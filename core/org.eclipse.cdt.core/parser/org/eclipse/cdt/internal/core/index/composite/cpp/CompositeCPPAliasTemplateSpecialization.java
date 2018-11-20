@@ -17,8 +17,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPAliasTemplateSpecialization extends CompositeCPPAliasTemplate
-		implements ICPPSpecialization {
+public class CompositeCPPAliasTemplateSpecialization extends CompositeCPPAliasTemplate implements ICPPSpecialization {
 	public CompositeCPPAliasTemplateSpecialization(ICompositesFactory cf, ICPPAliasTemplate delegate) {
 		super(cf, delegate);
 	}

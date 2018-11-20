@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -20,13 +20,13 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 /**
  * In c++ the a function definition for a constructor may contain member initializers.
  * @since 5.1
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTFunctionDefinition extends IASTFunctionDefinition, IASTAttributeOwner {
 	/**
- 	 * <code>MEMBER_INITIALIZER</code> is the role of a member initializer in the function definition.
+	 * <code>MEMBER_INITIALIZER</code> is the role of a member initializer in the function definition.
 	 */
 	@SuppressWarnings("nls")
 	public static final ASTNodeProperty MEMBER_INITIALIZER = new ASTNodeProperty(
@@ -41,7 +41,7 @@ public interface ICPPASTFunctionDefinition extends IASTFunctionDefinition, IASTA
 	 * Adds a member initializer to this function definition.
 	 */
 	public void addMemberInitializer(ICPPASTConstructorChainInitializer initializer);
-	
+
 	/**
 	 * @since 5.1
 	 */

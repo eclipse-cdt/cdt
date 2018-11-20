@@ -32,12 +32,13 @@ public class IntegerWithBooleanFieldEditor extends DecoratingIntegerFieldEditor 
 
 	public IntegerWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, Composite parent) {
 		super(nameKey, labelText, parent);
-		fEnableKey= enableKey;
+		fEnableKey = enableKey;
 	}
 
-	public IntegerWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, Composite parent, int textLimit) {
+	public IntegerWithBooleanFieldEditor(String enableKey, String nameKey, String labelText, Composite parent,
+			int textLimit) {
 		super(nameKey, labelText, parent, textLimit);
-		fEnableKey= enableKey;
+		fEnableKey = enableKey;
 	}
 
 	@Override
@@ -48,11 +49,11 @@ public class IntegerWithBooleanFieldEditor extends DecoratingIntegerFieldEditor 
 
 	private Button getCheckboxControl(Composite parent) {
 		if (fCheckbox == null) {
-			Composite inner= new Composite(parent, SWT.NULL);
-			final GridLayout layout= new GridLayout(2, false);
+			Composite inner = new Composite(parent, SWT.NULL);
+			final GridLayout layout = new GridLayout(2, false);
 			layout.marginWidth = 0;
 			inner.setLayout(layout);
-			fCheckbox= new Button(inner, SWT.CHECK);
+			fCheckbox = new Button(inner, SWT.CHECK);
 			fCheckbox.setFont(parent.getFont());
 			fCheckbox.setText(getLabelText());
 			// create and hide label from base class
@@ -62,9 +63,9 @@ public class IntegerWithBooleanFieldEditor extends DecoratingIntegerFieldEditor 
 			fCheckbox.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-                    boolean isSelected = fCheckbox.getSelection();
-                    valueChanged(fWasSelected, isSelected);
-                    fWasSelected = isSelected;
+					boolean isSelected = fCheckbox.getSelection();
+					valueChanged(fWasSelected, isSelected);
+					fWasSelected = isSelected;
 				}
 			});
 		} else {
@@ -75,7 +76,7 @@ public class IntegerWithBooleanFieldEditor extends DecoratingIntegerFieldEditor 
 
 	@Override
 	public Label getLabelControl(Composite parent) {
-		final Label label= getLabelControl();
+		final Label label = getLabelControl();
 		if (label == null) {
 			return super.getLabelControl(parent);
 		} else {
@@ -85,11 +86,11 @@ public class IntegerWithBooleanFieldEditor extends DecoratingIntegerFieldEditor 
 	}
 
 	protected void valueChanged(boolean oldValue, boolean newValue) {
-        if (oldValue != newValue) {
-    		valueChanged();
+		if (oldValue != newValue) {
+			valueChanged();
 			fireStateChanged(VALUE, oldValue, newValue);
-        	getTextControl().setEnabled(newValue);
-        	getLabelControl().setEnabled(newValue);
+			getTextControl().setEnabled(newValue);
+			getLabelControl().setEnabled(newValue);
 		}
 	}
 
@@ -105,40 +106,40 @@ public class IntegerWithBooleanFieldEditor extends DecoratingIntegerFieldEditor 
 	@Override
 	protected void doLoad() {
 		super.doLoad();
-        if (fCheckbox != null) {
-            boolean value = getPreferenceStore().getBoolean(fEnableKey);
-            fCheckbox.setSelection(value);
-            fWasSelected = value;
-        	getTextControl().setEnabled(value);
-        	getLabelControl().setEnabled(value);
-        }
+		if (fCheckbox != null) {
+			boolean value = getPreferenceStore().getBoolean(fEnableKey);
+			fCheckbox.setSelection(value);
+			fWasSelected = value;
+			getTextControl().setEnabled(value);
+			getLabelControl().setEnabled(value);
+		}
 	}
 
 	@Override
 	protected void doLoadDefault() {
 		super.doLoadDefault();
-        if (fCheckbox != null) {
-            boolean value = getPreferenceStore().getDefaultBoolean(fEnableKey);
-            fCheckbox.setSelection(value);
-            fWasSelected = value;
-        	getTextControl().setEnabled(value);
-        	getLabelControl().setEnabled(value);
-        }
+		if (fCheckbox != null) {
+			boolean value = getPreferenceStore().getDefaultBoolean(fEnableKey);
+			fCheckbox.setSelection(value);
+			fWasSelected = value;
+			getTextControl().setEnabled(value);
+			getLabelControl().setEnabled(value);
+		}
 	}
 
-    @Override
+	@Override
 	protected void doStore() {
-    	super.doStore();
-        getPreferenceStore().setValue(fEnableKey, fCheckbox.getSelection());
-    }
+		super.doStore();
+		getPreferenceStore().setValue(fEnableKey, fCheckbox.getSelection());
+	}
 
-    /**
-     * Returns this field editor's current boolean value.
-     *
-     * @return the value
-     */
-    public boolean getBooleanValue() {
-        return fCheckbox.getSelection();
-    }
+	/**
+	 * Returns this field editor's current boolean value.
+	 *
+	 * @return the value
+	 */
+	public boolean getBooleanValue() {
+		return fCheckbox.getSelection();
+	}
 
 }

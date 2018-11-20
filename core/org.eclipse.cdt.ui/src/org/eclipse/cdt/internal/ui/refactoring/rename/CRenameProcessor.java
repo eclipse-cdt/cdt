@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
@@ -50,282 +50,274 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * use and forwards further calls to the delegate.
  */
 public class CRenameProcessor extends RenameProcessor {
-	public static final String IDENTIFIER= "org.eclips.cdt.refactoring.RenameProcessor"; //$NON-NLS-1$
+	public static final String IDENTIFIER = "org.eclips.cdt.refactoring.RenameProcessor"; //$NON-NLS-1$
 
-	private static final String[] AFFECTED_PROJECT_NATURES =
-    	{ CCProjectNature.CC_NATURE_ID, CProjectNature.C_NATURE_ID };
+	private static final String[] AFFECTED_PROJECT_NATURES = { CCProjectNature.CC_NATURE_ID,
+			CProjectNature.C_NATURE_ID };
 
-    private final CRefactoringArgument fArgument;
-    private CRenameProcessorDelegate fDelegate;
-    private String fReplacementText;
-    private String fWorkingSetName;
-    private int fExhaustiveSearchScope;
-    private int fSelectedOptions;
-    private final CRefactory fManager;
-    private final ASTManager fAstManager;
+	private final CRefactoringArgument fArgument;
+	private CRenameProcessorDelegate fDelegate;
+	private String fReplacementText;
+	private String fWorkingSetName;
+	private int fExhaustiveSearchScope;
+	private int fSelectedOptions;
+	private final CRefactory fManager;
+	private final ASTManager fAstManager;
 	private IIndex fIndex;
 	private int fIndexLockCount;
 	private RefactoringStatus fInitialConditionsStatus;
-    
-    public CRenameProcessor(CRefactory refactoringManager, CRefactoringArgument arg) {
-        fManager= refactoringManager;
-        fArgument= arg;
-        fAstManager= new ASTManager(arg);
-    }
-    
-    public CRefactoringArgument getArgument() {
-        return fArgument;
-    }
 
-    @Override
-	public Object[] getElements() {
-        return new Object[] { fArgument.getBinding() };
-    }
-
-    @Override
-	public String getProcessorName() {
-        String result= null;
-        if (fDelegate != null) { 
-            result= fDelegate.getProcessorName();
-        }
-        if (result == null) {
-            String identifier= getArgument().getName();
-            if (identifier != null && identifier.length() > 0) {
-                result= NLS.bind(RenameMessages.CRenameTopProcessor_wizard_title, identifier);
-            }
-        }
-        if (result == null) {
-            result= RenameMessages.CRenameTopProcessor_wizard_backup_title;
-        }
-
-        return result;
-    }
-
-    @Override
-	public boolean isApplicable() throws CoreException {
-        return true;
-    }
-
-    @Override
-	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
-            throws CoreException, OperationCanceledException {
-    	if (fInitialConditionsStatus != null) {
-    		return fInitialConditionsStatus; // Already checked.
-    	}
-        String identifier= null;
-        fInitialConditionsStatus= new RefactoringStatus();
-        if (fArgument != null) {
-            fAstManager.analyzeArgument(fIndex, pm, fInitialConditionsStatus);
-            identifier= fArgument.getName();
-        }
-        if (identifier == null || identifier.length() == 0) {
-        	fInitialConditionsStatus.addFatalError(RenameMessages.CRenameTopProcessor_error_invalidTextSelection);
-            return fInitialConditionsStatus;
-        }
-        IFile file= fArgument.getSourceFile();
-        IPath path= null;
-        if (file != null) {
-            path= file.getLocation();
-        }
-        if (path == null) {
-            return RefactoringStatus.createFatalErrorStatus(RenameMessages.CRenameTopProcessor_error_renameWithoutSourceFile);
-        }
-
-        updateBinding();
-        
-        fDelegate= createDelegate();
-        if (fDelegate == null) {
-        	fInitialConditionsStatus.addFatalError(RenameMessages.CRenameTopProcessor_error_invalidName);
-            return fInitialConditionsStatus;
-        }            
-        RefactoringStatus status= fDelegate.checkInitialConditions(new NullProgressMonitor());
-        fInitialConditionsStatus.merge(status);
-        return fInitialConditionsStatus;
-    }
-
-	/**
-	 * Change the binding for the renaming of constructors and destructor to the class.  
-	 */
-	private void updateBinding() {
-		IBinding binding= fArgument.getBinding();
-        if (binding instanceof ICPPConstructor || 
-        		(binding instanceof ICPPMethod  && ((ICPPMethod) binding).isDestructor())) {
-        	// Switch binding to class level when constructor or destructor selected
-        	IBinding newBinding = ((ICPPMember) binding).getClassOwner();
-        	IScope scope = fArgument.getScope();
-        	try {
-        		scope = newBinding.getScope();
-        	} catch (DOMException e) {
-        		CUIPlugin.log(e);
-        	}
-        	fArgument.setBinding(fArgument.getTranslationUnit(), newBinding, scope);
-        	
-        	if (fArgument.getName().startsWith("~")) { //$NON-NLS-1$
-        		fArgument.setName(newBinding.getName());
-        	}
-        }
+	public CRenameProcessor(CRefactory refactoringManager, CRefactoringArgument arg) {
+		fManager = refactoringManager;
+		fArgument = arg;
+		fAstManager = new ASTManager(arg);
 	}
 
-    private CRenameProcessorDelegate createDelegate() {
-        switch (fArgument.getArgumentKind()) {
-        	case CRefactory.ARGUMENT_LOCAL_VAR: 
-                return new CRenameLocalProcessor(this,
-                        RenameMessages.CRenameTopProcessor_localVar,
-                        fArgument.getScope());
-        	case CRefactory.ARGUMENT_PARAMETER:
-                return new CRenameLocalProcessor(this,
-                        RenameMessages.CRenameTopProcessor_parameter,
-                        fArgument.getScope());
-        	case CRefactory.ARGUMENT_FILE_LOCAL_VAR:
-                return new CRenameLocalProcessor(this,
-                        RenameMessages.CRenameTopProcessor_filelocalVar,
-                        null);
-        	case CRefactory.ARGUMENT_GLOBAL_VAR:
-                return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_globalVar);
-            case CRefactory.ARGUMENT_ENUMERATOR:
-                return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_enumerator);
-        	case CRefactory.ARGUMENT_FIELD:
-                return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_field);
-        	case CRefactory.ARGUMENT_FILE_LOCAL_FUNCTION:
-                return new CRenameLocalProcessor(this,
-                        RenameMessages.CRenameTopProcessor_filelocalFunction,
-                        null);
-        	case CRefactory.ARGUMENT_GLOBAL_FUNCTION:
-                return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_globalFunction);
-        	case CRefactory.ARGUMENT_VIRTUAL_METHOD:
-                return new CRenameMethodProcessor(this, RenameMessages.CRenameTopProcessor_virtualMethod, true);
-        	case CRefactory.ARGUMENT_NON_VIRTUAL_METHOD:
-                return new CRenameMethodProcessor(this, RenameMessages.CRenameTopProcessor_method, false);
-            case CRefactory.ARGUMENT_CLASS_TYPE:                
-                return new CRenameClassProcessor(this, RenameMessages.CRenameTopProcessor_type);
-            case CRefactory.ARGUMENT_NAMESPACE:
-                return new CRenameTypeProcessor(this, RenameMessages.CRenameTopProcessor_namespace);
-        	case CRefactory.ARGUMENT_TYPE:
-                return new CRenameTypeProcessor(this, RenameMessages.CRenameTopProcessor_type);
-        	case CRefactory.ARGUMENT_MACRO:
-                return new CRenameMacroProcessor(this, RenameMessages.CRenameTopProcessor_macro);
-        	case CRefactory.ARGUMENT_INCLUDE_DIRECTIVE:
-                return new CRenameIncludeProcessor(this, RenameMessages.CRenameIncludeProcessor_includeDirective);
-        	default:
-                return null;
-        }
-    }
-
-    @Override
-	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context)
-    		throws CoreException, OperationCanceledException {
-		return fDelegate.checkFinalConditions(pm, context);
-    }
-
-    @Override
-	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-        return fDelegate.createChange(pm);
-    }
+	public CRefactoringArgument getArgument() {
+		return fArgument;
+	}
 
 	@Override
-	public final RefactoringParticipant[] loadParticipants(RefactoringStatus status,
-			SharableParticipants shared) throws CoreException {
+	public Object[] getElements() {
+		return new Object[] { fArgument.getBinding() };
+	}
+
+	@Override
+	public String getProcessorName() {
+		String result = null;
+		if (fDelegate != null) {
+			result = fDelegate.getProcessorName();
+		}
+		if (result == null) {
+			String identifier = getArgument().getName();
+			if (identifier != null && identifier.length() > 0) {
+				result = NLS.bind(RenameMessages.CRenameTopProcessor_wizard_title, identifier);
+			}
+		}
+		if (result == null) {
+			result = RenameMessages.CRenameTopProcessor_wizard_backup_title;
+		}
+
+		return result;
+	}
+
+	@Override
+	public boolean isApplicable() throws CoreException {
+		return true;
+	}
+
+	@Override
+	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
+			throws CoreException, OperationCanceledException {
+		if (fInitialConditionsStatus != null) {
+			return fInitialConditionsStatus; // Already checked.
+		}
+		String identifier = null;
+		fInitialConditionsStatus = new RefactoringStatus();
+		if (fArgument != null) {
+			fAstManager.analyzeArgument(fIndex, pm, fInitialConditionsStatus);
+			identifier = fArgument.getName();
+		}
+		if (identifier == null || identifier.length() == 0) {
+			fInitialConditionsStatus.addFatalError(RenameMessages.CRenameTopProcessor_error_invalidTextSelection);
+			return fInitialConditionsStatus;
+		}
+		IFile file = fArgument.getSourceFile();
+		IPath path = null;
+		if (file != null) {
+			path = file.getLocation();
+		}
+		if (path == null) {
+			return RefactoringStatus
+					.createFatalErrorStatus(RenameMessages.CRenameTopProcessor_error_renameWithoutSourceFile);
+		}
+
+		updateBinding();
+
+		fDelegate = createDelegate();
+		if (fDelegate == null) {
+			fInitialConditionsStatus.addFatalError(RenameMessages.CRenameTopProcessor_error_invalidName);
+			return fInitialConditionsStatus;
+		}
+		RefactoringStatus status = fDelegate.checkInitialConditions(new NullProgressMonitor());
+		fInitialConditionsStatus.merge(status);
+		return fInitialConditionsStatus;
+	}
+
+	/**
+	 * Change the binding for the renaming of constructors and destructor to the class.
+	 */
+	private void updateBinding() {
+		IBinding binding = fArgument.getBinding();
+		if (binding instanceof ICPPConstructor
+				|| (binding instanceof ICPPMethod && ((ICPPMethod) binding).isDestructor())) {
+			// Switch binding to class level when constructor or destructor selected
+			IBinding newBinding = ((ICPPMember) binding).getClassOwner();
+			IScope scope = fArgument.getScope();
+			try {
+				scope = newBinding.getScope();
+			} catch (DOMException e) {
+				CUIPlugin.log(e);
+			}
+			fArgument.setBinding(fArgument.getTranslationUnit(), newBinding, scope);
+
+			if (fArgument.getName().startsWith("~")) { //$NON-NLS-1$
+				fArgument.setName(newBinding.getName());
+			}
+		}
+	}
+
+	private CRenameProcessorDelegate createDelegate() {
+		switch (fArgument.getArgumentKind()) {
+		case CRefactory.ARGUMENT_LOCAL_VAR:
+			return new CRenameLocalProcessor(this, RenameMessages.CRenameTopProcessor_localVar, fArgument.getScope());
+		case CRefactory.ARGUMENT_PARAMETER:
+			return new CRenameLocalProcessor(this, RenameMessages.CRenameTopProcessor_parameter, fArgument.getScope());
+		case CRefactory.ARGUMENT_FILE_LOCAL_VAR:
+			return new CRenameLocalProcessor(this, RenameMessages.CRenameTopProcessor_filelocalVar, null);
+		case CRefactory.ARGUMENT_GLOBAL_VAR:
+			return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_globalVar);
+		case CRefactory.ARGUMENT_ENUMERATOR:
+			return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_enumerator);
+		case CRefactory.ARGUMENT_FIELD:
+			return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_field);
+		case CRefactory.ARGUMENT_FILE_LOCAL_FUNCTION:
+			return new CRenameLocalProcessor(this, RenameMessages.CRenameTopProcessor_filelocalFunction, null);
+		case CRefactory.ARGUMENT_GLOBAL_FUNCTION:
+			return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_globalFunction);
+		case CRefactory.ARGUMENT_VIRTUAL_METHOD:
+			return new CRenameMethodProcessor(this, RenameMessages.CRenameTopProcessor_virtualMethod, true);
+		case CRefactory.ARGUMENT_NON_VIRTUAL_METHOD:
+			return new CRenameMethodProcessor(this, RenameMessages.CRenameTopProcessor_method, false);
+		case CRefactory.ARGUMENT_CLASS_TYPE:
+			return new CRenameClassProcessor(this, RenameMessages.CRenameTopProcessor_type);
+		case CRefactory.ARGUMENT_NAMESPACE:
+			return new CRenameTypeProcessor(this, RenameMessages.CRenameTopProcessor_namespace);
+		case CRefactory.ARGUMENT_TYPE:
+			return new CRenameTypeProcessor(this, RenameMessages.CRenameTopProcessor_type);
+		case CRefactory.ARGUMENT_MACRO:
+			return new CRenameMacroProcessor(this, RenameMessages.CRenameTopProcessor_macro);
+		case CRefactory.ARGUMENT_INCLUDE_DIRECTIVE:
+			return new CRenameIncludeProcessor(this, RenameMessages.CRenameIncludeProcessor_includeDirective);
+		default:
+			return null;
+		}
+	}
+
+	@Override
+	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context)
+			throws CoreException, OperationCanceledException {
+		return fDelegate.checkFinalConditions(pm, context);
+	}
+
+	@Override
+	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+		return fDelegate.createChange(pm);
+	}
+
+	@Override
+	public final RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants shared)
+			throws CoreException {
 		return fDelegate.getRenameModifications().loadParticipants(status, this, AFFECTED_PROJECT_NATURES, shared);
 	}
 
-    /**
-     * Options for the input page in the refactoring wizard.
-     */
-    public int getAvailableOptions() {
-        if (fDelegate == null) {
-            return 0;
-        }
-        return fDelegate.getAvailableOptions();
-    }
+	/**
+	 * Options for the input page in the refactoring wizard.
+	 */
+	public int getAvailableOptions() {
+		if (fDelegate == null) {
+			return 0;
+		}
+		return fDelegate.getAvailableOptions();
+	}
 
-    /**
-     * Options for the input page that trigger the preview.
-     */
-    public int getOptionsForcingPreview() {
-        if (fDelegate == null) {
-            return 0;
-        }
-        return fDelegate.getOptionsForcingPreview();
-    }
+	/**
+	 * Options for the input page that trigger the preview.
+	 */
+	public int getOptionsForcingPreview() {
+		if (fDelegate == null) {
+			return 0;
+		}
+		return fDelegate.getOptionsForcingPreview();
+	}
 
-    /**
-     * The options that may need exhaustive file search since index lookup is not guaranteed to
-     * return all files participating in refactoring. When one of these options is selected,
-     * the exhaustive file search is enabled.
-     */
-    public int getOptionsEnablingExhaustiveSearch() {
-        if (fDelegate == null) {
-            return 0;
-        }
-        return fDelegate.getOptionsEnablingExhaustiveSearch();
-    }
+	/**
+	 * The options that may need exhaustive file search since index lookup is not guaranteed to
+	 * return all files participating in refactoring. When one of these options is selected,
+	 * the exhaustive file search is enabled.
+	 */
+	public int getOptionsEnablingExhaustiveSearch() {
+		if (fDelegate == null) {
+			return 0;
+		}
+		return fDelegate.getOptionsEnablingExhaustiveSearch();
+	}
 
-    @Override
+	@Override
 	public String getIdentifier() {
-        return IDENTIFIER;
-    }
+		return IDENTIFIER;
+	}
 
-    public int getExhaustiveSearchScope() {
-        return (fSelectedOptions & CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH) != 0 ?
-        		fExhaustiveSearchScope : TextSearchWrapper.SCOPE_FILE;
-    }
+	public int getExhaustiveSearchScope() {
+		return (fSelectedOptions & CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH) != 0 ? fExhaustiveSearchScope
+				: TextSearchWrapper.SCOPE_FILE;
+	}
 
-    public void setExhaustiveSearchScope(int scope) {
-        fExhaustiveSearchScope = scope;
-    }
+	public void setExhaustiveSearchScope(int scope) {
+		fExhaustiveSearchScope = scope;
+	}
 
-    public int getSelectedOptions() {
-        return fSelectedOptions;
-    }
+	public int getSelectedOptions() {
+		return fSelectedOptions;
+	}
 
-    public void setSelectedOptions(int selectedOptions) {
-        fSelectedOptions = selectedOptions;
-    }
+	public void setSelectedOptions(int selectedOptions) {
+		fSelectedOptions = selectedOptions;
+	}
 
-    public boolean isPreviewRequired() {
-    	return (fSelectedOptions & getOptionsForcingPreview()) != 0;
-    }
+	public boolean isPreviewRequired() {
+		return (fSelectedOptions & getOptionsForcingPreview()) != 0;
+	}
 
-    public String getWorkingSetName() {
-        return fWorkingSetName;
-    }
+	public String getWorkingSetName() {
+		return fWorkingSetName;
+	}
 
-    /**
-     * Sets the name of the working set. If the name of the working set is invalid,
-     * it's set to an empty string. 
-     */
-    public void setWorkingSetName(String workingSet) {
-        fWorkingSetName = checkWorkingSet(workingSet);
-    }
+	/**
+	 * Sets the name of the working set. If the name of the working set is invalid,
+	 * it's set to an empty string.
+	 */
+	public void setWorkingSetName(String workingSet) {
+		fWorkingSetName = checkWorkingSet(workingSet);
+	}
 
-    public String getReplacementText() {
-        return fReplacementText;
-    }
+	public String getReplacementText() {
+		return fReplacementText;
+	}
 
-    public void setReplacementText(String replacementText) {
-        fReplacementText = replacementText;
-    }
+	public void setReplacementText(String replacementText) {
+		fReplacementText = replacementText;
+	}
 
-    public CRefactory getManager() {
-        return fManager;
-    }
+	public CRefactory getManager() {
+		return fManager;
+	}
 
-    public ASTManager getAstManager() {
-        return fAstManager;
-    }
+	public ASTManager getAstManager() {
+		return fAstManager;
+	}
 
 	public void lockIndex() throws CoreException, InterruptedException {
 		if (fIndexLockCount == 0) {
 			if (fIndex == null) {
-				ICProject[] projects= CoreModel.getDefault().getCModel().getCProjects();
-				fIndex = CCorePlugin.getIndexManager().getIndex(projects,
-						IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR);
+				ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
+				fIndex = CCorePlugin.getIndexManager().getIndex(projects, IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR);
 			}
 			fIndex.acquireReadLock();
 		}
 		fIndexLockCount++;
 	}
-	
+
 	public void unlockIndex() {
 		if (--fIndexLockCount <= 0) {
 			if (fAstManager != null) {
@@ -334,7 +326,7 @@ public class CRenameProcessor extends RenameProcessor {
 			if (fIndex != null) {
 				fIndex.releaseReadLock();
 			}
-			fIndex= null;
+			fIndex = null;
 		}
 	}
 
@@ -349,13 +341,13 @@ public class CRenameProcessor extends RenameProcessor {
 		return fDelegate.getSaveMode();
 	}
 
-    private String checkWorkingSet(String workingSet) {
+	private String checkWorkingSet(String workingSet) {
 		if (workingSet != null && workingSet.length() > 0) {
-		    IWorkingSetManager wsManager= PlatformUI.getWorkbench().getWorkingSetManager();
-		    if (wsManager.getWorkingSet(workingSet) != null) {
-		        return workingSet;
-		    }
+			IWorkingSetManager wsManager = PlatformUI.getWorkbench().getWorkingSetManager();
+			if (wsManager.getWorkingSet(workingSet) != null) {
+				return workingSet;
+			}
 		}
-	    return ""; //$NON-NLS-1$
-    }
+		return ""; //$NON-NLS-1$
+	}
 }

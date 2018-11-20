@@ -10,7 +10,7 @@
  *
  * Contributors:
  * Nokia - Initial API and implementation
- * Marc Khouzam (Ericsson) - Turn off casting for expression-group or 
+ * Marc Khouzam (Ericsson) - Turn off casting for expression-group or
  *                           pattern expressions (bug 394408)
  *******************************************************************************/
 
@@ -50,60 +50,59 @@ import org.eclipse.debug.core.DebugException;
  * This provides {@link ICastToType} and {@link ICastToArray} support on
  * expression nodes.
  */
-public class DsfCastToTypeSupport  {
+public class DsfCastToTypeSupport {
 	private final DsfServicesTracker serviceTracker;
 	private final AbstractDMVMProvider dmvmProvider;
 	private final SyncVariableDataAccess fSyncVariableDataAccess;
-	 
-    /** expression memento to casting context (TODO: persist these; bug 228301)*/
-    private Map<String, CastInfo> fCastedExpressionStorage = new HashMap<String, CastInfo>();
 
-    public class CastImplementation extends PlatformObject implements ICastToArray  {
+	/** expression memento to casting context (TODO: persist these; bug 228301)*/
+	private Map<String, CastInfo> fCastedExpressionStorage = new HashMap<String, CastInfo>();
+
+	public class CastImplementation extends PlatformObject implements ICastToArray {
 		private final IExpressionDMContext exprDMC;
 		private String memento;
 
 		public CastImplementation(IExpressionDMContext exprDMC) {
 			this.exprDMC = exprDMC;
 			this.memento = createCastedExpressionMemento(exprDMC);
-    	}
-		
-	    public class TestExpressions2Query extends Query<Boolean> {
+		}
 
-	        public TestExpressions2Query() {
-	            super();
-	        }
+		public class TestExpressions2Query extends Query<Boolean> {
 
-	        @Override
-	        protected void execute(final DataRequestMonitor<Boolean> rm) {
-	            /*
-	             * We're in another dispatch, so we must guard against executor
-	             * shutdown again.
-	             */
-	            final DsfSession session = DsfSession.getSession(
-	            		dmvmProvider.getSession().getId());
-	            if (session == null) {
-	                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Debug session already shut down.", null)); //$NON-NLS-1$
-	                rm.done();
-	                return;
-	            }
+			public TestExpressions2Query() {
+				super();
+			}
 
-                DsfServicesTracker tracker = new DsfServicesTracker(
-                		DsfUIPlugin.getBundleContext(), dmvmProvider.getSession().getId());
-                IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
-                rm.setData(expressions2 != null);
-                rm.done();
-                tracker.dispose();
-	        }
-	    }
+			@Override
+			protected void execute(final DataRequestMonitor<Boolean> rm) {
+				/*
+				 * We're in another dispatch, so we must guard against executor
+				 * shutdown again.
+				 */
+				final DsfSession session = DsfSession.getSession(dmvmProvider.getSession().getId());
+				if (session == null) {
+					rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+							"Debug session already shut down.", null)); //$NON-NLS-1$
+					rm.done();
+					return;
+				}
+
+				DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+						dmvmProvider.getSession().getId());
+				IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
+				rm.setData(expressions2 != null);
+				rm.done();
+				tracker.dispose();
+			}
+		}
 
 		private boolean isValid() {
-			if (exprDMC instanceof IIndexedPartitionDMContext ||
-					exprDMC instanceof IExpressionGroupDMContext) {
+			if (exprDMC instanceof IIndexedPartitionDMContext || exprDMC instanceof IExpressionGroupDMContext) {
 				return false;
 			}
-			
-	        TestExpressions2Query query = new TestExpressions2Query();
-	        dmvmProvider.getSession().getExecutor().execute(query);
+
+			TestExpressions2Query query = new TestExpressions2Query();
+			dmvmProvider.getSession().getExecutor().execute(query);
 
 			try {
 				/*
@@ -118,39 +117,40 @@ public class DsfCastToTypeSupport  {
 				return false;
 			}
 		}
-		
+
 		private void throwIfNotValid() throws DebugException {
-        	if (!isValid())
-        		throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, 
-        				MessagesForVariablesVM.VariableVMNode_CannotCastVariable, null)); 
+			if (!isValid())
+				throw new DebugException(
+						new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+								MessagesForVariablesVM.VariableVMNode_CannotCastVariable, null));
 		}
-		
-        /*
+
+		/*
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToType#canCast()
 		 */
-	    @Override
-        public boolean canCast() {
-        	return isValid();
+		@Override
+		public boolean canCast() {
+			return isValid();
 		}
 
 		/*
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToType#getCurrentType()
 		 */
-	    @Override
-        public String getCurrentType() {
-        	// get expected casted type first, if possible (if there's an error in the type,
-        	// the expression might not evaluate successfully)
-        	CastInfo castDMC = fCastedExpressionStorage.get(memento);
-        	if (castDMC != null && castDMC.getTypeString() != null)
-        		return castDMC.getTypeString();
-        	
-        	// else, get the actual type
-        	IExpressionDMData data = fSyncVariableDataAccess.readVariable(exprDMC);
-        	if (data != null)
-        		return data.getTypeName();
-        	
+		@Override
+		public String getCurrentType() {
+			// get expected casted type first, if possible (if there's an error in the type,
+			// the expression might not evaluate successfully)
+			CastInfo castDMC = fCastedExpressionStorage.get(memento);
+			if (castDMC != null && castDMC.getTypeString() != null)
+				return castDMC.getTypeString();
+
+			// else, get the actual type
+			IExpressionDMData data = fSyncVariableDataAccess.readVariable(exprDMC);
+			if (data != null)
+				return data.getTypeName();
+
 			return ""; //$NON-NLS-1$
 		}
 
@@ -158,34 +158,33 @@ public class DsfCastToTypeSupport  {
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToType#cast(java.lang.String)
 		 */
-	    @Override
-        public void cast(String type) throws DebugException {
-        	throwIfNotValid();
-        	
-        	CastInfo currentContext = fCastedExpressionStorage.get(memento);
-        	
-        	updateCastInformation(type, 
-        			currentContext != null ? currentContext.getArrayStartIndex() : 0, 
-        			currentContext != null ? currentContext.getArrayCount() : 0);
-        	
+		@Override
+		public void cast(String type) throws DebugException {
+			throwIfNotValid();
+
+			CastInfo currentContext = fCastedExpressionStorage.get(memento);
+
+			updateCastInformation(type, currentContext != null ? currentContext.getArrayStartIndex() : 0,
+					currentContext != null ? currentContext.getArrayCount() : 0);
+
 		}
 
-        /*
-         * (non-Javadoc)
-         * @see org.eclipse.cdt.debug.core.model.ICastToType#restoreOriginal()
-         */
-	    @Override
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.model.ICastToType#restoreOriginal()
+		 */
+		@Override
 		public void restoreOriginal() throws DebugException {
 			throwIfNotValid();
-        	fCastedExpressionStorage.remove(memento);
-        	fireExpressionChangedEvent(exprDMC);
+			fCastedExpressionStorage.remove(memento);
+			fireExpressionChangedEvent(exprDMC);
 		}
 
 		/*
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToType#isCasted()
 		 */
-	    @Override
+		@Override
 		public boolean isCasted() {
 			if (isValid())
 				return fCastedExpressionStorage.containsKey(memento);
@@ -197,7 +196,7 @@ public class DsfCastToTypeSupport  {
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToArray#canCastToArray()
 		 */
-	    @Override
+		@Override
 		public boolean canCastToArray() {
 			return isValid();
 		}
@@ -206,74 +205,71 @@ public class DsfCastToTypeSupport  {
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToArray#castToArray(int, int)
 		 */
-	    @Override
-		public void castToArray(int startIndex, int length)
-				throws DebugException {
+		@Override
+		public void castToArray(int startIndex, int length) throws DebugException {
 			throwIfNotValid();
-        	
+
 			CastInfo currentContext = fCastedExpressionStorage.get(memento);
-			
-        	updateCastInformation(currentContext != null ? currentContext.getTypeString() : null, 
-        			startIndex,
-        			length);
+
+			updateCastInformation(currentContext != null ? currentContext.getTypeString() : null, startIndex, length);
 		}
 
-		private void updateCastInformation(
-				String type, int arrayStartIndex, 
-				int arrayCount) {
+		private void updateCastInformation(String type, int arrayStartIndex, int arrayCount) {
 			final CastInfo info = new CastInfo(type, arrayStartIndex, arrayCount);
 			fCastedExpressionStorage.put(memento, info);
-		    fireExpressionChangedEvent(exprDMC);
+			fireExpressionChangedEvent(exprDMC);
 		}
 
-		private class ExpressionChangedEvent extends AbstractDMEvent<IExpressionDMContext> implements IExpressionChangedDMEvent {
+		private class ExpressionChangedEvent extends AbstractDMEvent<IExpressionDMContext>
+				implements IExpressionChangedDMEvent {
 			public ExpressionChangedEvent(IExpressionDMContext context) {
 				super(context);
 			}
 		}
-		
+
 		private void fireExpressionChangedEvent(IExpressionDMContext exprDMC) {
 			ExpressionChangedEvent event = new ExpressionChangedEvent(exprDMC);
 			dmvmProvider.handleEvent(event);
 		}
-    }
-    
-	public DsfCastToTypeSupport(DsfSession session, AbstractDMVMProvider dmvmProvider, SyncVariableDataAccess fSyncVariableDataAccess) {
+	}
+
+	public DsfCastToTypeSupport(DsfSession session, AbstractDMVMProvider dmvmProvider,
+			SyncVariableDataAccess fSyncVariableDataAccess) {
 		this.dmvmProvider = dmvmProvider;
 		this.fSyncVariableDataAccess = fSyncVariableDataAccess;
 		this.serviceTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.ICastSupportTarget#createCastedExpressionMemento(org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext, java.lang.String)
 	 */
 	public String createCastedExpressionMemento(IExpressionDMContext exprDMC) {
 		// go to the original variable first
 		if (exprDMC instanceof ICastedExpressionDMContext) {
-			IExpressionDMContext origExpr = DMContexts.getAncestorOfType(exprDMC.getParents()[0], IExpressionDMContext.class);
+			IExpressionDMContext origExpr = DMContexts.getAncestorOfType(exprDMC.getParents()[0],
+					IExpressionDMContext.class);
 			if (origExpr == null) {
 				assert false;
 			} else {
 				exprDMC = origExpr;
 			}
 		}
-		
+
 		// TODO: the memento doesn't really strictly define the expression's context;
 		// we should fetch module name, function name, etc. to be more useful (but do that asynchronously)
 		String expression = exprDMC.getExpression();
-		String memento = exprDMC.getSessionId() + "." + expression; //$NON-NLS-1$ 
+		String memento = exprDMC.getSessionId() + "." + expression; //$NON-NLS-1$
 		return memento;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.ICastSupportTarget#replaceWihCastedExpression(org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext)
 	 */
-	public IExpressionDMContext replaceWithCastedExpression(
-			IExpressionDMContext exprDMC) {
+	public IExpressionDMContext replaceWithCastedExpression(IExpressionDMContext exprDMC) {
 		IExpressions2 expression2Service = serviceTracker.getService(IExpressions2.class);
 		if (expression2Service == null)
 			return exprDMC;
-		
+
 		if (!fCastedExpressionStorage.isEmpty()) {
 			String memento = createCastedExpressionMemento(exprDMC);
 			CastInfo castInfo = fCastedExpressionStorage.get(memento);
@@ -286,7 +282,7 @@ public class DsfCastToTypeSupport  {
 
 	/**
 	 * Get the ICastToArray (and ICastToType) implementation for the expression.
-	 * This does not necessarily return a unique object for each call. 
+	 * This does not necessarily return a unique object for each call.
 	 * @param exprDMC
 	 * @return {@link ICastToArray}
 	 */

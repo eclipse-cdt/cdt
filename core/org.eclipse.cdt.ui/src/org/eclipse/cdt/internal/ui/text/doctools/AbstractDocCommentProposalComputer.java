@@ -33,23 +33,24 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 
 abstract class AbstractDocCommentProposalComputer implements ICompletionProposalComputer {
-	
+
 	protected abstract IDocCommentViewerConfiguration getConfiguration(IDocCommentOwner owner);
-	
+
 	protected final IDocCommentViewerConfiguration getConfiguration() {
-		IResource resource= getResource();
-		IDocCommentOwner owner= DocCommentOwnerManager.getInstance().getCommentOwner(resource);
+		IResource resource = getResource();
+		IDocCommentOwner owner = DocCommentOwnerManager.getInstance().getCommentOwner(resource);
 		return getConfiguration(owner);
 	}
-	
+
 	@Override
-	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
 		return getConfiguration().createProposalComputer().computeCompletionProposals(context, monitor);
 	}
 
 	@Override
-	public List<IContextInformation> computeContextInformation(
-			ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
 		return getConfiguration().createProposalComputer().computeContextInformation(context, monitor);
 	}
 
@@ -65,30 +66,30 @@ abstract class AbstractDocCommentProposalComputer implements ICompletionProposal
 	@Override
 	public void sessionStarted() {
 	}
-	
+
 	private static IResource getResource() {
-		ITranslationUnit tu= getTranslationUnit();
+		ITranslationUnit tu = getTranslationUnit();
 		if (tu == null)
 			return null;
-		
+
 		return tu.getResource();
 	}
-	
+
 	private static ITranslationUnit getTranslationUnit() {
-		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null)
 			return null;
 
-		IWorkbenchPage page= window.getActivePage();
+		IWorkbenchPage page = window.getActivePage();
 		if (page == null)
 			return null;
 
-		IEditorPart editor= page.getActiveEditor();
+		IEditorPart editor = page.getActiveEditor();
 		if (editor == null)
 			return null;
 
-		IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();
-		ITranslationUnit unit= manager.getWorkingCopy(editor.getEditorInput());
+		IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
+		ITranslationUnit unit = manager.getWorkingCopy(editor.getEditorInput());
 		if (unit == null)
 			return null;
 

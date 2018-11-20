@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -32,83 +32,83 @@ import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
- * Dynamic menu contribution that shows available update policies 
+ * Dynamic menu contribution that shows available update policies
  * in the current view.
- * 
+ *
  * @since 1.1
  */
 public class UpdatePoliciesContribution extends CompoundContributionItem implements IWorkbenchContribution {
-    
-    private class SelectUpdatePolicyAction extends Action {
-        private final ICachingVMProvider fProvider;
-        private final IVMUpdatePolicy fPolicy;
-        SelectUpdatePolicyAction(ICachingVMProvider provider, IVMUpdatePolicy policy) {
-            super(policy.getName(), AS_RADIO_BUTTON);
-            fProvider = provider;
-            fPolicy = policy;
-        }
 
-        @Override
-        public void run() {
-            if (isChecked()) {
-                fProvider.setActiveUpdatePolicy(fPolicy);
-            }
-        }
-    }
- 
-    private IServiceLocator fServiceLocator;
+	private class SelectUpdatePolicyAction extends Action {
+		private final ICachingVMProvider fProvider;
+		private final IVMUpdatePolicy fPolicy;
 
-    private static IContributionItem[] NO_UPDATE_POLICIES_CONTRIBUTION_ITEMS = new IContributionItem[] { 
-    	new ContributionItem() {
-            @Override
-			public void fill(Menu menu, int index) {
-				MenuItem item = new MenuItem(menu, SWT.NONE);
-				item.setEnabled(false);
-				item.setText(MessagesForVMActions.UpdatePoliciesContribution_EmptyPoliciesList_label);
+		SelectUpdatePolicyAction(ICachingVMProvider provider, IVMUpdatePolicy policy) {
+			super(policy.getName(), AS_RADIO_BUTTON);
+			fProvider = provider;
+			fPolicy = policy;
+		}
+
+		@Override
+		public void run() {
+			if (isChecked()) {
+				fProvider.setActiveUpdatePolicy(fPolicy);
 			}
-	
-            @Override
-			public boolean isEnabled() {
-				return false;
-			}
-    	}
-    };
-    
-    @Override
-    protected IContributionItem[] getContributionItems() {
-        IVMProvider provider = VMHandlerUtils.getActiveVMProvider(fServiceLocator);
+		}
+	}
 
-        // If no part or selection, disable all.
-        if (provider == null || !(provider instanceof ICachingVMProvider)) {
-            return NO_UPDATE_POLICIES_CONTRIBUTION_ITEMS;
-        }
-        ICachingVMProvider cachingProvider = (ICachingVMProvider)provider;
-        
-        IVMUpdatePolicy[] policies = cachingProvider.getAvailableUpdatePolicies();
-        IVMUpdatePolicy activePolicy = cachingProvider.getActiveUpdatePolicy();
-        
-        List<Action> actions = new ArrayList<Action>(policies.length);
-        for (IVMUpdatePolicy policy : policies) {
-            Action action = new SelectUpdatePolicyAction(cachingProvider, policy);
-            if (policy.getID().equals(activePolicy.getID())) {
-                action.setChecked(true);
-            }
-            actions.add(action);
-        }
-        
-        if ( actions.isEmpty() ) {
-            return NO_UPDATE_POLICIES_CONTRIBUTION_ITEMS;
-        }
-        
-        IContributionItem[] items = new IContributionItem[actions.size()];
-        for (int i = 0; i < actions.size(); i++) {
-            items[i] = new ActionContributionItem(actions.get(i));
-        }
-        return items;
-    }
-    
-    @Override
+	private IServiceLocator fServiceLocator;
+
+	private static IContributionItem[] NO_UPDATE_POLICIES_CONTRIBUTION_ITEMS = new IContributionItem[] {
+			new ContributionItem() {
+				@Override
+				public void fill(Menu menu, int index) {
+					MenuItem item = new MenuItem(menu, SWT.NONE);
+					item.setEnabled(false);
+					item.setText(MessagesForVMActions.UpdatePoliciesContribution_EmptyPoliciesList_label);
+				}
+
+				@Override
+				public boolean isEnabled() {
+					return false;
+				}
+			} };
+
+	@Override
+	protected IContributionItem[] getContributionItems() {
+		IVMProvider provider = VMHandlerUtils.getActiveVMProvider(fServiceLocator);
+
+		// If no part or selection, disable all.
+		if (provider == null || !(provider instanceof ICachingVMProvider)) {
+			return NO_UPDATE_POLICIES_CONTRIBUTION_ITEMS;
+		}
+		ICachingVMProvider cachingProvider = (ICachingVMProvider) provider;
+
+		IVMUpdatePolicy[] policies = cachingProvider.getAvailableUpdatePolicies();
+		IVMUpdatePolicy activePolicy = cachingProvider.getActiveUpdatePolicy();
+
+		List<Action> actions = new ArrayList<Action>(policies.length);
+		for (IVMUpdatePolicy policy : policies) {
+			Action action = new SelectUpdatePolicyAction(cachingProvider, policy);
+			if (policy.getID().equals(activePolicy.getID())) {
+				action.setChecked(true);
+			}
+			actions.add(action);
+		}
+
+		if (actions.isEmpty()) {
+			return NO_UPDATE_POLICIES_CONTRIBUTION_ITEMS;
+		}
+
+		IContributionItem[] items = new IContributionItem[actions.size()];
+		for (int i = 0; i < actions.size(); i++) {
+			items[i] = new ActionContributionItem(actions.get(i));
+		}
+		return items;
+	}
+
+	@Override
 	public void initialize(IServiceLocator serviceLocator) {
-        fServiceLocator = serviceLocator;
-    }
+		fServiceLocator = serviceLocator;
+	}
 }

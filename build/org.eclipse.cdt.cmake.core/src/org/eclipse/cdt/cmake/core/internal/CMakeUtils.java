@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Red Hat Inc. - initial version
  *******************************************************************************/
 package org.eclipse.cdt.cmake.core.internal;
@@ -18,10 +18,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CMakeUtils {
-	
+
 	/**
 	 * Parse a string containing environment variables into individual VAR=VALUE pairs.
-	 * 
+	 *
 	 * @param envString - String to parse
 	 * @return List of var=value Strings
 	 */
@@ -34,7 +34,7 @@ public class CMakeUtils {
 		while (!finished) {
 			Matcher m1 = p1.matcher(envString);
 			if (m1.matches()) {
-				envString = envString.replaceFirst("\\w+[=]\\\".*?\\\"","").trim(); //$NON-NLS-1$ //$NON-NLS-2$
+				envString = envString.replaceFirst("\\w+[=]\\\".*?\\\"", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
 				String s = m1.group(1).trim();
 				envVars.add(s.replaceAll("\\\"", "")); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {

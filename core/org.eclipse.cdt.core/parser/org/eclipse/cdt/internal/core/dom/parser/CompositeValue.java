@@ -65,7 +65,7 @@ public final class CompositeValue implements IValue {
 		if (evaluation != null) {
 			return evaluation.getSignature();
 		}
-		return new char[]{};
+		return new char[] {};
 	}
 
 	@Override
@@ -160,8 +160,7 @@ public final class CompositeValue implements IValue {
 
 	// The set of class types for which composite value creation is in progress on each thread.
 	// Used to guard against infinite recursion due to a class (illegally) aggregating itself.
-	private static final ThreadLocal<Set<ICPPClassType>> fCreateInProgress =
-			new ThreadLocal<Set<ICPPClassType>>() {
+	private static final ThreadLocal<Set<ICPPClassType>> fCreateInProgress = new ThreadLocal<Set<ICPPClassType>>() {
 		@Override
 		protected Set<ICPPClassType> initialValue() {
 			return new TreeSet<>((type1, type2) -> {
@@ -193,7 +192,8 @@ public final class CompositeValue implements IValue {
 		}
 		try {
 			if (sDEBUG && nestingLevel > 0) {
-				System.out.println("CompositeValue.create(" + ASTTypeUtil.getType(classType) + ", " + nestingLevel + ")");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				System.out
+						.println("CompositeValue.create(" + ASTTypeUtil.getType(classType) + ", " + nestingLevel + ")"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 				System.out.flush();
 			}
 			ActivationRecord record = new ActivationRecord();
@@ -249,8 +249,8 @@ public final class CompositeValue implements IValue {
 		if (position >= 0 && position < values.length) {
 			values[position] = newValue == null ? EvalFixed.INCOMPLETE : newValue;
 		} else {
-			CCorePlugin.log(IStatus.WARNING, "Out-of-bounds access to composite value: " + position + //$NON-NLS-1$ 
-					" (length is " + values.length + ")");  //$NON-NLS-1$//$NON-NLS-2$
+			CCorePlugin.log(IStatus.WARNING, "Out-of-bounds access to composite value: " + position + //$NON-NLS-1$
+					" (length is " + values.length + ")"); //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 
@@ -302,15 +302,14 @@ public final class CompositeValue implements IValue {
 		}
 		return new CompositeValue(evaluation, values);
 	}
-	
+
 	@Override
 	public boolean isEquivalentTo(IValue other) {
 		if (!(other instanceof CompositeValue)) {
 			return false;
 		}
 		CompositeValue o = (CompositeValue) other;
-		if (!((evaluation == null && o.evaluation == null) || 
-			  (evaluation.isEquivalentTo(o.evaluation)))) {
+		if (!((evaluation == null && o.evaluation == null) || (evaluation.isEquivalentTo(o.evaluation)))) {
 			return false;
 		}
 		if (values.length != o.values.length) {

@@ -47,10 +47,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * 
+ *
  * Locates source elements in a directory in the local
  * file system. Returns instances of <code>FileStorage</code>.
- * 
+ *
  * @since Sep 23, 2002
  */
 public class CDirectorySourceLocation implements IDirectorySourceLocation {
@@ -64,7 +64,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	 */
 	private IPath fDirectory;
 	/**
-	 * The associated path of this source location. 
+	 * The associated path of this source location.
 	 */
 	private IPath fAssociation;
 	private boolean fSearchForDuplicateFiles;
@@ -124,7 +124,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 
 	/**
 	 * Sets the directory in which source elements will be searched for.
-	 * 
+	 *
 	 * @param directory a directory
 	 */
 	private void setDirectory(IPath directory) {
@@ -133,7 +133,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 
 	/**
 	 * Returns the root directory of this source location.
-	 * 
+	 *
 	 * @return directory
 	 */
 	@Override
@@ -161,7 +161,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 			return null;
 		File[] folders = getFolders();
 		if (folders != null) {
-			LinkedList<Object> list = new LinkedList<Object>();		
+			LinkedList<Object> list = new LinkedList<Object>();
 			for (int i = 0; i < folders.length; ++i) {
 				Object result = findFileByAbsolutePath(folders[i], name);
 				if (result instanceof List) {
@@ -178,7 +178,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 					}
 				}
 			}
-			if (list.size() > 0) 
+			if (list.size() > 0)
 				return (list.size() == 1) ? list.getFirst() : list;
 		}
 		return null;
@@ -192,8 +192,8 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 		IPath path = new Path(folder.getAbsolutePath());
 		IPath association = getAssociation();
 		if (!isPrefix(path, filePath) || path.segmentCount() + 1 != filePath.segmentCount()) {
-			if (association != null &&
-					isPrefix(association, filePath) && association.segmentCount() + 1 == filePath.segmentCount()) {
+			if (association != null && isPrefix(association, filePath)
+					&& association.segmentCount() + 1 == filePath.segmentCount()) {
 				filePath = path.append(filePath.removeFirstSegments(association.segmentCount()));
 			} else {
 				return null;
@@ -209,7 +209,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 					return wsFiles[j];
 				list.add(wsFiles[j]);
 			}
-		if (list.size() > 0) 
+		if (list.size() > 0)
 			return (list.size() == 1) ? list.getFirst() : list;
 
 		file = filePath.toFile();
@@ -223,7 +223,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	private Object findFileByRelativePath(String fileName) {
 		File[] folders = getFolders();
 		if (folders != null) {
-			LinkedList<Object> list = new LinkedList<Object>();		
+			LinkedList<Object> list = new LinkedList<Object>();
 			for (int i = 0; i < folders.length; ++i) {
 				Object result = findFileByRelativePath(folders[i], fileName);
 				if (result instanceof List) {
@@ -248,7 +248,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 
 	private Object findFileByRelativePath(File folder, String fileName) {
 		IPath path = new Path(folder.getAbsolutePath());
-		path = path.append(fileName);	
+		path = path.append(fileName);
 		File file = path.toFile();
 		if (file.exists() && file.isFile()) {
 			path = new Path(file.getAbsolutePath());
@@ -260,13 +260,13 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 						return wsFiles[j];
 					list.add(wsFiles[j]);
 				}
-			if (list.size() > 0) 
+			if (list.size() > 0)
 				return (list.size() == 1) ? list.getFirst() : list;
 			return createExternalFileStorage(path);
 		}
 		return null;
 	}
-	
+
 	private IStorage createExternalFileStorage(IPath path) {
 		return new FileStorage(path);
 	}
@@ -276,20 +276,20 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	 */
 	@Override
 	public String getMemento() throws CoreException {
-        Document document = null;
-        Throwable ex = null;
-        try {
-            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            Element node = document.createElement(ELEMENT_NAME);
-            document.appendChild(node);
-    		node.setAttribute(ATTR_DIRECTORY, getDirectory().toOSString());
-    		if (getAssociation() != null)
-    			node.setAttribute(ATTR_ASSOCIATION, getAssociation().toOSString());
-    		node.setAttribute(ATTR_SEARCH_SUBFOLDERS, String.valueOf(searchSubfolders()));
+		Document document = null;
+		Throwable ex = null;
+		try {
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			Element node = document.createElement(ELEMENT_NAME);
+			document.appendChild(node);
+			node.setAttribute(ATTR_DIRECTORY, getDirectory().toOSString());
+			if (getAssociation() != null)
+				node.setAttribute(ATTR_ASSOCIATION, getAssociation().toOSString());
+			node.setAttribute(ATTR_SEARCH_SUBFOLDERS, String.valueOf(searchSubfolders()));
 			return CDebugUtils.serializeDocument(document);
-        } catch (ParserConfigurationException e) {
-        	ex = e;
-        } catch (IOException e) {
+		} catch (ParserConfigurationException e) {
+			ex = e;
+		} catch (IOException e) {
 			ex = e;
 		} catch (TransformerException e) {
 			ex = e;
@@ -350,11 +350,8 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	 * Throws an internal error exception
 	 */
 	private void abort(String message, Throwable e) throws CoreException {
-		IStatus s = new Status(IStatus.ERROR,
-								CDebugCorePlugin.getUniqueIdentifier(),
-								CDebugCorePlugin.INTERNAL_ERROR,
-								message,
-								e);
+		IStatus s = new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR,
+				message, e);
 		throw new CoreException(s);
 	}
 
@@ -368,8 +365,8 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IDirectorySourceLocation) {
-			IPath dir = ((IDirectorySourceLocation)obj).getDirectory();
-			IPath association = ((IDirectorySourceLocation)obj).getAssociation();
+			IPath dir = ((IDirectorySourceLocation) obj).getDirectory();
+			IPath association = ((IDirectorySourceLocation) obj).getAssociation();
 			if (dir == null)
 				return false;
 			boolean result = dir.equals(getDirectory());
@@ -444,13 +441,12 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 
 	private List<File> getFileFolders(File file) {
 		ArrayList<File> list = new ArrayList<File>();
-		File[] folders = file.listFiles(
-									new FileFilter() {
-											@Override
-											public boolean accept(File pathname) {
-												return pathname.isDirectory();
-											}
-										});
+		File[] folders = file.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.isDirectory();
+			}
+		});
 		list.addAll(Arrays.asList(folders));
 		for (int i = 0; i < folders.length; ++i)
 			list.addAll(getFileFolders(folders[i]));

@@ -13,27 +13,26 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
-
 /**
- * 
+ *
  * This class contains the description of a group of generated dependency files,
  * e.g., .d files created by compilations
  *
  */
 
 public class GnuDependencyGroupInfo {
-	
+
 	//  Member Variables
 	String groupBuildVar;
 	boolean conditionallyInclude;
-//	ArrayList groupFiles;
-	
+	//	ArrayList groupFiles;
+
 	//  Constructor
 	public GnuDependencyGroupInfo(String groupName, boolean bConditionallyInclude) {
 		groupBuildVar = groupName;
 		conditionallyInclude = bConditionallyInclude;
 		//  Note: not yet needed
-//		groupFiles = null;
+		//		groupFiles = null;
 	}
 
 }

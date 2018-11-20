@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson           - initial API and implementation
  *******************************************************************************/
@@ -17,22 +17,24 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 
 public class ExprMetaGetValueInfo implements ICommandResult {
-	    
-		private final String value;
 
-	    public ExprMetaGetValueInfo(String v) {
-	    	value = v;
-	    }
-	    
-	    public String getValue() { return value; }
-		
-		@Override
-		public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
-			return null;
-		}
-		
-		@Override
-		public String toString() {
-			return getClass().getSimpleName() + " (" + getValue() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
+	private final String value;
+
+	public ExprMetaGetValueInfo(String v) {
+		value = v;
 	}
+
+	public String getValue() {
+		return value;
+	}
+
+	@Override
+	public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
+		return null;
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " (" + getValue() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+}

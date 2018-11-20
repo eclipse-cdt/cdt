@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 /**
  * This interface represents the role of a C array modifier. C allows for
  * modifiers (const, restrict, etc.) as well as variable sized arrays.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -26,35 +26,35 @@ public interface ICASTArrayModifier extends IASTArrayModifier {
 
 	/**
 	 * Is the const modifier used?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isConst();
 
 	/**
 	 * Is the static modifier used?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isStatic();
 
 	/**
 	 * Is the restrict modifier used?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isRestrict();
 
 	/**
 	 * Is the volatile modifier used?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isVolatile();
 
 	/**
 	 * Set true/false that the const modifier is used.
-	 * 
+	 *
 	 * @param value
 	 *            boolean
 	 */
@@ -62,7 +62,7 @@ public interface ICASTArrayModifier extends IASTArrayModifier {
 
 	/**
 	 * Set true/false that the volatile modifier is used.
-	 * 
+	 *
 	 * @param value
 	 *            boolean
 	 */
@@ -70,7 +70,7 @@ public interface ICASTArrayModifier extends IASTArrayModifier {
 
 	/**
 	 * Set true/false that the restrict modifier is used.
-	 * 
+	 *
 	 * @param value
 	 *            boolean
 	 */
@@ -78,7 +78,7 @@ public interface ICASTArrayModifier extends IASTArrayModifier {
 
 	/**
 	 * Set true/false that the static modifier is used.
-	 * 
+	 *
 	 * @param value
 	 *            boolean
 	 */
@@ -86,19 +86,19 @@ public interface ICASTArrayModifier extends IASTArrayModifier {
 
 	/**
 	 * Is the array variable sized? ( used ... )
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isVariableSized();
 
 	/**
 	 * Set the array to be variable sized dependent upon value.
-	 * 
+	 *
 	 * @param value
 	 *            boolean
 	 */
 	public void setVariableSized(boolean value);
-	
+
 	/**
 	 * @since 5.1
 	 */

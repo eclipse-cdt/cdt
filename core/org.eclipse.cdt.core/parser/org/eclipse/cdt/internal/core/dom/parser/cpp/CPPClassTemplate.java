@@ -49,8 +49,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 /**
  * Represents a class template.
  */
-public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClassTemplate,
-		ICPPInternalClassTemplate, ICPPInternalClassTypeMixinHost {
+public class CPPClassTemplate extends CPPTemplateDefinition
+		implements ICPPClassTemplate, ICPPInternalClassTemplate, ICPPInternalClassTypeMixinHost {
 	private ICPPClassTemplatePartialSpecialization[] partialSpecializations;
 	private ICPPDeferredClassInstance fDeferredInstance;
 	private boolean addedPartialSpecializationsOfIndex;
@@ -67,8 +67,8 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 
 	@Override
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
-		partialSpecializations = ArrayUtil.append(
-				ICPPClassTemplatePartialSpecialization.class, partialSpecializations, spec);
+		partialSpecializations = ArrayUtil.append(ICPPClassTemplatePartialSpecialization.class, partialSpecializations,
+				spec);
 	}
 
 	@Override
@@ -111,11 +111,11 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	@Override
 	public int getKey() {
 		if (definition != null) {
-			ICPPASTCompositeTypeSpecifier cts= getCompositeTypeSpecifier();
+			ICPPASTCompositeTypeSpecifier cts = getCompositeTypeSpecifier();
 			if (cts != null) {
 				return cts.getKey();
 			}
-			IASTNode n= definition.getParent();
+			IASTNode n = definition.getParent();
 			if (n instanceof ICPPASTElaboratedTypeSpecifier) {
 				return ((ICPPASTElaboratedTypeSpecifier) n).getKind();
 			}
@@ -134,7 +134,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		if (!addedPartialSpecializationsOfIndex) {
-			addedPartialSpecializationsOfIndex= true;
+			addedPartialSpecializationsOfIndex = true;
 			ICPPClassTemplate ib = getIndexBinding();
 			if (ib != null) {
 				IIndexFileSet fs = getTemplateName().getTranslationUnit().getIndexFileSet();
@@ -205,7 +205,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	public ICPPClassType[] getNestedClasses() {
 		return ClassTypeHelper.getNestedClasses(this);
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
 		return ClassTypeHelper.getUsingDeclarations(this);
@@ -239,7 +239,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	@Override
 	public final ICPPDeferredClassInstance asDeferredInstance() {
 		if (fDeferredInstance == null) {
-			fDeferredInstance= CPPTemplates.createDeferredInstance(this);
+			fDeferredInstance = CPPTemplates.createDeferredInstance(this);
 		}
 		return fDeferredInstance;
 	}

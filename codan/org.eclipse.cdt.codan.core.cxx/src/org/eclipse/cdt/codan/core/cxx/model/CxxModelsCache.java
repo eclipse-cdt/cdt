@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Alena Laskavaia 
+ * Copyright (c) 2009, 2013 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,7 +53,7 @@ public class CxxModelsCache implements ICodanDisposable {
 		this.file = tu != null ? (IFile) tu.getResource() : null;
 		cfgmap = new WeakHashMap<IASTFunctionDefinition, IControlFlowGraph>(0);
 	}
-	
+
 	CxxModelsCache(IASTTranslationUnit ast) {
 		this(ast.getOriginatingTranslationUnit());
 		this.ast = ast;
@@ -63,14 +63,13 @@ public class CxxModelsCache implements ICodanDisposable {
 		return getAST(tu);
 	}
 
-	public IASTTranslationUnit getAST(ITranslationUnit tu)
-			throws OperationCanceledException, CoreException {
+	public IASTTranslationUnit getAST(ITranslationUnit tu) throws OperationCanceledException, CoreException {
 		if (!this.tu.equals(tu)) {
 			throw new IllegalArgumentException();
 		}
 		if (ast == null) {
 			getIndex();
-			ast= tu.getAST(index, PARSE_MODE);
+			ast = tu.getAST(index, PARSE_MODE);
 		}
 		return ast;
 	}
@@ -99,7 +98,7 @@ public class CxxModelsCache implements ICodanDisposable {
 	public synchronized ICodanCommentMap getCommentedNodeMap() {
 		return getCommentedNodeMap(tu);
 	}
-	
+
 	public synchronized ICodanCommentMap getCommentedNodeMap(ITranslationUnit tu) {
 		if (!this.tu.equals(tu)) {
 			throw new IllegalArgumentException();
@@ -115,11 +114,11 @@ public class CxxModelsCache implements ICodanDisposable {
 
 	/**
 	 * Returns the index that can be safely used for reading until the cache is disposed.
-	 * 
+	 *
 	 * @return The index.
 	 */
 	public synchronized IIndex getIndex() throws CoreException, OperationCanceledException {
-        Assert.isTrue(!disposed, "CxxASTCache is already disposed."); //$NON-NLS-1$
+		Assert.isTrue(!disposed, "CxxASTCache is already disposed."); //$NON-NLS-1$
 		if (this.index == null) {
 			IIndex index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
 			try {
@@ -138,7 +137,7 @@ public class CxxModelsCache implements ICodanDisposable {
 	 */
 	@Override
 	public void dispose() {
-        Assert.isTrue(!disposed, "CxxASTCache.dispose() called more than once."); //$NON-NLS-1$
+		Assert.isTrue(!disposed, "CxxASTCache.dispose() called more than once."); //$NON-NLS-1$
 		disposed = true;
 		if (index != null) {
 			index.releaseReadLock();
@@ -146,10 +145,10 @@ public class CxxModelsCache implements ICodanDisposable {
 	}
 
 	// finalize() method delays garbage collection of objects. Uncomment only for testing.
-//	@Override
-//	protected void finalize() throws Throwable {
-//		if (!disposed)
-//			Activator.log("CxxASTCache was not disposed."); //$NON-NLS-1$
-//		super.finalize();
-//	}
+	//	@Override
+	//	protected void finalize() throws Throwable {
+	//		if (!disposed)
+	//			Activator.log("CxxASTCache was not disposed."); //$NON-NLS-1$
+	//		super.finalize();
+	//	}
 }

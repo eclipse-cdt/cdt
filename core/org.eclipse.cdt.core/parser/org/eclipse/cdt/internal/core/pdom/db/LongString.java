@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  * This is for strings that take up more than on chunk.
  * The string will need to be broken up into sections and then
  * reassembled when necessary.
- * 
+ *
  * @author Doug Schaefer
  */
 public class LongString implements IString {
@@ -37,20 +37,20 @@ public class LongString implements IString {
 	private static final int LENGTH = 0; // Must be first to match ShortString.
 	private static final int NEXT1 = 4;
 	private static final int CHARS1 = 8;
-	
+
 	private static final int NUM_CHARS1 = (Database.MAX_MALLOC_SIZE - CHARS1) / 2;
-	
+
 	// Additional fields of subsequent records.
 	private static final int NEXTN = 0;
 	private static final int CHARSN = 4;
-	
+
 	private static final int NUM_CHARSN = (Database.MAX_MALLOC_SIZE - CHARSN) / 2;
-	
+
 	public LongString(Database db, long record) {
 		this.db = db;
 		this.record = record;
 	}
-	
+
 	public LongString(Database db, final char[] chars, boolean useBytes) throws CoreException {
 		final int numChars1 = useBytes ? NUM_CHARS1 * 2 : NUM_CHARS1;
 		final int numCharsn = useBytes ? NUM_CHARSN * 2 : NUM_CHARSN;
@@ -61,21 +61,21 @@ public class LongString implements IString {
 		// Write the first record.
 		final int length = chars.length;
 		db.putInt(this.record, useBytes ? -length : length);
-		Chunk chunk= db.getChunk(this.record);
-		
+		Chunk chunk = db.getChunk(this.record);
+
 		if (useBytes) {
 			chunk.putCharsAsBytes(this.record + CHARS1, chars, 0, numChars1);
 		} else {
 			chunk.putChars(this.record + CHARS1, chars, 0, numChars1);
 		}
-		
+
 		// Write the subsequent records.
 		long lastNext = this.record + NEXT1;
 		int start = numChars1;
 		while (length - start > numCharsn) {
 			long nextRecord = db.malloc(Database.MAX_MALLOC_SIZE);
 			db.putRecPtr(lastNext, nextRecord);
-			chunk= db.getChunk(nextRecord);
+			chunk = db.getChunk(nextRecord);
 			if (useBytes) {
 				chunk.putCharsAsBytes(nextRecord + CHARSN, chars, start, numCharsn);
 			} else {
@@ -84,12 +84,12 @@ public class LongString implements IString {
 			start += numCharsn;
 			lastNext = nextRecord + NEXTN;
 		}
-		
+
 		// Write the last record.
-		int remaining= length - start;
+		int remaining = length - start;
 		long nextRecord = db.malloc(CHARSN + (useBytes ? remaining : remaining * 2));
 		db.putRecPtr(lastNext, nextRecord);
-		chunk= db.getChunk(nextRecord);
+		chunk = db.getChunk(nextRecord);
 		if (useBytes) {
 			chunk.putCharsAsBytes(nextRecord + CHARSN, chars, start, remaining);
 		} else {
@@ -99,7 +99,7 @@ public class LongString implements IString {
 		// There is currently no need to store char[] in cachedChars because all
 		// callers are currently only interested in the record.
 	}
-	
+
 	@Override
 	public long getRecord() {
 		return record;
@@ -115,37 +115,37 @@ public class LongString implements IString {
 		int numChars1 = NUM_CHARS1;
 		int numCharsn = NUM_CHARSN;
 		if (useBytes) {
-			length= -length;
+			length = -length;
 			numChars1 *= 2;
 			numCharsn *= 2;
 		}
 
 		final char[] chars = new char[length];
-	
+
 		// First record
 		long p = record;
-		Chunk chunk= db.getChunk(p);
+		Chunk chunk = db.getChunk(p);
 		if (useBytes) {
 			chunk.getCharsFromBytes(p + CHARS1, chars, 0, numChars1);
 		} else {
 			chunk.getChars(p + CHARS1, chars, 0, numChars1);
 		}
-		
-		int start= numChars1;
-		p= record + NEXT1;
-				
+
+		int start = numChars1;
+		p = record + NEXT1;
+
 		// Other records
 		while (start < length) {
 			p = db.getRecPtr(p);
-			int partLen= Math.min(length - start, numCharsn);
-			chunk= db.getChunk(p);
+			int partLen = Math.min(length - start, numCharsn);
+			chunk = db.getChunk(p);
 			if (useBytes) {
 				chunk.getCharsFromBytes(p + CHARSN, chars, start, partLen);
 			} else {
 				chunk.getChars(p + CHARSN, chars, start, partLen);
 			}
 			start += partLen;
-			p= p + NEXTN;
+			p = p + NEXTN;
 		}
 		cachedChars = chars; // cache the array
 		return chars;
@@ -158,14 +158,14 @@ public class LongString implements IString {
 		int numChars1 = NUM_CHARS1;
 		int numCharsn = NUM_CHARSN;
 		if (useBytes) {
-			length= -length;
+			length = -length;
 			numChars1 *= 2;
 			numCharsn *= 2;
 		}
 		long nextRecord = db.getRecPtr(record + NEXT1);
 		db.free(record);
 		length -= numChars1;
-		
+
 		// Middle records.
 		while (length > numCharsn) {
 			length -= numCharsn;
@@ -173,18 +173,18 @@ public class LongString implements IString {
 			db.free(nextRecord);
 			nextRecord = nextnext;
 		}
-		
+
 		// Last record.
 		db.free(nextRecord);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
 		try {
 			if (obj instanceof LongString) {
-				LongString lstr = (LongString)obj;
+				LongString lstr = (LongString) obj;
 				if (db == lstr.db && record == lstr.record)
 					return true;
 				return compare(lstr, true) == 0;
@@ -200,7 +200,7 @@ public class LongString implements IString {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Compatible with {@link String#hashCode()}
 	 */
@@ -221,12 +221,12 @@ public class LongString implements IString {
 		}
 		return h;
 	}
-	
+
 	@Override
 	public int compare(IString string, boolean caseSensitive) throws CoreException {
 		return ShortString.compare(getChars(), string.getChars(), caseSensitive);
 	}
-		
+
 	@Override
 	public int compare(String other, boolean caseSensitive) throws CoreException {
 		return ShortString.compare(getChars(), other.toCharArray(), caseSensitive);
@@ -236,12 +236,12 @@ public class LongString implements IString {
 	public int compare(char[] other, boolean caseSensitive) throws CoreException {
 		return ShortString.compare(getChars(), other, caseSensitive);
 	}
-	
+
 	@Override
 	public int compareCompatibleWithIgnoreCase(IString string) throws CoreException {
 		return ShortString.compareCompatibleWithIgnoreCase(getChars(), string.getChars());
 	}
-	
+
 	@Override
 	public int comparePrefix(char[] other, boolean caseSensitive) throws CoreException {
 		return ShortString.comparePrefix(getChars(), other, caseSensitive);

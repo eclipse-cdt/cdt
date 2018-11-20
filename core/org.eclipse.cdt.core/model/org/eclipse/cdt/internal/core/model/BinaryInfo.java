@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.internal.core.model;
 
-
 class BinaryInfo extends OpenableInfo {
 
 	public BinaryInfo(CElement element) {

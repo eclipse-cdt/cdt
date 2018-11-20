@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      QNX Software Systems - initial API and implementation
  *      Freescale Semiconductor
@@ -101,6 +101,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			return (element == input) ? (input.size() > 0) : false;
 		}
 	}
+
 	static class LabelProvider extends BaseLabelProvider implements ITableLabelProvider {
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -109,17 +110,19 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			if (columnIndex == 0) {
 				MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) element;
 				if (el.data == null || !MultiLaunchConfigurationDelegate.isValidLaunchReference(el.data)) {
-					Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
+					Image errorImage = PlatformUI.getWorkbench().getSharedImages()
+							.getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 					return errorImage;
 				}
-				
+
 				try {
-	                String key = el.data.getType().getIdentifier();
-	                return DebugPluginImages.getImage(key);
-                } catch (CoreException e) {
-                	Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
+					String key = el.data.getType().getIdentifier();
+					return DebugPluginImages.getImage(key);
+				} catch (CoreException e) {
+					Image errorImage = PlatformUI.getWorkbench().getSharedImages()
+							.getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 					return errorImage;
-                }
+				}
 			}
 			return null;
 		}
@@ -129,7 +132,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			if (!(element instanceof MultiLaunchConfigurationDelegate.LaunchElement))
 				return null;
 			MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) element;
-			
+
 			// launch name
 			if (columnIndex == 0) {
 				try {
@@ -139,10 +142,10 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				}
 			}
 
-			// launch mode 
+			// launch mode
 			if (columnIndex == 1)
 				return el.mode;
-			
+
 			// launch post action
 			if (columnIndex == 2) {
 				EPostLaunchAction action = el.action;
@@ -163,7 +166,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			return null;
 		}
 	}
-	
+
 	static class CheckStateProvider implements ICheckStateProvider {
 
 		/* (non-Javadoc)
@@ -172,7 +175,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		@Override
 		public boolean isChecked(Object element) {
 			if (element instanceof LaunchElement) {
-				return ((LaunchElement)element).enabled;
+				return ((LaunchElement) element).enabled;
 			}
 			return false;
 		}
@@ -185,6 +188,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			return false;
 		}
 	}
+
 	static abstract class ButtonComposite extends Composite implements SelectionListener {
 		Button upButton;
 		Button downButton;
@@ -195,20 +199,21 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		public ButtonComposite(Composite parent, int style) {
 			super(parent, style);
 			setLayout(new GridLayout());
-			upButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_1); 
-			downButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_2); 
-			editButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_3); 
-			addButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_4); 
-			deleteButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_5); 
-		
+			upButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_1);
+			downButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_2);
+			editButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_3);
+			addButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_4);
+			deleteButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_5);
+
 		}
 
-		protected void updateWidgetEnablement(){
-			
+		protected void updateWidgetEnablement() {
+
 		}
+
 		/**
 		 * Helper method to create a push button.
-		 * 
+		 *
 		 * @param parent
 		 *            the parent control
 		 * @param key
@@ -249,21 +254,22 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		protected abstract void addPressed();
 
 		protected abstract void editPressed();
-		
+
 		protected abstract void deletePressed();
 
 		protected abstract void downPressed();
 
 		protected abstract void upPressed();
 	}
+
 	static class GroupLaunchTab extends AbstractLaunchConfigurationTab {
 		protected CheckboxTreeViewer treeViewer;
 		protected List<LaunchElement> input = new ArrayList<LaunchElement>();
 		private String mode;
 
 		public GroupLaunchTab(String mode) {
-	        this.mode = mode;
-        }
+			this.mode = mode;
+		}
 
 		@Override
 		public void createControl(Composite parent) {
@@ -280,25 +286,24 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			table.setHeaderVisible(true);
 			table.setLayoutData(new GridData(GridData.FILL_BOTH));
 			TreeColumn col1 = new TreeColumn(table, SWT.NONE);
-			col1.setText(LaunchMessages.MultiLaunchConfigurationTabGroup_6); 
+			col1.setText(LaunchMessages.MultiLaunchConfigurationTabGroup_6);
 			col1.setWidth(300);
 			TreeColumn col2 = new TreeColumn(table, SWT.NONE);
-			col2.setText(LaunchMessages.MultiLaunchConfigurationTabGroup_7); 
+			col2.setText(LaunchMessages.MultiLaunchConfigurationTabGroup_7);
 			col2.setWidth(100);
 			TreeColumn col3 = new TreeColumn(table, SWT.NONE);
-			col3.setText(LaunchMessages.MultiLaunchConfigurationTabGroup_12); 
+			col3.setText(LaunchMessages.MultiLaunchConfigurationTabGroup_12);
 			col3.setWidth(100);
-		
+
 			treeViewer.setInput(input);
 			final ButtonComposite buts = new ButtonComposite(comp, SWT.NONE) {
 				@Override
 				protected void addPressed() {
-					MultiLaunchConfigurationSelectionDialog dialog = 
-						MultiLaunchConfigurationSelectionDialog.createDialog(
-								treeViewer.getControl().getShell(), mode, false);
+					MultiLaunchConfigurationSelectionDialog dialog = MultiLaunchConfigurationSelectionDialog
+							.createDialog(treeViewer.getControl().getShell(), mode, false);
 					if (dialog.open() == Dialog.OK) {
 						ILaunchConfiguration[] configs = dialog.getSelectedLaunchConfigurations();
-						if (configs.length < 1) 
+						if (configs.length < 1)
 							return;
 						for (ILaunchConfiguration config : configs) {
 							MultiLaunchConfigurationDelegate.LaunchElement el = new MultiLaunchConfigurationDelegate.LaunchElement();
@@ -317,8 +322,9 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						updateLaunchConfigurationDialog();
 					}
 				}
+
 				@Override
-				protected void updateWidgetEnablement(){
+				protected void updateWidgetEnablement() {
 					downButton.setEnabled(isDownEnabled());
 					upButton.setEnabled(isUpEnabled());
 
@@ -326,7 +332,6 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					editButton.setEnabled(selectionCount == 1);
 					deleteButton.setEnabled(selectionCount > 0);
 				}
-				
 
 				@Override
 				protected void editPressed() {
@@ -334,15 +339,14 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					if (index < 0)
 						return;
 					MultiLaunchConfigurationDelegate.LaunchElement el = input.get(index);
-					MultiLaunchConfigurationSelectionDialog dialog = 
-						MultiLaunchConfigurationSelectionDialog.createDialog(
-								treeViewer.getControl().getShell(), el.mode, true);
+					MultiLaunchConfigurationSelectionDialog dialog = MultiLaunchConfigurationSelectionDialog
+							.createDialog(treeViewer.getControl().getShell(), el.mode, true);
 					if (MultiLaunchConfigurationDelegate.isValidLaunchReference(el.data)) {
 						dialog.setInitialSelection(el);
 					}
 					if (dialog.open() == Dialog.OK) {
 						ILaunchConfiguration[] confs = dialog.getSelectedLaunchConfigurations();
-						if (confs.length < 0) 
+						if (confs.length < 0)
 							return;
 						assert confs.length == 1 : "invocation of the dialog for editing an entry sholdn't allow OK to be hit if the user chooses multiple launch configs in the dialog"; //$NON-NLS-1$
 						el.name = confs[0].getName();
@@ -355,6 +359,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						updateLaunchConfigurationDialog();
 					}
 				}
+
 				@Override
 				protected void deletePressed() {
 					int[] indices = getMultiSelectionIndices();
@@ -379,7 +384,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					if (sel.size() != 1)
 						return -1;
 					MultiLaunchConfigurationDelegate.LaunchElement el = ((MultiLaunchConfigurationDelegate.LaunchElement) sel
-					        .getFirstElement());
+							.getFirstElement());
 					return input.indexOf(el);
 				}
 
@@ -390,11 +395,12 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				private int[] getMultiSelectionIndices() {
 					StructuredSelection sel = (StructuredSelection) treeViewer.getSelection();
 					List<Integer> indices = new ArrayList<Integer>();
-					
-					for (Iterator<?> iter = sel.iterator(); iter.hasNext(); ) {
-						MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement)iter.next();
+
+					for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
+						MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) iter
+								.next();
 						indices.add(input.indexOf(el));
-						
+
 					}
 					int[] result = new int[indices.size()];
 					for (int i = 0; i < result.length; i++) {
@@ -404,15 +410,15 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				}
 
 				private int getSelectionCount() {
-					return ((StructuredSelection)treeViewer.getSelection()).size();
+					return ((StructuredSelection) treeViewer.getSelection()).size();
 				}
-				
 
 				@Override
 				protected void downPressed() {
-					if (!isDownEnabled()) return;
+					if (!isDownEnabled())
+						return;
 					int index = getSingleSelectionIndex();
-					
+
 					MultiLaunchConfigurationDelegate.LaunchElement x = input.get(index);
 					input.set(index, input.get(index + 1));
 					input.set(index + 1, x);
@@ -420,19 +426,20 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					updateWidgetEnablement();
 					updateLaunchConfigurationDialog();
 				}
-				
+
 				protected boolean isDownEnabled() {
 					final int index = getSingleSelectionIndex();
-	                return (index >= 0) && (index != input.size() - 1);
-                }
-				
-				protected boolean isUpEnabled(){
+					return (index >= 0) && (index != input.size() - 1);
+				}
+
+				protected boolean isUpEnabled() {
 					return getSingleSelectionIndex() > 0;
 				}
 
 				@Override
 				protected void upPressed() {
-					if (!isUpEnabled()) return;
+					if (!isUpEnabled())
+						return;
 					int index = getSingleSelectionIndex();
 					MultiLaunchConfigurationDelegate.LaunchElement x = input.get(index);
 					input.set(index, input.get(index - 1));
@@ -448,18 +455,18 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					buts.updateWidgetEnablement();
 				}
 			});
-			
-			treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
+
+			treeViewer.getTree().addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					buts.editPressed();
 				}
 			});
-			
-			treeViewer.addCheckStateListener(new ICheckStateListener(){
+
+			treeViewer.addCheckStateListener(new ICheckStateListener() {
 				@Override
 				public void checkStateChanged(CheckStateChangedEvent event) {
-					((LaunchElement)event.getElement()).enabled = event.getChecked();
+					((LaunchElement) event.getElement()).enabled = event.getChecked();
 					updateLaunchConfigurationDialog();
 				}
 			});
@@ -471,13 +478,14 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 		@Override
 		public String getName() {
-			return LaunchMessages.MultiLaunchConfigurationTabGroup_10; 
+			return LaunchMessages.MultiLaunchConfigurationTabGroup_10;
 		}
 
 		@Override
 		public void initializeFrom(ILaunchConfiguration configuration) {
-			// replace the input from previously shown launch configurations 
-			input = MultiLaunchConfigurationDelegate.createLaunchElements(configuration, new ArrayList<LaunchElement>());
+			// replace the input from previously shown launch configurations
+			input = MultiLaunchConfigurationDelegate.createLaunchElements(configuration,
+					new ArrayList<LaunchElement>());
 			if (treeViewer != null) {
 				treeViewer.setInput(input);
 			}
@@ -503,25 +511,25 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			int validLaunches = 0;
 			// test if each launch is valid
 			for (LaunchElement element : input) {
-				if (element.enabled) { 
-					if ( element.data == null) {
+				if (element.enabled) {
+					if (element.data == null) {
 						// error referencing invalid launch
-						setErrorMessage(MessageFormat.format(LaunchMessages.MultiLaunchConfigurationTabGroup_14, 
-								element.name));
+						setErrorMessage(
+								MessageFormat.format(LaunchMessages.MultiLaunchConfigurationTabGroup_14, element.name));
 						return false;
 					} else if (!MultiLaunchConfigurationDelegate.isValidLaunchReference(element.data)) {
 						// error referencing invalid launch
-						setErrorMessage(MessageFormat.format(LaunchMessages.MultiLaunchConfigurationTabGroup_15, 
-								element.name));
+						setErrorMessage(
+								MessageFormat.format(LaunchMessages.MultiLaunchConfigurationTabGroup_15, element.name));
 						return false;
 					}
 					validLaunches++;
-				} 
+				}
 			}
 			if (validLaunches < 1) {
 				// must have at least one valid and enabled launch
-				setErrorMessage(LaunchMessages.MultiLaunchConfigurationTabGroup_16); 
-				return false;				
+				setErrorMessage(LaunchMessages.MultiLaunchConfigurationTabGroup_16);
+				return false;
 			}
 			return true;
 		}
@@ -533,7 +541,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {//
+		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] { //
 				new GroupLaunchTab(mode), //
 				new CommonTabLite() //
 		};

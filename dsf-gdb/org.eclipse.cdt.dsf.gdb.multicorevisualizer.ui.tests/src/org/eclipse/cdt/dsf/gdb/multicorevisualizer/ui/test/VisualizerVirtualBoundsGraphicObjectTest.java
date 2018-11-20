@@ -12,18 +12,16 @@
  * Contributors:
  *     Marc Dumais (Ericsson) - Initial API and implementation
  *     Marc Khouzam (Ericsson) - Move to o.e.cdt.dsf.gdb.tests (bug 455237)
- *     Marc Dumais (Ericsson) - Move VisualizerVirtualBoundsGraphicObjectTest 
+ *     Marc Dumais (Ericsson) - Move VisualizerVirtualBoundsGraphicObjectTest
  *                              to o.e.cdt.dsf.gdb.multicoreVisualizer.ui.tests
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.test;
-
 
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.cdt.visualizer.ui.canvas.VirtualBoundsGraphicObject;
 import org.junit.Test;
 
 public class VisualizerVirtualBoundsGraphicObjectTest {
-
 
 	// testcases
 
@@ -113,7 +111,6 @@ public class VisualizerVirtualBoundsGraphicObjectTest {
 		org.junit.Assert.assertEquals(90, containerF.getBounds().y);
 		org.junit.Assert.assertEquals(10, containerF.getBounds().width);
 		org.junit.Assert.assertEquals(10, containerF.getBounds().height);
-
 
 		// check recursive object retrieval returns expected number of child objects, for A
 		org.junit.Assert.assertEquals(5, containerA.getAllObjects(true).size());

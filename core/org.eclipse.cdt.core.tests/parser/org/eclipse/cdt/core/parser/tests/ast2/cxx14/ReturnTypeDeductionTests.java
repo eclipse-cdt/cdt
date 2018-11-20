@@ -26,19 +26,19 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		ICPPFunction f = bh.assertNonProblem(functionName);
 		return f.getType().getReturnType();
 	}
-	
+
 	private void assertReturnType(String functionName, IType returnType) throws Exception {
 		assertSameType(getReturnType(functionName), returnType);
 	}
-	
+
 	private void assertReturnTypeProblem(String functionName) throws Exception {
 		assertInstance(getReturnType(functionName), IProblemType.class);
 	}
-	
+
 	private void assertReturnTypeValid(String functionName) throws Exception {
 		assertFalse(getReturnType(functionName) instanceof IProblemType);
 	}
-	
+
 	private IType getLambdaReturnType(String lambdaName) throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ICPPVariable lambda = bh.assertNonProblem(lambdaName);
@@ -47,20 +47,20 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		ICPPFunction f = ((CPPClosureType) lambdaType).getFunctionCallOperator();
 		return f.getType().getReturnType();
 	}
-	
+
 	private void assertLambdaReturnType(String lambdaName, IType returnType) throws Exception {
 		assertSameType(getLambdaReturnType(lambdaName), returnType);
 	}
-	
+
 	private void assertLambdaReturnTypeValid(String lambdaName) throws Exception {
 		assertFalse(getLambdaReturnType(lambdaName) instanceof IProblemType);
 	}
-	
+
 	//	auto f() { return 42; }
 	public void testSingleReturn() throws Exception {
 		assertReturnType("f", CommonCPPTypes.int_);
 	}
-	
+
 	//	auto f(int x) {
 	//		if (x < 10)
 	//			return 42;
@@ -70,7 +70,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 	public void testMultipleReturnsSameType() throws Exception {
 		assertReturnType("f", CommonCPPTypes.int_);
 	}
-	
+
 	//	struct S {};
 	//	auto f(const S& s, bool c) {
 	//		if (c)
@@ -81,7 +81,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 	public void testMultipleReturnsDifferingByConst() throws Exception {
 		assertReturnTypeValid("f");
 	}
-	
+
 	//	auto f(int x) {
 	//		if (x < 10)
 	//			return 42;
@@ -98,7 +98,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 	public void testFullyRecursiveFunction() throws Exception {
 		assertReturnTypeProblem("f");
 	}
-	
+
 	//	auto sum(int i) {
 	//		if (i == 1)
 	//			return i;
@@ -108,7 +108,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 	public void testPartiallyRecursiveFunction() throws Exception {
 		assertReturnType("sum", CommonCPPTypes.int_);
 	}
-	
+
 	//	template <typename T>
 	//	auto f(T t) {
 	//		return t;
@@ -119,7 +119,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		ITypedef t = bh.assertNonProblem("fint_t");
 		assertSameType(t, CommonCPPTypes.int_);
 	}
-	
+
 	//	template <typename T> auto f(T t) { return t; }
 	//	template <typename T> auto f(T* t) { return *t; }
 	//	void g() { int (*p)(int*) = &f; }
@@ -129,7 +129,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		ICPPTemplateInstance fi = bh.assertNonProblem("f;", 1);
 		assertSame(f2, fi.getSpecializedBinding());
 	}
-	
+
 	//	struct A { static int i; };
 	//	auto& f1() { return A::i; }
 	//	auto&& f2() { return A::i; }
@@ -143,7 +143,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		assertReturnType("f4", CommonCPPTypes.referenceToConstInt);
 		assertReturnType("f5", CommonCPPTypes.rvalueReferenceToConstInt);
 	}
-	
+
 	//	struct A { static int i; };
 	//	auto* f1() { return &A::i; }
 	//	const auto* f2() { return &A::i; }
@@ -151,7 +151,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		assertReturnType("f1", CommonCPPTypes.pointerToInt);
 		assertReturnType("f2", CommonCPPTypes.pointerToConstInt);
 	}
-	
+
 	//	auto f1() {}
 	//	auto& f2() {}
 	//	auto* f3() {}
@@ -160,7 +160,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		assertReturnTypeProblem("f2");
 		assertReturnTypeProblem("f3");
 	}
-	
+
 	//	struct A { static int i; };
 	//	auto f1() -> auto { return 42; }
 	//	auto f2() -> auto& { return A::i; }
@@ -180,7 +180,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		assertReturnType("f7", CommonCPPTypes.pointerToInt);
 		assertReturnType("f8", CommonCPPTypes.pointerToConstInt);
 	}
-	
+
 	//      int i;
 	//      auto f1 = []() -> auto { return 42; };
 	//      auto f2 = []() -> auto& { return i; };
@@ -192,7 +192,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		assertLambdaReturnType("f3", CommonCPPTypes.referenceToInt);
 		assertLambdaReturnType("f4", CommonCPPTypes.rvalueReferenceToInt);
 	}
-	
+
 	//	struct S {};
 	//	auto f = [](const S& s, bool c) {
 	//		if (c)
@@ -203,7 +203,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 	public void testLambdaWithMultipleReturnsDifferingByConst() throws Exception {
 		assertLambdaReturnTypeValid("f");
 	}
-	
+
 	//	struct A {
 	//		virtual auto f() { return 42; }
 	//		virtual decltype(auto) g() { return 42; }
@@ -212,12 +212,12 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		assertReturnTypeProblem("f");
 		assertReturnTypeProblem("g");
 	}
-	
+
 	//	auto f() { return {1, 2, 3}; }
 	public void testInitializerList() throws Exception {
 		assertReturnTypeProblem("f");
 	}
-	
+
 	//	int f(int);
 	//	int g(int);
 	//	template <typename T>
@@ -237,14 +237,14 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		BindingAssertionHelper bh = getAssertionHelper();
 		bh.assertNonProblem("foo(cond", "foo");
 	}
-	
+
 	//	decltype(auto) f() { return 42; }
-	//	decltype(auto) g(int* arg) { return *arg; } 
+	//	decltype(auto) g(int* arg) { return *arg; }
 	public void testDecltypeAuto() throws Exception {
 		assertReturnType("f", CommonCPPTypes.int_);
 		assertReturnType("g", CommonCPPTypes.referenceToInt);
 	}
-	
+
 	//	auto f() -> decltype(auto) { return 42; }
 	//	auto g(int* arg) -> decltype(auto) { return *arg; }
 	// 	auto L1 = []() -> decltype(auto) { return 42; };
@@ -255,7 +255,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		assertLambdaReturnType("L1", CommonCPPTypes.int_);
 		assertLambdaReturnType("L2", CommonCPPTypes.referenceToInt);
 	}
-	
+
 	//	int i;
 	//	decltype(auto)& f() { return i; }
 	//	decltype(auto)* g() { return &i; }
@@ -267,14 +267,14 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		assertReturnTypeProblem("f2");
 		assertReturnTypeProblem("g2");
 	}
-	
+
 	//	auto f();
 	//	auto waldo = f();
 	public void testUseWithoutDefinition() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableTypeProblem("waldo");
 	}
-	
+
 	//	auto f();
 	//	auto f() { return 42; }
 	//	auto waldo = f();
@@ -282,7 +282,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableType("waldo", CommonCPPTypes.int_);
 	}
-	
+
 	//	auto f();
 	//	auto waldo = f();
 	//	auto f() { return 42; }
@@ -292,7 +292,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableTypeProblem("waldo");
 	}
-	
+
 	//	auto f() { return 42; }
 	//	int f();
 	public void testRedeclaration() throws Exception {
@@ -303,7 +303,7 @@ public class ReturnTypeDeductionTests extends AST2CPPTestBase {
 		ICPPFunction intFunction = helper.assertNonProblem("int f", "f");
 		assertNotSame(autoFunction, intFunction);
 	}
-	
+
 	//	struct A {
 	//		auto f();
 	//	};

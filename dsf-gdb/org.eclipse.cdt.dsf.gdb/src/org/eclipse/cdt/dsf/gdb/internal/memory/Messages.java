@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Freescale Semiconductor - initial API and implementation
  *******************************************************************************/
@@ -20,13 +20,13 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class Messages extends NLS {
-    static {
-        NLS.initializeMessages("org.eclipse.cdt.dsf.gdb.internal.memory.messages", Messages.class); //$NON-NLS-1$
-    }
+	static {
+		NLS.initializeMessages("org.eclipse.cdt.dsf.gdb.internal.memory.messages", Messages.class); //$NON-NLS-1$
+	}
 
-    public static String Err_ExceedsMaxAddress;
+	public static String Err_ExceedsMaxAddress;
 	public static String Err_MemoryServiceNotAvailable;
-    public static String Err_MemoryReadFailed;
-    public static String Err_MemoryWriteFailed;
-    public static String Err_InvalidEncodedAddress;
+	public static String Err_MemoryReadFailed;
+	public static String Err_MemoryWriteFailed;
+	public static String Err_InvalidEncodedAddress;
 }

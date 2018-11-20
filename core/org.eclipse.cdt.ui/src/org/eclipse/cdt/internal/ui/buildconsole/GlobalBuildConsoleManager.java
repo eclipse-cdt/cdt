@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *   Jeff Johnston (Red Hat Inc.), Andrew Gvozdev - initial implementation 
+ *   Jeff Johnston (Red Hat Inc.), Andrew Gvozdev - initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -46,7 +46,7 @@ public class GlobalBuildConsoleManager extends BuildConsoleManager {
 	/** Singleton instance */
 	private static GlobalBuildConsoleManager INSTANCE = null;
 	private static BuildConsolePartitioner fGlobalConsolePartitioner = null;
-	
+
 	/**
 	 * Default constructor is private. The only instance will be created on
 	 * access of static methods and assigned to {@link #INSTANCE}.
@@ -60,22 +60,21 @@ public class GlobalBuildConsoleManager extends BuildConsoleManager {
 	 * @return get instance creating one if necessary.
 	 */
 	private static GlobalBuildConsoleManager getInstance() {
-		if (INSTANCE==null)
+		if (INSTANCE == null)
 			INSTANCE = new GlobalBuildConsoleManager();
 		return INSTANCE;
 	}
-	
+
 	/**
 	 * @return get global console partitioner creating one if necessary.
 	 */
 	private static BuildConsolePartitioner getConsolePartitioner() {
-		if (fGlobalConsolePartitioner==null) {
+		if (fGlobalConsolePartitioner == null) {
 			fGlobalConsolePartitioner = new BuildConsolePartitioner(getInstance());
 		}
 		return fGlobalConsolePartitioner;
 	}
-	
-	
+
 	/**
 	 * Start the console. This will call {@link #startup(String, String, URL)}
 	 * to add the global console to the Console view.
@@ -84,16 +83,16 @@ public class GlobalBuildConsoleManager extends BuildConsoleManager {
 		// instantiate the INSTANCE
 		getInstance();
 	}
-	
+
 	/**
 	 * Stop the console and deallocate resources allocated during {@link #startup()}
 	 */
 	public static void stop() {
 		// avoid initializing INSTANCE needlessly during shutdown
-		if (INSTANCE!=null)
+		if (INSTANCE != null)
 			INSTANCE.shutdown();
 	}
-	
+
 	@Override
 	protected BuildConsole createBuildConsole(String name, String contextId, final URL iconUrl) {
 		return new GlobalBuildConsole(this, name, contextId, iconUrl);
@@ -180,11 +179,12 @@ public class GlobalBuildConsoleManager extends BuildConsoleManager {
 		boolean keepLog = prefs.getBoolean(KEY_KEEP_LOG, CONSOLE_KEEP_LOG_DEFAULT);
 		if (keepLog) {
 			String strLocation = prefs.get(KEY_LOG_LOCATION, getDefaultConsoleLogLocation());
-			if (strLocation.trim().length()>0) {
+			if (strLocation.trim().length() > 0) {
 				logURI = URIUtil.toURI(strLocation);
 			}
-			if (logURI==null) {
-				IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,"Can't determine URI for location=["+strLocation+"]");  //$NON-NLS-1$ //$NON-NLS-2$
+			if (logURI == null) {
+				IStatus status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
+						"Can't determine URI for location=[" + strLocation + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				CUIPlugin.log(status);
 			}
 		}

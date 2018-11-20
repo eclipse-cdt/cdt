@@ -70,9 +70,9 @@ public class MakeBuilderUtil {
 		}
 		return project.getLocationURI();
 	}
-	
+
 	/**
-	 * @param builderID 
+	 * @param builderID
 	 * @return URI of the build directory, or the Project's URI if one couldn't be found
 	 * @since 7.1
 	 */
@@ -83,7 +83,7 @@ public class MakeBuilderUtil {
 		} catch (CoreException e) {
 			return project.getLocationURI();
 		}
-		
+
 		IPath buildDirectory = info.getBuildLocation();
 		if (!buildDirectory.isEmpty()) {
 			IResource res = project.getParent().findMember(buildDirectory);
@@ -93,6 +93,5 @@ public class MakeBuilderUtil {
 		}
 		return project.getLocationURI();
 	}
-	
-	
+
 }

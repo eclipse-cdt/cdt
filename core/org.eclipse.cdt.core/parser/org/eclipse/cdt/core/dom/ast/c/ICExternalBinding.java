@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  * This interface represents a binding for a function or variable that is
  * assumed to exist in another compilation unit and that would be found at link
  * time.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

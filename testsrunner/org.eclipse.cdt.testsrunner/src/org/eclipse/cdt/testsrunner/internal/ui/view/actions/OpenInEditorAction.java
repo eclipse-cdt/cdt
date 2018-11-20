@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,6 @@
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
-
 
 import java.net.URI;
 
@@ -63,8 +62,8 @@ public class OpenInEditorAction extends Action {
 	private TestingSessionsManager testingSessionsManager;
 	private IWorkbench workbench;
 
-
-	public OpenInEditorAction(TableViewer tableViewer, TestingSessionsManager testingSessionsManager, IWorkbench workbench) {
+	public OpenInEditorAction(TableViewer tableViewer, TestingSessionsManager testingSessionsManager,
+			IWorkbench workbench) {
 		super(ActionsMessages.OpenInEditorAction_text);
 		this.messagesViewer = tableViewer;
 		this.testingSessionsManager = testingSessionsManager;
@@ -74,9 +73,9 @@ public class OpenInEditorAction extends Action {
 
 	@Override
 	public void run() {
-		Object selectedObject = ((IStructuredSelection)messagesViewer.getSelection()).getFirstElement();
+		Object selectedObject = ((IStructuredSelection) messagesViewer.getSelection()).getFirstElement();
 		if (selectedObject != null && selectedObject instanceof ITestMessage) {
-			ITestLocation messageLocation = ((ITestMessage)selectedObject).getLocation();
+			ITestLocation messageLocation = ((ITestMessage) selectedObject).getLocation();
 			if (messageLocation != null) {
 				ILaunch launch = testingSessionsManager.getActiveSession().getLaunch();
 				lookupSource(messageLocation, launch);
@@ -104,14 +103,15 @@ public class OpenInEditorAction extends Action {
 							sourceLocator.initializeDefaults(config);
 						} else {
 							sourceLocator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(id);
-							String memento = config.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String) null);
+							String memento = config.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO,
+									(String) null);
 							if (memento == null) {
 								sourceLocator.initializeDefaults(config);
 							} else {
 								sourceLocator.initializeFromMemento(memento);
 							}
 						}
-						
+
 						// replace old source locator
 						locator = sourceLocator;
 						launch.setSourceLocator(sourceLocator);
@@ -130,14 +130,15 @@ public class OpenInEditorAction extends Action {
 			TestsRunnerPlugin.log(e);
 		}
 	}
-	
+
 	// NOTE: This method is copied from Linux Tools Project (http://www.eclipse.org/linuxtools).
 	// Valgrind Support Plugin is implementing similar functionality so it is just reused.
 	// See also org.eclipse.linuxtools.valgrind.ui/src/org/eclipse/linuxtools/internal/valgrind/ui/CoreMessagesViewer.java
-	private void openEditorAndSelect(ISourceLookupResult result, int line) throws PartInitException, BadLocationException {
+	private void openEditorAndSelect(ISourceLookupResult result, int line)
+			throws PartInitException, BadLocationException {
 		IEditorInput input = result.getEditorInput();
 		String editorID = result.getEditorId();
-		
+
 		if (input == null || editorID == null) {
 			// Consult the CDT DebugModelPresentation
 			Object sourceElement = result.getSourceElement();
@@ -153,8 +154,9 @@ public class OpenInEditorAction extends Action {
 						sourceElement = files[0];
 					}
 				}
-				
-				IDebugModelPresentation pres = DebugUITools.newDebugModelPresentation(CDebugCorePlugin.getUniqueIdentifier());
+
+				IDebugModelPresentation pres = DebugUITools
+						.newDebugModelPresentation(CDebugCorePlugin.getUniqueIdentifier());
 				input = pres.getEditorInput(sourceElement);
 				editorID = pres.getEditorId(input, sourceElement);
 				pres.dispose();
@@ -179,6 +181,5 @@ public class OpenInEditorAction extends Action {
 			}
 		}
 	}
-	
-}
 
+}

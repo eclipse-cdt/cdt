@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Represents a #pragma directive or a pragma operator.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -26,7 +26,7 @@ public interface IASTPreprocessorPragmaStatement extends IASTPreprocessorStateme
 	 * Returns the pragma message.
 	 */
 	public char[] getMessage();
-	
+
 	/**
 	 * Returns whether this uses the pragma operator syntax, e.g: <code>_Pragma("once")</code>
 	 * @since 5.2

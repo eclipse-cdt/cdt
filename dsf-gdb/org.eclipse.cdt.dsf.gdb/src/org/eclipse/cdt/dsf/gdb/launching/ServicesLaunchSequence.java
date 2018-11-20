@@ -7,11 +7,11 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Nokia 			  - created GDBBackend service. Sep. 2008
- *     IBM Corporation 
+ *     IBM Corporation
  *     Ericsson           - Support for Tracing Control service
  *     Marc Khouzam (Ericsson) - Start IGDBHardware service for the multicore visualizer (Bug 335027)
  *******************************************************************************/
@@ -44,114 +44,139 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class ServicesLaunchSequence extends Sequence {
 
-    private DsfSession fSession;
-    private GdbLaunch fLaunch;
+	private DsfSession fSession;
+	private GdbLaunch fLaunch;
 
-    private ICommandControlService fCommandControl;
-    private CSourceLookup fSourceLookup;
-    
-    private Step[] fSteps = new Step[] {
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-            fLaunch.getServiceFactory().createService(IMIBackend.class, fSession, fLaunch.getLaunchConfiguration()).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-            fCommandControl = fLaunch.getServiceFactory().createService(ICommandControlService.class, fSession, fLaunch.getLaunchConfiguration());
-            fCommandControl.initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(IGDBHardwareAndOS.class, fSession, fLaunch.getLaunchConfiguration()).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(IProcesses.class, fSession).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(IRunControl.class, fSession).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(IMemory.class, fSession).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(IModules.class, fSession).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(IStack.class, fSession).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(IExpressions.class, fSession).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-        	fSourceLookup = (CSourceLookup)fLaunch.getServiceFactory().createService(ISourceLookup.class, fSession);
-            fSourceLookup.initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-       		ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext)fCommandControl.getContext();
-            fSourceLookup.setSourceLookupDirector(sourceLookupDmc, (CSourceLookupDirector)fLaunch.getSourceLocator());
-            requestMonitor.done();
-        }},
-        new Step() { @Override
-        public void execute(final RequestMonitor requestMonitor) {
-            // Create the low-level breakpoint service 
-        	fLaunch.getServiceFactory().createService(IBreakpoints.class, fSession).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(final RequestMonitor requestMonitor) {
-            // Create high-level breakpoint service and install breakpoints 
-            // for the GDB debug context.
-        	fLaunch.getServiceFactory().createService(MIBreakpointsManager.class, fSession).initialize(requestMonitor); 
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(IRegisters.class, fSession).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(IDisassembly.class, fSession).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-           	IGDBTraceControl traceService = fLaunch.getServiceFactory().createService(IGDBTraceControl.class, fSession, fLaunch.getLaunchConfiguration());
-           	// Note that for older versions of GDB, we don't support tracing, so there is no trace service.
-           	if (traceService != null) {
-           		traceService.initialize(requestMonitor);
-           	} else {
-           		requestMonitor.done();
-           	}
-        }},
-        new Step() { @Override
-        public void execute(final RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(MIBreakpointsSynchronizer.class, fSession).initialize(requestMonitor); 
-        }},
-        new Step() { @Override
-        public void execute(final RequestMonitor requestMonitor) {
-        	IGDBFocusSynchronizer service = fLaunch.getServiceFactory().createService(IGDBFocusSynchronizer.class, fSession);
-        	// The focus synchronizer is a new service, don't require it to exist/be supported by a backend.
-        	if (service != null) {
-        		service.initialize(requestMonitor);
-        	} else {
-        		requestMonitor.done();
-        	}
-        }},
-    };
-    
-    public ServicesLaunchSequence(DsfSession session, GdbLaunch launch, IProgressMonitor pm) {
-        super(session.getExecutor(), pm, LaunchMessages.getString("ServicesLaunchSequence_0"), LaunchMessages.getString("ServicesLaunchSequence_1"));   //$NON-NLS-1$ //$NON-NLS-2$
-        fSession = session;
-        fLaunch = launch;
-    }
+	private ICommandControlService fCommandControl;
+	private CSourceLookup fSourceLookup;
 
-    @Override
-    public Step[] getSteps() {
-        return fSteps;
-    }
+	private Step[] fSteps = new Step[] { new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fLaunch.getServiceFactory().createService(IMIBackend.class, fSession, fLaunch.getLaunchConfiguration())
+					.initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fCommandControl = fLaunch.getServiceFactory().createService(ICommandControlService.class, fSession,
+					fLaunch.getLaunchConfiguration());
+			fCommandControl.initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fLaunch.getServiceFactory()
+					.createService(IGDBHardwareAndOS.class, fSession, fLaunch.getLaunchConfiguration())
+					.initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fLaunch.getServiceFactory().createService(IProcesses.class, fSession).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fLaunch.getServiceFactory().createService(IRunControl.class, fSession).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fLaunch.getServiceFactory().createService(IMemory.class, fSession).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fLaunch.getServiceFactory().createService(IModules.class, fSession).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fLaunch.getServiceFactory().createService(IStack.class, fSession).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fLaunch.getServiceFactory().createService(IExpressions.class, fSession).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fSourceLookup = (CSourceLookup) fLaunch.getServiceFactory().createService(ISourceLookup.class, fSession);
+			fSourceLookup.initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext) fCommandControl.getContext();
+			fSourceLookup.setSourceLookupDirector(sourceLookupDmc, (CSourceLookupDirector) fLaunch.getSourceLocator());
+			requestMonitor.done();
+		}
+	}, new Step() {
+		@Override
+		public void execute(final RequestMonitor requestMonitor) {
+			// Create the low-level breakpoint service
+			fLaunch.getServiceFactory().createService(IBreakpoints.class, fSession).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(final RequestMonitor requestMonitor) {
+			// Create high-level breakpoint service and install breakpoints
+			// for the GDB debug context.
+			fLaunch.getServiceFactory().createService(MIBreakpointsManager.class, fSession).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fLaunch.getServiceFactory().createService(IRegisters.class, fSession).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			fLaunch.getServiceFactory().createService(IDisassembly.class, fSession).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			IGDBTraceControl traceService = fLaunch.getServiceFactory().createService(IGDBTraceControl.class, fSession,
+					fLaunch.getLaunchConfiguration());
+			// Note that for older versions of GDB, we don't support tracing, so there is no trace service.
+			if (traceService != null) {
+				traceService.initialize(requestMonitor);
+			} else {
+				requestMonitor.done();
+			}
+		}
+	}, new Step() {
+		@Override
+		public void execute(final RequestMonitor requestMonitor) {
+			fLaunch.getServiceFactory().createService(MIBreakpointsSynchronizer.class, fSession)
+					.initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(final RequestMonitor requestMonitor) {
+			IGDBFocusSynchronizer service = fLaunch.getServiceFactory().createService(IGDBFocusSynchronizer.class,
+					fSession);
+			// The focus synchronizer is a new service, don't require it to exist/be supported by a backend.
+			if (service != null) {
+				service.initialize(requestMonitor);
+			} else {
+				requestMonitor.done();
+			}
+		}
+	}, };
+
+	public ServicesLaunchSequence(DsfSession session, GdbLaunch launch, IProgressMonitor pm) {
+		super(session.getExecutor(), pm, LaunchMessages.getString("ServicesLaunchSequence_0"), //$NON-NLS-1$
+				LaunchMessages.getString("ServicesLaunchSequence_1")); //$NON-NLS-1$
+		fSession = session;
+		fLaunch = launch;
+	}
+
+	@Override
+	public Step[] getSteps() {
+		return fSteps;
+	}
 }

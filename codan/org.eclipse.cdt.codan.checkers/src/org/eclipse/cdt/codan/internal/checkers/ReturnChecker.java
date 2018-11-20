@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Alena Laskavaia 
+ * Copyright (c) 2009, 2015 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -66,7 +66,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	public static final String RET_NO_VALUE_ID = "org.eclipse.cdt.codan.checkers.noreturn"; //$NON-NLS-1$
 	public static final String RET_ERR_VALUE_ID = "org.eclipse.cdt.codan.checkers.errreturnvalue"; //$NON-NLS-1$
 	public static final String RET_NORET_ID = "org.eclipse.cdt.codan.checkers.errnoreturn"; //$NON-NLS-1$
-	
+
 	private IType cachedReturnType = null;
 
 	class ReturnStmpVisitor extends ASTVisitor {
@@ -126,7 +126,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	public boolean isConstructorDestructor(IASTFunctionDefinition func) {
 		if (func instanceof ICPPASTFunctionDefinition) {
 			IBinding method = func.getDeclarator().getName().resolveBinding();
-			if (method instanceof ICPPConstructor || method instanceof ICPPMethod && ((ICPPMethod) method).isDestructor()) {
+			if (method instanceof ICPPConstructor
+					|| method instanceof ICPPMethod && ((ICPPMethod) method).isDestructor()) {
 				return true;
 			}
 		}
@@ -188,7 +189,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("restriction")
 	// TODO: Any reason not to just expose getDeadNodes() in IControlFlowGraph?
 	public Collection<IBasicBlock> getDeadBlocks(IASTFunctionDefinition func) {
@@ -203,20 +204,19 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 				return;
 			}
 		}
-	
+
 		reportProblem(RET_NORET_ID, func.getDeclSpecifier());
 	}
 
 	private boolean isCompoundStatement(IASTStatement last) {
-		return last instanceof IASTIfStatement || last instanceof IASTWhileStatement ||
-				last instanceof IASTDoStatement || last instanceof IASTForStatement || 
-				last instanceof IASTSwitchStatement || last instanceof IASTCompoundStatement || 
-				last instanceof ICPPASTTryBlockStatement;
+		return last instanceof IASTIfStatement || last instanceof IASTWhileStatement || last instanceof IASTDoStatement
+				|| last instanceof IASTForStatement || last instanceof IASTSwitchStatement
+				|| last instanceof IASTCompoundStatement || last instanceof ICPPASTTryBlockStatement;
 	}
 
 	protected boolean isFuncExitStatement(IASTStatement statement) {
-		return statement instanceof IASTReturnStatement || CxxAstUtils.isThrowStatement(statement) ||
-				CxxAstUtils.isExitStatement(statement);
+		return statement instanceof IASTReturnStatement || CxxAstUtils.isThrowStatement(statement)
+				|| CxxAstUtils.isExitStatement(statement);
 	}
 
 	/**
@@ -247,8 +247,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 
 	protected boolean isExplicitReturn(IASTFunctionDefinition func) {
 		IASTDeclSpecifier declSpecifier = func.getDeclSpecifier();
-		return !(declSpecifier instanceof IASTSimpleDeclSpecifier && 
-				 ((IASTSimpleDeclSpecifier) declSpecifier).getType() == IASTSimpleDeclSpecifier.t_unspecified);
+		return !(declSpecifier instanceof IASTSimpleDeclSpecifier
+				&& ((IASTSimpleDeclSpecifier) declSpecifier).getType() == IASTSimpleDeclSpecifier.t_unspecified);
 	}
 
 	/**
@@ -263,8 +263,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			return false;
 		return !isVoid(getReturnType(func));
 	}
-	
-	
+
 	private IType getReturnType(IASTFunctionDefinition func) {
 		if (cachedReturnType == null) {
 			cachedReturnType = CxxAstUtils.getReturnType(func);

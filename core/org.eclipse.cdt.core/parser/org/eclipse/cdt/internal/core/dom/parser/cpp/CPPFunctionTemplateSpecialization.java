@@ -51,14 +51,14 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 	public synchronized final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
-		String key= ASTTypeUtil.getArgumentListString(arguments, true);
+		String key = ASTTypeUtil.getArgumentListString(arguments, true);
 		instances.put(key, instance);
 	}
 
 	@Override
 	public synchronized final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		if (instances != null) {
-			String key= ASTTypeUtil.getArgumentListString(arguments, true);
+			String key = ASTTypeUtil.getArgumentListString(arguments, true);
 			return (ICPPTemplateInstance) instances.get(key);
 		}
 		return null;
@@ -67,9 +67,9 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 	@Override
 	public synchronized ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
-			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
-			for (int i= 0; i < instances.size(); i++) {
-				result[i]= (ICPPTemplateInstance) instances.getAt(i);
+			ICPPTemplateInstance[] result = new ICPPTemplateInstance[instances.size()];
+			for (int i = 0; i < instances.size(); i++) {
+				result[i] = (ICPPTemplateInstance) instances.getAt(i);
 			}
 			return result;
 		}

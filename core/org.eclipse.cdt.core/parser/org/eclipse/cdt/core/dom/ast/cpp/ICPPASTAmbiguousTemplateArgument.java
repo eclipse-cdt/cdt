@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
  * Place-holder in the AST for template arguments that are not yet understood.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -33,21 +33,21 @@ public interface ICPPASTAmbiguousTemplateArgument extends IASTNode {
 	 * @since 5.6
 	 */
 	public void addExpression(IASTExpression expression);
-	
+
 	/**
 	 * Add an partial parse tree that could be a suitable subtree representing
 	 * the template argument
 	 * @param typeId a non-null type-id
 	 */
 	public void addTypeId(IASTTypeId typeId);
-	
+
 	/**
 	 * @deprecated Replaced by {@link #addExpression(IASTExpression)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public void addIdExpression(IASTExpression idExpression);
-	
+
 	/**
 	 * @deprecated Replaced by {@link #addIdExpression(IASTExpression)}.
 	 * @noreference This method is not intended to be referenced by clients.

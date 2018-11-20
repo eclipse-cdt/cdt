@@ -54,8 +54,8 @@ public class MakeScannerProvider extends ScannerProvider {
 	public static final String INTERFACE_IDENTITY = MAKE_CORE_ID + ".MakeScannerProvider"; //$NON-NLS-1$
 
 	// Name we will use to store build property with the project
-	private static final QualifiedName scannerInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(),
-			"makeBuildInfo"); //$NON-NLS-1$
+	private static final QualifiedName scannerInfoProperty = new QualifiedName(
+			ManagedBuilderCorePlugin.getUniqueIdentifier(), "makeBuildInfo"); //$NON-NLS-1$
 	static final String CDESCRIPTOR_ID = MAKE_CORE_ID + ".makeScannerInfo"; //$NON-NLS-1$
 
 	public static final String INCLUDE_PATH = "includePath"; //$NON-NLS-1$
@@ -76,7 +76,7 @@ public class MakeScannerProvider extends ScannerProvider {
 		MakeScannerInfo scannerInfo = null;
 		// See if there's already one associated with the resource for this
 		// session
-		scannerInfo = (MakeScannerInfo)project.getSessionProperty(scannerInfoProperty);
+		scannerInfo = (MakeScannerInfo) project.getSessionProperty(scannerInfoProperty);
 
 		// Try to load one for the project
 		if (scannerInfo == null) {
@@ -147,14 +147,15 @@ public class MakeScannerProvider extends ScannerProvider {
 		List<IPathEntry> cPaths = new ArrayList<IPathEntry>(Arrays.asList(entries));
 
 		Iterator<IPathEntry> cpIter = cPaths.iterator();
-		while(cpIter.hasNext()) {
+		while (cpIter.hasNext()) {
 			int kind = cpIter.next().getEntryKind();
-			if(kind == IPathEntry.CDT_INCLUDE || kind == IPathEntry.CDT_MACRO) {
+			if (kind == IPathEntry.CDT_INCLUDE || kind == IPathEntry.CDT_MACRO) {
 				cpIter.remove();
 			}
 		}
 		for (int i = 0; i < includes.length; i++) {
-			IIncludeEntry include = CoreModel.newIncludeEntry(info.getProject().getFullPath(), null, new Path(includes[i]), true);
+			IIncludeEntry include = CoreModel.newIncludeEntry(info.getProject().getFullPath(), null,
+					new Path(includes[i]), true);
 			if (!cPaths.contains(include)) {
 				cPaths.add(include);
 			}
@@ -162,7 +163,8 @@ public class MakeScannerProvider extends ScannerProvider {
 		Iterator<Entry<String, String>> syms = symbols.entrySet().iterator();
 		while (syms.hasNext()) {
 			Entry<String, String> entry = syms.next();
-			IMacroEntry sym = CoreModel.newMacroEntry(info.getProject().getFullPath(), entry.getKey(), entry.getValue());
+			IMacroEntry sym = CoreModel.newMacroEntry(info.getProject().getFullPath(), entry.getKey(),
+					entry.getValue());
 			if (!cPaths.contains(sym)) {
 				cPaths.add(sym);
 			}

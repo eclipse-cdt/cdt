@@ -48,7 +48,7 @@ public class IncludesGrouping extends CElementGrouping {
 			return true;
 		}
 		if (obj instanceof IncludesGrouping) {
-			return tu.equals(((IncludesGrouping) obj).tu) ;
+			return tu.equals(((IncludesGrouping) obj).tu);
 		}
 		return false;
 	}

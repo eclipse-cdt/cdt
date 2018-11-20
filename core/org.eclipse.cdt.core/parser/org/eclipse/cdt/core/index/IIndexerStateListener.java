@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
 /**
@@ -29,7 +29,7 @@ public interface IIndexerStateListener {
 	/**
 	 * Notifies this listener that the state of the indexer has changed.
 	 * <p>
-	 * The supplied event provides the details. This event object is valid only for 
+	 * The supplied event provides the details. This event object is valid only for
 	 * the duration of the invocation of this method.
 	 * </p>
 	 * <p>

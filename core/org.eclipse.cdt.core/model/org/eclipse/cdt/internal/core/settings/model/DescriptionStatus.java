@@ -21,6 +21,7 @@ public class DescriptionStatus extends Status {
 	public DescriptionStatus(String message) {
 		this(message, null);
 	}
+
 	public DescriptionStatus(String message, Throwable exception) {
 		this(OK, message, exception);
 	}

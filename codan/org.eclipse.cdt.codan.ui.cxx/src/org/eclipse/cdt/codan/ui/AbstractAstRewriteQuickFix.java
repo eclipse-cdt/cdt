@@ -26,7 +26,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * 
+ *
  * Abstract class to simply ast rewrite quick fixers
  * @since 2.0
  */
@@ -62,7 +62,7 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 	}
 
 	/**
-	 * 
+	 *
 	 * @param ast
 	 * @param astName
 	 * @param r
@@ -97,13 +97,12 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 		FindReplaceDocumentAdapter dad = new FindReplaceDocumentAdapter(getDocument());
 		IRegion region;
 		try {
-			region = dad.find(pos, name,
-			/* forwardSearch */true, /* caseSensitive */true,
-			/* wholeWord */true, /* regExSearch */false);
+			region = dad.find(pos, name, /* forwardSearch */true, /* caseSensitive */true, /* wholeWord */true,
+					/* regExSearch */false);
 		} catch (BadLocationException e) {
 			return null;
 		}
 		astName = getASTNameFromPositions(ast, region.getOffset(), region.getLength());
 		return astName;
-	}	
+	}
 }

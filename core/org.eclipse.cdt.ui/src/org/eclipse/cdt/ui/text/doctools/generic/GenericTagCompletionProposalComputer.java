@@ -39,49 +39,52 @@ import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 public class GenericTagCompletionProposalComputer implements ICompletionProposalComputer {
 	protected GenericDocTag[] tags;
 	protected char[] tagMarkers;
-	
+
 	/**
 	 * Constructs a proposal computer for the specified tags
 	 * @param tags
 	 */
 	public GenericTagCompletionProposalComputer(GenericDocTag[] tags, char[] tagMarkers) {
-		this.tags= tags;
-		this.tagMarkers= tagMarkers;
+		this.tags = tags;
+		this.tagMarkers = tagMarkers;
 	}
-	
+
 	/**
 	 * @param c the character to test
-	 * @return whether the specified character is a tag prefix marker 
+	 * @return whether the specified character is a tag prefix marker
 	 */
 	protected boolean isTagMarker(char c) {
-		for(char candidate : tagMarkers)
-			if(c == candidate)
+		for (char candidate : tagMarkers)
+			if (c == candidate)
 				return true;
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#computeCompletionProposals(org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
-		IDocument doc= context.getDocument();
-		int ivcOffset= context.getInvocationOffset();
+	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
+		IDocument doc = context.getDocument();
+		int ivcOffset = context.getInvocationOffset();
 		try {
-			ITypedRegion tr= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, ivcOffset, false);
-			int firstNonWS= ivcOffset;
-			while(firstNonWS-1> tr.getOffset() && !Character.isWhitespace(doc.get(firstNonWS-1, 1).charAt(0)))
+			ITypedRegion tr = TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, ivcOffset, false);
+			int firstNonWS = ivcOffset;
+			while (firstNonWS - 1 > tr.getOffset() && !Character.isWhitespace(doc.get(firstNonWS - 1, 1).charAt(0)))
 				firstNonWS--;
-			String prefix= doc.get(firstNonWS, ivcOffset-firstNonWS);
-			if(prefix.length()>0 && isTagMarker(prefix.charAt(0))) {
-				List<ICompletionProposal> proposals= new ArrayList<ICompletionProposal>();
-				char tagMarker= prefix.charAt(0);
+			String prefix = doc.get(firstNonWS, ivcOffset - firstNonWS);
+			if (prefix.length() > 0 && isTagMarker(prefix.charAt(0))) {
+				List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+				char tagMarker = prefix.charAt(0);
 				for (GenericDocTag tag2 : tags) {
-					String tag= tag2.getTagName();
-					if(tag.toLowerCase().startsWith(prefix.substring(1).toLowerCase())) {						
-						CCompletionProposal proposal= new CCompletionProposal(tagMarker+tag, ivcOffset-prefix.length(), prefix.length(), null, tagMarker+tag, 1, context.getViewer()); 
-						String description= tag2.getTagDescription();
-						if(description!=null && description.length()>0) {
+					String tag = tag2.getTagName();
+					if (tag.toLowerCase().startsWith(prefix.substring(1).toLowerCase())) {
+						CCompletionProposal proposal = new CCompletionProposal(tagMarker + tag,
+								ivcOffset - prefix.length(), prefix.length(), null, tagMarker + tag, 1,
+								context.getViewer());
+						String description = tag2.getTagDescription();
+						if (description != null && description.length() > 0) {
 							proposal.setAdditionalProposalInfo(description);
 						}
 						proposals.add(proposal);
@@ -89,7 +92,7 @@ public class GenericTagCompletionProposalComputer implements ICompletionProposal
 				}
 				return proposals;
 			}
-		} catch(BadLocationException ble) {
+		} catch (BadLocationException ble) {
 			// offset is zero, ignore
 		}
 		return Collections.emptyList();
@@ -99,7 +102,8 @@ public class GenericTagCompletionProposalComputer implements ICompletionProposal
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#computeContextInformation(org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context,
+			IProgressMonitor monitor) {
 		return Collections.emptyList();
 	}
 
@@ -115,11 +119,13 @@ public class GenericTagCompletionProposalComputer implements ICompletionProposal
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#sessionEnded()
 	 */
 	@Override
-	public void sessionEnded() {}
-	
+	public void sessionEnded() {
+	}
+
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#sessionStarted()
 	 */
 	@Override
-	public void sessionStarted() {}
+	public void sessionStarted() {
+	}
 }

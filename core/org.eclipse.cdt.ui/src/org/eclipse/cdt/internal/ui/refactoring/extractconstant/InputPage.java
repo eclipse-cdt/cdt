@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -64,7 +64,7 @@ public class InputPage extends UserInputWizardPage {
 			buttons.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseUp(MouseEvent e) {
-					String text = ((Button)e.getSource()).getText();
+					String text = ((Button) e.getSource()).getText();
 					visibilityChange(text);
 				}
 			});
@@ -93,19 +93,19 @@ public class InputPage extends UserInputWizardPage {
 			setPageComplete(true);
 			verifyName(methodName);
 		} else {
-			setErrorMessage(result.getMessage()); 
+			setErrorMessage(result.getMessage());
 			setPageComplete(false);
 		}
 	}
 
 	private void verifyName(String name) {
 		if (info.isNameUsed(name)) {
-			setErrorMessage(NLS.bind(Messages.InputPage_NameAlreadyDefined, name)); 
+			setErrorMessage(NLS.bind(Messages.InputPage_NameAlreadyDefined, name));
 			setPageComplete(false);
 		}
 	}
 
 	private void visibilityChange(String visibilityText) {
 		info.setVisibility(VisibilityEnum.getEnumForStringRepresentation(visibilityText));
-	} 
+	}
 }

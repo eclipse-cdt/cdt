@@ -40,30 +40,31 @@ public class DOMSelectionParseTestBase extends DOMFileBasePluginTest {
 	}
 
 	protected IASTNode parse(String code, int offset1, int offset2) throws Exception {
-		return parse( code, offset1, offset2, true );
+		return parse(code, offset1, offset2, true);
 	}
 
 	protected IASTNode parse(String code, int offset1, int offset2, boolean expectedToPass) throws Exception {
 		IFile file = importFile("temp.cpp", code); //$NON-NLS-1$
 		return parse(file, offset1, offset2, expectedToPass);
 	}
-	
-	protected IASTNode parse(IFile file, int offset1, int offset2, boolean expectedToPass) throws Exception {
-		ITranslationUnit tu = (ITranslationUnit)CCorePlugin.getDefault().getCoreModel().create(file);
-		IASTTranslationUnit ast = tu.getAST();
-		IASTName name= ast.getNodeSelector(null).findName(offset1, offset2 - offset1);
 
-		if (!expectedToPass) return null;
-		
+	protected IASTNode parse(IFile file, int offset1, int offset2, boolean expectedToPass) throws Exception {
+		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(file);
+		IASTTranslationUnit ast = tu.getAST();
+		IASTName name = ast.getNodeSelector(null).findName(offset1, offset2 - offset1);
+
+		if (!expectedToPass)
+			return null;
+
 		assertNotNull(name);
 		return name;
 	}
-	
+
 	protected IName[] getDeclarationOffTU(IASTName name) {
-        return DOMSearchUtil.getNamesFromDOM(name, DOMSearchUtil.DECLARATIONS);
+		return DOMSearchUtil.getNamesFromDOM(name, DOMSearchUtil.DECLARATIONS);
 	}
-    
-    protected IName[] getReferencesOffTU(IASTName name) {
-        return DOMSearchUtil.getNamesFromDOM(name, DOMSearchUtil.REFERENCES);
-    }
+
+	protected IName[] getReferencesOffTU(IASTName name) {
+		return DOMSearchUtil.getNamesFromDOM(name, DOMSearchUtil.REFERENCES);
+	}
 }

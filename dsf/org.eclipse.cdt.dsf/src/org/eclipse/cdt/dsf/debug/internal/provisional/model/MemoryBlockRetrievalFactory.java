@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
  *******************************************************************************/
@@ -20,12 +20,12 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 
 /**
  * A common MemoryBlockRetrievalFactory across debug sessions
- * which resolves (adapts) an element context to its corresponding 
+ * which resolves (adapts) an element context to its corresponding
  * IMemoryBlockRetrieval via the session's IMemoryBlockRetrievalManager
- * 
+ *
  * (non-Javadoc)
  * @see org.eclipse.cdt.dsf.debug.internal.provisional.model.IMemoryBlockRetrievalManager
- * 
+ *
  */
 public class MemoryBlockRetrievalFactory implements IAdapterFactory {
 
@@ -33,7 +33,7 @@ public class MemoryBlockRetrievalFactory implements IAdapterFactory {
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		IMemoryBlockRetrieval memRetrieval = null;
-		
+
 		if (adaptableObject instanceof IDMContext) {
 			if (adapterType.equals(IMemoryBlockRetrieval.class)) {
 				IAdaptable adaptable = (IAdaptable) adaptableObject;
@@ -42,12 +42,12 @@ public class MemoryBlockRetrievalFactory implements IAdapterFactory {
 						.getAdapter(IMemoryBlockRetrievalManager.class));
 				if (retrievalManager != null) {
 					//resolve the specific Memory Block Retrieval associated to the memory context of adaptableObject
-					memRetrieval = retrievalManager.getMemoryBlockRetrieval((IDMContext) adaptableObject);					
-				} 
+					memRetrieval = retrievalManager.getMemoryBlockRetrieval((IDMContext) adaptableObject);
+				}
 			}
 		}
-		
-		return (T)memRetrieval;
+
+		return (T) memRetrieval;
 	}
 
 	@Override

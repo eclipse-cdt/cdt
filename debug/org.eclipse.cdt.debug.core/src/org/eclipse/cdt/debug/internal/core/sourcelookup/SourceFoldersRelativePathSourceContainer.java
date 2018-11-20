@@ -39,11 +39,11 @@ import org.eclipse.osgi.util.NLS;
  * is intended to be used when debugging information produced by the C/C++ compiler contains paths
  * to the source and header files relative to the directory where the compiler is run from.
  * The assumption is that all files under a source folder are compiled relative to that folder.
- * 
+ *
  * Source elements returned from <code>findSourceElements(...)</code> are instances of
  * <code>LocalFileStorage</code>.
  * <p>
- * Clients may instantiate this class. 
+ * Clients may instantiate this class.
  * </p>
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -53,16 +53,16 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	 * Unique identifier for the container type
 	 * (value <code>org.eclipse.cdt.debug.core.containerType.sourceFoldersRelativePath</code>).
 	 */
-	public static final String TYPE_ID =
-			CDebugCorePlugin.getUniqueIdentifier() + ".containerType.sourceFoldersRelativePath"; //$NON-NLS-1$
+	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier()
+			+ ".containerType.sourceFoldersRelativePath"; //$NON-NLS-1$
 
-	private final IProject fOwnProject;  // Project assigned to this container at construction time.
+	private final IProject fOwnProject; // Project assigned to this container at construction time.
 	private IProject fProject;
 	private boolean fSearchReferencedProjects;
 
 	/**
 	 * Constructs a source folder relative path source container.
-	 * 
+	 *
 	 * @param project the project to search for source in. A {@code null} project indicates
 	 * 		the the project from the launch configuration should be used.
 	 * @param referenced whether referenced projects should be considered
@@ -101,9 +101,8 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 
 	@Override
 	public String getName() {
-		return fProject == null ?
-				InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainer_0 :
-				NLS.bind(InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainer_1, fProject.getName());
+		return fProject == null ? InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainer_0
+				: NLS.bind(InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainer_1, fProject.getName());
 	}
 
 	@Override
@@ -116,10 +115,10 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 		if (obj != null && obj instanceof SourceFoldersRelativePathSourceContainer) {
 			SourceFoldersRelativePathSourceContainer loc = (SourceFoldersRelativePathSourceContainer) obj;
 			return fProject == null ? loc.fProject == null : fProject.equals(loc.fProject);
-		}	
+		}
 		return false;
-	}	
-	
+	}
+
 	@Override
 	public int hashCode() {
 		return TYPE_ID.hashCode() * 31 + (fProject == null ? 0 : fProject.hashCode());
@@ -156,14 +155,14 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 				}
 				for (IProject ref : projects) {
 					if (ref.exists() && ref.isOpen()) {
-						SourceFoldersRelativePathSourceContainer container =
-								new SourceFoldersRelativePathSourceContainer(ref, false);
+						SourceFoldersRelativePathSourceContainer container = new SourceFoldersRelativePathSourceContainer(
+								ref, false);
 						container.init(getDirector());
 						containers.add(container);
 					}
 				}
 				return containers.toArray(new ISourceContainer[containers.size()]);
-			} 
+			}
 			return createCompilationDirectoryContainers(fProject);
 		}
 		return new ISourceContainer[0];

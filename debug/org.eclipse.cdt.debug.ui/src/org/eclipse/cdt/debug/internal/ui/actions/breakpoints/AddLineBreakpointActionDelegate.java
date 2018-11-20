@@ -42,8 +42,8 @@ public class AddLineBreakpointActionDelegate extends ActionDelegate implements I
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	@Override
-	public void init( IViewPart view ) {
-		setView( view );
+	public void init(IViewPart view) {
+		setView(view);
 	}
 
 	private void setView(IViewPart view) {
@@ -56,26 +56,27 @@ public class AddLineBreakpointActionDelegate extends ActionDelegate implements I
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-	    fSelection = selection;
+		fSelection = selection;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void run( IAction action ) {
-	    IToggleBreakpointsTarget toggleTarget = DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fView, fSelection);
-	    IToggleBreakpointsTargetCExtension cToggleTarget = null;
-	    if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
-	        cToggleTarget = (IToggleBreakpointsTargetCExtension)toggleTarget;
-	    } else {
-	        cToggleTarget = fDefaultToggleTarget;
-	    }
+	public void run(IAction action) {
+		IToggleBreakpointsTarget toggleTarget = DebugUITools.getToggleBreakpointsTargetManager()
+				.getToggleBreakpointsTarget(fView, fSelection);
+		IToggleBreakpointsTargetCExtension cToggleTarget = null;
+		if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
+			cToggleTarget = (IToggleBreakpointsTargetCExtension) toggleTarget;
+		} else {
+			cToggleTarget = fDefaultToggleTarget;
+		}
 
-        try {
-            cToggleTarget.createLineBreakpointsInteractive(fView, fSelection);
-        } catch (CoreException e) {
-            CDebugUIPlugin.errorDialog( ActionMessages.getString( "AddLineBreakpointActionDelegate.0" ), e ); //$NON-NLS-1$
-        }
+		try {
+			cToggleTarget.createLineBreakpointsInteractive(fView, fSelection);
+		} catch (CoreException e) {
+			CDebugUIPlugin.errorDialog(ActionMessages.getString("AddLineBreakpointActionDelegate.0"), e); //$NON-NLS-1$
+		}
 	}
 }

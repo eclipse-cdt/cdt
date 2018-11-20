@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
@@ -62,20 +62,20 @@ public class CDescriptorEvent extends EventObject {
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
 		switch (getType()) {
-			case CDTPROJECT_ADDED :
-				buf.append("CDTPROJECT_ADDED"); //$NON-NLS-1$
-				break;
-			case CDTPROJECT_REMOVED :
-				buf.append("CDTPROJECT_REMOVED"); //$NON-NLS-1$
-				break;
-			case CDTPROJECT_CHANGED :
-				buf.append("CDTPROJECT_CHANGED"); //$NON-NLS-1$
-				break;
+		case CDTPROJECT_ADDED:
+			buf.append("CDTPROJECT_ADDED"); //$NON-NLS-1$
+			break;
+		case CDTPROJECT_REMOVED:
+			buf.append("CDTPROJECT_REMOVED"); //$NON-NLS-1$
+			break;
+		case CDTPROJECT_CHANGED:
+			buf.append("CDTPROJECT_CHANGED"); //$NON-NLS-1$
+			break;
 		}
-		if ( (getFlags() & OWNER_CHANGED) != 0 ) {
+		if ((getFlags() & OWNER_CHANGED) != 0) {
 			buf.append("[OWNER CHANGED]"); //$NON-NLS-1$
 		}
-		if ( (getFlags() & EXTENSION_CHANGED) != 0 ) {
+		if ((getFlags() & EXTENSION_CHANGED) != 0) {
 			buf.append("[EXTENSION CHANGED]"); //$NON-NLS-1$
 		}
 		if (getFlags() == 0) {

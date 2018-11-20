@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 /**
  * Interface of an object listening to (AST-) reconciling.
  * Inspired by JDT.
- * 
+ *
  * @since 4.0
  */
 public interface ICReconcilingListener {
@@ -32,7 +32,7 @@ public interface ICReconcilingListener {
 
 	/**
 	 * Called after reconciling has been finished.
-	 * 
+	 *
 	 * @param ast
 	 *            the translation unit AST or <code>null</code> if the working
 	 *            copy was consistent or reconciliation has been cancelled

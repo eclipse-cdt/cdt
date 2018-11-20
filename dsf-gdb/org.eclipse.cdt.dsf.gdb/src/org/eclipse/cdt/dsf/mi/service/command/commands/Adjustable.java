@@ -15,15 +15,15 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 /**
  * The implementor of this interface may adjust its output.
- * 
+ *
  * This is used for MICommands where the output of each option and/or parameter
  * may be adjusted independently to conform to the current version of the MI
  * interface.
- * 
+ *
  */
 public interface Adjustable {
-	
+
 	String getValue();
-	
+
 	String getAdjustedValue();
 }

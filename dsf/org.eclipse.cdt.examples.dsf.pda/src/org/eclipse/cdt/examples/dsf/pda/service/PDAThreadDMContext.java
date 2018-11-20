@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -20,32 +20,30 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 /**
  * Context representing a PDA thread.
  */
-public class PDAThreadDMContext extends AbstractDMContext
-    implements IExecutionDMContext 
-{
-    final private Integer fID;
-    
-    public PDAThreadDMContext(String sessionId, PDAVirtualMachineDMContext vmCtx, int id) {
-        super(sessionId, new IDMContext[] { vmCtx });
-        fID = id;
-    }
+public class PDAThreadDMContext extends AbstractDMContext implements IExecutionDMContext {
+	final private Integer fID;
 
-    public int getID() {
-        return fID;
-    }
-    
-    @Override
-    public String toString() {
-        return super.baseToString() + ".thread[" + fID + "]";
-    }
-    
-    @Override
-    public int hashCode() {
-        return baseHashCode() + fID.hashCode();
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        return baseEquals(obj) && ((PDAThreadDMContext)obj).fID.equals(fID);
-    }
+	public PDAThreadDMContext(String sessionId, PDAVirtualMachineDMContext vmCtx, int id) {
+		super(sessionId, new IDMContext[] { vmCtx });
+		fID = id;
+	}
+
+	public int getID() {
+		return fID;
+	}
+
+	@Override
+	public String toString() {
+		return super.baseToString() + ".thread[" + fID + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return baseHashCode() + fID.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return baseEquals(obj) && ((PDAThreadDMContext) obj).fID.equals(fID);
+	}
 }

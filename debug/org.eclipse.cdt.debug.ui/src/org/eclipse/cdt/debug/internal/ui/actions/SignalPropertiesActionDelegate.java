@@ -36,7 +36,7 @@ public class SignalPropertiesActionDelegate extends ActionDelegate implements IO
 
 	/**
 	 * Constructor for SignalPropertiesActionDelegate.
-	 * 
+	 *
 	 */
 	public SignalPropertiesActionDelegate() {
 		super();
@@ -47,7 +47,7 @@ public class SignalPropertiesActionDelegate extends ActionDelegate implements IO
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	@Override
-	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		fTargetPart = targetPart;
 	}
 
@@ -55,24 +55,24 @@ public class SignalPropertiesActionDelegate extends ActionDelegate implements IO
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public void selectionChanged( IAction action, ISelection selection ) {
-		if ( selection instanceof IStructuredSelection ) {
-			Object element = ((IStructuredSelection)selection).getFirstElement();
-			if ( element instanceof ICSignal ) {
-				action.setEnabled( true );
-				setSignal( (ICSignal)element );
+	public void selectionChanged(IAction action, ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			Object element = ((IStructuredSelection) selection).getFirstElement();
+			if (element instanceof ICSignal) {
+				action.setEnabled(true);
+				setSignal((ICSignal) element);
 				return;
 			}
 		}
-		action.setEnabled( false );
-		setSignal( null );
+		action.setEnabled(false);
+		setSignal(null);
 	}
 
 	protected ICSignal getSignal() {
 		return this.fSignal;
 	}
 
-	private void setSignal( ICSignal signal ) {
+	private void setSignal(ICSignal signal) {
 		this.fSignal = signal;
 	}
 
@@ -80,26 +80,27 @@ public class SignalPropertiesActionDelegate extends ActionDelegate implements IO
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void run( IAction action ) {
-		PropertyDialogAction propertyAction = new PropertyDialogAction( getActivePart().getSite(), new ISelectionProvider() {
+	public void run(IAction action) {
+		PropertyDialogAction propertyAction = new PropertyDialogAction(getActivePart().getSite(),
+				new ISelectionProvider() {
 
-			@Override
-			public void addSelectionChangedListener( ISelectionChangedListener listener ) {
-			}
+					@Override
+					public void addSelectionChangedListener(ISelectionChangedListener listener) {
+					}
 
-			@Override
-			public ISelection getSelection() {
-				return new StructuredSelection( getSignal() );
-			}
+					@Override
+					public ISelection getSelection() {
+						return new StructuredSelection(getSignal());
+					}
 
-			@Override
-			public void removeSelectionChangedListener( ISelectionChangedListener listener ) {
-			}
+					@Override
+					public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+					}
 
-			@Override
-			public void setSelection( ISelection selection ) {
-			}
-		} );
+					@Override
+					public void setSelection(ISelection selection) {
+					}
+				});
 		propertyAction.run();
 	}
 

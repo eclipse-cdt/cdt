@@ -31,8 +31,7 @@ public class CPPASTTemplateName extends CPPASTName implements ICPPASTTemplateNam
 
 	@Override
 	public CPPASTTemplateName copy(CopyStyle style) {
-		CPPASTTemplateName copy = new CPPASTTemplateName(
-				toCharArray() == null ? null : toCharArray().clone());
+		CPPASTTemplateName copy = new CPPASTTemplateName(toCharArray() == null ? null : toCharArray().clone());
 		return copy(copy, style);
 	}
 }

@@ -23,11 +23,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 public class CPPUsingDeclarationSpecialization extends CPPSpecialization implements ICPPUsingDeclaration {
 	private final IBinding[] fDelegates;
 
-    public CPPUsingDeclarationSpecialization(ICPPUsingDeclaration specialized, IBinding owner,
-    		ICPPTemplateParameterMap tpmap, IBinding[] delegates) {
-        super(specialized, owner, tpmap);
-        fDelegates= delegates;
-    }
+	public CPPUsingDeclarationSpecialization(ICPPUsingDeclaration specialized, IBinding owner,
+			ICPPTemplateParameterMap tpmap, IBinding[] delegates) {
+		super(specialized, owner, tpmap);
+		fDelegates = delegates;
+	}
 
 	@Override
 	public IBinding[] getDelegates() {

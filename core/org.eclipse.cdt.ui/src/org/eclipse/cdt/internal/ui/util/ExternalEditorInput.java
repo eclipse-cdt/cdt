@@ -41,7 +41,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 
 	/**
 	 * Creates an editor input for an external translation unit.
-	 * 
+	 *
 	 * @param unit  the translation unit
 	 */
 	public ExternalEditorInput(ITranslationUnit unit) {
@@ -52,7 +52,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 
 	/**
 	 * Creates an editor input for an external file of the local file system.
-	 * 
+	 *
 	 * @param location  the file system location
 	 */
 	public ExternalEditorInput(IPath location) {
@@ -61,7 +61,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 
 	/**
 	 * Creates an editor input for an external file of the local file system.
-	 * 
+	 *
 	 * @param location  the file system location
 	 * @param markerResource  the associated marker resource, may be <code>null</code>
 	 */
@@ -71,7 +71,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 
 	/**
 	 * Creates an editor input for a location URI.
-	 * 
+	 *
 	 * @param locationURI  the location URI
 	 */
 	public ExternalEditorInput(URI locationURI) {
@@ -80,7 +80,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 
 	/**
 	 * Creates an editor input for a location URI.
-	 * 
+	 *
 	 * @param locationURI  the location URI
 	 * @param markerResource  the associated marker resource, may be <code>null</code>
 	 */

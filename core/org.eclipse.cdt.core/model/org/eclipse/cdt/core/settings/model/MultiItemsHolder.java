@@ -54,6 +54,7 @@ public abstract class MultiItemsHolder implements ICMultiItemsHolder {
 		else
 			return new MultiConfigDescription(rds);
 	}
+
 	/**
 	 * This method is put here to prevent UI from
 	 * accessing constructors in "internal" dirs.

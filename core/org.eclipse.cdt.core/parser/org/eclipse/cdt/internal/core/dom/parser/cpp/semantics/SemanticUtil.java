@@ -96,23 +96,23 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 public class SemanticUtil {
 	private static final char[] OPERATOR_CHARS = Keywords.OPERATOR.toCharArray();
 	// Cache of overloadable operator names for fast lookup. Used by isConversionOperator.
-	private static final CharArraySet cas= new CharArraySet(OverloadableOperator.values().length);
+	private static final CharArraySet cas = new CharArraySet(OverloadableOperator.values().length);
 
 	// Resolve typedefs.
-	public static final int TDEF =      0x01;
+	public static final int TDEF = 0x01;
 	// Resolve typedefs, but only if necessary for a nested type transformation.
 	public static final int COND_TDEF = 0x02;
-	public static final int REF =       0x04;
-	public static final int CVTYPE =    0x08;
-	public static final int ALLCVQ =    0x10;
-	public static final int PTR =       0x20;
-	public static final int MPTR =      0x40;
-	public static final int ARRAY =     0x80;
+	public static final int REF = 0x04;
+	public static final int CVTYPE = 0x08;
+	public static final int ALLCVQ = 0x10;
+	public static final int PTR = 0x20;
+	public static final int MPTR = 0x40;
+	public static final int ARRAY = 0x80;
 
 	static {
-		final int OPERATOR_SPC= OPERATOR_CHARS.length + 1;
+		final int OPERATOR_SPC = OPERATOR_CHARS.length + 1;
 		for (OverloadableOperator op : OverloadableOperator.values()) {
-			char[] name= op.toCharArray();
+			char[] name = op.toCharArray();
 			cas.put(CharArrayUtils.subarray(name, OPERATOR_SPC, name.length));
 		}
 	}
@@ -126,9 +126,9 @@ public class SemanticUtil {
 	 * @return an array of conversion operators.
 	 */
 	public static final ICPPMethod[] getDeclaredConversionOperators(ICPPClassType clazz) throws DOMException {
-		ICPPMethod[] conversionOps= ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+		ICPPMethod[] conversionOps = ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		if (clazz instanceof ICPPDeferredClassInstance) {
-			clazz= (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getTemplateDefinition();
+			clazz = (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getTemplateDefinition();
 		}
 		ICPPMethod[] methods;
 		// For a closure type, getDeclaredMethods() does not return the conversion
@@ -144,7 +144,7 @@ public class SemanticUtil {
 		if (methods != null) {
 			for (ICPPMethod method : methods) {
 				if (isConversionOperator(method)) {
-					conversionOps= ArrayUtil.append(conversionOps, method);
+					conversionOps = ArrayUtil.append(conversionOps, method);
 				}
 			}
 		}
@@ -160,10 +160,10 @@ public class SemanticUtil {
 	 * @return an array of conversion operators.
 	 */
 	public static ICPPMethod[] getConversionOperators(ICPPClassType clazz) throws DOMException {
-		ICPPMethod[] methods= ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-		ObjectSet<ICPPClassType> ancestry= inheritanceClosure(clazz);
+		ICPPMethod[] methods = ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+		ObjectSet<ICPPClassType> ancestry = inheritanceClosure(clazz);
 		for (int i = 0; i < ancestry.size(); i++) {
-			methods= ArrayUtil.addAll(methods, getDeclaredConversionOperators(ancestry.keyAt(i)));
+			methods = ArrayUtil.addAll(methods, getDeclaredConversionOperators(ancestry.keyAt(i)));
 		}
 		return methods;
 	}
@@ -174,21 +174,21 @@ public class SemanticUtil {
 	 * @throws DOMException
 	 */
 	public static ObjectSet<ICPPClassType> inheritanceClosure(ICPPClassType root) throws DOMException {
-		ObjectSet<ICPPClassType> done= new ObjectSet<>(2);
-		ObjectSet<ICPPClassType> current= new ObjectSet<>(2);
+		ObjectSet<ICPPClassType> done = new ObjectSet<>(2);
+		ObjectSet<ICPPClassType> current = new ObjectSet<>(2);
 		current.put(root);
 
 		for (int count = 0; count < CPPSemantics.MAX_INHERITANCE_DEPTH && !current.isEmpty(); count++) {
-			ObjectSet<ICPPClassType> next= new ObjectSet<>(2);
+			ObjectSet<ICPPClassType> next = new ObjectSet<>(2);
 
 			for (int i = 0; i < current.size(); i++) {
-				ICPPClassType clazz= current.keyAt(i);
+				ICPPClassType clazz = current.keyAt(i);
 				done.put(clazz);
 
 				for (ICPPBase base : clazz.getBases()) {
-					IBinding binding= base.getBaseClass();
+					IBinding binding = base.getBaseClass();
 					if (binding instanceof ICPPClassType && !(binding instanceof IProblemBinding)) {
-						ICPPClassType ct= (ICPPClassType) binding;
+						ICPPClassType ct = (ICPPClassType) binding;
 						if (!done.containsKey(ct)) {
 							next.put(ct);
 						}
@@ -196,7 +196,7 @@ public class SemanticUtil {
 				}
 			}
 
-			current= next;
+			current = next;
 		}
 
 		return done;
@@ -208,10 +208,10 @@ public class SemanticUtil {
 	 */
 	public static final boolean isConversionOperator(ICPPFunction method) {
 		if (method instanceof ICPPMethod) {
-			final char[] name= method.getNameCharArray();
-			if (name.length > OPERATOR_CHARS.length + 1 && name[OPERATOR_CHARS.length] == ' ' &&
-					CharArrayUtils.equals(name, 0, OPERATOR_CHARS.length, OPERATOR_CHARS)) {
-				return !cas.containsKey(name, OPERATOR_CHARS.length + 1, name.length - (OPERATOR_CHARS.length+1));
+			final char[] name = method.getNameCharArray();
+			if (name.length > OPERATOR_CHARS.length + 1 && name[OPERATOR_CHARS.length] == ' '
+					&& CharArrayUtils.equals(name, 0, OPERATOR_CHARS.length, OPERATOR_CHARS)) {
+				return !cas.containsKey(name, OPERATOR_CHARS.length + 1, name.length - (OPERATOR_CHARS.length + 1));
 			}
 		}
 		return false;
@@ -219,19 +219,15 @@ public class SemanticUtil {
 
 	public static CVQualifier getCVQualifier(IType t) {
 		if (t instanceof IQualifierType) {
-			IQualifierType qt= (IQualifierType) t;
-			return qt.isConst()
-				? qt.isVolatile() ? CONST_VOLATILE : CONST
-				: qt.isVolatile() ? VOLATILE : NONE;
+			IQualifierType qt = (IQualifierType) t;
+			return qt.isConst() ? qt.isVolatile() ? CONST_VOLATILE : CONST : qt.isVolatile() ? VOLATILE : NONE;
 		}
 		if (t instanceof IPointerType) {
-			IPointerType pt= (IPointerType) t;
+			IPointerType pt = (IPointerType) t;
 			return pt.isConst()
-					? pt.isVolatile()
-							? pt.isRestrict() ? CONST_VOLATILE_RESTRICT : CONST_VOLATILE
+					? pt.isVolatile() ? pt.isRestrict() ? CONST_VOLATILE_RESTRICT : CONST_VOLATILE
 							: pt.isRestrict() ? CONST_RESTRICT : CONST
-					: pt.isVolatile()
-							? pt.isRestrict() ? VOLATILE_RESTRICT : VOLATILE
+					: pt.isVolatile() ? pt.isRestrict() ? VOLATILE_RESTRICT : VOLATILE
 							: pt.isRestrict() ? RESTRICT : NONE;
 		}
 		if (t instanceof IArrayType) {
@@ -266,31 +262,31 @@ public class SemanticUtil {
 	 * Descends into typedefs, references, etc. as specified by options.
 	 */
 	public static IType getNestedType(IType type, int options) {
-		final boolean tdef= (options & TDEF) != 0;
-		final boolean cond_tdef= (options & COND_TDEF) != 0;
-		final boolean ptr= (options & PTR) != 0;
-		final boolean mptr= (options & MPTR) != 0;
-		final boolean allcvq= (options & ALLCVQ) != 0;
-		final boolean cvtype= (options & CVTYPE) != 0;
+		final boolean tdef = (options & TDEF) != 0;
+		final boolean cond_tdef = (options & COND_TDEF) != 0;
+		final boolean ptr = (options & PTR) != 0;
+		final boolean mptr = (options & MPTR) != 0;
+		final boolean allcvq = (options & ALLCVQ) != 0;
+		final boolean cvtype = (options & CVTYPE) != 0;
 
 		IType beforeTypedefs = null;
 
 		while (true) {
-			IType t= null;
+			IType t = null;
 			if (type instanceof ITypedef) {
 				if (tdef || cond_tdef) {
 					if (beforeTypedefs == null && cond_tdef) {
 						beforeTypedefs = type;
 					}
-					t= ((ITypedef) type).getType();
+					t = ((ITypedef) type).getType();
 				}
 			} else if (type instanceof IPointerType) {
 				final boolean isMbrPtr = type instanceof ICPPPointerToMemberType;
 				if ((ptr && !isMbrPtr) || (mptr && isMbrPtr)) {
-					t= ((IPointerType) type).getType();
+					t = ((IPointerType) type).getType();
 					beforeTypedefs = null;
 				} else if (allcvq) {
-					IPointerType pt= (IPointerType) type;
+					IPointerType pt = (IPointerType) type;
 					if (pt.isConst() || pt.isVolatile() || pt.isRestrict()) {
 						if (pt instanceof ICPPPointerToMemberType) {
 							final IType memberOfClass = ((ICPPPointerToMemberType) pt).getMemberOfClass();
@@ -304,22 +300,22 @@ public class SemanticUtil {
 				final IQualifierType qt = (IQualifierType) type;
 				final IType qttgt = qt.getType();
 				if (allcvq || cvtype) {
-					t= qttgt;
+					t = qttgt;
 					beforeTypedefs = null;
 				} else if (tdef || cond_tdef) {
-					t= getNestedType(qttgt, options);
+					t = getNestedType(qttgt, options);
 					if (t == qttgt)
 						return qt;
 					return addQualifiers(t, qt.isConst(), qt.isVolatile(), false);
 				}
 			} else if (type instanceof IArrayType) {
-				final IArrayType atype= (IArrayType) type;
+				final IArrayType atype = (IArrayType) type;
 				if ((options & ARRAY) != 0) {
-					t= atype.getType();
+					t = atype.getType();
 					beforeTypedefs = null;
 				} else if (allcvq) {
-					IType nested= atype.getType();
-					IType newNested= getNestedType(nested, ALLCVQ);
+					IType nested = atype.getType();
+					IType newNested = getNestedType(nested, ALLCVQ);
 					if (nested == newNested)
 						return type;
 					return replaceNestedType((ITypeContainer) atype, newNested);
@@ -327,11 +323,11 @@ public class SemanticUtil {
 			} else if (type instanceof ICPPReferenceType) {
 				final ICPPReferenceType rt = (ICPPReferenceType) type;
 				if ((options & REF) != 0) {
-					t= rt.getType();
+					t = rt.getType();
 					beforeTypedefs = null;
 				} else if (tdef) {
 					// A typedef within the reference type can influence whether the reference is lvalue or rvalue
-					IType nested= rt.getType();
+					IType nested = rt.getType();
 					IType newNested = getNestedType(nested, TDEF);
 					if (nested == newNested)
 						return type;
@@ -346,7 +342,7 @@ public class SemanticUtil {
 				return type;
 			}
 
-			type= t;
+			type = t;
 		}
 	}
 
@@ -365,23 +361,23 @@ public class SemanticUtil {
 			if (ret == r && params == ps) {
 				return type;
 			}
-			return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(),
-					ft.hasRefQualifier(), ft.isRValueReference(), ft.takesVarArgs());
+			return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(), ft.hasRefQualifier(),
+					ft.isRValueReference(), ft.takesVarArgs());
 		}
 
 		if (type instanceof ITypedef) {
-			IType t= ((ITypedef) type).getType();
+			IType t = ((ITypedef) type).getType();
 			if (t != null)
 				return getSimplifiedType(t);
 			return type;
 		}
 		if (type instanceof ITypeContainer) {
 			final ITypeContainer tc = (ITypeContainer) type;
-			final IType nestedType= tc.getType();
+			final IType nestedType = tc.getType();
 			if (nestedType == null)
 				return type;
 
-			IType newType= getSimplifiedType(nestedType);
+			IType newType = getSimplifiedType(nestedType);
 			if (newType != nestedType) {
 				return replaceNestedType(tc, newType);
 			}
@@ -418,7 +414,7 @@ public class SemanticUtil {
 
 		// Do not to add unnecessary qualifications (bug 24908).
 		if (type instanceof IQualifierType) {
-			IQualifierType qt= (IQualifierType) type;
+			IQualifierType qt = (IQualifierType) type;
 			return addQualifiers(newNestedType, qt.isConst(), qt.isVolatile(), false);
 		}
 
@@ -460,7 +456,7 @@ public class SemanticUtil {
 
 		IType result = null;
 		ITypeContainer containerType = null;
-		for (IType t = type; ; t = containerType.getType()) {
+		for (IType t = type;; t = containerType.getType()) {
 			IType newType = t == nestedType ? typedefType : (IType) t.clone();
 			if (result == null)
 				result = newType;
@@ -483,19 +479,19 @@ public class SemanticUtil {
 			if (t instanceof ISemanticProblem) {
 				return false;
 			} else if (t instanceof IFunctionType) {
-				IFunctionType ft= (IFunctionType) t;
+				IFunctionType ft = (IFunctionType) t;
 				for (IType parameterType : ft.getParameterTypes()) {
 					if (!isValidType(parameterType))
 						return false;
 				}
-				t= ft.getReturnType();
+				t = ft.getReturnType();
 			} else if (t instanceof ICPPPointerToMemberType) {
-				ICPPPointerToMemberType mptr= (ICPPPointerToMemberType) t;
+				ICPPPointerToMemberType mptr = (ICPPPointerToMemberType) t;
 				if (!isValidType(mptr.getMemberOfClass()))
 					return false;
-				t= mptr.getType();
+				t = mptr.getType();
 			} else if (t instanceof ITypeContainer) {
-				t= ((ITypeContainer) t).getType();
+				t = ((ITypeContainer) t).getType();
 			} else {
 				return true;
 			}
@@ -559,14 +555,14 @@ public class SemanticUtil {
 					return ((ASTTranslationUnit) ast).mapToASTScope(scope);
 				}
 			} else if (scope.getKind() == EScopeKind.eGlobal) {
-				CCorePlugin.log(new Exception(
-						"The point argument was not provided. Returning the global index scope.")); //$NON-NLS-1$
+				CCorePlugin
+						.log(new Exception("The point argument was not provided. Returning the global index scope.")); //$NON-NLS-1$
 			}
 		}
 		return scope;
 	}
 
-	public static void recordPartialSpecialization(ICPPClassTemplatePartialSpecialization indexSpec, 
+	public static void recordPartialSpecialization(ICPPClassTemplatePartialSpecialization indexSpec,
 			ICPPClassTemplatePartialSpecialization astSpec, IASTNode point) {
 		if (point != null) {
 			IASTTranslationUnit ast = point.getTranslationUnit();
@@ -575,9 +571,8 @@ public class SemanticUtil {
 			}
 		}
 	}
-	
-	public static ICPPClassTemplatePartialSpecialization mapToAST(
-			ICPPClassTemplatePartialSpecialization indexSpec) {
+
+	public static ICPPClassTemplatePartialSpecialization mapToAST(ICPPClassTemplatePartialSpecialization indexSpec) {
 		IASTNode point = CPPSemantics.getCurrentLookupPoint();
 		if (point != null) {
 			IASTTranslationUnit ast = point.getTranslationUnit();
@@ -593,15 +588,15 @@ public class SemanticUtil {
 		IType[] result = types;
 		for (int i = 0; i < types.length; i++) {
 			final IType type = types[i];
-			final IType newType= getSimplifiedType(type);
+			final IType newType = getSimplifiedType(type);
 			if (result != types) {
-				result[i]= newType;
+				result[i] = newType;
 			} else if (type != newType) {
 				result = new IType[types.length];
 				if (i > 0) {
 					System.arraycopy(types, 0, result, 0, i);
 				}
-				result[i]= newType;
+				result[i] = newType;
 			}
 		}
 		return result;
@@ -611,18 +606,18 @@ public class SemanticUtil {
 		// Don't create a new array until it's really needed.
 		ICPPTemplateArgument[] result = args;
 		for (int i = 0; i < args.length; i++) {
-			final ICPPTemplateArgument arg= args[i];
-			ICPPTemplateArgument newArg= arg;
+			final ICPPTemplateArgument arg = args[i];
+			ICPPTemplateArgument newArg = arg;
 			if (arg != null) {
 				newArg = getSimplifiedArgument(arg);
 				if (result != args) {
-					result[i]= newArg;
+					result[i] = newArg;
 				} else if (arg != newArg) {
 					result = new ICPPTemplateArgument[args.length];
 					if (i > 0) {
 						System.arraycopy(args, 0, result, 0, i);
 					}
-					result[i]= newArg;
+					result[i] = newArg;
 				}
 			}
 		}
@@ -631,8 +626,8 @@ public class SemanticUtil {
 
 	public static ICPPTemplateArgument getSimplifiedArgument(final ICPPTemplateArgument arg) {
 		if (arg.isTypeValue()) {
-			final IType type= arg.getTypeValue();
-			final IType newType= getSimplifiedType(type);
+			final IType type = arg.getTypeValue();
+			final IType newType = getSimplifiedType(type);
 			if (newType != type) {
 				return new CPPTemplateTypeArgument(newType, arg.getOriginalTypeValue());
 			}
@@ -647,31 +642,29 @@ public class SemanticUtil {
 	public static IType addQualifiers(IType baseType, boolean cnst, boolean vol, boolean restrict) {
 		if (cnst || vol || restrict) {
 			if (baseType instanceof IQualifierType) {
-				IQualifierType qt= (IQualifierType) baseType;
+				IQualifierType qt = (IQualifierType) baseType;
 				if ((cnst && !qt.isConst()) || (vol && !qt.isVolatile())) {
 					return new CPPQualifierType(qt.getType(), cnst || qt.isConst(), vol || qt.isVolatile());
 				}
 				return baseType;
 			} else if (baseType instanceof ICPPPointerToMemberType) {
-				ICPPPointerToMemberType pt= (ICPPPointerToMemberType) baseType;
-				if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile())
-						|| (restrict && !pt.isRestrict())) {
-					return new CPPPointerToMemberType(pt.getType(), pt.getMemberOfClass(),
-							cnst || pt.isConst(), vol || pt.isVolatile(), restrict || pt.isRestrict());
+				ICPPPointerToMemberType pt = (ICPPPointerToMemberType) baseType;
+				if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile()) || (restrict && !pt.isRestrict())) {
+					return new CPPPointerToMemberType(pt.getType(), pt.getMemberOfClass(), cnst || pt.isConst(),
+							vol || pt.isVolatile(), restrict || pt.isRestrict());
 				}
 				return baseType;
 			} else if (baseType instanceof IPointerType) {
-				IPointerType pt= (IPointerType) baseType;
-				if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile())
-						|| (restrict && !pt.isRestrict())) {
-					return new CPPPointerType(pt.getType(),
-							cnst || pt.isConst(), vol || pt.isVolatile(), restrict || pt.isRestrict());
+				IPointerType pt = (IPointerType) baseType;
+				if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile()) || (restrict && !pt.isRestrict())) {
+					return new CPPPointerType(pt.getType(), cnst || pt.isConst(), vol || pt.isVolatile(),
+							restrict || pt.isRestrict());
 				}
 				return baseType;
 			} else if (baseType instanceof IArrayType) {
-				IArrayType at= (IArrayType) baseType;
-				IType nested= at.getType();
-				IType newNested= addQualifiers(nested, cnst, vol, restrict);
+				IArrayType at = (IArrayType) baseType;
+				IType nested = at.getType();
+				IType newNested = addQualifiers(nested, cnst, vol, restrict);
 				if (newNested != nested && at instanceof ITypeContainer) {
 					return replaceNestedType((ITypeContainer) at, newNested);
 				}
@@ -716,9 +709,9 @@ public class SemanticUtil {
 
 		while (true) {
 			for (int i = 0; b1 instanceof ICPPNamespaceAlias && i < 20; i++)
-				b1= ((ICPPNamespaceAlias) b1).getBinding();
+				b1 = ((ICPPNamespaceAlias) b1).getBinding();
 			for (int i = 0; b2 instanceof ICPPNamespaceAlias && i < 20; i++)
-				b2= ((ICPPNamespaceAlias) b2).getBinding();
+				b2 = ((ICPPNamespaceAlias) b2).getBinding();
 
 			if (b1 == null)
 				return b2 == null;
@@ -736,7 +729,7 @@ public class SemanticUtil {
 
 	public static boolean isVoidType(IType ptype) {
 		while (ptype instanceof ITypedef) {
-			ptype= ((ITypedef) ptype).getType();
+			ptype = ((ITypedef) ptype).getType();
 		}
 		if (ptype instanceof IBasicType) {
 			return ((IBasicType) ptype).getKind() == Kind.eVoid;
@@ -781,24 +774,23 @@ public class SemanticUtil {
 		if (maxdepth > 0 && type instanceof ICPPClassType && baseClass instanceof ICPPClassType) {
 			ICPPClassType clazz = (ICPPClassType) type;
 			if (clazz instanceof ICPPDeferredClassInstance) {
-				clazz= (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getSpecializedBinding();
+				clazz = (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getSpecializedBinding();
 			}
 
 			// The base classes may have changed since the definition of clazz was indexed.
 			clazz = (ICPPClassType) mapToAST(clazz);
 
 			for (ICPPBase cppBase : clazz.getBases()) {
-				IBinding base= cppBase.getBaseClass();
+				IBinding base = cppBase.getBaseClass();
 				if (base instanceof IType && hashSet.add(base)) {
-					IType tbase= (IType) base;
-					if (tbase.isSameType(baseClass) ||
-							(baseClass instanceof ICPPSpecialization && // Allow some flexibility with templates.
+					IType tbase = (IType) base;
+					if (tbase.isSameType(baseClass) || (baseClass instanceof ICPPSpecialization && // Allow some flexibility with templates.
 							((IType) ((ICPPSpecialization) baseClass).getSpecializedBinding()).isSameType(tbase))) {
 						return 1;
 					}
 
 					if (tbase instanceof ICPPClassType) {
-						int n= calculateInheritanceDepth(maxdepth - 1, hashSet, tbase, baseClass);
+						int n = calculateInheritanceDepth(maxdepth - 1, hashSet, tbase, baseClass);
 						if (n > 0)
 							return n + 1;
 					}
@@ -867,36 +859,36 @@ public class SemanticUtil {
 	 * @param type the type of the variable
 	 */
 	public static IValue getValueOfInitializer(IASTInitializer init, IType type) {
-		IASTInitializerClause clause= null;
+		IASTInitializerClause clause = null;
 		CPPSemantics.pushLookupPoint(init);
 		try {
 			if (init instanceof IASTEqualsInitializer) {
-				clause= ((IASTEqualsInitializer) init).getInitializerClause();
+				clause = ((IASTEqualsInitializer) init).getInitializerClause();
 			} else if (init instanceof ICPPASTConstructorInitializer) {
-				IASTInitializerClause[] args= ((ICPPASTConstructorInitializer) init).getArguments();
+				IASTInitializerClause[] args = ((ICPPASTConstructorInitializer) init).getArguments();
 				if (args.length == 1 && args[0] instanceof IASTExpression) {
-					IType typeUpToPointers= SemanticUtil.getUltimateTypeUptoPointers(type);
+					IType typeUpToPointers = SemanticUtil.getUltimateTypeUptoPointers(type);
 					if (typeUpToPointers instanceof IPointerType || typeUpToPointers instanceof IBasicType) {
-						clause= args[0];
+						clause = args[0];
 					}
 				}
 			} else if (init instanceof ICPPASTInitializerList) {
-				ICPPASTInitializerList list= (ICPPASTInitializerList) init;
+				ICPPASTInitializerList list = (ICPPASTInitializerList) init;
 				switch (list.getSize()) {
 				case 0:
 					return IntegralValue.create(0);
 				case 1:
-					clause= list.getClauses()[0];
+					clause = list.getClauses()[0];
 					break;
 				default:
 					return ((ICPPASTInitializerList) init).getEvaluation().getValue();
-	
+
 				}
 			}
 			if (clause instanceof IASTExpression) {
 				return ValueFactory.create((IASTExpression) clause);
 			}
-	
+
 			if (clause instanceof ICPPASTInitializerList) {
 				return ((ICPPASTInitializerList) clause).getEvaluation().getValue();
 			}
@@ -924,13 +916,13 @@ public class SemanticUtil {
 	}
 
 	static IType[] addImplicitParameterType(IType[] types, ICPPMethod m) {
-		IType t= CPPSemantics.getImplicitParameterType(m);
+		IType t = CPPSemantics.getImplicitParameterType(m);
 		return concatTypes(t, types);
 	}
 
 	static IType[] concatTypes(final IType t, IType[] types) {
-		IType[] result= new IType[types.length + 1];
-		result[0]= t;
+		IType[] result = new IType[types.length + 1];
+		result[0] = t;
 		System.arraycopy(types, 0, result, 1, types.length);
 		return result;
 	}

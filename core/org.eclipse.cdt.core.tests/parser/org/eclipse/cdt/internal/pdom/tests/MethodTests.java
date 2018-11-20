@@ -54,7 +54,7 @@ public class MethodTests extends PDOMTestBase {
 		pdom.releaseReadLock();
 		if (project != null) {
 			CProjectHelper.delete(project);
-			project= null;
+			project = null;
 		}
 	}
 
@@ -70,14 +70,14 @@ public class MethodTests extends PDOMTestBase {
 		assertEquals(IBasicType.t_float, ((ICPPBasicType) parameters[2].getType()).getType());
 		assertEquals("p3", parameters[2].getName());
 	}
-	
+
 	public void testVirtualMethod() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::inheritedMethod");
 		assertEquals(1, bindings.length);
 		ICPPMethod method = (ICPPMethod) bindings[0];
 		assertTrue(method.isVirtual());
 	}
-	
+
 	public void testVirtualMethodType() throws Exception {
 		assertType(pdom, "Class1::inheritedMethod", ICPPFunction.class);
 	}
@@ -117,7 +117,7 @@ public class MethodTests extends PDOMTestBase {
 		assertTrue(method.isVirtual());
 		assertTrue(method.isPureVirtual());
 	}
-	
+
 	public void testPureVirtualMethodType() throws Exception {
 		assertType(pdom, "Class1::pureVirtualMethod", ICPPFunction.class);
 		assertType(pdom, "Class2::pureVirtualMethod", ICPPFunction.class);
@@ -164,44 +164,44 @@ public class MethodTests extends PDOMTestBase {
 		ICPPMethod method = (ICPPMethod) bindings[0];
 		assertTrue(method.isDestructor());
 	}
-	
+
 	public void testDefaultPrivateMethod() throws Exception {
 		assertCPPMemberVisibility(pdom, "Class3::defaultMethod", ICPPMember.v_private);
 	}
-	
+
 	public void testPrivateMethod() throws Exception {
 		assertCPPMemberVisibility(pdom, "Class3::privateMethod", ICPPMember.v_private);
 	}
-	
+
 	public void testProtectedMethod() throws Exception {
 		assertCPPMemberVisibility(pdom, "Class3::protectedMethod", ICPPMember.v_protected);
 	}
-	
+
 	public void testPublicMethod() throws Exception {
 		assertCPPMemberVisibility(pdom, "Class3::publicMethod", ICPPMember.v_public);
 	}
-	
+
 	public void testInlineMethod() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::inlineMethod");
 		assertEquals(1, bindings.length);
 		ICPPMethod method = (ICPPMethod) bindings[0];
 		assertTrue(method.isInline());
 	}
-	
+
 	public void testStaticMethod() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::staticMethod");
 		assertEquals(1, bindings.length);
 		ICPPMethod method = (ICPPMethod) bindings[0];
 		assertTrue(method.isStatic());
 	}
-	
+
 	public void testVarArgsMethod() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::varArgsMethod");
 		assertEquals(1, bindings.length);
 		ICPPMethod method = (ICPPMethod) bindings[0];
 		assertTrue(method.takesVarArgs());
 	}
-	
+
 	public void testConstMethod() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::constMethod");
 		assertEquals(1, bindings.length);
@@ -209,7 +209,7 @@ public class MethodTests extends PDOMTestBase {
 		ICPPFunctionType type = method.getType();
 		assertTrue(type.isConst());
 	}
-	
+
 	public void testVolatileMethod() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::volatileMethod");
 		assertEquals(1, bindings.length);
@@ -217,7 +217,7 @@ public class MethodTests extends PDOMTestBase {
 		ICPPFunctionType type = method.getType();
 		assertTrue(type.isVolatile());
 	}
-		
+
 	public void testConstVolatileMethod() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::constVolatileMethod");
 		assertEquals(1, bindings.length);
@@ -226,7 +226,7 @@ public class MethodTests extends PDOMTestBase {
 		assertTrue(type.isConst());
 		assertTrue(type.isVolatile());
 	}
-	
+
 	public void testNotConstMethod() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::notConstMethod");
 		assertEquals(1, bindings.length);
@@ -234,7 +234,7 @@ public class MethodTests extends PDOMTestBase {
 		ICPPFunctionType type = method.getType();
 		assertFalse(type.isConst());
 	}
-	
+
 	public void testNotVolatileMethod() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::notVolatileMethod");
 		assertEquals(1, bindings.length);
@@ -242,7 +242,7 @@ public class MethodTests extends PDOMTestBase {
 		ICPPFunctionType type = method.getType();
 		assertFalse(type.isVolatile());
 	}
-		
+
 	public void testNotConstVolatileMethod() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::notConstVolatileMethod");
 		assertEquals(1, bindings.length);
@@ -251,7 +251,7 @@ public class MethodTests extends PDOMTestBase {
 		assertFalse(type.isConst());
 		assertFalse(type.isVolatile());
 	}
-	
+
 	public void testNoExceptionSpecification() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::noExceptionSpecMethod");
 		assertEquals(1, bindings.length);
@@ -259,7 +259,7 @@ public class MethodTests extends PDOMTestBase {
 		IType[] exceptionSpec = method.getExceptionSpecification();
 		assertNull(exceptionSpec);
 	}
-	
+
 	public void testEmptyExceptionSpecification() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::emptyExceptionSpecMethod");
 		assertEquals(1, bindings.length);
@@ -267,7 +267,7 @@ public class MethodTests extends PDOMTestBase {
 		IType[] exceptionSpec = method.getExceptionSpecification();
 		assertEquals(0, exceptionSpec.length);
 	}
-	
+
 	public void testNonEmptyExceptionSpecification() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::nonEmptyExceptionSpecMethod");
 		assertEquals(1, bindings.length);
@@ -301,8 +301,8 @@ public class MethodTests extends PDOMTestBase {
 		ICPPMethod method = (ICPPMethod) bindings[0];
 		IType[] exceptionSpec = method.getExceptionSpecification();
 		assertEquals(2, exceptionSpec.length);
-		int t1= ((ICPPBasicType) exceptionSpec[0]).getType();
-		int t2= ((ICPPBasicType) exceptionSpec[1]).getType();
+		int t1 = ((ICPPBasicType) exceptionSpec[0]).getType();
+		int t2 = ((ICPPBasicType) exceptionSpec[1]).getType();
 		assertEquals(IBasicType.t_int, Math.min(t1, t2));
 		assertEquals(IBasicType.t_double, Math.max(t1, t2));
 	}

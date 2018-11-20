@@ -23,12 +23,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 public class CPPASTInactiveCompletionName extends CPPASTName implements IASTInactiveCompletionName {
 	private IASTTranslationUnit fAst;
-	
+
 	public CPPASTInactiveCompletionName(char[] name, IASTTranslationUnit ast) {
 		super(name);
 		fAst = ast;
 	}
-	
+
 	@Override
 	public IASTCompletionContext getCompletionContext() {
 		return this;
@@ -37,7 +37,7 @@ public class CPPASTInactiveCompletionName extends CPPASTName implements IASTInac
 	@Override
 	public IBinding[] findBindings(IASTName name, boolean isPrefix) {
 		// 'name' (which is the same as 'this') is not hooked up to the AST, but it
-		// does have a location (offset and length) which we use to compute the 
+		// does have a location (offset and length) which we use to compute the
 		// containing scope.
 		IASTNodeSelector sel = fAst.getNodeSelector(null);
 		IASTNode node = sel.findEnclosingNode(getOffset(), getLength());

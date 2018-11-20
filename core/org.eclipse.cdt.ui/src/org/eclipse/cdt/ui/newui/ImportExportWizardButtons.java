@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    IBM Corporation - Initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -36,13 +36,13 @@ import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsWizard
 /**
  * Utility class that adds buttons for "Import Settings..." and "Export Settings..."
  * to the bottom of the Includes and Symbols tabs.
- * 
+ *
  * @since 5.2
  */
 public class ImportExportWizardButtons {
-	
-	private ImportExportWizardButtons() {}
-	
+
+	private ImportExportWizardButtons() {
+	}
 
 	public static void addWizardLaunchButtons(final Composite parent, final IAdaptable selection) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -52,44 +52,45 @@ public class ImportExportWizardButtons {
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		comp.setLayoutData(data);
-		
+
 		Button importButton = new Button(comp, SWT.NONE);
-		importButton.setText(Messages.IncludeTab_import); 
+		importButton.setText(Messages.IncludeTab_import);
 		importButton.setImage(CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_IMPORT_SETTINGS));
 		importButton.addSelectionListener(new SelectionAdapter() {
-			@Override public void widgetSelected(SelectionEvent e) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
 				boolean finishedPressed = launchWizard(parent.getShell(), selection, false);
 				// There is no way to get the contents of the property page to update
 				// other than to close the whole dialog and then reopen it.
-				if(finishedPressed)
+				if (finishedPressed)
 					parent.getShell().close();
 			}
 		});
-		
+
 		Button exportButton = new Button(comp, SWT.NONE);
-		exportButton.setText(Messages.IncludeTab_export); 
+		exportButton.setText(Messages.IncludeTab_export);
 		exportButton.setImage(CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_EXPORT_SETTINGS));
 		exportButton.addSelectionListener(new SelectionAdapter() {
-			@Override public void widgetSelected(SelectionEvent e) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
 				launchWizard(parent.getShell(), selection, true);
 			}
 		});
-		
+
 	}
-	
-	
+
 	private static boolean launchWizard(Shell shell, IAdaptable selection, boolean export) {
 		ProjectSettingsWizard wizard;
-		if(export)
+		if (export)
 			wizard = new ProjectSettingsExportWizard();
 		else
 			wizard = new ProjectSettingsImportWizard();
-		
+
 		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection(selection));
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.open();
-		
+
 		return wizard.isFinishedPressed();
 	}
 }

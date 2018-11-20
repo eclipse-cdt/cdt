@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,12 +17,12 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
- * Sets a variable value 
- * 
+ * Sets a variable value
+ *
  * <pre>
  *    C: setvar {thread_id} {frame_number} {variable} {value}
  *    R: ok
- *    
+ *
  * Errors:
  *    error: invalid thread
  * </pre>
@@ -30,12 +30,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDASetVarCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASetVarCommand(PDAThreadDMContext thread, int frame, String variable, String value) {
-        super(thread, "setvar " + thread.getID() + " " + frame + " " + variable + " " + value);
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDASetVarCommand(PDAThreadDMContext thread, int frame, String variable, String value) {
+		super(thread, "setvar " + thread.getID() + " " + frame + " " + variable + " " + value);
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

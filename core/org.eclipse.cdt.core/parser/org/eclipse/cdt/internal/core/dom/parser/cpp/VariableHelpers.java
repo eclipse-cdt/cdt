@@ -78,8 +78,7 @@ public class VariableHelpers {
 		}
 
 		if (parent instanceof IASTSimpleDeclaration) {
-			ICPPASTDeclSpecifier declSpec =
-					(ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) parent).getDeclSpecifier();
 			if (declSpec != null)
 				return declSpec.isConstexpr();
 		}
@@ -98,8 +97,7 @@ public class VariableHelpers {
 			// the declarations.
 			// See http://bugs.eclipse.org/434150
 			if (definition != null && !doneWithDefinition
-					&& (i == length
-					|| ((ASTNode) definition).getOffset() < ((ASTNode) declarations[i]).getOffset())) {
+					&& (i == length || ((ASTNode) definition).getOffset() < ((ASTNode) declarations[i]).getOffset())) {
 				n = definition;
 				doneWithDefinition = true;
 				--i; // We still have to come back to the declaration at position i.
@@ -133,8 +131,7 @@ public class VariableHelpers {
 		return firstCandidate;
 	}
 
-	private static void resolveAllDeclarations(ICPPVariable variable, IASTName definition,
-			IASTName[] declarations) {
+	private static void resolveAllDeclarations(ICPPVariable variable, IASTName definition, IASTName[] declarations) {
 		final int length = declarations == null ? 0 : declarations.length;
 		for (int i = -1; i < length; i++) {
 			@SuppressWarnings("null")
@@ -219,15 +216,15 @@ public class VariableHelpers {
 
 	private static IASTDeclaration getPrimaryDeclaration(ICPPInternalVariable field) {
 		// First check if we already know it.
-		IASTDeclaration decl= findDeclaration(field.getDefinition());
+		IASTDeclaration decl = findDeclaration(field.getDefinition());
 		if (decl != null) {
 			return decl;
 		}
 
-	    IASTName[] declarations = (IASTName[]) field.getDeclarations();
+		IASTName[] declarations = (IASTName[]) field.getDeclarations();
 		if (declarations != null) {
 			for (IASTName name : declarations) {
-				decl= findDeclaration(name);
+				decl = findDeclaration(name);
 				if (decl != null) {
 					return decl;
 				}
@@ -237,8 +234,8 @@ public class VariableHelpers {
 		char[] myName = field.getNameCharArray();
 
 		ICPPClassScope scope = findClassScope(field);
-		ICPPASTCompositeTypeSpecifier compSpec =
-				(ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(scope);
+		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal
+				.getPhysicalNodeOfScope(scope);
 		IASTDeclaration[] members = compSpec.getMembers();
 		for (IASTDeclaration member : members) {
 			if (member instanceof IASTSimpleDeclaration) {
@@ -280,7 +277,7 @@ public class VariableHelpers {
 		}
 		if (node != null && node.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
 			return (IASTDeclaration) node;
-    	}
+		}
 		return null;
 	}
 }

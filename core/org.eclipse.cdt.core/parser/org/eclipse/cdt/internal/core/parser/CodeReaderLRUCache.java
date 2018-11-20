@@ -19,15 +19,14 @@ import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
 
 /**
  * This class is a wrapper/implementor class for OverflowingLRUCache.
- * 
+ *
  * It uses CodeReaderCacheEntry (which implements ILRUCacheable) to specify that the size of
- * the cache should be relative to the size of the entries and not the number of entries. 
+ * the cache should be relative to the size of the entries and not the number of entries.
  * @deprecated
  */
 @Deprecated
 public class CodeReaderLRUCache extends OverflowingLRUCache<String, CodeReaderCacheEntry> {
-	
-	
+
 	/**
 	 * Creates a new CodeReaderLRUCache with a specified initial maximum size.
 	 * @param size the maximum size of the cache in terms of MB
@@ -36,39 +35,39 @@ public class CodeReaderLRUCache extends OverflowingLRUCache<String, CodeReaderCa
 		super(); // need to initialize the LRUCache with super() so that the size of the hashtable isn't relative to the size in MB
 		this.setSpaceLimit(size);
 	}
-	
+
 	// must be overloaded, required to remove entries from the cache
 	@Override
-	protected boolean close(LRUCacheEntry<String,CodeReaderCacheEntry> entry) {
+	protected boolean close(LRUCacheEntry<String, CodeReaderCacheEntry> entry) {
 		Object obj = remove(entry._fKey);
-		
-		if (obj != null) 
+
+		if (obj != null)
 			return true;
-					
+
 		return false;
 	}
 
 	@Override
-	protected OverflowingLRUCache<String,CodeReaderCacheEntry> newInstance(int size, int overflow) {
-		return null;
-	}
-	
-	/**
-	 * Removes an entry from the cache and returns the entry that was removed if found.
-	 * Otherwise null is returned. 
-	 */
-	@Override
-	public CodeReader remove(String key) {
-		Object removed = removeKey(key);
-					
-		if (removed instanceof CodeReaderCacheEntry)
-			return ((CodeReaderCacheEntry)removed).getCodeReader();
-		
+	protected OverflowingLRUCache<String, CodeReaderCacheEntry> newInstance(int size, int overflow) {
 		return null;
 	}
 
 	/**
-	 * Puts a CodeReader into the cache by wrapping it with a CodeReaderCacheEntry first. 
+	 * Removes an entry from the cache and returns the entry that was removed if found.
+	 * Otherwise null is returned.
+	 */
+	@Override
+	public CodeReader remove(String key) {
+		Object removed = removeKey(key);
+
+		if (removed instanceof CodeReaderCacheEntry)
+			return ((CodeReaderCacheEntry) removed).getCodeReader();
+
+		return null;
+	}
+
+	/**
+	 * Puts a CodeReader into the cache by wrapping it with a CodeReaderCacheEntry first.
 	 * This way the proper size of the element in the cache can be determined
 	 * via the CodeReaderCacheEntry.
 	 */
@@ -77,7 +76,7 @@ public class CodeReaderLRUCache extends OverflowingLRUCache<String, CodeReaderCa
 		CodeReaderCacheEntry ret = put(key, entry);
 		if (ret != null)
 			return ret.getCodeReader();
-		
+
 		return null;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,9 +24,9 @@ import org.eclipse.cdt.codan.internal.core.model.ProblemLocationFactory;
 
 /**
  * Runtime singleton class to get access to Codan framework parts
- * 
+ *
  * Clients may extend this class to override default framework parts.
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
  * of a work in progress. There is no guarantee that this API will work or that
@@ -50,7 +50,7 @@ public class CodanRuntime {
 
 	/**
 	 * Get runtime problem reporter. Default reported generated problem markers.
-	 * 
+	 *
 	 * @return
 	 */
 	public IProblemReporter getProblemReporter() {
@@ -59,7 +59,7 @@ public class CodanRuntime {
 
 	/**
 	 * Set different problem reporter.
-	 * 
+	 *
 	 * @param reporter
 	 */
 	public void setProblemReporter(IProblemReporter reporter) {
@@ -68,7 +68,7 @@ public class CodanRuntime {
 
 	/**
 	 * Get instance of of Codan Runtime
-	 * 
+	 *
 	 * @return
 	 */
 	public static CodanRuntime getInstance() {
@@ -78,7 +78,7 @@ public class CodanRuntime {
 	/**
 	 * Get builder. Builder can used to run code analysis on given resource
 	 * using API.
-	 * 
+	 *
 	 * @return
 	 */
 	public ICodanBuilder getBuilder() {
@@ -87,7 +87,7 @@ public class CodanRuntime {
 
 	/**
 	 * Get checkers registry.
-	 * 
+	 *
 	 * @return
 	 * @since 2.0
 	 */
@@ -97,7 +97,7 @@ public class CodanRuntime {
 
 	/**
 	 * Get problem location factory.
-	 * 
+	 *
 	 * @return
 	 */
 	public IProblemLocationFactory getProblemLocationFactory() {
@@ -107,7 +107,7 @@ public class CodanRuntime {
 	/**
 	 * Set another problem location factory - only need if default is not
 	 * sufficient, i.e IProblemLocation is implemented differently
-	 * 
+	 *
 	 * @param factory
 	 */
 	public void setProblemLocationFactory(IProblemLocationFactory factory) {

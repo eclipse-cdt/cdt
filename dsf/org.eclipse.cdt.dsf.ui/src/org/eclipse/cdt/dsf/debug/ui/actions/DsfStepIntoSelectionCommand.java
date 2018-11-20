@@ -46,15 +46,16 @@ import org.eclipse.swt.widgets.Display;
 /**
  * @since 2.4
  */
-public class DsfStepIntoSelectionCommand extends AbstractDebugCommand implements IStepIntoSelectionHandler, IDsfStepIntoSelection {
+public class DsfStepIntoSelectionCommand extends AbstractDebugCommand
+		implements IStepIntoSelectionHandler, IDsfStepIntoSelection {
 	private final DsfSession fSession;
 	private final DsfServicesTracker fTracker;
-	
+
 	public DsfStepIntoSelectionCommand(DsfSession session) {
 		fSession = session;
 		fTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
 	}
-	
+
 	public void dispose() {
 		fTracker.dispose();
 	}
@@ -66,7 +67,8 @@ public class DsfStepIntoSelectionCommand extends AbstractDebugCommand implements
 			return;
 		}
 
-		final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(), IExecutionDMContext.class);
+		final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(),
+				IExecutionDMContext.class);
 		if (dmc == null) {
 			return;
 		}
@@ -83,13 +85,15 @@ public class DsfStepIntoSelectionCommand extends AbstractDebugCommand implements
 	}
 
 	@Override
-	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request) throws CoreException {
+	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
+			throws CoreException {
 		// No multiple selections allowed for Step into selection
 		if (targets.length != 1) {
 			return false;
 		}
 
-		final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(), IExecutionDMContext.class);
+		final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(),
+				IExecutionDMContext.class);
 		return isExecutable(dmc);
 	}
 
@@ -105,7 +109,7 @@ public class DsfStepIntoSelectionCommand extends AbstractDebugCommand implements
 	protected boolean isRemainEnabled(IDebugCommandRequest request) {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isExecutable(final IExecutionDMContext dmc) {
 		if (dmc == null) {
@@ -140,7 +144,8 @@ public class DsfStepIntoSelectionCommand extends AbstractDebugCommand implements
 	}
 
 	@Override
-	public void runToSelection(final String fileName, final int lineLocation, final IFunctionDeclaration selectedFunction, final IExecutionDMContext dmc) {
+	public void runToSelection(final String fileName, final int lineLocation,
+			final IFunctionDeclaration selectedFunction, final IExecutionDMContext dmc) {
 		if (fSession != null && fSession.isActive()) {
 			Throwable exception = null;
 			try {
@@ -149,12 +154,15 @@ public class DsfStepIntoSelectionCommand extends AbstractDebugCommand implements
 					protected void execute(final DataRequestMonitor<Object> rm) {
 						IRunControl3 runControl = fTracker.getService(IRunControl3.class);
 						if (runControl == null) {
-							rm.done(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "IRunControl3 service not available", null)); //$NON-NLS-1$
+							rm.done(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED,
+									"IRunControl3 service not available", null)); //$NON-NLS-1$
 							return;
 						}
 
-						boolean skipBreakpoints = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
-						runControl.stepIntoSelection(dmc, fileName, lineLocation, skipBreakpoints, selectedFunction, rm);
+						boolean skipBreakpoints = DebugUITools.getPreferenceStore()
+								.getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
+						runControl.stepIntoSelection(dmc, fileName, lineLocation, skipBreakpoints, selectedFunction,
+								rm);
 					}
 				};
 
@@ -169,10 +177,12 @@ public class DsfStepIntoSelectionCommand extends AbstractDebugCommand implements
 			}
 
 			if (exception != null) {
-				DsfUIPlugin.log(new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Failed executing Step into Selection", exception)));//$NON-NLS-1$
+				DsfUIPlugin.log(new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID,
+						DebugException.REQUEST_FAILED, "Failed executing Step into Selection", exception)));//$NON-NLS-1$
 			}
 		} else {
-			DsfUIPlugin.log(new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Debug session is not active", null))); //$NON-NLS-1$            
+			DsfUIPlugin.log(new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID,
+					DebugException.REQUEST_FAILED, "Debug session is not active", null))); //$NON-NLS-1$
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2012, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences.
  *
  * This program and the accompanying materials
@@ -27,5 +27,5 @@ public interface ICPPAliasTemplate extends IType, ICPPTemplateDefinition {
 	/**
 	 * Returns the aliased type.
 	 */
-	public IType getType();	
+	public IType getType();
 }

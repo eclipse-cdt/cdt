@@ -32,7 +32,6 @@ public class ShowCamelCasePreferenceTest extends AbstractContentAssistTest {
 	private static final String SOURCE_FILE_NAME = "ContentAssistPreferenceTest.cpp";
 	private static final String CURSOR_LOCATION_TAG = "/*cursor*/";
 
-	
 	protected int fCursorOffset;
 	private IProject fProject;
 
@@ -43,45 +42,43 @@ public class ShowCamelCasePreferenceTest extends AbstractContentAssistTest {
 	public static Test suite() {
 		return BaseTestCase.suite(ShowCamelCasePreferenceTest.class, "_");
 	}
-	
+
 	@Override
 	protected IFile setUpProjectContent(IProject project) throws Exception {
-		fProject= project;
-		StringBuilder sourceContent= getContentsForTest(1)[0];
-		fCursorOffset= sourceContent.indexOf(CURSOR_LOCATION_TAG);
+		fProject = project;
+		StringBuilder sourceContent = getContentsForTest(1)[0];
+		fCursorOffset = sourceContent.indexOf(CURSOR_LOCATION_TAG);
 		assertTrue("No cursor location specified", fCursorOffset >= 0);
-		sourceContent.delete(fCursorOffset, fCursorOffset+CURSOR_LOCATION_TAG.length());
+		sourceContent.delete(fCursorOffset, fCursorOffset + CURSOR_LOCATION_TAG.length());
 		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
-		InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID).remove(
-				ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES);
+		InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID).remove(ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES);
 		super.setUp();
 	}
 
 	@Override
 
 	protected void tearDown() throws Exception {
-		InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID).remove(
-				ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES);
+		InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID).remove(ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES);
 		super.tearDown();
 	}
-	
+
 	protected static final int DEFAULT_FLAGS = AbstractContentAssistTest.DEFAULT_FLAGS | IS_COMPLETION;
 
 	protected void assertCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
 		assertContentAssistResults(offset, expected, DEFAULT_FLAGS, compareType);
 	}
-	
+
 	protected void assertCompletionResults(String[] expected) throws Exception {
 		assertCompletionResults(fCursorOffset, expected, CompareType.REPLACEMENT);
 	}
 
 	private void setShowCamelCaseMatches(boolean enabled) {
-		InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID).putBoolean(
-				ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES, enabled);
+		InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID).putBoolean(ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES,
+				enabled);
 	}
 
 	// int fbar;
@@ -90,10 +87,10 @@ public class ShowCamelCasePreferenceTest extends AbstractContentAssistTest {
 	//   fB/*cursor*/
 	// }
 	public void testDefault() throws Exception {
-		final String[] expected= { "fbar", "fooBar" };
+		final String[] expected = { "fbar", "fooBar" };
 		assertCompletionResults(expected);
 	}
-	
+
 	// int fbar;
 	// int fooBar;
 	// void something() {
@@ -101,10 +98,10 @@ public class ShowCamelCasePreferenceTest extends AbstractContentAssistTest {
 	// }
 	public void testCamelCaseOff() throws Exception {
 		setShowCamelCaseMatches(false);
-		final String[] expected= { "fbar" };
+		final String[] expected = { "fbar" };
 		assertCompletionResults(expected);
 	}
-	
+
 	// int fbar;
 	// int fooBar;
 	// void something() {
@@ -112,7 +109,7 @@ public class ShowCamelCasePreferenceTest extends AbstractContentAssistTest {
 	// }
 	public void testCamelCaseOn() throws Exception {
 		setShowCamelCaseMatches(true);
-		final String[] expected= { "fbar", "fooBar" };
+		final String[] expected = { "fbar", "fooBar" };
 		assertCompletionResults(expected);
 	}
 }

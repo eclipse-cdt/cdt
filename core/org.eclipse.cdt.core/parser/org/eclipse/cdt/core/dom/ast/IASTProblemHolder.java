@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represents a base interface to represent a problem owner or holder.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -24,19 +24,19 @@ public interface IASTProblemHolder {
 	 * <code>PROBLEM</code> represents the relationship between a
 	 * <code>IASTProblemHolder</code> and its <code>IASTProblem</code>.
 	 */
-	public static final ASTNodeProperty PROBLEM =
-			new ASTNodeProperty("IASTProblemHolder.PROBLEM - IASTProblem for IASTProblemHolder"); //$NON-NLS-1$
+	public static final ASTNodeProperty PROBLEM = new ASTNodeProperty(
+			"IASTProblemHolder.PROBLEM - IASTProblem for IASTProblemHolder"); //$NON-NLS-1$
 
 	/**
 	 * Get the problem.
-	 * 
+	 *
 	 * @return <code>IASTProblem</code>
 	 */
 	public IASTProblem getProblem();
 
 	/**
 	 * Set the problem.
-	 * 
+	 *
 	 * @param p
 	 *            <code>IASTProblem</code>
 	 */

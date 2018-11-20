@@ -21,31 +21,33 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
  * @since 2.6
  */
 public interface IModules2 extends IModules {
-	
-    /**
-     * Event indicating a change in the symbols of certain modules of the symbol context.
-     */
-    public interface ISymbolsChangedDMEvent extends IDMEvent<ISymbolDMContext> {
-        public IModuleDMContext[] getModules();        
-    }
 
-    /**
-     * Indicates symbols were loaded for some modules.
-     */
-    public interface ISymbolsLoadedDMEvent extends ISymbolsChangedDMEvent {}
+	/**
+	 * Event indicating a change in the symbols of certain modules of the symbol context.
+	 */
+	public interface ISymbolsChangedDMEvent extends IDMEvent<ISymbolDMContext> {
+		public IModuleDMContext[] getModules();
+	}
 
-    /**
-     * Indicates symbols were unloaded for some modules.
-     */
-    public interface ISymbolsUnloadedDMEvent extends ISymbolsChangedDMEvent {}
+	/**
+	 * Indicates symbols were loaded for some modules.
+	 */
+	public interface ISymbolsLoadedDMEvent extends ISymbolsChangedDMEvent {
+	}
 
-	/** 
-	 * Load symbols for all modules of the specified symbol context 
+	/**
+	 * Indicates symbols were unloaded for some modules.
+	 */
+	public interface ISymbolsUnloadedDMEvent extends ISymbolsChangedDMEvent {
+	}
+
+	/**
+	 * Load symbols for all modules of the specified symbol context
 	 */
 	void loadSymbolsForAllModules(ISymbolDMContext symCtx, RequestMonitor rm);
-	
+
 	/**
-	 *  Load symbols for the specified module 
+	 *  Load symbols for the specified module
 	 */
 	void loadSymbols(IModuleDMContext dmc, RequestMonitor rm);
 }

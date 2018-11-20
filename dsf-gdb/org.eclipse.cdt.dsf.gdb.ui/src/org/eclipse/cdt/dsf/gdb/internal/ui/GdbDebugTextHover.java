@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson                    - Updated hover to use the new Details format
@@ -23,30 +23,29 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * Debug editor text hover for GDB.
- * 
+ *
  * @since 2.1
  */
 public class GdbDebugTextHover extends AbstractDsfDebugTextHover {
 
-    @Override
-    protected String getModelId() {
-        return GdbLaunchDelegate.GDB_DEBUG_MODEL_ID;
-    }
+	@Override
+	protected String getModelId() {
+		return GdbLaunchDelegate.GDB_DEBUG_MODEL_ID;
+	}
 
-    @Override
+	@Override
 	protected String getHoverFormat() {
-    	return  MIExpressions.DETAILS_FORMAT;
-    }
+		return MIExpressions.DETAILS_FORMAT;
+	}
 
-    @Override
-    protected boolean useExpressionExplorer() {
-    	// The preference is part of the GdbPlugin preference store
-    	// Bug 414622
-    	if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
-				IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER,
-				true, null)) {
-    		return true;
-    	}
-    	return false;
-    }
+	@Override
+	protected boolean useExpressionExplorer() {
+		// The preference is part of the GdbPlugin preference store
+		// Bug 414622
+		if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
+				IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER, true, null)) {
+			return true;
+		}
+		return false;
+	}
 }

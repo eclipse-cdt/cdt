@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This is the root class of expressions.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -37,7 +37,7 @@ public interface IASTExpression extends IASTInitializerClause {
 		 * Pure rvalue.
 		 */
 		PRVALUE;
-		
+
 		/**
 		 * Both prvalues and xvalues are rvalues.
 		 */
@@ -62,14 +62,14 @@ public interface IASTExpression extends IASTInitializerClause {
 	 * Returns the type of the value the expression evaluates to.
 	 */
 	public IType getExpressionType();
-	
+
 	/**
 	 * Returns whether this expression is an lvalue. LValues are for instance required on
 	 * the left hand side of an assignment expression.
 	 * @since 5.2
 	 */
 	public boolean isLValue();
-	
+
 	/**
 	 * Returns the value category of this expression.
 	 * @since 5.3

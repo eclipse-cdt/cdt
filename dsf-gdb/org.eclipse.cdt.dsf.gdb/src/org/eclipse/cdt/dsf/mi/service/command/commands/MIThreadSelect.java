@@ -18,26 +18,24 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
-
 /**
- * 
+ *
  *    -thread-select THREADNUM
  *
  * Make THREADNUM the current thread.  It prints the number of the new
  * current thread, and the topmost frame for that thread.
- * 
+ *
  */
 
-public class MIThreadSelect extends MICommand<MIInfo>
-{
+public class MIThreadSelect extends MICommand<MIInfo> {
 	public MIThreadSelect(IDMContext ctx, int threadNum) {
 		this(ctx, Integer.toString(threadNum));
 	}
-	
+
 	/**
-     * @since 1.1
-     */
+	 * @since 1.1
+	 */
 	public MIThreadSelect(IDMContext ctx, String threadNum) {
-		super(ctx, "-thread-select", new String[]{threadNum}); //$NON-NLS-1$
+		super(ctx, "-thread-select", new String[] { threadNum }); //$NON-NLS-1$
 	}
 }

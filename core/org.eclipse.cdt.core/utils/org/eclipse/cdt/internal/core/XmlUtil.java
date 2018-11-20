@@ -72,7 +72,7 @@ public class XmlUtil {
 	 * @return node value or {@code null}
 	 */
 	public static String determineNodeValue(Node node) {
-		return node!=null ? node.getNodeValue() : null;
+		return node != null ? node.getNodeValue() : null;
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class XmlUtil {
 	 */
 	public static String determineAttributeValue(Node element, String attr) {
 		NamedNodeMap attributes = element.getAttributes();
-		return attributes!=null ? determineNodeValue(attributes.getNamedItem(attr)) : null;
+		return attributes != null ? determineNodeValue(attributes.getNamedItem(attr)) : null;
 	}
 
 	/**
@@ -102,13 +102,13 @@ public class XmlUtil {
 	 *    (i.e. the last attribute is missing a value).
 	 */
 	public static Element appendElement(Node parent, String name, String[] attributes) {
-		Document doc = parent instanceof Document ? (Document)parent : parent.getOwnerDocument();
+		Document doc = parent instanceof Document ? (Document) parent : parent.getOwnerDocument();
 		Element element = doc.createElement(name);
-		if (attributes!=null) {
+		if (attributes != null) {
 			int attrLen = attributes.length;
-			for (int i=0;i<attrLen;i+=2) {
+			for (int i = 0; i < attrLen; i += 2) {
 				String attrName = attributes[i];
-				String attrValue = attributes[i+1];
+				String attrValue = attributes[i + 1];
 				element.setAttribute(attrName, attrValue);
 			}
 		}
@@ -150,7 +150,7 @@ public class XmlUtil {
 	public static void prettyFormat(Document doc, String ident) {
 		doc.normalize();
 		Element documentElement = doc.getDocumentElement();
-		if (documentElement!=null) {
+		if (documentElement != null) {
 			prettyFormat(documentElement, "", ident); //$NON-NLS-1$
 		}
 	}
@@ -164,33 +164,33 @@ public class XmlUtil {
 	 */
 	private static void prettyFormat(Node node, String identLevel, String ident) {
 		NodeList nodelist = node.getChildNodes();
-		int iStart=0;
+		int iStart = 0;
 		Node item = nodelist.item(0);
-		if (item!=null) {
+		if (item != null) {
 			short type = item.getNodeType();
-			if (type==Node.ELEMENT_NODE || type==Node.COMMENT_NODE) {
+			if (type == Node.ELEMENT_NODE || type == Node.COMMENT_NODE) {
 				Node newChild = node.getOwnerDocument().createTextNode(EOL_XML + identLevel + ident);
 				node.insertBefore(newChild, item);
-				iStart=1;
+				iStart = 1;
 			}
 		}
-		for (int i=iStart;i<nodelist.getLength();i++) {
+		for (int i = iStart; i < nodelist.getLength(); i++) {
 			item = nodelist.item(i);
-			if (item!=null) {
+			if (item != null) {
 				short type = item.getNodeType();
-				if (type==Node.TEXT_NODE && item.getNodeValue().trim().length()==0) {
-					if (i+1<nodelist.getLength()) {
+				if (type == Node.TEXT_NODE && item.getNodeValue().trim().length() == 0) {
+					if (i + 1 < nodelist.getLength()) {
 						item.setNodeValue(EOL_XML + identLevel + ident);
 					} else {
 						item.setNodeValue(EOL_XML + identLevel);
 					}
-				} else if (type==Node.ELEMENT_NODE) {
+				} else if (type == Node.ELEMENT_NODE) {
 					prettyFormat(item, identLevel + ident, ident);
-					if (i+1<nodelist.getLength()) {
-						Node nextItem = nodelist.item(i+1);
-						if (nextItem!=null) {
+					if (i + 1 < nodelist.getLength()) {
+						Node nextItem = nodelist.item(i + 1);
+						if (nextItem != null) {
 							short nextType = nextItem.getNodeType();
-							if (nextType==Node.ELEMENT_NODE || nextType==Node.COMMENT_NODE) {
+							if (nextType == Node.ELEMENT_NODE || nextType == Node.COMMENT_NODE) {
 								Node newChild = node.getOwnerDocument().createTextNode(EOL_XML + identLevel + ident);
 								node.insertBefore(newChild, nextItem);
 								i++;
@@ -276,11 +276,12 @@ public class XmlUtil {
 	 * @param doc - DOM Document to serialize.
 	 * @param uriLocation - URI of the file.
 	 * @param lineSeparator - line separator.
-	 * 
+	 *
 	 * @throws IOException in case of problems with file I/O
 	 * @throws TransformerException in case of problems with XML output
 	 */
-	public static void serializeXml(Document doc, URI uriLocation, String lineSeparator) throws IOException, TransformerException, CoreException {
+	public static void serializeXml(Document doc, URI uriLocation, String lineSeparator)
+			throws IOException, TransformerException, CoreException {
 		XmlUtil.prettyFormat(doc);
 
 		java.io.File storeFile = new java.io.File(uriLocation);
@@ -320,10 +321,11 @@ public class XmlUtil {
 				return new FileOutputStream(storeFile);
 			} catch (FileNotFoundException e) {
 				// only apply workaround for the very specific exception
-				if (i >= maxCount || !e.getMessage().contains("The requested operation cannot be performed on a file with a user-mapped section open")) { //$NON-NLS-1$
+				if (i >= maxCount || !e.getMessage().contains(
+						"The requested operation cannot be performed on a file with a user-mapped section open")) { //$NON-NLS-1$
 					throw e;
 				}
-//				CCorePlugin.log(new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, "Workaround for concurrent access to memory-mapped files applied, attempt " + (i + 1), e)); //$NON-NLS-1$
+				//				CCorePlugin.log(new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, "Workaround for concurrent access to memory-mapped files applied, attempt " + (i + 1), e)); //$NON-NLS-1$
 			}
 		}
 
@@ -364,7 +366,7 @@ public class XmlUtil {
 	 *
 	 * @param string - the string to be replaced
 	 * @param lineSeparator - line separator to be used in the string
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 *    This is an internal method which ideally should be made private.
 	 */

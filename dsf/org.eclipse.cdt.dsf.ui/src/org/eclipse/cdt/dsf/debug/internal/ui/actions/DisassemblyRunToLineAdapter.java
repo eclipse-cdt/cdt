@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Run to line target adapter for the DSF Disassembly view
- * 
+ *
  * @since 2.1
  */
 public class DisassemblyRunToLineAdapter implements IRunToLineTarget {
@@ -49,21 +49,21 @@ public class DisassemblyRunToLineAdapter implements IRunToLineTarget {
 	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
 		if (part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
 			if (!(selection instanceof IDisassemblySelection)) {
-				selection = new DisassemblySelection((ITextSelection)selection, (IDisassemblyPart)part);
+				selection = new DisassemblySelection((ITextSelection) selection, (IDisassemblyPart) part);
 			}
-			IDisassemblySelection disassemblySelection = (IDisassemblySelection)selection;
+			IDisassemblySelection disassemblySelection = (IDisassemblySelection) selection;
 			final IAddress address = disassemblySelection.getStartAddress();
 
 			if (address != null && target instanceof IAdaptable) {
-				final IRunToAddress runToAddress = ((IAdaptable)target).getAdapter(IRunToAddress.class);
+				final IRunToAddress runToAddress = ((IAdaptable) target).getAdapter(IRunToAddress.class);
 				if (runToAddress != null && runToAddress.canRunToAddress(address)) {
 					try {
-						boolean skipBreakpoints = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
-						runToAddress.runToAddress(address, skipBreakpoints);								
-					}
-					catch(DebugException e) {
+						boolean skipBreakpoints = DebugUITools.getPreferenceStore()
+								.getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
+						runToAddress.runToAddress(address, skipBreakpoints);
+					} catch (DebugException e) {
 						failed(e);
-					}								
+					}
 				}
 			}
 		}
@@ -75,15 +75,15 @@ public class DisassemblyRunToLineAdapter implements IRunToLineTarget {
 	@Override
 	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
 		if (target instanceof IAdaptable && part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
-			IRunToAddress runToAddress = ((IAdaptable)target).getAdapter(IRunToAddress.class);
+			IRunToAddress runToAddress = ((IAdaptable) target).getAdapter(IRunToAddress.class);
 			if (runToAddress == null) {
 				return false;
 			}
-			
+
 			if (!(selection instanceof IDisassemblySelection)) {
-				selection = new DisassemblySelection((ITextSelection)selection, (IDisassemblyPart)part);
+				selection = new DisassemblySelection((ITextSelection) selection, (IDisassemblyPart) part);
 			}
-			IDisassemblySelection disassemblySelection = (IDisassemblySelection)selection;
+			IDisassemblySelection disassemblySelection = (IDisassemblySelection) selection;
 			final IAddress address = disassemblySelection.getStartAddress();
 			if (address == null) {
 				return false;
@@ -95,9 +95,11 @@ public class DisassemblyRunToLineAdapter implements IRunToLineTarget {
 		return false;
 	}
 
-	protected void failed( Throwable e ) {
-		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), IDsfStatusConstants.REQUEST_FAILED, "RunToLine failed", null ); //$NON-NLS-1$
-		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), IDsfStatusConstants.REQUEST_FAILED, e.getMessage(), e ) );
+	protected void failed(Throwable e) {
+		MultiStatus ms = new MultiStatus(CDIDebugModel.getPluginIdentifier(), IDsfStatusConstants.REQUEST_FAILED,
+				"RunToLine failed", null); //$NON-NLS-1$
+		ms.add(new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), IDsfStatusConstants.REQUEST_FAILED,
+				e.getMessage(), e));
 		DsfUIPlugin.log(ms);
 	}
 }

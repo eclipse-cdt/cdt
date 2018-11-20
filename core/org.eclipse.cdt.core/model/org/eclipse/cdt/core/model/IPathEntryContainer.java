@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients. 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPathEntryContainer {
 
@@ -38,7 +38,7 @@ public interface IPathEntryContainer {
 	 * @see IPathEntry
 	 */
 	IPathEntry[] getPathEntries();
-	
+
 	/**
 	 * Answers a readable description of this container
 	 *
@@ -58,5 +58,5 @@ public interface IPathEntryContainer {
 	 * @return IPath - the container path that is associated with this container
 	 */
 	IPath getPath();
-	
+
 }

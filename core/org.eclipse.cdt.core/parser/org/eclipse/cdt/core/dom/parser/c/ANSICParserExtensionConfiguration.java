@@ -15,10 +15,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.c;
 
-
 /**
  * @author jcamelon
  */
 public class ANSICParserExtensionConfiguration extends AbstractCParserExtensionConfiguration {
-	
+
 }

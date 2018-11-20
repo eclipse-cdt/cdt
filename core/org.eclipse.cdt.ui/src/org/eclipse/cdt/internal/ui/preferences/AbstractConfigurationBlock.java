@@ -51,47 +51,47 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 
 /**
  * Abstract implementation of a generic {@link IPreferenceConfigurationBlock}.
- * 
+ *
  * @since 4.0
  */
 abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlock {
 	/**
 	 * Use as follows:
-	 * 
+	 *
 	 * <pre>
 	 * SectionManager manager= new SectionManager();
 	 * Composite composite= manager.createSectionComposite(parent);
-	 * 
+	 *
 	 * Composite xSection= manager.createSection("section X"));
 	 * xSection.setLayout(new FillLayout());
 	 * new Button(xSection, SWT.PUSH); // add controls to section..
-	 * 
+	 *
 	 * [...]
-	 * 
+	 *
 	 * return composite; // return main composite
 	 * </pre>
 	 */
 	protected final class SectionManager {
 		/** The preference setting for keeping no section open. */
-		private static final String __NONE= "__none"; //$NON-NLS-1$
-		private final Set<ExpandableComposite> fSections= new HashSet<ExpandableComposite>();
-		private boolean fIsBeingManaged= false;
-		private final ExpansionAdapter fListener= new ExpansionAdapter() {
+		private static final String __NONE = "__none"; //$NON-NLS-1$
+		private final Set<ExpandableComposite> fSections = new HashSet<ExpandableComposite>();
+		private boolean fIsBeingManaged = false;
+		private final ExpansionAdapter fListener = new ExpansionAdapter() {
 			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
-				ExpandableComposite source= (ExpandableComposite) e.getSource();
+				ExpandableComposite source = (ExpandableComposite) e.getSource();
 				updateSectionStyle(source);
 				if (fIsBeingManaged)
 					return;
 				if (e.getState()) {
 					try {
-						fIsBeingManaged= true;
+						fIsBeingManaged = true;
 						for (ExpandableComposite composite : fSections) {
 							if (composite != source)
 								composite.setExpanded(false);
 						}
 					} finally {
-						fIsBeingManaged= false;
+						fIsBeingManaged = false;
 					}
 					if (fLastOpenKey != null && fDialogSettingsStore != null)
 						fDialogSettingsStore.setValue(fLastOpenKey, source.getText());
@@ -99,10 +99,10 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 					if (!fIsBeingManaged && fLastOpenKey != null && fDialogSettingsStore != null)
 						fDialogSettingsStore.setValue(fLastOpenKey, __NONE);
 				}
-				ExpandableComposite exComp= getParentExpandableComposite(source);
+				ExpandableComposite exComp = getParentExpandableComposite(source);
 				if (exComp != null)
 					exComp.layout(true, true);
-				ScrolledPageContent parentScrolledComposite= getParentScrolledComposite(source);
+				ScrolledPageContent parentScrolledComposite = getParentScrolledComposite(source);
 				if (parentScrolledComposite != null) {
 					parentScrolledComposite.reflow(true);
 				}
@@ -120,13 +120,15 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		public SectionManager() {
 			this(null, null);
 		}
+
 		/**
 		 * Creates a new section manager.
 		 */
 		public SectionManager(IPreferenceStore dialogSettingsStore, String lastOpenKey) {
-			fDialogSettingsStore= dialogSettingsStore;
-			fLastOpenKey= lastOpenKey;
+			fDialogSettingsStore = dialogSettingsStore;
+			fLastOpenKey = lastOpenKey;
 		}
+
 		private void manage(ExpandableComposite section) {
 			if (section == null)
 				throw new NullPointerException();
@@ -134,7 +136,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 				section.addExpansionListener(fListener);
 			makeScrollableCompositeAware(section);
 		}
-		
+
 		/**
 		 * Creates a new composite that can contain a set of expandable
 		 * sections. A <code>ScrolledPageComposite</code> is created and a new
@@ -147,45 +149,46 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		 * The receiver keeps a reference to the inner body composite, so that
 		 * new sections can be added via <code>createSection</code>.
 		 * </p>
-		 * 
+		 *
 		 * @param parent the parent composite
 		 * @return the newly created composite
 		 */
 		public Composite createSectionComposite(Composite parent) {
 			Assert.isTrue(fBody == null);
-			boolean isNested= isNestedInScrolledComposite(parent);
+			boolean isNested = isNestedInScrolledComposite(parent);
 			Composite composite;
 			if (isNested) {
-				composite= new Composite(parent, SWT.NONE);
-				fBody= composite;
+				composite = new Composite(parent, SWT.NONE);
+				fBody = composite;
 			} else {
-				composite= new ScrolledPageContent(parent);
-				fBody= ((ScrolledPageContent) composite).getBody();
+				composite = new ScrolledPageContent(parent);
+				fBody = ((ScrolledPageContent) composite).getBody();
 			}
-			
+
 			fBody.setLayout(new GridLayout());
-			
+
 			return composite;
 		}
-		
+
 		/**
 		 * Creates an expandable section within the parent created previously by
-		 * calling <code>createSectionComposite</code>. Controls can be added 
+		 * calling <code>createSectionComposite</code>. Controls can be added
 		 * directly to the returned composite, which has no layout initially.
-		 * 
+		 *
 		 * @param label the display name of the section
 		 * @return a composite within the expandable section
 		 */
 		public Composite createSection(String label) {
 			Assert.isNotNull(fBody);
-			final ExpandableComposite excomposite= new ExpandableComposite(fBody, SWT.NONE, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT | ExpandableComposite.COMPACT);
+			final ExpandableComposite excomposite = new ExpandableComposite(fBody, SWT.NONE,
+					ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT | ExpandableComposite.COMPACT);
 			if (fFirstChild == null)
-				fFirstChild= excomposite;
+				fFirstChild = excomposite;
 			excomposite.setText(label);
-			String last= null;
+			String last = null;
 			if (fLastOpenKey != null && fDialogSettingsStore != null)
-				last= fDialogSettingsStore.getString(fLastOpenKey);
-			
+				last = fDialogSettingsStore.getString(fLastOpenKey);
+
 			if (fFirstChild == excomposite && !__NONE.equals(last) || label.equals(last)) {
 				excomposite.setExpanded(true);
 				if (fFirstChild != excomposite)
@@ -194,79 +197,78 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 				excomposite.setExpanded(false);
 			}
 			excomposite.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
-			
+
 			updateSectionStyle(excomposite);
 			manage(excomposite);
-			
-			Composite contents= new Composite(excomposite, SWT.NONE);
+
+			Composite contents = new Composite(excomposite, SWT.NONE);
 			excomposite.setClient(contents);
-			
+
 			return contents;
 		}
 	}
 
-	protected static final int INDENT= 20;
+	protected static final int INDENT = 20;
 	private final OverlayPreferenceStore fStore;
-	
-	private final Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
-	private final SelectionListener fCheckBoxListener= new SelectionListener() {
+
+	private final Map<Object, String> fCheckBoxes = new HashMap<Object, String>();
+	private final SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			Button button= (Button) e.widget;
+			Button button = (Button) e.widget;
 			fStore.setValue(fCheckBoxes.get(button), button.getSelection());
 		}
 	};
-	
-	
-	private final Map<Object, String> fTextFields= new HashMap<Object, String>();
-	private final ModifyListener fTextFieldListener= new ModifyListener() {
+
+	private final Map<Object, String> fTextFields = new HashMap<Object, String>();
+	private final ModifyListener fTextFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
-			Text text= (Text) e.widget;
+			Text text = (Text) e.widget;
 			fStore.setValue(fTextFields.get(text), text.getText());
 		}
 	};
 
-	private final ArrayList<Text> fNumberFields= new ArrayList<Text>();
-	private final ModifyListener fNumberFieldListener= new ModifyListener() {
+	private final ArrayList<Text> fNumberFields = new ArrayList<Text>();
+	private final ModifyListener fNumberFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
 			numberFieldChanged((Text) e.widget);
 		}
 	};
-	
+
 	/**
 	 * List of master/slave listeners when there's a dependency.
-	 * 
+	 *
 	 * @see #createDependency(Button, Control)
 	 * @since 3.0
 	 */
-	private final ArrayList<Object> fMasterSlaveListeners= new ArrayList<Object>();
-	
+	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<Object>();
+
 	private StatusInfo fStatus;
 	private final PreferencePage fMainPage;
 
 	public AbstractConfigurationBlock(OverlayPreferenceStore store) {
 		Assert.isNotNull(store);
-		fStore= store;
-		fMainPage= null;
+		fStore = store;
+		fMainPage = null;
 	}
-	
+
 	public AbstractConfigurationBlock(OverlayPreferenceStore store, PreferencePage mainPreferencePage) {
 		Assert.isNotNull(store);
 		Assert.isNotNull(mainPreferencePage);
-		fStore= store;
-		fMainPage= mainPreferencePage;
+		fStore = store;
+		fMainPage = mainPreferencePage;
 	}
 
 	protected final ScrolledPageContent getParentScrolledComposite(Control control) {
-		Control parent= control.getParent();
+		Control parent = control.getParent();
 		while (!(parent instanceof ScrolledPageContent) && parent != null) {
-			parent= parent.getParent();
+			parent = parent.getParent();
 		}
 		if (parent instanceof ScrolledPageContent) {
 			return (ScrolledPageContent) parent;
@@ -275,9 +277,9 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	}
 
 	private final ExpandableComposite getParentExpandableComposite(Control control) {
-		Control parent= control.getParent();
+		Control parent = control.getParent();
 		while (!(parent instanceof ExpandableComposite) && parent != null) {
-			parent= parent.getParent();
+			parent = parent.getParent();
 		}
 		if (parent instanceof ExpandableComposite) {
 			return (ExpandableComposite) parent;
@@ -288,31 +290,31 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	protected void updateSectionStyle(ExpandableComposite excomposite) {
 		excomposite.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
 	}
-	
+
 	private void makeScrollableCompositeAware(Control control) {
-		ScrolledPageContent parentScrolledComposite= getParentScrolledComposite(control);
+		ScrolledPageContent parentScrolledComposite = getParentScrolledComposite(control);
 		if (parentScrolledComposite != null) {
 			parentScrolledComposite.adaptChild(control);
 		}
 	}
-	
+
 	private boolean isNestedInScrolledComposite(Composite parent) {
 		return getParentScrolledComposite(parent) != null;
 	}
-	
-	protected Button addCheckBox(Composite parent, String label, String key, int indentation) {		
-		Button checkBox= new Button(parent, SWT.CHECK);
+
+	protected Button addCheckBox(Composite parent, String label, String key, int indentation) {
+		Button checkBox = new Button(parent, SWT.CHECK);
 		checkBox.setText(label);
-		
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
-		gd.horizontalSpan= 2;
+
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = indentation;
+		gd.horizontalSpan = 2;
 		checkBox.setLayoutData(gd);
 		checkBox.addSelectionListener(fCheckBoxListener);
 		makeScrollableCompositeAware(checkBox);
 
 		fCheckBoxes.put(checkBox, key);
-		
+
 		return checkBox;
 	}
 
@@ -321,7 +323,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	 *  - first element is of type <code>Label</code>
 	 *  - second element is of type <code>Text</code>
 	 * Use <code>getLabelControl</code> and <code>getTextControl</code> to get the 2 controls.
-	 * 
+	 *
 	 * @param composite 	the parent composite
 	 * @param label			the text field's label
 	 * @param key			the preference key
@@ -330,19 +332,19 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	 * @param isNumber		<code>true</code> iff this text field is used to e4dit a number
 	 * @return the controls added
 	 */
-	protected Control[] addLabelledTextField(Composite composite, String label, String key,
-			int textLimit, int indentation, boolean isNumber) {
-		PixelConverter pixelConverter= new PixelConverter(composite);
-		
-		Label labelControl= new Label(composite, SWT.NONE);
+	protected Control[] addLabelledTextField(Composite composite, String label, String key, int textLimit,
+			int indentation, boolean isNumber) {
+		PixelConverter pixelConverter = new PixelConverter(composite);
+
+		Label labelControl = new Label(composite, SWT.NONE);
 		labelControl.setText(label);
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = indentation;
 		labelControl.setLayoutData(gd);
-		
-		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);		
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.widthHint= pixelConverter.convertWidthInCharsToPixels(textLimit + 1);
+
+		Text textControl = new Text(composite, SWT.BORDER | SWT.SINGLE);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.widthHint = pixelConverter.convertWidthInCharsToPixels(textLimit + 1);
 		textControl.setLayoutData(gd);
 		textControl.setTextLimit(textLimit);
 		fTextFields.put(textControl, key);
@@ -352,28 +354,29 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		} else {
 			textControl.addModifyListener(fTextFieldListener);
 		}
-			
-		return new Control[]{labelControl, textControl};
+
+		return new Control[] { labelControl, textControl };
 	}
 
 	protected void createDependency(final Button master, final Control slave) {
-		createDependency(master, new Control[] {slave});
+		createDependency(master, new Control[] { slave });
 	}
-	
+
 	protected void createDependency(final Button master, final Control[] slaves) {
 		Assert.isTrue(slaves.length > 0);
 		indent(slaves[0]);
-		SelectionListener listener= new SelectionListener() {
+		SelectionListener listener = new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean state= master.getSelection();
+				boolean state = master.getSelection();
 				for (Control slave : slaves) {
 					slave.setEnabled(state);
 				}
 			}
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
 		};
 		master.addSelectionListener(listener);
 		fMasterSlaveListeners.add(listener);
@@ -389,28 +392,28 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	}
 
 	private void initializeFields() {
-		Iterator<Object> iter= fCheckBoxes.keySet().iterator();
+		Iterator<Object> iter = fCheckBoxes.keySet().iterator();
 		while (iter.hasNext()) {
-			Button b= (Button) iter.next();
-			String key= fCheckBoxes.get(b);
+			Button b = (Button) iter.next();
+			String key = fCheckBoxes.get(b);
 			b.setSelection(fStore.getBoolean(key));
 		}
-		
-		iter= fTextFields.keySet().iterator();
+
+		iter = fTextFields.keySet().iterator();
 		while (iter.hasNext()) {
-			Text t= (Text) iter.next();
-			String key= fTextFields.get(t);
+			Text t = (Text) iter.next();
+			String key = fTextFields.get(t);
 			t.setText(fStore.getString(key));
 		}
-		
-        // Update slaves
-        iter= fMasterSlaveListeners.iterator();
-        while (iter.hasNext()) {
-            SelectionListener listener= (SelectionListener)iter.next();
-            listener.widgetSelected(null);
-        }
-     
-        updateStatus(new StatusInfo());
+
+		// Update slaves
+		iter = fMasterSlaveListeners.iterator();
+		while (iter.hasNext()) {
+			SelectionListener listener = (SelectionListener) iter.next();
+			listener.widgetSelected(null);
+		}
+
+		updateStatus(new StatusInfo());
 	}
 
 	@Override
@@ -424,33 +427,33 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 
 	IStatus getStatus() {
 		if (fStatus == null)
-			fStatus= new StatusInfo();
+			fStatus = new StatusInfo();
 		return fStatus;
 	}
 
 	@Override
 	public void dispose() {
 	}
-	
+
 	private void numberFieldChanged(Text textControl) {
-		String number= textControl.getText();
-		IStatus status= validatePositiveNumber(number);
+		String number = textControl.getText();
+		IStatus status = validatePositiveNumber(number);
 		if (!status.matches(IStatus.ERROR))
 			fStore.setValue(fTextFields.get(textControl), number);
 		updateStatus(status);
 	}
-	
+
 	private IStatus validatePositiveNumber(String number) {
-		StatusInfo status= new StatusInfo();
+		StatusInfo status = new StatusInfo();
 		if (number.length() == 0) {
-			status.setError(PreferencesMessages.CEditorPreferencePage_empty_input); 
+			status.setError(PreferencesMessages.CEditorPreferencePage_empty_input);
 		} else {
 			try {
-				int value= Integer.parseInt(number);
+				int value = Integer.parseInt(number);
 				if (value < 0)
-					status.setError(NLS.bind(PreferencesMessages.CEditorPreferencePage_invalid_input, number)); 
+					status.setError(NLS.bind(PreferencesMessages.CEditorPreferencePage_invalid_input, number));
 			} catch (NumberFormatException e) {
-				status.setError(NLS.bind(PreferencesMessages.CEditorPreferencePage_invalid_input, number)); 
+				status.setError(NLS.bind(PreferencesMessages.CEditorPreferencePage_invalid_input, number));
 			}
 		}
 		return status;
@@ -462,7 +465,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		fMainPage.setValid(status.isOK());
 		StatusUtil.applyToStatusLine(fMainPage, status);
 	}
-	
+
 	protected final OverlayPreferenceStore getPreferenceStore() {
 		return fStore;
 	}
@@ -471,9 +474,9 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		if (manager != null) {
 			return manager.createSection(label);
 		}
-		Group group= new Group(parent, SWT.SHADOW_NONE);
+		Group group = new Group(parent, SWT.SHADOW_NONE);
 		group.setText(label);
-		GridData data= new GridData(SWT.FILL, SWT.CENTER, true, false);
+		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		group.setLayoutData(data);
 		return group;
 	}

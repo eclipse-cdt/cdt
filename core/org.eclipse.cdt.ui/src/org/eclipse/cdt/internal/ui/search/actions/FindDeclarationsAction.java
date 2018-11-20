@@ -20,25 +20,22 @@ import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.ui.IWorkbenchSite;
 
-
 public class FindDeclarationsAction extends FindAction {
-	
-	public FindDeclarationsAction(CEditor editor, String label, String tooltip){
+
+	public FindDeclarationsAction(CEditor editor, String label, String tooltip) {
 		super(editor);
-		setText(label); 
-		setToolTipText(tooltip); 
+		setText(label);
+		setToolTipText(tooltip);
 	}
-	
-	public FindDeclarationsAction(CEditor editor){
-		this(editor,
-			CSearchMessages.CSearch_FindDeclarationAction_label, 
-			CSearchMessages.CSearch_FindDeclarationAction_tooltip); 
+
+	public FindDeclarationsAction(CEditor editor) {
+		this(editor, CSearchMessages.CSearch_FindDeclarationAction_label,
+				CSearchMessages.CSearch_FindDeclarationAction_tooltip);
 	}
-	
-	public FindDeclarationsAction(IWorkbenchSite site){
-		this(site,
-			CSearchMessages.CSearch_FindDeclarationAction_label, 
-			CSearchMessages.CSearch_FindDeclarationAction_tooltip); 
+
+	public FindDeclarationsAction(IWorkbenchSite site) {
+		this(site, CSearchMessages.CSearch_FindDeclarationAction_label,
+				CSearchMessages.CSearch_FindDeclarationAction_tooltip);
 	}
 
 	public FindDeclarationsAction(IWorkbenchSite site, String label, String tooltip) {
@@ -51,12 +48,12 @@ public class FindDeclarationsAction extends FindAction {
 	protected ICElement[] getScope() {
 		return null;
 	}
-	
+
 	@Override
 	protected String getScopeDescription() {
-		return CSearchMessages.WorkspaceScope; 
+		return CSearchMessages.WorkspaceScope;
 	}
-	
+
 	@Override
 	protected int getLimitTo() {
 		return CSearchQuery.FIND_DECLARATIONS_DEFINITIONS;

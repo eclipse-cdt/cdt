@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -17,6 +17,6 @@ package org.eclipse.cdt.debug.ui.memory.traditional;
 public interface IMemoryByte {
 
 	public boolean isEdited();
-	
+
 	public void setEdited(boolean edited);
 }

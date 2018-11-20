@@ -57,28 +57,26 @@ import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
  * Base class for toggle breakpoint targets for the disassembly part.
  * @since 2.2
  */
-public abstract class AbstractDisassemblyBreakpointsTarget 
-    implements IToggleBreakpointsTargetExtension2, IToggleBreakpointsTargetCExtension
-{
+public abstract class AbstractDisassemblyBreakpointsTarget
+		implements IToggleBreakpointsTargetExtension2, IToggleBreakpointsTargetCExtension {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public void toggleLineBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
+	public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 		assert part instanceof IDisassemblyPart && selection instanceof ITextSelection;
 
-		if ( !(selection instanceof IDisassemblySelection) ) {
-			selection = new DisassemblySelection( (ITextSelection)selection, (IDisassemblyPart)part );
+		if (!(selection instanceof IDisassemblySelection)) {
+			selection = new DisassemblySelection((ITextSelection) selection, (IDisassemblyPart) part);
 		}
-		IDisassemblySelection disassemblySelection = (IDisassemblySelection)selection;
+		IDisassemblySelection disassemblySelection = (IDisassemblySelection) selection;
 		int line = disassemblySelection.getStartLine();
-		IBreakpoint[] bp = getBreakpointsAtLine( (IDisassemblyPart)part, line );
-		if ( bp == null || bp.length == 0 ) {
+		IBreakpoint[] bp = getBreakpointsAtLine((IDisassemblyPart) part, line);
+		if (bp == null || bp.length == 0) {
 			insertBreakpoint(part, disassemblySelection, false);
-		}
-		else {
-			for( int i = 0; i < bp.length; i++ ) {
+		} else {
+			for (int i = 0; i < bp.length; i++) {
 				bp[i].delete();
 			}
 		}
@@ -88,7 +86,7 @@ public abstract class AbstractDisassemblyBreakpointsTarget
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public boolean canToggleLineBreakpoints( IWorkbenchPart part, ISelection selection ) {
+	public boolean canToggleLineBreakpoints(IWorkbenchPart part, ISelection selection) {
 		return part instanceof IDisassemblyPart && selection instanceof ITextSelection;
 	}
 
@@ -96,14 +94,14 @@ public abstract class AbstractDisassemblyBreakpointsTarget
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public void toggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
+	public void toggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public boolean canToggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) {
+	public boolean canToggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) {
 		return false;
 	}
 
@@ -111,14 +109,14 @@ public abstract class AbstractDisassemblyBreakpointsTarget
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public void toggleWatchpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
+	public void toggleWatchpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public boolean canToggleWatchpoints( IWorkbenchPart part, ISelection selection ) {
+	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
 		return false;
 	}
 
@@ -126,266 +124,266 @@ public abstract class AbstractDisassemblyBreakpointsTarget
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public void toggleBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
-		toggleLineBreakpoints( part, selection );
+	public void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
+		toggleLineBreakpoints(part, selection);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public boolean canToggleBreakpoints( IWorkbenchPart part, ISelection selection ) {
-		return canToggleLineBreakpoints( part, selection );
+	public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
+		return canToggleLineBreakpoints(part, selection);
 	}
 
 	/**
-     * @since 2.3
-     */
+	 * @since 2.3
+	 */
 	@Override
 	public boolean canToggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event) {
-	    return canToggleBreakpoints(part, selection);
+		return canToggleBreakpoints(part, selection);
 	}
-	
-    /**
-     * @since 2.3
-     */
+
+	/**
+	 * @since 2.3
+	 */
 	@Override
-	public void toggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event) throws CoreException {
-	    assert part instanceof IDisassemblyPart && selection instanceof ITextSelection;
-
-	    boolean mod1 = event != null && (event.stateMask & SWT.MOD1) > 0;
-	    boolean mod2 = event != null && (event.stateMask & SWT.MOD2) > 0;
-        if ( !(selection instanceof IDisassemblySelection) ) {
-            selection = new DisassemblySelection( (ITextSelection)selection, (IDisassemblyPart)part );
-        }
-        IDisassemblySelection disassemblySelection = (IDisassemblySelection)selection;
-        int line = disassemblySelection.getStartLine();
-        IBreakpoint[] bp = getBreakpointsAtLine( (IDisassemblyPart)part, line );
-        if ( bp == null || bp.length == 0 ) {
-            insertBreakpoint(part, disassemblySelection, mod1);
-        }
-        else {
-            if(mod2) {
-                toggleBreakpointEnabled(bp[0]);
-                return;
-            } else if (mod1 && bp[0] instanceof ICBreakpoint) {
-                CDebugUIUtils.editBreakpointProperties(part, (ICBreakpoint)bp[0]);
-                return;
-            }
-                    
-            for( int i = 0; i < bp.length; i++ ) {
-                bp[i].delete();
-            }
-        }
-	}
-
-    /**
-     * @since 2.3
-     */
-    @Override
-    public boolean canCreateLineBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
-        return canToggleLineBreakpoints(part, selection) && !hasBreakpoint(part, selection);
-    }
-
-    /**
-     * @since 2.3
-     */
-    @Override
-    public void createLineBreakpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
-        assert part instanceof IDisassemblyPart && selection instanceof ITextSelection;
-        
-        if ( !(selection instanceof IDisassemblySelection) ) {
-            selection = new DisassemblySelection( (ITextSelection)selection, (IDisassemblyPart)part );
-        }
-        IDisassemblySelection disassemblySelection = (IDisassemblySelection)selection;
-        insertBreakpoint(part, disassemblySelection, true);
-    }
-    
-    /**
-     * @since 2.3
-     */
-    @Override
-    public boolean canCreateFunctionBreakpointInteractive(IWorkbenchPart part, ISelection selection) {
-        return false;
-    }
-
-    /**
-     * @since 2.3
-     */
-    @Override
-    public void createFunctionBreakpointInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
-    }
-    
-    /**
-     * @since 2.3
-     */
-    @Override
-    public boolean canCreateWatchpointsInteractive(IWorkbenchPart part, ISelection selection) {
-        return false;
-    }
-    
-    /**
-     * @since 2.3
-     */
-    @Override
-    public void createWatchpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
-    }
-
-    /**
-     * @since 2.3
-     */
-    @Override
-    public boolean canCreateEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
-        return false;
-    }
-
-    /**
-     * @since 2.3
-     */
-    @Override
-    public void createEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
-    }
-
-	private void toggleBreakpointEnabled(IBreakpoint bp) {
-	    try {
-	        bp.setEnabled(!bp.isEnabled());
-	    } catch (CoreException e) {
-	        CDebugUIPlugin.log(e.getStatus());
-	    }
-	}
-	
-	protected abstract void createLineBreakpoint( String sourceHandle, IResource resource, int lineNumber ) throws CoreException;
-
-	/**
-     * @since 2.3
-     */
-	protected void createLineBreakpointInteractive(IWorkbenchPart part, String sourceHandle, IResource resource, int lineNumber ) throws CoreException {
-	    createLineBreakpoint(sourceHandle, resource, lineNumber);
-	}
-
-	protected abstract void createAddressBreakpoint( IResource resource, IAddress address ) throws CoreException;
-
-	/**
-     * @since 2.3
-     */
-	protected void createAddressBreakpointInteractive(IWorkbenchPart part, IResource resource, IAddress address ) throws CoreException {
-	    createAddressBreakpoint(resource, address);
-	}
-
-    private boolean hasBreakpoint(IWorkbenchPart part, ISelection selection) {
+	public void toggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event)
+			throws CoreException {
 		assert part instanceof IDisassemblyPart && selection instanceof ITextSelection;
 
-		if ( !(selection instanceof IDisassemblySelection) ) {
-			selection = new DisassemblySelection( (ITextSelection)selection, (IDisassemblyPart)part );
+		boolean mod1 = event != null && (event.stateMask & SWT.MOD1) > 0;
+		boolean mod2 = event != null && (event.stateMask & SWT.MOD2) > 0;
+		if (!(selection instanceof IDisassemblySelection)) {
+			selection = new DisassemblySelection((ITextSelection) selection, (IDisassemblyPart) part);
 		}
-		IDisassemblySelection disassemblySelection = (IDisassemblySelection)selection;
+		IDisassemblySelection disassemblySelection = (IDisassemblySelection) selection;
 		int line = disassemblySelection.getStartLine();
-		IBreakpoint[] bp = getBreakpointsAtLine( (IDisassemblyPart)part, line );
+		IBreakpoint[] bp = getBreakpointsAtLine((IDisassemblyPart) part, line);
+		if (bp == null || bp.length == 0) {
+			insertBreakpoint(part, disassemblySelection, mod1);
+		} else {
+			if (mod2) {
+				toggleBreakpointEnabled(bp[0]);
+				return;
+			} else if (mod1 && bp[0] instanceof ICBreakpoint) {
+				CDebugUIUtils.editBreakpointProperties(part, (ICBreakpoint) bp[0]);
+				return;
+			}
+
+			for (int i = 0; i < bp.length; i++) {
+				bp[i].delete();
+			}
+		}
+	}
+
+	/**
+	 * @since 2.3
+	 */
+	@Override
+	public boolean canCreateLineBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
+		return canToggleLineBreakpoints(part, selection) && !hasBreakpoint(part, selection);
+	}
+
+	/**
+	 * @since 2.3
+	 */
+	@Override
+	public void createLineBreakpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
+		assert part instanceof IDisassemblyPart && selection instanceof ITextSelection;
+
+		if (!(selection instanceof IDisassemblySelection)) {
+			selection = new DisassemblySelection((ITextSelection) selection, (IDisassemblyPart) part);
+		}
+		IDisassemblySelection disassemblySelection = (IDisassemblySelection) selection;
+		insertBreakpoint(part, disassemblySelection, true);
+	}
+
+	/**
+	 * @since 2.3
+	 */
+	@Override
+	public boolean canCreateFunctionBreakpointInteractive(IWorkbenchPart part, ISelection selection) {
+		return false;
+	}
+
+	/**
+	 * @since 2.3
+	 */
+	@Override
+	public void createFunctionBreakpointInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
+	}
+
+	/**
+	 * @since 2.3
+	 */
+	@Override
+	public boolean canCreateWatchpointsInteractive(IWorkbenchPart part, ISelection selection) {
+		return false;
+	}
+
+	/**
+	 * @since 2.3
+	 */
+	@Override
+	public void createWatchpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
+	}
+
+	/**
+	 * @since 2.3
+	 */
+	@Override
+	public boolean canCreateEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
+		return false;
+	}
+
+	/**
+	 * @since 2.3
+	 */
+	@Override
+	public void createEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
+	}
+
+	private void toggleBreakpointEnabled(IBreakpoint bp) {
+		try {
+			bp.setEnabled(!bp.isEnabled());
+		} catch (CoreException e) {
+			CDebugUIPlugin.log(e.getStatus());
+		}
+	}
+
+	protected abstract void createLineBreakpoint(String sourceHandle, IResource resource, int lineNumber)
+			throws CoreException;
+
+	/**
+	 * @since 2.3
+	 */
+	protected void createLineBreakpointInteractive(IWorkbenchPart part, String sourceHandle, IResource resource,
+			int lineNumber) throws CoreException {
+		createLineBreakpoint(sourceHandle, resource, lineNumber);
+	}
+
+	protected abstract void createAddressBreakpoint(IResource resource, IAddress address) throws CoreException;
+
+	/**
+	 * @since 2.3
+	 */
+	protected void createAddressBreakpointInteractive(IWorkbenchPart part, IResource resource, IAddress address)
+			throws CoreException {
+		createAddressBreakpoint(resource, address);
+	}
+
+	private boolean hasBreakpoint(IWorkbenchPart part, ISelection selection) {
+		assert part instanceof IDisassemblyPart && selection instanceof ITextSelection;
+
+		if (!(selection instanceof IDisassemblySelection)) {
+			selection = new DisassemblySelection((ITextSelection) selection, (IDisassemblyPart) part);
+		}
+		IDisassemblySelection disassemblySelection = (IDisassemblySelection) selection;
+		int line = disassemblySelection.getStartLine();
+		IBreakpoint[] bp = getBreakpointsAtLine((IDisassemblyPart) part, line);
 		return bp != null && bp.length > 0;
-    }
-    
-	private IBreakpoint[] getBreakpointsAtLine( IDisassemblyPart part, int line ) {
+	}
+
+	private IBreakpoint[] getBreakpointsAtLine(IDisassemblyPart part, int line) {
 		List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>();
 		IAnnotationModel annotationModel = part.getTextViewer().getAnnotationModel();
 		IDocument document = part.getTextViewer().getDocument();
-		if ( annotationModel != null ) {
+		if (annotationModel != null) {
 			Iterator<?> iterator = annotationModel.getAnnotationIterator();
-			while( iterator.hasNext() ) {
+			while (iterator.hasNext()) {
 				Object object = iterator.next();
-				if ( object instanceof SimpleMarkerAnnotation ) {
-					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation)object;
+				if (object instanceof SimpleMarkerAnnotation) {
+					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
 					IMarker marker = markerAnnotation.getMarker();
 					try {
-						if ( marker.isSubtypeOf( IBreakpoint.BREAKPOINT_MARKER ) ) {
-							Position position = annotationModel.getPosition( markerAnnotation );
-							int bpLine = document.getLineOfOffset( position.getOffset() );
-							if ( line == bpLine ) {
-								IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint( marker );
-								if ( breakpoint != null ) {
-									breakpoints.add( breakpoint );
+						if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
+							Position position = annotationModel.getPosition(markerAnnotation);
+							int bpLine = document.getLineOfOffset(position.getOffset());
+							if (line == bpLine) {
+								IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager()
+										.getBreakpoint(marker);
+								if (breakpoint != null) {
+									breakpoints.add(breakpoint);
 								}
 							}
 						}
-					}
-					catch( CoreException e ) {
-					}
-					catch( BadLocationException e ) {
+					} catch (CoreException e) {
+					} catch (BadLocationException e) {
 					}
 				}
 			}
 		}
 		IBreakpoint[] breakpointsArray = new IBreakpoint[breakpoints.size()];
-		return breakpoints.toArray( breakpointsArray );
+		return breakpoints.toArray(breakpointsArray);
 	}
 
-	private void insertBreakpoint(IWorkbenchPart part, IDisassemblySelection selection, boolean interactive) throws CoreException {
+	private void insertBreakpoint(IWorkbenchPart part, IDisassemblySelection selection, boolean interactive)
+			throws CoreException {
 		IAddress address = selection.getStartAddress();
-		if ( address == null ) {
+		if (address == null) {
 			return;
 		}
 		URI fileUri = selection.getSourceLocationURI();
-		if ( fileUri != null ) {
+		if (fileUri != null) {
 			String filePath = null;
 			IResource resource = selection.getSourceFile();
-			if ( resource != null ) {
+			if (resource != null) {
 				final IPath location = resource.getLocation();
-				if ( location == null ) {
+				if (location == null) {
 					return;
 				}
 				filePath = location.toOSString();
-			}
-			else {
+			} else {
 				resource = ResourcesPlugin.getWorkspace().getRoot();
-				filePath = URIUtil.toPath( fileUri ).toOSString();
+				filePath = URIUtil.toPath(fileUri).toOSString();
 			}
 			int srcLine = selection.getSourceLine();
 			if (interactive) {
-			    createLineBreakpointInteractive(part, filePath, resource, srcLine + 1 );
+				createLineBreakpointInteractive(part, filePath, resource, srcLine + 1);
 			} else {
-                createLineBreakpoint( filePath, resource, srcLine + 1 );
-			}			    
-		}
-		else {
+				createLineBreakpoint(filePath, resource, srcLine + 1);
+			}
+		} else {
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot();
-            if (interactive) {
-                createAddressBreakpointInteractive(part, resource, address );
-            } else {
-                createAddressBreakpoint( resource, address );
-            }
+			if (interactive) {
+				createAddressBreakpointInteractive(part, resource, address);
+			} else {
+				createAddressBreakpoint(resource, address);
+			}
 		}
-    }
-	
-    /**
-     * Opens the properties dialog for the given breakpoint. This method can be
-     * used on an existing breakpoint or on a blank breakpoint which doesn't
-     * have an associated marker yet.
-     * 
-     * @param bp
-     *            The breakpoint to edit. This breakpoint may not have an
-     *            associated marker yet.
-     * @param part
-     *            Workbench part where the action was invoked.
-     * @param resource
-     *            Workbench resource to create the breakpoint on.
-     * @param attributes
-     *            Breakpoint attributes to show in properties dialog. If the
-     *            breakpoint already exists, this attribute map can be used to
-     *            override the attributes currently in the breakpoint. Can be
-     *            <code>null</code>.
-     * @since 2.3
-     */
-    protected void openBreakpointPropertiesDialog(ICBreakpoint bp, IWorkbenchPart part, IResource resource,
-        Map<String, Object> attributes) 
-    {
-        ISelection debugContext = DebugUITools.getDebugContextManager()
-            .getContextService(part.getSite().getWorkbenchWindow()).getActiveContext(part.getSite().getId());
-        CBreakpointContext bpContext = new CBreakpointContext(bp, debugContext, resource, attributes);
+	}
 
-        PreferenceDialog dialog = PreferencesUtil.createPropertyDialogOn(part.getSite().getShell(), bpContext, null,
-            null, null);
-        if (dialog != null) {
-            dialog.open();
-        }
-    }
+	/**
+	 * Opens the properties dialog for the given breakpoint. This method can be
+	 * used on an existing breakpoint or on a blank breakpoint which doesn't
+	 * have an associated marker yet.
+	 *
+	 * @param bp
+	 *            The breakpoint to edit. This breakpoint may not have an
+	 *            associated marker yet.
+	 * @param part
+	 *            Workbench part where the action was invoked.
+	 * @param resource
+	 *            Workbench resource to create the breakpoint on.
+	 * @param attributes
+	 *            Breakpoint attributes to show in properties dialog. If the
+	 *            breakpoint already exists, this attribute map can be used to
+	 *            override the attributes currently in the breakpoint. Can be
+	 *            <code>null</code>.
+	 * @since 2.3
+	 */
+	protected void openBreakpointPropertiesDialog(ICBreakpoint bp, IWorkbenchPart part, IResource resource,
+			Map<String, Object> attributes) {
+		ISelection debugContext = DebugUITools.getDebugContextManager()
+				.getContextService(part.getSite().getWorkbenchWindow()).getActiveContext(part.getSite().getId());
+		CBreakpointContext bpContext = new CBreakpointContext(bp, debugContext, resource, attributes);
+
+		PreferenceDialog dialog = PreferencesUtil.createPropertyDialogOn(part.getSite().getShell(), bpContext, null,
+				null, null);
+		if (dialog != null) {
+			dialog.open();
+		}
+	}
 
 }

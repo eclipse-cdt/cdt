@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik 
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- *     Institute for Software - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Institute for Software - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.comenthandler;
 
@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.Path;
  * /resources/rewrite/CommentHandlingTestSource.rts.<br>
  * This file contains the source code and the expected output for all the tests.
  * Following a little example how such a test looks like:<br><br>
- * 
+ *
  * <code><pre>
  * //!NameOfTheTest - will be used as JUnit test name
  * //#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
@@ -54,18 +54,18 @@ import org.eclipse.core.runtime.Path;
  *  //myFreestandingComment
  *  //myFreestandingComment2
  * };
- * 
+ *
  * //=
  * =>leading
  * void aMethod(); = //myLeadingComment
- * 
+ *
  * =>trailing
  * void aMethod(); = //myTrailingComment
- * 
+ *
  * =>freestanding
  * void aMethod(); = //myFreestandingComment , //myFreestandingComment2
  * </pre></code>
- * 
+ *
  * The second line (//#org.eclipse.cdt...) indicates the test class (in this case this class).<br>
  * The "//=" indicates the beginning of the expected test result.<br>
  * The test result contains three sections (separated by "=>leading", "=>trailing" and
@@ -73,7 +73,7 @@ import org.eclipse.core.runtime.Path;
  * Each section contains the raw signature of the node to which a comment is assigned plus " = "
  * and the comment. If there are several comments assigned to the same node they are concatenated
  * with a " , ".
- * 
+ *
  * @author Guido Zgraggen IFS, Lukas Felber IFS
  */
 public class CommentHandlingTest extends RewriteBaseTest {
@@ -87,7 +87,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 	private static final String LEADING_COMMENT_TITLE = "<<<=== Leading Comment Test Section ===>>>"; //$NON-NLS-1$
 	private static final String TRAILING_COMMENT_TITLE = "<<<=== Trailing Comment Test Section ===>>>"; //$NON-NLS-1$
 	private static final String FREESTANDING_COMMENT_TITLE = "<<<=== Freestanding Comment Test Section ===>>>"; //$NON-NLS-1$
-	
+
 	public CommentHandlingTest(String name, List<TestSourceFile> files) {
 		super(name, files);
 	}
@@ -97,7 +97,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 		if (fileMap.isEmpty()) {
 			fail("No file for testing"); //$NON-NLS-1$
 		}
-		
+
 		for (String fileName : fileMap.keySet()) {
 			TestSourceFile file = fileMap.get(fileName);
 			NodeCommentMap nodeMap = getNodeMapForFile(fileName);
@@ -110,17 +110,17 @@ public class CommentHandlingTest extends RewriteBaseTest {
 	}
 
 	private StringBuilder buildExpectedResult(TestSourceFile file) {
-		Matcher matcher = Pattern.compile(CommentHandlingTest.getSeparatingRegexp(),
-				Pattern.MULTILINE | Pattern.DOTALL).matcher(file.getExpectedSource());
+		Matcher matcher = Pattern.compile(CommentHandlingTest.getSeparatingRegexp(), Pattern.MULTILINE | Pattern.DOTALL)
+				.matcher(file.getExpectedSource());
 		if (!matcher.find()) {
 			fail("Missing expected section. Expected result code must be of the following format:\n\"=>leading\n...\n=>trailing\n...\n=>freestanding\""); //$NON-NLS-1$
 		}
 		StringBuilder expectedResultBuilder = new StringBuilder();
-		
+
 		String leadingResult = matcher.group(1);
 		String trailingResult = matcher.group(2);
 		String freestandingResult = matcher.group(3);
-		
+
 		appendLineTrimmed(expectedResultBuilder, LEADING_COMMENT_TITLE);
 		appendLineTrimmed(expectedResultBuilder, leadingResult);
 		appendLineTrimmed(expectedResultBuilder, TRAILING_COMMENT_TITLE);
@@ -176,16 +176,16 @@ public class CommentHandlingTest extends RewriteBaseTest {
 	}
 
 	private static String getSeparatingRegexp() {
-		return LEADING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP + TRAILING_COMMENT_SEPARATOR +
-				ANY_CHAR_REGEXP + FREESTANDING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP;
+		return LEADING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP + TRAILING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP
+				+ FREESTANDING_COMMENT_SEPARATOR + ANY_CHAR_REGEXP;
 	}
-	
+
 	protected IASTTranslationUnit getUnit(String fileName) throws CoreException {
-		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(
-				project.getFile(fileName));
+		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel()
+				.create(project.getFile(fileName));
 		return tu.getAST();
 	}
-	
+
 	private final class NodeOffsetComparator implements Comparator<IASTNode> {
 		@Override
 		public int compare(IASTNode o1, IASTNode o2) {
@@ -196,7 +196,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 			return offDif;
 		}
 	}
-	
+
 	private void appendLineTrimmed(StringBuilder builderToAppendTo, String line) {
 		builderToAppendTo.append(line.trim());
 		builderToAppendTo.append(SEPARATOR);

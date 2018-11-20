@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 public interface IPathEntry {
 	/**
 	 * Entry kind constant describing a path entry identifying a
-	 * library. A library is an archive containing 
+	 * library. A library is an archive containing
 	 * consisting of pre-compiled binaries.
 	 */
 	int CDT_LIBRARY = 1;
@@ -40,7 +40,7 @@ public interface IPathEntry {
 	 * include path.
 	 */
 	int CDT_INCLUDE = 1 << 4;
-	
+
 	/**
 	 * Entry kind constant describing a path entry representing
 	 * a container id.
@@ -72,7 +72,7 @@ public interface IPathEntry {
 	 * Entry kind constant describing a path entry representing
 	 * a file that will be process file as if "#include "file"" appeared as
 	 * the first line of the source file but only the macro definitions are kept.
-	 * 
+	 *
 	 */
 	int CDT_MACRO_FILE = 1 << 9;
 
@@ -94,14 +94,14 @@ public interface IPathEntry {
 	int getEntryKind();
 
 	/**
-	 * 
+	 *
 	 * @return true if exported.
 	 */
 	boolean isExported();
 
 	/**
 	 * Returns the affected IPath
-	 * 
+	 *
 	 * @return IPath
 	 */
 	IPath getPath();

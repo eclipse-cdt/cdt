@@ -61,7 +61,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 	 */
 	@Override
 	public boolean isEnabled(DropTargetEvent event) {
-		Object target= event.item != null ? event.item.getData() : null;
+		Object target = event.item != null ? event.item.getData() : null;
 		if (target == null) {
 			return false;
 		}
@@ -95,26 +95,24 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 
 	@Override
 	public void drop(Object dropTarget, final DropTargetEvent event) {
-		int op= event.detail;
-		
-		event.detail= DND.DROP_NONE;
-		final Object data= event.data;
+		int op = event.detail;
+
+		event.detail = DND.DROP_NONE;
+		final Object data = event.data;
 		if (data == null || !(data instanceof IResource[]))
 			return;
-		
-		final IContainer target= getDestination(dropTarget);
+
+		final IContainer target = getDestination(dropTarget);
 		if (target == null) {
 			return;
 		}
-		IResource[] sources = (IResource[])data;
+		IResource[] sources = (IResource[]) data;
 		if (op == DND.DROP_COPY) {
 			CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
 			operation.copyResources(sources, target);
-		} else  {
-			ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
-				getShell(), 
-				"Move Resource Action",	//$NON-NLS-1$
-				"Move Resource Action");//$NON-NLS-1$	
+		} else {
+			ReadOnlyStateChecker checker = new ReadOnlyStateChecker(getShell(), "Move Resource Action", //$NON-NLS-1$
+					"Move Resource Action");//$NON-NLS-1$
 			sources = checker.checkReadOnlyResources(sources);
 			MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
 			operation.copyResources(sources, target);
@@ -123,31 +121,29 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 
 	private IContainer getDestination(Object dropTarget) {
 		if (dropTarget instanceof IContainer) {
-			return (IContainer)dropTarget;
+			return (IContainer) dropTarget;
 		} else if (dropTarget instanceof ICElement) {
-			return getDestination(((ICElement)dropTarget).getResource());
+			return getDestination(((ICElement) dropTarget).getResource());
 		}
 		return null;
 	}
 
 	/**
 	 * Returns the resource selection from the LocalSelectionTransfer.
-	 * 
+	 *
 	 * @return the resource selection from the LocalSelectionTransfer
 	 */
 	private IResource[] getSelectedResources() {
 		ArrayList<IResource> selectedResources = new ArrayList<IResource>();
-		
-		ISelection selection = LocalSelectionTransfer.getTransfer()
-		.getSelection();
+
+		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			for (Iterator<?> i = ssel.iterator(); i.hasNext();) {
 				Object o = i.next();
 				if (o instanceof IResource) {
 					selectedResources.add((IResource) o);
-				}
-				else if (o instanceof IAdaptable) {
+				} else if (o instanceof IAdaptable) {
 					IAdaptable a = (IAdaptable) o;
 					IResource r = a.getAdapter(IResource.class);
 					if (r != null) {

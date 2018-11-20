@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Red Hat Inc. - initial version
  *******************************************************************************/
 package org.eclipse.cdt.internal.meson.core;
@@ -16,7 +16,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.meson.core.messages"; //$NON-NLS-1$
-	
+
 	public static String MesonBuildConfiguration_Building;
 	public static String MesonBuildConfiguration_BuildingIn;
 	public static String MesonBuildConfiguration_BuildingComplete;
@@ -32,7 +32,6 @@ public class Messages extends NLS {
 	public static String MesonBuildConfiguration_ProcCompCmds;
 	public static String MesonBuildConfiguration_ProcCompJson;
 
-	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
@@ -41,4 +40,3 @@ public class Messages extends NLS {
 	private Messages() {
 	}
 }
-

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.HashMap;
@@ -42,7 +42,8 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 	public static boolean sSuppressUpdateOfLastRecentlyUsed = false;
 
 	private PDOMManager fManager;
-	private final LinkedHashMap<ITranslationUnit, ITranslationUnit> fLRUs= new LinkedHashMap<ITranslationUnit, ITranslationUnit>(UPDATE_LR_CHANGED_FILES_COUNT, 0.75f, true) {
+	private final LinkedHashMap<ITranslationUnit, ITranslationUnit> fLRUs = new LinkedHashMap<ITranslationUnit, ITranslationUnit>(
+			UPDATE_LR_CHANGED_FILES_COUNT, 0.75f, true) {
 		@Override
 		protected boolean removeEldestEntry(Map.Entry<ITranslationUnit, ITranslationUnit> eldest) {
 			return size() > UPDATE_LR_CHANGED_FILES_COUNT;
@@ -50,7 +51,7 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 	};
 
 	public CModelListener(PDOMManager manager) {
-		fManager= manager;
+		fManager = manager;
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 			return;
 
 		// Walk the delta collecting tu's per project
-		HashMap<ICProject, DeltaAnalyzer> changeMap= new HashMap<>();
+		HashMap<ICProject, DeltaAnalyzer> changeMap = new HashMap<>();
 		processDelta(event.getDelta(), changeMap);
 
 		// bug 171834 update last recently changed sources
@@ -70,8 +71,9 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 
 		for (Map.Entry<ICProject, DeltaAnalyzer> entry : changeMap.entrySet()) {
 			ICProject cproject = entry.getKey();
-			DeltaAnalyzer analyzer= entry.getValue();
-			fManager.changeProject(cproject, analyzer.getForcedTUs(), analyzer.getChangedTUs(), analyzer.getRemovedTUs());
+			DeltaAnalyzer analyzer = entry.getValue();
+			fManager.changeProject(cproject, analyzer.getForcedTUs(), analyzer.getChangedTUs(),
+					analyzer.getRemovedTUs());
 		}
 	}
 
@@ -91,7 +93,7 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 			switch (delta.getKind()) {
 			case ICElementDelta.ADDED:
 				fManager.addProject(project);
-		    	break;
+				break;
 
 			case ICElementDelta.CHANGED:
 				processProjectDelta(project, delta, changeMap);
@@ -99,12 +101,13 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 
 			case ICElementDelta.REMOVED:
 				fManager.removeProject(project, delta);
-		    	break;
+				break;
 			}
 		}
 	}
 
-	private void processProjectDelta(ICProject project, ICElementDelta delta, HashMap<ICProject, DeltaAnalyzer> changeMap) {
+	private void processProjectDelta(ICProject project, ICElementDelta delta,
+			HashMap<ICProject, DeltaAnalyzer> changeMap) {
 		IPDOMIndexer indexer = fManager.getIndexer(project);
 		if (indexer != null && indexer.getID().equals(IPDOMManager.ID_NO_INDEXER)) {
 			return;
@@ -120,35 +123,35 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 	}
 
 	private void addLastRecentlyUsed(HashMap<ICProject, DeltaAnalyzer> changeMap) {
-		boolean addLRUs= false;
-		int count= 0;
-		ITranslationUnit[] newLRUs= new ITranslationUnit[UPDATE_LR_CHANGED_FILES_COUNT];
+		boolean addLRUs = false;
+		int count = 0;
+		ITranslationUnit[] newLRUs = new ITranslationUnit[UPDATE_LR_CHANGED_FILES_COUNT];
 
 		for (DeltaAnalyzer analyzer : changeMap.values()) {
 			for (ITranslationUnit tu : analyzer.getChangedList()) {
-				newLRUs[count++ % UPDATE_LR_CHANGED_FILES_COUNT]= tu;
+				newLRUs[count++ % UPDATE_LR_CHANGED_FILES_COUNT] = tu;
 				if (!addLRUs && tu.isHeaderUnit()) {
-					addLRUs= true;
+					addLRUs = true;
 				}
 			}
 		}
 
 		if (count > 0) {
-			synchronized(fLRUs) {
+			synchronized (fLRUs) {
 				if (addLRUs) {
 					for (final ITranslationUnit tu : fLRUs.keySet()) {
 						if (tu.getResource().exists()) {
-							final ICProject cproject= tu.getCProject();
-							DeltaAnalyzer analyzer= changeMap.get(cproject);
+							final ICProject cproject = tu.getCProject();
+							DeltaAnalyzer analyzer = changeMap.get(cproject);
 							if (analyzer == null) {
-								analyzer= new DeltaAnalyzer();
+								analyzer = new DeltaAnalyzer();
 								changeMap.put(cproject, analyzer);
 							}
 							analyzer.getForcedList().add(tu);
 						}
 					}
 				}
-				count= Math.min(count, newLRUs.length);
+				count = Math.min(count, newLRUs.length);
 				for (int i = 0; i < count; i++) {
 					final ITranslationUnit tu = newLRUs[i];
 					fLRUs.put(tu, tu);

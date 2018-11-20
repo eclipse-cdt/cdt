@@ -36,7 +36,7 @@ public class CContainerInfo extends OpenableInfo {
 	Object[] nonCResources = null;
 
 	/**
-	 * Constructs a new C Model Info 
+	 * Constructs a new C Model Info
 	 */
 	protected CContainerInfo(CElement element) {
 		super(element);
@@ -50,54 +50,55 @@ public class CContainerInfo extends OpenableInfo {
 		ICElement celement = getElement();
 		ICProject cproject = celement.getCProject();
 		// move back to the sourceroot.
-		while (! (celement instanceof ISourceRoot) && celement != null) {
+		while (!(celement instanceof ISourceRoot) && celement != null) {
 			celement = celement.getParent();
 		}
 		ISourceRoot root = null;
 		if (celement instanceof ISourceRoot) {
-			root = (ISourceRoot)celement;
+			root = (ISourceRoot) celement;
 		}
 
 		try {
 			IResource[] resources = null;
 			if (res instanceof IContainer) {
-				IContainer container = (IContainer)res;
+				IContainer container = (IContainer) res;
 				resources = container.members(false);
 			}
 
 			ICSourceEntry[] entries = null;
-			ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(cproject.getProject(), false);
-			if(des != null){
+			ICProjectDescription des = CProjectDescriptionManager.getInstance()
+					.getProjectDescription(cproject.getProject(), false);
+			if (des != null) {
 				ICConfigurationDescription cfg = des.getDefaultSettingConfiguration();
-				if(cfg != null){
+				if (cfg != null) {
 					entries = cfg.getResolvedSourceEntries();
 				}
 			}
-			
+
 			if (resources != null) {
 				for (IResource member : resources) {
-					switch(member.getType()) {
-						case IResource.FOLDER: {
-							// Check if the folder is not itself a sourceEntry.
-							IPath resourcePath = member.getFullPath();
-							if (cproject.isOnSourceRoot(member) || isSourceEntry(resourcePath, entries)
-							        || (root == null && cproject.isOnOutputEntry(member))) {
-								continue;
-							}
-							break;
+					switch (member.getType()) {
+					case IResource.FOLDER: {
+						// Check if the folder is not itself a sourceEntry.
+						IPath resourcePath = member.getFullPath();
+						if (cproject.isOnSourceRoot(member) || isSourceEntry(resourcePath, entries)
+								|| (root == null && cproject.isOnOutputEntry(member))) {
+							continue;
 						}
-						case IResource.FILE: {
-							String filename = member.getName();
-							if (root != null && CoreModel.isValidTranslationUnitName(cproject.getProject(), filename)
-							        && root.isOnSourceEntry(member)) {
-								continue;
-							}
-							if (cproject.isOnOutputEntry(member)
-							        && CModelManager.getDefault().createBinaryFile((IFile) member) != null) {
-								continue;
-							}
-							break;
+						break;
+					}
+					case IResource.FILE: {
+						String filename = member.getName();
+						if (root != null && CoreModel.isValidTranslationUnitName(cproject.getProject(), filename)
+								&& root.isOnSourceEntry(member)) {
+							continue;
 						}
+						if (cproject.isOnOutputEntry(member)
+								&& CModelManager.getDefault().createBinaryFile((IFile) member) != null) {
+							continue;
+						}
+						break;
+					}
 					}
 					notChildren.add(member);
 				}
@@ -107,7 +108,7 @@ public class CContainerInfo extends OpenableInfo {
 			//CPlugin.log (e);
 			//e.printStackTrace();
 		}
-		setNonCResources(notChildren.toArray());	
+		setNonCResources(notChildren.toArray());
 		return nonCResources;
 	}
 
@@ -116,16 +117,16 @@ public class CContainerInfo extends OpenableInfo {
 	}
 
 	private static boolean isSourceEntry(IPath resourcePath, ICSourceEntry[] entries) {
-		if(entries == null)
+		if (entries == null)
 			return false;
-		
+
 		for (ICSourceEntry entry : entries) {
 			//			if (entry.getEntryKind() == IPathEntry.CDT_SOURCE) {
-				IPath sourcePath = entry.getFullPath();
-				if (resourcePath.equals(sourcePath)) {
-					return true;
-				}
-//			}
+			IPath sourcePath = entry.getFullPath();
+			if (resourcePath.equals(sourcePath)) {
+				return true;
+			}
+			//			}
 		}
 		return false;
 	}

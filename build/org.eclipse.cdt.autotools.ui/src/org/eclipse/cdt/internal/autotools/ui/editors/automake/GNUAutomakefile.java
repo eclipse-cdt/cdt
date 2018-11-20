@@ -46,21 +46,20 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
-
 /**
  * Makefile : ( statement ) *
  * statement :   rule | macro_definition | comments | empty
  * rule :  inference_rule | target_rule
  * inference_rule : target ':' <nl> ( <tab> command <nl> ) +
- * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl> 
+ * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl>
                  [ ( command ) * ]
- * macro_definition : string '=' (string)* 
+ * macro_definition : string '=' (string)*
  * comments : ('#' (string) <nl>) *
  * empty : <nl>
  * command : <tab> prefix_command string <nl>
  * target : string
  * prefix_command : '-' | '@' | '+'
- * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
+ * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%"
  */
 
 public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
@@ -80,7 +79,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 			parse(name, stream);
 		}
 	}
-	
+
 	@Override
 	public void parse(String filePath, Reader reader) throws IOException {
 		parse(URIUtil.toURI(filePath), new MakefileReader(reader));
@@ -90,7 +89,6 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 	public void parse(URI fileURI, Reader reader) throws IOException {
 		parse(fileURI, new MakefileReader(reader));
 	}
-	
 
 	protected void parse(URI fileURI, MakefileReader reader) throws IOException {
 		String line;
@@ -104,11 +102,11 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 		clearDirectives();
 
 		setFileURI(fileURI);
-	
+
 		while ((line = reader.readLine()) != null) {
 			startLine = endLine + 1;
 			endLine = reader.getLineNumber();
-			
+
 			// Check if we enter in "define"
 			if (GNUMakefileUtil.isEndef(line)) {
 				// We should have a "define" for a "endef".
@@ -146,8 +144,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 			}
 
 			// 1- Try command first, since we can not strip '#' in command line
-			if (PosixMakefileUtil.isCommand(line) ||
-					AutomakefileUtil.isAutomakeCommand(line)) {
+			if (PosixMakefileUtil.isCommand(line) || AutomakefileUtil.isAutomakeCommand(line)) {
 				Command cmd = new Command(this, line);
 				cmd.setLines(startLine, endLine);
 				if (rules != null) {
@@ -235,11 +232,11 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 				rules = null;
 				continue;
 			}
-			
+
 			// 3c - Check for else or endif
 
 			if (GNUMakefileUtil.isElse(line)) {
-				Else elseDirective = (Else)parseConditional(line);
+				Else elseDirective = (Else) parseConditional(line);
 				elseDirective.setLines(startLine, endLine);
 				Conditional cond = null;
 				// FIXME: Are we missing a if condition ?
@@ -250,7 +247,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 				if (cond != null && cond.isIf()) {
 					// See 3b above for description on automake if/else handling.
 					elseDirective.setAutomake(true);
-					rules = ((If)cond).getRules();
+					rules = ((If) cond).getRules();
 					// We cache the rules at the time of entry into the if/else block.
 					elseDirective.setRules(rules);
 					if (rules != null) {
@@ -278,7 +275,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 					cond.setEndLine(endLine);
 				}
 				if (cond instanceof IAutomakeConditional) {
-				   rules = ((IAutomakeConditional)cond).getRules();
+					rules = ((IAutomakeConditional) cond).getRules();
 				}
 				if (rules != null) {
 					// The endif is added to the rules.
@@ -291,7 +288,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 				}
 				continue;
 			}
-			
+
 			// 4 - reset rules to null
 			// The first non empty line that does not begin with a <TAB> or '#'
 			// shall begin a new entry.
@@ -338,7 +335,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 				vd.setLines(startLine, endLine);
 				addDirective(conditions, vd);
 				if (!vd.isTargetSpecific()) {
-					continue;					
+					continue;
 				}
 			}
 
@@ -363,7 +360,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 				rules = trules;
 				continue;
 			}
-			
+
 			// - Configure macro (@xxxx@)
 			if (AutomakefileUtil.isConfigMacro(line)) {
 				AutomakeConfigMacro macro = parseConfigMacro(line);
@@ -462,7 +459,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 	 */
 	protected SpecialRule parseSpecialRule(String line) {
 		line = line.trim();
-		String keyword =  null;
+		String keyword = null;
 		String[] reqs = null;
 		SpecialRule special = null;
 		int index = Util.indexOf(line, ':');
@@ -505,7 +502,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 		}
 		return special;
 	}
-	
+
 	/**
 	 * if CONDITIONAL
 	 *
@@ -526,15 +523,15 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 		if (keyword == null) {
 			keyword = line;
 		}
-		if (keyword.equals(GNUMakefileConstants.CONDITIONAL_IF) ||
-				keyword.equals(GNUMakefileConstants.AT_CONDITIONAL_IF)) {
+		if (keyword.equals(GNUMakefileConstants.CONDITIONAL_IF)
+				|| keyword.equals(GNUMakefileConstants.AT_CONDITIONAL_IF)) {
 			return new If(this, rules, line);
 		}
 		return null;
 	}
 
 	/**
-	 * 
+	 *
 	 * ifdef CONDITIONAL
 	 * ifeq CONDITIONAL
 	 * ifneq CONDITIONAL
@@ -579,14 +576,14 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 		String extraChars = "_-";
 		char[] ch = line.toCharArray();
 		int i = 1;
-		while (Character.isLetterOrDigit(ch[i]) ||
-				extraChars.indexOf(ch[i]) >= 0) {
+		while (Character.isLetterOrDigit(ch[i]) || extraChars.indexOf(ch[i]) >= 0) {
 			++i;
 		}
 		if (i > 1 && ch[i] == '@')
-			return new AutomakeConfigMacro(this, line.substring(0, i+1));
+			return new AutomakeConfigMacro(this, line.substring(0, i + 1));
 		return null;
 	}
+
 	/**
 	 *  Format of the include directive:
 	 *      include filename1 filename2 ...
@@ -718,7 +715,8 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 
 		GNUTargetRule[] rules = new GNUTargetRule[targetNames.length];
 		for (int i = 0; i < targetNames.length; i++) {
-			rules[i] = new GNUTargetRule(this, new Target(targetNames[i]), doubleColon, normalReqs, orderReqs, new Command[0]);
+			rules[i] = new GNUTargetRule(this, new Target(targetNames[i]), doubleColon, normalReqs, orderReqs,
+					new Command[0]);
 			if (cmd != null) {
 				rules[i].addDirective(new Command(this, cmd));
 			}
@@ -798,9 +796,8 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 			// Check for "+=",  ":=", "?="
 			if (index > 0) {
 				type = line.charAt(index - 1);
-				if (type == GNUVariableDef.TYPE_SIMPLE_EXPAND
-					|| type == GNUVariableDef.TYPE_APPEND
-					|| type == GNUVariableDef.TYPE_CONDITIONAL) {
+				if (type == GNUVariableDef.TYPE_SIMPLE_EXPAND || type == GNUVariableDef.TYPE_APPEND
+						|| type == GNUVariableDef.TYPE_CONDITIONAL) {
 					separator = index - 1;
 				} else {
 					type = GNUVariableDef.TYPE_RECURSIVE_EXPAND;
@@ -861,7 +858,8 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 
 		StaticTargetRule[] staticRules = new StaticTargetRule[targets.length];
 		for (int i = 0; i < targets.length; i++) {
-			staticRules[i] = new StaticTargetRule(this, new Target(targets[i]), targetPattern, prereqPatterns, new Command[0]);
+			staticRules[i] = new StaticTargetRule(this, new Target(targets[i]), targetPattern, prereqPatterns,
+					new Command[0]);
 		}
 		return staticRules;
 	}
@@ -890,10 +888,10 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 		ArrayList<IDirective> list = new ArrayList<>(Arrays.asList(dirs));
 		for (int i = 0; i < dirs.length; ++i) {
 			if (dirs[i] instanceof Include) {
-				Include include = (Include)dirs[i];
+				Include include = (Include) dirs[i];
 				IDirective[] includedMakefiles = include.getDirectives();
 				for (int j = 0; j < includedMakefiles.length; ++j) {
-					IMakefile includedMakefile = (IMakefile)includedMakefiles[j];
+					IMakefile includedMakefile = (IMakefile) includedMakefiles[j];
 					list.addAll(Arrays.asList(includedMakefile.getDirectives()));
 				}
 			}
@@ -904,9 +902,10 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 	@Override
 	public IDirective[] getBuiltins() {
 		if (builtins == null) {
-			String location =  "builtin" + File.separator + "gnu.mk"; //$NON-NLS-1$ //$NON-NLS-2$
+			String location = "builtin" + File.separator + "gnu.mk"; //$NON-NLS-1$ //$NON-NLS-2$
 			try {
-				InputStream stream = FileLocator.openStream(MakeCorePlugin.getDefault().getBundle(), new Path(location), false);
+				InputStream stream = FileLocator.openStream(MakeCorePlugin.getDefault().getBundle(), new Path(location),
+						false);
 				GNUAutomakefile gnu = new GNUAutomakefile();
 				URL url = FileLocator.find(MakeCorePlugin.getDefault().getBundle(), new Path(location), null);
 				url = FileLocator.resolve(url);
@@ -915,7 +914,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 				builtins = gnu.getDirectives();
 				for (int i = 0; i < builtins.length; i++) {
 					if (builtins[i] instanceof MacroDefinition) {
-						((MacroDefinition)builtins[i]).setFromDefault(true);
+						((MacroDefinition) builtins[i]).setFromDefault(true);
 					}
 				}
 			} catch (Exception e) {
@@ -940,8 +939,8 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 
 	/**
 	 * Create an IMakefile using the given IMakefileReaderProvider to fetch
-	 * contents by name. 
-	 * 
+	 * contents by name.
+	 *
 	 * @param fileURI URI of main file
 	 * @param makefileReaderProvider may be <code>null</code> for EFS IFileStore reading
 	 */
@@ -960,8 +959,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 			if (!info.exists() || info.isDirectory())
 				throw new IOException();
 
-			MakefileReader reader = new MakefileReader(new InputStreamReader(
-					store.openInputStream(EFS.NONE, null)));
+			MakefileReader reader = new MakefileReader(new InputStreamReader(store.openInputStream(EFS.NONE, null)));
 			gnu.parse(fileURI, reader);
 		} catch (IOException e) {
 			AutotoolsUIPlugin.log(e);
@@ -971,7 +969,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 		makefile = gnu;
 		return makefile;
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			String filename = "Makefile"; //$NON-NLS-1$

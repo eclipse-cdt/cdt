@@ -57,7 +57,7 @@ import org.eclipse.osgi.util.NLS;
  * <p>An extension of MIRegisters to support management of Register Groups as per the IRegisters2 interface.</p>
  * <p>The managed registered groups are user-defined subsets of the complete list of Registers reported by GDB for a specific Target</p>
  * <p>This class also triggers the read/write (persistence) of the user-defined Register Groups during the start/shutdown process of a session respectively.
- * It optionally supports persistence of user-defined Register Groups per container/process, 
+ * It optionally supports persistence of user-defined Register Groups per container/process,
  * see {@link #getPersistenceIdForRegisterGroupContainer(IContainerDMContext)}.</p>
  * @since 4.6
  */
@@ -146,7 +146,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 			return nameMap;
 		}
-		
+
 		/**
 		 * Needed when group name(s) change but the associated group objects remain the same
 		 */
@@ -218,7 +218,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 			Map<String, MIRegisterDMC> registerNameMap = new HashMap<String, MIRegisterDMC>();
 			for (IRegisterDMContext register : registers) {
-				assert(register instanceof MIRegisterDMC);
+				assert (register instanceof MIRegisterDMC);
 				MIRegisterDMC registerDmc = (MIRegisterDMC) register;
 				registerNameMap.put(registerDmc.getName(), registerDmc);
 			}
@@ -245,7 +245,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		public boolean isEnabled() {
 			return fEnabled;
 		}
-		
+
 		@Override
 		public String getContainerId() {
 			IContainerDMContext parent = fgroup.getContainerParent();
@@ -296,23 +296,21 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		}
 	}
 
-    @Override
-    public void initialize(final RequestMonitor requestMonitor) {
-        super.initialize(
-            new ImmediateRequestMonitor(requestMonitor) { 
-                @Override
-                public void handleSuccess() {
-                    doInitialize(requestMonitor);
-                }});
-    }
+	@Override
+	public void initialize(final RequestMonitor requestMonitor) {
+		super.initialize(new ImmediateRequestMonitor(requestMonitor) {
+			@Override
+			public void handleSuccess() {
+				doInitialize(requestMonitor);
+			}
+		});
+	}
 
-    private void doInitialize(final RequestMonitor requestMonitor) {
-        register(new String[]{IRegisters.class.getName(), 
-           		IRegisters2.class.getName(),
-           		MIRegisters.class.getName(), 
-        		GDBRegisters.class.getName()}, new Hashtable<String,String>());
-        requestMonitor.done();
-    }
+	private void doInitialize(final RequestMonitor requestMonitor) {
+		register(new String[] { IRegisters.class.getName(), IRegisters2.class.getName(), MIRegisters.class.getName(),
+				GDBRegisters.class.getName() }, new Hashtable<String, String>());
+		requestMonitor.done();
+	}
 
 	@Override
 	public void getRegisterGroups(final IDMContext ctx, final DataRequestMonitor<IRegisterGroupDMContext[]> rm) {
@@ -366,9 +364,9 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	@Override
 	public void getRegisterGroupData(final IRegisterGroupDMContext regGroupDmc,
 			final DataRequestMonitor<IRegisterGroupDMData> rm) {
-		
+
 		assert (regGroupDmc instanceof MIRegisterGroupDMC);
-		
+
 		if (regGroupDmc instanceof MIRegisterGroupDMC) {
 			MIRegisterGroupDMC groupDmc = (MIRegisterGroupDMC) regGroupDmc;
 			rm.setData(createRegisterGroupData(groupDmc));
@@ -405,10 +403,10 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		if (fGroupToRegistersMap.get(groupDmc) == null) {
 			fGroupToRegistersMap.put(groupDmc, new MIRegisterDMC[0]);
 		}
-		
+
 		return groupData;
 	}
-	
+
 	@Override
 	public void getRegisters(final IDMContext aCtx, final DataRequestMonitor<IRegisterDMContext[]> rm) {
 		findRegisterGroup(aCtx, ROOT_GROUP_NAME, new ImmediateDataRequestMonitor<IRegisterGroupDMContext>() {
@@ -418,19 +416,19 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 				IRegisterGroupDMContext rootGroup = getData();
 				assert (rootGroup instanceof MIRegisterGroupDMC);
 				final MIRegisterGroupDMC rootGroupContext = (MIRegisterGroupDMC) rootGroup;
-				
+
 				//if the received context does not contain a register group i.e.is null, the default group to resolve registers is the root group
 				MIRegisterGroupDMC tGroupDmc = DMContexts.getAncestorOfType(aCtx, MIRegisterGroupDMC.class);
-				
+
 				IDMContext tCtx = aCtx;
 				if (tGroupDmc == null) {
 					tGroupDmc = rootGroupContext;
 					//We need a register group as part of the context to resolve registers
-					tCtx = new CompositeDMContext(new IDMContext[] {aCtx, tGroupDmc});
+					tCtx = new CompositeDMContext(new IDMContext[] { aCtx, tGroupDmc });
 				}
 
 				final IDMContext ctx = tCtx;
-				
+
 				final MIRegisterGroupDMC groupDmc = tGroupDmc;
 				// check if base registers have been loaded already
 				MIRegisterDMC[] baseRegisters = fGroupToRegistersMap.get(groupDmc);
@@ -460,24 +458,26 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 					}
 
 					// Fetch the register base from GDB
-					GDBRegisters.super.getRegisters(compCtx, new DataRequestMonitor<IRegisterDMContext[]>(getExecutor(), rm) {
-						@Override
-						@ConfinedToDsfExecutor("fExecutor")
-						protected void handleSuccess() {
-							IRegisterDMContext[] iregisters = getData();
-							MIRegisterDMC[] registers = Arrays.copyOf(iregisters, iregisters.length, MIRegisterDMC[].class);
+					GDBRegisters.super.getRegisters(compCtx,
+							new DataRequestMonitor<IRegisterDMContext[]>(getExecutor(), rm) {
+								@Override
+								@ConfinedToDsfExecutor("fExecutor")
+								protected void handleSuccess() {
+									IRegisterDMContext[] iregisters = getData();
+									MIRegisterDMC[] registers = Arrays.copyOf(iregisters, iregisters.length,
+											MIRegisterDMC[].class);
 
-							// associate group to bare registers i.e. not associated to a specific execution context
-							fGroupToRegistersMap.put(rootGroupContext, toBareRegisters(registers));
-							if (groupDmc.getName().equals(ROOT_GROUP_NAME)) {
-								buildGroupRegisters(ctx, registers, rm);
-								return;
-							}
+									// associate group to bare registers i.e. not associated to a specific execution context
+									fGroupToRegistersMap.put(rootGroupContext, toBareRegisters(registers));
+									if (groupDmc.getName().equals(ROOT_GROUP_NAME)) {
+										buildGroupRegisters(ctx, registers, rm);
+										return;
+									}
 
-							// Now proceed to resolve the requested user group registers
-							getUserGroupRegisters(ctx, rm);
-						}
-					});
+									// Now proceed to resolve the requested user group registers
+									getUserGroupRegisters(ctx, rm);
+								}
+							});
 				} else {
 					if (groupDmc.getName().equals(ROOT_GROUP_NAME)) {
 						buildGroupRegisters(ctx, registerBase, rm);
@@ -499,7 +499,8 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	}
 
 	@Override
-	public void addRegisterGroup(final IDMContext containerContext, final String groupName, final IRegisterDMContext[] registers, RequestMonitor rm) {
+	public void addRegisterGroup(final IDMContext containerContext, final String groupName,
+			final IRegisterDMContext[] registers, RequestMonitor rm) {
 		if (registers == null || registers.length < 1) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 					Messages.RegisterGroup_invalid_number_of_registers, null));
@@ -534,8 +535,8 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 		// Make sure the name is not currently in use
 		if (fContextToGroupsMap.getGroupNameMap(contDmc).get(groupName) != null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, NLS.bind(
-					Messages.RegisterGroup_name_used, groupName), null));
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
+					NLS.bind(Messages.RegisterGroup_name_used, groupName), null));
 			rm.done();
 			return;
 		}
@@ -569,30 +570,31 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	@Override
 	public void editRegisterGroup(IRegisterGroupDMContext group, String newGroupName, IRegisterDMContext[] iRegisters,
 			RequestMonitor rm) {
-		
+
 		if (iRegisters != null && iRegisters.length == 0) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
-                    Messages.RegisterGroup_invalid_number_of_registers, null));
-            return;
+					Messages.RegisterGroup_invalid_number_of_registers, null));
+			return;
 		}
-		
+
 		if (!(group instanceof MIRegisterGroupDMC)) {
-            rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown DMC type", null));  //$NON-NLS-1$
-            return;
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown DMC type", null)); //$NON-NLS-1$
+			return;
 		}
-		
+
 		IContainerDMContext contDmc = DMContexts.getAncestorOfType(group, IContainerDMContext.class);
 		if (contDmc == null) {
-				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
-						"Unable to edit Register group, Invalid Container", null)); //$NON-NLS-1$
-				rm.done();
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
+					"Unable to edit Register group, Invalid Container", null)); //$NON-NLS-1$
+			rm.done();
 		}
-		
+
 		MIRegisterGroupDMC miGroup = ((MIRegisterGroupDMC) group);
 
 		if (!canEditRegisterGroup(group)) {
 			// Should not happen as canEdit is expected to be called before edit
-            rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot currently edit register groups", null)); //$NON-NLS-1$
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+					"Cannot currently edit register groups", null)); //$NON-NLS-1$
 			return;
 		}
 
@@ -604,7 +606,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 				rm.done();
 				return;
 			}
-			
+
 			// Make sure the name is not currently in use
 			if (!miGroup.getName().equals(newGroupName)) {
 				// we are updating the name, lets make sure this new name is not in use
@@ -615,20 +617,20 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 					return;
 				}
 			}
-			
+
 			miGroup.setName(newGroupName);
 
 			//make sure we update the group name cache
 			fContextToGroupsMap.resetGroupNameMap(contDmc);
-			
+
 			generateRegisterGroupChangedEvent(miGroup);
 		} else {
 			// Request to keep name the same
 		}
-		
+
 		if (iRegisters != null) {
 			assert (iRegisters.length > 0);
-			
+
 			// transform to MIRegistersDMC[]
 			MIRegisterDMC[] registers = arrangeRegisters(iRegisters);
 
@@ -646,7 +648,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.dsf.debug.service.IRegisters2#removeRegisterGroups(org.eclipse.cdt.dsf.debug.service.IRegisters
 	 * .IRegisterGroupDMContext[], org.eclipse.cdt.dsf.concurrent.RequestMonitor)
@@ -672,7 +674,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 	/**
 	 * Reset this class i.e. does not impact saved groups within launch configuration
-	 * 
+	 *
 	 * @param rm
 	 */
 	public void reset(final RequestMonitor rm) {
@@ -687,16 +689,17 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.dsf.mi.service.MIRegisters#findRegisterGroup(org.eclipse.cdt.dsf.datamodel.IDMContext,
 	 * java.lang.String, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
 	 */
 	@Override
-	public void findRegisterGroup(final IDMContext ctx, final String name, final DataRequestMonitor<IRegisterGroupDMContext> rm) {
+	public void findRegisterGroup(final IDMContext ctx, final String name,
+			final DataRequestMonitor<IRegisterGroupDMContext> rm) {
 		final IContainerDMContext contDmc = DMContexts.getAncestorOfType(ctx, IContainerDMContext.class);
 		if (contDmc == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
-					"Container context not found", null)); //$NON-NLS-1$
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Container context not found", //$NON-NLS-1$
+					null));
 			rm.done();
 			return;
 		}
@@ -719,7 +722,8 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	/**
 	 * Call it only after getRegisterGroups has been called at least once, so the context to groups map is not empty
 	 */
-	private void findRegisterGroup(IContainerDMContext contDmc, String name, DataRequestMonitor<IRegisterGroupDMContext> rm) {
+	private void findRegisterGroup(IContainerDMContext contDmc, String name,
+			DataRequestMonitor<IRegisterGroupDMContext> rm) {
 		Map<String, MIRegisterGroupDMC> nameToGroup = fContextToGroupsMap.getGroupNameMap(contDmc);
 		if (nameToGroup != null) {
 			rm.setData(nameToGroup.get(name));
@@ -729,27 +733,27 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 		rm.done();
 	}
-	
+
 	@Override
 	public void shutdown(RequestMonitor rm) {
 		save();
 		super.shutdown(rm);
 	}
 
-    /**
-     * Save the register group settings into the underlying launch configuration.
-     */
+	/**
+	 * Save the register group settings into the underlying launch configuration.
+	 */
 	public void save() {
-        IRegisterGroupDescriptor[] groups = buildDescriptors();
-        ILaunchConfiguration launchConfig = getLaunchConfig();
-        if (launchConfig != null) {
-            RegisterGroupsPersistance serializer = new RegisterGroupsPersistance(launchConfig);
-            try {
-                serializer.saveGroups(groups);
-            } catch (CoreException e) {
-                GdbPlugin.log(e);
-            }
-        }
+		IRegisterGroupDescriptor[] groups = buildDescriptors();
+		ILaunchConfiguration launchConfig = getLaunchConfig();
+		if (launchConfig != null) {
+			RegisterGroupsPersistance serializer = new RegisterGroupsPersistance(launchConfig);
+			try {
+				serializer.saveGroups(groups);
+			} catch (CoreException e) {
+				GdbPlugin.log(e);
+			}
+		}
 
 	}
 
@@ -759,7 +763,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	private MIRegisterDMC[] arrangeRegisters(IRegisterDMContext[] iRegisters) {
 		TreeMap<Integer, MIRegisterDMC> sortedRegisters = new TreeMap<Integer, MIRegisterDMC>();
 		for (int i = 0; i < iRegisters.length; i++) {
-			assert(iRegisters[i] instanceof MIRegisterDMC);
+			assert (iRegisters[i] instanceof MIRegisterDMC);
 			MIRegisterDMC register = (MIRegisterDMC) iRegisters[i];
 			sortedRegisters.put(register.getRegNo(), register);
 		}
@@ -801,16 +805,17 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 				// This could be revisited in case there is performance concerns which does not seem an issue at this
 				// point.
 				MIRegisterGroupDMC[] groupsCtx = fContextToGroupsMap.get(containerDmc);
-				assert(groupsCtx != null);
-				
-				if (groupsCtx != null) {			
+				assert (groupsCtx != null);
+
+				if (groupsCtx != null) {
 					List<MIRegisterGroupDMC> groupsList = new ArrayList<MIRegisterGroupDMC>(Arrays.asList(groupsCtx));
-					
+
 					// Removing a single group
 					groupsList.remove(group);
-					
+
 					// Back to context map without the given group
-					fContextToGroupsMap.put(containerDmc, groupsList.toArray(new MIRegisterGroupDMC[groupsList.size()]));
+					fContextToGroupsMap.put(containerDmc,
+							groupsList.toArray(new MIRegisterGroupDMC[groupsList.size()]));
 					// Now remove the group from the groups to registers map
 					if (fGroupToRegistersMap.remove(group) != null) {
 						updatedContainers.add(containerDmc);
@@ -822,10 +827,10 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 					return;
 				}
 			}
-			
+
 			// Sending only one update per container
 			for (IContainerDMContext container : updatedContainers) {
-				getSession().dispatchEvent(new GroupsChangedDMEvent(container), null);				
+				getSession().dispatchEvent(new GroupsChangedDMEvent(container), null);
 			}
 		}
 
@@ -909,12 +914,12 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 	MIRegisterGroupDMC[] readGroupsFromMemento(final IContainerDMContext contDmc) {
 		String containerId = getPersistenceIdForRegisterGroupContainer(contDmc);
-		
+
 		RegisterGroupsPersistance deserializer = new RegisterGroupsPersistance(getLaunchConfig());
 		IRegisterGroupDescriptor[] groupDescriptions;
 		try {
 			groupDescriptions = deserializer.parseGroups(containerId);
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			return new MIRegisterGroupDMC[0];
 		}
 
@@ -927,21 +932,21 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 		return groups.toArray(new MIRegisterGroupDMC[groups.size()]);
 	}
-	
+
 	/**
-	 * @return the persistence id for the register group in the given contDmc container context, 
-	 * or null to associate the Register Groups in the given container to the launch itself (this is the default behavior). 
-	 * 
+	 * @return the persistence id for the register group in the given contDmc container context,
+	 * or null to associate the Register Groups in the given container to the launch itself (this is the default behavior).
+	 *
 	 * Subclasses may override. Alternatively simply use override {@link #useProcessIdAsRegisterGroupPersistanceId()} to return true to have
-	 * the process id be used as the persistence id. 
-	 * 
+	 * the process id be used as the persistence id.
+	 *
 	 * Note that for this to work correctly the id returned for a given container must be same across launch sessions,
 	 * otherwise persistence info will be lost. (Hence why null is the default behavior)
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	protected String getPersistenceIdForRegisterGroupContainer(final IContainerDMContext contDmc) {
-		if(useProcessIdAsRegisterGroupPersistanceId()) {
+		if (useProcessIdAsRegisterGroupPersistanceId()) {
 			IMIProcessDMContext processDmc = DMContexts.getAncestorOfType(contDmc, IMIProcessDMContext.class);
 			return processDmc == null ? null : processDmc.getProcId();
 		} else {
@@ -950,11 +955,11 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	}
 
 	/**
-	 * @return whether the process id should be used as a container id for the persistence 
+	 * @return whether the process id should be used as a container id for the persistence
 	 * of the register groups. Subclasses may override.
-	 * 
+	 *
 	 * @see #getPersistenceIdForRegisterGroupContainer(IContainerDMContext)
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	protected boolean useProcessIdAsRegisterGroupPersistanceId() {
@@ -1027,8 +1032,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	@Override
 	protected void generateRegisterChangedEvent(final IRegisterDMContext dmc) {
 		// notify the register value change
-        getSession().dispatchEvent(new RegisterChangedDMEvent(dmc), getProperties());
-
+		getSession().dispatchEvent(new RegisterChangedDMEvent(dmc), getProperties());
 
 		// Propagate notification to all groups.
 		// A change of a single register needs to be propagated to all groups within the same Container/Process
@@ -1037,11 +1041,11 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
 		generateRegistersChangedEvent(containerDmc);
 	}
-	
+
 	private void generateRegistersChangedEvent(IContainerDMContext containerDmc) {
-		//resolve the groups for the current container (process) context 
+		//resolve the groups for the current container (process) context
 		final MIRegisterGroupDMC[] groups = fContextToGroupsMap.get(containerDmc);
-		
+
 		//trigger notification to all groups in the container
 		for (int i = 0; i < groups.length; i++) {
 			//We need final locals variables from the loop. Use a method call for this
@@ -1056,7 +1060,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 				return groupDmc;
 			}
 		};
-		
+
 		getSession().dispatchEvent(event, getProperties());
 	}
 
@@ -1067,11 +1071,9 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 				return groupDmc;
 			}
 		};
-		
+
 		getSession().dispatchEvent(event, getProperties());
 	}
-
-	
 
 	/**
 	 * Create Registers from specific execution context to a generic register context, e.g. not associated to a specific
@@ -1162,9 +1164,9 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 			rm.done();
 			return;
 		}
-		
-		for(IRegisterGroupDMContext group : groups) {
-			assert(group instanceof MIRegisterGroupDMC);
+
+		for (IRegisterGroupDMContext group : groups) {
+			assert (group instanceof MIRegisterGroupDMC);
 			MIRegisterGroupDMC miGroup = (MIRegisterGroupDMC) group;
 			if (miGroup.getName().equals(ROOT_GROUP_NAME)) {
 				// Not allowed to remove the root group
@@ -1176,7 +1178,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 		rm.setData(true);
 		rm.done();
-	
+
 	}
 
 	@Override

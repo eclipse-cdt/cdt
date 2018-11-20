@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
  * -break-watch [ -a | -r ] LOCATION
- *  
+ *
  * Create a watchpoint on LOCATION. Without either of the options, the watchpoint
  * created is a regular watchpoint, i.e., a watchpoint that triggers when the
  * memory LOCATION is accessed for writing.
@@ -35,24 +35,22 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  *      Creates a read watchpoint i.e. a watchpoint that triggers only when
  *      the memory location is accessed for reading.
  */
-public class MIBreakWatch extends MICommand<MIBreakInsertInfo> 
-{
-	public MIBreakWatch(IBreakpointsTargetDMContext ctx, boolean isRead, boolean isWrite, String expression)
-	{
+public class MIBreakWatch extends MICommand<MIBreakInsertInfo> {
+	public MIBreakWatch(IBreakpointsTargetDMContext ctx, boolean isRead, boolean isWrite, String expression) {
 		super(ctx, "-break-watch"); //$NON-NLS-1$
 
 		if (isRead) {
 			if (isWrite)
-	        	setOptions(new String[] { "-a" });  //$NON-NLS-1$
-	        else
-	        	setOptions(new String[] { "-r" });  //$NON-NLS-1$
+				setOptions(new String[] { "-a" }); //$NON-NLS-1$
+			else
+				setOptions(new String[] { "-r" }); //$NON-NLS-1$
 		}
 
-        setParameters(new String[]{ expression });
-    }
+		setParameters(new String[] { expression });
+	}
 
-    @Override
-    public MIBreakInsertInfo getResult(MIOutput output) {
-        return new MIBreakInsertInfo(output);
-    }
+	@Override
+	public MIBreakInsertInfo getResult(MIOutput output) {
+		return new MIBreakInsertInfo(output);
+	}
 }

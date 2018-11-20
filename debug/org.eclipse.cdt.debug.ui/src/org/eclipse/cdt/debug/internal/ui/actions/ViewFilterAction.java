@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ import org.eclipse.ui.IViewPart;
  * the view has no CDT content.
  */
 public abstract class ViewFilterAction extends ViewerFilter implements IViewActionDelegate, IActionDelegate2 {
-	
+
 	private IViewPart fView;
 	private IAction fAction;
 
@@ -110,17 +110,17 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	 * practical generic way to test that so we have to use view specific tests.
 	 * Currently, we support the Debug and Breakpoints view. Support for other
 	 * views should be added as needed.
-	 * 
+	 *
 	 * Note that because we do this test on a view selection change, there can
 	 * be some edge cases where we'll be enabled even though there is no CDT
 	 * content. Closing those gaps would not be easy, and thus not worth the
 	 * effort as no harm is done by an unintentional enablement.
-	 * 
+	 *
 	 * For the Debug view case, we check debugTargets in the base method to
 	 * be backwards compatible as this was the criteria from the start.
- 	 * A specific action can specialize this method but should call super.selectionChanged
- 	 * to maintain backwards compatibility.
-	 * 
+	 * A specific action can specialize this method but should call super.selectionChanged
+	 * to maintain backwards compatibility.
+	 *
 	 *  @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
@@ -128,7 +128,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enable = false;
 		IDebugView view = getView().getAdapter(IDebugView.class);
-		
+
 		// Debug view
 		if (view instanceof LaunchView) {
 			ILaunchManager launchmgr = DebugPlugin.getDefault().getLaunchManager();
@@ -161,11 +161,11 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	protected IPreferenceStore getPreferenceStore() {
 		return CDebugUIPlugin.getDefault().getPreferenceStore();
 	}
-	
+
 	/**
 	 * Returns the value of this filters preference (on/off) for the given
 	 * view.
-	 * 
+	 *
 	 * @param part
 	 * @return boolean
 	 */
@@ -173,41 +173,41 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		String key = part.getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
 		return getPreferenceStore().getBoolean(key);
 	}
-	
+
 	/**
 	 * Returns the key for this action's preference
-	 * 
+	 *
 	 * @return String
 	 */
-	protected abstract String getPreferenceKey(); 
+	protected abstract String getPreferenceKey();
 
 	protected IViewPart getView() {
 		return fView;
 	}
-	
+
 	protected StructuredViewer getStructuredViewer() {
 		IDebugView view = getView().getAdapter(IDebugView.class);
 		if (view != null) {
 			Viewer viewer = view.getViewer();
 			if (viewer instanceof StructuredViewer) {
-				return (StructuredViewer)viewer;
+				return (StructuredViewer) viewer;
 			}
-		}		
+		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns whether this action is selected/checked.
-	 * 
+	 *
 	 * @return whether this action is selected/checked
 	 */
 	protected boolean getValue() {
 		return fAction.isChecked();
 	}
-	
+
 	/**
 	 * Sets whether the action should be enabled or not.
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	protected void setEnabled(boolean enabled) {

@@ -100,7 +100,7 @@ public class IncludeInfo implements Comparable<IncludeInfo> {
 	public int compareTo(IncludeInfo other) {
 		if (isSystem != other.isSystem)
 			return isSystem ? -1 : 1;
-		
+
 		int length1 = name.length();
 		int length2 = other.name.length();
 		for (int i = 0; i < length1 && i < length2; i++) {

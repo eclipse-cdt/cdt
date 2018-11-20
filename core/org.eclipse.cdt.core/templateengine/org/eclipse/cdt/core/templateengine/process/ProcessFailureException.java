@@ -36,7 +36,7 @@ public class ProcessFailureException extends Exception {
 	public ProcessFailureException(Throwable cause) {
 		super(cause);
 	}
-	
+
 	/**
 	 * Constructor based on the message and cause.
 	 * @param msg

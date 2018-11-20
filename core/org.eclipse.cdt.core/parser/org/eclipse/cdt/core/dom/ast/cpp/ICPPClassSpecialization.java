@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 /**
  * Specializations of all sorts of class types.
  * @since 5.1
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -30,7 +30,7 @@ public interface ICPPClassSpecialization extends ICPPTypeSpecialization, ICPPCla
 	ICPPClassType getSpecializedBinding();
 
 	/**
-	 * Creates a specialized binding for a member of the original class. The result is 
+	 * Creates a specialized binding for a member of the original class. The result is
 	 * a member of this class specialization.
 	 */
 	IBinding specializeMember(IBinding binding);

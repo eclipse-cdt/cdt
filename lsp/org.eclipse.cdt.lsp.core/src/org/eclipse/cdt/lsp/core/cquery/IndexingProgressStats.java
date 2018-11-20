@@ -19,8 +19,8 @@ public class IndexingProgressStats {
 	private int onIndexedCount;
 	private int activeThreads;
 
-	public IndexingProgressStats(int indexRequestCount, int doIdMapCount, int loadPreviousIndexCount, int onIdMappedCount,
-			int onIndexedCount, int activeThreads) {
+	public IndexingProgressStats(int indexRequestCount, int doIdMapCount, int loadPreviousIndexCount,
+			int onIdMappedCount, int onIndexedCount, int activeThreads) {
 		this.indexRequestCount = indexRequestCount;
 		this.doIdMapCount = doIdMapCount;
 		this.loadPreviousIndexCount = loadPreviousIndexCount;
@@ -30,9 +30,9 @@ public class IndexingProgressStats {
 	}
 
 	public int getTotalJobs() {
-        int sum = indexRequestCount + doIdMapCount + loadPreviousIndexCount + onIdMappedCount + onIndexedCount;
-        return sum;
-    }
+		int sum = indexRequestCount + doIdMapCount + loadPreviousIndexCount + onIdMappedCount + onIndexedCount;
+		return sum;
+	}
 
 	public int getIndexRequestCount() {
 		return indexRequestCount;

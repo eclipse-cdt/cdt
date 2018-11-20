@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
@@ -35,18 +35,18 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier
 
 /**
  * A visitor for the comments. Calls the NodeCommenter to assign the comments.
- * 
- * @see org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommenter 
- *   
- * @author Guido Zgraggen IFS 
+ *
+ * @see org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommenter
+ *
+ * @author Guido Zgraggen IFS
  */
 public class ASTCommenterVisitor extends ASTVisitor {
 	protected CommentHandler commentHandler;
 	protected NodeCommentMap commentMap;
-		
+
 	private NodeCommenter nodeCommenter;
 	private IASTDeclaration lastDecl;
-	
+
 	{
 		shouldVisitBaseSpecifiers = true;
 		shouldVisitDeclarations = true;
@@ -62,7 +62,7 @@ public class ASTCommenterVisitor extends ASTVisitor {
 		shouldVisitTypeIds = true;
 		shouldVisitTranslationUnit = true;
 	}
-	
+
 	public ASTCommenterVisitor(CommentHandler commentHandler, NodeCommentMap commentMap) {
 		this.commentHandler = commentHandler;
 		this.commentMap = commentMap;
@@ -72,7 +72,7 @@ public class ASTCommenterVisitor extends ASTVisitor {
 	private void init() {
 		nodeCommenter = new NodeCommenter(this, commentHandler, commentMap);
 	}
-	
+
 	@Override
 	public int visit(IASTName name) {
 		return nodeCommenter.appendComments((ASTNode) name);
@@ -108,7 +108,7 @@ public class ASTCommenterVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTDeclarator declarator) {
-		return nodeCommenter.appendComments((ASTNode) declarator);		
+		return nodeCommenter.appendComments((ASTNode) declarator);
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class ASTCommenterVisitor extends ASTVisitor {
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
 		return nodeCommenter.appendComments((ASTNode) parameterDeclaration);
 	}
-	
+
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespace) {
 		return nodeCommenter.appendComments((ASTNode) namespace);
@@ -139,7 +139,6 @@ public class ASTCommenterVisitor extends ASTVisitor {
 		}
 		return PROCESS_CONTINUE;
 	}
-
 
 	@Override
 	public int leave(IASTName name) {
@@ -179,7 +178,7 @@ public class ASTCommenterVisitor extends ASTVisitor {
 
 	@Override
 	public int leave(IASTDeclSpecifier declSpec) {
-		if(declSpec instanceof CPPASTCompositeTypeSpecifier) {
+		if (declSpec instanceof CPPASTCompositeTypeSpecifier) {
 			return nodeCommenter.appendFreestandingComments((ASTNode) declSpec);
 		}
 		nodeCommenter.appendComments((ASTNode) declSpec);
@@ -194,7 +193,7 @@ public class ASTCommenterVisitor extends ASTVisitor {
 
 	@Override
 	public int leave(IASTStatement statement) {
-		if(statement instanceof IASTCompoundStatement) {
+		if (statement instanceof IASTCompoundStatement) {
 			return nodeCommenter.appendFreestandingComments((ASTNode) statement);
 		}
 		nodeCommenter.appendComments((ASTNode) statement);

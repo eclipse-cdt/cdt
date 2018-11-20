@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.FileInputStream;
@@ -33,15 +33,14 @@ import org.eclipse.cdt.core.CCorePlugin;
 public class FileCharArray extends LazyCharArray {
 	private static final String UTF8_CHARSET_NAME = "UTF-8"; //$NON-NLS-1$
 
-	public static AbstractCharArray create(String fileName, String charSet, InputStream in)
-			throws IOException {
+	public static AbstractCharArray create(String fileName, String charSet, InputStream in) throws IOException {
 		// No support for non-local files.
 		if (!(in instanceof FileInputStream)) {
 			return null;
 		}
-		FileInputStream fis= (FileInputStream) in;
+		FileInputStream fis = (FileInputStream) in;
 		if (!Charset.isSupported(charSet)) {
-			charSet= System.getProperty("file.encoding"); //$NON-NLS-1$
+			charSet = System.getProperty("file.encoding"); //$NON-NLS-1$
 		}
 		FileChannel channel = fis.getChannel();
 		final long lsize = channel.size();
@@ -51,29 +50,28 @@ public class FileCharArray extends LazyCharArray {
 
 		return new FileCharArray(fileName, charSet);
 	}
-	
+
 	private static AbstractCharArray decodeSmallFile(FileChannel channel, int lsize, String charSet)
 			throws IOException {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(lsize);
 		channel.read(byteBuffer);
 		byteBuffer.flip();
 		skipUTF8ByteOrderMark(byteBuffer, charSet);
-		
+
 		CharBuffer charBuffer = Charset.forName(charSet).decode(byteBuffer);
-		char[] buf= extractChars(charBuffer);
+		char[] buf = extractChars(charBuffer);
 		return new CharArray(buf);
 	}
 
 	private static void skipUTF8ByteOrderMark(ByteBuffer buf, String charset) {
 		if (charset.equals(UTF8_CHARSET_NAME) && buf.remaining() >= 3) {
 			int pos = buf.position();
-			if (buf.get(pos) == (byte) 0xEF && buf.get(++pos) == (byte) 0xBB &&
-					buf.get(++pos) == (byte) 0xBF) {
+			if (buf.get(pos) == (byte) 0xEF && buf.get(++pos) == (byte) 0xBB && buf.get(++pos) == (byte) 0xBF) {
 				buf.position(++pos);
 			}
 		}
 	}
-	
+
 	private static char[] extractChars(CharBuffer charBuffer) {
 		if (charBuffer.hasArray() && charBuffer.arrayOffset() == 0) {
 			char[] buf = charBuffer.array();
@@ -94,8 +92,8 @@ public class FileCharArray extends LazyCharArray {
 	private boolean fReachedEOF;
 
 	private FileCharArray(String fileName, String charSet) {
-		fFileName= fileName;
-		fCharSet= charSet;
+		fFileName = fileName;
+		fCharSet = charSet;
 	}
 
 	@Override
@@ -108,42 +106,41 @@ public class FileCharArray extends LazyCharArray {
 			fHasError = true;
 			return null;
 		}
-		fChannel= fis.getChannel();
+		fChannel = fis.getChannel();
 		try {
 			return super.createChunk(chunkNumber);
 		} finally {
-			fChannel= null;
+			fChannel = null;
 			try {
 				fis.close();
 			} catch (IOException e) {
 			}
 		}
 	}
-	
+
 	@Override
 	protected Chunk nextChunk() {
 		if (fReachedEOF)
 			return null;
-		
+
 		try {
 			assert fChannel != null;
 			final Charset charset = Charset.forName(fCharSet);
-			final CharsetDecoder decoder = charset.newDecoder()
-					.onMalformedInput(CodingErrorAction.REPLACE)
+			final CharsetDecoder decoder = charset.newDecoder().onMalformedInput(CodingErrorAction.REPLACE)
 					.onUnmappableCharacter(CodingErrorAction.REPLACE);
 
 			int needBytes = 3 + (int) (CHUNK_SIZE * (double) decoder.averageCharsPerByte()); // avoid rounding errors.
 			final ByteBuffer in = ByteBuffer.allocate(needBytes);
-			final CharBuffer dest= CharBuffer.allocate(CHUNK_SIZE);
+			final CharBuffer dest = CharBuffer.allocate(CHUNK_SIZE);
 
 			boolean eof;
 			CoderResult result;
-			long fileOffset= fNextFileOffset;
+			long fileOffset = fNextFileOffset;
 			do {
 				in.clear();
 				fChannel.position(fileOffset);
 				fChannel.read(in);
-				eof= in.remaining() > 0;
+				eof = in.remaining() > 0;
 				in.flip();
 				if (fileOffset == 0) {
 					skipUTF8ByteOrderMark(in, fCharSet);
@@ -154,11 +151,11 @@ public class FileCharArray extends LazyCharArray {
 
 			dest.flip();
 			if (dest.remaining() == 0) {
-				fReachedEOF= true;
+				fReachedEOF = true;
 				return null;
 			}
 			if (eof && result == CoderResult.UNDERFLOW) {
-				fReachedEOF= true;
+				fReachedEOF = true;
 			}
 			final char[] chars = extractChars(dest);
 			Chunk chunk = newChunk(fNextFileOffset, fileOffset, fNextCharOffset, chars);
@@ -199,15 +196,13 @@ public class FileCharArray extends LazyCharArray {
 		}
 	}
 
-	private void decode(FileChannel channel, long fileOffset, long fileEndOffset, CharBuffer dest)
-			throws IOException {
+	private void decode(FileChannel channel, long fileOffset, long fileEndOffset, CharBuffer dest) throws IOException {
 		final Charset charset = Charset.forName(fCharSet);
-		final CharsetDecoder decoder = charset.newDecoder()
-				.onMalformedInput(CodingErrorAction.REPLACE)
+		final CharsetDecoder decoder = charset.newDecoder().onMalformedInput(CodingErrorAction.REPLACE)
 				.onUnmappableCharacter(CodingErrorAction.REPLACE);
 
 		final ByteBuffer in = ByteBuffer.allocate((int) (fileEndOffset - fileOffset));
-		
+
 		in.clear();
 		channel.position(fileOffset);
 		channel.read(in);

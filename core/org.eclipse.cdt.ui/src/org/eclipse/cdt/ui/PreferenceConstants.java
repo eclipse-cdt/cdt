@@ -67,28 +67,28 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_BOLD_SUFFIX= "_bold"; //$NON-NLS-1$
+	public static final String EDITOR_BOLD_SUFFIX = "_bold"; //$NON-NLS-1$
 
 	/**
 	 * Preference key suffix for italic text style preference keys.
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_ITALIC_SUFFIX= "_italic"; //$NON-NLS-1$
+	public static final String EDITOR_ITALIC_SUFFIX = "_italic"; //$NON-NLS-1$
 
 	/**
 	 * Preference key suffix for strikethrough text style preference keys.
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_STRIKETHROUGH_SUFFIX= "_strikethrough"; //$NON-NLS-1$
+	public static final String EDITOR_STRIKETHROUGH_SUFFIX = "_strikethrough"; //$NON-NLS-1$
 
 	/**
 	 * Preference key suffix for underline text style preference keys.
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_UNDERLINE_SUFFIX= "_underline"; //$NON-NLS-1$
+	public static final String EDITOR_UNDERLINE_SUFFIX = "_underline"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that holds the color used to render multi-line comments.
@@ -100,7 +100,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_MULTI_LINE_COMMENT_COLOR= ICColorConstants.C_MULTI_LINE_COMMENT;
+	public final static String EDITOR_MULTI_LINE_COMMENT_COLOR = ICColorConstants.C_MULTI_LINE_COMMENT;
 
 	/**
 	 * A named preference that controls whether multi-line comments are rendered in bold.
@@ -110,7 +110,8 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_MULTI_LINE_COMMENT_BOLD= ICColorConstants.C_MULTI_LINE_COMMENT + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_MULTI_LINE_COMMENT_BOLD = ICColorConstants.C_MULTI_LINE_COMMENT
+			+ EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether multi-line comments are rendered in italic.
@@ -120,7 +121,8 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_MULTI_LINE_COMMENT_ITALIC= ICColorConstants.C_MULTI_LINE_COMMENT + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_MULTI_LINE_COMMENT_ITALIC = ICColorConstants.C_MULTI_LINE_COMMENT
+			+ EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render single line comments.
@@ -132,7 +134,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_SINGLE_LINE_COMMENT_COLOR= ICColorConstants.C_SINGLE_LINE_COMMENT;
+	public final static String EDITOR_SINGLE_LINE_COMMENT_COLOR = ICColorConstants.C_SINGLE_LINE_COMMENT;
 
 	/**
 	 * A named preference that controls whether single line comments are rendered in bold.
@@ -142,7 +144,8 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_SINGLE_LINE_COMMENT_BOLD= ICColorConstants.C_SINGLE_LINE_COMMENT + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_SINGLE_LINE_COMMENT_BOLD = ICColorConstants.C_SINGLE_LINE_COMMENT
+			+ EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether single line comments are rendered in italic.
@@ -152,7 +155,8 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_SINGLE_LINE_COMMENT_ITALIC= ICColorConstants.C_SINGLE_LINE_COMMENT + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_SINGLE_LINE_COMMENT_ITALIC = ICColorConstants.C_SINGLE_LINE_COMMENT
+			+ EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render C/C++ keywords.
@@ -164,7 +168,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_KEYWORD_COLOR= ICColorConstants.C_KEYWORD;
+	public final static String EDITOR_C_KEYWORD_COLOR = ICColorConstants.C_KEYWORD;
 
 	/**
 	 * A named preference that controls whether keywords are rendered in bold.
@@ -173,7 +177,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_KEYWORD_BOLD= ICColorConstants.C_KEYWORD + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_C_KEYWORD_BOLD = ICColorConstants.C_KEYWORD + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether keywords are rendered in italic.
@@ -182,7 +186,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_KEYWORD_ITALIC= ICColorConstants.C_KEYWORD + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_C_KEYWORD_ITALIC = ICColorConstants.C_KEYWORD + EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render preprocessor directives.
@@ -194,7 +198,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_PP_DIRECTIVE_COLOR= ICColorConstants.PP_DIRECTIVE;
+	public final static String EDITOR_PP_DIRECTIVE_COLOR = ICColorConstants.PP_DIRECTIVE;
 
 	/**
 	 * A named preference that controls whether preprocessor directives are rendered in bold.
@@ -203,7 +207,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_PP_DIRECTIVE_BOLD= ICColorConstants.PP_DIRECTIVE + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_PP_DIRECTIVE_BOLD = ICColorConstants.PP_DIRECTIVE + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether preprocessor directives are rendered in italic.
@@ -212,7 +216,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_PP_DIRECTIVE_ITALIC= ICColorConstants.PP_DIRECTIVE + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_PP_DIRECTIVE_ITALIC = ICColorConstants.PP_DIRECTIVE + EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render headers.
@@ -224,7 +228,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_PP_HEADER_COLOR= ICColorConstants.PP_HEADER;
+	public final static String EDITOR_PP_HEADER_COLOR = ICColorConstants.PP_HEADER;
 
 	/**
 	 * A named preference that controls whether headers are rendered in bold.
@@ -233,7 +237,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_PP_HEADER_BOLD= ICColorConstants.PP_HEADER + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_PP_HEADER_BOLD = ICColorConstants.PP_HEADER + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether number are rendered in italic.
@@ -242,7 +246,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_PP_HEADER_ITALIC= ICColorConstants.PP_HEADER + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_PP_HEADER_ITALIC = ICColorConstants.PP_HEADER + EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render preprocessor text.
@@ -254,7 +258,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_PP_DEFAULT_COLOR= ICColorConstants.PP_DEFAULT;
+	public final static String EDITOR_PP_DEFAULT_COLOR = ICColorConstants.PP_DEFAULT;
 
 	/**
 	 * A named preference that controls whether preprocessor text is rendered in bold.
@@ -263,7 +267,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_PP_DEFAULT_BOLD= ICColorConstants.PP_DEFAULT + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_PP_DEFAULT_BOLD = ICColorConstants.PP_DEFAULT + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether preprocessor text is rendered in italic.
@@ -272,7 +276,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_PP_DEFAULT_ITALIC= ICColorConstants.PP_DEFAULT + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_PP_DEFAULT_ITALIC = ICColorConstants.PP_DEFAULT + EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render builtin types.
@@ -284,7 +288,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_BUILTIN_TYPE_COLOR= ICColorConstants.C_TYPE;
+	public final static String EDITOR_C_BUILTIN_TYPE_COLOR = ICColorConstants.C_TYPE;
 
 	/**
 	 * A named preference that controls whether builtin types are rendered in bold.
@@ -293,7 +297,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_BUILTIN_TYPE_BOLD= ICColorConstants.C_TYPE + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_C_BUILTIN_TYPE_BOLD = ICColorConstants.C_TYPE + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether builtin types are rendered in italic.
@@ -302,7 +306,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_BUILTIN_TYPE_ITALIC= ICColorConstants.C_TYPE + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_C_BUILTIN_TYPE_ITALIC = ICColorConstants.C_TYPE + EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render string constants.
@@ -314,7 +318,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_STRING_COLOR= ICColorConstants.C_STRING;
+	public final static String EDITOR_C_STRING_COLOR = ICColorConstants.C_STRING;
 
 	/**
 	 * A named preference that controls whether string constants are rendered in bold.
@@ -323,7 +327,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_STRING_BOLD= ICColorConstants.C_STRING + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_C_STRING_BOLD = ICColorConstants.C_STRING + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether string constants are rendered in italic.
@@ -332,7 +336,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_STRING_ITALIC= ICColorConstants.C_STRING + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_C_STRING_ITALIC = ICColorConstants.C_STRING + EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render operators.
@@ -344,7 +348,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_OPERATOR_COLOR= ICColorConstants.C_OPERATOR;
+	public final static String EDITOR_C_OPERATOR_COLOR = ICColorConstants.C_OPERATOR;
 
 	/**
 	 * A named preference that controls whether operators are rendered in bold.
@@ -353,7 +357,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_OPERATOR_BOLD= ICColorConstants.C_OPERATOR + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_C_OPERATOR_BOLD = ICColorConstants.C_OPERATOR + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether operators are rendered in italic.
@@ -362,7 +366,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_OPERATOR_ITALIC= ICColorConstants.C_OPERATOR + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_C_OPERATOR_ITALIC = ICColorConstants.C_OPERATOR + EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render numbers.
@@ -374,7 +378,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_NUMBER_COLOR= ICColorConstants.C_NUMBER;
+	public final static String EDITOR_C_NUMBER_COLOR = ICColorConstants.C_NUMBER;
 
 	/**
 	 * A named preference that controls whether number are rendered in bold.
@@ -383,7 +387,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_NUMBER_BOLD= ICColorConstants.C_NUMBER + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_C_NUMBER_BOLD = ICColorConstants.C_NUMBER + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether number are rendered in italic.
@@ -392,7 +396,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_NUMBER_ITALIC= ICColorConstants.C_NUMBER + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_C_NUMBER_ITALIC = ICColorConstants.C_NUMBER + EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render braces.
@@ -404,7 +408,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_BRACES_COLOR= ICColorConstants.C_BRACES;
+	public final static String EDITOR_C_BRACES_COLOR = ICColorConstants.C_BRACES;
 
 	/**
 	 * A named preference that controls whether braces are rendered in bold.
@@ -413,7 +417,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_BRACES_BOLD= ICColorConstants.C_BRACES + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_C_BRACES_BOLD = ICColorConstants.C_BRACES + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether braces are rendered in italic.
@@ -422,7 +426,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_BRACES_ITALIC= ICColorConstants.C_BRACES + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_C_BRACES_ITALIC = ICColorConstants.C_BRACES + EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render C/C++ default text.
@@ -434,7 +438,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_DEFAULT_COLOR= ICColorConstants.C_DEFAULT;
+	public final static String EDITOR_C_DEFAULT_COLOR = ICColorConstants.C_DEFAULT;
 
 	/**
 	 * A named preference that controls whether C/C++ default text is rendered in bold.
@@ -443,7 +447,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_DEFAULT_BOLD= ICColorConstants.C_DEFAULT + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_C_DEFAULT_BOLD = ICColorConstants.C_DEFAULT + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether C/C++ default text is rendered in italic.
@@ -452,7 +456,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_DEFAULT_ITALIC= ICColorConstants.C_DEFAULT + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_C_DEFAULT_ITALIC = ICColorConstants.C_DEFAULT + EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render assembly labels.
@@ -464,7 +468,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 5.0
 	 */
-	public final static String EDITOR_ASM_LABEL_COLOR= ICColorConstants.ASM_LABEL;
+	public final static String EDITOR_ASM_LABEL_COLOR = ICColorConstants.ASM_LABEL;
 
 	/**
 	 * A named preference that controls whether assembly labels are rendered in bold.
@@ -473,7 +477,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String EDITOR_ASM_LABEL_BOLD= ICColorConstants.ASM_LABEL + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_ASM_LABEL_BOLD = ICColorConstants.ASM_LABEL + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether assembly labels are rendered in italic.
@@ -482,7 +486,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String EDITOR_ASM_LABEL_ITALIC= ICColorConstants.ASM_LABEL + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_ASM_LABEL_ITALIC = ICColorConstants.ASM_LABEL + EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render assembly directives.
@@ -494,7 +498,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 5.0
 	 */
-	public final static String EDITOR_ASM_DIRECTIVE_COLOR= ICColorConstants.ASM_DIRECTIVE;
+	public final static String EDITOR_ASM_DIRECTIVE_COLOR = ICColorConstants.ASM_DIRECTIVE;
 
 	/**
 	 * A named preference that controls whether assembly directives are rendered in bold.
@@ -503,7 +507,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String EDITOR_ASM_DIRECTIVE_BOLD= ICColorConstants.ASM_DIRECTIVE + EDITOR_BOLD_SUFFIX;
+	public final static String EDITOR_ASM_DIRECTIVE_BOLD = ICColorConstants.ASM_DIRECTIVE + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether assembly directives are rendered in italic.
@@ -512,7 +516,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String EDITOR_ASM_DIRECTIVE_ITALIC= ICColorConstants.ASM_DIRECTIVE + EDITOR_ITALIC_SUFFIX;
+	public final static String EDITOR_ASM_DIRECTIVE_ITALIC = ICColorConstants.ASM_DIRECTIVE + EDITOR_ITALIC_SUFFIX;
 
 	/**
 	 * A named preference that holds the color used to render doxygen tags.
@@ -524,7 +528,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 5.4
 	 */
-	public static final String DOXYGEN_TAG_COLOR= "org.eclipse.cdt.internal.ui.text.doctools.doxygen.recognizedTag"; //$NON-NLS-1$
+	public static final String DOXYGEN_TAG_COLOR = "org.eclipse.cdt.internal.ui.text.doctools.doxygen.recognizedTag"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that holds the color used to render doxygen single line comments.
@@ -536,7 +540,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 5.4
 	 */
-	public static final String DOXYGEN_SINGLE_LINE_COLOR= "org.eclipse.cdt.internal.ui.text.doctools.doxygen.single"; //$NON-NLS-1$
+	public static final String DOXYGEN_SINGLE_LINE_COLOR = "org.eclipse.cdt.internal.ui.text.doctools.doxygen.single"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that holds the color used to render doxygen multi-line comments.
@@ -548,7 +552,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 5.4
 	 */
-	public static final String DOXYGEN_MULTI_LINE_COLOR= "org.eclipse.cdt.internal.ui.text.doctools.doxygen.multi"; //$NON-NLS-1$
+	public static final String DOXYGEN_MULTI_LINE_COLOR = "org.eclipse.cdt.internal.ui.text.doctools.doxygen.multi"; //$NON-NLS-1$
 
 	/**
 	 * The symbolic font name for the C/C++ editor text font
@@ -556,7 +560,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_TEXT_FONT= "org.eclipse.cdt.ui.editors.textfont"; //$NON-NLS-1$
+	public final static String EDITOR_TEXT_FONT = "org.eclipse.cdt.ui.editors.textfont"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the cview's selection is linked to the active
@@ -564,7 +568,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public static final String PREF_LINK_TO_EDITOR= "org.eclipse.cdt.ui.editor.linkToEditor"; //$NON-NLS-1$
+	public static final String PREF_LINK_TO_EDITOR = "org.eclipse.cdt.ui.editor.linkToEditor"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that specifies whether children of a translation unit are shown in
@@ -572,7 +576,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public static final String PREF_SHOW_CU_CHILDREN= "org.eclipse.cdt.ui.editor.CUChildren"; //$NON-NLS-1$
+	public static final String PREF_SHOW_CU_CHILDREN = "org.eclipse.cdt.ui.editor.CUChildren"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that speficies whether to use the parser's structural mode to build
@@ -580,7 +584,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public static final String PREF_USE_STRUCTURAL_PARSE_MODE= "org.eclipse.cdt.ui.editor.UseStructuralMode"; //$NON-NLS-1$
+	public static final String PREF_USE_STRUCTURAL_PARSE_MODE = "org.eclipse.cdt.ui.editor.UseStructuralMode"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls if segmented view (show selected element only) is turned
@@ -588,55 +592,55 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public static final String EDITOR_SHOW_SEGMENTS= "org.eclipse.cdt.ui.editor.showSegments"; //$NON-NLS-1$
+	public static final String EDITOR_SHOW_SEGMENTS = "org.eclipse.cdt.ui.editor.showSegments"; //$NON-NLS-1$
 
-    /**
-     * A named preference that holds the color used to render task tags.
-     * <p>
-     * Value is of type {@code String}. A RGB color value encoded as a string
-     * using class {@code PreferenceConverter}
-     * </p>
-     *
-     * @see org.eclipse.jface.resource.StringConverter
-     * @see org.eclipse.jface.preference.PreferenceConverter
-     */
-    public final static String EDITOR_TASK_TAG_COLOR= ICColorConstants.TASK_TAG;
+	/**
+	 * A named preference that holds the color used to render task tags.
+	 * <p>
+	 * Value is of type {@code String}. A RGB color value encoded as a string
+	 * using class {@code PreferenceConverter}
+	 * </p>
+	 *
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 */
+	public final static String EDITOR_TASK_TAG_COLOR = ICColorConstants.TASK_TAG;
 
-    /**
-     * A named preference that controls whether task tags are rendered in bold.
-     * <p>
-     * Value is of type {@code Boolean}.
-     * </p>
-     */
-    public final static String EDITOR_TASK_TAG_BOLD= ICColorConstants.TASK_TAG + EDITOR_BOLD_SUFFIX;
+	/**
+	 * A named preference that controls whether task tags are rendered in bold.
+	 * <p>
+	 * Value is of type {@code Boolean}.
+	 * </p>
+	 */
+	public final static String EDITOR_TASK_TAG_BOLD = ICColorConstants.TASK_TAG + EDITOR_BOLD_SUFFIX;
 
-    /**
-     * A named preference that controls whether task tags are rendered in italic.
-     * <p>
-     * Value is of type {@code Boolean}.
-     * </p>
-     */
-    public final static String EDITOR_TASK_TAG_ITALIC= ICColorConstants.TASK_TAG + EDITOR_ITALIC_SUFFIX;
+	/**
+	 * A named preference that controls whether task tags are rendered in italic.
+	 * <p>
+	 * Value is of type {@code Boolean}.
+	 * </p>
+	 */
+	public final static String EDITOR_TASK_TAG_ITALIC = ICColorConstants.TASK_TAG + EDITOR_ITALIC_SUFFIX;
 
-    /**
+	/**
 	 * A named preference that controls if correction indicators are shown in the UI.
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public final static String EDITOR_CORRECTION_INDICATION= "CEditor.ShowTemporaryProblem"; //$NON-NLS-1$
+	public final static String EDITOR_CORRECTION_INDICATION = "CEditor.ShowTemporaryProblem"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls if temporary problems are evaluated and shown in the UI.
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public final static String EDITOR_EVALUATE_TEMPORARY_PROBLEMS= "handleTemporaryProblems"; //$NON-NLS-1$
+	public final static String EDITOR_EVALUATE_TEMPORARY_PROBLEMS = "handleTemporaryProblems"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that defines the key for the hover modifiers.
 	 *
 	 */
-	public static final String EDITOR_TEXT_HOVER_MODIFIERS= "hoverModifiers"; //$NON-NLS-1$
+	public static final String EDITOR_TEXT_HOVER_MODIFIERS = "hoverModifiers"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that defines the key for the hover modifier state masks.
@@ -645,7 +649,7 @@ public class PreferenceConstants {
 	 *
 	 * @see #EDITOR_TEXT_HOVER_MODIFIERS
 	 */
-	public static final String EDITOR_TEXT_HOVER_MODIFIER_MASKS= "hoverModifierMasks"; //$NON-NLS-1$
+	public static final String EDITOR_TEXT_HOVER_MODIFIER_MASKS = "hoverModifierMasks"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the 'close strings' feature
@@ -653,7 +657,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public final static String EDITOR_CLOSE_STRINGS= "closeStrings"; //$NON-NLS-1$
+	public final static String EDITOR_CLOSE_STRINGS = "closeStrings"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the 'wrap strings' feature is
@@ -661,7 +665,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public final static String EDITOR_WRAP_STRINGS= "wrapStrings"; //$NON-NLS-1$
+	public final static String EDITOR_WRAP_STRINGS = "wrapStrings"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the 'escape strings' feature is
@@ -669,7 +673,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public final static String EDITOR_ESCAPE_STRINGS= "escapeStrings"; //$NON-NLS-1$
+	public final static String EDITOR_ESCAPE_STRINGS = "escapeStrings"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the 'close brackets' feature is
@@ -677,7 +681,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public final static String EDITOR_CLOSE_BRACKETS= "closeBrackets"; //$NON-NLS-1$
+	public final static String EDITOR_CLOSE_BRACKETS = "closeBrackets"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the 'close angular brackets' feature is
@@ -685,7 +689,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public final static String EDITOR_CLOSE_ANGULAR_BRACKETS= "closeAngularBrackets"; //$NON-NLS-1$
+	public final static String EDITOR_CLOSE_ANGULAR_BRACKETS = "closeAngularBrackets"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the 'close braces' feature is
@@ -693,7 +697,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public final static String EDITOR_CLOSE_BRACES= "closeBraces"; //$NON-NLS-1$
+	public final static String EDITOR_CLOSE_BRACES = "closeBraces"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the 'smart paste' feature is
@@ -701,14 +705,14 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public final static String EDITOR_SMART_PASTE= "smartPaste"; //$NON-NLS-1$
+	public final static String EDITOR_SMART_PASTE = "smartPaste"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls the smart tab behavior.
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public static final String EDITOR_SMART_TAB= "smart_tab"; //$NON-NLS-1$
+	public static final String EDITOR_SMART_TAB = "smart_tab"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the 'auto indent' feature is
@@ -716,7 +720,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public final static String EDITOR_AUTO_INDENT= "autoIndent"; //$NON-NLS-1$
+	public final static String EDITOR_AUTO_INDENT = "autoIndent"; //$NON-NLS-1$
 
 	/**
 	 * The id of the best match hover contributed for extension point
@@ -724,21 +728,21 @@ public class PreferenceConstants {
 	 *
 	 * @since 2.1
 	 */
-	public static final String ID_BESTMATCH_HOVER= "org.eclipse.cdt.ui.BestMatchHover"; //$NON-NLS-1$
+	public static final String ID_BESTMATCH_HOVER = "org.eclipse.cdt.ui.BestMatchHover"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the Outline view should group include directives.
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public static final String OUTLINE_GROUP_INCLUDES= "org.eclipse.cdt.ui.outline.groupincludes"; //$NON-NLS-1$
+	public static final String OUTLINE_GROUP_INCLUDES = "org.eclipse.cdt.ui.outline.groupincludes"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the Outline view should group namespaces.
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public static final String OUTLINE_GROUP_NAMESPACES= "org.eclipse.cdt.ui.outline.groupnamespaces"; //$NON-NLS-1$
+	public static final String OUTLINE_GROUP_NAMESPACES = "org.eclipse.cdt.ui.outline.groupnamespaces"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the Outline view should group member definitions.
@@ -746,7 +750,7 @@ public class PreferenceConstants {
 	 * Value is of type {@code Boolean}.
 	 * @since 5.1
 	 */
-	public static final String OUTLINE_GROUP_MEMBERS= "org.eclipse.cdt.ui.outline.groupmembers"; //$NON-NLS-1$
+	public static final String OUTLINE_GROUP_MEMBERS = "org.eclipse.cdt.ui.outline.groupmembers"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the Outline view should group macro definitions.
@@ -754,7 +758,7 @@ public class PreferenceConstants {
 	 * Value is of type {@code Boolean}.
 	 * @since 5.2
 	 */
-	public static final String OUTLINE_GROUP_MACROS= "org.eclipse.cdt.ui.outline.groupmacros"; //$NON-NLS-1$
+	public static final String OUTLINE_GROUP_MACROS = "org.eclipse.cdt.ui.outline.groupmacros"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the Outline view
@@ -770,7 +774,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type {@code Boolean}.
 	 */
-	public static final String CVIEW_GROUP_INCLUDES= "org.eclipse.cdt.ui.cview.groupincludes"; //$NON-NLS-1$
+	public static final String CVIEW_GROUP_INCLUDES = "org.eclipse.cdt.ui.cview.groupincludes"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether macro definitions should be grouped in
@@ -779,7 +783,7 @@ public class PreferenceConstants {
 	 * Value is of type {@code Boolean}.
 	 * @since 5.2
 	 */
-	public static final String CVIEW_GROUP_MACROS= "org.eclipse.cdt.ui.cview.groupmacros"; //$NON-NLS-1$
+	public static final String CVIEW_GROUP_MACROS = "org.eclipse.cdt.ui.cview.groupmacros"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether header and source files should be separated in
@@ -789,7 +793,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public static final String CVIEW_SEPARATE_HEADER_AND_SOURCE= "org.eclipse.cdt.ui.cview.separateheaderandsource"; //$NON-NLS-1$
+	public static final String CVIEW_SEPARATE_HEADER_AND_SOURCE = "org.eclipse.cdt.ui.cview.separateheaderandsource"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the sorting order of source files should be changed
@@ -799,7 +803,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.3
 	 */
-	public static final String SORT_ORDER_OF_EXCLUDED_FILES= "org.eclipse.cdt.ui.cview.sortorderofexcludedfiles"; //$NON-NLS-1$
+	public static final String SORT_ORDER_OF_EXCLUDED_FILES = "org.eclipse.cdt.ui.cview.sortorderofexcludedfiles"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls which completion proposal categories
@@ -809,7 +813,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String CODEASSIST_EXCLUDED_CATEGORIES= "content_assist_disabled_computers"; //$NON-NLS-1$
+	public static final String CODEASSIST_EXCLUDED_CATEGORIES = "content_assist_disabled_computers"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls the order of the specific code assist commands.
@@ -818,7 +822,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String CODEASSIST_CATEGORY_ORDER= "content_assist_category_order"; //$NON-NLS-1$
+	public static final String CODEASSIST_CATEGORY_ORDER = "content_assist_category_order"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether folding is enabled in the C editor.
@@ -826,7 +830,7 @@ public class PreferenceConstants {
 	 * Value is of type {@code Boolean}.
 	 *
 	 */
-	public static final String EDITOR_FOLDING_ENABLED= "editor_folding_enabled"; //$NON-NLS-1$
+	public static final String EDITOR_FOLDING_ENABLED = "editor_folding_enabled"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that stores the configured folding provider.
@@ -834,7 +838,7 @@ public class PreferenceConstants {
 	 * Value is of type {@code String}.
 	 *
 	 */
-	public static final String EDITOR_FOLDING_PROVIDER= "editor_folding_provider"; //$NON-NLS-1$
+	public static final String EDITOR_FOLDING_PROVIDER = "editor_folding_provider"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that stores the value for Structure folding for the default folding provider.
@@ -843,7 +847,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 3.0
 	 */
-	public static final String EDITOR_FOLDING_STRUCTURES= "editor_folding_default_structures"; //$NON-NLS-1$
+	public static final String EDITOR_FOLDING_STRUCTURES = "editor_folding_default_structures"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that stores the value for statements folding (if/else, do/while, for, switch statements)
@@ -859,7 +863,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 3.0
 	 */
-	public static final String EDITOR_FOLDING_FUNCTIONS= "editor_folding_default_functions"; //$NON-NLS-1$
+	public static final String EDITOR_FOLDING_FUNCTIONS = "editor_folding_default_functions"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that stores the value for method folding for the default folding provider.
@@ -868,7 +872,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 3.0
 	 */
-	public static final String EDITOR_FOLDING_METHODS= "editor_folding_default_methods"; //$NON-NLS-1$
+	public static final String EDITOR_FOLDING_METHODS = "editor_folding_default_methods"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that stores the value for macros folding for the default folding provider.
@@ -877,7 +881,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 3.0
 	 */
-	public static final String EDITOR_FOLDING_MACROS= "editor_folding_default_macros"; //$NON-NLS-1$
+	public static final String EDITOR_FOLDING_MACROS = "editor_folding_default_macros"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that stores the value for comment folding for the default folding provider.
@@ -886,7 +890,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_FOLDING_COMMENTS= "editor_folding_default_comments"; //$NON-NLS-1$
+	public static final String EDITOR_FOLDING_COMMENTS = "editor_folding_default_comments"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that stores the value for document comment folding for the default folding provider.
@@ -896,7 +900,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 6.2
 	 */
-	public static final String EDITOR_FOLDING_DOC_COMMENTS= "editor_folding_default_doc_comments"; //$NON-NLS-1$
+	public static final String EDITOR_FOLDING_DOC_COMMENTS = "editor_folding_default_doc_comments"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that stores the value for non-document comment folding for the default folding provider.
@@ -906,7 +910,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 6.2
 	 */
-	public static final String EDITOR_FOLDING_NON_DOC_COMMENTS= "editor_folding_default_non_doc_comments"; //$NON-NLS-1$
+	public static final String EDITOR_FOLDING_NON_DOC_COMMENTS = "editor_folding_default_non_doc_comments"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that stores the value for header comment folding for the default folding provider.
@@ -915,7 +919,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_FOLDING_HEADERS= "editor_folding_default_headers"; //$NON-NLS-1$
+	public static final String EDITOR_FOLDING_HEADERS = "editor_folding_default_headers"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that stores the value for inactive code folding for the default folding provider.
@@ -924,7 +928,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_FOLDING_INACTIVE_CODE= "editor_folding_default_inactive"; //$NON-NLS-1$
+	public static final String EDITOR_FOLDING_INACTIVE_CODE = "editor_folding_default_inactive"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether folding of preprocessor branches is enabled.
@@ -933,7 +937,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED= "editor_folding_preprocessor_enabled"; //$NON-NLS-1$
+	public static final String EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED = "editor_folding_preprocessor_enabled"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls if templates are formatted when applied.
@@ -942,7 +946,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 2.1
 	 */
-	public static final String TEMPLATES_USE_CODEFORMATTER= "org.eclipse.cdt.ui.text.templates.format"; //$NON-NLS-1$
+	public static final String TEMPLATES_USE_CODEFORMATTER = "org.eclipse.cdt.ui.text.templates.format"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls which profile is used by the code formatter.
@@ -961,7 +965,7 @@ public class PreferenceConstants {
 	 * @since 5.9
 	 */
 	public final static String FORMATTING_SCOPE_FOR_EMPTY_SELECTION = "formattingScopeForEmptySelection"; //$NON-NLS-1$
-	
+
 	/**
 	 * The value of {@link #FORMATTING_SCOPE_FOR_EMPTY_SELECTION} specifying that the formatting
 	 * applies to the whole document.
@@ -1035,14 +1039,14 @@ public class PreferenceConstants {
 	 * @deprecated As of 4.0, replaced by {@link AbstractDecoratedTextEditorPreferenceConstants#EDITOR_SHOW_TEXT_HOVER_AFFORDANCE}
 	 */
 	@Deprecated
-	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE;
+	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE;
 
 	/**
 	 * A named preference prefix for semantic highlighting preferences.
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX="semanticHighlighting."; //$NON-NLS-1$
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX = "semanticHighlighting."; //$NON-NLS-1$
 
 	/**
 	 * A named preference suffix that controls a semantic highlighting's color.
@@ -1054,7 +1058,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX=".color"; //$NON-NLS-1$
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX = ".color"; //$NON-NLS-1$
 
 	/**
 	 * A named preference suffix that controls if semantic highlighting has the text attribute bold.
@@ -1063,7 +1067,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX=".bold"; //$NON-NLS-1$
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX = ".bold"; //$NON-NLS-1$
 
 	/**
 	 * A named preference suffix that controls if semantic highlighting has the text attribute italic.
@@ -1072,7 +1076,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX=".italic"; //$NON-NLS-1$
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX = ".italic"; //$NON-NLS-1$
 
 	/**
 	 * A named preference suffix that controls if semantic highlighting has the text attribute strikethrough.
@@ -1081,7 +1085,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX=".strikethrough"; //$NON-NLS-1$
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX = ".strikethrough"; //$NON-NLS-1$
 
 	/**
 	 * A named preference suffix that controls if semantic highlighting has the text attribute underline.
@@ -1090,7 +1094,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX=".underline"; //$NON-NLS-1$
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX = ".underline"; //$NON-NLS-1$
 
 	/**
 	 * A named preference suffix that controls if semantic highlighting is enabled.
@@ -1099,7 +1103,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX=".enabled"; //$NON-NLS-1$
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX = ".enabled"; //$NON-NLS-1$
 
 	/**
 	 * A named preference key that controls if semantic highlighting is enabled.
@@ -1108,7 +1112,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 4.0
 	 */
-	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED= "semanticHighlighting.enabled"; //$NON-NLS-1$
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED = "semanticHighlighting.enabled"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls if quick assist light bulbs are shown.
@@ -1118,7 +1122,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public static final String EDITOR_QUICKASSIST_LIGHTBULB="org.eclipse.cdt.quickassist.lightbulb"; //$NON-NLS-1$
+	public static final String EDITOR_QUICKASSIST_LIGHTBULB = "org.eclipse.cdt.quickassist.lightbulb"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that holds the background color used in the code assist selection dialog.
@@ -1131,7 +1135,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String CODEASSIST_PROPOSALS_BACKGROUND= "content_assist_proposals_background"; //$NON-NLS-1$
+	public final static String CODEASSIST_PROPOSALS_BACKGROUND = "content_assist_proposals_background"; //$NON-NLS-1$
 	/**
 	 * A named preference that holds the foreground color used in the code assist selection dialog.
 	 * <p>
@@ -1143,19 +1147,19 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "content_assist_proposals_foreground"; //$NON-NLS-1$
+	public final static String CODEASSIST_PROPOSALS_FOREGROUND = "content_assist_proposals_foreground"; //$NON-NLS-1$
 
 	/**
-     * A named preference that holds the duration (in milli seconds) a content proposal may compute
-     * until it is assumed that the proposal computer has a problem and should be disabled.
-     * <p>
-     * Value is of type {@code long}.
-     *
-     * @since 5.4
-     */
-    public final static String CODEASSIST_PROPOSALS_TIMEOUT= "content_assist_proposals_timeout"; //$NON-NLS-1$
+	 * A named preference that holds the duration (in milli seconds) a content proposal may compute
+	 * until it is assumed that the proposal computer has a problem and should be disabled.
+	 * <p>
+	 * Value is of type {@code long}.
+	 *
+	 * @since 5.4
+	 */
+	public final static String CODEASSIST_PROPOSALS_TIMEOUT = "content_assist_proposals_timeout"; //$NON-NLS-1$
 
-    /**
+	/**
 	 * A named preference that holds the background color used for parameter hints.
 	 * <p>
 	 * Value is of type {@code String}. A RGB color value encoded as a string
@@ -1166,7 +1170,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String CODEASSIST_PARAMETERS_BACKGROUND= "content_assist_parameters_background"; //$NON-NLS-1$
+	public final static String CODEASSIST_PARAMETERS_BACKGROUND = "content_assist_parameters_background"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that holds the foreground color used in the code assist selection dialog.
@@ -1179,7 +1183,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String CODEASSIST_PARAMETERS_FOREGROUND= "content_assist_parameters_foreground"; //$NON-NLS-1$
+	public final static String CODEASSIST_PARAMETERS_FOREGROUND = "content_assist_parameters_foreground"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether all dirty editors are automatically saved before a refactoring is
@@ -1188,7 +1192,7 @@ public class PreferenceConstants {
 	 * Value is of type {@code Boolean}.
 	 * @since 5.3
 	 */
-	public static final String REFACTOR_SAVE_ALL_EDITORS= "Refactoring.savealleditors"; //$NON-NLS-1$
+	public static final String REFACTOR_SAVE_ALL_EDITORS = "Refactoring.savealleditors"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether certain refactorings use a lightweight UI when
@@ -1197,7 +1201,7 @@ public class PreferenceConstants {
 	 * Value is of type {@code Boolean}.
 	 * @since 5.3
 	 */
-	public static final String REFACTOR_LIGHTWEIGHT= "Refactor.lightweight"; //$NON-NLS-1$
+	public static final String REFACTOR_LIGHTWEIGHT = "Refactor.lightweight"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether words containing digits should
@@ -1207,7 +1211,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_IGNORE_DIGITS= "spelling_ignore_digits"; //$NON-NLS-1$
+	public final static String SPELLING_IGNORE_DIGITS = "spelling_ignore_digits"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether mixed case words should be
@@ -1217,7 +1221,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_IGNORE_MIXED= "spelling_ignore_mixed"; //$NON-NLS-1$
+	public final static String SPELLING_IGNORE_MIXED = "spelling_ignore_mixed"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether sentence capitalization should
@@ -1227,7 +1231,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_IGNORE_SENTENCE= "spelling_ignore_sentence"; //$NON-NLS-1$
+	public final static String SPELLING_IGNORE_SENTENCE = "spelling_ignore_sentence"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether upper case words should be
@@ -1237,7 +1241,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_IGNORE_UPPER= "spelling_ignore_upper"; //$NON-NLS-1$
+	public final static String SPELLING_IGNORE_UPPER = "spelling_ignore_upper"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether URLs should be ignored during
@@ -1247,7 +1251,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_IGNORE_URLS= "spelling_ignore_urls"; //$NON-NLS-1$
+	public final static String SPELLING_IGNORE_URLS = "spelling_ignore_urls"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether single letters
@@ -1257,7 +1261,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_IGNORE_SINGLE_LETTERS= "spelling_ignore_single_letters"; //$NON-NLS-1$
+	public final static String SPELLING_IGNORE_SINGLE_LETTERS = "spelling_ignore_single_letters"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether string literals
@@ -1267,7 +1271,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_IGNORE_STRING_LITERALS= "spelling_ignore_string_literals"; //$NON-NLS-1$
+	public final static String SPELLING_IGNORE_STRING_LITERALS = "spelling_ignore_string_literals"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether non-letters at word boundaries
@@ -1277,7 +1281,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_IGNORE_NON_LETTERS= "spelling_ignore_non_letters"; //$NON-NLS-1$
+	public final static String SPELLING_IGNORE_NON_LETTERS = "spelling_ignore_non_letters"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls the locale used for spell checking.
@@ -1286,7 +1290,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_LOCALE= "spelling_locale"; //$NON-NLS-1$
+	public final static String SPELLING_LOCALE = "spelling_locale"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls the number of proposals offered during
@@ -1296,7 +1300,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_PROPOSAL_THRESHOLD= "spelling_proposal_threshold"; //$NON-NLS-1$
+	public final static String SPELLING_PROPOSAL_THRESHOLD = "spelling_proposal_threshold"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls the maximum number of problems reported
@@ -1306,7 +1310,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_PROBLEMS_THRESHOLD= "spelling_problems_threshold"; //$NON-NLS-1$
+	public final static String SPELLING_PROBLEMS_THRESHOLD = "spelling_problems_threshold"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that specifies the workspace user dictionary.
@@ -1315,7 +1319,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_USER_DICTIONARY= "spelling_user_dictionary"; //$NON-NLS-1$
+	public final static String SPELLING_USER_DICTIONARY = "spelling_user_dictionary"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that specifies encoding of the workspace user dictionary.
@@ -1324,7 +1328,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_USER_DICTIONARY_ENCODING= "spelling_user_dictionary_encoding"; //$NON-NLS-1$
+	public final static String SPELLING_USER_DICTIONARY_ENCODING = "spelling_user_dictionary_encoding"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that specifies whether spelling dictionaries are available to content assist.
@@ -1336,7 +1340,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public final static String SPELLING_ENABLE_CONTENTASSIST= "spelling_enable_contentassist"; //$NON-NLS-1$
+	public final static String SPELLING_ENABLE_CONTENTASSIST = "spelling_enable_contentassist"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls if documentation comment stubs will be added
@@ -1345,7 +1349,7 @@ public class PreferenceConstants {
 	 * Value is of type {@code Boolean}.
 	 * @since 5.0
 	 */
-	public static final String CODEGEN_ADD_COMMENTS= "org.eclipse.cdt.ui.add_comments"; //$NON-NLS-1$
+	public static final String CODEGEN_ADD_COMMENTS = "org.eclipse.cdt.ui.add_comments"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that holds the source hover background color.
@@ -1357,7 +1361,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 5.0
 	 */
-	public final static String EDITOR_SOURCE_HOVER_BACKGROUND_COLOR= "sourceHoverBackgroundColor"; //$NON-NLS-1$
+	public final static String EDITOR_SOURCE_HOVER_BACKGROUND_COLOR = "sourceHoverBackgroundColor"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that tells whether to use the system
@@ -1370,7 +1374,7 @@ public class PreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 5.0
 	 */
-	public final static String EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT= "sourceHoverBackgroundColor.SystemDefault"; //$NON-NLS-1$
+	public final static String EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT = "sourceHoverBackgroundColor.SystemDefault"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether occurrences are marked in the editor.
@@ -1379,7 +1383,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public static final String EDITOR_MARK_OCCURRENCES= "markOccurrences"; //$NON-NLS-1$
+	public static final String EDITOR_MARK_OCCURRENCES = "markOccurrences"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether occurrences are sticky in the editor.
@@ -1389,7 +1393,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.0
 	 */
-	public static final String EDITOR_STICKY_OCCURRENCES= "stickyOccurrences"; //$NON-NLS-1$
+	public static final String EDITOR_STICKY_OCCURRENCES = "stickyOccurrences"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether occurrences of overloaded operators are marked in the editor.
@@ -1399,7 +1403,7 @@ public class PreferenceConstants {
 	 *
 	 * @since 5.3
 	 */
-	public static final String EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES= "markOverloadedOperatorsOccurrences"; //$NON-NLS-1$
+	public static final String EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES = "markOverloadedOperatorsOccurrences"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether all scalability mode options should be turned on.
@@ -2049,7 +2053,7 @@ public class PreferenceConstants {
 	 */
 	public static final String INCLUDE_STYLE_RELATED = "includeStyle.related"; //$NON-NLS-1$
 	/**
-	 * Include style for the header with the same name as the including file. 
+	 * Include style for the header with the same name as the including file.
 	 * The value of the preference is an XML representation of
 	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
 	 *
@@ -2153,8 +2157,8 @@ public class PreferenceConstants {
 	 *
 	 * @since 6.1
 	 */
-	public static final String EDITOR_ANNOTATION_ROLL_OVER= "editor_annotation_roll_over"; //$NON-NLS-1$
-	
+	public static final String EDITOR_ANNOTATION_ROLL_OVER = "editor_annotation_roll_over"; //$NON-NLS-1$
+
 	/**
 	 * Returns the CDT-UI preference store.
 	 *
@@ -2164,12 +2168,12 @@ public class PreferenceConstants {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 
-    /**
-     * Initializes the given preference store with the default values.
-     *
-     * @param store the preference store to be initialized
-     */
-    public static void initializeDefaultValues(IPreferenceStore store) {
+	/**
+	 * Initializes the given preference store with the default values.
+	 *
+	 * @param store the preference store to be initialized
+	 */
+	public static void initializeDefaultValues(IPreferenceStore store) {
 		store.setDefault(EDITOR_CORRECTION_INDICATION, false);
 		store.setDefault(EDITOR_SHOW_SEGMENTS, false);
 		store.setDefault(PREF_SHOW_CU_CHILDREN, true);
@@ -2178,10 +2182,12 @@ public class PreferenceConstants {
 		// This option has to be turned on for the spelling checker too work.
 		store.setDefault(EDITOR_EVALUATE_TEMPORARY_PROBLEMS, true);
 
-		int sourceHoverModifier= SWT.MOD2;
-		String sourceHoverModifierName= Action.findModifierString(sourceHoverModifier);	// Shift
-		store.setDefault(EDITOR_TEXT_HOVER_MODIFIERS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + sourceHoverModifierName); //$NON-NLS-1$
-		store.setDefault(EDITOR_TEXT_HOVER_MODIFIER_MASKS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + sourceHoverModifier); //$NON-NLS-1$
+		int sourceHoverModifier = SWT.MOD2;
+		String sourceHoverModifierName = Action.findModifierString(sourceHoverModifier); // Shift
+		store.setDefault(EDITOR_TEXT_HOVER_MODIFIERS,
+				"org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + sourceHoverModifierName); //$NON-NLS-1$
+		store.setDefault(EDITOR_TEXT_HOVER_MODIFIER_MASKS,
+				"org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + sourceHoverModifier); //$NON-NLS-1$
 
 		store.setDefault(EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT, true);
 
@@ -2195,7 +2201,7 @@ public class PreferenceConstants {
 		store.setDefault(EDITOR_SINGLE_LINE_COMMENT_ITALIC, false);
 
 		store.setDefault(EDITOR_TASK_TAG_BOLD, true);
-        store.setDefault(EDITOR_TASK_TAG_ITALIC, false);
+		store.setDefault(EDITOR_TASK_TAG_ITALIC, false);
 
 		store.setDefault(EDITOR_C_KEYWORD_BOLD, true);
 		store.setDefault(EDITOR_C_KEYWORD_ITALIC, false);
@@ -2209,23 +2215,23 @@ public class PreferenceConstants {
 		store.setDefault(EDITOR_C_DEFAULT_BOLD, false);
 		store.setDefault(EDITOR_C_DEFAULT_ITALIC, false);
 
-        store.setDefault(EDITOR_C_OPERATOR_BOLD, false);
-        store.setDefault(EDITOR_C_OPERATOR_ITALIC, false);
+		store.setDefault(EDITOR_C_OPERATOR_BOLD, false);
+		store.setDefault(EDITOR_C_OPERATOR_ITALIC, false);
 
-        store.setDefault(EDITOR_C_BRACES_BOLD, false);
-        store.setDefault(EDITOR_C_BRACES_ITALIC, false);
+		store.setDefault(EDITOR_C_BRACES_BOLD, false);
+		store.setDefault(EDITOR_C_BRACES_ITALIC, false);
 
-        store.setDefault(EDITOR_C_NUMBER_BOLD, false);
-        store.setDefault(EDITOR_C_NUMBER_ITALIC, false);
+		store.setDefault(EDITOR_C_NUMBER_BOLD, false);
+		store.setDefault(EDITOR_C_NUMBER_ITALIC, false);
 
 		store.setDefault(EDITOR_PP_DIRECTIVE_BOLD, true);
 		store.setDefault(EDITOR_PP_DIRECTIVE_ITALIC, false);
 
-        store.setDefault(EDITOR_PP_HEADER_BOLD, false);
-        store.setDefault(EDITOR_PP_HEADER_ITALIC, false);
+		store.setDefault(EDITOR_PP_HEADER_BOLD, false);
+		store.setDefault(EDITOR_PP_HEADER_ITALIC, false);
 
-        store.setDefault(EDITOR_PP_DEFAULT_BOLD, false);
-        store.setDefault(EDITOR_PP_DEFAULT_ITALIC, false);
+		store.setDefault(EDITOR_PP_DEFAULT_BOLD, false);
+		store.setDefault(EDITOR_PP_DEFAULT_ITALIC, false);
 
 		store.setDefault(EDITOR_ASM_LABEL_BOLD, true);
 		store.setDefault(EDITOR_ASM_LABEL_ITALIC, false);
@@ -2274,7 +2280,8 @@ public class PreferenceConstants {
 
 		// Content assist
 		store.setDefault(CODEASSIST_EXCLUDED_CATEGORIES, "org.eclipse.cdt.ui.textProposalCategory\0"); //$NON-NLS-1$
-		store.setDefault(CODEASSIST_CATEGORY_ORDER, "org.eclipse.cdt.ui.parserProposalCategory:65539\0org.eclipse.cdt.ui.textProposalCategory:65541\0org.eclipse.cdt.ui.templateProposalCategory:2\0org.eclipse.cdt.ui.helpProposalCategory:5\0"); //$NON-NLS-1$
+		store.setDefault(CODEASSIST_CATEGORY_ORDER,
+				"org.eclipse.cdt.ui.parserProposalCategory:65539\0org.eclipse.cdt.ui.textProposalCategory:65541\0org.eclipse.cdt.ui.templateProposalCategory:2\0org.eclipse.cdt.ui.helpProposalCategory:5\0"); //$NON-NLS-1$
 
 		store.setDefault(CODEASSIST_PROPOSALS_TIMEOUT, 5000);
 
@@ -2284,11 +2291,11 @@ public class PreferenceConstants {
 
 		// Spell checking
 		store.setDefault(SPELLING_LOCALE, "en_US"); //$NON-NLS-1$
-		String isInitializedKey= "spelling_locale_initialized"; //$NON-NLS-1$
+		String isInitializedKey = "spelling_locale_initialized"; //$NON-NLS-1$
 		if (!store.getBoolean(isInitializedKey)) {
 			store.setValue(isInitializedKey, true);
-			Locale locale= SpellCheckEngine.getDefaultLocale();
-			locale= SpellCheckEngine.findClosestLocale(locale);
+			Locale locale = SpellCheckEngine.getDefaultLocale();
+			locale = SpellCheckEngine.findClosestLocale(locale);
 			if (locale != null)
 				store.setValue(SPELLING_LOCALE, locale.toString());
 		}
@@ -2303,8 +2310,7 @@ public class PreferenceConstants {
 		store.setDefault(SPELLING_USER_DICTIONARY, ""); //$NON-NLS-1$
 
 		// Note: For backwards compatibility we must use the property and not the workspace default
-		store.setDefault(SPELLING_USER_DICTIONARY_ENCODING,
-				System.getProperty("file.encoding")); //$NON-NLS-1$
+		store.setDefault(SPELLING_USER_DICTIONARY_ENCODING, System.getProperty("file.encoding")); //$NON-NLS-1$
 
 		store.setDefault(SPELLING_PROPOSAL_THRESHOLD, 20);
 		store.setDefault(SPELLING_PROBLEMS_THRESHOLD, 100);
@@ -2333,8 +2339,7 @@ public class PreferenceConstants {
 		store.setDefault(SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION, false);
 
 		// Code Templates
-		store.setDefault(CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
-				CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_PATH);
+		store.setDefault(CODE_TEMPLATES_INCLUDE_GUARD_SCHEME, CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_PATH);
 
 		// Name Style
 		store.setDefault(NAME_STYLE_CONSTANT_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_UPPER_CASE);
@@ -2382,16 +2387,16 @@ public class PreferenceConstants {
 
 		// Colors that are set by the current theme
 		CUIPreferenceInitializer.setThemeBasedPreferences(store, false);
-    }
+	}
 
-    /**
-     * Returns the node in the preference in the given context.
-     *
-     * @param key The preference key.
-     * @param project The current context or {@code null} if no context is available and
-     *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
-     * @return Returns the node matching the given context.
-     */
+	/**
+	 * Returns the node in the preference in the given context.
+	 *
+	 * @param key The preference key.
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
+	 * @return Returns the node matching the given context.
+	 */
 	private static IEclipsePreferences getPreferenceNode(String key, IProject project) {
 		IEclipsePreferences node = null;
 

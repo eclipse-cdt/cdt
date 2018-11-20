@@ -103,8 +103,8 @@ import org.eclipse.osgi.util.NLS;
  */
 public class TranslationUnit extends Openable implements ITranslationUnit {
 	static {
-		CompositeValue.sDEBUG=
-				Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/parser/CompositeValue"));  //$NON-NLS-1$
+		CompositeValue.sDEBUG = Boolean
+				.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/parser/CompositeValue")); //$NON-NLS-1$
 	}
 
 	private URI location;
@@ -126,7 +126,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	public TranslationUnit(ICElement parent, URI uri, String idType) {
 		super(parent, (IResource) null, uri.toString(), ICElement.C_UNIT);
-		location= uri;
+		location = uri;
 		setContentTypeID(idType);
 	}
 
@@ -136,8 +136,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	public IInclude createInclude(String includeName, boolean isStd, ICElement sibling,
-			IProgressMonitor monitor) throws CModelException {
+	public IInclude createInclude(String includeName, boolean isStd, ICElement sibling, IProgressMonitor monitor)
+			throws CModelException {
 		CreateIncludeOperation op = new CreateIncludeOperation(includeName, isStd, this);
 		if (sibling != null) {
 			op.createBefore(sibling);
@@ -147,8 +147,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	public IUsing createUsing(String usingName, boolean isDirective, ICElement sibling,
-			IProgressMonitor monitor) throws CModelException {
+	public IUsing createUsing(String usingName, boolean isDirective, ICElement sibling, IProgressMonitor monitor)
+			throws CModelException {
 		CreateIncludeOperation op = new CreateIncludeOperation(usingName, isDirective, this);
 		if (sibling != null) {
 			op.createBefore(sibling);
@@ -158,8 +158,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	public INamespace createNamespace(String namespace, ICElement sibling,
-			IProgressMonitor monitor) throws CModelException {
+	public INamespace createNamespace(String namespace, ICElement sibling, IProgressMonitor monitor)
+			throws CModelException {
 		CreateNamespaceOperation op = new CreateNamespaceOperation(namespace, this);
 		if (sibling != null) {
 			op.createBefore(sibling);
@@ -172,7 +172,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public ICElement getElementAtLine(int line) throws CModelException {
 		ICElement[] celements = getChildren();
 		for (ICElement celement : celements) {
-			ISourceRange range = ((ISourceReference)celement).getSourceRange();
+			ISourceRange range = ((ISourceReference) celement).getSourceRange();
 			int startLine = range.getStartLine();
 			int endLine = range.getEndLine();
 			if (line >= startLine && line <= endLine) {
@@ -376,8 +376,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	public void copy(ICElement container, ICElement sibling, String rename, boolean force,
-			IProgressMonitor monitor) throws CModelException {
+	public void copy(ICElement container, ICElement sibling, String rename, boolean force, IProgressMonitor monitor)
+			throws CModelException {
 		getSourceManipulationInfo().copy(container, sibling, rename, force, monitor);
 	}
 
@@ -388,8 +388,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	public void move(ICElement container, ICElement sibling, String rename, boolean force,
-			IProgressMonitor monitor) throws CModelException {
+	public void move(ICElement container, ICElement sibling, String rename, boolean force, IProgressMonitor monitor)
+			throws CModelException {
 		Assert.isTrue(!isReadOnly(), NLS.bind("Translation unit {0} must not be read-only", getElementName())); //$NON-NLS-1$
 		getSourceManipulationInfo().move(container, sibling, rename, force, monitor);
 	}
@@ -436,7 +436,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof ITranslationUnit)) return false;
+		if (!(o instanceof ITranslationUnit))
+			return false;
 		return super.equals(o) && !((ITranslationUnit) o).isWorkingCopy();
 	}
 
@@ -448,7 +449,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	@Override
 	public CElementInfo getElementInfo(IProgressMonitor monitor) throws CModelException {
 		CModelManager manager = CModelManager.getDefault();
-		CElementInfo info = (CElementInfo)manager.getInfo(this);
+		CElementInfo info = (CElementInfo) manager.getInfo(this);
 		if (info != null) {
 			return info;
 		}
@@ -460,8 +461,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm,
-			Map<ICElement, CElementInfo> newElements, IResource underlyingResource) throws CModelException {
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements,
+			IResource underlyingResource) throws CModelException {
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
 
 		// Generate structure
@@ -470,7 +471,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		// /////////////////////////////////////////////////////////////
 
 		if (isWorkingCopy()) {
-			ITranslationUnit original =  ((IWorkingCopy)this).getOriginalElement();
+			ITranslationUnit original = ((IWorkingCopy) this).getOriginalElement();
 			// Might be IResource.NULL_STAMP if original does not exist
 			IResource r = original.getResource();
 			if (r != null && r instanceof IFile) {
@@ -510,11 +511,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	@Override
 	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException {
 		WorkingCopy workingCopy;
-		IFile file= getFile();
+		IFile file = getFile();
 		if (file != null) {
-			workingCopy= new WorkingCopy(getParent(), file, getContentTypeId(), factory);
+			workingCopy = new WorkingCopy(getParent(), file, getContentTypeId(), factory);
 		} else {
-			workingCopy= new WorkingCopy(getParent(), getLocationURI(), getContentTypeId(), factory);
+			workingCopy = new WorkingCopy(getParent(), getLocationURI(), getContentTypeId(), factory);
 		}
 		// Open the working copy now to ensure contents are that of the current state of this element
 		workingCopy.open(monitor);
@@ -530,8 +531,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	protected void openParent(CElementInfo childInfo, Map<ICElement, CElementInfo> newElements,
-			IProgressMonitor pm) throws CModelException {
+	protected void openParent(CElementInfo childInfo, Map<ICElement, CElementInfo> newElements, IProgressMonitor pm)
+			throws CModelException {
 		try {
 			super.openParent(childInfo, newElements, pm);
 		} catch (CModelException e) {
@@ -552,8 +553,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		makeConsistent(forced, monitor);
 	}
 
-	protected IASTTranslationUnit makeConsistent(boolean computeAST, IProgressMonitor monitor)
-			throws CModelException {
+	protected IASTTranslationUnit makeConsistent(boolean computeAST, IProgressMonitor monitor) throws CModelException {
 		if (!computeAST && isConsistent()) {
 			return null;
 		}
@@ -564,9 +564,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		boolean hadTemporaryCache = manager.hasTemporaryCache();
 		final CElementInfo info;
 		if (computeAST) {
-			info= new ASTHolderTUInfo(this);
+			info = new ASTHolderTUInfo(this);
 		} else {
-			info= createElementInfo();
+			info = createElementInfo();
 		}
 		try {
 			Map<ICElement, CElementInfo> newElements = manager.getTemporaryCache();
@@ -591,8 +591,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			}
 		}
 		if (info instanceof ASTHolderTUInfo) {
-			final IASTTranslationUnit ast= ((ASTHolderTUInfo) info).fAST;
-			((ASTHolderTUInfo) info).fAST= null;
+			final IASTTranslationUnit ast = ((ASTHolderTUInfo) info).fAST;
+			((ASTHolderTUInfo) info).fAST = null;
 			return ast;
 		}
 		return null;
@@ -620,12 +620,12 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (buffer.getCharacters() == null) {
 			IResource resource = this.getResource();
 			if (resource != null && resource.getType() == IResource.FILE) {
-				buffer.setContents(Util.getResourceContentsAsCharArray((IFile)resource));
+				buffer.setContents(Util.getResourceContentsAsCharArray((IFile) resource));
 			} else {
 				IPath path = this.getLocation();
 				java.io.File file = path.toFile();
 				if (file != null && file.isFile()) {
-					InputStream stream= null;
+					InputStream stream = null;
 					try {
 						stream = new FileInputStream(file);
 						buffer.setContents(Util.getInputStreamAsCharArray(stream, (int) file.length(), null));
@@ -664,7 +664,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	private void parse(Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor) {
 		boolean quickParseMode = !(CCorePlugin.getDefault().useStructuralParseMode());
-		IContributedModelBuilder mb = LanguageManager.getInstance().getContributedModelBuilderFor((ITranslationUnit) this);
+		IContributedModelBuilder mb = LanguageManager.getInstance()
+				.getContributedModelBuilderFor((ITranslationUnit) this);
 		if (mb == null) {
 			parseUsingCModelBuilder(newElements, quickParseMode, monitor);
 		} else {
@@ -676,7 +677,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * Parse the buffer contents of this element.
 	 * @param monitor
 	 */
-	private void parseUsingCModelBuilder(Map<ICElement, CElementInfo> newElements, boolean quickParseMode, IProgressMonitor monitor) {
+	private void parseUsingCModelBuilder(Map<ICElement, CElementInfo> newElements, boolean quickParseMode,
+			IProgressMonitor monitor) {
 		try {
 			new CModelBuilder2(this, newElements, monitor).parse(quickParseMode);
 		} catch (OperationCanceledException oce) {
@@ -685,7 +687,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			}
 		} catch (Exception e) {
 			// use the debug log for this exception.
-			Util.debugLog("Exception in CModelBuilder", DebugLogConstants.MODEL);  //$NON-NLS-1$
+			Util.debugLog("Exception in CModelBuilder", DebugLogConstants.MODEL); //$NON-NLS-1$
 		}
 	}
 
@@ -701,7 +703,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			mb.parse(quickParseMode);
 		} catch (Exception e) {
 			// use the debug log for this exception.
-			Util.debugLog("Exception in contributed model builder", DebugLogConstants.MODEL);  //$NON-NLS-1$
+			Util.debugLog("Exception in contributed model builder", DebugLogConstants.MODEL); //$NON-NLS-1$
 		}
 	}
 
@@ -774,7 +776,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		ILanguage language = null;
 
 		ICProject cProject = getCProject();
-		IProject project= cProject.getProject();
+		IProject project = cProject.getProject();
 
 		ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project, false);
 		ICConfigurationDescription configuration;
@@ -787,13 +789,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			configuration = description.getActiveConfiguration();
 		}
 
-		IFile file= getFile();
+		IFile file = getFile();
 		if (file != null) {
 			language = LanguageManager.getInstance().getLanguageForFile(file, configuration, contentTypeId);
 		} else {
 			String filename = getElementName();
-			language = LanguageManager.getInstance().getLanguageForFile(new Path(filename),
-					getCProject().getProject(), configuration, contentTypeId);
+			language = LanguageManager.getInstance().getLanguageForFile(new Path(filename), getCProject().getProject(),
+					configuration, contentTypeId);
 		}
 		return language;
 	}
@@ -846,25 +848,26 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		IIndexFile[] contextToHeader = getContextToHeader(index, style);
 		ITranslationUnit configureWith = getConfigureWith(contextToHeader);
 		if (configureWith == this)
-			contextToHeader= null;
+			contextToHeader = null;
 
-		IScannerInfo scanInfo= configureWith.getScannerInfo((style & AST_SKIP_IF_NO_BUILD_INFO) == 0);
+		IScannerInfo scanInfo = configureWith.getScannerInfo((style & AST_SKIP_IF_NO_BUILD_INFO) == 0);
 		if (scanInfo == null) {
 			return null;
 		}
 
-		FileContent fileContent= FileContent.create(this);
+		FileContent fileContent = FileContent.create(this);
 		if (fileContent == null) {
 			return null;
 		}
-		ILanguage language= configureWith.getLanguage();
-		fLanguageOfContext= language;
+		ILanguage language = configureWith.getLanguage();
+		fLanguageOfContext = language;
 		if (language == null) {
 			return null;
 		}
 
-		IncludeFileContentProvider crf= getIncludeFileContentProvider(style, index, language.getLinkageID(), contextToHeader);
-		int options= 0;
+		IncludeFileContentProvider crf = getIncludeFileContentProvider(style, index, language.getLinkageID(),
+				contextToHeader);
+		int options = 0;
 		if ((style & AST_SKIP_FUNCTION_BODIES) != 0) {
 			options |= ILanguage.OPTION_SKIP_FUNCTION_BODIES;
 		}
@@ -876,12 +879,12 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 		final IParserLogService log;
 		if (monitor instanceof ICanceler) {
-			log= new ParserLogService(DebugLogConstants.PARSER, (ICanceler) monitor);
+			log = new ParserLogService(DebugLogConstants.PARSER, (ICanceler) monitor);
 		} else {
-			log= ParserUtil.getParserLogService();
+			log = ParserUtil.getParserLogService();
 		}
-		ASTTranslationUnit ast = (ASTTranslationUnit) ((AbstractLanguage) language).getASTTranslationUnit(
-				fileContent, scanInfo, crf, index, options, log);
+		ASTTranslationUnit ast = (ASTTranslationUnit) ((AbstractLanguage) language).getASTTranslationUnit(fileContent,
+				scanInfo, crf, index, options, log);
 		if (ast == null)
 			return null;
 		ast.setOriginatingTranslationUnit(this);
@@ -889,48 +892,50 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return ast;
 	}
 
-	private IncludeFileContentProvider getIncludeFileContentProvider(int style, IIndex index, int linkageID, IIndexFile[] contextToHeader) {
-		final ICProject cprj= getCProject();
+	private IncludeFileContentProvider getIncludeFileContentProvider(int style, IIndex index, int linkageID,
+			IIndexFile[] contextToHeader) {
+		final ICProject cprj = getCProject();
 		final ProjectIndexerInputAdapter pathResolver = new ProjectIndexerInputAdapter(cprj);
 		IncludeFileContentProvider fileContentsProvider;
 		if ((style & AST_SKIP_NONINDEXED_HEADERS) != 0) {
-			fileContentsProvider= IncludeFileContentProvider.getEmptyFilesProvider();
+			fileContentsProvider = IncludeFileContentProvider.getEmptyFilesProvider();
 		} else {
-			fileContentsProvider= IncludeFileContentProvider.getSavedFilesProvider();
+			fileContentsProvider = IncludeFileContentProvider.getSavedFilesProvider();
 		}
 
 		if (index != null && (style & AST_SKIP_INDEXED_HEADERS) != 0) {
-			IndexBasedFileContentProvider ibcf= new IndexBasedFileContentProvider(index, pathResolver, linkageID,
+			IndexBasedFileContentProvider ibcf = new IndexBasedFileContentProvider(index, pathResolver, linkageID,
 					fileContentsProvider);
 			ibcf.setContextToHeaderGap(contextToHeader);
-			fileContentsProvider= ibcf;
+			fileContentsProvider = ibcf;
 		}
 
 		if (fileContentsProvider instanceof InternalFileContentProvider) {
-			final ProjectIndexerIncludeResolutionHeuristics heuristics = new ProjectIndexerIncludeResolutionHeuristics(cprj.getProject(), pathResolver);
+			final ProjectIndexerIncludeResolutionHeuristics heuristics = new ProjectIndexerIncludeResolutionHeuristics(
+					cprj.getProject(), pathResolver);
 			((InternalFileContentProvider) fileContentsProvider).setIncludeResolutionHeuristics(heuristics);
 		}
 
 		return fileContentsProvider;
 	}
 
-	private static final int[] CTX_LINKAGES= { ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID };
+	private static final int[] CTX_LINKAGES = { ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID };
 
 	public IIndexFile[] getContextToHeader(IIndex index, int style) {
 		if (index != null && (style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
 			try {
-				fLanguageOfContext= null;
+				fLanguageOfContext = null;
 				final IIndexFileLocation ifl = IndexLocationFactory.getIFL(this);
 				if (ifl != null) {
 					IIndexFile best = null;
 					IIndexFile contextOfBest = null;
-					int bestScore= -1;
+					int bestScore = -1;
 					// Find file variant that has the most content and preferably was parsed in
 					// context of a source file.
 					for (int linkageID : CTX_LINKAGES) {
 						for (IIndexFile indexFile : index.getFiles(linkageID, ifl)) {
-							int score= indexFile.getMacros().length * 2;
-							IIndexFile context= getParsedInContext(indexFile);
+							int score = indexFile.getMacros().length * 2;
+							IIndexFile context = getParsedInContext(indexFile);
 							if (isSourceFile(context, getCProject().getProject())) {
 								if (indexFile.equals(context)) {
 									// The file is an independently indexed source - return it.
@@ -939,8 +944,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 								score++;
 							}
 							if (score > bestScore) {
-								bestScore= score;
-								best= indexFile;
+								bestScore = score;
+								best = indexFile;
 								contextOfBest = context;
 							}
 						}
@@ -958,10 +963,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public static IIndexFile getParsedInContext(IIndexFile indexFile) throws CoreException {
-		HashSet<IIndexFile> visited= new HashSet<>();
+		HashSet<IIndexFile> visited = new HashSet<>();
 		// Bug 199412, may recurse.
 		while (visited.add(indexFile)) {
-			IIndexInclude include= indexFile.getParsedInContext();
+			IIndexInclude include = indexFile.getParsedInContext();
 			if (include == null)
 				break;
 			indexFile = include.getIncludedBy();
@@ -984,8 +989,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	private ITranslationUnit getConfigureWith(IIndexFile[] contextToHeader) throws CoreException {
 		if (contextToHeader != null) {
-			ITranslationUnit configureWith = CoreModelUtil.findTranslationUnitForLocation(
-					contextToHeader[0].getLocation(), getCProject());
+			ITranslationUnit configureWith = CoreModelUtil
+					.findTranslationUnitForLocation(contextToHeader[0].getLocation(), getCProject());
 			if (configureWith != null)
 				return configureWith;
 		}
@@ -997,19 +1002,20 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		IIndexFile[] contextToHeader = getContextToHeader(index, style);
 		ITranslationUnit configureWith = getConfigureWith(contextToHeader);
 		if (configureWith == this)
-			contextToHeader= null;
+			contextToHeader = null;
 
 		IScannerInfo scanInfo = configureWith.getScannerInfo((style & ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO) == 0);
 		if (scanInfo == null) {
 			return null;
 		}
 
-		FileContent fileContent= FileContent.create(this);
+		FileContent fileContent = FileContent.create(this);
 
-		ILanguage language= configureWith.getLanguage();
-		fLanguageOfContext= language;
+		ILanguage language = configureWith.getLanguage();
+		fLanguageOfContext = language;
 		if (language != null) {
-			IncludeFileContentProvider crf= getIncludeFileContentProvider(style, index, language.getLinkageID(), contextToHeader);
+			IncludeFileContentProvider crf = getIncludeFileContentProvider(style, index, language.getLinkageID(),
+					contextToHeader);
 			IASTCompletionNode result = language.getCompletionNode(fileContent, scanInfo, crf, index,
 					ParserUtil.getParserLogService(), offset);
 			if (result != null) {
@@ -1027,14 +1033,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	@Override
 	@Deprecated
 	public org.eclipse.cdt.core.parser.CodeReader getCodeReader() {
-		IPath location= getLocation();
+		IPath location = getLocation();
 		if (location == null)
 			return new org.eclipse.cdt.core.parser.CodeReader(getContents());
 		if (isWorkingCopy()) {
 			return new org.eclipse.cdt.core.parser.CodeReader(location.toOSString(), getContents());
 		}
 
-		IResource res= getResource();
+		IResource res = getResource();
 		try {
 			if (res instanceof IFile)
 				return InternalParserUtil.createWorkspaceFileReader(location.toOSString(), (IFile) res, null);
@@ -1077,7 +1083,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * {@link ITranslationUnit#AST_CONFIGURE_USING_SOURCE_CONTEXT}.
 	 */
 	public ILanguage getLanguageOfContext() throws CoreException {
-		final ILanguage result= fLanguageOfContext;
+		final ILanguage result = fLanguageOfContext;
 		return result != null ? result : getLanguage();
 	}
 
@@ -1086,7 +1092,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (getFile() != null) {
 			return super.getPath();
 		}
-		IPath path= getLocation();
+		IPath path = getLocation();
 		if (path != null) {
 			return path;
 		}
@@ -1097,54 +1103,56 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		switch (token.charAt(0)) {
 		case CEM_SOURCEELEMENT:
-			if (!memento.hasMoreTokens()) return this;
-			token= memento.nextToken();
+			if (!memento.hasMoreTokens())
+				return this;
+			token = memento.nextToken();
 			// element name
 			final String elementName;
 			if (token.charAt(0) != CEM_ELEMENTTYPE) {
-				elementName= token;
-				if (!memento.hasMoreTokens()) return null;
-				token= memento.nextToken();
+				elementName = token;
+				if (!memento.hasMoreTokens())
+					return null;
+				token = memento.nextToken();
 			} else {
 				// anonymous
-				elementName= ""; //$NON-NLS-1$
+				elementName = ""; //$NON-NLS-1$
 			}
 			// element type
 			if (token.charAt(0) != CEM_ELEMENTTYPE || !memento.hasMoreTokens()) {
 				return null;
 			}
-			String typeString= memento.nextToken();
+			String typeString = memento.nextToken();
 			int elementType;
 			try {
-				elementType= Integer.parseInt(typeString);
+				elementType = Integer.parseInt(typeString);
 			} catch (NumberFormatException nfe) {
 				CCorePlugin.log(nfe);
 				return null;
 			}
-			token= null;
+			token = null;
 			// optional: parameters
-			String[] mementoParams= {};
+			String[] mementoParams = {};
 			if (memento.hasMoreTokens()) {
-				List<String> params= new ArrayList<>();
+				List<String> params = new ArrayList<>();
 				do {
-					token= memento.nextToken();
+					token = memento.nextToken();
 					if (token.charAt(0) != CEM_PARAMETER) {
 						break;
 					}
 					if (!memento.hasMoreTokens()) {
 						params.add(""); //$NON-NLS-1$
-						token= null;
+						token = null;
 						break;
 					}
 					params.add(memento.nextToken());
-					token= null;
+					token = null;
 				} while (memento.hasMoreTokens());
-				mementoParams= params.toArray(new String[params.size()]);
+				mementoParams = params.toArray(new String[params.size()]);
 			}
-			CElement element= null;
+			CElement element = null;
 			ICElement[] children;
 			try {
-				children= getChildren();
+				children = getChildren();
 			} catch (CModelException e) {
 				CCorePlugin.log(e);
 				return null;
@@ -1161,12 +1169,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
 				// search for matching function
 				for (ICElement element2 : children) {
-					if (elementType == element2.getElementType()
-							&& elementName.equals(element2.getElementName())) {
+					if (elementType == element2.getElementType() && elementName.equals(element2.getElementName())) {
 						assert element2 instanceof IFunctionDeclaration;
-						String[] functionParams= ((IFunctionDeclaration)element2).getParameterTypes();
+						String[] functionParams = ((IFunctionDeclaration) element2).getParameterTypes();
 						if (Arrays.equals(functionParams, mementoParams)) {
-							element= (CElement) element2;
+							element = (CElement) element2;
 							break;
 						}
 					}
@@ -1177,12 +1184,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			case ICElement.C_TEMPLATE_UNION:
 				// search for matching template type
 				for (ICElement element2 : children) {
-					if (elementType == element2.getElementType()
-							&& elementName.equals(element2.getElementName())) {
+					if (elementType == element2.getElementType() && elementName.equals(element2.getElementName())) {
 						assert element2 instanceof ITemplate;
-						String[] templateParams= ((ITemplate)element2).getTemplateParameterTypes();
+						String[] templateParams = ((ITemplate) element2).getTemplateParameterTypes();
 						if (Arrays.equals(templateParams, mementoParams)) {
-							element= (CElement) element2;
+							element = (CElement) element2;
 							break;
 						}
 					}
@@ -1191,9 +1197,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			default:
 				// search for matching element
 				for (ICElement element2 : children) {
-					if (elementType == element2.getElementType()
-							&& elementName.equals(element2.getElementName())) {
-						element= (CElement) element2;
+					if (elementType == element2.getElementType() && elementName.equals(element2.getElementName())) {
+						element = (CElement) element2;
 						break;
 					}
 				}
@@ -1214,9 +1219,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public void getHandleMemento(StringBuilder buff) {
 		if (getResource() == null) {
 			// external translation unit
-			((CElement)getCProject()).getHandleMemento(buff);
+			((CElement) getCProject()).getHandleMemento(buff);
 			buff.append(getHandleMementoDelimiter());
-			final IPath fileLocation= getLocation();
+			final IPath fileLocation = getLocation();
 			if (fileLocation != null) {
 				escapeMementoName(buff, fileLocation.toPortableString());
 			}
@@ -1225,10 +1230,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			super.getHandleMemento(buff);
 		} else {
 			// translation unit below a binary
-			((CElement)getCProject()).getHandleMemento(buff);
+			((CElement) getCProject()).getHandleMemento(buff);
 			buff.append(getHandleMementoDelimiter());
 			// project relative path
-			final IPath projectPath= getResource().getFullPath().removeFirstSegments(1);
+			final IPath projectPath = getResource().getFullPath().removeFirstSegments(1);
 			if (projectPath != null) {
 				escapeMementoName(buff, projectPath.toPortableString());
 			}
@@ -1258,7 +1263,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	@Override
 	@Deprecated
-	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory, IProblemRequestor requestor) throws CModelException {
+	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory,
+			IProblemRequestor requestor) throws CModelException {
 		return CModelManager.getDefault().getSharedWorkingCopy(factory, this, requestor, monitor);
 	}
 

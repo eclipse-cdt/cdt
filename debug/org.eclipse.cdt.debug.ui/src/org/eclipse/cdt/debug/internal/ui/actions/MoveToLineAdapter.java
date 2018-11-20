@@ -48,103 +48,101 @@ public class MoveToLineAdapter implements IMoveToLineTarget {
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget#moveToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	@Override
-	public void moveToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) throws CoreException {
+	public void moveToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
 		String errorMessage = null;
-		if ( part instanceof ITextEditor ) {
-			ITextEditor textEditor = (ITextEditor)part;
+		if (part instanceof ITextEditor) {
+			ITextEditor textEditor = (ITextEditor) part;
 			IEditorInput input = textEditor.getEditorInput();
-			if ( input == null ) {
-				errorMessage = ActionMessages.getString( "MoveToLineAdapter.0" ); //$NON-NLS-1$
-			}
-			else {
-				IDocument document = textEditor.getDocumentProvider().getDocument( input );
-				if ( document == null ) {
-					errorMessage = ActionMessages.getString( "MoveToLineAdapter.1" ); //$NON-NLS-1$
-				}
-				else {
-					final String fileName = getFileName( input );
-					ITextSelection textSelection = (ITextSelection)selection;
+			if (input == null) {
+				errorMessage = ActionMessages.getString("MoveToLineAdapter.0"); //$NON-NLS-1$
+			} else {
+				IDocument document = textEditor.getDocumentProvider().getDocument(input);
+				if (document == null) {
+					errorMessage = ActionMessages.getString("MoveToLineAdapter.1"); //$NON-NLS-1$
+				} else {
+					final String fileName = getFileName(input);
+					ITextSelection textSelection = (ITextSelection) selection;
 					final int lineNumber = textSelection.getStartLine() + 1;
-					if ( target instanceof IAdaptable ) {
-						final IPath path = new Path( fileName );
-						final IMoveToLine moveToLine = ((IAdaptable)target).getAdapter( IMoveToLine.class );
-						if ( moveToLine != null && moveToLine.canMoveToLine( path.toPortableString(), lineNumber ) ) {
+					if (target instanceof IAdaptable) {
+						final IPath path = new Path(fileName);
+						final IMoveToLine moveToLine = ((IAdaptable) target).getAdapter(IMoveToLine.class);
+						if (moveToLine != null && moveToLine.canMoveToLine(path.toPortableString(), lineNumber)) {
 							Runnable r = new Runnable() {
 								@Override
 								public void run() {
 									try {
-										moveToLine.moveToLine(path.toPortableString(), lineNumber );
-									}
-									catch( DebugException e ) {
-										failed( e );
+										moveToLine.moveToLine(path.toPortableString(), lineNumber);
+									} catch (DebugException e) {
+										failed(e);
 									}
 								}
 							};
-							runInBackground( r );
+							runInBackground(r);
 						}
 					}
 					return;
 				}
 			}
+		} else {
+			errorMessage = ActionMessages.getString("MoveToLineAdapter.3"); //$NON-NLS-1$
 		}
-		else {
-			errorMessage = ActionMessages.getString( "MoveToLineAdapter.3" ); //$NON-NLS-1$
-		}
-		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
+		throw new CoreException(new Status(IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(),
+				IInternalCDebugUIConstants.INTERNAL_ERROR, errorMessage, null));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget#canMoveToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	@Override
-	public boolean canMoveToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) {
-		if ( target instanceof IAdaptable ) {
-			if ( part instanceof IEditorPart ) {
-				IMoveToLine moveToLine = ((IAdaptable)target).getAdapter( IMoveToLine.class );
-				if ( moveToLine == null)
+	public boolean canMoveToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
+		if (target instanceof IAdaptable) {
+			if (part instanceof IEditorPart) {
+				IMoveToLine moveToLine = ((IAdaptable) target).getAdapter(IMoveToLine.class);
+				if (moveToLine == null)
 					return false;
-				IEditorPart editorPart = (IEditorPart)part;
+				IEditorPart editorPart = (IEditorPart) part;
 				IEditorInput input = editorPart.getEditorInput();
-				if ( input == null ) {
+				if (input == null) {
 					return false;
 				}
-				if ( !(editorPart instanceof ITextEditor) ) {
+				if (!(editorPart instanceof ITextEditor)) {
 					return false;
 				}
-				ITextEditor textEditor = (ITextEditor)editorPart;
-				IDocument document = textEditor.getDocumentProvider().getDocument( input );
-				if ( document == null ) {
+				ITextEditor textEditor = (ITextEditor) editorPart;
+				IDocument document = textEditor.getDocumentProvider().getDocument(input);
+				if (document == null) {
 					return false;
 				}
 				String fileName = null;
 				try {
-					fileName = getFileName( input );
-				}
-				catch( CoreException e ) {
+					fileName = getFileName(input);
+				} catch (CoreException e) {
 				}
 				if (fileName == null) {
 					return false;
 				}
-				final IPath path = new Path( fileName );
-				ITextSelection textSelection = (ITextSelection)selection;
+				final IPath path = new Path(fileName);
+				ITextSelection textSelection = (ITextSelection) selection;
 				int lineNumber = textSelection.getStartLine() + 1;
-				return moveToLine.canMoveToLine(path.toPortableString(), lineNumber );
+				return moveToLine.canMoveToLine(path.toPortableString(), lineNumber);
 			}
 		}
 		return false;
 	}
 
-	private String getFileName( IEditorInput input ) throws CoreException {
-		return CDebugUIUtils.getEditorFilePath(input);		
+	private String getFileName(IEditorInput input) throws CoreException {
+		return CDebugUIUtils.getEditorFilePath(input);
 	}
 
-	private void runInBackground( Runnable r ) {
-		DebugPlugin.getDefault().asyncExec( r );
+	private void runInBackground(Runnable r) {
+		DebugPlugin.getDefault().asyncExec(r);
 	}
 
-	protected void failed( Throwable e ) {
-		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, ActionMessages.getString( "MoveToLineAdapter.4" ), null ); //$NON-NLS-1$
-		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
-		CDebugUtils.error( ms, this );
+	protected void failed(Throwable e) {
+		MultiStatus ms = new MultiStatus(CDIDebugModel.getPluginIdentifier(),
+				ICDebugInternalConstants.STATUS_CODE_ERROR, ActionMessages.getString("MoveToLineAdapter.4"), null); //$NON-NLS-1$
+		ms.add(new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
+				ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e));
+		CDebugUtils.error(ms, this);
 	}
 }

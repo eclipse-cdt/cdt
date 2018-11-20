@@ -21,7 +21,7 @@ import org.eclipse.cdt.ui.CElementGrouping;
 
 /**
  * Grouping for macro definitions.
- * 
+ *
  * @since 5.2
  */
 public class MacrosGrouping extends CElementGrouping {
@@ -61,7 +61,7 @@ public class MacrosGrouping extends CElementGrouping {
 			return true;
 		}
 		if (obj instanceof MacrosGrouping) {
-			return tu.equals(((MacrosGrouping)obj).tu) ;
+			return tu.equals(((MacrosGrouping) obj).tu);
 		}
 		return false;
 	}

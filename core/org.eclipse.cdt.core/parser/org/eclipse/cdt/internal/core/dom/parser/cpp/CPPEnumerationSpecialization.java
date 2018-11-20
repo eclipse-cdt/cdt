@@ -40,16 +40,16 @@ public class CPPEnumerationSpecialization extends CPPSpecialization implements I
 	private final IType fFixedType;
 	private boolean fInitializationComplete;
 
-	public static IBinding createInstance(ICPPEnumeration enumeration,
-			ICPPClassSpecialization owner, ICPPTemplateParameterMap tpMap) {
+	public static IBinding createInstance(ICPPEnumeration enumeration, ICPPClassSpecialization owner,
+			ICPPTemplateParameterMap tpMap) {
 		IType fixedType = enumeration.getFixedType();
 		if (fixedType != null) {
 			ICPPClassSpecialization within = CPPTemplates.getSpecializationContext(owner);
 			InstantiationContext context = new InstantiationContext(tpMap, within);
 			fixedType = CPPTemplates.instantiateType(fixedType, context);
 		}
-		CPPEnumerationSpecialization specializedEnumeration =
-				new CPPEnumerationSpecialization(enumeration, owner, tpMap, fixedType);
+		CPPEnumerationSpecialization specializedEnumeration = new CPPEnumerationSpecialization(enumeration, owner,
+				tpMap, fixedType);
 		specializedEnumeration.initialize();
 		return specializedEnumeration;
 	}
@@ -68,23 +68,22 @@ public class CPPEnumerationSpecialization extends CPPSpecialization implements I
 		for (int i = 0; i < enumerators.length; ++i) {
 			IEnumerator enumerator = enumerators[i];
 			InstantiationContext context = new InstantiationContext(tpMap, this);
-			IValue specializedValue =
-					CPPTemplates.instantiateValue(enumerator.getValue(), context, IntegralValue.MAX_RECURSION_DEPTH);
+			IValue specializedValue = CPPTemplates.instantiateValue(enumerator.getValue(), context,
+					IntegralValue.MAX_RECURSION_DEPTH);
 			IType internalType = null;
 			if (fFixedType == null && enumerator instanceof ICPPInternalEnumerator) {
 				internalType = ((ICPPInternalEnumerator) enumerator).getInternalType();
 				if (internalType != null) {
 					internalType = CPPTemplates.instantiateType(internalType, context);
 				} else if (previousInternalType instanceof IBasicType) {
-					internalType = ASTEnumerator.getTypeOfIncrementedValue(
-							(IBasicType) previousInternalType, specializedValue);
+					internalType = ASTEnumerator.getTypeOfIncrementedValue((IBasicType) previousInternalType,
+							specializedValue);
 				}
 				if (internalType != null) {
 					previousInternalType = internalType;
 				}
 			}
-			fEnumerators[i] = new CPPEnumeratorSpecialization(enumerator, this, tpMap, specializedValue,
-					internalType);
+			fEnumerators[i] = new CPPEnumeratorSpecialization(enumerator, this, tpMap, specializedValue, internalType);
 		}
 		fInitializationComplete = true;
 	}
@@ -123,7 +122,7 @@ public class CPPEnumerationSpecialization extends CPPSpecialization implements I
 			return false;
 		ICPPEnumerationSpecialization otherEnumSpec = (ICPPEnumerationSpecialization) type;
 		return getSpecializedBinding().isSameType(otherEnumSpec.getSpecializedBinding())
-			&& ((IType) getOwner()).isSameType((IType) otherEnumSpec.getOwner());
+				&& ((IType) getOwner()).isSameType((IType) otherEnumSpec.getOwner());
 	}
 
 	@Override
@@ -144,7 +143,7 @@ public class CPPEnumerationSpecialization extends CPPSpecialization implements I
 
 	@Override
 	public Object clone() {
-    	throw new IllegalArgumentException("Enums must not be cloned"); //$NON-NLS-1$
+		throw new IllegalArgumentException("Enums must not be cloned"); //$NON-NLS-1$
 	}
 
 	@Override

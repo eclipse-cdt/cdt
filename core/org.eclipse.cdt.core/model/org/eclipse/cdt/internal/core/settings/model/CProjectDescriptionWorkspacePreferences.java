@@ -16,22 +16,20 @@ package org.eclipse.cdt.internal.core.settings.model;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionWorkspacePreferences;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 
-public class CProjectDescriptionWorkspacePreferences extends
-		CProjectDescriptionPreferences implements ICProjectDescriptionWorkspacePreferences{
+public class CProjectDescriptionWorkspacePreferences extends CProjectDescriptionPreferences
+		implements ICProjectDescriptionWorkspacePreferences {
 
-	public CProjectDescriptionWorkspacePreferences(
-			CProjectDescriptionPreferences base, boolean isReadOnly) {
+	public CProjectDescriptionWorkspacePreferences(CProjectDescriptionPreferences base, boolean isReadOnly) {
 		super(base, isReadOnly);
 	}
 
-	public CProjectDescriptionWorkspacePreferences(
-			CProjectDescriptionPreferences base,
+	public CProjectDescriptionWorkspacePreferences(CProjectDescriptionPreferences base,
 			CProjectDescriptionPreferences superPreference, boolean isReadOnly) {
 		super(base, superPreference, isReadOnly);
 	}
 
-	public CProjectDescriptionWorkspacePreferences(ICStorageElement el,
-			CProjectDescriptionPreferences superPreference, boolean isReadOnly) {
+	public CProjectDescriptionWorkspacePreferences(ICStorageElement el, CProjectDescriptionPreferences superPreference,
+			boolean isReadOnly) {
 		super(el, superPreference, isReadOnly);
 	}
 }

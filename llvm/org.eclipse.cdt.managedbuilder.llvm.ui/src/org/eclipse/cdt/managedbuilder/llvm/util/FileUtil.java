@@ -31,7 +31,7 @@ public class FileUtil {
 		String path = null;
 		for (File entry : entries) {
 			path = entry.getAbsolutePath();
-			if (path!=null) {
+			if (path != null) {
 				if (path.contains(".cpp") || path.contains(".cc")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return true;
 				}

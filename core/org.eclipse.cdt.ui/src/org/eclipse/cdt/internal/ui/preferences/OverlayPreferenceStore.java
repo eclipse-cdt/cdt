@@ -23,111 +23,112 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /**
  * An overlaying preference store.
  */
-public class OverlayPreferenceStore  implements IPreferenceStore {
-	
+public class OverlayPreferenceStore implements IPreferenceStore {
+
 	public static final class TypeDescriptor {
 		protected TypeDescriptor() {
 		}
 	}
-	
-	public static final TypeDescriptor BOOLEAN= new TypeDescriptor();
-	public static final TypeDescriptor DOUBLE= new TypeDescriptor();
-	public static final TypeDescriptor FLOAT= new TypeDescriptor();
-	public static final TypeDescriptor INT= new TypeDescriptor();
-	public static final TypeDescriptor LONG= new TypeDescriptor();
-	public static final TypeDescriptor STRING= new TypeDescriptor();
-	
+
+	public static final TypeDescriptor BOOLEAN = new TypeDescriptor();
+	public static final TypeDescriptor DOUBLE = new TypeDescriptor();
+	public static final TypeDescriptor FLOAT = new TypeDescriptor();
+	public static final TypeDescriptor INT = new TypeDescriptor();
+	public static final TypeDescriptor LONG = new TypeDescriptor();
+	public static final TypeDescriptor STRING = new TypeDescriptor();
+
 	public static class OverlayKey {
 		TypeDescriptor fDescriptor;
 		String fKey;
-		
+
 		public OverlayKey(TypeDescriptor descriptor, String key) {
-			fDescriptor= descriptor;
-			fKey= key;
+			fDescriptor = descriptor;
+			fKey = key;
 		}
 	}
-	
+
 	private class PropertyListener implements IPropertyChangeListener {
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
-			OverlayKey key= findOverlayKey(event.getProperty());
+			OverlayKey key = findOverlayKey(event.getProperty());
 			if (key != null)
-				propagateProperty(fParent, key, fStore); 
+				propagateProperty(fParent, key, fStore);
 		}
 	}
-	
+
 	protected IPreferenceStore fParent;
 	protected IPreferenceStore fStore;
 	private OverlayKey[] fOverlayKeys;
 	private boolean fLoaded;
 	private PropertyListener fPropertyListener;
-	
+
 	public OverlayPreferenceStore(IPreferenceStore parent, OverlayKey[] overlayKeys) {
-		fParent= parent;
-		fOverlayKeys= overlayKeys;
-		fStore= new PreferenceStore();
+		fParent = parent;
+		fOverlayKeys = overlayKeys;
+		fStore = new PreferenceStore();
 	}
-	
+
 	protected OverlayKey findOverlayKey(String key) {
-		for (int i= 0; i < fOverlayKeys.length; i++) {
+		for (int i = 0; i < fOverlayKeys.length; i++) {
 			if (fOverlayKeys[i].fKey.equals(key))
 				return fOverlayKeys[i];
 		}
 		return null;
 	}
-	
+
 	private boolean covers(String key) {
 		return (findOverlayKey(key) != null);
 	}
-	
+
 	protected void propagateProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target) {
 		if (orgin.isDefault(key.fKey)) {
 			if (!target.isDefault(key.fKey))
 				target.setToDefault(key.fKey);
 			return;
 		}
-		
-		TypeDescriptor d= key.fDescriptor;
+
+		TypeDescriptor d = key.fDescriptor;
 		if (BOOLEAN == d) {
-			boolean originValue= orgin.getBoolean(key.fKey);
-			boolean targetValue= target.getBoolean(key.fKey);
+			boolean originValue = orgin.getBoolean(key.fKey);
+			boolean targetValue = target.getBoolean(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
 		} else if (DOUBLE == d) {
-			double originValue= orgin.getDouble(key.fKey);
-			double targetValue= target.getDouble(key.fKey);
+			double originValue = orgin.getDouble(key.fKey);
+			double targetValue = target.getDouble(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
 		} else if (FLOAT == d) {
-			float originValue= orgin.getFloat(key.fKey);
-			float targetValue= target.getFloat(key.fKey);
+			float originValue = orgin.getFloat(key.fKey);
+			float targetValue = target.getFloat(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
 		} else if (INT == d) {
-			int originValue= orgin.getInt(key.fKey);
-			int targetValue= target.getInt(key.fKey);
+			int originValue = orgin.getInt(key.fKey);
+			int targetValue = target.getInt(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
 		} else if (LONG == d) {
-			long originValue= orgin.getLong(key.fKey);
-			long targetValue= target.getLong(key.fKey);
+			long originValue = orgin.getLong(key.fKey);
+			long targetValue = target.getLong(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
 		} else if (STRING == d) {
-			String originValue= orgin.getString(key.fKey);
-			String targetValue= target.getString(key.fKey);
+			String originValue = orgin.getString(key.fKey);
+			String targetValue = target.getString(key.fKey);
 			if (targetValue != null && originValue != null && !targetValue.equals(originValue))
 				target.setValue(key.fKey, originValue);
 		}
 	}
-	
+
 	public void propagate() {
-		for (int i= 0; i < fOverlayKeys.length; i++)
+		for (int i = 0; i < fOverlayKeys.length; i++)
 			propagateProperty(fStore, fOverlayKeys[i], fParent);
 	}
-	
-	private void loadProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target, boolean forceInitialization) {
-		TypeDescriptor d= key.fDescriptor;
+
+	private void loadProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target,
+			boolean forceInitialization) {
+		TypeDescriptor d = key.fDescriptor;
 		if (BOOLEAN == d) {
 			if (forceInitialization)
 				target.setValue(key.fKey, true);
@@ -160,43 +161,43 @@ public class OverlayPreferenceStore  implements IPreferenceStore {
 			target.setDefault(key.fKey, orgin.getDefaultString(key.fKey));
 		}
 	}
-	
+
 	public void load() {
-		for (int i= 0; i < fOverlayKeys.length; i++)
+		for (int i = 0; i < fOverlayKeys.length; i++)
 			loadProperty(fParent, fOverlayKeys[i], fStore, true);
 
-		fLoaded= true;
+		fLoaded = true;
 	}
-	
+
 	public void loadDefaults() {
-		for (int i= 0; i < fOverlayKeys.length; i++)
+		for (int i = 0; i < fOverlayKeys.length; i++)
 			setToDefault(fOverlayKeys[i].fKey);
 	}
-	
+
 	public void start() {
 		if (fPropertyListener == null) {
-			fPropertyListener= new PropertyListener();
+			fPropertyListener = new PropertyListener();
 			fParent.addPropertyChangeListener(fPropertyListener);
 		}
 	}
-	
+
 	public void stop() {
-		if (fPropertyListener != null)  {
+		if (fPropertyListener != null) {
 			fParent.removePropertyChangeListener(fPropertyListener);
-			fPropertyListener= null;
+			fPropertyListener = null;
 		}
 	}
-	
+
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		fStore.addPropertyChangeListener(listener);
 	}
-	
+
 	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		fStore.removePropertyChangeListener(listener);
 	}
-	
+
 	@Override
 	public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
 		fStore.firePropertyChangeEvent(name, oldValue, newValue);
@@ -206,7 +207,7 @@ public class OverlayPreferenceStore  implements IPreferenceStore {
 	public boolean contains(String name) {
 		return fStore.contains(name);
 	}
-	
+
 	@Override
 	public boolean getBoolean(String name) {
 		return fStore.getBoolean(name);
@@ -363,29 +364,28 @@ public class OverlayPreferenceStore  implements IPreferenceStore {
 	/**
 	 * The keys to add to the list of overlay keys.
 	 * <p>
-	 * Note: This method must be called before {@link #load()} is called. 
+	 * Note: This method must be called before {@link #load()} is called.
 	 * </p>
-	 * 
+	 *
 	 * @param keys
 	 * @since 3.0
 	 */
 	public void addKeys(OverlayKey[] keys) {
 		Assert.isTrue(!fLoaded);
 		Assert.isNotNull(keys);
-		
-		int overlayKeysLength= fOverlayKeys.length;
-		OverlayKey[] result= new OverlayKey[keys.length + overlayKeysLength];
 
-		for (int i= 0, length= overlayKeysLength; i < length; i++)
-			result[i]= fOverlayKeys[i];
-		
-		for (int i= 0, length= keys.length; i < length; i++)
-			result[overlayKeysLength + i]= keys[i];
-		
-		fOverlayKeys= result;
-		
+		int overlayKeysLength = fOverlayKeys.length;
+		OverlayKey[] result = new OverlayKey[keys.length + overlayKeysLength];
+
+		for (int i = 0, length = overlayKeysLength; i < length; i++)
+			result[i] = fOverlayKeys[i];
+
+		for (int i = 0, length = keys.length; i < length; i++)
+			result[overlayKeysLength + i] = keys[i];
+
+		fOverlayKeys = result;
+
 		if (fLoaded)
 			load();
 	}
 }
-

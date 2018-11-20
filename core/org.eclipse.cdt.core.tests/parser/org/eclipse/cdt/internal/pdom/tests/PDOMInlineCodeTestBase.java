@@ -36,20 +36,17 @@ public class PDOMInlineCodeTestBase extends PDOMTestBase {
 	protected ICProject cproject;
 
 	public void setUp() throws Exception {
-		cproject = CProjectHelper.createCCProject("classTemplateTests" + System.currentTimeMillis(),
-				"bin", IPDOMManager.ID_NO_INDEXER);
+		cproject = CProjectHelper.createCCProject("classTemplateTests" + System.currentTimeMillis(), "bin",
+				IPDOMManager.ID_NO_INDEXER);
 	}
 
 	protected void setUpSections(int sections) throws Exception {
-		CharSequence[] contents = TestSourceReader.getContentsForTest(
-				CTestPlugin.getDefault().getBundle(), "parser", getClass(),
-				getName(), sections);
+		CharSequence[] contents = TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "parser",
+				getClass(), getName(), sections);
 		for (CharSequence content : contents) {
-			IFile file = TestSourceReader.createFile(cproject.getProject(),
-					new Path("refs.cpp"), content.toString());
+			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("refs.cpp"), content.toString());
 		}
-		IndexerPreferences
-				.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
+		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(cproject);
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireReadLock();

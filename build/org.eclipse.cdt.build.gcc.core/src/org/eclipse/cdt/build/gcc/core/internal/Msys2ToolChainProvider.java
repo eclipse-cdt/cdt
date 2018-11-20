@@ -87,8 +87,7 @@ public class Msys2ToolChainProvider implements IToolChainProvider {
 			pathVar.append("\\bin"); //$NON-NLS-1$
 			IEnvironmentVariable[] vars = new IEnvironmentVariable[] {
 					new EnvironmentVariable("PATH", pathVar.toString(), IEnvironmentVariable.ENVVAR_PREPEND, //$NON-NLS-1$
-							File.pathSeparator)
-			};
+							File.pathSeparator) };
 			GCCToolChain toolChain = new GCCToolChain(this, gccPath, Platform.ARCH_X86_64, vars);
 			toolChain.setProperty(IToolChain.ATTR_PACKAGE, "msys2"); //$NON-NLS-1$
 			manager.addToolChain(toolChain);

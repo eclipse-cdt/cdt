@@ -12,47 +12,38 @@
  * IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
- * Testing Single name reference, with prefix 
+ *
+ * Testing Single name reference, with prefix
  *
  */
-public class CompletionTest_SingleName_Prefix2  extends CompletionProposalsBaseTest{
+public class CompletionTest_SingleName_Prefix2 extends CompletionProposalsBaseTest {
 	private final String fileName = "CompletionTestStart14.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "a";
-	private final String[] expectedResults = {
-			"aVariable : int",
-			"aFunction(void) : bool",
-			"anotherFunction(void) : void",
-			"aClass",
-			"anotherClass",
-			"aNamespace",
-			"anEnumeration",
-			"aFirstEnum",
-			"aSecondEnum",
-			"aThirdEnum",
-			"AMacro(x)",
-			"AStruct"
-	};
-	
+	private final String[] expectedResults = { "aVariable : int", "aFunction(void) : bool",
+			"anotherFunction(void) : void", "aClass", "anotherClass", "aNamespace", "anEnumeration", "aFirstEnum",
+			"aSecondEnum", "aThirdEnum", "AMacro(x)", "AStruct" };
+
 	public CompletionTest_SingleName_Prefix2(String name) {
 		super(name);
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
 		//setExpectFailure(109724);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_SingleName_Prefix2.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_SingleName_Prefix2.class.getName());
 		suite.addTest(new CompletionTest_SingleName_Prefix2("testCompletionProposals"));
 		return suite;
-	}		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -92,6 +83,7 @@ public class CompletionTest_SingleName_Prefix2  extends CompletionProposalsBaseT
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

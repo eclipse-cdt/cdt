@@ -40,10 +40,8 @@ import org.eclipse.core.runtime.Path;
  *  This class implements the Dependency Manager and Output Name Provider interfaces
  *  for a very "quick & dirty" ifort tool-chain on Win32
  */
-public class DefaultFortranDependencyCalculator implements IManagedDependencyGenerator,
-														   IManagedOutputNameProvider
-{
-	public static final String MODULE_EXTENSION = "mod";	//$NON-NLS-1$
+public class DefaultFortranDependencyCalculator implements IManagedDependencyGenerator, IManagedOutputNameProvider {
+	public static final String MODULE_EXTENSION = "mod"; //$NON-NLS-1$
 
 	/*
 	 * Return a list of the names of all modules used by a file
@@ -80,7 +78,8 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 			if (in != null)
 				try {
 					in.close();
-				} catch (IOException e) {/*don't care */}
+				} catch (IOException e) {
+					/*don't care */}
 		}
 		return names.toArray(new String[names.size()]);
 	}
@@ -120,7 +119,8 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 			if (in != null)
 				try {
 					in.close();
-				} catch (IOException e) {/*don't care */}
+				} catch (IOException e) {
+					/*don't care */}
 		}
 		return names.toArray(new String[names.size()]);
 	}
@@ -132,9 +132,12 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 		// TODO:  Get the file extensions from the tool's primary input type
 		String ext = resource.getFileExtension();
 		if (ext != null) {
-			if (ext.equalsIgnoreCase("f")) return true;
-			if (ext.equalsIgnoreCase("for")) return true;
-			if (ext.equalsIgnoreCase("f90")) return true;
+			if (ext.equalsIgnoreCase("f"))
+				return true;
+			if (ext.equalsIgnoreCase("for"))
+				return true;
+			if (ext.equalsIgnoreCase("f90"))
+				return true;
 		}
 		return false;
 	}
@@ -143,14 +146,16 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	 * Given a set of the module names used by a source file, and a set of resources to search, determine
 	 * if any of the source files implements the module names.
 	 */
-	private IResource[] FindModulesInResources(IProject project, ITool tool, IResource resource, IResource[] resourcesToSearch,
-							String topBuildDir, String[] usedNames) {
+	private IResource[] FindModulesInResources(IProject project, ITool tool, IResource resource,
+			IResource[] resourcesToSearch, String topBuildDir, String[] usedNames) {
 		ArrayList<IResource> modRes = new ArrayList<IResource>();
 		for (int ir = 0; ir < resourcesToSearch.length; ir++) {
-			if (resourcesToSearch[ir].equals(resource)) continue;
+			if (resourcesToSearch[ir].equals(resource))
+				continue;
 			if (resourcesToSearch[ir].getType() == IResource.FILE) {
 				File projectFile = resourcesToSearch[ir].getLocation().toFile();
-				if (!isFortranFile(tool, resourcesToSearch[ir])) continue;
+				if (!isFortranFile(tool, resourcesToSearch[ir]))
+					continue;
 				String[] modules = findModuleNames(projectFile);
 				if (modules != null) {
 					for (int iu = 0; iu < usedNames.length; iu++) {
@@ -161,26 +166,29 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 								//  to generate .mod files in the directory from which the compiler is run.  For MBS, this
 								//  is the top-level build directory.
 								//  TODO: Support the /module:path option and use that in determining the path of the module file
-								IPath modName = Path.fromOSString(topBuildDir + Path.SEPARATOR + modules[im] + "." + MODULE_EXTENSION);
+								IPath modName = Path.fromOSString(
+										topBuildDir + Path.SEPARATOR + modules[im] + "." + MODULE_EXTENSION);
 								modRes.add(project.getFile(modName));
 								modRes.add(resourcesToSearch[ir]);
 								foundDependency = true;
 								break;
 							}
 						}
-						if (foundDependency) break;
+						if (foundDependency)
+							break;
 					}
 				}
 			} else if (resourcesToSearch[ir].getType() == IResource.FOLDER) {
 				try {
-					IResource[] modFound = FindModulesInResources(project, tool, resource, ((IFolder)resourcesToSearch[ir]).members(),
-							topBuildDir, usedNames);
+					IResource[] modFound = FindModulesInResources(project, tool, resource,
+							((IFolder) resourcesToSearch[ir]).members(), topBuildDir, usedNames);
 					if (modFound != null) {
-						for (int i=0; i<modFound.length; i++) {
+						for (int i = 0; i < modFound.length; i++) {
 							modRes.add(modFound[i]);
 						}
 					}
-				} catch(Exception e) {}
+				} catch (Exception e) {
+				}
 			}
 		}
 		return modRes.toArray(new IResource[modRes.size()]);
@@ -199,7 +207,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 		IConfiguration config = mngInfo.getDefaultConfiguration();
 		ITool tool = null;
 		ITool[] tools = config.getTools();
-		for (int i=0; i<tools.length; i++) {
+		for (int i = 0; i < tools.length; i++) {
 			if (tools[i].getName().equals("Fortran (ifort) Compiler for Win32")) {
 				tool = tools[i];
 				break;
@@ -208,24 +216,25 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 
 		File file = resource.getLocation().toFile();
 		try {
-			if (!isFortranFile(tool, resource)) return null;
+			if (!isFortranFile(tool, resource))
+				return null;
 
 			//  Get the names of the modules USE'd by the source file
 			String[] usedNames = findUsedModuleNames(file);
-			if (usedNames.length == 0) return null;
+			if (usedNames.length == 0)
+				return null;
 
 			//  Search the project files for a Fortran source that creates the module.  If we find one, then compiling this
 			//  source file is dependent upon first compiling the found source file.
 			IResource[] resources = project.members();
-			IResource[] modRes = FindModulesInResources(project, tool, resource, resources, config.getName(), usedNames);
+			IResource[] modRes = FindModulesInResources(project, tool, resource, resources, config.getName(),
+					usedNames);
 			if (modRes != null) {
-				for (int i=0; i<modRes.length; i++) {
+				for (int i = 0; i < modRes.length; i++) {
 					dependencies.add(modRes[i]);
 				}
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			return null;
 		}
 

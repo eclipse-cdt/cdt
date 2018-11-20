@@ -19,29 +19,29 @@ package org.eclipse.cdt.debug.ui.disassembly;
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
- * 
+ *
  * This interface is experimental
  */
 public interface IDocumentBaseChangeUpdate extends IDocumentUpdate {
 
-    /**
-     * Returns the offset of the old base element.
-     * 
-     * @return the offset of the old base element
-     */
-    public int getOriginalOffset();
+	/**
+	 * Returns the offset of the old base element.
+	 *
+	 * @return the offset of the old base element
+	 */
+	public int getOriginalOffset();
 
-    /**
-     * Sets the base element to use with the given presentation context.
-     * 
-     * @param base the base element to use with the given presentation context
-     */
-    public void setBaseElement( Object base );
+	/**
+	 * Sets the base element to use with the given presentation context.
+	 *
+	 * @param base the base element to use with the given presentation context
+	 */
+	public void setBaseElement(Object base);
 
-    /**
-     * Sets the offset of the new base element.
-     * 
-     * @param offset the offset of the new base element
-     */
-    public void setOffset( int offset );
+	/**
+	 * Sets the offset of the new base element.
+	 *
+	 * @param offset the offset of the new base element
+	 */
+	public void setOffset(int offset);
 }

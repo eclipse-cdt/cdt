@@ -20,16 +20,15 @@ public class BreakpointMessages {
 
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.core.breakpoints.BreakpointMessages";//$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle( BUNDLE_NAME );
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private BreakpointMessages() {
 	}
 
-	public static String getString( String key ) {
+	public static String getString(String key) {
 		try {
-			return RESOURCE_BUNDLE.getString( key );
-		}
-		catch( MissingResourceException e ) {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
 			return '!' + key + '!';
 		}
 	}

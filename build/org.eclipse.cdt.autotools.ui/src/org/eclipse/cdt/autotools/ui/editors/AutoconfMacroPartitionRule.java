@@ -20,7 +20,6 @@ import org.eclipse.jface.text.rules.IWhitespaceDetector;
 import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.Token;
 
-
 public class AutoconfMacroPartitionRule implements IPredicateRule {
 	/**
 	 * The default token to be returned on success and if nothing else has been
@@ -52,7 +51,7 @@ public class AutoconfMacroPartitionRule implements IPredicateRule {
 	public IToken getSuccessToken() {
 		return token;
 	}
-	
+
 	protected void matchParentheses(ICharacterScanner scanner) {
 		boolean finished = false;
 		int depth = 1;
@@ -61,50 +60,48 @@ public class AutoconfMacroPartitionRule implements IPredicateRule {
 		while (!finished && c != ICharacterScanner.EOF) {
 			if (c == '[') {
 				++quoteDepth;
-			}
-			else if (c == ']') {
+			} else if (c == ']') {
 				--quoteDepth;
 				if (quoteDepth < 0)
 					finished = true;
 			}
 			if (quoteDepth == 0) {
 				if (c == ')') {
-				  --depth;
-				  if (depth <= 0)
-					  finished = true;
-				}
-				else if (c == '(') {
+					--depth;
+					if (depth <= 0)
+						finished = true;
+				} else if (c == '(') {
 					++depth;
 				}
 			}
 			c = scanner.read();
 		}
 	}
-	
+
 	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
-//		if (resume)
-//			return Token.UNDEFINED;
+		//		if (resume)
+		//			return Token.UNDEFINED;
 		return evaluate(scanner);
 	}
-	
+
 	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c = scanner.read();
 		fBuffer.setLength(0);
 
-		fBuffer.append((char)c);
+		fBuffer.append((char) c);
 		if (c == 'A') {
 			c = scanner.read();
-			fBuffer.append((char)c);
+			fBuffer.append((char) c);
 			if (c != 'C' && c != 'H' && c != 'M') {
 				unreadBuffer(scanner);
-				return Token.UNDEFINED;	
+				return Token.UNDEFINED;
 			}
 			fDetector = generalMacroWordDetector;
 		} else if (c == 'm') {
 			c = scanner.read();
-			fBuffer.append((char)c);
+			fBuffer.append((char) c);
 			if (c != 4) {
 				unreadBuffer(scanner);
 				return Token.UNDEFINED;
@@ -114,22 +111,19 @@ public class AutoconfMacroPartitionRule implements IPredicateRule {
 			unreadBuffer(scanner);
 			return Token.UNDEFINED;
 		}
-		
-    	c = scanner.read();
-		while (c != ICharacterScanner.EOF
-				&& fDetector.isWordPart((char) c)) {
+
+		c = scanner.read();
+		while (c != ICharacterScanner.EOF && fDetector.isWordPart((char) c)) {
 			fBuffer.append((char) c);
 			c = scanner.read();
 		}
 
 		if (c != ICharacterScanner.EOF) {
-			if (c == ';' || fWsDetector.isWhitespace((char)c)) {
+			if (c == ';' || fWsDetector.isWhitespace((char) c)) {
 				// We are done
-			}
-			else if (c == '(') {
+			} else if (c == '(') {
 				matchParentheses(scanner);
-			}
-			else {
+			} else {
 				scanner.unread();
 				unreadBuffer(scanner);
 				return Token.UNDEFINED;
@@ -142,7 +136,7 @@ public class AutoconfMacroPartitionRule implements IPredicateRule {
 
 	/**
 	 * Returns the characters in the buffer to the scanner.
-	 * 
+	 *
 	 * @param scanner
 	 *            the scanner to be used
 	 */

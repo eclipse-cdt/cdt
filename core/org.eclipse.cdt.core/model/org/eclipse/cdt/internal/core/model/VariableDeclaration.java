@@ -65,12 +65,12 @@ public class VariableDeclaration extends SourceManipulation implements IVariable
 		getVariableInfo().setStatic(isStatic);
 	}
 
-	public VariableInfo getVariableInfo() throws CModelException{
+	public VariableInfo getVariableInfo() throws CModelException {
 		return (VariableInfo) getElementInfo();
 	}
 
 	@Override
-	protected CElementInfo createElementInfo () {
+	protected CElementInfo createElementInfo() {
 		return new VariableInfo(this);
 	}
 }

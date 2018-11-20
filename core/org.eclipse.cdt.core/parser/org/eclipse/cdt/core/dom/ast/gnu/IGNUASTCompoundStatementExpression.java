@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 /**
  * There are GNU language extensions that apply to both GCC and G++. Compound
  * statement's as expressions.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -36,14 +36,14 @@ public interface IGNUASTCompoundStatementExpression extends IASTExpression {
 
 	/**
 	 * Get the compound statement.
-	 * 
+	 *
 	 * @return <code>IASTCompoundStatement</code>
 	 */
 	public IASTCompoundStatement getCompoundStatement();
 
 	/**
 	 * Set the compound statement.
-	 * 
+	 *
 	 * @param statement
 	 *            <code>IASTCompoundStatement</code>
 	 */

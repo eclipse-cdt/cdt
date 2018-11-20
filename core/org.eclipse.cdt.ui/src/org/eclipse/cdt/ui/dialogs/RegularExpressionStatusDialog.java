@@ -58,9 +58,8 @@ public class RegularExpressionStatusDialog extends InputStatusDialog {
 	 *            (equivalent to the empty string)
 	 */
 	public RegularExpressionStatusDialog(Shell shell, String initialValue) {
-		super(shell, DialogsMessages.RegularExpression_Validate,
-				DialogsMessages.RegularExpression_Enter,
-				initialValue, fValidator);
+		super(shell, DialogsMessages.RegularExpression_Validate, DialogsMessages.RegularExpression_Enter, initialValue,
+				fValidator);
 	}
 
 	/**
@@ -83,14 +82,8 @@ public class RegularExpressionStatusDialog extends InputStatusDialog {
 	protected Control createDialogArea(Composite parent) {
 		Control control = super.createDialogArea(parent);
 
-		new ContentAssistCommandAdapter(
-				getText(),
-				new TextContentAdapter(),
-				new FindReplaceDocumentAdapterContentProposalProvider(true),
-				null,
-				null,
-				true);
-
+		new ContentAssistCommandAdapter(getText(), new TextContentAdapter(),
+				new FindReplaceDocumentAdapterContentProposalProvider(true), null, null, true);
 
 		setHelpAvailable(false);
 		return control;
@@ -102,7 +95,7 @@ public class RegularExpressionStatusDialog extends InputStatusDialog {
 	@Override
 	public void create() {
 		super.create();
-		if (getValue().length()>0)
+		if (getValue().length() > 0)
 			validateInput();
 	}
 }

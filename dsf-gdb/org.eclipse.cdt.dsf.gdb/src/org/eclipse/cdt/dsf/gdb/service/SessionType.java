@@ -7,10 +7,12 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
-public enum SessionType { LOCAL, REMOTE, CORE }
+public enum SessionType {
+	LOCAL, REMOTE, CORE
+}

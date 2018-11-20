@@ -62,8 +62,7 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 	IWorkspaceRoot root;
 	List tcList;
 	Map<String, IToolChain> tcMap = new HashMap<String, IToolChain>();
-	
-	
+
 	/**
 	 * True if the user entered a non-empty string in the project name field. In that state, we avoid
 	 * automatically filling the project name field with the directory name (last segment of the location) he
@@ -112,7 +111,7 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 				}
 			}
 		});
-		
+
 		// Note that the modify listener gets called not only when the user enters text but also when we
 		// programatically set the field. This listener only gets called when the user modifies the field
 		projectName.addKeyListener(new KeyAdapter() {
@@ -122,41 +121,38 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 			}
 		});
 	}
-	
+
 	/**
 	 * Validates the contents of the page, setting the page error message and Finish button state accordingly
-	 * 
+	 *
 	 * @since 8.1
 	 */
 	protected void validatePage() {
-		// Don't generate an error if project name or location is empty, but do disable Finish button.  
+		// Don't generate an error if project name or location is empty, but do disable Finish button.
 		String msg = null;
 		boolean complete = true; // ultimately treated as false if msg != null
-		
+
 		String name = getProjectName();
 		if (name.isEmpty()) {
 			complete = false;
-		}
-		else {
+		} else {
 			IStatus status = ResourcesPlugin.getWorkspace().validateName(name, IResource.PROJECT);
 			if (!status.isOK()) {
-			    msg = status.getMessage();
-			}
-			else {
+				msg = status.getMessage();
+			} else {
 				IProject project = root.getProject(name);
 				if (project.exists()) {
 					msg = Messages.NewMakeProjFromExistingPage_4;
 
 				}
-	        }
+			}
 		}
 		if (msg == null) {
 			String loc = getLocation();
 			if (loc.isEmpty()) {
 				complete = false;
-			}
-			else {
-				final File file= new File(loc);
+			} else {
+				final File file = new File(loc);
 				if (file.isDirectory()) {
 					// Ensure we can create files in the directory.
 					if (!file.canWrite())
@@ -263,11 +259,11 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 
 		tcList = new List(group, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		
+
 		// Base the List control size on the number of total toolchains, up to 15 entries, but allocate for no
 		// less than five (small list boxes look strange). A vertical scrollbar will appear as needed
 		updateTcMap(false);
-		gd.heightHint = tcList.getItemHeight() * (1 + Math.max(Math.min(tcMap.size(), 15), 5)); // +1 for <none> 
+		gd.heightHint = tcList.getItemHeight() * (1 + Math.max(Math.min(tcMap.size(), 15), 5)); // +1 for <none>
 		tcList.setLayoutData(gd);
 		tcList.add(Messages.NewMakeProjFromExistingPage_11);
 
@@ -281,15 +277,16 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateTcWidget(supportedOnly.getSelection());
-			}});
+			}
+		});
 
 		supportedOnly.setSelection(true);
 		updateTcWidget(true);
-	}		
+	}
 
 	/**
 	 * Load our map and with the suitable toolchains and then populate the List control
-	 * 
+	 *
 	 * @param supportedOnly
 	 *            if true, consider only supported toolchains
 	 */
@@ -308,7 +305,7 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 
 	/**
 	 * Load our map with the suitable toolchains.
-	 * 
+	 *
 	 * @param supportedOnly
 	 *            if true, add only toolchains that are available and which support the host platform
 	 */

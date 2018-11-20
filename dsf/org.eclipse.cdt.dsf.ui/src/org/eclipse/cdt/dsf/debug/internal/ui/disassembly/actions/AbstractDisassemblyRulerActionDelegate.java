@@ -39,10 +39,11 @@ import org.eclipse.ui.texteditor.IUpdate;
  * adapter (inner) action on menu and mouse action on the vertical ruler.<p>
  * Extending classes must implement the factory method
  * <code>createAction(IDisassemblyPart, IVerticalRulerInfo)</code>.
- * 
+ *
  * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate
  */
-public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDelegate implements IEditorActionDelegate, IViewActionDelegate, MouseListener, IMenuListener {
+public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDelegate
+		implements IEditorActionDelegate, IViewActionDelegate, MouseListener, IMenuListener {
 
 	/** The disassembly part. */
 	private IDisassemblyPart fDisassemblyPart;
@@ -68,24 +69,24 @@ public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDeleg
 		setTargetPart(callerAction, targetEditor);
 	}
 
-    /*
-     * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-     */
-    @Override
+	/*
+	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
+	 */
+	@Override
 	public void init(IViewPart view) {
-    	setTargetPart(fCallerAction, view);
-    }
+		setTargetPart(fCallerAction, view);
+	}
 
 	@Override
 	public void init(IAction action) {
-		fCallerAction= action;
+		fCallerAction = action;
 	}
 
 	private void setTargetPart(IAction callerAction, IWorkbenchPart targetPart) {
 		if (fDisassemblyPart != null) {
-			IVerticalRulerInfo rulerInfo= fDisassemblyPart.getAdapter(IVerticalRulerInfo.class);
+			IVerticalRulerInfo rulerInfo = fDisassemblyPart.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
-				Control control= rulerInfo.getControl();
+				Control control = rulerInfo.getControl();
 				if (control != null && !control.isDisposed())
 					control.removeMouseListener(this);
 			}
@@ -93,19 +94,19 @@ public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDeleg
 			fDisassemblyPart.removeRulerContextMenuListener(this);
 		}
 
-		fDisassemblyPart= targetPart == null ? null : targetPart.getAdapter(IDisassemblyPart.class);
-		fCallerAction= callerAction;
-		fAction= null;
+		fDisassemblyPart = targetPart == null ? null : targetPart.getAdapter(IDisassemblyPart.class);
+		fCallerAction = callerAction;
+		fAction = null;
 
 		if (fDisassemblyPart != null) {
-				fDisassemblyPart.addRulerContextMenuListener(this);
+			fDisassemblyPart.addRulerContextMenuListener(this);
 
-			IVerticalRulerInfo rulerInfo= fDisassemblyPart.getAdapter(IVerticalRulerInfo.class);
+			IVerticalRulerInfo rulerInfo = fDisassemblyPart.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
-				fAction= createAction(fDisassemblyPart, rulerInfo);
+				fAction = createAction(fDisassemblyPart, rulerInfo);
 				update();
 
-				Control control= rulerInfo.getControl();
+				Control control = rulerInfo.getControl();
 				if (control != null && !control.isDisposed())
 					control.addMouseListener(this);
 			}
@@ -117,7 +118,7 @@ public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDeleg
 		if (fAction != null)
 			fAction.run();
 	}
-	
+
 	@Override
 	public void runWithEvent(IAction action, Event event) {
 		if (fAction != null)

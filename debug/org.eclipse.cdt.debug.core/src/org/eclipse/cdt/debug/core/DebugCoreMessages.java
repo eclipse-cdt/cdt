@@ -22,24 +22,23 @@ public class DebugCoreMessages {
 
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.core.DebugCoreMessages";//$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle( BUNDLE_NAME );
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private DebugCoreMessages() {
 	}
 
 	static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getString(key), new Object[]{arg});
+		return MessageFormat.format(getString(key), new Object[] { arg });
 	}
 
 	static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getString(key), (Object[])args);
+		return MessageFormat.format(getString(key), (Object[]) args);
 	}
 
-	public static String getString( String key ) {
+	public static String getString(String key) {
 		try {
-			return RESOURCE_BUNDLE.getString( key );
-		}
-		catch( MissingResourceException e ) {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
 			return '!' + key + '!';
 		}
 	}

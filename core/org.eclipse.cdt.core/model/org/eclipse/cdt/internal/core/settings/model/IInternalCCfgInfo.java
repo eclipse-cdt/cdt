@@ -19,6 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 
 public interface IInternalCCfgInfo {
 	CConfigurationSpecSettings getSpecSettings() throws CoreException;
-	
+
 	CConfigurationData getConfigurationData(boolean write) throws WriteAccessException;
 }

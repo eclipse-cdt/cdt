@@ -21,14 +21,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPASTStaticAssertDeclaration, IASTAmbiguityParent {
+public class CPPASTStaticAssertionDeclaration extends ASTNode
+		implements ICPPASTStaticAssertDeclaration, IASTAmbiguityParent {
 
 	private IASTExpression fCondition;
 	private final ICPPASTLiteralExpression fMessage;
 
 	/**
 	 * Constructor for C++17 static_assert with only a condition.
-	 * 
+	 *
 	 * @param condition The condition of the static assertion
 	 */
 	public CPPASTStaticAssertionDeclaration(IASTExpression condition) {
@@ -36,15 +37,15 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
 	}
 
 	public CPPASTStaticAssertionDeclaration(IASTExpression condition, ICPPASTLiteralExpression message) {
-		fCondition= condition;
-		fMessage= message;
-        if (condition != null) {
+		fCondition = condition;
+		fMessage = message;
+		if (condition != null) {
 			condition.setParent(this);
 			condition.setPropertyInParent(CONDITION);
 		}
-        if (message != null) {
-        	message.setParent(this);
-        	message.setPropertyInParent(MESSAGE);
+		if (message != null) {
+			message.setParent(this);
+			message.setPropertyInParent(MESSAGE);
 		}
 	}
 
@@ -58,7 +59,6 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
 		return fMessage;
 	}
 
-
 	@Override
 	public CPPASTStaticAssertionDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -68,18 +68,19 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
 	public CPPASTStaticAssertionDeclaration copy(CopyStyle style) {
 		final IASTExpression condCopy = fCondition == null ? null : fCondition.copy(style);
 		final ICPPASTLiteralExpression msgCopy = fMessage == null ? null : fMessage.copy(style);
-		CPPASTStaticAssertionDeclaration copy = new CPPASTStaticAssertionDeclaration(condCopy,
-				msgCopy);
+		CPPASTStaticAssertionDeclaration copy = new CPPASTStaticAssertionDeclaration(condCopy, msgCopy);
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclarations) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	        }
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			}
 		}
 
 		if (fCondition != null && !fCondition.accept(action))
@@ -89,15 +90,15 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
 
 		if (action.shouldVisitDeclarations && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-    	if (child == fCondition) {
-    		fCondition= (IASTExpression) other;
-    		other.setParent(child.getParent());
-    		other.setPropertyInParent(child.getPropertyInParent());
-    	}
+		if (child == fCondition) {
+			fCondition = (IASTExpression) other;
+			other.setParent(child.getParent());
+			other.setPropertyInParent(child.getPropertyInParent());
+		}
 	}
 }

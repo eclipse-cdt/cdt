@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.build.IToolChain;
 
 /**
  * Parent class for toolChain wizards that create or edit toolchains.
- * 
+ *
  * @since 6.3
  */
 public abstract class ToolChainWizard extends Wizard {

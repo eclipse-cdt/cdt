@@ -24,42 +24,44 @@ import org.eclipse.swt.widgets.Display;
 /**
  * Class used to initialize default preference values.
  */
-public class FPRenderingPreferenceInitializer extends AbstractPreferenceInitializer
-{
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#
-     * initializeDefaultPreferences()
-     */
-    @Override
-    public void initializeDefaultPreferences()
-    {
-        IPreferenceStore store = FPRenderingPlugin.getDefault().getPreferenceStore();
+public class FPRenderingPreferenceInitializer extends AbstractPreferenceInitializer {
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#
+	 * initializeDefaultPreferences()
+	 */
+	@Override
+	public void initializeDefaultPreferences() {
+		IPreferenceStore store = FPRenderingPlugin.getDefault().getPreferenceStore();
 
-        store.setDefault(FPRenderingPreferenceConstants.MEM_USE_GLOBAL_TEXT, true);
-        store.setDefault(FPRenderingPreferenceConstants.MEM_USE_GLOBAL_BACKGROUND, true);
-        store.setDefault(FPRenderingPreferenceConstants.MEM_USE_GLOBAL_SELECTION, true);
+		store.setDefault(FPRenderingPreferenceConstants.MEM_USE_GLOBAL_TEXT, true);
+		store.setDefault(FPRenderingPreferenceConstants.MEM_USE_GLOBAL_BACKGROUND, true);
+		store.setDefault(FPRenderingPreferenceConstants.MEM_USE_GLOBAL_SELECTION, true);
 
-        store.setDefault(FPRenderingPreferenceConstants.MEM_COLOR_CHANGED, "255,0,0"); //$NON-NLS-1$
+		store.setDefault(FPRenderingPreferenceConstants.MEM_COLOR_CHANGED, "255,0,0"); //$NON-NLS-1$
 
-        Color systemSelection = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
-        store.setDefault(FPRenderingPreferenceConstants.MEM_COLOR_SELECTION, systemSelection.getRed() + "," + systemSelection.getGreen() + "," //$NON-NLS-1$ //$NON-NLS-2$
-                + systemSelection.getBlue());
+		Color systemSelection = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
+		store.setDefault(FPRenderingPreferenceConstants.MEM_COLOR_SELECTION,
+				systemSelection.getRed() + "," + systemSelection.getGreen() + "," //$NON-NLS-1$ //$NON-NLS-2$
+						+ systemSelection.getBlue());
 
-        store.setDefault(FPRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS, "5"); //$NON-NLS-1$
+		store.setDefault(FPRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS, "5"); //$NON-NLS-1$
 
-        store.setDefault(FPRenderingPreferenceConstants.MEM_COLOR_EDIT, "0,255,0"); //$NON-NLS-1$
+		store.setDefault(FPRenderingPreferenceConstants.MEM_COLOR_EDIT, "0,255,0"); //$NON-NLS-1$
 
-        Color systemText = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-        store.setDefault(FPRenderingPreferenceConstants.MEM_COLOR_TEXT, systemText.getRed() + "," + systemText.getGreen() + "," + systemText.getBlue()); //$NON-NLS-1$ //$NON-NLS-2$
+		Color systemText = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+		store.setDefault(FPRenderingPreferenceConstants.MEM_COLOR_TEXT,
+				systemText.getRed() + "," + systemText.getGreen() + "," + systemText.getBlue()); //$NON-NLS-1$ //$NON-NLS-2$
 
-        Color systemBackground = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-        store.setDefault(FPRenderingPreferenceConstants.MEM_COLOR_BACKGROUND, systemBackground.getRed() + "," + systemBackground.getGreen() + "," //$NON-NLS-1$ //$NON-NLS-2$
-                + systemBackground.getBlue());
+		Color systemBackground = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		store.setDefault(FPRenderingPreferenceConstants.MEM_COLOR_BACKGROUND,
+				systemBackground.getRed() + "," + systemBackground.getGreen() + "," //$NON-NLS-1$ //$NON-NLS-2$
+						+ systemBackground.getBlue());
 
-        store.setDefault(FPRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE, FPRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY);
+		store.setDefault(FPRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE,
+				FPRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY);
 
-        store.setDefault(FPRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT, "1"); //$NON-NLS-1$
-    }
+		store.setDefault(FPRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT, "1"); //$NON-NLS-1$
+	}
 }

@@ -25,13 +25,14 @@ import org.eclipse.core.runtime.IPath;
 public class DbgTcmUtil {
 	private static final PrintStream OUT = System.out;
 	public static boolean DEBUG = false;
-	
-	private DbgTcmUtil(){
+
+	private DbgTcmUtil() {
 	}
+
 	public static final class DbgException extends RuntimeException {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 
@@ -51,46 +52,48 @@ public class DbgTcmUtil {
 			super(cause);
 		}
 	}
-	
-	public static void print(String str){
+
+	public static void print(String str) {
 		OUT.print(str);
 	}
 
-	public static void println(String str){
+	public static void println(String str) {
 		OUT.println(str);
 	}
-	
-	public static void fail(String msg){
+
+	public static void fail(String msg) {
 		println(msg);
 		throw new DbgException(msg);
 	}
 
-	public static void fail(){
+	public static void fail() {
 		DbgException e = new DbgException();
 		e.printStackTrace(OUT);
 		throw e;
 	}
-	
-	public static void dumpStorage(PerTypeMapStorage<? extends IRealBuildObjectAssociation, Set<IPath>> storage){
+
+	public static void dumpStorage(PerTypeMapStorage<? extends IRealBuildObjectAssociation, Set<IPath>> storage) {
 		println("starting storage dump.."); //$NON-NLS-1$
 		int[] types = ObjectTypeBasedStorage.getSupportedObjectTypes();
-		for(int i = 0; i < types.length; i++){
+		for (int i = 0; i < types.length; i++) {
 			int type = types[i];
-			MatchObjectElement.TypeToStringAssociation assoc = MatchObjectElement.TypeToStringAssociation.getAssociation(type);
-			if(assoc == null)
+			MatchObjectElement.TypeToStringAssociation assoc = MatchObjectElement.TypeToStringAssociation
+					.getAssociation(type);
+			if (assoc == null)
 				continue;
-			
+
 			println(" dumping for type " + assoc.getString()); //$NON-NLS-1$
-			
+
 			@SuppressWarnings("unchecked")
-			Map<IRealBuildObjectAssociation, Set<IPath>> map = (Map<IRealBuildObjectAssociation, Set<IPath>>) storage.getMap(type, false);
-			if(map != null){
+			Map<IRealBuildObjectAssociation, Set<IPath>> map = (Map<IRealBuildObjectAssociation, Set<IPath>>) storage
+					.getMap(type, false);
+			if (map != null) {
 				Set<Entry<IRealBuildObjectAssociation, Set<IPath>>> entrySet = map.entrySet();
 				for (Entry<IRealBuildObjectAssociation, Set<IPath>> entry : entrySet) {
 					IRealBuildObjectAssociation obj = entry.getKey();
 					println("  dumping " + assoc.getString() + " " + obj.getUniqueRealName()); //$NON-NLS-1$ //$NON-NLS-2$
 					Set<IPath> set = entry.getValue();
-					if(set != null){
+					if (set != null) {
 						for (IPath path : set) {
 							println("   path \"" + path + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 						}
@@ -98,7 +101,7 @@ public class DbgTcmUtil {
 					println("  end dumping " + obj.getUniqueRealName()); //$NON-NLS-1$
 				}
 			}
-			
+
 			println(" end type " + assoc.getString()); //$NON-NLS-1$
 		}
 		println("end storage dump"); //$NON-NLS-1$

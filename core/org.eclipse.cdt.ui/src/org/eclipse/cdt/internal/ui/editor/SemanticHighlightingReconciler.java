@@ -63,11 +63,11 @@ import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 /**
  * Semantic highlighting reconciler - Background thread implementation.
  * Cloned from JDT.
- * 
+ *
  * @since 4.0
  */
 public class SemanticHighlightingReconciler implements ICReconcilingListener {
-	
+
 	/**
 	 * Collects positions from the AST.
 	 * This abstract version exists so it can be reused by the previewer widget.
@@ -76,34 +76,33 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	public static abstract class AbstractPositionCollector extends ASTVisitor {
 		private SemanticHighlighting[] fHighlightings;
 		private HighlightingStyle[] fHighlightingStyles;
-		
+
 		/** The semantic token */
-		private SemanticToken fToken= new SemanticToken();
-		
+		private SemanticToken fToken = new SemanticToken();
+
 		private class PositionCollectorRequirements {
 			public boolean visitImplicitNames = false;
 			public boolean visitExpressions = false;
 		}
-		
-		public AbstractPositionCollector(SemanticHighlighting[] highlightings, 
-				HighlightingStyle[] highlightingStyles) {
+
+		public AbstractPositionCollector(SemanticHighlighting[] highlightings, HighlightingStyle[] highlightingStyles) {
 			fHighlightings = highlightings;
 			fHighlightingStyles = highlightingStyles;
-			
+
 			PositionCollectorRequirements requirements = getRequirements();
-			
-			shouldVisitTranslationUnit= true;
-			shouldVisitNames= true;
-			shouldVisitDeclarations= true;
-			shouldVisitExpressions= requirements.visitExpressions;
-			shouldVisitStatements= true;
-			shouldVisitDeclarators= true;
-			shouldVisitNamespaces= true;
-			shouldVisitVirtSpecifiers= true;
+
+			shouldVisitTranslationUnit = true;
+			shouldVisitNames = true;
+			shouldVisitDeclarations = true;
+			shouldVisitExpressions = requirements.visitExpressions;
+			shouldVisitStatements = true;
+			shouldVisitDeclarators = true;
+			shouldVisitNamespaces = true;
+			shouldVisitVirtSpecifiers = true;
 			shouldVisitImplicitNames = requirements.visitImplicitNames;
 			shouldVisitImplicitNameAlternates = requirements.visitImplicitNames;
 		}
-		
+
 		private PositionCollectorRequirements getRequirements() {
 			PositionCollectorRequirements result = new PositionCollectorRequirements();
 			for (int i = 0; i < fHighlightings.length; i++) {
@@ -123,7 +122,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		@Override
 		public int visit(IASTTranslationUnit tu) {
 			// Visit macro definitions.
-			IASTPreprocessorMacroDefinition[] macroDefs= tu.getMacroDefinitions();
+			IASTPreprocessorMacroDefinition[] macroDefs = tu.getMacroDefinitions();
 			for (IASTPreprocessorMacroDefinition macroDef : macroDefs) {
 				if (macroDef.isPartOfTranslationUnitFile()) {
 					visitNode(macroDef.getName());
@@ -131,12 +130,12 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 
 			// Visit macro expansions.
-			IASTPreprocessorMacroExpansion[] macroExps= tu.getMacroExpansions();
+			IASTPreprocessorMacroExpansion[] macroExps = tu.getMacroExpansions();
 			for (IASTPreprocessorMacroExpansion macroExp : macroExps) {
 				if (macroExp.isPartOfTranslationUnitFile()) {
-					IASTName macroRef= macroExp.getMacroReference();
+					IASTName macroRef = macroExp.getMacroReference();
 					visitNode(macroRef);
-					IASTName[] nestedMacroRefs= macroExp.getNestedMacroReferences();
+					IASTName[] nestedMacroRefs = macroExp.getNestedMacroReferences();
 					for (IASTName nestedMacroRef : nestedMacroRefs) {
 						visitNode(nestedMacroRef);
 					}
@@ -157,18 +156,18 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 
 		@Override
 		public int leave(IASTDeclaration declaration) {
-//			if (!shouldVisitCatchHandlers && declaration instanceof IASTFunctionDefinition) {
-//				shouldVisitCatchHandlers= true;
-//				IASTFunctionDefinition functionDef= (IASTFunctionDefinition) declaration;
-//				ICPPASTFunctionTryBlockDeclarator declarator= (ICPPASTFunctionTryBlockDeclarator) functionDef.getDeclarator();
-//				ICPPASTCatchHandler[] catchHandlers= declarator.getCatchHandlers();
-//				for (ICPPASTCatchHandler catchHandler : catchHandlers) {
-//					catchHandler.accept(this);
-//				}
-//			}
+			//			if (!shouldVisitCatchHandlers && declaration instanceof IASTFunctionDefinition) {
+			//				shouldVisitCatchHandlers= true;
+			//				IASTFunctionDefinition functionDef= (IASTFunctionDefinition) declaration;
+			//				ICPPASTFunctionTryBlockDeclarator declarator= (ICPPASTFunctionTryBlockDeclarator) functionDef.getDeclarator();
+			//				ICPPASTCatchHandler[] catchHandlers= declarator.getCatchHandlers();
+			//				for (ICPPASTCatchHandler catchHandler : catchHandlers) {
+			//					catchHandler.accept(this);
+			//				}
+			//			}
 			return PROCESS_CONTINUE;
 		}
-		
+
 		@Override
 		public int visit(ICPPASTNamespaceDefinition namespace) {
 			if (!namespace.isPartOfTranslationUnitFile()) {
@@ -179,17 +178,17 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 
 		@Override
 		public int visit(IASTDeclarator declarator) {
-//			if (declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
-//				shouldVisitCatchHandlers= false;
-//			}
+			//			if (declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
+			//				shouldVisitCatchHandlers= false;
+			//			}
 			return PROCESS_CONTINUE;
 		}
 
 		@Override
 		public int visit(IASTStatement statement) {
-//			if (!shouldVisitCatchHandlers && statement instanceof ICPPASTCatchHandler) {
-//				return PROCESS_SKIP;
-//			}
+			//			if (!shouldVisitCatchHandlers && statement instanceof ICPPASTCatchHandler) {
+			//				return PROCESS_SKIP;
+			//			}
 			return PROCESS_CONTINUE;
 		}
 
@@ -200,19 +199,19 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 			return PROCESS_CONTINUE;
 		}
-		
+
 		@Override
 		public int visit(ICPPASTVirtSpecifier virtSpecifier) {
 			visitNode(virtSpecifier);
 			return PROCESS_CONTINUE;
 		}
-		
+
 		@Override
 		public int visit(ICPPASTClassVirtSpecifier classVirtSpecifier) {
 			visitNode(classVirtSpecifier);
 			return PROCESS_CONTINUE;
 		}
-		
+
 		@Override
 		public int visit(IASTExpression expression) {
 			if (visitNode(expression)) {
@@ -220,14 +219,14 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 			return PROCESS_CONTINUE;
 		}
-		
+
 		private boolean visitNode(IASTNode node) {
 			try {
 				CPPSemantics.pushLookupPoint(node);
-				boolean consumed= false;
+				boolean consumed = false;
 				fToken.update(node);
-				for (int i= 0, n= fHighlightings.length; i < n; ++i) {
-					SemanticHighlighting semanticHighlighting= fHighlightings[i];
+				for (int i = 0, n = fHighlightings.length; i < n; ++i) {
+					SemanticHighlighting semanticHighlighting = fHighlightings[i];
 					// If the semantic highlighting doesn't color expressions, don't bother
 					// passing it one to begin with.
 					if (node instanceof IASTExpression && !semanticHighlighting.requiresExpressions()) {
@@ -238,7 +237,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 						if (location != null) {
 							highlightLocation(location, fHighlightingStyles[i]);
 						}
-						consumed= true;
+						consumed = true;
 						break;
 					}
 				}
@@ -251,7 +250,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 
 		/**
 		 * Gets the location to highlight for a given node.
-		 * 
+		 *
 		 * @param node the node
 		 */
 		private IASTNodeLocation getLocationToHighlight(IASTNode node) {
@@ -269,12 +268,12 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			} else {
 				// Fallback in case no image location available.
 				// Only use the fallback for nodes that are not preprocessor nodes,
-				// because in the case of nested macro expansions, a preprocessor node 
+				// because in the case of nested macro expansions, a preprocessor node
 				// can have a node location that is not representative of its actual
 				// image; such nodes should have an image location (accessed via
 				// getImageLocation(), above) where appropriate.
 				if (!(node instanceof ASTPreprocessorName)) {
-					IASTNodeLocation[] nodeLocations= node.getNodeLocations();
+					IASTNodeLocation[] nodeLocations = node.getNodeLocations();
 					if (nodeLocations.length == 1) {
 						IASTNodeLocation nodeLocation = nodeLocations[0];
 						if (!(nodeLocation instanceof IASTMacroExpansionLocation)) {
@@ -285,16 +284,16 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 			return null;
 		}
-		
+
 		/**
 		 * Highlights the given node location with the given highlighting.
-		 * 
+		 *
 		 * @param nodeLocation the node location to highlight
 		 * @param highlightingStyle the highlighting style to apply
 		 */
 		private void highlightLocation(IASTNodeLocation nodeLocation, HighlightingStyle highlightingStyle) {
-			int offset= nodeLocation.getNodeOffset();
-			int length= nodeLocation.getNodeLength();
+			int offset = nodeLocation.getNodeOffset();
+			int length = nodeLocation.getNodeLength();
 			if (offset > -1 && length > 0) {
 				addPosition(offset, length, highlightingStyle);
 			}
@@ -302,29 +301,29 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 
 		/**
 		 * Adds a position with the given range and highlighting iff it does not exist already.
-		 * 
+		 *
 		 * @param offset The range offset
 		 * @param length The range length
 		 * @param highlightingStyle The highlighting style
 		 */
 		protected abstract void addPosition(int offset, int length, HighlightingStyle highlightingStyle);
 	}
-	
+
 	private class PositionCollector extends AbstractPositionCollector {
 		public PositionCollector() {
 			super(fJobSemanticHighlightings, fJobHighlightings);
 		}
 
 		@Override
-		protected void addPosition(int offset, int length, HighlightingStyle highlightingStyle)  {
-			boolean isExisting= false;
+		protected void addPosition(int offset, int length, HighlightingStyle highlightingStyle) {
+			boolean isExisting = false;
 			// TODO: use binary search
-			for (int i= 0, n= fRemovedPositions.size(); i < n; i++) {
-				HighlightedPosition position= fRemovedPositions.get(i);
+			for (int i = 0, n = fRemovedPositions.size(); i < n; i++) {
+				HighlightedPosition position = fRemovedPositions.get(i);
 				if (position == null)
 					continue;
 				if (position.isEqual(offset, length, highlightingStyle)) {
-					isExisting= true;
+					isExisting = true;
 					fRemovedPositions.set(i, null);
 					fNOfRemovedPositions--;
 					break;
@@ -332,7 +331,8 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 
 			if (!isExisting) {
-				HighlightedPosition position= fJobPresenter.createHighlightedPosition(offset, length, highlightingStyle);
+				HighlightedPosition position = fJobPresenter.createHighlightedPosition(offset, length,
+						highlightingStyle);
 				fAddedPositions.add(position);
 			}
 		}
@@ -348,23 +348,23 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	private HighlightingStyle[] fHighlightings;
 
 	/** Background job's added highlighted positions */
-	protected List<HighlightedPosition> fAddedPositions= new ArrayList<HighlightedPosition>();
+	protected List<HighlightedPosition> fAddedPositions = new ArrayList<HighlightedPosition>();
 	/** Background job's removed highlighted positions */
-	protected List<HighlightedPosition> fRemovedPositions= new ArrayList<HighlightedPosition>();
+	protected List<HighlightedPosition> fRemovedPositions = new ArrayList<HighlightedPosition>();
 	/** Number of removed positions */
 	protected int fNOfRemovedPositions;
 
 	/** Background job */
 	private Job fJob;
 	/** Background job lock */
-	private final Object fJobLock= new Object();
+	private final Object fJobLock = new Object();
 	/** Reconcile operation lock. */
-	private final Object fReconcileLock= new Object();
+	private final Object fReconcileLock = new Object();
 	/**
 	 * <code>true</code> if any thread is executing
 	 * <code>reconcile</code>, <code>false</code> otherwise.
 	 */
-	private boolean fIsReconciling= false;
+	private boolean fIsReconciling = false;
 
 	/**
 	 * The semantic highlighting presenter - cache for background thread, only valid during
@@ -393,42 +393,42 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		synchronized (fReconcileLock) {
 			if (fIsReconciling)
 				return;
-			fIsReconciling= true;
+			fIsReconciling = true;
 		}
-		fJobPresenter= fPresenter;
-		fJobSemanticHighlightings= fSemanticHighlightings;
-		fJobHighlightings= fHighlightings;
-		
+		fJobPresenter = fPresenter;
+		fJobSemanticHighlightings = fSemanticHighlightings;
+		fJobHighlightings = fHighlightings;
+
 		try {
 			if (fJobPresenter == null || fJobSemanticHighlightings == null || fJobHighlightings == null)
 				return;
-			
+
 			fJobPresenter.setCanceled(progressMonitor != null && progressMonitor.isCanceled());
-			
+
 			if (ast == null || fJobPresenter.isCanceled())
 				return;
-			
-			PositionCollector collector= new PositionCollector();
+
+			PositionCollector collector = new PositionCollector();
 
 			startReconcilingPositions();
-			
+
 			if (!fJobPresenter.isCanceled())
 				reconcilePositions(ast, collector);
-			
-			TextPresentation textPresentation= null;
+
+			TextPresentation textPresentation = null;
 			if (!fJobPresenter.isCanceled())
-				textPresentation= fJobPresenter.createPresentation(fAddedPositions, fRemovedPositions);
-			
+				textPresentation = fJobPresenter.createPresentation(fAddedPositions, fRemovedPositions);
+
 			if (!fJobPresenter.isCanceled())
 				updatePresentation(textPresentation, fAddedPositions, fRemovedPositions);
-			
+
 			stopReconcilingPositions();
 		} finally {
-			fJobPresenter= null;
-			fJobSemanticHighlightings= null;
-			fJobHighlightings= null;
+			fJobPresenter = null;
+			fJobSemanticHighlightings = null;
+			fJobHighlightings = null;
 			synchronized (fReconcileLock) {
-				fIsReconciling= false;
+				fIsReconciling = false;
 			}
 		}
 	}
@@ -438,7 +438,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 */
 	protected void startReconcilingPositions() {
 		fJobPresenter.addAllPositions(fRemovedPositions);
-		fNOfRemovedPositions= fRemovedPositions.size();
+		fNOfRemovedPositions = fRemovedPositions.size();
 	}
 
 	/**
@@ -454,14 +454,14 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		} finally {
 			CPPSemantics.popLookupPoint();
 		}
-		List<HighlightedPosition> oldPositions= fRemovedPositions;
-		List<HighlightedPosition> newPositions= new ArrayList<HighlightedPosition>(fNOfRemovedPositions);
-		for (int i= 0, n= oldPositions.size(); i < n; i ++) {
-			HighlightedPosition current= oldPositions.get(i);
+		List<HighlightedPosition> oldPositions = fRemovedPositions;
+		List<HighlightedPosition> newPositions = new ArrayList<HighlightedPosition>(fNOfRemovedPositions);
+		for (int i = 0, n = oldPositions.size(); i < n; i++) {
+			HighlightedPosition current = oldPositions.get(i);
 			if (current != null)
 				newPositions.add(current);
 		}
-		fRemovedPositions= newPositions;
+		fRemovedPositions = newPositions;
 		// Positions need to be sorted by ascending offset
 		Collections.sort(fAddedPositions, new Comparator<Position>() {
 			@Override
@@ -478,24 +478,25 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 * @param addedPositions the added positions
 	 * @param removedPositions the removed positions
 	 */
-	protected void updatePresentation(TextPresentation textPresentation, List<HighlightedPosition> addedPositions, List<HighlightedPosition> removedPositions) {
-		Runnable runnable= fJobPresenter.createUpdateRunnable(textPresentation, addedPositions, removedPositions);
+	protected void updatePresentation(TextPresentation textPresentation, List<HighlightedPosition> addedPositions,
+			List<HighlightedPosition> removedPositions) {
+		Runnable runnable = fJobPresenter.createUpdateRunnable(textPresentation, addedPositions, removedPositions);
 		if (runnable == null)
 			return;
 
-		CEditor editor= fEditor;
+		CEditor editor = fEditor;
 		if (editor == null)
 			return;
 
-		IWorkbenchPartSite site= editor.getSite();
+		IWorkbenchPartSite site = editor.getSite();
 		if (site == null)
 			return;
 
-		Shell shell= site.getShell();
+		Shell shell = site.getShell();
 		if (shell == null || shell.isDisposed())
 			return;
 
-		Display display= shell.getDisplay();
+		Display display = shell.getDisplay();
 		if (display == null || display.isDisposed())
 			return;
 
@@ -507,7 +508,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 */
 	protected void stopReconcilingPositions() {
 		fRemovedPositions.clear();
-		fNOfRemovedPositions= 0;
+		fNOfRemovedPositions = 0;
 		fAddedPositions.clear();
 	}
 
@@ -519,12 +520,13 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 * @param semanticHighlightings the semantic highlightings
 	 * @param highlightings the highlightings
 	 */
-	public void install(CEditor editor, ISourceViewer sourceViewer, SemanticHighlightingPresenter presenter, SemanticHighlighting[] semanticHighlightings, HighlightingStyle[] highlightings) {
-		fPresenter= presenter;
-		fSemanticHighlightings= semanticHighlightings;
-		fHighlightings= highlightings;
+	public void install(CEditor editor, ISourceViewer sourceViewer, SemanticHighlightingPresenter presenter,
+			SemanticHighlighting[] semanticHighlightings, HighlightingStyle[] highlightings) {
+		fPresenter = presenter;
+		fSemanticHighlightings = semanticHighlightings;
+		fHighlightings = highlightings;
 
-		fEditor= editor;
+		fEditor = editor;
 
 		if (fEditor != null) {
 			fEditor.addReconcileListener(this);
@@ -540,29 +542,29 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 
 		if (fEditor != null) {
 			fEditor.removeReconcileListener(this);
-			fEditor= null;
+			fEditor = null;
 		}
 
-		fSemanticHighlightings= null;
-		fHighlightings= null;
-		fPresenter= null;
+		fSemanticHighlightings = null;
+		fHighlightings = null;
+		fPresenter = null;
 	}
 
 	/**
 	 * Schedules a background job for retrieving the AST and reconciling the Semantic Highlighting model.
 	 */
 	private void scheduleJob() {
-		final ICElement element= fEditor.getInputCElement();
+		final ICElement element = fEditor.getInputCElement();
 
 		synchronized (fJobLock) {
-			final Job oldJob= fJob;
+			final Job oldJob = fJob;
 			if (fJob != null) {
 				fJob.cancel();
-				fJob= null;
+				fJob = null;
 			}
-			
+
 			if (element != null) {
-				fJob= new Job(CEditorMessages.SemanticHighlighting_job) { 
+				fJob = new Job(CEditorMessages.SemanticHighlighting_job) {
 					@Override
 					protected IStatus run(final IProgressMonitor monitor) {
 						if (oldJob != null) {
@@ -575,25 +577,26 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 						}
 						if (monitor.isCanceled())
 							return Status.CANCEL_STATUS;
-						
-						final Job me= this;
-						ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
-						IStatus status= astProvider.runOnAST(element, ASTProvider.WAIT_IF_OPEN, monitor, new ASTCache.ASTRunnable() {
-							@Override
-							public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
-								reconciled(ast, true, monitor);
-								synchronized (fJobLock) {
-									// allow the job to be gc'ed
-									if (fJob == me)
-										fJob= null;
-								}
-								return Status.OK_STATUS;
-							}
-						});
+
+						final Job me = this;
+						ASTProvider astProvider = CUIPlugin.getDefault().getASTProvider();
+						IStatus status = astProvider.runOnAST(element, ASTProvider.WAIT_IF_OPEN, monitor,
+								new ASTCache.ASTRunnable() {
+									@Override
+									public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
+										reconciled(ast, true, monitor);
+										synchronized (fJobLock) {
+											// allow the job to be gc'ed
+											if (fJob == me)
+												fJob = null;
+										}
+										return Status.OK_STATUS;
+									}
+								});
 						return status;
 					}
 				};
-//				fJob.setSystem(true);
+				//				fJob.setSystem(true);
 				fJob.setPriority(Job.SHORT);
 				fJob.schedule();
 			}

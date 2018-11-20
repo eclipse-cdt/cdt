@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Intel Corporation - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.core.autotools.core;
 
@@ -44,9 +44,8 @@ public class AutotoolsProjectGenerator extends FMProjectGenerator implements IGe
 
 	@Override
 	protected void initProjectDescription(IProjectDescription description) {
-		description
-				.setNatureIds(
-						new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, AutotoolsNature.ID });
+		description.setNatureIds(
+				new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, AutotoolsNature.ID });
 		ICommand command = description.newCommand();
 		CBuilder.setupBuilder(command);
 		description.setBuildSpec(new ICommand[] { command });
@@ -85,7 +84,7 @@ public class AutotoolsProjectGenerator extends FMProjectGenerator implements IGe
 		entries.add(CoreModel.newOutputEntry(getProject().getFullPath())); //$NON-NLS-1$
 		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 				monitor);
-		
+
 	}
 
 }

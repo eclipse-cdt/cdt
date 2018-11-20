@@ -7,13 +7,12 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.traditional;
-
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -31,7 +30,7 @@ public class TraditionalRenderingPreferenceAction extends ActionDelegate impleme
 	@Override
 	public void run(IAction action) {
 		IPreferencePage page = new TraditionalRenderingPreferencePage();
-		showPreferencePage("org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage", page);	 //$NON-NLS-1$
+		showPreferencePage("org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage", page); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -39,14 +38,15 @@ public class TraditionalRenderingPreferenceAction extends ActionDelegate impleme
 	 */
 	public void init(IViewPart view) {
 	}
-	
+
 	protected void showPreferencePage(String id, IPreferencePage page) {
 		BusyIndicator.showWhile(TraditionalRenderingPlugin.getStandardDisplay(), new Runnable() {
 			public void run() {
-        		PreferencesUtil.createPreferenceDialogOn(TraditionalRenderingPlugin.getShell(), id, new String[] { id }, null).open();
+				PreferencesUtil
+						.createPreferenceDialogOn(TraditionalRenderingPlugin.getShell(), id, new String[] { id }, null)
+						.open();
 			}
-		});		
+		});
 	}
 
 }
-

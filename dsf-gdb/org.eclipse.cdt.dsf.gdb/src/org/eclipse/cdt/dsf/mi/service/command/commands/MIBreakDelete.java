@@ -19,28 +19,27 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *   -break-delete ( BREAKPOINT )+
  *
  * Delete the breakpoint(s) whose number(s) are specified in the
  * argument list.  This is obviously reflected in the breakpoint list.
- * 
+ *
  * Result:
  *  ^done
  *
  */
- 
-public class MIBreakDelete extends MICommand<MIInfo>
-{
-    /** @since 5.0 */
-    public MIBreakDelete (IBreakpointsTargetDMContext ctx, String[] array) {
-        super(ctx, "-break-delete"); //$NON-NLS-1$
-        if (array != null && array.length > 0) {
-            String[] brkids = new String[array.length];
-            for (int i = 0; i < array.length; i++) {
-                brkids[i] = array[i];
-            }
-            setParameters(brkids);
-        } 
-    }
+
+public class MIBreakDelete extends MICommand<MIInfo> {
+	/** @since 5.0 */
+	public MIBreakDelete(IBreakpointsTargetDMContext ctx, String[] array) {
+		super(ctx, "-break-delete"); //$NON-NLS-1$
+		if (array != null && array.length > 0) {
+			String[] brkids = new String[array.length];
+			for (int i = 0; i < array.length; i++) {
+				brkids[i] = array[i];
+			}
+			setParameters(brkids);
+		}
+	}
 }

@@ -17,7 +17,6 @@ import java.util.Collection;
 
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 
-
 public interface IObjectSet {
 
 	int getObjectType();
@@ -25,10 +24,10 @@ public interface IObjectSet {
 	IRealBuildObjectAssociation[] getRealBuildObjects();
 
 	Collection<IRealBuildObjectAssociation> getRealBuildObjects(Collection<IRealBuildObjectAssociation> list);
-	
+
 	boolean matchesObject(IRealBuildObjectAssociation obj);
-	
+
 	boolean retainMatches(Collection<IRealBuildObjectAssociation> collection);
-	
+
 	public int getNumObjects();
 }

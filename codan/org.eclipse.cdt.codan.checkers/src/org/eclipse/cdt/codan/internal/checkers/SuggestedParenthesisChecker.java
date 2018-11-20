@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,9 +30,9 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
  * parenthesis to improve readability. Example: ! x>0 && x<10 (this would be
  * (!x)>0 && x<10 in C) We only look for &&, || and ! operators (and binary | &
  * ^ ~)
- * 
+ *
  * @author Alena
- * 
+ *
  */
 public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"; //$NON-NLS-1$
@@ -75,7 +75,7 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 		private boolean isUsedAsOperand(IASTExpression expression) {
 			ASTNodeProperty prop = expression.getPropertyInParent();
 			if (prop == IASTBinaryExpression.OPERAND_ONE
-			// || prop == IASTBinaryExpression.OPERAND_TWO
+					// || prop == IASTBinaryExpression.OPERAND_TWO
 					|| prop == IASTUnaryExpression.OPERAND)
 				return true;
 			return false;
@@ -129,7 +129,7 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences
 	 * #initPreferences(org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
@@ -137,6 +137,7 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_NOT, CheckersMessages.SuggestedParenthesisChecker_SuggestParanthesesAroundNot, Boolean.FALSE);
+		addPreference(problem, PARAM_NOT, CheckersMessages.SuggestedParenthesisChecker_SuggestParanthesesAroundNot,
+				Boolean.FALSE);
 	}
 }

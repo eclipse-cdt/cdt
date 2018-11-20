@@ -31,7 +31,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
-/** 
+/**
  * Info for ICProject.
  */
 
@@ -56,14 +56,14 @@ class CProjectInfo extends OpenableInfo {
 
 	synchronized public IBinaryContainer getBinaryContainer() {
 		if (vBin == null) {
-			vBin = new BinaryContainer((CProject)getElement());
+			vBin = new BinaryContainer((CProject) getElement());
 		}
 		return vBin;
 	}
 
 	synchronized public IArchiveContainer getArchiveContainer() {
 		if (vLib == null) {
-			vLib = new ArchiveContainer((CProject)getElement());
+			vLib = new ArchiveContainer((CProject) getElement());
 		}
 		return vLib;
 	}
@@ -77,25 +77,26 @@ class CProjectInfo extends OpenableInfo {
 			if (res instanceof IContainer) {
 				ICProject cproject = getElement().getCProject();
 				ISourceRoot[] sourceRoots = cproject.getSourceRoots();
-				IResource[] resources = ((IContainer)res).members();
-				
+				IResource[] resources = ((IContainer) res).members();
+
 				for (int i = 0; i < resources.length; ++i) {
 					IResource child = resources[i];
-					
+
 					// Check if under source root
 					boolean found = false;
 					for (int j = 0; j < sourceRoots.length; ++j)
 						if (sourceRoots[j].isOnSourceEntry(child)) {
-							found = true; 
+							found = true;
 							break;
 						}
-					
+
 					if (found) {
 						switch (child.getType()) {
 						case IResource.FILE:
 							// Must be a translation unit or binary
 							if (CoreModel.isValidTranslationUnitName(cproject.getProject(), child.getName())
-									|| (cproject.isOnOutputEntry(child) && (CModelManager.getDefault().createBinaryFile((IFile)child) != null)) )
+									|| (cproject.isOnOutputEntry(child)
+											&& (CModelManager.getDefault().createBinaryFile((IFile) child) != null)))
 								continue;
 							break;
 						case IResource.FOLDER:
@@ -105,7 +106,7 @@ class CProjectInfo extends OpenableInfo {
 					} else if (cproject.isOnOutputEntry(child)) {
 						switch (child.getType()) {
 						case IResource.FILE:
-							if (CModelManager.getDefault().createBinaryFile((IFile)child) != null)
+							if (CModelManager.getDefault().createBinaryFile((IFile) child) != null)
 								continue;
 							break;
 						case IResource.FOLDER:
@@ -117,14 +118,14 @@ class CProjectInfo extends OpenableInfo {
 					// It's a non C resource
 					notChildren.add(child);
 				}
-			}			
+			}
 		} catch (CModelException e) {
 			// this can't be good.
 		} catch (CoreException e) {
 			// this neither
 		}
-	
-		setNonCResources(notChildren.toArray());	
+
+		setNonCResources(notChildren.toArray());
 		return nonCResources;
 	}
 
@@ -139,7 +140,7 @@ class CProjectInfo extends OpenableInfo {
 		if (libReferences != null) {
 			for (ILibraryReference libReference : libReferences) {
 				try {
-					((CElement)libReference).close();
+					((CElement) libReference).close();
 				} catch (CModelException e) {
 					//
 				}
@@ -148,7 +149,7 @@ class CProjectInfo extends OpenableInfo {
 		if (incReferences != null) {
 			for (IIncludeReference incReference : incReferences) {
 				try {
-					((CElement)incReference).close();
+					((CElement) incReference).close();
 				} catch (CModelException e) {
 					//
 				}

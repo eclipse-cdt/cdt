@@ -57,10 +57,10 @@ class PDOMCPPAnnotations {
 
 	/**
 	 * Encodes annotations applicable to C++ functions.
-	 * 
+	 *
 	 * @param function the function whose annotations will be encoded
 	 * @return a bit vector of the annotations
-	 */	
+	 */
 	public static short encodeFunctionAnnotations(ICPPFunction function) {
 		short annotation = encodeVisibility(function);
 
@@ -88,10 +88,10 @@ class PDOMCPPAnnotations {
 
 	/**
 	 * Encodes annotations applicable to C++ variables.
-	 * 
+	 *
 	 * @param variable the IBinding whose annotations will be encoded
 	 * @return a bit vector of the annotations
-	 */	
+	 */
 	public static byte encodeVariableAnnotations(ICPPVariable variable) {
 		byte annotation = encodeVisibility(variable);
 
@@ -120,10 +120,10 @@ class PDOMCPPAnnotations {
 
 	/**
 	 * Encodes extra annotations applicable to C++ methods.
-	 * 
+	 *
 	 * @param binding the IBinding whose annotations will be encoded
 	 * @return a bit vector of the annotation
-	 */	
+	 */
 	public static byte encodeExtraMethodAnnotations(IBinding binding) {
 		byte annotation = 0;
 		if (binding instanceof ICPPMethod) {

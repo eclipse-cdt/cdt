@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
-
 /**
  * This interface is used to provide a description of a debug element,
  * usually a stack frame, when no source can be located for it.
@@ -26,7 +25,7 @@ public interface ICSourceNotFoundDescription {
 	 * Returns a description of the debug element suitable for use by the
 	 * CSourceNotFoundEditor. This description is then used by the editor to
 	 * inform the user when describing what it can't locate source for.
-	 * 
+	 *
 	 * @return the description of the debug element, or null if not available
 	 */
 	String getDescription();
@@ -34,7 +33,7 @@ public interface ICSourceNotFoundDescription {
 	/**
 	 * Return true if the debug element only is an address, false if not. This
 	 * is used by the editor to know wich type of message he should use.
-	 * 
+	 *
 	 * @return a boolean that is true if the debug element only is an address
 	 */
 	default boolean isAddressOnly() {

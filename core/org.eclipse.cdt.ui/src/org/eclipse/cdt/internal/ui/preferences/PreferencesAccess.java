@@ -25,76 +25,76 @@ import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * 
+ *
  */
 public class PreferencesAccess {
-	
+
 	public static PreferencesAccess getOriginalPreferences() {
 		return new PreferencesAccess();
 	}
-	
+
 	public static PreferencesAccess getWorkingCopyPreferences(IWorkingCopyManager workingCopyManager) {
 		return new WorkingCopyPreferencesAccess(workingCopyManager);
 	}
-		
+
 	private PreferencesAccess() {
 		// can only extends in this file
 	}
-	
+
 	public IScopeContext getDefaultScope() {
 		return DefaultScope.INSTANCE;
 	}
-	
+
 	public IScopeContext getInstanceScope() {
 		return InstanceScope.INSTANCE;
 	}
-	
+
 	public IScopeContext getProjectScope(IProject project) {
 		return new ProjectScope(project);
 	}
-	
+
 	public void applyChanges() throws BackingStoreException {
 	}
-	
+
 	private static class WorkingCopyPreferencesAccess extends PreferencesAccess {
 		private final IWorkingCopyManager fWorkingCopyManager;
 
 		private WorkingCopyPreferencesAccess(IWorkingCopyManager workingCopyManager) {
-			fWorkingCopyManager= workingCopyManager;
+			fWorkingCopyManager = workingCopyManager;
 		}
-		
+
 		private final IScopeContext getWorkingCopyScopeContext(IScopeContext original) {
 			return new WorkingCopyScopeContext(fWorkingCopyManager, original);
 		}
-		
+
 		@Override
 		public IScopeContext getDefaultScope() {
 			return getWorkingCopyScopeContext(super.getDefaultScope());
 		}
-		
+
 		@Override
 		public IScopeContext getInstanceScope() {
 			return getWorkingCopyScopeContext(super.getInstanceScope());
 		}
-		
+
 		@Override
 		public IScopeContext getProjectScope(IProject project) {
 			return getWorkingCopyScopeContext(super.getProjectScope(project));
 		}
-		
+
 		@Override
 		public void applyChanges() throws BackingStoreException {
 			fWorkingCopyManager.applyChanges();
 		}
 	}
-	
+
 	private static class WorkingCopyScopeContext implements IScopeContext {
 		private final IWorkingCopyManager fWorkingCopyManager;
 		private final IScopeContext fOriginal;
 
 		public WorkingCopyScopeContext(IWorkingCopyManager workingCopyManager, IScopeContext original) {
-			fWorkingCopyManager= workingCopyManager;
-			fOriginal= original;	
+			fWorkingCopyManager = workingCopyManager;
+			fOriginal = original;
 		}
 
 		@Override

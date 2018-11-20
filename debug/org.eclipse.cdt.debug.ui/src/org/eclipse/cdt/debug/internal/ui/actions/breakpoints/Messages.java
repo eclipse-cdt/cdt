@@ -13,14 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
-
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 
 	public static String Default_LineDynamicPrintf_String;
 	public static String Default_FunctionDynamicPrintf_String;
-	
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}

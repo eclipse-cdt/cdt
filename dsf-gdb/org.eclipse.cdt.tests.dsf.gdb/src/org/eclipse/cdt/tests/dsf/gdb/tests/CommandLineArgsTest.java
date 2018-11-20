@@ -134,7 +134,7 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Check that the target program received the arguments as expected
-	 * 
+	 *
 	 * @param expected
 	 *            arguments to check, e.g. check expected[0].equals(argv[1])
 	 */

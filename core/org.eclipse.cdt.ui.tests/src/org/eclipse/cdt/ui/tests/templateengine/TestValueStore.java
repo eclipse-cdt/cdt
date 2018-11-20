@@ -42,34 +42,35 @@ public class TestValueStore extends BaseTestCase {
 
 	public TestValueStore(String name) {
 		super(name);
-    }
+	}
 
 	/**
 	 * Test ValueStore for Not Null condition.
 	 */
-	public void testValueStoreNotNull(){
+	public void testValueStoreNotNull() {
 		TemplateCore[] templates = TemplateEngineTestsHelper.getTestTemplates();
 		for (int i = 0; i < templates.length; i++) {
 			Map<String, String> valueStore = templates[i].getValueStore();
 			assertNotNull(valueStore);
 		}
 	}
-	
+
 	/**
-	 * ValueStore is expected to consist all the IDs from 
+	 * ValueStore is expected to consist all the IDs from
 	 * FactoryDefaults. Test the same.
 	 */
-	public void testCompareValueStoreWithTemplateDefaluts(){
+	public void testCompareValueStoreWithTemplateDefaluts() {
 		TemplateCore[] templates = TemplateEngineTestsHelper.getTestTemplates();
 		for (int i = 0; i < templates.length; i++) {
 			Map<String, String> valueStore = templates[i].getValueStore();
 			TemplateDescriptor templateDescriptor = templates[i].getTemplateDescriptor();
-	        Map<String, String> templateDefaults = templateDescriptor.getTemplateDefaults(templateDescriptor.getRootElement());
+			Map<String, String> templateDefaults = templateDescriptor
+					.getTemplateDefaults(templateDescriptor.getRootElement());
 
-	        Iterator<String> defaultsIterator = templateDefaults.keySet().iterator();
-			while (defaultsIterator.hasNext()){
-			  String key = defaultsIterator.next();
-			  assertNotNull(valueStore.get(key));
+			Iterator<String> defaultsIterator = templateDefaults.keySet().iterator();
+			while (defaultsIterator.hasNext()) {
+				String key = defaultsIterator.next();
+				assertNotNull(valueStore.get(key));
 			}
 		}
 	}

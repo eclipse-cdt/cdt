@@ -95,7 +95,7 @@ public class DebuggerConsoleDropDownAction extends Action implements IMenuCreato
 
 	private void addActionToMenu(Menu parent, Action action, int accelerator) {
 		if (accelerator < 10) {
-			StringBuffer label= new StringBuffer();
+			StringBuffer label = new StringBuffer();
 			//add the numerical accelerator
 			label.append('&');
 			label.append(accelerator);
@@ -103,7 +103,7 @@ public class DebuggerConsoleDropDownAction extends Action implements IMenuCreato
 			label.append(action.getText());
 			action.setText(label.toString());
 		}
-		ActionContributionItem item= new ActionContributionItem(action);
+		ActionContributionItem item = new ActionContributionItem(action);
 		item.fill(parent, -1);
 	}
 
@@ -118,7 +118,7 @@ public class DebuggerConsoleDropDownAction extends Action implements IMenuCreato
 				break;
 			}
 		}
-		int next = idx+1;
+		int next = idx + 1;
 		if (next >= consoles.length) {
 			next = 0;
 		}

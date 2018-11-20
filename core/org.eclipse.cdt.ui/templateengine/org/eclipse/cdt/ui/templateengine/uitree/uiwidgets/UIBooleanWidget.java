@@ -29,7 +29,6 @@ import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 
-
 /**
  * This gives a Label and Boolean widget.
  */
@@ -48,18 +47,18 @@ public class UIBooleanWidget extends InputUIElement {
 	 * Composite to which this widget control is added.
 	 */
 	protected UIComposite uiComposite;
-	
+
 	private boolean booleanValue;
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param uiAttributes
 	 *            attribute associated with this widget.
 	 */
 	public UIBooleanWidget(UIAttributes uiAttributes, boolean defaultValue) {
 		super(uiAttributes);
-		this.booleanValue= defaultValue;
+		this.booleanValue = defaultValue;
 	}
 
 	/**
@@ -91,7 +90,7 @@ public class UIBooleanWidget extends InputUIElement {
 		label = new Label(uiComposite, SWT.LEFT);
 		label.setText(uiAttributes.get(InputUIElement.WIDGETLABEL));
 
-		if (uiAttributes.get(UIElement.DESCRIPTION) != null){
+		if (uiAttributes.get(UIElement.DESCRIPTION) != null) {
 			String tipText = uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			label.setToolTipText(tipText);
@@ -119,10 +118,10 @@ public class UIBooleanWidget extends InputUIElement {
 	 */
 	@Override
 	public boolean isValid() {
-		boolean retVal= true;
-		String mandatory= uiAttributes.get(InputUIElement.MANDATORY);
+		boolean retVal = true;
+		String mandatory = uiAttributes.get(InputUIElement.MANDATORY);
 		if (!booleanValue && Boolean.parseBoolean(mandatory)) {
-			retVal= false;
+			retVal = false;
 		}
 		return retVal;
 	}

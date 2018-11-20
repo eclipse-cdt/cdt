@@ -21,24 +21,24 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
- * 
+ *
  * Use the element path instead of this interface?
- * 
+ *
  * This interface is experimental
  */
 public interface IDocumentUpdate extends IViewerUpdate {
 
-    /**
-     * Returns the root element associated with this request.
-     * 
-     * @return the root element
-     */
-    public Object getRootElement();
-    
-    /**
-     * Returns the base element associated with this request.
-     * 
-     * @return the base element
-     */
-    public Object getBaseElement();
+	/**
+	 * Returns the root element associated with this request.
+	 *
+	 * @return the root element
+	 */
+	public Object getRootElement();
+
+	/**
+	 * Returns the base element associated with this request.
+	 *
+	 * @return the base element
+	 */
+	public Object getBaseElement();
 }

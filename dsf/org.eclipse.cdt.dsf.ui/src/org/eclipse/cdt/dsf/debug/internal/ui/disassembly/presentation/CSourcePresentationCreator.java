@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -54,7 +54,8 @@ import org.eclipse.ui.IEditorInput;
 /**
  * A presentation creator based on CDT syntax highlighting.
  */
-public class CSourcePresentationCreator extends PresentationReconciler implements ISourcePresentationCreator, IPropertyChangeListener {
+public class CSourcePresentationCreator extends PresentationReconciler
+		implements ISourcePresentationCreator, IPropertyChangeListener {
 
 	/**
 	 *
@@ -71,13 +72,13 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 		 * @param preferenceStore
 		 * @param language
 		 */
-		private CustomCSourceViewerConfiguration(
-				IColorManager colorManager, IPreferenceStore preferenceStore,
+		private CustomCSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore preferenceStore,
 				ILanguage language) {
 			super(colorManager, preferenceStore, null, ICPartitions.C_PARTITIONING);
 			fLanguage = language;
 			if (language instanceof IAsmLanguage) {
-				fAsmConfig= new AsmSourceViewerConfiguration(colorManager, preferenceStore, null, ICPartitions.C_PARTITIONING);
+				fAsmConfig = new AsmSourceViewerConfiguration(colorManager, preferenceStore, null,
+						ICPartitions.C_PARTITIONING);
 			}
 		}
 
@@ -127,7 +128,7 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 			}
 			return super.getCodeScanner(language);
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration#getPreprocessorScanner(org.eclipse.cdt.core.model.ILanguage)
 		 */
@@ -218,7 +219,7 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 		public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 			return null;
 		}
-		
+
 		/*
 		 * @see CSourceViewerConfiguration#getOutlinePresenter(ISourceViewer)
 		 */
@@ -226,7 +227,7 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 		public IInformationPresenter getOutlinePresenter(ISourceViewer sourceViewer) {
 			return null;
 		}
-}
+	}
 
 	private ITextViewer fViewer;
 	private ISourceTagProvider fSourceTagProvider;
@@ -243,10 +244,10 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 	 */
 	public CSourcePresentationCreator(ILanguage language, IStorage storage, ITextViewer textViewer) {
 		if (language != null) {
-			fViewer= textViewer;
-			fPreferenceStore= CUIPlugin.getDefault().getCombinedPreferenceStore();
-			final IColorManager colorManager= CDTUITools.getColorManager();
-			fSourceViewerConfiguration= new CustomCSourceViewerConfiguration(colorManager, fPreferenceStore, language);
+			fViewer = textViewer;
+			fPreferenceStore = CUIPlugin.getDefault().getCombinedPreferenceStore();
+			final IColorManager colorManager = CDTUITools.getColorManager();
+			fSourceViewerConfiguration = new CustomCSourceViewerConfiguration(colorManager, fPreferenceStore, language);
 			setDocumentPartitioning(fSourceViewerConfiguration.getConfiguredDocumentPartitioning(null));
 			initializeDamagerRepairer(storage, colorManager, fPreferenceStore);
 			fPreferenceStore.addPropertyChangeListener(this);
@@ -254,7 +255,7 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 	}
 
 	private void initializeDamagerRepairer(IStorage storage, IColorManager colorManager, IPreferenceStore store) {
-		String[] contentTypes= fSourceViewerConfiguration.getConfiguredContentTypes(null);
+		String[] contentTypes = fSourceViewerConfiguration.getConfiguredContentTypes(null);
 		for (int i = 0; i < contentTypes.length; ++i) {
 			String contentType = contentTypes[i];
 			ITokenScanner scanner;
@@ -262,14 +263,15 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 			if (scanner != null) {
 				if (fDamagerRepairer == null) {
 					fSourceTagProvider = createSourceTagProvider(storage);
-					fDamagerRepairer= new SourceTagDamagerRepairer(scanner, fSourceTagProvider, colorManager, store);
+					fDamagerRepairer = new SourceTagDamagerRepairer(scanner, fSourceTagProvider, colorManager, store);
 					if (fSourceTagProvider != null) {
 						if (fSourceTagListener == null) {
-							fSourceTagListener= new ISourceTagListener() {
+							fSourceTagListener = new ISourceTagListener() {
 								@Override
 								public void sourceTagsChanged(ISourceTagProvider provider) {
 									handleSourceTagsChanged();
-								}};
+								}
+							};
 						}
 						fSourceTagProvider.addSourceTagListener(fSourceTagListener);
 					}
@@ -286,22 +288,22 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 	 */
 	@Override
 	public void dispose() {
-		fViewer= null;
-		fPresentation= null;
+		fViewer = null;
+		fPresentation = null;
 		if (fPreferenceStore != null) {
 			fPreferenceStore.removePropertyChangeListener(this);
-			fPreferenceStore= null;
+			fPreferenceStore = null;
 		}
 		if (fSourceViewerConfiguration != null) {
 			fSourceViewerConfiguration.dispose();
-			fSourceViewerConfiguration= null;
+			fSourceViewerConfiguration = null;
 		}
 		if (fSourceTagProvider != null) {
 			if (fSourceTagListener != null) {
 				fSourceTagProvider.removeSourceTagListener(fSourceTagListener);
-				fSourceTagListener= null;
+				fSourceTagListener = null;
 			}
-			fSourceTagProvider= null;
+			fSourceTagProvider = null;
 		}
 	}
 
@@ -317,10 +319,10 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 		if (fPresentation == null) {
 			setDocumentToDamagers(document);
 			setDocumentToRepairers(document);
-			int docLength= document.getLength();
-			if (docLength <= 128*1024) {
-				IRegion all= new Region(0, docLength);
-				fPresentation= createPresentation(all, document);
+			int docLength = document.getLength();
+			if (docLength <= 128 * 1024) {
+				IRegion all = new Region(0, docLength);
+				fPresentation = createPresentation(all, document);
 			} else {
 				return createPresentation(region, document);
 			}
@@ -335,9 +337,9 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 
 	private void invalidateTextPresentation() {
 		if (fPresentation != null) {
-			fPresentation= null;
+			fPresentation = null;
 			if (fViewer != null) {
-				Display display= fViewer.getTextWidget().getDisplay();
+				Display display = fViewer.getTextWidget().getDisplay();
 				if (display.getThread() != Thread.currentThread()) {
 					display.asyncExec(new Runnable() {
 						@Override
@@ -345,7 +347,8 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 							if (fViewer != null) {
 								fViewer.invalidateTextPresentation();
 							}
-						}});
+						}
+					});
 				} else {
 					fViewer.invalidateTextPresentation();
 				}
@@ -354,23 +357,23 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 	}
 
 	private ISourceTagProvider createSourceTagProvider(IStorage storage) {
-		ITranslationUnit tUnit= null;
+		ITranslationUnit tUnit = null;
 		if (storage instanceof IFile) {
-			tUnit= (ITranslationUnit) CoreModel.getDefault().create((IFile)storage);
+			tUnit = (ITranslationUnit) CoreModel.getDefault().create((IFile) storage);
 		} else if (storage instanceof IFileState) {
-			ICModel cModel= CoreModel.getDefault().getCModel();
+			ICModel cModel = CoreModel.getDefault().getCModel();
 			ICProject[] cProjects;
 			try {
 				cProjects = cModel.getCProjects();
 				if (cProjects.length > 0) {
-					tUnit= CoreModel.getDefault().createTranslationUnitFrom(cProjects[0], storage.getFullPath());
+					tUnit = CoreModel.getDefault().createTranslationUnitFrom(cProjects[0], storage.getFullPath());
 				}
 			} catch (CModelException e) {
 			}
 		} else {
-			IEditorInput input= CDTUITools.getEditorInputForLocation(storage.getFullPath(), null);
+			IEditorInput input = CDTUITools.getEditorInputForLocation(storage.getFullPath(), null);
 			if (input != null) {
-				tUnit= input.getAdapter(ITranslationUnit.class);
+				tUnit = input.getAdapter(ITranslationUnit.class);
 			}
 		}
 		if (tUnit != null) {

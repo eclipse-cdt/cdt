@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson           - initial API and implementation
  *******************************************************************************/
@@ -23,16 +23,16 @@ public class ExprMetaGetValue extends ExprMetaCommand<ExprMetaGetValueInfo> {
 	public ExprMetaGetValue(FormattedValueDMContext ctx) {
 		super(ctx);
 	}
-	
-    @Override
-    public String toString() {
-    	IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(getContext(), IExpressionDMContext.class);
-    	if (exprDmc != null) {
-    		return getClass().getSimpleName() + "(\"" + //$NON-NLS-1$
-    				exprDmc.getExpression() + "\", " + //$NON-NLS-1$
-    				((FormattedValueDMContext)getContext()).getFormatID() + ")"; //$NON-NLS-1$
-    	} else {
-    		return super.toString();
-    	}
-    }
+
+	@Override
+	public String toString() {
+		IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(getContext(), IExpressionDMContext.class);
+		if (exprDmc != null) {
+			return getClass().getSimpleName() + "(\"" + //$NON-NLS-1$
+					exprDmc.getExpression() + "\", " + //$NON-NLS-1$
+					((FormattedValueDMContext) getContext()).getFormatID() + ")"; //$NON-NLS-1$
+		} else {
+			return super.toString();
+		}
+	}
 }

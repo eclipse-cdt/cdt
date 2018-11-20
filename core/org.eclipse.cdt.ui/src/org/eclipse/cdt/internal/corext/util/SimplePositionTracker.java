@@ -25,8 +25,7 @@ import org.eclipse.cdt.internal.core.PositionTracker;
  *
  * @since 4.0
  */
-public class SimplePositionTracker extends PositionTracker implements
-		IPositionUpdater {
+public class SimplePositionTracker extends PositionTracker implements IPositionUpdater {
 
 	private IDocument fDocument;
 
@@ -35,47 +34,47 @@ public class SimplePositionTracker extends PositionTracker implements
 	 */
 	@Override
 	public void update(DocumentEvent event) {
-        String text = event.getText();
-        int insertLen = text != null ? text.length() : 0;
-        update(event.getOffset(), event.getLength(), insertLen);
-    }
+		String text = event.getText();
+		int insertLen = text != null ? text.length() : 0;
+		update(event.getOffset(), event.getLength(), insertLen);
+	}
 
-    private void update(int offset, int deleteLen, int insertLen) {
-        if (insertLen > deleteLen) {
-            insert(offset + deleteLen, insertLen - deleteLen);
-        } else if (insertLen < deleteLen) {
-            delete(offset+insertLen, deleteLen - insertLen);
-        }
-    }
+	private void update(int offset, int deleteLen, int insertLen) {
+		if (insertLen > deleteLen) {
+			insert(offset + deleteLen, insertLen - deleteLen);
+		} else if (insertLen < deleteLen) {
+			delete(offset + insertLen, deleteLen - insertLen);
+		}
+	}
 
-    /**
-     * Start tracking on the given document.
-     * 
-     * @param doc
-     */
-    public synchronized void startTracking(IDocument doc) {
-        stopTracking();
-        fDocument= doc;
-        if (fDocument != null) {
-        	fDocument.addPositionUpdater(this);
-        }
-    }
+	/**
+	 * Start tracking on the given document.
+	 *
+	 * @param doc
+	 */
+	public synchronized void startTracking(IDocument doc) {
+		stopTracking();
+		fDocument = doc;
+		if (fDocument != null) {
+			fDocument.addPositionUpdater(this);
+		}
+	}
 
-    /**
-     * Stop tracking.
-     */
-    public synchronized void stopTracking() {
-        if (fDocument != null) {
-            fDocument.removePositionUpdater(this);
-            fDocument= null;
-        }
-    }
-    
-    /**
-     * Destroy the tracker.
-     */
-    public void dispose() {
-        stopTracking();
-    }
+	/**
+	 * Stop tracking.
+	 */
+	public synchronized void stopTracking() {
+		if (fDocument != null) {
+			fDocument.removePositionUpdater(this);
+			fDocument = null;
+		}
+	}
+
+	/**
+	 * Destroy the tracker.
+	 */
+	public void dispose() {
+		stopTracking();
+	}
 
 }

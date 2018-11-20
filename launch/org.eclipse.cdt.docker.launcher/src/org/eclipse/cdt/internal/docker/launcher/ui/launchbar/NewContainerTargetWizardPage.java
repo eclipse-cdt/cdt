@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contibutors:
  * 		Red Hat Inc. - initial implementation
  *******************************************************************************/
@@ -60,7 +60,6 @@ public class NewContainerTargetWizardPage extends WizardPage
 	private String connectionName;
 	private String connectionUri = "";
 
-
 	public NewContainerTargetWizardPage(ILaunchTarget launchTarget) {
 		super(NewContainerTargetWizardPage.class.getName());
 		if (launchTarget == null) {
@@ -73,10 +72,8 @@ public class NewContainerTargetWizardPage extends WizardPage
 		this.launchTarget = launchTarget;
 		this.wizardPage = this;
 		if (launchTarget != null) {
-			connectionUri = launchTarget.getAttribute(
-					IContainerLaunchTarget.ATTR_CONNECTION_URI, null);
-			imageName = launchTarget
-					.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, null);
+			connectionUri = launchTarget.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, null);
+			imageName = launchTarget.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, null);
 		}
 	}
 
@@ -183,8 +180,7 @@ public class NewContainerTargetWizardPage extends WizardPage
 		int defaultIndex = -1;
 		connections = DockerConnectionManager.getInstance().getConnections();
 		if (connections.length == 0) {
-			setErrorMessage(
-					Messages.NewContainerTargetWizardPage_no_connections);
+			setErrorMessage(Messages.NewContainerTargetWizardPage_no_connections);
 			return;
 		}
 		String[] connectionNames = new String[connections.length];
@@ -209,8 +205,7 @@ public class NewContainerTargetWizardPage extends WizardPage
 		if (connection != null) {
 			java.util.List<IDockerImage> images = connection.getImages();
 			if (images == null || images.size() == 0) {
-				setErrorMessage(
-						Messages.NewContainerTargetWizardPage_no_images);
+				setErrorMessage(Messages.NewContainerTargetWizardPage_no_images);
 				return;
 			}
 			connection.removeImageListener(wizardPage);
@@ -259,12 +254,10 @@ public class NewContainerTargetWizardPage extends WizardPage
 			connectionUri = connection.getUri();
 			java.util.List<IDockerImage> images = connection.getImages();
 			if (images == null || images.size() == 0) {
-				setErrorMessage(
-						Messages.NewContainerTargetWizardPage_no_images);
+				setErrorMessage(Messages.NewContainerTargetWizardPage_no_images);
 			}
 		} else {
-			setErrorMessage(
-					Messages.NewContainerTargetWizardPage_no_connections);
+			setErrorMessage(Messages.NewContainerTargetWizardPage_no_connections);
 			connection = null;
 			connectionUri = "";
 			connectionSelector.setText("");
@@ -272,8 +265,7 @@ public class NewContainerTargetWizardPage extends WizardPage
 		connectionSelector.addModifyListener(connectionModifyListener);
 	}
 
-	public void listChanged(IDockerConnection c,
-			java.util.List<IDockerImage> list) {
+	public void listChanged(IDockerConnection c, java.util.List<IDockerImage> list) {
 		setErrorMessage(null);
 		final IDockerImage[] finalList = list.toArray(new IDockerImage[0]);
 		if (finalList.length == 0) {

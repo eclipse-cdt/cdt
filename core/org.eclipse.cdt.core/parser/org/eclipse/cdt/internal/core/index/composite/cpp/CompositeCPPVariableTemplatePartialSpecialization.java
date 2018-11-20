@@ -23,7 +23,8 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 public class CompositeCPPVariableTemplatePartialSpecialization extends CompositeCPPVariableTemplate
 		implements ICPPVariableTemplatePartialSpecialization {
 
-	public CompositeCPPVariableTemplatePartialSpecialization(ICompositesFactory cf, ICPPVariableTemplatePartialSpecialization delegate) {
+	public CompositeCPPVariableTemplatePartialSpecialization(ICompositesFactory cf,
+			ICPPVariableTemplatePartialSpecialization delegate) {
 		super(cf, delegate);
 	}
 

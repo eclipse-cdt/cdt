@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.Path;
  *    same type of container.
  *
  *    <li>This operation can be used to copy and rename elements within
- *    the same container. 
+ *    the same container.
  *
  *    <li>This operation only copies translation units.
  * </ul>
@@ -56,11 +56,11 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	protected ArrayList<ICElement> fCreatedElements;
 
 	/**
-	 * Table specifying deltas for elements being 
+	 * Table specifying deltas for elements being
 	 * copied/moved/renamed. Keyed by elements' project(s), and
 	 * values are the corresponding deltas.
 	 */
-	protected Map<ICProject, CElementDelta> fDeltasPerProject= new HashMap<ICProject, CElementDelta>(1);
+	protected Map<ICProject, CElementDelta> fDeltasPerProject = new HashMap<ICProject, CElementDelta>(1);
 
 	public CopyResourceElementsOperation(ICElement[] src, ICElement[] dst, boolean force) {
 		super(src, dst, force);
@@ -97,7 +97,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	 *                      <li>one rooted in the source project
 	 *                      <li>one rooted in the destination project</ul></ul>
 	 * If the operation is rooted in a single project, the delta is rooted in that project
-	 *       
+	 *
 	 */
 	protected void prepareDeltas(ICElement sourceElement, ICElement destinationElement) {
 		ICProject destProject = destinationElement.getCProject();
@@ -133,9 +133,9 @@ public class CopyResourceElementsOperation extends MultiOperation {
 		String destName = (newName != null) ? newName : source.getElementName();
 
 		// copy resource
-		IFile sourceResource = (IFile)source.getResource();
+		IFile sourceResource = (IFile) source.getResource();
 		// can be an IFolder or an IProject
-		IContainer destFolder = (IContainer)dest.getResource();
+		IContainer destFolder = (IContainer) dest.getResource();
 		IFile destFile = destFolder.getFile(new Path(destName));
 		if (!destFile.equals(sourceResource)) {
 			try {
@@ -161,18 +161,18 @@ public class CopyResourceElementsOperation extends MultiOperation {
 			}
 
 			// update new resource content
-        
+
 			// register the correct change deltas
 			ICElement cdest = CModelManager.getDefault().create(destFile, null);
 			prepareDeltas(source, cdest);
 			fCreatedElements.add(cdest);
 			//if (newName != null) {
-				//the main type has been renamed
-				//String oldName = source.getElementName();
-				//oldName = oldName.substring(0, oldName.length() - 5);
-				//String nName = newName;
-				//nName = nName.substring(0, nName.length() - 5);
-				//prepareDeltas(source.getType(oldName), cdest.getType(nName));
+			//the main type has been renamed
+			//String oldName = source.getElementName();
+			//oldName = oldName.substring(0, oldName.length() - 5);
+			//String nName = newName;
+			//nName = nName.substring(0, nName.length() - 5);
+			//prepareDeltas(source.getType(oldName), cdest.getType(nName));
 			//}
 		} else {
 			if (!fForce) {
@@ -247,7 +247,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	@Override
 	protected void verify(ICElement element) throws CModelException {
 		if (element == null || !element.exists())
-			error(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, element);   
+			error(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, element);
 		else if (element.isReadOnly() && (isRename() || isMove()))
 			error(ICModelStatusConstants.READ_ONLY, element);
 		else {

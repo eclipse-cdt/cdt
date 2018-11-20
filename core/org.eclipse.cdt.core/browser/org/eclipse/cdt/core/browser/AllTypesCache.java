@@ -43,51 +43,51 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * If <code>getTypes</code> is called in response to a user action, a progress
  * dialog is shown. If called before the background job has finished, getTypes
  * waits for the completion of the background job.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class AllTypesCache {
 	private static final boolean DEBUG = false;
-	
-	private static ITypeInfo[] getTypes(ICProject[] projects, final int[] kinds, IProgressMonitor monitor) throws CoreException {
-		IIndex index = CCorePlugin.getIndexManager().getIndex(projects, IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION);
-		
+
+	private static ITypeInfo[] getTypes(ICProject[] projects, final int[] kinds, IProgressMonitor monitor)
+			throws CoreException {
+		IIndex index = CCorePlugin.getIndexManager().getIndex(projects,
+				IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION);
+
 		try {
 			index.acquireReadLock();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return new ITypeInfo[0];
 		}
-		
+
 		try {
 			long start = System.currentTimeMillis();
-			
-			IIndexBinding[] all =
-				index.findBindings(Pattern.compile(".*"), false, new IndexFilter() { //$NON-NLS-1$
-					@Override
-					public boolean acceptBinding(IBinding binding) throws CoreException {
-						return IndexFilter.ALL_DECLARED_OR_IMPLICIT.acceptBinding(binding) &&
-							IndexModelUtil.bindingHasCElementType(binding, kinds);
-					}},
-					monitor
-				);
-			
-			if(DEBUG) {
-				System.out.println("Index search took "+(System.currentTimeMillis() - start)); //$NON-NLS-1$
+
+			IIndexBinding[] all = index.findBindings(Pattern.compile(".*"), false, new IndexFilter() { //$NON-NLS-1$
+				@Override
+				public boolean acceptBinding(IBinding binding) throws CoreException {
+					return IndexFilter.ALL_DECLARED_OR_IMPLICIT.acceptBinding(binding)
+							&& IndexModelUtil.bindingHasCElementType(binding, kinds);
+				}
+			}, monitor);
+
+			if (DEBUG) {
+				System.out.println("Index search took " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
 				start = System.currentTimeMillis();
 			}
-			
+
 			ITypeInfo[] result = new ITypeInfo[all.length];
-			for(int i=0; i<all.length; i++) {
+			for (int i = 0; i < all.length; i++) {
 				result[i] = IndexTypeInfo.create(index, all[i]);
 			}
 
-			if(DEBUG) {
-				System.out.println("Wrapping as ITypeInfo took "+(System.currentTimeMillis() - start)); //$NON-NLS-1$
+			if (DEBUG) {
+				System.out.println("Wrapping as ITypeInfo took " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
 				start = System.currentTimeMillis();
 			}
-			
+
 			return result;
 		} finally {
 			index.releaseReadLock();
@@ -100,7 +100,7 @@ public class AllTypesCache {
 	public static ITypeInfo[] getAllTypes() {
 		return getAllTypes(new NullProgressMonitor());
 	}
-	
+
 	/**
 	 * Returns all types in the workspace.
 	 */
@@ -116,7 +116,7 @@ public class AllTypesCache {
 
 	/**
 	 * Returns all types in the given scope.
-	 * 
+	 *
 	 * @param scope The search scope
 	 * @param kinds Array containing CElement types: C_NAMESPACE, C_CLASS,
 	 *              C_UNION, C_ENUMERATION, C_TYPEDEF
@@ -132,13 +132,14 @@ public class AllTypesCache {
 
 	/**
 	 * Returns all namespaces in the given scope.
-	 * 
+	 *
 	 * @param scope The search scope
 	 * @param includeGlobalNamespace <code>true</code> if the global (default) namespace should be returned
 	 */
 	public static ITypeInfo[] getNamespaces(ITypeSearchScope scope, boolean includeGlobalNamespace) {
 		try {
-			return getTypes(scope.getEnclosingProjects(), new int[] {ICElement.C_NAMESPACE}, new NullProgressMonitor());
+			return getTypes(scope.getEnclosingProjects(), new int[] { ICElement.C_NAMESPACE },
+					new NullProgressMonitor());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return new ITypeInfo[0];
@@ -159,7 +160,8 @@ public class AllTypesCache {
 	 * @deprecated never worked.
 	 */
 	@Deprecated
-	public static ITypeInfo[] getTypes(ICProject project, IQualifiedTypeName qualifiedName, boolean matchEnclosed, boolean ignoreCase) {
+	public static ITypeInfo[] getTypes(ICProject project, IQualifiedTypeName qualifiedName, boolean matchEnclosed,
+			boolean ignoreCase) {
 		return new ITypeInfo[0];
 	}
 

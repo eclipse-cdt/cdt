@@ -16,20 +16,20 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
  * 'show endian' returns the endianness of the current target.
- * 
- * sample output: 
+ *
+ * sample output:
  *
  * (gdb) show endian
  * The target endianness is set automatically (currently little endian)
- * 
+ *
  * @since 4.2
  */
 public class CLIShowEndianInfo extends MIInfo {
 
 	final private static String BIG_ENDIAN = "big endian"; //$NON-NLS-1$
-	
+
 	private boolean fIsBigEndian = false;
-	
+
 	public CLIShowEndianInfo(MIOutput record) {
 		super(record);
 		parse();
@@ -40,8 +40,8 @@ public class CLIShowEndianInfo extends MIInfo {
 			MIOutput out = getMIOutput();
 			for (MIOOBRecord oob : out.getMIOOBRecords()) {
 				if (oob instanceof MIConsoleStreamOutput) {
-					String line = ((MIConsoleStreamOutput)oob).getString().trim();
-					if (line.indexOf(BIG_ENDIAN) >= 0 ) {
+					String line = ((MIConsoleStreamOutput) oob).getString().trim();
+					if (line.indexOf(BIG_ENDIAN) >= 0) {
 						fIsBigEndian = true;
 						break;
 					}

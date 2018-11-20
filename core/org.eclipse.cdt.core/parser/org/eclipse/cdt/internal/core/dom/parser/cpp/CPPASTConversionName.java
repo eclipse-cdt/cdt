@@ -58,8 +58,8 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 
 	@Override
 	public void setTypeId(IASTTypeId typeId) {
-        assertNotFrozen();
-		this.typeId= typeId;
+		assertNotFrozen();
+		this.typeId = typeId;
 		if (typeId != null) {
 			typeId.setParent(this);
 			typeId.setPropertyInParent(TYPE_ID);
@@ -103,11 +103,11 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 	@Override
 	public char[] toCharArray() {
 		if (fName == null) {
-			IType t= null;
+			IType t = null;
 			if (typeId != null) {
-				t= CPPVisitor.createType(typeId);
+				t = CPPVisitor.createType(typeId);
 			}
-			fName= createName(t, typeId);
+			fName = createName(t, typeId);
 		}
 		return fName;
 	}
@@ -117,14 +117,14 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 		buf.append(Keywords.cOPERATOR);
 		buf.append(' ');
 		buf.append(targetName);
-		final int len= buf.length();
-		char[] name= new char[len];
+		final int len = buf.length();
+		char[] name = new char[len];
 		buf.getChars(0, len, name, 0);
 		return name;
 	}
-	
+
 	public static char[] createName(IType t, IASTNode typeId) {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		buf.append(Keywords.cOPERATOR);
 		buf.append(' ');
 		if (t != null) {
@@ -133,8 +133,8 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 			buf.append(typeId.getRawSignature());
 			WHITESPACE_SEQ.matcher(buf).replaceAll(" "); //$NON-NLS-1$
 		}
-		final int len= buf.length();
-		char[] name= new char[len];
+		final int len = buf.length();
+		char[] name = new char[len];
 		buf.getChars(0, len, name, 0);
 		return name;
 	}

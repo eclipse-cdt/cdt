@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * Institute for Software - initial API and implementation
  *******************************************************************************/
 
@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.ui.refactoring.implementmethod.ImplementMethodRe
 
 /**
  * Launches the implement method source generator (refactoring).
- * 
+ *
  * @author Lukas Felber
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -64,11 +64,11 @@ public class ImplementMethodAction extends RefactoringAction {
 
 	@Override
 	public void updateSelection(ICElement elem) {
-    	super.updateSelection(elem);
-    	if (elem instanceof IMethod || elem instanceof IMethodDeclaration == false 
-    			|| elem instanceof ISourceReference == false
-    			|| ((ISourceReference) elem).getTranslationUnit().getResource() instanceof IFile == false) {
-    		setEnabled(false);
-    	}
-    }
+		super.updateSelection(elem);
+		if (elem instanceof IMethod || elem instanceof IMethodDeclaration == false
+				|| elem instanceof ISourceReference == false
+				|| ((ISourceReference) elem).getTranslationUnit().getResource() instanceof IFile == false) {
+			setEnabled(false);
+		}
+	}
 }

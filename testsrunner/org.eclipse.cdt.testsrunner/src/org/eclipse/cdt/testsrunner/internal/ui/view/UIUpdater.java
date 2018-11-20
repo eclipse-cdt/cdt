@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,49 +38,48 @@ import org.eclipse.ui.progress.UIJob;
  * periodically. It allows to significantly improve the UI performance.
  */
 public class UIUpdater {
-	
+
 	/** Access to the results showing view. */
 	private ResultsView resultsView;
-	
+
 	/** Access to the tests hierarchy showing widget. */
 	private TestsHierarchyViewer testsHierarchyViewer;
 
 	/** Access to the statistics showing widget. */
 	private ProgressCountPanel progressCountPanel;
-	
+
 	/** Listener for the changes in active testing session. */
 	private ITestingSessionListener sessionListener;
-	
+
 	/**
 	 * Specifies whether tests hierarchy scrolling should be done during the
 	 * testing process.
 	 */
 	private boolean autoScroll = true;
-	
+
 	/** Access to the testing sessions manager. */
 	private TestingSessionsManager sessionsManager;
-	
+
 	/** Listener to handle active testing session change. */
 	private TestingSessionsManagerListener sessionsManagerListener;
-	
+
 	/** Reference to the active testing session. */
 	ITestingSession testingSession;
-	
+
 	/** Storage for the UI changes that should be done on update. */
 	UIChangesCache uiChangesCache = new UIChangesCache();
-	
+
 	/** A job that makes an UI update periodically. */
 	UpdateUIJob updateUIJob = null;
-	
+
 	/** Time interval over which the UI should be updated. */
 	private static final int REFRESH_INTERVAL = 200;
-	
-	
-	/** 
+
+	/**
 	 * Storage for the UI changes that should be done on update.
 	 */
 	private class UIChangesCache {
-		
+
 		/**
 		 * Specifies whether Progress Counter Panel should be updated during the
 		 * next UI update.
@@ -98,26 +97,25 @@ public class UIUpdater {
 		 * next UI update.
 		 */
 		private ITestItem testItemForNewViewCaption;
-		
+
 		/**
 		 * Set of tree objects on which <code>refresh()</code> should be called
 		 * during the next UI update.
 		 */
- 		private Set<Object> treeItemsToRefresh = new HashSet<Object>();
+		private Set<Object> treeItemsToRefresh = new HashSet<Object>();
 
 		/**
 		 * Set of tree objects on which <code>update()</code> should be called
 		 * during the next UI update.
 		 */
- 		private Set<Object> treeItemsToUpdate = new HashSet<Object>();
+		private Set<Object> treeItemsToUpdate = new HashSet<Object>();
 
- 		/** Tree object that should be revealed during the next UI update. */
- 		private Object treeItemToReveal;
- 		
- 		/** Map of tree objects that should be expanded or collapsed to their new states. */
+		/** Tree object that should be revealed during the next UI update. */
+		private Object treeItemToReveal;
+
+		/** Map of tree objects that should be expanded or collapsed to their new states. */
 		private Map<Object, Boolean> treeItemsToExpand = new LinkedHashMap<Object, Boolean>();
-		
-		
+
 		UIChangesCache() {
 			resetChanges();
 		}
@@ -130,7 +128,7 @@ public class UIUpdater {
 				needProgressCountPanelUpdate = true;
 			}
 		}
-		
+
 		/**
 		 * Schedules the view actions update during the next UI update.
 		 */
@@ -139,11 +137,11 @@ public class UIUpdater {
 				needActionsUpdate = true;
 			}
 		}
-		
+
 		/**
 		 * Schedules the view caption update to the path to specified test item
 		 * during the next UI update.
-		 * 
+		 *
 		 * @param testItem specified test item
 		 */
 		public void scheduleViewCaptionChange(ITestItem testItem) {
@@ -151,11 +149,11 @@ public class UIUpdater {
 				testItemForNewViewCaption = testItem;
 			}
 		}
-		
+
 		/**
 		 * Schedules the <code>update()</code> call for the specified tree
 		 * object during the next UI update.
-		 * 
+		 *
 		 * @param item tree object to update
 		 */
 		public void scheduleTreeItemUpdate(Object item) {
@@ -163,11 +161,11 @@ public class UIUpdater {
 				treeItemsToUpdate.add(item);
 			}
 		}
-		
+
 		/**
 		 * Schedules the revealing of the specified tree object. Overrides
 		 * the previously specified tree object to reveal (if any).
-		 * 
+		 *
 		 * @param item tree object to reveal
 		 */
 		public void scheduleTreeItemReveal(Object item) {
@@ -175,11 +173,11 @@ public class UIUpdater {
 				treeItemToReveal = item;
 			}
 		}
-		
+
 		/**
 		 * Schedules the expanding or collapsing of the specified tree object.
 		 * Overrides the previous state for the same tree object (if any).
-		 * 
+		 *
 		 * @param item tree object to expand or collapse
 		 * @param expandedState true if the node is expanded, and false if
 		 * collapsed
@@ -189,11 +187,11 @@ public class UIUpdater {
 				treeItemsToExpand.put(item, expandedState);
 			}
 		}
-		
+
 		/**
 		 * Schedules the <code>refresh()</code> call for the specified tree
 		 * object during the next UI update.
-		 * 
+		 *
 		 * @param item tree object to refresh
 		 */
 		public void scheduleTreeItemRefresh(Object item) {
@@ -201,8 +199,7 @@ public class UIUpdater {
 				treeItemsToRefresh.add(item);
 			}
 		}
-		
-		
+
 		/**
 		 * Apply any scheduled changes to UI.
 		 */
@@ -219,13 +216,9 @@ public class UIUpdater {
 				}
 				// View caption update
 				if (testItemForNewViewCaption != null) {
-					resultsView.setCaption(
-							MessageFormat.format(
-								UIViewMessages.UIUpdater_view_caption_format, 
-									testItemForNewViewCaption.getName(),
-									TestPathUtils.getTestItemPath(testItemForNewViewCaption.getParent())
-							)
-						);
+					resultsView.setCaption(MessageFormat.format(UIViewMessages.UIUpdater_view_caption_format,
+							testItemForNewViewCaption.getName(),
+							TestPathUtils.getTestItemPath(testItemForNewViewCaption.getParent())));
 				}
 				// Tree view update
 				if (!treeItemsToRefresh.isEmpty()) {
@@ -244,7 +237,7 @@ public class UIUpdater {
 						treeViewer.setExpandedState(entry.getKey(), entry.getValue());
 					}
 				}
-				// All changes are applied, remove them 
+				// All changes are applied, remove them
 				resetChangesImpl();
 			}
 		}
@@ -257,7 +250,7 @@ public class UIUpdater {
 				resetChangesImpl();
 			}
 		}
-		
+
 		/**
 		 * Reset all the scheduled changes to UI. Note, this method is not
 		 * synchronized so it should be used carefully
@@ -271,7 +264,6 @@ public class UIUpdater {
 			treeItemsToExpand.clear();
 		}
 	}
-
 
 	/**
 	 * A job that makes an UI update periodically.
@@ -294,14 +286,14 @@ public class UIUpdater {
 			}
 			return Status.OK_STATUS;
 		}
-		
+
 		/**
 		 * Schedule self for running after time interval.
 		 */
 		public void scheduleSelf() {
 			schedule(REFRESH_INTERVAL);
 		}
-		
+
 		/**
 		 * Sets the flag that prevents planning this job again.
 		 */
@@ -316,15 +308,14 @@ public class UIUpdater {
 
 	}
 
-	
 	/**
 	 * Listener for the changes in active testing session.
 	 */
 	private class SessionListener implements ITestingSessionListener {
-		
+
 		/**
 		 * Common implementation for test case and test suite entering.
-		 * 
+		 *
 		 * @param testItem test case or test suite
 		 */
 		private void enterTestItem(ITestItem testItem) {
@@ -334,12 +325,12 @@ public class UIUpdater {
 				uiChangesCache.scheduleTreeItemReveal(testItem);
 			}
 		}
-		
+
 		@Override
 		public void enterTestSuite(ITestSuite testSuite) {
 			enterTestItem(testSuite);
 		}
-	
+
 		@Override
 		public void exitTestSuite(ITestSuite testSuite) {
 			uiChangesCache.scheduleTreeItemUpdate(testSuite);
@@ -347,19 +338,19 @@ public class UIUpdater {
 				uiChangesCache.scheduleTreeItemExpand(testSuite, false);
 			}
 		}
-	
+
 		@Override
 		public void enterTestCase(ITestCase testCase) {
 			enterTestItem(testCase);
 		}
-	
+
 		@Override
 		public void exitTestCase(ITestCase testCase) {
 			uiChangesCache.scheduleActionsUpdate();
 			uiChangesCache.scheduleProgressCountPanelUpdate();
 			uiChangesCache.scheduleTreeItemUpdate(testCase);
 		}
-	
+
 		@Override
 		public void childrenUpdate(ITestSuite parent) {
 			uiChangesCache.scheduleTreeItemRefresh(parent);
@@ -369,7 +360,7 @@ public class UIUpdater {
 		public void testingStarted() {
 			resultsView.updateActionsFromSession();
 			Display.getDefault().syncExec(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					resultsView.setCaption(testingSession.getStatusMessage());
@@ -385,7 +376,7 @@ public class UIUpdater {
 			stopUpdateUIJob();
 			resultsView.updateActionsFromSession();
 			Display.getDefault().syncExec(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					uiChangesCache.applyChanges();
@@ -399,25 +390,24 @@ public class UIUpdater {
 		}
 	}
 
-
 	/**
 	 * Listener to handle active testing session change.
 	 */
 	private class TestingSessionsManagerListener implements ITestingSessionsManagerListener {
-		
+
 		@Override
 		public void sessionActivated(ITestingSession newTestingSession) {
 			if (testingSession != newTestingSession) {
 				stopUpdateUIJob();
 				uiChangesCache.resetChanges();
-				
+
 				unsubscribeFromSessionEvent();
 				testingSession = newTestingSession;
 				subscribeToSessionEvent();
-				
+
 				resultsView.updateActionsFromSession();
 				Display.getDefault().syncExec(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						progressCountPanel.setTestingSession(testingSession);
@@ -432,8 +422,8 @@ public class UIUpdater {
 		}
 	}
 
-
-	public UIUpdater(ResultsView resultsView, TestsHierarchyViewer testsHierarchyViewer, ProgressCountPanel progressCountPanel, TestingSessionsManager sessionsManager) {
+	public UIUpdater(ResultsView resultsView, TestsHierarchyViewer testsHierarchyViewer,
+			ProgressCountPanel progressCountPanel, TestingSessionsManager sessionsManager) {
 		this.resultsView = resultsView;
 		this.testsHierarchyViewer = testsHierarchyViewer;
 		this.progressCountPanel = progressCountPanel;
@@ -446,17 +436,17 @@ public class UIUpdater {
 	/**
 	 * Returns whether tests hierarchy scrolling should be done during the
 	 * testing process.
-	 * 
+	 *
 	 * @return auto scroll state
 	 */
 	public boolean getAutoScroll() {
 		return autoScroll;
 	}
-	
+
 	/**
 	 * Sets whether whether tests hierarchy scrolling should be done during the
 	 * testing process.
-	 * 
+	 *
 	 * @param autoScroll new filter state
 	 */
 	public void setAutoScroll(boolean autoScroll) {
@@ -470,7 +460,7 @@ public class UIUpdater {
 		unsubscribeFromSessionEvent();
 		sessionsManager.removeListener(sessionsManagerListener);
 	}
-	
+
 	/**
 	 * Subscribes to the events of currently set testing session.
 	 */
@@ -488,7 +478,7 @@ public class UIUpdater {
 			testingSession.getModelAccessor().removeChangesListener(sessionListener);
 		}
 	}
-	
+
 	/**
 	 * Starts the UI updating job. Stops the previously running (if any).
 	 */
@@ -498,7 +488,7 @@ public class UIUpdater {
 		updateUIJob = new UpdateUIJob();
 		updateUIJob.scheduleSelf();
 	}
-	
+
 	/**
 	 * Stops the UI updating job (if any).
 	 */

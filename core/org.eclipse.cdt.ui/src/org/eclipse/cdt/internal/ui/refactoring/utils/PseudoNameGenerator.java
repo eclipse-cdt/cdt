@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
@@ -19,18 +19,18 @@ import java.util.Set;
 
 /**
  * Helps to generate new unused names.
- * 
+ *
  * @author Mirko Stocker
  *
  */
 public class PseudoNameGenerator {
-	
+
 	private final Set<String> names = new HashSet<String>();
-	
+
 	public void addExistingName(String name) {
 		names.add(name);
 	}
-	
+
 	public String generateNewName(String typeName) {
 		String[] nameParts = typeName.split("::"); //$NON-NLS-1$
 		typeName = nameParts[nameParts.length - 1];
@@ -46,7 +46,7 @@ public class PseudoNameGenerator {
 			if (i <= 0) {
 				typeName = nameParts[i];
 			} else {
-				typeName = typeName.concat(nameParts[i].substring(0,1).toUpperCase());
+				typeName = typeName.concat(nameParts[i].substring(0, 1).toUpperCase());
 				if (nameParts[i].length() > 1) {
 					typeName = typeName.concat(nameParts[i].substring(1));
 				}
@@ -56,7 +56,7 @@ public class PseudoNameGenerator {
 		String numberString = ""; //$NON-NLS-1$
 		String newNameCandidate;
 		int index = 0;
-		
+
 		do {
 			newNameCandidate = typeName + numberString;
 			if (!NameHelper.isValidLocalVariableName(newNameCandidate)) {
@@ -65,7 +65,7 @@ public class PseudoNameGenerator {
 			index++;
 			numberString = Integer.toString(index);
 		} while (names.contains(newNameCandidate) || NameHelper.isKeyword(newNameCandidate));
-		
+
 		names.add(newNameCandidate);
 		return newNameCandidate;
 	}

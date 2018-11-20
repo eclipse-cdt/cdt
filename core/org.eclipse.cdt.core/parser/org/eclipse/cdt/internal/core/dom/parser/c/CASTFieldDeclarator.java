@@ -25,9 +25,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @author jcamelon
  */
 public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDeclarator {
-    private IASTExpression bitFieldSize;
+	private IASTExpression bitFieldSize;
 
-    public CASTFieldDeclarator() {
+	public CASTFieldDeclarator() {
 	}
 
 	public CASTFieldDeclarator(IASTName name, IASTExpression bitFieldSize) {
@@ -49,20 +49,20 @@ public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDecl
 
 	@Override
 	public IASTExpression getBitFieldSize() {
-        return bitFieldSize;
-    }
+		return bitFieldSize;
+	}
 
-    @Override
+	@Override
 	public void setBitFieldSize(IASTExpression size) {
-        assertNotFrozen();
-        bitFieldSize = size;
-        if (size != null) {
+		assertNotFrozen();
+		bitFieldSize = size;
+		if (size != null) {
 			size.setParent(this);
 			size.setPropertyInParent(FIELD_SIZE);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	protected boolean postAccept(ASTVisitor action) {
 		if (bitFieldSize != null && !bitFieldSize.accept(action))
 			return false;
@@ -70,14 +70,14 @@ public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDecl
 		return super.postAccept(action);
 	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == bitFieldSize) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            bitFieldSize = (IASTExpression) other;
-        } else {
-        	super.replace(child, other);
-        }
-    }
+		if (child == bitFieldSize) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			bitFieldSize = (IASTExpression) other;
+		} else {
+			super.replace(child, other);
+		}
+	}
 }

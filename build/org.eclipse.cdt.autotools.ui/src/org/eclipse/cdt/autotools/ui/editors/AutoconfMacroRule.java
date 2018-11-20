@@ -41,8 +41,7 @@ public class AutoconfMacroRule implements IRule {
 
 	private String fStartingSequence;
 
-	public AutoconfMacroRule(String startingSequence,
-			IWordDetector detector, IToken inToken) {
+	public AutoconfMacroRule(String startingSequence, IWordDetector detector, IToken inToken) {
 		token = inToken;
 		fDetector = detector;
 		fStartingSequence = startingSequence;
@@ -62,14 +61,12 @@ public class AutoconfMacroRule implements IRule {
 			c = scanner.read();
 		}
 
-		while (c != ICharacterScanner.EOF
-				&& fDetector.isWordPart((char) c)) {
+		while (c != ICharacterScanner.EOF && fDetector.isWordPart((char) c)) {
 			fBuffer.append((char) c);
 			c = scanner.read();
 		}
 
-		if (c != ICharacterScanner.EOF && c != '(' && c != ';'
-			&& !fWsDetector.isWhitespace((char)c)) {
+		if (c != ICharacterScanner.EOF && c != '(' && c != ';' && !fWsDetector.isWhitespace((char) c)) {
 			unreadBuffer(scanner);
 			return Token.UNDEFINED;
 		}
@@ -80,7 +77,7 @@ public class AutoconfMacroRule implements IRule {
 
 	/**
 	 * Returns the characters in the buffer to the scanner.
-	 * 
+	 *
 	 * @param scanner
 	 *            the scanner to be used
 	 */

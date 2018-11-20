@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - initial implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class MesonPropertyCheckbox implements IMesonPropertyPageControl {
-	
+
 	private String name;
 	private boolean initialValue;
 	protected Button checkbox;
@@ -44,8 +44,6 @@ public class MesonPropertyCheckbox implements IMesonPropertyPageControl {
 		label.setLayoutData(data2);
 	}
 
-
-
 	@Override
 	public String getFieldValue() {
 		return Boolean.toString(checkbox.getSelection());
@@ -65,7 +63,7 @@ public class MesonPropertyCheckbox implements IMesonPropertyPageControl {
 	public boolean isValid() {
 		return true;
 	}
-	
+
 	@Override
 	public String getErrorMessage() {
 		return null;

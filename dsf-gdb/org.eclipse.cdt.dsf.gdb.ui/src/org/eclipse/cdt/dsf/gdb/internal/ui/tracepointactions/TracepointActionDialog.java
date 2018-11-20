@@ -63,8 +63,8 @@ public class TracepointActionDialog extends Dialog {
 	private static final String TRACEPOINT_ACTION_DIALOG_LAST_SELECTED = "TracepointActionDialog.lastSelectedAction"; //$NON-NLS-1$
 
 	private static final int TRACEPOINT_ACTIONS_COUNT = 3;
-	
-	private Composite actionArea; 	
+
+	private Composite actionArea;
 	private Composite[] actionComposites;
 	private ITracepointAction tracepointAction;
 	private IBreakpointActionPage actionPage;
@@ -77,20 +77,20 @@ public class TracepointActionDialog extends Dialog {
 	private int lastSelectedActionTypeIndex;
 	private IBreakpointAction originalAction;
 	private boolean isSubAction;
-	
+
 	// If this dialog is for a "while-stepping" action, we keep track
 	// of the parent global list, so that it can be updated.
 	private TracepointGlobalActionsList parentGlobalList;
 
 	private IExtension[] breakpointActionPageExtensions;
-	
+
 	private static final Point MINIMUM_SIZE = new Point(440, 540);
 
 	/**
 	 * Create the dialog
 	 */
-	public TracepointActionDialog(Shell parentShell, ITracepointAction action,
-			                      TracepointGlobalActionsList parentList, boolean isSub) {
+	public TracepointActionDialog(Shell parentShell, ITracepointAction action, TracepointGlobalActionsList parentList,
+			boolean isSub) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 		originalAction = action;
@@ -161,14 +161,16 @@ public class TracepointActionDialog extends Dialog {
 		tracepointActions.add(new CollectAction());
 		tracepointActions.add(new EvaluateAction());
 		// Sub actions of whileStepping cannot be whileStepping
-		if (!isSubAction) tracepointActions.add(new WhileSteppingAction());
-		
+		if (!isSubAction)
+			tracepointActions.add(new WhileSteppingAction());
+
 		actionPages = new IBreakpointActionPage[TRACEPOINT_ACTIONS_COUNT];
 		actionComposites = new Composite[TRACEPOINT_ACTIONS_COUNT];
 
 		if (!tracepointActions.isEmpty()) {
 
-			String lastTypeName = GdbUIPlugin.getDefault().getPreferenceStore().getString(TRACEPOINT_ACTION_DIALOG_LAST_SELECTED);
+			String lastTypeName = GdbUIPlugin.getDefault().getPreferenceStore()
+					.getString(TRACEPOINT_ACTION_DIALOG_LAST_SELECTED);
 
 			if (tracepointAction != null) {
 				lastTypeName = tracepointAction.getTypeName();
@@ -177,17 +179,17 @@ public class TracepointActionDialog extends Dialog {
 
 			for (int i = 0; i < tracepointActions.size(); i++) {
 				tracepointActions.get(i).setName(tracepointActions.get(i).getDefaultName());
-				String actionTypeName =  tracepointActions.get(i).getTypeName();
+				String actionTypeName = tracepointActions.get(i).getTypeName();
 				combo.add(actionTypeName);
 				if (actionTypeName.equals(lastTypeName)) {
 					lastSelectedActionTypeIndex = i;
 					if (tracepointAction != null) {
 						tracepointActions.add(i, tracepointAction);
-						tracepointActions.remove(i+1);
+						tracepointActions.remove(i + 1);
 					}
 				}
 			}
-			
+
 			combo.select(lastSelectedActionTypeIndex);
 			if (originalAction != null)
 				combo.setEnabled(false);
@@ -224,7 +226,8 @@ public class TracepointActionDialog extends Dialog {
 	@Override
 	protected void okPressed() {
 		if (originalAction == null)
-			GdbUIPlugin.getDefault().getPreferenceStore().setValue(TRACEPOINT_ACTION_DIALOG_LAST_SELECTED, tracepointAction.getTypeName());
+			GdbUIPlugin.getDefault().getPreferenceStore().setValue(TRACEPOINT_ACTION_DIALOG_LAST_SELECTED,
+					tracepointAction.getTypeName());
 		String newName = actionNameTextWidget.getText();
 		if (originalAction == null || !originalAction.getName().equals(newName)) {
 			actionName = TracepointActionManager.getInstance().makeUniqueActionName(newName);
@@ -245,11 +248,12 @@ public class TracepointActionDialog extends Dialog {
 			actionPages[selectedTypeIndex] = getActionPage(tracepointActions.get(selectedTypeIndex));
 			actionPage = actionPages[selectedTypeIndex];
 			if (actionPage instanceof WhileSteppingActionPage) {
-				((WhileSteppingActionPage)actionPage).setParentGlobalList(parentGlobalList);
+				((WhileSteppingActionPage) actionPage).setParentGlobalList(parentGlobalList);
 			}
 		}
 		if (actionComposites[selectedTypeIndex] == null) {
-			Composite actionComposite = actionPages[selectedTypeIndex].createComposite(tracepointAction, actionArea, SWT.NONE);
+			Composite actionComposite = actionPages[selectedTypeIndex].createComposite(tracepointAction, actionArea,
+					SWT.NONE);
 			actionComposites[selectedTypeIndex] = actionComposite;
 		}
 		actionName = tracepointAction.getName();
@@ -262,7 +266,8 @@ public class TracepointActionDialog extends Dialog {
 
 	public IExtension[] getBreakpointActionPageExtensions() {
 		if (breakpointActionPageExtensions == null) {
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CDebugUIPlugin.PLUGIN_ID, BREAKPOINT_ACTION_PAGE_EXTENSION_POINT_ID);
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CDebugUIPlugin.PLUGIN_ID,
+					BREAKPOINT_ACTION_PAGE_EXTENSION_POINT_ID);
 			if (point == null)
 				breakpointActionPageExtensions = new IExtension[0];
 			else {
@@ -296,22 +301,20 @@ public class TracepointActionDialog extends Dialog {
 		return actionPageResult;
 	}
 
-
 	private void addDecorator(Composite parent, final Text control) {
-		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false); 
-		gd.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth(); 
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
 		control.setLayoutData(gd);
 
-		final ControlDecoration decoration = new ControlDecoration(control, SWT.TOP | SWT.LEFT, parent );
+		final ControlDecoration decoration = new ControlDecoration(control, SWT.TOP | SWT.LEFT, parent);
 		decoration.hide();
 		control.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				String name = control.getText();
 				if (name.trim().isEmpty()) {
-					decoration.setImage( 
-							FieldDecorationRegistry.getDefault().getFieldDecoration( 
-									FieldDecorationRegistry.DEC_ERROR).getImage());
+					decoration.setImage(FieldDecorationRegistry.getDefault()
+							.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR).getImage());
 					decoration.setDescriptionText(Messages.getString("ActionDialog.ErrEmptyName")); //$NON-NLS-1$
 					decoration.show();
 				} else {

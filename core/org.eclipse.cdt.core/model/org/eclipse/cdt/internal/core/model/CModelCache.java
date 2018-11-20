@@ -116,7 +116,7 @@ public class CModelCache {
 		case ICElement.C_ARCHIVE:
 		case ICElement.C_BINARY:
 		case ICElement.C_UNIT:
-			this.fileCache.put((IOpenable)element, info);
+			this.fileCache.put((IOpenable) element, info);
 			break;
 		default:
 			this.childrenCache.put(element, info);
@@ -138,7 +138,7 @@ public class CModelCache {
 		case ICElement.C_ARCHIVE:
 		case ICElement.C_BINARY:
 		case ICElement.C_UNIT:
-			this.fileCache.remove((IOpenable)element);
+			this.fileCache.remove((IOpenable) element);
 			break;
 		default:
 			this.childrenCache.remove(element);

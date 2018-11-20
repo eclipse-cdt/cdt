@@ -49,12 +49,13 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof IncludeReferenceProxy) {
-			final IIncludeReference ref = ((IncludeReferenceProxy)element).getReference();
+			final IIncludeReference ref = ((IncludeReferenceProxy) element).getReference();
 			final IPath uriPathLocation = ref.getPath().makeAbsolute();
-			final IContainer[] containers= ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(URIUtil.toURI(uriPathLocation));
+			final IContainer[] containers = ResourcesPlugin.getWorkspace().getRoot()
+					.findContainersForLocationURI(URIUtil.toURI(uriPathLocation));
 			if (containers.length > 0) {
 				// bug 192707, prefer the project the reference belongs to.
-				final ICProject prj= ref.getCProject();
+				final ICProject prj = ref.getCProject();
 				if (prj != null) {
 					for (int i = 0; i < containers.length; i++) {
 						final IContainer container = containers[i];
@@ -70,11 +71,11 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 				return decorateText(p.toString(), element);
 			}
 		} else if (element instanceof IIncludeReference) {
-			IIncludeReference ref = (IIncludeReference)element;
+			IIncludeReference ref = (IIncludeReference) element;
 			Object parent = ref.getParent();
 			if (parent instanceof IIncludeReference) {
 				IPath p = ref.getPath();
-				IPath parentLocation = ((IIncludeReference)parent).getPath();
+				IPath parentLocation = ((IIncludeReference) parent).getPath();
 				if (parentLocation.isPrefixOf(p)) {
 					p = p.setDevice(null);
 					p = p.removeFirstSegments(parentLocation.segmentCount());
@@ -82,11 +83,11 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 				return decorateText(p.toString(), element);
 			}
 		} else if (element instanceof ITranslationUnit) {
-			ITranslationUnit unit = (ITranslationUnit)element;
+			ITranslationUnit unit = (ITranslationUnit) element;
 			Object parent = unit.getParent();
 			if (parent instanceof IIncludeReference) {
 				IPath p = unit.getPath();
-				IPath parentLocation = ((IIncludeReference)parent).getPath();
+				IPath parentLocation = ((IIncludeReference) parent).getPath();
 				if (parentLocation.isPrefixOf(p)) {
 					p = p.setDevice(null);
 					p = p.removeFirstSegments(parentLocation.segmentCount());
@@ -106,14 +107,16 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 	public Image getImage(Object element) {
 		String imageKey = null;
 		if (element instanceof IncludeReferenceProxy) {
-			IIncludeReference reference = ((IncludeReferenceProxy)element).getReference();
+			IIncludeReference reference = ((IncludeReferenceProxy) element).getReference();
 			IPath path = reference.getPath();
 			ICProject cproject = reference.getCProject();
 			IProject project = (cproject != null) ? cproject.getProject() : null;
-			for (IContainer containerInclude : ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(URIUtil.toURI(path.makeAbsolute()))) {
+			for (IContainer containerInclude : ResourcesPlugin.getWorkspace().getRoot()
+					.findContainersForLocationURI(URIUtil.toURI(path.makeAbsolute()))) {
 				IProject projectInclude = containerInclude.getProject();
 				boolean isProjectRelative = projectInclude != null && projectInclude.equals(project);
-				imageKey = LanguageSettingsImages.getImageKey(ICSettingEntry.INCLUDE_PATH, ICSettingEntry.VALUE_WORKSPACE_PATH, isProjectRelative);
+				imageKey = LanguageSettingsImages.getImageKey(ICSettingEntry.INCLUDE_PATH,
+						ICSettingEntry.VALUE_WORKSPACE_PATH, isProjectRelative);
 				if (isProjectRelative) {
 					break;
 				}

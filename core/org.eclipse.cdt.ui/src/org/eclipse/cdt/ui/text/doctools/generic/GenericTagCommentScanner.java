@@ -55,16 +55,17 @@ public class GenericTagCommentScanner extends BufferedRuleBasedScanner implement
 	 * @param docToken the token id associated with the enclosing comment
 	 * @param tagToken the token id associated with highlighting any recognized tags
 	 */
-	public GenericTagCommentScanner(GenericDocTag[] tags, char[] tagMarkers, ITokenStoreFactory tokenStoreFactory, String docToken, String tagToken) {
+	public GenericTagCommentScanner(GenericDocTag[] tags, char[] tagMarkers, ITokenStoreFactory tokenStoreFactory,
+			String docToken, String tagToken) {
 		Assert.isNotNull(tags);
 		Assert.isNotNull(tagMarkers);
-		
-		fTags= tags;
-		fTagMarkers= tagMarkers;
-		fTagToken= tagToken;
 
-		fTokenStore= tokenStoreFactory.createTokenStore(mkArray(docToken, tagToken));
-		fDefaultTokenProperty= docToken;
+		fTags = tags;
+		fTagMarkers = tagMarkers;
+		fTagToken = tagToken;
+
+		fTokenStore = tokenStoreFactory.createTokenStore(mkArray(docToken, tagToken));
+		fDefaultTokenProperty = docToken;
 
 		setRules(createRules());
 	}
@@ -82,16 +83,17 @@ public class GenericTagCommentScanner extends BufferedRuleBasedScanner implement
 	 * @return the rules to use in this scanner
 	 */
 	protected IRule[] createRules() {
-		List<IRule> result= new ArrayList<IRule>();
+		List<IRule> result = new ArrayList<IRule>();
 
 		class TagDetector implements IWordDetector {
 			@Override
 			public boolean isWordStart(char c) {
-				for (int i= 0; i < fTagMarkers.length; i++)
+				for (int i = 0; i < fTagMarkers.length; i++)
 					if (fTagMarkers[i] == c)
 						return true;
 				return false;
 			}
+
 			@Override
 			public boolean isWordPart(char c) {
 				return c == '.' || Character.isJavaIdentifierPart(c);
@@ -99,17 +101,17 @@ public class GenericTagCommentScanner extends BufferedRuleBasedScanner implement
 		}
 
 		setDefaultReturnToken(fTokenStore.getToken(fDefaultTokenProperty));
-		WordRule wr= new WordRule(new TagDetector(), fDefaultReturnToken);
-		for (int i= 0; i < fTags.length; i++) {
-			String wd= fTags[i].getTagName();
-			for (int j= 0; j < fTagMarkers.length; j++) {
+		WordRule wr = new WordRule(new TagDetector(), fDefaultReturnToken);
+		for (int i = 0; i < fTags.length; i++) {
+			String wd = fTags[i].getTagName();
+			for (int j = 0; j < fTagMarkers.length; j++) {
 				wr.addWord(fTagMarkers[j] + wd, fTokenStore.getToken(fTagToken));
 			}
 		}
 		result.add(wr);
 
 		// Add rule for Task Tags.
-		fTaskTagRule= new TaskTagRule(fTokenStore.getToken(PreferenceConstants.EDITOR_TASK_TAG_COLOR),
+		fTaskTagRule = new TaskTagRule(fTokenStore.getToken(PreferenceConstants.EDITOR_TASK_TAG_COLOR),
 				fDefaultReturnToken, fTokenStore.getPreferenceStore(), fCorePreferenceStore);
 		result.add(fTaskTagRule);
 
@@ -134,7 +136,7 @@ public class GenericTagCommentScanner extends BufferedRuleBasedScanner implement
 		}
 		fTaskTagRule.adaptToPreferenceChange(event);
 	}
-	
+
 	private static String[] mkArray(String defaultTokenProperty, String tagToken) {
 		return new String[] { defaultTokenProperty, tagToken, PreferenceConstants.EDITOR_TASK_TAG_COLOR };
 	}

@@ -15,16 +15,15 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represent a preprocessor #else statement.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTPreprocessorElseStatement extends
-		IASTPreprocessorStatement {
+public interface IASTPreprocessorElseStatement extends IASTPreprocessorStatement {
 
 	/**
 	 * Was this #else branch taken?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean taken();

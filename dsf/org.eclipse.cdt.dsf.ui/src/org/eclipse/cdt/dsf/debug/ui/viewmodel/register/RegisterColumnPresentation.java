@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -20,64 +20,64 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * 
+ *
  */
 public class RegisterColumnPresentation implements IColumnPresentation {
 
-    public static final String ID = DsfUIPlugin.PLUGIN_ID + ".REGISTERS_COLUMN_PRESENTATION_ID"; //$NON-NLS-1$
+	public static final String ID = DsfUIPlugin.PLUGIN_ID + ".REGISTERS_COLUMN_PRESENTATION_ID"; //$NON-NLS-1$
 
-    @Override
+	@Override
 	public void init(IPresentationContext context) {
-    }
-    
-    @Override
+	}
+
+	@Override
 	public void dispose() {
-    }
+	}
 
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getAvailableColumns()
-    @Override
+	// @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getAvailableColumns()
+	@Override
 	public String[] getAvailableColumns() {
-        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION,  };
-    }
+		return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE,
+				IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION, };
+	}
 
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getHeader(java.lang.String)
-    @Override
+	// @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getHeader(java.lang.String)
+	@Override
 	public String getHeader(String id) {
-        if (IDebugVMConstants.COLUMN_ID__NAME.equals(id)) {
-            return MessagesForRegisterVM.RegisterColumnPresentation_name; 
-        } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(id)) {
-            return MessagesForRegisterVM.RegisterColumnPresentation_type;
-        } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(id)) {
-            return MessagesForRegisterVM.RegisterColumnPresentation_value;
-        } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(id)) {
-            return MessagesForRegisterVM.RegisterColumnPresentation_description;
-        }
-        return null;
-    }
+		if (IDebugVMConstants.COLUMN_ID__NAME.equals(id)) {
+			return MessagesForRegisterVM.RegisterColumnPresentation_name;
+		} else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(id)) {
+			return MessagesForRegisterVM.RegisterColumnPresentation_type;
+		} else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(id)) {
+			return MessagesForRegisterVM.RegisterColumnPresentation_value;
+		} else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(id)) {
+			return MessagesForRegisterVM.RegisterColumnPresentation_description;
+		}
+		return null;
+	}
 
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getId()
-    @Override
+	// @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getId()
+	@Override
 	public String getId() {
-        return ID;
-    }
-    
-    @Override
+		return ID;
+	}
+
+	@Override
 	public ImageDescriptor getImageDescriptor(String id) {
-        return null;
-    } 
+		return null;
+	}
 
-
-    
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getInitialColumns()
-    @Override
+	// @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getInitialColumns()
+	@Override
 	public String[] getInitialColumns() {
-        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION };
-    }
-    
-    // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#isOptional()
-    @Override
+		return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__VALUE,
+				IDebugVMConstants.COLUMN_ID__DESCRIPTION };
+	}
+
+	// @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#isOptional()
+	@Override
 	public boolean isOptional() {
-        return true;
-    }
+		return true;
+	}
 
 }

@@ -31,7 +31,7 @@ public class CPElementAttribute {
 
 	/**
 	 * Returns the key.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getKey() {
@@ -40,7 +40,7 @@ public class CPElementAttribute {
 
 	/**
 	 * Returns the value.
-	 * 
+	 *
 	 * @return Object
 	 */
 	public Object getValue() {

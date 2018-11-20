@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,7 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
  * Sutter/Andrei Alexandresscu "C++ Coding Standards", Rule 73
  * "Throw by value, catch by reference".
  * For one thing, this avoids copying and potentially slicing the exception.
- * 
+ *
  */
 public class CatchByReference extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.CatchByReference"; //$NON-NLS-1$
@@ -76,7 +76,8 @@ public class CatchByReference extends AbstractIndexAstChecker {
 									IASTName tname = ((IASTNamedTypeSpecifier) spec).getName();
 									IType typeName = (IType) tname.resolveBinding();
 									typeName = CxxAstUtils.unwindTypedef(typeName);
-									if (typeName instanceof IBasicType || typeName instanceof IPointerType || typeName == null)
+									if (typeName instanceof IBasicType || typeName instanceof IPointerType
+											|| typeName == null)
 										continue;
 									if (typeName instanceof IProblemBinding && !shouldReportForUnknownType())
 										continue;
@@ -98,7 +99,7 @@ public class CatchByReference extends AbstractIndexAstChecker {
 
 		/**
 		 * If it uses reference or pointer
-		 * 
+		 *
 		 * @param catchHandler
 		 * @return
 		 */
@@ -127,7 +128,8 @@ public class CatchByReference extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_UNKNOWN_TYPE, CheckersMessages.CatchByReference_ReportForUnknownType, Boolean.FALSE);
+		addPreference(problem, PARAM_UNKNOWN_TYPE, CheckersMessages.CatchByReference_ReportForUnknownType,
+				Boolean.FALSE);
 		addListPreference(problem, PARAM_EXCEPT_ARG_LIST, CheckersMessages.GenericParameter_ParameterExceptions,
 				CheckersMessages.GenericParameter_ParameterExceptionsItem);
 	}

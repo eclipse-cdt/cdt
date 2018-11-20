@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This is an initializer that is simply an expression.
- * 
+ *
  * @deprecated Replaced by {@link IASTEqualsInitializer}.
  * @noreference This interface is not intended to be referenced by clients.
  */
@@ -29,19 +29,19 @@ public interface IASTInitializerExpression extends IASTEqualsInitializer {
 
 	/**
 	 * Get the expression for the initializer.
-	 * 
+	 *
 	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getExpression();
 
 	/**
 	 * Set the initializer's expression.
-	 * 
+	 *
 	 * @param expression
 	 *            <code>IASTExpression</code>
 	 */
 	public void setExpression(IASTExpression expression);
-	
+
 	/**
 	 * @since 5.1
 	 */

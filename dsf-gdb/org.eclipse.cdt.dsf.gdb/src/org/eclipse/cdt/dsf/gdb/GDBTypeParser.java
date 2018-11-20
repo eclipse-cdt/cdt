@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial implementation
  *     Anders Dahlberg (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * GDB Type Parser (duplicate of org.eclipse.cdt.debug.mi.core.GDBTypeParser)
  * The code was lifted from: The C Programming Language
  * B. W. Kernighan and D. Ritchie
- * 
+ *
  * @since 3.0
  */
 public class GDBTypeParser {
@@ -35,7 +35,7 @@ public class GDBTypeParser {
 	//             direct-dcl '(' ')'
 	//             direct-dcl '[' integer ']'
 	// name: ([a-zA-z][0-9])+
-	// integer ([0-9)+ 
+	// integer ([0-9)+
 
 	private static final int EOF = -1;
 	private static final int NAME = 0;
@@ -66,8 +66,8 @@ public class GDBTypeParser {
 		// Sanity.
 		String s = (gdbTypeString == null) ? "" : gdbTypeString; //$NON-NLS-1$
 
-		s = Pattern.compile("\\bconst\\b").matcher(s).replaceAll("");  //$NON-NLS-1$//$NON-NLS-2$
-		s = Pattern.compile("\\bvolatile\\b").matcher(s).replaceAll("");  //$NON-NLS-1$//$NON-NLS-2$
+		s = Pattern.compile("\\bconst\\b").matcher(s).replaceAll(""); //$NON-NLS-1$//$NON-NLS-2$
+		s = Pattern.compile("\\bvolatile\\b").matcher(s).replaceAll(""); //$NON-NLS-1$//$NON-NLS-2$
 		s = s.trim();
 
 		// Initialize.
@@ -90,14 +90,14 @@ public class GDBTypeParser {
 		// We are only interested in "class A"
 		// Carefull for class A::data or class ns::A<ns::data>
 		int column = dataType.indexOf(':');
-        while (column > 0) {
-            if ((column + 2) < dataType.length() && dataType.charAt(column + 1) == ':') {
-                column = dataType.indexOf(':', column+2);
-                continue;
-            }
-            dataType = dataType.substring(0, column);
-            break;
-        }
+		while (column > 0) {
+			if ((column + 2) < dataType.length() && dataType.charAt(column + 1) == ':') {
+				column = dataType.indexOf(':', column + 2);
+				continue;
+			}
+			dataType = dataType.substring(0, column);
+			break;
+		}
 		genericType = new GDBType(dataType);
 
 		// Start the recursive parser.
@@ -105,13 +105,13 @@ public class GDBTypeParser {
 		return getGDBType();
 	}
 
-	public static String unParse (GDBType gdbParentType) {
+	public static String unParse(GDBType gdbParentType) {
 		StringBuilder sb = new StringBuilder();
 		GDBType gdbType = gdbParentType;
 		// Fetch the datatype.
 		while (gdbType != null) {
 			if (gdbType instanceof GDBDerivedType) {
-				GDBDerivedType derived = (GDBDerivedType)gdbType;
+				GDBDerivedType derived = (GDBDerivedType) gdbType;
 				int type = derived.getType();
 				gdbType = derived.getChild();
 				switch (type) {
@@ -150,13 +150,13 @@ public class GDBTypeParser {
 		switch (getChildType(gdbType)) {
 		case GDBType.POINTER:
 		case GDBType.REFERENCE:
-			sb.append(prefix); 
+			sb.append(prefix);
 			break;
 		case GDBType.GENERIC:
 			sb.insert(0, prefix);
 			break;
 		default:
-			sb.insert(0, "("+prefix).append(')'); //$NON-NLS-1$
+			sb.insert(0, "(" + prefix).append(')'); //$NON-NLS-1$
 			break;
 		}
 	}
@@ -240,18 +240,18 @@ public class GDBTypeParser {
 		public String verbose() {
 			StringBuilder sb = new StringBuilder();
 			switch (getType()) {
-				case FUNCTION :
-					sb.append(" function returning ").append(hasChild() ? child.verbose() : "");  //$NON-NLS-1$//$NON-NLS-2$
-					break;
-				case ARRAY :
-					sb.append(" array[").append(dimension).append("] of ").append(hasChild() ? child.verbose() : "");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-					break;
-				case REFERENCE :
-					sb.append(" reference to ").append(hasChild() ? child.verbose() : "");  //$NON-NLS-1$//$NON-NLS-2$
-					break;
-				case POINTER :
-					sb.append(" pointer to ").append(hasChild() ? child.verbose() : "");  //$NON-NLS-1$//$NON-NLS-2$
-					break;
+			case FUNCTION:
+				sb.append(" function returning ").append(hasChild() ? child.verbose() : ""); //$NON-NLS-1$//$NON-NLS-2$
+				break;
+			case ARRAY:
+				sb.append(" array[").append(dimension).append("] of ").append(hasChild() ? child.verbose() : ""); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				break;
+			case REFERENCE:
+				sb.append(" reference to ").append(hasChild() ? child.verbose() : ""); //$NON-NLS-1$//$NON-NLS-2$
+				break;
+			case POINTER:
+				sb.append(" pointer to ").append(hasChild() ? child.verbose() : ""); //$NON-NLS-1$//$NON-NLS-2$
+				break;
 			}
 			return sb.toString();
 		}
@@ -310,9 +310,9 @@ public class GDBTypeParser {
 			GDBDerivedType dType = gdbDerivedType;
 			GDBType gdbType = gdbDerivedType.getChild();
 			while (gdbType instanceof GDBDerivedType) {
-				dType = (GDBDerivedType)gdbType;
+				dType = (GDBDerivedType) gdbType;
 				gdbType = dType.getChild();
-			}				
+			}
 			gdbType = createGDBDerivedType(gdbType, kind, d);
 			dType.setChild(gdbType);
 		}
@@ -338,14 +338,14 @@ public class GDBTypeParser {
 				tokenType = PARENS;
 			} else if (isCIdentifierStart(c)) {
 				int i = 0;
-				token += (char)c;
+				token += (char) c;
 				while (i == 0 && c != ')') {
 					if (c == EOF) {
 						// Unbalanced parantheses.
 						break;
 					}
 					c = getch();
-					token += (char)c;
+					token += (char) c;
 					if (c == '(') {
 						++i;
 					} else if (c == ')') {
@@ -357,8 +357,6 @@ public class GDBTypeParser {
 				ungetch();
 				tokenType = '(';
 			}
-			
-			
 
 		} else if (c == '[') {
 			while ((c = getch()) != ']' && c != EOF) {
@@ -366,31 +364,31 @@ public class GDBTypeParser {
 			}
 			tokenType = BRACKETS;
 		} else if (isCIdentifierStart(c)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append((char) c);
+			StringBuilder sb = new StringBuilder();
+			sb.append((char) c);
 			while (isCIdentifierPart((c = getch())) && c != EOF) {
-                sb.append((char) c);
+				sb.append((char) c);
 			}
-            if (c == '<') {
-                // Swallow template args in types like "class foobar<A,B> : public C {..} *"
-                // FIXME: if the bracket is not terminate do we throw exception?
-                sb.append((char) c);
-                int count = 1;
-                do {
-                    c = getch();
-                    if (c == '<') {
-                        count++;
-                    } else if (c == '>') {
-                        count--;
-                    }
-                    if (c != ' ') {
-                    	sb.append((char)c);
-                    }
-                } while (count > 0 && c != EOF);
-            } else if (c != EOF) {
+			if (c == '<') {
+				// Swallow template args in types like "class foobar<A,B> : public C {..} *"
+				// FIXME: if the bracket is not terminate do we throw exception?
+				sb.append((char) c);
+				int count = 1;
+				do {
+					c = getch();
+					if (c == '<') {
+						count++;
+					} else if (c == '>') {
+						count--;
+					}
+					if (c != ' ') {
+						sb.append((char) c);
+					}
+				} while (count > 0 && c != EOF);
+			} else if (c != EOF) {
 				ungetch();
 			}
-            token = sb.toString();
+			token = sb.toString();
 			tokenType = NAME;
 		} else if (c == '{') {
 			// Swallow gdb sends things like "struct foobar {..} *"
@@ -452,7 +450,7 @@ public class GDBTypeParser {
 			name = " " + token; //$NON-NLS-1$
 		} else if (tokenType == PARENS) {
 			insertingChild(GDBType.FUNCTION);
-		} else if (tokenType == BRACKETS) {			
+		} else if (tokenType == BRACKETS) {
 			int len = 0;
 			if (!token.isEmpty()) {
 				try {
@@ -483,7 +481,7 @@ public class GDBTypeParser {
 			}
 		}
 	}
-	
+
 	/**
 	 * @since 4.4
 	 */
@@ -519,13 +517,13 @@ public class GDBTypeParser {
 		System.out.println(parser.getGDBType().verbose());
 		System.out.println();
 
-        System.out.println("class ns::link<8, ns::A> : public ns::B { int i; int j; struct link * next;} *"); //$NON-NLS-1$
-        parser.parse("class ns::link<8, ns::A> : public ns::B { int i; int j; struct link * next;} *"); //$NON-NLS-1$
-        System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
-        System.out.println(parser.getGDBType().verbose());
-        System.out.println();
+		System.out.println("class ns::link<8, ns::A> : public ns::B { int i; int j; struct link * next;} *"); //$NON-NLS-1$
+		parser.parse("class ns::link<8, ns::A> : public ns::B { int i; int j; struct link * next;} *"); //$NON-NLS-1$
+		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
+		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
 
-        System.out.println("char **argv"); //$NON-NLS-1$
+		System.out.println("char **argv"); //$NON-NLS-1$
 		parser.parse("char **argv"); //$NON-NLS-1$
 		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
 		System.out.println(parser.getGDBType().verbose());

@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2018 PalmSource, Inc. and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0 
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * Ewa Matejska (PalmSource)
- * 
+ *
  * Referenced GDBDebuggerPage code to write this.
  * Anna Dushistova (Mentor Graphics) - adapted from RemoteGDBDebuggerPage
  * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
@@ -39,48 +39,46 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
-public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage{
+public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage {
 
 	protected Text fGDBServerCommandText;
 
 	protected Text fGDBServerPortNumberText;
 
 	protected Text fGDBServerOptionsText;
-	
+
 	protected Button fRemoteTimeoutEnabledCheckbox;
-	
+
 	protected Text fRemoteTimeoutValueText;
 
 	private boolean fIsInitializing = false;
 
-	
 	public RemoteDSFGDBDebuggerPage() {
 		super();
 	}
 
-	
 	@Override
 	public String getName() {
 		return Messages.Remote_GDB_Debugger_Options;
 	}
-	
+
 	@Override
-	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
-		configuration.setAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND, 
-									IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND_DEFAULT );
-		configuration.setAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT,
-									IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT_DEFAULT );
-		configuration.setAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS,
-									IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS_DEFAULT );
-		configuration.setAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
-									LaunchUtils.getRemoteTimeoutEnabledDefault());
-		configuration.setAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
-									LaunchUtils.getRemoteTimeoutValueDefault());
+		configuration.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND,
+				IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
+		configuration.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT,
+				IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT_DEFAULT);
+		configuration.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS,
+				IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS_DEFAULT);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
+				LaunchUtils.getRemoteTimeoutEnabledDefault());
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
+				LaunchUtils.getRemoteTimeoutValueDefault());
 	}
-	
+
 	@Override
-	public void initializeFrom( ILaunchConfiguration configuration ) {
+	public void initializeFrom(ILaunchConfiguration configuration) {
 		setInitializing(true);
 		super.initializeFrom(configuration);
 
@@ -90,147 +88,146 @@ public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage{
 		boolean remoteTimeoutEnabled = false;
 		String remoteTimeoutValue = null;
 		try {
-			gdbserverCommand = configuration.getAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND,
-														   IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
-		}
-		catch( CoreException e ) {
-		}
-		try {
-			gdbserverPortNumber = configuration.getAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT,
-															  IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT_DEFAULT );
-		}
-		catch( CoreException e ) {
+			gdbserverCommand = configuration.getAttribute(
+					IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND,
+					IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
+		} catch (CoreException e) {
 		}
 		try {
-			gdbserverOptions = configuration.getAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS,
-														   IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS_DEFAULT );
-		}
-		catch( CoreException e ) {
-		}
-		try {
-			remoteTimeoutEnabled = configuration.getAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
-														   LaunchUtils.getRemoteTimeoutEnabledDefault() );
-		}
-		catch( CoreException e ) {
+			gdbserverPortNumber = configuration.getAttribute(
+					IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT,
+					IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT_DEFAULT);
+		} catch (CoreException e) {
 		}
 		try {
-			remoteTimeoutValue = configuration.getAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
-															   LaunchUtils.getRemoteTimeoutValueDefault() );
+			gdbserverOptions = configuration.getAttribute(
+					IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS,
+					IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS_DEFAULT);
+		} catch (CoreException e) {
 		}
-		catch( CoreException e ) {
+		try {
+			remoteTimeoutEnabled = configuration.getAttribute(
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
+					LaunchUtils.getRemoteTimeoutEnabledDefault());
+		} catch (CoreException e) {
 		}
-		fGDBServerCommandText.setText( gdbserverCommand );
-		fGDBServerPortNumberText.setText( gdbserverPortNumber );
-		fGDBServerOptionsText.setText( gdbserverOptions );
-		fRemoteTimeoutEnabledCheckbox.setSelection( remoteTimeoutEnabled );
-		fRemoteTimeoutValueText.setText( remoteTimeoutValue );
+		try {
+			remoteTimeoutValue = configuration.getAttribute(
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
+					LaunchUtils.getRemoteTimeoutValueDefault());
+		} catch (CoreException e) {
+		}
+		fGDBServerCommandText.setText(gdbserverCommand);
+		fGDBServerPortNumberText.setText(gdbserverPortNumber);
+		fGDBServerOptionsText.setText(gdbserverOptions);
+		fRemoteTimeoutEnabledCheckbox.setSelection(remoteTimeoutEnabled);
+		fRemoteTimeoutValueText.setText(remoteTimeoutValue);
 		remoteTimeoutEnabledChanged();
 		setInitializing(false);
 	}
-	
+
 	@Override
-	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		super.performApply(configuration);
 		String str = fGDBServerCommandText.getText();
 		str.trim();
-		configuration.setAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND, str );
+		configuration.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND, str);
 		str = fGDBServerPortNumberText.getText();
 		str.trim();
-		configuration.setAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT, str );
+		configuration.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT, str);
 		str = fGDBServerOptionsText.getText();
 		str.trim();
-		configuration.setAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS, str );
+		configuration.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS, str);
 		boolean b = fRemoteTimeoutEnabledCheckbox.getSelection();
-		configuration.setAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED, b );
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED, b);
 		str = fRemoteTimeoutValueText.getText();
 		str.trim();
-		configuration.setAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE, str );
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE, str);
 	}
-	
-	protected void createGdbserverSettingsTab( TabFolder tabFolder ) {
-		TabItem tabItem = new TabItem( tabFolder, SWT.NONE );
-		tabItem.setText( Messages.Gdbserver_Settings_Tab_Name );
-		
+
+	protected void createGdbserverSettingsTab(TabFolder tabFolder) {
+		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+		tabItem.setText(Messages.Gdbserver_Settings_Tab_Name);
+
 		Composite comp = new Composite(tabFolder, SWT.NULL);
 		comp.setLayout(new GridLayout(1, true));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
-		comp.setFont( tabFolder.getFont() );
-		tabItem.setControl( comp );
-		
+		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
+		comp.setFont(tabFolder.getFont());
+		tabItem.setControl(comp);
+
 		Composite subComp = new Composite(comp, SWT.NULL);
 		subComp.setLayout(new GridLayout(2, true));
 		subComp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
-		subComp.setFont( tabFolder.getFont() );
-		
-		Label label = new Label(subComp, SWT.LEFT);		
+		((GridLayout) subComp.getLayout()).makeColumnsEqualWidth = false;
+		subComp.setFont(tabFolder.getFont());
+
+		Label label = new Label(subComp, SWT.LEFT);
 		label.setText(Messages.Gdbserver_name_textfield_label);
 		GridData gd = new GridData();
-		label.setLayoutData( gd );
-		
-		
+		label.setLayoutData(gd);
+
 		fGDBServerCommandText = new Text(subComp, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
 		fGDBServerCommandText.setLayoutData(data);
-		fGDBServerCommandText.addModifyListener( new ModifyListener() {
+		fGDBServerCommandText.addModifyListener(new ModifyListener() {
 
-			public void modifyText( ModifyEvent evt ) {
+			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
-		} );
+		});
 		label = new Label(subComp, SWT.LEFT);
 		label.setText(Messages.Port_number_textfield_label);
 		gd = new GridData();
-		label.setLayoutData( gd );
-		
+		label.setLayoutData(gd);
+
 		fGDBServerPortNumberText = new Text(subComp, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(SWT.FILL, SWT.TOP, true, false);
 		fGDBServerPortNumberText.setLayoutData(data);
-		fGDBServerPortNumberText.addModifyListener( new ModifyListener() {
+		fGDBServerPortNumberText.addModifyListener(new ModifyListener() {
 
-			public void modifyText( ModifyEvent evt ) {
+			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
-		} );
+		});
 		label = new Label(subComp, SWT.LEFT);
 		label.setText(Messages.Gdbserver_options_textfield_label);
 		gd = new GridData();
-		label.setLayoutData( gd );
+		label.setLayoutData(gd);
 
 		fGDBServerOptionsText = new Text(subComp, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(SWT.FILL, SWT.TOP, true, false);
 		fGDBServerOptionsText.setLayoutData(data);
-		fGDBServerOptionsText.addModifyListener( new ModifyListener() {
+		fGDBServerOptionsText.addModifyListener(new ModifyListener() {
 
-			public void modifyText( ModifyEvent evt ) {
+			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
-		} );
+		});
 
 		fRemoteTimeoutEnabledCheckbox = new Button(subComp, SWT.CHECK);
 		fRemoteTimeoutEnabledCheckbox.setText(Messages.Remotetimeout_label);
 		fRemoteTimeoutEnabledCheckbox.setToolTipText(Messages.Remotetimeout_tooltip);
 		gd = new GridData();
-		fRemoteTimeoutEnabledCheckbox.setLayoutData( gd );
-		fRemoteTimeoutEnabledCheckbox.addSelectionListener( new SelectionAdapter() {
+		fRemoteTimeoutEnabledCheckbox.setLayoutData(gd);
+		fRemoteTimeoutEnabledCheckbox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				remoteTimeoutEnabledChanged();
 				updateLaunchConfigurationDialog();
 			}
-		} );
+		});
 
 		fRemoteTimeoutValueText = new Text(subComp, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(SWT.FILL, SWT.TOP, true, false);
 		fRemoteTimeoutValueText.setLayoutData(data);
 		fRemoteTimeoutValueText.setToolTipText(Messages.Remotetimeout_tooltip);
-		fRemoteTimeoutValueText.addModifyListener( new ModifyListener() {
+		fRemoteTimeoutValueText.addModifyListener(new ModifyListener() {
 
-			public void modifyText( ModifyEvent evt ) {
+			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
-		} );
+		});
 		remoteTimeoutEnabledChanged();
 	}
 
@@ -242,9 +239,9 @@ public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage{
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#createTabs(org.eclipse.swt.widgets.TabFolder)
 	 */
 	@Override
-	public void createTabs( TabFolder tabFolder ) {
-		super.createTabs( tabFolder );
-		createGdbserverSettingsTab( tabFolder );
+	public void createTabs(TabFolder tabFolder) {
+		super.createTabs(tabFolder);
+		createGdbserverSettingsTab(tabFolder);
 	}
 
 	@Override

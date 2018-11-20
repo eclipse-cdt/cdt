@@ -62,18 +62,18 @@ import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
 
 /**
  * Tests the C/C++ Editor's occurrence marking feature.
- * 
+ *
  * @since 5.0
  */
 public class MarkOccurrenceTest extends BaseUITestCase {
 	private static final String PROJECT = "MarkOccurrenceTest";
 
-	private static final String OCCURRENCE_ANNOTATION= "org.eclipse.cdt.ui.occurrences";
-	private static final String WRITE_OCCURRENCE_ANNOTATION= "org.eclipse.cdt.ui.occurrences.write";
-	
-	private static final RGB fgHighlightRGB= getHighlightRGB();
-	private static final RGB fgWriteHighlightRGB= getWriteHighlightRGB();
-	
+	private static final String OCCURRENCE_ANNOTATION = "org.eclipse.cdt.ui.occurrences";
+	private static final String WRITE_OCCURRENCE_ANNOTATION = "org.eclipse.cdt.ui.occurrences.write";
+
+	private static final RGB fgHighlightRGB = getHighlightRGB();
+	private static final RGB fgWriteHighlightRGB = getWriteHighlightRGB();
+
 	private CEditor fEditor;
 	private IDocument fDocument;
 	private FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
@@ -88,7 +88,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 	protected static class MarkOccurrenceTestSetup extends TestSetup {
 		private ICProject fCProject;
-		
+
 		public MarkOccurrenceTestSetup(Test test) {
 			super(test);
 		}
@@ -96,30 +96,30 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
-			fCProject= EditorTestHelper.createCProject(PROJECT, "resources/ceditor", false, true);
+			fCProject = EditorTestHelper.createCProject(PROJECT, "resources/ceditor", false, true);
 		}
 
 		@Override
 		protected void tearDown() throws Exception {
 			if (fCProject != null)
 				CProjectHelper.delete(fCProject);
-			
+
 			super.tearDown();
 		}
 	}
-	
+
 	public static Test setUpTest(Test someTest) {
 		return new MarkOccurrenceTestSetup(someTest);
 	}
-	
+
 	public static Test suite() {
 		return setUpTest(new TestSuite(MarkOccurrenceTest.class));
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		if (!ResourcesPlugin.getWorkspace().getRoot().exists(new Path(PROJECT))) {
-			fProjectSetup= new MarkOccurrenceTestSetup(this);
+			fProjectSetup = new MarkOccurrenceTestSetup(this);
 			fProjectSetup.setUp();
 		}
 		assertNotNull(fgHighlightRGB);
@@ -127,31 +127,32 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		final IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_MARK_OCCURRENCES, true);
 		store.setValue(PreferenceConstants.EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES, true);
-		fEditor= openCEditor(new Path("/" + PROJECT + "/src/occurrences.cpp"));
+		fEditor = openCEditor(new Path("/" + PROJECT + "/src/occurrences.cpp"));
 		assertNotNull(fEditor);
-		fTextWidget= fEditor.getViewer().getTextWidget();
+		fTextWidget = fEditor.getViewer().getTextWidget();
 		assertNotNull(fTextWidget);
-		EditorTestHelper.joinReconciler((SourceViewer)fEditor.getViewer(), 10, 1000, 20);
-		fDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+		EditorTestHelper.joinReconciler((SourceViewer) fEditor.getViewer(), 10, 1000, 20);
+		fDocument = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		assertNotNull(fDocument);
-		fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		fAnnotationModel= fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
-	
-		fMatch= null;
-		fSelWASTListener= new ISelectionListenerWithAST() {
+		fFindReplaceDocumentAdapter = new FindReplaceDocumentAdapter(fDocument);
+		fAnnotationModel = fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
+
+		fMatch = null;
+		fSelWASTListener = new ISelectionListenerWithAST() {
 			@Override
 			public void selectionChanged(IEditorPart part, ITextSelection selection, IASTTranslationUnit astRoot) {
-				if (fMatch != null && selection != null && selection.getOffset() == fMatch.getOffset() && selection.getLength() == fMatch.getLength()) {
+				if (fMatch != null && selection != null && selection.getOffset() == fMatch.getOffset()
+						&& selection.getLength() == fMatch.getLength()) {
 					countOccurrences();
 				}
 			}
-	
+
 			private synchronized void countOccurrences() {
-				fOccurrences= 0;
-				fWriteOccurrences= 0;
-				Iterator<Annotation> iter= fAnnotationModel.getAnnotationIterator();
+				fOccurrences = 0;
+				fWriteOccurrences = 0;
+				Iterator<Annotation> iter = fAnnotationModel.getAnnotationIterator();
 				while (iter.hasNext()) {
-					Annotation annotation= iter.next();
+					Annotation annotation = iter.next();
 					if (annotation.getType().startsWith(OCCURRENCE_ANNOTATION))
 						fOccurrences++;
 					if (annotation.getType().equals(WRITE_OCCURRENCE_ANNOTATION))
@@ -161,24 +162,24 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		};
 		SelectionListenerWithASTManager.getDefault().addListener(fEditor, fSelWASTListener);
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		final IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		store.setToDefault(PreferenceConstants.EDITOR_MARK_OCCURRENCES);
-	    // TLETODO temporary fix for bug 314635
-		store.setToDefault(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX 
-				            + SemanticHighlightings.OVERLOADED_OPERATOR 
-				            + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX);
+		// TLETODO temporary fix for bug 314635
+		store.setToDefault(
+				PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + SemanticHighlightings.OVERLOADED_OPERATOR
+						+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX);
 		SelectionListenerWithASTManager.getDefault().removeListener(fEditor, fSelWASTListener);
 		EditorTestHelper.closeAllEditors();
 		if (fProjectSetup != null) {
 			fProjectSetup.tearDown();
 		}
 	}
-	
+
 	private CEditor openCEditor(IPath path) {
-		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		assertTrue(file != null && file.exists());
 		try {
 			return (CEditor) EditorTestHelper.openInEditor(file, true);
@@ -187,348 +188,347 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 			return null;
 		}
 	}
-	
+
 	public void testMarkTypeOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "ClassContainer", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "ClassContainer", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(3, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkTypeOccurrences2() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "Base1", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "Base1", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(5, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkTypeOccurrences3() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "Base2", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "Base2", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(3, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkTypedefOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "size_t", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "size_t", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(4, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkClassTemplateOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "TemplateClass", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "TemplateClass", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(3, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkTemplateParameterOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "T1", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "T1", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(3, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkTemplateIdOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "ConstantTemplate", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "ConstantTemplate", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(4, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkOccurrencesAfterEditorReuse() {
-		IPreferenceStore store= PlatformUI.getWorkbench().getPreferenceStore();
+		IPreferenceStore store = PlatformUI.getWorkbench().getPreferenceStore();
 		store.setValue("REUSE_OPEN_EDITORS_BOOLEAN", true);
-		
-		int reuseOpenEditors= store.getInt("REUSE_OPEN_EDITORS");
+
+		int reuseOpenEditors = store.getInt("REUSE_OPEN_EDITORS");
 		store.setValue("REUSE_OPEN_EDITORS", 1);
-		
+
 		SelectionListenerWithASTManager.getDefault().removeListener(fEditor, fSelWASTListener);
-		fEditor= openCEditor(new Path("/" + PROJECT + "/src/main.cpp"));
-		EditorTestHelper.joinReconciler((SourceViewer)fEditor.getViewer(), 10, 200, 20);
+		fEditor = openCEditor(new Path("/" + PROJECT + "/src/main.cpp"));
+		EditorTestHelper.joinReconciler((SourceViewer) fEditor.getViewer(), 10, 200, 20);
 		SelectionListenerWithASTManager.getDefault().addListener(fEditor, fSelWASTListener);
-		fDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+		fDocument = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		assertNotNull(fDocument);
-		fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
-		fAnnotationModel= fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
-		
+		fFindReplaceDocumentAdapter = new FindReplaceDocumentAdapter(fDocument);
+		fAnnotationModel = fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
+
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "main", true, true, false, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "main", true, true, false, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
-		fMatch= new Region(fMatch.getOffset(), 4);
+		fMatch = new Region(fMatch.getOffset(), 4);
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(1, 0);
 		assertOccurrencesInWidget();
-		
+
 		store.setValue("REUSE_OPEN_EDITORS_BOOLEAN", false);
 		store.setValue("REUSE_OPEN_EDITORS", reuseOpenEditors);
 	}
-	
+
 	public void testMarkMethodOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "pubMethod", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "pubMethod", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
-	
+
 	public void testMarkMethodOccurrences2() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "getNumber", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "getNumber", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
-	
+
 	public void testMarkFieldOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "pubField", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "pubField", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
-	
+
 	public void testMarkFieldOccurrences2() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "tArg1", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "tArg1", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(2, 2);
 		assertOccurrencesInWidget();
 	}
-	
+
 	public void testMarkConstructorOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "Base1(", true, true, false, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "Base1(", true, true, false, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
-		fMatch= new Region(fMatch.getOffset(), fMatch.getLength() - 1);
+		fMatch = new Region(fMatch.getOffset(), fMatch.getLength() - 1);
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkDestructorOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "~Base1", true, true, false, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "~Base1", true, true, false, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
-		fMatch= new Region(fMatch.getOffset() + 1, fMatch.getLength() - 1);
+		fMatch = new Region(fMatch.getOffset() + 1, fMatch.getLength() - 1);
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
-	
+
 	public void testMarkLocalOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "localVar", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "localVar", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(2, 1);
 		assertOccurrencesInWidget();
 	}
-	
+
 	public void testMarkMacroOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "INT", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "INT", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(5, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkEmptyMacroOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "EMPTY_MACRO", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "EMPTY_MACRO", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(3, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkEnumeratorOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "ONE", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "ONE", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkNamespaceOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "ns", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "ns", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(3, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkNamespaceVariableOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "namespaceVar", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "namespaceVar", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(4, 2);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkLabelOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "label", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "label", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
 
 	public void testMarkOperatorOccurrences() {
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "operator+", true, true, false, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "operator+", true, true, false, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
-	
-	
+
 	public void testNoOccurrencesIfDisabled() {
 		CUIPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.EDITOR_MARK_OCCURRENCES, false);
-		fOccurrences= Integer.MAX_VALUE;
+		fOccurrences = Integer.MAX_VALUE;
 		try {
-			fMatch= fFindReplaceDocumentAdapter.find(0, "Base1", true, true, true, false);
+			fMatch = fFindReplaceDocumentAdapter.find(0, "Base1", true, true, true, false);
 		} catch (BadLocationException e) {
 			fail();
 		}
 		assertNotNull(fMatch);
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
-		
+
 		assertOccurrences(0, 0);
 		assertOccurrencesInWidget();
 	}
@@ -562,35 +562,36 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 	private void assertOccurrencesInWidget() {
 		EditorTestHelper.runEventQueue(100);
 
-		Iterator<Annotation> iter= fAnnotationModel.getAnnotationIterator();
+		Iterator<Annotation> iter = fAnnotationModel.getAnnotationIterator();
 		while (iter.hasNext()) {
-			Annotation annotation= iter.next();
+			Annotation annotation = iter.next();
 			if (annotation.getType().startsWith(OCCURRENCE_ANNOTATION))
 				assertOccurrenceInWidget(fAnnotationModel.getPosition(annotation));
 		}
 	}
 
 	private void assertOccurrenceInWidget(Position position) {
-		StyleRange[] styleRanges= fTextWidget.getStyleRanges(position.offset, position.length);
-		for (int i= 0; i < styleRanges.length; i++) {
+		StyleRange[] styleRanges = fTextWidget.getStyleRanges(position.offset, position.length);
+		for (int i = 0; i < styleRanges.length; i++) {
 			if (styleRanges[i].background != null) {
-				RGB rgb= styleRanges[i].background.getRGB();
+				RGB rgb = styleRanges[i].background.getRGB();
 				if ((fgHighlightRGB.equals(rgb)) || (fgWriteHighlightRGB.equals(rgb)))
 					return;
 			}
 		}
 		fail();
 	}
-	
+
 	/**
 	 * Returns the occurrence annotation color.
 	 */
 	private static RGB getHighlightRGB() {
-		AnnotationPreference annotationPref= EditorsPlugin.getDefault().getAnnotationPreferenceLookup().getAnnotationPreference(OCCURRENCE_ANNOTATION);
-		IPreferenceStore store= EditorsUI.getPreferenceStore();
+		AnnotationPreference annotationPref = EditorsPlugin.getDefault().getAnnotationPreferenceLookup()
+				.getAnnotationPreference(OCCURRENCE_ANNOTATION);
+		IPreferenceStore store = EditorsUI.getPreferenceStore();
 		if (store != null)
 			return PreferenceConverter.getColor(store, annotationPref.getColorPreferenceKey());
-		
+
 		return null;
 	}
 
@@ -598,16 +599,17 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 	 * Returns the write occurrence annotation color.
 	 */
 	private static RGB getWriteHighlightRGB() {
-		AnnotationPreference annotationPref= EditorsPlugin.getDefault().getAnnotationPreferenceLookup().getAnnotationPreference(WRITE_OCCURRENCE_ANNOTATION);
-		IPreferenceStore store= EditorsUI.getPreferenceStore();
+		AnnotationPreference annotationPref = EditorsPlugin.getDefault().getAnnotationPreferenceLookup()
+				.getAnnotationPreference(WRITE_OCCURRENCE_ANNOTATION);
+		IPreferenceStore store = EditorsUI.getPreferenceStore();
 		if (store != null)
 			return PreferenceConverter.getColor(store, annotationPref.getColorPreferenceKey());
-		
+
 		return null;
 	}
 
 	private void assertOccurrences(final int expected, final int expectedWrite) {
-		DisplayHelper helper= new DisplayHelper() {
+		DisplayHelper helper = new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 				return ((fOccurrences == expected) && (fWriteOccurrences == expectedWrite));

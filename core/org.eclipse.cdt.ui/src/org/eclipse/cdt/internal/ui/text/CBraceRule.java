@@ -20,26 +20,22 @@ import org.eclipse.jface.text.rules.IToken;
  *
  * @author P.Tomaszewski
  */
-public class CBraceRule extends SingleCharRule
-{
+public class CBraceRule extends SingleCharRule {
 
-    /**
-     * Creates new rule. 
-     * @param token Style token.
-     */
-    public CBraceRule(IToken token)
-    {
-        super(token);
-    }
+	/**
+	 * Creates new rule.
+	 * @param token Style token.
+	 */
+	public CBraceRule(IToken token) {
+		super(token);
+	}
 
-    /**
-     * @see org.eclipse.cdt.internal.ui.text.SingleCharRule#isRuleChar(int)
-     */
-    @Override
-	protected boolean isRuleChar(int ch)
-    {
-        return ch == '{' || ch == '}' || ch == '[' || ch == ']' || ch == '(' || ch == ')';
-    }
+	/**
+	 * @see org.eclipse.cdt.internal.ui.text.SingleCharRule#isRuleChar(int)
+	 */
+	@Override
+	protected boolean isRuleChar(int ch) {
+		return ch == '{' || ch == '}' || ch == '[' || ch == ']' || ch == '(' || ch == ')';
+	}
 
-    
 }

@@ -18,28 +18,26 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarInfoTypeInfo;
 
-
 /**
- * 
+ *
  *     -var-info-type NAME
  *
  *   Returns the type of the specified variable NAME.  The type is
  * returned as a string in the same format as it is output by the GDB CLI:
  *
  *     type=TYPENAME
- * 
+ *
  */
-public class MIVarInfoType extends MICommand<MIVarInfoTypeInfo> 
-{
+public class MIVarInfoType extends MICommand<MIVarInfoTypeInfo> {
 	/**
-     * @since 1.1
-     */
+	 * @since 1.1
+	 */
 	public MIVarInfoType(ICommandControlDMContext ctx, String name) {
-		super(ctx, "-var-info-type", new String[]{name}); //$NON-NLS-1$
+		super(ctx, "-var-info-type", new String[] { name }); //$NON-NLS-1$
 	}
-    
-    @Override
-    public MIVarInfoTypeInfo getResult(MIOutput out) {
-        return new MIVarInfoTypeInfo(out);
-    }
+
+	@Override
+	public MIVarInfoTypeInfo getResult(MIOutput out) {
+		return new MIVarInfoTypeInfo(out);
+	}
 }

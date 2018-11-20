@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Alena Laskavaia 
+ * Copyright (c) 2009, 2014 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,12 +33,12 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 
 /**
  * Checker that detects statements without effect such as
- * 
+ *
  * a+b;
  * or
  * +b;
- * 
- * 
+ *
+ *
  */
 public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem"; //$NON-NLS-1$
@@ -59,7 +59,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTExpressionStatement) {
 				IASTExpression expression = ((IASTExpressionStatement) stmt).getExpression();
-				if (hasNoEffect(expression) ) {
+				if (hasNoEffect(expression)) {
 					if (isLastExpressionInStatementExpression(expression))
 						return PROCESS_SKIP;
 					if (!shouldReportInMacro() && CxxAstUtils.isInMacro(expression))
@@ -89,7 +89,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 					if (parentStmtExpr instanceof IGNUASTCompoundStatementExpression) {
 						// Are we evaluating the last statement in the list?
 						IASTStatement childlist[] = ((IASTCompoundStatement) parentComp).getStatements();
-						if (stmt == childlist[childlist.length-1])
+						if (stmt == childlist[childlist.length - 1])
 							return true;
 					}
 				}
@@ -101,7 +101,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		 * We consider has not effect binary statements without assignment and
 		 * unary statement which is not dec and inc. If operator is overloaded
 		 * we not going to bother.
-		 * 
+		 *
 		 * @param e
 		 * @return
 		 */
@@ -113,9 +113,9 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				if (usesOverloadedOperator(binExpr))
 					return false;
 				switch (binExpr.getOperator()) {
-					case IASTBinaryExpression.op_logicalOr:
-					case IASTBinaryExpression.op_logicalAnd:
-						return hasNoEffect(binExpr.getOperand1()) && hasNoEffect(binExpr.getOperand2());
+				case IASTBinaryExpression.op_logicalOr:
+				case IASTBinaryExpression.op_logicalAnd:
+					return hasNoEffect(binExpr.getOperand1()) && hasNoEffect(binExpr.getOperand2());
 				}
 				return true;
 			}
@@ -125,14 +125,14 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 					return false;
 				int operator = unaryExpr.getOperator();
 				switch (operator) {
-					case IASTUnaryExpression.op_postFixDecr:
-					case IASTUnaryExpression.op_prefixDecr:
-					case IASTUnaryExpression.op_postFixIncr:
-					case IASTUnaryExpression.op_prefixIncr:
-					case IASTUnaryExpression.op_throw:
-						return false;
-					case IASTUnaryExpression.op_bracketedPrimary:
-						return hasNoEffect(unaryExpr.getOperand());
+				case IASTUnaryExpression.op_postFixDecr:
+				case IASTUnaryExpression.op_prefixDecr:
+				case IASTUnaryExpression.op_postFixIncr:
+				case IASTUnaryExpression.op_prefixIncr:
+				case IASTUnaryExpression.op_throw:
+					return false;
+				case IASTUnaryExpression.op_bracketedPrimary:
+					return hasNoEffect(unaryExpr.getOperand());
 				}
 				return true;
 			}
@@ -147,7 +147,8 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_MACRO_ID, CheckersMessages.StatementHasNoEffectChecker_ParameterMacro, Boolean.TRUE);
+		addPreference(problem, PARAM_MACRO_ID, CheckersMessages.StatementHasNoEffectChecker_ParameterMacro,
+				Boolean.TRUE);
 		addListPreference(problem, PARAM_EXCEPT_ARG_LIST, CheckersMessages.GenericParameter_ParameterExceptions,
 				CheckersMessages.GenericParameter_ParameterExceptionsItem);
 	}
@@ -165,22 +166,22 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 
 	public boolean isPossibleAssignment(IASTBinaryExpression expr) {
 		switch (expr.getOperator()) {
-			case IASTBinaryExpression.op_assign:
-			case IASTBinaryExpression.op_binaryAndAssign:
-			case IASTBinaryExpression.op_binaryOrAssign:
-			case IASTBinaryExpression.op_binaryXorAssign:
-			case IASTBinaryExpression.op_divideAssign:
-			case IASTBinaryExpression.op_minusAssign:
-			case IASTBinaryExpression.op_moduloAssign:
-			case IASTBinaryExpression.op_multiplyAssign:
-			case IASTBinaryExpression.op_plusAssign:
-			case IASTBinaryExpression.op_shiftLeftAssign:
-			case IASTBinaryExpression.op_shiftRightAssign:
-				return true;
+		case IASTBinaryExpression.op_assign:
+		case IASTBinaryExpression.op_binaryAndAssign:
+		case IASTBinaryExpression.op_binaryOrAssign:
+		case IASTBinaryExpression.op_binaryXorAssign:
+		case IASTBinaryExpression.op_divideAssign:
+		case IASTBinaryExpression.op_minusAssign:
+		case IASTBinaryExpression.op_moduloAssign:
+		case IASTBinaryExpression.op_multiplyAssign:
+		case IASTBinaryExpression.op_plusAssign:
+		case IASTBinaryExpression.op_shiftLeftAssign:
+		case IASTBinaryExpression.op_shiftRightAssign:
+			return true;
 		}
 		return false;
 	}
-	
+
 	private boolean usesOverloadedOperator(IASTBinaryExpression expr) {
 		if (expr instanceof IASTImplicitNameOwner) {
 			IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) expr).getImplicitNames();
@@ -189,16 +190,17 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			IASTExpression operand1 = expr.getOperand1();
 			IASTExpression operand2 = expr.getOperand2();
 			// This shouldn't happen, but if it does, it's better to have a
-			// false negative than a false positive warning. 
+			// false negative than a false positive warning.
 			if (operand1 == null || operand2 == null)
 				return true;
-			if (!(operand1.getExpressionType() instanceof IBasicType && operand2.getExpressionType() instanceof IBasicType)) {
+			if (!(operand1.getExpressionType() instanceof IBasicType
+					&& operand2.getExpressionType() instanceof IBasicType)) {
 				return true; // must be overloaded but parser could not find it
 			}
 		}
 		return false;
 	}
-	
+
 	private boolean usesOverloadedOperator(IASTUnaryExpression expr) {
 		if (expr instanceof IASTImplicitNameOwner) {
 			IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) expr).getImplicitNames();
@@ -206,7 +208,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				return true;
 			IASTExpression operand = expr.getOperand();
 			// This shouldn't happen, but if it does, it's better to have a
-			// false negative than a false positive warning. 
+			// false negative than a false positive warning.
 			if (operand == null)
 				return true;
 			if (!(operand.getExpressionType() instanceof IBasicType)) {

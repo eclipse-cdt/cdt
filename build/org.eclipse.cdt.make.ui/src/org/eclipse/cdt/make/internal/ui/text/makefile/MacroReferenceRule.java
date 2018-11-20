@@ -22,19 +22,19 @@ public class MacroReferenceRule extends PatternRule {
 	int nOfBrackets;
 	int fBracket;
 
-//	public MacroReferenceRule(IToken token) {
-//		super("$(", ")", token, (char) 0, true); //$NON-NLS-1$ //$NON-NLS-2$
-//	}
+	//	public MacroReferenceRule(IToken token) {
+	//		super("$(", ")", token, (char) 0, true); //$NON-NLS-1$ //$NON-NLS-2$
+	//	}
 
 	public MacroReferenceRule(IToken token, String startSeq, String endSeq) {
-		super(startSeq, endSeq, token, (char)0, true);
+		super(startSeq, endSeq, token, (char) 0, true);
 		if (endSeq.length() > 0 && endSeq.charAt(0) == '}') {
 			fBracket = '{';
 		} else {
 			fBracket = '(';
 		}
 	}
-	
+
 	@Override
 	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume) {
 		nOfBrackets = 1;

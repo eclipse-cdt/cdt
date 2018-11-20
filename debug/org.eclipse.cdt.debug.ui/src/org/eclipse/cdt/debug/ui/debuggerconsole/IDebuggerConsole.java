@@ -20,33 +20,33 @@ import org.eclipse.ui.part.IPageBookViewPage;
 public interface IDebuggerConsole extends IConsole {
 	/**
 	 * Returns the launch associated with this console.
-	 * 
+	 *
 	 * @return the launch associated with this console.
 	 */
 	ILaunch getLaunch();
-	
+
 	/**
 	 * Creates and returns a new page for this console. The page is displayed
 	 * for this console in the console given view.
-	 * 
+	 *
 	 * @param view the view in which the page is to be created
 	 * @return a page book view page representation of this console
 	 */
 	IPageBookViewPage createDebuggerPage(IDebuggerConsoleView view);
-	
+
 	/**
 	 * Request a re-computation of the name of the console.
 	 */
 	void resetName();
-	
+
 	/**
-	 * This console has become selected, the implementation shall use this 
+	 * This console has become selected, the implementation shall use this
 	 * notification to e.g. keep other views in sync with the context of the console
 	 */
 	void consoleSelected();
 
 	/**
-	 * Stop processing but don't dispose this console yet, 
+	 * Stop processing but don't dispose this console yet,
 	 * i.e. It's desirable to keep the last I/O information available to the user
 	 * @since 8.2
 	 */

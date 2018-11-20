@@ -49,20 +49,21 @@ import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
  * Annotation model for breakpoints in the disassembly.
  * Works only with {@link DisassemblyDocument}.
  */
-public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel implements IBreakpointListener, IDocumentListener {
-	
+public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel
+		implements IBreakpointListener, IDocumentListener {
+
 	private Runnable fCatchup;
 	private IAdaptable fDebugContext;
-	
+
 	public BreakpointsAnnotationModel(IAdaptable debugContext) {
 		fDebugContext = debugContext;
 	}
-	
+
 	@Override
 	public void connect(IDocument document) {
 		super.connect(document);
 		if (document instanceof DisassemblyDocument) {
-			final IBreakpointManager bpMgr= DebugPlugin.getDefault().getBreakpointManager();
+			final IBreakpointManager bpMgr = DebugPlugin.getDefault().getBreakpointManager();
 			addBreakpoints(bpMgr.getBreakpoints());
 			bpMgr.addBreakpointListener(this);
 			document.addDocumentListener(this);
@@ -72,17 +73,17 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 	@Override
 	public void disconnect(IDocument document) {
 		if (document instanceof DisassemblyDocument) {
-			final IBreakpointManager bpMgr= DebugPlugin.getDefault().getBreakpointManager();
+			final IBreakpointManager bpMgr = DebugPlugin.getDefault().getBreakpointManager();
 			bpMgr.removeBreakpointListener(this);
 			document.removeDocumentListener(this);
-			fCatchup= null;
+			fCatchup = null;
 		}
 		super.disconnect(document);
 	}
 
 	private void catchupWithBreakpoints() {
 		removeAllAnnotations(false);
-		final IBreakpointManager bpMgr= DebugPlugin.getDefault().getBreakpointManager();
+		final IBreakpointManager bpMgr = DebugPlugin.getDefault().getBreakpointManager();
 		addBreakpoints(bpMgr.getBreakpoints());
 	}
 
@@ -106,10 +107,10 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 	 */
 	@Override
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
-		Annotation a= findAnnotation(breakpoint.getMarker());
+		Annotation a = findAnnotation(breakpoint.getMarker());
 		if (a != null) {
 			if (a instanceof SimpleMarkerAnnotation) {
-				((SimpleMarkerAnnotation)a).update();
+				((SimpleMarkerAnnotation) a).update();
 			}
 			synchronized (getLockObject()) {
 				getAnnotationModelEvent().annotationChanged(a);
@@ -125,15 +126,15 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 	 */
 	@Override
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
-		Annotation a= findAnnotation(breakpoint.getMarker());
+		Annotation a = findAnnotation(breakpoint.getMarker());
 		if (a != null) {
 			removeAnnotation(a, true);
 		}
 	}
 
 	private Annotation findAnnotation(IMarker marker) {
-		for (Iterator<Annotation> it= getAnnotationIterator(false); it.hasNext();) {
-			SimpleMarkerAnnotation a= (SimpleMarkerAnnotation) it.next();
+		for (Iterator<Annotation> it = getAnnotationIterator(false); it.hasNext();) {
+			SimpleMarkerAnnotation a = (SimpleMarkerAnnotation) it.next();
 			if (a.getMarker().equals(marker)) {
 				return a;
 			}
@@ -145,7 +146,7 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 		if (fDocument == null) {
 			return;
 		}
-		final IMarker marker= breakpoint.getMarker();
+		final IMarker marker = breakpoint.getMarker();
 		if (marker == null) {
 			return;
 		}
@@ -160,10 +161,10 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 			// ignore wrong positions
 		}
 	}
-	
+
 	private Position createPositionFromBreakpoint(IBreakpoint breakpoint) throws CoreException {
 		IBreakpointLocationProvider locationProvider = breakpoint.getAdapter(IBreakpointLocationProvider.class);
-			
+
 		/* if there is a location provider, than use the provider to retrieve the location */
 		if (locationProvider != null) {
 
@@ -172,20 +173,20 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 			if (sourceFile != null) {
 				int lineNumber = locationProvider.getLineNumber(breakpoint, fDebugContext) - 1;
 				return createPositionFromSourceLine(sourceFile, lineNumber);
-			
+
 			} else {
 				/* if there is label info, than create a label position */
 				IAddress labelAddress = locationProvider.getLabelAddress(breakpoint, fDebugContext);
 				if (labelAddress != null) {
 					return createPositionFromLabel(labelAddress.getValue());
-				
-				/* Otherwise, create an address position */
+
+					/* Otherwise, create an address position */
 				} else {
 					// See bug 300053 comment 5:
-					// Since there can only be one annotation per marker and in order to support multiple 
+					// Since there can only be one annotation per marker and in order to support multiple
 					// annotations per breakpoint, we need a specialized annotation type.
 					//
-					// So for now, we only create an annotation for the first valid address. We can add 
+					// So for now, we only create an annotation for the first valid address. We can add
 					// support for multiple annotations per breakpoint when it's needed.
 					IAddress[] addresses = locationProvider.getAddresses(breakpoint, fDebugContext);
 					for (int i = 0; addresses != null && i < addresses.length; ++i) {
@@ -196,31 +197,31 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 					}
 				}
 			}
-			
-		/* otherwise, use legacy ICBreakpoint location info */
+
+			/* otherwise, use legacy ICBreakpoint location info */
 		} else {
 			if (breakpoint instanceof ICAddressBreakpoint) {
-				ICAddressBreakpoint addressBreakpoint= (ICAddressBreakpoint) breakpoint;
+				ICAddressBreakpoint addressBreakpoint = (ICAddressBreakpoint) breakpoint;
 				return createPositionFromAddress(decodeAddress(addressBreakpoint.getAddress()));
 			} else if (breakpoint instanceof ILineBreakpoint) {
-				ILineBreakpoint lineBreakpoint= (ILineBreakpoint) breakpoint;
-				Position position= null;
-				final int lineNumber= lineBreakpoint.getLineNumber() - 1;
-				final IMarker marker= breakpoint.getMarker();
+				ILineBreakpoint lineBreakpoint = (ILineBreakpoint) breakpoint;
+				Position position = null;
+				final int lineNumber = lineBreakpoint.getLineNumber() - 1;
+				final IMarker marker = breakpoint.getMarker();
 				if (marker.getResource().getType() == IResource.FILE) {
-					position= createPositionFromSourceLine((IFile) marker.getResource(), lineNumber);
+					position = createPositionFromSourceLine((IFile) marker.getResource(), lineNumber);
 					if (position != null) {
 						return position;
 					}
 				}
-				String fileName= marker.getAttribute(ICLineBreakpoint.SOURCE_HANDLE, null);
-				position= createPositionFromSourceLine(fileName, lineNumber);
+				String fileName = marker.getAttribute(ICLineBreakpoint.SOURCE_HANDLE, null);
+				position = createPositionFromSourceLine(fileName, lineNumber);
 				if (position == null && breakpoint instanceof ICLineBreakpoint) {
-					ICLineBreakpoint cBreakpoint= (ICLineBreakpoint) breakpoint;
+					ICLineBreakpoint cBreakpoint = (ICLineBreakpoint) breakpoint;
 					if (breakpoint instanceof ICFunctionBreakpoint) {
-						position= createPositionFromLabel(cBreakpoint.getFunction());
+						position = createPositionFromLabel(cBreakpoint.getFunction());
 					} else {
-						position= createPositionFromAddress(decodeAddress(cBreakpoint.getAddress()));
+						position = createPositionFromAddress(decodeAddress(cBreakpoint.getAddress()));
 					}
 				}
 				return position;
@@ -232,7 +233,7 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 	/**
 	 * Decode given string representation of a non-negative integer. A
 	 * hexadecimal encoded integer is expected to start with <code>0x</code>.
-	 * 
+	 *
 	 * @param string
 	 *            decimal or hexadecimal representation of an non-negative integer
 	 * @return address value as <code>BigInteger</code> or <code>null</code> in case of a <code>NumberFormatException</code>
@@ -266,14 +267,15 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 	@Override
 	public void documentChanged(DocumentEvent event) {
 		if (fCatchup == null && event.fText != null && !event.fText.isEmpty()) {
-			fCatchup= new Runnable() {
+			fCatchup = new Runnable() {
 				@Override
 				public void run() {
 					if (fCatchup == this) {
 						catchupWithBreakpoints();
-						fCatchup= null;
+						fCatchup = null;
 					}
-				}};
+				}
+			};
 			Display.getCurrent().timerExec(50, fCatchup);
 		}
 	}

@@ -123,7 +123,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 	/**
 	 * Gets the CDT environment from the CDT project's configuration referenced
 	 * by the launch
-	 * 
+	 *
 	 * This code matches what
 	 * org.eclipse.cdt.dsf.gdb.launching.GdbLaunch.getLaunchEnvironment() and
 	 * org.eclipse.cdt.dsf.gdb.service.DebugNewProcessSequence.stepSetEnvironmentVariables(RequestMonitor)
@@ -152,7 +152,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 		// If the launch configuration is the only environment the inferior should see, just use that
 		boolean append = config.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		boolean environmentCollectedFromProject = false;
-		
+
 		if (append && project != null && project.isAccessible()) {
 			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project, false);
 			if (projDesc != null) {
@@ -198,14 +198,14 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 				}
 			}
 		}
-		
+
 		if (!environmentCollectedFromProject) {
 			// we haven't collected any environment variables from the project settings,
 			// therefore simply use the launch settings
-			return DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);			
+			return DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
 		}
-		
-		// Now that we have the environment from the project, update it with 
+
+		// Now that we have the environment from the project, update it with
 		// the environment settings the user has explicitly set in the launch
 		// configuration. There is no API in the launch manager to do this,
 		// so we create a temp copy with append = false to get around that.
@@ -222,7 +222,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 				}
 			}
 		}
-		
+
 		// Turn it into an envp format
 		List<String> strings = new ArrayList<String>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
@@ -267,7 +267,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 	/**
 	 * Performs a runtime exec on the given command line in the context of the
 	 * specified working directory, and returns the resulting process.
-	 * 
+	 *
 	 * @param cmdLine
 	 *            the command line
 	 * @param environ
@@ -304,7 +304,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 	 * Modify the ILaunchConfiguration to set the
 	 * DebugPlugin.ATTR_PROCESS_FACTORY_ID attribute, so as to specify the
 	 * process factory to use.
-	 * 
+	 *
 	 * This attribute should only be set if it is not part of the configuration
 	 * already, to allow other code to set it to something else.
 	 */

@@ -53,7 +53,7 @@ public final class CDTUITools {
 	private CDTUITools() {
 		// prevent instantiation
 	}
-	
+
 	/**
 	 * Returns the color manager which is used to manage
 	 * colors needed for syntax highlighting.
@@ -86,11 +86,12 @@ public final class CDTUITools {
 	 * @exception PartInitException if the editor could not be initialized or no workbench page is active
 	 * @exception CModelException if this element does not exist or if an exception occurs while accessing its underlying resource
 	 */
-	public static IEditorPart openInEditor(ICElement element, boolean activate, boolean reveal) throws CModelException, PartInitException {
+	public static IEditorPart openInEditor(ICElement element, boolean activate, boolean reveal)
+			throws CModelException, PartInitException {
 		if (!(element instanceof ISourceReference)) {
 			return null;
 		}
-		IEditorPart part= EditorUtility.openInEditor(element, activate);
+		IEditorPart part = EditorUtility.openInEditor(element, activate);
 		if (reveal && part != null) {
 			EditorUtility.revealInEditor(part, element);
 		}
@@ -98,7 +99,7 @@ public final class CDTUITools {
 	}
 
 	/**
-	 * Reveals the given C model element  in the given editor.. 
+	 * Reveals the given C model element  in the given editor..
 	 *
 	 * @param part the editor displaying a translation unit
 	 * @param element the element to be revealed
@@ -137,7 +138,7 @@ public final class CDTUITools {
 		if (editorInput instanceof ITranslationUnitEditorInput) {
 			return ((ITranslationUnitEditorInput) editorInput).getTranslationUnit();
 		}
-		IWorkingCopy tu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
+		IWorkingCopy tu = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
 		if (tu != null)
 			return tu;
 
@@ -178,7 +179,7 @@ public final class CDTUITools {
 
 	/**
 	 * Sets up the given document for the default C/C++ partitioning.
-	 * 
+	 *
 	 * @param document the document to be set up
 	 * @param location the path of the resource backing the document. May be null.
 	 * @param locationKind the type of path specified above. May be null.
@@ -196,13 +197,13 @@ public final class CDTUITools {
 
 	/**
 	 * Sets up the given document for the default Assembly partitioning.
-	 * 
+	 *
 	 * @param document the document to be set up
 	 */
 	public static void setupAsmDocument(IDocument document) {
-		IDocumentPartitioner partitioner= createAsmDocumentPartitioner();
+		IDocumentPartitioner partitioner = createAsmDocumentPartitioner();
 		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			IDocumentExtension3 extension3 = (IDocumentExtension3) document;
 			extension3.setDocumentPartitioner(ICPartitions.C_PARTITIONING, partitioner);
 		} else {
 			document.setDocumentPartitioner(partitioner);

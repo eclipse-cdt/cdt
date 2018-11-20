@@ -26,28 +26,25 @@ import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.core.runtime.IPath;
 
 public class PathInfoToLangSettingsConverter {
-	public static int getSupportedEntryKinds(IDiscoveredPathInfo info){
-		if(info instanceof IPerFileDiscoveredPathInfo){
-			return getSupportedEntryKinds((IPerFileDiscoveredPathInfo)info);
+	public static int getSupportedEntryKinds(IDiscoveredPathInfo info) {
+		if (info instanceof IPerFileDiscoveredPathInfo) {
+			return getSupportedEntryKinds((IPerFileDiscoveredPathInfo) info);
 		}
-		return ICLanguageSettingEntry.INCLUDE_PATH
-			| ICLanguageSettingEntry.MACRO;
+		return ICLanguageSettingEntry.INCLUDE_PATH | ICLanguageSettingEntry.MACRO;
 	}
 
-	public static int getSupportedEntryKinds(IPerFileDiscoveredPathInfo info){
-		return ICLanguageSettingEntry.INCLUDE_FILE
-			| ICLanguageSettingEntry.INCLUDE_PATH
-			| ICLanguageSettingEntry.MACRO
-			| ICLanguageSettingEntry.MACRO_FILE;
+	public static int getSupportedEntryKinds(IPerFileDiscoveredPathInfo info) {
+		return ICLanguageSettingEntry.INCLUDE_FILE | ICLanguageSettingEntry.INCLUDE_PATH | ICLanguageSettingEntry.MACRO
+				| ICLanguageSettingEntry.MACRO_FILE;
 	}
 
-	public static ICLanguageSettingEntry[] entriesForKind(int kind, int flags, PathInfo info){
+	public static ICLanguageSettingEntry[] entriesForKind(int kind, int flags, PathInfo info) {
 		switch (kind) {
 		case ICLanguageSettingEntry.INCLUDE_PATH:
 			ICLanguageSettingEntry[] incPaths = calculateEntries(kind, flags, info.getIncludePaths());
 			IPath[] quotedPaths = info.getQuoteIncludePaths();
-			if(quotedPaths.length != 0){
-				if(incPaths.length != 0){
+			if (quotedPaths.length != 0) {
+				if (incPaths.length != 0) {
 					ICLanguageSettingEntry quotedEntries[] = calculateEntries(kind, flags, quotedPaths);
 					ICLanguageSettingEntry[] tmp = new ICLanguageSettingEntry[incPaths.length + quotedEntries.length];
 					System.arraycopy(incPaths, 0, tmp, 0, incPaths.length);
@@ -68,15 +65,15 @@ public class PathInfoToLangSettingsConverter {
 		return new ICLanguageSettingEntry[0];
 	}
 
-	private static ICLanguageSettingEntry[] calculateEntries(int kind, int flags, IPath[] values){
+	private static ICLanguageSettingEntry[] calculateEntries(int kind, int flags, IPath[] values) {
 		ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[values.length];
-		for(int i = 0; i < values.length; i++){
-			entries[i] = (ICLanguageSettingEntry)CDataUtil.createEntry(kind, values[i].toString(), null, null, flags);
+		for (int i = 0; i < values.length; i++) {
+			entries[i] = (ICLanguageSettingEntry) CDataUtil.createEntry(kind, values[i].toString(), null, null, flags);
 		}
 		return entries;
 	}
 
-	private static ICMacroEntry[] calculateEntries(int flags, Map<String, String> map){
+	private static ICMacroEntry[] calculateEntries(int flags, Map<String, String> map) {
 		ICMacroEntry entries[] = new ICMacroEntry[map.size()];
 		int num = 0;
 		Set<Entry<String, String>> entrySet = map.entrySet();

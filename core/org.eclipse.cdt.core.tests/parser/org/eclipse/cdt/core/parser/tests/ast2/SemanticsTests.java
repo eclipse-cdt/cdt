@@ -25,9 +25,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  */
 public class SemanticsTests extends AST2TestBase {
 
-	public SemanticsTests() {}
-	public SemanticsTests(String name) { super(name); }
-	
+	public SemanticsTests() {
+	}
+
+	public SemanticsTests(String name) {
+		super(name);
+	}
 
 	//	class A {};
 	//	class B {};
@@ -62,7 +65,7 @@ public class SemanticsTests extends AST2TestBase {
 	//		void operator +(X x)    {} // Addition
 	//		A operator +=(int y)    {} // Addition with assignment
 	//		B operator -(X x)       {} // Subtraction
-	//		void operator -=(int y) {} // Subtraction with assignment	
+	//		void operator -=(int y) {} // Subtraction with assignment
 	//		void operator ->*(int z){} // ptr-to-member selection
 	//		void operator /(int x)  {} // division
 	//		void operator /=(int y) {} // division with assignment
@@ -85,29 +88,31 @@ public class SemanticsTests extends AST2TestBase {
 	//		void operator()(int a, int b, int c) {} // function call
 	//
 	//		void operator[](int i) {} // subscripting
-	//      
+	//
 	//      operator A(); // conversion
 	//      operator B(); // conversion
 	//	};
 	public void testConversionOperators() throws Exception {
 		// Test getDeclaredConversionOperators()
-		BindingAssertionHelper ba= new AST2AssertionHelper(getAboveComment(), true);
-		ICPPClassType c= ba.assertNonProblem("X {", 1, ICPPClassType.class);
-		ICPPMethod[] cops= SemanticUtil.getDeclaredConversionOperators(c);
+		BindingAssertionHelper ba = new AST2AssertionHelper(getAboveComment(), true);
+		ICPPClassType c = ba.assertNonProblem("X {", 1, ICPPClassType.class);
+		ICPPMethod[] cops = SemanticUtil.getDeclaredConversionOperators(c);
 		assertEquals(2, cops.length);
-		Set actual= new HashSet();
-		actual.add(cops[0].getName()); actual.add(cops[1].getName());
-		Set expected= new HashSet();
-		expected.add("operator A"); expected.add("operator B");
+		Set actual = new HashSet();
+		actual.add(cops[0].getName());
+		actual.add(cops[1].getName());
+		Set expected = new HashSet();
+		expected.add("operator A");
+		expected.add("operator B");
 		assertEquals(expected, actual);
 
 		// Test isConversionOperator()
-		ICPPMethod[] dms= c.getDeclaredMethods();
+		ICPPMethod[] dms = c.getDeclaredMethods();
 		assertEquals(48, dms.length);
-		
-		for(ICPPMethod method : dms) {
-			String name= method.getName();
-			boolean isConvOp= name.equals("operator A") || name.equals("operator B");
+
+		for (ICPPMethod method : dms) {
+			String name = method.getName();
+			boolean isConvOp = name.equals("operator A") || name.equals("operator B");
 			assertEquals(isConvOp, SemanticUtil.isConversionOperator(method));
 		}
 	}

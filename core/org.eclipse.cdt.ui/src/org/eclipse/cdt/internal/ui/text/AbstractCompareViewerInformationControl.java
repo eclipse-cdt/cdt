@@ -54,22 +54,26 @@ import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
  *
  * @since 5.0
  */
-public abstract class AbstractCompareViewerInformationControl extends org.eclipse.jface.text.AbstractInformationControl implements IInformationControlExtension2, DisposeListener {
+public abstract class AbstractCompareViewerInformationControl extends org.eclipse.jface.text.AbstractInformationControl
+		implements IInformationControlExtension2, DisposeListener {
 
 	protected class CompareViewerControl extends ViewForm {
 		private CompareConfiguration fCompareConfiguration;
 		private Viewer fViewer;
+
 		public CompareViewerControl(Composite parent, int styles, CompareConfiguration cc) {
 			super(parent, styles & ~SWT.BORDER);
-			verticalSpacing= 0;
-			fCompareConfiguration= cc;
+			verticalSpacing = 0;
+			fCompareConfiguration = cc;
 		}
+
 		public CompareConfiguration getCompareConfiguration() {
 			return fCompareConfiguration;
 		}
+
 		public void setInput(ICompareInput input) {
 			if (fViewer == null) {
-				fViewer= createContentViewer(this, input, fCompareConfiguration);
+				fViewer = createContentViewer(this, input, fCompareConfiguration);
 				setContent(fViewer.getControl());
 			}
 			fViewer.setInput(input);
@@ -111,45 +115,46 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 	}
 
 	private void initializeColors() {
-		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		RGB bgRGB;
 		if (store.getBoolean(PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT)) {
-			bgRGB= SourceViewerInformationControl.getVisibleBackgroundColor(getShell().getDisplay());
+			bgRGB = SourceViewerInformationControl.getVisibleBackgroundColor(getShell().getDisplay());
 		} else {
-			bgRGB= PreferenceConverter.getColor(store, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR);
+			bgRGB = PreferenceConverter.getColor(store, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR);
 		}
 		if (bgRGB != null) {
-			fBackgroundColor= new Color(getShell().getDisplay(), bgRGB);
-			fIsSystemBackgroundColor= false;
+			fBackgroundColor = new Color(getShell().getDisplay(), bgRGB);
+			fIsSystemBackgroundColor = false;
 		} else {
-			fBackgroundColor= getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-			fIsSystemBackgroundColor= true;
+			fBackgroundColor = getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			fIsSystemBackgroundColor = true;
 		}
 	}
-	
+
 	@Override
 	protected void createContent(Composite parent) {
 		initializeColors();
-		Composite content= new Composite(parent, SWT.NONE);
-		final GridLayout gridLayout= new GridLayout();
-		gridLayout.marginWidth= 0;
-		gridLayout.marginHeight= 0;
-		gridLayout.verticalSpacing= 0;
+		Composite content = new Composite(parent, SWT.NONE);
+		final GridLayout gridLayout = new GridLayout();
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		gridLayout.verticalSpacing = 0;
 		content.setLayout(gridLayout);
 
 		if (hasHeader()) {
 			createTitleLabel(content);
 		}
-		CompareConfiguration compareConfig= new CompareConfiguration();
+		CompareConfiguration compareConfig = new CompareConfiguration();
 		compareConfig.setLeftEditable(false);
 		compareConfig.setRightEditable(false);
-		fCompareViewerControl= createCompareViewerControl(content, SWT.NONE, compareConfig);
+		fCompareViewerControl = createCompareViewerControl(content, SWT.NONE, compareConfig);
 
 		addDisposeListener(this);
 	}
 
-	protected CompareViewerControl createCompareViewerControl(Composite parent, int style, CompareConfiguration compareConfig) {
-		CompareViewerControl compareViewer= new CompareViewerControl(parent, style, compareConfig);
+	protected CompareViewerControl createCompareViewerControl(Composite parent, int style,
+			CompareConfiguration compareConfig) {
+		CompareViewerControl compareViewer = new CompareViewerControl(parent, style, compareConfig);
 		return compareViewer;
 	}
 
@@ -158,19 +163,19 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 	}
 
 	private void createTitleLabel(Composite parent) {
-		fTitleLabel= new Label(parent, SWT.LEFT);
+		fTitleLabel = new Label(parent, SWT.LEFT);
 		fTitleLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		Label separator= new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		fTitleLabel.setFont(JFaceResources.getDialogFont());
 
-		Display display= parent.getDisplay();
-		Color foreground= display.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
-		Color background= display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		Display display = parent.getDisplay();
+		Color foreground = display.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+		Color background = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
 		fTitleLabel.setForeground(foreground);
 		fTitleLabel.setBackground(background);
-		
+
 		addMoveSupport(fTitleLabel);
 	}
 
@@ -182,7 +187,7 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 
 	/**
 	 * Returns the compare viewer.
-	 * 
+	 *
 	 * @return the compare viewer.
 	 */
 	protected final CompareViewerControl getCompareViewer() {
@@ -191,7 +196,7 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 
 	/**
 	 * Returns the compare configuration.
-	 * 
+	 *
 	 * @return the compare configuration.
 	 */
 	protected final CompareConfiguration getCompareConfiguration() {
@@ -203,7 +208,7 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 	 * <p>
 	 * The default is to return <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if the control has a header
 	 */
 	protected boolean hasHeader() {
@@ -222,14 +227,14 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 	@Override
 	public void setInput(Object input) {
 		if (input instanceof ICompareInput) {
-			fCompareInput= (ICompareInput) input;
+			fCompareInput = (ICompareInput) input;
 			if (fCompareViewerControl != null) {
 				fCompareViewerControl.setInput(fCompareInput);
 			}
 		} else if (input instanceof String) {
 			// do nothing
 		} else {
-			fCompareInput= null;
+			fCompareInput = null;
 			if (fCompareViewerControl != null) {
 				fCompareViewerControl.setInput(fCompareInput);
 			}
@@ -261,7 +266,7 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 	 */
 	@Override
 	public void widgetDisposed(DisposeEvent event) {
-		fCompareViewerControl= null;
+		fCompareViewerControl = null;
 	}
 
 	@Override
@@ -272,19 +277,19 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 	@Override
 	public Point computeSizeHint() {
 		// compute the preferred size
-		int x= SWT.DEFAULT;
-		int y= SWT.DEFAULT;
-		Point size= getShell().computeSize(x, y);
-		Point constraints= getSizeConstraints();
+		int x = SWT.DEFAULT;
+		int y = SWT.DEFAULT;
+		Point size = getShell().computeSize(x, y);
+		Point constraints = getSizeConstraints();
 		if (constraints != null) {
 			if (size.x < constraints.x)
-				x= constraints.x;
+				x = constraints.x;
 			if (size.y < constraints.y)
-				y= constraints.y;
+				y = constraints.y;
 		}
 		// recompute using the constraints if the preferred size is smaller than the constraints
 		if (x != SWT.DEFAULT || y != SWT.DEFAULT)
-			size= getShell().computeSize(x, y, false);
+			size = getShell().computeSize(x, y, false);
 
 		return size;
 	}
@@ -297,35 +302,35 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 
 	@Override
 	public Rectangle computeTrim() {
-		Rectangle trim= super.computeTrim();
+		Rectangle trim = super.computeTrim();
 		addInternalTrim(trim);
 		return trim;
 	}
 
 	/**
 	 * Adds the internal trimmings to the given trim of the shell.
-	 * 
+	 *
 	 * @param trim the shell's trim, will be updated
 	 * @since 5.0
 	 */
 	private void addInternalTrim(Rectangle trim) {
-		Rectangle textTrim= fCompareViewerControl.computeTrim(0, 0, 0, 0);
-		trim.x+= textTrim.x;
-		trim.y+= textTrim.y;
-		trim.width+= textTrim.width;
-		trim.height+= textTrim.height;
+		Rectangle textTrim = fCompareViewerControl.computeTrim(0, 0, 0, 0);
+		trim.x += textTrim.x;
+		trim.y += textTrim.y;
+		trim.width += textTrim.width;
+		trim.height += textTrim.height;
 		if (fTitleLabel != null) {
-			trim.height+= fTitleLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+			trim.height += fTitleLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 		}
 	}
 
 	@Override
 	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
-		Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
-		GC gc= new GC(fCompareViewerControl);
+		Font font = JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
+		GC gc = new GC(fCompareViewerControl);
 		gc.setFont(font);
-		int width= gc.getFontMetrics().getAverageCharWidth();
-		int height= gc.getFontMetrics().getHeight();
+		int width = gc.getFontMetrics().getAverageCharWidth();
+		int height = gc.getFontMetrics().getHeight();
 		gc.dispose();
 
 		return new Point(widthInChars * width, heightInChars * height);
@@ -337,24 +342,24 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 	}
 
 	protected final void addMoveSupport(final Control control) {
-		MouseAdapter moveSupport= new MouseAdapter() {
+		MouseAdapter moveSupport = new MouseAdapter() {
 			private MouseMoveListener fMoveListener;
-			private final Control fShell= getShell();
+			private final Control fShell = getShell();
 
 			@Override
 			public void mouseDown(MouseEvent e) {
-				Point shellLoc= fShell.getLocation();
-				final int shellX= shellLoc.x;
-				final int shellY= shellLoc.y;
-				Point mouseLoc= control.toDisplay(e.x, e.y);
-				final int mouseX= mouseLoc.x;
-				final int mouseY= mouseLoc.y;
-				fMoveListener= new MouseMoveListener() {
+				Point shellLoc = fShell.getLocation();
+				final int shellX = shellLoc.x;
+				final int shellY = shellLoc.y;
+				Point mouseLoc = control.toDisplay(e.x, e.y);
+				final int mouseX = mouseLoc.x;
+				final int mouseY = mouseLoc.y;
+				fMoveListener = new MouseMoveListener() {
 					@Override
 					public void mouseMove(MouseEvent e2) {
-						Point mouseLoc2= control.toDisplay(e2.x, e2.y);
-						int dx= mouseLoc2.x - mouseX;
-						int dy= mouseLoc2.y - mouseY;
+						Point mouseLoc2 = control.toDisplay(e2.x, e2.y);
+						int dx = mouseLoc2.x - mouseX;
+						int dy = mouseLoc2.y - mouseY;
 						fShell.setLocation(shellX + dx, shellY + dy);
 					}
 				};
@@ -364,7 +369,7 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 			@Override
 			public void mouseUp(MouseEvent e) {
 				control.removeMouseMoveListener(fMoveListener);
-				fMoveListener= null;
+				fMoveListener = null;
 			}
 		};
 		control.addMouseListener(moveSupport);

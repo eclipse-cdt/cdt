@@ -80,15 +80,15 @@ public class EvalPackExpansion extends CPPDependentEvaluation {
 		EvalPackExpansion o = (EvalPackExpansion) other;
 		return fExpansionPattern.isEquivalentTo(o.fExpansionPattern);
 	}
-	
+
 	@Override
 	public IType getType() {
 		if (fType == null) {
 			IType type = fExpansionPattern.getType();
 			if (type == null) {
-				fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
+				fType = ProblemType.UNKNOWN_FOR_EXPRESSION;
 			} else {
-				fType= new CPPParameterPackType(type);
+				fType = new CPPParameterPackType(type);
 			}
 		}
 		return fType;

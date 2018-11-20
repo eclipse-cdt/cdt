@@ -20,9 +20,9 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 /**
  * GCC-specific designator that allows for shorthand array range to be specified
  * in a designated initializer.
- * 
+ *
  * struct ABC { int def[10]; } abc = { def[4...10] = 3 };
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -43,14 +43,14 @@ public interface IGCCASTArrayRangeDesignator extends ICASTDesignator {
 
 	/**
 	 * Get the floor expression of the range.
-	 * 
+	 *
 	 * @return the floor expression <code>IASTExpression</code>
 	 */
 	public IASTExpression getRangeFloor();
 
 	/**
 	 * Set the floor expression of the range.
-	 * 
+	 *
 	 * @param expression
 	 *            <code>IASTExpression</code>
 	 */
@@ -58,19 +58,19 @@ public interface IGCCASTArrayRangeDesignator extends ICASTDesignator {
 
 	/**
 	 * Get the range ceiling expression.
-	 * 
+	 *
 	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getRangeCeiling();
 
 	/**
 	 * Set the ceiling expression of the range.
-	 * 
+	 *
 	 * @param expression
 	 *            <code>IASTExpression</code>
 	 */
 	public void setRangeCeiling(IASTExpression expression);
-	
+
 	/**
 	 * @since 5.1
 	 */

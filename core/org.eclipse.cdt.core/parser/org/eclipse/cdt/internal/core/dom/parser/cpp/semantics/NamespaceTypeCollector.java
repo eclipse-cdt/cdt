@@ -39,10 +39,10 @@ class NamespaceTypeCollector extends ASTVisitor {
 	private final ICPPASTInternalScope fScope;
 
 	public NamespaceTypeCollector(ICPPASTInternalScope scope) {
-		fScope= scope;
-		shouldVisitDeclarations= true;
-		shouldVisitStatements= true;
-		shouldVisitParameterDeclarations= true;
+		fScope = scope;
+		shouldVisitDeclarations = true;
+		shouldVisitStatements = true;
+		shouldVisitParameterDeclarations = true;
 	}
 
 	@Override
@@ -51,20 +51,20 @@ class NamespaceTypeCollector extends ASTVisitor {
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
 			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) simpleDeclaration.getDeclSpecifier();
 			if (declSpec.isFriend()) {
-				IASTDeclarator[] declarators= simpleDeclaration.getDeclarators();
+				IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 				for (IASTDeclarator declarator : declarators) {
-					IASTDeclarator innermost= null;
+					IASTDeclarator innermost = null;
 					while (declarator != null) {
 						if (declarator instanceof IASTAmbiguousDeclarator) {
-							innermost= null;
+							innermost = null;
 							break;
 						}
-						innermost= declarator;
-						declarator= declarator.getNestedDeclarator();
+						innermost = declarator;
+						declarator = declarator.getNestedDeclarator();
 					}
 					if (innermost != null) {
 						IASTName declaratorName = innermost.getName();
-						ASTInternal.addName(fScope,  declaratorName);
+						ASTInternal.addName(fScope, declaratorName);
 					}
 				}
 			} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
@@ -80,7 +80,7 @@ class NamespaceTypeCollector extends ASTVisitor {
 			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) funcDefinition.getDeclSpecifier();
 			if (declSpec.isFriend()) {
 				IASTFunctionDeclarator declarator = funcDefinition.getDeclarator();
-				ASTInternal.addName(fScope,  declarator.getName());
+				ASTInternal.addName(fScope, declarator.getName());
 			} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
 				addNonSimpleElabSpec((ICPPASTElaboratedTypeSpecifier) declSpec);
 			}
@@ -89,7 +89,6 @@ class NamespaceTypeCollector extends ASTVisitor {
 		}
 		return PROCESS_SKIP;
 	}
-
 
 	@Override
 	public int visit(IASTParameterDeclaration declaration) {
@@ -104,7 +103,7 @@ class NamespaceTypeCollector extends ASTVisitor {
 		if (elabSpec.getKind() != IASTElaboratedTypeSpecifier.k_enum) {
 			final IASTName name = elabSpec.getName();
 			if (!(name instanceof ICPPASTQualifiedName)) {
-				ASTInternal.addName(fScope,  name);
+				ASTInternal.addName(fScope, name);
 			}
 		}
 	}

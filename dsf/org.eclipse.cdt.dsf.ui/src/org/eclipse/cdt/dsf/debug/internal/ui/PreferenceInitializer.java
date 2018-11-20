@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,10 +29,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-		
+
 		IPreferenceStore prefs = DsfUIPlugin.getDefault().getPreferenceStore();
 
-		/* 
+		/*
 		 * Debug View
 		 */
 		prefs.setDefault(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, 10);

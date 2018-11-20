@@ -17,18 +17,18 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Represent the root C element corresponding to the workspace. 
+ * Represent the root C element corresponding to the workspace.
  * Since there is only one such root element, it is commonly referred to as
  * <em>the</em> C model element.
  * The C model element needs to be opened before it can be navigated or manipulated.
- * The C model element has no parent (it is the root of the C element 
+ * The C model element has no parent (it is the root of the C element
  * hierarchy). Its children are {@code ICProject}s.
  * <p>
  * This interface provides methods for performing copy, move, rename, and
  * delete operations on multiple C elements.
  *
  * @see CoreModel#create(org.eclipse.core.resources.IWorkspaceRoot)
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -44,9 +44,9 @@ public interface ICModel extends ICElement, IParent, IOpenable {
 	 * element. If {@code null} is specified for a given sibling, the copy
 	 * is inserted as the last child of its associated container.
 	 * <p>
-	 * Optionally, each copy can be renamed. If 
+	 * Optionally, each copy can be renamed. If
 	 * {@code null} is specified for the new name, the copy
-	 * is not renamed. 
+	 * is not renamed.
 	 * <p>
 	 * Optionally, any existing child in the destination container with
 	 * the same name can be replaced by specifying {@code true} for
@@ -73,11 +73,12 @@ public interface ICModel extends ICElement, IParent, IOpenable {
 	 * <li> A child in its associated container already exists with the same
 	 * 		name and {@code replace} has been specified as {@code false}
 	 *      ({@code NAME_COLLISION})
-	 * <li> A container or element is read-only ({@code READ_ONLY}) 
+	 * <li> A container or element is read-only ({@code READ_ONLY})
 	 * </ul>
 	 */
-	void copy(ICElement[] elements, ICElement[] containers, ICElement[] siblings, String[] renamings,
-			boolean replace, IProgressMonitor monitor) throws CModelException;
+	void copy(ICElement[] elements, ICElement[] containers, ICElement[] siblings, String[] renamings, boolean replace,
+			IProgressMonitor monitor) throws CModelException;
+
 	/**
 	 * Deletes the given elements, forcing the operation if necessary and specified.
 	 *
@@ -89,7 +90,7 @@ public interface ICModel extends ICElement, IParent, IOpenable {
 	 * <ul>
 	 * <li> A specified element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
 	 * <li> A {@code CoreException} occurred while updating an underlying resource
-	 * <li> An element is read-only ({@code READ_ONLY}) 
+	 * <li> An element is read-only ({@code READ_ONLY})
 	 * </ul>
 	 */
 	void delete(ICElement[] elements, boolean force, IProgressMonitor monitor) throws CModelException;
@@ -105,9 +106,9 @@ public interface ICModel extends ICElement, IParent, IOpenable {
 	 * element. If {@code null} is specified for sibling, the element
 	 * is inserted as the last child of its associated container.
 	 * <p>
-	 * Optionally, each element can be renamed. If 
+	 * Optionally, each element can be renamed. If
 	 * {@code null} is specified for the new name, the element
-	 * is not renamed. 
+	 * is not renamed.
 	 * <p>
 	 * Optionally, any existing child in the destination container with
 	 * the same name can be replaced by specifying {@code true} for
@@ -134,13 +135,13 @@ public interface ICModel extends ICElement, IParent, IOpenable {
 	 * <li> A child in its associated container already exists with the same
 	 * 		name and {@code replace} has been specified as {@code false}
 	 *      ({@code NAME_COLLISION})
-	 * <li> A container or element is read-only ({@code READ_ONLY}) 
+	 * <li> A container or element is read-only ({@code READ_ONLY})
 	 * </ul>
 	 *
 	 * @exception IllegalArgumentException any element or container is {@code null}
 	 */
-	void move(ICElement[] elements, ICElement[] containers, ICElement[] siblings, String[] renamings,
-			boolean replace, IProgressMonitor monitor) throws CModelException;
+	void move(ICElement[] elements, ICElement[] containers, ICElement[] siblings, String[] renamings, boolean replace,
+			IProgressMonitor monitor) throws CModelException;
 
 	/**
 	 * Renames the given elements as specified.
@@ -163,16 +164,16 @@ public interface ICModel extends ICElement, IParent, IOpenable {
 	 * <li> A new name is invalid ({@code INVALID_NAME})
 	 * <li> A child already exists with the same name and {@code replace} has been specified as
 	 *      {@code false} ({@code NAME_COLLISION})
-	 * <li> An element is read-only ({@code READ_ONLY}) 
+	 * <li> An element is read-only ({@code READ_ONLY})
 	 * </ul>
 	 */
 	void rename(ICElement[] elements, ICElement[] destinations, String[] names, boolean replace,
 			IProgressMonitor monitor) throws CModelException;
 
 	/**
-	 * Returns the C project with the given name. This is a handle-only method. 
+	 * Returns the C project with the given name. This is a handle-only method.
 	 * The project may or may not exist.
-	 * 
+	 *
 	 * @param name of the project
 	 */
 	ICProject getCProject(String name);

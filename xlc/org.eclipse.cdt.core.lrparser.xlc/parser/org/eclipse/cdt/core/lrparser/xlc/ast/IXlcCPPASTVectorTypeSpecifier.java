@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 public interface IXlcCPPASTVectorTypeSpecifier extends ICPPASTDeclSpecifier {
 
 	public boolean isPixel();
-	
+
 	public void setPixel(boolean isPixel);
-	
+
 }

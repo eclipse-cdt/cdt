@@ -36,8 +36,8 @@ public class CAddressBreakpoint extends AbstractLineBreakpoint implements ICAddr
 	/**
 	 * Constructor for CAddressBreakpoint.
 	 */
-	public CAddressBreakpoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, attributes, add );
+	public CAddressBreakpoint(IResource resource, Map<String, Object> attributes, boolean add) throws CoreException {
+		super(resource, attributes, add);
 	}
 
 	/**
@@ -49,11 +49,12 @@ public class CAddressBreakpoint extends AbstractLineBreakpoint implements ICAddr
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
 	@Override
 	protected String getMarkerMessage() throws CoreException {
-		return MessageFormat.format( BreakpointMessages.getString( "CAddressBreakpoint.0" ), (Object[])new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
+		return MessageFormat.format(BreakpointMessages.getString("CAddressBreakpoint.0"), //$NON-NLS-1$
+				(Object[]) new String[] { CDebugUtils.getBreakpointText(this, false) });
 	}
 }

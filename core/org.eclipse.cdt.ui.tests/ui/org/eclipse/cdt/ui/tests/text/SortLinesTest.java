@@ -63,15 +63,15 @@ public class SortLinesTest extends BaseUITestCase {
 		protected void setUp() throws Exception {
 			super.setUp();
 
-			fCProject= CProjectHelper.createCProject(PROJECT, null);
+			fCProject = CProjectHelper.createCProject(PROJECT, null);
 			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, DefaultCodeFormatterConstants.MIXED);
 			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, String.valueOf(8));
 			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, String.valueOf(4));
-			IFile file= EditorTestHelper.createFile(fCProject.getProject(), FILE, "", new NullProgressMonitor());
+			IFile file = EditorTestHelper.createFile(fCProject.getProject(), FILE, "", new NullProgressMonitor());
 		}
 
 		@Override
-		protected void tearDown () throws Exception {
+		protected void tearDown() throws Exception {
 			EditorTestHelper.closeAllEditors();
 			if (fCProject != null) {
 				CProjectHelper.delete(fCProject);
@@ -80,7 +80,8 @@ public class SortLinesTest extends BaseUITestCase {
 		}
 	}
 
-	private static final Class<?> THIS= SortLinesTest.class;
+	private static final Class<?> THIS = SortLinesTest.class;
+
 	public static Test suite() {
 		return new SortLinesTestSetup(new TestSuite(THIS));
 	}
@@ -96,12 +97,12 @@ public class SortLinesTest extends BaseUITestCase {
 	@Override
 	protected void setUp() throws Exception {
 		if (!ResourcesPlugin.getWorkspace().getRoot().exists(new Path(PROJECT))) {
-			fProjectSetup= new SortLinesTestSetup(this);
+			fProjectSetup = new SortLinesTestSetup(this);
 			fProjectSetup.setUp();
 		}
-		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(PROJECT + '/' + FILE), true);
-		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
-		fDocument= fSourceViewer.getDocument();
+		fEditor = (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(PROJECT + '/' + FILE), true);
+		fSourceViewer = EditorTestHelper.getSourceViewer(fEditor);
+		fDocument = fSourceViewer.getDocument();
 		super.setUp();
 	}
 
@@ -128,8 +129,7 @@ public class SortLinesTest extends BaseUITestCase {
 	 * @param endLine Last line of the selection. Zero based.
 	 * @param endPosition Position after the end of the selection in endLine. Zero based.
 	 */
-	private void select(int startLine, int startPosition, int endLine, int endPosition)
-			throws BadLocationException {
+	private void select(int startLine, int startPosition, int endLine, int endPosition) throws BadLocationException {
 		int offset = fDocument.getLineOffset(startLine) + startPosition;
 		fSourceViewer.setSelectedRange(offset, fDocument.getLineOffset(endLine) + endPosition - offset);
 	}
@@ -161,9 +161,9 @@ public class SortLinesTest extends BaseUITestCase {
 	//	// e.h
 	//	#include "e.h"
 	public void testSortLinesMixed() throws Exception {
-		CharSequence[] contents= getContentsForTest(2);
-		String before= contents[0].toString();
-		String after= contents[1].toString();
+		CharSequence[] contents = getContentsForTest(2);
+		String before = contents[0].toString();
+		String after = contents[1].toString();
 		fDocument.set(before);
 		selectAll();
 		sortLines();
@@ -182,9 +182,9 @@ public class SortLinesTest extends BaseUITestCase {
 	//	 * Callisto
 	//	 */
 	public void testSortLinesCommentsOnly() throws Exception {
-		CharSequence[] contents= getContentsForTest(2);
-		String before= contents[0].toString();
-		String after= contents[1].toString();
+		CharSequence[] contents = getContentsForTest(2);
+		String before = contents[0].toString();
+		String after = contents[1].toString();
 		fDocument.set(before);
 		select(1, 0, 3, 0);
 		sortLines();

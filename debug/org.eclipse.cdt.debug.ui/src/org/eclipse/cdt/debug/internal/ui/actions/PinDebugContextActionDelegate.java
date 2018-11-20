@@ -45,7 +45,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.WorkbenchPart;
 
 /**
- * Pin the selected debug context for the view. 
+ * Pin the selected debug context for the view.
  */
 public class PinDebugContextActionDelegate implements IViewActionDelegate, IActionDelegate2, IDebugContextListener {
 	private IViewPart fPart;
@@ -54,10 +54,10 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 	private IAction fAction;
 	private IPartListener2 fPartListener;
 	private DebugContextPinProvider fProvider;
-	
+
 	public PinDebugContextActionDelegate() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
@@ -65,7 +65,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -77,13 +77,13 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 				fLastKnownDescription = ((WorkbenchPart) fPart).getContentDescription();
 				fPinnedContextLabel = getPinContextLabel(fProvider);
 				PinCloneUtils.setPartContentDescription(fPart, fPinnedContextLabel);
-				updatePinContextColor(fProvider); 
+				updatePinContextColor(fProvider);
 			}
 		} else {
 			fProvider = null;
 			DebugEventFilterService.getInstance().removeDebugEventFilter(fPart);
 			updatePinContextColor(fProvider);
-			PinCloneUtils.setPartContentDescription(fPart, fLastKnownDescription);			
+			PinCloneUtils.setPartContentDescription(fPart, fLastKnownDescription);
 		}
 	}
 
@@ -101,7 +101,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 	public void init(IAction action) {
 		fAction = action;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
@@ -110,12 +110,13 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		fPart = view;
 
 		if (fAction != null && !fAction.isChecked()) {
-			IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(fPart.getViewSite().getWorkbenchWindow());
-			boolean pinnable = PinCloneUtils.isPinnable(fPart, service.getActiveContext());		
+			IDebugContextService service = DebugUITools.getDebugContextManager()
+					.getContextService(fPart.getViewSite().getWorkbenchWindow());
+			boolean pinnable = PinCloneUtils.isPinnable(fPart, service.getActiveContext());
 			fAction.setEnabled(pinnable);
 		}
-		
-		fPart.addPropertyListener(new IPropertyListener() {			
+
+		fPart.addPropertyListener(new IPropertyListener() {
 			@Override
 			public void propertyChanged(Object source, int propId) {
 				if (IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION == propId) {
@@ -125,7 +126,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 					if (!fPinnedContextLabel.equals(desc)) {
 						fLastKnownDescription = desc;
 					}
-					
+
 					// if action is checked, than set it back to the pinned context label.
 					if (fAction != null && fAction.isChecked()) {
 						PinCloneUtils.setPartContentDescription(fPart, fPinnedContextLabel);
@@ -134,16 +135,18 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 					PinCloneUtils.setPartTitle(fPart);
 				}
 			}
-		});		
-		
+		});
+
 		DebugUITools.addPartDebugContextListener(fPart.getSite(), this);
-		
+
 		// Platform AbstractDebugView saves action check state,
 		// in our case, we don't want this behavior.
 		// Listens to part close and set the check state off.
-		fPartListener = new IPartListener2() {					
+		fPartListener = new IPartListener2() {
 			@Override
-			public void partBroughtToTop(IWorkbenchPartReference partRef) {}
+			public void partBroughtToTop(IWorkbenchPartReference partRef) {
+			}
+
 			@Override
 			public void partClosed(IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
@@ -151,22 +154,34 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 					unpinPart();
 				}
 			}
+
 			@Override
-			public void partDeactivated(IWorkbenchPartReference partRef) {}
+			public void partDeactivated(IWorkbenchPartReference partRef) {
+			}
+
 			@Override
-			public void partOpened(IWorkbenchPartReference partRef) {}
+			public void partOpened(IWorkbenchPartReference partRef) {
+			}
+
 			@Override
-			public void partHidden(IWorkbenchPartReference partRef) {}
+			public void partHidden(IWorkbenchPartReference partRef) {
+			}
+
 			@Override
-			public void partVisible(IWorkbenchPartReference partRef) {}
+			public void partVisible(IWorkbenchPartReference partRef) {
+			}
+
 			@Override
-			public void partInputChanged(IWorkbenchPartReference partRef) {}
+			public void partInputChanged(IWorkbenchPartReference partRef) {
+			}
+
 			@Override
-			public void partActivated(IWorkbenchPartReference partRef) {}
+			public void partActivated(IWorkbenchPartReference partRef) {
+			}
 		};
-		fPart.getSite().getWorkbenchWindow().getPartService().addPartListener(fPartListener);		
+		fPart.getSite().getWorkbenchWindow().getPartService().addPartListener(fPartListener);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
@@ -176,23 +191,23 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		fPart.getSite().getWorkbenchWindow().getPartService().removePartListener(fPartListener);
 		unpinPart();
 	}
-	
+
 	protected void unpinPart() {
 		if (fAction.isChecked()) {
 			DebugEventFilterService.getInstance().removeDebugEventFilter(fPart);
 			fAction.setChecked(false);
 		}
 	}
-	
+
 	protected ISelection getActiveDebugContext() {
-		IDebugContextService contextService = 
-			DebugUITools.getDebugContextManager().getContextService(fPart.getSite().getWorkbenchWindow());
-		return contextService.getActiveContext();		
+		IDebugContextService contextService = DebugUITools.getDebugContextManager()
+				.getContextService(fPart.getSite().getWorkbenchWindow());
+		return contextService.getActiveContext();
 	}
-	
+
 	private String getPinContextLabel(DebugContextPinProvider provider) {
 		String description = ""; //$NON-NLS-1$
-		
+
 		if (provider != null) {
 			Set<String> labels = new HashSet<String>();
 			for (IPinElementHandle handle : provider.getPinHandles()) {
@@ -200,7 +215,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 				if (tmp != null && tmp.trim().length() != 0)
 					labels.add(tmp);
 			}
-			
+
 			for (String label : labels) {
 				if (label != null) {
 					if (description.length() > 0) {
@@ -213,19 +228,20 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		}
 		return description;
 	}
-	
+
 	private String getLabel(IPinElementHandle handle) {
 		String label = ""; //$NON-NLS-1$
 
 		if (handle != null)
 			label = handle.getLabel();
-		
+
 		return label;
 	}
 
 	private boolean useMultiPinImage(Set<IPinElementHandle> handles) {
-		if (handles.size() <= 1) return false;
-		
+		if (handles.size() <= 1)
+			return false;
+
 		int overlayColor = IPinElementColorDescriptor.UNDEFINED;
 		ImageDescriptor imageDesc = null;
 		for (IPinElementHandle handle : handles) {
@@ -235,27 +251,27 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 				if (imageDesc != null && !imageDesc.equals(descImageDesc))
 					return true;
 				imageDesc = descImageDesc;
-				
+
 				int descOverlayColor = colorDesc.getOverlayColor();
 				if (overlayColor != IPinElementColorDescriptor.UNDEFINED && descOverlayColor != overlayColor)
 					return true;
 				overlayColor = descOverlayColor;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	private void updatePinContextColor(DebugContextPinProvider provider) {
 		ImageDescriptor imageDesc = null;
 		if (provider != null) {
 			Set<IPinElementHandle> handles = provider.getPinHandles();
-			
-			// if handles have different toolbar icon descriptor or different pin color, than use a 
+
+			// if handles have different toolbar icon descriptor or different pin color, than use a
 			// multi-pin toolbar icon
 			if (useMultiPinImage(handles))
-				imageDesc =  CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_PIN_ACTION_MULTI);
-			
+				imageDesc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_PIN_ACTION_MULTI);
+
 			if (imageDesc == null) {
 				Iterator<IPinElementHandle> itr = handles.iterator();
 				if (itr.hasNext()) {
@@ -263,10 +279,10 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 					IPinElementColorDescriptor desc = handle.getPinElementColorDescriptor();
 					if (desc != null)
 						imageDesc = desc.getToolbarIconDescriptor();
-					
+
 					if (imageDesc == null && desc != null) {
 						int overlayColor = desc.getOverlayColor() % IPinElementColorDescriptor.DEFAULT_COLOR_COUNT;
-						
+
 						switch (overlayColor) {
 						case IPinProvider.IPinElementColorDescriptor.GREEN:
 							imageDesc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_PIN_ACTION_G);
@@ -282,12 +298,12 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 				}
 			}
 		}
-		
+
 		if (imageDesc == null)
 			imageDesc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_PIN_ACTION);
 		fAction.setImageDescriptor(imageDesc);
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
 	 */
@@ -295,8 +311,8 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 	public void debugContextChanged(DebugContextEvent event) {
 		if (fAction != null && !fAction.isChecked()) {
 			final boolean pinnable = PinCloneUtils.isPinnable(fPart, event.getContext());
-			if (pinnable != fAction.isEnabled()) {			
-				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {				
+			if (pinnable != fAction.isEnabled()) {
+				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 					@Override
 					public void run() {
 						fAction.setEnabled(pinnable);

@@ -66,8 +66,9 @@ public class QPropertyAttributeProposal {
 	public ICompletionProposal createProposal(String prefix, int offset) {
 		int prefixLen = prefix == null ? 0 : prefix.length();
 
-		String disp = identifier.equals(display) ? display : ( identifier + " - " + display );
-		return new CCompletionProposal(identifier.substring(prefixLen), offset, prefixLen, Activator.getQtLogo(), disp, relevance);
+		String disp = identifier.equals(display) ? display : (identifier + " - " + display);
+		return new CCompletionProposal(identifier.substring(prefixLen), offset, prefixLen, Activator.getQtLogo(), disp,
+				relevance);
 	}
 
 	private QPropertyAttributeProposal(String identifier, String display, int relevance) {
@@ -80,15 +81,15 @@ public class QPropertyAttributeProposal {
 		return identifier;
 	}
 
-	public static Collection<QPropertyAttributeProposal> buildProposals(IQProperty.Attribute attr, ICEditorContentAssistInvocationContext context, IType type, String name) {
-		switch(attr) {
+	public static Collection<QPropertyAttributeProposal> buildProposals(IQProperty.Attribute attr,
+			ICEditorContentAssistInvocationContext context, IType type, String name) {
+		switch (attr) {
 		// propose true/false for bool Attributes
 		case DESIGNABLE:
 		case SCRIPTABLE:
 		case STORED:
 		case USER:
-			return Arrays.asList(
-					new QPropertyAttributeProposal("true", IMethodAttribute.BaseRelevance + 11),
+			return Arrays.asList(new QPropertyAttributeProposal("true", IMethodAttribute.BaseRelevance + 11),
 					new QPropertyAttributeProposal("false", IMethodAttribute.BaseRelevance + 10));
 
 		// propose appropriate methods for method-based attributes
@@ -108,7 +109,8 @@ public class QPropertyAttributeProposal {
 		return Collections.emptyList();
 	}
 
-	private static Collection<QPropertyAttributeProposal> getMethodProposals(ICEditorContentAssistInvocationContext context, IMethodAttribute methodAttribute) {
+	private static Collection<QPropertyAttributeProposal> getMethodProposals(
+			ICEditorContentAssistInvocationContext context, IMethodAttribute methodAttribute) {
 
 		ICPPClassType cls = getEnclosingClassDefinition(context);
 		if (cls == null)
@@ -117,7 +119,7 @@ public class QPropertyAttributeProposal {
 		// Return all the methods, including inherited and non-visible ones.
 		ICPPMethod[] methods = cls.getMethods();
 		List<ICPPMethod> filtered = new ArrayList<ICPPMethod>(methods.length);
-		for(ICPPMethod method : methods)
+		for (ICPPMethod method : methods)
 			if (methodAttribute.keep(method))
 				filtered.add(method);
 
@@ -125,13 +127,15 @@ public class QPropertyAttributeProposal {
 		//      parameters with default values.
 
 		List<QPropertyAttributeProposal> proposals = new ArrayList<QPropertyAttributeProposal>();
-		for(ICPPMethod method : getMethods(context, methodAttribute))
-			proposals.add(new QPropertyAttributeProposal(method.getName(), getDisplay(cls, method), methodAttribute.getRelevance(method)));
+		for (ICPPMethod method : getMethods(context, methodAttribute))
+			proposals.add(new QPropertyAttributeProposal(method.getName(), getDisplay(cls, method),
+					methodAttribute.getRelevance(method)));
 
 		return proposals;
 	}
 
-	private static Collection<QPropertyAttributeProposal> getSignalProposals(ICEditorContentAssistInvocationContext context, IMethodAttribute methodAttribute) {
+	private static Collection<QPropertyAttributeProposal> getSignalProposals(
+			ICEditorContentAssistInvocationContext context, IMethodAttribute methodAttribute) {
 		ICPPClassType cls = getEnclosingClassDefinition(context);
 		if (cls == null)
 			return Collections.emptyList();
@@ -147,7 +151,7 @@ public class QPropertyAttributeProposal {
 		IQObject qobj = null;
 		try {
 			qobj = qtIndex.findQObject(cls.getQualifiedName());
-		} catch(DOMException e) {
+		} catch (DOMException e) {
 			Activator.log(e);
 		}
 
@@ -155,7 +159,7 @@ public class QPropertyAttributeProposal {
 			return Collections.emptyList();
 
 		List<QPropertyAttributeProposal> proposals = new ArrayList<QPropertyAttributeProposal>();
-		for(IQMethod qMethod : qobj.getSignals().all())
+		for (IQMethod qMethod : qobj.getSignals().all())
 			proposals.add(new QPropertyAttributeProposal(qMethod.getName(), IMethodAttribute.BaseRelevance));
 
 		return proposals;
@@ -176,11 +180,11 @@ public class QPropertyAttributeProposal {
 			if (qn1.length != qn2.length)
 				return false;
 
-			for(int i = 0; i < qn1.length; ++i)
+			for (int i = 0; i < qn1.length; ++i)
 				if (!qn1[i].equals(qn2[i]))
 					return false;
 			return true;
-		} catch(DOMException e) {
+		} catch (DOMException e) {
 			return false;
 		}
 	}
@@ -201,7 +205,7 @@ public class QPropertyAttributeProposal {
 		sig.append(method.getName());
 		sig.append('(');
 		boolean first = true;
-		for(ICPPParameter param : method.getParameters()) {
+		for (ICPPParameter param : method.getParameters()) {
 			if (first)
 				first = false;
 			else
@@ -227,6 +231,7 @@ public class QPropertyAttributeProposal {
 		public boolean keep(ICPPMethod method);
 
 		public static final int BaseRelevance = 2000;
+
 		public int getRelevance(ICPPMethod method);
 
 		public static final IMethodAttribute Null = new IMethodAttribute() {
@@ -243,7 +248,7 @@ public class QPropertyAttributeProposal {
 	}
 
 	private static IMethodAttribute get(IQProperty.Attribute attr, IType type, String propertyName) {
-		switch(attr) {
+		switch (attr) {
 		case READ:
 			return new Read(type, propertyName);
 		case WRITE:
@@ -272,8 +277,7 @@ public class QPropertyAttributeProposal {
 		@Override
 		public boolean keep(ICPPMethod method) {
 			// READ must have no params without default values
-			if (method.getParameters().length > 0
-			 && !method.getParameters()[0].hasDefaultValue())
+			if (method.getParameters().length > 0 && !method.getParameters()[0].hasDefaultValue())
 				return false;
 
 			// Make sure the return type of the method can be assigned to the property's type.
@@ -331,8 +335,7 @@ public class QPropertyAttributeProposal {
 
 			// WRITE must have at least one parameter and no more than one param without default values
 			if (method.getParameters().length < 1
-			 || (method.getParameters().length > 1
-			 && !method.getParameters()[1].hasDefaultValue()))
+					|| (method.getParameters().length > 1 && !method.getParameters()[1].hasDefaultValue()))
 				return false;
 
 			// Make sure the property's type can be assigned to the type of the first parameter
@@ -388,8 +391,7 @@ public class QPropertyAttributeProposal {
 
 			// RESET must have void return type
 			IType retType = method.getType().getReturnType();
-			if (!(retType instanceof IBasicType)
-			 || ((IBasicType) retType).getKind() != IBasicType.Kind.eVoid)
+			if (!(retType instanceof IBasicType) || ((IBasicType) retType).getKind() != IBasicType.Kind.eVoid)
 				return false;
 
 			// RESET must have no parameters
@@ -427,14 +429,11 @@ public class QPropertyAttributeProposal {
 				return null;
 
 			// Disable all unneeded parts of the parser.
-			IASTTranslationUnit astTU
-				= tu.getAST(
-					index,
-					ITranslationUnit.AST_SKIP_FUNCTION_BODIES
-				  | ITranslationUnit.AST_SKIP_ALL_HEADERS
-				  | ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
-				  | ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS
-				  | ITranslationUnit.AST_PARSE_INACTIVE_CODE);
+			IASTTranslationUnit astTU = tu.getAST(index,
+					ITranslationUnit.AST_SKIP_FUNCTION_BODIES | ITranslationUnit.AST_SKIP_ALL_HEADERS
+							| ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
+							| ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS
+							| ITranslationUnit.AST_PARSE_INACTIVE_CODE);
 			if (astTU == null)
 				return null;
 
@@ -455,8 +454,7 @@ public class QPropertyAttributeProposal {
 					return null;
 
 				offset = location.getNodeOffset() - 1;
-			} while(offset > 0
-				 && !(enclosing instanceof IASTCompositeTypeSpecifier));
+			} while (offset > 0 && !(enclosing instanceof IASTCompositeTypeSpecifier));
 
 			if (!(enclosing instanceof IASTCompositeTypeSpecifier))
 				return null;
@@ -470,7 +468,7 @@ public class QPropertyAttributeProposal {
 				return null;
 
 			return (ICPPClassType) binding.getAdapter(ICPPClassType.class);
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			Activator.log(e);
 		}
 
@@ -481,7 +479,8 @@ public class QPropertyAttributeProposal {
 	 * Find and return all methods that are accessible in the class definition that encloses the argument
 	 * invocation context.  Does not return null.
 	 */
-	private static Collection<ICPPMethod> getMethods(ICEditorContentAssistInvocationContext context, IMethodAttribute methodAttribute) {
+	private static Collection<ICPPMethod> getMethods(ICEditorContentAssistInvocationContext context,
+			IMethodAttribute methodAttribute) {
 
 		ICPPClassType cls = getEnclosingClassDefinition(context);
 		if (cls == null)
@@ -490,7 +489,7 @@ public class QPropertyAttributeProposal {
 		// Return all the methods, including inherited and non-visible ones.
 		ICPPMethod[] methods = cls.getMethods();
 		List<ICPPMethod> filtered = new ArrayList<ICPPMethod>(methods.length);
-		for(ICPPMethod method : methods)
+		for (ICPPMethod method : methods)
 			if (methodAttribute.keep(method))
 				filtered.add(method);
 
@@ -503,7 +502,6 @@ public class QPropertyAttributeProposal {
 	private static boolean isAssignable(IType lhs, IType rhs) {
 		// TODO This needs a real assignment check.  If the types are different by implicitly convertible
 		//      then this should return true.
-		return lhs != null
-			&& rhs.isSameType(lhs);
+		return lhs != null && rhs.isSameType(lhs);
 	}
 }

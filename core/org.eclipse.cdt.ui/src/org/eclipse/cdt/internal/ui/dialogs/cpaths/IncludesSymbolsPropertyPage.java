@@ -50,7 +50,8 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 /**
  * @noreference This class is not intended to be referenced by clients.
  */
-public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatusChangeListener, IPathEntryStoreListener {
+public class IncludesSymbolsPropertyPage extends PropertyPage
+		implements IStatusChangeListener, IPathEntryStoreListener {
 	private static final String PAGE_SETTINGS = "IncludeSysmbolsPropertyPage"; //$NON-NLS-1$
 	private static final String INDEX = "pageIndex"; //$NON-NLS-1$
 
@@ -102,7 +103,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	 */
 	private Control createWithoutCProject(Composite parent) {
 		Label label = new Label(parent, SWT.LEFT);
-		label.setText(CPathEntryMessages.CPathsPropertyPage_no_C_project_message); 
+		label.setText(CPathEntryMessages.CPathsPropertyPage_no_C_project_message);
 
 		fIncludesSymbolsBlock = null;
 		setValid(true);
@@ -114,7 +115,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	 */
 	private Control createForClosedProject(Composite parent) {
 		Label label = new Label(parent, SWT.LEFT);
-		label.setText(CPathEntryMessages.CPathsPropertyPage_closed_project_message); 
+		label.setText(CPathEntryMessages.CPathsPropertyPage_closed_project_message);
 
 		fIncludesSymbolsBlock = null;
 		setValid(true);
@@ -123,7 +124,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	@Override
@@ -132,18 +133,17 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 			fStore.removePathEntryStoreListener(this);
 		}
 	}
-	
+
 	@Override
 	public void setVisible(boolean visible) {
 		if (fIncludesSymbolsBlock != null) {
 			if (!visible) {
 				if (fIncludesSymbolsBlock.hasChangesInDialog()) {
-					String title = CPathEntryMessages.CPathsPropertyPage_unsavedchanges_title; 
-					String message = CPathEntryMessages.CPathsPropertyPage_unsavedchanges_message; 
-					String[] buttonLabels = new String[]{
-							CPathEntryMessages.CPathsPropertyPage_unsavedchanges_button_save, 
-							CPathEntryMessages.CPathsPropertyPage_unsavedchanges_button_discard, 
-					};
+					String title = CPathEntryMessages.CPathsPropertyPage_unsavedchanges_title;
+					String message = CPathEntryMessages.CPathsPropertyPage_unsavedchanges_message;
+					String[] buttonLabels = new String[] {
+							CPathEntryMessages.CPathsPropertyPage_unsavedchanges_button_save,
+							CPathEntryMessages.CPathsPropertyPage_unsavedchanges_button_discard, };
 					MessageDialog dialog = new MessageDialog(getShell(), title, null, message, MessageDialog.QUESTION,
 							buttonLabels, 0);
 					int res = dialog.open();
@@ -213,8 +213,8 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 			try {
 				new ProgressMonitorDialog(shell).run(true, true, op);
 			} catch (InvocationTargetException e) {
-				String title = CPathEntryMessages.CPathsPropertyPage_error_title; 
-				String message = CPathEntryMessages.CPathsPropertyPage_error_message; 
+				String title = CPathEntryMessages.CPathsPropertyPage_error_title;
+				String message = CPathEntryMessages.CPathsPropertyPage_error_message;
 				ExceptionHandler.handle(e, shell, title, message);
 				return false;
 			} catch (InterruptedException e) {
@@ -227,7 +227,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IStatusChangeListener#statusChanged
 	 */
 	@Override
@@ -238,7 +238,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
 	 */
 	@Override
@@ -251,7 +251,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStoreListener#pathEntryStoreChanged(org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent)
 	 */
 	@Override

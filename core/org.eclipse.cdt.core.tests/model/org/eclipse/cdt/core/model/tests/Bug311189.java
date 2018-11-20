@@ -62,9 +62,9 @@ public class Bug311189 extends BaseTestCase {
 
 		// create a source folder and set it as a source entry
 		srcFolder.create(true, true, null);
-		CoreModel.setRawPathEntries(CoreModel.getDefault().create(project), new IPathEntry[] {sourceEntry}, null);
+		CoreModel.setRawPathEntries(CoreModel.getDefault().create(project), new IPathEntry[] { sourceEntry }, null);
 		IPathEntry[] rawEntries = CoreModel.getPathEntryStore(project).getRawPathEntries();
-		assertTrue ("Path entry unset!", Arrays.asList(rawEntries).contains(sourceEntry));
+		assertTrue("Path entry unset!", Arrays.asList(rawEntries).contains(sourceEntry));
 
 		try {
 			// None-batched resource change, though we do hold a scheduling rule
@@ -88,8 +88,7 @@ public class Bug311189 extends BaseTestCase {
 
 		IPathEntryStore store = CoreModel.getPathEntryStore(project);
 		rawEntries = store.getRawPathEntries();
-		assertTrue ("Path entry gone!", Arrays.asList(rawEntries).contains(sourceEntry));
+		assertTrue("Path entry gone!", Arrays.asList(rawEntries).contains(sourceEntry));
 	}
-
 
 }

@@ -44,11 +44,11 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * The view controller for the working set configurations pane in the dialog. It takes care of coordinating
  * the user gestures in the pane with the working set configuration model, and vice-versa. It also implements
  * the handling of the action buttons.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
- * 
+ *
  */
 class WorkingSetConfigsController implements SelectionListener, ISelectionChangedListener {
 
@@ -92,7 +92,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 
 	/**
 	 * Assigns the tree viewer that I control.
-	 * 
+	 *
 	 * @param tree
 	 *            my tree viewer
 	 */
@@ -118,8 +118,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 						ITreeContentProvider content = (ITreeContentProvider) tree.getContentProvider();
 
 						if ((initialWorkingSet != null)
-								&& Arrays.asList(content.getElements(tree.getInput())).contains(
-										initialWorkingSet)) {
+								&& Arrays.asList(content.getElements(tree.getInput())).contains(initialWorkingSet)) {
 							initialSelection = initialWorkingSet;
 						} else {
 							// we have a most-recently-used working set. Just
@@ -164,7 +163,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 
 	/**
 	 * Assigns me my "Add..." button.
-	 * 
+	 *
 	 * @param addButton
 	 *            my add button
 	 */
@@ -174,7 +173,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 
 	/**
 	 * Assigns me my "Remove" button.
-	 * 
+	 *
 	 * @param removeButton
 	 *            my remove button
 	 */
@@ -184,7 +183,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 
 	/**
 	 * Assigns me my "Rename..." button.
-	 * 
+	 *
 	 * @param renameButton
 	 *            my rename button
 	 */
@@ -194,7 +193,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 
 	/**
 	 * Assigns me my "Activate" button.
-	 * 
+	 *
 	 * @param activateButton
 	 *            my activate button
 	 */
@@ -204,7 +203,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 
 	/**
 	 * Assigns me my "Build" button.
-	 * 
+	 *
 	 * @param buildButton
 	 *            my build button
 	 */
@@ -215,7 +214,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 	/**
 	 * Connects me to the controller for the project configurations pane, into which I inject the currently
 	 * selected working set configuration.
-	 * 
+	 *
 	 * @param controller
 	 *            my project configurations controller
 	 */
@@ -289,8 +288,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 	 */
 	private void addConfig() {
 		InputDialog dlg = new InputDialog(tree.getTree().getShell(),
-				WorkingSetMessages.WSConfigsController_addDlg_title,
-				WorkingSetMessages.WSConfigsController_addDlg_msg,
+				WorkingSetMessages.WSConfigsController_addDlg_title, WorkingSetMessages.WSConfigsController_addDlg_msg,
 				WorkingSetMessages.WSConfigsController_addDlg_defaultName, new IInputValidator() {
 
 					@Override
@@ -306,8 +304,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 				});
 
 		if (dlg.open() == IDialogConstants.OK_ID) {
-			IWorkingSetConfiguration.ISnapshot newConfig = currentWorkingSet.createConfiguration(dlg
-					.getValue());
+			IWorkingSetConfiguration.ISnapshot newConfig = currentWorkingSet.createConfiguration(dlg.getValue());
 			tree.refresh(currentWorkingSet);
 			tree.setSelection(new StructuredSelection(newConfig), true);
 			currentConfig = newConfig;
@@ -335,8 +332,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 	private void renameConfig() {
 		InputDialog dlg = new InputDialog(tree.getTree().getShell(),
 				WorkingSetMessages.WSConfigsController_renameDlg_title,
-				WorkingSetMessages.WSConfigsController_renameDlg_msg, currentConfig.getName(),
-				new IInputValidator() {
+				WorkingSetMessages.WSConfigsController_renameDlg_msg, currentConfig.getName(), new IInputValidator() {
 
 					@Override
 					public String isValid(String newText) {
@@ -459,7 +455,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 	 * Notification that the selection of configuration(s) in some project in the current working set
 	 * configuration has changed. I accordingly update the visuals of the working-set configuration to
 	 * indicate whether it is active or not.
-	 * 
+	 *
 	 * @param project
 	 *            the project configuration whose active configuration selections have changed
 	 */

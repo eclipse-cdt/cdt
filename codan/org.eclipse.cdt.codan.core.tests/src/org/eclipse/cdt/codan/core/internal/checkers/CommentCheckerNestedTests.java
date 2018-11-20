@@ -34,6 +34,7 @@ public class CommentCheckerNestedTests extends CheckerTestCase {
 	public void testLineComment() throws Exception {
 		checkSampleAbove();
 	}
+
 	//	void foo() {
 	//	  return; /*
 	//    /* // error

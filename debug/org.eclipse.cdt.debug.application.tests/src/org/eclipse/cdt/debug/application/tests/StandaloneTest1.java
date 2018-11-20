@@ -117,7 +117,8 @@ public class StandaloneTest1 extends StandaloneTest {
 		boolean found = false;
 		try {
 			final Matcher<MenuItem> matcher = withMnemonic(menuText);
-			WaitForObjectCondition<MenuItem> waitForMenuItem = Conditions.waitForMenuItem(shell.menu(), matcher, false, 0);
+			WaitForObjectCondition<MenuItem> waitForMenuItem = Conditions.waitForMenuItem(shell.menu(), matcher, false,
+					0);
 			bot.waitUntil(waitForMenuItem, 50);
 			found = true;
 		} catch (TimeoutException e) {

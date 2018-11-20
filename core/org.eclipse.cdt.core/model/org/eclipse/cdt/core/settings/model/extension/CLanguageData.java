@@ -20,41 +20,41 @@ public abstract class CLanguageData extends CDataObject {
 	protected CLanguageData() {
 	}
 
-//	public abstract CDataObject[] getChildrenOfKind(int kind);
+	//	public abstract CDataObject[] getChildrenOfKind(int kind);
 
-//	public abstract CDataObject getChildById(String id);
+	//	public abstract CDataObject getChildById(String id);
 
 	@Override
 	public final int getType() {
 		return SETTING_LANGUAGE;
 	}
-	
+
 	public abstract String getLanguageId();
 
 	public abstract void setLanguageId(String id);
-	
+
 	public abstract String[] getSourceContentTypeIds();
-	
+
 	public abstract String[] getSourceExtensions();
 
-//	public abstract IContentType getHeaderContentType();
+	//	public abstract IContentType getHeaderContentType();
 
-//	public abstract String[] getHeaderExtensions();
-	
-//	public abstract void removeEntry(ICLanguageSettingEntry entry);
-	
-//	public abstract void addEntry(ICLanguageSettingEntry entry, int position);
-	
+	//	public abstract String[] getHeaderExtensions();
+
+	//	public abstract void removeEntry(ICLanguageSettingEntry entry);
+
+	//	public abstract void addEntry(ICLanguageSettingEntry entry, int position);
+
 	public abstract ICLanguageSettingEntry[] getEntries(int kind);
-	
+
 	public abstract void setEntries(int kind, ICLanguageSettingEntry entries[]);
-		
+
 	public abstract int getSupportedEntryKinds();
-	
+
 	public abstract void setSourceContentTypeIds(String ids[]);
 
 	public abstract void setSourceExtensions(String exts[]);
-	
+
 	public boolean containsDiscoveredScannerInfo() {
 		return true;
 	}

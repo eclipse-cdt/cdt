@@ -49,24 +49,19 @@ public class IntegralValue implements IValue {
 	};
 
 	// IntegralValue.ERROR indicates that an error, such as a substitution failure, occurred during evaluation.
-	public static final IntegralValue ERROR= new IntegralValue("<error>".toCharArray()); //$NON-NLS-1$
+	public static final IntegralValue ERROR = new IntegralValue("<error>".toCharArray()); //$NON-NLS-1$
 
-	public static final IntegralValue NOT_INITIALIZED= new IntegralValue("<__>".toCharArray()); //$NON-NLS-1$
+	public static final IntegralValue NOT_INITIALIZED = new IntegralValue("<__>".toCharArray()); //$NON-NLS-1$
 
 	private static final char UNIQUE_CHAR = '_';
 
-	private final static IntegralValue[] TYPICAL= {
-			new IntegralValue(new char[] {'-', '1'}),
-			new IntegralValue(new char[] {'0'}),
-			new IntegralValue(new char[] {'1'}),
-			new IntegralValue(new char[] {'2'}),
-			new IntegralValue(new char[] {'3'}),
-			new IntegralValue(new char[] {'4'}),
-			new IntegralValue(new char[] {'5'}),
-			new IntegralValue(new char[] {'6'}),
-			new IntegralValue(new char[] {'7'})};
+	private final static IntegralValue[] TYPICAL = { new IntegralValue(new char[] { '-', '1' }),
+			new IntegralValue(new char[] { '0' }), new IntegralValue(new char[] { '1' }),
+			new IntegralValue(new char[] { '2' }), new IntegralValue(new char[] { '3' }),
+			new IntegralValue(new char[] { '4' }), new IntegralValue(new char[] { '5' }),
+			new IntegralValue(new char[] { '6' }), new IntegralValue(new char[] { '7' }) };
 
-	private static int sUnique= 0;
+	private static int sUnique = 0;
 
 	private final char[] fFixedValue;
 
@@ -78,7 +73,7 @@ public class IntegralValue implements IValue {
 	public final Number numberValue() {
 		return parseLong(fFixedValue);
 	}
-	
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		return null;
@@ -94,13 +89,14 @@ public class IntegralValue implements IValue {
 		if (UNKNOWN == this) {
 			buf.putShort((short) (ITypeMarshalBuffer.INTEGRAL_VALUE | ITypeMarshalBuffer.FLAG1));
 		} else if (ERROR == this) {
-			buf.putShort((short) (ITypeMarshalBuffer.INTEGRAL_VALUE | ITypeMarshalBuffer.FLAG1 | ITypeMarshalBuffer.FLAG2));
+			buf.putShort(
+					(short) (ITypeMarshalBuffer.INTEGRAL_VALUE | ITypeMarshalBuffer.FLAG1 | ITypeMarshalBuffer.FLAG2));
 		} else if (THIS == this) {
 			buf.putShort((short) (ITypeMarshalBuffer.INTEGRAL_VALUE | ITypeMarshalBuffer.FLAG5));
 		} else {
-			Number num= numberValue();
+			Number num = numberValue();
 			if (num != null) {
-				long lv= num.longValue();
+				long lv = num.longValue();
 				if (lv >= 0) {
 					buf.putShort((short) (ITypeMarshalBuffer.INTEGRAL_VALUE | ITypeMarshalBuffer.FLAG2));
 					buf.putLong(lv);
@@ -184,8 +180,8 @@ public class IntegralValue implements IValue {
 		}
 		ICPPEvaluation arg1 = value.getEvaluation();
 		EvalFixed arg2 = new EvalFixed(CPPBasicType.INT, ValueCategory.PRVALUE, create(increment));
-		return DependentValue.create(new EvalBinary(IASTBinaryExpression.op_plus, arg1, arg2, 
-				arg1.getTemplateDefinition()));
+		return DependentValue
+				.create(new EvalBinary(IASTBinaryExpression.op_plus, arg1, arg2, arg1.getTemplateDefinition()));
 	}
 
 	/**
@@ -226,7 +222,7 @@ public class IntegralValue implements IValue {
 	 * Creates a unique value needed during template instantiation.
 	 */
 	public static IValue unique() {
-		StringBuilder buf= new StringBuilder(10);
+		StringBuilder buf = new StringBuilder(10);
 		buf.append(UNIQUE_CHAR);
 		buf.append(++sUnique);
 		return new IntegralValue(CharArrayUtils.extractChars(buf));
@@ -236,11 +232,11 @@ public class IntegralValue implements IValue {
 	 * Parses a long, returns <code>null</code> if not possible
 	 */
 	private static Long parseLong(char[] value) {
-		final long maxvalue= Long.MAX_VALUE / 10;
-		final int len= value.length;
-		boolean negative= false;
+		final long maxvalue = Long.MAX_VALUE / 10;
+		final int len = value.length;
+		boolean negative = false;
 		long result = 0;
-		int i= 0;
+		int i = 0;
 
 		if (len > 0 && value[0] == '-') {
 			negative = true;
@@ -253,10 +249,10 @@ public class IntegralValue implements IValue {
 			if (result > maxvalue)
 				return null;
 
-			final int digit= (value[i] - '0');
+			final int digit = (value[i] - '0');
 			if (digit < 0 || digit > 9)
 				return null;
-			result= result * 10 + digit;
+			result = result * 10 + digit;
 		}
 		return negative ? -result : result;
 	}
@@ -265,7 +261,7 @@ public class IntegralValue implements IValue {
 	 * Converts long to a char array
 	 */
 	private static char[] toCharArray(long value) {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		buf.append(value);
 		return CharArrayUtils.extractChars(buf);
 	}
@@ -294,7 +290,7 @@ public class IntegralValue implements IValue {
 	public IValue clone() {
 		return new IntegralValue(Arrays.copyOf(fFixedValue, fFixedValue.length));
 	}
-	
+
 	@Override
 	public boolean isEquivalentTo(IValue other) {
 		if (!(other instanceof IntegralValue)) {

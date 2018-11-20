@@ -13,12 +13,12 @@ package org.eclipse.cdt.dsf.gdb.service.command;
 /**
  * Interface used by a process representing the GDB process but for which there
  * is no IO.
- * 
+ *
  * When using the full GDB console, this marker can be used for the class that
  * will represent the GDB process in the launch since the IO should not be
  * handled by the launch and the console it normally created, but is handled by
  * the full GDB console itself.
- * 
+ *
  * @since 5.2
  */
 public interface IGDBBackendProcessWithoutIO {

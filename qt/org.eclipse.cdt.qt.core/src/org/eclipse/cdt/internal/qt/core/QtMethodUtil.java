@@ -61,7 +61,7 @@ public class QtMethodUtil {
 		//       returns the wrong value, then this can be changed back to #getRawSignature.  Implement the
 		//       AST and LocationResolver to work with ASTNode#getRawSignatureChars:
 		// protected char[] getRawSignatureChars() {
-	    //     final IASTFileLocation floc= getFileLocation();
+		//     final IASTFileLocation floc= getFileLocation();
 		//     final IASTTranslationUnit ast = getTranslationUnit();
 		//     if (floc != null && ast != null) {
 		//  	   ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
@@ -78,7 +78,7 @@ public class QtMethodUtil {
 		result.append('(');
 
 		boolean first = true;
-		for(ICPPASTParameterDeclaration param : function.getParameters()) {
+		for (ICPPASTParameterDeclaration param : function.getParameters()) {
 			if (first)
 				first = false;
 			else
@@ -117,7 +117,7 @@ public class QtMethodUtil {
 		List<String> signatures = new ArrayList<String>();
 		qtEncSignatures = qtEncSignatures.substring(i + 1);
 		Pattern p = Pattern.compile("^([a-zA-Z0-9+/=]*)(@?).*$");
-		while(!qtEncSignatures.isEmpty()) {
+		while (!qtEncSignatures.isEmpty()) {
 			Matcher m = p.matcher(qtEncSignatures);
 			if (!m.matches())
 				break;
@@ -158,7 +158,7 @@ public class QtMethodUtil {
 		result.append('(');
 
 		boolean first = true;
-		for(ICPPASTParameterDeclaration param : function.getParameters()) {
+		for (ICPPASTParameterDeclaration param : function.getParameters()) {
 			if (first)
 				first = false;
 			else
@@ -193,11 +193,8 @@ public class QtMethodUtil {
 	}
 
 	private static String stripWS(String str) {
-		return str
-				.trim()
-				.replaceAll("\\s+", " ")
-				.replaceAll(" ([\\*&,()<>]+)", "$1")
-				.replaceAll("([\\*&,()<>]+) ", "$1");
+		return str.trim().replaceAll("\\s+", " ").replaceAll(" ([\\*&,()<>]+)", "$1").replaceAll("([\\*&,()<>]+) ",
+				"$1");
 	}
 
 	private static String asString(IASTPointerOperator ptr) {
@@ -217,7 +214,8 @@ public class QtMethodUtil {
 		return ptr.toString();
 	}
 
-	private static void append(StringBuilder result, IASTDeclSpecifier spec, IASTDeclarator declarator, boolean pruneConst) {
+	private static void append(StringBuilder result, IASTDeclSpecifier spec, IASTDeclarator declarator,
+			boolean pruneConst) {
 		IASTPointerOperator[] ptrs = declarator.getPointerOperators();
 		if (ptrs == null)
 			ptrs = new IASTPointerOperator[0];
@@ -234,13 +232,10 @@ public class QtMethodUtil {
 		// const T&         -> T
 		// const T* const & -> T*
 		boolean isConst = cppSpec.isConst();
-		boolean stripLastPtrConst
-			= pruneConst
-				&& !isConst
-				&& (ptrs.length >= 2
-				  && ptrs[ptrs.length - 1] instanceof ICPPASTReferenceOperator
-				  && ptrs[ptrs.length - 2] instanceof IASTPointer
-				  && ((IASTPointer) ptrs[ptrs.length - 2]).isConst());
+		boolean stripLastPtrConst = pruneConst && !isConst
+				&& (ptrs.length >= 2 && ptrs[ptrs.length - 1] instanceof ICPPASTReferenceOperator
+						&& ptrs[ptrs.length - 2] instanceof IASTPointer
+						&& ((IASTPointer) ptrs[ptrs.length - 2]).isConst());
 
 		if (isConst || stripLastPtrConst) {
 			if (!pruneConst)
@@ -259,8 +254,7 @@ public class QtMethodUtil {
 					IASTPointerOperator lastPtr = ptrs[ptrs.length - 1];
 					if (lastPtr instanceof ICPPASTReferenceOperator)
 						ptrs = Arrays.copyOf(ptrs, ptrs.length - 1);
-					else if (!(lastPtr instanceof IASTPointer)
-						 || !((IASTPointer) lastPtr).isConst())
+					else if (!(lastPtr instanceof IASTPointer) || !((IASTPointer) lastPtr).isConst())
 						result.append("const ");
 				}
 			}
@@ -280,13 +274,13 @@ public class QtMethodUtil {
 			raw = raw.replaceAll("\\sconst", "");
 			result.append(raw);
 		} else {
-			for(IASTNode child : children) {
-				result.append( ' ' );
+			for (IASTNode child : children) {
+				result.append(' ');
 				if (child instanceof ICPPASTTemplateId) {
 					ICPPASTTemplateId templId = (ICPPASTTemplateId) child;
 					result.append(templId.getTemplateName());
 					result.append('<');
-					for(IASTNode templArg : templId.getTemplateArguments()) {
+					for (IASTNode templArg : templId.getTemplateArguments()) {
 						append(result, templArg);
 					}
 					result.append('>');
@@ -296,24 +290,22 @@ public class QtMethodUtil {
 		}
 
 		// exclude param name, use '=' to indicate an initial value
-		for(int i = 0; i < ptrs.length; ++i) {
-			if (!stripLastPtrConst
-			 || i < ptrs.length - 1)
+		for (int i = 0; i < ptrs.length; ++i) {
+			if (!stripLastPtrConst || i < ptrs.length - 1)
 				result.append(asString(ptrs[i]));
 			else
 				result.append(asString(ptrs[i]).replaceAll("const", ""));
 		}
 	}
 
-    private static void append(StringBuilder result, IASTNode node) {
+	private static void append(StringBuilder result, IASTNode node) {
 
 		// JI476551: When the code is parsed without full context, e.g., when parsing a Qt method ref, an
 		//           ambiguous node could be created.  Since we only need the original text, we can use
 		//           any of the nodes that triggered the ambiguity.  Arbitrarily choose the first one.
 		if (node instanceof ASTAmbiguousNode) {
 			IASTNode[] nodes = ((ASTAmbiguousNode) node).getNodes();
-			if (nodes != null
-			 && nodes.length > 0) {
+			if (nodes != null && nodes.length > 0) {
 				append(result, nodes[0]);
 				return;
 			}

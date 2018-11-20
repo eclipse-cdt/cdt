@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,11 +88,11 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 
 	@Override
 	protected Control createContents(Composite parent) {
-		pixelConverter =  new PixelConverter(parent);
+		pixelConverter = new PixelConverter(parent);
 
 		setShell(parent.getShell());
 
-		Composite composite =  new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
 
 		GridLayout layout = new GridLayout();
@@ -131,7 +130,7 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 	}
 
 	private void createCategoryEditors(Composite parent) {
-		Composite editorArea =  new Composite(parent, SWT.NONE);
+		Composite editorArea = new Composite(parent, SWT.NONE);
 		editorArea.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
 		editorArea.setFont(parent.getFont());
 		editorAreaStack = new StackLayout();
@@ -176,12 +175,12 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 		fContext.statusChanged(new StatusInfo());
 	}
 
-    /**
-     * Represents a category of settings.
-     */
+	/**
+	 * Represents a category of settings.
+	 */
 	private final static class Category {
 		public final Category parent;
-		public final int index;  // Index in the siblings list
+		public final int index; // Index in the siblings list
 		private final List<Category> children;
 		private final IncludeKind includeKind;
 		private Control editorArea;

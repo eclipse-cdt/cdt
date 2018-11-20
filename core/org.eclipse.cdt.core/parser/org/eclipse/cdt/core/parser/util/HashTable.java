@@ -22,36 +22,9 @@ import java.util.Comparator;
  */
 public class HashTable implements Cloneable {
 	// Prime numbers from http://planetmath.org/goodhashtableprimes
-	private static final int[] PRIMES = {
-			17,
-			29,
-			53,
-			97,
-			193,
-			389,
-			769,
-			1543,
-			3079,
-			6151,
-			12289,
-			24593,
-			49157,
-			98317,
-			196613,
-			393241,
-			786433,
-			1572869,
-			3145739,
-			6291469,
-			12582917,
-			25165843,
-			50331653,
-			100663319,
-			201326611,
-			402653189,
-			805306457,
-			1610612741
-	};
+	private static final int[] PRIMES = { 17, 29, 53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317,
+			196613, 393241, 786433, 1572869, 3145739, 6291469, 12582917, 25165843, 50331653, 100663319, 201326611,
+			402653189, 805306457, 1610612741 };
 
 	private static final int MIN_HASH_SIZE = 9;
 	/** @deprecated Don't depend on this implementation detail. @noreference This field is not intended to be referenced by clients. */
@@ -62,12 +35,12 @@ public class HashTable implements Cloneable {
 	protected int[] hashTable;
 	protected int[] nextTable;
 
-    public boolean isEmpty() {
-        return currEntry < 0;
-    }
+	public boolean isEmpty() {
+		return currEntry < 0;
+	}
 
 	public final int size() {
-	    return currEntry + 1;
+		return currEntry + 1;
 	}
 
 	public HashTable(int initialSize) {
@@ -82,24 +55,24 @@ public class HashTable implements Cloneable {
 
 	@Override
 	public Object clone() {
-	    HashTable newTable = null;
-        try {
-            newTable = (HashTable) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Shouldn't happen because object supports clone.
-            return null;
-        }
+		HashTable newTable = null;
+		try {
+			newTable = (HashTable) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Shouldn't happen because object supports clone.
+			return null;
+		}
 
-        int size = capacity();
+		int size = capacity();
 
-        if (hashTable != null) {
-	        newTable.hashTable = new int[getSuitableHashTableSize(size)];
-	        newTable.nextTable = new int[size];
-		    System.arraycopy(hashTable, 0, newTable.hashTable, 0, hashTable.length);
-		    System.arraycopy(nextTable, 0, newTable.nextTable, 0, nextTable.length);
-        }
-        newTable.currEntry = currEntry;
-	    return newTable;
+		if (hashTable != null) {
+			newTable.hashTable = new int[getSuitableHashTableSize(size)];
+			newTable.nextTable = new int[size];
+			System.arraycopy(hashTable, 0, newTable.hashTable, 0, hashTable.length);
+			System.arraycopy(nextTable, 0, newTable.nextTable, 0, nextTable.length);
+		}
+		newTable.currEntry = currEntry;
+		return newTable;
 	}
 
 	protected void resize() {
@@ -207,7 +180,7 @@ public class HashTable implements Cloneable {
 
 	protected void removeEntry(int i, int hash) {
 		if (nextTable == null) {
-		    --currEntry;
+			--currEntry;
 			return;
 		}
 
@@ -247,26 +220,26 @@ public class HashTable implements Cloneable {
 		--currEntry;
 	}
 
-    public final void sort(Comparator<Object> c) {
-        if (size() > 1) {
-	        quickSort(c, 0, size() - 1);
-	        rehash();
-        }
-    }
+	public final void sort(Comparator<Object> c) {
+		if (size() > 1) {
+			quickSort(c, 0, size() - 1);
+			rehash();
+		}
+	}
 
-    private void quickSort(Comparator<Object> c, int p, int r) {
-        if (p < r) {
-            int q = partition(c, p, r);
-            if (p < q)
-            	quickSort(c, p, q);
-            if (++q < r)
-            	quickSort(c, q, r);
-        }
-    }
+	private void quickSort(Comparator<Object> c, int p, int r) {
+		if (p < r) {
+			int q = partition(c, p, r);
+			if (p < q)
+				quickSort(c, p, q);
+			if (++q < r)
+				quickSort(c, q, r);
+		}
+	}
 
-    protected int partition(Comparator<Object> c, int p, int r) {
-    	throw new UnsupportedOperationException();
-    }
+	protected int partition(Comparator<Object> c, int p, int r) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * For debugging only.

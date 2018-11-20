@@ -34,9 +34,7 @@ public class XlcCPPBuildASTParserAction extends GPPBuildASTParserAction {
 	private IXlcCPPNodeFactory nodeFactory;
 	private final ITokenMap tokenMap;
 
-	
-	public XlcCPPBuildASTParserAction(ITokenStream parser,
-			ScopedStack<Object> astStack, IXlcCPPNodeFactory nodeFactory,
+	public XlcCPPBuildASTParserAction(ITokenStream parser, ScopedStack<Object> astStack, IXlcCPPNodeFactory nodeFactory,
 			ICPPSecondaryParserFactory parserFactory) {
 		super(parser, astStack, nodeFactory, parserFactory);
 		this.nodeFactory = nodeFactory;
@@ -45,67 +43,72 @@ public class XlcCPPBuildASTParserAction extends GPPBuildASTParserAction {
 
 	/*
 	 * vector_type
-     *     ::= <openscope-ast> sqlist_op 'vector' vector_type_specifier all_specifier_qualifier_list
+	 *     ::= <openscope-ast> sqlist_op 'vector' vector_type_specifier all_specifier_qualifier_list
 	 */
 	public void consumeVectorTypeSpecifier() {
 		IXlcCPPASTVectorTypeSpecifier declSpec = nodeFactory.newVectorTypeSpecifier();
-		
-		for(Object specifier : astStack.closeScope()) {
-			if(specifier instanceof IToken) {
-				switch(tokenMap.mapKind(((IToken)specifier).getKind())) {
-				case XlcCPPParsersym.TK_pixel :
+
+		for (Object specifier : astStack.closeScope()) {
+			if (specifier instanceof IToken) {
+				switch (tokenMap.mapKind(((IToken) specifier).getKind())) {
+				case XlcCPPParsersym.TK_pixel:
 					declSpec.setPixel(true);
 					continue;
-				case XlcCPPParsersym.TK_vector :
+				case XlcCPPParsersym.TK_vector:
 					continue;
 				}
 			}
-			
+
 			setSpecifier(declSpec, specifier);
 		}
-		
+
 		setOffsetAndLength(declSpec);
 		astStack.push(declSpec);
 	}
-	
-	
-	public void consumeDirectDeclaratorModifiedArrayModifier(boolean isStatic, 
-			 boolean isVarSized, boolean hasTypeQualifierList, boolean hasAssignmentExpr) {
+
+	public void consumeDirectDeclaratorModifiedArrayModifier(boolean isStatic, boolean isVarSized,
+			boolean hasTypeQualifierList, boolean hasAssignmentExpr) {
 		assert isStatic || isVarSized || hasTypeQualifierList;
-		
+
 		IXlcCPPASTModifiedArrayModifier arrayModifier = nodeFactory.newModifiedArrayModifier(null);
-		
+
 		// consume all the stuff between the square brackets into an array modifier
 		arrayModifier.setStatic(isStatic);
 		arrayModifier.setVariableSized(isVarSized);
-		
-		if(hasAssignmentExpr)
-			arrayModifier.setConstantExpression((IASTExpression)astStack.pop());
-		
-		if(hasTypeQualifierList)
+
+		if (hasAssignmentExpr)
+			arrayModifier.setConstantExpression((IASTExpression) astStack.pop());
+
+		if (hasTypeQualifierList)
 			collectArrayModifierTypeQualifiers(arrayModifier);
 
 		setOffsetAndLength(arrayModifier);
 		astStack.push(arrayModifier);
 	}
-	
+
 	private void collectArrayModifierTypeQualifiers(IXlcCPPASTModifiedArrayModifier arrayModifier) {
-		for(Object o : astStack.closeScope()) {
-			switch(tokenMap.mapKind(((IToken)o).getKind())) {
-				case XlcCPPParsersym.TK_const:    arrayModifier.setConst(true);    break;
-				case XlcCPPParsersym.TK_restrict: arrayModifier.setRestrict(true); break;
-				case XlcCPPParsersym.TK_volatile: arrayModifier.setVolatile(true); break;
+		for (Object o : astStack.closeScope()) {
+			switch (tokenMap.mapKind(((IToken) o).getKind())) {
+			case XlcCPPParsersym.TK_const:
+				arrayModifier.setConst(true);
+				break;
+			case XlcCPPParsersym.TK_restrict:
+				arrayModifier.setRestrict(true);
+				break;
+			case XlcCPPParsersym.TK_volatile:
+				arrayModifier.setVolatile(true);
+				break;
 			}
 		}
 	}
-	
+
 	/**
 	 * staticAssertDeclaration ::= '__static_assert'  '(' expression ',' literal ')' ';'
 	 */
 	public void consumeCPPASTStaticAssertDeclaration() {
 		ICPPASTLiteralExpression message = (ICPPASTLiteralExpression) astStack.pop();
 		IASTExpression condition = (IASTExpression) astStack.pop();
-		
+
 		ICPPASTStaticAssertDeclaration assertDeclaration = nodeFactory.newStaticAssertion(condition, message);
 		setOffsetAndLength(assertDeclaration);
 		astStack.push(assertDeclaration);

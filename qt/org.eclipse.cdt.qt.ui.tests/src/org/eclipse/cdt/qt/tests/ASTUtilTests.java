@@ -134,7 +134,7 @@ public class ASTUtilTests extends AST2TestBase {
 		if (cls.isAssignableFrom(node.getClass()))
 			list.add(cls.cast(node));
 
-		for(IASTNode child : node.getChildren())
+		for (IASTNode child : node.getChildren())
 			collectChildren(list, child, cls);
 	}
 }

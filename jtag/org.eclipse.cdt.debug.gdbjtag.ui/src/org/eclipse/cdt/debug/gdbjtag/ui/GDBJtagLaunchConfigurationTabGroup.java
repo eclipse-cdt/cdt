@@ -23,12 +23,11 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
  * @author Doug Schaefer
  *
  */
-public class GDBJtagLaunchConfigurationTabGroup extends
-		AbstractLaunchConfigurationTabGroup {
+public class GDBJtagLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		setTabs(new ILaunchConfigurationTab[0]);
 	}
-	
+
 }

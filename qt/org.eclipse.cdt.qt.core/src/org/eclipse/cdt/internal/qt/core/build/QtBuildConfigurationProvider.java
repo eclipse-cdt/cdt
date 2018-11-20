@@ -89,8 +89,8 @@ public class QtBuildConfigurationProvider implements ICBuildConfigurationProvide
 				ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
 				if (cconfig != null) {
 					IQtBuildConfiguration qtConfig = cconfig.getAdapter(IQtBuildConfiguration.class);
-					if (qtConfig != null && launchMode.equals(qtConfig.getLaunchMode()) &&
-							qtConfig.getToolChain().equals(toolChain)) {
+					if (qtConfig != null && launchMode.equals(qtConfig.getLaunchMode())
+							&& qtConfig.getToolChain().equals(toolChain)) {
 						return qtConfig;
 					}
 				}
@@ -98,8 +98,7 @@ public class QtBuildConfigurationProvider implements ICBuildConfigurationProvide
 
 			// TODO what if multiple matches, this returns first match
 			String configName = "qt." + qtInstall.getSpec() + "." + launchMode; //$NON-NLS-1$ //$NON-NLS-2$
-			IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName,
-					monitor);
+			IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName, monitor);
 			QtBuildConfiguration qtConfig = new QtBuildConfiguration(config, configName, toolChain, qtInstall,
 					launchMode);
 			configManager.addBuildConfiguration(config, qtConfig);

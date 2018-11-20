@@ -40,7 +40,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Binary file in AIX XCOFF32 format
- * 
+ *
  * @author vhirsl
  */
 public class XCOFFBinaryObject extends BinaryObjectAdapter {
@@ -69,9 +69,10 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 		super(parser, path, IBinaryFile.OBJECT);
 		this.header = header;
 	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
 	 */
 	@Override
@@ -88,7 +89,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
 	 */
 	@Override
@@ -102,8 +103,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 		}
 		return info;
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
 	 */
@@ -114,7 +114,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 		}
 		return super.getName();
 	}
-	
+
 	/**
 	 * @throws IOException
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
@@ -192,7 +192,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 		CPPFilt cppfilt = getCPPFilt();
 		Addr2line addr2line = getAddr2line(false);
 		for (Symbol peSym : peSyms) {
-			if (peSym.isFunction() || peSym.isVariable() ) {
+			if (peSym.isFunction() || peSym.isVariable()) {
 				String name = peSym.getName(table);
 				if (name == null || name.trim().length() == 0 || !Character.isJavaIdentifierStart(name.charAt(0))) {
 					continue;
@@ -304,7 +304,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 		}
 		return null;
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
@@ -315,7 +315,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 		}
 		return super.getAdapter(adapter);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
 	 */

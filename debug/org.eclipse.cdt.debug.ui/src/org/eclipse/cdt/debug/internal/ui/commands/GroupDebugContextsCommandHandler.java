@@ -18,13 +18,13 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
 
 /**
  * Command handler to trigger grouping of debug contexts operation.
- * 
- * @since 7.1 
+ *
+ * @since 7.1
  */
 public class GroupDebugContextsCommandHandler extends DebugCommandHandler {
-	
-    @Override
-    protected Class<?> getCommandType() {
-        return IGroupDebugContextsHandler.class;
-    }
+
+	@Override
+	protected Class<?> getCommandType() {
+		return IGroupDebugContextsHandler.class;
+	}
 }

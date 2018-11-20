@@ -21,9 +21,9 @@ package org.eclipse.cdt.utils.debug;
 public class DebugUnknownType extends DebugType {
 
 	String name;
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public DebugUnknownType(String unknown) {
 		super();

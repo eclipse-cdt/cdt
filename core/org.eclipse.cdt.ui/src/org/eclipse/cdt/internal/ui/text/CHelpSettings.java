@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Intel Corporation - Initial API and implementation
  **********************************************************************/
 package org.eclipse.cdt.internal.ui.text;
@@ -32,7 +32,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * This class represents the Help settings for the current project
- * 
+ *
  * @since 2.1
  */
 public class CHelpSettings {
@@ -44,146 +44,147 @@ public class CHelpSettings {
 	private IProject fProject;
 	private static IConfigurationElement fConfigElements[] = null;
 	private CHelpProviderDescriptor fProviderDescriptors[] = null;
-	
-	public CHelpSettings(IProject project){
-		this(project,null);
+
+	public CHelpSettings(IProject project) {
+		this(project, null);
 	}
-	
-	public CHelpSettings(IProject project, Element parentElement){
+
+	public CHelpSettings(IProject project, Element parentElement) {
 		fProject = project;
-		
-		if(parentElement == null)
+
+		if (parentElement == null)
 			return;
-		
+
 		Element projectElement = getProjectElement(parentElement);
-		if(projectElement == null)
+		if (projectElement == null)
 			return;
-		
+
 		getCHelpProviderDescriptors(projectElement);
 	}
-	
-	private Element getProjectElement(Element parentElement){
+
+	private Element getProjectElement(Element parentElement) {
 		NodeList nodes = parentElement.getElementsByTagName(ELEMENT_PROJECT);
-		for(int i = 0; i < nodes.getLength(); i++){
-			Element curProject = (Element)nodes.item(i);
-			if(getProject().getName().equals(curProject.getAttribute(ATTRIBUTE_NAME)))
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Element curProject = (Element) nodes.item(i);
+			if (getProject().getName().equals(curProject.getAttribute(ATTRIBUTE_NAME)))
 				return curProject;
 		}
 		return null;
 	}
 
-	public IProject getProject(){
+	public IProject getProject() {
 		return fProject;
 	}
-	
-	public CHelpProviderDescriptor[] getCHelpProviderDescriptors(Element projectElement){
-		if(fProviderDescriptors == null || projectElement != null){
+
+	public CHelpProviderDescriptor[] getCHelpProviderDescriptors(Element projectElement) {
+		if (fProviderDescriptors == null || projectElement != null) {
 			IConfigurationElement congifElements[] = getConfigElements();
 			fProviderDescriptors = new CHelpProviderDescriptor[congifElements.length];
-			for(int i = 0; i < congifElements.length; i++){
-				fProviderDescriptors[i] = new CHelpProviderDescriptor(fProject,congifElements[i],projectElement);
+			for (int i = 0; i < congifElements.length; i++) {
+				fProviderDescriptors[i] = new CHelpProviderDescriptor(fProject, congifElements[i], projectElement);
 			}
 		}
 		return fProviderDescriptors;
 	}
 
-	public CHelpProviderDescriptor[] getCHelpProviderDescriptors(){
+	public CHelpProviderDescriptor[] getCHelpProviderDescriptors() {
 		return getCHelpProviderDescriptors(null);
 	}
 
-	public CHelpBookDescriptor[] getCHelpBookDescriptors(){
+	public CHelpBookDescriptor[] getCHelpBookDescriptors() {
 		CHelpProviderDescriptor providerDescriptors[] = getCHelpProviderDescriptors();
-		if(providerDescriptors.length == 0)
+		if (providerDescriptors.length == 0)
 			return new CHelpBookDescriptor[0];
-		
-		List<CHelpBookDescriptor> bookList = new ArrayList<CHelpBookDescriptor>(); 	
-		for(int i = 0; i < providerDescriptors.length; i++){
+
+		List<CHelpBookDescriptor> bookList = new ArrayList<CHelpBookDescriptor>();
+		for (int i = 0; i < providerDescriptors.length; i++) {
 			CHelpBookDescriptor bookDescriptors[] = providerDescriptors[i].getCHelpBookDescriptors();
-			if(bookDescriptors.length != 0)
+			if (bookDescriptors.length != 0)
 				bookList.addAll(Arrays.asList(bookDescriptors));
 		}
 		return bookList.toArray(new CHelpBookDescriptor[bookList.size()]);
 	}
-	
-	private static IConfigurationElement[] getConfigElements(){
-		if(fConfigElements == null){
-			fConfigElements= Platform.getExtensionRegistry().getConfigurationElementsFor(CUIPlugin.PLUGIN_ID, CONTRIBUTION_EXTENSION);
-			if(fConfigElements == null)
+
+	private static IConfigurationElement[] getConfigElements() {
+		if (fConfigElements == null) {
+			fConfigElements = Platform.getExtensionRegistry().getConfigurationElementsFor(CUIPlugin.PLUGIN_ID,
+					CONTRIBUTION_EXTENSION);
+			if (fConfigElements == null)
 				fConfigElements = new IConfigurationElement[0];
 		}
 		return fConfigElements;
 	}
-	
-	public IFunctionSummary getFunctionInfo(ICHelpInvocationContext context, String name){
+
+	public IFunctionSummary getFunctionInfo(ICHelpInvocationContext context, String name) {
 		CHelpProviderDescriptor providerDescriptors[] = getCHelpProviderDescriptors();
-		for(int i = 0; i < providerDescriptors.length; i++){
+		for (int i = 0; i < providerDescriptors.length; i++) {
 			ICHelpBook books[] = providerDescriptors[i].getEnabledMatchedCHelpBooks(context);
-			if(books != null && books.length != 0){
+			if (books != null && books.length != 0) {
 				ICHelpProvider provider = providerDescriptors[i].getCHelpProvider();
-				if(provider != null){
-					IFunctionSummary summary = provider.getFunctionInfo(context,books,name);
-					if(summary != null)
+				if (provider != null) {
+					IFunctionSummary summary = provider.getFunctionInfo(context, books, name);
+					if (summary != null)
 						return summary;
 				}
 			}
 		}
 		return null;
 	}
-	
-	public IFunctionSummary[] getMatchingFunctions(ICHelpInvocationContext context, String frag){
+
+	public IFunctionSummary[] getMatchingFunctions(ICHelpInvocationContext context, String frag) {
 		CHelpProviderDescriptor providerDescriptors[] = getCHelpProviderDescriptors();
 		List<IFunctionSummary> sumaryList = new ArrayList<IFunctionSummary>();
-		for(int i = 0; i < providerDescriptors.length; i++){
+		for (int i = 0; i < providerDescriptors.length; i++) {
 			ICHelpBook books[] = providerDescriptors[i].getEnabledMatchedCHelpBooks(context);
-			if(books != null && books.length != 0){
+			if (books != null && books.length != 0) {
 				ICHelpProvider provider = providerDescriptors[i].getCHelpProvider();
-				if(provider != null){
-					IFunctionSummary summaries[] = provider.getMatchingFunctions(context,books,frag);
-					if(summaries != null && summaries.length != 0)
+				if (provider != null) {
+					IFunctionSummary summaries[] = provider.getMatchingFunctions(context, books, frag);
+					if (summaries != null && summaries.length != 0)
 						sumaryList.addAll(Arrays.asList(summaries));
 				}
 			}
 		}
-		if(sumaryList.size() == 0)
+		if (sumaryList.size() == 0)
 			return null;
-		
+
 		return sumaryList.toArray(new IFunctionSummary[sumaryList.size()]);
 	}
-	
-	public ICHelpResourceDescriptor[] getHelpResources(ICHelpInvocationContext context, String name){
+
+	public ICHelpResourceDescriptor[] getHelpResources(ICHelpInvocationContext context, String name) {
 		CHelpProviderDescriptor providerDescriptors[] = getCHelpProviderDescriptors();
 		List<ICHelpResourceDescriptor> resourcesList = new ArrayList<ICHelpResourceDescriptor>();
-		for(int i = 0; i < providerDescriptors.length; i++){
+		for (int i = 0; i < providerDescriptors.length; i++) {
 			ICHelpBook books[] = providerDescriptors[i].getEnabledMatchedCHelpBooks(context);
-			if(books != null && books.length != 0){
+			if (books != null && books.length != 0) {
 				ICHelpProvider provider = providerDescriptors[i].getCHelpProvider();
-				if(provider != null){
-					ICHelpResourceDescriptor resources[] = provider.getHelpResources(context,books,name);
-					if(resources != null && resources.length != 0)
+				if (provider != null) {
+					ICHelpResourceDescriptor resources[] = provider.getHelpResources(context, books, name);
+					if (resources != null && resources.length != 0)
 						resourcesList.addAll(Arrays.asList(resources));
 				}
 			}
 		}
-		if(resourcesList.size() == 0)
+		if (resourcesList.size() == 0)
 			return null;
-		
+
 		return resourcesList.toArray(new ICHelpResourceDescriptor[resourcesList.size()]);
 	}
-	
-	public void serialize(Document doc, Element parentElement){
+
+	public void serialize(Document doc, Element parentElement) {
 		CHelpProviderDescriptor providerDescriptors[] = getCHelpProviderDescriptors();
 		Element oldProjectElement = getProjectElement(parentElement);
 
 		Element projectElement = doc.createElement(ELEMENT_PROJECT);
-		projectElement.setAttribute(ATTRIBUTE_NAME,getProject().getName());
+		projectElement.setAttribute(ATTRIBUTE_NAME, getProject().getName());
 
-		if(oldProjectElement != null)
-			parentElement.replaceChild(projectElement,oldProjectElement);
+		if (oldProjectElement != null)
+			parentElement.replaceChild(projectElement, oldProjectElement);
 		else
 			parentElement.appendChild(projectElement);
 
-		for(int i = 0; i < providerDescriptors.length; i++){
-			providerDescriptors[i].serialize(doc,projectElement);
+		for (int i = 0; i < providerDescriptors.length; i++) {
+			providerDescriptors[i].serialize(doc, projectElement);
 		}
 	}
 }

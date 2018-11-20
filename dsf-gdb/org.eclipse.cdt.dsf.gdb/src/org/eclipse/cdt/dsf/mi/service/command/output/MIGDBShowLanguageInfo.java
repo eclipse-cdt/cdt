@@ -28,7 +28,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  * ^done,value="auto; currently c"
  *
  * the different returned values are:
- * 
+ *
  * (gdb) help set language
  * Set the current source language.
  * The currently understood settings are:
@@ -77,29 +77,29 @@ public class MIGDBShowLanguageInfo extends MIInfo {
 	}
 
 	protected void parse() {
-        if (isDone()) {
-            MIOutput out = getMIOutput();
-            MIResultRecord outr = out.getMIResultRecord();
-            if (outr != null) {
-                MIResult[] results =  outr.getMIResults();
-                for (int i = 0; i < results.length; i++) {
-                    String var = results[i].getVariable();
-                    if (var.equals("value")) { //$NON-NLS-1$
-                        MIValue value = results[i].getMIValue();
-                        if (value instanceof MIConst) {
-                            fLanguage = ((MIConst)value).getString();
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord outr = out.getMIResultRecord();
+			if (outr != null) {
+				MIResult[] results = outr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					if (var.equals("value")) { //$NON-NLS-1$
+						MIValue value = results[i].getMIValue();
+						if (value instanceof MIConst) {
+							fLanguage = ((MIConst) value).getString();
 
-                            // Some versions of GDB (6.2-6.8) output "auto; currently c"
-                            // so we need to remove the semicolon part
-                            int semiColonIdx = fLanguage.indexOf(';');
-                            if (semiColonIdx != -1) {
-                                fLanguage = fLanguage.substring(0, semiColonIdx);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+							// Some versions of GDB (6.2-6.8) output "auto; currently c"
+							// so we need to remove the semicolon part
+							int semiColonIdx = fLanguage.indexOf(';');
+							if (semiColonIdx != -1) {
+								fLanguage = fLanguage.substring(0, semiColonIdx);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public String getLanguage() {

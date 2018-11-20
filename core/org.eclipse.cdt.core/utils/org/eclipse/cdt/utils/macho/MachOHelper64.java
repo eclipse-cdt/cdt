@@ -37,21 +37,24 @@ public class MachOHelper64 {
 	private MachO64.Section[] sections;
 	private MachO64.DyLib[] needed;
 	private MachO64.DyLib[] sonames;
-	
+
 	public void dispose() {
 		if (macho != null) {
 			macho.dispose();
 			macho = null;
 		}
 	}
+
 	public boolean is64() {
 		return macho.is64();
 	}
+
 	public class Sizes {
 		public long text;
 		public long data;
 		public long bss;
 		public long total;
+
 		public Sizes(long t, long d, long b) {
 			text = t;
 			data = d;
@@ -68,12 +71,11 @@ public class MachOHelper64 {
 			sections = macho.getSections();
 			needed = macho.getDyLibs(MachO64.LoadCommand.LC_LOAD_DYLIB);
 			sonames = macho.getDyLibs(MachO64.LoadCommand.LC_ID_DYLIB);
-				
+
 			if (dynsyms == null)
 				dynsyms = symbols;
 		}
 	}
-
 
 	/**
 	 * Create a new <code>MachOHelper64</code> using an existing <code>MachO64</code>
@@ -87,7 +89,7 @@ public class MachOHelper64 {
 
 	/**
 	 * Create a new <code>MachOHelper64</code> based on the given filename.
-	 * 
+	 *
 	 * @param filename The file to use for creating a new MachO64 object.
 	 * @throws IOException Error processing the MachO file.
 	 * @see MachO64#MachO64( String )
@@ -98,7 +100,7 @@ public class MachOHelper64 {
 
 	/**
 	 * Create a new <code>MachOHelper64</code> based on the given filename.
-	 * 
+	 *
 	 * @param filename The file to use for creating a new MachO64 object.
 	 * @throws IOException Error processing the MachO file.
 	 * @see MachO64#MachO64( String )
@@ -106,7 +108,6 @@ public class MachOHelper64 {
 	public MachOHelper64(String filename, long offset) throws IOException {
 		macho = new MachO64(filename, offset);
 	}
-
 
 	public MachOHelper64(String filename, boolean filton) throws IOException {
 		macho = new MachO64(filename, filton);
@@ -123,8 +124,7 @@ public class MachOHelper64 {
 		loadBinary();
 
 		for (Symbol sym : dynsyms) {
-			if ((sym.n_type_mask(MachO64.Symbol.N_PEXT) 
-					|| sym.n_type_mask(MachO64.Symbol.N_EXT))
+			if ((sym.n_type_mask(MachO64.Symbol.N_PEXT) || sym.n_type_mask(MachO64.Symbol.N_EXT))
 					&& sym.n_desc(MachO64.Symbol.REFERENCE_FLAG_UNDEFINED_LAZY)) {
 				String name = sym.toString();
 				if (name != null && name.trim().length() > 0)
@@ -142,8 +142,7 @@ public class MachOHelper64 {
 		loadBinary();
 
 		for (Symbol sym : dynsyms) {
-			if ((sym.n_type_mask(MachO64.Symbol.N_PEXT) 
-					|| sym.n_type_mask(MachO64.Symbol.N_EXT))
+			if ((sym.n_type_mask(MachO64.Symbol.N_PEXT) || sym.n_type_mask(MachO64.Symbol.N_EXT))
 					&& sym.n_desc(MachO64.Symbol.REFERENCE_FLAG_UNDEFINED_NON_LAZY)) {
 				String name = sym.toString();
 				if (name != null && name.trim().length() > 0)
@@ -177,8 +176,7 @@ public class MachOHelper64 {
 
 		loadBinary();
 		for (Symbol sym : dynsyms) {
-			if ((!sym.n_type_mask(MachO64.Symbol.N_PEXT) 
-					&& !sym.n_type_mask(MachO64.Symbol.N_EXT))
+			if ((!sym.n_type_mask(MachO64.Symbol.N_PEXT) && !sym.n_type_mask(MachO64.Symbol.N_EXT))
 					&& sym.n_desc(MachO64.Symbol.REFERENCE_FLAG_PRIVATE_UNDEFINED_LAZY)) {
 				String name = sym.toString();
 				if (name != null && name.trim().length() > 0)
@@ -199,8 +197,7 @@ public class MachOHelper64 {
 		loadBinary();
 
 		for (Symbol sym : dynsyms) {
-			if ((!sym.n_type_mask(MachO64.Symbol.N_PEXT) 
-					&& !sym.n_type_mask(MachO64.Symbol.N_EXT))
+			if ((!sym.n_type_mask(MachO64.Symbol.N_PEXT) && !sym.n_type_mask(MachO64.Symbol.N_EXT))
 					&& sym.n_desc(MachO64.Symbol.REFERENCE_FLAG_PRIVATE_UNDEFINED_NON_LAZY)) {
 				String name = sym.toString();
 				if (name != null && name.trim().length() > 0)
@@ -219,9 +216,7 @@ public class MachOHelper64 {
 
 		for (int i = 0; i < dynsyms.length; i++) {
 			MachO64.Symbol sym = dynsyms[i];
-			if (sym.n_type_mask(MachO64.Symbol.N_EXT) 
-					&& sym.n_type(MachO64.Symbol.N_UNDF)
-					&& sym.n_value != 0) {
+			if (sym.n_type_mask(MachO64.Symbol.N_EXT) && sym.n_type(MachO64.Symbol.N_UNDF) && sym.n_value != 0) {
 				v.add(symbols[i]);
 			}
 		}
@@ -252,41 +247,41 @@ public class MachOHelper64 {
 		return soname;
 	}
 
-//	private String getSubUsage(String full, String name) {
-//		int start, end;
-//		//boolean has_names = false;
-//		//boolean has_languages = false;
-//		start = 0;
-//		end = 0;
-//
-//		for (int i = 0; i < full.length(); i++) {
-//			if (full.charAt(i) == '%') {
-//				if (full.charAt(i + 1) == '-') {
-//					if (start == 0) {
-//						int eol = full.indexOf('\n', i + 2);
-//						String temp = full.substring(i + 2, eol);
-//						if (temp.compareTo(name) == 0)
-//							start = eol;
-//
-//						//has_names = true;
-//					} else if (end == 0) {
-//						end = i - 1;
-//					}
-//				}
-//
-//				//if( full.charAt( i+1 ) == '=' )
-//				//has_languages = true;
-//			}
-//		}
-//
-//		if (end == 0)
-//			end = full.length();
-//
-//		if (start == 0)
-//			return full;
-//
-//		return full.substring(start, end);
-//	}
+	//	private String getSubUsage(String full, String name) {
+	//		int start, end;
+	//		//boolean has_names = false;
+	//		//boolean has_languages = false;
+	//		start = 0;
+	//		end = 0;
+	//
+	//		for (int i = 0; i < full.length(); i++) {
+	//			if (full.charAt(i) == '%') {
+	//				if (full.charAt(i + 1) == '-') {
+	//					if (start == 0) {
+	//						int eol = full.indexOf('\n', i + 2);
+	//						String temp = full.substring(i + 2, eol);
+	//						if (temp.compareTo(name) == 0)
+	//							start = eol;
+	//
+	//						//has_names = true;
+	//					} else if (end == 0) {
+	//						end = i - 1;
+	//					}
+	//				}
+	//
+	//				//if( full.charAt( i+1 ) == '=' )
+	//				//has_languages = true;
+	//			}
+	//		}
+	//
+	//		if (end == 0)
+	//			end = full.length();
+	//
+	//		if (start == 0)
+	//			return full;
+	//
+	//		return full.substring(start, end);
+	//	}
 
 	public String getQnxUsage() throws IOException {
 		return ""; //$NON-NLS-1$

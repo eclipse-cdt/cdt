@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
  */
 public interface ICPPConstructor extends ICPPMethod {
 	public static final ICPPConstructor[] EMPTY_CONSTRUCTOR_ARRAY = {};
-	
+
 	/**
 	 * @since 6.0
 	 * @noreference This method is not intended to be referenced by clients.

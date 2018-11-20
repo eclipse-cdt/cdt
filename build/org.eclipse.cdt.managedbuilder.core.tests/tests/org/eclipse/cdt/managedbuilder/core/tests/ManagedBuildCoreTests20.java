@@ -68,7 +68,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	private static final String testConfigId = "test.config.override";
 	private static final String testConfigName = "Tester";
 	private static final String enumVal = "Another Enum";
-	private static final String[] listVal = {"_DEBUG", "/usr/include", "libglade.a"};
+	private static final String[] listVal = { "_DEBUG", "/usr/include", "libglade.a" };
 	private static final String newExt = "wen";
 	private static final String projectName = "ManagedBuildTest";
 	private static final String projectName2 = "ManagedBuildTest2";
@@ -109,7 +109,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			path = file.getCanonicalPath();
 		} catch (IOException e) {
 		}
-		
+
 		return path;
 	}
 
@@ -119,7 +119,6 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	private String toOSString(String path) {
 		return new Path(path).toOSString();
 	}
-
 
 	/**
 	 * Navigates through the build info as defined in the extensions
@@ -180,7 +179,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	 * This test exercises the interface the <code>IConfiguration</code> exposes to manipulate
 	 * its make command.
 	 */
-	public void testMakeCommandManipulation () {
+	public void testMakeCommandManipulation() {
 		String oldMakeCmd = "make";
 		String newMakeCmd = "Ant";
 
@@ -223,13 +222,12 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		ManagedBuildManager.saveBuildInfo(project, false);
 	}
 
-
 	/**
 	 * The purpose of this test is to exercise the build path info interface.
 	 * To get to that point, a new project/config has to be created in the test
 	 * project and the default configuration changed.
 	 */
-	public void testScannerInfoInterface(){
+	public void testScannerInfoInterface() {
 		// Open the test project
 		IProject project = null;
 		try {
@@ -248,31 +246,23 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		final String[] expectedPaths;
 		if (new Path("C:\\home\\tester/include").isAbsolute()) {
 			// Windows
-			expectedPaths = new String[] {
-					toOSLocation("/usr/include"),
-					toOSLocation("/opt/gnome/include"),
+			expectedPaths = new String[] { toOSLocation("/usr/include"), toOSLocation("/opt/gnome/include"),
 					toOSLocation("C:\\home\\tester/include"),
 					// relative paths from MBS will make 3 entries
-					project.getLocation().append("includes").toOSString(),
-					buildCWD.append("includes").toOSString(),
-					toOSString("includes"),
-					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
+					project.getLocation().append("includes").toOSString(), buildCWD.append("includes").toOSString(),
+					toOSString("includes"), "/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
 			};
 		} else {
 			// Unix
-			expectedPaths = new String[] {
-					toOSLocation("/usr/include"),
-					toOSLocation("/opt/gnome/include"),
+			expectedPaths = new String[] { toOSLocation("/usr/include"), toOSLocation("/opt/gnome/include"),
 					// on unix "C:\\home\\tester/include" is relative path
 					// looks like nonsense but it this way due to MBS converting entry to keep "Sub Config/C:\\home\\tester/include" in its storage
 					project.getLocation().append("Sub Config/C:\\home\\tester/include").toOSString(),
 					buildCWD.append("Sub Config/C:\\home\\tester/include").toOSString(),
 					toOSString("Sub Config/C:\\home\\tester/include"),
 					// relative paths from MBS will make 3 entries
-					project.getLocation().append("includes").toOSString(),
-					buildCWD.append("includes").toOSString(),
-					toOSString("includes"),
-					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
+					project.getLocation().append("includes").toOSString(), buildCWD.append("includes").toOSString(),
+					toOSString("includes"), "/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
 			};
 		}
 
@@ -319,7 +309,8 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		buildInfo = ManagedBuildManager.getBuildInfo(project);
 
 		// Use the plugin mechanism to discover the supplier of the path information
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID + ".ScannerInfoProvider");
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint(CCorePlugin.PLUGIN_ID + ".ScannerInfoProvider");
 		if (extensionPoint == null) {
 			fail("Failed to retrieve the extension point ScannerInfoProvider.");
 		}
@@ -329,7 +320,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertNotNull(provider);
 
 		// Now subscribe (note that the method will be called after a change
-		provider.subscribe(project, new IScannerInfoChangeListener () {
+		provider.subscribe(project, new IScannerInfoChangeListener() {
 			@Override
 			public void changeNotification(IResource project, IScannerInfo info) {
 				// Test the symbols: expect "BUILTIN" from the manifest, and "DEBUG" and "GNOME=ME"
@@ -360,13 +351,13 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		BuildSystemTestHelper.checkDiff(expectedPaths, currentPaths);
 
 		// Add some defined symbols programmatically
-		String[] expectedSymbols = {"DEBUG", "GNOME = ME "};
+		String[] expectedSymbols = { "DEBUG", "GNOME = ME " };
 		IConfiguration defaultConfig = buildInfo.getDefaultConfiguration();
 		ITool[] tools = defaultConfig.getTools();
 		ITool subTool = null;
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
-			if("tool.sub".equalsIgnoreCase(tool.getSuperClass().getId())) {
+			if ("tool.sub".equalsIgnoreCase(tool.getSuperClass().getId())) {
 				subTool = tool;
 				break;
 			}
@@ -451,29 +442,31 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("Root Tool", topCategory.getName());
 		Object[][] options = topCategory.getOptions(newConfig);
 		int i;
-		for (i=0; i<options.length; i++)
-			if (options[i][0] == null) break;
+		for (i = 0; i < options.length; i++)
+			if (options[i][0] == null)
+				break;
 		assertEquals(2, i);
-		ITool tool = (ITool)options[0][0];
-		IOption option = (IOption)options[0][1];
+		ITool tool = (ITool) options[0][0];
+		IOption option = (IOption) options[0][1];
 		ManagedBuildManager.setOption(newConfig, tool, option, listVal);
-		option = (IOption)options[1][1];
+		option = (IOption) options[1][1];
 		ManagedBuildManager.setOption(newConfig, tool, option, boolVal);
 
 		IOptionCategory[] categories = topCategory.getChildCategories();
 		assertEquals(1, categories.length);
 		options = categories[0].getOptions(newConfig);
-		for (i=0; i<options.length; i++)
-			if (options[i][0] == null) break;
+		for (i = 0; i < options.length; i++)
+			if (options[i][0] == null)
+				break;
 		assertEquals(4, i);
-		tool = (ITool)options[0][0];
-		option = (IOption)options[0][1];
+		tool = (ITool) options[0][0];
+		option = (IOption) options[0][1];
 		ManagedBuildManager.setOption(newConfig, tool, option, stringVal);
-		option = (IOption)options[1][1];
+		option = (IOption) options[1][1];
 		ManagedBuildManager.setOption(newConfig, tool, option, anotherStringVal);
-		option = (IOption)options[2][1];
+		option = (IOption) options[2][1];
 		ManagedBuildManager.setOption(newConfig, tool, option, enumVal);
-		option = (IOption)options[3][1];
+		option = (IOption) options[3][1];
 		ManagedBuildManager.setOption(newConfig, tool, option, "False");
 
 		// Save, close, reopen and test again
@@ -590,7 +583,8 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Initialize the path entry container
 		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
 		if (initResult.getCode() != IStatus.OK) {
-			fail("Initializing build information failed for: " + project.getName() + " because: " + initResult.getMessage());
+			fail("Initializing build information failed for: " + project.getName() + " because: "
+					+ initResult.getMessage());
 		}
 
 		// Now test the results out
@@ -602,16 +596,16 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		IOptionCategory topCategory = tools[0].getTopOptionCategory();
 		IOptionCategory[] categories = topCategory.getChildCategories();
 		Object[][] options = categories[0].getOptions(configs[0]);
-		ITool tool = (ITool)options[0][0];
-		IOption option = (IOption)options[0][1];
+		ITool tool = (ITool) options[0][0];
+		IOption option = (IOption) options[0][1];
 		configs[0].setOption(tool, option, "z");
-		options = categories[0].getOptions((IConfiguration)null);
-		tool = (ITool)options[0][0];
-		option = (IOption)options[0][1];
+		options = categories[0].getOptions((IConfiguration) null);
+		tool = (ITool) options[0][0];
+		option = (IOption) options[0][1];
 		assertEquals("x", option.getStringValue());
 		options = categories[0].getOptions(configs[0]);
-		tool = (ITool)options[0][0];
-		option = (IOption)options[0][1];
+		tool = (ITool) options[0][0];
+		option = (IOption) options[0][1];
 		assertEquals("z", option.getStringValue());
 
 		// Save, close, reopen and test again
@@ -712,14 +706,16 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("Root Tool", topCategory.getName());
 		Object[][] options = topCategory.getOptions(baseConfig);
 		int i;
-		for (i=0; i<options.length; i++)
-			if (options[i][0] == null) break;
+		for (i = 0; i < options.length; i++)
+			if (options[i][0] == null)
+				break;
 		assertEquals(2, i);
 		IOptionCategory[] categories = topCategory.getChildCategories();
 		assertEquals(1, categories.length);
 		options = categories[0].getOptions(baseConfig);
-		for (i=0; i<options.length; i++)
-			if (options[i][0] == null) break;
+		for (i = 0; i < options.length; i++)
+			if (options[i][0] == null)
+				break;
 		assertEquals(4, i);
 
 		// Set the name back
@@ -765,14 +761,16 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		topCategory = rootTool.getTopOptionCategory();
 		assertEquals("Root Tool", topCategory.getName());
 		options = topCategory.getOptions(baseConfig);
-		for (i=0; i<options.length; i++)
-			if (options[i][0] == null) break;
+		for (i = 0; i < options.length; i++)
+			if (options[i][0] == null)
+				break;
 		assertEquals(2, i);
 		categories = topCategory.getChildCategories();
 		assertEquals(1, categories.length);
 		options = categories[0].getOptions(baseConfig);
-		for (i=0; i<options.length; i++)
-			if (options[i][0] == null) break;
+		for (i = 0; i < options.length; i++)
+			if (options[i][0] == null)
+				break;
 		assertEquals(4, i);
 	}
 
@@ -894,8 +892,8 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Project stuff
 		String expectedCleanCmd = "del /myworld";
 		String expectedParserId = "org.eclipse.cdt.core.PE";
-		String[] expectedOSList = {"win32"};
-		String[] expectedArchList = {"all"};
+		String[] expectedOSList = { "win32" };
+		String[] expectedArchList = { "all" };
 		assertTrue(type.isTestProjectType());
 		IConfiguration[] configs = type.getConfigurations();
 		if (configs[0].getArtifactName().equals("ManagedBuildTest")) {
@@ -909,7 +907,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		ITargetPlatform targetPlatform = toolChain.getTargetPlatform();
 		String[] binaryParsers = targetPlatform.getBinaryParserList();
 		assertEquals(binaryParsers.length, 1);
-	    assertEquals(binaryParsers[0], expectedParserId);
+		assertEquals(binaryParsers[0], expectedParserId);
 		assertTrue(Arrays.equals(expectedOSList, toolChain.getOSList()));
 		assertTrue(Arrays.equals(expectedArchList, toolChain.getArchList()));
 		// This configuration defines no errors parsers.
@@ -975,22 +973,24 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("Root Tool", topCategory.getName());
 		Object[][] catoptions = topCategory.getOptions(configs[0]);
 		int i;
-		for (i=0; i<catoptions.length; i++)
-			if (catoptions[i][0] == null) break;
+		for (i = 0; i < catoptions.length; i++)
+			if (catoptions[i][0] == null)
+				break;
 		assertEquals(2, i);
-		assertEquals("List Option in Top", ((IOption)catoptions[0][1]).getName());
-		assertEquals("Boolean Option in Top", ((IOption)catoptions[1][1]).getName());
+		assertEquals("List Option in Top", ((IOption) catoptions[0][1]).getName());
+		assertEquals("Boolean Option in Top", ((IOption) catoptions[1][1]).getName());
 		IOptionCategory[] categories = topCategory.getChildCategories();
 		assertEquals(1, categories.length);
 		assertEquals("Category", categories[0].getName());
 		catoptions = categories[0].getOptions(configs[0]);
-		for (i=0; i<catoptions.length; i++)
-			if (catoptions[i][0] == null) break;
+		for (i = 0; i < catoptions.length; i++)
+			if (catoptions[i][0] == null)
+				break;
 		assertEquals(4, i);
-		assertEquals("String Option in Category", ((IOption)catoptions[0][1]).getName());
-		assertEquals("Another String Option in Category", ((IOption)catoptions[1][1]).getName());
-		assertEquals("Enumerated Option in Category", ((IOption)catoptions[2][1]).getName());
-		assertEquals("Boolean Option in Category", ((IOption)catoptions[3][1]).getName());
+		assertEquals("String Option in Category", ((IOption) catoptions[0][1]).getName());
+		assertEquals("Another String Option in Category", ((IOption) catoptions[1][1]).getName());
+		assertEquals("Enumerated Option in Category", ((IOption) catoptions[2][1]).getName());
+		assertEquals("Boolean Option in Category", ((IOption) catoptions[3][1]).getName());
 
 		// There should be 3 defined configs
 		configs = type.getConfigurations();
@@ -1022,37 +1022,39 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("Root Tool", tools[0].getName());
 		topCategory = tools[0].getTopOptionCategory();
 		catoptions = topCategory.getOptions(configs[1]);
-		for (i=0; i<catoptions.length; i++)
-			if (catoptions[i][0] == null) break;
+		for (i = 0; i < catoptions.length; i++)
+			if (catoptions[i][0] == null)
+				break;
 		assertEquals(2, i);
-		assertEquals("List Option in Top", ((IOption)catoptions[0][1]).getName());
-		valueList = ((IOption)catoptions[0][1]).getStringListValue();
+		assertEquals("List Option in Top", ((IOption) catoptions[0][1]).getName());
+		valueList = ((IOption) catoptions[0][1]).getStringListValue();
 		assertEquals("a", valueList[0]);
 		assertEquals("b", valueList[1]);
-		assertEquals("Boolean Option in Top", ((IOption)catoptions[1][1]).getName());
-		assertEquals(true, ((IOption)catoptions[1][1]).getBooleanValue());
-		assertEquals("-b", ((IOption)catoptions[1][1]).getCommand());
+		assertEquals("Boolean Option in Top", ((IOption) catoptions[1][1]).getName());
+		assertEquals(true, ((IOption) catoptions[1][1]).getBooleanValue());
+		assertEquals("-b", ((IOption) catoptions[1][1]).getCommand());
 		categories = topCategory.getChildCategories();
 		catoptions = categories[0].getOptions(configs[1]);
-		for (i=0; i<catoptions.length; i++)
-			if (catoptions[i][0] == null) break;
+		for (i = 0; i < catoptions.length; i++)
+			if (catoptions[i][0] == null)
+				break;
 		assertEquals(4, i);
-		assertEquals("String Option in Category", ((IOption)catoptions[0][1]).getName());
-		assertEquals("y", ((IOption)catoptions[0][1]).getStringValue());
-		assertEquals("Another String Option in Category", ((IOption)catoptions[1][1]).getName());
-		assertEquals("", ((IOption)catoptions[1][1]).getStringValue());
-		assertEquals("Enumerated Option in Category", ((IOption)catoptions[2][1]).getName());
-		valueList = ((IOption)catoptions[2][1]).getApplicableValues();
+		assertEquals("String Option in Category", ((IOption) catoptions[0][1]).getName());
+		assertEquals("y", ((IOption) catoptions[0][1]).getStringValue());
+		assertEquals("Another String Option in Category", ((IOption) catoptions[1][1]).getName());
+		assertEquals("", ((IOption) catoptions[1][1]).getStringValue());
+		assertEquals("Enumerated Option in Category", ((IOption) catoptions[2][1]).getName());
+		valueList = ((IOption) catoptions[2][1]).getApplicableValues();
 		assertEquals(2, valueList.length);
 		assertEquals("Default Enum", valueList[0]);
 		assertEquals("Another Enum", valueList[1]);
-		assertEquals("-e1", ((IOption)catoptions[2][1]).getEnumCommand(valueList[0]));
-		assertEquals("-e2", ((IOption)catoptions[2][1]).getEnumCommand(valueList[1]));
+		assertEquals("-e1", ((IOption) catoptions[2][1]).getEnumCommand(valueList[0]));
+		assertEquals("-e2", ((IOption) catoptions[2][1]).getEnumCommand(valueList[1]));
 		assertEquals(1, tools.length);
-		assertEquals("Boolean Option in Category", ((IOption)catoptions[3][1]).getName());
-		assertEquals(false, ((IOption)catoptions[3][1]).getBooleanValue());
-		assertEquals("", ((IOption)catoptions[3][1]).getCommand());
-		assertEquals("-nob", ((IOption)catoptions[3][1]).getCommandFalse());
+		assertEquals("Boolean Option in Category", ((IOption) catoptions[3][1]).getName());
+		assertEquals(false, ((IOption) catoptions[3][1]).getBooleanValue());
+		assertEquals("", ((IOption) catoptions[3][1]).getCommand());
+		assertEquals("-nob", ((IOption) catoptions[3][1]).getCommandFalse());
 		assertEquals(1, tools.length);
 		ITool tool = tools[0];
 		assertNotNull(tool);
@@ -1072,41 +1074,43 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("Root Tool", tools[0].getName());
 		topCategory = tools[0].getTopOptionCategory();
 		catoptions = topCategory.getOptions(configs[2]);
-		for (i=0; i<catoptions.length; i++)
-			if (catoptions[i][0] == null) break;
+		for (i = 0; i < catoptions.length; i++)
+			if (catoptions[i][0] == null)
+				break;
 		assertEquals(2, i);
 		// Check that there's an string list with totally new values
-		assertEquals("List Option in Top", ((IOption)catoptions[0][1]).getName());
-		assertEquals(IOption.STRING_LIST, ((IOption)catoptions[0][1]).getValueType());
-		valueList = ((IOption)catoptions[0][1]).getStringListValue();
+		assertEquals("List Option in Top", ((IOption) catoptions[0][1]).getName());
+		assertEquals(IOption.STRING_LIST, ((IOption) catoptions[0][1]).getValueType());
+		valueList = ((IOption) catoptions[0][1]).getStringListValue();
 		assertTrue(valueList.length == 3);
 		assertEquals("d", valueList[0]);
 		assertEquals("e", valueList[1]);
 		assertEquals("f", valueList[2]);
-		assertEquals("-L", ((IOption)catoptions[0][1]).getCommand());
+		assertEquals("-L", ((IOption) catoptions[0][1]).getCommand());
 		// and a true boolean (commands should not have changed)
-		assertEquals("Boolean Option in Top", ((IOption)catoptions[1][1]).getName());
-		assertEquals(IOption.BOOLEAN, ((IOption)catoptions[1][1]).getValueType());
-		assertEquals(true, ((IOption)catoptions[1][1]).getBooleanValue());
-		assertEquals("-b", ((IOption)catoptions[1][1]).getCommand());
+		assertEquals("Boolean Option in Top", ((IOption) catoptions[1][1]).getName());
+		assertEquals(IOption.BOOLEAN, ((IOption) catoptions[1][1]).getValueType());
+		assertEquals(true, ((IOption) catoptions[1][1]).getBooleanValue());
+		assertEquals("-b", ((IOption) catoptions[1][1]).getCommand());
 		// Check that there's an overridden enumeration and string
 		categories = topCategory.getChildCategories();
 		catoptions = categories[0].getOptions(configs[2]);
-		for (i=0; i<catoptions.length; i++)
-			if (catoptions[i][0] == null) break;
+		for (i = 0; i < catoptions.length; i++)
+			if (catoptions[i][0] == null)
+				break;
 		assertEquals(4, i);
-		assertEquals("String Option in Category", ((IOption)catoptions[0][1]).getName());
-		assertEquals(IOption.STRING, ((IOption)catoptions[0][1]).getValueType());
-		assertEquals("overridden", ((IOption)catoptions[0][1]).getStringValue());
-		assertEquals("Another String Option in Category", ((IOption)catoptions[1][1]).getName());
-		assertEquals(IOption.STRING, ((IOption)catoptions[1][1]).getValueType());
-		assertEquals("alsooverridden", ((IOption)catoptions[1][1]).getStringValue());
-		assertEquals("Enumerated Option in Category", ((IOption)catoptions[2][1]).getName());
-		assertEquals(IOption.ENUMERATED, ((IOption)catoptions[2][1]).getValueType());
-		assertEquals("another.enum.option", ((IOption)catoptions[2][1]).getSelectedEnum());
-		assertEquals("Boolean Option in Category", ((IOption)catoptions[3][1]).getName());
-		assertEquals(IOption.BOOLEAN, ((IOption)catoptions[3][1]).getValueType());
-		assertEquals(true, ((IOption)catoptions[3][1]).getBooleanValue());
+		assertEquals("String Option in Category", ((IOption) catoptions[0][1]).getName());
+		assertEquals(IOption.STRING, ((IOption) catoptions[0][1]).getValueType());
+		assertEquals("overridden", ((IOption) catoptions[0][1]).getStringValue());
+		assertEquals("Another String Option in Category", ((IOption) catoptions[1][1]).getName());
+		assertEquals(IOption.STRING, ((IOption) catoptions[1][1]).getValueType());
+		assertEquals("alsooverridden", ((IOption) catoptions[1][1]).getStringValue());
+		assertEquals("Enumerated Option in Category", ((IOption) catoptions[2][1]).getName());
+		assertEquals(IOption.ENUMERATED, ((IOption) catoptions[2][1]).getValueType());
+		assertEquals("another.enum.option", ((IOption) catoptions[2][1]).getSelectedEnum());
+		assertEquals("Boolean Option in Category", ((IOption) catoptions[3][1]).getName());
+		assertEquals(IOption.BOOLEAN, ((IOption) catoptions[3][1]).getValueType());
+		assertEquals(true, ((IOption) catoptions[3][1]).getBooleanValue());
 		tool = tools[0];
 		assertEquals("-Ld -Le -Lf -b overridden -stralsooverridden -e2", tool.getToolFlags());
 
@@ -1120,8 +1124,8 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	private void checkRootManagedProject(IManagedProject managedProj, String testValue) throws BuildException {
 		String expectedCleanCmd = "del /myworld";
 		String expectedParserId = "org.eclipse.cdt.core.PE";
-		String[] expectedOSList = {"win32"};
-		String[] expectedArchList = {"all"};
+		String[] expectedOSList = { "win32" };
+		String[] expectedArchList = { "all" };
 		assertTrue(managedProj.getProjectType().isTestProjectType());
 		IConfiguration[] configs = managedProj.getConfigurations();
 		if (configs[0].getArtifactName().equals("ManagedBuildTest")) {
@@ -1135,7 +1139,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		ITargetPlatform targetPlatform = toolChain.getTargetPlatform();
 		String[] binaryParsers = targetPlatform.getBinaryParserList();
 		assertEquals(binaryParsers.length, 1);
-	    assertEquals(binaryParsers[0], expectedParserId);
+		assertEquals(binaryParsers[0], expectedParserId);
 		assertTrue(Arrays.equals(expectedOSList, toolChain.getOSList()));
 		assertTrue(Arrays.equals(expectedArchList, toolChain.getArchList()));
 		// This configuration defines no errors parsers.
@@ -1201,27 +1205,29 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("Root Tool", topCategory.getName());
 		Object[][] catoptions = topCategory.getOptions(configs[0]);
 		int i;
-		for (i=0; i<catoptions.length; i++)
-			if (catoptions[i][0] == null) break;
+		for (i = 0; i < catoptions.length; i++)
+			if (catoptions[i][0] == null)
+				break;
 		assertEquals(2, i);
-		IOption catOption = (IOption)catoptions[0][1];
+		IOption catOption = (IOption) catoptions[0][1];
 		assertEquals("List Option in Top", catOption.getName());
-		catOption = (IOption)catoptions[1][1];
+		catOption = (IOption) catoptions[1][1];
 		assertEquals("Boolean Option in Top", catOption.getName());
 		IOptionCategory[] categories = topCategory.getChildCategories();
 		assertEquals(1, categories.length);
 		assertEquals("Category", categories[0].getName());
 		catoptions = categories[0].getOptions(configs[0]);
-		for (i=0; i<catoptions.length; i++)
-			if (catoptions[i][0] == null) break;
+		for (i = 0; i < catoptions.length; i++)
+			if (catoptions[i][0] == null)
+				break;
 		assertEquals(4, i);
-		catOption = (IOption)catoptions[0][1];
+		catOption = (IOption) catoptions[0][1];
 		assertEquals("String Option in Category", catOption.getName());
-		catOption = (IOption)catoptions[1][1];
+		catOption = (IOption) catoptions[1][1];
 		assertEquals("Another String Option in Category", catOption.getName());
-		catOption = (IOption)catoptions[2][1];
+		catOption = (IOption) catoptions[2][1];
 		assertEquals("Enumerated Option in Category", catOption.getName());
-		catOption = (IOption)catoptions[3][1];
+		catOption = (IOption) catoptions[3][1];
 		assertEquals("Boolean Option in Category", catOption.getName());
 
 		// There should be 3 defined configs
@@ -1253,40 +1259,42 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("Root Tool", tools[0].getName());
 		topCategory = tools[0].getTopOptionCategory();
 		catoptions = topCategory.getOptions(configs[1]);
-		for (i=0; i<catoptions.length; i++)
-			if (catoptions[i][0] == null) break;
+		for (i = 0; i < catoptions.length; i++)
+			if (catoptions[i][0] == null)
+				break;
 		assertEquals(2, i);
-		catOption = (IOption)catoptions[0][1];
+		catOption = (IOption) catoptions[0][1];
 		assertEquals("List Option in Top", catOption.getName());
 		valueList = catOption.getStringListValue();
 		assertEquals("a", valueList[0]);
 		assertEquals("b", valueList[1]);
-		catOption = (IOption)catoptions[1][1];
+		catOption = (IOption) catoptions[1][1];
 		assertEquals("Boolean Option in Top", catOption.getName());
 		assertEquals(true, catOption.getBooleanValue());
 		assertEquals("-b", catOption.getCommand());
 		categories = topCategory.getChildCategories();
 		catoptions = categories[0].getOptions(configs[1]);
-		for (i=0; i<catoptions.length; i++)
-			if (catoptions[i][0] == null) break;
+		for (i = 0; i < catoptions.length; i++)
+			if (catoptions[i][0] == null)
+				break;
 		assertEquals(4, i);
-		catOption = (IOption)catoptions[0][1];
+		catOption = (IOption) catoptions[0][1];
 		assertEquals("String Option in Category", catOption.getName());
 		assertEquals("y", catOption.getStringValue());
-		catOption = (IOption)catoptions[1][1];
+		catOption = (IOption) catoptions[1][1];
 		assertEquals("Another String Option in Category", catOption.getName());
 		assertEquals("", catOption.getStringValue());
-		catOption = (IOption)catoptions[2][1];
+		catOption = (IOption) catoptions[2][1];
 		assertEquals("Enumerated Option in Category", catOption.getName());
 		valueList = catOption.getApplicableValues();
 		assertEquals(2, valueList.length);
 		assertEquals("Default Enum", valueList[0]);
 		assertEquals("Another Enum", valueList[1]);
-		catOption = (IOption)catoptions[2][1];
+		catOption = (IOption) catoptions[2][1];
 		assertEquals("-e1", catOption.getEnumCommand(valueList[0]));
 		assertEquals("-e2", catOption.getEnumCommand(valueList[1]));
 		assertEquals(1, tools.length);
-		catOption = (IOption)catoptions[3][1];
+		catOption = (IOption) catoptions[3][1];
 		assertEquals("Boolean Option in Category", catOption.getName());
 		assertEquals(false, catOption.getBooleanValue());
 		assertEquals("", catOption.getCommand());
@@ -1310,11 +1318,12 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("Root Tool", tools[0].getName());
 		topCategory = tools[0].getTopOptionCategory();
 		catoptions = topCategory.getOptions(configs[2]);
-		for (i=0; i<catoptions.length; i++)
-			if (catoptions[i][0] == null) break;
+		for (i = 0; i < catoptions.length; i++)
+			if (catoptions[i][0] == null)
+				break;
 		assertEquals(2, i);
 		// Check that there's an string list with totally new values
-		catOption = (IOption)catoptions[0][1];
+		catOption = (IOption) catoptions[0][1];
 		assertEquals("List Option in Top", catOption.getName());
 		assertEquals(IOption.STRING_LIST, catOption.getValueType());
 		valueList = catOption.getStringListValue();
@@ -1324,7 +1333,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("f", valueList[2]);
 		assertEquals("-L", catOption.getCommand());
 		// and a true boolean (commands should not have changed)
-		catOption = (IOption)catoptions[1][1];
+		catOption = (IOption) catoptions[1][1];
 		assertEquals("Boolean Option in Top", catOption.getName());
 		assertEquals(IOption.BOOLEAN, catOption.getValueType());
 		assertEquals(true, catOption.getBooleanValue());
@@ -1332,22 +1341,23 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Check that there's an overridden enumeration and string
 		categories = topCategory.getChildCategories();
 		catoptions = categories[0].getOptions(configs[2]);
-		for (i=0; i<catoptions.length; i++)
-			if (catoptions[i][0] == null) break;
+		for (i = 0; i < catoptions.length; i++)
+			if (catoptions[i][0] == null)
+				break;
 		assertEquals(4, i);
-		catOption = (IOption)catoptions[0][1];
+		catOption = (IOption) catoptions[0][1];
 		assertEquals("String Option in Category", catOption.getName());
 		assertEquals(IOption.STRING, catOption.getValueType());
 		assertEquals("overridden", catOption.getStringValue());
-		catOption = (IOption)catoptions[1][1];
+		catOption = (IOption) catoptions[1][1];
 		assertEquals("Another String Option in Category", catOption.getName());
 		assertEquals(IOption.STRING, catOption.getValueType());
 		assertEquals("alsooverridden", catOption.getStringValue());
-		catOption = (IOption)catoptions[2][1];
+		catOption = (IOption) catoptions[2][1];
 		assertEquals("Enumerated Option in Category", catOption.getName());
 		assertEquals(IOption.ENUMERATED, catOption.getValueType());
 		assertEquals("another.enum.option", catOption.getSelectedEnum());
-		catOption = (IOption)catoptions[3][1];
+		catOption = (IOption) catoptions[3][1];
 		assertEquals("Boolean Option in Category", catOption.getName());
 		assertEquals(IOption.BOOLEAN, catOption.getValueType());
 		assertEquals(true, catOption.getBooleanValue());
@@ -1405,10 +1415,10 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		ITargetPlatform targetPlatform = toolChain.getTargetPlatform();
 		assertEquals("org.eclipse.cdt.core.ELF", targetPlatform.getBinaryParserList()[0]);
 		// Make sure the os list is inherited
-		String[] expectedOSList = {"win32","linux","solaris"};
+		String[] expectedOSList = { "win32", "linux", "solaris" };
 		assertTrue(Arrays.equals(expectedOSList, toolChain.getOSList()));
 		// Make sure the arch list is inherited
-		String[] expectedArchList = {"x86", "ppc"};
+		String[] expectedArchList = { "x86", "ppc" };
 		assertTrue(Arrays.equals(expectedArchList, toolChain.getArchList()));
 
 		// Get the 5 configurations (3 from test, 1 from test sub and 1 from this)
@@ -1440,10 +1450,11 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Make sure the option in the top category is correct
 		Object[][] optsInCat = categories[0].getOptions(configs[0]);
 		int i;
-		for (i=0; i<optsInCat.length; i++)
-			if (optsInCat[i][0] == null) break;
+		for (i = 0; i < optsInCat.length; i++)
+			if (optsInCat[i][0] == null)
+				break;
 		assertEquals(1, i);
-		IOption optCat = (IOption)optsInCat[0][1];
+		IOption optCat = (IOption) optsInCat[0][1];
 		assertEquals(freeOptName, optCat.getName());
 		try {
 			// We get the option categories and options from the tool itself, but the
@@ -1460,10 +1471,11 @@ public class ManagedBuildCoreTests20 extends TestCase {
 
 		// Do the same for the options in the child cat
 		Object[][] optsInSubCat = subCategories[0].getOptions(configs[0]);
-		for (i=0; i<optsInSubCat.length; i++)
-			if (optsInSubCat[i][0] == null) break;
+		for (i = 0; i < optsInSubCat.length; i++)
+			if (optsInSubCat[i][0] == null)
+				break;
 		assertEquals(1, i);
-		IOption booleanRef = toolRef.getOptionById(((IOption)optsInSubCat[0][1]).getId());
+		IOption booleanRef = toolRef.getOptionById(((IOption) optsInSubCat[0][1]).getId());
 		assertEquals(chainedOptName, booleanRef.getName());
 		try {
 			assertEquals(IOption.BOOLEAN, booleanRef.getValueType());
@@ -1483,7 +1495,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// This tool ref is inherited from parent, so it does not belong to the config
 		ITool configToolRef = configTools[0];
 		assertNotNull(configToolRef);
-		optCat = (IOption)optsInCat[0][1];
+		optCat = (IOption) optsInCat[0][1];
 		IOption configStringOpt = configToolRef.getOptionById(optCat.getId());
 		assertNotNull(configStringOpt);
 		// Override the string option
@@ -1499,10 +1511,11 @@ public class ManagedBuildCoreTests20 extends TestCase {
 
 		// Test that the string option is overridden in the configuration
 		optsInCat = categories[0].getOptions(configs[0]);
-		for (i=0; i<optsInCat.length; i++)
-			if (optsInCat[i][0] == null) break;
+		for (i = 0; i < optsInCat.length; i++)
+			if (optsInCat[i][0] == null)
+				break;
 		assertEquals(1, i);
-		optCat = (IOption)optsInCat[0][1];
+		optCat = (IOption) optsInCat[0][1];
 		assertEquals(freeOptName, optCat.getName());
 		configStringOpt = configToolRef.getOptionById(optCat.getId());
 		try {
@@ -1511,7 +1524,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			fail("Failure getting string value in subsubconfiguration: " + e.getLocalizedMessage());
 		}
 		// The tool should also contain the boolean option set to true
-		IOption optSubCat = (IOption)optsInSubCat[0][1];
+		IOption optSubCat = (IOption) optsInSubCat[0][1];
 		IOption configBoolOpt = configToolRef.getOptionById(optSubCat.getId());
 		assertNotNull(configBoolOpt);
 		try {
@@ -1527,10 +1540,11 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			fail("Failure setting boolean value in subsubconfiguration: " + e.getLocalizedMessage());
 		}
 		optsInSubCat = subCategories[0].getOptions(configs[0]);
-		for (i=0; i<optsInSubCat.length; i++)
-			if (optsInSubCat[i][0] == null) break;
+		for (i = 0; i < optsInSubCat.length; i++)
+			if (optsInSubCat[i][0] == null)
+				break;
 		assertEquals(1, i);
-		configBoolOpt = configToolRef.getOptionById(((IOption)optsInSubCat[0][1]).getId());
+		configBoolOpt = configToolRef.getOptionById(((IOption) optsInSubCat[0][1]).getId());
 		assertEquals(chainedOptName, booleanRef.getName());
 		try {
 			assertFalse(configBoolOpt.getBooleanValue());
@@ -1558,10 +1572,10 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		IToolChain toolChain = configs[0].getToolChain();
 		ITargetPlatform targetPlatform = toolChain.getTargetPlatform();
 		assertEquals("org.eclipse.cdt.core.PE", targetPlatform.getBinaryParserList()[0]);
-		String[] expectedOSList = {"win32","linux","solaris"};
+		String[] expectedOSList = { "win32", "linux", "solaris" };
 		assertTrue(Arrays.equals(expectedOSList, toolChain.getOSList()));
 		// Make sure the list is overridden
-		String[] expectedArchList = {"x86", "ppc"};
+		String[] expectedArchList = { "x86", "ppc" };
 		assertTrue(Arrays.equals(expectedArchList, toolChain.getArchList()));
 
 		// Make sure this is a test projType
@@ -1663,16 +1677,16 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// check option categories
 		IOption option = parentTool.getOptionById("test.forward.option");
 		assertNotNull(option);
-		IOptionCategory[] firstLevel = parentTool.getTopOptionCategory()
-			.getChildCategories();
+		IOptionCategory[] firstLevel = parentTool.getTopOptionCategory().getChildCategories();
 		assertEquals(1, firstLevel.length);
 		IOptionCategory[] secondLevel = firstLevel[0].getChildCategories();
 		assertEquals(1, secondLevel.length);
 		assertEquals(0, secondLevel[0].getChildCategories().length);
 		Object[][] optList = secondLevel[0].getOptions(parentConfigs[0]);
 		int i;
-		for (i=0; i<optList.length; i++)
-			if (optList[i][0] == null) break;
+		for (i = 0; i < optList.length; i++)
+			if (optList[i][0] == null)
+				break;
 		assertEquals(1, i);
 		assertEquals(option, optList[0][1]);
 
@@ -1742,7 +1756,8 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			workspace.setDescription(workspaceDesc);
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 			//description.setLocation(root.getLocation());
-			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), /*MakeCorePlugin.MAKE_PROJECT_ID*/ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID);
+			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(),
+					/*MakeCorePlugin.MAKE_PROJECT_ID*/ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID);
 
 			// Now associate the builder with the project
 			ManagedBuildTestHelper.addManagedBuildNature(project);
@@ -1791,6 +1806,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			}
 		}
 	}
+
 	/**
 	 * @throws BuildException
 	 */
@@ -1823,7 +1839,8 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Initialize the path entry container
 		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
 		if (initResult.getCode() != IStatus.OK) {
-			fail("Initializing build information failed for: " + project.getName() + " because: " + initResult.getMessage());
+			fail("Initializing build information failed for: " + project.getName() + " because: "
+					+ initResult.getMessage());
 		}
 
 		// Copy over the configs
@@ -1870,7 +1887,9 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals(expectedBinParserId, targetPlatform.getBinaryParserList()[0]);
 		// This target defines errors parsers.  Check that the error parsers
 		// have been assigned.
-		assertEquals("org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GmakeErrorParser", configs[0].getErrorParserIds());
+		assertEquals(
+				"org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GmakeErrorParser",
+				configs[0].getErrorParserIds());
 
 		// Tool
 		ITool[] tools = configs[0].getTools();
@@ -1892,7 +1911,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	 * Test that the build artifact of a <code>ITarget</code> can be modified
 	 * programmatically.
 	 */
-	public void testConfigBuildArtifact () throws CoreException {
+	public void testConfigBuildArtifact() throws CoreException {
 		// Open the test project
 		IProject project = createProject(projectName);
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
@@ -1929,4 +1948,3 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	}
 
 }
-

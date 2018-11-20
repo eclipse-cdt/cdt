@@ -23,36 +23,36 @@ public interface ICastToType extends IAdaptable {
 
 	/**
 	 * Returns whether this element can currently be casted.
-	 * 
+	 *
 	 * @return whether this element can currently be casted
 	 */
 	boolean canCast();
 
 	/**
 	 * Returns the string presentation of the current type.
-	 * 
+	 *
 	 * @return the string presentation of the current type
 	 */
 	String getCurrentType();
 
 	/**
 	 * Performs the casting to the given type.
-	 * 
+	 *
 	 * @param type a type to cast to.
 	 * @throws DebugException
 	 */
-	void cast( String type ) throws DebugException;
+	void cast(String type) throws DebugException;
 
 	/**
 	 * Restores the original type.
-	 * 
+	 *
 	 * @throws DebugException
 	 */
 	void restoreOriginal() throws DebugException;
 
 	/**
 	 * Returns whether this element is casted.
-	 * 
+	 *
 	 * @return whether this element is casted
 	 */
 	boolean isCasted();

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *     Ed Swartz (Nokia)
@@ -31,23 +31,26 @@ import org.eclipse.cdt.core.parser.Keywords;
  * Configures the preprocessor for c++-sources as accepted by g++.
  */
 public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfiguration {
-	private static enum CompilerType { GCC, Clang }
+	private static enum CompilerType {
+		GCC, Clang
+	}
+
 	private static final int VERSION_4_2 = version(4, 2);
 	private static final int VERSION_4_3 = version(4, 3);
 	private static final int VERSION_4_6 = version(4, 6);
 	private static final int VERSION_4_7 = version(4, 7);
 	private static final int VERSION_5_0 = version(5, 0);
 	private static final int VERSION_8_0 = version(8, 0);
-	private static GPPScannerExtensionConfiguration CONFIG= new GPPScannerExtensionConfiguration();
-	private static GPPScannerExtensionConfiguration CONFIG_4_2= new GPPScannerExtensionConfiguration(VERSION_4_2);
-	private static GPPScannerExtensionConfiguration CONFIG_4_3= new GPPScannerExtensionConfiguration(VERSION_4_3);
-	private static GPPScannerExtensionConfiguration CONFIG_4_6= new GPPScannerExtensionConfiguration(VERSION_4_6);
-	private static GPPScannerExtensionConfiguration CONFIG_4_7= new GPPScannerExtensionConfiguration(VERSION_4_7);
-	private static GPPScannerExtensionConfiguration CONFIG_5_0= new GPPScannerExtensionConfiguration(VERSION_5_0);
-	private static GPPScannerExtensionConfiguration CONFIG_8_0= new GPPScannerExtensionConfiguration(VERSION_8_0);
-	private static GPPScannerExtensionConfiguration CONFIG_CLANG= 
-			new GPPScannerExtensionConfiguration(CompilerType.Clang, 0 /* version is ignored for now */);
-	
+	private static GPPScannerExtensionConfiguration CONFIG = new GPPScannerExtensionConfiguration();
+	private static GPPScannerExtensionConfiguration CONFIG_4_2 = new GPPScannerExtensionConfiguration(VERSION_4_2);
+	private static GPPScannerExtensionConfiguration CONFIG_4_3 = new GPPScannerExtensionConfiguration(VERSION_4_3);
+	private static GPPScannerExtensionConfiguration CONFIG_4_6 = new GPPScannerExtensionConfiguration(VERSION_4_6);
+	private static GPPScannerExtensionConfiguration CONFIG_4_7 = new GPPScannerExtensionConfiguration(VERSION_4_7);
+	private static GPPScannerExtensionConfiguration CONFIG_5_0 = new GPPScannerExtensionConfiguration(VERSION_5_0);
+	private static GPPScannerExtensionConfiguration CONFIG_8_0 = new GPPScannerExtensionConfiguration(VERSION_8_0);
+	private static GPPScannerExtensionConfiguration CONFIG_CLANG = new GPPScannerExtensionConfiguration(
+			CompilerType.Clang, 0 /* version is ignored for now */);
+
 	public static GPPScannerExtensionConfiguration getInstance() {
 		return CONFIG;
 	}
@@ -59,17 +62,17 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		if (info != null) {
 			try {
 				final Map<String, String> definedSymbols = info.getDefinedSymbols();
-				
+
 				// Clang. Needs to be checked first since it pretends to be GCC too.
-				String clang= definedSymbols.get("__clang__");  //$NON-NLS-1$
+				String clang = definedSymbols.get("__clang__"); //$NON-NLS-1$
 				if (clang != null && Integer.valueOf(clang) > 0) {
 					return CONFIG_CLANG;
 				}
-				
+
 				// GCC
-				int major= Integer.valueOf(definedSymbols.get("__GNUC__")); //$NON-NLS-1$
-				int minor= Integer.valueOf(definedSymbols.get("__GNUC_MINOR__")); //$NON-NLS-1$
-				int version= version(major, minor);
+				int major = Integer.valueOf(definedSymbols.get("__GNUC__")); //$NON-NLS-1$
+				int minor = Integer.valueOf(definedSymbols.get("__GNUC_MINOR__")); //$NON-NLS-1$
+				int version = version(major, minor);
 				if (version >= VERSION_8_0) {
 					return CONFIG_8_0;
 				}
@@ -98,24 +101,25 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	public GPPScannerExtensionConfiguration() {
 		this(CompilerType.GCC, 0);
 	}
-	
+
 	/**
 	 * @since 5.4
 	 */
 	public GPPScannerExtensionConfiguration(int version) {
 		this(CompilerType.GCC, version);
 	}
-	
+
 	/**
 	 * @since 6.3
 	 */
 	@SuppressWarnings("nls")
 	public GPPScannerExtensionConfiguration(CompilerType compiler, int version) {
-		addMacro("__null", "0");  
-		addMacro("__builtin_offsetof(T,m)", "(reinterpret_cast <size_t>(&reinterpret_cast <const volatile char &>(static_cast<T*> (0)->m)))");
+		addMacro("__null", "0");
+		addMacro("__builtin_offsetof(T,m)",
+				"(reinterpret_cast <size_t>(&reinterpret_cast <const volatile char &>(static_cast<T*> (0)->m)))");
 		addKeyword(Keywords.c_COMPLEX, IToken.t__Complex);
 		addKeyword(Keywords.c_IMAGINARY, IToken.t__Imaginary);
-		
+
 		if (compiler == CompilerType.GCC) {
 			if (version >= VERSION_4_2) {
 				addKeyword(GCCKeywords.cp_decimal32, IGCCToken.t_decimal32);
@@ -161,7 +165,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 				addKeyword(GCCKeywords.cp__is_constructible, IGCCToken.tTT_is_constructible);
 			}
 		} else if (compiler == CompilerType.Clang) {
-			// As documented at 
+			// As documented at
 			// http://clang.llvm.org/docs/LanguageExtensions.html#checks-for-type-trait-primitives.
 			// For now we don't make it dependent on the version.
 			addKeyword(GCCKeywords.cp__has_nothrow_assign, IGCCToken.tTT_has_nothrow_assign);
@@ -187,19 +191,19 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 			addKeyword(GCCKeywords.cp__is_constructible, IGCCToken.tTT_is_constructible);
 		}
 	}
-	
-    @Override
+
+	@Override
 	public boolean supportMinAndMaxOperators() {
-        return true;
-    }
-    
-    /**
+		return true;
+	}
+
+	/**
 	 * @since 5.5
 	 */
-    @Override
-    public boolean supportRawStringLiterals() {
-    	return true;
-    }
+	@Override
+	public boolean supportRawStringLiterals() {
+		return true;
+	}
 
 	/**
 	 * User Defined Literals

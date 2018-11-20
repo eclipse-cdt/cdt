@@ -19,26 +19,36 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
-
 public interface IMethodStub {
-    public String getName();
-    public String getDescription();
+	public String getName();
 
-    public ASTAccessVisibility getAccess();
-    public boolean canModifyAccess();
-    public void setAccess(ASTAccessVisibility access);
+	public String getDescription();
 
-    public boolean isVirtual();
-    public boolean canModifyVirtual();
-    public void setVirtual(boolean isVirtual);
+	public ASTAccessVisibility getAccess();
 
-    public boolean isInline();
-    public boolean canModifyInline();
-    public void setInline(boolean isVirtual);
-    
-    public boolean isConstructor();
-    public boolean isDestructor();
-    
-    public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException;
-    public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException;
+	public boolean canModifyAccess();
+
+	public void setAccess(ASTAccessVisibility access);
+
+	public boolean isVirtual();
+
+	public boolean canModifyVirtual();
+
+	public void setVirtual(boolean isVirtual);
+
+	public boolean isInline();
+
+	public boolean canModifyInline();
+
+	public void setInline(boolean isVirtual);
+
+	public boolean isConstructor();
+
+	public boolean isDestructor();
+
+	public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses,
+			String lineDelimiter) throws CoreException;
+
+	public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses,
+			String lineDelimiter) throws CoreException;
 }

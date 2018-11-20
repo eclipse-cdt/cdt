@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
  *******************************************************************************/
@@ -37,7 +37,7 @@ public interface IMemoryBlockRetrievalManager {
 	 * @return - The IMemoryBlockRetrieval associated to the IMemoryDMContext resolved from the given dmc
 	 */
 	public IMemoryBlockRetrieval getMemoryBlockRetrieval(IDMContext dmc);
-	
+
 	/**
 	 * Shall be called when this manager is no longer needed
 	 * Any required clean up needs to be performed so this class can be

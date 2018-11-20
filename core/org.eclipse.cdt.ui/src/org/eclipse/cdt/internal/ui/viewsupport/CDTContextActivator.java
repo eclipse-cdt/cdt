@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -50,36 +50,35 @@ import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
  * CDT outline view is brought to the front, the CDT context is set.
  */
 public class CDTContextActivator implements IWindowListener, IPartListener2 {
-	private static CDTContextActivator sInstance= new CDTContextActivator();
-	
-	private Map<ContentOutline, IContextActivation> fActivationPerOutline = new HashMap<ContentOutline, IContextActivation>();
-	private Map<CommonNavigator, SelectionListener> fActivationPerNavigator= new HashMap<CommonNavigator, SelectionListener>();
-	private Collection<IWorkbenchWindow> fWindows= new HashSet<IWorkbenchWindow>();
+	private static CDTContextActivator sInstance = new CDTContextActivator();
 
-	
+	private Map<ContentOutline, IContextActivation> fActivationPerOutline = new HashMap<ContentOutline, IContextActivation>();
+	private Map<CommonNavigator, SelectionListener> fActivationPerNavigator = new HashMap<CommonNavigator, SelectionListener>();
+	private Collection<IWorkbenchWindow> fWindows = new HashSet<IWorkbenchWindow>();
+
 	private CDTContextActivator() {
 	}
-	
+
 	public static CDTContextActivator getInstance() {
 		return sInstance;
 	}
-	
+
 	public void install() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench != null) {
 			// listen for new windows
 			workbench.addWindowListener(this);
-			IWorkbenchWindow[] wnds= workbench.getWorkbenchWindows();
+			IWorkbenchWindow[] wnds = workbench.getWorkbenchWindows();
 			for (int i = 0; i < wnds.length; i++) {
 				IWorkbenchWindow window = wnds[i];
 				register(window);
 			}
 			// register open windows
-			IWorkbenchWindow ww= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			if (ww != null) {
 				IWorkbenchPage activePage = ww.getActivePage();
 				if (activePage != null) {
-					IWorkbenchPartReference part= activePage.getActivePartReference();
+					IWorkbenchPartReference part = activePage.getActivePartReference();
 					if (part != null) {
 						partActivated(part);
 					}
@@ -94,7 +93,7 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 			unregister(window);
 		}
 		for (Iterator<SelectionListener> iterator = fActivationPerNavigator.values().iterator(); iterator.hasNext();) {
-			SelectionListener l= iterator.next();
+			SelectionListener l = iterator.next();
 			l.uninstall();
 		}
 	}
@@ -103,7 +102,7 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 		wnd.getPartService().addPartListener(this);
 		fWindows.add(wnd);
 	}
-	
+
 	private void unregister(IWorkbenchWindow wnd) {
 		wnd.getPartService().removePartListener(this);
 		fWindows.remove(wnd);
@@ -122,7 +121,7 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 	@Override
 	public void windowActivated(IWorkbenchWindow window) {
 	}
-	
+
 	@Override
 	public void windowDeactivated(IWorkbenchWindow window) {
 	}
@@ -130,19 +129,18 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 	private void onContentOutlineClosed(ContentOutline outline) {
 		fActivationPerOutline.remove(outline);
 	}
-	
+
 	private void onContentOutlineActivated(ContentOutline outline) {
 		IPage page = outline.getCurrentPage();
 		if (page instanceof CContentOutlinePage) {
-			if (!fActivationPerOutline.containsKey(outline)){
+			if (!fActivationPerOutline.containsKey(outline)) {
 				// cdt outline activated for the first time
 				IContextService ctxtService = outline.getViewSite().getService(IContextService.class);
 				IContextActivation activateContext = ctxtService.activateContext(CUIPlugin.CVIEWS_SCOPE);
-				fActivationPerOutline.put(outline,activateContext);
+				fActivationPerOutline.put(outline, activateContext);
 			}
-		} 
-		else {
-			IContextActivation activation = fActivationPerOutline.remove(outline); 
+		} else {
+			IContextActivation activation = fActivationPerOutline.remove(outline);
 			if (activation != null) {
 				// other outline page brought to front
 				IContextService ctxtService = outline.getViewSite().getService(IContextService.class);
@@ -157,10 +155,10 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 		private IContextActivation fActivation;
 
 		public SelectionListener(IWorkbenchPartSite site) {
-			fSite= site;
-			fCtxService= fSite.getService(IContextService.class);
-			ISelectionProvider sp= site.getSelectionProvider();
-			
+			fSite = site;
+			fCtxService = fSite.getService(IContextService.class);
+			ISelectionProvider sp = site.getSelectionProvider();
+
 			if (sp != null && fCtxService != null) {
 				sp.addSelectionChangedListener(this);
 				onNewSelection(sp.getSelection());
@@ -168,20 +166,20 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 		}
 
 		public void uninstall() {
-			ISelectionProvider sp= fSite.getSelectionProvider();
+			ISelectionProvider sp = fSite.getSelectionProvider();
 			if (sp != null && fCtxService != null) {
 				onNewSelection(null);
 				sp.removeSelectionChangedListener(this);
 			}
 		}
-		
+
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			onNewSelection(event.getSelection());
 		}
 
 		private void onNewSelection(ISelection selection) {
-			boolean isRelevant= false;
+			boolean isRelevant = false;
 			if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 				if (((IStructuredSelection) selection).getFirstElement() instanceof ICElement) {
 					isRelevant = true;
@@ -189,22 +187,21 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 			}
 			if (isRelevant) {
 				if (fActivation == null) {
-					fActivation= fCtxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
+					fActivation = fCtxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
 				}
-			}
-			else {
+			} else {
 				if (fActivation != null) {
 					fCtxService.deactivateContext(fActivation);
-					fActivation= null;
+					fActivation = null;
 				}
 			}
 		}
 	}
 
 	private void onCommonNavigatorActivated(CommonNavigator part) {
-		SelectionListener l= fActivationPerNavigator.get(part);
+		SelectionListener l = fActivationPerNavigator.get(part);
 		if (l == null) {
-			l= new SelectionListener(part.getSite());
+			l = new SelectionListener(part.getSite());
 			fActivationPerNavigator.put(part, l);
 		}
 	}
@@ -215,22 +212,20 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 
 	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
-		IWorkbenchPart part= partRef.getPart(false);
+		IWorkbenchPart part = partRef.getPart(false);
 		if (part instanceof ContentOutline) {
 			onContentOutlineActivated((ContentOutline) part);
-		}
-		else if (part instanceof CommonNavigator) {
+		} else if (part instanceof CommonNavigator) {
 			onCommonNavigatorActivated((CommonNavigator) part);
 		}
 	}
 
 	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
-		IWorkbenchPart part= partRef.getPart(false);
+		IWorkbenchPart part = partRef.getPart(false);
 		if (part instanceof ContentOutline) {
-			onContentOutlineClosed((ContentOutline)part);
-		}
-		else if (part instanceof CommonNavigator) {
+			onContentOutlineClosed((ContentOutline) part);
+		} else if (part instanceof CommonNavigator) {
 			onCommonNavigatorClosed((CommonNavigator) part);
 		}
 	}

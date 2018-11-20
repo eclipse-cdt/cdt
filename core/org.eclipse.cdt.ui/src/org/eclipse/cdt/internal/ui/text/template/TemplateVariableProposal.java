@@ -47,14 +47,15 @@ public class TemplateVariableProposal implements ICompletionProposal {
 	 * @param offset the offset to replace
 	 * @param length the length to replace
 	 * @param viewer the viewer
-	 * @param includeBrace whether to also replace the ${ 
+	 * @param includeBrace whether to also replace the ${
 	 */
-	public TemplateVariableProposal(TemplateVariableResolver variable, int offset, int length, ITextViewer viewer, boolean includeBrace) {
-		fResolver= variable;
-		fOffset= offset;
-		fLength= length;
-		fViewer= viewer;
-		fIncludeBrace= includeBrace;
+	public TemplateVariableProposal(TemplateVariableResolver variable, int offset, int length, ITextViewer viewer,
+			boolean includeBrace) {
+		fResolver = variable;
+		fOffset = offset;
+		fLength = length;
+		fViewer = viewer;
+		fIncludeBrace = includeBrace;
 	}
 
 	/*
@@ -65,20 +66,20 @@ public class TemplateVariableProposal implements ICompletionProposal {
 
 		try {
 			String variable;
-			String type= fResolver.getType();
+			String type = fResolver.getType();
 			if (type.equals("dollar")) //$NON-NLS-1$
-				variable= "$$"; //$NON-NLS-1$
+				variable = "$$"; //$NON-NLS-1$
 			else if (fIncludeBrace)
-				variable= "${" + type + '}'; //$NON-NLS-1$
+				variable = "${" + type + '}'; //$NON-NLS-1$
 			else
-				variable= type;
+				variable = type;
 			document.replace(fOffset, fLength, variable);
-			fSelection= new Point(fOffset + variable.length(), 0);
+			fSelection = new Point(fOffset + variable.length(), 0);
 
 		} catch (BadLocationException e) {
 			CUIPlugin.log(e);
 
-			Shell shell= fViewer.getTextWidget().getShell();
+			Shell shell = fViewer.getTextWidget().getShell();
 			MessageDialog.openError(shell, TemplateMessages.TemplateVariableProposal_error_title, e.getMessage());
 		}
 	}

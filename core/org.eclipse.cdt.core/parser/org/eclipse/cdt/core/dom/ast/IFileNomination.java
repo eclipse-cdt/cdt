@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -27,14 +27,14 @@ import org.eclipse.core.runtime.CoreException;
 public interface IFileNomination {
 	/**
 	 * Returns macros relevant to parsing of the file included by this include statement and their
-	 * definitions at the point of the include. 
+	 * definitions at the point of the include.
 	 * <p>
 	 * This method should only be called after the included file has been parsed. The method will
 	 * return {@link ISignificantMacros#NONE}</code> if it is called prematurely.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public ISignificantMacros getSignificantMacros() throws CoreException;
-	
+
 	/**
 	 * Returns whether pragma once semantics has been detected when parsing the translation unit.
 	 */

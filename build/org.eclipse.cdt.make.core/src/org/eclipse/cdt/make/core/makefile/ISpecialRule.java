@@ -15,7 +15,7 @@ package org.eclipse.cdt.make.core.makefile;
 
 /**
  * Target rule that have special meaning for Make.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

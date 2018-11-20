@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -63,13 +63,13 @@ public final class REDTextStore implements ITextStore {
 			REDFileRider fileRider = null;
 			if (!monitor.isCanceled()) {
 				try {
-//					System.out.println("TextStoreSwapper.run() creating swap file");
+					//					System.out.println("TextStoreSwapper.run() creating swap file");
 					fileRider = new REDFileRider(new REDFile());
 					int size = fText.length();
-					monitor.beginTask(getName(), size+1);
+					monitor.beginTask(getName(), size + 1);
 					int written = 0;
 					while (written < size && !monitor.isCanceled()) {
-						int n = Math.min(size-written, CHUNK_SIZE);
+						int n = Math.min(size - written, CHUNK_SIZE);
 						fileRider.writeChars(fText, written, n);
 						monitor.worked(n);
 						written += n;
@@ -79,19 +79,19 @@ public final class REDTextStore implements ITextStore {
 				}
 			}
 			if (!monitor.isCanceled()) {
-//				System.out.println("TextStoreSwapper.run() swapping");
+				//				System.out.println("TextStoreSwapper.run() swapping");
 				fileRider = swap(fRider, fileRider);
 				monitor.done();
 			}
 			// something went wrong, dispose the file
 			if (fileRider != null) {
-//				System.out.println("TextStoreSwapper.run() disposing");
+				//				System.out.println("TextStoreSwapper.run() disposing");
 				fileRider.getFile().dispose();
 			}
 			// remove references
 			fText = null;
 			fRider = null;
-//			System.out.println("TextStoreSwapper.run() done");
+			//			System.out.println("TextStoreSwapper.run() done");
 			return Status.OK_STATUS;
 		}
 	}
@@ -103,9 +103,11 @@ public final class REDTextStore implements ITextStore {
 		LinkedRun(IFileRider rider, String str) throws IOException {
 			super(rider, str);
 		}
+
 		LinkedRun(IFileRider rider, char[] buf, int off, int n) throws IOException {
 			super(rider, buf, off, n);
 		}
+
 		LinkedRun(IFileRider rider, int offset, int length) {
 			super(rider, offset, length);
 		}
@@ -179,8 +181,8 @@ public final class REDTextStore implements ITextStore {
 		synchronized (fRunSpec) {
 			// special case: long in-memory text in full length (about to be swapped)
 			if (length == fLength && fSwapper != null && fHead != null && fHead.fNext == null) {
-				((StringRider)fHead.fRider).fBuffer.position(0);
-				return ((StringRider)fHead.fRider).fBuffer.toString();
+				((StringRider) fHead.fRider).fBuffer.position(0);
+				return ((StringRider) fHead.fRider).fBuffer.toString();
 			}
 			return toString(offset, offset + length);
 		}
@@ -283,7 +285,7 @@ public final class REDTextStore implements ITextStore {
 		assert from >= 0 && from <= fLength;
 		assert deleteLen >= 0;
 		assert from + deleteLen <= fLength;
-		
+
 		RunPair split = null;
 		if (deleteLen > 0) {
 			split = delete(from, from + deleteLen);
@@ -291,19 +293,19 @@ public final class REDTextStore implements ITextStore {
 		if (buf == null || insertLen == 0) {
 			return;
 		}
-//		assert off >= 0 && off < buf.length;
-//		assert insertLen >= 0 && off+insertLen <= buf.length;
-	    if (split == null) {
-	    	split = splitRun(from);
-	    }
+		//		assert off >= 0 && off < buf.length;
+		//		assert insertLen >= 0 && off+insertLen <= buf.length;
+		if (split == null) {
+			split = splitRun(from);
+		}
 		RunPair insert = makeRuns(split.fBefore, buf, off, insertLen);
-//		assert runLength(insert.fBefore, insert.fAfter) == insertLen;
+		//		assert runLength(insert.fBefore, insert.fAfter) == insertLen;
 		insertRuns(split, insert.fBefore, insert.fAfter);
 		fLength += insertLen;
-//		assert runLength(fHead, null) == fLength;
+		//		assert runLength(fHead, null) == fLength;
 		fCache = insert.fAfter;
-		fCachePos = from+insertLen-insert.fAfter.fLength;
-//		assert checkConsistency();
+		fCachePos = from + insertLen - insert.fAfter.fLength;
+		//		assert checkConsistency();
 		if (split.fBefore != null) {
 			mergeRuns(split.fBefore, split.fAfter);
 		} else {
@@ -366,7 +368,8 @@ public final class REDTextStore implements ITextStore {
 	 */
 	private LinkedRun createRun(LinkedRun before, int n) {
 		IFileRider scratchFile;
-		if (before != null && before.fRider.length() == before.fOffset + before.fLength && before.fRider.limit() >= before.fRider.length() + n) {
+		if (before != null && before.fRider.length() == before.fOffset + before.fLength
+				&& before.fRider.limit() >= before.fRider.length() + n) {
 			scratchFile = before.fRider;
 		} else {
 			scratchFile = getScratchFile();
@@ -457,6 +460,7 @@ public final class REDTextStore implements ITextStore {
 	private final static class RunSpec {
 		public LinkedRun fRun = null;
 		public int fOff = -1;
+
 		public boolean isValid() {
 			return fRun != null;
 		}
@@ -586,7 +590,8 @@ public final class REDTextStore implements ITextStore {
 			p.fBefore = spec.fRun;
 			int len = spec.fRun.length();
 			if (spec.fOff != len) { // need to split
-				p.fAfter = new LinkedRun(p.fBefore.fRider, p.fBefore.fOffset + spec.fOff, p.fBefore.fLength - spec.fOff);
+				p.fAfter = new LinkedRun(p.fBefore.fRider, p.fBefore.fOffset + spec.fOff,
+						p.fBefore.fLength - spec.fOff);
 				p.fBefore.fLength = spec.fOff;
 				p.fAfter.fNext = p.fBefore.fNext;
 				if (p.fAfter.fNext != null) {
@@ -648,13 +653,13 @@ public final class REDTextStore implements ITextStore {
 					}
 					run.fRider.seek(run.fOffset);
 					if (buf instanceof char[]) {
-						run.fRider.writeChars((char[])buf, off, count);
+						run.fRider.writeChars((char[]) buf, off, count);
 					} else {
-						run.fRider.writeChars((String)buf, off, count);
+						run.fRider.writeChars((String) buf, off, count);
 					}
 					if (run.fLength - count >= RECYCLE_THRESHOLD) {
 						LinkedRun next = run.fNext;
-						LinkedRun newRun = new LinkedRun(run.fRider, run.fOffset+count, run.fLength-count);
+						LinkedRun newRun = new LinkedRun(run.fRider, run.fOffset + count, run.fLength - count);
 						joinRuns(run, newRun);
 						joinRuns(newRun, next);
 					} else {
@@ -667,7 +672,7 @@ public final class REDTextStore implements ITextStore {
 					run = run.fNext;
 				} catch (IOException e) {
 					run = null;
-//					internalError(e);
+					//					internalError(e);
 					break;
 				}
 			} while (run != null && n > 0);
@@ -681,18 +686,18 @@ public final class REDTextStore implements ITextStore {
 			if (buf instanceof char[]) {
 				try {
 					run.fRider.seek(run.fOffset);
-					run.fRider.writeChars((char[])buf, off, n);
+					run.fRider.writeChars((char[]) buf, off, n);
 				} catch (IOException e) {
-//					internalError(e);
-					run = new LinkedRun(new StringRider(CharBuffer.wrap((char[])buf, off, off+n)), 0, n);
+					//					internalError(e);
+					run = new LinkedRun(new StringRider(CharBuffer.wrap((char[]) buf, off, off + n)), 0, n);
 				}
 			} else {
 				try {
 					run.fRider.seek(run.fOffset);
-					run.fRider.writeChars((String)buf, off, n);
+					run.fRider.writeChars((String) buf, off, n);
 				} catch (IOException e) {
-//					internalError(e);
-					run = new LinkedRun(new StringRider(CharBuffer.wrap((String)buf, off, off+n)), 0, n);
+					//					internalError(e);
+					run = new LinkedRun(new StringRider(CharBuffer.wrap((String) buf, off, off + n)), 0, n);
 				}
 			}
 			if (result.fBefore == null) {
@@ -706,7 +711,7 @@ public final class REDTextStore implements ITextStore {
 		}
 		return result;
 	}
-	
+
 	private void joinRuns(LinkedRun start, LinkedRun next) {
 		assert start != next;
 		start.fNext = next;
@@ -714,6 +719,7 @@ public final class REDTextStore implements ITextStore {
 			next.fPrev = start;
 		}
 	}
+
 	private void insertRuns(RunPair pos, LinkedRun start, LinkedRun end) {
 		assert pos.fBefore == null || pos.fBefore != pos.fAfter;
 		start.fPrev = pos.fBefore;
@@ -727,7 +733,7 @@ public final class REDTextStore implements ITextStore {
 			pos.fAfter.fPrev = end;
 		}
 	}
-	
+
 	/**
 	 * Swap given old (readonly) rider with the new (writable) one.
 	 * @param oldRider
@@ -735,7 +741,7 @@ public final class REDTextStore implements ITextStore {
 	 * @return <code>null</code> if the new rider was consumed
 	 */
 	private REDFileRider swap(IFileRider oldRider, REDFileRider newRider) {
-		synchronized(fRunSpec) {
+		synchronized (fRunSpec) {
 			// search linked run list starting from head and replace
 			// all instances of oldRider with newRider
 			// in the general case, spare list should be searched, too
@@ -754,7 +760,7 @@ public final class REDTextStore implements ITextStore {
 			}
 			if (newRider != null) {
 				// unlikely, but possible: need to increase array
-				REDFileRider[] scratchFiles = new REDFileRider[fScratchFiles.length+1];
+				REDFileRider[] scratchFiles = new REDFileRider[fScratchFiles.length + 1];
 				System.arraycopy(fScratchFiles, 0, scratchFiles, 0, fScratchFiles.length);
 				scratchFiles[fScratchFiles.length] = newRider;
 				fScratchFiles = scratchFiles;
@@ -775,23 +781,23 @@ public final class REDTextStore implements ITextStore {
 		int nSpare = 0;
 		int spareLength = 0;
 		LinkedRun run = fHead;
-		while(run != null) {
+		while (run != null) {
 			++nRuns;
 			run = run.fNext;
 		}
 		run = fSpare;
-		while(run != null) {
+		while (run != null) {
 			++nSpare;
 			spareLength += run.fLength;
 			run = run.fNext;
 		}
-		double runMean = nRuns > 0 ? (double)fLength / nRuns : Double.NaN;
+		double runMean = nRuns > 0 ? (double) fLength / nRuns : Double.NaN;
 		double spareMean = nSpare > 0 ? spareLength / nSpare : Double.NaN;
-		out.println("Length: "+fLength); //$NON-NLS-1$
-		out.println("Number of runs: "+nRuns); //$NON-NLS-1$
+		out.println("Length: " + fLength); //$NON-NLS-1$
+		out.println("Number of runs: " + nRuns); //$NON-NLS-1$
 		out.println("Mean length of runs: " + runMean); //$NON-NLS-1$
-		out.println("Length of spare runs: "+spareLength); //$NON-NLS-1$
-		out.println("Number of spare runs: "+nSpare); //$NON-NLS-1$
+		out.println("Length of spare runs: " + spareLength); //$NON-NLS-1$
+		out.println("Number of spare runs: " + nSpare); //$NON-NLS-1$
 		out.println("Mean length of spare runs: " + spareMean); //$NON-NLS-1$
 		out.println("Length of dead runs: " + fDeadLength); //$NON-NLS-1$
 	}
@@ -817,7 +823,7 @@ public final class REDTextStore implements ITextStore {
 		structure += "null"; //$NON-NLS-1$
 		return structure;
 	}
-	
+
 	/**
 	 * For debugging purposes only.
 	 */
@@ -862,7 +868,7 @@ public final class REDTextStore implements ITextStore {
 		}
 		return true;
 	}
-	
+
 	int runLength(LinkedRun first, LinkedRun last) {
 		LinkedRun run = first;
 		int length = 0;

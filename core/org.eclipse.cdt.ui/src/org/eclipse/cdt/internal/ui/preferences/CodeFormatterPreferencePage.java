@@ -32,30 +32,30 @@ import org.eclipse.cdt.internal.ui.preferences.formatter.CodeFormatterConfigurat
  * The page to configure the code formatter options.
  */
 public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
-	public static final String PREF_ID= "org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage"; //$NON-NLS-1$
-	public static final String PROP_ID= "org.eclipse.cdt.ui.propertyPages.CodeFormatterPreferencePage"; //$NON-NLS-1$
-	
+	public static final String PREF_ID = "org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage"; //$NON-NLS-1$
+	public static final String PROP_ID = "org.eclipse.cdt.ui.propertyPages.CodeFormatterPreferencePage"; //$NON-NLS-1$
+
 	private CodeFormatterConfigurationBlock fConfigurationBlock;
 
 	public CodeFormatterPreferencePage() {
-		setDescription(PreferencesMessages.CodeFormatterPreferencePage_description); 
-		
+		setDescription(PreferencesMessages.CodeFormatterPreferencePage_description);
+
 		// Only used when page is shown programmatically.
-		setTitle(PreferencesMessages.CodeFormatterPreferencePage_title);		 
+		setTitle(PreferencesMessages.CodeFormatterPreferencePage_title);
 	}
 
 	@Override
 	public void createControl(Composite parent) {
-		IPreferencePageContainer container= getContainer();
+		IPreferencePageContainer container = getContainer();
 		IWorkingCopyManager workingCopyManager;
 		if (container instanceof IWorkbenchPreferenceContainer) {
-			workingCopyManager= ((IWorkbenchPreferenceContainer) container).getWorkingCopyManager();
+			workingCopyManager = ((IWorkbenchPreferenceContainer) container).getWorkingCopyManager();
 		} else {
-			workingCopyManager= new WorkingCopyManager(); // non shared 
+			workingCopyManager = new WorkingCopyManager(); // non shared
 		}
-		PreferencesAccess access= PreferencesAccess.getWorkingCopyPreferences(workingCopyManager);
-		fConfigurationBlock= new CodeFormatterConfigurationBlock(getProject(), access);
-		
+		PreferencesAccess access = PreferencesAccess.getWorkingCopyPreferences(workingCopyManager);
+		fConfigurationBlock = new CodeFormatterConfigurationBlock(getProject(), access);
+
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.CODEFORMATTER_PREFERENCE_PAGE);
 	}
@@ -64,12 +64,12 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 	protected Control createPreferenceContent(Composite composite) {
 		return fConfigurationBlock.createContents(composite);
 	}
-	
+
 	@Override
 	protected boolean hasProjectSpecificOptions(IProject project) {
 		return fConfigurationBlock.hasProjectSpecificOptions(project);
 	}
-	
+
 	@Override
 	protected void enableProjectSpecificSettings(boolean useProjectSpecificSettings) {
 		super.enableProjectSpecificSettings(useProjectSpecificSettings);
@@ -77,17 +77,17 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 			fConfigurationBlock.enableProjectSpecificSettings(useProjectSpecificSettings);
 		}
 	}
-	
+
 	@Override
 	protected String getPreferencePageId() {
 		return PREF_ID;
 	}
-	
+
 	@Override
 	protected String getPropertyPageId() {
 		return PROP_ID;
 	}
-	
+
 	@Override
 	public void dispose() {
 		if (fConfigurationBlock != null) {
@@ -95,7 +95,7 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		}
 		super.dispose();
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		if (fConfigurationBlock != null) {
@@ -108,18 +108,18 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 	public boolean performOk() {
 		if (fConfigurationBlock != null && !fConfigurationBlock.performOk()) {
 			return false;
-		}	
+		}
 		return super.performOk();
 	}
-	
+
 	@Override
 	public void performApply() {
 		if (fConfigurationBlock != null) {
 			fConfigurationBlock.performApply();
-		}	
+		}
 		super.performApply();
 	}
-	
+
 	@Override
 	public void setElement(IAdaptable element) {
 		super.setElement(element);

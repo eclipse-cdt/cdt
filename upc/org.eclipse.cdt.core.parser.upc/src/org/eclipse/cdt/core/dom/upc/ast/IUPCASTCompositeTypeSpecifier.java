@@ -15,9 +15,7 @@ package org.eclipse.cdt.core.dom.upc.ast;
 
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 
-public interface IUPCASTCompositeTypeSpecifier extends
-	IUPCASTDeclSpecifier, ICASTCompositeTypeSpecifier {
-
+public interface IUPCASTCompositeTypeSpecifier extends IUPCASTDeclSpecifier, ICASTCompositeTypeSpecifier {
 
 	@Override
 	public IUPCASTCompositeTypeSpecifier copy();

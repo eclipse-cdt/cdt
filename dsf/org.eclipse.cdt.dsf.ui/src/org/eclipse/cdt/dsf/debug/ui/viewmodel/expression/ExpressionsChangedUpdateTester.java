@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,55 +19,55 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.jface.viewers.TreePath;
 
 class ExpressionsChangedUpdateTester implements IElementUpdateTester {
-    
-    private final ExpressionsChangedEvent fEvent;
-    
-    public ExpressionsChangedUpdateTester(ExpressionsChangedEvent event) {
-        fEvent = event;
-    }
 
-    @Override
+	private final ExpressionsChangedEvent fEvent;
+
+	public ExpressionsChangedUpdateTester(ExpressionsChangedEvent event) {
+		fEvent = event;
+	}
+
+	@Override
 	public int getUpdateFlags(Object viewerInput, TreePath path) {
-        // Check whether the element in the cache matches the expression manager element.
-        Object element = path.getSegmentCount() == 0 ? viewerInput : path.getLastSegment();
-        if (fEvent.getExpressionManagerElements().contains(element)) {
-            return ExpressionsManualUpdatePolicy.FLUSH;
-        }
-        
-        // If the expressions were modified, flush the entries which are under the 
-        // given expression. To do that, check whether the element path contains one 
-        // of the changed expressions.
-        if (fEvent.getType().equals(ExpressionsChangedEvent.Type.CHANGED)) {
-            for (int i = 0; i < path.getSegmentCount(); i++) {
-                if (eventContainsElement(path.getSegment(i))) {
-                    return ExpressionsManualUpdatePolicy.FLUSH;
-                }
-            }
-        }
-        return 0;
-    }
-    
-    private boolean eventContainsElement(Object element) {
-        if (element instanceof IAdaptable) {
-            IExpression expression = ((IAdaptable)element).getAdapter(IExpression.class);
-            if (expression != null) {
-                for (int i = 0; i < fEvent.getExpressions().length; i++) {
-                    if (expression.equals(fEvent.getExpressions()[i])) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    
-    @Override
+		// Check whether the element in the cache matches the expression manager element.
+		Object element = path.getSegmentCount() == 0 ? viewerInput : path.getLastSegment();
+		if (fEvent.getExpressionManagerElements().contains(element)) {
+			return ExpressionsManualUpdatePolicy.FLUSH;
+		}
+
+		// If the expressions were modified, flush the entries which are under the
+		// given expression. To do that, check whether the element path contains one
+		// of the changed expressions.
+		if (fEvent.getType().equals(ExpressionsChangedEvent.Type.CHANGED)) {
+			for (int i = 0; i < path.getSegmentCount(); i++) {
+				if (eventContainsElement(path.getSegment(i))) {
+					return ExpressionsManualUpdatePolicy.FLUSH;
+				}
+			}
+		}
+		return 0;
+	}
+
+	private boolean eventContainsElement(Object element) {
+		if (element instanceof IAdaptable) {
+			IExpression expression = ((IAdaptable) element).getAdapter(IExpression.class);
+			if (expression != null) {
+				for (int i = 0; i < fEvent.getExpressions().length; i++) {
+					if (expression.equals(fEvent.getExpressions()[i])) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public boolean includes(IElementUpdateTester tester) {
-        return tester instanceof ExpressionsChangedUpdateTester;
-    }
-    
-    @Override
-    public String toString() {
-        return "(" + fEvent + ") update tester"; //$NON-NLS-1$ //$NON-NLS-2$
-    }
+		return tester instanceof ExpressionsChangedUpdateTester;
+	}
+
+	@Override
+	public String toString() {
+		return "(" + fEvent + ") update tester"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }

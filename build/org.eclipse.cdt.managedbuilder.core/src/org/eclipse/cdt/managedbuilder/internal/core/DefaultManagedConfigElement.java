@@ -79,9 +79,7 @@ public class DefaultManagedConfigElement implements IManagedConfigElement {
 	 * Convenience method for converting an array of IConfigurationElements
 	 * into an array of IManagedConfigElements.
 	 */
-	public static IManagedConfigElement[] convertArray(
-		IConfigurationElement[] elements,
-		IExtension extension) {
+	public static IManagedConfigElement[] convertArray(IConfigurationElement[] elements, IExtension extension) {
 
 		IManagedConfigElement[] ret = new IManagedConfigElement[elements.length];
 		for (int i = 0; i < elements.length; i++) {

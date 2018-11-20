@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite;
@@ -33,7 +33,7 @@ import org.eclipse.jface.text.TextSelection;
  */
 public abstract class RewriteBaseTest extends BaseTestFramework implements ILogListener {
 	protected static final NullProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
-	
+
 	protected TreeMap<String, TestSourceFile> fileMap = new TreeMap<>();
 	protected String fileWithSelection;
 	protected TextSelection selection;
@@ -61,19 +61,18 @@ public abstract class RewriteBaseTest extends BaseTestFramework implements ILogL
 			}
 		}
 	}
-	
+
 	protected void assertEquals(TestSourceFile file, IFile file2) throws Exception {
 		StringBuilder code = getCodeFromFile(file2);
 		assertEquals(file.getExpectedSource(), TestHelper.unifyNewLines(code.toString()));
 	}
-	
+
 	protected void compareFiles(Map<String, TestSourceFile> testResourceFiles) throws Exception {
 		for (String fileName : testResourceFiles.keySet()) {
 			TestSourceFile file = testResourceFiles.get(fileName);
 			IFile iFile = project.getFile(new Path(fileName));
 			StringBuilder code = getCodeFromFile(iFile);
-			assertEquals(TestHelper.unifyNewLines(file.getExpectedSource()),
-					TestHelper.unifyNewLines(code.toString()));
+			assertEquals(TestHelper.unifyNewLines(file.getExpectedSource()), TestHelper.unifyNewLines(code.toString()));
 		}
 	}
 

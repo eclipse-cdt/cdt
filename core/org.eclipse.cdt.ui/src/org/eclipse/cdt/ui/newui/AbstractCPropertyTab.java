@@ -121,15 +121,15 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static final int TRI_NO = 0;
 
 	protected static final String ENUM = "enum"; //$NON-NLS-1$
-	protected static final String SSET = "set";  //$NON-NLS-1$
+	protected static final String SSET = "set"; //$NON-NLS-1$
 
 	private PageBook pageBook; // to select between background and usercomp.
-	private CLabel  background;
+	private CLabel background;
 	private Composite userdata;
 
 	protected Composite usercomp; // space where user can create widgets
 	protected Composite buttoncomp; // space for buttons on the right
-	private Button[] buttons;     // buttons in buttoncomp
+	private Button[] buttons; // buttons in buttoncomp
 	public ICPropertyProvider page;
 	protected Image icon = null;
 	private String helpId = EMPTY_STR;
@@ -157,18 +157,18 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		background.setText(EMPTY_STR);
 
 		GridData gd;
-		userdata= new Composite(pageBook, SWT.NONE);
+		userdata = new Composite(pageBook, SWT.NONE);
 		userdata.setLayout(new GridLayout(2, false));
 
 		usercomp = new Composite(userdata, SWT.NONE);
-		usercomp.setLayoutData(gd= new GridData(GridData.FILL_BOTH));
-		gd.widthHint= 150;
+		usercomp.setLayoutData(gd = new GridData(GridData.FILL_BOTH));
+		gd.widthHint = 150;
 
 		buttoncomp = new Composite(userdata, SWT.NONE);
-		buttoncomp.setLayoutData(gd= new GridData(GridData.END));
+		buttoncomp.setLayoutData(gd = new GridData(GridData.END));
 		// width hint must be set to one, otherwise subclasses that do not have buttons
 		// don't look pretty, bug 242408
-		gd.widthHint= 1;
+		gd.widthHint = 1;
 
 		pageBook.showPage(userdata);
 
@@ -181,10 +181,11 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * @param names : array of button names
 	 * null instead of name means "skip place"
 	 */
-	protected void  initButtons(String[] names) {
+	protected void initButtons(String[] names) {
 		initButtons(buttoncomp, names, 80);
 	}
-	protected void  initButtons(String[] names, int width) {
+
+	protected void initButtons(String[] names, int width) {
 		initButtons(buttoncomp, names, width);
 	}
 
@@ -196,12 +197,14 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	protected void initButtons(Composite c, String[] names) {
 		initButtons(c, names, 80);
 	}
+
 	protected void initButtons(Composite c, String[] names, int width) {
-		if (names == null || names.length == 0) return;
+		if (names == null || names.length == 0)
+			return;
 		c.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		c.setLayout(new GridLayout(1, false));
 		buttons = new Button[names.length];
-		for (int i=0; i<names.length; i++) {
+		for (int i = 0; i < names.length; i++) {
 			buttons[i] = new Button(c, SWT.PUSH);
 			GridData gdb = new GridData(GridData.VERTICAL_ALIGN_CENTER);
 			gdb.grabExcessHorizontalSpace = false;
@@ -231,7 +234,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * @param cfg - selected configuration
 	 */
 	private void configChanged(ICResourceDescription cfg) {
-		if (visible) updateData(cfg);
+		if (visible)
+			updateData(cfg);
 	}
 
 	/**
@@ -248,7 +252,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 */
 	public void setVisible(boolean _visible) {
 		visible = _visible;
-		if (visible) updateData(page.getResDesc());
+		if (visible)
+			updateData(page.getResDesc());
 	}
 
 	/**
@@ -261,17 +266,24 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * @param dst
 	 */
 	protected abstract void performApply(ICResourceDescription src, ICResourceDescription dst);
+
 	protected abstract void performDefaults();
+
 	protected abstract void updateData(ICResourceDescription cfg);
+
 	protected abstract void updateButtons();
-	protected void performCancel() {}
-	protected void performOK() {}
+
+	protected void performCancel() {
+	}
+
+	protected void performOK() {
+	}
 
 	/**
 	 * @param e - event to be handled
 	 */
 	private void buttonPressed(SelectionEvent e) {
-		for (int i=0; i<buttons.length; i++) {
+		for (int i = 0; i < buttons.length; i++) {
 			if (buttons[i].equals(e.widget)) {
 				buttonPressed(i);
 				return;
@@ -286,7 +298,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * Does nothing by default.
 	 * May (but not must) be overridden.
 	 */
-	protected void buttonPressed(int i) {}
+	protected void buttonPressed(int i) {
+	}
 
 	/**
 	 * Checks state of existing button.
@@ -295,7 +308,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * @return - true if button exists and enabled
 	 */
 	protected boolean buttonIsEnabled(int i) {
-		if (buttons == null || buttons.length <= i )
+		if (buttons == null || buttons.length <= i)
 			return false;
 		return buttons[i].isEnabled();
 	}
@@ -308,7 +321,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * @param state - required state
 	 */
 	protected void buttonSetEnabled(int i, boolean state) {
-		if (buttons == null || buttons.length <= i ) return;
+		if (buttons == null || buttons.length <= i)
+			return;
 		buttons[i].setEnabled(state);
 	}
 
@@ -320,7 +334,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * @param text - text to display
 	 */
 	protected void buttonSetText(int i, String text) {
-		if (buttons == null || buttons.length <= i ) return;
+		if (buttons == null || buttons.length <= i)
+			return;
 		buttons[i].setText(text);
 		Composite c = buttons[i].getParent();
 		if (c != null) {
@@ -345,7 +360,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		Button b = new Button(c, SWT.PUSH);
 		b.setText(name);
 		setupControl(b, span, mode);
-		GridData g = (GridData)b.getLayoutData();
+		GridData g = (GridData) b.getLayoutData();
 		g.minimumWidth = BUTTON_WIDTH;
 		g.horizontalAlignment = SWT.RIGHT;
 		b.setLayoutData(g);
@@ -414,15 +429,17 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 */
 
 	public static String getFileSystemDirDialog(Shell shell, String text) {
-		DirectoryDialog dialog = new DirectoryDialog(shell,	SWT.OPEN|SWT.APPLICATION_MODAL);
-		if(text != null && text.trim().length() != 0) dialog.setFilterPath(text);
+		DirectoryDialog dialog = new DirectoryDialog(shell, SWT.OPEN | SWT.APPLICATION_MODAL);
+		if (text != null && text.trim().length() != 0)
+			dialog.setFilterPath(text);
 		dialog.setMessage(FILESYSTEM_DIR_DIALOG_MSG);
 		return dialog.open();
 	}
 
 	public static String getFileSystemFileDialog(Shell shell, String text) {
 		FileDialog dialog = new FileDialog(shell);
-		if(text != null && text.trim().length() != 0) dialog.setFilterPath(text);
+		if (text != null && text.trim().length() != 0)
+			dialog.setFilterPath(text);
 		dialog.setText(FILESYSTEM_FILE_DIALOG_TITLE);
 		return dialog.open();
 	}
@@ -432,7 +449,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 */
 	public static String getFileSystemFileDialog(Shell shell, String text, String[] filter) {
 		FileDialog dialog = new FileDialog(shell);
-		if(text != null && text.trim().length() != 0) dialog.setFilterPath(text);
+		if (text != null && text.trim().length() != 0)
+			dialog.setFilterPath(text);
 		dialog.setFilterExtensions(filter);
 		dialog.setText(FILESYSTEM_FILE_DIALOG_TITLE);
 		return dialog.open();
@@ -446,8 +464,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			if (selected.length > 0) {
-				String s = ((ICdtVariable)selected[0]).getName();
-				return  "${"+s.trim()+"}";  //$NON-NLS-1$//$NON-NLS-2$
+				String s = ((ICdtVariable) selected[0]).getName();
+				return "${" + s.trim() + "}"; //$NON-NLS-1$//$NON-NLS-2$
 			}
 		}
 		return null;
@@ -456,15 +474,18 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static String getWorkspaceDirDialog(Shell shell, String text) {
 		return getWorkspaceDialog(shell, text, true, null);
 	}
+
 	public static String getWorkspaceFileDialog(Shell shell, String text) {
 		return getWorkspaceDialog(shell, text, false, null);
 	}
+
 	/**
 	 * @since 5.4
 	 */
 	public static String getProjectDirDialog(Shell shell, String text, IProject prj) {
 		return getWorkspaceDialog(shell, text, true, prj);
 	}
+
 	/**
 	 * @since 5.4
 	 */
@@ -480,8 +501,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		currentPathText = currentPathText.replaceAll("\"", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		path = new Path(currentPathText);
 
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell,
-				new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, new WorkbenchLabelProvider(),
+				new WorkbenchContentProvider());
 
 		if (prj == null)
 			dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
@@ -489,11 +510,11 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			dialog.setInput(prj);
 		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 
-		if (dir)	{
+		if (dir) {
 			IResource container = null;
-			if(path.isAbsolute()){
+			if (path.isAbsolute()) {
 				IContainer cs[] = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(path);
-				if(cs != null && cs.length > 0)
+				if (cs != null && cs.length > 0)
 					container = cs[0];
 			}
 			dialog.setInitialSelection(container);
@@ -511,8 +532,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG);
 		} else {
 			IResource resource = null;
-			if(path.isAbsolute()){
-				resource= ResourceLookup.selectFileForLocation(path, prj);
+			if (path.isAbsolute()) {
+				resource = ResourceLookup.selectFileForLocation(path, prj);
 			}
 			dialog.setInitialSelection(resource);
 			dialog.setValidator(new ISelectionStatusValidator() {
@@ -547,16 +568,19 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * Common event handler: called by parent for each tab
 	 */
 	@Override
-	public void handleTabEvent (int kind, Object data) {
-		switch(kind) {
+	public void handleTabEvent(int kind, Object data) {
+		switch (kind) {
 		case ICPropertyTab.OK:
-			if (canBeVisible()) performOK();
+			if (canBeVisible())
+				performOK();
 			break;
 		case ICPropertyTab.APPLY:
-			if (canBeVisible()) performApply(getResDesc(), (ICResourceDescription)data);
+			if (canBeVisible())
+				performApply(getResDesc(), (ICResourceDescription) data);
 			break;
 		case ICPropertyTab.CANCEL:
-			if (canBeVisible()) performCancel();
+			if (canBeVisible())
+				performCancel();
 			break;
 		case ICPropertyTab.DEFAULTS:
 			if (canBeVisible() /*&& getResDesc() != null*/) {
@@ -568,10 +592,9 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			if (canSupportMultiCfg() || !page.isMultiCfg()) {
 				if (canBeVisible()) {
 					setButtonVisible(true);
-					configChanged((ICResourceDescription)data);
+					configChanged((ICResourceDescription) data);
 				}
-			}
-			else
+			} else
 				setAllVisible(false, null);
 			break;
 		case ICPropertyTab.DISPOSE:
@@ -582,15 +605,13 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 				if (canBeVisible()) {
 					setVisible(data != null);
 					setButtonVisible(data != null);
-				} 
-				else
+				} else
 					setVisible(false);
-			}
-			else
+			} else
 				setAllVisible(false, null);
 			break;
 		case ICPropertyTab.SET_ICON:
-			icon = (Image)data;
+			icon = (Image) data;
 			break;
 		default:
 			break;
@@ -607,9 +628,9 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	/**
 	 * Method to be implemented by inherited classes to indicate whether or not the tab supports displaying
 	 * and editing settings for multiple configuration selection.
-	 * 
+	 *
 	 * Default implementation returns true.
-	 * 
+	 *
 	 * @return true if the tab supports multiple configurations, false otherwise
 	 * @since 5.7
 	 */
@@ -619,7 +640,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 
 	/**
 	 * Returns true if this tab is the one currently selected in the UI.
-	 * 
+	 *
 	 * @return true if this tab is the one selected in the UI, false otherwise.
 	 * @since 5.7
 	 */
@@ -628,6 +649,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			return ((ICPropertyProvider2) page).getSelectedTab() == this;
 		return false;
 	}
+
 	/**
 	 * Added to avoid usage PixelConverter class.
 	 * @param control
@@ -636,7 +658,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static FontMetrics getFontMetrics(Control control) {
 		GC gc = new GC(control);
 		gc.setFont(control.getFont());
-		FontMetrics fFontMetrics= gc.getFontMetrics();
+		FontMetrics fFontMetrics = gc.getFontMetrics();
 		gc.dispose();
 		return fFontMetrics;
 	}

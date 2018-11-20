@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-
 public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 
 	protected Combo fACVersionCombo;
@@ -42,43 +41,43 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		Composite composite= usercomp;
-		
+		Composite composite = usercomp;
+
 		// assume parent page uses griddata
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_FILL);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_FILL);
 		composite.setLayoutData(gd);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 2;
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
 		//PixelConverter pc= new PixelConverter(composite);
 		//layout.verticalSpacing= pc.convertHeightInCharsToPixels(1) / 2;
 		composite.setLayout(layout);
-		
+
 		project = page.getProject();
-		
+
 		/* check box for new editors */
-		fACVersionCombo= new Combo(composite, SWT.CHECK | SWT.DROP_DOWN | SWT.READ_ONLY);
+		fACVersionCombo = new Combo(composite, SWT.CHECK | SWT.DROP_DOWN | SWT.READ_ONLY);
 		fACVersionCombo.setItems(AutotoolsPropertyConstants.fACVersions);
 		fACVersionCombo.select(AutotoolsPropertyConstants.fACVersions.length - 1);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 		fACVersionCombo.setLayoutData(gd);
-		
-		Label label= new Label(composite, SWT.LEFT);
+
+		Label label = new Label(composite, SWT.LEFT);
 		label.setText(AutotoolsPropertyMessages.getString("ACEditor.autoconfVersion")); //$NON-NLS-1$
-		gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
+		gd = new GridData();
+		gd.horizontalAlignment = GridData.BEGINNING;
 		label.setLayoutData(gd);
-		
+
 		/* check box for new editors */
-		fAMVersionCombo= new Combo(composite, SWT.CHECK | SWT.DROP_DOWN | SWT.READ_ONLY);
+		fAMVersionCombo = new Combo(composite, SWT.CHECK | SWT.DROP_DOWN | SWT.READ_ONLY);
 		fAMVersionCombo.setItems(AutotoolsPropertyConstants.fAMVersions);
 		fAMVersionCombo.select(AutotoolsPropertyConstants.fAMVersions.length - 1);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 		fAMVersionCombo.setLayoutData(gd);
-		
-		Label label2= new Label(composite, SWT.LEFT);
+
+		Label label2 = new Label(composite, SWT.LEFT);
 		label2.setText(AutotoolsPropertyMessages.getString("ACEditor.automakeVersion")); //$NON-NLS-1$
-		gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
+		gd = new GridData();
+		gd.horizontalAlignment = GridData.BEGINNING;
 		label2.setLayoutData(gd);
 
 		initialize();
@@ -101,7 +100,8 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 		if (!acVerSelected.equals(acVer)) {
 			changed = true;
 			try {
-				project.setPersistentProperty(AutotoolsPropertyConstants.AUTOCONF_VERSION, fACVersionCombo.getItem(index));
+				project.setPersistentProperty(AutotoolsPropertyConstants.AUTOCONF_VERSION,
+						fACVersionCombo.getItem(index));
 			} catch (CoreException ce) {
 				// Not much we can do at this point
 			}
@@ -112,7 +112,8 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 		if (!amVerSelected.equals(amVer)) {
 			changed = true;
 			try {
-				project.setPersistentProperty(AutotoolsPropertyConstants.AUTOMAKE_VERSION, fAMVersionCombo.getItem(index));
+				project.setPersistentProperty(AutotoolsPropertyConstants.AUTOMAKE_VERSION,
+						fAMVersionCombo.getItem(index));
 			} catch (CoreException ce) {
 				// Not much we can do here either
 			}
@@ -121,19 +122,21 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 		// Notify any Autoconf editors that are open for this project that macro versioning
 		// has changed.
 		if (changed)
-			AutotoolsPropertyManager.getDefault().notifyPropertyListeners(project, AutotoolsPropertyConstants.AUTOCONF_MACRO_VERSIONING);
+			AutotoolsPropertyManager.getDefault().notifyPropertyListeners(project,
+					AutotoolsPropertyConstants.AUTOCONF_MACRO_VERSIONING);
 	}
-	
+
 	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		performOK();
 	}
-	
+
 	@Override
 	public void performDefaults() {
 		// For default Autoconf and Automake versions, use the setting from the
 		// Autotools preference dialog.
-		String version = AutotoolsPlugin.getDefault().getPreferenceStore().getString(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION);
+		String version = AutotoolsPlugin.getDefault().getPreferenceStore()
+				.getString(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION);
 		String[] items = fACVersionCombo.getItems();
 		// Try and find which list item matches the current preference stored and
 		// select it in the list.
@@ -146,7 +149,8 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 			i = items.length - 1;
 		fACVersionCombo.select(i);
 
-		version = AutotoolsPlugin.getDefault().getPreferenceStore().getString(AutotoolsEditorPreferenceConstants.AUTOMAKE_VERSION);
+		version = AutotoolsPlugin.getDefault().getPreferenceStore()
+				.getString(AutotoolsEditorPreferenceConstants.AUTOMAKE_VERSION);
 		items = fAMVersionCombo.getItems();
 		// Try and find which list item matches the current preference stored and
 		// select it in the list
@@ -158,12 +162,12 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 			i = items.length - 1;
 		fAMVersionCombo.select(i);
 	}
-	
+
 	@Override
 	public void updateData(ICResourceDescription cfgd) {
 		// Nothing to do
 	}
-	
+
 	@Override
 	public void updateButtons() {
 		// Nothing to do
@@ -173,13 +177,14 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 		initializeACVersion();
 		initializeAMVersion();
 	}
-	
+
 	void initializeACVersion() {
 		String version = "";
 		try {
 			version = project.getPersistentProperty(AutotoolsPropertyConstants.AUTOCONF_VERSION);
 			if (version == null)
-				version = AutotoolsPlugin.getDefault().getPreferenceStore().getString(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION);
+				version = AutotoolsPlugin.getDefault().getPreferenceStore()
+						.getString(AutotoolsEditorPreferenceConstants.AUTOCONF_VERSION);
 		} catch (CoreException e) {
 			// do nothing
 		}
@@ -195,13 +200,14 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 			i = items.length - 1;
 		fACVersionCombo.select(i);
 	}
-	
+
 	void initializeAMVersion() {
 		String version = "";
 		try {
 			version = project.getPersistentProperty(AutotoolsPropertyConstants.AUTOMAKE_VERSION);
 			if (version == null)
-				version = AutotoolsPlugin.getDefault().getPreferenceStore().getString(AutotoolsEditorPreferenceConstants.AUTOMAKE_VERSION);
+				version = AutotoolsPlugin.getDefault().getPreferenceStore()
+						.getString(AutotoolsEditorPreferenceConstants.AUTOMAKE_VERSION);
 		} catch (CoreException e) {
 			// do nothing
 		}

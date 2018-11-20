@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,23 +18,23 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 
 /**
- * 
+ *
  */
 public class RefreshAllRetargetAction extends RetargetDebugContextAction {
 
-    @Override
-    protected boolean canPerformAction(Object target, ISelection selection) {
-        return true;
-    }
+	@Override
+	protected boolean canPerformAction(Object target, ISelection selection) {
+		return true;
+	}
 
-    @Override
-    protected Class<?> getAdapterClass() {
-        return IRefreshAllTarget.class;
-    }
+	@Override
+	protected Class<?> getAdapterClass() {
+		return IRefreshAllTarget.class;
+	}
 
-    @Override
-    protected void performAction(Object target, ISelection debugContext) throws CoreException {
-        ((IRefreshAllTarget)target).refresh(debugContext);
-    }
+	@Override
+	protected void performAction(Object target, ISelection debugContext) throws CoreException {
+		((IRefreshAllTarget) target).refresh(debugContext);
+	}
 
 }

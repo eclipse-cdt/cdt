@@ -60,9 +60,9 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 
 	/** Offset of the function body execution for constexpr functions. */
 	private static final int FUNCTION_BODY = REQUIRED_ARG_COUNT + 2; // Database.EXECUTION_SIZE
-	
+
 	/** Offset of the function's declared type. */
-	private static final int DECLARED_TYPE = FUNCTION_BODY + Database.EXECUTION_SIZE;  // Database.TYPE_SIZE
+	private static final int DECLARED_TYPE = FUNCTION_BODY + Database.EXECUTION_SIZE; // Database.TYPE_SIZE
 
 	/**
 	 * The size in bytes of a PDOMCPPFunctionSpecialization record in the database.
@@ -72,8 +72,8 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 
 	private ICPPFunctionType fType; // No need for volatile, all fields of ICPPFunctionTypes are final.
 	private ICPPFunctionType fDeclaredType;
-	private short fAnnotations= -1;
-	private int fRequiredArgCount= -1;
+	private short fAnnotations = -1;
+	private int fRequiredArgCount = -1;
 
 	public PDOMCPPFunctionSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunction astFunction,
 			PDOMBinding specialized) throws CoreException {
@@ -82,16 +82,16 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 		Database db = getDB();
 		fAnnotations = PDOMCPPAnnotations.encodeFunctionAnnotations(astFunction);
 		db.putShort(record + ANNOTATION, fAnnotations);
-		db.putShort(record + REQUIRED_ARG_COUNT , (short) astFunction.getRequiredArgumentCount());
+		db.putShort(record + REQUIRED_ARG_COUNT, (short) astFunction.getRequiredArgumentCount());
 		linkage.new ConfigureFunctionSpecialization(astFunction, this, specialized);
 	}
-	
+
 	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 
 	public void initData(PDOMBinding specialized, ICPPFunctionType type, ICPPFunctionType declaredType,
-			ICPPParameter[] astParams, ICPPParameter[] origAstParams, IType[] exceptionSpec, 
+			ICPPParameter[] astParams, ICPPParameter[] origAstParams, IType[] exceptionSpec,
 			ICPPExecution functionBody) {
 		try {
 			setType(type);
@@ -106,35 +106,35 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 		}
 	}
 
-	private void setParameters(ICPPParameter[] astParams, ICPPParameter[] origAstParams, 
-			PDOMBinding specialized) throws CoreException {
+	private void setParameters(ICPPParameter[] astParams, ICPPParameter[] origAstParams, PDOMBinding specialized)
+			throws CoreException {
 		final PDOMCPPLinkage linkage = (PDOMCPPLinkage) getLinkage();
 		final Database db = getDB();
 		if (origAstParams.length == 0) {
 			db.putInt(record + NUM_PARAMS, 0);
 			db.putRecPtr(record + FIRST_PARAM, 0);
 		} else {
-			final int length= astParams.length;
+			final int length = astParams.length;
 			db.putInt(record + NUM_PARAMS, length);
 
 			db.putRecPtr(record + FIRST_PARAM, 0);
-			PDOMCPPParameter origPar= null;
-			PDOMCPPParameterSpecialization next= null;
-			for (int i= length; --i >= 0;) {
+			PDOMCPPParameter origPar = null;
+			PDOMCPPParameterSpecialization next = null;
+			for (int i = length; --i >= 0;) {
 				// There may be fewer or less original parameters, because of parameter packs.
 				if (i < origAstParams.length - 1) {
 					// Normal case.
-					origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[i], null);
+					origPar = new PDOMCPPParameter(linkage, specialized, origAstParams[i], null);
 				} else if (origPar == null) {
 					// Use last parameter.
-					origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[origAstParams.length - 1], null);
+					origPar = new PDOMCPPParameter(linkage, specialized, origAstParams[origAstParams.length - 1], null);
 				}
-				next= new PDOMCPPParameterSpecialization(linkage, this, astParams[i], origPar, next);
+				next = new PDOMCPPParameterSpecialization(linkage, this, astParams[i], origPar, next);
 			}
 			db.putRecPtr(record + FIRST_PARAM, next == null ? 0 : next.getRecord());
 		}
 	}
-	
+
 	private void setType(ICPPFunctionType ft) throws CoreException {
 		if (ft != null) {
 			fType = null;
@@ -148,7 +148,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			getLinkage().storeType(record + DECLARED_TYPE, ft);
 		}
 	}
-	
+
 	private void storeExceptionSpec(IType[] exceptionSpec) throws CoreException {
 		long typelist = 0;
 		if (exceptionSpec != null) {
@@ -175,10 +175,10 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	protected final short getAnnotations() {
 		if (fAnnotations == -1) {
 			try {
-				fAnnotations= getDB().getShort(record + ANNOTATION);
+				fAnnotations = getDB().getShort(record + ANNOTATION);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-				fAnnotations= 0;
+				fAnnotations = 0;
 			}
 		}
 		return fAnnotations;
@@ -197,21 +197,20 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	@Override
 	public ICPPParameter[] getParameters() {
 		try {
-			PDOMLinkage linkage= getLinkage();
-			Database db= getDB();
+			PDOMLinkage linkage = getLinkage();
+			Database db = getDB();
 			ICPPFunctionType ft = getType();
-			IType[] ptypes= ft == null ? IType.EMPTY_TYPE_ARRAY : ft.getParameterTypes();
+			IType[] ptypes = ft == null ? IType.EMPTY_TYPE_ARRAY : ft.getParameterTypes();
 
 			int n = db.getInt(record + NUM_PARAMS);
 			ICPPParameter[] result = new ICPPParameter[n];
 
 			long next = db.getRecPtr(record + FIRST_PARAM);
- 			for (int i = 0; i < n && next != 0; i++) {
- 				IType type= i < ptypes.length ? ptypes[i] : null;
-				final PDOMCPPParameterSpecialization par =
-						new PDOMCPPParameterSpecialization(linkage, next, type);
-				next= par.getNextPtr();
-				result[i]= par;
+			for (int i = 0; i < n && next != 0; i++) {
+				IType type = i < ptypes.length ? ptypes[i] : null;
+				final PDOMCPPParameterSpecialization par = new PDOMCPPParameterSpecialization(linkage, next, type);
+				next = par.getNextPtr();
+				result[i] = par;
 			}
 			return result;
 		} catch (CoreException e) {
@@ -232,15 +231,15 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 		}
 		return fDeclaredType;
 	}
-	
+
 	@Override
 	public ICPPFunctionType getType() {
 		if (fType == null) {
 			try {
-				fType= (ICPPFunctionType) getLinkage().loadType(record + FUNCTION_TYPE);
+				fType = (ICPPFunctionType) getLinkage().loadType(record + FUNCTION_TYPE);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-				fType= new ProblemFunctionType(ISemanticProblem.TYPE_NOT_PERSISTED);
+				fType = new ProblemFunctionType(ISemanticProblem.TYPE_NOT_PERSISTED);
 			}
 		}
 		return fType;
@@ -292,9 +291,9 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	public int getRequiredArgumentCount() {
 		if (fRequiredArgCount == -1) {
 			try {
-				fRequiredArgCount= getDB().getShort(record + REQUIRED_ARG_COUNT);
+				fRequiredArgCount = getDB().getShort(record + REQUIRED_ARG_COUNT);
 			} catch (CoreException e) {
-				fRequiredArgCount= 0;
+				fRequiredArgCount = 0;
 			}
 		}
 		return fRequiredArgCount;
@@ -312,7 +311,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 
 	@Override
 	public int pdomCompareTo(PDOMBinding other) {
-		int cmp= super.pdomCompareTo(other);
+		int cmp = super.pdomCompareTo(other);
 		return cmp == 0 ? PDOMCPPFunction.compareSignatures(this, other) : cmp;
 	}
 

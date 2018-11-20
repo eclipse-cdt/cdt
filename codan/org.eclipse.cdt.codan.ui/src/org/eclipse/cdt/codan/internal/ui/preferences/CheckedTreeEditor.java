@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Tree;
  * should be set outside by setting getTreeViewer().setContentProvider() and
  * getTreeViewer().setInput() Control stores checked elements only in preference
  * storage.
- * 
+ *
  * <p>
  * Subclasses may implement the <code>parseString</code>,
  * <code>createList</code>, <code>storeValue</code> and
@@ -59,7 +59,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 
 	/**
 	 * Creates a list field editor.
-	 * 
+	 *
 	 * @param name
 	 *        the name of the preference this field editor works on
 	 * @param labelText
@@ -206,7 +206,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 
 	/**
 	 * Returns this field editor's list control.
-	 * 
+	 *
 	 * @param parent
 	 *        the parent control
 	 * @return the list control
@@ -215,7 +215,8 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 		Tree table = (Tree) getTreeControl();
 		if (table == null) {
 			listParent = parent;
-			treeViewer = doCreateTreeViewer(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+			treeViewer = doCreateTreeViewer(parent,
+					SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 			table = treeViewer.getTree();
 			table.setFont(parent.getFont());
 			treeViewer.setComparator(new ViewerComparator());
@@ -246,7 +247,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	 * This method is internal to the framework; subclassers should not call
 	 * this method.
 	 * </p>
-	 * 
+	 *
 	 * @return the shell
 	 */
 	protected Shell getShell() {
@@ -278,7 +279,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	 * <p>
 	 * Subclasses may implement this method.
 	 * </p>
-	 * 
+	 *
 	 * @return the combined string
 	 * @see #modelFromString(String)
 	 */

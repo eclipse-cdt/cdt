@@ -74,8 +74,8 @@ import org.eclipse.core.runtime.IStatus;
 public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	// Destructors don't have a return type, but the type of a destructor call expression
 	// is void, so it's simpler to model them as having a void return type.
-    public static final ICPPFunctionType DESTRUCTOR_FUNCTION_TYPE =
-    		CPPVisitor.createImplicitFunctionType(VOID, EMPTY_CPPPARAMETER_ARRAY, false, false);
+	public static final ICPPFunctionType DESTRUCTOR_FUNCTION_TYPE = CPPVisitor.createImplicitFunctionType(VOID,
+			EMPTY_CPPPARAMETER_ARRAY, false, false);
 
 	private ICPPMethod[] implicits;
 
@@ -93,32 +93,31 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 * if appropriate. The method will be called after ambiguity resolution.
 	 */
 	public void createImplicitMembers() {
-	    // Create bindings for the implicit members, if the user declared them then those
+		// Create bindings for the implicit members, if the user declared them then those
 		// declarations will resolve to these bindings.
-	    ICPPASTCompositeTypeSpecifier compTypeSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
+		ICPPASTCompositeTypeSpecifier compTypeSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 
-        IASTName name = compTypeSpec.getName().getLastName();
-        IBinding binding = name.resolveBinding();
-        if (!(binding instanceof ICPPClassType))
-        	return;
+		IASTName name = compTypeSpec.getName().getLastName();
+		IBinding binding = name.resolveBinding();
+		if (!(binding instanceof ICPPClassType))
+			return;
 
-        ICPPClassType classType = (ICPPClassType) binding;
-        if (classType instanceof ICPPClassTemplate) {
-            classType= (ICPPClassType) ((ICPPClassTemplate) classType).asDeferredInstance();
-        }
-        char[] className = name.getLookupKey();
+		ICPPClassType classType = (ICPPClassType) binding;
+		if (classType instanceof ICPPClassTemplate) {
+			classType = (ICPPClassType) ((ICPPClassTemplate) classType).asDeferredInstance();
+		}
+		char[] className = name.getLookupKey();
 
 		IType pType = new CPPReferenceType(SemanticUtil.constQualify(classType), false);
 		ICPPParameter[] params = new ICPPParameter[] { new CPPParameter(pType, 0) };
 
-		int i= 0;
-		ImplicitsAnalysis ia= new ImplicitsAnalysis(compTypeSpec, classType);
-		implicits= new ICPPMethod[ia.getImplicitsToDeclareCount()];
+		int i = 0;
+		ImplicitsAnalysis ia = new ImplicitsAnalysis(compTypeSpec, classType);
+		implicits = new ICPPMethod[ia.getImplicitsToDeclareCount()];
 
 		if (!ia.hasUserDeclaredConstructor()) {
 			// Default constructor: A(void)
-			ICPPMethod m = new CPPImplicitConstructor(this, className, EMPTY_CPPPARAMETER_ARRAY,
-					compTypeSpec);
+			ICPPMethod m = new CPPImplicitConstructor(this, className, EMPTY_CPPPARAMETER_ARRAY, compTypeSpec);
 			implicits[i++] = m;
 			addBinding(m);
 		}
@@ -133,16 +132,15 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		if (!ia.hasUserDeclaredCopyAssignmentOperator()) {
 			// Copy assignment operator: A& operator = (const A &)
 			IType refType = new CPPReferenceType(classType, false);
-			ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(refType, params, false, false);
-			ICPPMethod m =
-					new CPPImplicitMethod(this, OverloadableOperator.ASSIGN.toCharArray(), ft, params, false);
+			ICPPFunctionType ft = CPPVisitor.createImplicitFunctionType(refType, params, false, false);
+			ICPPMethod m = new CPPImplicitMethod(this, OverloadableOperator.ASSIGN.toCharArray(), ft, params, false);
 			implicits[i++] = m;
 			addBinding(m);
 		}
 
 		if (!ia.hasUserDeclaredDestructor()) {
 			// Destructor: ~A()
-			char[] dtorName = CharArrayUtils.concat("~".toCharArray(), className);  //$NON-NLS-1$
+			char[] dtorName = CharArrayUtils.concat("~".toCharArray(), className); //$NON-NLS-1$
 			ICPPMethod m = new CPPImplicitMethod(this, dtorName, DESTRUCTOR_FUNCTION_TYPE, EMPTY_CPPPARAMETER_ARRAY,
 					false);
 			implicits[i++] = m;
@@ -160,7 +158,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		if (bases.length == 0)
 			return;
 		IASTDeclaration[] members = compositeTypeSpec.getMembers();
-        for (IASTDeclaration member : members) {
+		for (IASTDeclaration member : members) {
 			if (member instanceof ICPPASTUsingDeclaration) {
 				IASTName name = ((ICPPASTUsingDeclaration) member).getName();
 				if (!(name instanceof ICPPASTQualifiedName))
@@ -188,7 +186,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 					}
 				}
 			}
-        }
+		}
 	}
 
 	private static boolean isConstructorNameForType(char[] lastName, IType type) {
@@ -204,18 +202,18 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 	@Override
 	public IScope getParent() {
-	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-	    IASTName compName = compType.getName().getLastName();
+		ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
+		IASTName compName = compType.getName().getLastName();
 		return CPPVisitor.getContainingNonTemplateScope(compName);
 	}
 
 	@Override
 	public void addBinding(IBinding binding) {
-	    if (binding instanceof ICPPConstructor) {
-	        addConstructor(binding);
-	        return;
-	    }
-        super.addBinding(binding);
+		if (binding instanceof ICPPConstructor) {
+			addConstructor(binding);
+			return;
+		}
+		super.addBinding(binding);
 	}
 
 	@Override
@@ -226,7 +224,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 		if (name instanceof ICPPASTQualifiedName) {
 			// Check whether the qualification matches.
-			IBinding b= getClassType();
+			IBinding b = getClassType();
 			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
 			final ICPPASTNameSpecifier[] qualifier = qname.getQualifier();
 			for (int i = qualifier.length; --i >= 0;) {
@@ -246,7 +244,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 				if (!CharArrayUtils.equals(segmentName, b.getNameCharArray()))
 					return;
 
-				b= b.getOwner();
+				b = b.getOwner();
 			}
 			if (qname.isFullyQualified() && b != null)
 				return;
@@ -264,66 +262,66 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addConstructor(Object constructor) {
 		if (bindings == null)
-            bindings = new CharArrayObjectMap(1);
+			bindings = new CharArrayObjectMap(1);
 
-        Object o = bindings.get(CONSTRUCTOR_KEY);
-        if (o != null) {
-            if (o instanceof ObjectSet) {
-                ((ObjectSet) o).put(constructor);
-            } else {
-                ObjectSet set = new ObjectSet(2);
-                set.put(o);
-                set.put(constructor);
-                bindings.put(CONSTRUCTOR_KEY, set);
-            }
-        } else {
-            bindings.put(CONSTRUCTOR_KEY, constructor);
-        }
+		Object o = bindings.get(CONSTRUCTOR_KEY);
+		if (o != null) {
+			if (o instanceof ObjectSet) {
+				((ObjectSet) o).put(constructor);
+			} else {
+				ObjectSet set = new ObjectSet(2);
+				set.put(o);
+				set.put(constructor);
+				bindings.put(CONSTRUCTOR_KEY, set);
+			}
+		} else {
+			bindings.put(CONSTRUCTOR_KEY, constructor);
+		}
 	}
 
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
-	    char[] c = name.getLookupKey();
+		char[] c = name.getLookupKey();
 
-	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-	    IASTName compName = compType.getName().getLastName();
+		ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
+		IASTName compName = compType.getName().getLastName();
 		if (compName instanceof ICPPASTTemplateId) {
-			compName= ((ICPPASTTemplateId) compName).getTemplateName();
+			compName = ((ICPPASTTemplateId) compName).getTemplateName();
 		}
-	    if (CharArrayUtils.equals(c, compName.getLookupKey())) {
-            // 9.2 ... The class-name is also inserted into the scope of the class itself.
-            return compName.resolveBinding();
-	    }
-	    return super.getBinding(name, resolve, fileSet);
+		if (CharArrayUtils.equals(c, compName.getLookupKey())) {
+			// 9.2 ... The class-name is also inserted into the scope of the class itself.
+			return compName.resolveBinding();
+		}
+		return super.getBinding(name, resolve, fileSet);
 	}
 
 	@Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
-	    char[] c = lookup.getLookupKey();
-	    final boolean prefixLookup= lookup.isPrefixLookup();
+		char[] c = lookup.getLookupKey();
+		final boolean prefixLookup = lookup.isPrefixLookup();
 
-	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-	    IASTName compName = compType.getName().getLastName();
+		ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
+		IASTName compName = compType.getName().getLastName();
 		if (compName instanceof ICPPASTTemplateId) {
-			compName= ((ICPPASTTemplateId) compName).getTemplateName();
+			compName = ((ICPPASTTemplateId) compName).getTemplateName();
 		}
-	    IBinding[] result = IBinding.EMPTY_BINDING_ARRAY;
-        int n = 0;
-	    if ((!prefixLookup && CharArrayUtils.equals(c, compName.getLookupKey()))
+		IBinding[] result = IBinding.EMPTY_BINDING_ARRAY;
+		int n = 0;
+		if ((!prefixLookup && CharArrayUtils.equals(c, compName.getLookupKey()))
 				|| (prefixLookup && ContentAssistMatcherFactory.getInstance().match(c, compName.getLookupKey()))) {
-	        final IASTName lookupName = lookup.getLookupName();
+			final IASTName lookupName = lookup.getLookupName();
 			if (shallReturnConstructors(lookupName, prefixLookup)) {
-	            ICPPConstructor[] constructors = getConstructors(lookupName, lookup.isResolve());
+				ICPPConstructor[] constructors = getConstructors(lookupName, lookup.isResolve());
 				result = addAll(result, constructors);
 				n += constructors.length;
-	        }
-            // 9.2 ... The class-name is also inserted into the scope of the class itself.
-            result = appendAt(result, n++, compName.resolveBinding());
-	    }
-	    IBinding[] bindings = super.getBindings(lookup);
+			}
+			// 9.2 ... The class-name is also inserted into the scope of the class itself.
+			result = appendAt(result, n++, compName.resolveBinding());
+		}
+		IBinding[] bindings = super.getBindings(lookup);
 		result = addAll(result, bindings);
 		n += bindings.length;
-	    return trim(result, n);
+		return trim(result, n);
 	}
 
 	static protected boolean shouldResolve(boolean force, IASTName candidate, IASTName forName) {
@@ -351,37 +349,37 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		Object o = nameMap.get(CONSTRUCTOR_KEY);
 		if (o != null) {
 			IBinding binding = null;
-	        if (o instanceof ObjectSet<?>) {
-	        	ObjectSet<?> set = (ObjectSet<?>) o;
-	        	ICPPConstructor[] bs = ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
-    			int n = 0;
-        		for (int i = 0; i < set.size(); i++) {
-        			Object obj = set.keyAt(i);
-        			if (obj instanceof IASTName) {
-        				IASTName name = (IASTName) obj;
-        				binding = shouldResolve(forceResolve, name, forName) ?
-        						name.resolveBinding() : name.getBinding();
-        				if (binding instanceof ICPPConstructor) {
-    						bs = appendAt(bs, n++, (ICPPConstructor) binding);
-        				}
-        			} else if (obj instanceof ICPPConstructor) {
+			if (o instanceof ObjectSet<?>) {
+				ObjectSet<?> set = (ObjectSet<?>) o;
+				ICPPConstructor[] bs = ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+				int n = 0;
+				for (int i = 0; i < set.size(); i++) {
+					Object obj = set.keyAt(i);
+					if (obj instanceof IASTName) {
+						IASTName name = (IASTName) obj;
+						binding = shouldResolve(forceResolve, name, forName) ? name.resolveBinding()
+								: name.getBinding();
+						if (binding instanceof ICPPConstructor) {
+							bs = appendAt(bs, n++, (ICPPConstructor) binding);
+						}
+					} else if (obj instanceof ICPPConstructor) {
 						bs = appendAt(bs, n++, (ICPPConstructor) obj);
-        			}
-        		}
-        		return trim(bs, n);
-	        } else if (o instanceof IASTName) {
-	        	if (shouldResolve(forceResolve, (IASTName) o, forName) || ((IASTName) o).getBinding() != null) {
-	        		// Always store the name, rather than the binding, so that we can properly flush the scope.
-	        		nameMap.put(CONSTRUCTOR_KEY, o);
-	        		binding = ((IASTName) o).resolveBinding();
-	        	}
-	        } else if (o instanceof IBinding) {
-	        	binding = (IBinding) o;
-	        }
-	        if (binding != null && binding instanceof ICPPConstructor) {
-	        	return new ICPPConstructor[] { (ICPPConstructor) binding };
-	        }
-	    }
+					}
+				}
+				return trim(bs, n);
+			} else if (o instanceof IASTName) {
+				if (shouldResolve(forceResolve, (IASTName) o, forName) || ((IASTName) o).getBinding() != null) {
+					// Always store the name, rather than the binding, so that we can properly flush the scope.
+					nameMap.put(CONSTRUCTOR_KEY, o);
+					binding = ((IASTName) o).resolveBinding();
+				}
+			} else if (o instanceof IBinding) {
+				binding = (IBinding) o;
+			}
+			if (binding != null && binding instanceof ICPPConstructor) {
+				return new ICPPConstructor[] { (ICPPConstructor) binding };
+			}
+		}
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
@@ -392,18 +390,18 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 	@Override
 	public IBinding[] find(String name) {
-	    char[] n = name.toCharArray();
-	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-	    IASTName compName = compType.getName().getLastName();
+		char[] n = name.toCharArray();
+		ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
+		IASTName compName = compType.getName().getLastName();
 		if (compName instanceof ICPPASTTemplateId) {
-			compName= ((ICPPASTTemplateId) compName).getTemplateName();
+			compName = ((ICPPASTTemplateId) compName).getTemplateName();
 		}
 
-	    if (CharArrayUtils.equals(compName.getLookupKey(), n)) {
-	        return new IBinding[] { compName.resolveBinding() };
-	    }
+		if (CharArrayUtils.equals(compName.getLookupKey(), n)) {
+			return new IBinding[] { compName.resolveBinding() };
+		}
 
-	    return super.find(name);
+		return super.find(name);
 	}
 
 	public static boolean shallReturnConstructors(IASTName name, boolean isPrefixLookup) {
@@ -411,8 +409,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			return false;
 
 		if (!isPrefixLookup) {
-			return CPPVisitor.isConstructorDeclaration(name)
-				|| CPPVisitor.isLastNameInUsingDeclaration(name);
+			return CPPVisitor.isConstructorDeclaration(name) || CPPVisitor.isLastNameInUsingDeclaration(name);
 		}
 
 		IASTNode node = name.getParent();
@@ -455,12 +452,12 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		return implicits;
 	}
 
-    @Override
+	@Override
 	public IName getScopeName() {
-        IASTNode node = getPhysicalNode();
-        if (node instanceof ICPPASTCompositeTypeSpecifier) {
-            return ((ICPPASTCompositeTypeSpecifier) node).getName();
-        }
-        return null;
-    }
+		IASTNode node = getPhysicalNode();
+		if (node instanceof ICPPASTCompositeTypeSpecifier) {
+			return ((ICPPASTCompositeTypeSpecifier) node).getName();
+		}
+		return null;
+	}
 }

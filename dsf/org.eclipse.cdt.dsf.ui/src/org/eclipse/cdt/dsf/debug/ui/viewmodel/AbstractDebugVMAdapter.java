@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -26,56 +26,56 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 
 /**
  * Base class for VM adapters used for implementing a debugger integration.
- * 
+ *
  * @since 1.1
  */
-public class AbstractDebugVMAdapter extends AbstractDMVMAdapter
-    implements ISteppingControlParticipant 
-{
-    
-    public AbstractDebugVMAdapter(DsfSession session, final SteppingController controller) {
-        super(session);
-        fController = controller;
-        try {
-            fController.getExecutor().execute(new DsfRunnable() {
-                @Override
-				public void run() {
-                    fController.addSteppingControlParticipant(AbstractDebugVMAdapter.this);
-                }
-            });
-        } catch (RejectedExecutionException e) {} // Do nothing if session is shut down.
-    }
+public class AbstractDebugVMAdapter extends AbstractDMVMAdapter implements ISteppingControlParticipant {
 
-    private final SteppingController fController;
-    
+	public AbstractDebugVMAdapter(DsfSession session, final SteppingController controller) {
+		super(session);
+		fController = controller;
+		try {
+			fController.getExecutor().execute(new DsfRunnable() {
+				@Override
+				public void run() {
+					fController.addSteppingControlParticipant(AbstractDebugVMAdapter.this);
+				}
+			});
+		} catch (RejectedExecutionException e) {
+		} // Do nothing if session is shut down.
+	}
+
+	private final SteppingController fController;
+
 	@Override
-    protected IVMProvider createViewModelProvider(IPresentationContext context) {
-        return null;
-    }
+	protected IVMProvider createViewModelProvider(IPresentationContext context) {
+		return null;
+	}
 
-    @Override
-    public void doneHandleEvent(Object event) {
-        if (event instanceof IRunControl.ISuspendedDMEvent) {
-            final ISuspendedDMEvent suspendedEvent= (IRunControl.ISuspendedDMEvent) event;
-            fController.getExecutor().execute(new DsfRunnable() {
-                @Override
+	@Override
+	public void doneHandleEvent(Object event) {
+		if (event instanceof IRunControl.ISuspendedDMEvent) {
+			final ISuspendedDMEvent suspendedEvent = (IRunControl.ISuspendedDMEvent) event;
+			fController.getExecutor().execute(new DsfRunnable() {
+				@Override
 				public void run() {
-                    fController.doneStepping(suspendedEvent.getDMContext(), AbstractDebugVMAdapter.this);
-                };
-            });
-        }
-    }
+					fController.doneStepping(suspendedEvent.getDMContext(), AbstractDebugVMAdapter.this);
+				};
+			});
+		}
+	}
 
-    @Override
-    public void dispose() {
-        try {
-	        fController.getExecutor().execute(new DsfRunnable() {
-	            @Override
+	@Override
+	public void dispose() {
+		try {
+			fController.getExecutor().execute(new DsfRunnable() {
+				@Override
 				public void run() {
-	                fController.removeSteppingControlParticipant(AbstractDebugVMAdapter.this);
-	            }
-	        });
-        } catch (RejectedExecutionException e) {} // Do nothing if session is shut down.
-        super.dispose();
-    }
+					fController.removeSteppingControlParticipant(AbstractDebugVMAdapter.this);
+				}
+			});
+		} catch (RejectedExecutionException e) {
+		} // Do nothing if session is shut down.
+		super.dispose();
+	}
 }

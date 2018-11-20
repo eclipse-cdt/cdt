@@ -14,47 +14,37 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Exception_Reference, with No prefix
  * Bug#50640 : Wrong completion kind when expecting an exception
  *
  */
-public class CompletionTest_ExceptionReference_NoPrefix  extends CompletionProposalsBaseTest{
-	
+public class CompletionTest_ExceptionReference_NoPrefix extends CompletionProposalsBaseTest {
+
 	private final String fileName = "CompletionTestStart23.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedPrefix = ""; 
-	private final String[] expectedResults = {
-			"AStruct",
-			"XStruct",
-			"aClass",
-			"aNamespace",
-			"anEnumeration",
-			"anotherClass",
-			"xEnumeration",
-			"xNamespace",
-			"xOtherClass"
-	};
-	
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
+	private final String expectedPrefix = "";
+	private final String[] expectedResults = { "AStruct", "XStruct", "aClass", "aNamespace", "anEnumeration",
+			"anotherClass", "xEnumeration", "xNamespace", "xOtherClass" };
+
 	public CompletionTest_ExceptionReference_NoPrefix(String name) {
 		super(name);
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_ExceptionReference_NoPrefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_ExceptionReference_NoPrefix.class.getName());
 		suite.addTest(new CompletionTest_ExceptionReference_NoPrefix("testCompletionProposals"));
 		return suite;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -94,6 +84,7 @@ public class CompletionTest_ExceptionReference_NoPrefix  extends CompletionPropo
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

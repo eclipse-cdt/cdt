@@ -52,7 +52,7 @@ public class AttributeWriter extends NodeWriter {
 			writeAlignmentSpecifier((IASTAlignmentSpecifier) attribute);
 		}
 	}
-	
+
 	private void writeAlignmentSpecifier(IASTAlignmentSpecifier specifier) {
 		scribe.print(Keywords.ALIGNAS);
 		scribe.print(OPENING_PARENTHESIS);
@@ -102,7 +102,7 @@ public class AttributeWriter extends NodeWriter {
 		IASTAttribute[] innerAttributes = specifier.getAttributes();
 		for (int i = 0; i < innerAttributes.length; i++) {
 			IASTAttribute innerAttribute = innerAttributes[i];
-			writeAttribute((ICPPASTAttribute)innerAttribute);
+			writeAttribute((ICPPASTAttribute) innerAttribute);
 			if (i < innerAttributes.length - 1) {
 				scribe.print(',');
 				scribe.printSpace();

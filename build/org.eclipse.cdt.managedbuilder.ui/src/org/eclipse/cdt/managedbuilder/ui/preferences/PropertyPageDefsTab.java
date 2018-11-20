@@ -92,6 +92,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				showDiscoveryProfiles(show_sd.getSelection());
 			}
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				showDiscoveryProfiles(show_sd.getSelection());
@@ -147,20 +148,35 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		show_tool.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOTOOLM));
 		show_exp.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_EXPORT));
 		show_sd.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_SHOW_SD));
-		show_providers_tab.setSelection(ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null));
+		show_providers_tab
+				.setSelection(ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null));
 		show_tipbox.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_TIPBOX));
 
 		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_DISC_NAMES)) {
-		case CDTPrefUtil.DISC_NAMING_UNIQUE_OR_BOTH: b_0.setSelection(true); break;
-		case CDTPrefUtil.DISC_NAMING_UNIQUE_OR_IDS:  b_1.setSelection(true); break;
-		case CDTPrefUtil.DISC_NAMING_ALWAYS_BOTH:    b_2.setSelection(true); break;
-		case CDTPrefUtil.DISC_NAMING_ALWAYS_IDS:     b_3.setSelection(true); break;
+		case CDTPrefUtil.DISC_NAMING_UNIQUE_OR_BOTH:
+			b_0.setSelection(true);
+			break;
+		case CDTPrefUtil.DISC_NAMING_UNIQUE_OR_IDS:
+			b_1.setSelection(true);
+			break;
+		case CDTPrefUtil.DISC_NAMING_ALWAYS_BOTH:
+			b_2.setSelection(true);
+			break;
+		case CDTPrefUtil.DISC_NAMING_ALWAYS_IDS:
+			b_3.setSelection(true);
+			break;
 		}
 
 		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_POSSAVE)) {
-		case CDTPrefUtil.POSITION_SAVE_BOTH: s_1.setSelection(true); break;
-		case CDTPrefUtil.POSITION_SAVE_NONE: s_2.setSelection(true); break;
-		default: s_0.setSelection(true); break;
+		case CDTPrefUtil.POSITION_SAVE_BOTH:
+			s_1.setSelection(true);
+			break;
+		case CDTPrefUtil.POSITION_SAVE_NONE:
+			s_2.setSelection(true);
+			break;
+		default:
+			s_0.setSelection(true);
+			break;
 		}
 	}
 
@@ -180,17 +196,24 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOTOOLM, !show_tool.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_EXPORT, show_exp.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_SHOW_SD, show_sd.getSelection());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(null, show_providers_tab.getSelection());
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(null,
+				show_providers_tab.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_TIPBOX, show_tipbox.getSelection());
 		int x = 0;
-		if (b_1.getSelection()) x = 1;
-		else if (b_2.getSelection()) x = 2;
-		else if (b_3.getSelection()) x = 3;
+		if (b_1.getSelection())
+			x = 1;
+		else if (b_2.getSelection())
+			x = 2;
+		else if (b_3.getSelection())
+			x = 3;
 		CDTPrefUtil.setInt(CDTPrefUtil.KEY_DISC_NAMES, x);
 
-		if (s_0.getSelection()) x = CDTPrefUtil.POSITION_SAVE_SIZE;
-		else if (s_1.getSelection()) x = CDTPrefUtil.POSITION_SAVE_BOTH;
-		else if (s_2.getSelection()) x = CDTPrefUtil.POSITION_SAVE_NONE;
+		if (s_0.getSelection())
+			x = CDTPrefUtil.POSITION_SAVE_SIZE;
+		else if (s_1.getSelection())
+			x = CDTPrefUtil.POSITION_SAVE_BOTH;
+		else if (s_2.getSelection())
+			x = CDTPrefUtil.POSITION_SAVE_NONE;
 		CDTPrefUtil.setInt(CDTPrefUtil.KEY_POSSAVE, x);
 	}
 
@@ -214,9 +237,15 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 	}
 
 	@Override
-	protected void performApply(ICResourceDescription src, ICResourceDescription dst) { performOK(); }
+	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
+		performOK();
+	}
+
 	@Override
-	protected void updateData(ICResourceDescription cfg) {}  // Do nothing. Data is read once after creation
+	protected void updateData(ICResourceDescription cfg) {
+	} // Do nothing. Data is read once after creation
+
 	@Override
-	protected void updateButtons() {} // Do nothing. No buttons to update
+	protected void updateButtons() {
+	} // Do nothing. No buttons to update
 }

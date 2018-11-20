@@ -31,7 +31,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
  * Property page for Tracepoint actions
- * 
+ *
  * @since 2.1
  */
 public class TracepointActionsPropertyPage extends PropertyPage {
@@ -89,7 +89,7 @@ public class TracepointActionsPropertyPage extends PropertyPage {
 
 		// connect attached actions list to global list
 		globalActionsList.setClientList(actionsList);
-		
+
 		globalActionsList.getAttachButton().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -117,7 +117,7 @@ public class TracepointActionsPropertyPage extends PropertyPage {
 
 	/**
 	 * Clean up attached actions that were just deleted from the GlobalActionList
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	protected void HandleDeleteButton() {
@@ -150,7 +150,8 @@ public class TracepointActionsPropertyPage extends PropertyPage {
 	public boolean performOk() {
 		try {
 			TracepointActionManager.getInstance().saveActionData();
-			tracepointMarker.setAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE, actionsList.getActionNames());
+			tracepointMarker.setAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE,
+					actionsList.getActionNames());
 		} catch (CoreException e) {
 		}
 		return super.performOk();

@@ -69,12 +69,12 @@ public class EvalConditional extends CPPDependentEvaluation {
 	public EvalConditional(ICPPEvaluation condition, ICPPEvaluation positive, ICPPEvaluation negative,
 			boolean positiveThrows, boolean negativeThrows, IBinding templateDefinition) {
 		super(templateDefinition);
-    	// Gnu-extension: Empty positive expression is replaced by condition.
-		fCondition= condition;
-		fPositive= positive;
-		fNegative= negative;
-		fPositiveThrows= positiveThrows;
-		fNegativeThrows= negativeThrows;
+		// Gnu-extension: Empty positive expression is replaced by condition.
+		fCondition = condition;
+		fPositive = positive;
+		fNegative = negative;
+		fPositiveThrows = positiveThrows;
+		fNegativeThrows = negativeThrows;
 	}
 
 	public ICPPEvaluation getCondition() {
@@ -162,9 +162,8 @@ public class EvalConditional extends CPPDependentEvaluation {
 	}
 
 	private boolean computeIsConstantExpression() {
-		return fCondition.isConstantExpression()
-			&& (fPositive == null || fPositive.isConstantExpression())
-			&& fNegative.isConstantExpression();
+		return fCondition.isConstantExpression() && (fPositive == null || fPositive.isConstantExpression())
+				&& fNegative.isConstantExpression();
 	}
 
 	@Override
@@ -173,61 +172,60 @@ public class EvalConditional extends CPPDependentEvaluation {
 			return false;
 		}
 		EvalConditional o = (EvalConditional) other;
-		return fCondition.isEquivalentTo(o.fCondition)
-			&& areEquivalentOrNull(fPositive, o.fPositive)
-			&& fNegative.isEquivalentTo(o.fNegative);
+		return fCondition.isEquivalentTo(o.fCondition) && areEquivalentOrNull(fPositive, o.fPositive)
+				&& fNegative.isEquivalentTo(o.fNegative);
 	}
-	
-	private void evaluate() {
-    	if (fValueCategory != null)
-    		return;
 
-    	fValueCategory= PRVALUE;
+	private void evaluate() {
+		if (fValueCategory != null)
+			return;
+
+		fValueCategory = PRVALUE;
 
 		final ICPPEvaluation positive = fPositive == null ? fCondition : fPositive;
 
 		IType t2 = positive.getType();
 		IType t3 = fNegative.getType();
 
-		final IType uqt2= getNestedType(t2, TDEF | REF | CVTYPE);
-		final IType uqt3= getNestedType(t3, TDEF | REF | CVTYPE);
+		final IType uqt2 = getNestedType(t2, TDEF | REF | CVTYPE);
+		final IType uqt3 = getNestedType(t3, TDEF | REF | CVTYPE);
 		if (uqt2 instanceof ISemanticProblem || uqt2 instanceof ICPPUnknownType) {
-			fType= uqt2;
+			fType = uqt2;
 			return;
 		}
 		if (uqt3 instanceof ISemanticProblem || uqt3 instanceof ICPPUnknownType) {
-			fType= uqt3;
+			fType = uqt3;
 			return;
 		}
 
-		final boolean void2= isVoidType(uqt2);
-		final boolean void3= isVoidType(uqt3);
+		final boolean void2 = isVoidType(uqt2);
+		final boolean void3 = isVoidType(uqt3);
 
 		// Void types: Either both are void or one is a throw expression.
 		if (void2 || void3) {
 			if (fPositiveThrows) {
-				fType= Conversions.lvalue_to_rvalue(t3, false);
+				fType = Conversions.lvalue_to_rvalue(t3, false);
 			} else if (fNegativeThrows) {
-				fType= Conversions.lvalue_to_rvalue(t2, false);
+				fType = Conversions.lvalue_to_rvalue(t2, false);
 			} else if (void2 && void3) {
-				fType= uqt2;
+				fType = uqt2;
 			} else {
-				fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
+				fType = ProblemType.UNKNOWN_FOR_EXPRESSION;
 			}
 			return;
 		}
 
-		final ValueCategory vcat2= positive.getValueCategory();
-		final ValueCategory vcat3= fNegative.getValueCategory();
+		final ValueCategory vcat2 = positive.getValueCategory();
+		final ValueCategory vcat3 = fNegative.getValueCategory();
 
 		// Same type
 		if (t2.isSameType(t3)) {
 			if (vcat2 == vcat3) {
-				fType= t2;
-				fValueCategory= vcat2;
+				fType = t2;
+				fValueCategory = vcat2;
 			} else {
-				fType= prvalueType(t2);
-				fValueCategory= PRVALUE;
+				fType = prvalueType(t2);
+				fValueCategory = PRVALUE;
 			}
 			return;
 		}
@@ -237,15 +235,15 @@ public class EvalConditional extends CPPDependentEvaluation {
 
 		// Different types with at least one class type
 		if (isClassType2 || isClassType3) {
-			final Cost cost2= convertToMatch(t2, vcat2, uqt2, t3, vcat3, uqt3); // sets fType and fValueCategory
-			final Cost cost3= convertToMatch(t3, vcat3, uqt3, t2, vcat2, uqt2); // sets fType and fValueCategory
+			final Cost cost2 = convertToMatch(t2, vcat2, uqt2, t3, vcat3, uqt3); // sets fType and fValueCategory
+			final Cost cost3 = convertToMatch(t3, vcat3, uqt3, t2, vcat2, uqt2); // sets fType and fValueCategory
 			if (cost2.converts() || cost3.converts()) {
 				if (cost2.converts()) {
 					if (cost3.converts() || cost2.isAmbiguousUDC()) {
-						fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
+						fType = ProblemType.UNKNOWN_FOR_EXPRESSION;
 					}
 				} else if (cost3.isAmbiguousUDC()) {
-					fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
+					fType = ProblemType.UNKNOWN_FOR_EXPRESSION;
 				}
 				return;
 			}
@@ -254,65 +252,67 @@ public class EvalConditional extends CPPDependentEvaluation {
 			final CVQualifier cv2 = SemanticUtil.getCVQualifier(t2);
 			final CVQualifier cv3 = SemanticUtil.getCVQualifier(t3);
 			if (cv2.isAtLeastAsQualifiedAs(cv3)) {
-				fType= t2;
-				fValueCategory= vcat2;
+				fType = t2;
+				fValueCategory = vcat2;
 			} else if (cv3.isAtLeastAsQualifiedAs(cv2)) {
-				fType= t3;
-				fValueCategory= vcat3;
+				fType = t3;
+				fValueCategory = vcat3;
 			} else {
-				fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
+				fType = ProblemType.UNKNOWN_FOR_EXPRESSION;
 			}
 			return;
 		}
 
 		// 5.16-5: At least one class type but no conversion
 		if (isClassType2 || isClassType3) {
-			fOverload = CPPSemantics.findOverloadedConditionalOperator(getTemplateDefinitionScope(), positive, fNegative);
+			fOverload = CPPSemantics.findOverloadedConditionalOperator(getTemplateDefinitionScope(), positive,
+					fNegative);
 			if (fOverload != null) {
-				fType= ExpressionTypes.typeFromFunctionCall(fOverload);
+				fType = ExpressionTypes.typeFromFunctionCall(fOverload);
 			} else {
-				fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
+				fType = ProblemType.UNKNOWN_FOR_EXPRESSION;
 			}
 			return;
 		}
 
 		// 5.16-6
-		t2= Conversions.lvalue_to_rvalue(t2, false);
-		t3= Conversions.lvalue_to_rvalue(t3, false);
+		t2 = Conversions.lvalue_to_rvalue(t2, false);
+		t3 = Conversions.lvalue_to_rvalue(t3, false);
 		if (t2.isSameType(t3)) {
-			fType= t2;
+			fType = t2;
 		} else {
-	    	fType= CPPArithmeticConversion.convertCppOperandTypes(IASTBinaryExpression.op_plus, t2, t3);
-	    	if (fType == null) {
-	    		fType= Conversions.compositePointerType(t2, t3);
-		    	if (fType == null) {
-					fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
-		    	}
-	    	}
+			fType = CPPArithmeticConversion.convertCppOperandTypes(IASTBinaryExpression.op_plus, t2, t3);
+			if (fType == null) {
+				fType = Conversions.compositePointerType(t2, t3);
+				if (fType == null) {
+					fType = ProblemType.UNKNOWN_FOR_EXPRESSION;
+				}
+			}
 		}
-    }
+	}
 
-    private Cost convertToMatch(IType t1, ValueCategory vcat1, IType uqt1, IType t2, ValueCategory vcat2, IType uqt2) {
+	private Cost convertToMatch(IType t1, ValueCategory vcat1, IType uqt1, IType t2, ValueCategory vcat2, IType uqt2) {
 		// E2 is an lvalue or E2 is an xvalue
 		try {
 			if (vcat2.isGLValue()) {
-				IType target= new CPPReferenceType(t2, vcat2 == XVALUE);
-				Cost c= Conversions.checkImplicitConversionSequence(target, t1, vcat1, UDCMode.ALLOWED, Context.REQUIRE_DIRECT_BINDING);
+				IType target = new CPPReferenceType(t2, vcat2 == XVALUE);
+				Cost c = Conversions.checkImplicitConversionSequence(target, t1, vcat1, UDCMode.ALLOWED,
+						Context.REQUIRE_DIRECT_BINDING);
 				if (c.converts()) {
-					fType= t2;
-					fValueCategory= vcat2;
+					fType = t2;
+					fValueCategory = vcat2;
 					return c;
 				}
 			}
 			// Both are class types and one derives from the other
 			if (uqt1 instanceof ICPPClassType && uqt2 instanceof ICPPClassType) {
-				int dist= SemanticUtil.calculateInheritanceDepth(uqt1, uqt2);
+				int dist = SemanticUtil.calculateInheritanceDepth(uqt1, uqt2);
 				if (dist >= 0) {
 					CVQualifier cv1 = SemanticUtil.getCVQualifier(t1);
 					CVQualifier cv2 = SemanticUtil.getCVQualifier(t2);
 					if (cv2.isAtLeastAsQualifiedAs(cv1)) {
-						fType= t2;
-						fValueCategory= PRVALUE;
+						fType = t2;
+						fValueCategory = PRVALUE;
 						return new Cost(t1, t2, Rank.IDENTITY);
 					}
 					return Cost.NO_CONVERSION;
@@ -322,12 +322,12 @@ public class EvalConditional extends CPPDependentEvaluation {
 			}
 			// Unrelated class types or just one class:
 			if (vcat2 != PRVALUE) {
-				t2= Conversions.lvalue_to_rvalue(t2, false);
+				t2 = Conversions.lvalue_to_rvalue(t2, false);
 			}
-			Cost c= Conversions.checkImplicitConversionSequence(t2, t1, vcat1, UDCMode.ALLOWED, Context.ORDINARY);
+			Cost c = Conversions.checkImplicitConversionSequence(t2, t1, vcat1, UDCMode.ALLOWED, Context.ORDINARY);
 			if (c.converts()) {
-				fType= t2;
-				fValueCategory= PRVALUE;
+				fType = t2;
+				fValueCategory = PRVALUE;
 				return c;
 			}
 		} catch (DOMException e) {
@@ -355,24 +355,24 @@ public class EvalConditional extends CPPDependentEvaluation {
 	}
 
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		boolean pth= (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
-		boolean nth= (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
-		ICPPEvaluation cond= buffer.unmarshalEvaluation();
-		ICPPEvaluation pos= buffer.unmarshalEvaluation();
-		ICPPEvaluation neg= buffer.unmarshalEvaluation();
-		IBinding templateDefinition= buffer.unmarshalBinding();
+		boolean pth = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
+		boolean nth = (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
+		ICPPEvaluation cond = buffer.unmarshalEvaluation();
+		ICPPEvaluation pos = buffer.unmarshalEvaluation();
+		ICPPEvaluation neg = buffer.unmarshalEvaluation();
+		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalConditional(cond, pos, neg, pth, nth, templateDefinition);
 	}
 
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
 		ICPPEvaluation condition = fCondition.instantiate(context, maxDepth);
-		ICPPEvaluation positive = fPositive == null ?
-				null : fPositive.instantiate(context, maxDepth);
+		ICPPEvaluation positive = fPositive == null ? null : fPositive.instantiate(context, maxDepth);
 		ICPPEvaluation negative = fNegative.instantiate(context, maxDepth);
 		if (condition == fCondition && positive == fPositive && negative == fNegative)
 			return this;
-		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows, getTemplateDefinition());
+		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows,
+				getTemplateDefinition());
 	}
 
 	@Override
@@ -390,14 +390,15 @@ public class EvalConditional extends CPPDependentEvaluation {
 				return fNegative.computeForFunctionCall(record, context.recordStep());
 			}
 		}
-		ICPPEvaluation positive = fPositive == null ?
-				null : fPositive.computeForFunctionCall(record, context.recordStep());
+		ICPPEvaluation positive = fPositive == null ? null
+				: fPositive.computeForFunctionCall(record, context.recordStep());
 		ICPPEvaluation negative = fNegative.computeForFunctionCall(record, context.recordStep());
 		if (condition == fCondition && positive == fPositive && negative == fNegative) {
 			return this;
 		}
 
-		EvalConditional evalConditional = new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows, getTemplateDefinition());
+		EvalConditional evalConditional = new EvalConditional(condition, positive, negative, fPositiveThrows,
+				fNegativeThrows, getTemplateDefinition());
 		return evalConditional;
 	}
 
@@ -412,8 +413,8 @@ public class EvalConditional extends CPPDependentEvaluation {
 
 	@Override
 	public boolean referencesTemplateParameter() {
-		return fCondition.referencesTemplateParameter() ||
-				(fPositive != null && fPositive.referencesTemplateParameter()) ||
-				fNegative.referencesTemplateParameter();
+		return fCondition.referencesTemplateParameter()
+				|| (fPositive != null && fPositive.referencesTemplateParameter())
+				|| fNegative.referencesTemplateParameter();
 	}
 }

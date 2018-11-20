@@ -19,19 +19,20 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MITraceStatusInfo;
 
 /**
  * -trace-status
- * 
+ *
  * Gets the status of tracing.
- * 
+ *
  * Available with GDB 7.1
- * 
+ *
  * @since 3.0
  */
 public class MITraceStatus extends MICommand<MITraceStatusInfo> {
 	public MITraceStatus(ITraceTargetDMContext ctx) {
 		super(ctx, "-trace-status"); //$NON-NLS-1$
 	}
-    @Override
-    public MITraceStatusInfo getResult(MIOutput out) {
-        return new MITraceStatusInfo(out);
-    }
+
+	@Override
+	public MITraceStatusInfo getResult(MIOutput out) {
+		return new MITraceStatusInfo(out);
+	}
 }

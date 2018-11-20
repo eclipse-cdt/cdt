@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation 
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.c;
 
@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 
 /**
  * Structs and Unions in C can be qualified w/restrict keyword.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

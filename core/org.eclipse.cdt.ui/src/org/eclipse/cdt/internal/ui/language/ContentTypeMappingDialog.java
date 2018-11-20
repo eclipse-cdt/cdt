@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -72,19 +72,16 @@ public abstract class ContentTypeMappingDialog extends Dialog {
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
-				true);
-		createButton(parent, IDialogConstants.CANCEL_ID,
-				IDialogConstants.CANCEL_LABEL, false);
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 
 		getButton(IDialogConstants.OK_ID).setEnabled(false);
 	}
 
 	protected String[] getLanguages() {
-		ILanguage[] languages = LanguageManager.getInstance()
-				.getRegisteredLanguages();
+		ILanguage[] languages = LanguageManager.getInstance().getRegisteredLanguages();
 		String[] descriptions = new String[languages.length];
-		
+
 		for (int i = 0; i < descriptions.length; i++) {
 			descriptions[i] = languages[i].getName();
 			fLanguageNamesToIDsMap.put(descriptions[i], languages[i].getId());

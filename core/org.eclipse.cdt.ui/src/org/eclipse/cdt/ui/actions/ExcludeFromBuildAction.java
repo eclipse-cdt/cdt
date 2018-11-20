@@ -57,8 +57,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * @deprecated as of CDT 8.0 now using {@link ExcludeFromBuildHandler}
  */
 @Deprecated
-public class ExcludeFromBuildAction
-implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
+public class ExcludeFromBuildAction implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 
 	protected ArrayList<IResource> objects = null;
 	protected ArrayList<String> cfgNames = null;
@@ -72,12 +71,12 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 		if (!selection.isEmpty()) {
 			// case for context menu
 			if (selection instanceof IStructuredSelection) {
-				Object[] obs = ((IStructuredSelection)selection).toArray();
+				Object[] obs = ((IStructuredSelection) selection).toArray();
 				if (obs.length > 0) {
-					for (int i=0; i<obs.length && cfgsOK; i++) {
+					for (int i = 0; i < obs.length && cfgsOK; i++) {
 						// if project selected, don't do anything
 						if ((obs[i] instanceof IProject) || (obs[i] instanceof ICProject)) {
-							cfgsOK=false;
+							cfgsOK = false;
 							break;
 						}
 						IResource res = null;
@@ -90,13 +89,15 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 						}
 						if (res != null) {
 							ICConfigurationDescription[] cfgds = getCfgsRead(res);
-							if (cfgds == null || cfgds.length == 0) continue;
+							if (cfgds == null || cfgds.length == 0)
+								continue;
 
-							if (objects == null) objects = new ArrayList<IResource>();
+							if (objects == null)
+								objects = new ArrayList<IResource>();
 							objects.add(res);
 							if (cfgNames == null) {
 								cfgNames = new ArrayList<String>(cfgds.length);
-								for (int j=0; j<cfgds.length; j++) {
+								for (int j = 0; j < cfgds.length; j++) {
 									if (!canExclude(res, cfgds[j])) {
 										cfgNames = null;
 										cfgsOK = false;
@@ -108,9 +109,8 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 								if (cfgNames.size() != cfgds.length) {
 									cfgsOK = false;
 								} else {
-									for (int j=0; j<cfgds.length; j++) {
-										if (! canExclude(res, cfgds[j]) ||
-											! cfgNames.contains(cfgds[j].getName())) {
+									for (int j = 0; j < cfgds.length; j++) {
+										if (!canExclude(res, cfgds[j]) || !cfgNames.contains(cfgds[j].getName())) {
 											cfgsOK = false;
 											break;
 										}
@@ -122,7 +122,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 				}
 			}
 		}
-		action.setEnabled(cfgsOK && objects != null );
+		action.setEnabled(cfgsOK && objects != null);
 	}
 
 	private boolean canExclude(IResource res, ICConfigurationDescription cfg) {
@@ -134,7 +134,8 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 
 	private void setExclude(IResource res, ICConfigurationDescription cfg, boolean exclude) {
 		try {
-			ICSourceEntry[] newEntries = CDataUtil.setExcluded(res.getFullPath(), (res instanceof IFolder), exclude, cfg.getSourceEntries());
+			ICSourceEntry[] newEntries = CDataUtil.setExcluded(res.getFullPath(), (res instanceof IFolder), exclude,
+					cfg.getSourceEntries());
 			cfg.setSourceEntries(newEntries);
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
@@ -148,23 +149,24 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 
 	private ICConfigurationDescription[] getCfgsRead(IResource res) {
 		IProject p = res.getProject();
-		if (!p.isOpen()) return null;
-		if (!CoreModel.getDefault().isNewStyleProject(p)) return null;
+		if (!p.isOpen())
+			return null;
+		if (!CoreModel.getDefault().isNewStyleProject(p))
+			return null;
 		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false);
-		if (prjd == null) return null;
+		if (prjd == null)
+			return null;
 		return prjd.getConfigurations();
 	}
 
 	private void openDialog() {
-		if (objects == null || objects.size() == 0) return;
+		if (objects == null || objects.size() == 0)
+			return;
 		// create list of configurations to delete
 
-		ListSelectionDialog dialog = new ListSelectionDialog(
-				CUIPlugin.getActiveWorkbenchShell(),
-				cfgNames,
-				createSelectionDialogContentProvider(),
-				new LabelProvider() {},
-				ActionMessages.ExcludeFromBuildAction_0);
+		ListSelectionDialog dialog = new ListSelectionDialog(CUIPlugin.getActiveWorkbenchShell(), cfgNames,
+				createSelectionDialogContentProvider(), new LabelProvider() {
+				}, ActionMessages.ExcludeFromBuildAction_0);
 		dialog.setTitle(ActionMessages.ExcludeFromBuildAction_1);
 
 		boolean[] status = new boolean[cfgNames.size()];
@@ -173,14 +175,16 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 			IResource res = it.next();
 			ICConfigurationDescription[] cfgds = getCfgsRead(res);
 			IPath p = res.getFullPath();
-			for (int i=0; i<cfgds.length; i++) {
+			for (int i = 0; i < cfgds.length; i++) {
 				boolean b = CDataUtil.isExcluded(p, cfgds[i].getSourceEntries());
-				if (b) status[i] = true;
+				if (b)
+					status[i] = true;
 			}
 		}
 		ArrayList<String> lst = new ArrayList<String>();
-		for (int i=0; i<status.length; i++)
-			if (status[i]) lst.add(cfgNames.get(i));
+		for (int i = 0; i < status.length; i++)
+			if (status[i])
+				lst.add(cfgNames.get(i));
 		if (lst.size() > 0)
 			dialog.setInitialElementSelections(lst);
 
@@ -190,14 +194,16 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 			while (it2.hasNext()) {
 				IResource res = it2.next();
 				IProject p = res.getProject();
-				if (!p.isOpen()) continue;
+				if (!p.isOpen())
+					continue;
 				// get writable description
 				ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, true);
-				if (prjd == null) continue;
+				if (prjd == null)
+					continue;
 				ICConfigurationDescription[] cfgds = prjd.getConfigurations();
-				for (int i=0; i<cfgds.length; i++) {
+				for (int i = 0; i < cfgds.length; i++) {
 					boolean exclude = false;
-					for (int j=0; j<selected.length; j++) {
+					for (int j = 0; j < selected.length; j++) {
 						if (cfgds[i].getName().equals(selected[j])) {
 							exclude = true;
 							break;
@@ -218,24 +224,41 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 	private IStructuredContentProvider createSelectionDialogContentProvider() {
 		return new IStructuredContentProvider() {
 			@Override
-			public Object[] getElements(Object inputElement) { return cfgNames.toArray(); }
+			public Object[] getElements(Object inputElement) {
+				return cfgNames.toArray();
+			}
+
 			@Override
-			public void dispose() {}
+			public void dispose() {
+			}
+
 			@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
 		};
 	}
 
 	@Override
-	public void dispose() { objects = null; }
+	public void dispose() {
+		objects = null;
+	}
 
 	// doing nothing
 	@Override
-	public void init(IWorkbenchWindow window) { }
+	public void init(IWorkbenchWindow window) {
+	}
+
 	@Override
-	public Menu getMenu(Menu parent) { return null; }
+	public Menu getMenu(Menu parent) {
+		return null;
+	}
+
 	@Override
-	public Menu getMenu(Control parent) { return null; }
+	public Menu getMenu(Control parent) {
+		return null;
+	}
+
 	@Override
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {}
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+	}
 }

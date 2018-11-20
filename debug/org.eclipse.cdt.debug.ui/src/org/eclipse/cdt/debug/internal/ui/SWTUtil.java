@@ -42,7 +42,7 @@ public class SWTUtil {
 	public static Display getStandardDisplay() {
 		Display display;
 		display = Display.getCurrent();
-		if ( display == null )
+		if (display == null)
 			display = Display.getDefault();
 		return display;
 	}
@@ -50,54 +50,54 @@ public class SWTUtil {
 	/**
 	 * Returns the shell for the given widget. If the widget doesn't represent
 	 * a SWT object that manage a shell, <code>null</code> is returned.
-	 * 
+	 *
 	 * @return the shell for the given widget
 	 */
 	public static Shell getShell(Widget widget) {
-		if ( widget instanceof Control )
-			return ((Control)widget).getShell();
-		if ( widget instanceof Caret )
-			return ((Caret)widget).getParent().getShell();
-		if ( widget instanceof DragSource )
-			return ((DragSource)widget).getControl().getShell();
-		if ( widget instanceof DropTarget )
-			return ((DropTarget)widget).getControl().getShell();
-		if ( widget instanceof Menu )
-			return ((Menu)widget).getParent().getShell();
-		if ( widget instanceof ScrollBar )
-			return ((ScrollBar)widget).getParent().getShell();
+		if (widget instanceof Control)
+			return ((Control) widget).getShell();
+		if (widget instanceof Caret)
+			return ((Caret) widget).getParent().getShell();
+		if (widget instanceof DragSource)
+			return ((DragSource) widget).getControl().getShell();
+		if (widget instanceof DropTarget)
+			return ((DropTarget) widget).getControl().getShell();
+		if (widget instanceof Menu)
+			return ((Menu) widget).getParent().getShell();
+		if (widget instanceof ScrollBar)
+			return ((ScrollBar) widget).getParent().getShell();
 		return null;
 	}
 
 	/**
 	 * Returns a width hint for a button control.
 	 */
-	public static int getButtonWidthHint( Button button ) {
-		PixelConverter converter = new PixelConverter( button );
-		int widthHint = converter.convertHorizontalDLUsToPixels( IDialogConstants.BUTTON_WIDTH );
-		return Math.max( widthHint, button.computeSize( SWT.DEFAULT, SWT.DEFAULT, true ).x );
+	public static int getButtonWidthHint(Button button) {
+		PixelConverter converter = new PixelConverter(button);
+		int widthHint = converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
 
 	/**
 	 * Returns a height hint for a button control.
 	 */
-//	public static int getButtonHeigthHint( Button button ) {
-//		PixelConverter converter = new PixelConverter( button );
-//		return converter.convertVerticalDLUsToPixels( IDialogConstants.BUTTON_HEIGHT );
-//	}
+	//	public static int getButtonHeigthHint( Button button ) {
+	//		PixelConverter converter = new PixelConverter( button );
+	//		return converter.convertVerticalDLUsToPixels( IDialogConstants.BUTTON_HEIGHT );
+	//	}
 
 	/**
 	 * Sets width and height hint for the button control. <b>Note:</b> This
 	 * is a NOP if the button's layout data is not an instance of <code>GridData</code>.
-	 * 
+	 *
 	 * @param the button for which to set the dimension hint
 	 */
-	public static void setButtonDimensionHint( Button button ) {
-		Assert.isNotNull( button );
+	public static void setButtonDimensionHint(Button button) {
+		Assert.isNotNull(button);
 		Object gd = button.getLayoutData();
-		if ( gd instanceof GridData ) {
-			((GridData)gd).widthHint = getButtonWidthHint( button );
-			((GridData)gd).horizontalAlignment = GridData.FILL;	 
+		if (gd instanceof GridData) {
+			((GridData) gd).widthHint = getButtonWidthHint(button);
+			((GridData) gd).horizontalAlignment = GridData.FILL;
 		}
 	}
 }

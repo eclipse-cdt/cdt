@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- *     Institute for Software - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Institute for Software - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 /**
  * @author Emanuel Graf IFS
  */
-class ReturnStatementFinder extends ASTVisitor{
+class ReturnStatementFinder extends ASTVisitor {
 	private boolean containsReturnStmt;
 
 	{
@@ -36,7 +36,7 @@ class ReturnStatementFinder extends ASTVisitor{
 		}
 		return ASTVisitor.PROCESS_CONTINUE;
 	}
-	
+
 	public boolean containsReturn() {
 		return containsReturnStmt;
 	}

@@ -11,8 +11,8 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
- 
+package org.eclipse.cdt.debug.internal.ui.sourcelookup;
+
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -23,26 +23,26 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class AddContainerAction extends SourceContainerAction {
 	private ISourceLookupDirector fDirector;
-	
+
 	public AddContainerAction() {
 		super(SourceLookupUIMessages.AddContainerAction_0);
 	}
-	
+
 	/**
 	 * Prompts for a project to add.
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IAction#run()
-	 */	
+	 */
 	@Override
 	public void run() {
 		AddSourceContainerDialog dialog = new AddSourceContainerDialog(getShell(), getViewer(), fDirector);
-		dialog.open();			
+		dialog.open();
 	}
-	
+
 	public void setSourceLookupDirector(ISourceLookupDirector director) {
 		fDirector = director;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
@@ -50,7 +50,7 @@ public class AddContainerAction extends SourceContainerAction {
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection == null || selection.isEmpty()) {
 			return true;
-		} 
+		}
 		return getViewer().getTree().getSelection()[0].getParentItem() == null;
 	}
 }

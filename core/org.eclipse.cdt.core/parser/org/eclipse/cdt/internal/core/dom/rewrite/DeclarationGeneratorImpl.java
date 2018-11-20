@@ -66,7 +66,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 
 	/**
 	 * Creates a new generator using the given factory.
-	 * 
+	 *
 	 * @param factory The factory to use. If a C++ type is requested, it has to be an instance of
 	 *     {@link ICPPNodeFactory}.
 	 */
@@ -143,7 +143,6 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 			// the end.
 			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap = new HashMap<IASTDeclarator, LinkedList<IASTPointerOperator>>();
 
-
 			// If the type is an array of something, create a declaration of a pointer to something
 			// instead (to allow assignment, etc).
 
@@ -176,8 +175,8 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 					while (type instanceof IArrayType) {
 						arrayType = (IArrayType) type;
 						IASTExpression arraySizeExpression = arrayType.getArraySizeExpression();
-						arrayDeclarator.addArrayModifier(factory.newArrayModifier(arraySizeExpression == null
-								? null : arraySizeExpression.copy(CopyStyle.withLocations)));
+						arrayDeclarator.addArrayModifier(factory.newArrayModifier(arraySizeExpression == null ? null
+								: arraySizeExpression.copy(CopyStyle.withLocations)));
 						type = arrayType.getType();
 					}
 					returnedDeclarator = arrayDeclarator;
@@ -199,8 +198,8 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 						} else {
 							declarator = factory.newDeclarator(factory.newName());
 						}
-						IASTParameterDeclaration parameterDeclaration = factory.newParameterDeclaration(
-								declspec, declarator);
+						IASTParameterDeclaration parameterDeclaration = factory.newParameterDeclaration(declspec,
+								declarator);
 						func.addParameterDeclaration(parameterDeclaration);
 					}
 					if (returnedDeclarator == null) {
@@ -215,7 +214,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 				replaceInitialArrayWithPointer = false;
 				changeNextFunctionToFuncPtr = false;
 			}
-			
+
 			finalizePointerOperators(pointerOperatorMap);
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
@@ -229,8 +228,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		return returnedDeclarator;
 	}
 
-	private void finalizePointerOperators(
-			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap) {
+	private void finalizePointerOperators(Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap) {
 		for (IASTDeclarator declarator : pointerOperatorMap.keySet()) {
 			LinkedList<IASTPointerOperator> list = pointerOperatorMap.get(declarator);
 			for (IASTPointerOperator op : list) {
@@ -239,8 +237,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		}
 	}
 
-	private void addPointerOperatorDeferred(
-			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap,
+	private void addPointerOperatorDeferred(Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap,
 			IASTDeclarator returnedDeclarator, IASTPointerOperator ptrOp) {
 		LinkedList<IASTPointerOperator> list;
 		if (!pointerOperatorMap.containsKey(returnedDeclarator)) {
@@ -277,8 +274,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 			return pointer;
 		} else {
 			ICPPReferenceType refType = (ICPPReferenceType) type;
-			ICPPASTReferenceOperator op =
-					((ICPPNodeFactory) factory).newReferenceOperator(refType.isRValueReference());
+			ICPPASTReferenceOperator op = ((ICPPNodeFactory) factory).newReferenceOperator(refType.isRValueReference());
 			return op;
 		}
 	}
@@ -298,9 +294,8 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 				ICPPASTQualifiedName fullQualifiedName = (ICPPASTQualifiedName) name;
 				IASTName templateName = fullQualifiedName.getLastName();
 				ICPPASTTemplateId tempId = getTemplateId(type, templateName);
-				
-				ICPPASTQualifiedName newQualifiedName =
-						((ICPPNodeFactory) factory).newQualifiedName(tempId);
+
+				ICPPASTQualifiedName newQualifiedName = ((ICPPNodeFactory) factory).newQualifiedName(tempId);
 				ICPPASTNameSpecifier[] qualifier = fullQualifiedName.getQualifier();
 				int nbQualifiedNames = qualifier.length;
 				for (int i = 0; i < nbQualifiedNames; i++) {

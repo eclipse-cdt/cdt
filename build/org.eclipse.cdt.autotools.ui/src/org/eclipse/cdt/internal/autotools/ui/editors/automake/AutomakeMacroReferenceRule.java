@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2015, Red Hat, Inc.
  * Based on MacroReferenceRule which has the following copyright notice
- * 
+ *
  * Copyright (c) 2000, 2006 QNX Software Systems and others.
  *
  * This program and the accompanying materials
@@ -25,19 +25,19 @@ public class AutomakeMacroReferenceRule extends PatternRule {
 	int nOfBrackets;
 	int fBracket;
 
-//	public MacroReferenceRule(IToken token) {
-//		super("$(", ")", token, (char) 0, true); //$NON-NLS-1$ //$NON-NLS-2$
-//	}
+	//	public MacroReferenceRule(IToken token) {
+	//		super("$(", ")", token, (char) 0, true); //$NON-NLS-1$ //$NON-NLS-2$
+	//	}
 
 	public AutomakeMacroReferenceRule(IToken token, String startSeq, String endSeq) {
-		super(startSeq, endSeq, token, (char)0, true);
+		super(startSeq, endSeq, token, (char) 0, true);
 		if (endSeq.length() > 0 && endSeq.charAt(0) == '}') {
 			fBracket = '{';
 		} else {
 			fBracket = '(';
 		}
 	}
-	
+
 	@Override
 	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume) {
 		nOfBrackets = 1;

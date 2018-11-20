@@ -23,23 +23,27 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class RawCommand extends MICommand<MIInfo> {
 
-    String fRaw;
+	String fRaw;
 
-    public RawCommand(IDMContext ctx, String operation) {
-        super(ctx, operation);
-        fRaw = operation;
-    }
+	public RawCommand(IDMContext ctx, String operation) {
+		super(ctx, operation);
+		fRaw = operation;
+	}
 
-    @Override
-	public boolean supportsThreadAndFrameOptions() { return false; }
+	@Override
+	public boolean supportsThreadAndFrameOptions() {
+		return false;
+	}
 
-    @Override
-    public boolean supportsThreadGroupOption() { return false; }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.debug.mi.core.command.Command#getMIOutput()
-     */
-    public MIOutput getMIOutput() {
-        return new MIOutput();
-    }
+	@Override
+	public boolean supportsThreadGroupOption() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.core.command.Command#getMIOutput()
+	 */
+	public MIOutput getMIOutput() {
+		return new MIOutput();
+	}
 }

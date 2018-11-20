@@ -18,7 +18,7 @@ package org.eclipse.cdt.core.dom.ast;
  * <pre>
  * #define ONE_TWO_THREE 123
  * </pre>
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

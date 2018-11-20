@@ -18,21 +18,25 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * see org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class TypedCDTViewerFilter extends ViewerFilter {
 
 	private Class<?>[] types;
 
-	public TypedCDTViewerFilter(Class<?>[] _types) { types= _types; }
+	public TypedCDTViewerFilter(Class<?>[] _types) {
+		types = _types;
+	}
+
 	/**
 	 * @see ViewerFilter#select
 	 */
 	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		for (Class<?> type : types) {
-			if (type.isInstance(element)) return true;
+			if (type.isInstance(element))
+				return true;
 		}
 		return false;
 	}

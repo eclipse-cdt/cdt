@@ -19,30 +19,31 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 
 /**
- * Manages current position of highlighted error in BuildConsole 
+ * Manages current position of highlighted error in BuildConsole
  */
 class DocumentMarkerManager {
-	
-	BuildConsoleDocument fDocument; 
+
+	BuildConsoleDocument fDocument;
 	BuildConsolePartitioner fPartitioner;
-	
+
 	int highlightedPartitionIndex = -1;
-	
+
 	DocumentMarkerManager(BuildConsoleDocument document, BuildConsolePartitioner partitioner) {
 		fDocument = document;
 		fPartitioner = partitioner;
 	}
 
 	/** Increment index */
-	void moveToNextError() {				
-		if ( fPartitioner.fPartitions.size() == 0 ) return;
-		if ( highlightedPartitionIndex == -1 ) { 
+	void moveToNextError() {
+		if (fPartitioner.fPartitions.size() == 0)
+			return;
+		if (highlightedPartitionIndex == -1) {
 			moveToFirstError();
 			return;
 		}
-		int i = highlightedPartitionIndex + 1; 
+		int i = highlightedPartitionIndex + 1;
 		do {
-			if ( i == fPartitioner.fPartitions.size() ) {
+			if (i == fPartitioner.fPartitions.size()) {
 				i = 0;
 			}
 			String type = fPartitioner.fPartitions.get(i).getType();
@@ -52,20 +53,21 @@ class DocumentMarkerManager {
 			} else {
 				i++;
 			}
-		} while ( highlightedPartitionIndex != i);
+		} while (highlightedPartitionIndex != i);
 	}
-	
+
 	/** Decrement index */
-	void moveToPreviousError() {	
-		if ( fPartitioner.fPartitions.size() == 0 ) return;
-		if ( highlightedPartitionIndex == -1 ) { 
+	void moveToPreviousError() {
+		if (fPartitioner.fPartitions.size() == 0)
+			return;
+		if (highlightedPartitionIndex == -1) {
 			moveToFirstError();
 			return;
 		}
-		
-		int i = highlightedPartitionIndex - 1; 
+
+		int i = highlightedPartitionIndex - 1;
 		do {
-			if ( i == -1 ) {
+			if (i == -1) {
 				i = fPartitioner.fPartitions.size() - 1;
 			}
 			String type = fPartitioner.fPartitions.get(i).getType();
@@ -75,15 +77,15 @@ class DocumentMarkerManager {
 			} else {
 				i--;
 			}
-		} while ( highlightedPartitionIndex != i);
+		} while (highlightedPartitionIndex != i);
 	}
-	
+
 	void moveToFirstError() {
-		for (int i=0; i<fPartitioner.fPartitions.size(); i++) {
+		for (int i = 0; i < fPartitioner.fPartitions.size(); i++) {
 			String type = fPartitioner.fPartitions.get(i).getType();
 			if (BuildConsolePartition.isProblemPartitionType(type)) {
 				highlightedPartitionIndex = i;
-				return;			
+				return;
 			}
 		}
 		highlightedPartitionIndex = -1;
@@ -103,7 +105,7 @@ class DocumentMarkerManager {
 	/** Get marker for current error */
 	ProblemMarkerInfo getCurrentErrorMarker() {
 		BuildConsolePartition p = getCurrentPartition();
-		if ( p != null ) { 
+		if (p != null) {
 			return p.getMarker();
 		} else {
 			return null;
@@ -112,15 +114,14 @@ class DocumentMarkerManager {
 
 	/** Get partition for current error */
 	BuildConsolePartition getCurrentPartition() {
-		if ( 0 <= highlightedPartitionIndex && 	
-				highlightedPartitionIndex < fPartitioner.fPartitions.size() ) {
+		if (0 <= highlightedPartitionIndex && highlightedPartitionIndex < fPartitioner.fPartitions.size()) {
 			BuildConsolePartition p = fPartitioner.fPartitions.get(highlightedPartitionIndex);
 			return p;
 		}
 		return null;
-	}	
-	
+	}
+
 	void clear() {
-		highlightedPartitionIndex = -1;		
+		highlightedPartitionIndex = -1;
 	}
 }

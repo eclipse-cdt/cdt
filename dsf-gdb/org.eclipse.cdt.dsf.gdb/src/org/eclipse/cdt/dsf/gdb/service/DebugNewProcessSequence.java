@@ -7,12 +7,12 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
- *     Marc Khouzam (Ericsson) - Support setting the path in which the core file 
+ *     Marc Khouzam (Ericsson) - Support setting the path in which the core file
  *                               dialog should start (Bug 362039)
- *     Sergey Prigogin (Google) - Bug 381804 
+ *     Sergey Prigogin (Google) - Bug 381804
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -55,14 +55,14 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 
-/** 
+/**
  * This sequence is used to start debugging a new process.
  *
  * @since 4.0
 */
 public class DebugNewProcessSequence extends ReflectionSequence {
 
-	private final static String INVALID = "invalid";   //$NON-NLS-1$
+	private final static String INVALID = "invalid"; //$NON-NLS-1$
 
 	private IGDBControl fCommandControl;
 	private CommandFactory fCommandFactory;
@@ -74,11 +74,10 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	private String fBinaryName;
 	private Map<String, Object> fAttributes;
 	private IMIContainerDMContext fContainerCtx;
-	
+
 	// Store the dataRM so that we can fill it with the container context that we will be creating
 	private DataRequestMonitor<IDMContext> fDataRequestMonitor;
 
-	
 	protected IMIContainerDMContext getContainerContext() {
 		return fContainerCtx;
 	}
@@ -86,8 +85,9 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	protected void setContainerContext(IMIContainerDMContext ctx) {
 		fContainerCtx = ctx;
 	}
-	
-	public DebugNewProcessSequence(DsfExecutor executor, boolean isInitial, IDMContext dmc, String file, Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
+
+	public DebugNewProcessSequence(DsfExecutor executor, boolean isInitial, IDMContext dmc, String file,
+			Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
 		super(executor, rm);
 		fContext = dmc;
 		fBinaryName = file;
@@ -98,27 +98,26 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	@Override
 	protected String[] getExecutionOrder(String group) {
 		if (GROUP_TOP_LEVEL.equals(group)) {
-			return new String[] {
-					"stepInitializeBaseSequence",  //$NON-NLS-1$
-					"stepSetEnvironmentVariables",   //$NON-NLS-1$
-					"stepSetExecutable",   //$NON-NLS-1$
-					"stepSetArguments",   //$NON-NLS-1$
-					
+			return new String[] { "stepInitializeBaseSequence", //$NON-NLS-1$
+					"stepSetEnvironmentVariables", //$NON-NLS-1$
+					"stepSetExecutable", //$NON-NLS-1$
+					"stepSetArguments", //$NON-NLS-1$
+
 					// For remote non-attach only
-					"stepRemoteConnection",   //$NON-NLS-1$
+					"stepRemoteConnection", //$NON-NLS-1$
 					// For post-mortem launch only
-					"stepSpecifyCoreFile",   //$NON-NLS-1$
-					
+					"stepSpecifyCoreFile", //$NON-NLS-1$
+
 					"stepInitializeMemory", //$NON-NLS-1$
 					"stepStartTrackingBreakpoints", //$NON-NLS-1$
-					"stepStartExecution",   //$NON-NLS-1$
-					"stepCleanupBaseSequence",   //$NON-NLS-1$
+					"stepStartExecution", //$NON-NLS-1$
+					"stepCleanupBaseSequence", //$NON-NLS-1$
 			};
 		}
 		return null;
 	}
 
-	/** 
+	/**
 	 * Initialize the members of the DebugNewProcessSequence class.
 	 * This step is mandatory for the rest of the sequence to complete.
 	 */
@@ -127,33 +126,36 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fContext.getSessionId());
 		fBackend = fTracker.getService(IGDBBackend.class);
 		fCommandControl = fTracker.getService(IGDBControl.class);
-        fCommandFactory = fTracker.getService(IMICommandControl.class).getCommandFactory();		
+		fCommandFactory = fTracker.getService(IMICommandControl.class).getCommandFactory();
 		fProcService = fTracker.getService(IGDBProcesses.class);
 
-        if (fBackend == null || fCommandControl == null || fCommandFactory == null || fProcService == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Cannot obtain service", null)); //$NON-NLS-1$
+		if (fBackend == null || fCommandControl == null || fCommandFactory == null || fProcService == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+					"Cannot obtain service", null)); //$NON-NLS-1$
 			rm.done();
 			return;
 		}
 
-        // When we are starting to debug a new process, the container is the default process used by GDB.
-        // We don't have a pid yet, so we can simply create the container with the UNIQUE_GROUP_ID
-        setContainerContext(fProcService.createContainerContextFromGroupId(fCommandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID));
-        
-        rm.done();
+		// When we are starting to debug a new process, the container is the default process used by GDB.
+		// We don't have a pid yet, so we can simply create the container with the UNIQUE_GROUP_ID
+		setContainerContext(fProcService.createContainerContextFromGroupId(fCommandControl.getContext(),
+				MIProcesses.UNIQUE_GROUP_ID));
+
+		rm.done();
 	}
-	
-	/** 
+
+	/**
 	 * Rollback method for {@link #stepInitializeBaseSequence()}
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	@RollBack("stepInitializeBaseSequence")
 	public void rollBackInitializeBaseSequence(RequestMonitor rm) {
-		if (fTracker != null) fTracker.dispose();
+		if (fTracker != null)
+			fTracker.dispose();
 		fTracker = null;
 		rm.done();
 	}
-	
+
 	/**
 	 * Specify environment variables if needed
 	 */
@@ -166,7 +168,8 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 			clear = fBackend.getClearEnvironment();
 			properties = fBackend.getEnvironmentVariables();
 		} catch (CoreException e) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Cannot get environment information", e)); //$NON-NLS-1$
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED,
+					"Cannot get environment information", e)); //$NON-NLS-1$
 			rm.done();
 			return;
 		}
@@ -184,47 +187,43 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSetExecutable(RequestMonitor rm) {
-		boolean noFileCommand = CDebugUtils.getAttribute(
-				fAttributes, 
+		boolean noFileCommand = CDebugUtils.getAttribute(fAttributes,
 				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP,
 				IGDBLaunchConfigurationConstants.DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT);
 
 		if (!noFileCommand && fBinaryName != null && !fBinaryName.isEmpty()) {
-			fCommandControl.queueCommand(
-					fCommandFactory.createMIFileExecAndSymbols(getContainerContext(), fBinaryName), 
+			fCommandControl.queueCommand(fCommandFactory.createMIFileExecAndSymbols(getContainerContext(), fBinaryName),
 					new ImmediateDataRequestMonitor<MIInfo>(rm));
 		} else {
 			rm.done();
 		}
 	}
-	
+
 	/**
 	 * Specify the arguments to the program that will be run.
 	 */
 	@Execute
 	public void stepSetArguments(RequestMonitor rm) {
 		try {
-			String args = CDebugUtils.getAttribute(
-					fAttributes,
-					ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
+			String args = CDebugUtils.getAttribute(fAttributes, ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
 					""); //$NON-NLS-1$
 
 			if (args.length() != 0) {
 				args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
 				String[] argArray = CommandLineUtil.argumentsToArray(args);
-				fCommandControl.queueCommand(
-						fCommandFactory.createMIGDBSetArgs(getContainerContext(), argArray), 
+				fCommandControl.queueCommand(fCommandFactory.createMIGDBSetArgs(getContainerContext(), argArray),
 						new ImmediateDataRequestMonitor<MIInfo>(rm));
 			} else {
 				rm.done();
 			}
 		} catch (CoreException e) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Cannot get inferior arguments", e)); //$NON-NLS-1$
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED,
+					"Cannot get inferior arguments", e)); //$NON-NLS-1$
 			rm.done();
-		}    		
+		}
 	}
 
-	/** 
+	/**
 	 * If we are dealing with a remote debugging session, connect to the target.
 	 * @since 4.0
 	 */
@@ -238,31 +237,23 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		// It is safe to do it here because a 'target remote' does not support
 		// multi-process so this step will not be executed more than once.
 		if (fBackend.getSessionType() == SessionType.REMOTE && !fBackend.getIsAttachSession()) {
-			boolean isTcpConnection = CDebugUtils.getAttribute(
-					fAttributes,
-					IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
-					false);
+			boolean isTcpConnection = CDebugUtils.getAttribute(fAttributes,
+					IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, false);
 
 			if (isTcpConnection) {
-				String remoteTcpHost = CDebugUtils.getAttribute(
-						fAttributes,
-						IGDBLaunchConfigurationConstants.ATTR_HOST, INVALID);
-				String remoteTcpPort = CDebugUtils.getAttribute(
-						fAttributes,
-						IGDBLaunchConfigurationConstants.ATTR_PORT, INVALID);
+				String remoteTcpHost = CDebugUtils.getAttribute(fAttributes, IGDBLaunchConfigurationConstants.ATTR_HOST,
+						INVALID);
+				String remoteTcpPort = CDebugUtils.getAttribute(fAttributes, IGDBLaunchConfigurationConstants.ATTR_PORT,
+						INVALID);
 
-				fCommandControl.queueCommand(
-						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
-								remoteTcpHost, remoteTcpPort, false), 
-								new ImmediateDataRequestMonitor<MIInfo>(rm));
+				fCommandControl.queueCommand(fCommandFactory.createMITargetSelect(fCommandControl.getContext(),
+						remoteTcpHost, remoteTcpPort, false), new ImmediateDataRequestMonitor<MIInfo>(rm));
 			} else {
-				String serialDevice = CDebugUtils.getAttribute(
-						fAttributes,
-						IGDBLaunchConfigurationConstants.ATTR_DEV, INVALID);
+				String serialDevice = CDebugUtils.getAttribute(fAttributes, IGDBLaunchConfigurationConstants.ATTR_DEV,
+						INVALID);
 				fCommandControl.queueCommand(
-						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
-								serialDevice, false), 
-								new ImmediateDataRequestMonitor<MIInfo>(rm));
+						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), serialDevice, false),
+						new ImmediateDataRequestMonitor<MIInfo>(rm));
 			}
 		} else {
 			rm.done();
@@ -273,7 +264,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	protected static class PromptForCoreJob extends Job {
 		/**
 		 * The initial path that should be used in the prompt for the core file
-		 * @since 4.1 
+		 * @since 4.1
 		 */
 		protected String fInitialPath;
 		protected DataRequestMonitor<String> fRequestMonitor;
@@ -291,7 +282,8 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			final IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200/*STATUS_HANDLER_PROMPT*/, "", null); //$NON-NLS-1$//$NON-NLS-2$
+			final IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200/*STATUS_HANDLER_PROMPT*/, //$NON-NLS-1$
+					"", null); //$NON-NLS-1$
 			final IStatus filePrompt = new Status(IStatus.INFO, "org.eclipse.cdt.dsf.gdb.ui", 1001, "", null); //$NON-NLS-1$//$NON-NLS-2$
 			// consult a status handler
 			final IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
@@ -304,14 +296,14 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 				fRequestMonitor.setStatus(NO_CORE_STATUS);
 				fRequestMonitor.done();
 				return Status.OK_STATUS;
-			} 				
+			}
 
 			try {
 				Object result = prompter.handleStatus(filePrompt, fInitialPath);
-				 if (result == null) {
-						fRequestMonitor.cancel();
+				if (result == null) {
+					fRequestMonitor.cancel();
 				} else if (result instanceof String) {
-					fRequestMonitor.setData((String)result);
+					fRequestMonitor.setData((String) result);
 				} else {
 					fRequestMonitor.setStatus(NO_CORE_STATUS);
 				}
@@ -323,8 +315,8 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 			return Status.OK_STATUS;
 		}
 	};
-	
-	/** 
+
+	/**
 	 * If we are dealing with a postmortem session, connect to the core/trace file.
 	 * @since 4.0
 	 */
@@ -337,25 +329,24 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		// multi-process so this step will not be executed more than once.
 		// Bug 338730
 		if (fBackend.getSessionType() == SessionType.CORE) {
-			String coreFile = CDebugUtils.getAttribute(
-					fAttributes,
-					ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, ""); //$NON-NLS-1$
-			
+			String coreFile = CDebugUtils.getAttribute(fAttributes, ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH,
+					""); //$NON-NLS-1$
+
 			try {
 				// Support variable substitution for the core file path
 				// Bug 362039
-				coreFile = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(coreFile, false);
+				coreFile = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(coreFile,
+						false);
 			} catch (CoreException e) {
 				// Ignore and use core file string as is.
 				// This should not happen because the dialog will
 				// prevent the user from making such mistakes
 			}
 
-			final String coreType = CDebugUtils.getAttribute(
-					fAttributes,
+			final String coreType = CDebugUtils.getAttribute(fAttributes,
 					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
 					IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
-			
+
 			// We handle three cases:
 			// 1- Core file specified, in which case we use it
 			// 2- Nothing specified, in which case we prompt for a core file path
@@ -374,64 +365,65 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 				}
 				// else not a directory but an actual core file: use it.
 			}
-			
+
 			if (shouldPrompt) {
-					new PromptForCoreJob(
-							"Prompt for post mortem file",  //$NON-NLS-1$
-							coreType,
-							coreFile,
-							new DataRequestMonitor<String>(getExecutor(), rm) {
-								@Override
-								protected void handleCancel() {
-									rm.cancel();
+				new PromptForCoreJob("Prompt for post mortem file", //$NON-NLS-1$
+						coreType, coreFile, new DataRequestMonitor<String>(getExecutor(), rm) {
+							@Override
+							protected void handleCancel() {
+								rm.cancel();
+								rm.done();
+							}
+
+							@Override
+							protected void handleSuccess() {
+								String newCoreFile = getData();
+								if (newCoreFile == null || newCoreFile.length() == 0) {
+									rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1,
+											Messages.Cannot_get_post_mortem_file_path_error, null));
 									rm.done();
+								} else {
+									targetSelectFile(coreType, newCoreFile, rm);
 								}
-								@Override
-								protected void handleSuccess() {
-									String newCoreFile = getData();
-									if (newCoreFile == null || newCoreFile.length()== 0) {
-										rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, Messages.Cannot_get_post_mortem_file_path_error, null)); 
-										rm.done();
-									} else {
-										targetSelectFile(coreType, newCoreFile, rm);
-									}
-								}
-							}).schedule();
-				} else {
-					// The user specified something that was not a directory,
-					// it therefore should be the core file itself.  Let's use it.
-					
-					// First convert to absolute path so that things work even if the user
-					// specifies a relative path.  The reason we do this is that GDB
-					// may not be using the same root path as Eclipse.
-					String absoluteCoreFile = new Path(coreFile).toFile().getAbsolutePath();
-					targetSelectFile(coreType, absoluteCoreFile, rm);
-				}
+							}
+						}).schedule();
+			} else {
+				// The user specified something that was not a directory,
+				// it therefore should be the core file itself.  Let's use it.
+
+				// First convert to absolute path so that things work even if the user
+				// specifies a relative path.  The reason we do this is that GDB
+				// may not be using the same root path as Eclipse.
+				String absoluteCoreFile = new Path(coreFile).toFile().getAbsolutePath();
+				targetSelectFile(coreType, absoluteCoreFile, rm);
+			}
 		} else {
 			rm.done();
 		}
 	}
-	
+
 	private void targetSelectFile(String coreType, String file, RequestMonitor rm) {
 		if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
-			fCommandControl.queueCommand(
-					fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), file),
+			fCommandControl.queueCommand(fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), file),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 		} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
 			IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
 			if (traceControl != null) {
-				ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(fCommandControl.getContext(), ITraceTargetDMContext.class);
+				ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(fCommandControl.getContext(),
+						ITraceTargetDMContext.class);
 				traceControl.loadTraceData(targetDmc, file, rm);
 			} else {
-				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, Messages.Tracing_not_supported_error, null));
+				rm.setStatus(
+						new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, Messages.Tracing_not_supported_error, null));
 				rm.done();
 			}
 		} else {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, Messages.Invalid_post_mortem_type_error, null));
+			rm.setStatus(
+					new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, Messages.Invalid_post_mortem_type_error, null));
 			rm.done();
 		}
 	}
-	
+
 	/**
 	 * Start tracking the breakpoints.  Note that for remote debugging
 	 * we should first connect to the target.
@@ -471,27 +463,28 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 			// This is important for multi-process
 			// Bug 342351
 			fAttributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, fBinaryName);
-			
-			fProcService.start(getContainerContext(), fAttributes, new ImmediateDataRequestMonitor<IContainerDMContext>(rm) {
-				@Override
-				protected void handleSuccess() {
-					assert getData() instanceof IMIContainerDMContext;
 
-					// Set the container that we created
-					setContainerContext(DMContexts.getAncestorOfType(getData(), IMIContainerDMContext.class));
-					fDataRequestMonitor.setData(getContainerContext());
+			fProcService.start(getContainerContext(), fAttributes,
+					new ImmediateDataRequestMonitor<IContainerDMContext>(rm) {
+						@Override
+						protected void handleSuccess() {
+							assert getData() instanceof IMIContainerDMContext;
 
-					// Don't call fDataRequestMonitor.done(), the sequence will
-					// automatically do that when it completes;
-					rm.done();
-				}
-			});
+							// Set the container that we created
+							setContainerContext(DMContexts.getAncestorOfType(getData(), IMIContainerDMContext.class));
+							fDataRequestMonitor.setData(getContainerContext());
+
+							// Don't call fDataRequestMonitor.done(), the sequence will
+							// automatically do that when it completes;
+							rm.done();
+						}
+					});
 		} else {
 			fDataRequestMonitor.setData(getContainerContext());
 			rm.done();
 		}
 	}
-	
+
 	/**
 	 * Cleanup now that the sequence has been run.
 	 * @since 4.0

@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarInfoExpressionInfo;
 
 /**
- * 
+ *
  *     -var-info-expression NAME
  *
  *  Returns what is represented by the variable object NAME:
@@ -27,21 +27,20 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarInfoExpressionInfo;
  *     lang=LANG-SPEC,exp=EXPRESSION
  *
  * where LANG-SPEC is `{"C" | "C++" | "Java"}'.
- * 
+ *
  */
 
 //MIVarInfoExpression.java
-public class MIVarInfoExpression extends MICommand<MIVarInfoExpressionInfo> 
-{
+public class MIVarInfoExpression extends MICommand<MIVarInfoExpressionInfo> {
 	/**
-     * @since 1.1
-     */
+	 * @since 1.1
+	 */
 	public MIVarInfoExpression(ICommandControlDMContext ctx, String name) {
-		super(ctx, "-var-info-expression", new String[]{name}); //$NON-NLS-1$
+		super(ctx, "-var-info-expression", new String[] { name }); //$NON-NLS-1$
 	}
-	
-    @Override
-    public MIVarInfoExpressionInfo getResult(MIOutput out) {
-        return new MIVarInfoExpressionInfo(out);
-    }
+
+	@Override
+	public MIVarInfoExpressionInfo getResult(MIOutput out) {
+		return new MIVarInfoExpressionInfo(out);
+	}
 }

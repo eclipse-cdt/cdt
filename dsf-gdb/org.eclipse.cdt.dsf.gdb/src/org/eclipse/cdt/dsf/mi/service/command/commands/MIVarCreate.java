@@ -20,9 +20,8 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarCreateInfo;
 
-
 /**
- * 
+ *
  *    -var-create {NAME | "-"}
  *       {FRAME-ADDR | "*"} EXPRESSION
  *
@@ -48,24 +47,23 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarCreateInfo;
  *   * `*ADDR-ADDR' -- a memory address range (TBD)
  *
  *   * `$REGNAME' -- a CPU register name
- * 
+ *
  */
-public class MIVarCreate extends MICommand<MIVarCreateInfo> 
-{
-    public MIVarCreate(IExpressionDMContext dmc, String expression) {
-        this(dmc, "-", "*", expression); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+public class MIVarCreate extends MICommand<MIVarCreateInfo> {
+	public MIVarCreate(IExpressionDMContext dmc, String expression) {
+		this(dmc, "-", "*", expression); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
-    public MIVarCreate(IExpressionDMContext dmc, String name, String expression) {
-        this(dmc, name, "*", expression); //$NON-NLS-1$
-    }
+	public MIVarCreate(IExpressionDMContext dmc, String name, String expression) {
+		this(dmc, name, "*", expression); //$NON-NLS-1$
+	}
 
-    public MIVarCreate(IExpressionDMContext dmc, String name, String frameAddr, String expression) {
-        super(dmc, "-var-create", new String[]{name, frameAddr, expression}); //$NON-NLS-1$
-    }
-        
-    @Override
-    public MIVarCreateInfo getResult(MIOutput out)  {
-        return new MIVarCreateInfo(out);
-    }
+	public MIVarCreate(IExpressionDMContext dmc, String name, String frameAddr, String expression) {
+		super(dmc, "-var-create", new String[] { name, frameAddr, expression }); //$NON-NLS-1$
+	}
+
+	@Override
+	public MIVarCreateInfo getResult(MIOutput out) {
+		return new MIVarCreateInfo(out);
+	}
 }

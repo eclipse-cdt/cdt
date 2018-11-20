@@ -34,7 +34,7 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 
 	/**
 	 * Creates a new control for use as a hover which does not take the focus.
-	 * 
+	 *
 	 * @param parent  parent shell
 	 * @param statusFieldText  text to be displayed in the status field, may be <code>null</code>
 	 */
@@ -45,7 +45,7 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 
 	/**
 	 * Creates a new control for use as a hover which optionally takes the focus.
-	 * 
+	 *
 	 * @param parent  parent shell
 	 * @param isResizable  whether this control should be resizable
 	 */
@@ -62,9 +62,9 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 	@Override
 	public void setInput(Object input) {
 		if (input instanceof CMacroExpansionInput) {
-			CMacroExpansionInput macroExpansionInput= (CMacroExpansionInput) input;
+			CMacroExpansionInput macroExpansionInput = (CMacroExpansionInput) input;
 			setInformation(macroExpansionInput.fExplorer.getFullExpansion().getCodeAfterStep());
-			fInput= macroExpansionInput;
+			fInput = macroExpansionInput;
 			updateStatusText();
 		} else {
 			fInput = null;
@@ -85,9 +85,10 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 			return;
 		}
 		if (fInput.fExplorer.getExpansionStepCount() > 1) {
-			IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+			IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 			if (bindingService != null) {
-				String keySequence= bindingService.getBestActiveBindingFormattedFor(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
+				String keySequence = bindingService
+						.getBestActiveBindingFormattedFor(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
 				if (keySequence != null) {
 					setStatusText(NLS.bind(CHoverMessages.CMacroExpansionControl_exploreMacroExpansion, keySequence));
 				}

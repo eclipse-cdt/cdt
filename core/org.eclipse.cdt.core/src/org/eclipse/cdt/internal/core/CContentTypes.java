@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -28,15 +28,17 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-/** 
+/**
  * Handles the access to the content types of the platform.
  * @author markus.schorn@windriver.com
  */
 public class CContentTypes {
 	private static final String PREF_LOCAL_CONTENT_TYPE_SETTINGS = "enabled"; //$NON-NLS-1$
-	private static final Preferences PROJECT_SCOPE = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
+	private static final Preferences PROJECT_SCOPE = Platform.getPreferencesService().getRootNode()
+			.node(ProjectScope.SCOPE);
 	private static final String CONTENT_TYPE_PREF_NODE = "content-types"; //$NON-NLS-1$
-	private static final String FULLPATH_CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + CONTENT_TYPE_PREF_NODE;
+	private static final String FULLPATH_CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR
+			+ CONTENT_TYPE_PREF_NODE;
 
 	/**
 	 * Implementation for {@link CCorePlugin#getContentType(IProject, String)}.
@@ -45,25 +47,25 @@ public class CContentTypes {
 		if (filename == null) {
 			return null;
 		}
-		IContentTypeMatcher matcher= null;
-		IScopeContext scopeCtx= null;
-		boolean preferCpp= true;
+		IContentTypeMatcher matcher = null;
+		IScopeContext scopeCtx = null;
+		boolean preferCpp = true;
 		if (project != null) {
 			// try with the project settings
 			try {
-				matcher= project.getContentTypeMatcher();
+				matcher = project.getContentTypeMatcher();
 				if (usesProjectSpecificContentTypes(project)) {
-					scopeCtx= new ProjectScope(project);
+					scopeCtx = new ProjectScope(project);
 				}
 				if (CoreModel.hasCNature(project)) {
-					preferCpp= CoreModel.hasCCNature(project) == IndexerPreferences.preferDefaultLanguage(project);
+					preferCpp = CoreModel.hasCCNature(project) == IndexerPreferences.preferDefaultLanguage(project);
 				}
 			} catch (CoreException e) {
 				// fallback to workspace wide definitions.
-				matcher= Platform.getContentTypeManager();
+				matcher = Platform.getContentTypeManager();
 			}
 		} else {
-			matcher= Platform.getContentTypeManager();
+			matcher = Platform.getContentTypeManager();
 		}
 
 		IContentType[] cts = matcher.findContentTypesFor(filename);
@@ -73,28 +75,28 @@ public class CContentTypes {
 		case 1:
 			return cts[0];
 		}
-		
-		int maxPossiblePriority= scopeCtx == null ? 11 : 101;
-		int bestPriority= -1;
-		IContentType bestResult= null;
-		
+
+		int maxPossiblePriority = scopeCtx == null ? 11 : 101;
+		int bestPriority = -1;
+		IContentType bestResult = null;
+
 		for (int i = 0; i < cts.length; i++) {
-			IContentType candidate= cts[i];
-			int priority= 0;
+			IContentType candidate = cts[i];
+			int priority = 0;
 			try {
 				if (scopeCtx != null) {
-					IContentTypeSettings settings= candidate.getSettings(scopeCtx);
+					IContentTypeSettings settings = candidate.getSettings(scopeCtx);
 					if (isStrictlyAssociatedWith(settings, filename)) {
-						priority= 100;
+						priority = 100;
 					}
 				}
 				if (priority == 0 && bestPriority < 100) {
 					if (isStrictlyAssociatedWith(candidate, filename)) {
-						priority= 10;
+						priority = 10;
 					}
 				}
 				if (isPreferredContentType(candidate, preferCpp)) {
-					priority+= 1;
+					priority += 1;
 				}
 			} catch (CoreException e) {
 				// skip it
@@ -103,32 +105,30 @@ public class CContentTypes {
 				if (priority == maxPossiblePriority) {
 					return candidate;
 				}
-				bestPriority= priority;
-				bestResult= candidate;
+				bestPriority = priority;
+				bestResult = candidate;
 			}
 		}
 		return bestResult;
 	}
-	
+
 	private static boolean isPreferredContentType(IContentType candidate, boolean preferCpp) {
 		while (candidate != null) {
-			String id= candidate.getId();
-			if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id) || 
-					CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {	
+			String id = candidate.getId();
+			if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id) || CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
 				return preferCpp;
 			}
-			
-			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id) || 
-					CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) { 
+
+			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id) || CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) {
 				return !preferCpp;
 			}
-			candidate= candidate.getBaseType();
+			candidate = candidate.getBaseType();
 		}
 		return false;
 	}
 
 	private static boolean isStrictlyAssociatedWith(IContentTypeSettings settings, String filename) {
-		String[] namespecs= settings.getFileSpecs(IContentType.FILE_NAME_SPEC);
+		String[] namespecs = settings.getFileSpecs(IContentType.FILE_NAME_SPEC);
 		for (int i = 0; i < namespecs.length; i++) {
 			String name = namespecs[i];
 			if (name.equals(filename)) {
@@ -137,9 +137,9 @@ public class CContentTypes {
 		}
 		// check the file extensions only
 		int dotPosition = filename.lastIndexOf('.');
-		if (dotPosition >= 0 && dotPosition < filename.length()-1) {
-			String fileExtension= filename.substring(dotPosition + 1); 
-			String[] extensions= settings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+		if (dotPosition >= 0 && dotPosition < filename.length() - 1) {
+			String fileExtension = filename.substring(dotPosition + 1);
+			String[] extensions = settings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
 			for (int i = 0; i < extensions.length; i++) {
 				String ext = extensions[i];
 				if (ext.equals(fileExtension)) {
@@ -156,7 +156,7 @@ public class CContentTypes {
 	 * Implementation for {@link CCorePlugin#usesProjectSpecificContentTypes(IProject)}.
 	 */
 	public static boolean usesProjectSpecificContentTypes(IProject project) {
-		String projectName= project.getName();
+		String projectName = project.getName();
 		try {
 			// be careful looking up for our node so not to create any nodes as side effect
 			Preferences node = PROJECT_SCOPE;
@@ -179,7 +179,7 @@ public class CContentTypes {
 	}
 
 	/**
-	 * Implementation for {@link CCorePlugin#setUseProjectSpecificContentTypes(IProject, boolean)}. 
+	 * Implementation for {@link CCorePlugin#setUseProjectSpecificContentTypes(IProject, boolean)}.
 	 */
 	public static void setUseProjectSpecificContentTypes(IProject project, boolean val) {
 		ProjectScope projectScope = new ProjectScope(project);

@@ -43,7 +43,6 @@ import org.eclipse.cdt.internal.ui.util.CoreUtility;
 
 public class CPathContainerDescriptor implements IContainerDescriptor {
 
-
 	/**
 	 * Adapter class to adapter deprecated ICPathContainerPage to new IPathEntryContainerPage
 	 * @author Dave
@@ -58,8 +57,8 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 			return null;
 		}
 
-
 		private final org.eclipse.cdt.ui.wizards.ICPathContainerPage fPage;
+
 		protected PathEntryContainerPageAdapter(org.eclipse.cdt.ui.wizards.ICPathContainerPage page) {
 			fPage = page;
 		}
@@ -269,6 +268,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		}
 
 	}
+
 	private IConfigurationElement fConfigElement;
 
 	private static final String ATT_EXTENSION = "PathContainerPage"; //$NON-NLS-1$
@@ -276,7 +276,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_NAME = "name"; //$NON-NLS-1$
 	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
-	private static final String ATT_PAGE_CLASS = "class"; //$NON-NLS-1$	
+	private static final String ATT_PAGE_CLASS = "class"; //$NON-NLS-1$
 
 	private Image pageImage;
 
@@ -289,8 +289,9 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		String pageClassName = configElement.getAttribute(ATT_PAGE_CLASS);
 
 		if (name == null) {
-			throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "Invalid extension (missing name): " + id, //$NON-NLS-1$
-					null));
+			throw new CoreException(
+					new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "Invalid extension (missing name): " + id, //$NON-NLS-1$
+							null));
 		}
 		if (pageClassName == null) {
 			throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0,
@@ -303,8 +304,8 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		Object elem = CoreUtility.createExtension(fConfigElement, ATT_PAGE_CLASS);
 		if (elem instanceof IPathEntryContainerPage) {
 			return (IPathEntryContainerPage) elem;
-		} 
-		IPathEntryContainerPage result= PathEntryContainerPageAdapter.createAdapter(elem);
+		}
+		IPathEntryContainerPage result = PathEntryContainerPageAdapter.createAdapter(elem);
 		if (result != null) {
 			return result;
 		}
@@ -367,7 +368,8 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 	public static IContainerDescriptor[] getDescriptors() {
 		ArrayList<IContainerDescriptor> containers = new ArrayList<IContainerDescriptor>();
 
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, ATT_EXTENSION);
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
+				ATT_EXTENSION);
 		if (extensionPoint != null) {
 			IContainerDescriptor defaultPage = null;
 			String defaultPageName = CPathContainerDefaultPage.class.getName();

@@ -12,7 +12,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 /**
  * Binding for specializations of constructors.
- * 
+ *
  * @since 6.2
  */
 public interface ICPPConstructorSpecialization extends ICPPConstructor, ICPPSpecialization {

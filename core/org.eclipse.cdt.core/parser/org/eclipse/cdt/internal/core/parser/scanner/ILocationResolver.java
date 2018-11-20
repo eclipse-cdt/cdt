@@ -35,7 +35,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
  * Interface between the AST and the location-resolver for resolving offsets.
  * @since 5.0
  */
-public interface ILocationResolver {    
+public interface ILocationResolver {
 	/**
 	 * Introduces the AST translation unit to the location resolver. Must be called before any
 	 * tokens from the scanner are obtained.
@@ -65,42 +65,42 @@ public interface ILocationResolver {
 	/**
 	 * @see IASTTranslationUnit#getPreprocessorProblems()
 	 */
-    IASTProblem[] getScannerProblems();
+	IASTProblem[] getScannerProblems();
 
 	/**
 	 * @see IASTTranslationUnit#getPreprocessorProblemsCount()
 	 */
 	int getScannerProblemsCount();
 
-    /**
-     * Returns the comments encountered.
-     */
+	/**
+	 * Returns the comments encountered.
+	 */
 	IASTComment[] getComments();
 
 	/**
-     * @see IASTTranslationUnit#getFilePath()
-     */
-    String getTranslationUnitPath();
-    
-    /**
-     * @see IASTTranslationUnit#getContainingFilename()
-     */
+	 * @see IASTTranslationUnit#getFilePath()
+	 */
+	String getTranslationUnitPath();
+
+	/**
+	 * @see IASTTranslationUnit#getContainingFilename()
+	 */
 	String getContainingFilePath(int sequenceNumber);
-	
-    /**
-     * @see IASTTranslationUnit#getDependencyTree()
-     */
-    IDependencyTree getDependencyTree();
 
-    /**
-     * Returns explicit and implicit references for a macro.
-     */
-    IASTName[] getReferences(IMacroBinding binding);
+	/**
+	 * @see IASTTranslationUnit#getDependencyTree()
+	 */
+	IDependencyTree getDependencyTree();
 
-    /**
-     * Returns the definition for a macro.
-     */
-    IASTName[] getDeclarations(IMacroBinding binding);
+	/**
+	 * Returns explicit and implicit references for a macro.
+	 */
+	IASTName[] getReferences(IMacroBinding binding);
+
+	/**
+	 * Returns the definition for a macro.
+	 */
+	IASTName[] getDeclarations(IMacroBinding binding);
 
 	/**
 	 * Returns the smallest file location, that encloses the given global range. In case the range
@@ -108,7 +108,7 @@ public interface ILocationResolver {
 	 * found in the same file. So the resulting location contains the include directives that
 	 * actually cause the range to be part of the AST.
 	 * @param offset sequence number as stored in the ASTNodes.
-	 * @param length 
+	 * @param length
 	 */
 	IASTFileLocation getMappedFileLocation(int offset, int length);
 
@@ -119,7 +119,7 @@ public interface ILocationResolver {
 	  * @param offset sequence number as stored in the ast nodes.
 	  * @param length
 	  * @return and array of locations.
-	  */	
+	  */
 	IASTNodeLocation[] getLocations(int sequenceNumber, int length);
 
 	/**
@@ -139,15 +139,15 @@ public interface ILocationResolver {
 	 * @see IASTNode#getRawSignature()
 	 */
 	char[] getUnpreprocessedSignature(IASTFileLocation loc);
-	
+
 	/**
-	 * Searches for a preprocessor node matching the given specification. Candidates are passed to 
+	 * Searches for a preprocessor node matching the given specification. Candidates are passed to
 	 * nodeSpec, which selects and stores the best result.
-	 * 
+	 *
 	 * @param nodeSpec specification of node to search for.
 	 */
 	void findPreprocessorNode(ASTNodeSpecification<?> nodeSpec);
-	
+
 	/**
 	 * Returns whether the specified sequence number points into the root file of the
 	 * translation unit, or not.
@@ -169,7 +169,7 @@ public interface ILocationResolver {
 
 	/**
 	 * Returns all explicit macro expansions that intersect with the given file location.
-	 * Include files that may be included within the given location are not examined. 
+	 * Include files that may be included within the given location are not examined.
 	 * @param loc the file-location to search for macro references
 	 * @return an array of macro expansions.
 	 * @since 5.0

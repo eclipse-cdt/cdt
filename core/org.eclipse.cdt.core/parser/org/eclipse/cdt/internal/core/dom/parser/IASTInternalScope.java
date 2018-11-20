@@ -22,10 +22,10 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * Interface for methods on scopes that are internal to the AST.
  */
 public interface IASTInternalScope extends IScope {
-    /**
-     * Returns the physical IASTNode that this scope was created for
-     */
-    public IASTNode getPhysicalNode();
+	/**
+	 * Returns the physical IASTNode that this scope was created for
+	 */
+	public IASTNode getPhysicalNode();
 
 	/**
 	 * Adds an IBinding to the scope.  It is primarily used by the parser to add
@@ -37,7 +37,7 @@ public interface IASTInternalScope extends IScope {
 	 * Adds an IASTName to be cached in this scope.
 	 * @param adlOnly whether this declaration of this name only makes the name visible to
 	 *                argument-dependent lookup
-	 *                
+	 *
 	 * Implementation note: only CPPNamespaceScope cares about "adlOnly".
 	 */
 	public void addName(IASTName name, boolean adlOnly);

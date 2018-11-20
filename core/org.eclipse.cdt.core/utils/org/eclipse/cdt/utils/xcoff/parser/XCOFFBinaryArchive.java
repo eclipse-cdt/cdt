@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * XCOFF32 binary archive
- * 
+ *
  * @author vhirsl
  */
 public class XCOFFBinaryArchive extends BinaryFile implements IBinaryArchive {
@@ -42,7 +42,6 @@ public class XCOFFBinaryArchive extends BinaryFile implements IBinaryArchive {
 		new AR(path.toOSString()).dispose(); // check file type
 		children = new ArrayList<IBinaryObject>(5);
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryArchive#getObjects()

@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
  * This interface represents a template specialization.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -31,14 +31,14 @@ public interface ICPPASTTemplateSpecialization extends IASTDeclaration {
 
 	/**
 	 * Get the declaration.
-	 * 
+	 *
 	 * @return <code>IASTDeclaration</code>
 	 */
 	public IASTDeclaration getDeclaration();
 
 	/**
 	 * Set the declaration.
-	 * 
+	 *
 	 * @param declaration
 	 *            <code>IASTDeclaration</code>
 	 */

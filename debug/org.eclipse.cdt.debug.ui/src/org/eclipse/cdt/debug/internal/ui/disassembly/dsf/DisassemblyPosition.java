@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -31,12 +31,13 @@ public class DisassemblyPosition extends AddressRangePosition {
 	 * @param functionOffset
 	 * @param opcodes
 	 */
-	public DisassemblyPosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength, String functionOffset, BigInteger opcodes) {
+	public DisassemblyPosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength,
+			String functionOffset, BigInteger opcodes) {
 		super(offset, length, addressOffset, addressLength);
 		fOpcodes = opcodes;
 		fFunction = functionOffset.toCharArray();
-	}	
-	
+	}
+
 	/**
 	 * @return source file
 	 */

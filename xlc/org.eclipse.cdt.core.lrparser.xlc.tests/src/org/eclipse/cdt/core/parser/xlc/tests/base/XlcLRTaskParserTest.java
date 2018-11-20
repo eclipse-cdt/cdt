@@ -24,11 +24,11 @@ public class XlcLRTaskParserTest extends LRTaskParserTest {
 	public static TestSuite suite() {
 		return suite(XlcLRTaskParserTest.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

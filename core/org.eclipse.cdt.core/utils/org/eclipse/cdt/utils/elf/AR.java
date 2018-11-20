@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.elf;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -59,17 +58,17 @@ public class AR {
 	}
 
 	/**
-	 * The <code>ARHeader</code> class is used to store the per-object file 
+	 * The <code>ARHeader</code> class is used to store the per-object file
 	 *  archive headers.  It can also create an Elf object for inspecting
 	 *  the object file data.
 	 */
 	public class ARHeader {
 
 		private String object_name;
-//		private String modification_time;
-//		private String uid;
-//		private String gid;
-//		private String mode;
+		//		private String modification_time;
+		//		private String uid;
+		//		private String gid;
+		//		private String mode;
 		private long size;
 		private long elf_offset;
 
@@ -84,13 +83,13 @@ public class AR {
 
 		/**
 		 * Look up the name stored in the archive's string table based
-		 * on the offset given. 
+		 * on the offset given.
 		 *
 		 * Maintains <code>efile</code> file location.
 		 *
-		 * @param offset 
+		 * @param offset
 		 *    Offset into the string table for first character of the name.
-		 * @throws IOException 
+		 * @throws IOException
 		 *    <code>offset</code> not in string table bounds.
 		 */
 		private String nameFromStringTable(long offset) throws IOException {
@@ -112,11 +111,11 @@ public class AR {
 		}
 
 		/**
-		 * Creates a new archive header object.  
+		 * Creates a new archive header object.
 		 *
 		 * Assumes that efile is already at the correct location in the file.
 		 *
-		 * @throws IOException 
+		 * @throws IOException
 		 *    There was an error processing the header data from the file.
 		 */
 		public ARHeader() throws IOException {
@@ -148,10 +147,10 @@ public class AR {
 			// Convert the raw bytes into strings and numbers.
 			//
 			this.object_name = removeBlanks(new String(object_name));
-//			this.modification_time = new String(modification_time);
-//			this.uid = new String(uid);
-//			this.gid = new String(gid);
-//			this.mode = new String(mode);
+			//			this.modification_time = new String(modification_time);
+			//			this.uid = new String(uid);
+			//			this.gid = new String(gid);
+			//			this.mode = new String(mode);
 			this.size = Long.parseLong(removeBlanks(new String(size)));
 
 			//
@@ -185,7 +184,7 @@ public class AR {
 		public long getSize() {
 			return size;
 		}
-		
+
 		public String getArchiveName() {
 			return filename;
 		}
@@ -193,9 +192,9 @@ public class AR {
 		/**
 		 *  Create an new Elf object for the object file.
 		 *
-		 * @throws IOException 
+		 * @throws IOException
 		 *    Not a valid Elf object file.
-		 * @return A new Elf object.  
+		 * @return A new Elf object.
 		 * @see Elf#Elf( String, long )
 		 */
 		public Elf getElf() throws IOException {
@@ -219,20 +218,14 @@ public class AR {
 	}
 
 	public static boolean isARHeader(byte[] ident) {
-		if (ident == null || ident.length < 7
-			|| ident[0] != '!'
-			|| ident[1] != '<'
-			|| ident[2] != 'a'
-			|| ident[3] != 'r'
-			|| ident[4] != 'c'
-			|| ident[5] != 'h'
-			|| ident[6] != '>')
+		if (ident == null || ident.length < 7 || ident[0] != '!' || ident[1] != '<' || ident[2] != 'a'
+				|| ident[3] != 'r' || ident[4] != 'c' || ident[5] != 'h' || ident[6] != '>')
 			return false;
 		return true;
 	}
 
 	/**
-	 *  Creates a new <code>AR</code> object from the contents of 
+	 *  Creates a new <code>AR</code> object from the contents of
 	 *  the given file.
 	 *
 	 *  @param filename The file to process.
@@ -292,8 +285,8 @@ public class AR {
 
 	/**
 	 *  Get an array of all the object file headers for this archive.
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 *    Unable to process the archive file.
 	 * @return An array of headers, one for each object within the archive.
 	 * @see ARHeader

@@ -19,10 +19,9 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 
-
 /**
  * This class contains several convenience methods mainly for debugging purposes.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -31,8 +30,7 @@ public class DebugUtil {
 
 	private DebugUtil() { // class just contains static methods
 	}
-	
-	
+
 	/**
 	 * Prints a trace message to stdout that gives info
 	 * about the method that calls this method.
@@ -41,50 +39,47 @@ public class DebugUtil {
 		StackTraceElement[] trace = Thread.currentThread().getStackTrace();
 		printMethodTrace(trace, null);
 	}
-	
+
 	/**
 	 * Prints a trace message to stdout that gives info
 	 * about the method that calls this method.
-	 * 
+	 *
 	 * The output is in a format that will show up as a hyperlink in the eclipse console.
 	 */
 	public static void printMethodTrace(String extraMessage) {
 		StackTraceElement[] trace = Thread.currentThread().getStackTrace();
 		printMethodTrace(trace, extraMessage);
 	}
-	
+
 	private static void printMethodTrace(StackTraceElement[] trace, String extraMessage) {
 		StackTraceElement caller = trace[3];
-		
+
 		String className = caller.getClassName();
 		className = className.substring(className.lastIndexOf(".") + 1);
-		
-		String message = String.format("%s.%s(%s:%d)",
-				className, caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
-		
-		if(extraMessage != null)
+
+		String message = String.format("%s.%s(%s:%d)", className, caller.getMethodName(), caller.getFileName(),
+				caller.getLineNumber());
+
+		if (extraMessage != null)
 			message += ": " + extraMessage;
-		
+
 		System.out.println(message);
 	}
 
 	public static String safeClassName(Object obj) {
 		return obj != null ? obj.getClass().getSimpleName() : "";
 	}
-	
+
 	public static String toStringWithClass(Object obj) {
-		return obj != null ?
-				String.valueOf(obj) + " " + obj.getClass().getSimpleName() :
-				"null";
+		return obj != null ? String.valueOf(obj) + " " + obj.getClass().getSimpleName() : "null";
 	}
-	
-	
+
 	/**
 	 * Prints the values of javabean properties to the console.
 	 * This method is not recursive, it does not print nested properties.
-	 * 
-	 * Example of usage: 
-	 * 
+	 *
+	 * Example of usage:
+	 *
 	 * IResource resource = ...;
 	 * DebugUtil.printObjectProperties(resource);
 	 * DebugUtil.printObjectProperties(resource.getResourceAttributes());
@@ -94,13 +89,15 @@ public class DebugUtil {
 		try {
 			System.out.println("Object: " + obj);
 			BeanInfo info = Introspector.getBeanInfo(obj.getClass());
-			
+
 			for (PropertyDescriptor propertyDescriptor : info.getPropertyDescriptors()) {
 				Method getter = propertyDescriptor.getReadMethod();
 				try {
 					System.out.println("  " + getter.getName() + "=" + getter.invoke(obj, new Object[0]));
-				} catch (Exception e) {} 
+				} catch (Exception e) {
+				}
 			}
-		} catch (IntrospectionException e) {}
+		} catch (IntrospectionException e) {
+		}
 	}
 }

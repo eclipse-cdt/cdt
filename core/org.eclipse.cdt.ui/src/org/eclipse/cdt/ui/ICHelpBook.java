@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Intel Corporation - Initial API and implementation
  **********************************************************************/
 package org.eclipse.cdt.ui;
@@ -32,11 +32,10 @@ public interface ICHelpBook {
 	 * @return String representing the HelpBook tytle
 	 */
 	String getTitle();
-	
+
 	/**
 	 * gets the type of Help provided with this book that might be ine of ICHelpBook.HELP_TYPE_XXX
 	 * @return one of ICHelpBook.HELP_TYPE_XXX representing the type of Provided help
 	 */
 	int getCHelpType();
 }
-

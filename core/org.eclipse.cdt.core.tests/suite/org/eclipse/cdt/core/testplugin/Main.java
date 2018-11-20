@@ -15,7 +15,6 @@ package org.eclipse.cdt.core.testplugin;
 
 // copied from startup.jar. planned to be removed soon
 
-
 import java.io.File;
 import java.io.FileFilter;
 import java.lang.reflect.InvocationTargetException;
@@ -26,6 +25,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
 /**
  * Startup class for Eclipse. Creates a class loader using
  * supplied URL of platform installation, loads and calls
@@ -61,9 +61,9 @@ import java.util.StringTokenizer;
  *    -password &lt;passwd&gt;: the password for the authorization database
  * </dd>
  * <dd>
- *    -plugins &lt;location&gt;: The arg is a URL pointing to a file which specs the plugin 
- * path for the platform.  The file is in property file format where the keys are user-defined 
- * names and the values are comma separated lists of either explicit paths to plugin.xml 
+ *    -plugins &lt;location&gt;: The arg is a URL pointing to a file which specs the plugin
+ * path for the platform.  The file is in property file format where the keys are user-defined
+ * names and the values are comma separated lists of either explicit paths to plugin.xml
  * files or directories containing plugins. (e.g., .../eclipse/plugins).
  * </dd>
  * <dd>
@@ -156,14 +156,15 @@ public class Main {
 
 	/**
 	 * Executes the launch.
-	 * 
+	 *
 	 * @return the result of performing the launch
 	 * @param args command-line arguments
 	 * @exception Exception thrown if a problem occurs during the launch
 	 */
 	protected Object basicRun(String[] args) throws Exception {
 		Class clazz = getBootLoader(bootLocation);
-		Method method = clazz.getDeclaredMethod("run", new Class[] { String.class, URL.class, String.class, String[].class });
+		Method method = clazz.getDeclaredMethod("run",
+				new Class[] { String.class, URL.class, String.class, String[].class });
 		try {
 			return method.invoke(clazz, new Object[] { application, pluginPathLocation, location, args });
 		} catch (InvocationTargetException e) {
@@ -176,7 +177,7 @@ public class Main {
 
 	/**
 	 * Returns the result of converting a list of comma-separated tokens into an array
-	 * 
+	 *
 	 * @return the array of string tokens
 	 * @param prop the initial comma-separated string
 	 */
@@ -198,7 +199,7 @@ public class Main {
 	 * up and run the platform.  The given base, if not <code>null</code>,
 	 * is the location of the boot loader code.  If the value is <code>null</code>
 	 * then the boot loader is located relative to this class.
-	 * 
+	 *
 	 * @return the new boot loader
 	 * @param base the location of the boot loader
 	 */
@@ -211,7 +212,7 @@ public class Main {
 	/**
 	 * Returns the <code>URL</code>-based class path describing where the boot classes
 	 * are located when running in development mode.
-	 * 
+	 *
 	 * @return the url-based class path
 	 * @param base the base location
 	 * @exception MalformedURLException if a problem occurs computing the class path
@@ -221,7 +222,7 @@ public class Main {
 		String devBase = base.toExternalForm();
 		if (!inDevelopmentMode) {
 			url = new URL(devBase + "boot.jar");
-			return new URL[] {url};
+			return new URL[] { url };
 		}
 		String[] locations = getArrayFromList(devClassPath);
 		ArrayList result = new ArrayList(locations.length);
@@ -229,7 +230,7 @@ public class Main {
 			String spec = devBase + locations[i];
 			char lastChar = spec.charAt(spec.length() - 1);
 			if ((spec.endsWith(".jar") || (lastChar == '/' || lastChar == '\\')))
-				url = new URL (spec);
+				url = new URL(spec);
 			else
 				url = new URL(spec + "/");
 			//make sure URL exists before adding to path
@@ -239,42 +240,41 @@ public class Main {
 		url = new URL(devBase + "boot.jar");
 		if (new java.io.File(url.getFile()).exists())
 			result.add(url);
-		return (URL[])result.toArray(new URL[result.size()]);
+		return (URL[]) result.toArray(new URL[result.size()]);
 	}
 
 	/**
 	 * Returns the <code>URL</code>-based class path describing where the boot classes are located.
-	 * 
+	 *
 	 * @return the url-based class path
 	 * @param base the base location
 	 * @exception MalformedURLException if a problem occurs computing the class path
 	 */
 	protected URL[] getBootPath(String base) throws MalformedURLException {
 		URL url = null;
-		// if the given location is not null, assume it is correct and use it. 
+		// if the given location is not null, assume it is correct and use it.
 		if (base != null) {
 			url = new URL(base);
 			if (debug)
 				System.out.println("Boot URL: " + url.toExternalForm());
-			return new URL[] {url};	
+			return new URL[] { url };
 		}
 		// Create a URL based on the location of this class' code.
-		// strip off jar file and/or last directory to get 
+		// strip off jar file and/or last directory to get
 		// to the directory containing projects.
 		URL[] result = null;
 		url = getClass().getProtectionDomain().getCodeSource().getLocation();
 		String path = url.getFile();
 		if (path.endsWith(".jar"))
 			path = path.substring(0, path.lastIndexOf("/"));
-		else 
-			if (path.endsWith("/"))
-				path = path.substring(0, path.length() - 1);
+		else if (path.endsWith("/"))
+			path = path.substring(0, path.length() - 1);
 		if (inVAJ || inVAME) {
 			int ix = path.lastIndexOf("/");
 			path = path.substring(0, ix + 1);
 			path = path + PROJECT_NAME + "/";
 			url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
-			result = new URL[] {url};
+			result = new URL[] { url };
 		} else {
 			path = searchForPlugins(path);
 			path = searchForBoot(path);
@@ -285,7 +285,7 @@ public class Main {
 		if (debug) {
 			System.out.println("Boot URL:");
 			for (int i = 0; i < result.length; i++)
-				System.out.println("    " + result[i].toExternalForm());	
+				System.out.println("    " + result[i].toExternalForm());
 		}
 		return result;
 	}
@@ -294,7 +294,7 @@ public class Main {
 	 * Searches for a plugins root starting at a given location.  If one is
 	 * found then this location is returned; otherwise an empty string is
 	 * returned.
-	 * 
+	 *
 	 * @return the location where plugins were found, or an empty string
 	 * @param start the location to begin searching at
 	 */
@@ -305,15 +305,16 @@ public class Main {
 			if (test.exists())
 				return test.toString();
 			path = path.getParentFile();
-			path = (path == null || path.length() == 1)  ? null : path;
+			path = (path == null || path.length() == 1) ? null : path;
 		}
 		return "";
 	}
+
 	/**
 	 * Searches for a boot directory starting at a given location.  If one
 	 * is found then this location is returned; otherwise an empty string
 	 * is returned.
-	 * 
+	 *
 	 * @return the location where plugins were found, or an empty string
 	 * @param start the location to begin searching at
 	 */
@@ -339,22 +340,22 @@ public class Main {
 					if (maxVersion == null) {
 						result = boots[i].getAbsolutePath();
 						maxVersion = version;
-					} else
-						if (maxVersion.compareTo(version) == -1) {
-							result = boots[i].getAbsolutePath();
-							maxVersion = version;
-						}						
+					} else if (maxVersion.compareTo(version) == -1) {
+						result = boots[i].getAbsolutePath();
+						maxVersion = version;
+					}
 				}
 			}
 		}
 		if (result == null)
-			throw new RuntimeException("Could not find bootstrap code. Check location of boot plug-in or specify -boot.");
+			throw new RuntimeException(
+					"Could not find bootstrap code. Check location of boot plug-in or specify -boot.");
 		return result.replace(File.separatorChar, '/') + "/";
 	}
 
 	/**
 	 * Returns the update loader for the given boot path.
-	 * 
+	 *
 	 * @return the update loader
 	 * @param base the boot path base
 	 * @exception Exception thrown is a problem occurs determining this loader
@@ -377,7 +378,7 @@ public class Main {
 	 * call should use <code>run()</code>.
 	 *
 	 * @see #run
-	 * 
+	 *
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
@@ -393,6 +394,7 @@ public class Main {
 		int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
 		System.exit(exitCode);
 	}
+
 	/**
 	 * Tears down the currently-displayed splash screen.
 	 */
@@ -407,7 +409,7 @@ public class Main {
 
 	/**
 	 * Runs this launcher with the arguments specified in the given string.
-	 * 
+	 *
 	 * @param argString the arguments string
 	 * @exception Exception thrown if a problem occurs during launching
 	 */
@@ -420,7 +422,7 @@ public class Main {
 
 	/**
 	 * Processes the command line arguments
-	 * 
+	 *
 	 * @return the arguments to pass through to the launched application
 	 * @param args the command line arguments
 	 */
@@ -439,23 +441,24 @@ public class Main {
 			}
 
 			// check if development mode should be enabled for the entire platform
-			// If this is the last arg or there is a following arg (i.e., arg+1 has a leading -), 
+			// If this is the last arg or there is a following arg (i.e., arg+1 has a leading -),
 			// simply enable development mode.  Otherwise, assume that that the following arg is
 			// actually some additional development time class path entries.  This will be processed below.
-			if (args[i].equalsIgnoreCase(DEV) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) {
+			if (args[i].equalsIgnoreCase(DEV)
+					&& ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) {
 				inDevelopmentMode = true;
 				// do not mark the arg as found so it will be passed through
 				continue;
 			}
 
-			// done checking for args.  Remember where an arg was found 
+			// done checking for args.  Remember where an arg was found
 			if (found) {
 				configArgs[configArgIndex++] = i;
 				continue;
 			}
 			// check for args with parameters. If we are at the last argument or if the next one
 			// has a '-' as the first character, then we can't have an arg with a parm so continue.
-			if (i == args.length - 1 || args[i + 1].startsWith("-")) 
+			if (i == args.length - 1 || args[i + 1].startsWith("-"))
 				continue;
 			String arg = args[++i];
 
@@ -465,7 +468,7 @@ public class Main {
 				found = true;
 			}
 
-			// look for the development mode and class path entries.  
+			// look for the development mode and class path entries.
 			if (args[i - 1].equalsIgnoreCase(DEV)) {
 				inDevelopmentMode = true;
 				devClassPath = arg;
@@ -491,7 +494,7 @@ public class Main {
 				found = true;
 			}
 
-			// done checking for args.  Remember where an arg was found 
+			// done checking for args.  Remember where an arg was found
 			if (found) {
 				configArgs[configArgIndex++] = i - 1;
 				configArgs[configArgIndex++] = i;
@@ -514,7 +517,7 @@ public class Main {
 
 	/**
 	 * Runs the application to be launched.
-	 * 
+	 *
 	 * @return the return value from the launched application
 	 * @param args the arguments to pass to the application
 	 * @exception thrown if a problem occurs during launching
@@ -529,7 +532,7 @@ public class Main {
 
 	/**
 	 * Performs an update run.
-	 * 
+	 *
 	 * @return the return value from the update loader
 	 * @param flag flag to give to the update loader
 	 * @param value value to give to the update loader
@@ -538,7 +541,8 @@ public class Main {
 	 */
 	protected Object updateRun(String flag, String value, String[] args) throws Exception {
 		Class clazz = getUpdateLoader(bootLocation);
-		Method method = clazz.getDeclaredMethod("run", new Class[] { String.class, String.class, String.class, String[].class });
+		Method method = clazz.getDeclaredMethod("run",
+				new Class[] { String.class, String.class, String.class, String[].class });
 		try {
 			return method.invoke(clazz, new Object[] { flag, value, location, args });
 		} catch (InvocationTargetException e) {

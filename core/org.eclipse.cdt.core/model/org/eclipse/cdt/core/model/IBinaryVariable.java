@@ -16,9 +16,9 @@ package org.eclipse.cdt.core.model;
 
 /**
  * Represents a global variable.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IBinaryVariable extends IVariable , IBinaryElement {
+public interface IBinaryVariable extends IVariable, IBinaryElement {
 }

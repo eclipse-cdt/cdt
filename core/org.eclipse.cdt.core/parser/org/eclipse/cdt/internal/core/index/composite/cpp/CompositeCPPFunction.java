@@ -61,7 +61,7 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 	@Override
 	public ICPPParameter[] getParameters() {
 		ICPPParameter[] result = ((ICPPFunction) rbinding).getParameters();
-		for (int i= 0; i < result.length; i++) {
+		for (int i = 0; i < result.length; i++) {
 			result[i] = (ICPPParameter) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
@@ -72,7 +72,7 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 		IType rtype = ((ICPPFunction) rbinding).getType();
 		return (ICPPFunctionType) cf.getCompositeType(rtype);
 	}
-	
+
 	@Override
 	public ICPPFunctionType getDeclaredType() {
 		IType rtype = ((ICPPFunction) rbinding).getDeclaredType();
@@ -126,7 +126,8 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 
 	@Override
 	public Object clone() {
-		fail(); return null;
+		fail();
+		return null;
 	}
 
 	@Override
@@ -136,13 +137,13 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 
 	@Override
 	public IType[] getExceptionSpecification() {
-		IType[] es= ((ICPPFunction) rbinding).getExceptionSpecification();
+		IType[] es = ((ICPPFunction) rbinding).getExceptionSpecification();
 		if (es == null || es.length == 0)
 			return es;
-		
-		IType[] result= new IType[es.length];
+
+		IType[] result = new IType[es.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i]= cf.getCompositeType(es[i]);
+			result[i] = cf.getCompositeType(es[i]);
 		}
 		return result;
 	}

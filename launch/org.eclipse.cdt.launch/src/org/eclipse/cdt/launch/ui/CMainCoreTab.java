@@ -7,19 +7,18 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
-
 
 /**
  * @since 6.0
  */
 @Deprecated
 public class CMainCoreTab extends CMainTab {
-    public CMainCoreTab() {
-        super(CMainTab.SPECIFY_CORE_FILE);
-    }
+	public CMainCoreTab() {
+		super(CMainTab.SPECIFY_CORE_FILE);
+	}
 }

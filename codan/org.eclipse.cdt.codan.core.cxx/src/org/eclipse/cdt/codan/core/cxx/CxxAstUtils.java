@@ -82,12 +82,12 @@ public final class CxxAstUtils {
 			return PROCESS_ABORT;
 		}
 	}
-	
+
 	private static class FunctionNameFinderVisitor extends NameFinderVisitor {
 		{
 			shouldVisitExpressions = true;
 		}
-		
+
 		@Override
 		public int visit(IASTExpression expression) {
 			if (expression instanceof IASTFieldReference) {
@@ -95,9 +95,9 @@ public final class CxxAstUtils {
 				return PROCESS_ABORT;
 			}
 			return super.visit(expression);
-		}	
+		}
 	}
-	
+
 	private static class NoReturnImplicitCallFinder extends ASTVisitor {
 		boolean noReturn;
 
@@ -105,7 +105,7 @@ public final class CxxAstUtils {
 			shouldVisitImplicitNames = true;
 			shouldVisitImplicitDestructorNames = true;
 		}
-		
+
 		@Override
 		public int visit(IASTName name) {
 			if (name instanceof IASTImplicitName) {
@@ -116,9 +116,9 @@ public final class CxxAstUtils {
 				}
 			}
 			return PROCESS_CONTINUE;
-		}	
+		}
 	}
-	
+
 	// Not instantiatable. All methods are static.
 	private CxxAstUtils() {
 	}
@@ -128,7 +128,8 @@ public final class CxxAstUtils {
 	}
 
 	public static boolean isInMacro(IASTNode node) {
-		IASTNodeSelector nodeSelector = node.getTranslationUnit().getNodeSelector(node.getTranslationUnit().getFilePath());
+		IASTNodeSelector nodeSelector = node.getTranslationUnit()
+				.getNodeSelector(node.getTranslationUnit().getFilePath());
 		IASTFileLocation fileLocation = node.getFileLocation();
 		if (fileLocation == null)
 			return true;
@@ -197,11 +198,12 @@ public final class CxxAstUtils {
 	/**
 	 * For any BinaryExpression, guess the type from the other operand. (A good
 	 * guess for =, ==; hard to get a better guess for others)
-	 * 
+	 *
 	 * @return inferred type or {@code null} if couldn't infer
 	 */
 	private static IType tryInferTypeFromBinaryExpr(IASTName astName) {
-		if (astName.getParent() instanceof IASTIdExpression && astName.getParent().getParent() instanceof IASTBinaryExpression) {
+		if (astName.getParent() instanceof IASTIdExpression
+				&& astName.getParent().getParent() instanceof IASTBinaryExpression) {
 			IASTNode binaryExpr = astName.getParent().getParent();
 			for (IASTNode node : binaryExpr.getChildren()) {
 				if (node != astName.getParent()) {
@@ -216,12 +218,14 @@ public final class CxxAstUtils {
 	/**
 	 * For a function call, tries to find a matching function declaration.
 	 * Checks the argument count.
-	 * 
+	 *
 	 * @param index the index
 	 * @return a generated declaration or {@code null} if not suitable
 	 */
-	private static IASTSimpleDeclaration tryInferTypeFromFunctionCall(IASTName astName, INodeFactory factory, IIndex index) {
-		if (astName.getParent() instanceof IASTIdExpression && astName.getParent().getParent() instanceof IASTFunctionCallExpression
+	private static IASTSimpleDeclaration tryInferTypeFromFunctionCall(IASTName astName, INodeFactory factory,
+			IIndex index) {
+		if (astName.getParent() instanceof IASTIdExpression
+				&& astName.getParent().getParent() instanceof IASTFunctionCallExpression
 				&& astName.getParent().getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT) {
 			IASTFunctionCallExpression call = (IASTFunctionCallExpression) astName.getParent().getParent();
 			FunctionNameFinderVisitor visitor = new FunctionNameFinderVisitor();
@@ -270,7 +274,7 @@ public final class CxxAstUtils {
 					if (tu == null) {
 						continue;
 					}
-					
+
 					IASTTranslationUnit ast = null;
 					if (astCache.containsKey(tu)) {
 						ast = astCache.get(tu);
@@ -278,8 +282,9 @@ public final class CxxAstUtils {
 						ast = tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 						astCache.put(tu, ast);
 					}
-					
-					IASTName name = (IASTName) ast.getNodeSelector(null).findEnclosingNode(decl.getNodeOffset(), decl.getNodeLength());
+
+					IASTName name = (IASTName) ast.getNodeSelector(null).findEnclosingNode(decl.getNodeOffset(),
+							decl.getNodeLength());
 					IASTNode fdecl = name;
 					while (fdecl instanceof IASTName) {
 						fdecl = fdecl.getParent();
@@ -324,7 +329,7 @@ public final class CxxAstUtils {
 	public static ITranslationUnit getTranslationUnitFromIndexName(IIndexName decl) throws CoreException {
 		IIndexFile file = decl.getFile();
 		if (file != null) {
-			return CoreModelUtil.findTranslationUnitForLocation(file.getLocation().getURI(), null);	
+			return CoreModelUtil.findTranslationUnitForLocation(file.getLocation().getURI(), null);
 		}
 		return null;
 	}
@@ -332,12 +337,13 @@ public final class CxxAstUtils {
 	/**
 	 * If the function definition belongs to a class, returns the class.
 	 * Otherwise, returns {@code null}.
-	 * 
+	 *
 	 * @param function the function definition to check
 	 * @param index the index to use for name lookup
 	 * @return either a type specifier or {@code null}
 	 */
-	public static IASTCompositeTypeSpecifier getCompositeTypeFromFunction(final IASTFunctionDefinition function, final IIndex index) {
+	public static IASTCompositeTypeSpecifier getCompositeTypeFromFunction(final IASTFunctionDefinition function,
+			final IIndex index) {
 		// Return value to be set via visitor.
 		final IASTCompositeTypeSpecifier returnSpecifier[] = { null };
 		final HashMap<ITranslationUnit, IASTTranslationUnit> astCache = new HashMap<>();
@@ -368,15 +374,16 @@ public final class CxxAstUtils {
 						if (tu == null) {
 							continue;
 						}
-						
+
 						IASTTranslationUnit ast = null;
-						if(astCache.containsKey(tu)) {
+						if (astCache.containsKey(tu)) {
 							ast = astCache.get(tu);
 						} else {
 							ast = tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 							astCache.put(tu, ast);
 						}
-						IASTNode node = ast.getNodeSelector(null).findEnclosingNode(decl.getNodeOffset(), decl.getNodeLength());
+						IASTNode node = ast.getNodeSelector(null).findEnclosingNode(decl.getNodeOffset(),
+								decl.getNodeLength());
 						IASTCompositeTypeSpecifier specifier = getEnclosingCompositeTypeSpecifier(node);
 						if (specifier != null) {
 							returnSpecifier[0] = specifier;
@@ -420,7 +427,7 @@ public final class CxxAstUtils {
 		IASTExpression functionNameExpression = ((IASTFunctionCallExpression) expression).getFunctionNameExpression();
 		if (functionNameExpression instanceof IASTIdExpression) {
 			IASTName name = ((IASTIdExpression) functionNameExpression).getName();
-			
+
 			IBinding binding = name.resolveBinding();
 			if (binding instanceof IFunction && ((IFunction) binding).isNoReturn()) {
 				return true;
@@ -428,14 +435,14 @@ public final class CxxAstUtils {
 		}
 		return functionNameExpression.getRawSignature().equals("exit"); //$NON-NLS-1$
 	}
-	
+
 	@SuppressWarnings("restriction")
 	public static IType getReturnType(IASTFunctionDefinition func) {
 		// We could do this with public API (func.getDeclarator().getName().resolveBinding().getType()
 		// .getReturnType()), but that would trigger resolution of the parameter types as well,
 		// which is needless extra work.
 		if (func instanceof ICPPASTFunctionDefinition) {
-			return CPPVisitor.createType(func.getDeclarator(), 
+			return CPPVisitor.createType(func.getDeclarator(),
 					CPPVisitor.RESOLVE_PLACEHOLDERS | CPPVisitor.ONLY_RETURN_TYPE);
 		}
 		return CVisitor.createType(func.getDeclarator(), CVisitor.ONLY_RETURN_TYPE);

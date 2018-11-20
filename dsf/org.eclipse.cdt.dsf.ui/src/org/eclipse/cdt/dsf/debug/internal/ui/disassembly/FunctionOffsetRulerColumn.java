@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class FunctionOffsetRulerColumn extends DisassemblyRulerColumn {
 	public static final String ID = "org.eclipse.cdt.dsf.ui.disassemblyColumn.functionOffset"; //$NON-NLS-1$
 
 	/** Maximum width of column (in characters) */
-	private static final int MAXWIDTH= 20;
+	private static final int MAXWIDTH = 20;
 
 	/**
 	 * Default constructor.
@@ -44,13 +44,13 @@ public class FunctionOffsetRulerColumn extends DisassemblyRulerColumn {
 	 */
 	@Override
 	protected String createDisplayString(int line) {
-		DisassemblyDocument doc = (DisassemblyDocument)getParentRuler().getTextViewer().getDocument();
+		DisassemblyDocument doc = (DisassemblyDocument) getParentRuler().getTextViewer().getDocument();
 		int offset;
 		try {
 			offset = doc.getLineOffset(line);
 			AddressRangePosition pos = doc.getDisassemblyPosition(offset);
 			if (pos instanceof DisassemblyPosition && pos.length > 0 && pos.offset == offset && pos.fValid) {
-				DisassemblyPosition disassPos = (DisassemblyPosition)pos;
+				DisassemblyPosition disassPos = (DisassemblyPosition) pos;
 				int length = disassPos.fFunction.length;
 				if (length > MAXWIDTH) {
 					return "..." + new String(disassPos.fFunction, length - MAXWIDTH + 3, MAXWIDTH - 3); //$NON-NLS-1$
@@ -67,13 +67,13 @@ public class FunctionOffsetRulerColumn extends DisassemblyRulerColumn {
 
 	@Override
 	protected int computeNumberOfCharacters() {
-		DisassemblyDocument doc = (DisassemblyDocument)getParentRuler().getTextViewer().getDocument();
+		DisassemblyDocument doc = (DisassemblyDocument) getParentRuler().getTextViewer().getDocument();
 		return Math.min(MAXWIDTH, doc.getMaxFunctionLength());
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		String property	= event.getProperty();
+		String property = event.getProperty();
 		boolean needRedraw = false;
 		if (DisassemblyPreferenceConstants.FUNCTION_OFFSETS_COLOR.equals(property)) {
 			setForeground(getColor(property));

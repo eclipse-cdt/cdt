@@ -17,21 +17,21 @@ package org.eclipse.cdt.core.build;
  * @since 6.5
  */
 public interface ICBuildCommandLauncher {
-	
+
 	/**
 	 * Get registered CBuildConfiguration
-	 * 
+	 *
 	 * @return ICBuildConfiguration or null
 	 */
 	public ICBuildConfiguration getBuildConfiguration();
-	
+
 	/**
 	 * Register a CBuildConfiguration for this command launcher
-	 * 
+	 *
 	 * @param config - CBuildConfiguration to register
 	 */
 	public void setBuildConfiguration(ICBuildConfiguration config);
-	
+
 	/**
 	 * Get any special console header (e.g. Container Image used)
 	 */

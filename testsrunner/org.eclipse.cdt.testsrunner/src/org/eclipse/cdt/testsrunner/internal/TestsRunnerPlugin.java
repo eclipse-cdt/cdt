@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,25 +42,24 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/** The plug-in ID. */
 	private static final String PLUGIN_ID = "org.eclipse.cdt.testsrunner"; //$NON-NLS-1$
-	
+
 	/** The path to the plugin icons */
 	private static final IPath ICONS_PATH = new Path("$nl$/icons"); //$NON-NLS-1$
 
 	/** Plug-in instance. */
 	private static TestsRunnerPlugin plugin;
-	
+
 	private TestsRunnerProvidersManager testsRunnerProvidersManager = new TestsRunnerProvidersManager();
 	private TestingSessionsManager testingSessionsManager = new TestingSessionsManager(testsRunnerProvidersManager);
 
-	
 	public TestsRunnerPlugin() {
 		super();
 		plugin = this;
 	}
-	
+
 	/**
 	 * Returns the Tests Runner Plug-in instance
-	 * 
+	 *
 	 * @return the plug-in instance
 	 */
 	public static TestsRunnerPlugin getDefault() {
@@ -74,16 +73,16 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message the error message to log
 	 */
 	public static void logErrorMessage(String message) {
@@ -92,7 +91,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e the exception to be logged
 	 */
 	public static void log(Throwable e) {
@@ -100,20 +99,20 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 	}
 
 	@Override
-    public void start(BundleContext context) throws Exception {
+	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+
 		setDefaultLaunchDelegates();
 	}
 
 	@Override
-    public void stop(BundleContext context) throws Exception {
+	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 	}
 
 	/**
 	 * Access the plugin's Testing Sessions Manager instance.
-	 * 
+	 *
 	 * @return sessions manager
 	 */
 	public TestingSessionsManager getTestingSessionsManager() {
@@ -122,7 +121,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Access the plugin's Test Runners manager instance.
-	 * 
+	 *
 	 * @return tests runners manager
 	 */
 	public TestsRunnerProvidersManager getTestsRunnerProvidersManager() {
@@ -131,7 +130,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the descriptor for image with <code>relativePath</code> path.
-	 * 
+	 *
 	 * @param relativePath path relative to <code>ICONS_PATH</code>
 	 * @return image descriptor
 	 */
@@ -141,7 +140,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the descriptor for image with <code>relativePath</code> path.
-	 * 
+	 *
 	 * @param relativePath path relative to <code>ICONS_PATH</code>
 	 * @return image descriptor
 	 */
@@ -152,7 +151,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the image with the specified path.
-	 * 
+	 *
 	 * @param path path
 	 * @return image image
 	 */
@@ -162,7 +161,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the image with the specified path.
-	 * 
+	 *
 	 * @param path path
 	 * @return image image
 	 */
@@ -180,7 +179,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 	 * contain variables like $NL$. If no image could be found,
 	 * <code>useMissingImageDescriptor</code> decides if either the 'missing
 	 * image descriptor' is returned or <code>null</code>.
-	 * 
+	 *
 	 * @param bundle a bundle
 	 * @param path path in the bundle
 	 * @param useMissingImageDescriptor if <code>true</code>, returns the shared
@@ -200,12 +199,12 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Setup the launch delegate with id <code>delegateId</code> as default for
 	 * launch configuration type <code>cfgType</code> for <code>mode</code>
 	 * launch mode.
-	 * 
+	 *
 	 * @param cfgType launch configuration type
 	 * @param delegateId unique identifier of the launch delegate
 	 * @param mode launch mode
@@ -227,16 +226,19 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 			log(e);
 		}
 	}
-	
+
 	/**
 	 * Sets up the default launch delegates for the Tests Runner's launch configuration type.
 	 */
 	private void setDefaultLaunchDelegates() {
 		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType configurationType = launchMgr.getLaunchConfigurationType(ITestsRunnerConstants.LAUNCH_CONFIGURATION_TYPE_ID);
-		
-		setDefaultLaunchDelegate(configurationType, ITestsRunnerConstants.PREFERRED_DEBUG_TESTS_LAUNCH_DELEGATE, ILaunchManager.DEBUG_MODE);
-		setDefaultLaunchDelegate(configurationType, ITestsRunnerConstants.PREFERRED_RUN_TESTS_LAUNCH_DELEGATE, ILaunchManager.RUN_MODE);
+		ILaunchConfigurationType configurationType = launchMgr
+				.getLaunchConfigurationType(ITestsRunnerConstants.LAUNCH_CONFIGURATION_TYPE_ID);
+
+		setDefaultLaunchDelegate(configurationType, ITestsRunnerConstants.PREFERRED_DEBUG_TESTS_LAUNCH_DELEGATE,
+				ILaunchManager.DEBUG_MODE);
+		setDefaultLaunchDelegate(configurationType, ITestsRunnerConstants.PREFERRED_RUN_TESTS_LAUNCH_DELEGATE,
+				ILaunchManager.RUN_MODE);
 	}
-	
+
 }

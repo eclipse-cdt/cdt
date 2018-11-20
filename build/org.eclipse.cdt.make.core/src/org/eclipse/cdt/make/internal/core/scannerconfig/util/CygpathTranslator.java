@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.Platform;
 /**
  * Use binary parser's 'cygpath' command to translate cygpaths to absolute paths.
  * Note that this class does not support build configurations.
- * 
+ *
  * @author vhirsl
  */
 public class CygpathTranslator {
@@ -63,8 +63,7 @@ public class CygpathTranslator {
 				} catch (ClassCastException e) {
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 		}
 	}
 
@@ -72,7 +71,7 @@ public class CygpathTranslator {
 		// first check if cygpath translation is needed at all
 		boolean translationNeeded = false;
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			for (Iterator<String> i = sumIncludes.iterator(); i.hasNext(); ) {
+			for (Iterator<String> i = sumIncludes.iterator(); i.hasNext();) {
 				String include = i.next();
 				if (include.startsWith("/")) { //$NON-NLS-1$
 					translationNeeded = true;
@@ -113,22 +112,20 @@ public class CygpathTranslator {
 		}
 
 		List<String> translatedIncludePaths = new ArrayList<String>();
-		for (Iterator<String> i = sumIncludes.iterator(); i.hasNext(); ) {
+		for (Iterator<String> i = sumIncludes.iterator(); i.hasNext();) {
 			String includePath = i.next();
 			IPath realPath = new Path(includePath);
 			// only allow native pathes if they have a device prefix
 			// to avoid matches on the current drive, e.g. /usr/bin = C:\\usr\\bin
 			if (realPath.getDevice() != null && realPath.toFile().exists()) {
 				translatedIncludePaths.add(includePath);
-			}
-			else {
+			} else {
 				String translatedPath = includePath;
 
 				if (useCygPathExtension) {
 					try {
 						translatedPath = cygpath.cygPath.getFileName(includePath);
-					}
-					catch (IOException e) {
+					} catch (IOException e) {
 						TraceUtil.outputError("CygpathTranslator unable to translate path: ", includePath); //$NON-NLS-1$
 					}
 				} else if (useCygwinFromPath) {
@@ -141,9 +138,10 @@ public class CygpathTranslator {
 					// try default conversions
 					//     /cygdrive/x/ --> X:\
 					if ("cygdrive".equals(realPath.segment(0))) { //$NON-NLS-1$
-						String drive= realPath.segment(1);
+						String drive = realPath.segment(1);
 						if (drive.length() == 1) {
-							translatedPath= realPath.removeFirstSegments(2).makeAbsolute().setDevice(drive.toUpperCase() + ':').toOSString();
+							translatedPath = realPath.removeFirstSegments(2).makeAbsolute()
+									.setDevice(drive.toUpperCase() + ':').toOSString();
 						}
 					}
 				}
@@ -151,16 +149,13 @@ public class CygpathTranslator {
 					// Check if the translated path exists
 					if (new File(translatedPath).exists()) {
 						translatedIncludePaths.add(translatedPath);
-					}
-					else if (useCygPathExtension || useCygwinFromPath) {
+					} else if (useCygPathExtension || useCygwinFromPath) {
 						// TODO VMIR for now add even if it does not exist
 						translatedIncludePaths.add(translatedPath);
-					}
-					else {
+					} else {
 						translatedIncludePaths.add(includePath);
 					}
-				}
-				else {
+				} else {
 					// TODO VMIR for now add even if it does not exist
 					translatedIncludePaths.add(translatedPath);
 				}

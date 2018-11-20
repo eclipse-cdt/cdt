@@ -48,13 +48,16 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		public int getCount() {
 			return count;
 		}
+
 		public void resetCount() {
 			count = 0;
 			lastEvent = null;
 		}
+
 		public IEnvironmentChangeEvent getLastEvent() {
 			return lastEvent;
 		}
+
 		@Override
 		public void handleEvent(IEnvironmentChangeEvent event) {
 			count++;
@@ -73,8 +76,8 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	}
 
 	public static Test suite() {
-        TestSuite suite = new TestSuite(IEnvironmentVariableManagerTests.class);
-        return suite;
+		TestSuite suite = new TestSuite(IEnvironmentVariableManagerTests.class);
+		return suite;
 	}
 
 	/**
@@ -88,8 +91,8 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		// Add another, derived configuration
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
 		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
-		final String id1 = desc.getId();  	      // Config 1's ID
-		final String id2 = CDataUtil.genId(id1);  // Config 2's ID
+		final String id1 = desc.getId(); // Config 1's ID
+		final String id2 = CDataUtil.genId(id1); // Config 2's ID
 		prjDesc.createConfiguration(id2, "config2", desc);
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
@@ -142,7 +145,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
 		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
 		final String id1 = desc.getId(); // Config 1's ID
-		final String id2 = "712427638";  // Config 2's ID
+		final String id2 = "712427638"; // Config 2's ID
 		prjDesc.createConfiguration(id2, "config2", desc);
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
@@ -152,14 +155,14 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		contribEnv.addVariable(varOrig, prjDesc.getConfigurationById(id2));
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
-		final String env = "#Mon Nov 16 21:47:46 GMT 2009\n" +
-			"eclipse.preferences.version=1\n" +
-			"environment/project/712427638=<?xml version\\=\"1.0\" encoding\\=\"UTF-8\" standalone\\=\"no\"?>\\n" +
-			"<environment append\\=\"true\" appendContributed\\=\"true\">\\n" +
-			"<variable delimiter\\=\"\\:\" name\\=\"FOO1\" operation\\=\"replace\" value\\=\"BAR1\"/>\\n" +
-			"<variable delimiter\\=\"\\:\" name\\=\"FOO2\" operation\\=\"replace\" value\\=\"BAR2\"/>\\n" +
-			"<variable delimiter\\=\"\\;\" name\\=\"FOO\" operation\\=\"append\" value\\=\"BAR\"/>\\n</environment>\n";
-		project.getFile(".settings/org.eclipse.cdt.core.prefs").setContents(new ByteArrayInputStream(env.getBytes("UTF-8")), true, false, null);
+		final String env = "#Mon Nov 16 21:47:46 GMT 2009\n" + "eclipse.preferences.version=1\n"
+				+ "environment/project/712427638=<?xml version\\=\"1.0\" encoding\\=\"UTF-8\" standalone\\=\"no\"?>\\n"
+				+ "<environment append\\=\"true\" appendContributed\\=\"true\">\\n"
+				+ "<variable delimiter\\=\"\\:\" name\\=\"FOO1\" operation\\=\"replace\" value\\=\"BAR1\"/>\\n"
+				+ "<variable delimiter\\=\"\\:\" name\\=\"FOO2\" operation\\=\"replace\" value\\=\"BAR2\"/>\\n"
+				+ "<variable delimiter\\=\"\\;\" name\\=\"FOO\" operation\\=\"append\" value\\=\"BAR\"/>\\n</environment>\n";
+		project.getFile(".settings/org.eclipse.cdt.core.prefs")
+				.setContents(new ByteArrayInputStream(env.getBytes("UTF-8")), true, false, null);
 
 		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR", IEnvironmentVariable.ENVVAR_APPEND, ";");
 		final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1", ":");
@@ -182,7 +185,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
 		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
 		final String id1 = desc.getId(); // Config 1's ID
-		final String id2 = "712427638";  // Config 2's ID
+		final String id2 = "712427638"; // Config 2's ID
 		prjDesc.createConfiguration(id2, "config2", desc);
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
@@ -192,20 +195,21 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		contribEnv.addVariable(varOrig, prjDesc.getConfigurationById(id2));
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
-		final String env = "#Mon Nov 16 21:47:46 GMT 2009\n" +
-		"eclipse.preferences.version=1\n" +
-		"environment/project/712427638=<?xml version\\=\"1.0\" encoding\\=\"UTF-8\" standalone\\=\"no\"?>\\n" +
-		"<environment append\\=\"true\" appendContributed\\=\"true\">\\n" +
-		"<variable delimiter\\=\"\\:\" name\\=\"FOO1\" operation\\=\"replace\" value\\=\"BAR1\"/>\\n" +
-		"<variable delimiter\\=\"\\:\" name\\=\"FOO2\" operation\\=\"replace\" value\\=\"BAR2\"/>\\n" +
-		"<variable delimiter\\=\"\\;\" name\\=\"FOO\" operation\\=\"append\" value\\=\"BAR\"/>\\n</environment>\n";
-		project.getFile(".settings/org.eclipse.cdt.core.prefs").setContents(new ByteArrayInputStream(env.getBytes("UTF-8")), true, false, null);
+		final String env = "#Mon Nov 16 21:47:46 GMT 2009\n" + "eclipse.preferences.version=1\n"
+				+ "environment/project/712427638=<?xml version\\=\"1.0\" encoding\\=\"UTF-8\" standalone\\=\"no\"?>\\n"
+				+ "<environment append\\=\"true\" appendContributed\\=\"true\">\\n"
+				+ "<variable delimiter\\=\"\\:\" name\\=\"FOO1\" operation\\=\"replace\" value\\=\"BAR1\"/>\\n"
+				+ "<variable delimiter\\=\"\\:\" name\\=\"FOO2\" operation\\=\"replace\" value\\=\"BAR2\"/>\\n"
+				+ "<variable delimiter\\=\"\\;\" name\\=\"FOO\" operation\\=\"append\" value\\=\"BAR\"/>\\n</environment>\n";
+		project.getFile(".settings/org.eclipse.cdt.core.prefs")
+				.setContents(new ByteArrayInputStream(env.getBytes("UTF-8")), true, false, null);
 
 		ISchedulingRule incompatibleRule = new ISchedulingRule() {
 			@Override
 			public boolean isConflicting(ISchedulingRule rule) {
 				return rule == this || rule instanceof IResource;
 			}
+
 			@Override
 			public boolean contains(ISchedulingRule rule) {
 				return rule == this;
@@ -213,10 +217,11 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		};
 		try {
 			Job.getJobManager().beginRule(incompatibleRule, new NullProgressMonitor());
-			final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR", IEnvironmentVariable.ENVVAR_APPEND, ";");
+			final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR", IEnvironmentVariable.ENVVAR_APPEND,
+					";");
 			final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1", ":");
 			final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2", ":");
-	
+
 			prjDesc = CoreModel.getDefault().getProjectDescription(project);
 			assertEquals(var, envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id2), true));
 			assertEquals(var1, envManager.getVariable(var1.getName(), prjDesc.getConfigurationById(id2), true));
@@ -247,7 +252,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
 		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
 		final String id1 = desc.getId(); // Config 1's ID
-		final String id2 = "712427638";  // Config 2's ID
+		final String id2 = "712427638"; // Config 2's ID
 		prjDesc.createConfiguration(id2, "config2", desc);
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
@@ -258,18 +263,17 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		contribEnv.addVariable(varOrig, prjDesc.getConfigurationById(id2));
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
-		final String env = "environment/project/712427638/FOO/delimiter=;\n" +
-						   "environment/project/712427638/FOO/operation=append\n" +
-						   "environment/project/712427638/FOO/value=BAR\n" +
-						   "environment/project/712427638/FOO1/delimiter=\\:\n" +
-						   "environment/project/712427638/FOO1/operation=replace\n" +
-						   "environment/project/712427638/FOO1/value=BAR1\n" +
-						   "environment/project/712427638/FOO2/delimiter=\\:\n" +
-						   "environment/project/712427638/FOO2/operation=replace\n" +
-						   "environment/project/712427638/FOO2/value=BAR2\n" +
-						   "environment/project/712427638/append=true\n" +
-						   "environment/project/712427638/appendContributed=true\n";
-		project.getFile(".settings/org.eclipse.cdt.core.prefs").setContents(new ByteArrayInputStream(env.getBytes("UTF-8")), true, false, null);
+		final String env = "environment/project/712427638/FOO/delimiter=;\n"
+				+ "environment/project/712427638/FOO/operation=append\n"
+				+ "environment/project/712427638/FOO/value=BAR\n" + "environment/project/712427638/FOO1/delimiter=\\:\n"
+				+ "environment/project/712427638/FOO1/operation=replace\n"
+				+ "environment/project/712427638/FOO1/value=BAR1\n"
+				+ "environment/project/712427638/FOO2/delimiter=\\:\n"
+				+ "environment/project/712427638/FOO2/operation=replace\n"
+				+ "environment/project/712427638/FOO2/value=BAR2\n" + "environment/project/712427638/append=true\n"
+				+ "environment/project/712427638/appendContributed=true\n";
+		project.getFile(".settings/org.eclipse.cdt.core.prefs")
+				.setContents(new ByteArrayInputStream(env.getBytes("UTF-8")), true, false, null);
 
 		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR", IEnvironmentVariable.ENVVAR_APPEND, ";");
 		final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1", ":");
@@ -346,8 +350,8 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		// Add another, derived configuration
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
 		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
-		final String id1 = desc.getId();  	      // Config 1's ID
-		final String id2 = CDataUtil.genId(id1);  // Config 2's ID
+		final String id1 = desc.getId(); // Config 1's ID
+		final String id2 = CDataUtil.genId(id1); // Config 2's ID
 		prjDesc.createConfiguration(id2, "config2", desc);
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
@@ -389,8 +393,8 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		// Add another, derived configuration
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
 		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
-		final String id1 = desc.getId();  	      // Config 1's ID
-		final String id2 = CDataUtil.genId(id1);  // Config 2's ID
+		final String id1 = desc.getId(); // Config 1's ID
+		final String id2 = CDataUtil.genId(id1); // Config 2's ID
 		prjDesc.createConfiguration(id2, "config2", desc);
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
@@ -413,8 +417,8 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
 		// Backup the settings file
-		project.getFile(".settings/org.eclipse.cdt.core.prefs.bak").create(
-				project.getFile(".settings/org.eclipse.cdt.core.prefs").getContents(), true, null);
+		project.getFile(".settings/org.eclipse.cdt.core.prefs.bak")
+				.create(project.getFile(".settings/org.eclipse.cdt.core.prefs").getContents(), true, null);
 
 		// Change the environment variable
 		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO", "BOO");
@@ -438,8 +442,8 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		// Add another, derived configuration
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
 		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
-		final String id1 = desc.getId();  	      // Config 1's ID
-		final String id2 = CDataUtil.genId(id1);  // Config 2's ID
+		final String id1 = desc.getId(); // Config 1's ID
+		final String id2 = CDataUtil.genId(id1); // Config 2's ID
 		prjDesc.createConfiguration(id2, "config2", desc);
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
@@ -462,8 +466,8 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		CoreModel.getDefault().setProjectDescription(project, prjDesc);
 
 		// Backup the settings file
-		project.getFile(".settings/org.eclipse.cdt.core.prefs.bak").create(
-				project.getFile(".settings/org.eclipse.cdt.core.prefs").getContents(), true, null);
+		project.getFile(".settings/org.eclipse.cdt.core.prefs.bak")
+				.create(project.getFile(".settings/org.eclipse.cdt.core.prefs").getContents(), true, null);
 
 		// Change the environment variable
 		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO", "BOO");
@@ -473,13 +477,15 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 
 		// clean desc should be updated when the preference file is overwritten
 		final ICProjectDescription cleanDesc = CoreModel.getDefault().getProjectDescription(project);
-		assertEquals(contribEnv.getVariable(var.getName(), cleanDesc.getConfigurationById(id1)).getValue(), var2.getValue());
+		assertEquals(contribEnv.getVariable(var.getName(), cleanDesc.getConfigurationById(id1)).getValue(),
+				var2.getValue());
 
 		// Replace the settings with it's backup
 		project.getFile(".settings/org.eclipse.cdt.core.prefs").setContents(
 				project.getFile(".settings/org.eclipse.cdt.core.prefs.bak").getContents(), true, false, null);
 		// check that cleanDesc has been updated
-		assertEquals(contribEnv.getVariable(var.getName(), cleanDesc.getConfigurationById(id1)).getValue(), var.getValue());
+		assertEquals(contribEnv.getVariable(var.getName(), cleanDesc.getConfigurationById(id1)).getValue(),
+				var.getValue());
 		assertEquals(var, envManager.getVariable(var.getName(), cleanDesc.getConfigurationById(id1), true));
 	}
 
@@ -608,7 +614,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	/**
 	 * This test checks if an environment variable is only processed as a list
 	 * if it matches a certain pattern. ([^:]+:)+[^:]* (; on Windows)
-	 * 
+	 *
 	 * If a variable is a list, it is split into a String array depending on the
 	 * delimiter given. At some point, this array is used to build a new
 	 * String representing the list, separated by the delimiter. This should
@@ -616,10 +622,10 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	 * variable has a value of ':' without the quotes, it shouldn't processed as
 	 * a list even if it contains a delimiter because if it was, it would give
 	 * an empty string when built since there are no items in the list.
-	 * 
+	 *
 	 * @throws Exception
 	 */
-	public void testBug284843() throws Exception{
+	public void testBug284843() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
 		IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
@@ -628,50 +634,48 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		String delimiter = System.getProperty("path.separator");
 
 		// Create the test variables
-		IEnvironmentVariable varDelim = new EnvironmentVariable("DELIM",
-				delimiter);
+		IEnvironmentVariable varDelim = new EnvironmentVariable("DELIM", delimiter);
 		String varListValue = "value1" + delimiter + "value2" + delimiter + "value3";
 		IEnvironmentVariable varList = new EnvironmentVariable("LIST", varListValue);
-		IEnvironmentVariable varListDelim = new EnvironmentVariable("LISTDELIM", 
-				"value1" + delimiter);
-		IEnvironmentVariable varListDelims = new EnvironmentVariable("LISTDELIMS", 
-				varListValue + delimiter);
-		String varInvalidListValue = delimiter + "value1" + delimiter + "value2" + delimiter + delimiter + "value3" + delimiter;
+		IEnvironmentVariable varListDelim = new EnvironmentVariable("LISTDELIM", "value1" + delimiter);
+		IEnvironmentVariable varListDelims = new EnvironmentVariable("LISTDELIMS", varListValue + delimiter);
+		String varInvalidListValue = delimiter + "value1" + delimiter + "value2" + delimiter + delimiter + "value3"
+				+ delimiter;
 		IEnvironmentVariable varInvalidList = new EnvironmentVariable("INVALIDLIST", varInvalidListValue);
-		
+
 		// Add the variables to the contributed environment
 		contribEnv.addVariable(varDelim, confDesc);
 		contribEnv.addVariable(varList, confDesc);
 		contribEnv.addVariable(varListDelim, confDesc);
 		contribEnv.addVariable(varListDelims, confDesc);
 		contribEnv.addVariable(varInvalidList, confDesc);
-		
+
 		// Get the processed variables
 		varDelim = envManager.getVariable(varDelim.getName(), confDesc, true);
 		varList = envManager.getVariable(varList.getName(), confDesc, true);
 		varListDelim = envManager.getVariable(varListDelim.getName(), confDesc, true);
 		varListDelims = envManager.getVariable(varListDelims.getName(), confDesc, true);
 		varInvalidList = envManager.getVariable(varInvalidList.getName(), confDesc, true);
-		
+
 		// Should keep the same value, not a list
 		assertEquals(delimiter, varDelim.getValue());
-		
+
 		// Should keep the same value, processed as a list
 		assertEquals(varListValue, varList.getValue());
-		
+
 		// The delimiter will be trimmed, processed as a list
 		assertEquals("value1", varListDelim.getValue());
-		
+
 		// The last delimiter will be trimmed, processed as a list
-		assertEquals(varListValue, varListDelims.getValue()); 
-		
+		assertEquals(varListValue, varListDelims.getValue());
+
 		// Should keep the same value, not a list
-		assertEquals(varInvalidListValue,varInvalidList.getValue()); 
+		assertEquals(varInvalidListValue, varInvalidList.getValue());
 	}
 
 	/**
 	 * Test case to test environment variable change notifications
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEnvironmentChangeListener() throws Exception {

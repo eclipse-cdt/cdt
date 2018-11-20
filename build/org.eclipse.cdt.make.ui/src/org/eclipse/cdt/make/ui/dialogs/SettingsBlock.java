@@ -81,7 +81,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 	private static final String MAKE_WORKBENCH_BUILD_TARGET = PREFIX + ".makeWorkbench.target"; //$NON-NLS-1$
 	private static final String MAKE_WORKBENCH_BUILD_AUTO = PREFIX + ".makeWorkbench.auto"; //$NON-NLS-1$
 	private static final String MAKE_WORKBENCH_BUILD_INCR = PREFIX + ".makeWorkbench.incremental"; //$NON-NLS-1$
-//	private static final String MAKE_WORKBENCH_BUILD_FULL = PREFIX + ".makeWorkbench.full"; //$NON-NLS-1$
+	//	private static final String MAKE_WORKBENCH_BUILD_FULL = PREFIX + ".makeWorkbench.full"; //$NON-NLS-1$
 	private static final String MAKE_WORKBENCH_BUILD_CLEAN = PREFIX + ".makeWorkbench.clean"; //$NON-NLS-1$
 
 	private static final String MAKE_BUILD_DIR_GROUP = PREFIX + ".makeLoc.group_label"; //$NON-NLS-1$
@@ -91,7 +91,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 
 	private static final String MAKE_BUILD_AUTO_TARGET = PREFIX + ".makeWorkbench.autoBuildTarget"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_INCREMENTAL_TARGET = PREFIX + ".makeWorkbench.incrementalBuildTarget"; //$NON-NLS-1$
-//	private static final String MAKE_BUILD_FULL_TARGET = PREFIX + ".makeWorkbench.fullBuildTarget"; //$NON-NLS-1$
+	//	private static final String MAKE_BUILD_FULL_TARGET = PREFIX + ".makeWorkbench.fullBuildTarget"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_CLEAN_TARGET = PREFIX + ".makeWorkbench.cleanTarget"; //$NON-NLS-1$
 
 	Button stopOnErrorButton;
@@ -318,20 +318,25 @@ public class SettingsBlock extends AbstractCOptionPage {
 		messageLabel.setFont(font);
 		return messageComposite;
 	}
+
 	public void addControlAccessibleListener(Control control, String controlName) {
 		control.getAccessible().addAccessibleListener(new ControlAccessibleListener(controlName));
 	}
+
 	private class ControlAccessibleListener extends AccessibleAdapter {
 
 		private String controlName;
+
 		ControlAccessibleListener(String name) {
 			controlName = name;
 		}
+
 		@Override
 		public void getName(AccessibleEvent e) {
 			e.result = controlName;
 		}
 	}
+
 	protected void createBuilderWorkingDirControls(Composite parent) {
 		Group group = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_GROUP), 1);
 		GridLayout layout = new GridLayout();
@@ -361,7 +366,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		gd.horizontalSpan = 2;
 		buttons.setLayoutData(gd);
 
-		Label emptyLabel = ControlFactory.createLabel(buttons, "");	 //$NON-NLS-1$
+		Label emptyLabel = ControlFactory.createLabel(buttons, ""); //$NON-NLS-1$
 		emptyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Button browseWorkspace = new Button(buttons, SWT.NONE);
@@ -370,12 +375,12 @@ public class SettingsBlock extends AbstractCOptionPage {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), getContainer().getProject(), true,
-						MakeUIPlugin.getResourceString("SettingsBlock.title.selectLocationToBuildFrom")); //$NON-NLS-1$
+				ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), getContainer().getProject(),
+						true, MakeUIPlugin.getResourceString("SettingsBlock.title.selectLocationToBuildFrom")); //$NON-NLS-1$
 				if (dialog.open() == Window.OK) {
 					Object[] selection = dialog.getResult();
 					if (selection.length > 0) {
-						buildLocation.setText( ((IPath)selection[0]).toOSString());
+						buildLocation.setText(((IPath) selection[0]).toOSString());
 					}
 				}
 			}
@@ -423,16 +428,19 @@ public class SettingsBlock extends AbstractCOptionPage {
 		dialog.open();
 		return dialog.getVariableExpression();
 	}
+
 	@Override
 	public void createControl(Composite parent) {
 		Composite composite = ControlFactory.createComposite(parent, 1);
 		setControl(composite);
 
-		MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), IMakeHelpContextIds.MAKE_BUILDER_SETTINGS);
+		MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+				IMakeHelpContextIds.MAKE_BUILDER_SETTINGS);
 
 		if (fBuildInfo == null) {
 			ControlFactory.createEmptySpace(composite);
-			ControlFactory.createLabel(composite, MakeUIPlugin.getResourceString("SettingsBlock.label.missingBuilderInformation")); //$NON-NLS-1$
+			ControlFactory.createLabel(composite,
+					MakeUIPlugin.getResourceString("SettingsBlock.label.missingBuilderInformation")); //$NON-NLS-1$
 			return;
 		}
 

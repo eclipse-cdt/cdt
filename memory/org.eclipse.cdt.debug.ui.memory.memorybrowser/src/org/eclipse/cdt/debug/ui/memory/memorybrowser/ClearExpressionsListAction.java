@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -22,17 +22,18 @@ import org.eclipse.ui.IViewPart;
 public class ClearExpressionsListAction implements IViewActionDelegate {
 
 	private IViewPart fView;
-	
+
 	public void init(IViewPart view) {
 		fView = view;
 	}
 
 	public void run(IAction action) {
-		if ( fView instanceof MemoryBrowser ) {
+		if (fView instanceof MemoryBrowser) {
 			MemoryBrowser browser = (MemoryBrowser) fView;
 			browser.clearExpressionHistoryForActiveTab();
 		}
 	}
 
-	public void selectionChanged(IAction action, ISelection selection) {}
+	public void selectionChanged(IAction action, ISelection selection) {
+	}
 }

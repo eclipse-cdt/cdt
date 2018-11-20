@@ -23,10 +23,10 @@ class CompositeCField extends CompositeCVariable implements IField {
 	public CompositeCField(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);
 	}
-	
+
 	@Override
 	public ICompositeType getCompositeTypeOwner() {
-		IBinding preresult = ((IField)rbinding).getCompositeTypeOwner();
-		return (ICompositeType) cf.getCompositeBinding((IIndexFragmentBinding)preresult);
+		IBinding preresult = ((IField) rbinding).getCompositeTypeOwner();
+		return (ICompositeType) cf.getCompositeBinding((IIndexFragmentBinding) preresult);
 	}
 }

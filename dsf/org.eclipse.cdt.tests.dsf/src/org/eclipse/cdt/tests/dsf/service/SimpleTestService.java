@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,34 +23,33 @@ import org.osgi.framework.BundleContext;
 
 public class SimpleTestService extends AbstractDsfService {
 
-    public SimpleTestService(DsfSession session) {
-        super(session);
-    }
-    
-    @Override 
-    protected BundleContext getBundleContext() {
-        return DsfTestPlugin.getBundleContext();
-    }    
+	public SimpleTestService(DsfSession session) {
+		super(session);
+	}
 
-    @Override 
-    public void initialize(final RequestMonitor requestMonitor) {
-        super.initialize(
-            new RequestMonitor(getExecutor(), requestMonitor) { 
-                @Override
-                public void handleSuccess() {
-                    doInitialize(requestMonitor);
-                }
-            });
-    }
-            
-    private void doInitialize(RequestMonitor requestMonitor) {
-        register(new String[]{SimpleTestService.class.getName()}, new Hashtable<String,String>());
-        requestMonitor.done();
-    }
+	@Override
+	protected BundleContext getBundleContext() {
+		return DsfTestPlugin.getBundleContext();
+	}
 
-    @Override 
-    public void shutdown(RequestMonitor requestMonitor) {
-        unregister();
-        super.shutdown(requestMonitor);
-    }
+	@Override
+	public void initialize(final RequestMonitor requestMonitor) {
+		super.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
+			@Override
+			public void handleSuccess() {
+				doInitialize(requestMonitor);
+			}
+		});
+	}
+
+	private void doInitialize(RequestMonitor requestMonitor) {
+		register(new String[] { SimpleTestService.class.getName() }, new Hashtable<String, String>());
+		requestMonitor.done();
+	}
+
+	@Override
+	public void shutdown(RequestMonitor requestMonitor) {
+		unregister();
+		super.shutdown(requestMonitor);
+	}
 }

@@ -21,12 +21,12 @@ class DoWhileFlowInfo extends FlowInfo {
 		if (info == null)
 			return;
 
-		fActionBranches= info.branches();
+		fActionBranches = info.branches();
 
 		assign(info);
 
 		if (fActionBranches && fReturnKind == VALUE_RETURN) {
-			fReturnKind= PARTIAL_RETURN;
+			fReturnKind = PARTIAL_RETURN;
 		}
 	}
 
@@ -36,4 +36,3 @@ class DoWhileFlowInfo extends FlowInfo {
 		mergeAccessModeSequential(info, context);
 	}
 }
-

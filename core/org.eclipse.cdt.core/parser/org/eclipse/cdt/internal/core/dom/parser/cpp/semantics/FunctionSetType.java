@@ -31,8 +31,8 @@ public class FunctionSetType implements IType {
 	private final boolean fPointerType;
 
 	public FunctionSetType(CPPFunctionSet set, boolean addressOf) {
-		fFunctionSet= set;
-		fPointerType= addressOf;
+		fFunctionSet = set;
+		fPointerType = addressOf;
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class FunctionSetType implements IType {
 	public Cost costForTarget(IType paramType) {
 		IBinding result = CPPSemantics.resolveTargetedFunction(paramType, fFunctionSet);
 		if (result instanceof ICPPFunction && !(result instanceof IProblemBinding)) {
-			Cost c= new Cost(paramType, paramType, Rank.IDENTITY);
+			Cost c = new Cost(paramType, paramType, Rank.IDENTITY);
 			c.setSelectedFunction((ICPPFunction) result);
 			return c;
 		}

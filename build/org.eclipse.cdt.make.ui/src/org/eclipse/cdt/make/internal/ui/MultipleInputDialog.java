@@ -58,8 +58,6 @@ public class MultipleInputDialog extends Dialog {
 
 	private String title;
 
-
-
 	public MultipleInputDialog(Shell shell, String title) {
 		super(shell);
 		this.title = title;
@@ -93,7 +91,7 @@ public class MultipleInputDialog extends Dialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite container = (Composite)super.createDialogArea(parent);
+		Composite container = (Composite) super.createDialogArea(parent);
 		container.setLayout(new GridLayout(2, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -103,16 +101,16 @@ public class MultipleInputDialog extends Dialog {
 		panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		for (FieldSummary field : fieldList) {
-			switch(field.type) {
-				case TEXT:
-					createTextField(field.name, field.initialValue, field.allowsEmpty);
-					break;
-				case BROWSE:
-					createBrowseField(field.name, field.initialValue, field.allowsEmpty);
-					break;
-				case VARIABLE:
-					createVariablesField(field.name, field.initialValue, field.allowsEmpty);
-					break;
+			switch (field.type) {
+			case TEXT:
+				createTextField(field.name, field.initialValue, field.allowsEmpty);
+				break;
+			case BROWSE:
+				createBrowseField(field.name, field.initialValue, field.allowsEmpty);
+				break;
+			case VARIABLE:
+				createVariablesField(field.name, field.initialValue, field.allowsEmpty);
+				break;
 			}
 		}
 
@@ -124,9 +122,11 @@ public class MultipleInputDialog extends Dialog {
 	public void addBrowseField(String labelText, String initialValue, boolean allowsEmpty) {
 		fieldList.add(new FieldSummary(BROWSE, labelText, initialValue, allowsEmpty));
 	}
+
 	public void addTextField(String labelText, String initialValue, boolean allowsEmpty) {
 		fieldList.add(new FieldSummary(TEXT, labelText, initialValue, allowsEmpty));
 	}
+
 	public void addVariablesField(String labelText, String initialValue, boolean allowsEmpty) {
 		fieldList.add(new FieldSummary(VARIABLE, labelText, initialValue, allowsEmpty));
 	}
@@ -172,8 +172,8 @@ public class MultipleInputDialog extends Dialog {
 
 		Composite comp = new Composite(panel, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginHeight=0;
-		layout.marginWidth=0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -206,7 +206,8 @@ public class MultipleInputDialog extends Dialog {
 			});
 		}
 
-		Button button = createButton(comp, IDialogConstants.IGNORE_ID, MakeUIPlugin.getResourceString("MultipleInputDialog.0"), false); //$NON-NLS-1$
+		Button button = createButton(comp, IDialogConstants.IGNORE_ID,
+				MakeUIPlugin.getResourceString("MultipleInputDialog.0"), false); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -231,7 +232,6 @@ public class MultipleInputDialog extends Dialog {
 
 	}
 
-
 	public void createVariablesField(String labelText, String initialValue, boolean allowEmpty) {
 		Label label = new Label(panel, SWT.NONE);
 		label.setText(labelText);
@@ -239,8 +239,8 @@ public class MultipleInputDialog extends Dialog {
 
 		Composite comp = new Composite(panel, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginHeight=0;
-		layout.marginWidth=0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -273,7 +273,8 @@ public class MultipleInputDialog extends Dialog {
 			});
 		}
 
-		Button button = createButton(comp, IDialogConstants.IGNORE_ID, MakeUIPlugin.getResourceString("MultipleInputDialog.2"), false); //$NON-NLS-1$
+		Button button = createButton(comp, IDialogConstants.IGNORE_ID,
+				MakeUIPlugin.getResourceString("MultipleInputDialog.2"), false); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -304,7 +305,6 @@ public class MultipleInputDialog extends Dialog {
 		super.okPressed();
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
@@ -319,7 +319,7 @@ public class MultipleInputDialog extends Dialog {
 	}
 
 	public String getStringValue(String key) {
-		return  (String) getValue(key);
+		return (String) getValue(key);
 	}
 
 	public void validateFields() {
@@ -337,13 +337,12 @@ public class MultipleInputDialog extends Dialog {
 	 */
 	@Override
 	protected Point getInitialLocation(Point initialSize) {
-		Point initialLocation= DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
+		Point initialLocation = DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
 		if (initialLocation != null) {
 			return initialLocation;
 		}
 		return super.getInitialLocation(initialSize);
 	}
-
 
 	protected String getDialogSettingsSectionName() {
 		return MakeUIPlugin.getPluginId() + ".MULTIPLE_INPUT_DIALOG_2"; //$NON-NLS-1$

@@ -1,17 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
- *     Sergey Prigogin (Google) 
+ *     Sergey Prigogin (Google)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -29,19 +29,19 @@ import org.eclipse.cdt.ui.CUIPlugin;
 /**
  * Represents the interface between the user who invokes the action and the
  * actual refactoring mechanism. Starts the ToggleRefactoringRunner.
- * 
+ *
  * Order of execution is: constructor, init, selectionChanged, run
  */
 public class TogglingActionDelegate implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
 	private TextSelection selection;
-	
+
 	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 		assert (window != null);
 	}
-	
+
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean isTextSelection = selection != null && selection instanceof TextSelection;
@@ -49,7 +49,8 @@ public class TogglingActionDelegate implements IWorkbenchWindowActionDelegate {
 		if (!isTextSelection)
 			return;
 		// Get our own selection due to (a possible) bug?
-		this.selection = (TextSelection) CUIPlugin.getActivePage().getActiveEditor().getEditorSite().getSelectionProvider().getSelection();
+		this.selection = (TextSelection) CUIPlugin.getActivePage().getActiveEditor().getEditorSite()
+				.getSelectionProvider().getSelection();
 	}
 
 	@Override
@@ -60,8 +61,7 @@ public class TogglingActionDelegate implements IWorkbenchWindowActionDelegate {
 		IEditorPart editor = activePage.getActiveEditor();
 		if (editor == null || editor.getEditorInput() == null)
 			return;
-		ITranslationUnit tu =
-				CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
+		ITranslationUnit tu = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
 		if (tu == null || tu.getResource() == null)
 			return;
 		new ToggleRefactoringRunner(tu, selection, window, tu.getCProject()).run();

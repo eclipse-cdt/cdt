@@ -23,47 +23,47 @@ import org.eclipse.core.runtime.ListenerList;
 
 public class DisassemblyContextService implements IDisassemblyContextService {
 
-    private ListenerList<IDisassemblyContextListener> fListeners;
-    private Set<Object> fContexts;
+	private ListenerList<IDisassemblyContextListener> fListeners;
+	private Set<Object> fContexts;
 
-    public DisassemblyContextService() {
-        fContexts = new CopyOnWriteArraySet<Object>();
-        fListeners = new ListenerList<>();
-    }
+	public DisassemblyContextService() {
+		fContexts = new CopyOnWriteArraySet<Object>();
+		fListeners = new ListenerList<>();
+	}
 
-    @Override
-	public void addDisassemblyContextListener( IDisassemblyContextListener listener ) {
-        fListeners.add( listener );
-    }
+	@Override
+	public void addDisassemblyContextListener(IDisassemblyContextListener listener) {
+		fListeners.add(listener);
+	}
 
-    @Override
-	public void removeDisassemblyContextListener( IDisassemblyContextListener listener ) {
-        fListeners.remove( listener );
-    }
+	@Override
+	public void removeDisassemblyContextListener(IDisassemblyContextListener listener) {
+		fListeners.remove(listener);
+	}
 
-    @Override
-	public void register( Object context ) {
-        fContexts.add( context );
-        for( IDisassemblyContextListener listener : fListeners) {
-            listener.contextAdded( context );
-        }
-    }
+	@Override
+	public void register(Object context) {
+		fContexts.add(context);
+		for (IDisassemblyContextListener listener : fListeners) {
+			listener.contextAdded(context);
+		}
+	}
 
-    @Override
-	public void unregister( Object context ) {
-        fContexts.remove( context );
-        for( IDisassemblyContextListener listener : fListeners) {
-            listener.contextRemoved( context );
-        }
-    }
+	@Override
+	public void unregister(Object context) {
+		fContexts.remove(context);
+		for (IDisassemblyContextListener listener : fListeners) {
+			listener.contextRemoved(context);
+		}
+	}
 
-    public void dispose() {
-        for( Object context : fContexts ) {
-            for( IDisassemblyContextListener listener : fListeners) {
-                listener.contextRemoved( context );
-            }
-        }
-        fListeners.clear();
-        fContexts.clear();
-    }
+	public void dispose() {
+		for (Object context : fContexts) {
+			for (IDisassemblyContextListener listener : fListeners) {
+				listener.contextRemoved(context);
+			}
+		}
+		fListeners.clear();
+		fContexts.clear();
+	}
 }

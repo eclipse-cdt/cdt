@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2015 Wind River Systems, Inc. and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- ******************************************************************************/ 
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import java.util.ArrayList;
@@ -59,9 +59,9 @@ import org.eclipse.cdt.internal.ui.util.NameComposer;
 public class CRenameClassProcessor extends CRenameTypeProcessor {
 	private final List<Change> tuRenames = new ArrayList<>();
 
-    public CRenameClassProcessor(CRenameProcessor processor, String kind) {
-        super(processor, kind);
-    }
+	public CRenameClassProcessor(CRenameProcessor processor, String kind) {
+		super(processor, kind);
+	}
 
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
@@ -83,44 +83,44 @@ public class CRenameClassProcessor extends CRenameTypeProcessor {
 		return compositeChange;
 	}
 
-    @Override
+	@Override
 	protected IBinding[] getBindingsToBeRenamed(RefactoringStatus status) {
-    	tuRenames.clear();
-        CRefactoringArgument argument= getArgument();
-        IBinding binding= argument.getBinding();
-        ArrayList<IBinding> bindings= new ArrayList<>();
-        if (binding != null) {
-        	recordRename(binding);
-            bindings.add(binding);
-        }
-        if (binding instanceof ICPPClassType) {
-            ICPPClassType ctype= (ICPPClassType) binding;
-            ICPPConstructor[] ctors= ctype.getConstructors();
+		tuRenames.clear();
+		CRefactoringArgument argument = getArgument();
+		IBinding binding = argument.getBinding();
+		ArrayList<IBinding> bindings = new ArrayList<>();
+		if (binding != null) {
+			recordRename(binding);
+			bindings.add(binding);
+		}
+		if (binding instanceof ICPPClassType) {
+			ICPPClassType ctype = (ICPPClassType) binding;
+			ICPPConstructor[] ctors = ctype.getConstructors();
 			if (ctors != null) {
-			    ArrayUtil.addAll(bindings, ctors);
+				ArrayUtil.addAll(bindings, ctors);
 			}
 
-			IScope scope= ctype.getCompositeScope();
+			IScope scope = ctype.getCompositeScope();
 			if (scope != null) {
-			    IBinding[] dtors= scope.find("~" + argument.getName(), argument.getTranslationUnit()); //$NON-NLS-1$
-			    if (dtors != null) {
-			    	ArrayUtil.addAll(bindings, dtors);
-			    }
+				IBinding[] dtors = scope.find("~" + argument.getName(), argument.getTranslationUnit()); //$NON-NLS-1$
+				if (dtors != null) {
+					ArrayUtil.addAll(bindings, dtors);
+				}
 			}
 
 			renameTranslationUnits(ctype);
-        }
-        return bindings.toArray(new IBinding[bindings.size()]);
-    }
+		}
+		return bindings.toArray(new IBinding[bindings.size()]);
+	}
 
 	private void renameTranslationUnits(ICPPBinding binding) {
-    	IIndex index = getIndex();
-    	if (index == null) {
-    		return;
-    	}
-    	try {
-    		index.acquireReadLock();
-    		Set<IIndexFileLocation> locations = new HashSet<>();
+		IIndex index = getIndex();
+		if (index == null) {
+			return;
+		}
+		try {
+			index.acquireReadLock();
+			Set<IIndexFileLocation> locations = new HashSet<>();
 			IIndexName[] names = index.findNames(binding, IIndex.FIND_DEFINITIONS);
 			for (IIndexName name : names) {
 				locations.add(name.getFile().getLocation());
@@ -132,68 +132,68 @@ public class CRenameClassProcessor extends CRenameTypeProcessor {
 			if (fullPath == null)
 				return;
 			IPath headerPath = new Path(fullPath);
-            IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(headerPath);
-            if (file == null || file.getType() != IResource.FILE)
-            	return;
+			IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(headerPath);
+			if (file == null || file.getType() != IResource.FILE)
+				return;
 
-	    	IProject project = getProject();
-	    	int headerCapitalization = PreferenceConstants.getPreference(
-	    			PreferenceConstants.NAME_STYLE_CPP_HEADER_CAPITALIZATION, project,
-	    			PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL);
-	    	String headerWordDelimiter = PreferenceConstants.getPreference(
-	    			PreferenceConstants.NAME_STYLE_CPP_HEADER_WORD_DELIMITER, project, ""); //$NON-NLS-1$
-	    	int sourceCapitalization = PreferenceConstants.getPreference(
-	    			PreferenceConstants.NAME_STYLE_CPP_SOURCE_CAPITALIZATION, project,
-	    			PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL);
-	    	String sourceWordDelimiter = PreferenceConstants.getPreference(
-	    			PreferenceConstants.NAME_STYLE_CPP_SOURCE_WORD_DELIMITER, project, ""); //$NON-NLS-1$
+			IProject project = getProject();
+			int headerCapitalization = PreferenceConstants.getPreference(
+					PreferenceConstants.NAME_STYLE_CPP_HEADER_CAPITALIZATION, project,
+					PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL);
+			String headerWordDelimiter = PreferenceConstants
+					.getPreference(PreferenceConstants.NAME_STYLE_CPP_HEADER_WORD_DELIMITER, project, ""); //$NON-NLS-1$
+			int sourceCapitalization = PreferenceConstants.getPreference(
+					PreferenceConstants.NAME_STYLE_CPP_SOURCE_CAPITALIZATION, project,
+					PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL);
+			String sourceWordDelimiter = PreferenceConstants
+					.getPreference(PreferenceConstants.NAME_STYLE_CPP_SOURCE_WORD_DELIMITER, project, ""); //$NON-NLS-1$
 
 			String headerName = headerPath.lastSegment();
 			String className = binding.getName();
-			NameComposer nameComposer = NameComposer.createByExample(className, headerName,
-					headerCapitalization, headerWordDelimiter);
+			NameComposer nameComposer = NameComposer.createByExample(className, headerName, headerCapitalization,
+					headerWordDelimiter);
 			if (nameComposer == null)
 				return;
 
 			String newClassName = getReplacementText();
 			String newHeaderName = nameComposer.compose(newClassName);
-            if (!newHeaderName.equals(headerName)) {
-            	renameTranslationUnit((IFile) file, newHeaderName);
-            }
+			if (!newHeaderName.equals(headerName)) {
+				renameTranslationUnit((IFile) file, newHeaderName);
+			}
 
-            IIndexInclude[] includedBy = index.findIncludedBy(names[0].getFile());
-            for (IIndexInclude include : includedBy) {
+			IIndexInclude[] includedBy = index.findIncludedBy(names[0].getFile());
+			for (IIndexInclude include : includedBy) {
 				location = include.getIncludedByLocation();
 				fullPath = location.getFullPath();
 				if (fullPath == null)
 					continue;
 				IPath filePath = new Path(fullPath);
-                file = ResourcesPlugin.getWorkspace().getRoot().findMember(filePath);
-                if (file != null && file.getType() == IResource.FILE) {
-                	String fileName = filePath.lastSegment();
+				file = ResourcesPlugin.getWorkspace().getRoot().findMember(filePath);
+				if (file != null && file.getType() == IResource.FILE) {
+					String fileName = filePath.lastSegment();
 					if (CoreModel.isValidHeaderUnitName(project, fileName)) {
-            			nameComposer = NameComposer.createByExample(className, fileName,
-            					headerCapitalization, headerWordDelimiter);
-                	} else {
-            			nameComposer = NameComposer.createByExample(className, fileName,
-            					sourceCapitalization, sourceWordDelimiter);
-                	}
+						nameComposer = NameComposer.createByExample(className, fileName, headerCapitalization,
+								headerWordDelimiter);
+					} else {
+						nameComposer = NameComposer.createByExample(className, fileName, sourceCapitalization,
+								sourceWordDelimiter);
+					}
 					if (nameComposer != null) {
 						String newName = nameComposer.compose(newClassName);
-		                if (!newName.equals(fileName)) {
-		                	renameTranslationUnit((IFile) file, newName);
-		                }
-		            }
-                }
+						if (!newName.equals(fileName)) {
+							renameTranslationUnit((IFile) file, newName);
+						}
+					}
+				}
 			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
 			return;
 		} catch (InterruptedException e) {
-			return;  // Ignore.
+			return; // Ignore.
 		} finally {
-    		index.releaseReadLock();
-    	}
+			index.releaseReadLock();
+		}
 	}
 
 	protected void renameTranslationUnit(IFile file, String newName) {
@@ -205,9 +205,9 @@ public class CRenameClassProcessor extends CRenameTypeProcessor {
 	}
 
 	protected IProject getProject() {
-		IFile file= getArgument().getSourceFile();
+		IFile file = getArgument().getSourceFile();
 		if (file == null)
 			return null;
-        return file.getProject();
+		return file.getProject();
 	}
 }

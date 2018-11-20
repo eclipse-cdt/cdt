@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
@@ -37,39 +37,38 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
 public class IBDropTargetListener implements DropTargetListener {
-    
-    private IBViewPart fIncludeBrowser;
-	private ITranslationUnit fTranslationUnit;
-	private boolean fEnabled= true;
 
-    public IBDropTargetListener(IBViewPart view) {
-        fIncludeBrowser= view;
-    }
-    
-    public void setEnabled(boolean val) {
-    	fEnabled= val;
-    }
-    
-    @Override
+	private IBViewPart fIncludeBrowser;
+	private ITranslationUnit fTranslationUnit;
+	private boolean fEnabled = true;
+
+	public IBDropTargetListener(IBViewPart view) {
+		fIncludeBrowser = view;
+	}
+
+	public void setEnabled(boolean val) {
+		fEnabled = val;
+	}
+
+	@Override
 	public void dragEnter(DropTargetEvent event) {
-        fTranslationUnit= null;
-        checkOperation(event);
-        if (event.detail != DND.DROP_NONE) {
+		fTranslationUnit = null;
+		checkOperation(event);
+		if (event.detail != DND.DROP_NONE) {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(event.currentDataType)) {
-				fTranslationUnit= checkLocalSelection();
+				fTranslationUnit = checkLocalSelection();
 				if (fTranslationUnit == null) {
-					TransferData alternateDataType = checkForAlternateDataType(event.dataTypes, 
-							new Transfer[] {ResourceTransfer.getInstance(), FileTransfer.getInstance()});
+					TransferData alternateDataType = checkForAlternateDataType(event.dataTypes,
+							new Transfer[] { ResourceTransfer.getInstance(), FileTransfer.getInstance() });
 					if (alternateDataType == null) {
-						event.detail= DND.DROP_NONE;
-					}
-					else {
-						event.currentDataType= alternateDataType;
+						event.detail = DND.DROP_NONE;
+					} else {
+						event.currentDataType = alternateDataType;
 					}
 				}
-        	}
-        }
-    }
+			}
+		}
+	}
 
 	private TransferData checkForAlternateDataType(TransferData[] dataTypes, Transfer[] transfers) {
 		for (int i = 0; i < dataTypes.length; i++) {
@@ -85,9 +84,9 @@ public class IBDropTargetListener implements DropTargetListener {
 	}
 
 	private ITranslationUnit checkLocalSelection() {
-		ISelection sel= LocalSelectionTransfer.getTransfer().getSelection();
+		ISelection sel = LocalSelectionTransfer.getTransfer().getSelection();
 		if (sel instanceof IStructuredSelection) {
-			for (Iterator<?> iter = ((IStructuredSelection)sel).iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = ((IStructuredSelection) sel).iterator(); iter.hasNext();) {
 				Object element = iter.next();
 				if (element instanceof ITranslationUnit) {
 					return (ITranslationUnit) element;
@@ -97,74 +96,73 @@ public class IBDropTargetListener implements DropTargetListener {
 		return null;
 	}
 
-    @Override
+	@Override
 	public void dragLeave(DropTargetEvent event) {
-    }
+	}
 
-    @Override
+	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
-        checkOperation(event);
-    }
+		checkOperation(event);
+	}
 
-    @Override
+	@Override
 	public void dragOver(DropTargetEvent event) {
-    }
+	}
 
-    @Override
+	@Override
 	public void drop(DropTargetEvent event) {
-    	if (fTranslationUnit == null) {
-    		fTranslationUnit= findFirstTranslationUnit(event.data);
-    	}            
-        if (fTranslationUnit == null) {
-            fIncludeBrowser.setMessage(IBMessages.IBViewPart_falseInputMessage);
-            Display.getCurrent().beep();
-        }
-        else {
-            fIncludeBrowser.setInput(fTranslationUnit);
-        }
-    }
+		if (fTranslationUnit == null) {
+			fTranslationUnit = findFirstTranslationUnit(event.data);
+		}
+		if (fTranslationUnit == null) {
+			fIncludeBrowser.setMessage(IBMessages.IBViewPart_falseInputMessage);
+			Display.getCurrent().beep();
+		} else {
+			fIncludeBrowser.setInput(fTranslationUnit);
+		}
+	}
 
-    private ITranslationUnit findFirstTranslationUnit(Object o) {
-        if (o instanceof String[]) {
-            String[] filePaths= (String[]) o;
-            for (int i = 0; i < filePaths.length; i++) {
-                String filePath = filePaths[i];
-                ITranslationUnit tu= findTranslationUnit(ResourceLookup.findFilesForLocation(Path.fromOSString(filePath)));
-                if (tu != null) {
-                    return tu;
-                }
-            }
-            return null;
-        }
-        if (o instanceof IResource[]) {
-            return findTranslationUnit((IResource[]) o);
-        }
-        return null;
-    }
+	private ITranslationUnit findFirstTranslationUnit(Object o) {
+		if (o instanceof String[]) {
+			String[] filePaths = (String[]) o;
+			for (int i = 0; i < filePaths.length; i++) {
+				String filePath = filePaths[i];
+				ITranslationUnit tu = findTranslationUnit(
+						ResourceLookup.findFilesForLocation(Path.fromOSString(filePath)));
+				if (tu != null) {
+					return tu;
+				}
+			}
+			return null;
+		}
+		if (o instanceof IResource[]) {
+			return findTranslationUnit((IResource[]) o);
+		}
+		return null;
+	}
 
-    private ITranslationUnit findTranslationUnit(IResource[] files) {
-        for (int i = 0; i < files.length; i++) {
-            IResource resource = files[i];
-            if (resource.getType() == IResource.FILE) {
-                ITranslationUnit tu= CoreModelUtil.findTranslationUnit((IFile) resource);
-                if (tu != null) {
-                    return tu;
-                }
-            }
-        }
-        return null;
-    }
+	private ITranslationUnit findTranslationUnit(IResource[] files) {
+		for (int i = 0; i < files.length; i++) {
+			IResource resource = files[i];
+			if (resource.getType() == IResource.FILE) {
+				ITranslationUnit tu = CoreModelUtil.findTranslationUnit((IFile) resource);
+				if (tu != null) {
+					return tu;
+				}
+			}
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public void dropAccept(DropTargetEvent event) {
-    }
-    
-    private void checkOperation(DropTargetEvent event) {
-        if (fEnabled && (event.operations & DND.DROP_COPY) != 0) {
-            event.detail= DND.DROP_COPY;
-        }
-        else {
-            event.detail= DND.DROP_NONE;
-        }
-    }
+	}
+
+	private void checkOperation(DropTargetEvent event) {
+		if (fEnabled && (event.operations & DND.DROP_COPY) != 0) {
+			event.detail = DND.DROP_COPY;
+		} else {
+			event.detail = DND.DROP_NONE;
+		}
+	}
 }

@@ -37,7 +37,7 @@ public class CDebugImageDescriptorRegistry {
 
 	/**
 	 * Creates a new image descriptor registry for the given display. All images managed by this registry will be disposed when the display gets disposed.
-	 * 
+	 *
 	 * @param diaplay
 	 *            the display the images managed by this registry are allocated for
 	 */
@@ -49,7 +49,7 @@ public class CDebugImageDescriptorRegistry {
 
 	/**
 	 * Returns the image associated with the given image descriptor.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the image descriptor for which the registry manages an image
 	 * @return the image associated with the image descriptor or <code>null</code> if the image
@@ -61,7 +61,8 @@ public class CDebugImageDescriptorRegistry {
 		Image result = fRegistry.get(descriptor);
 		if (result != null)
 			return result;
-		Assert.isTrue(fDisplay == CDebugUIPlugin.getStandardDisplay(), CDebugUIMessages.getString("CDebugImageDescriptorRegistry.0")); //$NON-NLS-1$
+		Assert.isTrue(fDisplay == CDebugUIPlugin.getStandardDisplay(),
+				CDebugUIMessages.getString("CDebugImageDescriptorRegistry.0")); //$NON-NLS-1$
 		result = descriptor.createImage();
 		if (result != null)
 			fRegistry.put(descriptor, result);

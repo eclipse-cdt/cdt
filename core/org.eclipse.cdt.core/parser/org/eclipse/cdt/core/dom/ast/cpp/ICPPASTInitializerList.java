@@ -10,13 +10,13 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 
 /**
- * Braced initializer list. 
+ * Braced initializer list.
  *
  * @since 5.2
  * @noextend This interface is not intended to be extended by clients.

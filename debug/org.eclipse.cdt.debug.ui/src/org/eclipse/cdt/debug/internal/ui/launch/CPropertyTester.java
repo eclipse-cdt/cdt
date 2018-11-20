@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *     Ken Ryall (Nokia) - Modified to launch on a project context.
@@ -46,7 +46,7 @@ public class CPropertyTester extends PropertyTester {
 		}
 		return celement != null && celement instanceof IBinary;
 	}
-	
+
 	private boolean isCProject(Object receiver) {
 		if (receiver instanceof IProject)
 			return CoreModel.hasCNature((IProject) receiver);

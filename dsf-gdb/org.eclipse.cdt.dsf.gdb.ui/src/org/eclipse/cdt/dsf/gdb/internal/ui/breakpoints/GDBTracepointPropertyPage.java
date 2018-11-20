@@ -14,7 +14,7 @@
  *                           before creating the tracepoint (Bug 376116)
  * Marc Khouzam (Ericsson) - Support for dynamic printf (bug 400628)
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints; 
+package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
@@ -51,7 +51,7 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * The preference page used to present the properties of a GDB tracepoint as preferences. 
+ * The preference page used to present the properties of a GDB tracepoint as preferences.
  */
 public class GDBTracepointPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 
@@ -77,7 +77,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 
 		/**
 		 * Only store if the text control is enabled
-		 * 
+		 *
 		 * @see FieldEditor#doStore()
 		 */
 		@Override
@@ -95,12 +95,11 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 		protected void clearErrorMessage() {
 			if (getPage() != null) {
 				String message = getPage().getErrorMessage();
-				if ( message != null ) {
+				if (message != null) {
 					if (getErrorMessage().equals(message)) {
 						super.clearErrorMessage();
 					}
-				}
-				else {
+				} else {
 					super.clearErrorMessage();
 				}
 			}
@@ -133,11 +132,11 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 				super.doStore();
 			}
 		}
-		
+
 		@Override
-		protected void doLoad()  {
+		protected void doLoad() {
 			String value = getPreferenceStore().getString(getPreferenceName());
-            setStringValue(value);
+			setStringValue(value);
 		}
 
 		/**
@@ -147,12 +146,11 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 		protected void clearErrorMessage() {
 			if (getPage() != null) {
 				String message = getPage().getErrorMessage();
-				if ( message != null ) {
+				if (message != null) {
 					if (getErrorMessage().equals(message)) {
 						super.clearErrorMessage();
 					}
-				}
-				else {
+				} else {
 					super.clearErrorMessage();
 				}
 			}
@@ -173,6 +171,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 				textField.setText(fValue);
 			}
 		}
+
 		@Override
 		protected void doLoadDefault() {
 			// nothing
@@ -185,11 +184,11 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	private TracepointStringFieldEditor fCondition;
 
 	private Text fIgnoreCountTextControl;
-	
+
 	private TracepointIntegerFieldEditor fLineEditor;
 	private TracepointIntegerFieldEditor fIgnoreCount;
-	
-	/** 
+
+	/**
 	 * Indicates if the page currently aims to create
 	 * a breakpoint that already exits.
 	 */
@@ -201,9 +200,9 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	private IAdaptable fElement;
 
 	/**
-	 * The preference store used to interface between the tracepoint and the 
+	 * The preference store used to interface between the tracepoint and the
 	 * tracepoint preference page.  This preference store is initialized only
-	 * when the preference store cannot be retrieved from the preference 
+	 * when the preference store cannot be retrieved from the preference
 	 * dialog's element.
 	 * @see #getPreferenceStore()
 	 */
@@ -211,7 +210,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 
 	/**
 	 * Constructor for GDBTracepointPropertyPage.
-	 * 
+	 *
 	 */
 	public GDBTracepointPropertyPage() {
 		super(GRID);
@@ -231,24 +230,21 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	}
 
 	private void createMainLabel(ICTracepoint tracepoint) {
-		addField(createLabelEditor(getFieldEditorParent(), 
-				                   Messages.PropertyPage_Class,
-				                   getTracepointMainLabel(tracepoint)));
+		addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_Class,
+				getTracepointMainLabel(tracepoint)));
 	}
 
 	private void createTypeSpecificLabelFieldEditors(ICTracepoint tracepoint) {
 		if (tracepoint instanceof ICFunctionBreakpoint) {
-		    createFunctionEditor(getFieldEditorParent());
-		}
-		else if (tracepoint instanceof ICAddressBreakpoint) {
+			createFunctionEditor(getFieldEditorParent());
+		} else if (tracepoint instanceof ICAddressBreakpoint) {
 			String address = getPreferenceStore().getString(ICLineBreakpoint.ADDRESS);
 			if (address == null || address.trim().length() == 0) {
 				address = Messages.PropertyPage_NotAvailable;
 			}
 			addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_Address, address));
-		}
-		else { // LineTracepoint
-		    String fileName = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
+		} else { // LineTracepoint
+			String fileName = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
 			if (fileName != null) {
 				addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_File, fileName));
 			}
@@ -260,38 +256,39 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	}
 
 	private String getTracepointMainLabel(ICTracepoint tracepoint) {
-	    IWorkbenchAdapter labelProvider = getElement().getAdapter(IWorkbenchAdapter.class);
-	    if (labelProvider != null) {
-	        return labelProvider.getLabel(getElement());
-	    }
-        // default main label is the label of marker type for the tracepoint
-        return CDIDebugModel.calculateMarkerType(tracepoint);
+		IWorkbenchAdapter labelProvider = getElement().getAdapter(IWorkbenchAdapter.class);
+		if (labelProvider != null) {
+			return labelProvider.getLabel(getElement());
+		}
+		// default main label is the label of marker type for the tracepoint
+		return CDIDebugModel.calculateMarkerType(tracepoint);
 	}
-	
-    protected void createFunctionEditor(Composite parent) {
-    	ICTracepoint tracepoint = getTracepoint();
-        if (tracepoint == null || tracepoint.getMarker() == null) {
-            TracepointStringFieldEditor expressionEditor = new TracepointStringFieldEditor(
-                ICLineBreakpoint.FUNCTION, Messages.PropertyPage_FunctionName, parent);
-            expressionEditor.setErrorMessage(Messages.PropertyPage_function_value_errorMessage);
-            expressionEditor.setEmptyStringAllowed(false);
-            addField(expressionEditor);
-        } else {
-            String function = getPreferenceStore().getString(ICLineBreakpoint.FUNCTION); 
-            if (function == null) { 
-                function = Messages.PropertyPage_NotAvailable;
-            }
-            addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_FunctionName, function));
-        }
-    }
+
+	protected void createFunctionEditor(Composite parent) {
+		ICTracepoint tracepoint = getTracepoint();
+		if (tracepoint == null || tracepoint.getMarker() == null) {
+			TracepointStringFieldEditor expressionEditor = new TracepointStringFieldEditor(ICLineBreakpoint.FUNCTION,
+					Messages.PropertyPage_FunctionName, parent);
+			expressionEditor.setErrorMessage(Messages.PropertyPage_function_value_errorMessage);
+			expressionEditor.setEmptyStringAllowed(false);
+			addField(expressionEditor);
+		} else {
+			String function = getPreferenceStore().getString(ICLineBreakpoint.FUNCTION);
+			if (function == null) {
+				function = Messages.PropertyPage_NotAvailable;
+			}
+			addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_FunctionName, function));
+		}
+	}
+
 	protected void createLineNumberEditor(Composite parent) {
-		 String title = Messages.PropertyPage_LineNumber;
-		 fLineEditor = new TracepointIntegerFieldEditor(IMarker.LINE_NUMBER, title, parent);
-		 fLineEditor.setValidRange(1, Integer.MAX_VALUE);
-		 fLineEditor.setErrorMessage(Messages.PropertyPage_lineNumber_errorMessage);
-		 addField(fLineEditor);
+		String title = Messages.PropertyPage_LineNumber;
+		fLineEditor = new TracepointIntegerFieldEditor(IMarker.LINE_NUMBER, title, parent);
+		fLineEditor.setValidRange(1, Integer.MAX_VALUE);
+		fLineEditor.setErrorMessage(Messages.PropertyPage_lineNumber_errorMessage);
+		addField(fLineEditor);
 	}
-	
+
 	protected void createEnabledField(Composite parent) {
 		fEnabled = new BooleanFieldEditor(ICBreakpoint.ENABLED, Messages.PropertyPage_Enabled, parent);
 		addField(fEnabled);
@@ -305,15 +302,17 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	}
 
 	protected void createIgnoreCountEditor(Composite parent) {
-		fIgnoreCount = new TracepointIntegerFieldEditor(ICBreakpoint.IGNORE_COUNT, Messages.PropertyPage_IgnoreCount, parent);
+		fIgnoreCount = new TracepointIntegerFieldEditor(ICBreakpoint.IGNORE_COUNT, Messages.PropertyPage_IgnoreCount,
+				parent);
 		fIgnoreCount.setValidRange(0, Integer.MAX_VALUE);
 		fIgnoreCountTextControl = fIgnoreCount.getTextControl(parent);
-		fIgnoreCountTextControl.setEnabled( getPreferenceStore().getInt(ICBreakpoint.IGNORE_COUNT) >= 0 );
+		fIgnoreCountTextControl.setEnabled(getPreferenceStore().getInt(ICBreakpoint.IGNORE_COUNT) >= 0);
 		addField(fIgnoreCount);
 	}
 
 	protected void createPassCountEditor(Composite parent) {
-		fPassCount = new TracepointIntegerFieldEditor(ICTracepoint.PASS_COUNT, Messages.TracepointPropertyPage_PassCount, parent);
+		fPassCount = new TracepointIntegerFieldEditor(ICTracepoint.PASS_COUNT,
+				Messages.TracepointPropertyPage_PassCount, parent);
 		fPassCount.setValidRange(0, Integer.MAX_VALUE);
 		fPassCountTextControl = fPassCount.getTextControl(parent);
 		fPassCountTextControl.setEnabled(getPreferenceStore().getInt(ICTracepoint.PASS_COUNT) >= 0);
@@ -329,14 +328,13 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 		// Don't allow to create a duplicate breakpoint
 		return super.isValid() && !fDuplicateBreakpoint;
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		super.propertyChange(event);
 
 		ICBreakpoint currentBp = getTracepoint();
-		if (!(currentBp instanceof ICFunctionBreakpoint) &&
-				!(currentBp instanceof ICAddressBreakpoint)) {
+		if (!(currentBp instanceof ICFunctionBreakpoint) && !(currentBp instanceof ICAddressBreakpoint)) {
 			// Check for duplication of line tracepoints
 
 			if (event.getProperty().equals(FieldEditor.VALUE)) {
@@ -348,7 +346,8 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 					fDuplicateBreakpoint = isDuplicateBreakpoint();
 					if (oldValue != fDuplicateBreakpoint) {
 						if (fDuplicateBreakpoint) {
-							setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.breakpoint_already_exists_errorMessage")); //$NON-NLS-1$
+							setErrorMessage(BreakpointsMessages
+									.getString("CBreakpointPropertyPage.breakpoint_already_exists_errorMessage")); //$NON-NLS-1$
 						} else {
 							setErrorMessage(null);
 						}
@@ -363,7 +362,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 			}
 		}
 	}
-	
+
 	private boolean isDuplicateBreakpoint() {
 		String source = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
 		int line = fLineEditor.getIntValue();
@@ -389,17 +388,17 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 		}
 		return false;
 	}
-	
+
 	protected ICTracepoint getTracepoint() {
 		IAdaptable element = getElement();
 		if (element instanceof ICTracepoint) {
-		    return (ICTracepoint)element;
+			return (ICTracepoint) element;
 		}
-		
+
 		if (element instanceof ICBreakpointContext) {
-			ICBreakpoint breakpoint =((ICBreakpointContext)element).getBreakpoint();
+			ICBreakpoint breakpoint = ((ICBreakpointContext) element).getBreakpoint();
 			if (breakpoint instanceof ICTracepoint) {
-			    return (ICTracepoint)breakpoint;
+				return (ICTracepoint) breakpoint;
 			}
 			assert false : "Should always have a tracepoint"; //$NON-NLS-1$
 		}
@@ -408,68 +407,66 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	}
 
 	protected Object getDebugContext() {
-        IDebugContextProvider provider = getElement().getAdapter(IDebugContextProvider.class);
-        if (provider != null) {
-            ISelection selection = provider.getActiveContext();
-            if (selection instanceof IStructuredSelection) {
-                return ((IStructuredSelection) selection).getFirstElement();
-            }
-            return null;
-        }
-        return DebugUITools.getDebugContext();        
+		IDebugContextProvider provider = getElement().getAdapter(IDebugContextProvider.class);
+		if (provider != null) {
+			ISelection selection = provider.getActiveContext();
+			if (selection instanceof IStructuredSelection) {
+				return ((IStructuredSelection) selection).getFirstElement();
+			}
+			return null;
+		}
+		return DebugUITools.getDebugContext();
 	}
 
-	
 	protected IResource getResource() {
-        IAdaptable element = getElement();
-        if (element instanceof ICTracepoint) {
-            IMarker marker = ((ICTracepoint)element).getMarker();
-            if (marker != null) {
-                return marker.getResource();
-            }
-        } else if (element instanceof ICBreakpointContext) {
-            return ((ICBreakpointContext)element).getResource();
-        } 
-        return null;
+		IAdaptable element = getElement();
+		if (element instanceof ICTracepoint) {
+			IMarker marker = ((ICTracepoint) element).getMarker();
+			if (marker != null) {
+				return marker.getResource();
+			}
+		} else if (element instanceof ICBreakpointContext) {
+			return ((ICBreakpointContext) element).getResource();
+		}
+		return null;
 	}
 
 	@Override
 	public IPreferenceStore getPreferenceStore() {
-	    IAdaptable element = getElement();
-	    if (element instanceof ICBreakpointContext) {
-	        return ((ICBreakpointContext)element).getPreferenceStore();
-	    }
+		IAdaptable element = getElement();
+		if (element instanceof ICBreakpointContext) {
+			return ((ICBreakpointContext) element).getPreferenceStore();
+		}
 
-	    if (fTracepointPreferenceStore == null) {
-	        CBreakpointContext bpContext = element instanceof CBreakpointContext ? 
-	            (CBreakpointContext)element : null;
-	        fTracepointPreferenceStore = new CBreakpointPreferenceStore(bpContext, null);
-	    }
-	    return fTracepointPreferenceStore;
+		if (fTracepointPreferenceStore == null) {
+			CBreakpointContext bpContext = element instanceof CBreakpointContext ? (CBreakpointContext) element : null;
+			fTracepointPreferenceStore = new CBreakpointPreferenceStore(bpContext, null);
+		}
+		return fTracepointPreferenceStore;
 	}
 
 	@Override
 	public boolean performCancel() {
-	    IPreferenceStore store = getPreferenceStore();
-	    if (store instanceof CBreakpointPreferenceStore) {
-	        ((CBreakpointPreferenceStore)store).setCanceled(true);
-	    }
-	    return super.performCancel();
+		IPreferenceStore store = getPreferenceStore();
+		if (store instanceof CBreakpointPreferenceStore) {
+			((CBreakpointPreferenceStore) store).setCanceled(true);
+		}
+		return super.performCancel();
 	}
 
 	@Override
-    public boolean performOk() {
-        IPreferenceStore store = getPreferenceStore();
-        if (store instanceof CBreakpointPreferenceStore) {
-            ((CBreakpointPreferenceStore)store).setCanceled(false);
-        }
-        return super.performOk();
-    }
-	
+	public boolean performOk() {
+		IPreferenceStore store = getPreferenceStore();
+		if (store instanceof CBreakpointPreferenceStore) {
+			((CBreakpointPreferenceStore) store).setCanceled(false);
+		}
+		return super.performOk();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
-    @Override
+	@Override
 	public IAdaptable getElement() {
 		return fElement;
 	}
@@ -477,26 +474,25 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
 	 */
-    @Override
+	@Override
 	public void setElement(IAdaptable element) {
-    	if (element instanceof ICBreakpoint) {
-			fElement = new CBreakpointContext((ICBreakpoint)element, null);
-		}
-		else {
+		if (element instanceof ICBreakpoint) {
+			fElement = new CBreakpointContext((ICBreakpoint) element, null);
+		} else {
 			fElement = element;
 		}
 	}
 
 	protected String[] getDebugModelIds() {
-        String[] debugModelIds = null;
-        Object debugContext = getDebugContext();
-        IDebugModelProvider debugModelProvider = (IDebugModelProvider)
-            DebugPlugin.getAdapter(debugContext, IDebugModelProvider.class);
-        if (debugModelProvider != null) {
-            debugModelIds = debugModelProvider.getModelIdentifiers();
-        } else if (debugContext instanceof IDebugElement) {
-            debugModelIds = new String[] { ((IDebugElement)debugContext).getModelIdentifier() };
-        }
-        return debugModelIds;
+		String[] debugModelIds = null;
+		Object debugContext = getDebugContext();
+		IDebugModelProvider debugModelProvider = (IDebugModelProvider) DebugPlugin.getAdapter(debugContext,
+				IDebugModelProvider.class);
+		if (debugModelProvider != null) {
+			debugModelIds = debugModelProvider.getModelIdentifiers();
+		} else if (debugContext instanceof IDebugElement) {
+			debugModelIds = new String[] { ((IDebugElement) debugContext).getModelIdentifier() };
+		}
+		return debugModelIds;
 	}
 }

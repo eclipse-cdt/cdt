@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -20,36 +20,36 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.swt.graphics.RGB;
 
 /**
- * The color attribute of a label.  It determines what background color to use 
+ * The color attribute of a label.  It determines what background color to use
  * for the given label.
- * 
+ *
  * @see LabelAttribute
  * @see LabelColumnInfo
  * @see PropertiesBasedLabelProvider
- * 
+ *
  * @since 2.0
  */
 
 public class LabelBackground extends LabelAttribute {
-    private RGB fBackground;
+	private RGB fBackground;
 
-    public LabelBackground(RGB background) {
-        fBackground = background;
-    }
-    
-    public RGB getBackground() {
-        return fBackground;
-    }
-    
-    public void setBackground(RGB background) {
-        fBackground = background;
-    }
+	public LabelBackground(RGB background) {
+		fBackground = background;
+	}
 
-    @Override
-    public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
-        RGB background = getBackground();
-        if (background != null) {
-            update.setBackground(background, columnIndex);
-        }
-    }
+	public RGB getBackground() {
+		return fBackground;
+	}
+
+	public void setBackground(RGB background) {
+		fBackground = background;
+	}
+
+	@Override
+	public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
+		RGB background = getBackground();
+		if (background != null) {
+			update.setBackground(background, columnIndex);
+		}
+	}
 }

@@ -18,19 +18,18 @@ import java.util.ResourceBundle;
 
 public class MakefileMessages {
 
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.make.internal.core.makefile.MakeFileResources";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.make.internal.core.makefile.MakeFileResources";//$NON-NLS-1$
 
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
-    private MakefileMessages() {
-    }
+	private MakefileMessages() {
+	}
 
-    public static String getString(String key) {
-        try {
-            return RESOURCE_BUNDLE.getString(key);
-        } catch (MissingResourceException e) {
-            return '!' + key + '!';
-        }
-    }
+	public static String getString(String key) {
+		try {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
+			return '!' + key + '!';
+		}
+	}
 }

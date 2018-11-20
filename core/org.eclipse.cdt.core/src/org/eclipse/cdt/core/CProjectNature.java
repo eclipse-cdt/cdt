@@ -64,21 +64,21 @@ public class CProjectNature implements IProjectNature {
 	 *
 	 */
 	public static void addNature(IProject project, String natureId, IProgressMonitor monitor) throws CoreException {
-	    try {
-	        if (monitor == null) {
-	            monitor = new NullProgressMonitor();
-	        }
-    		IProjectDescription description = project.getDescription();
-    		String[] prevNatures = description.getNatureIds();
-    		for (String prevNature : prevNatures) {
-    			if (natureId.equals(prevNature))
-    				return;
-    		}
-    		String[] newNatures = new String[prevNatures.length + 1];
-    		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-    		newNatures[prevNatures.length] = natureId;
-    		description.setNatureIds(newNatures);
-    		project.setDescription(description, monitor);
+		try {
+			if (monitor == null) {
+				monitor = new NullProgressMonitor();
+			}
+			IProjectDescription description = project.getDescription();
+			String[] prevNatures = description.getNatureIds();
+			for (String prevNature : prevNatures) {
+				if (natureId.equals(prevNature))
+					return;
+			}
+			String[] newNatures = new String[prevNatures.length + 1];
+			System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
+			newNatures[prevNatures.length] = natureId;
+			description.setNatureIds(newNatures);
+			project.setDescription(description, monitor);
 		}
 
 		catch (CoreException e) {

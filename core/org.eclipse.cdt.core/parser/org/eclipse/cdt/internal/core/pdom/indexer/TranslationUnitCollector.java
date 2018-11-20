@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.Collection;
@@ -26,10 +26,11 @@ final public class TranslationUnitCollector implements ICElementVisitor {
 	private final Collection<ITranslationUnit> fHeaders;
 	private final IProgressMonitor fProgressMonitor;
 
-	public TranslationUnitCollector(Collection<ITranslationUnit> sources, Collection<ITranslationUnit> headers, IProgressMonitor pm) {
-		fSources= sources;
-		fHeaders= headers;
-		fProgressMonitor= pm;
+	public TranslationUnitCollector(Collection<ITranslationUnit> sources, Collection<ITranslationUnit> headers,
+			IProgressMonitor pm) {
+		fSources = sources;
+		fHeaders = headers;
+		fProgressMonitor = pm;
 	}
 
 	@Override
@@ -39,11 +40,10 @@ final public class TranslationUnitCollector implements ICElementVisitor {
 		}
 		switch (element.getElementType()) {
 		case ICElement.C_UNIT:
-			ITranslationUnit tu = (ITranslationUnit)element;
+			ITranslationUnit tu = (ITranslationUnit) element;
 			if (tu.isSourceUnit()) {
 				fSources.add(tu);
-			}
-			else if (fHeaders != null && tu.isHeaderUnit()) {
+			} else if (fHeaders != null && tu.isHeaderUnit()) {
 				fHeaders.add(tu);
 			}
 			return false;

@@ -24,50 +24,51 @@ import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 /**
  * This class is used by the MacroResolver to collect and present
  * the explicit file macros referenced in the given expression
- * 
+ *
  * @since 3.0
  */
 public class ExplicitFileMacroCollector extends SupplierBasedCdtVariableSubstitutor {
-	private static final String EMPTY_STRING = "";	//$NON-NLS-1$
-	
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
 	private List<ICdtVariable> fMacrosList = new ArrayList<ICdtVariable>();
 
-/*	public ExplicitFileMacroCollector(int contextType, Object contextData){
-		super(contextType, contextData, EMPTY_STRING, EMPTY_STRING);
-	}
-*/
-	public ExplicitFileMacroCollector(IMacroContextInfo contextInfo){
+	/*	public ExplicitFileMacroCollector(int contextType, Object contextData){
+			super(contextType, contextData, EMPTY_STRING, EMPTY_STRING);
+		}
+	*/
+	public ExplicitFileMacroCollector(IMacroContextInfo contextInfo) {
 		super(contextInfo, EMPTY_STRING, EMPTY_STRING);
 	}
-/*
-	public ExplicitFileMacroCollector(ITool tool){
-		super(null, EMPTY_STRING, EMPTY_STRING);
-		IBuildObject bo = tool.getParent();
-		IConfiguration cfg = null;
-		if(bo instanceof IResourceConfiguration)
-			cfg = ((IResourceConfiguration)bo).getParent();
-		else if (bo instanceof IToolChain)
-			cfg = ((IToolChain)bo).getParent();
-		try{
-			setMacroContextInfo(IBuildMacroProvider.CONTEXT_CONFIGURATION,cfg);
-		}catch (BuildMacroException e){
+
+	/*
+		public ExplicitFileMacroCollector(ITool tool){
+			super(null, EMPTY_STRING, EMPTY_STRING);
+			IBuildObject bo = tool.getParent();
+			IConfiguration cfg = null;
+			if(bo instanceof IResourceConfiguration)
+				cfg = ((IResourceConfiguration)bo).getParent();
+			else if (bo instanceof IToolChain)
+				cfg = ((IToolChain)bo).getParent();
+			try{
+				setMacroContextInfo(IBuildMacroProvider.CONTEXT_CONFIGURATION,cfg);
+			}catch (BuildMacroException e){
+			}
 		}
-	}
-*/
+	*/
 	/* (non-Javadoc)
 	 */
 	@Override
-	protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException{
-		if(macro instanceof MbsMacroSupplier.FileContextMacro){
-			MbsMacroSupplier.FileContextMacro fileMacro = (MbsMacroSupplier.FileContextMacro)macro;
-			if(fileMacro.isExplicit())
+	protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException {
+		if (macro instanceof MbsMacroSupplier.FileContextMacro) {
+			MbsMacroSupplier.FileContextMacro fileMacro = (MbsMacroSupplier.FileContextMacro) macro;
+			if (fileMacro.isExplicit())
 				fMacrosList.add(macro);
 			return null;
 		}
 		return super.resolveMacro(macro);
 	}
-	
-	public IBuildMacro[] getExplicisFileMacros(){
+
+	public IBuildMacro[] getExplicisFileMacros() {
 		return fMacrosList.toArray(new IBuildMacro[fMacrosList.size()]);
 	}
 

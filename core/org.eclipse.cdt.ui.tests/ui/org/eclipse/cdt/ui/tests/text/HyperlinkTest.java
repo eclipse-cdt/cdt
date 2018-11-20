@@ -44,50 +44,28 @@ import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
 
 /**
  * This test just checks that hyperlinks are created in the right
- * places. It does not test that the hyperlinks actually take you 
+ * places. It does not test that the hyperlinks actually take you
  * to the right place.
- * 
+ *
  * @author Mike Kucera
  */
 public class HyperlinkTest extends TestCase {
 	private static final String CPP_FILE_NAME_1 = "hyperlink_test_cpp.cpp";
 	private static final String CPP_FILE_NAME_2 = "hyperlink_test_cpp_without_ast.cpp";
-	private static final String CPP_CODE = 
-		"#include <stdio.h> \n" +
-		"#define SOMEMACRO macro_token1 macro_token2 \n" +
-		"// COMMENT there should not be links inside of comments \n" +
-		"class Point { \n" +
-		"  public: \n" +
-		"    Point(); \n" +
-		"    ~Point(); \n" +
-		"    void set(int x, int y); \n" +
-		"    int getX(); \n" +
-		"    int getY(); \n" +
-		"    Point operator+(Point); \n" +
-		"  private: \n" +
-		"    int x, y; \n" +
-		"}; \n" +
-		"#define SOMEMACROFUNCTION(a) function(a) \n" +
-		"int test(Point p) {  \n" +
-		"    char* str = \"STRING LITERAL\"; \n" +
-		"    p + p;" +
-		"    int arg;" +
-		"    SOMEMACROFUNCTION(arg);" +
-		"} \n";
-	
+	private static final String CPP_CODE = "#include <stdio.h> \n" + "#define SOMEMACRO macro_token1 macro_token2 \n"
+			+ "// COMMENT there should not be links inside of comments \n" + "class Point { \n" + "  public: \n"
+			+ "    Point(); \n" + "    ~Point(); \n" + "    void set(int x, int y); \n" + "    int getX(); \n"
+			+ "    int getY(); \n" + "    Point operator+(Point); \n" + "  private: \n" + "    int x, y; \n" + "}; \n"
+			+ "#define SOMEMACROFUNCTION(a) function(a) \n" + "int test(Point p) {  \n"
+			+ "    char* str = \"STRING LITERAL\"; \n" + "    p + p;" + "    int arg;" + "    SOMEMACROFUNCTION(arg);"
+			+ "} \n";
+
 	private static final String C_FILE_NAME_1 = "hyperlink_test_c_1.c";
-	private static final String C_CODE_1 = 
-		"int main() { \n" +
-		"    int class = 99; \n" +
-		"}";
-	
+	private static final String C_CODE_1 = "int main() { \n" + "    int class = 99; \n" + "}";
+
 	private static final String C_FILE_NAME_2 = "hyperlink_test_c_2.c";
-	private static final String C_CODE_2 = 
-		"#ifdef NOTDEF\n" +
-		"    int nothere = 99; \n" +
-		"#else\n" +
-		"    int itworks = 100; \n" +
-		"#endif\n";
+	private static final String C_CODE_2 = "#ifdef NOTDEF\n" + "    int nothere = 99; \n" + "#else\n"
+			+ "    int itworks = 100; \n" + "#endif\n";
 
 	private ICProject project;
 	private CEditor editor;
@@ -95,17 +73,17 @@ public class HyperlinkTest extends TestCase {
 	public static TestSuite suite() {
 		return new TestSuite(HyperlinkTest.class);
 	}
-	
+
 	private void setUpEditor(String fileName, String code) throws Exception {
 		setUpEditor(fileName, code, true);
 	}
 
 	private void setUpEditor(String fileName, String code, boolean buildAST) throws Exception {
 		super.setUp();
-		project= CProjectHelper.createCCProject(super.getName(), "unused", IPDOMManager.ID_NO_INDEXER);
-		ICContainer cContainer= CProjectHelper.addCContainer(project, "src");
-		IFile file= EditorTestHelper.createFile(cContainer.getResource(), fileName, code, new NullProgressMonitor());
-		
+		project = CProjectHelper.createCCProject(super.getName(), "unused", IPDOMManager.ID_NO_INDEXER);
+		ICContainer cContainer = CProjectHelper.addCContainer(project, "src");
+		IFile file = EditorTestHelper.createFile(cContainer.getResource(), fileName, code, new NullProgressMonitor());
+
 		assertNotNull(file);
 		assertTrue(file.exists());
 		editor = (CEditor) EditorTestHelper.openInEditor(file, true);
@@ -115,28 +93,29 @@ public class HyperlinkTest extends TestCase {
 			// we trigger AST creation ahead of time.
 			IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
 			IWorkingCopy workingCopy = manager.getWorkingCopy(editor.getEditorInput());
-			IStatus status= ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_IF_OPEN, null, new ASTRunnable() {
-				@Override
-				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
-					return Status.OK_STATUS;
-				}
-			});
+			IStatus status = ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_IF_OPEN, null,
+					new ASTRunnable() {
+						@Override
+						public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
+							return Status.OK_STATUS;
+						}
+					});
 		}
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		EditorTestHelper.closeEditor(editor);
 		CProjectHelper.delete(project);
 	}
-	
+
 	private IHyperlink[] getHyperlinks(int mouseOffset) {
 		CElementHyperlinkDetector detector = new CElementHyperlinkDetector();
 		detector.setContext(editor);
 		IRegion region = new Region(mouseOffset, 0);
 		return detector.detectHyperlinks(EditorTestHelper.getSourceViewer(editor), region, false);
 	}
-	
+
 	private void assertHyperlink(int mouseOffset, int linkStartOffset, int linkLength) {
 		IHyperlink[] links = getHyperlinks(mouseOffset);
 		assertNotNull(links);
@@ -145,7 +124,7 @@ public class HyperlinkTest extends TestCase {
 		assertEquals(linkStartOffset, hyperlinkRegion.getOffset());
 		assertEquals(linkLength, hyperlinkRegion.getLength());
 	}
-	
+
 	private void assertNotHyperlink(int mouseOffset) {
 		IHyperlink[] links = getHyperlinks(mouseOffset);
 		assertNull(links);
@@ -154,11 +133,11 @@ public class HyperlinkTest extends TestCase {
 	public void testHyperlinksCpp() throws Exception {
 		// entire include highlighted
 		setUpEditor(CPP_FILE_NAME_1, CPP_CODE, true);
-		
-		assertHyperlink(CPP_CODE.indexOf("#include") + 2, 0, "#include <stdio.h>".length()); 
+
+		assertHyperlink(CPP_CODE.indexOf("#include") + 2, 0, "#include <stdio.h>".length());
 		assertHyperlink(CPP_CODE.indexOf("<stdio.h>") + 2, 0, "#include <stdio.h>".length());
 		assertHyperlink(CPP_CODE.indexOf("<stdio.h>") + "<stdio.h".length(), 0, "#include <stdio.h>".length());
-		
+
 		// hovering over the whitespace inside an include still results in a hyperlink
 		assertHyperlink(CPP_CODE.indexOf("<stdio.h>") - 1, 0, "#include <stdio.h>".length());
 
@@ -170,19 +149,19 @@ public class HyperlinkTest extends TestCase {
 		assertHyperlink(CPP_CODE.indexOf("macro_token2"), CPP_CODE.indexOf("macro_token2"), "macro_token2".length());
 		// see bug 344604
 		assertHyperlink(CPP_CODE.indexOf("arg);"), CPP_CODE.indexOf("arg);"), "arg".length());
-		
+
 		// no hyperlinks for comments
 		assertNotHyperlink(CPP_CODE.indexOf("//") + 1);
 		assertNotHyperlink(CPP_CODE.indexOf("COMMENT") + 1);
-		
+
 		// no hyperlinks for keywords
-		assertNotHyperlink(CPP_CODE.indexOf("class") + 1); 
-		assertNotHyperlink(CPP_CODE.indexOf("public") + 1); 
-		assertNotHyperlink(CPP_CODE.indexOf("private") + 1); 
-		assertNotHyperlink(CPP_CODE.indexOf("int x") + 1); 
-		assertNotHyperlink(CPP_CODE.indexOf("char") + 1); 
+		assertNotHyperlink(CPP_CODE.indexOf("class") + 1);
+		assertNotHyperlink(CPP_CODE.indexOf("public") + 1);
+		assertNotHyperlink(CPP_CODE.indexOf("private") + 1);
+		assertNotHyperlink(CPP_CODE.indexOf("int x") + 1);
+		assertNotHyperlink(CPP_CODE.indexOf("char") + 1);
 		assertNotHyperlink(CPP_CODE.indexOf("void") + 1);
-		
+
 		// no hyperlinks for punctuation
 		assertNotHyperlink(CPP_CODE.indexOf("{"));
 		assertNotHyperlink(CPP_CODE.indexOf("}"));
@@ -190,19 +169,19 @@ public class HyperlinkTest extends TestCase {
 		assertNotHyperlink(CPP_CODE.indexOf(")"));
 		assertNotHyperlink(CPP_CODE.indexOf(":"));
 		assertNotHyperlink(CPP_CODE.indexOf(";"));
-		
+
 		// no hyperlinks inside strings
 		assertNotHyperlink(CPP_CODE.indexOf("STRING") + 1);
 		assertNotHyperlink(CPP_CODE.indexOf("STRING") + 6);
 		assertNotHyperlink(CPP_CODE.indexOf("LITERAL") + 1);
-		
+
 		assertHyperlink(CPP_CODE.indexOf("Point {") + 1, CPP_CODE.indexOf("Point {"), "Point".length());
 		assertHyperlink(CPP_CODE.indexOf("Point()") + 1, CPP_CODE.indexOf("Point()"), "Point".length());
 		assertHyperlink(CPP_CODE.indexOf("~Point()") + 1, CPP_CODE.indexOf("~Point()"), "~Point".length());
 		assertHyperlink(CPP_CODE.indexOf("set(") + 1, CPP_CODE.indexOf("set("), "set".length());
 		assertHyperlink(CPP_CODE.indexOf("getX()") + 1, CPP_CODE.indexOf("getX()"), "getX".length());
 		assertHyperlink(CPP_CODE.indexOf("getY()") + 1, CPP_CODE.indexOf("getY()"), "getY".length());
-		
+
 		// hyperlinks for overloaded operators
 		assertHyperlink(CPP_CODE.indexOf("+ p"), CPP_CODE.indexOf("+ p"), 1);
 	}
@@ -210,11 +189,11 @@ public class HyperlinkTest extends TestCase {
 	public void testHyperlinksCppWithoutAST() throws Exception {
 		// entire include highlighted
 		setUpEditor(CPP_FILE_NAME_2, CPP_CODE, false);
-		
-		assertHyperlink(CPP_CODE.indexOf("#include") + 2, 0, "#include <stdio.h>".length()); 
+
+		assertHyperlink(CPP_CODE.indexOf("#include") + 2, 0, "#include <stdio.h>".length());
 		assertHyperlink(CPP_CODE.indexOf("<stdio.h>") + 2, 0, "#include <stdio.h>".length());
 		assertHyperlink(CPP_CODE.indexOf("<stdio.h>") + "<stdio.h".length(), 0, "#include <stdio.h>".length());
-		
+
 		// hovering over the whitespace inside an include still results in a hyperlink
 		assertHyperlink(CPP_CODE.indexOf("<stdio.h>") - 1, 0, "#include <stdio.h>".length());
 
@@ -226,19 +205,19 @@ public class HyperlinkTest extends TestCase {
 		assertHyperlink(CPP_CODE.indexOf("macro_token2"), CPP_CODE.indexOf("macro_token2"), "macro_token2".length());
 		// see bug 344604
 		assertHyperlink(CPP_CODE.indexOf("arg);"), CPP_CODE.indexOf("arg);"), "arg".length());
-		
+
 		// no hyperlinks for comments
 		assertNotHyperlink(CPP_CODE.indexOf("//") + 1);
 		assertNotHyperlink(CPP_CODE.indexOf("COMMENT") + 1);
-		
+
 		// no hyperlinks for keywords
-		assertNotHyperlink(CPP_CODE.indexOf("class") + 1); 
-		assertNotHyperlink(CPP_CODE.indexOf("public") + 1); 
-		assertNotHyperlink(CPP_CODE.indexOf("private") + 1); 
-		assertNotHyperlink(CPP_CODE.indexOf("int x") + 1); 
-		assertNotHyperlink(CPP_CODE.indexOf("char") + 1); 
+		assertNotHyperlink(CPP_CODE.indexOf("class") + 1);
+		assertNotHyperlink(CPP_CODE.indexOf("public") + 1);
+		assertNotHyperlink(CPP_CODE.indexOf("private") + 1);
+		assertNotHyperlink(CPP_CODE.indexOf("int x") + 1);
+		assertNotHyperlink(CPP_CODE.indexOf("char") + 1);
 		assertNotHyperlink(CPP_CODE.indexOf("void") + 1);
-		
+
 		// no hyperlinks for punctuation
 		assertNotHyperlink(CPP_CODE.indexOf("{"));
 		assertNotHyperlink(CPP_CODE.indexOf("}"));
@@ -246,43 +225,43 @@ public class HyperlinkTest extends TestCase {
 		assertNotHyperlink(CPP_CODE.indexOf(")"));
 		assertNotHyperlink(CPP_CODE.indexOf(":"));
 		assertNotHyperlink(CPP_CODE.indexOf(";"));
-		
+
 		// no hyperlinks inside strings
 		assertNotHyperlink(CPP_CODE.indexOf("STRING") + 1);
 		assertNotHyperlink(CPP_CODE.indexOf("STRING") + 6);
 		assertNotHyperlink(CPP_CODE.indexOf("LITERAL") + 1);
-		
+
 		assertHyperlink(CPP_CODE.indexOf("Point {") + 1, CPP_CODE.indexOf("Point {"), "Point".length());
 		assertHyperlink(CPP_CODE.indexOf("Point()") + 1, CPP_CODE.indexOf("Point()"), "Point".length());
-		// No-AST hyperlink detection doesn't know that tilde is part of the destructor name. 
+		// No-AST hyperlink detection doesn't know that tilde is part of the destructor name.
 		assertHyperlink(CPP_CODE.indexOf("~Point()") + 1, CPP_CODE.indexOf("~Point()") + 1, "Point".length());
 		assertHyperlink(CPP_CODE.indexOf("set(") + 1, CPP_CODE.indexOf("set("), "set".length());
 		assertHyperlink(CPP_CODE.indexOf("getX()") + 1, CPP_CODE.indexOf("getX()"), "getX".length());
 		assertHyperlink(CPP_CODE.indexOf("getY()") + 1, CPP_CODE.indexOf("getY()"), "getY".length());
-		
+
 		// Overloaded operators are not hyperlinked when AST is not available.
-        //assertHyperlink(CPP_CODE.indexOf("+ p"), CPP_CODE.indexOf("+ p"), 1);
+		//assertHyperlink(CPP_CODE.indexOf("+ p"), CPP_CODE.indexOf("+ p"), 1);
 	}
 
 	public void testHyperlinksCKeywords() throws Exception {
 		setUpEditor(C_FILE_NAME_1, C_CODE_1, true);
-		
+
 		// 'class' is not a keyword in C, it should be hyperlinked
 		assertHyperlink(C_CODE_1.indexOf("class") + 1, C_CODE_1.indexOf("class"), "class".length());
-		
+
 		// no hyperlinks for numeric literals
 		assertNotHyperlink(C_CODE_1.indexOf("99") + 1);
 	}
 
 	public void testHyperlinksInactiveCode() throws Exception {
 		setUpEditor(C_FILE_NAME_2, C_CODE_2, true);
-		
+
 		assertNotHyperlink(C_CODE_2.indexOf("#ifdef") + 2);
 		assertNotHyperlink(C_CODE_2.indexOf("#else") + 2);
 		assertNotHyperlink(C_CODE_2.indexOf("#endif") + 2);
-		
+
 		// see bug 259015
-//		assertNotHyperlink(C_CODE_2.indexOf("nothere") + 1);
+		//		assertNotHyperlink(C_CODE_2.indexOf("nothere") + 1);
 		assertHyperlink(C_CODE_2.indexOf("itworks") + 1, C_CODE_2.indexOf("itworks"), "itworks".length());
 	}
 }

@@ -48,7 +48,8 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	protected List<String> includes = new ArrayList<String>();
 
 	@Override
-	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
+	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector,
+			IMarkerGenerator markerGenerator) {
 		this.fProject = project;
 		this.fCollector = collector;
 	}
@@ -58,9 +59,9 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 */
 	@Override
 	public boolean processLine(String line) {
-		TraceUtil.outputTrace("GCCSpecsConsoleParser parsing line: [", line, "]");	//$NON-NLS-1$ //$NON-NLS-2$
+		TraceUtil.outputTrace("GCCSpecsConsoleParser parsing line: [", line, "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		line= line.trim();
+		line = line.trim();
 		if (line.length() == 0) {
 			return false;
 		}
@@ -83,7 +84,8 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 							defineParts[2] = line.substring(i + 1).trim();
 						}
 					} else {
-						MakeCorePlugin.log(new Exception("GCCSpecsConsoleParser ERROR: Unmatched brackets: ["+ line+ "]")); //$NON-NLS-1$ //$NON-NLS-2$
+						MakeCorePlugin
+								.log(new Exception("GCCSpecsConsoleParser ERROR: Unmatched brackets: [" + line + "]")); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 
@@ -103,11 +105,9 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 		// now get all the includes
 		else if (line.startsWith(INCLUDE) && line.endsWith("search starts here:")) { //$NON-NLS-1$
 			expectingIncludes = true;
-		}
-		else if (line.startsWith("End of search list.")) {	//$NON-NLS-1$
+		} else if (line.startsWith("End of search list.")) { //$NON-NLS-1$
 			expectingIncludes = false;
-		}
-		else if (expectingIncludes) {
+		} else if (expectingIncludes) {
 			if (!includes.contains(line))
 				includes.add(line);
 		}
@@ -130,8 +130,8 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 				fCollector.contributeToScannerConfig(fProject, scannerInfo);
 			}
 		}
-		TraceUtil.outputTrace("Scanner info from \'specs\' file",	//$NON-NLS-1$
-				"Include paths", includes, new ArrayList<String>(0), "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$);
+		TraceUtil.outputTrace("Scanner info from \'specs\' file", //$NON-NLS-1$
+				"Include paths", includes, new ArrayList<String>(0), "Defined symbols", symbols); //$NON-NLS-1$ //$NON-NLS-2$);
 	}
 
 }

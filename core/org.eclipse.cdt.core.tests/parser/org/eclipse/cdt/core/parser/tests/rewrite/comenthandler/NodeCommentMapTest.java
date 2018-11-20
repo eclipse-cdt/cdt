@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- *     Institute for Software - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Institute for Software - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.comenthandler;
 
@@ -29,34 +29,34 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  */
 public class NodeCommentMapTest extends TestCase {
 	private NodeCommentMap map;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		map = new NodeCommentMap();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		map = null;
 	}
-	
-	public void testNoComment(){
+
+	public void testNoComment() {
 		ASTNode node = new CPPASTName();
 		assertEquals(0, map.getLeadingCommentsForNode(node).size());
 		assertEquals(0, map.getTrailingCommentsForNode(node).size());
 		assertEquals(0, map.getFreestandingCommentsForNode(node).size());
 	}
-	
-	public void testOneComment(){
+
+	public void testOneComment() {
 		ASTNode node = new CPPASTName();
 		IASTComment comm1 = new Comment();
 		IASTComment comm2 = new Comment();
 		IASTComment comm3 = new Comment();
-		
+
 		map.addLeadingCommentToNode(node, comm1);
 		map.addTrailingCommentToNode(node, comm2);
 		map.addFreestandingCommentToNode(node, comm3);
-		
+
 		assertEquals(1, map.getLeadingCommentsForNode(node).size());
 		assertEquals(1, map.getTrailingCommentsForNode(node).size());
 		assertEquals(1, map.getFreestandingCommentsForNode(node).size());
@@ -65,19 +65,19 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(comm2, map.getTrailingCommentsForNode(node).get(0));
 		assertEquals(comm3, map.getFreestandingCommentsForNode(node).get(0));
 	}
-	
-	public void testTwoComment(){
+
+	public void testTwoComment() {
 		ASTNode node = new CPPASTName();
 		IASTComment com1 = new Comment();
 		IASTComment com2 = new Comment();
-		
+
 		map.addLeadingCommentToNode(node, com1);
 		map.addLeadingCommentToNode(node, com2);
 		map.addTrailingCommentToNode(node, com1);
 		map.addTrailingCommentToNode(node, com2);
 		map.addFreestandingCommentToNode(node, com1);
 		map.addFreestandingCommentToNode(node, com2);
-		
+
 		assertEquals(2, map.getLeadingCommentsForNode(node).size());
 		assertEquals(2, map.getTrailingCommentsForNode(node).size());
 		assertEquals(2, map.getFreestandingCommentsForNode(node).size());
@@ -90,7 +90,7 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(com2, map.getFreestandingCommentsForNode(node).get(1));
 	}
 
-	public void testCommentOnDifferentNodes(){
+	public void testCommentOnDifferentNodes() {
 		ASTNode node1 = new CPPASTName();
 		ASTNode node2 = new CPPASTName();
 		IASTComment com1 = new Comment();
@@ -100,11 +100,11 @@ public class NodeCommentMapTest extends TestCase {
 		map.addLeadingCommentToNode(node1, com1);
 		map.addLeadingCommentToNode(node2, com2);
 		map.addLeadingCommentToNode(node1, com3);
-		
+
 		map.addTrailingCommentToNode(node1, com1);
 		map.addTrailingCommentToNode(node2, com2);
 		map.addTrailingCommentToNode(node1, com3);
-		
+
 		map.addFreestandingCommentToNode(node1, com1);
 		map.addFreestandingCommentToNode(node2, com2);
 		map.addFreestandingCommentToNode(node1, com3);
@@ -115,15 +115,15 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(1, map.getTrailingCommentsForNode(node2).size());
 		assertEquals(2, map.getFreestandingCommentsForNode(node1).size());
 		assertEquals(1, map.getFreestandingCommentsForNode(node2).size());
-		
+
 		assertEquals(com1, map.getLeadingCommentsForNode(node1).get(0));
 		assertEquals(com2, map.getLeadingCommentsForNode(node2).get(0));
 		assertEquals(com3, map.getLeadingCommentsForNode(node1).get(1));
-		
+
 		assertEquals(com1, map.getTrailingCommentsForNode(node1).get(0));
 		assertEquals(com2, map.getTrailingCommentsForNode(node2).get(0));
 		assertEquals(com3, map.getTrailingCommentsForNode(node1).get(1));
-		
+
 		assertEquals(com1, map.getFreestandingCommentsForNode(node1).get(0));
 		assertEquals(com2, map.getFreestandingCommentsForNode(node2).get(0));
 		assertEquals(com3, map.getFreestandingCommentsForNode(node1).get(1));
@@ -198,10 +198,10 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(0, allComments.size());
 	}
 
-	//=== Internal Comment class for testing 
+	//=== Internal Comment class for testing
 	private static class Comment extends ASTNode implements IASTComment {
 		private char[] comment;
-		
+
 		@Override
 		public char[] getComment() {
 			return comment;

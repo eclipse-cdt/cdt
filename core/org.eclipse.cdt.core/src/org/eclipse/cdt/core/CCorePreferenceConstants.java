@@ -32,29 +32,29 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
  */
 public class CCorePreferenceConstants {
 	/**
-     * <pre>
-     * RECOGNIZED OPTIONS:
-     * Define the Automatic Task Tags
-     *    When the tag list is not empty, indexer will issue a task marker whenever it encounters
-     *    one of the corresponding tags inside any comment in C/C++ source code.
-     *    Generated task messages will include the tag, and range until the next line separator or comment ending.
-     *    Note that tasks messages are trimmed. If a tag is starting with a letter or digit, then it cannot be leaded by
-     *    another letter or digit to be recognized ("fooToDo" will not be recognized as a task for tag "ToDo", but "foo#ToDo"
-     *    will be detected for either tag "ToDo" or "#ToDo"). Respectively, a tag ending with a letter or digit cannot be followed
-     *    by a letter or digit to be recognized ("ToDofoo" will not be recognized as a task for tag "ToDo", but "ToDo:foo" will
-     *    be detected either for tag "ToDo" or "ToDo:").
-     *     - option id:         "org.eclipse.cdt.core.taskTags"
-     *     - possible values:   { "<tag>[,<tag>]*" } where <tag> is a String without any wild-card or leading/trailing spaces
-     *     - default:           ""
-     *
-     * Define the Automatic Task Priorities
-     *    In parallel with the Automatic Task Tags, this list defines the priorities (high, normal or low)
-     *    of the task markers issued by the translation.
-     *    If the default is specified, the priority of each task marker is "normal".
-     *     - option id:         "org.eclipse.cdt.core.taskPriorities"
-     *     - possible values:   { "<priority>[,<priority>]*" } where <priority> is one of "high", "normal" or "low"
-     *     - default:           ""
-     */
+	 * <pre>
+	 * RECOGNIZED OPTIONS:
+	 * Define the Automatic Task Tags
+	 *    When the tag list is not empty, indexer will issue a task marker whenever it encounters
+	 *    one of the corresponding tags inside any comment in C/C++ source code.
+	 *    Generated task messages will include the tag, and range until the next line separator or comment ending.
+	 *    Note that tasks messages are trimmed. If a tag is starting with a letter or digit, then it cannot be leaded by
+	 *    another letter or digit to be recognized ("fooToDo" will not be recognized as a task for tag "ToDo", but "foo#ToDo"
+	 *    will be detected for either tag "ToDo" or "#ToDo"). Respectively, a tag ending with a letter or digit cannot be followed
+	 *    by a letter or digit to be recognized ("ToDofoo" will not be recognized as a task for tag "ToDo", but "ToDo:foo" will
+	 *    be detected either for tag "ToDo" or "ToDo:").
+	 *     - option id:         "org.eclipse.cdt.core.taskTags"
+	 *     - possible values:   { "<tag>[,<tag>]*" } where <tag> is a String without any wild-card or leading/trailing spaces
+	 *     - default:           ""
+	 *
+	 * Define the Automatic Task Priorities
+	 *    In parallel with the Automatic Task Tags, this list defines the priorities (high, normal or low)
+	 *    of the task markers issued by the translation.
+	 *    If the default is specified, the priority of each task marker is "normal".
+	 *     - option id:         "org.eclipse.cdt.core.taskPriorities"
+	 *     - possible values:   { "<priority>[,<priority>]*" } where <priority> is one of "high", "normal" or "low"
+	 *     - default:           ""
+	 */
 
 	/**
 	 * Task tags used in code comments.
@@ -76,14 +76,14 @@ public class CCorePreferenceConstants {
 	 * Possible configurable option value for TODO_TASK_PRIORITIES.
 	 */
 	public static final String TASK_PRIORITY_NORMAL = "normal"; //$NON-NLS-1$
-    /**
-     * Possible configurable option value for TODO_TASK_PRIORITIES.
-     */
-    public static final String TASK_PRIORITY_HIGH = "high"; //$NON-NLS-1$
-    /**
-     * Possible configurable option value for TODO_TASK_PRIORITIES.
-     */
-    public static final String TASK_PRIORITY_LOW = "low"; //$NON-NLS-1$
+	/**
+	 * Possible configurable option value for TODO_TASK_PRIORITIES.
+	 */
+	public static final String TASK_PRIORITY_HIGH = "high"; //$NON-NLS-1$
+	/**
+	 * Possible configurable option value for TODO_TASK_PRIORITIES.
+	 */
+	public static final String TASK_PRIORITY_LOW = "low"; //$NON-NLS-1$
 	/**
 	 * Default task priority
 	 */
@@ -194,7 +194,8 @@ public class CCorePreferenceConstants {
 	 * Show source roots at the top level of projects.
 	 * @since 5.2
 	 */
-	public static final String SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT = CCorePlugin.PLUGIN_ID + ".showSourceRootsAtTopLevelOfProject"; //$NON-NLS-1$
+	public static final String SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT = CCorePlugin.PLUGIN_ID
+			+ ".showSourceRootsAtTopLevelOfProject"; //$NON-NLS-1$
 
 	/**
 	 * "Build All Configurations" preference key.
@@ -260,7 +261,7 @@ public class CCorePreferenceConstants {
 	 * @since 5.7
 	 */
 	public static final String DEFAULT_INCLUDE_PRIVATE_PATTERN = "IWYU\\s+(pragma:?\\s+)?private(,\\s+include\\s+(?<header>\\S+))?"; //$NON-NLS-1$
-	
+
 	/**
 	 * Preference key for the regular expression pattern that, when appears in a comment on the same
 	 * line as include statement, indicates that the included header file is private and that
@@ -276,7 +277,7 @@ public class CCorePreferenceConstants {
 	 * @since 5.9
 	 */
 	public static final String DEFAULT_INCLUDE_KEEP_PATTERN = "IWYU\\s+(pragma:?\\s+)?keep"; //$NON-NLS-1$
-	
+
 	/**
 	 * Preference key for the regular expression pattern that, when appears in a comment on the same
 	 * line as include statement, indicates that the include statement should be preserved when
@@ -303,7 +304,7 @@ public class CCorePreferenceConstants {
 	public static final boolean DEFAULT_SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS = true;
 
 	/**
-	 * The maximum number of trivial expressions that are parsed in initializer lists. This preference 
+	 * The maximum number of trivial expressions that are parsed in initializer lists. This preference
 	 * is considered only if <code>SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS</code> is set to true.
 	 * <p>
 	 * Value is of type <code>int</code>.
@@ -358,7 +359,7 @@ public class CCorePreferenceConstants {
 	 *
 	 * @since 6.3
 	 */
-	public static final String PLACE_CONST_RIGHT_OF_TYPE =  "astwriter.placeConstRightOfType"; //$NON-NLS-1$
+	public static final String PLACE_CONST_RIGHT_OF_TYPE = "astwriter.placeConstRightOfType"; //$NON-NLS-1$
 
 	/**
 	 * Default value for {@link #PLACE_CONST_RIGHT_OF_TYPE}.
@@ -367,29 +368,29 @@ public class CCorePreferenceConstants {
 	 */
 	public static final boolean DEFAULT_PLACE_CONST_RIGHT_OF_TYPE = false;
 
-    /**
-     * Returns the node in the preference in the given context.
-     *
-     * @param key The preference key.
-     * @param cProject The current context or {@code null} if no context is available and
-     *     the workspace setting should be taken. Note that passing {@code null} should
-     *     be avoided.
-     * @return Returns the node matching the given context.
-     */
+	/**
+	 * Returns the node in the preference in the given context.
+	 *
+	 * @param key The preference key.
+	 * @param cProject The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should
+	 *     be avoided.
+	 * @return Returns the node matching the given context.
+	 */
 	private static IEclipsePreferences getPreferenceNode(String key, ICProject cProject) {
 		IProject project = cProject == null ? null : cProject.getProject();
 		return getPreferenceNode(key, project);
 	}
 
-    /**
-     * Returns the node in the preference in the given context.
-     *
-     * @param key The preference key.
-     * @param project The current context or {@code null} if no context is available and
-     *     the workspace setting should be taken. Note that passing {@code null} should
-     *     be avoided.
-     * @return Returns the node matching the given context.
-     */
+	/**
+	 * Returns the node in the preference in the given context.
+	 *
+	 * @param key The preference key.
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should
+	 *     be avoided.
+	 * @return Returns the node matching the given context.
+	 */
 	private static IEclipsePreferences getPreferenceNode(String key, IProject project) {
 		IEclipsePreferences node = null;
 		if (project != null) {
@@ -529,8 +530,9 @@ public class CCorePreferenceConstants {
 	 * @since 5.5
 	 */
 	public static IScopeContext[] getPreferenceScopes(IProject project) {
-		return project != null ?
-				new IScopeContext[] { new ProjectScope(project), InstanceScope.INSTANCE, ConfigurationScope.INSTANCE, DefaultScope.INSTANCE } :
-				new IScopeContext[] { InstanceScope.INSTANCE, ConfigurationScope.INSTANCE, DefaultScope.INSTANCE };
+		return project != null
+				? new IScopeContext[] { new ProjectScope(project), InstanceScope.INSTANCE, ConfigurationScope.INSTANCE,
+						DefaultScope.INSTANCE }
+				: new IScopeContext[] { InstanceScope.INSTANCE, ConfigurationScope.INSTANCE, DefaultScope.INSTANCE };
 	}
 }

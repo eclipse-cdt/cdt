@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,22 +21,22 @@ import java.util.Set;
  * viewer is configured to be in a manual update mode, the modification of an
  * element by the user should at least cause an update of the modified element.
  * This event is used to accomplish that behavior.
- * 
+ *
  * @since 1.0
  */
 public class UserEditEvent {
-    private final Set<Object> fElements;
-    
-    public UserEditEvent(Object element) {
-        fElements = new HashSet<Object>();
-        fElements.add(element);
-    }
+	private final Set<Object> fElements;
 
-    public UserEditEvent(Set<Object> elements) {
-        fElements = elements;
-    }
-    
-    public Set<Object> getElements() {
-        return fElements;
-    }
+	public UserEditEvent(Object element) {
+		fElements = new HashSet<Object>();
+		fElements.add(element);
+	}
+
+	public UserEditEvent(Set<Object> elements) {
+		fElements = elements;
+	}
+
+	public Set<Object> getElements() {
+		return fElements;
+	}
 }

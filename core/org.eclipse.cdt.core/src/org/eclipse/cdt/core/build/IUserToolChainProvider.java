@@ -15,17 +15,17 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * A toolchain provider that is managed by the user. The user can manually add
  * and remove toolchains.
- * 
+ *
  * It is the responsibility of the provider to manage persistence and to
  * populate the toolchains with the toolchain manager.
- * 
+ *
  * @since 6.4
  */
 public interface IUserToolChainProvider extends IToolChainProvider {
 
 	/**
 	 * Manually add a toolchain to be managed by this provider.
-	 * 
+	 *
 	 * @param toolChain
 	 *            toolchain to be added
 	 * @since 6.4
@@ -34,7 +34,7 @@ public interface IUserToolChainProvider extends IToolChainProvider {
 
 	/**
 	 * Manually remove a toolchain managed by this provider.
-	 * 
+	 *
 	 * @param toolChain
 	 *            toolchain to be removed
 	 * @throws CoreException

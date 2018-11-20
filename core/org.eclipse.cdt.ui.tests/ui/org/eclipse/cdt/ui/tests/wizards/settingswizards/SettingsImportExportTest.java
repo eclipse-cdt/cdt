@@ -46,51 +46,40 @@ import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsImport
 public class SettingsImportExportTest extends BaseUITestCase {
 
 	private static ICLanguageSettingEntry[] EXPORTED_MACROS = new ICLanguageSettingEntry[] {
-		new CMacroEntry("MAC1", "value1", 0),
-		new CMacroEntry("anothermacro", "", 0),
-		new CMacroEntry("smac", "blah", 0)
-	};
-		
-	private static ICLanguageSettingEntry[] EXPORTED_INCLUDES = new ICLanguageSettingEntry[] {
-		new CIncludePathEntry("/path/to/somewhere", 0),
-		new CIncludePathEntry("/blah/blah/blah", 0),
-		new CIncludePathEntry("pantera/is/awesome", 0)
-	};
-		
-		
+			new CMacroEntry("MAC1", "value1", 0), new CMacroEntry("anothermacro", "", 0),
+			new CMacroEntry("smac", "blah", 0) };
 
-	public SettingsImportExportTest() {}
-	
+	private static ICLanguageSettingEntry[] EXPORTED_INCLUDES = new ICLanguageSettingEntry[] {
+			new CIncludePathEntry("/path/to/somewhere", 0), new CIncludePathEntry("/blah/blah/blah", 0),
+			new CIncludePathEntry("pantera/is/awesome", 0) };
+
+	public SettingsImportExportTest() {
+	}
+
 	public SettingsImportExportTest(String name) {
 		super(name);
 	}
-	
-
 
 	// This could be replaced with an extension point
-	private static final List<ISettingsProcessor> processors = Arrays.<ISettingsProcessor>asList(
-		new IncludePathsSettingsProcessor(),
-		new MacroSettingsProcessor()
-	);
-	
-	
+	private static final List<ISettingsProcessor> processors = Arrays
+			.<ISettingsProcessor>asList(new IncludePathsSettingsProcessor(), new MacroSettingsProcessor());
+
 	private static void createFile(String contents, String filePath) throws Exception {
 		IPath path = new Path(filePath);
 		FileWriter writer = new FileWriter(path.toFile());
 		writer.write(contents);
 		writer.close();
 	}
-	
+
 	private static void deleteFile(String filePath) {
 		new Path(filePath).toFile().delete();
 	}
-	
+
 	private static String getFilePath(String fileName) {
 		IPath workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		return workspaceLocation.toOSString() + IPath.SEPARATOR + fileName;
 	}
-	
-	
+
 	private void setUpProjectSettings(ICProject cProject) throws Exception {
 		IProject project = cProject.getProject();
 		ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(project, true);
@@ -102,40 +91,41 @@ public class SettingsImportExportTest extends BaseUITestCase {
 		languageSetting.setSettingEntries(ICSettingEntry.INCLUDE_PATH, EXPORTED_INCLUDES);
 		CoreModel.getDefault().setProjectDescription(project, desc);
 	}
-	
-	
+
 	public void testNormalExportImport() throws Exception {
 		ICProject exportProject = CProjectHelper.createNewStyleCProject("TempProject1", IPDOMManager.ID_NO_INDEXER);
 		ICProject importProject = CProjectHelper.createNewStyleCProject("TempProject2", IPDOMManager.ID_NO_INDEXER);
 		setUpProjectSettings(exportProject);
-		
+
 		ProjectSettingsWizardPageMock page = new ProjectSettingsWizardPageMock() {
-			@Override public void setMessage(String message, int flag) {
-				if(flag == IMessageProvider.ERROR)
+			@Override
+			public void setMessage(String message, int flag) {
+				if (flag == IMessageProvider.ERROR)
 					fail("there should be no error message displayed");
 			}
-			@Override public void showErrorDialog(String dialogTitle, String message) {
-				fail("the error dialog should not be displayed"); 
+
+			@Override
+			public void showErrorDialog(String dialogTitle, String message) {
+				fail("the error dialog should not be displayed");
 			}
 		};
-		
+
 		page.setDestinationFilePath(getFilePath("settings.xml"));
 		page.setSettingsProcessors(processors);
 		page.setSelectedSettingsProcessors(processors);
 		ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(exportProject.getProject(), false);
 		ICConfigurationDescription config = desc.getActiveConfiguration();
 		page.setSelectedConfiguration(config);
-		
+
 		ProjectSettingsExportStrategy exporter = new ProjectSettingsExportStrategy();
 		exporter.finish(page);
 
-		
 		// now import into another project
-		
+
 		desc = CoreModel.getDefault().getProjectDescription(importProject.getProject(), true);
 		config = desc.getActiveConfiguration();
 		page.setSelectedConfiguration(config);
-		
+
 		ProjectSettingsImportStrategy importer = new ProjectSettingsImportStrategy();
 		importer.finish(page);
 
@@ -143,42 +133,44 @@ public class SettingsImportExportTest extends BaseUITestCase {
 		config = desc.getActiveConfiguration();
 		ICFolderDescription folder = config.getRootFolderDescription();
 		ICLanguageSetting languageSetting = folder.getLanguageSettings()[0];
-		
+
 		ICLanguageSettingEntry[] importedMacros = languageSetting.getSettingEntries(ICSettingEntry.MACRO);
-		
+
 		assertEquals(EXPORTED_MACROS.length, importedMacros.length);
-		for(int i = 0; i < importedMacros.length; i++) {
+		for (int i = 0; i < importedMacros.length; i++) {
 			assertEquals(EXPORTED_MACROS[i].getName(), importedMacros[i].getName());
 			assertEquals(EXPORTED_MACROS[i].getValue(), importedMacros[i].getValue());
 		}
 
 		ICLanguageSettingEntry[] importedIncludes = languageSetting.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
-		
+
 		assertEquals(EXPORTED_INCLUDES.length, importedIncludes.length);
-		for(int i = 0; i < importedIncludes.length; i++) {
+		for (int i = 0; i < importedIncludes.length; i++) {
 			assertTrue(importedIncludes[i].getName().endsWith(EXPORTED_INCLUDES[i].getName()));
 		}
-		
+
 		CProjectHelper.delete(importProject);
 		CProjectHelper.delete(exportProject);
 	}
-	
-	
+
 	public static void vaidateCorrectErrorHandling(String xmlContent) throws Exception {
 		String filePath = getFilePath("test.txt");
 		createFile(xmlContent, filePath);
-		
+
 		ICProject project = CProjectHelper.createNewStyleCProject("VaidateProject", IPDOMManager.ID_NO_INDEXER);
-		
+
 		ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(project.getProject(), false);
 		ICConfigurationDescription config = desc.getActiveConfiguration();
-		
-		final boolean[] errorDialogShown = new boolean[] {false};
+
+		final boolean[] errorDialogShown = new boolean[] { false };
 		ProjectSettingsWizardPageMock page = new ProjectSettingsWizardPageMock() {
-			@Override public void setMessage(String message, int flag) {
+			@Override
+			public void setMessage(String message, int flag) {
 				fail();
 			}
-			@Override public void showErrorDialog(String dialogTitle, String message) {
+
+			@Override
+			public void showErrorDialog(String dialogTitle, String message) {
 				errorDialogShown[0] = true;
 			}
 		};
@@ -186,37 +178,36 @@ public class SettingsImportExportTest extends BaseUITestCase {
 		page.setSettingsProcessors(processors);
 		page.setSelectedSettingsProcessors(processors);
 		page.setSelectedConfiguration(config);
-		
-		
+
 		ProjectSettingsImportStrategy importer = new ProjectSettingsImportStrategy();
 		importer.finish(page);
-		
+
 		assertTrue(xmlContent, errorDialogShown[0]);
-		
+
 		assertNoSettingsImported(project.getProject());
-		
+
 		// TODO test that no macros or includes were imported
 		CProjectHelper.delete(project);
 		deleteFile(filePath);
 	}
-	
+
 	private static void assertNoSettingsImported(IProject project) {
 		ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(project, true);
 		ICConfigurationDescription config = desc.getActiveConfiguration();
 		ICFolderDescription folder = config.getRootFolderDescription();
 		ICLanguageSetting[] languageSettings = folder.getLanguageSettings();
-		for(ICLanguageSetting languageSetting : languageSettings) {
+		for (ICLanguageSetting languageSetting : languageSettings) {
 			ICLanguageSettingEntry[] entries = languageSetting.getSettingEntries(ICSettingEntry.MACRO);
-			for(ICLanguageSettingEntry entry : entries) {
+			for (ICLanguageSettingEntry entry : entries) {
 				assertTrue(entry.isBuiltIn());
 			}
 			entries = languageSetting.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
-			for(ICLanguageSettingEntry entry : entries) {
+			for (ICLanguageSettingEntry entry : entries) {
 				assertTrue(entry.isBuiltIn());
 			}
 		}
 	}
-	
+
 	// {badXML1}
 	// blah blah blah
 	//
@@ -236,7 +227,7 @@ public class SettingsImportExportTest extends BaseUITestCase {
 	// </invalidtag>
 	// </section>
 	// </cdtprojectproperties>
-	// 
+	//
 	// {badXML5}
 	// <cdtprojectproperties>
 	// <section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros">
@@ -245,7 +236,7 @@ public class SettingsImportExportTest extends BaseUITestCase {
 	// </macro>
 	// </section>
 	// </cdtprojectproperties>
-	// 
+	//
 	// {badXML6}
 	// <cdtprojectproperties>
 	// <section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros">

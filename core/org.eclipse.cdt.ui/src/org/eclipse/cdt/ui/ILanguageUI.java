@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Doug Schaefer (QNX Software Systems) - Initial API and implementation
  **********************************************************************/
 
@@ -28,9 +28,9 @@ public interface ILanguageUI extends IAdaptable {
 
 	/**
 	 * Get the code scanner that drives coloring in the editor.
-	 * 
+	 *
 	 * @return code scanner for this language
 	 */
 	RuleBasedScanner getCodeScanner();
-	
+
 }

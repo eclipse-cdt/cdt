@@ -26,7 +26,7 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 final class TestScannerInfoCollector implements IScannerInfoCollector {
 	private HashMap<ScannerInfoTypes, List> fInfoMap = new HashMap<ScannerInfoTypes, List>();
 	private HashMap<Object, Map<ScannerInfoTypes, List>> fResourceToInfoMap = new HashMap<Object, Map<ScannerInfoTypes, List>>();
@@ -57,7 +57,7 @@ final class TestScannerInfoCollector implements IScannerInfoCollector {
 	private void addTo(ScannerInfoTypes type, List<String> col) {
 		List<String> target = fInfoMap.get(type);
 		if (target == null) {
-			target= new ArrayList<String>();
+			target = new ArrayList<String>();
 			fInfoMap.put(type, target);
 		}
 		target.addAll(col);
@@ -66,12 +66,12 @@ final class TestScannerInfoCollector implements IScannerInfoCollector {
 	@Override
 	public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
 		if (resource == null) {
-			List result= fInfoMap.get(type);
+			List result = fInfoMap.get(type);
 			return result == null ? Collections.EMPTY_LIST : result;
 		}
-		Map<ScannerInfoTypes, List> scannerInfo= fResourceToInfoMap.get(resource);
+		Map<ScannerInfoTypes, List> scannerInfo = fResourceToInfoMap.get(resource);
 		if (scannerInfo != null) {
-			List result= scannerInfo.get(type);
+			List result = scannerInfo.get(type);
 			return result == null ? Collections.EMPTY_LIST : result;
 		}
 		return Collections.EMPTY_LIST;

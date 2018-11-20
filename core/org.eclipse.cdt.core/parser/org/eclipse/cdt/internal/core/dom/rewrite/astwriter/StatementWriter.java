@@ -105,14 +105,14 @@ public class StatementWriter extends NodeWriter {
 			writeDeclarationStatement((IASTDeclarationStatement) statement);
 			newLine = false;
 		} else if (statement instanceof IASTNullStatement) {
-			writeNullStatement((IASTNullStatement)statement);
-//			usually newLine
+			writeNullStatement((IASTNullStatement) statement);
+			//			usually newLine
 		} else if (statement instanceof IASTReturnStatement) {
-			writeReturnStatement((IASTReturnStatement)statement);
-//			usually newLine
+			writeReturnStatement((IASTReturnStatement) statement);
+			//			usually newLine
 		} else if (statement instanceof IASTGotoStatement) {
 			writeGotoStatement((IASTGotoStatement) statement);
-//			usually newLine
+			//			usually newLine
 		} else if (statement instanceof IGNUASTGotoStatement) {
 			writeGNUASTGotoStatement((IGNUASTGotoStatement) statement);
 		} else if (statement instanceof IASTLabelStatement) {
@@ -120,12 +120,12 @@ public class StatementWriter extends NodeWriter {
 			newLine = false;
 		} else if (statement instanceof IASTCaseStatement) {
 			writeCaseStatement((IASTCaseStatement) statement);
-//			usually newLine
+			//			usually newLine
 		} else if (statement instanceof IASTDefaultStatement) {
-			writeDefaultStatement((IASTDefaultStatement)statement);
+			writeDefaultStatement((IASTDefaultStatement) statement);
 		} else if (statement instanceof IASTContinueStatement) {
-			writeContinueStatement((IASTContinueStatement)statement);
-//			usually newLine
+			writeContinueStatement((IASTContinueStatement) statement);
+			//			usually newLine
 		} else if (statement instanceof IASTCompoundStatement) {
 			if (compoundNoNewLine) {
 				newLine = false;
@@ -134,7 +134,7 @@ public class StatementWriter extends NodeWriter {
 			writeCompoundStatement((IASTCompoundStatement) statement);
 		} else if (statement instanceof IASTBreakStatement) {
 			writeBreakStatement((IASTBreakStatement) statement);
-//			usually newLine
+			//			usually newLine
 		} else if (statement instanceof IASTSwitchStatement) {
 			writeSwitchStatement((IASTSwitchStatement) statement);
 			newLine = false;
@@ -160,7 +160,7 @@ public class StatementWriter extends NodeWriter {
 			writeCatchHandler((ICPPASTCatchHandler) statement);
 			newLine = false;
 		} else if (statement instanceof IASTProblemStatement) {
-			throw new ProblemRuntimeException((IASTProblemStatement)statement);
+			throw new ProblemRuntimeException((IASTProblemStatement) statement);
 		}
 
 		writeTrailingComments(statement, newLine);
@@ -182,7 +182,7 @@ public class StatementWriter extends NodeWriter {
 	private void writeForStatement(IASTForStatement forStatement) {
 		scribe.noNewLines();
 		scribe.print(FOR);
-		writeStatement(forStatement.getInitializerStatement(),false);
+		writeStatement(forStatement.getInitializerStatement(), false);
 		if (forStatement instanceof ICPPASTForStatement) {
 			ICPPASTForStatement cppForStatment = (ICPPASTForStatement) forStatement;
 			IASTDeclaration cppConditionDeclaration = cppForStatment.getConditionDeclaration();

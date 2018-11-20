@@ -13,30 +13,32 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * An openable is an element that can be opened, saved, and closed.
  * An openable might or might not have an associated buffer.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IOpenable extends IBufferChangedListener{
+public interface IOpenable extends IBufferChangedListener {
 	/**
 	 * Closes this element and its buffer (if any).
 	 */
 	public void close() throws CModelException;
+
 	/**
 	 * Returns the buffer opened for this element, or <code>null</code>
 	 * if this element does not have a buffer.
 	 */
 	public IBuffer getBuffer() throws CModelException;
+
 	/**
-	 * returns true if the associated buffer has some unsaved changes 
+	 * returns true if the associated buffer has some unsaved changes
 	 */
 	boolean hasUnsavedChanges() throws CModelException;
+
 	/**
 	 * Returns whether the element is consistent with its underlying resource or buffer.
 	 * The element is consistent when opened, and is consistent if the underlying resource
@@ -48,12 +50,13 @@ public interface IOpenable extends IBufferChangedListener{
 	 * Returns whether this CFile is open.
 	 */
 	boolean isOpen();
-	
+
 	/**
-	 * Makes this element consistent with its underlying resource or buffer 
+	 * Makes this element consistent with its underlying resource or buffer
 	 * by updating the element's structure and properties as necessary.
 	 */
 	void makeConsistent(IProgressMonitor progress) throws CModelException;
+
 	void makeConsistent(IProgressMonitor progress, boolean forced) throws CModelException;
 
 	/**
@@ -62,10 +65,10 @@ public interface IOpenable extends IBufferChangedListener{
 	 * underlying resource.
 	 */
 	public void open(IProgressMonitor progress) throws CModelException;
-	
+
 	/**
 	 * Saves any changes in this element's buffer to its underlying resource
-	 * via a workspace resource operation. 
+	 * via a workspace resource operation.
 	 * <p>
 	 * The <code>force</code> parameter controls how this method deals with
 	 * cases where the workbench is not completely in sync with the local file system.

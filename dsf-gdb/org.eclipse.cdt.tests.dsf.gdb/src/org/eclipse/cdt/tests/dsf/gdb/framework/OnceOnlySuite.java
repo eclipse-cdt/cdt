@@ -19,7 +19,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 
-	
 /**
  * This custom suite runner ensures that a class runs only once, no matter how
  * many times it appears in a suite. Redundant appearances are possible with
@@ -28,7 +27,7 @@ import org.junit.runners.model.RunnerBuilder;
  * variation). However, in some cases, the redundant appearances are
  * unintentional and unavoidable consequences of how the suites are defined and
  * used. This runner caters to the latter scenario.
- * 
+ *
  * <p>
  * Thanks to Bill Venners and David Saff for suggesting this solution on the
  * junit mailing list. See <a
@@ -37,18 +36,18 @@ import org.junit.runners.model.RunnerBuilder;
  */
 @SuppressWarnings("restriction")
 public class OnceOnlySuite extends Suite {
-   private static Set<Class<?>> alreadySeen = new HashSet<Class<?>>();
-   
-   public OnceOnlySuite(Class<?> testClass, final RunnerBuilder builder) throws InitializationError {
-       super(testClass, new RunnerBuilder() {
-    	   @Override
+	private static Set<Class<?>> alreadySeen = new HashSet<Class<?>>();
+
+	public OnceOnlySuite(Class<?> testClass, final RunnerBuilder builder) throws InitializationError {
+		super(testClass, new RunnerBuilder() {
+			@Override
 			public Runner runnerForClass(Class<?> testClass) throws Throwable {
-	               if (alreadySeen.contains(testClass)) {
-	                   return new IgnoredClassRunner(testClass);
-	               }
-	               alreadySeen.add(testClass);
-	               return builder.runnerForClass(testClass);
-	           }
-	       });
-   }
+				if (alreadySeen.contains(testClass)) {
+					return new IgnoredClassRunner(testClass);
+				}
+				alreadySeen.add(testClass);
+				return builder.runnerForClass(testClass);
+			}
+		});
+	}
 }

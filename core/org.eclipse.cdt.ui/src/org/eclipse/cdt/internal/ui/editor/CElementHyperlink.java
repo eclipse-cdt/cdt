@@ -19,10 +19,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 
-
 /**
  * C element hyperlink.
- * 
+ *
  * @since 3.0
  */
 public class CElementHyperlink implements IHyperlink {
@@ -30,18 +29,17 @@ public class CElementHyperlink implements IHyperlink {
 	private final IRegion fRegion;
 	private final IAction fOpenAction;
 
-	
 	/**
 	 * Creates a new C element hyperlink.
 	 */
 	public CElementHyperlink(IRegion region, IAction openAction) {
 		Assert.isNotNull(openAction);
 		Assert.isNotNull(region);
-		
-		fRegion= region;
-		fOpenAction= openAction;
+
+		fRegion = region;
+		fOpenAction = openAction;
 	}
-	
+
 	@Override
 	public IRegion getHyperlinkRegion() {
 		return fRegion;

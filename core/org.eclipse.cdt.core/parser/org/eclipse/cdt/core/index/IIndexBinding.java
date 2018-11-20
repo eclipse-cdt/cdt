@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Represents the semantics of a name in the index.
  * @since 4.0
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -30,14 +30,14 @@ public interface IIndexBinding extends IBinding {
 	 * Returns the qualified name of this binding as array of strings.
 	 */
 	String[] getQualifiedName();
-	
+
 	/**
 	 * Returns whether the scope of the binding is file-local. A file local
 	 * binding is private to an index and should not be adapted to a binding
 	 * in another index.
 	 */
 	boolean isFileLocal() throws CoreException;
-	
+
 	/**
 	 * Returns the file this binding is local to, or <code>null</code> for global
 	 * bindings.
@@ -45,7 +45,7 @@ public interface IIndexBinding extends IBinding {
 	 * is used to model static files, static variables.
 	 */
 	IIndexFile getLocalToFile() throws CoreException;
-	
+
 	/**
 	 * @since 5.1
 	 */

@@ -46,11 +46,11 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 	public NewElementWizard() {
 		setNeedsProgressMonitor(true);
 	}
-			
+
 	protected void openResource(final IFile resource) {
-		final IWorkbenchPage activePage= CUIPlugin.getActivePage();
+		final IWorkbenchPage activePage = CUIPlugin.getActivePage();
 		if (activePage != null) {
-			final Display display= getShell().getDisplay();
+			final Display display = getShell().getDisplay();
 			if (display != null) {
 				display.asyncExec(new Runnable() {
 					@Override
@@ -65,33 +65,33 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 			}
 		}
 	}
-	
+
 	/**
 	 * Subclasses should override to perform the actions of the wizard.
 	 * This method is run in the wizard container's context as a workspace runnable.
 	 */
 	protected abstract void finishPage(IProgressMonitor monitor) throws CoreException;
-	
+
 	/**
 	 * Returns the scheduling rule for creating the element.
 	 */
 	protected ISchedulingRule getSchedulingRule() {
 		return ResourcesPlugin.getWorkspace().getRoot(); // look all by default
 	}
-	
+
 	protected boolean canRunForked() {
 		return true;
 	}
-	
+
 	protected void handleFinishException(Shell shell, InvocationTargetException e) {
-		String title= NewWizardMessages.NewElementWizard_op_error_title; 
-		String message= NewWizardMessages.NewElementWizard_op_error_message; 
+		String title = NewWizardMessages.NewElementWizard_op_error_title;
+		String message = NewWizardMessages.NewElementWizard_op_error_message;
 		ExceptionHandler.handle(e, shell, title, message);
 	}
-	
+
 	@Override
 	public boolean performFinish() {
-		IWorkspaceRunnable op= new IWorkspaceRunnable() {
+		IWorkspaceRunnable op = new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 				finishPage(monitor);
@@ -107,13 +107,13 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-		fWorkbench= workbench;
-		fSelection= currentSelection;
+		fWorkbench = workbench;
+		fSelection = currentSelection;
 	}
-	
+
 	public IStructuredSelection getSelection() {
 		return fSelection;
 	}

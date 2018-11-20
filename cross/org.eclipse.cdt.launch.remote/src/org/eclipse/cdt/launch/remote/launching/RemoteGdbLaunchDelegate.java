@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * Anna Dushistova (Mentor Graphics) - initial API and implementation
  * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.launching
@@ -48,67 +48,57 @@ import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.RemoteProcessAdapter;
 
 public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
-	
+
 	@Override
-	public void launch(ILaunchConfiguration config, String mode,
-			ILaunch launch, IProgressMonitor monitor) throws CoreException {
+	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor)
+			throws CoreException {
 
 		IPath exePath = checkBinaryDetails(config);
 		Process remoteShellProcess = null;
 		if (exePath != null) {
 			// 1.Download binary if needed
-			String remoteExePath = config.getAttribute(
-					IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
-					""); //$NON-NLS-1$
+			String remoteExePath = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH, ""); //$NON-NLS-1$
 			monitor.setTaskName(Messages.RemoteRunLaunchDelegate_2);
-			RemoteHelper.remoteFileDownload(config, launch, exePath.toString(),
-					remoteExePath, new SubProgressMonitor(monitor, 80));
+			RemoteHelper.remoteFileDownload(config, launch, exePath.toString(), remoteExePath,
+					new SubProgressMonitor(monitor, 80));
 			// 2.Launch gdbserver on target
-			String gdbserverPortNumber = config
-					.getAttribute(
-							IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT,
-							IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT_DEFAULT);
-			String gdbserverCommand = config
-					.getAttribute(
-							IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND,
-							IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
-			String gdbserverOptions = config
-					.getAttribute(
-							IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS,
-							IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS_DEFAULT);
+			String gdbserverPortNumber = config.getAttribute(
+					IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT,
+					IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT_DEFAULT);
+			String gdbserverCommand = config.getAttribute(
+					IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND,
+					IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
+			String gdbserverOptions = config.getAttribute(
+					IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS,
+					IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_OPTIONS_DEFAULT);
 			String commandArguments = gdbserverOptions + " " //$NON-NLS-1$
 					+ ":" + gdbserverPortNumber + " " //$NON-NLS-1$ //$NON-NLS-2$
 					+ RemoteHelper.spaceEscapify(remoteExePath);
 			String arguments = getProgramArguments(config);
-			String prelaunchCmd = config
-					.getAttribute(
-							IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS,
-							""); //$NON-NLS-1$
+			String prelaunchCmd = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS, ""); //$NON-NLS-1$
 
 			if (arguments != null && !arguments.isEmpty())
 				commandArguments += " " + arguments; //$NON-NLS-1$
 			monitor.setTaskName(Messages.RemoteRunLaunchDelegate_9);
-			
+
 			// extending HostShellProcessAdapter here
-	        final GdbLaunch l = (GdbLaunch)launch;
+			final GdbLaunch l = (GdbLaunch) launch;
 			IRemoteProcess remoteShell = null;
 			try {
-				remoteShell = RemoteHelper.execCmdInRemoteShell(config, prelaunchCmd,
-						gdbserverCommand, commandArguments,
-						new SubProgressMonitor(monitor, 5));
+				remoteShell = RemoteHelper.execCmdInRemoteShell(config, prelaunchCmd, gdbserverCommand,
+						commandArguments, new SubProgressMonitor(monitor, 5));
 			} catch (Exception e1) {
-				RemoteHelper.abort(e1.getMessage(), e1,
-						ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+				RemoteHelper.abort(e1.getMessage(), e1, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 
 			}
-			
+
 			// We cannot use a global variable because multiple launches
 			// could access them at the same time.  We need a different
 			// variable for each launch, but we also need it be final.
 			// Use a final array to do that.
 			final boolean gdbServerReady[] = new boolean[1];
 			gdbServerReady[0] = false;
-			
+
 			final Object lock = new Object();
 			if (remoteShell != null) {
 				try {
@@ -122,10 +112,8 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 									session.getExecutor().execute(new DsfRunnable() {
 										public void run() {
 											DsfServicesTracker tracker = new DsfServicesTracker(
-													Activator.getBundleContext(),
-													session.getId());
-											IGDBControl control = tracker
-													.getService(IGDBControl.class);
+													Activator.getBundleContext(), session.getId());
+											IGDBControl control = tracker.getService(IGDBControl.class);
 											if (control != null) {
 												control.terminate(new ImmediateRequestMonitor());
 											}
@@ -179,15 +167,15 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 							try {
 								l.getSession().getExecutor().execute(new DsfRunnable() {
 									public void run() {
-				                        l.shutdownSession(new ImmediateRequestMonitor());
+										l.shutdownSession(new ImmediateRequestMonitor());
 									}
 								});
 							} catch (RejectedExecutionException e) {
 								// Session disposed.
 							}
 
-							RemoteHelper.abort(Messages.RemoteGdbLaunchDelegate_gdbserverFailedToStartErrorMessage, null,
-									ICDTLaunchConfigurationConstants.ERR_DEBUGGER_NOT_INSTALLED);
+							RemoteHelper.abort(Messages.RemoteGdbLaunchDelegate_gdbserverFailedToStartErrorMessage,
+									null, ICDTLaunchConfigurationConstants.ERR_DEBUGGER_NOT_INSTALLED);
 						}
 						try {
 							lock.wait(300);
@@ -198,24 +186,21 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 
 				// 3. Let debugger know how gdbserver was started on the remote
 				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-				wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
-						true);
-				wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST,
-						RemoteHelper.getRemoteHostname(config));
-				wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT,
-						gdbserverPortNumber);
+				wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
+				wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, RemoteHelper.getRemoteHostname(config));
+				wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT, gdbserverPortNumber);
 				wc.doSave();
 
 			}
-			try{
+			try {
 				super.launch(config, mode, launch, monitor);
-			} catch(CoreException ex) {
+			} catch (CoreException ex) {
 				//launch failed, need to kill gdbserver
 				if (remoteShellProcess != null) {
 					remoteShellProcess.destroy();
 				}
 
-				//report failure further	
+				//report failure further
 				throw ex;
 			} finally {
 				monitor.done();
@@ -223,14 +208,10 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 		}
 	}
 
-	protected String getProgramArguments(ILaunchConfiguration config)
-			throws CoreException {
-		String args = config.getAttribute(
-				ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-				(String) null);
+	protected String getProgramArguments(ILaunchConfiguration config) throws CoreException {
+		String args = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
 		if (args != null) {
-			args = VariablesPlugin.getDefault().getStringVariableManager()
-					.performStringSubstitution(args);
+			args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
 		}
 		return args;
 	}

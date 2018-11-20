@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -55,8 +55,8 @@ public class DisassemblyViewerConfiguration extends TextSourceViewerConfiguratio
 		 */
 		@Override
 		public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent e, boolean documentPartitioningChanged) {
-			int start= e.fOffset;
-			int end= e.getOffset() + (e.getText() == null ? 0 : e.getText().length());
+			int start = e.fOffset;
+			int end = e.getOffset() + (e.getText() == null ? 0 : e.getText().length());
 			return new Region(start, end - start);
 		}
 
@@ -71,7 +71,7 @@ public class DisassemblyViewerConfiguration extends TextSourceViewerConfiguratio
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public DisassemblyViewerConfiguration(DisassemblyPart part) {
 		super(EditorsUI.getPreferenceStore());
@@ -89,6 +89,7 @@ public class DisassemblyViewerConfiguration extends TextSourceViewerConfiguratio
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		return reconciler;
 	}
+
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getUndoManager(org.eclipse.jface.text.source.ISourceViewer)
 	 */
@@ -97,7 +98,7 @@ public class DisassemblyViewerConfiguration extends TextSourceViewerConfiguratio
 		// no undo/redo
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTextHover(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
@@ -111,21 +112,21 @@ public class DisassemblyViewerConfiguration extends TextSourceViewerConfiguratio
 	 */
 	@Override
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
-		IHyperlinkDetector[] inheritedDetectors= super.getHyperlinkDetectors(sourceViewer);
-		
+		IHyperlinkDetector[] inheritedDetectors = super.getHyperlinkDetectors(sourceViewer);
+
 		if (fPart == null || inheritedDetectors == null)
 			return inheritedDetectors;
-		
-		int inheritedDetectorsLength= inheritedDetectors.length;
-		IHyperlinkDetector[] detectors= new IHyperlinkDetector[inheritedDetectorsLength + 1];
-		detectors[0]= new DisassemblyHyperlinkDetector(fPart);
-		for (int i= 0; i < inheritedDetectorsLength; i++) {
-			detectors[i+1]= inheritedDetectors[i];
+
+		int inheritedDetectorsLength = inheritedDetectors.length;
+		IHyperlinkDetector[] detectors = new IHyperlinkDetector[inheritedDetectorsLength + 1];
+		detectors[0] = new DisassemblyHyperlinkDetector(fPart);
+		for (int i = 0; i < inheritedDetectorsLength; i++) {
+			detectors[i + 1] = inheritedDetectors[i];
 		}
-		
+
 		return detectors;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */

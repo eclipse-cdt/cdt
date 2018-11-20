@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,32 +28,31 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 public class LRUtilOldTests extends AST2UtilOldTests {
 
 	public static TestSuite suite() {
-    	return suite(LRUtilOldTests.class);
-    }
-	
-	 
-    @Override
-    @SuppressWarnings("unused") 
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-    	return ParseHelper.parse(code, language, expectNoProblems);
-    }
-    
-    
-    protected ILanguage getCLanguage() {
-    	return GCCLanguage.getDefault();
-    }
-	
+		return suite(LRUtilOldTests.class);
+	}
+
+	@Override
+	@SuppressWarnings("unused")
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
+			boolean expectNoProblems) throws ParserException {
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
+		return ParseHelper.parse(code, language, expectNoProblems);
+	}
+
+	protected ILanguage getCLanguage() {
+		return GCCLanguage.getDefault();
+	}
+
 	protected ILanguage getCPPLanguage() {
 		return GPPLanguage.getDefault();
 	}
-    
-    
-    @Override
+
+	@Override
 	public void testCastExpression() throws Exception { // A not typedefed
-    	try {
-    		super.testCastExpression();
-    		fail();
-    	} catch(AssertionFailedError expectedException) {}
-    }
+		try {
+			super.testCastExpression();
+			fail();
+		} catch (AssertionFailedError expectedException) {
+		}
+	}
 }

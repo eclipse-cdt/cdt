@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson			  - Modified for new functionality	
+ *     Ericsson			  - Modified for new functionality
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf.pda.ui.viewmodel.launch;
 
@@ -27,42 +27,40 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
-
 /**
- * View Model provider for the Launch (AKA Debug) view. The launch VM 
+ * View Model provider for the Launch (AKA Debug) view. The launch VM
  * provider is configured with three nodes:
  * <ul>
- * <li> LaunchRootVMNode - This is the root of the PDA view model.</li>  
+ * <li> LaunchRootVMNode - This is the root of the PDA view model.</li>
  * <li> PDAVirtualMachineVMNode - Supplies the element representing PDA VM</li>
  * <li> PDAThreadsVMNode - Supplies the PDA thread elements</li>
- * <li> StackFramesVMNode - Supplies the stack frame elements.</li>  
- * <li> StandardProcessVMNode - Supplies elements representing the PDA 
+ * <li> StackFramesVMNode - Supplies the stack frame elements.</li>
+ * <li> StandardProcessVMNode - Supplies elements representing the PDA
  * debugger process.</li>
- * </ul> 
+ * </ul>
  */
 @SuppressWarnings("restriction")
-public class PDALaunchVMProvider extends AbstractLaunchVMProvider 
-    implements IDebugEventSetListener, ILaunchesListener2
-{
-    @ThreadSafe
-    public PDALaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session) 
-    {
-        super(adapter, presentationContext, session);
-        
-        IRootVMNode launchNode = new LaunchRootVMNode(this);
-        setRootNode(launchNode);
+public class PDALaunchVMProvider extends AbstractLaunchVMProvider
+		implements IDebugEventSetListener, ILaunchesListener2 {
+	@ThreadSafe
+	public PDALaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext,
+			DsfSession session) {
+		super(adapter, presentationContext, session);
 
-        // Launch node is a parent to the processes and program nodes.
-        IVMNode pdaVirtualMachineNode = new PDAVirtualMachineVMNode(this, getSession());
-        IVMNode processesNode = new StandardProcessVMNode(this);
-        addChildNodes(launchNode, new IVMNode[] { pdaVirtualMachineNode, processesNode});
-        
-        // Virtual machine node is under the PDA threads node.
-        IVMNode threadsNode = new PDAThreadsVMNode(this, getSession());
-        addChildNodes(pdaVirtualMachineNode, new IVMNode[] { threadsNode });
-        
-        // Stack frames node is under the PDA threads node.
-        IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
-        addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
-    }
+		IRootVMNode launchNode = new LaunchRootVMNode(this);
+		setRootNode(launchNode);
+
+		// Launch node is a parent to the processes and program nodes.
+		IVMNode pdaVirtualMachineNode = new PDAVirtualMachineVMNode(this, getSession());
+		IVMNode processesNode = new StandardProcessVMNode(this);
+		addChildNodes(launchNode, new IVMNode[] { pdaVirtualMachineNode, processesNode });
+
+		// Virtual machine node is under the PDA threads node.
+		IVMNode threadsNode = new PDAThreadsVMNode(this, getSession());
+		addChildNodes(pdaVirtualMachineNode, new IVMNode[] { threadsNode });
+
+		// Stack frames node is under the PDA threads node.
+		IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
+		addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
+	}
 }

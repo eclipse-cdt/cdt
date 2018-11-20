@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * This class implements external process launching for internal builder. 
+ * This class implements external process launching for internal builder.
  *
- * NOTE: This class is subject to change and discuss, 
+ * NOTE: This class is subject to change and discuss,
  * and is currently available in experimental mode only
  */
 public class ProcessLauncher {
@@ -32,7 +32,7 @@ public class ProcessLauncher {
 	public final static int STATE_RUNNING = 1;
 	public final static int STATE_CANCELED = 2;
 	public final static int STATE_ILLEGAL = -1;
-	
+
 	protected String[] cmd;
 	protected String[] env;
 	protected File cwd;
@@ -52,7 +52,7 @@ public class ProcessLauncher {
 	public String[] getCommandArray() {
 		return cmd;
 	}
-	
+
 	/**
 	 * Returns command line in a single string
 	 */
@@ -65,55 +65,60 @@ public class ProcessLauncher {
 			}
 			buf.append(lineSeparator);
 		}
-		
+
 		return buf.toString();
 	}
-	
+
 	/**
 	 * Returns process environment
 	 */
 	public String[] getEnvironment() {
 		return env;
 	}
-	
+
 	/**
 	 * Returns command working directory
 	 */
 	public File getWorkingDir() {
 		return cwd;
 	}
-	
+
 	/**
 	 * Returns error message (if any)
 	 */
 	public String getErrorMessage() {
 		return error;
 	}
-	
+
 	/**
 	 * Returns exit code of a process
 	 */
 	public int getExitCode() {
-		if (process == null || closure.isAlive()) return 0;
-		try { return process.waitFor(); }
-		catch (InterruptedException e) { return 0; } 
+		if (process == null || closure.isAlive())
+			return 0;
+		try {
+			return process.waitFor();
+		} catch (InterruptedException e) {
+			return 0;
+		}
 	}
-	
+
 	/**
 	 * Initializes launcher
 	 * @param _cmd Command path
 	 * @param args Command arguments
-	 * @param _env Environment 
+	 * @param _env Environment
 	 * @param _cwd Working directory
 	 * @param _out Output stream
 	 * @param _err Error output stream
-	 * @param _monitor Progress monitor 
+	 * @param _monitor Progress monitor
 	 * @param _show If true, print command line before launching
 	 */
-	public ProcessLauncher(IPath _cmd, String[] args, String[] _env, IPath _cwd, OutputStream _out, OutputStream _err, IProgressMonitor _monitor, boolean _show) {
+	public ProcessLauncher(IPath _cmd, String[] args, String[] _env, IPath _cwd, OutputStream _out, OutputStream _err,
+			IProgressMonitor _monitor, boolean _show) {
 		cmd = createCmdArray(_cmd.toOSString(), args);
 		env = _env;
-		cwd = _cwd.toFile(); 
+		cwd = _cwd.toFile();
 		out = _out;
 		err = _err;
 		monitor = _monitor;
@@ -121,7 +126,7 @@ public class ProcessLauncher {
 		error = ""; //$NON-NLS-1$
 		lineSeparator = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Launches a process
 	 */
@@ -130,7 +135,7 @@ public class ProcessLauncher {
 			if (show)
 				printCommandLine();
 			state = STATE_RUNNING;
-			process = ProcessFactory.getFactory().exec(cmd, env, cwd); 
+			process = ProcessFactory.getFactory().exec(cmd, env, cwd);
 			closure = new ProcessClosure(process, out, err);
 			// Close the input of the process since we will never write to it
 			try {
@@ -144,13 +149,13 @@ public class ProcessLauncher {
 			closure = null;
 		}
 	}
-	
+
 	/**
 	 * Returns process state
 	 */
 	public int queryState() {
 		if (state == STATE_RUNNING) {
-			if (closure == null) 
+			if (closure == null)
 				state = STATE_ILLEGAL;
 			else if (monitor.isCanceled()) {
 				closure.terminate();
@@ -160,22 +165,22 @@ public class ProcessLauncher {
 				state = STATE_DONE;
 			}
 		}
-	
+
 		return state;
 	}
 
 	/**
-	 * Creates a string array representing the command that will be passed 
+	 * Creates a string array representing the command that will be passed
 	 * to the process
 	 */
 	protected String[] createCmdArray(String cmdPath, String[] cmdArgs) {
 		String[] args = new String[1 + cmdArgs.length];
 		args[0] = cmdPath;
 		System.arraycopy(cmdArgs, 0, args, 1, cmdArgs.length);
-		
+
 		return args;
 	}
-	
+
 	/**
 	 * Prints command line
 	 */

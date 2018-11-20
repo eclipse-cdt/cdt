@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -26,41 +26,41 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRe
  */
 public class BreakpointVMInput extends AbstractVMContext implements IElementMementoProvider, IDMVMContext {
 
-    final private IDMContext fDMContext; 
-    
-    public BreakpointVMInput(IVMNode node, IDMContext dmc) {
-        super(node);
-        fDMContext = dmc;
-    }
+	final private IDMContext fDMContext;
 
-    @Override
+	public BreakpointVMInput(IVMNode node, IDMContext dmc) {
+		super(node);
+		fDMContext = dmc;
+	}
+
+	@Override
 	public IDMContext getDMContext() {
-        return fDMContext;
-    }
-    
-    @Override
+		return fDMContext;
+	}
+
+	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
-        for (IElementMementoRequest request : requests) {
-            request.getMemento().putString("ELEMENT_NAME", "BreakpointInputMemento");  //$NON-NLS-1$//$NON-NLS-2$
-            request.done();
-        }
-    }
-    
-    @Override
+		for (IElementMementoRequest request : requests) {
+			request.getMemento().putString("ELEMENT_NAME", "BreakpointInputMemento"); //$NON-NLS-1$//$NON-NLS-2$
+			request.done();
+		}
+	}
+
+	@Override
 	public void compareElements(IElementCompareRequest[] requests) {
-        for (IElementCompareRequest request : requests) {
-            request.setEqual( "BreakpointInputMemento".equals(request.getMemento().getString("ELEMENT_NAME")) );  //$NON-NLS-1$//$NON-NLS-2$
-            request.done();
-        }
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof BreakpointVMInput && ((BreakpointVMInput)obj).getDMContext().equals(fDMContext);
-    }
-    
-    @Override
-    public int hashCode() {
-        return fDMContext.hashCode(); 
-    }
+		for (IElementCompareRequest request : requests) {
+			request.setEqual("BreakpointInputMemento".equals(request.getMemento().getString("ELEMENT_NAME"))); //$NON-NLS-1$//$NON-NLS-2$
+			request.done();
+		}
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof BreakpointVMInput && ((BreakpointVMInput) obj).getDMContext().equals(fDMContext);
+	}
+
+	@Override
+	public int hashCode() {
+		return fDMContext.hashCode();
+	}
 }

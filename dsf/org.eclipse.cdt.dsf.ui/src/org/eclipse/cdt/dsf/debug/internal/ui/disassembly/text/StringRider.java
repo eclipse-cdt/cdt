@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -61,7 +61,7 @@ public class StringRider implements IFileRider {
 
 	@Override
 	public void writeChars(String buf, int off, int n) throws IOException {
-		fBuffer.put(buf, off, off+n);
+		fBuffer.put(buf, off, off + n);
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class StringRider implements IFileRider {
 		if (fBuffer.hasArray()) {
 			buf.append(fBuffer.array(), fBuffer.arrayOffset() + pos, n);
 		} else {
-			fBuffer.limit(pos+n);
+			fBuffer.limit(pos + n);
 			String str = fBuffer.toString();
 			assert str.length() == n;
 			buf.append(str);

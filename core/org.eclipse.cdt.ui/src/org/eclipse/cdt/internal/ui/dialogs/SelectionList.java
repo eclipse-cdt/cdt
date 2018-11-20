@@ -48,24 +48,25 @@ public class SelectionList extends Composite {
 	private Object[] fElements;
 	protected ILabelProvider fRenderer;
 	private boolean fIgnoreCase;
-	
+
 	// Implementation details
 	private String[] fRenderedStrings;
-	private int[] fFilteredElements;	
+	private int[] fFilteredElements;
 	private String fRememberedMatchText;
 
 	// SWT widgets
 	private Table fList;
 	private Text fText;
-	
+
 	/**
 	 * Adds a selection change listener to this widget.
 	 */
 	public void addSelectionListener(SelectionListener listener) {
 		fList.addSelectionListener(listener);
 	}
+
 	private void createList(int style) {
-		fList= new Table(this, style);
+		fList = new Table(this, style);
 		fList.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fList.addDisposeListener(new DisposeListener() {
 			@Override
@@ -74,15 +75,16 @@ public class SelectionList extends Composite {
 			}
 		});
 	}
+
 	private void createText() {
-		fText= new Text(this, SWT.BORDER);
-		GridData spec= new GridData();
-		spec.grabExcessVerticalSpace= false;
-		spec.grabExcessHorizontalSpace= true;
-		spec.horizontalAlignment= GridData.FILL;
-		spec.verticalAlignment= GridData.BEGINNING;
+		fText = new Text(this, SWT.BORDER);
+		GridData spec = new GridData();
+		spec.grabExcessVerticalSpace = false;
+		spec.grabExcessHorizontalSpace = true;
+		spec.horizontalAlignment = GridData.FILL;
+		spec.verticalAlignment = GridData.BEGINNING;
 		fText.setLayoutData(spec);
-		Listener l= new Listener() {
+		Listener l = new Listener() {
 			@Override
 			public void handleEvent(Event evt) {
 				filter(false);
@@ -90,38 +92,42 @@ public class SelectionList extends Composite {
 		};
 		fText.addListener(SWT.Modify, l);
 	}
+
 	/**
 	 * Filters the list of elements according to the pattern entered
 	 * into the text entry field.
 	 */
 	public void filter(boolean forceUpdate) {
-		int k= 0;
-		String text= fText.getText();
+		int k = 0;
+		String text = fText.getText();
 		if (!forceUpdate && text.equals(fRememberedMatchText))
 			return;
-		fRememberedMatchText= text;
-		StringMatcher matcher= new StringMatcher(text+"*", fIgnoreCase, false); //$NON-NLS-1$
-		for (int i= 0; i < fElements.length; i++) {
+		fRememberedMatchText = text;
+		StringMatcher matcher = new StringMatcher(text + "*", fIgnoreCase, false); //$NON-NLS-1$
+		for (int i = 0; i < fElements.length; i++) {
 			if (matcher.match(fRenderedStrings[i])) {
-				fFilteredElements[k]= i;
+				fFilteredElements[k] = i;
 				k++;
 			}
 		}
-		fFilteredElements[k]= -1;
+		fFilteredElements[k] = -1;
 		updateListWidget(fFilteredElements, k);
 	}
+
 	/**
 	 * Returns the currently used filter text.
 	 */
 	public String getFilter() {
 		return fText.getText();
 	}
+
 	/**
 	 * Returns the selection indices.
 	 */
 	public int[] getSelectionIndices() {
 		return fList.getSelectionIndices();
 	}
+
 	/**
 	 * Returns a list of selected elements. Note that the type of the elements
 	 * returned in the list are the same as the ones passed to the selection list
@@ -130,68 +136,76 @@ public class SelectionList extends Composite {
 	public List<?> getSelection() {
 		if (fList == null || fList.isDisposed() || fList.getSelectionCount() == 0)
 			return Collections.emptyList();
-		int[] listSelection= fList.getSelectionIndices();
-		List<Object> selected= new ArrayList<Object>(listSelection.length);
-		for (int i= 0; i < listSelection.length; i++) {
+		int[] listSelection = fList.getSelectionIndices();
+		List<Object> selected = new ArrayList<Object>(listSelection.length);
+		for (int i = 0; i < listSelection.length; i++) {
 			selected.add(fElements[fFilteredElements[listSelection[i]]]);
 		}
 		return selected;
 	}
+
 	/**
 	 * Returns <code>true</code> when the list of elements is empty.
 	 */
 	public boolean isEmptyList() {
 		return fElements == null || fElements.length == 0;
 	}
+
 	/**
 	 * Creates new instance of the widget.
 	 */
 	public SelectionList(Composite parent, int style, ILabelProvider renderer, boolean ignoreCase) {
 		super(parent, SWT.NONE);
-		fRenderer= renderer;
-		fIgnoreCase= ignoreCase;
-		GridLayout layout= new GridLayout();
-		layout.marginHeight= 0; layout.marginWidth= 0;
+		fRenderer = renderer;
+		fIgnoreCase = ignoreCase;
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		//XXX: 1G9V58A: ITPUI:WIN2000 - Dialog.convert* methods should be static
 		setLayout(layout);
 		createText();
 		createList(style);
 	}
+
 	/**
 	 * Removes a selection change listener to this widget.
 	 */
 	public void removeSelectionListener(SelectionListener listener) {
 		fList.removeSelectionListener(listener);
 	}
+
 	private String[] renderStrings() {
-		String[] strings= new String[fElements.length];
-		for (int i= 0; i < strings.length; i++) {
-			strings[i]= fRenderer.getText(fElements[i]);
+		String[] strings = new String[fElements.length];
+		for (int i = 0; i < strings.length; i++) {
+			strings[i] = fRenderer.getText(fElements[i]);
 		}
 		TwoArrayQuickSort.sort(strings, fElements, fIgnoreCase);
 		return strings;
 	}
+
 	/**
 	 * Select the pattern text.
 	 */
 	public void selectFilterText() {
 		fText.selectAll();
 	}
+
 	/**
 	 * Sets the list of elements presented in the widget.
 	 */
 	public void setElements(List<?> elements, boolean refilter) {
 		// We copy the list since we sort it.
 		if (elements == null)
-			fElements= new Object[0];
-		else 
-			fElements= elements.toArray();
-		fFilteredElements= new int[fElements.length+1];
-		fRenderedStrings= renderStrings();
+			fElements = new Object[0];
+		else
+			fElements = elements.toArray();
+		fFilteredElements = new int[fElements.length + 1];
+		fRenderedStrings = renderStrings();
 		if (refilter)
-			filter(true);		
+			filter(true);
 	}
-	/* 
+
+	/*
 	 * Non Java-doc
 	 */
 	@Override
@@ -200,6 +214,7 @@ public class SelectionList extends Composite {
 		fText.setEnabled(enable);
 		fList.setEnabled(enable);
 	}
+
 	/**
 	 * Sets the filter pattern. Current only prefix filter pattern are supported.
 	 */
@@ -208,6 +223,7 @@ public class SelectionList extends Composite {
 		if (refilter)
 			filter(true);
 	}
+
 	/*
 	 * Non Java-doc
 	 */
@@ -215,6 +231,7 @@ public class SelectionList extends Composite {
 	public boolean setFocus() {
 		return fText.setFocus();
 	}
+
 	/*
 	 * Non Java-doc
 	 */
@@ -224,6 +241,7 @@ public class SelectionList extends Composite {
 		fText.setFont(font);
 		fList.setFont(font);
 	}
+
 	/**
 	 * Selects the elements in the list determined by the given
 	 * selection indices.
@@ -231,34 +249,35 @@ public class SelectionList extends Composite {
 	protected void setSelection(int[] selection) {
 		fList.setSelection(selection);
 	}
+
 	private void updateListWidget(int[] indices, int size) {
 		if (fList == null || fList.isDisposed())
 			return;
 		fList.setRedraw(false);
-		int itemCount= fList.getItemCount();
+		int itemCount = fList.getItemCount();
 		if (size < itemCount) {
-			fList.remove(0, itemCount-size-1);
+			fList.remove(0, itemCount - size - 1);
 		}
 
-		TableItem[] items= fList.getItems();
-		for (int i= 0; i < size; i++) {
-			TableItem ti= null;
+		TableItem[] items = fList.getItems();
+		for (int i = 0; i < size; i++) {
+			TableItem ti = null;
 			if (i < itemCount) {
-				ti= items[i];
+				ti = items[i];
 			} else {
-				ti= new TableItem(fList, i);
+				ti = new TableItem(fList, i);
 			}
 			ti.setText(fRenderedStrings[indices[i]]);
-			Image img= fRenderer.getImage(fElements[indices[i]]);
+			Image img = fRenderer.getImage(fElements[indices[i]]);
 			if (img != null)
 				ti.setImage(img);
 		}
 		if (fList.getItemCount() > 0) {
 			fList.setSelection(0);
 		}
-					
+
 		fList.setRedraw(true);
-		Event event= new Event();
+		Event event = new Event();
 		fList.notifyListeners(SWT.Selection, event);
 	}
 }

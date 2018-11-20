@@ -22,9 +22,6 @@ public interface IQMLPartitions {
 	final String QML_MULTI_LINE_COMMENT = "__qml_multiline_comment"; //$NON-NLS-1$
 	final String QML_STRING = "__qml_string"; //$NON-NLS-1$
 
-	final String[] ALL_QMLPARTITIONS = {
-			IQMLPartitions.QML_SINGLE_LINE_COMMENT,
-			IQMLPartitions.QML_MULTI_LINE_COMMENT,
-			IQMLPartitions.QML_STRING
-	};
+	final String[] ALL_QMLPARTITIONS = { IQMLPartitions.QML_SINGLE_LINE_COMMENT, IQMLPartitions.QML_MULTI_LINE_COMMENT,
+			IQMLPartitions.QML_STRING };
 }

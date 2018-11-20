@@ -87,7 +87,7 @@ import org.junit.rules.Timeout;
  */
 @SuppressWarnings("restriction")
 public class BaseTestCase {
-	/** 
+	/**
 	 * When used, the tests will use a GDB called 'gdb'.  This uses
 	 * whatever GDB is installed on the machine where the tests are run.
 	 */
@@ -103,18 +103,20 @@ public class BaseTestCase {
 	private final static int TEST_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 	// Make the current test name available through testName.getMethodName()
-	@Rule public TestName testName = new TestName();
+	@Rule
+	public TestName testName = new TestName();
 
 	// Add a timeout for each test, to make sure no test hangs
-	@Rule public TestRule timeout = new Timeout(TEST_TIMEOUT, TimeUnit.MILLISECONDS);
+	@Rule
+	public TestRule timeout = new Timeout(TEST_TIMEOUT, TimeUnit.MILLISECONDS);
 
 	public static final String ATTR_DEBUG_SERVER_NAME = TestsPlugin.PLUGIN_ID + ".DEBUG_SERVER_NAME";
 	private static final String DEFAULT_EXEC_NAME = "GDBMIGenericTestApp.exe";
 	private static final String LAUNCH_CONFIGURATION_TYPE_ID = "org.eclipse.cdt.tests.dsf.gdb.TestLaunch";
 
-    private static GdbLaunch fLaunch;
+	private static GdbLaunch fLaunch;
 
-    // The set of attributes used for the launch of a single test.
+	// The set of attributes used for the launch of a single test.
 	private Map<String, Object> launchAttributes;
 
 	// The launch configuration generated from the launch attributes
@@ -139,7 +141,6 @@ public class BaseTestCase {
 	protected static String globalVersion;
 	protected static final String GDB_NOT_FOUND = "not found";
 
-
 	private HashMap<String, Integer> fTagLocations = new HashMap<>();
 
 	// Provides the possibility to override the Debug Services factory and
@@ -149,57 +150,62 @@ public class BaseTestCase {
 	/**
 	 * Return the launch created when {@link #doLaunch()} was called.
 	 */
-    public GdbLaunch getGDBLaunch() { return fLaunch; }
+	public GdbLaunch getGDBLaunch() {
+		return fLaunch;
+	}
 
 	public ILaunchConfiguration getLaunchConfiguration() {
 		return fLaunchConfiguration;
 	}
 
-    public void setLaunchAttribute(String key, Object value) {
-    	launchAttributes.put(key, value);
-    }
+	public void setLaunchAttribute(String key, Object value) {
+		launchAttributes.put(key, value);
+	}
 
-    public void removeLaunchAttribute(String key) {
-    	launchAttributes.remove(key);
-    }
-    
-    public Object getLaunchAttribute(String key) {
-    	return launchAttributes.get(key);
-    }
+	public void removeLaunchAttribute(String key) {
+		launchAttributes.remove(key);
+	}
 
-    public static void setGlobalLaunchAttribute(String key, Object value) {
-    	globalLaunchAttributes.put(key, value);
-    }
-    
-    public static Object getGlobalLaunchAttribite(String key){
-    	return globalLaunchAttributes.get(key);
-    }
+	public Object getLaunchAttribute(String key) {
+		return launchAttributes.get(key);
+	}
 
-    public static void removeGlobalLaunchAttribute(String key) {
-   		globalLaunchAttributes.remove(key);
-    }
+	public static void setGlobalLaunchAttribute(String key, Object value) {
+		globalLaunchAttributes.put(key, value);
+	}
 
-    public synchronized MIStoppedEvent getInitialStoppedEvent() { return fInitialStoppedEvent; }
+	public static Object getGlobalLaunchAttribite(String key) {
+		return globalLaunchAttributes.get(key);
+	}
 
-    /**
-     * Return whether this is a remote session.
-     * 
-     * WARNING: This method must only be called after launch attributes are initialized.
-     */
-    public boolean isRemoteSession() {
+	public static void removeGlobalLaunchAttribute(String key) {
+		globalLaunchAttributes.remove(key);
+	}
+
+	public synchronized MIStoppedEvent getInitialStoppedEvent() {
+		return fInitialStoppedEvent;
+	}
+
+	/**
+	 * Return whether this is a remote session.
+	 *
+	 * WARNING: This method must only be called after launch attributes are initialized.
+	 */
+	public boolean isRemoteSession() {
 		return launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
-	              .equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
-    }
+				.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
+	}
 
 	/**
 	 * Validate that the gdb version launched is the one that was targeted.
 	 * Will fail the test if the versions don't match.
-	 * 
+	 *
 	 * @param launch The launch in which we can find the gdb version
 	 */
-	protected void validateGdbVersion(GdbLaunch launch) throws Exception {};
-	
-    /**
+	protected void validateGdbVersion(GdbLaunch launch) throws Exception {
+	};
+
+	/**
 	 * We listen for the target to stop at the main breakpoint. This listener is
 	 * installed when the session is created and we uninstall ourselves when we
 	 * get to the breakpoint state, as we have no further need to monitor events
@@ -310,7 +316,7 @@ public class BaseTestCase {
 		IBreakpoint[] breakpoints = manager.getBreakpoints();
 		manager.removeBreakpoints(breakpoints, true);
 	}
-	
+
 	/**
 	 * Make sure we are starting with a clean/known state. That means no
 	 * existing launches.
@@ -331,7 +337,7 @@ public class BaseTestCase {
 	/**
 	 * Make sure we are starting with a clean/known state. That means no
 	 * existing launch configurations.
-	 * 
+	 *
 	 * XXX: Bugs 512180 and 501906, limit this call to only those test that
 	 * really need a clean state. This does not remove the race condition, but
 	 * does improve it somewhat.
@@ -355,32 +361,32 @@ public class BaseTestCase {
 	}
 
 	protected void setLaunchAttributes() {
-    	// Clear all launch attributes before starting a new test
-    	launchAttributes = new HashMap<String, Object>();
+		// Clear all launch attributes before starting a new test
+		launchAttributes = new HashMap<String, Object>();
 
-   		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + DEFAULT_EXEC_NAME);
+		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + DEFAULT_EXEC_NAME);
 
 		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
-		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
+		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
+				ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
 		launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
 
-    	
-    	launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
-    	
+		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+				ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 
 		// Set these up in case we will be running Remote tests.  They will be ignored if we don't
-    	launchAttributes.put(ATTR_DEBUG_SERVER_NAME, "gdbserver");
-    	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
-    	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_HOST, "localhost");
-    	// Using a port of 0 here means gdbserver will allocate the port number
-    	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_PORT, "0");
-    	launchAttributes.put(ITestConstants.LAUNCH_GDB_SERVER, true);
+		launchAttributes.put(ATTR_DEBUG_SERVER_NAME, "gdbserver");
+		launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
+		launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_HOST, "localhost");
+		// Using a port of 0 here means gdbserver will allocate the port number
+		launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_PORT, "0");
+		launchAttributes.put(ITestConstants.LAUNCH_GDB_SERVER, true);
 
-    	initializeLaunchAttributes();
- 
-    	// Set the global launch attributes
-    	launchAttributes.putAll(globalLaunchAttributes);
-    }
+		initializeLaunchAttributes();
+
+		// Set the global launch attributes
+		launchAttributes.putAll(globalLaunchAttributes);
+	}
 
 	/**
 	 * Override this method to initialize test specific launch attributes.
@@ -390,22 +396,22 @@ public class BaseTestCase {
 	 * If it is undesired override {@link #setLaunchAttributes()} method instead
 	 */
 	protected void initializeLaunchAttributes() {
-	   	setGdbVersion();
+		setGdbVersion();
 	}
 
-    /**
-     * Clear our knowledge of line tags. Must be called before
-     * resolveLineTagLocations in {@link Intermittent} tests.
-     * <p>
-     * This is a workaround for Bug 508642. This may not seem necessary, since
-     * the fTagLocations field is not static and a new instance of the test
-     * class is created for each test. However, when a test marked as
-     * {@link Intermittent} fails, the class instance is re-used, so the content
-     * of the failed try leaks in the new try.
-     */
-    public void clearLineTags() {
-        fTagLocations.clear();
-    }
+	/**
+	 * Clear our knowledge of line tags. Must be called before
+	 * resolveLineTagLocations in {@link Intermittent} tests.
+	 * <p>
+	 * This is a workaround for Bug 508642. This may not seem necessary, since
+	 * the fTagLocations field is not static and a new instance of the test
+	 * class is created for each test. However, when a test marked as
+	 * {@link Intermittent} fails, the class instance is re-used, so the content
+	 * of the failed try leaks in the new try.
+	 */
+	public void clearLineTags() {
+		fTagLocations.clear();
+	}
 
 	/**
 	 * Given a set of tags (strings) to find in sourceFile, populate the
@@ -416,10 +422,8 @@ public class BaseTestCase {
 	 * @throws IOException If sourceFile is not found or can't be read.
 	 * @throws RuntimeException If one or more tags are not found in sourceFile.
 	 */
-	protected void resolveLineTagLocations(String sourceName,
-			String... tags) throws IOException {
-		try (BufferedReader reader =
-				new BufferedReader(new FileReader(SOURCE_PATH + sourceName))) {
+	protected void resolveLineTagLocations(String sourceName, String... tags) throws IOException {
+		try (BufferedReader reader = new BufferedReader(new FileReader(SOURCE_PATH + sourceName))) {
 			Set<String> tagsToFind = new HashSet<>(Arrays.asList(tags));
 			String line;
 
@@ -427,8 +431,7 @@ public class BaseTestCase {
 				for (String tag : tagsToFind) {
 					if (line.contains(tag)) {
 						if (fTagLocations.containsKey(tag)) {
-							throw new RuntimeException("Tag " + tag
-									+ " was found twice in " + sourceName);
+							throw new RuntimeException("Tag " + tag + " was found twice in " + sourceName);
 						}
 						fTagLocations.put(tag, lineNumber);
 						tagsToFind.remove(tag);
@@ -438,8 +441,7 @@ public class BaseTestCase {
 			}
 			/* Make sure all tags have been found */
 			if (!tagsToFind.isEmpty()) {
-				throw new RuntimeException(
-						"Tags " + tagsToFind + " were not found in " + sourceName);
+				throw new RuntimeException("Tags " + tagsToFind + " were not found in " + sourceName);
 			}
 		}
 	}
@@ -461,76 +463,77 @@ public class BaseTestCase {
 		return fTagLocations.get(tag);
 	}
 
-    /**
-     * Launch GDB.  The launch attributes must have been set already.
-     */
- 	protected void doLaunch() throws Exception {
- 		boolean remote = isRemoteSession();
+	/**
+	 * Launch GDB.  The launch attributes must have been set already.
+	 */
+	protected void doLaunch() throws Exception {
+		boolean remote = isRemoteSession();
 
-    	if (GdbDebugOptions.DEBUG) {
-    		GdbDebugOptions.trace("===============================================================================================\n");
-    	}
+		if (GdbDebugOptions.DEBUG) {
+			GdbDebugOptions.trace(
+					"===============================================================================================\n");
+		}
 
-    	// Always print this output to help easily troubleshoot tests on Hudson
-    	// Don't end with a new line as we may add another printout in doInnerLaunch()
-    	// Also don't split the line to make it all nicely aligned
-    	GdbDebugOptions.trace(String.format("%s \"%s\" requesting %s%s",
-    			GdbPlugin.getDebugTime(), testName.getMethodName(), launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME), remote ? " with gdbserver." : ".")
-    			, -1);
+		// Always print this output to help easily troubleshoot tests on Hudson
+		// Don't end with a new line as we may add another printout in doInnerLaunch()
+		// Also don't split the line to make it all nicely aligned
+		GdbDebugOptions.trace(String.format("%s \"%s\" requesting %s%s", GdbPlugin.getDebugTime(),
+				testName.getMethodName(), launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME),
+				remote ? " with gdbserver." : "."), -1);
 
-    	if (GdbDebugOptions.DEBUG) {
-    		GdbDebugOptions.trace("\n===============================================================================================\n");
-    	}
+		if (GdbDebugOptions.DEBUG) {
+			GdbDebugOptions.trace(
+					"\n===============================================================================================\n");
+		}
 
 		launchGdbServer();
 
- 		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
- 		String lcTypeId = getLaunchConfigurationTypeId();
- 		ILaunchConfigurationType lcType = launchMgr.getLaunchConfigurationType(lcTypeId);
- 		assert lcType != null;
+		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
+		String lcTypeId = getLaunchConfigurationTypeId();
+		ILaunchConfigurationType lcType = launchMgr.getLaunchConfigurationType(lcTypeId);
+		assert lcType != null;
 
- 		ILaunchConfigurationWorkingCopy lcWorkingCopy = lcType.newInstance(
- 				null,
- 				launchMgr.generateLaunchConfigurationName("Test Launch")); //$NON-NLS-1$
- 		assert lcWorkingCopy != null;
- 		lcWorkingCopy.setAttributes(launchAttributes);
+		ILaunchConfigurationWorkingCopy lcWorkingCopy = lcType.newInstance(null,
+				launchMgr.generateLaunchConfigurationName("Test Launch")); //$NON-NLS-1$
+		assert lcWorkingCopy != null;
+		lcWorkingCopy.setAttributes(launchAttributes);
 
- 		fLaunchConfiguration = lcWorkingCopy.doSave();
- 		fLaunch = doLaunchInner();
+		fLaunchConfiguration = lcWorkingCopy.doSave();
+		fLaunch = doLaunchInner();
 
- 		validateGdbVersion(fLaunch);
+		validateGdbVersion(fLaunch);
 
- 		// If we started a gdbserver add it to the launch to make sure it is killed at the end
- 		if (gdbserverProc != null) {
-            DebugPlugin.newProcess(fLaunch, gdbserverProc, "gdbserver");
- 		}
+		// If we started a gdbserver add it to the launch to make sure it is killed at the end
+		if (gdbserverProc != null) {
+			DebugPlugin.newProcess(fLaunch, gdbserverProc, "gdbserver");
+		}
 
- 		// Now initialize our SyncUtility, since we have the launcher
- 		SyncUtil.initialize(fLaunch.getSession());
+		// Now initialize our SyncUtility, since we have the launcher
+		SyncUtil.initialize(fLaunch.getSession());
 
 	}
 
- 	/**
- 	 * Perform the actual launch. This is normally called by {@link #doLaunch()}, however
- 	 * it can be called repeatedly after an initial doLaunch sets up the environment. Doing
- 	 * so allows multiple launches on the same launch configuration to be created. When this
- 	 * method is called directly, the returned launch is not tracked and it is up to the
- 	 * individual test to cleanup the launch. If the launch is not cleaned up, subsequent
- 	 * tests will fail due to checks in {@link #doBeforeTest()} that verify state is clean
- 	 * and no launches are currently running.
- 	 * 
- 	 * This method is blocking until the breakpoint at main in the program is reached.
- 	 * 
- 	 * @return the new launch created
- 	 */
+	/**
+	 * Perform the actual launch. This is normally called by {@link #doLaunch()}, however
+	 * it can be called repeatedly after an initial doLaunch sets up the environment. Doing
+	 * so allows multiple launches on the same launch configuration to be created. When this
+	 * method is called directly, the returned launch is not tracked and it is up to the
+	 * individual test to cleanup the launch. If the launch is not cleaned up, subsequent
+	 * tests will fail due to checks in {@link #doBeforeTest()} that verify state is clean
+	 * and no launches are currently running.
+	 *
+	 * This method is blocking until the breakpoint at main in the program is reached.
+	 *
+	 * @return the new launch created
+	 */
 	protected GdbLaunch doLaunchInner() throws Exception {
 		assertNotNull("The launch configuration has not been created. Call doLaunch first.", fLaunchConfiguration);
-		
- 		boolean postMortemLaunch = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
-                .equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
 
- 		SessionEventListener sessionEventListener = new SessionEventListener(fLaunchConfiguration);
- 		SessionStartedListener sessionStartedListener = new SessionStartedListener() {
+		boolean postMortemLaunch = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
+				.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
+
+		SessionEventListener sessionEventListener = new SessionEventListener(fLaunchConfiguration);
+		SessionStartedListener sessionStartedListener = new SessionStartedListener() {
 			@Override
 			public void sessionStarted(DsfSession session) {
 				sessionEventListener.setSession(session);
@@ -541,53 +544,54 @@ public class BaseTestCase {
 		// Launch the debug session. The session-started listener will be called
 		// before the launch() call returns (unless, of course, there was a
 		// problem launching and no session is created).
- 		DsfSession.addSessionStartedListener(sessionStartedListener);
- 		GdbLaunch launch = (GdbLaunch)fLaunchConfiguration.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
- 		if (!GdbDebugOptions.DEBUG) {
- 			// Now that we have started the launch we can print the real GDB version
- 			// but not if DEBUG is on since we get the version anyway in that case.
- 			GdbDebugOptions.trace(String.format(" Launched gdb %s.\n", launch.getGDBVersion()));
- 		}
+		DsfSession.addSessionStartedListener(sessionStartedListener);
+		GdbLaunch launch = (GdbLaunch) fLaunchConfiguration.launch(ILaunchManager.DEBUG_MODE,
+				new NullProgressMonitor());
+		if (!GdbDebugOptions.DEBUG) {
+			// Now that we have started the launch we can print the real GDB version
+			// but not if DEBUG is on since we get the version anyway in that case.
+			GdbDebugOptions.trace(String.format(" Launched gdb %s.\n", launch.getGDBVersion()));
+		}
 
- 		DsfSession.removeSessionStartedListener(sessionStartedListener);
+		DsfSession.removeSessionStartedListener(sessionStartedListener);
 
- 		try {
+		try {
 
- 	 		// If we haven't hit main() yet,
- 	 		// wait for the program to hit the breakpoint at main() before
- 			// proceeding. All tests assume that stable initial state. Two
- 			// seconds is plenty; we typically get to that state in a few
- 			// hundred milliseconds with the tiny test programs we use.
- 			if (!postMortemLaunch) {
- 				sessionEventListener.waitUntilTargetSuspended();
- 	 		}
+			// If we haven't hit main() yet,
+			// wait for the program to hit the breakpoint at main() before
+			// proceeding. All tests assume that stable initial state. Two
+			// seconds is plenty; we typically get to that state in a few
+			// hundred milliseconds with the tiny test programs we use.
+			if (!postMortemLaunch) {
+				sessionEventListener.waitUntilTargetSuspended();
+			}
 
- 	 		// This should be a given if the above check passes
- 	 		if (!postMortemLaunch) {
- 	 			synchronized(this) {
- 	 				MIStoppedEvent initialStoppedEvent = sessionEventListener.getInitialStoppedEvent();
- 	 				Assert.assertNotNull(initialStoppedEvent);
+			// This should be a given if the above check passes
+			if (!postMortemLaunch) {
+				synchronized (this) {
+					MIStoppedEvent initialStoppedEvent = sessionEventListener.getInitialStoppedEvent();
+					Assert.assertNotNull(initialStoppedEvent);
 					if (fInitialStoppedEvent == null) {
 						// On the very first launch we do, save the initial stopped event
 						// XXX: If someone writes a test with an additional launch
 						// that needs this info, they should resolve this return value then
 						fInitialStoppedEvent = initialStoppedEvent;
 					}
- 	 			}
- 	 		}
- 	 		
- 		} catch (Exception e) {
- 			try {
- 				launch.terminate();
- 				assertLaunchTerminates(launch);
- 			} catch (Exception inner) {
- 				e.addSuppressed(inner);
- 			}
- 			throw e;
- 		}
-		
+				}
+			}
+
+		} catch (Exception e) {
+			try {
+				launch.terminate();
+				assertLaunchTerminates(launch);
+			} catch (Exception inner) {
+				e.addSuppressed(inner);
+			}
+			throw e;
+		}
+
 		return launch;
-	} 	
+	}
 
 	/**
 	 * Assert that the launch terminates. Callers should have already
@@ -685,12 +689,12 @@ public class BaseTestCase {
 	 *            string that contains the major and minor version number, e.g.,
 	 *            "6.8", special constant "default" represent default gdb on the box (called as "gdb")
 	 */
- 	public static void setGdbProgramNamesLaunchAttributes(String version) {
- 		globalVersion = version;
- 		setGlobalLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, getProgramPath("gdb", version));
- 		setGlobalLaunchAttribute(ATTR_DEBUG_SERVER_NAME, getProgramPath("gdbserver", version));
- 	}
- 	
+	public static void setGdbProgramNamesLaunchAttributes(String version) {
+		globalVersion = version;
+		setGlobalLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, getProgramPath("gdb", version));
+		setGlobalLaunchAttribute(ATTR_DEBUG_SERVER_NAME, getProgramPath("gdbserver", version));
+	}
+
 	public static String getProgramPath(String main, String version) {
 		// See bugzilla 303811 for why we have to append ".exe" on Windows
 		boolean isWindows = runningOnWindows();
@@ -704,18 +708,18 @@ public class BaseTestCase {
 		return debugName;
 	}
 
- 	public static boolean supportsNonStop() {
- 		return !(runningOnWindows() || runningOnMac());
- 	}
+	public static boolean supportsNonStop() {
+		return !(runningOnWindows() || runningOnMac());
+	}
 
- 	protected void setGdbVersion() {
- 		// Leave empty for the base class
- 	}
+	protected void setGdbVersion() {
+		// Leave empty for the base class
+	}
 
- 	/**
- 	 * This method will verify that the GDB binary is available, and if it is not, the test will
- 	 * be ignored.  This method should be called by a SuiteGdb that specifies a specific GDB version.
- 	 */
+	/**
+	 * This method will verify that the GDB binary is available, and if it is not, the test will
+	 * be ignored.  This method should be called by a SuiteGdb that specifies a specific GDB version.
+	 */
 	public static void ignoreIfGDBMissing() {
 		String gdb = (String) globalLaunchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME);
 		String version = getGdbVersion(gdb);
@@ -762,32 +766,33 @@ public class BaseTestCase {
 		}
 	}
 
- 	protected static boolean runningOnWindows() {
- 		return Platform.getOS().equals(Platform.OS_WIN32);
- 	}
+	protected static boolean runningOnWindows() {
+		return Platform.getOS().equals(Platform.OS_WIN32);
+	}
 
- 	protected static boolean runningOnMac() {
- 		return Platform.getOS().equals(Platform.OS_MACOSX);
- 	}
+	protected static boolean runningOnMac() {
+		return Platform.getOS().equals(Platform.OS_MACOSX);
+	}
 
 	@BeforeClass
- 	public static void setGlobalPreferences() {
+	public static void setGlobalPreferences() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugPlugin.getUniqueIdentifier());
 		// Disable status handlers
-		fgStatusHandlersEnabled = Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, true, null);
+		fgStatusHandlersEnabled = Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(),
+				IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, true, null);
 		node.putBoolean(IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, false);
- 	}
+	}
 
 	@AfterClass
 	public static void restoreGlobalPreferences() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugPlugin.getUniqueIdentifier());
 		node.putBoolean(IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, fgStatusHandlersEnabled);
 	}
-	
+
 	/**
 	 * Wait until the given callable returns true, must be within timeout millis.
 	 */
-	protected void waitUntil(String message, Callable<Boolean> callable,  long millis) throws Exception {
+	protected void waitUntil(String message, Callable<Boolean> callable, long millis) throws Exception {
 		long endTime = System.currentTimeMillis() + millis;
 		while (!callable.call() && System.currentTimeMillis() < endTime) {
 			Thread.sleep(100);

@@ -29,10 +29,10 @@ public class MICatchpointHitEvent extends MIBreakpointHitEvent {
 	 * See {@link #getReason()}
 	 */
 	private String fReason;
-	
+
 	/** @since 5.0 */
-	protected MICatchpointHitEvent(IExecutionDMContext ctx, int token,
-			MIResult[] results, MIFrame frame, String bkptno, String reason) {
+	protected MICatchpointHitEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, String bkptno,
+			String reason) {
 		super(ctx, token, results, frame, bkptno);
 		fReason = reason;
 	}
@@ -52,43 +52,44 @@ public class MICatchpointHitEvent extends MIBreakpointHitEvent {
 	 * sends us a stopped event, but it doesn't include a reason in it.
 	 * Fortunately, it does output a stream record that tells us not only that a
 	 * catchpoint was hit, but what its breakpoint number is.
-	 * 
+	 *
 	 * @param streamRecord
 	 *            the stream record that reveals that a catchpoint was hit and
 	 *            what the event was
 	 */
-    public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, MIStreamRecord streamRecord) {
-        // stream record example: "Catchpoint 1 (exception caught)"
-        StringTokenizer tokenizer = new StringTokenizer(streamRecord.getString());
-        tokenizer.nextToken(); // "Catchpoint"
-        try {
-        	String bkptNumber = tokenizer.nextToken(); // "1"
-        	StringBuilder reason = new StringBuilder();
-        	boolean first = true;
-        	while (tokenizer.hasMoreElements()) {
-        		if (!first) {
-        			reason.append(" "); //$NON-NLS-1$ ok; technically, the delim could be any whitespace, but we know it's s a space char
-        		}
-        		reason.append(tokenizer.nextElement());
-    			first = false;
-        	}
+	public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results,
+			MIStreamRecord streamRecord) {
+		// stream record example: "Catchpoint 1 (exception caught)"
+		StringTokenizer tokenizer = new StringTokenizer(streamRecord.getString());
+		tokenizer.nextToken(); // "Catchpoint"
+		try {
+			String bkptNumber = tokenizer.nextToken(); // "1"
+			StringBuilder reason = new StringBuilder();
+			boolean first = true;
+			while (tokenizer.hasMoreElements()) {
+				if (!first) {
+					reason.append(" "); //$NON-NLS-1$ ok; technically, the delim could be any whitespace, but we know it's s a space char
+				}
+				reason.append(tokenizer.nextElement());
+				first = false;
+			}
 
-        	// remove the parentheses
-        	if (reason.charAt(0) == '(') {
-        		reason.deleteCharAt(0);
-        	}
-        	if (reason.charAt(reason.length()-1) == ')') {
-        		reason.deleteCharAt(reason.length()-1);
-        	}
-        	
-            MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
-            return new MICatchpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptNumber, reason.toString());
-        }
-        catch (NumberFormatException exc) {
-        	assert false : "unexpected catchpoint stream record format: " + streamRecord.getString(); //$NON-NLS-1$
-        	return null;
-        }
-    }
+			// remove the parentheses
+			if (reason.charAt(0) == '(') {
+				reason.deleteCharAt(0);
+			}
+			if (reason.charAt(reason.length() - 1) == ')') {
+				reason.deleteCharAt(reason.length() - 1);
+			}
+
+			MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
+			return new MICatchpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(),
+					bkptNumber, reason.toString());
+		} catch (NumberFormatException exc) {
+			assert false : "unexpected catchpoint stream record format: " + streamRecord.getString(); //$NON-NLS-1$
+			return null;
+		}
+	}
 
 	/**
 	 * This variant is for a catchpoint-hit in gdb >= 7.0.
@@ -100,10 +101,12 @@ public class MICatchpointHitEvent extends MIBreakpointHitEvent {
 	 * "exception caught"). The inconsistency is fine. The user will get the
 	 * insight he needs either way.
 	 *
-	 * @since 5.0	 
+	 * @since 5.0
 	 */
-    public static MICatchpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, String bkptNumber, String gdbKeyword) {
-    	MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
-    	return new MICatchpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptNumber, gdbKeyword);
-    }
+	public static MICatchpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, String bkptNumber,
+			String gdbKeyword) {
+		MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
+		return new MICatchpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(),
+				bkptNumber, gdbKeyword);
+	}
 }

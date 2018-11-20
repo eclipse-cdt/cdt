@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - modified for use in Meson build
  *******************************************************************************/
@@ -176,8 +176,7 @@ public class MesonBuildTab extends CommonBuildTab {
 	@Override
 	protected void saveProperties(Map<String, String> properties) {
 		super.saveProperties(properties);
-		properties.put(IMesonConstants.MESON_GENERATOR,
-				ninjaGenButton.getSelection() ? NINJA : "Unix Makefiles"); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put(IMesonConstants.MESON_GENERATOR, ninjaGenButton.getSelection() ? NINJA : "Unix Makefiles"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		properties.put(IMesonConstants.MESON_ARGUMENTS, mesonArgsText.getText().trim());
 		properties.put(IMesonConstants.BUILD_COMMAND, buildCommandText.getText().trim());

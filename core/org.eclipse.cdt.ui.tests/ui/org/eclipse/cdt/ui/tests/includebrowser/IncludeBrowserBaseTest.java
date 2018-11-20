@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.ui.tests.includebrowser;
 
 import org.eclipse.core.resources.IFile;
@@ -34,11 +34,10 @@ import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.internal.ui.includebrowser.IBViewPart;
 
 public class IncludeBrowserBaseTest extends BaseUITestCase {
-	protected static IProgressMonitor NPM= new NullProgressMonitor();
+	protected static IProgressMonitor NPM = new NullProgressMonitor();
 
 	private ICProject fCProject;
 	protected IIndex fIndex;
-
 
 	public IncludeBrowserBaseTest(String name) {
 		super(name);
@@ -47,13 +46,13 @@ public class IncludeBrowserBaseTest extends BaseUITestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject= CProjectHelper.createCCProject("__ibTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
-		
+		fCProject = CProjectHelper.createCCProject("__ibTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
+
 		// clear the index
 		CCorePlugin.getIndexManager().reindex(fCProject);
-		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
+		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		if (fCProject != null) {
@@ -61,11 +60,11 @@ public class IncludeBrowserBaseTest extends BaseUITestCase {
 		}
 		super.tearDown();
 	}
-	
+
 	protected ICProject getProject() {
 		return fCProject;
 	}
-	
+
 	protected IBViewPart openIncludeBrowser(IFile file) throws PartInitException {
 		IBViewPart result = doOpenIncludeBrowser(file);
 		runEventQueue(200);
@@ -80,22 +79,22 @@ public class IncludeBrowserBaseTest extends BaseUITestCase {
 	}
 
 	private IBViewPart doOpenIncludeBrowser(IFile file) throws PartInitException {
-		ITranslationUnit tu= CoreModelUtil.findTranslationUnit(file);
+		ITranslationUnit tu = CoreModelUtil.findTranslationUnit(file);
 		if (tu == null) {
 			fail(file.getFullPath().toString() + " is no translation unit!");
 		}
-        IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-        IBViewPart result= (IBViewPart)page.showView(CUIPlugin.ID_INCLUDE_BROWSER);
-        result.setInput(tu);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IBViewPart result = (IBViewPart) page.showView(CUIPlugin.ID_INCLUDE_BROWSER);
+		result.setInput(tu);
 		return result;
 	}
 
 	protected Tree getIBTree() {
-		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		runEventQueue(0);
-		IBViewPart ib= (IBViewPart)page.findView(CUIPlugin.ID_INCLUDE_BROWSER);
+		IBViewPart ib = (IBViewPart) page.findView(CUIPlugin.ID_INCLUDE_BROWSER);
 		assertNotNull(ib);
-		Tree tree= ib.getTreeViewer().getTree();
+		Tree tree = ib.getTreeViewer().getTree();
 		return tree;
 	}
 }

@@ -38,12 +38,12 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 	private static final int ARGUMENTS = PDOMCPPClassTemplateSpecialization.RECORD_SIZE + 4;
 	private static final int NEXT_PARTIAL = PDOMCPPClassTemplateSpecialization.RECORD_SIZE + 8;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE= PDOMCPPClassTemplateSpecialization.RECORD_SIZE + 12;
+	protected static final int RECORD_SIZE = PDOMCPPClassTemplateSpecialization.RECORD_SIZE + 12;
 
 	private volatile ICPPClassTemplate fPrimaryTemplate;
 
-	public PDOMCPPClassTemplatePartialSpecializationSpecialization(PDOMCPPLinkage linkage,
-			PDOMNode parent, PDOMBinding specialized, ICPPClassTemplatePartialSpecialization partial,
+	public PDOMCPPClassTemplatePartialSpecializationSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
+			PDOMBinding specialized, ICPPClassTemplatePartialSpecialization partial,
 			PDOMCPPClassTemplateSpecialization primary) throws CoreException {
 		super(linkage, parent, partial, specialized);
 
@@ -88,7 +88,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 		}
 
 		if (type instanceof PDOMNode) {
-			PDOMNode node= (PDOMNode) type;
+			PDOMNode node = (PDOMNode) type;
 			if (node.getPDOM() == getPDOM()) {
 				return node.getRecord() == getRecord();
 			}
@@ -98,7 +98,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 			return false;
 		}
 
-		final ICPPClassTemplatePartialSpecialization rhs = (ICPPClassTemplatePartialSpecialization)type;
+		final ICPPClassTemplatePartialSpecialization rhs = (ICPPClassTemplatePartialSpecialization) type;
 		return CPPClassTemplatePartialSpecialization.isSamePartialClassSpecialization(this, rhs);
 	}
 
@@ -107,7 +107,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 		if (fPrimaryTemplate == null) {
 			try {
 				long specializedRec = getDB().getRecPtr(record + PRIMARY_TEMPLATE);
-				fPrimaryTemplate= (ICPPClassTemplate) PDOMNode.load(getPDOM(), specializedRec);
+				fPrimaryTemplate = (ICPPClassTemplate) PDOMNode.load(getPDOM(), specializedRec);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
@@ -119,7 +119,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 	public void setTemplateArguments(ICPPTemplateArgument[] templateArguments) throws CoreException {
 		final Database db = getPDOM().getDB();
 		long oldRec = db.getRecPtr(record + ARGUMENTS);
-		long rec= PDOMCPPArgumentList.putArguments(this, templateArguments);
+		long rec = PDOMCPPArgumentList.putArguments(this, templateArguments);
 		db.putRecPtr(record + ARGUMENTS, rec);
 		if (oldRec != 0) {
 			PDOMCPPArgumentList.clearArguments(this, oldRec);
@@ -129,7 +129,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
+			final long rec = getPDOM().getDB().getRecPtr(record + ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

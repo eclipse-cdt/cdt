@@ -26,27 +26,57 @@ public class CDTStatusInfo implements IStatus {
 	private String text;
 	private int code;
 
-	public CDTStatusInfo() {this(OK, null); }
-	public CDTStatusInfo(int _code, String _text) {
-		text= _text;
-		code= _code;
+	public CDTStatusInfo() {
+		this(OK, null);
 	}
+
+	public CDTStatusInfo(int _code, String _text) {
+		text = _text;
+		code = _code;
+	}
+
 	@Override
-	public IStatus[] getChildren() { return new IStatus[0];}
+	public IStatus[] getChildren() {
+		return new IStatus[0];
+	}
+
 	@Override
-	public int getCode() { return code; }
+	public int getCode() {
+		return code;
+	}
+
 	@Override
-	public Throwable getException() { return null; }
+	public Throwable getException() {
+		return null;
+	}
+
 	@Override
-	public String getMessage() { return text; }
+	public String getMessage() {
+		return text;
+	}
+
 	@Override
-	public String getPlugin() { return CUIPlugin.PLUGIN_ID; }
+	public String getPlugin() {
+		return CUIPlugin.PLUGIN_ID;
+	}
+
 	@Override
-	public int getSeverity() { return code; }
+	public int getSeverity() {
+		return code;
+	}
+
 	@Override
-	public boolean isMultiStatus() { return false; }
+	public boolean isMultiStatus() {
+		return false;
+	}
+
 	@Override
-	public boolean isOK() { return (code == OK); }
+	public boolean isOK() {
+		return (code == OK);
+	}
+
 	@Override
-	public boolean matches(int mask) { return (code & mask) != 0; }
+	public boolean matches(int mask) {
+		return (code & mask) != 0;
+	}
 }

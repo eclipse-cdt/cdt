@@ -70,9 +70,9 @@ import org.eclipse.core.runtime.QualifiedName;
 public class CConfigurationDescription extends CDataProxyContainer
 		implements ICConfigurationDescription, IProxyFactory, IInternalCCfgInfo, ILanguageSettingsProvidersKeeper {
 	private CfgProxyCache fCache;
-//	private ProxyProvider fFileProxyProvider;
-//	private ProxyProvider fFolderProxyProvider;
-//	private ProxyProvider fRcProxyProvider;
+	//	private ProxyProvider fFileProxyProvider;
+	//	private ProxyProvider fFolderProxyProvider;
+	//	private ProxyProvider fRcProxyProvider;
 	private PathSettingsContainer fPathContainer;
 	private ResourceDescriptionHolder fRcHolder;
 	private CConfigurationSpecSettings fCfgSpecSettings;
@@ -83,16 +83,17 @@ public class CConfigurationDescription extends CDataProxyContainer
 		this(data, null, cr);
 	}
 
-	CConfigurationDescription(CConfigurationData data, String buildSystemId, ICDataProxyContainer cr) throws CoreException {
+	CConfigurationDescription(CConfigurationData data, String buildSystemId, ICDataProxyContainer cr)
+			throws CoreException {
 		super(data, cr, null);
-		if(!(cr instanceof ICProjectDescription))
+		if (!(cr instanceof ICProjectDescription))
 			fIsPreference = true;
 
-		if(data instanceof CConfigurationDescriptionCache)
-			fCfgCache = (CConfigurationDescriptionCache)data;
+		if (data instanceof CConfigurationDescriptionCache)
+			fCfgCache = (CConfigurationDescriptionCache) data;
 
 		setConfiguration(this);
-		if(buildSystemId != null)
+		if (buildSystemId != null)
 			getSpecSettings().setBuildSystemId(buildSystemId);
 
 	}
@@ -106,23 +107,25 @@ public class CConfigurationDescription extends CDataProxyContainer
 	 * @param projectDes
 	 * @throws CoreException
 	 */
-	CConfigurationDescription(String id, String name, ICConfigurationDescription base, CProjectDescription projectDes) throws CoreException {
+	CConfigurationDescription(String id, String name, ICConfigurationDescription base, CProjectDescription projectDes)
+			throws CoreException {
 		super(null, projectDes, null);
 
 		setConfiguration(this);
 		internalSetId(id);
 
-		CConfigurationSpecSettings baseSettings = ((CConfigurationDescription)base).getSpecSettings();
-		InternalXmlStorageElement baseRootEl = (InternalXmlStorageElement)baseSettings.getRootStorageElement();
-		ICStorageElement newRootEl = CProjectDescriptionManager.getInstance().createStorage(projectDes.getStorageBase(), id, baseRootEl);
+		CConfigurationSpecSettings baseSettings = ((CConfigurationDescription) base).getSpecSettings();
+		InternalXmlStorageElement baseRootEl = (InternalXmlStorageElement) baseSettings.getRootStorageElement();
+		ICStorageElement newRootEl = CProjectDescriptionManager.getInstance().createStorage(projectDes.getStorageBase(),
+				id, baseRootEl);
 
 		fCfgSpecSettings = new CConfigurationSpecSettings(this, baseSettings, newRootEl);
 		fCfgSpecSettings.setId(id);
 		fCfgSpecSettings.setName(name);
 		fCfgSpecSettings.serializeId();
-		CConfigurationData baseData = ((IInternalCCfgInfo)base).getConfigurationData(false);
-		if(baseData instanceof CConfigurationDescriptionCache){
-			baseData = ((CConfigurationDescriptionCache)baseData).getConfigurationData();
+		CConfigurationData baseData = ((IInternalCCfgInfo) base).getConfigurationData(false);
+		if (baseData instanceof CConfigurationDescriptionCache) {
+			baseData = ((CConfigurationDescriptionCache) baseData).getConfigurationData();
 		}
 		setData(CProjectDescriptionManager.getInstance().createData(this, base, baseData, false, null));
 	}
@@ -130,7 +133,8 @@ public class CConfigurationDescription extends CDataProxyContainer
 	/**
 	 * Converter config constructor.
 	 */
-	CConfigurationDescription(String id, String name, ICStorageElement el, CProjectDescription projectDes) throws CoreException {
+	CConfigurationDescription(String id, String name, ICStorageElement el, CProjectDescription projectDes)
+			throws CoreException {
 		super(null, projectDes, null);
 
 		setConfiguration(this);
@@ -141,7 +145,8 @@ public class CConfigurationDescription extends CDataProxyContainer
 		fCfgSpecSettings.setName(name);
 		fCfgSpecSettings.setBuildSystemId(CCorePlugin.DEFAULT_PROVIDER_ID);
 		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
-		CConfigurationData data = mngr.createDefaultConfigData(projectDes.getProject(), id, name, PathEntryConfigurationDataProvider.getDataFactory());
+		CConfigurationData data = mngr.createDefaultConfigData(projectDes.getProject(), id, name,
+				PathEntryConfigurationDataProvider.getDataFactory());
 		setData(data);
 		fCfgSpecSettings.reconcileExtensionSettings(false);
 	}
@@ -149,7 +154,8 @@ public class CConfigurationDescription extends CDataProxyContainer
 	/**
 	 * Preference config constructor.
 	 */
-	CConfigurationDescription(String id, String name, String bsId, ICStorageElement el, ICDataProxyContainer cr) throws CoreException {
+	CConfigurationDescription(String id, String name, String bsId, ICStorageElement el, ICDataProxyContainer cr)
+			throws CoreException {
 		super(null, cr, null);
 		fIsPreference = true;
 
@@ -167,7 +173,8 @@ public class CConfigurationDescription extends CDataProxyContainer
 		if (!fCfgSpecSettings.isLanguageSettingProvidersLoaded()) {
 			// default ids would come from the preference configuration, ensure sensible defaults
 			String[] defaultIds = ScannerDiscoveryLegacySupport.getDefaultProviderIdsLegacy(this);
-			List<ILanguageSettingsProvider> providers = LanguageSettingsManager.createLanguageSettingsProviders(defaultIds);
+			List<ILanguageSettingsProvider> providers = LanguageSettingsManager
+					.createLanguageSettingsProviders(defaultIds);
 			setDefaultLanguageSettingsProvidersIds(defaultIds);
 			setLanguageSettingProviders(providers);
 		}
@@ -176,20 +183,20 @@ public class CConfigurationDescription extends CDataProxyContainer
 	void doWritable() throws CoreException {
 		if (!containsWritableData()) {
 			CConfigurationData data = getConfigurationData(false);
-			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)data;
+			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache) data;
 			data = cache.getConfigurationData();
 			setData(CProjectDescriptionManager.getInstance().createData(this, cache, data, true, null));
 		}
 	}
 
-//	public CConfigurationDescriptionCache getCache(){
-//		return fCfgCache;
-//	}
+	//	public CConfigurationDescriptionCache getCache(){
+	//		return fCfgCache;
+	//	}
 
 	@Override
 	public String getId() {
 		String id = super.getId();
-		if(id == null){
+		if (id == null) {
 			try {
 				id = getSpecSettings().getId();
 			} catch (CoreException e) {
@@ -202,7 +209,7 @@ public class CConfigurationDescription extends CDataProxyContainer
 	@Override
 	public String getName() {
 		String name = super.getName();
-		if(name == null){
+		if (name == null) {
 			try {
 				name = getSpecSettings().getName();
 			} catch (CoreException e) {
@@ -219,18 +226,18 @@ public class CConfigurationDescription extends CDataProxyContainer
 	}
 
 	@Override
-	public CConfigurationData getConfigurationData(boolean write){
-		CConfigurationData data = (CConfigurationData)getData(write);
-		if(data == null)
+	public CConfigurationData getConfigurationData(boolean write) {
+		CConfigurationData data = (CConfigurationData) getData(write);
+		if (data == null)
 			throw new IllegalStateException();
 		return data;
 	}
 
 	@Override
 	public ICProjectDescription getProjectDescription() {
-		if(fIsPreference)
+		if (fIsPreference)
 			return null;
-		return (ICProjectDescription)getParent();
+		return (ICProjectDescription) getParent();
 	}
 
 	public ICResourceDescription[] getResourceDescriptions(int kind) {
@@ -239,30 +246,29 @@ public class CConfigurationDescription extends CDataProxyContainer
 
 	@Override
 	public ICFolderDescription getRootFolderDescription() {
-		return (ICFolderDescription)getRcHolder().getCurrentResourceDescription();
+		return (ICFolderDescription) getRcHolder().getCurrentResourceDescription();
 	}
 
 	@Override
 	public boolean isActive() {
-		if(fIsPreference)
+		if (fIsPreference)
 			return false;
 		return getProjectDescription().getActiveConfiguration() == this;
 	}
 
 	@Override
-	public void setActive() throws WriteAccessException{
-		if(fIsPreference)
+	public void setActive() throws WriteAccessException {
+		if (fIsPreference)
 			return;
 		getProjectDescription().setActiveConfiguration(this);
 	}
 
 	@Override
-	public void removeResourceDescription(ICResourceDescription des)
-			throws CoreException {
+	public void removeResourceDescription(ICResourceDescription des) throws CoreException {
 		CConfigurationData data = getConfigurationData(true);
 		IPath path = des.getPath();
 		getRcHolder().removeResurceDescription(path);
-		data.removeResourceData((CResourceData)((CDataProxy)des).getData(false));
+		data.removeResourceData((CResourceData) ((CDataProxy) des).getData(false));
 	}
 
 	@Override
@@ -272,15 +278,15 @@ public class CConfigurationDescription extends CDataProxyContainer
 
 	@Override
 	public CDataProxy createProxy(CDataObject data) {
-		switch(data.getType()){
-			case ICSettingBase.SETTING_FOLDER:
-				return new CFolderDescription((CFolderData)data, this);
-			case ICSettingBase.SETTING_FILE:
-				return new CFileDescription((CFileData)data, this);
-			case ICSettingBase.SETTING_TARGET_PLATFORM:
-				return new CTargetPlatformSetting((CTargetPlatformData)data, this);
-			case ICSettingBase.SETTING_BUILD:
-				return new CBuildSetting((CBuildData)data, this);
+		switch (data.getType()) {
+		case ICSettingBase.SETTING_FOLDER:
+			return new CFolderDescription((CFolderData) data, this);
+		case ICSettingBase.SETTING_FILE:
+			return new CFileDescription((CFileData) data, this);
+		case ICSettingBase.SETTING_TARGET_PLATFORM:
+			return new CTargetPlatformSetting((CTargetPlatformData) data, this);
+		case ICSettingBase.SETTING_BUILD:
+			return new CBuildSetting((CBuildData) data, this);
 
 		}
 		return null;
@@ -288,14 +294,14 @@ public class CConfigurationDescription extends CDataProxyContainer
 
 	@Override
 	protected IProxyProvider createChildProxyProvider() {
-		ICDataScope scope = new ICDataScope(){
+		ICDataScope scope = new ICDataScope() {
 
 			@Override
 			public CDataObject[] getChildren() {
 				CConfigurationData data = getConfigurationData(false);
 				List<CDataObject> list = new ArrayList<CDataObject>();
 				CResourceData rcDatas[] = data.getResourceDatas();
-				for(int i = 0; i < rcDatas.length; i++){
+				for (int i = 0; i < rcDatas.length; i++) {
 					list.add(rcDatas[i]);
 				}
 				CTargetPlatformData tpData = data.getTargetPlatformData();
@@ -317,9 +323,9 @@ public class CConfigurationDescription extends CDataProxyContainer
 		return new ProxyProvider(scope, cache, this);
 	}
 
-	protected ResourceDescriptionHolder createHolder(CFolderDescription des){
+	protected ResourceDescriptionHolder createHolder(CFolderDescription des) {
 		PathSettingsContainer container = des.getPathContainer();
-		if(container == null){
+		if (container == null) {
 			container = getPathContainer().getChildContainer(des.getPath(), true, true);
 			des.setPathContainer(container);
 		}
@@ -327,9 +333,9 @@ public class CConfigurationDescription extends CDataProxyContainer
 		return new ProviderBasedRcDesHolder(getChildrenProxyProvider(), container, false);
 	}
 
-	protected ResourceDescriptionHolder createHolder(CFileDescription des){
+	protected ResourceDescriptionHolder createHolder(CFileDescription des) {
 		PathSettingsContainer container = des.getPathContainer();
-		if(container == null){
+		if (container == null) {
 			container = getPathContainer().getChildContainer(des.getPath(), true, true);
 			des.setPathContainer(container);
 		}
@@ -337,26 +343,23 @@ public class CConfigurationDescription extends CDataProxyContainer
 		return new ProviderBasedRcDesHolder(getChildrenProxyProvider(), container, false);
 	}
 
-	private CfgProxyCache getCfgProxyCache(){
-		if(fCache == null)
+	private CfgProxyCache getCfgProxyCache() {
+		if (fCache == null)
 			fCache = new CfgProxyCache(getPathContainer());
 		return fCache;
 	}
 
-	private PathSettingsContainer getPathContainer(){
-		if(fPathContainer == null)
+	private PathSettingsContainer getPathContainer() {
+		if (fPathContainer == null)
 			fPathContainer = PathSettingsContainer.createRootContainer();
 		return fPathContainer;
 	}
 
-	private ResourceDescriptionHolder getRcHolder(){
-		if(fRcHolder == null)
-			fRcHolder = new ProviderBasedRcDesHolder(getChildrenProxyProvider(),
-					getPathContainer(),
-					true);
+	private ResourceDescriptionHolder getRcHolder() {
+		if (fRcHolder == null)
+			fRcHolder = new ProviderBasedRcDesHolder(getChildrenProxyProvider(), getPathContainer(), true);
 		return fRcHolder;
 	}
-
 
 	@Override
 	public ICResourceDescription getResourceDescription(IPath path, boolean exactPath) {
@@ -379,7 +382,8 @@ public class CConfigurationDescription extends CDataProxyContainer
 	}
 
 	@Override
-	public ICStorageElement importStorage(String id, ICStorageElement el) throws UnsupportedOperationException, CoreException {
+	public ICStorageElement importStorage(String id, ICStorageElement el)
+			throws UnsupportedOperationException, CoreException {
 		return getSpecSettings().importStorage(id, el);
 	}
 
@@ -398,22 +402,22 @@ public class CConfigurationDescription extends CDataProxyContainer
 	}
 
 	@Override
-	public CConfigurationSpecSettings getSpecSettings() throws CoreException{
-		if(fCfgSpecSettings == null){
-			if(fCfgCache != null){
-				if(fCfgCache.isInitializing())
+	public CConfigurationSpecSettings getSpecSettings() throws CoreException {
+		if (fCfgSpecSettings == null) {
+			if (fCfgCache != null) {
+				if (fCfgCache.isInitializing())
 					fCfgSpecSettings = fCfgCache.getSpecSettings();
 				else {
 					fCfgSpecSettings = new CConfigurationSpecSettings(this, fCfgCache.getSpecSettings());
 					fCfgCache = null;
 				}
 			} else {
-				fCfgSpecSettings = new CConfigurationSpecSettings(this, (ICStorageElement)null);
+				fCfgSpecSettings = new CConfigurationSpecSettings(this, (ICStorageElement) null);
 			}
 
-//			fCfgSpecSettings = CProjectDescriptionManager.getInstance().createConfigurationSpecSettings(this);
-		} else if( fCfgSpecSettings.getConfigurarion() != this){
-			if(!fCfgCache.isInitializing()){
+			//			fCfgSpecSettings = CProjectDescriptionManager.getInstance().createConfigurationSpecSettings(this);
+		} else if (fCfgSpecSettings.getConfigurarion() != this) {
+			if (!fCfgCache.isInitializing()) {
 				fCfgSpecSettings = new CConfigurationSpecSettings(this, fCfgCache.getSpecSettings());
 				fCfgCache = null;
 			}
@@ -433,8 +437,8 @@ public class CConfigurationDescription extends CDataProxyContainer
 	@Override
 	public CConfigurationData getConfigurationData() {
 		CConfigurationData data = getConfigurationData(true);
-		if(data instanceof CConfigurationDescriptionCache){
-			data = ((CConfigurationDescriptionCache)data).getConfigurationData();
+		if (data instanceof CConfigurationDescriptionCache) {
+			data = ((CConfigurationDescriptionCache) data).getConfigurationData();
 		}
 		return data;
 	}
@@ -443,8 +447,8 @@ public class CConfigurationDescription extends CDataProxyContainer
 	public void setConfigurationData(String buildSystemId, CConfigurationData data) throws WriteAccessException {
 		String oldId = getId();
 		setData(data);
-		if(!fIsPreference){
-			((CProjectDescription)getProjectDescription()).updateMap(this, oldId);
+		if (!fIsPreference) {
+			((CProjectDescription) getProjectDescription()).updateMap(this, oldId);
 		}
 		try {
 			CConfigurationSpecSettings settings = getSpecSettings();
@@ -459,92 +463,95 @@ public class CConfigurationDescription extends CDataProxyContainer
 	public boolean isModified() {
 		try {
 			CConfigurationSpecSettings settings = getSpecSettings();
-			if(settings.isModified())
+			if (settings.isModified())
 				return true;
 		} catch (CoreException e) {
 		}
 		return !(getConfigurationData(false) instanceof CConfigurationDescriptionCache);
 	}
 
-	void removeConfiguration(){
-//		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
-//		CConfigurationData data = getConfigurationData(true);//fCfgCache.getBaseData();
-//
-//		try {
-//			mngr.removeData(this, data);
-//		} catch (CoreException e) {
-//		}
+	void removeConfiguration() {
+		//		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
+		//		CConfigurationData data = getConfigurationData(true);//fCfgCache.getBaseData();
+		//
+		//		try {
+		//			mngr.removeData(this, data);
+		//		} catch (CoreException e) {
+		//		}
 
 		try {
 			getSpecSettings().removeConfiguration();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		((CProjectDescription)getProjectDescription()).configurationRemoved(this);
+		((CProjectDescription) getProjectDescription()).configurationRemoved(this);
 		remove();
 	}
 
 	@Override
-	public ICFileDescription createFileDescription(IPath path, ICResourceDescription base) throws CoreException, WriteAccessException {
+	public ICFileDescription createFileDescription(IPath path, ICResourceDescription base)
+			throws CoreException, WriteAccessException {
 		CConfigurationData data = getConfigurationData(true);
-		CResourceData baseRcData = (CResourceData)((CDataProxy)base).getData(true);
+		CResourceData baseRcData = (CResourceData) ((CDataProxy) base).getData(true);
 		CFileData createdData = null;
-		if(base instanceof ICFileDescription){
-			createdData = data.createFileData(path, (CFileData)baseRcData);
+		if (base instanceof ICFileDescription) {
+			createdData = data.createFileData(path, (CFileData) baseRcData);
 		} else {
-			ICFolderDescription baseFo = (ICFolderDescription)base;
+			ICFolderDescription baseFo = (ICFolderDescription) base;
 			String fileName = path.lastSegment();
-			CLanguageSetting baseLang = (CLanguageSetting)baseFo.getLanguageSettingForFile(fileName);
-//			if(baseLang == null){
-//				ICLanguageSetting allSettings[] = baseFo.getLanguageSettings();
-//				if(allSettings.length != 0)
-//					baseLang = (CLanguageSetting)allSettings[0];
-//			}
-			CLanguageData baseLangData = baseLang != null ? (CLanguageData)baseLang.getData(false) : null;
-			createdData = data.createFileData(path, (CFolderData)baseRcData, baseLangData);
+			CLanguageSetting baseLang = (CLanguageSetting) baseFo.getLanguageSettingForFile(fileName);
+			//			if(baseLang == null){
+			//				ICLanguageSetting allSettings[] = baseFo.getLanguageSettings();
+			//				if(allSettings.length != 0)
+			//					baseLang = (CLanguageSetting)allSettings[0];
+			//			}
+			CLanguageData baseLangData = baseLang != null ? (CLanguageData) baseLang.getData(false) : null;
+			createdData = data.createFileData(path, (CFolderData) baseRcData, baseLangData);
 		}
 
-
-		if(createdData == null)
+		if (createdData == null)
 			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CConfigurationDescription.0")); //$NON-NLS-1$
 
 		CDataProxy proxy = getChildrenProxyProvider().getProxy(createdData);
-		if(!(proxy instanceof ICFileDescription))
-			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CConfigurationDescription.1") + proxy.getClass().getName()); //$NON-NLS-1$
+		if (!(proxy instanceof ICFileDescription))
+			throw ExceptionFactory.createCoreException(
+					SettingsModelMessages.getString("CConfigurationDescription.1") + proxy.getClass().getName()); //$NON-NLS-1$
 
-		return (ICFileDescription)proxy;
+		return (ICFileDescription) proxy;
 	}
 
 	@Override
-	public ICFolderDescription createFolderDescription(IPath path, ICFolderDescription base) throws CoreException, WriteAccessException {
+	public ICFolderDescription createFolderDescription(IPath path, ICFolderDescription base)
+			throws CoreException, WriteAccessException {
 		CConfigurationData data = getConfigurationData(true);
-		CFolderData baseRcData = (CFolderData)((CDataProxy)base).getData(true);
+		CFolderData baseRcData = (CFolderData) ((CDataProxy) base).getData(true);
 		CFolderData createdData = data.createFolderData(path, baseRcData);
 
-		if(createdData == null)
+		if (createdData == null)
 			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CConfigurationDescription.2")); //$NON-NLS-1$
 
 		CDataProxy proxy = getChildrenProxyProvider().getProxy(createdData);
-		if(!(proxy instanceof ICFolderDescription))
-			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CConfigurationDescription.3") + proxy.getClass().getName()); //$NON-NLS-1$
+		if (!(proxy instanceof ICFolderDescription))
+			throw ExceptionFactory.createCoreException(
+					SettingsModelMessages.getString("CConfigurationDescription.3") + proxy.getClass().getName()); //$NON-NLS-1$
 
-		return (ICFolderDescription)proxy;
+		return (ICFolderDescription) proxy;
 	}
 
 	@Override
 	public ICTargetPlatformSetting getTargetPlatformSetting() {
 		CConfigurationData data = getConfigurationData(false);
-		return (ICTargetPlatformSetting)getChildrenProxyProvider().getProxy(data.getTargetPlatformData());
+		return (ICTargetPlatformSetting) getChildrenProxyProvider().getProxy(data.getTargetPlatformData());
 	}
 
 	@Override
 	public ICFileDescription[] getFileDescriptions() {
-		return (ICFileDescription[])getRcHolder().getResourceDescriptions(ICSettingBase.SETTING_FILE);
+		return (ICFileDescription[]) getRcHolder().getResourceDescriptions(ICSettingBase.SETTING_FILE);
 	}
 
 	@Override
 	public ICFolderDescription[] getFolderDescriptions() {
-		return (ICFolderDescription[])getRcHolder().getResourceDescriptions(ICSettingBase.SETTING_FOLDER);
+		return (ICFolderDescription[]) getRcHolder().getResourceDescriptions(ICSettingBase.SETTING_FOLDER);
 	}
 
 	@Override
@@ -553,48 +560,48 @@ public class CConfigurationDescription extends CDataProxyContainer
 		ICSourceEntry[] srcEntries = data.getSourceEntries();
 		IProject proj = fIsPreference ? null : getProjectDescription().getProject();
 		return CDataUtil.adjustEntries(srcEntries, true, proj);
-//		return getRcHolder().calculateSourceEntriesFromPaths(proj, srcPaths);
+		//		return getRcHolder().calculateSourceEntriesFromPaths(proj, srcPaths);
 	}
 
 	@Override
 	public void setSourceEntries(ICSourceEntry[] entries) throws CoreException {
 		CConfigurationData data = getConfigurationData(true);
 		IProject project = fIsPreference ? null : getProjectDescription().getProject();
-		if(entries != null){
+		if (entries != null) {
 			entries = CDataUtil.adjustEntries(entries, false, project);
 		}
 
 		data.setSourceEntries(entries);
 
-		if(entries == null){
+		if (entries == null) {
 			CExternalSettingsManager.getInstance().restoreSourceEntryDefaults(this);
 		}
 	}
 
-//	private ICResourceDescription createResourceDescription(IPath path, ICResourceDescription base){
-//		if(fIsPreference)
-//			return null;
-//		IProject project = getProjectDescription().getProject();
-//		IResource rc = project.findMember(path);
-//		ICResourceDescription des = null;
-//		if(rc != null){
-//			if(rc.getType() == IResource.FILE) {
-//				try {
-//					des = createFileDescription(path, base);
-//				} catch (WriteAccessException e) {
-//				} catch (CoreException e) {
-//				}
-//			} else if (rc.getType() == IResource.FOLDER) {
-//				try {
-//					des = createFolderDescription(path, (ICFolderDescription)base);
-//				} catch (WriteAccessException e) {
-//				} catch (CoreException e) {
-//				}
-//			}
-//		}
-//
-//		return des;
-//	}
+	//	private ICResourceDescription createResourceDescription(IPath path, ICResourceDescription base){
+	//		if(fIsPreference)
+	//			return null;
+	//		IProject project = getProjectDescription().getProject();
+	//		IResource rc = project.findMember(path);
+	//		ICResourceDescription des = null;
+	//		if(rc != null){
+	//			if(rc.getType() == IResource.FILE) {
+	//				try {
+	//					des = createFileDescription(path, base);
+	//				} catch (WriteAccessException e) {
+	//				} catch (CoreException e) {
+	//				}
+	//			} else if (rc.getType() == IResource.FOLDER) {
+	//				try {
+	//					des = createFolderDescription(path, (ICFolderDescription)base);
+	//				} catch (WriteAccessException e) {
+	//				} catch (CoreException e) {
+	//				}
+	//			}
+	//		}
+	//
+	//		return des;
+	//	}
 
 	@Override
 	public Map<String, String> getReferenceInfo() {
@@ -616,8 +623,7 @@ public class CConfigurationDescription extends CDataProxyContainer
 	}
 
 	@Override
-	public ICExternalSetting createExternalSetting(String[] languageIDs,
-			String[] contentTypeIDs, String[] extensions,
+	public ICExternalSetting createExternalSetting(String[] languageIDs, String[] contentTypeIDs, String[] extensions,
 			ICSettingEntry[] entries) {
 		try {
 			return getSpecSettings().createExternalSetting(languageIDs, contentTypeIDs, extensions, entries);
@@ -654,11 +660,11 @@ public class CConfigurationDescription extends CDataProxyContainer
 	@Override
 	public ICBuildSetting getBuildSetting() {
 		CConfigurationData data = getConfigurationData(false);
-		return (ICBuildSetting)getChildrenProxyProvider().getProxy(data.getBuildData());
+		return (ICBuildSetting) getChildrenProxyProvider().getProxy(data.getBuildData());
 	}
 
 	@Override
-	public void setSessionProperty(QualifiedName name, Object value){
+	public void setSessionProperty(QualifiedName name, Object value) {
 		try {
 			getSpecSettings().setSettionProperty(name, value);
 		} catch (CoreException e) {
@@ -682,7 +688,7 @@ public class CConfigurationDescription extends CDataProxyContainer
 
 	@Override
 	public void setName(String name) {
-		if(name.equals(getName()))
+		if (name.equals(getName()))
 			return;
 
 		getConfigurationData(true).setName(name);
@@ -693,8 +699,7 @@ public class CConfigurationDescription extends CDataProxyContainer
 	}
 
 	@Override
-	public ICConfigExtensionReference create(String extensionPoint,
-			String extension) throws CoreException {
+	public ICConfigExtensionReference create(String extensionPoint, String extension) throws CoreException {
 		return getSpecSettings().create(extensionPoint, extension);
 	}
 
@@ -723,11 +728,11 @@ public class CConfigurationDescription extends CDataProxyContainer
 	}
 
 	@Override
-	protected boolean containsWritableData(){
-		if(super.containsWritableData())
+	protected boolean containsWritableData() {
+		if (super.containsWritableData())
 			return true;
 
-		CConfigurationDescriptionCache data = (CConfigurationDescriptionCache)doGetData();
+		CConfigurationDescriptionCache data = (CConfigurationDescriptionCache) doGetData();
 		return data.isInitializing();
 	}
 
@@ -736,24 +741,24 @@ public class CConfigurationDescription extends CDataProxyContainer
 		return CProjectDescriptionManager.getLanguageSettingForFile(this, path, ignoreExcludeStatus);
 	}
 
-	boolean isExcluded(IPath path){
-//		if(path.segmentCount() == 0)
-//			return false;
+	boolean isExcluded(IPath path) {
+		//		if(path.segmentCount() == 0)
+		//			return false;
 		IProject project = fIsPreference ? null : getProjectDescription().getProject();
 		ICSourceEntry[] entries = getResolvedSourceEntries();
-		if(project != null)
+		if (project != null)
 			path = project.getFullPath().append(path);
 		return CDataUtil.isExcluded(path, entries);
 	}
 
-	void setExcluded(IPath path, boolean isFolder, boolean exclude){
-//		if(path.segmentCount() == 0)
-//			return;
-		if(isExcluded(path) == exclude)
+	void setExcluded(IPath path, boolean isFolder, boolean exclude) {
+		//		if(path.segmentCount() == 0)
+		//			return;
+		if (isExcluded(path) == exclude)
 			return;
 
 		ICSourceEntry[] newEntries = getUpdatedSourceEntries(path, isFolder, exclude);
-		if(newEntries != null) {
+		if (newEntries != null) {
 			try {
 				setSourceEntries(newEntries);
 			} catch (CoreException e) {
@@ -762,30 +767,31 @@ public class CConfigurationDescription extends CDataProxyContainer
 		}
 	}
 
-	boolean canExclude(IPath path, boolean isFolder, boolean exclude){
-		if(isExcluded(path) == exclude)
+	boolean canExclude(IPath path, boolean isFolder, boolean exclude) {
+		if (isExcluded(path) == exclude)
 			return true;
 
 		return getUpdatedSourceEntries(path, isFolder, exclude) != null;
 	}
 
-	private ICSourceEntry[] getUpdatedSourceEntries(IPath path, boolean isFolder, boolean exclude){
-//		if(path.segmentCount() == 0)
-//			return;
+	private ICSourceEntry[] getUpdatedSourceEntries(IPath path, boolean isFolder, boolean exclude) {
+		//		if(path.segmentCount() == 0)
+		//			return;
 		IProject project = fIsPreference ? null : getProjectDescription().getProject();
-		if(project != null)
+		if (project != null)
 			path = project.getFullPath().append(path);
 
 		CConfigurationData data = getConfigurationData(false);
 		ICSourceEntry[] newEntries = null;
-		if(project != null){
-			if(!(data instanceof CConfigurationDescriptionCache)){
-				ICProjectDescription roDes = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
-				if(roDes != null){
+		if (project != null) {
+			if (!(data instanceof CConfigurationDescriptionCache)) {
+				ICProjectDescription roDes = CProjectDescriptionManager.getInstance().getProjectDescription(project,
+						false);
+				if (roDes != null) {
 					ICConfigurationDescription roCfg = roDes.getConfigurationById(getId());
-					if(roCfg != null){
+					if (roCfg != null) {
 						newEntries = roCfg.getResolvedSourceEntries();
-						if(CDataUtil.isExcluded(path, newEntries) != exclude)
+						if (CDataUtil.isExcluded(path, newEntries) != exclude)
 							newEntries = null;
 						else
 							newEntries = roCfg.getSourceEntries();
@@ -794,7 +800,7 @@ public class CConfigurationDescription extends CDataProxyContainer
 			}
 		}
 
-		if(newEntries == null){
+		if (newEntries == null) {
 			try {
 				newEntries = CDataUtil.setExcluded(path, isFolder, exclude, getResolvedSourceEntries(), false);
 				if (CDataUtil.isEqual(newEntries, getResolvedSourceEntries()))
@@ -854,7 +860,7 @@ public class CConfigurationDescription extends CDataProxyContainer
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-}
+	}
 
 	@Override
 	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {

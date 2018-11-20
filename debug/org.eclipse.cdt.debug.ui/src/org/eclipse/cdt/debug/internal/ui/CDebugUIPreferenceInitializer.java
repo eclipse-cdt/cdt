@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui; 
+package org.eclipse.cdt.debug.internal.ui;
 
 import org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
@@ -24,20 +24,20 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public class CDebugUIPreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/** 
-	 * Constructor for CDebugUIPreferenceInitializer. 
+	/**
+	 * Constructor for CDebugUIPreferenceInitializer.
 	 */
 	public CDebugUIPreferenceInitializer() {
 		super();
 	}
 
 	@Override
-    public void initializeDefaultPreferences() {
+	public void initializeDefaultPreferences() {
 		IPreferenceStore pstore = CDebugUIPlugin.getDefault().getPreferenceStore();
-		CDebugPreferencePage.initDefaults( pstore );
-        pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_OPEN_NO_SOURCE_INFO, true );
-        pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_OPEN_SOURCE_NOT_FOUND, false );
-        pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_SHOW_INSTRUCTIONS, true );
-        pstore.setDefault( ICDebugPreferenceConstants.PREF_DISASM_SHOW_SOURCE, true );
+		CDebugPreferencePage.initDefaults(pstore);
+		pstore.setDefault(ICDebugPreferenceConstants.PREF_DISASM_OPEN_NO_SOURCE_INFO, true);
+		pstore.setDefault(ICDebugPreferenceConstants.PREF_DISASM_OPEN_SOURCE_NOT_FOUND, false);
+		pstore.setDefault(ICDebugPreferenceConstants.PREF_DISASM_SHOW_INSTRUCTIONS, true);
+		pstore.setDefault(ICDebugPreferenceConstants.PREF_DISASM_SHOW_SOURCE, true);
 	}
 }

@@ -28,15 +28,15 @@ public class DebugTextHover extends AbstractDebugTextHover {
 
 	/**
 	 * Returns the evaluation stack frame, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the evaluation stack frame, or <code>null</code> if none
 	 */
 	protected ICStackFrame getFrame() {
-        IAdaptable adaptable = getSelectionAdaptable();
-        if (adaptable != null) {
-            return adaptable.getAdapter(ICStackFrame.class);
-        }
-        return null;
+		IAdaptable adaptable = getSelectionAdaptable();
+		if (adaptable != null) {
+			return adaptable.getAdapter(ICStackFrame.class);
+		}
+		return null;
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class DebugTextHover extends AbstractDebugTextHover {
 		ICStackFrame frame = getFrame();
 		if (frame != null)
 			return frame.canEvaluate();
-		
+
 		return false;
 	}
 

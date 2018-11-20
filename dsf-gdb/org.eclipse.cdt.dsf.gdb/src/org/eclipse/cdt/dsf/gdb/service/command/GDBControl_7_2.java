@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -27,13 +27,14 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * @since 4.0
  */
 public class GDBControl_7_2 extends GDBControl_7_0 implements IGDBControl {
-    public GDBControl_7_2(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
-    	super(session, config, factory);
-    	setUseThreadGroupOptions(true);
-    }
-    
-    @Override
-	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes, RequestMonitorWithProgress rm) {
+	public GDBControl_7_2(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
+		super(session, config, factory);
+		setUseThreadGroupOptions(true);
+	}
+
+	@Override
+	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes,
+			RequestMonitorWithProgress rm) {
 		return new FinalLaunchSequence_7_2(getSession(), attributes, rm);
 	}
 

@@ -37,54 +37,53 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * Binding for a C++ enumerator.
  */
-public class CPPEnumerator extends PlatformObject
-		implements ICPPInternalEnumerator, ICPPInternalBinding {
-    private IASTName enumName;
-    private IType internalType;
+public class CPPEnumerator extends PlatformObject implements ICPPInternalEnumerator, ICPPInternalBinding {
+	private IASTName enumName;
+	private IType internalType;
 
-    /**
-     * @param enumerator
-     */
-    public CPPEnumerator(IASTName enumerator) {
-        this.enumName = enumerator;
-        enumerator.setBinding(this);
-    }
+	/**
+	 * @param enumerator
+	 */
+	public CPPEnumerator(IASTName enumerator) {
+		this.enumName = enumerator;
+		enumerator.setBinding(this);
+	}
 
-    @Override
+	@Override
 	public IASTNode[] getDeclarations() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
+	@Override
 	public IASTNode getDefinition() {
-        return enumName;
-    }
+		return enumName;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return new String(getNameCharArray());
-    }
+		return new String(getNameCharArray());
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return enumName.getSimpleID();
-    }
+		return enumName.getSimpleID();
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        return CPPVisitor.getContainingScope(enumName);
-    }
+		return CPPVisitor.getContainingScope(enumName);
+	}
 
-    public IASTNode getPhysicalNode() {
-        return enumName;
-    }
+	public IASTNode getPhysicalNode() {
+		return enumName;
+	}
 
 	@Override
 	public IType getType() {
-	    IASTEnumerator etor = (IASTEnumerator) enumName.getParent();
-	    IASTInternalEnumerationSpecifier enumSpec = (IASTInternalEnumerationSpecifier) etor.getParent();
+		IASTEnumerator etor = (IASTEnumerator) enumName.getParent();
+		IASTInternalEnumerationSpecifier enumSpec = (IASTInternalEnumerationSpecifier) etor.getParent();
 		if (enumSpec.isValueComputationInProgress()) {
-		    // During value computation enumerators can be referenced only by initializer
+			// During value computation enumerators can be referenced only by initializer
 			// expressions of other enumerators of the same enumeration. Return the internal type
 			// of the enumerator ([dcl.enum] 7.2-5).
 			if (internalType != null)
@@ -99,7 +98,7 @@ public class CPPEnumerator extends PlatformObject
 	@Override
 	public IType getInternalType() {
 		if (internalType == null) {
-			getValue();	// Trigger value and internal type computation.
+			getValue(); // Trigger value and internal type computation.
 		}
 		return internalType;
 	}
@@ -114,26 +113,26 @@ public class CPPEnumerator extends PlatformObject
 		internalType = type;
 	}
 
-    @Override
+	@Override
 	public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName(this);
-    }
+		return CPPVisitor.getQualifiedName(this);
+	}
 
-    @Override
+	@Override
 	public char[][] getQualifiedNameCharArray() {
-        return CPPVisitor.getQualifiedNameCharArray(this);
-    }
+		return CPPVisitor.getQualifiedNameCharArray(this);
+	}
 
-    @Override
+	@Override
 	public boolean isGloballyQualified() throws DOMException {
-        IScope scope = getScope();
-        while (scope != null) {
-            if (scope instanceof ICPPBlockScope)
-                return false;
-            scope = scope.getParent();
-        }
-        return true;
-    }
+		IScope scope = getScope();
+		while (scope != null) {
+			if (scope instanceof ICPPBlockScope)
+				return false;
+			scope = scope.getParent();
+		}
+		return true;
+	}
 
 	@Override
 	public void addDefinition(IASTNode node) {
@@ -155,7 +154,7 @@ public class CPPEnumerator extends PlatformObject
 
 	@Override
 	public IValue getValue() {
-		final IASTNode parent= enumName.getParent();
+		final IASTNode parent = enumName.getParent();
 		if (parent instanceof ASTEnumerator)
 			return ((ASTEnumerator) parent).getIntegralValue();
 

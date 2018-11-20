@@ -28,8 +28,8 @@ public class BuildGroup {
 	public IBuildStep[] getSteps() {
 		return fActions.toArray(new IBuildStep[fActions.size()]);
 	}
-	
-	public void addAction(BuildStep action){
+
+	public void addAction(BuildStep action) {
 		fActions.add(action);
 	}
 
@@ -46,10 +46,10 @@ public class BuildGroup {
 	public boolean needsRebuild() {
 		return fNeedsRebuild;
 	}
-	
-	public void setRebuildState(boolean rebuild){
+
+	public void setRebuildState(boolean rebuild) {
 		fNeedsRebuild = rebuild;
-		
+
 		for (BuildStep action : fActions) {
 			action.setRebuildState(rebuild);
 		}

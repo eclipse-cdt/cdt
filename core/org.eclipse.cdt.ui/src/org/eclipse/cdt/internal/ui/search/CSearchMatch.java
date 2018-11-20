@@ -20,7 +20,7 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 
 /**
- * Base class for search matches found by various index searches. 
+ * Base class for search matches found by various index searches.
  */
 public class CSearchMatch extends Match {
 	private boolean fIsPolymorphicCall;
@@ -33,7 +33,7 @@ public class CSearchMatch extends Match {
 	IIndexFileLocation getLocation() {
 		return ((CSearchElement) getElement()).getLocation();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
@@ -41,15 +41,14 @@ public class CSearchMatch extends Match {
 		if (!(obj instanceof CSearchMatch))
 			return false;
 		CSearchMatch other = (CSearchMatch) obj;
-		return getElement().equals(other.getElement())
-				&& getOffset() == other.getOffset()
+		return getElement().equals(other.getElement()) && getOffset() == other.getOffset()
 				&& getLength() == other.getLength();
 	}
 
 	public void setIsPolymorphicCall() {
-		fIsPolymorphicCall= true;
+		fIsPolymorphicCall = true;
 	}
-	
+
 	public boolean isPolymorphicCall() {
 		return fIsPolymorphicCall;
 	}

@@ -57,22 +57,22 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 	private ICdtVariableManager fVarMngr;
 	private ICConfigurationDescription fCfgDes;
 
-	private class DefaultReservedMacroNameSupplier implements IReservedMacroNameSupplier{
+	private class DefaultReservedMacroNameSupplier implements IReservedMacroNameSupplier {
 		String fReservedNames[];
 
-		public DefaultReservedMacroNameSupplier(IConfiguration configuration){
+		public DefaultReservedMacroNameSupplier(IConfiguration configuration) {
 			IBuilder builder = configuration.getToolChain().getBuilder();
 			String reservedNames[] = builder.getReservedMacroNames();
 			String buildVars[] = getConfigurationReservedNames(configuration);
 
-			if(reservedNames == null || reservedNames.length == 0)
+			if (reservedNames == null || reservedNames.length == 0)
 				fReservedNames = buildVars;
-			else if(buildVars == null || buildVars.length == 0)
+			else if (buildVars == null || buildVars.length == 0)
 				fReservedNames = reservedNames;
 			else {
 				fReservedNames = new String[reservedNames.length + buildVars.length];
-				System.arraycopy(reservedNames,0,fReservedNames,0,reservedNames.length);
-				System.arraycopy(buildVars,0,fReservedNames,reservedNames.length,buildVars.length);
+				System.arraycopy(reservedNames, 0, fReservedNames, 0, reservedNames.length);
+				System.arraycopy(buildVars, 0, fReservedNames, reservedNames.length, buildVars.length);
 			}
 		}
 
@@ -81,37 +81,37 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 		 */
 		@Override
 		public boolean isReservedName(String macroName, IConfiguration configuration) {
-			if(fReservedNames != null && fReservedNames.length > 0){
-				for(int i = 0; i < fReservedNames.length; i++){
+			if (fReservedNames != null && fReservedNames.length > 0) {
+				for (int i = 0; i < fReservedNames.length; i++) {
 					Pattern p = Pattern.compile(fReservedNames[i]);
 					Matcher m = p.matcher(macroName);
-					if(m.matches())
+					if (m.matches())
 						return true;
 				}
 			}
 			return false;
 		}
 
-		protected String[] getConfigurationReservedNames(IConfiguration configuration){
+		protected String[] getConfigurationReservedNames(IConfiguration configuration) {
 			ITool tools[] = configuration.getFilteredTools();
-			if(tools != null){
+			if (tools != null) {
 				Set<String> set = new HashSet<String>();
-				for(int i = 0; i < tools.length; i++){
+				for (int i = 0; i < tools.length; i++) {
 					IOutputType ots[] = tools[i].getOutputTypes();
-					if(ots != null){
-						for(int j = 0; j < ots.length; j++){
+					if (ots != null) {
+						for (int j = 0; j < ots.length; j++) {
 							String varName = ots[j].getBuildVariable();
-							if(varName != null){
+							if (varName != null) {
 								set.add(varName);
 							}
 						}
 					}
 
 					IInputType its[] = tools[i].getInputTypes();
-					if(its != null){
-						for(int j = 0; j < its.length; j++){
+					if (its != null) {
+						for (int j = 0; j < its.length; j++) {
 							String varName = its[j].getBuildVariable();
-							if(varName != null){
+							if (varName != null) {
 								set.add(varName);
 							}
 						}
@@ -125,93 +125,92 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 		}
 	}
 
-//	public BuildfileMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter){
-//		super(contextType, contextData, inexistentMacroValue, listDelimiter);
-//		init();
-//	}
+	//	public BuildfileMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter){
+	//		super(contextType, contextData, inexistentMacroValue, listDelimiter);
+	//		init();
+	//	}
 
-	public BuildfileMacroSubstitutor(IBuilder builder, IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter){
+	public BuildfileMacroSubstitutor(IBuilder builder, IMacroContextInfo contextInfo, String inexistentMacroValue,
+			String listDelimiter) {
 		super(contextInfo, inexistentMacroValue, listDelimiter);
 		init(builder, contextInfo);
 	}
 
-	public BuildfileMacroSubstitutor(IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter){
+	public BuildfileMacroSubstitutor(IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter) {
 		this(null, contextInfo, inexistentMacroValue, listDelimiter);
 	}
 
-
-
-	private void init(IBuilder builder, IMacroContextInfo contextInfo){
-		if(contextInfo == null)
+	private void init(IBuilder builder, IMacroContextInfo contextInfo) {
+		if (contextInfo == null)
 			return;
 
 		fVarMngr = CCorePlugin.getDefault().getCdtVariableManager();
 
-		if(builder != null){
+		if (builder != null) {
 			fBuilder = builder;
 			fConfiguration = builder.getParent().getParent();
 		} else {
 			IBuildObject[] bos = findConfigurationAndBuilderFromContext(contextInfo);
-			if(bos != null){
-				fConfiguration = (IConfiguration)bos[0];
-				fBuilder = (IBuilder)bos[1];
+			if (bos != null) {
+				fConfiguration = (IConfiguration) bos[0];
+				fBuilder = (IBuilder) bos[1];
 			}
 		}
 
-		if(fConfiguration != null){
+		if (fConfiguration != null) {
 			fCfgDes = ManagedBuildManager.getDescriptionForConfiguration(fConfiguration);
 		}
 	}
 
-	static IBuildObject[] findConfigurationAndBuilderFromContext(IMacroContextInfo contextInfo){
+	static IBuildObject[] findConfigurationAndBuilderFromContext(IMacroContextInfo contextInfo) {
 		int type = contextInfo.getContextType();
 		IConfiguration cfg = null;
 		IBuilder builder = null;
-		switch(type){
+		switch (type) {
 		case IBuildMacroProvider.CONTEXT_FILE:
-			contextInfo = (IMacroContextInfo)contextInfo.getNext();
-			if(contextInfo == null)
+			contextInfo = (IMacroContextInfo) contextInfo.getNext();
+			if (contextInfo == null)
 				break;
 		case IBuildMacroProvider.CONTEXT_OPTION:
-			contextInfo = (IMacroContextInfo)contextInfo.getNext();
-			if(contextInfo == null)
+			contextInfo = (IMacroContextInfo) contextInfo.getNext();
+			if (contextInfo == null)
 				break;
-		case IBuildMacroProvider.CONTEXT_CONFIGURATION:{
-				Object contextData = contextInfo.getContextData();
-				if(contextData instanceof IConfiguration){
-					cfg = (IConfiguration)contextData;
-					builder = cfg.getBuilder();
-				} else if (contextData instanceof IBuilder){
-					builder = (IBuilder)contextData;
-					cfg = builder.getParent().getParent();
-				} else if (contextData instanceof ITool) {
-					ITool tool = (ITool)contextData;
-					IResourceInfo rcInfo = tool.getParentResourceInfo();
-					if(rcInfo != null){
-						cfg = rcInfo.getParent();
-						if(cfg != null){
-							builder = cfg.getBuilder();
-						}
-					}
-				}
-			}
-			break;
-		case IBuildMacroProvider.CONTEXT_PROJECT:{
-				Object contextData = contextInfo.getContextData();
-				if(contextData instanceof IManagedProject){
-					IResource rc = ((IManagedProject)contextData).getOwner();
-					if(rc != null){
-						IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(rc);
-						cfg = info.getDefaultConfiguration();
+		case IBuildMacroProvider.CONTEXT_CONFIGURATION: {
+			Object contextData = contextInfo.getContextData();
+			if (contextData instanceof IConfiguration) {
+				cfg = (IConfiguration) contextData;
+				builder = cfg.getBuilder();
+			} else if (contextData instanceof IBuilder) {
+				builder = (IBuilder) contextData;
+				cfg = builder.getParent().getParent();
+			} else if (contextData instanceof ITool) {
+				ITool tool = (ITool) contextData;
+				IResourceInfo rcInfo = tool.getParentResourceInfo();
+				if (rcInfo != null) {
+					cfg = rcInfo.getParent();
+					if (cfg != null) {
 						builder = cfg.getBuilder();
 					}
 				}
 			}
+		}
+			break;
+		case IBuildMacroProvider.CONTEXT_PROJECT: {
+			Object contextData = contextInfo.getContextData();
+			if (contextData instanceof IManagedProject) {
+				IResource rc = ((IManagedProject) contextData).getOwner();
+				if (rc != null) {
+					IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(rc);
+					cfg = info.getDefaultConfiguration();
+					builder = cfg.getBuilder();
+				}
+			}
+		}
 			break;
 		}
 
-		if(cfg != null && builder != null)
-			return new IBuildObject[]{cfg, builder};
+		if (cfg != null && builder != null)
+			return new IBuildObject[] { cfg, builder };
 		return null;
 	}
 
@@ -219,61 +218,61 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor#resolveMacro(org.eclipse.cdt.managedbuilder.macros.IBuildMacro)
 	 */
 	@Override
-	protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException{
+	protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException {
 		ResolvedMacro resolved = null;
 
-		if(fConfiguration != null && fBuilder != null &&
-				fBuilder.keepEnvironmentVariablesInBuildfile() &&
-				fVarMngr.isEnvironmentVariable(macro, fCfgDes) &&
-				(!CdtVariableResolver.isStringListVariable(macro.getValueType())
-						|| size(macro.getStringListValue()) < 2)){
+		if (fConfiguration != null && fBuilder != null && fBuilder.keepEnvironmentVariablesInBuildfile()
+				&& fVarMngr.isEnvironmentVariable(macro, fCfgDes)
+				&& (!CdtVariableResolver.isStringListVariable(macro.getValueType())
+						|| size(macro.getStringListValue()) < 2)) {
 			String ref = getMacroReference(macro);
-			if(ref != null)
-				resolved = new ResolvedMacro(macro.getName(),ref);
+			if (ref != null)
+				resolved = new ResolvedMacro(macro.getName(), ref);
 
 		}
-		if(resolved != null)
+		if (resolved != null)
 			return resolved;
 		return super.resolveMacro(macro);
 	}
 
-	private static int size(String[] value){
+	private static int size(String[] value) {
 		return value != null ? value.length : 0;
 	}
 
-	public IConfiguration getConfiguration(){
+	public IConfiguration getConfiguration() {
 		return fConfiguration;
 	}
 
-	protected IReservedMacroNameSupplier getReservedMacroNameSupplier(){
-		if(fBuilder == null)
+	protected IReservedMacroNameSupplier getReservedMacroNameSupplier() {
+		if (fBuilder == null)
 			return null;
 		IReservedMacroNameSupplier supplier = fBuilder.getReservedMacroNameSupplier();
-		if(supplier == null)
+		if (supplier == null)
 			supplier = new DefaultReservedMacroNameSupplier(fConfiguration);
 
 		return supplier;
 	}
 
-	protected String getMacroReference(ICdtVariable macro){
+	protected String getMacroReference(ICdtVariable macro) {
 		String macroName = macro.getName();
 		String ref = null;
 		IReservedMacroNameSupplier supplier = getReservedMacroNameSupplier();
 		//on win32 all environment variable names are converted to upper case
 		macroName = EnvVarOperationProcessor.normalizeName(macroName);
-		if(supplier == null || !supplier.isReservedName(macroName,fConfiguration)){
+		if (supplier == null || !supplier.isReservedName(macroName, fConfiguration)) {
 			String pattern = fBuilder.getBuilderVariablePattern();
-			if(pattern != null && pattern.indexOf(PATTERN_MACRO_NAME) != -1){
-				if(fBuilder.isVariableCaseSensitive() || getCaseInsensitiveReferencedNames().add(macroName.toUpperCase())){
-					ref = pattern.replaceAll(PATTERN_MACRO_NAME,macroName);
+			if (pattern != null && pattern.indexOf(PATTERN_MACRO_NAME) != -1) {
+				if (fBuilder.isVariableCaseSensitive()
+						|| getCaseInsensitiveReferencedNames().add(macroName.toUpperCase())) {
+					ref = pattern.replaceAll(PATTERN_MACRO_NAME, macroName);
 				}
 			}
 		}
 		return ref;
 	}
 
-	protected Set<String> getCaseInsensitiveReferencedNames(){
-		if(fCaseInsensitiveReferencedNames == null)
+	protected Set<String> getCaseInsensitiveReferencedNames() {
+		if (fCaseInsensitiveReferencedNames == null)
 			fCaseInsensitiveReferencedNames = new HashSet<String>();
 		return fCaseInsensitiveReferencedNames;
 	}
@@ -282,19 +281,18 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor#setMacroContextInfo(org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo)
 	 */
 	@Override
-	public void setMacroContextInfo(IVariableContextInfo info)
-				throws CdtVariableException{
+	public void setMacroContextInfo(IVariableContextInfo info) throws CdtVariableException {
 		super.setMacroContextInfo(info);
-		if(info instanceof IMacroContextInfo)
-			init(null, (IMacroContextInfo)info);
+		if (info instanceof IMacroContextInfo)
+			init(null, (IMacroContextInfo) info);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor#setMacroContextInfo(int, java.lang.Object)
 	 */
-//	public void setMacroContextInfo(int contextType, Object contextData) throws BuildMacroException{
-//		super.setMacroContextInfo(contextType, contextData);
-//		init();
-//	}
+	//	public void setMacroContextInfo(int contextType, Object contextData) throws BuildMacroException{
+	//		super.setMacroContextInfo(contextType, contextData);
+	//		init();
+	//	}
 
 }

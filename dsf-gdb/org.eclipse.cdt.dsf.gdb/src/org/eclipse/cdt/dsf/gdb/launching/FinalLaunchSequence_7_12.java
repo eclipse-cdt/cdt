@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Subclass for GDB >= 7.12.
- * 
+ *
  * @since 5.2
  */
 public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
@@ -42,8 +42,7 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 	private Map<String, Object> fAttributes;
 	private IGDBBackend fGdbBackEnd;
 
-	public FinalLaunchSequence_7_12(DsfSession session, Map<String, Object> attributes,
-			RequestMonitorWithProgress rm) {
+	public FinalLaunchSequence_7_12(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
 		super(session, attributes, rm);
 		fAttributes = attributes;
 	}
@@ -53,8 +52,7 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			// Initialize the list with the base class' steps
 			// We need to create a list that we can modify, which is why we create our own ArrayList.
-			List<String> orderList = new ArrayList<String>(
-					Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
+			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Now insert our steps right after the initialization of the base class.
 			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence_7_7") + 1, //$NON-NLS-1$
@@ -62,7 +60,7 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 
 			orderList.add(orderList.indexOf("stepSourceGDBInitFile") + 1, //$NON-NLS-1$
 					"stepSetTargetAsync"); //$NON-NLS-1$
-			
+
 			orderList.add(orderList.indexOf("stepSetTargetAsync") + 1, //$NON-NLS-1$
 					"stepSetRecordFullStopAtLimit"); //$NON-NLS-1$
 
@@ -78,8 +76,7 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 	 */
 	@Execute
 	public void stepInitializeFinalLaunchSequence_7_12(RequestMonitor rm) {
-		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(),
-				getSession().getId());
+		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), getSession().getId());
 		fCommandControl = tracker.getService(IGDBControl.class);
 		fGdbBackEnd = tracker.getService(IGDBBackend.class);
 
@@ -99,8 +96,7 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 
 	private boolean isNonStop() {
 		boolean isNonStop = CDebugUtils.getAttribute(fAttributes,
-				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-				LaunchUtils.getIsNonStopModeDefault());
+				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP, LaunchUtils.getIsNonStopModeDefault());
 		return isNonStop;
 	}
 
@@ -119,8 +115,7 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 			asyncOn = true;
 		}
 
-		fCommandControl.queueCommand(
-				fCommandFactory.createMIGDBSetTargetAsync(fCommandControl.getContext(), asyncOn),
+		fCommandControl.queueCommand(fCommandFactory.createMIGDBSetTargetAsync(fCommandControl.getContext(), asyncOn),
 				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
 					@Override
 					protected void handleError() {
@@ -129,7 +124,7 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 					}
 				});
 	}
-	
+
 	/**
 	 * Set reverse debugging record full stop-at-limit to off, so GDB does not halt waiting for user input
 	 * when the recording buffer gets full
@@ -138,14 +133,14 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 	@Execute
 	public void stepSetRecordFullStopAtLimit(RequestMonitor requestMonitor) {
 		fCommandControl.queueCommand(
-			fCommandFactory.createMIGDBSetRecordFullStopAtLimit(fCommandControl.getContext(), false),
-			new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-				@Override
-				protected void handleError() {
-					// Accept errors since this is not essential
-					requestMonitor.done();
-				}
-			});
+				fCommandFactory.createMIGDBSetRecordFullStopAtLimit(fCommandControl.getContext(), false),
+				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+					@Override
+					protected void handleError() {
+						// Accept errors since this is not essential
+						requestMonitor.done();
+					}
+				});
 	}
 
 	@Override
@@ -155,11 +150,10 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 			// GDBs that don't support non-stop don't allow you to set it to false.
 			// We really should set it to false when GDB supports it though.
 			// Something to fix later.
-			// Note: The base class is setting pagination to off, this is only necessary when 
+			// Note: The base class is setting pagination to off, this is only necessary when
 			// using the Full GDB console (The basic console is started in MI mode and does not paginate).
 			// When the Full GDB console is used, pagination is set to off when GDB is started.
-			fCommandControl.queueCommand(
-					fCommandFactory.createMIGDBSetNonStop(fCommandControl.getContext(), true),
+			fCommandControl.queueCommand(fCommandFactory.createMIGDBSetNonStop(fCommandControl.getContext(), true),
 					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
 		} else {
 			requestMonitor.done();

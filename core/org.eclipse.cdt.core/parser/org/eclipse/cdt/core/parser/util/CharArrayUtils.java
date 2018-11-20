@@ -29,7 +29,8 @@ public class CharArrayUtils {
 	/** @since 5.7 */
 	public static final char[][] EMPTY_ARRAY_OF_CHAR_ARRAYS = {};
 
-	private CharArrayUtils() {}
+	private CharArrayUtils() {
+	}
 
 	public static final int hash(char[] str, int start, int length) {
 		int h = 0;
@@ -68,15 +69,15 @@ public class CharArrayUtils {
 	 * @since 5.4
 	 */
 	public static final boolean equals(char[] str1, String str2) {
-        int length = str1.length;
-        if (str2.length() != length)
-            return false;
+		int length = str1.length;
+		if (str2.length() != length)
+			return false;
 
-        for (int i = 0; i < length; i++) {
-            if (str1[i] != str2.charAt(i))
-                return false;
-        }
-        return true;
+		for (int i = 0; i < length; i++) {
+			if (str1[i] != str2.charAt(i))
+				return false;
+		}
+		return true;
 	}
 
 	/**
@@ -104,11 +105,11 @@ public class CharArrayUtils {
 		if (str1.length < len)
 			return false;
 		for (int i = 0; i < len; i++) {
-            if (str1[i] != str2.charAt(i)) {
-                return false;
-            }
-        }
-        return true;
+			if (str1[i] != str2.charAt(i)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -127,9 +128,9 @@ public class CharArrayUtils {
 		if (str1 == str2)
 			return 0;
 
-		int end= Math.min(str1.length, str2.length);
+		int end = Math.min(str1.length, str2.length);
 		for (int i = 0; i < end; ++i) {
-			int diff= str1[i] - str2[i];
+			int diff = str1[i] - str2[i];
 			if (diff != 0)
 				return diff;
 		}
@@ -145,7 +146,7 @@ public class CharArrayUtils {
 		if (length1 != str2.length || str1.length < length1 + start1)
 			return false;
 		if (str1 == str2 && start1 == 0)
-		    return true;
+			return true;
 		for (int i = 0; i < length1; ++i) {
 			if (str1[start1++] != str2[i])
 				return false;
@@ -155,8 +156,8 @@ public class CharArrayUtils {
 	}
 
 	public static final boolean equals(char[] str1, int start1, int length1, char[] str2, boolean ignoreCase) {
-	    if (!ignoreCase)
-	        return equals(str1, start1, length1, str2);
+		if (!ignoreCase)
+			return equals(str1, start1, length1, str2);
 
 		if (length1 != str2.length || str1.length < start1 + length1)
 			return false;
@@ -209,8 +210,7 @@ public class CharArrayUtils {
 						continue next;
 				}
 				if (occurrenceCount == starts.length) {
-					System.arraycopy(starts, 0, starts = new int[occurrenceCount * 2], 0,
-							occurrenceCount);
+					System.arraycopy(starts, 0, starts = new int[occurrenceCount * 2], 0, occurrenceCount);
 				}
 				starts[occurrenceCount++] = i;
 			}
@@ -224,12 +224,7 @@ public class CharArrayUtils {
 			System.arraycopy(array, inStart, result, outStart, offset);
 			inStart += offset;
 			outStart += offset;
-			System.arraycopy(
-				replacementChars,
-				0,
-				result,
-				outStart,
-				replacementLength);
+			System.arraycopy(replacementChars, 0, result, outStart, replacementLength);
 			inStart += replacedLength;
 			outStart += replacementLength;
 		}
@@ -275,44 +270,44 @@ public class CharArrayUtils {
 		return -1;
 	}
 
-    public static int indexOf(char toBeFound, char[] buffer, int start, int end) {
-        if (start < 0 || start > buffer.length || end > buffer.length)
-            return -1;
+	public static int indexOf(char toBeFound, char[] buffer, int start, int end) {
+		if (start < 0 || start > buffer.length || end > buffer.length)
+			return -1;
 
-        for (int i = start; i < end; i++) {
+		for (int i = start; i < end; i++) {
 			if (toBeFound == buffer[i])
 				return i;
-        }
+		}
 		return -1;
-    }
+	}
 
 	public static final int indexOf(char[] toBeFound, char[] array) {
-	    if (toBeFound.length > array.length)
-	        return -1;
+		if (toBeFound.length > array.length)
+			return -1;
 
-	    int j = 0;
-	    for (int i = 0; i < array.length; i++) {
-	        if (toBeFound[j] == array[i]) {
-	            if (++j == toBeFound.length)
-	                return i - j + 1;
-	        } else {
-	        	j = 0;
-	        }
-	    }
-	    return -1;
+		int j = 0;
+		for (int i = 0; i < array.length; i++) {
+			if (toBeFound[j] == array[i]) {
+				if (++j == toBeFound.length)
+					return i - j + 1;
+			} else {
+				j = 0;
+			}
+		}
+		return -1;
 	}
 
 	public static final int lastIndexOf(char[] toBeFound, char[] array) {
 		return lastIndexOf(toBeFound, array, 0);
 	}
-	
+
 	/**
 	 * @since 5.11
 	 */
 	public static int lastIndexOf(char toBeFound, char[] array) {
 		return lastIndexOf(toBeFound, array, 0);
 	}
-	
+
 	/**
 	 * @since 5.11
 	 */
@@ -324,7 +319,7 @@ public class CharArrayUtils {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * @since 5.11
 	 */
@@ -342,7 +337,7 @@ public class CharArrayUtils {
 			}
 		}
 	}
-	
+
 	static final public char[] trim(char[] chars) {
 		if (chars == null)
 			return null;
@@ -371,42 +366,42 @@ public class CharArrayUtils {
 		return subarray(array, pos + separator.length, array.length);
 	}
 
-    /**
-     * @param buff
-     * @param i
-     * @param charImage
-     */
-    public static void overWrite(char[] buff, int i, char[] charImage) {
-        if (buff.length < i + charImage.length)
-            return;
-        for (int j = 0; j < charImage.length; j++) {
-            buff[i + j] = charImage[j];
-        }
-    }
+	/**
+	 * @param buff
+	 * @param i
+	 * @param charImage
+	 */
+	public static void overWrite(char[] buff, int i, char[] charImage) {
+		if (buff.length < i + charImage.length)
+			return;
+		for (int j = 0; j < charImage.length; j++) {
+			buff[i + j] = charImage[j];
+		}
+	}
 
-    /**
-     * Finds an array of chars in an array of arrays of chars.
-     *
-     * @return offset where the array was found or {@code -1}
-     */
-    public static int indexOf(final char[] searchFor, final char[][] searchIn) {
+	/**
+	 * Finds an array of chars in an array of arrays of chars.
+	 *
+	 * @return offset where the array was found or {@code -1}
+	 */
+	public static int indexOf(final char[] searchFor, final char[][] searchIn) {
 		for (int i = 0; i < searchIn.length; i++) {
 			if (equals(searchIn[i], searchFor)) {
 				return i;
 			}
 		}
 		return -1;
-    }
+	}
 
-    /**
-     * Converts a {@link StringBuilder} to a character array.
-     * @since 5.5
-     */
+	/**
+	 * Converts a {@link StringBuilder} to a character array.
+	 * @since 5.5
+	 */
 	public static char[] extractChars(StringBuilder buf) {
 		final int len = buf.length();
 		if (len == 0)
 			return EMPTY_CHAR_ARRAY;
-		char[] result= new char[len];
+		char[] result = new char[len];
 		buf.getChars(0, len, result, 0);
 		return result;
 	}

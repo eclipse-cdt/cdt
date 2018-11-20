@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 
 /**
  * This is C++'s reference operator, i.e. &, used in a declarator.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -28,7 +28,7 @@ public interface ICPPASTReferenceOperator extends IASTPointerOperator {
 	 * @since 5.2
 	 */
 	public boolean isRValueReference();
-	
+
 	/**
 	 * @since 5.1
 	 */

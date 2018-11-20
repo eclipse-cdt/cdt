@@ -76,7 +76,7 @@ import org.osgi.framework.Bundle;
  */
 public class CProjectHelper {
 
-	private final static IOverwriteQuery OVERWRITE_QUERY= new IOverwriteQuery() {
+	private final static IOverwriteQuery OVERWRITE_QUERY = new IOverwriteQuery() {
 		@Override
 		public String queryOverwrite(String file) {
 			return ALL;
@@ -86,11 +86,12 @@ public class CProjectHelper {
 	public static ICProject createCProject(final String projectName, String binFolderName) throws CoreException {
 		return createCCProject(projectName, binFolderName, null);
 	}
-	
+
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createCProject(final String projectName, String binFolderName, final String indexerID) throws CoreException {
+	public static ICProject createCProject(final String projectName, String binFolderName, final String indexerID)
+			throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
 		ws.run(new IWorkspaceRunnable() {
@@ -99,7 +100,8 @@ public class CProjectHelper {
 				IWorkspaceRoot root = ws.getRoot();
 				IProject project = root.getProject(projectName);
 				if (indexerID != null) {
-					IndexerPreferences.set(project, IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "true");
+					IndexerPreferences.set(project, IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG,
+							"true");
 					IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, indexerID);
 				}
 				if (!project.exists()) {
@@ -125,19 +127,20 @@ public class CProjectHelper {
 
 	/**
 	 * Adds the default binary parser if no binary parser configured.
-	 * 
+	 *
 	 * @param project
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public static boolean addDefaultBinaryParser(IProject project) throws CoreException {
-		ICConfigExtensionReference[] binaryParsers= CCorePlugin.getDefault().getDefaultBinaryParserExtensions(project);
+		ICConfigExtensionReference[] binaryParsers = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(project);
 		if (binaryParsers == null || binaryParsers.length == 0) {
-			ICProjectDescription desc= CCorePlugin.getDefault().getProjectDescription(project);
+			ICProjectDescription desc = CCorePlugin.getDefault().getProjectDescription(project);
 			if (desc == null) {
 				return false;
 			}
-			
-			desc.getDefaultSettingConfiguration().create(CCorePlugin.BINARY_PARSER_UNIQ_ID, CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID);
+
+			desc.getDefaultSettingConfiguration().create(CCorePlugin.BINARY_PARSER_UNIQ_ID,
+					CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID);
 			CCorePlugin.getDefault().setProjectDescription(project, desc);
 		}
 		return true;
@@ -146,33 +149,37 @@ public class CProjectHelper {
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createNewStyleCProject(final String projectName, final String indexerID) throws CoreException {
+	public static ICProject createNewStyleCProject(final String projectName, final String indexerID)
+			throws CoreException {
 		return createNewStyleCProject(projectName, indexerID, false);
 	}
 
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createNewStyleCProject(final String projectName, String providerId, final String indexerID) throws CoreException {
+	public static ICProject createNewStyleCProject(final String projectName, String providerId, final String indexerID)
+			throws CoreException {
 		return createNewStyleCProject(projectName, providerId, indexerID, false);
 	}
 
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createNewStyleCProject(final String projectName, final String indexerID, boolean markCreating) throws CoreException {
+	public static ICProject createNewStyleCProject(final String projectName, final String indexerID,
+			boolean markCreating) throws CoreException {
 		return createNewStyleCProject(projectName, null, indexerID, markCreating);
 	}
 
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createNewStyleCProject(final String projectName, String cfgProviderId, final String indexerID, final boolean markCreating) throws CoreException {
+	public static ICProject createNewStyleCProject(final String projectName, String cfgProviderId,
+			final String indexerID, final boolean markCreating) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
-		if(cfgProviderId == null)
+		if (cfgProviderId == null)
 			cfgProviderId = TestCfgDataProvider.PROVIDER_ID;
-		
+
 		final String finalCfgProviderId = cfgProviderId;
 		ws.run(new IWorkspaceRunnable() {
 			@Override
@@ -192,12 +199,13 @@ public class CProjectHelper {
 				}
 				if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
 					addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
-					ICConfigurationDescription prefCfg = CCorePlugin.getDefault().getPreferenceConfiguration(finalCfgProviderId);
+					ICConfigurationDescription prefCfg = CCorePlugin.getDefault()
+							.getPreferenceConfiguration(finalCfgProviderId);
 					ICProjectDescriptionManager mngr = CCorePlugin.getDefault().getProjectDescriptionManager();
 					ICProjectDescription projDes = mngr.createProjectDescription(project, false, markCreating);
 					projDes.createConfiguration(CDataUtil.genId(null), CDataUtil.genId("test"), prefCfg);
 					mngr.setProjectDescription(project, projDes);
-//					CCorePlugin.getDefault().mapCProjectOwner(project, projectId, false);
+					//					CCorePlugin.getDefault().mapCProjectOwner(project, projectId, false);
 				}
 				addDefaultBinaryParser(project);
 				newProject[0] = CCorePlugin.getDefault().getCoreModel().create(project);
@@ -207,13 +215,12 @@ public class CProjectHelper {
 		return newProject[0];
 	}
 
-	
 	private static String getMessage(IStatus status) {
 		StringBuilder message = new StringBuilder("[");
 		message.append(status.getMessage());
 		if (status.isMultiStatus()) {
 			IStatus children[] = status.getChildren();
-			for( int i = 0; i < children.length; i++) {
+			for (int i = 0; i < children.length; i++) {
 				message.append(getMessage(children[i]));
 			}
 		}
@@ -225,7 +232,8 @@ public class CProjectHelper {
 		return createCCProject(projectName, binFolderName, null);
 	}
 
-	public static ICProject createCCProject(final String projectName, final String binFolderName, final String indexerID) throws CoreException {
+	public static ICProject createCCProject(final String projectName, final String binFolderName,
+			final String indexerID) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
 		ws.run(new IWorkspaceRunnable() {
@@ -320,21 +328,21 @@ public class CProjectHelper {
 			InternalCoreModelUtil.addSourceEntry(project, rootFolder, false, null);
 		} else {
 			IPathEntry[] entries = cproject.getRawPathEntries();
-			ArrayList<IPathEntry> newEntries= new ArrayList<>(entries.length + 1);
-			
+			ArrayList<IPathEntry> newEntries = new ArrayList<>(entries.length + 1);
+
 			for (IPathEntry entry : entries) {
 				if (entry.getEntryKind() == IPathEntry.CDT_SOURCE && rootPath.equals(entry.getPath())) {
 					return; // The source root exists already.
 				}
 				newEntries.add(entry);
 			}
-			
-			IPathEntry newEntry= CoreModel.newSourceEntry(rootPath);
-			
-			Set<IPathEntry> modified= new HashSet<>();				
+
+			IPathEntry newEntry = CoreModel.newSourceEntry(rootPath);
+
+			Set<IPathEntry> modified = new HashSet<>();
 			InternalCoreModelUtil.addExclusionPatterns(newEntry, newEntries, modified);
 			newEntries.add(CoreModel.newSourceEntry(rootPath));
-				
+
 			cproject.setRawPathEntries(newEntries.toArray(new IPathEntry[newEntries.size()]), null);
 		}
 	}
@@ -416,7 +424,8 @@ public class CProjectHelper {
 		return null;
 	}
 
-	public static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
+	public static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor)
+			throws CoreException {
 		IProjectDescription description = proj.getDescription();
 		String[] prevNatures = description.getNatureIds();
 		String[] newNatures = new String[prevNatures.length + 1];
@@ -440,9 +449,9 @@ public class CProjectHelper {
 
 	public static void importSourcesFromPlugin(ICProject project, Bundle bundle, String sources) throws CoreException {
 		try {
-			String baseDir= FileLocator.toFileURL(FileLocator.find(bundle, new Path(sources), null)).getFile();
-			ImportOperation importOp = new ImportOperation(project.getProject().getFullPath(),
-					new File(baseDir), FileSystemStructureProvider.INSTANCE, OVERWRITE_QUERY);
+			String baseDir = FileLocator.toFileURL(FileLocator.find(bundle, new Path(sources), null)).getFile();
+			ImportOperation importOp = new ImportOperation(project.getProject().getFullPath(), new File(baseDir),
+					FileSystemStructureProvider.INSTANCE, OVERWRITE_QUERY);
 			importOp.setCreateContainerStructure(false);
 			importOp.run(new NullProgressMonitor());
 		} catch (Exception e) {
@@ -460,7 +469,7 @@ public class CProjectHelper {
 		Assert.assertTrue(folder.exists());
 		Assert.assertTrue(folder.isDirectory());
 		Assert.assertTrue(folder.canWrite());
-		
+
 		return folder;
 	}
 }

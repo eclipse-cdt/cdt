@@ -75,7 +75,6 @@ public class CommentCheckerLineTests extends CheckerTestCase {
 	// @file:test.h
 	// int foo();// error too
 
-
 	// @file:test.c
 	// #include "test.h"
 	// int bar() {

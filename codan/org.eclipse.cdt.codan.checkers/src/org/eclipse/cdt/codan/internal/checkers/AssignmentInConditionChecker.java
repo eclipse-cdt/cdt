@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -58,8 +58,8 @@ public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 
 		private boolean isUsedAsCondition(IASTExpression expression) {
 			ASTNodeProperty prop = expression.getPropertyInParent();
-			if (prop == IASTForStatement.CONDITION || prop == IASTIfStatement.CONDITION || prop == IASTWhileStatement.CONDITIONEXPRESSION
-					|| prop == IASTDoStatement.CONDITION)
+			if (prop == IASTForStatement.CONDITION || prop == IASTIfStatement.CONDITION
+					|| prop == IASTWhileStatement.CONDITIONEXPRESSION || prop == IASTDoStatement.CONDITION)
 				return true;
 			if (prop == IASTUnaryExpression.OPERAND) {
 				IASTUnaryExpression expr = (IASTUnaryExpression) expression.getParent();

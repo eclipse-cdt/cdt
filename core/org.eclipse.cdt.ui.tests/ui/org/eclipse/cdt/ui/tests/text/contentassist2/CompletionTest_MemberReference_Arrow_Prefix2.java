@@ -12,37 +12,36 @@
  * IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Member_Reference, with a prefix
  * Complex Context: Function return value: foo()->a(CTRL+SPACE)
  *
  */
-public class CompletionTest_MemberReference_Arrow_Prefix2  extends CompletionProposalsBaseTest{
+public class CompletionTest_MemberReference_Arrow_Prefix2 extends CompletionProposalsBaseTest {
 	private final String fileName = "CompletionTestStart7.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "a";
-	private final String[] expectedResults = {
-			"aClass", // aClass is valid
-			"aField : int",
-			"aMethod(void) : int"
-	};
-	
+	private final String[] expectedResults = { "aClass", // aClass is valid
+			"aField : int", "aMethod(void) : int" };
+
 	public CompletionTest_MemberReference_Arrow_Prefix2(String name) {
-		super(name) ;
+		super(name);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_MemberReference_Arrow_Prefix2.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_MemberReference_Arrow_Prefix2.class.getName());
 		suite.addTest(new CompletionTest_MemberReference_Arrow_Prefix2("testCompletionProposals"));
 		return suite;
-	}		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -82,6 +81,7 @@ public class CompletionTest_MemberReference_Arrow_Prefix2  extends CompletionPro
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

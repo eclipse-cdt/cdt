@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebug
 
 /**
  * This command turns on on off the recording of "Process Record and Replay".
- * 
+ *
  * @since 3.0
  */
 public class CLIRecord extends CLICommand<MIInfo> {
@@ -31,28 +31,27 @@ public class CLIRecord extends CLICommand<MIInfo> {
 
 	/** Only available for GDB >= 7.10 */
 	/** @since 5.0 */
-    public CLIRecord(ICommandControlDMContext ctx, ReverseDebugMethod traceMethod) {
-        super(ctx, "record" + createRecordParams(traceMethod));  //$NON-NLS-1$
-    }
+	public CLIRecord(ICommandControlDMContext ctx, ReverseDebugMethod traceMethod) {
+		super(ctx, "record" + createRecordParams(traceMethod)); //$NON-NLS-1$
+	}
 
-    private static String createRecordParams(ReverseDebugMethod traceMethod)
-    {
-        String recordParam;
+	private static String createRecordParams(ReverseDebugMethod traceMethod) {
+		String recordParam;
 
-        if (traceMethod == ReverseDebugMethod.OFF) {
-        	recordParam = " stop"; //$NON-NLS-1$
-        } else if (traceMethod == ReverseDebugMethod.SOFTWARE) {
-        	recordParam = " full"; //$NON-NLS-1$
-        } else if (traceMethod == ReverseDebugMethod.BRANCH_TRACE) {
-        	recordParam = " btrace bts"; //$NON-NLS-1$
-        } else if (traceMethod == ReverseDebugMethod.PROCESSOR_TRACE) {
-        	recordParam = " btrace pt"; //$NON-NLS-1$
-        } else if (traceMethod == ReverseDebugMethod.GDB_TRACE) {
-        	recordParam = " btrace"; //$NON-NLS-1$
-        } else {// no trace method defined
-        	recordParam = ""; //$NON-NLS-1$
-        }
+		if (traceMethod == ReverseDebugMethod.OFF) {
+			recordParam = " stop"; //$NON-NLS-1$
+		} else if (traceMethod == ReverseDebugMethod.SOFTWARE) {
+			recordParam = " full"; //$NON-NLS-1$
+		} else if (traceMethod == ReverseDebugMethod.BRANCH_TRACE) {
+			recordParam = " btrace bts"; //$NON-NLS-1$
+		} else if (traceMethod == ReverseDebugMethod.PROCESSOR_TRACE) {
+			recordParam = " btrace pt"; //$NON-NLS-1$
+		} else if (traceMethod == ReverseDebugMethod.GDB_TRACE) {
+			recordParam = " btrace"; //$NON-NLS-1$
+		} else {// no trace method defined
+			recordParam = ""; //$NON-NLS-1$
+		}
 
-        return recordParam;
-    }
+		return recordParam;
+	}
 }

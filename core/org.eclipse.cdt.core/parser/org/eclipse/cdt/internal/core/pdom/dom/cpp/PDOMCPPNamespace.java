@@ -54,8 +54,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Represents a namespace scope for a namespace stored in the index.
  */
-class PDOMCPPNamespace extends PDOMCPPBinding
-		implements ICPPNamespace, ICPPNamespaceScope, IIndexScope {
+class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPNamespaceScope, IIndexScope {
 	private static final int INDEX_OFFSET = PDOMCPPBinding.RECORD_SIZE;
 	private static final int FIRST_NAMESPACE_CHILD_OFFSET = INDEX_OFFSET + Database.PTR_SIZE;
 	private static final int NEXT_NAMESPACE_SIBBLING_OFFSET = FIRST_NAMESPACE_CHILD_OFFSET + Database.PTR_SIZE;
@@ -63,10 +62,10 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = FLAG_OFFSET + 1;
-	
-	private static int INLINE_FLAG= 0x1;
-	
-	private int fFlag= -1;
+
+	private static int INLINE_FLAG = 0x1;
+
+	private int fFlag = -1;
 	private volatile ICPPNamespaceScope[] fInlineNamespaces;
 
 	public PDOMCPPNamespace(PDOMLinkage linkage, PDOMNode parent, ICPPNamespace namespace) throws CoreException {
@@ -77,17 +76,17 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	public PDOMCPPNamespace(PDOMLinkage linkage, long record) throws CoreException {
 		super(linkage, record);
 	}
-	
+
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		updateFlag((ICPPNamespace) newBinding);
 	}
 
 	private void updateFlag(ICPPNamespace namespace) throws CoreException {
-		int flag= 0;
+		int flag = 0;
 		if (namespace.isInline())
 			flag |= INLINE_FLAG;
-		
+
 		getDB().putByte(record + FLAG_OFFSET, (byte) flag);
 	}
 
@@ -120,6 +119,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 				public int compare(long record) throws CoreException {
 					return 0;
 				}
+
 				@Override
 				public boolean visit(long record) throws CoreException {
 					PDOMBinding binding = getLinkage().getBinding(record);
@@ -154,8 +154,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	}
 
 	public void addToList(final long listRecord) throws CoreException {
-		final Database db= getDB();
-		final long nextRec= db.getRecPtr(listRecord);
+		final Database db = getDB();
+		final long nextRec = db.getRecPtr(listRecord);
 		db.putRecPtr(record + NEXT_NAMESPACE_SIBBLING_OFFSET, nextRec);
 		db.putRecPtr(listRecord, record);
 	}
@@ -191,9 +191,9 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		try {
-			IBinding[] bindings= getBindingsViaCache(name.getLookupKey());
+			IBinding[] bindings = getBindingsViaCache(name.getLookupKey());
 			if (fileSet != null) {
-				bindings= fileSet.filterFileLocalBindings(bindings);
+				bindings = fileSet.filterFileLocalBindings(bindings);
 			}
 			return CPPSemantics.resolveAmbiguities(name, bindings);
 		} catch (CoreException e) {
@@ -201,7 +201,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		}
 		return null;
 	}
-	
+
 	@Deprecated
 	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
@@ -213,16 +213,16 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		IBinding[] result = null;
 		try {
 			if (!lookup.isPrefixLookup()) {
-				result= getBindingsViaCache(lookup.getLookupKey());
+				result = getBindingsViaCache(lookup.getLookupKey());
 			} else {
-				BindingCollector visitor= new BindingCollector(getLinkage(), lookup.getLookupKey(),
+				BindingCollector visitor = new BindingCollector(getLinkage(), lookup.getLookupKey(),
 						IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, true, true, false);
 				getIndex().accept(visitor);
 				result = visitor.getBindings();
 			}
 			IIndexFileSet filter = lookup.getIncludedFiles();
 			if (filter != null) {
-				result= filter.filterFileLocalBindings(result);
+				result = filter.filterFileLocalBindings(result);
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -232,8 +232,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 
 	private IBinding[] getBindingsViaCache(final char[] name) throws CoreException {
 		final PDOM pdom = getPDOM();
-		final String key= pdom.createKeyForCache(record, name);
-		IBinding[] result= (IBinding[]) pdom.getCachedResult(key);
+		final String key = pdom.createKeyForCache(record, name);
+		IBinding[] result = (IBinding[]) pdom.getCachedResult(key);
 		if (result != null) {
 			return result;
 		}
@@ -260,6 +260,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 				public int compare(long record) throws CoreException {
 					return 0;
 				}
+
 				@Override
 				public boolean visit(long record) throws CoreException {
 					preresult.add(PDOMNode.load(getPDOM(), record));
@@ -272,24 +273,24 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		}
 		return result;
 	}
-	
+
 	@Override
-	public void addUsingDirective(ICPPUsingDirective directive) { 
+	public void addUsingDirective(ICPPUsingDirective directive) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public IIndexBinding getScopeBinding() {
 		return this;
 	}
 
-    @Override
+	@Override
 	protected String toStringBase() {
-    	String[] names = CPPVisitor.getQualifiedName(this);
-    	if (names.length == 0) {
-    		return "<unnamed namespace>"; //$NON-NLS-1$
-    	}
-    	return ASTStringUtil.join(names, String.valueOf(Keywords.cpCOLONCOLON));
+		String[] names = CPPVisitor.getQualifiedName(this);
+		if (names.length == 0) {
+			return "<unnamed namespace>"; //$NON-NLS-1$
+		}
+		return ASTStringUtil.join(names, String.valueOf(Keywords.cpCOLONCOLON));
 	}
 
 	@Override
@@ -298,28 +299,27 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 			List<PDOMCPPNamespace> nslist = collectInlineNamespaces(getDB(), getLinkage(),
 					record + FIRST_NAMESPACE_CHILD_OFFSET);
 			if (nslist == null) {
-				fInlineNamespaces= ICPPNamespaceScope.EMPTY_NAMESPACE_SCOPE_ARRAY;
+				fInlineNamespaces = ICPPNamespaceScope.EMPTY_NAMESPACE_SCOPE_ARRAY;
 			} else {
-				fInlineNamespaces= nslist.toArray(new PDOMCPPNamespace[nslist.size()]);
+				fInlineNamespaces = nslist.toArray(new PDOMCPPNamespace[nslist.size()]);
 			}
 		}
 		return fInlineNamespaces;
 	}
 
-	public static List<PDOMCPPNamespace> collectInlineNamespaces(Database db, PDOMLinkage linkage,
-			long listRecord) {
-		List<PDOMCPPNamespace> nslist= null;
+	public static List<PDOMCPPNamespace> collectInlineNamespaces(Database db, PDOMLinkage linkage, long listRecord) {
+		List<PDOMCPPNamespace> nslist = null;
 		try {
-			long rec= db.getRecPtr(listRecord);
+			long rec = db.getRecPtr(listRecord);
 			while (rec != 0) {
-				PDOMCPPNamespace ns= new PDOMCPPNamespace(linkage, rec);
+				PDOMCPPNamespace ns = new PDOMCPPNamespace(linkage, rec);
 				if (ns.isInline()) {
 					if (nslist == null) {
-						nslist= new ArrayList<>();
+						nslist = new ArrayList<>();
 					}
 					nslist.add(ns);
 				}
-				rec= db.getRecPtr(rec + NEXT_NAMESPACE_SIBBLING_OFFSET);
+				rec = db.getRecPtr(rec + NEXT_NAMESPACE_SIBBLING_OFFSET);
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -331,10 +331,10 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	public boolean isInline() {
 		if (fFlag == -1) {
 			try {
-				fFlag= getDB().getByte(record + FLAG_OFFSET);
+				fFlag = getDB().getByte(record + FLAG_OFFSET);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-				fFlag= 0;
+				fFlag = 0;
 			}
 		}
 		return (fFlag & INLINE_FLAG) != 0;

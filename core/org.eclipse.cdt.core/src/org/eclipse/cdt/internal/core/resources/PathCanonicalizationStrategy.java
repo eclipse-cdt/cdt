@@ -20,7 +20,7 @@ import java.io.IOException;
  * Configurable strategy for canonicalizing file paths. File paths can be canonicalized by calling
  * either File.getCanonicalPath or File.getAbsolutePath. File.getCanonicalPath resolves symbolic
  * links and guarantees path uniqueness. File.getAbsolutePath can be used when resolution of
- * symbolic links is undesirable. The default is to use File.getCanonicalPath.  
+ * symbolic links is undesirable. The default is to use File.getCanonicalPath.
  */
 public abstract class PathCanonicalizationStrategy {
 	private static volatile PathCanonicalizationStrategy instance;
@@ -32,7 +32,7 @@ public abstract class PathCanonicalizationStrategy {
 	public static String getCanonicalPath(File file) {
 		return instance.getCanonicalPathInternal(file);
 	}
-	
+
 	public static boolean resolvesSymbolicLinks() {
 		return instance.resolvesSymbolicLinksInternal();
 	}
@@ -41,7 +41,7 @@ public abstract class PathCanonicalizationStrategy {
 	 * Sets path canonicalization strategy. If <code>canonicalize</code> is <code>true</code>,
 	 * file paths will be canonicalized by calling File.getCanonicalPath, otherwise
 	 * File.getAbsolutePath is used.
-	 * 
+	 *
 	 * @param canonicalize <code>true</code> to use File.getCanonicalPath, <code>false</code>
 	 * to use File.getAbsolutePath.
 	 */
@@ -78,5 +78,6 @@ public abstract class PathCanonicalizationStrategy {
 	}
 
 	protected abstract String getCanonicalPathInternal(File file);
+
 	protected abstract boolean resolvesSymbolicLinksInternal();
 }

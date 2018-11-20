@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Winnie Lai (Texas Instruments) - Individual Element Number Format example (Bug 202556)
@@ -29,30 +29,29 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 @ThreadSafe
 @SuppressWarnings("restriction")
-public class PDAVMAdapter extends AbstractDebugVMAdapter
-{
-    public PDAVMAdapter(DsfSession session, SteppingController controller) {
-        super(session, controller);
-        getSession().registerModelAdapter(IColumnPresentationFactory.class, this);
-    }    
+public class PDAVMAdapter extends AbstractDebugVMAdapter {
+	public PDAVMAdapter(DsfSession session, SteppingController controller) {
+		super(session, controller);
+		getSession().registerModelAdapter(IColumnPresentationFactory.class, this);
+	}
 
-    @Override
-    public void dispose() {
-        getSession().unregisterModelAdapter(IColumnPresentationFactory.class);
-        super.dispose();
-    }
-    
-    @Override
-    protected AbstractDMVMProvider createViewModelProvider(IPresentationContext context) {
-        if ( IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId()) ) {
-            return new PDALaunchVMProvider(this, context, getSession()); 
-        } else if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId()) ) {
-            return new VariableVMProvider(this, context, getSession());
-        } else if (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(context.getId()) ) {
-            return new PDAExpressionVMProvider(this, context, getSession());
-        } else if (IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId()) ) {
-        	return new RegisterVMProvider(this, context, getSession());
-        }
-        return null;
-    }    
+	@Override
+	public void dispose() {
+		getSession().unregisterModelAdapter(IColumnPresentationFactory.class);
+		super.dispose();
+	}
+
+	@Override
+	protected AbstractDMVMProvider createViewModelProvider(IPresentationContext context) {
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
+			return new PDALaunchVMProvider(this, context, getSession());
+		} else if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId())) {
+			return new VariableVMProvider(this, context, getSession());
+		} else if (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(context.getId())) {
+			return new PDAExpressionVMProvider(this, context, getSession());
+		} else if (IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId())) {
+			return new RegisterVMProvider(this, context, getSession());
+		}
+		return null;
+	}
 }

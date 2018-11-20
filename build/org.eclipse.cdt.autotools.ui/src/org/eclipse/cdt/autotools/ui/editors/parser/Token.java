@@ -19,12 +19,12 @@ import org.eclipse.jface.text.IDocument;
 /**
  * A single token parsed from an autotools-style file.  This represents m4 and sh
  * tokens.  Punctuation characters shared by both are not in a namespace.
- * 
+ *
  * @author eswartz
  *
  */
 public class Token implements ITokenConstants {
-	/** Type: 
+	/** Type:
 	 * @see ITokenConstants
 	 */
 	final int type;
@@ -52,7 +52,7 @@ public class Token implements ITokenConstants {
 		this.offset = offset;
 		this.length = length;
 	}
-	
+
 	@Override
 	public String toString() {
 		return text;
@@ -73,7 +73,7 @@ public class Token implements ITokenConstants {
 	public int getOffset() {
 		return offset;
 	}
-	
+
 	public int getLength() {
 		return length;
 	}
@@ -84,5 +84,5 @@ public class Token implements ITokenConstants {
 			return false;
 		return (" \t\r\n\f".indexOf(text[offset - 1]) >= 0);
 	}
-	
+
 }

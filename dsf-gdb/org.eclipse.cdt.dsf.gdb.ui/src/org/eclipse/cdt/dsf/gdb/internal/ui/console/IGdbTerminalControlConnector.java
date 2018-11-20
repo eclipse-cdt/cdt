@@ -21,14 +21,14 @@ public interface IGdbTerminalControlConnector {
 
 	/**
 	 * Adds a terminal control which is ready to receive the process output
-	 * 
+	 *
 	 * @param terminalControl
 	 */
 	void addPageTerminalControl(ITerminalControl terminalControl);
 
 	/**
 	 * Removes a registered terminal control
-	 * 
+	 *
 	 * @param terminalControl
 	 */
 	void removePageTerminalControl(ITerminalControl terminalControl);

@@ -58,7 +58,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.executables.IExecutableImporter#importExecutables(java.lang.String[],
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -95,7 +95,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 						IProject newProjectHandle = workspace.getRoot().getProject(defaultProjectName);
 
 						int projectSuffix = 2;
-						while (newProjectHandle.exists()){						
+						while (newProjectHandle.exists()) {
 							newProjectHandle = workspace.getRoot().getProject(defaultProjectName + projectSuffix);
 							projectSuffix++;
 						}
@@ -115,11 +115,12 @@ public class StandardExecutableImporter implements IExecutableImporter {
 								if (fileStore.fetchInfo().isDirectory())
 									fileStore.delete(EFS.NONE, new NullProgressMonitor());
 							}
-							exeProject = CCorePlugin.getDefault().createCProject(description, newProjectHandle, null, DEBUG_PROJECT_ID);
+							exeProject = CCorePlugin.getDefault().createCProject(description, newProjectHandle, null,
+									DEBUG_PROJECT_ID);
 						} catch (OperationCanceledException e) {
-							DebugPlugin.log( e );
+							DebugPlugin.log(e);
 						} catch (CoreException e) {
-							DebugPlugin.log( e );
+							DebugPlugin.log(e);
 						}
 					}
 					checkProject = true;
@@ -138,7 +139,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 	}
 
 	public boolean AllowImport(IPath path) {
-		 return (!ExecutablesManager.getExecutablesManager().executableExists(path));
+		return (!ExecutablesManager.getExecutablesManager().executableExists(path));
 	}
 
 	private IContainer createFromRoot(IProject exeProject, IPath path) throws CoreException {
@@ -148,7 +149,8 @@ public class StandardExecutableImporter implements IExecutableImporter {
 		for (int i = 0; i < segmentCount; i++) {
 			currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
 			if (!currentFolder.exists()) {
-				((IFolder) currentFolder).create(IResource.VIRTUAL | IResource.DERIVED, true, new NullProgressMonitor());
+				((IFolder) currentFolder).create(IResource.VIRTUAL | IResource.DERIVED, true,
+						new NullProgressMonitor());
 			}
 		}
 
@@ -224,7 +226,8 @@ public class StandardExecutableImporter implements IExecutableImporter {
 
 	private boolean validateBinaryParsers(IProject exeProject, File file) {
 		IExtension[] binaryParserExtensions;
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.BINARY_PARSER_SIMPLE_ID);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
+				CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
 			ArrayList<IExtension> extensionsInUse = new ArrayList<IExtension>();
@@ -243,18 +246,18 @@ public class StandardExecutableImporter implements IExecutableImporter {
 					ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(exeProject);
 					try {
 						boolean existsAlready = false;
-						ICConfigExtensionReference[] parsers = pd.getDefaultSettingConfiguration().get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+						ICConfigExtensionReference[] parsers = pd.getDefaultSettingConfiguration()
+								.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 						for (ICConfigExtensionReference configExtensionReference : parsers) {
-							if (configExtensionReference.getID().equals(parserID))
-							{
+							if (configExtensionReference.getID().equals(parserID)) {
 								existsAlready = true;
 								break;
 							}
 						}
-						if (!existsAlready)
-						{
+						if (!existsAlready) {
 							pd.getDefaultSettingConfiguration().create(CCorePlugin.BINARY_PARSER_UNIQ_ID, parserID);
-							CCorePlugin.getDefault().setProjectDescription(exeProject, pd, true, new NullProgressMonitor());							
+							CCorePlugin.getDefault().setProjectDescription(exeProject, pd, true,
+									new NullProgressMonitor());
 						}
 					} catch (CoreException e) {
 					}
@@ -270,7 +273,8 @@ public class StandardExecutableImporter implements IExecutableImporter {
 		if (parser != null) {
 			try {
 				IBinaryParser.IBinaryFile bin = parser.getBinary(new Path(file.getAbsolutePath()));
-				return bin != null && (bin.getType() == IBinaryParser.IBinaryFile.EXECUTABLE || bin.getType() == IBinaryParser.IBinaryFile.SHARED);
+				return bin != null && (bin.getType() == IBinaryParser.IBinaryFile.EXECUTABLE
+						|| bin.getType() == IBinaryParser.IBinaryFile.SHARED);
 			} catch (IOException e) {
 				return false;
 			}

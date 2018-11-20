@@ -28,7 +28,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A preference that on preference from the UI plugin, as well the CDT core.
- * 
+ *
  * Currently only supporting boolean preferences.
  */
 public abstract class AbstractMixedPreferencePage extends AbstractPreferencePage {
@@ -69,7 +69,7 @@ public abstract class AbstractMixedPreferencePage extends AbstractPreferencePage
 	}
 
 	protected abstract OverlayPreferenceStore.OverlayKey[] createCorePrefsOverlayStoreKeys();
-	
+
 	@Override
 	protected void initializeFields() {
 		super.initializeFields();
@@ -81,13 +81,13 @@ public abstract class AbstractMixedPreferencePage extends AbstractPreferencePage
 			b.setSelection(corePrefsOverlayStore.getBoolean(key));
 		}
 	}
-	
+
 	@Override
 	public boolean performOk() {
 		corePrefsOverlayStore.propagate();
 		return super.performOk();
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		corePrefsOverlayStore.loadDefaults();

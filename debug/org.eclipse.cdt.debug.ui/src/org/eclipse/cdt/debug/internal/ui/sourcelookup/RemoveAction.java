@@ -7,12 +7,12 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
- 
+package org.eclipse.cdt.debug.internal.ui.sourcelookup;
+
 import java.util.List;
 
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
@@ -28,7 +28,7 @@ public class RemoveAction extends SourceContainerAction {
 
 	/**
 	 * Removes all selected entries.
-	 * 
+	 *
 	 * @see IAction#run()
 	 */
 	@Override
@@ -38,7 +38,7 @@ public class RemoveAction extends SourceContainerAction {
 		list.removeAll(targets);
 		setEntries(list);
 	}
-	
+
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */

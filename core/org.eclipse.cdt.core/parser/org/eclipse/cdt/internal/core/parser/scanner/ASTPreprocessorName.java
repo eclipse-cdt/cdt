@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -37,11 +37,11 @@ public class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName
 	private final char[] fName;
 	private final IBinding fBinding;
 
-	public ASTPreprocessorName(IASTNode parent, ASTNodeProperty property, int startNumber,
-			int endNumber, char[] name, IBinding binding) {
+	public ASTPreprocessorName(IASTNode parent, ASTNodeProperty property, int startNumber, int endNumber, char[] name,
+			IBinding binding) {
 		super(parent, property, startNumber, endNumber);
-		fName= name;
-		fBinding= binding;
+		fName = name;
+		fBinding = binding;
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName
 
 	@Override
 	public ILinkage getLinkage() {
-		final IASTTranslationUnit tu= getTranslationUnit();
+		final IASTTranslationUnit tu = getTranslationUnit();
 		return tu == null ? Linkage.NO_LINKAGE : tu.getLinkage();
 	}
 
@@ -84,6 +84,7 @@ public class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName
 	public boolean isDefinition() {
 		return false;
 	}
+
 	@Override
 	public boolean isReference() {
 		return false;
@@ -110,7 +111,9 @@ public class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName
 	}
 
 	@Override
-	public void setBinding(IBinding binding) {assert false;}
+	public void setBinding(IBinding binding) {
+		assert false;
+	}
 
 	@Override
 	public int getRoleOfName(boolean allowResolution) {
@@ -139,8 +142,8 @@ public class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName
 }
 
 class ASTPreprocessorDefinition extends ASTPreprocessorName {
-	public ASTPreprocessorDefinition(IASTNode parent, ASTNodeProperty property, int startNumber,
-			int endNumber, char[] name, IBinding binding) {
+	public ASTPreprocessorDefinition(IASTNode parent, ASTNodeProperty property, int startNumber, int endNumber,
+			char[] name, IBinding binding) {
 		super(parent, property, startNumber, endNumber, name, binding);
 	}
 
@@ -148,7 +151,7 @@ class ASTPreprocessorDefinition extends ASTPreprocessorName {
 	public boolean isDefinition() {
 		return true;
 	}
-	
+
 	@Override
 	public int getRoleOfName(boolean allowResolution) {
 		return IASTNameOwner.r_definition;
@@ -158,10 +161,10 @@ class ASTPreprocessorDefinition extends ASTPreprocessorName {
 class ASTBuiltinName extends ASTPreprocessorDefinition implements IAdaptable {
 	private final IName fOriginalDefinition;
 
-	public ASTBuiltinName(IASTNode parent, ASTNodeProperty property, IName originalDefinition,
-			char[] name, IBinding binding) {
+	public ASTBuiltinName(IASTNode parent, ASTNodeProperty property, IName originalDefinition, char[] name,
+			IBinding binding) {
 		super(parent, property, -1, -1, name, binding);
-		fOriginalDefinition= originalDefinition;
+		fOriginalDefinition = originalDefinition;
 	}
 
 	@Override
@@ -210,11 +213,11 @@ class ASTBuiltinName extends ASTPreprocessorDefinition implements IAdaptable {
 
 class ASTMacroReferenceName extends ASTPreprocessorName {
 	private ImageLocationInfo fImageLocationInfo;
-	
-	public ASTMacroReferenceName(IASTNode parent, ASTNodeProperty property,
-			int offset, int endOffset, IMacroBinding macro, ImageLocationInfo imgLocationInfo) {
+
+	public ASTMacroReferenceName(IASTNode parent, ASTNodeProperty property, int offset, int endOffset,
+			IMacroBinding macro, ImageLocationInfo imgLocationInfo) {
 		super(parent, property, offset, endOffset, macro.getNameCharArray(), macro);
-		fImageLocationInfo= imgLocationInfo;
+		fImageLocationInfo = imgLocationInfo;
 	}
 
 	@Override
@@ -230,9 +233,9 @@ class ASTMacroReferenceName extends ASTPreprocessorName {
 	@Override
 	public IASTImageLocation getImageLocation() {
 		if (fImageLocationInfo != null) {
-			IASTTranslationUnit tu= getTranslationUnit();
+			IASTTranslationUnit tu = getTranslationUnit();
 			if (tu != null) {
-				LocationMap lr= tu.getAdapter(LocationMap.class);
+				LocationMap lr = tu.getAdapter(LocationMap.class);
 				if (lr != null) {
 					return fImageLocationInfo.createLocation(lr, fImageLocationInfo);
 				}
@@ -243,7 +246,7 @@ class ASTMacroReferenceName extends ASTPreprocessorName {
 		// Macro reference names which are nested references rather than the name of the
 		// macro being expanded itself, have their node location set to the entire macro
 		// expansion (see LocationMap.pushMacroExpansion()), which doesn't produce a
-		// useful image location. 
+		// useful image location.
 		if (getParent() instanceof ASTMacroExpansion) {
 			if (((ASTMacroExpansion) getParent()).getContext().getMacroReference() == this) {
 				return super.getImageLocation();

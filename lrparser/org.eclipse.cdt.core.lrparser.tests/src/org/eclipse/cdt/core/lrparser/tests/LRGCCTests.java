@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,28 +27,32 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 public class LRGCCTests extends GCCTests {
 
 	public static TestSuite suite() {
-    	return suite(LRGCCTests.class);
-    }
-	
-	public LRGCCTests() {}
-	public LRGCCTests(String name) { super(name); }
+		return suite(LRGCCTests.class);
+	}
 
-	 
-    @Override
-    @SuppressWarnings("unused") 
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-    	ParseHelper.Options options = new ParseHelper.Options().setCheckSyntaxProblems(expectNoProblems).setCheckPreprocessorProblems(expectNoProblems);
-    	return ParseHelper.parse(code, language, options);
-    }
-    
-    
-    protected ILanguage getCLanguage() {
-    	return GCCLanguage.getDefault();
-    }
-	
+	public LRGCCTests() {
+	}
+
+	public LRGCCTests(String name) {
+		super(name);
+	}
+
+	@Override
+	@SuppressWarnings("unused")
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
+			boolean expectNoProblems) throws ParserException {
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
+		ParseHelper.Options options = new ParseHelper.Options().setCheckSyntaxProblems(expectNoProblems)
+				.setCheckPreprocessorProblems(expectNoProblems);
+		return ParseHelper.parse(code, language, options);
+	}
+
+	protected ILanguage getCLanguage() {
+		return GCCLanguage.getDefault();
+	}
+
 	protected ILanguage getCPPLanguage() {
 		return GPPLanguage.getDefault();
 	}
-    
+
 }

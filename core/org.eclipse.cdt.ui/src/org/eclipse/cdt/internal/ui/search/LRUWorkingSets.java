@@ -28,8 +28,6 @@ import java.util.Set;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 
-
-
 /**
  * @author bgheorgh
  *
@@ -37,53 +35,53 @@ import org.eclipse.ui.PlatformUI;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class LRUWorkingSets {
-	
+
 	ArrayList<IWorkingSet[]> workingSetsCache = null;
-	int size=0;
-	
-	public LRUWorkingSets(int size){
+	int size = 0;
+
+	public LRUWorkingSets(int size) {
 		workingSetsCache = new ArrayList<IWorkingSet[]>(size);
 		this.size = size;
 	}
-	
-	public void add(IWorkingSet[] workingSet){
+
+	public void add(IWorkingSet[] workingSet) {
 		cleanUpCache();
-		//See if this working set has been previously added to the 
-		IWorkingSet[] existingWorkingSets= find(workingSetsCache, workingSet);
+		//See if this working set has been previously added to the
+		IWorkingSet[] existingWorkingSets = find(workingSetsCache, workingSet);
 		if (existingWorkingSets != null)
 			workingSetsCache.remove(existingWorkingSets);
 		else if (workingSetsCache.size() == size)
 			workingSetsCache.remove(size - 1);
 		workingSetsCache.add(0, workingSet);
 	}
-	
+
 	private IWorkingSet[] find(ArrayList<IWorkingSet[]> list, IWorkingSet[] workingSet) {
-		Set<IWorkingSet> workingSetList= new HashSet<IWorkingSet>(Arrays.asList(workingSet));
-		Iterator<IWorkingSet[]> iter= list.iterator();
+		Set<IWorkingSet> workingSetList = new HashSet<IWorkingSet>(Arrays.asList(workingSet));
+		Iterator<IWorkingSet[]> iter = list.iterator();
 		while (iter.hasNext()) {
-			IWorkingSet[] lruWorkingSets= iter.next();
-			Set<IWorkingSet> lruWorkingSetList= new HashSet<IWorkingSet>(Arrays.asList(lruWorkingSets));
+			IWorkingSet[] lruWorkingSets = iter.next();
+			Set<IWorkingSet> lruWorkingSetList = new HashSet<IWorkingSet>(Arrays.asList(lruWorkingSets));
 			if (lruWorkingSetList.equals(workingSetList))
 				return lruWorkingSets;
 		}
 		return null;
 	}
 
-	private void cleanUpCache(){
-     //Remove any previously deleted entries
-	 Iterator<IWorkingSet[]> iter = workingSetsCache.iterator();
-	 while (iter.hasNext()){
-	 	IWorkingSet[] workingSet = iter.next();
-	 	for (int i= 0; i < workingSet.length; i++) {
-			if (PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSet[i].getName()) == null) {
-				workingSetsCache.remove(workingSet);
-				break;
+	private void cleanUpCache() {
+		//Remove any previously deleted entries
+		Iterator<IWorkingSet[]> iter = workingSetsCache.iterator();
+		while (iter.hasNext()) {
+			IWorkingSet[] workingSet = iter.next();
+			for (int i = 0; i < workingSet.length; i++) {
+				if (PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSet[i].getName()) == null) {
+					workingSetsCache.remove(workingSet);
+					break;
+				}
 			}
 		}
-	 }
 	}
 
 	public Iterator<IWorkingSet[]> iterator() {
-		return workingSetsCache.iterator(); 
+		return workingSetsCache.iterator();
 	}
 }

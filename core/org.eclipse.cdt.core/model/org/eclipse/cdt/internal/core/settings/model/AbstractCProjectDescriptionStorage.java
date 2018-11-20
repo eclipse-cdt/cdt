@@ -80,13 +80,13 @@ public abstract class AbstractCProjectDescriptionStorage {
 	 *  Cached temporarily in a thread local variable for this very purpose. */
 	final private ThreadLocal<ICProjectDescription> currentThreadProjectDescription = new ThreadLocal<ICProjectDescription>();
 
-
 	/**
 	 * @param type CProjectDescriptionStorageTypeProxy
 	 * @param project IProject
 	 * @param version Version
 	 */
-	public AbstractCProjectDescriptionStorage(CProjectDescriptionStorageTypeProxy type, IProject project, Version version) {
+	public AbstractCProjectDescriptionStorage(CProjectDescriptionStorageTypeProxy type, IProject project,
+			Version version) {
 		this.type = type;
 		this.project = project;
 		this.version = version;
@@ -116,7 +116,6 @@ public abstract class AbstractCProjectDescriptionStorage {
 	 */
 	public abstract ICSettingsStorage getStorageForElement(ICStorageElement element) throws CoreException;
 
-
 	/*
 	 * T O    C L E A N U P
 	 */
@@ -133,7 +132,6 @@ public abstract class AbstractCProjectDescriptionStorage {
 	public ICStorageElement copyElement(ICStorageElement el, boolean writable) throws CoreException {
 		return null;
 	}
-
 
 	/*
 	 * get/setProjectDescription methods
@@ -159,18 +157,21 @@ public abstract class AbstractCProjectDescriptionStorage {
 	 */
 	public ICProjectDescription getProjectDescription(int flags, IProgressMonitor monitor) throws CoreException {
 		if (!project.isAccessible())
-			throw ExceptionFactory.createCoreException(MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), new Object[] {getProject().getName()})); //$NON-NLS-1$
+			throw ExceptionFactory.createCoreException(
+					MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), //$NON-NLS-1$
+							new Object[] { getProject().getName() }));
 		return currentThreadProjectDescription.get();
 	}
 
 	/**
 	 * The method called by the CProjectDescriptionManager for serializing the project settings
- 	 * @param description the project description being set
+	 * @param description the project description being set
 	 * @param flags
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public void setProjectDescription(final ICProjectDescription description, final int flags, IProgressMonitor monitor) throws CoreException {
+	public void setProjectDescription(final ICProjectDescription description, final int flags, IProgressMonitor monitor)
+			throws CoreException {
 		try {
 			if (monitor == null)
 				monitor = new NullProgressMonitor();
@@ -179,7 +180,8 @@ public abstract class AbstractCProjectDescriptionStorage {
 
 			// The CProjectDescriptionOperation fires the appropriate CElementDeltas calling the callbacks
 			// below for actual project serialization
-			SetCProjectDescriptionOperation op = new SetCProjectDescriptionOperation(this, cproject, (CProjectDescription)description, flags);
+			SetCProjectDescriptionOperation op = new SetCProjectDescriptionOperation(this, cproject,
+					(CProjectDescription) description, flags);
 
 			// Safety: Verify that the listeners of the event call-backs don't recursively call setProjectDescription(...)
 			//         While in the past this recursion hasn't been infinite, the behaviour is 'undefined'.
@@ -214,7 +216,6 @@ public abstract class AbstractCProjectDescriptionStorage {
 		}
 	}
 
-
 	/*
 	 * C A L L B A C K S
 	 * Callbacks for the SetCProjectDescriptionOperation to allow AbstractCProjectDescriptionStorage overrides
@@ -241,8 +242,6 @@ public abstract class AbstractCProjectDescriptionStorage {
 	 */
 	public abstract IWorkspaceRunnable createDesSerializationRunnable() throws CoreException;
 
-
-
 	/*
 	 * R E S O U R C E     C H A N G E    E V E N T S
 	 */
@@ -268,7 +267,8 @@ public abstract class AbstractCProjectDescriptionStorage {
 	 */
 
 	public static final void fireLoadedEvent(ICProjectDescription desc) {
-		CProjectDescriptionManager.getInstance().notifyListeners(new CProjectDescriptionEvent(CProjectDescriptionEvent.LOADED, null, desc, null, null));
+		CProjectDescriptionManager.getInstance()
+				.notifyListeners(new CProjectDescriptionEvent(CProjectDescriptionEvent.LOADED, null, desc, null, null));
 	}
 
 	/**
@@ -280,18 +280,22 @@ public abstract class AbstractCProjectDescriptionStorage {
 	 * @param oldDes The old description
 	 */
 	public static final void fireCopyCreatedEvent(ICProjectDescription newDes, ICProjectDescription oldDes) {
-		CProjectDescriptionManager.getInstance().notifyListeners(new CProjectDescriptionEvent(CProjectDescriptionEvent.COPY_CREATED, null, newDes, oldDes, null));
+		CProjectDescriptionManager.getInstance().notifyListeners(
+				new CProjectDescriptionEvent(CProjectDescriptionEvent.COPY_CREATED, null, newDes, oldDes, null));
 	}
 
 	public static final void fireAboutToApplyEvent(ICProjectDescription newDes, ICProjectDescription oldDes) {
-		CProjectDescriptionManager.getInstance().notifyListeners(new CProjectDescriptionEvent(CProjectDescriptionEvent.ABOUT_TO_APPLY, null, newDes, oldDes, null));
+		CProjectDescriptionManager.getInstance().notifyListeners(
+				new CProjectDescriptionEvent(CProjectDescriptionEvent.ABOUT_TO_APPLY, null, newDes, oldDes, null));
 	}
 
-	public static final CProjectDescriptionEvent createAppliedEvent(ICProjectDescription newDes, ICProjectDescription oldDes, ICProjectDescription appliedDes, ICDescriptionDelta delta) {
+	public static final CProjectDescriptionEvent createAppliedEvent(ICProjectDescription newDes,
+			ICProjectDescription oldDes, ICProjectDescription appliedDes, ICDescriptionDelta delta) {
 		return new CProjectDescriptionEvent(CProjectDescriptionEvent.APPLIED, delta, newDes, oldDes, appliedDes);
 	}
 
-	public static final void fireAppliedEvent(ICProjectDescription newDes, ICProjectDescription oldDes, ICProjectDescription appliedDes, ICDescriptionDelta delta) {
+	public static final void fireAppliedEvent(ICProjectDescription newDes, ICProjectDescription oldDes,
+			ICProjectDescription appliedDes, ICDescriptionDelta delta) {
 		CProjectDescriptionManager.getInstance().notifyListeners(createAppliedEvent(newDes, oldDes, appliedDes, delta));
 	}
 
@@ -301,8 +305,10 @@ public abstract class AbstractCProjectDescriptionStorage {
 	 * @param appliedDes - the description being applied
 	 * @param delta
 	 */
-	public static final void fireDataAppliedEvent(ICProjectDescription newDes, ICProjectDescription oldDes, ICProjectDescription appliedDes, ICDescriptionDelta delta) {
-		CProjectDescriptionManager.getInstance().notifyListeners(new CProjectDescriptionEvent(CProjectDescriptionEvent.DATA_APPLIED, delta, newDes, oldDes, appliedDes));
+	public static final void fireDataAppliedEvent(ICProjectDescription newDes, ICProjectDescription oldDes,
+			ICProjectDescription appliedDes, ICDescriptionDelta delta) {
+		CProjectDescriptionManager.getInstance().notifyListeners(
+				new CProjectDescriptionEvent(CProjectDescriptionEvent.DATA_APPLIED, delta, newDes, oldDes, appliedDes));
 	}
 
 	/**
@@ -311,7 +317,7 @@ public abstract class AbstractCProjectDescriptionStorage {
 	 * @param check
 	 * @return boolean indicating whether flags are set
 	 */
-	protected static final boolean checkFlags(int flags, int check){
+	protected static final boolean checkFlags(int flags, int check) {
 		return (flags & check) == check;
 	}
 

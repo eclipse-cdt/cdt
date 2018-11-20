@@ -10,7 +10,7 @@
  *
  * Contributors:
  * 		Mentor Graphics - Initial API and implementation
- * 		John Dallaway - Add methods to get the endianness and address size (Bug 225609) 
+ * 		John Dallaway - Add methods to get the endianness and address size (Bug 225609)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
@@ -21,12 +21,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
  * Returns the endianness of the current GDB target.
- * 
+ *
  * @since 4.2
  */
 public class CLIShowEndian extends MIInterpreterExecConsole<CLIShowEndianInfo> {
 
-	private static final String SHOW_ENDIAN = "show endian";  //$NON-NLS-1$
+	private static final String SHOW_ENDIAN = "show endian"; //$NON-NLS-1$
 
 	public CLIShowEndian(IMemoryDMContext ctx) {
 		super(ctx, SHOW_ENDIAN);

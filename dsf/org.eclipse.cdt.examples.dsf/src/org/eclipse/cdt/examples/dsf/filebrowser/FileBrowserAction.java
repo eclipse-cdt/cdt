@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,22 +22,20 @@ import org.eclipse.ui.actions.ActionDelegate;
 /**
  * Action that opens the File Browser example dialog.
  */
-public class FileBrowserAction extends ActionDelegate 
-    implements IWorkbenchWindowActionDelegate 
-{
-    private IWorkbenchWindow fWindow;
-    
-    @Override
-    public void run(IAction action) {
-        if (fWindow != null) {
-            // Create the dialog and open it.
-            Dialog dialog = new FileBrowserDialog(fWindow.getShell());
-            dialog.open();
-        }
-    }
+public class FileBrowserAction extends ActionDelegate implements IWorkbenchWindowActionDelegate {
+	private IWorkbenchWindow fWindow;
 
-    @Override
-    public void init(IWorkbenchWindow window) {
-        fWindow = window;
-    }
+	@Override
+	public void run(IAction action) {
+		if (fWindow != null) {
+			// Create the dialog and open it.
+			Dialog dialog = new FileBrowserDialog(fWindow.getShell());
+			dialog.open();
+		}
+	}
+
+	@Override
+	public void init(IWorkbenchWindow window) {
+		fWindow = window;
+	}
 }

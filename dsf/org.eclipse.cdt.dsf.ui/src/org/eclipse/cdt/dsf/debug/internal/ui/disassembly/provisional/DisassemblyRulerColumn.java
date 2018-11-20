@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
@@ -69,7 +69,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
  * </p>
  */
 public class DisassemblyRulerColumn extends AbstractContributedRulerColumn implements IPropertyChangeListener {
-	protected final static String DOTS =   "......................................................................"; //$NON-NLS-1$
+	protected final static String DOTS = "......................................................................"; //$NON-NLS-1$
 	protected final static String SPACES = "                                                                      "; //$NON-NLS-1$
 
 	/**
@@ -231,7 +231,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		/**
 		 * Expands the line selection from the remembered start line to the
 		 * given line.
-		 * 
+		 *
 		 * @param lineNumber
 		 *            the line to which to expand the selection
 		 */
@@ -242,8 +242,8 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 				IRegion lineInfo = document.getLineInformation(lineNumber);
 
 				int start = Math.min(fStartLine.getOffset(), lineInfo.getOffset());
-				int end = Math.max(fStartLine.getOffset() + fStartLine.getLength(), lineInfo.getOffset()
-					+ lineInfo.getLength());
+				int end = Math.max(fStartLine.getOffset() + fStartLine.getLength(),
+						lineInfo.getOffset() + lineInfo.getLength());
 
 				if (lineNumber < fStartLineNumber)
 					fCachedTextViewer.setSelectedRange(end, start - end);
@@ -263,7 +263,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 		/**
 		 * Called on drag selection.
-		 * 
+		 *
 		 * @param event
 		 *            the mouse event caught by the mouse move listener
 		 * @return <code>true</code> if scrolling happened, <code>false</code>
@@ -288,7 +288,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 		/**
 		 * Scrolls the viewer into the given direction.
-		 * 
+		 *
 		 * @param direction
 		 *            the scroll direction
 		 */
@@ -340,7 +340,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		/**
 		 * Returns the viewer's first visible line, even if only partially
 		 * visible.
-		 * 
+		 *
 		 * @return the viewer's first visible line
 		 */
 		private int getInclusiveTopIndex() {
@@ -408,7 +408,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Constructs a new vertical ruler column.
-	 * 
+	 *
 	 */
 	public DisassemblyRulerColumn() {
 		this(SWT.LEFT);
@@ -439,7 +439,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Sets the foreground color of this column.
-	 * 
+	 *
 	 * @param foreground
 	 *            the foreground color
 	 */
@@ -449,7 +449,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Returns the foreground color being used to print the line numbers.
-	 * 
+	 *
 	 * @return the configured foreground color
 	 */
 	protected Color getForeground() {
@@ -458,7 +458,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Sets the background color of this column.
-	 * 
+	 *
 	 * @param background
 	 *            the background color
 	 */
@@ -470,7 +470,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Returns the System background color for list widgets.
-	 * 
+	 *
 	 * @param display
 	 *            the display
 	 * @return the System background color for list widgets
@@ -506,7 +506,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 * if the number of digits changed compared to the previous call of this
 	 * method. If the method is called for the first time, the return value is
 	 * also <code>true</code>.
-	 * 
+	 *
 	 * @return whether the number of digits has been changed
 	 */
 	protected boolean updateNumberOfDigits() {
@@ -527,14 +527,14 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 * Does the real computation of the number of characters. The default
 	 * implementation computes the number of digits for the line number.
 	 * Subclasses may override this method if they need extra space on the ruler.
-	 * 
+	 *
 	 * @return the number of characters to be displayed on the ruler.
 	 */
 	protected int computeNumberOfCharacters() {
 		IDocument document = fCachedTextViewer.getDocument();
-		int lines= document == null ? 0 : document.getNumberOfLines();
+		int lines = document == null ? 0 : document.getNumberOfLines();
 
-		int digits= 2;
+		int digits = 2;
 		while (lines > Math.pow(10, digits) - 1) {
 			++digits;
 		}
@@ -544,22 +544,22 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	/**
 	 * Layouts the enclosing viewer to adapt the layout to changes of the size
 	 * of the individual components.
-	 * 
+	 *
 	 * @param redraw
 	 *            <code>true</code> if this column can be redrawn
 	 */
 	protected void layout(boolean redraw) {
 		if (!redraw) {
-			fRelayoutRequired= true;
+			fRelayoutRequired = true;
 			return;
 		}
 
-		fRelayoutRequired= false;
+		fRelayoutRequired = false;
 		if (fCachedTextViewer instanceof ITextViewerExtension) {
-			ITextViewerExtension extension= (ITextViewerExtension) fCachedTextViewer;
-			Control control= extension.getControl();
+			ITextViewerExtension extension = (ITextViewerExtension) fCachedTextViewer;
+			Control control = extension.getControl();
 			if (control instanceof Composite && !control.isDisposed()) {
-				Composite composite= (Composite) control;
+				Composite composite = (Composite) control;
 				composite.layout(true);
 			}
 		}
@@ -573,20 +573,20 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		if (fCanvas == null)
 			return;
 
-		GC gc= new GC(fCanvas);
+		GC gc = new GC(fCanvas);
 		try {
 
 			gc.setFont(fCanvas.getFont());
 
-			fIndentation= new int[fCachedNumberOfDigits + 1];
-			char[] digitStr= new char[fCachedNumberOfDigits + 1];
+			fIndentation = new int[fCachedNumberOfDigits + 1];
+			char[] digitStr = new char[fCachedNumberOfDigits + 1];
 			Arrays.fill(digitStr, '9');
-			Point p= gc.stringExtent(new String(digitStr, 0, fCachedNumberOfDigits + 1));
-			fIndentation[0]= p.x;
+			Point p = gc.stringExtent(new String(digitStr, 0, fCachedNumberOfDigits + 1));
+			fIndentation[0] = p.x;
 
-			for (int i= 1; i <= fCachedNumberOfDigits; i++) {
-				p= gc.stringExtent(new String(digitStr, 0, i));
-				fIndentation[i]= fIndentation[0] - p.x;
+			for (int i = 1; i <= fCachedNumberOfDigits; i++) {
+				p = gc.stringExtent(new String(digitStr, 0, i));
+				fIndentation[i] = fIndentation[0] - p.x;
 			}
 
 		} finally {
@@ -600,11 +600,11 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	@Override
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 
-		fParentRuler= parentRuler;
-		fCachedTextViewer= parentRuler.getTextViewer();
-		fCachedTextWidget= fCachedTextViewer.getTextWidget();
+		fParentRuler = parentRuler;
+		fCachedTextViewer = parentRuler.getTextViewer();
+		fCachedTextWidget = fCachedTextViewer.getTextWidget();
 
-		fCanvas= new Canvas(parentControl, SWT.NONE);
+		fCanvas = new Canvas(parentControl, SWT.NONE);
 		fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
 		fCanvas.setForeground(fForeground);
 
@@ -620,8 +620,8 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				handleDispose();
-				fCachedTextViewer= null;
-				fCachedTextWidget= null;
+				fCachedTextViewer = null;
+				fCachedTextWidget = null;
 			}
 		});
 
@@ -635,7 +635,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 			if (fFont == null) {
 				if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed())
-					fFont= fCachedTextWidget.getFont();
+					fFont = fCachedTextWidget.getFont();
 			}
 		}
 
@@ -660,7 +660,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 		if (fBuffer != null) {
 			fBuffer.dispose();
-			fBuffer= null;
+			fBuffer = null;
 		}
 	}
 
@@ -674,28 +674,28 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Double buffer drawing.
-	 * 
+	 *
 	 * @param dest
 	 *            the gc to draw into
 	 */
 	private void doubleBufferPaint(GC dest) {
 
-		Point size= fCanvas.getSize();
+		Point size = fCanvas.getSize();
 
 		if (size.x <= 0 || size.y <= 0)
 			return;
 
 		if (fBuffer != null) {
-			Rectangle r= fBuffer.getBounds();
+			Rectangle r = fBuffer.getBounds();
 			if (r.width != size.x || r.height != size.y) {
 				fBuffer.dispose();
-				fBuffer= null;
+				fBuffer = null;
 			}
 		}
 		if (fBuffer == null)
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
+			fBuffer = new Image(fCanvas.getDisplay(), size.x, size.y);
 
-		GC gc= new GC(fBuffer);
+		GC gc = new GC(fBuffer);
 		gc.setFont(fCanvas.getFont());
 		if (fForeground != null)
 			gc.setForeground(fForeground);
@@ -718,17 +718,17 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Returns the viewport height in lines.
-	 * 
+	 *
 	 * @return the viewport height in lines
 	 */
 	protected int getVisibleLinesInViewport() {
-		Rectangle clArea= fCachedTextWidget.getClientArea();
+		Rectangle clArea = fCachedTextWidget.getClientArea();
 		return clArea.height / fCachedTextWidget.getLineHeight();
 	}
 
 	/**
 	 * Draws the ruler column.
-	 * 
+	 *
 	 * @param gc
 	 *            the gc to draw into
 	 */
@@ -740,12 +740,12 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		if (fCachedTextWidget == null)
 			return;
 
-		int firstLine= 0;
+		int firstLine = 0;
 
-		int topLine= fCachedTextWidget.getTopIndex();
-		fScrollPos= fCachedTextWidget.getTopPixel();
-		int lineheight= fCachedTextWidget.getLineHeight();
-		int partialLineHidden= fScrollPos % lineheight;
+		int topLine = fCachedTextWidget.getTopIndex();
+		fScrollPos = fCachedTextWidget.getTopPixel();
+		int lineheight = fCachedTextWidget.getLineHeight();
+		int partialLineHidden = fScrollPos % lineheight;
 
 		if (partialLineHidden > 0 && topLine > 0) // widgetTopLine shows the
 			// first fully visible line
@@ -755,51 +755,51 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 		try {
 
-			IRegion region= fCachedTextViewer.getVisibleRegion();
-			IDocument doc= fCachedTextViewer.getDocument();
+			IRegion region = fCachedTextViewer.getVisibleRegion();
+			IDocument doc = fCachedTextViewer.getDocument();
 
 			if (doc == null)
 				return;
 
-			firstLine= doc.getLineOfOffset(region.getOffset());
+			firstLine = doc.getLineOfOffset(region.getOffset());
 			if (firstLine > topLine)
-				topLine= firstLine;
+				topLine = firstLine;
 
-			bottomLine= doc.getLineOfOffset(region.getOffset() + region.getLength());
+			bottomLine = doc.getLineOfOffset(region.getOffset() + region.getLength());
 
 		} catch (BadLocationException x) {
 			return;
 		}
 
-		fSensitiveToTextChanges= bottomLine - topLine < getVisibleLinesInViewport();
+		fSensitiveToTextChanges = bottomLine - topLine < getVisibleLinesInViewport();
 
-		int baselineBias= getBaselineBias(gc);
+		int baselineBias = getBaselineBias(gc);
 
-		int topInset= fCachedTextViewer.getTopInset();
-		int y= topInset - partialLineHidden;
-		Point canvasSize= fCanvas.getSize();
-		Point selection= fCachedTextWidget.getSelection();
-		boolean selectedLine= false;
-		Color defaultForeground= gc.getForeground();
-		Color defaultBackground= gc.getBackground();
+		int topInset = fCachedTextViewer.getTopInset();
+		int y = topInset - partialLineHidden;
+		Point canvasSize = fCanvas.getSize();
+		Point selection = fCachedTextWidget.getSelection();
+		boolean selectedLine = false;
+		Color defaultForeground = gc.getForeground();
+		Color defaultBackground = gc.getBackground();
 
-		for (int line= topLine; y < canvasSize.y && line <= bottomLine; line++, y += lineheight) {
-			int widgetOffset= fCachedTextWidget.getOffsetAtLine(line);
+		for (int line = topLine; y < canvasSize.y && line <= bottomLine; line++, y += lineheight) {
+			int widgetOffset = fCachedTextWidget.getOffsetAtLine(line);
 			if (fPaintSelectionBackground && widgetOffset >= selection.x && widgetOffset < selection.y) {
 				if (!selectedLine) {
-					selectedLine= true;
+					selectedLine = true;
 					gc.setForeground(fCachedTextWidget.getSelectionForeground());
 					gc.setBackground(fCachedTextWidget.getSelectionBackground());
 				}
 			} else if (selectedLine) {
-				selectedLine= false;
+				selectedLine = false;
 				gc.setForeground(defaultForeground);
 				gc.setBackground(defaultBackground);
 			}
 			if (selectedLine) {
 				gc.fillRectangle(0, y, canvasSize.x, lineheight);
 			} else if (fPaintStyleBackground && widgetOffset >= 0 && widgetOffset < fCachedTextWidget.getCharCount()) {
-				StyleRange style= fCachedTextWidget.getStyleRangeAtOffset(widgetOffset);
+				StyleRange style = fCachedTextWidget.getStyleRangeAtOffset(widgetOffset);
 				if (style != null && style.background != null) {
 					gc.setBackground(style.background);
 					gc.fillRectangle(0, y + baselineBias, canvasSize.x, lineheight - baselineBias);
@@ -807,8 +807,8 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 				}
 			}
 			paintLine(line, y, lineheight, gc, fCachedTextWidget.getDisplay());
-			String s= createDisplayString(line);
-			int indentation= fAlignRight ? fIndentation[s.length()] : 0;
+			String s = createDisplayString(line);
+			int indentation = fAlignRight ? fIndentation[s.length()] : 0;
 			gc.drawString(s, indentation, y + baselineBias, true);
 		}
 	}
@@ -816,7 +816,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	/**
 	 * Computes the string to be printed for <code>line</code>. The default
 	 * implementation returns <code>Integer.toString(line + 1)</code>.
-	 * 
+	 *
 	 * @param line
 	 *            the line number for which the string is generated
 	 * @return the string to be printed on the ruler column for <code>line</code>
@@ -828,7 +828,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	/**
 	 * Draws the ruler column. Uses <code>ITextViewerExtension5</code> for the
 	 * implementation. Will replace <code>doPinat(GC)</code>.
-	 * 
+	 *
 	 * @param gc
 	 *            the gc to draw into
 	 */
@@ -837,77 +837,77 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		if (fCachedTextViewer == null)
 			return;
 
-		ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
+		ITextViewerExtension5 extension = (ITextViewerExtension5) fCachedTextViewer;
 
-		int widgetTopLine= fCachedTextWidget.getTopIndex();
-		fScrollPos= fCachedTextWidget.getTopPixel();
-		int lineheight= fCachedTextWidget.getLineHeight();
-		int partialLineHidden= fScrollPos % lineheight;
+		int widgetTopLine = fCachedTextWidget.getTopIndex();
+		fScrollPos = fCachedTextWidget.getTopPixel();
+		int lineheight = fCachedTextWidget.getLineHeight();
+		int partialLineHidden = fScrollPos % lineheight;
 
 		if (partialLineHidden > 0 && widgetTopLine > 0) // widgetTopLine shows
 			// the first fully
 			// visible line
 			--widgetTopLine;
 
-		int modelTopLine= extension.widgetLine2ModelLine(widgetTopLine);
-		int modelBottomLine= fCachedTextViewer.getBottomIndex();
+		int modelTopLine = extension.widgetLine2ModelLine(widgetTopLine);
+		int modelBottomLine = fCachedTextViewer.getBottomIndex();
 		if (modelBottomLine >= 0)
 			++modelBottomLine;
 
 		try {
 
-			IRegion region= extension.getModelCoverage();
-			IDocument doc= fCachedTextViewer.getDocument();
+			IRegion region = extension.getModelCoverage();
+			IDocument doc = fCachedTextViewer.getDocument();
 
 			if (doc == null)
 				return;
 
-			int coverageTopLine= doc.getLineOfOffset(region.getOffset());
+			int coverageTopLine = doc.getLineOfOffset(region.getOffset());
 			if (coverageTopLine > modelTopLine || modelTopLine == -1)
-				modelTopLine= coverageTopLine;
+				modelTopLine = coverageTopLine;
 
-			int coverageBottomLine= doc.getLineOfOffset(region.getOffset() + region.getLength());
+			int coverageBottomLine = doc.getLineOfOffset(region.getOffset() + region.getLength());
 			if (coverageBottomLine < modelBottomLine || modelBottomLine == -1)
-				modelBottomLine= coverageBottomLine;
+				modelBottomLine = coverageBottomLine;
 
 		} catch (BadLocationException x) {
 			return;
 		}
 
-		fSensitiveToTextChanges= modelBottomLine - modelTopLine < getVisibleLinesInViewport();
+		fSensitiveToTextChanges = modelBottomLine - modelTopLine < getVisibleLinesInViewport();
 
-		int baselineBias= getBaselineBias(gc);
+		int baselineBias = getBaselineBias(gc);
 
-		int topInset= fCachedTextViewer.getTopInset();
-		int y= topInset - partialLineHidden;
-		Point canvasSize= fCanvas.getSize();
-		Point selection= fCachedTextWidget.getSelection();
-		boolean selectedLine= false;
-		Color defaultForeground= gc.getForeground();
-		Color defaultBackground= gc.getBackground();
+		int topInset = fCachedTextViewer.getTopInset();
+		int y = topInset - partialLineHidden;
+		Point canvasSize = fCanvas.getSize();
+		Point selection = fCachedTextWidget.getSelection();
+		boolean selectedLine = false;
+		Color defaultForeground = gc.getForeground();
+		Color defaultBackground = gc.getBackground();
 
-		for (int modelLine= modelTopLine; y < canvasSize.y && modelLine <= modelBottomLine; modelLine++) {
+		for (int modelLine = modelTopLine; y < canvasSize.y && modelLine <= modelBottomLine; modelLine++) {
 
 			// don't draw hidden (e.g. folded) lines
-			int widgetLine= extension.modelLine2WidgetLine(modelLine);
+			int widgetLine = extension.modelLine2WidgetLine(modelLine);
 			if (widgetLine == -1)
 				continue;
-			int widgetOffset= fCachedTextWidget.getOffsetAtLine(widgetLine);
+			int widgetOffset = fCachedTextWidget.getOffsetAtLine(widgetLine);
 			if (fPaintSelectionBackground && widgetOffset >= selection.x && widgetOffset < selection.y) {
 				if (!selectedLine) {
-					selectedLine= true;
+					selectedLine = true;
 					gc.setForeground(fCachedTextWidget.getSelectionForeground());
 					gc.setBackground(fCachedTextWidget.getSelectionBackground());
 				}
 			} else if (selectedLine) {
-				selectedLine= false;
+				selectedLine = false;
 				gc.setForeground(defaultForeground);
 				gc.setBackground(defaultBackground);
 			}
 			if (selectedLine) {
 				gc.fillRectangle(0, y, canvasSize.x, lineheight);
 			} else if (fPaintStyleBackground && widgetOffset >= 0 && widgetOffset < fCachedTextWidget.getCharCount()) {
-				StyleRange style= fCachedTextWidget.getStyleRangeAtOffset(widgetOffset);
+				StyleRange style = fCachedTextWidget.getStyleRangeAtOffset(widgetOffset);
 				if (style != null && style.background != null) {
 					gc.setBackground(style.background);
 					gc.fillRectangle(0, y + baselineBias, canvasSize.x, lineheight - baselineBias);
@@ -917,8 +917,8 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 			paintLine(modelLine, y, lineheight, gc, fCachedTextWidget.getDisplay());
 
-			String s= createDisplayString(modelLine);
-			int indentation= fAlignRight ? fIndentation[s.length()] : 0;
+			String s = createDisplayString(modelLine);
+			int indentation = fAlignRight ? fIndentation[s.length()] : 0;
 			gc.drawString(s, indentation, y + baselineBias, true);
 			y += lineheight;
 		}
@@ -929,7 +929,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 * baseline as specified by the font for <code>gc</code>. When drawing
 	 * text, the returned bias should be added to obtain text line up on
 	 * the correct base line of the text widget.
-	 * 
+	 *
 	 * @param gc
 	 *            the <code>GC</code> to get the font metrics from
 	 * @return the baseline bias to use when drawing text that is line up with
@@ -942,11 +942,11 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		 * since font styles (bold, italics...) can have larger font metrics
 		 * than the simple font used for the numbers.
 		 */
-		int widgetBaseline= fCachedTextWidget.getBaseline();
-		FontMetrics fm= gc.getFontMetrics();
-		int fontBaseline= fm.getAscent() + fm.getLeading();
+		int widgetBaseline = fCachedTextWidget.getBaseline();
+		FontMetrics fm = gc.getFontMetrics();
+		int fontBaseline = fm.getAscent() + fm.getLeading();
 		Assert.isTrue(widgetBaseline >= fontBaseline);
-		int baselineBias= widgetBaseline - fontBaseline;
+		int baselineBias = widgetBaseline - fontBaseline;
 		return baselineBias;
 	}
 
@@ -956,7 +956,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 * <p>
 	 * This default implementation does nothing.
 	 * </p>
-	 * 
+	 *
 	 * @param line
 	 *            the line of the document which the ruler is painted for
 	 * @param y
@@ -978,12 +978,12 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 */
 	protected final void postRedraw() {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
-			Display d= fCanvas.getDisplay();
+			Display d = fCanvas.getDisplay();
 			if (d != null) {
 				synchronized (fRunnableLock) {
 					if (fIsRunnablePosted)
 						return;
-					fIsRunnablePosted= true;
+					fIsRunnablePosted = true;
 				}
 				d.asyncExec(fRunnable);
 			}
@@ -1002,7 +1002,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		}
 
 		if (fCanvas != null && !fCanvas.isDisposed()) {
-			GC gc= new GC(fCanvas);
+			GC gc = new GC(fCanvas);
 			doubleBufferPaint(gc);
 			gc.dispose();
 		}
@@ -1020,7 +1020,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 */
 	@Override
 	public void setFont(Font font) {
-		fFont= font;
+		fFont = font;
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			fCanvas.setFont(fFont);
 			updateNumberOfDigits();
@@ -1030,7 +1030,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Returns the parent (composite) ruler of this ruler column.
-	 * 
+	 *
 	 * @return the parent ruler
 	 */
 	protected CompositeRuler getParentRuler() {

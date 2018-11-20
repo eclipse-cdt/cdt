@@ -28,8 +28,9 @@ public interface IDocCommentOwnershipListener {
 	 * @param oldOwner the previous document comment owner
 	 * @param newOwner the new document comment owner
 	 */
-	public void ownershipChanged(IResource resource, boolean submappingsRemoved, IDocCommentOwner oldOwner, IDocCommentOwner newOwner);
-	
+	public void ownershipChanged(IResource resource, boolean submappingsRemoved, IDocCommentOwner oldOwner,
+			IDocCommentOwner newOwner);
+
 	/**
 	 * Called when workspace-scope document comment owner changes.
 	 * @param oldOwner the previous document comment owner

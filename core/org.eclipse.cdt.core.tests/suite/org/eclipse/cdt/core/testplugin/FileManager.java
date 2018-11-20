@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,25 +34,25 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class FileManager {
 	HashSet<IFile> fileHandles;
-	
-	public FileManager(){
+
+	public FileManager() {
 		fileHandles = new HashSet<IFile>();
 	}
-	
-	public void addFile(IFile file){
+
+	public void addFile(IFile file) {
 		fileHandles.add(file);
 	}
-	
-	public void closeAllFiles() throws CoreException, InterruptedException{
-		int wait= 1;
+
+	public void closeAllFiles() throws CoreException, InterruptedException {
+		int wait = 1;
 		for (int i = 0; i < 11; i++) {
-			for (Iterator iter= fileHandles.iterator(); iter.hasNext();) {
+			for (Iterator iter = fileHandles.iterator(); iter.hasNext();) {
 				IFile tempFile = (IFile) iter.next();
 				try {
-					if (i==1) {
-						tempFile.refreshLocal(IResource.DEPTH_INFINITE,null);
+					if (i == 1) {
+						tempFile.refreshLocal(IResource.DEPTH_INFINITE, null);
 					}
-					tempFile.delete(true,null);
+					tempFile.delete(true, null);
 					iter.remove();
 				} catch (CoreException e) {
 					if (wait > 2000)
@@ -63,7 +63,7 @@ public class FileManager {
 			if (fileHandles.isEmpty())
 				return;
 			Thread.sleep(wait);
-			wait*=2;
+			wait *= 2;
 		}
 	}
 }

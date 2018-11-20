@@ -26,10 +26,8 @@ import org.eclipse.core.runtime.QualifiedName;
  * @see CoreModel#getProjectDescription(IProject, boolean)
  *
  */
-public interface ICProjectDescription  extends ICSettingContainer,
-							ICSettingObject,
-							ICSettingsStorage,
-							ICProjectDescriptionPreferences {
+public interface ICProjectDescription
+		extends ICSettingContainer, ICSettingObject, ICSettingsStorage, ICProjectDescriptionPreferences {
 
 	/**
 	 * @return {@link ICConfigurationDescription}[] containing all configurations in the project
@@ -65,7 +63,8 @@ public interface ICProjectDescription  extends ICSettingContainer,
 	 * the description is read only if it was queried/returned by the <code>CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)</code> call
 	 *
 	 */
-	ICConfigurationDescription createConfiguration(String id, String name, ICConfigurationDescription base) throws CoreException, WriteAccessException;
+	ICConfigurationDescription createConfiguration(String id, String name, ICConfigurationDescription base)
+			throws CoreException, WriteAccessException;
 
 	/**
 	 * creates/adds a new configuration for this project description
@@ -79,7 +78,8 @@ public interface ICProjectDescription  extends ICSettingContainer,
 	 * @throws WriteAccessException when the project description is read-only
 	 * the description is read only if it was queried/returned by the <code>CoreModel.getProjectDescription(org.eclipse.core.resources.IProject, false)</code> call
 	 */
-	ICConfigurationDescription createConfiguration(String buildSystemId, CConfigurationData data) throws CoreException, WriteAccessException;
+	ICConfigurationDescription createConfiguration(String buildSystemId, CConfigurationData data)
+			throws CoreException, WriteAccessException;
 
 	/**
 	 * @param name String name of the configuration to get
@@ -152,8 +152,8 @@ public interface ICProjectDescription  extends ICSettingContainer,
 
 	/**
 	 * Sets the default setting ICConfigurationDescription. This is the configuration
-     * used by the CDT editor and views.
-     *
+	 * used by the CDT editor and views.
+	 *
 	 * @param cfg
 	 */
 	void setDefaultSettingConfiguration(ICConfigurationDescription cfg);

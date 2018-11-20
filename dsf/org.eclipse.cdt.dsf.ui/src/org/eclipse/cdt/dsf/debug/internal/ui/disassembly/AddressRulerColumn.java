@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -34,10 +34,11 @@ import org.eclipse.swt.SWT;
 /**
  * A vertical ruler column to display the instruction address.
  */
-public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension, IAnnotationHover {
+public class AddressRulerColumn extends DisassemblyRulerColumn
+		implements IVerticalRulerInfo, IVerticalRulerInfoExtension, IAnnotationHover {
 
 	public static final String ID = "org.eclipse.cdt.dsf.ui.disassemblyColumn.address"; //$NON-NLS-1$
-	
+
 	private int fRadix;
 	private boolean fShowRadixPrefix;
 	private String fRadixPrefix;
@@ -58,7 +59,7 @@ public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerti
 
 	@Override
 	protected String createDisplayString(int line) {
-		DisassemblyDocument doc = (DisassemblyDocument)getParentRuler().getTextViewer().getDocument();
+		DisassemblyDocument doc = (DisassemblyDocument) getParentRuler().getTextViewer().getDocument();
 		int offset;
 		try {
 			offset = doc.getLineOffset(line);
@@ -76,16 +77,16 @@ public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerti
 				int nLines;
 				if (srcPos.fFileInfo.fSource == null) {
 					srcLine = srcPos.fLine;
-					nLines = srcLine+1;
+					nLines = srcLine + 1;
 				} else {
-				 	int delta = offset-srcPos.offset;
-				 	int baseOffset = srcPos.fFileInfo.fSource.getLineOffset(srcPos.fLine);
-					srcLine = srcPos.fFileInfo.fSource.getLineOfOffset(baseOffset+delta);
+					int delta = offset - srcPos.offset;
+					int baseOffset = srcPos.fFileInfo.fSource.getLineOffset(srcPos.fLine);
+					srcLine = srcPos.fFileInfo.fSource.getLineOfOffset(baseOffset + delta);
 					nLines = srcPos.fFileInfo.fSource.getNumberOfLines();
 				}
-				String digitStr = Integer.toString(srcLine+1);
-				int maxDigits = (int)(Math.log(nLines)/Math.log(10))+1;
-				return SPACES.substring(0, maxDigits-digitStr.length())+digitStr;
+				String digitStr = Integer.toString(srcLine + 1);
+				int maxDigits = (int) (Math.log(nLines) / Math.log(10)) + 1;
+				return SPACES.substring(0, maxDigits - digitStr.length()) + digitStr;
 			}
 		} catch (BadLocationException e) {
 			// silently ignored
@@ -99,20 +100,20 @@ public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerti
 	}
 
 	public void setAddressSize(int bits) {
-		fAddressSize= bits;
+		fAddressSize = bits;
 		calculateNumberOfDigits();
 	}
 
 	public void setRadix(int radix) {
-		fRadix= radix;
+		fRadix = radix;
 		calculateNumberOfDigits();
 		setShowRadixPrefix(fShowRadixPrefix);
 	}
 
 	private void calculateNumberOfDigits() {
-		fNumberOfDigits= BigInteger.ONE.shiftLeft(fAddressSize).subtract(BigInteger.ONE).toString(fRadix).length();
+		fNumberOfDigits = BigInteger.ONE.shiftLeft(fAddressSize).subtract(BigInteger.ONE).toString(fRadix).length();
 	}
-	
+
 	public void setShowRadixPrefix(boolean showRadixPrefix) {
 		fShowRadixPrefix = showRadixPrefix;
 		if (!fShowRadixPrefix) {
@@ -132,7 +133,7 @@ public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerti
 			buf.append(fRadixPrefix);
 		}
 		String str = address.toString(fRadix);
-		for (int i=str.length(); i<fNumberOfDigits; ++i)
+		for (int i = str.length(); i < fNumberOfDigits; ++i)
 			buf.append('0');
 		buf.append(str);
 		buf.append(':');
@@ -169,7 +170,7 @@ public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerti
 
 	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int line) {
-		DisassemblyDocument doc = (DisassemblyDocument)getParentRuler().getTextViewer().getDocument();
+		DisassemblyDocument doc = (DisassemblyDocument) getParentRuler().getTextViewer().getDocument();
 		BigInteger address = doc.getAddressOfLine(line);
 		SourceFileInfo info = doc.getSourceInfo(address);
 		if (info != null) {
@@ -180,7 +181,7 @@ public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerti
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		String property	= event.getProperty();
+		String property = event.getProperty();
 		IPreferenceStore store = getPreferenceStore();
 		boolean needRedraw = false;
 		if (DisassemblyPreferenceConstants.ADDRESS_COLOR.equals(property)) {

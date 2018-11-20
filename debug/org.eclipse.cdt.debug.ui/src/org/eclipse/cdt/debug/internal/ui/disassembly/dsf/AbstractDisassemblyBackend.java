@@ -49,20 +49,19 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 	 */
 	public abstract BigInteger evaluateAddressExpression(String expression, boolean suppressError);
 
-
 	@Override
 	public String evaluateRegister(String register) {
 		return null;
 	}
 
-    @Override
+	@Override
 	public String getHoverInfoData(AddressRangePosition pos, String ident) {
-    	return null;
+		return null;
 	}
 
 	/**
 	 * Default error handler, sub-class can override this method to provide it's own error handling.
-	 *  
+	 *
 	 * @param status
 	 */
 	protected void handleError(final IStatus status) {
@@ -71,7 +70,7 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 			public void run() {
 				ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, status); //$NON-NLS-1$
 			}
-		});				
+		});
 	}
 
 	/**
@@ -80,12 +79,12 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 	@Override
 	public void updateExtendedPCAnnotation(IAnnotationModel model) {
 	}
-	
+
 	@Override
 	public boolean canDisassemble() {
 		return true;
 	}
-	
+
 	@Override
 	public BigInteger getLastKnownAddress() {
 		return UNKNOWN_ADDRESS;

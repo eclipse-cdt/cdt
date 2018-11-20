@@ -16,13 +16,12 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
-
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListFramesInfo;
 
 /**
- * 
+ *
  *     -stack-list-frames [ LOW-FRAME HIGH-FRAME ]
  *
  *  List the frames currently on the stack.  For each frame it displays
@@ -52,20 +51,19 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListFramesInfo;
  * whole stack.  If given two integer arguments, it shows the frames whose
  * levels are between the two arguments (inclusive).  If the two arguments
  * are equal, it shows the single frame at the corresponding level.
- * 
+ *
  */
-public class MIStackListFrames extends MICommand<MIStackListFramesInfo>
-{
-    public MIStackListFrames(IMIExecutionDMContext execDmc) {
-        super(execDmc, "-stack-list-frames"); //$NON-NLS-1$
-    }
-    
-    public MIStackListFrames(IMIExecutionDMContext execDmc, int low, int high) {
-        super(execDmc, "-stack-list-frames", new String[] { Integer.toString(low), Integer.toString(high) }); //$NON-NLS-1$
-    }
-    
-    @Override
-    public MIStackListFramesInfo getResult(MIOutput out) {
-        return new MIStackListFramesInfo(out);
-    }
+public class MIStackListFrames extends MICommand<MIStackListFramesInfo> {
+	public MIStackListFrames(IMIExecutionDMContext execDmc) {
+		super(execDmc, "-stack-list-frames"); //$NON-NLS-1$
+	}
+
+	public MIStackListFrames(IMIExecutionDMContext execDmc, int low, int high) {
+		super(execDmc, "-stack-list-frames", new String[] { Integer.toString(low), Integer.toString(high) }); //$NON-NLS-1$
+	}
+
+	@Override
+	public MIStackListFramesInfo getResult(MIOutput out) {
+		return new MIStackListFramesInfo(out);
+	}
 }

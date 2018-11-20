@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.model.ICElement;
  * This operation renames resources (Package fragments and compilation units).
  *
  * <p>Notes:<ul>
- * <li>When a compilation unit is renamed, its main type and the constructors of the 
+ * <li>When a compilation unit is renamed, its main type and the constructors of the
  * 		main type are renamed.
  * </ul>
  */
@@ -31,7 +31,8 @@ public class RenameResourceElementsOperation extends MoveResourceElementsOperati
 	 * When executed, this operation will rename the specified elements with the given names in the
 	 * corresponding destinations.
 	 */
-	public RenameResourceElementsOperation(ICElement[] elements, ICElement[] destinations, String[] newNames, boolean force) {
+	public RenameResourceElementsOperation(ICElement[] elements, ICElement[] destinations, String[] newNames,
+			boolean force) {
 		//a rename is a move to the same parent with a new name specified
 		//these elements are from different parents
 		super(elements, destinations, force);

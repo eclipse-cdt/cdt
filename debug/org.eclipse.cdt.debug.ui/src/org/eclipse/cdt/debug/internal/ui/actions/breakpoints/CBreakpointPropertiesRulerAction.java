@@ -33,22 +33,24 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Opens a custom properties dialog to configure the attibutes of a C/C++ breakpoint 
+ * Opens a custom properties dialog to configure the attibutes of a C/C++ breakpoint
  * from the ruler popup menu.
  */
 public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAction {
 
-    private ICBreakpoint fBreakpoint;
+	private ICBreakpoint fBreakpoint;
 
 	/**
 	 * Creates the action to modify the breakpoint properties.
 	 */
-	public CBreakpointPropertiesRulerAction( IWorkbenchPart part, IVerticalRulerInfo info ) {
-		super( part, info );
-		setText( ActionMessages.getString( "CBreakpointPropertiesRulerAction.Breakpoint_Properties" )  + "\t" + //$NON-NLS-1$ //$NON-NLS-2$
-            CDebugUIUtils.formatKeyBindingString(SWT.MOD1, ActionMessages.getString("CRulerToggleBreakpointAction_accelerator")) );  //$NON-NLS-1$
-		part.getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.BREAKPOINT_PROPERTIES_ACTION );
-		setId( IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES );
+	public CBreakpointPropertiesRulerAction(IWorkbenchPart part, IVerticalRulerInfo info) {
+		super(part, info);
+		setText(ActionMessages.getString("CBreakpointPropertiesRulerAction.Breakpoint_Properties") + "\t" + //$NON-NLS-1$ //$NON-NLS-2$
+				CDebugUIUtils.formatKeyBindingString(SWT.MOD1,
+						ActionMessages.getString("CRulerToggleBreakpointAction_accelerator"))); //$NON-NLS-1$
+		part.getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
+				ICDebugHelpContextIds.BREAKPOINT_PROPERTIES_ACTION);
+		setId(IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES);
 	}
 
 	/* (non-Javadoc)
@@ -56,33 +58,49 @@ public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAct
 	 */
 	@Override
 	public void run() {
-        if ( fBreakpoint != null ) {
-            final ISelection debugContext = DebugUITools.getDebugContextForPart(getTargetPart());
-            CBreakpointPropertyDialogAction propertiesAction = new CBreakpointPropertyDialogAction(
-                getTargetPart().getSite(), 
-                new ISelectionProvider() {
-                    @Override
-                    public ISelection getSelection() {
-                        return new StructuredSelection( fBreakpoint );
-                    }
-                    @Override public void addSelectionChangedListener( ISelectionChangedListener listener ) {}
-                    @Override public void removeSelectionChangedListener( ISelectionChangedListener listener ) {}
-                    @Override public void setSelection( ISelection selection ) {}
-                }, 
-                new IDebugContextProvider() {
-                    @Override
-                    public ISelection getActiveContext() {
-                        return debugContext;
-                    }
-                    @Override public void addDebugContextListener(IDebugContextListener listener) {}
-                    @Override public void removeDebugContextListener(IDebugContextListener listener) {}
-                    @Override public IWorkbenchPart getPart() { return null; }
-                    
-                }
-                );
-            propertiesAction.run();
-            propertiesAction.dispose();
-        }
+		if (fBreakpoint != null) {
+			final ISelection debugContext = DebugUITools.getDebugContextForPart(getTargetPart());
+			CBreakpointPropertyDialogAction propertiesAction = new CBreakpointPropertyDialogAction(
+					getTargetPart().getSite(), new ISelectionProvider() {
+						@Override
+						public ISelection getSelection() {
+							return new StructuredSelection(fBreakpoint);
+						}
+
+						@Override
+						public void addSelectionChangedListener(ISelectionChangedListener listener) {
+						}
+
+						@Override
+						public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+						}
+
+						@Override
+						public void setSelection(ISelection selection) {
+						}
+					}, new IDebugContextProvider() {
+						@Override
+						public ISelection getActiveContext() {
+							return debugContext;
+						}
+
+						@Override
+						public void addDebugContextListener(IDebugContextListener listener) {
+						}
+
+						@Override
+						public void removeDebugContextListener(IDebugContextListener listener) {
+						}
+
+						@Override
+						public IWorkbenchPart getPart() {
+							return null;
+						}
+
+					});
+			propertiesAction.run();
+			propertiesAction.dispose();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -90,13 +108,13 @@ public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAct
 	 */
 	@Override
 	public void update() {
-        IBreakpoint breakpoint= getBreakpoint();
-        
-        if (breakpoint instanceof ICBreakpoint) {
-            fBreakpoint = (ICBreakpoint)breakpoint;
-        } else {
-            fBreakpoint = null;
-        }
-        setEnabled( fBreakpoint != null );
+		IBreakpoint breakpoint = getBreakpoint();
+
+		if (breakpoint instanceof ICBreakpoint) {
+			fBreakpoint = (ICBreakpoint) breakpoint;
+		} else {
+			fBreakpoint = null;
+		}
+		setEnabled(fBreakpoint != null);
 	}
 }

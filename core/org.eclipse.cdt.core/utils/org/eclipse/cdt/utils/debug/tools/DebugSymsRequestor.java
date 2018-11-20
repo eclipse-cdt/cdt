@@ -23,7 +23,6 @@ import org.eclipse.cdt.utils.debug.DebugType;
 import org.eclipse.cdt.utils.debug.DebugVariableKind;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 
-
 /**
  * DebugSymsRequestor
  *
@@ -36,7 +35,7 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	List<DebugSym> list = new ArrayList<DebugSym>();
 
 	/**
-	 * 
+	 *
 	 */
 	public DebugSymsRequestor() {
 		super();
@@ -70,7 +69,7 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#enterCompilationUnit(java.lang.String, long)
 	 */
@@ -193,7 +192,7 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	@Override
 	public void acceptTypeConst(String name, DebugType type, int value) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptParameter(java.lang.String, int, int, long)
 	 */
@@ -235,7 +234,7 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptTypeDef(java.lang.String, org.eclipse.cdt.utils.debug.DebugType)
 	 */
 	@Override
-	public void acceptTypeDef(String name, DebugType type) {		
+	public void acceptTypeDef(String name, DebugType type) {
 	}
 
 }

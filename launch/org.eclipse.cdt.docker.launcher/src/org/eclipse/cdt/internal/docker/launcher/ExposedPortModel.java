@@ -20,8 +20,7 @@ import java.util.UUID;
 
 import org.eclipse.core.runtime.Assert;
 
-public class ExposedPortModel extends BaseDatabindingModel
-		implements Comparable<ExposedPortModel> {
+public class ExposedPortModel extends BaseDatabindingModel implements Comparable<ExposedPortModel> {
 
 	private static final String SEPARATOR = ":"; //$NON-NLS-1$
 
@@ -52,17 +51,15 @@ public class ExposedPortModel extends BaseDatabindingModel
 	/**
 	 * Parses and converts the {@link List} of the given {@link String} values
 	 * into a {@link List} of {@link ExposedPortModel}
-	 * 
+	 *
 	 * @param exposedPortInfos
 	 *            the input values
 	 * @return the corresponding {@link ExposedPortModel}s
 	 */
-	public static List<ExposedPortModel> fromStrings(
-			final Collection<String> exposedPortInfos) {
+	public static List<ExposedPortModel> fromStrings(final Collection<String> exposedPortInfos) {
 		final List<ExposedPortModel> exposedPorts = new ArrayList<>();
 		for (String exposedPortInfo : exposedPortInfos) {
-			final ExposedPortModel exposedPort = ExposedPortModel
-					.fromString(exposedPortInfo);
+			final ExposedPortModel exposedPort = ExposedPortModel.fromString(exposedPortInfo);
 			if (exposedPort != null) {
 				exposedPorts.add(exposedPort);
 			}
@@ -73,14 +70,13 @@ public class ExposedPortModel extends BaseDatabindingModel
 	/**
 	 * Converts a collection of ExposedPortModel to a {@link List} of
 	 * {@link String} values
-	 * 
-	 * 
+	 *
+	 *
 	 * @param exposedPorts
 	 *            collection of ExposedPortModel instances
 	 * @return the corresponding {@link List} of {@link String}s
 	 */
-	public static List<String> toArrayString(
-			final Collection<ExposedPortModel> exposedPorts) {
+	public static List<String> toArrayString(final Collection<ExposedPortModel> exposedPorts) {
 		final List<String> exposedPortList = new ArrayList<>();
 		for (ExposedPortModel exposedPort : exposedPorts) {
 			final String exposedPortString = exposedPort.toString();
@@ -94,51 +90,41 @@ public class ExposedPortModel extends BaseDatabindingModel
 	/**
 	 * Parse the given value and returns an instance of
 	 * {@link ExposedPortModel}.
-	 * 
+	 *
 	 * @param exposedPortInfo
 	 *            the value to parse
 	 * @return the corresponding {@link ExposedPortModel}
 	 */
 	public static ExposedPortModel fromString(final String exposedPortInfo) {
-		final String privatePort = exposedPortInfo.substring(0,
-				exposedPortInfo.indexOf(CONTAINER_TYPE_SEPARATOR));
+		final String privatePort = exposedPortInfo.substring(0, exposedPortInfo.indexOf(CONTAINER_TYPE_SEPARATOR));
 		// exposed ports without host IP/port info
 		final int firstColumnSeparator = exposedPortInfo.indexOf(SEPARATOR);
-		if (firstColumnSeparator == -1
-				&& exposedPortInfo.indexOf(CONTAINER_TYPE_SEPARATOR) != -1) {
-			final String type = exposedPortInfo.substring(
-					exposedPortInfo.indexOf(CONTAINER_TYPE_SEPARATOR)); // $NON-NLS-1$
-			final ExposedPortModel exposedPort = new ExposedPortModel(
-					privatePort, type, "", privatePort); // $NON-NLS-1$
+		if (firstColumnSeparator == -1 && exposedPortInfo.indexOf(CONTAINER_TYPE_SEPARATOR) != -1) {
+			final String type = exposedPortInfo.substring(exposedPortInfo.indexOf(CONTAINER_TYPE_SEPARATOR)); // $NON-NLS-1$
+			final ExposedPortModel exposedPort = new ExposedPortModel(privatePort, type, "", privatePort); // $NON-NLS-1$
 			return exposedPort; // $NON-NLS-1$
 		} else {
-			final int secondColumnSeparator = exposedPortInfo.indexOf(SEPARATOR,
-					firstColumnSeparator + 1);
-			final String type = exposedPortInfo.substring(
-					exposedPortInfo.indexOf(CONTAINER_TYPE_SEPARATOR), // $NON-NLS-1$
+			final int secondColumnSeparator = exposedPortInfo.indexOf(SEPARATOR, firstColumnSeparator + 1);
+			final String type = exposedPortInfo.substring(exposedPortInfo.indexOf(CONTAINER_TYPE_SEPARATOR), // $NON-NLS-1$
 					firstColumnSeparator); // $NON-NLS-1$
-			final String hostIP = exposedPortInfo
-					.substring(firstColumnSeparator + 1, secondColumnSeparator);
-			final String hostPort = exposedPortInfo
-					.substring(secondColumnSeparator + 1);
-			final ExposedPortModel exposedPort = new ExposedPortModel(
-					privatePort, type, hostIP, hostPort); // $NON-NLS-1$
+			final String hostIP = exposedPortInfo.substring(firstColumnSeparator + 1, secondColumnSeparator);
+			final String hostPort = exposedPortInfo.substring(secondColumnSeparator + 1);
+			final ExposedPortModel exposedPort = new ExposedPortModel(privatePort, type, hostIP, hostPort); // $NON-NLS-1$
 			return exposedPort; // $NON-NLS-1$
 		}
 	}
 
 	/**
 	 * Full constructor
-	 * 
+	 *
 	 * @param privatePort
 	 * @param portType
 	 * @param hostAddress
 	 * @param hostPort
 	 */
-	public ExposedPortModel(final String privatePort, final String type,
-			final String hostAddress, final String hostPort) {
-		Assert.isNotNull(privatePort,
-				"Port Mapping privatePort cannot be null"); //$NON-NLS-1$
+	public ExposedPortModel(final String privatePort, final String type, final String hostAddress,
+			final String hostPort) {
+		Assert.isNotNull(privatePort, "Port Mapping privatePort cannot be null"); //$NON-NLS-1$
 		Assert.isNotNull(type, "Port Mapping portType cannot be null"); //$NON-NLS-1$
 		this.containerPort = privatePort;
 		this.hostPort = hostPort;
@@ -148,19 +134,17 @@ public class ExposedPortModel extends BaseDatabindingModel
 
 	/**
 	 * Create an ExposedPortModel from its toString output
-	 * 
+	 *
 	 * @param stringValue
 	 * @return ExposedPortModel
 	 */
 	static public ExposedPortModel createPortModel(String stringValue) {
 		final String[] elements = stringValue.split(SEPARATOR);
-		final String[] containerPortElements = elements[0]
-				.split(CONTAINER_TYPE_SEPARATOR);
-		ExposedPortModel model = new ExposedPortModel(containerPortElements[0],
-				containerPortElements[1], elements[1], elements[2]);
+		final String[] containerPortElements = elements[0].split(CONTAINER_TYPE_SEPARATOR);
+		ExposedPortModel model = new ExposedPortModel(containerPortElements[0], containerPortElements[1], elements[1],
+				elements[2]);
 		// check the last argument if exists otherwise assume 'true'
-		model.selected = (elements.length == 4) ? Boolean.valueOf(elements[3])
-				: true;
+		model.selected = (elements.length == 4) ? Boolean.valueOf(elements[3]) : true;
 		return model;
 	}
 
@@ -169,8 +153,7 @@ public class ExposedPortModel extends BaseDatabindingModel
 	}
 
 	public void setContainerPort(final String containerPort) {
-		firePropertyChange(CONTAINER_PORT, this.containerPort,
-				this.containerPort = containerPort);
+		firePropertyChange(CONTAINER_PORT, this.containerPort, this.containerPort = containerPort);
 	}
 
 	public String getPortType() {
@@ -202,8 +185,7 @@ public class ExposedPortModel extends BaseDatabindingModel
 	}
 
 	public void setHostAddress(final String hostAddress) {
-		firePropertyChange(HOST_ADDRESS, this.hostAddress,
-				this.hostAddress = hostAddress);
+		firePropertyChange(HOST_ADDRESS, this.hostAddress, this.hostAddress = hostAddress);
 	}
 
 	@Override
@@ -240,9 +222,8 @@ public class ExposedPortModel extends BaseDatabindingModel
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(containerPort + CONTAINER_TYPE_SEPARATOR + portType
-				+ SEPARATOR + (hostAddress != null ? hostAddress : "")
-				+ SEPARATOR + hostPort + SEPARATOR + selected);
+		buffer.append(containerPort + CONTAINER_TYPE_SEPARATOR + portType + SEPARATOR
+				+ (hostAddress != null ? hostAddress : "") + SEPARATOR + hostPort + SEPARATOR + selected);
 		return buffer.toString();
 	}
 

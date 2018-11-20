@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,31 +27,32 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 public class LRUtilTests extends AST2UtilTests {
 
 	public static TestSuite suite() {
-    	return suite(LRUtilTests.class);
-    }
-	
-	@Override
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
-	    return parse(code, lang, false, true );
+		return suite(LRUtilTests.class);
 	}
-	    
+
 	@Override
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions ) throws ParserException {
-	    return parse( code, lang, useGNUExtensions, true );
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang) throws ParserException {
+		return parse(code, lang, false, true);
 	}
-	 
-    @Override
-    @SuppressWarnings("unused") 
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-    	return ParseHelper.parse(code, language, expectNoProblems);
-    }
-    
-    
-    protected ILanguage getCLanguage() {
-    	return GCCLanguage.getDefault();
-    }
-	
+
+	@Override
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions)
+			throws ParserException {
+		return parse(code, lang, useGNUExtensions, true);
+	}
+
+	@Override
+	@SuppressWarnings("unused")
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
+			boolean expectNoProblems) throws ParserException {
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
+		return ParseHelper.parse(code, language, expectNoProblems);
+	}
+
+	protected ILanguage getCLanguage() {
+		return GCCLanguage.getDefault();
+	}
+
 	protected ILanguage getCPPLanguage() {
 		return GPPLanguage.getDefault();
 	}

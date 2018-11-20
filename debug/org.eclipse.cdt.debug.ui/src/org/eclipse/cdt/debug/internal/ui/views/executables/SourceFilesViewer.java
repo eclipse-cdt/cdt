@@ -72,13 +72,13 @@ public class SourceFilesViewer extends BaseViewer {
 	private static final String P_COLUMN_SORT_DIRECTION_KEY_SF = "columnSortDirectionKeySF"; //$NON-NLS-1$
 	private static final String P_VISIBLE_COLUMNS_KEY_SF = "visibleColumnsKeySF"; //$NON-NLS-1$
 
-
 	TreeColumn originalLocationColumn;
 	private Tree sourceFilesTree;
-	/** Tradeoff expensiveness of checking filesystem against likelihood 
+	/** Tradeoff expensiveness of checking filesystem against likelihood
 	 * that files will be added/removed/changed in the given time period */
 	static final long FILE_CHECK_DELTA = 30 * 1000;
-	private static LRUCache<Object, TranslationUnitInfo> translationUnitInfoCache = new LRUCache<Object, TranslationUnitInfo>(1024);
+	private static LRUCache<Object, TranslationUnitInfo> translationUnitInfoCache = new LRUCache<Object, TranslationUnitInfo>(
+			1024);
 
 	public SourceFilesViewer(ExecutablesView view, Composite parent, int style) {
 		super(view, parent, style);
@@ -98,8 +98,8 @@ public class SourceFilesViewer extends BaseViewer {
 				openSourceFile(event);
 			}
 		});
-		
-		ExecutablesManager.getExecutablesManager().addExecutablesChangeListener(new IExecutablesChangeListener(){
+
+		ExecutablesManager.getExecutablesManager().addExecutablesChangeListener(new IExecutablesChangeListener() {
 			@Override
 			public void executablesListChanged() {
 				// this doesn't directly affect us
@@ -109,12 +109,13 @@ public class SourceFilesViewer extends BaseViewer {
 			public void executablesChanged(List<Executable> executables) {
 				// TODO: be more selective; we don't know what TUs go with which executables yet
 				flushTranslationUnitCache();
-				
-				// Note that we don't invoke a viewer refresh. Our content 
-				// provider needs to also be listening for this notification. 
-				// It's up to him to invoke a refresh on us if the model has 
+
+				// Note that we don't invoke a viewer refresh. Our content
+				// provider needs to also be listening for this notification.
+				// It's up to him to invoke a refresh on us if the model has
 				// been affected by the Executable change
-			}});
+			}
+		});
 	}
 
 	private void openSourceFile(OpenEvent event) {
@@ -207,7 +208,8 @@ public class SourceFilesViewer extends BaseViewer {
 						Executable exe = (Executable) getInput();
 						String originalLocation1 = exe.getOriginalLocation(entry1);
 						String originalLocation2 = exe.getOriginalLocation(entry2);
-						return getComparator().compare(originalLocation1, originalLocation2) * column_sort_order[ExecutablesView.ORG_LOCATION];
+						return getComparator().compare(originalLocation1, originalLocation2)
+								* column_sort_order[ExecutablesView.ORG_LOCATION];
 					}
 					return super.compare(viewer, e1, e2);
 				}
@@ -246,18 +248,18 @@ public class SourceFilesViewer extends BaseViewer {
 		if (!(element instanceof ITranslationUnit)) {
 			return null;
 		}
-		
+
 		ITranslationUnit tu = (ITranslationUnit) element;
 		long now = System.currentTimeMillis();
 		TranslationUnitInfo info;
-		
+
 		synchronized (translationUnitInfoCache) {
 			info = (TranslationUnitInfo) translationUnitInfoCache.get(element);
 		}
 		if (info == null || info.nextCheckTimestamp <= now) {
 			if (info == null)
 				info = new TranslationUnitInfo();
-			
+
 			info.location = tu.getLocation();
 			if (info.location != null) {
 				// A source file with a non-absolute path has no local context;
@@ -265,26 +267,25 @@ public class SourceFilesViewer extends BaseViewer {
 				// java.io.File would be wrong since that class makes arbitrary
 				// assumptions about where the file should be locally. See
 				// similar comment in Executable.getSourceFiles()
-				if (Util.isNativeAbsolutePath(info.location.toOSString()) ) {
+				if (Util.isNativeAbsolutePath(info.location.toOSString())) {
 					File file = info.location.toFile();
 					info.exists = file.exists();
 					if (info.exists) {
 						info.fileLength = file.length();
 						info.lastModified = file.lastModified();
-					}
-					else {
+					} else {
 						info.fileLength = 0;
 						info.lastModified = 0;
 					}
-				}
-				else {
+				} else {
 					info.exists = false;
 					info.fileLength = 0;
 					info.lastModified = 0;
 				}
-				
+
 				info.originalLocation = new Path(executable.getOriginalLocation(tu));
-				info.originalExists = Util.isNativeAbsolutePath(info.originalLocation.toOSString()) && info.originalLocation.toFile().exists();
+				info.originalExists = Util.isNativeAbsolutePath(info.originalLocation.toOSString())
+						&& info.originalLocation.toFile().exists();
 			} else {
 				info.exists = false;
 				info.fileLength = 0;
@@ -292,9 +293,9 @@ public class SourceFilesViewer extends BaseViewer {
 				info.originalExists = false;
 				info.originalLocation = null;
 			}
-			
+
 			info.nextCheckTimestamp = System.currentTimeMillis() + FILE_CHECK_DELTA;
-			
+
 			synchronized (translationUnitInfoCache) {
 				translationUnitInfoCache.put(element, info);
 			}
@@ -303,13 +304,13 @@ public class SourceFilesViewer extends BaseViewer {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	static void flushTranslationUnitCache() {
 		synchronized (translationUnitInfoCache) {
 			translationUnitInfoCache.flush();
 		}
-		
+
 	}
 
 	/**
@@ -318,11 +319,11 @@ public class SourceFilesViewer extends BaseViewer {
 	 * canceled. If it wasn't canceled, this is a no-op.
 	 */
 	public void restartCanceledExecutableParse() {
-		SourceFilesContentProvider provider = (SourceFilesContentProvider)getContentProvider();
+		SourceFilesContentProvider provider = (SourceFilesContentProvider) getContentProvider();
 		if (provider != null) {
 			provider.restartCanceledExecutableParse();
 		}
-		
+
 	}
 
 }

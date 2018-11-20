@@ -119,14 +119,14 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * Status code for core exception that is thrown if a pdom grew larger than
 	 * the supported limit.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public static final int STATUS_PDOM_TOO_LARGE = 4;
 
 	/**
 	 * Toolchain not found when inflating a build configuration.
-	 * 
+	 *
 	 * @since 6.4
 	 */
 	public static final int STATUS_BUILD_CONFIG_NOT_VALID = 5;
@@ -161,14 +161,14 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Name of the extension point for contributing a Command Launcher factory
-	 * 
+	 *
 	 * @since 6.4
 	 */
 	public static final String COMMAND_LAUNCHER_FACTORY_SIMPLE_ID = "CommandLauncherFactory"; //$NON-NLS-1$
 	/**
 	 * Full unique name of the extension point for contributing a Command Launcher
 	 * factory
-	 * 
+	 *
 	 * @since 6.4
 	 */
 	public static final String COMMAND_LAUNCHER_FACTORY_UNIQ_ID = PLUGIN_ID + "." + COMMAND_LAUNCHER_FACTORY_SIMPLE_ID; //$NON-NLS-1$
@@ -192,7 +192,7 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Possible configurable option ID.
-	 * 
+	 *
 	 * @see #getDefaultOptions
 	 */
 	public static final String CORE_ENCODING = PLUGIN_ID + ".encoding"; //$NON-NLS-1$
@@ -224,25 +224,25 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Possible configurable option value.
-	 * 
+	 *
 	 * @see #getDefaultOptions()
 	 */
 	public static final String INSERT = "insert"; //$NON-NLS-1$
 	/**
 	 * Possible configurable option value.
-	 * 
+	 *
 	 * @see #getDefaultOptions()
 	 */
 	public static final String DO_NOT_INSERT = "do not insert"; //$NON-NLS-1$
 	/**
 	 * Possible configurable option value.
-	 * 
+	 *
 	 * @see #getDefaultOptions()
 	 */
 	public static final String TAB = "tab"; //$NON-NLS-1$
 	/**
 	 * Possible configurable option value.
-	 * 
+	 *
 	 * @see #getDefaultOptions()
 	 */
 	public static final String SPACE = "space"; //$NON-NLS-1$
@@ -264,7 +264,7 @@ public class CCorePlugin extends Plugin {
 	private ITagService tagService = new TagService();
 
 	private CdtVarPathEntryVariableManager fPathEntryVariableManager;
-	
+
 	private CBuildConfigurationManager buildConfigManager;
 
 	private final class NullConsole implements IConsole {
@@ -315,7 +315,7 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * Returns the shared working copies currently registered for the default
 	 * buffer factory.
-	 * 
+	 *
 	 * @since 5.1
 	 */
 	public static IWorkingCopy[] getSharedWorkingCopies() {
@@ -385,7 +385,7 @@ public class CCorePlugin extends Plugin {
 
 			fNewCProjectDescriptionManager.shutdown();
 			ResourceLookup.shutdown();
-			
+
 			buildConfigManager.dispose();
 			buildConfigManager = null;
 
@@ -410,7 +410,7 @@ public class CCorePlugin extends Plugin {
 
 		ToolChainManager toolChainManager = new ToolChainManager();
 		context.registerService(IToolChainManager.class, toolChainManager, null);
-		
+
 		buildConfigManager = new CBuildConfigurationManager();
 		context.registerService(ICBuildConfigurationManager.class, buildConfigManager, null);
 
@@ -449,7 +449,7 @@ public class CCorePlugin extends Plugin {
 	 * ID and their possible constant values.
 	 *
 	 * Note: more options might be added in further releases.
-	 * 
+	 *
 	 * <pre>
 	 * RECOGNIZED OPTIONS:
 	 *
@@ -623,8 +623,8 @@ public class CCorePlugin extends Plugin {
 	 */
 	public IConsole getConsole(String extConsoleId, String contextId, String name, URL iconUrl) {
 		try {
-			IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-					.getExtensionPoint(CCorePlugin.PLUGIN_ID, "CBuildConsole"); //$NON-NLS-1$
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
+					"CBuildConsole"); //$NON-NLS-1$
 			if (extensionPoint != null) {
 				IExtension[] extensions = extensionPoint.getExtensions();
 				for (IExtension extension : extensions) {
@@ -726,11 +726,10 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * Returns the binary parser extensions for the default settings
 	 * configuration.
-	 * 
+	 *
 	 * @since 5.2
 	 */
-	public ICConfigExtensionReference[] getDefaultBinaryParserExtensions(IProject project)
-			throws CoreException {
+	public ICConfigExtensionReference[] getDefaultBinaryParserExtensions(IProject project) throws CoreException {
 		ICConfigExtensionReference ext[] = new ICConfigExtensionReference[0];
 		if (project != null) {
 			ICProjectDescription desc = CCorePlugin.getDefault().getProjectDescription(project, false);
@@ -789,8 +788,8 @@ public class CCorePlugin extends Plugin {
 		if (id == null || id.isEmpty()) {
 			id = DEFAULT_BINARY_PARSER_UNIQ_ID;
 		}
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint(CCorePlugin.PLUGIN_ID, BINARY_PARSER_SIMPLE_ID);
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
+				BINARY_PARSER_SIMPLE_ID);
 		IExtension extension = extensionPoint.getExtension(id);
 		if (extension != null) {
 			IConfigurationElement element[] = extension.getConfigurationElements();
@@ -817,8 +816,8 @@ public class CCorePlugin extends Plugin {
 	 * @since 6.0
 	 */
 	public IBinaryParser getBinaryParser(String id) throws CoreException {
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint(CCorePlugin.PLUGIN_ID, BINARY_PARSER_SIMPLE_ID);
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
+				BINARY_PARSER_SIMPLE_ID);
 		IExtension extension = extensionPoint.getExtension(id);
 		if (extension != null) {
 			IConfigurationElement element[] = extension.getConfigurationElements();
@@ -834,7 +833,7 @@ public class CCorePlugin extends Plugin {
 		}
 		return null;
 	}
-	
+
 	public CoreModel getCoreModel() {
 		return fCoreModel;
 	}
@@ -928,8 +927,7 @@ public class CCorePlugin extends Plugin {
 	 *                if the operation is canceled
 	 */
 	public IProject createCProject(final IProjectDescription description, final IProject projectHandle,
-			IProgressMonitor monitor, final String projectID)
-			throws CoreException, OperationCanceledException {
+			IProgressMonitor monitor, final String projectID) throws CoreException, OperationCanceledException {
 		getWorkspace().run(new ICoreRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -995,8 +993,8 @@ public class CCorePlugin extends Plugin {
 					if (cfg == null) {
 						ICConfigurationDescription prefCfg = getPreferenceConfiguration(bsId);
 						if (prefCfg != null) {
-							cfg = projDes.createConfiguration(CDataUtil.genId(prefCfg.getId()),
-									prefCfg.getName(), prefCfg);
+							cfg = projDes.createConfiguration(CDataUtil.genId(prefCfg.getId()), prefCfg.getName(),
+									prefCfg);
 						}
 					}
 
@@ -1018,8 +1016,7 @@ public class CCorePlugin extends Plugin {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public void convertProjectFromCtoCC(IProject projectHandle, IProgressMonitor monitor)
-			throws CoreException {
+	public void convertProjectFromCtoCC(IProject projectHandle, IProgressMonitor monitor) throws CoreException {
 		if ((projectHandle != null) && projectHandle.hasNature(CProjectNature.C_NATURE_ID)
 				&& !projectHandle.hasNature(CCProjectNature.CC_NATURE_ID)) {
 			// Add C++ Nature ... does not add duplicates
@@ -1079,7 +1076,7 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Get the IProcessList contributed interface for the platform.
-	 * 
+	 *
 	 * @return IProcessList
 	 */
 	public IProcessList getProcessList() throws CoreException {
@@ -1118,8 +1115,7 @@ public class CCorePlugin extends Plugin {
 	@Deprecated
 	public String[] getAllErrorParsersIDs() {
 		ErrorParserExtensionManager.loadErrorParserExtensions();
-		return ErrorParserExtensionManager
-				.getErrorParserAvailableIdsInContext(ErrorParserManager.BUILD_CONTEXT);
+		return ErrorParserExtensionManager.getErrorParserAvailableIdsInContext(ErrorParserManager.BUILD_CONTEXT);
 	}
 
 	/**
@@ -1148,7 +1144,7 @@ public class CCorePlugin extends Plugin {
 			// Next search the extension registry to see if a provider is
 			// registered with a build command
 			provider = getExtensionScannerInfoProvider2(project);
-			
+
 			// If we are new style build configurations, get the provider there
 			IBuildConfiguration activeConfig = project.getActiveBuildConfig();
 			ICBuildConfiguration cconfig = activeConfig.getAdapter(ICBuildConfiguration.class);
@@ -1157,8 +1153,8 @@ public class CCorePlugin extends Plugin {
 			}
 
 			// Regular usage is where Language Settings Providers are employed
-			if (provider == null && ScannerDiscoveryLegacySupport
-					.isLanguageSettingsProvidersFunctionalityEnabled(project)) {
+			if (provider == null
+					&& ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project)) {
 				provider = new LanguageSettingsScannerInfoProvider();
 			}
 
@@ -1225,11 +1221,11 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Helper function, returning the content type for a filename Same as:
-	 * 
+	 *
 	 * <pre>
 	 * getContentType(null, filename)
 	 * </pre>
-	 * 
+	 *
 	 * @param filename
 	 * @return the content type found, or <code>null</code>
 	 */
@@ -1241,7 +1237,7 @@ public class CCorePlugin extends Plugin {
 	 * Returns the content type for a filename. The method respects project
 	 * specific content type definitions. The lookup prefers case- sensitive
 	 * matches over the others.
-	 * 
+	 *
 	 * @param project
 	 *            a project with possible project specific settings. Can be
 	 *            <code>null</code>
@@ -1339,8 +1335,7 @@ public class CCorePlugin extends Plugin {
 		return fNewCProjectDescriptionManager.getPreferenceConfiguration(buildSystemId, write);
 	}
 
-	public void setPreferenceConfiguration(String buildSystemId, ICConfigurationDescription des)
-			throws CoreException {
+	public void setPreferenceConfiguration(String buildSystemId, ICConfigurationDescription des) throws CoreException {
 		fNewCProjectDescriptionManager.setPreferenceConfiguration(buildSystemId, des);
 	}
 
@@ -1350,8 +1345,7 @@ public class CCorePlugin extends Plugin {
 	 *
 	 * @see #createProjectDescription(IProject, boolean, boolean)
 	 */
-	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists)
-			throws CoreException {
+	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists) throws CoreException {
 		return fNewCProjectDescriptionManager.createProjectDescription(project, loadIfExists);
 	}
 
@@ -1381,8 +1375,8 @@ public class CCorePlugin extends Plugin {
 	 * @return {@link ICProjectDescription}
 	 * @throws CoreException
 	 */
-	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists,
-			boolean creating) throws CoreException {
+	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists, boolean creating)
+			throws CoreException {
 		return fNewCProjectDescriptionManager.createProjectDescription(project, loadIfExists, creating);
 	}
 
@@ -1479,8 +1473,7 @@ public class CCorePlugin extends Plugin {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public void updateProjectDescriptions(IProject projects[], IProgressMonitor monitor)
-			throws CoreException {
+	public void updateProjectDescriptions(IProject projects[], IProgressMonitor monitor) throws CoreException {
 		fNewCProjectDescriptionManager.updateProjectDescriptions(projects, monitor);
 	}
 
@@ -1531,14 +1524,14 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Prints a message in the log
-	 * 
+	 *
 	 * @param severity
 	 *            - desired severity of the message in the log, one of
 	 *            {@link IStatus#INFO}, {@link IStatus#WARNING} or
 	 *            {@link IStatus#ERROR}
 	 * @param msg
 	 *            - message
-	 * 
+	 *
 	 * @since 5.5
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -1548,14 +1541,14 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Prints a message in the log accompanied by stack trace
-	 * 
+	 *
 	 * @param severity
 	 *            - desired severity of the message in the log, one of
 	 *            {@link IStatus#INFO}, {@link IStatus#WARNING} or
 	 *            {@link IStatus#ERROR}
 	 * @param msg
 	 *            - message
-	 * 
+	 *
 	 * @since 5.5
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -1568,14 +1561,14 @@ public class CCorePlugin extends Plugin {
 	 */
 	public static void log(Throwable e) {
 		if (e instanceof CoreException) {
-			// If the CoreException doesn't have a nested exception, wrap it 
+			// If the CoreException doesn't have a nested exception, wrap it
 			// into another Status object. This ensures that we can see its
 			// stack trace.
 			IStatus status = ((CoreException) e).getStatus();
 			if (status.getException() != null) {
 				log(status);
 			} else {
-				log(createStatus("Error", e));  //$NON-NLS-1$
+				log(createStatus("Error", e)); //$NON-NLS-1$
 			}
 		} else {
 			String msg = e.getMessage();
@@ -1592,8 +1585,7 @@ public class CCorePlugin extends Plugin {
 	 */
 	public static void log(String message, Throwable e) {
 		Throwable nestedException;
-		if (e instanceof CModelException
-				&& (nestedException = ((CModelException) e).getException()) != null) {
+		if (e instanceof CModelException && (nestedException = ((CModelException) e).getException()) != null) {
 			e = nestedException;
 		}
 		log(createStatus(message, e));
@@ -1644,7 +1636,7 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Return the given OSGi service.
-	 * 
+	 *
 	 * @param service service class
 	 * @return service
 	 * @since 6.0
@@ -1654,16 +1646,16 @@ public class CCorePlugin extends Plugin {
 		ServiceReference<T> ref = context.getServiceReference(service);
 		return ref != null ? context.getService(ref) : null;
 	}
-	
-	private static final String CDT_FEATURE_ID = "org.eclipse.cdt";  //$NON-NLS-1$  
-	
+
+	private static final String CDT_FEATURE_ID = "org.eclipse.cdt"; //$NON-NLS-1$
+
 	/**
 	 * Return the version of the CDT feature in this Eclipse installation, if any.
-	 * 
+	 *
 	 * Note that, while this is a method in CCorePlugin, it's not specific to the
 	 * org.eclipse.cdt.core plugin; it returns the version of the entire
 	 * org.eclipse.cdt feature.
-	 * 
+	 *
 	 * @since 6.3
 	 */
 	public static Version getCDTFeatureVersion() {

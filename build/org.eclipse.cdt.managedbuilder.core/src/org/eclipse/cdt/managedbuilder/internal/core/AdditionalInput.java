@@ -56,7 +56,7 @@ public class AdditionalInput implements IAdditionalInput {
 
 	private static final String BUILD_VARIABLE_STATIC_LIB = "ARCHIVES"; //$NON-NLS-1$
 	private static final String BUILD_VARIABLE_SHARED_LIB = "LIBRARIES"; //$NON-NLS-1$
-	
+
 	private String[] expandedNames;
 
 	//  Superclass
@@ -211,18 +211,18 @@ public class AdditionalInput implements IAdditionalInput {
 		if (fKind != null) {
 			String str;
 			switch (getKind()) {
-				case KIND_ADDITIONAL_INPUT:
-					str = ADDITIONAL_INPUT;
-					break;
-				case KIND_ADDITIONAL_DEPENDENCY:
-					str = ADDITIONAL_DEPENDENCY;
-					break;
-				case KIND_ADDITIONAL_INPUT_DEPENDENCY:
-					str = ADDITIONAL_INPUT_DEPENDENCY;
-					break;
-				default:
-					str = ""; //$NON-NLS-1$
-					break;
+			case KIND_ADDITIONAL_INPUT:
+				str = ADDITIONAL_INPUT;
+				break;
+			case KIND_ADDITIONAL_DEPENDENCY:
+				str = ADDITIONAL_DEPENDENCY;
+				break;
+			case KIND_ADDITIONAL_INPUT_DEPENDENCY:
+				str = ADDITIONAL_INPUT_DEPENDENCY;
+				break;
+			default:
+				str = ""; //$NON-NLS-1$
+				break;
 			}
 			element.setAttribute(IAdditionalInput.KIND, str);
 		}
@@ -264,7 +264,8 @@ public class AdditionalInput implements IAdditionalInput {
 	 */
 	@Override
 	public void setPaths(String newPaths) {
-		if (fPaths == null && newPaths == null) return;
+		if (fPaths == null && newPaths == null)
+			return;
 		if (fPaths == null || newPaths == null || !(fPaths.equals(newPaths))) {
 			fPaths = newPaths;
 			fIsDirty = true;
@@ -312,7 +313,8 @@ public class AdditionalInput implements IAdditionalInput {
 	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension AdditionalInput
- 		if (fIsExtensionAdditionalInput) return false;
+		if (fIsExtensionAdditionalInput)
+			return false;
 		return fIsDirty;
 	}
 
@@ -332,7 +334,7 @@ public class AdditionalInput implements IAdditionalInput {
 			fResolved = true;
 		}
 	}
-	
+
 	public boolean needsRebuild() {
 		// This shouldn't be called for an extension AdditionalInput
 		if (fIsExtensionAdditionalInput)
@@ -340,8 +342,7 @@ public class AdditionalInput implements IAdditionalInput {
 		if (fRebuildState)
 			return fRebuildState;
 		if (fKind.intValue() == IAdditionalInput.KIND_ADDITIONAL_DEPENDENCY
-				|| fKind.intValue() == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY
-				|| isLibrariesInput()) {
+				|| fKind.intValue() == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY || isLibrariesInput()) {
 			IToolChain toolChain = getToolChain();
 			/* toolChain can be null e.g. in tools for custom build steps */
 			if (toolChain != null && !toolChain.isExtensionElement()) {
@@ -359,7 +360,7 @@ public class AdditionalInput implements IAdditionalInput {
 		}
 		return false;
 	}
-	
+
 	private long getArtifactTimeStamp(IToolChain toolChain) {
 		IBuilder builder = toolChain.getBuilder();
 		IConfiguration configuration = toolChain.getParent();
@@ -369,7 +370,7 @@ public class AdditionalInput implements IAdditionalInput {
 				// ensure that it's a directory URI
 				buildLocationURI = URI.create(buildLocationURI.toString() + "/"); //$NON-NLS-1$
 			}
-			
+
 			String artifactName = configuration.getArtifactName();
 			String artifactExt = configuration.getArtifactExtension();
 			String artifactPref = configuration.getOutputPrefix(artifactExt);
@@ -383,9 +384,9 @@ public class AdditionalInput implements IAdditionalInput {
 							" ", IBuildMacroProvider.CONTEXT_CONFIGURATION, configuration); //$NON-NLS-1$
 				} catch (BuildMacroException e) {
 				}
-				
+
 				URI buildArtifactURI = EFSExtensionManager.getDefault().append(buildLocationURI, artifactName);
-				
+
 				try {
 					IFileStore artifact = EFS.getStore(buildArtifactURI);
 					org.eclipse.core.filesystem.IFileInfo info = (artifact == null) ? null : artifact.fetchInfo();
@@ -404,9 +405,10 @@ public class AdditionalInput implements IAdditionalInput {
 		// libraries are of the "additionalinput" kind, not "additionalinputdependency" because otherwise the
 		// external make builder would generate makefiles with $(LIBS) in the dependency list, resulting in
 		// failure to build dependency -lxyz etc.
-		return (fKind.intValue() == IAdditionalInput.KIND_ADDITIONAL_INPUT && Arrays.asList(getPaths()).contains("$(LIBS)")); //$NON-NLS-1$
+		return (fKind.intValue() == IAdditionalInput.KIND_ADDITIONAL_INPUT
+				&& Arrays.asList(getPaths()).contains("$(LIBS)")); //$NON-NLS-1$
 	}
-	
+
 	private boolean dependencyChanged(String sPath, long artefactTimeStamp) {
 		try {
 			IToolChain toolChain = getToolChain();
@@ -482,10 +484,9 @@ public class AdditionalInput implements IAdditionalInput {
 	}
 
 	private URI findLibrary(IToolChain toolChain, final String libName, List<String> dirs) throws CoreException {
-		final String libSO = getDynamicLibPrefix(toolChain) + libName + '.'
-				+ getDynamicLibExtension(toolChain);
+		final String libSO = getDynamicLibPrefix(toolChain) + libName + '.' + getDynamicLibExtension(toolChain);
 		final String libA = getStaticLibPrefix(toolChain) + libName + '.' + getStaticLibExtension(toolChain);
-		
+
 		class LibFilter {
 			public boolean accept(String name) {
 				if (equals(libA, name))
@@ -504,28 +505,28 @@ public class AdditionalInput implements IAdditionalInput {
 					return false;
 				}
 			}
-			
+
 			boolean equals(String a, String b) {
 				return a.equals(b);
 			}
-			
+
 			boolean startsWith(String string, String prefix) {
 				return string.startsWith(prefix);
 			}
-			
+
 		}
 		class CaseInsensitiveLibFilter extends LibFilter {
 			@Override
 			boolean equals(String a, String b) {
 				return a.equalsIgnoreCase(b);
 			}
-			
+
 			@Override
 			boolean startsWith(String string, String prefix) {
 				return string.toLowerCase().startsWith(prefix.toLowerCase());
 			}
 		}
-		
+
 		for (Iterator<String> i = dirs.iterator(); i.hasNext();) {
 			IFileStore dir = getEFSFile(i.next());
 			LibFilter filter = dir.getFileSystem().isCaseSensitive() ? new LibFilter() : new CaseInsensitiveLibFilter();
@@ -537,17 +538,17 @@ public class AdditionalInput implements IAdditionalInput {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gets an EFS file-store for the specified path or URI, which may be a local filesystem path or may be a more abstract URI.
-	 * 
+	 *
 	 * @param pathOrURI a local filesystem path or URI
-	 * 
+	 *
 	 * @return the file store, if one could be determined
 	 */
 	private static IFileStore getEFSFile(String pathOrURI) {
 		IFileStore result;
-		
+
 		try {
 			// try it as a URI
 			result = EFS.getStore(URI.create(pathOrURI));
@@ -555,7 +556,7 @@ public class AdditionalInput implements IAdditionalInput {
 			// most likely, the path is not a URI, so assume a local file and try again
 			result = EFS.getLocalFileSystem().getStore(new Path(pathOrURI));
 		}
-		
+
 		return result;
 	}
 
@@ -588,7 +589,7 @@ public class AdditionalInput implements IAdditionalInput {
 		IOutputType type = findOutputType(toolChain, BUILD_VARIABLE_STATIC_LIB);
 		if (null == type || type.getOutputExtensionsAttribute().length == 0) {
 			return "a"; //$NON-NLS-1$
-		} 
+		}
 		return type.getOutputExtensionsAttribute()[0];
 	}
 
@@ -603,7 +604,7 @@ public class AdditionalInput implements IAdditionalInput {
 		IOutputType type = findOutputType(toolChain, BUILD_VARIABLE_SHARED_LIB);
 		if (null == type || type.getOutputExtensionsAttribute().length == 0) {
 			return "so"; //$NON-NLS-1$
-		} 
+		}
 		return type.getOutputExtensionsAttribute()[0];
 	}
 
@@ -640,8 +641,8 @@ public class AdditionalInput implements IAdditionalInput {
 		return new String[0];
 	}
 
-	public void setRebuildState(boolean rebuild){
-		if(isExtensionElement() && rebuild)
+	public void setRebuildState(boolean rebuild) {
+		if (isExtensionElement() && rebuild)
 			return;
 
 		fRebuildState = rebuild;

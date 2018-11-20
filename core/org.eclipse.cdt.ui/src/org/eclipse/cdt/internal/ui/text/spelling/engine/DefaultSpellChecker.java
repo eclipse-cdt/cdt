@@ -31,7 +31,8 @@ import org.eclipse.cdt.internal.ui.text.spelling.SpellingPreferences;
  */
 public class DefaultSpellChecker implements ISpellChecker {
 	/** Array of URL prefixes */
-	public static final String[] URL_PREFIXES= new String[] { "http://", "https://", "www.", "ftp://", "ftps://", "news://", "mailto://" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+	public static final String[] URL_PREFIXES = new String[] { "http://", "https://", "www.", "ftp://", "ftps://", //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$
+			"news://", "mailto://" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * Does this word contain digits?
@@ -40,7 +41,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	 * @return <code>true</code> iff this word contains digits, <code>false</code> otherwise
 	 */
 	protected static boolean isDigits(final String word) {
-		for (int index= 0; index < word.length(); index++) {
+		for (int index = 0; index < word.length(); index++) {
 			if (Character.isDigit(word.charAt(index)))
 				return true;
 		}
@@ -59,19 +60,19 @@ public class DefaultSpellChecker implements ISpellChecker {
 	 *               otherwise
 	 */
 	protected static boolean isMixedCase(final String word, final boolean sentence) {
-		final int length= word.length();
-		boolean upper= Character.isUpperCase(word.charAt(0));
+		final int length = word.length();
+		boolean upper = Character.isUpperCase(word.charAt(0));
 
 		if (sentence && upper && (length > 1))
-			upper= Character.isUpperCase(word.charAt(1));
+			upper = Character.isUpperCase(word.charAt(1));
 
 		if (upper) {
-			for (int index= length - 1; index > 0; index--) {
+			for (int index = length - 1; index > 0; index--) {
 				if (Character.isLowerCase(word.charAt(index)))
 					return true;
 			}
 		} else {
-			for (int index= length - 1; index > 0; index--) {
+			for (int index = length - 1; index > 0; index--) {
 				if (Character.isUpperCase(word.charAt(index)))
 					return true;
 			}
@@ -88,7 +89,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	 *               letters, <code>false</code> otherwise
 	 */
 	protected static boolean isUpperCase(final String word) {
-		for (int index= word.length() - 1; index >= 0; index--) {
+		for (int index = word.length() - 1; index >= 0; index--) {
 			if (Character.isLowerCase(word.charAt(index)))
 				return false;
 		}
@@ -115,18 +116,18 @@ public class DefaultSpellChecker implements ISpellChecker {
 	 * The dictionaries to use for spell checking. Synchronized to avoid
 	 * concurrent modifications.
 	 */
-	private final Set<ISpellDictionary> fDictionaries= Collections.synchronizedSet(new HashSet<ISpellDictionary>());
+	private final Set<ISpellDictionary> fDictionaries = Collections.synchronizedSet(new HashSet<ISpellDictionary>());
 
 	/**
 	 * The words to be ignored. Synchronized to avoid concurrent modifications.
 	 */
-	private final Set<String> fIgnored= Collections.synchronizedSet(new HashSet<String>());
+	private final Set<String> fIgnored = Collections.synchronizedSet(new HashSet<String>());
 
 	/**
 	 * The spell event listeners. Synchronized to avoid concurrent
 	 * modifications.
 	 */
-	private final Set<ISpellEventListener> fListeners= Collections.synchronizedSet(new HashSet<ISpellEventListener>());
+	private final Set<ISpellEventListener> fListeners = Collections.synchronizedSet(new HashSet<ISpellEventListener>());
 
 	/**
 	 * The locale of this checker.
@@ -142,8 +143,8 @@ public class DefaultSpellChecker implements ISpellChecker {
 	public DefaultSpellChecker(IPreferenceStore store, Locale locale) {
 		Assert.isLegal(store != null);
 		Assert.isLegal(locale != null);
-		
-		fLocale= locale;
+
+		fLocale = locale;
 	}
 
 	/*
@@ -174,12 +175,12 @@ public class DefaultSpellChecker implements ISpellChecker {
 		// the modifying methods add/checkWord (?)
 		Set<ISpellDictionary> copy;
 		synchronized (fDictionaries) {
-			copy= new HashSet<ISpellDictionary>(fDictionaries);
+			copy = new HashSet<ISpellDictionary>(fDictionaries);
 		}
 
-		ISpellDictionary dictionary= null;
-		for (final Iterator<ISpellDictionary> iterator= copy.iterator(); iterator.hasNext();) {
-			dictionary= iterator.next();
+		ISpellDictionary dictionary = null;
+		for (final Iterator<ISpellDictionary> iterator = copy.iterator(); iterator.hasNext();) {
+			dictionary = iterator.next();
 			if (dictionary.acceptsWords())
 				return true;
 		}
@@ -194,10 +195,10 @@ public class DefaultSpellChecker implements ISpellChecker {
 		// synchronizing is necessary as this is a write access
 		Set<ISpellDictionary> copy;
 		synchronized (fDictionaries) {
-			copy= new HashSet<ISpellDictionary>(fDictionaries);
+			copy = new HashSet<ISpellDictionary>(fDictionaries);
 		}
 
-		final String addable= word.toLowerCase();
+		final String addable = word.toLowerCase();
 		for (ISpellDictionary dictionary : copy) {
 			if (dictionary.acceptsWords())
 				dictionary.addWord(addable);
@@ -218,39 +219,41 @@ public class DefaultSpellChecker implements ISpellChecker {
 	 */
 	@Override
 	public void execute(final ISpellCheckIterator iterator) {
-		final boolean ignoreDigits= SpellingPreferences.isIgnoreDigits();
-		final boolean ignoreMixed= SpellingPreferences.isIgnoreMixed();
-		final boolean ignoreSentence= SpellingPreferences.isIgnoreSentence();
-		final boolean ignoreUpper= SpellingPreferences.isIgnoreUpper();
-		final boolean ignoreUrls= SpellingPreferences.isIgnoreUrls();
-		final boolean ignoreNonLetters= SpellingPreferences.isIgnoreNonLetters();
-		final boolean ignoreSingleLetters= SpellingPreferences.isIgnoreSingleLetters();
-		
+		final boolean ignoreDigits = SpellingPreferences.isIgnoreDigits();
+		final boolean ignoreMixed = SpellingPreferences.isIgnoreMixed();
+		final boolean ignoreSentence = SpellingPreferences.isIgnoreSentence();
+		final boolean ignoreUpper = SpellingPreferences.isIgnoreUpper();
+		final boolean ignoreUrls = SpellingPreferences.isIgnoreUrls();
+		final boolean ignoreNonLetters = SpellingPreferences.isIgnoreNonLetters();
+		final boolean ignoreSingleLetters = SpellingPreferences.isIgnoreSingleLetters();
+
 		iterator.setIgnoreSingleLetters(ignoreSingleLetters);
-		
+
 		synchronized (fDictionaries) {
-			Iterator<ISpellDictionary> iter= fDictionaries.iterator();
+			Iterator<ISpellDictionary> iter = fDictionaries.iterator();
 			while (iter.hasNext())
 				iter.next().setStripNonLetters(ignoreNonLetters);
 		}
 
-		String word= null;
-		boolean starts= false;
+		String word = null;
+		boolean starts = false;
 
 		while (iterator.hasNext()) {
-			word= iterator.next();
+			word = iterator.next();
 			if (word != null) {
 				// synchronizing is necessary as this is called inside the reconciler
 				if (!fIgnored.contains(word)) {
-					starts= iterator.startsSentence();
+					starts = iterator.startsSentence();
 					if (!isCorrect(word)) {
-					    boolean isMixed= isMixedCase(word, true);
-					    boolean isUpper= isUpperCase(word);
-					    boolean isDigits= isDigits(word);
-					    boolean isUrl= isUrl(word);
+						boolean isMixed = isMixedCase(word, true);
+						boolean isUpper = isUpperCase(word);
+						boolean isDigits = isDigits(word);
+						boolean isUrl = isUrl(word);
 
-					    if (!ignoreMixed && isMixed || !ignoreUpper && isUpper || !ignoreDigits && isDigits || !ignoreUrls && isUrl || !(isMixed || isUpper || isDigits || isUrl))
-					        fireEvent(new SpellEvent(this, word, iterator.getBegin(), iterator.getEnd(), starts, false));
+						if (!ignoreMixed && isMixed || !ignoreUpper && isUpper || !ignoreDigits && isDigits
+								|| !ignoreUrls && isUrl || !(isMixed || isUpper || isDigits || isUrl))
+							fireEvent(
+									new SpellEvent(this, word, iterator.getBegin(), iterator.getEnd(), starts, false));
 					} else {
 						if (!ignoreSentence && starts && Character.isLowerCase(word.charAt(0)))
 							fireEvent(new SpellEvent(this, word, iterator.getBegin(), iterator.getEnd(), true, true));
@@ -270,7 +273,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 		// synchronizing is necessary as this is called from execute
 		Set<ISpellEventListener> copy;
 		synchronized (fListeners) {
-			copy= new HashSet<ISpellEventListener>(fListeners);
+			copy = new HashSet<ISpellEventListener>(fListeners);
 		}
 		for (ISpellEventListener spellEventListener : copy) {
 			spellEventListener.handle(event);
@@ -287,14 +290,14 @@ public class DefaultSpellChecker implements ISpellChecker {
 		// the modifying methods add/removeDictionary (?)
 		Set<ISpellDictionary> copy;
 		synchronized (fDictionaries) {
-			copy= new HashSet<ISpellDictionary>(fDictionaries);
+			copy = new HashSet<ISpellDictionary>(fDictionaries);
 		}
 
-		ISpellDictionary dictionary= null;
-		final HashSet<RankedWordProposal> proposals= new HashSet<RankedWordProposal>();
+		ISpellDictionary dictionary = null;
+		final HashSet<RankedWordProposal> proposals = new HashSet<RankedWordProposal>();
 
-		for (final Iterator<ISpellDictionary> iterator= copy.iterator(); iterator.hasNext();) {
-			dictionary= iterator.next();
+		for (final Iterator<ISpellDictionary> iterator = copy.iterator(); iterator.hasNext();) {
+			dictionary = iterator.next();
 			proposals.addAll(dictionary.getProposals(word, sentence));
 		}
 		return proposals;
@@ -317,15 +320,15 @@ public class DefaultSpellChecker implements ISpellChecker {
 		// synchronizing is necessary as this is called from execute
 		Set<ISpellDictionary> copy;
 		synchronized (fDictionaries) {
-			copy= new HashSet<ISpellDictionary>(fDictionaries);
+			copy = new HashSet<ISpellDictionary>(fDictionaries);
 		}
 
 		if (fIgnored.contains(word.toLowerCase()))
 			return true;
 
-		ISpellDictionary dictionary= null;
-		for (final Iterator<ISpellDictionary> iterator= copy.iterator(); iterator.hasNext();) {
-			dictionary= iterator.next();
+		ISpellDictionary dictionary = null;
+		for (final Iterator<ISpellDictionary> iterator = copy.iterator(); iterator.hasNext();) {
+			dictionary = iterator.next();
 			if (dictionary.isCorrect(word))
 				return true;
 		}

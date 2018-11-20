@@ -21,34 +21,34 @@ import org.eclipse.core.runtime.IStatus;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class QualifiedTypeName implements IQualifiedTypeName {
-    private static final String[] NO_SEGMENTS = {};
+	private static final String[] NO_SEGMENTS = {};
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final int INITIAL_SEGMENT_LENGTH = 12;
 	private static final int HASH_INIT = 17;
-    private static final int HASH_MULTIPLIER = 37;
+	private static final int HASH_MULTIPLIER = 37;
 
-    private String[] fSegments = NO_SEGMENTS;
+	private String[] fSegments = NO_SEGMENTS;
 	private int fHashCode;
 
 	public static final QualifiedTypeName EMPTY = new QualifiedTypeName();
 
 	public QualifiedTypeName(IQualifiedTypeName typeName) {
-	    fSegments = typeName.segments();
+		fSegments = typeName.segments();
 	}
-	
+
 	public QualifiedTypeName(String qualifiedName) {
-	    fSegments = createSegments(qualifiedName);
+		fSegments = createSegments(qualifiedName);
 	}
 
 	public QualifiedTypeName(String[] names) {
-	    fSegments = createSegments(names);
+		fSegments = createSegments(names);
 	}
 
 	public QualifiedTypeName(String name, String[] enclosingNames) {
 		if (enclosingNames == null) {
-		    fSegments = createSegments(name);
+			fSegments = createSegments(name);
 		} else {
-		    fSegments = createSegments(name, enclosingNames);
+			fSegments = createSegments(name, enclosingNames);
 		}
 	}
 
@@ -56,12 +56,12 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	}
 
 	private String[] createSegments(String qualifiedName) {
-	    String[] segments;
+		String[] segments;
 		int qualifierIndex = qualifiedName.indexOf(QUALIFIER, 0);
 		if (qualifierIndex == -1) {
-		    segments = new String[] { qualifiedName };
+			segments = new String[] { qualifiedName };
 		} else {
-		    int maxSegments = 1;
+			int maxSegments = 1;
 			int lastIndex = 0;
 			while (qualifierIndex >= 0) {
 				lastIndex = qualifierIndex + QUALIFIER.length();
@@ -73,15 +73,15 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 			lastIndex = 0;
 			qualifierIndex = qualifiedName.indexOf(QUALIFIER, 0);
 			while (qualifierIndex >= 0) {
-                // note: we allocate a new string rather than use the returned substring,
-                // otherwise we're holding a reference to the entire original string
-			    segments[segmentCount] = new String(qualifiedName.substring(lastIndex, qualifierIndex));
+				// note: we allocate a new string rather than use the returned substring,
+				// otherwise we're holding a reference to the entire original string
+				segments[segmentCount] = new String(qualifiedName.substring(lastIndex, qualifierIndex));
 				++segmentCount;
 				lastIndex = qualifierIndex + QUALIFIER.length();
 				qualifierIndex = qualifiedName.indexOf(QUALIFIER, lastIndex);
 			}
-            // note: we allocate a new string rather than use the returned substring,
-            // otherwise we're holding a reference to the entire original string
+			// note: we allocate a new string rather than use the returned substring,
+			// otherwise we're holding a reference to the entire original string
 			segments[segmentCount] = new String(qualifiedName.substring(lastIndex));
 		}
 		return segments;
@@ -94,10 +94,10 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	}
 
 	private String[] createSegments(String name, String[] enclosingNames) {
-	    String[] segments = new String[enclosingNames.length + 1];
+		String[] segments = new String[enclosingNames.length + 1];
 		System.arraycopy(enclosingNames, 0, segments, 0, enclosingNames.length);
 		segments[segments.length - 1] = name;
-	    return segments;
+		return segments;
 	}
 
 	@Override
@@ -117,7 +117,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		}
 		return NO_SEGMENTS;
 	}
-	
+
 	@Override
 	public String getFullyQualifiedName() {
 		if (fSegments.length > 0) {
@@ -137,9 +137,9 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	public IQualifiedTypeName getEnclosingTypeName() {
 		String[] enclosingNames = getEnclosingNames();
 		if (enclosingNames.length > 0) {
-		    QualifiedTypeName enclosingTypeName = new QualifiedTypeName();
-		    enclosingTypeName.fSegments = enclosingNames;
-		    return enclosingTypeName;
+			QualifiedTypeName enclosingTypeName = new QualifiedTypeName();
+			enclosingTypeName.fSegments = enclosingNames;
+			return enclosingTypeName;
 		}
 		return null;
 	}
@@ -153,10 +153,10 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	public boolean isEmpty() {
 		return (fSegments.length == 0);
 	}
-	
+
 	@Override
 	public boolean isGlobal() {
-	    return (fSegments.length <= 1 || fSegments[0].length() == 0);
+		return (fSegments.length <= 1 || fSegments[0].length() == 0);
 	}
 
 	@Override
@@ -170,7 +170,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		System.arraycopy(fSegments, 0, segmentCopy, 0, fSegments.length);
 		return segmentCopy;
 	}
-	
+
 	@Override
 	public String segment(int index) {
 		if (index >= fSegments.length) {
@@ -178,7 +178,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		}
 		return fSegments[index];
 	}
-	
+
 	@Override
 	public String lastSegment() {
 		if (fSegments.length > 0) {
@@ -186,7 +186,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public int matchingFirstSegments(IQualifiedTypeName typeName) {
 		int max = Math.min(fSegments.length, typeName.segmentCount());
@@ -204,7 +204,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	public boolean isPrefixOf(IQualifiedTypeName typeName) {
 		if (fSegments.length == 0)
 			return true;
-		
+
 		if (fSegments.length > typeName.segmentCount()) {
 			return false;
 		}
@@ -236,7 +236,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		String[] newSegments = new String[length + typeNameLength];
 		System.arraycopy(fSegments, 0, newSegments, 0, length);
 		for (int i = 0; i < typeNameLength; ++i) {
-		    newSegments[i + length] = typeName.segment(i);
+			newSegments[i + length] = typeName.segment(i);
 		}
 		QualifiedTypeName newTypeName = new QualifiedTypeName();
 		newTypeName.fSegments = newSegments;
@@ -247,7 +247,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	public IQualifiedTypeName append(String qualifiedName) {
 		return append(createSegments(qualifiedName));
 	}
-	
+
 	@Override
 	public IQualifiedTypeName removeFirstSegments(int count) {
 		if (count == 0) {
@@ -293,19 +293,19 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	@Override
 	public boolean isValid() {
 		for (int i = 0; i < fSegments.length; ++i) {
-		    String segment = fSegments[i];
+			String segment = fSegments[i];
 			// type name must follow C conventions
 			IStatus val = CConventions.validateIdentifier(segment, GPPLanguage.getDefault());
 			if (val.getSeverity() == IStatus.ERROR)
-			    return false;
+				return false;
 		}
 		return true;
 	}
-	
+
 	@Override
 	public boolean isValidSegment(String segment) {
 		if (segment.indexOf(QUALIFIER) != -1)
-		    return false;
+			return false;
 		// type name must follow C conventions
 		IStatus val = CConventions.validateIdentifier(segment, GPPLanguage.getDefault());
 		return (val.getSeverity() != IStatus.ERROR);
@@ -314,10 +314,10 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	@Override
 	public int hashCode() {
 		if (fHashCode == 0) {
-		    fHashCode = HASH_INIT;
-	        for (int i = 0; i < fSegments.length; ++i) {
-	            fHashCode = fHashCode * HASH_MULTIPLIER + fSegments[i].hashCode();
-	        }
+			fHashCode = HASH_INIT;
+			for (int i = 0; i < fSegments.length; ++i) {
+				fHashCode = fHashCode * HASH_MULTIPLIER + fSegments[i].hashCode();
+			}
 		}
 		return fHashCode;
 	}
@@ -332,19 +332,19 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		if (typeName == this)
 			return 0;
 		if (typeName == null)
-		    return 1;
+			return 1;
 
 		int length = fSegments.length;
 		int typeNameLength = typeName.segmentCount();
 		int len = Math.min(length, typeNameLength);
 		int result = 0;
-        for (int i = 0; result == 0 && i < len; ++i) {
-            result = fSegments[i].compareTo(typeName.segment(i));
-        }
-        if (result == 0 && length != typeNameLength) {
-            result = (length < typeNameLength) ? -1 : 1;
-        }
-        return result;
+		for (int i = 0; result == 0 && i < len; ++i) {
+			result = fSegments[i].compareTo(typeName.segment(i));
+		}
+		if (result == 0 && length != typeNameLength) {
+			result = (length < typeNameLength) ? -1 : 1;
+		}
+		return result;
 	}
 
 	@Override
@@ -352,19 +352,19 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		if (typeName == this)
 			return 0;
 		if (typeName == null)
-		    return 1;
+			return 1;
 
 		int length = fSegments.length;
 		int typeNameLength = typeName.segmentCount();
 		int len = Math.min(length, typeNameLength);
 		int result = 0;
-        for (int i = 0; result == 0 && i < len; ++i) {
-            result = fSegments[i].compareToIgnoreCase(typeName.segment(i));
-        }
-        if (result == 0 && length != typeNameLength) {
-            result = (length < typeNameLength) ? -1 : 1;
-        }
-        return result;
+		for (int i = 0; result == 0 && i < len; ++i) {
+			result = fSegments[i].compareToIgnoreCase(typeName.segment(i));
+		}
+		if (result == 0 && length != typeNameLength) {
+			result = (length < typeNameLength) ? -1 : 1;
+		}
+		return result;
 	}
 
 	@Override
@@ -373,27 +373,27 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 			return true;
 		}
 		if (!(obj instanceof IQualifiedTypeName)) {
-		    return false;
+			return false;
 		}
-		return equals((IQualifiedTypeName)obj);
+		return equals((IQualifiedTypeName) obj);
 	}
-	
+
 	@Override
 	public boolean equals(IQualifiedTypeName typeName) {
 		if (typeName == this)
 			return true;
 		if (typeName == null)
-		    return false;
-		
+			return false;
+
 		int length = fSegments.length;
 		int typeNameLength = typeName.segmentCount();
 		if (length != typeNameLength)
-        	return false;
-        for (int i = 0; i < length; ++i) {
-            if (!fSegments[i].equals(typeName.segment(i)))
-                return false;
-        }
-        return true;
+			return false;
+		for (int i = 0; i < length; ++i) {
+			if (!fSegments[i].equals(typeName.segment(i)))
+				return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -401,16 +401,16 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		if (typeName == this)
 			return true;
 		if (typeName == null)
-		    return false;
-		
+			return false;
+
 		int length = fSegments.length;
 		int typeNameLength = typeName.segmentCount();
 		if (length != typeNameLength)
-        	return false;
-        for (int i = 0; i < length; ++i) {
-            if (!fSegments[i].equalsIgnoreCase(typeName.segment(i)))
-                return false;
-        }
-        return true;
+			return false;
+		for (int i = 0; i < length; ++i) {
+			if (!fSegments[i].equalsIgnoreCase(typeName.segment(i)))
+				return false;
+		}
+		return true;
 	}
 }

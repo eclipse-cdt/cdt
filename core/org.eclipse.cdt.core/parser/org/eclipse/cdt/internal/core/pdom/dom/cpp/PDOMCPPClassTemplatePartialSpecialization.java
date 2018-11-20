@@ -36,26 +36,26 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Partial specialization of a class template for the index.
  */
-class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate 
+class PDOMCPPClassTemplatePartialSpecialization extends PDOMCPPClassTemplate
 		implements IPDOMPartialSpecialization, IPDOMOverloader, ICPPClassTemplatePartialSpecialization {
 	private static final int ARGUMENTS = PDOMCPPClassTemplate.RECORD_SIZE + 0;
 	private static final int SIGNATURE_HASH = PDOMCPPClassTemplate.RECORD_SIZE + 4;
 	private static final int PRIMARY = PDOMCPPClassTemplate.RECORD_SIZE + 8;
 	private static final int NEXT_PARTIAL = PDOMCPPClassTemplate.RECORD_SIZE + 12;
-	
+
 	/**
 	 * The size in bytes of a PDOMCPPClassTemplatePartialSpecialization record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPClassTemplate.RECORD_SIZE + 16;
-	
+
 	public PDOMCPPClassTemplatePartialSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
-			ICPPClassTemplatePartialSpecialization partial, PDOMCPPClassTemplate primary) 
+			ICPPClassTemplatePartialSpecialization partial, PDOMCPPClassTemplate primary)
 			throws CoreException, DOMException {
 		super(linkage, parent, partial, false);
 		getDB().putRecPtr(record + PRIMARY, primary.getRecord());
 		primary.addPartial(this);
-		
+
 		try {
 			Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(partial);
 			getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
@@ -64,16 +64,16 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 		}
 		linkage.new ConfigurePartialSpecialization(this, partial);
 	}
-	
+
 	public PDOMCPPClassTemplatePartialSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
-	
+
 	@Override
 	public int getSignatureHash() throws CoreException {
 		return getDB().getInt(record + SIGNATURE_HASH);
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -88,12 +88,12 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 		long value = getDB().getRecPtr(record + NEXT_PARTIAL);
 		return value != 0 ? new PDOMCPPClassTemplatePartialSpecialization(getLinkage(), value) : null;
 	}
-	
+
 	public void setNextPartial(PDOMCPPClassTemplatePartialSpecialization partial) throws CoreException {
 		long value = partial != null ? partial.getRecord() : 0;
 		getDB().putRecPtr(record + NEXT_PARTIAL, value);
 	}
-	
+
 	@Override
 	public ICPPClassTemplate getPrimaryClassTemplate() {
 		try {
@@ -103,12 +103,12 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 			return null;
 		}
 	}
-	
+
 	@Override
 	public void setTemplateArguments(ICPPTemplateArgument[] templateArguments) throws CoreException {
 		final Database db = getPDOM().getDB();
 		long oldRec = db.getRecPtr(record + ARGUMENTS);
-		long rec= PDOMCPPArgumentList.putArguments(this, templateArguments);
+		long rec = PDOMCPPArgumentList.putArguments(this, templateArguments);
 		db.putRecPtr(record + ARGUMENTS, rec);
 		if (oldRec != 0) {
 			PDOMCPPArgumentList.clearArguments(this, oldRec);
@@ -118,14 +118,14 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
+			final long rec = getPDOM().getDB().getRecPtr(record + ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log("Failed to load template arguments for " + getName(), e); //$NON-NLS-1$
 			return ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		}
 	}
-	
+
 	@Override
 	public int pdomCompareTo(PDOMBinding other) {
 		int cmp = super.pdomCompareTo(other);
@@ -146,20 +146,20 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 		}
 		return cmp;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
-		
+
 		if (type instanceof PDOMNode) {
-			PDOMNode node= (PDOMNode) type;
+			PDOMNode node = (PDOMNode) type;
 			if (node.getPDOM() == getPDOM()) {
 				return node.getRecord() == getRecord();
 			}
 		}
-		
+
 		if (!(type instanceof ICPPClassTemplatePartialSpecialization)) {
 			return false;
 		}

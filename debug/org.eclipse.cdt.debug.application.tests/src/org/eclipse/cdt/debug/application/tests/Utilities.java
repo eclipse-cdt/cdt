@@ -43,7 +43,7 @@ public class Utilities {
 		return instance;
 	}
 
-	public IPath getProjectPath (String name) {
+	public IPath getProjectPath(String name) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IPath rootLocation = root.getLocation();
 
@@ -52,18 +52,17 @@ public class Utilities {
 		return destProjectDirPath;
 	}
 
-	public boolean buildProject (String name) {
+	public boolean buildProject(String name) {
 		File destProjectDir = getProjectPath(name).toFile();
 
 		String resourceDirPath = "/projects/" + name; //$NON-NLS-1$
 		try {
-			String path = FileLocator.toFileURL(
-					this.getClass().getResource(resourceDirPath)).getPath();
+			String path = FileLocator.toFileURL(this.getClass().getResource(resourceDirPath)).getPath();
 
 			File projectDir = new Path(path).toFile();
 			copy(projectDir, destProjectDir);
 
-			Process process = execute(new String[]{"make","all","2>&1"}, null, destProjectDir, false);
+			Process process = execute(new String[] { "make", "all", "2>&1" }, null, destProjectDir, false);
 
 			boolean done = false;
 			while (!done) {
@@ -86,7 +85,7 @@ public class Utilities {
 				}
 			}
 			process.destroy();
-			process = execute(new String[]{"ls","-l"}, null, destProjectDir, false);
+			process = execute(new String[] { "ls", "-l" }, null, destProjectDir, false);
 
 			done = false;
 			while (!done) {
@@ -116,13 +115,13 @@ public class Utilities {
 		return true;
 	}
 
-	public boolean cleanProject (String name) {
+	public boolean cleanProject(String name) {
 		IPath destProjectDirPath = getProjectPath(name);
 		File destProjectDir = destProjectDirPath.toFile();
-		
+
 		try {
 
-			Process process = execute(new String[]{"make","clean"}, null, destProjectDir, false);
+			Process process = execute(new String[] { "make", "clean" }, null, destProjectDir, false);
 
 			boolean done = false;
 			while (!done) {
@@ -166,7 +165,8 @@ public class Utilities {
 		}
 	}
 
-	private static Process startProcess(String[] commandArray, String[] envp, File workDir, boolean usePty) throws IOException {
+	private static Process startProcess(String[] commandArray, String[] envp, File workDir, boolean usePty)
+			throws IOException {
 		if (workDir == null) {
 			return ProcessFactory.getFactory().exec(commandArray, envp);
 		}
@@ -177,13 +177,12 @@ public class Utilities {
 		}
 	}
 
-	public static void copy (File src, File dest)
-			throws IOException {
+	public static void copy(File src, File dest) throws IOException {
 
 		if (src.isDirectory()) {
 
 			// ensure destination directory exists
-			if (!dest.exists()){
+			if (!dest.exists()) {
 				dest.mkdir();
 			}
 

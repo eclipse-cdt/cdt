@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.CoreException;
  * This is sample of non AST checker integration. This one is not
  * external checker because it does not actually call other process, but it
  * can easily made into one.
- * 
+ *
  * This checker is parametrized by the search strings
  */
 public class GrepChecker extends AbstractCheckerWithProblemPreferences {
@@ -96,7 +96,7 @@ public class GrepChecker extends AbstractCheckerWithProblemPreferences {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences
 	 * #initPreferences(org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)

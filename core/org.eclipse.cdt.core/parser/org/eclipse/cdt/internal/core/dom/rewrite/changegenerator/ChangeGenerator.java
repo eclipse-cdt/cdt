@@ -72,8 +72,7 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
 
 public class ChangeGenerator extends ASTVisitor {
-	private final Map<IASTNode, Map<ModificationKind, List<ASTModification>>> classifiedModifications =
-			new HashMap<>();
+	private final Map<IASTNode, Map<ModificationKind, List<ASTModification>>> classifiedModifications = new HashMap<>();
 	private int processedOffset;
 	private MultiTextEdit rootEdit;
 	private CompositeChange change;
@@ -82,7 +81,7 @@ public class ChangeGenerator extends ASTVisitor {
 	private final NodeCommentMap commentMap;
 
 	{
-		shouldVisitArrayModifiers= true;
+		shouldVisitArrayModifiers = true;
 		shouldVisitBaseSpecifiers = true;
 		shouldVisitNames = true;
 		shouldVisitDeclarations = true;
@@ -108,8 +107,7 @@ public class ChangeGenerator extends ASTVisitor {
 		generateChange(rootNode, this);
 	}
 
-	private void generateChange(IASTNode rootNode, ASTVisitor pathProvider)
-			throws ProblemRuntimeException {
+	private void generateChange(IASTNode rootNode, ASTVisitor pathProvider) throws ProblemRuntimeException {
 		change = new CompositeChange(ChangeGeneratorMessages.ChangeGenerator_compositeChange);
 		classifyModifications();
 		rootNode.accept(pathProvider);
@@ -119,7 +117,7 @@ public class ChangeGenerator extends ASTVisitor {
 		String source = ast.getRawSignature();
 		ITranslationUnit tu = ast.getOriginatingTranslationUnit();
 		rootEdit = ChangeFormatter.formatChangedCode(source, tu, rootEdit);
-		TextFileChange subchange= ASTRewriteAnalyzer.createCTextFileChange((IFile) tu.getResource());
+		TextFileChange subchange = ASTRewriteAnalyzer.createCTextFileChange((IFile) tu.getResource());
 		subchange.setEdit(rootEdit);
 		change.add(subchange);
 	}
@@ -180,7 +178,7 @@ public class ChangeGenerator extends ASTVisitor {
 		}
 		return super.visit(declarator);
 	}
-	
+
 	@Override
 	public int visit(ICPPASTBaseSpecifier baseSpecifier) {
 		handleInserts(baseSpecifier);
@@ -198,7 +196,7 @@ public class ChangeGenerator extends ASTVisitor {
 		}
 		return super.leave(baseSpecifier);
 	}
-	
+
 	@Override
 	public int visit(IASTArrayModifier arrayModifier) {
 		handleInserts(arrayModifier);
@@ -627,7 +625,7 @@ public class ChangeGenerator extends ASTVisitor {
 			return statement;
 		}
 
-		return endOffset(originalSibling) >= endOffset(statement) ? sibling : statement; 
+		return endOffset(originalSibling) >= endOffset(statement) ? sibling : statement;
 	}
 
 	private IASTNode getNextSiblingNode(IASTNode node) {
@@ -666,7 +664,7 @@ public class ChangeGenerator extends ASTVisitor {
 				low = mid + 1;
 			}
 		}
-		IASTNode statement =  high < preprocessorStatements.length ? preprocessorStatements[high] : null;
+		IASTNode statement = high < preprocessorStatements.length ? preprocessorStatements[high] : null;
 
 		IASTNode originalSibling = getNextSiblingNode(node);
 		IASTNode sibling = originalSibling == null ? null : getReplacementNode(originalSibling);
@@ -680,7 +678,7 @@ public class ChangeGenerator extends ASTVisitor {
 			return statement;
 		}
 
-		return offset(originalSibling) <= offset(statement) ? sibling : statement; 
+		return offset(originalSibling) <= offset(statement) ? sibling : statement;
 	}
 
 	/**
@@ -692,9 +690,8 @@ public class ChangeGenerator extends ASTVisitor {
 	 *     children to it.
 	 */
 	private ReplaceEdit getAppendAnchor(IASTNode node) {
-		if (!(node instanceof IASTCompositeTypeSpecifier ||
-				node instanceof IASTCompoundStatement ||
-				node instanceof ICPPASTNamespaceDefinition)) {
+		if (!(node instanceof IASTCompositeTypeSpecifier || node instanceof IASTCompoundStatement
+				|| node instanceof ICPPASTNamespaceDefinition)) {
 			return null;
 		}
 		String code = node.getRawSignature();
@@ -720,7 +717,7 @@ public class ChangeGenerator extends ASTVisitor {
 	 *     Otherwise returns the start position.
 	 */
 	private int skipPrecedingWhitespace(String text, int startPos) {
-		for (int pos = startPos; --pos >= 0; ) {
+		for (int pos = startPos; --pos >= 0;) {
 			char c = text.charAt(pos);
 			if (c == '\n') {
 				return pos + 1;
@@ -787,7 +784,7 @@ public class ChangeGenerator extends ASTVisitor {
 	 *     character is encountered before the given delimiter.
 	 */
 	private int skipToPrecedingDelimiter(String text, char delimiter, int startPos) {
-		for (int pos = startPos; --pos >= 0; ) {
+		for (int pos = startPos; --pos >= 0;) {
 			char c = text.charAt(pos);
 			if (c == delimiter) {
 				return pos;

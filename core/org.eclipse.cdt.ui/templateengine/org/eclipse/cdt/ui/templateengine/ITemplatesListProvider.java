@@ -17,13 +17,13 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 
 /**
  * ITemplatesListProvider
- * 
+ *
  * @since 4.0
  */
 public interface ITemplatesListProvider extends ITreeContentProvider {
-	
+
 	Template[] getTemplates();
-	
+
 	String getDescription(Object object);
 
 	boolean showTemplatesInTreeView();

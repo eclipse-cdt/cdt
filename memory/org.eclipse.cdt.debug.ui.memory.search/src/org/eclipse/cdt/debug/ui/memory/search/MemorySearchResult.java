@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -23,23 +23,21 @@ import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
 
-public class MemorySearchResult implements ISearchResult 
-{
+public class MemorySearchResult implements ISearchResult {
 	private ISearchQuery fQuery;
 	private String fLabel;
-	
+
 	private Vector<ISearchResultListener> listeners = new Vector<ISearchResultListener>();
-	
+
 	private Vector<MemoryMatch> fMatches = new Vector<MemoryMatch>();
-	
-	public MemorySearchResult(ISearchQuery query, String label)
-	{
+
+	public MemorySearchResult(ISearchQuery query, String label) {
 		fQuery = query;
 		fLabel = label;
 	}
-	
+
 	public ImageDescriptor getImageDescriptor() {
-		
+
 		return null;
 	}
 
@@ -52,38 +50,34 @@ public class MemorySearchResult implements ISearchResult
 	}
 
 	public String getTooltip() {
-		
+
 		return fLabel;
 	}
-	
-	public MemoryMatch[] getMatches()
-	{
+
+	public MemoryMatch[] getMatches() {
 		MemoryMatch matches[] = new MemoryMatch[fMatches.size()];
-		for(int i = 0; i < matches.length; i++)
+		for (int i = 0; i < matches.length; i++)
 			matches[i] = fMatches.elementAt(i);
 		return matches;
 	}
-	
-	public void addMatch(MemoryMatch address)
-	{
+
+	public void addMatch(MemoryMatch address) {
 		fMatches.addElement(address);
 		fireChange();
 	}
-	
-	private void fireChange()
-	{
+
+	private void fireChange() {
 		Enumeration<ISearchResultListener> en = listeners.elements();
-		while(en.hasMoreElements()) {
+		while (en.hasMoreElements()) {
 			en.nextElement().searchResultChanged(new SearchResultEvent(this) {
-					private static final long serialVersionUID = -1435449002760145835L;
-				} 
-			);
+				private static final long serialVersionUID = -1435449002760145835L;
+			});
 		}
 	}
 
 	public void addListener(ISearchResultListener l) {
 		listeners.addElement(l);
-		
+
 	}
 
 	public void removeListener(ISearchResultListener l) {

@@ -20,25 +20,24 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarInfoNumChildrenInfo;
 
 /**
- * 
+ *
  * -var-info-num-children NAME
- * 
+ *
  * Returns the number of children of a variable object NAME:
- * 
+ *
  * numchild=N
- * 
+ *
  * Note that this number is not completely reliable for a dynamic varobjs. It
  * will return the current number of children, but more children may be
  * available.
  */
-public class MIVarInfoNumChildren extends MICommand<MIVarInfoNumChildrenInfo> 
-{
+public class MIVarInfoNumChildren extends MICommand<MIVarInfoNumChildrenInfo> {
 	public MIVarInfoNumChildren(IExpressionDMContext ctx, String name) {
-		super(ctx, "-var-info-num-children", new String[]{name}); //$NON-NLS-1$
+		super(ctx, "-var-info-num-children", new String[] { name }); //$NON-NLS-1$
 	}
-    
-    @Override
-    public MIVarInfoNumChildrenInfo getResult(MIOutput out) {
-        return new MIVarInfoNumChildrenInfo(out);
-    }
+
+	@Override
+	public MIVarInfoNumChildrenInfo getResult(MIOutput out) {
+		return new MIVarInfoNumChildrenInfo(out);
+	}
 }

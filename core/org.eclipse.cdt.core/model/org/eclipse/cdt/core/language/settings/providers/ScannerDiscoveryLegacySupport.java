@@ -49,13 +49,13 @@ public class ScannerDiscoveryLegacySupport {
 	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"; //$NON-NLS-1$
 
 	/**
-	 * ID of ScannerInfo language settings provider wrapping ScannerInfoProvider defined by org.eclipse.cdt.core.ScannerInfoProvider extension point 
+	 * ID of ScannerInfo language settings provider wrapping ScannerInfoProvider defined by org.eclipse.cdt.core.ScannerInfoProvider extension point
 	 * @since 5.5
 	 */
 	public static final String SI_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.core.LegacyScannerInfoLanguageSettingsProvider"; //$NON-NLS-1$
 
 	/**
-	 * ID of language settings provider wrapping {@link org.eclipse.cdt.core.resources.ScannerProvider} of {@link PathEntryManager} for 3.X projects 
+	 * ID of language settings provider wrapping {@link org.eclipse.cdt.core.resources.ScannerProvider} of {@link PathEntryManager} for 3.X projects
 	 * @since 5.5
 	 */
 	public static final String PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.core.PathEntryScannerInfoLanguageSettingsProvider"; //$NON-NLS-1$
@@ -69,7 +69,7 @@ public class ScannerDiscoveryLegacySupport {
 
 	/**
 	 * Get preferences node for org.eclipse.cdt.core.
-	 * 
+	 *
 	 * @param project - project to get preferences or {@code null} for workspace preferences
 	 * @return
 	 */
@@ -88,7 +88,7 @@ public class ScannerDiscoveryLegacySupport {
 	 * @return {@code true} if functionality is defined
 	 *
 	 * @noreference This method is temporary and not intended to be referenced by clients.
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public static boolean isLanguageSettingsProvidersFunctionalityDefined(IProject project) {
@@ -107,7 +107,8 @@ public class ScannerDiscoveryLegacySupport {
 	 * @noreference This method is temporary and not intended to be referenced by clients.
 	 */
 	public static boolean isLanguageSettingsProvidersFunctionalityEnabled(IProject project) {
-		boolean isEnabledInWorkspace = !getPreferences(null).getBoolean(DISABLE_LSP_PREFERENCE, DISABLE_LSP_DEFAULT_WORKSPACE);
+		boolean isEnabledInWorkspace = !getPreferences(null).getBoolean(DISABLE_LSP_PREFERENCE,
+				DISABLE_LSP_DEFAULT_WORKSPACE);
 		if (isEnabledInWorkspace && project != null) {
 			return !getPreferences(project).getBoolean(DISABLE_LSP_PREFERENCE, DISABLE_LSP_DEFAULT_PROJECT);
 		}
@@ -143,7 +144,8 @@ public class ScannerDiscoveryLegacySupport {
 	 */
 	public static boolean isMbsLanguageSettingsProviderOn(ICConfigurationDescription cfgDescription) {
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders();
 			for (ILanguageSettingsProvider lsp : lsProviders) {
 				if (MBS_LANGUAGE_SETTINGS_PROVIDER_ID.equals(lsp.getId())) {
 					return true;
@@ -159,17 +161,19 @@ public class ScannerDiscoveryLegacySupport {
 	 */
 	private static boolean isLegacyProviderOn(ICConfigurationDescription cfgDescription) {
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders();
 			for (ILanguageSettingsProvider lsp : lsProviders) {
 				String id = lsp.getId();
-				if (MBS_LANGUAGE_SETTINGS_PROVIDER_ID.equals(id) || SI_LANGUAGE_SETTINGS_PROVIDER_ID.equals(id) || PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID.equals(id)) {
+				if (MBS_LANGUAGE_SETTINGS_PROVIDER_ID.equals(id) || SI_LANGUAGE_SETTINGS_PROVIDER_ID.equals(id)
+						|| PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID.equals(id)) {
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @noreference This is internal helper method to support compatibility with previous versions
 	 * which is not intended to be referenced by clients.
@@ -200,13 +204,14 @@ public class ScannerDiscoveryLegacySupport {
 
 	/**
 	 * Return list containing User provider and one of wrapper providers to support legacy projects (backward compatibility).
-	 * 
+	 *
 	 * @noreference This is internal helper method to support compatibility with previous versions
 	 * which is not intended to be referenced by clients.
 	 * @since 5.5
 	 */
 	public static String[] getDefaultProviderIdsLegacy(ICConfigurationDescription cfgDescription) {
-		boolean useScannerInfoProviderExtension = new ScannerInfoExtensionLanguageSettingsProvider().getScannerInfoProvider(cfgDescription) != null;
+		boolean useScannerInfoProviderExtension = new ScannerInfoExtensionLanguageSettingsProvider()
+				.getScannerInfoProvider(cfgDescription) != null;
 		String legacyProviderId;
 		if (useScannerInfoProviderExtension) {
 			legacyProviderId = SI_LANGUAGE_SETTINGS_PROVIDER_ID;
@@ -216,19 +221,21 @@ public class ScannerDiscoveryLegacySupport {
 			legacyProviderId = PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID;
 		}
 
-		return new String[] {USER_LANGUAGE_SETTINGS_PROVIDER_ID, ReferencedProjectsLanguageSettingsProvider.ID, legacyProviderId};
+		return new String[] { USER_LANGUAGE_SETTINGS_PROVIDER_ID, ReferencedProjectsLanguageSettingsProvider.ID,
+				legacyProviderId };
 	}
-	
+
 	/**
 	 * Checks if the provider is applicable for configuration from backward compatibility point of view
-	 * 
+	 *
 	 * @noreference This is internal helper method to support compatibility with previous versions
 	 * which is not intended to be referenced by clients.
 	 * @since 5.5
 	 */
 	public static boolean isProviderCompatible(String providerId, ICConfigurationDescription cfgDescription) {
 		if (cfgDescription != null) {
-			boolean useScannerInfoProviderExtension = new ScannerInfoExtensionLanguageSettingsProvider().getScannerInfoProvider(cfgDescription) != null;
+			boolean useScannerInfoProviderExtension = new ScannerInfoExtensionLanguageSettingsProvider()
+					.getScannerInfoProvider(cfgDescription) != null;
 			if (SI_LANGUAGE_SETTINGS_PROVIDER_ID.equals(providerId)) {
 				return useScannerInfoProviderExtension;
 			}
@@ -249,14 +256,17 @@ public class ScannerDiscoveryLegacySupport {
 	/**
 	 * If not defined yet, define property that controls if language settings providers functionality enabled for a given project.
 	 * Workspace preference is checked and the project property is set to match it.
-	 * 
+	 *
 	 * @param project - project to define enablement.
 	 * @since 5.5
 	 */
 	public static void defineLanguageSettingsEnablement(IProject project) {
-		if (project != null && ! ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityDefined(project)) {
-			boolean isPreferenceEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null);
-			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isPreferenceEnabled);
+		if (project != null
+				&& !ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityDefined(project)) {
+			boolean isPreferenceEnabled = ScannerDiscoveryLegacySupport
+					.isLanguageSettingsProvidersFunctionalityEnabled(null);
+			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project,
+					isPreferenceEnabled);
 		}
 	}
 
@@ -275,13 +285,20 @@ public class ScannerDiscoveryLegacySupport {
 			legacyProfiles = new HashMap<String, String>();
 
 			// InputTypes
-			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input", "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
-			legacyProfiles.put("cdt.managedbuild.tool.gnu.cpp.compiler.input", "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
-			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input.cygwin", "org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC");
-			legacyProfiles.put("cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin", "org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP");
-			legacyProfiles.put("cdt.managedbuild.tool.xlc.c.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile");
-			legacyProfiles.put("cdt.managedbuild.tool.xlc.cpp.c.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile");
-			legacyProfiles.put("cdt.managedbuild.tool.xlc.cpp.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP");
+			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input",
+					"org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
+			legacyProfiles.put("cdt.managedbuild.tool.gnu.cpp.compiler.input",
+					"org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
+			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input.cygwin",
+					"org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC");
+			legacyProfiles.put("cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin",
+					"org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP");
+			legacyProfiles.put("cdt.managedbuild.tool.xlc.c.compiler.input",
+					"org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile");
+			legacyProfiles.put("cdt.managedbuild.tool.xlc.cpp.c.compiler.input",
+					"org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile");
+			legacyProfiles.put("cdt.managedbuild.tool.xlc.cpp.compiler.input",
+					"org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP");
 
 			// Toolchains
 		}

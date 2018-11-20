@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,12 +17,12 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
- * Retrieves data stack information 
- * 
+ * Retrieves data stack information
+ *
  * <pre>
  *    C: children {thread_id} {frame_id} {variable_name}
  *    R: {child variable 1}|{child variable 2}|{child variable 3}|...|
- *    
+ *
  * Errors:
  *    error: invalid thread
  * </pre>
@@ -30,12 +30,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDAChildrenCommand extends AbstractPDACommand<PDAListResult> {
 
-    public PDAChildrenCommand(PDAThreadDMContext thread, int frameId, String name  ) {
-        super(thread, "children " + thread.getID() + " " + frameId + " " + name);
-    }
-    
-    @Override
-    public PDAListResult createResult(String resultText) {
-        return new PDAListResult(resultText);
-    }
+	public PDAChildrenCommand(PDAThreadDMContext thread, int frameId, String name) {
+		super(thread, "children " + thread.getID() + " " + frameId + " " + name);
+	}
+
+	@Override
+	public PDAListResult createResult(String resultText) {
+		return new PDAListResult(resultText);
+	}
 }

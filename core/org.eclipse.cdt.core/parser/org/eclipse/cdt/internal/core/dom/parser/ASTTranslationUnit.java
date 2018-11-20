@@ -73,53 +73,52 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private static final IASTProblem[] EMPTY_PROBLEM_ARRAY = {};
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-    private IASTDeclaration[] fAllDeclarations;
-    private IASTDeclaration[] fActiveDeclarations;
-	private int fLastDeclaration= -1;
+	private IASTDeclaration[] fAllDeclarations;
+	private IASTDeclaration[] fActiveDeclarations;
+	private int fLastDeclaration = -1;
 
 	protected ILocationResolver fLocationResolver;
 	private IIndex fIndex;
-	private boolean fIsHeader= true;
+	private boolean fIsHeader = true;
 	private IIndexFileSet fIndexFileSet;
 	private IIndexFileSet fASTFileSet;
 	private INodeFactory fNodeFactory;
 	private boolean fForContentAssist;
 	private ITranslationUnit fOriginatingTranslationUnit;
-	private ISignificantMacros fSignificantMacros= ISignificantMacros.NONE;
+	private ISignificantMacros fSignificantMacros = ISignificantMacros.NONE;
 	private boolean fPragmaOnceSemantics;
 	private SizeofCalculator fSizeofCalculator;
 	/** The semaphore controlling exclusive access to the AST. */
-	private final Semaphore fSemaphore= new Semaphore(1);
+	private final Semaphore fSemaphore = new Semaphore(1);
 	private boolean fBasedOnIncompleteIndex;
 	private boolean fNodesOmitted;
 	private IBuiltinBindingsProvider fBuiltinBindingsProvider;
-	
+
 	// Caches
 	private final WeakHashMap<IType, String> fUnnormalizedTypeStringCache = new WeakHashMap<>();
 	private final WeakHashMap<IType, String> fNormalizedTypeStringCache = new WeakHashMap<>();
 
 	@Override
 	public final IASTTranslationUnit getTranslationUnit() {
-    	return this;
-    }
+		return this;
+	}
 
 	@Override
 	public final void addDeclaration(IASTDeclaration d) {
 		if (d != null) {
 			d.setParent(this);
 			d.setPropertyInParent(OWNED_DECLARATION);
-			fAllDeclarations = ArrayUtil.appendAt(IASTDeclaration.class,
-					fAllDeclarations, ++fLastDeclaration, d);
-			fActiveDeclarations= null;
+			fAllDeclarations = ArrayUtil.appendAt(IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, d);
+			fActiveDeclarations = null;
 		}
 	}
 
 	@Override
 	public final IASTDeclaration[] getDeclarations() {
-		IASTDeclaration[] active= fActiveDeclarations;
+		IASTDeclaration[] active = fActiveDeclarations;
 		if (active == null) {
-			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fLastDeclaration+1);
-			fActiveDeclarations= active;
+			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fLastDeclaration + 1);
+			fActiveDeclarations = active;
 		}
 		return active;
 	}
@@ -127,8 +126,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	@Override
 	public final IASTDeclaration[] getDeclarations(boolean includeInactive) {
 		if (includeInactive) {
-			fAllDeclarations= ArrayUtil.trimAt(IASTDeclaration.class,
-					fAllDeclarations, fLastDeclaration);
+			fAllDeclarations = ArrayUtil.trimAt(IASTDeclaration.class, fAllDeclarations, fLastDeclaration);
 			return fAllDeclarations;
 		}
 		return getDeclarations();
@@ -141,7 +139,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 				other.setParent(child.getParent());
 				other.setPropertyInParent(child.getPropertyInParent());
 				fAllDeclarations[i] = (IASTDeclaration) other;
-				fActiveDeclarations= null;
+				fActiveDeclarations = null;
 				return;
 			}
 		}
@@ -149,15 +147,15 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 
 	@Override
 	public final IName[] getDeclarations(IBinding binding) {
-    	IName[] names= getDeclarationsInAST(binding);
-        if (names.length == 0 && fIndex != null) {
-        	try {
-        		names = fIndex.findDeclarations(binding);
-        	} catch (CoreException e) {
-        		CCorePlugin.log(e);
-        		return names;
-        	}
-        }
+		IName[] names = getDeclarationsInAST(binding);
+		if (names.length == 0 && fIndex != null) {
+			try {
+				names = fIndex.findDeclarations(binding);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				return names;
+			}
+		}
 
 		return names;
 	}
@@ -182,22 +180,22 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	protected final IASTName[] getMacroReferencesInAST(IMacroBinding binding) {
 		if (fLocationResolver == null)
 			return IASTName.EMPTY_NAME_ARRAY;
-        return fLocationResolver.getReferences(binding);
-    }
+		return fLocationResolver.getReferences(binding);
+	}
 
-    @Override
+	@Override
 	public final IName[] getDefinitions(IBinding binding) {
-    	IName[] names= getDefinitionsInAST(binding);
-        if (names.length == 0 && fIndex != null) {
-        	try {
-        		names= fIndex.findDefinitions(binding);
-        	} catch (CoreException e) {
-        		CCorePlugin.log(e);
-        		return names;
-        	}
-        }
-        return names;
-    }
+		IName[] names = getDefinitionsInAST(binding);
+		if (names.length == 0 && fIndex != null) {
+			try {
+				names = fIndex.findDefinitions(binding);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				return names;
+			}
+		}
+		return names;
+	}
 
 	@Override
 	public final IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
@@ -235,8 +233,8 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	}
 
 	public final void setLocationResolver(ILocationResolver resolver) {
-		fLocationResolver= resolver;
-        resolver.setRootNode(this);
+		fLocationResolver = resolver;
+		resolver.setRootNode(this);
 	}
 
 	@Override
@@ -268,35 +266,39 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public final boolean accept(ASTVisitor action) {
 		if (action.shouldVisitTranslationUnit) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 		IASTDeclaration[] decls = getDeclarations(action.includeInactiveNodes);
 		for (IASTDeclaration decl : decls) {
-			if (!decl.accept(action)) return false;
+			if (!decl.accept(action))
+				return false;
 		}
 
-        if (action.shouldVisitTranslationUnit && action.leave(this) == ASTVisitor.PROCESS_ABORT)
-        	return false;
+		if (action.shouldVisitTranslationUnit && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
 
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public final IASTFileLocation flattenLocationsToFile(IASTNodeLocation[] nodeLocations) {
-        if (fLocationResolver == null)
-            return null;
-        return fLocationResolver.flattenLocations(nodeLocations);
-    }
+		if (fLocationResolver == null)
+			return null;
+		return fLocationResolver.flattenLocations(nodeLocations);
+	}
 
-    @Override
+	@Override
 	public final IDependencyTree getDependencyTree() {
-        if (fLocationResolver == null)
-            return null;
-        return fLocationResolver.getDependencyTree();
-    }
+		if (fLocationResolver == null)
+			return null;
+		return fLocationResolver.getDependencyTree();
+	}
 
 	@Override
 	public final String getContainingFilename(int offset) {
@@ -305,28 +307,28 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		return fLocationResolver.getContainingFilePath(offset);
 	}
 
-    @Override
+	@Override
 	public final IIndex getIndex() {
-    	return fIndex;
-    }
+		return fIndex;
+	}
 
-    @Override
+	@Override
 	public final void setIndex(IIndex index) {
-    	this.fIndex = index;
-    	if (index != null) {
-    		fIndexFileSet= index.createFileSet();
-    		fASTFileSet= index.createFileSet();
-    	}
-    }
+		this.fIndex = index;
+		if (index != null) {
+			fIndexFileSet = index.createFileSet();
+			fASTFileSet = index.createFileSet();
+		}
+	}
 
-    @Override
+	@Override
 	public final INodeFactory getASTNodeFactory() {
-    	return fNodeFactory;
-    }
+		return fNodeFactory;
+	}
 
-    public final void setASTNodeFactory(INodeFactory nodeFactory) {
-    	this.fNodeFactory = nodeFactory;
-    }
+	public final void setASTNodeFactory(INodeFactory nodeFactory) {
+		this.fNodeFactory = nodeFactory;
+	}
 
 	@Override
 	public final IASTComment[] getComments() {
@@ -358,7 +360,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 
 	@Override
 	public final void setIsHeaderUnit(boolean headerUnit) {
-		fIsHeader= headerUnit;
+		fIsHeader = headerUnit;
 	}
 
 	public boolean isForContentAssist() {
@@ -366,7 +368,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	}
 
 	public final void setIsForContentAssist(boolean forContentAssist) {
-		fForContentAssist= forContentAssist;
+		fForContentAssist = forContentAssist;
 	}
 
 	@Override
@@ -381,7 +383,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	@Override
 	public void skippedFile(int offset, InternalFileContent fileContent) {
 		if (fIndexFileSet != null) {
-			List<IIndexFile> files= fileContent.getFilesIncluded();
+			List<IIndexFile> files = fileContent.getFilesIncluded();
 			for (IIndexFile indexFile : files) {
 				fASTFileSet.remove(indexFile);
 				fIndexFileSet.add(indexFile);
@@ -473,10 +475,10 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		});
 
 		if (IndexFileSet.sDEBUG && fIndexFileSet != null && fASTFileSet != null) {
-			long t = ((IndexFileSet) fIndexFileSet).getTimingContainsDeclarationNanos() +
-					((IndexFileSet) fASTFileSet).getTimingContainsDeclarationNanos();
-			String forName = fOriginatingTranslationUnit == null ?
-					"" : " for " + fOriginatingTranslationUnit.getElementName(); //$NON-NLS-1$ //$NON-NLS-2$
+			long t = ((IndexFileSet) fIndexFileSet).getTimingContainsDeclarationNanos()
+					+ ((IndexFileSet) fASTFileSet).getTimingContainsDeclarationNanos();
+			String forName = fOriginatingTranslationUnit == null ? "" //$NON-NLS-1$
+					: " for " + fOriginatingTranslationUnit.getElementName(); //$NON-NLS-1$
 			System.out.println(String.format("IndexFileSet.containsDeclaration%s took %.2g ms", forName, t / 1.e6)); //$NON-NLS-1$
 		}
 	}
@@ -499,7 +501,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public void setSignificantMacros(ISignificantMacros sigMacros) {
 		assertNotFrozen();
 		if (sigMacros != null)
-			fSignificantMacros= sigMacros;
+			fSignificantMacros = sigMacros;
 	}
 
 	@Override
@@ -510,13 +512,13 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	@Override
 	public void setPragmaOnceSemantics(boolean value) {
 		assertNotFrozen();
-		fPragmaOnceSemantics= value;
+		fPragmaOnceSemantics = value;
 	}
 
 	/**
 	 * Starts exclusive access.
 	 *
-     * @throws InterruptedException if the current thread is interrupted
+	 * @throws InterruptedException if the current thread is interrupted
 	 */
 	public void beginExclusiveAccess() throws InterruptedException {
 		fSemaphore.acquire();
@@ -525,10 +527,10 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	/**
 	 * Starts exclusive access.
 	 *
-     * @param timeoutMillis the maximum time to wait in milliseconds
-     * @return {@code true} if exclusive access was acquired, or {@code false} if it
-     *     was not possible to acquire exclusive access before the timeout expired
-     * @throws InterruptedException if the current thread is interrupted
+	 * @param timeoutMillis the maximum time to wait in milliseconds
+	 * @return {@code true} if exclusive access was acquired, or {@code false} if it
+	 *     was not possible to acquire exclusive access before the timeout expired
+	 * @throws InterruptedException if the current thread is interrupted
 	 */
 	public boolean tryBeginExclusiveAccess(long timeoutMillis) throws InterruptedException {
 		return fSemaphore.tryAcquire(timeoutMillis, TimeUnit.MILLISECONDS);
@@ -560,8 +562,9 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	 * If ambiguity resolution is in progress, and processing of 'node' has been deferred,
 	 * process it now. Has no effect if ambiguity resolution is not in progress.
 	 */
-	public void resolvePendingAmbiguities(IASTNode node) {}
-	
+	public void resolvePendingAmbiguities(IASTNode node) {
+	}
+
 	public void setupBuiltinBindings(IBuiltinBindingsProvider builtinBindingsProvider) {
 		IScope tuScope = getScope();
 
@@ -569,18 +572,18 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		for (IBinding binding : bindings) {
 			ASTInternal.addBinding(tuScope, binding);
 		}
-		
+
 		// Save the builtin bindings provider for later use by isKnownBuiltin().
 		fBuiltinBindingsProvider = builtinBindingsProvider;
 	}
-	
+
 	public boolean isKnownBuiltin(char[] builtinName) {
 		if (fBuiltinBindingsProvider != null) {
 			return fBuiltinBindingsProvider.isKnownBuiltin(builtinName);
 		}
 		return false;
 	}
-	
+
 	public Map<IType, String> getTypeStringCache(boolean normalized) {
 		return normalized ? fNormalizedTypeStringCache : fUnnormalizedTypeStringCache;
 	}

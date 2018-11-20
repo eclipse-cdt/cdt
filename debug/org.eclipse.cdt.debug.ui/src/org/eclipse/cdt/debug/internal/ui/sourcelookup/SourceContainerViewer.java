@@ -11,7 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
+package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class SourceContainerViewer extends TreeViewer {
 	 * The source container entries displayed in this viewer
 	 */
 	protected List<ISourceContainer> fEntries = new ArrayList<ISourceContainer>();
-	
+
 	class ContentProvider implements ITreeContentProvider {
 		/**
 		 * @see IStructuredContentProvider#getElements(Object)
@@ -46,33 +46,33 @@ public class SourceContainerViewer extends TreeViewer {
 		public Object[] getElements(Object inputElement) {
 			return getEntries();
 		}
-		
+
 		/**
 		 * @see IContentProvider#dispose()
 		 */
 		@Override
 		public void dispose() {
 		}
-		
+
 		/**
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-		
-		/** 
+
+		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			try {
-				return ((ISourceContainer)parentElement).getSourceContainers();
+				return ((ISourceContainer) parentElement).getSourceContainers();
 			} catch (CoreException e) {
 				return new Object[0];
 			}
 		}
-		
+
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
@@ -80,16 +80,16 @@ public class SourceContainerViewer extends TreeViewer {
 		public Object getParent(Object element) {
 			return null;
 		}
-		
+
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
 		@Override
 		public boolean hasChildren(Object element) {
-			return ((ISourceContainer)element).isComposite();				
+			return ((ISourceContainer) element).isComposite();
 		}
 	}
-	
+
 	/**
 	 * Creates a runtime classpath viewer with the given parent.
 	 *
@@ -100,12 +100,12 @@ public class SourceContainerViewer extends TreeViewer {
 		super(parent);
 		setContentProvider(new ContentProvider());
 		SourceContainerLabelProvider lp = new SourceContainerLabelProvider();
-		setLabelProvider(lp);		
-	}	
-	
+		setLabelProvider(lp);
+	}
+
 	/**
-	 * Sets the entries in this viewer 
-	 * 
+	 * Sets the entries in this viewer
+	 *
 	 * @param entries source container entries
 	 */
 	public void setEntries(ISourceContainer[] entries) {
@@ -117,39 +117,39 @@ public class SourceContainerViewer extends TreeViewer {
 		if (getInput() == null) {
 			setInput(fEntries);
 			//select first item in list
-			if (!fEntries.isEmpty() && fEntries.get(0)!=null)
-				setSelection(new StructuredSelection(fEntries.get(0)));			
+			if (!fEntries.isEmpty() && fEntries.get(0) != null)
+				setSelection(new StructuredSelection(fEntries.get(0)));
 		} else {
 			refresh();
 		}
 	}
-	
+
 	/**
 	 * Returns the entries in this viewer
-	 * 
+	 *
 	 * @return the entries in this viewer
 	 */
 	public ISourceContainer[] getEntries() {
 		return fEntries.toArray(new ISourceContainer[fEntries.size()]);
 	}
-	
+
 	/**
 	 * Adds the given entries to the list. If there is no selection
-	 * in the list, the entries are added at the end of the list, 
+	 * in the list, the entries are added at the end of the list,
 	 * otherwise the new entries are added before the (first) selected
 	 * entry. The new entries are selected.
-	 * 
+	 *
 	 * @param entries additions
 	 */
 	public void addEntries(ISourceContainer[] entries) {
-		IStructuredSelection sel = (IStructuredSelection)getSelection();
+		IStructuredSelection sel = (IStructuredSelection) getSelection();
 		if (sel.isEmpty()) {
 			for (int i = 0; i < entries.length; i++) {
 				if (!fEntries.contains(entries[i])) {
 					fEntries.add(entries[i]);
 				}
 			}
-		}  else { 
+		} else {
 			int index = fEntries.indexOf(sel.getFirstElement());
 			for (int i = 0; i < entries.length; i++) {
 				if (!fEntries.contains(entries[i])) {
@@ -157,13 +157,13 @@ public class SourceContainerViewer extends TreeViewer {
 					index++;
 				}
 			}
-		}		
-		
-		if (!fEntries.isEmpty() && fEntries.get(0)!=null)
+		}
+
+		if (!fEntries.isEmpty() && fEntries.get(0) != null)
 			setSelection(new StructuredSelection(fEntries.get(0)));
 		refresh();
-	}	
-	
+	}
+
 	/**
 	 * Enables/disables this viewer. Note the control is not disabled, since
 	 * we still want the user to be able to scroll if required to see the
@@ -173,18 +173,18 @@ public class SourceContainerViewer extends TreeViewer {
 		fEnabled = enabled;
 		// fire selection change to update actions
 		setSelection(getSelection());
-	}	
-	
+	}
+
 	/**
 	 * Returns whether this viewer is enabled
 	 */
 	public boolean isEnabled() {
 		return fEnabled;
-	}	
-		
+	}
+
 	/**
 	 * Returns the index of an equivalent entry, or -1 if none.
-	 * 
+	 *
 	 * @return the index of an equivalent entry, or -1 if none
 	 */
 	public int indexOf(ISourceContainer entry) {

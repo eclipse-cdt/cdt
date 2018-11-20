@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 /**
@@ -24,15 +24,15 @@ public abstract class AbstractCharArray {
 	 * before the array has been traversed.
 	 */
 	public abstract int tryGetLength();
-	
+
 	/**
 	 * Returns the length of the array. This method is called only after the lexer has worked its
 	 * way through the array. Therefore for subclasses it is efficient enough to read through to
-	 * the end of the array and provide the length. 
+	 * the end of the array and provide the length.
 	 */
 	public abstract int getLength();
 
-	/** 
+	/**
 	 * Checks whether the given offset is valid for this array. Subclasses may assume
 	 * that offset is non-negative.
 	 */

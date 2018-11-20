@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson			  - Modified for new functionality
@@ -42,135 +42,123 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
-
 /**
- * 
+ *
  */
-public class LaunchVMProvider extends AbstractLaunchVMProvider 
-    implements IDebugEventSetListener, ILaunchesListener2
-{
-	
+public class LaunchVMProvider extends AbstractLaunchVMProvider implements IDebugEventSetListener, ILaunchesListener2 {
+
 	/**
 	 * Indicates that we are currently visualizing trace data.
 	 */
 	private boolean fTracepointVisualizationModeEnabled;
-	
+
 	@ThreadSafe
-    public LaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session)
-    {
-        super(adapter, presentationContext, session);
-        
-        createNodes();
-    }
+	public LaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session) {
+		super(adapter, presentationContext, session);
+
+		createNodes();
+	}
 
 	protected void createNodes() {
-        IRootVMNode launchNode = new LaunchRootVMNode(this);
-        setRootNode(launchNode);
+		IRootVMNode launchNode = new LaunchRootVMNode(this);
+		setRootNode(launchNode);
 
-        // Container node to contain all processes and threads
-        IVMNode containerNode = new ContainerVMNode(this, getSession());
-        IVMNode processesNode = new GdbStandardProcessVMNode(this);
-        addChildNodes(launchNode, new IVMNode[] { containerNode, processesNode});
-        
-        IVMNode threadsNode = new ThreadVMNode(this, getSession());
-        addChildNodes(containerNode, new IVMNode[] { threadsNode });
-        
-        IVMNode stackFramesNode = new GdbStackFramesVMNode(this, getSession());
-        addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
-    }
-    
-    @Override
-    protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
-        // Never skip the process lifecycle events.
-        if (eventToSkip instanceof ICommandControlInitializedDMEvent ||
-            eventToSkip instanceof ICommandControlShutdownDMEvent) 
-        {
-            return false;
-        }
-        
-        if (eventToSkip instanceof ITracingStartedDMEvent || 
-        	eventToSkip instanceof ITracingStoppedDMEvent) 
-        {
-        	if (newEvent instanceof ITracingStartedDMEvent || 
-        		newEvent instanceof ITracingStoppedDMEvent) 
-        	{
-        		return true;
-        	}
-        }
-        
-        if (eventToSkip instanceof ITracingSupportedChangeDMEvent) 
-        {
-        	if (newEvent instanceof ITracingSupportedChangeDMEvent) 
-        	{
-        		return true;
-        	}
-        }
-        
-        if (eventToSkip instanceof ITraceRecordSelectedChangedDMEvent) {
-    		ITraceRecordSelectedChangedDMEvent recordChanged = (ITraceRecordSelectedChangedDMEvent)eventToSkip;
-    		if (recordChanged.isVisualizationModeEnabled() == fTracepointVisualizationModeEnabled) {
-    			// We only care about this event if it indicates a change of visualization state
-    			return true;
-    		}
-        }
-        
-        return super.canSkipHandlingEvent(newEvent, eventToSkip);
-    }
-    
-    @Override
-    public void handleEvent(Object event, RequestMonitor rm) {
-    	if (event instanceof ITracingStartedDMEvent || 
-    		event instanceof ITracingStoppedDMEvent ||
-    		event instanceof ITracingSupportedChangeDMEvent)
-    	{
-    		// Refresh the view to trigger a context change, which
-    		// will cause command enablement to be refreshed
-    		refresh();
-    		rm.done();
-    		return;
-    	}    
+		// Container node to contain all processes and threads
+		IVMNode containerNode = new ContainerVMNode(this, getSession());
+		IVMNode processesNode = new GdbStandardProcessVMNode(this);
+		addChildNodes(launchNode, new IVMNode[] { containerNode, processesNode });
 
-    	if (event instanceof ITraceRecordSelectedChangedDMEvent) {
-    		ITraceRecordSelectedChangedDMEvent recordChanged = (ITraceRecordSelectedChangedDMEvent)event;
-    		// If trace visualization has changed we have to refresh the debug view
-    		if (recordChanged.isVisualizationModeEnabled() != fTracepointVisualizationModeEnabled) {
-    			fTracepointVisualizationModeEnabled = recordChanged.isVisualizationModeEnabled();
-    			
-        		// Refresh the view because the set of threads has totally changed.
-        		refresh();
-        		rm.done();
-        		return;
-        	}
-    	}
-    	
-    	super.handleEvent(event, rm);
-    }
+		IVMNode threadsNode = new ThreadVMNode(this, getSession());
+		addChildNodes(containerNode, new IVMNode[] { threadsNode });
 
-    @Override
-    public void refresh() {
-        super.refresh();
-        try {
-            getSession().getExecutor().execute(new DsfRunnable() {
-                @Override
-                public void run() {
-                    DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), getSession().getId());
-                    IProcesses processesService = tracker.getService(IProcesses.class);
-                    if (processesService instanceof ICachingService) {
-                        ((ICachingService)processesService).flushCache(null);
-                    }
-                    IStack stackService = tracker.getService(IStack.class);
-                    if (stackService instanceof ICachingService) {
-                        ((ICachingService)stackService).flushCache(null);
-                    }
-                    IRunControl runControlService = tracker.getService(IRunControl.class);
-                    if (runControlService instanceof ICachingService) {
-                        ((ICachingService)runControlService).flushCache(null);
-                    }
-                    tracker.dispose();
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            // Session disposed, ignore.
-        }
-    }
+		IVMNode stackFramesNode = new GdbStackFramesVMNode(this, getSession());
+		addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
+	}
+
+	@Override
+	protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
+		// Never skip the process lifecycle events.
+		if (eventToSkip instanceof ICommandControlInitializedDMEvent
+				|| eventToSkip instanceof ICommandControlShutdownDMEvent) {
+			return false;
+		}
+
+		if (eventToSkip instanceof ITracingStartedDMEvent || eventToSkip instanceof ITracingStoppedDMEvent) {
+			if (newEvent instanceof ITracingStartedDMEvent || newEvent instanceof ITracingStoppedDMEvent) {
+				return true;
+			}
+		}
+
+		if (eventToSkip instanceof ITracingSupportedChangeDMEvent) {
+			if (newEvent instanceof ITracingSupportedChangeDMEvent) {
+				return true;
+			}
+		}
+
+		if (eventToSkip instanceof ITraceRecordSelectedChangedDMEvent) {
+			ITraceRecordSelectedChangedDMEvent recordChanged = (ITraceRecordSelectedChangedDMEvent) eventToSkip;
+			if (recordChanged.isVisualizationModeEnabled() == fTracepointVisualizationModeEnabled) {
+				// We only care about this event if it indicates a change of visualization state
+				return true;
+			}
+		}
+
+		return super.canSkipHandlingEvent(newEvent, eventToSkip);
+	}
+
+	@Override
+	public void handleEvent(Object event, RequestMonitor rm) {
+		if (event instanceof ITracingStartedDMEvent || event instanceof ITracingStoppedDMEvent
+				|| event instanceof ITracingSupportedChangeDMEvent) {
+			// Refresh the view to trigger a context change, which
+			// will cause command enablement to be refreshed
+			refresh();
+			rm.done();
+			return;
+		}
+
+		if (event instanceof ITraceRecordSelectedChangedDMEvent) {
+			ITraceRecordSelectedChangedDMEvent recordChanged = (ITraceRecordSelectedChangedDMEvent) event;
+			// If trace visualization has changed we have to refresh the debug view
+			if (recordChanged.isVisualizationModeEnabled() != fTracepointVisualizationModeEnabled) {
+				fTracepointVisualizationModeEnabled = recordChanged.isVisualizationModeEnabled();
+
+				// Refresh the view because the set of threads has totally changed.
+				refresh();
+				rm.done();
+				return;
+			}
+		}
+
+		super.handleEvent(event, rm);
+	}
+
+	@Override
+	public void refresh() {
+		super.refresh();
+		try {
+			getSession().getExecutor().execute(new DsfRunnable() {
+				@Override
+				public void run() {
+					DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(),
+							getSession().getId());
+					IProcesses processesService = tracker.getService(IProcesses.class);
+					if (processesService instanceof ICachingService) {
+						((ICachingService) processesService).flushCache(null);
+					}
+					IStack stackService = tracker.getService(IStack.class);
+					if (stackService instanceof ICachingService) {
+						((ICachingService) stackService).flushCache(null);
+					}
+					IRunControl runControlService = tracker.getService(IRunControl.class);
+					if (runControlService instanceof ICachingService) {
+						((ICachingService) runControlService).flushCache(null);
+					}
+					tracker.dispose();
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Session disposed, ignore.
+		}
+	}
 }

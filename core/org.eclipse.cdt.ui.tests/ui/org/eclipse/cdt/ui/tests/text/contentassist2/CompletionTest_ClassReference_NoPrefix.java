@@ -19,35 +19,29 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing class reference, with no prefix
  * https://bugs.eclipse.org/bugs/show_bug.cgi?id=50621
  * https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
  */
-public class CompletionTest_ClassReference_NoPrefix  extends CompletionProposalsBaseTest{
+public class CompletionTest_ClassReference_NoPrefix extends CompletionProposalsBaseTest {
 	private final String fileName = "CompletionTestStart21.h";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
-	private final String[] expectedResults = {
-		"aClass",
-		"anotherClass",
-		"xOtherClass",
-		"AStruct",
-		"XStruct"
-	};
-	
+	private final String[] expectedResults = { "aClass", "anotherClass", "xOtherClass", "AStruct", "XStruct" };
+
 	public CompletionTest_ClassReference_NoPrefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_ClassReference_NoPrefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_ClassReference_NoPrefix.class.getName());
 		suite.addTest(new CompletionTest_ClassReference_NoPrefix("testCompletionProposals"));
 		return suite;
-	}		
-	
+	}
+
 	@Override
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf("      ") + 2;

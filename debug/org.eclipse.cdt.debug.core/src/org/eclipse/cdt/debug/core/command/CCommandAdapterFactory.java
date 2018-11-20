@@ -20,9 +20,9 @@ import org.eclipse.debug.core.commands.IRestartHandler;
 
 /**
  * Adapter factory for debug commands.
- * 
+ *
  * @see org.eclipse.debug.core.command
- * 
+ *
  * @since 7.0
  *
  */
@@ -42,9 +42,7 @@ public class CCommandAdapterFactory implements IAdapterFactory {
 
 	@Override
 	public Class<?>[] getAdapterList() {
-		return new Class[] {
-				IRestartHandler.class
-		};
+		return new Class[] { IRestartHandler.class };
 	}
 
 }

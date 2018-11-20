@@ -20,14 +20,14 @@ import java.util.Map;
  * Interface for scanner info collector.
  * Used by scanner info console parsers.
  * Eclipse independent.
- * 
+ *
  * @author vhirsl
  */
 @SuppressWarnings("rawtypes")
 public interface IScannerInfoCollector {
 	/**
 	 * Contribute to resource's scanner configuration
-	 * 
+	 *
 	 * @param resource
 	 *    <li> {@link org.eclipse.core.resources.IResource} if used from within Eclipse.</li>
 	 *    <li> {@link java.io.File}  if used outside of Eclipse.</li>
@@ -39,12 +39,12 @@ public interface IScannerInfoCollector {
 	 */
 	public void contributeToScannerConfig(Object resource, Map scannerInfo);
 
-    /**
-     * @return specific piece of discovered scanner info for a resource
-     * discovered during the last collection cycle, can be:
+	/**
+	 * @return specific piece of discovered scanner info for a resource
+	 * discovered during the last collection cycle, can be:
 	 *    <li>{@code List<String>}</li>
 	 *    <li>{@code List<CCommandDSC>}</li>
-     */
-    public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type);
+	 */
+	public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type);
 
 }

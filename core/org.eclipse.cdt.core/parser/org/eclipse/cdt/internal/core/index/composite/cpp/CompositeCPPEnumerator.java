@@ -29,7 +29,7 @@ class CompositeCPPEnumerator extends CompositeCPPBinding implements ICPPInternal
 		IType type = ((ICPPInternalEnumerator) rbinding).getType();
 		return cf.getCompositeType(type);
 	}
-	
+
 	@Override
 	public IValue getValue() {
 		return ((ICPPInternalEnumerator) rbinding).getValue();

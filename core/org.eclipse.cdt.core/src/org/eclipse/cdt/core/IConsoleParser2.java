@@ -22,13 +22,13 @@ import org.eclipse.core.runtime.jobs.Job;
  *
  */
 public interface IConsoleParser2 extends IConsoleParser {
-	
+
 	/**
 	 * Process a line of output in a job
 	 * @param s - String to process
 	 * @param jobList - list of jobs to add to
 	 * @return true if line processed, false otherwise
 	 */
-	boolean processLine (String s, List<Job> jobList);
+	boolean processLine(String s, List<Job> jobList);
 
 }

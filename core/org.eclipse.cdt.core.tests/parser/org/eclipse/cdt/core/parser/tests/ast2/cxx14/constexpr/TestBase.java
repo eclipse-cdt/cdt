@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -154,8 +154,9 @@ public class TestBase extends IndexBindingResolutionTestBase {
 		@Override
 		public void setUp() throws Exception {
 			CTestPlugin plugin = CTestPlugin.getDefault();
-			StringBuilder[] builders = TestSourceReader.getContentsForTest(plugin.getBundle(), "parser", TestBase.this.getClass(), getName(), 2);
-			if(builders.length == 2) {
+			StringBuilder[] builders = TestSourceReader.getContentsForTest(plugin.getBundle(), "parser",
+					TestBase.this.getClass(), getName(), 2);
+			if (builders.length == 2) {
 				builders[0].append(builders[1].toString());
 			}
 			testData = new StringBuilder[] { builders[0] };
@@ -178,7 +179,8 @@ public class TestBase extends IndexBindingResolutionTestBase {
 	}
 
 	protected static IASTTranslationUnit parse(String code) throws ParserException {
-		IScanner scanner = createScanner(FileContent.create(TEST_CODE, code.toCharArray()), ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, SCANNER_INFO);
+		IScanner scanner = createScanner(FileContent.create(TEST_CODE, code.toCharArray()), ParserLanguage.CPP,
+				ParserMode.COMPLETE_PARSE, SCANNER_INFO);
 		AbstractGNUSourceCodeParser parser = null;
 		ICPPParserExtensionConfiguration config = new ANSICPPParserExtensionConfiguration();
 		parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config, null);

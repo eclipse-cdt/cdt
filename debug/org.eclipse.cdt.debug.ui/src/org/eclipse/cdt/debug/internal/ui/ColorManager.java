@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Color manager for C/C++ Debug UI.
- * 
+ *
  * @since Jul 23, 2002
  */
 public class ColorManager {
@@ -53,6 +53,6 @@ public class ColorManager {
 	public void dispose() {
 		Iterator<Color> e = fColorTable.values().iterator();
 		while (e.hasNext())
-			 e.next().dispose();
+			e.next().dispose();
 	}
 }

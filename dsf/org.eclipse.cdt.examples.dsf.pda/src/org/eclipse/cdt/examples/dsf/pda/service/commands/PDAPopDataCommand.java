@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,12 +17,12 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
- * Pops the top value from the data stack  
- * 
+ * Pops the top value from the data stack
+ *
  * <pre>
  *    C: popdata {thread_id}
  *    R: ok
- *    
+ *
  * Errors:
  *    error: invalid thread
  * </pre>
@@ -30,12 +30,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDAPopDataCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAPopDataCommand(PDAThreadDMContext thread) {
-        super(thread, "popdata " + thread.getID());
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAPopDataCommand(PDAThreadDMContext thread) {
+		super(thread, "popdata " + thread.getID());
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

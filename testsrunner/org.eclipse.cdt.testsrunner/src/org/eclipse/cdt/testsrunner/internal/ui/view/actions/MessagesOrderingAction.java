@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin;
 import org.eclipse.cdt.testsrunner.internal.ui.view.MessagesViewer;
 import org.eclipse.jface.action.Action;
@@ -24,7 +23,6 @@ import org.eclipse.jface.action.Action;
 public class MessagesOrderingAction extends Action {
 
 	private MessagesViewer messagesViewer;
-
 
 	public MessagesOrderingAction(MessagesViewer messagesViewer) {
 		super("", AS_CHECK_BOX); //$NON-NLS-1$

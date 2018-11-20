@@ -131,8 +131,7 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 		}
 
 		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, name, monitor);
-		CMakeBuildConfiguration cmakeConfig = new CMakeBuildConfiguration(config, name, toolChain, file,
-				launchMode);
+		CMakeBuildConfiguration cmakeConfig = new CMakeBuildConfiguration(config, name, toolChain, file, launchMode);
 		configManager.addBuildConfiguration(config, cmakeConfig);
 		return cmakeConfig;
 	}

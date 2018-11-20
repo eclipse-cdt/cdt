@@ -28,31 +28,27 @@ import org.eclipse.ui.IWorkbenchPart;
  * that provide an <code>IToggleBreakpointsTarget</code> adapter.
  * <p>
  * This class is based on {@link org.eclipse.debug.ui.actions.ToggleMethodBreakpointActionDelegate }
- * class.  In addition to the copied functionality, it adds the handling of 
+ * class.  In addition to the copied functionality, it adds the handling of
  * action-triggering event.
  * </p>
- * 
+ *
  * @since 7.2
  */
 public class CToggleMethodBreakpointActionDelegate extends CToggleBreakpointObjectActionDelegate {
 
-	protected void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection, Event event) 
-	    throws CoreException 
-	{
-	    if ((event.stateMask & SWT.MOD1) != 0 && 
-	        target instanceof IToggleBreakpointsTargetCExtension &&
-	        ((IToggleBreakpointsTargetCExtension)target).canCreateFunctionBreakpointInteractive(part, selection)) 
-	    {
-	        ((IToggleBreakpointsTargetCExtension)target).createFunctionBreakpointInteractive(part, selection);
-	    } 
-	    else {
-	        target.toggleMethodBreakpoints(part, selection);
-	    }
+	protected void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection,
+			Event event) throws CoreException {
+		if ((event.stateMask & SWT.MOD1) != 0 && target instanceof IToggleBreakpointsTargetCExtension
+				&& ((IToggleBreakpointsTargetCExtension) target).canCreateFunctionBreakpointInteractive(part,
+						selection)) {
+			((IToggleBreakpointsTargetCExtension) target).createFunctionBreakpointInteractive(part, selection);
+		} else {
+			target.toggleMethodBreakpoints(part, selection);
+		}
 	}
 
 	@Override
-	protected boolean canPerformAction(IToggleBreakpointsTarget target,
-			IWorkbenchPart part, ISelection selection) {
+	protected boolean canPerformAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection) {
 		return target.canToggleMethodBreakpoints(part, selection);
 	}
 }

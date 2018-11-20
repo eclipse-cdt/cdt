@@ -24,7 +24,7 @@ import org.eclipse.ui.IViewPart;
  */
 public class OpenNewViewActionDelegate implements IViewActionDelegate {
 	private OpenNewViewAction fOpenNewViewAction = new OpenNewViewAction();
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)

@@ -23,36 +23,36 @@ import org.eclipse.core.runtime.IAdapterFactory;
 
 /**
  * Adapter factory adapting an {@link IDMVMContext} to an {@link ICEditorTextHover}.
- * 
+ *
  * @since 2.1
  */
 public class DebugTextHoverAdapterFactory implements IAdapterFactory {
 
-    private static final Class<?>[] TYPES = { ICEditorTextHover.class };
-    private static final Object fDebugTextHover= new DsfDebugTextHover();
-    
-    @SuppressWarnings("unchecked")
-	@Override
-    public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-        if (adaptableObject instanceof IDMVMContext) {
-        	IDMContext dmc = ((IDMVMContext) adaptableObject).getDMContext();
-        	// try session specific hover
-        	T sessionHover = dmc.getAdapter(adapterType);
-        	if (sessionHover != null) {
-        		return sessionHover;
-        	}
-        	// use default
-        	IFrameDMContext frameDmc = DMContexts.getAncestorOfType(dmc, IFrameDMContext.class);
-        	if (frameDmc != null) {
-        	    return (T)fDebugTextHover;
-        	}
-        }
-        return null;
-    }
+	private static final Class<?>[] TYPES = { ICEditorTextHover.class };
+	private static final Object fDebugTextHover = new DsfDebugTextHover();
 
-    @Override
-    public Class<?>[] getAdapterList() {
-        return TYPES;
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+		if (adaptableObject instanceof IDMVMContext) {
+			IDMContext dmc = ((IDMVMContext) adaptableObject).getDMContext();
+			// try session specific hover
+			T sessionHover = dmc.getAdapter(adapterType);
+			if (sessionHover != null) {
+				return sessionHover;
+			}
+			// use default
+			IFrameDMContext frameDmc = DMContexts.getAncestorOfType(dmc, IFrameDMContext.class);
+			if (frameDmc != null) {
+				return (T) fDebugTextHover;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Class<?>[] getAdapterList() {
+		return TYPES;
+	}
 
 }

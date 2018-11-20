@@ -46,12 +46,12 @@ import org.eclipse.cdt.internal.ui.util.Messages;
 
 public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 	private Map<String, String> fContentTypeMappings;
-	
+
 	public WorkspaceLanguageMappingWidget() {
 		super();
 		fContentTypeMappings = new TreeMap<String, String>();
 	}
-	
+
 	@Override
 	public Composite createContents(Composite parent, String description) {
 		fContents = new Composite(parent, SWT.NONE);
@@ -74,7 +74,6 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 			}
 		});
 		fTable.setToolTipText(PreferencesMessages.WorkspaceLanguagesPreferencePage_mappingTableTitle);
-		
 
 		TableColumn contentTypeColumn = new TableColumn(fTable, SWT.LEAD);
 		contentTypeColumn.setText(PreferencesMessages.ProjectLanguagesPropertyPage_contentTypeColumn);
@@ -91,17 +90,18 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 			Composite buttons = new Composite(fContents, SWT.NONE);
 			buttons.setLayout(new GridLayout());
 			buttons.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-	
+
 			Button addButton = new Button(buttons, SWT.PUSH);
 			addButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 			addButton.setText(PreferencesMessages.ProjectLanguagesPropertyPage_addMappingButton);
 			addButton.addListener(SWT.Selection, new Listener() {
 				@Override
 				public void handleEvent(Event event) {
-					WorkspaceContentTypeMappingDialog dialog = new WorkspaceContentTypeMappingDialog(fContents.getShell());
+					WorkspaceContentTypeMappingDialog dialog = new WorkspaceContentTypeMappingDialog(
+							fContents.getShell());
 					dialog.setContentTypeFilter(fContentTypeMappings.keySet());
 					dialog.setBlockOnOpen(true);
-	
+
 					if (dialog.open() == Window.OK) {
 						String contentType = dialog.getContentTypeID();
 						String language = dialog.getLanguageID();
@@ -113,29 +113,29 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 					}
 				}
 			});
-	
+
 			Button removeButton = new Button(buttons, SWT.PUSH);
 			removeButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 			removeButton.setText(PreferencesMessages.ProjectLanguagesPropertyPage_removeMappingButton);
 			removeButton.addListener(SWT.Selection, new Listener() {
-	
+
 				@Override
 				public void handleEvent(Event event) {
 					TableItem[] selection = fTable.getSelection();
-	
+
 					for (int i = 0; i < selection.length; i++) {
 						String contentType = fContentTypeNamesToIDsMap.get(selection[i].getText(0));
-	
+
 						fContentTypeMappings.remove(contentType);
-	
+
 						IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 						fAffectedContentTypes.add(contentTypeManager.getContentType(contentType));
 					}
-					
+
 					if (selection.length > 0) {
 						setChanged(true);
 					}
-	
+
 					refreshMappings();
 				}
 			});
@@ -150,7 +150,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 		if (fTable == null) {
 			return;
 		}
-		
+
 		fTable.removeAll();
 		Iterator<Entry<String, String>> mappings = fContentTypeMappings.entrySet().iterator();
 
@@ -166,14 +166,15 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 			String languageName = LanguageManager.getInstance().getLanguage(entry.getValue()).getName();
 
 			if (fOverriddenContentTypes.contains(contentType)) {
-				item.setText(0, Messages.format(PreferencesMessages.ProjectLanguagesPropertyPage_overriddenContentType, contentTypeName));
+				item.setText(0, Messages.format(PreferencesMessages.ProjectLanguagesPropertyPage_overriddenContentType,
+						contentTypeName));
 				item.setFont(fOverriddenFont);
 			} else {
 				item.setText(0, contentTypeName);
 			}
 			item.setText(1, languageName);
 		}
-		
+
 		if (fChild != null) {
 			Set<String> overrides = new HashSet<String>(fContentTypeMappings.keySet());
 			overrides.addAll(fOverriddenContentTypes);
@@ -181,7 +182,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 			fChild.refreshMappings();
 		}
 	}
-	
+
 	public void setMappings(Map<String, String> mappings) {
 		fContentTypeMappings = new TreeMap<String, String>(mappings);
 	}

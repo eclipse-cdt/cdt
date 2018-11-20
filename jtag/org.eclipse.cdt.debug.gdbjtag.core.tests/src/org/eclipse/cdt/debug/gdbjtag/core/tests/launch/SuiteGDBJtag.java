@@ -21,9 +21,7 @@ import org.junit.runners.Suite;
 
 @SuppressWarnings("restriction")
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	GDBJtagLaunchTest.class
-})
+@Suite.SuiteClasses({ GDBJtagLaunchTest.class })
 
 public class SuiteGDBJtag {
 

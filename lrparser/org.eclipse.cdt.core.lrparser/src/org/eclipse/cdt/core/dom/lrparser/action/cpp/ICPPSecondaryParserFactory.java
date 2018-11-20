@@ -21,16 +21,16 @@ import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 
-
 /**
  * Secondary parsers for resolving ambiguities specific to C++.
- * 
+ *
  * @author Mike Kucera
  */
 public interface ICPPSecondaryParserFactory extends ISecondaryParserFactory {
 
-	ISecondaryParser<ICPPASTTemplateParameter> getTemplateTypeParameterParser(ITokenStream stream, Map<String,String> properties);
-	
-	ISecondaryParser<IASTDeclarator> getNoFunctionDeclaratorParser(ITokenStream stream, Map<String,String> properties);
-	
+	ISecondaryParser<ICPPASTTemplateParameter> getTemplateTypeParameterParser(ITokenStream stream,
+			Map<String, String> properties);
+
+	ISecondaryParser<IASTDeclarator> getNoFunctionDeclaratorParser(ITokenStream stream, Map<String, String> properties);
+
 }

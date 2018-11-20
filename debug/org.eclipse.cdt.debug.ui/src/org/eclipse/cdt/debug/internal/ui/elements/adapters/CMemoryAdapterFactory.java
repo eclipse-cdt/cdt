@@ -43,7 +43,7 @@ public class CMemoryAdapterFactory implements IAdapterFactory {
 				return (T) fgAddMemoryBlocks;
 			}
 		}
-		
+
 		return null;
 	}
 

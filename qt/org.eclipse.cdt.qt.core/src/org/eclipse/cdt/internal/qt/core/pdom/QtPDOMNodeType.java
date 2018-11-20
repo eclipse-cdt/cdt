@@ -17,13 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 @SuppressWarnings("restriction")
 public enum QtPDOMNodeType {
 
-	QObject,
-	QEnum,
-	QProperty,
-	QMethod,
-	QGadget,
-	QmlTypeRegistration,
-	QmlUncreatableRegistration;
+	QObject, QEnum, QProperty, QMethod, QGadget, QmlTypeRegistration, QmlUncreatableRegistration;
 
 	public final int Type = IIndexBindingConstants.LAST_CONSTANT + 1 + ordinal();
 
@@ -42,7 +36,7 @@ public enum QtPDOMNodeType {
 	public static QtPDOMNodeType forType(int version, int type) {
 		// Nothing has been deleted or replaced yet, so the version is ignored.
 
-		for(QtPDOMNodeType node : values())
+		for (QtPDOMNodeType node : values())
 			if (node.Type == type)
 				return node;
 		return null;
@@ -54,7 +48,7 @@ public enum QtPDOMNodeType {
 		if (node == null)
 			return null;
 
-		switch(node) {
+		switch (node) {
 		case QObject:
 			return new QtPDOMQObject(linkage, record);
 		case QEnum:

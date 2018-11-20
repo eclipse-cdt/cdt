@@ -46,8 +46,8 @@ public class CDocHover extends AbstractCEditorTextHover {
 	@Override
 	public String getHoverInfo(ITextViewer viewer, IRegion region) {
 		String expression = null;
-		
-		if (getEditor() == null) 
+
+		if (getEditor() == null)
 			return null;
 		try {
 			IDocument document = viewer.getDocument();
@@ -57,7 +57,7 @@ public class CDocHover extends AbstractCEditorTextHover {
 			expression = document.get(region.getOffset(), region.getLength());
 			expression = expression.trim();
 			if (expression.isEmpty())
-				return null; 
+				return null;
 
 			StringBuilder buffer = new StringBuilder();
 			final IRegion hoverRegion = region;
@@ -76,44 +76,44 @@ public class CDocHover extends AbstractCEditorTextHover {
 
 				@Override
 				public ITranslationUnit getTranslationUnit() {
-					IEditorInput editorInput= getEditor().getEditorInput();
+					IEditorInput editorInput = getEditor().getEditorInput();
 					return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
 				}
 
 				@Override
 				public IRegion getHoverRegion() {
-					return hoverRegion; 
+					return hoverRegion;
 				}
 			};
 
 			IFunctionSummary fs = CHelpProviderManager.getDefault().getFunctionInfo(context, expression);
 			if (fs != null) {
-				buffer.append(CEditorMessages.DefaultCEditorTextHover_html_name); 
+				buffer.append(CEditorMessages.DefaultCEditorTextHover_html_name);
 				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getName()));
 				final IFunctionPrototypeSummary prototype = fs.getPrototype();
 				if (prototype != null) {
-					buffer.append(CEditorMessages.DefaultCEditorTextHover_html_prototype); 
+					buffer.append(CEditorMessages.DefaultCEditorTextHover_html_prototype);
 					buffer.append(HTMLPrinter.convertToHTMLContent(prototype.getPrototypeString(false)));
 				}
 				if (fs.getDescription() != null) {
-					buffer.append(CEditorMessages.DefaultCEditorTextHover_html_description); 
+					buffer.append(CEditorMessages.DefaultCEditorTextHover_html_description);
 					//Don't convert this description since it could already be formatted
 					buffer.append(fs.getDescription());
 				}
 				IRequiredInclude[] incs = fs.getIncludes();
 				if (incs != null && incs.length > 0) {
-					buffer.append(CEditorMessages.DefaultCEditorTextHover_html_includes); 
+					buffer.append(CEditorMessages.DefaultCEditorTextHover_html_includes);
 					int count = 0;
 					for (IRequiredInclude inc : incs) {
 						buffer.append(inc.getIncludeName());
-						buffer.append("<br>");        //$NON-NLS-1$
+						buffer.append("<br>"); //$NON-NLS-1$
 						if (count++ > 4) {
 							buffer.append("...<br>"); //$NON-NLS-1$
-							break; // too long list: do not display all 
+							break; // too long list: do not display all
 						}
 					}
 				}
-			} 
+			}
 			if (buffer.length() > 0) {
 				HTMLPrinter.insertPageProlog(buffer, 0);
 				HTMLPrinter.addPageEpilog(buffer);
@@ -122,7 +122,7 @@ public class CDocHover extends AbstractCEditorTextHover {
 		} catch (Exception e) {
 			/* Ignore */
 		}
-		
+
 		return null;
 	}
 
@@ -133,13 +133,11 @@ public class CDocHover extends AbstractCEditorTextHover {
 	public IRegion getHoverRegion(ITextViewer viewer, int offset) {
 		if (viewer != null) {
 			Point selectedRange = viewer.getSelectedRange();
-			if (selectedRange.x >= 0 && 
-					selectedRange.y > 0 &&
-					offset >= selectedRange.x &&
-					offset <= selectedRange.x + selectedRange.y) {
+			if (selectedRange.x >= 0 && selectedRange.y > 0 && offset >= selectedRange.x
+					&& offset <= selectedRange.x + selectedRange.y) {
 				return new Region(selectedRange.x, selectedRange.y);
 			}
-			
+
 			return CWordFinder.findWord(viewer.getDocument(), offset);
 		}
 		return null;

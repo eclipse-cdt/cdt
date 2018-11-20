@@ -32,10 +32,12 @@ public abstract class SharedPartWithButtons extends SharedPart {
 		public void widgetSelected(SelectionEvent e) {
 			buttonSelected(e);
 		}
+
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			buttonSelected(e);
 		}
+
 		private void buttonSelected(SelectionEvent e) {
 			Integer index = (Integer) e.widget.getData();
 			SharedPartWithButtons.this.buttonSelected((Button) e.widget, index.intValue());
@@ -55,6 +57,7 @@ public abstract class SharedPartWithButtons extends SharedPart {
 	}
 
 	protected abstract void createMainControl(Composite parent, int style, int span);
+
 	protected abstract void buttonSelected(Button button, int index);
 
 	@Override

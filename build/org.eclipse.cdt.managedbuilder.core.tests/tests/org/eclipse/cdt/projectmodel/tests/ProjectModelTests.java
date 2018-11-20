@@ -70,13 +70,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-public class ProjectModelTests extends TestCase implements IElementChangedListener{
+public class ProjectModelTests extends TestCase implements IElementChangedListener {
 	private boolean isPrint = false;
 	private CDefaultModelEventChecker fEventChecker;
 
 	@Override
 	public void elementChanged(ElementChangedEvent event) {
-		if(fEventChecker != null)
+		if (fEventChecker != null)
 			fEventChecker.checkEvent(event);
 	}
 
@@ -91,8 +91,6 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		}
 
 	}
-
-
 
 	public static Test suite() {
 		return new TestSuite(ProjectModelTests.class);
@@ -112,28 +110,28 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		CoreModel.getDefault().removeElementChangedListener(this);
 	}
 
-	private void modify(ICFileDescription fiDes){
+	private void modify(ICFileDescription fiDes) {
 		ICLanguageSetting ls = fiDes.getLanguageSetting();
 		modify(ls);
 	}
 
-	private void modify(ICFolderDescription foDes){
+	private void modify(ICFolderDescription foDes) {
 		ICLanguageSetting ls = foDes.getLanguageSettingForFile("a.c");
 		modify(ls);
 	}
 
-	private void modify(ICLanguageSetting ls){
+	private void modify(ICLanguageSetting ls) {
 		List<ICLanguageSettingEntry> list = ls.getSettingEntriesList(ICSourceEntry.INCLUDE_PATH);
 		list.add(new CIncludePathEntry("_modify_", 0));
 		ls.setSettingEntries(ICSettingEntry.INCLUDE_PATH, list);
 	}
 
-	private void modify(IFileInfo fiInfo){
+	private void modify(IFileInfo fiInfo) {
 		CLanguageData lData = fiInfo.getCLanguageDatas()[0];
 		modify(lData);
 	}
 
-	private void modify(CLanguageData lData){
+	private void modify(CLanguageData lData) {
 		ICLanguageSettingEntry[] entries = lData.getEntries(ICSourceEntry.INCLUDE_PATH);
 		ICLanguageSettingEntry[] updatedEntries = new ICLanguageSettingEntry[entries.length + 1];
 		System.arraycopy(entries, 0, updatedEntries, 0, entries.length);
@@ -141,7 +139,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		lData.setEntries(ICSettingEntry.INCLUDE_PATH, updatedEntries);
 	}
 
-	public void testDescription() throws Exception{
+	public void testDescription() throws Exception {
 		final String projectName = "test1";
 		IProject project = createProject(projectName);
 		CoreModel coreModel = CoreModel.getDefault();
@@ -166,10 +164,9 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 
 		IConfiguration cfgs[] = type.getConfigurations();
 
-
-		for(int i = 0; i < cfgs.length; i++){
+		for (int i = 0; i < cfgs.length; i++) {
 			String id = ManagedBuildManager.calculateChildId(cfgs[i].getId(), null);
-			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true, false);
+			Configuration config = new Configuration(mProj, (Configuration) cfgs[i], id, false, true, false);
 			CConfigurationData data = config.getConfigurationData();
 			assertNotNull("data is null for created configuration", data);
 			des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
@@ -212,19 +209,19 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 
 		modify(fd_abc);
 
-			ICProjectDescription anotherDes = coreModel.getProjectDescription(project);
-			assertNotNull("project description is null for re-created project", des);
-			assertTrue("des should be valid for re-created project", des.isValid());
+		ICProjectDescription anotherDes = coreModel.getProjectDescription(project);
+		assertNotNull("project description is null for re-created project", des);
+		assertTrue("des should be valid for re-created project", des.isValid());
 
-			ICConfigurationDescription anotherCfgDess[] = anotherDes.getConfigurations();
+		ICConfigurationDescription anotherCfgDess[] = anotherDes.getConfigurations();
 
-			assertEquals(2, anotherCfgDess.length);
+		assertEquals(2, anotherCfgDess.length);
 
-			ICConfigurationDescription anotherCfgDes = anotherCfgDess[0];
-			ICResourceDescription anotherRcDess[] = anotherCfgDes.getResourceDescriptions();
-			assertEquals(1, anotherRcDess.length);
-			assertEquals(anotherCfgDes.getRootFolderDescription(), anotherRcDess[0]);
-			assertFalse(anotherCfgDes.isModified());
+		ICConfigurationDescription anotherCfgDes = anotherCfgDess[0];
+		ICResourceDescription anotherRcDess[] = anotherCfgDes.getResourceDescriptions();
+		assertEquals(1, anotherRcDess.length);
+		assertEquals(anotherCfgDes.getRootFolderDescription(), anotherRcDess[0]);
+		assertFalse(anotherCfgDes.isModified());
 
 		CConfigurationData cfgData = cfgDes.getConfigurationData();
 		assertEquals(cfgData, cfgDes.getConfigurationData());
@@ -257,7 +254,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 
 		fi = cfg.createFileInfo(new Path("q/w/e.c"));
 		modify(fi);
-		ICFileDescription fd_qwe = (ICFileDescription)cfgDes.getResourceDescription(new Path("q/w/e.c"), true);
+		ICFileDescription fd_qwe = (ICFileDescription) cfgDes.getResourceDescription(new Path("q/w/e.c"), true);
 		assertNotNull(fd_qwe);
 		assertEquals(5, cfgDes.getResourceDescriptions().length);
 		nestedFis = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE);
@@ -279,23 +276,24 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(0, nestedFos.length);
 		assertEquals(2, nestedFis.length);
 
-		IFileInfo fi_qwe = (IFileInfo)cfg.getResourceInfo(new Path("q/w/e.c"), true);
+		IFileInfo fi_qwe = (IFileInfo) cfg.getResourceInfo(new Path("q/w/e.c"), true);
 		assertNotNull(fi_qwe);
 
-		ICFileDescription fid_qwe = (ICFileDescription)cfgDes.getResourceDescription(new Path("q/w/e.c"), true);
+		ICFileDescription fid_qwe = (ICFileDescription) cfgDes.getResourceDescription(new Path("q/w/e.c"), true);
 		assertNotNull(fid_qwe);
 		fi_qwe.setPath(new Path("r/t/y.c"));
 		assertEquals(fi_qwe, cfg.getResourceInfo(new Path("r/t/y.c"), true));
 		assertNull(cfgDes.getResourceDescription(new Path("q/w/e.c"), true));
-		ICFileDescription fid_rty = (ICFileDescription)cfgDes.getResourceDescription(new Path("r/t/y.c"), true);
+		ICFileDescription fid_rty = (ICFileDescription) cfgDes.getResourceDescription(new Path("r/t/y.c"), true);
 		assertEquals(fid_qwe, fid_rty);
 
 		fid_rty.setPath(new Path("f/g/h.c"));
 		assertNull(cfg.getResourceInfo(new Path("r/t/y.c"), true));
-		IFileInfo fi_fgh = (IFileInfo)cfg.getResourceInfo(new Path("f/g/h.c"), true);
+		IFileInfo fi_fgh = (IFileInfo) cfg.getResourceInfo(new Path("f/g/h.c"), true);
 		assertEquals(fi_qwe, fi_fgh);
 
-		ICFolderDescription fod_fg1 = cfgDes.createFolderDescription(new Path("f/g/1"), cfgDes.getRootFolderDescription());
+		ICFolderDescription fod_fg1 = cfgDes.createFolderDescription(new Path("f/g/1"),
+				cfgDes.getRootFolderDescription());
 		modify(fod_fg1);
 		ICFolderDescription fod_fg12 = cfgDes.createFolderDescription(new Path("f/g/1/2"), fod_fg1);
 		modify(fod_fg12);
@@ -309,7 +307,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(1, fod_fg1.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE).length);
 		assertEquals(1, fod_fg1.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER).length);
 
-		IFolderInfo fo_fg1 = (IFolderInfo)cfg.getResourceInfo(new Path("f/g/1"), true);
+		IFolderInfo fo_fg1 = (IFolderInfo) cfg.getResourceInfo(new Path("f/g/1"), true);
 		assertNotNull(fo_fg1);
 
 		fo_fg1.setPath(new Path("t/y/u"));
@@ -322,13 +320,13 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(fid_fg13, cfgDes.getResourceDescription(new Path("t/y/u/3.c"), true));
 
 		ICLanguageSetting settings[] = cfgDes.getRootFolderDescription().getLanguageSettings();
-		for(int i = 0; i < settings.length; i++){
+		for (int i = 0; i < settings.length; i++) {
 			ICLanguageSetting setting = settings[i];
 			ICLanguageSettingEntry[] entries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
 			if (!setting.supportsEntryKind(ICSettingEntry.INCLUDE_PATH))
 				assertTrue(entries.length == 0);
 			if (isPrint) {
-				for(int j = 0; j < entries.length; j++){
+				for (int j = 0; j < entries.length; j++) {
 					System.out.println(entries[j].getName());
 				}
 				System.out.println(entries.length);
@@ -362,17 +360,17 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		rf = cfgDes.getRootFolderDescription();
 		settings = rf.getLanguageSettings();
 		ICLanguageSettingEntry updatedEntries[] = new ICLanguageSettingEntry[0];
-		for(int i = 0; i < settings.length; i++){
+		for (int i = 0; i < settings.length; i++) {
 			ICLanguageSetting setting = settings[i];
 			ICLanguageSettingEntry[] entries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
-			if(entries.length > 0){
+			if (entries.length > 0) {
 				ICLanguageSettingEntry updated[] = new ICLanguageSettingEntry[entries.length + 1];
 				System.arraycopy(entries, 0, updated, 1, entries.length);
 				updated[0] = new CIncludePathEntry("a/b/c", 0);
 				setting.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, updated);
 				updatedEntries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
 				assertEquals(updated.length, updatedEntries.length);
-				for(int k = 0; k < updated.length; k++){
+				for (int k = 0; k < updated.length; k++) {
 					assertEquals(updated[i].getValue(), updatedEntries[i].getValue());
 				}
 			}
@@ -406,13 +404,13 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		rf = cfgDes.getRootFolderDescription();
 		settings = rf.getLanguageSettings();
 
-		for(int i = 0; i < settings.length; i++){
+		for (int i = 0; i < settings.length; i++) {
 			ICLanguageSetting setting = settings[i];
 			ICLanguageSettingEntry[] entries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
 			if (setting.supportsEntryKind(ICSettingEntry.INCLUDE_PATH)) {
 				BuildSystemTestHelper.checkDiff(entries, updatedEntries);
 				assertEquals(entries.length, updatedEntries.length);
-				for(int k = 0; k < entries.length; k++)
+				for (int k = 0; k < entries.length; k++)
 					assertEquals(entries[i].getValue(), updatedEntries[i].getValue());
 			} else
 				assertTrue(entries.length == 0);
@@ -427,8 +425,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(6, cfgDes.getResourceDescriptions().length);
 
 		ManagedBuildTestHelper.createFolder(project, "a/b");
-		ICFolderDescription base = (ICFolderDescription)cfgDes.getResourceDescription(new Path("a/b"), false);
-		ICFolderDescription abFoDes =  cfgDes.createFolderDescription(new Path("a/b"), base);
+		ICFolderDescription base = (ICFolderDescription) cfgDes.getResourceDescription(new Path("a/b"), false);
+		ICFolderDescription abFoDes = cfgDes.createFolderDescription(new Path("a/b"), base);
 		ICLanguageSetting ls = abFoDes.getLanguageSettingForFile("a.c");
 		assertNotNull(ls);
 		List<ICLanguageSettingEntry> list = ls.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH);
@@ -455,8 +453,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		rf = cfgDes.getRootFolderDescription();
 
 		ManagedBuildTestHelper.createFolder(project, "b/c");
-		base = (ICFolderDescription)cfgDes.getResourceDescription(new Path("b/c"), false);
-		ICFolderDescription bcFoDes =  cfgDes.createFolderDescription(new Path("b/c"), base);
+		base = (ICFolderDescription) cfgDes.getResourceDescription(new Path("b/c"), false);
+		ICFolderDescription bcFoDes = cfgDes.createFolderDescription(new Path("b/c"), base);
 		ls = bcFoDes.getLanguageSettingForFile("a.c");
 		assertNotNull(ls);
 		ICLanguageSetting rLS = rf.getLanguageSettingForFile("a.c");
@@ -499,10 +497,9 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 
 		IConfiguration cfgs[] = type.getConfigurations();
 
-
-		for(int i = 0; i < cfgs.length; i++){
+		for (int i = 0; i < cfgs.length; i++) {
 			String id = ManagedBuildManager.calculateChildId(cfgs[i].getId(), null);
-			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true);
+			Configuration config = new Configuration(mProj, (Configuration) cfgs[i], id, false, true);
 			CConfigurationData data = config.getConfigurationData();
 			assertNotNull("data is null for created configuration", data);
 			des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
@@ -548,13 +545,15 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		ManagedBuildTestHelper.createFolder(project, "a/b");
 
 		ICSourceEntry updatetSEs[] = new ICSourceEntry[2];
-		updatetSEs[0] = new CSourceEntry(projPath.append("a"), new Path[]{new Path("b")}, ICSourceEntry.VALUE_WORKSPACE_PATH);
+		updatetSEs[0] = new CSourceEntry(projPath.append("a"), new Path[] { new Path("b") },
+				ICSourceEntry.VALUE_WORKSPACE_PATH);
 		updatetSEs[1] = s[0];
 
 		cfgDes.setSourceEntries(updatetSEs);
 
 		s = cfgDes.getSourceEntries();
-		updatetSEs[1] = new CSourceEntry(projPath, new Path[]{new Path("a")}, ICSourceEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+		updatetSEs[1] = new CSourceEntry(projPath, new Path[] { new Path("a") },
+				ICSourceEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
 		checkArrays(updatetSEs, s);
 		//assertTrue(Arrays.equals(updatetSEs, s));
 
@@ -597,9 +596,9 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 
 		IConfiguration cfgs[] = type.getConfigurations();
 
-		for(int i = 0; i < cfgs.length; i++){
+		for (int i = 0; i < cfgs.length; i++) {
 			String id = ManagedBuildManager.calculateChildId(cfgs[i].getId(), null);
-			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true);
+			Configuration config = new Configuration(mProj, (Configuration) cfgs[i], id, false, true);
 			CConfigurationData data = config.getConfigurationData();
 			assertNotNull("data is null for created configuration", data);
 			des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
@@ -631,8 +630,9 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		ICLanguageSettingEntry entries[] = setting.getSettingEntries(ICLanguageSettingEntry.MACRO);
 
 		if (isPrint) {
-			for(int i = 0; i < entries.length; i++){
-				System.out.println("name = \"" + entries[i].getName() + "\", value = \"" + entries[i].getValue() + "\"");
+			for (int i = 0; i < entries.length; i++) {
+				System.out
+						.println("name = \"" + entries[i].getName() + "\", value = \"" + entries[i].getValue() + "\"");
 			}
 		}
 
@@ -647,9 +647,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(entries.length + 1, updatedEntries.length);
 
 		boolean found = false;
-		for(int i = 0; i < updatedEntries.length; i++){
-			if(updatedEntries[i].getName().equals("a")
-					&& updatedEntries[i].getValue().equals("b")){
+		for (int i = 0; i < updatedEntries.length; i++) {
+			if (updatedEntries[i].getName().equals("a") && updatedEntries[i].getValue().equals("b")) {
 				found = true;
 				break;
 			}
@@ -658,7 +657,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertTrue(found);
 	}
 
-	public void testActiveCfg() throws Exception{
+	public void testActiveCfg() throws Exception {
 		final String projectName = "test8";
 
 		IProject project = createProject(projectName, "cdt.managedbuild.target.gnu30.exe");
@@ -679,8 +678,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(id1, des.getActiveConfiguration().getId());
 
 		ICConfigurationDescription newActive = null;
-		for(int i = 0; i < cfgs.length; i++){
-			if(!cfgs[i].getId().equals(id1)){
+		for (int i = 0; i < cfgs.length; i++) {
+			if (!cfgs[i].getId().equals(id1)) {
 				newActive = cfgs[i];
 				break;
 			}
@@ -695,11 +694,10 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		des = coreModel.getProjectDescription(project);
 		assertEquals(newActiveId, des.getActiveConfiguration().getId());
 
-
 	}
 
 	/**
-	 * Verifies that project-model is not re-serialized unnecessarily. 
+	 * Verifies that project-model is not re-serialized unnecessarily.
 	 */
 	public void testCompulsiveSerialization_Bug340219() throws Exception {
 		final String projectName = "test_bug340219";
@@ -709,13 +707,13 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		IProject project = null;
 		try {
 			project = createProject(projectName, "cdt.managedbuild.target.gnu30.exe");
-	
+
 			File projectFile = project.getFile(".project").getLocation().toFile();
 			File cprojectFile = project.getFile(".cproject").getLocation().toFile();
-			
+
 			final long projectFileStamp = projectFile.lastModified();
 			final long cprojectFileStamp = cprojectFile.lastModified();
-			
+
 			ICProjectDescription des = coreModel.getProjectDescription(project);
 			ICConfigurationDescription[] cfgs = des.getConfigurations();
 
@@ -730,7 +728,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 			assertEquals(cfgs[1].getId(), des.getActiveConfiguration().getId());
 			assertEquals(projectFileStamp, projectFile.lastModified());
 			assertEquals(cprojectFileStamp, cprojectFile.lastModified());
-	
+
 			// verify that closing/reopening the project preserves active configuration and does not touch project-model files
 			ResourceHelper.joinIndexerBeforeCleanup(getName());
 			project.close(null);
@@ -740,7 +738,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 			assertEquals(cfgs[1].getId(), des.getActiveConfiguration().getId());
 			assertEquals(projectFileStamp, projectFile.lastModified());
 			assertEquals(cprojectFileStamp, cprojectFile.lastModified());
-			
+
 			// verify that deleting/reimporting the project resets active configuration but does not touch project-model files
 			ResourceHelper.joinIndexerBeforeCleanup(getName());
 			project.delete(false, true, null);
@@ -751,21 +749,20 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 			assertEquals(cfgs[0].getId(), des.getActiveConfiguration().getId());
 			assertEquals(projectFileStamp, projectFile.lastModified());
 			assertEquals(cprojectFileStamp, cprojectFile.lastModified());
-			
+
 			// verify that building the project does not touch project-model files
 			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 			assertEquals(projectFileStamp, projectFile.lastModified());
 			assertEquals(cprojectFileStamp, cprojectFile.lastModified());
-		}
-		finally {
-			if(project != null)
+		} finally {
+			if (project != null)
 				ResourceHelper.joinIndexerBeforeCleanup(getName());
-				project.delete(true, null);
+			project.delete(true, null);
 		}
 	}
-	
-	private void checkArrays(Object[] a1, Object[] a2){
-		if(a1 == null){
+
+	private void checkArrays(Object[] a1, Object[] a2) {
+		if (a1 == null) {
 			assertTrue(a2 == null);
 			return;
 		}
@@ -773,23 +770,23 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 
 		assertEquals(a1.length, a2.length);
 
-		for(int i = 0; i < a1.length; i++){
+		for (int i = 0; i < a1.length; i++) {
 			Object o1 = a1[i];
 			boolean found = false;
-			for(int j = 0; j < a2.length; j++){
-				if(o1.equals(a2[j])){
+			for (int j = 0; j < a2.length; j++) {
+				if (o1.equals(a2[j])) {
 					found = true;
 					break;
 				}
 			}
 
-			if(!found){
+			if (!found) {
 				fail("a2 array does not contain the \"" + o1 + "\" element");
 			}
 		}
 	}
 
-	static public IProject createProject(String name, String projTypeId) throws CoreException{
+	static public IProject createProject(String name, String projTypeId) throws CoreException {
 		IProject project = createProject(name);
 
 		CoreModel coreModel = CoreModel.getDefault();
@@ -814,10 +811,9 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 
 		IConfiguration cfgs[] = type.getConfigurations();
 
-
-		for(int i = 0; i < cfgs.length; i++){
+		for (int i = 0; i < cfgs.length; i++) {
 			String id = ManagedBuildManager.calculateChildId(cfgs[i].getId(), null);
-			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true);
+			Configuration config = new Configuration(mProj, (Configuration) cfgs[i], id, false, true);
 			CConfigurationData data = config.getConfigurationData();
 			assertNotNull("data is null for created configuration", data);
 			des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
@@ -828,13 +824,11 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		return project;
 	}
 
-	static public IProject createProject(String name) throws CoreException{
-		return createProject(name, (IPath)null);
+	static public IProject createProject(String name) throws CoreException {
+		return createProject(name, (IPath) null);
 	}
 
-	static public IProject createProject(
-			final String name,
-			final IPath location) throws CoreException{
+	static public IProject createProject(final String name, final IPath location) throws CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		final IProject newProjectHandle = root.getProject(name);
@@ -845,10 +839,11 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 			workspaceDesc.setAutoBuilding(false);
 			workspace.setDescription(workspaceDesc);
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
-			if(location != null)
+			if (location != null)
 				description.setLocation(location);
 			//description.setLocation(root.getLocation());
-			project = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, new NullProgressMonitor());
+			project = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle,
+					new NullProgressMonitor());
 		} else {
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 				@Override

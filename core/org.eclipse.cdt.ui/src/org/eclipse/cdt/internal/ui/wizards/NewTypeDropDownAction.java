@@ -20,7 +20,7 @@ import org.eclipse.ui.PlatformUI;
 public class NewTypeDropDownAction extends AbstractWizardDropDownAction {
 
 	public NewTypeDropDownAction() {
-	    super();
+		super();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.OPEN_CLASS_WIZARD_ACTION);
 	}
 

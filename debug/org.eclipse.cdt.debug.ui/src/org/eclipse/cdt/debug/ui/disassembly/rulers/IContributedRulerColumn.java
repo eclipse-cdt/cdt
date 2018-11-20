@@ -14,11 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.disassembly.rulers;
 
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.ui.IWorkbenchPart;
-
 
 /**
  * Interface that has to be implemented by contributions to the

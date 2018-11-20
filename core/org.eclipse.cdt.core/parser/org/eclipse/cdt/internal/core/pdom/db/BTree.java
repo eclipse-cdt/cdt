@@ -37,19 +37,19 @@ public class BTree {
 	protected final int DEGREE;
 	protected final int MAX_RECORDS;
 	protected final int MAX_CHILDREN;
-	protected final int MIN_RECORDS; 
+	protected final int MIN_RECORDS;
 	protected final int OFFSET_CHILDREN;
 	protected final int MEDIAN_RECORD;
 
 	protected final IBTreeComparator cmp;
-	
+
 	public BTree(Database db, long rootPointer, IBTreeComparator cmp) {
 		this(db, rootPointer, 8, cmp);
 	}
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param db the database containing the B-tree
 	 * @param rootPointer offset into database of the pointer to the root node
 	 */
@@ -60,7 +60,7 @@ public class BTree {
 		this.db = db;
 		this.rootPointer = rootPointer;
 		this.cmp = cmp;
-		
+
 		this.DEGREE = degree;
 		this.MIN_RECORDS = DEGREE - 1;
 		this.MAX_RECORDS = 2 * DEGREE - 1;
@@ -93,7 +93,7 @@ public class BTree {
 	 * Inserts the record into the b-tree. We don't insert if the key was already there,
 	 * in which case we return the record that matched. In other cases, we just return
 	 * the record back.
-	 * 
+	 *
 	 * @param record  offset of the record
 	 */
 	public long insert(long record) throws CoreException {
@@ -113,7 +113,7 @@ public class BTree {
 
 		// If this node is full (last record isn't null), split it.
 		if (getRecord(chunk, node, MAX_RECORDS - 1) != 0) {
-			long median = getRecord(chunk, node, MEDIAN_RECORD); 
+			long median = getRecord(chunk, node, MEDIAN_RECORD);
 			if (median == record) {
 				// Found it, never mind.
 				return median;
@@ -161,30 +161,30 @@ public class BTree {
 		}
 
 		// Binary search to find the insertion point.
-		int lower= 0; 
-		int upper= MAX_RECORDS - 1;
+		int lower = 0;
+		int upper = MAX_RECORDS - 1;
 		while (lower < upper && getRecord(chunk, node, upper - 1) == 0) {
 			upper--;
 		}
 
 		while (lower < upper) {
-    		int middle= (lower + upper) >>> 1;
-			long checkRec= getRecord(chunk, node, middle);
+			int middle = (lower + upper) >>> 1;
+			long checkRec = getRecord(chunk, node, middle);
 			if (checkRec == 0) {
-				upper= middle;
+				upper = middle;
 			} else {
-				int compare= cmp.compare(checkRec, record);
+				int compare = cmp.compare(checkRec, record);
 				if (compare > 0) {
-					upper= middle;
+					upper = middle;
 				} else if (compare < 0) {
-					lower= middle + 1;
+					lower = middle + 1;
 				} else {
 					// Found it, no insert, just return the matched record.
 					return checkRec;
 				}
 			}
 		}
-		final int i= lower;
+		final int i = lower;
 		long child = getChild(chunk, node, i);
 		if (child != 0) {
 			// Visit the children.
@@ -207,7 +207,7 @@ public class BTree {
 		long root = allocateNode();
 		db.putRecPtr(rootPointer, root);
 		// Put the record in the first slot of the node.
-		putRecord(db.getChunk(root), root, 0, record); 
+		putRecord(db.getChunk(root), root, 0, record);
 	}
 
 	private long allocateNode() throws CoreException {
@@ -220,11 +220,11 @@ public class BTree {
 	 * If the specified record is not present then this routine has no effect.
 	 * <p>
 	 * Specifying a record r for which there is another record q existing in the B-tree
-	 * where cmp.compare(r,q)==0 && r!=q will also have no effect   
+	 * where cmp.compare(r,q)==0 && r!=q will also have no effect
 	 * <p>
 	 * N.B. The record is not deleted itself - its storage is not deallocated.
 	 * The reference to the record in the btree is deleted.
-	 *  
+	 *
 	 * @param record the record to delete
 	 * @throws CoreException
 	 */
@@ -238,6 +238,7 @@ public class BTree {
 
 	private class BTreeKeyNotFoundException extends Exception {
 		private static final long serialVersionUID = 9065438266175091670L;
+
 		public BTreeKeyNotFoundException(String msg) {
 			super(msg);
 		}
@@ -254,7 +255,7 @@ public class BTree {
 		BTNode(long node) throws CoreException {
 			this.node = node;
 			this.chunk = db.getChunk(node);
-			int i= 0;
+			int i = 0;
 			while (i < MAX_RECORDS && getRecord(chunk, node, i) != 0)
 				i++;
 			keyCount = i;
@@ -287,14 +288,13 @@ public class BTree {
 	 * @return the address of the record removed from the B-tree
 	 * @throws CoreException
 	 */
-	private long deleteImp(long key, long nodeRecord, int mode)
-	throws CoreException, BTreeKeyNotFoundException {
+	private long deleteImp(long key, long nodeRecord, int mode) throws CoreException, BTreeKeyNotFoundException {
 		BTNode node = new BTNode(nodeRecord);
 
 		// Determine index of key in current node, or -1 if its not in this node.
 		int keyIndexInNode = -1;
 		if (mode == DELMODE_NORMAL)
-			for (int i= 0; i < node.keyCount; i++)
+			for (int i = 0; i < node.keyCount; i++)
 				if (getRecord(node.chunk, node.node, i) == key) {
 					keyIndexInNode = i;
 					break;
@@ -331,7 +331,7 @@ public class BTree {
 					return key;
 				}
 
-				BTNode pred = node.getChild(keyIndexInNode); 
+				BTNode pred = node.getChild(keyIndexInNode);
 				if (pred != null && pred.keyCount > MIN_RECORDS) {
 					/* Case 2b: Delete key by overwriting it with its predecessor (which occurs in a leaf node) */
 					long subst = deleteImp(-1, pred.node, DELMODE_DELETE_MAXIMUM);
@@ -351,23 +351,30 @@ public class BTree {
 
 				/* Determine root of subtree that should contain the key */
 				int subtreeIndex;
-				switch(mode) {
+				switch (mode) {
 				case DELMODE_NORMAL:
-					subtreeIndex = node.keyCount; 
-					for (int i= 0; i < node.keyCount; i++)
-						if (cmp.compare(getRecord(node.chunk, node.node, i), key)>0) {
+					subtreeIndex = node.keyCount;
+					for (int i = 0; i < node.keyCount; i++)
+						if (cmp.compare(getRecord(node.chunk, node.node, i), key) > 0) {
 							subtreeIndex = i;
 							break;
 						}
 					break;
-				case DELMODE_DELETE_MINIMUM: subtreeIndex = 0; break;
-				case DELMODE_DELETE_MAXIMUM: subtreeIndex = node.keyCount; break;
-				default: throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.OK, Messages.getString("BTree.UnknownMode"), null)); //$NON-NLS-1$
+				case DELMODE_DELETE_MINIMUM:
+					subtreeIndex = 0;
+					break;
+				case DELMODE_DELETE_MAXIMUM:
+					subtreeIndex = node.keyCount;
+					break;
+				default:
+					throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.OK,
+							Messages.getString("BTree.UnknownMode"), null)); //$NON-NLS-1$
 				}
 
 				BTNode child = node.getChild(subtreeIndex);
 				if (child == null) {
-					throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.OK, Messages.getString("BTree.IntegrityError"), null)); //$NON-NLS-1$
+					throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.OK,
+							Messages.getString("BTree.IntegrityError"), null)); //$NON-NLS-1$
 				}
 
 				if (child.keyCount > MIN_RECORDS) {
@@ -410,7 +417,7 @@ public class BTree {
 
 					throw new BTreeKeyNotFoundException(
 							MessageFormat.format(Messages.getString("BTree.DeletionOnAbsentKey"), //$NON-NLS-1$
-									new Object[]{Long.valueOf(key), Integer.valueOf(mode)}));
+									new Object[] { Long.valueOf(key), Integer.valueOf(mode) }));
 				}
 			}
 		}
@@ -425,13 +432,12 @@ public class BTree {
 	 * @param kIndex the index of the key in the node <i>mid</i> which is to become the new node's median key
 	 * @param dst the node which is the basis and result of the merge
 	 */
-	public void mergeNodes(BTNode src, BTNode keyProvider, int kIndex, BTNode dst) 
-	throws CoreException {
+	public void mergeNodes(BTNode src, BTNode keyProvider, int kIndex, BTNode dst) throws CoreException {
 		nodeContentCopy(src, 0, dst, dst.keyCount + 1, src.keyCount + 1);
 		long midKey = getRecord(keyProvider.chunk, keyProvider.node, kIndex);
 		putRecord(dst.chunk, dst.node, dst.keyCount, midKey);
 		long keySucc = kIndex + 1 == MAX_RECORDS ? 0 : getRecord(keyProvider.chunk, keyProvider.node, kIndex + 1);
-		db.free(getChild(keyProvider.chunk, keyProvider.node,  kIndex + 1));
+		db.free(getChild(keyProvider.chunk, keyProvider.node, kIndex + 1));
 		nodeContentDelete(keyProvider, kIndex + 1, 1);
 		putRecord(keyProvider.chunk, keyProvider.node, kIndex, keySucc);
 		if (kIndex == 0 && keySucc == 0) {
@@ -486,7 +492,7 @@ public class BTree {
 	 * @param length the number of (key,(predecessor)child) nodes to write
 	 */
 	private void nodeContentCopy(BTNode src, int srcPos, BTNode dst, int dstPos, int length) {
-		for (int i=length - 1; i >= 0; i--) { // this order is important when src == dst!
+		for (int i = length - 1; i >= 0; i--) { // this order is important when src == dst!
 			int srcIndex = srcPos + i;
 			int dstIndex = dstPos + i;
 
@@ -512,7 +518,7 @@ public class BTree {
 	 * @param length the length of the sequence to delete
 	 */
 	private void nodeContentDelete(BTNode node, int i, int length) {
-		for (int index= i; index <= MAX_RECORDS; index++) {
+		for (int index = i; index <= MAX_RECORDS; index++) {
 			long newKey = (index + length) < node.keyCount ? getRecord(node.chunk, node.node, index + length) : 0;
 			long newChild = (index + length) < node.keyCount + 1 ? getChild(node.chunk, node.node, index + length) : 0;
 			if (index < MAX_RECORDS) {
@@ -527,7 +533,7 @@ public class BTree {
 	/**
 	 * Visits all nodes beginning when the visitor comparator
 	 * returns >= 0 until the visitor visit returns falls.
-	 * 
+	 *
 	 * @param visitor
 	 */
 	public void accept(IBTreeVisitor visitor) throws CoreException {
@@ -546,41 +552,41 @@ public class BTree {
 
 		try {
 			Chunk chunk = db.getChunk(node);
-			
+
 			// Binary search to find first record greater or equal.
-			int lower= 0; 
-			int upper= MAX_RECORDS - 1;
+			int lower = 0;
+			int upper = MAX_RECORDS - 1;
 			while (lower < upper && getRecord(chunk, node, upper - 1) == 0) {
 				upper--;
 			}
 			while (lower < upper) {
-				int middle= (lower + upper) >>> 1;
+				int middle = (lower + upper) >>> 1;
 				long checkRec = getRecord(chunk, node, middle);
 				if (checkRec == 0) {
-					upper= middle;
+					upper = middle;
 				} else {
-					int compare= visitor.compare(checkRec);
+					int compare = visitor.compare(checkRec);
 					if (compare >= 0) {
-						upper= middle;
+						upper = middle;
 					} else {
-						lower= middle + 1;
+						lower = middle + 1;
 					}
 				}
 			}
-			
+
 			// Start with first record greater or equal, reuse comparison results.
-			int i= lower;
+			int i = lower;
 			for (; i < MAX_RECORDS; ++i) {
 				long record = getRecord(chunk, node, i);
-				if (record == 0) 
+				if (record == 0)
 					break;
 
-				int compare= visitor.compare(record); 
+				int compare = visitor.compare(record);
 				if (compare > 0) {
 					// Start point is to the left.
 					return accept(getChild(chunk, node, i), visitor);
 				} else if (compare == 0) {
-					if (!accept(getChild(chunk, node, i), visitor)) 
+					if (!accept(getChild(chunk, node, i), visitor))
 						return false;
 					if (!visitor.visit(record))
 						return false;
@@ -614,14 +620,28 @@ public class BTree {
 		Integer leafDepth;
 		int depth;
 
-		public String getMsg() { return msg; }
-		public boolean isValid() { return valid; }
+		public String getMsg() {
+			return msg;
+		}
+
+		public boolean isValid() {
+			return valid;
+		}
+
 		@Override
-		public void postVisit(long node) throws CoreException { depth--; }
+		public void postVisit(long node) throws CoreException {
+			depth--;
+		}
+
 		@Override
-		public int compare(long record) throws CoreException { return 0; }
+		public int compare(long record) throws CoreException {
+			return 0;
+		}
+
 		@Override
-		public boolean visit(long record) throws CoreException { return true; }
+		public boolean visit(long record) throws CoreException {
+			return true;
+		}
 
 		@Override
 		public void preVisit(long node) throws CoreException {
@@ -630,8 +650,8 @@ public class BTree {
 			// Collect information for checking.
 			int keyCount = 0;
 			int indexFirstBlankKey = MAX_RECORDS;
-			int indexLastNonBlankKey = 0; 
-			for (int i= 0; i < MAX_RECORDS; i++) {
+			int indexLastNonBlankKey = 0;
+			for (int i = 0; i < MAX_RECORDS; i++) {
 				if (getRecord(db.getChunk(node), node, i) != 0) {
 					keyCount++;
 					indexLastNonBlankKey = i;
@@ -641,7 +661,7 @@ public class BTree {
 			}
 
 			int childCount = 0;
-			for (int i= 0; i < MAX_CHILDREN; i++) {
+			for (int i = 0; i < MAX_CHILDREN; i++) {
 				if (getChild(db.getChunk(node), node, i) != 0) {
 					childCount++;
 				}
@@ -651,28 +671,31 @@ public class BTree {
 			if (indexFirstBlankKey != indexLastNonBlankKey + 1) {
 				boolean full = indexFirstBlankKey == MAX_RECORDS && indexLastNonBlankKey == MAX_RECORDS - 1;
 				boolean empty = indexFirstBlankKey == 0 && indexLastNonBlankKey == 0;
-				if (!full && !empty) { 
+				if (!full && !empty) {
 					valid = false;
 					msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorA"), //$NON-NLS-1$
-							new Object[] { Long.valueOf(node), Integer.valueOf(indexFirstBlankKey), Integer.valueOf(indexLastNonBlankKey) });
+							new Object[] { Long.valueOf(node), Integer.valueOf(indexFirstBlankKey),
+									Integer.valueOf(indexLastNonBlankKey) });
 				}
 			}
 
 			// Check: Key number constrains child numbers
 			if (childCount != 0 && childCount != keyCount + 1) {
 				valid = false;
-				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorB"), new Object[] { Long.valueOf(node) }); //$NON-NLS-1$
+				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorB"), //$NON-NLS-1$
+						new Object[] { Long.valueOf(node) });
 			}
 
 			// The root node is excused from the remaining node constraints.
 			if (node == db.getRecPtr(rootPointer)) {
-				return; 
+				return;
 			}
 
 			// Check: Non-root nodes must have a keyCount within a certain range
 			if (keyCount < MIN_RECORDS || keyCount > MAX_RECORDS) {
 				valid = false;
-				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorC"), new Object[] { Long.valueOf(node) }); //$NON-NLS-1$
+				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorC"), //$NON-NLS-1$
+						new Object[] { Long.valueOf(node) });
 			}
 
 			// Check: All leaf nodes are at the same depth

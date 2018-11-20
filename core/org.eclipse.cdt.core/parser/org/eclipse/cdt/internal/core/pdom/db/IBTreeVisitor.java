@@ -19,15 +19,15 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
- * 
- * The visitor visits all records where compare returns 0. 
+ *
+ * The visitor visits all records where compare returns 0.
  */
 public interface IBTreeVisitor {
 	/**
 	 * Compares the record against an internally held key. The comparison must be
 	 * compatible with the one used for the B-tree.
 	 * Used for visiting.
-	 * 
+	 *
 	 * @param record the offset of the record to compare with the key
 	 * @return -1 if record < key, 0 if record == key, 1 if record > key
 	 */
@@ -39,19 +39,21 @@ public interface IBTreeVisitor {
 	 * @param record the offset of the record being visited
 	 * @return {@code true} to continue the visit, {@code false} to abort it.
 	 */
-	public boolean visit(long record) throws CoreException;	
+	public boolean visit(long record) throws CoreException;
 
 	/**
 	 * Called before visiting a record.
 	 *
 	 * @param record the offset of the record being visited
 	 */
-	public default void preVisit(long record) throws CoreException {}
+	public default void preVisit(long record) throws CoreException {
+	}
 
 	/**
 	 * Called after visiting a record.
 	 *
 	 * @param record the offset of the record being visited
 	 */
-	public default void postVisit(long record) throws CoreException {}
+	public default void postVisit(long record) throws CoreException {
+	}
 }

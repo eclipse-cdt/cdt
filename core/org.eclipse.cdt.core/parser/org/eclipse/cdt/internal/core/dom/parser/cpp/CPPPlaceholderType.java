@@ -18,24 +18,23 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Represents an occurrence of 'auto' or 'decltype(auto)' that has
  * not been resolved (replaced with a real type) because the information
- * necessary to resolve it (the function's body) is not available yet. 
+ * necessary to resolve it (the function's body) is not available yet.
  */
 public class CPPPlaceholderType implements ISerializableType, IType {
 	public enum PlaceholderKind {
-		Auto,
-		DecltypeAuto
+		Auto, DecltypeAuto
 	}
-	
+
 	private final PlaceholderKind fPlaceholderKind;
-	
+
 	public CPPPlaceholderType(PlaceholderKind placeholderKind) {
 		fPlaceholderKind = placeholderKind;
 	}
-	
+
 	public PlaceholderKind getPlaceholderKind() {
 		return fPlaceholderKind;
 	}
-	
+
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		short firstBytes = ITypeMarshalBuffer.PLACEHOLDER_TYPE;
@@ -52,22 +51,21 @@ public class CPPPlaceholderType implements ISerializableType, IType {
 		}
 		return false;
 	}
-	
-    @Override
+
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // not going to happen
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// not going to happen
+		}
+		return t;
+	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) {
-		PlaceholderKind kind = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0 
-				             ? PlaceholderKind.DecltypeAuto
-				             : PlaceholderKind.Auto;
+		PlaceholderKind kind = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0 ? PlaceholderKind.DecltypeAuto
+				: PlaceholderKind.Auto;
 		return new CPPPlaceholderType(kind);
 	}
 }

@@ -24,8 +24,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTAttributeSpecifier extends IASTNode {
 	public static final IASTAttributeSpecifier[] EMPTY_ATTRIBUTE_SPECIFIER_ARRAY = {};
-	public static final ASTNodeProperty ATTRIBUTE = 
-			new ASTNodeProperty("IASTAttributeSpecifier.ATTRIBUTE"); //$NON-NLS-1$
+	public static final ASTNodeProperty ATTRIBUTE = new ASTNodeProperty("IASTAttributeSpecifier.ATTRIBUTE"); //$NON-NLS-1$
 
 	/**
 	 * @deprecated Use IASTAttributeList.getAttributes() instead.

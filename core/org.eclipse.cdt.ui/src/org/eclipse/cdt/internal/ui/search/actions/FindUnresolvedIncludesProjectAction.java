@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
 import org.eclipse.jface.action.IAction;
@@ -39,11 +39,12 @@ public class FindUnresolvedIncludesProjectAction extends AbstractUpdateIndexActi
 	@Override
 	protected void doRun(ICElement[] elements) {
 		if (elements.length == 0) {
-			StatusLineHandler.showStatusLineMessage(fSite, CSearchMessages.CSearchOperation_operationUnavailable_message);
-	 		return;
-	 	}
+			StatusLineHandler.showStatusLineMessage(fSite,
+					CSearchMessages.CSearchOperation_operationUnavailable_message);
+			return;
+		}
 
-	 	ISearchQuery searchJob= new CSearchUnresolvedIncludesQuery(elements);
+		ISearchQuery searchJob = new CSearchUnresolvedIncludesQuery(elements);
 
 		StatusLineHandler.clearStatusLine(fSite);
 		NewSearchUI.activateSearchResultView();
@@ -52,7 +53,7 @@ public class FindUnresolvedIncludesProjectAction extends AbstractUpdateIndexActi
 
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		fSite= targetPart.getSite();
+		fSite = targetPart.getSite();
 	}
 
 	@Override

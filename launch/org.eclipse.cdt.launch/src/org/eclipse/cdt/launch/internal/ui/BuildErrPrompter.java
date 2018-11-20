@@ -63,7 +63,7 @@ public class BuildErrPrompter implements IStatusHandler {
 	 * if it was the active one. This argument should be non-empty ONLY if a
 	 * not-active configuration was built.
 	 * <ul>
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus,
 	 *      java.lang.Object)
 	 */
@@ -75,82 +75,67 @@ public class BuildErrPrompter implements IStatusHandler {
 			return Boolean.TRUE;
 		}
 
-		Object[] args = (Object[])source;
-		if (args.length != 3 ||
-			!(args[0] instanceof ILaunchConfiguration) ||
-			!(args[1] instanceof String) ||
-			!(args[2] instanceof String)) {
+		Object[] args = (Object[]) source;
+		if (args.length != 3 || !(args[0] instanceof ILaunchConfiguration) || !(args[1] instanceof String)
+				|| !(args[2] instanceof String)) {
 			assert false : "status handler not given expected arguments"; //$NON-NLS-1$
 			return Boolean.TRUE;
 		}
 
-		final ILaunchConfiguration launchConfig = (ILaunchConfiguration)args[0];
-		final String projectName = (String)args[1];
-		final String buildConfigName = (String)args[2];
+		final ILaunchConfiguration launchConfig = (ILaunchConfiguration) args[0];
+		final String projectName = (String) args[1];
+		final String buildConfigName = (String) args[2];
 
 		// The platform does this check; we should, too
 		if (DebugUITools.isPrivate(launchConfig)) {
 			return Boolean.TRUE;
 		}
-	
+
 		Shell shell = DebugUIPlugin.getShell();
-		String title =  LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0; 
+		String title = LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0;
 		String message;
 		if (status.getCode() == STATUS_CODE_ERR_IN_MAIN_PROJ) {
 			if (buildConfigName.length() > 0) {
-				message = MessageFormat.format(
-						LaunchMessages.BuildErrPrompter_error_in_specific_config, projectName, buildConfigName);  
+				message = MessageFormat.format(LaunchMessages.BuildErrPrompter_error_in_specific_config, projectName,
+						buildConfigName);
+			} else {
+				message = MessageFormat.format(LaunchMessages.BuildErrPrompter_error_in_active_config, projectName);
 			}
-			else {
-				message = MessageFormat.format(
-						LaunchMessages.BuildErrPrompter_error_in_active_config, projectName);  
-			}
-		}
-		else if (status.getCode() == STATUS_CODE_ERR_IN_REFERENCED_PROJS) {
+		} else if (status.getCode() == STATUS_CODE_ERR_IN_REFERENCED_PROJS) {
 			if (buildConfigName.length() > 0) {
-				message = MessageFormat.format(
-						LaunchMessages.BuildErrPrompter_error_in_referenced_project_specific,  
-						projectName, buildConfigName);  
+				message = MessageFormat.format(LaunchMessages.BuildErrPrompter_error_in_referenced_project_specific,
+						projectName, buildConfigName);
+			} else {
+				message = MessageFormat.format(LaunchMessages.BuildErrPrompter_error_in_referenced_project_active,
+						projectName);
 			}
-			else {
-				message = MessageFormat.format(
-						LaunchMessages.BuildErrPrompter_error_in_referenced_project_active, 						
-						projectName);  
-			}
-		}
-		else {
+		} else {
 			assert false : "this prompter was called for an unexpected status"; //$NON-NLS-1$
 			return Boolean.TRUE;
 		}
-		
+
 		// The rest is monkey-see, monkey-do (copied from
 		// CompileErrorProjectPromptStatusHandler)
-		
-		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore(); 
+
+		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		if (pref != null) {
 			if (pref.equals(MessageDialogWithToggle.ALWAYS)) {
 				return Boolean.TRUE;
 			}
 		}
-		MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell, 
-				title, 
-				null, 
-				message, 
-				MessageDialog.QUESTION,
-				new String[] {IDialogConstants.PROCEED_LABEL, IDialogConstants.CANCEL_LABEL}, 
-				0,
-				LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_1,
-				false);
-        int open = dialog.open();
+		MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell, title, null, message,
+				MessageDialog.QUESTION, new String[] { IDialogConstants.PROCEED_LABEL, IDialogConstants.CANCEL_LABEL },
+				0, LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_1, false);
+		int open = dialog.open();
 		if (open == IDialogConstants.PROCEED_ID) {
-        	if(dialog.getToggleState()) {
-        		store.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
-        	}
-            return Boolean.TRUE;
-        } 
-        else {
-            return Boolean.FALSE;
-        }
+			if (dialog.getToggleState()) {
+				store.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR,
+						MessageDialogWithToggle.ALWAYS);
+			}
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
 	}
 }

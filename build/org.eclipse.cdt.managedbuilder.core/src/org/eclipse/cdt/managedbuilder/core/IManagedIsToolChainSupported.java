@@ -16,14 +16,14 @@ package org.eclipse.cdt.managedbuilder.core;
 import org.osgi.framework.Version;
 
 /**
- * 
+ *
  * @since 3.0
  */
 public interface IManagedIsToolChainSupported {
 	/**
 	 * @return <code>true</code> if the given tool-chain is supported on the system
 	 * otherwise returns <code>false</code>
-	 * 
+	 *
 	 * @since 8.0
 	 */
 	public boolean isSupported(IToolChain toolChain, Version version, String instance);

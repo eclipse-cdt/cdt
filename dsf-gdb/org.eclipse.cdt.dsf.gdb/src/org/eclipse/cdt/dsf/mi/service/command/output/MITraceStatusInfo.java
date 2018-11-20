@@ -18,11 +18,11 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.STOP_REASON_ENUM;
 
 /**
  * -trace-status result.
- * 
+ *
  * ^done,supported="1",running="1",frames="0",buffer-size="5242880",buffer-free="5242880"
  * ^done,supported="1",running="0",stop-reason="request",frames="0",buffer-size="5242880",buffer-free="5242880"
  * ^done,supported="1",running="0",stop-reason="passcount",stopping-tracepoint="7",frames="3",buffer-size="5242880",buffer-free="5242862"
- * 
+ *
  * Field presence:
  *   With GDB 7.2:
  *        "supported"
@@ -109,7 +109,7 @@ public class MITraceStatusInfo extends MIInfo {
 	public STOP_REASON_ENUM getStopReason() {
 		return fStopReason;
 	}
-	
+
 	/** @since 4.4 */
 	public String getStopErrorDescription() {
 		return fStopErrorDesc;
@@ -118,13 +118,13 @@ public class MITraceStatusInfo extends MIInfo {
 	public Integer getStopTracepoint() {
 		return fStoppingTracepoint;
 	}
-	
+
 	/** @since 4.4 */
 	public String getUserName() {
 		return fUserName;
 	}
 
-	/** @since 4.4 */	
+	/** @since 4.4 */
 	public String getNotes() {
 		return fNotes;
 	}
@@ -148,35 +148,35 @@ public class MITraceStatusInfo extends MIInfo {
 	public boolean isCircularBuffer() {
 		return fIsCircularBuffer;
 	}
-	
+
 	private void parse() {
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
 			if (rr != null) {
-				MIResult[] results =  rr.getMIResults();
+				MIResult[] results = rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 					if (var.equals("supported")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							fIsTracingSupported = ((MIConst)val).getString().equals("0") ? false : true;  //$NON-NLS-1$
-							fIsTracingFromFile = ((MIConst)val).getString().equals("file");  //$NON-NLS-1$
+							fIsTracingSupported = ((MIConst) val).getString().equals("0") ? false : true; //$NON-NLS-1$
+							fIsTracingFromFile = ((MIConst) val).getString().equals("file"); //$NON-NLS-1$
 						}
 					} else if (var.equals("trace-file")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							fTraceFile = ((MIConst)val).getString().trim();
+							fTraceFile = ((MIConst) val).getString().trim();
 						}
 					} else if (var.equals("running")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							fIsTracingActive = ((MIConst)val).getString().equals("0") ? false : true;  //$NON-NLS-1$
+							fIsTracingActive = ((MIConst) val).getString().equals("0") ? false : true; //$NON-NLS-1$
 						}
 					} else if (var.equals("stop-reason")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							String reason = ((MIConst)val).getString().trim();
+							String reason = ((MIConst) val).getString().trim();
 							if (reason.equalsIgnoreCase("request")) { //$NON-NLS-1$
 								fStopReason = STOP_REASON_ENUM.REQUEST;
 							} else if (reason.equalsIgnoreCase("overflow")) { //$NON-NLS-1$
@@ -195,71 +195,76 @@ public class MITraceStatusInfo extends MIInfo {
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
 							try {
-								fStoppingTracepoint = Integer.parseInt(((MIConst)val).getString().trim());
-							} catch (NumberFormatException e) {}
+								fStoppingTracepoint = Integer.parseInt(((MIConst) val).getString().trim());
+							} catch (NumberFormatException e) {
+							}
 						}
 					} else if (var.equals("error-description")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							fStopErrorDesc = ((MIConst)val).getString().trim();
+							fStopErrorDesc = ((MIConst) val).getString().trim();
 						}
 					} else if (var.equals("frames")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
 							try {
-								fNumberOfCollectedFrames = Integer.parseInt(((MIConst)val).getString().trim());
-							} catch (NumberFormatException e) {}
+								fNumberOfCollectedFrames = Integer.parseInt(((MIConst) val).getString().trim());
+							} catch (NumberFormatException e) {
+							}
 						}
 					} else if (var.equals("frames-created")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
 							try {
-								fNumberOfCreatedFrames = Integer.parseInt(((MIConst)val).getString().trim());
-							} catch (NumberFormatException e) {}
+								fNumberOfCreatedFrames = Integer.parseInt(((MIConst) val).getString().trim());
+							} catch (NumberFormatException e) {
+							}
 						}
 					} else if (var.equals("buffer-size")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
 							try {
-								fTotalBufferSize = Integer.parseInt(((MIConst)val).getString().trim());
-							} catch (NumberFormatException e) {}
+								fTotalBufferSize = Integer.parseInt(((MIConst) val).getString().trim());
+							} catch (NumberFormatException e) {
+							}
 						}
 					} else if (var.equals("buffer-free")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
 							try {
-								fFreeBufferSize = Integer.parseInt(((MIConst)val).getString().trim());
-							} catch (NumberFormatException e) {}
+								fFreeBufferSize = Integer.parseInt(((MIConst) val).getString().trim());
+							} catch (NumberFormatException e) {
+							}
 						}
 					} else if (var.equals("disconnected")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							fIsDisconnectedTracingEnabled = ((MIConst)val).getString().equals("0") ? false : true;  //$NON-NLS-1$
+							fIsDisconnectedTracingEnabled = ((MIConst) val).getString().equals("0") ? false : true; //$NON-NLS-1$
 						}
 					} else if (var.equals("circular")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							fIsCircularBuffer = ((MIConst)val).getString().trim().equals("0") ? false : true;  //$NON-NLS-1$
+							fIsCircularBuffer = ((MIConst) val).getString().trim().equals("0") ? false : true; //$NON-NLS-1$
 						}
 					} else if (var.equals("user-name")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							fUserName = ((MIConst)val).getString().trim();
+							fUserName = ((MIConst) val).getString().trim();
 						}
-					}  else if (var.equals("notes")) { //$NON-NLS-1$
+					} else if (var.equals("notes")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							fNotes = ((MIConst)val).getString();
+							fNotes = ((MIConst) val).getString();
 						}
-					}  else if (var.equals("start-time")) { //$NON-NLS-1$
+					} else if (var.equals("start-time")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							fStartTime = ((MIConst)val).getString().trim();
+							fStartTime = ((MIConst) val).getString().trim();
 						}
 					} else if (var.equals("stop-time")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							fStopTime = ((MIConst)val).getString().trim();
+							fStopTime = ((MIConst) val).getString().trim();
 						}
 					}
 				}

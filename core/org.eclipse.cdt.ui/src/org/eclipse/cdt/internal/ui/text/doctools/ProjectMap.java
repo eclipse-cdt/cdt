@@ -39,47 +39,47 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
  * <li>Manages persistence of these mappings to the .cproject file.
  * </ul>
  * for a particular {@link IProject}
- * 
+ *
  * @since 5.0
  */
 class ProjectMap {
 	/** .cproject xml element/attribute names **/
-	private static final String ATTRVAL_STORAGEID= "org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"; //$NON-NLS-1$
+	private static final String ATTRVAL_STORAGEID = "org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"; //$NON-NLS-1$
 	private static final String ELEMENT_DOC_COMMENT_OWNER = "doc-comment-owner"; //$NON-NLS-1$
 	private static final String ATTRKEY_DCO_ID = "id"; //$NON-NLS-1$
 	private static final String ELEMENT_PATH = "path"; //$NON-NLS-1$
 	private static final String ATTRKEY_PATH_VALUE = "value"; //$NON-NLS-1$
-	
+
 	private IProject fProject;
 	private Map<IPath, String> fMap;
-	
+
 	/**
 	 * Loads the project map
 	 * @param project
 	 */
 	public ProjectMap(IProject project) {
 		try {
-			fMap= load(project);
-		} catch(CoreException ce) {
+			fMap = load(project);
+		} catch (CoreException ce) {
 			CUIPlugin.log(ce);
-			fMap= new HashMap<IPath, String>();
+			fMap = new HashMap<IPath, String>();
 		}
-		fProject= project;
+		fProject = project;
 	}
-	
+
 	/**
 	 * Returns the id of the doc comment owner mapped to the resource specified, or null
 	 * if no owner is mapped within this project. Ownership is inherited from parents and
-	 *  may be overridden. 
+	 *  may be overridden.
 	 * @param resource
 	 * @return possibly null
 	 */
 	public String getOwnerID(IResource resource) {
-		String id= null;
+		String id = null;
 		if (resource != null) {
-			for (IPath p= resource.getProjectRelativePath(); ; p= p.removeLastSegments(1)) {
+			for (IPath p = resource.getProjectRelativePath();; p = p.removeLastSegments(1)) {
 				if (fMap.containsKey(p)) {
-					id= fMap.get(p);
+					id = fMap.get(p);
 					break;
 				}
 				if (p.isEmpty())
@@ -107,7 +107,7 @@ class ProjectMap {
 		}
 		try {
 			save();
-		} catch(CoreException ce) {
+		} catch (CoreException ce) {
 			CUIPlugin.log(ce);
 		}
 	}
@@ -115,10 +115,10 @@ class ProjectMap {
 	public boolean isEmpty() {
 		return fMap.isEmpty();
 	}
-	
+
 	private static Map<IPath, String> load(IProject project) throws CoreException {
-		Map<IPath, String> result= new HashMap<IPath, String>();
-		ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(project, false);
+		Map<IPath, String> result = new HashMap<IPath, String>();
+		ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(project, false);
 		if (pd != null) {
 			ICStorageElement element = pd.getStorage(ATTRVAL_STORAGEID, false);
 			if (element != null) {
@@ -126,8 +126,8 @@ class ProjectMap {
 					String commentOwnerID = node.getAttribute(ATTRKEY_DCO_ID);
 					if (commentOwnerID != null) {
 						for (ICStorageElement path : node.getChildrenByName(ELEMENT_PATH)) {
-							String pathValue= path.getAttribute(ATTRKEY_PATH_VALUE);
-							if(pathValue != null) {
+							String pathValue = path.getAttribute(ATTRKEY_PATH_VALUE);
+							if (pathValue != null) {
 								result.put(Path.fromPortableString(pathValue), commentOwnerID);
 							}
 						}
@@ -142,7 +142,7 @@ class ProjectMap {
 	 * Write the map to the .cproject file
 	 */
 	public void save() throws CoreException {
-		ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(fProject, true);
+		ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(fProject, true);
 
 		// remove current associations
 		ICStorageElement data = pd.getStorage(ATTRVAL_STORAGEID, true);
@@ -150,14 +150,14 @@ class ProjectMap {
 			data.removeChild(child);
 
 		// invert and persist associations
-		for (Iterator<String> i= fMap.values().iterator(); i.hasNext();) {
-			String cid= i.next();
+		for (Iterator<String> i = fMap.values().iterator(); i.hasNext();) {
+			String cid = i.next();
 			ICStorageElement commentNode = data.createChild(ELEMENT_DOC_COMMENT_OWNER);
 			commentNode.setAttribute(ATTRKEY_DCO_ID, cid);
-			for (Iterator<IPath> j= fMap.keySet().iterator(); j.hasNext(); ) {
-				IPath path= j.next();
-				String ccid= fMap.get(path);
-				if(cid.equals(ccid)) {
+			for (Iterator<IPath> j = fMap.keySet().iterator(); j.hasNext();) {
+				IPath path = j.next();
+				String ccid = fMap.get(path);
+				if (cid.equals(ccid)) {
 					ICStorageElement pathNode = commentNode.createChild(ELEMENT_PATH);
 					pathNode.setAttribute(ATTRKEY_PATH_VALUE, path.toPortableString());
 				}

@@ -32,4 +32,3 @@ public interface IBuildPathResolver {
 	 */
 	String[] resolveBuildPaths(int pathType, String variableName, String variableValue, IConfiguration configuration);
 }
-

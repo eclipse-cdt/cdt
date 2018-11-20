@@ -43,10 +43,10 @@ abstract class LocationCtx implements ILocationCtx {
 	final int fEndOffsetInParent;
 
 	public LocationCtx(LocationCtxContainer parent, int parentOffset, int parentEndOffset, int sequenceNumber) {
-		fParent= parent;
-		fOffsetInParent= parentOffset;
-		fEndOffsetInParent= parentEndOffset;
-		fSequenceNumber= sequenceNumber;
+		fParent = parent;
+		fOffsetInParent = parentOffset;
+		fEndOffsetInParent = parentEndOffset;
+		fSequenceNumber = sequenceNumber;
 		if (parent != null) {
 			parent.addChild(this);
 		}
@@ -133,8 +133,7 @@ abstract class LocationCtx implements ILocationCtx {
 	 * Returns the sequence of file locations spanning the given range.
 	 * Assumes that the range starts within this context.
 	 */
-	public abstract void collectLocations(int sequenceNumber, int length,
-			ArrayList<IASTNodeLocation> sofar);
+	public abstract void collectLocations(int sequenceNumber, int length, ArrayList<IASTNodeLocation> sofar);
 
 	/**
 	 * Support for the dependency tree, add inclusion statements found in this context.

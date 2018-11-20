@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Ericsson 
+ * Copyright (c) 2011 Ericsson
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,23 +17,22 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceDumpInfo;
 
-
 /**
  * GDB tdump CLI command.
  * @since 4.0
  *
  */
 public class CLITraceDump extends CLICommand<CLITraceDumpInfo> {
-	
+
 	/**
 	 * @param ctx trace context
 	 */
 	public CLITraceDump(ITraceRecordDMContext ctx) {
 		super(ctx, "tdump"); //$NON-NLS-1$
 	}
-	
-    @Override
-    public CLITraceDumpInfo getResult(MIOutput out) {
-        return new CLITraceDumpInfo(out);
-    }
-} 
+
+	@Override
+	public CLITraceDumpInfo getResult(MIOutput out) {
+		return new CLITraceDumpInfo(out);
+	}
+}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
 
-
 import org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin;
 import org.eclipse.cdt.testsrunner.internal.model.TestingSessionsManager;
 import org.eclipse.cdt.testsrunner.model.ITestingSession;
@@ -25,7 +24,6 @@ import org.eclipse.jface.action.Action;
 public class StopAction extends Action {
 
 	private TestingSessionsManager testingSessionsManager;
-
 
 	public StopAction(TestingSessionsManager testingSessionsManager) {
 		super(ActionsMessages.StopAction_text);
@@ -44,6 +42,5 @@ public class StopAction extends Action {
 		}
 		setEnabled(false);
 	}
-	
-}
 
+}

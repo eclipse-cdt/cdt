@@ -20,13 +20,12 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
-
 /**
- * Scanner2Tests ported to use the CPreprocessor plus additional bugs fixed in 
+ * Scanner2Tests ported to use the CPreprocessor plus additional bugs fixed in
  * the CPreprocessor, afterwards.
  */
 public class PreprocessorBugsTests extends PreprocessorTestsBase {
-	
+
 	public static TestSuite suite() {
 		return suite(PreprocessorBugsTests.class);
 	}
@@ -40,7 +39,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateProblem(0, IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, "<regxag4.sfr>");
 		validateProblemCount(1);
 	}
-	
+
 	//	#define FUNKY(x) __##x##__
 	//	#define __foo__ 127
 	//
@@ -56,7 +55,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
-	
+
 	// #ifndef PREFIX
 	// #define PREFIX
 	// #endif
@@ -71,17 +70,17 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateProblem(0, IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, "\"bar.h\"");
 		validateProblemCount(1);
 	}
-	
+
 	// #define D
-	// #if defined D 
+	// #if defined D
 	//     x;
-	// #endif 
-	// #if defined(D) 
+	// #endif
+	// #if defined(D)
 	//     y;
-	// #endif 
+	// #endif
 	public void testBug186047() throws Exception {
 		initializeScanner();
-		
+
 		validateIdentifier("x");
 		validateToken(IToken.tSEMI);
 		validateIdentifier("y");
@@ -89,7 +88,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
-	
+
 	// __CDT_PARSER__
 	public void testPredefinedCDTMacro_Bug173848() throws Exception {
 		initializeScanner();
@@ -97,7 +96,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
-	
+
 	//	#define FOO(ARG) defined(ARG##_BAZ)
 	//	#define BAR_BAZ UNDEFINED
 	//	#if FOO(BAR)
@@ -109,11 +108,10 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	//
 	//  #define PLATFORM(WTF_FEATURE) (defined( WTF_PLATFORM_##WTF_FEATURE ) && WTF_PLATFORM_##WTF_FEATURE)
 	//  #define WTF_PLATFORM_FOO 1
-    //  #if PLATFORM(FOO)
+	//  #if PLATFORM(FOO)
 	//  ok
 	//  #endif
 
-	
 	public void testIndirectDefined_Bug225562() throws Exception {
 		initializeScanner();
 		validateIdentifier("juhuu");
@@ -121,12 +119,12 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateToken(IToken.tLPAREN);
 		validateIdentifier("UNDEFINED"); // here the expansion has to take place
 		validateToken(IToken.tRPAREN);
-		
+
 		validateIdentifier("ok");
 		validateEOF();
 		validateProblemCount(0);
 	}
-	
+
 	// "unintentionally unbounded
 	// "
 	//
@@ -136,7 +134,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(2);
 	}
-	
+
 	// #if true
 	// yes
 	// #else
@@ -170,10 +168,10 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateProblemCount(1);
 		validateProblem(0, IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
 	}
-	
+
 	//	#define BAR1_RX_BLOCK_SIZE 1
 	//	#define MAX(__x,__y) ((__x)>(__y)?(__x):(__y))
-	//	#define BAR_BLOCK_SIZE    (MAX(BAR1_RX_BLOCK_SIZE, 
+	//	#define BAR_BLOCK_SIZE    (MAX(BAR1_RX_BLOCK_SIZE,
 	//	int main(void) {
 	//	   BAR_BLOCK_SIZE;
 	//	}
@@ -236,11 +234,11 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
-	
+
 	//	#define ID(x) x
 	//	ID(
 	//	#include "bbb"
-	//	) 
+	//	)
 	//  passed1
 	//
 	//  ID(
@@ -264,9 +262,9 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateIdentifier("passed2");
 		validateIdentifier("passed3");
 		validateEOF();
-		validateProblemCount(2);  // the inclusions
+		validateProblemCount(2); // the inclusions
 	}
-	
+
 	//	#define UNFOLD(v,x) v:x
 	//	UNFOLD("A",
 	//		#ifdef X
@@ -280,7 +278,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateToken(IToken.tCOLON);
 		validateString("C");
 		validateEOF();
-		validateProblemCount(0);  
+		validateProblemCount(0);
 	}
 
 	// #if 0xe000
@@ -293,11 +291,11 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateFloatingPointLiteral("0x1p2");
 		validateInteger("0xe0");
 		validateEOF();
-		validateProblemCount(0); 
+		validateProblemCount(0);
 	}
-	
-	// #error // 
-	// #warning // 
+
+	// #error //
+	// #warning //
 	// #pragma  // not marked as problem
 	// #define //
 	// #include //
@@ -316,9 +314,9 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		initializeScanner();
 		validateIdentifier("a");
 		validateEOF();
-		validateProblemCount(9); 
+		validateProblemCount(9);
 	}
-	
+
 	//	#define str(x) #x
 	//	#define xstr(x) str(x)
 	//  #define MY_MACROS(Type) unsigned ##Type f();
@@ -328,7 +326,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateString("unsignedint f();");
 		validateEOF();
 	}
-	
+
 	// #if '\0'
 	// no
 	// #else
@@ -346,7 +344,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
-	
+
 	//	#define foo(x) (## x)
 	//	void test foo(void);  // Valid for Microsoft's compiler, expands to (void)
 	public void testInvalidTokenPasting_Bug354553() throws Exception {
@@ -361,7 +359,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateProblem(0, IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, "foo");
 		validateProblemCount(1);
 	}
-	
+
 	//	#define PR ""
 	//	A
 	//	#ifdef _DEBUG
@@ -374,7 +372,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateIdentifier("B");
 		validateProblemCount(0);
 	}
-	
+
 	// __COUNTER__
 	// __COUNTER__
 	public void testCounter_Bug362148() throws Exception {

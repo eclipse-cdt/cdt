@@ -62,7 +62,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 			return null;
 		}
 		insertion = -insertion - 1;
-		ISymbol symbol =  syms[insertion - 1];
+		ISymbol symbol = syms[insertion - 1];
 		if (addr.compareTo(symbol.getAddress().add(symbol.getSize())) < 0) {
 			return syms[insertion - 1];
 		}
@@ -181,6 +181,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	 */
 	@Override
 	public abstract ISymbol[] getSymbols();
+
 	@Override
 	public abstract IAddressFactory getAddressFactory();
 

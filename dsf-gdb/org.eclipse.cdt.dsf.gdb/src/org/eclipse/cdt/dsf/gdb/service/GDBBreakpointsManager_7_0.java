@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Marc Khouzam (Ericsson) - Initial API and implementation 
+ *     Marc Khouzam (Ericsson) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -33,11 +33,11 @@ import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
  * Version of BreakpointsManager for GDB version starting with 7.0.
- * 
+ *
  * @since 4.7
  */
 public class GDBBreakpointsManager_7_0 extends MIBreakpointsManager {
-    private String fDebugModelId;
+	private String fDebugModelId;
 
 	public GDBBreakpointsManager_7_0(DsfSession session, String debugModelId) {
 		super(session, debugModelId);
@@ -55,14 +55,13 @@ public class GDBBreakpointsManager_7_0 extends MIBreakpointsManager {
 	}
 
 	private void doInitialize(final RequestMonitor rm) {
-		register(new String[] { GDBBreakpointsManager_7_0.class.getName() },
-				 new Hashtable<String, String>());
+		register(new String[] { GDBBreakpointsManager_7_0.class.getName() }, new Hashtable<String, String>());
 
 		rm.done();
 	}
 
 	@DsfServiceEventHandler
-    public void eventDispatched_7_0(IStartedDMEvent e) {
+	public void eventDispatched_7_0(IStartedDMEvent e) {
 		// With GDB 7.0 and 7.1, the pid of the process is used by GDB
 		// as the thread-group id.  This is a problem because the pid does
 		// not exist when we create breakpoints.
@@ -73,29 +72,29 @@ public class GDBBreakpointsManager_7_0 extends MIBreakpointsManager {
 		// pid when we get the start event for the process.
 		// Note that we don't support multi-process for GDB 7.0 and 7.1, so it
 		// simplifies things.
-    	updateContextOnStartEvent(e);
-    }  
+		updateContextOnStartEvent(e);
+	}
 
 	protected void updateContextOnStartEvent(IStartedDMEvent e) {
 		if (e.getDMContext() instanceof IContainerDMContext) {
 			// Process created.
-			IContainerDMContext containerWithPid = (IContainerDMContext)e.getDMContext();
-			
-			assert getTrackedBreakpointTargetContexts().size() == 1;  // Only one process for GDB 7.0 and 7.1
+			IContainerDMContext containerWithPid = (IContainerDMContext) e.getDMContext();
+
+			assert getTrackedBreakpointTargetContexts().size() == 1; // Only one process for GDB 7.0 and 7.1
 			for (IBreakpointsTargetDMContext oldBpTarget : getTrackedBreakpointTargetContexts()) {
 				assert oldBpTarget instanceof IContainerDMContext;
-				assert !containerWithPid.equals(oldBpTarget);  // BpTarget does not have pid, while new container does
+				assert !containerWithPid.equals(oldBpTarget); // BpTarget does not have pid, while new container does
 
 				// Replace all BpTarget entries with the new container context containing the pid
-				IBreakpointsTargetDMContext newBpTarget = (IBreakpointsTargetDMContext)containerWithPid;
+				IBreakpointsTargetDMContext newBpTarget = (IBreakpointsTargetDMContext) containerWithPid;
 				updateBpManagerMaps(newBpTarget, oldBpTarget);
-				
+
 				// Replace all target filters of this session with the new container context containing the pid
 				updateTargetFilters(containerWithPid);
 			}
 		}
 	}
-	
+
 	/**
 	 * Updates all the maps of the MIBreakpointsManager to replace the old IBreakpointsTargetDMContext which
 	 * does not have the pid, with the new one with does have the pid.
@@ -106,7 +105,7 @@ public class GDBBreakpointsManager_7_0 extends MIBreakpointsManager {
 		getBPToPlatformMaps().put(newBpTarget, getBPToPlatformMaps().get(oldBpTarget));
 		getPlatformToBPThreadsMaps().put(newBpTarget, getPlatformToBPThreadsMaps().get(oldBpTarget));
 	}
-	
+
 	/**
 	 * Updates all the target filter for this session to replace the old IBreakpointsTargetDMContext which
 	 * does not have the pid, with the new one with does have the pid.
@@ -116,13 +115,15 @@ public class GDBBreakpointsManager_7_0 extends MIBreakpointsManager {
 		for (IBreakpoint breakpoint : breakpoints) {
 			if (breakpoint instanceof ICBreakpoint && supportsBreakpoint(breakpoint)) {
 				try {
-					IDsfBreakpointExtension filterExt = getFilterExtension((ICBreakpoint)breakpoint);
+					IDsfBreakpointExtension filterExt = getFilterExtension((ICBreakpoint) breakpoint);
 
 					IContainerDMContext[] filterContainers = filterExt.getTargetFilters();
 					for (IContainerDMContext oldContainer : filterContainers) {
 						// For each target filter, replace it if it is from our session
-						ICommandControlDMContext controldForOld = DMContexts.getAncestorOfType(oldContainer, ICommandControlDMContext.class);
-						ICommandControlDMContext controlForNew = DMContexts.getAncestorOfType(newContainer, ICommandControlDMContext.class);
+						ICommandControlDMContext controldForOld = DMContexts.getAncestorOfType(oldContainer,
+								ICommandControlDMContext.class);
+						ICommandControlDMContext controlForNew = DMContexts.getAncestorOfType(newContainer,
+								ICommandControlDMContext.class);
 
 						if (controldForOld.equals(controlForNew)) {
 							filterExt.removeTargetFilter(oldContainer);

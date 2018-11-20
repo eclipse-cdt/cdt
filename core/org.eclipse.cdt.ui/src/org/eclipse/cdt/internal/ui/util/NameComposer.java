@@ -35,13 +35,8 @@ public class NameComposer {
 	private static final int CAPITALIZATION_LOWER_CASE = PreferenceConstants.NAME_STYLE_CAPITALIZATION_LOWER_CASE;
 	private static final int CAPITALIZATION_CAMEL_CASE = PreferenceConstants.NAME_STYLE_CAPITALIZATION_CAMEL_CASE;
 	private static final int CAPITALIZATION_LOWER_CAMEL_CASE = PreferenceConstants.NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE;
-	private static final int[] ALL_CAPITALIZATIONS = {
-		CAPITALIZATION_ORIGINAL,
-		CAPITALIZATION_UPPER_CASE,
-		CAPITALIZATION_LOWER_CASE,
-		CAPITALIZATION_CAMEL_CASE,
-		CAPITALIZATION_LOWER_CAMEL_CASE,
-	};
+	private static final int[] ALL_CAPITALIZATIONS = { CAPITALIZATION_ORIGINAL, CAPITALIZATION_UPPER_CASE,
+			CAPITALIZATION_LOWER_CASE, CAPITALIZATION_CAMEL_CASE, CAPITALIZATION_LOWER_CAMEL_CASE, };
 
 	private int capitalization;
 	private final String wordDelimiter;
@@ -50,7 +45,7 @@ public class NameComposer {
 
 	/**
 	 * Creates a name composer for a given style.
-	 * 
+	 *
 	 * @param capitalization capitalization transformation applied to a name. Possible values: <ul>
 	 * <li>PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL,</li>
 	 * <li>PreferenceConstants.NAME_STYLE_CAPITALIZATION_UPPER_CASE,</li>
@@ -71,7 +66,7 @@ public class NameComposer {
 
 	/**
 	 * Composes a name according to the composer's style based on a seed name.
-	 * 
+	 *
 	 * @param seedName the name used as an inspiration
 	 * @return the composed name
 	 */
@@ -82,7 +77,7 @@ public class NameComposer {
 
 	/**
 	 * Composes a name according to the composer's style based on a seed words.
-	 * 
+	 *
 	 * @param words the words that that should be combined to form the name
 	 * @return the composed name
 	 */
@@ -153,15 +148,14 @@ public class NameComposer {
 
 	private void appendTitleCase(StringBuilder buf, CharSequence word) {
 		for (int i = 0; i < word.length(); i++) {
-			buf.append(i == 0 ?
-					Character.toUpperCase(word.charAt(i)) : Character.toLowerCase(word.charAt(i)));
+			buf.append(i == 0 ? Character.toUpperCase(word.charAt(i)) : Character.toLowerCase(word.charAt(i)));
 		}
 	}
 
 	/**
 	 * Creates a NameComposer such that it would compose {@code composedName} given {@code seedName}
 	 * as a seed.
-	 *  
+	 *
 	 * @param seedName the seed name
 	 * @param composedName the composed name
 	 * @param defaultCapitalization used to disambiguate capitalization if it cannot be uniquely
@@ -169,10 +163,10 @@ public class NameComposer {
 	 * @param defaultWordDelimiter used to disambiguate word delimiter if it cannot be uniquely
 	 *     determined from the composed name
 	 * @return a name composer based on the composed name, or {@code null} if such name composer
-	 *     does not exist  
+	 *     does not exist
 	 */
-	public static NameComposer createByExample(String seedName, String composedName,
-			int defaultCapitalization, String defaultWordDelimiter) {
+	public static NameComposer createByExample(String seedName, String composedName, int defaultCapitalization,
+			String defaultWordDelimiter) {
 		List<CharSequence> seedWords = splitIntoWords(seedName);
 		if (seedWords.isEmpty())
 			return null;
@@ -211,18 +205,17 @@ public class NameComposer {
 	}
 
 	private static int indexOfSublistIgnoreCase(List<CharSequence> list, List<CharSequence> subList) {
-        int subListSize = subList.size();
-        int limit = list.size() - subListSize;
+		int subListSize = subList.size();
+		int limit = list.size() - subListSize;
 
-        outer:
-        for (int k = 0; k <= limit; k++) {
-            for (int i = 0, j = k; i < subListSize; i++, j++) {
-                if (!subList.get(i).toString().equalsIgnoreCase(list.get(j).toString()))
-                    continue outer;
-            }
-            return k;
-        }
-        return -1;
+		outer: for (int k = 0; k <= limit; k++) {
+			for (int i = 0, j = k; i < subListSize; i++, j++) {
+				if (!subList.get(i).toString().equalsIgnoreCase(list.get(j).toString()))
+					continue outer;
+			}
+			return k;
+		}
+		return -1;
 	}
 
 	private static String deducePrefix(CharSequence name, int numPrefixWords) {
@@ -239,6 +232,6 @@ public class NameComposer {
 		}
 		if (wordCount == numPrefixWords)
 			return name.toString();
-		throw new IllegalArgumentException(numPrefixWords + " is larger than the number of words in \"" + name + "\"");  //$NON-NLS-1$//$NON-NLS-2$
+		throw new IllegalArgumentException(numPrefixWords + " is larger than the number of words in \"" + name + "\""); //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

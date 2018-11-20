@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Patrick Chuong (Texas Instruments) - 
+ *     Patrick Chuong (Texas Instruments) -
  *     	Update CDT ToggleBreakpointTargetFactory enablement (340177 )
  *****************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
@@ -26,7 +26,7 @@ import org.eclipse.debug.ui.DebugUITools;
 
 /**
  * Disassembly toggle breakpoint factory enablement tester.
- * 
+ *
  * @since 2.2
  */
 public class DisassemblyToggleBreakpointTester extends PropertyTester {
@@ -40,25 +40,25 @@ public class DisassemblyToggleBreakpointTester extends PropertyTester {
 		if ("isDisassemblyViewSupportsCBreakpoint".equals(property) && (receiver instanceof IDisassemblyPart)) { //$NON-NLS-1$
 			IDisassemblyPart view = ((IDisassemblyPart) receiver);
 			if (!CDebugUtils.isCustomToggleBreakpointFactory())
-				return true;			
-			
-			IAdaptable element = DebugUITools.getPartDebugContext(view.getSite());			
-	        if (element != null) {
-	            IDebugModelProvider modelProvider = element.getAdapter(IDebugModelProvider.class);
-	            if (modelProvider != null) {
-	                String[] models = modelProvider.getModelIdentifiers();
-	                for (String model : models) {
-	                    if (CDIDebugModel.getPluginIdentifier().equals(model) ||
-	                        ICBreakpoint.C_BREAKPOINTS_DEBUG_MODEL_ID.equals(model)) {
-	                        return true;
-	                    }
-	                }
-	            } else if (element instanceof IDebugElement) {
-	                if (CDIDebugModel.getPluginIdentifier().equals(((IDebugElement)element).getModelIdentifier()) ) {
-	                    return true;
-	                }
-	            }
-	        }
+				return true;
+
+			IAdaptable element = DebugUITools.getPartDebugContext(view.getSite());
+			if (element != null) {
+				IDebugModelProvider modelProvider = element.getAdapter(IDebugModelProvider.class);
+				if (modelProvider != null) {
+					String[] models = modelProvider.getModelIdentifiers();
+					for (String model : models) {
+						if (CDIDebugModel.getPluginIdentifier().equals(model)
+								|| ICBreakpoint.C_BREAKPOINTS_DEBUG_MODEL_ID.equals(model)) {
+							return true;
+						}
+					}
+				} else if (element instanceof IDebugElement) {
+					if (CDIDebugModel.getPluginIdentifier().equals(((IDebugElement) element).getModelIdentifier())) {
+						return true;
+					}
+				}
+			}
 		}
 		return false;
 	}

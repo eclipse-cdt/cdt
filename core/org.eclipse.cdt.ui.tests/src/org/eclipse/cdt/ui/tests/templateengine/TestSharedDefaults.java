@@ -35,7 +35,7 @@ public class TestSharedDefaults extends BaseTestCase {
 	private final String TEST_KEY = "org.eclipse.cdt.templateengine.project.HelloWorld.basename";
 	private final String TEST_VALUE = "Astala Vista";
 	private final String TEST_VALUE_UPDATED = "Astala Vista Updated";
-	
+
 	/*
 	 * @see TestCase#setUp()
 	 */
@@ -43,24 +43,25 @@ public class TestSharedDefaults extends BaseTestCase {
 	protected void setUp() throws Exception {
 		sharedDefaults = SharedDefaults.getInstance();
 	}
-	
+
 	/*
 	 * @see TestCase#tearDown()
 	 */
 	@Override
-	protected void tearDown(){
+	protected void tearDown() {
 		sharedDefaults = null;
 	}
-	
+
 	/**
 	 * Get a value from the backend storage
-	 * 
+	 *
 	 * @return the value for this key or null if no value exist for this key
 	 */
 	private String getValueFromBackEndStorate(String key) throws Exception {
 		File parsedXML = TemplateEngineHelper.getSharedDefaultLocation("shareddefaults.xml");
-		
-		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(parsedXML.toURI().toURL().openStream());
+
+		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+				.parse(parsedXML.toURI().toURL().openStream());
 
 		List<Element> sharedElementList = TemplateEngine.getChildrenOfElement(document.getDocumentElement());
 		int listSize = sharedElementList.size();
@@ -72,44 +73,44 @@ public class TestSharedDefaults extends BaseTestCase {
 				return value2;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * This test checks if data gets added to the back end
-	 * New data gets persisted in SharedDefault XML file 
+	 * New data gets persisted in SharedDefault XML file
 	 */
 	public void testAddToBackEndStorage() throws Exception {
 		sharedDefaults.addToBackEndStorage(TEST_KEY, TEST_VALUE);
 		assertTrue(sharedDefaults.getSharedDefaultsMap().containsKey(TEST_KEY));
 		assertEquals(TEST_VALUE, sharedDefaults.getSharedDefaultsMap().get(TEST_KEY));
-		
+
 		assertEquals(TEST_VALUE, getValueFromBackEndStorate(TEST_KEY));
 	}
-	
+
 	/**
 	 * This tests the updateToBackEndStorage of SharedDefaults
 	 * to verify whether the key-value pair gets updated with new value
-	 * New data gets persisted in SharedDefault XML file 
+	 * New data gets persisted in SharedDefault XML file
 	 */
 	public void testUpdateToBackEndStorage() throws Exception {
 		sharedDefaults.addToBackEndStorage(TEST_KEY, TEST_VALUE);
 		assertTrue(sharedDefaults.getSharedDefaultsMap().containsKey(TEST_KEY));
 		sharedDefaults.updateToBackEndStorage(TEST_KEY, TEST_VALUE_UPDATED);
-	 	assertEquals(TEST_VALUE_UPDATED, sharedDefaults.getSharedDefaultsMap().get(TEST_KEY));
-	 	assertEquals(TEST_VALUE_UPDATED, getValueFromBackEndStorate(TEST_KEY));
+		assertEquals(TEST_VALUE_UPDATED, sharedDefaults.getSharedDefaultsMap().get(TEST_KEY));
+		assertEquals(TEST_VALUE_UPDATED, getValueFromBackEndStorate(TEST_KEY));
 	}
-	
+
 	/**
 	 * This tests the deleteBackEndStorage of SharedDefaults
 	 * to verify whether the key-value pair gets deleted at the backend
 	 */
 	public void testDeleteBackEndStorage() throws Exception {
 		sharedDefaults.addToBackEndStorage(TEST_KEY, TEST_VALUE);
-		assertTrue(sharedDefaults.getSharedDefaultsMap().containsKey(TEST_KEY));	 	
-	 	sharedDefaults.deleteBackEndStorage(new String[] { TEST_KEY });
-	 	assertFalse(sharedDefaults.getSharedDefaultsMap().containsKey(TEST_KEY));
-	 	assertNull(getValueFromBackEndStorate(TEST_KEY));
+		assertTrue(sharedDefaults.getSharedDefaultsMap().containsKey(TEST_KEY));
+		sharedDefaults.deleteBackEndStorage(new String[] { TEST_KEY });
+		assertFalse(sharedDefaults.getSharedDefaultsMap().containsKey(TEST_KEY));
+		assertNull(getValueFromBackEndStorate(TEST_KEY));
 	}
 }

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,24 +30,24 @@ import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParser;
 
 /**
  * ILanguage implementation for the C++ parser.
- * 
+ *
  * @author Mike Kucera
  */
 public class ISOCPPLanguage extends BaseExtensibleLanguage {
 
-	public static final String ID = "org.eclipse.cdt.core.lrparser.isocpp"; //$NON-NLS-1$ 
-	
+	public static final String ID = "org.eclipse.cdt.core.lrparser.isocpp"; //$NON-NLS-1$
+
 	private static ISOCPPLanguage DEFAULT = new ISOCPPLanguage();
-	
+
 	public static ISOCPPLanguage getDefault() {
 		return DEFAULT;
 	}
-	
+
 	@Override
-	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties) {
+	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String, String> properties) {
 		return new CPPParser(scanner, DOMToISOCPPTokenMap.DEFAULT_MAP, getBuiltinBindingsProvider(), index, properties);
 	}
-	
+
 	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
 		return ScannerExtensionConfiguration.createCPP();
@@ -67,7 +67,7 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.CPP;
 	}
-	
+
 	protected IBuiltinBindingsProvider getBuiltinBindingsProvider() {
 		return new ANSICPPParserExtensionConfiguration().getBuiltinBindingsProvider();
 	}

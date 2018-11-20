@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Alena Laskavaia 
+ * Copyright (c) 2009, 2015 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,7 +60,8 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 							if (o instanceof IResource) {
 								IResource res = (IResource) o;
 								SubProgressMonitor subMon = new SubProgressMonitor(monitor, 100);
-								CodanRuntime.getInstance().getBuilder().processResource(res, subMon, CheckerLaunchMode.RUN_ON_DEMAND);
+								CodanRuntime.getInstance().getBuilder().processResource(res, subMon,
+										CheckerLaunchMode.RUN_ON_DEMAND);
 								if (subMon.isCanceled())
 									return Status.CANCEL_STATUS;
 							}

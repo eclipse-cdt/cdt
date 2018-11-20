@@ -88,7 +88,7 @@ public class BuildInfoFactory {
 		@Override
 		public String getBuildAttribute(String name, String defaultValue) {
 			String value = getString(name);
-			if (value == null ) {
+			if (value == null) {
 				if (IMakeCommonBuildInfo.BUILD_COMMAND.equals(name)) {
 					value = getString(BuildInfoFactory.BUILD_COMMAND);
 				} else if (IMakeCommonBuildInfo.BUILD_ARGUMENTS.equals(name)) {
@@ -127,7 +127,8 @@ public class BuildInfoFactory {
 				// translate any string substitution variables
 				String translated = value;
 				try {
-					translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value, false);
+					translated = VariablesPlugin.getDefault().getStringVariableManager()
+							.performStringSubstitution(value, false);
 				} catch (CoreException e) {
 				}
 				envMap.put(key, translated);
@@ -150,9 +151,11 @@ public class BuildInfoFactory {
 				}
 				return new Path(command);
 			}
-			String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, getString(BuildInfoFactory.BUILD_COMMAND));
+			String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND,
+					getString(BuildInfoFactory.BUILD_COMMAND));
 			try {
-				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result,
+						false);
 			} catch (CoreException e) {
 			}
 			return new Path(result);
@@ -187,9 +190,11 @@ public class BuildInfoFactory {
 
 		@Override
 		public IPath getBuildLocation() {
-			String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, getString(BuildInfoFactory.BUILD_LOCATION));
+			String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION,
+					getString(BuildInfoFactory.BUILD_LOCATION));
 			try {
-				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result,
+						false);
 			} catch (CoreException e) {
 			}
 			return new Path(result);
@@ -197,12 +202,14 @@ public class BuildInfoFactory {
 
 		@Override
 		public String getBuildArguments() {
-			String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, getString(BuildInfoFactory.BUILD_ARGUMENTS));
+			String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS,
+					getString(BuildInfoFactory.BUILD_ARGUMENTS));
 			if (result == null) {
 				return ""; //$NON-NLS-1$
 			}
 			try {
-				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result,
+						false);
 			} catch (CoreException e) {
 			}
 			return result;
@@ -232,9 +239,11 @@ public class BuildInfoFactory {
 
 		@Override
 		public String getAutoBuildTarget() {
-			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, getString(BuildInfoFactory.BUILD_TARGET_AUTO));
+			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO,
+					getString(BuildInfoFactory.BUILD_TARGET_AUTO));
 			try {
-				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result,
+						false);
 			} catch (CoreException e) {
 			}
 			return result;
@@ -251,7 +260,8 @@ public class BuildInfoFactory {
 			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL,
 					getString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL));
 			try {
-				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result,
+						false);
 			} catch (CoreException e) {
 			}
 			return result;
@@ -264,9 +274,11 @@ public class BuildInfoFactory {
 
 		@Override
 		public String getFullBuildTarget() {
-			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, getString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL));
+			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL,
+					getString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL));
 			try {
-				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result,
+						false);
 			} catch (CoreException e) {
 			}
 			return result;
@@ -280,9 +292,11 @@ public class BuildInfoFactory {
 
 		@Override
 		public String getCleanBuildTarget() {
-			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, getString(BuildInfoFactory.BUILD_TARGET_CLEAN));
+			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN,
+					getString(BuildInfoFactory.BUILD_TARGET_CLEAN));
 			try {
-				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result,
+						false);
 			} catch (CoreException e) {
 			}
 			return result;
@@ -446,8 +460,9 @@ public class BuildInfoFactory {
 		}
 
 		protected abstract void putString(String name, String value) throws CoreException;
+
 		protected abstract String getString(String property);
- 	}
+	}
 
 	private static class BuildInfoPreference extends AbstractBuildInfo {
 
@@ -507,7 +522,7 @@ public class BuildInfoFactory {
 
 			// first, give the build-system a chance to return the build-command overlayed with data managed by it
 			ICProjectDescription cProjectDescription = CoreModel.getDefault().getProjectDescription(project, false);
-			if(cProjectDescription != null) {
+			if (cProjectDescription != null) {
 				ICConfigurationDescription cConfigDescription = cProjectDescription.getActiveConfiguration();
 				CConfigurationData configurationData = cConfigDescription.getConfigurationData();
 				if (configurationData != null) {
@@ -518,7 +533,7 @@ public class BuildInfoFactory {
 				}
 			}
 
-			if(builder == null) {
+			if (builder == null) {
 				builder = MakeProjectNature.getBuildSpec(project.getDescription(), builderID);
 				if (builder == null) {
 					throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,

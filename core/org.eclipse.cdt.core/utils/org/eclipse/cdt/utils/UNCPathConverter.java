@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Path;
  * representations. By default, paths are translated into the equivalent local file version to
  * preserve existing behavior, but by providing an appropriate extension, these paths can be mapped
  * into locations on a remote system.
- * 
+ *
  * May be subclassed by clients.
  * @since 5.3
  */
@@ -42,16 +42,16 @@ public abstract class UNCPathConverter {
 
 	/**
 	 * Test if the string path is in UNC format.
-	 * 
+	 *
 	 * @param path
 	 *            path to test
 	 * @return true if the path is in UNC format, false otherwise
 	 */
 	public static boolean isUNC(String path) {
 		if (path.length() >= 2) {
-			char c= path.charAt(0);
-			if (c == IPath.SEPARATOR  || c == File.separatorChar) {
-				c= path.charAt(1);
+			char c = path.charAt(0);
+			if (c == IPath.SEPARATOR || c == File.separatorChar) {
+				c = path.charAt(1);
 				return c == IPath.SEPARATOR || c == File.separatorChar;
 			}
 		}
@@ -59,9 +59,9 @@ public abstract class UNCPathConverter {
 	}
 
 	/**
-	 * Convert a URI to an IPath. 
+	 * Convert a URI to an IPath.
 	 * Resolves to local path if possible, including using EFS where required.
-	 * 
+	 *
 	 * @param uri
 	 *            URI to convert to an IPath
 	 * @return IPath representation of the URI
@@ -85,7 +85,7 @@ public abstract class UNCPathConverter {
 
 	/**
 	 * Convert an IPath to a URI.
-	 * 
+	 *
 	 * @param path
 	 *            path to convert
 	 * @return URI representation of the IPath
@@ -94,7 +94,7 @@ public abstract class UNCPathConverter {
 
 	/**
 	 * Convert a string path to a URI
-	 * 
+	 *
 	 * @param path
 	 *            path to convert
 	 * @return URI representation of the path

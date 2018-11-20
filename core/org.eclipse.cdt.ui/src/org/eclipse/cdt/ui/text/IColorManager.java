@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -16,8 +16,6 @@ package org.eclipse.cdt.ui.text;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-
-
 
 /**
  * Manages SWT color objects for the given color keys and
@@ -30,21 +28,21 @@ import org.eclipse.swt.graphics.RGB;
  * </p>
  *
  * @see org.eclipse.cdt.ui.text.ICColorConstants
- * 
+ *
  * @since 5.1
  */
 public interface IColorManager {
-	
+
 	/**
-	 * Returns a color object for the given key. The color objects 
-	 * are remembered internally; the same color object is returned 
+	 * Returns a color object for the given key. The color objects
+	 * are remembered internally; the same color object is returned
 	 * for equal keys.
 	 *
 	 * @param key the color key
 	 * @return the color object for the given key
 	 */
 	Color getColor(String key);
-	
+
 	/**
 	 * Returns the color object for the value represented by the given
 	 * <code>RGB</code> object.
@@ -52,8 +50,8 @@ public interface IColorManager {
 	 * @param rgb the rgb color specification
 	 * @return the color object for the given rgb value
 	 */
-	Color getColor(RGB rgb);	
-	
+	Color getColor(RGB rgb);
+
 	/**
 	 * Disposes all color objects remembered by this color manager.
 	 */
@@ -68,8 +66,7 @@ public interface IColorManager {
 	 * 	color specification remembered under the given key
 	 */
 	void bindColor(String key, RGB rgb);
-	
-	
+
 	/**
 	 * Forgets the color specification remembered under the given key.
 	 * @param key the color key

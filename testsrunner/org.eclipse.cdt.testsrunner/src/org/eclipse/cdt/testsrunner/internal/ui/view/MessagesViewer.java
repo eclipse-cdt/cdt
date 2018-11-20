@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,7 +60,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 
-
 /**
  * Shows the messages for the currently selected items in tests hierarchy (test
  * suites or test cases).
@@ -72,40 +71,40 @@ public class MessagesViewer {
 	 */
 	public enum LevelFilter {
 		Info(ISharedImages.IMG_OBJS_INFO_TSK, ITestMessage.Level.Info, ITestMessage.Level.Message),
-		Warning(ISharedImages.IMG_OBJS_WARN_TSK, ITestMessage.Level.Warning),
-		Error(ISharedImages.IMG_OBJS_ERROR_TSK, ITestMessage.Level.Error, ITestMessage.Level.FatalError, ITestMessage.Level.Exception);
+		Warning(ISharedImages.IMG_OBJS_WARN_TSK, ITestMessage.Level.Warning), Error(ISharedImages.IMG_OBJS_ERROR_TSK,
+				ITestMessage.Level.Error, ITestMessage.Level.FatalError, ITestMessage.Level.Exception);
 
 		private String imageId;
-		private ITestMessage.Level [] includedLevels;
-		
+		private ITestMessage.Level[] includedLevels;
+
 		LevelFilter(String imageId, ITestMessage.Level... includedLevels) {
 			this.imageId = imageId;
 			this.includedLevels = includedLevels;
 		}
-		
+
 		/**
 		 * The shared image ID corresponding to the message level filter action.
-		 * 
+		 *
 		 * @return shared image ID
 		 */
 		public String getImageId() {
 			return imageId;
 		}
-		
+
 		/**
 		 * The message levels that should be shown if current message level
 		 * filter action is set.
-		 * 
+		 *
 		 * @return array of message levels
 		 */
-		public ITestMessage.Level [] getLevels() {
+		public ITestMessage.Level[] getLevels() {
 			return includedLevels;
 		}
-		
+
 		/**
 		 * Checks whether the specified message level should be shown if current
 		 * message level filter action is set.
-		 * 
+		 *
 		 * @param messageLevel message level to search
 		 * @return <code>true</code> if found
 		 */
@@ -123,54 +122,58 @@ public class MessagesViewer {
 	 * The content provider for the test messages viewer.
 	 */
 	private class MessagesContentProvider implements IStructuredContentProvider {
-		
+
 		/**
 		 * Utility class: recursively collects all the messages of the specified
 		 * test item.
 		 */
 		class MessagesCollector implements IModelVisitor {
-			
+
 			/** Collected test messages. */
 			Collection<ITestMessage> collectedTestMessages;
-			
+
 			/**
 			 * Specifies whether gathering should be done. It is used to skip
 			 * the messages of the passed tests if they should not be shown.
 			 */
 			boolean collect = true;
-			
+
 			MessagesCollector(Collection<ITestMessage> testMessages) {
 				this.collectedTestMessages = testMessages;
 			}
-			
+
 			@Override
 			public void visit(ITestMessage testMessage) {
 				if (collect) {
 					collectedTestMessages.add(testMessage);
 				}
 			}
-			
+
 			@Override
 			public void visit(ITestCase testCase) {
 				collect = !showFailedOnly || testCase.getStatus().isError();
 			}
-			
-			@Override
-			public void visit(ITestSuite testSuite) {}
 
 			@Override
-			public void leave(ITestSuite testSuite) {}
+			public void visit(ITestSuite testSuite) {
+			}
 
 			@Override
-			public void leave(ITestCase testCase) {}
+			public void leave(ITestSuite testSuite) {
+			}
 
 			@Override
-			public void leave(ITestMessage testMessage) {}
+			public void leave(ITestCase testCase) {
+			}
+
+			@Override
+			public void leave(ITestMessage testMessage) {
+			}
 		}
 
 		/** Test messages to show in the viewer. */
 		ITestMessage[] testMessages;
-		
+
 		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 			if (newInput != null) {
@@ -179,20 +182,20 @@ public class MessagesViewer {
 				testMessages = new ITestMessage[0];
 			}
 		}
-		
+
 		@Override
 		public void dispose() {
 		}
-		
+
 		@Override
 		public Object[] getElements(Object parent) {
 			return testMessages;
 		}
-		
+
 		/**
 		 * Creates a messages set with a custom comparator. It is used for the
 		 * ordered messages showing.
-		 * 
+		 *
 		 * @return set to store the test messages
 		 */
 		private TreeSet<ITestMessage> createMessagesSet() {
@@ -203,7 +206,7 @@ public class MessagesViewer {
 					// Compare messages by location
 					ITestLocation location1 = message1.getLocation();
 					ITestLocation location2 = message2.getLocation();
-					
+
 					if (location1 != null && location2 != null) {
 						// Compare by file name
 						String file1 = location1.getFile();
@@ -217,19 +220,19 @@ public class MessagesViewer {
 							int line2 = location2.getLine();
 							if (line1 < line2) {
 								return -1;
-								
+
 							} else if (line1 > line2) {
 								return 1;
 							}
 						}
-						
+
 					} else if (location1 == null && location2 != null) {
 						return -1;
-						
+
 					} else if (location1 != null && location2 == null) {
 						return 1;
 					}
-					
+
 					// Compare by message text
 					String text1 = message1.getText();
 					String text2 = message2.getText();
@@ -237,11 +240,11 @@ public class MessagesViewer {
 				}
 			});
 		}
-		
+
 		/**
 		 * Creates a list to store the test messages. It is used for the
 		 * unordered messages showing.
-		 * 
+		 *
 		 * @return list to store the test messages
 		 */
 		private ArrayList<ITestMessage> createMessagesList() {
@@ -251,16 +254,16 @@ public class MessagesViewer {
 		/**
 		 * Creates a collection to store the test messages depending on whether
 		 * ordering is required.
-		 * 
+		 *
 		 * @return collection to store the test messages
 		 */
 		private Collection<ITestMessage> createMessagesCollection() {
 			return orderingMode ? createMessagesSet() : createMessagesList();
 		}
-		
+
 		/**
 		 * Run messages collecting for the specified test items.
-		 * 
+		 *
 		 * @param testItems test items array
 		 */
 		private void collectMessages(ITestItem[] testItems) {
@@ -276,11 +279,11 @@ public class MessagesViewer {
 	 * The label provider for the test messages viewer.
 	 */
 	private class MessagesLabelProvider extends LabelProvider implements ITableLabelProvider {
-		
+
 		/**
 		 * Returns the full (file path) or short (file name only) file path view
 		 * depending on the filter set.
-		 * 
+		 *
 		 * @param location test object location
 		 * @return file path
 		 */
@@ -292,31 +295,28 @@ public class MessagesViewer {
 				return filePath;
 			}
 		}
-		
+
 		@Override
 		public String getColumnText(Object obj, int index) {
-			ITestMessage message = (ITestMessage)obj;
+			ITestMessage message = (ITestMessage) obj;
 			ITestLocation location = message.getLocation();
 			String locationString = ""; //$NON-NLS-1$
 			if (location != null) {
-				locationString = MessageFormat.format(
-						UIViewMessages.MessagesViewer_location_format, 
-						new Object[] { getLocationFile(location), location.getLine() }
-				);
+				locationString = MessageFormat.format(UIViewMessages.MessagesViewer_location_format,
+						new Object[] { getLocationFile(location), location.getLine() });
 			}
-			return MessageFormat.format(UIViewMessages.MessagesViewer_message_format, 
-					locationString, message.getLevel(), message.getText()
-			  );
+			return MessageFormat.format(UIViewMessages.MessagesViewer_message_format, locationString,
+					message.getLevel(), message.getText());
 		}
-		
+
 		@Override
 		public Image getColumnImage(Object obj, int index) {
 			return getImage(obj);
 		}
-		
+
 		@Override
 		public Image getImage(Object obj) {
-			Level level = ((ITestMessage)obj).getLevel();
+			Level level = ((ITestMessage) obj).getLevel();
 			String imageId = ISharedImages.IMG_OBJ_ELEMENT;
 			for (LevelFilter levelFilter : LevelFilter.values()) {
 				if (levelFilter.isIncluded(level)) {
@@ -327,7 +327,7 @@ public class MessagesViewer {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(imageId);
 		}
 	}
-	
+
 	/**
 	 * Filters the required test messages by level.
 	 */
@@ -335,20 +335,19 @@ public class MessagesViewer {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			return acceptedMessageLevels.contains(((ITestMessage)element).getLevel());
+			return acceptedMessageLevels.contains(((ITestMessage) element).getLevel());
 		}
 	}
 
-
 	/** Main widget. */
 	private TableViewer tableViewer;
-	
+
 	private IViewSite viewSite;
-	
+
 	// Context menu actions
 	private OpenInEditorAction openInEditorAction;
 	private Action copyAction;
-	
+
 	/** Specifies whether only messages for failed tests should be shown. */
 	private boolean showFailedOnly = false;
 
@@ -357,16 +356,14 @@ public class MessagesViewer {
 	 * paths).
 	 */
 	private boolean showFileNameOnly = false;
-	
+
 	/** The set of message level to show the messages with. */
 	private Set<ITestMessage.Level> acceptedMessageLevels = new HashSet<ITestMessage.Level>();
-	
+
 	/** Specifies whether test messages ordering is on or off. */
 	private boolean orderingMode = false;
 
-
-	public MessagesViewer(Composite parent,
-			TestingSessionsManager sessionsManager, IWorkbench workbench,
+	public MessagesViewer(Composite parent, TestingSessionsManager sessionsManager, IWorkbench workbench,
 			IViewSite viewSite, Clipboard clipboard) {
 		this.viewSite = viewSite;
 		tableViewer = new TableViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -383,15 +380,14 @@ public class MessagesViewer {
 	}
 
 	/**
-	 * Initializes the viewer context menu. 
-	 * 
+	 * Initializes the viewer context menu.
+	 *
 	 * @param viewSite view
 	 * @param sessionsManager testing sessions manager
 	 * @param workbench workbench
 	 * @param clipboard clipboard
 	 */
-	private void initContextMenu(IViewSite viewSite,
-			TestingSessionsManager sessionsManager, IWorkbench workbench,
+	private void initContextMenu(IViewSite viewSite, TestingSessionsManager sessionsManager, IWorkbench workbench,
 			Clipboard clipboard) {
 		openInEditorAction = new OpenInEditorAction(tableViewer, sessionsManager, workbench);
 		copyAction = new CopySelectedMessagesAction(tableViewer, clipboard);
@@ -411,7 +407,7 @@ public class MessagesViewer {
 		menuMgr.add(copyAction);
 		configureCopy();
 	}
-	
+
 	/**
 	 * Configures the view copy action which should be run on CTRL+C. We have to
 	 * track widget focus to select the actual action because we have a few
@@ -420,20 +416,20 @@ public class MessagesViewer {
 	 */
 	private void configureCopy() {
 		getTableViewer().getTable().addFocusListener(new FocusListener() {
-        	IAction viewCopyHandler;
+			IAction viewCopyHandler;
 
-        	@Override
+			@Override
 			public void focusLost(FocusEvent e) {
-        		if (viewCopyHandler != null) {
-        			switchTo(viewCopyHandler);
-        		}
+				if (viewCopyHandler != null) {
+					switchTo(viewCopyHandler);
+				}
 			}
 
 			@Override
 			public void focusGained(FocusEvent e) {
 				switchTo(copyAction);
 			}
-			
+
 			private void switchTo(IAction copyAction) {
 				IActionBars actionBars = viewSite.getActionBars();
 				viewCopyHandler = actionBars.getGlobalActionHandler(ActionFactory.COPY.getId());
@@ -442,10 +438,10 @@ public class MessagesViewer {
 			}
 		});
 	}
-	
+
 	/**
 	 * Handles the context menu showing.
-	 * 
+	 *
 	 * @param manager context menu manager
 	 */
 	private void handleMenuAboutToShow(IMenuManager manager) {
@@ -456,22 +452,22 @@ public class MessagesViewer {
 
 	/**
 	 * Provides access to the main widget of the messages viewer.
-	 * 
+	 *
 	 * @return main widget of the messages viewer
 	 */
 	public TableViewer getTableViewer() {
 		return tableViewer;
 	}
-	
+
 	/**
 	 * Sets the test items for which the messages should be shown.
-	 * 
+	 *
 	 * @param testItems test items array
 	 */
 	public void showItemsMessages(ITestItem[] testItems) {
 		tableViewer.setInput(testItems);
 	}
-	
+
 	/**
 	 * Forces the messages recollecting. It is used after message filters
 	 * change.
@@ -483,16 +479,16 @@ public class MessagesViewer {
 
 	/**
 	 * Returns whether the messages only for the failed tests should be shown.
-	 * 
+	 *
 	 * @return filter state
 	 */
 	public boolean getShowFailedOnly() {
 		return showFailedOnly;
 	}
-	
+
 	/**
 	 * Sets whether the messages only for the failed tests should be shown.
-	 * 
+	 *
 	 * @param showFailedOnly new filter state
 	 */
 	public void setShowFailedOnly(boolean showFailedOnly) {
@@ -504,16 +500,16 @@ public class MessagesViewer {
 
 	/**
 	 * Returns whether short or long view for file paths should be shown.
-	 * 
+	 *
 	 * @return filter state
 	 */
 	public boolean getShowFileNameOnly() {
 		return showFileNameOnly;
 	}
-	
+
 	/**
 	 * Sets whether short or long view for file paths should be shown.
-	 * 
+	 *
 	 * @param showFileNameOnly new filter state
 	 */
 	public void setShowFileNameOnly(boolean showFileNameOnly) {
@@ -525,16 +521,16 @@ public class MessagesViewer {
 
 	/**
 	 * Returns whether test messages should be ordered by location.
-	 * 
+	 *
 	 * @return messages ordering state
 	 */
 	public boolean getOrderingMode() {
 		return orderingMode;
 	}
-	
+
 	/**
 	 * Sets whether test messages should be ordered by location.
-	 * 
+	 *
 	 * @param orderingMode new messages ordering state
 	 */
 	public void setOrderingMode(boolean orderingMode) {
@@ -546,7 +542,7 @@ public class MessagesViewer {
 
 	/**
 	 * Adds the filter message level filters by the message filter action level.
-	 * 
+	 *
 	 * @param levelFilter message filter action level
 	 * @param refresh specifies whether viewer should be refreshed after filter
 	 * update (small optimization: avoid many updates on initialization)
@@ -563,7 +559,7 @@ public class MessagesViewer {
 	/**
 	 * Removed the filter message level filters by the message filter action
 	 * level.
-	 * 
+	 *
 	 * @param levelFilter message filter action level
 	 */
 	public void removeLevelFilter(LevelFilter levelFilter) {
@@ -572,5 +568,5 @@ public class MessagesViewer {
 		}
 		tableViewer.refresh();
 	}
-	
+
 }

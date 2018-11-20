@@ -21,24 +21,24 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MITargetDownloadInfo;
 
 /**
  * This command downloads a file to a remote target.
- * 
+ *
  * @since 3.0
  */
 public class MITargetDownload extends MICommand<MITargetDownloadInfo> {
 
-    public MITargetDownload(ICommandControlDMContext ctx) {
-        super(ctx, "-target-download"); //$NON-NLS-1$
-    }
+	public MITargetDownload(ICommandControlDMContext ctx) {
+		super(ctx, "-target-download"); //$NON-NLS-1$
+	}
 
-    public MITargetDownload(ICommandControlDMContext ctx, String file) {
-        super(ctx, "-target-download", null, new String[] { file }); //$NON-NLS-1$
-    }
+	public MITargetDownload(ICommandControlDMContext ctx, String file) {
+		super(ctx, "-target-download", null, new String[] { file }); //$NON-NLS-1$
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.dsf.mi.service.command.commands.MICommand#getResult(org.eclipse.cdt.dsf.mi.service.command.output.MIOutput)
-     */
-    @Override
-    public MIInfo getResult( MIOutput MIresult ) {
-        return new MITargetDownloadInfo( MIresult );
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.mi.service.command.commands.MICommand#getResult(org.eclipse.cdt.dsf.mi.service.command.output.MIOutput)
+	 */
+	@Override
+	public MIInfo getResult(MIOutput MIresult) {
+		return new MITargetDownloadInfo(MIresult);
+	}
 }

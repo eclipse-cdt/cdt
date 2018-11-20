@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see ICStorageElement
  * @see ICProjectDescription
  * @see ICConfigurationDescription
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -70,16 +70,17 @@ public interface ICSettingsStorage {
 	/**
 	 * Import an existing ICStorageElement storage module into the ICSettingsStorage
 	 * Returns a handle on the newly imported ICSettingsStorage
-	 * 
+	 *
 	 * NB Storage IDs are unique in an ICSettingsStorage.   Importing a storage
-	 * will replace any other storage with equivalent id 
+	 * will replace any other storage with equivalent id
 	 * @param id name of the storage to be imported
 	 * @param el ICStorageElement to be imported
 	 * @return ICStorageElement representing the imported storage
 	 * @throws UnsupportedOperationException
 	 * @since 5.1
 	 */
-	public ICStorageElement importStorage(String id, ICStorageElement el) throws UnsupportedOperationException, CoreException;
+	public ICStorageElement importStorage(String id, ICStorageElement el)
+			throws UnsupportedOperationException, CoreException;
 
 	/**
 	 * Returns whether any non-persisted changes exist in this tree

@@ -14,24 +14,24 @@
 package org.eclipse.cdt.core.settings.model;
 
 /**
- * this is the common super-class for all ICProjectDescription model elements 
+ * this is the common super-class for all ICProjectDescription model elements
  *
  */
-public interface ICSettingObject extends ICSettingBase{
+public interface ICSettingObject extends ICSettingBase {
 	/**
-	 * 
+	 *
 	 * @return the unique id of this element
 	 */
 	String getId();
-	
+
 	/**
-	 * 
+	 *
 	 * @return the name of this element
 	 */
 	String getName();
-	
+
 	/**
-	 * 
+	 *
 	 * @return constant representing the setting type
 	 * can be one of the following:
 	 * {@link ICSettingBase#SETTING_PROJECT}
@@ -43,29 +43,29 @@ public interface ICSettingObject extends ICSettingBase{
 	 * {@link ICSettingBase#SETTING_BUILD}
 	 */
 	int getType();
-	
+
 	/**
-	 * 
+	 *
 	 * @return true if the given object is valid, false - otherwise
-	 * 
+	 *
 	 * the object can be invalid, e.g. in case it was removed
 	 */
 	boolean isValid();
-	
+
 	/**
-	 * 
+	 *
 	 * @return the configuration description this object belongs to
 	 */
 	ICConfigurationDescription getConfiguration();
-	
+
 	/**
-	 * 
+	 *
 	 * @return the object parent
 	 */
 	ICSettingContainer getParent();
-	
+
 	/**
-	 * 
+	 *
 	 * @return true if the object is read-only, false - otherwise
 	 */
 	boolean isReadOnly();

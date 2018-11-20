@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,22 +23,24 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * primarily by other services that need to access source-path mappings, such
  * as the breakpoints service.  For UI components, the platform source lookup
  * interfaces could be sufficient.
- * 
+ *
  * @since 1.0
  */
 public interface ISourceLookup extends IDsfService {
 
-    public interface ISourceLookupDMContext extends IDMContext {}
-        
-    public interface ISourceLookupChangedDMEvent extends IDMEvent<ISourceLookupDMContext> {}
-    
-    /**
-     * Retrieves the host source object for given debugger path string.
-     */
-    void getSource(ISourceLookupDMContext ctx, String debuggerPath, DataRequestMonitor<Object> rm);
-    
-    /**
-     * Retrieves the debugger path string for given host source object.
-     */
-    void getDebuggerPath(ISourceLookupDMContext ctx, Object source, DataRequestMonitor<String> rm);
+	public interface ISourceLookupDMContext extends IDMContext {
+	}
+
+	public interface ISourceLookupChangedDMEvent extends IDMEvent<ISourceLookupDMContext> {
+	}
+
+	/**
+	 * Retrieves the host source object for given debugger path string.
+	 */
+	void getSource(ISourceLookupDMContext ctx, String debuggerPath, DataRequestMonitor<Object> rm);
+
+	/**
+	 * Retrieves the debugger path string for given host source object.
+	 */
+	void getDebuggerPath(ISourceLookupDMContext ctx, Object source, DataRequestMonitor<String> rm);
 }

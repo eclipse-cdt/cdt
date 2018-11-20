@@ -16,22 +16,22 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * Represents the mapping between goto statements and the label statements
  * the go to.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILabel extends IBinding {
-    /** @since 6.0 */
-    public static final ILabel[] EMPTY_ARRAY = {};
-    /**
-     * @since 5.4
-     * @deprecated use {@link #EMPTY_ARRAY} instead
-     * @noreference This field is not intended to be referenced by clients.
-     */
+	/** @since 6.0 */
+	public static final ILabel[] EMPTY_ARRAY = {};
+	/**
+	 * @since 5.4
+	 * @deprecated use {@link #EMPTY_ARRAY} instead
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
 	@Deprecated
-    public static final IBinding[] EMPTY_LABEL_ARRAY = {};
-	
-    /**
+	public static final IBinding[] EMPTY_LABEL_ARRAY = {};
+
+	/**
 	 * Returns the label statement for this label.
 	 */
 	public IASTLabelStatement getLabelStatement();

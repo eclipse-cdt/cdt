@@ -21,23 +21,22 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListLocalsInfo;
 
 /**
- * 
+ *
  *     -stack-list-locals PRINT-VALUES
  *
  *  Display the local variable names for the current frame.  With an
  * argument of 0 prints only the names of the variables, with argument of 1
  * prints also their values.
- * 
+ *
  */
-public class MIStackListLocals extends MICommand<MIStackListLocalsInfo> 
-{
-	
-    public MIStackListLocals(IFrameDMContext frameCtx, boolean printValues) {
-        super(frameCtx, "-stack-list-locals", new String[] { printValues ? "1" : "0" } );  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
+public class MIStackListLocals extends MICommand<MIStackListLocalsInfo> {
 
-    @Override
-    public MIStackListLocalsInfo getResult(MIOutput out) {
-        return new MIStackListLocalsInfo(out);
-    }
+	public MIStackListLocals(IFrameDMContext frameCtx, boolean printValues) {
+		super(frameCtx, "-stack-list-locals", new String[] { printValues ? "1" : "0" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	@Override
+	public MIStackListLocalsInfo getResult(MIOutput out) {
+		return new MIStackListLocalsInfo(out);
+	}
 }

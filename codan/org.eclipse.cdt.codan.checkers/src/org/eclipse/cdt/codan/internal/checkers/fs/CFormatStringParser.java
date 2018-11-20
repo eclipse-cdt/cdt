@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Meisam Fathi and others 
+ * Copyright (c) 2010, 2011 Meisam Fathi and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 /**
  * This class parses the format string argument and extracts all %s tokens.
- * 
+ *
  * @version 0.2, June 04, 2010
  * @author Meisam Fathi
  */
@@ -42,7 +42,7 @@ public class CFormatStringParser {
 	 * <li>u: Unsigned decimal integer.
 	 * <li>x,X: Hexadecimal integer.
 	 * </ul>
-	 * 
+	 *
 	 * @see {@link http://www.cplusplus.com/reference/clibrary/cstdio/scanf/}
 	 *      for more information.
 	 */
@@ -53,7 +53,7 @@ public class CFormatStringParser {
 	 * Hence, the only vulnerable arguments are arguments in which either there
 	 * is no specified size, or there is a size greater than the size of the
 	 * string.
-	 * 
+	 *
 	 * @see #FORMAT_STRING_PATTERN
 	 */
 	private static final String VULNERABLE_PATTERN = "%[0-9]*s";//$NON-NLS-1$
@@ -79,7 +79,7 @@ public class CFormatStringParser {
 
 	/**
 	 * Constructs an argument parser for the given argument.
-	 * 
+	 *
 	 * @param argument
 	 */
 	protected CFormatStringParser(final String argument) {
@@ -93,7 +93,7 @@ public class CFormatStringParser {
 	/**
 	 * If the given argument to this class is vulnerable, it returns true, else
 	 * it return false.
-	 * 
+	 *
 	 * @return true if the format string argument is vulnerable.
 	 */
 	public boolean isVulnerable() {
@@ -122,8 +122,8 @@ public class CFormatStringParser {
 			final boolean isVulnerable = vulnerabilityMatcher.find();
 			if (isVulnerable) {
 				final int argumentSize = parseArgumentSize(formatString);
-				final VulnerableFormatStringArgument vulnerableArgument = new VulnerableFormatStringArgument(indexOfCurrentArgument,
-						formatString, argumentSize);
+				final VulnerableFormatStringArgument vulnerableArgument = new VulnerableFormatStringArgument(
+						indexOfCurrentArgument, formatString, argumentSize);
 				this.vulnerableArguments.add(vulnerableArgument);
 			}
 			hasMore = this.argumentMatcher.find();
@@ -143,7 +143,7 @@ public class CFormatStringParser {
 	 * <li>%015s ==> 15</li>
 	 * <li>%0s ==> 0</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param formatString
 	 *        The given format string.
 	 * @return Either ARGUMENT_SIZE_NOT_SPECIFIED or the number embedded in the

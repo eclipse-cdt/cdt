@@ -13,43 +13,36 @@
  * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Variable_type, with NO prefix
  *
  */
-public class CompletionTest_VariableType_NoPrefix  extends CompletionProposalsBaseTest{
+public class CompletionTest_VariableType_NoPrefix extends CompletionProposalsBaseTest {
 	private final String fileName = "CompletionTestStart11.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
-	private final String[] expectedResults = {
-			"aClass",
-			"anotherClass",
-			"aNamespace",
-			"anEnumeration",
-			"AStruct",
-			"xOtherClass",
-			"xNamespace",
-			"xEnumeration",
-			"XStruct",
-	};
-	
+	private final String[] expectedResults = { "aClass", "anotherClass", "aNamespace", "anEnumeration", "AStruct",
+			"xOtherClass", "xNamespace", "xEnumeration", "XStruct", };
+
 	public CompletionTest_VariableType_NoPrefix(String name) {
 		super(name);
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_VariableType_NoPrefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_VariableType_NoPrefix.class.getName());
 		suite.addTest(new CompletionTest_VariableType_NoPrefix("testCompletionProposals"));
 		return suite;
-	}		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -89,6 +82,7 @@ public class CompletionTest_VariableType_NoPrefix  extends CompletionProposalsBa
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

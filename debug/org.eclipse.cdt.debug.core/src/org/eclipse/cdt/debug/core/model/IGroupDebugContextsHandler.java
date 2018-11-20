@@ -16,9 +16,9 @@ package org.eclipse.cdt.debug.core.model;
 import org.eclipse.debug.core.commands.IDebugCommandHandler;
 
 /**
- * Handler interface to perform grouping of debug contexts. 
- * 
- * @since 7.1 
+ * Handler interface to perform grouping of debug contexts.
+ *
+ * @since 7.1
  */
 public interface IGroupDebugContextsHandler extends IDebugCommandHandler {
 

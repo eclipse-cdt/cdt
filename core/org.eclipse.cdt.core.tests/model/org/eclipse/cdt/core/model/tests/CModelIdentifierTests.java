@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Tests for CModel identifier API.
- * 
+ *
  * @see ICElement#getHandleIdentifier()
  * @see CoreModel#create(String)
  *
@@ -55,14 +55,14 @@ public class CModelIdentifierTests extends BaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		// reusing project setup from CModelElementsTests
-		NullProgressMonitor monitor= new NullProgressMonitor();
-		fCProject= CProjectHelper.createCCProject("CModelIdentifierTests", "bin", IPDOMManager.ID_FAST_INDEXER);
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		fCProject = CProjectHelper.createCCProject("CModelIdentifierTests", "bin", IPDOMManager.ID_FAST_INDEXER);
 		fHeaderFile = fCProject.getProject().getFile("CModelIdentifierTests.h");
 		if (!fHeaderFile.exists()) {
-			try{
-				FileInputStream fileIn = new FileInputStream(
-						CTestPlugin.getDefault().getFileInPlugin(new Path("resources/cfiles/CModelElementsTestStart.h"))); 
-				fHeaderFile.create(fileIn,false, monitor);
+			try {
+				FileInputStream fileIn = new FileInputStream(CTestPlugin.getDefault()
+						.getFileInPlugin(new Path("resources/cfiles/CModelElementsTestStart.h")));
+				fHeaderFile.create(fileIn, false, monitor);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
@@ -75,41 +75,42 @@ public class CModelIdentifierTests extends BaseTestCase {
 	@Override
 	protected void tearDown() {
 		CProjectHelper.delete(fCProject);
-	}	
+	}
 
 	public void testIdentifierConsistency() throws Exception {
-		ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(fHeaderFile);
+		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(fHeaderFile);
 
-		final String cModelIdentifier= tu.getCModel().getHandleIdentifier();
+		final String cModelIdentifier = tu.getCModel().getHandleIdentifier();
 		assertNotNull(cModelIdentifier);
 		assertEquals(tu.getCModel(), CoreModel.create(cModelIdentifier));
-		
-		final String cProjectIdentifier= tu.getCProject().getHandleIdentifier();
+
+		final String cProjectIdentifier = tu.getCProject().getHandleIdentifier();
 		assertNotNull(cProjectIdentifier);
 		assertEquals(tu.getCProject(), CoreModel.create(cProjectIdentifier));
 
-		final String tUnitIdentifier= tu.getHandleIdentifier();
+		final String tUnitIdentifier = tu.getHandleIdentifier();
 		assertNotNull(tUnitIdentifier);
 		assertEquals(tu, CoreModel.create(tUnitIdentifier));
 
-		final List elements= new ArrayList();
-		final List identifiers= new ArrayList();
-		ICElementVisitor visitor= new ICElementVisitor() {
+		final List elements = new ArrayList();
+		final List identifiers = new ArrayList();
+		ICElementVisitor visitor = new ICElementVisitor() {
 			@Override
 			public boolean visit(ICElement element) throws CoreException {
 				elements.add(element);
 				identifiers.add(element.getHandleIdentifier());
 				return true;
-			}};
+			}
+		};
 		tu.accept(visitor);
-		
+
 		assertEquals(elements.size(), identifiers.size());
-		int size= elements.size();
+		int size = elements.size();
 		for (int i = 0; i < size; i++) {
-			ICElement expected= (ICElement) elements.get(i);
-			String identifier= (String) identifiers.get(i);
-			assertNotNull("Could not create identifier for element: "+ expected, identifier);
-			ICElement actual= CoreModel.create(identifier);
+			ICElement expected = (ICElement) elements.get(i);
+			String identifier = (String) identifiers.get(i);
+			assertNotNull("Could not create identifier for element: " + expected, identifier);
+			ICElement actual = CoreModel.create(identifier);
 			assertNotNull("Cannot create element '" + expected + "' from identifier: " + identifier, actual);
 			assertEquals(expected.getElementName(), actual.getElementName());
 			assertEquals(expected.getElementType(), actual.getElementType());

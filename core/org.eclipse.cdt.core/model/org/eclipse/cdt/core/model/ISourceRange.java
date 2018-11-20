@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.model;
 
 /**
  * A source range defines an element's source coordinates
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -29,7 +29,7 @@ public interface ISourceRange {
 	 * Returns the number of characters of the source code for this element.
 	 */
 	public int getLength();
-        
+
 	/**
 	 * Returns the Id starting position of this element.
 	 */

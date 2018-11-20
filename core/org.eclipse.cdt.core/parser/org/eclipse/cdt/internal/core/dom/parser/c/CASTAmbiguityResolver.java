@@ -30,13 +30,13 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 public final class CASTAmbiguityResolver extends ASTVisitor {
 	public CASTAmbiguityResolver() {
 		super(false);
-		includeInactiveNodes= true;
-		shouldVisitAmbiguousNodes= true;
+		includeInactiveNodes = true;
+		shouldVisitAmbiguousNodes = true;
 	}
 
 	@Override
 	public int visit(ASTAmbiguousNode astAmbiguousNode) {
-		IASTNode node= astAmbiguousNode.resolveAmbiguity(this);
+		IASTNode node = astAmbiguousNode.resolveAmbiguity(this);
 		if (node instanceof IASTDeclarator || node instanceof IASTParameterDeclaration
 				|| node instanceof IASTDeclaration) {
 			while (node != null) {
@@ -47,14 +47,14 @@ public final class CASTAmbiguityResolver extends ASTVisitor {
 				if (node instanceof IASTExpression) {
 					break;
 				}
-				node= node.getParent();
+				node = node.getParent();
 			}
 		}
 		return PROCESS_SKIP;
 	}
 
 	private void repopulateScope(IASTNode node) {
-		IScope scope= CVisitor.getContainingScope(node);
+		IScope scope = CVisitor.getContainingScope(node);
 		if (scope instanceof CScope) {
 			CScope cscope = (CScope) scope;
 			if (scope instanceof ICCompositeTypeScope) {

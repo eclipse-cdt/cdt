@@ -14,10 +14,9 @@
 
 package org.eclipse.cdt.utils.debug;
 
-
 /**
  * DebugType
- *  
+ *
  */
 public class DebugBaseType extends DebugType {
 
@@ -27,7 +26,7 @@ public class DebugBaseType extends DebugType {
 
 	public DebugBaseType(String name, int size, boolean unSigned) {
 		typeName = name;
-		typeSize = size; 
+		typeSize = size;
 		typeUnSigned = unSigned;
 	}
 

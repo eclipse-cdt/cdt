@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-
 /**
  * Exclude Resources from a CDT project. This takes three arguments
  * <ul>
@@ -58,7 +57,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class ExcludeResources extends ProcessRunner {
 
 	@Override
-	public void process(TemplateCore template, final ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, final ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		String configIdPattern = args[1].getSimpleValue();
 		final String[] filePatterns = args[2].getSimpleArrayValue();
@@ -69,7 +69,7 @@ public class ExcludeResources extends ProcessRunner {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-		if(info==null) {
+		if (info == null) {
 			throw new ProcessFailureException(Messages.getString("ExcludeResources.0")); //$NON-NLS-1$
 		}
 		IManagedProject managedProject = info.getManagedProject();
@@ -79,14 +79,14 @@ public class ExcludeResources extends ProcessRunner {
 		 */
 		IConfiguration[] allConfigs = managedProject.getConfigurations();
 		List<IConfiguration> matchingConfigs = new ArrayList<IConfiguration>();
-		for(int i=0; i<allConfigs.length; i++) {
+		for (int i = 0; i < allConfigs.length; i++) {
 			IConfiguration config = allConfigs[i];
-			if(config.getId().matches(configIdPattern)) {
+			if (config.getId().matches(configIdPattern)) {
 				matchingConfigs.add(config);
 			}
 		}
 
-		if(invert) {
+		if (invert) {
 			List<IConfiguration> invertedConfigs = new ArrayList<IConfiguration>(Arrays.asList(allConfigs));
 			invertedConfigs.removeAll(matchingConfigs);
 			matchingConfigs = invertedConfigs;
@@ -101,26 +101,26 @@ public class ExcludeResources extends ProcessRunner {
 			public boolean visit(IResourceProxy proxy) throws CoreException {
 				IPath lPath = proxy.requestFullPath();
 
-				if(proxy.getType() == IResource.FILE) { /* CDT does not support directory resource configurations */
+				if (proxy.getType() == IResource.FILE) { /* CDT does not support directory resource configurations */
 					boolean isDerived = false;
-					for(IResource res = proxy.requestResource(); res!=null; res = res.getParent()) {
+					for (IResource res = proxy.requestResource(); res != null; res = res.getParent()) {
 						isDerived |= res.isDerived();
 					}
 
-					if(!isDerived) {
+					if (!isDerived) {
 						for (IConfiguration config : configsToProcess) {
 							IResourceConfiguration resourceConfig = config.getResourceConfiguration(lPath.toString());
 							// Only add a resource configuration if the file pattern matches something that
 							//is actually supposed to be excluded. Adding a resrouce configuration for all files
 							// regardless of wheter they need it or not mess up the makefile generation.
 							for (String filePattern : filePatterns) {
-								if(lPath.toString().matches(filePattern)) {
-									if(resourceConfig==null) {
+								if (lPath.toString().matches(filePattern)) {
+									if (resourceConfig == null) {
 										IFile file = (IFile) proxy.requestResource();
-											resourceConfig = config.createResourceConfiguration(file);
+										resourceConfig = config.createResourceConfiguration(file);
 									}
 
-									if (resourceConfig != null){
+									if (resourceConfig != null) {
 										resourceConfig.setExclude(true);
 									}
 
@@ -138,7 +138,7 @@ public class ExcludeResources extends ProcessRunner {
 
 		try {
 			project.accept(visitor, IResource.DEPTH_INFINITE);
-			if (info.isDirty()){
+			if (info.isDirty()) {
 				ManagedBuildManager.saveBuildInfo(project, true);
 			}
 		} catch (CoreException ce) {

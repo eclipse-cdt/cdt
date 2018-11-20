@@ -24,66 +24,66 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  */
 public class MIResultRecord {
 
-    public final static String DONE ="done"; //$NON-NLS-1$
-    public final static String RUNNING ="running"; //$NON-NLS-1$
-    public final static String CONNECTED ="connected"; //$NON-NLS-1$
-    public final static String ERROR ="error"; //$NON-NLS-1$
-    public final static String EXIT ="exit"; //$NON-NLS-1$
+	public final static String DONE = "done"; //$NON-NLS-1$
+	public final static String RUNNING = "running"; //$NON-NLS-1$
+	public final static String CONNECTED = "connected"; //$NON-NLS-1$
+	public final static String ERROR = "error"; //$NON-NLS-1$
+	public final static String EXIT = "exit"; //$NON-NLS-1$
 
-    String resultClass = ""; //$NON-NLS-1$
-    int token = -1;
-    MITuple value = new MITuple();
+	String resultClass = ""; //$NON-NLS-1$
+	int token = -1;
+	MITuple value = new MITuple();
 
-    public int getToken() {
-        return token;
-    }
+	public int getToken() {
+		return token;
+	}
 
-    public void setToken(int t) {
-        token = t;
-    }
+	public void setToken(int t) {
+		token = t;
+	}
 
-    /**
-     */
-    public String getResultClass() {
-        return resultClass;
-    }
-
-    public void setResultClass(String type) {
-        resultClass = type;
-    }
-
-    /** Return all data fields of this record as MITuple
-     * @since 4.6
+	/**
 	 */
-    public MITuple getFields() {
-        return value;
-    }
+	public String getResultClass() {
+		return resultClass;
+	}
 
-    public MIResult[] getMIResults() {
-        return value.getMIResults();
-    }
+	public void setResultClass(String type) {
+		resultClass = type;
+	}
 
-    public void setMIResults(MIResult[] res) {
-        value.setMIResults(res);
-    }
-
-    /** Return the value of the named field in this record.
+	/** Return all data fields of this record as MITuple
 	 * @since 4.6
 	 */
-    public MIValue getField(String name) {
-        return value.getField(name);
-    }
+	public MITuple getFields() {
+		return value;
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        if (token > 0) {
-            buffer.append(token);
-        }
-        buffer.append('^').append(resultClass);
+	public MIResult[] getMIResults() {
+		return value.getMIResults();
+	}
 
-        if (value.getMIResults().length != 0)
-            buffer.append(value.toString(",", "")); //$NON-NLS-1$ //$NON-NLS-2$
-        return buffer.toString();
-    }
+	public void setMIResults(MIResult[] res) {
+		value.setMIResults(res);
+	}
+
+	/** Return the value of the named field in this record.
+	 * @since 4.6
+	 */
+	public MIValue getField(String name) {
+		return value.getField(name);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder buffer = new StringBuilder();
+		if (token > 0) {
+			buffer.append(token);
+		}
+		buffer.append('^').append(resultClass);
+
+		if (value.getMIResults().length != 0)
+			buffer.append(value.toString(",", "")); //$NON-NLS-1$ //$NON-NLS-2$
+		return buffer.toString();
+	}
 }

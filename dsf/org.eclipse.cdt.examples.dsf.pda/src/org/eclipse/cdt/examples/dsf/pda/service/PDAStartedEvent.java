@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -20,10 +20,8 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 /**
  * Event issued when the PDA debugger is started.
  */
-public class PDAStartedEvent extends AbstractDMEvent<IExecutionDMContext> 
-    implements IStartedDMEvent
-{
-    PDAStartedEvent(PDAVirtualMachineDMContext context) {
-        super(context);
-    }
+public class PDAStartedEvent extends AbstractDMEvent<IExecutionDMContext> implements IStartedDMEvent {
+	PDAStartedEvent(PDAVirtualMachineDMContext context) {
+		super(context);
+	}
 }

@@ -30,43 +30,43 @@ public class ExpectedStringsTests extends TestCase {
 	public ExpectedStringsTests(String name) {
 		super(name);
 	}
-	    /**
-     * Sets up the test fixture.
-     *
-     * Called before every test case method.
-     * 
-     * Example code test the packages in the project 
-     *  "com.qnx.tools.ide.cdt.core"
-     */
-    @Override
+
+	/**
+	* Sets up the test fixture.
+	*
+	* Called before every test case method.
+	*
+	* Example code test the packages in the project
+	*  "com.qnx.tools.ide.cdt.core"
+	*/
+	@Override
 	protected void setUp() {
 
+	}
 
-    }
-    
-     /**
-     * Tears down the test fixture.
-     *
-     * Called after every test case method.
-     */
-    @Override
+	/**
+	* Tears down the test fixture.
+	*
+	* Called after every test case method.
+	*/
+	@Override
 	protected void tearDown() {
-       // release resources here and clean-up
-    }
-    
-    public static TestSuite suite() {
-        return new TestSuite(ExpectedStringsTests.class);
-    }
-    
-    public static void main (String[] args){
-        junit.textui.TestRunner.run(suite());
-    }
+		// release resources here and clean-up
+	}
+
+	public static TestSuite suite() {
+		return new TestSuite(ExpectedStringsTests.class);
+	}
+
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(suite());
+	}
 
 	public void testGotAll() {
 		ExpectedStrings myExp;
-		String[] strings= {"stringOne", "stringTwo", "stringThree" };
-		
-		myExp=new ExpectedStrings(strings);
+		String[] strings = { "stringOne", "stringTwo", "stringThree" };
+
+		myExp = new ExpectedStrings(strings);
 		assertTrue("No found strings", !myExp.gotAll());
 		myExp.foundString("stringOne");
 		assertTrue("1 found strings", !myExp.gotAll());
@@ -74,14 +74,14 @@ public class ExpectedStringsTests extends TestCase {
 		assertTrue("2 found strings", !myExp.gotAll());
 		myExp.foundString("stringThree");
 		assertTrue("All found strings", myExp.gotAll());
-		
-		
+
 	}
-	public void testGotExtra () {
+
+	public void testGotExtra() {
 		ExpectedStrings myExp;
-		String[] strings= {"stringOne", "stringTwo", "stringThree" };
-		
-		myExp=new ExpectedStrings(strings);
+		String[] strings = { "stringOne", "stringTwo", "stringThree" };
+
+		myExp = new ExpectedStrings(strings);
 		assertTrue("No found strings", !myExp.gotExtra());
 		myExp.foundString("stringOne");
 		assertTrue("1 found strings", !myExp.gotExtra());
@@ -91,15 +91,14 @@ public class ExpectedStringsTests extends TestCase {
 		assertTrue("All found strings", !myExp.gotExtra());
 		myExp.foundString("Somerandomestring");
 		assertTrue("Extra String", myExp.gotExtra());
-		
+
 	}
-	
-	public void testGetMissingString()
-	{
+
+	public void testGetMissingString() {
 		ExpectedStrings myExp;
-		String[] strings= {"stringOne", "stringTwo", "stringThree" };
-		
-		myExp=new ExpectedStrings(strings);
+		String[] strings = { "stringOne", "stringTwo", "stringThree" };
+
+		myExp = new ExpectedStrings(strings);
 		assertNotNull(myExp.getMissingString());
 		myExp.foundString("stringOne");
 		assertNotNull(myExp.getMissingString());
@@ -109,13 +108,12 @@ public class ExpectedStringsTests extends TestCase {
 		assertNotNull(myExp.getMissingString());
 
 	}
-	
-	public void testGetExtraString()
-	{
+
+	public void testGetExtraString() {
 		ExpectedStrings myExp;
-		String[] strings= {"stringOne", "stringTwo", "stringThree" };
-		
-		myExp=new ExpectedStrings(strings);
+		String[] strings = { "stringOne", "stringTwo", "stringThree" };
+
+		myExp = new ExpectedStrings(strings);
 		assertNotNull(myExp.getExtraString());
 		myExp.foundString("stringOnenot");
 		assertNotNull(myExp.getMissingString());
@@ -123,7 +121,5 @@ public class ExpectedStringsTests extends TestCase {
 		assertNotNull(myExp.getMissingString());
 
 	}
-
-
 
 }

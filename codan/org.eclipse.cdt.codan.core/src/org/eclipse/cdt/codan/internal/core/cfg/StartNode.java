@@ -18,7 +18,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 
 /**
  * Start node has no incoming, one outgoing and it is connect to function exits
- * 
+ *
  */
 public class StartNode extends AbstractSingleOutgoingNode implements IStartNode {
 	protected StartNode() {

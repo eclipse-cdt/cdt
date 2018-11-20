@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * Catch handler used for try block statements or for functions with try block.
  * @see ICPPASTFunctionWithTryBlock
  * @see ICPPASTTryBlockStatement
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -77,7 +77,7 @@ public interface ICPPASTCatchHandler extends IASTStatement, IASTImplicitDestruct
 	 * @since 5.1
 	 */
 	public IScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */

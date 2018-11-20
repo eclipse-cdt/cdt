@@ -31,12 +31,11 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-public class CPPAliasTemplateInstance extends CPPSpecialization implements ICPPAliasTemplateInstance, 
-		ITypeContainer {
+public class CPPAliasTemplateInstance extends CPPSpecialization implements ICPPAliasTemplateInstance, ITypeContainer {
 	private IType aliasedType;
 	private ICPPTemplateArgument[] fArguments;
 
-	public CPPAliasTemplateInstance(ICPPAliasTemplate aliasTemplate, IType aliasedType, IBinding owner, 
+	public CPPAliasTemplateInstance(ICPPAliasTemplate aliasTemplate, IType aliasedType, IBinding owner,
 			ICPPTemplateParameterMap argumentMap, ICPPTemplateArgument[] arguments) {
 		super(aliasTemplate, owner, argumentMap);
 		this.aliasedType = aliasedType;

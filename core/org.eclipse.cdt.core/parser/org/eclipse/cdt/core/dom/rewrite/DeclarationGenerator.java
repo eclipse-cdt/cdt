@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.DeclarationGeneratorImpl;
 /**
  * This class handles the creation of {@link IASTDeclarator}s and {@link IASTDeclSpecifier}s
  * for a given type.
- * 
+ *
  * @author Tomasz Wesolowski
  * @noextend This interface is not intended to be extended by clients.
  * @since 5.3
@@ -32,7 +32,7 @@ public abstract class DeclarationGenerator {
 	public static DeclarationGenerator create(INodeFactory factory) {
 		return new DeclarationGeneratorImpl(factory);
 	}
-	
+
 	/**
 	 * Creates a new {@link IASTDeclSpecifier} for a given {@link IType}.
 	 * @param type the type to describe

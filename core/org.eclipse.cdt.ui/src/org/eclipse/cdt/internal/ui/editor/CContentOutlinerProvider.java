@@ -69,7 +69,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 
 	/**
 	 * Creates new content provider for dialog.
-	 * 
+	 *
 	 * @param viewer
 	 *            Tree viewer.
 	 */
@@ -93,13 +93,13 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 				public void run() {
 					if (!treeViewer.getControl().isDisposed()) {
 						if (fInitialDeltaPending) {
-							fInitialDeltaPending= false;
+							fInitialDeltaPending = false;
 							treeViewer.setInput(root);
 						} else {
 							// setting the selection here causes a secondary editor to scroll
 							// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=191358
-	//						final ISelection sel = treeViewer.getSelection();
-	//						treeViewer.setSelection(updateSelection(sel));
+							//						final ISelection sel = treeViewer.getSelection();
+							//						treeViewer.setSelection(updateSelection(sel));
 							treeViewer.refresh();
 						}
 					}
@@ -111,22 +111,25 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	/**
 	 * Called after CEditor contents is changed.
 	 * Existing elements can change their offset and length.
-	 * 
+	 *
 	 * @param sdata  delta information
 	 */
 	public void contentShift(CShiftData sdata) {
 		try {
 			ICElement[] el = root.getChildren();
-			for (int i=0; i< el.length; i++) {
-				if (!(el[i] instanceof SourceManipulation)) continue;
+			for (int i = 0; i < el.length; i++) {
+				if (!(el[i] instanceof SourceManipulation))
+					continue;
 
 				SourceManipulation sm = (SourceManipulation) el[i];
 				ISourceRange src = sm.getSourceRange();
 				int endOffset = src.getStartPos() + src.getLength();
-				
+
 				// code BELOW this element changed - do nothing !
-				if (sdata.getOffset() > endOffset) { continue;	}
-				
+				if (sdata.getOffset() > endOffset) {
+					continue;
+				}
+
 				if (sdata.getOffset() < src.getStartPos()) {
 					// code ABOVE this element changed - modify offset
 					sm.setIdPos(src.getIdStartPos() + sdata.getSize(), src.getIdLength());
@@ -138,9 +141,10 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 					sm.setLines(src.getStartLine(), src.getEndLine() + sdata.getLines());
 				}
 			}
-		} catch (CModelException e) {}
+		} catch (CModelException e) {
+		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
@@ -167,19 +171,19 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		if (isTU) {
 			root = (ITranslationUnit) newInput;
 			if (fListener == null) {
-				fListener= new ElementChangedListener();
+				fListener = new ElementChangedListener();
 				CoreModel.getDefault().addElementChangedListener(fListener);
-				fPropertyListener= new PropertyListener();
+				fPropertyListener = new PropertyListener();
 				PreferenceConstants.getPreferenceStore().addPropertyChangeListener(fPropertyListener);
 			}
 		} else {
 			if (fListener != null) {
 				CoreModel.getDefault().removeElementChangedListener(fListener);
 				PreferenceConstants.getPreferenceStore().removePropertyChangeListener(fPropertyListener);
-				fListener= null;
-				fPropertyListener= null;
+				fListener = null;
+				fPropertyListener = null;
 			}
-			root= null;
+			root = null;
 		}
 	}
 
@@ -191,10 +195,10 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		Object[] children = null;
 		// Use the deferred manager for the first time (when parsing)
 		if (element instanceof ITranslationUnit) {
-			ITranslationUnit unit= (ITranslationUnit)element;
+			ITranslationUnit unit = (ITranslationUnit) element;
 			if (!unit.isOpen()) {
-				fInitialDeltaPending= true;
-				children= new Object[] { new PendingUpdateAdapter() };
+				fInitialDeltaPending = true;
+				children = new Object[] { new PendingUpdateAdapter() };
 			}
 		}
 		if (children == null) {
@@ -213,7 +217,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 
 	/**
 	 * Updates current selection.
-	 * 
+	 *
 	 * @param sel
 	 *            Selection to update.
 	 * @return Updated selection.
@@ -225,7 +229,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 			while (iter.hasNext()) {
 				final Object o = iter.next();
 				if (o instanceof ICElement) {
-					newSelection.add((ICElement)o);
+					newSelection.add((ICElement) o);
 				}
 			}
 		}
@@ -234,7 +238,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 
 	/**
 	 * The element change listener of the C outline viewer.
-	 * 
+	 *
 	 * @see IElementChangedListener
 	 */
 	class ElementChangedListener implements IElementChangedListener {
@@ -252,10 +256,10 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		@Override
 		public void elementChanged(final ElementChangedEvent e) {
 			if (e.getType() == ElementChangedEvent.POST_SHIFT && e.getDelta() instanceof CShiftData) {
-				contentShift((CShiftData)(e.getDelta()));
+				contentShift((CShiftData) (e.getDelta()));
 				return;
 			}
-			
+
 			final ICElementDelta delta = findElement(root, e.getDelta());
 			if (delta != null) {
 				contentUpdated();
@@ -264,7 +268,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 
 		/**
 		 * Determines is structural change.
-		 * 
+		 *
 		 * @param cuDelta
 		 *            Delta to check.
 		 * @return <b>true</b> if structural change.
@@ -278,7 +282,8 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 				if ((flags & ICElementDelta.F_CHILDREN) != 0) {
 					ret = true;
 				} else {
-					ret = (flags & (ICElementDelta.F_CONTENT | ICElementDelta.F_FINE_GRAINED)) == ICElementDelta.F_CONTENT;
+					ret = (flags
+							& (ICElementDelta.F_CONTENT | ICElementDelta.F_FINE_GRAINED)) == ICElementDelta.F_CONTENT;
 				}
 			}
 			return ret;
@@ -286,15 +291,14 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 
 		/**
 		 * Searches for element.
-		 * 
+		 *
 		 * @param unit
 		 *            Unit to search in.
 		 * @param delta
 		 *            Delta.
 		 * @return Found element.
 		 */
-		protected ICElementDelta findElement(ICElement unit,
-				ICElementDelta delta) {
+		protected ICElementDelta findElement(ICElement unit, ICElementDelta delta) {
 			if (delta == null || unit == null) {
 				return null;
 			}
@@ -329,9 +333,9 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	}
 
 	/**
-	 * 
+	 *
 	 * Property change listener.
-	 * 
+	 *
 	 * @author P.Tomaszewski
 	 */
 	class PropertyListener implements IPropertyChangeListener {
@@ -369,7 +373,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 						contentUpdated();
 					}
 				}
-			}else if (prop.equals(PreferenceConstants.OUTLINE_GROUP_MACROS)) {
+			} else if (prop.equals(PreferenceConstants.OUTLINE_GROUP_MACROS)) {
 				Object newValue = event.getNewValue();
 				if (newValue instanceof Boolean) {
 					boolean value = ((Boolean) newValue).booleanValue();
@@ -379,7 +383,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 					}
 				}
 			}
-			
+
 		}
 
 	}

@@ -36,22 +36,22 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Represents a function template, base class for method/constructor templates.
  */
-class PDOMCPPFunctionTemplate extends PDOMCPPFunction 
+class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner, IPDOMCPPTemplateParameterOwner {
 	private static final int TEMPLATE_PARAMS = PDOMCPPFunction.RECORD_SIZE;
-	
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = TEMPLATE_PARAMS + Database.PTR_SIZE;
-	
-	private volatile IPDOMCPPTemplateParameter[] params;  // Cached template parameters.
 
-	public PDOMCPPFunctionTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunctionTemplate template) 
+	private volatile IPDOMCPPTemplateParameter[] params; // Cached template parameters.
+
+	public PDOMCPPFunctionTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunctionTemplate template)
 			throws CoreException, DOMException {
 		super(linkage, parent, template, false);
-		final ICPPTemplateParameter[] origParams= template.getTemplateParameters();
+		final ICPPTemplateParameter[] origParams = template.getTemplateParameters();
 		params = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
 		final Database db = getDB();
-		long rec= PDOMTemplateParameterArray.putArray(db, params);
+		long rec = PDOMTemplateParameterArray.putArray(db, params);
 		db.putRecPtr(record + TEMPLATE_PARAMS, rec);
 		linkage.new ConfigureFunctionTemplate(template, this);
 	}
@@ -64,7 +64,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 	public void update(PDOMLinkage linkage, IBinding name) {
 		// no support for updating templates, yet.
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -79,11 +79,11 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 	public IPDOMCPPTemplateParameter[] getTemplateParameters() {
 		if (params == null) {
 			try {
-				long rec= getDB().getRecPtr(record + TEMPLATE_PARAMS);
+				long rec = getDB().getRecPtr(record + TEMPLATE_PARAMS);
 				if (rec == 0) {
-					params= IPDOMCPPTemplateParameter.EMPTY_ARRAY;
+					params = IPDOMCPPTemplateParameter.EMPTY_ARRAY;
 				} else {
-					params= PDOMTemplateParameterArray.getArray(this, rec);
+					params = PDOMTemplateParameterArray.getArray(this, rec);
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -92,20 +92,20 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 		}
 		return params;
 	}
-	
+
 	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
-		return PDOMInstanceCache.getCache(this).getInstance(arguments);	
+		return PDOMInstanceCache.getCache(this).getInstance(arguments);
 	}
 
 	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
-		PDOMInstanceCache.getCache(this).addInstance(arguments, instance);	
+		PDOMInstanceCache.getCache(this).addInstance(arguments, instance);
 	}
-	
+
 	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
-		return PDOMInstanceCache.getCache(this).getAllInstances();	
+		return PDOMInstanceCache.getCache(this).getAllInstances();
 	}
 
 	@Override
@@ -113,11 +113,11 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 		// Template parameters are identified by their position in the parameter list.
 		int pos = param.getParameterPosition();
 		ICPPTemplateParameter[] pars = getTemplateParameters();
-		
+
 		if (pars == null || pos >= pars.length)
 			return null;
-		
-		ICPPTemplateParameter result= pars[pos];
+
+		ICPPTemplateParameter result = pars[pos];
 		if (param instanceof ICPPTemplateTypeParameter) {
 			if (result instanceof ICPPTemplateTypeParameter)
 				return result;

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -34,11 +34,11 @@ import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
  * A merge viewer for C/C++ code.
  */
 public class CMergeViewer extends AbstractMergeViewer {
-	
-	private static final String TITLE= "CMergeViewer.title"; //$NON-NLS-1$
+
+	private static final String TITLE = "CMergeViewer.title"; //$NON-NLS-1$
 
 	CSourceViewerConfiguration fSourceViewerConfiguration;
-		
+
 	public CMergeViewer(Composite parent, int styles, CompareConfiguration mp) {
 		super(parent, styles, mp);
 	}
@@ -46,9 +46,10 @@ public class CMergeViewer extends AbstractMergeViewer {
 	@Override
 	protected SourceViewerConfiguration getSourceViewerConfiguration() {
 		if (fSourceViewerConfiguration == null) {
-			CTextTools tools= CUIPlugin.getDefault().getTextTools();
+			CTextTools tools = CUIPlugin.getDefault().getTextTools();
 			IPreferenceStore store = getPreferenceStore();
-			fSourceViewerConfiguration = new CSourceViewerConfiguration(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING);
+			fSourceViewerConfiguration = new CSourceViewerConfiguration(tools.getColorManager(), store, null,
+					ICPartitions.C_PARTITIONING);
 		}
 		return fSourceViewerConfiguration;
 	}
@@ -56,7 +57,7 @@ public class CMergeViewer extends AbstractMergeViewer {
 	@Override
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		// use workspace default for highlighting doc comments in compare viewer
-		IDocCommentOwner owner= DocCommentOwnerManager.getInstance().getWorkspaceCommentOwner();
+		IDocCommentOwner owner = DocCommentOwnerManager.getInstance().getWorkspaceCommentOwner();
 		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner(owner);
 	}
 

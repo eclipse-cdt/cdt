@@ -27,14 +27,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *  the function.
  *  </p>
  *  <p>
- *  The <code>-exec-finish</code> command operates on the selected stack 
+ *  The <code>-exec-finish</code> command operates on the selected stack
  *  frame.  Therefore the constructor requires a stack frame context.
  *  </p>
- * 
+ *
  */
-public class MIExecFinish extends MICommand<MIInfo> 
-{
-    public MIExecFinish(IFrameDMContext dmc) {
-        super(dmc, "-exec-finish"); //$NON-NLS-1$
-    }
+public class MIExecFinish extends MICommand<MIInfo> {
+	public MIExecFinish(IFrameDMContext dmc) {
+		super(dmc, "-exec-finish"); //$NON-NLS-1$
+	}
 }

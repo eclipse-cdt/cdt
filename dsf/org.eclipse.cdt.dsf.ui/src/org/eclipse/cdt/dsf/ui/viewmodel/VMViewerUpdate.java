@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -29,185 +29,213 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
 
-/** 
- * Helper class implementation of the update objects used with 
- * {@link IElementContentProvider}, {@link IElementLabelProvider}, 
- * and {@link IElementMementoProvider}.  The viewer update can be constructed 
- * using a higher level update object or a set of parameters to fulfill the 
- * <code>IViewerUpdate</code> interface. 
- * 
+/**
+ * Helper class implementation of the update objects used with
+ * {@link IElementContentProvider}, {@link IElementLabelProvider},
+ * and {@link IElementMementoProvider}.  The viewer update can be constructed
+ * using a higher level update object or a set of parameters to fulfill the
+ * <code>IViewerUpdate</code> interface.
+ *
  * @since 1.0
  */
 public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
-    
-    /**
-     * The request monitor to be called when this update is completed.
-     */
-    final private RequestMonitor fRequestMonitor;
-    
-    /**
-     * A higher-level update that this update is based on.  If specified, the given
-     * update is used to delegate calls to {@link #cancel()} and {@link #isCanceled()}.
-     */
-    final private IViewerUpdate fClientUpdate;
-    
-    /**
-     * Place holder for the client update.  It is only used if the client update is
-     * not specified.
-     */
-    private static class ClientUpdatePlaceHolder implements IViewerUpdate {
-        
-        ClientUpdatePlaceHolder(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext)
-        {
-            fViewerInput = viewerInput;
-            fElementPath = elementPath;
-            fPresentationContext = presentationContext;
-        }
-        /**
-         * The flag indicating whether this update was canceled.
-         */
-        private volatile boolean fCanceled;
-        
-        /**
-         * The viewer input object for this update.
-         */
-        final private Object fViewerInput;
-        
-        /**
-         * The element path of this update.
-         */
-        final private TreePath fElementPath;
-        
-        /**
-         * The presentation context of this update.
-         */
-        final private IPresentationContext fPresentationContext;
 
-        @Override
+	/**
+	 * The request monitor to be called when this update is completed.
+	 */
+	final private RequestMonitor fRequestMonitor;
+
+	/**
+	 * A higher-level update that this update is based on.  If specified, the given
+	 * update is used to delegate calls to {@link #cancel()} and {@link #isCanceled()}.
+	 */
+	final private IViewerUpdate fClientUpdate;
+
+	/**
+	 * Place holder for the client update.  It is only used if the client update is
+	 * not specified.
+	 */
+	private static class ClientUpdatePlaceHolder implements IViewerUpdate {
+
+		ClientUpdatePlaceHolder(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext) {
+			fViewerInput = viewerInput;
+			fElementPath = elementPath;
+			fPresentationContext = presentationContext;
+		}
+
+		/**
+		 * The flag indicating whether this update was canceled.
+		 */
+		private volatile boolean fCanceled;
+
+		/**
+		 * The viewer input object for this update.
+		 */
+		final private Object fViewerInput;
+
+		/**
+		 * The element path of this update.
+		 */
+		final private TreePath fElementPath;
+
+		/**
+		 * The presentation context of this update.
+		 */
+		final private IPresentationContext fPresentationContext;
+
+		@Override
 		public void cancel() {
-            fCanceled = true;
-        }
-        
-        @Override
-		public boolean isCanceled() { 
-            return fCanceled; 
-        }
+			fCanceled = true;
+		}
 
-        @Override
+		@Override
+		public boolean isCanceled() {
+			return fCanceled;
+		}
+
+		@Override
 		public IPresentationContext getPresentationContext() {
-            return fPresentationContext;
-        }
+			return fPresentationContext;
+		}
 
-        @Override
+		@Override
 		public Object getElement() {
-            return fElementPath.getSegmentCount() != 0 ? fElementPath.getLastSegment() : fViewerInput;
-        }
+			return fElementPath.getSegmentCount() != 0 ? fElementPath.getLastSegment() : fViewerInput;
+		}
 
-        @Override
+		@Override
 		public TreePath getElementPath() {
-            return fElementPath;
-        }
+			return fElementPath;
+		}
 
-        @Override
+		@Override
 		public Object getViewerInput() {
-            return fViewerInput;
-        }
-        
-        @Override
-		public void done() { assert false; } // not used
-        @Override
-		public void setStatus(IStatus status) {assert false; } // not used
-        @Override
-		public IStatus getStatus() { assert false; return null; } // not used
+			return fViewerInput;
+		}
 
-    }
-    
-    /**
-     * Creates a viewer update based on a higher-level update.  The update element
-     * information as well as cancel requests are delegated to the given client
-     * update.
-     * <p/>
-     * Note: this update will not automatically call the client update's 
-     * {@link IRequest#done()} method.  The user of this update should supply
-     * a request monitor which properly completes the client update. 
-     * 
-     * @param clientUpdate Client update that this update is based on.
-     * @param requestMonitor Call-back invoked when this update completes.  
-     */
-    public VMViewerUpdate(IViewerUpdate clientUpdate, RequestMonitor requestMonitor) {
-        fRequestMonitor = requestMonitor;
-        fClientUpdate = clientUpdate;
-    }
+		@Override
+		public void done() {
+			assert false;
+		} // not used
 
-    /**
-     * Request monitor which uses a model delta to calculate the element information.
-     * This update is useful when calculating a model delta for a given view model node.
-     * 
-     * @param delta Model delta of a parent element.
-     * @param presentationContext Presentation context for this update.
-     * @param requestMonitor Call-back invoked when this update completes.  
-     */
-    public VMViewerUpdate(IModelDelta delta, IPresentationContext presentationContext, RequestMonitor requestMonitor) {
-        List<Object> elementList = new LinkedList<Object>();
-        IModelDelta listDelta = delta;
-        elementList.add(0, listDelta.getElement());
-        while (listDelta.getParentDelta() != null) {
-            listDelta = listDelta.getParentDelta();
-            elementList.add(0, listDelta.getElement());
-        }
-        Object viewerInput = elementList.remove(0);
-        fClientUpdate = new ClientUpdatePlaceHolder(
-            new TreePath(elementList.toArray()), viewerInput, presentationContext);
-        fRequestMonitor = requestMonitor;
-    }
+		@Override
+		public void setStatus(IStatus status) {
+			assert false;
+		} // not used
 
-    /**
-     * Creates a viewer update with the given parameters.
-     * 
-     * @param elementPath The path to the element for which the update is generated.
-     * @param viewerInput Input into the viewer of the update.
-     * @param presentationContext Presentation context for this update.
-     * @param requestMonitor Call-back invoked when this update completes.  
-     */
-    public VMViewerUpdate(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext, RequestMonitor requestMonitor) {
-        fRequestMonitor = requestMonitor;
-        fClientUpdate = new ClientUpdatePlaceHolder(elementPath, viewerInput, presentationContext);
-    }
-    
-    protected RequestMonitor getRequestMonitor() {
-        return fRequestMonitor;
-    }
-    
-    @Override
-	public Object getViewerInput() { return fClientUpdate.getViewerInput(); }
-    @Override
-	public Object getElement() { return fClientUpdate.getElement(); }
-    @Override
-	public TreePath getElementPath() { return fClientUpdate.getElementPath(); }
-    @Override
-	public IPresentationContext getPresentationContext() { return fClientUpdate.getPresentationContext(); }
-    @Override
-	public IStatus getStatus() { return fRequestMonitor.getStatus(); }
-    @Override
-	public void setStatus(IStatus status) { fRequestMonitor.setStatus(status); }
-    
-    @Override
-	public boolean isCanceled() { 
-        return fClientUpdate.isCanceled();
-    }
-    @Override
+		@Override
+		public IStatus getStatus() {
+			assert false;
+			return null;
+		} // not used
+
+	}
+
+	/**
+	 * Creates a viewer update based on a higher-level update.  The update element
+	 * information as well as cancel requests are delegated to the given client
+	 * update.
+	 * <p/>
+	 * Note: this update will not automatically call the client update's
+	 * {@link IRequest#done()} method.  The user of this update should supply
+	 * a request monitor which properly completes the client update.
+	 *
+	 * @param clientUpdate Client update that this update is based on.
+	 * @param requestMonitor Call-back invoked when this update completes.
+	 */
+	public VMViewerUpdate(IViewerUpdate clientUpdate, RequestMonitor requestMonitor) {
+		fRequestMonitor = requestMonitor;
+		fClientUpdate = clientUpdate;
+	}
+
+	/**
+	 * Request monitor which uses a model delta to calculate the element information.
+	 * This update is useful when calculating a model delta for a given view model node.
+	 *
+	 * @param delta Model delta of a parent element.
+	 * @param presentationContext Presentation context for this update.
+	 * @param requestMonitor Call-back invoked when this update completes.
+	 */
+	public VMViewerUpdate(IModelDelta delta, IPresentationContext presentationContext, RequestMonitor requestMonitor) {
+		List<Object> elementList = new LinkedList<Object>();
+		IModelDelta listDelta = delta;
+		elementList.add(0, listDelta.getElement());
+		while (listDelta.getParentDelta() != null) {
+			listDelta = listDelta.getParentDelta();
+			elementList.add(0, listDelta.getElement());
+		}
+		Object viewerInput = elementList.remove(0);
+		fClientUpdate = new ClientUpdatePlaceHolder(new TreePath(elementList.toArray()), viewerInput,
+				presentationContext);
+		fRequestMonitor = requestMonitor;
+	}
+
+	/**
+	 * Creates a viewer update with the given parameters.
+	 *
+	 * @param elementPath The path to the element for which the update is generated.
+	 * @param viewerInput Input into the viewer of the update.
+	 * @param presentationContext Presentation context for this update.
+	 * @param requestMonitor Call-back invoked when this update completes.
+	 */
+	public VMViewerUpdate(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext,
+			RequestMonitor requestMonitor) {
+		fRequestMonitor = requestMonitor;
+		fClientUpdate = new ClientUpdatePlaceHolder(elementPath, viewerInput, presentationContext);
+	}
+
+	protected RequestMonitor getRequestMonitor() {
+		return fRequestMonitor;
+	}
+
+	@Override
+	public Object getViewerInput() {
+		return fClientUpdate.getViewerInput();
+	}
+
+	@Override
+	public Object getElement() {
+		return fClientUpdate.getElement();
+	}
+
+	@Override
+	public TreePath getElementPath() {
+		return fClientUpdate.getElementPath();
+	}
+
+	@Override
+	public IPresentationContext getPresentationContext() {
+		return fClientUpdate.getPresentationContext();
+	}
+
+	@Override
+	public IStatus getStatus() {
+		return fRequestMonitor.getStatus();
+	}
+
+	@Override
+	public void setStatus(IStatus status) {
+		fRequestMonitor.setStatus(status);
+	}
+
+	@Override
+	public boolean isCanceled() {
+		return fClientUpdate.isCanceled();
+	}
+
+	@Override
 	public void cancel() {
-        fClientUpdate.cancel();
-    }
+		fClientUpdate.cancel();
+	}
 
-    @Override
-	public void done() { 
-    	setSubmitted();
-        if ( isCanceled() ) {
-            fRequestMonitor.cancel();
-            fRequestMonitor.setStatus(new Status( IStatus.CANCEL, DsfUIPlugin.PLUGIN_ID," Update was canceled") ); //$NON-NLS-1$
-        }
-        fRequestMonitor.done();
-    }
+	@Override
+	public void done() {
+		setSubmitted();
+		if (isCanceled()) {
+			fRequestMonitor.cancel();
+			fRequestMonitor.setStatus(new Status(IStatus.CANCEL, DsfUIPlugin.PLUGIN_ID, " Update was canceled")); //$NON-NLS-1$
+		}
+		fRequestMonitor.done();
+	}
 
 }

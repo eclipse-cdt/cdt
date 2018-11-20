@@ -17,32 +17,32 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * Utility functions some collectors may need
- * 
+ *
  * @author vhirsl
  */
 public interface IScannerInfoCollectorCleaner {
-    /**
-     * Delete all discovered paths for the resource
-     */
-    public void deleteAllPaths(IResource resource);
+	/**
+	 * Delete all discovered paths for the resource
+	 */
+	public void deleteAllPaths(IResource resource);
 
-    /**
-     * Delete all discovered symbols for the resource
-     */
-    public void deleteAllSymbols(IResource resource);
+	/**
+	 * Delete all discovered symbols for the resource
+	 */
+	public void deleteAllSymbols(IResource resource);
 
-    /**
-     * Delete a specific include path
-     */
-    public void deletePath(IResource resource, String path);
+	/**
+	 * Delete a specific include path
+	 */
+	public void deletePath(IResource resource, String path);
 
-    /**
-     * Delete a specific symbol definition
-     */
-    public void deleteSymbol(IResource resource, String symbol);
-    
-    /**
-     * Delete all discovered scanner info for the resource
-     */
-    public void deleteAll(IResource resource);
+	/**
+	 * Delete a specific symbol definition
+	 */
+	public void deleteSymbol(IResource resource, String symbol);
+
+	/**
+	 * Delete all discovered scanner info for the resource
+	 */
+	public void deleteAll(IResource resource);
 }

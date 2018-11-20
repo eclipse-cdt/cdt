@@ -137,9 +137,9 @@ public class CodanCorePlugin extends Plugin {
 	private final boolean isDebuggingEnabled(final String optionPath) {
 		if (optionPath == null)
 			return true;
-		if (debugOptions==null)
+		if (debugOptions == null)
 			getTrace();
-		if (debugOptions==null)
+		if (debugOptions == null)
 			return false;
 		boolean debugEnabled = false;
 		if (debugOptions.isDebugEnabled()) {
@@ -155,23 +155,37 @@ public class CodanCorePlugin extends Plugin {
 	 */
 	private static final DebugTrace NULL_TRACE = new DebugTrace() {
 		@Override
-		public void trace(String option, String message) {}
-		@Override
-		public void trace(String option, String message, Throwable error) {}
-		@Override
-		public void traceDumpStack(String option) {}
-		@Override
-		public void traceEntry(String option) {}
-		@Override
-		public void traceEntry(String option, Object methodArgument) {}
-		@Override
-		public void traceEntry(String option, Object[] methodArguments) {}
-		@Override
-		public void traceExit(String option) {}
-		@Override
-		public void traceExit(String option, Object result) {}
-	};
+		public void trace(String option, String message) {
+		}
 
+		@Override
+		public void trace(String option, String message, Throwable error) {
+		}
+
+		@Override
+		public void traceDumpStack(String option) {
+		}
+
+		@Override
+		public void traceEntry(String option) {
+		}
+
+		@Override
+		public void traceEntry(String option, Object methodArgument) {
+		}
+
+		@Override
+		public void traceEntry(String option, Object[] methodArguments) {
+		}
+
+		@Override
+		public void traceExit(String option) {
+		}
+
+		@Override
+		public void traceExit(String option, Object result) {
+		}
+	};
 
 	synchronized private static DebugTrace getTrace() {
 		if (trace == null) {
@@ -181,15 +195,15 @@ public class CodanCorePlugin extends Plugin {
 				if (bundle != null) {
 					BundleContext context = bundle.getBundleContext();
 					if (context != null) {
-						ServiceTracker<DebugOptions, DebugOptions> tracker = new ServiceTracker<DebugOptions, DebugOptions>(context, DebugOptions.class.getName(), null);
+						ServiceTracker<DebugOptions, DebugOptions> tracker = new ServiceTracker<DebugOptions, DebugOptions>(
+								context, DebugOptions.class.getName(), null);
 						try {
 							tracker.open();
 							debugOptions = tracker.getService();
 							if (debugOptions != null) {
 								trace = debugOptions.newDebugTrace(bundle.getSymbolicName());
 							}
-						}
-						finally {
+						} finally {
 							tracker.close();
 						}
 					}

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *     IBM Corporation
@@ -29,10 +29,10 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * This class represents a preference page that
- * is contributed to the Preferences dialog. By 
+ * is contributed to the Preferences dialog. By
  * subclassing <samp>FieldEditorPreferencePage</samp>, we
  * can use the field support built into JFace that allows
- * us to create a page that is small and knows how to 
+ * us to create a page that is small and knows how to
  * save, restore and apply itself.
  * <p>
  * This page is used to modify preferences only. They
@@ -41,23 +41,20 @@ import org.eclipse.ui.PlatformUI;
  * be accessed directly via the preference store.
  */
 
-public class TraditionalRenderingPreferencePage
-	extends FieldEditorPreferencePage
-	implements IWorkbenchPreferencePage {
+public class TraditionalRenderingPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public TraditionalRenderingPreferencePage() {
 		super(GRID);
 		setPreferenceStore(TraditionalRenderingPlugin.getDefault().getPreferenceStore());
 		setDescription(TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_description")); //$NON-NLS-1$
 	}
-	
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), TraditionalRenderingPlugin.getUniqueIdentifier() + ".TraditionalRenderingPreferencePage_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				TraditionalRenderingPlugin.getUniqueIdentifier() + ".TraditionalRenderingPreferencePage_context"); //$NON-NLS-1$
 	}
-
 
 	/**
 	 * Creates the field editors. Field editors are abstractions of
@@ -68,26 +65,31 @@ public class TraditionalRenderingPreferencePage
 	@Override
 	public void createFieldEditors() {
 		addField(new BooleanFieldEditor(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_TEXT,
-				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_UseGlobalTextColor"), getFieldEditorParent())); //$NON-NLS-1$
-		
-		addField(new ColorFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_TEXT, 
-				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_TextColor"), getFieldEditorParent()));  //$NON-NLS-1$
-		
+				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_UseGlobalTextColor"), //$NON-NLS-1$
+				getFieldEditorParent()));
+
+		addField(new ColorFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_TEXT,
+				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_TextColor"), //$NON-NLS-1$
+				getFieldEditorParent()));
+
 		addField(new ScaleFieldEditor(TraditionalRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS,
-				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_BrightenAlternateCells"), getFieldEditorParent(), 0, 8, 1, 1)); //$NON-NLS-1$
-		
+				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_BrightenAlternateCells"), //$NON-NLS-1$
+				getFieldEditorParent(), 0, 8, 1, 1));
+
 		addField(new BooleanFieldEditor(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_BACKGROUND,
-				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_UseGlobalBackgroundColor"), getFieldEditorParent())); //$NON-NLS-1$
-		
-		addField(new ColorFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND, 
-				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_BackgroundColor"), getFieldEditorParent())); //$NON-NLS-1$
-		
+				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_UseGlobalBackgroundColor"), //$NON-NLS-1$
+				getFieldEditorParent()));
+
+		addField(new ColorFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND,
+				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_BackgroundColor"), //$NON-NLS-1$
+				getFieldEditorParent()));
+
 		// are there known memory spaces? If so make their background color configurable
 		IMemorySpacePreferencesHelper util = TraditionalMemoryRenderingFactory.getMemorySpacesPreferencesHelper();
-		
+
 		Map<String, String> memSpacesLabels = util.getMemorySpaceLabels();
 		for (String key : memSpacesLabels.keySet()) {
-		  addField(new ColorFieldEditor(key, memSpacesLabels.get(key), getFieldEditorParent()));
+			addField(new ColorFieldEditor(key, memSpacesLabels.get(key), getFieldEditorParent()));
 		}
 
 		addField(new ColorAndEffectFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED,
@@ -105,21 +107,30 @@ public class TraditionalRenderingPreferencePage
 				getFieldEditorParent()));
 
 		addField(new BooleanFieldEditor(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_SELECTION,
-				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_UseGlobalSelectionColor"), getFieldEditorParent())); //$NON-NLS-1$
-		
-		addField(new ColorFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_SELECTION, 
-				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_SelectionColor"), getFieldEditorParent())); //$NON-NLS-1$
-		
-		addField(new RadioGroupFieldEditor(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE, 
-				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_EditBuffer"), 1, new String[][] { { TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_SaveOnEnterCancelOnFocusLost"), "saveOnEnterCancelOnFocusLost" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				{ TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_SaveOnEnterOrFocusLost"), "saveOnEnterOrFocusLost" } }, getFieldEditorParent())); //$NON-NLS-1$ //$NON-NLS-2$
-		
+				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_UseGlobalSelectionColor"), //$NON-NLS-1$
+				getFieldEditorParent()));
+
+		addField(new ColorFieldEditor(TraditionalRenderingPreferenceConstants.MEM_COLOR_SELECTION,
+				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_SelectionColor"), //$NON-NLS-1$
+				getFieldEditorParent()));
+
+		addField(new RadioGroupFieldEditor(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE,
+				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_EditBuffer"), 1, //$NON-NLS-1$
+				new String[][] {
+						{ TraditionalRenderingMessages
+								.getString("TraditionalRenderingPreferencePage_SaveOnEnterCancelOnFocusLost"), //$NON-NLS-1$
+								"saveOnEnterCancelOnFocusLost" }, //$NON-NLS-1$
+						{ TraditionalRenderingMessages
+								.getString("TraditionalRenderingPreferencePage_SaveOnEnterOrFocusLost"), //$NON-NLS-1$
+								"saveOnEnterOrFocusLost" } }, //$NON-NLS-1$
+				getFieldEditorParent()));
+
 		addField(new ScaleFieldEditor(TraditionalRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT,
-				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_HistoryTrailLevels"), getFieldEditorParent(), 1, 10, 1, 1)); //$NON-NLS-1$
+				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_HistoryTrailLevels"), //$NON-NLS-1$
+				getFieldEditorParent(), 1, 10, 1, 1));
 
 		addField(new BooleanFieldEditor(TraditionalRenderingPreferenceConstants.MEM_CROSS_REFERENCE_INFO,
-				TraditionalRenderingMessages
-						.getString("TraditionalRenderingPreferencePage_ShowCrossRefInfo"), //$NON-NLS-1$
+				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_ShowCrossRefInfo"), //$NON-NLS-1$
 				getFieldEditorParent()));
 	}
 
@@ -128,5 +139,5 @@ public class TraditionalRenderingPreferencePage
 	 */
 	public void init(IWorkbench workbench) {
 	}
-	
+
 }

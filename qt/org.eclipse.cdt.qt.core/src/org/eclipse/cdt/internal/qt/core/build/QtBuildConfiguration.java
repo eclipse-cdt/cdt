@@ -71,23 +71,23 @@ public class QtBuildConfiguration extends CBuildConfiguration
 	private IQtInstall qtInstall;
 	private Map<String, String> qtProperties;
 	private boolean doFullBuild;
-	
+
 	private IEnvironmentVariable pathVar = new IEnvironmentVariable() {
 		@Override
 		public String getValue() {
 			return getQmakeCommand().getParent().toString();
 		}
-		
+
 		@Override
 		public int getOperation() {
 			return IEnvironmentVariable.ENVVAR_PREPEND;
 		}
-		
+
 		@Override
 		public String getName() {
 			return "PATH"; //$NON-NLS-1$
 		}
-		
+
 		@Override
 		public String getDelimiter() {
 			return File.pathSeparator;
@@ -117,9 +117,8 @@ public class QtBuildConfiguration extends CBuildConfiguration
 		}
 
 		if (getQtInstall() == null) {
-			throw new CoreException(
-					new Status(IStatus.ERROR, Activator.ID, CCorePlugin.STATUS_BUILD_CONFIG_NOT_VALID,
-							String.format(Messages.QtBuildConfiguration_ConfigNotFound, name), null));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.ID, CCorePlugin.STATUS_BUILD_CONFIG_NOT_VALID,
+					String.format(Messages.QtBuildConfiguration_ConfigNotFound, name), null));
 		}
 
 		String oldLaunchMode = settings.get(LAUNCH_MODE, null);
@@ -457,7 +456,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 	public String[] getMakeCommand() {
 		String buildCommandStr = getProperty(BUILD_COMMAND);
 		if (buildCommandStr != null) {
-			String[] buildCommand = buildCommandStr.split(" "); //$NON-NLS-1$ 
+			String[] buildCommand = buildCommandStr.split(" "); //$NON-NLS-1$
 			Path command = findCommand(buildCommand[0]);
 			if (command == null) {
 				command = findCommand("make"); //$NON-NLS-1$

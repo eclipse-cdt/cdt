@@ -39,12 +39,23 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase {
 
 	public static class SingleProject extends IndexCBindingResolutionBugs {
-		public SingleProject() { setStrategy(new SinglePDOMTestStrategy(false)); }
-		public static TestSuite suite() { return suite(SingleProject.class); }
+		public SingleProject() {
+			setStrategy(new SinglePDOMTestStrategy(false));
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
+
 	public static class ProjectWithDepProj extends IndexCBindingResolutionBugs {
-		public ProjectWithDepProj() { setStrategy(new ReferencedProject(false)); }
-		public static TestSuite suite() { return suite(ProjectWithDepProj.class); }
+		public ProjectWithDepProj() {
+			setStrategy(new ReferencedProject(false));
+		}
+
+		public static TestSuite suite() {
+			return suite(ProjectWithDepProj.class);
+		}
 	}
 
 	public static void addTests(TestSuite suite) {
@@ -72,9 +83,9 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		IBinding b0 = getBindingFromASTName("func1()", 5);
 		assertTrue(b0 instanceof IFunction);
 		IFunction f0 = (IFunction) b0;
-		IParameter[] params= f0.getParameters();
+		IParameter[] params = f0.getParameters();
 		assertEquals(0, params.length);
-		IType returnType= f0.getType().getReturnType();
+		IType returnType = f0.getType().getReturnType();
 		assertTrue(returnType instanceof IBasicType);
 		assertEquals(IBasicType.Kind.eVoid, ((IBasicType) returnType).getKind());
 	}
@@ -91,210 +102,212 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertTrue(b0 instanceof IFunction);
 	}
 
-    // typedef struct {
-    //    int utm;
-    // } usertype;
-    // void func(usertype t);
+	// typedef struct {
+	//    int utm;
+	// } usertype;
+	// void func(usertype t);
 
 	// #include "header.h"
-    // void test() {
+	// void test() {
 	//    usertype ut;
 	//    func(ut);
-    // }
-    public void testFuncWithTypedefForAnonymousStruct_190730() throws Exception {
+	// }
+	public void testFuncWithTypedefForAnonymousStruct_190730() throws Exception {
 		IBinding b0 = getBindingFromASTName("func(", 4);
 		assertTrue(b0 instanceof IFunction);
-		IFunction f= (IFunction) b0;
-		IParameter[] pars= f.getParameters();
+		IFunction f = (IFunction) b0;
+		IParameter[] pars = f.getParameters();
 		assertEquals(1, pars.length);
-		IType type= pars[0].getType();
+		IType type = pars[0].getType();
 		assertInstance(type, ITypedef.class);
-		type= ((ITypedef) type).getType();
+		type = ((ITypedef) type).getType();
 		assertInstance(type, ICompositeType.class);
-    }
+	}
 
-    // typedef enum {
-    //    eItem
-    // } userEnum;
-    // void func(userEnum t);
+	// typedef enum {
+	//    eItem
+	// } userEnum;
+	// void func(userEnum t);
 
 	// #include "header.h"
-    // void test() {
+	// void test() {
 	//    userEnum ut;
 	//    func(ut);
-    // }
-    public void testFuncWithTypedefForAnonymousEnum_190730() throws Exception {
+	// }
+	public void testFuncWithTypedefForAnonymousEnum_190730() throws Exception {
 		IBinding b0 = getBindingFromASTName("func(", 4);
 		assertTrue(b0 instanceof IFunction);
-		IFunction f= (IFunction) b0;
-		IParameter[] pars= f.getParameters();
+		IFunction f = (IFunction) b0;
+		IParameter[] pars = f.getParameters();
 		assertEquals(1, pars.length);
-		IType type= pars[0].getType();
+		IType type = pars[0].getType();
 		assertInstance(type, ITypedef.class);
-		type= ((ITypedef) type).getType();
+		type = ((ITypedef) type).getType();
 		assertInstance(type, IEnumeration.class);
 		assertTrue(type instanceof IEnumeration);
-    }
+	}
 
-    // int globalVar;
+	// int globalVar;
 
 	// // don't include header
-    // char globalVar;
-    public void testAstIndexConflictVariable_Bug195127() throws Exception {
-    	fakeFailForMultiProject();
+	// char globalVar;
+	public void testAstIndexConflictVariable_Bug195127() throws Exception {
+		fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("globalVar;", 9);
 		assertTrue(b0 instanceof IVariable);
-		IVariable v= (IVariable) b0;
-		IType type= v.getType();
+		IVariable v = (IVariable) b0;
+		IType type = v.getType();
 		assertTrue(type instanceof IBasicType);
 		assertTrue(((IBasicType) type).getKind() == IBasicType.Kind.eChar);
-    }
+	}
 
-    // int globalFunc();
+	// int globalFunc();
 
 	// // don't include header
-    // char globalFunc();
-    public void testAstIndexConflictFunction_Bug195127() throws Exception {
-    	fakeFailForMultiProject();
+	// char globalFunc();
+	public void testAstIndexConflictFunction_Bug195127() throws Exception {
+		fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("globalFunc(", 10);
 		assertTrue(b0 instanceof IFunction);
-		IFunction f= (IFunction) b0;
-		IType type= f.getType().getReturnType();
+		IFunction f = (IFunction) b0;
+		IType type = f.getType().getReturnType();
 		assertTrue(type instanceof IBasicType);
 		assertTrue(((IBasicType) type).getKind() == IBasicType.Kind.eChar);
-    }
+	}
 
-    // struct astruct {
-    //    int member;
-    // };
+	// struct astruct {
+	//    int member;
+	// };
 
 	// // don't include header
-    // struct astruct {
-    //    char member;
-    //    int additionalMember;
-    // };
-    public void testAstIndexConflictStruct_Bug195127() throws Exception {
-    	fakeFailForMultiProject();
+	// struct astruct {
+	//    char member;
+	//    int additionalMember;
+	// };
+	public void testAstIndexConflictStruct_Bug195127() throws Exception {
+		fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("astruct", 7);
 		assertTrue(b0 instanceof ICompositeType);
-		ICompositeType ct= (ICompositeType) b0;
-		IField[] fields= ct.getFields();
+		ICompositeType ct = (ICompositeType) b0;
+		IField[] fields = ct.getFields();
 		assertEquals(2, fields.length);
-		IField member= fields[0];
-		IField additionalMember= fields[1];
+		IField member = fields[0];
+		IField additionalMember = fields[1];
 		if (member.getName().equals("additionalMember")) {
-			IField h= member; member= additionalMember; additionalMember= h;
+			IField h = member;
+			member = additionalMember;
+			additionalMember = h;
 		}
 		assertEquals("member", member.getName());
 		assertEquals("additionalMember", additionalMember.getName());
-		IType type= member.getType();
+		IType type = member.getType();
 		assertTrue(type instanceof IBasicType);
 		assertTrue(((IBasicType) type).getKind() == IBasicType.Kind.eChar);
-    }
+	}
 
-    // enum anenum {
-    //    eItem0
-    // };
+	// enum anenum {
+	//    eItem0
+	// };
 
 	// // don't include header
-    // enum anenum {
-    //    eItem0, eItem1
-    // };
-    public void testAstIndexConflictEnumerator_Bug195127() throws Exception {
-    	fakeFailForMultiProject();
+	// enum anenum {
+	//    eItem0, eItem1
+	// };
+	public void testAstIndexConflictEnumerator_Bug195127() throws Exception {
+		fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("anenum", 6);
 		assertTrue(b0 instanceof IEnumeration);
-		IEnumeration enumeration= (IEnumeration) b0;
-		IEnumerator[] enumerators= enumeration.getEnumerators();
+		IEnumeration enumeration = (IEnumeration) b0;
+		IEnumerator[] enumerators = enumeration.getEnumerators();
 		assertEquals(2, enumerators.length);
-    }
+	}
 
-    // typedef int atypedef;
+	// typedef int atypedef;
 
 	// // don't include header
-    // typedef char atypedef;
-    public void testAstIndexConflictTypedef_Bug195127() throws Exception {
-    	fakeFailForMultiProject();
+	// typedef char atypedef;
+	public void testAstIndexConflictTypedef_Bug195127() throws Exception {
+		fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("atypedef;", 8);
 		assertTrue(b0 instanceof ITypedef);
-		ITypedef t= (ITypedef) b0;
-		IType type= t.getType();
+		ITypedef t = (ITypedef) b0;
+		IType type = t.getType();
 		assertTrue(type instanceof IBasicType);
 		assertTrue(((IBasicType) type).getKind() == IBasicType.Kind.eChar);
-    }
+	}
 
-    // struct st_20070703 {
-    //    int member;
-    // };
+	// struct st_20070703 {
+	//    int member;
+	// };
 
 	// #include "header.h"
-    // struct st_20070703;
-    // void func(struct st_20070703* x) {
-    //    x->member= 0;
-    // }
-    public void testAstIndexStructFwdDecl_Bug195227() throws Exception {
+	// struct st_20070703;
+	// void func(struct st_20070703* x) {
+	//    x->member= 0;
+	// }
+	public void testAstIndexStructFwdDecl_Bug195227() throws Exception {
 		IBinding b0 = getBindingFromASTName("member=", 6);
 		assertTrue(b0 instanceof IField);
-    }
+	}
 
-    // struct astruct {
-    //    int member;
-    // };
-    // enum anenum {
-    //    eItem0
-    // };
+	// struct astruct {
+	//    int member;
+	// };
+	// enum anenum {
+	//    eItem0
+	// };
 
 	// #include "header.h"
-    // struct astruct;
-    // enum anenum;
-    // void func(struct astruct a, enum anenum b) {
-    // }
-    public void testAstIndexFwdDecl_Bug195227() throws Exception {
+	// struct astruct;
+	// enum anenum;
+	// void func(struct astruct a, enum anenum b) {
+	// }
+	public void testAstIndexFwdDecl_Bug195227() throws Exception {
 		IBinding b0 = getBindingFromASTName("astruct;", 7);
 		IBinding b1 = getBindingFromASTName("anenum;", 6);
 		assertTrue(b0 instanceof ICompositeType);
-		ICompositeType t= (ICompositeType) b0;
-		IField[] f= t.getFields();
+		ICompositeType t = (ICompositeType) b0;
+		IField[] f = t.getFields();
 		assertEquals(1, f.length);
 		assertTrue(b1 instanceof IEnumeration);
-		IEnumeration e= (IEnumeration) b1;
-		IEnumerator[] ei= e.getEnumerators();
+		IEnumeration e = (IEnumeration) b1;
+		IEnumerator[] ei = e.getEnumerators();
 		assertEquals(1, ei.length);
 
 		b0 = getBindingFromASTName("astruct a", 7);
 		b1 = getBindingFromASTName("anenum b", 6);
 		assertTrue(b0 instanceof ICompositeType);
-		t= (ICompositeType) b0;
-		f= t.getFields();
+		t = (ICompositeType) b0;
+		f = t.getFields();
 		assertEquals(1, f.length);
 		assertTrue(b1 instanceof IEnumeration);
-		e= (IEnumeration) b1;
-		ei= e.getEnumerators();
+		e = (IEnumeration) b1;
+		ei = e.getEnumerators();
 		assertEquals(1, ei.length);
-    }
+	}
 
-    // // no header needed
+	// // no header needed
 
-    // typedef struct {
-    //    int member;
-    // } t_struct;
-    // typedef union {
-    //    int member;
-    // } t_union;
-    // typedef enum {
-    //    ei
-    // } t_enum;
+	// typedef struct {
+	//    int member;
+	// } t_struct;
+	// typedef union {
+	//    int member;
+	// } t_union;
+	// typedef enum {
+	//    ei
+	// } t_enum;
 	public void testIsSameAnonymousType_Bug193962() throws DOMException {
 		// struct
 		IBinding tdAST = getBindingFromASTName("t_struct;", 8);
 		assertFalse(tdAST instanceof IIndexBinding);
-		IBinding tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		IBinding tdIndex = strategy.getIndex().adaptBinding(tdAST);
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
 
-		IType tAST= ((ITypedef) tdAST).getType();
-		IType tIndex= ((ITypedef) tdIndex).getType();
+		IType tAST = ((ITypedef) tdAST).getType();
+		IType tIndex = ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof ICompositeType);
 		assertTrue(tIndex instanceof ICompositeType);
 		assertTrue(tAST.isSameType(tIndex));
@@ -303,13 +316,13 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		// union
 		tdAST = getBindingFromASTName("t_union;", 7);
 		assertFalse(tdAST instanceof IIndexBinding);
-		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		tdIndex = strategy.getIndex().adaptBinding(tdAST);
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
 
-		tAST= ((ITypedef) tdAST).getType();
-		tIndex= ((ITypedef) tdIndex).getType();
+		tAST = ((ITypedef) tdAST).getType();
+		tIndex = ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof ICompositeType);
 		assertTrue(tIndex instanceof ICompositeType);
 		assertTrue(tAST.isSameType(tIndex));
@@ -318,13 +331,13 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		// enum
 		tdAST = getBindingFromASTName("t_enum;", 6);
 		assertFalse(tdAST instanceof IIndexBinding);
-		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		tdIndex = strategy.getIndex().adaptBinding(tdAST);
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
 
-		tAST= ((ITypedef) tdAST).getType();
-		tIndex= ((ITypedef) tdIndex).getType();
+		tAST = ((ITypedef) tdAST).getType();
+		tIndex = ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof IEnumeration);
 		assertTrue(tIndex instanceof IEnumeration);
 		assertTrue(tAST.isSameType(tIndex));
@@ -346,8 +359,8 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		// struct
 		IBinding b = getBindingFromASTName("var1=", 4);
 		assertTrue(b instanceof IField);
-		IField f= (IField) b;
-		IScope outer= f.getCompositeTypeOwner().getScope();
+		IField f = (IField) b;
+		IScope outer = f.getCompositeTypeOwner().getScope();
 		assertTrue(outer instanceof ICCompositeTypeScope);
 		assertEquals("outer", outer.getScopeName().toString());
 	}
@@ -367,8 +380,8 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		// struct
 		IBinding b = getBindingFromASTName("var1=", 4);
 		assertTrue(b instanceof IField);
-		IField f= (IField) b;
-		IScope outer= f.getCompositeTypeOwner().getScope();
+		IField f = (IField) b;
+		IScope outer = f.getCompositeTypeOwner().getScope();
 		assertTrue(outer instanceof ICCompositeTypeScope);
 		assertEquals("outer", outer.getScopeName().toString());
 	}
@@ -387,8 +400,8 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		// struct
 		IBinding b = getBindingFromASTName("myFunc(", 6);
 		assertTrue(b instanceof IFunction);
-		IFunction f= (IFunction) b;
-		IParameter[] params= f.getParameters();
+		IFunction f = (IFunction) b;
+		IParameter[] params = f.getParameters();
 		assertEquals(1, params.length);
 		assertTrue(params[0].getType() instanceof IBasicType);
 		assertEquals(IBasicType.Kind.eInt, ((IBasicType) params[0].getType()).getKind());
@@ -476,7 +489,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 	//			.f = 3.1
 	//	};
 	public void testDesignatedInitializer_Bug210019() throws Exception {
-		IField f= getBindingFromASTName("f", 0);
+		IField f = getBindingFromASTName("f", 0);
 	}
 
 	//	struct S {
@@ -488,6 +501,6 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 	//		f(&i->data);
 	//	}
 	public void testBug394151() throws Exception {
-		IParameter f= getBindingFromASTName("f(", 1);
+		IParameter f = getBindingFromASTName("f(", 1);
 	}
 }

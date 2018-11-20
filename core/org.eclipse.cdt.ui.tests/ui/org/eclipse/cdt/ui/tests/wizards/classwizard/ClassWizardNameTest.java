@@ -19,25 +19,25 @@ import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage;
 
 public class ClassWizardNameTest extends BaseUITestCase {
-	
+
 	private class ClassCreationPage extends NewClassCreationWizardPage {
 		private IStatus classNameStatus;
-		
+
 		public IStatus getClassNameStatus() {
 			return classNameStatus;
 		}
-		
+
 		@Override
 		protected IStatus classNameChanged() {
 			classNameStatus = super.classNameChanged();
 			return classNameStatus;
 		}
 	}
-	
+
 	private boolean isErrorStatus(IStatus status) {
 		return (status.getSeverity() == IStatus.ERROR) ? true : false;
 	}
-	
+
 	public void testEmptyName() {
 		ClassCreationPage page = new ClassCreationPage();
 		page.setClassName("", true);
@@ -45,7 +45,7 @@ public class ClassWizardNameTest extends BaseUITestCase {
 		page.setClassName("nonempty", true);
 		assertTrue(!isErrorStatus(page.getClassNameStatus()));
 	}
-	
+
 	public void testFirstCharacter() {
 		ClassCreationPage page = new ClassCreationPage();
 		page.setClassName("1name", true);
@@ -55,7 +55,7 @@ public class ClassWizardNameTest extends BaseUITestCase {
 		page.setClassName("name", true);
 		assertTrue(!isErrorStatus(page.getClassNameStatus()));
 	}
-	
+
 	public void testAllowedCharacters() {
 		ClassCreationPage page = new ClassCreationPage();
 		page.setClassName("name1", true);
@@ -67,7 +67,7 @@ public class ClassWizardNameTest extends BaseUITestCase {
 		page.setClassName("na#me", true);
 		assertTrue(isErrorStatus(page.getClassNameStatus()));
 	}
-	
+
 	public void testStandardKeyword() {
 		ClassCreationPage page = new ClassCreationPage();
 		page.setClassName("new", true);

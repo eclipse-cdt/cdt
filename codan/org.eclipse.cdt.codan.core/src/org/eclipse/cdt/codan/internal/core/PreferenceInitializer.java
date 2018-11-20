@@ -26,8 +26,8 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences node =
-				DefaultScope.INSTANCE.getNode(CodanCorePlugin.getDefault().getBundle().getSymbolicName());
+		IEclipsePreferences node = DefaultScope.INSTANCE
+				.getNode(CodanCorePlugin.getDefault().getBundle().getSymbolicName());
 		node.putBoolean(PreferenceConstants.P_RUN_ON_BUILD, false);
 		node.putBoolean(PreferenceConstants.P_RUN_IN_EDITOR, true);
 		node.putBoolean(PreferenceConstants.P_USE_PARENT, true);

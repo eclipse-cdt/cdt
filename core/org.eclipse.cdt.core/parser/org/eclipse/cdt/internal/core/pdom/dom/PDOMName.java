@@ -31,40 +31,39 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-
 public final class PDOMName implements IIndexFragmentName {
 	private final PDOMLinkage linkage;
 	private final long record;
 
-	private static final int FILE_REC_OFFSET     = 0;
-	private static final int FILE_NEXT_OFFSET	 = 4;
-	private static final int CALLER_REC_OFFSET   = 8;
-	private static final int BINDING_REC_OFFSET  = 12;
+	private static final int FILE_REC_OFFSET = 0;
+	private static final int FILE_NEXT_OFFSET = 4;
+	private static final int CALLER_REC_OFFSET = 8;
+	private static final int BINDING_REC_OFFSET = 12;
 	private static final int BINDING_PREV_OFFSET = 16;
 	private static final int BINDING_NEXT_OFFSET = 20;
-	private static final int NODE_OFFSET_OFFSET  = 24; // 3-byte unsigned int (sufficient for files <= 16mb)
-	private static final int NODE_LENGTH_OFFSET  = 27; // short (sufficient for names <= 32k)
-	private static final int FLAGS 				 = 29;
+	private static final int NODE_OFFSET_OFFSET = 24; // 3-byte unsigned int (sufficient for files <= 16mb)
+	private static final int NODE_LENGTH_OFFSET = 27; // short (sufficient for names <= 32k)
+	private static final int FLAGS = 29;
 
-	private static final int RECORD_SIZE = 30;	// 30 yields a 32-byte block. (31 would trigger a 40-byte block)
+	private static final int RECORD_SIZE = 30; // 30 yields a 32-byte block. (31 would trigger a 40-byte block)
 
-	public static final int IS_DECLARATION 						= 0x01;
-	public static final int IS_DEFINITION 						= 0x02;
-	public static final int IS_REFERENCE 						= IS_DECLARATION | IS_DEFINITION;
-	public static final int DECL_DEF_REF_MASK					= IS_DECLARATION | IS_DEFINITION | IS_REFERENCE;
-	public static final int INHERIT_FRIEND_INLINE_MASK	    	= 0x0C;
-	public static final int IS_INHERITANCE_SPEC 				= 0x04;
-	public static final int IS_FRIEND_SPEC						= 0x08;
-	public static final int IS_INLINE_NAMESPACE					= 0x0C;
-	public static final int COULD_BE_POLYMORPHIC_METHOD_CALL	= 0x10;
-	public static final int READ_ACCESS 						= 0x20;
-	public static final int WRITE_ACCESS 						= 0x40;
+	public static final int IS_DECLARATION = 0x01;
+	public static final int IS_DEFINITION = 0x02;
+	public static final int IS_REFERENCE = IS_DECLARATION | IS_DEFINITION;
+	public static final int DECL_DEF_REF_MASK = IS_DECLARATION | IS_DEFINITION | IS_REFERENCE;
+	public static final int INHERIT_FRIEND_INLINE_MASK = 0x0C;
+	public static final int IS_INHERITANCE_SPEC = 0x04;
+	public static final int IS_FRIEND_SPEC = 0x08;
+	public static final int IS_INLINE_NAMESPACE = 0x0C;
+	public static final int COULD_BE_POLYMORPHIC_METHOD_CALL = 0x10;
+	public static final int READ_ACCESS = 0x20;
+	public static final int WRITE_ACCESS = 0x40;
 	// Whether this name is a potential match for its binding, rather than an exact match.
 	// Potential matches are recorded in the index so that we can e.g. offer best-effort
 	// navigation even in the presence of errors in the code (or an incomplete project
 	// configuration), but they are annotated as such so exact matches can be preferred
 	// where appropriate.
-	public static final int IS_POTENTIAL_MATCH                  = 0x80;
+	public static final int IS_POTENTIAL_MATCH = 0x80;
 	// Note: There is no room in the flags byte for more flags. If more flags are
 	//       needed, the flag byte needs to be expanded to a short.
 
@@ -75,12 +74,12 @@ public final class PDOMName implements IIndexFragmentName {
 		record = db.malloc(RECORD_SIZE);
 
 		// What kind of name are we
-		int flags= getRoleOfName(name);
+		int flags = getRoleOfName(name);
 
 		if (isPotentialMatch) {
 			flags |= IS_POTENTIAL_MATCH;
 		}
-		
+
 		flags |= binding.getAdditionalNameFlags(flags, name);
 		db.putByte(record + FLAGS, (byte) flags);
 
@@ -265,19 +264,19 @@ public final class PDOMName implements IIndexFragmentName {
 	}
 
 	public void setIsFriendSpecifier() throws CoreException {
-		int flags= linkage.getDB().getByte(record + FLAGS) & 0xff;
+		int flags = linkage.getDB().getByte(record + FLAGS) & 0xff;
 		flags |= IS_FRIEND_SPEC;
 		linkage.getDB().putByte(record + FLAGS, (byte) flags);
 	}
 
 	public void setIsBaseSpecifier() throws CoreException {
-		int flags= linkage.getDB().getByte(record + FLAGS) & 0xff;
+		int flags = linkage.getDB().getByte(record + FLAGS) & 0xff;
 		flags |= IS_INHERITANCE_SPEC;
 		linkage.getDB().putByte(record + FLAGS, (byte) flags);
 	}
 
 	public void setIsInlineNamespace() throws CoreException {
-		int flags= linkage.getDB().getByte(record + FLAGS) & 0xff;
+		int flags = linkage.getDB().getByte(record + FLAGS) & 0xff;
 		flags |= IS_INLINE_NAMESPACE;
 		linkage.getDB().putByte(record + FLAGS, (byte) flags);
 	}
@@ -300,7 +299,7 @@ public final class PDOMName implements IIndexFragmentName {
 	public boolean couldBePolymorphicMethodCall() throws CoreException {
 		return getFlags(COULD_BE_POLYMORPHIC_METHOD_CALL) == COULD_BE_POLYMORPHIC_METHOD_CALL;
 	}
-	
+
 	@Override
 	public boolean isPotentialMatch() throws CoreException {
 		return getFlags(IS_POTENTIAL_MATCH) == IS_POTENTIAL_MATCH;
@@ -425,20 +424,20 @@ public final class PDOMName implements IIndexFragmentName {
 
 	@Override
 	public IIndexName[] getEnclosedNames() throws CoreException {
-		ArrayList<PDOMName> result= new ArrayList<>();
-		PDOMName name= getNextInFile();
+		ArrayList<PDOMName> result = new ArrayList<>();
+		PDOMName name = getNextInFile();
 		while (name != null) {
 			if (name.getEnclosingDefinitionRecord() == record) {
 				result.add(name);
 			}
-			name= name.getNextInFile();
+			name = name.getNextInFile();
 		}
 		return result.toArray(new PDOMName[result.size()]);
 	}
 
 	/**
 	 * Returns an iterator over names in binding. This is a lighter weight alternative to
-	 * the {@link #getNextInBinding()} method. 
+	 * the {@link #getNextInBinding()} method.
 	 */
 	public static IRecordIterator getNameInBindingRecordIterator(Database db, long nameRecord) {
 		if (nameRecord == 0)

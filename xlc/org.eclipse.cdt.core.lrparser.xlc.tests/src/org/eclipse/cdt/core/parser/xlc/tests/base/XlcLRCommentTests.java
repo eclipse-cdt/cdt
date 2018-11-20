@@ -21,16 +21,15 @@ import org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 
 public class XlcLRCommentTests extends LRCommentTests {
-	
-	
+
 	public static TestSuite suite() {
-        return suite(XlcLRCommentTests.class);
-    }
-	
+		return suite(XlcLRCommentTests.class);
+	}
+
 	protected ILanguage getCLanguage() {
-    	return XlcCLanguage.getDefault();
-    }
-	
+		return XlcCLanguage.getDefault();
+	}
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

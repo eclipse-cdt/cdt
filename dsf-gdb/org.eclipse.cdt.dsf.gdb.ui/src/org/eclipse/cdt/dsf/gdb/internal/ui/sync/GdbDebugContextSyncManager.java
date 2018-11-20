@@ -50,9 +50,8 @@ public class GdbDebugContextSyncManager implements IDebugContextListener {
 		if (context != null) {
 			final IDMContext dmc = context.getAdapter(IDMContext.class);
 
-			if (dmc instanceof IMIContainerDMContext ||
-					dmc instanceof IMIExecutionDMContext || 
-					dmc instanceof IFrameDMContext) {
+			if (dmc instanceof IMIContainerDMContext || dmc instanceof IMIExecutionDMContext
+					|| dmc instanceof IFrameDMContext) {
 				// A process, thread or stack frame was selected. In each case, have GDB switch to the new
 				// corresponding thread, if required.
 
@@ -72,9 +71,9 @@ public class GdbDebugContextSyncManager implements IDebugContextListener {
 								eventSessionId);
 						IGDBFocusSynchronizer gdbSync = tracker.getService(IGDBFocusSynchronizer.class);
 						tracker.dispose();
-						
+
 						if (gdbSync != null) {
-							gdbSync.setFocus(new IDMContext[] {dmc}, new ImmediateRequestMonitor() {
+							gdbSync.setFocus(new IDMContext[] { dmc }, new ImmediateRequestMonitor() {
 								@Override
 								protected void handleFailure() {
 									// do not set error - it's normal in some cases to fail to switch thread

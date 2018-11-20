@@ -26,16 +26,17 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Utility class that handles some Scanner Config specifig collection conversions
- * 
+ *
  * @author vhirsl
  */
 public final class ScannerConfigUtil {
-    /**
+	/**
 	 * Adds all new discovered symbols/values to the existing ones.
-	 *  
+	 *
 	 * @param sumSymbols - a map of [String, Map] where Map is a SymbolEntry
 	 */
-	public static boolean scAddSymbolsList2SymbolEntryMap(Map<String, SymbolEntry> sumSymbols, List<String> symbols, boolean active) {
+	public static boolean scAddSymbolsList2SymbolEntryMap(Map<String, SymbolEntry> sumSymbols, List<String> symbols,
+			boolean active) {
 		boolean rc = false;
 		for (String symbol : symbols) {
 			String key;
@@ -52,8 +53,7 @@ public final class ScannerConfigUtil {
 				// make only the first one to be active
 				sEntry = new SymbolEntry(key, value, true);
 				rc = true;
-			}
-			else {
+			} else {
 				rc |= sEntry.add(value, active);
 			}
 			sumSymbols.put(key, sEntry);
@@ -71,17 +71,16 @@ public final class ScannerConfigUtil {
 			SymbolEntry sEntry = symbol.getValue();
 			if (active) {
 				rv.addAll(sEntry.getActiveRaw());
-			}
-			else {
+			} else {
 				rv.addAll(sEntry.getRemovedRaw());
 			}
 		}
 		return rv;
 	}
-	
+
 	/**
 	 * MapsSymbolEntryMap to a plain Map
-	 * 
+	 *
 	 * @param sumSymbols (in) - discovered symbols in SymbolEntryMap
 	 * @return - active symbols as a plain Map
 	 */
@@ -101,7 +100,8 @@ public final class ScannerConfigUtil {
 	/**
 	 * Adds a single symbol definition string ("DEBUG_LEVEL=4") to the SymbolEntryMap
 	 */
-	public static boolean scAddSymbolString2SymbolEntryMap(Map<String, SymbolEntry> symbols, String symbol, boolean active) {
+	public static boolean scAddSymbolString2SymbolEntryMap(Map<String, SymbolEntry> symbols, String symbol,
+			boolean active) {
 		boolean rc = false;
 		String key;
 		String value = null;
@@ -117,8 +117,7 @@ public final class ScannerConfigUtil {
 			// make only the first one to be active
 			sEntry = new SymbolEntry(key, value, active);
 			rc = true;
-		}
-		else {
+		} else {
 			rc |= sEntry.add(value, active);
 		}
 		symbols.put(key, sEntry);
@@ -129,7 +128,8 @@ public final class ScannerConfigUtil {
 	 * @param result (out)
 	 * @param addend (in)
 	 */
-	public static boolean scAddSymbolEntryMap2SymbolEntryMap(Map<String, SymbolEntry> result, Map<String, SymbolEntry> addend) {
+	public static boolean scAddSymbolEntryMap2SymbolEntryMap(Map<String, SymbolEntry> result,
+			Map<String, SymbolEntry> addend) {
 		boolean rc = false;
 		Set<String> keySet = addend.keySet();
 		for (String key : keySet) {
@@ -152,8 +152,7 @@ public final class ScannerConfigUtil {
 						rc |= true;
 					}
 				}
-			}
-			else {
+			} else {
 				// result does not contain the symbol; add it
 				// shallow copy
 				SymbolEntry aSymbolEntry = addend.get(key);
@@ -174,14 +173,14 @@ public final class ScannerConfigUtil {
 		}
 		return symbol;
 	}
-	
+
 	/**
 	 * Returns a symbol value (i.e. for DEF=1 returns 1),  may be null
 	 */
 	public static String getSymbolValue(String symbol) {
 		int index = symbol.indexOf('=');
 		if (index != -1) {
-			return symbol.substring(index+1).trim();
+			return symbol.substring(index + 1).trim();
 		}
 		return null;
 	}
@@ -189,7 +188,7 @@ public final class ScannerConfigUtil {
 	/**
 	 * Removes a symbol value from the symbol entry. If it was an only value than
 	 * it symbol entry will be removed alltogether.
-	 * 
+	 *
 	 * @param symbolEntryMap map of [symbol's key, symbolEntry]
 	 */
 	public static void removeSymbolEntryValue(String symbol, Map<String, SymbolEntry> symbolEntryMap) {
@@ -204,18 +203,17 @@ public final class ScannerConfigUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * Swaps two include paths in the include paths Map.
 	 * Used by Up/Down discovered paths
-	 *  
+	 *
 	 * @return new map of include paths
 	 */
-	public static LinkedHashMap<String, SymbolEntry> swapIncludePaths(LinkedHashMap<String, SymbolEntry> sumPaths, int index1, int index2) {
+	public static LinkedHashMap<String, SymbolEntry> swapIncludePaths(LinkedHashMap<String, SymbolEntry> sumPaths,
+			int index1, int index2) {
 		int size = sumPaths.size();
-		if (index1 == index2 ||
-			!(index1 >= 0 && index1 < size && 
-			  index2 >= 0 && index2 < size)) {
+		if (index1 == index2 || !(index1 >= 0 && index1 < size && index2 >= 0 && index2 < size)) {
 			return sumPaths;
 		}
 		ArrayList<String> pathKeyList = new ArrayList<String>(sumPaths.keySet());
@@ -223,14 +221,14 @@ public final class ScannerConfigUtil {
 		String temp2 = pathKeyList.get(index2);
 		pathKeyList.set(index1, temp2);
 		pathKeyList.set(index2, temp1);
-		
+
 		LinkedHashMap<String, SymbolEntry> newSumPaths = new LinkedHashMap<String, SymbolEntry>(sumPaths.size());
 		for (String key : pathKeyList) {
 			newSumPaths.put(key, sumPaths.get(key));
 		}
 		return newSumPaths;
 	}
-	
+
 	/**
 	 * Tokenizes string with quotes
 	 */
@@ -240,9 +238,9 @@ public final class ScannerConfigUtil {
 		for (int i = 0; i < tokens.length; ++i) {
 			if (i % 2 == 0) { // even tokens need further tokenization
 				String[] sTokens = tokens[i].split("\\s+"); //$NON-NLS-1$
-				for (int j = 0; j < sTokens.length; allTokens.add(sTokens[j++])) {}
-			}
-			else {
+				for (int j = 0; j < sTokens.length; allTokens.add(sTokens[j++])) {
+				}
+			} else {
 				allTokens.add(tokens[i]);
 			}
 		}
@@ -255,9 +253,9 @@ public final class ScannerConfigUtil {
 	public static String[] iPathArray2StringArray(IPath[] paths) {
 		String[] rv = new String[paths.length];
 		for (int i = 0; i < paths.length; ++i) {
-			rv[i] = paths[i].toString(); 
+			rv[i] = paths[i].toString();
 		}
 		return rv;
 	}
-	
+
 }

@@ -41,28 +41,27 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 /**
- * 
+ *
  * All supporting functions which are not part of Testing class.
- * 
+ *
  * @since 4.0
 */
 
 public class TemplateEngineTestsHelper {
-	
-	public static final String LOGGER_FILE_NAME="TemplateEngineTests";	//$NON-NLS-1$
+
+	public static final String LOGGER_FILE_NAME = "TemplateEngineTests"; //$NON-NLS-1$
 	private static List<IProjectType> projectTypes = new ArrayList<IProjectType>();
 	private static List<String> projectTypeNames = new ArrayList<String>();
-	
+
 	/**
 	 * get the url of a xml template, by passing the xml file name.
 	 * @param templateName
 	 * @return URL
 	 */
-	public static URL getTemplateURL(String templateName){
+	public static URL getTemplateURL(String templateName) {
 		Bundle bundle = Platform.getBundle("org.eclipse.cdt.managedbuilder.core.tests"); //$NON-NLS-1$
-		URL url = FileLocator.find(bundle, new Path("testdata/"+templateName), null); //$NON-NLS-1$
-		if ( url != null )
-		{ 
+		URL url = FileLocator.find(bundle, new Path("testdata/" + templateName), null); //$NON-NLS-1$
+		if (url != null) {
 			try {
 				url = FileLocator.toFileURL(url);
 			} catch (IOException e) {
@@ -71,8 +70,8 @@ public class TemplateEngineTestsHelper {
 		}
 		return url;
 	}
-	
-	public static int getChildCount(TemplateDescriptor templateDescriptor, String propertyGroupID){
+
+	public static int getChildCount(TemplateDescriptor templateDescriptor, String propertyGroupID) {
 		List<Element> list = templateDescriptor.getPropertyGroupList();
 		for (int i = 0, l = list.size(); i < l; i++) {
 			Element element = list.get(i);
@@ -86,9 +85,9 @@ public class TemplateEngineTestsHelper {
 		}
 		return 0;
 	}
-	
+
 	public static boolean failIfErrorStatus(IStatus[] statuses) {
-		for(int i=0; i<statuses.length; i++) {
+		for (int i = 0; i < statuses.length; i++) {
 			IStatus status = statuses[i];
 			if (status.getCode() == IStatus.ERROR) {
 				TestCase.fail(status.getMessage());
@@ -103,14 +102,14 @@ public class TemplateEngineTestsHelper {
 		}
 		return false;
 	}
-	
+
 	public static void turnOffAutoBuild() throws CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceDescription workspaceDesc = workspace.getDescription();
 		workspaceDesc.setAutoBuilding(false);
 		workspace.setDescription(workspaceDesc);
 	}
-	
+
 	public static List<IProjectType> getProjectTypes() {
 		populateProjectTypes();
 		return projectTypes;
@@ -120,7 +119,7 @@ public class TemplateEngineTestsHelper {
 		populateProjectTypes();
 		return projectTypeNames;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Collects all the valid project types for the platform Eclipse is running on
 	 * Note: This method is a copy of populateTypes() from org.eclipse.cdt.managedbuilder.ui.wizards.CProjectPlatformPage class.
@@ -129,20 +128,20 @@ public class TemplateEngineTestsHelper {
 		IProjectType[] allProjectTypes = ManagedBuildManager.getDefinedProjectTypes();
 		String os = Platform.getOS();
 		String arch = Platform.getOSArch();
-		
+
 		for (int index = 0; index < allProjectTypes.length; ++index) {
 			IProjectType type = allProjectTypes[index];
 			if (!type.isAbstract() && !type.isTestProjectType()) {
-				
+
 				if (!type.getConvertToId().isEmpty())
 					continue;
-				
+
 				if (type.isSupported()) {
 					IConfiguration[] configs = type.getConfigurations();
 					for (int j = 0; j < configs.length; ++j) {
 						IToolChain tc = configs[j].getToolChain();
 						List<String> osList = Arrays.asList(tc.getOSList());
-						if (osList.contains("all") || osList.contains(os)) {	//$NON-NLS-1$
+						if (osList.contains("all") || osList.contains(os)) { //$NON-NLS-1$
 							List<String> archList = Arrays.asList(tc.getArchList());
 							if (archList.contains("all") || archList.contains(arch)) { //$NON-NLS-1$
 								projectTypes.add(type);
@@ -158,5 +157,5 @@ public class TemplateEngineTestsHelper {
 			projectTypeNames.add(iter.next().getName());
 		}
 	}
-	
+
 }

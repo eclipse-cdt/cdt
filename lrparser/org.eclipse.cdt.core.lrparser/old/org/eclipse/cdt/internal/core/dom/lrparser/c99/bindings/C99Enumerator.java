@@ -29,8 +29,7 @@ public class C99Enumerator extends PlatformObject implements IC99Binding, IEnume
 	private String name;
 	private IType type;
 	private IScope scope;
-	
-	
+
 	public C99Enumerator() {
 	}
 

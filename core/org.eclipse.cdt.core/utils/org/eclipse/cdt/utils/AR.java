@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -58,33 +57,33 @@ public class AR {
 	}
 
 	/**
-	 * The <code>ARHeader</code> class is used to store the per-object file 
+	 * The <code>ARHeader</code> class is used to store the per-object file
 	 *  archive headers.  It can also create an Elf object for inspecting
 	 *  the object file data.
 	 */
 	public class ARHeader {
 
-		private static final int NAME_IDX= 0;
-		private static final int NAME_LEN= 16;
-//		private static final int MTIME_IDX= 16;
-//		private static final int MTIME_LEN= 12;
-//		private static final int UID_IDX= 28;
-//		private static final int UID_LEN= 6;
-//		private static final int GID_IDX= 34;
-//		private static final int GID_LEN= 6;
-//		private static final int MODE_IDX= 40;
-//		private static final int MODE_LEN= 8;
-		private static final int SIZE_IDX= 48;
-		private static final int SIZE_LEN= 10;
-//		private static final int TRAILER_IDX= 58;
-//		private static final int TRAILER_LEN= 2;
-		private static final int HEADER_LEN= 60;
-		
+		private static final int NAME_IDX = 0;
+		private static final int NAME_LEN = 16;
+		//		private static final int MTIME_IDX= 16;
+		//		private static final int MTIME_LEN= 12;
+		//		private static final int UID_IDX= 28;
+		//		private static final int UID_LEN= 6;
+		//		private static final int GID_IDX= 34;
+		//		private static final int GID_LEN= 6;
+		//		private static final int MODE_IDX= 40;
+		//		private static final int MODE_LEN= 8;
+		private static final int SIZE_IDX = 48;
+		private static final int SIZE_LEN = 10;
+		//		private static final int TRAILER_IDX= 58;
+		//		private static final int TRAILER_LEN= 2;
+		private static final int HEADER_LEN = 60;
+
 		private String object_name;
-//		private String modification_time;
-//		private String uid;
-//		private String gid;
-//		private String mode;
+		//		private String modification_time;
+		//		private String uid;
+		//		private String gid;
+		//		private String mode;
 		private long size;
 		private long obj_offset;
 
@@ -92,18 +91,18 @@ public class AR {
 		 * Remove the padding from the archive header strings.
 		 */
 		private String removeBlanks(String str) {
-		    return str.trim();
+			return str.trim();
 		}
 
 		/**
 		 * Look up the name stored in the archive's string table based
-		 * on the offset given. 
+		 * on the offset given.
 		 *
 		 * Maintains <code>efile</code> file location.
 		 *
-		 * @param offset 
+		 * @param offset
 		 *    Offset into the string table for first character of the name.
-		 * @throws IOException 
+		 * @throws IOException
 		 *    <code>offset</code> not in string table bounds.
 		 */
 		private String nameFromStringTable(long offset) throws IOException {
@@ -125,15 +124,15 @@ public class AR {
 		}
 
 		/**
-		 * Creates a new archive header object.  
+		 * Creates a new archive header object.
 		 *
 		 * Assumes that efile is already at the correct location in the file.
 		 *
-		 * @throws IOException 
+		 * @throws IOException
 		 *    There was an error processing the header data from the file.
 		 */
 		ARHeader() throws IOException {
-			byte[] buf= new byte[HEADER_LEN];
+			byte[] buf = new byte[HEADER_LEN];
 			//
 			// Read in the archive header data. Fixed sizes.
 			//
@@ -147,10 +146,10 @@ public class AR {
 			// Convert the raw bytes into strings and numbers.
 			//
 			this.object_name = removeBlanks(new String(buf, NAME_IDX, NAME_LEN));
-//			this.modification_time = new String(buf, MTIME_IDX, MTIME_LEN);
-//			this.uid = new String(buf, UID_IDX, UID_LEN);
-//			this.gid = new String(buf, GID_IDX, GID_LEN);
-//			this.mode = new String(buf, MODE_IDX, MODE_LEN);
+			//			this.modification_time = new String(buf, MTIME_IDX, MTIME_LEN);
+			//			this.uid = new String(buf, UID_IDX, UID_LEN);
+			//			this.gid = new String(buf, GID_IDX, GID_LEN);
+			//			this.mode = new String(buf, MODE_IDX, MODE_LEN);
 			this.size = Long.parseLong(removeBlanks(new String(buf, SIZE_IDX, SIZE_LEN)));
 
 			//
@@ -183,15 +182,15 @@ public class AR {
 		public long getSize() {
 			return size;
 		}
-		
+
 		public String getArchiveName() {
 			return filename;
 		}
 
-		public long	getObjectDataOffset() {
+		public long getObjectDataOffset() {
 			return obj_offset;
 		}
-				
+
 		public byte[] getObjectData() throws IOException {
 			byte[] temp = new byte[(int) size];
 			if (efile != null) {
@@ -209,20 +208,14 @@ public class AR {
 	}
 
 	public static boolean isARHeader(byte[] ident) {
-		if (ident.length < 7
-			|| ident[0] != '!'
-			|| ident[1] != '<'
-			|| ident[2] != 'a'
-			|| ident[3] != 'r'
-			|| ident[4] != 'c'
-			|| ident[5] != 'h'
-			|| ident[6] != '>')
+		if (ident.length < 7 || ident[0] != '!' || ident[1] != '<' || ident[2] != 'a' || ident[3] != 'r'
+				|| ident[4] != 'c' || ident[5] != 'h' || ident[6] != '>')
 			return false;
 		return true;
 	}
 
 	/**
-	 *  Creates a new <code>AR</code> object from the contents of 
+	 *  Creates a new <code>AR</code> object from the contents of
 	 *  the given file.
 	 *
 	 *  @param filename The file to process.
@@ -233,7 +226,7 @@ public class AR {
 		boolean goodAr = false;
 		try {
 			efile = new ERandomAccessFile(filename, "r"); //$NON-NLS-1$
-			byte [] hdrBytes = new byte[7];
+			byte[] hdrBytes = new byte[7];
 			efile.readFully(hdrBytes);
 			goodAr = isARHeader(hdrBytes);
 			if (!goodAr) {
@@ -292,8 +285,8 @@ public class AR {
 
 	/**
 	 *  Get an array of all the object file headers for this archive.
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 *    Unable to process the archive file.
 	 * @return An array of headers, one for each object within the archive.
 	 * @see ARHeader

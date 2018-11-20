@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.ui.text.spelling.CSpellingReconcileStrategy;
  * Reconciling strategy for C/C++ code. This is a composite strategy containing
  * the regular C/C++ model reconciler and the comment spelling strategy.
  */
-public class CCompositeReconcilingStrategy  extends CompositeReconcilingStrategy {
+public class CCompositeReconcilingStrategy extends CompositeReconcilingStrategy {
 	private ITextEditor fEditor;
 	private CReconcilingStrategy fCStrategy;
 
@@ -39,12 +39,10 @@ public class CCompositeReconcilingStrategy  extends CompositeReconcilingStrategy
 	 * @param documentPartitioning the document partitioning this strategy uses for configuration
 	 */
 	public CCompositeReconcilingStrategy(ISourceViewer viewer, ITextEditor editor, String documentPartitioning) {
-		fEditor= editor;
-		fCStrategy= new CReconcilingStrategy(editor);
-		setReconcilingStrategies(new IReconcilingStrategy[] {
-			fCStrategy,
-			new CSpellingReconcileStrategy(viewer, editor)
-		});
+		fEditor = editor;
+		fCStrategy = new CReconcilingStrategy(editor);
+		setReconcilingStrategies(
+				new IReconcilingStrategy[] { fCStrategy, new CSpellingReconcileStrategy(viewer, editor) });
 	}
 
 	/**
@@ -68,7 +66,7 @@ public class CCompositeReconcilingStrategy  extends CompositeReconcilingStrategy
 	 */
 	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
-		IProblemRequestorExtension e= getProblemRequestorExtension();
+		IProblemRequestorExtension e = getProblemRequestorExtension();
 		if (e != null) {
 			try {
 				e.beginReportingSequence();
@@ -86,7 +84,7 @@ public class CCompositeReconcilingStrategy  extends CompositeReconcilingStrategy
 	 */
 	@Override
 	public void reconcile(IRegion partition) {
-		IProblemRequestorExtension e= getProblemRequestorExtension();
+		IProblemRequestorExtension e = getProblemRequestorExtension();
 		if (e != null) {
 			try {
 				e.beginReportingSequence();

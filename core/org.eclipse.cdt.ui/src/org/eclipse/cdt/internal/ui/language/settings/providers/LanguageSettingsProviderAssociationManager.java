@@ -72,7 +72,8 @@ public class LanguageSettingsProviderAssociationManager {
 		isLoaded = true;
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID, PROVIDER_ASSOCIATION_EXTENSION_POINT_SIMPLE_ID);
+		IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID,
+				PROVIDER_ASSOCIATION_EXTENSION_POINT_SIMPLE_ID);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
 			for (IExtension ext : extensions) {
@@ -127,7 +128,8 @@ public class LanguageSettingsProviderAssociationManager {
 		try {
 			String iconName = config.getAttribute(ATTR_ICON);
 			if (iconName != null) {
-				URL pluginInstallUrl = Platform.getBundle(config.getDeclaringExtension().getContributor().getName()).getEntry("/"); //$NON-NLS-1$
+				URL pluginInstallUrl = Platform.getBundle(config.getDeclaringExtension().getContributor().getName())
+						.getEntry("/"); //$NON-NLS-1$
 				url = new URL(pluginInstallUrl, iconName);
 				if (loadedIcons.contains(url)) {
 					return url;
@@ -164,7 +166,8 @@ public class LanguageSettingsProviderAssociationManager {
 
 		if (fRegirestedIds.contains(providerId)) {
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID, PROVIDER_ASSOCIATION_EXTENSION_POINT_SIMPLE_ID);
+			IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID,
+					PROVIDER_ASSOCIATION_EXTENSION_POINT_SIMPLE_ID);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (IExtension ext : extensions) {
@@ -184,7 +187,8 @@ public class LanguageSettingsProviderAssociationManager {
 							}
 						}
 					} catch (Exception e) {
-						CUIPlugin.log("Cannot load LanguageSettingsProviderAssociation extension " + ext.getUniqueIdentifier(), e); //$NON-NLS-1$
+						CUIPlugin.log("Cannot load LanguageSettingsProviderAssociation extension " //$NON-NLS-1$
+								+ ext.getUniqueIdentifier(), e);
 					}
 				}
 			}
@@ -200,7 +204,8 @@ public class LanguageSettingsProviderAssociationManager {
 
 		if (fRegisteredClasses.contains(providerClassName)) {
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID, PROVIDER_ASSOCIATION_EXTENSION_POINT_SIMPLE_ID);
+			IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID,
+					PROVIDER_ASSOCIATION_EXTENSION_POINT_SIMPLE_ID);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (IExtension ext : extensions) {
@@ -212,7 +217,7 @@ public class LanguageSettingsProviderAssociationManager {
 								String className = cfgEl.getAttribute(ATTR_CLASS);
 								if (providerClassName.equals(className)) {
 									String pageClass = cfgEl.getAttribute(ATTR_PAGE);
-									if (pageClass!=null && pageClass.trim().length()>0) {
+									if (pageClass != null && pageClass.trim().length() > 0) {
 										ICOptionPage page = (ICOptionPage) cfgEl.createExecutableExtension(ATTR_PAGE);
 										return page;
 									}
@@ -220,7 +225,8 @@ public class LanguageSettingsProviderAssociationManager {
 							}
 						}
 					} catch (Exception e) {
-						CUIPlugin.log("Cannot load LanguageSettingsProviderAssociation extension " + ext.getUniqueIdentifier(), e); //$NON-NLS-1$
+						CUIPlugin.log("Cannot load LanguageSettingsProviderAssociation extension " //$NON-NLS-1$
+								+ ext.getUniqueIdentifier(), e);
 					}
 				}
 			}
@@ -282,7 +288,7 @@ public class LanguageSettingsProviderAssociationManager {
 		}
 
 		Class<? extends ILanguageSettingsProvider> clazz = provider.getClass();
-		outer: for (Class<?> c = clazz ;c != null; c = c.getSuperclass()) {
+		outer: for (Class<?> c = clazz; c != null; c = c.getSuperclass()) {
 			optionsPage = createOptionsPageByClass(c);
 			if (optionsPage != null) {
 				break;
@@ -324,7 +330,7 @@ public class LanguageSettingsProviderAssociationManager {
 			return Boolean.parseBoolean(properties.get(attr));
 		}
 
-		for (Class<?> c = provider.getClass();c != null; c = c.getSuperclass()) {
+		for (Class<?> c = provider.getClass(); c != null; c = c.getSuperclass()) {
 			String className = c.getCanonicalName();
 			properties = fAssociationsByClass.get(className);
 			if (properties != null) {

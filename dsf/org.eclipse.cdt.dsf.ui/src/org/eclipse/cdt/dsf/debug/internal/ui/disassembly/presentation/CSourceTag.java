@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -63,7 +63,7 @@ public class CSourceTag implements ISourceTag {
 		 * @param sourceRange
 		 */
 		public CSourceRange(org.eclipse.cdt.core.model.ISourceRange sourceRange) {
-			fRange= sourceRange;
+			fRange = sourceRange;
 		}
 
 		@Override
@@ -83,9 +83,9 @@ public class CSourceTag implements ISourceTag {
 
 		@Override
 		public int compareTo(ISourceRange other) {
-			int delta= this.getBeginOffset() - other.getBeginOffset();
+			int delta = this.getBeginOffset() - other.getBeginOffset();
 			if (delta == 0) {
-				delta= this.getEndOffset() - other.getEndOffset();
+				delta = this.getEndOffset() - other.getEndOffset();
 			}
 			return delta;
 		}
@@ -100,7 +100,7 @@ public class CSourceTag implements ISourceTag {
 		private org.eclipse.cdt.core.model.ISourceRange fRange;
 
 		public CIdentifierRange(org.eclipse.cdt.core.model.ISourceRange sourceRange) {
-			fRange= sourceRange;
+			fRange = sourceRange;
 		}
 
 		@Override
@@ -120,27 +120,27 @@ public class CSourceTag implements ISourceTag {
 
 		@Override
 		public int compareTo(ISourceRange other) {
-			int delta= this.getBeginOffset() - other.getBeginOffset();
+			int delta = this.getBeginOffset() - other.getBeginOffset();
 			if (delta == 0) {
-				delta= this.getEndOffset() - other.getEndOffset();
+				delta = this.getEndOffset() - other.getEndOffset();
 			}
 			return delta;
 		}
 
 	}
-	
+
 	private ISourceReference fReference;
 	private int fType;
 
 	/**
 	 * Create a new source tag for the given element and type.
-	 * 
+	 *
 	 * @param element
 	 * @param elementType
 	 */
 	public CSourceTag(ISourceReference element, int elementType) {
-		fReference= element;
-		fType= elementType;
+		fReference = element;
+		fType = elementType;
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class CSourceTag implements ISourceTag {
 
 	@Override
 	public String getName() {
-		return ((ICElement)fReference).getElementName();
+		return ((ICElement) fReference).getElementName();
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public class CSourceTag implements ISourceTag {
 	@Override
 	public int getStyleCode() {
 		switch (fType) {
-		case ICElement.C_METHOD :
+		case ICElement.C_METHOD:
 		case ICElement.C_METHOD_DECLARATION:
 		case ICElement.C_TEMPLATE_METHOD:
 		case ICElement.C_TEMPLATE_METHOD_DECLARATION:
@@ -189,7 +189,7 @@ public class CSourceTag implements ISourceTag {
 		case ICElement.C_TEMPLATE_FUNCTION:
 		case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
 			return ISourceTag.STYLE_Function;
-		case ICElement.C_FIELD :
+		case ICElement.C_FIELD:
 			return ISourceTag.STYLE_MemberVariable;
 		case ICElement.C_VARIABLE:
 		case ICElement.C_VARIABLE_DECLARATION:

@@ -27,7 +27,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 /**
  * Default handler for the toggle breakpoint command in the disassembly ruler.
  * Invoked on double click in the ruler.
- * 
+ *
  * @since 2.1
  */
 public class RulerToggleBreakpointHandler extends AbstractHandler {
@@ -38,20 +38,20 @@ public class RulerToggleBreakpointHandler extends AbstractHandler {
 		if (part instanceof IDisassemblyPart) {
 			IDisassemblyPart disassemblyPart = (IDisassemblyPart) part;
 			IDocument document = disassemblyPart.getTextViewer().getDocument();
-			final IVerticalRulerInfo rulerInfo= part.getAdapter(IVerticalRulerInfo.class);
+			final IVerticalRulerInfo rulerInfo = part.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
-				final ToggleBreakpointAction toggleBpAction= new ToggleBreakpointAction(part, document, rulerInfo);
+				final ToggleBreakpointAction toggleBpAction = new ToggleBreakpointAction(part, document, rulerInfo);
 				try {
 					toggleBpAction.update();
 					if (toggleBpAction.isEnabled()) {
-					    if (event.getTrigger() instanceof Event) {
-					        // Pass through the event that triggered the action.  
-					        // This will give toggle action access to key modifiers 
-					        // (shift, ctrl, etc.)
-					        toggleBpAction.runWithEvent((Event)event.getTrigger());
-					    } else {
-					        toggleBpAction.run();
-					    }
+						if (event.getTrigger() instanceof Event) {
+							// Pass through the event that triggered the action.
+							// This will give toggle action access to key modifiers
+							// (shift, ctrl, etc.)
+							toggleBpAction.runWithEvent((Event) event.getTrigger());
+						} else {
+							toggleBpAction.run();
+						}
 					}
 				} finally {
 					toggleBpAction.dispose();

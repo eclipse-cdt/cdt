@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -26,9 +26,9 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 public class ModifiedASTDeclarationWriter extends DeclarationWriter {
 	private final ASTModificationHelper modificationHelper;
-	
-	public ModifiedASTDeclarationWriter(Scribe scribe, ASTWriterVisitor visitor,
-			ModificationScopeStack stack, NodeCommentMap commentMap) {
+
+	public ModifiedASTDeclarationWriter(Scribe scribe, ASTWriterVisitor visitor, ModificationScopeStack stack,
+			NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		this.modificationHelper = new ASTModificationHelper(stack);
 	}
@@ -36,17 +36,16 @@ public class ModifiedASTDeclarationWriter extends DeclarationWriter {
 	@Override
 	protected void writeDeclarationsInNamespace(ICPPASTNamespaceDefinition namespaceDefinition,
 			IASTDeclaration[] declarations) {
-		IASTDeclaration[] modifiedDeclarations = modificationHelper.createModifiedChildArray(
-				namespaceDefinition, declarations, IASTDeclaration.class, commentMap);
+		IASTDeclaration[] modifiedDeclarations = modificationHelper.createModifiedChildArray(namespaceDefinition,
+				declarations, IASTDeclaration.class, commentMap);
 		super.writeDeclarationsInNamespace(namespaceDefinition, modifiedDeclarations);
 	}
-	
+
 	@Override
 	protected void writeCtorChainInitializer(ICPPASTFunctionDefinition funcDec,
 			ICPPASTConstructorChainInitializer[] ctorInitChain) {
-		ICPPASTConstructorChainInitializer[] modifiedInitializer =
-				modificationHelper.createModifiedChildArray(funcDec, ctorInitChain,
-						ICPPASTConstructorChainInitializer.class, commentMap);
+		ICPPASTConstructorChainInitializer[] modifiedInitializer = modificationHelper.createModifiedChildArray(funcDec,
+				ctorInitChain, ICPPASTConstructorChainInitializer.class, commentMap);
 		super.writeCtorChainInitializer(funcDec, modifiedInitializer);
 	}
 }

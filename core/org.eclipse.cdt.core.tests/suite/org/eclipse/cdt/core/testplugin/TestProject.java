@@ -27,7 +27,7 @@ public class TestProject implements ICOwner {
 
 	@Override
 	public void update(ICDescriptor cDescriptor, String extensionID) throws CoreException {
-		if ( extensionID.equals(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID)) {
+		if (extensionID.equals(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID)) {
 			cDescriptor.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, TestScannerProvider.SCANNER_ID);
 		}
 	}

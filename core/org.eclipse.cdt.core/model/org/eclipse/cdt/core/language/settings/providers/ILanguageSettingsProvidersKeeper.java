@@ -16,6 +16,7 @@ package org.eclipse.cdt.core.language.settings.providers;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+
 /**
  * Interface to express ability (of a configuration description) to handle Language Settings
  * Providers.

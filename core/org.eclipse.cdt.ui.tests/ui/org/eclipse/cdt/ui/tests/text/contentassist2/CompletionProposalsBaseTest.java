@@ -42,7 +42,7 @@ public abstract class CompletionProposalsBaseTest extends AbstractContentAssistT
 	public CompletionProposalsBaseTest(String name, boolean isCpp) {
 		super(name, isCpp);
 	}
-	
+
 	@Override
 	public String getName() {
 		if (fFailingTest) {
@@ -54,21 +54,27 @@ public abstract class CompletionProposalsBaseTest extends AbstractContentAssistT
 	@Override
 	public void setExpectFailure(int bugnumber) {
 		super.setExpectFailure(bugnumber);
-		fFailingTest= true;
+		fFailingTest = true;
 	}
 
 	/*
 	 * Derived classes have to provide the file locations
 	 */
 	protected abstract String getFileName();
+
 	protected abstract String getFileFullPath();
+
 	protected abstract String getHeaderFileName();
+
 	protected abstract String getHeaderFileFullPath();
+
 	/*
 	 * Derived classes have to provide these test parameters
 	 */
 	protected abstract int getCompletionPosition();
+
 	protected abstract String getExpectedPrefix();
+
 	protected abstract String[] getExpectedResultsValues();
 
 	@Override
@@ -76,15 +82,15 @@ public abstract class CompletionProposalsBaseTest extends AbstractContentAssistT
 		IFile headerFile = project.getFile(getHeaderFileName());
 		String fileName = getFileName();
 		IFile bodyFile = project.getFile(fileName);
-		if ( (!bodyFile.exists()) &&( !headerFile.exists() )) {
-			IProgressMonitor monitor= new NullProgressMonitor();
-			try{
+		if ((!bodyFile.exists()) && (!headerFile.exists())) {
+			IProgressMonitor monitor = new NullProgressMonitor();
+			try {
 				FileInputStream headerFileIn = new FileInputStream(
-						CTestPlugin.getDefault().getFileInPlugin(new Path(getHeaderFileFullPath()))); 
-				headerFile.create(headerFileIn,false, monitor);  
+						CTestPlugin.getDefault().getFileInPlugin(new Path(getHeaderFileFullPath())));
+				headerFile.create(headerFileIn, false, monitor);
 				FileInputStream bodyFileIn = new FileInputStream(
-						CTestPlugin.getDefault().getFileInPlugin(new Path(getFileFullPath()))); 
-				bodyFile.create(bodyFileIn,false, monitor);        
+						CTestPlugin.getDefault().getFileInPlugin(new Path(getFileFullPath())));
+				bodyFile.create(bodyFileIn, false, monitor);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
@@ -93,11 +99,11 @@ public abstract class CompletionProposalsBaseTest extends AbstractContentAssistT
 	}
 
 	protected final static int DEFAULT_FLAGS = AbstractContentAssistTest.DEFAULT_FLAGS | IS_COMPLETION;
-	
+
 	protected void assertCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
 		assertContentAssistResults(offset, expected, DEFAULT_FLAGS, compareType);
 	}
-	
+
 	public void testCompletionProposals() throws Exception {
 		String[] expected = getExpectedResultsValues();
 		assertCompletionResults(getCompletionPosition(), expected, CompareType.DISPLAY);

@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IPath;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class PathEntryContainerChanged  {
+public class PathEntryContainerChanged {
 
 	/**
 	 * Change in the includes settings
@@ -42,9 +42,8 @@ public class PathEntryContainerChanged  {
 	 */
 	IPath fPath;
 
-
 	/**
-	 * 
+	 *
 	 * @param source
 	 * @param type
 	 */

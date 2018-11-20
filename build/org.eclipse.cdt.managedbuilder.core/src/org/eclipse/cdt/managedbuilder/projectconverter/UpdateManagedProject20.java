@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.projectconverter;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -56,42 +55,43 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 class UpdateManagedProject20 {
-	private static final String ID_SEPARATOR = ".";	//$NON-NLS-1$
-	
+	private static final String ID_SEPARATOR = "."; //$NON-NLS-1$
+
 	/**
 	 * @param monitor the monitor to allow users to cancel the long-running operation
 	 * @param project the <code>IProject</code> that needs to be upgraded
 	 */
 	static void doProjectUpdate(IProgressMonitor monitor, final IProject project) throws CoreException {
-		String[] projectName = new String[]{project.getName()};
+		String[] projectName = new String[] { project.getName() };
 		IFile file = project.getFile(ManagedBuildManager.SETTINGS_FILE_NAME);
 		File settingsFile = file.getLocation().toFile();
 		if (!settingsFile.exists()) {
 			monitor.done();
 			return;
 		}
-		
+
 		// Backup the file
 		monitor.beginTask(ConverterMessages.getFormattedString("UpdateManagedProject20.0", projectName), 1); //$NON-NLS-1$
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		UpdateManagedProjectManager.backupFile(file, "_20backup", monitor, project); //$NON-NLS-1$
-		
+
 		try {
 			// Load the old build file
 			InputStream stream = new FileInputStream(settingsFile);
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document document = parser.parse(stream);
-			
+
 			// Clone the target based on the proper target definition
 			NodeList targetNodes = document.getElementsByTagName(ITarget.TARGET_ELEMENT_NAME);
 			// This is a guess, but typically the project has 1 target, 2 configs, and 6 tool defs
 			int listSize = targetNodes.getLength();
-			monitor.beginTask(ConverterMessages.getFormattedString("UpdateManagedProject20.1", projectName), listSize * 9); //$NON-NLS-1$
+			monitor.beginTask(ConverterMessages.getFormattedString("UpdateManagedProject20.1", projectName), //$NON-NLS-1$
+					listSize * 9);
 			for (int targIndex = 0; targIndex < listSize; ++targIndex) {
 				Element oldTarget = (Element) targetNodes.item(targIndex);
 				String oldTargetId = oldTarget.getAttribute(ITarget.ID);
 				IManagedProject newProject = convertTarget(project, oldTarget, monitor);
-			
+
 				// Remove the old target
 				if (newProject != null) {
 					info.removeTarget(oldTargetId);
@@ -99,94 +99,94 @@ class UpdateManagedProject20 {
 				}
 			}
 			// Upgrade the version
-			((ManagedBuildInfo)info).setVersion("2.1.0"); //$NON-NLS-1$
+			((ManagedBuildInfo) info).setVersion("2.1.0"); //$NON-NLS-1$
 			info.setValid(true);
-		}catch (CoreException e){
+		} catch (CoreException e) {
 			throw e;
-		}catch (Exception e) {
-			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-					e.getMessage(), e));
+		} catch (Exception e) {
+			throw new CoreException(
+					new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1, e.getMessage(), e));
 		} finally {
 			// If the tree is locked spawn a job to this.
 			IWorkspace workspace = project.getWorkspace();
-//			boolean treeLock = workspace.isTreeLocked();
+			//			boolean treeLock = workspace.isTreeLocked();
 			ISchedulingRule rule = workspace.getRuleFactory().createRule(project);
-//			if (treeLock) {
+			//			if (treeLock) {
 			//since the java synchronized mechanism is now used for the build info loadding,
 			//initiate the job in all cases
-				WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
-					@Override
-					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-						ManagedBuildManager.saveBuildInfoLegacy(project, false);
-						return Status.OK_STATUS;
-					}
-				};
-				job.setRule(rule);
-				job.schedule();
-//			} else {
-//				ManagedBuildManager.saveBuildInfo(project, false);
-//			}
+			WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
+				@Override
+				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+					ManagedBuildManager.saveBuildInfoLegacy(project, false);
+					return Status.OK_STATUS;
+				}
+			};
+			job.setRule(rule);
+			job.schedule();
+			//			} else {
+			//				ManagedBuildManager.saveBuildInfo(project, false);
+			//			}
 			monitor.done();
 		}
 
 	}
-	
+
 	protected static IManagedProject convertTarget(IProject project, Element oldTarget, IProgressMonitor monitor)
-						throws CoreException{
+			throws CoreException {
 		// What we want to create
 		IManagedProject newProject = null;
 		IProjectType newParent = null;
-		
+
 		// Get the parent
 		String parentID = oldTarget.getAttribute(ITarget.PARENT);
-		
+
 		String targetID = oldTarget.getAttribute(ITarget.ID);
-	
+
 		// Get the new target definitions we need for the conversion
 		newParent = ManagedBuildManager.getProjectType(parentID);
-		
+
 		if (newParent == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-					ConverterMessages.getFormattedString("UpdateManagedProject20.9",parentID), null)); //$NON-NLS-1$
+					ConverterMessages.getFormattedString("UpdateManagedProject20.9", parentID), null)); //$NON-NLS-1$
 		}
 
 		try {
 			// Create a new ManagedProject based on the new parent
 			newProject = ManagedBuildManager.createManagedProject(project, newParent);
-			
+
 			// Create new configurations
 			NodeList configNodes = oldTarget.getElementsByTagName(IConfigurationV2.CONFIGURATION_ELEMENT_NAME);
 			for (int configIndex = 0; configIndex < configNodes.getLength(); ++configIndex) {
-				try{
+				try {
 					convertConfiguration(newProject, newParent, (Element) configNodes.item(configIndex), monitor);
-				}
-				catch(CoreException e){
-					//TODO: implement logging					
+				} catch (CoreException e) {
+					//TODO: implement logging
 					//should we continue or fail ??
 				}
 			}
-			
+
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 			IConfiguration[] newConfigs = newProject.getConfigurations();
 			if (newConfigs.length > 0) {
 				info.setDefaultConfiguration(newConfigs[0]);
 				info.setSelectedConfiguration(newConfigs[0]);
-			}
-			else{
+			} else {
 				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-						ConverterMessages.getFormattedString("UpdateManagedProject20.10",newProject.getName()), null)); //$NON-NLS-1$
+						ConverterMessages.getFormattedString("UpdateManagedProject20.10", newProject.getName()), null)); //$NON-NLS-1$
 			}
 		} catch (BuildException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-					ConverterMessages.getFormattedString("UpdateManagedProject20.11",new String[]{project.getName(),e.getMessage()}), null)); //$NON-NLS-1$
+					ConverterMessages.getFormattedString("UpdateManagedProject20.11", //$NON-NLS-1$
+							new String[] { project.getName(), e.getMessage() }),
+					null));
 		}
-		
+
 		monitor.worked(1);
 		return newProject;
 	}
 
-	protected static void convertConfiguration(IManagedProject newProject, IProjectType newParent, Element oldConfig, IProgressMonitor monitor) 
-								throws CoreException {
+	protected static void convertConfiguration(IManagedProject newProject, IProjectType newParent, Element oldConfig,
+			IProgressMonitor monitor) throws CoreException {
 		IConfiguration newParentConfig = null;
 		IConfiguration newConfig = null;
 
@@ -197,101 +197,100 @@ class UpdateManagedProject20 {
 		if (newParentConfig == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
 					ConverterMessages.getFormattedString("UpdateManagedProject20.2", parentId), null)); //$NON-NLS-1$
-		}		
+		}
 		// Generate a random number for the new config id
 		int randomElement = ManagedBuildManager.getRandomNumber();
 		String newConfigId = parentId + ID_SEPARATOR + randomElement;
 		// Create the new configuration
 		newConfig = newProject.createConfiguration(newParentConfig, newConfigId);
 
-		if(oldConfig.hasAttribute(IConfigurationV2.NAME))
+		if (oldConfig.hasAttribute(IConfigurationV2.NAME))
 			newConfig.setName(oldConfig.getAttribute(IConfigurationV2.NAME));
 
-		Element targetEl = (Element)oldConfig.getParentNode();
+		Element targetEl = (Element) oldConfig.getParentNode();
 
-		if(targetEl.hasAttribute(ITarget.ARTIFACT_NAME))
+		if (targetEl.hasAttribute(ITarget.ARTIFACT_NAME))
 			newConfig.setArtifactName(targetEl.getAttribute(ITarget.ARTIFACT_NAME));
 
-		if(targetEl.hasAttribute(ITarget.ERROR_PARSERS))
+		if (targetEl.hasAttribute(ITarget.ERROR_PARSERS))
 			newConfig.setErrorParserIds(targetEl.getAttribute(ITarget.ERROR_PARSERS));
 
-		if(targetEl.hasAttribute(ITarget.CLEAN_COMMAND))
+		if (targetEl.hasAttribute(ITarget.CLEAN_COMMAND))
 			newConfig.setCleanCommand(targetEl.getAttribute(ITarget.CLEAN_COMMAND));
 
-		if(targetEl.hasAttribute(ITarget.EXTENSION))
+		if (targetEl.hasAttribute(ITarget.EXTENSION))
 			newConfig.setArtifactExtension(targetEl.getAttribute(ITarget.EXTENSION));
-		
-		// Convert the tool references
-		
-		IToolChain toolChain = newConfig.getToolChain();
-		((ToolChain)toolChain).checkForMigrationSupport();
 
-		if(targetEl.hasAttribute(ITarget.OS_LIST)){
+		// Convert the tool references
+
+		IToolChain toolChain = newConfig.getToolChain();
+		((ToolChain) toolChain).checkForMigrationSupport();
+
+		if (targetEl.hasAttribute(ITarget.OS_LIST)) {
 			String oses = targetEl.getAttribute(ITarget.OS_LIST);
 			String osList[] = oses.split(","); //$NON-NLS-1$
 			for (int i = 0; i < osList.length; ++i) {
-				osList[i]=osList[i].trim();
+				osList[i] = osList[i].trim();
 			}
 			toolChain.setOSList(osList);
 		}
-		
-		if(targetEl.hasAttribute(ITarget.ARCH_LIST)){
+
+		if (targetEl.hasAttribute(ITarget.ARCH_LIST)) {
 			String archs = targetEl.getAttribute(ITarget.ARCH_LIST);
 			String archList[] = archs.split(","); //$NON-NLS-1$
 			for (int i = 0; i < archList.length; ++i) {
-				archList[i]=archList[i].trim();
+				archList[i] = archList[i].trim();
 			}
 			toolChain.setArchList(archList);
 		}
-		
-		if(targetEl.hasAttribute(ITarget.BINARY_PARSER)){
+
+		if (targetEl.hasAttribute(ITarget.BINARY_PARSER)) {
 			String binaryParser = targetEl.getAttribute(ITarget.BINARY_PARSER);
 			ITargetPlatform targetPlatform = toolChain.getTargetPlatform();
-			if(targetPlatform.isExtensionElement()){
+			if (targetPlatform.isExtensionElement()) {
 				int nnn = ManagedBuildManager.getRandomNumber();
-				String subId = targetPlatform.getId() + "." + nnn;		//$NON-NLS-1$
-				String builderName = targetPlatform.getName() + "." + newConfig.getName(); 	//$NON-NLS-1$				
-				toolChain.createTargetPlatform(targetPlatform,subId,builderName,false);
+				String subId = targetPlatform.getId() + "." + nnn; //$NON-NLS-1$
+				String builderName = targetPlatform.getName() + "." + newConfig.getName(); //$NON-NLS-1$
+				toolChain.createTargetPlatform(targetPlatform, subId, builderName, false);
 			}
-			targetPlatform.setBinaryParserList(new String[]{binaryParser});  // Older projects have only a single binary parser.
+			targetPlatform.setBinaryParserList(new String[] { binaryParser }); // Older projects have only a single binary parser.
 		}
-		
-		if(targetEl.hasAttribute(ITarget.MAKE_COMMAND)){
-			String makeCommand =  targetEl.getAttribute(ITarget.MAKE_COMMAND);
+
+		if (targetEl.hasAttribute(ITarget.MAKE_COMMAND)) {
+			String makeCommand = targetEl.getAttribute(ITarget.MAKE_COMMAND);
 			IBuilder builder = toolChain.getBuilder();
 			if (builder.isExtensionElement()) {
 				int nnn = ManagedBuildManager.getRandomNumber();
-				String subId = builder.getId() + "." + nnn;		//$NON-NLS-1$
-				String builderName = builder.getName() + "." + newConfig.getName(); 	//$NON-NLS-1$
+				String subId = builder.getId() + "." + nnn; //$NON-NLS-1$
+				String builderName = builder.getName() + "." + newConfig.getName(); //$NON-NLS-1$
 				builder = toolChain.createBuilder(builder, subId, builderName, false);
 			}
 			builder.setCommand(makeCommand);
 		}
 
-		if(targetEl.hasAttribute(ITarget.MAKE_ARGS)){
-			String makeArguments =  targetEl.getAttribute(ITarget.MAKE_ARGS);
+		if (targetEl.hasAttribute(ITarget.MAKE_ARGS)) {
+			String makeArguments = targetEl.getAttribute(ITarget.MAKE_ARGS);
 			IBuilder builder = toolChain.getBuilder();
 			if (builder.isExtensionElement()) {
 				int nnn = ManagedBuildManager.getRandomNumber();
-				String subId = builder.getId() + "." + nnn;		//$NON-NLS-1$
-				String builderName = builder.getName() + "." + newConfig.getName(); 	//$NON-NLS-1$
+				String subId = builder.getId() + "." + nnn; //$NON-NLS-1$
+				String builderName = builder.getName() + "." + newConfig.getName(); //$NON-NLS-1$
 				builder = toolChain.createBuilder(builder, subId, builderName, false);
 			}
 			builder.setArguments(makeArguments);
 		}
 
-//		 by now if a builder is going to be created, it will have been
-		Builder builder = (Builder)toolChain.getBuilder();
-		if (! builder.isExtensionElement()) {
+		//		 by now if a builder is going to be created, it will have been
+		Builder builder = (Builder) toolChain.getBuilder();
+		if (!builder.isExtensionElement()) {
 			builder.checkForMigrationSupport();
 		}
 
 		NodeList toolRefNodes = oldConfig.getElementsByTagName(IConfigurationV2.TOOLREF_ELEMENT_NAME);
 		for (int refIndex = 0; refIndex < toolRefNodes.getLength(); ++refIndex) {
-			try{
+			try {
 				convertToolRef(toolChain, (Element) toolRefNodes.item(refIndex), monitor);
-			}
-			catch(CoreException e){
+			} catch (CoreException e) {
 				newProject.removeConfiguration(newConfigId);
 				throw e;
 			}
@@ -299,167 +298,163 @@ class UpdateManagedProject20 {
 
 		monitor.worked(1);
 	}
-	
-	protected static void convertToolRef(IToolChain toolChain, Element oldToolRef, IProgressMonitor monitor) 
-							throws CoreException {
-		if(!oldToolRef.hasAttribute(IToolReference.ID)) {
+
+	protected static void convertToolRef(IToolChain toolChain, Element oldToolRef, IProgressMonitor monitor)
+			throws CoreException {
+		if (!oldToolRef.hasAttribute(IToolReference.ID)) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
 					ConverterMessages.getResourceString("UpdateManagedProject20.3"), null)); //$NON-NLS-1$
 		}
 
 		String toolId = oldToolRef.getAttribute(IToolReference.ID);
 		IConfiguration configuration = toolChain.getParent();
-		
+
 		ITool tools[] = configuration.getTools();
-		if(tools == null) {
+		if (tools == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
 					ConverterMessages.getResourceString("UpdateManagedProject20.4"), null)); //$NON-NLS-1$
 		}
-		
+
 		ITool tool = null;
-		for(int i = 0; i < tools.length; i++){
-			ITool curTool = tools[i]; 
+		for (int i = 0; i < tools.length; i++) {
+			ITool curTool = tools[i];
 			ITool parent = curTool.getSuperClass();
 			String curToolId = curTool.getId();
-			
+
 			while (parent != null) {
 				String parentId = parent.getId();
-				if(parentId.equals(toolId))
+				if (parentId.equals(toolId))
 					break;
 				parent = parent.getSuperClass();
 			}
-			if(parent == null)
+			if (parent == null)
 				continue;
 
-			try{
-				Integer.decode(curToolId.substring(curToolId.lastIndexOf('.')+1));
-			}
-			catch(IndexOutOfBoundsException e){
+			try {
+				Integer.decode(curToolId.substring(curToolId.lastIndexOf('.') + 1));
+			} catch (IndexOutOfBoundsException e) {
 				continue;
-			}
-			catch(NumberFormatException e){
+			} catch (NumberFormatException e) {
 				continue;
 			}
 			tool = curTool;
 			break;
 		}
 
-		if(tool == null){
+		if (tool == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-					ConverterMessages.getFormattedString("UpdateManagedProject20.5",toolId), null)); //$NON-NLS-1$
+					ConverterMessages.getFormattedString("UpdateManagedProject20.5", toolId), null)); //$NON-NLS-1$
 		}
-			
-		// Check for migration support 
-		((Tool)tool).checkForMigrationSupport();
-		
+
+		// Check for migration support
+		((Tool) tool).checkForMigrationSupport();
+
 		//the tool found, proceed with conversion ...
 
-		if(oldToolRef.hasAttribute(IToolReference.COMMAND))
+		if (oldToolRef.hasAttribute(IToolReference.COMMAND))
 			tool.setToolCommand(oldToolRef.getAttribute(IToolReference.COMMAND));
 
-		if(oldToolRef.hasAttribute(IToolReference.OUTPUT_FLAG))
+		if (oldToolRef.hasAttribute(IToolReference.OUTPUT_FLAG))
 			tool.setOutputFlag(oldToolRef.getAttribute(IToolReference.OUTPUT_FLAG));
 
-		if(oldToolRef.hasAttribute(IToolReference.OUTPUT_PREFIX))
+		if (oldToolRef.hasAttribute(IToolReference.OUTPUT_PREFIX))
 			tool.setOutputPrefix(oldToolRef.getAttribute(IToolReference.OUTPUT_PREFIX));
-			
 
-		if(oldToolRef.hasAttribute(IToolReference.OUTPUTS)){
+		if (oldToolRef.hasAttribute(IToolReference.OUTPUTS)) {
 			String outputs = oldToolRef.getAttribute(IToolReference.OUTPUTS);
 			tool.setOutputsAttribute(outputs);
 		}
 
 		NodeList optRefs = oldToolRef.getElementsByTagName(ITool.OPTION_REF);
 		for (int refIndex = optRefs.getLength() - 1; refIndex >= 0; --refIndex) {
-				convertOptionRef(toolChain, tool, (Element) optRefs.item(refIndex), monitor);
+			convertOptionRef(toolChain, tool, (Element) optRefs.item(refIndex), monitor);
 		}
 
 		monitor.worked(1);
 	}
-	
-	protected static void convertOptionRef(IToolChain toolChain, ITool tool, Element optRef, IProgressMonitor monitor) 
-							throws CoreException {
 
-		if(!optRef.hasAttribute(IOption.ID)){
+	protected static void convertOptionRef(IToolChain toolChain, ITool tool, Element optRef, IProgressMonitor monitor)
+			throws CoreException {
+
+		if (!optRef.hasAttribute(IOption.ID)) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
 					ConverterMessages.getResourceString("UpdateManagedProject20.6"), null)); //$NON-NLS-1$
 		}
-		
+
 		String optId = optRef.getAttribute(IOption.ID);
-		
+
 		IConfiguration configuration = toolChain.getParent();
-		
-		IOption options[] = tool.getOptions();		
+
+		IOption options[] = tool.getOptions();
 		IOption option = null;
 
-		for(int i = 0; i < options.length; i++){
-			IOption curOption = options[i]; 
+		for (int i = 0; i < options.length; i++) {
+			IOption curOption = options[i];
 			IOption parent = curOption.getSuperClass();
-			if(parent == null)
+			if (parent == null)
 				continue;
-			
-			for (;parent.getSuperClass()!=null;parent = parent.getSuperClass()) {
+
+			for (; parent.getSuperClass() != null; parent = parent.getSuperClass()) {
 				// empty body, the loop is to find superclass
 			}
-			
+
 			String parentId = parent.getId();
-			if(!parentId.equals(optId))
+			if (!parentId.equals(optId))
 				continue;
-				
+
 			option = curOption;
 			break;
 		}
-		
-		if(option == null)
+
+		if (option == null)
 			option = tool.getOptionById(optId);
-		
-		if (option != null) {		//  Ignore options that don't have a match
-			try{
+
+		if (option != null) { //  Ignore options that don't have a match
+			try {
 				int type = option.getValueType();
-					
-				switch(type){
-					case IOption.BOOLEAN:{
-						if(optRef.hasAttribute(IOption.DEFAULT_VALUE)){
-							Boolean bool = Boolean.valueOf(optRef.getAttribute(IOption.DEFAULT_VALUE));
-							configuration.setOption(tool,option,bool.booleanValue());
-						}
-						break;
+
+				switch (type) {
+				case IOption.BOOLEAN: {
+					if (optRef.hasAttribute(IOption.DEFAULT_VALUE)) {
+						Boolean bool = Boolean.valueOf(optRef.getAttribute(IOption.DEFAULT_VALUE));
+						configuration.setOption(tool, option, bool.booleanValue());
 					}
+					break;
+				}
 				case IOption.ENUMERATED:
 				case IOption.TREE:
-				case IOption.STRING:{
-						if(optRef.hasAttribute(IOption.DEFAULT_VALUE))
-							configuration.setOption(tool,option,optRef.getAttribute(IOption.DEFAULT_VALUE));
-						break;
-					}
+				case IOption.STRING: {
+					if (optRef.hasAttribute(IOption.DEFAULT_VALUE))
+						configuration.setOption(tool, option, optRef.getAttribute(IOption.DEFAULT_VALUE));
+					break;
+				}
 				case IOption.STRING_LIST:
 				case IOption.INCLUDE_PATH:
 				case IOption.PREPROCESSOR_SYMBOLS:
 				case IOption.LIBRARIES:
-				case IOption.OBJECTS:{
-						Vector<String> values = new Vector<String>();
-						NodeList nodes = optRef.getElementsByTagName(IOption.LIST_VALUE);
-						for (int j = 0; j < nodes.getLength(); ++j) {
-							Node node = nodes.item(j);
-							if (node.getNodeType() == Node.ELEMENT_NODE) {
-								Boolean isBuiltIn = Boolean.valueOf(((Element)node).getAttribute(IOption.LIST_ITEM_BUILTIN));
-								if (!isBuiltIn.booleanValue()) {
-									values.add(((Element)node).getAttribute(IOption.LIST_ITEM_VALUE));
-								}
+				case IOption.OBJECTS: {
+					Vector<String> values = new Vector<String>();
+					NodeList nodes = optRef.getElementsByTagName(IOption.LIST_VALUE);
+					for (int j = 0; j < nodes.getLength(); ++j) {
+						Node node = nodes.item(j);
+						if (node.getNodeType() == Node.ELEMENT_NODE) {
+							Boolean isBuiltIn = Boolean
+									.valueOf(((Element) node).getAttribute(IOption.LIST_ITEM_BUILTIN));
+							if (!isBuiltIn.booleanValue()) {
+								values.add(((Element) node).getAttribute(IOption.LIST_ITEM_VALUE));
 							}
 						}
-						configuration.setOption(tool,option,values.toArray(new String[values.size()]));
-						break;
 					}
+					configuration.setOption(tool, option, values.toArray(new String[values.size()]));
+					break;
+				}
 				default:
 					break;
 				}
-			}
-			catch(BuildException e){
+			} catch (BuildException e) {
 				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-						ConverterMessages.getFormattedString("UpdateManagedProject20.8",e.getMessage()), e)); //$NON-NLS-1$
+						ConverterMessages.getFormattedString("UpdateManagedProject20.8", e.getMessage()), e)); //$NON-NLS-1$
 			}
 		}
 	}
 }
-

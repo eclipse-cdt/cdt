@@ -18,20 +18,19 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  * -break-commands NUMBER [ COMMAND-1 ... COMMAND-N ]
- *    
+ *
  * Specifies the CLI commands that should be executed when breakpoint NUMBER is hit.
  * The parameters COMMAND-1 to COMMAND-N are the commands. If no command is specified,
  * any previously-set commands are cleared.
- * 
+ *
  * Available since GDB 7.0
- * 
+ *
  * @since 3.0
  */
- 
-public class MIBreakCommands extends MICommand<MIInfo>
-{
+
+public class MIBreakCommands extends MICommand<MIInfo> {
 	/** @since 5.0 */
 	public MIBreakCommands(IBreakpointsTargetDMContext ctx, String breakpoint, String[] commands) {
 		super(ctx, "-break-commands"); //$NON-NLS-1$
@@ -41,7 +40,7 @@ public class MIBreakCommands extends MICommand<MIInfo>
 			String[] params = new String[commands.length + 1];
 			params[0] = breakpoint;
 			for (int i = 1; i < params.length; i++) {
-				params[i] = commands[i-1];
+				params[i] = commands[i - 1];
 			}
 			setParameters(params);
 		}

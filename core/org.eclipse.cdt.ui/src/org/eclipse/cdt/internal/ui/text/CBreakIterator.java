@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Assert;
 
 import com.ibm.icu.text.BreakIterator;
 
-
 /**
  * A C break iterator. It returns all breaks, including before and after
  * whitespace, and it returns all camel case breaks.
@@ -72,7 +71,7 @@ public class CBreakIterator extends BreakIterator {
 		 * Resets this run to the initial state.
 		 */
 		protected void init() {
-			length= 0;
+			length = 0;
 		}
 	}
 
@@ -86,8 +85,8 @@ public class CBreakIterator extends BreakIterator {
 	static final class LineDelimiter extends Run {
 		/** State: INIT -> delimiter -> EXIT. */
 		private char fState;
-		private static final char INIT= '\0';
-		private static final char EXIT= '\1';
+		private static final char INIT = '\0';
+		private static final char EXIT = '\1';
 
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#init()
@@ -95,7 +94,7 @@ public class CBreakIterator extends BreakIterator {
 		@Override
 		protected void init() {
 			super.init();
-			fState= INIT;
+			fState = INIT;
 		}
 
 		/*
@@ -107,11 +106,11 @@ public class CBreakIterator extends BreakIterator {
 				return false;
 
 			if (fState == INIT) {
-				fState= ch;
+				fState = ch;
 				length++;
 				return true;
 			} else if (fState != ch) {
-				fState= EXIT;
+				fState = EXIT;
 				length++;
 				return true;
 			} else {
@@ -137,30 +136,30 @@ public class CBreakIterator extends BreakIterator {
 
 	static final class CamelCaseIdentifier extends Run {
 		/* states */
-		private static final int S_INIT= 0;
-		private static final int S_LOWER= 1;
-		private static final int S_ONE_CAP= 2;
-		private static final int S_ALL_CAPS= 3;
-		private static final int S_UNDERSCORE= 4;
-		private static final int S_EXIT= 5;
-		private static final int S_EXIT_MINUS_ONE= 6;
+		private static final int S_INIT = 0;
+		private static final int S_LOWER = 1;
+		private static final int S_ONE_CAP = 2;
+		private static final int S_ALL_CAPS = 3;
+		private static final int S_UNDERSCORE = 4;
+		private static final int S_EXIT = 5;
+		private static final int S_EXIT_MINUS_ONE = 6;
 
 		/* character types */
-		private static final int K_INVALID= 0;
-		private static final int K_LOWER= 1;
-		private static final int K_UPPER= 2;
-		private static final int K_UNDERSCORE= 3;
-		private static final int K_OTHER= 4;
+		private static final int K_INVALID = 0;
+		private static final int K_LOWER = 1;
+		private static final int K_UPPER = 2;
+		private static final int K_UNDERSCORE = 3;
+		private static final int K_OTHER = 4;
 
 		private int fState;
 
-		private static final int[][] MATRIX= new int[][] {
+		private static final int[][] MATRIX = new int[][] {
 				// K_INVALID, K_LOWER,           K_UPPER,    K_UNDERSCORE, K_OTHER
-				{  S_EXIT,    S_LOWER,           S_ONE_CAP,  S_UNDERSCORE, S_LOWER }, // S_INIT
-				{  S_EXIT,    S_LOWER,           S_EXIT,     S_UNDERSCORE, S_LOWER }, // S_LOWER
-				{  S_EXIT,    S_LOWER,           S_ALL_CAPS, S_UNDERSCORE, S_LOWER }, // S_ONE_CAP
-				{  S_EXIT,    S_EXIT_MINUS_ONE,  S_ALL_CAPS, S_UNDERSCORE, S_LOWER }, // S_ALL_CAPS
-				{  S_EXIT,    S_EXIT,            S_EXIT,     S_UNDERSCORE, S_EXIT  }, // S_UNDERSCORE
+				{ S_EXIT, S_LOWER, S_ONE_CAP, S_UNDERSCORE, S_LOWER }, // S_INIT
+				{ S_EXIT, S_LOWER, S_EXIT, S_UNDERSCORE, S_LOWER }, // S_LOWER
+				{ S_EXIT, S_LOWER, S_ALL_CAPS, S_UNDERSCORE, S_LOWER }, // S_ONE_CAP
+				{ S_EXIT, S_EXIT_MINUS_ONE, S_ALL_CAPS, S_UNDERSCORE, S_LOWER }, // S_ALL_CAPS
+				{ S_EXIT, S_EXIT, S_EXIT, S_UNDERSCORE, S_EXIT }, // S_UNDERSCORE
 		};
 
 		/*
@@ -169,7 +168,7 @@ public class CBreakIterator extends BreakIterator {
 		@Override
 		protected void init() {
 			super.init();
-			fState= S_INIT;
+			fState = S_INIT;
 		}
 
 		/*
@@ -177,23 +176,23 @@ public class CBreakIterator extends BreakIterator {
 		 */
 		@Override
 		protected boolean consume(char ch) {
-			int kind= getKind(ch);
-			fState= MATRIX[fState][kind];
+			int kind = getKind(ch);
+			fState = MATRIX[fState][kind];
 			switch (fState) {
-				case S_LOWER:
-				case S_ONE_CAP:
-				case S_ALL_CAPS:
-				case S_UNDERSCORE:
-					length++;
-					return true;
-				case S_EXIT:
-					return false;
-				case S_EXIT_MINUS_ONE:
-					length--;
-					return false;
-				default:
-					Assert.isTrue(false);
-					return false;
+			case S_LOWER:
+			case S_ONE_CAP:
+			case S_ALL_CAPS:
+			case S_UNDERSCORE:
+				length++;
+				return true;
+			case S_EXIT:
+				return false;
+			case S_EXIT_MINUS_ONE:
+				length--;
+				return false;
+			default:
+				Assert.isTrue(false);
+				return false;
 			}
 		}
 
@@ -233,11 +232,11 @@ public class CBreakIterator extends BreakIterator {
 		}
 	}
 
-	private static final Run WHITESPACE= new Whitespace();
-	private static final Run DELIMITER= new LineDelimiter();
-	private static final Run IDENTIFIER= new Identifier();
-	private static final Run CAMELCASE= new CamelCaseIdentifier();
-	private static final Run OTHER= new Other();
+	private static final Run WHITESPACE = new Whitespace();
+	private static final Run DELIMITER = new LineDelimiter();
+	private static final Run IDENTIFIER = new Identifier();
+	private static final Run CAMELCASE = new CamelCaseIdentifier();
+	private static final Run OTHER = new Other();
 
 	/** The platform break iterator (word instance) used as a base. */
 	protected final BreakIterator fIterator;
@@ -248,13 +247,12 @@ public class CBreakIterator extends BreakIterator {
 	/** Break on camel case word boundaries */
 	private boolean fCamelCaseBreakEnabled = true;
 
-
 	/**
 	 * Creates a new break iterator.
 	 */
 	public CBreakIterator() {
-		fIterator= BreakIterator.getWordInstance();
-		fIndex= fIterator.current();
+		fIterator = BreakIterator.getWordInstance();
+		fIndex = fIterator.current();
 	}
 
 	/*
@@ -270,7 +268,7 @@ public class CBreakIterator extends BreakIterator {
 	 */
 	@Override
 	public int first() {
-		fIndex= fIterator.first();
+		fIndex = fIterator.first();
 		return fIndex;
 	}
 
@@ -283,7 +281,7 @@ public class CBreakIterator extends BreakIterator {
 		if (offset == getText().getEndIndex())
 			return DONE;
 
-		int next= fIterator.following(offset);
+		int next = fIterator.following(offset);
 		if (next == DONE)
 			return DONE;
 
@@ -291,7 +289,7 @@ public class CBreakIterator extends BreakIterator {
 		// Math.min(offset + run.length, next) does not work
 		// since BreakIterator.getWordInstance considers _ as boundaries
 		// seems to work fine, however
-		Run run= consumeRun(offset);
+		Run run = consumeRun(offset);
 		return offset + run.length;
 
 	}
@@ -304,12 +302,12 @@ public class CBreakIterator extends BreakIterator {
 	private Run consumeRun(int offset) {
 		// assert offset < length
 
-		char ch= fText.charAt(offset);
-		int length= fText.length();
-		Run run= getRun(ch);
+		char ch = fText.charAt(offset);
+		int length = fText.length();
+		Run run = getRun(ch);
 		while (run.consume(ch) && offset < length - 1) {
 			offset++;
-			ch= fText.charAt(offset);
+			ch = fText.charAt(offset);
 		}
 
 		return run;
@@ -324,17 +322,16 @@ public class CBreakIterator extends BreakIterator {
 	private Run getRun(char ch) {
 		Run run;
 		if (WHITESPACE.isValid(ch))
-			run= WHITESPACE;
+			run = WHITESPACE;
 		else if (DELIMITER.isValid(ch))
-			run= DELIMITER;
+			run = DELIMITER;
 		else if (IDENTIFIER.isValid(ch)) {
 			if (fCamelCaseBreakEnabled)
-				run= CAMELCASE;
+				run = CAMELCASE;
 			else
-				run= IDENTIFIER;
-		}
-		else if (OTHER.isValid(ch))
-			run= OTHER;
+				run = IDENTIFIER;
+		} else if (OTHER.isValid(ch))
+			run = OTHER;
 		else {
 			Assert.isTrue(false);
 			return null;
@@ -357,8 +354,8 @@ public class CBreakIterator extends BreakIterator {
 	 */
 	@Override
 	public boolean isBoundary(int offset) {
-        if (offset == getText().getBeginIndex())
-            return true;
+		if (offset == getText().getBeginIndex())
+			return true;
 		return following(offset - 1) == offset;
 	}
 
@@ -367,7 +364,7 @@ public class CBreakIterator extends BreakIterator {
 	 */
 	@Override
 	public int last() {
-		fIndex= fIterator.last();
+		fIndex = fIterator.last();
 		return fIndex;
 	}
 
@@ -376,7 +373,7 @@ public class CBreakIterator extends BreakIterator {
 	 */
 	@Override
 	public int next() {
-		fIndex= following(fIndex);
+		fIndex = following(fIndex);
 		return fIndex;
 	}
 
@@ -399,15 +396,15 @@ public class CBreakIterator extends BreakIterator {
 		if (isBoundary(offset - 1))
 			return offset - 1;
 
-		int previous= offset - 1;
+		int previous = offset - 1;
 		do {
-			previous= fIterator.preceding(previous);
+			previous = fIterator.preceding(previous);
 		} while (!isBoundary(previous));
 
-		int last= DONE;
+		int last = DONE;
 		while (previous < offset) {
-			last= previous;
-			previous= following(previous);
+			last = previous;
+			previous = following(previous);
 		}
 
 		return last;
@@ -418,7 +415,7 @@ public class CBreakIterator extends BreakIterator {
 	 */
 	@Override
 	public int previous() {
-		fIndex= preceding(fIndex);
+		fIndex = preceding(fIndex);
 		return fIndex;
 	}
 
@@ -435,7 +432,7 @@ public class CBreakIterator extends BreakIterator {
 	 * @param newText the new text
 	 */
 	public void setText(CharSequence newText) {
-		fText= newText;
+		fText = newText;
 		fIterator.setText(new SequenceCharacterIterator(newText));
 		first();
 	}
@@ -446,7 +443,7 @@ public class CBreakIterator extends BreakIterator {
 	@Override
 	public void setText(CharacterIterator newText) {
 		if (newText instanceof CharSequence) {
-			fText= (CharSequence) newText;
+			fText = (CharSequence) newText;
 			fIterator.setText(newText);
 			first();
 		} else {
@@ -456,7 +453,7 @@ public class CBreakIterator extends BreakIterator {
 
 	/**
 	 * Enables breaks at word boundaries inside a camel case identifier.
-	 *  
+	 *
 	 * @param camelCaseBreakEnabled <code>true</code> to enable, <code>false</code> to disable.
 	 */
 	public void setCamelCaseBreakEnabled(boolean camelCaseBreakEnabled) {

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -47,442 +47,438 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
- * Service for retrieving PDA debugger stack data. 
+ * Service for retrieving PDA debugger stack data.
  * <p>
- * This service depends on the {@link PDACommandControl} service and the 
- * {@link IRunControl} service.  These services must be initialized before 
+ * This service depends on the {@link PDACommandControl} service and the
+ * {@link IRunControl} service.  These services must be initialized before
  * this service is initialized.
  * </p>
  */
 public class PDAStack extends AbstractDsfService implements IStack, ICachingService {
 
-    /**
-     * PDA stack frame contains only the stack frame level.  It is only 
-     * used as an index into the frame data returned by the PDA debugger.
-     */
-    @Immutable
-    private static class FrameDMContext extends AbstractDMContext implements IFrameDMContext {
+	/**
+	 * PDA stack frame contains only the stack frame level.  It is only
+	 * used as an index into the frame data returned by the PDA debugger.
+	 */
+	@Immutable
+	private static class FrameDMContext extends AbstractDMContext implements IFrameDMContext {
 
-        final private int fLevel;
+		final private int fLevel;
 
-        FrameDMContext(String sessionId, PDAThreadDMContext execDmc, int level) {
-            super(sessionId, new IDMContext[] { execDmc });
-            fLevel = level;
-        }
+		FrameDMContext(String sessionId, PDAThreadDMContext execDmc, int level) {
+			super(sessionId, new IDMContext[] { execDmc });
+			fLevel = level;
+		}
 
-        @Override
-	public int getLevel() { return fLevel; }
+		@Override
+		public int getLevel() {
+			return fLevel;
+		}
 
-        @Override
-        public boolean equals(Object other) {
-            return super.baseEquals(other) && ((FrameDMContext)other).fLevel == fLevel;
-        }
+		@Override
+		public boolean equals(Object other) {
+			return super.baseEquals(other) && ((FrameDMContext) other).fLevel == fLevel;
+		}
 
-        @Override
-        public int hashCode() {
-            return super.baseHashCode() ^ fLevel;
-        }
+		@Override
+		public int hashCode() {
+			return super.baseHashCode() ^ fLevel;
+		}
 
-        @Override
-        public String toString() { 
-            return baseToString() + ".frame[" + fLevel + "]";  //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
+		@Override
+		public String toString() {
+			return baseToString() + ".frame[" + fLevel + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
 
-    /**
-     * Frame data based on the PDAFrame object returned by the PDA debugger.
-     */
-    @Immutable
-    private static class FrameDMData implements IFrameDMData {
+	/**
+	 * Frame data based on the PDAFrame object returned by the PDA debugger.
+	 */
+	@Immutable
+	private static class FrameDMData implements IFrameDMData {
 
-        final private PDAFrame fFrame;
+		final private PDAFrame fFrame;
 
-        FrameDMData(PDAFrame frame) {
-            fFrame = frame;
-        }
+		FrameDMData(PDAFrame frame) {
+			fFrame = frame;
+		}
 
-        @Override
-	public String getFile() {
-            return fFrame.fFilePath.lastSegment();
-        }
+		@Override
+		public String getFile() {
+			return fFrame.fFilePath.lastSegment();
+		}
 
-        @Override
-	public String getFunction() {
-            return fFrame.fFunction;
-        }
+		@Override
+		public String getFunction() {
+			return fFrame.fFunction;
+		}
 
-        @Override
-	public int getLine() {
-            return fFrame.fLine + 1;
-        }
+		@Override
+		public int getLine() {
+			return fFrame.fLine + 1;
+		}
 
-        @Override
-	public int getColumn() {
-            return 0;
-        }
+		@Override
+		public int getColumn() {
+			return 0;
+		}
 
-        @Override
-	public IAddress getAddress() {
-            return null;
-        }
+		@Override
+		public IAddress getAddress() {
+			return null;
+		}
 
 		@Override
 		public String getModule() {
 			return "";//$NON-NLS-1$
 		}
-    }
+	}
 
-    /**
-     * Context representing a variable in a given stack frame.
-     */
-    @Immutable
-    private static class VariableDMContext extends AbstractDMContext implements IVariableDMContext {
+	/**
+	 * Context representing a variable in a given stack frame.
+	 */
+	@Immutable
+	private static class VariableDMContext extends AbstractDMContext implements IVariableDMContext {
 
-        final private String fVariable;
+		final private String fVariable;
 
-        VariableDMContext(String sessionId, FrameDMContext frameCtx, String variable) {
-            super(sessionId, new IDMContext[] { frameCtx });
-            fVariable = variable;
-        }
+		VariableDMContext(String sessionId, FrameDMContext frameCtx, String variable) {
+			super(sessionId, new IDMContext[] { frameCtx });
+			fVariable = variable;
+		}
 
-        String getVariable() { return fVariable; }
+		String getVariable() {
+			return fVariable;
+		}
 
-        @Override
-        public boolean equals(Object other) {
-            return super.baseEquals(other) && ((VariableDMContext)other).fVariable.equals(fVariable);
-        }
+		@Override
+		public boolean equals(Object other) {
+			return super.baseEquals(other) && ((VariableDMContext) other).fVariable.equals(fVariable);
+		}
 
-        @Override
-        public int hashCode() {
-            return super.baseHashCode() + fVariable.hashCode();
-        }
+		@Override
+		public int hashCode() {
+			return super.baseHashCode() + fVariable.hashCode();
+		}
 
-        @Override
-        public String toString() { 
-            return baseToString() + ".variable(" + fVariable + ")";  //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
+		@Override
+		public String toString() {
+			return baseToString() + ".variable(" + fVariable + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
 
-    /**
-     * PDA variable data, only supports returning the variable name.
-     */
-    @Immutable
-    private static class VariableDMData implements IVariableDMData {
+	/**
+	 * PDA variable data, only supports returning the variable name.
+	 */
+	@Immutable
+	private static class VariableDMData implements IVariableDMData {
 
-        final private String fVariable;
+		final private String fVariable;
 
-        VariableDMData(String variable) {
-            fVariable = variable;
-        }
+		VariableDMData(String variable) {
+			fVariable = variable;
+		}
 
-        @Override
-	public String getName() {
-            return fVariable;
-        }
+		@Override
+		public String getName() {
+			return fVariable;
+		}
 
-        @Override
-	public String getValue() {
-            return null;
-        }
-    }
+		@Override
+		public String getValue() {
+			return null;
+		}
+	}
 
-    // Services that this service depends on.
-    private PDACommandControl fCommandControl;
-    private IRunControl fRunControl;
+	// Services that this service depends on.
+	private PDACommandControl fCommandControl;
+	private IRunControl fRunControl;
 
-    // Command cache 
-    private CommandCache fCommandCache;
+	// Command cache
+	private CommandCache fCommandCache;
 
-    public PDAStack(DsfSession session) {
-        super(session);
-    }
+	public PDAStack(DsfSession session) {
+		super(session);
+	}
 
-    @Override
-    protected BundleContext getBundleContext() {
-        return PDAPlugin.getBundleContext();
-    }
+	@Override
+	protected BundleContext getBundleContext() {
+		return PDAPlugin.getBundleContext();
+	}
 
-    @Override
-    public void initialize(final RequestMonitor rm) {
-        super.initialize(
-            new RequestMonitor(getExecutor(), rm) { 
-                @Override
-                protected void handleSuccess() {
-                    doInitialize(rm);
-                }});
-    }
+	@Override
+	public void initialize(final RequestMonitor rm) {
+		super.initialize(new RequestMonitor(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				doInitialize(rm);
+			}
+		});
+	}
 
-    private void doInitialize(final RequestMonitor rm) {
-        // Initialize service references that stack service depends on
-        fCommandControl = getServicesTracker().getService(PDACommandControl.class);
-        fRunControl = getServicesTracker().getService(IRunControl.class);
+	private void doInitialize(final RequestMonitor rm) {
+		// Initialize service references that stack service depends on
+		fCommandControl = getServicesTracker().getService(PDACommandControl.class);
+		fRunControl = getServicesTracker().getService(IRunControl.class);
 
-        // Create the commands cache
-        fCommandCache = new CommandCache(getSession(), fCommandControl);
-        fCommandCache.setContextAvailable(fCommandControl.getContext(), true);
+		// Create the commands cache
+		fCommandCache = new CommandCache(getSession(), fCommandControl);
+		fCommandCache.setContextAvailable(fCommandControl.getContext(), true);
 
-        // Register to listen for run control events, to clear cache accordingly.
-        getSession().addServiceEventListener(this, null);
+		// Register to listen for run control events, to clear cache accordingly.
+		getSession().addServiceEventListener(this, null);
 
-        // Register stack service with OSGi
-        register(new String[]{IStack.class.getName(), PDAStack.class.getName()}, new Hashtable<String,String>());
+		// Register stack service with OSGi
+		register(new String[] { IStack.class.getName(), PDAStack.class.getName() }, new Hashtable<String, String>());
 
-        rm.done();
-    }
+		rm.done();
+	}
 
-    @Override
-    public void shutdown(final RequestMonitor rm) {
-        getSession().removeServiceEventListener(this);
-        fCommandCache.reset();
-        super.shutdown(rm);
-    }
+	@Override
+	public void shutdown(final RequestMonitor rm) {
+		getSession().removeServiceEventListener(this);
+		fCommandCache.reset();
+		super.shutdown(rm);
+	}
 
+	@Override
+	public void getArguments(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm) {
+		PDAPlugin.failRequest(rm, IDsfStatusConstants.NOT_SUPPORTED,
+				"PDA debugger does not support function arguments.");
+	}
 
-    @Override
-    public void getArguments(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm) {
-        PDAPlugin.failRequest(rm, IDsfStatusConstants.NOT_SUPPORTED, "PDA debugger does not support function arguments.");
-    }
+	@Override
+	public void getFrameData(final IFrameDMContext frameCtx, final DataRequestMonitor<IFrameDMData> rm) {
+		final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(frameCtx, PDAThreadDMContext.class);
 
-    @Override
-    public void getFrameData(final IFrameDMContext frameCtx, final DataRequestMonitor<IFrameDMData> rm) {
-        final PDAThreadDMContext threadCtx = 
-            DMContexts.getAncestorOfType(frameCtx, PDAThreadDMContext.class);
-        
-        if (threadCtx == null) {
-            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + frameCtx, null));
-            rm.done();
-            return;            
-        }
-        
-        getStackDepth(
-            threadCtx, -1, 
-            new DataRequestMonitor<Integer>(getExecutor(), rm) {
-                @Override
-                protected void handleSuccess() {
-                    // PDAFrame array is ordered highest to lowest.  We need to 
-                    // calculate the index based on frame level.
-                    int frameNum = getData() - frameCtx.getLevel() - 1;
-                    if (frameNum < 0) {
-                        PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid frame level " + frameCtx);
-                        return;
-                    }
+		if (threadCtx == null) {
+			rm.setStatus(
+					new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + frameCtx, null));
+			rm.done();
+			return;
+		}
 
-                    // Execute the PDA stack command, or retrieve the result from cache if already available.
-                    fCommandCache.execute(
-                        new PDAFrameCommand(threadCtx, frameNum),
-                        new DataRequestMonitor<PDAFrameCommandResult>(getExecutor(), rm) {
-                            @Override
-                            protected void handleSuccess() {
-                                // Create the frame data object based on the corresponding PDAFrame
-                                rm.setData(new FrameDMData(getData().fFrame));
-                                rm.done();
-                            }
-                        });
-                }
-            });
-    }
+		getStackDepth(threadCtx, -1, new DataRequestMonitor<Integer>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				// PDAFrame array is ordered highest to lowest.  We need to
+				// calculate the index based on frame level.
+				int frameNum = getData() - frameCtx.getLevel() - 1;
+				if (frameNum < 0) {
+					PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid frame level " + frameCtx);
+					return;
+				}
 
+				// Execute the PDA stack command, or retrieve the result from cache if already available.
+				fCommandCache.execute(new PDAFrameCommand(threadCtx, frameNum),
+						new DataRequestMonitor<PDAFrameCommandResult>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								// Create the frame data object based on the corresponding PDAFrame
+								rm.setData(new FrameDMData(getData().fFrame));
+								rm.done();
+							}
+						});
+			}
+		});
+	}
 
-    @Override
-    public void getFrames(IDMContext context, final DataRequestMonitor<IFrameDMContext[]> rm) {
-        // Can only create stack frames for an execution context as a parent, 
-        // however the argument context is a generic context type, so it could 
-        // be an execution context, a frame, a variable, etc. Search the 
-        // hierarchy of the argument context to find the execution one.
-        final PDAThreadDMContext threadCtx = 
-            DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
-        
-        if (threadCtx == null) {
-            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
-            rm.done();
-            return;            
-        }
+	@Override
+	public void getFrames(IDMContext context, final DataRequestMonitor<IFrameDMContext[]> rm) {
+		// Can only create stack frames for an execution context as a parent,
+		// however the argument context is a generic context type, so it could
+		// be an execution context, a frame, a variable, etc. Search the
+		// hierarchy of the argument context to find the execution one.
+		final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
 
-        // Execute the stack command and create the corresponding frame contexts.
-        getStackDepth(
-            context, -1, 
-            new DataRequestMonitor<Integer>(getExecutor(), rm) {
-                @Override
-                protected void handleSuccess() {
-                    IFrameDMContext[] frameCtxs = new IFrameDMContext[getData()];
-                    for (int i = 0; i < getData(); i++) {
-                        frameCtxs[i] = new FrameDMContext(getSession().getId(), threadCtx, i);
-                    }
-                    rm.setData(frameCtxs);
-                    rm.done();
-                }
-            });
-    }
+		if (threadCtx == null) {
+			rm.setStatus(
+					new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
+			rm.done();
+			return;
+		}
 
-    @Override
-    public void getFrames(IDMContext context, final int startIndex, final int endIndex, final DataRequestMonitor<IFrameDMContext[]> rm) {
-        // Validate index range.
-        assert startIndex >=0 && (endIndex < 0 || startIndex <= endIndex);
-        
-        final PDAThreadDMContext threadCtx = 
-            DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
-        
-        if (threadCtx == null) {
-            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
-            rm.done();
-            return;            
-        }
+		// Execute the stack command and create the corresponding frame contexts.
+		getStackDepth(context, -1, new DataRequestMonitor<Integer>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				IFrameDMContext[] frameCtxs = new IFrameDMContext[getData()];
+				for (int i = 0; i < getData(); i++) {
+					frameCtxs[i] = new FrameDMContext(getSession().getId(), threadCtx, i);
+				}
+				rm.setData(frameCtxs);
+				rm.done();
+			}
+		});
+	}
 
-        // Execute the stack command and create the corresponding frame contexts.
-        getStackDepth(
-            context, -1, 
-            new DataRequestMonitor<Integer>(getExecutor(), rm) {
-                @Override
-                protected void handleSuccess() {
-                    int numFrames = endIndex < 0 
-                        ? (getData() - startIndex) 
-                        : Math.min(endIndex + 1, getData()) - startIndex;
-                    IFrameDMContext[] frameCtxs = new IFrameDMContext[numFrames];
-                    for (int i = 0; i < numFrames; i++) {
-                        frameCtxs[i] = new FrameDMContext(getSession().getId(), threadCtx, startIndex + i);
-                    }
-                    rm.setData(frameCtxs);
-                    rm.done();
-                }
-            });
-    }
-    
-    @Override
-    public void getLocals(IFrameDMContext context, final DataRequestMonitor<IVariableDMContext[]> rm) {
-        if (!(context instanceof FrameDMContext)) {
-            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
-            rm.done();
-            return;            
-        }
-        final FrameDMContext frameCtx = (FrameDMContext)context;
-        
-        final PDAThreadDMContext threadCtx = 
-            DMContexts.getAncestorOfType(frameCtx, PDAThreadDMContext.class);
-        
-        if (threadCtx == null) {
-            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + frameCtx, null));
-            rm.done();
-            return;            
-        }
+	@Override
+	public void getFrames(IDMContext context, final int startIndex, final int endIndex,
+			final DataRequestMonitor<IFrameDMContext[]> rm) {
+		// Validate index range.
+		assert startIndex >= 0 && (endIndex < 0 || startIndex <= endIndex);
 
-        fCommandCache.execute(
-            new PDAStackCommand(threadCtx),
-            new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
-                @Override
-                protected void handleSuccess() {
-                    // Find the correct PDAFrame
-                    int frameId = getData().fFrames.length - frameCtx.getLevel() - 1;
-                    if (frameId < 0) {
-                        PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid frame level " + frameCtx);
-                        return;
-                    }
-                    PDAFrame pdaFrame = getData().fFrames[frameId];
+		final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
 
-                    // Create variable contexts for all variables in frame.
-                    IVariableDMContext[] variableCtxs = new IVariableDMContext[pdaFrame.fVariables.length];
-                    for (int i = 0; i < pdaFrame.fVariables.length; i++) {
-                        variableCtxs[i] = new VariableDMContext(getSession().getId(), frameCtx, pdaFrame.fVariables[i]);
-                    }
-                    rm.setData(variableCtxs);
-                    rm.done();
-                }
-            });
+		if (threadCtx == null) {
+			rm.setStatus(
+					new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
+			rm.done();
+			return;
+		}
 
-    }
+		// Execute the stack command and create the corresponding frame contexts.
+		getStackDepth(context, -1, new DataRequestMonitor<Integer>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				int numFrames = endIndex < 0 ? (getData() - startIndex)
+						: Math.min(endIndex + 1, getData()) - startIndex;
+				IFrameDMContext[] frameCtxs = new IFrameDMContext[numFrames];
+				for (int i = 0; i < numFrames; i++) {
+					frameCtxs[i] = new FrameDMContext(getSession().getId(), threadCtx, startIndex + i);
+				}
+				rm.setData(frameCtxs);
+				rm.done();
+			}
+		});
+	}
 
-    @Override
-    public void getStackDepth(IDMContext context, final int maxDepth, final DataRequestMonitor<Integer> rm) {
-        final PDAThreadDMContext threadCtx = 
-            DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
-        
-        if (threadCtx == null) {
-            rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
-            rm.done();
-            return;            
-        }
+	@Override
+	public void getLocals(IFrameDMContext context, final DataRequestMonitor<IVariableDMContext[]> rm) {
+		if (!(context instanceof FrameDMContext)) {
+			rm.setStatus(
+					new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
+			rm.done();
+			return;
+		}
+		final FrameDMContext frameCtx = (FrameDMContext) context;
 
-        // Execute stack command and return the data's size.
-        fCommandCache.execute(
-            new PDAStackDepthCommand(threadCtx),
-            new DataRequestMonitor<PDAStackDepthCommandResult>(getExecutor(), rm) {
-                @Override
-                protected void handleSuccess() {
-                    int depth= getData().fDepth;
-                    if (maxDepth > 0 && maxDepth < depth) {
-                    	depth = maxDepth;
-                    }
-					rm.setData(depth);
-                    rm.done();
-                }
-            });
-    }
+		final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(frameCtx, PDAThreadDMContext.class);
 
-    @Override
-    public void getTopFrame(IDMContext context, final DataRequestMonitor<IFrameDMContext> rm) {
-        // Can only create stack frames for an execution context as a parent, 
-        // however the argument context is a generic context type, so it could 
-        // be an execution context, a frame, a variable, etc. Search the 
-        // hierarchy of the argument context to find the execution one.
-        final PDAThreadDMContext execCtx = DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
-        if (execCtx == null) {
-            PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid context " + context);
-            return;
-        }
+		if (threadCtx == null) {
+			rm.setStatus(
+					new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + frameCtx, null));
+			rm.done();
+			return;
+		}
 
-        // Since the frame context only contain the level, there's no need to 
-        // call the PDA debugger.  Simply create a context for level 0. 
-        rm.setData(new FrameDMContext(getSession().getId(), execCtx, 0));
-        rm.done();
-    }
+		fCommandCache.execute(new PDAStackCommand(threadCtx),
+				new DataRequestMonitor<PDAStackCommandResult>(getExecutor(), rm) {
+					@Override
+					protected void handleSuccess() {
+						// Find the correct PDAFrame
+						int frameId = getData().fFrames.length - frameCtx.getLevel() - 1;
+						if (frameId < 0) {
+							PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE,
+									"Invalid frame level " + frameCtx);
+							return;
+						}
+						PDAFrame pdaFrame = getData().fFrames[frameId];
 
-    @Override
-    public void getVariableData(IVariableDMContext variableCtx, DataRequestMonitor<IVariableDMData> rm) {
-        if ( !(variableCtx instanceof VariableDMContext) ) {
-            PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid context " + variableCtx);
-            return;
-        }
+						// Create variable contexts for all variables in frame.
+						IVariableDMContext[] variableCtxs = new IVariableDMContext[pdaFrame.fVariables.length];
+						for (int i = 0; i < pdaFrame.fVariables.length; i++) {
+							variableCtxs[i] = new VariableDMContext(getSession().getId(), frameCtx,
+									pdaFrame.fVariables[i]);
+						}
+						rm.setData(variableCtxs);
+						rm.done();
+					}
+				});
 
-        // The variable data doen't contain a value.  So there's no need to 
-        // go to the back end to retrieve it.
-        String variable = ((VariableDMContext)variableCtx).getVariable();
+	}
 
-        rm.setData(new VariableDMData(variable));
-        rm.done();
-    }
+	@Override
+	public void getStackDepth(IDMContext context, final int maxDepth, final DataRequestMonitor<Integer> rm) {
+		final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
 
-    public boolean isStackAvailable(IDMContext context) {
-        // Stack is available if the program is suspended or stepping.
-        IExecutionDMContext execCtx = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
-        return execCtx != null && (fRunControl.isSuspended(execCtx) || (fRunControl.isStepping(execCtx)));
-    }
-    
-    /**
-     * Returns a frame context for the given thread and level;
-     */
-    public IFrameDMContext getFrameDMContext(PDAThreadDMContext thread, int level) {
-        return new FrameDMContext(getSession().getId(), thread, level);
-    }
+		if (threadCtx == null) {
+			rm.setStatus(
+					new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
+			rm.done();
+			return;
+		}
 
-    @DsfServiceEventHandler 
-    public void eventDispatched(IResumedDMEvent e) {
-        // Mark the cache as not available, so that stack commands will
-        // fail.  Also reset the cache unless it was a step command.
-        fCommandCache.setContextAvailable(e.getDMContext(), false);
-        if (!e.getReason().equals(StateChangeReason.STEP)) {
-            fCommandCache.reset(e.getDMContext());
-        }
-    }    
+		// Execute stack command and return the data's size.
+		fCommandCache.execute(new PDAStackDepthCommand(threadCtx),
+				new DataRequestMonitor<PDAStackDepthCommandResult>(getExecutor(), rm) {
+					@Override
+					protected void handleSuccess() {
+						int depth = getData().fDepth;
+						if (maxDepth > 0 && maxDepth < depth) {
+							depth = maxDepth;
+						}
+						rm.setData(depth);
+						rm.done();
+					}
+				});
+	}
 
+	@Override
+	public void getTopFrame(IDMContext context, final DataRequestMonitor<IFrameDMContext> rm) {
+		// Can only create stack frames for an execution context as a parent,
+		// however the argument context is a generic context type, so it could
+		// be an execution context, a frame, a variable, etc. Search the
+		// hierarchy of the argument context to find the execution one.
+		final PDAThreadDMContext execCtx = DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
+		if (execCtx == null) {
+			PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid context " + context);
+			return;
+		}
 
-    @DsfServiceEventHandler 
-    public void eventDispatched(ISuspendedDMEvent e) {
-        // Enable sending commands to target and clear the cache.
-        fCommandCache.setContextAvailable(e.getDMContext(), true);
-        fCommandCache.reset(e.getDMContext());
-    }
+		// Since the frame context only contain the level, there's no need to
+		// call the PDA debugger.  Simply create a context for level 0.
+		rm.setData(new FrameDMContext(getSession().getId(), execCtx, 0));
+		rm.done();
+	}
+
+	@Override
+	public void getVariableData(IVariableDMContext variableCtx, DataRequestMonitor<IVariableDMData> rm) {
+		if (!(variableCtx instanceof VariableDMContext)) {
+			PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid context " + variableCtx);
+			return;
+		}
+
+		// The variable data doen't contain a value.  So there's no need to
+		// go to the back end to retrieve it.
+		String variable = ((VariableDMContext) variableCtx).getVariable();
+
+		rm.setData(new VariableDMData(variable));
+		rm.done();
+	}
+
+	public boolean isStackAvailable(IDMContext context) {
+		// Stack is available if the program is suspended or stepping.
+		IExecutionDMContext execCtx = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
+		return execCtx != null && (fRunControl.isSuspended(execCtx) || (fRunControl.isStepping(execCtx)));
+	}
+
+	/**
+	 * Returns a frame context for the given thread and level;
+	 */
+	public IFrameDMContext getFrameDMContext(PDAThreadDMContext thread, int level) {
+		return new FrameDMContext(getSession().getId(), thread, level);
+	}
+
+	@DsfServiceEventHandler
+	public void eventDispatched(IResumedDMEvent e) {
+		// Mark the cache as not available, so that stack commands will
+		// fail.  Also reset the cache unless it was a step command.
+		fCommandCache.setContextAvailable(e.getDMContext(), false);
+		if (!e.getReason().equals(StateChangeReason.STEP)) {
+			fCommandCache.reset(e.getDMContext());
+		}
+	}
+
+	@DsfServiceEventHandler
+	public void eventDispatched(ISuspendedDMEvent e) {
+		// Enable sending commands to target and clear the cache.
+		fCommandCache.setContextAvailable(e.getDMContext(), true);
+		fCommandCache.reset(e.getDMContext());
+	}
 
 	@Override
 	public void flushCache(IDMContext context) {
-        fCommandCache.reset(context);	
+		fCommandCache.reset(context);
 	}
 }

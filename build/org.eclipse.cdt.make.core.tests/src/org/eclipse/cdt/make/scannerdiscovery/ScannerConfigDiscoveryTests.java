@@ -35,14 +35,14 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Scanner configuration discovery tests
- * 
+ *
  * @author vhirsl
  */
 public class ScannerConfigDiscoveryTests extends BaseTestCase {
 	private IProject fCProject = null;
 	private IFile fCFile = null;
-	IProgressMonitor fMonitor = null; 
-	
+	IProgressMonitor fMonitor = null;
+
 	/**
 	 * @param name
 	 */
@@ -53,8 +53,8 @@ public class ScannerConfigDiscoveryTests extends BaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		fMonitor = new NullProgressMonitor();
-		
-		fCProject = StandardBuildTestHelper.createProject("SCD", (IPath)null, MakeCorePlugin.MAKE_PROJECT_ID);
+
+		fCProject = StandardBuildTestHelper.createProject("SCD", (IPath) null, MakeCorePlugin.MAKE_PROJECT_ID);
 		fCFile = fCProject.getProject().getFile("main.c");
 		if (!fCFile.exists()) {
 			fCFile.create(new ByteArrayInputStream(" \n".getBytes()), false, fMonitor);
@@ -70,10 +70,9 @@ public class ScannerConfigDiscoveryTests extends BaseTestCase {
 	public void testGetCCompilerBuiltins() throws CoreException {
 		MakeProjectNature.addNature(fCProject, fMonitor);
 		ScannerConfigNature.addScannerConfigNature(fCProject);
-		
+
 		PerProjectSICollector.calculateCompilerBuiltins(fCProject);
-		IScannerInfo scInfo = CCorePlugin.getDefault().getScannerInfoProvider(fCProject).
-				getScannerInformation(fCFile);
+		IScannerInfo scInfo = CCorePlugin.getDefault().getScannerInfoProvider(fCProject).getScannerInformation(fCFile);
 		assertNotNull(scInfo);
 		String[] includes = scInfo.getIncludePaths();
 		assertTrue(includes.length == 0);
@@ -85,10 +84,9 @@ public class ScannerConfigDiscoveryTests extends BaseTestCase {
 		CCProjectNature.addCCNature(fCProject, fMonitor);
 		MakeProjectNature.addNature(fCProject, fMonitor);
 		ScannerConfigNature.addScannerConfigNature(fCProject);
-		
+
 		PerProjectSICollector.calculateCompilerBuiltins(fCProject);
-		IScannerInfo scInfo = CCorePlugin.getDefault().getScannerInfoProvider(fCProject).
-				getScannerInformation(fCFile);
+		IScannerInfo scInfo = CCorePlugin.getDefault().getScannerInfoProvider(fCProject).getScannerInformation(fCFile);
 		assertNotNull(scInfo);
 		String[] includes = scInfo.getIncludePaths();
 		assertTrue(includes.length == 0);

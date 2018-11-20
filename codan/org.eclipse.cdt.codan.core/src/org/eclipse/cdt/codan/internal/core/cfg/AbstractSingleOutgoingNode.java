@@ -18,7 +18,7 @@ import org.eclipse.cdt.codan.core.model.cfg.ISingleOutgoing;
 
 /**
  * Abstract implementation of basic block with single outgoing arc (node)
- * 
+ *
  */
 public abstract class AbstractSingleOutgoingNode extends AbstractBasicBlock implements ISingleOutgoing {
 	private IBasicBlock next;
@@ -47,7 +47,7 @@ public abstract class AbstractSingleOutgoingNode extends AbstractBasicBlock impl
 
 	/**
 	 * Sets outgoing node
-	 * 
+	 *
 	 * @param node
 	 */
 	public void setOutgoing(IBasicBlock node) {

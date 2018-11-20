@@ -25,36 +25,36 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
-
 /**
  * An IExportProjectProvider implementation intended to be sub-classed by clients. It
  * provides convenience methods for obtaining options and their parameters from the
  * command-line.
- * 
+ *
  * @see ExternalExportProjectProvider for usage scenarios
  */
 public abstract class AbstractExportProjectProvider implements IExportProjectProvider {
-	public static final IProgressMonitor NPM= new NullProgressMonitor();
-	
+	public static final IProgressMonitor NPM = new NullProgressMonitor();
+
 	private Map<String, List<String>> arguments;
 	private String[] appArguments;
-	
-	public AbstractExportProjectProvider() {}
-	
+
+	public AbstractExportProjectProvider() {
+	}
+
 	/**
 	 * @return the application arguments
 	 */
 	protected String[] getApplicationArguments() {
 		return appArguments.clone();
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.core.index.export.IExportProjectProvider#setApplicationArguments(java.lang.String[])
 	 */
 	@Override
 	public void setApplicationArguments(String[] arguments) {
-		this.appArguments= arguments.clone();
-		this.arguments= Collections.unmodifiableMap(CLIUtil.parseToMap(arguments));
+		this.appArguments = arguments.clone();
+		this.arguments = Collections.unmodifiableMap(CLIUtil.parseToMap(arguments));
 	}
 
 	/**
@@ -64,10 +64,10 @@ public abstract class AbstractExportProjectProvider implements IExportProjectPro
 	 * the mapping option=>[p1,p2,p3] will be present in the map
 	 * @return a mapping from string option to parameter string list
 	 */
-	protected Map<String,List<String>> getParsedArgs() {
+	protected Map<String, List<String>> getParsedArgs() {
 		return arguments;
 	}
-	
+
 	/**
 	 * Gets an option's single parameter, or throws a CoreException should the option
 	 * not be present, or if it does not have exactly one parameter
@@ -79,15 +79,15 @@ public abstract class AbstractExportProjectProvider implements IExportProjectPro
 	public String getSingleString(String option) throws CoreException {
 		return CLIUtil.getArg(arguments, option, 1).get(0);
 	}
-	
+
 	/**
 	 * @param option
 	 * @return the list of parameters given with this option
 	 */
 	public List<String> getParameters(String option) {
-		return arguments.get(option); 
+		return arguments.get(option);
 	}
-	
+
 	/**
 	 * Returns whether the specified option appears in the application arguments
 	 * @param option the option to check for
@@ -96,7 +96,7 @@ public abstract class AbstractExportProjectProvider implements IExportProjectPro
 	public boolean isPresent(String option) {
 		return arguments.containsKey(option);
 	}
-	
+
 	/**
 	 * Returns a list of strings representing the parameters to the specified option. If the number
 	 * of parameters does not match the expected number, an command-line error message is shown to the
@@ -108,7 +108,7 @@ public abstract class AbstractExportProjectProvider implements IExportProjectPro
 	public List<String> getParameters(String option, int expected) throws CoreException {
 		return CLIUtil.getArg(arguments, option, expected);
 	}
-	
+
 	/**
 	 * Produces an error in the application
 	 * @param message an error message suitable for the user

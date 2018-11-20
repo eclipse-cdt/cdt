@@ -116,7 +116,7 @@ public class ToolChainEnvironmentPage extends WizardPage {
 				}
 				return null;
 			}
-		});	
+		});
 
 		Composite buttonComp = new Composite(comp, SWT.NONE);
 		buttonComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));

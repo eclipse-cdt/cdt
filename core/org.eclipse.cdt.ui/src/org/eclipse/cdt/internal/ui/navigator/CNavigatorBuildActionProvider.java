@@ -24,7 +24,7 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 /**
  * A Common Navigator action provider providing the contributions
  * from the build action group.
- * 
+ *
  * @see CNavigatorBuildActionGroup
  */
 public class CNavigatorBuildActionProvider extends CommonActionProvider {
@@ -36,15 +36,15 @@ public class CNavigatorBuildActionProvider extends CommonActionProvider {
 	 */
 	@Override
 	public void init(ICommonActionExtensionSite site) {
-		ICommonViewerWorkbenchSite workbenchSite= null;
+		ICommonViewerWorkbenchSite workbenchSite = null;
 		if (site.getViewSite() instanceof ICommonViewerWorkbenchSite) {
-			workbenchSite= (ICommonViewerWorkbenchSite) site.getViewSite();
+			workbenchSite = (ICommonViewerWorkbenchSite) site.getViewSite();
 		}
 		if (workbenchSite != null) {
 			if (workbenchSite.getPart() != null && workbenchSite.getPart() instanceof IViewPart) {
-				IViewPart viewPart= (IViewPart) workbenchSite.getPart();
+				IViewPart viewPart = (IViewPart) workbenchSite.getPart();
 
-				fBuildGroup= new CNavigatorBuildActionGroup(viewPart);
+				fBuildGroup = new CNavigatorBuildActionGroup(viewPart);
 			}
 		}
 	}

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     William R. Swanson (Tilera) - initial API and implementation (Bug 365966)
  *******************************************************************************/
@@ -19,19 +19,18 @@ package org.eclipse.cdt.dsf.concurrent;
  * The handleCompleted() method is immediately executed in same thread as done() call.
  * @since 2.3
  */
-public class ImmediateDataRequestMonitor<V> extends DataRequestMonitor<V>
-{
+public class ImmediateDataRequestMonitor<V> extends DataRequestMonitor<V> {
 	/**
 	 * Constructor without a parent monitor and using ImmediateExecutor.
 	 */
 	public ImmediateDataRequestMonitor() {
 		super(ImmediateExecutor.getInstance(), null);
 	}
-	
+
 	/**
 	 * Constructor with an optional parent monitor and using ImmediateExecutor.
 	 */
 	public ImmediateDataRequestMonitor(RequestMonitor parentMonitor) {
 		super(ImmediateExecutor.getInstance(), parentMonitor);
-	}	
+	}
 }

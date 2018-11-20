@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Intel Corporation - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.core.autotools.core;
 
@@ -51,13 +51,13 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 	@Override
 	public IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor)
 			throws CoreException {
-		
+
 		IProject project = getProject();
-		
+
 		execute(Arrays.asList(new String[] { "autoreconf", "--install" }), project.getLocation(), console, monitor); //$NON-NLS-1$ //$NON-NLS-2$
 		execute(Arrays.asList(new String[] { "./configure" }), project.getLocation(), console, monitor); //$NON-NLS-1$
 		execute(Arrays.asList(new String[] { "make" }), project.getLocation(), console, monitor); //$NON-NLS-1$
-		
+
 		return new IProject[] { project };
 	}
 
@@ -66,7 +66,8 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 		execute(Arrays.asList(new String[] { "make", "clean" }), getProject().getLocation(), console, monitor); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	protected void execute(List<String> command, IPath dir, IConsole console, IProgressMonitor monitor) throws CoreException {
+	protected void execute(List<String> command, IPath dir, IConsole console, IProgressMonitor monitor)
+			throws CoreException {
 		String cmd = command.get(0);
 
 		if (Platform.getOS().equals(Platform.OS_WIN32) && !(cmd.endsWith(".exe") && !cmd.endsWith(".bat"))) { //$NON-NLS-1$ //$NON-NLS-2$

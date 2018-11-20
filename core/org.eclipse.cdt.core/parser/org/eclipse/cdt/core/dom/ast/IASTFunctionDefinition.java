@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This is a function definition, i.e. it has a body.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -50,14 +50,14 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 
 	/**
 	 * Set the decl specifier for the function.
-	 * 
+	 *
 	 * @param declSpec
 	 */
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec);
 
 	/**
 	 * Returns the function declarator of the function.
-	 * Note, that the function declarator may contain nested declarators and may also nest within 
+	 * Note, that the function declarator may contain nested declarators and may also nest within
 	 * another declarator. In the latter case this function definition is always the parent of the
 	 * outermost declarator.
 	 * <pre>
@@ -68,8 +68,8 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	public IASTFunctionDeclarator getDeclarator();
 
 	/**
-	 * Sets the declarator for the function. 
-	 * Note, that the function declarator may contain nested declarators and may also nest within 
+	 * Sets the declarator for the function.
+	 * Note, that the function declarator may contain nested declarators and may also nest within
 	 * another declarator. In the latter case this function definition is set to be the parent of the
 	 * outermost declarator.
 	 * <pre>
@@ -89,18 +89,18 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 
 	/**
 	 * Sets the body of the function.
-	 * 
+	 *
 	 * @param statement
 	 */
 	public void setBody(IASTStatement statement);
 
 	/**
 	 * Get the logical IScope that the function definition body represents.
-	 * 
+	 *
 	 * @return {@code IScope} representing function body.
 	 */
 	public IScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */

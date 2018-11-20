@@ -23,7 +23,6 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
 @SuppressWarnings("restriction")
 public class UPCASTKeywordExpression extends ASTNode implements IUPCASTKeywordExpression {
 
-
 	private int keywordKind;
 
 	public UPCASTKeywordExpression() {
@@ -72,16 +71,20 @@ public class UPCASTKeywordExpression extends ASTNode implements IUPCASTKeywordEx
 
 	@Override
 	public boolean accept(ASTVisitor visitor) {
-		if(visitor.shouldVisitExpressions) {
-			switch(visitor.visit(this)) {
-				case ASTVisitor.PROCESS_ABORT : return false;
-				case ASTVisitor.PROCESS_SKIP  : return true;
+		if (visitor.shouldVisitExpressions) {
+			switch (visitor.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
 			}
 		}
-		if(visitor.shouldVisitExpressions) {
-			switch(visitor.leave(this)) {
-				case ASTVisitor.PROCESS_ABORT : return false;
-				case ASTVisitor.PROCESS_SKIP  : return true;
+		if (visitor.shouldVisitExpressions) {
+			switch (visitor.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
 			}
 		}
 		return true;

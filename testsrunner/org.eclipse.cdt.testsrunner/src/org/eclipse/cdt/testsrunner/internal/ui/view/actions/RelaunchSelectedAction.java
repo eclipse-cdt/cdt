@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,6 @@
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
-
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -40,7 +39,6 @@ public abstract class RelaunchSelectedAction extends Action {
 	private ITestingSession testingSession;
 	private TreeViewer treeViewer;
 
-
 	public RelaunchSelectedAction(ITestingSession testingSession, TreeViewer treeViewer) {
 		this.testingSession = testingSession;
 		this.treeViewer = treeViewer;
@@ -48,7 +46,7 @@ public abstract class RelaunchSelectedAction extends Action {
 
 	/**
 	 * Returns the launch mode that should be use to run selected test item.
-	 * 
+	 *
 	 * @return launch mode
 	 */
 	protected abstract String getLaunchMode();
@@ -69,18 +67,18 @@ public abstract class RelaunchSelectedAction extends Action {
 		}
 		setEnabled(false);
 	}
-	
+
 	/**
 	 * Returns the currently selected items of test hierarchy.
-	 * 
+	 *
 	 * @return array of test items
 	 */
 	private ITestItem[] getSelectedTestItems() {
-		IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		ITestItem[] result = new ITestItem[selection.size()];
 		int resultIndex = 0;
 		for (Iterator<?> it = selection.iterator(); it.hasNext();) {
-			result[resultIndex] = (ITestItem)it.next();
+			result[resultIndex] = (ITestItem) it.next();
 			++resultIndex;
 		}
 		return result;
@@ -88,12 +86,11 @@ public abstract class RelaunchSelectedAction extends Action {
 
 	/**
 	 * Sets actual testing session.
-	 * 
+	 *
 	 * @param testingSession testing session
 	 */
 	public void setTestingSession(ITestingSession testingSession) {
 		this.testingSession = testingSession;
 	}
-	
-}
 
+}

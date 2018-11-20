@@ -31,8 +31,8 @@ import org.eclipse.core.runtime.Platform;
  * in order to do so.
  * <br><br>
  * If your requirements are very simple, then {@link ExternalExportProjectProvider} may
- * be sufficient for direct usage. 
- * 
+ * be sufficient for direct usage.
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -45,23 +45,23 @@ public interface IExportProjectProvider {
 	 * @see Platform#getApplicationArgs()
 	 */
 	public void setApplicationArguments(String[] arguments);
-	
+
 	/**
 	 * Creates, configures and returns a project for the indexer to index. This routine should
 	 * not itself index the project, as a reindex will be performed by the framework.
 	 * May not return null.
 	 */
 	public ICProject createProject() throws CoreException;
-	
+
 	/**
 	 * The location converter to use on export. This converter will be called to convert
-	 * IIndexFileLocation's to an external form. The external form is implementation dependent. 
+	 * IIndexFileLocation's to an external form. The external form is implementation dependent.
 	 * @param cproject
 	 * @see URIRelativeLocationConverter
 	 * @see ResourceContainerRelativeLocationConverter
 	 */
 	public IIndexLocationConverter getLocationConverter(ICProject cproject);
-	
+
 	/**
 	 * Get a String to String map of properties to store with the index
 	 * content. The export framework may ignore this if the index format does
@@ -69,5 +69,5 @@ public interface IExportProjectProvider {
 	 * @return a Map of String typed key value pairs representing ISV specific properties. This
 	 * may return null.
 	 */
-	public Map<String,String> getExportProperties();	
+	public Map<String, String> getExportProperties();
 }

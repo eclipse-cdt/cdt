@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -24,7 +24,7 @@ import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 /**
  * Tab group for a PDA application
  * <p>
- * This class is identical to the corresponding in PDA debugger implemented in 
+ * This class is identical to the corresponding in PDA debugger implemented in
  * org.eclipse.debug.examples.ui.
  * </p>
  */
@@ -34,14 +34,10 @@ public class PDATabGroup extends AbstractLaunchConfigurationTabGroup {
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		//#ifdef ex1
-//#		// TODO: Exercise 1 - add the PDA main tab, source lookup tab and common
-//#		//  tab to the tab group		
+		//#		// TODO: Exercise 1 - add the PDA main tab, source lookup tab and common
+		//#		//  tab to the tab group
 		//#else
-		setTabs(new ILaunchConfigurationTab[] {
-				new PDAMainTab(),
-				new SourceLookupTab(),
-				new CommonTab()
-		});
+		setTabs(new ILaunchConfigurationTab[] { new PDAMainTab(), new SourceLookupTab(), new CommonTab() });
 		//#endif
 	}
 }

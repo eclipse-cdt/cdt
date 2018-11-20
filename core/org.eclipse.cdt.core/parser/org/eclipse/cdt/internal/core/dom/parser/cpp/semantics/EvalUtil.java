@@ -53,7 +53,8 @@ public class EvalUtil {
 
 	public static IValue getConditionDeclValue(ExecSimpleDeclaration conditionDeclExec, ActivationRecord record,
 			ConstexprEvaluationContext context) {
-		ICPPBinding declaredBinding = ((ExecDeclarator) conditionDeclExec.getDeclaratorExecutions()[0]).getDeclaredBinding();
+		ICPPBinding declaredBinding = ((ExecDeclarator) conditionDeclExec.getDeclaratorExecutions()[0])
+				.getDeclaredBinding();
 		conditionDeclExec.executeForFunctionCall(record, context.recordStep());
 		return record.getVariable(declaredBinding).computeForFunctionCall(record, context).getValue();
 	}
@@ -81,23 +82,18 @@ public class EvalUtil {
 	// A return value != null means that there was a return, break or continue in that statement.
 	public static ICPPExecution executeStatement(ICPPExecution exec, ActivationRecord record,
 			ConstexprEvaluationContext context) {
-		if (exec instanceof ExecExpressionStatement
-				|| exec instanceof ExecDeclarationStatement
-				|| exec instanceof ExecCase
-				|| exec instanceof ExecDefault) {
+		if (exec instanceof ExecExpressionStatement || exec instanceof ExecDeclarationStatement
+				|| exec instanceof ExecCase || exec instanceof ExecDefault) {
 			exec.executeForFunctionCall(record, context.recordStep());
 			return null;
 		}
 
-		if (exec instanceof ExecCompoundStatement
-				|| exec instanceof ExecWhile
-				|| exec instanceof ExecFor
-				|| exec instanceof ExecRangeBasedFor
-				|| exec instanceof ExecDo
-				|| exec instanceof ExecIf
+		if (exec instanceof ExecCompoundStatement || exec instanceof ExecWhile || exec instanceof ExecFor
+				|| exec instanceof ExecRangeBasedFor || exec instanceof ExecDo || exec instanceof ExecIf
 				|| exec instanceof ExecSwitch) {
 			ICPPExecution innerResult = exec.executeForFunctionCall(record, context.recordStep());
-			if (innerResult instanceof ExecReturn || innerResult instanceof ExecBreak || innerResult instanceof ExecContinue) {
+			if (innerResult instanceof ExecReturn || innerResult instanceof ExecBreak
+					|| innerResult instanceof ExecContinue) {
 				return innerResult;
 			} else if (innerResult != null) {
 				return ExecIncomplete.INSTANCE;
@@ -109,8 +105,8 @@ public class EvalUtil {
 	}
 
 	private static boolean isUpdateable(ICPPEvaluation eval) {
-		return eval instanceof EvalBinding || (eval instanceof EvalReference && !(eval instanceof EvalPointer)) ||
-				eval instanceof EvalCompositeAccess;
+		return eval instanceof EvalBinding || (eval instanceof EvalReference && !(eval instanceof EvalPointer))
+				|| eval instanceof EvalCompositeAccess;
 	}
 
 	/**
@@ -146,8 +142,13 @@ public class EvalUtil {
 			this.second = second;
 		}
 
-		public T1 getFirst() { return first; }
-		public T2 getSecond() { return second; }
+		public T1 getFirst() {
+			return first;
+		}
+
+		public T2 getSecond() {
+			return second;
+		}
 	}
 
 	public static boolean isCompilerGeneratedCtor(IBinding ctor) {
@@ -173,14 +174,14 @@ public class EvalUtil {
 			IValue initialValue = variable.getInitialValue();
 			ICPPEvaluation valueEval = null;
 
-			if ((initialValue != null && initialValue.getEvaluation() != null) ||
-					(initialValue == null && nestedType instanceof ICPPClassType)) {
+			if ((initialValue != null && initialValue.getEvaluation() != null)
+					|| (initialValue == null && nestedType instanceof ICPPClassType)) {
 				final ICPPEvaluation initializerEval = initialValue == null ? null : initialValue.getEvaluation();
 				if (initializerEval == EvalFixed.INCOMPLETE) {
 					return null;
 				}
 				ExecDeclarator declaratorExec = new ExecDeclarator(variable, initializerEval);
-	
+
 				ConstexprEvaluationContext context = new ConstexprEvaluationContext();
 				if (declaratorExec.executeForFunctionCall(record, context) != ExecIncomplete.INSTANCE) {
 					valueEval = record.getVariable(declaratorExec.getDeclaredBinding());
@@ -189,8 +190,8 @@ public class EvalUtil {
 				valueEval = new EvalFixed(type, ValueCategory.LVALUE, initialValue);
 			}
 
-			if (valueEval != null && (valueEval == EvalFixed.INCOMPLETE ||
-					valueEval.getValue() == IntegralValue.UNKNOWN)) {
+			if (valueEval != null
+					&& (valueEval == EvalFixed.INCOMPLETE || valueEval.getValue() == IntegralValue.UNKNOWN)) {
 				return null;
 			}
 			return valueEval;

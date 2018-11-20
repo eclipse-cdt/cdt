@@ -64,7 +64,7 @@ public class LinkedNamesFinderTest extends AST2TestBase {
 	}
 
 	private IRegion[] getLinkedRegions(String code, String name, int len, boolean isCpp) throws ParserException {
-		BindingAssertionHelper ba= new AST2AssertionHelper(code, isCpp);
+		BindingAssertionHelper ba = new AST2AssertionHelper(code, isCpp);
 		IASTName astName = ba.findName(name, len);
 		IRegion[] regions = LinkedNamesFinder.findByName(ba.getTranslationUnit(), astName);
 		Arrays.sort(regions, REGION_COMPARATOR);
@@ -87,7 +87,7 @@ public class LinkedNamesFinderTest extends AST2TestBase {
 	//	  void m(int x);
 	//	  void m(int x, int y);
 	//	};
-	//  
+	//
 	//	void A::m(int x) {}
 	//	void A::m(int x, int y) {}
 	public void testMethodParameter() throws Exception {
@@ -104,7 +104,7 @@ public class LinkedNamesFinderTest extends AST2TestBase {
 	//    A(int x);
 	//    ~A();
 	//	};
-	//  
+	//
 	//	A::A() {}
 	//	A::A(int x) {}
 	//	A::~A() {}
@@ -133,12 +133,12 @@ public class LinkedNamesFinderTest extends AST2TestBase {
 	//    virtual void m(int a);
 	//    virtual void m();
 	//	};
-	//  
+	//
 	//	class B : public A {
 	//	public:
 	//    void m();
 	//	};
-    //
+	//
 	//	class C : public B {
 	//	public:
 	//    void m(int c);

@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Andrey Eremchenko, kamre@ngs.ru - 222495 C/C++ search should show line matches and line numbers	
+ *     Andrey Eremchenko, kamre@ngs.ru - 222495 C/C++ search should show line matches and line numbers
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -62,7 +62,7 @@ public class LineSearchElement extends CSearchElement {
 		public boolean isPolymorphicCall() {
 			return fIsPolymorphicCall;
 		}
-		
+
 		public ICElement getEnclosingElement() {
 			return fEnclosingElement;
 		}
@@ -70,7 +70,7 @@ public class LineSearchElement extends CSearchElement {
 		public boolean isWriteAccess() {
 			return fIsWriteAccess;
 		}
-		
+
 		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof Match))
@@ -88,9 +88,9 @@ public class LineSearchElement extends CSearchElement {
 	private static final class MatchesComparator implements Comparator<Match> {
 		@Override
 		public int compare(Match m1, Match m2) {
-			int diff= m1.getOffset() - m2.getOffset();
+			int diff = m1.getOffset() - m2.getOffset();
 			if (diff == 0)
-				diff= m2.getLength() -m1.getLength();
+				diff = m2.getLength() - m1.getLength();
 			return diff;
 		}
 	}
@@ -101,8 +101,7 @@ public class LineSearchElement extends CSearchElement {
 	private final Match[] fMatches;
 	private final static MatchesComparator MATCHES_COMPARATOR = new MatchesComparator();
 
-	private LineSearchElement(IIndexFileLocation file, Match[] matches, int number, String content,
-			int offset) {
+	private LineSearchElement(IIndexFileLocation file, Match[] matches, int number, String content, int offset) {
 		super(file);
 		fMatches = matches;
 		fNumber = number;
@@ -159,7 +158,7 @@ public class LineSearchElement extends CSearchElement {
 		// sort matches according to their offsets
 		Arrays.sort(matches, MATCHES_COMPARATOR);
 		LineSearchElement[] result = {};
-		
+
 		// read the content of file
 		FileContent content = FileContent.create(fileLocation);
 		if (content != null) {
@@ -176,7 +175,7 @@ public class LineSearchElement extends CSearchElement {
 		Arrays.sort(matches, MATCHES_COMPARATOR);
 		// Group all matches by lines and create LineSearchElements
 		List<LineSearchElement> result = new ArrayList<LineSearchElement>();
-		List<Match> matchCollector= new ArrayList<Match>();
+		List<Match> matchCollector = new ArrayList<Match>();
 		int minOffset = 0;
 		int lineNumber = 0;
 		int lineOffset = 0;
@@ -185,21 +184,22 @@ public class LineSearchElement extends CSearchElement {
 
 		try {
 			for (final Match match : matches) {
-				final int offset= match.getOffset();
+				final int offset = match.getOffset();
 				if (offset < lineEndOffset) {
 					// Match on same line
 					if (offset < minOffset) {
 						// Match is not overlapped by previous one.
 						matchCollector.add(match);
-						minOffset= offset + match.getLength();
+						minOffset = offset + match.getLength();
 					}
 				} else {
 					// Match is on a new line
 					if (!matchCollector.isEmpty()) {
 						// Complete a line
 						String content = document.get(lineOffset, lineLength);
-						Match[] lineMatches= matchCollector.toArray(new Match[matchCollector.size()]);
-						result.add(new LineSearchElement(fileLocation, lineMatches, lineNumber + 1, content, lineOffset));
+						Match[] lineMatches = matchCollector.toArray(new Match[matchCollector.size()]);
+						result.add(
+								new LineSearchElement(fileLocation, lineMatches, lineNumber + 1, content, lineOffset));
 						matchCollector.clear();
 					}
 					// Setup next line
@@ -208,12 +208,12 @@ public class LineSearchElement extends CSearchElement {
 					lineLength = document.getLineLength(lineNumber);
 					lineEndOffset = lineOffset + lineLength;
 					matchCollector.add(match);
-				} 
+				}
 			}
 			if (!matchCollector.isEmpty()) {
 				// Complete a line
 				String content = document.get(lineOffset, lineLength);
-				Match[] lineMatches= matchCollector.toArray(new Match[matchCollector.size()]);
+				Match[] lineMatches = matchCollector.toArray(new Match[matchCollector.size()]);
 				result.add(new LineSearchElement(fileLocation, lineMatches, lineNumber + 1, content, lineOffset));
 				matchCollector.clear();
 			}
@@ -226,33 +226,33 @@ public class LineSearchElement extends CSearchElement {
 	private static LineSearchElement[] collectLineElements(AbstractCharArray buf, Match[] matches,
 			IIndexFileLocation fileLocation) {
 		List<LineSearchElement> result = new ArrayList<LineSearchElement>();
-		List<Match> matchCollector= new ArrayList<Match>();
+		List<Match> matchCollector = new ArrayList<Match>();
 
 		boolean skipLF = false;
 		int lineNumber = 1;
 		int lineOffset = 0;
 		int i = 0;
-		Match match= matches[i];
+		Match match = matches[i];
 		int matchOffset = match.getOffset();
 		for (int pos = 0; buf.isValidOffset(pos); pos++) {
 			if (matchOffset <= pos && match != null) {
 				// We are on the line of the match, store it.
 				matchCollector.add(match);
-				final int minOffset= matchOffset + match.getLength();
-				match= null;
-				matchOffset= Integer.MAX_VALUE;
-				for(i= i + 1; i < matches.length; i++) {
+				final int minOffset = matchOffset + match.getLength();
+				match = null;
+				matchOffset = Integer.MAX_VALUE;
+				for (i = i + 1; i < matches.length; i++) {
 					// Advance to next match that is not overlapped
-					final Match nextMatch= matches[i];
-					final int nextOffset= nextMatch.getOffset();
+					final Match nextMatch = matches[i];
+					final int nextOffset = nextMatch.getOffset();
 					if (nextOffset >= minOffset) {
-						match= nextMatch;
-						matchOffset= nextOffset;
+						match = nextMatch;
+						matchOffset = nextOffset;
 						break;
 					}
 				}
 			}
-				
+
 			char c = buf.get(pos);
 			// consider '\n' and '\r'
 			if (skipLF) {
@@ -266,12 +266,11 @@ public class LineSearchElement extends CSearchElement {
 				// Create new LineElement for collected matches on this line
 				if (!matchCollector.isEmpty()) {
 					int lineLength = pos - lineOffset;
-					Match[] lineMatches= matchCollector.toArray(new Match[matchCollector.size()]);
-					char[] lineChars= new char[lineLength];
+					Match[] lineMatches = matchCollector.toArray(new Match[matchCollector.size()]);
+					char[] lineChars = new char[lineLength];
 					buf.arraycopy(lineOffset, lineChars, 0, lineLength);
 					String lineContent = new String(lineChars);
-					result.add(new LineSearchElement(fileLocation, lineMatches, lineNumber, lineContent,
-							lineOffset));
+					result.add(new LineSearchElement(fileLocation, lineMatches, lineNumber, lineContent, lineOffset));
 					matchCollector.clear();
 					if (match == null)
 						break;
@@ -286,12 +285,11 @@ public class LineSearchElement extends CSearchElement {
 		// Create new LineElement for  matches on the last line
 		if (!matchCollector.isEmpty()) {
 			int lineLength = buf.getLength() - lineOffset;
-			Match[] lineMatches= matchCollector.toArray(new Match[matchCollector.size()]);
-			char[] lineChars= new char[lineLength];
+			Match[] lineMatches = matchCollector.toArray(new Match[matchCollector.size()]);
+			char[] lineChars = new char[lineLength];
 			buf.arraycopy(lineOffset, lineChars, 0, lineLength);
 			String lineContent = new String(lineChars);
-			result.add(new LineSearchElement(fileLocation, lineMatches, lineNumber, lineContent,
-					lineOffset));
+			result.add(new LineSearchElement(fileLocation, lineMatches, lineNumber, lineContent, lineOffset));
 		}
 		return result.toArray(new LineSearchElement[result.size()]);
 	}

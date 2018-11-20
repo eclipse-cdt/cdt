@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -48,14 +48,14 @@ import org.eclipse.cdt.internal.ui.refactoring.NameInformation.Indirection;
  * @author Mirko Stocker
  */
 public abstract class FunctionExtractor {
-	
+
 	public static FunctionExtractor createFor(List<IASTNode> list) {
 		if (list.get(0) instanceof IASTExpression) {
 			return new ExpressionExtractor();
 		}
 		return new StatementExtractor();
 	}
-	
+
 	public abstract boolean canChooseReturnValue();
 
 	public abstract void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> nodes,
@@ -70,35 +70,34 @@ public abstract class FunctionExtractor {
 	 * @param pointerOperators output parameter - pointer operators for the function declarator
 	 * @return the declarator specifier of the function
 	 */
-	public abstract IASTDeclSpecifier determineReturnType(IASTNode extractedNode,
-			NameInformation returnVariable, List<IASTPointerOperator> pointerOperators);
+	public abstract IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation returnVariable,
+			List<IASTPointerOperator> pointerOperators);
 
 	public abstract IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt,
 			IASTExpression callExpression);
-	
+
 	IASTStandardFunctionDeclarator createFunctionDeclarator(IASTName name,
 			IASTStandardFunctionDeclarator functionDeclarator, NameInformation returnVariable,
-			List<IASTNode> nodesToWrite, Collection<NameInformation> allUsedNames,
-			INodeFactory nodeFactory) {
+			List<IASTNode> nodesToWrite, Collection<NameInformation> allUsedNames, INodeFactory nodeFactory) {
 		IASTStandardFunctionDeclarator declarator = nodeFactory.newFunctionDeclarator(name);
-	
-		if (functionDeclarator instanceof ICPPASTFunctionDeclarator &&
-				declarator instanceof ICPPASTFunctionDeclarator) {
+
+		if (functionDeclarator instanceof ICPPASTFunctionDeclarator
+				&& declarator instanceof ICPPASTFunctionDeclarator) {
 			if (((ICPPASTFunctionDeclarator) functionDeclarator).isConst()) {
 				((ICPPASTFunctionDeclarator) declarator).setConst(true);
 			}
 		}
-		
+
 		for (IASTParameterDeclaration param : getParameterDeclarations(allUsedNames, nodeFactory)) {
 			declarator.addParameterDeclaration(param);
 		}
-		
+
 		return declarator;
 	}
-	
-	public List<IASTParameterDeclaration> getParameterDeclarations(
-			Collection<NameInformation> parameterNames, INodeFactory nodeFactory) {
-		List<IASTParameterDeclaration> result = new ArrayList<>(parameterNames.size());		
+
+	public List<IASTParameterDeclaration> getParameterDeclarations(Collection<NameInformation> parameterNames,
+			INodeFactory nodeFactory) {
+		List<IASTParameterDeclaration> result = new ArrayList<>(parameterNames.size());
 		for (NameInformation param : parameterNames) {
 			result.add(param.getParameterDeclaration(nodeFactory));
 		}
@@ -108,7 +107,7 @@ public abstract class FunctionExtractor {
 	/**
 	 * Adjusts parameter references under the given node to account for renamed parameters and
 	 * parameters passed by pointer.
-	 *  
+	 *
 	 * @param node the root node of the AST subtree to be adjusted
 	 * @param changedParameters the map from references to changed parameters to parameters
 	 *     themselves
@@ -133,11 +132,11 @@ public abstract class FunctionExtractor {
 					if (param.isRenamed()) {
 						newName = nodeFactory.newName(param.getNewName().toCharArray());
 					}
-					if (param.getIndirection() == Indirection.POINTER &&
-							name.getPropertyInParent() == IASTIdExpression.ID_NAME) {
+					if (param.getIndirection() == Indirection.POINTER
+							&& name.getPropertyInParent() == IASTIdExpression.ID_NAME) {
 						IASTIdExpression idExp = (IASTIdExpression) name.getParent();
-						if (idExp.getPropertyInParent() == IASTFieldReference.FIELD_OWNER &&
-								!((IASTFieldReference) idExp.getParent()).isPointerDereference()) {
+						if (idExp.getPropertyInParent() == IASTFieldReference.FIELD_OWNER
+								&& !((IASTFieldReference) idExp.getParent()).isPointerDereference()) {
 							IASTFieldReference dotRef = (IASTFieldReference) idExp.getParent();
 							IASTFieldReference arrowRef = dotRef.copy(CopyStyle.withLocations);
 							arrowRef.setIsPointerDereference(true);
@@ -148,15 +147,15 @@ public abstract class FunctionExtractor {
 							rewrite.replace(dotRef, arrowRef, group);
 						} else {
 							IASTIdExpression newIdExp = idExp.copy(CopyStyle.withLocations);
-							IASTUnaryExpression starExp =
-									nodeFactory.newUnaryExpression(IASTUnaryExpression.op_star, newIdExp);
+							IASTUnaryExpression starExp = nodeFactory.newUnaryExpression(IASTUnaryExpression.op_star,
+									newIdExp);
 							if (newName != null) {
 								newIdExp.setName(newName);
 							}
 							rewrite.replace(idExp, starExp, group);
 						}
 					} else if (newName != null) {
-						rewrite.replace(name, newName, group);				
+						rewrite.replace(name, newName, group);
 					}
 				}
 				return super.visit(name);
@@ -168,8 +167,8 @@ public abstract class FunctionExtractor {
 	 * Returns a map from references to parameters inside the body of the extracted function to
 	 * the parameters themselves. The map includes only the parameters that are either renamed,
 	 * or passed by pointer.
-	 *  
-	 * @param parameters the function parameters. 
+	 *
+	 * @param parameters the function parameters.
 	 * @return a map from references to parameters to parameters themselves.
 	 */
 	protected static Map<IASTName, NameInformation> getChangedParameterReferences(List<NameInformation> parameters) {

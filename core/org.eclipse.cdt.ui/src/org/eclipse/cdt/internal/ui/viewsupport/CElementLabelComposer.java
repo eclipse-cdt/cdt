@@ -96,7 +96,7 @@ public class CElementLabelComposer {
 		private final StringBuilder fStringBuilder;
 
 		public FlexibleStringBuffer(StringBuilder stringBuilder) {
-			fStringBuilder= stringBuilder;
+			fStringBuilder = stringBuilder;
 		}
 
 		@Override
@@ -131,7 +131,7 @@ public class CElementLabelComposer {
 		private final StyledString fStyledString;
 
 		public FlexibleStyledString(StyledString stringBuffer) {
-			fStyledString= stringBuffer;
+			fStyledString = stringBuffer;
 		}
 
 		@Override
@@ -162,11 +162,9 @@ public class CElementLabelComposer {
 		}
 	}
 
-
-	private static final Styler QUALIFIER_STYLE= StyledString.QUALIFIER_STYLER;
+	private static final Styler QUALIFIER_STYLE = StyledString.QUALIFIER_STYLER;
 	//private static final Styler COUNTER_STYLE= StyledString.COUNTER_STYLER;
-	private static final Styler DECORATIONS_STYLE= StyledString.DECORATIONS_STYLER;
-
+	private static final Styler DECORATIONS_STYLE = StyledString.DECORATIONS_STYLER;
 
 	private final FlexibleBuffer fBuffer;
 
@@ -176,7 +174,7 @@ public class CElementLabelComposer {
 	 * @param buffer the buffer
 	 */
 	public CElementLabelComposer(FlexibleBuffer buffer) {
-		fBuffer= buffer;
+		fBuffer = buffer;
 	}
 
 	/**
@@ -203,22 +201,22 @@ public class CElementLabelComposer {
 	 * @param flags any of the flags (M_*, F_*, ROOT_*, etc.) defined in this class
 	 */
 	public void appendElementLabel(ICElement element, long flags) {
-		int type= element.getElementType();
-		ISourceRoot root= null;
+		int type = element.getElementType();
+		ISourceRoot root = null;
 
-		if (type != ICElement.C_MODEL && type != ICElement.C_PROJECT &&
-				!(type == ICElement.C_CCONTAINER && element instanceof ISourceRoot)) {
-			root= getSourceRoot(element);
+		if (type != ICElement.C_MODEL && type != ICElement.C_PROJECT
+				&& !(type == ICElement.C_CCONTAINER && element instanceof ISourceRoot)) {
+			root = getSourceRoot(element);
 		}
 		if (root != null && getFlag(flags, CElementLabels.PREPEND_ROOT_PATH)) {
 			getSourceRootLabel(root, CElementLabels.ROOT_QUALIFIED);
 			fBuffer.append(CElementLabels.CONCAT_STRING);
-		}		
+		}
 		switch (type) {
 		case ICElement.C_MACRO:
 			appendMacroLabel((IMacro) element, flags);
 			break;
-		case ICElement.C_METHOD : 
+		case ICElement.C_METHOD:
 		case ICElement.C_METHOD_DECLARATION:
 		case ICElement.C_TEMPLATE_METHOD:
 		case ICElement.C_TEMPLATE_METHOD_DECLARATION:
@@ -230,7 +228,7 @@ public class CElementLabelComposer {
 		case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
 			appendFunctionLabel((IFunctionDeclaration) element, flags);
 			break;
-		case ICElement.C_FIELD : 
+		case ICElement.C_FIELD:
 			appendFieldLabel((IField) element, flags);
 			break;
 		case ICElement.C_VARIABLE:
@@ -254,11 +252,11 @@ public class CElementLabelComposer {
 			appendTypeLabel(element, flags);
 			break;
 		case ICElement.C_TYPEDEF:
-			appendTypeDefLabel((ITypeDef)element, flags);
+			appendTypeDefLabel((ITypeDef) element, flags);
 			break;
-		case ICElement.C_UNIT: 
+		case ICElement.C_UNIT:
 			appendTranslationUnitLabel((ITranslationUnit) element, flags);
-			break;	
+			break;
 		case ICElement.C_CCONTAINER:
 			ICContainer container = (ICContainer) element;
 			if (container instanceof ISourceRoot) {
@@ -276,7 +274,7 @@ public class CElementLabelComposer {
 		}
 
 		if (root != null && getFlag(flags, CElementLabels.APPEND_ROOT_PATH)) {
-			int offset= fBuffer.length();
+			int offset = fBuffer.length();
 			fBuffer.append(CElementLabels.CONCAT_STRING);
 			getSourceRootLabel(root, CElementLabels.ROOT_QUALIFIED);
 			if (getFlag(flags, CElementLabels.COLORIZE)) {
@@ -285,7 +283,7 @@ public class CElementLabelComposer {
 		}
 
 		if (element instanceof IBinary) {
-			IBinary bin = (IBinary)element;
+			IBinary bin = (IBinary) element;
 			fBuffer.append(" - [" + bin.getCPU() + "/" + (bin.isLittleEndian() ? "le" : "be") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 	}
@@ -304,9 +302,9 @@ public class CElementLabelComposer {
 		}
 
 		if (getFlag(flags, CElementLabels.MF_POST_FILE_QUALIFIED)) {
-			IPath path= macro.getPath();
+			IPath path = macro.getPath();
 			if (path != null) {
-				int offset= fBuffer.length();
+				int offset = fBuffer.length();
 				fBuffer.append(CElementLabels.CONCAT_STRING);
 				fBuffer.append(path.toString());
 				if (getFlag(flags, CElementLabels.COLORIZE)) {
@@ -333,7 +331,8 @@ public class CElementLabelComposer {
 			if (getFlag(flags, CElementLabels.M_FULLY_QUALIFIED)) {
 				ICElement parent = method.getParent();
 				if (parent != null && parent.exists() && !(parent instanceof ITranslationUnit)) {
-					appendTypeLabel(parent, CElementLabels.T_FULLY_QUALIFIED | (flags & CElementLabels.TEMPLATE_ARGUMENTS));
+					appendTypeLabel(parent,
+							CElementLabels.T_FULLY_QUALIFIED | (flags & CElementLabels.TEMPLATE_ARGUMENTS));
 					fBuffer.append("::"); //$NON-NLS-1$
 				}
 			}
@@ -346,7 +345,7 @@ public class CElementLabelComposer {
 
 			// template parameters
 			if (method instanceof ITemplate) {
-				appendTemplateParameters((ITemplate)method, flags);
+				appendTemplateParameters((ITemplate) method, flags);
 			}
 
 			// parameters
@@ -356,7 +355,7 @@ public class CElementLabelComposer {
 				String[] types = method.getParameterTypes();
 
 				if (types != null) {
-					for (int i= 0; i < types.length; i++) {
+					for (int i = 0; i < types.length; i++) {
 						if (i > 0) {
 							fBuffer.append(CElementLabels.COMMA_STRING);
 						}
@@ -371,7 +370,7 @@ public class CElementLabelComposer {
 				String[] types = method.getExceptions();
 				if (types.length > 0) {
 					fBuffer.append(" throw ("); //$NON-NLS-1$
-					for (int i= 0; i < types.length; i++) {
+					for (int i = 0; i < types.length; i++) {
 						if (i > 0) {
 							fBuffer.append(CElementLabels.COMMA_STRING);
 						}
@@ -381,31 +380,33 @@ public class CElementLabelComposer {
 				}
 			}
 
-			if (getFlag(flags, CElementLabels.M_APP_RETURNTYPE) && method.exists() && !method.isConstructor() && !method.isDestructor()) {
-				final String typeName= method.getReturnType();
+			if (getFlag(flags, CElementLabels.M_APP_RETURNTYPE) && method.exists() && !method.isConstructor()
+					&& !method.isDestructor()) {
+				final String typeName = method.getReturnType();
 				if (typeName != null && typeName.length() > 0) {
-					int offset= fBuffer.length();
+					int offset = fBuffer.length();
 					fBuffer.append(CElementLabels.DECL_STRING);
 					fBuffer.append(typeName);
 					if (getFlag(flags, CElementLabels.COLORIZE)) {
 						fBuffer.setStyle(offset, fBuffer.length() - offset, DECORATIONS_STYLE);
 					}
 				}
-			}			
+			}
 
 			// post qualification
 			if (getFlag(flags, CElementLabels.M_POST_QUALIFIED)) {
-				int offset= fBuffer.length();
+				int offset = fBuffer.length();
 				fBuffer.append(CElementLabels.CONCAT_STRING);
-				appendTypeLabel(method.getParent(), CElementLabels.T_FULLY_QUALIFIED | (flags & CElementLabels.TEMPLATE_ARGUMENTS));
+				appendTypeLabel(method.getParent(),
+						CElementLabels.T_FULLY_QUALIFIED | (flags & CElementLabels.TEMPLATE_ARGUMENTS));
 				if (getFlag(flags, CElementLabels.COLORIZE)) {
 					fBuffer.setStyle(offset, fBuffer.length() - offset, QUALIFIER_STYLE);
 				}
 			}
 			if (getFlag(flags, CElementLabels.MF_POST_FILE_QUALIFIED)) {
-				IPath path= method.getPath();
+				IPath path = method.getPath();
 				if (path != null) {
-					int offset= fBuffer.length();
+					int offset = fBuffer.length();
 					fBuffer.append(CElementLabels.CONCAT_STRING);
 					fBuffer.append(path.toString());
 					if (getFlag(flags, CElementLabels.COLORIZE)) {
@@ -421,7 +422,7 @@ public class CElementLabelComposer {
 
 	/**
 	 * Strip any qualifier from the given name.
-	 * 
+	 *
 	 * @param elementName
 	 * @return a "simple" name
 	 */
@@ -434,18 +435,18 @@ public class CElementLabelComposer {
 	}
 
 	private void appendTemplateParameters(ITemplate template, long flags) {
-		String[] args= null;
+		String[] args = null;
 		if (getFlag(flags, CElementLabels.TEMPLATE_ARGUMENTS)) {
 			args = template.getTemplateArguments();
 		} else if (getFlag(flags, CElementLabels.TEMPLATE_PARAMETERS)) {
-			args= template.getTemplateParameterTypes();
+			args = template.getTemplateParameterTypes();
 		} else {
 			return;
 		}
 
 		fBuffer.append('<');
 		if (args != null) {
-			for (int i= 0; i < args.length; i++) {
+			for (int i = 0; i < args.length; i++) {
 				if (i > 0) {
 					fBuffer.append(',');
 				}
@@ -472,7 +473,8 @@ public class CElementLabelComposer {
 			if (getFlag(flags, CElementLabels.F_FULLY_QUALIFIED)) {
 				ICElement parent = field.getParent();
 				if (parent != null && parent.exists()) {
-					appendTypeLabel(parent, CElementLabels.T_FULLY_QUALIFIED | (flags & CElementLabels.TEMPLATE_PARAMETERS));
+					appendTypeLabel(parent,
+							CElementLabels.T_FULLY_QUALIFIED | (flags & CElementLabels.TEMPLATE_PARAMETERS));
 					fBuffer.append("::"); //$NON-NLS-1$
 				}
 			}
@@ -484,27 +486,28 @@ public class CElementLabelComposer {
 			}
 
 			if (getFlag(flags, CElementLabels.F_APP_TYPE_SIGNATURE) && field.exists()) {
-				int offset= fBuffer.length();
+				int offset = fBuffer.length();
 				fBuffer.append(CElementLabels.DECL_STRING);
-				fBuffer.append(field.getTypeName());	
+				fBuffer.append(field.getTypeName());
 				if (getFlag(flags, CElementLabels.COLORIZE)) {
 					fBuffer.setStyle(offset, fBuffer.length() - offset, DECORATIONS_STYLE);
 				}
-			}	
+			}
 
 			// post qualification
 			if (getFlag(flags, CElementLabels.F_POST_QUALIFIED)) {
-				int offset= fBuffer.length();
+				int offset = fBuffer.length();
 				fBuffer.append(CElementLabels.CONCAT_STRING);
-				appendTypeLabel(field.getParent(), CElementLabels.T_FULLY_QUALIFIED | (flags & CElementLabels.TEMPLATE_PARAMETERS));
+				appendTypeLabel(field.getParent(),
+						CElementLabels.T_FULLY_QUALIFIED | (flags & CElementLabels.TEMPLATE_PARAMETERS));
 				if (getFlag(flags, CElementLabels.COLORIZE)) {
 					fBuffer.setStyle(offset, fBuffer.length() - offset, QUALIFIER_STYLE);
 				}
 			}
 			if (getFlag(flags, CElementLabels.MF_POST_FILE_QUALIFIED)) {
-				IPath path= field.getPath();
+				IPath path = field.getPath();
 				if (path != null) {
-					int offset= fBuffer.length();
+					int offset = fBuffer.length();
 					fBuffer.append(CElementLabels.CONCAT_STRING);
 					fBuffer.append(path.toString());
 					if (getFlag(flags, CElementLabels.COLORIZE)) {
@@ -543,19 +546,19 @@ public class CElementLabelComposer {
 			fBuffer.append(var.getElementName());
 
 			if (getFlag(flags, CElementLabels.F_APP_TYPE_SIGNATURE) && var.exists()) {
-				int offset= fBuffer.length();
+				int offset = fBuffer.length();
 				fBuffer.append(CElementLabels.DECL_STRING);
-				fBuffer.append(var.getTypeName());	
+				fBuffer.append(var.getTypeName());
 				if (getFlag(flags, CElementLabels.COLORIZE)) {
 					fBuffer.setStyle(offset, fBuffer.length() - offset, DECORATIONS_STYLE);
 				}
-			}			
+			}
 
 			// post qualification
 			if (getFlag(flags, CElementLabels.F_POST_QUALIFIED)) {
 				ICElement parent = var.getParent();
 				if (parent != null && parent.exists() && parent.getElementType() == ICElement.C_NAMESPACE) {
-					int offset= fBuffer.length();
+					int offset = fBuffer.length();
 					fBuffer.append(CElementLabels.CONCAT_STRING);
 					appendTypeLabel(var.getParent(), CElementLabels.T_FULLY_QUALIFIED);
 					if (getFlag(flags, CElementLabels.COLORIZE)) {
@@ -564,8 +567,8 @@ public class CElementLabelComposer {
 				}
 			}
 			if (getFlag(flags, CElementLabels.MF_POST_FILE_QUALIFIED)) {
-				int offset= fBuffer.length();
-				IPath path= var.getPath();
+				int offset = fBuffer.length();
+				IPath path = var.getPath();
 				if (path != null) {
 					fBuffer.append(CElementLabels.CONCAT_STRING);
 					fBuffer.append(path.toString());
@@ -605,8 +608,8 @@ public class CElementLabelComposer {
 			}
 		}
 		if (getFlag(flags, CElementLabels.MF_POST_FILE_QUALIFIED)) {
-			int offset= fBuffer.length();
-			IPath path= var.getPath();
+			int offset = fBuffer.length();
+			IPath path = var.getPath();
 			if (path != null) {
 				fBuffer.append(CElementLabels.CONCAT_STRING);
 				fBuffer.append(path.toString());
@@ -642,7 +645,7 @@ public class CElementLabelComposer {
 
 		// template parameters
 		if (func instanceof ITemplate) {
-			appendTemplateParameters((ITemplate)func, flags);
+			appendTemplateParameters((ITemplate) func, flags);
 		}
 
 		// parameters
@@ -652,7 +655,7 @@ public class CElementLabelComposer {
 			String[] types = func.getParameterTypes();
 
 			if (types != null) {
-				for (int i= 0; i < types.length; i++) {
+				for (int i = 0; i < types.length; i++) {
 					if (i > 0) {
 						fBuffer.append(CElementLabels.COMMA_STRING);
 					}
@@ -667,7 +670,7 @@ public class CElementLabelComposer {
 			String[] types = func.getExceptions();
 			if (types.length > 0) {
 				fBuffer.append(" throw ("); //$NON-NLS-1$
-				for (int i= 0; i < types.length; i++) {
+				for (int i = 0; i < types.length; i++) {
 					if (i > 0) {
 						fBuffer.append(CElementLabels.COMMA_STRING);
 					}
@@ -678,16 +681,16 @@ public class CElementLabelComposer {
 		}
 
 		if (getFlag(flags, CElementLabels.M_APP_RETURNTYPE) && func.exists()) {
-			final String typeName= func.getReturnType();
+			final String typeName = func.getReturnType();
 			if (typeName != null && typeName.length() > 0) {
-				int offset= fBuffer.length();
+				int offset = fBuffer.length();
 				fBuffer.append(CElementLabels.DECL_STRING);
 				fBuffer.append(typeName);
 				if (getFlag(flags, CElementLabels.COLORIZE)) {
 					fBuffer.setStyle(offset, fBuffer.length() - offset, DECORATIONS_STYLE);
 				}
 			}
-		}			
+		}
 
 		// post qualification
 		if (getFlag(flags, CElementLabels.M_POST_QUALIFIED)) {
@@ -698,9 +701,9 @@ public class CElementLabelComposer {
 			}
 		}
 		if (getFlag(flags, CElementLabels.MF_POST_FILE_QUALIFIED)) {
-			IPath path= func.getPath();
+			IPath path = func.getPath();
 			if (path != null) {
-				int offset= fBuffer.length();
+				int offset = fBuffer.length();
 				fBuffer.append(CElementLabels.CONCAT_STRING);
 				fBuffer.append(path.toString());
 				if (getFlag(flags, CElementLabels.COLORIZE)) {
@@ -734,16 +737,16 @@ public class CElementLabelComposer {
 		fBuffer.append(typedef.getElementName());
 
 		if (getFlag(flags, CElementLabels.F_APP_TYPE_SIGNATURE) && typedef.exists()) {
-			String typeName= typedef.getTypeName();
+			String typeName = typedef.getTypeName();
 			if (typeName != null && typeName.length() > 0) {
-				int offset= fBuffer.length();
+				int offset = fBuffer.length();
 				fBuffer.append(CElementLabels.DECL_STRING);
 				fBuffer.append(typeName);
 				if (getFlag(flags, CElementLabels.COLORIZE)) {
 					fBuffer.setStyle(offset, fBuffer.length() - offset, DECORATIONS_STYLE);
 				}
 			}
-		}			
+		}
 
 		// post qualification
 		if (getFlag(flags, CElementLabels.F_POST_QUALIFIED)) {
@@ -754,9 +757,9 @@ public class CElementLabelComposer {
 			}
 		}
 		if (getFlag(flags, CElementLabels.MF_POST_FILE_QUALIFIED)) {
-			IPath path= typedef.getPath();
+			IPath path = typedef.getPath();
 			if (path != null) {
-				int offset= fBuffer.length();
+				int offset = fBuffer.length();
 				fBuffer.append(CElementLabels.CONCAT_STRING);
 				fBuffer.append(path.toString());
 				if (getFlag(flags, CElementLabels.COLORIZE)) {
@@ -785,8 +788,8 @@ public class CElementLabelComposer {
 	}
 
 	private void appendFolderLabel(ICContainer container, long flags) {
-		IResource resource= container.getResource();
-		boolean rootQualified= getFlag(flags, CElementLabels.ROOT_QUALIFIED);
+		IResource resource = container.getResource();
+		boolean rootQualified = getFlag(flags, CElementLabels.ROOT_QUALIFIED);
 		if (rootQualified) {
 			fBuffer.append(container.getPath().makeRelative().toString());
 		} else {
@@ -814,13 +817,13 @@ public class CElementLabelComposer {
 	 * @param tu a translation unit
 	 * @param flags any of the TU_* flags
 	 */
-	public  void appendTranslationUnitLabel(ITranslationUnit tu, long flags) {
-		IResource r= tu.getResource();
+	public void appendTranslationUnitLabel(ITranslationUnit tu, long flags) {
+		IResource r = tu.getResource();
 		IPath path;
 		if (r != null) {
-			path= r.getFullPath().makeRelative();
+			path = r.getFullPath().makeRelative();
 		} else {
-			path= tu.getPath();
+			path = tu.getPath();
 		}
 
 		if (path == null) {
@@ -845,8 +848,8 @@ public class CElementLabelComposer {
 	 */
 	private void appendTypeLabel(ICElement elem, long flags) {
 		if (getFlag(flags, CElementLabels.T_FULLY_QUALIFIED)) {
-			ICElement parent= elem.getParent();
-			boolean isQualifier= true;
+			ICElement parent = elem.getParent();
+			boolean isQualifier = true;
 			if (parent != null) {
 				switch (parent.getElementType()) {
 				case ICElement.C_ARCHIVE:
@@ -856,31 +859,31 @@ public class CElementLabelComposer {
 				case ICElement.C_PROJECT:
 				case ICElement.C_UNIT:
 				case ICElement.C_VCONTAINER:
-					isQualifier= false;
+					isQualifier = false;
 					break;
 				}
 			}
 			// types cannot be qualified in plain c
 			if (isQualifier && !isCLanguage(parent)) {
-				long qflags= flags & ~CElementLabels.MF_POST_FILE_QUALIFIED;
+				long qflags = flags & ~CElementLabels.MF_POST_FILE_QUALIFIED;
 				appendTypeLabel(parent, qflags);
 				fBuffer.append("::"); //$NON-NLS-1$
 			}
 		}
 
-		String typeName= elem.getElementName();
+		String typeName = elem.getElementName();
 		if (typeName.length() == 0) { // anonymous
-			typeName = CoreModelMessages.getString("CElementLabels.anonymous");	//$NON-NLS-1$
+			typeName = CoreModelMessages.getString("CElementLabels.anonymous"); //$NON-NLS-1$
 		}
 		fBuffer.append(typeName);
 
 		if (getFlag(flags, CElementLabels.T_INHERITANCE) && elem instanceof IInheritance) {
-			IInheritance inheritance= (IInheritance)elem;
-			String[] superclassNames= inheritance.getSuperClassesNames();
+			IInheritance inheritance = (IInheritance) elem;
+			String[] superclassNames = inheritance.getSuperClassesNames();
 			if (superclassNames != null && superclassNames.length > 0) {
 				fBuffer.append(CElementLabels.DECL_STRING);
 				for (int i = 0; i < superclassNames.length; i++) {
-					if (i> 0) {
+					if (i > 0) {
 						fBuffer.append(CElementLabels.COMMA_STRING);
 					}
 					String superclass = superclassNames[i];
@@ -892,13 +895,13 @@ public class CElementLabelComposer {
 
 		// template parameters
 		if (elem instanceof ITemplate) {
-			appendTemplateParameters((ITemplate)elem, flags);
+			appendTemplateParameters((ITemplate) elem, flags);
 		}
 
 		if (getFlag(flags, CElementLabels.MF_POST_FILE_QUALIFIED)) {
-			IPath path= elem.getPath();
+			IPath path = elem.getPath();
 			if (path != null) {
-				int offset= fBuffer.length();
+				int offset = fBuffer.length();
 				fBuffer.append(CElementLabels.CONCAT_STRING);
 				fBuffer.append(path.toString());
 				if (getFlag(flags, CElementLabels.COLORIZE)) {
@@ -910,7 +913,7 @@ public class CElementLabelComposer {
 
 	private static boolean isCLanguage(ICElement elem) {
 		while (elem != null) {
-			elem= elem.getParent();
+			elem = elem.getParent();
 			if (elem instanceof ITranslationUnit) {
 				return ((ITranslationUnit) elem).isCLanguage();
 			}
@@ -920,7 +923,7 @@ public class CElementLabelComposer {
 
 	/**
 	 * Convert an <code>ASTAccessVisibility</code> into its string representation.
-	 * 
+	 *
 	 * @param access
 	 * @return "public", "protected" or "private"
 	 */
@@ -944,7 +947,7 @@ public class CElementLabelComposer {
 		ICElement root = element;
 		while (root != null) {
 			if (root instanceof ISourceRoot)
-				return (ISourceRoot)root;
+				return (ISourceRoot) root;
 			ICElement parent = root.getAncestor(ICElement.C_CCONTAINER);
 			if (parent == root)
 				return null;
@@ -959,10 +962,10 @@ public class CElementLabelComposer {
 	 * if the given root doesn't have an underlying resource.
 	 */
 	public static boolean isReferenced(ISourceRoot root) {
-		IResource resource= root.getResource();
+		IResource resource = root.getResource();
 		if (resource != null) {
-			IProject project= resource.getProject();
-			IProject container= root.getCProject().getProject();
+			IProject project = resource.getProject();
+			IProject container = root.getCProject().getProject();
 			return !container.equals(project);
 		}
 		return false;

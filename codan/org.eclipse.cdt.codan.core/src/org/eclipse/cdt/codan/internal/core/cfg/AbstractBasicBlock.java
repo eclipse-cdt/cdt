@@ -38,14 +38,14 @@ public abstract class AbstractBasicBlock implements IBasicBlock, ICfgData {
 
 	/**
 	 * Add a node to list of outgoing nodes of this node
-	 * 
+	 *
 	 * @param node - node to add
 	 */
 	public abstract void addOutgoing(IBasicBlock node);
 
 	/**
 	 * Add a node to list of incoming nodes of this node
-	 * 
+	 *
 	 * @param node - node to add
 	 */
 	public abstract void addIncoming(IBasicBlock node);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * Composite to show problem scope
- * 
+ *
  */
 public class FileScopeComposite extends Composite {
 	private FileScopePreferencePage page;
@@ -53,8 +53,7 @@ public class FileScopeComposite extends Composite {
 		this.prefStore = new PreferenceStore();
 		IProblemPreference info = problem.getPreference();
 		FileScopeProblemPreference scopeIn = null;
-		if (info == null
-				|| (!(info instanceof MapProblemPreference))
+		if (info == null || (!(info instanceof MapProblemPreference))
 				|| ((scopeIn = (FileScopeProblemPreference) ((MapProblemPreference) info)
 						.getChildDescriptor(FileScopeProblemPreference.KEY)) == null)) {
 			Label label = new Label(this, 0);

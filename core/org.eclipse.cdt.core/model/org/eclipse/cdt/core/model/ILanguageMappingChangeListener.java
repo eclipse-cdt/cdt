@@ -15,12 +15,12 @@ package org.eclipse.cdt.core.model;
 
 /**
  * Listens to changes in language mappings.
- *  
+ *
  * @author crecoskie
  * @since 4.0
  */
 public interface ILanguageMappingChangeListener {
-	
+
 	/**
 	 * Indicates that language mappings have been changed.
 	 * @param event

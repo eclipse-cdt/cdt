@@ -24,29 +24,28 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 
-
 public class OpenNewWizardAction extends AbstractOpenWizardAction {
 
-	private static final String TAG_DESCRIPTION = "description";	//$NON-NLS-1$
+	private static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	private final static String ATT_NAME = "name";//$NON-NLS-1$
 	private final static String ATT_CLASS = "class";//$NON-NLS-1$
 	private final static String ATT_ICON = "icon";//$NON-NLS-1$
-	
+
 	private IConfigurationElement fConfigurationElement;
 
 	public OpenNewWizardAction(IConfigurationElement element) {
-		fConfigurationElement= element;
+		fConfigurationElement = element;
 		setText(element.getAttribute(ATT_NAME));
-		
-		String description= getDescriptionFromConfig(fConfigurationElement);
+
+		String description = getDescriptionFromConfig(fConfigurationElement);
 		setDescription(description);
 		setToolTipText(description);
 		setImageDescriptor(getIconFromConfig(fConfigurationElement));
 	}
-	
- 	private String getDescriptionFromConfig(IConfigurationElement config) {
-		IConfigurationElement [] children = config.getChildren(TAG_DESCRIPTION);
-		if (children.length>=1) {
+
+	private String getDescriptionFromConfig(IConfigurationElement config) {
+		IConfigurationElement[] children = config.getChildren(TAG_DESCRIPTION);
+		if (children.length >= 1) {
 			return children[0].getValue();
 		}
 		return ""; //$NON-NLS-1$
@@ -56,7 +55,8 @@ public class OpenNewWizardAction extends AbstractOpenWizardAction {
 		try {
 			String iconName = config.getAttribute(ATT_ICON);
 			if (iconName != null) {
-				URL pluginInstallUrl = Platform.getBundle(config.getDeclaringExtension().getContributor().getName()).getEntry("/"); //$NON-NLS-1$			
+				URL pluginInstallUrl = Platform.getBundle(config.getDeclaringExtension().getContributor().getName())
+						.getEntry("/"); //$NON-NLS-1$
 				return ImageDescriptor.createFromURL(new URL(pluginInstallUrl, iconName));
 			}
 			return null;
@@ -64,9 +64,9 @@ public class OpenNewWizardAction extends AbstractOpenWizardAction {
 			CUIPlugin.logError("Unable to load wizard icon"); //$NON-NLS-1$
 		}
 		return ImageDescriptor.getMissingImageDescriptor();
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.wizards.AbstractOpenWizardAction#createWizard()
 	 */

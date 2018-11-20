@@ -46,7 +46,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 
 	/**
 	 * Constructor for IndexManagerTest.
-	 * 
+	 *
 	 * @param name
 	 */
 	public GenericErrorParserTests(String name) {
@@ -93,11 +93,12 @@ public abstract class GenericErrorParserTests extends TestCase {
 		return buf.toString();
 	}
 
-	protected void transferInputStreamToOutputStream(InputStream input, OutputStream output, int byteBlockSize) throws IOException {
+	protected void transferInputStreamToOutputStream(InputStream input, OutputStream output, int byteBlockSize)
+			throws IOException {
 		byte[] buffer = new byte[byteBlockSize];
 		int bytesRead;
 
-		while ( (bytesRead = input.read(buffer)) >= 0) {
+		while ((bytesRead = input.read(buffer)) >= 0) {
 			output.write(buffer, 0, bytesRead);
 		}
 
@@ -106,12 +107,13 @@ public abstract class GenericErrorParserTests extends TestCase {
 
 	protected void runParserTest(InputStream inputStream, int expectedErrorCount, int expectedWarningCount,
 			String[] expectedFileNames, String[] expectedDescriptions, String[] parserID) throws IOException {
-		runParserTest(inputStream, expectedErrorCount, expectedWarningCount, 0, expectedFileNames, expectedDescriptions, parserID);
+		runParserTest(inputStream, expectedErrorCount, expectedWarningCount, 0, expectedFileNames, expectedDescriptions,
+				parserID);
 	}
-	
+
 	protected void runParserTest(InputStream inputStream, int expectedErrorCount, int expectedWarningCount,
-			int expectedInfoCount, String[] expectedFileNames, String[] expectedDescriptions,
-			String[] parserID) throws IOException {
+			int expectedInfoCount, String[] expectedFileNames, String[] expectedDescriptions, String[] parserID)
+			throws IOException {
 		assertNotNull(inputStream);
 
 		CountingMarkerGenerator markerGenerator = new CountingMarkerGenerator();
@@ -139,7 +141,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 			assertEquals(expectedFileNames.length, markerGenerator.uniqFiles.size());
 			for (int i = 0; i < expectedFileNames.length; i++) {
 				// Keep in mind that uniqFiles get alphabetically sorted
-				IPath path = ((IFile)markerGenerator.uniqFiles.get(i)).getLocation();
+				IPath path = ((IFile) markerGenerator.uniqFiles.get(i)).getLocation();
 				assertEquals(expectedFileNames[i], path.lastSegment());
 			}
 		}
@@ -147,24 +149,26 @@ public abstract class GenericErrorParserTests extends TestCase {
 		if (expectedDescriptions != null) {
 			assertNotNull(markerGenerator.descriptions);
 			for (int i = 0; i < expectedDescriptions.length; i++) {
-				assertEquals(expectedDescriptions[i],markerGenerator.descriptions.get(i));
+				assertEquals(expectedDescriptions[i], markerGenerator.descriptions.get(i));
 			}
 		}
 	}
 
 	protected void runParserTest(String[] dataStream, int expectedErrorCount, int expectedWarningCount,
 			String[] expectedFileNames, String[] expectedDescriptions, String[] parserID) throws IOException {
-		runParserTest(dataStream, expectedErrorCount, expectedWarningCount, 0, expectedFileNames, expectedDescriptions, parserID);
+		runParserTest(dataStream, expectedErrorCount, expectedWarningCount, 0, expectedFileNames, expectedDescriptions,
+				parserID);
 	}
-	
-	protected void runParserTest(String[] dataStream, int expectedErrorCount, int expectedWarningCount, int expectedInfoCount,
-			String[] expectedFileNames, String[] expectedDescriptions, String[] parserID) throws IOException {
+
+	protected void runParserTest(String[] dataStream, int expectedErrorCount, int expectedWarningCount,
+			int expectedInfoCount, String[] expectedFileNames, String[] expectedDescriptions, String[] parserID)
+			throws IOException {
 		String errorStream = makeStringFromArray(dataStream, "\n");
 
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(errorStream.getBytes());
 
-		runParserTest(inputStream, expectedErrorCount, expectedWarningCount, expectedInfoCount,
-				expectedFileNames, expectedDescriptions, parserID);
+		runParserTest(inputStream, expectedErrorCount, expectedWarningCount, expectedInfoCount, expectedFileNames,
+				expectedDescriptions, parserID);
 	}
 
 	private static class FileNameComparator implements Comparator<IResource> {
@@ -188,7 +192,8 @@ public abstract class GenericErrorParserTests extends TestCase {
 
 		@Override
 		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
-			ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar, null);
+			ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar,
+					null);
 			addMarker(problemMarkerInfo);
 		}
 
@@ -199,7 +204,8 @@ public abstract class GenericErrorParserTests extends TestCase {
 				uniqFiles.add(-1 * (index + 1), problemMarkerInfo.file);
 			}
 
-			if (problemMarkerInfo.severity == SEVERITY_ERROR_BUILD || problemMarkerInfo.severity == SEVERITY_ERROR_RESOURCE) {
+			if (problemMarkerInfo.severity == SEVERITY_ERROR_BUILD
+					|| problemMarkerInfo.severity == SEVERITY_ERROR_RESOURCE) {
 				numErrors++;
 			} else if (problemMarkerInfo.severity == SEVERITY_WARNING) {
 				numWarnings++;
@@ -235,14 +241,14 @@ public abstract class GenericErrorParserTests extends TestCase {
 
 		@Override
 		public IFile findFileName(String fileName) {
-			if (fileName==null || fileName.trim().length()==0) {
+			if (fileName == null || fileName.trim().length() == 0) {
 				return null;
 			}
 			if (fileName.lastIndexOf('/') != -1) {
 				fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
 			}
 			IFile file = fProject.getFile(fileName);
-			if (file!=null && !file.exists()) {
+			if (file != null && !file.exists()) {
 				try {
 					InputStream stream = new ByteArrayInputStream("TestFile".getBytes());
 					file.create(stream, true, new NullProgressMonitor());

@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.lang.ref.SoftReference;
@@ -23,8 +23,8 @@ import java.util.List;
  * Because of bug 320157 we need to deal with chunks of different length.
  */
 public abstract class LazyCharArray extends AbstractCharArray {
-	private final static int CHUNK_BITS= 16;  // 2^16 == 64K
-	public final static int CHUNK_SIZE= 1 << CHUNK_BITS;
+	private final static int CHUNK_BITS = 16; // 2^16 == 64K
+	public final static int CHUNK_SIZE = 1 << CHUNK_BITS;
 
 	protected static class Chunk {
 		final int fCharOffset;
@@ -34,16 +34,16 @@ public abstract class LazyCharArray extends AbstractCharArray {
 		private SoftReference<char[]> fCharsReference;
 
 		private Chunk(long sourceOffset, long sourceEndOffset, int charOffset, char[] chars) {
-			fCharOffset= charOffset;
-			fCharEndOffset= charOffset+ chars.length;
-			fSourceOffset= sourceOffset;
-			fSourceEndOffset= sourceEndOffset;
-			fCharsReference= new SoftReference<char[]>(chars);
+			fCharOffset = charOffset;
+			fCharEndOffset = charOffset + chars.length;
+			fSourceOffset = sourceOffset;
+			fSourceEndOffset = sourceEndOffset;
+			fCharsReference = new SoftReference<char[]>(chars);
 		}
 	}
 
-	private int fLength= -1;
-	private List<Chunk> fChunks= new ArrayList<Chunk>();
+	private int fLength = -1;
+	private List<Chunk> fChunks = new ArrayList<Chunk>();
 	private StreamHasher fHasher;
 	private long fHash64;
 	// Make a reference to the currently used char[], such that it is not collected.
@@ -87,7 +87,7 @@ public abstract class LazyCharArray extends AbstractCharArray {
 
 	@Override
 	public final char get(int offset) {
-		Chunk chunk= getChunkForOffset(offset);
+		Chunk chunk = getChunkForOffset(offset);
 		if (chunk != null) {
 			return getChunkData(chunk)[offset - chunk.fCharOffset];
 		}
@@ -96,9 +96,9 @@ public abstract class LazyCharArray extends AbstractCharArray {
 
 	@Override
 	public final void arraycopy(int offset, char[] destination, int destinationPos, int length) {
-		final Chunk chunk= getChunkForOffset(offset);
-		final int offsetInChunk= offset - chunk.fCharOffset;
-		final char[] data= getChunkData(chunk);
+		final Chunk chunk = getChunkForOffset(offset);
+		final int offsetInChunk = offset - chunk.fCharOffset;
+		final char[] data = getChunkData(chunk);
 		final int maxLenInChunk = data.length - offsetInChunk;
 		if (length <= maxLenInChunk) {
 			System.arraycopy(data, offsetInChunk, destination, destinationPos, length);
@@ -115,12 +115,12 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	}
 
 	private Chunk getChunkForOffset(int offset) {
-		int minChunkNumber= offset >> CHUNK_BITS;
-		for(;;) {
-			Chunk chunk= getChunkByNumber(minChunkNumber);
-			if (chunk == null) 
+		int minChunkNumber = offset >> CHUNK_BITS;
+		for (;;) {
+			Chunk chunk = getChunkByNumber(minChunkNumber);
+			if (chunk == null)
 				return null;
-			
+
 			if (offset < chunk.fCharEndOffset) {
 				return chunk;
 			}
@@ -133,7 +133,7 @@ public abstract class LazyCharArray extends AbstractCharArray {
 		if (chunkNumber < chunkCount)
 			return fChunks.get(chunkNumber);
 
-		if (fLength >=0)
+		if (fLength >= 0)
 			return null;
 
 		return createChunk(chunkNumber);
@@ -145,10 +145,10 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	 */
 	protected Chunk createChunk(int chunkNumber) {
 		for (int i = fChunks.size(); i <= chunkNumber; i++) {
-			Chunk chunk= nextChunk();
+			Chunk chunk = nextChunk();
 			if (chunk == null) {
-				final int chunkCount= fChunks.size();
-				fLength= chunkCount == 0 ? 0 : fChunks.get(chunkCount-1).fCharEndOffset;
+				final int chunkCount = fChunks.size();
+				fLength = chunkCount == 0 ? 0 : fChunks.get(chunkCount - 1).fCharEndOffset;
 				break;
 			}
 			if (fHasher != null) {
@@ -163,12 +163,12 @@ public abstract class LazyCharArray extends AbstractCharArray {
 
 		return null;
 	}
-	
+
 	/**
 	 * Creates a new chunk.
 	 */
 	protected Chunk newChunk(long sourceOffset, long sourceEndOffset, int charOffset, char[] chars) {
-		fCurrentChars= chars;
+		fCurrentChars = chars;
 		return new Chunk(sourceOffset, sourceEndOffset, charOffset, chars);
 	}
 
@@ -178,13 +178,13 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	protected abstract Chunk nextChunk();
 
 	private char[] getChunkData(Chunk chunk) {
-		char[] data= chunk.fCharsReference.get();
+		char[] data = chunk.fCharsReference.get();
 		if (data == null) {
-			data= new char[chunk.fCharEndOffset - chunk.fCharOffset];
+			data = new char[chunk.fCharEndOffset - chunk.fCharOffset];
 			rereadChunkData(chunk, data);
-			chunk.fCharsReference= new SoftReference<char[]>(data);
+			chunk.fCharsReference = new SoftReference<char[]>(data);
 		}
-		return fCurrentChars= data;
+		return fCurrentChars = data;
 	}
 
 	/**
@@ -193,14 +193,14 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	 */
 	protected abstract void rereadChunkData(Chunk chunk, char[] data);
 
-	/** 
+	/**
 	 * For testing purposes: Simulates that all the data gets collected.
 	 */
 	public void testClearData() {
 		for (Chunk chunk : fChunks) {
-			chunk.fCharsReference= new SoftReference<char[]>(null);
+			chunk.fCharsReference = new SoftReference<char[]>(null);
 		}
 		if (fCurrentChars != null)
-			fCurrentChars= null;
+			fCurrentChars = null;
 	}
 }

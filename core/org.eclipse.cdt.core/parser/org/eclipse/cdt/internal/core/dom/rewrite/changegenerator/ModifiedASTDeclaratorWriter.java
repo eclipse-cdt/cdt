@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
@@ -37,44 +37,43 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 	private final ASTModificationHelper modificationHelper;
 
-	public ModifiedASTDeclaratorWriter(Scribe scribe, ASTWriterVisitor visitor, ModificationScopeStack stack, NodeCommentMap commentMap) {
+	public ModifiedASTDeclaratorWriter(Scribe scribe, ASTWriterVisitor visitor, ModificationScopeStack stack,
+			NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		this.modificationHelper = new ASTModificationHelper(stack);
 	}
 
 	@Override
 	protected void writeParameterDeclarations(IASTStandardFunctionDeclarator funcDec,
-			IASTParameterDeclaration[] paraDecls) {	
-		IASTParameterDeclaration[] modifiedParameters =	modificationHelper.createModifiedChildArray(
-				funcDec, paraDecls, IASTParameterDeclaration.class, commentMap);
+			IASTParameterDeclaration[] paraDecls) {
+		IASTParameterDeclaration[] modifiedParameters = modificationHelper.createModifiedChildArray(funcDec, paraDecls,
+				IASTParameterDeclaration.class, commentMap);
 		super.writeParameterDeclarations(funcDec, modifiedParameters);
 	}
 
 	@Override
-	protected void writePointerOperators(IASTDeclarator declarator,
-			IASTPointerOperator[] unmodifiedPointerOperations) {
-		IASTPointerOperator[] modifiedPointer = modificationHelper.createModifiedChildArray(
-				declarator, unmodifiedPointerOperations, IASTPointerOperator.class, commentMap);
+	protected void writePointerOperators(IASTDeclarator declarator, IASTPointerOperator[] unmodifiedPointerOperations) {
+		IASTPointerOperator[] modifiedPointer = modificationHelper.createModifiedChildArray(declarator,
+				unmodifiedPointerOperations, IASTPointerOperator.class, commentMap);
 		super.writePointerOperators(declarator, modifiedPointer);
 	}
-	
+
 	@Override
 	protected void writeArrayModifiers(IASTArrayDeclarator arrDecl, IASTArrayModifier[] arrMods) {
-		IASTArrayModifier[] modifiedModifiers = modificationHelper.createModifiedChildArray(arrDecl,
-				arrMods, IASTArrayModifier.class, commentMap);
+		IASTArrayModifier[] modifiedModifiers = modificationHelper.createModifiedChildArray(arrDecl, arrMods,
+				IASTArrayModifier.class, commentMap);
 		super.writeArrayModifiers(arrDecl, modifiedModifiers);
 	}
 
 	@Override
-	protected void writeExceptionSpecification(ICPPASTFunctionDeclarator funcDec,
-			IASTTypeId[] exceptions, ICPPASTExpression noexceptExpression) {	
-		IASTTypeId[] modifiedExceptions = modificationHelper.createModifiedChildArray(funcDec,
-				exceptions, IASTTypeId.class, commentMap);
-		// It makes a difference whether the exception array is identical to 
+	protected void writeExceptionSpecification(ICPPASTFunctionDeclarator funcDec, IASTTypeId[] exceptions,
+			ICPPASTExpression noexceptExpression) {
+		IASTTypeId[] modifiedExceptions = modificationHelper.createModifiedChildArray(funcDec, exceptions,
+				IASTTypeId.class, commentMap);
+		// It makes a difference whether the exception array is identical to
 		// ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION or not.
-		if (modifiedExceptions.length == 0 &&
-				exceptions == ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION) {
-			modifiedExceptions= ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION;
+		if (modifiedExceptions.length == 0 && exceptions == ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION) {
+			modifiedExceptions = ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION;
 		}
 
 		noexceptExpression = modificationHelper.getNodeAfterReplacement(noexceptExpression);
@@ -85,16 +84,15 @@ public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 	@Override
 	protected void writeKnRParameterDeclarations(ICASTKnRFunctionDeclarator knrFunct,
 			IASTDeclaration[] knrDeclarations) {
-		IASTDeclaration[] modifiedDeclarations = modificationHelper.createModifiedChildArray(
-				knrFunct, knrDeclarations, IASTDeclaration.class, commentMap);
+		IASTDeclaration[] modifiedDeclarations = modificationHelper.createModifiedChildArray(knrFunct, knrDeclarations,
+				IASTDeclaration.class, commentMap);
 		super.writeKnRParameterDeclarations(knrFunct, modifiedDeclarations);
 	}
 
 	@Override
-	protected void writeKnRParameterNames(ICASTKnRFunctionDeclarator knrFunct,
-			IASTName[] parameterNames) {
-		IASTName[] modifiedNames = modificationHelper.createModifiedChildArray(knrFunct,
-				parameterNames, IASTName.class, commentMap);
+	protected void writeKnRParameterNames(ICASTKnRFunctionDeclarator knrFunct, IASTName[] parameterNames) {
+		IASTName[] modifiedNames = modificationHelper.createModifiedChildArray(knrFunct, parameterNames, IASTName.class,
+				commentMap);
 		super.writeKnRParameterNames(knrFunct, modifiedNames);
 	}
 

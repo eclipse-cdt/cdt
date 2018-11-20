@@ -25,36 +25,38 @@ import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPImplicitNameTests;
 public class LRCPPImplicitNameTests extends AST2CPPImplicitNameTests {
 
 	public static TestSuite suite() {
-    	return suite(LRCPPImplicitNameTests.class);
-    }
-    
+		return suite(LRCPPImplicitNameTests.class);
+	}
+
 	public LRCPPImplicitNameTests() {
 	}
-	
+
 	public LRCPPImplicitNameTests(String name) {
 		super(name);
 	}
-	
+
 	//TODO ??? overwrite some failed test cases
 	@Override
-	public void testNew() throws Exception {}
-	
-	 
+	public void testNew() throws Exception {
+	}
+
 	@Override
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, @SuppressWarnings("unused") boolean useGNUExtensions, boolean expectNoProblems, int limitTrivialInitializers)  {
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-    	ParseHelper.Options options = new ParseHelper.Options();
-    	options.setCheckSyntaxProblems(expectNoProblems);
-    	options.setCheckPreprocessorProblems(expectNoProblems);
-    	options.setLimitTrivialInitializers(limitTrivialInitializers);
-    	return ParseHelper.parse(code, language, options);
-    }
-    
-    protected ILanguage getCLanguage() {
-    	return GCCLanguage.getDefault();
-    }
-    
-    protected ILanguage getCPPLanguage() {
-    	return GPPLanguage.getDefault();
-    }
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang,
+			@SuppressWarnings("unused") boolean useGNUExtensions, boolean expectNoProblems,
+			int limitTrivialInitializers) {
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
+		ParseHelper.Options options = new ParseHelper.Options();
+		options.setCheckSyntaxProblems(expectNoProblems);
+		options.setCheckPreprocessorProblems(expectNoProblems);
+		options.setLimitTrivialInitializers(limitTrivialInitializers);
+		return ParseHelper.parse(code, language, options);
+	}
+
+	protected ILanguage getCLanguage() {
+		return GCCLanguage.getDefault();
+	}
+
+	protected ILanguage getCPPLanguage() {
+		return GPPLanguage.getDefault();
+	}
 }

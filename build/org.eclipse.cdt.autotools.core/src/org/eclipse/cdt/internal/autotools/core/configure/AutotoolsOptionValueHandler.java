@@ -28,9 +28,8 @@ import org.eclipse.cdt.managedbuilder.core.ManagedOptionValueHandler;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
-public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler 
-	implements IOptionApplicability {
-	
+public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler implements IOptionApplicability {
+
 	public static final String DEFAULT_BUILD_DIR = "build"; //$NON-NLS-1$
 	public static final String CONFIGURE_TOOL_ID = "org.eclipse.linuxtools.cdt.autotools.core.gnu.toolchain.tool.configure"; //$NON-NLS-1$
 	public static final String BUILD_DIR_OPTION_ID = "org.eclipse.linuxtools.cdt.autotools.core.option.configure.builddir"; //$NON-NLS-1$
@@ -41,25 +40,21 @@ public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler
 
 	//FIXME: Use holder to set option value, not the "option" parameter
 	@Override
-	public boolean handleValue(IBuildObject buildObject, 
-                   IHoldsOptions holder, 
-                   IOption option,
-                   String extraArgument, int event)
-	{
+	public boolean handleValue(IBuildObject buildObject, IHoldsOptions holder, IOption option, String extraArgument,
+			int event) {
 		// Get the current value of the build dir option.
-		String value = (String)option.getValue();
+		String value = (String) option.getValue();
 
-		if (buildObject instanceof IConfiguration &&
-				(event == IManagedOptionValueHandler.EVENT_OPEN)) {
-//			SortedSet<Integer> nums = new TreeSet<Integer>();
-			IConfiguration configuration = (IConfiguration)buildObject;
+		if (buildObject instanceof IConfiguration && (event == IManagedOptionValueHandler.EVENT_OPEN)) {
+			//			SortedSet<Integer> nums = new TreeSet<Integer>();
+			IConfiguration configuration = (IConfiguration) buildObject;
 			ICConfigurationDescription cfgd = ManagedBuildManager.getDescriptionForConfiguration(configuration);
 			if (option.getName().equals("Name") && cfgd != null) {
 				String cfgId = cfgd.getId();
 				if (!value.isEmpty() && !value.equals(cfgId)) {
 					// we have a cloned configuration and we know that the
 					// clonee's name is the value of the option
-					IProject project = (IProject)configuration.getManagedProject().getOwner();
+					IProject project = (IProject) configuration.getManagedProject().getOwner();
 					String autoName = null;
 					String autoNameTemplate = null;
 					// Check if we are supposed to automatically name the build directory for any
@@ -71,8 +66,8 @@ public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler
 						// ignore
 					}
 					if (autoName == null || autoName.equals(AutotoolsPropertyConstants.TRUE)) {
-						autoNameTemplate = "${workspace_loc:/" + project.getName() + //$NON-NLS-1$ 
-							"}/build-" + fixName(configuration.getName()); //$NON-NLS-1$
+						autoNameTemplate = "${workspace_loc:/" + project.getName() + //$NON-NLS-1$
+								"}/build-" + fixName(configuration.getName()); //$NON-NLS-1$
 						IBuilder cfgBuilder = configuration.getEditableBuilder();
 						cfgBuilder.setBuildPath(autoNameTemplate);
 					}
@@ -93,35 +88,31 @@ public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler
 				}
 			}
 		}
-		
+
 		// The event was not handled, thus return false
 		return true;
 	}
-	
+
 	private String fixName(String cfgName) {
 		// Replace whitespace with underscores.
 		return cfgName.replaceAll("\\s", "_");
 	}
-	
+
 	// IOptionApplicability methods
-	
+
 	@Override
-	public boolean isOptionEnabled(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionEnabled(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return true;
 	}
 
 	@Override
-	public boolean isOptionUsedInCommandLine(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionUsedInCommandLine(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return false;
 	}
 
 	@Override
-	public boolean isOptionVisible(IBuildObject configuration,
-			IHoldsOptions holder, IOption option) {
+	public boolean isOptionVisible(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return true;
 	}
-
 
 }

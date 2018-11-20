@@ -93,31 +93,31 @@ public class InclusionContext {
 		if (path == null) {
 			String directory = fCurrentDirectory == null ? null : fCurrentDirectory.toOSString();
 			String filePath = CPreprocessor.getAbsoluteInclusionPath(include.getName(), directory);
-	        if (filePath != null) {
-	        	path = new Path(filePath);
-	        } else if (!include.isSystem() && !fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory()) {
-	            // Check to see if we find a match in the current directory.
-	    		filePath = ScannerUtility.createReconciledPath(directory, include.getName());
-	    		if (fileExists(filePath)) {
-	    			path = new Path(filePath);
-	    		}
-	        }
+			if (filePath != null) {
+				path = new Path(filePath);
+			} else if (!include.isSystem() && !fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory()) {
+				// Check to see if we find a match in the current directory.
+				filePath = ScannerUtility.createReconciledPath(directory, include.getName());
+				if (fileExists(filePath)) {
+					path = new Path(filePath);
+				}
+			}
 
-	        if (path == null) {
+			if (path == null) {
 				for (IncludeSearchPathElement pathElement : fIncludeSearchPath.getElements()) {
 					if (include.isSystem() && pathElement.isForQuoteIncludesOnly())
 						continue;
 					filePath = pathElement.getLocation(include.getName());
-		    		if (fileExists(filePath)) {
-		    			path = new Path(filePath);
-		    			break;
-		    		}
+					if (fileExists(filePath)) {
+						path = new Path(filePath);
+						break;
+					}
 				}
-	        }
-	        if (path == null)
-	        	path = UNRESOLVED_INCLUDE;
-	        fIncludeResolutionCache.put(include, path);
-	        fInverseIncludeResolutionCache.put(path, include);
+			}
+			if (path == null)
+				path = UNRESOLVED_INCLUDE;
+			fIncludeResolutionCache.put(include, path);
+			fInverseIncludeResolutionCache.put(path, include);
 		}
 		return path == UNRESOLVED_INCLUDE ? null : path;
 	}
@@ -127,24 +127,24 @@ public class InclusionContext {
 	 * the file is not on the include search path. Current directory is not considered to be a part
 	 * of the include path by this method.
 	 */
-    public IncludeInfo getIncludeForHeaderFile(IPath fullPath) {
-    	IncludeInfo include = fInverseIncludeResolutionCache.get(fullPath);
-    	if (include != null)
-    		return include;
-        String headerLocation = fullPath.toOSString();
-        String shortestInclude = null;
-        boolean isSystem = false;
+	public IncludeInfo getIncludeForHeaderFile(IPath fullPath) {
+		IncludeInfo include = fInverseIncludeResolutionCache.get(fullPath);
+		if (include != null)
+			return include;
+		String headerLocation = fullPath.toOSString();
+		String shortestInclude = null;
+		boolean isSystem = false;
 		for (IncludeSearchPathElement pathElement : fIncludeSearchPath.getElements()) {
 			String includeDirective = pathElement.getIncludeDirective(headerLocation);
-			if (includeDirective != null &&
-					(shortestInclude == null || shortestInclude.length() > includeDirective.length())) {
+			if (includeDirective != null
+					&& (shortestInclude == null || shortestInclude.length() > includeDirective.length())) {
 				shortestInclude = includeDirective;
 				isSystem = !pathElement.isForQuoteIncludesOnly();
 			}
 		}
 		if (shortestInclude == null) {
-			if (fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory() || fCurrentDirectory == null ||
-					!fCurrentDirectory.isPrefixOf(fullPath)) {
+			if (fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory() || fCurrentDirectory == null
+					|| !fCurrentDirectory.isPrefixOf(fullPath)) {
 				return null;
 			}
 			shortestInclude = fullPath.setDevice(null).removeFirstSegments(fCurrentDirectory.segmentCount()).toString();
@@ -154,31 +154,31 @@ public class InclusionContext {
 		// if the header was included by #include_next.
 		fInverseIncludeResolutionCache.put(fullPath, include);
 		return include;
-    }
+	}
 
 	/**
 	 * Returns the include directive that resolves to the given header file, or {@code null} if
 	 * the file is not on the include search path. Current directory is not considered to be a part
 	 * of the include path by this method.
 	 */
-    public IncludeInfo getIncludeForHeaderFile(IPath fullPath, boolean isSystem) {
-    	IncludeInfo include = fInverseIncludeResolutionCache.get(fullPath);
-    	if (include != null)
-    		return include;
-        String headerLocation = fullPath.toOSString();
-        String shortestInclude = null;
+	public IncludeInfo getIncludeForHeaderFile(IPath fullPath, boolean isSystem) {
+		IncludeInfo include = fInverseIncludeResolutionCache.get(fullPath);
+		if (include != null)
+			return include;
+		String headerLocation = fullPath.toOSString();
+		String shortestInclude = null;
 		for (IncludeSearchPathElement pathElement : fIncludeSearchPath.getElements()) {
 			if (isSystem && pathElement.isForQuoteIncludesOnly())
 				continue;
 			String includeDirective = pathElement.getIncludeDirective(headerLocation);
-			if (includeDirective != null &&
-					(shortestInclude == null || shortestInclude.length() > includeDirective.length())) {
+			if (includeDirective != null
+					&& (shortestInclude == null || shortestInclude.length() > includeDirective.length())) {
 				shortestInclude = includeDirective;
 			}
 		}
 		if (shortestInclude == null) {
-			if (fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory() || fCurrentDirectory == null ||
-					!fCurrentDirectory.isPrefixOf(fullPath)) {
+			if (fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory() || fCurrentDirectory == null
+					|| !fCurrentDirectory.isPrefixOf(fullPath)) {
 				return null;
 			}
 			shortestInclude = fullPath.setDevice(null).removeFirstSegments(fCurrentDirectory.segmentCount()).toString();
@@ -188,9 +188,9 @@ public class InclusionContext {
 		// if the header was included by #include_next.
 		fInverseIncludeResolutionCache.put(fullPath, include);
 		return include;
-    }
+	}
 
-    public IncludeGroupStyle getIncludeStyle(IPath headerPath) {
+	public IncludeGroupStyle getIncludeStyle(IPath headerPath) {
 		IncludeKind includeKind;
 		IncludeInfo includeInfo = getIncludeForHeaderFile(headerPath);
 		if (includeInfo != null && includeInfo.isSystem()) {
@@ -282,7 +282,7 @@ public class InclusionContext {
 				name = getRelativePath(header);
 			}
 			if (name == null) {
-				name = header.toPortableString();  // Last resort. 
+				name = header.toPortableString(); // Last resort.
 			}
 		}
 		return new IncludeInfo(name, style.isAngleBrackets());
@@ -315,9 +315,8 @@ public class InclusionContext {
 
 	public Pattern getKeepPragmaPattern() {
 		if (fKeepPragmaPattern == null) {
-			String keepPattern = CCorePreferenceConstants.getPreference(
-					CCorePreferenceConstants.INCLUDE_KEEP_PATTERN, fProject,
-					CCorePreferenceConstants.DEFAULT_INCLUDE_KEEP_PATTERN);
+			String keepPattern = CCorePreferenceConstants.getPreference(CCorePreferenceConstants.INCLUDE_KEEP_PATTERN,
+					fProject, CCorePreferenceConstants.DEFAULT_INCLUDE_KEEP_PATTERN);
 			try {
 				fKeepPragmaPattern = Pattern.compile(keepPattern);
 			} catch (PatternSyntaxException e) {
@@ -331,7 +330,7 @@ public class InclusionContext {
 	 * Sets the effective translation unit location that overrides the default value obtained by
 	 * calling {@code getTranslationUnit().getLocation()}.
 	 *
-	 * @param location the file system location to set 
+	 * @param location the file system location to set
 	 */
 	public void setTranslationUnitLocation(IPath location) {
 		this.fTuLocation = location;

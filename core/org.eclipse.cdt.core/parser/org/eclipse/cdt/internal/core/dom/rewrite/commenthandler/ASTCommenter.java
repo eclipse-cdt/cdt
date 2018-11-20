@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  ******************************************************************************/
@@ -43,16 +43,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 
 /**
- * This is the starting point of the entire comment handling  process. The creation of the 
+ * This is the starting point of the entire comment handling  process. The creation of the
  * {@link NodeCommentMap} is based on the {@link IASTTranslationUnit}. From this translation unit
  * the comments are extracted and skipped if they belong not to the same workspace.
  * An {@link ASTCommenterVisitor} is initialized with this collection of comments. And the visit
- * process can start. 
- * 
+ * process can start.
+ *
  * @see NodeCommenter
  * @see NodeCommentMap
- *  
- * @author Guido Zgraggen IFS 
+ *
+ * @author Guido Zgraggen IFS
  */
 public class ASTCommenter {
 
@@ -71,11 +71,11 @@ public class ASTCommenter {
 			IASTFileLocation nodeLocation = node.getFileLocation();
 			if (nodeLocation == null)
 				return PROCESS_SKIP;
-				
+
 			int nodeEndOffset = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 
-			boolean nodeInBetweenCommentAndPpStmt =
-					nodeEndOffset > commentLocation.getNodeOffset() && nodeEndOffset < ppStmtOffset;
+			boolean nodeInBetweenCommentAndPpStmt = nodeEndOffset > commentLocation.getNodeOffset()
+					&& nodeEndOffset < ppStmtOffset;
 			if (isCommentOnSameLine(node) || nodeInBetweenCommentAndPpStmt) {
 				isPrePpStmtComment = false;
 				return PROCESS_ABORT;
@@ -84,20 +84,21 @@ public class ASTCommenter {
 			} else if (nodeLocation.getNodeOffset() > ppStmtOffset) {
 				return PROCESS_ABORT;
 			}
-			
+
 			return PROCESS_CONTINUE;
 		}
 
 		private boolean isCommentOnSameLine(IASTNode node) {
 			IASTFileLocation fileLocation = node.getFileLocation();
-			return fileLocation != null && commentLocation.getStartingLineNumber() == fileLocation.getEndingLineNumber();
+			return fileLocation != null
+					&& commentLocation.getStartingLineNumber() == fileLocation.getEndingLineNumber();
 		}
 
 		@Override
 		public int visit(ICPPASTBaseSpecifier baseSpecifier) {
 			return checkOffsets(baseSpecifier);
 		}
-		
+
 		@Override
 		public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
 			return checkOffsets(namespaceDefinition);
@@ -177,7 +178,7 @@ public class ASTCommenter {
 	/**
 	 * Creates a NodeCommentMap for the given AST. This is the only way to get a NodeCommentMap
 	 * which contains all the comments mapped against nodes.
-	 * 
+	 *
 	 * @param ast the AST
 	 * @return NodeCommentMap
 	 */
@@ -193,7 +194,7 @@ public class ASTCommenter {
 	/**
 	 * Adds all comments given in {@code ast} to the {@code commentMap}. Calling this twice has
 	 * no effect.
-	 * 
+	 *
 	 * @param ast
 	 *            the AST which contains the comments to add
 	 * @param commentMap
@@ -235,13 +236,13 @@ public class ASTCommenter {
 	public static boolean isInWorkspace(IASTNode node) {
 		return node.isPartOfTranslationUnitFile();
 	}
-	
+
 	/**
 	 * Puts leading and trailing comments to {@code commentMap} and removes them from
-	 * the {@code comments} list. 
+	 * the {@code comments} list.
 	 */
-	private static void assignPreprocessorComments(NodeCommentMap commentMap,
-			List<IASTComment> comments, IASTTranslationUnit tu) {
+	private static void assignPreprocessorComments(NodeCommentMap commentMap, List<IASTComment> comments,
+			IASTTranslationUnit tu) {
 		IASTPreprocessorStatement[] preprocessorStatementsArray = tu.getAllPreprocessorStatements();
 		if (preprocessorStatementsArray == null) {
 			return;

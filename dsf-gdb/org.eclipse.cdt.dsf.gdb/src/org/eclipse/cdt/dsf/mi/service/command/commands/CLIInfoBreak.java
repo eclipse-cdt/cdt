@@ -19,27 +19,27 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
  * 'info break [BP_REFERENCE]
- * 
+ *
  * will return information about the specified breakpoint.  If no breakpoint is
- * specified, it will return information about all breakpoints.  
- * We use it to find out to which inferior a breakpoint is applicable.  
+ * specified, it will return information about all breakpoints.
+ * We use it to find out to which inferior a breakpoint is applicable.
  * This information is not available from -break-list or -break-info until GDB 7.6.
- * 
+ *
  * @since 4.2
  */
 public class CLIInfoBreak extends CLICommand<CLIInfoBreakInfo> {
 
-	private static final String INFO_BREAK = "info break";  //$NON-NLS-1$
-	
+	private static final String INFO_BREAK = "info break"; //$NON-NLS-1$
+
 	public CLIInfoBreak(IDMContext ctx) {
-        super(ctx, INFO_BREAK);
+		super(ctx, INFO_BREAK);
 	};
 
 	public CLIInfoBreak(IDMContext ctx, int bpReference) {
 		super(ctx, INFO_BREAK + Integer.toString(bpReference));
 	}
-	
-    @Override
+
+	@Override
 	public CLIInfoBreakInfo getResult(MIOutput MIresult) {
 		return new CLIInfoBreakInfo(MIresult);
 	}

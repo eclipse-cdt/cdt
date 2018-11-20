@@ -28,14 +28,14 @@ public interface ITypeReference {
 	/**
 	 * Returns the full, absolute path of this reference
 	 * relative to the workspace, or null if no path can be
-	 * determined. 
+	 * determined.
 	 */
 	public IPath getPath();
 
 	/**
 	 * Returns the absolute path in the local file system
 	 * to this reference, or null if no path can be
-	 * determined. 
+	 * determined.
 	 */
 	public IPath getLocation();
 
@@ -63,13 +63,13 @@ public interface ITypeReference {
 	 * Returns the length.
 	 */
 	public int getLength();
-	
+
 	/**
 	 * Returns the CElements located at the stored offset and length,
 	 * or <code>null</code> if not found.
 	 */
 	public ICElement[] getCElements();
-	
+
 	/**
 	 * Returns a translation unit for this location.
 	 */
@@ -77,7 +77,7 @@ public interface ITypeReference {
 
 	/** Gets the path for this location, relative to one of
 	 * the given project's include paths.
-	 * 
+	 *
 	 * @param project the project to use as a reference.
 	 * @return The path to this location, relative to the longest
 	 * matching include path in the given project.
@@ -86,12 +86,12 @@ public interface ITypeReference {
 
 	/** Gets the path for this location, relative to the
 	 * given path.
-	 * 
+	 *
 	 * @param relativeToPath the path to use as a reference.
 	 * @return The path to this location, relative to the
 	 * given path.
 	 */
 	public IPath getRelativePath(IPath relativeToPath);
-    
-    boolean isLineNumber();
+
+	boolean isLineNumber();
 }

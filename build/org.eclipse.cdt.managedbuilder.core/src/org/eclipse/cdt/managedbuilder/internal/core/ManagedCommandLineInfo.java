@@ -15,8 +15,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 
-public class ManagedCommandLineInfo implements
-		IManagedCommandLineInfo {
+public class ManagedCommandLineInfo implements IManagedCommandLineInfo {
 
 	private String commandLine;
 	private String commandLinePattern;
@@ -27,8 +26,8 @@ public class ManagedCommandLineInfo implements
 	private String outputName;
 	private String inputResources;
 
-	public ManagedCommandLineInfo( String commandLine, String commandLinePattern, String commandName, String flags, String outputFlag,
-			String outputPrefix, String outputName, String inputResources) {
+	public ManagedCommandLineInfo(String commandLine, String commandLinePattern, String commandName, String flags,
+			String outputFlag, String outputPrefix, String outputName, String inputResources) {
 		this.commandLine = commandLine;
 		this.commandLinePattern = commandLinePattern;
 		this.commandName = commandName;

@@ -13,13 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
-
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider;
 
-
-public class TestConfigurationNameProvider implements
-		IConfigurationNameProvider {
+public class TestConfigurationNameProvider implements IConfigurationNameProvider {
 
 	/*
 	 * (non-Javadoc)
@@ -33,16 +30,14 @@ public class TestConfigurationNameProvider implements
 	private static int configNumber = 0;
 
 	@Override
-	public String getNewConfigurationName(IConfiguration configuration,
-			String[] usedConfigurationNames) {
+	public String getNewConfigurationName(IConfiguration configuration, String[] usedConfigurationNames) {
 
 		String configName = configuration.getName();
 
 		if (isArrayContains(usedConfigurationNames, configName) == false)
 			return configName;
 		else {
-			String[] supportedArchList = configuration.getToolChain()
-					.getArchList();
+			String[] supportedArchList = configuration.getToolChain().getArchList();
 			if (supportedArchList.length == 1) {
 				String newConfigName = configName + "_" + supportedArchList[0];
 				if (isArrayContains(usedConfigurationNames, newConfigName) == false) {
@@ -65,7 +60,7 @@ public class TestConfigurationNameProvider implements
 	private boolean isArrayContains(String[] usedNames, String name) {
 		if (usedNames != null) {
 			for (int i = 0; i < usedNames.length; i++) {
-				if ( ( usedNames[i] != null) && (usedNames[i].equals(name)) ) {
+				if ((usedNames[i] != null) && (usedNames[i].equals(name))) {
 					return true;
 				}
 			}

@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -42,25 +42,25 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTWhileStatement;
  * The NodeCommenter contains all the logic that is needed for the ASTCommentVisitor to assign
  * the comments to the suitable node. Together with the ASTCommenterVisitor it fills all
  * the comments with the correspondent node into the NodeCommentMap.
- * 
+ *
  * Following, a little explanation of the assignment logic. It is only a loose illustration
  * a detailed description would include a combined explanation of ASTCommenterVisitor and
  * NodeCommenter.<br>
  * To understand the logic we define the three types of comments:<br>
  * leading comments - Comments before a statement, declaration, or definition.<br>
  * trailing comments - Comments right after the AST node on the same line.<br>
- * freestanding comments - Comments before a closing brace such as they occur in 
+ * freestanding comments - Comments before a closing brace such as they occur in
  * namespace-, class- and method-definitions or at the end of a file.<br>
- * 
+ *
  * The first comment is fetched and the position of it is compared to the position of the actual
  * node. If the position of the comment is smaller than the comment is added to the node as leading.
  * If it is behind the node but on the same line it is added as trailing. If one of these
  * possibilities match the next comment is fetched for the same check. If it doesn't match the same
  * procedure is done for all the child nodes. After checking the sub nodes the actual node is
- * checked again if the comment is trailing. Then there is also the possibility that this comment is 
+ * checked again if the comment is trailing. Then there is also the possibility that this comment is
  * freestanding. This is the case when the comment is not added to any child node but the position
- * is smaller than the end position of the node. 
- * 
+ * is smaller than the end position of the node.
+ *
  * @author Guido Zgraggen IFS
  */
 public class NodeCommenter {
@@ -81,9 +81,9 @@ public class NodeCommenter {
 			nodes[i].accept(visitor);
 		}
 	}
-	
-	protected void visitNodeIfNotNull(IASTNode node){
-		if (node != null){
+
+	protected void visitNodeIfNotNull(IASTNode node) {
+		if (node != null) {
 			node.accept(visitor);
 		}
 	}
@@ -95,10 +95,10 @@ public class NodeCommenter {
 			// MacroExpansions have no FileLocation
 			return false;
 		}
-				
+
 		int nodeLineNumber = getEndingLineNumber(node);
-		int commentLineNumber= getStartingLineNumber(comment);
-	
+		int commentLineNumber = getStartingLineNumber(comment);
+
 		if (getNodeEndPoint(com) <= getNodeOffset(node)) {
 			addLeadingCommentToMap(node, comment);
 			return true;
@@ -108,7 +108,7 @@ public class NodeCommenter {
 		}
 		return false;
 	}
-	
+
 	protected boolean appendFreestandingComment(ASTNode node, IASTComment comment) {
 		ASTNode com = (ASTNode) comment;
 
@@ -139,10 +139,8 @@ public class NodeCommenter {
 	}
 
 	private boolean isTrailing(ASTNode node, ASTNode com, int nodeLineNumber, int commentLineNumber) {
-		if (nodeLineNumber != commentLineNumber || 
-				getNodeOffset(com) < getNodeEndPoint(node) || 
-				!canNotBeAddedToParent(node, com) ||
-				mustBeAddedToSubnodes(node)) {
+		if (nodeLineNumber != commentLineNumber || getNodeOffset(com) < getNodeEndPoint(node)
+				|| !canNotBeAddedToParent(node, com) || mustBeAddedToSubnodes(node)) {
 			return false;
 		}
 		if (getNodeOffset(com) < getNodeEndPoint(node) + 2) {
@@ -156,9 +154,10 @@ public class NodeCommenter {
 		}
 		return true;
 	}
+
 	private boolean canNotBeAddedToParent(ASTNode node, ASTNode com) {
 		ASTNode parent = (ASTNode) node.getParent();
-		
+
 		if (hasNodeSameEndingAsSubnode(parent)) {
 			return true;
 		} else if (parent instanceof IASTTranslationUnit) {
@@ -176,7 +175,7 @@ public class NodeCommenter {
 	private boolean mustBeAddedToSubnodes(ASTNode node) {
 		return hasNodeSameEndingAsSubnode(node);
 	}
-	
+
 	private boolean hasNodeSameEndingAsSubnode(ASTNode node) {
 		if (node instanceof CPPASTFunctionDefinition) {
 			return true;
@@ -201,41 +200,41 @@ public class NodeCommenter {
 		}
 		return false;
 	}
-	
+
 	protected int appendComments(ASTNode node) {
 		while (commentHandler.hasMore()) {
 			IASTComment comment = commentHandler.getFirst();
-			
+
 			if (isNotSameFile(node, comment)) {
 				return ASTVisitor.PROCESS_SKIP;
 			}
-			
+
 			if (!appendComment(node, comment)) {
 				return ASTVisitor.PROCESS_CONTINUE;
 			}
 		}
 		return ASTVisitor.PROCESS_ABORT;
 	}
-	
+
 	protected int appendFreestandingComments(ASTNode node) {
 		while (commentHandler.hasMore()) {
 			IASTComment comment = commentHandler.getFirst();
-			
+
 			if (isNotSameFile(node, comment)) {
 				return ASTVisitor.PROCESS_SKIP;
 			}
-			
+
 			if (appendComment(node, comment)) {
 				return ASTVisitor.PROCESS_CONTINUE;
 			}
-			
+
 			if (!appendFreestandingComment(node, comment)) {
 				return ASTVisitor.PROCESS_CONTINUE;
 			}
 		}
 		return ASTVisitor.PROCESS_ABORT;
 	}
-	
+
 	public void appendRemainingComments(IASTDeclaration declaration) {
 		while (commentHandler.hasMore()) {
 			IASTComment comment = commentHandler.getFirst();
@@ -245,7 +244,7 @@ public class NodeCommenter {
 			addFreestandingCommentToMap((ASTNode) declaration, comment);
 		}
 	}
-	
+
 	private boolean isNotSameFile(IASTNode node, IASTComment comment) {
 		if (node.getFileLocation() == null) {
 			return true;
@@ -257,7 +256,7 @@ public class NodeCommenter {
 		IASTFileLocation fileLocation = node.getFileLocation();
 		return fileLocation.getNodeOffset() + fileLocation.getNodeLength();
 	}
-	
+
 	private static int getNodeOffset(ASTNode node) {
 		return node.getOffset();
 	}

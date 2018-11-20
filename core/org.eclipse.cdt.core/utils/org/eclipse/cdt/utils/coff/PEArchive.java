@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -61,17 +60,17 @@ public class PEArchive {
 	}
 
 	/**
-	 * The <code>ARHeader</code> class is used to store the per-object file 
+	 * The <code>ARHeader</code> class is used to store the per-object file
 	 *  archive headers.  It can also create an PE object for inspecting
 	 *  the object file data.
 	 */
 	public class ARHeader {
 
 		private String object_name;
-//		private String modification_time;
-//		private String uid;
-//		private String gid;
-//		private String mode;
+		//		private String modification_time;
+		//		private String uid;
+		//		private String gid;
+		//		private String mode;
 		private long size;
 		private long elf_offset;
 
@@ -86,13 +85,13 @@ public class PEArchive {
 
 		/**
 		 * Look up the name stored in the archive's string table based
-		 * on the offset given. 
+		 * on the offset given.
 		 *
 		 * Maintains <code>rfile</code> file location.
 		 *
-		 * @param offset 
+		 * @param offset
 		 *    Offset into the string table for first character of the name.
-		 * @throws IOException 
+		 * @throws IOException
 		 *    <code>offset</code> not in string table bounds.
 		 */
 		private String nameFromStringTable(long offset) throws IOException {
@@ -114,11 +113,11 @@ public class PEArchive {
 		}
 
 		/**
-		 * Creates a new archive header object.  
+		 * Creates a new archive header object.
 		 *
 		 * Assumes that rfile is already at the correct location in the file.
 		 *
-		 * @throws IOException 
+		 * @throws IOException
 		 *    There was an error processing the header data from the file.
 		 */
 		public ARHeader() throws IOException {
@@ -150,19 +149,17 @@ public class PEArchive {
 			// Convert the raw bytes into strings and numbers.
 			//
 			this.object_name = removeBlanks(new String(object_name));
-//			this.modification_time = new String(modification_time);
-//			this.uid = new String(uid);
-//			this.gid = new String(gid);
-//			this.mode = new String(mode);
+			//			this.modification_time = new String(modification_time);
+			//			this.uid = new String(uid);
+			//			this.gid = new String(gid);
+			//			this.mode = new String(mode);
 			this.size = Long.parseLong(removeBlanks(new String(size)));
 
 			//
 			// If the name is of the format "/<number>", get name from the
 			// string table.
 			//
-			if (strtbl_pos != -1
-				&& this.object_name.length() > 1
-				&& this.object_name.charAt(0) == '/') {
+			if (strtbl_pos != -1 && this.object_name.length() > 1 && this.object_name.charAt(0) == '/') {
 				try {
 					long offset = Long.parseLong(this.object_name.substring(1));
 					this.object_name = nameFromStringTable(offset);
@@ -193,9 +190,9 @@ public class PEArchive {
 		/**
 		 *  Create an new PE object for the object file.
 		 *
-		 * @throws IOException 
+		 * @throws IOException
 		 *    Not a valid PE object file.
-		 * @return A new PE object.  
+		 * @return A new PE object.
 		 * @see PE#PE( String, long )
 		 */
 		public PE getPE() throws IOException {
@@ -215,20 +212,14 @@ public class PEArchive {
 	}
 
 	public static boolean isARHeader(byte[] ident) {
-		if (ident == null || ident.length < 7
-			|| ident[0] != '!'
-			|| ident[1] != '<'
-			|| ident[2] != 'a'
-			|| ident[3] != 'r'
-			|| ident[4] != 'c'
-			|| ident[5] != 'h'
-			|| ident[6] != '>')
+		if (ident == null || ident.length < 7 || ident[0] != '!' || ident[1] != '<' || ident[2] != 'a'
+				|| ident[3] != 'r' || ident[4] != 'c' || ident[5] != 'h' || ident[6] != '>')
 			return false;
 		return true;
 	}
 
 	/**
-	 *  Creates a new <code>AR</code> object from the contents of 
+	 *  Creates a new <code>AR</code> object from the contents of
 	 *  the given file.
 	 *
 	 *  @param filename The file to process.
@@ -288,8 +279,8 @@ public class PEArchive {
 
 	/**
 	 *  Get an array of all the object file headers for this archive.
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 *    Unable to process the archive file.
 	 * @return An array of headers, one for each object within the archive.
 	 * @see ARHeader
@@ -306,8 +297,7 @@ public class PEArchive {
 		return false;
 	}
 
-	public String[] extractFiles(String outdir, String[] names)
-		throws IOException {
+	public String[] extractFiles(String outdir, String[] names) throws IOException {
 		Vector<String> names_used = new Vector<String>();
 		String object_name;
 		int count;

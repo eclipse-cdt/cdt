@@ -19,20 +19,21 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MITraceStopInfo;
 
 /**
  * -trace-stop
- * 
- * Stops a tracing experiment. The result of this command has the same fields 
+ *
+ * Stops a tracing experiment. The result of this command has the same fields
  * as -trace-status, except that the 'supported' and 'running' fields are not output.
- * 
+ *
  * Available with GDB 7.1
- *  
+ *
  * @since 3.0
  */
 public class MITraceStop extends MICommand<MITraceStopInfo> {
 	public MITraceStop(ITraceTargetDMContext ctx) {
 		super(ctx, "-trace-stop"); //$NON-NLS-1$
 	}
-    @Override
-    public MITraceStopInfo getResult(MIOutput out) {
-        return new MITraceStopInfo(out);
-    }
+
+	@Override
+	public MITraceStopInfo getResult(MIOutput out) {
+		return new MITraceStopInfo(out);
+	}
 }

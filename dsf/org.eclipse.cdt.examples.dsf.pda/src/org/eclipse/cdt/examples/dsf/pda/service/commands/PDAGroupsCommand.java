@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,8 +17,8 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 
 /**
- * Retrieves register groups information 
- * 
+ * Retrieves register groups information
+ *
  * <pre>
  *    C: groups
  *    R: {group 1}|{group 2}|{group 3}|...|
@@ -27,12 +27,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAGroupsCommand extends AbstractPDACommand<PDAListResult> {
 
-    public PDAGroupsCommand(PDAVirtualMachineDMContext context) {
-        super(context, "groups");
-    }
-    
-    @Override
-    public PDAListResult createResult(String resultText) {
-        return new PDAListResult(resultText);
-    }
+	public PDAGroupsCommand(PDAVirtualMachineDMContext context) {
+		super(context, "groups");
+	}
+
+	@Override
+	public PDAListResult createResult(String resultText) {
+		return new PDAListResult(resultText);
+	}
 }

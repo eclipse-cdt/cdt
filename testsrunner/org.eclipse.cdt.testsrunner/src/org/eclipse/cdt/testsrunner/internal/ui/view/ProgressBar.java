@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Display;
  * A progress bar with a red/green indication for testing success or failure.
  */
 public class ProgressBar extends Canvas {
-	
+
 	/** Default bar width */
 	private static final int DEFAULT_WIDTH = 160;
 
@@ -42,10 +42,10 @@ public class ProgressBar extends Canvas {
 
 	/** Testing session to show progress bar for. */
 	private ITestingSession testingSession;
-	
-	/** Current bar width. */ 
+
+	/** Current bar width. */
 	private int colorBarWidth;
-	
+
 	/** The bar color when everything is OK (no tests failed and no testing errors). */
 	private Color okColor;
 
@@ -55,7 +55,6 @@ public class ProgressBar extends Canvas {
 	/** The bar color when the testing session was stopped by user. */
 	private Color stoppedColor;
 
-	
 	public ProgressBar(Composite parent, ITestingSession testingSession) {
 		super(parent, SWT.NONE);
 
@@ -87,17 +86,17 @@ public class ProgressBar extends Canvas {
 		});
 		setTestingSession(testingSession);
 	}
-	
+
 	/**
 	 * Sets the testing session to show information about.
-	 * 
+	 *
 	 * @param testingSession testing session (null is not acceptable)
 	 */
 	public void setTestingSession(ITestingSession testingSession) {
 		this.testingSession = testingSession;
 		updateInfoFromSession();
 	}
-	
+
 	/**
 	 * Updates the progress from the currently set testing session.
 	 */
@@ -108,7 +107,7 @@ public class ProgressBar extends Canvas {
 
 	/**
 	 * Sets the color of the progress bar depending on the testing session.
-	 * 
+	 *
 	 * @param gc gc
 	 */
 	private void setStatusColor(GC gc) {
@@ -122,7 +121,7 @@ public class ProgressBar extends Canvas {
 
 	/**
 	 * Calculate the width of the progress rectangle in a widget.
-	 * 
+	 *
 	 * @note If total tests count is known it is used to determine width of the
 	 * progress rectangle. If it isn't the width of progress rectangle is set to
 	 * the half of a widget.
@@ -131,9 +130,10 @@ public class ProgressBar extends Canvas {
 		Rectangle r = getClientArea();
 		int newColorBarWidth;
 		if (testingSession.getTotalCounter() > 0) {
-			newColorBarWidth = testingSession.getCurrentCounter()*(r.width-2)/testingSession.getTotalCounter();
+			newColorBarWidth = testingSession.getCurrentCounter() * (r.width - 2) / testingSession.getTotalCounter();
 		} else {
-			newColorBarWidth = testingSession.getCurrentCounter() > 0 ? (r.width-2)/2 : (testingSession.isFinished() ? r.width-2 : 0);
+			newColorBarWidth = testingSession.getCurrentCounter() > 0 ? (r.width - 2) / 2
+					: (testingSession.isFinished() ? r.width - 2 : 0);
 		}
 		colorBarWidth = Math.max(0, newColorBarWidth);
 	}
@@ -143,17 +143,17 @@ public class ProgressBar extends Canvas {
 	 */
 	private void drawBevelRect(GC gc, int x, int y, int w, int h, Color topleft, Color bottomright) {
 		gc.setForeground(topleft);
-		gc.drawLine(x, y, x+w-1, y);
-		gc.drawLine(x, y, x, y+h-1);
+		gc.drawLine(x, y, x + w - 1, y);
+		gc.drawLine(x, y, x, y + h - 1);
 
 		gc.setForeground(bottomright);
-		gc.drawLine(x+w, y, x+w, y+h);
-		gc.drawLine(x, y+h, x+w, y+h);
+		gc.drawLine(x + w, y, x + w, y + h);
+		gc.drawLine(x, y + h, x + w, y + h);
 	}
 
 	/**
 	 * Handles paint event and redraws the widget if necessary.
-	 * 
+	 *
 	 * @param event paint event
 	 */
 	private void paint(PaintEvent event) {
@@ -162,13 +162,13 @@ public class ProgressBar extends Canvas {
 
 		Rectangle rect = getClientArea();
 		gc.fillRectangle(rect);
-		drawBevelRect(gc, rect.x, rect.y, rect.width-1, rect.height-1,
-			disp.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW),
-			disp.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
+		drawBevelRect(gc, rect.x, rect.y, rect.width - 1, rect.height - 1,
+				disp.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW),
+				disp.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
 
 		setStatusColor(gc);
-		colorBarWidth = Math.min(rect.width-2, colorBarWidth);
-		gc.fillRectangle(1, 1, colorBarWidth, rect.height-2);
+		colorBarWidth = Math.min(rect.width - 2, colorBarWidth);
+		gc.fillRectangle(1, 1, colorBarWidth, rect.height - 2);
 	}
 
 	@Override

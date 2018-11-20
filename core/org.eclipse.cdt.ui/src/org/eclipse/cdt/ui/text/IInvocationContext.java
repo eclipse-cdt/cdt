@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ public interface IInvocationContext {
 	 * @return Returns the length of the current selection
 	 */
 	int getSelectionLength();
-	
+
 	/**
 	 * @return ITranslationUnit or null
 	 */

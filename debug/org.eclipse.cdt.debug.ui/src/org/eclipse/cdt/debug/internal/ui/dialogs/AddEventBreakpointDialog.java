@@ -83,11 +83,12 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 						.getBreakpointUIContributions(modelId, ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER, map);
 				for (ICBreakpointsUIContribution con : cons) {
 
-					if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) continue;
-					if (con.getId().equals(ICBreakpointType.TYPE)) continue;
-					FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel(),
-							parent);
-					getPreferenceStore().setValue(con.getId(),""); //$NON-NLS-1$
+					if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID))
+						continue;
+					if (con.getId().equals(ICBreakpointType.TYPE))
+						continue;
+					FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel(), parent);
+					getPreferenceStore().setValue(con.getId(), ""); //$NON-NLS-1$
 					if (fieldEditor != null)
 						addField(fieldEditor);
 				}
@@ -100,7 +101,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parentShell
 	 */
 	public AddEventBreakpointDialog(Shell parentShell) {
@@ -118,7 +119,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	private void loadEventTypes() {
 		ICBreakpointsUIContribution[] cons = factory.getBreakpointUIContributions(debugModelId,
-		    ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER, null);
+				ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER, null);
 		for (int i = 0; i < cons.length; i++) {
 			ICBreakpointsUIContribution con = cons[i];
 			if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
@@ -133,7 +134,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -146,8 +147,8 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 		Composite composite = new Composite(parent, SWT.None);
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
-		
-		layoutData.heightHint=100;
+
+		layoutData.heightHint = 100;
 		composite.setLayoutData(layoutData);
 		composite.setLayout(new GridLayout(1, false));
 
@@ -222,12 +223,13 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 		}
 	}
 
-	public boolean isActive(){
-		return fIdLabelMap.size()>0;
+	public boolean isActive() {
+		return fIdLabelMap.size() > 0;
 	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	@Override
@@ -238,7 +240,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	@Override
@@ -251,8 +253,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 			IPreferenceStore preferenceStore = page.getPreferenceStore();
 			if (preferenceStore != null) {
 				fEventArgument = preferenceStore.getString(ICEventBreakpoint.EVENT_ARG);
-			}
-			else
+			} else
 				fEventArgument = null;
 		}
 
@@ -271,7 +272,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
 	@Override
@@ -284,7 +285,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.TrayDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -294,7 +295,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	@Override
@@ -304,7 +305,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	@Override
@@ -338,8 +339,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// override so we can change the initial okay enabled state
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true).setEnabled(
-				okayEnabled());
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true).setEnabled(okayEnabled());
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 

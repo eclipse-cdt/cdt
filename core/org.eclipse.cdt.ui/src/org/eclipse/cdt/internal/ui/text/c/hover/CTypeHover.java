@@ -29,7 +29,8 @@ import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
  * Aggregator of problem and doc hovers.
  * @since 5.0
  */
-public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, ITextHoverExtension2, IInformationProviderExtension2 {
+public class CTypeHover
+		implements ICEditorTextHover, ITextHoverExtension, ITextHoverExtension2, IInformationProviderExtension2 {
 	private AbstractCEditorTextHover fProblemHover;
 	private AbstractCEditorTextHover fCDocHover;
 	private AbstractCEditorTextHover fBestMatchHover;
@@ -37,9 +38,9 @@ public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, IText
 	private AbstractCEditorTextHover fCurrentHover;
 
 	public CTypeHover() {
-		fProblemHover= new ProblemHover();
-		fCDocHover= new CDocHover();
-		fCurrentHover= null;
+		fProblemHover = new ProblemHover();
+		fCDocHover = new CDocHover();
+		fCurrentHover = null;
 		fBestMatchHover = new BestMatchHover();
 	}
 
@@ -51,7 +52,7 @@ public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, IText
 		fProblemHover.setEditor(editor);
 		fCDocHover.setEditor(editor);
 		fBestMatchHover.setEditor(editor);
-		fCurrentHover= null;
+		fCurrentHover = null;
 	}
 
 	/*
@@ -67,7 +68,7 @@ public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, IText
 	 */
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
-		Object info= getHoverInfo2(textViewer, hoverRegion);
+		Object info = getHoverInfo2(textViewer, hoverRegion);
 		if (info != null) {
 			return String.valueOf(info);
 		}
@@ -79,22 +80,22 @@ public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, IText
 	 */
 	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
-		Object hoverInfo= fProblemHover.getHoverInfo2(textViewer, hoverRegion);
+		Object hoverInfo = fProblemHover.getHoverInfo2(textViewer, hoverRegion);
 		if (hoverInfo != null) {
-			fCurrentHover= fProblemHover;
+			fCurrentHover = fProblemHover;
 			return hoverInfo;
 		}
 
 		hoverInfo = fCDocHover.getHoverInfo2(textViewer, hoverRegion);
-		if(hoverInfo != null){
-			fCurrentHover= fCDocHover;
+		if (hoverInfo != null) {
+			fCurrentHover = fCDocHover;
 		}
-		
+
 		hoverInfo = fBestMatchHover.getHoverInfo(textViewer, hoverRegion);
-		if(hoverInfo != null){
+		if (hoverInfo != null) {
 			fCurrentHover = fBestMatchHover;
 		}
-		
+
 		return hoverInfo;
 	}
 

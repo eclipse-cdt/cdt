@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 
 /**
- * Abstract class to obtain information about the input to the indexer. For the 
+ * Abstract class to obtain information about the input to the indexer. For the
  * project based indexers the input are translation units, for the stand-alone
  * indexer they are file-paths represented as strings.
  * @since 5.0

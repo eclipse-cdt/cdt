@@ -34,47 +34,47 @@ public class UpdateManagedProject30 {
 	 * @param project the <code>IProject</code> that needs to be upgraded
 	 */
 	static void doProjectUpdate(IProgressMonitor monitor, final IProject project) throws CoreException {
-		String[] projectName = new String[]{project.getName()};
+		String[] projectName = new String[] { project.getName() };
 		IFile file = project.getFile(ManagedBuildManager.SETTINGS_FILE_NAME);
 		File settingsFile = file.getLocation().toFile();
 		if (!settingsFile.exists()) {
 			monitor.done();
 			return;
 		}
-		
+
 		// Backup the file
 		monitor.beginTask(ConverterMessages.getFormattedString("UpdateManagedProject20.0", projectName), 1); //$NON-NLS-1$
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		UpdateManagedProjectManager.backupFile(file, "_30backup", monitor, project); //$NON-NLS-1$
 
-		// No physical conversion is need since the 3.1 model is a superset of the 3.0 model 
+		// No physical conversion is need since the 3.1 model is a superset of the 3.0 model
 		// We need to upgrade the version
-		((ManagedBuildInfo)info).setVersion("3.1.0"); //$NON-NLS-1$
-//		info.setValid(true);		
+		((ManagedBuildInfo) info).setVersion("3.1.0"); //$NON-NLS-1$
+		//		info.setValid(true);
 
 		//no need to persist data here
-//		// Save the updated file.
-//		IWorkspace workspace = project.getWorkspace();
-////		boolean treeLock = workspace.isTreeLocked();
-//		ISchedulingRule rule1 = workspace.getRuleFactory().createRule(project);
-//		ISchedulingRule rule2 = workspace.getRuleFactory().refreshRule(project);
-//		ISchedulingRule rule = MultiRule.combine(rule1, rule2);
-//		//since the java synchronized mechanism is now used for the build info loadding,
-//		//initiate the job in all cases
-////		if (treeLock) {
-//			WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
-//				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-//					ManagedBuildManager.saveBuildInfo(project, true);
-//					return Status.OK_STATUS;
-//				}
-//			};
-//			job.setRule(rule);
-//			job.schedule();
-////		} else {
-////			checkForCPPWithC(monitor, project);
-////			ManagedBuildManager.saveBuildInfo(project, true);
-////		}
-//		monitor.done();
+		//		// Save the updated file.
+		//		IWorkspace workspace = project.getWorkspace();
+		////		boolean treeLock = workspace.isTreeLocked();
+		//		ISchedulingRule rule1 = workspace.getRuleFactory().createRule(project);
+		//		ISchedulingRule rule2 = workspace.getRuleFactory().refreshRule(project);
+		//		ISchedulingRule rule = MultiRule.combine(rule1, rule2);
+		//		//since the java synchronized mechanism is now used for the build info loadding,
+		//		//initiate the job in all cases
+		////		if (treeLock) {
+		//			WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
+		//				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+		//					ManagedBuildManager.saveBuildInfo(project, true);
+		//					return Status.OK_STATUS;
+		//				}
+		//			};
+		//			job.setRule(rule);
+		//			job.schedule();
+		////		} else {
+		////			checkForCPPWithC(monitor, project);
+		////			ManagedBuildManager.saveBuildInfo(project, true);
+		////		}
+		//		monitor.done();
 	}
 
 }

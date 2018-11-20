@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
@@ -23,72 +23,73 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
-
 /**
  * The main plugin class
  */
 public class TestsPlugin extends Plugin {
-    //The shared instance.
-    private static TestsPlugin plugin;
-    //Resource bundle.
-    private ResourceBundle resourceBundle;
-    private static BundleContext bundleContext;
-	
-    public static final String PLUGIN_ID = "org.eclipse.cdt.tests.dsf.gdb"; //$NON-NLS-1$
-    
-    /** Base tracing option for this plugin */
-    public static final boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.tests.dsf.gdb/debug"));  //$NON-NLS-1$
-    
-    /**
-     * The constructor.
-     */
-    public TestsPlugin() {
-        super();
-        plugin = this;
-        try {
-            resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.tests.dsf.gdb.TestsPluginResources"); //$NON-NLS-1$
-        }
-        catch (MissingResourceException x) {
-            resourceBundle = null;
-        }
-    }
-    
-   @Override
-   public void start(BundleContext context) throws Exception {
-       super.start(context);
-       bundleContext = context;
-   }
-   /**
-    * This method is called when the plug-in is stopped
-    */
-   @Override
-   public void stop(BundleContext context) throws Exception {
-       super.stop(context);
-   }
-   /**
-    * Returns the shared instance.
-    */
-   public static TestsPlugin getDefault() {
-       return plugin;
-   }
-    
-   /**
-    * Returns the plugin's resource bundle,
-    */
-    public ResourceBundle getResourceBundle() {
-        return resourceBundle;
-    }    
-    
-    /**
-     * Returns the plugin's bundle context,
-     */
-    public static BundleContext getBundleContext() {
-        return bundleContext;
-    }             
+	//The shared instance.
+	private static TestsPlugin plugin;
+	//Resource bundle.
+	private ResourceBundle resourceBundle;
+	private static BundleContext bundleContext;
+
+	public static final String PLUGIN_ID = "org.eclipse.cdt.tests.dsf.gdb"; //$NON-NLS-1$
+
+	/** Base tracing option for this plugin */
+	public static final boolean DEBUG = Boolean
+			.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.tests.dsf.gdb/debug")); //$NON-NLS-1$
+
+	/**
+	 * The constructor.
+	 */
+	public TestsPlugin() {
+		super();
+		plugin = this;
+		try {
+			resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.tests.dsf.gdb.TestsPluginResources"); //$NON-NLS-1$
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
+	}
+
+	@Override
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		bundleContext = context;
+	}
+
+	/**
+	* This method is called when the plug-in is stopped
+	*/
+	@Override
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
+	}
+
+	/**
+	* Returns the shared instance.
+	*/
+	public static TestsPlugin getDefault() {
+		return plugin;
+	}
+
+	/**
+	* Returns the plugin's resource bundle,
+	*/
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
+
+	/**
+	 * Returns the plugin's bundle context,
+	 */
+	public static BundleContext getBundleContext() {
+		return bundleContext;
+	}
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -96,23 +97,22 @@ public class TestsPlugin extends Plugin {
 		getDefault().getLog().log(status);
 	}
 
-    /**     
-     * Convenience method which returns the unique identifier of this plugin.
-     */    
-    public static String getUniqueIdentifier() {
-    	return getDefault().getBundle().getSymbolicName();    
-    }
-	
+	/**
+	 * Convenience method which returns the unique identifier of this plugin.
+	 */
+	public static String getUniqueIdentifier() {
+		return getDefault().getBundle().getSymbolicName();
+	}
+
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e
 	 *            the exception to be logged
 	 */
-	public static void log( Throwable e ) {
+	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), "Internal Error", e)); //$NON-NLS-1$
 	}
-
 
 	/**
 	 * Tests should use this utility when specifying a timeout value for a wait
@@ -122,7 +122,7 @@ public class TestsPlugin extends Plugin {
 	 * would up the timeout value by 50%. This gives the executor of the tests
 	 * the ability to widen the timeouts across the board for all operations to
 	 * accommodate a slow machine.
-	 * 
+	 *
 	 * @param timeoutMs
 	 *            the timeout, in milliseconds
 	 * @return the adjusted value
@@ -132,13 +132,13 @@ public class TestsPlugin extends Plugin {
 		if (prop == null || prop.length() == 0) {
 			return timeoutMs;
 		}
-		
+
 		try {
 			float multiplier = Float.valueOf(prop);
-			return (int)(timeoutMs * multiplier);
-		}
-		catch (NumberFormatException exc) {
-			log(new Status(IStatus.ERROR, getUniqueIdentifier(), "\"dsf.gdb.tests.timeout.multiplier\" property incorrectly specified. Should be a float value (e.g., \"1.5\") or not specified at all.")); //$NON-NLS-1$
+			return (int) (timeoutMs * multiplier);
+		} catch (NumberFormatException exc) {
+			log(new Status(IStatus.ERROR, getUniqueIdentifier(),
+					"\"dsf.gdb.tests.timeout.multiplier\" property incorrectly specified. Should be a float value (e.g., \"1.5\") or not specified at all.")); //$NON-NLS-1$
 			return timeoutMs;
 		}
 	}

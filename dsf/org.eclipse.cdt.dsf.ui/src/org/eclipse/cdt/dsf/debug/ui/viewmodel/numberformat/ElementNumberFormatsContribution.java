@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.MenuItem;
 /**
  * Dynamic menu contribution that shows available number formats in the current
  * selection of the view.
- * 
+ *
  * @since 2.2
  */
 public class ElementNumberFormatsContribution extends NumberFormatsContribution {
@@ -60,8 +60,8 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 
 		SelectFormatAction(IElementFormatProvider provider, IPresentationContext context, IVMNode[] nodes,
 				Object viewerInput, TreePath[] elementPaths, String formatId) {
-			super(formatId == null ? MessagesForNumberFormat.ElementNumberFormatContribution_RestoreToPreference_label : 
-				                     FormattedValueVMUtil.getFormatLabel(formatId),
+			super(formatId == null ? MessagesForNumberFormat.ElementNumberFormatContribution_RestoreToPreference_label
+					: FormattedValueVMUtil.getFormatLabel(formatId),
 					formatId == null ? AS_PUSH_BUTTON : AS_RADIO_BUTTON);
 			fProvider = provider;
 			fContext = context;
@@ -83,21 +83,19 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 		}
 	}
 
-	protected static IContributionItem[] NO_ITEMS = new IContributionItem[] {
-		new ContributionItem() {
-			@Override
-			public void fill(Menu menu, int index) {
-				MenuItem item = new MenuItem(menu, SWT.NONE);
-				item.setEnabled(false);
-				item.setText(MessagesForNumberFormat.NumberFormatContribution_EmptyFormatsList_label);
-			}
-	
-			@Override
-			public boolean isEnabled() {
-				return false;
-			}
+	protected static IContributionItem[] NO_ITEMS = new IContributionItem[] { new ContributionItem() {
+		@Override
+		public void fill(Menu menu, int index) {
+			MenuItem item = new MenuItem(menu, SWT.NONE);
+			item.setEnabled(false);
+			item.setText(MessagesForNumberFormat.NumberFormatContribution_EmptyFormatsList_label);
 		}
-	};
+
+		@Override
+		public boolean isEnabled() {
+			return false;
+		}
+	} };
 
 	@Override
 	protected IContributionItem[] getContributionItems() {
@@ -105,13 +103,13 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 		if (selection == null || selection.isEmpty() || selection instanceof ITreeSelection == false) {
 			return NO_ITEMS;
 		}
-		
+
 		IVMProvider provider = VMHandlerUtils.getVMProviderForSelection(selection);
 		if (provider instanceof IElementFormatProvider == false) {
 			return NO_ITEMS;
 		}
-		
-		IPresentationContext context = provider.getPresentationContext();		
+
+		IPresentationContext context = provider.getPresentationContext();
 		Object viewerInput = VMHandlerUtils.getViewerInput(context);
 		TreePath[] elementPaths = ((ITreeSelection) selection).getPaths();
 		List<String> availableFormats = getAvailableFormats(provider, viewerInput, elementPaths);
@@ -122,20 +120,20 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 		IVMNode[] nodes = new IVMNode[elementPaths.length];
 		final List<SelectFormatAction> actions = new ArrayList<SelectFormatAction>(availableFormats.size());
 		for (String formatId : availableFormats) {
-			actions.add(new SelectFormatAction((IElementFormatProvider) provider,
-					context, nodes, viewerInput, elementPaths, formatId));
+			actions.add(new SelectFormatAction((IElementFormatProvider) provider, context, nodes, viewerInput,
+					elementPaths, formatId));
 		}
 
 		final String[] elementActiveFormats = new String[elementPaths.length];
-		CountingRequestMonitor crm = new CountingRequestMonitor(SimpleDisplayExecutor.getSimpleDisplayExecutor(Display.getDefault()), null) {
+		CountingRequestMonitor crm = new CountingRequestMonitor(
+				SimpleDisplayExecutor.getSimpleDisplayExecutor(Display.getDefault()), null) {
 			@Override
 			protected void handleCompleted() {
 				String activeFormat = null;
 				for (int i = 0; i < elementActiveFormats.length; i++) {
 					if (i == 0) {
 						activeFormat = elementActiveFormats[i];
-					} else if (activeFormat != null
-							&& activeFormat.equals(elementActiveFormats[i]) == false) {
+					} else if (activeFormat != null && activeFormat.equals(elementActiveFormats[i]) == false) {
 						activeFormat = null;
 						break;
 					}
@@ -160,12 +158,12 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 			final int index = i;
 			((IElementFormatProvider) provider).getActiveFormat(context, nodes[i], viewerInput, elementPaths[i],
 					new DataRequestMonitor<String>(ImmediateExecutor.getInstance(), crm) {
-				@Override
-				protected void handleSuccess() {
-					elementActiveFormats[index] = this.getData();
-					super.handleSuccess();
-				}
-			});
+						@Override
+						protected void handleSuccess() {
+							elementActiveFormats[index] = this.getData();
+							super.handleSuccess();
+						}
+					});
 		}
 		crm.setDoneCount(elementPaths.length);
 		int count = actions.size();
@@ -182,7 +180,7 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 	 */
 	private List<String> getAvailableFormats(IVMProvider provider, Object viewerInput, TreePath[] paths) {
 		if (provider instanceof ICachingVMProviderExtension2) {
-			ICachingVMProviderExtension2 cachingProvider = (ICachingVMProviderExtension2)provider;
+			ICachingVMProviderExtension2 cachingProvider = (ICachingVMProviderExtension2) provider;
 
 			String[] formats = null;
 			for (TreePath path : paths) {
@@ -190,7 +188,8 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 				if (node != null) {
 					ICacheEntry cacheEntry = cachingProvider.getCacheEntry(node, viewerInput, path);
 					if (cacheEntry != null && cacheEntry.getProperties() != null) {
-						String[] entryFormats = (String[]) cacheEntry.getProperties().get(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
+						String[] entryFormats = (String[]) cacheEntry.getProperties()
+								.get(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
 						if (entryFormats == null) {
 							// At least one element has no formats.  Use the default ones.
 							return FORMATS;

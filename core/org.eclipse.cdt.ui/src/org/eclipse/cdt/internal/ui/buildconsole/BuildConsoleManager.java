@@ -130,8 +130,9 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	 */
 	protected void startConsoleActivity(IProject project) {
 		if (!listeners.isEmpty()) {
-			for (IBuildConsoleListener listener: listeners) {
-				ConsoleEvent event = new ConsoleEvent(BuildConsoleManager.this, project, IBuildConsoleEvent.CONSOLE_START);
+			for (IBuildConsoleListener listener : listeners) {
+				ConsoleEvent event = new ConsoleEvent(BuildConsoleManager.this, project,
+						IBuildConsoleEvent.CONSOLE_START);
 				listener.consoleChange(event);
 			}
 		}
@@ -165,9 +166,9 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 				}
 				if (consoleView instanceof IConsoleView) {
 					if (BuildConsole.getCurrentPage() == null)
-						((IConsoleView)consoleView).display(fConsole);
+						((IConsoleView) consoleView).display(fConsole);
 					else
-						((IConsoleView)consoleView).display(BuildConsole.getCurrentPage().getConsole());
+						((IConsoleView) consoleView).display(BuildConsole.getCurrentPage().getConsole());
 				}
 			}
 		}
@@ -176,7 +177,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	boolean shouldBringToTop(IViewPart consoleView) {
 		boolean bringToTop = false;
 		if (consoleView instanceof IConsoleView) {
-			IConsoleView cView = (IConsoleView)consoleView;
+			IConsoleView cView = (IConsoleView) consoleView;
 			return !cView.isPinned() && BuildConsolePreferencePage.isConsoleOnTop();
 		}
 		return bringToTop;
@@ -192,13 +193,15 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResource resource = event.getResource();
 		if (resource != null && resource.getType() == IResource.PROJECT) {
-			if (event.getType() == IResourceChangeEvent.PRE_DELETE || event.getType() == IResourceChangeEvent.PRE_CLOSE) {
+			if (event.getType() == IResourceChangeEvent.PRE_DELETE
+					|| event.getType() == IResourceChangeEvent.PRE_CLOSE) {
 				IDocumentPartitioner partioner = fConsoleMap.remove(resource);
 				if (partioner != null) {
 					partioner.disconnect();
 					if (!listeners.isEmpty()) {
 						for (IBuildConsoleListener listener : listeners) {
-							ConsoleEvent consoleEvent = new ConsoleEvent(this, (IProject)resource, IBuildConsoleEvent.CONSOLE_CLOSE);
+							ConsoleEvent consoleEvent = new ConsoleEvent(this, (IProject) resource,
+									IBuildConsoleEvent.CONSOLE_CLOSE);
 							listener.consoleChange(consoleEvent);
 						}
 					}
@@ -221,7 +224,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			problemInfoBackgroundColor.dispose();
 			problemHighlightedColor.dispose();
 		}
-		ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new org.eclipse.ui.console.IConsole[]{fConsole});
+		ConsolePlugin.getDefault().getConsoleManager()
+				.removeConsoles(new org.eclipse.ui.console.IConsole[] { fConsole });
 		CUIPlugin.getWorkspace().removeResourceChangeListener(this);
 		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 	}
@@ -286,23 +290,32 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			public void run() {
 				// add console to the Console view
 				fConsole = createBuildConsole(fName, fContextMenuId, iconUrl);
-				ConsolePlugin.getDefault().getConsoleManager().addConsoles(new org.eclipse.ui.console.IConsole[]{fConsole});
+				ConsolePlugin.getDefault().getConsoleManager()
+						.addConsoles(new org.eclipse.ui.console.IConsole[] { fConsole });
 
 				infoStream.setConsole(fConsole);
-				infoColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);
+				infoColor = createColor(CUIPlugin.getStandardDisplay(),
+						BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);
 				infoStream.setColor(infoColor);
 				outputStream.setConsole(fConsole);
-				outputColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR);
+				outputColor = createColor(CUIPlugin.getStandardDisplay(),
+						BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR);
 				outputStream.setColor(outputColor);
 				errorStream.setConsole(fConsole);
-				errorColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
+				errorColor = createColor(CUIPlugin.getStandardDisplay(),
+						BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
 				errorStream.setColor(errorColor);
-				backgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
+				backgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
+						BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
 				fConsole.setBackground(backgroundColor);
-				problemHighlightedColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR);
-				problemErrorBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
-				problemWarningBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR);
-				problemInfoBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR);
+				problemHighlightedColor = createColor(CUIPlugin.getStandardDisplay(),
+						BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR);
+				problemErrorBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
+						BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
+				problemWarningBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
+						BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR);
+				problemInfoBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
+						BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR);
 			}
 		});
 		CUIPlugin.getWorkspace().addResourceChangeListener(this);
@@ -319,42 +332,50 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		String property = event.getProperty();
 		// colors
 		if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR)) {
-			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);
+			Color newColor = createColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);
 			infoStream.setColor(newColor);
 			infoColor.dispose();
 			infoColor = newColor;
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR)) {
-			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR);
+			Color newColor = createColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR);
 			outputStream.setColor(newColor);
 			outputColor.dispose();
 			outputColor = newColor;
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR)) {
-			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
+			Color newColor = createColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
 			errorStream.setColor(newColor);
 			errorColor.dispose();
 			errorColor = newColor;
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR)) {
-			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
+			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
 			fConsole.setBackground(newColor);
 			backgroundColor.dispose();
 			backgroundColor = newColor;
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR)) {
-			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR);
+			Color newColor = createColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR);
 			problemHighlightedColor.dispose();
 			problemHighlightedColor = newColor;
 			redrawTextViewer();
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR)) {
-			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
+			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
 			problemErrorBackgroundColor.dispose();
 			problemErrorBackgroundColor = newColor;
 			redrawTextViewer();
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR)) {
-			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR);
+			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR);
 			problemWarningBackgroundColor.dispose();
 			problemWarningBackgroundColor = newColor;
 			redrawTextViewer();
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR)) {
-			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR);
+			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR);
 			problemInfoBackgroundColor.dispose();
 			problemInfoBackgroundColor = newColor;
 			redrawTextViewer();
@@ -363,9 +384,11 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 
 	private void redrawTextViewer() {
 		final BuildConsolePage p = BuildConsole.getCurrentPage();
-		if ( p == null ) return;
+		if (p == null)
+			return;
 		final BuildConsoleViewer v = p.getViewer();
-		if ( v  == null ) return;
+		if (v == null)
+			return;
 		Display display = Display.getDefault();
 		display.asyncExec(new Runnable() {
 			@Override
@@ -377,12 +400,12 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 
 	public IBuildConsoleStreamDecorator getStreamDecorator(int type) throws CoreException {
 		switch (type) {
-			case BUILD_STREAM_TYPE_ERROR :
-				return errorStream;
-			case BUILD_STREAM_TYPE_INFO :
-				return infoStream;
-			case BUILD_STREAM_TYPE_OUTPUT :
-				return outputStream;
+		case BUILD_STREAM_TYPE_ERROR:
+			return errorStream;
+		case BUILD_STREAM_TYPE_INFO:
+			return infoStream;
+		case BUILD_STREAM_TYPE_OUTPUT:
+			return outputStream;
 		}
 		throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, -1, "No Such Console", null)); //$NON-NLS-1$
 	}
@@ -426,7 +449,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	 */
 	@Override
 	public IConsole getProjectConsole(IProject project) {
-		if (project==null || !project.isAccessible())
+		if (project == null || !project.isAccessible())
 			return null;
 
 		fLastProject = project;
@@ -487,7 +510,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	 * @param project to get default log location for, can't be {@code null}.
 	 */
 	public String getDefaultConsoleLogLocation(IProject project) {
-		IPath defaultLogLocation = CUIPlugin.getDefault().getStateLocation().append(project.getName() + PROJECT_LOG_EXT);
+		IPath defaultLogLocation = CUIPlugin.getDefault().getStateLocation()
+				.append(project.getName() + PROJECT_LOG_EXT);
 		return defaultLogLocation.toOSString();
 	}
 
@@ -500,7 +524,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	public URI getLogURI(IProject project) {
 		Assert.isNotNull(project);
 
-		if (fContextMenuId!=DEFAULT_CONTEXT_MENU_ID)
+		if (fContextMenuId != DEFAULT_CONTEXT_MENU_ID)
 			return null;
 
 		URI logURI = null;
@@ -510,11 +534,12 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		if (keepLog) {
 			String strLocation;
 			strLocation = prefs.get(KEY_LOG_LOCATION, getDefaultConsoleLogLocation(project));
-			if (strLocation.trim().length()>0) {
+			if (strLocation.trim().length() > 0) {
 				logURI = URIUtil.toURI(strLocation);
 			}
-			if (logURI==null) {
-				IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,"Can't determine URI for location=["+strLocation+"]");  //$NON-NLS-1$ //$NON-NLS-2$
+			if (logURI == null) {
+				IStatus status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
+						"Can't determine URI for location=[" + strLocation + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				CUIPlugin.log(status);
 			}
 		}

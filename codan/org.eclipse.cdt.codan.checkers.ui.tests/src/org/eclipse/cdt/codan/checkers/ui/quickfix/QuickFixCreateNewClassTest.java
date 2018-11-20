@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Dominic Scharfe (COSEDA Technologies GmbH) - initial implementation 
+ *     Dominic Scharfe (COSEDA Technologies GmbH) - initial implementation
  *
  *******************************************************************************/
 package org.eclipse.cdt.codan.checkers.ui.quickfix;
@@ -117,7 +117,7 @@ public class QuickFixCreateNewClassTest {
 	/**
 	 * Test if the marker is applicable if <code>tu.getLanguage()</code> throws
 	 * a {@link CoreException}.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	@Test

@@ -43,12 +43,10 @@ public class QtProjectFileSourceViewerConfiguration extends TextSourceViewerConf
 	private static int TOKEN_COMMENT = 3;
 
 	// TODO: Add preference page for syntax highlighting
-	private static IToken[] allTokens = new IToken[] {
-			new Token(null),
+	private static IToken[] allTokens = new IToken[] { new Token(null),
 			new Token(new TextAttribute(new Color(Display.getCurrent(), new RGB(140, 140, 0)))),
 			new Token(new TextAttribute(new Color(Display.getCurrent(), new RGB(140, 0, 100)))),
-			new Token(new TextAttribute(new Color(Display.getCurrent(), new RGB(0, 140, 0))))
-	};
+			new Token(new TextAttribute(new Color(Display.getCurrent(), new RGB(0, 140, 0)))) };
 
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer viewer) {
@@ -87,19 +85,17 @@ public class QtProjectFileSourceViewerConfiguration extends TextSourceViewerConf
 			wordRule.addWord(keyword.getKeyword(), allTokens[TOKEN_VARIABLE_KEYWORD]);
 		}
 
-		scanner.setRules(new IRule[] {
-				wordRule,
-				new EndOfLineRule("#", allTokens[TOKEN_COMMENT]) //$NON-NLS-1$
+		scanner.setRules(new IRule[] { wordRule, new EndOfLineRule("#", allTokens[TOKEN_COMMENT]) //$NON-NLS-1$
 		});
 		return scanner;
 	}
 
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-	    ContentAssistant contentAssistant = new ContentAssistant();
-	    IContentAssistProcessor processor = new QtProjectFileContentAssistProcessor();
-	    contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
-	    contentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
-	    return contentAssistant;
+		ContentAssistant contentAssistant = new ContentAssistant();
+		IContentAssistProcessor processor = new QtProjectFileContentAssistProcessor();
+		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+		contentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
+		return contentAssistant;
 	}
 }

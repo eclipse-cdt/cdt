@@ -14,28 +14,25 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.wizards;
 
-
 import org.eclipse.cdt.internal.autotools.ui.AutotoolsUIPluginImages;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+public class ConfigurationLabelProvider extends LabelProvider implements ITableLabelProvider {
+	private final Image IMG_CFG = AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_BUILD_CONFIG);
 
-public class ConfigurationLabelProvider	extends LabelProvider implements ITableLabelProvider {
-	private final Image IMG_CFG =
-		AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_BUILD_CONFIG);
-
-	// 
+	//
 	@Override
 	public String getColumnText(Object obj, int index) {
 		if (obj instanceof IConfiguration) {
 			IConfiguration tmpConfig = (IConfiguration) obj;
-			
-			if( (tmpConfig.getDescription() == null)|| (tmpConfig.getDescription().isEmpty()) )
+
+			if ((tmpConfig.getDescription() == null) || (tmpConfig.getDescription().isEmpty()))
 				return ((IConfiguration) obj).getName();
 			else
-				return ( tmpConfig.getName() + " ( " + tmpConfig.getDescription() + " )");	//$NON-NLS-1$	//$NON-NLS-2$
+				return (tmpConfig.getName() + " ( " + tmpConfig.getDescription() + " )"); //$NON-NLS-1$	//$NON-NLS-2$
 		}
 		return "";
 	}
@@ -45,4 +42,3 @@ public class ConfigurationLabelProvider	extends LabelProvider implements ITableL
 		return IMG_CFG;
 	}
 }
-

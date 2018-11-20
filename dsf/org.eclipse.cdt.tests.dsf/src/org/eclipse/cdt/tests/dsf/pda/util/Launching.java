@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Nokia - create and use backend service. 
+ *     Nokia - create and use backend service.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.pda.util;
 
@@ -24,25 +24,26 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.Launch;
 
 /**
- * 
+ *
  */
 public class Launching {
-    
-	private static PDABackend fBackendService;
-	
-    public static Process launchPDA(DsfSession session, Launch launch, String pdaProgram) throws CoreException {
-        
-        class InitializeBackendServiceQuery extends Query<Object> {
-            @Override
-            protected void execute(DataRequestMonitor<Object> rm) {
-                fBackendService.initialize(rm);
-            }
-        };
 
-        fBackendService = new PDABackend(session, launch, pdaProgram);
-    	InitializeBackendServiceQuery initQuery = new InitializeBackendServiceQuery();
-        session.getExecutor().execute(initQuery);
-        try {
+	private static PDABackend fBackendService;
+
+	public static Process launchPDA(DsfSession session, Launch launch, String pdaProgram) throws CoreException {
+
+		class InitializeBackendServiceQuery extends Query<Object> {
+			@Override
+			protected void execute(DataRequestMonitor<Object> rm) {
+				fBackendService.initialize(rm);
+			}
+		}
+		;
+
+		fBackendService = new PDABackend(session, launch, pdaProgram);
+		InitializeBackendServiceQuery initQuery = new InitializeBackendServiceQuery();
+		session.getExecutor().execute(initQuery);
+		try {
 			initQuery.get();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -50,10 +51,10 @@ public class Launching {
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 			return null;
-		}        
-   	
-        return fBackendService.getProcess();
-    }
+		}
+
+		return fBackendService.getProcess();
+	}
 
 	public static PDABackend getBackendService() {
 		return fBackendService;

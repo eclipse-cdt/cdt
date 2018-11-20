@@ -20,8 +20,8 @@ import org.eclipse.jface.wizard.IWizard;
 public interface IWizardWithMemory extends IWizard {
 	// returns name of last-created project
 	// or null if no projects were created
-	public String getLastProjectName(); 
+	public String getLastProjectName();
 
-	public URI getLastProjectLocation(); 
+	public URI getLastProjectLocation();
 
 }

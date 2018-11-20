@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
@@ -69,7 +69,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.LinkedProposalModelPresenter;
  *
  * @since 5.1
  */
-public class TUCorrectionProposal extends ChangeCorrectionProposal  {
+public class TUCorrectionProposal extends ChangeCorrectionProposal {
 	private ITranslationUnit fTranslationUnit;
 	private LinkedProposalModel fLinkedProposalModel;
 
@@ -90,7 +90,7 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 		if (tu == null) {
 			throw new IllegalArgumentException("Translation unit must not be null"); //$NON-NLS-1$
 		}
-		fTranslationUnit= tu;
+		fTranslationUnit = tu;
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 	 * <p>
 	 * Users have to override {@link #addEdits(IDocument, TextEdit)} to provide
 	 * the text edits or {@link #createTextChange()} to provide a text change.
-	 * 
+	 *
 	 * @param name The name that is displayed in the proposal selection dialog.
 	 * @param tu The compilation unit on that the change works.
 	 * @param relevance The relevance of this proposal.
@@ -120,32 +120,32 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 	 * @throws CoreException can be thrown if adding the edits is failing.
 	 */
 	protected void addEdits(IDocument document, TextEdit editRoot) throws CoreException {
-//		if (false) {
-//			throw new CoreException(CUIStatus.createError(IStatus.ERROR, "Implementors can throw an exception", null)); //$NON-NLS-1$
-//		}
+		//		if (false) {
+		//			throw new CoreException(CUIStatus.createError(IStatus.ERROR, "Implementors can throw an exception", null)); //$NON-NLS-1$
+		//		}
 	}
 
 	protected LinkedProposalModel getLinkedProposalModel() {
 		if (fLinkedProposalModel == null) {
-			fLinkedProposalModel= new LinkedProposalModel();
+			fLinkedProposalModel = new LinkedProposalModel();
 		}
 		return fLinkedProposalModel;
 	}
 
 	public void setLinkedProposalModel(LinkedProposalModel model) {
-		fLinkedProposalModel= model;
+		fLinkedProposalModel = model;
 	}
 
 	@Override
 	public String getAdditionalProposalInfo() {
-		final StringBuilder buf= new StringBuilder();
+		final StringBuilder buf = new StringBuilder();
 
 		try {
-			final TextChange change= getTextChange();
+			final TextChange change = getTextChange();
 
 			change.setKeepPreviewEdits(true);
-			final IDocument previewContent= change.getPreviewDocument(new NullProgressMonitor());
-			final TextEdit rootEdit= change.getPreviewEdit(change.getEdit());
+			final IDocument previewContent = change.getPreviewDocument(new NullProgressMonitor());
+			final TextEdit rootEdit = change.getPreviewEdit(change.getEdit());
 
 			class EditAnnotator extends TextEditVisitor {
 				private int fWrittenToPos = 0;
@@ -214,26 +214,27 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 		return buf.toString();
 	}
 
-	private final int surroundLines= 1;
+	private final int surroundLines = 1;
 
-	private void appendContent(IDocument text, int startOffset, int endOffset, StringBuilder buf, boolean surroundLinesOnly) {
+	private void appendContent(IDocument text, int startOffset, int endOffset, StringBuilder buf,
+			boolean surroundLinesOnly) {
 		try {
-			int startLine= text.getLineOfOffset(startOffset);
-			int endLine= text.getLineOfOffset(endOffset);
+			int startLine = text.getLineOfOffset(startOffset);
+			int endLine = text.getLineOfOffset(endOffset);
 
-			boolean dotsAdded= false;
+			boolean dotsAdded = false;
 			if (surroundLinesOnly && startOffset == 0) { // No surround lines for the top no-change range
-				startLine= Math.max(endLine - surroundLines, 0);
+				startLine = Math.max(endLine - surroundLines, 0);
 				buf.append("...<br>"); //$NON-NLS-1$
-				dotsAdded= true;
+				dotsAdded = true;
 			}
 
-			for (int i= startLine; i <= endLine; i++) {
+			for (int i = startLine; i <= endLine; i++) {
 				if (surroundLinesOnly) {
 					if ((i - startLine > surroundLines) && (endLine - i > surroundLines)) {
 						if (!dotsAdded) {
 							buf.append("...<br>"); //$NON-NLS-1$
-							dotsAdded= true;
+							dotsAdded = true;
 						} else if (endOffset == text.getLength()) {
 							return; // No surround lines for the bottom no-change range
 						}
@@ -241,18 +242,18 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 					}
 				}
 
-				IRegion lineInfo= text.getLineInformation(i);
-				int start= lineInfo.getOffset();
-				int end= start + lineInfo.getLength();
+				IRegion lineInfo = text.getLineInformation(i);
+				int start = lineInfo.getOffset();
+				int end = start + lineInfo.getLength();
 
-				int from= Math.max(start, startOffset);
-				int to= Math.min(end, endOffset);
-				String content= text.get(from, to - from);
+				int from = Math.max(start, startOffset);
+				int to = Math.min(end, endOffset);
+				String content = text.get(from, to - from);
 				if (surroundLinesOnly && from == start && Strings.containsOnlyWhitespaces(content)) {
 					continue; // Ignore empty lines except when range started in the middle of a line
 				}
-				for (int k= 0; k < content.length(); k++) {
-					char ch= content.charAt(k);
+				for (int k = 0; k < content.length(); k++) {
+					char ch = content.charAt(k);
 					if (ch == '<') {
 						buf.append("&lt;"); //$NON-NLS-1$
 					} else if (ch == '>') {
@@ -273,21 +274,21 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 	@Override
 	public void apply(IDocument document) {
 		try {
-			ITranslationUnit unit= getTranslationUnit();
-			IEditorPart part= null;
+			ITranslationUnit unit = getTranslationUnit();
+			IEditorPart part = null;
 			if (unit.getResource().exists()) {
-				boolean canEdit= performValidateEdit(unit);
+				boolean canEdit = performValidateEdit(unit);
 				if (!canEdit) {
 					return;
 				}
-				part= EditorUtility.isOpenInEditor(unit);
+				part = EditorUtility.isOpenInEditor(unit);
 				if (part == null) {
-					part= EditorUtility.openInEditor(unit);
+					part = EditorUtility.openInEditor(unit);
 					if (part != null) {
-						document= CUIPlugin.getDefault().getDocumentProvider().getDocument(part.getEditorInput());
+						document = CUIPlugin.getDefault().getDocumentProvider().getDocument(part.getEditorInput());
 					}
 				}
-				IWorkbenchPage page= CUIPlugin.getActivePage();
+				IWorkbenchPage page = CUIPlugin.getActivePage();
 				if (page != null && part != null) {
 					page.bringToTop(part);
 				}
@@ -303,10 +304,10 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 	}
 
 	private boolean performValidateEdit(ITranslationUnit unit) {
-		IStatus status= Resources.makeCommittable(unit.getResource(), CUIPlugin.getActiveWorkbenchShell());
+		IStatus status = Resources.makeCommittable(unit.getResource(), CUIPlugin.getActiveWorkbenchShell());
 		if (!status.isOK()) {
-			String label= CorrectionMessages.TUCorrectionProposal_error_title;
-			String message= CorrectionMessages.TUCorrectionProposal_error_message;
+			String label = CorrectionMessages.TUCorrectionProposal_error_title;
+			String message = CorrectionMessages.TUCorrectionProposal_error_message;
 			ErrorDialog.openError(CUIPlugin.getActiveWorkbenchShell(), label, message, status);
 			return false;
 		}
@@ -324,13 +325,13 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 			if (fLinkedProposalModel != null) {
 				if (fLinkedProposalModel.hasLinkedPositions() && part instanceof CEditor) {
 					// enter linked mode
-					ITextViewer viewer= ((CEditor) part).getViewer();
+					ITextViewer viewer = ((CEditor) part).getViewer();
 					new LinkedProposalModelPresenter().enterLinkedMode(viewer, part, fLinkedProposalModel);
 				} else if (part instanceof ITextEditor) {
-					LinkedProposalPositionGroup.PositionInformation endPosition= fLinkedProposalModel.getEndPosition();
+					LinkedProposalPositionGroup.PositionInformation endPosition = fLinkedProposalModel.getEndPosition();
 					if (endPosition != null) {
 						// select a result
-						int pos= endPosition.getOffset() + endPosition.getLength();
+						int pos = endPosition.getOffset() + endPosition.getLength();
 						((ITextEditor) part).selectAndReveal(pos, 0);
 					}
 				}
@@ -349,30 +350,30 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 	 * @throws CoreException thrown if the creation of the text change failed.
 	 */
 	protected TextChange createTextChange() throws CoreException {
-		ITranslationUnit tu= getTranslationUnit();
-		String name= getName();
+		ITranslationUnit tu = getTranslationUnit();
+		String name = getName();
 		TextChange change;
 		if (!tu.getResource().exists()) {
 			String source;
 			try {
-				source= tu.getSource();
+				source = tu.getSource();
 			} catch (CModelException e) {
 				CUIPlugin.log(e);
-				source= ""; //$NON-NLS-1$
+				source = ""; //$NON-NLS-1$
 			}
-			Document document= new Document(source);
+			Document document = new Document(source);
 			document.setInitialLineDelimiter(StubUtility.getLineDelimiterUsed(tu));
-			change= new DocumentChange(name, document);
+			change = new DocumentChange(name, document);
 		} else {
 			CTextFileChange tuChange = new CTextFileChange(name, tu);
 			tuChange.setSaveMode(TextFileChange.LEAVE_DIRTY);
-			change= tuChange;
+			change = tuChange;
 		}
-		TextEdit rootEdit= new MultiTextEdit();
+		TextEdit rootEdit = new MultiTextEdit();
 		change.setEdit(rootEdit);
 
 		// Initialize text change.
-		IDocument document= change.getCurrentDocument(new NullProgressMonitor());
+		IDocument document = change.getCurrentDocument(new NullProgressMonitor());
 		addEdits(document, rootEdit);
 		return change;
 	}

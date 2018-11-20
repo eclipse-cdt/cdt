@@ -36,8 +36,8 @@ import org.eclipse.cdt.internal.ui.text.CWordFinder;
 /**
  * Abstract class for providing hover information for C elements.
  */
-public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITextHoverExtension,
-		ITextHoverExtension2, IInformationProviderExtension2 {
+public abstract class AbstractCEditorTextHover
+		implements ICEditorTextHover, ITextHoverExtension, ITextHoverExtension2, IInformationProviderExtension2 {
 	private IEditorPart fEditor;
 
 	/*
@@ -63,11 +63,10 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITe
 			 * region for the whole selection.
 			 */
 			Point selectedRange = textViewer.getSelectedRange();
-			if (selectedRange.x >= 0 && selectedRange.y > 0
-					&& offset >= selectedRange.x
+			if (selectedRange.x >= 0 && selectedRange.y > 0 && offset >= selectedRange.x
 					&& offset <= selectedRange.x + selectedRange.y)
 				return new Region(selectedRange.x, selectedRange.y);
-			
+
 			return CWordFinder.findWord(textViewer.getDocument(), offset);
 		}
 		return null;
@@ -117,7 +116,7 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITe
 
 	/**
 	 * Returns the tool tip affordance string.
-	 * 
+	 *
 	 * @return the affordance string or <code>null</code> if disabled or no
 	 *         key binding is defined
 	 * @since 3.0

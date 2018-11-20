@@ -10,7 +10,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
- * Red Hat - Copy from org.eclipse.cdt.wizards to here plus rename 
+ * Red Hat - Copy from org.eclipse.cdt.wizards to here plus rename
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.wizards;
 
@@ -40,7 +40,7 @@ public class AutotoolsWizardMessages {
 	}
 
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getResourceString(key), (Object[])args);
+		return MessageFormat.format(getResourceString(key), (Object[]) args);
 	}
 
 	public static String getResourceString(String key) {

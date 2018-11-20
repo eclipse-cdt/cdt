@@ -52,178 +52,174 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * A preference store that presents the state of the properties of a C/C++ breakpoint,
- * tracepoint or dynamic-printf. 
+ * tracepoint or dynamic-printf.
  */
 public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 
 	// This map is the current properties/values being maintained/manipulated
-    private HashMap<String, Object> fProperties = new HashMap<String, Object>();
-    
-    // Original set of values. So we can see what has really changed on the save and
-    // perform appropriate change operations. We only really want to operate on changed
-    // values, to avoid generating churn.
-    private HashMap<String, Object> fOriginalValues = new HashMap<String, Object>();
-    private boolean fIsDirty = false; 
-    private boolean fIsCanceled = false;
-    private ListenerList<IPropertyChangeListener> fListeners;
-    private final CBreakpointContext fContext;
-    
-    public CBreakpointPreferenceStore() {
-        this (null, null);
-    }
+	private HashMap<String, Object> fProperties = new HashMap<String, Object>();
 
-    public CBreakpointPreferenceStore(CBreakpointContext context, Map<String, Object> attributes) {
-        fListeners = new ListenerList<>(org.eclipse.core.runtime.ListenerList.IDENTITY);
-        fContext = context;
-        
-        fOriginalValues.clear();
-        fProperties.clear();
-        if (context != null) {
-            IMarker marker = context.getBreakpoint().getMarker();
-            if (marker != null) {
-                Map<String, Object> bpAttrs = Collections.emptyMap();
-                try {
-                    bpAttrs = marker.getAttributes();
-                    fOriginalValues.putAll(bpAttrs);
-                    fProperties.putAll(bpAttrs);
-                } catch (CoreException e) {
-                    DebugPlugin.log(e);
-                }
-            } 
-        }
-        if (attributes != null) {
-            fProperties.putAll(attributes);
-            fIsDirty = true;
-        }
-    }
+	// Original set of values. So we can see what has really changed on the save and
+	// perform appropriate change operations. We only really want to operate on changed
+	// values, to avoid generating churn.
+	private HashMap<String, Object> fOriginalValues = new HashMap<String, Object>();
+	private boolean fIsDirty = false;
+	private boolean fIsCanceled = false;
+	private ListenerList<IPropertyChangeListener> fListeners;
+	private final CBreakpointContext fContext;
 
-    public Map<String, Object> getAttributes() {
-        return fProperties;
-    }
-    
-    public void setCanceled(boolean canceled) {
-        fIsCanceled = canceled;
-    }
-    
-    public void save() throws IOException {
-        if (!fIsCanceled && fContext != null && fContext.getBreakpoint() != null) {
-            ICBreakpoint bp = fContext.getBreakpoint();
-            if (bp.getMarker() != null && fIsDirty) {
-                saveToExistingMarker(bp, bp.getMarker());
-            } else {
-                IResource resolved = getResource(fContext.getResource());
-                if (resolved != null) {
-                    saveToNewMarker(bp, resolved);
-                } else {
-                    throw new IOException("Unable to create breakpoint: no resource specified."); //$NON-NLS-1$
-                }
-            }
-        }
+	public CBreakpointPreferenceStore() {
+		this(null, null);
+	}
 
-    }
+	public CBreakpointPreferenceStore(CBreakpointContext context, Map<String, Object> attributes) {
+		fListeners = new ListenerList<>(org.eclipse.core.runtime.ListenerList.IDENTITY);
+		fContext = context;
 
-    /**
-     * Get the resource to apply the marker against. This may not be the same
-     * resource the dialog was created for if the user has selected a different
-     * resource.
-     * <p>
-     * If the {@link ICBreakpoint#SOURCE_HANDLE} resolves to the same file on
-     * the filesystem as the preferred resource the preferred resource is used.
-     *
-     * @param preferred
-     *            resource to use if it matches the SOURCE_HANDLE
-     * @return Resource to install marker on, or <code>null</code> for not
-     *         available.
-     */
-    private IResource getResource(IResource preferred) {
-        IResource resolved = null;
-        String source = getString(ICBreakpoint.SOURCE_HANDLE);
-        if (!"".equals(source)) { //$NON-NLS-1$
-            IPath rawLocation = preferred.getRawLocation();
-            if (rawLocation != null) {
-                File file = rawLocation.toFile();
-                File sourceFile = new File(source);
-                if (file.getAbsoluteFile().equals(sourceFile.getAbsoluteFile())) {
-                    resolved = preferred;
-                }
-            }
-
-            if (resolved == null) {
-                IPath path = Path.fromOSString(source);
-                IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-                IFile file = root.getFileForLocation(path);
-                if (file == null) {
-                    resolved = root;
-                } else {
-                    resolved = file;
-                }
-            }
-        }
-        if (resolved == null) {
-            resolved = preferred;
-        }
-        return resolved;
-    }
-    
-    private void saveToExistingMarker(final ICBreakpoint breakpoint, final IMarker marker) throws IOException {
-		final List<String> changedProperties = new ArrayList<String>( 5 );
-		Set<String> valueNames = fProperties.keySet();
-		for ( String name : valueNames ) {
-			if ( fProperties.containsKey( name ) ) {
-				Object originalObject = fOriginalValues.get( name );
-				Object currentObject  = fProperties.get( name );
-				if ( originalObject == null ) {
-					changedProperties.add( name );
-				}
-				else if ( ! originalObject.equals( currentObject ) ) {
-					changedProperties.add( name );
+		fOriginalValues.clear();
+		fProperties.clear();
+		if (context != null) {
+			IMarker marker = context.getBreakpoint().getMarker();
+			if (marker != null) {
+				Map<String, Object> bpAttrs = Collections.emptyMap();
+				try {
+					bpAttrs = marker.getAttributes();
+					fOriginalValues.putAll(bpAttrs);
+					fProperties.putAll(bpAttrs);
+				} catch (CoreException e) {
+					DebugPlugin.log(e);
 				}
 			}
 		}
-		if ( ! changedProperties.isEmpty() ) {
+		if (attributes != null) {
+			fProperties.putAll(attributes);
+			fIsDirty = true;
+		}
+	}
+
+	public Map<String, Object> getAttributes() {
+		return fProperties;
+	}
+
+	public void setCanceled(boolean canceled) {
+		fIsCanceled = canceled;
+	}
+
+	public void save() throws IOException {
+		if (!fIsCanceled && fContext != null && fContext.getBreakpoint() != null) {
+			ICBreakpoint bp = fContext.getBreakpoint();
+			if (bp.getMarker() != null && fIsDirty) {
+				saveToExistingMarker(bp, bp.getMarker());
+			} else {
+				IResource resolved = getResource(fContext.getResource());
+				if (resolved != null) {
+					saveToNewMarker(bp, resolved);
+				} else {
+					throw new IOException("Unable to create breakpoint: no resource specified."); //$NON-NLS-1$
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Get the resource to apply the marker against. This may not be the same
+	 * resource the dialog was created for if the user has selected a different
+	 * resource.
+	 * <p>
+	 * If the {@link ICBreakpoint#SOURCE_HANDLE} resolves to the same file on
+	 * the filesystem as the preferred resource the preferred resource is used.
+	 *
+	 * @param preferred
+	 *            resource to use if it matches the SOURCE_HANDLE
+	 * @return Resource to install marker on, or <code>null</code> for not
+	 *         available.
+	 */
+	private IResource getResource(IResource preferred) {
+		IResource resolved = null;
+		String source = getString(ICBreakpoint.SOURCE_HANDLE);
+		if (!"".equals(source)) { //$NON-NLS-1$
+			IPath rawLocation = preferred.getRawLocation();
+			if (rawLocation != null) {
+				File file = rawLocation.toFile();
+				File sourceFile = new File(source);
+				if (file.getAbsoluteFile().equals(sourceFile.getAbsoluteFile())) {
+					resolved = preferred;
+				}
+			}
+
+			if (resolved == null) {
+				IPath path = Path.fromOSString(source);
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				IFile file = root.getFileForLocation(path);
+				if (file == null) {
+					resolved = root;
+				} else {
+					resolved = file;
+				}
+			}
+		}
+		if (resolved == null) {
+			resolved = preferred;
+		}
+		return resolved;
+	}
+
+	private void saveToExistingMarker(final ICBreakpoint breakpoint, final IMarker marker) throws IOException {
+		final List<String> changedProperties = new ArrayList<String>(5);
+		Set<String> valueNames = fProperties.keySet();
+		for (String name : valueNames) {
+			if (fProperties.containsKey(name)) {
+				Object originalObject = fOriginalValues.get(name);
+				Object currentObject = fProperties.get(name);
+				if (originalObject == null) {
+					changedProperties.add(name);
+				} else if (!originalObject.equals(currentObject)) {
+					changedProperties.add(name);
+				}
+			}
+		}
+		if (!changedProperties.isEmpty()) {
 			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-				public void run( IProgressMonitor monitor ) throws CoreException {
+				public void run(IProgressMonitor monitor) throws CoreException {
 					Iterator<String> changed = changedProperties.iterator();
-					while( changed.hasNext() ) {
+					while (changed.hasNext()) {
 						String property = changed.next();
-						if ( property.equals( ICBreakpoint.ENABLED ) ) {
-							breakpoint.setEnabled( getBoolean( ICBreakpoint.ENABLED ) );
-						}
-						else if ( property.equals( ICBreakpoint.IGNORE_COUNT ) ) {
-							breakpoint.setIgnoreCount( getInt( ICBreakpoint.IGNORE_COUNT ) );
-						}
-						else if ( breakpoint instanceof ICTracepoint && property.equals( ICTracepoint.PASS_COUNT ) ) {
-							((ICTracepoint)breakpoint).setPassCount( getInt( ICTracepoint.PASS_COUNT ) );
-						}
-						else if ( breakpoint instanceof ICDynamicPrintf && property.equals( ICDynamicPrintf.PRINTF_STRING ) ) {
-							((ICDynamicPrintf)breakpoint).setPrintfString( getString( ICDynamicPrintf.PRINTF_STRING ) );
-						}
-						else if ( property.equals( ICBreakpoint.CONDITION ) ) {
-							breakpoint.setCondition( getString( ICBreakpoint.CONDITION ) );
-						}
-						else if ( property.equals( IMarker.LINE_NUMBER ) ) {
+						if (property.equals(ICBreakpoint.ENABLED)) {
+							breakpoint.setEnabled(getBoolean(ICBreakpoint.ENABLED));
+						} else if (property.equals(ICBreakpoint.IGNORE_COUNT)) {
+							breakpoint.setIgnoreCount(getInt(ICBreakpoint.IGNORE_COUNT));
+						} else if (breakpoint instanceof ICTracepoint && property.equals(ICTracepoint.PASS_COUNT)) {
+							((ICTracepoint) breakpoint).setPassCount(getInt(ICTracepoint.PASS_COUNT));
+						} else if (breakpoint instanceof ICDynamicPrintf
+								&& property.equals(ICDynamicPrintf.PRINTF_STRING)) {
+							((ICDynamicPrintf) breakpoint).setPrintfString(getString(ICDynamicPrintf.PRINTF_STRING));
+						} else if (property.equals(ICBreakpoint.CONDITION)) {
+							breakpoint.setCondition(getString(ICBreakpoint.CONDITION));
+						} else if (property.equals(IMarker.LINE_NUMBER)) {
 							if (breakpoint instanceof ICLineBreakpoint2) {
 								// refresh message and line number
 								// Note there are no API methods to set the line number of a Line Breakpoint, so we
 								// replicate what is done in CDIDebugModel.setLineBreakpointAttributes()
 								// to set the line number fields properly and then refresh the message if possible
-								((ICLineBreakpoint2)breakpoint).setRequestedLine(getInt(IMarker.LINE_NUMBER));
+								((ICLineBreakpoint2) breakpoint).setRequestedLine(getInt(IMarker.LINE_NUMBER));
 								breakpoint.getMarker().setAttribute(IMarker.LINE_NUMBER, getInt(IMarker.LINE_NUMBER));
-								((ICBreakpoint2)breakpoint).refreshMessage();
+								((ICBreakpoint2) breakpoint).refreshMessage();
 							} else {
 								// already workspace runnable, setting markers are safe
 								breakpoint.getMarker().setAttribute(IMarker.LINE_NUMBER, getInt(IMarker.LINE_NUMBER));
-								breakpoint.getMarker().setAttribute(ICLineBreakpoint2.REQUESTED_LINE, getInt(IMarker.LINE_NUMBER));
+								breakpoint.getMarker().setAttribute(ICLineBreakpoint2.REQUESTED_LINE,
+										getInt(IMarker.LINE_NUMBER));
 							}
 						} else {
-						    // this allow set attributes contributed by other plugins
+							// this allow set attributes contributed by other plugins
 							Object value = fProperties.get(property);
-							if ( value != null ) {
+							if (value != null) {
 								marker.setAttribute(property, value);
 								if (breakpoint instanceof ICBreakpoint2) {
 									// To be safe, refresh the breakpoint message as the property
 									// change might affect it.
-									((ICBreakpoint2)breakpoint).refreshMessage();
+									((ICBreakpoint2) breakpoint).refreshMessage();
 								}
 							}
 						}
@@ -231,166 +227,204 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 				}
 			};
 			try {
-				ResourcesPlugin.getWorkspace().run( wr, null );
+				ResourcesPlugin.getWorkspace().run(wr, null);
+			} catch (CoreException ce) {
+				throw new IOException("Cannot save properties to breakpoint.", ce); //$NON-NLS-1$
 			}
-			catch( CoreException ce ) {
-	            throw new IOException("Cannot save properties to breakpoint.", ce); //$NON-NLS-1$
+		}
+	}
+
+	private void saveToNewMarker(final ICBreakpoint breakpoint, final IResource resource) throws IOException {
+		try {
+			// On initial creation of BP, make sure that requested values of breakpoint
+			// match the current values (i.e. make sure it starts as a not-relocated breakpoint)
+			// See CDIDebugModel.setLineBreakpointAttributes
+			if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE)) {
+				fProperties.put(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE, fProperties.get(ICBreakpoint.SOURCE_HANDLE));
 			}
-    	}
-    }
+			if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_LINE)) {
+				fProperties.put(ICLineBreakpoint2.REQUESTED_LINE, fProperties.get(IMarker.LINE_NUMBER));
+			}
+			if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_CHAR_START)) {
+				fProperties.put(ICLineBreakpoint2.REQUESTED_CHAR_START, fProperties.get(IMarker.CHAR_START));
+			}
+			if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_CHAR_END)) {
+				fProperties.put(ICLineBreakpoint2.REQUESTED_CHAR_END, fProperties.get(IMarker.CHAR_END));
+			}
 
-    private void saveToNewMarker(final ICBreakpoint breakpoint, final IResource resource) throws IOException {
-        try {
-            // On initial creation of BP, make sure that requested values of breakpoint
-            // match the current values (i.e. make sure it starts as a not-relocated breakpoint)
-            // See CDIDebugModel.setLineBreakpointAttributes
-            if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE)) {
-                fProperties.put(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE, fProperties.get(ICBreakpoint.SOURCE_HANDLE));
-            }
-            if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_LINE)) {
-                fProperties.put(ICLineBreakpoint2.REQUESTED_LINE, fProperties.get(IMarker.LINE_NUMBER));
-            }
-            if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_CHAR_START)) {
-                fProperties.put(ICLineBreakpoint2.REQUESTED_CHAR_START, fProperties.get(IMarker.CHAR_START));
-            }
-            if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_CHAR_END)) {
-                fProperties.put(ICLineBreakpoint2.REQUESTED_CHAR_END, fProperties.get(IMarker.CHAR_END));
-            }
+			CDIDebugModel.createBreakpointMarker(breakpoint, resource, fProperties, true);
+		} catch (CoreException ce) {
+			throw new IOException("Cannot save properties to new breakpoint.", ce); //$NON-NLS-1$
+		}
+	}
 
-            CDIDebugModel.createBreakpointMarker(breakpoint, resource, fProperties, true);
-        }
-        catch( CoreException ce ) {
-            throw new IOException("Cannot save properties to new breakpoint.", ce); //$NON-NLS-1$
-        }
-    }
-    
-    ///////////////////////////////////////////////////////////////////////
-    // IPreferenceStore
-    
-    public boolean needsSaving() { 
-        return fIsDirty && !fIsCanceled; 
-    }
+	///////////////////////////////////////////////////////////////////////
+	// IPreferenceStore
 
-    public boolean contains(String name) {
-        return fProperties.containsKey(name);
-    }
+	public boolean needsSaving() {
+		return fIsDirty && !fIsCanceled;
+	}
 
-    public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        fListeners.add(listener);
-    }
+	public boolean contains(String name) {
+		return fProperties.containsKey(name);
+	}
 
-    public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        fListeners.remove(listener);
-    }
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		fListeners.add(listener);
+	}
 
-    public void firePropertyChangeEvent(String name,
-                                        Object oldValue,
-                                        Object newValue) 
-    {
-        Object[] listeners = fListeners.getListeners();
-        // Do we need to fire an event.
-        if (listeners.length > 0 && (oldValue == null || !oldValue.equals(newValue))) {
-            PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
-            for (int i = 0; i < listeners.length; ++i) {
-                IPropertyChangeListener l = (IPropertyChangeListener) listeners[i];
-                l.propertyChange(pe);
-            }
-        }
-    }
-    
-    public boolean getBoolean(String name) {
-        boolean retVal = false;
-        Object o = fProperties.get(name);
-        if (o instanceof Boolean) {
-            retVal = ((Boolean)o).booleanValue();
-        }
-        return retVal;
-    }
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		fListeners.remove(listener);
+	}
 
-    public int getInt(String name) {
-        int retVal = 0;
-        Object o = fProperties.get(name);
-        if (o instanceof Integer) {
-            retVal = ((Integer)o).intValue();
-        }
-        return retVal;
-    }
+	public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
+		Object[] listeners = fListeners.getListeners();
+		// Do we need to fire an event.
+		if (listeners.length > 0 && (oldValue == null || !oldValue.equals(newValue))) {
+			PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
+			for (int i = 0; i < listeners.length; ++i) {
+				IPropertyChangeListener l = (IPropertyChangeListener) listeners[i];
+				l.propertyChange(pe);
+			}
+		}
+	}
 
-    public String getString(String name) {
-        String retVal = ""; //$NON-NLS-1$
-        Object o = fProperties.get(name);
-        if (o instanceof String) {
-            retVal = (String)o;
-        }
-        return retVal;
-    }
+	public boolean getBoolean(String name) {
+		boolean retVal = false;
+		Object o = fProperties.get(name);
+		if (o instanceof Boolean) {
+			retVal = ((Boolean) o).booleanValue();
+		}
+		return retVal;
+	}
 
-    public double getDouble(String name) { return 0; }
-    public float getFloat(String name) { return 0; }
-    public long getLong(String name) { return 0; }
+	public int getInt(String name) {
+		int retVal = 0;
+		Object o = fProperties.get(name);
+		if (o instanceof Integer) {
+			retVal = ((Integer) o).intValue();
+		}
+		return retVal;
+	}
 
-    public boolean isDefault(String name) { return false; }
+	public String getString(String name) {
+		String retVal = ""; //$NON-NLS-1$
+		Object o = fProperties.get(name);
+		if (o instanceof String) {
+			retVal = (String) o;
+		}
+		return retVal;
+	}
 
-    public boolean getDefaultBoolean(String name) { return false; }
-    public double getDefaultDouble(String name) { return 0; }
-    public float getDefaultFloat(String name) { return 0; }
-    public int getDefaultInt(String name) { return 0; }
-    public long getDefaultLong(String name) { return 0; }
-    public String getDefaultString(String name) { return null; }
+	public double getDouble(String name) {
+		return 0;
+	}
 
-    public void putValue(String name, String value) {
-        Object oldValue = fProperties.get(name);
-        if ( oldValue == null || !oldValue.equals(value) ) {
-            fProperties.put(name, value);
-            setDirty(true);
-        }
-    }
+	public float getFloat(String name) {
+		return 0;
+	}
 
-    public void setDefault(String name, double value) {}
-    public void setDefault(String name, float value) {}
-    public void setDefault(String name, int value) {}
-    public void setDefault(String name, long value) {}
-    public void setDefault(String name, String defaultObject) {}
-    public void setDefault(String name, boolean value) {}
-    public void setToDefault(String name) {}
+	public long getLong(String name) {
+		return 0;
+	}
 
-    public void setValue(String name, boolean value) {
-        boolean oldValue = getBoolean(name);
-        if (oldValue != value) {
-            fProperties.put( name, Boolean.valueOf(value) );
-            setDirty(true);
-            firePropertyChangeEvent(name, Boolean.valueOf(oldValue), Boolean.valueOf(value) );
-        }
-    }
+	public boolean isDefault(String name) {
+		return false;
+	}
 
-    public void setValue(String name, int value) {
-        int oldValue = getInt(name);
-        if (oldValue != value) {
-            fProperties.put( name, Integer.valueOf(value) );
-            setDirty(true);
-            firePropertyChangeEvent(name, Integer.valueOf(oldValue), Integer.valueOf(value) );
-        }
-    }
+	public boolean getDefaultBoolean(String name) {
+		return false;
+	}
 
-    public void setValue(String name, String value) {
-        Object oldValue = fProperties.get(name);
-        if ( (oldValue == null && value != null) ||
-             (oldValue != null && !oldValue.equals(value)) ) 
-        {
-            fProperties.put(name, value);
-            setDirty(true);
-            firePropertyChangeEvent(name, oldValue, value);
-        }
-    }
+	public double getDefaultDouble(String name) {
+		return 0;
+	}
 
-    public void setValue(String name, float value) {}        
-    public void setValue(String name, double value) {}
-    public void setValue(String name, long value) {}
+	public float getDefaultFloat(String name) {
+		return 0;
+	}
 
-    // IPreferenceStore
-    ///////////////////////////////////////////////////////////////////////        
+	public int getDefaultInt(String name) {
+		return 0;
+	}
 
-    private void setDirty(boolean isDirty) {
-        fIsDirty = isDirty;
-    }
+	public long getDefaultLong(String name) {
+		return 0;
+	}
+
+	public String getDefaultString(String name) {
+		return null;
+	}
+
+	public void putValue(String name, String value) {
+		Object oldValue = fProperties.get(name);
+		if (oldValue == null || !oldValue.equals(value)) {
+			fProperties.put(name, value);
+			setDirty(true);
+		}
+	}
+
+	public void setDefault(String name, double value) {
+	}
+
+	public void setDefault(String name, float value) {
+	}
+
+	public void setDefault(String name, int value) {
+	}
+
+	public void setDefault(String name, long value) {
+	}
+
+	public void setDefault(String name, String defaultObject) {
+	}
+
+	public void setDefault(String name, boolean value) {
+	}
+
+	public void setToDefault(String name) {
+	}
+
+	public void setValue(String name, boolean value) {
+		boolean oldValue = getBoolean(name);
+		if (oldValue != value) {
+			fProperties.put(name, Boolean.valueOf(value));
+			setDirty(true);
+			firePropertyChangeEvent(name, Boolean.valueOf(oldValue), Boolean.valueOf(value));
+		}
+	}
+
+	public void setValue(String name, int value) {
+		int oldValue = getInt(name);
+		if (oldValue != value) {
+			fProperties.put(name, Integer.valueOf(value));
+			setDirty(true);
+			firePropertyChangeEvent(name, Integer.valueOf(oldValue), Integer.valueOf(value));
+		}
+	}
+
+	public void setValue(String name, String value) {
+		Object oldValue = fProperties.get(name);
+		if ((oldValue == null && value != null) || (oldValue != null && !oldValue.equals(value))) {
+			fProperties.put(name, value);
+			setDirty(true);
+			firePropertyChangeEvent(name, oldValue, value);
+		}
+	}
+
+	public void setValue(String name, float value) {
+	}
+
+	public void setValue(String name, double value) {
+	}
+
+	public void setValue(String name, long value) {
+	}
+
+	// IPreferenceStore
+	///////////////////////////////////////////////////////////////////////
+
+	private void setDirty(boolean isDirty) {
+		fIsDirty = isDirty;
+	}
 }

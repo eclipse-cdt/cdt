@@ -14,30 +14,28 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * [Current thread is 1 (Thread 0xb7cc56b0 (LWP 5488))]
- * 
+ *
  * @since 3.0
  */
 public class CLIThreadInfo extends MIInfo {
 
 	private String fCurrentThread;
-	
+
 	public CLIThreadInfo(MIOutput out) {
 		super(out);
 		parse();
 	}
 
 	/**
-     * @since 5.0
-     */
-	public String getCurrentThread(){
-		return fCurrentThread; 
+	 * @since 5.0
+	 */
+	public String getCurrentThread() {
+		return fCurrentThread;
 	}
 
 	protected void parse() {
@@ -56,14 +54,14 @@ public class CLIThreadInfo extends MIInfo {
 	}
 
 	protected void parseThreadInfo(String str) {
-			// Fetch the OS ThreadId & Find the current thread 
-			if(!str.isEmpty() ){
-				Pattern pattern = Pattern.compile("Current thread is (\\d+)",  Pattern.MULTILINE); //$NON-NLS-1$
-				Matcher matcher = pattern.matcher(str);
-				if (matcher.find()) {
-					String id = matcher.group(1).trim();
-					fCurrentThread = id;
-				}
+		// Fetch the OS ThreadId & Find the current thread
+		if (!str.isEmpty()) {
+			Pattern pattern = Pattern.compile("Current thread is (\\d+)", Pattern.MULTILINE); //$NON-NLS-1$
+			Matcher matcher = pattern.matcher(str);
+			if (matcher.find()) {
+				String id = matcher.group(1).trim();
+				fCurrentThread = id;
 			}
+		}
 	}
 }

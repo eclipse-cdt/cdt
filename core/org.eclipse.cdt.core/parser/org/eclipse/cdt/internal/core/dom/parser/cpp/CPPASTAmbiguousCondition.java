@@ -29,8 +29,8 @@ public class CPPASTAmbiguousCondition extends ASTAmbiguousNode implements IASTAm
 	private IASTDeclaration fDeclaration;
 
 	public CPPASTAmbiguousCondition(IASTExpression expression, IASTSimpleDeclaration declaration) {
-		fExpression= expression;
-		fDeclaration= declaration;
+		fExpression = expression;
+		fDeclaration = declaration;
 
 		expression.setParent(this);
 		expression.setPropertyInParent(SUBCONDITION);
@@ -40,13 +40,13 @@ public class CPPASTAmbiguousCondition extends ASTAmbiguousNode implements IASTAm
 
 	@Override
 	public IASTNode[] getNodes() {
-		return new IASTNode[] {fExpression, fDeclaration};
+		return new IASTNode[] { fExpression, fDeclaration };
 	}
 
 	@Override
 	protected void beforeResolution() {
 		// populate containing scope, so that it will not be affected by the alternative branches.
-		IScope scope= CPPVisitor.getContainingNonTemplateScope(this);
+		IScope scope = CPPVisitor.getContainingNonTemplateScope(this);
 		if (scope instanceof ICPPASTInternalScope) {
 			((ICPPASTInternalScope) scope).populateCache();
 		}

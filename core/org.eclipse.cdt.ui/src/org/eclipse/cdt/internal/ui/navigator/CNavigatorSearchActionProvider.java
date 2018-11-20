@@ -25,25 +25,25 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 
 /**
  * Common Navigator action provider for the C-search sub menus.
- * 
+ *
  * @see org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup
  */
 public class CNavigatorSearchActionProvider extends CommonActionProvider {
 
 	private SelectionSearchGroup fSearchGroup;
-	
+
 	/*
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
 	@Override
 	public void init(ICommonActionExtensionSite site) {
-		ICommonViewerWorkbenchSite workbenchSite= null;
+		ICommonViewerWorkbenchSite workbenchSite = null;
 		if (site.getViewSite() instanceof ICommonViewerWorkbenchSite) {
-			workbenchSite= (ICommonViewerWorkbenchSite) site.getViewSite();
+			workbenchSite = (ICommonViewerWorkbenchSite) site.getViewSite();
 		}
 		if (workbenchSite != null) {
 			if (workbenchSite.getPart() != null && workbenchSite.getPart() instanceof IViewPart) {
-				fSearchGroup= new SelectionSearchGroup(workbenchSite.getSite());
+				fSearchGroup = new SelectionSearchGroup(workbenchSite.getSite());
 			}
 		}
 	}
@@ -77,7 +77,7 @@ public class CNavigatorSearchActionProvider extends CommonActionProvider {
 	public void fillContextMenu(IMenuManager menu) {
 		if (fSearchGroup != null) {
 			ISelection selection = getContext().getSelection();
-			if (SelectionSearchGroup.canActionBeAdded(selection)){
+			if (SelectionSearchGroup.canActionBeAdded(selection)) {
 				fSearchGroup.fillContextMenu(menu);
 			}
 		}
@@ -103,5 +103,5 @@ public class CNavigatorSearchActionProvider extends CommonActionProvider {
 			fSearchGroup.updateActionBars();
 		}
 	}
-	
+
 }

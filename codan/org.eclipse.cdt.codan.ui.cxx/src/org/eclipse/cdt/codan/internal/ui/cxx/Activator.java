@@ -47,16 +47,16 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static Activator getDefault() {
 		return plugin;
 	}
-	
+
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status the status to log
 	 */
 	public static void log(IStatus status) {
@@ -65,7 +65,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e the exception to be logged
 	 */
 	public static void log(Throwable e) {
@@ -74,7 +74,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *        the error message to log
 	 */

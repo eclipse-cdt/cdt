@@ -20,42 +20,42 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * This is the interface to a cache for CodeReaders.
- * 
- * For thread safety the implementations of this interface must ensure that their methods are thread safe. 
- * 
+ *
+ * For thread safety the implementations of this interface must ensure that their methods are thread safe.
+ *
  * @deprecated
  * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public interface ICodeReaderCache {
 	/**
-	 * Retrieves the CodeReader corresponding to the key specified that represents the 
+	 * Retrieves the CodeReader corresponding to the key specified that represents the
 	 * path for that CodeReader.  If no CodeReader is found in the cache then a new CodeReader
 	 * is created for the path and then returned.
 	 *
-	 * @param key the path corresponding to the CodeReader, generally: 
+	 * @param key the path corresponding to the CodeReader, generally:
 	 * fileToParse.getLocation().toOSString()
 	 * @return the CodeReader corresponding to the path specified by the key
 	 */
 	public CodeReader get(String key);
-	
+
 	/**
-	 * Retrieves the CodeReader corresponding to the key specified that represents the 
+	 * Retrieves the CodeReader corresponding to the key specified that represents the
 	 * path for that CodeReader.  If no CodeReader is found in the cache then a new CodeReader
 	 * is created for the ifl and then returned.
-	 * 
-	 * @param key the path corresponding to the CodeReader, generally: 
+	 *
+	 * @param key the path corresponding to the CodeReader, generally:
 	 * fileToParse.getLocation().toOSString()
 	 * @return the CodeReader corresponding to the path specified by the key
-	 * @throws IOException 
-	 * @throws CoreException 
+	 * @throws IOException
+	 * @throws CoreException
 	 * @since 5.1
 	 */
 	public CodeReader get(String key, IIndexFileLocation ifl) throws CoreException, IOException;
 
 	/**
 	 * Used to remove the CodeReader corresponding to the path specified by key from the cache.
-	 * 
+	 *
 	 * @param key the path of the CodeReader to be removed
 	 * @return the removed CodeReader or null if not found
 	 */
@@ -64,13 +64,13 @@ public interface ICodeReaderCache {
 	/**
 	 * Returns the amount of space that the cache is using.
 	 * The units are relative to the implementation of the cache.  It could be
-	 * the total number of objects in the cache, or the total space the cache is 
+	 * the total number of objects in the cache, or the total space the cache is
 	 * using in MB.
 	 */
 	public int getCurrentSpace();
 
 	/**
-	 * 
+	 *
 	 */
 	public void flush();
 }

@@ -54,8 +54,8 @@ final class TemplateIdStrategy implements ITemplateIdStrategy {
 	private IASTName[] fTemplateNames;
 
 	public TemplateIdStrategy() {
-		fCurrentBranchPoint= -1;
-		fTemplateNames= IASTName.EMPTY_NAME_ARRAY;
+		fCurrentBranchPoint = -1;
+		fTemplateNames = IASTName.EMPTY_NAME_ARRAY;
 	}
 
 	/**
@@ -71,9 +71,9 @@ final class TemplateIdStrategy implements ITemplateIdStrategy {
 
 		// 'fSimpleIDs == null' means we're on the first alternative.
 		// On the first alternative, everything is parsed as a template-id.
-		boolean templateID= fSimpleIDs == null || !fSimpleIDs.get(fCurrentBranchPoint);
+		boolean templateID = fSimpleIDs == null || !fSimpleIDs.get(fCurrentBranchPoint);
 		if (templateID) {
-			fTemplateNames= ArrayUtil.append(fTemplateNames, name);
+			fTemplateNames = ArrayUtil.append(fTemplateNames, name);
 		}
 		return templateID;
 	}
@@ -94,18 +94,18 @@ final class TemplateIdStrategy implements ITemplateIdStrategy {
 		// Reset the current position, saving the old one, which should point to the last name in the
 		// bitset for which parsing was attempted during the previous alternative.
 		int bp = fCurrentBranchPoint;
-		fCurrentBranchPoint= -1;
+		fCurrentBranchPoint = -1;
 
 		// Reset the list of names that were parsed as template-ids, saving the list for the previous
 		// alternative.
 		IASTName[] names = getTemplateNames();
 		// Note that 'names' here contains the list of names for which there is a '0' in the bitset.
-		int nameLen= names.length;
-		fTemplateNames= IASTName.EMPTY_NAME_ARRAY;
+		int nameLen = names.length;
+		fTemplateNames = IASTName.EMPTY_NAME_ARRAY;
 
 		// If the previous alternative was the first, the bitset is still null. Create it.
 		if (fSimpleIDs == null) {
-			fSimpleIDs= new BitSet();
+			fSimpleIDs = new BitSet();
 		}
 
 		// Advance to the next alternative by finding the right-most '0' in the bitset, and setting it to '1',
@@ -125,7 +125,7 @@ final class TemplateIdStrategy implements ITemplateIdStrategy {
 				// successfully (bug 445177).
 				// TODO: This optimization is invalid since it triggers bug 497931.
 				if (previousAlternativeFailedToParse || nameLen == 0 || !hasMultipleArgs(names[--nameLen])) {
-					fSimpleIDs.clear(bp+1, Integer.MAX_VALUE);
+					fSimpleIDs.clear(bp + 1, Integer.MAX_VALUE);
 					fSimpleIDs.set(bp);
 					return true;
 				}
@@ -138,7 +138,7 @@ final class TemplateIdStrategy implements ITemplateIdStrategy {
 	}
 
 	private boolean hasMultipleArgs(IASTName templateName) {
-		IASTNode parent= templateName.getParent();
+		IASTNode parent = templateName.getParent();
 		if (parent instanceof ICPPASTTemplateId) {
 			return ((ICPPASTTemplateId) parent).getTemplateArguments().length > 1;
 		}
@@ -156,11 +156,12 @@ final class TemplateIdStrategy implements ITemplateIdStrategy {
 	 * backtracking we need to restore the branch point that was active at the point
 	 * we're backing up to (otherwise, the current branch point could get out of sync
 	 * with the parsing position). These methods facilitate marking and backing up to
-	 * the current branch point for such situations. 
+	 * the current branch point for such situations.
 	 */
 	public int getCurrentBranchPoint() {
 		return fCurrentBranchPoint;
 	}
+
 	public void backupToBranchPoint(int branchPoint) {
 		fCurrentBranchPoint = branchPoint;
 	}

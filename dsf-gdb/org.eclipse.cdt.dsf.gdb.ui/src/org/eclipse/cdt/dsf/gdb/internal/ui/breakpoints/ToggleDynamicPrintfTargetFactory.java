@@ -28,7 +28,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * Toggle DynamicPrintf target factory for disassembly parts.
  * We use a separate factory because the tracepoint factory is controlled
  * through an action set, while the breakpoint factory is down in DSF (not DSF-GDB).
- * 
+ *
  * @since 2.4
  */
 public class ToggleDynamicPrintfTargetFactory implements IToggleBreakpointsTargetFactory {
@@ -45,8 +45,9 @@ public class ToggleDynamicPrintfTargetFactory implements IToggleBreakpointsTarge
 	 *       leaving <code>ToggleCDynamicPrintfTargetFactory</code> to return the same id
 	 *       for the editor.
 	 */
-	public static final String TOGGLE_C_DYNAMICPRINTF_TARGET_ID = CDebugUIPlugin.PLUGIN_ID + ".toggleCDynamicPrintfTarget"; //$NON-NLS-1$
-	
+	public static final String TOGGLE_C_DYNAMICPRINTF_TARGET_ID = CDebugUIPlugin.PLUGIN_ID
+			+ ".toggleCDynamicPrintfTarget"; //$NON-NLS-1$
+
 	private static final Set<String> TOGGLE_TARGET_IDS_ALL = new HashSet<String>(1);
 	static {
 		TOGGLE_TARGET_IDS_ALL.add(TOGGLE_C_DYNAMICPRINTF_TARGET_ID);

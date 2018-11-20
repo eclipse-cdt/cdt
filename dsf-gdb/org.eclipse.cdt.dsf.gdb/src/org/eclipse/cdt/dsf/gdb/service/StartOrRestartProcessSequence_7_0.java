@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Sergey Prigogin (Google)
@@ -59,9 +59,9 @@ import org.eclipse.core.runtime.Status;
  * This class causes a process to start (run for the first time), or to
  * be restarted.  The complexity is due to the handling of reverse debugging,
  * which this class transparently enables if necessary.
- * 
+ *
  * This sequence is used for GDB >= 7.0 which supports reverse debugging.
- * 
+ *
  * @since 4.0
  */
 public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
@@ -70,7 +70,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	private IGDBProcesses fProcService;
 	private IReverseRunControl fReverseService;
 	private IGDBBackend fBackend;
-	
+
 	private DsfServicesTracker fTracker;
 
 	// This variable will be used to store the original container context,
@@ -78,32 +78,32 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	// container context.  This new container context has for parent the process
 	// context, which holds the new pid.
 	private IContainerDMContext fContainerDmc;
-	
+
 	// If the user requested a stop_on_main, this variable will hold the breakpoint
 	private MIBreakpoint fUserBreakpoint;
 	// Since the stop_on_main option allows the user to set the breakpoint on any
 	// symbol, we use this variable to know if the stop_on_main breakpoint was really
 	// on the main() method.
 	private boolean fUserBreakpointIsOnMain;
-	
+
 	private MIBreakpoint fBreakPointForReverse;
 	private boolean fReverseEnabled;
 	private final Map<String, Object> fAttributes;
-	
+
 	// Indicates if the sequence is being used for a restart or a start
 	private final boolean fRestart;
-	
+
 	private PTY fPty;
-	
+
 	// Store the dataRM so that we can fill it with the new container context, which we must return
 	// Although we can access this through Sequence.getRequestMonitor(), we would loose the type-checking.
 	// Therefore, doing it like this is more future-proof.
 	private final DataRequestMonitor<IContainerDMContext> fDataRequestMonitor;
-	
+
 	protected IContainerDMContext getContainerContext() {
 		return fContainerDmc;
 	}
-	
+
 	protected MIBreakpoint getUserBreakpoint() {
 		return fUserBreakpoint;
 	}
@@ -123,18 +123,18 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	protected boolean getReverseEnabled() {
 		return fReverseEnabled;
 	}
-	
+
 	public StartOrRestartProcessSequence_7_0(DsfExecutor executor, IContainerDMContext containerDmc,
 			Map<String, Object> attributes, boolean restart, DataRequestMonitor<IContainerDMContext> rm) {
 		super(executor, rm);
-		
+
 		assert executor != null;
 		assert containerDmc != null;
 		if (attributes == null) {
 			// If no attributes are specified, simply use an empty map.
 			attributes = new HashMap<String, Object>();
 		}
-		
+
 		fContainerDmc = containerDmc;
 		fAttributes = attributes;
 		fRestart = restart;
@@ -144,23 +144,22 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	@Override
 	protected String[] getExecutionOrder(String group) {
 		if (GROUP_TOP_LEVEL.equals(group)) {
-			return new String[] {
-					"stepInitializeBaseSequence",  //$NON-NLS-1$
-					"stepInsertStopOnMainBreakpoint",  //$NON-NLS-1$
-					"stepSetBreakpointForReverse",   //$NON-NLS-1$
-					"stepInitializeInputOutput",   //$NON-NLS-1$
-					"stepCreateConsole",    //$NON-NLS-1$
-					"stepRunProgram",   //$NON-NLS-1$
-					"stepSetReverseOff",   //$NON-NLS-1$
-					"stepEnableReverse",   //$NON-NLS-1$
-					"stepContinue",   //$NON-NLS-1$
-					"stepCleanupBaseSequence",   //$NON-NLS-1$
+			return new String[] { "stepInitializeBaseSequence", //$NON-NLS-1$
+					"stepInsertStopOnMainBreakpoint", //$NON-NLS-1$
+					"stepSetBreakpointForReverse", //$NON-NLS-1$
+					"stepInitializeInputOutput", //$NON-NLS-1$
+					"stepCreateConsole", //$NON-NLS-1$
+					"stepRunProgram", //$NON-NLS-1$
+					"stepSetReverseOff", //$NON-NLS-1$
+					"stepEnableReverse", //$NON-NLS-1$
+					"stepContinue", //$NON-NLS-1$
+					"stepCleanupBaseSequence", //$NON-NLS-1$
 			};
 		}
 		return null;
 	}
-	
-	/** 
+
+	/**
 	 * Initialize the members of the StartOrRestartProcessSequence_7_0 class.
 	 * This step is mandatory for the rest of the sequence to complete.
 	 */
@@ -168,51 +167,52 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	public void stepInitializeBaseSequence(RequestMonitor rm) {
 		fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fContainerDmc.getSessionId());
 		fCommandControl = fTracker.getService(IGDBControl.class);
-        fCommandFactory = fTracker.getService(IMICommandControl.class).getCommandFactory();		
+		fCommandFactory = fTracker.getService(IMICommandControl.class).getCommandFactory();
 		fProcService = fTracker.getService(IGDBProcesses.class);
 		fBackend = fTracker.getService(IGDBBackend.class);
 
-        if (fCommandControl == null || fCommandFactory == null || fProcService == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Cannot obtain service", null)); //$NON-NLS-1$
+		if (fCommandControl == null || fCommandFactory == null || fProcService == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+					"Cannot obtain service", null)); //$NON-NLS-1$
 			rm.done();
 			return;
 		}
-        
+
 		fReverseService = fTracker.getService(IReverseRunControl.class);
 		if (fReverseService != null) {
 			// Although the option to use reverse debugging could be on, we only check
 			// it if we actually have a reverse debugging service.  There is no point
 			// in trying to handle reverse debugging if it is not available.
-			fReverseEnabled = CDebugUtils.getAttribute(fAttributes, 
+			fReverseEnabled = CDebugUtils.getAttribute(fAttributes,
 					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
 					IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
 		}
 
 		rm.done();
 	}
-	
-	/** 
+
+	/**
 	 * Rollback method for {@link #stepInitializeBaseSequence()}
 	 */
 	@RollBack("stepInitializeBaseSequence")
 	public void rollBackInitializeBaseSequence(RequestMonitor rm) {
-		if (fTracker != null) fTracker.dispose();
+		if (fTracker != null)
+			fTracker.dispose();
 		fTracker = null;
 		rm.done();
 	}
-	
+
 	/**
 	 * If the user requested a 'stopAtMain', let's set the temporary breakpoint
 	 * where the user specified.
 	 */
 	@Execute
 	public void stepInsertStopOnMainBreakpoint(final RequestMonitor rm) {
-		boolean userRequestedStop = CDebugUtils.getAttribute(fAttributes, 
-				ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
-				LaunchUtils.getStopAtMainDefault());
+		boolean userRequestedStop = CDebugUtils.getAttribute(fAttributes,
+				ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, LaunchUtils.getStopAtMainDefault());
 
 		if (userRequestedStop) {
-			String userStopSymbol = CDebugUtils.getAttribute(fAttributes, 
+			String userStopSymbol = CDebugUtils.getAttribute(fAttributes,
 					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
 					LaunchUtils.getStopAtMainSymbolDefault());
 
@@ -247,10 +247,11 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	@Execute
 	public void stepSetBreakpointForReverse(final RequestMonitor rm) {
 		if (fReverseEnabled) {
-			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(getContainerContext(), IBreakpointsTargetDMContext.class);
+			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(getContainerContext(),
+					IBreakpointsTargetDMContext.class);
 
 			fCommandControl.queueCommand(
-					fCommandFactory.createMIBreakInsert(bpTargetDmc, true, false, null, 0, 
+					fCommandFactory.createMIBreakInsert(bpTargetDmc, true, false, null, 0,
 							ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT, "0"), //$NON-NLS-1$
 					new ImmediateDataRequestMonitor<MIBreakInsertInfo>(rm) {
 						@Override
@@ -260,7 +261,8 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 								if (breakpoints.length > 0) {
 									fBreakPointForReverse = breakpoints[0];
 									if (fUserBreakpoint != null) {
-										fUserBreakpointIsOnMain = fBreakPointForReverse.getAddress().equals(fUserBreakpoint.getAddress());
+										fUserBreakpointIsOnMain = fBreakPointForReverse.getAddress()
+												.equals(fUserBreakpoint.getAddress());
 									}
 								}
 							}
@@ -271,37 +273,36 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 			rm.done();
 		}
 	}
-	
-    /**
-     * This method does the necessary work to setup the input/output streams for the
-     * inferior process, by either preparing the PTY to be used, or by simply leaving
-     * the PTY null, which indicates that the input/output streams are handled externally;
-     * this decision is based on the type of session.
-     */
+
+	/**
+	 * This method does the necessary work to setup the input/output streams for the
+	 * inferior process, by either preparing the PTY to be used, or by simply leaving
+	 * the PTY null, which indicates that the input/output streams are handled externally;
+	 * this decision is based on the type of session.
+	 */
 	@Execute
-    public void stepInitializeInputOutput(final RequestMonitor rm) {
-    	if (fBackend.getSessionType() == SessionType.REMOTE) {
-    		// The program input and output for a remote session is handled by gdbserver. 
-    		// Therefore, no need to create a pty.
-    		fPty = null;
-    		rm.done();
-    	} else {
-    		if (fRestart) {
-    			// For a restart we re-use the previous PersistentPTY (or no pty if we couldn't tell GDB about it)
-    			assert fPty instanceof PersistentPTY || fPty == null;
-    			rm.done();
-    			return;
-    		}
-    
+	public void stepInitializeInputOutput(final RequestMonitor rm) {
+		if (fBackend.getSessionType() == SessionType.REMOTE) {
+			// The program input and output for a remote session is handled by gdbserver.
+			// Therefore, no need to create a pty.
+			fPty = null;
+			rm.done();
+		} else {
+			if (fRestart) {
+				// For a restart we re-use the previous PersistentPTY (or no pty if we couldn't tell GDB about it)
+				assert fPty instanceof PersistentPTY || fPty == null;
+				rm.done();
+				return;
+			}
+
 			boolean externalConsoleDefault = Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
 					IGdbDebugPreferenceConstants.PREF_EXTERNAL_CONSOLE,
 					IGDBLaunchConfigurationConstants.DEBUGGER_EXTERNAL_CONSOLE_DEFAULT, null);
 
-    		boolean externalConsole = CDebugUtils.getAttribute(fAttributes,
-    				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_EXTERNAL_CONSOLE,
-    				externalConsoleDefault);
-    		if (externalConsole) {
-	    		initializeExternalConsole(new ImmediateRequestMonitor(rm) {
+			boolean externalConsole = CDebugUtils.getAttribute(fAttributes,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_EXTERNAL_CONSOLE, externalConsoleDefault);
+			if (externalConsole) {
+				initializeExternalConsole(new ImmediateRequestMonitor(rm) {
 					@Override
 					protected void handleCompleted() {
 						if (isSuccess()) {
@@ -310,13 +311,13 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 						} else {
 							initializePty(rm);
 						}
-	    			}
-	    		});
-    		} else {
+					}
+				});
+			} else {
 				initializePty(rm);
-    		}
-    	}
-    }
+			}
+		}
+	}
 
 	private void initializeExternalConsole(final RequestMonitor rm) {
 		fCommandControl.queueCommand(fCommandFactory.createMIGDBShowNewConsole(getContainerContext()),
@@ -343,15 +344,15 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 			fPty.validateSlaveName();
 
 			// Tell GDB to use this PTY
-			fCommandControl.queueCommand(
-					fCommandFactory.createMIInferiorTTYSet((IMIContainerDMContext)getContainerContext(), fPty.getSlaveName()), 
+			fCommandControl.queueCommand(fCommandFactory
+					.createMIInferiorTTYSet((IMIContainerDMContext) getContainerContext(), fPty.getSlaveName()),
 					new ImmediateDataRequestMonitor<MIInfo>(rm) {
 						@Override
 						protected void handleFailure() {
 							// We were not able to tell GDB to use the PTY
 							// so we won't use it at all.
-			    			fPty = null;
-			        		rm.done();
+							fPty = null;
+							rm.done();
 						}
 					});
 		} catch (IOException e) {
@@ -359,9 +360,9 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 			rm.done();
 		}
 	}
-	
-	/** 
-	 * @since 4.7 
+
+	/**
+	 * @since 4.7
 	 * @deprecated The creation of MIInferiorProcess has been moved to the IGDBProcesses service
 	 */
 	@Deprecated
@@ -369,8 +370,8 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		return new MIInferiorProcess(container, outputStream);
 	}
 
-	/** 
-	 * @since 4.7 
+	/**
+	 * @since 4.7
 	 * @deprecated The creation of MIInferiorProcess has been moved to the IGDBProcesses service
 	 */
 	@Deprecated
@@ -383,12 +384,12 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepCreateConsole(RequestMonitor rm) {
-    	if (fBackend.getSessionType() == SessionType.REMOTE) {
-    		// The program output for a remote session is handled by gdbserver. Therefore,
-    		// no need to create an inferior process and add it to the launch.
-    		rm.done();
-    		return;
-    	}
+		if (fBackend.getSessionType() == SessionType.REMOTE) {
+			// The program output for a remote session is handled by gdbserver. Therefore,
+			// no need to create an inferior process and add it to the launch.
+			rm.done();
+			return;
+		}
 
 		if (fRestart) {
 			// For a restart, the IGDBProcesses service already handles creating the new
@@ -398,7 +399,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 			return;
 		}
 
-    	// For multi-process, we cannot simply use the name given by the backend service
+		// For multi-process, we cannot simply use the name given by the backend service
 		// because we may not be starting that process, but another one.
 		// Instead, we can look in the attributes for the binary name, which we stored
 		// there for this case, specifically.
@@ -408,11 +409,9 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		if (defaultPathName == null) {
 			defaultPathName = ""; //$NON-NLS-1$
 		}
-		String progPathName =
-				CDebugUtils.getAttribute(fAttributes,
-						ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
-						defaultPathName);
-		final String pathLabel = new Path(progPathName).lastSegment();    			 
+		String progPathName = CDebugUtils.getAttribute(fAttributes, ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+				defaultPathName);
+		final String pathLabel = new Path(progPathName).lastSegment();
 
 		// Adds the inferior to the launch which will also create the console
 		fProcService.addInferiorToLaunch(fContainerDmc, pathLabel, fPty, new ImmediateRequestMonitor() {
@@ -424,7 +423,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 			}
 		});
 	}
-	
+
 	/**
 	 * Now, run the program.
 	 */
@@ -434,7 +433,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		if (useContinueCommand()) {
 			command = fCommandFactory.createMIExecContinue(fContainerDmc);
 		} else {
-			command = fCommandFactory.createMIExecRun(fContainerDmc);	
+			command = fCommandFactory.createMIExecRun(fContainerDmc);
 		}
 		fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo>(rm) {
 			@Override
@@ -442,11 +441,12 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 				// Now that the process is started, the pid has been allocated
 				// so we need to fetch the proper container context
 				// We replace our current context which does not have the pid, with one that has the pid.
-				if (fContainerDmc instanceof IMIContainerDMContext) {	
-					fContainerDmc = fProcService.createContainerContextFromGroupId(fCommandControl.getContext(), ((IMIContainerDMContext)fContainerDmc).getGroupId());
-					
+				if (fContainerDmc instanceof IMIContainerDMContext) {
+					fContainerDmc = fProcService.createContainerContextFromGroupId(fCommandControl.getContext(),
+							((IMIContainerDMContext) fContainerDmc).getGroupId());
+
 					// This is the container context that this sequence is supposed to return: set the dataRm
-					fDataRequestMonitor.setData(fContainerDmc);					
+					fDataRequestMonitor.setData(fContainerDmc);
 				} else {
 					assert false : "Container context was not an IMIContainerDMContext"; //$NON-NLS-1$
 				}
@@ -454,7 +454,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 			}
 		});
 	}
-	
+
 	/**
 	 * In case of a restart, we must mark reverse debugging as disabled because
 	 * GDB has turned it off. We may have to turn it back on after.
@@ -469,7 +469,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		}
 		rm.done();
 	}
-	
+
 	/**
 	 * Since we have started the program, we can turn on reverse debugging if needed.
 	 * We know the program will stop since we set a breakpoint on main, to enable reverse.
@@ -482,10 +482,10 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 			rm.done();
 		}
 	}
-	
+
 	/**
 	 * Finally, if we are enabling reverse, and the userSymbolStop is not on main,
-	 * we should do a continue because we are currently stopped on main but that 
+	 * we should do a continue because we are currently stopped on main but that
 	 * is not what the user requested
 	 */
 	@Execute
@@ -497,7 +497,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 			rm.done();
 		}
 	}
-	
+
 	/**
 	 * Cleanup now that the sequence has been run.
 	 */
@@ -507,21 +507,21 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		fTracker = null;
 		rm.done();
 	}
-	
-    /**
-     * This method indicates if we should use the -exec-continue command
-     * instead of the -exec-run command.
-     * This method can be overridden to allow for customization.
-     */
-    protected boolean useContinueCommand() {
-    	// Note that restart does not apply to remote sessions
-    	IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+
+	/**
+	 * This method indicates if we should use the -exec-continue command
+	 * instead of the -exec-run command.
+	 * This method can be overridden to allow for customization.
+	 */
+	protected boolean useContinueCommand() {
+		// Note that restart does not apply to remote sessions
+		IGDBBackend backend = fTracker.getService(IGDBBackend.class);
 		if (backend == null) {
 			return false;
 		}
-    	// When doing remote non-attach debugging, we use -exec-continue instead of -exec-run
+		// When doing remote non-attach debugging, we use -exec-continue instead of -exec-run
 		// For remote attach, if we get here it is that we are starting a new process
 		// (multi-process), so we want to use -exec-run
-    	return backend.getSessionType() == SessionType.REMOTE && !backend.getIsAttachSession();
-    }
+		return backend.getSessionType() == SessionType.REMOTE && !backend.getIsAttachSession();
+	}
 }

@@ -37,11 +37,11 @@ public class StructureSelectPreviousAction extends StructureSelectionAction {
 	public ISourceRange doExpand(IASTTranslationUnit ast, SourceRange current) {
 		ISourceRange newSourceRange = expandToPrevious(ast, current);
 		if (newSourceRange == null) {
-			newSourceRange = StructureSelectEnclosingAction.expandToEnclosing(ast, current); 
+			newSourceRange = StructureSelectEnclosingAction.expandToEnclosing(ast, current);
 		}
 		if (newSourceRange != null) {
 			history.remember(current);
-		}			
+		}
 		return newSourceRange;
 	}
 
@@ -72,7 +72,8 @@ public class StructureSelectPreviousAction extends StructureSelectionAction {
 		if (firstSelectedChildIndex > 0) {
 			IASTNode prevNode = children[firstSelectedChildIndex - 1];
 			int endingOffset = current.getStartPos() + current.getLength();
-			return new SourceRange(prevNode.getFileLocation().getNodeOffset(), endingOffset - prevNode.getFileLocation().getNodeOffset());
+			return new SourceRange(prevNode.getFileLocation().getNodeOffset(),
+					endingOffset - prevNode.getFileLocation().getNodeOffset());
 		}
 		return null;
 	}

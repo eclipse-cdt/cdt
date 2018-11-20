@@ -69,23 +69,23 @@ public class RenameMoveHeaderRefactoringTest extends RefactoringTestBase {
 	protected CRenameRefactoring createRenameRefactoring(String newName) {
 		IFile file = getSelectedFile();
 		TextSelection selection = getSelection();
-    	CRefactoringArgument arg = new CRefactoringArgument(file, selection.getOffset(), selection.getLength());
-        CRenameProcessor processor = new CRenameProcessor(CRefactory.getInstance(), arg);
-        processor.setReplacementText(newName);
-        processor.setSelectedOptions(0xFFFF & ~CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
+		CRefactoringArgument arg = new CRefactoringArgument(file, selection.getOffset(), selection.getLength());
+		CRenameProcessor processor = new CRenameProcessor(CRefactory.getInstance(), arg);
+		processor.setReplacementText(newName);
+		processor.setSelectedOptions(0xFFFF & ~CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
 		return new CRenameRefactoring(processor);
 	}
 
 	protected void executeRenameRefactoring(String newName, boolean expectedSuccess) throws Exception {
 		CRenameRefactoring refactoring = createRenameRefactoring(newName);
-        refactoring.getProcessor().lockIndex();
-        try {
-        	executeRefactoring(refactoring, expectedSuccess);
-        } finally {
-            refactoring.getProcessor().unlockIndex();
-        }
+		refactoring.getProcessor().lockIndex();
+		try {
+			executeRefactoring(refactoring, expectedSuccess);
+		} finally {
+			refactoring.getProcessor().unlockIndex();
+		}
 	}
-    
+
 	// test1.h
 	//#ifndef TEST1_H_
 	//#define TEST1_H_

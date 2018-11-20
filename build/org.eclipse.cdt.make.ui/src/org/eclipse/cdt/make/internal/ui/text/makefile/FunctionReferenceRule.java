@@ -22,22 +22,15 @@ import org.eclipse.jface.text.rules.WordRule;
 
 public class FunctionReferenceRule extends WordRule {
 	/** Buffer used for pattern detection. */
-	private StringBuilder fBuffer= new StringBuilder();
+	private StringBuilder fBuffer = new StringBuilder();
 	private String startSeq;
 	private String endSeq;
 
 	@SuppressWarnings("nls")
-	private final static String[] functions = {
-		"subst", "patsubst", "strip", "findstring",
-		"filter", "filter-out", "sort",
-		"word", "words", "wordlist", "firstword", "lastword",
-		"dir", "notdir",
-		"suffix", "basename", "addsuffix", "addprefix",
-		"join", "wildcard", "realpath", "abspath",
-		"if", "or", "and", "foreach",
-		"call", "value", "eval", "origin", "flavor",
-		"shell", "error", "warning", "info",
-	};
+	private final static String[] functions = { "subst", "patsubst", "strip", "findstring", "filter", "filter-out",
+			"sort", "word", "words", "wordlist", "firstword", "lastword", "dir", "notdir", "suffix", "basename",
+			"addsuffix", "addprefix", "join", "wildcard", "realpath", "abspath", "if", "or", "and", "foreach", "call",
+			"value", "eval", "origin", "flavor", "shell", "error", "warning", "info", };
 
 	private static class TagDetector implements IWordDetector {
 		private char openBracket;
@@ -54,15 +47,18 @@ public class FunctionReferenceRule extends WordRule {
 				closedBracket = ')';
 			}
 		}
+
 		@Override
 		public boolean isWordStart(char c) {
 			isClosedBracket = c == closedBracket;
 			return isClosedBracket || c == '$';
 		}
+
 		@Override
 		public boolean isWordPart(char c) {
 			return !isClosedBracket && (c == '$' || c == openBracket || Character.isJavaIdentifierPart(c) || c == '-');
 		}
+
 		public boolean isBracket(char c) {
 			return "(){}".contains(Character.toString(c)); //$NON-NLS-1$
 		}
@@ -81,7 +77,7 @@ public class FunctionReferenceRule extends WordRule {
 
 	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
-		TagDetector tagDetector = (TagDetector)fDetector;
+		TagDetector tagDetector = (TagDetector) fDetector;
 		int c = scanner.read();
 		if (c == tagDetector.closedBracket) {
 			if (tagDetector.bracketNesting > 0) {
@@ -101,20 +97,21 @@ public class FunctionReferenceRule extends WordRule {
 				} while (c != ICharacterScanner.EOF && fDetector.isWordPart((char) c));
 				scanner.unread();
 
-				String buffer= fBuffer.toString();
+				String buffer = fBuffer.toString();
 
-				IToken token= fWords.get(buffer);
+				IToken token = fWords.get(buffer);
 
 				if (token != null) {
-					if (buffer.equals(startSeq + GNUMakefileConstants.FUNCTION_CALL) || buffer.equals('$' + startSeq + GNUMakefileConstants.FUNCTION_CALL)) {
-						if ((char)scanner.read() == ' ') {
+					if (buffer.equals(startSeq + GNUMakefileConstants.FUNCTION_CALL)
+							|| buffer.equals('$' + startSeq + GNUMakefileConstants.FUNCTION_CALL)) {
+						if ((char) scanner.read() == ' ') {
 							do {
 								c = scanner.read();
-							} while (((TagDetector) fDetector).isBracket((char)c) || fDetector.isWordPart((char) c));
+							} while (((TagDetector) fDetector).isBracket((char) c) || fDetector.isWordPart((char) c));
 						}
 						scanner.unread();
 					}
-					((TagDetector)fDetector).bracketNesting++;
+					((TagDetector) fDetector).bracketNesting++;
 					return token;
 				}
 
@@ -131,7 +128,7 @@ public class FunctionReferenceRule extends WordRule {
 
 	@Override
 	protected void unreadBuffer(ICharacterScanner scanner) {
-		for (int i= fBuffer.length() - 1; i >= 0; i--)
+		for (int i = fBuffer.length() - 1; i >= 0; i--)
 			scanner.unread();
 	}
 }

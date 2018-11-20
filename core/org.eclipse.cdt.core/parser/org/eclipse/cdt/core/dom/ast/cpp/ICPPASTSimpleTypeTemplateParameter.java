@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
  * This interface represents a simple type template parameter.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -48,12 +48,11 @@ public interface ICPPASTSimpleTypeTemplateParameter extends ICPPASTTemplateParam
 	 */
 	public static final int st_typename = 2;
 
-
 	/**
 	 * Get the type of the type parameter (either {@link #st_class} or {@link #st_typename}).
 	 */
 	public int getParameterType();
-	
+
 	/**
 	 * Returns the template parameter name.
 	 */
@@ -66,7 +65,7 @@ public interface ICPPASTSimpleTypeTemplateParameter extends ICPPASTTemplateParam
 
 	/**
 	 * Set the type of the type parameter.
-	 * 
+	 *
 	 * @param value The type of the type parameter (either {@link #st_class} or {@link #st_typename})
 	 */
 	public void setParameterType(int value);
@@ -76,7 +75,7 @@ public interface ICPPASTSimpleTypeTemplateParameter extends ICPPASTTemplateParam
 	 * @since 5.2
 	 */
 	public void setIsParameterPack(boolean val);
-	
+
 	/**
 	 * Sets the template parameter name.
 	 */
@@ -86,7 +85,7 @@ public interface ICPPASTSimpleTypeTemplateParameter extends ICPPASTTemplateParam
 	 * Sets the default value (a type id) for this template parameter.
 	 */
 	public void setDefaultType(IASTTypeId typeId);
-	
+
 	/**
 	 * @since 5.1
 	 */

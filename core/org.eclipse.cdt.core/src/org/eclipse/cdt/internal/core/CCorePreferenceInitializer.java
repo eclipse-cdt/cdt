@@ -33,23 +33,28 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
-        HashSet<String> optionNames = CModelManager.OptionNames;
+		HashSet<String> optionNames = CModelManager.OptionNames;
 
 		// Formatter settings.
 		Map<String, String> defaultOptionsMap = DefaultCodeFormatterConstants.getDefaultSettings(); // code formatter defaults
 
 		// Compiler settings.
 		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_TAGS, CCorePreferenceConstants.DEFAULT_TASK_TAGS);
-		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_PRIORITIES, CCorePreferenceConstants.DEFAULT_TASK_PRIORITY);
-		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE, CCorePreferenceConstants.DEFAULT_TASK_CASE_SENSITIVE);
+		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_PRIORITIES,
+				CCorePreferenceConstants.DEFAULT_TASK_PRIORITY);
+		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE,
+				CCorePreferenceConstants.DEFAULT_TASK_CASE_SENSITIVE);
 		defaultOptionsMap.put(CCorePreferenceConstants.CODE_FORMATTER, CCorePreferenceConstants.DEFAULT_CODE_FORMATTER);
-		defaultOptionsMap.put(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT, CCorePreferenceConstants.DEFAULT_INDEX_DB_CACHE_SIZE_PCT);
-		defaultOptionsMap.put(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB, CCorePreferenceConstants.DEFAULT_MAX_INDEX_DB_CACHE_SIZE_MB);
-		defaultOptionsMap.put(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, CCorePreferenceConstants.DEFAULT_WORKSPACE_LANGUAGE_MAPPINGS);
+		defaultOptionsMap.put(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT,
+				CCorePreferenceConstants.DEFAULT_INDEX_DB_CACHE_SIZE_PCT);
+		defaultOptionsMap.put(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB,
+				CCorePreferenceConstants.DEFAULT_MAX_INDEX_DB_CACHE_SIZE_MB);
+		defaultOptionsMap.put(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS,
+				CCorePreferenceConstants.DEFAULT_WORKSPACE_LANGUAGE_MAPPINGS);
 		defaultOptionsMap.put(CodeReaderCache.CODE_READER_BUFFER, CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB_STRING);
 
 		// Store default values to default preferences.
-	 	IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
+		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 		for (Map.Entry<String, String> entry : defaultOptionsMap.entrySet()) {
 			String optionName = entry.getKey();
 			defaultPreferences.put(optionName, entry.getValue());
@@ -67,17 +72,27 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// Indexer defaults.
 		IndexerPreferences.initializeDefaultPreferences(defaultPreferences);
-		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_EXPORT_PATTERN, CCorePreferenceConstants.DEFAULT_INCLUDE_EXPORT_PATTERN);
-		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_BEGIN_EXPORTS_PATTERN, CCorePreferenceConstants.DEFAULT_INCLUDE_BEGIN_EXPORTS_PATTERN);
-		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_END_EXPORTS_PATTERN, CCorePreferenceConstants.DEFAULT_INCLUDE_END_EXPORTS_PATTERN);
-		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_PRIVATE_PATTERN, CCorePreferenceConstants.DEFAULT_INCLUDE_PRIVATE_PATTERN);
-		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_KEEP_PATTERN, CCorePreferenceConstants.DEFAULT_INCLUDE_KEEP_PATTERN);
+		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_EXPORT_PATTERN,
+				CCorePreferenceConstants.DEFAULT_INCLUDE_EXPORT_PATTERN);
+		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_BEGIN_EXPORTS_PATTERN,
+				CCorePreferenceConstants.DEFAULT_INCLUDE_BEGIN_EXPORTS_PATTERN);
+		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_END_EXPORTS_PATTERN,
+				CCorePreferenceConstants.DEFAULT_INCLUDE_END_EXPORTS_PATTERN);
+		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_PRIVATE_PATTERN,
+				CCorePreferenceConstants.DEFAULT_INCLUDE_PRIVATE_PATTERN);
+		defaultPreferences.put(CCorePreferenceConstants.INCLUDE_KEEP_PATTERN,
+				CCorePreferenceConstants.DEFAULT_INCLUDE_KEEP_PATTERN);
 
 		// Scalability defaults.
-		defaultPreferences.putBoolean(CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS, CCorePreferenceConstants.DEFAULT_SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS);
-		defaultPreferences.putInt(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS, CCorePreferenceConstants.DEFAULT_SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS);
-		defaultPreferences.putBoolean(CCorePreferenceConstants.SCALABILITY_LIMIT_TOKENS_PER_TU, CCorePreferenceConstants.DEFAULT_SCALABILITY_LIMIT_TOKENS_PER_TU);
-		defaultPreferences.putInt(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TOKENS, CCorePreferenceConstants.DEFAULT_SCALABILITY_MAXIMUM_TOKENS);
-		defaultPreferences.putBoolean(CCorePreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE, CCorePreferenceConstants.DEFAULT_PLACE_CONST_RIGHT_OF_TYPE);
+		defaultPreferences.putBoolean(CCorePreferenceConstants.SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS,
+				CCorePreferenceConstants.DEFAULT_SCALABILITY_SKIP_TRIVIAL_EXPRESSIONS);
+		defaultPreferences.putInt(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS,
+				CCorePreferenceConstants.DEFAULT_SCALABILITY_MAXIMUM_TRIVIAL_EXPRESSIONS);
+		defaultPreferences.putBoolean(CCorePreferenceConstants.SCALABILITY_LIMIT_TOKENS_PER_TU,
+				CCorePreferenceConstants.DEFAULT_SCALABILITY_LIMIT_TOKENS_PER_TU);
+		defaultPreferences.putInt(CCorePreferenceConstants.SCALABILITY_MAXIMUM_TOKENS,
+				CCorePreferenceConstants.DEFAULT_SCALABILITY_MAXIMUM_TOKENS);
+		defaultPreferences.putBoolean(CCorePreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE,
+				CCorePreferenceConstants.DEFAULT_PLACE_CONST_RIGHT_OF_TYPE);
 	}
 }

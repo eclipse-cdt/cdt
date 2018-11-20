@@ -15,7 +15,6 @@ package org.eclipse.cdt.core.model;
 
 import java.util.EventObject;
 
-
 /**
  * A   buffer changed event describes how a buffer has changed. These events are
  * used in <code>IBufferChangedListener</code> notifications.
@@ -30,7 +29,7 @@ import java.util.EventObject;
  * and <code>getLength</code> is the length of the text that was removed.
  * </p>
  * <p>
- * For replacements (including <code>IBuffer.setContents</code>), 
+ * For replacements (including <code>IBuffer.setContents</code>),
  * <code>getOffset</code> is the offset
  * of the first replaced character, <code>getText</code> is the replacement
  * text, and <code>getLength</code> is the length of the original text
@@ -42,12 +41,12 @@ import java.util.EventObject;
  * </p>
  * <p>
  * @noextend This class is not intended to be subclassed by clients.
- * 
+ *
  * Instances of this class are automatically created by the C model.
  * </p>
  *
  * @see IBuffer
- * This class is similar to the JDT BufferChangedEvent class. 
+ * This class is similar to the JDT BufferChangedEvent class.
  */
 
 public class BufferChangedEvent extends EventObject {
@@ -80,6 +79,7 @@ public class BufferChangedEvent extends EventObject {
 		this.length = length;
 		this.text = text;
 	}
+
 	/**
 	 * Returns the buffer which has changed.
 	 *
@@ -88,16 +88,18 @@ public class BufferChangedEvent extends EventObject {
 	public IBuffer getBuffer() {
 		return (IBuffer) source;
 	}
+
 	/**
 	 * Returns the length of text removed or replaced in the buffer, or
 	 * 0 if text has been inserted into the buffer.
 	 *
-	 * @return the length of the original text fragment modified by the 
+	 * @return the length of the original text fragment modified by the
 	 *   buffer change (<code> 0 </code> in case of insertion).
 	 */
 	public int getLength() {
 		return this.length;
 	}
+
 	/**
 	 * Returns the index of the first character inserted, removed, or replaced
 	 * in the buffer.
@@ -107,6 +109,7 @@ public class BufferChangedEvent extends EventObject {
 	public int getOffset() {
 		return this.offset;
 	}
+
 	/**
 	 * Returns the text that was inserted, the replacement text,
 	 * or <code>null</code> if text has been removed.

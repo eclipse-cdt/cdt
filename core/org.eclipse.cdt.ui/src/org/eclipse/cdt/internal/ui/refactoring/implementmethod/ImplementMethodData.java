@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * Institute for Software (IFS)- initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
@@ -26,21 +26,20 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
  * @author Emanuel Graf IFS
  *
  */
-public class ImplementMethodData implements ITreeContentProvider{
+public class ImplementMethodData implements ITreeContentProvider {
 
 	public ImplementMethodData() {
 	}
-
 
 	private List<MethodToImplementConfig> methodDeclarations;
 
 	public void setMethodDeclarations(List<IASTSimpleDeclaration> methodDeclarations) {
 		this.methodDeclarations = new ArrayList<MethodToImplementConfig>();
-		
+
 		for (IASTSimpleDeclaration declaration : methodDeclarations) {
 			this.methodDeclarations.add(new MethodToImplementConfig(declaration, new ParameterHandler(declaration)));
 		}
-		
+
 		// Only one declaration available, might as well check it
 		if (this.methodDeclarations.size() == 1) {
 			this.methodDeclarations.get(0).setChecked(true);
@@ -79,47 +78,47 @@ public class ImplementMethodData implements ITreeContentProvider{
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 	}
-	
+
 	public List<MethodToImplementConfig> getMethodsToImplement() {
 		List<MethodToImplementConfig> ret = new ArrayList<MethodToImplementConfig>();
 		for (MethodToImplementConfig config : methodDeclarations) {
-			if(config.isChecked()) {
+			if (config.isChecked()) {
 				ret.add(config);
 			}
 		}
 		return ret;
 	}
-	
+
 	public boolean needParameterInput() {
 		for (MethodToImplementConfig config : getMethodsToImplement()) {
-			if(config.getParaHandler().needsAdditionalArgumentNames())return true;
+			if (config.getParaHandler().needsAdditionalArgumentNames())
+				return true;
 		}
 		return false;
 	}
-	
+
 	public MethodToImplementConfig getNextConfigNeedingParameterNames(MethodToImplementConfig currentConfig) {
 		int i = 0;
 		List<MethodToImplementConfig> methodsToImplement = getMethodsToImplement();
-		for(;i < methodsToImplement.size();++i) {
-			if(currentConfig == methodsToImplement.get(i)) {
+		for (; i < methodsToImplement.size(); ++i) {
+			if (currentConfig == methodsToImplement.get(i)) {
 				++i;
 				break;
 			}
 		}
-		
-		for(;i < methodsToImplement.size();++i) {
-			if(methodsToImplement.get(i).getParaHandler().needsAdditionalArgumentNames()) {
+
+		for (; i < methodsToImplement.size(); ++i) {
+			if (methodsToImplement.get(i).getParaHandler().needsAdditionalArgumentNames()) {
 				return methodsToImplement.get(i);
 			}
 		}
 		return null;
 	}
 
-
 	public MethodToImplementConfig getFirstConfigNeedingParameterNames() {
 		List<MethodToImplementConfig> methodsToImplement = getMethodsToImplement();
 		for (MethodToImplementConfig config : methodsToImplement) {
-			if(config.getParaHandler().needsAdditionalArgumentNames()) {
+			if (config.getParaHandler().needsAdditionalArgumentNames()) {
 				return config;
 			}
 		}

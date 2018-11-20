@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBuildDescriptionFactory {
-	
+
 	/**
 	 * creates the build description
 	 * @param cfg the build configuration for which the description is to be
@@ -34,32 +34,30 @@ public interface IBuildDescriptionFactory {
 	 * @param flags specifies how the build description should be generated
 	 * and what information it should contain.
 	 * Can contain the following flags:
-	 * BuildDescriptionManager.REBUILD, 
+	 * BuildDescriptionManager.REBUILD,
 	 * BuildDescriptionManager.REMOVED,
 	 * BuildDescriptionManager.DEPS,
 	 * BuildDescriptionManager.DEPFILES,
-	 * 
-	 * 
-	 * @see BuildDescriptionManager#REBUILD 
+	 *
+	 *
+	 * @see BuildDescriptionManager#REBUILD
 	 * @see BuildDescriptionManager#REMOVED
 	 * @see BuildDescriptionManager#DEPS
 	 * @see BuildDescriptionManager#DEPFILES
 	 * @return IBuildDescription
 	 * @throws CoreException if the build description creation fails
 	 */
-	IBuildDescription createBuildDescription(IConfiguration cfg,
-			IResourceDelta delta,
-			int flags) throws CoreException;
-	
+	IBuildDescription createBuildDescription(IConfiguration cfg, IResourceDelta delta, int flags) throws CoreException;
+
 	/**
-	 * 
+	 *
 	 * returns the supported methods of generation the build description
-	 * 
-	 * @see BuildDescriptionManager#REBUILD 
+	 *
+	 * @see BuildDescriptionManager#REBUILD
 	 * @see BuildDescriptionManager#REMOVED
 	 * @see BuildDescriptionManager#DEPS
 	 * @see BuildDescriptionManager#DEPFILES
-	 * 
+	 *
 	 * @return int
 	 */
 	int getSupportedMethods();

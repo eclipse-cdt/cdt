@@ -61,7 +61,7 @@ import org.eclipse.cdt.internal.ui.build.NewToolChainWizard;
 
 /**
  * Preference page to manage Toolchains for Core Build.
- * 
+ *
  * @since 6.3
  */
 public class ToolChainPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -163,7 +163,7 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 				if (i < 1) {
 					return;
 				}
-				
+
 				IToolChain tc = toolChains.get(i - 1);
 				toolChains.set(i - 1, toolChains.get(i));
 				toolChains.set(i, tc);
@@ -265,7 +265,8 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 					WizardDialog dialog = new WizardDialog(getShell(), wizard);
 					dialog.open();
 				} else {
-					MessageDialog.openInformation(getShell(), CUIMessages.ToolChainPreferencePage_Edit, CUIMessages.ToolChainPreferencePage_NoEditor);
+					MessageDialog.openInformation(getShell(), CUIMessages.ToolChainPreferencePage_Edit,
+							CUIMessages.ToolChainPreferencePage_NoEditor);
 				}
 			}
 		});
@@ -354,7 +355,7 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 		tableLayout.setColumnData(tableArchColumn, new ColumnWeightData(2));
 
 		tableComp.setLayout(tableLayout);
-		
+
 		return new TableViewer(table);
 	}
 

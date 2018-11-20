@@ -28,16 +28,16 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 	 * Unique identifier for the absolute source container type
 	 * (value <code>org.eclipse.cdt.debug.core.containerType.absolutePath</code>).
 	 */
-	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.absolutePath";	 //$NON-NLS-1$
+	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.absolutePath"; //$NON-NLS-1$
 
 	public boolean isValidAbsoluteFilePath(String name) {
-		return isValidAbsoluteFilePath(new File(name));	
+		return isValidAbsoluteFilePath(new File(name));
 	}
 
 	public boolean isValidAbsoluteFilePath(File file) {
-		return file.isAbsolute() && file.exists() && file.isFile();	
+		return file.isAbsolute() && file.exists() && file.isFile();
 	}
-	
+
 	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
 		if (name != null) {
@@ -66,11 +66,11 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 	public int hashCode() {
 		return TYPE_ID.hashCode();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-	    if (!(obj instanceof AbsolutePathSourceContainer))
-		    return false;
-	    return true;
-    }
+		if (!(obj instanceof AbsolutePathSourceContainer))
+			return false;
+		return true;
+	}
 }

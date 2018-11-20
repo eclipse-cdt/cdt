@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ public class ErrorPosition extends AddressRangePosition {
 	public int hashCode() {
 		return fHashCode;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.AddressRangePosition#toString()
 	 */

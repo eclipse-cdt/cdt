@@ -7,14 +7,13 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
  *     Wind River Systems - adopted to use with DSF
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf.pda.ui.launcher;
-
 
 import org.eclipse.cdt.examples.dsf.pda.PDAPlugin;
 import org.eclipse.cdt.examples.dsf.pda.ui.PDAUIPlugin;
@@ -43,25 +42,24 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 
-
 /**
  * Tab to specify the PDA program to run/debug.
  * <p>
- * This class is identical to the corresponding in PDA debugger implemented in 
+ * This class is identical to the corresponding in PDA debugger implemented in
  * org.eclipse.debug.examples.ui.
  * </p>
  */
 public class PDAMainTab extends AbstractLaunchConfigurationTab {
-	
+
 	private Text fProgramText;
 	private Button fProgramButton;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		
+
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		GridLayout topLayout = new GridLayout();
@@ -69,15 +67,15 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		topLayout.numColumns = 3;
 		comp.setLayout(topLayout);
 		comp.setFont(font);
-		
+
 		createVerticalSpacer(comp, 3);
-		
+
 		Label programLabel = new Label(comp, SWT.NONE);
 		programLabel.setText("&Program:");
 		GridData gd = new GridData(GridData.BEGINNING);
 		programLabel.setLayoutData(gd);
 		programLabel.setFont(font);
-		
+
 		fProgramText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProgramText.setLayoutData(gd);
@@ -87,7 +85,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		fProgramButton = createPushButton(comp, "&Browse...", null); //$NON-NLS-1$
 		fProgramButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -95,12 +93,13 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 	}
-	
+
 	/**
-	 * Open a resource chooser to select a PDA program 
+	 * Open a resource chooser to select a PDA program
 	 */
 	protected void browsePDAFiles() {
-		ResourceListSelectionDialog dialog = new ResourceListSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), IResource.FILE);
+		ResourceListSelectionDialog dialog = new ResourceListSelectionDialog(getShell(),
+				ResourcesPlugin.getWorkspace().getRoot(), IResource.FILE);
 		dialog.setTitle("PDA Program");
 		dialog.setMessage("Select PDA Program");
 		if (dialog.open() == Window.OK) {
@@ -108,27 +107,29 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 			IFile file = (IFile) files[0];
 			fProgramText.setText(file.getFullPath().toString());
 		}
-		
+
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		//#ifdef ex1
-//#		// TODO: Exercise 1 - retrieve the program path attribute from the launch configuration		
-//#		String program = null;
-//#		if (program != null) {
-//#			fProgramText.setText(program);
-//#		}
+		//#		// TODO: Exercise 1 - retrieve the program path attribute from the launch configuration
+		//#		String program = null;
+		//#		if (program != null) {
+		//#			fProgramText.setText(program);
+		//#		}
 		//#else
 		try {
 			String program = null;
-			program = configuration.getAttribute(PDAPlugin.ATTR_PDA_PROGRAM, (String)null);
+			program = configuration.getAttribute(PDAPlugin.ATTR_PDA_PROGRAM, (String) null);
 			if (program != null) {
 				fProgramText.setText(program);
 			}
@@ -137,6 +138,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		}
 		//#endif
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -146,20 +148,20 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 			program = null;
 		}
 		//#ifdef ex1
-//#		// TODO: Exercise 1 - update the launch configuration with the path to
-//#		//   currently specified program		
+		//#		// TODO: Exercise 1 - update the launch configuration with the path to
+		//#		//   currently specified program
 		//#else
 		configuration.setAttribute(PDAPlugin.ATTR_PDA_PROGRAM, program);
 		//#endif
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return "Main";
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -168,8 +170,8 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		setMessage(null);
 		String text = fProgramText.getText();
 		//#ifdef ex1
-//#		// TODO: Exercise 1 - validate the currently specified program exists and is not
-//#		//	empty, providing the user with feedback.		
+		//#		// TODO: Exercise 1 - validate the currently specified program exists and is not
+		//#		//	empty, providing the user with feedback.
 		//#else
 		if (text.length() > 0) {
 			IPath path = new Path(text);

@@ -31,7 +31,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 
-
 /**
  * A helper class to provide common methods to set up managed image repository for a plugin.
  * <p>
@@ -43,7 +42,7 @@ import org.osgi.framework.Bundle;
  * <p>
  * See {@link CDTSharedImages} for an example of using this factory.
  * </p>
- * 
+ *
  * @since 5.7
  *
  */
@@ -56,12 +55,12 @@ public class SharedImagesFactory {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param plugin - the plugin where the images are defined.
 	 */
 	public SharedImagesFactory(Plugin plugin) {
 		this.bundle = plugin.getBundle();
-		
+
 		Display display = Display.getCurrent();
 		if (display == null) {
 			display = Display.getDefault();
@@ -87,7 +86,7 @@ public class SharedImagesFactory {
 
 		IPath projectRelativePath = new Path(key);
 		URL url = FileLocator.find(bundle, projectRelativePath, null);
-		if (url==null) {
+		if (url == null) {
 			Exception e = new Exception(NLS.bind(Messages.CDTSharedImages_MissingImage, key, CUIPlugin.PLUGIN_ID));
 			CUIPlugin.log(e.getMessage(), e);
 		}
@@ -118,10 +117,10 @@ public class SharedImagesFactory {
 	 */
 	public Image getImage(String key) {
 		URL url = getUrl(key);
-		String registryKey = url!=null ? url.toString() : null;
+		String registryKey = url != null ? url.toString() : null;
 		Image image = imageRegistry.get(registryKey);
-		if (image==null) {
-			ImageDescriptor descriptor= ImageDescriptor.createFromURL(url);
+		if (image == null) {
+			ImageDescriptor descriptor = ImageDescriptor.createFromURL(url);
 			imageRegistry.put(registryKey, descriptor);
 			image = imageRegistry.get(registryKey);
 		}
@@ -138,9 +137,9 @@ public class SharedImagesFactory {
 	 */
 	public ImageDescriptor getImageDescriptor(String key) {
 		URL url = getUrl(key);
-		String registryKey = url!=null ? url.toString() : null;
+		String registryKey = url != null ? url.toString() : null;
 		ImageDescriptor descriptor = imageRegistry.getDescriptor(registryKey);
-		if (descriptor==null) {
+		if (descriptor == null) {
 			descriptor = ImageDescriptor.createFromURL(url);
 			imageRegistry.put(registryKey, descriptor);
 		}
@@ -151,7 +150,7 @@ public class SharedImagesFactory {
 	 * Retrieves an overlaid image from the internal repository of images.
 	 * If there is no image one will be created.
 	 *
- 	* The decoration overlay for the base image will use the array of
+	* The decoration overlay for the base image will use the array of
 	 * provided overlays. The indices of the array correspond to the values
 	 * of the 5 overlay constants defined on {@link IDecoration}, i.e.
 	 * {@link IDecoration#TOP_LEFT},
@@ -166,32 +165,32 @@ public class SharedImagesFactory {
 	 *    an element to the array if no overlay should be added in given quadrant.
 	 */
 	public Image getImageOverlaid(String baseKey, String[] overlayKeys) {
-		Assert.isTrue(overlayKeys.length==5);
+		Assert.isTrue(overlayKeys.length == 5);
 
-		String suffix=""; //$NON-NLS-1$
-		for (int i=0;i<5;i++) {
-			String overlayKey=""; //$NON-NLS-1$
-			if (i<overlayKeys.length && overlayKeys[i]!=null) {
-				overlayKey=overlayKeys[i];
+		String suffix = ""; //$NON-NLS-1$
+		for (int i = 0; i < 5; i++) {
+			String overlayKey = ""; //$NON-NLS-1$
+			if (i < overlayKeys.length && overlayKeys[i] != null) {
+				overlayKey = overlayKeys[i];
 			}
-			suffix=suffix+OVERLAY_SEPARATOR+overlayKey;
+			suffix = suffix + OVERLAY_SEPARATOR + overlayKey;
 		}
-		if (suffix.length()==5) {
+		if (suffix.length() == 5) {
 			// No overlays added
 			Image result = getImage(baseKey);
 			return result;
 		}
-		String compositeKey=baseKey+suffix;
+		String compositeKey = baseKey + suffix;
 
 		Image result = imageRegistry.get(compositeKey);
-		if (result!=null)
+		if (result != null)
 			return result;
 
 		Image baseImage = getImage(baseKey);
 		ImageDescriptor[] overlayDescriptors = new ImageDescriptor[5];
-		for (int i=0;i<5;i++) {
+		for (int i = 0; i < 5; i++) {
 			String overlayKey = overlayKeys[i];
-			if (overlayKey!=null) {
+			if (overlayKey != null) {
 				overlayDescriptors[i] = getImageDescriptor(overlayKey);
 			}
 		}
@@ -217,8 +216,7 @@ public class SharedImagesFactory {
 	 */
 	public Image getImageOverlaid(String baseKey, String overlayKey, int quadrant) {
 		String[] overlayKeys = new String[5];
-		overlayKeys[quadrant]=overlayKey;
+		overlayKeys[quadrant] = overlayKey;
 		return getImageOverlaid(baseKey, overlayKeys);
 	}
 }
-

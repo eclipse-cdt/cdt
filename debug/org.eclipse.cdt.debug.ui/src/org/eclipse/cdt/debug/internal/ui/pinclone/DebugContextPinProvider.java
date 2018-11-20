@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Pin debug context provider. 
+ * Pin debug context provider.
  * It takes a debug context and translates it to a handle for pinning purpose.
  */
 public class DebugContextPinProvider extends AbstractDebugContextProvider implements IDebugContextProvider2 {
@@ -43,10 +43,10 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	private final Set<IPinElementHandle> fPinHandles;
 	private final IWorkbenchPart fWorkbenchPart;
 	private final Map<IPinElementHandle, IPinProvider> fPinProvider;
-	
+
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param part the workbench part of where the pin action takes place
 	 * @param activeContext the debug context selection
 	 */
@@ -54,19 +54,18 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 		super(part);
 		fWorkbenchPart = part;
 		fPinProvider = new HashMap<IPinElementHandle, IPinProvider>();
-		
+
 		fActiveContext = activeContext;
 		fPinHandles = pin(part, activeContext, new IPinModelListener() {
 			@Override
 			public void modelChanged(ISelection selection) {
-				// send a change notification for the view to update			
-				delegateEvent(new DebugContextEvent(DebugContextPinProvider.this, 
-						selection == null ? new StructuredSelection() : selection, 
-						DebugContextEvent.ACTIVATED));
+				// send a change notification for the view to update
+				delegateEvent(new DebugContextEvent(DebugContextPinProvider.this,
+						selection == null ? new StructuredSelection() : selection, DebugContextEvent.ACTIVATED));
 			}
 		});
 	}
-	
+
 	/**
 	 * Dispose the provider.
 	 */
@@ -75,7 +74,7 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 			entry.getValue().unpin(fWorkbenchPart, entry.getKey());
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider2#isWindowContextProvider()
@@ -84,7 +83,7 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	public boolean isWindowContextProvider() {
 		return false;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider#getActiveContext()
@@ -93,68 +92,70 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	public ISelection getActiveContext() {
 		return fActiveContext;
 	}
-	
+
 	/**
 	 * Returns the pinned debug context handles.
-	 * 
+	 *
 	 * @return the handle set
 	 */
 	public Set<IPinElementHandle> getPinHandles() {
 		return fPinHandles;
 	}
-	
+
 	/**
 	 * Returns whether the current pinned handles are pinned to the given debug context.
-	 * 
+	 *
 	 * @param debugContext the debug context in question
 	 * @return true if the pinned handles are pinned to the debug context
 	 */
 	public boolean isPinnedTo(Object debugContext) {
-		return PinCloneUtils.isPinnedTo(fPinHandles, debugContext);		
+		return PinCloneUtils.isPinnedTo(fPinHandles, debugContext);
 	}
-	
+
 	/**
 	 * Pin the given debug context selection.
-	 * 
+	 *
 	 * @param part the workbench part where the pin action is requested
 	 * @param selection the debug context selection
 	 * @param listener pin model listener
 	 * @return a set of pinned handle
 	 */
-		Set<IPinElementHandle> handles = new HashSet<IPinElementHandle>();
-		private Set<IPinElementHandle> pin(IWorkbenchPart part, ISelection selection, IPinModelListener listener) {
-		
+	Set<IPinElementHandle> handles = new HashSet<IPinElementHandle>();
+
+	private Set<IPinElementHandle> pin(IWorkbenchPart part, ISelection selection, IPinModelListener listener) {
+
 		if (selection instanceof IStructuredSelection) {
-			for (Object element : ((IStructuredSelection)selection).toList()) {
+			for (Object element : ((IStructuredSelection) selection).toList()) {
 				IPinProvider pinProvider = null;
 				if (element instanceof IAdaptable) {
-					pinProvider = ((IAdaptable)element).getAdapter(IPinProvider.class);					
+					pinProvider = ((IAdaptable) element).getAdapter(IPinProvider.class);
 				}
-				
+
 				if (pinProvider != null) {
 					IPinElementHandle handle = pinProvider.pin(fWorkbenchPart, element, listener);
 					handles.add(handle);
-					fPinProvider.put(handle, pinProvider);					
+					fPinProvider.put(handle, pinProvider);
 				} else
-					handles.add(new PinElementHandle(element, null, PinCloneUtils.getDefaultPinElementColorDescriptor()));					
+					handles.add(
+							new PinElementHandle(element, null, PinCloneUtils.getDefaultPinElementColorDescriptor()));
 			}
-		} 
-		
+		}
+
 		return handles;
 	}
-	
+
 	/**
 	 * Delegates debug event to the listener.
-	 * 
+	 *
 	 * @param event debug event
 	 */
 	public void delegateEvent(final DebugContextEvent event) {
-		Display.getDefault().syncExec(new Runnable() {			
+		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				fActiveContext = event.getContext();
 				fire(event);
 			}
-		});		
+		});
 	}
 }

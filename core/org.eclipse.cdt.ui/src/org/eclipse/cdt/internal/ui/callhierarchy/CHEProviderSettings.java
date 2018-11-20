@@ -33,18 +33,18 @@ import org.eclipse.cdt.ui.ICHEContentProvider;
 public class CHEProviderSettings {
 
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.CCallHierarchy"; //$NON-NLS-1$
-	private static final String ELEMENT_NAME_CONTENT  = "CallHierarchyContentProvider"; //$NON-NLS-1$
-	private static final String ELEMENT_NAME_LABEL  = "CallHierarchyLabelProvider"; //$NON-NLS-1$
-	private static final String ATTRIB_CLASS   = "class"; //$NON-NLS-1$
+	private static final String ELEMENT_NAME_CONTENT = "CallHierarchyContentProvider"; //$NON-NLS-1$
+	private static final String ELEMENT_NAME_LABEL = "CallHierarchyLabelProvider"; //$NON-NLS-1$
+	private static final String ATTRIB_CLASS = "class"; //$NON-NLS-1$
 
-	IOpenListener[]  openListeners =null;
+	IOpenListener[] openListeners = null;
 
 	static ICHEContentProvider[] chContentProviders = null;
 	static IStyledLabelProvider[] chLabelProviders = null;
 
 	private static void loadExtensions() {
-		List<ICHEContentProvider>  chCProviders  = new ArrayList<ICHEContentProvider>();
-		List<IStyledLabelProvider> chLProviders  = new ArrayList<IStyledLabelProvider>();
+		List<ICHEContentProvider> chCProviders = new ArrayList<ICHEContentProvider>();
+		List<IStyledLabelProvider> chLProviders = new ArrayList<IStyledLabelProvider>();
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
 		if (extensionPoint != null) {
@@ -82,17 +82,15 @@ public class CHEProviderSettings {
 		chContentProviders = chCProviders.toArray(new ICHEContentProvider[chCProviders.size()]);
 	}
 
-
-
 	public static IStyledLabelProvider[] getCCallHierarchyLabelProviders() {
-		if ( chLabelProviders == null) {
+		if (chLabelProviders == null) {
 			loadExtensions();
 		}
 		return chLabelProviders;
 	}
 
 	public static ICHEContentProvider[] getCCallHierarchyContentProviders() {
-		if ( chContentProviders == null) {
+		if (chContentProviders == null) {
 			loadExtensions();
 		}
 		return chContentProviders;

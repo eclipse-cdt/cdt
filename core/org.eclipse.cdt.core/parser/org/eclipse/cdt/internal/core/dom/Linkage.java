@@ -25,8 +25,8 @@ public class Linkage implements ILinkage {
 	public static final ILinkage OBJC_LINKAGE = new Linkage(OBJC_LINKAGE_ID, OBJC_LINKAGE_NAME);
 	public static final ILinkage QT_LINKAGE = new Linkage(QT_LINKAGE_ID, QT_LINKAGE_NAME);
 
-	private static final ILinkage[] LINKAGES= { C_LINKAGE, CPP_LINKAGE, FORTRAN_LINKAGE, OBJC_LINKAGE, QT_LINKAGE };
-	private static final ILinkage[] INDEX_LINKAGES= { C_LINKAGE, CPP_LINKAGE, FORTRAN_LINKAGE };
+	private static final ILinkage[] LINKAGES = { C_LINKAGE, CPP_LINKAGE, FORTRAN_LINKAGE, OBJC_LINKAGE, QT_LINKAGE };
+	private static final ILinkage[] INDEX_LINKAGES = { C_LINKAGE, CPP_LINKAGE, FORTRAN_LINKAGE };
 
 	public static final ILinkage[] getIndexerLinkages() {
 		return INDEX_LINKAGES;
@@ -38,12 +38,18 @@ public class Linkage implements ILinkage {
 
 	public static String getLinkageName(int linkageID) throws CoreException {
 		switch (linkageID) {
-		case NO_LINKAGE_ID: return NO_LINKAGE_NAME;
-		case C_LINKAGE_ID: return C_LINKAGE_NAME;
-		case CPP_LINKAGE_ID: return CPP_LINKAGE_NAME;
-		case FORTRAN_LINKAGE_ID: return FORTRAN_LINKAGE_NAME;
-		case OBJC_LINKAGE_ID: return OBJC_LINKAGE_NAME;
-		case QT_LINKAGE_ID: return QT_LINKAGE_NAME;
+		case NO_LINKAGE_ID:
+			return NO_LINKAGE_NAME;
+		case C_LINKAGE_ID:
+			return C_LINKAGE_NAME;
+		case CPP_LINKAGE_ID:
+			return CPP_LINKAGE_NAME;
+		case FORTRAN_LINKAGE_ID:
+			return FORTRAN_LINKAGE_NAME;
+		case OBJC_LINKAGE_ID:
+			return OBJC_LINKAGE_NAME;
+		case QT_LINKAGE_ID:
+			return QT_LINKAGE_NAME;
 		}
 		throw new CoreException(CCorePlugin.createStatus("Unsupported linkage id: " + linkageID)); //$NON-NLS-1$
 	}
@@ -52,8 +58,8 @@ public class Linkage implements ILinkage {
 	private String fName;
 
 	private Linkage(int id, String name) {
-		fID= id;
-		fName= name;
+		fID = id;
+		fName = name;
 	}
 
 	@Override

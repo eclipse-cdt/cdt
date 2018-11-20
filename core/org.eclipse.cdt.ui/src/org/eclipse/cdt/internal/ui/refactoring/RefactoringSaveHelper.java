@@ -49,10 +49,10 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 /**
  * Helper to save dirty editors prior to starting a refactoring.
- * 
+ *
  * @see PreferenceConstants#REFACTOR_SAVE_ALL_EDITORS
  * @since 5.3
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RefactoringSaveHelper {
@@ -62,41 +62,39 @@ public class RefactoringSaveHelper {
 	/**
 	 * Save mode to save all dirty editors (always ask).
 	 */
-	public static final int SAVE_ALL_ALWAYS_ASK= 1;
+	public static final int SAVE_ALL_ALWAYS_ASK = 1;
 
 	/**
 	 * Save mode to save all dirty editors.
 	 */
-	public static final int SAVE_ALL= 2;
+	public static final int SAVE_ALL = 2;
 
 	/**
 	 * Save mode to not save any editors.
 	 */
-	public static final int SAVE_NOTHING= 3;
-	
+	public static final int SAVE_NOTHING = 3;
+
 	/**
 	 * Save mode to save all editors that are known to cause trouble for C refactorings, e.g.
 	 * editors on compilation units that are not in working copy mode.
 	 */
-	public static final int SAVE_REFACTORING= 4;
-	
+	public static final int SAVE_REFACTORING = 4;
+
 	/**
 	 * Creates a refactoring save helper with the given save mode.
-	 * 
+	 *
 	 * @param saveMode one of the SAVE_* constants
 	 */
 	public RefactoringSaveHelper(int saveMode) {
-		Assert.isLegal(saveMode == SAVE_ALL_ALWAYS_ASK
-				|| saveMode == SAVE_ALL
-				|| saveMode == SAVE_NOTHING
+		Assert.isLegal(saveMode == SAVE_ALL_ALWAYS_ASK || saveMode == SAVE_ALL || saveMode == SAVE_NOTHING
 				|| saveMode == SAVE_REFACTORING);
-		fSaveMode= saveMode;
+		fSaveMode = saveMode;
 	}
 
 	/**
 	 * Saves all editors. Depending on the {@link PreferenceConstants#REFACTOR_SAVE_ALL_EDITORS}
 	 * preference, the user is asked to save affected dirty editors.
-	 * 
+	 *
 	 * @param shell the parent shell for the confirmation dialog
 	 * @return <code>true</code> if save was successful and refactoring can proceed;
 	 * 		false if the refactoring must be canceled
@@ -104,20 +102,20 @@ public class RefactoringSaveHelper {
 	public boolean saveEditors(Shell shell) {
 		final IEditorPart[] dirtyEditors;
 		switch (fSaveMode) {
-			case SAVE_ALL_ALWAYS_ASK:
-			case SAVE_ALL:
-				dirtyEditors= EditorUtility.getDirtyEditors(true);
-				break;
+		case SAVE_ALL_ALWAYS_ASK:
+		case SAVE_ALL:
+			dirtyEditors = EditorUtility.getDirtyEditors(true);
+			break;
 
-			case SAVE_REFACTORING:
-				dirtyEditors= EditorUtility.getDirtyEditorsToSave(false); // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=175495
-				break;
+		case SAVE_REFACTORING:
+			dirtyEditors = EditorUtility.getDirtyEditorsToSave(false); // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=175495
+			break;
 
-			case SAVE_NOTHING:
-				return true;
+		case SAVE_NOTHING:
+			return true;
 
-			default:
-				throw new IllegalStateException(Integer.toString(fSaveMode));
+		default:
+			throw new IllegalStateException(Integer.toString(fSaveMode));
 		}
 		if (dirtyEditors.length == 0)
 			return true;
@@ -129,14 +127,14 @@ public class RefactoringSaveHelper {
 			if (!CUIPlugin.getActiveWorkbenchWindow().getWorkbench().saveAllEditors(false))
 				return false;
 		} else {
-			IRunnableWithProgress runnable= new IRunnableWithProgress() {
+			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				@Override
 				public void run(IProgressMonitor pm) throws InterruptedException {
-					int count= dirtyEditors.length;
+					int count = dirtyEditors.length;
 					SubMonitor progress = SubMonitor.convert(pm, "", count); //$NON-NLS-1$
 					try {
-						for (int i= 0; i < count; i++) {
-							IEditorPart editor= dirtyEditors[i];
+						for (int i = 0; i < count; i++) {
+							IEditorPart editor = dirtyEditors[i];
 							editor.doSave(progress.split(1));
 						}
 					} catch (OperationCanceledException e) {
@@ -147,16 +145,17 @@ public class RefactoringSaveHelper {
 				}
 			};
 			try {
-				PlatformUI.getWorkbench().getProgressService().runInUI(CUIPlugin.getActiveWorkbenchWindow(), runnable, null);
+				PlatformUI.getWorkbench().getProgressService().runInUI(CUIPlugin.getActiveWorkbenchWindow(), runnable,
+						null);
 			} catch (InterruptedException e) {
 				return false;
 			} catch (InvocationTargetException e) {
-				ExceptionHandler.handle(e, shell,
-						Messages.RefactoringSaveHelper_saving, Messages.RefactoringSaveHelper_unexpected_exception);
+				ExceptionHandler.handle(e, shell, Messages.RefactoringSaveHelper_saving,
+						Messages.RefactoringSaveHelper_unexpected_exception);
 				return false;
 			}
 		}
-		fFilesSaved= true;
+		fFilesSaved = true;
 		return true;
 	}
 
@@ -165,32 +164,34 @@ public class RefactoringSaveHelper {
 	 */
 	public void triggerIncrementalBuild() {
 		if (fFilesSaved && ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding()) {
-			new GlobalBuildAction(CUIPlugin.getActiveWorkbenchWindow(), IncrementalProjectBuilder.INCREMENTAL_BUILD).run();
+			new GlobalBuildAction(CUIPlugin.getActiveWorkbenchWindow(), IncrementalProjectBuilder.INCREMENTAL_BUILD)
+					.run();
 		}
 	}
 
 	/**
 	 * Returns whether this save helper did actually save any files.
-	 * 
+	 *
 	 * @return <code>true</code> iff files have been saved
 	 */
 	public boolean didSaveFiles() {
 		return fFilesSaved;
 	}
-	
+
 	private boolean askSaveAllDirtyEditors(Shell shell, IEditorPart[] dirtyEditors) {
-		final boolean canSaveAutomatically= fSaveMode != SAVE_ALL_ALWAYS_ASK;
+		final boolean canSaveAutomatically = fSaveMode != SAVE_ALL_ALWAYS_ASK;
 		if (canSaveAutomatically && RefactoringSavePreferences.getSaveAllEditors()) //must save everything
 			return true;
-		ListDialog dialog= new ListDialog(shell) {
+		ListDialog dialog = new ListDialog(shell) {
 			{
 				setShellStyle(getShellStyle() | SWT.APPLICATION_MODAL);
 			}
+
 			@Override
 			protected Control createDialogArea(Composite parent) {
-				Composite result= (Composite) super.createDialogArea(parent);
+				Composite result = (Composite) super.createDialogArea(parent);
 				if (canSaveAutomatically) {
-					final Button check= new Button(result, SWT.CHECK);
+					final Button check = new Button(result, SWT.CHECK);
 					check.setText(Messages.RefactoringSaveHelper_always_save);
 					check.setSelection(RefactoringSavePreferences.getSaveAllEditors());
 					check.addSelectionListener(new SelectionAdapter() {
@@ -218,6 +219,7 @@ public class RefactoringSaveHelper {
 			public Image getImage(Object element) {
 				return ((IEditorPart) element).getTitleImage();
 			}
+
 			@Override
 			public String getText(Object element) {
 				return ((IEditorPart) element).getTitle();

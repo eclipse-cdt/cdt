@@ -160,50 +160,50 @@ import org.w3c.dom.ProcessingInstruction;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ManagedBuildManager extends AbstractCExtension {
-//	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.PLUGIN_ID, "managedBuildInfo");	//$NON-NLS-1$
-	private static final String ROOT_NODE_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
-	public  static final String SETTINGS_FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
+	//	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.PLUGIN_ID, "managedBuildInfo");	//$NON-NLS-1$
+	private static final String ROOT_NODE_NAME = "ManagedProjectBuildInfo"; //$NON-NLS-1$
+	public static final String SETTINGS_FILE_NAME = ".cdtbuild"; //$NON-NLS-1$
 	private static final ITarget[] emptyTargets = new ITarget[0];
-	public  static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.PLUGIN_ID + ".ManagedBuildManager";	//$NON-NLS-1$
-	public  static final String EXTENSION_POINT_ID = ManagedBuilderCorePlugin.PLUGIN_ID + ".buildDefinitions";		//$NON-NLS-1$
-	public  static final String EXTENSION_POINT_ID_V2 = ManagedBuilderCorePlugin.PLUGIN_ID + ".ManagedBuildInfo";	//$NON-NLS-1$
-	private static final String REVISION_ELEMENT_NAME = "managedBuildRevision";	//$NON-NLS-1$
-	private static final String VERSION_ELEMENT_NAME = "fileVersion";	//$NON-NLS-1$
-	private static final String MANIFEST_VERSION_ERROR ="ManagedBuildManager.error.manifest.version.error";	//$NON-NLS-1$
-	private static final String PROJECT_VERSION_ERROR ="ManagedBuildManager.error.project.version.error";	//$NON-NLS-1$
-	private static final String PROJECT_FILE_ERROR = "ManagedBuildManager.error.project.file.missing";	//$NON-NLS-1$
-	private static final String MANIFEST_ERROR_HEADER = "ManagedBuildManager.error.manifest.header";	//$NON-NLS-1$
-	public  static final String MANIFEST_ERROR_RESOLVING = "ManagedBuildManager.error.manifest.resolving";	//$NON-NLS-1$
-	public  static final String MANIFEST_ERROR_DUPLICATE = "ManagedBuildManager.error.manifest.duplicate";	//$NON-NLS-1$
-	public  static final String MANIFEST_ERROR_ICON = "ManagedBuildManager.error.manifest.icon";	//$NON-NLS-1$
-	private static final String MANIFEST_ERROR_OPTION_CATEGORY = "ManagedBuildManager.error.manifest.option.category";	//$NON-NLS-1$
-	private static final String MANIFEST_ERROR_OPTION_FILTER = "ManagedBuildManager.error.manifest.option.filter";	//$NON-NLS-1$
-	private static final String MANIFEST_ERROR_OPTION_VALUEHANDLER = "ManagedBuildManager.error.manifest.option.valuehandler";	//$NON-NLS-1$
-	private static final String MANIFEST_ERROR_READ_ONLY = "ManagedBuildManager.error.read_only";  //$NON-NLS-1$
-	private static final String MANIFEST_ERROR_WRITE_FAILED = "ManagedBuildManager.error.write_failed";  //$NON-NLS-1$
+	public static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.PLUGIN_ID + ".ManagedBuildManager"; //$NON-NLS-1$
+	public static final String EXTENSION_POINT_ID = ManagedBuilderCorePlugin.PLUGIN_ID + ".buildDefinitions"; //$NON-NLS-1$
+	public static final String EXTENSION_POINT_ID_V2 = ManagedBuilderCorePlugin.PLUGIN_ID + ".ManagedBuildInfo"; //$NON-NLS-1$
+	private static final String REVISION_ELEMENT_NAME = "managedBuildRevision"; //$NON-NLS-1$
+	private static final String VERSION_ELEMENT_NAME = "fileVersion"; //$NON-NLS-1$
+	private static final String MANIFEST_VERSION_ERROR = "ManagedBuildManager.error.manifest.version.error"; //$NON-NLS-1$
+	private static final String PROJECT_VERSION_ERROR = "ManagedBuildManager.error.project.version.error"; //$NON-NLS-1$
+	private static final String PROJECT_FILE_ERROR = "ManagedBuildManager.error.project.file.missing"; //$NON-NLS-1$
+	private static final String MANIFEST_ERROR_HEADER = "ManagedBuildManager.error.manifest.header"; //$NON-NLS-1$
+	public static final String MANIFEST_ERROR_RESOLVING = "ManagedBuildManager.error.manifest.resolving"; //$NON-NLS-1$
+	public static final String MANIFEST_ERROR_DUPLICATE = "ManagedBuildManager.error.manifest.duplicate"; //$NON-NLS-1$
+	public static final String MANIFEST_ERROR_ICON = "ManagedBuildManager.error.manifest.icon"; //$NON-NLS-1$
+	private static final String MANIFEST_ERROR_OPTION_CATEGORY = "ManagedBuildManager.error.manifest.option.category"; //$NON-NLS-1$
+	private static final String MANIFEST_ERROR_OPTION_FILTER = "ManagedBuildManager.error.manifest.option.filter"; //$NON-NLS-1$
+	private static final String MANIFEST_ERROR_OPTION_VALUEHANDLER = "ManagedBuildManager.error.manifest.option.valuehandler"; //$NON-NLS-1$
+	private static final String MANIFEST_ERROR_READ_ONLY = "ManagedBuildManager.error.read_only"; //$NON-NLS-1$
+	private static final String MANIFEST_ERROR_WRITE_FAILED = "ManagedBuildManager.error.write_failed"; //$NON-NLS-1$
 
 	// Error ID's for OptionValidError()
 	public static final int ERROR_CATEGORY = 0;
 	public static final int ERROR_FILTER = 1;
 
-	public static final String BUILD_TYPE_PROPERTY_ID = "org.eclipse.cdt.build.core.buildType";	//$NON-NLS-1$
-	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_ID = "org.eclipse.cdt.build.core.buildArtefactType";	//$NON-NLS-1$
+	public static final String BUILD_TYPE_PROPERTY_ID = "org.eclipse.cdt.build.core.buildType"; //$NON-NLS-1$
+	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_ID = "org.eclipse.cdt.build.core.buildArtefactType"; //$NON-NLS-1$
 
-	public static final String BUILD_TYPE_PROPERTY_DEBUG = "org.eclipse.cdt.build.core.buildType.debug";	//$NON-NLS-1$
-	public static final String BUILD_TYPE_PROPERTY_RELEASE = "org.eclipse.cdt.build.core.buildType.release";	//$NON-NLS-1$
-	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_EXE = "org.eclipse.cdt.build.core.buildArtefactType.exe";	//$NON-NLS-1$
-	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_STATICLIB = "org.eclipse.cdt.build.core.buildArtefactType.staticLib";	//$NON-NLS-1$
-	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_SHAREDLIB = "org.eclipse.cdt.build.core.buildArtefactType.sharedLib";	//$NON-NLS-1$
+	public static final String BUILD_TYPE_PROPERTY_DEBUG = "org.eclipse.cdt.build.core.buildType.debug"; //$NON-NLS-1$
+	public static final String BUILD_TYPE_PROPERTY_RELEASE = "org.eclipse.cdt.build.core.buildType.release"; //$NON-NLS-1$
+	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_EXE = "org.eclipse.cdt.build.core.buildArtefactType.exe"; //$NON-NLS-1$
+	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_STATICLIB = "org.eclipse.cdt.build.core.buildArtefactType.staticLib"; //$NON-NLS-1$
+	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_SHAREDLIB = "org.eclipse.cdt.build.core.buildArtefactType.sharedLib"; //$NON-NLS-1$
 
 	public static final String CFG_DATA_PROVIDER_ID = ManagedBuilderCorePlugin.PLUGIN_ID + ".configurationDataProvider"; //$NON-NLS-1$
 
-	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
+	private static final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
 
-	public static final String INTERNAL_BUILDER_ID = "org.eclipse.cdt.build.core.internal.builder";	//$NON-NLS-1$
+	public static final String INTERNAL_BUILDER_ID = "org.eclipse.cdt.build.core.internal.builder"; //$NON-NLS-1$
 
 	private static final String os = Platform.getOS();
 	private static final String arch = Platform.getOSArch();
-	private static final String ALL = "all";  //$NON-NLS-1$
+	private static final String ALL = "all"; //$NON-NLS-1$
 
 	// This is the version of the manifest and project files
 	private static final Version buildInfoVersion = new Version(4, 0, 0);
@@ -238,7 +238,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	// Targets defined in the manifest files (CDT V2.0 object model)
 	private static Map<String, ITarget> extensionTargetMap;
 
-
 	// "Selected configuraton" elements defined in the manifest files.
 	// These are configuration elements that map to objects in the internal
 	// representation of the manifest files.  For example, ListOptionValues
@@ -252,8 +251,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	// This map has a lifecycle corresponding to the build definitions extension loading.
 	private static Map<IBuildObject, IManagedConfigElement> configElementMap;
 
-//	private static List sortedToolChains;
-//	private static Map builtTypeToToolChainListMap;
+	//	private static List sortedToolChains;
+	//	private static Map builtTypeToToolChainListMap;
 	// Listeners interested in build model changes
 	private static Map<IResource, List<IScannerInfoChangeListener>> buildModelListeners;
 	// Random number for derived object model elements
@@ -267,19 +266,19 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	private static Map<IProject, IManagedBuildInfo> fInfoMap = new HashMap<IProject, IManagedBuildInfo>();
 
-	private static ISorter fToolChainSorter = new ISorter(){
+	private static ISorter fToolChainSorter = new ISorter() {
 		@Override
 		public void sort() {
 			resortToolChains();
 		}
 	};
-	private static ISorter fToolSorter = new ISorter(){
+	private static ISorter fToolSorter = new ISorter() {
 		@Override
 		public void sort() {
 			resortTools();
 		}
 	};
-	private static ISorter fBuilderSorter = new ISorter(){
+	private static ISorter fBuilderSorter = new ISorter() {
 		@Override
 		public void sort() {
 			resortBuilders();
@@ -290,19 +289,19 @@ public class ManagedBuildManager extends AbstractCExtension {
 		void sort();
 	}
 
-
 	static {
-		getEnvironmentVariableProvider().subscribe(
-				fEnvironmentBuildPathsChangeListener = new IEnvironmentBuildPathsChangeListener(){
+		getEnvironmentVariableProvider()
+				.subscribe(fEnvironmentBuildPathsChangeListener = new IEnvironmentBuildPathsChangeListener() {
 					@Override
-					public void buildPathsChanged(IConfiguration configuration, int buildPathType){
-//						if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE){
-//							initializePathEntries(configuration,null);
-//							notifyListeners(configuration,null);
-//						}
+					public void buildPathsChanged(IConfiguration configuration, int buildPathType) {
+						//						if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE){
+						//							initializePathEntries(configuration,null);
+						//							notifyListeners(configuration,null);
+						//						}
 					}
 				});
 	}
+
 	/**
 	 * @return the next random number as a positive integer.
 	 */
@@ -371,7 +370,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return getExtensionProjectTypeMap().get(id);
 	}
 
-	public static Version getVersion(){
+	public static Version getVersion() {
 		return version;
 	}
 
@@ -419,7 +418,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 
 		if (extensionToolChainMap == null) {
-			extensionToolChainMap =  new TreeMap<String, ToolChain>();
+			extensionToolChainMap = new TreeMap<String, ToolChain>();
 		}
 		return extensionToolChainMap;
 	}
@@ -582,7 +581,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @since 8.0
 	 */
 	public static IConfiguration getExtensionConfiguration(IConfiguration cfg) {
-		for(;cfg != null && !cfg.isExtensionElement(); cfg = cfg.getParent()) {
+		for (; cfg != null && !cfg.isExtensionElement(); cfg = cfg.getParent()) {
 			// empty loop to find base configuration
 		}
 		return cfg;
@@ -613,7 +612,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 			e.printStackTrace();
 		}
 
-		return getExtensionConfigurationMap().values().toArray(new Configuration[getExtensionConfigurationMap().size()]);
+		return getExtensionConfigurationMap().values()
+				.toArray(new Configuration[getExtensionConfigurationMap().size()]);
 	}
 
 	/**
@@ -673,12 +673,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	public static IBuilder getExtensionBuilder(IBuilder builder) {
-		for(;builder != null && !builder.isExtensionElement(); builder = builder.getSuperClass()) {
+		for (; builder != null && !builder.isExtensionElement(); builder = builder.getSuperClass()) {
 			// empty loop to find parent builder
 		}
 		return builder;
 	}
-
 
 	/**
 	 * @return the option from the manifest with the ID specified in the argument
@@ -798,9 +797,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	public static IManagedBuilderMakefileGenerator getBuildfileGenerator(IConfiguration config) {
 		IToolChain toolChain = config.getToolChain();
-		if(toolChain != null){
+		if (toolChain != null) {
 			IBuilder builder = toolChain.getBuilder();
-			if(builder != null)
+			if (builder != null)
 				return builder.getBuildFileGenerator();
 		}
 		// If no generator is defined, return the default GNU generator
@@ -819,17 +818,17 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return ManagedCommandLineGenerator.getCommandLineGenerator();
 	}
 
-    /**
-     * Targets may have a scanner config discovery profile defined that knows
-     * how to discover built-in compiler defines and includes search paths.
-     * Find the profile for the target specified.
-     *
-     * @return scanner configuration discovery profile id
-     */
-    public static String getScannerInfoProfileId(IConfiguration config) {
-        IToolChain toolChain = config.getToolChain();
-        return toolChain.getScannerConfigDiscoveryProfileId();
-    }
+	/**
+	 * Targets may have a scanner config discovery profile defined that knows
+	 * how to discover built-in compiler defines and includes search paths.
+	 * Find the profile for the target specified.
+	 *
+	 * @return scanner configuration discovery profile id
+	 */
+	public static String getScannerInfoProfileId(IConfiguration config) {
+		IToolChain toolChain = config.getToolChain();
+		return toolChain.getScannerConfigDiscoveryProfileId();
+	}
 
 	/**
 	 * Gets the currently selected target.  This is used while the project
@@ -889,26 +888,21 @@ public class ManagedBuildManager extends AbstractCExtension {
 			((IScannerInfoChangeListener)iter.next()).changeNotification(resource, (IScannerInfo)getBuildInfo(resource));
 		}
 	}
-*/
-	public static void initializePathEntries(IConfiguration config, IOption option){
-		try{
-			if(config.isTemporary() ||
-					(option != null
-					&& option.getValueType() != IOption.INCLUDE_PATH
+	*/
+	public static void initializePathEntries(IConfiguration config, IOption option) {
+		try {
+			if (config.isTemporary() || (option != null && option.getValueType() != IOption.INCLUDE_PATH
 					&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS
-					&& option.getValueType() != IOption.INCLUDE_FILES
-					&& option.getValueType() != IOption.LIBRARY_PATHS
-					&& option.getValueType() != IOption.LIBRARY_FILES
-					&& option.getValueType() != IOption.MACRO_FILES
+					&& option.getValueType() != IOption.INCLUDE_FILES && option.getValueType() != IOption.LIBRARY_PATHS
+					&& option.getValueType() != IOption.LIBRARY_FILES && option.getValueType() != IOption.MACRO_FILES
 					&& option.getValueType() != IOption.UNDEF_INCLUDE_PATH
 					&& option.getValueType() != IOption.UNDEF_PREPROCESSOR_SYMBOLS
 					&& option.getValueType() != IOption.UNDEF_INCLUDE_FILES
 					&& option.getValueType() != IOption.UNDEF_LIBRARY_PATHS
 					&& option.getValueType() != IOption.UNDEF_LIBRARY_FILES
-					&& option.getValueType() != IOption.UNDEF_MACRO_FILES
-					))
+					&& option.getValueType() != IOption.UNDEF_MACRO_FILES))
 				return;
-		} catch (BuildException e){
+		} catch (BuildException e) {
 			return;
 		}
 
@@ -919,33 +913,30 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	}
 
-	public static void initializePathEntries(IResourceConfiguration resConfig, IOption option){
+	public static void initializePathEntries(IResourceConfiguration resConfig, IOption option) {
 		IConfiguration cfg = resConfig.getParent();
-		if(cfg != null)
-			initializePathEntries(cfg,option);
+		if (cfg != null)
+			initializePathEntries(cfg, option);
 	}
 
 	private static void notifyListeners(IResourceInfo resConfig, IOption option) {
 		// Continue if change is something that effect the scanreser
 		try {
-			if (resConfig.getParent().isTemporary() ||
-					(option != null && option.getValueType() != IOption.INCLUDE_PATH
-				&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS
-				&& option.getValueType() != IOption.INCLUDE_FILES
-				&& option.getValueType() != IOption.LIBRARY_PATHS
-				&& option.getValueType() != IOption.LIBRARY_FILES
-				&& option.getValueType() != IOption.MACRO_FILES
-				&& option.getValueType() != IOption.UNDEF_INCLUDE_PATH
-				&& option.getValueType() != IOption.UNDEF_PREPROCESSOR_SYMBOLS
-				&& option.getValueType() != IOption.UNDEF_INCLUDE_FILES
-				&& option.getValueType() != IOption.UNDEF_LIBRARY_PATHS
-				&& option.getValueType() != IOption.UNDEF_LIBRARY_FILES
-				&& option.getValueType() != IOption.UNDEF_MACRO_FILES
-				&& !option.isForScannerDiscovery()
-					)) {
+			if (resConfig.getParent().isTemporary() || (option != null && option.getValueType() != IOption.INCLUDE_PATH
+					&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS
+					&& option.getValueType() != IOption.INCLUDE_FILES && option.getValueType() != IOption.LIBRARY_PATHS
+					&& option.getValueType() != IOption.LIBRARY_FILES && option.getValueType() != IOption.MACRO_FILES
+					&& option.getValueType() != IOption.UNDEF_INCLUDE_PATH
+					&& option.getValueType() != IOption.UNDEF_PREPROCESSOR_SYMBOLS
+					&& option.getValueType() != IOption.UNDEF_INCLUDE_FILES
+					&& option.getValueType() != IOption.UNDEF_LIBRARY_PATHS
+					&& option.getValueType() != IOption.UNDEF_LIBRARY_FILES
+					&& option.getValueType() != IOption.UNDEF_MACRO_FILES && !option.isForScannerDiscovery())) {
 				return;
 			}
-		} catch (BuildException e) {return;}
+		} catch (BuildException e) {
+			return;
+		}
 
 		// Figure out if there is a listener for this change
 		IResource resource = resConfig.getParent().getOwner();
@@ -955,7 +946,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 		ListIterator<IScannerInfoChangeListener> iter = listeners.listIterator();
 		while (iter.hasNext()) {
-			iter.next().changeNotification(resource, (IScannerInfo)getBuildInfo(resource));
+			iter.next().changeNotification(resource, (IScannerInfo) getBuildInfo(resource));
 		}
 	}
 
@@ -968,7 +959,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	public static void setNewProjectVersion(IProject newProject) {
 		// Get the build info for the argument
 		ManagedBuildInfo info = findBuildInfo(newProject, true);
-		if(info != null)
+		if (info != null)
 			info.setVersion(buildInfoVersion.toString());
 	}
 
@@ -991,19 +982,15 @@ public class ManagedBuildManager extends AbstractCExtension {
 		try {
 			// Request a value change and set dirty if real change results
 			retOpt = config.setOption(holder, option, value);
-			if (retOpt.getValueHandler().handleValue(
-					config,
-					holder,
-					retOpt,
-					retOpt.getValueHandlerExtraArgument(),
+			if (retOpt.getValueHandler().handleValue(config, holder, retOpt, retOpt.getValueHandlerExtraArgument(),
 					IManagedOptionValueHandler.EVENT_APPLY)) {
 				// TODO : Event is handled successfully and returned true.
 				// May need to do something here say log a message.
 			} else {
 				// Event handling Failed.
 			}
-//			initializePathEntries(config,retOpt);
-//			notifyListeners(config, retOpt);
+			//			initializePathEntries(config,retOpt);
+			//			notifyListeners(config, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -1029,24 +1016,21 @@ public class ManagedBuildManager extends AbstractCExtension {
 		try {
 			// Request a value change and set dirty if real change results
 			retOpt = resConfig.setOption(holder, option, value);
-			if (retOpt != null && retOpt.getValueHandler().handleValue(
-					resConfig,
-					holder,
-					retOpt,
-					retOpt.getValueHandlerExtraArgument(),
-					IManagedOptionValueHandler.EVENT_APPLY)) {
+			if (retOpt != null && retOpt.getValueHandler().handleValue(resConfig, holder, retOpt,
+					retOpt.getValueHandlerExtraArgument(), IManagedOptionValueHandler.EVENT_APPLY)) {
 				// TODO : Event is handled successfully and returned true.
 				// May need to do something here say log a message.
 			} else {
 				// Event handling Failed.
 			}
-	//		initializePathEntries(resConfig,retOpt);
+			//		initializePathEntries(resConfig,retOpt);
 			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
 		return retOpt;
 	}
+
 	/**
 	 * Set the string value for an option for a given config.
 	 *
@@ -1065,19 +1049,15 @@ public class ManagedBuildManager extends AbstractCExtension {
 		IOption retOpt;
 		try {
 			retOpt = config.setOption(holder, option, value);
-			if (retOpt.getValueHandler().handleValue(
-					config,
-					holder,
-					retOpt,
-					retOpt.getValueHandlerExtraArgument(),
+			if (retOpt.getValueHandler().handleValue(config, holder, retOpt, retOpt.getValueHandlerExtraArgument(),
 					IManagedOptionValueHandler.EVENT_APPLY)) {
 				// TODO : Event is handled successfully and returned true.
 				// May need to do something here say log a message.
 			} else {
 				// Event handling Failed.
 			}
-//			initializePathEntries(config,retOpt);
-//			notifyListeners(config, retOpt);
+			//			initializePathEntries(config,retOpt);
+			//			notifyListeners(config, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -1102,55 +1082,48 @@ public class ManagedBuildManager extends AbstractCExtension {
 		IOption retOpt;
 		try {
 			retOpt = resConfig.setOption(holder, option, value);
-			if (retOpt.getValueHandler().handleValue(
-					resConfig,
-					holder,
-					retOpt,
-					retOpt.getValueHandlerExtraArgument(),
+			if (retOpt.getValueHandler().handleValue(resConfig, holder, retOpt, retOpt.getValueHandlerExtraArgument(),
 					IManagedOptionValueHandler.EVENT_APPLY)) {
 				// TODO : Event is handled successfully and returned true.
 				// May need to do something here say log a message.
 			} else {
 				// Event handling Failed.
 			}
-	//		initializePathEntries(resConfig,retOpt);
+			//		initializePathEntries(resConfig,retOpt);
 			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
 		return retOpt;
 	}
-/**
-	 * Set the string array value for an option for a given config.
-	 *
-	 * @param config The configuration the option belongs to.
-	 * @param holder The holder/parent of the option.
-	 * @param option The option to set the value for.
-	 * @param value The values the option should contain after the change.
-	 *
-	 * @return The modified option.  This can be the same option or a newly created option.
-	 *
-	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
-	 *        has changed to <code>IHoldsOptions holder</code>. Client code
-	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
-	 */
+
+	/**
+		 * Set the string array value for an option for a given config.
+		 *
+		 * @param config The configuration the option belongs to.
+		 * @param holder The holder/parent of the option.
+		 * @param option The option to set the value for.
+		 * @param value The values the option should contain after the change.
+		 *
+		 * @return The modified option.  This can be the same option or a newly created option.
+		 *
+		 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
+		 *        has changed to <code>IHoldsOptions holder</code>. Client code
+		 *        assuming <code>ITool</code> as type, will continue to work unchanged.
+		 */
 	public static IOption setOption(IConfiguration config, IHoldsOptions holder, IOption option, String[] value) {
 		IOption retOpt;
 		try {
 			retOpt = config.setOption(holder, option, value);
-			if (retOpt.getValueHandler().handleValue(
-					config,
-					holder,
-					retOpt,
-					retOpt.getValueHandlerExtraArgument(),
+			if (retOpt.getValueHandler().handleValue(config, holder, retOpt, retOpt.getValueHandlerExtraArgument(),
 					IManagedOptionValueHandler.EVENT_APPLY)) {
 				// TODO : Event is handled successfully and returned true.
 				// May need to do something here say log a message.
 			} else {
 				// Event handling Failed.
 			}
-//			initializePathEntries(config,retOpt);
-//			notifyListeners(config, retOpt);
+			//			initializePathEntries(config,retOpt);
+			//			notifyListeners(config, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -1175,18 +1148,14 @@ public class ManagedBuildManager extends AbstractCExtension {
 		IOption retOpt;
 		try {
 			retOpt = resConfig.setOption(holder, option, value);
-			if (retOpt.getValueHandler().handleValue(
-					resConfig,
-					holder,
-					retOpt,
-					retOpt.getValueHandlerExtraArgument(),
+			if (retOpt.getValueHandler().handleValue(resConfig, holder, retOpt, retOpt.getValueHandlerExtraArgument(),
 					IManagedOptionValueHandler.EVENT_APPLY)) {
 				// TODO : Event is handled successfully and returned true.
 				// May need to do something here say log a message.
 			} else {
 				// Event handling Failed.
 			}
-//			initializePathEntries(resConfig,retOpt);
+			//			initializePathEntries(resConfig,retOpt);
 			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
@@ -1194,22 +1163,19 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return retOpt;
 	}
 
-	public static IOption setOption(IResourceInfo resConfig, IHoldsOptions holder, IOption option, OptionStringValue[] value) {
+	public static IOption setOption(IResourceInfo resConfig, IHoldsOptions holder, IOption option,
+			OptionStringValue[] value) {
 		IOption retOpt;
 		try {
 			retOpt = resConfig.setOption(holder, option, value);
-			if (retOpt.getValueHandler().handleValue(
-					resConfig,
-					holder,
-					retOpt,
-					retOpt.getValueHandlerExtraArgument(),
+			if (retOpt.getValueHandler().handleValue(resConfig, holder, retOpt, retOpt.getValueHandlerExtraArgument(),
 					IManagedOptionValueHandler.EVENT_APPLY)) {
 				// TODO : Event is handled successfully and returned true.
 				// May need to do something here say log a message.
 			} else {
 				// Event handling Failed.
 			}
-//			initializePathEntries(resConfig,retOpt);
+			//			initializePathEntries(resConfig,retOpt);
 			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
@@ -1221,7 +1187,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		// The tool may be a reference.
 		if (tool instanceof IToolReference) {
 			// If so, just set the command in the reference
-			((IToolReference)tool).setToolCommand(command);
+			((IToolReference) tool).setToolCommand(command);
 		} else {
 			config.setToolCommand(tool, command);
 		}
@@ -1231,7 +1197,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		// The tool may be a reference.
 		if (tool instanceof IToolReference) {
 			// If so, just set the command in the reference
-			((IToolReference)tool).setToolCommand(command);
+			((IToolReference) tool).setToolCommand(command);
 		} else {
 			resConfig.setToolCommand(tool, command);
 		}
@@ -1248,14 +1214,13 @@ public class ManagedBuildManager extends AbstractCExtension {
 			ManagedBuildInfo buildInfo = (ManagedBuildInfo) getBuildInfo(project);
 
 			// Save the build info
-			if (buildInfo != null &&
-					!buildInfo.isReadOnly() &&
-					buildInfo.isValid() &&
-					(force == true || buildInfo.isDirty())) {
+			if (buildInfo != null && !buildInfo.isReadOnly() && buildInfo.isValid()
+					&& (force == true || buildInfo.isDirty())) {
 				// For post-2.0 projects, there will be a version
 				String projectVersion = buildInfo.getVersion();
 				if (projectVersion != null) {
-					ProcessingInstruction instruction = doc.createProcessingInstruction(VERSION_ELEMENT_NAME, projectVersion);
+					ProcessingInstruction instruction = doc.createProcessingInstruction(VERSION_ELEMENT_NAME,
+							projectVersion);
 					doc.appendChild(instruction);
 				}
 				Element rootElement = doc.createElement(ROOT_NODE_NAME);
@@ -1265,16 +1230,16 @@ public class ManagedBuildManager extends AbstractCExtension {
 				// Transform the document to something we can save in a file
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				Transformer transformer = TransformerFactory.newInstance().newTransformer();
-				transformer.setOutputProperty(OutputKeys.METHOD, "xml");	//$NON-NLS-1$
+				transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
-				transformer.setOutputProperty(OutputKeys.INDENT, "yes");	//$NON-NLS-1$
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
 				DOMSource source = new DOMSource(doc);
 				StreamResult result = new StreamResult(stream);
 				transformer.transform(source, result);
 
 				// Save the document
 				IFile projectFile = project.getFile(SETTINGS_FILE_NAME);
-				String utfString = stream.toString("UTF-8");	//$NON-NLS-1$
+				String utfString = stream.toString("UTF-8"); //$NON-NLS-1$
 
 				if (projectFile.exists()) {
 					if (projectFile.isReadOnly()) {
@@ -1289,11 +1254,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 						if (window != null) {
 							shell = window.getShell();
 						}
-	                    // Inform Eclipse that we are intending to modify this file
+						// Inform Eclipse that we are intending to modify this file
 						// This will provide the user the opportunity, via UI prompts, to fetch the file from source code control
 						// reset a read-only file protection to write etc.
 						// If there is no shell, i.e. shell is null, then there will be no user UI interaction
-						IStatus status = projectFile.getWorkspace().validateEdit(new IFile[]{projectFile}, shell);
+						IStatus status = projectFile.getWorkspace().validateEdit(new IFile[] { projectFile }, shell);
 						// If the file is still read-only, then we should not attempt the write, since it will
 						// just fail - just throw an exception, to be caught below, and inform the user
 						// For other non-successful status, we take our chances, attempt the write, and pass
@@ -1301,13 +1266,16 @@ public class ManagedBuildManager extends AbstractCExtension {
 						if (!status.isOK()) {
 							if (status.getCode() == IResourceStatus.READ_ONLY_LOCAL) {
 								stream.close();
-								throw new IOException(ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_READ_ONLY, projectFile.getFullPath().toString()));
+								throw new IOException(ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_READ_ONLY,
+										projectFile.getFullPath().toString()));
 							}
 						}
 					}
-					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
+					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, //$NON-NLS-1$
+							new NullProgressMonitor());
 				} else {
-					projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
+					projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, //$NON-NLS-1$
+							new NullProgressMonitor());
 				}
 
 				// Close the streams
@@ -1326,10 +1294,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 		} catch (IOException e) {
 			// The save failed
 			err = e;
-    	} catch (CoreException e) {
-	    	// Save to IFile failed
-		    err = e;
-	    }
+		} catch (CoreException e) {
+			// Save to IFile failed
+			err = e;
+		}
 
 		if (err != null) {
 			// Put out an error message indicating that the attempted write to the .cdtbuild project file failed
@@ -1342,15 +1310,14 @@ public class ManagedBuildManager extends AbstractCExtension {
 			final Shell shell = window.getShell();
 			if (shell != null) {
 				final String exceptionMsg = err.getMessage();
-				shell.getDisplay().syncExec( new Runnable() {
+				shell.getDisplay().syncExec(new Runnable() {
 					@Override
 					public void run() {
 						MessageDialog.openError(shell,
-								ManagedMakeMessages.getResourceString("ManagedBuildManager.error.write_failed_title"),	//$NON-NLS-1$
-								ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_WRITE_FAILED,
-										exceptionMsg));
+								ManagedMakeMessages.getResourceString("ManagedBuildManager.error.write_failed_title"), //$NON-NLS-1$
+								ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_WRITE_FAILED, exceptionMsg));
 					}
-			    } );
+				});
 			}
 		}
 		// If we return an honest status when the operation fails, there are instances when the UI behavior
@@ -1369,9 +1336,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 			return updateBuildInfo(project, force);
 		} catch (CoreException e) {
 			Throwable cause = e.getStatus().getException();
-			if(cause instanceof IllegalArgumentException){
+			if (cause instanceof IllegalArgumentException) {
 				//can not acquire the root rule
-				Job j = new Job("save build info job"){ //$NON-NLS-1$
+				Job j = new Job("save build info job") { //$NON-NLS-1$
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
@@ -1400,17 +1367,17 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 */
 	private static boolean updateBuildInfo(IProject project, boolean force) throws CoreException {
 		IManagedBuildInfo info = getBuildInfo(project, false);
-		if(info == null)
+		if (info == null)
 			return true;
 
 		ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project);
 		projDes = BuildSettingsUtil.synchBuildInfo(info, projDes, force);
 
-//		try {
-			BuildSettingsUtil.checkApplyDescription(project, projDes);
-//		} catch (CoreException e) {
-//			return false;
-//		}
+		//		try {
+		BuildSettingsUtil.checkApplyDescription(project, projDes);
+		//		} catch (CoreException e) {
+		//			return false;
+		//		}
 		return true;
 		/*
 		// Create document
@@ -1464,7 +1431,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 						if (window != null) {
 							shell = window.getShell();
 						}
-	                    // Inform Eclipse that we are intending to modify this file
+		                // Inform Eclipse that we are intending to modify this file
 						// This will provide the user the opportunity, via UI prompts, to fetch the file from source code control
 						// reset a read-only file protection to write etc.
 						// If there is no shell, i.e. shell is null, then there will be no user UI interaction
@@ -1501,10 +1468,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 		} catch (IOException e) {
 			// The save failed
 			err = e;
-    	} catch (CoreException e) {
-	    	// Save to IFile failed
+		} catch (CoreException e) {
+			// Save to IFile failed
 		    err = e;
-	    }
+		}
 
 		if (err != null) {
 			// Put out an error message indicating that the attempted write to the .cdtbuild project file failed
@@ -1543,38 +1510,40 @@ public class ManagedBuildManager extends AbstractCExtension {
 		updateBuildInfo(project, true);
 	}
 
-	public static void updateCoreSettings(IConfiguration cfg) throws CoreException{
+	public static void updateCoreSettings(IConfiguration cfg) throws CoreException {
 		IProject project = cfg.getOwner().getProject();
 		ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project);
-		if(projDes != null){
-			if(BuildSettingsUtil.applyConfiguration(cfg, projDes, true)){
+		if (projDes != null) {
+			if (BuildSettingsUtil.applyConfiguration(cfg, projDes, true)) {
 				BuildSettingsUtil.checkApplyDescription(project, projDes);
 			}
 		}
 	}
-	public static void updateCoreSettings(IProject project, IConfiguration[] cfgs) throws CoreException{
+
+	public static void updateCoreSettings(IProject project, IConfiguration[] cfgs) throws CoreException {
 		updateCoreSettings(project, cfgs, false);
 	}
 
-	public static void updateCoreSettings(IProject project, IConfiguration[] cfgs, boolean avoidSerialization) throws CoreException{
-		if(cfgs == null){
+	public static void updateCoreSettings(IProject project, IConfiguration[] cfgs, boolean avoidSerialization)
+			throws CoreException {
+		if (cfgs == null) {
 			IManagedBuildInfo info = getBuildInfo(project);
-			if(info != null && info.isValid() && info.getManagedProject() != null)
+			if (info != null && info.isValid() && info.getManagedProject() != null)
 				cfgs = info.getManagedProject().getConfigurations();
 		}
 
-		if(cfgs == null || cfgs.length == 0)
+		if (cfgs == null || cfgs.length == 0)
 			return;
 
 		ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project);
 		boolean updated = false;
-		if(projDes != null){
+		if (projDes != null) {
 			for (IConfiguration cfg : cfgs) {
-				if(BuildSettingsUtil.applyConfiguration(cfg, projDes, true)){
+				if (BuildSettingsUtil.applyConfiguration(cfg, projDes, true)) {
 					updated = true;
 				}
 			}
-			if(updated){
+			if (updated) {
 				BuildSettingsUtil.checkApplyDescription(project, projDes, avoidSerialization);
 			}
 		}
@@ -1607,16 +1576,14 @@ public class ManagedBuildManager extends AbstractCExtension {
 	public static void resetConfiguration(IProject project, IConfiguration configuration) {
 		// reset the configuration
 		if (configuration instanceof MultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[])((MultiConfiguration)configuration).getItems();
+			IConfiguration[] cfs = (IConfiguration[]) ((MultiConfiguration) configuration).getItems();
 			for (IConfiguration c : cfs) {
-				((Configuration)c).reset();
-				performValueHandlerEvent(c,
-						IManagedOptionValueHandler.EVENT_SETDEFAULT, false);
+				((Configuration) c).reset();
+				performValueHandlerEvent(c, IManagedOptionValueHandler.EVENT_SETDEFAULT, false);
 			}
 		} else {
-			((Configuration)configuration).reset();
-			performValueHandlerEvent(configuration,
-					IManagedOptionValueHandler.EVENT_SETDEFAULT, false);
+			((Configuration) configuration).reset();
+			performValueHandlerEvent(configuration, IManagedOptionValueHandler.EVENT_SETDEFAULT, false);
 		}
 	}
 
@@ -1624,41 +1591,41 @@ public class ManagedBuildManager extends AbstractCExtension {
 		// reset the configuration
 		((ResourceConfiguration) resConfig).reset();
 
-		performValueHandlerEvent(resConfig,
-				IManagedOptionValueHandler.EVENT_SETDEFAULT);
+		performValueHandlerEvent(resConfig, IManagedOptionValueHandler.EVENT_SETDEFAULT);
 
 	}
 
-	public static void resetOptionSettings(IResourceInfo rcInfo){
-		if(rcInfo instanceof IFileInfo){
+	public static void resetOptionSettings(IResourceInfo rcInfo) {
+		if (rcInfo instanceof IFileInfo) {
 			IConfiguration c = rcInfo.getParent();
 			Configuration cfg = null;
 			IProject project = null;
 			if (c instanceof Configuration)
-				cfg = (Configuration)c;
+				cfg = (Configuration) c;
 			else if (c instanceof MultiConfiguration) {
-				MultiConfiguration mc = (MultiConfiguration)c;
-				IConfiguration[] cfs = (IConfiguration[])mc.getItems();
-				cfg = (Configuration)cfs[0];
+				MultiConfiguration mc = (MultiConfiguration) c;
+				IConfiguration[] cfs = (IConfiguration[]) mc.getItems();
+				cfg = (Configuration) cfs[0];
 			}
-			if(!(cfg==null || cfg.isExtensionElement() || cfg.isPreference()))
+			if (!(cfg == null || cfg.isExtensionElement() || cfg.isPreference()))
 				project = cfg.getOwner().getProject();
 
 			if (rcInfo instanceof MultiResourceInfo) {
-				for (IResourceInfo ri : (IResourceInfo[])((MultiResourceInfo)rcInfo).getItems())
-					resetResourceConfiguration(project, (IFileInfo)ri);
+				for (IResourceInfo ri : (IResourceInfo[]) ((MultiResourceInfo) rcInfo).getItems())
+					resetResourceConfiguration(project, (IFileInfo) ri);
 			} else
-				resetResourceConfiguration(project, (IFileInfo)rcInfo);
+				resetResourceConfiguration(project, (IFileInfo) rcInfo);
 		} else {
 			if (rcInfo instanceof MultiFolderInfo) {
-				for (IFolderInfo fi : (IFolderInfo[])((MultiFolderInfo)rcInfo).getItems())
-					((FolderInfo)fi).resetOptionSettings();
+				for (IFolderInfo fi : (IFolderInfo[]) ((MultiFolderInfo) rcInfo).getItems())
+					((FolderInfo) fi).resetOptionSettings();
 			} else {
-				FolderInfo fo = (FolderInfo)rcInfo;
+				FolderInfo fo = (FolderInfo) rcInfo;
 				fo.resetOptionSettings();
 			}
 		}
 	}
+
 	/**
 	 * Adds a ProjectType that is is specified in the manifest to the
 	 * build system. It is available to any element that
@@ -1673,8 +1640,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		IProjectType previous = getExtensionProjectTypeMap().put(projectType.getId(), projectType);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.outputDuplicateIdError(
-					"ProjectType",	//$NON-NLS-1$
+			ManagedBuildManager.outputDuplicateIdError("ProjectType", //$NON-NLS-1$
 					projectType.getId());
 		}
 	}
@@ -1688,8 +1654,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		IConfiguration previous = getExtensionConfigurationMap().put(configuration.getId(), configuration);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.outputDuplicateIdError(
-					"Configuration",	//$NON-NLS-1$
+			ManagedBuildManager.outputDuplicateIdError("Configuration", //$NON-NLS-1$
 					configuration.getId());
 		}
 	}
@@ -1700,11 +1665,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * has a reference to it as part of its description.
 	 */
 	public static void addExtensionResourceConfiguration(ResourceConfiguration resourceConfiguration) {
-		IResourceConfiguration previous = getExtensionResourceConfigurationMap().put(resourceConfiguration.getId(), resourceConfiguration);
+		IResourceConfiguration previous = getExtensionResourceConfigurationMap().put(resourceConfiguration.getId(),
+				resourceConfiguration);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.outputDuplicateIdError(
-					"ResourceConfiguration",	//$NON-NLS-1$
+			ManagedBuildManager.outputDuplicateIdError("ResourceConfiguration", //$NON-NLS-1$
 					resourceConfiguration.getId());
 		}
 	}
@@ -1718,8 +1683,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		IToolChain previous = getExtensionToolChainMapInternal().put(toolChain.getId(), toolChain);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.outputDuplicateIdError(
-					"ToolChain",	//$NON-NLS-1$
+			ManagedBuildManager.outputDuplicateIdError("ToolChain", //$NON-NLS-1$
 					toolChain.getId());
 		}
 	}
@@ -1735,8 +1699,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		ITool previous = getExtensionToolMapInternal().put(tool.getId(), tool);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.outputDuplicateIdError(
-					"Tool",	//$NON-NLS-1$
+			ManagedBuildManager.outputDuplicateIdError("Tool", //$NON-NLS-1$
 					tool.getId());
 		}
 	}
@@ -1750,8 +1713,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		ITargetPlatform previous = getExtensionTargetPlatformMap().put(targetPlatform.getId(), targetPlatform);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.outputDuplicateIdError(
-					"TargetPlatform",	//$NON-NLS-1$
+			ManagedBuildManager.outputDuplicateIdError("TargetPlatform", //$NON-NLS-1$
 					targetPlatform.getId());
 		}
 	}
@@ -1765,8 +1727,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		IBuilder previous = getExtensionBuilderMapInternal().put(builder.getId(), builder);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.outputDuplicateIdError(
-					"Builder",	//$NON-NLS-1$
+			ManagedBuildManager.outputDuplicateIdError("Builder", //$NON-NLS-1$
 					builder.getId());
 		}
 	}
@@ -1780,8 +1741,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		IOption previous = getExtensionOptionMap().put(option.getId(), option);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.outputDuplicateIdError(
-					"Option",	//$NON-NLS-1$
+			ManagedBuildManager.outputDuplicateIdError("Option", //$NON-NLS-1$
 					option.getId());
 		}
 	}
@@ -1795,8 +1755,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		IOptionCategory previous = getExtensionOptionCategoryMap().put(optionCategory.getId(), optionCategory);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.outputDuplicateIdError(
-					"OptionCategory",	//$NON-NLS-1$
+			ManagedBuildManager.outputDuplicateIdError("OptionCategory", //$NON-NLS-1$
 					optionCategory.getId());
 		}
 	}
@@ -1810,8 +1769,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		IInputType previous = getExtensionInputTypeMap().put(inputType.getId(), inputType);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.outputDuplicateIdError(
-					"InputType",	//$NON-NLS-1$
+			ManagedBuildManager.outputDuplicateIdError("InputType", //$NON-NLS-1$
 					inputType.getId());
 		}
 	}
@@ -1825,8 +1783,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		IOutputType previous = getExtensionOutputTypeMap().put(outputType.getId(), outputType);
 		if (previous != null) {
 			// Report error
-			ManagedBuildManager.outputDuplicateIdError(
-					"OutputType",	//$NON-NLS-1$
+			ManagedBuildManager.outputDuplicateIdError("OutputType", //$NON-NLS-1$
 					outputType.getId());
 		}
 	}
@@ -1846,9 +1803,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param parent - parent project type
 	 * @return new <code>ITarget</code> with settings based on the parent passed in the arguments
 	 */
-	public static IManagedProject createManagedProject(IResource resource, IProjectType parent)
-		throws BuildException
-	{
+	public static IManagedProject createManagedProject(IResource resource, IProjectType parent) throws BuildException {
 		return new ManagedProject(resource, parent);
 	}
 
@@ -1857,9 +1812,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 *
 	 * @return new <code>ITarget</code> with settings based on the parent passed in the arguments
 	 */
-	public static ITarget createTarget(IResource resource, ITarget parentTarget)
-		throws BuildException
-	{
+	public static ITarget createTarget(IResource resource, ITarget parentTarget) throws BuildException {
 		IResource owner = parentTarget.getOwner();
 
 		if (owner != null && owner.equals(resource))
@@ -1869,13 +1822,15 @@ public class ManagedBuildManager extends AbstractCExtension {
 		if (resource instanceof IProject) {
 			// Must be an extension target
 			if (owner != null)
-				throw new BuildException(ManagedMakeMessages.getResourceString("ManagedBuildManager.error.owner_not_null")); //$NON-NLS-1$
+				throw new BuildException(
+						ManagedMakeMessages.getResourceString("ManagedBuildManager.error.owner_not_null")); //$NON-NLS-1$
 		} else {
 			// Owner must be owned by the project containing this resource
 			if (owner == null)
 				throw new BuildException(ManagedMakeMessages.getResourceString("ManagedBuildManager.error.null_owner")); //$NON-NLS-1$
 			if (!owner.equals(resource.getProject()))
-				throw new BuildException(ManagedMakeMessages.getResourceString("ManagedBuildManager.error.owner_not_project")); //$NON-NLS-1$
+				throw new BuildException(
+						ManagedMakeMessages.getResourceString("ManagedBuildManager.error.owner_not_project")); //$NON-NLS-1$
 		}
 
 		// Passed validation so create the target.
@@ -1906,41 +1861,41 @@ public class ManagedBuildManager extends AbstractCExtension {
 			*/
 	}
 
-//	/**
-//	 * Private helper method to initialize the path entry container once and
-//	 * only once when the build info is first loaded or created.
-//	 *
-//	 * @param info
-//	 * @throws CoreException
-//	 */
-//	private static void initBuildInfoContainer(ManagedBuildInfo info) throws CoreException {
-//		if (info == null) {
-//			throw new CoreException(new Status(IStatus.ERROR,
-//					ManagedBuilderCorePlugin.PLUGIN_ID,
-//					IStatus.ERROR,
-//					"", //$NON-NLS-1$
-//					null));
-//		}
-//
-//		if (info.isContainerInited()) return;
-//		// Now associate the path entry container with the project
-//		ICProject cProject = info.getCProject();
-//
-//		synchronized (cProject) {
-//
-//			// This does not block the workspace or trigger delta events
-//		IPathEntry[] entries = cProject.getRawPathEntries();
-//		// Make sure the container for this project is in the path entries
-//		List newEntries = new ArrayList(Arrays.asList(entries));
-//		if (!newEntries.contains(ManagedBuildInfo.containerEntry)) {
-//			// In this case we should trigger an init and deltas
-//			newEntries.add(ManagedBuildInfo.containerEntry);
-//			cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), new NullProgressMonitor());
-//		}
-//		info.setContainerInited(true);
-//
-//		}  //  end synchronized
-//	}
+	//	/**
+	//	 * Private helper method to initialize the path entry container once and
+	//	 * only once when the build info is first loaded or created.
+	//	 *
+	//	 * @param info
+	//	 * @throws CoreException
+	//	 */
+	//	private static void initBuildInfoContainer(ManagedBuildInfo info) throws CoreException {
+	//		if (info == null) {
+	//			throw new CoreException(new Status(IStatus.ERROR,
+	//					ManagedBuilderCorePlugin.PLUGIN_ID,
+	//					IStatus.ERROR,
+	//					"", //$NON-NLS-1$
+	//					null));
+	//		}
+	//
+	//		if (info.isContainerInited()) return;
+	//		// Now associate the path entry container with the project
+	//		ICProject cProject = info.getCProject();
+	//
+	//		synchronized (cProject) {
+	//
+	//			// This does not block the workspace or trigger delta events
+	//		IPathEntry[] entries = cProject.getRawPathEntries();
+	//		// Make sure the container for this project is in the path entries
+	//		List newEntries = new ArrayList(Arrays.asList(entries));
+	//		if (!newEntries.contains(ManagedBuildInfo.containerEntry)) {
+	//			// In this case we should trigger an init and deltas
+	//			newEntries.add(ManagedBuildInfo.containerEntry);
+	//			cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), new NullProgressMonitor());
+	//		}
+	//		info.setContainerInited(true);
+	//
+	//		}  //  end synchronized
+	//	}
 
 	private static boolean isVersionCompatible(IExtension extension) {
 		// We can ignore the qualifier
@@ -1961,7 +1916,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			// This is a 1.2 manifest and we are compatible for now
 			return true;
 		}
-		return(buildInfoVersion.compareTo(version)>=0);
+		return (buildInfoVersion.compareTo(version) >= 0);
 	}
 
 	/**
@@ -1970,9 +1925,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 */
 	private static boolean canLoadBuildInfo(final IProject project) {
 		IFile file = project.getFile(SETTINGS_FILE_NAME);
-	    if (file == null) return false;
+		if (file == null)
+			return false;
 		File cdtbuild = file.getLocation().toFile();
-		if (cdtbuild == null) return false;
+		if (cdtbuild == null)
+			return false;
 		return cdtbuild.exists();
 	}
 
@@ -2007,7 +1964,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				fileVersion = rootElement.getNodeValue();
 				Version version = new Version(fileVersion);
 				//if buildInfoVersion is greater than fileVersion
-				if (buildInfoVersion.compareTo(version)>0) {
+				if (buildInfoVersion.compareTo(version) > 0) {
 					// This is >= 2.0 project, but earlier than the current MBS version - it may need to be updated
 				} else {
 					// This is a
@@ -2015,23 +1972,24 @@ public class ManagedBuildManager extends AbstractCExtension {
 					//   o  The major versions are not equal
 					//   o  The major versions are equal, but the remainder of the .cdtbuild version # is
 					//      greater than the MBS version #
-					boolean compatible=false;
+					boolean compatible = false;
 					if (version == null)
-						compatible=false;
+						compatible = false;
 					if (buildInfoVersion.getMajor() != version.getMajor())
-						compatible=false;
+						compatible = false;
 					if (buildInfoVersion.getMinor() > version.getMinor())
-						compatible=true;
+						compatible = true;
 					if (buildInfoVersion.getMinor() < version.getMinor())
-						compatible=false;
+						compatible = false;
 					if (buildInfoVersion.getMicro() > version.getMicro())
-						compatible=true;
+						compatible = true;
 					if (buildInfoVersion.getMicro() < version.getMicro())
-						compatible=false;
+						compatible = false;
 					if (buildInfoVersion.getQualifier().compareTo(version.getQualifier()) >= 0)
-						compatible=true;
+						compatible = true;
 					if (!compatible) {
-						throw new BuildException(ManagedMakeMessages.getFormattedString(PROJECT_VERSION_ERROR, project.getName()));
+						throw new BuildException(
+								ManagedMakeMessages.getFormattedString(PROJECT_VERSION_ERROR, project.getName()));
 					}
 				}
 			}
@@ -2042,20 +2000,21 @@ public class ManagedBuildManager extends AbstractCExtension {
 				Node node = nodes.item(0);
 
 				//  Create the internal representation of the project's MBS information
-				buildInfo = new ManagedBuildInfo(project, XmlStorageUtil.createCStorageTree((Element)node), true, fileVersion);
+				buildInfo = new ManagedBuildInfo(project, XmlStorageUtil.createCStorageTree((Element) node), true,
+						fileVersion);
 				if (fileVersion != null) {
-	//				buildInfo.setVersion(fileVersion);
+					//				buildInfo.setVersion(fileVersion);
 					Version version = new Version(fileVersion);
-					Version version21 = new Version("2.1");		//$NON-NLS-1$
+					Version version21 = new Version("2.1"); //$NON-NLS-1$
 					//  CDT 2.1 is the first version using the new MBS model
-					if (version.compareTo(version21)>=0) {
+					if (version.compareTo(version21) >= 0) {
 						//  Check to see if all elements could be loaded correctly - for example,
 						//  if references in the project file could not be resolved to extension
 						//  elements
-						if (buildInfo.getManagedProject() == null ||
-							(!buildInfo.getManagedProject().isValid())) {
+						if (buildInfo.getManagedProject() == null || (!buildInfo.getManagedProject().isValid())) {
 							//  The load failed
-							throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
+							throw new Exception(ManagedMakeMessages
+									.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
 						}
 
 						// Each ToolChain/Tool/Builder element maintain two separate
@@ -2063,12 +2022,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 						// 0ne for previous Mbs versions and one for current Mbs version
 						// walk through the project hierarchy and call the converters
 						// written for previous mbs versions
-						if ( checkForMigrationSupport(buildInfo, false) != true ) {
+						if (checkForMigrationSupport(buildInfo, false) != true) {
 							// display an error message that the project is not loadable
-							if (buildInfo.getManagedProject() == null ||
-									(!buildInfo.getManagedProject().isValid())) {
-									//  The load failed
-									throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
+							if (buildInfo.getManagedProject() == null || (!buildInfo.getManagedProject().isValid())) {
+								//  The load failed
+								throw new Exception(ManagedMakeMessages
+										.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
 							}
 						}
 					}
@@ -2079,21 +2038,21 @@ public class ManagedBuildManager extends AbstractCExtension {
 					UpdateManagedProjectManager.updateProject(project, buildInfo);
 				}
 				//  Check to see if the upgrade (if required) succeeded
-				if (buildInfo.getManagedProject() == null ||
-					(!buildInfo.getManagedProject().isValid())) {
+				if (buildInfo.getManagedProject() == null || (!buildInfo.getManagedProject().isValid())) {
 					//  The load failed
-					throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
+					throw new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", //$NON-NLS-1$
+							project.getName()));
 				}
 
 				//  Walk through the project hierarchy and call the converters
 				//  written for current mbs version
-				if ( checkForMigrationSupport(buildInfo, true) != true ) {
+				if (checkForMigrationSupport(buildInfo, true) != true) {
 					// display an error message.that the project is no loadable
-					if (buildInfo.getManagedProject() == null ||
-							(!buildInfo.getManagedProject().isValid())) {
-							//  The load failed
-							throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
-						}
+					if (buildInfo.getManagedProject() == null || (!buildInfo.getManagedProject().isValid())) {
+						//  The load failed
+						throw new Exception(ManagedMakeMessages
+								.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
+					}
 				}
 
 				IConfiguration[] configs = buildInfo.getManagedProject().getConfigurations();
@@ -2132,239 +2091,151 @@ public class ManagedBuildManager extends AbstractCExtension {
 	private synchronized static void loadExtensionsSynchronized() throws BuildException {
 		// Do this once
 		if (projectTypesLoaded)
-				return;
+			return;
 
 		// This routine gets called recursively.  If so, just return
 		if (projectTypesLoading)
 			return;
 		projectTypesLoading = true;
 
-
 		// scalability issue:  configElementMap does not need to live past when loading is done, so we will
 		// deallocate it upon exit with a try...finally
 
 		try {
 
-		//The list of the IManagedBuildDefinitionsStartup callbacks
-		List<IManagedBuildDefinitionsStartup> buildDefStartupList = null;
-		// Get the extensions that use the current CDT managed build model
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
-		if( extensionPoint != null) {
-			IExtension[] extensions = extensionPoint.getExtensions();
-			if (extensions != null) {
+			//The list of the IManagedBuildDefinitionsStartup callbacks
+			List<IManagedBuildDefinitionsStartup> buildDefStartupList = null;
+			// Get the extensions that use the current CDT managed build model
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
+			if (extensionPoint != null) {
+				IExtension[] extensions = extensionPoint.getExtensions();
+				if (extensions != null) {
 
-				// First call the constructors of the internal classes that correspond to the
-				// build model elements
-				for (IExtension extension : extensions) {
-					// Can we read this manifest
-					if (!isVersionCompatible(extension)) {
-						//  The version of the Plug-in is greater than what the manager thinks it understands
-						//  Display error message
-						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-						if(window == null){
-							IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
-							window = windows[0];
-						}
-
-						final Shell shell = window.getShell();
-						final String errMsg = ManagedMakeMessages.getFormattedString(MANIFEST_VERSION_ERROR, extension.getUniqueIdentifier());
-						shell.getDisplay().asyncExec( new Runnable() {
-							@Override
-							public void run() {
-								MessageDialog.openError(shell,
-										ManagedMakeMessages.getResourceString("ManagedBuildManager.error.manifest_load_failed_title"),	//$NON-NLS-1$
-										errMsg);
-							}
-						} );
-					} else {
-						// Get the "configuraton elements" defined in the plugin.xml file.
-						// Note that these "configuration elements" are not related to the
-						// managed build system "configurations".
-						// From the PDE Guide:
-						//  A configuration element, with its attributes and children, directly
-						//  reflects the content and structure of the extension section within the
-						//  declaring plug-in's manifest (plugin.xml) file.
-						IConfigurationElement[] elements = extension.getConfigurationElements();
-						String revision = null;
-
-						// Get the managedBuildRevsion of the extension.
-						for (IConfigurationElement element : elements) {
-							if( element.getName().equals(REVISION_ELEMENT_NAME) ) {
-								revision = element.getAttribute(VERSION_ELEMENT_NAME);
-								break;
-							}
-						}
-
-						// Get the value of 'ManagedBuildRevision' attribute
-						loadConfigElements(DefaultManagedConfigElement.convertArray(elements, extension), revision);
-					}
-				}
-
-				// Call the start up config extensions. These may rely on the standard elements
-				// having already been loaded so we wait to call them from here.
-				if (startUpConfigElements != null) {
-					buildDefStartupList = new ArrayList<IManagedBuildDefinitionsStartup>(startUpConfigElements.size());
-
-					for (IManagedConfigElement startUpConfigElement : startUpConfigElements) {
-						IManagedBuildDefinitionsStartup customConfigLoader;
-						try {
-							customConfigLoader = createStartUpConfigLoader((DefaultManagedConfigElement)startUpConfigElement);
-
-							//need to save the startup for the future notifications
-							buildDefStartupList.add(customConfigLoader);
-
-							// Now we can perform any actions on the build configurations
-							// in an extended plugin before the build configurations have been resolved
-							customConfigLoader.buildDefsLoaded();
-						} catch (CoreException e) {
-						}
-					}
-				}
-
-				// Then call resolve.
-				//
-				// Here are notes on "references" within the managed build system.
-				// References are "pointers" from one model element to another.
-				// These are encoded in manifest and managed build system project files (.cdtbuild)
-				// using unique string IDs (e.g. "cdt.managedbuild.tool.gnu.c.linker").
-				// These string IDs are "resolved" to pointers to interfaces in model
-				// elements in the in-memory represent of the managed build system information.
-				//
-				// Here are the current "rules" for references:
-				//  1.  A reference is always resolved to an interface pointer in the
-				//      referenced object.
-				//  2.  A reference is always TO an extension object - that is, an object
-				//      loaded from a manifest file or a dynamic element provider.  It cannot
-				//      be to an object loaded from a managed build system project file (.cdtbuild).
-				//
-
-				Collection<IProjectType> prjTypes = getExtensionProjectTypeMap().values();
-				for (IProjectType projectType : prjTypes) {
-					try {
-						((ProjectType) projectType).resolveReferences();
-					} catch (Exception ex) {
-						// TODO: log
-						ex.printStackTrace();
-					}
-				}
-				Collection<IConfiguration> configurations = getExtensionConfigurationMap().values();
-				for (IConfiguration configuration : configurations) {
-					try {
-						((Configuration) configuration).resolveReferences();
-					} catch (Exception ex) {
-						// TODO: log
-						ex.printStackTrace();
-					}
-				}
-				Collection<IResourceConfiguration> resConfigs = getExtensionResourceConfigurationMap().values();
-				for (IResourceConfiguration resConfig : resConfigs) {
-					try {
-						((ResourceConfiguration) resConfig).resolveReferences();
-					} catch (Exception ex) {
-						// TODO: log
-						ex.printStackTrace();
-					}
-				}
-				Collection<ToolChain> toolChains = getExtensionToolChainMapInternal().values();
-				for (ToolChain toolChain : toolChains) {
-					try {
-						toolChain.resolveReferences();
-					} catch (Exception ex) {
-						// TODO: log
-						ex.printStackTrace();
-					}
-				}
-				Collection<Tool> tools = getExtensionToolMapInternal().values();
-				for (Tool tool : tools) {
-					try {
-						tool.resolveReferences();
-					} catch (Exception ex) {
-						// TODO: log
-						ex.printStackTrace();
-					}
-				}
-				Collection<ITargetPlatform> targetPlatforms = getExtensionTargetPlatformMap().values();
-				for (ITargetPlatform targetPlatform : targetPlatforms) {
-					try {
-						((TargetPlatform) targetPlatform).resolveReferences();
-					} catch (Exception ex) {
-						// TODO: log
-						ex.printStackTrace();
-					}
-				}
-				Collection<Builder> builders = getExtensionBuilderMapInternal().values();
-				for (Builder builder : builders) {
-					try {
-						builder.resolveReferences();
-					} catch (Exception ex) {
-						// TODO: log
-						ex.printStackTrace();
-					}
-				}
-				Collection<IOption> options = getExtensionOptionMap().values();
-				for (IOption option : options) {
-					try {
-						((Option) option).resolveReferences();
-					} catch (Exception ex) {
-						// TODO: log
-						ex.printStackTrace();
-					}
-				}
-				Collection<IOptionCategory> optionCategories = getExtensionOptionCategoryMap().values();
-				for (IOptionCategory optionCat : optionCategories) {
-					try {
-						((OptionCategory) optionCat).resolveReferences();
-					} catch (Exception ex) {
-						// TODO: log
-						ex.printStackTrace();
-					}
-				}
-			}
-		}
-
-		// Get the extensions that use the CDT 2.0 build model
-		extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID_V2);
-		if( extensionPoint != null) {
-			IExtension[] extensions = extensionPoint.getExtensions();
-			String revision = null;
-
-			if (extensions != null) {
-				if (extensions.length > 0) {
-
-					// Call the constructors of the internal classes that correspond to the
-					// V2.0 build model elements.  Some of these objects are converted to new model objects.
-					// Others can use the same classes.
+					// First call the constructors of the internal classes that correspond to the
+					// build model elements
 					for (IExtension extension : extensions) {
 						// Can we read this manifest
 						if (!isVersionCompatible(extension)) {
-							//The version of the Plug-in is greater than what the manager thinks it understands
-							throw new BuildException(ManagedMakeMessages.getResourceString(MANIFEST_VERSION_ERROR));
-						}
-						IConfigurationElement[] elements = extension.getConfigurationElements();
+							//  The version of the Plug-in is greater than what the manager thinks it understands
+							//  Display error message
+							IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+							if (window == null) {
+								IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+								window = windows[0];
+							}
 
-						// Get the managedBuildRevsion of the extension.
-						for (IConfigurationElement element : elements) {
-							if(element.getName().equals(REVISION_ELEMENT_NAME)) {
-								revision = element.getAttribute(VERSION_ELEMENT_NAME);
-								break;
+							final Shell shell = window.getShell();
+							final String errMsg = ManagedMakeMessages.getFormattedString(MANIFEST_VERSION_ERROR,
+									extension.getUniqueIdentifier());
+							shell.getDisplay().asyncExec(new Runnable() {
+								@Override
+								public void run() {
+									MessageDialog.openError(shell,
+											ManagedMakeMessages.getResourceString(
+													"ManagedBuildManager.error.manifest_load_failed_title"), //$NON-NLS-1$
+											errMsg);
+								}
+							});
+						} else {
+							// Get the "configuraton elements" defined in the plugin.xml file.
+							// Note that these "configuration elements" are not related to the
+							// managed build system "configurations".
+							// From the PDE Guide:
+							//  A configuration element, with its attributes and children, directly
+							//  reflects the content and structure of the extension section within the
+							//  declaring plug-in's manifest (plugin.xml) file.
+							IConfigurationElement[] elements = extension.getConfigurationElements();
+							String revision = null;
+
+							// Get the managedBuildRevsion of the extension.
+							for (IConfigurationElement element : elements) {
+								if (element.getName().equals(REVISION_ELEMENT_NAME)) {
+									revision = element.getAttribute(VERSION_ELEMENT_NAME);
+									break;
+								}
+							}
+
+							// Get the value of 'ManagedBuildRevision' attribute
+							loadConfigElements(DefaultManagedConfigElement.convertArray(elements, extension), revision);
+						}
+					}
+
+					// Call the start up config extensions. These may rely on the standard elements
+					// having already been loaded so we wait to call them from here.
+					if (startUpConfigElements != null) {
+						buildDefStartupList = new ArrayList<IManagedBuildDefinitionsStartup>(
+								startUpConfigElements.size());
+
+						for (IManagedConfigElement startUpConfigElement : startUpConfigElements) {
+							IManagedBuildDefinitionsStartup customConfigLoader;
+							try {
+								customConfigLoader = createStartUpConfigLoader(
+										(DefaultManagedConfigElement) startUpConfigElement);
+
+								//need to save the startup for the future notifications
+								buildDefStartupList.add(customConfigLoader);
+
+								// Now we can perform any actions on the build configurations
+								// in an extended plugin before the build configurations have been resolved
+								customConfigLoader.buildDefsLoaded();
+							} catch (CoreException e) {
 							}
 						}
-						// If the "fileVersion" attribute is missing, then default revision is "1.2.0"
-						if (revision == null)
-							revision = "1.2.0"; 	//$NON-NLS-1$
-						loadConfigElementsV2(DefaultManagedConfigElement.convertArray(elements, extension), revision);
 					}
-					// Resolve references
-					Collection<ITarget> targets = getExtensionTargetMap().values();
-					for (ITarget target : targets) {
+
+					// Then call resolve.
+					//
+					// Here are notes on "references" within the managed build system.
+					// References are "pointers" from one model element to another.
+					// These are encoded in manifest and managed build system project files (.cdtbuild)
+					// using unique string IDs (e.g. "cdt.managedbuild.tool.gnu.c.linker").
+					// These string IDs are "resolved" to pointers to interfaces in model
+					// elements in the in-memory represent of the managed build system information.
+					//
+					// Here are the current "rules" for references:
+					//  1.  A reference is always resolved to an interface pointer in the
+					//      referenced object.
+					//  2.  A reference is always TO an extension object - that is, an object
+					//      loaded from a manifest file or a dynamic element provider.  It cannot
+					//      be to an object loaded from a managed build system project file (.cdtbuild).
+					//
+
+					Collection<IProjectType> prjTypes = getExtensionProjectTypeMap().values();
+					for (IProjectType projectType : prjTypes) {
 						try {
-							((Target) target).resolveReferences();
+							((ProjectType) projectType).resolveReferences();
 						} catch (Exception ex) {
 							// TODO: log
 							ex.printStackTrace();
 						}
 					}
-					// The V2 model can also add top-level Tools - they need to be "resolved"
+					Collection<IConfiguration> configurations = getExtensionConfigurationMap().values();
+					for (IConfiguration configuration : configurations) {
+						try {
+							((Configuration) configuration).resolveReferences();
+						} catch (Exception ex) {
+							// TODO: log
+							ex.printStackTrace();
+						}
+					}
+					Collection<IResourceConfiguration> resConfigs = getExtensionResourceConfigurationMap().values();
+					for (IResourceConfiguration resConfig : resConfigs) {
+						try {
+							((ResourceConfiguration) resConfig).resolveReferences();
+						} catch (Exception ex) {
+							// TODO: log
+							ex.printStackTrace();
+						}
+					}
+					Collection<ToolChain> toolChains = getExtensionToolChainMapInternal().values();
+					for (ToolChain toolChain : toolChains) {
+						try {
+							toolChain.resolveReferences();
+						} catch (Exception ex) {
+							// TODO: log
+							ex.printStackTrace();
+						}
+					}
 					Collection<Tool> tools = getExtensionToolMapInternal().values();
 					for (Tool tool : tools) {
 						try {
@@ -2374,64 +2245,156 @@ public class ManagedBuildManager extends AbstractCExtension {
 							ex.printStackTrace();
 						}
 					}
-					// Convert the targets to the new model
-					targets = getExtensionTargetMap().values();
-					for (ITarget target : targets) {
+					Collection<ITargetPlatform> targetPlatforms = getExtensionTargetPlatformMap().values();
+					for (ITargetPlatform targetPlatform : targetPlatforms) {
 						try {
-							//  Check to see if it has already been converted - if not, do it
-							if (target.getCreatedProjectType() == null) {
-								target.convertToProjectType(revision);
-							}
+							((TargetPlatform) targetPlatform).resolveReferences();
 						} catch (Exception ex) {
 							// TODO: log
 							ex.printStackTrace();
 						}
 					}
-					// Resolve references for new ProjectTypes
-					Collection<IProjectType> prjTypes = getExtensionProjectTypeMap().values();
-					for (IProjectType prjType : prjTypes) {
+					Collection<Builder> builders = getExtensionBuilderMapInternal().values();
+					for (Builder builder : builders) {
 						try {
-							((ProjectType) prjType).resolveReferences();
+							builder.resolveReferences();
 						} catch (Exception ex) {
 							// TODO: log
 							ex.printStackTrace();
 						}
 					}
-
-					// TODO:  Clear the target and configurationV2 maps so that the object can be garbage collected
-					//        We can't do this yet, because the UpdateManagedProjectAction class may need these elements later
-					//        Can we change UpdateManagedProjectAction to see the converted model elements?
-					//targetIter = getExtensionTargetMap().values().iterator();
-					//while (targetIter.hasNext()) {
-					//	try {
-					//		Target target = (Target)targetIter.next();
-					//		ManagedBuildManager.removeConfigElement(target);
-					//		getExtensionTargetMap().remove(target);
-					//	} catch (Exception ex) {
-					//		// TODO: log
-					//		ex.printStackTrace();
-					//	}
-					//}
-					//getExtensionConfigurationV2Map().clear();
+					Collection<IOption> options = getExtensionOptionMap().values();
+					for (IOption option : options) {
+						try {
+							((Option) option).resolveReferences();
+						} catch (Exception ex) {
+							// TODO: log
+							ex.printStackTrace();
+						}
+					}
+					Collection<IOptionCategory> optionCategories = getExtensionOptionCategoryMap().values();
+					for (IOptionCategory optionCat : optionCategories) {
+						try {
+							((OptionCategory) optionCat).resolveReferences();
+						} catch (Exception ex) {
+							// TODO: log
+							ex.printStackTrace();
+						}
+					}
 				}
 			}
-		}
 
-		// configs resolved...
-		// Call the start up config extensions again now that configs have been resolved.
-		if (buildDefStartupList != null) {
-			for (IManagedBuildDefinitionsStartup customConfigLoader : buildDefStartupList) {
-				// Now we can perform any actions on the build configurations
-				// in an extended plugin now that all build configruations have been resolved
-				customConfigLoader.buildDefsResolved();
+			// Get the extensions that use the CDT 2.0 build model
+			extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID_V2);
+			if (extensionPoint != null) {
+				IExtension[] extensions = extensionPoint.getExtensions();
+				String revision = null;
+
+				if (extensions != null) {
+					if (extensions.length > 0) {
+
+						// Call the constructors of the internal classes that correspond to the
+						// V2.0 build model elements.  Some of these objects are converted to new model objects.
+						// Others can use the same classes.
+						for (IExtension extension : extensions) {
+							// Can we read this manifest
+							if (!isVersionCompatible(extension)) {
+								//The version of the Plug-in is greater than what the manager thinks it understands
+								throw new BuildException(ManagedMakeMessages.getResourceString(MANIFEST_VERSION_ERROR));
+							}
+							IConfigurationElement[] elements = extension.getConfigurationElements();
+
+							// Get the managedBuildRevsion of the extension.
+							for (IConfigurationElement element : elements) {
+								if (element.getName().equals(REVISION_ELEMENT_NAME)) {
+									revision = element.getAttribute(VERSION_ELEMENT_NAME);
+									break;
+								}
+							}
+							// If the "fileVersion" attribute is missing, then default revision is "1.2.0"
+							if (revision == null)
+								revision = "1.2.0"; //$NON-NLS-1$
+							loadConfigElementsV2(DefaultManagedConfigElement.convertArray(elements, extension),
+									revision);
+						}
+						// Resolve references
+						Collection<ITarget> targets = getExtensionTargetMap().values();
+						for (ITarget target : targets) {
+							try {
+								((Target) target).resolveReferences();
+							} catch (Exception ex) {
+								// TODO: log
+								ex.printStackTrace();
+							}
+						}
+						// The V2 model can also add top-level Tools - they need to be "resolved"
+						Collection<Tool> tools = getExtensionToolMapInternal().values();
+						for (Tool tool : tools) {
+							try {
+								tool.resolveReferences();
+							} catch (Exception ex) {
+								// TODO: log
+								ex.printStackTrace();
+							}
+						}
+						// Convert the targets to the new model
+						targets = getExtensionTargetMap().values();
+						for (ITarget target : targets) {
+							try {
+								//  Check to see if it has already been converted - if not, do it
+								if (target.getCreatedProjectType() == null) {
+									target.convertToProjectType(revision);
+								}
+							} catch (Exception ex) {
+								// TODO: log
+								ex.printStackTrace();
+							}
+						}
+						// Resolve references for new ProjectTypes
+						Collection<IProjectType> prjTypes = getExtensionProjectTypeMap().values();
+						for (IProjectType prjType : prjTypes) {
+							try {
+								((ProjectType) prjType).resolveReferences();
+							} catch (Exception ex) {
+								// TODO: log
+								ex.printStackTrace();
+							}
+						}
+
+						// TODO:  Clear the target and configurationV2 maps so that the object can be garbage collected
+						//        We can't do this yet, because the UpdateManagedProjectAction class may need these elements later
+						//        Can we change UpdateManagedProjectAction to see the converted model elements?
+						//targetIter = getExtensionTargetMap().values().iterator();
+						//while (targetIter.hasNext()) {
+						//	try {
+						//		Target target = (Target)targetIter.next();
+						//		ManagedBuildManager.removeConfigElement(target);
+						//		getExtensionTargetMap().remove(target);
+						//	} catch (Exception ex) {
+						//		// TODO: log
+						//		ex.printStackTrace();
+						//	}
+						//}
+						//getExtensionConfigurationV2Map().clear();
+					}
+				}
 			}
-		}
 
-		performAdjustments();
-		projectTypesLoading = false;
-		projectTypesLoaded = true;
+			// configs resolved...
+			// Call the start up config extensions again now that configs have been resolved.
+			if (buildDefStartupList != null) {
+				for (IManagedBuildDefinitionsStartup customConfigLoader : buildDefStartupList) {
+					// Now we can perform any actions on the build configurations
+					// in an extended plugin now that all build configruations have been resolved
+					customConfigLoader.buildDefsResolved();
+				}
+			}
 
-		ToolChainModificationManager.getInstance().start();
+			performAdjustments();
+			projectTypesLoading = false;
+			projectTypesLoaded = true;
+
+			ToolChainModificationManager.getInstance().start();
 
 		} // try
 
@@ -2440,7 +2403,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 	}
 
-	private static void performAdjustments(){
+	private static void performAdjustments() {
 		IProjectType types[] = getDefinedProjectTypes();
 		for (IProjectType type : types) {
 			IConfiguration cfgs[] = type.getConfigurations();
@@ -2458,11 +2421,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	}
 
-	private static void adjustConfig(IConfiguration cfg){
+	private static void adjustConfig(IConfiguration cfg) {
 		IResourceInfo rcInfos[] = cfg.getResourceInfos();
 		for (IResourceInfo rcInfo : rcInfos) {
-			if(rcInfo instanceof IFolderInfo){
-				IFolderInfo info = (IFolderInfo)rcInfo;
+			if (rcInfo instanceof IFolderInfo) {
+				IFolderInfo info = (IFolderInfo) rcInfo;
 				IToolChain tc = info.getToolChain();
 				adjustHolder(info, tc);
 
@@ -2470,8 +2433,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 				for (ITool tool : tools) {
 					adjustHolder(info, tool);
 				}
-			} else if (rcInfo instanceof IFileInfo){
-				IFileInfo info = (IFileInfo)rcInfo;
+			} else if (rcInfo instanceof IFileInfo) {
+				IFileInfo info = (IFileInfo) rcInfo;
 				ITool rcTools[] = info.getTools();
 				for (ITool rcTool : rcTools) {
 					adjustHolder(info, rcTool);
@@ -2482,24 +2445,22 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 		IResourceConfiguration rcCfgs[] = cfg.getResourceConfigurations();
 
-//		for (IResourceConfiguration rcCfg : rcCfgs) {
-//		}
+		//		for (IResourceConfiguration rcCfg : rcCfgs) {
+		//		}
 
 	}
 
-	private static void adjustHolder(IResourceInfo rcInfo, IHoldsOptions holder){
+	private static void adjustHolder(IResourceInfo rcInfo, IHoldsOptions holder) {
 		IOption options[] = holder.getOptions();
 
 		for (IOption opt : options) {
-			Option option = (Option)opt;
-			BooleanExpressionApplicabilityCalculator calc =
-				option.getBooleanExpressionCalculator(true);
+			Option option = (Option) opt;
+			BooleanExpressionApplicabilityCalculator calc = option.getBooleanExpressionCalculator(true);
 
-			if(calc != null)
-				calc.adjustOption(rcInfo,holder,option, true);
+			if (calc != null)
+				calc.adjustOption(rcInfo, holder, option, true);
 		}
 	}
-
 
 	private static void loadConfigElements(IManagedConfigElement[] elements, String revision) {
 		for (IManagedConfigElement element : elements) {
@@ -2508,28 +2469,28 @@ public class ManagedBuildManager extends AbstractCExtension {
 				if (element.getName().equals(IProjectType.PROJECTTYPE_ELEMENT_NAME)) {
 					new ProjectType(element, revision);
 				} else if (element.getName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
-					new Configuration((ProjectType)null, element, revision);
+					new Configuration((ProjectType) null, element, revision);
 				} else if (element.getName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
-					new ToolChain((IFolderInfo)null, element, revision);
+					new ToolChain((IFolderInfo) null, element, revision);
 				} else if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
-					new Tool((ProjectType)null, element, revision);
+					new Tool((ProjectType) null, element, revision);
 				} else if (element.getName().equals(ITargetPlatform.TARGET_PLATFORM_ELEMENT_NAME)) {
-					new TargetPlatform((ToolChain)null, element, revision);
+					new TargetPlatform((ToolChain) null, element, revision);
 				} else if (element.getName().equals(IBuilder.BUILDER_ELEMENT_NAME)) {
-					new Builder((ToolChain)null, element, revision);
+					new Builder((ToolChain) null, element, revision);
 				} else if (element.getName().equals(IManagedConfigElementProvider.ELEMENT_NAME)) {
 					// don't allow nested config providers.
 					if (element instanceof DefaultManagedConfigElement) {
 						IManagedConfigElement[] providedConfigs;
 						IManagedConfigElementProvider provider = createConfigProvider(
-								(DefaultManagedConfigElement)element);
+								(DefaultManagedConfigElement) element);
 						providedConfigs = provider.getConfigElements();
-						loadConfigElements(providedConfigs, revision);	// This must use the current build model
+						loadConfigElements(providedConfigs, revision); // This must use the current build model
 					}
 				} else if (element.getName().equals(IManagedBuildDefinitionsStartup.BUILD_DEFINITION_STARTUP)) {
 					if (element instanceof DefaultManagedConfigElement) {
-					// Cache up early configuration extension elements so was can call them after
-					// other configuration elements have loaded.
+						// Cache up early configuration extension elements so was can call them after
+						// other configuration elements have loaded.
 						if (startUpConfigElements == null)
 							startUpConfigElements = new ArrayList<IManagedConfigElement>();
 						startUpConfigElements.add(element);
@@ -2551,15 +2512,15 @@ public class ManagedBuildManager extends AbstractCExtension {
 				if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
 					new Tool(element, revision);
 				} else if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME)) {
-					new Target(element,revision);
+					new Target(element, revision);
 				} else if (element.getName().equals(IManagedConfigElementProvider.ELEMENT_NAME)) {
 					// don't allow nested config providers.
 					if (element instanceof DefaultManagedConfigElement) {
 						IManagedConfigElement[] providedConfigs;
 						IManagedConfigElementProvider provider = createConfigProvider(
-								(DefaultManagedConfigElement)element);
+								(DefaultManagedConfigElement) element);
 						providedConfigs = provider.getConfigElements();
-						loadConfigElementsV2(providedConfigs, revision);	// This must use the 2.0 build model
+						loadConfigElementsV2(providedConfigs, revision); // This must use the 2.0 build model
 					}
 				}
 			} catch (Exception ex) {
@@ -2599,90 +2560,91 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return buildInfo;
 	}
 
-	public static void setLoaddedBuildInfo(IProject project, IManagedBuildInfo info) throws CoreException{
+	public static void setLoaddedBuildInfo(IProject project, IManagedBuildInfo info) throws CoreException {
 		// Associate the build info with the project for the duration of the session
 		//project.setSessionProperty(buildInfoProperty, info);
-//		IResourceRuleFactory rcRf = ResourcesPlugin.getWorkspace().getRuleFactory();
-//		ISchedulingRule rule = rcRf.modifyRule(project);
-//		IJobManager mngr = Job.getJobManager();
+		//		IResourceRuleFactory rcRf = ResourcesPlugin.getWorkspace().getRuleFactory();
+		//		ISchedulingRule rule = rcRf.modifyRule(project);
+		//		IJobManager mngr = Job.getJobManager();
 
-//		try {
-//			mngr.beginRule(rule, null);
-			doSetLoaddedInfo(project, info, true);
-//		} catch (IllegalArgumentException e) {
-//			// TODO: set anyway for now
-//			doSetLoaddedInfo(project, info);
-//		}finally {
-//			mngr.endRule(rule);
-//		}
+		//		try {
+		//			mngr.beginRule(rule, null);
+		doSetLoaddedInfo(project, info, true);
+		//		} catch (IllegalArgumentException e) {
+		//			// TODO: set anyway for now
+		//			doSetLoaddedInfo(project, info);
+		//		}finally {
+		//			mngr.endRule(rule);
+		//		}
 	}
 
-	private synchronized static void doSetLoaddedInfo(IProject project, IManagedBuildInfo info, boolean overwrite){
-		if(!overwrite && fInfoMap.get(project) != null)
+	private synchronized static void doSetLoaddedInfo(IProject project, IManagedBuildInfo info, boolean overwrite) {
+		if (!overwrite && fInfoMap.get(project) != null)
 			return;
 
-		if(info != null){
+		if (info != null) {
 			fInfoMap.put(project, info);
-			if(BuildDbgUtil.DEBUG)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info set for project " + project.getName()); //$NON-NLS-1$
-		}else{
+			if (BuildDbgUtil.DEBUG)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
+						"build info load: build info set for project " + project.getName()); //$NON-NLS-1$
+		} else {
 			fInfoMap.remove(project);
-			if(BuildDbgUtil.DEBUG)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info CLEARED for project " + project.getName()); //$NON-NLS-1$
+			if (BuildDbgUtil.DEBUG)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
+						"build info load: build info CLEARED for project " + project.getName()); //$NON-NLS-1$
 		}
 	}
 
-	private static IManagedConfigElementProvider createConfigProvider(
-		DefaultManagedConfigElement element) throws CoreException {
+	private static IManagedConfigElementProvider createConfigProvider(DefaultManagedConfigElement element)
+			throws CoreException {
 
-		return (IManagedConfigElementProvider)element.getConfigurationElement().
-			createExecutableExtension(IManagedConfigElementProvider.CLASS_ATTRIBUTE);
+		return (IManagedConfigElementProvider) element.getConfigurationElement()
+				.createExecutableExtension(IManagedConfigElementProvider.CLASS_ATTRIBUTE);
 	}
 
+	private static IManagedBuildDefinitionsStartup createStartUpConfigLoader(DefaultManagedConfigElement element)
+			throws CoreException {
 
-	private static IManagedBuildDefinitionsStartup createStartUpConfigLoader(
-			DefaultManagedConfigElement element) throws CoreException {
-
-			return (IManagedBuildDefinitionsStartup)element.getConfigurationElement().createExecutableExtension(IManagedBuildDefinitionsStartup.CLASS_ATTRIBUTE);
-		}
+		return (IManagedBuildDefinitionsStartup) element.getConfigurationElement()
+				.createExecutableExtension(IManagedBuildDefinitionsStartup.CLASS_ATTRIBUTE);
+	}
 
 	public static boolean manages(IResource resource) {
 		ICProjectDescription des = CoreModel.getDefault().getProjectDescription(resource.getProject(), false);
-		if(des == null){
+		if (des == null) {
 			return false;
 		}
 
 		ICConfigurationDescription cfgDes = des.getActiveConfiguration();
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
-		if(cfg != null)
+		if (cfg != null)
 			return true;
 		return false;
 
-
 		//		// The managed build manager manages build information for the
-//		// resource IFF it it is a project and has a build file with the proper
-//		// root element
-//		IProject project = null;
-//		if (resource instanceof IProject){
-//			project = (IProject)resource;
-//		} else if (resource instanceof IFile) {
-//			project = ((IFile)resource).getProject();
-//		} else {
-//			return false;
-//		}
-//		IFile file = project.getFile(SETTINGS_FILE_NAME);
-//		if (file.exists()) {
-//			try {
-//				InputStream stream = file.getContents();
-//				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-//				Document document = parser.parse(stream);
-//				NodeList nodes = document.getElementsByTagName(ROOT_NODE_NAME);
-//				return (nodes.getLength() > 0);
-//			} catch (Exception e) {
-//				return false;
-//			}
-//		}
-//		return false;
+		//		// resource IFF it it is a project and has a build file with the proper
+		//		// root element
+		//		IProject project = null;
+		//		if (resource instanceof IProject){
+		//			project = (IProject)resource;
+		//		} else if (resource instanceof IFile) {
+		//			project = ((IFile)resource).getProject();
+		//		} else {
+		//			return false;
+		//		}
+		//		IFile file = project.getFile(SETTINGS_FILE_NAME);
+		//		if (file.exists()) {
+		//			try {
+		//				InputStream stream = file.getContents();
+		//				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		//				Document document = parser.parse(stream);
+		//				NodeList nodes = document.getElementsByTagName(ROOT_NODE_NAME);
+		//				return (nodes.getLength() > 0);
+		//			} catch (Exception e) {
+		//				return false;
+		//			}
+		//		}
+		//		return false;
 	}
 
 	/**
@@ -2694,8 +2656,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 */
 	private static ManagedBuildInfo findBuildInfo(IResource rc, boolean forceLoad) {
 
-		if (rc == null){
-			if(BuildDbgUtil.DEBUG)
+		if (rc == null) {
+			if (BuildDbgUtil.DEBUG)
 				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: null resource"); //$NON-NLS-1$
 			return null;
 		}
@@ -2704,110 +2666,122 @@ public class ManagedBuildManager extends AbstractCExtension {
 		IProject proj = rc.getProject();
 
 		if (!proj.exists()) {
-			if(BuildDbgUtil.DEBUG)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, project does not exist"); //$NON-NLS-1$
+			if (BuildDbgUtil.DEBUG)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
+						"build info load: info is null, project does not exist"); //$NON-NLS-1$
 			return null;
 		}
 
-		if(BuildDbgUtil.DEBUG)
-			BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, querying the update mngr"); //$NON-NLS-1$
+		if (BuildDbgUtil.DEBUG)
+			BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
+					"build info load: info is null, querying the update mngr"); //$NON-NLS-1$
 		buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
 
-		if(buildInfo != null)
+		if (buildInfo != null)
 			return buildInfo;
 
 		// Check if there is any build info associated with this project for this session
 		try {
 			buildInfo = getLoadedBuildInfo(proj);
 		} catch (CoreException e) {
-			if(BuildDbgUtil.DEBUG)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while getting the loaded info: " + e.getLocalizedMessage()); //$NON-NLS-1$
+			if (BuildDbgUtil.DEBUG)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
+						"build info load: core exception while getting the loaded info: " + e.getLocalizedMessage()); //$NON-NLS-1$
 			return null;
 		}
 
-		if(buildInfo == null /*&& forceLoad*/){
+		if (buildInfo == null /*&& forceLoad*/) {
 			int flags = forceLoad ? 0 : ICProjectDescriptionManager.GET_IF_LOADDED;
 
-			if(BuildDbgUtil.DEBUG)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is NOT loaded" + (forceLoad ? " forceload" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			ICProjectDescription projDes = CoreModel.getDefault().getProjectDescriptionManager().getProjectDescription(proj, flags);
-			if(projDes != null){
-				if(BuildDbgUtil.DEBUG)
-					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: project description is obtained, qwerying the loaded build info"); //$NON-NLS-1$
+			if (BuildDbgUtil.DEBUG)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
+						"build info load: build info is NOT loaded" + (forceLoad ? " forceload" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			ICProjectDescription projDes = CoreModel.getDefault().getProjectDescriptionManager()
+					.getProjectDescription(proj, flags);
+			if (projDes != null) {
+				if (BuildDbgUtil.DEBUG)
+					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
+							"build info load: project description is obtained, qwerying the loaded build info"); //$NON-NLS-1$
 				try {
 					buildInfo = getLoadedBuildInfo(proj);
 				} catch (CoreException e) {
-					if(BuildDbgUtil.DEBUG)
-						BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while getting the loaded info (2): " + e.getLocalizedMessage()); //$NON-NLS-1$
+					if (BuildDbgUtil.DEBUG)
+						BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
+								"build info load: core exception while getting the loaded info (2): " //$NON-NLS-1$
+										+ e.getLocalizedMessage());
 					return null;
 				}
 
-				if(buildInfo == null){
-					if(BuildDbgUtil.DEBUG)
-						BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, trying the cfg data provider"); //$NON-NLS-1$
+				if (buildInfo == null) {
+					if (BuildDbgUtil.DEBUG)
+						BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
+								"build info load: info is null, trying the cfg data provider"); //$NON-NLS-1$
 
 					buildInfo = ConfigurationDataProvider.getLoaddedBuildInfo(projDes);
-					if(buildInfo != null){
-						if(BuildDbgUtil.DEBUG)
-							BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info found, setting as loaded"); //$NON-NLS-1$
+					if (buildInfo != null) {
+						if (BuildDbgUtil.DEBUG)
+							BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
+									"build info load: info found, setting as loaded"); //$NON-NLS-1$
 
 						try {
 							setLoaddedBuildInfo(proj, buildInfo);
 						} catch (CoreException e) {
-							if(BuildDbgUtil.DEBUG)
-								BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: core exception while setting loaded description, ignoring; : " + e.getLocalizedMessage()); //$NON-NLS-1$
+							if (BuildDbgUtil.DEBUG)
+								BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
+										"build info load: core exception while setting loaded description, ignoring; : " //$NON-NLS-1$
+												+ e.getLocalizedMessage());
 						}
 					}
 
 				}
 
-			} else if(BuildDbgUtil.DEBUG){
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: project description in null"); //$NON-NLS-1$
+			} else if (BuildDbgUtil.DEBUG) {
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
+						"build info load: project description in null"); //$NON-NLS-1$
 			}
 
-
-//			if(buildInfo == null){
-//				if(BuildDbgUtil.DEBUG)
-//					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, querying the update mngr"); //$NON-NLS-1$
-//				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
-//			}
+			//			if(buildInfo == null){
+			//				if(BuildDbgUtil.DEBUG)
+			//					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, querying the update mngr"); //$NON-NLS-1$
+			//				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
+			//			}
 		}
-//		if (buildInfo == null && resource instanceof IProject)
-//			buildInfo = findBuildInfoSynchronized((IProject)resource, forceLoad);
-/*
-		// Nothing in session store, so see if we can load it from cdtbuild
-		if (buildInfo == null && resource instanceof IProject) {
-			try {
-				buildInfo = loadBuildInfo((IProject)resource);
-			} catch (Exception e) {
-				// TODO:  Issue error reagarding not being able to load the project file (.cdtbuild)
-			}
+		//		if (buildInfo == null && resource instanceof IProject)
+		//			buildInfo = findBuildInfoSynchronized((IProject)resource, forceLoad);
+		/*
+				// Nothing in session store, so see if we can load it from cdtbuild
+				if (buildInfo == null && resource instanceof IProject) {
+					try {
+						buildInfo = loadBuildInfo((IProject)resource);
+					} catch (Exception e) {
+						// TODO:  Issue error reagarding not being able to load the project file (.cdtbuild)
+					}
 
-			try {
-				// Check if the project needs its container initialized
-				initBuildInfoContainer(buildInfo);
-			} catch (CoreException e) {
-				// We can live without a path entry container if the build information is valid
-			}
-		}
-*/
-		if(buildInfo != null)
+					try {
+						// Check if the project needs its container initialized
+						initBuildInfoContainer(buildInfo);
+					} catch (CoreException e) {
+						// We can live without a path entry container if the build information is valid
+					}
+				}
+		*/
+		if (buildInfo != null)
 			buildInfo.updateOwner(proj);
 
-		if(BuildDbgUtil.DEBUG){
-			if(buildInfo == null)
+		if (BuildDbgUtil.DEBUG) {
+			if (buildInfo == null)
 				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is null"); //$NON-NLS-1$
-//			else
-//				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info found");
+			//			else
+			//				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info found");
 		}
 
 		return buildInfo;
 	}
 
-	synchronized static ManagedBuildInfo getLoadedBuildInfo(IProject project) throws CoreException{
+	synchronized static ManagedBuildInfo getLoadedBuildInfo(IProject project) throws CoreException {
 		// Check if there is any build info associated with this project for this session
-		ManagedBuildInfo buildInfo = (ManagedBuildInfo)fInfoMap.get(project);//project.getSessionProperty(buildInfoProperty);
-			// Make sure that if a project has build info, that the info is not corrupted
+		ManagedBuildInfo buildInfo = (ManagedBuildInfo) fInfoMap.get(project);//project.getSessionProperty(buildInfoProperty);
+		// Make sure that if a project has build info, that the info is not corrupted
 		if (buildInfo != null) {
 			buildInfo.updateOwner(project);
 		}
@@ -2823,7 +2797,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 */
 	private static boolean canFindBuildInfo(IResource resource) {
 
-		if (resource == null) return false;
+		if (resource == null)
+			return false;
 
 		// Make sure the extension information is loaded first
 		try {
@@ -2844,10 +2819,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 		if (buildInfo == null && resource instanceof IProject) {
 			// Check weather getBuildInfo is called from converter
-			buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo((IProject)resource);
-			if (buildInfo != null) return true;
+			buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo((IProject) resource);
+			if (buildInfo != null)
+				return true;
 			// Check if the build information can be loaded from the .cdtbuild file
-			return canLoadBuildInfo(((IProject)resource));
+			return canLoadBuildInfo(((IProject) resource));
 		}
 
 		return (buildInfo != null);
@@ -2860,81 +2836,81 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * findBuildInfoSynchronized could also be called from project converter
 	 * in this case the ManagedBuildInfo saved in the converter would be returned
 	 */
-/*	synchronized private static ManagedBuildInfo findBuildInfoSynchronized(IProject project, boolean forceLoad) {
-		ManagedBuildInfo buildInfo = null;
+	/*	synchronized private static ManagedBuildInfo findBuildInfoSynchronized(IProject project, boolean forceLoad) {
+			ManagedBuildInfo buildInfo = null;
 
-		// Check if there is any build info associated with this project for this session
-		try {
-			buildInfo = (ManagedBuildInfo)project.getSessionProperty(buildInfoProperty);
-			// Make sure that if a project has build info, that the info is not corrupted
-			if (buildInfo != null) {
-				buildInfo.updateOwner(project);
-			}
-		} catch (CoreException e) {
-	//		return null;
-		}
-
-		if(buildInfo == null && forceLoad){
-			// Make sure the extension information is loaded first
+			// Check if there is any build info associated with this project for this session
 			try {
-				loadExtensions();
-			} catch (BuildException e) {
-				e.printStackTrace();
-				return null;
+				buildInfo = (ManagedBuildInfo)project.getSessionProperty(buildInfoProperty);
+				// Make sure that if a project has build info, that the info is not corrupted
+				if (buildInfo != null) {
+					buildInfo.updateOwner(project);
+				}
+			} catch (CoreException e) {
+		//		return null;
 			}
 
-
-			// Check weather getBuildInfo is called from converter
-			buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(project);
-
-			// Nothing in session store, so see if we can load it from cdtbuild
-			if (buildInfo == null) {
+			if(buildInfo == null && forceLoad){
+				// Make sure the extension information is loaded first
 				try {
-					buildInfo = loadBuildInfo(project);
-				} catch (Exception e) {
-					// Issue error regarding not being able to load the project file (.cdtbuild)
-					if (buildInfo == null) {
-						buildInfo = createBuildInfo(project);
-					}
-					buildInfo.setValid(false);
-					//  Display error message
-					IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					if(window == null){
-						IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
-						window = windows[0];
-					}
-
-					final Shell shell = window.getShell();
-					final String exceptionMsg = e.getMessage();
-					//using syncExec could cause a dead-lock
-					//that is why asyncExec is used
-					shell.getDisplay().asyncExec( new Runnable() {
-						public void run() {
-							MessageDialog.openError(shell,
-									ManagedMakeMessages.getResourceString("ManagedBuildManager.error.open_failed_title"),	//$NON-NLS-1$
-									ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.open_failed",			//$NON-NLS-1$
-											exceptionMsg));
-						}
-					} );
+					loadExtensions();
+				} catch (BuildException e) {
+					e.printStackTrace();
+					return null;
 				}
 
-				if (buildInfo != null && !buildInfo.isContainerInited()) {
-					//  NOTE:  If this is called inside the above rule, then an IllegalArgumentException can
-					//         occur when the CDT project file is saved - it uses the Workspace Root as the scheduling rule.
-					//
+
+				// Check weather getBuildInfo is called from converter
+				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(project);
+
+				// Nothing in session store, so see if we can load it from cdtbuild
+				if (buildInfo == null) {
 					try {
-						// Check if the project needs its container initialized
-						initBuildInfoContainer(buildInfo);
-					} catch (CoreException e) {
-						// We can live without a path entry container if the build information is valid
+						buildInfo = loadBuildInfo(project);
+					} catch (Exception e) {
+						// Issue error regarding not being able to load the project file (.cdtbuild)
+						if (buildInfo == null) {
+							buildInfo = createBuildInfo(project);
+						}
+						buildInfo.setValid(false);
+						//  Display error message
+						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+						if(window == null){
+							IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+							window = windows[0];
+						}
+
+						final Shell shell = window.getShell();
+						final String exceptionMsg = e.getMessage();
+						//using syncExec could cause a dead-lock
+						//that is why asyncExec is used
+						shell.getDisplay().asyncExec( new Runnable() {
+							public void run() {
+								MessageDialog.openError(shell,
+										ManagedMakeMessages.getResourceString("ManagedBuildManager.error.open_failed_title"),	//$NON-NLS-1$
+										ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.open_failed",			//$NON-NLS-1$
+												exceptionMsg));
+							}
+						} );
+					}
+
+					if (buildInfo != null && !buildInfo.isContainerInited()) {
+						//  NOTE:  If this is called inside the above rule, then an IllegalArgumentException can
+						//         occur when the CDT project file is saved - it uses the Workspace Root as the scheduling rule.
+						//
+						try {
+							// Check if the project needs its container initialized
+							initBuildInfoContainer(buildInfo);
+						} catch (CoreException e) {
+							// We can live without a path entry container if the build information is valid
+						}
 					}
 				}
 			}
-		}
 
-		return buildInfo;
-	}
-*/
+			return buildInfo;
+		}
+	*/
 	/**
 	 * Finds, but does not create, the managed build information for the
 	 * argument.
@@ -2956,14 +2932,15 @@ public class ManagedBuildManager extends AbstractCExtension {
 		} catch (CoreException e) {
 		}
 
-		if(info == null){
+		if (info == null) {
 			try {
 				info = loadOldStyleBuildInfo(project);
 
-				if(info != null)
+				if (info != null)
 					doSetLoaddedInfo(project, info, false);
 			} catch (Exception e) {
-				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));
+				throw new CoreException(
+						new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));
 			}
 		}
 
@@ -2971,7 +2948,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	}
 
-	public static synchronized IManagedBuildInfo getBuildInfoLegacy(IProject project){
+	public static synchronized IManagedBuildInfo getBuildInfoLegacy(IProject project) {
 		try {
 			return getOldStyleBuildInfo(project);
 		} catch (CoreException e) {
@@ -2979,6 +2956,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			return null;
 		}
 	}
+
 	/**
 	 * Finds, but does not create, the managed build information for the
 	 * argument.
@@ -3025,7 +3003,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	public static URL getURLInBuildDefinitions(DefaultManagedConfigElement element, IPath path) {
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
-		if( extensionPoint != null) {
+		if (extensionPoint != null) {
 			IExtension[] extensions = extensionPoint.getExtensions();
 			if (extensions != null) {
 
@@ -3037,23 +3015,19 @@ public class ManagedBuildManager extends AbstractCExtension {
 					//
 					// Note: If not done, icon file names would have to be unique
 					// across several plug-ins.
-					if (element.getExtension().getExtensionPointUniqueIdentifier()
-						 == extension.getExtensionPointUniqueIdentifier())
-					{
+					if (element.getExtension().getExtensionPointUniqueIdentifier() == extension
+							.getExtensionPointUniqueIdentifier()) {
 						// Get the path-name
-						Bundle bundle = Platform.getBundle( extension.getNamespace() );
+						Bundle bundle = Platform.getBundle(extension.getNamespace());
 						URL url = Platform.find(bundle, path);
-						if ( url != null )
-						{
+						if (url != null) {
 							try {
 								return Platform.asLocalURL(url);
 							} catch (IOException e) {
 								// Ignore the exception
 								return null;
 							}
-						}
-						else
-						{
+						} else {
 							// Print a warning
 							outputIconError(path.toString());
 						}
@@ -3075,7 +3049,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	private static Map<IBuildObject, IManagedConfigElement> getConfigElementMap() {
-		if(!projectTypesLoading)
+		if (!projectTypesLoading)
 			throw new IllegalStateException();
 
 		if (configElementMap == null) {
@@ -3121,7 +3095,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		msgs[0] = attribute;
 		msgs[1] = id;
 		ManagedBuildManager.outputManifestError(
-			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_OPTION_VALUEHANDLER, msgs));
+				ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_OPTION_VALUEHANDLER, msgs));
 	}
 
 	public static void outputResolveError(String attribute, String lookupId, String type, String id) {
@@ -3131,7 +3105,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		msgs[2] = type;
 		msgs[3] = id;
 		ManagedBuildManager.outputManifestError(
-			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_RESOLVING, msgs));
+				ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_RESOLVING, msgs));
 	}
 
 	public static void outputDuplicateIdError(String type, String id) {
@@ -3139,7 +3113,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		msgs[0] = type;
 		msgs[1] = id;
 		ManagedBuildManager.outputManifestError(
-			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_DUPLICATE, msgs));
+				ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_DUPLICATE, msgs));
 	}
 
 	public static void outputManifestError(String message) {
@@ -3148,15 +3122,15 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	public static void outputIconError(String iconLocation) {
 		String[] msgs = new String[1];
-		msgs[0]= iconLocation;
+		msgs[0] = iconLocation;
 		ManagedBuildManager.outputManifestError(
-			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_ICON, msgs));
+				ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_ICON, msgs));
 	}
 
 	/**
 	 * @return the instance of the Environment Variable Provider
 	 */
-	public static IEnvironmentVariableProvider getEnvironmentVariableProvider(){
+	public static IEnvironmentVariableProvider getEnvironmentVariableProvider() {
 		return EnvironmentVariableProvider.getDefault();
 	}
 
@@ -3167,13 +3141,13 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	public static String getVersionFromIdAndVersion(String idAndVersion) {
 
-//		 Get the index of the separator '_' in tool id.
+		//		 Get the index of the separator '_' in tool id.
 		int index = idAndVersion.lastIndexOf('_');
 
 		//Validate the version number if exists.
-		if ( index != -1) {
+		if (index != -1) {
 			// Get the version number from tool id.
-			String version = idAndVersion.substring(index+1);
+			String version = idAndVersion.substring(index + 1);
 
 			try {
 				// If there is a valid version then return 'version'
@@ -3193,12 +3167,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 */
 	public static String getIdFromIdAndVersion(String idAndVersion) {
 		// If there is a valid version return only 'id' part
-		if ( getVersionFromIdAndVersion(idAndVersion) != null) {
+		if (getVersionFromIdAndVersion(idAndVersion) != null) {
 			// Get the index of the separator '_' in tool id.
 			int index = idAndVersion.lastIndexOf('_');
-			return idAndVersion.substring(0,index);
-		}
-		else {
+			return idAndVersion.substring(0, index);
+		} else {
 			// if there is no version or no valid version
 			return idAndVersion;
 		}
@@ -3207,7 +3180,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * @return the instance of the Build Macro Provider
 	 */
-	public static IBuildMacroProvider getBuildMacroProvider(){
+	public static IBuildMacroProvider getBuildMacroProvider() {
 		return BuildMacroProvider.getDefault();
 	}
 
@@ -3247,12 +3220,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 			// Ignore invalid options
 			if (option.isValid()) {
 				// Call the handler
-				if (option.getValueHandler().handleValue(
-						config,
-						toolChain,
-						option,
-						option.getValueHandlerExtraArgument(),
-						event)) {
+				if (option.getValueHandler().handleValue(config, toolChain, option,
+						option.getValueHandlerExtraArgument(), event)) {
 					// TODO : Event is handled successfully and returned true.
 					// May need to do something here say logging a message.
 				} else {
@@ -3269,12 +3238,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 				// Ignore invalid options
 				if (toolOption.isValid()) {
 					// Call the handler
-					if (toolOption.getValueHandler().handleValue(
-							config,
-							tool,
-							toolOption,
-							toolOption.getValueHandlerExtraArgument(),
-							event)) {
+					if (toolOption.getValueHandler().handleValue(config, tool, toolOption,
+							toolOption.getValueHandlerExtraArgument(), event)) {
 						// TODO : Event is handled successfully and returned true.
 						// May need to do something here say logging a message.
 					} else {
@@ -3306,21 +3271,16 @@ public class ManagedBuildManager extends AbstractCExtension {
 		// Note: Resource configurations have no toolchain options
 
 		// Get options associated with the resource configuration
-		ITool[] tools = config instanceof IFileInfo ?
-				((IFileInfo)config).getToolsToInvoke() :
-					((IFolderInfo)config).getFilteredTools();
+		ITool[] tools = config instanceof IFileInfo ? ((IFileInfo) config).getToolsToInvoke()
+				: ((IFolderInfo) config).getFilteredTools();
 		for (ITool tool : tools) {
 			IOption[] toolOptions = tool.getOptions();
 			for (IOption toolOption : toolOptions) {
 				// Ignore invalid options
 				if (toolOption.isValid()) {
 					// Call the handler
-					if (toolOption.getValueHandler().handleValue(
-							config,
-							tool,
-							toolOption,
-							toolOption.getValueHandlerExtraArgument(),
-							event)) {
+					if (toolOption.getValueHandler().handleValue(config, tool, toolOption,
+							toolOption.getValueHandlerExtraArgument(), event)) {
 						// TODO : Event is handled successfully and returned true.
 						// May need to do something here say logging a message.
 					} else {
@@ -3331,8 +3291,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 	}
 
-	private static boolean checkForMigrationSupport(ManagedBuildInfo buildInfo,
-			boolean forCurrentMbsVersion) {
+	private static boolean checkForMigrationSupport(ManagedBuildInfo buildInfo, boolean forCurrentMbsVersion) {
 
 		IConfigurationElement element = null;
 
@@ -3341,11 +3300,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 		IProjectType projectType = managedProject.getProjectType();
 		if (forCurrentMbsVersion) {
-			element = ((ProjectType) projectType)
-					.getCurrentMbsVersionConversionElement();
+			element = ((ProjectType) projectType).getCurrentMbsVersionConversionElement();
 		} else {
-			element = ((ProjectType) projectType)
-					.getPreviousMbsVersionConversionElement();
+			element = ((ProjectType) projectType).getPreviousMbsVersionConversionElement();
 		}
 
 		if (element != null) {
@@ -3365,11 +3322,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 				IToolChain toolChain = configuration.getToolChain();
 
 				if (forCurrentMbsVersion) {
-					element = ((ToolChain) toolChain)
-							.getCurrentMbsVersionConversionElement();
+					element = ((ToolChain) toolChain).getCurrentMbsVersionConversionElement();
 				} else {
-					element = ((ToolChain) toolChain)
-							.getPreviousMbsVersionConversionElement();
+					element = ((ToolChain) toolChain).getPreviousMbsVersionConversionElement();
 				}
 
 				if (element != null) {
@@ -3386,11 +3341,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 					ITool[] tools = toolChain.getTools();
 					for (ITool tool : tools) {
 						if (forCurrentMbsVersion) {
-							element = ((Tool) tool)
-									.getCurrentMbsVersionConversionElement();
+							element = ((Tool) tool).getCurrentMbsVersionConversionElement();
 						} else {
-							element = ((Tool) tool)
-									.getPreviousMbsVersionConversionElement();
+							element = ((Tool) tool).getPreviousMbsVersionConversionElement();
 						}
 						if (element != null) {
 							if (invokeConverter(buildInfo, tool, element) == null) {
@@ -3402,11 +3355,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 					IBuilder builder = toolChain.getBuilder();
 					if (builder != null) {
 						if (forCurrentMbsVersion) {
-							element = ((Builder) builder)
-									.getCurrentMbsVersionConversionElement();
+							element = ((Builder) builder).getCurrentMbsVersionConversionElement();
 						} else {
-							element = ((Builder) builder)
-									.getPreviousMbsVersionConversionElement();
+							element = ((Builder) builder).getPreviousMbsVersionConversionElement();
 						}
 
 						if (element != null) {
@@ -3421,23 +3372,19 @@ public class ManagedBuildManager extends AbstractCExtension {
 				// walk through each resource configuration and look if there
 				// are any converters
 				// available. If so, invoke them.
-				IResourceConfiguration[] resourceConfigs = configuration
-						.getResourceConfigurations();
+				IResourceConfiguration[] resourceConfigs = configuration.getResourceConfigurations();
 				if ((resourceConfigs != null) && (resourceConfigs.length > 0)) {
 					for (IResourceConfiguration resConfig : resourceConfigs) {
 						ITool[] resTools = resConfig.getTools();
 						for (ITool resTool : resTools) {
 							if (forCurrentMbsVersion) {
-								element = ((Tool) resTool)
-										.getCurrentMbsVersionConversionElement();
+								element = ((Tool) resTool).getCurrentMbsVersionConversionElement();
 							} else {
-								element = ((Tool) resTool)
-										.getPreviousMbsVersionConversionElement();
+								element = ((Tool) resTool).getPreviousMbsVersionConversionElement();
 							}
 							if (element != null) {
 								if (invokeConverter(buildInfo, resTool, element) == null) {
-									buildInfo.getManagedProject().setValid(
-											false);
+									buildInfo.getManagedProject().setValid(false);
 									return false;
 								}
 							}
@@ -3452,7 +3399,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return true;
 	}
 
-	private static IBuildObject invokeConverter(ManagedBuildInfo bi, IBuildObject buildObject, IConfigurationElement element) {
+	private static IBuildObject invokeConverter(ManagedBuildInfo bi, IBuildObject buildObject,
+			IConfigurationElement element) {
 
 		if (element != null) {
 			IConvertManagedBuildObject convertBuildObject = null;
@@ -3460,8 +3408,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			String fromId = element.getAttribute("fromId"); //$NON-NLS-1$
 
 			try {
-				convertBuildObject = (IConvertManagedBuildObject) element
-						.createExecutableExtension("class"); //$NON-NLS-1$
+				convertBuildObject = (IConvertManagedBuildObject) element.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -3473,7 +3420,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				IBuildObject result = null;
 				try {
 					if (bi != null) {
-						prj = (IProject)bi.getManagedProject().getOwner();
+						prj = (IProject) bi.getManagedProject().getOwner();
 						UpdateManagedProjectManager.addInfo(prj, bi);
 					}
 					result = convertBuildObject.convert(buildObject, fromId, toId, false);
@@ -3496,26 +3443,25 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * It returns 'IBuildObject' if the conversion is successful.
 	 */
 
-	public static IBuildObject convert(IBuildObject buildObj, String toId,
-			boolean userhasConfirmed) {
+	public static IBuildObject convert(IBuildObject buildObj, String toId, boolean userhasConfirmed) {
 
 		String tmpToId = null;
 
 		// Get the Converter Extension Point
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint("org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
-						"projectConverter"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(
+				"org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
+				"projectConverter"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			// Get the extensions
 			IExtension[] extensions = extensionPoint.getExtensions();
 			for (IExtension extension : extensions) {
 				// Get the configuration elements of each extension
-				IConfigurationElement[] configElements = extension
-						.getConfigurationElements();
+				IConfigurationElement[] configElements = extension.getConfigurationElements();
 				for (IConfigurationElement element : configElements) {
 
-					if (element.getName().equals("converter") && (isBuildObjectApplicableForConversion(buildObj, element) == true)) { //$NON-NLS-1$
-						tmpToId = element.getAttribute("toId");	//$NON-NLS-1$
+					if (element.getName().equals("converter") //$NON-NLS-1$
+							&& (isBuildObjectApplicableForConversion(buildObj, element) == true)) {
+						tmpToId = element.getAttribute("toId"); //$NON-NLS-1$
 						if (tmpToId.equals(toId)) {
 							return invokeConverter(null, buildObj, element);
 						}
@@ -3536,9 +3482,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	public static boolean hasTargetConversionElements(IBuildObject buildObj) {
 
 		// Get the Converter Extension Point
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint("org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
-						"projectConverter"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(
+				"org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
+				"projectConverter"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			// Get the extensions
 			IExtension[] extensions = extensionPoint.getExtensions();
@@ -3546,7 +3492,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 				// Get the configuration elements of each extension
 				IConfigurationElement[] configElements = extension.getConfigurationElements();
 				for (IConfigurationElement element : configElements) {
-					if (element.getName().equals("converter") && (isBuildObjectApplicableForConversion(buildObj, element) == true)) //$NON-NLS-1$
+					if (element.getName().equals("converter") //$NON-NLS-1$
+							&& (isBuildObjectApplicableForConversion(buildObj, element) == true))
 						return true;
 				}
 			}
@@ -3563,9 +3510,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 		Map<String, IConfigurationElement> conversionTargets = new HashMap<String, IConfigurationElement>();
 
 		// Get the Converter Extension Point
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint("org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
-						"projectConverter"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(
+				"org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
+				"projectConverter"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			// Get the extensions
 			IExtension[] extensions = extensionPoint.getExtensions();
@@ -3573,7 +3520,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 				// Get the configuration elements of each extension
 				IConfigurationElement[] configElements = extension.getConfigurationElements();
 				for (IConfigurationElement element : configElements) {
-					if (element.getName().equals("converter") && (isBuildObjectApplicableForConversion(buildObj, element) == true)) { //$NON-NLS-1$
+					if (element.getName().equals("converter") //$NON-NLS-1$
+							&& (isBuildObjectApplicableForConversion(buildObj, element) == true)) {
 						conversionTargets.put(element.getAttribute("name"), element); //$NON-NLS-1$
 					}
 				}
@@ -3587,8 +3535,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * build object. It returns true if the given build object is convertable, otherwise it returns false.
 	 */
 
-	private static boolean isBuildObjectApplicableForConversion(
-			IBuildObject buildObj, IConfigurationElement element) {
+	private static boolean isBuildObjectApplicableForConversion(IBuildObject buildObj, IConfigurationElement element) {
 
 		String id = null;
 		String fromId = element.getAttribute("fromId"); //$NON-NLS-1$
@@ -3654,16 +3601,15 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/*
 	 * if the suffix is null, then the random number will be appended to the superId
 	 */
-	static public String calculateChildId(String superId, String suffix){
-		if(suffix == null)
+	static public String calculateChildId(String superId, String suffix) {
+		if (suffix == null)
 			suffix = Integer.toString(getRandomNumber());
 
 		String version = getVersionFromIdAndVersion(superId);
-        if(version != null)
-            return ManagedBuildManager.getIdFromIdAndVersion(superId) + "." + suffix + "_" + version;             //$NON-NLS-1$ //$NON-NLS-2$
-        return superId + "." + suffix;                     //$NON-NLS-1$
+		if (version != null)
+			return ManagedBuildManager.getIdFromIdAndVersion(superId) + "." + suffix + "_" + version; //$NON-NLS-1$ //$NON-NLS-2$
+		return superId + "." + suffix; //$NON-NLS-1$
 	}
-
 
 	private static int isInt(String s) {
 		try {
@@ -3679,12 +3625,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 */
 	public static String calculateBaseId(String id) {
 		int index = id.lastIndexOf('.');
-		if (index<0)
+		if (index < 0)
 			return id;
 
-		String lastSeg = id.substring(index+1,id.length());
-		if (isInt(lastSeg)>0) {
-			String baseId = id.substring(0,index);
+		String lastSeg = id.substring(index + 1, id.length());
+		if (isInt(lastSeg) > 0) {
+			String baseId = id.substring(0, index);
 			return baseId;
 		}
 		return getIdFromIdAndVersion(id);
@@ -3693,66 +3639,67 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * @return calculated relative path given the full path to a folder and a file
 	 */
-	public static IPath calculateRelativePath(IPath container, IPath contents){
+	public static IPath calculateRelativePath(IPath container, IPath contents) {
 		IPath path = contents;
-		if(container.isPrefixOf(contents)){
+		if (container.isPrefixOf(contents)) {
 			path = contents.setDevice(null).removeFirstSegments(container.segmentCount());
 		} else {
 			String file = null;
 			container = container.addTrailingSeparator();
-			if(!contents.hasTrailingSeparator()){
+			if (!contents.hasTrailingSeparator()) {
 				file = contents.lastSegment();
 				contents = contents.removeLastSegments(1);
 				contents = contents.addTrailingSeparator();
 			}
 
 			IPath prefix = contents;
-			for(;prefix.segmentCount() > 0 && !prefix.isPrefixOf(container);prefix = prefix.removeLastSegments(1)){
+			for (; prefix.segmentCount() > 0 && !prefix.isPrefixOf(container); prefix = prefix.removeLastSegments(1)) {
 			}
-			if(prefix.segmentCount() > 0){
+			if (prefix.segmentCount() > 0) {
 				int diff = container.segmentCount() - prefix.segmentCount();
 				StringBuilder buff = new StringBuilder();
-				while(diff-- > 0)
-					buff.append("../");	//$NON-NLS-1$
+				while (diff-- > 0)
+					buff.append("../"); //$NON-NLS-1$
 				path = new Path(buff.toString()).append(contents.removeFirstSegments(prefix.segmentCount()));
-				if(file != null)
+				if (file != null)
 					path = path.append(file);
 			}
 		}
 		return path;
 	}
 
-/*	private static IBuildObject getBuildObjectFromDataObject(CDataObject data){
-		if(data instanceof BuildConfigurationData)
-			return ((BuildConfigurationData)data).getConfiguration();
-		else if(data instanceof BuildFolderData)
-			return ((BuildFolderData)data).getFolderInfo();
-		else if(data instanceof BuildFileData)
-			return ((BuildFileData)data).getFileInfo();
-		return null;
-	}
-*/
+	/*	private static IBuildObject getBuildObjectFromDataObject(CDataObject data){
+			if(data instanceof BuildConfigurationData)
+				return ((BuildConfigurationData)data).getConfiguration();
+			else if(data instanceof BuildFolderData)
+				return ((BuildFolderData)data).getFolderInfo();
+			else if(data instanceof BuildFileData)
+				return ((BuildFileData)data).getFileInfo();
+			return null;
+		}
+	*/
 	private static final boolean TEST_CONSISTENCE = false;
 
-	public static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes){
+	public static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes) {
 		return getConfigurationForDescription(cfgDes, TEST_CONSISTENCE);
 	}
 
-	private static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes, boolean checkConsistance){
-		if(cfgDes == null)
+	private static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes,
+			boolean checkConsistance) {
+		if (cfgDes == null)
 			return null;
 
 		if (cfgDes instanceof ICMultiConfigDescription) {
-			ICMultiConfigDescription mcd = (ICMultiConfigDescription)cfgDes;
-			ICConfigurationDescription[] cfds = (ICConfigurationDescription[])mcd.getItems();
+			ICMultiConfigDescription mcd = (ICMultiConfigDescription) cfgDes;
+			ICConfigurationDescription[] cfds = (ICConfigurationDescription[]) mcd.getItems();
 			return new MultiConfiguration(cfds);
 		}
 
 		CConfigurationData cfgData = cfgDes.getConfigurationData();
-		if(cfgData instanceof BuildConfigurationData){
-			IConfiguration cfg = ((BuildConfigurationData)cfgData).getConfiguration();
-			if(checkConsistance){
-				if(cfgDes != getDescriptionForConfiguration(cfg, false)){
+		if (cfgData instanceof BuildConfigurationData) {
+			IConfiguration cfg = ((BuildConfigurationData) cfgData).getConfiguration();
+			if (checkConsistance) {
+				if (cfgDes != getDescriptionForConfiguration(cfg, false)) {
 					throw new IllegalStateException();
 				}
 			}
@@ -3766,8 +3713,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param type {@link IOption#getValueType()}
 	 * @return ICSettingEntry type
 	 */
-	public static int optionTypeToEntryKind(int type){
-		switch(type){
+	public static int optionTypeToEntryKind(int type) {
+		switch (type) {
 		case IOption.INCLUDE_PATH:
 			return ICSettingEntry.INCLUDE_PATH;
 		case IOption.PREPROCESSOR_SYMBOLS:
@@ -3790,8 +3737,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param type {@link IOption#getValueType()}
 	 * @return ICSettingEntry type
 	 */
-	public static int optionUndefTypeToEntryKind(int type){
-		switch(type){
+	public static int optionUndefTypeToEntryKind(int type) {
+		switch (type) {
 		case IOption.UNDEF_INCLUDE_PATH:
 			return ICSettingEntry.INCLUDE_PATH;
 		case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
@@ -3808,8 +3755,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return 0;
 	}
 
-	public static int entryKindToOptionType(int kind){
-		switch(kind){
+	public static int entryKindToOptionType(int kind) {
+		switch (kind) {
 		case ICSettingEntry.INCLUDE_PATH:
 			return IOption.INCLUDE_PATH;
 		case ICSettingEntry.INCLUDE_FILE:
@@ -3826,8 +3773,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return 0;
 	}
 
-	public static int entryKindToUndefOptionType(int kind){
-		switch(kind){
+	public static int entryKindToUndefOptionType(int kind) {
+		switch (kind) {
 		case ICSettingEntry.INCLUDE_PATH:
 			return IOption.UNDEF_INCLUDE_PATH;
 		case ICSettingEntry.INCLUDE_FILE:
@@ -3843,18 +3790,20 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 		return 0;
 	}
-	public static ICConfigurationDescription getDescriptionForConfiguration(IConfiguration cfg){
+
+	public static ICConfigurationDescription getDescriptionForConfiguration(IConfiguration cfg) {
 		return getDescriptionForConfiguration(cfg, TEST_CONSISTENCE);
 	}
 
-	private static ICConfigurationDescription getDescriptionForConfiguration(IConfiguration cfg, boolean checkConsistance){
-		if(cfg.isExtensionElement())
+	private static ICConfigurationDescription getDescriptionForConfiguration(IConfiguration cfg,
+			boolean checkConsistance) {
+		if (cfg.isExtensionElement())
 			return null;
-		ICConfigurationDescription des = ((Configuration)cfg).getConfigurationDescription();
-		if(des == null){
-			if(checkConsistance)
+		ICConfigurationDescription des = ((Configuration) cfg).getConfigurationDescription();
+		if (des == null) {
+			if (checkConsistance)
 				throw new IllegalStateException();
-			if(((Configuration)cfg).isPreference()){
+			if (((Configuration) cfg).isPreference()) {
 				try {
 					des = CCorePlugin.getDefault().getPreferenceConfiguration(CFG_DATA_PROVIDER_ID);
 				} catch (CoreException e) {
@@ -3863,22 +3812,22 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				IProject project = cfg.getOwner().getProject();
 				ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project, false);
-				if(projDes != null){
+				if (projDes != null) {
 					des = projDes.getConfigurationById(cfg.getId());
 				}
 			}
 		}
-		if(checkConsistance){
-			if(cfg != getConfigurationForDescription(des, false)){
+		if (checkConsistance) {
+			if (cfg != getConfigurationForDescription(des, false)) {
 				throw new IllegalStateException();
 			}
 		}
 		return des;
 	}
 
-	public static IPath getBuildFullPath(IConfiguration cfg, IBuilder builder){
+	public static IPath getBuildFullPath(IConfiguration cfg, IBuilder builder) {
 		IProject project = cfg.getOwner().getProject();
-//		String path = builder.getBuildPath();
+		//		String path = builder.getBuildPath();
 
 		IPath buildDirectory = builder.getBuildLocation();
 		IPath fullPath = null;
@@ -3887,25 +3836,25 @@ public class ManagedBuildManager extends AbstractCExtension {
 			if (res instanceof IContainer && res.exists()) {
 				fullPath = res.getFullPath();
 			} else {
-				IContainer crs[] = ((IWorkspaceRoot)project.getParent()).findContainersForLocation(buildDirectory);
-				if(crs.length != 0){
+				IContainer crs[] = ((IWorkspaceRoot) project.getParent()).findContainersForLocation(buildDirectory);
+				if (crs.length != 0) {
 					String projName = project.getName();
 					for (IContainer cr : crs) {
 						IPath path = cr.getFullPath();
-						if(path.segmentCount() != 0 && path.segment(0).equals(projName)){
+						if (path.segmentCount() != 0 && path.segment(0).equals(projName)) {
 							fullPath = path;
 							break;
 						}
 					}
 
-					if(fullPath == null){
+					if (fullPath == null) {
 						fullPath = crs[0].getFullPath();
 					}
 				}
 			}
 		} else {
 			fullPath = cfg.getOwner().getProject().getFullPath();
-			if(builder.isManagedBuildOn())
+			if (builder.isManagedBuildOn())
 				fullPath = fullPath.append(cfg.getName());
 		}
 
@@ -3917,23 +3866,23 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * or null if the String path doesn't contain workspace_loc
 	 * @param path String path to have workspace_loc removed
 	 * @return workspace path or null
-	 * 
+	 *
 	 * @deprecated as of CDT 8.3. This method is useless as API as it does something very specfic to {@link BuildEntryStorage}.
 	 *    It was moved there as private method {@link BuildEntryStorage#locationToFullPath}.
 	 */
 	@Deprecated
-	public static String locationToFullPath(String path){
+	public static String locationToFullPath(String path) {
 		Assert.isLegal(false, "Do not use this method"); //$NON-NLS-1$
 		return null;
 	}
 
-	public static String fullPathToLocation(String path){
+	public static String fullPathToLocation(String path) {
 		StringBuilder buf = new StringBuilder();
 		return buf.append("${").append("workspace_loc:").append(path).append("}").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public static IPath getBuildLocation(IConfiguration cfg, IBuilder builder) {
-		if(cfg.getOwner() == null)
+		if (cfg.getOwner() == null)
 			return Path.EMPTY;
 
 		IProject project = cfg.getOwner().getProject();
@@ -3959,7 +3908,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @since 6.0
 	 */
 	public static URI getBuildLocationURI(IConfiguration cfg, IBuilder builder) {
-		if(cfg.getOwner() == null)
+		if (cfg.getOwner() == null)
 			return null;
 
 		IProject project = cfg.getOwner().getProject();
@@ -3983,119 +3932,120 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return new Path(uri.getPath());
 	}
 
-	public static IBuilder[] createBuilders(IProject project, Map<String, String> args){
+	public static IBuilder[] createBuilders(IProject project, Map<String, String> args) {
 		return ManagedBuilderCorePlugin.createBuilders(project, args);
 	}
 
-	public static IBuilder createCustomBuilder(IConfiguration cfg, String builderId) throws CoreException{
+	public static IBuilder createCustomBuilder(IConfiguration cfg, String builderId) throws CoreException {
 		return ManagedBuilderCorePlugin.createCustomBuilder(cfg, builderId);
 	}
 
-	public static IBuilder createCustomBuilder(IConfiguration cfg, IBuilder base){
+	public static IBuilder createCustomBuilder(IConfiguration cfg, IBuilder base) {
 		return ManagedBuilderCorePlugin.createCustomBuilder(cfg, base);
 	}
 
-	public static IBuilder createBuilderForEclipseBuilder(IConfiguration cfg, String eclipseBuilderID) throws CoreException {
+	public static IBuilder createBuilderForEclipseBuilder(IConfiguration cfg, String eclipseBuilderID)
+			throws CoreException {
 		return ManagedBuilderCorePlugin.createBuilderForEclipseBuilder(cfg, eclipseBuilderID);
 	}
 
-/*	public static IToolChain[] getExtensionsToolChains(String propertyType, String propertyValue){
-		List all = getSortedToolChains();
-		List result = new ArrayList();
-		for(int i = 0; i < all.size(); i++){
-			List list = (List)all.get(i);
-			IToolChain tc = findToolChain(list, propertyType, propertyValue);
-			if(tc != null)
-				result.add(tc);
-		}
-		return (IToolChain[])result.toArray(new ToolChain[result.size()]);
-	}
-*/
-/*	public static void resortToolChains(){
-		sortedToolChains = null;
-		getSortedToolChains();
-	}
-*/
-/*	private static List getSortedToolChains(){
-		if(sortedToolChains == null){
-			sortedToolChains = new ArrayList();
-			SortedMap map = getExtensionToolChainMapInternal();
-			for(Iterator iter = map.values().iterator(); iter.hasNext();){
-				ToolChain tc = (ToolChain)iter.next();
-				if(tc.isAbstract())
-					continue;
-				List list = searchIdentical(sortedToolChains, tc);
-				if(list == null){
-					list = new ArrayList();
-					sortedToolChains.add(list);
-				}
-				list.add(tc);
-				tc.setIdenticalList(list);
+	/*	public static IToolChain[] getExtensionsToolChains(String propertyType, String propertyValue){
+			List all = getSortedToolChains();
+			List result = new ArrayList();
+			for(int i = 0; i < all.size(); i++){
+				List list = (List)all.get(i);
+				IToolChain tc = findToolChain(list, propertyType, propertyValue);
+				if(tc != null)
+					result.add(tc);
 			}
+			return (IToolChain[])result.toArray(new ToolChain[result.size()]);
 		}
-		return sortedToolChains;
-	}
-*/
-//	private static List findIdenticalToolChains(IToolChain tc){
-//		ToolChain tCh = (ToolChain)tc;
-//		List list = tCh.getIdenticalList();
-//		if(list == null){
-//			resortToolChains();
-//			list = tCh.getIdenticalList();
-//			if(list == null){
-//				list = new ArrayList(0);
-//				tCh.setIdenticalList(list);
-//			}
-//		}
-//
-//		return ((ToolChain)tc).getIdenticalList();
-//	}
+	*/
+	/*	public static void resortToolChains(){
+			sortedToolChains = null;
+			getSortedToolChains();
+		}
+	*/
+	/*	private static List getSortedToolChains(){
+			if(sortedToolChains == null){
+				sortedToolChains = new ArrayList();
+				SortedMap map = getExtensionToolChainMapInternal();
+				for(Iterator iter = map.values().iterator(); iter.hasNext();){
+					ToolChain tc = (ToolChain)iter.next();
+					if(tc.isAbstract())
+						continue;
+					List list = searchIdentical(sortedToolChains, tc);
+					if(list == null){
+						list = new ArrayList();
+						sortedToolChains.add(list);
+					}
+					list.add(tc);
+					tc.setIdenticalList(list);
+				}
+			}
+			return sortedToolChains;
+		}
+	*/
+	//	private static List findIdenticalToolChains(IToolChain tc){
+	//		ToolChain tCh = (ToolChain)tc;
+	//		List list = tCh.getIdenticalList();
+	//		if(list == null){
+	//			resortToolChains();
+	//			list = tCh.getIdenticalList();
+	//			if(list == null){
+	//				list = new ArrayList(0);
+	//				tCh.setIdenticalList(list);
+	//			}
+	//		}
+	//
+	//		return ((ToolChain)tc).getIdenticalList();
+	//	}
 
-	public static IToolChain[] getExtensionToolChains(IProjectType type){
+	public static IToolChain[] getExtensionToolChains(IProjectType type) {
 		List<IToolChain> result = new ArrayList<IToolChain>();
 		IConfiguration cfgs[] = type.getConfigurations();
 
 		for (IConfiguration cfg : cfgs) {
 			IToolChain tc = cfg.getToolChain();
-			if(tc == null)
+			if (tc == null)
 				continue;
 
-			List<ToolChain> list = findIdenticalElements((ToolChain)tc, fToolChainSorter);
+			List<ToolChain> list = findIdenticalElements((ToolChain) tc, fToolChainSorter);
 			int k = 0;
-			for(; k < result.size(); k++){
-				if(findIdenticalElements((ToolChain)result.get(k), fToolChainSorter) == list)
+			for (; k < result.size(); k++) {
+				if (findIdenticalElements((ToolChain) result.get(k), fToolChainSorter) == list)
 					break;
 			}
 
-			if(k == result.size()){
+			if (k == result.size()) {
 				result.add(tc);
 			}
 		}
 		return result.toArray(new IToolChain[result.size()]);
 	}
 
-	public static IConfiguration[] getExtensionConfigurations(IToolChain tChain, IProjectType type){
+	public static IConfiguration[] getExtensionConfigurations(IToolChain tChain, IProjectType type) {
 		List<IConfiguration> list = new ArrayList<IConfiguration>();
 		IConfiguration cfgs[] = type.getConfigurations();
 		for (IConfiguration cfg : cfgs) {
 			IToolChain cur = cfg.getToolChain();
-			if(cur != null
-					&& findIdenticalElements((ToolChain)cur, fToolChainSorter) == findIdenticalElements((ToolChain)tChain, fToolChainSorter)){
+			if (cur != null && findIdenticalElements((ToolChain) cur,
+					fToolChainSorter) == findIdenticalElements((ToolChain) tChain, fToolChainSorter)) {
 				list.add(cfg);
 			}
 		}
 		return list.toArray(new Configuration[list.size()]);
 	}
 
-	public static IConfiguration getFirstExtensionConfiguration(IToolChain tChain){
-		if(tChain.getParent() != null)
+	public static IConfiguration getFirstExtensionConfiguration(IToolChain tChain) {
+		if (tChain.getParent() != null)
 			return tChain.getParent();
 
-		List<ToolChain> list = findIdenticalElements((ToolChain)tChain, fToolChainSorter);
-		if(list != null){
-			for(int i = 0; i < list.size(); i++){
+		List<ToolChain> list = findIdenticalElements((ToolChain) tChain, fToolChainSorter);
+		if (list != null) {
+			for (int i = 0; i < list.size(); i++) {
 				ToolChain cur = list.get(i);
-				if(cur.getParent() != null)
+				if (cur.getParent() != null)
 					return cur.getParent();
 			}
 		}
@@ -4103,22 +4053,23 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return null;
 	}
 
-	public static IConfiguration[] getExtensionConfigurations(IToolChain tChain, String propertyType, String propertyValue){
-//		List all = getSortedToolChains();
-		List<ToolChain> list = findIdenticalElements((ToolChain)tChain, fToolChainSorter);
+	public static IConfiguration[] getExtensionConfigurations(IToolChain tChain, String propertyType,
+			String propertyValue) {
+		//		List all = getSortedToolChains();
+		List<ToolChain> list = findIdenticalElements((ToolChain) tChain, fToolChainSorter);
 		LinkedHashSet<IConfiguration> result = new LinkedHashSet<IConfiguration>();
 		boolean tcFound = false;
-		if(list != null){
-			for(int i = 0; i < list.size(); i++){
+		if (list != null) {
+			for (int i = 0; i < list.size(); i++) {
 				ToolChain cur = list.get(i);
-				if(cur == tChain){
+				if (cur == tChain) {
 					tcFound = true;
 				}
 
 				IConfiguration cfg = cur.getParent();
-				if(cfg != null){
+				if (cfg != null) {
 					IBuildObjectProperties props = cfg.getBuildProperties();
-					if(props.containsValue(propertyType, propertyValue)){
+					if (props.containsValue(propertyType, propertyValue)) {
 						result.add(cfg);
 					}
 				}
@@ -4126,71 +4077,72 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 		}
 
-		if(!tcFound) {
+		if (!tcFound) {
 			IConfiguration cfg = tChain.getParent();
-			if(cfg != null){
+			if (cfg != null) {
 				IBuildObjectProperties props = cfg.getBuildProperties();
-				if(props.containsValue(propertyType, propertyValue)){
+				if (props.containsValue(propertyType, propertyValue)) {
 					result.add(cfg);
 				}
 			}
 		}
 
-//		if(result.size() == 0){
-//			if(((ToolChain)tChain).supportsValue(propertyType, propertyValue)){
-//				IConfiguration cfg = getFirstExtensionConfiguration(tChain);
-//				if(cfg != null){
-//					result.add(cfg);
-//				}
-//			}
-//		}
+		//		if(result.size() == 0){
+		//			if(((ToolChain)tChain).supportsValue(propertyType, propertyValue)){
+		//				IConfiguration cfg = getFirstExtensionConfiguration(tChain);
+		//				if(cfg != null){
+		//					result.add(cfg);
+		//				}
+		//			}
+		//		}
 		return result.toArray(new IConfiguration[result.size()]);
 	}
 
-/*	public static IToolChain[] getRealToolChains(){
-		List all = getSortedToolChains();
-		IToolChain tcs[] = new ToolChain[all.size()];
-		for(int i = 0; i < tcs.length; i++){
-			List list = (List)all.get(i);
-			tcs[i] = (ToolChain)list.get(0);
+	/*	public static IToolChain[] getRealToolChains(){
+			List all = getSortedToolChains();
+			IToolChain tcs[] = new ToolChain[all.size()];
+			for(int i = 0; i < tcs.length; i++){
+				List list = (List)all.get(i);
+				tcs[i] = (ToolChain)list.get(0);
+			}
+			return tcs;
 		}
-		return tcs;
-	}
-*/
+	*/
 
-	private static HashMap<MatchKey<ToolChain>, List<ToolChain>> getSortedToolChains(){
-		if(fSortedToolChains == null){
+	private static HashMap<MatchKey<ToolChain>, List<ToolChain>> getSortedToolChains() {
+		if (fSortedToolChains == null) {
 			Collection<ToolChain> toolChains = getExtensionToolChainMapInternal().values();
 			fSortedToolChains = getSortedElements(toolChains);
 		}
 		return fSortedToolChains;
 	}
 
-	private static HashMap<MatchKey<Tool>, List<Tool>> getSortedTools(){
-		if(fSortedTools == null){
+	private static HashMap<MatchKey<Tool>, List<Tool>> getSortedTools() {
+		if (fSortedTools == null) {
 			Collection<Tool> tools = getExtensionToolMapInternal().values();
 			fSortedTools = getSortedElements(tools);
 		}
 		return fSortedTools;
 	}
 
-	private static HashMap<MatchKey<Builder>, List<Builder>> getSortedBuilders(){
-		if(fSortedBuilders == null){
+	private static HashMap<MatchKey<Builder>, List<Builder>> getSortedBuilders() {
+		if (fSortedBuilders == null) {
 			Collection<Builder> builders = getExtensionBuilderMapInternal().values();
 			fSortedBuilders = getSortedElements(builders);
 		}
 		return fSortedBuilders;
 	}
 
-	private static <T extends BuildObject & IMatchKeyProvider<T>> HashMap<MatchKey<T>, List<T>> getSortedElements(Collection<T> elements){
+	private static <T extends BuildObject & IMatchKeyProvider<T>> HashMap<MatchKey<T>, List<T>> getSortedElements(
+			Collection<T> elements) {
 		HashMap<MatchKey<T>, List<T>> map = new HashMap<MatchKey<T>, List<T>>();
 		for (T p : elements) {
 			MatchKey<T> key = p.getMatchKey();
-			if(key == null)
+			if (key == null)
 				continue;
 
 			List<T> list = map.get(key);
-			if(list == null){
+			if (list == null) {
 				list = new ArrayList<T>();
 				map.put(key, list);
 			}
@@ -4205,7 +4157,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return map;
 	}
 
-	public static IToolChain[] getRealToolChains(){
+	public static IToolChain[] getRealToolChains() {
 		HashMap<MatchKey<ToolChain>, List<ToolChain>> map = getSortedToolChains();
 		IToolChain tcs[] = new ToolChain[map.size()];
 		int i = 0;
@@ -4215,7 +4167,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return tcs;
 	}
 
-	public static ITool[] getRealTools(){
+	public static ITool[] getRealTools() {
 		HashMap<MatchKey<Tool>, List<Tool>> map = getSortedTools();
 		Tool ts[] = new Tool[map.size()];
 		int i = 0;
@@ -4225,7 +4177,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return ts;
 	}
 
-	public static IBuilder[] getRealBuilders(){
+	public static IBuilder[] getRealBuilders() {
 		HashMap<MatchKey<Builder>, List<Builder>> map = getSortedBuilders();
 		IBuilder bs[] = new Builder[map.size()];
 		int i = 0;
@@ -4235,21 +4187,21 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return bs;
 	}
 
-	public static IBuilder getRealBuilder(IBuilder builder){
+	public static IBuilder getRealBuilder(IBuilder builder) {
 		IBuilder extBuilder = builder;
 		IBuilder realBuilder = null;
-		for(;extBuilder != null && !extBuilder.isExtensionElement(); extBuilder = extBuilder.getSuperClass()) {
+		for (; extBuilder != null && !extBuilder.isExtensionElement(); extBuilder = extBuilder.getSuperClass()) {
 			// empty body
 		}
 
-		if(extBuilder != null){
-			List<Builder> list = findIdenticalElements((Builder)extBuilder, fBuilderSorter);
-			if(list.size() == 0){
+		if (extBuilder != null) {
+			List<Builder> list = findIdenticalElements((Builder) extBuilder, fBuilderSorter);
+			if (list.size() == 0) {
 				realBuilder = extBuilder;
 			} else {
 				for (IBuilder realBldr : getRealBuilders()) {
-					List<Builder> rList = findIdenticalElements((Builder)realBldr, fBuilderSorter);
-					if(rList == list){
+					List<Builder> rList = findIdenticalElements((Builder) realBldr, fBuilderSorter);
+					if (rList == list) {
 						realBuilder = realBldr;
 						break;
 					}
@@ -4261,23 +4213,23 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return realBuilder;
 	}
 
-	public static ITool getRealTool(ITool tool){
-		if(tool == null)
+	public static ITool getRealTool(ITool tool) {
+		if (tool == null)
 			return null;
 		ITool extTool = tool;
 		ITool realTool = null;
-		for(;extTool != null && !extTool.isExtensionElement(); extTool= extTool.getSuperClass()) {
+		for (; extTool != null && !extTool.isExtensionElement(); extTool = extTool.getSuperClass()) {
 			// empty body
 		}
 
-		if(extTool != null){
-			List<Tool> list = findIdenticalElements((Tool)extTool, fToolSorter);
-			if(list.size() == 0){
+		if (extTool != null) {
+			List<Tool> list = findIdenticalElements((Tool) extTool, fToolSorter);
+			if (list.size() == 0) {
 				realTool = extTool;
 			} else {
 				for (ITool realT : getRealTools()) {
-					List<Tool> rList = findIdenticalElements((Tool)realT, fToolSorter);
-					if(rList == list){
+					List<Tool> rList = findIdenticalElements((Tool) realT, fToolSorter);
+					if (rList == list) {
 						realTool = realT;
 						break;
 					}
@@ -4289,29 +4241,29 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return realTool;
 	}
 
-	public static IToolChain getExtensionToolChain(IToolChain tc){
+	public static IToolChain getExtensionToolChain(IToolChain tc) {
 		IToolChain extTc = tc;
-		for(;extTc != null && !extTc.isExtensionElement(); extTc= extTc.getSuperClass()) {
+		for (; extTc != null && !extTc.isExtensionElement(); extTc = extTc.getSuperClass()) {
 			// empty body
 		}
 		return extTc;
 	}
 
-	public static IToolChain getRealToolChain(IToolChain tc){
+	public static IToolChain getRealToolChain(IToolChain tc) {
 		IToolChain extTc = tc;
 		IToolChain realToolChain = null;
-		for(;extTc != null && !extTc.isExtensionElement(); extTc= extTc.getSuperClass()) {
+		for (; extTc != null && !extTc.isExtensionElement(); extTc = extTc.getSuperClass()) {
 			// empty body
 		}
 
-		if(extTc != null){
-			List<ToolChain> list = findIdenticalElements((ToolChain)extTc, fToolChainSorter);
-			if(list.size() == 0){
+		if (extTc != null) {
+			List<ToolChain> list = findIdenticalElements((ToolChain) extTc, fToolChainSorter);
+			if (list.size() == 0) {
 				realToolChain = extTc;
 			} else {
 				for (IToolChain realTc : getRealToolChains()) {
-					List<ToolChain> rList = findIdenticalElements((ToolChain)realTc, fToolChainSorter);
-					if(rList == list){
+					List<ToolChain> rList = findIdenticalElements((ToolChain) realTc, fToolChainSorter);
+					if (rList == list) {
 						realToolChain = realTc;
 						break;
 					}
@@ -4323,96 +4275,98 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return realToolChain;
 	}
 
-	public static IToolChain[] findIdenticalToolChains(IToolChain tc){
-		List<ToolChain> list = findIdenticalElements((ToolChain)tc, fToolChainSorter);
+	public static IToolChain[] findIdenticalToolChains(IToolChain tc) {
+		List<ToolChain> list = findIdenticalElements((ToolChain) tc, fToolChainSorter);
 		return list.toArray(new ToolChain[list.size()]);
 	}
 
-	public static ITool[] findIdenticalTools(ITool tool){
-		List<Tool> list = findIdenticalElements((Tool)tool, fToolSorter);
+	public static ITool[] findIdenticalTools(ITool tool) {
+		List<Tool> list = findIdenticalElements((Tool) tool, fToolSorter);
 		return list.toArray(new Tool[list.size()]);
 	}
 
-	public static IBuilder[] findIdenticalBuilders(IBuilder b){
-		List<Builder> list = findIdenticalElements((Builder)b, fBuilderSorter);
+	public static IBuilder[] findIdenticalBuilders(IBuilder b) {
+		List<Builder> list = findIdenticalElements((Builder) b, fBuilderSorter);
 		return list.toArray(new Builder[list.size()]);
 	}
 
-	public static IToolChain[] getExtensionsToolChains(String propertyType, String propertyValue){
+	public static IToolChain[] getExtensionsToolChains(String propertyType, String propertyValue) {
 		return getExtensionsToolChains(propertyType, propertyValue, true);
 	}
 
-	public static IToolChain[] getExtensionsToolChains(String propertyType, String propertyValue, boolean supportedPropsOnly){
+	public static IToolChain[] getExtensionsToolChains(String propertyType, String propertyValue,
+			boolean supportedPropsOnly) {
 		HashMap<MatchKey<ToolChain>, List<ToolChain>> all = getSortedToolChains();
 		List<IToolChain> result = new ArrayList<IToolChain>();
 		for (List<ToolChain> list : all.values()) {
 			IToolChain tc = findToolChain(list, propertyType, propertyValue, supportedPropsOnly);
-			if(tc != null)
+			if (tc != null)
 				result.add(tc);
 		}
 		return result.toArray(new ToolChain[result.size()]);
 	}
 
-	public static void resortToolChains(){
+	public static void resortToolChains() {
 		fSortedToolChains = null;
 		getSortedToolChains();
 	}
 
-	public static void resortTools(){
+	public static void resortTools() {
 		fSortedTools = null;
 		getSortedTools();
 	}
 
-	public static void resortBuilders(){
+	public static void resortBuilders() {
 		fSortedBuilders = null;
 		getSortedBuilders();
 	}
 
-	private static IToolChain findToolChain(List<ToolChain> list, String propertyType, String propertyValue, boolean supportedOnly){
+	private static IToolChain findToolChain(List<ToolChain> list, String propertyType, String propertyValue,
+			boolean supportedOnly) {
 		ToolChain bestMatch = null;
 		IConfiguration cfg = null;
 		IProjectType type = null;
 		boolean valueSupported = false;
 
-		for(int i = 0; i < list.size(); i++){
+		for (int i = 0; i < list.size(); i++) {
 			ToolChain tc = list.get(i);
-			if(tc.supportsValue(propertyType, propertyValue)){
+			if (tc.supportsValue(propertyType, propertyValue)) {
 				valueSupported = true;
-			} else if (valueSupported){
+			} else if (valueSupported) {
 				continue;
 			}
 
-			if(!tc.supportsBuild(true))
+			if (!tc.supportsBuild(true))
 				return null;
 
-			if(bestMatch == null && valueSupported)
+			if (bestMatch == null && valueSupported)
 				bestMatch = tc;
 
 			IConfiguration tcCfg = tc.getParent();
-			if(tcCfg != null){
-				if(cfg == null && valueSupported){
+			if (tcCfg != null) {
+				if (cfg == null && valueSupported) {
 					bestMatch = tc;
 					cfg = tcCfg;
 				}
 
-				IBuildObjectProperties props =tcCfg.getBuildProperties();
+				IBuildObjectProperties props = tcCfg.getBuildProperties();
 				IBuildProperty prop = props.getProperty(propertyType);
-				if(valueSupported && prop != null && propertyValue.equals(prop.getValue().getId())){
+				if (valueSupported && prop != null && propertyValue.equals(prop.getValue().getId())) {
 					bestMatch = tc;
 					cfg = tcCfg;
 				}
 
 				IProjectType tcType = tcCfg.getProjectType();
-				if(tcType != null){
-					if(type == null && valueSupported){
+				if (tcType != null) {
+					if (type == null && valueSupported) {
 						type = tcType;
 						bestMatch = tc;
 					}
 					props = tcType.getBuildProperties();
 					prop = props.getProperty(propertyType);
-					if(prop != null && propertyValue.equals(prop.getValue().getId())){
+					if (prop != null && propertyValue.equals(prop.getValue().getId())) {
 						bestMatch = tc;
-						if(valueSupported){
+						if (valueSupported) {
 							type = tcType;
 							break;
 						}
@@ -4421,17 +4375,17 @@ public class ManagedBuildManager extends AbstractCExtension {
 			}
 		}
 
-		if(valueSupported || ! supportedOnly)
+		if (valueSupported || !supportedOnly)
 			return bestMatch;
 		return null;
 	}
 
-	private static <T extends BuildObject & IMatchKeyProvider<T>> List<T> findIdenticalElements(T p, ISorter sorter){
+	private static <T extends BuildObject & IMatchKeyProvider<T>> List<T> findIdenticalElements(T p, ISorter sorter) {
 		List<T> list = p.getIdenticalList();
-		if(list == null){
+		if (list == null) {
 			sorter.sort();
 			list = p.getIdenticalList();
-			if(list == null){
+			if (list == null) {
 				list = new ArrayList<T>(0);
 				p.setIdenticalList(list);
 			}
@@ -4440,9 +4394,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return list;
 	}
 
-
-
-	public static IBuildPropertyManager getBuildPropertyManager(){
+	public static IBuildPropertyManager getBuildPropertyManager() {
 		return BuildPropertyManager.getInstance();
 	}
 
@@ -4453,14 +4405,14 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @see CoreModelUtil#getReferencedConfigurationDescriptions(ICConfigurationDescription, boolean)
 	 * @return an array of IConfiguration objects referenced by this IConfiguration
 	 */
-	public static IConfiguration[] getReferencedConfigurations(IConfiguration config){
+	public static IConfiguration[] getReferencedConfigurations(IConfiguration config) {
 		ICConfigurationDescription cfgDes = getDescriptionForConfiguration(config);
-		if(cfgDes != null){
-			ICConfigurationDescription[] descs= CoreModelUtil.getReferencedConfigurationDescriptions(cfgDes, false);
+		if (cfgDes != null) {
+			ICConfigurationDescription[] descs = CoreModelUtil.getReferencedConfigurationDescriptions(cfgDes, false);
 			List<IConfiguration> result = new ArrayList<IConfiguration>();
 			for (ICConfigurationDescription desc : descs) {
 				IConfiguration cfg = getConfigurationForDescription(desc);
-				if(cfg != null) {
+				if (cfg != null) {
 					result.add(cfg);
 				}
 			}
@@ -4475,7 +4427,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param configs - configurations to build
 	 * @param monitor - progress monitor
 	 */
-	public static void buildConfigurations(IConfiguration[] configs, IProgressMonitor monitor) throws CoreException{
+	public static void buildConfigurations(IConfiguration[] configs, IProgressMonitor monitor) throws CoreException {
 		buildConfigurations(configs, null, monitor);
 	}
 
@@ -4485,7 +4437,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param builder - builder to retrieve build arguments
 	 * @param monitor - progress monitor
 	 */
-	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor) throws CoreException{
+	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor)
+			throws CoreException {
 		buildConfigurations(configs, builder, monitor, true);
 	}
 
@@ -4498,7 +4451,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param allBuilders - {@code true} if all builders need to be building
 	 *    or {@code false} to build with {@link CommonBuilder}
 	 */
-	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor, boolean allBuilders) throws CoreException{
+	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor,
+			boolean allBuilders) throws CoreException {
 		buildConfigurations(configs, builder, monitor, allBuilders, IncrementalProjectBuilder.FULL_BUILD);
 	}
 
@@ -4518,7 +4472,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @since 7.0
 	 */
 	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor,
-			boolean allBuilders, int buildKind) throws CoreException{
+			boolean allBuilders, int buildKind) throws CoreException {
 
 		Map<IProject, IConfiguration[]> map = sortConfigs(configs);
 		for (Entry<IProject, IConfiguration[]> entry : map.entrySet()) {
@@ -4528,12 +4482,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 	}
 
-	private static Map<IProject, IConfiguration[]> sortConfigs(IConfiguration cfgs[]){
+	private static Map<IProject, IConfiguration[]> sortConfigs(IConfiguration cfgs[]) {
 		Map<IProject, Set<IConfiguration>> cfgSetMap = new HashMap<IProject, Set<IConfiguration>>();
 		for (IConfiguration cfg : cfgs) {
 			IProject proj = cfg.getOwner().getProject();
 			Set<IConfiguration> set = cfgSetMap.get(proj);
-			if(set == null){
+			if (set == null) {
 				set = new HashSet<IConfiguration>();
 				cfgSetMap.put(proj, set);
 			}
@@ -4541,7 +4495,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 
 		Map<IProject, IConfiguration[]> cfgArrayMap = new HashMap<IProject, IConfiguration[]>();
-		if(cfgSetMap.size() != 0){
+		if (cfgSetMap.size() != 0) {
 			Set<Entry<IProject, Set<IConfiguration>>> entrySet = cfgSetMap.entrySet();
 			for (Entry<IProject, Set<IConfiguration>> entry : entrySet) {
 				IProject key = entry.getKey();
@@ -4570,7 +4524,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @throws CoreException
 	 */
 	private static void buildConfigurations(final IProject project, final IConfiguration[] configs,
-			final IBuilder builder, final IProgressMonitor monitor, final boolean allBuilders, final int buildKind) throws CoreException{
+			final IBuilder builder, final IProgressMonitor monitor, final boolean allBuilders, final int buildKind)
+			throws CoreException {
 
 		IWorkspaceRunnable op = new IWorkspaceRunnable() {
 			/*
@@ -4581,16 +4536,16 @@ public class ManagedBuildManager extends AbstractCExtension {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				int ticks = 1;
-				if (buildKind==IncrementalProjectBuilder.CLEAN_BUILD) {
+				if (buildKind == IncrementalProjectBuilder.CLEAN_BUILD) {
 					if (allBuilders) {
 						ICommand[] commands = project.getDescription().getBuildSpec();
 						ticks = commands.length;
 					}
-					ticks = ticks*configs.length;
+					ticks = ticks * configs.length;
 				}
 				monitor.beginTask(project.getName(), ticks);
 
-				if (buildKind==IncrementalProjectBuilder.CLEAN_BUILD) {
+				if (buildKind == IncrementalProjectBuilder.CLEAN_BUILD) {
 					// It is not possible to pass arguments to clean() method of a builder
 					// So we iterate setting active configuration
 					IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
@@ -4609,7 +4564,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 					}
 				} else {
 					// configuration IDs are passed in args to CDT builder
-					Map<String, String> args = builder!=null ? BuilderFactory.createBuildArgs(configs, builder)
+					Map<String, String> args = builder != null ? BuilderFactory.createBuildArgs(configs, builder)
 							: BuilderFactory.createBuildArgs(configs);
 					buildProject(project, args, allBuilders, buildKind, monitor);
 				}
@@ -4617,8 +4572,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 				monitor.done();
 			}
 
-			private void buildProject(IProject project, Map<String, String> args, boolean allBuilders, int buildKind, IProgressMonitor monitor)
-					throws CoreException {
+			private void buildProject(IProject project, Map<String, String> args, boolean allBuilders, int buildKind,
+					IProgressMonitor monitor) throws CoreException {
 
 				if (allBuilders) {
 					ICommand[] commands = project.getDescription().getBuildSpec();
@@ -4628,7 +4583,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 						String builderName = command.getBuilderName();
 						Map<String, String> newArgs = null;
-						if (buildKind!=IncrementalProjectBuilder.CLEAN_BUILD) {
+						if (buildKind != IncrementalProjectBuilder.CLEAN_BUILD) {
 							newArgs = new HashMap<String, String>(args);
 							if (!builderName.equals(CommonBuilder.BUILDER_ID)) {
 								newArgs.putAll(command.getArguments());
@@ -4649,26 +4604,29 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 	}
 
-	public static IBuilder getInternalBuilder(){
+	public static IBuilder getInternalBuilder() {
 		return getExtensionBuilder(INTERNAL_BUILDER_ID);
 	}
 
-	public static ITool getExtensionTool(ITool tool){
+	public static ITool getExtensionTool(ITool tool) {
 		ITool extTool = tool;
-		for(;extTool != null && !extTool.isExtensionElement(); extTool = extTool.getSuperClass()) {}
+		for (; extTool != null && !extTool.isExtensionElement(); extTool = extTool.getSuperClass()) {
+		}
 		return extTool;
 	}
 
-	public static IInputType getExtensionInputType(IInputType inType){
+	public static IInputType getExtensionInputType(IInputType inType) {
 		IInputType extIT = inType;
-		for(;extIT != null && !extIT.isExtensionElement(); extIT = extIT.getSuperClass()) {}
+		for (; extIT != null && !extIT.isExtensionElement(); extIT = extIT.getSuperClass()) {
+		}
 		return extIT;
 	}
 
-	public static IConfiguration getPreferenceConfiguration(boolean write){
+	public static IConfiguration getPreferenceConfiguration(boolean write) {
 		try {
-			ICConfigurationDescription des = CCorePlugin.getDefault().getPreferenceConfiguration(CFG_DATA_PROVIDER_ID, write);
-			if(des != null)
+			ICConfigurationDescription des = CCorePlugin.getDefault().getPreferenceConfiguration(CFG_DATA_PROVIDER_ID,
+					write);
+			if (des != null)
 				return getConfigurationForDescription(des);
 		} catch (CoreException e) {
 			ManagedBuilderCorePlugin.log(e);
@@ -4676,13 +4634,13 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return null;
 	}
 
-	public static void setPreferenceConfiguration(IConfiguration cfg) throws CoreException{
+	public static void setPreferenceConfiguration(IConfiguration cfg) throws CoreException {
 		ICConfigurationDescription des = getDescriptionForConfiguration(cfg);
-		if(des != null)
+		if (des != null)
 			CCorePlugin.getDefault().setPreferenceConfiguration(CFG_DATA_PROVIDER_ID, des);
 	}
 
-	static synchronized void updateLoaddedInfo(IProject fromProject, IProject toProject, IManagedBuildInfo info){
+	static synchronized void updateLoaddedInfo(IProject fromProject, IProject toProject, IManagedBuildInfo info) {
 		try {
 			setLoaddedBuildInfo(fromProject, null);
 			setLoaddedBuildInfo(toProject, info);
@@ -4693,7 +4651,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * entry-point for the tool-chain modification validation functionality
 	 */
-	public static IToolChainModificationManager getToolChainModificationManager(){
+	public static IToolChainModificationManager getToolChainModificationManager() {
 		return ToolChainModificationManager.getInstance();
 	}
 
@@ -4712,9 +4670,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return true; // no target platform - nothing to check.
 	}
 
-	/*package*/ static void collectLanguageSettingsConsoleParsers(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker, List<IConsoleParser> parsers) {
+	/*package*/ static void collectLanguageSettingsConsoleParsers(ICConfigurationDescription cfgDescription,
+			IWorkingDirectoryTracker cwdTracker, List<IConsoleParser> parsers) {
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
+					.getLanguageSettingProviders();
 			for (ILanguageSettingsProvider lsProvider : lsProviders) {
 				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(lsProvider);
 				if (rawProvider instanceof ICBuildOutputParser) {
@@ -4733,7 +4693,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	/**
 	 * Generic routine for checking the availability of converters for the given list of Build Objects.
-	 * 
+	 *
 	 * @return true if there are converters for at least one object in the given list of Build Objects.
 	 *         Returns false if there are no converters.
 	 * @since 8.1

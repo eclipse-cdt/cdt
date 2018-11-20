@@ -11,7 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
- *     Ericsson 		  	- Modified for additional features in DSF Reference implementation     
+ *     Ericsson 		  	- Modified for additional features in DSF Reference implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
@@ -21,13 +21,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
  * MIInterpreterExec
- * 
+ *
  * -interpreter-exec
  *
  * -interpreter-exec interpreter command
- * 
+ *
  * Execute the specified command in the given interpreter.
- * 
+ *
  * -interpreter-exec console "break main"
  * &"During symbol reading, couldn't parse type; debugger out of date?.\n"
  * &"During symbol reading, bad structure-type format.\n"
@@ -37,11 +37,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  */
 public class MIInterpreterExec<V extends MIInfo> extends MICommand<V> {
 
-    /**
-     * @param oper
-     */
-    public MIInterpreterExec(IDMContext ctx, String interpreter, String cmd) {
-        super(ctx, "-interpreter-exec", new String[] {interpreter, cmd}); //$NON-NLS-1$
-    }
+	/**
+	 * @param oper
+	 */
+	public MIInterpreterExec(IDMContext ctx, String interpreter, String cmd) {
+		super(ctx, "-interpreter-exec", new String[] { interpreter, cmd }); //$NON-NLS-1$
+	}
 
 }

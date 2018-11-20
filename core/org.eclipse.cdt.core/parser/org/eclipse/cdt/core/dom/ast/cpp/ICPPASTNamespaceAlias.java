@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 /**
  * This interface represents a namespace alias in C++,
  * e.g. namespace ABC { int* x; } namespace DEF = ABC;
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -42,14 +42,14 @@ public interface ICPPASTNamespaceAlias extends IASTDeclaration, IASTNameOwner {
 
 	/**
 	 * Get the new alias name.
-	 * 
+	 *
 	 * @return <code>IASTName</code>
 	 */
 	public IASTName getAlias();
 
 	/**
 	 * Set the new alias name.
-	 * 
+	 *
 	 * @param name
 	 *            <code>IASTName</code>
 	 */
@@ -57,19 +57,19 @@ public interface ICPPASTNamespaceAlias extends IASTDeclaration, IASTNameOwner {
 
 	/**
 	 * Get the mapping name.
-	 * 
+	 *
 	 * @return <code>IASTName</code>
 	 */
 	public IASTName getMappingName();
 
 	/**
 	 * Set the mapping name.
-	 * 
+	 *
 	 * @param qualifiedName
 	 *            <code>IASTName</code>
 	 */
 	public void setMappingName(IASTName qualifiedName);
-	
+
 	/**
 	 * @since 5.1
 	 */

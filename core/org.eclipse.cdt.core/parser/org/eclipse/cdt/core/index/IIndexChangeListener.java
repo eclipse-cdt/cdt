@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
 /**
@@ -24,14 +24,14 @@ package org.eclipse.cdt.core.index;
  * that it will remain the same. Please do not use this API without consulting
  * with the CDT team.
  * </p>
- * 
+ *
  * @since 4.0
  */
 public interface IIndexChangeListener {
 	/**
 	 * Notifies this listener that some part of the index has changed.
 	 * <p>
-	 * The supplied event provides the details. This event object is valid only for 
+	 * The supplied event provides the details. This event object is valid only for
 	 * the duration of the invocation of this method.
 	 * </p>
 	 * <p>

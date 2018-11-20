@@ -33,13 +33,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.ui.util.Messages;
 
 public class OccurrencesFinder implements IOccurrencesFinder {
-	public static final String ID= "OccurrencesFinder"; //$NON-NLS-1$
-	
+	public static final String ID = "OccurrencesFinder"; //$NON-NLS-1$
+
 	/**
 	 * If set, don't search for implicit references.
 	 */
 	public static final int OPTION_EXCLUDE_IMPLICIT_REFERENCES = 1;
-	
+
 	private IASTTranslationUnit fRoot;
 	private IASTName fSelectedNode;
 	private IBinding fTarget;
@@ -48,54 +48,55 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 
 	private String fReadDescription;
 	private String fWriteDescription;
-	
+
 	private int fOptions;
-	
+
 	public OccurrencesFinder() {
 		super();
 	}
-	
+
 	@Override
 	public String initialize(IASTTranslationUnit root, IASTNode node) {
 		if (!(node instanceof IASTName))
-			return CSearchMessages.OccurrencesFinder_no_element; 
-		fRoot= root;
-		fSelectedNode= (IASTName) node;
-		fTarget= fSelectedNode.resolveBinding();
+			return CSearchMessages.OccurrencesFinder_no_element;
+		fRoot = root;
+		fSelectedNode = (IASTName) node;
+		fTarget = fSelectedNode.resolveBinding();
 		if (fTarget == null)
-			return CSearchMessages.OccurrencesFinder_no_binding; 
-		
-		fReadDescription= Messages.format(CSearchMessages.OccurrencesFinder_occurrence_description, fTarget.getName());
-		fWriteDescription= Messages.format(CSearchMessages.OccurrencesFinder_occurrence_write_description, fTarget.getName());
+			return CSearchMessages.OccurrencesFinder_no_binding;
+
+		fReadDescription = Messages.format(CSearchMessages.OccurrencesFinder_occurrence_description, fTarget.getName());
+		fWriteDescription = Messages.format(CSearchMessages.OccurrencesFinder_occurrence_write_description,
+				fTarget.getName());
 		return null;
 	}
-	
+
 	/**
 	 * Specify search options.
-	 * 
+	 *
 	 * @param options
 	 */
 	public void setOptions(int options) {
 		fOptions = options;
 	}
-	
+
 	private void performSearch() {
 		if (fResult == null) {
-			fResult= new ArrayList<>();
-			IASTName[] names= fRoot.getDeclarationsInAST(fTarget);
+			fResult = new ArrayList<>();
+			IASTName[] names = fRoot.getDeclarationsInAST(fTarget);
 			for (IASTName candidate : names) {
 				if (candidate.isPartOfTranslationUnitFile()) {
 					addUsage(candidate, candidate.resolveBinding());
 				}
 			}
-			names= fRoot.getReferences(fTarget);
+			names = fRoot.getReferences(fTarget);
 			for (IASTName candidate : names) {
 				if (candidate.isPartOfTranslationUnitFile()) {
 					addUsage(candidate, candidate.resolveBinding());
 				}
 			}
 			if (needImplicitReferences() && canHaveImplicitReference(fTarget)) {
-				names= CPPVisitor.getImplicitReferences(fRoot, fTarget);
+				names = CPPVisitor.getImplicitReferences(fRoot, fTarget);
 				for (IASTName candidate : names) {
 					if (candidate.isPartOfTranslationUnitFile()) {
 						addUsage(candidate, candidate.resolveBinding());
@@ -104,7 +105,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 			}
 		}
 	}
-	
+
 	private boolean needImplicitReferences() {
 		return (fOptions & OPTION_EXCLUDE_IMPLICIT_REFERENCES) == 0;
 	}
@@ -122,7 +123,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		}
 		if (binding instanceof ICPPConstructor)
 			return true;
-		
+
 		return false;
 	}
 
@@ -138,7 +139,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 	public IASTTranslationUnit getASTRoot() {
 		return fRoot;
 	}
-		
+
 	@Override
 	public String getElementName() {
 		if (fSelectedNode != null) {
@@ -146,29 +147,29 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String getUnformattedPluralLabel() {
 		return CSearchMessages.OccurrencesFinder_label_plural;
 	}
-	
+
 	@Override
 	public String getUnformattedSingularLabel() {
 		return CSearchMessages.OccurrencesFinder_label_singular;
 	}
-	
+
 	private boolean addUsage(IASTName node, IBinding binding) {
 		if (binding != null /* && Bindings.equals(binding, fTarget) */) {
 			if (node instanceof ICPPASTTemplateId) {
-				node= ((ICPPASTTemplateId) node).getTemplateName();
+				node = ((ICPPASTTemplateId) node).getTemplateName();
 			}
-			IASTFileLocation fileLocation= node.getImageLocation();
+			IASTFileLocation fileLocation = node.getImageLocation();
 			if (fileLocation == null || !fRoot.getFilePath().equals(fileLocation.getFileName())) {
-				fileLocation= node.getFileLocation();
+				fileLocation = node.getFileLocation();
 			}
 			if (fileLocation != null) {
-				final int offset= fileLocation.getNodeOffset();
-				final int length= fileLocation.getNodeLength();
+				final int offset = fileLocation.getNodeOffset();
+				final int length = fileLocation.getNodeLength();
 				if (offset >= 0 && length > 0) {
 					if (binding instanceof IVariable) {
 						final boolean isWriteOccurrence = CSearchUtil.isWriteOccurrence(node, binding);
@@ -189,7 +190,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 	public int getSearchKind() {
 		return K_OCCURRENCE;
 	}
-	
+
 	@Override
 	public String getID() {
 		return ID;

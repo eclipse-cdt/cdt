@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -23,24 +23,24 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.swt.widgets.Shell;
 
 public class PDAContentAssistant extends ContentAssistant {
-    
-    public PDAContentAssistant() {
-        super();
-        
-        PDAContentAssistProcessor processor= new PDAContentAssistProcessor(); 
-        setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
-    
-        enableAutoActivation(false);
-        enableAutoInsert(false);
-        
-        setInformationControlCreator(getInformationControlCreator());   
-    }
 
-    private IInformationControlCreator getInformationControlCreator() {
-        return new IInformationControlCreator() {
-            public IInformationControl createInformationControl(Shell parent) {
-                return new DefaultInformationControl(parent);
-            }
-        };
-    }
+	public PDAContentAssistant() {
+		super();
+
+		PDAContentAssistProcessor processor = new PDAContentAssistProcessor();
+		setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+
+		enableAutoActivation(false);
+		enableAutoInsert(false);
+
+		setInformationControlCreator(getInformationControlCreator());
+	}
+
+	private IInformationControlCreator getInformationControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				return new DefaultInformationControl(parent);
+			}
+		};
+	}
 }

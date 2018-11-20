@@ -21,7 +21,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotRadio;
  * Custom assertions on a given {@link SWTBotRadio}.
  */
 public class RadioAssertion extends AbstractSWTBotAssertions<RadioAssertion, SWTBotRadio> {
-	
+
 	protected RadioAssertion(final SWTBotRadio actual) {
 		super(actual, RadioAssertion.class);
 	}
@@ -32,7 +32,7 @@ public class RadioAssertion extends AbstractSWTBotAssertions<RadioAssertion, SWT
 
 	public RadioAssertion isSelected() {
 		notNullValue();
-		if(!actual.isSelected()) {
+		if (!actual.isSelected()) {
 			failWithMessage("Expected checkbox with text '%s' to be checked but it was not", actual.getText());
 		}
 		return this;
@@ -40,10 +40,10 @@ public class RadioAssertion extends AbstractSWTBotAssertions<RadioAssertion, SWT
 
 	public RadioAssertion isNotSelected() {
 		notNullValue();
-		if(actual.isSelected()) {
+		if (actual.isSelected()) {
 			failWithMessage("Expected checkbox with text '%s' to be unchecked but it was not", actual.getText());
 		}
 		return this;
 	}
-	
+
 }

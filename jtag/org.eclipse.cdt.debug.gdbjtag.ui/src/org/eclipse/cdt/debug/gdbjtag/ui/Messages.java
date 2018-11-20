@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      QNX Software Systems - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ public class Messages {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.gdbjtag.ui.JtagUi"; //$NON-NLS-1$
 
 	private static /* final */ ResourceBundle RESOURCE_BUNDLE; // = ResourceBundle.getBundle(BUNDLE_NAME);
-	
+
 	static {
 		try {
 			RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
@@ -40,7 +40,7 @@ public class Messages {
 			return '!' + key + '!';
 		}
 	}
-	
+
 	public static ResourceBundle getResourceBundle() {
 		return RESOURCE_BUNDLE;
 	}

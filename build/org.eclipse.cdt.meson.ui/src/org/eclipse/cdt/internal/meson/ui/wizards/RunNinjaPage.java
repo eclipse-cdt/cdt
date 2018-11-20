@@ -31,11 +31,11 @@ import org.eclipse.swt.widgets.Text;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RunNinjaPage extends WizardPage {
-	
+
 	private ICBuildConfiguration config;
 	private Text envText;
 	private Text ninjaArgs;
@@ -50,15 +50,15 @@ public class RunNinjaPage extends WizardPage {
 
 	@Override
 	public void createControl(Composite parent) {
-		
+
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout(1, true));
-		
+
 		Label envLabel = new Label(composite, SWT.NONE);
 		envLabel.setText(WizardMessages.RunNinjaPage_env_label);
 		envLabel.setLayoutData(new GridData());
-		
+
 		envText = new Text(composite, SWT.BORDER);
 		String lastEnv = config.getProperty(IMesonConstants.NINJA_ENV);
 		if (lastEnv == null) {
@@ -68,11 +68,11 @@ public class RunNinjaPage extends WizardPage {
 		envText.setText(lastEnv);
 		GridData gdata = new GridData(SWT.FILL, SWT.FILL, true, false);
 		envText.setLayoutData(gdata);
-		
+
 		Label argLabel = new Label(composite, SWT.NONE);
 		argLabel.setText(WizardMessages.RunNinjaPage_options_label);
 		argLabel.setLayoutData(new GridData());
-		
+
 		ninjaArgs = new Text(composite, SWT.BORDER);
 		String lastNinjaArgs = config.getProperty(IMesonConstants.NINJA_ARGUMENTS);
 		if (lastNinjaArgs == null) {
@@ -82,7 +82,7 @@ public class RunNinjaPage extends WizardPage {
 		ninjaArgs.setText(lastNinjaArgs);
 		GridData gdata2 = new GridData(SWT.FILL, SWT.FILL, true, false);
 		ninjaArgs.setLayoutData(gdata2);
-		
+
 		setControl(composite);
 	}
 
@@ -93,7 +93,7 @@ public class RunNinjaPage extends WizardPage {
 	public String getEnvStr() {
 		return envText.getText();
 	}
-	
+
 	/**
 	 * Return the user-specified ninja arguments
 	 * @return the ninja arg String
@@ -101,5 +101,5 @@ public class RunNinjaPage extends WizardPage {
 	public String getNinjaArgs() {
 		return ninjaArgs.getText();
 	}
-	
+
 }

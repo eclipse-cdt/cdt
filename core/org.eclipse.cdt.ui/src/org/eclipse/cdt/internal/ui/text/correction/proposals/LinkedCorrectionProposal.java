@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.ITrackedNodePosition;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
 
 /**
  * A proposal for quick fixes and quick assists that works on a AST rewriter and enters the
@@ -39,8 +38,7 @@ public class LinkedCorrectionProposal extends ASTRewriteCorrectionProposal {
 	 * @param image The image that is displayed for this proposal or {@code null} if no
 	 * image is desired.
 	 */
-	public LinkedCorrectionProposal(String name, ITranslationUnit tu, ASTRewrite rewrite,
-			int relevance, Image image) {
+	public LinkedCorrectionProposal(String name, ITranslationUnit tu, ASTRewrite rewrite, int relevance, Image image) {
 		super(name, tu, rewrite, relevance, image);
 	}
 

@@ -38,11 +38,11 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 /**
  * Test the Shift left/right actions.
- * 
+ *
  * @since 5.0
  */
 public class ShiftActionTest extends BaseUITestCase {
-	private static final String PROJECT= "ShiftTests";
+	private static final String PROJECT = "ShiftTests";
 	private static final String FILE = "shiftTest.c";
 
 	private static final class EmptyBundle extends ListResourceBundle {
@@ -59,20 +59,20 @@ public class ShiftActionTest extends BaseUITestCase {
 		public ShiftTestSetup(Test test) {
 			super(test);
 		}
-		
+
 		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
-			
-			fCProject= CProjectHelper.createCProject(PROJECT, null);
+
+			fCProject = CProjectHelper.createCProject(PROJECT, null);
 			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, DefaultCodeFormatterConstants.MIXED);
 			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, String.valueOf(8));
 			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, String.valueOf(4));
-			IFile file= EditorTestHelper.createFile(fCProject.getProject(), FILE, "", new NullProgressMonitor());
+			IFile file = EditorTestHelper.createFile(fCProject.getProject(), FILE, "", new NullProgressMonitor());
 		}
 
 		@Override
-		protected void tearDown () throws Exception {
+		protected void tearDown() throws Exception {
 			EditorTestHelper.closeAllEditors();
 			if (fCProject != null) {
 				CProjectHelper.delete(fCProject);
@@ -80,8 +80,9 @@ public class ShiftActionTest extends BaseUITestCase {
 			super.tearDown();
 		}
 	}
-	
-	private static final Class<?> THIS= ShiftActionTest.class;
+
+	private static final Class<?> THIS = ShiftActionTest.class;
+
 	public static Test suite() {
 		return new ShiftTestSetup(new TestSuite(THIS));
 	}
@@ -97,15 +98,15 @@ public class ShiftActionTest extends BaseUITestCase {
 	@Override
 	protected void setUp() throws Exception {
 		if (!ResourcesPlugin.getWorkspace().getRoot().exists(new Path(PROJECT))) {
-			fProjectSetup= new ShiftTestSetup(this);
+			fProjectSetup = new ShiftTestSetup(this);
 			fProjectSetup.setUp();
 		}
-		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(PROJECT + '/' + FILE), true);
-		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
-		fDocument= fSourceViewer.getDocument();
+		fEditor = (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(PROJECT + '/' + FILE), true);
+		fSourceViewer = EditorTestHelper.getSourceViewer(fEditor);
+		fDocument = fSourceViewer.getDocument();
 		super.setUp();
 	}
-	
+
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
@@ -116,7 +117,7 @@ public class ShiftActionTest extends BaseUITestCase {
 		}
 		super.tearDown();
 	}
-	
+
 	private void shiftLeft() throws Exception {
 		new ShiftAction(new EmptyBundle(), "prefix", fEditor, ITextOperationTarget.SHIFT_LEFT).run();
 	}
@@ -132,14 +133,14 @@ public class ShiftActionTest extends BaseUITestCase {
 	//void f() {
 	//    for(;;) {
 	//}
-	
+
 	//    void f() {
 	//	for(;;) {
 	//    }
 	public void testShiftRight() throws Exception {
-		CharSequence[] contents= getContentsForTest(2);
-		String before= contents[0].toString();
-		String after= contents[1].toString();
+		CharSequence[] contents = getContentsForTest(2);
+		String before = contents[0].toString();
+		String after = contents[1].toString();
 		fDocument.set(before);
 		selectAll();
 		shiftRight();
@@ -154,9 +155,9 @@ public class ShiftActionTest extends BaseUITestCase {
 	//    for(;;) {
 	//}
 	public void testShiftLeft() throws Exception {
-		CharSequence[] contents= getContentsForTest(2);
-		String before= contents[0].toString();
-		String after= contents[1].toString();
+		CharSequence[] contents = getContentsForTest(2);
+		String before = contents[0].toString();
+		String after = contents[1].toString();
 		fDocument.set(before);
 		selectAll();
 		shiftLeft();

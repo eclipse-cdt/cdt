@@ -26,55 +26,54 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This class represents the generated directory information
- * 
- * NOTE: This class is subject to change and discuss, 
+ *
+ * NOTE: This class is subject to change and discuss,
  * and is currently available in experimental mode only
- *  
+ *
  */
 public class GenDirInfo {
 	private IProject fProject;
 	private IPath fProjPath;
 	private Set<IPath> fDirPathSet = new HashSet<IPath>();
-	
-	public GenDirInfo(IProject proj){
+
+	public GenDirInfo(IProject proj) {
 		fProject = proj;
 		fProjPath = proj.getFullPath();
 	}
 
-	public GenDirInfo(IConfiguration cfg){
+	public GenDirInfo(IConfiguration cfg) {
 		this(cfg.getOwner().getProject());
 	}
-	
-	public void createDir(IBuildResource rc, IProgressMonitor monitor){
+
+	public void createDir(IBuildResource rc, IProgressMonitor monitor) {
 		IPath path = rc.getFullPath();
-		if(path != null
-				&& fProjPath.isPrefixOf(path)){
+		if (path != null && fProjPath.isPrefixOf(path)) {
 			path = path.removeLastSegments(1).removeFirstSegments(1);
 			createDir(path, monitor);
 		}
 	}
 
-	public void createIfProjectDir(IPath fullPath, IProgressMonitor monitor){
-		if(fullPath.segmentCount() > fProjPath.segmentCount() && fProjPath.isPrefixOf(fullPath))
+	public void createIfProjectDir(IPath fullPath, IProgressMonitor monitor) {
+		if (fullPath.segmentCount() > fProjPath.segmentCount() && fProjPath.isPrefixOf(fullPath))
 			createDir(fullPath.removeFirstSegments(fProjPath.segmentCount()), monitor);
 	}
 
-	protected void createDir(IPath path, IProgressMonitor monitor){
-		if(path.segmentCount() > 0 && fDirPathSet.add(path)){
+	protected void createDir(IPath path, IProgressMonitor monitor) {
+		if (path.segmentCount() > 0 && fDirPathSet.add(path)) {
 			IFolder folder = fProject.getFolder(path);
-			if(!folder.exists()){
+			if (!folder.exists()) {
 				createDir(path.removeLastSegments(1), monitor);
 				try {
 					folder.create(true, true, monitor);
 					folder.setDerived(true);
 				} catch (CoreException e) {
-					if(DbgUtil.DEBUG)
-						DbgUtil.trace("GenDirInfo: failed to create dir: " + e.getLocalizedMessage()); //$NON-NLS-1$ 
+					if (DbgUtil.DEBUG)
+						DbgUtil.trace("GenDirInfo: failed to create dir: " + e.getLocalizedMessage()); //$NON-NLS-1$
 					//TODO: log the error
 				}
 			}
 		}
 
 	}
-	
+
 }

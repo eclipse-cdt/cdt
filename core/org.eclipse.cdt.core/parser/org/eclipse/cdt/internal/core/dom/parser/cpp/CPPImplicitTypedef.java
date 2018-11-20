@@ -26,38 +26,38 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
  * An example is the GCC built-in typedef:  typedef char * __builtin_va_list;
  */
 public class CPPImplicitTypedef extends CPPTypedef {
-    private IType type;
-    private char[] name;
-    private IScope scope;
+	private IType type;
+	private char[] name;
+	private IScope scope;
 
-    public CPPImplicitTypedef(IType type, char[] name, IScope scope) {
-        super(null);
-        this.type = type;
-        this.name = name;
-        this.scope = scope;
-    }
+	public CPPImplicitTypedef(IType type, char[] name, IScope scope) {
+		super(null);
+		this.type = type;
+		this.name = name;
+		this.scope = scope;
+	}
 
-    @Override
+	@Override
 	public IType getType() {
-        return type;
-    }
+		return type;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return String.valueOf(name);
-    }
+		return String.valueOf(name);
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        return scope;
-    }
+		return scope;
+	}
 
-    @Override
+	@Override
 	public boolean isSameType(IType t) {
 		if (t == this)
 			return true;
@@ -75,67 +75,66 @@ public class CPPImplicitTypedef extends CPPTypedef {
 		return false;
 	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-        t = (IType) super.clone();
-        return t;
-    }
+		IType t = null;
+		t = (IType) super.clone();
+		return t;
+	}
 
-    /**
-     * returns null
-     */
-    @Override
+	/**
+	 * returns null
+	 */
+	@Override
 	public IASTNode[] getDeclarations() {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * returns null
-     */
-    @Override
+	/**
+	 * returns null
+	 */
+	@Override
 	public IASTNode getDefinition() {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * does nothing
-     */
-    @Override
+	/**
+	 * does nothing
+	 */
+	@Override
 	public void addDefinition(IASTNode node) {
-        // do nothing
-    }
+		// do nothing
+	}
 
-    /**
-     * does nothing
-     */
-    @Override
+	/**
+	 * does nothing
+	 */
+	@Override
 	public void addDeclaration(IASTNode node) {
-        // do nothing
-    }
+		// do nothing
+	}
 
-    @Override
+	@Override
 	public String[] getQualifiedName() {
-        String[] temp = new String[1];
-        temp[0] = String.valueOf(name);
+		String[] temp = new String[1];
+		temp[0] = String.valueOf(name);
 
-        return temp;
-    }
+		return temp;
+	}
 
-
-    @Override
+	@Override
 	public char[][] getQualifiedNameCharArray() {
-        char[][] temp = new char[1][];
-        temp[0] = name;
+		char[][] temp = new char[1][];
+		temp[0] = name;
 
-        return temp;
-    }
+		return temp;
+	}
 
-    /**
-     * returns true
-     */
-    @Override
+	/**
+	 * returns true
+	 */
+	@Override
 	public boolean isGloballyQualified() {
-        return true;
-    }
+		return true;
+	}
 }

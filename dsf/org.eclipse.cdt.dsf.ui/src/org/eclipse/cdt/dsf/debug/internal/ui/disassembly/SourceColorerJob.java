@@ -36,9 +36,9 @@ class SourceColorerJob extends UIJob implements Runnable {
 
 	public SourceColorerJob(Display jobDisplay, IStorage storage, DisassemblyPart disassemblyPart) {
 		super(DisassemblyMessages.SourceColorerJob_name);
-		fDisassemblyPart= disassemblyPart;
-		fViewer= disassemblyPart.getTextViewer();
-		fDocument= (DisassemblyDocument) fViewer.getDocument();
+		fDisassemblyPart = disassemblyPart;
+		fViewer = disassemblyPart.getTextViewer();
+		fDocument = (DisassemblyDocument) fViewer.getDocument();
 		fStorage = storage;
 		setDisplay(fDisassemblyPart.getSite().getShell().getDisplay());
 		setSystem(true);
@@ -56,7 +56,7 @@ class SourceColorerJob extends UIJob implements Runnable {
 			if (fi != null) {
 				fi.initPresentationCreator(fViewer);
 				if (fi.fError != null) {
-					String message= DisassemblyMessages.Disassembly_log_error_readFile + fi.fFileKey;
+					String message = DisassemblyMessages.Disassembly_log_error_readFile + fi.fFileKey;
 					fDisassemblyPart.logWarning(message, fi.fError);
 				}
 			}
@@ -71,8 +71,9 @@ class SourceColorerJob extends UIJob implements Runnable {
 	 */
 	@Override
 	public void run() {
-		IWorkbenchSiteProgressService progressService = fDisassemblyPart.getSite().getAdapter(IWorkbenchSiteProgressService.class);
-		if(progressService != null) {
+		IWorkbenchSiteProgressService progressService = fDisassemblyPart.getSite()
+				.getAdapter(IWorkbenchSiteProgressService.class);
+		if (progressService != null) {
 			progressService.schedule(this, 0, true);
 		} else {
 			schedule();

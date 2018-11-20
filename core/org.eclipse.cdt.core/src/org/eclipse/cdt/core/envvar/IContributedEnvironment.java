@@ -21,28 +21,23 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
  */
 public interface IContributedEnvironment {
 	IEnvironmentVariable[] getVariables(ICConfigurationDescription des);
-	
+
 	IEnvironmentVariable getVariable(String name, ICConfigurationDescription des);
-	
+
 	boolean appendEnvironment(ICConfigurationDescription des);
 
 	void setAppendEnvironment(boolean append, ICConfigurationDescription des);
-	
-	IEnvironmentVariable addVariable(String name,
-			String value,
-			int op,
-			String delimiter,
+
+	IEnvironmentVariable addVariable(String name, String value, int op, String delimiter,
 			ICConfigurationDescription des);
 
-	IEnvironmentVariable addVariable(IEnvironmentVariable var,
-			ICConfigurationDescription des);
-	
-	void addVariables(IEnvironmentVariable[] vars,
-			ICConfigurationDescription des);
+	IEnvironmentVariable addVariable(IEnvironmentVariable var, ICConfigurationDescription des);
+
+	void addVariables(IEnvironmentVariable[] vars, ICConfigurationDescription des);
 
 	IEnvironmentVariable removeVariable(String name, ICConfigurationDescription des);
-	
+
 	void restoreDefaults(ICConfigurationDescription des);
-	
+
 	boolean isUserVariable(ICConfigurationDescription des, IEnvironmentVariable var);
 }

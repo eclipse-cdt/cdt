@@ -15,10 +15,9 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
-
 /**
  * GDB/MI var-info-num-children.
- * 
+ *
  * For dynamic variable objects, only the number children currently fetched
  * by gdb is returned.
  */
@@ -28,27 +27,27 @@ public class MIVarInfoNumChildrenInfo extends MIInfo {
 
 	public MIVarInfoNumChildrenInfo(MIOutput record) {
 		super(record);
-        if (isDone()) {
-            MIOutput out = getMIOutput();
-            MIResultRecord rr = out.getMIResultRecord();
-            if (rr != null) {
-                MIResult[] results =  rr.getMIResults();
-                for (int i = 0; i < results.length; i++) {
-                    String var = results[i].getVariable();
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIResult[] results = rr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
 
-                    if (var.equals("numchild")) { //$NON-NLS-1$
-                        MIValue value = results[i].getMIValue();
-                        if (value instanceof MIConst) {
-                            String str = ((MIConst)value).getString();
-                            try {
-                                children = Integer.parseInt(str.trim());
-                            } catch (NumberFormatException e) {
-                            }
-                        }
-                    }
-                }
-            }
-        }
+					if (var.equals("numchild")) { //$NON-NLS-1$
+						MIValue value = results[i].getMIValue();
+						if (value instanceof MIConst) {
+							String str = ((MIConst) value).getString();
+							try {
+								children = Integer.parseInt(str.trim());
+							} catch (NumberFormatException e) {
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public int getChildNumber() {

@@ -62,7 +62,7 @@ public class ASTNameReference extends ASTDelegatedName {
 
 		// Look for external references to the binding.
 		IPDOMIterator<PDOMName> pdomIterator = binding.getExternalReferences();
-		while(pdomIterator.hasNext()) {
+		while (pdomIterator.hasNext()) {
 			PDOMName extRef = pdomIterator.next();
 			IIndexName caller = extRef.getEnclosingDefinition();
 			if (caller instanceof IIndexFragmentName) {

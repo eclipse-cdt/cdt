@@ -23,18 +23,19 @@ import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 
 /**
  * A task for index updates.
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will work or
  * that it will remain the same. Please do not use this API without consulting
  * with the CDT team.
  * </p>
- * 
+ *
  * @since 4.0
  */
 public class StandaloneFastIndexerTask extends StandaloneIndexerTask {
-	public StandaloneFastIndexerTask(StandaloneFastIndexer indexer, List<String> added,	List<String> changed, List<String> removed) {
+	public StandaloneFastIndexerTask(StandaloneFastIndexer indexer, List<String> added, List<String> changed,
+			List<String> removed) {
 		super(indexer, added, changed, removed, true);
 	}
 

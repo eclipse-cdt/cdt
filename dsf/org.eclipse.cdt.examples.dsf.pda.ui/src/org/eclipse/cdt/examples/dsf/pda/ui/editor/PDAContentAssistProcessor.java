@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -29,78 +29,79 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 public class PDAContentAssistProcessor implements IContentAssistProcessor {
 
-    public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
-        int index = offset - 1;
-        StringBuilder prefix = new StringBuilder();
-        IDocument document = viewer.getDocument();
-        while (index > 0) {
-            try {
-                char prev = document.getChar(index);
-                if (Character.isWhitespace(prev)) {
-                    break;
-                }
-                prefix.insert(0, prev);
-                index--;
-            } catch (BadLocationException e) {
-            }
-        }
-        
-        List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
-        String[] keywords = PDAScanner.fgKeywords;
-        if (prefix.length() > 0) {
-            String word = prefix.toString();
-            for (int i = 0; i < keywords.length; i++) {
-                String keyword = keywords[i];
-                if (keyword.startsWith(word) && word.length() < keyword.length()) {
-                    proposals.add(new CompletionProposal(keyword + " ", index + 1, offset - (index + 1), keyword.length() + 1));
-                }
-            }
-        } else {
-            // propose all keywords
-            for (int i = 0; i < keywords.length; i++) {
-                String keyword = keywords[i];
-                proposals.add(new CompletionProposal(keyword + " ", offset, 0, keyword.length() + 1));
-            }
-        }
-        if (!proposals.isEmpty()) {
-            return proposals.toArray(new ICompletionProposal[proposals.size()]);
-        }
-        return null;
-    }
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+		int index = offset - 1;
+		StringBuilder prefix = new StringBuilder();
+		IDocument document = viewer.getDocument();
+		while (index > 0) {
+			try {
+				char prev = document.getChar(index);
+				if (Character.isWhitespace(prev)) {
+					break;
+				}
+				prefix.insert(0, prev);
+				index--;
+			} catch (BadLocationException e) {
+			}
+		}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
-     */
-    public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
-        return null;
-    }
+		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		String[] keywords = PDAScanner.fgKeywords;
+		if (prefix.length() > 0) {
+			String word = prefix.toString();
+			for (int i = 0; i < keywords.length; i++) {
+				String keyword = keywords[i];
+				if (keyword.startsWith(word) && word.length() < keyword.length()) {
+					proposals.add(new CompletionProposal(keyword + " ", index + 1, offset - (index + 1),
+							keyword.length() + 1));
+				}
+			}
+		} else {
+			// propose all keywords
+			for (int i = 0; i < keywords.length; i++) {
+				String keyword = keywords[i];
+				proposals.add(new CompletionProposal(keyword + " ", offset, 0, keyword.length() + 1));
+			}
+		}
+		if (!proposals.isEmpty()) {
+			return proposals.toArray(new ICompletionProposal[proposals.size()]);
+		}
+		return null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-     */
-    public char[] getCompletionProposalAutoActivationCharacters() {
-        return null;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
+	 */
+	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
+		return null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-     */
-    public char[] getContextInformationAutoActivationCharacters() {
-        return null;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
+	 */
+	public char[] getCompletionProposalAutoActivationCharacters() {
+		return null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
-     */
-    public String getErrorMessage() {
-        return null;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
+	 */
+	public char[] getContextInformationAutoActivationCharacters() {
+		return null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
-     */
-    public IContextInformationValidator getContextInformationValidator() {
-        return null;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
+	 */
+	public String getErrorMessage() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
+	 */
+	public IContextInformationValidator getContextInformationValidator() {
+		return null;
+	}
 
 }

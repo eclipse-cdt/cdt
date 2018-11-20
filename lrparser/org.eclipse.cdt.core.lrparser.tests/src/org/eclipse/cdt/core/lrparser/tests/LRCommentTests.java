@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,50 +29,44 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 public class LRCommentTests extends CommentTests {
 
 	public static TestSuite suite() {
-        return suite(LRCommentTests.class);
-    }
-	 
-	
-    @Override
-    @SuppressWarnings("unused")
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems )  throws ParserException {
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-    	return ParseHelper.parse(code, language, expectNoProblems);
-    }
-    
-    
-    @Override
-    @SuppressWarnings("unused")
-	protected IASTTranslationUnit parse(String code, ParserLanguage lang,
-			boolean useGNUExtensions, boolean expectNoProblems,
-			int limitTrivialInitializers) throws ParserException {
-		
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-    	ParseHelper.Options options = new ParseHelper.Options();
-    	options.setCheckSyntaxProblems(expectNoProblems);
-    	options.setCheckPreprocessorProblems(expectNoProblems);
-    	options.setLimitTrivialInitializers(limitTrivialInitializers);
-    	return ParseHelper.commentParse(code, language);
-    }
+		return suite(LRCommentTests.class);
+	}
+
+	@Override
+	@SuppressWarnings("unused")
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
+			boolean expectNoProblems) throws ParserException {
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
+		return ParseHelper.parse(code, language, expectNoProblems);
+	}
+
+	@Override
+	@SuppressWarnings("unused")
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
+			boolean expectNoProblems, int limitTrivialInitializers) throws ParserException {
+
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
+		ParseHelper.Options options = new ParseHelper.Options();
+		options.setCheckSyntaxProblems(expectNoProblems);
+		options.setCheckPreprocessorProblems(expectNoProblems);
+		options.setLimitTrivialInitializers(limitTrivialInitializers);
+		return ParseHelper.commentParse(code, language);
+	}
 
 	protected ILanguage getCLanguage() {
-    	return GCCLanguage.getDefault();
-    }
-	
+		return GCCLanguage.getDefault();
+	}
+
 	protected ILanguage getCPPLanguage() {
 		return GPPLanguage.getDefault();
 	}
-	
-	
+
 	@SuppressWarnings("nls")
 	public void testBug191266() throws Exception {
-		String code =
-			"#define MACRO 1000000000000  \n" +
-			"int x = MACRO;  \n" +
-			"//comment\n";
-		
+		String code = "#define MACRO 1000000000000  \n" + "int x = MACRO;  \n" + "//comment\n";
+
 		IASTTranslationUnit tu = parse(code, ParserLanguage.C, false, false, 0);
-		
+
 		IASTComment[] comments = tu.getComments();
 		assertEquals(1, comments.length);
 

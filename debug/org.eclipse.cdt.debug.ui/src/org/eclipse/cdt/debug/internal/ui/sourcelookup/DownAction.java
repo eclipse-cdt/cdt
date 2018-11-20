@@ -7,11 +7,11 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
+package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.util.List;
 
@@ -21,8 +21,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 /**
  * The action for sorting the order of source containers in the dialog.
  */
-public class DownAction	extends SourceContainerAction {
-	
+public class DownAction extends SourceContainerAction {
+
 	public DownAction() {
 		super(SourceLookupUIMessages.DownAction_0);
 	}
@@ -49,16 +49,16 @@ public class DownAction	extends SourceContainerAction {
 				list.set(index, temp);
 			}
 			bottom = index;
-		} 
+		}
 		setEntries(list);
 	}
-	
+
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return !selection.isEmpty() && !isIndexSelected(selection, getEntriesAsList().size() - 1) &&
-				getViewer().getTree().getSelection()[0].getParentItem() == null;	
+		return !selection.isEmpty() && !isIndexSelected(selection, getEntriesAsList().size() - 1)
+				&& getViewer().getTree().getSelection()[0].getParentItem() == null;
 	}
 }

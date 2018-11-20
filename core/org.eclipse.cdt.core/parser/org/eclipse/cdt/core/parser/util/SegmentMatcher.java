@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 /**
  * A matcher for camel case matching supporting both the camel case as well as
  *  he underscore notation.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 5.3
  */
@@ -33,12 +33,12 @@ public class SegmentMatcher {
 
 	/** The regular expression for a segment match. */
 	private final Pattern regexp;
-	
+
 	/** The minimum length any name must have in order to match. */
 	private final int minNameLength;
 
 	private final boolean singleSegment;
-	
+
 	/**
 	 * @param pattern
 	 *            The camel case or underscore pattern.
@@ -58,7 +58,7 @@ public class SegmentMatcher {
 			int lengthOfFirstSegment = 0;
 			char currentChar;
 			int segmentCount = 0;
-			
+
 			// Translate each segment
 			while (i < pattern.length) {
 
@@ -132,28 +132,28 @@ public class SegmentMatcher {
 					}
 				}
 				regexpBuffer.append(".*"); //$NON-NLS-1$
-				
+
 				if (segmentCount == 0) {
 					lengthOfFirstSegment = i;
 				}
-				
+
 				++segmentCount;
 			}
-			
+
 			regexp = Pattern.compile(regexpBuffer.toString());
 			singleSegment = (segmentCount == 1);
 			prefixForMatching = pattern;
-			
+
 			// The first segment is also the binary search prefix
 			prefixForBinarySearch = CharArrayUtils.extract(pattern, 0, lengthOfFirstSegment);
-			
+
 			minNameLength = pattern.length;
 		}
 	}
 
 	/**
 	 * Matches the given name by prefix and segment matching.
-	 * 
+	 *
 	 * @return true if the associated pattern is a prefix-based or segment-based abbreviation of name.
 	 */
 	public boolean match(char[] name) {
@@ -172,7 +172,7 @@ public class SegmentMatcher {
 
 	/**
 	 * Matches the given name by prefix matching.
-	 * 
+	 *
 	 * @return true if the associated pattern is a prefix-based abbreviation of name.
 	 */
 	public boolean matchPrefix(char[] name) {
@@ -181,7 +181,7 @@ public class SegmentMatcher {
 
 	/**
 	 * Matches the given name by segment matching.
-	 * 
+	 *
 	 * @return true if the associated pattern is a segment-based abbreviation of name.
 	 */
 	public boolean matchSegments(char[] name) {
@@ -189,25 +189,25 @@ public class SegmentMatcher {
 		if (name == null) {
 			return false;
 		}
-		
+
 		if (name.length < minNameLength) {
 			return false;
 		}
-						
+
 		if (regexp == null) {
 			return true;
 		}
-		
+
 		Matcher matcher = regexp.matcher(String.valueOf(name));
-		
+
 		return matcher.find();
 	}
-	
+
 	/**
 	 * Matches pattern to name by prefix and segment matching. If you have to match
 	 * against the same pattern repeatedly, create a {@link SegmentMatcher} instead
 	 * and re-use it all the time, because this is much faster.
-	 * 
+	 *
 	 * @return true if pattern is a prefix-based or segment-based abbreviation of name
 	 */
 	public static boolean match(char[] pattern, char[] name) {
@@ -221,15 +221,15 @@ public class SegmentMatcher {
 	 * context of binary searches.
 	 * In the compare method used by your binary search, return 0 for any string
 	 * that starts with the returned string.
-	 * 
+	 *
 	 * @return Such a string.
 	 */
 	public char[] getPrefixForBinarySearch() {
 		return prefixForBinarySearch;
 	}
-	
+
 	/**
-	 * @return If false, calling @{@link #match(char[])} can be skipped if a 
+	 * @return If false, calling @{@link #match(char[])} can be skipped if a
 	 *         name survived a binary search using the prefix returned by
 	 *         @{@link #getPrefixForBinarySearch()} as key.
 	 */

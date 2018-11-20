@@ -31,15 +31,14 @@ import org.eclipse.core.runtime.CoreException;
  * Binding for c enumerator in the index.
  */
 class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
-	private static final int VALUE= PDOMBinding.RECORD_SIZE + 0;
-	
+	private static final int VALUE = PDOMBinding.RECORD_SIZE + 0;
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = VALUE + 4;
-	
-	public PDOMCEnumerator(PDOMLinkage linkage, PDOMNode parent, IEnumerator enumerator)
-			throws CoreException {
+
+	public PDOMCEnumerator(PDOMLinkage linkage, PDOMNode parent, IEnumerator enumerator) throws CoreException {
 		super(linkage, parent, enumerator.getNameCharArray());
-		
+
 		final Database db = getDB();
 		storeValue(db, enumerator);
 	}
@@ -52,20 +51,20 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
-	
+
 	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CENUMERATOR;
 	}
 
 	private void storeValue(final Database db, IEnumerator enumerator) throws CoreException {
-		IValue value= enumerator.getValue();
+		IValue value = enumerator.getValue();
 		if (value != null) {
-			Number val= value.numberValue();
+			Number val = value.numberValue();
 			db.putInt(record + VALUE, val == null ? -1 : val.intValue());
 		}
 	}
-	
+
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof IEnumerator)
@@ -79,11 +78,11 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 			return (IType) owner;
 		return null;
 	}
-	
+
 	@Override
 	public IValue getValue() {
 		try {
-			int val= getDB().getInt(record + VALUE);
+			int val = getDB().getInt(record + VALUE);
 			return IntegralValue.create(val);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

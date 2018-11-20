@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Dmitry Kozlov (Mentor Graphics) - Initial API and implementation
 *******************************************************************************/
@@ -18,12 +18,12 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 
 /**
  * -gdb-set trace-user "user"
- * 
+ *
  * Sets trace user
  * @since 4.4
  */
 public class MIGDBSetTraceUser extends MIGDBSet {
 	public MIGDBSetTraceUser(ITraceTargetDMContext ctx, String userName) {
-		super(ctx, new String[] {"trace-user", userName}); //$NON-NLS-1$
+		super(ctx, new String[] { "trace-user", userName }); //$NON-NLS-1$
 	}
 }

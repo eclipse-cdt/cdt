@@ -34,19 +34,19 @@ public class FunctionTemplateDeclaration extends FunctionDeclaration implements 
 
 	@Override
 	public String[] getTemplateArguments() {
-		return  fTemplate.getTemplateArguments();
+		return fTemplate.getTemplateArguments();
 	}
 
 	@Override
 	public String getTemplateSignature() throws CModelException {
 		StringBuilder sig = new StringBuilder(fTemplate.getTemplateSignature());
 		sig.append(this.getParameterClause());
-		if(isConst())
+		if (isConst())
 			sig.append(" const"); //$NON-NLS-1$
-		if(isVolatile())
+		if (isVolatile())
 			sig.append(" volatile"); //$NON-NLS-1$
 
-		if((this.getReturnType() != null) && (this.getReturnType().length() > 0)){
+		if ((this.getReturnType() != null) && (this.getReturnType().length() > 0)) {
 			sig.append(" : "); //$NON-NLS-1$
 			sig.append(this.getReturnType());
 		}

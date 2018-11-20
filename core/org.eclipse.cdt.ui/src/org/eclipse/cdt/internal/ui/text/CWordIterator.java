@@ -39,7 +39,7 @@ public class CWordIterator extends BreakIterator {
 	 * Creates a new word iterator.
 	 */
 	public CWordIterator() {
-		fIterator= new CBreakIterator();
+		fIterator = new CBreakIterator();
 		first();
 	}
 
@@ -48,7 +48,7 @@ public class CWordIterator extends BreakIterator {
 	 */
 	@Override
 	public int first() {
-		fIndex= fIterator.first();
+		fIndex = fIterator.first();
 		return fIndex;
 	}
 
@@ -57,7 +57,7 @@ public class CWordIterator extends BreakIterator {
 	 */
 	@Override
 	public int last() {
-		fIndex= fIterator.last();
+		fIndex = fIterator.last();
 		return fIndex;
 	}
 
@@ -66,9 +66,9 @@ public class CWordIterator extends BreakIterator {
 	 */
 	@Override
 	public int next(int n) {
-		int next= 0;
+		int next = 0;
 		while (--n > 0 && next != DONE) {
-			next= next();
+			next = next();
 		}
 		return next;
 	}
@@ -78,7 +78,7 @@ public class CWordIterator extends BreakIterator {
 	 */
 	@Override
 	public int next() {
-		fIndex= following(fIndex);
+		fIndex = following(fIndex);
 		return fIndex;
 	}
 
@@ -87,19 +87,18 @@ public class CWordIterator extends BreakIterator {
 	 */
 	@Override
 	public int previous() {
-		fIndex= preceding(fIndex);
+		fIndex = preceding(fIndex);
 		return fIndex;
 	}
-
 
 	/*
 	 * @see com.ibm.icu.text.BreakIterator#preceding(int)
 	 */
 	@Override
 	public int preceding(int offset) {
-		int first= fIterator.preceding(offset);
+		int first = fIterator.preceding(offset);
 		if (isWhitespace(first, offset)) {
-			int second= fIterator.preceding(first);
+			int second = fIterator.preceding(first);
 			if (second != DONE && !isDelimiter(second, first))
 				return second;
 		}
@@ -111,9 +110,9 @@ public class CWordIterator extends BreakIterator {
 	 */
 	@Override
 	public int following(int offset) {
-		int first= fIterator.following(offset);
+		int first = fIterator.following(offset);
 		if (eatFollowingWhitespace(offset, first)) {
-			int second= fIterator.following(first);
+			int second = fIterator.following(first);
 			if (isWhitespace(first, second))
 				return second;
 		}
@@ -148,10 +147,10 @@ public class CWordIterator extends BreakIterator {
 		Assert.isTrue(exclusiveEnd <= getText().getEndIndex());
 		Assert.isTrue(exclusiveEnd > offset);
 
-		CharSequence seq= fIterator.fText;
+		CharSequence seq = fIterator.fText;
 
 		while (offset < exclusiveEnd) {
-			char ch= seq.charAt(offset);
+			char ch = seq.charAt(offset);
 			if (ch != '\n' && ch != '\r')
 				return false;
 			offset++;
@@ -176,10 +175,10 @@ public class CWordIterator extends BreakIterator {
 		Assert.isTrue(exclusiveEnd <= getText().getEndIndex());
 		Assert.isTrue(exclusiveEnd > offset);
 
-		CharSequence seq= fIterator.fText;
+		CharSequence seq = fIterator.fText;
 
 		while (offset < exclusiveEnd) {
-			char ch= seq.charAt(offset);
+			char ch = seq.charAt(offset);
 			if (!Character.isWhitespace(ch))
 				return false;
 			if (ch == '\n' || ch == '\r')
@@ -234,7 +233,7 @@ public class CWordIterator extends BreakIterator {
 
 	/**
 	 * Enables breaks at word boundaries inside a camel case identifier.
-	 *  
+	 *
 	 * @param camelCaseBreakEnabled <code>true</code> to enable,
 	 * <code>false</code> to disable.
 	 */

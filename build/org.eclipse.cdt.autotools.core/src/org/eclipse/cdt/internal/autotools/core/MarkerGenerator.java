@@ -69,15 +69,14 @@ public abstract class MarkerGenerator {
 			if (errorVar != null) {
 				marker.setAttribute(IAutotoolsMarker.MARKER_VARIABLE, errorVar);
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			AutotoolsPlugin.log(e.getStatus());
 		}
 
 	}
-	
+
 	public abstract IProject getProject();
-	
+
 	public boolean hasMarkers(IResource file) {
 		IMarker[] markers;
 		try {
@@ -94,14 +93,15 @@ public abstract class MarkerGenerator {
 	public void addMarker(AutotoolsProblemMarkerInfo autotoolsMarker) {
 
 		ProblemMarkerInfo info = autotoolsMarker.getMarker();
-		
+
 		try {
-			IResource markerResource = info.file ;
-			if (markerResource==null)  {
+			IResource markerResource = info.file;
+			if (markerResource == null) {
 				markerResource = getProject();
 			}
-			IMarker[] cur = markerResource.findMarkers(IAutotoolsMarker.AUTOTOOLS_PROBLEM_MARKER, true, IResource.DEPTH_ONE);
-//			IMarker[] cur = markerResource.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ONE);
+			IMarker[] cur = markerResource.findMarkers(IAutotoolsMarker.AUTOTOOLS_PROBLEM_MARKER, true,
+					IResource.DEPTH_ONE);
+			//			IMarker[] cur = markerResource.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ONE);
 			/*
 			 * Try to find matching markers and don't put in duplicates
 			 */
@@ -110,14 +110,15 @@ public abstract class MarkerGenerator {
 					int line = ((Integer) cur[i].getAttribute(IMarker.LOCATION)).intValue();
 					int sev = ((Integer) cur[i].getAttribute(IMarker.SEVERITY)).intValue();
 					String mesg = (String) cur[i].getAttribute(IMarker.MESSAGE);
-					if (line == info.lineNumber && sev == mapMarkerSeverity(info.severity) && mesg.equals(info.description)) {
+					if (line == info.lineNumber && sev == mapMarkerSeverity(info.severity)
+							&& mesg.equals(info.description)) {
 						return;
 					}
 				}
 			}
 
 			IMarker marker = markerResource.createMarker(IAutotoolsMarker.AUTOTOOLS_PROBLEM_MARKER);
-//			IMarker marker = markerResource.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
+			//			IMarker marker = markerResource.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
 			marker.setAttribute(IMarker.LOCATION, info.lineNumber);
 			marker.setAttribute(IMarker.MESSAGE, info.description);
 			marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(info.severity));
@@ -133,36 +134,34 @@ public abstract class MarkerGenerator {
 
 			// Add all other client defined attributes.
 			Map<String, String> attributes = info.getAttributes();
-			if (attributes != null){
+			if (attributes != null) {
 				for (Entry<String, String> entry : attributes.entrySet()) {
 					marker.setAttribute(entry.getKey(), entry.getValue());
 				}
 			}
 
-			
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			AutotoolsPlugin.log(e.getStatus());
 		}
 	}
 
 	private int mapMarkerSeverity(int severity) {
 		switch (severity) {
-			case SEVERITY_ERROR_BUILD :
-			case SEVERITY_ERROR_RESOURCE :
-				return IMarker.SEVERITY_ERROR;
-			case SEVERITY_INFO :
-				return IMarker.SEVERITY_INFO;
-			case SEVERITY_WARNING :
-				return IMarker.SEVERITY_WARNING;
+		case SEVERITY_ERROR_BUILD:
+		case SEVERITY_ERROR_RESOURCE:
+			return IMarker.SEVERITY_ERROR;
+		case SEVERITY_INFO:
+			return IMarker.SEVERITY_INFO;
+		case SEVERITY_WARNING:
+			return IMarker.SEVERITY_WARNING;
 		}
 		return IMarker.SEVERITY_ERROR;
 	}
-	
+
 	/**
 	 * Removes the IMarkers for the project specified in the argument if the
 	 * project exists, and is open.
-	 * 
+	 *
 	 * @param project
 	 */
 	public void removeAllMarkers(IProject project) {
@@ -175,7 +174,7 @@ public abstract class MarkerGenerator {
 		IMarker[] markers;
 		try {
 			markers = project.findMarkers(IAutotoolsMarker.AUTOTOOLS_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-//			markers = project.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+			//			markers = project.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			// Handled just about every case in the sanity check
 			return;

@@ -84,7 +84,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 			toolchainId = getToolchainId();
 			toolchain = ManagedBuildManager.getExtensionToolChain(toolchainId);
 		}
-		for (;toolchain != null;toolchain = toolchain.getSuperClass()) {
+		for (; toolchain != null; toolchain = toolchain.getSuperClass()) {
 			tool = getTool(languageId, toolchain);
 			if (tool != null) {
 				break;
@@ -96,7 +96,8 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 		}
 
 		if (tool == null) {
-			ManagedBuilderCorePlugin.error("Unable to find tool in toolchain=" + toolchainId + " for language=" + languageId); //$NON-NLS-1$ //$NON-NLS-2$
+			ManagedBuilderCorePlugin
+					.error("Unable to find tool in toolchain=" + toolchainId + " for language=" + languageId); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return tool;
 	}
@@ -169,11 +170,11 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 							break;
 						case IOption.STRING_LIST:
 							String[] values = option.getBasicStringListValue();
-							if(values != null) {
+							if (values != null) {
 								optionValue = ""; //$NON-NLS-1$
 								String cmd = option.getCommand();
 								for (String value : values) {
-									if(!value.isEmpty() && !value.equals(EMPTY_QUOTED_STRING)) {
+									if (!value.isEmpty() && !value.equals(EMPTY_QUOTED_STRING)) {
 										optionValue = optionValue + cmd + value + ' ';
 									}
 								}

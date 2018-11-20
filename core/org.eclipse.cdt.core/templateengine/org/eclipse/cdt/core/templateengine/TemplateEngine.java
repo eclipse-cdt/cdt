@@ -35,31 +35,29 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 /**
- * TemplateEngine is implemented as a Singleton. TemplateEngine is responsible for 
+ * TemplateEngine is implemented as a Singleton. TemplateEngine is responsible for
  * creating SharedDefaults and initialising the SharedDefaults. Template instances
  * are obtained from TemplateEngine.
- * 
+ *
  * @since 4.0
  */
 public class TemplateEngine {
 
 	public static String TEMPLATES_EXTENSION_ID = CCorePlugin.PLUGIN_ID + ".templates"; //$NON-NLS-1$
 	public static String TEMPLATE_ASSOCIATIONS_EXTENSION_ID = CCorePlugin.PLUGIN_ID + ".templateAssociations"; //$NON-NLS-1$
-	
+
 	/**
 	 * static reference to the Singleton TemplateEngine instance.
 	 */
 	private static TemplateEngine TEMPLATE_ENGINE;
-	
+
 	/**
 	 * This is a Map <WizardID, TemplateInfo>.
 	 */
 	private Map<String, List<TemplateInfo>> templateInfoMap = new LinkedHashMap<String, List<TemplateInfo>>();
-	
+
 	Map<String, TemplateCategory> categoryMap = new HashMap<String, TemplateCategory>();
-	
 
 	/**
 	 * TemplateEngine constructor, create and initialise SharedDefaults.
@@ -74,7 +72,7 @@ public class TemplateEngine {
 	public TemplateCore[] getTemplates() {
 		TemplateInfo[] templateInfoArray = getTemplateInfos();
 		List<TemplateCore> tcores = new ArrayList<TemplateCore>();
-		for (int i=0; i<templateInfoArray.length; i++) {
+		for (int i = 0; i < templateInfoArray.length; i++) {
 			TemplateInfo info = templateInfoArray[i];
 			try {
 				tcores.add(TemplateCore.getTemplate(info));
@@ -96,17 +94,17 @@ public class TemplateEngine {
 	 * be logged).
 	 */
 	public TemplateCore getFirstTemplate(String projectType, String toolChain, String usageFilter) {
-		TemplateInfo[] infos= getTemplateInfos(projectType, toolChain, usageFilter);
-		if(infos.length>0) {
+		TemplateInfo[] infos = getTemplateInfos(projectType, toolChain, usageFilter);
+		if (infos.length > 0) {
 			try {
 				return TemplateCore.getTemplate(infos[0]);
-			} catch(TemplateInitializationException tie) {
+			} catch (TemplateInitializationException tie) {
 				CCorePlugin.log(tie);
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Equivalent to calling the overloaded version of getFirstTemplate with null arguments for
 	 * toolChain and usageFilter.
@@ -126,7 +124,7 @@ public class TemplateEngine {
 	public TemplateCore[] getTemplates(String projectType, String toolChain, String usageFilter) {
 		TemplateInfo[] templateInfoArray = getTemplateInfos(projectType, toolChain, usageFilter);
 		List<TemplateCore> templatesList = new ArrayList<TemplateCore>();
-		for (int i=0; i<templateInfoArray.length; i++) {
+		for (int i = 0; i < templateInfoArray.length; i++) {
 			TemplateInfo info = templateInfoArray[i];
 			try {
 				templatesList.add(TemplateCore.getTemplate(info));
@@ -136,7 +134,7 @@ public class TemplateEngine {
 		}
 		return templatesList.toArray(new TemplateCore[templatesList.size()]);
 	}
-	
+
 	public TemplateCore[] getTemplates(String projectType, String toolChain) {
 		return getTemplates(projectType, toolChain, null);
 	}
@@ -144,11 +142,11 @@ public class TemplateEngine {
 	public TemplateCore[] getTemplates(String projectType) {
 		return getTemplates(projectType, null);
 	}
-	
+
 	public TemplateCore getTemplateById(String templateId) {
 		TemplateCore[] templates = getTemplates();
-		
-		for(int i=0; i<templates.length; i++) {
+
+		for (int i = 0; i < templates.length; i++) {
 			TemplateCore template = templates[i];
 			if (template.getTemplateId().equalsIgnoreCase(templateId)) {
 				return template;
@@ -156,7 +154,7 @@ public class TemplateEngine {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @return the SharedDefaults.
 	 */
@@ -177,7 +175,7 @@ public class TemplateEngine {
 	public void updateSharedDefaults(TemplateCore template) {
 		Map<String, String> tobePersisted = new HashMap<String, String>();
 		Map<String, String> valueStore = template.getValueStore();
-		for(String key : template.getPersistTrueIDs()) {
+		for (String key : template.getPersistTrueIDs()) {
 			tobePersisted.put(key, valueStore.get(key));
 		}
 		SharedDefaults.getInstance().updateShareDefaultsMap(tobePersisted);
@@ -188,13 +186,13 @@ public class TemplateEngine {
 	 * TEMPLATE_ENGINE. If TEMPLATE_ENGINE is null create the TemplateEngine
 	 * instance assign it to TEMPLATE_ENGINE. There is no need to have
 	 * synchronized here(while creating TemplateEngine).
-	 * 
+	 *
 	 * @return TEMPLATE_ENGINE, instance of TemplateEngine.
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
 	public static TemplateEngine getDefault() {
-		if(TEMPLATE_ENGINE==null) {
+		if (TEMPLATE_ENGINE == null) {
 			TEMPLATE_ENGINE = new TemplateEngine2();
 		}
 		return TEMPLATE_ENGINE;
@@ -206,12 +204,13 @@ public class TemplateEngine {
 	 * extension point "templates"
 	 */
 	private void initializeTemplateInfoMap() {
-		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(TEMPLATES_EXTENSION_ID).getExtensions();
-		for(int i=0; i<extensions.length; i++) {
+		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(TEMPLATES_EXTENSION_ID)
+				.getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
 			IExtension extension = extensions[i];
 			IConfigurationElement[] configElements = extension.getConfigurationElements();
 			String pluginId = extension.getNamespaceIdentifier(); // Plug-in id of the extending plug-in.
-			for(int j=0; j<configElements.length; j++) {
+			for (int j = 0; j < configElements.length; j++) {
 				IConfigurationElement config = configElements[j];
 				String configName = config.getName();
 				if (configName.equals("template")) { //$NON-NLS-1$
@@ -222,39 +221,41 @@ public class TemplateEngine {
 					if (projectType == null || projectType.isEmpty())
 						projectType = TemplateEngine2.NEW_TEMPLATE;
 					String filterPattern = config.getAttribute(TemplateEngineHelper.FILTER_PATTERN);
-					boolean isCategory = Boolean.valueOf(config.getAttribute(TemplateEngineHelper.IS_CATEGORY)).booleanValue();
+					boolean isCategory = Boolean.valueOf(config.getAttribute(TemplateEngineHelper.IS_CATEGORY))
+							.booleanValue();
 					String providerAttribute = config.getAttribute(TemplateEngineHelper.EXTRA_PAGES_PROVIDER);
 					if (providerAttribute != null) {
 						try {
-							extraPagesProvider = config.createExecutableExtension(TemplateEngineHelper.EXTRA_PAGES_PROVIDER);
+							extraPagesProvider = config
+									.createExecutableExtension(TemplateEngineHelper.EXTRA_PAGES_PROVIDER);
 						} catch (CoreException e) {
-							CCorePlugin.log(CCorePlugin.createStatus("Unable to create extra pages for "+providerAttribute,e)); //$NON-NLS-1$
-						}				
+							CCorePlugin.log(CCorePlugin
+									.createStatus("Unable to create extra pages for " + providerAttribute, e)); //$NON-NLS-1$
+						}
 					}
-	
+
 					IConfigurationElement[] toolChainConfigs = config.getChildren(TemplateEngineHelper.TOOL_CHAIN);
 					Set<String> toolChainIdSet = new LinkedHashSet<String>();
 					for (IConfigurationElement toolChainConfig : toolChainConfigs)
 						toolChainIdSet.add(toolChainConfig.getAttribute(TemplateEngineHelper.ID));
-					
+
 					IConfigurationElement[] parentCategoryConfigs = config.getChildren("parentCategory"); //$NON-NLS-1$
 					List<String> parentCategoryIds = new ArrayList<String>();
 					for (IConfigurationElement parentCategoryConfig : parentCategoryConfigs)
 						parentCategoryIds.add(parentCategoryConfig.getAttribute("id")); //$NON-NLS-1$
-					
-					TemplateInfo templateInfo = new TemplateInfo2(templateId, projectType, filterPattern, location, 
-																  pluginId, toolChainIdSet,
-															      extraPagesProvider, isCategory, parentCategoryIds);
+
+					TemplateInfo templateInfo = new TemplateInfo2(templateId, projectType, filterPattern, location,
+							pluginId, toolChainIdSet, extraPagesProvider, isCategory, parentCategoryIds);
 					if (!templateInfoMap.containsKey(projectType)) {
 						templateInfoMap.put(projectType, new ArrayList<TemplateInfo>());
 					}
 					(templateInfoMap.get(projectType)).add(templateInfo);
-				} else if (configName.equals("category"))  { //$NON-NLS-1$
+				} else if (configName.equals("category")) { //$NON-NLS-1$
 					String id = config.getAttribute("id"); //$NON-NLS-1$
 					if (!id.contains(".")) //$NON-NLS-1$
 						id = pluginId + "." + id; //$NON-NLS-1$
 					String label = config.getAttribute("label"); //$NON-NLS-1$
-					
+
 					IConfigurationElement[] parentCategoryConfigs = config.getChildren("parentCategory"); //$NON-NLS-1$
 					List<String> parentCategoryIds = new ArrayList<String>();
 					for (IConfigurationElement parentCategoryConfig : parentCategoryConfigs)
@@ -272,21 +273,22 @@ public class TemplateEngine {
 		String templateId = null;
 		TemplateCore[] templates = getTemplates();
 
-		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(TEMPLATE_ASSOCIATIONS_EXTENSION_ID).getExtensions();
-		for(int i=0; i<extensions.length; i++) {
+		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(TEMPLATE_ASSOCIATIONS_EXTENSION_ID)
+				.getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
 			IExtension extension = extensions[i];
 			IConfigurationElement[] configElements = extension.getConfigurationElements();
-			for(int j=0; j<configElements.length; j++) {
+			for (int j = 0; j < configElements.length; j++) {
 				IConfigurationElement config = configElements[j];
 				templateId = config.getAttribute(TemplateEngineHelper.ID);
-				
+
 				IConfigurationElement[] toolChainConfigs = config.getChildren(TemplateEngineHelper.TOOL_CHAIN);
 				Set<String> toolChainIdSet = new LinkedHashSet<String>();
-				for (int k=0; k < toolChainConfigs.length; k++) {
+				for (int k = 0; k < toolChainConfigs.length; k++) {
 					toolChainIdSet.add(toolChainConfigs[k].getAttribute(TemplateEngineHelper.ID));
 				}
-				
-				for (int k=0; k < templates.length; k++) {
+
+				for (int k = 0; k < templates.length; k++) {
 					String id = templates[k].getTemplateInfo().getTemplateId();
 					if (id == null) {
 						id = templates[k].getTemplateId();
@@ -299,7 +301,7 @@ public class TemplateEngine {
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets an array of template info objects matching the criteria passed as parameters.
 	 * @param projectType may not be null
@@ -311,18 +313,19 @@ public class TemplateEngine {
 	public TemplateInfo[] getTemplateInfos(String projectType, String toolChain, String usageFilter) {
 		List<TemplateInfo> templateInfoList = templateInfoMap.get(projectType.trim());
 		List<TemplateInfo> matchedTemplateInfoList = new ArrayList<TemplateInfo>();
-		
+
 		if (templateInfoList != null) {
-			for(TemplateInfo templateInfo : templateInfoList) {
+			for (TemplateInfo templateInfo : templateInfoList) {
 				String filterPattern = templateInfo.getFilterPattern();
 				String[] toolChains = templateInfo.getToolChainIds();
 
 				if (toolChain != null) {
-					for (int j=0; j < toolChains.length; j++) {
+					for (int j = 0; j < toolChains.length; j++) {
 						if (toolChains[j].equals(toolChain)) {
-							if ((usageFilter != null) && (filterPattern != null) && usageFilter.matches(filterPattern)) {
+							if ((usageFilter != null) && (filterPattern != null)
+									&& usageFilter.matches(filterPattern)) {
 								matchedTemplateInfoList.add(templateInfo);
-							} else if (usageFilter == null || filterPattern==null) {
+							} else if (usageFilter == null || filterPattern == null) {
 								matchedTemplateInfoList.add(templateInfo);
 							}
 							continue;
@@ -331,7 +334,7 @@ public class TemplateEngine {
 				} else {
 					if ((usageFilter != null) && (filterPattern != null) && usageFilter.matches(filterPattern)) {
 						matchedTemplateInfoList.add(templateInfo);
-					} else if (usageFilter == null || filterPattern==null) {
+					} else if (usageFilter == null || filterPattern == null) {
 						matchedTemplateInfoList.add(templateInfo);
 					}
 				}
@@ -353,12 +356,11 @@ public class TemplateEngine {
 	 */
 	public TemplateInfo[] getTemplateInfos() {
 		List<TemplateInfo> infoList = new ArrayList<TemplateInfo>();
-		for(List<TemplateInfo> infos : templateInfoMap.values()) {
+		for (List<TemplateInfo> infos : templateInfoMap.values()) {
 			infoList.addAll(infos);
 		}
 		return infoList.toArray(new TemplateInfo[infoList.size()]);
 	}
-
 
 	/**
 	 * @return the map from project-type ID's to all associated TemplateInfo instances
@@ -369,20 +371,21 @@ public class TemplateEngine {
 
 	/**
 	 * Returns the Template Schema URL
-	 * 
+	 *
 	 * @return URL of the Template Schema.
 	 * @throws IOException
 	 */
 	public URL getTemplateSchemaURL() throws IOException {
-		return FileLocator.toFileURL(Platform.getBundle(CCorePlugin.PLUGIN_ID).getEntry("schema/TemplateDescriptorSchema.xsd")); //$NON-NLS-1$
+		return FileLocator
+				.toFileURL(Platform.getBundle(CCorePlugin.PLUGIN_ID).getEntry("schema/TemplateDescriptorSchema.xsd")); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns the Children of the Element.
 	 * @param element
 	 * @return List of the child elements
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
 	public static List<Element> getChildrenOfElement(Element element) {
 		List<Element> list = new ArrayList<Element>();
@@ -395,15 +398,15 @@ public class TemplateEngine {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Returns the child elements by Tag
-	 * 
+	 *
 	 * @param element
 	 * @param tag
 	 * @return List of child elements
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
 	public static List<Element> getChildrenOfElementByTag(Element element, String tag) {
 		List<Element> list = new ArrayList<Element>();

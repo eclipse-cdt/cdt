@@ -13,13 +13,11 @@
 *********************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
 
-
-
 /**
  * Maps tokens defined in parser extensions back to the token kinds
  * defined in the lr parsers.
- * 
- * 
+ *
+ *
  * @author Mike Kucera
  */
 public interface ITokenMap {

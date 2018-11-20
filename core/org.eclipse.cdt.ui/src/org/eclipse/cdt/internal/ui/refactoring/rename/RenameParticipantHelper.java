@@ -29,7 +29,7 @@ public class RenameParticipantHelper {
 	 * the refactoring processor. If the two changes are be affecting the same files, the part of
 	 * the refactoring participant's change that affects the files also modified by the refactoring
 	 * processor is merged into the processor's change. The remaining part, if any, is returned from
-	 * the method. 
+	 * the method.
 	 *
 	 * @param change the change produced by a refactoring participant
 	 * @param participant the refactoring participant
@@ -38,10 +38,8 @@ public class RenameParticipantHelper {
 	public static Change postprocessParticipantChange(Change change, RefactoringParticipant participant) {
 		if (change == null)
 			return null;
-		CompositeChange compositeChange = change instanceof CompositeChange ?
-				(CompositeChange) change : null;
-		Change[] changes = compositeChange != null ?
-				compositeChange.getChildren() : new Change[] { change };
+		CompositeChange compositeChange = change instanceof CompositeChange ? (CompositeChange) change : null;
+		Change[] changes = compositeChange != null ? compositeChange.getChildren() : new Change[] { change };
 		for (Change ch : changes) {
 			if (ch instanceof TextChange) {
 				TextChange textChange = (TextChange) ch;
@@ -74,5 +72,6 @@ public class RenameParticipantHelper {
 		}
 	}
 
-	private RenameParticipantHelper() {}
+	private RenameParticipantHelper() {
+	}
 }

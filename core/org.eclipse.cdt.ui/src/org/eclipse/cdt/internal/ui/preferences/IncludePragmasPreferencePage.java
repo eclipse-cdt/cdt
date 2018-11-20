@@ -24,13 +24,13 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * @see "https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md"
  */
 public class IncludePragmasPreferencePage extends ConfigurationBlockPropertyAndPreferencePage {
-	public static final String PREF_ID= "org.eclipse.cdt.ui.preferences.IncludePragmasPreferencePage"; //$NON-NLS-1$
-	public static final String PROP_ID= "org.eclipse.cdt.ui.propertyPages.IncludePragmasPreferencePage"; //$NON-NLS-1$
+	public static final String PREF_ID = "org.eclipse.cdt.ui.preferences.IncludePragmasPreferencePage"; //$NON-NLS-1$
+	public static final String PROP_ID = "org.eclipse.cdt.ui.propertyPages.IncludePragmasPreferencePage"; //$NON-NLS-1$
 
 	public IncludePragmasPreferencePage() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		// Only used when the page is shown programmatically.
-		setTitle(PreferencesMessages.IncludePragmasPreferencePage_title);		 
+		setTitle(PreferencesMessages.IncludePragmasPreferencePage_title);
 	}
 
 	@Override
@@ -52,6 +52,6 @@ public class IncludePragmasPreferencePage extends ConfigurationBlockPropertyAndP
 	protected String getPropertyPageId() {
 		return null;
 		// TODO(sprigogin): Project specific settings
-//		return PROP_ID;
+		//		return PROP_ID;
 	}
 }

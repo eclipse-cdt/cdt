@@ -72,7 +72,7 @@ public class Messages extends NLS {
 	public static String Port_number_textfield_label;
 	public static String Gdbserver_start;
 	public static String Gdbserver_up;
-	
+
 	public static String GDBDebuggerPage0;
 	public static String GDBDebuggerPage1;
 	public static String GDBDebuggerPage2;
@@ -86,7 +86,7 @@ public class Messages extends NLS {
 	public static String GDBDebuggerPage10;
 	public static String GDBDebuggerPage11;
 	public static String GDBDebuggerPage12;
-	
+
 	public static String GDBDebuggerPage_gdb_executable_not_specified;
 	public static String GDBDebuggerPage_tab_name;
 	public static String GDBDebuggerPage_main_tab_name;
@@ -106,7 +106,7 @@ public class Messages extends NLS {
 	public static String GDBDebuggerPage_tracepoint_mode_fast;
 	public static String GDBDebuggerPage_tracepoint_mode_normal;
 	public static String GDBDebuggerPage_tracepoint_mode_auto;
-			
+
 	public static String StandardGDBDebuggerPage14;
 
 	public static String ContainerPropertyTab_Title;

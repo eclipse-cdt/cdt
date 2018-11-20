@@ -50,23 +50,23 @@ import org.eclipse.ui.part.PageSwitcher;
 
 /**
  * The Debugger console view shows different {@link IDebuggerConsole}.
- * 
+ *
  * This class extends {@link IConsoleView} to allow it to easily display
  * consoles of type {@link IOConsole}.
- * 
+ *
  * @see {@link IDebuggerConsoleManager}
  */
-public class DebuggerConsoleView extends PageBookView 
+public class DebuggerConsoleView extends PageBookView
 		implements IConsoleView, IDebuggerConsoleView, IConsoleListener, IPropertyChangeListener, IPartListener2 {
 
 	public static final String DEBUGGER_CONSOLE_VIEW_ID = "org.eclipse.cdt.debug.ui.debuggerConsoleView"; //$NON-NLS-1$
-	public static final String DROP_DOWN_ACTION_ID = DEBUGGER_CONSOLE_VIEW_ID  + ".DebuggerConsoleDropDownAction"; //$NON-NLS-1$
+	public static final String DROP_DOWN_ACTION_ID = DEBUGGER_CONSOLE_VIEW_ID + ".DebuggerConsoleDropDownAction"; //$NON-NLS-1$
 
 	/**
 	 * Stack of consoles in MRU order
 	 */
 	private List<IDebuggerConsole> fStack = new ArrayList<>();
-	
+
 	/** The console being displayed, or <code>null</code> if none */
 	private IDebuggerConsole fActiveConsole;
 
@@ -84,7 +84,7 @@ public class DebuggerConsoleView extends PageBookView
 	 * Map of consoles to array of page participants
 	 */
 	private Map<IDebuggerConsole, ListenerList<IConsolePageParticipant>> fConsoleToPageParticipants = new HashMap<>();
-	
+
 	/**
 	 * Whether this view is active
 	 */
@@ -99,7 +99,7 @@ public class DebuggerConsoleView extends PageBookView
 		// create pages for existing consoles
 		IConsole[] consoles = getConsoleManager().getConsoles();
 		consolesAdded(consoles);
-		
+
 		// add as a listener for new consoles
 		getConsoleManager().addConsoleListener(this);
 		// register for part events
@@ -110,7 +110,7 @@ public class DebuggerConsoleView extends PageBookView
 
 	@Override
 	protected PageRec doCreatePage(IWorkbenchPart dummyPart) {
-		DebuggerConsoleWorkbenchPart part = (DebuggerConsoleWorkbenchPart)dummyPart;
+		DebuggerConsoleWorkbenchPart part = (DebuggerConsoleWorkbenchPart) dummyPart;
 		IDebuggerConsole console = fPartToConsole.get(part);
 		IPageBookViewPage page = console.createDebuggerPage(this);
 		initPage(page);
@@ -118,26 +118,28 @@ public class DebuggerConsoleView extends PageBookView
 		console.addPropertyChangeListener(this);
 
 		// initialize page participants
-		IConsolePageParticipant[] consoleParticipants = ((DebuggerConsoleManager)getConsoleManager()).getPageParticipants(console);
+		IConsolePageParticipant[] consoleParticipants = ((DebuggerConsoleManager) getConsoleManager())
+				.getPageParticipants(console);
 		final ListenerList<IConsolePageParticipant> participants = new ListenerList<>();
 		for (int i = 0; i < consoleParticipants.length; i++) {
 			participants.add(consoleParticipants[i]);
 		}
 		fConsoleToPageParticipants.put(console, participants);
 		for (IConsolePageParticipant participant : participants) {
-            SafeRunner.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
 					participant.init(page, console);
 				}
+
 				@Override
 				public void handleException(Throwable exception) {
 					CDebugUIPlugin.log(exception);
 					participants.remove(participant);
 				}
 			});
-        }
-		
+		}
+
 		return new PageRec(dummyPart, page);
 	}
 
@@ -210,7 +212,7 @@ public class DebuggerConsoleView extends PageBookView
 			fStack.add(0, fActiveConsole);
 			activateParticipants(fActiveConsole);
 		}
-		
+
 		updateTitle();
 	}
 
@@ -225,22 +227,23 @@ public class DebuggerConsoleView extends PageBookView
 			final ListenerList<IConsolePageParticipant> listeners = getParticipants(console);
 			if (listeners != null) {
 				for (IConsolePageParticipant participant : listeners) {
-			    	SafeRunner.run(new ISafeRunnable() {
+					SafeRunner.run(new ISafeRunnable() {
 						@Override
 						public void run() throws Exception {
 							participant.activated();
 						}
+
 						@Override
 						public void handleException(Throwable exception) {
 							CDebugUIPlugin.log(exception);
 							listeners.remove(participant);
 						}
 					});
-			    }
+				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the page participants registered for the given console, or
 	 * <code>null</code>
@@ -303,10 +306,10 @@ public class DebuggerConsoleView extends PageBookView
 
 		fConsoleToPart.remove(console);
 		console.removePropertyChangeListener(this);
-		
-        if (fPartToConsole.isEmpty()) {
-            fActiveConsole = null;
-        }
+
+		if (fPartToConsole.isEmpty()) {
+			fActiveConsole = null;
+		}
 	}
 
 	@Override
@@ -336,7 +339,8 @@ public class DebuggerConsoleView extends PageBookView
 						IDebuggerConsole[] allConsoles = getConsoleManager().getConsoles();
 						for (IDebuggerConsole registered : allConsoles) {
 							if (registered.equals(console)) {
-								DebuggerConsoleWorkbenchPart part = new DebuggerConsoleWorkbenchPart(registered, getSite());
+								DebuggerConsoleWorkbenchPart part = new DebuggerConsoleWorkbenchPart(registered,
+										getSite());
 								fConsoleToPart.put(registered, part);
 								fPartToConsole.put(part, registered);
 								// Must call partActivated() to create the page
@@ -391,12 +395,12 @@ public class DebuggerConsoleView extends PageBookView
 			// Already displayed
 			return;
 		}
-		
+
 		DebuggerConsoleWorkbenchPart part = fConsoleToPart.get(console);
 		if (part != null) {
 			partActivated(part);
 			// let the console know it's being activated
-	         fActiveConsole.consoleSelected();
+			fActiveConsole.consoleSelected();
 		}
 	}
 
@@ -421,24 +425,24 @@ public class DebuggerConsoleView extends PageBookView
 	/**
 	 * Initialize the PageSwitcher.
 	 * The page switcher is triggered using a keyboard shortcut
-	 * configured in the user's eclipse and allows to switch 
+	 * configured in the user's eclipse and allows to switch
 	 * pages using a popup.
 	 */
 	private void initPageSwitcher() {
 		new PageSwitcher(this) {
 			@Override
 			public void activatePage(Object page) {
-				display((IDebuggerConsole)page);
+				display((IDebuggerConsole) page);
 			}
 
 			@Override
 			public ImageDescriptor getImageDescriptor(Object page) {
-				return ((IDebuggerConsole)page).getImageDescriptor();
+				return ((IDebuggerConsole) page).getImageDescriptor();
 			}
 
 			@Override
 			public String getName(Object page) {
-				return ((IDebuggerConsole)page).getName();
+				return ((IDebuggerConsole) page).getName();
 			}
 
 			@Override
@@ -472,7 +476,7 @@ public class DebuggerConsoleView extends PageBookView
 	@Override
 	public void display(IConsole console) {
 		if (console instanceof IDebuggerConsole) {
-			display((IDebuggerConsole)console);
+			display((IDebuggerConsole) console);
 		}
 	}
 

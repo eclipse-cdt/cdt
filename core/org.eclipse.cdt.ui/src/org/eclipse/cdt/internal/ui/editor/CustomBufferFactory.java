@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.core.model.IBufferFactory;
  */
 public class CustomBufferFactory implements IBufferFactory {
 	/**
-	 * 
+	 *
 	 */
 	public CustomBufferFactory() {
 		super();
@@ -46,17 +46,17 @@ public class CustomBufferFactory implements IBufferFactory {
 	public IBuffer createBuffer(IOpenable owner) {
 		if (owner instanceof IWorkingCopy) {
 
-			IWorkingCopy unit= (IWorkingCopy) owner;
-			ITranslationUnit original= unit.getOriginalElement();
-			IResource resource= original.getResource();
+			IWorkingCopy unit = (IWorkingCopy) owner;
+			ITranslationUnit original = unit.getOriginalElement();
+			IResource resource = original.getResource();
 			if (resource instanceof IFile) {
-				IFile fFile = (IFile)resource;
-				DocumentAdapter adapter= new DocumentAdapter(owner, fFile);
+				IFile fFile = (IFile) resource;
+				DocumentAdapter adapter = new DocumentAdapter(owner, fFile);
 				return adapter;
 			}
 
 			// URI
-			URI locationUri= original.getLocationURI();
+			URI locationUri = original.getLocationURI();
 			if (locationUri != null) {
 				try {
 					return new DocumentAdapter(owner, locationUri);

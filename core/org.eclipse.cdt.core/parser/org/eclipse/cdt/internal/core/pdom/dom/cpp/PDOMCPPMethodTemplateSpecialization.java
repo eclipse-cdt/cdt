@@ -33,8 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Bryan Wilkinson
  */
-class PDOMCPPMethodTemplateSpecialization extends PDOMCPPFunctionTemplateSpecialization
-		implements ICPPMethod {
+class PDOMCPPMethodTemplateSpecialization extends PDOMCPPFunctionTemplateSpecialization implements ICPPMethod {
 	private static final int TEMPLATE_PARAMS = PDOMCPPFunctionTemplateSpecialization.RECORD_SIZE;
 
 	@SuppressWarnings("hiding")
@@ -42,10 +41,10 @@ class PDOMCPPMethodTemplateSpecialization extends PDOMCPPFunctionTemplateSpecial
 
 	private volatile IPDOMCPPTemplateParameter[] fTemplateParameters;
 
-	public PDOMCPPMethodTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
-			ICPPMethod method, PDOMBinding specialized) throws CoreException {
+	public PDOMCPPMethodTemplateSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method,
+			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPFunctionTemplate) method, specialized);
-		computeTemplateParameters((ICPPFunctionTemplate) method);  // Sets fTemplateParameters
+		computeTemplateParameters((ICPPFunctionTemplate) method); // Sets fTemplateParameters
 		final Database db = getDB();
 		long rec = PDOMTemplateParameterArray.putArray(db, fTemplateParameters);
 		db.putRecPtr(record + TEMPLATE_PARAMS, rec);
@@ -89,7 +88,7 @@ class PDOMCPPMethodTemplateSpecialization extends PDOMCPPFunctionTemplateSpecial
 	public boolean isDestructor() {
 		IBinding spec = getSpecializedBinding();
 		if (spec instanceof ICPPMethod) {
-			((ICPPMethod)spec).isDestructor();
+			((ICPPMethod) spec).isDestructor();
 		}
 		return false;
 	}
@@ -98,7 +97,7 @@ class PDOMCPPMethodTemplateSpecialization extends PDOMCPPFunctionTemplateSpecial
 	public boolean isImplicit() {
 		IBinding spec = getSpecializedBinding();
 		if (spec instanceof ICPPMethod) {
-			((ICPPMethod)spec).isImplicit();
+			((ICPPMethod) spec).isImplicit();
 		}
 		return false;
 	}
@@ -107,7 +106,7 @@ class PDOMCPPMethodTemplateSpecialization extends PDOMCPPFunctionTemplateSpecial
 	public boolean isExplicit() {
 		IBinding spec = getSpecializedBinding();
 		if (spec instanceof ICPPMethod) {
-			((ICPPMethod)spec).isExplicit();
+			((ICPPMethod) spec).isExplicit();
 		}
 		return false;
 	}
@@ -116,7 +115,7 @@ class PDOMCPPMethodTemplateSpecialization extends PDOMCPPFunctionTemplateSpecial
 	public boolean isVirtual() {
 		IBinding spec = getSpecializedBinding();
 		if (spec instanceof ICPPMethod) {
-			((ICPPMethod)spec).isVirtual();
+			((ICPPMethod) spec).isVirtual();
 		}
 		return false;
 	}
@@ -130,7 +129,7 @@ class PDOMCPPMethodTemplateSpecialization extends PDOMCPPFunctionTemplateSpecial
 	public int getVisibility() {
 		IBinding spec = getSpecializedBinding();
 		if (spec instanceof ICPPMethod) {
-			((ICPPMethod)spec).getVisibility();
+			((ICPPMethod) spec).getVisibility();
 		}
 		return 0;
 	}
@@ -157,8 +156,8 @@ class PDOMCPPMethodTemplateSpecialization extends PDOMCPPFunctionTemplateSpecial
 
 	private void computeTemplateParameters(ICPPFunctionTemplate originalMethodTemplate) {
 		try {
-			fTemplateParameters = PDOMTemplateParameterArray.createPDOMTemplateParameters(getLinkage(),
-					this, originalMethodTemplate.getTemplateParameters());
+			fTemplateParameters = PDOMTemplateParameterArray.createPDOMTemplateParameters(getLinkage(), this,
+					originalMethodTemplate.getTemplateParameters());
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
 			fTemplateParameters = IPDOMCPPTemplateParameter.EMPTY_ARRAY;

@@ -55,24 +55,24 @@ public class CSelectMarkerRulerAction extends SelectAnnotationRulerAction {
 	 */
 	@Override
 	public void annotationDefaultSelected(VerticalRulerEvent event) {
-		Annotation annotation= event.getSelectedAnnotation();
-		IAnnotationModel model= getAnnotationModel();
+		Annotation annotation = event.getSelectedAnnotation();
+		IAnnotationModel model = getAnnotationModel();
 
 		if (isOverrideIndicator(annotation)) {
-			((OverrideIndicatorManager.OverrideIndicator)annotation).open();
+			((OverrideIndicatorManager.OverrideIndicator) annotation).open();
 			return;
 		}
 
 		if (isBreakpoint(annotation))
 			triggerAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK, event.getEvent());
 
-		Position position= model.getPosition(annotation);
+		Position position = model.getPosition(annotation);
 		if (position == null)
 			return;
 
 		if (isQuickFixTarget(annotation)) {
-			ITextOperationTarget operation= getTextEditor().getAdapter(ITextOperationTarget.class);
-			final int opCode= ISourceViewer.QUICK_ASSIST;
+			ITextOperationTarget operation = getTextEditor().getAdapter(ITextOperationTarget.class);
+			final int opCode = ISourceViewer.QUICK_ASSIST;
 			if (operation != null && operation.canDoOperation(opCode)) {
 				getTextEditor().selectAndReveal(position.getOffset(), position.getLength());
 				operation.doOperation(opCode);
@@ -96,12 +96,13 @@ public class CSelectMarkerRulerAction extends SelectAnnotationRulerAction {
 
 	/**
 	 * Checks whether the given annotation is a breakpoint annotation.
-	 * 
+	 *
 	 * @param annotation the annotation
 	 * @return <code>true</code> if the annotation is a breakpoint annotation
 	 */
 	private boolean isBreakpoint(Annotation annotation) {
-		return annotation.getType().equals("org.eclipse.cdt.debug.core.breakpoint") || annotation.getType().equals(CExpandHover.NO_BREAKPOINT_ANNOTATION); //$NON-NLS-1$
+		return annotation.getType().equals("org.eclipse.cdt.debug.core.breakpoint") //$NON-NLS-1$
+				|| annotation.getType().equals(CExpandHover.NO_BREAKPOINT_ANNOTATION);
 	}
 
 	private boolean isQuickFixTarget(Annotation a) {
@@ -109,20 +110,20 @@ public class CSelectMarkerRulerAction extends SelectAnnotationRulerAction {
 	}
 
 	private void triggerAction(String actionID, Event event) {
-		IAction action= getTextEditor().getAction(actionID);
+		IAction action = getTextEditor().getAction(actionID);
 		if (action != null) {
 			if (action instanceof IUpdate)
 				((IUpdate) action).update();
 			// hack to propagate line change
 			if (action instanceof ISelectionListener) {
-				((ISelectionListener)action).selectionChanged(null, null);
+				((ISelectionListener) action).selectionChanged(null, null);
 			}
 			if (action.isEnabled()) {
 				if (event == null) {
 					action.run();
 				} else {
-					event.type= SWT.MouseDoubleClick;
-					event.count= 2;
+					event.type = SWT.MouseDoubleClick;
+					event.count = 2;
 					action.runWithEvent(event);
 				}
 			}
@@ -130,4 +131,3 @@ public class CSelectMarkerRulerAction extends SelectAnnotationRulerAction {
 	}
 
 }
-

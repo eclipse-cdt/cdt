@@ -18,26 +18,26 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 /**
  * C++ adds the capability of qualifying a named type specifier w/the keyword
  * typename.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTNamedTypeSpecifier extends IASTNamedTypeSpecifier, ICPPASTDeclSpecifier {
 	/**
 	 * Was typename token consumed?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isTypename();
 
 	/**
 	 * Set this value.
-	 * 
+	 *
 	 * @param value
 	 *            boolean
 	 */
 	public void setIsTypename(boolean value);
-	
+
 	/**
 	 * @since 5.1
 	 */

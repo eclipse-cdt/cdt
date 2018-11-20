@@ -24,14 +24,14 @@ import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * This is a copy of the RulerToggleBreakpointActionDelegate in platform.  
+ * This is a copy of the RulerToggleBreakpointActionDelegate in platform.
  * It updates the toggle action to include an accelertor text in its label.
  * See bug 374153.
- * 
+ *
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate
  */
 public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDelegate implements IActionDelegate2 {
-	
+
 	private IEditorPart fEditor = null;
 	private ToggleBreakpointAction fDelegate = null;
 
@@ -40,8 +40,8 @@ public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDel
 	 */
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
 		fDelegate = new ToggleBreakpointAction(editor, null, rulerInfo);
-		fDelegate.setText( ActionMessages.getString("CRulerToggleBreakpointActionDelegate_label") ); //$NON-NLS-1$
-		
+		fDelegate.setText(ActionMessages.getString("CRulerToggleBreakpointActionDelegate_label")); //$NON-NLS-1$
+
 		return fDelegate;
 	}
 
@@ -80,7 +80,7 @@ public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDel
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
 	public void runWithEvent(IAction action, Event event) {
-		if(fDelegate != null) {
+		if (fDelegate != null) {
 			fDelegate.runWithEvent(event);
 		}
 	}

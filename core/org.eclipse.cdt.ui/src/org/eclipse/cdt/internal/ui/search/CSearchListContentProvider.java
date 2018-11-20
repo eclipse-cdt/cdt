@@ -41,18 +41,18 @@ public class CSearchListContentProvider implements IStructuredContentProvider, I
 	private final CSearchViewPage fPage;
 
 	CSearchListContentProvider(CSearchViewPage page) {
-		fPage= page;
+		fPage = page;
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		Set<String> uncoveredProjects = new HashSet<String>(); 
-		
+		Set<String> uncoveredProjects = new HashSet<String>();
+
 		CSearchResult result = (CSearchResult) inputElement;
-		
+
 		Object[] results = result.getElements();
 		List<Object> resultList = new ArrayList<Object>();
-	
+
 		// see which projects returned results
 		for (int i = 0; i < results.length; i++) {
 			if (results[i] instanceof CSearchElement) {
@@ -87,22 +87,20 @@ public class CSearchListContentProvider implements IStructuredContentProvider, I
 				}
 			}
 		}
-		
+
 		return resultList.toArray();
 	}
 
 	private Status createUnindexedProjectWarningElement(ICProject project) {
 		return new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
-				MessageFormat.format(
-					CSearchMessages.PDOMSearchListContentProvider_IndexerNotEnabledMessageFormat, 
-					new Object[] { project.getProject().getName() }));
+				MessageFormat.format(CSearchMessages.PDOMSearchListContentProvider_IndexerNotEnabledMessageFormat,
+						new Object[] { project.getProject().getName() }));
 	}
 
 	private Status createClosedProjectWarningElement(ICProject project) {
 		return new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
-				MessageFormat.format(
-					CSearchMessages.PDOMSearchListContentProvider_ProjectClosedMessageFormat, 
-					new Object[] { project.getProject().getName() }));
+				MessageFormat.format(CSearchMessages.PDOMSearchListContentProvider_ProjectClosedMessageFormat,
+						new Object[] { project.getProject().getName() }));
 	}
 
 	@Override
@@ -111,8 +109,8 @@ public class CSearchListContentProvider implements IStructuredContentProvider, I
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		this.viewer = (TableViewer)viewer;
-		result = (CSearchResult)newInput;
+		this.viewer = (TableViewer) viewer;
+		result = (CSearchResult) newInput;
 		viewer.refresh();
 	}
 
@@ -120,8 +118,8 @@ public class CSearchListContentProvider implements IStructuredContentProvider, I
 	public void elementsChanged(Object[] elements) {
 		if (result == null)
 			return;
-		
-		for (int i= 0; i < elements.length; i++) {
+
+		for (int i = 0; i < elements.length; i++) {
 			if (fPage.getDisplayedMatchCount(elements[i]) > 0) {
 				if (viewer.testFindItem(elements[i]) != null)
 					viewer.refresh(elements[i]);
@@ -132,7 +130,7 @@ public class CSearchListContentProvider implements IStructuredContentProvider, I
 			}
 		}
 	}
-	
+
 	@Override
 	public void clear() {
 		viewer.refresh();

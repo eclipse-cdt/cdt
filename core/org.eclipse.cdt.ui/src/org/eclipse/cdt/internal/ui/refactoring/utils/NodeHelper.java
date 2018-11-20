@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -46,7 +46,7 @@ import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 
 /**
  * General class for common Node operations.
- * 
+ *
  * @author Lukas Felber & Guido Zgraggen
  */
 public class NodeHelper {
@@ -59,7 +59,7 @@ public class NodeHelper {
 		} else if (parent instanceof CPPASTNamespaceDefinition) {
 			return ((CPPASTNamespaceDefinition) parent).getDeclarations();
 		}
-		return IASTDeclaration.EMPTY_DECLARATION_ARRAY; 
+		return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
 	}
 
 	public static IASTNode findFollowingNode(IASTNode currentNode) {
@@ -89,9 +89,10 @@ public class NodeHelper {
 		if (node1 == null || node2 == null) {
 			return false;
 		}
-		return node1.getNodeLocations()[0].getNodeOffset() == node2.getNodeLocations()[0].getNodeOffset() 
-			&& node1.getNodeLocations()[0].getNodeLength() == node2.getNodeLocations()[0].getNodeLength()
-			&& new Path(node1.getFileLocation().getFileName()).equals(new Path(node2.getFileLocation().getFileName()));
+		return node1.getNodeLocations()[0].getNodeOffset() == node2.getNodeLocations()[0].getNodeOffset()
+				&& node1.getNodeLocations()[0].getNodeLength() == node2.getNodeLocations()[0].getNodeLength()
+				&& new Path(node1.getFileLocation().getFileName())
+						.equals(new Path(node2.getFileLocation().getFileName()));
 	}
 
 	public static MethodContext findMethodContext(IASTNode node, CRefactoringContext refactoringContext,
@@ -118,9 +119,8 @@ public class NodeHelper {
 		return context;
 	}
 
-	private static void getMethodContexWithIndex(CRefactoringContext refactoringContext,
-			IASTTranslationUnit ast, IASTName name, MethodContext context, IProgressMonitor pm)
-			throws CoreException {
+	private static void getMethodContexWithIndex(CRefactoringContext refactoringContext, IASTTranslationUnit ast,
+			IASTName name, MethodContext context, IProgressMonitor pm) throws CoreException {
 		if (name instanceof ICPPASTQualifiedName) {
 			ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
 			context.setMethodQName(qname);
@@ -139,8 +139,7 @@ public class NodeHelper {
 		}
 		final IASTDeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
 		final IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
-		if ((declSpecifier instanceof ICPPASTDeclSpecifier)
-				&& ((ICPPASTDeclSpecifier) declSpecifier).isFriend()) {
+		if ((declSpecifier instanceof ICPPASTDeclSpecifier) && ((ICPPASTDeclSpecifier) declSpecifier).isFriend()) {
 			return false;
 		}
 		return declarators.length == 1 && declarators[0] instanceof ICPPASTFunctionDeclarator;

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class ConfigureTool extends AbstractConfigurationOption {
 
 	private String value;
-	
+
 	public ConfigureTool(String name, AutotoolsConfiguration cfg) {
 		super(name, cfg);
 		this.value = name;
@@ -33,12 +33,12 @@ public class ConfigureTool extends AbstractConfigurationOption {
 		super(name, cfg);
 		this.value = value;
 	}
-	
+
 	@Override
 	public String getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public void setValue(String newValue) {
 		if (!newValue.equals(value)) {
@@ -51,17 +51,17 @@ public class ConfigureTool extends AbstractConfigurationOption {
 	public boolean isParmSet() {
 		return false;
 	}
-	
+
 	@Override
 	public String getParameter() {
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public ArrayList<String> getParameters() {
 		return new ArrayList<>();
 	}
-	
+
 	@Override
 	public IConfigureOption copy(AutotoolsConfiguration config) {
 		return new ConfigureTool(name, config, value);

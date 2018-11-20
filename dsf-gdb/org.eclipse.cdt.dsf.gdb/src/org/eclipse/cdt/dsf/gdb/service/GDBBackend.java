@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Nokia              - initial API and implementation with some code moved from GDBControl.
  *     Wind River System
@@ -67,7 +67,7 @@ import org.osgi.framework.BundleContext;
  * manages some GDB parameters from a given launch configuration.<br>
  * <br>
  * You can subclass for you special needs.
- * 
+ *
  * @since 1.1
  */
 public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBackend2 {
@@ -174,11 +174,11 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	/**
 	 * Options for GDB process. Returns the GDB command and its arguments as an
 	 * array. Allow subclass to override.
-	 * 
+	 *
 	 * @since 4.6
 	 * @deprecated Replaced by getDebuggerCommandLine()
 	 */
-    @Deprecated
+	@Deprecated
 	protected String[] getGDBCommandLineArray() {
 		// The goal here is to keep options to an absolute minimum.
 		// All configuration should be done in the final launch sequence
@@ -187,10 +187,10 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		String cmd = getGDBPath().toOSString() + " --interpreter" + //$NON-NLS-1$
 		// We currently work with MI version 2. Don't use just 'mi' because it
 		// points to the latest MI version, while we want mi2 specifically.
-		" mi2" + //$NON-NLS-1$
-		// Don't read the gdbinit file here. It is read explicitly in
-		// the LaunchSequence to make it easier to customize.
-		" --nx"; //$NON-NLS-1$
+				" mi2" + //$NON-NLS-1$
+				// Don't read the gdbinit file here. It is read explicitly in
+				// the LaunchSequence to make it easier to customize.
+				" --nx"; //$NON-NLS-1$
 
 		// Parse to properly handle spaces and such things (bug 458499)
 		return CommandLineUtil.argumentsToArray(cmd);
@@ -201,29 +201,29 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	 * Allow subclass to override.
 	 * @since 5.2
 	 */
-    // This method replaces getGDBCommandLineArray() because we need
-    // to override it for GDB 7.12 even if an extender has overridden
-    // getGDBCommandLineArray().
-    // Here is the scenario:
-    //   An extender has overridden getGDBCommandLineArray() to launch
-    //   GDB in MI mode but with extra parameters.  Once GDBBackend_7_12
-    //   is released, the extender may likely point their extension to
-    //   GDBBackend_7_12 instead of GDBBackend (which will even happen
-    //   automatically if the extender extends GDBBackend_HEAD).
-    //   In such a case, they would override the changes in 
-    //   GDBBackend_7_12.getGDBCommandLineArray() and the debug session
-    //   is likely to fail since with GDBBackend_7_12, we launch GDB
-    //   in CLI mode.
-    //
-    //   Instead, we use getDebuggerCommandLine() and override that method in
-    //   GDBBackend_7_12.  That way an extender will not override it
-    //   without noticing (since it didn't exist before).  Then we can call
-    //   the overridden getGDBCommandLineArray() and work with that to
-    //   make it work with the new way to launch GDB of GDBBackend_7_12
-    //
-    // Note that we didn't name this method getGDBCommandLine() because
-    // this name had been used in CDT 8.8 and could still be part of
-    // extenders' code.
+	// This method replaces getGDBCommandLineArray() because we need
+	// to override it for GDB 7.12 even if an extender has overridden
+	// getGDBCommandLineArray().
+	// Here is the scenario:
+	//   An extender has overridden getGDBCommandLineArray() to launch
+	//   GDB in MI mode but with extra parameters.  Once GDBBackend_7_12
+	//   is released, the extender may likely point their extension to
+	//   GDBBackend_7_12 instead of GDBBackend (which will even happen
+	//   automatically if the extender extends GDBBackend_HEAD).
+	//   In such a case, they would override the changes in
+	//   GDBBackend_7_12.getGDBCommandLineArray() and the debug session
+	//   is likely to fail since with GDBBackend_7_12, we launch GDB
+	//   in CLI mode.
+	//
+	//   Instead, we use getDebuggerCommandLine() and override that method in
+	//   GDBBackend_7_12.  That way an extender will not override it
+	//   without noticing (since it didn't exist before).  Then we can call
+	//   the overridden getGDBCommandLineArray() and work with that to
+	//   make it work with the new way to launch GDB of GDBBackend_7_12
+	//
+	// Note that we didn't name this method getGDBCommandLine() because
+	// this name had been used in CDT 8.8 and could still be part of
+	// extenders' code.
 	protected String[] getDebuggerCommandLine() {
 		// Call the old method in case it was overridden
 		return getGDBCommandLineArray();
@@ -278,7 +278,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 
 	/**
 	 * Launch GDB process. Allow subclass to override.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	// Again, we create a new method that we know has not been already
@@ -300,7 +300,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	/**
 	 * Launch GDB process with command and arguments. Allow subclass to
 	 * override.
-	 * 
+	 *
 	 * @since 4.6
 	 * @deprecated Replace by launchGDBProcess()
 	 */
@@ -532,7 +532,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 				}
 
 				try {
-                    fProcess = launchGDBProcess();
+					fProcess = launchGDBProcess();
 
 					// Need to do this on the executor for thread-safety
 					getExecutor().submit(new DsfRunnable() {
@@ -624,9 +624,9 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 					if (jobThread != null) {
 						jobThread.interrupt();
 					}
-					
+
 					destroy();
-					
+
 					requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
 							DebugException.TARGET_REQUEST_FAILED, "Timed out trying to launch GDB.", null)); //$NON-NLS-1$
 					requestMonitor.done();
@@ -732,7 +732,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		 * GDBControlInitializedDMEvent that's used to indicate that GDB back
 		 * end is ready for MI commands. But we still fire the event as it does
 		 * no harm and may be needed sometime.... 09/29/2008
-		 * 
+		 *
 		 * We send the event in the register step because that is when other
 		 * services have access to it.
 		 */
@@ -810,12 +810,12 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	 * this job should be canceled. If this job is not canceled before the time
 	 * is up, it will imply the interrupt did not successfully suspend the
 	 * backend, and the current job will indicate this in the request monitor.
-	 * 
+	 *
 	 * The specified timeout is used to indicate how many milliseconds this job
 	 * should wait for. INTERRUPT_TIMEOUT_DEFAULT indicates to use the default
 	 * of 5 seconds. The default is also use if the timeout value is 0 or
 	 * negative.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected class MonitorInterruptJob extends Job {
@@ -864,14 +864,14 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	 * when the target stops, in cases where we don't want to views to update.
 	 * For example, if we want to interrupt the target to set a breakpoint, this
 	 * interruption is done silently; we will receive the MI event though.
-	 * 
+	 *
 	 * <p>
 	 * Though we send a SIGINT, we may not specifically get an MISignalEvent.
 	 * Typically we will, but not always, so wait for an MIStoppedEvent. See
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=305178#c21
-	 * 
+	 *
 	 * @since 3.0
-	 * 
+	 *
 	 */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIStoppedEvent e) {

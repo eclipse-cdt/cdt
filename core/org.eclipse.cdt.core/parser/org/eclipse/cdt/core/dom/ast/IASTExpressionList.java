@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Expression list (comma separated list of expressions).
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -30,18 +30,18 @@ public interface IASTExpressionList extends IASTExpression {
 
 	/**
 	 * Returns nested expressions.
-	 * 
+	 *
 	 * @return an array of nested expressions
 	 */
 	public IASTExpression[] getExpressions();
 
 	/**
 	 * Adds nested expression.
-	 * 
+	 *
 	 * @param expression the expression to be added.
 	 */
 	public void addExpression(IASTExpression expression);
-	
+
 	/**
 	 * @since 5.1
 	 */

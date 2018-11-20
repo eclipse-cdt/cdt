@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -23,7 +23,7 @@ import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 public class PDASourceLookupDirector extends AbstractSourceLookupDirector {
 	@Override
 	public void initializeParticipants() {
-	    // No need to add participants here, the source display adapter will
-	    // add the participant with the correct session ID.
+		// No need to add participants here, the source display adapter will
+		// add the participant with the correct session ID.
 	}
 }

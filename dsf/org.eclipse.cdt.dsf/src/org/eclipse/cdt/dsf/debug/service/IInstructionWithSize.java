@@ -28,9 +28,9 @@ import org.eclipse.cdt.dsf.debug.service.IInstruction;
  */
 public interface IInstructionWithSize extends IInstruction {
 
-    /**
-     * @return size of the instruction in bytes or <code>null</code> if unknown
-     */
-    Integer getSize();
+	/**
+	 * @return size of the instruction in bytes or <code>null</code> if unknown
+	 */
+	Integer getSize();
 
 }

@@ -36,141 +36,149 @@ class ToolInfo {
 	public static final int REMOVED = 1 << 1;
 	public static final int REMAINED = 1 << 2;
 
-	ToolInfo(IResourceInfo rcInfo, ITool tool, int flag){
+	ToolInfo(IResourceInfo rcInfo, ITool tool, int flag) {
 		fRcInfo = rcInfo;
-		
+
 		updateInitialTool(tool);
-		
+
 		fFlag = flag;
 	}
-	
-	private static ITool calculateBaseTool(IResourceInfo rcInfo, ITool tool){
+
+	private static ITool calculateBaseTool(IResourceInfo rcInfo, ITool tool) {
 		ITool baseTool = null;
-		if(tool.isExtensionElement()) {
+		if (tool.isExtensionElement()) {
 			IToolChain baseTc;
-			if(rcInfo instanceof IFolderInfo){
-				baseTc = ((IFolderInfo)rcInfo).getToolChain();
+			if (rcInfo instanceof IFolderInfo) {
+				baseTc = ((IFolderInfo) rcInfo).getToolChain();
 			} else {
-				IFolderInfo foInfo = ((ResourceConfiguration)rcInfo).getParentFolderInfo();
+				IFolderInfo foInfo = ((ResourceConfiguration) rcInfo).getParentFolderInfo();
 				baseTc = foInfo.getToolChain();
 			}
-			
+
 			ITool realTool = ManagedBuildManager.getRealTool(tool);
-			if(realTool == null){
+			if (realTool == null) {
 				baseTool = tool;
 			} else {
-//				ITool[] tcTools = baseTc.getTools();
-//				baseTool = getBestMatchTool(realTool, tcTools);
-//				
-//				if(baseTool == null){
-//					IToolChain extTc = ManagedBuildManager.getExtensionToolChain(baseTc);
-//					if(extTc != null){
-//						baseTool = getBestMatchTool(realTool, extTc.getTools());
-//					}
-//				}
-				
-				if(baseTool == null){
+				//				ITool[] tcTools = baseTc.getTools();
+				//				baseTool = getBestMatchTool(realTool, tcTools);
+				//
+				//				if(baseTool == null){
+				//					IToolChain extTc = ManagedBuildManager.getExtensionToolChain(baseTc);
+				//					if(extTc != null){
+				//						baseTool = getBestMatchTool(realTool, extTc.getTools());
+				//					}
+				//				}
+
+				if (baseTool == null) {
 					baseTool = tool;
 				}
 			}
 		} else if (rcInfo != tool.getParentResourceInfo()) {
 			baseTool = tool;
 		}
-		
+
 		return baseTool;
 	}
-	
-	public int getType(){
+
+	public int getType() {
 		return fFlag;
 	}
-	
-	public ITool getRealTool(){
-		if(fRealTool == null){
+
+	public ITool getRealTool() {
+		if (fRealTool == null) {
 			ITool baseTool = getBaseTool();
 			fRealTool = ManagedBuildManager.getRealTool(baseTool);
-			if(fRealTool == null)
+			if (fRealTool == null)
 				fRealTool = fBaseTool;
 		}
 		return fRealTool;
 	}
-	
-	void updateInitialTool(ITool tool){
-		if(fInitialTool == tool)
+
+	void updateInitialTool(ITool tool) {
+		if (fInitialTool == tool)
 			return;
 
 		fResultingTool = null;
 		fRealTool = null;
-		
+
 		fInitialTool = tool;
-		
+
 		fModificationStatus = null;
-		
+
 		fBaseTool = calculateBaseTool(fRcInfo, tool);
 	}
 
-	public ITool getBaseTool(){
-		if(fBaseTool == null){
+	public ITool getBaseTool() {
+		if (fBaseTool == null) {
 			fBaseTool = ManagedBuildManager.getExtensionTool(fInitialTool);
-			if(fBaseTool == null)
+			if (fBaseTool == null)
 				fBaseTool = fInitialTool;
 		}
 		return fBaseTool;
 	}
-	
-	public ITool getBaseExtensionTool(){
+
+	public ITool getBaseExtensionTool() {
 		ITool tool = getBaseTool();
 		return ManagedBuildManager.getExtensionTool(tool);
 	}
-	
-	public ITool getInitialTool(){
+
+	public ITool getInitialTool() {
 		return fInitialTool;
 	}
-	
-	public IModificationStatus getModificationStatus(){
-		if(fModificationStatus == null){
+
+	public IModificationStatus getModificationStatus() {
+		if (fModificationStatus == null) {
 			getResultingTool();
 		}
 		return fModificationStatus;
 	}
 
 	public ITool getResultingTool() {
-		switch(fFlag){
+		switch (fFlag) {
 		case ADDED:
-			if(fResultingTool == null || fResultingTool.getParentResourceInfo() != fRcInfo){
+			if (fResultingTool == null || fResultingTool.getParentResourceInfo() != fRcInfo) {
 				Tool result = null;
 				ModificationStatus status = null;
-				if(fConverterInfo != null){
+				if (fConverterInfo != null) {
 					IBuildObject resultBo = fConverterInfo.getConvertedFromObject();
-					if(!(resultBo instanceof Tool)) {
+					if (!(resultBo instanceof Tool)) {
 						status = new ModificationStatus(ManagedMakeMessages.getString("ToolInfo.0")); //$NON-NLS-1$
 					} else {
-						result = (Tool)resultBo;
+						result = (Tool) resultBo;
 						status = ModificationStatus.OK;
 					}
-				} 
-				
-				if(status != ModificationStatus.OK){
+				}
+
+				if (status != ModificationStatus.OK) {
 					ITool baseTool = getBaseTool();
 
-					if(fRcInfo instanceof IFolderInfo){
-						IFolderInfo foInfo = (IFolderInfo)fRcInfo;
-						if(baseTool.isExtensionElement()){
-							result = new Tool((ToolChain)foInfo.getToolChain(), baseTool, ManagedBuildManager.calculateChildId(baseTool.getId(), null), baseTool.getName(), false);
+					if (fRcInfo instanceof IFolderInfo) {
+						IFolderInfo foInfo = (IFolderInfo) fRcInfo;
+						if (baseTool.isExtensionElement()) {
+							result = new Tool((ToolChain) foInfo.getToolChain(), baseTool,
+									ManagedBuildManager.calculateChildId(baseTool.getId(), null), baseTool.getName(),
+									false);
 						} else {
 							ITool extTool = ManagedBuildManager.getExtensionTool(baseTool);
-							result = new Tool(foInfo.getToolChain(), extTool, ManagedBuildManager.calculateChildId(extTool.getId(), null), baseTool.getName(), (Tool)baseTool);
+							result = new Tool(foInfo.getToolChain(), extTool,
+									ManagedBuildManager.calculateChildId(extTool.getId(), null), baseTool.getName(),
+									(Tool) baseTool);
 						}
 					} else {
-						ResourceConfiguration fiInfo = (ResourceConfiguration)fRcInfo;
-						if(baseTool.isExtensionElement()){
-							result = new Tool(fiInfo, baseTool, ManagedBuildManager.calculateChildId(baseTool.getId(), null), baseTool.getName(), false);
+						ResourceConfiguration fiInfo = (ResourceConfiguration) fRcInfo;
+						if (baseTool.isExtensionElement()) {
+							result = new Tool(fiInfo, baseTool,
+									ManagedBuildManager.calculateChildId(baseTool.getId(), null), baseTool.getName(),
+									false);
 						} else {
 							ITool extTool = ManagedBuildManager.getExtensionTool(baseTool);
-							result = new Tool(fiInfo, extTool, ManagedBuildManager.calculateChildId(extTool.getId(), null), baseTool.getName(), (Tool)baseTool);
+							result = new Tool(fiInfo, extTool,
+									ManagedBuildManager.calculateChildId(extTool.getId(), null), baseTool.getName(),
+									(Tool) baseTool);
 						}
 					}
-					
-					if(status == null)
+
+					if (status == null)
 						status = ModificationStatus.OK;
 				}
 
@@ -183,16 +191,16 @@ class ToolInfo {
 			fModificationStatus = new ModificationStatus(ManagedMakeMessages.getString("ToolInfo.1")); //$NON-NLS-1$
 			return null;
 		case REMAINED:
-		default: 
-			if(fResultingTool == null){
+		default:
+			if (fResultingTool == null) {
 				fModificationStatus = ModificationStatus.OK;
 				fResultingTool = fInitialTool;
 			}
-			return fResultingTool; 
+			return fResultingTool;
 		}
 	}
-	
-	void setConversionInfo(ToolInfo corInfo, ConverterInfo converterInfo){
+
+	void setConversionInfo(ToolInfo corInfo, ConverterInfo converterInfo) {
 		fCorInfo = corInfo;
 		fConverterInfo = converterInfo;
 	}

@@ -15,8 +15,8 @@
 package org.eclipse.cdt.debug.core.disassembly;
 
 /**
- * The instances of this interface are notified when 
- * a disassembly context is registered or unregistered 
+ * The instances of this interface are notified when
+ * a disassembly context is registered or unregistered
  * with <code>IDisassemblyContextService</code>.
  * <p>
  * This interface is used by the disassembly UI components.
@@ -27,20 +27,20 @@ package org.eclipse.cdt.debug.core.disassembly;
  * This interface is experimental.
  */
 public interface IDisassemblyContextListener {
-    
-    /**
-     * Indicates that <code>context</code> has been registered
-     * with <code>IDisassemblyContextService</code>.
-     * 
-     * @param context the disassembly context that is registered
-     */
-    public void contextAdded( Object context );
 
-    /**
-     * Indicates that <code>context</code> has been unregistered
-     * with <code>IDisassemblyContextService</code>.
-     * 
-     * @param context the disassembly context that is unregistered
-     */
-    public void contextRemoved( Object context );
+	/**
+	 * Indicates that <code>context</code> has been registered
+	 * with <code>IDisassemblyContextService</code>.
+	 *
+	 * @param context the disassembly context that is registered
+	 */
+	public void contextAdded(Object context);
+
+	/**
+	 * Indicates that <code>context</code> has been unregistered
+	 * with <code>IDisassemblyContextService</code>.
+	 *
+	 * @param context the disassembly context that is unregistered
+	 */
+	public void contextRemoved(Object context);
 }

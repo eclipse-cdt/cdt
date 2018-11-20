@@ -12,14 +12,14 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *******************************************************************************/
- 
+
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *  -exec-return [arg]
  *
  *  <p>
@@ -27,18 +27,17 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *  inferior.  Displays the new current frame.
  *  </p>
  *  <p>
- *  The <code>-exec-return</code> command operates on the selected stack 
+ *  The <code>-exec-return</code> command operates on the selected stack
  *  frame.  Therefore the constructor requires a stack frame context.
  *  </p>
- * 
+ *
  */
-public class MIExecReturn extends MICommand<MIInfo> 
-{
-    public MIExecReturn(IFrameDMContext dmc) {
-        super(dmc, "-exec-return"); //$NON-NLS-1$
-    }
+public class MIExecReturn extends MICommand<MIInfo> {
+	public MIExecReturn(IFrameDMContext dmc) {
+		super(dmc, "-exec-return"); //$NON-NLS-1$
+	}
 
-    public MIExecReturn(IFrameDMContext dmc, String arg) {
-        super(dmc, "-exec-return", new String[] { arg }); //$NON-NLS-1$
-    }
+	public MIExecReturn(IFrameDMContext dmc, String arg) {
+		super(dmc, "-exec-return", new String[] { arg }); //$NON-NLS-1$
+	}
 }

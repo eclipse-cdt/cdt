@@ -28,11 +28,11 @@ import org.eclipse.cdt.core.templateengine.TemplateInfo;
 public class UIAttributes extends HashMap<String, String> {
 	private static final long serialVersionUID = 0000000000L;
 	private TemplateInfo templateInfo;
-	
+
 	UIAttributes(TemplateInfo templateInfo) {
 		this.templateInfo = templateInfo;
 	}
-	
+
 	@Override
 	public String put(String key, String value) {
 		value = TemplateEngineHelper.externalizeTemplateString(templateInfo, value);
@@ -41,7 +41,7 @@ public class UIAttributes extends HashMap<String, String> {
 
 	@Override
 	public void putAll(Map<? extends String, ? extends String> map) {
-		for(String key : map.keySet()) {
+		for (String key : map.keySet()) {
 			String value = map.get(key);
 			value = TemplateEngineHelper.externalizeTemplateString(templateInfo, value);
 			super.put(key, value);

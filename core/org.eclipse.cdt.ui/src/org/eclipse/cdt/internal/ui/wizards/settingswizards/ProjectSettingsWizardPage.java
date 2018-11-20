@@ -67,109 +67,95 @@ import org.eclipse.cdt.internal.ui.wizards.settingswizards.IProjectSettingsWizar
 abstract public class ProjectSettingsWizardPage extends WizardPage implements IProjectSettingsWizardPage {
 
 	public static final String FILENAME_EXTENSION = "xml"; //$NON-NLS-1$
-	
-	
+
 	private final IProjectSettingsWizardPageStrategy strategy;
 	private final List<ISettingsProcessor> processors;
-	
+
 	private ICProject selectedProject;
 	private ICConfigurationDescription selectedConfiguration;
-	
+
 	private Text filePathText;
 	private CheckboxTableViewer settingsViewer;
-	
+
 	private IProject initialProject;
-	
+
 	/**
-	 * 
+	 *
 	 * @param strategy
 	 * @param initialProject the initial project to be selected, may be null
 	 */
 	private ProjectSettingsWizardPage(IProjectSettingsWizardPageStrategy strategy) {
 		super(""); //$NON-NLS-1$
 		this.strategy = strategy;
-		
+
 		// This could be replaced with an extension point
-		this.processors = Arrays.<ISettingsProcessor>asList(
-			new IncludePathsSettingsProcessor(),
-			new MacroSettingsProcessor()
-		);
-		
+		this.processors = Arrays.<ISettingsProcessor>asList(new IncludePathsSettingsProcessor(),
+				new MacroSettingsProcessor());
+
 	}
-	
-	
-	
-	
+
 	protected abstract void layoutPage(Composite parent);
-	
-	
+
 	public static ProjectSettingsWizardPage createExportWizardPage() {
 		return new ProjectSettingsWizardPage(new ProjectSettingsExportStrategy()) {
 			@Override
 			public void layoutPage(Composite parent) {
-			    createProjectSelectionGroup(parent);
-			    createSettingsSelectionGroup(parent);
-			    //createCheckboxSelectionGroup(parent);
-			    createFileSelectionGroup(parent);
+				createProjectSelectionGroup(parent);
+				createSettingsSelectionGroup(parent);
+				//createCheckboxSelectionGroup(parent);
+				createFileSelectionGroup(parent);
 			}
 		};
 	}
-	
-	
+
 	public static ProjectSettingsWizardPage createImportWizardPage() {
 		return new ProjectSettingsWizardPage(new ProjectSettingsImportStrategy()) {
 			@Override
 			public void layoutPage(Composite parent) {
 				createFileSelectionGroup(parent);
-			    createProjectSelectionGroup(parent);
-			    createSettingsSelectionGroup(parent);
-			    //createCheckboxSelectionGroup(parent);
+				createProjectSelectionGroup(parent);
+				createSettingsSelectionGroup(parent);
+				//createCheckboxSelectionGroup(parent);
 			}
 		};
 	}
-	
-	
+
 	public boolean finish() {
 		return strategy.finish(this);
 	}
-	
-	
+
 	public void setInitialProject(IProject project) {
 		this.initialProject = project;
 	}
-	
-	
+
 	@Override
 	public List<ISettingsProcessor> getSettingsProcessors() {
 		return Collections.unmodifiableList(processors);
 	}
-	
-	
+
 	@Override
 	public List<ISettingsProcessor> getSelectedSettingsProcessors() {
 		List<ISettingsProcessor> selected = new ArrayList<ISettingsProcessor>();
-		for(Object element : settingsViewer.getCheckedElements()) {
-			selected.add((ISettingsProcessor)element);
+		for (Object element : settingsViewer.getCheckedElements()) {
+			selected.add((ISettingsProcessor) element);
 		}
 		return selected;
 	}
-	
+
 	@Override
 	public String getDestinationFilePath() {
 		return filePathText.getText();
 	}
-	
-	
+
 	public ICProject getSelectedProject() {
 		return selectedProject;
 	}
-	
-	
+
 	@Override
 	public ICConfigurationDescription getSelectedConfiguration() {
 		return selectedConfiguration;
 	}
-	
+
 	@Override
 	public void setDisplayedSettingsProcessors(List<ISettingsProcessor> processors) {
 		settingsViewer.setInput(processors);
@@ -177,65 +163,58 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 		settingsViewer.setAllChecked(true);
 		updateWidgetEnablements();
 	}
-	
-	
+
 	@Override
 	public void showErrorDialog(String dialogTitle, String message) {
 		Shell shell = Display.getCurrent().getActiveShell();
 		Status status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, message, null);
 		ErrorDialog.openError(shell, dialogTitle, null, status);
 	}
-	
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		setTitle(strategy.getMessage(MessageType.TITLE));
 		setMessage(strategy.getMessage(MessageType.MESSAGE));
-		    
+
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-	    composite.setFont(parent.getFont());
-	    
-	    layoutPage(composite);
-	    
+		composite.setFont(parent.getFont());
+
+		layoutPage(composite);
+
 		setControl(composite);
-		
+
 		strategy.pageCreated(this);
-		
+
 		updateWidgetEnablements();
 	}
-	
-	
+
 	private void updateWidgetEnablements() {
-		boolean enableFinishButton = selectedProject != null 
-		                          && selectedConfiguration != null
-		                          && settingsViewer.getCheckedElements().length > 0 
-		                          && filePathText.getText().length() > 0;
-		
+		boolean enableFinishButton = selectedProject != null && selectedConfiguration != null
+				&& settingsViewer.getCheckedElements().length > 0 && filePathText.getText().length() > 0;
+
 		// since this wizard has only one page we can toggle the finish button using the setPageComplete() method
 		setPageComplete(enableFinishButton);
 	}
-	
-	
-	
+
 	protected void createProjectSelectionGroup(Composite parent) {
 		Composite projectSelectionGroup = new Composite(parent, SWT.NONE);
 		projectSelectionGroup.setLayout(new GridLayout(2, true));
 		projectSelectionGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		projectSelectionGroup.setFont(parent.getFont());
-		
+
 		Label projectLabel = new Label(projectSelectionGroup, SWT.NONE);
 		projectLabel.setText(Messages.ProjectSettingsWizardPage_selectProject);
 		projectLabel.setLayoutData(new GridData());
-		
+
 		Label configLabel = new Label(projectSelectionGroup, SWT.NONE);
 		configLabel.setText(Messages.ProjectSettingsWizardPage_selectConfiguration);
 		configLabel.setLayoutData(new GridData());
 
 		final Table projectTable = new Table(projectSelectionGroup, SWT.SINGLE | SWT.BORDER);
 		projectTable.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		TableViewer projectViewer = new TableViewer(projectTable);
 		projectViewer.setContentProvider(new ListContentProvider());
 		projectViewer.setLabelProvider(new CElementLabelProvider());
@@ -247,175 +226,176 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 			}
 		});
 		projectViewer.setInput(openProjects);
-		
+
 		final Table configTable = new Table(projectSelectionGroup, SWT.SINGLE | SWT.BORDER);
 		configTable.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		final TableViewer configViewer = new TableViewer(configTable);
 		configViewer.setContentProvider(new ListContentProvider());
-		configViewer.setLabelProvider(new LabelProvider() { 
-			@Override public Image getImage(Object element) {
+		configViewer.setLabelProvider(new LabelProvider() {
+			@Override
+			public Image getImage(Object element) {
 				return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CONFIG);
 			}
-			@Override public String getText(Object element) {
-				ICConfigurationDescription config = (ICConfigurationDescription)element;
+
+			@Override
+			public String getText(Object element) {
+				ICConfigurationDescription config = (ICConfigurationDescription) element;
 				String label = config.getName();
-				if(config.isActive())
+				if (config.isActive())
 					label += " (" + Messages.ProjectSettingsWizardPage_active + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 				return label;
 			}
 		});
-		
-		
+
 		// TODO what if nothing is selected?
 		projectTable.addSelectionListener(new SelectionAdapter() {
-			@Override public void widgetSelected(SelectionEvent e) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
 				TableItem[] items = projectTable.getSelection();
-				selectedProject = (ICProject)items[0].getData(); // its a single select so this is ok
+				selectedProject = (ICProject) items[0].getData(); // its a single select so this is ok
 				configViewer.setInput(getConfigurations(selectedProject));
 				configViewer.refresh();
 				configTable.select(0);
 				configTable.notifyListeners(SWT.Selection, new Event());
 			}
 		});
-		
-		
+
 		configTable.addSelectionListener(new SelectionAdapter() {
-			@Override public void widgetSelected(SelectionEvent e) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
 				TableItem[] items = configTable.getSelection();
-				selectedConfiguration = (ICConfigurationDescription)items[0].getData();
+				selectedConfiguration = (ICConfigurationDescription) items[0].getData();
 				updateWidgetEnablements();
 			}
 		});
-		
-		if(openProjects.isEmpty()) {
+
+		if (openProjects.isEmpty()) {
 			setErrorMessage(Messages.ProjectSettingsWizardPage_noOpenProjects);
 		}
-		
-		
-		if((initialProject == null || !initialProject.isOpen()) && !openProjects.isEmpty()) {
+
+		if ((initialProject == null || !initialProject.isOpen()) && !openProjects.isEmpty()) {
 			initialProject = openProjects.get(0).getProject();
 		}
-			
-		if(initialProject != null) {
+
+		if (initialProject != null) {
 			String initialProjectName = initialProject.getName();
-			for(int i = 0; i < openProjects.size(); i++) {
+			for (int i = 0; i < openProjects.size(); i++) {
 				ICProject tableProject = openProjects.get(i);
-				if(tableProject.getElementName().equals(initialProjectName)) {
+				if (tableProject.getElementName().equals(initialProjectName)) {
 					projectTable.select(i);
 					configViewer.setInput(getConfigurations(tableProject));
 					configViewer.refresh();
 					configTable.select(0);
 					selectedProject = tableProject;
-					selectedConfiguration = (ICConfigurationDescription)configTable.getSelection()[0].getData();
+					selectedConfiguration = (ICConfigurationDescription) configTable.getSelection()[0].getData();
 					break;
 				}
 			}
 		}
 	}
-	
-	
+
 	private static List<ICConfigurationDescription> getConfigurations(ICProject project) {
 		// get a read-only project description, no need to waste memory
 		ICProjectDescription description = CCorePlugin.getDefault().getProjectDescription(project.getProject(), false);
 		return Arrays.asList(description.getConfigurations());
 	}
-	
-	
+
 	private static List<ICProject> getAllOpenCProjects() {
-        List<ICProject> projects = new ArrayList<ICProject>();
+		List<ICProject> projects = new ArrayList<ICProject>();
 		try {
-	        for(ICProject project : CoreModel.getDefault().getCModel().getCProjects()) {
-	            if(project.getProject().isOpen()) {
-	            	projects.add(project);
+			for (ICProject project : CoreModel.getDefault().getCModel().getCProjects()) {
+				if (project.getProject().isOpen()) {
+					projects.add(project);
 				}
-	        }
-		} catch(CModelException e) {
+			}
+		} catch (CModelException e) {
 			CUIPlugin.log(e);
 		}
 		return projects;
 	}
-	
-	
+
 	protected void createSettingsSelectionGroup(Composite parent) {
 		Composite settingsSelectionGroup = new Composite(parent, SWT.NONE);
 		settingsSelectionGroup.setLayout(new GridLayout());
 		settingsSelectionGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		settingsSelectionGroup.setFont(parent.getFont());
-	
+
 		Label label = new Label(settingsSelectionGroup, SWT.NONE);
 		label.setText(strategy.getMessage(MessageType.SETTINGS));
-		
+
 		Table table = new Table(settingsSelectionGroup, SWT.CHECK | SWT.BORDER);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		
+
 		settingsViewer = new CheckboxTableViewer(table);
 		settingsViewer.setContentProvider(new ListContentProvider());
-		
+
 		settingsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateWidgetEnablements();
 			}
 		});
-		
+
 		LabelProvider settingsProcessorLabelProvider = new LabelProvider() {
-			@Override public Image getImage(Object element) {
-				return ((ISettingsProcessor)element).getIcon();
+			@Override
+			public Image getImage(Object element) {
+				return ((ISettingsProcessor) element).getIcon();
 			}
-			@Override public String getText(Object element) {
-				return ((ISettingsProcessor)element).getDisplayName();
+
+			@Override
+			public String getText(Object element) {
+				return ((ISettingsProcessor) element).getDisplayName();
 			}
 		};
-		
-		settingsViewer.setLabelProvider(settingsProcessorLabelProvider); 
+
+		settingsViewer.setLabelProvider(settingsProcessorLabelProvider);
 		settingsViewer.setInput(processors);
 		settingsViewer.setAllChecked(true);
-		
-		
+
 		Composite buttonComposite = new Composite(settingsSelectionGroup, SWT.NONE);
 		GridLayout layout = new GridLayout(2, true);
-        layout.marginHeight= layout.marginWidth= 0;
-        buttonComposite.setLayout(layout);
-        buttonComposite.setLayoutData(new GridData());
-        
+		layout.marginHeight = layout.marginWidth = 0;
+		buttonComposite.setLayout(layout);
+		buttonComposite.setLayoutData(new GridData());
+
 		Button selectButton = new Button(buttonComposite, SWT.PUSH);
 		selectButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		selectButton.setText(Messages.ProjectSettingsWizardPage_selectAll);
-		
+
 		selectButton.addSelectionListener(new SelectionAdapter() {
-			@Override public void widgetSelected(SelectionEvent e) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
 				settingsViewer.setAllChecked(true);
 				updateWidgetEnablements();
 			}
 		});
-		
+
 		Button deselectButton = new Button(buttonComposite, SWT.PUSH);
 		deselectButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		deselectButton.setText(Messages.ProjectSettingsWizardPage_deselectAll);
-		
+
 		deselectButton.addSelectionListener(new SelectionAdapter() {
-			@Override public void widgetSelected(SelectionEvent e) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
 				settingsViewer.setAllChecked(false);
 				updateWidgetEnablements();
 			}
 		});
 	}
-	
-	
+
 	protected void createFileSelectionGroup(Composite parent) {
 		Composite fileSelectionGroup = new Composite(parent, SWT.NONE);
 		fileSelectionGroup.setLayout(new GridLayout(2, false));
 		fileSelectionGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fileSelectionGroup.setFont(parent.getFont());
-		
+
 		Label label = new Label(fileSelectionGroup, SWT.NONE);
 		label.setText(strategy.getMessage(MessageType.FILE));
 		GridData gridData = new GridData();
 		gridData.horizontalSpan = 2;
 		label.setLayoutData(gridData);
-		
+
 		filePathText = new Text(fileSelectionGroup, SWT.SINGLE | SWT.BORDER);
 		filePathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		filePathText.addModifyListener(new ModifyListener() {
@@ -423,44 +403,40 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 			public void modifyText(ModifyEvent e) {
 				updateWidgetEnablements();
 				strategy.fileSelected(ProjectSettingsWizardPage.this);
-			} 
+			}
 		});
-		
+
 		Button browseButton = new Button(fileSelectionGroup, SWT.PUSH);
 		browseButton.setText(Messages.ProjectSettingsWizardPage_browse);
 		browseButton.setLayoutData(new GridData());
 		browseButton.addSelectionListener(new SelectionAdapter() {
-			@Override public void widgetSelected(SelectionEvent e) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
 				int type = (strategy instanceof ProjectSettingsImportStrategy) ? SWT.OPEN : SWT.SAVE;
 				FileDialog fileDialog = new FileDialog(getShell(), type);
-				fileDialog.setFilterExtensions(new String[] {"*." + FILENAME_EXTENSION}); //$NON-NLS-1$
+				fileDialog.setFilterExtensions(new String[] { "*." + FILENAME_EXTENSION }); //$NON-NLS-1$
 				String filePath = fileDialog.open();
-				if(filePath != null)
+				if (filePath != null)
 					filePathText.setText(filePath);
 			}
 		});
 	}
 
-	
-
-
-//	protected void createCheckboxSelectionGroup(Composite parent) {
-//		Composite checkboxSelectGroup = new Composite(parent, SWT.NONE);
-//		checkboxSelectGroup.setLayout(new GridLayout());
-//		checkboxSelectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-//		checkboxSelectGroup.setFont(parent.getFont());
-//		
-//		final Button checkBox = new Button(checkboxSelectGroup, SWT.CHECK);
-//		checkBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-//		checkBox.setText(strategy.getMessage(CHECKBOX));
-//		
-//		checkBox.addSelectionListener(new SelectionAdapter() {
-//			@Override public void widgetSelected(SelectionEvent e) {
-//				strategy.handleCheckboxClick(ProjectSettingsWizardPage.this, checkBox.getSelection());
-//			}
-//		});
-//	}
-	
+	//	protected void createCheckboxSelectionGroup(Composite parent) {
+	//		Composite checkboxSelectGroup = new Composite(parent, SWT.NONE);
+	//		checkboxSelectGroup.setLayout(new GridLayout());
+	//		checkboxSelectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	//		checkboxSelectGroup.setFont(parent.getFont());
+	//
+	//		final Button checkBox = new Button(checkboxSelectGroup, SWT.CHECK);
+	//		checkBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	//		checkBox.setText(strategy.getMessage(CHECKBOX));
+	//
+	//		checkBox.addSelectionListener(new SelectionAdapter() {
+	//			@Override public void widgetSelected(SelectionEvent e) {
+	//				strategy.handleCheckboxClick(ProjectSettingsWizardPage.this, checkBox.getSelection());
+	//			}
+	//		});
+	//	}
 
 }
-

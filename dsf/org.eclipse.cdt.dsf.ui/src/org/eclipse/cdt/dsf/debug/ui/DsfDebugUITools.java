@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -27,9 +27,8 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
  * @since 1.1
  */
 public class DsfDebugUITools {
-	
-	public static IPreferenceStore getPreferenceStore()
-	{
+
+	public static IPreferenceStore getPreferenceStore() {
 		return DsfUIPlugin.getDefault().getPreferenceStore();
 	}
 
@@ -37,8 +36,7 @@ public class DsfDebugUITools {
 	 * @since 2.1
 	 */
 	@SuppressWarnings("unchecked")
-	public static void enableActivity(final String activityID, final boolean enableit)
-	{
+	public static void enableActivity(final String activityID, final boolean enableit) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -47,9 +45,9 @@ public class DsfDebugUITools {
 				Set<String> enabledActivityIds = new HashSet<String>(activityManager.getEnabledActivityIds());
 				boolean changed = false;
 				if (enableit)
-					changed = enabledActivityIds.add(activityID);		
+					changed = enabledActivityIds.add(activityID);
 				else
-					changed = enabledActivityIds.remove(activityID);		
+					changed = enabledActivityIds.remove(activityID);
 				if (changed)
 					workbenchActivitySupport.setEnabledActivityIds(enabledActivityIds);
 			}

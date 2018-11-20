@@ -37,33 +37,33 @@ public class AR {
 
 	/**
 	 * Archive and archive member header. Does not include 8-byte magic character.
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public class ARHeader {
 		public static final int HEADER_SIZE = 60;
-		
+
 		// fields
-		private byte[] ar_name = new byte[16];	// file member name - '/' terminated 
-		private byte[] ar_date = new byte[12]; 	// file member date - decimal
-		private byte[] ar_uid  = new byte[6]; 	// file member user id - decimal
-		private byte[] ar_gid  = new byte[6]; 	// file member group id - decimal
-		private byte[] ar_mode = new byte[8]; 	// file member mode - octal
-		private byte[] ar_size = new byte[10]; 	// file member size - decimal
-		private byte[] ar_fmag = new byte[2]; 	// ARFMAG - string to end header
+		private byte[] ar_name = new byte[16]; // file member name - '/' terminated
+		private byte[] ar_date = new byte[12]; // file member date - decimal
+		private byte[] ar_uid = new byte[6]; // file member user id - decimal
+		private byte[] ar_gid = new byte[6]; // file member group id - decimal
+		private byte[] ar_mode = new byte[8]; // file member mode - octal
+		private byte[] ar_size = new byte[10]; // file member size - decimal
+		private byte[] ar_fmag = new byte[2]; // ARFMAG - string to end header
 
 		// derived information
 		String name;
 		public int somOffset;
 		public int somSize;
-		
+
 		public ARHeader(long offset) throws IOException {
 			try {
 				getRandomAccessFile();
 				file.seek(offset);
-				
+
 				file.read(ar_name);
-				for (int i = 0; i < 16; ++ i) {
+				for (int i = 0; i < 16; ++i) {
 					if (ar_name[i] == '/') {
 						name = new String(ar_name, 0, i);
 					}
@@ -89,7 +89,7 @@ public class AR {
 		public long getSize() {
 			return somSize;
 		}
-		
+
 		public byte[] getObjectData() throws IOException {
 			byte[] temp = new byte[somSize];
 			file = getRandomAccessFile();
@@ -106,13 +106,13 @@ public class AR {
 
 	/**
 	 * Library Symbol Table header
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public class LSTHeader {
 		public static final int LST_HEADER_OFFSET = 68;
 		public static final int LST_HEADER_SIZE = 19 * 4;
-		
+
 		// record fields
 		public short system_id;
 		public short a_magic;
@@ -134,7 +134,7 @@ public class AR {
 		public int free_list;
 		public int file_end;
 		public int checksum;
-		
+
 		public LSTHeader() throws IOException {
 			try {
 				getRandomAccessFile();
@@ -142,7 +142,7 @@ public class AR {
 				byte[] lstRecord = new byte[LST_HEADER_SIZE];
 				file.readFully(lstRecord);
 				ReadMemoryAccess memory = new ReadMemoryAccess(lstRecord, false);
-				
+
 				system_id = memory.getShort();
 				a_magic = memory.getShort();
 				version_id = memory.getInt();
@@ -168,11 +168,11 @@ public class AR {
 				CCorePlugin.log(e);
 			}
 		}
-		
+
 	}
-	
+
 	/**
-	 *  Creates a new <code>AR</code> object from the contents of 
+	 *  Creates a new <code>AR</code> object from the contents of
 	 *  the given file.
 	 *
 	 *  @param filename The file to process.
@@ -210,20 +210,13 @@ public class AR {
 	}
 
 	public static boolean isARHeader(byte[] ident) {
-		if (ident == null || ident.length < 8
-			|| ident[0] != '!'
-			|| ident[1] != '<'
-			|| ident[2] != 'a'
-			|| ident[3] != 'r'
-			|| ident[4] != 'c'
-			|| ident[5] != 'h'
-			|| ident[6] != '>'
-			|| ident[7] != '\n')
+		if (ident == null || ident.length < 8 || ident[0] != '!' || ident[1] != '<' || ident[2] != 'a'
+				|| ident[3] != 'r' || ident[4] != 'c' || ident[5] != 'h' || ident[6] != '>' || ident[7] != '\n')
 			return false;
 		return true;
 	}
 
-	protected RandomAccessFile getRandomAccessFile () throws IOException {
+	protected RandomAccessFile getRandomAccessFile() throws IOException {
 		if (file == null) {
 			file = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 		}
@@ -232,8 +225,8 @@ public class AR {
 
 	/**
 	 *  Get an array of all the object file headers for this archive.
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 *    Unable to process the archive file.
 	 * @return An array of headers, one for each object within the archive.
 	 * @see ARHeader
@@ -256,7 +249,7 @@ public class AR {
 			// get the SOM directory
 			long somDirOffset = lstHeader.dir_loc + LSTHeader.LST_HEADER_OFFSET;
 			// each SOM Directory entry has 2 32bit words: SOM offset from LST and size
-			int somDirSize = lstHeader.module_limit * 8;  
+			int somDirSize = lstHeader.module_limit * 8;
 			getRandomAccessFile();
 			file.seek(somDirOffset);
 			byte[] somDirectory = new byte[somDirSize];
@@ -265,7 +258,7 @@ public class AR {
 			for (int i = 0; i < lstHeader.module_limit; ++i) {
 				int somOffset = memory.getInt();
 				int somSize = memory.getInt();
-				ARHeader aHeader = new ARHeader(somOffset-ARHeader.HEADER_SIZE);
+				ARHeader aHeader = new ARHeader(somOffset - ARHeader.HEADER_SIZE);
 				aHeader.somOffset = somOffset;
 				aHeader.somSize = somSize;
 				v.add(aHeader);
@@ -274,7 +267,7 @@ public class AR {
 		}
 		memberHeaders = v.toArray(new ARHeader[v.size()]);
 	}
-	
+
 	public String[] extractFiles(String outdir) throws IOException {
 		return extractFiles(outdir, null);
 	}
@@ -325,7 +318,7 @@ public class AR {
 			buffer.append("module_count = ").append(lstHeader.module_count).append(NL); //$NON-NLS-1$
 			buffer.append("module_limit = ").append(lstHeader.module_limit).append(NL); //$NON-NLS-1$
 			buffer.append("dir_loc      = ").append(lstHeader.dir_loc).append(NL); //$NON-NLS-1$
-			
+
 			for (int i = 0; i < memberHeaders.length; ++i) {
 				buffer.append("MEMBER HEADER VALUES").append(NL); //$NON-NLS-1$
 				buffer.append("name      = ").append(memberHeaders[i].getObjectName()).append(NL); //$NON-NLS-1$
@@ -335,7 +328,7 @@ public class AR {
 		}
 		return buffer.toString();
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			AR ar = new AR(args[0]);

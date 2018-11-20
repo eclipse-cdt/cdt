@@ -19,18 +19,18 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 
 /**
  * An adapter to support breakpoint creation/deletion for the disassembly editor.
- * 
+ *
  * This interface is experimental.
  */
 public interface IElementToggleBreakpointAdapter {
 
-    /**
-     * Creates new line breakpoints or removes existing breakpoints for the given element.
-     */
-    public void toggleLineBreakpoints( IPresentationContext presentationContext, Object element ) throws CoreException;
+	/**
+	 * Creates new line breakpoints or removes existing breakpoints for the given element.
+	 */
+	public void toggleLineBreakpoints(IPresentationContext presentationContext, Object element) throws CoreException;
 
-    /**
-     * Returns whether line breakpoints can be toggled on the given element.
-     */
-    public boolean canToggleLineBreakpoints( IPresentationContext presentationContext, Object element );
+	/**
+	 * Returns whether line breakpoints can be toggled on the given element.
+	 */
+	public boolean canToggleLineBreakpoints(IPresentationContext presentationContext, Object element);
 }

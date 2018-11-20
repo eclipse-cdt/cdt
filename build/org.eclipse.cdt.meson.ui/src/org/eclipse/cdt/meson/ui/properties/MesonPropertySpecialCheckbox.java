@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - initial implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ package org.eclipse.cdt.meson.ui.properties;
 import org.eclipse.swt.widgets.Composite;
 
 public class MesonPropertySpecialCheckbox extends MesonPropertyCheckbox {
-	
+
 	public MesonPropertySpecialCheckbox(Composite composite, String name, boolean initialValue, String tooltip) {
 		super(composite, name, initialValue, tooltip);
 	}
@@ -28,6 +28,5 @@ public class MesonPropertySpecialCheckbox extends MesonPropertyCheckbox {
 		}
 		return "";
 	}
-
 
 }

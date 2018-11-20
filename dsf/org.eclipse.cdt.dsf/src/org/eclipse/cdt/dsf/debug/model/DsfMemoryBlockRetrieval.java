@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson Communication - upgrade IF to IMemoryBlockRetrievalExtension
@@ -64,112 +64,107 @@ import org.w3c.dom.NodeList;
 
 /**
  * Implementation of memory access API of the Eclipse standard debug model.
- * 
+ *
  * The DsfMemoryBlockRetrieval is not an actual memory block but rather a
- * reference to the memory address space for an execution context (e.g. a 
- * process) within a debug session. From this debug 'context', memory blocks 
+ * reference to the memory address space for an execution context (e.g. a
+ * process) within a debug session. From this debug 'context', memory blocks
  * can then be read/written.
- * 
+ *
  * Note: For the reference application, The IMemoryBlockRetrievalExtension
  * is implemented. This will result in getExtendedMemoryBlock() being called
  * when a memory block is selected from the platform memory pane.
- * 
+ *
  * However, if the 'simpler' IMemoryBlockRetrieval is to be implemented, the
  * code will still be functional after some trivial adjustments.
- * 
+ *
  * @since 1.0
  */
-public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBlockRetrievalExtension
-{
+public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBlockRetrievalExtension {
 	private static final String DEFAULT_ATTR_DEBUGGER_MEMORY_BLOCKS_VALUE = ""; //$NON-NLS-1$
-	private final String           fModelId;
-	private final DsfSession       fSession;
-    private final DsfExecutor      fExecutor;
-    private final String           fContextString;
-    private final ServiceTracker<IMemory, IMemory>   fMemoryServiceTracker;
-    private final ServiceTracker<IExpressions, IExpressions>   fExpressionServiceTracker;
+	private final String fModelId;
+	private final DsfSession fSession;
+	private final DsfExecutor fExecutor;
+	private final String fContextString;
+	private final ServiceTracker<IMemory, IMemory> fMemoryServiceTracker;
+	private final ServiceTracker<IExpressions, IExpressions> fExpressionServiceTracker;
 
-    private final ILaunchConfiguration fLaunchConfig;
-	private final ILaunch          fLaunch;
-	private final IDebugTarget     fDebugTarget;
-    private final boolean          fSupportsValueModification;
-    private final boolean          fSupportBaseAddressModification;
-    private final int              fAddressSize;
-    private final int              fWordSize;  // Number of bytes per address
-	
+	private final ILaunchConfiguration fLaunchConfig;
+	private final ILaunch fLaunch;
+	private final IDebugTarget fDebugTarget;
+	private final boolean fSupportsValueModification;
+	private final boolean fSupportBaseAddressModification;
+	private final int fAddressSize;
+	private final int fWordSize; // Number of bytes per address
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param modelId
 	 * @param dmc
 	 * @throws DebugException
 	 */
-	public DsfMemoryBlockRetrieval(String modelId, ILaunchConfiguration config, DsfSession session) throws DebugException {
+	public DsfMemoryBlockRetrieval(String modelId, ILaunchConfiguration config, DsfSession session)
+			throws DebugException {
 
-	    // DSF stuff
-        fModelId = modelId;
+		// DSF stuff
+		fModelId = modelId;
 
-        // FIXME: (Bug228573) Currently memory contexts are differentiated by
-        // sessionID so there is no way to guarantee the memory blocks will be
-        // reinstated in the correct memory space.
-        // Need a way to create deterministically the context ID from a unique
-        // target, ideally from the launch configuration (or derived from it).
-        // For the time being, just put some constant. This will work until we
-        // support multiple targets in the same launch.
-        // fContextString = fContext.toString();
-        fContextString = "Context string";  //$NON-NLS-1$
+		// FIXME: (Bug228573) Currently memory contexts are differentiated by
+		// sessionID so there is no way to guarantee the memory blocks will be
+		// reinstated in the correct memory space.
+		// Need a way to create deterministically the context ID from a unique
+		// target, ideally from the launch configuration (or derived from it).
+		// For the time being, just put some constant. This will work until we
+		// support multiple targets in the same launch.
+		// fContextString = fContext.toString();
+		fContextString = "Context string"; //$NON-NLS-1$
 
-        fSession = session;
+		fSession = session;
 		if (fSession == null) {
-			throw new IllegalArgumentException(
-					"Session " + session + " is not active"); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new IllegalArgumentException("Session " + session + " is not active"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		fExecutor = fSession.getExecutor();
- 		BundleContext bundle = DsfPlugin.getBundleContext();
+		BundleContext bundle = DsfPlugin.getBundleContext();
 
- 		// Here we chose to use 2 distinct service trackers instead of an
- 		// amalgamated one because it is less error prone (and we are lazy).
+		// Here we chose to use 2 distinct service trackers instead of an
+		// amalgamated one because it is less error prone (and we are lazy).
 
- 		// Create a tracker for the MemoryService
- 		String memoryServiceFilter = DsfServices.createServiceFilter(IMemory.class, session.getId());
+		// Create a tracker for the MemoryService
+		String memoryServiceFilter = DsfServices.createServiceFilter(IMemory.class, session.getId());
 
- 		try {
-			fMemoryServiceTracker = new ServiceTracker<>(
-					bundle,	bundle.createFilter(memoryServiceFilter), null);
+		try {
+			fMemoryServiceTracker = new ServiceTracker<>(bundle, bundle.createFilter(memoryServiceFilter), null);
 		} catch (InvalidSyntaxException e) {
-			throw new DebugException(new Status(IStatus.ERROR,
-					DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+			throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
 					"Error creating service filter.", e)); //$NON-NLS-1$
 		}
 		fMemoryServiceTracker.open();
 
 		// Create a tracker for the ExpressionService
- 		String expressionServiceFilter = "(&" + //$NON-NLS-1$
+		String expressionServiceFilter = "(&" + //$NON-NLS-1$
 				"(OBJECTCLASS=" //$NON-NLS-1$
-				+ IExpressions.class.getName()
-				+ ")" + //$NON-NLS-1$
+				+ IExpressions.class.getName() + ")" + //$NON-NLS-1$
 				"(" + IDsfService.PROP_SESSION_ID //$NON-NLS-1$
 				+ "=" + session.getId() + ")" + //$NON-NLS-1$//$NON-NLS-2$
 				")"; //$NON-NLS-1$
 
 		try {
-			fExpressionServiceTracker = new ServiceTracker<>(
-					bundle, bundle.createFilter(expressionServiceFilter), null);
+			fExpressionServiceTracker = new ServiceTracker<>(bundle, bundle.createFilter(expressionServiceFilter),
+					null);
 		} catch (InvalidSyntaxException e) {
-			throw new DebugException(new Status(IStatus.ERROR,
-					DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+			throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
 					"Error creating service filter.", e)); //$NON-NLS-1$
 		}
 		fExpressionServiceTracker.open();
 
-        // Launch configuration information
-        fLaunchConfig = config;
-        fLaunch       = null;
-        fDebugTarget  = null;
-        fAddressSize  = 4;    // Get this from the launch configuration
-        fWordSize     = 1;    // Get this from the launch configuration
-        fSupportsValueModification = true;          // Get this from the launch configuration
-        fSupportBaseAddressModification = false;    // Get this from the launch configuration
+		// Launch configuration information
+		fLaunchConfig = config;
+		fLaunch = null;
+		fDebugTarget = null;
+		fAddressSize = 4; // Get this from the launch configuration
+		fWordSize = 1; // Get this from the launch configuration
+		fSupportsValueModification = true; // Get this from the launch configuration
+		fSupportBaseAddressModification = false; // Get this from the launch configuration
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -179,9 +174,9 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	/*
 	 * In the launch configuration file, the memory block entry is structured
 	 *  as follows (note: this differs from CDI):
-	 * 
+	 *
 	 *  <stringAttribute
-	 *     key="org.eclipse.dsf.launch.MEMORY_BLOCKS" 
+	 *     key="org.eclipse.dsf.launch.MEMORY_BLOCKS"
 	 *     value="<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 	 *         <memoryBlockExpressionList context=[memory context ID]>
 	 *             <memoryBlockExpression label=[monitor label] address=[base address]/>
@@ -189,98 +184,100 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	 *             ...
 	 *         </memoryBlockExpressionList>
 	 *         ...
-     *         <memoryBlockExpressionList context=...>
-     *             ...
-     *         </memoryBlockExpressionList>"
+	 *         <memoryBlockExpressionList context=...>
+	 *             ...
+	 *         </memoryBlockExpressionList>"
 	 *  />
 	 */
 
 	//-------------------------------------------------------------------------
 	// Memory blocks memento tags
-    //-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 
 	// These 2 really belong in the DSF launch configuration class...
 	private static final String DSF_LAUNCH_ID = "org.eclipse.dsf.launch"; //$NON-NLS-1$
 	private static final String ATTR_DEBUGGER_MEMORY_BLOCKS = DSF_LAUNCH_ID + ".MEMORY_BLOCKS"; //$NON-NLS-1$
-	
-	private static final String MEMORY_BLOCK_EXPRESSION_LIST   = "memoryBlockExpressionList";   //$NON-NLS-1$
-    private static final String ATTR_EXPRESSION_LIST_CONTEXT   = "context";                     //$NON-NLS-1$   
-    private static final String MEMORY_BLOCK_EXPRESSION        = "memoryBlockExpression";       //$NON-NLS-1$
-    private static final String ATTR_MEMORY_BLOCK_EXPR_LABEL   = "label";                       //$NON-NLS-1$
-    private static final String ATTR_MEMORY_BLOCK_EXPR_ADDRESS = "address";                     //$NON-NLS-1$
 
-    //-------------------------------------------------------------------------
-    // Install persisted memory monitors
-    //-------------------------------------------------------------------------
+	private static final String MEMORY_BLOCK_EXPRESSION_LIST = "memoryBlockExpressionList"; //$NON-NLS-1$
+	private static final String ATTR_EXPRESSION_LIST_CONTEXT = "context"; //$NON-NLS-1$
+	private static final String MEMORY_BLOCK_EXPRESSION = "memoryBlockExpression"; //$NON-NLS-1$
+	private static final String ATTR_MEMORY_BLOCK_EXPR_LABEL = "label"; //$NON-NLS-1$
+	private static final String ATTR_MEMORY_BLOCK_EXPR_ADDRESS = "address"; //$NON-NLS-1$
 
-    /**
-     * Restore the memory monitors from the memento in the launch configuration
-     */
-    public void initialize(final IMemoryDMContext memoryCtx) {
-        try {
+	//-------------------------------------------------------------------------
+	// Install persisted memory monitors
+	//-------------------------------------------------------------------------
+
+	/**
+	 * Restore the memory monitors from the memento in the launch configuration
+	 */
+	public void initialize(final IMemoryDMContext memoryCtx) {
+		try {
 			final String memento = fLaunchConfig.getAttribute(ATTR_DEBUGGER_MEMORY_BLOCKS,
 					DEFAULT_ATTR_DEBUGGER_MEMORY_BLOCKS_VALUE);
-            if (memento != null && memento.trim().length() != 0) {
-                // Submit the runnable to install the monitors on dispatch thread.
-                getExecutor().submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            createBlocksFromConfiguration(memoryCtx, memento);
-                        } catch (CoreException e) {
-                            DsfPlugin.getDefault().getLog().log(e.getStatus());
-                        }
-                    }
-                });
-            }
-        } catch (CoreException e) {
-            DsfPlugin.getDefault().getLog().log(e.getStatus());
-        }
+			if (memento != null && memento.trim().length() != 0) {
+				// Submit the runnable to install the monitors on dispatch thread.
+				getExecutor().submit(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							createBlocksFromConfiguration(memoryCtx, memento);
+						} catch (CoreException e) {
+							DsfPlugin.getDefault().getLog().log(e.getStatus());
+						}
+					}
+				});
+			}
+		} catch (CoreException e) {
+			DsfPlugin.getDefault().getLog().log(e.getStatus());
+		}
 	}
 
 	/**
 	 * Create memory blocks based on the given memento (obtained from the launch
 	 * configuration) and add them to the platform's IMemoryBlockManager. The
 	 * memento was previously created by {@link #getMemento()}
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void createBlocksFromConfiguration(IMemoryDMContext memoryCtx, String memento) throws CoreException {
 
-	    // Parse the memento and validate its type
-        Element root = DebugPlugin.parseDocument(memento);
+		// Parse the memento and validate its type
+		Element root = DebugPlugin.parseDocument(memento);
 		if (!root.getNodeName().equalsIgnoreCase(MEMORY_BLOCK_EXPRESSION_LIST)) {
-	        IStatus status = new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugPlugin.INTERNAL_ERROR,
-	                "Memory monitor initialization: invalid memento", null);//$NON-NLS-1$
-	        throw new CoreException(status);
+			IStatus status = new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugPlugin.INTERNAL_ERROR,
+					"Memory monitor initialization: invalid memento", null);//$NON-NLS-1$
+			throw new CoreException(status);
 		}
-		    
-        // Process the block list specific to this memory context
-        // FIXME: (Bug228573) We only process the first entry...
-	    if (root.getAttribute(ATTR_EXPRESSION_LIST_CONTEXT).equals(fContextString)) {
-            List<IMemoryBlock> blocks = new ArrayList<IMemoryBlock>();
-            NodeList expressionList = root.getChildNodes();
-            int length = expressionList.getLength();
-            for (int i = 0; i < length; ++i) {
-                Node node = expressionList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element entry = (Element) node;
-                    if (entry.getNodeName().equalsIgnoreCase(MEMORY_BLOCK_EXPRESSION)) {
-                        String label   = entry.getAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL);
-                        String address = entry.getAttribute(ATTR_MEMORY_BLOCK_EXPR_ADDRESS);
-                        BigInteger blockAddress = new BigInteger(address);
-                        DsfMemoryBlock block = new DsfMemoryBlock(this, memoryCtx, fModelId, label, blockAddress, fWordSize, 0);
-                        blocks.add(block);
-                    }
-                }
-            }
-            DebugPlugin.getDefault().getMemoryBlockManager().addMemoryBlocks( blocks.toArray(new IMemoryBlock[blocks.size()]));
-	    }
+
+		// Process the block list specific to this memory context
+		// FIXME: (Bug228573) We only process the first entry...
+		if (root.getAttribute(ATTR_EXPRESSION_LIST_CONTEXT).equals(fContextString)) {
+			List<IMemoryBlock> blocks = new ArrayList<IMemoryBlock>();
+			NodeList expressionList = root.getChildNodes();
+			int length = expressionList.getLength();
+			for (int i = 0; i < length; ++i) {
+				Node node = expressionList.item(i);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element entry = (Element) node;
+					if (entry.getNodeName().equalsIgnoreCase(MEMORY_BLOCK_EXPRESSION)) {
+						String label = entry.getAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL);
+						String address = entry.getAttribute(ATTR_MEMORY_BLOCK_EXPR_ADDRESS);
+						BigInteger blockAddress = new BigInteger(address);
+						DsfMemoryBlock block = new DsfMemoryBlock(this, memoryCtx, fModelId, label, blockAddress,
+								fWordSize, 0);
+						blocks.add(block);
+					}
+				}
+			}
+			DebugPlugin.getDefault().getMemoryBlockManager()
+					.addMemoryBlocks(blocks.toArray(new IMemoryBlock[blocks.size()]));
+		}
 	}
 
-    // FIXME: (Bug228573) Each retrieval overwrites the previous one :-(
-	
-    // In theory, we should make this a Job since we are writing to the file system.
+	// FIXME: (Bug228573) Each retrieval overwrites the previous one :-(
+
+	// In theory, we should make this a Job since we are writing to the file system.
 	// However, this would cause the same racing condition as Bug228308. Finally, we
 	// don't care too much about the UI responsiveness since we are in the process of
 	// shutting down :-)
@@ -308,7 +305,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	 * object (blocks currently registered with the platform's
 	 * IMemoryBlockManager). We will be expected to recreate the blocks in
 	 * {@link #createBlocksFromConfiguration(IMemoryDMContext, String)}.
-	 * 
+	 *
 	 * @return a string memento
 	 * @throws CoreException
 	 */
@@ -318,13 +315,13 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 		Element expressionList = document.createElement(MEMORY_BLOCK_EXPRESSION_LIST);
 		expressionList.setAttribute(ATTR_EXPRESSION_LIST_CONTEXT, fContextString);
 		for (IMemoryBlock block : blocks) {
-	          if (block instanceof IMemoryBlockExtension) {
-	                IMemoryBlockExtension memoryBlock = (IMemoryBlockExtension) block;
-	                Element expression = document.createElement(MEMORY_BLOCK_EXPRESSION);
-	                expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL,   memoryBlock.getExpression());
-                    expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_ADDRESS, memoryBlock.getBigBaseAddress().toString());
-                    expressionList.appendChild(expression);
-				}
+			if (block instanceof IMemoryBlockExtension) {
+				IMemoryBlockExtension memoryBlock = (IMemoryBlockExtension) block;
+				Element expression = document.createElement(MEMORY_BLOCK_EXPRESSION);
+				expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL, memoryBlock.getExpression());
+				expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_ADDRESS, memoryBlock.getBigBaseAddress().toString());
+				expressionList.appendChild(expression);
+			}
 		}
 		document.appendChild(expressionList);
 		return DebugPlugin.serializeDocument(document);
@@ -335,9 +332,9 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	///////////////////////////////////////////////////////////////////////////
 
 	public DsfSession getSession() {
-	    return fSession;
+		return fSession;
 	}
-	
+
 	public DsfExecutor getExecutor() {
 		return fExecutor;
 	}
@@ -380,10 +377,10 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#supportsStorageRetrieval()
 	 */
-    @Override
+	@Override
 	public boolean supportsStorageRetrieval() {
 		return true;
 	}
@@ -391,11 +388,10 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long, long)
 	 */
-    @Override
-	public IMemoryBlock getMemoryBlock(final long startAddress,	final long length) throws DebugException {
-	    throw new DebugException(new Status(
-	        IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.NOT_SUPPORTED, 
-	        "getMemoryBlock() not supported, use getExtendedMemoryBlock()", null)); //$NON-NLS-1$
+	@Override
+	public IMemoryBlock getMemoryBlock(final long startAddress, final long length) throws DebugException {
+		throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.NOT_SUPPORTED,
+				"getMemoryBlock() not supported, use getExtendedMemoryBlock()", null)); //$NON-NLS-1$
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -404,26 +400,26 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension#getExtendedMemoryBlock(java.lang.String,
 	 *      java.lang.Object)
 	 */
-    @Override
+	@Override
 	public IMemoryBlockExtension getExtendedMemoryBlock(String expression, Object context) throws DebugException {
-        // Drill for the actual DMC
-        IMemoryDMContext memoryDmc = null;
-        IDMContext dmc = null;
-        if (context instanceof IAdaptable) {
-        	dmc = ((IAdaptable)context).getAdapter(IDMContext.class);
-            if (dmc != null) {
-                memoryDmc = DMContexts.getAncestorOfType(dmc, IMemoryDMContext.class);
-            }
-        }
+		// Drill for the actual DMC
+		IMemoryDMContext memoryDmc = null;
+		IDMContext dmc = null;
+		if (context instanceof IAdaptable) {
+			dmc = ((IAdaptable) context).getAdapter(IDMContext.class);
+			if (dmc != null) {
+				memoryDmc = DMContexts.getAncestorOfType(dmc, IMemoryDMContext.class);
+			}
+		}
 
-        if (memoryDmc == null) {
-            return null;
-        }
-        
+		if (memoryDmc == null) {
+			return null;
+		}
+
 		// The block start address (supports 64-bit processors)
 		BigInteger blockAddress;
 
@@ -453,7 +449,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 				offset = 1;
 			}
 			// Now, try to parse the expression. If a NumberFormatException is
-			// thrown, then it wasn't a simple numerical expression and we go 
+			// thrown, then it wasn't a simple numerical expression and we go
 			// to plan B (attempt an expression evaluation)
 			blockAddress = new BigInteger(expression.substring(offset), base);
 
@@ -472,17 +468,17 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 		/*
 		 * At this point, we only resolved the requested memory block
 		 * start address and we have no idea of the block's length.
-		 * 
+		 *
 		 * The renderer will provide this information when it calls
 		 * getBytesFromAddress() i.e. after the memory block holder has
 		 * been instantiated.
-		 * 
+		 *
 		 * The down side is that every time we switch renderer, for the
 		 * same memory block, a trip to the target could result. However,
 		 * the memory request cache should save the day.
 		 */
 
-		 return new DsfMemoryBlock(this, memoryDmc, fModelId, expression, blockAddress, fWordSize, 0);
+		return new DsfMemoryBlock(this, memoryDmc, fModelId, expression, blockAddress, fWordSize, 0);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -504,31 +500,31 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 					// Create the expression
 					final IExpressionDMContext expressionDMC = expressionService.createExpression(dmc, expression);
 					String formatId = IFormattedValues.HEX_FORMAT;
-					FormattedValueDMContext valueDmc = expressionService.getFormattedValueContext(expressionDMC, formatId);
-	                expressionService.getFormattedExpressionValue(
-	                	valueDmc, 
-	                    new DataRequestMonitor<FormattedValueDMData>(getExecutor(), drm) {
-	            			@Override
-	            			protected void handleSuccess() {
-	            				// Store the result
-	            				try {
-                					String value = getData().getFormattedValue().substring(2);	// Strip the "0x"
-                					drm.setData(new BigInteger(value, 16));
-	            				} catch (IndexOutOfBoundsException e) {
-	            				    setFormatError(e);
-	            				} catch (NumberFormatException e) {
-	            				    setFormatError(e);
-	            				}
-	            				drm.done();
-	            			}
-	            			
-	            			private void setFormatError(Exception e) {
-	            			    drm.setStatus(new Status(
-	            			        IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, 
-	            			        "The result of expression evaluation \"" + getData().getFormattedValue() + "\" is not formatted correctly.", e)); //$NON-NLS-1$ //$NON-NLS-2$
-	            			}
-	                	}
-	                );
+					FormattedValueDMContext valueDmc = expressionService.getFormattedValueContext(expressionDMC,
+							formatId);
+					expressionService.getFormattedExpressionValue(valueDmc,
+							new DataRequestMonitor<FormattedValueDMData>(getExecutor(), drm) {
+								@Override
+								protected void handleSuccess() {
+									// Store the result
+									try {
+										String value = getData().getFormattedValue().substring(2); // Strip the "0x"
+										drm.setData(new BigInteger(value, 16));
+									} catch (IndexOutOfBoundsException e) {
+										setFormatError(e);
+									} catch (NumberFormatException e) {
+										setFormatError(e);
+									}
+									drm.done();
+								}
+
+								private void setFormatError(Exception e) {
+									drm.setStatus(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID,
+											IDsfStatusConstants.INTERNAL_ERROR, "The result of expression evaluation \"" //$NON-NLS-1$
+													+ getData().getFormattedValue() + "\" is not formatted correctly.", //$NON-NLS-1$
+											e));
+								}
+							});
 				}
 			}
 		};
@@ -538,21 +534,18 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 			// The happy case
 			return query.get();
 		} catch (InterruptedException e) {
-			throw new DebugException(new Status(IStatus.ERROR,
-					DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+			throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
 					"Error evaluating memory address (InterruptedException).", e)); //$NON-NLS-1$
 
 		} catch (ExecutionException e) {
-			throw new DebugException(new Status(IStatus.ERROR,
-					DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+			throw new DebugException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
 					"Error evaluating memory address (ExecutionException).", e)); //$NON-NLS-1$
 		}
 	}
-	
-	
+
 	/**
-	 * Return the model ID specified at construction 
-	 * 
+	 * Return the model ID specified at construction
+	 *
 	 * @since 2.1
 	 */
 	protected String getModelId() {

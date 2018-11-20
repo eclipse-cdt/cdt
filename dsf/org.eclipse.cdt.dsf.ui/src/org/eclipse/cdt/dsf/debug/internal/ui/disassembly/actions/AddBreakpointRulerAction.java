@@ -41,101 +41,98 @@ import org.eclipse.ui.IWorkbenchPart;
  * Ruler action to add breakpoint with a dialog properties.
  */
 public class AddBreakpointRulerAction extends AbstractDisassemblyBreakpointRulerAction {
-    
-    
+
 	protected AddBreakpointRulerAction(IDisassemblyPart disassemblyPart, IVerticalRulerInfo rulerInfo) {
 		super(disassemblyPart, rulerInfo);
-		setText(DisassemblyMessages.Disassembly_action_AddBreakpoint_label + "\t" +  //$NON-NLS-1$
-		    CDebugUIUtils.formatKeyBindingString(SWT.MOD1, DisassemblyMessages.Disassembly_action_ToggleBreakpoint_accelerator));
+		setText(DisassemblyMessages.Disassembly_action_AddBreakpoint_label + "\t" + //$NON-NLS-1$
+				CDebugUIUtils.formatKeyBindingString(SWT.MOD1,
+						DisassemblyMessages.Disassembly_action_ToggleBreakpoint_accelerator));
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.AbstractDisassemblyAction#run()
 	 */
 	@Override
 	public void run() {
-	    IWorkbenchPart part = getDisassemblyPart();
-	    ISelection selection = getSelection();
-	    IToggleBreakpointsTargetCExtension toggleTarget = getToggleTarget(selection);
-	    if (toggleTarget != null) {
-	        try {
-    	        if (toggleTarget.canCreateLineBreakpointsInteractive(part, selection)) {
-    	            toggleTarget.createLineBreakpointsInteractive(part, selection);
-    	        }
-	        } catch (CoreException e) {
-	            reportException(e);
-	        }
-	    }
+		IWorkbenchPart part = getDisassemblyPart();
+		ISelection selection = getSelection();
+		IToggleBreakpointsTargetCExtension toggleTarget = getToggleTarget(selection);
+		if (toggleTarget != null) {
+			try {
+				if (toggleTarget.canCreateLineBreakpointsInteractive(part, selection)) {
+					toggleTarget.createLineBreakpointsInteractive(part, selection);
+				}
+			} catch (CoreException e) {
+				reportException(e);
+			}
+		}
 	}
 
 	@Override
 	public void update() {
-	    IDisassemblyPart part = getDisassemblyPart();
-	    if (part != null && part.isConnected()) {
-	        ISelection selection = getSelection();
-	        IToggleBreakpointsTargetCExtension toggleTarget = getToggleTarget(selection);
-	        if (toggleTarget != null) {
-	            setEnabled( toggleTarget.canCreateLineBreakpointsInteractive(part, selection) );
-	            return;
-	        }
-	    }
-	    setEnabled(false);
-	}
-	
-	private IToggleBreakpointsTargetCExtension getToggleTarget(ISelection selection) {
-	    IToggleBreakpointsTargetManager toggleMgr = DebugUITools.getToggleBreakpointsTargetManager();
-	    IToggleBreakpointsTarget toggleTarget = toggleMgr.getToggleBreakpointsTarget(getDisassemblyPart(), selection);
-	    if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
-	        return (IToggleBreakpointsTargetCExtension)toggleTarget;
-	    }
-	    return null;
+		IDisassemblyPart part = getDisassemblyPart();
+		if (part != null && part.isConnected()) {
+			ISelection selection = getSelection();
+			IToggleBreakpointsTargetCExtension toggleTarget = getToggleTarget(selection);
+			if (toggleTarget != null) {
+				setEnabled(toggleTarget.canCreateLineBreakpointsInteractive(part, selection));
+				return;
+			}
+		}
+		setEnabled(false);
 	}
 
-	   /**
-     * Report an error to the user.
-     * 
-     * @param e underlying exception
-     */
-    private void reportException(Exception e) {
-        IStatus status= new Status(IStatus.ERROR, CDebugUIPlugin.PLUGIN_ID, "Error creating breakpoint: ", e); //$NON-NLS-1$
-        ErrorDialog.openError(
-            getDisassemblyPart().getSite().getShell(), 
-            DisassemblyMessages.Disassembly_action_AddBreakpoint_errorTitle,
-            DisassemblyMessages.Disassembly_action_AddBreakpoint_errorMessage,
-            status);
-        CDebugUIPlugin.log(status);
-    }
+	private IToggleBreakpointsTargetCExtension getToggleTarget(ISelection selection) {
+		IToggleBreakpointsTargetManager toggleMgr = DebugUITools.getToggleBreakpointsTargetManager();
+		IToggleBreakpointsTarget toggleTarget = toggleMgr.getToggleBreakpointsTarget(getDisassemblyPart(), selection);
+		if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
+			return (IToggleBreakpointsTargetCExtension) toggleTarget;
+		}
+		return null;
+	}
 
 	/**
-     * Determines the text selection for the breakpoint action.  If clicking on the ruler inside
-     * the highlighted text, return the text selection for the highlighted text.  Otherwise, 
-     * return a text selection representing the start of the line.
-     * 
-     * @return  An ISelection as described.
-     * @throws BadLocationException If underlying operations throw.
-     */
-    private ISelection getSelection() {
-        IDocument document = getDocument();
-        if (document != null) {
-            int line = getRulerInfo().getLineOfLastMouseButtonActivity();
-            
-            try {
-                IRegion region = getDocument().getLineInformation(line);
-                ITextSelection textSelection = new TextSelection(document, region.getOffset(), 0);
-                ISelectionProvider provider = getDisassemblyPart().getSite().getSelectionProvider();
-                if (provider != null){
-                    ISelection selection = provider.getSelection();
-                    if (selection instanceof ITextSelection
-                            && ((ITextSelection) selection).getStartLine() <= line
-                            && ((ITextSelection) selection).getEndLine() >= line) {
-                        textSelection = (ITextSelection) selection;
-                    } 
-                }
-                return textSelection;
-            } catch (BadLocationException e) {
-            }
-        }
-        return StructuredSelection.EMPTY;
-    }
+	* Report an error to the user.
+	*
+	* @param e underlying exception
+	*/
+	private void reportException(Exception e) {
+		IStatus status = new Status(IStatus.ERROR, CDebugUIPlugin.PLUGIN_ID, "Error creating breakpoint: ", e); //$NON-NLS-1$
+		ErrorDialog.openError(getDisassemblyPart().getSite().getShell(),
+				DisassemblyMessages.Disassembly_action_AddBreakpoint_errorTitle,
+				DisassemblyMessages.Disassembly_action_AddBreakpoint_errorMessage, status);
+		CDebugUIPlugin.log(status);
+	}
+
+	/**
+	 * Determines the text selection for the breakpoint action.  If clicking on the ruler inside
+	 * the highlighted text, return the text selection for the highlighted text.  Otherwise,
+	 * return a text selection representing the start of the line.
+	 *
+	 * @return  An ISelection as described.
+	 * @throws BadLocationException If underlying operations throw.
+	 */
+	private ISelection getSelection() {
+		IDocument document = getDocument();
+		if (document != null) {
+			int line = getRulerInfo().getLineOfLastMouseButtonActivity();
+
+			try {
+				IRegion region = getDocument().getLineInformation(line);
+				ITextSelection textSelection = new TextSelection(document, region.getOffset(), 0);
+				ISelectionProvider provider = getDisassemblyPart().getSite().getSelectionProvider();
+				if (provider != null) {
+					ISelection selection = provider.getSelection();
+					if (selection instanceof ITextSelection && ((ITextSelection) selection).getStartLine() <= line
+							&& ((ITextSelection) selection).getEndLine() >= line) {
+						textSelection = (ITextSelection) selection;
+					}
+				}
+				return textSelection;
+			} catch (BadLocationException e) {
+			}
+		}
+		return StructuredSelection.EMPTY;
+	}
 
 }

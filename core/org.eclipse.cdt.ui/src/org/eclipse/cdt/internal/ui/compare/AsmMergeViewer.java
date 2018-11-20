@@ -31,13 +31,13 @@ import org.eclipse.cdt.ui.text.IColorManager;
  */
 public class AsmMergeViewer extends AbstractMergeViewer {
 
-	private static final String TITLE= "AsmMergeViewer.title"; //$NON-NLS-1$
+	private static final String TITLE = "AsmMergeViewer.title"; //$NON-NLS-1$
 
 	AsmSourceViewerConfiguration fSourceViewerConfiguration;
 
 	/**
 	 * Create a new assembly merge viewer.
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 * @param configuration
@@ -49,9 +49,10 @@ public class AsmMergeViewer extends AbstractMergeViewer {
 	@Override
 	protected SourceViewerConfiguration getSourceViewerConfiguration() {
 		if (fSourceViewerConfiguration == null) {
-			IPreferenceStore store= getPreferenceStore();
+			IPreferenceStore store = getPreferenceStore();
 			final IColorManager colorManager = CDTUITools.getColorManager();
-			fSourceViewerConfiguration= new AsmSourceViewerConfiguration(colorManager, store, null, ICPartitions.C_PARTITIONING);
+			fSourceViewerConfiguration = new AsmSourceViewerConfiguration(colorManager, store, null,
+					ICPartitions.C_PARTITIONING);
 		}
 		return fSourceViewerConfiguration;
 	}

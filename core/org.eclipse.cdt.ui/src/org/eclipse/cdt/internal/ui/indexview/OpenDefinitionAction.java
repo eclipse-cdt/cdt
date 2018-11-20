@@ -50,14 +50,14 @@ public class OpenDefinitionAction extends IndexAction {
 	public OpenDefinitionAction(IndexView view, TreeViewer viewer) {
 		super(view, viewer, CUIPlugin.getResourceString("IndexView.openDefinition.name"));//$NON-NLS-1$
 	}
-	
+
 	private IndexNode getBindingNode() {
 		ISelection selection = viewer.getSelection();
 		if (!(selection instanceof IStructuredSelection))
 			return null;
-		Object[] objs = ((IStructuredSelection)selection).toArray();
+		Object[] objs = ((IStructuredSelection) selection).toArray();
 		if (objs.length == 1 && objs[0] instanceof IndexNode) {
-			IndexNode node= (IndexNode) objs[0];
+			IndexNode node = (IndexNode) objs[0];
 			if (node.fObject instanceof IIndexBinding) {
 				return node;
 			}
@@ -67,40 +67,40 @@ public class OpenDefinitionAction extends IndexAction {
 
 	@Override
 	public void run() {
-		IndexNode bindingNode= getBindingNode();
+		IndexNode bindingNode = getBindingNode();
 		if (bindingNode == null) {
 			return;
 		}
 		try {
-			ICProject cproject= bindingNode.getProject();
+			ICProject cproject = bindingNode.getProject();
 			if (cproject != null) {
-				IIndex index= CCorePlugin.getIndexManager().getIndex(cproject);
+				IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
 				if (!openDefinition(cproject, bindingNode, index)) {
-					index= CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects(), IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION);
+					index = CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects(),
+							IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION);
 					openDefinition(cproject, bindingNode, index);
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			CUIPlugin.log(e);
-		} 
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 		}
 	}
 
-	private boolean openDefinition(ICProject cproject, IndexNode bindingNode, IIndex index) 
+	private boolean openDefinition(ICProject cproject, IndexNode bindingNode, IIndex index)
 			throws InterruptedException, CoreException, CModelException, PartInitException {
 		index.acquireReadLock();
 		try {
-			if (indexView.getLastWriteAccess(cproject) != CCoreInternals.getPDOMManager().getPDOM(cproject).getLastWriteAccess()) {
+			if (indexView.getLastWriteAccess(cproject) != CCoreInternals.getPDOMManager().getPDOM(cproject)
+					.getLastWriteAccess()) {
 				return true;
 			}
-			IIndexName[] defs= index.findDefinitions((IIndexBinding) bindingNode.fObject);
+			IIndexName[] defs = index.findDefinitions((IIndexBinding) bindingNode.fObject);
 			if (defs.length > 0) {
 				showInEditor(defs[0]);
 				return true;
 			}
-			defs= index.findDeclarations((IIndexBinding) bindingNode.fObject);
+			defs = index.findDeclarations((IIndexBinding) bindingNode.fObject);
 			if (defs.length > 0) {
 				showInEditor(defs[0]);
 				return true;
@@ -113,10 +113,10 @@ public class OpenDefinitionAction extends IndexAction {
 
 	private void showInEditor(IIndexName name) throws CModelException, PartInitException, CoreException {
 		IPath path = IndexLocationFactory.getPath(name.getFile().getLocation());
-		if(path!=null) {
+		if (path != null) {
 			IEditorPart editor = EditorUtility.openInEditor(path, null);
 			if (editor != null && editor instanceof ITextEditor) {
-				ITextEditor textEditor = (ITextEditor)editor;
+				ITextEditor textEditor = (ITextEditor) editor;
 				int nodeOffset = name.getNodeOffset();
 				int nodeLength = name.getNodeLength();
 				try {
@@ -125,7 +125,7 @@ public class OpenDefinitionAction extends IndexAction {
 						IDocument document = textEditor.getDocumentProvider().getDocument(editor.getEditorInput());
 						nodeOffset = document.getLineOffset(nodeOffset);
 						nodeLength = document.getLineLength(nodeOffset);
-					} 
+					}
 					textEditor.selectAndReveal(nodeOffset, nodeLength);
 				} catch (BadLocationException e) {
 					CUIPlugin.log(e);
@@ -133,7 +133,7 @@ public class OpenDefinitionAction extends IndexAction {
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean valid() {
 		return getBindingNode() != null;

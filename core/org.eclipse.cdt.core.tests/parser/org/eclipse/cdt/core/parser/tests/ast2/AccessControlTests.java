@@ -25,34 +25,34 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class AccessControlTests extends AST2TestBase {
-	
+
 	protected class AccessAssertionHelper extends AST2AssertionHelper {
 		AccessAssertionHelper(String contents) throws ParserException {
 			super(contents, true);
 		}
-		
+
 		void assertAccessible(String section, int len) {
 			IASTName name = findName(section, len);
 			IBinding binding = name.resolveBinding();
-    		assertNotNull(binding);
+			assertNotNull(binding);
 			assertTrue(AccessContext.isAccessible(binding, name));
 		}
-		
+
 		void assertNotAccessible(String section, int len) {
 			IASTName name = findName(section, len);
 			IBinding binding = name.resolveBinding();
-    		assertNotNull(binding);
+			assertNotNull(binding);
 			assertFalse(AccessContext.isAccessible(binding, name));
 		}
 	}
-	
+
 	public AccessControlTests() {
 	}
-	
+
 	public AccessControlTests(String name) {
 		super(name);
 	}
-	
+
 	public static TestSuite suite() {
 		return suite(AccessControlTests.class);
 	}
@@ -128,7 +128,7 @@ public class AccessControlTests extends AST2TestBase {
 		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertNotAccessible("a = 0", 1);
 	}
-	
+
 	//	class A0 {
 	//		public:
 	//			enum Ex {e1};
@@ -145,9 +145,9 @@ public class AccessControlTests extends AST2TestBase {
 		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertAccessible("Ex a;", 2);
 	}
-	
+
 	// // Example from C++-specification 11.2-3
-	// class B { 
+	// class B {
 	//   public:
 	//     int mi;
 	//     static int si;
@@ -159,7 +159,7 @@ public class AccessControlTests extends AST2TestBase {
 	//
 	// void DD::f() {
 	//   mi=3;  // private
-	//   si=3;  // private 
+	//   si=3;  // private
 	//   B b;
 	//   b.mi=4;
 	//   b.si=4;

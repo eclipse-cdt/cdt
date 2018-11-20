@@ -40,40 +40,38 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer {
 
 	@Override
-	protected List<ICompletionProposal> computeCompletionProposals(
-			CContentAssistInvocationContext cContext,
-			IASTCompletionNode completionNode, String prefix)
-			throws CoreException {
-		
+	protected List<ICompletionProposal> computeCompletionProposals(CContentAssistInvocationContext cContext,
+			IASTCompletionNode completionNode, String prefix) throws CoreException {
+
 		boolean handleHelp = false;
 		if (completionNode != null) {
 			IASTName[] names = completionNode.getNames();
 			for (int i = 0; i < names.length; ++i) {
 				IASTName name = names[i];
-				
+
 				// Ignore if not connected.
 				// See the corresponding code in DOMCompletionProposalComputer for why
 				// inactive completion names are special.
 				if (name.getTranslationUnit() == null && !(name instanceof IASTInactiveCompletionName))
 					continue;
-			
+
 				// ignore if this is a member access
 				if (name.getParent() instanceof IASTFieldReference)
 					continue;
-				
+
 				handleHelp = true;
 				break;
 			}
 		}
-		
+
 		if (!handleHelp) {
 			return Collections.emptyList();
 		}
-		
+
 		final ITranslationUnit tu = cContext.getTranslationUnit();
 		final IASTCompletionNode cn = completionNode;
 		final int cc = cContext.getInvocationOffset();
-		
+
 		// Find matching functions
 		ICHelpInvocationContext helpContext = new IContentAssistHelpInvocationContext() {
 
@@ -86,28 +84,26 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 			public ITranslationUnit getTranslationUnit() {
 				return tu;
 			}
-			
+
 			@Override
 			public int getInvocationOffset() {
 				return cc;
 			}
-			
+
 			@Override
 			public IASTCompletionNode getCompletionNode() {
 				return cn;
 			}
 		};
 
-		IFunctionSummary[] summaries = CHelpProviderManager.getDefault()
-				.getMatchingFunctions(helpContext, prefix);
+		IFunctionSummary[] summaries = CHelpProviderManager.getDefault().getMatchingFunctions(helpContext, prefix);
 		if (summaries == null)
 			return Collections.emptyList();
 
 		boolean doReplacement = !cContext.isContextInformationStyle();
 		int repLength = doReplacement ? prefix.length() : 0;
 		int repOffset = cContext.getInvocationOffset() - repLength;
-		Image image = CUIPlugin.getImageDescriptorRegistry().get(
-				CElementImageProvider.getFunctionImageDescriptor());
+		Image image = CUIPlugin.getImageDescriptorRegistry().get(CElementImageProvider.getFunctionImageDescriptor());
 
 		// If we are only providing context information, "prefix" is a complete
 		// function name, and we only want functions matching it exactly as
@@ -123,25 +119,18 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 			if (requireExactMatch && !summary.getName().equals(prefix)) {
 				continue;
 			}
-			
+
 			String fname = summary.getName() + "()"; //$NON-NLS-1$
 			String fdesc = summary.getDescription();
-			IFunctionSummary.IFunctionPrototypeSummary fproto = summary
-					.getPrototype();
+			IFunctionSummary.IFunctionPrototypeSummary fproto = summary.getPrototype();
 			String fargs = fproto.getArguments();
 
-			String repString = doReplacement ? fname : "";  //$NON-NLS-1$
-			
+			String repString = doReplacement ? fname : ""; //$NON-NLS-1$
+
 			int relevance = computeBaseRelevance(prefix, summary.getName()) + RelevanceConstants.HELP_TYPE_RELEVANCE;
 			CCompletionProposal proposal;
-			proposal = new CCompletionProposal(
-					repString,
-					repOffset,
-					repLength,
-					image,
-					fproto.getPrototypeString(true),
-					relevance,
-					cContext.getViewer());
+			proposal = new CCompletionProposal(repString, repOffset, repLength, image, fproto.getPrototypeString(true),
+					relevance, cContext.getViewer());
 
 			if (fdesc != null) {
 				proposal.setAdditionalProposalInfo(fdesc);
@@ -156,7 +145,7 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 					proposal.setCursorPosition(fname.length());
 				}
 			}
-			
+
 			if (fargs != null && fargs.length() > 0) {
 				CProposalContextInformation info = new CProposalContextInformation(image, fname, fargs);
 				info.setContextInformationPosition(cContext.getContextInformationOffset());

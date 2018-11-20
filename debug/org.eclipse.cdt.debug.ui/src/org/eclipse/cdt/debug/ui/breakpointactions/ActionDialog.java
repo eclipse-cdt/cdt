@@ -139,7 +139,8 @@ public class ActionDialog extends Dialog {
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		//
 
-		IExtension[] actionExtensions = CDebugCorePlugin.getDefault().getBreakpointActionManager().getBreakpointActionExtensions();
+		IExtension[] actionExtensions = CDebugCorePlugin.getDefault().getBreakpointActionManager()
+				.getBreakpointActionExtensions();
 
 		breakpointActions = new IBreakpointAction[actionExtensions.length];
 		actionPages = new IBreakpointActionPage[actionExtensions.length];
@@ -147,7 +148,8 @@ public class ActionDialog extends Dialog {
 
 		if (actionExtensions.length > 0) {
 
-			String lastTypeName = CDebugUIPlugin.getDefault().getPreferenceStore().getString(ACTION_DIALOG_LAST_SELECTED);
+			String lastTypeName = CDebugUIPlugin.getDefault().getPreferenceStore()
+					.getString(ACTION_DIALOG_LAST_SELECTED);
 
 			if (breakpointAction != null) {
 				lastTypeName = breakpointAction.getTypeName();
@@ -207,7 +209,8 @@ public class ActionDialog extends Dialog {
 	@Override
 	protected void okPressed() {
 		if (originalAction == null)
-			CDebugUIPlugin.getDefault().getPreferenceStore().setValue(ACTION_DIALOG_LAST_SELECTED, breakpointAction.getTypeName());
+			CDebugUIPlugin.getDefault().getPreferenceStore().setValue(ACTION_DIALOG_LAST_SELECTED,
+					breakpointAction.getTypeName());
 		String newName = actionNameTextWidget.getText();
 		if (originalAction == null || !originalAction.getName().equals(newName)) {
 			actionName = CDebugCorePlugin.getDefault().getBreakpointActionManager().makeUniqueActionName(newName);
@@ -226,7 +229,8 @@ public class ActionDialog extends Dialog {
 			int elementCount = 0;
 			IConfigurationElement selectedElement = null;
 
-			IExtension[] actionExtensions = CDebugCorePlugin.getDefault().getBreakpointActionManager().getBreakpointActionExtensions();
+			IExtension[] actionExtensions = CDebugCorePlugin.getDefault().getBreakpointActionManager()
+					.getBreakpointActionExtensions();
 
 			for (int i = 0; i < actionExtensions.length && selectedElement == null; i++) {
 				IConfigurationElement[] elements = actionExtensions[i].getConfigurationElements();
@@ -250,7 +254,8 @@ public class ActionDialog extends Dialog {
 			actionPage = actionPages[selectedTypeIndex];
 		}
 		if (actionComposites[selectedTypeIndex] == null) {
-			Composite actionComposite = actionPages[selectedTypeIndex].createComposite(breakpointAction, actionArea, SWT.NONE);
+			Composite actionComposite = actionPages[selectedTypeIndex].createComposite(breakpointAction, actionArea,
+					SWT.NONE);
 			actionComposites[selectedTypeIndex] = actionComposite;
 		}
 		actionName = breakpointAction.getName();
@@ -263,7 +268,8 @@ public class ActionDialog extends Dialog {
 
 	public IExtension[] getBreakpointActionPageExtensions() {
 		if (breakpointActionPageExtensions == null) {
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CDebugUIPlugin.PLUGIN_ID, BREAKPOINT_ACTION_PAGE_EXTENSION_POINT_ID);
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CDebugUIPlugin.PLUGIN_ID,
+					BREAKPOINT_ACTION_PAGE_EXTENSION_POINT_ID);
 			if (point == null)
 				breakpointActionPageExtensions = new IExtension[0];
 			else {
@@ -304,16 +310,15 @@ public class ActionDialog extends Dialog {
 		gd.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
 		control.setLayoutData(gd);
 
-		final ControlDecoration decoration = new ControlDecoration(control, SWT.TOP | SWT.LEFT, parent );
+		final ControlDecoration decoration = new ControlDecoration(control, SWT.TOP | SWT.LEFT, parent);
 		decoration.hide();
 		control.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				String name = control.getText();
 				if (name.trim().isEmpty()) {
-					decoration.setImage(
-							FieldDecorationRegistry.getDefault().getFieldDecoration(
-									FieldDecorationRegistry.DEC_ERROR).getImage());
+					decoration.setImage(FieldDecorationRegistry.getDefault()
+							.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR).getImage());
 					decoration.setDescriptionText(Messages.getString("ActionDialog.ErrEmptyName")); //$NON-NLS-1$
 					decoration.show();
 				} else {

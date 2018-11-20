@@ -40,82 +40,81 @@ public class AsmModelBuilderTest extends BaseTestCase {
 	}
 
 	private ICProject fCProject;
-	private ITranslationUnit fTU;		
-		
+	private ITranslationUnit fTU;
+
 	public AsmModelBuilderTest(String name) {
 		super(name);
 	}
-		
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject= CProjectHelper.createCProject(getName(), null, IPDOMManager.ID_FAST_INDEXER);
+		fCProject = CProjectHelper.createCProject(getName(), null, IPDOMManager.ID_FAST_INDEXER);
 		assertNotNull(fCProject);
 		CProjectHelper.importSourcesFromPlugin(fCProject, CTestPlugin.getDefault().getBundle(), "/resources/asmTests");
-		fTU= (ITranslationUnit) CProjectHelper.findElement(fCProject, "AsmTest.S");
+		fTU = (ITranslationUnit) CProjectHelper.findElement(fCProject, "AsmTest.S");
 		assertNotNull(fTU);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		  CProjectHelper.delete(fCProject);
-		  super.tearDown();
-	}	
-	
+		CProjectHelper.delete(fCProject);
+		super.tearDown();
+	}
+
 	public void testAsmModelElements() throws Exception {
-		ICElement[] children= fTU.getChildren();
+		ICElement[] children = fTU.getChildren();
 		assertEquals(8, children.length);
-		
-		int idx= 0;
+
+		int idx = 0;
 		assertEquals(ICElement.C_INCLUDE, children[idx].getElementType());
-		assertTrue(((IInclude)children[idx]).isStandard());
+		assertTrue(((IInclude) children[idx]).isStandard());
 		assertEquals("include1.h", children[idx++].getElementName());
 		assertEquals(ICElement.C_INCLUDE, children[idx].getElementType());
-		assertFalse(((IInclude)children[idx]).isStandard());
+		assertFalse(((IInclude) children[idx]).isStandard());
 		assertEquals("include2.h", children[idx++].getElementName());
-		
-		
+
 		assertEquals(ICElement.ASM_LABEL, children[idx].getElementType());
 		assertEquals("nonGlobalLabel", children[idx].getElementName());
-		assertFalse(((IAsmLabel)children[idx]).isGlobal());
-		assertEquals(0, ((IParent)children[idx++]).getChildren().length);
-		
+		assertFalse(((IAsmLabel) children[idx]).isGlobal());
+		assertEquals(0, ((IParent) children[idx++]).getChildren().length);
+
 		assertEquals(ICElement.ASM_LABEL, children[idx].getElementType());
 		assertEquals("globalLabel1", children[idx].getElementName());
-		assertTrue(((IAsmLabel)children[idx]).isGlobal());
-		assertEquals(2, ((IParent)children[idx++]).getChildren().length);
-		
+		assertTrue(((IAsmLabel) children[idx]).isGlobal());
+		assertEquals(2, ((IParent) children[idx++]).getChildren().length);
+
 		assertEquals(ICElement.C_MACRO, children[idx].getElementType());
 		assertEquals("MACRO", children[idx++].getElementName());
-		
+
 		assertEquals(ICElement.ASM_LABEL, children[idx].getElementType());
 		assertEquals("globalLabel2", children[idx].getElementName());
-		assertTrue(((IAsmLabel)children[idx]).isGlobal());
-		assertEquals(1, ((IParent)children[idx++]).getChildren().length);
-		
+		assertTrue(((IAsmLabel) children[idx]).isGlobal());
+		assertEquals(1, ((IParent) children[idx++]).getChildren().length);
+
 		assertEquals(ICElement.ASM_LABEL, children[idx].getElementType());
 		assertEquals("globalLabel3", children[idx].getElementName());
-		assertTrue(((IAsmLabel)children[idx]).isGlobal());
-		assertEquals(1, ((IParent)children[idx++]).getChildren().length);
-		
+		assertTrue(((IAsmLabel) children[idx]).isGlobal());
+		assertEquals(1, ((IParent) children[idx++]).getChildren().length);
+
 		assertEquals(ICElement.ASM_LABEL, children[idx].getElementType());
 		assertEquals("alloca", children[idx].getElementName());
-		assertTrue(((IAsmLabel)children[idx]).isGlobal());
-		assertEquals(0, ((IParent)children[idx++]).getChildren().length);
+		assertTrue(((IAsmLabel) children[idx]).isGlobal());
+		assertEquals(0, ((IParent) children[idx++]).getChildren().length);
 	}
 
 	public void testAsmLabelRanges() throws Exception {
-		String source= fTU.getBuffer().getContents();
-		ICElement[] labels= fTU.getChildrenOfType(ICElement.ASM_LABEL).toArray(new ICElement[0]);
+		String source = fTU.getBuffer().getContents();
+		ICElement[] labels = fTU.getChildrenOfType(ICElement.ASM_LABEL).toArray(new ICElement[0]);
 		for (ICElement label2 : labels) {
-			String name= label2.getElementName();
-			ISourceReference label= (ISourceReference)label2;
-			ISourceRange range= label.getSourceRange();
+			String name = label2.getElementName();
+			ISourceReference label = (ISourceReference) label2;
+			ISourceRange range = label.getSourceRange();
 			assertEquals(source.substring(range.getIdStartPos(), range.getIdStartPos() + range.getIdLength()), name);
-			int endOfLabel= source.indexOf("/* end */", range.getIdStartPos());
+			int endOfLabel = source.indexOf("/* end */", range.getIdStartPos());
 			assertEquals(range.getIdStartPos(), range.getStartPos());
 			assertEquals(endOfLabel, range.getStartPos() + range.getLength());
 		}
 	}
-	
+
 }

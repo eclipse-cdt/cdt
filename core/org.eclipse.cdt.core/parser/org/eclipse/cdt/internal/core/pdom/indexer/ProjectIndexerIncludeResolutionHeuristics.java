@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
@@ -41,86 +41,86 @@ public class ProjectIndexerIncludeResolutionHeuristics implements IIncludeFileRe
 	private final boolean fIgnoreCase;
 
 	public ProjectIndexerIncludeResolutionHeuristics(IProject project, ASTFilePathResolver resolver) {
-		fProject= project;
-		fResolver= resolver;
-		fIgnoreCase= resolver.isCaseInsensitiveFileSystem();
+		fProject = project;
+		fResolver = resolver;
+		fIgnoreCase = resolver.isCaseInsensitiveFileSystem();
 	}
 
 	@Override
 	public String findInclusion(String include, String currentFile) {
-		final IIndexFileLocation ifl= fResolver.resolveASTPath(currentFile);
+		final IIndexFileLocation ifl = fResolver.resolveASTPath(currentFile);
 		if (ifl == null || ifl.getFullPath() == null) {
 			return null;
 		}
-		
+
 		if (fProject == null)
 			return null;
 
 		if (fProjects == null) {
 			if (fProject.isOpen()) {
-				String val= IndexerPreferences.get(fProject, IndexerPreferences.KEY_INCLUDE_HEURISTICS, TRUE);
+				String val = IndexerPreferences.get(fProject, IndexerPreferences.KEY_INCLUDE_HEURISTICS, TRUE);
 				if (TRUE.equals(val)) {
-					fProjects= getOpenReferencedProjects(fProject);
+					fProjects = getOpenReferencedProjects(fProject);
 				}
-			} 
-			if (fProjects == null) { 
-				fProject= null;
+			}
+			if (fProjects == null) {
+				fProject = null;
 				return null;
 			}
 		}
-		
-		IFile[] files= ResourceLookup.findFilesByName(new Path(include), fProjects, fIgnoreCase);
+
+		IFile[] files = ResourceLookup.findFilesByName(new Path(include), fProjects, fIgnoreCase);
 		if (files.length == 0)
 			return null;
-		
+
 		final IPath bestLocation = selectBest(files, ifl.getFullPath().toCharArray()).getLocation();
 		if (bestLocation == null)
 			return null;
-		
+
 		return bestLocation.toString();
 	}
 
 	private IResource selectBest(IFile[] files, char[] currentFullPath) {
-		IFile best= files[0];
-		int bestScore= computeScore(best.getFullPath().toString().toCharArray(), currentFullPath);
-		
+		IFile best = files[0];
+		int bestScore = computeScore(best.getFullPath().toString().toCharArray(), currentFullPath);
+
 		for (int i = 1; i < files.length; i++) {
-			IFile file= files[i];
-			int score= computeScore(file.getFullPath().toString().toCharArray(), currentFullPath);
+			IFile file = files[i];
+			int score = computeScore(file.getFullPath().toString().toCharArray(), currentFullPath);
 			if (score > bestScore) {
-				bestScore= score;
-				best= file;
+				bestScore = score;
+				best = file;
 			}
 		}
 		return best;
 	}
 
 	private int computeScore(char[] path1, char[] path2) {
-		final int limit= Math.min(path1.length, path2.length);
-		int match= 0;
+		final int limit = Math.min(path1.length, path2.length);
+		int match = 0;
 		for (int i = 0; i < limit; i++) {
 			if (path1[i] != path2[i])
 				break;
 			if (path1[i] == '/')
-				match= i;
+				match = i;
 		}
 		// Prefer shortest path with longest matches with.
-		return (match << 16) - path1.length; 
+		return (match << 16) - path1.length;
 	}
 
 	private IProject[] getOpenReferencedProjects(IProject prj) {
-		Set<IProject> result= new HashSet<IProject>();
-		
+		Set<IProject> result = new HashSet<IProject>();
+
 		if (prj.isOpen()) {
 			result.add(prj);
 
-			List<IProject> projectsToSearch= new ArrayList<IProject>();
+			List<IProject> projectsToSearch = new ArrayList<IProject>();
 			projectsToSearch.add(prj);
-			for (int i= 0; i < projectsToSearch.size(); i++) {
-				IProject project= projectsToSearch.get(i);
+			for (int i = 0; i < projectsToSearch.size(); i++) {
+				IProject project = projectsToSearch.get(i);
 				IProject[] nextLevel;
 				try {
-					nextLevel= project.getReferencedProjects();
+					nextLevel = project.getReferencedProjects();
 					for (IProject prjNextLevel : nextLevel) {
 						if (prjNextLevel.isOpen() && result.add(prjNextLevel)) {
 							projectsToSearch.add(prjNextLevel);

@@ -40,7 +40,7 @@ class EditionFinderJob extends Job {
 
 	/**
 	 * Create a new edition finder for a file resource and address.
-	 * 
+	 *
 	 * @param sourceInfo  the file info containing the file resource for which to find an edition
 	 * @param address  address inside the module
 	 * @param disassemblyPart  the disassembly part where this job originated from
@@ -49,13 +49,13 @@ class EditionFinderJob extends Job {
 		super(DisassemblyMessages.EditionFinderJob_name);
 		Assert.isNotNull(sourceInfo);
 		Assert.isLegal(sourceInfo.fFile instanceof IFile);
-		fSourceInfo= sourceInfo;
-		fFile = (IFile)sourceInfo.fFile;
+		fSourceInfo = sourceInfo;
+		fFile = (IFile) sourceInfo.fFile;
 		fAddress = address;
-		fDisassemblyPart= disassemblyPart;
+		fDisassemblyPart = disassemblyPart;
 		setRule(fFile);
 		setSystem(true);
-		sourceInfo.fEditionJob= this;
+		sourceInfo.fEditionJob = this;
 	}
 
 	/*
@@ -79,7 +79,7 @@ class EditionFinderJob extends Job {
 		}
 		monitor.worked(1);
 		if (token instanceof Long && !monitor.isCanceled()) {
-			moduleTime = ((Long)token).longValue();
+			moduleTime = ((Long) token).longValue();
 			long buildTime = moduleTime * 1000;
 			if (fFile.getLocalTimeStamp() > buildTime) {
 				monitor.subTask(DisassemblyMessages.EditionFinderJob_task_search_history);

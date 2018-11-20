@@ -11,7 +11,7 @@
  * Contributors:
  * 	  Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.core.sourcelookup; 
+package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,7 +21,7 @@ import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainerTyp
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
- 
+
 /**
  * See <code>SourceFoldersRelativePathSourceContainer</code>.
  */
@@ -51,7 +51,7 @@ public class SourceFoldersRelativePathSourceContainerType extends AbstractSource
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
-			Element element = (Element)node;
+			Element element = (Element) node;
 			if ("project".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("name"); //$NON-NLS-1$
 				IProject project = null;
@@ -61,10 +61,10 @@ public class SourceFoldersRelativePathSourceContainerType extends AbstractSource
 				String nest = element.getAttribute("referencedProjects"); //$NON-NLS-1$
 				boolean ref = Boolean.parseBoolean(nest);
 				return new SourceFoldersRelativePathSourceContainer(project, ref);
-			} 
-			abort(InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainerType_1, null); 
+			}
+			abort(InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainerType_1, null);
 		}
-		abort(InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainerType_2, null); 
+		abort(InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainerType_2, null);
 		return null;
 	}
 }

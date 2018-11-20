@@ -11,7 +11,7 @@
  * Contributors:
  * Marc Khouzam (Ericsson) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints; 
+package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
@@ -49,7 +49,7 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * The preference page used to present the properties of a GDB dynamic printf as preferences. 
+ * The preference page used to present the properties of a GDB dynamic printf as preferences.
  */
 public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 
@@ -75,7 +75,7 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 
 		/**
 		 * Only store if the text control is enabled
-		 * 
+		 *
 		 * @see FieldEditor#doStore()
 		 */
 		@Override
@@ -93,12 +93,11 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 		protected void clearErrorMessage() {
 			if (getPage() != null) {
 				String message = getPage().getErrorMessage();
-				if ( message != null ) {
+				if (message != null) {
 					if (getErrorMessage().equals(message)) {
 						super.clearErrorMessage();
 					}
-				}
-				else {
+				} else {
 					super.clearErrorMessage();
 				}
 			}
@@ -131,11 +130,11 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 				super.doStore();
 			}
 		}
-		
+
 		@Override
-		protected void doLoad()  {
+		protected void doLoad() {
 			String value = getPreferenceStore().getString(getPreferenceName());
-            setStringValue(value);
+			setStringValue(value);
 		}
 
 		/**
@@ -145,12 +144,11 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 		protected void clearErrorMessage() {
 			if (getPage() != null) {
 				String message = getPage().getErrorMessage();
-				if ( message != null ) {
+				if (message != null) {
 					if (getErrorMessage().equals(message)) {
 						super.clearErrorMessage();
 					}
-				}
-				else {
+				} else {
 					super.clearErrorMessage();
 				}
 			}
@@ -171,6 +169,7 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 				textField.setText(fValue);
 			}
 		}
+
 		@Override
 		protected void doLoadDefault() {
 			// nothing
@@ -185,22 +184,21 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 	private Text fIgnoreCountTextControl;
 	private DynamicPrintfIntegerFieldEditor fLineEditor;
 	private DynamicPrintfIntegerFieldEditor fIgnoreCount;
-	
-	/** 
+
+	/**
 	 * Indicates if the page currently aims to create
 	 * a breakpoint that already exits.
 	 */
 	private boolean fDuplicateBreakpoint;
 
-	
 	private DynamicPrintfStringFieldEditor fPrintString;
 
 	private IAdaptable fElement;
 
 	/**
-	 * The preference store used to interface between the dynamic printf and the 
+	 * The preference store used to interface between the dynamic printf and the
 	 * dynamic printf preference page.  This preference store is initialized only
-	 * when the preference store cannot be retrieved from the preference 
+	 * when the preference store cannot be retrieved from the preference
 	 * dialog's element.
 	 * @see #getPreferenceStore()
 	 */
@@ -223,24 +221,21 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 	}
 
 	private void createMainLabel(ICDynamicPrintf dprintf) {
-		addField(createLabelEditor(getFieldEditorParent(), 
-				                   Messages.PropertyPage_Class,
-				                   getDynamicPrintfMainLabel(dprintf)));
+		addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_Class,
+				getDynamicPrintfMainLabel(dprintf)));
 	}
 
 	private void createTypeSpecificLabelFieldEditors(ICDynamicPrintf dprintf) {
 		if (dprintf instanceof ICFunctionBreakpoint) {
-		    createFunctionEditor(getFieldEditorParent());
-		}
-		else if (dprintf instanceof ICAddressBreakpoint) {
+			createFunctionEditor(getFieldEditorParent());
+		} else if (dprintf instanceof ICAddressBreakpoint) {
 			String address = getPreferenceStore().getString(ICLineBreakpoint.ADDRESS);
 			if (address == null || address.trim().length() == 0) {
 				address = Messages.PropertyPage_NotAvailable;
 			}
 			addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_Address, address));
-		}
-		else { // LineDprintf
-		    String fileName = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
+		} else { // LineDprintf
+			String fileName = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
 			if (fileName != null) {
 				addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_File, fileName));
 			}
@@ -252,70 +247,74 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 	}
 
 	private String getDynamicPrintfMainLabel(ICDynamicPrintf dprintf) {
-	    IWorkbenchAdapter labelProvider = getElement().getAdapter(IWorkbenchAdapter.class);
-	    if (labelProvider != null) {
-	        return labelProvider.getLabel(getElement());
-	    }
-        // default main label is the label of marker type for the dynamic printf
-        return CDIDebugModel.calculateMarkerType(dprintf);
+		IWorkbenchAdapter labelProvider = getElement().getAdapter(IWorkbenchAdapter.class);
+		if (labelProvider != null) {
+			return labelProvider.getLabel(getElement());
+		}
+		// default main label is the label of marker type for the dynamic printf
+		return CDIDebugModel.calculateMarkerType(dprintf);
 	}
-	
-    protected void createFunctionEditor(Composite parent) {
-    	ICDynamicPrintf dprintf = getDprintf();
-        if (dprintf == null || dprintf.getMarker() == null) {
-            DynamicPrintfStringFieldEditor expressionEditor = new DynamicPrintfStringFieldEditor(
-                ICLineBreakpoint.FUNCTION, Messages.PropertyPage_FunctionName, parent);
-            expressionEditor.setErrorMessage(Messages.PropertyPage_function_value_errorMessage);
-            expressionEditor.setEmptyStringAllowed(false);
-            addField(expressionEditor);
-        } else {
-            String function = getPreferenceStore().getString(ICLineBreakpoint.FUNCTION); 
-            if (function == null) { 
-                function = Messages.PropertyPage_NotAvailable;
-            }
-            addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_FunctionName, function));
-        }
-    }
+
+	protected void createFunctionEditor(Composite parent) {
+		ICDynamicPrintf dprintf = getDprintf();
+		if (dprintf == null || dprintf.getMarker() == null) {
+			DynamicPrintfStringFieldEditor expressionEditor = new DynamicPrintfStringFieldEditor(
+					ICLineBreakpoint.FUNCTION, Messages.PropertyPage_FunctionName, parent);
+			expressionEditor.setErrorMessage(Messages.PropertyPage_function_value_errorMessage);
+			expressionEditor.setEmptyStringAllowed(false);
+			addField(expressionEditor);
+		} else {
+			String function = getPreferenceStore().getString(ICLineBreakpoint.FUNCTION);
+			if (function == null) {
+				function = Messages.PropertyPage_NotAvailable;
+			}
+			addField(createLabelEditor(getFieldEditorParent(), Messages.PropertyPage_FunctionName, function));
+		}
+	}
+
 	protected void createLineNumberEditor(Composite parent) {
-		 String title = Messages.PropertyPage_LineNumber;
-		 fLineEditor = new DynamicPrintfIntegerFieldEditor(IMarker.LINE_NUMBER, title, parent);
-		 fLineEditor.setValidRange(1, Integer.MAX_VALUE);
-		 fLineEditor.setErrorMessage(Messages.PropertyPage_lineNumber_errorMessage);
-		 addField(fLineEditor);
+		String title = Messages.PropertyPage_LineNumber;
+		fLineEditor = new DynamicPrintfIntegerFieldEditor(IMarker.LINE_NUMBER, title, parent);
+		fLineEditor.setValidRange(1, Integer.MAX_VALUE);
+		fLineEditor.setErrorMessage(Messages.PropertyPage_lineNumber_errorMessage);
+		addField(fLineEditor);
 	}
-	
+
 	protected void createEnabledField(Composite parent) {
 		fEnabled = new BooleanFieldEditor(ICBreakpoint.ENABLED, Messages.PropertyPage_Enabled, parent);
 		addField(fEnabled);
 	}
 
 	protected void createConditionEditor(Composite parent) {
-		fCondition = new DynamicPrintfStringFieldEditor(ICBreakpoint.CONDITION, Messages.PropertyPage_Condition, parent);
+		fCondition = new DynamicPrintfStringFieldEditor(ICBreakpoint.CONDITION, Messages.PropertyPage_Condition,
+				parent);
 		fCondition.setEmptyStringAllowed(true);
 		fCondition.setErrorMessage(Messages.PropertyPage_InvalidCondition);
 		addField(fCondition);
 	}
 
 	protected void createIgnoreCountEditor(Composite parent) {
-		fIgnoreCount = new DynamicPrintfIntegerFieldEditor(ICBreakpoint.IGNORE_COUNT, Messages.PropertyPage_IgnoreCount, parent);
+		fIgnoreCount = new DynamicPrintfIntegerFieldEditor(ICBreakpoint.IGNORE_COUNT, Messages.PropertyPage_IgnoreCount,
+				parent);
 		fIgnoreCount.setValidRange(0, Integer.MAX_VALUE);
 		fIgnoreCountTextControl = fIgnoreCount.getTextControl(parent);
-		fIgnoreCountTextControl.setEnabled( getPreferenceStore().getInt(ICBreakpoint.IGNORE_COUNT) >= 0 );
+		fIgnoreCountTextControl.setEnabled(getPreferenceStore().getInt(ICBreakpoint.IGNORE_COUNT) >= 0);
 		addField(fIgnoreCount);
 	}
 
 	protected void createPrintStringEditor(Composite parent) {
-		fPrintString = new DynamicPrintfStringFieldEditor(ICDynamicPrintf.PRINTF_STRING, Messages.DynamicPrintfPropertyPage_PrintString, parent) {
+		fPrintString = new DynamicPrintfStringFieldEditor(ICDynamicPrintf.PRINTF_STRING,
+				Messages.DynamicPrintfPropertyPage_PrintString, parent) {
 			@Override
 			protected boolean doCheckState() {
-				GDBDynamicPrintfUtils.GDBDynamicPrintfString parsedStr = 
-						new GDBDynamicPrintfUtils.GDBDynamicPrintfString(getTextControl().getText());
-				
+				GDBDynamicPrintfUtils.GDBDynamicPrintfString parsedStr = new GDBDynamicPrintfUtils.GDBDynamicPrintfString(
+						getTextControl().getText());
+
 				boolean valid = parsedStr.isValid();
 				if (!valid) {
 					setErrorMessage(parsedStr.getErrorMessage());
 				}
-				
+
 				return valid;
 			}
 		};
@@ -327,14 +326,13 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 		// Don't allow to create a duplicate breakpoint
 		return super.isValid() && !fDuplicateBreakpoint;
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		super.propertyChange(event);
 
 		ICBreakpoint currentBp = getDprintf();
-		if (!(currentBp instanceof ICFunctionBreakpoint) &&
-				!(currentBp instanceof ICAddressBreakpoint)) {
+		if (!(currentBp instanceof ICFunctionBreakpoint) && !(currentBp instanceof ICAddressBreakpoint)) {
 			// Check for duplication of line dprintf
 			if (event.getProperty().equals(FieldEditor.VALUE)) {
 				if (super.isValid()) {
@@ -345,7 +343,8 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 					fDuplicateBreakpoint = isDuplicateBreakpoint();
 					if (oldValue != fDuplicateBreakpoint) {
 						if (fDuplicateBreakpoint) {
-							setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.breakpoint_already_exists_errorMessage")); //$NON-NLS-1$
+							setErrorMessage(BreakpointsMessages
+									.getString("CBreakpointPropertyPage.breakpoint_already_exists_errorMessage")); //$NON-NLS-1$
 						} else {
 							setErrorMessage(null);
 						}
@@ -356,11 +355,11 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 						// update page state
 						updateApplyButton();
 					}
-				}		
+				}
 			}
 		}
 	}
-	
+
 	private boolean isDuplicateBreakpoint() {
 		String source = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
 		int line = fLineEditor.getIntValue();
@@ -386,7 +385,7 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 		}
 		return false;
 	}
-	
+
 	protected FieldEditor createLabelEditor(Composite parent, String title, String value) {
 		return new LabelFieldEditor(parent, title, value);
 	}
@@ -394,13 +393,13 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 	protected ICDynamicPrintf getDprintf() {
 		IAdaptable element = getElement();
 		if (element instanceof ICDynamicPrintf) {
-		    return (ICDynamicPrintf)element;
+			return (ICDynamicPrintf) element;
 		}
-		
+
 		if (element instanceof ICBreakpointContext) {
-			ICBreakpoint breakpoint =((ICBreakpointContext)element).getBreakpoint();
+			ICBreakpoint breakpoint = ((ICBreakpointContext) element).getBreakpoint();
 			if (breakpoint instanceof ICDynamicPrintf) {
-			    return (ICDynamicPrintf)breakpoint;
+				return (ICDynamicPrintf) breakpoint;
 			}
 			assert false : "Should always have a dprintf"; //$NON-NLS-1$
 		}
@@ -409,68 +408,66 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 	}
 
 	protected Object getDebugContext() {
-        IDebugContextProvider provider = getElement().getAdapter(IDebugContextProvider.class);
-        if (provider != null) {
-            ISelection selection = provider.getActiveContext();
-            if (selection instanceof IStructuredSelection) {
-                return ((IStructuredSelection) selection).getFirstElement();
-            }
-            return null;
-        }
-        return DebugUITools.getDebugContext();        
+		IDebugContextProvider provider = getElement().getAdapter(IDebugContextProvider.class);
+		if (provider != null) {
+			ISelection selection = provider.getActiveContext();
+			if (selection instanceof IStructuredSelection) {
+				return ((IStructuredSelection) selection).getFirstElement();
+			}
+			return null;
+		}
+		return DebugUITools.getDebugContext();
 	}
 
-	
 	protected IResource getResource() {
-        IAdaptable element = getElement();
-        if (element instanceof ICDynamicPrintf) {
-            IMarker marker = ((ICDynamicPrintf)element).getMarker();
-            if (marker != null) {
-                return marker.getResource();
-            }
-        } else if (element instanceof ICBreakpointContext) {
-            return ((ICBreakpointContext)element).getResource();
-        } 
-        return null;
+		IAdaptable element = getElement();
+		if (element instanceof ICDynamicPrintf) {
+			IMarker marker = ((ICDynamicPrintf) element).getMarker();
+			if (marker != null) {
+				return marker.getResource();
+			}
+		} else if (element instanceof ICBreakpointContext) {
+			return ((ICBreakpointContext) element).getResource();
+		}
+		return null;
 	}
 
 	@Override
 	public IPreferenceStore getPreferenceStore() {
-	    IAdaptable element = getElement();
-	    if (element instanceof ICBreakpointContext) {
-	        return ((ICBreakpointContext)element).getPreferenceStore();
-	    }
+		IAdaptable element = getElement();
+		if (element instanceof ICBreakpointContext) {
+			return ((ICBreakpointContext) element).getPreferenceStore();
+		}
 
-	    if (fDynamicPrintfPreferenceStore == null) {
-	        CBreakpointContext bpContext = element instanceof CBreakpointContext ? 
-	            (CBreakpointContext)element : null;
-	        fDynamicPrintfPreferenceStore = new CBreakpointPreferenceStore(bpContext, null);
-	    }
-	    return fDynamicPrintfPreferenceStore;
+		if (fDynamicPrintfPreferenceStore == null) {
+			CBreakpointContext bpContext = element instanceof CBreakpointContext ? (CBreakpointContext) element : null;
+			fDynamicPrintfPreferenceStore = new CBreakpointPreferenceStore(bpContext, null);
+		}
+		return fDynamicPrintfPreferenceStore;
 	}
 
 	@Override
 	public boolean performCancel() {
-	    IPreferenceStore store = getPreferenceStore();
-	    if (store instanceof CBreakpointPreferenceStore) {
-	        ((CBreakpointPreferenceStore)store).setCanceled(true);
-	    }
-	    return super.performCancel();
+		IPreferenceStore store = getPreferenceStore();
+		if (store instanceof CBreakpointPreferenceStore) {
+			((CBreakpointPreferenceStore) store).setCanceled(true);
+		}
+		return super.performCancel();
 	}
 
 	@Override
-    public boolean performOk() {
-        IPreferenceStore store = getPreferenceStore();
-        if (store instanceof CBreakpointPreferenceStore) {
-            ((CBreakpointPreferenceStore)store).setCanceled(false);
-        }
-        return super.performOk();
-    }
-	
+	public boolean performOk() {
+		IPreferenceStore store = getPreferenceStore();
+		if (store instanceof CBreakpointPreferenceStore) {
+			((CBreakpointPreferenceStore) store).setCanceled(false);
+		}
+		return super.performOk();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
-    @Override
+	@Override
 	public IAdaptable getElement() {
 		return fElement;
 	}
@@ -478,26 +475,25 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
 	 */
-    @Override
+	@Override
 	public void setElement(IAdaptable element) {
-    	if (element instanceof ICBreakpoint) {
-			fElement = new CBreakpointContext((ICBreakpoint)element, null);
-		}
-		else {
+		if (element instanceof ICBreakpoint) {
+			fElement = new CBreakpointContext((ICBreakpoint) element, null);
+		} else {
 			fElement = element;
 		}
 	}
 
 	protected String[] getDebugModelIds() {
-        String[] debugModelIds = null;
-        Object debugContext = getDebugContext();
-        IDebugModelProvider debugModelProvider = (IDebugModelProvider)
-            DebugPlugin.getAdapter(debugContext, IDebugModelProvider.class);
-        if (debugModelProvider != null) {
-            debugModelIds = debugModelProvider.getModelIdentifiers();
-        } else if (debugContext instanceof IDebugElement) {
-            debugModelIds = new String[] { ((IDebugElement)debugContext).getModelIdentifier() };
-        }
-        return debugModelIds;
+		String[] debugModelIds = null;
+		Object debugContext = getDebugContext();
+		IDebugModelProvider debugModelProvider = (IDebugModelProvider) DebugPlugin.getAdapter(debugContext,
+				IDebugModelProvider.class);
+		if (debugModelProvider != null) {
+			debugModelIds = debugModelProvider.getModelIdentifiers();
+		} else if (debugContext instanceof IDebugElement) {
+			debugModelIds = new String[] { ((IDebugElement) debugContext).getModelIdentifier() };
+		}
+		return debugModelIds;
 	}
 }

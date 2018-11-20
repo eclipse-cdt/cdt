@@ -86,13 +86,12 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 * Reconciling listeners.
 	 * @since 3.0
 	 */
-	private ListenerList<IReconcilingParticipant> fReconcilingListeners= new ListenerList<>(ListenerList.IDENTITY);
-
+	private ListenerList<IReconcilingParticipant> fReconcilingListeners = new ListenerList<>(ListenerList.IDENTITY);
 
 	MakefileSourceConfiguration getMakefileSourceConfiguration() {
 		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
 		if (configuration instanceof MakefileSourceConfiguration) {
-			return (MakefileSourceConfiguration)configuration;
+			return (MakefileSourceConfiguration) configuration;
 		}
 		return null;
 	}
@@ -125,7 +124,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	public void dispose() {
 		if (fProjectionMakefileUpdater != null) {
 			fProjectionMakefileUpdater.uninstall();
-			fProjectionMakefileUpdater= null;
+			fProjectionMakefileUpdater = null;
 		}
 		if (fBracketMatcher != null) {
 			fBracketMatcher.dispose();
@@ -136,25 +135,25 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	}
 
 	boolean isFoldingEnabled() {
-		return MakeUIPlugin.getDefault().getPreferenceStore().getBoolean(MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
+		return MakeUIPlugin.getDefault().getPreferenceStore()
+				.getBoolean(MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
 
 	@Override
 	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
 		super.rulerContextMenuAboutToShow(menu);
-		IMenuManager foldingMenu= new MenuManager(MakefileEditorMessages.MakefileEditor_menu_folding, "projection");  //$NON-NLS-1$
+		IMenuManager foldingMenu = new MenuManager(MakefileEditorMessages.MakefileEditor_menu_folding, "projection"); //$NON-NLS-1$
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
 
-		IAction action= getAction("FoldingToggle"); //$NON-NLS-1$
+		IAction action = getAction("FoldingToggle"); //$NON-NLS-1$
 		foldingMenu.add(action);
-		action= getAction("FoldingExpandAll"); //$NON-NLS-1$
+		action = getAction("FoldingExpandAll"); //$NON-NLS-1$
 		foldingMenu.add(action);
-		action= getAction("FoldingCollapseAll"); //$NON-NLS-1$
+		action = getAction("FoldingCollapseAll"); //$NON-NLS-1$
 		foldingMenu.add(action);
-		action= getAction("FoldingRestore"); //$NON-NLS-1$
+		action = getAction("FoldingRestore"); //$NON-NLS-1$
 		foldingMenu.add(action);
 	}
-
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -171,7 +170,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 
 		//		ProjectionAnnotationModel model= (ProjectionAnnotationModel) getAdapter(ProjectionAnnotationModel.class);
 
-		fProjectionMakefileUpdater= new ProjectionMakefileUpdater();
+		fProjectionMakefileUpdater = new ProjectionMakefileUpdater();
 		if (fProjectionMakefileUpdater != null) {
 			fProjectionMakefileUpdater.install(this, projectionViewer);
 			fProjectionMakefileUpdater.initialize();
@@ -180,7 +179,8 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 
 	@Override
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		ISourceViewer viewer = new ProjectionViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
+		ISourceViewer viewer = new ProjectionViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(),
+				styles);
 
 		// ensure decoration support has been created and configured.
 		getSourceViewerDecorationSupport(viewer);
@@ -218,7 +218,8 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 
 		ResourceBundle bundle = MakeUIPlugin.getDefault().getResourceBundle();
 
-		IAction a = new TextOperationAction(bundle, "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
+		IAction a = new TextOperationAction(bundle, "ContentAssistProposal.", this, //$NON-NLS-1$
+				ISourceViewer.CONTENTASSIST_PROPOSALS);
 		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssistProposal", a); //$NON-NLS-1$
 
@@ -248,13 +249,13 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		ISelection selection = event.getSelection();
 		if (selection.isEmpty()) {
 			resetHighlightRange();
-		} else if (selection instanceof IStructuredSelection){
+		} else if (selection instanceof IStructuredSelection) {
 			if (!isActivePart() && MakeUIPlugin.getActivePage() != null) {
 				MakeUIPlugin.getActivePage().bringToTop(this);
 			}
-			Object element =  ((IStructuredSelection) selection).getFirstElement();
+			Object element = ((IStructuredSelection) selection).getFirstElement();
 			if (element instanceof IDirective) {
-				IDirective statement = (IDirective)element;
+				IDirective statement = (IDirective) element;
 				setSelection(statement, !isActivePart());
 			}
 		}
@@ -264,9 +265,9 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 * Returns whether the editor is active.
 	 */
 	private boolean isActivePart() {
-		IWorkbenchWindow window= getSite().getWorkbenchWindow();
-		IPartService service= window.getPartService();
-		IWorkbenchPart part= service.getActivePart();
+		IWorkbenchWindow window = getSite().getWorkbenchWindow();
+		IPartService service = window.getPartService();
+		IWorkbenchPart part = service.getActivePart();
 		return part != null && part.equals(this);
 	}
 
@@ -278,7 +279,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	private FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() {
 		if (fFindReplaceDocumentAdapter == null) {
 			IDocument doc = getDocumentProvider().getDocument(getEditorInput());
-			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(doc);
+			fFindReplaceDocumentAdapter = new FindReplaceDocumentAdapter(doc);
 		}
 		return fFindReplaceDocumentAdapter;
 	}
@@ -380,11 +381,11 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 
 	@Override
 	protected void performRevert() {
-		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
+		ProjectionViewer projectionViewer = (ProjectionViewer) getSourceViewer();
 		projectionViewer.setRedraw(false);
 		try {
 
-			boolean projectionMode= projectionViewer.isProjectionMode();
+			boolean projectionMode = projectionViewer.isProjectionMode();
 			if (projectionMode) {
 				projectionViewer.disableProjection();
 				if (fProjectionMakefileUpdater != null) {
@@ -420,7 +421,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 
 	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		ISourceViewer sourceViewer= getSourceViewer();
+		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer == null) {
 			return;
 		}
@@ -437,12 +438,12 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 
 		if (MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED.equals(property)) {
 			if (sourceViewer instanceof ProjectionViewer) {
-				ProjectionViewer projectionViewer= (ProjectionViewer) sourceViewer;
+				ProjectionViewer projectionViewer = (ProjectionViewer) sourceViewer;
 				if (fProjectionMakefileUpdater != null) {
 					fProjectionMakefileUpdater.uninstall();
 				}
 				// either freshly enabled or provider changed
-				fProjectionMakefileUpdater= new ProjectionMakefileUpdater();
+				fProjectionMakefileUpdater = new ProjectionMakefileUpdater();
 				if (fProjectionMakefileUpdater != null) {
 					fProjectionMakefileUpdater.install(this, projectionViewer);
 				}
@@ -477,7 +478,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 */
 	@Override
 	protected void initializeKeyBindingScopes() {
-		setKeyBindingScopes(new String [] { "org.eclipse.cdt.make.ui.makefileEditorScope" } ); //$NON-NLS-1$
+		setKeyBindingScopes(new String[] { "org.eclipse.cdt.make.ui.makefileEditorScope" }); //$NON-NLS-1$
 	}
 
 	@Override
@@ -490,7 +491,8 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		super.configureSourceViewerDecorationSupport(support);
 		//Enhance the stock source viewer decorator with a bracket matcher
 		support.setCharacterPairMatcher(fBracketMatcher);
-		support.setMatchingCharacterPainterPreferenceKeys(MakefileEditorPreferenceConstants.EDITOR_MATCHING_BRACKETS, ColorManager.MAKE_MATCHING_BRACKETS_COLOR);
+		support.setMatchingCharacterPainterPreferenceKeys(MakefileEditorPreferenceConstants.EDITOR_MATCHING_BRACKETS,
+				ColorManager.MAKE_MATCHING_BRACKETS_COLOR);
 	}
 
 }

@@ -24,12 +24,12 @@ import org.eclipse.cdt.core.EFSExtensionProvider;
 public class MemoryEFSExtensionProvider extends EFSExtensionProvider {
 
 	public String getMappedPath(URI locationURI) {
-		
+
 		String path = locationURI.getPath();
 		if (path.contains("/BeingMappedFrom/Folder")) {
 			return path.replaceFirst("/BeingMappedFrom/Folder", "/LocallyMappedTo/Folder");
 		}
-		
+
 		return super.getMappedPath(locationURI);
 	}
 

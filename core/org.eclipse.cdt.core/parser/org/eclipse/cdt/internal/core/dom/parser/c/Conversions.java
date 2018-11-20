@@ -22,8 +22,7 @@ public class Conversions {
 	 */
 	public static IType arrayTypeToPointerType(ICArrayType type) {
 		return new CPointerType(type.getType(),
-				(type.isConst() ? CPointerType.IS_CONST : 0) |
-				(type.isRestrict() ? CPointerType.IS_RESTRICT : 0) |
-				(type.isVolatile() ? CPointerType.IS_VOLATILE : 0));
+				(type.isConst() ? CPointerType.IS_CONST : 0) | (type.isRestrict() ? CPointerType.IS_RESTRICT : 0)
+						| (type.isVolatile() ? CPointerType.IS_VOLATILE : 0));
 	}
 }

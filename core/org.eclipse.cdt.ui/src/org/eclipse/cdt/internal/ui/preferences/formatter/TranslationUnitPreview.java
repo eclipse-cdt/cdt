@@ -34,36 +34,36 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
 
 public class TranslationUnitPreview extends CPreview {
-    private String fPreviewText;
-    private int fPreviewTextOffset;
+	private String fPreviewText;
+	private int fPreviewTextOffset;
 	private String fFormatterId;
 
-    /**
-     * @param workingValues
-     * @param parent
-     */
-    public TranslationUnitPreview(Map<String, String> workingValues, Composite parent) {
-        super(workingValues, parent);
-    }
+	/**
+	 * @param workingValues
+	 * @param parent
+	 */
+	public TranslationUnitPreview(Map<String, String> workingValues, Composite parent) {
+		super(workingValues, parent);
+	}
 
-    @Override
+	@Override
 	protected void doFormatPreview() {
-        if (fPreviewText == null) {
-            fPreviewDocument.set(""); //$NON-NLS-1$
-            return;
-        }
-        fPreviewDocument.set(fPreviewText);
-		
+		if (fPreviewText == null) {
+			fPreviewDocument.set(""); //$NON-NLS-1$
+			return;
+		}
+		fPreviewDocument.set(fPreviewText);
+
 		fSourceViewer.setVisibleRegion(fPreviewTextOffset, fPreviewText.length() - fPreviewTextOffset);
 		fSourceViewer.setRedraw(false);
 		final IFormattingContext context = new FormattingContext();
 		try {
-			final IContentFormatter formatter =	fViewerConfiguration.getContentFormatter(fSourceViewer);
+			final IContentFormatter formatter = fViewerConfiguration.getContentFormatter(fSourceViewer);
 			if (formatter instanceof IContentFormatterExtension) {
 				final IContentFormatterExtension extension = (IContentFormatterExtension) formatter;
-				Map<String, String> prefs= fWorkingValues;
+				Map<String, String> prefs = fWorkingValues;
 				if (fFormatterId != null) {
-					prefs= new HashMap<String, String>(fWorkingValues);
+					prefs = new HashMap<String, String>(fWorkingValues);
 					prefs.put(CCorePreferenceConstants.CODE_FORMATTER, fFormatterId);
 				}
 				context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, prefs);
@@ -73,29 +73,29 @@ public class TranslationUnitPreview extends CPreview {
 				formatter.format(fPreviewDocument, new Region(0, fPreviewDocument.getLength()));
 			}
 		} catch (Exception e) {
-			final IStatus status= new Status(IStatus.ERROR, CUIPlugin.getPluginId(), ICStatusConstants.INTERNAL_ERROR, 
-				FormatterMessages.CPreview_formatter_exception, e); 
+			final IStatus status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), ICStatusConstants.INTERNAL_ERROR,
+					FormatterMessages.CPreview_formatter_exception, e);
 			CUIPlugin.log(status);
 		} finally {
-		    context.dispose();
-		    fSourceViewer.setRedraw(true);
+			context.dispose();
+			fSourceViewer.setRedraw(true);
 		}
-    }
-    
-    public void setPreviewText(String previewText) {
+	}
+
+	public void setPreviewText(String previewText) {
 		setPreviewText(previewText, 0);
 	}
 
 	public void setPreviewText(String previewText, int previewTextOffset) {
-        fPreviewText= previewText;
-        fPreviewTextOffset = previewTextOffset;
-        update();
-    }
+		fPreviewText = previewText;
+		fPreviewTextOffset = previewTextOffset;
+		update();
+	}
 
 	/**
 	 * @param formatterId
 	 */
 	public void setFormatterId(String formatterId) {
-		fFormatterId= formatterId;
+		fFormatterId = formatterId;
 	}
 }

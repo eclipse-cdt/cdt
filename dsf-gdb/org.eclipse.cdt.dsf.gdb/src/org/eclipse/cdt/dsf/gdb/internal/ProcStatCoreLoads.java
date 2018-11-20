@@ -18,28 +18,27 @@ import java.util.Map;
 
 /**
  * This class provides a container to store the computed
- * loads for the various CPU cores.  
+ * loads for the various CPU cores.
  *
  */
 public class ProcStatCoreLoads {
 	private Map<String, Float> m_coreLoads;
-	
+
 	public ProcStatCoreLoads() {
-		m_coreLoads = new HashMap<String,Float>();
+		m_coreLoads = new HashMap<String, Float>();
 	}
-	
+
 	public void put(String coreId, Float load) {
-		m_coreLoads.put(coreId,load);
+		m_coreLoads.put(coreId, load);
 	}
-	
+
 	/**
 	 * @param cpuId: the cpu/core id, as listed in /proc/cpuinfo.
-	 * For example, for the core labelled "cpu0" in /proc/stat, 
+	 * For example, for the core labelled "cpu0" in /proc/stat,
 	 * use id "0".
 	 * @return The measured load for that core
 	 */
 	public Float getLoad(String cpuId) {
-		return m_coreLoads.get("cpu"+cpuId); //$NON-NLS-1$
+		return m_coreLoads.get("cpu" + cpuId); //$NON-NLS-1$
 	}
 }
-

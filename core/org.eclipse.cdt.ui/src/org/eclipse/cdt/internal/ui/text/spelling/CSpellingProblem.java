@@ -53,15 +53,15 @@ public class CSpellingProblem extends SpellingProblem {
 
 	/**
 	 * Initialize with the given spell event.
-	 * 
+	 *
 	 * @param spellEvent the spell event
 	 * @param document the document
 	 */
 	public CSpellingProblem(ISpellEvent spellEvent, IDocument document) {
 		Assert.isLegal(document != null);
 		Assert.isLegal(spellEvent != null);
-		fSpellEvent= spellEvent;
-		fDocument= document;
+		fSpellEvent = spellEvent;
+		fDocument = document;
 	}
 
 	/*
@@ -96,96 +96,86 @@ public class CSpellingProblem extends SpellingProblem {
 	 */
 	@Override
 	public ICompletionProposal[] getProposals() {
-		String[] arguments= getArguments();
+		String[] arguments = getArguments();
 		if (arguments == null)
 			return new ICompletionProposal[0];
-		
-		final int threshold= SpellingPreferences.spellingProposalThreshold();
-		int size= 0;
-		List<RankedWordProposal> proposals= null;
 
-		RankedWordProposal proposal= null;
-		ICCompletionProposal[] result= null;
-		int index= 0;
+		final int threshold = SpellingPreferences.spellingProposalThreshold();
+		int size = 0;
+		List<RankedWordProposal> proposals = null;
 
-		boolean fixed= false;
-		boolean match= false;
-		boolean sentence= false;
+		RankedWordProposal proposal = null;
+		ICCompletionProposal[] result = null;
+		int index = 0;
 
-		final ISpellCheckEngine engine= SpellCheckEngine.getInstance();
-		final ISpellChecker checker= engine.getSpellChecker();
+		boolean fixed = false;
+		boolean match = false;
+		boolean sentence = false;
+
+		final ISpellCheckEngine engine = SpellCheckEngine.getInstance();
+		final ISpellChecker checker = engine.getSpellChecker();
 
 		if (checker != null) {
-			CorrectionContext context= new CorrectionContext(null, getOffset(), getLength());
+			CorrectionContext context = new CorrectionContext(null, getOffset(), getLength());
 
 			// Hack borrowed from JDT.
-			fixed= arguments[0].charAt(0) == IHtmlTagConstants.HTML_TAG_PREFIX;
+			fixed = arguments[0].charAt(0) == IHtmlTagConstants.HTML_TAG_PREFIX;
 
 			if ((sentence && match) && !fixed) {
-				result= new ICCompletionProposal[] { new ChangeCaseProposal(
-						arguments, getOffset(), getLength(), context,
-						engine.getLocale()) };
-		    } else {
-				proposals= new ArrayList<RankedWordProposal>(checker.getProposals(arguments[0],
-						sentence));
-				size= proposals.size();
+				result = new ICCompletionProposal[] {
+						new ChangeCaseProposal(arguments, getOffset(), getLength(), context, engine.getLocale()) };
+			} else {
+				proposals = new ArrayList<RankedWordProposal>(checker.getProposals(arguments[0], sentence));
+				size = proposals.size();
 
 				if (threshold > 0 && size > threshold) {
 					Collections.sort(proposals);
-					proposals= proposals.subList(size - threshold - 1, size - 1);
-					size= proposals.size();
+					proposals = proposals.subList(size - threshold - 1, size - 1);
+					size = proposals.size();
 				}
 
-				boolean extendable= !fixed ? (checker.acceptsWords() || AddWordProposal.canAskToConfigure()) : false;
-				result= new ICCompletionProposal[size + (extendable ? 3 : 2)];
+				boolean extendable = !fixed ? (checker.acceptsWords() || AddWordProposal.canAskToConfigure()) : false;
+				result = new ICCompletionProposal[size + (extendable ? 3 : 2)];
 
-				for (index= 0; index < size; index++) {
-					proposal= proposals.get(index);
-					result[index]= new WordCorrectionProposal(proposal
-							.getText(), arguments, getOffset(), getLength(),
+				for (index = 0; index < size; index++) {
+					proposal = proposals.get(index);
+					result[index] = new WordCorrectionProposal(proposal.getText(), arguments, getOffset(), getLength(),
 							context, proposal.getRank());
 				}
 
 				if (extendable)
-					result[index++]= new AddWordProposal(arguments[0], context);
+					result[index++] = new AddWordProposal(arguments[0], context);
 
-				result[index++]= new WordIgnoreProposal(arguments[0], context);
-				result[index++]= new DisableSpellCheckingProposal(context);
+				result[index++] = new WordIgnoreProposal(arguments[0], context);
+				result[index++] = new DisableSpellCheckingProposal(context);
 			}
 		}
 
 		return result;
 	}
-	
+
 	public String[] getArguments() {
-		String prefix= ""; //$NON-NLS-1$
-		String postfix= ""; //$NON-NLS-1$
+		String prefix = ""; //$NON-NLS-1$
+		String postfix = ""; //$NON-NLS-1$
 		String word;
 		try {
-			word= fDocument.get(getOffset(), getLength());
+			word = fDocument.get(getOffset(), getLength());
 		} catch (BadLocationException e) {
 			return null;
 		}
 
 		try {
-			IRegion line= fDocument.getLineInformationOfOffset(getOffset());
-			int end= getOffset() + getLength();
-			prefix= fDocument.get(line.getOffset(), getOffset()
-					- line.getOffset());
-			postfix= fDocument.get(end + 1, line.getOffset() + line.getLength()
-					- end);
+			IRegion line = fDocument.getLineInformationOfOffset(getOffset());
+			int end = getOffset() + getLength();
+			prefix = fDocument.get(line.getOffset(), getOffset() - line.getOffset());
+			postfix = fDocument.get(end + 1, line.getOffset() + line.getLength() - end);
 		} catch (BadLocationException exception) {
 			// Do nothing
 		}
 
-		return new String[] {
-				word,
-				prefix,
-				postfix,
-				isSentenceStart() ? Boolean.toString(true) : Boolean
-						.toString(false),
-				isDictionaryMatch() ? Boolean.toString(true) : Boolean
-						.toString(false) };
+		return new String[] { word, prefix, postfix,
+				isSentenceStart() ? Boolean.toString(true) : Boolean.toString(false),
+				isDictionaryMatch() ? Boolean.toString(true) : Boolean.toString(false) };
 	}
 
 	/**

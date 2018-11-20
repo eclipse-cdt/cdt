@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -22,12 +22,11 @@ import org.eclipse.debug.core.model.IMemoryBlock;
  * An interface that offers the possibility to request information related to addresses for a given memory block
  * and within a specific context. It also offers the possibility to register listeners, listeners that can receive
  * notifications of changes/updates to the address information
- * 
+ *
  * @since 8.0
  */
 public interface IMemoryBlockAddressInfoRetrieval {
 
-    
 	/**
 	 * An indication of the type of change which may render the current memory address information out of date
 	 */
@@ -116,7 +115,7 @@ public interface IMemoryBlockAddressInfoRetrieval {
 	 */
 	public interface IAddressInfoUpdateListener {
 		/**
-		 * This method will be called for each registered listener, when there is a session change that may render 
+		 * This method will be called for each registered listener, when there is a session change that may render
 		 * previous memory address information out of date
 		 * @param update optional General purpose update object to e.g. determine changed values
 		 */
@@ -124,25 +123,25 @@ public interface IMemoryBlockAddressInfoRetrieval {
 	}
 
 	/**
-	 * Triggers an asynchronous request for Memory block address information 
-	 * 
+	 * Triggers an asynchronous request for Memory block address information
+	 *
 	 * @param context A reference to a session context
 	 * @param memoryBlock The memory block to be used in conjunction with the requested Address information
-	 * @param request This is the async request instance. Overriding its method "done()" allows to read and 
-	 * use the information items collected 
+	 * @param request This is the async request instance. Overriding its method "done()" allows to read and
+	 * use the information items collected
 	 */
 	void getMemoryBlockAddressInfo(Object context, IMemoryBlock memoryBlock, IGetMemoryBlockAddressInfoReq request);
 
 	/**
 	 * Register a listener so it can receive notifications of changes to address information items
-	 * 
+	 *
 	 * @param listener
 	 */
 	void addAddressInfoUpdateListener(IAddressInfoUpdateListener listener);
 
 	/**
 	 * Removes a listener so it no longer receives notifications
-	 * 
+	 *
 	 * @param The listener to remove. Nothing will happen if that listener is not registered already
 	 */
 	void removeAddressInfoUpdateListener(IAddressInfoUpdateListener listener);

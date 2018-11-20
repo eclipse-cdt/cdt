@@ -46,7 +46,6 @@ import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
 import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-
 /**
  * This class represents a preference page that is contributed to the
  * Preferences dialog. By Provided GUI for SharedDefaults settings for the
@@ -167,7 +166,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	 */
 
 	private void initializeDefaults() {
-		columnNames = new String[] { Messages.getString("TemplatePreferencePage.10"), Messages.getString("TemplatePreferencePage.11") };  //$NON-NLS-1$//$NON-NLS-2$
+		columnNames = new String[] { Messages.getString("TemplatePreferencePage.10"), //$NON-NLS-1$
+				Messages.getString("TemplatePreferencePage.11") }; //$NON-NLS-1$
 		// Setting InfoPop help (plugin-id+ContextID).
 		pageID = CUIPlugin.getPluginId() + "." + //$NON-NLS-1$
 				SharedContextHelpID;
@@ -268,8 +268,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 	private void createTable(Composite composite) {
 
-		table = new Table(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER
-				| SWT.NO_REDRAW_RESIZE);
+		table = new Table(composite,
+				SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER | SWT.NO_REDRAW_RESIZE);
 
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = convertHeightInCharsToPixels(10);
@@ -592,4 +592,3 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	}
 
 }
-

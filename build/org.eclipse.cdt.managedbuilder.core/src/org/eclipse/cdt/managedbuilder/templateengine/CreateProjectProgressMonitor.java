@@ -28,16 +28,16 @@ public class CreateProjectProgressMonitor extends NullProgressMonitor {
 	public CreateProjectProgressMonitor() {
 		super();
 	}
-	
+
 	public CreateProjectProgressMonitor(String taskName) {
 		super();
 		super.setTaskName(taskName);
 	}
-	
+
 	/**
 	 * Override this method to do something
 	 * with the name of the task.
-	 * 
+	 *
 	 * @see IProgressMonitor#setTaskName(String)
 	 */
 	@Override
@@ -57,7 +57,7 @@ public class CreateProjectProgressMonitor extends NullProgressMonitor {
 	}
 
 	/**
-	 * This implementation returns the value of the internal 
+	 * This implementation returns the value of the internal
 	 * state variable set by <code>setCanceled</code>.
 	 *
 	 * @see IProgressMonitor#isCanceled()
@@ -67,7 +67,5 @@ public class CreateProjectProgressMonitor extends NullProgressMonitor {
 	public boolean isCanceled() {
 		return super.isCanceled();
 	}
-
-
 
 }

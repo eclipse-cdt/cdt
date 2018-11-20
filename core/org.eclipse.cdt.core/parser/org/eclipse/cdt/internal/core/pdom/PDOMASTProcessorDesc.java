@@ -138,7 +138,7 @@ public class PDOMASTProcessorDesc {
 	}
 
 	// Activates the plugin if needed.
-	public IPDOMASTProcessor getProcessorFor(IASTTranslationUnit  ast) {
+	public IPDOMASTProcessor getProcessorFor(IASTTranslationUnit ast) {
 		// If there isn't an ast with an AST-TU accessible, then there is no way to defer processing,
 		// just return the processor and let it try to sort things out. E.g., this happens for built-in
 		// things.

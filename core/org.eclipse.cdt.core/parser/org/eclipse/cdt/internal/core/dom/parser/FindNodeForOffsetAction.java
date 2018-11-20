@@ -30,15 +30,14 @@ public class FindNodeForOffsetAction extends ASTGenericVisitor {
 
 	public FindNodeForOffsetAction(ASTNodeSpecification<?> nodeSpec) {
 		super(!nodeSpec.requiresClass(IASTName.class));
-		fNodeSpec= nodeSpec;
+		fNodeSpec = nodeSpec;
 
 		shouldVisitNames = true;
-		shouldVisitDeclarations= true;
-		includeInactiveNodes= true;
+		shouldVisitDeclarations = true;
+		includeInactiveNodes = true;
 
 		// only visit implicit names if asked
-		shouldVisitImplicitNames =
-		shouldVisitImplicitNameAlternates = nodeSpec.requiresClass(IASTImplicitName.class);
+		shouldVisitImplicitNames = shouldVisitImplicitNameAlternates = nodeSpec.requiresClass(IASTImplicitName.class);
 	}
 
 	@Override

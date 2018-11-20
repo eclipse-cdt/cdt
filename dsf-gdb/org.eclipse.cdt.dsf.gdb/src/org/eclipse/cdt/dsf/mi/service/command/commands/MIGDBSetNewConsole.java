@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Kichwa Coders - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
  * -gdb-set new-console on|off
  *
  * Set whether to start in a new console or not
- * 
+ *
  * @since 5.4
  */
 public class MIGDBSetNewConsole extends MIGDBSet {

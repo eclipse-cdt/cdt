@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Freescale Semiconductor - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import java.math.BigInteger;
  * changes.
  */
 public interface IMemoryRenderingViewportProvider {
-	
+
 	/**
 	 * Return the first address being shown in the rendering. Subject to scrolling.
 	 */

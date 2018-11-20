@@ -58,7 +58,7 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 	// Map of the cache scannerInfos
 
 	public static synchronized IScannerInfoProvider getInstance() {
-		if ( fProvider == null) {
+		if (fProvider == null) {
 			fProvider = new ScannerProvider();
 			CoreModel.getDefault().addElementChangedListener(fProvider);
 		}
@@ -203,23 +203,22 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 	public void elementChanged(ElementChangedEvent event) {
 		try {
 			processDelta(event.getDelta());
-		} catch(CModelException e) {
+		} catch (CModelException e) {
 		}
 	}
 
 	protected boolean isPathEntryChange(ICElementDelta delta) {
-		int flags= delta.getFlags();
-		return (delta.getKind() == ICElementDelta.CHANGED &&
-				((flags & ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE) != 0 ||
-				(flags & ICElementDelta.F_CHANGED_PATHENTRY_MACRO) != 0 ||
-				(flags & ICElementDelta.F_PATHENTRY_REORDER) !=0));
+		int flags = delta.getFlags();
+		return (delta.getKind() == ICElementDelta.CHANGED && ((flags & ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE) != 0
+				|| (flags & ICElementDelta.F_CHANGED_PATHENTRY_MACRO) != 0
+				|| (flags & ICElementDelta.F_PATHENTRY_REORDER) != 0));
 	}
 
 	/**
 	 * Processes a delta recursively.
 	 */
 	protected void processDelta(ICElementDelta delta) throws CModelException {
-		ICElement element= delta.getElement();
+		ICElement element = delta.getElement();
 
 		if (isPathEntryChange(delta)) {
 			IResource res = element.getResource();
@@ -231,7 +230,7 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 			notifyInfoListeners(project, info);
 		}
 
-		ICElementDelta[] affectedChildren= delta.getAffectedChildren();
+		ICElementDelta[] affectedChildren = delta.getAffectedChildren();
 		for (ICElementDelta element2 : affectedChildren) {
 			processDelta(element2);
 		}

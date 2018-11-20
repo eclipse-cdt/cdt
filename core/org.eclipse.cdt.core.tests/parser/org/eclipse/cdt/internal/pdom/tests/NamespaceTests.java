@@ -61,7 +61,8 @@ public class NamespaceTests extends PDOMTestBase {
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
-			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 		}
 	}
 
@@ -90,7 +91,8 @@ public class NamespaceTests extends PDOMTestBase {
 
 	public void testNested() throws Exception {
 		// Find deeply nested namespace
-		Pattern[] patterns = {Pattern.compile("namespace1"), Pattern.compile("namespace2"), Pattern.compile("namespace3")};
+		Pattern[] patterns = { Pattern.compile("namespace1"), Pattern.compile("namespace2"),
+				Pattern.compile("namespace3") };
 		IBinding[] namespaces = pdom.findBindings(patterns, false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, namespaces.length);
 		assertTrue(namespaces[0] instanceof ICPPNamespace);
@@ -98,7 +100,7 @@ public class NamespaceTests extends PDOMTestBase {
 
 	public void testMemberDefinition() throws Exception {
 		// Find the definition of a member declared in a namespace
-		Pattern[] patterns = {Pattern.compile("namespace1"), Pattern.compile("namespace2"), Pattern.compile("foo")};
+		Pattern[] patterns = { Pattern.compile("namespace1"), Pattern.compile("namespace2"), Pattern.compile("foo") };
 		IBinding[] members = pdom.findBindings(patterns, false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, members.length);
 		assertTrue(members[0] instanceof ICPPFunction);
@@ -120,14 +122,14 @@ public class NamespaceTests extends PDOMTestBase {
 		assertEquals(1, namespaces.length);
 		assertTrue(namespaces[0] instanceof ICPPNamespace);
 		ICPPNamespace namespace1 = (ICPPNamespace) namespaces[0];
-		Pattern[] patterns = {Pattern.compile("ns1"), Pattern.compile("c")};
+		Pattern[] patterns = { Pattern.compile("ns1"), Pattern.compile("c") };
 		IBinding[] members = pdom.findBindings(patterns, false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, members.length); // c was added by extending the namespace
 	}
 
 	public void testOverload() throws Exception {
 		// Function overloading in namespace
-		Pattern[] patterns = {Pattern.compile("ns3"), Pattern.compile("blah")};
+		Pattern[] patterns = { Pattern.compile("ns3"), Pattern.compile("blah") };
 		IBinding[] functions = pdom.findBindings(patterns, false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, functions.length);
 		assertTrue(functions[0] instanceof ICPPFunction);
@@ -197,7 +199,7 @@ public class NamespaceTests extends PDOMTestBase {
 
 	public void testUsingDirective() throws Exception {
 		// TODO need to test for PDOM?  or is it more for compiler?
-		Pattern[] patterns = {Pattern.compile("ns4"), Pattern.compile("element")};
+		Pattern[] patterns = { Pattern.compile("ns4"), Pattern.compile("element") };
 		IBinding[] variables = pdom.findBindings(patterns, false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, variables.length);
 		assertTrue(variables[0] instanceof ICPPVariable);

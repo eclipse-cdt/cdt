@@ -35,15 +35,15 @@ public class CLineDynamicPrintf extends AbstractDynamicPrintf implements ICDynam
 	public CLineDynamicPrintf() {
 	}
 
-	public CLineDynamicPrintf( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, attributes, add );
+	public CLineDynamicPrintf(IResource resource, Map<String, Object> attributes, boolean add) throws CoreException {
+		super(resource, attributes, add);
 	}
 
 	@Override
 	public String getMarkerType() {
-	    return C_LINE_DYNAMICPRINTF_MARKER;
+		return C_LINE_DYNAMICPRINTF_MARKER;
 	}
-	
+
 	/*(non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
@@ -54,23 +54,22 @@ public class CLineDynamicPrintf extends AbstractDynamicPrintf implements ICDynam
 		int bp_request_line = 0;
 		String bp_file = null;
 		String bp_reqest_file = null;
-		
+
 		if (marker != null) {
 			bp_line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
 			bp_request_line = marker.getAttribute(ICLineBreakpoint2.REQUESTED_LINE, -1);
-			bp_file = marker.getAttribute(ICBreakpoint.SOURCE_HANDLE, (String)null);
-            bp_reqest_file = marker.getAttribute(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE, (String)null);
+			bp_file = marker.getAttribute(ICBreakpoint.SOURCE_HANDLE, (String) null);
+			bp_reqest_file = marker.getAttribute(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE, (String) null);
 		}
-		
-		if (bp_line != bp_request_line || 
-		    (bp_file == null && bp_reqest_file != null) ||  
-		    (bp_file != null && !bp_file.equals(bp_reqest_file)) ) 
-		{
-			return MessageFormat.format( BreakpointMessages.getString( "CLineDynamicPrintf.1" ), (Object[])new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$			
-		}
-		else {
-			return MessageFormat.format( BreakpointMessages.getString( "CLineDynamicPrintf.0" ), (Object[])new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
+
+		if (bp_line != bp_request_line || (bp_file == null && bp_reqest_file != null)
+				|| (bp_file != null && !bp_file.equals(bp_reqest_file))) {
+			return MessageFormat.format(BreakpointMessages.getString("CLineDynamicPrintf.1"), //$NON-NLS-1$
+					(Object[]) new String[] { CDebugUtils.getBreakpointText(this, false) });
+		} else {
+			return MessageFormat.format(BreakpointMessages.getString("CLineDynamicPrintf.0"), //$NON-NLS-1$
+					(Object[]) new String[] { CDebugUtils.getBreakpointText(this, false) });
 
 		}
-	}	
+	}
 }

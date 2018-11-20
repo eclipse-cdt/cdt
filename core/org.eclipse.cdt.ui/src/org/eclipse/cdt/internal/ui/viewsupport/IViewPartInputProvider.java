@@ -17,7 +17,7 @@ package org.eclipse.cdt.internal.ui.viewsupport;
  * Interface common to all view parts that provide an input.
  */
 public interface IViewPartInputProvider {
-	
+
 	/**
 	 * Returns the input.
 	 *

@@ -41,51 +41,51 @@ public class ExternalEditorInputFactory implements IElementFactory {
 
 	public static final String ID = "org.eclipse.cdt.ui.ExternalEditorInputFactory"; //$NON-NLS-1$
 
-    private static final String TAG_PATH = "path";//$NON-NLS-1$
-    private static final String TAG_PROJECT = "project";//$NON-NLS-1$
+	private static final String TAG_PATH = "path";//$NON-NLS-1$
+	private static final String TAG_PROJECT = "project";//$NON-NLS-1$
 
 	/*
 	 * @see org.eclipse.ui.IElementFactory#createElement(org.eclipse.ui.IMemento)
 	 */
 	@Override
 	public IAdaptable createElement(IMemento memento) {
-        // Get the file name.
-        String fileName = memento.getString(TAG_PATH);
-        if (fileName == null) {
+		// Get the file name.
+		String fileName = memento.getString(TAG_PATH);
+		if (fileName == null) {
 			return null;
 		}
 
-        IPath location= new Path(fileName);
-        ICProject cProject= null;
-        
-        String projectName= memento.getString(TAG_PROJECT);
-        if (projectName != null) {
-        	IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-        	if (project.isAccessible() && CoreModel.hasCNature(project)) {
-        		cProject= CoreModel.getDefault().create(project);
-        	}
-        }
+		IPath location = new Path(fileName);
+		ICProject cProject = null;
+
+		String projectName = memento.getString(TAG_PROJECT);
+		if (projectName != null) {
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+			if (project.isAccessible() && CoreModel.hasCNature(project)) {
+				cProject = CoreModel.getDefault().create(project);
+			}
+		}
 		return EditorUtility.getEditorInputForLocation(location, cProject);
 	}
 
 	/**
 	 * Save the element state.
-	 * 
+	 *
 	 * @param memento  the storage
 	 * @param input  the element
 	 */
 	static void saveState(IMemento memento, ExternalEditorInput input) {
-		IPath location= input.getPath();
+		IPath location = input.getPath();
 		if (location != null) {
 			memento.putString(TAG_PATH, location.toOSString());
 		}
-		IProject project= null;
-		ITranslationUnit unit= input.getTranslationUnit();
+		IProject project = null;
+		ITranslationUnit unit = input.getTranslationUnit();
 		if (unit != null) {
-			project= unit.getCProject().getProject();
+			project = unit.getCProject().getProject();
 		}
 		if (project == null && input.getMarkerResource() instanceof IProject) {
-			project= (IProject)input.getMarkerResource();
+			project = (IProject) input.getMarkerResource();
 		}
 		if (project != null) {
 			memento.putString(TAG_PROJECT, project.getName());

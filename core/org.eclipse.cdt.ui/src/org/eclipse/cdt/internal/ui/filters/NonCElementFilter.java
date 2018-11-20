@@ -23,13 +23,11 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-
-
 /**
  * Filters out all non-C elements.
  */
-public class NonCElementFilter  extends ViewerFilter {
-	
+public class NonCElementFilter extends ViewerFilter {
+
 	/**
 	 * Returns the result of this filter, when applied to the
 	 * given inputs.
@@ -42,20 +40,20 @@ public class NonCElementFilter  extends ViewerFilter {
 			return true;
 
 		if (element instanceof IProject) {
-			IProject project = (IProject)element;
+			IProject project = (IProject) element;
 			if (!project.isOpen() || CoreModel.hasCNature(project)) {
 				return true;
 			}
 			return false;
 		} else if (element instanceof IResource) {
-			IProject project= ((IResource)element).getProject();
+			IProject project = ((IResource) element).getProject();
 			return project == null || !project.isOpen();
 		}
 
 		// Exclude all IStorage elements which are neither C elements nor resources
 		if (element instanceof IStorage)
 			return false;
-			
+
 		return true;
 	}
 }

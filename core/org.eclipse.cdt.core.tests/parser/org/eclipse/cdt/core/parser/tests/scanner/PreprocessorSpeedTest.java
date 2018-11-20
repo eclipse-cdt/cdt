@@ -33,8 +33,8 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
-public class PreprocessorSpeedTest  {
-	
+public class PreprocessorSpeedTest {
+
 	private PrintStream stream;
 
 	public static void main(String[] args) {
@@ -57,13 +57,10 @@ public class PreprocessorSpeedTest  {
 		this.stream = stream;
 		runTest(n);
 	}
-	
+
 	private void runTest(int n) throws Exception {
-		String code = 
-			"#include <windows.h>\n" +
-			"#include <stdio.h>\n" +
-			"#include <iostream>\n";
-		
+		String code = "#include <windows.h>\n" + "#include <stdio.h>\n" + "#include <iostream>\n";
+
 		FileContent reader = FileContent.create("<test-code>", code.toCharArray());
 		IScannerInfo info = getScannerInfo();
 		long totalTime = 0;
@@ -72,48 +69,47 @@ public class PreprocessorSpeedTest  {
 			if (i > 0)
 				totalTime += time;
 		}
-		
+
 		if (n > 1) {
 			System.out.println("Average Time: " + (totalTime / (n - 1)) + " millisecs");
 		}
 	}
 
-	protected long testScan(FileContent reader, boolean quick, IScannerInfo info, ParserLanguage lang) throws Exception {
-		FileCodeReaderFactory readerFactory= FileCodeReaderFactory.getInstance();
+	protected long testScan(FileContent reader, boolean quick, IScannerInfo info, ParserLanguage lang)
+			throws Exception {
+		FileCodeReaderFactory readerFactory = FileCodeReaderFactory.getInstance();
 		IScannerExtensionConfiguration scannerConfig;
-	    if (lang == ParserLanguage.C) {
-	    	scannerConfig= GCCScannerExtensionConfiguration.getInstance();
-	    }
-	    else {
-	    	scannerConfig= GPPScannerExtensionConfiguration.getInstance(info);
-	    }
+		if (lang == ParserLanguage.C) {
+			scannerConfig = GCCScannerExtensionConfiguration.getInstance();
+		} else {
+			scannerConfig = GPPScannerExtensionConfiguration.getInstance(info);
+		}
 		ParserMode mode = ParserMode.COMPLETE_PARSE;
-		CPreprocessor cpp= new CPreprocessor(reader, info, lang, new NullLogService(), scannerConfig, readerFactory);
+		CPreprocessor cpp = new CPreprocessor(reader, info, lang, new NullLogService(), scannerConfig, readerFactory);
 		cpp.getLocationMap().setRootNode(new CPPASTTranslationUnit());
 		long startTime = System.currentTimeMillis();
 		int count = 0;
 		try {
 			while (true) {
-					IToken t = cpp.nextToken();
-					
-					if (stream != null)
-						stream.println(t.getImage());
-					
-					if (t == null)
-						break;
-					++count;
-				
+				IToken t = cpp.nextToken();
+
+				if (stream != null)
+					stream.println(t.getImage());
+
+				if (t == null)
+					break;
+				++count;
+
 			}
 		} catch (EndOfFileException e2) {
 		}
 		long totalTime = System.currentTimeMillis() - startTime;
-		System.out.println( "Resulting scan took " + totalTime + " millisecs " +
-				count + " tokens");
+		System.out.println("Resulting scan took " + totalTime + " millisecs " + count + " tokens");
 		return totalTime;
 	}
-	
+
 	protected IScannerInfo getScannerInfo() {
-		String config = System.getProperty("speedTest.config"); 
+		String config = System.getProperty("speedTest.config");
 
 		if (config == null)
 			return mingwScannerInfo();
@@ -231,21 +227,17 @@ public class PreprocessorSpeedTest  {
 		Map definitions = new Hashtable();
 		//definitions.put( "__GNUC__", "3" );  //$NON-NLS-1$ //$NON-NLS-2$
 
-		String [] includePaths = new String[] {
-			"C:\\Program Files\\Microsoft SDK\\Include",
-			"C:\\Program Files\\Microsoft Visual C++ Toolkit 2003\\include"
-		};
-		return new ScannerInfo( definitions, includePaths );
+		String[] includePaths = new String[] { "C:\\Program Files\\Microsoft SDK\\Include",
+				"C:\\Program Files\\Microsoft Visual C++ Toolkit 2003\\include" };
+		return new ScannerInfo(definitions, includePaths);
 	}
 
 	protected IScannerInfo msvc98ScannerInfo() {
 		Map definitions = new Hashtable();
-		String [] includePaths = new String[] {
-			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include"
-		};
-		return new ScannerInfo( definitions, includePaths );
+		String[] includePaths = new String[] { "C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include" };
+		return new ScannerInfo(definitions, includePaths);
 	}
-	
+
 	protected IScannerInfo mingwScannerInfo() {
 		// TODO It would be easier and more flexible if we used discovery for this
 		Map definitions = new Hashtable();
@@ -278,16 +270,12 @@ public class PreprocessorSpeedTest  {
 		definitions.put("__declspec(x)", "__attribute__((x))");
 		definitions.put("__DEPRECATED", "");
 		definitions.put("__EXCEPTIONS", "");
-		
-		String [] includePaths = new String[] {
-			"c:/mingw/include/c++/3.2.3",
-			"c:/mingw/include/c++/3.2.3/mingw32",
-			"c:/mingw/include/c++/3.2.3/backward",
-			"c:/mingw/include",
-			"c:/mingw/lib/gcc-lib/mingw32/3.2.3/include"
-		};
 
-		return new ScannerInfo( definitions, includePaths );
+		String[] includePaths = new String[] { "c:/mingw/include/c++/3.2.3", "c:/mingw/include/c++/3.2.3/mingw32",
+				"c:/mingw/include/c++/3.2.3/backward", "c:/mingw/include",
+				"c:/mingw/lib/gcc-lib/mingw32/3.2.3/include" };
+
+		return new ScannerInfo(definitions, includePaths);
 	}
 
 	protected IScannerInfo ydlScannerInfo() {
@@ -305,17 +293,12 @@ public class PreprocessorSpeedTest  {
 		definitions.put("linux", "");
 		definitions.put("__linux", "");
 		definitions.put("__GNUG__", "3");
-		
-		String [] includePaths = new String[] {
-			"/usr/include/g++",
-			"/usr/include/g++/powerpc-yellowdog-linux",
-			"/usr/include/g++/backward",
-			"/usr/local/include",
-			"/usr/lib/gcc-lib/powerpc-yellowdog-linux/3.3.3/include",
-			"/usr/include"
-		};
 
-		return new ScannerInfo( definitions, includePaths );
+		String[] includePaths = new String[] { "/usr/include/g++", "/usr/include/g++/powerpc-yellowdog-linux",
+				"/usr/include/g++/backward", "/usr/local/include",
+				"/usr/lib/gcc-lib/powerpc-yellowdog-linux/3.3.3/include", "/usr/include" };
+
+		return new ScannerInfo(definitions, includePaths);
 	}
 
 }

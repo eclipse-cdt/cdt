@@ -55,7 +55,8 @@ import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
 
 public class IncludeUtil {
 	/** Not instantiatable. All methods are static. */
-	private IncludeUtil() {}
+	private IncludeUtil() {
+	}
 
 	/**
 	 * Checks if a file is a source file (.c, .cpp, .cc, etc). Header files are not considered
@@ -71,7 +72,7 @@ public class IncludeUtil {
 	 * @return {@code true} if the the file is a source file.
 	 */
 	public static boolean isSource(String filename, IProject project) {
-		IContentType ct= CCorePlugin.getContentType(project, filename);
+		IContentType ct = CCorePlugin.getContentType(project, filename);
 		if (ct != null) {
 			String id = ct.getId();
 			if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id) || CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
@@ -87,7 +88,7 @@ public class IncludeUtil {
 	 * @return {@code true} if the the file is a header file.
 	 */
 	public static boolean isHeader(String filename, IProject project) {
-		IContentType ct= CCorePlugin.getContentType(project, filename);
+		IContentType ct = CCorePlugin.getContentType(project, filename);
 		if (ct != null) {
 			String id = ct.getId();
 			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id) || CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
@@ -135,7 +136,7 @@ public class IncludeUtil {
 		IASTDeclaration[] declarations = ast.getDeclarations(true);
 		if (declarations.length != 0)
 			maxSafeOffset = declarations[0].getFileLocation().getNodeOffset();
-	
+
 		boolean topCommentSkipped = false;
 		int includeOffset = -1;
 		int includeEndOffset = -1;
@@ -148,7 +149,7 @@ public class IncludeUtil {
 				if (offset >= maxSafeOffset)
 					break;
 				int endOffset = offset + fileLocation.getNodeLength();
-	
+
 				if (includeGuardStatementsToSkip > 0) {
 					--includeGuardStatementsToSkip;
 					includeGuardEndOffset = endOffset;
@@ -159,7 +160,7 @@ public class IncludeUtil {
 					if (includeOffset < 0)
 						includeOffset = offset;
 					includeEndOffset = endOffset;
-					includeGuardStatementsToSkip = 0;  // Just in case
+					includeGuardStatementsToSkip = 0; // Just in case
 				} else {
 					break;
 				}
@@ -172,9 +173,9 @@ public class IncludeUtil {
 				includeOffset = 0;
 			}
 			if (!topCommentSkipped) {
-				// Skip the first comment block near the top of the file. 
-				includeOffset = skipStandaloneCommentBlock(contents, includeOffset, maxSafeOffset,
-						ast.getComments(), commentMap);
+				// Skip the first comment block near the top of the file.
+				includeOffset = skipStandaloneCommentBlock(contents, includeOffset, maxSafeOffset, ast.getComments(),
+						commentMap);
 			}
 			includeEndOffset = includeOffset;
 		} else {
@@ -202,8 +203,8 @@ public class IncludeUtil {
 				String path = include.getPath();
 				// An empty path means that the include was not resolved.
 				IPath header = path.isEmpty() ? null : Path.fromOSString(path);
-				IncludeGroupStyle style =
-						header != null ? inclusionContext.getIncludeStyle(header) : inclusionContext.getIncludeStyle(includeInfo);
+				IncludeGroupStyle style = header != null ? inclusionContext.getIncludeStyle(header)
+						: inclusionContext.getIncludeStyle(includeInfo);
 				StyledInclude prototype = new StyledInclude(header, includeInfo, style, include);
 				includes.add(prototype);
 			}
@@ -234,7 +235,7 @@ public class IncludeUtil {
 			i++;
 		}
 		IASTPreprocessorStatement statement = preprocessorStatements[i];
-	
+
 		int offset = 0;
 		if (isPragmaOnce(statement)) {
 			offset = ASTNodes.endOffset(statement);
@@ -250,8 +251,8 @@ public class IncludeUtil {
 			statement = preprocessorStatements[i];
 			if (statement.isPartOfTranslationUnitFile()) {
 				if (count < 2) {
-					findGuardInRange(contents, guard, ASTNodes.offset(statement),
-							ASTNodes.endOffset(statement), includeGuardPositions);
+					findGuardInRange(contents, guard, ASTNodes.offset(statement), ASTNodes.endOffset(statement),
+							includeGuardPositions);
 					count++;
 				} else {
 					lastStatement = statement;
@@ -259,8 +260,7 @@ public class IncludeUtil {
 			}
 		}
 		if (lastStatement != null) {
-			findGuardInRange(contents, guard, ASTNodes.offset(lastStatement),
-					contents.length(), includeGuardPositions);
+			findGuardInRange(contents, guard, ASTNodes.offset(lastStatement), contents.length(), includeGuardPositions);
 		}
 		return guard;
 	}
@@ -269,12 +269,12 @@ public class IncludeUtil {
 		IASTPreprocessorStatement statement = findFirstPreprocessorStatement(ast);
 		if (statement == null)
 			return 0;
-	
+
 		int num = 0;
 		int offset = 0;
 		if (isPragmaOnce(statement)) {
 			num++;
-			offset = ASTNodes.endOffset(statement); 
+			offset = ASTNodes.endOffset(statement);
 		}
 		char[] guard = detectIncludeGuard(contents, offset);
 		if (guard != null) {
@@ -287,10 +287,10 @@ public class IncludeUtil {
 		char[] contentsChars = contents.toCharArray();
 		if (offset != 0)
 			contentsChars = Arrays.copyOfRange(contentsChars, offset, contentsChars.length);
-		CharArrayIntMap ppKeywords= new CharArrayIntMap(40, -1);
+		CharArrayIntMap ppKeywords = new CharArrayIntMap(40, -1);
 		Keywords.addKeywordsPreprocessor(ppKeywords);
-		char[] guardChars = IncludeGuardDetection.detectIncludeGuard(
-				new CharArray(contentsChars), new LexerOptions(), ppKeywords);
+		char[] guardChars = IncludeGuardDetection.detectIncludeGuard(new CharArray(contentsChars), new LexerOptions(),
+				ppKeywords);
 		return guardChars;
 	}
 
@@ -302,8 +302,8 @@ public class IncludeUtil {
 		}
 	}
 
-	private static int skipStandaloneCommentBlock(String contents, int offset, int endOffset,
-			IASTComment[] comments, NodeCommentMap commentMap) {
+	private static int skipStandaloneCommentBlock(String contents, int offset, int endOffset, IASTComment[] comments,
+			NodeCommentMap commentMap) {
 		Map<IASTComment, IASTNode> inverseLeadingMap = new HashMap<>();
 		for (Map.Entry<IASTNode, List<IASTComment>> entry : commentMap.getLeadingMap().entrySet()) {
 			IASTNode node = entry.getKey();
@@ -322,7 +322,7 @@ public class IncludeUtil {
 				}
 			}
 		}
-	
+
 		for (int i = 0; i < comments.length; i++) {
 			IASTComment comment = comments[i];
 			int commentOffset = ASTNodes.offset(comment);

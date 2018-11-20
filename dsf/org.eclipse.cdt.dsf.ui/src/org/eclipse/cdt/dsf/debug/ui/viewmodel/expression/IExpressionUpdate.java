@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,14 +23,14 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  */
 public interface IExpressionUpdate extends IViewerUpdate {
 
-    /**
-     * Returns the expression object for this update.
-     */
-    public IExpression getExpression();
-    
-    /**
-     * Sets the element to the update.  The element is to be calculated by the provider
-     * handling the update.
-     */
-    public void setExpressionElement(Object element);
+	/**
+	 * Returns the expression object for this update.
+	 */
+	public IExpression getExpression();
+
+	/**
+	 * Sets the element to the update.  The element is to be calculated by the provider
+	 * handling the update.
+	 */
+	public void setExpressionElement(Object element);
 }

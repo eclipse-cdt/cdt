@@ -20,70 +20,70 @@ import org.eclipse.ui.IPersistableElement;
 
 public class DisassemblyEditorInput implements IEditorInput {
 
-    private Object fDebugContext;
-    private Object fDisassemblyContext;
+	private Object fDebugContext;
+	private Object fDisassemblyContext;
 
-    public DisassemblyEditorInput( Object debugContext, Object disassemblyContext ) {
-        fDisassemblyContext = disassemblyContext;
-        fDebugContext = debugContext;
-    }
+	public DisassemblyEditorInput(Object debugContext, Object disassemblyContext) {
+		fDisassemblyContext = disassemblyContext;
+		fDebugContext = debugContext;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IEditorInput#exists()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorInput#exists()
+	 */
+	@Override
 	public boolean exists() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
+	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IEditorInput#getName()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorInput#getName()
+	 */
+	@Override
 	public String getName() {
-        // TODO Auto-generated method stub
-        return ""; //$NON-NLS-1$
-    }
+		// TODO Auto-generated method stub
+		return ""; //$NON-NLS-1$
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IEditorInput#getPersistable()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorInput#getPersistable()
+	 */
+	@Override
 	public IPersistableElement getPersistable() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IEditorInput#getToolTipText()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
+	 */
+	@Override
 	public String getToolTipText() {
-        // TODO Auto-generated method stub
-        return ""; //$NON-NLS-1$
-    }
+		// TODO Auto-generated method stub
+		return ""; //$NON-NLS-1$
+	}
 
-    @Override
-    public <T> T getAdapter( Class<T> adapter ) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    public Object getDisassemblyContext() {
-        return fDisassemblyContext;
-    }
+	public Object getDisassemblyContext() {
+		return fDisassemblyContext;
+	}
 
-    public Object getDebugContext() {
-        return fDebugContext;
-    }
+	public Object getDebugContext() {
+		return fDebugContext;
+	}
 }

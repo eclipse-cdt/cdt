@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 class TrailName extends ASTNode {
 	private int nameNumber;
 	private IASTName realName;
-	
+
 	public TrailName(IASTName realName) {
 		super();
 		this.realName = realName;
@@ -51,7 +51,7 @@ class TrailName extends ASTNode {
 				return cppBind.isGloballyQualified();
 			}
 		} catch (DOMException e) {
-		}			
+		}
 		return false;
 	}
 

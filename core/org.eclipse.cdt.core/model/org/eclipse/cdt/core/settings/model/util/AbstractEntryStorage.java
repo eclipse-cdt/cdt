@@ -22,73 +22,73 @@ import org.eclipse.cdt.core.settings.model.util.SettingsSet.SettingLevel;
 
 public abstract class AbstractEntryStorage {
 	private int fKind;
-	
+
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	public AbstractEntryStorage(int kind){
+	public AbstractEntryStorage(int kind) {
 		fKind = kind;
 	}
-	
-	public int getKind(){
+
+	public int getKind() {
 		return fKind;
 	}
-	
-	public List<ICLanguageSettingEntry> getEntries(List<ICLanguageSettingEntry> list){
+
+	public List<ICLanguageSettingEntry> getEntries(List<ICLanguageSettingEntry> list) {
 		SettingsSet settings = initCache();
-		if(list == null)
+		if (list == null)
 			list = new ArrayList<ICLanguageSettingEntry>();
-		
+
 		ICLanguageSettingEntry entries[] = settings.getEntries();
 		list.addAll(Arrays.asList(entries));
 		return list;
 	}
-	
-	protected void resetDefaults(){
+
+	protected void resetDefaults() {
 		SettingsSet settings = createEmptySettings();
 		SettingLevel[] levels = settings.getLevels();
-		for(int i = 0; i < levels.length; i++){
+		for (int i = 0; i < levels.length; i++) {
 			obtainEntriesFromLevel(i, null);
 		}
 	}
-	
-	public void setEntries(ICLanguageSettingEntry entries[]){
-		if(entries == null){
+
+	public void setEntries(ICLanguageSettingEntry entries[]) {
+		if (entries == null) {
 			resetDefaults();
 			return;
 		}
 		SettingsSet settings = initCache();
-		
+
 		settings.applyEntries(entries);
-		
+
 		SettingLevel levels[] = settings.getLevels();
-		
-		for(int i = 0; i < levels.length; i++){
+
+		for (int i = 0; i < levels.length; i++) {
 			obtainEntriesFromLevel(i, levels[i]);
 		}
 	}
-	
-	protected SettingsSet initCache(){
+
+	protected SettingsSet initCache() {
 		SettingsSet settings = createEmptySettings();
 		SettingLevel levels[] = settings.getLevels();
-		for(int i = 0; i < levels.length; i++){
+		for (int i = 0; i < levels.length; i++) {
 			putEntriesToLevel(i, levels[i]);
 		}
-			
+
 		settings.adjustOverrideState();
-			
+
 		return settings;
 	}
-	
+
 	protected abstract void putEntriesToLevel(int levelNum, SettingLevel level);
 
 	protected abstract void obtainEntriesFromLevel(int levelNum, SettingLevel level);
 
 	protected abstract SettingsSet createEmptySettings();
-	
-	public static String[] macroNameValueFromValue(String value){
+
+	public static String[] macroNameValueFromValue(String value) {
 		String nv[] = new String[2];
 		int index = value.indexOf('=');
-		if(index > 0){
+		if (index > 0) {
 			nv[0] = value.substring(0, index);
 			nv[1] = value.substring(index + 1);
 		} else {
@@ -98,4 +98,3 @@ public abstract class AbstractEntryStorage {
 		return nv;
 	}
 }
-

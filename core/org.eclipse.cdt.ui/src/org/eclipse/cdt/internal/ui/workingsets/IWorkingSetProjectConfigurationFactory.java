@@ -42,42 +42,41 @@ import org.eclipse.cdt.internal.ui.workingsets.WorkspaceSnapshot.ProjectState;
 /**
  * Protocol for a factory of {@link IWorkingSetProjectConfiguration}s. Factories are {@linkplain Registry
  * registered} against project natures.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 public interface IWorkingSetProjectConfigurationFactory {
 	/**
 	 * Queries my factory ID. The ID is persisted in the working set configuration data so that the same
 	 * factory can be used to reconstruct project configurations when loading the working set configurations.
-	 * 
+	 *
 	 * @return my unique identifier
 	 */
 	String getID();
 
 	/**
 	 * Creates a new project configuration element.
-	 * 
+	 *
 	 * @param parent
 	 *            the working set configuration that owns the new project configuration
 	 * @param project
 	 *            the workspace project for which to create the configuration
-	 * 
+	 *
 	 * @return the new project configuration
 	 */
-	IWorkingSetProjectConfiguration createProjectConfiguration(IWorkingSetConfiguration parent,
-			IProject project);
+	IWorkingSetProjectConfiguration createProjectConfiguration(IWorkingSetConfiguration parent, IProject project);
 
 	/**
 	 * Creates a UI controller to support editing the specified project configuration snapshot, which should
 	 * have been obtained from a configuration that I previously
 	 * {@linkplain #createProjectConfiguration(org.eclipse.cdt.internal.ui.workingsets.IWorkingSetConfiguration, IProject)
 	 * created}, myself.
-	 * 
+	 *
 	 * @param config
 	 *            a project configuration snapshot that I created
-	 * 
+	 *
 	 * @return a suitable controller for it. Must not be <code>null</code>
 	 */
 	IWorkingSetProjectConfigurationController createProjectConfigurationController(
@@ -86,12 +85,12 @@ public interface IWorkingSetProjectConfigurationFactory {
 	/**
 	 * Creates a snapshot of the configuration state of a project in the workspace. This may capture
 	 * additional build meta-data beyond just the "active configuration."
-	 * 
+	 *
 	 * @param project
 	 *            a project to capture in a {@link WorkspaceSnapshot}
 	 * @param desc
 	 *            the project description, from which to capture the initial configuration data
-	 * 
+	 *
 	 * @return the project state capture. Must not be <code>null</code>
 	 */
 	WorkspaceSnapshot.ProjectState createProjectState(IProject project, ICProjectDescription desc);
@@ -103,9 +102,9 @@ public interface IWorkingSetProjectConfigurationFactory {
 	/**
 	 * A registry of {@linkplain IWorkingSetProjectConfigurationFactory project configuration factories}
 	 * contributed on the <tt>org.eclipse.cdt.ui.workingSetConfigurations</tt> extension point.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	class Registry {
@@ -158,8 +157,8 @@ public interface IWorkingSetProjectConfigurationFactory {
 			return result;
 		}
 
-		private IWorkingSetProjectConfigurationFactory get(
-				Map<?, IWorkingSetProjectConfigurationFactory> map, Object key) {
+		private IWorkingSetProjectConfigurationFactory get(Map<?, IWorkingSetProjectConfigurationFactory> map,
+				Object key) {
 			return map.get(key);
 		}
 
@@ -213,8 +212,8 @@ public interface IWorkingSetProjectConfigurationFactory {
 			// first pass to populate the map with immediate requireds
 			IWorkspace ws = ResourcesPlugin.getWorkspace();
 			for (IProjectNatureDescriptor next : ws.getNatureDescriptors()) {
-				result.put(next.getNatureId(), new java.util.HashSet<String>(Arrays.asList(next
-						.getRequiredNatureIds())));
+				result.put(next.getNatureId(),
+						new java.util.HashSet<String>(Arrays.asList(next.getRequiredNatureIds())));
 			}
 
 			// now, iterate to add transitive requireds
@@ -261,9 +260,8 @@ public interface IWorkingSetProjectConfigurationFactory {
 									if (natureID != null) {
 										factoriesByNature.put(natureID, desc);
 									} else {
-										CUIPlugin.log(NLS.bind(
-												WorkingSetMessages.WSProjConfigFactory_noNatureID, ext
-														.getContributor().getName()), null);
+										CUIPlugin.log(NLS.bind(WorkingSetMessages.WSProjConfigFactory_noNatureID,
+												ext.getContributor().getName()), null);
 									}
 								}
 							}
@@ -292,8 +290,7 @@ public interface IWorkingSetProjectConfigurationFactory {
 
 				if (id == null) {
 					throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, NLS.bind(
-							WorkingSetMessages.WSProjConfigFactory_noFactoryID, extension.getContributor()
-									.getName())));
+							WorkingSetMessages.WSProjConfigFactory_noFactoryID, extension.getContributor().getName())));
 				}
 			}
 
@@ -303,8 +300,8 @@ public interface IWorkingSetProjectConfigurationFactory {
 			}
 
 			@Override
-			public IWorkingSetProjectConfiguration createProjectConfiguration(
-					IWorkingSetConfiguration parent, IProject project) {
+			public IWorkingSetProjectConfiguration createProjectConfiguration(IWorkingSetConfiguration parent,
+					IProject project) {
 				return resolve().createProjectConfiguration(parent, project);
 			}
 
@@ -324,11 +321,10 @@ public interface IWorkingSetProjectConfigurationFactory {
 				IWorkingSetProjectConfigurationFactory result = null;
 
 				try {
-					result = (IWorkingSetProjectConfigurationFactory) extension
-							.createExecutableExtension(A_CLASS);
+					result = (IWorkingSetProjectConfigurationFactory) extension.createExecutableExtension(A_CLASS);
 				} catch (ClassCastException e) {
-					CUIPlugin.log(NLS.bind(WorkingSetMessages.WSProjConfigFactory_badFactory, extension
-							.getContributor().getName()), e);
+					CUIPlugin.log(NLS.bind(WorkingSetMessages.WSProjConfigFactory_badFactory,
+							extension.getContributor().getName()), e);
 				} catch (CoreException e) {
 					CUIPlugin.log(new MultiStatus(CUIPlugin.PLUGIN_ID, 0, new IStatus[] { e.getStatus() },
 							WorkingSetMessages.WSProjConfigFactory_factoryFailed, null));
@@ -358,9 +354,9 @@ public interface IWorkingSetProjectConfigurationFactory {
 		/**
 		 * The default project configuration factory. Clients may extend this class to implement custom
 		 * factories for their project natures.
-		 * 
+		 *
 		 * @author Christian W. Damus (cdamus)
-		 * 
+		 *
 		 * @since 6.0
 		 */
 		public static class Default implements IWorkingSetProjectConfigurationFactory, IExecutableExtension {
@@ -372,16 +368,15 @@ public interface IWorkingSetProjectConfigurationFactory {
 			}
 
 			@Override
-			public IWorkingSetProjectConfiguration createProjectConfiguration(
-					IWorkingSetConfiguration parent, IProject project) {
+			public IWorkingSetProjectConfiguration createProjectConfiguration(IWorkingSetConfiguration parent,
+					IProject project) {
 
 				WorkingSetProjectConfiguration result = createProjectConfiguration(parent);
 				result.setProjectName(project.getName());
 				return result;
 			}
 
-			protected WorkingSetProjectConfiguration createProjectConfiguration(
-					IWorkingSetConfiguration parent) {
+			protected WorkingSetProjectConfiguration createProjectConfiguration(IWorkingSetConfiguration parent) {
 				return new WorkingSetProjectConfiguration(parent);
 			}
 

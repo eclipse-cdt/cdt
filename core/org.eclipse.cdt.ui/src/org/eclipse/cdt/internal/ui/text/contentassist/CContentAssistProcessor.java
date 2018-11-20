@@ -81,7 +81,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		private ICompletionProposal fWrappedProposal;
 
 		public CCompletionProposalWrapper(ICompletionProposal proposal) {
-			fWrappedProposal= proposal;
+			fWrappedProposal = proposal;
 		}
 
 		@Override
@@ -139,13 +139,13 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 
 	public CContentAssistProcessor(IEditorPart editor, ContentAssistant assistant, String partition) {
 		super(assistant, partition);
-		fEditor= editor;
+		fEditor = editor;
 	}
 
 	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		if (fValidator == null) {
-			fValidator= new CParameterListValidator();
+			fValidator = new CParameterListValidator();
 		}
 		return fValidator;
 	}
@@ -154,46 +154,47 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	protected List<ICompletionProposal> filterAndSortProposals(List<ICompletionProposal> proposals,
 			IProgressMonitor monitor, ContentAssistInvocationContext context) {
 		IProposalFilter filter = getCompletionFilter();
-		ICCompletionProposal[] proposalsInput= new ICCompletionProposal[proposals.size()];
+		ICCompletionProposal[] proposalsInput = new ICCompletionProposal[proposals.size()];
 		// Wrap proposals which are no ICCompletionProposals.
-		boolean wrapped= false;
-		int i= 0;
+		boolean wrapped = false;
+		int i = 0;
 		for (ICompletionProposal proposal : proposals) {
 			if (proposal instanceof ICCompletionProposal) {
-				proposalsInput[i++]= (ICCompletionProposal) proposal;
+				proposalsInput[i++] = (ICCompletionProposal) proposal;
 			} else {
-				wrapped= true;
-				proposalsInput[i++]= new CCompletionProposalWrapper(proposal);
+				wrapped = true;
+				proposalsInput[i++] = new CCompletionProposalWrapper(proposal);
 			}
 		}
 		// Filter.
 		ICCompletionProposal[] proposalsFiltered = filter.filterProposals(proposalsInput);
 
 		// Sort.
-		boolean sortByAlphabet= CUIPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.ORDER_PROPOSALS);
+		boolean sortByAlphabet = CUIPlugin.getDefault().getPreferenceStore()
+				.getBoolean(ContentAssistPreference.ORDER_PROPOSALS);
 		if (sortByAlphabet) {
 			// Already sorted alphabetically by DefaultProposalFilter
 			// in case of custom proposal filter, keep ordering applied by filter.
 		} else {
 			// Sort by relevance.
-			CCompletionProposalComparator propsComp= new CCompletionProposalComparator();
+			CCompletionProposalComparator propsComp = new CCompletionProposalComparator();
 			propsComp.setOrderAlphabetically(sortByAlphabet);
 			Arrays.sort(proposalsFiltered, propsComp);
 		}
 		List<ICompletionProposal> filteredList;
 		if (wrapped) {
 			// Unwrap again.
-			filteredList= new ArrayList<>(proposalsFiltered.length);
+			filteredList = new ArrayList<>(proposalsFiltered.length);
 			for (ICCompletionProposal proposal : proposalsFiltered) {
 				if (proposal instanceof CCompletionProposalWrapper) {
-					filteredList.add(((CCompletionProposalWrapper)proposal).unwrap());
+					filteredList.add(((CCompletionProposalWrapper) proposal).unwrap());
 				} else {
 					filteredList.add(proposal);
 				}
 			}
 		} else {
-			final ICompletionProposal[] tmp= proposalsFiltered;
-			filteredList= Arrays.asList(tmp);
+			final ICompletionProposal[] tmp = proposalsFiltered;
+			filteredList = Arrays.asList(tmp);
 		}
 		return filteredList;
 	}
@@ -244,7 +245,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	 * @param activationSet the activation set
 	 */
 	public void setReplacementAutoActivationCharacters(String activationSet) {
-		fReplacementAutoActivationCharacters= new ActivationSet(activationSet);
+		fReplacementAutoActivationCharacters = new ActivationSet(activationSet);
 	}
 
 	/**
@@ -262,24 +263,25 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	 * @param activationSet the activation set
 	 */
 	public void setCContentAutoActivationCharacters(String activationSet) {
-		fCContentAutoActivationCharacters= new ActivationSet(activationSet);
+		fCContentAutoActivationCharacters = new ActivationSet(activationSet);
 	}
 
 	@Override
 	protected ContentAssistInvocationContext createContext(ITextViewer viewer, int offset, boolean isCompletion) {
 		char activationChar = getActivationChar(viewer, offset);
-		CContentAssistInvocationContext context =
-		  		new CContentAssistInvocationContext(viewer, offset, fEditor, isCompletion, isAutoActivated());
+		CContentAssistInvocationContext context = new CContentAssistInvocationContext(viewer, offset, fEditor,
+				isCompletion, isAutoActivated());
 		try {
-			if (isCompletion && activationChar == '.' && fReplacementAutoActivationCharacters != null &&
-					fReplacementAutoActivationCharacters.contains('.')) {
+			if (isCompletion && activationChar == '.' && fReplacementAutoActivationCharacters != null
+					&& fReplacementAutoActivationCharacters.contains('.')) {
 				IASTCompletionNode node = context.getCompletionNode();
 				if (node != null) {
 					IASTName[] names = node.getNames();
 					if (names.length > 0 && names[0].getParent() instanceof IASTFieldReference) {
 						IASTFieldReference ref = (IASTFieldReference) names[0].getParent();
 						IASTExpression ownerExpr = ref.getFieldOwner();
-						IType ownerExprType = SemanticUtil.getNestedType(ownerExpr.getExpressionType(), SemanticUtil.TDEF);
+						IType ownerExprType = SemanticUtil.getNestedType(ownerExpr.getExpressionType(),
+								SemanticUtil.TDEF);
 						if (ownerExprType instanceof ICPPUnknownType) {
 							try {
 								CPPSemantics.pushLookupPoint(names[0]);
@@ -293,7 +295,8 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 						}
 					}
 				}
-				if (context != null && isAutoActivated() && !fCContentAutoActivationCharacters.contains(activationChar)) {
+				if (context != null && isAutoActivated()
+						&& !fCContentAutoActivationCharacters.contains(activationChar)) {
 					// Auto-replace, but not auto-content-assist - bug 344387.
 					context.dispose();
 					context = null;
@@ -308,8 +311,8 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		return context;
 	}
 
-	private CContentAssistInvocationContext replaceDotWithArrow(ITextViewer viewer, int offset,
-			boolean isCompletion, CContentAssistInvocationContext context, char activationChar) {
+	private CContentAssistInvocationContext replaceDotWithArrow(ITextViewer viewer, int offset, boolean isCompletion,
+			CContentAssistInvocationContext context, char activationChar) {
 		IDocument doc = viewer.getDocument();
 		try {
 			doc.replace(offset - 1, 1, "->"); //$NON-NLS-1$
@@ -318,8 +321,8 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 			// If user turned on activation only for replacement characters,
 			// setting the context to null will skip the proposals popup later.
 			if (!isAutoActivated() || fCContentAutoActivationCharacters.contains(activationChar)) {
-				context = new CContentAssistInvocationContext(viewer, offset + 1, fEditor,
-						isCompletion, isAutoActivated());
+				context = new CContentAssistInvocationContext(viewer, offset + 1, fEditor, isCompletion,
+						isAutoActivated());
 			}
 		} catch (BadLocationException e) {
 			// Ignore
@@ -335,7 +338,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	 * @return the activation character
 	 */
 	private char getActivationChar(ITextViewer viewer, int offset) {
-		IDocument doc= viewer.getDocument();
+		IDocument doc = viewer.getDocument();
 		if (doc == null) {
 			return 0;
 		}
@@ -351,7 +354,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 
 	@Override
 	protected boolean verifyAutoActivation(ITextViewer viewer, int offset) {
-		IDocument doc= viewer.getDocument();
+		IDocument doc = viewer.getDocument();
 		if (doc == null) {
 			return false;
 		}
@@ -359,7 +362,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 			return false;
 		}
 		try {
-			char activationChar= doc.getChar(--offset);
+			char activationChar = doc.getChar(--offset);
 			switch (activationChar) {
 			case ':':
 				return offset > 0 && doc.getChar(--offset) == ':';
@@ -367,10 +370,11 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 				return offset > 0 && doc.getChar(--offset) == '-';
 			case '.':
 				// Avoid completion of float literals
-				CHeuristicScanner scanner= new CHeuristicScanner(doc);
-				int token= scanner.previousToken(--offset, Math.max(0, offset - 200));
+				CHeuristicScanner scanner = new CHeuristicScanner(doc);
+				int token = scanner.previousToken(--offset, Math.max(0, offset - 200));
 				// The scanner reports numbers as identifiers
-				if (token == Symbols.TokenIDENT && !Character.isJavaIdentifierStart(doc.getChar(scanner.getPosition() + 1))) {
+				if (token == Symbols.TokenIDENT
+						&& !Character.isJavaIdentifierStart(doc.getChar(scanner.getPosition() + 1))) {
 					// Not a valid identifier
 					return false;
 				}

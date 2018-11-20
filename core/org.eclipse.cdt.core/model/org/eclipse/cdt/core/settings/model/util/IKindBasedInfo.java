@@ -22,12 +22,12 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
  */
 public interface IKindBasedInfo<T> {
 	/**
-	 * @return {@link ICSettingEntry} type 
+	 * @return {@link ICSettingEntry} type
 	 */
 	int getKind();
 
 	/**
-	 * Return type info 
+	 * Return type info
 	 * @see KindBasedStore
 	 * @return the data stored
 	 */

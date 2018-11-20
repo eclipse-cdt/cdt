@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,14 +17,14 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
- * Suspends execution of a single thread.  Can be issued only if the virtual 
+ * Suspends execution of a single thread.  Can be issued only if the virtual
  * machine is running.
- * 
+ *
  * <pre>
  *    C: suspend {thread_id}
  *    R: ok
  *    E: suspended {thread_id} client
- *    
+ *
  * Errors:
  *    error: invalid thread
       error: vm already suspended
@@ -34,12 +34,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDASuspendCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASuspendCommand(PDAThreadDMContext thread) {
-        super(thread, "suspend " + thread.getID());
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDASuspendCommand(PDAThreadDMContext thread) {
+		super(thread, "suspend " + thread.getID());
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

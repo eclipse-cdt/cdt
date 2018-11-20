@@ -17,13 +17,13 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Qt specific build configuration settings.
- * 
+ *
  * @noimplement
  */
 public interface IQtBuildConfiguration extends ICBuildConfiguration {
 
 	Path getBuildDirectory() throws CoreException;
-	
+
 	Path getQmakeCommand();
 
 	String[] getQmakeConfig();

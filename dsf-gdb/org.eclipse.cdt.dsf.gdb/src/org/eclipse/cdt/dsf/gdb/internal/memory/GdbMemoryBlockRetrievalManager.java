@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
  *******************************************************************************/
@@ -31,16 +31,17 @@ public class GdbMemoryBlockRetrievalManager extends MemoryBlockRetrievalManager 
 	 * @see org.eclipse.cdt.dsf.debug.internal.provisional.model.MemoryBlockRetrievalManager#createMemoryBlockRetrieval(java.lang.String, org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.cdt.dsf.service.DsfSession)
 	 */
 	@Override
-	protected IMemoryBlockRetrieval createMemoryBlockRetrieval(String model, ILaunchConfiguration config, DsfSession session) {
+	protected IMemoryBlockRetrieval createMemoryBlockRetrieval(String model, ILaunchConfiguration config,
+			DsfSession session) {
 		DsfMemoryBlockRetrieval memRetrieval = null;
-	
+
 		try {
 			memRetrieval = new GdbMemoryBlockRetrieval(model, config, session);
 		} catch (DebugException e) {
 			GdbPlugin.getDefault().getLog().log(e.getStatus());
 		}
-		
+
 		return memRetrieval;
 	}
-	
+
 }

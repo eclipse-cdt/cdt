@@ -54,13 +54,13 @@ public class QMethod implements IQMethod {
 		if (otherBinding == null)
 			return getBinding() == null;
 
-		return false ;// TODO
-//		if (!ICPPMethod.class.isAssignableFrom(otherBinding.getClass()))
-//			return false;
-//
-//		IType thisType = method.getType();
-//		IType otherType = ((ICPPMethod) otherBinding).getType();
-//		return thisType == null ? otherType == null : thisType.isSameType(otherType);
+		return false;// TODO
+		//		if (!ICPPMethod.class.isAssignableFrom(otherBinding.getClass()))
+		//			return false;
+		//
+		//		IType thisType = method.getType();
+		//		IType otherType = ((ICPPMethod) otherBinding).getType();
+		//		return thisType == null ? otherType == null : thisType.isSameType(otherType);
 	}
 
 	@Override

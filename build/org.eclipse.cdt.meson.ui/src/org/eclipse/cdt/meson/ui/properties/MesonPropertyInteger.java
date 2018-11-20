@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - initial implementation
  *******************************************************************************/
@@ -17,22 +17,22 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 
 public class MesonPropertyInteger extends MesonPropertyText {
-	
+
 	@SuppressWarnings("unused")
 	private MesonPropertyPage page;
 	private String errorMessage;
-	
-	public MesonPropertyInteger(Composite composite, MesonPropertyPage page, String name, String initialValue, String tooltip) {
+
+	public MesonPropertyInteger(Composite composite, MesonPropertyPage page, String name, String initialValue,
+			String tooltip) {
 		super(composite, name, initialValue, tooltip);
 		this.page = page;
-		text.addModifyListener((e) -> { 
+		text.addModifyListener((e) -> {
 			if (isValid() != page.isValid()) {
-				page.update(); 
+				page.update();
 			}
 		});
 	}
 
-	
 	@Override
 	public boolean isValid() {
 		errorMessage = null;
@@ -44,10 +44,10 @@ public class MesonPropertyInteger extends MesonPropertyText {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public String getErrorMessage() {
 		return errorMessage;
 	}
-	
+
 }

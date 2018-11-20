@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 /**
  * Extension of IChecker that works with C-Index of a file (but not AST)
  * Default implementation {@link AbstractCIndexChecker}
- * 
+ *
  * Client may implement this interface.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 public interface ICIndexChecker extends IChecker {
 	/**
 	 * Run checker on translation unit
-	 * 
+	 *
 	 * @param unit - translation unit
 	 */
 	void processUnit(ITranslationUnit unit);

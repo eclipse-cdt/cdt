@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,24 +19,24 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
- * 
+ *
  */
 public class LaunchVMModelProxyStrategy extends DefaultVMModelProxyStrategy {
 
-    final private TreePath fRootPath;
-    
-    public LaunchVMModelProxyStrategy(AbstractVMProvider provider, Object rootElement) {
-        super(provider, rootElement);
-        fRootPath = new TreePath( new Object[] { rootElement });
-    }
-    
-    @Override
-    public Object getViewerInput() {
-        return DebugPlugin.getDefault().getLaunchManager();
-    }
-    
-    @Override
-    public TreePath getRootPath() {
-        return fRootPath;
-    }
+	final private TreePath fRootPath;
+
+	public LaunchVMModelProxyStrategy(AbstractVMProvider provider, Object rootElement) {
+		super(provider, rootElement);
+		fRootPath = new TreePath(new Object[] { rootElement });
+	}
+
+	@Override
+	public Object getViewerInput() {
+		return DebugPlugin.getDefault().getLaunchManager();
+	}
+
+	@Override
+	public TreePath getRootPath() {
+		return fRootPath;
+	}
 }

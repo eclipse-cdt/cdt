@@ -16,7 +16,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.resources;
 
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +88,8 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 
 	@Override
 	public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
-		ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar, null);
+		ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar,
+				null);
 		addMarker(problemMarkerInfo);
 	}
 
@@ -118,7 +118,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			if (getClass() != obj.getClass()) {
 				return false;
 			}
-			MarkerWithInfo otherInfo = (MarkerWithInfo)obj;
+			MarkerWithInfo otherInfo = (MarkerWithInfo) obj;
 			return Arrays.equals(attributes, otherInfo.attributes);
 		}
 	}
@@ -127,11 +127,11 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	 * Remove duplicate error markers that may have been created by
 	 * {@link ACBuilder#addMarker(ProblemMarkerInfo)} with the
 	 * {@link ProblemMarkerInfo#isDeferDeDuplication()} flag set.
-	 * 
+	 *
 	 * This method will also remove other duplicate
 	 * ICModelMarker.C_MODEL_PROBLEM_MARKER markers on the resources referred to
 	 * by ProblemMarkerInfo.
-	 * 
+	 *
 	 * @since 6.3
 	 */
 	public void deDuplicate() {
@@ -174,22 +174,24 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 		try {
 			IProject project = getCurrentProject();
 			IResource markerResource = problemMarkerInfo.file;
-			if (markerResource == null)  {
+			if (markerResource == null) {
 				markerResource = project;
 			}
 			String externalLocation = null;
-			if (problemMarkerInfo.externalPath != null && ! problemMarkerInfo.externalPath.isEmpty()) {
+			if (problemMarkerInfo.externalPath != null && !problemMarkerInfo.externalPath.isEmpty()) {
 				externalLocation = problemMarkerInfo.externalPath.toOSString();
 			}
 
 			if (!problemMarkerInfo.isDeferDeDuplication()) {
 				// Try to find matching markers and don't put in duplicates
-				IMarker[] markers = markerResource.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ONE);
+				IMarker[] markers = markerResource.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true,
+						IResource.DEPTH_ONE);
 				for (IMarker m : markers) {
 					int line = m.getAttribute(IMarker.LINE_NUMBER, -1);
 					int sev = m.getAttribute(IMarker.SEVERITY, -1);
 					String msg = (String) m.getAttribute(IMarker.MESSAGE);
-					if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && msg.equals(problemMarkerInfo.description)) {
+					if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity)
+							&& msg.equals(problemMarkerInfo.description)) {
 						String extloc = (String) m.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
 						if (extloc == externalLocation || (extloc != null && extloc.equals(externalLocation))) {
 							if (project == null || project.equals(markerResource.getProject())) {
@@ -222,13 +224,13 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			}
 			if (externalLocation != null) {
 				URI uri = URIUtil.toURI(externalLocation);
-				if (uri.getScheme()!=null) {
+				if (uri.getScheme() != null) {
 					marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, externalLocation);
 					String locationText = NLS.bind(CCorePlugin.getResourceString("ACBuilder.ProblemsView.Location"), //$NON-NLS-1$
 							problemMarkerInfo.lineNumber, externalLocation);
 					marker.setAttribute(IMarker.LOCATION, locationText);
 				}
-			} else if (problemMarkerInfo.lineNumber==0){
+			} else if (problemMarkerInfo.lineNumber == 0) {
 				marker.setAttribute(IMarker.LOCATION, " "); //$NON-NLS-1$
 			}
 			// Set source attribute only if the marker is being set to a file from different project
@@ -238,13 +240,12 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 
 			// Add all other client defined attributes.
 			Map<String, String> attributes = problemMarkerInfo.getAttributes();
-			if (attributes != null){
+			if (attributes != null) {
 				for (Entry<String, String> entry : attributes.entrySet()) {
 					marker.setAttribute(entry.getKey(), entry.getValue());
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			CCorePlugin.log(e.getStatus());
 		}
 
@@ -252,12 +253,12 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 
 	private int mapMarkerSeverity(int severity) {
 		switch (severity) {
-		case SEVERITY_ERROR_BUILD :
-		case SEVERITY_ERROR_RESOURCE :
+		case SEVERITY_ERROR_BUILD:
+		case SEVERITY_ERROR_RESOURCE:
 			return IMarker.SEVERITY_ERROR;
-		case SEVERITY_INFO :
+		case SEVERITY_INFO:
 			return IMarker.SEVERITY_INFO;
-		case SEVERITY_WARNING :
+		case SEVERITY_WARNING:
 			return IMarker.SEVERITY_WARNING;
 		}
 		return IMarker.SEVERITY_ERROR;
@@ -294,20 +295,21 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	}
 
 	private static boolean getPreference(String preferenceName, boolean defaultValue) {
-		IScopeContext[] contexts = {
-				InstanceScope.INSTANCE, // for preference page
-				DefaultScope.INSTANCE   // for product customization
+		IScopeContext[] contexts = { InstanceScope.INSTANCE, // for preference page
+				DefaultScope.INSTANCE // for product customization
 		};
-		return Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID, preferenceName, defaultValue, contexts);
+		return Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID, preferenceName, defaultValue,
+				contexts);
 	}
 
 	@SuppressWarnings("nls")
 	private static String kindToString(int kind) {
-		return (kind==IncrementalProjectBuilder.AUTO_BUILD ? "AUTO_BUILD"
-				: kind==IncrementalProjectBuilder.CLEAN_BUILD ? "CLEAN_BUILD"
-				: kind==IncrementalProjectBuilder.FULL_BUILD ? "FULL_BUILD"
-				: kind==IncrementalProjectBuilder.INCREMENTAL_BUILD ? "INCREMENTAL_BUILD"
-				: "[unknown kind]")+"="+kind;
+		return (kind == IncrementalProjectBuilder.AUTO_BUILD ? "AUTO_BUILD"
+				: kind == IncrementalProjectBuilder.CLEAN_BUILD ? "CLEAN_BUILD"
+						: kind == IncrementalProjectBuilder.FULL_BUILD ? "FULL_BUILD"
+								: kind == IncrementalProjectBuilder.INCREMENTAL_BUILD ? "INCREMENTAL_BUILD"
+										: "[unknown kind]")
+				+ "=" + kind;
 	}
 
 	@SuppressWarnings("nls")
@@ -323,7 +325,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 		}
 
 		String[] ids = strIds.split("\\|");
-		String names="";
+		String names = "";
 		for (String id : ids) {
 			ICConfigurationDescription cfgDesc = prjDesc.getConfigurationById(id);
 			String name;
@@ -333,8 +335,8 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 				name = id;
 			}
 
-			if (names.length() >0 ) {
-				names=names+",";
+			if (names.length() > 0) {
+				names = names + ",";
 			}
 			names = names + name;
 		}
@@ -352,13 +354,9 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	@SuppressWarnings("nls")
 	protected void printEvent(int kind, Map<String, String> args) {
 		if (DEBUG_EVENTS) {
-			String ids = args!=null ? args.get(CONTENTS_CONFIGURATION_IDS) : null;
-			System.out.println("t"+Thread.currentThread().getId()+": "
-					+ kindToString(kind)
-					+ ", " +  getCurrentProject()
-					+ "[" + cfgIdToNames(ids) +"]"
-					+ ", " + this.getClass().getSimpleName()
-				);
+			String ids = args != null ? args.get(CONTENTS_CONFIGURATION_IDS) : null;
+			System.out.println("t" + Thread.currentThread().getId() + ": " + kindToString(kind) + ", "
+					+ getCurrentProject() + "[" + cfgIdToNames(ids) + "]" + ", " + this.getClass().getSimpleName());
 		}
 	}
 

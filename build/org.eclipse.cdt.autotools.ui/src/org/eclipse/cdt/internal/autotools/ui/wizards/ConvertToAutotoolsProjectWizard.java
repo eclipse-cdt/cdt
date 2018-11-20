@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.wizards;
 
-
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
@@ -30,9 +29,8 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 
-
 /**
- * This wizard provides a method by which the user can 
+ * This wizard provides a method by which the user can
  * add a C nature to a project that previously had no nature associated with it.
  */
 public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
@@ -41,28 +39,29 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 	private static final String WZ_DESC = "WizardAutotoolsProjectConversion.description"; //$NON-NLS-1$
 	private static final String PREFIX = "WizardAutotoolsConversion"; //$NON-NLS-1$
 	private static final String WINDOW_TITLE = "WizardAutotoolsConversion.windowTitle"; //$NON-NLS-1$
-	protected static final String CONF_TITLE = PREFIX + ".config.title";	//$NON-NLS-1$
-	protected static final String CONF_DESC = PREFIX + ".config.desc";	//$NON-NLS-1$
-	protected static final String MSG_SAVE = PREFIX + ".message.save";	//$NON-NLS-1$
-	protected static final String OPTIONS_TITLE = PREFIX + ".options.title";	//$NON-NLS-1$
-	protected static final String OPTIONS_DESC = PREFIX + ".options.desc";	//$NON-NLS-1$
+	protected static final String CONF_TITLE = PREFIX + ".config.title"; //$NON-NLS-1$
+	protected static final String CONF_DESC = PREFIX + ".config.desc"; //$NON-NLS-1$
+	protected static final String MSG_SAVE = PREFIX + ".message.save"; //$NON-NLS-1$
+	protected static final String OPTIONS_TITLE = PREFIX + ".options.title"; //$NON-NLS-1$
+	protected static final String OPTIONS_DESC = PREFIX + ".options.desc"; //$NON-NLS-1$
 
 	public static final String NULL_INDEXER_ID = "org.eclipse.cdt.core.nullindexer"; //$NON-NLS-1$
-	
+
 	protected CProjectPlatformPage projectConfigurationPage;
 	protected NewAutotoolsProjectOptionPage optionPage;
 
 	protected IProject curProject;
-	
+
 	/**
 	 * ConvertToAutotoolsConversionWizard Wizard constructor
 	 */
 	public ConvertToAutotoolsProjectWizard() {
 		this(getWindowTitleResource(), getWzDescriptionResource());
 	}
+
 	/**
 	 * ConvertToAutotoolsConversionWizard Wizard constructor
-	 * 
+	 *
 	 * @param title
 	 * @param desc
 	 */
@@ -73,7 +72,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 	/**
 	 * Method getWzDescriptionResource,  allows Wizard description label value
 	 * to be changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getWzDescriptionResource() {
@@ -83,7 +82,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 	/**
 	 * Method getWzTitleResource,  allows Wizard description label value
 	 * to be changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getWzTitleResource() {
@@ -93,7 +92,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 	/**
 	 * Method getWindowTitleResource, allows Wizard Title label value to be
 	 * changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getWindowTitleResource() {
@@ -102,7 +101,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 
 	/**
 	  * Method getPrefix,  allows prefix value to be changed by subclasses
-	  * 
+	  *
 	  * @return String
 	  */
 	protected static String getPrefix() {
@@ -111,13 +110,13 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 
 	/**
 	 * Method addPages adds our Simple to C conversion Wizard page.
-	 * 
+	 *
 	 * @see Wizard#createPages
 	 */
 	@Override
 	public void addPages() {
 		addPage(mainPage = new ConvertToAutotoolsProjectWizardPage(getPrefix(), this));
-		
+
 		// Add the configuration selection page
 		projectConfigurationPage = new CProjectPlatformPage(PREFIX);
 		projectConfigurationPage.setTitle(AutotoolsUIPlugin.getResourceString(CONF_TITLE));
@@ -129,10 +128,10 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 		optionPage.setTitle(AutotoolsUIPlugin.getResourceString(OPTIONS_TITLE));
 		optionPage.setDescription(AutotoolsUIPlugin.getResourceString(OPTIONS_DESC));
 		addPage(optionPage);
-		
+
 		// add custom pages
 		MBSCustomPageManager.init();
-		
+
 		// add stock pages
 		MBSCustomPageManager.addStockPage(fMainPage, NewCProjectWizardPage.PAGE_ID);
 		MBSCustomPageManager.addStockPage(projectConfigurationPage, CProjectPlatformPage.PAGE_ID);
@@ -152,14 +151,14 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 		return projectConfigurationPage.getSelectedConfigurations();
 	}
 
-	protected void setCurrentProject (IProject project) {
+	protected void setCurrentProject(IProject project) {
 		curProject = project;
 	}
-	
+
 	public IProject getProject() {
 		return curProject;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public void applyOptions(IProject project, IProgressMonitor monitor) {
 		// When applying the project options, we need to specify which
@@ -169,18 +168,20 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 		// applying options will ask the wizard (us) to get the project which
 		// we will report is the current project being converted.
 		setCurrentProject(project);
-    	optionPage.performApply(monitor);
-    }
-	
+		optionPage.performApply(monitor);
+	}
+
 	@Override
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(AutotoolsUIPlugin.getResourceString("WizardAutotoolsProjectConversion.monitor.convertingToMakeProject"), 2); //$NON-NLS-1$
+		monitor.beginTask(
+				AutotoolsUIPlugin.getResourceString("WizardAutotoolsProjectConversion.monitor.convertingToMakeProject"), //$NON-NLS-1$
+				2);
 		try {
 			super.doRun(SubMonitor.convert(monitor, 5));
 		} finally {
 			monitor.done();
 		}
-		
+
 	}
 
 	@Override
@@ -192,25 +193,23 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 	@Override
 	protected void doRunEpilogue(IProgressMonitor monitor) {
 		// Get my initializer to run
-//		if (project == null)
-//			return;
-//
-//		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
-//		if (initResult.getCode() != IStatus.OK) {
-//			// At this point, I can live with a failure
-//			ManagedBuilderUIPlugin.log(initResult);
-//		}
-		
+		//		if (project == null)
+		//			return;
+		//
+		//		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
+		//		if (initResult.getCode() != IStatus.OK) {
+		//			// At this point, I can live with a failure
+		//			ManagedBuilderUIPlugin.log(initResult);
+		//		}
+
 		// execute any operations specified by custom pages
 		IRunnableWithProgress operations[] = MBSCustomPageManager.getOperations();
-		
-		if (operations != null)
-		{
-			for(int k = 0; k < operations.length; k++)
-			{
+
+		if (operations != null) {
+			for (int k = 0; k < operations.length; k++) {
 				try {
-				operations[k].run(monitor);
-				} catch(InvocationTargetException |InterruptedException e) {
+					operations[k].run(monitor);
+				} catch (InvocationTargetException | InterruptedException e) {
 					//TODO: what should we do?
 				}
 			}

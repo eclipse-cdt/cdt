@@ -473,10 +473,10 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 * the mailing list</a> and associated <a href=
 	 * "https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commitdiff;h=ec83d2110de6831ac2ed0e5a56dc33c60a477eb6">
 	 * gdb/NEWS item</a> (although you have to dig quite deep on these changes.)
-	 * 
+	 *
 	 * Therefore in version < 7.6 the MI frame info has file="SourceLookup.cc"
 	 * and no fullname field. This means there is no path to source map against.
-	 * 
+	 *
 	 * In version >= 7.6 the MI frame info has file="SourceLookup.cc",fullname=
 	 * "<cdt.git path>/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/build/SourceLookup.cc"
 	 * fields, so there is a path to do the mapping against. Recall that the
@@ -1100,7 +1100,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Terminate the session on the executor thread without blocking.
-	 * 
+	 *
 	 * This models the way DsfTerminateCommand terminates the launches.
 	 */
 	protected void terminateAsync(DsfSession session) throws Exception {
@@ -1116,9 +1116,9 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	/**
 	 * Test that two launches can be launched and terminated without becoming
 	 * interlocked.
-	 * 
+	 *
 	 * This is a regression test for Bug 494650.
-	 * 
+	 *
 	 * XXX: If this test fails as it did for the reason of Bug 494650, there is
 	 * deadlock and the JVM does not recover, causing this test to timeout and
 	 * all subsequent tests not to work.
@@ -1138,7 +1138,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		 * sufficient. However, it can happen that the first one terminates
 		 * progresses sufficiently far that the deadlock does not happen on the
 		 * second.
-		 * 
+		 *
 		 * NOTE: Can't use launch.terminate() here because it terminates
 		 * synchronously when adapters are not installed. Instead we need to
 		 * issue the terminates in a non-blocking way on both the the executor
@@ -1153,7 +1153,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		 * executor thread. The UI thread is waiting by using a Query, and
 		 * before the bug fix the two executor threads were waiting on each
 		 * other using a Query too.
-		 * 
+		 *
 		 * This test does not use the UI thread (aka main), but instead the
 		 * JUnit test thread. We determine success if both launches terminate,
 		 * because if they both terminate they have stayed responsive and

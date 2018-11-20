@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,40 +21,40 @@ import org.eclipse.cdt.examples.dsf.timers.TimersVMProvider.TimersViewLayoutChan
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 
 /**
- * 
+ *
  */
 @SuppressWarnings("restriction")
 public class TimersRootVMNode extends RootDMVMNode {
 
-    public TimersRootVMNode(AbstractVMProvider provider) {
-        super(provider);
-    }
+	public TimersRootVMNode(AbstractVMProvider provider) {
+		super(provider);
+	}
 
-    @Override
-    public boolean isDeltaEvent(Object rootObject, Object e) {
-        if (e instanceof TimersViewLayoutChanged) {
-            return true;
-        }
-        return super.isDeltaEvent(rootObject, e);
-    }
-    
-    @Override
-    public int getDeltaFlags(Object e) {
-        if (e instanceof TimersViewLayoutChanged) {
-            return IModelDelta.CONTENT;
-        }
-        
-        return IModelDelta.NO_CHANGE;
-    }
+	@Override
+	public boolean isDeltaEvent(Object rootObject, Object e) {
+		if (e instanceof TimersViewLayoutChanged) {
+			return true;
+		}
+		return super.isDeltaEvent(rootObject, e);
+	}
 
-    @Override
-    public void createRootDelta(Object rootObject, Object event, final DataRequestMonitor<VMDelta> rm) {
-        int flags = IModelDelta.NO_CHANGE;
-        if (event instanceof TimersViewLayoutChanged) {
-            flags |= IModelDelta.CONTENT;
-        }
-        rm.setData( new VMDelta(rootObject, 0, flags) );
-        rm.done();
-    }
+	@Override
+	public int getDeltaFlags(Object e) {
+		if (e instanceof TimersViewLayoutChanged) {
+			return IModelDelta.CONTENT;
+		}
+
+		return IModelDelta.NO_CHANGE;
+	}
+
+	@Override
+	public void createRootDelta(Object rootObject, Object event, final DataRequestMonitor<VMDelta> rm) {
+		int flags = IModelDelta.NO_CHANGE;
+		if (event instanceof TimersViewLayoutChanged) {
+			flags |= IModelDelta.CONTENT;
+		}
+		rm.setData(new VMDelta(rootObject, 0, flags));
+		rm.done();
+	}
 
 }

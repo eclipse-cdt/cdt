@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,11 +19,11 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * 
+ *
  */
 public class PDAWatchpointFunctionFieldEditorFactory implements IFieldEditorFactory {
-    
-    public FieldEditor createFieldEditor(String name, String labelText, Composite parent) {
-        return new StringFieldEditor(name, labelText, parent);
-    }
+
+	public FieldEditor createFieldEditor(String name, String labelText, Composite parent) {
+		return new StringFieldEditor(name, labelText, parent);
+	}
 }

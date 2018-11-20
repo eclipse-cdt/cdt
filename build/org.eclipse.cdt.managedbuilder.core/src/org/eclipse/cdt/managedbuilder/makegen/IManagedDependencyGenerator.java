@@ -20,12 +20,13 @@ import org.eclipse.core.resources.IResource;
 /**
  * @since 2.0
  * @deprecated 3.1
- * 
+ *
  * Use IManagedDependencyGenerator2 instead.
 */
 @Deprecated
 public interface IManagedDependencyGenerator extends IManagedDependencyGeneratorType {
-	
+
 	public IResource[] findDependencies(IResource resource, IProject project);
+
 	public String getDependencyCommand(IResource resource, IManagedBuildInfo info);
 }

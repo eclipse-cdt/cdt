@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,26 +21,23 @@ import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProvider;
 import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.TestingException;
 
-
 /**
  * The Tests Runner provider plug-in to run tests with Google Testing framework.
- * 
+ *
  * Parses the text test module to output and provides the data for the Tests
  * Runner Plug-In.
  */
 public class GoogleTestsRunnerProvider implements ITestsRunnerProvider {
-	
+
 	private static final String TEST_PATHS_DELIMITED = ":"; //$NON-NLS-1$
 	private static final String TEST_PATH_PARTS_DELIMITED = "."; //$NON-NLS-1$
-	private static final String ALL_TESTS= ".*"; //$NON-NLS-1$
+	private static final String ALL_TESTS = ".*"; //$NON-NLS-1$
 
-	
 	@Override
 	public String[] getAdditionalLaunchParameters(String[][] testPaths) {
-		final String[] gtestParameters = {
-			"--gtest_repeat=1", //$NON-NLS-1$
-			"--gtest_print_time=1", //$NON-NLS-1$
-			"--gtest_color=no", //$NON-NLS-1$
+		final String[] gtestParameters = { "--gtest_repeat=1", //$NON-NLS-1$
+				"--gtest_print_time=1", //$NON-NLS-1$
+				"--gtest_color=no", //$NON-NLS-1$
 		};
 		String[] result = gtestParameters;
 
@@ -74,10 +71,10 @@ public class GoogleTestsRunnerProvider implements ITestsRunnerProvider {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Construct the error message from prefix and detailed description.
-	 * 
+	 *
 	 * @param prefix prefix
 	 * @param description detailed description
 	 * @return the full message
@@ -85,15 +82,16 @@ public class GoogleTestsRunnerProvider implements ITestsRunnerProvider {
 	private String getErrorText(String prefix, String description) {
 		return MessageFormat.format(GoogleTestsRunnerMessages.GoogleTestsRunner_error_format, prefix, description);
 	}
-	
+
 	@Override
 	public void run(ITestModelUpdater modelUpdater, InputStream inputStream) throws TestingException {
-		
+
 		try {
 			OutputHandler ouputHandler = new OutputHandler(modelUpdater);
 			ouputHandler.run(inputStream);
 		} catch (IOException e) {
-			throw new TestingException(getErrorText(GoogleTestsRunnerMessages.GoogleTestsRunner_io_error_prefix, e.getLocalizedMessage()));
+			throw new TestingException(
+					getErrorText(GoogleTestsRunnerMessages.GoogleTestsRunner_io_error_prefix, e.getLocalizedMessage()));
 		}
 	}
 

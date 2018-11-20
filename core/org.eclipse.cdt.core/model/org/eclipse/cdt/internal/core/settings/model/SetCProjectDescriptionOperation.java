@@ -51,7 +51,8 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 	 * @param description
 	 * @param flags
 	 */
-	public SetCProjectDescriptionOperation(AbstractCProjectDescriptionStorage prjDescStorage, ICProject cProject, CProjectDescription description, int flags){
+	public SetCProjectDescriptionOperation(AbstractCProjectDescriptionStorage prjDescStorage, ICProject cProject,
+			CProjectDescription description, int flags) {
 		super(cProject);
 		this.fPrjDescStorage = prjDescStorage;
 		fFlags = flags;
@@ -61,7 +62,7 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 	@Override
 	protected void executeOperation() throws CModelException {
 		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
-		ICProject cProject = (ICProject)getElementToProcess();
+		ICProject cProject = (ICProject) getElementToProcess();
 		final IProject project = cProject.getProject();
 
 		ICProjectDescription fOldDescriptionCache = mngr.getProjectDescription(project, false);
@@ -71,13 +72,13 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		SettingsContext context = new SettingsContext(project);
 		boolean needsSerialization = false;
 
-		if(fSetDescription != null){
+		if (fSetDescription != null) {
 			ICStorageElement newEl = null;
 			ICSettingsStorage newStorage = null;
 			try {
 				ICStorageElement base = fSetDescription.getRootStorageElement();
 				needsSerialization = fSetDescription.needsDescriptionPersistence();
-//				el = base;
+				//				el = base;
 				// FIXME JBB there is deep magic going on here.  The project descriptions are being
 				//           changed in non-obvious ways
 				newEl = fPrjDescStorage.copyElement(base, false);
@@ -87,11 +88,12 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 			}
 
 			boolean creating = fOldDescriptionCache != null ? fOldDescriptionCache.isCdtProjectCreating() : true;
-			if(creating)
+			if (creating)
 				creating = fSetDescription.isCdtProjectCreating();
 
-			if(!fSetDescription.isValid() && (!mngr.isEmptyCreatingDescriptionAllowed() || !creating))
-				throw new CModelException(ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName())); //$NON-NLS-1$
+			if (!fSetDescription.isValid() && (!mngr.isEmptyCreatingDescriptionAllowed() || !creating))
+				throw new CModelException(ExceptionFactory.createCoreException(
+						SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName())); //$NON-NLS-1$
 
 			fNewDescriptionCache = new CProjectDescription(fSetDescription, true, newStorage, newEl, creating);
 
@@ -113,12 +115,13 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		for (ICElementDelta d : cElementDeltas)
 			addDelta(d);
 
-		if(fSetDescription != null)
+		if (fSetDescription != null)
 			fSetDescription.switchToCachedAppliedData(fNewDescriptionCache);
 
 		try {
 			final IProjectDescription eDes = context.getEclipseProjectDescription();
-			if(mngr.checkHandleActiveCfgChange(fNewDescriptionCache, fOldDescriptionCache, eDes, new NullProgressMonitor())){
+			if (mngr.checkHandleActiveCfgChange(fNewDescriptionCache, fOldDescriptionCache, eDes,
+					new NullProgressMonitor())) {
 				context.setEclipseProjectDescription(eDes);
 			}
 		} catch (CoreException e2) {
@@ -126,26 +129,29 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		}
 
 		// fNewDescriptionCache is still writable and may be written to at this point
-		AbstractCProjectDescriptionStorage.fireDataAppliedEvent(fNewDescriptionCache, fOldDescriptionCache, fSetDescription, delta);
+		AbstractCProjectDescriptionStorage.fireDataAppliedEvent(fNewDescriptionCache, fOldDescriptionCache,
+				fSetDescription, delta);
 
 		cProject.close(); // Why?
 
-//		ExternalSettingsManager.getInstance().updateDepentents(delta);
+		//		ExternalSettingsManager.getInstance().updateDepentents(delta);
 
-		if(fNewDescriptionCache != null){
+		if (fNewDescriptionCache != null) {
 			fNewDescriptionCache.doneApplying();
 		}
 
 		// Set 'fSetProjectDescription' as the new read-only project description on the block
 		fPrjDescStorage.setCurrentDescription(fNewDescriptionCache, true);
 
-		CProjectDescriptionEvent event = AbstractCProjectDescriptionStorage.createAppliedEvent(fNewDescriptionCache, fOldDescriptionCache, fSetDescription, delta);
+		CProjectDescriptionEvent event = AbstractCProjectDescriptionStorage.createAppliedEvent(fNewDescriptionCache,
+				fOldDescriptionCache, fSetDescription, delta);
 		mngr.notifyListeners(event);
 
 		try {
 			IWorkspaceRunnable toRun = null;
-			if(fNewDescriptionCache != null && !CProjectDescriptionManager.checkFlags(fFlags, ICProjectDescriptionManager.SET_NO_SERIALIZE)){
-				if(needsSerialization || isPersistentCoreSettingChanged(event)){
+			if (fNewDescriptionCache != null
+					&& !CProjectDescriptionManager.checkFlags(fFlags, ICProjectDescriptionManager.SET_NO_SERIALIZE)) {
+				if (needsSerialization || isPersistentCoreSettingChanged(event)) {
 					toRun = fPrjDescStorage.createDesSerializationRunnable();
 					if (toRun != null)
 						context.addWorkspaceRunnable(toRun);
@@ -153,7 +159,7 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 			}
 			toRun = context.createOperationRunnable();
 
-			if(toRun != null)
+			if (toRun != null)
 				CProjectDescriptionManager.runWspModification(toRun, getSchedulingRule(), new NullProgressMonitor());
 		} catch (CoreException e) {
 			throw new CModelException(e);
@@ -161,31 +167,31 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 	}
 
 	// Can't use project scoped rule see CProjectDescriptionBasicTests...
-//	/*
-//	 * Instead of using the workspace scheduling rule, use a more refined project scoped rule.
-//	 * This must contain the rule in CConfigBasedDescriptor.setApply(...)
-//	 * (non-Javadoc)
-//	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#getSchedulingRule()
-//	 */
-//	@Override
-//	public ISchedulingRule getSchedulingRule() {
-////		return null;
-//		return fPrjDescStorage.getProject();
-//	}
+	//	/*
+	//	 * Instead of using the workspace scheduling rule, use a more refined project scoped rule.
+	//	 * This must contain the rule in CConfigBasedDescriptor.setApply(...)
+	//	 * (non-Javadoc)
+	//	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#getSchedulingRule()
+	//	 */
+	//	@Override
+	//	public ISchedulingRule getSchedulingRule() {
+	////		return null;
+	//		return fPrjDescStorage.getProject();
+	//	}
 
-	private static boolean isPersistentCoreSettingChanged(CProjectDescriptionEvent event){
+	private static boolean isPersistentCoreSettingChanged(CProjectDescriptionEvent event) {
 		ICDescriptionDelta delta = event.getProjectDelta();
-		if(delta == null)
+		if (delta == null)
 			return false;
-		if(delta.getDeltaKind() != ICDescriptionDelta.CHANGED)
+		if (delta.getDeltaKind() != ICDescriptionDelta.CHANGED)
 			return true;
 
-		if(delta.getChildren().length != 0)
+		if (delta.getChildren().length != 0)
 			return true;
 
 		int flags = delta.getChangeFlags();
 		// check for any flag except ACTIVE_CFG and SETTING_CFG
-		if((flags & ~(ICDescriptionDelta.ACTIVE_CFG | ICDescriptionDelta.SETTING_CFG)) != 0)
+		if ((flags & ~(ICDescriptionDelta.ACTIVE_CFG | ICDescriptionDelta.SETTING_CFG)) != 0)
 			return true;
 
 		return false;
@@ -205,10 +211,10 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 	private boolean[] getEnvStates(CProjectDescription pd) {
 		ICConfigurationDescription[] cfs = pd.getConfigurations();
 		boolean[] result = new boolean[cfs.length];
-		for (int i=0; i<cfs.length; i++) {
+		for (int i = 0; i < cfs.length; i++) {
 			if (cfs[i] instanceof IInternalCCfgInfo) {
 				try {
-					CConfigurationSpecSettings ss = ((IInternalCCfgInfo)cfs[i]).getSpecSettings();
+					CConfigurationSpecSettings ss = ((IInternalCCfgInfo) cfs[i]).getSpecSettings();
 					if (ss != null && ss.getEnvironment() != null)
 						result[i] = ss.getEnvironment().isDirty();
 				} catch (CoreException e) {
@@ -228,16 +234,17 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		ICConfigurationDescription[] cfs = pd.getConfigurations();
 		if (cfs == null || data == null)
 			return;
-		for (int i=0; i<cfs.length; i++) {
+		for (int i = 0; i < cfs.length; i++) {
 			if (data.length <= i) {
-				CCorePlugin.log("Error: setEnvStates: different number of configurations as there are envDatas...", new Exception()); //$NON-NLS-1$
+				CCorePlugin.log("Error: setEnvStates: different number of configurations as there are envDatas...", //$NON-NLS-1$
+						new Exception());
 				break;
 			}
 			if (!data[i])
 				continue; // write only TRUE values
 			if (cfs[i] instanceof IInternalCCfgInfo) {
 				try {
-					CConfigurationSpecSettings ss = ((IInternalCCfgInfo)cfs[i]).getSpecSettings();
+					CConfigurationSpecSettings ss = ((IInternalCCfgInfo) cfs[i]).getSpecSettings();
 					if (ss != null && ss.getEnvironment() != null)
 						ss.getEnvironment().setDirty(true);
 				} catch (CoreException e) {

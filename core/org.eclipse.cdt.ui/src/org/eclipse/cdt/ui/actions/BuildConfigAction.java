@@ -23,20 +23,21 @@ import org.eclipse.ui.actions.BuildAction;
  * Action which builds the active configurations of the selected projects.
  */
 public class BuildConfigAction extends ChangeConfigAction {
-	
+
 	private BuildAction buildAction;
 
 	/**
 	 * Constructs the action.
-	 * @param projects List of selected managed-built projects 
+	 * @param projects List of selected managed-built projects
 	 * @param configName Build configuration name
 	 * @param accel Number to be used as accelerator
 	 */
-	public BuildConfigAction(HashSet<IProject> projects, String configName, String displayName, int accel, BuildAction buildAction) {
+	public BuildConfigAction(HashSet<IProject> projects, String configName, String displayName, int accel,
+			BuildAction buildAction) {
 		super(projects, configName, displayName, accel);
 		this.buildAction = buildAction;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
@@ -44,6 +45,6 @@ public class BuildConfigAction extends ChangeConfigAction {
 	public void run() {
 		super.run();
 		buildAction.selectionChanged(new StructuredSelection(fProjects.toArray()));
-		buildAction.run();		
+		buildAction.run();
 	}
 }

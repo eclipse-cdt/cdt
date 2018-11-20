@@ -7,13 +7,13 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
  *     James Blackburn (Broadcom) - Bug 247838
  *     Andrew Gvozdev (Quoin Inc)
- *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation  
+ *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.core;
 
@@ -37,11 +37,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.URIUtil;
 
 /**
- * The purpose of ErrorParserManager is to delegate the work of error parsing 
+ * The purpose of ErrorParserManager is to delegate the work of error parsing
  * build output to {@link IErrorParser}s, assist in finding {@link IResource}s, and
  * help create appropriate error/warning/info markers to be displayed
  * by the Problems view.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 @SuppressWarnings("restriction")
@@ -51,7 +51,7 @@ public class ErrorParserManager extends OutputStream {
 	 * as key/value pair with key="org.eclipse.cdt.core.errorOutputParser"
 	 * @deprecated since CDT 4.0.
 	 */
-	
+
 	/**
 	 * Delimiter for error parsers presented in one string.
 	 * @since 5.2
@@ -59,7 +59,7 @@ public class ErrorParserManager extends OutputStream {
 	public static final char ERROR_PARSER_DELIMITER = ';';
 
 	private int nOpens;
-	private int lineCounter=0;
+	private int lineCounter = 0;
 
 	private final IProject fProject;
 	private final MarkerGenerator fMarkerGenerator;
@@ -74,10 +74,9 @@ public class ErrorParserManager extends OutputStream {
 	private OutputStream outputStream;
 	private final StringBuilder currentLine = new StringBuilder();
 
-
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param project - project being built.
 	 * @param markerGenerator - marker generator able to create markers.
 	 */
@@ -85,12 +84,11 @@ public class ErrorParserManager extends OutputStream {
 		this(project, project.getLocationURI(), markerGenerator);
 	}
 
-
 	/**
 	 * URI based constructor.
-	 * 
+	 *
 	 * @param project - project being built.
-	 * @param baseDirectoryURI - absolute location URI of working directory of where the build is performed. 
+	 * @param baseDirectoryURI - absolute location URI of working directory of where the build is performed.
 	 * @param markerGenerator - marker generator able to create markers.
 	 * @since 2.0
 	 */
@@ -134,7 +132,7 @@ public class ErrorParserManager extends OutputStream {
 	 * {@link #pushDirectory} and {@link #popDirectory} are used to change working directory
 	 * from where file name is searched (see {@link #findFileInWorkspace}).
 	 * The intention is to handle make output of commands "pushd dir" and "popd".
-	 * 
+	 *
 	 * @param dir - another directory level to keep in stack -- corresponding to 'pushd'.
 	 */
 	public void pushDirectory(IPath dir) {
@@ -156,7 +154,7 @@ public class ErrorParserManager extends OutputStream {
 	 * {@link #pushDirectoryURI} and {@link #popDirectoryURI} are used to change working directory
 	 * from where file name is searched (see {@link #findFileInWorkspace}).
 	 * The intention is to handle make output of commands "pushd dir" and "popd".
-	 * 
+	 *
 	 * @param dir - another directory level to keep in stack -- corresponding to 'pushd'.
 	 * @since 5.1
 	 */
@@ -173,7 +171,7 @@ public class ErrorParserManager extends OutputStream {
 	 * {@link #pushDirectoryURI(URI)} and {@link #popDirectoryURI()} are used to change working directory
 	 * from where file name is searched (see {@link #findFileInWorkspace(IPath)}).
 	 * The intention is to handle make output of commands "pushd" and "popd".
-	 * 
+	 *
 	 * @return previous build directory location corresponding 'popd' command.
 	 * @since 5.1
 	 */
@@ -194,7 +192,6 @@ public class ErrorParserManager extends OutputStream {
 		return fDirectoryStack.size();
 	}
 
-
 	/**
 	 * Parses the input and tries to generate error or warning markers
 	 */
@@ -202,7 +199,7 @@ public class ErrorParserManager extends OutputStream {
 		String lineTrimmed = line.trim();
 		lineCounter++;
 
-		ProblemMarkerInfo marker=null;
+		ProblemMarkerInfo marker = null;
 
 		for (ErrorParser parser : fErrorParsers.values()) {
 			ErrorParser curr = parser;
@@ -217,7 +214,7 @@ public class ErrorParserManager extends OutputStream {
 			}
 			// standard behavior (pre 5.1) is to trim the line
 			String lineToParse = lineTrimmed;
-			if ((types & IErrorParser2.KEEP_UNTRIMMED) !=0 ) {
+			if ((types & IErrorParser2.KEEP_UNTRIMMED) != 0) {
 				// untrimmed lines
 				lineToParse = line;
 			}
@@ -228,11 +225,11 @@ public class ErrorParserManager extends OutputStream {
 			// It should not stop parsing of the rest of output.
 			try {
 				consume = curr.processLine(lineToParse, this);
-			} catch (Exception e){
+			} catch (Exception e) {
 				AutotoolsPlugin.log(e);
 			} finally {
 				if (fErrors.size() > 0) {
-					if (marker==null)
+					if (marker == null)
 						marker = fErrors.get(0);
 					fErrors.clear();
 				}
@@ -240,12 +237,12 @@ public class ErrorParserManager extends OutputStream {
 
 			if (consume)
 				break;
-			}
+		}
 		outputLine(line, marker);
 	}
-	
-	/** 
-	 * Conditionally output line to outputStream. If stream 
+
+	/**
+	 * Conditionally output line to outputStream. If stream
 	 * supports error markers, use it, otherwise use conventional stream
 	 */
 	private void outputLine(String line, ProblemMarkerInfo marker) {
@@ -256,12 +253,12 @@ public class ErrorParserManager extends OutputStream {
 		try {
 			if (marker != null) {
 				if (outputStream instanceof IErrorMarkeredOutputStream) {
-					IErrorMarkeredOutputStream mos = (IErrorMarkeredOutputStream)outputStream;
+					IErrorMarkeredOutputStream mos = (IErrorMarkeredOutputStream) outputStream;
 					mos.write(l, marker);
 				}
 			}
 			byte[] b = l.getBytes();
-			outputStream.write(b, 0, b.length);			
+			outputStream.write(b, 0, b.length);
 		} catch (IOException e) {
 			AutotoolsPlugin.log(e);
 		}
@@ -275,10 +272,9 @@ public class ErrorParserManager extends OutputStream {
 		return lineCounter;
 	}
 
-
 	/**
 	 * Add marker to the list of error markers.
-	 * 
+	 *
 	 * @param file - resource to add the new marker.
 	 * @param lineNumber - line number of the error.
 	 * @param desc - description of the error.
@@ -292,7 +288,7 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Add marker to the list of error markers.
-	 * 
+	 *
 	 * @param file - resource to add the new marker.
 	 * @param lineNumber - line number of the error.
 	 * @param desc - description of the error.
@@ -304,19 +300,19 @@ public class ErrorParserManager extends OutputStream {
 	 * @param varName - variable name.
 	 * @param externalPath - external path pointing to a file outside the workspace.
 	 */
-	public void generateExternalMarker(IResource file, int lineNumber, String desc, int severity, 
-			String varName, IPath externalPath, String libraryInfo, AutotoolsProblemMarkerInfo.Type type) {
-		AutotoolsProblemMarkerInfo problemMarkerInfo = 
-			new AutotoolsProblemMarkerInfo(file, lineNumber, desc, severity, varName, externalPath, libraryInfo, type);
+	public void generateExternalMarker(IResource file, int lineNumber, String desc, int severity, String varName,
+			IPath externalPath, String libraryInfo, AutotoolsProblemMarkerInfo.Type type) {
+		AutotoolsProblemMarkerInfo problemMarkerInfo = new AutotoolsProblemMarkerInfo(file, lineNumber, desc, severity,
+				varName, externalPath, libraryInfo, type);
 		addProblemMarker(problemMarkerInfo);
 	}
 
 	/**
 	 * Add the given marker to the list of error markers.
-	 * 
-	 * @param problemMarkerInfo - The marker to be added 
+	 *
+	 * @param problemMarkerInfo - The marker to be added
 	 */
-	public void addProblemMarker(AutotoolsProblemMarkerInfo problemMarkerInfo){
+	public void addProblemMarker(AutotoolsProblemMarkerInfo problemMarkerInfo) {
 		fErrors.add(problemMarkerInfo.getMarker());
 		fMarkerGenerator.addMarker(problemMarkerInfo);
 	}
@@ -332,7 +328,7 @@ public class ErrorParserManager extends OutputStream {
 	/**
 	 * Method setOutputStream.
 	 * Note: you have to close this stream explicitly
-	 * don't rely on ErrorParserManager.close(). 
+	 * don't rely on ErrorParserManager.close().
 	 * @param os - output stream
 	 */
 	public void setOutputStream(OutputStream os) {
@@ -340,9 +336,9 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * Method getOutputStream. 
+	 * Method getOutputStream.
 	 * Note: you have to close this stream explicitly
-	 * don't rely on ErrorParserManager.close(). 
+	 * don't rely on ErrorParserManager.close().
 	 * @return OutputStream
 	 */
 	public OutputStream getOutputStream() {
@@ -352,8 +348,8 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * @see java.io.OutputStream#close()
-	 * Note: don't rely on this method to close underlying OutputStream, 
-	 * close it explicitly 
+	 * Note: don't rely on this method to close underlying OutputStream,
+	 * close it explicitly
 	 */
 	@Override
 	public synchronized void close() {
@@ -393,7 +389,7 @@ public class ErrorParserManager extends OutputStream {
 
 	// This method examines contents of currentLine buffer
 	// if it contains whole line this line is checked by error
-	// parsers (processLine method). 
+	// parsers (processLine method).
 	// If flush is true rest of line is checked by error parsers.
 	private void checkLine(boolean flush) {
 		String buffer = currentLine.toString();
@@ -401,8 +397,8 @@ public class ErrorParserManager extends OutputStream {
 		while ((i = buffer.indexOf('\n')) != -1) {
 			String line = buffer.substring(0, i);
 			// get rid of any trailing '\r'
-			if (line.endsWith("\r"))  //$NON-NLS-1$
-				line=line.substring(0,line.length()-1);
+			if (line.endsWith("\r")) //$NON-NLS-1$
+				line = line.substring(0, line.length() - 1);
 			processLine(line);
 			previousLine = line;
 			buffer = buffer.substring(i + 1); // skip the \n and advance
@@ -418,32 +414,29 @@ public class ErrorParserManager extends OutputStream {
 		}
 	}
 
-
 	/**
-     * Converts a location {@link IPath} to an {@link URI}. Contrary to
-     * {@link URIUtil#toURI(IPath)} this method does not assume that the path belongs
-     * to local file system.
-     *
-     * The returned URI uses the scheme and authority of the current working directory
-     * as returned by {@link #getWorkingDirectoryURI()}
-     *
+	 * Converts a location {@link IPath} to an {@link URI}. Contrary to
+	 * {@link URIUtil#toURI(IPath)} this method does not assume that the path belongs
+	 * to local file system.
+	 *
+	 * The returned URI uses the scheme and authority of the current working directory
+	 * as returned by {@link #getWorkingDirectoryURI()}
+	 *
 	 * @param path - the path to convert to URI.
 	 * @return URI
 	 * @since 5.1
 	 */
 	private URI toURI(IPath path) {
-//		try {
-			URI baseURI = getWorkingDirectoryURI();
-			String uriString = path.toString();
+		//		try {
+		URI baseURI = getWorkingDirectoryURI();
+		String uriString = path.toString();
 
-			// On Windows "C:/folder/" -> "/C:/folder/"
-			if (path.isAbsolute() && uriString.charAt(0) != IPath.SEPARATOR)
-			    uriString = IPath.SEPARATOR + uriString;
-			
-			return EFSExtensionManager.getDefault().createNewURIFromPath(baseURI, uriString);
+		// On Windows "C:/folder/" -> "/C:/folder/"
+		if (path.isAbsolute() && uriString.charAt(0) != IPath.SEPARATOR)
+			uriString = IPath.SEPARATOR + uriString;
+
+		return EFSExtensionManager.getDefault().createNewURIFromPath(baseURI, uriString);
 	}
-
-
 
 	/**
 	 * @param ids - array of error parser IDs
@@ -451,9 +444,9 @@ public class ErrorParserManager extends OutputStream {
 	 * @since 5.2
 	 */
 	public static String toDelimitedString(String[] ids) {
-		String result=""; //$NON-NLS-1$
+		String result = ""; //$NON-NLS-1$
 		for (String id : ids) {
-			if (result.length()==0) {
+			if (result.length() == 0) {
 				result = id;
 			} else {
 				result += ERROR_PARSER_DELIMITER + id;

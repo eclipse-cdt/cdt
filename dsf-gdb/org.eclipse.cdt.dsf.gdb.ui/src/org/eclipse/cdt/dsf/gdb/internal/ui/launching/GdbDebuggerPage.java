@@ -56,19 +56,21 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	protected Text fGDBCommandText;
 	protected Text fGDBInitText;
 	protected Button fNonStopCheckBox;
-	
+
 	protected Button fReverseCheckBox;
 	protected Combo fReverseDebugMode;
-	protected static final String HW_REVERSE_MODE = LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodehard"); //$NON-NLS-1$
-	protected static final String SW_REVERSE_MODE = LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodesoft"); //$NON-NLS-1$
-	
+	protected static final String HW_REVERSE_MODE = LaunchUIMessages
+			.getString("GDBDebuggerPage.reverse_Debuggingmodehard"); //$NON-NLS-1$
+	protected static final String SW_REVERSE_MODE = LaunchUIMessages
+			.getString("GDBDebuggerPage.reverse_Debuggingmodesoft"); //$NON-NLS-1$
+
 	protected Button fUpdateThreadlistOnSuspend;
 	protected Button fDebugOnFork;
 	/**
 	 * Checkbox for using GDB's new-console -- only displayed on Windows. Will be null if unsupported.
 	 */
 	private Button fExternalConsole;
-	
+
 	/**
 	 * A combo box to let the user choose if fast tracepoints should be used or not.
 	 */
@@ -80,7 +82,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	private IMILaunchConfigurationComponent fSolibBlock;
 	private boolean fIsInitializing = false;
 
-    @Override
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout());
@@ -92,7 +94,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		setControl(parent);
 	}
 
-    @Override
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
@@ -113,7 +115,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				preferenceStore.getBoolean(IGdbDebugPreferenceConstants.PREF_EXTERNAL_CONSOLE));
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_MODE_DEFAULT);
-		
+
 		if (fSolibBlock != null)
 			fSolibBlock.setDefaults(configuration);
 	}
@@ -139,6 +141,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			return defaultValue;
 		}
 	}
+
 	/** utility method to cut down on clutter */
 	private boolean getBooleanAttr(ILaunchConfiguration config, String attributeName, boolean defaultValue) {
 		try {
@@ -148,7 +151,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		}
 	}
 
-    @Override
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setInitializing(true);
 		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
@@ -163,11 +166,14 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 		updateReverseDebugModeFromConfig(configuration);
 
-		boolean updateThreadsOnSuspend = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
+		boolean updateThreadsOnSuspend = getBooleanAttr(configuration,
+				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
 				IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
-		boolean debugOnFork = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
+		boolean debugOnFork = getBooleanAttr(configuration,
+				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
 				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
-		boolean externalConsole = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_EXTERNAL_CONSOLE,
+		boolean externalConsole = getBooleanAttr(configuration,
+				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_EXTERNAL_CONSOLE,
 				preferenceStore.getBoolean(IGdbDebugPreferenceConstants.PREF_EXTERNAL_CONSOLE));
 
 		if (fSolibBlock != null)
@@ -181,16 +187,17 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		if (fExternalConsole != null) {
 			fExternalConsole.setSelection(externalConsole);
 		}
-		
+
 		updateTracepointModeFromConfig(configuration);
-		
+
 		setInitializing(false);
 	}
 
 	protected void updateTracepointModeFromConfig(ILaunchConfiguration config) {
 		if (fTracepointModeCombo != null) {
-			String tracepointMode = getStringAttr(config, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
-					                              IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_MODE_DEFAULT);
+			String tracepointMode = getStringAttr(config,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
+					IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_MODE_DEFAULT);
 
 			if (tracepointMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_NORMAL_ONLY)) {
 				fTracepointModeCombo.setText(TP_NORMAL_ONLY);
@@ -205,12 +212,12 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				// Bug 375256
 				//
 				// assert false : "Unknown Tracepoint Mode: " + tracepointMode; //$NON-NLS-1$
-			    fTracepointModeCombo.setText(TP_NORMAL_ONLY);
+				fTracepointModeCombo.setText(TP_NORMAL_ONLY);
 			}
 		}
 	}
 
-	protected void updateReverseDebugModeFromConfig(ILaunchConfiguration config){
+	protected void updateReverseDebugModeFromConfig(ILaunchConfiguration config) {
 		if (fReverseDebugMode != null) {
 			String debugMode = getStringAttr(config, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE_MODE,
 					IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_DEFAULT);
@@ -253,40 +260,38 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		return IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_DEFAULT;
 	}
 
-    @Override
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
-				fGDBCommandText.getText().trim());
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT,
-				fGDBInitText.getText().trim());
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, fGDBCommandText.getText().trim());
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, fGDBInitText.getText().trim());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
 				fNonStopCheckBox.getSelection());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
-                fReverseCheckBox.getSelection());
+				fReverseCheckBox.getSelection());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
-                fUpdateThreadlistOnSuspend.getSelection());
+				fUpdateThreadlistOnSuspend.getSelection());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
 				fDebugOnFork.getSelection());
 		if (fExternalConsole != null) {
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_EXTERNAL_CONSOLE,
 					fExternalConsole.getSelection());
 		}
-		
+
 		if (fTracepointModeCombo != null) {
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
-									   getSelectedTracepointMode());
+					getSelectedTracepointMode());
 		}
 
 		if (fReverseDebugMode != null) {
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE_MODE,
-                                       getSelectedReverseDebugMode());
+					getSelectedReverseDebugMode());
 		}
 
 		if (fSolibBlock != null)
 			fSolibBlock.performApply(configuration);
 	}
 
-    @Override
+	@Override
 	public String getName() {
 		return LaunchUIMessages.getString("GDBDebuggerPage.tab_name"); //$NON-NLS-1$
 	}
@@ -312,14 +317,14 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	 *
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
-    @Override
+	@Override
 	public void update(Observable o, Object arg) {
 		if (!isInitializing())
 			updateLaunchConfigurationDialog();
 	}
 
 	public IMILaunchConfigurationComponent createSolibBlock(Composite parent) {
-		IMILaunchConfigurationComponent block = new GDBSolibBlock( new SolibSearchPathBlock(), true, true);
+		IMILaunchConfigurationComponent block = new GDBSolibBlock(new SolibSearchPathBlock(), true, true);
 		block.createControl(parent);
 		return block;
 	}
@@ -335,9 +340,9 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		Composite comp = ControlFactory.createCompositeEx(tabFolder, 1, GridData.FILL_BOTH);
 		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
 		tabItem.setControl(comp);
-		
+
 		createGdbContent(comp);
-		
+
 		ControlFactory.createLabel(comp, LaunchUIMessages.getString("GDBDebuggerPage.cmdfile_warning"), //$NON-NLS-1$
 				200, SWT.DEFAULT, SWT.WRAP);
 
@@ -347,15 +352,19 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 		createReverseDebugModeCombo(comp);
 
-		fUpdateThreadlistOnSuspend = addCheckbox(comp, LaunchUIMessages.getString("GDBDebuggerPage.update_thread_list_on_suspend")); //$NON-NLS-1$
+		fUpdateThreadlistOnSuspend = addCheckbox(comp,
+				LaunchUIMessages.getString("GDBDebuggerPage.update_thread_list_on_suspend")); //$NON-NLS-1$
 		// This checkbox needs an explanation. Attach context help to it.
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(fUpdateThreadlistOnSuspend, GdbUIPlugin.PLUGIN_ID + ".update_threadlist_button_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fUpdateThreadlistOnSuspend,
+				GdbUIPlugin.PLUGIN_ID + ".update_threadlist_button_context"); //$NON-NLS-1$
 
-		fDebugOnFork = addCheckbox(comp, LaunchUIMessages.getString("GDBDebuggerPage.Automatically_debug_forked_processes")); //$NON-NLS-1$
-    	if (Platform.getOS().startsWith("win")) { //$NON-NLS-1$
-    		fExternalConsole = addCheckbox(comp, LaunchUIMessages.getString("GDBDebuggerPage.use_new_console_for_process")); //$NON-NLS-1$
-    	}
-		
+		fDebugOnFork = addCheckbox(comp,
+				LaunchUIMessages.getString("GDBDebuggerPage.Automatically_debug_forked_processes")); //$NON-NLS-1$
+		if (Platform.getOS().startsWith("win")) { //$NON-NLS-1$
+			fExternalConsole = addCheckbox(comp,
+					LaunchUIMessages.getString("GDBDebuggerPage.use_new_console_for_process")); //$NON-NLS-1$
+		}
+
 		createTracepointModeCombo(comp);
 	}
 
@@ -367,7 +376,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_debugger")); //$NON-NLS-1$
 		fGDBCommandText = ControlFactory.createTextField(subComp, SWT.SINGLE | SWT.BORDER);
 		fGDBCommandText.addModifyListener(new ModifyListener() {
-            @Override
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				if (!isInitializing())
 					updateLaunchConfigurationDialog();
@@ -388,16 +397,16 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				int lastSeparatorIndex = gdbCommand.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
 					String cmd = gdbCommand.substring(0, lastSeparatorIndex);
-					// remove double quotes, since they interfere with 
+					// remove double quotes, since they interfere with
 					// "setFilterPath()" below
-					cmd = cmd.replaceAll("\\\"", "");  //$NON-NLS-1$//$NON-NLS-2$
+					cmd = cmd.replaceAll("\\\"", ""); //$NON-NLS-1$//$NON-NLS-2$
 					dialog.setFilterPath(cmd);
 				}
 				String res = dialog.open();
 				if (res == null) {
 					return;
 				}
-				// path contains space(s)? 
+				// path contains space(s)?
 				if (res.contains(" ")) { //$NON-NLS-1$
 					// surround it in double quotes
 					res = '"' + res + '"';
@@ -405,11 +414,11 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				fGDBCommandText.setText(res);
 			}
 		});
-		
+
 		ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_command_file")); //$NON-NLS-1$
 		fGDBInitText = ControlFactory.createTextField(subComp, SWT.SINGLE | SWT.BORDER);
 		fGDBInitText.addModifyListener(new ModifyListener() {
-            @Override
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				if (!isInitializing())
 					updateLaunchConfigurationDialog();
@@ -455,7 +464,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fTracepointModeCombo.add(TP_AUTOMATIC);
 
 		fTracepointModeCombo.addSelectionListener(new SelectionAdapter() {
-            @Override
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -474,11 +483,11 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 		fReverseCheckBox = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debugging")); //$NON-NLS-1$
 
-		fReverseDebugMode = new Combo(subComp, SWT.READ_ONLY | SWT.DROP_DOWN );
+		fReverseDebugMode = new Combo(subComp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		fReverseDebugMode.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		fReverseDebugMode.add(HW_REVERSE_MODE);
 		fReverseDebugMode.add(SW_REVERSE_MODE);
-		
+
 		fReverseDebugMode.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -502,7 +511,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	/** Used to add a checkbox to the tab. Each checkbox has its own line. */
 	private Button addCheckbox(Composite parent, String label) {
 		Button button = ControlFactory.createCheckBox(parent, label);
-		button .addSelectionListener(new SelectionAdapter() {
+		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();

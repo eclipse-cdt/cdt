@@ -75,8 +75,7 @@ public class ContainerDataVolumeDialog extends Dialog {
 
 	private final IDockerConnection connection;
 
-	public ContainerDataVolumeDialog(final Shell parentShell,
-			final IDockerConnection connection,
+	public ContainerDataVolumeDialog(final Shell parentShell, final IDockerConnection connection,
 			final DataVolumeModel selectedDataVolume) {
 		super(parentShell);
 		this.connection = connection;
@@ -84,8 +83,7 @@ public class ContainerDataVolumeDialog extends Dialog {
 		this.containerNames = WizardUtils.getContainerNames(connection);
 	}
 
-	public ContainerDataVolumeDialog(final Shell parentShell,
-			final IDockerConnection connection) {
+	public ContainerDataVolumeDialog(final Shell parentShell, final IDockerConnection connection) {
 		super(parentShell);
 		this.connection = connection;
 		this.model = new DataVolumeModel();
@@ -100,18 +98,15 @@ public class ContainerDataVolumeDialog extends Dialog {
 	protected void configureShell(final Shell shell) {
 		super.configureShell(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		shell.setText(
-				WizardMessages.getString("ContainerDataVolumeDialog.title")); //$NON-NLS-1$
+		shell.setText(WizardMessages.getString("ContainerDataVolumeDialog.title")); //$NON-NLS-1$
 	}
 
 	/**
 	 * Disable the 'OK' button by default
 	 */
 	@Override
-	protected Button createButton(Composite parent, int id, String label,
-			boolean defaultButton) {
-		final Button button = super.createButton(parent, id, label,
-				defaultButton);
+	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
+		final Button button = super.createButton(parent, id, label, defaultButton);
 		if (id == IDialogConstants.OK_ID) {
 			button.setEnabled(false);
 		}
@@ -127,172 +122,121 @@ public class ContainerDataVolumeDialog extends Dialog {
 	protected Control createDialogArea(final Composite parent) {
 		final Composite container = new Composite(parent, SWT.NONE);
 		final int COLUMNS = 3;
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(1, 1)
-				.grab(true, true).applyTo(container);
-		GridLayoutFactory.fillDefaults().margins(10, 10).numColumns(COLUMNS)
-				.applyTo(container);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(1, 1).grab(true, true).applyTo(container);
+		GridLayoutFactory.fillDefaults().margins(10, 10).numColumns(COLUMNS).applyTo(container);
 
 		// Container path
 		final Label containerPathLabel = new Label(container, SWT.NONE);
-		containerPathLabel.setText(WizardMessages
-				.getString("ContainerDataVolumeDialog.containerPathLabel")); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(false, false).applyTo(containerPathLabel);
+		containerPathLabel.setText(WizardMessages.getString("ContainerDataVolumeDialog.containerPathLabel")); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(false, false).applyTo(containerPathLabel);
 		final Text containerPathText = new Text(container, SWT.BORDER);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(true, false).applyTo(containerPathText);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(containerPathText);
 		final IObservableValue containerPathObservable = BeanProperties
-				.value(DataVolumeModel.class, DataVolumeModel.CONTAINER_PATH)
-				.observe(model);
-		dbc.bindValue(
-				WidgetProperties.text(SWT.Modify).observe(containerPathText),
-				containerPathObservable);
+				.value(DataVolumeModel.class, DataVolumeModel.CONTAINER_PATH).observe(model);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(containerPathText), containerPathObservable);
 		// mount type
 		final Label explanationLabel = new Label(container, SWT.NONE);
-		explanationLabel.setText(WizardMessages
-				.getString("ContainerDataVolumeDialog.explanationLabel")); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.span(COLUMNS, 1).grab(true, false).applyTo(explanationLabel);
+		explanationLabel.setText(WizardMessages.getString("ContainerDataVolumeDialog.explanationLabel")); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).span(COLUMNS, 1).grab(true, false)
+				.applyTo(explanationLabel);
 		final int INDENT = 20;
 		// No mount
 		final Button noMountButton = new Button(container, SWT.RADIO);
-		noMountButton.setText(WizardMessages
-				.getString("ContainerDataVolumeDialog.noMountButton")); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.indent(INDENT, 0).span(COLUMNS, 1).grab(true, false)
+		noMountButton.setText(WizardMessages.getString("ContainerDataVolumeDialog.noMountButton")); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).indent(INDENT, 0).span(COLUMNS, 1).grab(true, false)
 				.applyTo(noMountButton);
 		bindButton(noMountButton, MountType.NONE);
 		// File System mount
 		final Button fileSystemMountButton = new Button(container, SWT.RADIO);
-		fileSystemMountButton.setText(WizardMessages
-				.getString("ContainerDataVolumeDialog.fileSystemMountButton")); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.indent(INDENT, 0).span(COLUMNS, 1).grab(true, false)
+		fileSystemMountButton.setText(WizardMessages.getString("ContainerDataVolumeDialog.fileSystemMountButton")); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).indent(INDENT, 0).span(COLUMNS, 1).grab(true, false)
 				.applyTo(fileSystemMountButton);
 		final Label hostPathLabel = new Label(container, SWT.NONE);
-		hostPathLabel.setText(WizardMessages
-				.getString("ContainerDataVolumeDialog.hostPathLabel")); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.indent(2 * INDENT, SWT.DEFAULT).grab(false, false)
+		hostPathLabel.setText(WizardMessages.getString("ContainerDataVolumeDialog.hostPathLabel")); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).indent(2 * INDENT, SWT.DEFAULT).grab(false, false)
 				.applyTo(hostPathLabel);
 		final Text hostPathText = new Text(container, SWT.BORDER);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(true, false).applyTo(hostPathText);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(hostPathText);
 		final IObservableValue hostPathObservable = BeanProperties
-				.value(DataVolumeModel.class, DataVolumeModel.HOST_PATH_MOUNT)
-				.observe(model);
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(hostPathText),
-				hostPathObservable);
+				.value(DataVolumeModel.class, DataVolumeModel.HOST_PATH_MOUNT).observe(model);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(hostPathText), hostPathObservable);
 		// browse for directory
 		final Button hostPathDirectoryButton = new Button(container, SWT.NONE);
-		hostPathDirectoryButton.setText(WizardMessages
-				.getString("ContainerDataVolumeDialog.directoryButton")); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(false, false).applyTo(hostPathDirectoryButton);
+		hostPathDirectoryButton.setText(WizardMessages.getString("ContainerDataVolumeDialog.directoryButton")); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(false, false).applyTo(hostPathDirectoryButton);
 		hostPathDirectoryButton.addSelectionListener(onHostDirectoryPath());
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(false, false).applyTo(new Label(container, SWT.NONE));
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(false, false)
+				.applyTo(new Label(container, SWT.NONE));
 		// optional read-only access
 		final Button readOnlyButton = new Button(container, SWT.CHECK);
-		readOnlyButton.setText(WizardMessages
-				.getString("ContainerDataVolumeDialog.readOnlyButton")); //$NON-NLS-1$
-		readOnlyButton.setToolTipText(WizardMessages
-				.getString("ContainerDataVolumeDialog.readOnlyButtonTooltip")); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.span(COLUMNS - 2, 1).grab(true, false).applyTo(readOnlyButton);
-		final ISWTObservableValue readOnlyButtonObservable = WidgetProperties
-				.selection().observe(readOnlyButton);
+		readOnlyButton.setText(WizardMessages.getString("ContainerDataVolumeDialog.readOnlyButton")); //$NON-NLS-1$
+		readOnlyButton.setToolTipText(WizardMessages.getString("ContainerDataVolumeDialog.readOnlyButtonTooltip")); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).span(COLUMNS - 2, 1).grab(true, false)
+				.applyTo(readOnlyButton);
+		final ISWTObservableValue readOnlyButtonObservable = WidgetProperties.selection().observe(readOnlyButton);
 		dbc.bindValue(readOnlyButtonObservable,
-				BeanProperties
-						.value(DataVolumeModel.class,
-								DataVolumeModel.READ_ONLY_VOLUME)
-						.observe(model));
+				BeanProperties.value(DataVolumeModel.class, DataVolumeModel.READ_ONLY_VOLUME).observe(model));
 		// browse for file
 		final Button hostPathFileButton = new Button(container, SWT.NONE);
-		hostPathFileButton.setText(WizardMessages
-				.getString("ContainerDataVolumeDialog.fileButton")); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(false, false).applyTo(hostPathFileButton);
+		hostPathFileButton.setText(WizardMessages.getString("ContainerDataVolumeDialog.fileButton")); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(false, false).applyTo(hostPathFileButton);
 		hostPathFileButton.addSelectionListener(onHostFilePath());
-		bindButton(fileSystemMountButton, MountType.HOST_FILE_SYSTEM,
-				hostPathText, hostPathDirectoryButton, hostPathFileButton,
-				readOnlyButton);
+		bindButton(fileSystemMountButton, MountType.HOST_FILE_SYSTEM, hostPathText, hostPathDirectoryButton,
+				hostPathFileButton, readOnlyButton);
 
 		// Container mount
 		final Button containerMountButton = new Button(container, SWT.RADIO);
-		containerMountButton.setText(WizardMessages
-				.getString("ContainerDataVolumeDialog.containerMountButton")); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.indent(INDENT, 0).span(COLUMNS, 1).grab(true, false)
+		containerMountButton.setText(WizardMessages.getString("ContainerDataVolumeDialog.containerMountButton")); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).indent(INDENT, 0).span(COLUMNS, 1).grab(true, false)
 				.applyTo(containerMountButton);
 		final Label containerSelectionLabel = new Label(container, SWT.NONE);
-		containerSelectionLabel.setText(WizardMessages.getString(
-				"ContainerDataVolumeDialog.containerSelectionLabel")); //$NON-NLS-1$
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.indent(2 * INDENT, SWT.DEFAULT)
+		containerSelectionLabel.setText(WizardMessages.getString("ContainerDataVolumeDialog.containerSelectionLabel")); //$NON-NLS-1$
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).indent(2 * INDENT, SWT.DEFAULT)
 				.applyTo(containerSelectionLabel);
 		final Combo containerSelectionCombo = new Combo(container, SWT.BORDER);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(true, false).span(1, 1).applyTo(containerSelectionCombo);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(1, 1)
+				.applyTo(containerSelectionCombo);
 		new ControlDecoration(containerSelectionCombo, SWT.TOP | SWT.LEFT);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(false, false).applyTo(new Label(container, SWT.NONE));
-		bindButton(containerMountButton, MountType.CONTAINER,
-				containerSelectionCombo);
-		final ComboViewer containerSelectionComboViewer = new ComboViewer(
-				containerSelectionCombo);
-		containerSelectionComboViewer
-				.setContentProvider(new ArrayContentProvider());
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(false, false)
+				.applyTo(new Label(container, SWT.NONE));
+		bindButton(containerMountButton, MountType.CONTAINER, containerSelectionCombo);
+		final ComboViewer containerSelectionComboViewer = new ComboViewer(containerSelectionCombo);
+		containerSelectionComboViewer.setContentProvider(new ArrayContentProvider());
 		containerSelectionComboViewer.setInput(this.containerNames);
 		final IObservableValue selectedContainerObservable = BeanProperties
-				.value(DataVolumeModel.class, DataVolumeModel.CONTAINER_MOUNT)
-				.observe(model);
-		dbc.bindValue(
-				WidgetProperties.selection().observe(containerSelectionCombo),
-				selectedContainerObservable);
-		new ContentProposalAdapter(containerSelectionCombo,
-				new ComboContentAdapter() {
-					@Override
-					public void insertControlContents(Control control,
-							String text, int cursorPosition) {
-						final Combo combo = (Combo) control;
-						final Point selection = combo.getSelection();
-						combo.setText(text);
-						selection.x = text.length();
-						selection.y = selection.x;
-						combo.setSelection(selection);
-					}
-				}, getContainerNameContentProposalProvider(
-						containerSelectionCombo),
-				null, null);
+				.value(DataVolumeModel.class, DataVolumeModel.CONTAINER_MOUNT).observe(model);
+		dbc.bindValue(WidgetProperties.selection().observe(containerSelectionCombo), selectedContainerObservable);
+		new ContentProposalAdapter(containerSelectionCombo, new ComboContentAdapter() {
+			@Override
+			public void insertControlContents(Control control, String text, int cursorPosition) {
+				final Combo combo = (Combo) control;
+				final Point selection = combo.getSelection();
+				combo.setText(text);
+				selection.x = text.length();
+				selection.y = selection.x;
+				combo.setSelection(selection);
+			}
+		}, getContainerNameContentProposalProvider(containerSelectionCombo), null, null);
 
 		// error message
 		final Composite errorContainer = new Composite(container, SWT.NONE);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL)
-				.span(COLUMNS, 1).grab(true, true).applyTo(errorContainer);
-		GridLayoutFactory.fillDefaults().margins(6, 6).numColumns(2)
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(COLUMNS, 1).grab(true, true)
 				.applyTo(errorContainer);
+		GridLayoutFactory.fillDefaults().margins(6, 6).numColumns(2).applyTo(errorContainer);
 
 		final Label errorMessageIcon = new Label(errorContainer, SWT.NONE);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.hint(20, SWT.DEFAULT)
-				.applyTo(errorMessageIcon);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).hint(20, SWT.DEFAULT).applyTo(errorMessageIcon);
 		final Label errorMessageLabel = new Label(errorContainer, SWT.NONE);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER)
-				.grab(true, false)
-				.applyTo(errorMessageLabel);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(errorMessageLabel);
 		setupValidationSupport(errorMessageIcon, errorMessageLabel);
 		return container;
 	}
 
-	private void setupValidationSupport(final Label errorMessageIcon,
-			final Label errorMessageLabel) {
+	private void setupValidationSupport(final Label errorMessageIcon, final Label errorMessageLabel) {
 		for (@SuppressWarnings("unchecked")
-		Iterator<Binding> iterator = dbc.getBindings().iterator(); iterator
-				.hasNext();) {
+		Iterator<Binding> iterator = dbc.getBindings().iterator(); iterator.hasNext();) {
 			final Binding binding = iterator.next();
-			binding.getModel().addChangeListener(onDataVolumeSettingsChanged(
-					errorMessageIcon, errorMessageLabel));
+			binding.getModel().addChangeListener(onDataVolumeSettingsChanged(errorMessageIcon, errorMessageLabel));
 		}
 	}
 
@@ -301,7 +245,7 @@ public class ContainerDataVolumeDialog extends Dialog {
 	 * selected, and set the enablement of the associated {@link Control} at the
 	 * same time (ie: the {@link Control} are only enabled when the given
 	 * {@link Button} is selected.
-	 * 
+	 *
 	 * @param button
 	 *            the {@link Button} to bind
 	 * @param mountType
@@ -311,11 +255,9 @@ public class ContainerDataVolumeDialog extends Dialog {
 	 *            selected/unselected.
 	 * @return
 	 */
-	private Binding bindButton(final Button button, final MountType mountType,
-			final Control... controls) {
+	private Binding bindButton(final Button button, final MountType mountType, final Control... controls) {
 		return dbc.bindValue(WidgetProperties.selection().observe(button),
-				BeanProperties.value(DataVolumeModel.class,
-						DataVolumeModel.MOUNT_TYPE).observe(model),
+				BeanProperties.value(DataVolumeModel.class, DataVolumeModel.MOUNT_TYPE).observe(model),
 				new UpdateValueStrategy() {
 					@Override
 					public Object convert(Object value) {
@@ -327,8 +269,7 @@ public class ContainerDataVolumeDialog extends Dialog {
 						return null;
 					}
 
-					private void setEnabled(final Control[] controls,
-							final boolean enabled) {
+					private void setEnabled(final Control[] controls, final boolean enabled) {
 						for (Control control : controls) {
 							control.setEnabled(enabled);
 						}
@@ -346,8 +287,7 @@ public class ContainerDataVolumeDialog extends Dialog {
 
 	private SelectionListener onHostDirectoryPath() {
 		return SelectionListener.widgetSelectedAdapter(e -> {
-			final DirectoryDialog directoryDialog = new DirectoryDialog(
-					getShell());
+			final DirectoryDialog directoryDialog = new DirectoryDialog(getShell());
 			final String selectedPath = directoryDialog.open();
 			if (selectedPath != null) {
 				model.setHostPathMount(selectedPath);
@@ -368,26 +308,23 @@ public class ContainerDataVolumeDialog extends Dialog {
 	/**
 	 * Creates an {@link IContentProposalProvider} to propose
 	 * {@link IDockerContainer} names based on the current text.
-	 * 
+	 *
 	 * @param items
 	 * @return
 	 */
-	private IContentProposalProvider getContainerNameContentProposalProvider(
-			final Combo containerSelectionCombo) {
+	private IContentProposalProvider getContainerNameContentProposalProvider(final Combo containerSelectionCombo) {
 		return (contents, position) -> {
 			final List<IContentProposal> proposals = new ArrayList<>();
 			for (String containerName : containerSelectionCombo.getItems()) {
 				if (containerName.contains(contents)) {
-					proposals.add(new ContentProposal(containerName,
-							containerName, containerName, position));
+					proposals.add(new ContentProposal(containerName, containerName, containerName, position));
 				}
 			}
 			return proposals.toArray(new IContentProposal[0]);
 		};
 	}
 
-	private IChangeListener onDataVolumeSettingsChanged(
-			final Label errorMessageIcon, final Label errorMessageLabel) {
+	private IChangeListener onDataVolumeSettingsChanged(final Label errorMessageIcon, final Label errorMessageLabel) {
 
 		return event -> {
 			// skip if dialog has been closed
@@ -402,17 +339,14 @@ public class ContainerDataVolumeDialog extends Dialog {
 					setOkButtonEnabled(true);
 				} else if (status.matches(IStatus.WARNING)) {
 					errorMessageIcon.setVisible(true);
-					errorMessageIcon.setImage(
-							SWTImagesFactory.DESC_WARNING.createImage());
+					errorMessageIcon.setImage(SWTImagesFactory.DESC_WARNING.createImage());
 					errorMessageLabel.setVisible(true);
 					errorMessageLabel.setText(status.getMessage());
 					setOkButtonEnabled(true);
 				} else if (status.matches(IStatus.ERROR)) {
-					if (status.getMessage() != null
-							&& !status.getMessage().isEmpty()) {
+					if (status.getMessage() != null && !status.getMessage().isEmpty()) {
 						errorMessageIcon.setVisible(true);
-						errorMessageIcon.setImage(
-								SWTImagesFactory.DESC_ERROR.createImage());
+						errorMessageIcon.setImage(SWTImagesFactory.DESC_ERROR.createImage());
 						errorMessageLabel.setVisible(true);
 						errorMessageLabel.setText(status.getMessage());
 					}
@@ -430,28 +364,21 @@ public class ContainerDataVolumeDialog extends Dialog {
 			return ValidationStatus.error(null);
 		} else if (mountType == null) {
 			return ValidationStatus.error(null);
-		} else if (mountType == MountType.HOST_FILE_SYSTEM
-				&& (hostPath == null || hostPath.isEmpty())) {
+		} else if (mountType == MountType.HOST_FILE_SYSTEM && (hostPath == null || hostPath.isEmpty())) {
 			return ValidationStatus.error(null);
-		} else if (mountType == MountType.HOST_FILE_SYSTEM
-				&& !new File(hostPath).exists()) {
-			return ValidationStatus
-					.warning("The specified path does not exist on the host."); //$NON-NLS-1$
+		} else if (mountType == MountType.HOST_FILE_SYSTEM && !new File(hostPath).exists()) {
+			return ValidationStatus.warning("The specified path does not exist on the host."); //$NON-NLS-1$
 		} else if (mountType == MountType.CONTAINER) {
-			final IDockerContainer container = WizardUtils
-					.getContainer(connection, model.getContainerMount());
+			final IDockerContainer container = WizardUtils.getContainer(connection, model.getContainerMount());
 			if (container == null) {
 				// just make sure that the dialog cannot complete
 				return ValidationStatus.error(null);
 			}
 			final IDockerContainerInfo selectedContainerInfo = container.info();
-			if (selectedContainerInfo != null
-					&& selectedContainerInfo.volumes() != null
-					&& !selectedContainerInfo.volumes()
-					.containsKey(model.getContainerPath())) {
+			if (selectedContainerInfo != null && selectedContainerInfo.volumes() != null
+					&& !selectedContainerInfo.volumes().containsKey(model.getContainerPath())) {
 				return ValidationStatus
-						.warning(WizardMessages.getFormattedString(
-								"ContainerDataVolumeDialog.volumeWarning", //$NON-NLS-1$
+						.warning(WizardMessages.getFormattedString("ContainerDataVolumeDialog.volumeWarning", //$NON-NLS-1$
 								model.getContainerPath()));
 			}
 		}

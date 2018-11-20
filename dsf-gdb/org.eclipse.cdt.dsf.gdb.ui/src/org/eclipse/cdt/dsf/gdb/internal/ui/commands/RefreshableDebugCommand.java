@@ -28,8 +28,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * The enablement of a {@link AbstractDebugCommand} is updated only when the current 
- * debug context is changed. In some cases we need to force an update without changing 
+ * The enablement of a {@link AbstractDebugCommand} is updated only when the current
+ * debug context is changed. In some cases we need to force an update without changing
  * the context. This class provides such a functionality.
  * The proper way is to modify {@link AbstractDebugCommand}.
  */

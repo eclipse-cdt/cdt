@@ -18,13 +18,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A buffer contains the text contents of a resource. It is not language-specific.
- * The contents may be in the process of being edited, differing from the actual contents of the 
+ * The contents may be in the process of being edited, differing from the actual contents of the
  * underlying resource. A buffer has an owner, which is an
  * {@code IOpenable}. If a buffer does not have an underlying resource,
  * saving the buffer has no effect. Buffers can be read-only.
  * <p>
  * This interface is similar to the JDT IBuffer interface.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IBuffer {
@@ -218,12 +218,12 @@ public interface IBuffer {
 	 * cases where the workbench is not completely in sync with the local file system.
 	 * If {@code false} is specified, this method will only attempt
 	 * to overwrite a corresponding file in the local file system provided
-	 * it is in sync with the workbench. This option ensures there is no 
+	 * it is in sync with the workbench. This option ensures there is no
 	 * unintended data loss; it is the recommended setting.
 	 * However, if {@code true} is specified, an attempt will be made
-	 * to write a corresponding file in the local file system, 
+	 * to write a corresponding file in the local file system,
 	 * overwriting any existing one if need be.
-	 * In either case, if this method succeeds, the resource will be marked 
+	 * In either case, if this method succeeds, the resource will be marked
 	 * as being local (even if it wasn't before).
 	 * <p>
 	 * A {@code RuntimeException} might be thrown if the buffer is closed.

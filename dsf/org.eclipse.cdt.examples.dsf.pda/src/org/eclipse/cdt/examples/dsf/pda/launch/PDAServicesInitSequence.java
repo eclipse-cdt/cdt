@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAStack;
 /**
  * The initialization sequence for PDA debugger services.  This sequence contains
  * the series of steps that are executed to properly initialize the PDA-DSF debug
- * session.  If any of the individual steps fail, the initialization will abort.   
+ * session.  If any of the individual steps fail, the initialization will abort.
  * <p>
  * The order in which services are initialized is important.  Some services depend
  * on other services and they assume that they will be initialized only if those
@@ -40,108 +40,95 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAStack;
  */
 public class PDAServicesInitSequence extends Sequence {
 
-    Step[] fSteps = new Step[] {
-        new Step() 
-        { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                // Start PDA back end debugger service.
-                new PDABackend(fSession, fLaunch, fProgram).initialize(requestMonitor);
-            }
-        },
-        new Step() 
-        { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                // Start PDA command control service.
-                fCommandControl = new PDACommandControl(fSession);
-                fCommandControl.initialize(requestMonitor);
-            }
-        },
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                // Start the run control service.
-                fRunControl = new PDARunControl(fSession);
-                fRunControl.initialize(requestMonitor);
-            }
-        },
-        new Step() { 
-            @Override
-            public void execute(final RequestMonitor requestMonitor) {
-                // Start the low-level breakpoint service 
-                new PDABreakpoints(fSession).initialize(new RequestMonitor(getExecutor(), requestMonitor));
-            }
-        },
-        new Step() { 
-            @Override
-            public void execute(final RequestMonitor requestMonitor) {
-                // Create the breakpoint mediator and start tracking PDA breakpoints.
+	Step[] fSteps = new Step[] { new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			// Start PDA back end debugger service.
+			new PDABackend(fSession, fLaunch, fProgram).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			// Start PDA command control service.
+			fCommandControl = new PDACommandControl(fSession);
+			fCommandControl.initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			// Start the run control service.
+			fRunControl = new PDARunControl(fSession);
+			fRunControl.initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(final RequestMonitor requestMonitor) {
+			// Start the low-level breakpoint service
+			new PDABreakpoints(fSession).initialize(new RequestMonitor(getExecutor(), requestMonitor));
+		}
+	}, new Step() {
+		@Override
+		public void execute(final RequestMonitor requestMonitor) {
+			// Create the breakpoint mediator and start tracking PDA breakpoints.
 
-                final BreakpointsMediator2 bpmService = new BreakpointsMediator2(
-                    fSession, new PDABreakpointAttributeTranslator());
-                bpmService.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
-                    @Override
-                    protected void handleSuccess() {
-                        bpmService.startTrackingBreakpoints(fCommandControl.getContext(), requestMonitor);
-                    }
-                }); 
-            }
-        },
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                // Start the stack service.
-                new PDAStack(fSession).initialize(requestMonitor);
-            }
-        },
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                // Start the service to track expressions.
-                new PDAExpressions(fSession).initialize(requestMonitor);
-            }
-        },
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                // Start the service to track expressions.
-                new PDARegisters(fSession).initialize(requestMonitor);
-            }
-        },
-        /*
-         * Indicate that the Data Model has been filled.  This will trigger the Debug view to expand.
-         */
-        new Step() {
-            @Override
-            public void execute(final RequestMonitor requestMonitor) {
-                fSession.dispatchEvent(
-                    new DataModelInitializedEvent(fCommandControl.getContext()),
-                    fCommandControl.getProperties());
-                requestMonitor.done();
-            }
-        }
-    };
+			final BreakpointsMediator2 bpmService = new BreakpointsMediator2(fSession,
+					new PDABreakpointAttributeTranslator());
+			bpmService.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
+				@Override
+				protected void handleSuccess() {
+					bpmService.startTrackingBreakpoints(fCommandControl.getContext(), requestMonitor);
+				}
+			});
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			// Start the stack service.
+			new PDAStack(fSession).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			// Start the service to track expressions.
+			new PDAExpressions(fSession).initialize(requestMonitor);
+		}
+	}, new Step() {
+		@Override
+		public void execute(RequestMonitor requestMonitor) {
+			// Start the service to track expressions.
+			new PDARegisters(fSession).initialize(requestMonitor);
+		}
+	},
+			/*
+			 * Indicate that the Data Model has been filled.  This will trigger the Debug view to expand.
+			 */
+			new Step() {
+				@Override
+				public void execute(final RequestMonitor requestMonitor) {
+					fSession.dispatchEvent(new DataModelInitializedEvent(fCommandControl.getContext()),
+							fCommandControl.getProperties());
+					requestMonitor.done();
+				}
+			} };
 
-    // Sequence input parameters, used in initializing services.
-    private PDALaunch  fLaunch;
-    private DsfSession fSession;
-    private String fProgram;
+	// Sequence input parameters, used in initializing services.
+	private PDALaunch fLaunch;
+	private DsfSession fSession;
+	private String fProgram;
 
-    // Service references, initialized when created and used in initializing other services.
-    private PDACommandControl fCommandControl;
-    private PDARunControl fRunControl;
+	// Service references, initialized when created and used in initializing other services.
+	private PDACommandControl fCommandControl;
+	private PDARunControl fRunControl;
 
-    public PDAServicesInitSequence(DsfSession session, PDALaunch launch, String program, RequestMonitor rm) 
-    {
-        super(session.getExecutor(), rm);
-        fLaunch = launch;
-        fSession = session;
-        fProgram = program;
-    }
+	public PDAServicesInitSequence(DsfSession session, PDALaunch launch, String program, RequestMonitor rm) {
+		super(session.getExecutor(), rm);
+		fLaunch = launch;
+		fSession = session;
+		fProgram = program;
+	}
 
-    @Override
-    public Step[] getSteps() {
-        return fSteps;
-    }
+	@Override
+	public Step[] getSteps() {
+		return fSteps;
+	}
 }

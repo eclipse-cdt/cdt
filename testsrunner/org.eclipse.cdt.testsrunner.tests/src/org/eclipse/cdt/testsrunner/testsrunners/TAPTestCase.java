@@ -29,24 +29,24 @@ public class TAPTestCase extends BaseTestCase {
 	//
 	public void testNoTestCases() {
 	}
-	
+
 	//TAP version 1
-	public void testIgnoreVersion()	{		
+	public void testIgnoreVersion() {
 	}
-	
+
 	//
 	//TAP version 1
-	public void testVersionMustBeOnFirstLine()	{
+	public void testVersionMustBeOnFirstLine() {
 		expectTestingException();
 	}
-	
+
 	//ok
 	//not ok
 	//ok # skip
 	//not ok # SKiPped
 	//ok # todo
 	//not ok # toDO
-	public void testBasicTestCases()	{
+	public void testBasicTestCases() {
 		mockModelUpdater.enterTestCase("1");
 		mockModelUpdater.setTestStatus(Status.Passed);
 		mockModelUpdater.exitTestCase();
@@ -70,11 +70,11 @@ public class TAPTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(Status.NotRun);
 		mockModelUpdater.exitTestCase();
 	}
-	
+
 	//1..3
 	//ok
 	//not ok
-	public void testMorePlannedThanExecutedTestCases()	{
+	public void testMorePlannedThanExecutedTestCases() {
 		mockModelUpdater.enterTestCase("1");
 		mockModelUpdater.setTestStatus(Status.Passed);
 		mockModelUpdater.exitTestCase();
@@ -85,10 +85,10 @@ public class TAPTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(Status.Skipped);
 		mockModelUpdater.exitTestCase();
 	}
-	
+
 	//ok
 	//ok 4
-	public void testForwardJump()	{
+	public void testForwardJump() {
 		mockModelUpdater.enterTestCase("1");
 		mockModelUpdater.setTestStatus(Status.Passed);
 		mockModelUpdater.exitTestCase();
@@ -102,19 +102,19 @@ public class TAPTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(Status.Passed);
 		mockModelUpdater.exitTestCase();
 	}
-	
+
 	//ok
 	//ok 1
-	public void testNoBackwardJump()	{
+	public void testNoBackwardJump() {
 		mockModelUpdater.enterTestCase("1");
 		mockModelUpdater.setTestStatus(Status.Passed);
 		mockModelUpdater.exitTestCase();
 		expectTestingException();
 	}
-		
+
 	//ok some test name
 	//not ok 3 other test name
-	public void testTestCaseName()	{
+	public void testTestCaseName() {
 		mockModelUpdater.enterTestCase("some test name");
 		mockModelUpdater.setTestStatus(Status.Passed);
 		mockModelUpdater.exitTestCase();
@@ -125,12 +125,12 @@ public class TAPTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(Status.Failed);
 		mockModelUpdater.exitTestCase();
 	}
-	
+
 	//1..3
 	//ok 1
 	//Bail out! because I'm done with this testing
 	//Ignored trailing data
-	public void testBailOut()	{
+	public void testBailOut() {
 		mockModelUpdater.enterTestCase("1");
 		mockModelUpdater.setTestStatus(Status.Passed);
 		mockModelUpdater.exitTestCase();
@@ -147,15 +147,15 @@ public class TAPTestCase extends BaseTestCase {
 	//1..3
 	//ok
 	//1..2
-	public void testAtMostOnePlan()	{
+	public void testAtMostOnePlan() {
 		mockModelUpdater.enterTestCase("1");
 		mockModelUpdater.setTestStatus(Status.Passed);
 		mockModelUpdater.exitTestCase();
 		expectTestingException();
 	}
-	
+
 	//1..2 # skipped for some reason
-	public void testSkippedAllTestsWithReason()	{
+	public void testSkippedAllTestsWithReason() {
 		mockModelUpdater.enterTestCase("1");
 		mockModelUpdater.addTestMessage(null, 0, Level.Message, "skipped for some reason");
 		mockModelUpdater.setTestStatus(Status.Skipped);
@@ -165,7 +165,7 @@ public class TAPTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(Status.Skipped);
 		mockModelUpdater.exitTestCase();
 	}
-	
+
 	//output for 1 (1)
 	//output for 1 (2)
 	//ok
@@ -173,7 +173,7 @@ public class TAPTestCase extends BaseTestCase {
 	//output for 2 (2)
 	//not ok second test # skipped for some reason
 	//ignored output
-	public void testOutput()	{
+	public void testOutput() {
 		mockModelUpdater.enterTestCase("1");
 		mockModelUpdater.addTestMessage(null, 0, Level.Message, "output for 1 (1)");
 		mockModelUpdater.addTestMessage(null, 0, Level.Message, "output for 1 (2)");
@@ -186,12 +186,12 @@ public class TAPTestCase extends BaseTestCase {
 		mockModelUpdater.setTestStatus(Status.Skipped);
 		mockModelUpdater.exitTestCase();
 	}
-	
+
 	//filenameA: info: info text
 	//filenameB: warning: warning text
 	//filenameC:17: error: error text
 	//ok
-	public void testGCCDiagnosticOutput()	{
+	public void testGCCDiagnosticOutput() {
 		mockModelUpdater.enterTestCase("1");
 		mockModelUpdater.addTestMessage("filenameA", 0, Level.Info, "info text");
 		mockModelUpdater.addTestMessage("filenameB", 0, Level.Warning, "warning text");

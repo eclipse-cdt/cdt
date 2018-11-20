@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
-
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 
@@ -38,21 +37,20 @@ import org.eclipse.jface.dialogs.MessageDialog;
  */
 public class ExceptionHandler {
 
-	private static ExceptionHandler fgInstance= new ExceptionHandler();
-	
+	private static ExceptionHandler fgInstance = new ExceptionHandler();
+
 	/**
 	 * Logs the given exception using the platform's logging mechanism. The exception is
 	 * logged as an error with the error code <code>JavaStatusConstants.INTERNAL_ERROR</code>.
 	 */
 	public static void log(Throwable t, String message) {
-		CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), 
-			CStatusConstants.INTERNAL_ERROR, message, t));
+		CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), CStatusConstants.INTERNAL_ERROR, message, t));
 	}
-	
+
 	/**
 	 * Handles the given <code>CoreException</code>. The workbench shell is used as a parent
 	 * for the dialog window.
-	 * 
+	 *
 	 * @param e the <code>CoreException</code> to be handled
 	 * @param title the dialog window's window title
 	 * @param message message to be displayed by the dialog window
@@ -60,10 +58,10 @@ public class ExceptionHandler {
 	public static void handle(CoreException e, String title, String message) {
 		handle(e, CUIPlugin.getActiveWorkbenchShell(), title, message);
 	}
-	
+
 	/**
-	 * Handles the given <code>CoreException</code>. 
-	 * 
+	 * Handles the given <code>CoreException</code>.
+	 *
 	 * @param e the <code>CoreException</code> to be handled
 	 * @param parent the dialog window's parent shell
 	 * @param title the dialog window's window title
@@ -72,11 +70,11 @@ public class ExceptionHandler {
 	public static void handle(CoreException e, Shell parent, String title, String message) {
 		fgInstance.perform(e, parent, title, message);
 	}
-	
+
 	/**
-	 * Handles the given <code>InvocationTargetException</code>. The workbench shell is used 
+	 * Handles the given <code>InvocationTargetException</code>. The workbench shell is used
 	 * as a parent for the dialog window.
-	 * 
+	 *
 	 * @param e the <code>InvocationTargetException</code> to be handled
 	 * @param title the dialog window's window title
 	 * @param message message to be displayed by the dialog window
@@ -84,10 +82,10 @@ public class ExceptionHandler {
 	public static void handle(InvocationTargetException e, String title, String message) {
 		handle(e, CUIPlugin.getActiveWorkbenchShell(), title, message);
 	}
-	
+
 	/**
-	 * Handles the given <code>InvocationTargetException</code>. 
-	 * 
+	 * Handles the given <code>InvocationTargetException</code>.
+	 *
 	 * @param e the <code>InvocationTargetException</code> to be handled
 	 * @param parent the dialog window's parent shell
 	 * @param title the dialog window's window title
@@ -98,10 +96,10 @@ public class ExceptionHandler {
 	}
 
 	//---- Hooks for subclasses to control exception handling ------------------------------------
-	
+
 	protected void perform(CoreException e, Shell shell, String title, String message) {
 		CUIPlugin.log(e);
-		IStatus status= e.getStatus();
+		IStatus status = e.getStatus();
 		if (status != null) {
 			ErrorDialog.openError(shell, title, message, status);
 		} else {
@@ -110,9 +108,9 @@ public class ExceptionHandler {
 	}
 
 	protected void perform(InvocationTargetException e, Shell shell, String title, String message) {
-		Throwable target= e.getTargetException();
+		Throwable target = e.getTargetException();
 		if (target instanceof CoreException) {
-			perform((CoreException)target, shell, title, message);
+			perform((CoreException) target, shell, title, message);
 		} else {
 			CUIPlugin.log(e);
 			if (e.getMessage() != null && e.getMessage().length() > 0) {
@@ -124,17 +122,17 @@ public class ExceptionHandler {
 	}
 
 	//---- Helper methods -----------------------------------------------------------------------
-	
+
 	private void displayMessageDialog(Throwable t, String exceptionMessage, Shell shell, String title, String message) {
-		StringWriter msg= new StringWriter();
+		StringWriter msg = new StringWriter();
 		if (message != null) {
 			msg.write(message);
 			msg.write("\n\n"); //$NON-NLS-1$
 		}
 		if (exceptionMessage == null || exceptionMessage.length() == 0)
-			msg.write(CUIMessages.ExceptionDialog_seeErrorLogMessage); 
+			msg.write(CUIMessages.ExceptionDialog_seeErrorLogMessage);
 		else
 			msg.write(exceptionMessage);
-		MessageDialog.openError(shell, title, msg.toString());			
-	}	
+		MessageDialog.openError(shell, title, msg.toString());
+	}
 }

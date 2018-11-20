@@ -12,6 +12,7 @@
  *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.index;
+
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -29,7 +30,7 @@ import org.eclipse.core.runtime.Path;
 public class ResourceContainerRelativeLocationConverter implements IIndexLocationConverter {
 	protected IWorkspaceRoot root;
 	protected IPath fullPath;
-	
+
 	/**
 	 * @param container the resource container to convert relative to
 	 */
@@ -40,15 +41,16 @@ public class ResourceContainerRelativeLocationConverter implements IIndexLocatio
 
 	@Override
 	public IIndexFileLocation fromInternalFormat(String raw) {
-		IResource member= root.getFile(fullPath.append(raw)); 
+		IResource member = root.getFile(fullPath.append(raw));
 		return new IndexFileLocation(member.getLocationURI(), member.getFullPath().toString());
 	}
+
 	@Override
 	public String toInternalFormat(IIndexFileLocation location) {
-		String sFullPath= location.getFullPath();
-		if(sFullPath!=null) {
-			IPath path= new Path(sFullPath);
-			if(fullPath.isPrefixOf(path)) {
+		String sFullPath = location.getFullPath();
+		if (sFullPath != null) {
+			IPath path = new Path(sFullPath);
+			if (fullPath.isPrefixOf(path)) {
 				return path.removeFirstSegments(fullPath.segmentCount()).toString();
 			}
 		}

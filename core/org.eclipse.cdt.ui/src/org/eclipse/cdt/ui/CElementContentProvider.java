@@ -71,30 +71,31 @@ C model (<code>ICModel</code>)<br>
 
  * </pre>
  */
-public class CElementContentProvider extends BaseCElementContentProvider implements IElementChangedListener, IInformationProvider, IInformationProviderExtension{
+public class CElementContentProvider extends BaseCElementContentProvider
+		implements IElementChangedListener, IInformationProvider, IInformationProviderExtension {
 	/** Editor. */
-    protected ITextEditor fEditor;
-    protected StructuredViewer fViewer;
+	protected ITextEditor fEditor;
+	protected StructuredViewer fViewer;
 	protected Object fInput;
-	
+
 	/** Remember what refreshes we already have pending so we don't post them again. */
 	protected HashSet<IRefreshable> pendingRefreshes = new HashSet<IRefreshable>();
 
-    /**
-     * Creates a new content provider for C elements.
-     */
-    public CElementContentProvider() {
-        // Empty.
-    }
-    
 	/**
 	 * Creates a new content provider for C elements.
-     * @param editor Editor.
+	 */
+	public CElementContentProvider() {
+		// Empty.
+	}
+
+	/**
+	 * Creates a new content provider for C elements.
+	 * @param editor Editor.
 	 */
 	public CElementContentProvider(ITextEditor editor) {
-        fEditor = editor;
+		fEditor = editor;
 	}
-    
+
 	/**
 	 * Creates a new content provider for C elements.
 	 */
@@ -102,46 +103,45 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		super(provideMembers, provideWorkingCopy);
 	}
 
-    @Override
+	@Override
 	public void dispose() {
-        super.dispose();
-        CoreModel.getDefault().removeElementChangedListener(this);
-    }
+		super.dispose();
+		CoreModel.getDefault().removeElementChangedListener(this);
+	}
 
-    @Override
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        super.inputChanged(viewer, oldInput, newInput);
+		super.inputChanged(viewer, oldInput, newInput);
 
-        fViewer = (StructuredViewer) viewer;
+		fViewer = (StructuredViewer) viewer;
 
-        if (oldInput == null && newInput != null) {
-            CoreModel.getDefault().addElementChangedListener(this);
-        } else if (oldInput != null && newInput == null) {
-            CoreModel.getDefault().removeElementChangedListener(this);
-        }
-        fInput= newInput;
-    }
+		if (oldInput == null && newInput != null) {
+			CoreModel.getDefault().addElementChangedListener(this);
+		} else if (oldInput != null && newInput == null) {
+			CoreModel.getDefault().removeElementChangedListener(this);
+		}
+		fInput = newInput;
+	}
 
-    @Override
+	@Override
 	public void elementChanged(final ElementChangedEvent event) {
 		try {
 			processDelta(event.getDelta());
-		} catch(CModelException e) {
+		} catch (CModelException e) {
 			CUIPlugin.log(e);
 			e.printStackTrace();
 		}
 	}
 
 	protected boolean isPathEntryChange(ICElementDelta delta) {
-		int flags= delta.getFlags();
-		return (delta.getKind() == ICElementDelta.CHANGED &&
-				((flags & ICElementDelta.F_BINARY_PARSER_CHANGED) != 0 ||
-				(flags & ICElementDelta.F_ADDED_PATHENTRY_LIBRARY) != 0 ||
-				(flags & ICElementDelta.F_ADDED_PATHENTRY_SOURCE) != 0 ||
-				(flags & ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY) != 0 ||
-				(flags & ICElementDelta.F_PATHENTRY_REORDER) != 0 ||
-				(flags & ICElementDelta.F_REMOVED_PATHENTRY_SOURCE) != 0 ||
-				(flags & ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE) != 0));
+		int flags = delta.getFlags();
+		return (delta.getKind() == ICElementDelta.CHANGED && ((flags & ICElementDelta.F_BINARY_PARSER_CHANGED) != 0
+				|| (flags & ICElementDelta.F_ADDED_PATHENTRY_LIBRARY) != 0
+				|| (flags & ICElementDelta.F_ADDED_PATHENTRY_SOURCE) != 0
+				|| (flags & ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY) != 0
+				|| (flags & ICElementDelta.F_PATHENTRY_REORDER) != 0
+				|| (flags & ICElementDelta.F_REMOVED_PATHENTRY_SOURCE) != 0
+				|| (flags & ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE) != 0));
 	}
 
 	/**
@@ -150,9 +150,9 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	 * current thread but the viewer updates are posted to the UI thread.
 	 */
 	protected void processDelta(ICElementDelta delta) throws CModelException {
-		int kind= delta.getKind();
-		int flags= delta.getFlags();
-		ICElement element= delta.getElement();
+		int kind = delta.getKind();
+		int flags = delta.getFlags();
+		ICElement element = delta.getElement();
 
 		//System.out.println("Processing " + element);
 
@@ -183,7 +183,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 
 		if (kind == ICElementDelta.ADDED) {
-			Object parent= internalGetParent(element);
+			Object parent = internalGetParent(element);
 			postAdd(parent, element);
 			updateContainer(element);
 		}
@@ -206,7 +206,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 				return;
 			} else if (element instanceof ICContainer) {
 				// if element itself has changed, not its children
-				if ((flags&~(ICElementDelta.F_CHILDREN|ICElementDelta.F_FINE_GRAINED))!=0) {
+				if ((flags & ~(ICElementDelta.F_CHILDREN | ICElementDelta.F_FINE_GRAINED)) != 0) {
 					postRefresh(element);
 				}
 			} else if (element instanceof ArchiveContainer || element instanceof BinaryContainer) {
@@ -217,8 +217,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 
 		if (processResourceDeltas(delta.getResourceDeltas(), element))
 			return;
-	
-		ICElementDelta[] affectedChildren= delta.getAffectedChildren();
+
+		ICElementDelta[] affectedChildren = delta.getAffectedChildren();
 		for (ICElementDelta element2 : affectedChildren) {
 			processDelta(element2);
 		}
@@ -232,7 +232,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	private boolean processResourceDeltas(IResourceDelta[] deltas, Object parent) {
 		if (deltas == null)
 			return false;
-		
+
 		if (deltas.length > 1 && !(parent instanceof ICModel)) {
 			// more than one child changed, refresh from here downwards
 			// but not if the parent is ICModel
@@ -251,17 +251,17 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 
 	/**
 	 * Processes a resource delta.
-	 * 
+	 *
 	 * @return true if the parent got refreshed
 	 */
 	private boolean processResourceDelta(IResourceDelta delta, Object parent) {
-		int status= delta.getKind();
-		IResource resource= delta.getResource();
+		int status = delta.getKind();
+		IResource resource = delta.getResource();
 		// filter out changes affecting the output folder
 		if (resource == null) {
 			return false;
 		}
-                        
+
 		// this could be optimized by handling all the added children in the parent
 		if ((status & IResourceDelta.REMOVED) != 0) {
 			postRemove(resource);
@@ -270,7 +270,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			postAdd(parent, resource);
 		}
 
-		int flags= delta.getFlags();
+		int flags = delta.getFlags();
 		// open/close state change of a project
 		if ((flags & IResourceDelta.OPEN) != 0) {
 			postProjectStateChanged(parent);
@@ -285,7 +285,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		IParent container = null;
 		ICProject cproject = null;
 		if (cfile instanceof IBinary) {
-			IBinary bin = (IBinary)cfile;
+			IBinary bin = (IBinary) cfile;
 			if (bin.showInBinaryContainer()) {
 				cproject = bin.getCProject();
 				container = cproject.getBinaryContainer();
@@ -300,13 +300,13 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 		return false;
 	}
-	
+
 	// Tree refresh system
 	// We keep track of what we're going to refresh and avoid posting multiple refresh
 	// messages for the same elements. This avoids major performance issues where
 	// we update tree views hundreds or thousands of times.
 	protected interface IRefreshable {
-	    public void refresh();
+		public void refresh();
 	}
 
 	protected final class RefreshContainer implements IRefreshable {
@@ -332,21 +332,21 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			} else {
 				fViewer.refresh(project);
 			}
-	    }
+		}
 
 		@Override
 		public boolean equals(Object o) {
-	    	if (o instanceof RefreshContainer) {
-	    		RefreshContainer c = (RefreshContainer)o;
-	    		return c.container.equals(container) && c.project.equals(project);
-	    	}
-	        return false;
-	    }
+			if (o instanceof RefreshContainer) {
+				RefreshContainer c = (RefreshContainer) o;
+				return c.container.equals(container) && c.project.equals(project);
+			}
+			return false;
+		}
 
 		@Override
 		public int hashCode() {
-	    	return container.hashCode() * 10903143 + 31181;
-	    }
+			return container.hashCode() * 10903143 + 31181;
+		}
 	}
 
 	protected final class RefreshElement implements IRefreshable {
@@ -358,11 +358,11 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 
 		@Override
 		public void refresh() {
-			if (element instanceof IWorkingCopy){
-				if (fViewer.testFindItem(element) != null){
+			if (element instanceof IWorkingCopy) {
+				if (fViewer.testFindItem(element) != null) {
 					fViewer.refresh(element);
 				} else {
-					fViewer.refresh(((IWorkingCopy)element).getOriginalElement());
+					fViewer.refresh(((IWorkingCopy) element).getOriginalElement());
 				}
 			} else if (element instanceof IBinary) {
 				fViewer.refresh(element, true);
@@ -373,17 +373,17 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 
 		@Override
 		public boolean equals(Object o) {
-	    	if (o instanceof RefreshElement) {
-	    		RefreshElement c = (RefreshElement)o;
-	    		return c.element.equals(element);
-	    	}
-	        return false;
-	    }
+			if (o instanceof RefreshElement) {
+				RefreshElement c = (RefreshElement) o;
+				return c.element.equals(element);
+			}
+			return false;
+		}
 
 		@Override
 		public int hashCode() {
-	    	return element.hashCode() * 7 + 490487;
-	    }
+			return element.hashCode() * 7 + 490487;
+		}
 	}
 
 	protected final class RefreshProjectState implements IRefreshable {
@@ -403,17 +403,17 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 
 		@Override
 		public boolean equals(Object o) {
-	    	if (o instanceof RefreshElement) {
-	    		RefreshElement c = (RefreshElement)o;
-	    		return c.element.equals(element);
-	    	}
-	        return false;
-	    }
+			if (o instanceof RefreshElement) {
+				RefreshElement c = (RefreshElement) o;
+				return c.element.equals(element);
+			}
+			return false;
+		}
 
 		@Override
 		public int hashCode() {
-	    	return element.hashCode() * 11 + 490487;
-	    }
+			return element.hashCode() * 11 + 490487;
+		}
 	}
 
 	protected void postContainerRefresh(final IParent container, final ICProject cproject) {
@@ -441,7 +441,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	}
 
 	protected final void postRefreshable(final IRefreshable r) {
-		Control ctrl= fViewer.getControl();
+		Control ctrl = fViewer.getControl();
 		if (ctrl != null && !ctrl.isDisposed()) {
 			if (pendingRefreshes.contains(r))
 				return;
@@ -450,7 +450,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 				@Override
 				public void run() {
 					pendingRefreshes.remove(r);
-					Control ctrl= fViewer.getControl();
+					Control ctrl = fViewer.getControl();
 					if (ctrl != null && !ctrl.isDisposed()) {
 						r.refresh();
 					}
@@ -459,11 +459,10 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 	}
 
-    @Override
+	@Override
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		if (textViewer != null && fEditor != null) {
-			IRegion region = CWordFinder.findWord(textViewer.getDocument(),
-					offset);
+			IRegion region = CWordFinder.findWord(textViewer.getDocument(), offset);
 			if (region != null) {
 				return region;
 			}
@@ -472,17 +471,17 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		return null;
 	}
 
-    @Override
+	@Override
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
-    	// deprecated API - not used anymore
-        Object info = getInformation2(textViewer, subject);
-        if (info != null) {
-        	return info.toString();
-        }
-        return null;
-    }
+		// deprecated API - not used anymore
+		Object info = getInformation2(textViewer, subject);
+		if (info != null) {
+			return info.toString();
+		}
+		return null;
+	}
 
-    @Override
+	@Override
 	public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 		if (fEditor == null)
 			return null;

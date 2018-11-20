@@ -56,11 +56,12 @@ import org.osgi.service.prefs.Preferences;
  *
  * @since 3.0
  */
-public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader implements ICoreEnvironmentVariableSupplier {
-	public static final String NODENAME = "environment";  //$NON-NLS-1$
-	public static final String PREFNAME_WORKSPACE = "workspace";  //$NON-NLS-1$
-	public static final String PREFNAME_PROJECT = "project";  //$NON-NLS-1$
-	public static final String NODENAME_CFG = "project";  //$NON-NLS-1$
+public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader
+		implements ICoreEnvironmentVariableSupplier {
+	public static final String NODENAME = "environment"; //$NON-NLS-1$
+	public static final String PREFNAME_WORKSPACE = "workspace"; //$NON-NLS-1$
+	public static final String PREFNAME_PROJECT = "project"; //$NON-NLS-1$
+	public static final String NODENAME_CFG = "project"; //$NON-NLS-1$
 
 	private PrefsStorableEnvironment fWorkspaceVariables;
 	private StorableEnvironment fOverrideVariables = new StorableEnvironment(false);
@@ -73,7 +74,7 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader im
 		StorableEnvironment env = null;
 		if (context instanceof IInternalCCfgInfo) {
 			try {
-				CConfigurationSpecSettings settings = ((IInternalCCfgInfo)context).getSpecSettings();
+				CConfigurationSpecSettings settings = ((IInternalCCfgInfo) context).getSpecSettings();
 				env = settings.getEnvironment();
 				if (env == null || forceLoad) {
 					env = loadEnvironment(context, settings.isReadOnly());
@@ -82,8 +83,7 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader im
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
-		}
-		else if (context == null || context instanceof IBuildConfiguration || context instanceof IWorkspace) {
+		} else if (context == null || context instanceof IBuildConfiguration || context instanceof IWorkspace) {
 			if (fWorkspaceVariables == null || forceLoad)
 				fWorkspaceVariables = (PrefsStorableEnvironment) loadEnvironment(context, false);
 			env = fWorkspaceVariables;
@@ -97,36 +97,35 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader im
 		ISerializeInfo serializeInfo = null;
 
 		if (context instanceof ICConfigurationDescription) {
-			final ICConfigurationDescription cfg = (ICConfigurationDescription)context;
+			final ICConfigurationDescription cfg = (ICConfigurationDescription) context;
 			final String name = cfg.getId();
 			if (name != null)
 				serializeInfo = new ISerializeInfo() {
-				@Override
-				public Preferences getNode() {
-					return getConfigurationNode(cfg.getProjectDescription());
-				}
+					@Override
+					public Preferences getNode() {
+						return getConfigurationNode(cfg.getProjectDescription());
+					}
 
-				@Override
-				public String getPrefName() {
-					return name;
-				}
-			};
-		}
-		else if (context == null || context instanceof IWorkspace) {
+					@Override
+					public String getPrefName() {
+						return name;
+					}
+				};
+		} else if (context == null || context instanceof IWorkspace) {
 			final Preferences prefs = getWorkspaceNode();
 			final String name = PREFNAME_WORKSPACE;
 			if (prefs != null)
 				serializeInfo = new ISerializeInfo() {
-				@Override
-				public Preferences getNode() {
-					return prefs;
-				}
+					@Override
+					public Preferences getNode() {
+						return prefs;
+					}
 
-				@Override
-				public String getPrefName() {
-					return name;
-				}
-			};
+					@Override
+					public String getPrefName() {
+						return name;
+					}
+				};
 		}
 		return serializeInfo;
 	}
@@ -166,7 +165,7 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader im
 		if (prefNode == null)
 			return;
 
-		try{
+		try {
 			String ids[] = prefNode.keys();
 			boolean found = false;
 			for (String id : ids) {
@@ -178,16 +177,15 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader im
 
 			if (found)
 				prefNode.flush();
-		}
-		catch(BackingStoreException e) {
+		} catch (BackingStoreException e) {
 		}
 	}
 
 	public void storeWorkspaceEnvironment(boolean force) {
 		if (fWorkspaceVariables != null) {
-			try{
-				storeEnvironment(fWorkspaceVariables,ResourcesPlugin.getWorkspace(),force, true);
-			} catch(CoreException e) {
+			try {
+				storeEnvironment(fWorkspaceVariables, ResourcesPlugin.getWorkspace(), force, true);
+			} catch (CoreException e) {
 
 			}
 		}
@@ -209,7 +207,7 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader im
 
 		storeWorkspaceEnvironment(true);
 
-		return ! Arrays.equals(oldVariables, newVariables);
+		return !Arrays.equals(oldVariables, newVariables);
 	}
 
 	public void storeProjectEnvironment(ICProjectDescription des, boolean force) {
@@ -256,15 +254,18 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader im
 		return combineVariables(normal, override);
 	}
 
-	private IEnvironmentVariable[] combineVariables(IEnvironmentVariable[] oldVariables, IEnvironmentVariable[] newVariables) {
-		Map<String, IEnvironmentVariable> vars = new HashMap<String, IEnvironmentVariable>(oldVariables.length + newVariables.length);
+	private IEnvironmentVariable[] combineVariables(IEnvironmentVariable[] oldVariables,
+			IEnvironmentVariable[] newVariables) {
+		Map<String, IEnvironmentVariable> vars = new HashMap<String, IEnvironmentVariable>(
+				oldVariables.length + newVariables.length);
 		for (IEnvironmentVariable variable : oldVariables)
 			vars.put(variable.getName(), variable);
 		for (IEnvironmentVariable variable : newVariables) {
 			if (!vars.containsKey(variable.getName()))
 				vars.put(variable.getName(), variable);
 			else
-				vars.put(variable.getName(), EnvVarOperationProcessor.performOperation(vars.get(variable.getName()), variable));
+				vars.put(variable.getName(),
+						EnvVarOperationProcessor.performOperation(vars.get(variable.getName()), variable));
 		}
 		return vars.values().toArray(new IEnvironmentVariable[vars.size()]);
 	}
@@ -283,7 +284,7 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader im
 	public IEnvironmentVariable createOverrideVariable(String name, String value, int op, String delimiter) {
 		if (getValidName(name) == null)
 			return null;
-		return fOverrideVariables.createVariable(name,value,op,delimiter);
+		return fOverrideVariables.createVariable(name, value, op, delimiter);
 	}
 
 	public IEnvironmentVariable createVariable(String name, String value, int op, String delimiter, Object context) {
@@ -292,7 +293,7 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader im
 		StorableEnvironment env = getEnvironment(context);
 		if (env == null)
 			return null;
-		IEnvironmentVariable var =  env.createVariable(name,value,op,delimiter);
+		IEnvironmentVariable var = env.createVariable(name, value, op, delimiter);
 		if (env.isChanged()) {
 			env.setChanged(false);
 		}
@@ -334,7 +335,7 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader im
 	}
 
 	protected IEnvironmentVariable[] filterVariables(IEnvironmentVariable variables[]) {
-		return EnvVarOperationProcessor.filterVariables(variables,null);
+		return EnvVarOperationProcessor.filterVariables(variables, null);
 	}
 
 	@Override
@@ -351,7 +352,6 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader im
 			return true;
 		return env.appendContributedEnvironment();
 	}
-
 
 	public void setAppendEnvironment(boolean append, Object context) {
 		StorableEnvironment env = getEnvironment(context);

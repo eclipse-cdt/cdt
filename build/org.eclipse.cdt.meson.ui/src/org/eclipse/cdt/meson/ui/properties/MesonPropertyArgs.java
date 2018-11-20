@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - initial implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ public class MesonPropertyArgs extends MesonPropertyText {
 	public MesonPropertyArgs(Composite composite, String name, String initialValue, String tooltip) {
 		super(composite, name, initialValue, tooltip);
 	}
-	
+
 	@Override
 	public String getConfiguredString() {
 		// TODO Auto-generated method stub

@@ -12,7 +12,7 @@
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Chris Recoskie (IBM Corporation)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public abstract class FileContent {
 	/** @since 5.4 */
 	public static final long NULL_FILE_SIZE = -1;
 
-	/** 
+	/**
 	 * Returns the location of this file content as it will appear in {@link IASTFileLocation#getFileName()}
 	 */
 	public abstract String getFileLocation();
@@ -54,7 +54,7 @@ public abstract class FileContent {
 	public abstract long getTimestamp();
 
 	/**
-	 * Returns time when the file was read. Corresponds to the start of reading.    
+	 * Returns time when the file was read. Corresponds to the start of reading.
 	 * @return time before reading started in milliseconds since epoch
 	 * @since 5.4
 	 */
@@ -107,13 +107,13 @@ public abstract class FileContent {
 	public static FileContent create(ITranslationUnit tu) {
 		InternalFileContent fileContent;
 
-		IPath location= tu.getLocation();
+		IPath location = tu.getLocation();
 		if (location == null) {
 			fileContent = new InternalFileContent(tu.getElementName(), new CharArray(tu.getContents()));
 		} else if (tu.isWorkingCopy()) {
 			fileContent = new InternalFileContent(location.toOSString(), new CharArray(tu.getContents()));
 		} else {
-			IResource res= tu.getResource();
+			IResource res = tu.getResource();
 			if (res instanceof IFile) {
 				fileContent = InternalParserUtil.createWorkspaceFileContent((IFile) res);
 			} else {
@@ -128,7 +128,7 @@ public abstract class FileContent {
 		}
 		return fileContent;
 	}
-	
+
 	/**
 	 * Creates a file content object for an index file location.
 	 */
@@ -162,8 +162,7 @@ public abstract class FileContent {
 	 * Creates a file content object for a header or a source file that is not part of the workspace.
 	 * @since 6.3
 	 */
-	public static FileContent createForExternalFileLocation(String fileLocation, boolean isSource,
-			String encoding) {
+	public static FileContent createForExternalFileLocation(String fileLocation, boolean isSource, String encoding) {
 		InternalFileContent fileContent = InternalParserUtil.createExternalFileContent(fileLocation, encoding);
 		if (fileContent != null)
 			fileContent.setIsSource(isSource);

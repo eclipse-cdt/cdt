@@ -60,23 +60,22 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 import org.osgi.framework.FrameworkUtil;
 
-
 @SuppressWarnings("restriction")
 public class ProjectTools {
 
 	static IWorkspace workspace;
-    static IWorkspaceRoot root;
-    static NullProgressMonitor monitor;
-    static String pluginRoot;
-    static ConvertProjectWizardPage page;
-    static boolean setupComplete;
+	static IWorkspaceRoot root;
+	static NullProgressMonitor monitor;
+	static String pluginRoot;
+	static ConvertProjectWizardPage page;
+	static boolean setupComplete;
 
-    /**
-     * Setup routine for tests.
-     * @return true if setup successful, false otherwise
-     * @throws CoreException 
-     */
-	public static boolean setup() throws CoreException  {
+	/**
+	 * Setup routine for tests.
+	 * @return true if setup successful, false otherwise
+	 * @throws CoreException
+	 */
+	public static boolean setup() throws CoreException {
 		if (!setupComplete) {
 			IWorkspaceDescription desc;
 			workspace = ResourcesPlugin.getWorkspace();
@@ -95,7 +94,7 @@ public class ProjectTools {
 		setupComplete = true;
 		return true;
 	}
-	
+
 	/**
 	 * Build the project.
 	 * @return true if build started successfully or false otherwise
@@ -105,11 +104,11 @@ public class ProjectTools {
 			workspace.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 			workspace.getRoot().refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 		} catch (CoreException e) {
-		    return false;	
+			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Get the default monitor.
 	 * @return The current monitor
@@ -145,7 +144,7 @@ public class ProjectTools {
 		// if the path points to an actual object, use its resource to get its run path location
 		// which will handle any linked directories
 		if (project.findMember(filePath) != null)
-		   runPath = project.findMember(filePath).getLocation().removeLastSegments(1);
+			runPath = project.findMember(filePath).getLocation().removeLastSegments(1);
 		String[] args = new String[2];
 		args[0] = "+x";
 		// if the path points to an actual object, use its resource to get its location
@@ -155,8 +154,7 @@ public class ProjectTools {
 		else // otherwise, just append to project location
 			args[1] = project.getLocation().append(filePath).toOSString();
 		try {
-			Process proc = launcher.execute(commandPath, args, new String[0],
-					runPath, new NullProgressMonitor());
+			Process proc = launcher.execute(commandPath, args, new String[0], runPath, new NullProgressMonitor());
 			if (proc != null) {
 				try {
 					// Close the input of the process since we will never write to
@@ -176,7 +174,7 @@ public class ProjectTools {
 		}
 		return true;
 	}
-	
+
 	// Inner class to allow us to fake a project wizard without starting up
 	// the UI for it.
 	protected static class ConvertToAutotoolsProjectWizardTest extends ConvertToAutotoolsProjectWizard {
@@ -194,30 +192,32 @@ public class ProjectTools {
 		@Override
 		public void applyOptions(IProject project, IProgressMonitor monitor) {
 			setCurrentProject(project);
-	    }
-		
+		}
+
 		@Override
 		public IConfiguration[] getSelectedConfigurations() {
-			IProjectType projectType = ManagedBuildManager.getExtensionProjectType("org.eclipse.linuxtools.cdt.autotools.core.projectType"); //$NON-NLS-1$
+			IProjectType projectType = ManagedBuildManager
+					.getExtensionProjectType("org.eclipse.linuxtools.cdt.autotools.core.projectType"); //$NON-NLS-1$
 			return projectType.getConfigurations();
 		}
 	}
-	
+
 	/**
 	 * Creates an empty Autotools project.
 	 * @param name The name of the new project
 	 * @return The newly created project or null
-	 */		
+	 */
 	public static IProject createProject(String name) {
 		IProject testProject = root.getProject(name);
 		if (testProject == null) {
 			return null;
-        }
+		}
 		IProjectDescription description = workspace.newProjectDescription(name);
 		try {
 			testProject.create(monitor);
 			testProject.open(monitor);
-			IProject newProject = CCorePlugin.getDefault().createCDTProject(description, testProject, SubMonitor.convert(monitor,25));
+			IProject newProject = CCorePlugin.getDefault().createCDTProject(description, testProject,
+					SubMonitor.convert(monitor, 25));
 			ConvertToAutotoolsProjectWizardTest wizard = new ConvertToAutotoolsProjectWizardTest();
 			wizard.addPages();
 			ConvertToAutotoolsProjectWizardPage page = new ConvertToAutotoolsProjectWizardPage("test", wizard);
@@ -227,7 +227,7 @@ public class ProjectTools {
 		}
 		return testProject;
 	}
-	
+
 	/**
 	 * Set the configuration source directory for an Autotools project.
 	 * @param project The Autotools project to modify
@@ -241,11 +241,13 @@ public class ProjectTools {
 		IAConfiguration cfg = AutotoolsConfigurationManager.getInstance().getConfiguration(project, id, true);
 		cfg.setConfigToolDirectory(dir);
 	}
-	
-	private static void importFilesFromZip(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {		
-		ZipFileStructureProvider structureProvider=	new ZipFileStructureProvider(srcZipFile);
+
+	private static void importFilesFromZip(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor)
+			throws InvocationTargetException {
+		ZipFileStructureProvider structureProvider = new ZipFileStructureProvider(srcZipFile);
 		try {
-			ImportOperation op= new ImportOperation(destPath, structureProvider.getRoot(), structureProvider, new ImportOverwriteQuery());
+			ImportOperation op = new ImportOperation(destPath, structureProvider.getRoot(), structureProvider,
+					new ImportOverwriteQuery());
 			op.run(monitor);
 		} catch (InterruptedException e) {
 			// should not happen
@@ -257,17 +259,16 @@ public class ProjectTools {
 		CommandLauncher launcher = new CommandLauncher();
 		OutputStream stdout = new ByteArrayOutputStream();
 		OutputStream stderr = new ByteArrayOutputStream();
-		
+
 		IPath runPath = root.getLocation().append(destPath);
 
 		// Run the genfiles.sh shell script which will simulate
 		// running aclocal, autoconf, and automake
 		launcher.showCommand(true);
 		IPath commandPath = new Path("sh");
-		String[] cmdargs = new String[]{"genfiles.sh"};
+		String[] cmdargs = new String[] { "genfiles.sh" };
 		try {
-			Process proc = launcher.execute(commandPath, cmdargs, new String[0],
-					runPath, new NullProgressMonitor());
+			Process proc = launcher.execute(commandPath, cmdargs, new String[0], runPath, new NullProgressMonitor());
 			if (proc != null) {
 				try {
 					// Close the input of the process since we will never write to
@@ -276,8 +277,8 @@ public class ProjectTools {
 				} catch (IOException e) {
 				}
 
-				if (launcher.waitAndRead(stdout, stderr, SubMonitor.convert(
-						monitor, IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
+				if (launcher.waitAndRead(stdout, stderr,
+						SubMonitor.convert(monitor, IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
 					return false;
 				}
 			} else
@@ -289,42 +290,43 @@ public class ProjectTools {
 		return true;
 	}
 
-	private static void importFilesFromZipAndGenerate(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {
+	private static void importFilesFromZipAndGenerate(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor)
+			throws InvocationTargetException {
 		importFilesFromZip(srcZipFile, destPath, monitor);
 		if (!generateFiles(destPath))
 			throw new InvocationTargetException(new Exception("Unsuccessful test file generation"));
 	}
-	
+
 	private static class ImportOverwriteQuery implements IOverwriteQuery {
 		@Override
 		public String queryOverwrite(String file) {
 			return ALL;
-		}	
-	}		
-	
+		}
+	}
+
 	/**
 	 * Adds a source container to a IProject.
 	 * @param jproject The parent project
 	 * @param containerName The name of the new source container
 	 * @return The handle to the new source container
 	 * @throws CoreException Creation failed
-	 */				
+	 */
 	public static IContainer addSourceContainer(IProject jproject, String containerName) throws CoreException {
-		IProject project= jproject.getProject();
-		IContainer container= null;
+		IProject project = jproject.getProject();
+		IContainer container = null;
 		if (containerName == null || containerName.length() == 0) {
-			container= project;
+			container = project;
 		} else {
-			IFolder folder= project.getFolder(containerName);
+			IFolder folder = project.getFolder(containerName);
 			if (!folder.exists()) {
 				createFolder(folder, false, true, null);
 			}
-			container= folder;
+			container = folder;
 		}
-	
+
 		return container;
 	}
-	
+
 	/**
 	 * Adds a source container to a IProject and imports all files contained
 	 * in the given ZIP file.
@@ -337,10 +339,11 @@ public class ProjectTools {
 	 * @throws InvocationTargetException Creation failed
 	 * @throws CoreException Creation failed
 	 * @throws IOException Creation failed
-	 */		
-	public static IContainer addSourceContainerWithImport(IProject project, String containerName, File zipFile, boolean generate) throws InvocationTargetException, CoreException, IOException {
-		try (ZipFile file= new ZipFile(zipFile)){
-			IContainer root= addSourceContainer(project, containerName);
+	 */
+	public static IContainer addSourceContainerWithImport(IProject project, String containerName, File zipFile,
+			boolean generate) throws InvocationTargetException, CoreException, IOException {
+		try (ZipFile file = new ZipFile(zipFile)) {
+			IContainer root = addSourceContainer(project, containerName);
 			if (generate)
 				importFilesFromZipAndGenerate(file, root.getFullPath(), null);
 			else
@@ -360,12 +363,14 @@ public class ProjectTools {
 	 * @throws InvocationTargetException Creation failed
 	 * @throws CoreException Creation failed
 	 * @throws IOException Creation failed
-	 */		
-	public static IContainer addSourceContainerWithImport(IProject project, String containerName, Path zipFilePath, boolean generate) throws InvocationTargetException, CoreException, IOException {
-		File zipFile = new File(FileLocator.toFileURL(FileLocator.find(FrameworkUtil.getBundle(ProjectTools.class), zipFilePath, null)).getFile());
+	 */
+	public static IContainer addSourceContainerWithImport(IProject project, String containerName, Path zipFilePath,
+			boolean generate) throws InvocationTargetException, CoreException, IOException {
+		File zipFile = new File(FileLocator
+				.toFileURL(FileLocator.find(FrameworkUtil.getBundle(ProjectTools.class), zipFilePath, null)).getFile());
 		return addSourceContainerWithImport(project, containerName, zipFile, generate);
 	}
-	
+
 	/**
 	 * Adds a source container to a IProject and imports all files contained
 	 * in the given ZIP file.
@@ -376,8 +381,9 @@ public class ProjectTools {
 	 * @throws InvocationTargetException Creation failed
 	 * @throws CoreException Creation failed
 	 * @throws IOException Creation failed
-	 */		
-	public static IContainer addSourceContainerWithImport(IProject project, String containerName, Path zipFilePath) throws InvocationTargetException, CoreException, IOException {
+	 */
+	public static IContainer addSourceContainerWithImport(IProject project, String containerName, Path zipFilePath)
+			throws InvocationTargetException, CoreException, IOException {
 		return addSourceContainerWithImport(project, containerName, zipFilePath, false);
 	}
 
@@ -395,17 +401,18 @@ public class ProjectTools {
 		file.setContents(new ByteArrayInputStream(contents.getBytes()), false, false, null);
 		return file;
 	}
-	
+
 	/**
 	 * Create a linked folder for a project
 	 * @param project The project
 	 * @param folderName Name of the linked folder in the project
 	 * @param path The URI of the real file/folder
-	 * 
+	 *
 	 * @return
 	 * @throws CoreException
 	 */
-	public static IFolder createLinkedFolder(IProject project, String folderName, final URI linkTarget) throws Exception {
+	public static IFolder createLinkedFolder(IProject project, String folderName, final URI linkTarget)
+			throws Exception {
 		final IFolder folderHandle = root.getFolder(project.getFullPath().append(folderName));
 
 		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
@@ -439,14 +446,15 @@ public class ProjectTools {
 	 * <code> org.eclipse.ui.dialogs.ContainerGenerator</code> is too heavy
 	 * (creates a runnable)
 	 */
-	public static void createFolder(IFolder folder, boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
+	public static void createFolder(IFolder folder, boolean force, boolean local, IProgressMonitor monitor)
+			throws CoreException {
 		if (!folder.exists()) {
-			IContainer parent= folder.getParent();
+			IContainer parent = folder.getParent();
 			if (parent instanceof IFolder) {
-				createFolder((IFolder)parent, force, local, null);
+				createFolder((IFolder) parent, force, local, null);
 			}
 			folder.create(force, local, monitor);
 		}
 	}
-	
+
 }

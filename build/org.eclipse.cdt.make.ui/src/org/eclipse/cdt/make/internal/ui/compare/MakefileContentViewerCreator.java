@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-
 /**
  * Required when creating a MakefileMergeViewer from the plugin.xml file.
  */

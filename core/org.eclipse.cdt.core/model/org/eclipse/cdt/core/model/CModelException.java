@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
- 
 import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.core.runtime.CoreException;
 
@@ -43,12 +42,12 @@ public class CModelException extends CoreException {
 	 * @see org.eclipse.core.runtime.IStatus#ERROR
 	 */
 	public CModelException(Throwable e, int code) {
-		this(new CModelStatus(code, e)); 
+		this(new CModelStatus(code, e));
 	}
 
 	/**
 	 * Creates a C model exception for the given <code>CoreException</code>.
-	 * Equivalent to 
+	 * Equivalent to
 	 * <code>CModelException(exception,ICModelStatusConstants.CORE_EXCEPTION</code>.
 	 *
 	 * @param exception the <code>CoreException</code>
@@ -108,11 +107,11 @@ public class CModelException extends CoreException {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder buffer= new StringBuilder();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("C Model Exception: "); //$NON-NLS-1$
 		if (getException() != null) {
 			if (getException() instanceof CoreException) {
-				CoreException c= (CoreException)getException();
+				CoreException c = (CoreException) getException();
 				buffer.append("Core Exception [code "); //$NON-NLS-1$
 				buffer.append(c.getStatus().getCode());
 				buffer.append("] "); //$NON-NLS-1$

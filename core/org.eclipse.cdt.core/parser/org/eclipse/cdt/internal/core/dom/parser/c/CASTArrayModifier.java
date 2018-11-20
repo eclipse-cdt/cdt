@@ -27,14 +27,14 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CASTArrayModifier extends ASTAttributeOwner implements ICASTArrayModifier, IASTAmbiguityParent {
 
-    private IASTExpression exp;
-    private boolean isVolatile;
-    private boolean isRestrict;
-    private boolean isStatic;
-    private boolean isConst;
-    private boolean isVarSized;
+	private IASTExpression exp;
+	private boolean isVolatile;
+	private boolean isRestrict;
+	private boolean isStatic;
+	private boolean isConst;
+	private boolean isVarSized;
 
-    public CASTArrayModifier() {
+	public CASTArrayModifier() {
 	}
 
 	public CASTArrayModifier(IASTExpression exp) {
@@ -57,104 +57,106 @@ public class CASTArrayModifier extends ASTAttributeOwner implements ICASTArrayMo
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public IASTExpression getConstantExpression() {
-        return exp;
-    }
+		return exp;
+	}
 
-    @Override
+	@Override
 	public void setConstantExpression(IASTExpression expression) {
-        assertNotFrozen();
-        this.exp = expression;
-        if (expression != null) {
-        	expression.setParent(this);
-        	expression.setPropertyInParent(CONSTANT_EXPRESSION);
-        }
-    }
+		assertNotFrozen();
+		this.exp = expression;
+		if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(CONSTANT_EXPRESSION);
+		}
+	}
 
 	@Override
 	public boolean isConst() {
-        return isConst;
-    }
+		return isConst;
+	}
 
-    @Override
+	@Override
 	public boolean isStatic() {
-        return isStatic;
-    }
+		return isStatic;
+	}
 
-    @Override
+	@Override
 	public boolean isRestrict() {
-        return isRestrict;
-    }
+		return isRestrict;
+	}
 
-    @Override
+	@Override
 	public boolean isVolatile() {
-        return isVolatile;
-    }
+		return isVolatile;
+	}
 
-    @Override
+	@Override
 	public void setConst(boolean value) {
-        assertNotFrozen();
-        this.isConst = value;
-    }
+		assertNotFrozen();
+		this.isConst = value;
+	}
 
-    @Override
+	@Override
 	public void setVolatile(boolean value) {
-        assertNotFrozen();
-        this.isVolatile = value;
-    }
+		assertNotFrozen();
+		this.isVolatile = value;
+	}
 
-    @Override
+	@Override
 	public void setRestrict(boolean value) {
-        assertNotFrozen();
-        this.isRestrict = value;
-    }
+		assertNotFrozen();
+		this.isRestrict = value;
+	}
 
-    @Override
+	@Override
 	public void setStatic(boolean value) {
-        assertNotFrozen();
-        this.isStatic = value;
-    }
+		assertNotFrozen();
+		this.isStatic = value;
+	}
 
-    @Override
+	@Override
 	public boolean isVariableSized() {
-        return isVarSized;
-    }
+		return isVarSized;
+	}
 
-    @Override
+	@Override
 	public void setVariableSized(boolean value) {
-        assertNotFrozen();
-        isVarSized = value;
-    }
+		assertNotFrozen();
+		isVarSized = value;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-    	if (action.shouldVisitArrayModifiers) {
-    		switch (action.visit(this)) {
-    		case ASTVisitor.PROCESS_ABORT : return false;
-    		case ASTVisitor.PROCESS_SKIP  : return true;
-    		default : break;
-    		}
-    	}
-        if (exp != null && !exp.accept(action))
-        	return false;
+		if (action.shouldVisitArrayModifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		if (exp != null && !exp.accept(action))
+			return false;
 
-        if (!acceptByAttributeSpecifiers(action))
-        	return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
 
-        if (action.shouldVisitArrayModifiers && action.leave(this) == ASTVisitor.PROCESS_ABORT) {
-        	return false;
-        }
-        return true;
-    }
+		if (action.shouldVisitArrayModifiers && action.leave(this) == ASTVisitor.PROCESS_ABORT) {
+			return false;
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == exp)
-        {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            exp = (IASTExpression) other;
-        }
-    }
+		if (child == exp) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			exp = (IASTExpression) other;
+		}
+	}
 }

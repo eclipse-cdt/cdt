@@ -57,7 +57,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	public CygwinPEBinaryObject(IBinaryParser parser, IPath path, ARHeader header) {
 		super(parser, path, header);
 	}
-	
+
 	public CygwinPEBinaryObject(IBinaryParser parser, IPath path, int type) {
 		super(parser, path, type);
 	}
@@ -112,7 +112,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getCPPFilt()
 	 */
 	protected CPPFilt getCPPFilt() {
@@ -125,7 +125,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getObjdump()
 	 */
 	protected Objdump getObjdump() {
@@ -182,7 +182,6 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		symbolLoadingCPPFilt = getCPPFilt();
 		symbolLoadingCygPath = getCygPath();
 
-		
 		ArrayList<Symbol> list = new ArrayList<Symbol>();
 		super.loadSymbols(pe, list);
 
@@ -198,10 +197,10 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 				addSymbol(pairs[i], list, ISymbol.VARIABLE);
 			}
 		}
-//		pairs = nm.getTextSymbols();
-//		for (int i = 0; i < pairs.length; ++i) {
-//			addSymbol(pairs[i], list, ISymbol.FUNCTION);
-//		}
+		//		pairs = nm.getTextSymbols();
+		//		for (int i = 0; i < pairs.length; ++i) {
+		//			addSymbol(pairs[i], list, ISymbol.FUNCTION);
+		//		}
 		symbols = list.toArray(NO_SYMBOLS);
 		Arrays.sort(symbols);
 		list.clear();
@@ -221,7 +220,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	}
 
 	private void addSymbol(NM.AddressNamePair p, List<Symbol> list, int type) {
-		String name = p.name;		
+		String name = p.name;
 		if (name != null && name.length() > 0 && CConventions.isValidIdentifier(name)) {
 			IAddress addr = new Addr32(p.address);
 			int size = 4;
@@ -265,7 +264,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#addSymbols(org.eclipse.cdt.utils.coff.Coff.Symbol[],
 	 *      byte[], java.util.List)
 	 */

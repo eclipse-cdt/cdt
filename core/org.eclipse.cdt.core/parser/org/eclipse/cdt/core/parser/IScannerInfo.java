@@ -17,13 +17,13 @@ package org.eclipse.cdt.core.parser;
 import java.util.Map;
 
 /**
- * Interface for providing a configuration for the preprocessor. 
+ * Interface for providing a configuration for the preprocessor.
  * @see IExtendedScannerInfo
  */
 public interface IScannerInfo {
 	/**
 	 * Returns a {@link Map} containing all the defined preprocessor symbols and their values.
-	 * Symbols defined without values have an empty string for a value. For 
+	 * Symbols defined without values have an empty string for a value. For
 	 * example, -Dsymbol=value would have a map entry (symbol, value). A symbol
 	 * defined as -Dsymbol= would have a map entry of (symbol, "").
 	 */
@@ -39,7 +39,7 @@ public interface IScannerInfo {
 	 * that, use {@link IExtendedScannerInfo#getLocalIncludePath()}.
 	 * <p>
 	 * In order to handle framework includes used on Apple Computers you can make use of
-	 * the two variables: '__framework__' and '__header__'. 
+	 * the two variables: '__framework__' and '__header__'.
 	 * <br> E.g.:  /System/Library/Frameworks/__framework__.framework/Headers/__header__,
 	 * /System/Library/Frameworks/__framework__.framework/PrivateHeaders/__header__
 	 * would handle the framework search for '/System/Library/Frameworks'

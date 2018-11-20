@@ -14,17 +14,16 @@
 
 package org.eclipse.cdt.utils.debug;
 
-
 /**
  * DebugFunctionType
- *  
+ *
  */
 public class DebugFunctionType extends DebugType {
 
 	DebugType returnType;
 
 	/**
-	 *  
+	 *
 	 */
 	public DebugFunctionType(DebugType type) {
 		returnType = type;

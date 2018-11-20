@@ -54,25 +54,25 @@ public class CPathEntryTest extends BaseTestCase {
 
 		void processDelta(ICElementDelta delta) {
 			if (delta == null) {
-				return ;
+				return;
 			}
 
 			int flags = delta.getFlags();
 			int kind = delta.getKind();
-			if (kind == ICElementDelta.CHANGED ) {
+			if (kind == ICElementDelta.CHANGED) {
 				if ((flags & ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE) != 0) {
 					count++;
 				}
 			}
-			ICElementDelta[] affectedChildren= delta.getAffectedChildren();
-			for (int i= 0; i < affectedChildren.length; i++) {
+			ICElementDelta[] affectedChildren = delta.getAffectedChildren();
+			for (int i = 0; i < affectedChildren.length; i++) {
 				processDelta(affectedChildren[i]);
 			}
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
 		 */
 		@Override
@@ -84,7 +84,7 @@ public class CPathEntryTest extends BaseTestCase {
 
 	/**
 	 * Constructor for CModelTests.
-	 * 
+	 *
 	 * @param name
 	 */
 	public CPathEntryTest(String name) {
@@ -93,9 +93,9 @@ public class CPathEntryTest extends BaseTestCase {
 
 	/**
 	 * Sets up the test fixture.
-	 * 
+	 *
 	 * Called before every test case method.
-	 *  
+	 *
 	 */
 	@Override
 	protected void setUp() throws CoreException {
@@ -107,7 +107,7 @@ public class CPathEntryTest extends BaseTestCase {
 
 	/**
 	 * Tears down the test fixture.
-	 * 
+	 *
 	 * Called after every test case method.
 	 */
 	@Override
@@ -121,7 +121,7 @@ public class CPathEntryTest extends BaseTestCase {
 
 	/*******************************************************************************************************************************
 	 * Check if the PathEntry's are generated.
-	 * 
+	 *
 	 * @see CProjectHelper#createCProject
 	 */
 	public void testCPathEntries() throws CoreException {
@@ -133,7 +133,8 @@ public class CPathEntryTest extends BaseTestCase {
 		entries = new IPathEntry[3];
 		entries[0] = CoreModel.newIncludeEntry(new Path(""), null, new Path("/usr/include"), true);
 		entries[1] = CoreModel.newIncludeEntry(new Path("cpaththest/foo.c"), null, new Path("/usr/include"), true);
-		entries[2] = CoreModel.newLibraryEntry(new Path(""), null, new Path("/usr/lib/libc.so.1"), null, null, null, false);
+		entries[2] = CoreModel.newLibraryEntry(new Path(""), null, new Path("/usr/lib/libc.so.1"), null, null, null,
+				false);
 		testProject.setRawPathEntries(entries, new NullProgressMonitor());
 		entries = testProject.getResolvedPathEntries();
 		// We always have at least two entries:
@@ -145,7 +146,7 @@ public class CPathEntryTest extends BaseTestCase {
 
 	/*******************************************************************************************************************************
 	 * Check if the PathEntry's are generated.
-	 * 
+	 *
 	 * @see CProjectHelper#createCProject
 	 */
 	public void testCPathEntriesDelta() throws CoreException {
@@ -153,7 +154,8 @@ public class CPathEntryTest extends BaseTestCase {
 		IPathEntry[] entries = new IPathEntry[3];
 		entries[0] = CoreModel.newIncludeEntry(new Path(""), null, new Path("/usr/include"), true);
 		entries[1] = CoreModel.newIncludeEntry(new Path("foo"), null, new Path("/usr/include"), true);
-		entries[2] = CoreModel.newLibraryEntry(new Path(""), null, new Path("/usr/lib/libc.so.1"), null, null, null, false);
+		entries[2] = CoreModel.newLibraryEntry(new Path(""), null, new Path("/usr/lib/libc.so.1"), null, null, null,
+				false);
 		CElementListener listener = new CElementListener();
 		CoreModel.getDefault().addElementChangedListener(listener);
 		testProject.setRawPathEntries(entries, new NullProgressMonitor());
@@ -176,7 +178,8 @@ public class CPathEntryTest extends BaseTestCase {
 				IPathEntry[] entries = new IPathEntry[3];
 				entries[0] = CoreModel.newIncludeEntry(new Path(""), null, new Path("/usr/include"), true);
 				entries[1] = CoreModel.newIncludeEntry(new Path("foo.c"), null, new Path("/usr/include"), true);
-				entries[2] = CoreModel.newLibraryEntry(new Path(""), null, new Path("/usr/lib/libc.so.1"), null, null, null, true);
+				entries[2] = CoreModel.newLibraryEntry(new Path(""), null, new Path("/usr/lib/libc.so.1"), null, null,
+						null, true);
 				return entries;
 			}
 
@@ -189,49 +192,50 @@ public class CPathEntryTest extends BaseTestCase {
 			public IPath getPath() {
 				return containerID;
 			}
-			
+
 		};
-		CoreModel.setRawPathEntries(testProject, new IPathEntry[]{containerEntry}, new NullProgressMonitor());
-		CoreModel.setPathEntryContainer(new ICProject[]{testProject}, container, new NullProgressMonitor());
+		CoreModel.setRawPathEntries(testProject, new IPathEntry[] { containerEntry }, new NullProgressMonitor());
+		CoreModel.setPathEntryContainer(new ICProject[] { testProject }, container, new NullProgressMonitor());
 		IPathEntry[] entries = testProject.getResolvedPathEntries();
 		// We always have at least two entries:
 		//  1) the default sourceEntry becomes the project
 		//  2) the default outputEntry becomes the project
 		assertTrue("Expecting 3 pathentries from container", entries.length == (3 + 2));
-		
-	}	
-	
+
+	}
+
 	public void testSetExclusionFilter_Bug197486() throws Exception {
 		// get project description
-		ICProjectDescription prjDesc= CoreModel.getDefault().getProjectDescription(testProject.getProject(), true);
-		ICConfigurationDescription activeCfg= prjDesc.getActiveConfiguration();
+		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(testProject.getProject(), true);
+		ICConfigurationDescription activeCfg = prjDesc.getActiveConfiguration();
 		assertNotNull(activeCfg);
-		
+
 		// add filter to source entry
 		ICSourceEntry[] entries = activeCfg.getSourceEntries();
 		final String sourceEntryName = entries[0].getName();
 		final IPath[] exclusionPatterns = new IPath[] { new Path("dummy*"), new Path("dummy2/*") };
 
 		ICSourceEntry entry = new CSourceEntry(sourceEntryName, exclusionPatterns, entries[0].getFlags());
-		activeCfg.setSourceEntries(new ICSourceEntry[] {entry});
-		
+		activeCfg.setSourceEntries(new ICSourceEntry[] { entry });
+
 		// check the modified configuration for the exclusion patterns
 		checkExclusionPatterns(sourceEntryName, exclusionPatterns, activeCfg);
-		
+
 		// store the changed configuration
 		CoreModel.getDefault().setProjectDescription(testProject.getProject(), prjDesc);
 
 		// check again.
-		prjDesc= CoreModel.getDefault().getProjectDescription(testProject.getProject(), false);
-		ICConfigurationDescription[] allConfigs= prjDesc.getConfigurations();
+		prjDesc = CoreModel.getDefault().getProjectDescription(testProject.getProject(), false);
+		ICConfigurationDescription[] allConfigs = prjDesc.getConfigurations();
 		assertEquals(1, allConfigs.length);
 		checkExclusionPatterns(sourceEntryName, exclusionPatterns, allConfigs[0]);
-		
-		activeCfg= prjDesc.getActiveConfiguration();
+
+		activeCfg = prjDesc.getActiveConfiguration();
 		checkExclusionPatterns(sourceEntryName, exclusionPatterns, activeCfg);
 	}
 
-	private void checkExclusionPatterns(String sourceEntryName, IPath[] exclusionPatterns, ICConfigurationDescription cfg) {
+	private void checkExclusionPatterns(String sourceEntryName, IPath[] exclusionPatterns,
+			ICConfigurationDescription cfg) {
 		assertNotNull(cfg);
 
 		ICSourceEntry[] entries = cfg.getSourceEntries();
@@ -241,7 +245,7 @@ public class CPathEntryTest extends BaseTestCase {
 		assertEquals(exclusionPatterns.length, actualExclusionPatterns.length);
 		assertEquals(toSet(exclusionPatterns), toSet(actualExclusionPatterns));
 	}
-	
+
 	private Set toSet(Object[] array) {
 		HashSet set = new HashSet();
 		for (int i = 0; i < array.length; i++) {

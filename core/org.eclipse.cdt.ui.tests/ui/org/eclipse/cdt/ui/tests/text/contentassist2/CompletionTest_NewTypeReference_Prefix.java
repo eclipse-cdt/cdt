@@ -18,37 +18,31 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Class_Reference, with prefix
  * Bug#50711 : Wrong completion kind in a new expression
  *
  */
-public class CompletionTest_NewTypeReference_Prefix  extends CompletionProposalsBaseTest{
-	
+public class CompletionTest_NewTypeReference_Prefix extends CompletionProposalsBaseTest {
+
 	private final String fileName = "CompletionTestStart28.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedPrefix = "a"; 
-	private final String[] expectedResults = {
-			"aClass",
-			"anotherClass",
-			"aNamespace",
-			"AStruct",
-			"anEnumeration",
-			"AMacro(x)"
-	};
-	
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
+	private final String expectedPrefix = "a";
+	private final String[] expectedResults = { "aClass", "anotherClass", "aNamespace", "AStruct", "anEnumeration",
+			"AMacro(x)" };
+
 	public CompletionTest_NewTypeReference_Prefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_NewTypeReference_Prefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_NewTypeReference_Prefix.class.getName());
 		suite.addTest(new CompletionTest_NewTypeReference_Prefix("testCompletionProposals"));
 		return suite;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -88,6 +82,7 @@ public class CompletionTest_NewTypeReference_Prefix  extends CompletionProposals
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

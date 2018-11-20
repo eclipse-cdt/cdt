@@ -67,35 +67,36 @@ import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 /**
  * A proposal allowing user to edit in place all occurrences of a name.
  */
-public class LinkedNamesAssistProposal implements ICCompletionProposal, ICompletionProposalExtension2,
-		ICompletionProposalExtension6, ICommandAccess {
+public class LinkedNamesAssistProposal
+		implements ICCompletionProposal, ICompletionProposalExtension2, ICompletionProposalExtension6, ICommandAccess {
 	/**
 	 * An exit policy that skips Backspace and Delete at the beginning and at the end
 	 * of a linked position, respectively.
-	 * 
+	 *
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=183925 .
 	 */
 	public static class DeleteBlockingExitPolicy implements IExitPolicy {
 		private IDocument fDocument;
 
 		public DeleteBlockingExitPolicy(IDocument document) {
-			fDocument= document;
+			fDocument = document;
 		}
 
 		@Override
 		public ExitFlags doExit(LinkedModeModel model, VerifyEvent event, int offset, int length) {
 			if (length == 0 && (event.character == SWT.BS || event.character == SWT.DEL)) {
-				LinkedPosition position= model.findPosition(new LinkedPosition(fDocument, offset, 0, LinkedPositionGroup.NO_STOP));
+				LinkedPosition position = model
+						.findPosition(new LinkedPosition(fDocument, offset, 0, LinkedPositionGroup.NO_STOP));
 				if (position != null) {
 					if (event.character == SWT.BS) {
 						if (offset - 1 < position.getOffset()) {
 							//skip backspace at beginning of linked position
-							event.doit= false;
+							event.doit = false;
 						}
 					} else /* event.character == SWT.DEL */ {
 						if (offset + 1 > position.getOffset() + position.getLength()) {
 							//skip delete at end of linked position
-							event.doit= false;
+							event.doit = false;
 						}
 					}
 				}
@@ -105,8 +106,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 		}
 	}
 
-
-	public static final String ASSIST_ID= "org.eclipse.cdt.ui.correction.renameInFile.assist"; //$NON-NLS-1$
+	public static final String ASSIST_ID = "org.eclipse.cdt.ui.correction.renameInFile.assist"; //$NON-NLS-1$
 
 	private ITranslationUnit fTranslationUnit;
 	private String fLabel;
@@ -116,40 +116,40 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 
 	public LinkedNamesAssistProposal(ITranslationUnit tu) {
 		this(CorrectionMessages.LinkedNamesAssistProposal_description, tu, null);
-		fTranslationUnit= tu;
-		fRelevance= 8;
+		fTranslationUnit = tu;
+		fRelevance = 8;
 	}
 
 	public LinkedNamesAssistProposal(String label, ITranslationUnit tu, String valueSuggestion) {
-		fLabel= label;
-		fTranslationUnit= tu;
-		fValueSuggestion= valueSuggestion;
-		fRelevance= 8;
+		fLabel = label;
+		fTranslationUnit = tu;
+		fValueSuggestion = valueSuggestion;
+		fRelevance = 8;
 	}
 
 	@Override
 	public void apply(final ITextViewer viewer, char trigger, int stateMask, final int offset) {
 		try {
 			fLocations = null;
-			Point selection= viewer.getSelectedRange();
+			Point selection = viewer.getSelectedRange();
 			final int secectionOffset = selection.x;
 			final int selectionLength = selection.y;
 
 			ASTProvider.getASTProvider().runOnAST(fTranslationUnit, ASTProvider.WAIT_ACTIVE_ONLY,
 					new NullProgressMonitor(), new ASTRunnable() {
-				@Override
-				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
-					if (astRoot == null)
-						return Status.CANCEL_STATUS;
-					
-					IASTNodeSelector selector= astRoot.getNodeSelector(null);
-					IASTName name= selector.findEnclosingName(secectionOffset, selectionLength);
-					if (name != null) {
-						fLocations = LinkedNamesFinder.findByName(astRoot, name);
-					}
-					return Status.OK_STATUS;
-				}
-			});
+						@Override
+						public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
+							if (astRoot == null)
+								return Status.CANCEL_STATUS;
+
+							IASTNodeSelector selector = astRoot.getNodeSelector(null);
+							IASTName name = selector.findEnclosingName(secectionOffset, selectionLength);
+							if (name != null) {
+								fLocations = LinkedNamesFinder.findByName(astRoot, name);
+							}
+							return Status.OK_STATUS;
+						}
+					});
 
 			if (fLocations == null || fLocations.length == 0) {
 				return;
@@ -170,7 +170,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 				 * @return the rank of the location with respect to the invocation offset
 				 */
 				private int rank(IRegion location) {
-					int relativeRank= location.getOffset() + location.getLength() - offset;
+					int relativeRank = location.getOffset() + location.getLength() - offset;
 					if (relativeRank < 0) {
 						return Integer.MAX_VALUE + relativeRank;
 					} else {
@@ -178,31 +178,31 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 					}
 				}
 			});
-			
-			IDocument document= viewer.getDocument();
-			LinkedPositionGroup group= new LinkedPositionGroup();
-			for (int i= 0; i < fLocations.length; i++) {
-				IRegion item= fLocations[i];
+
+			IDocument document = viewer.getDocument();
+			LinkedPositionGroup group = new LinkedPositionGroup();
+			for (int i = 0; i < fLocations.length; i++) {
+				IRegion item = fLocations[i];
 				group.addPosition(new LinkedPosition(document, item.getOffset(), item.getLength(), i));
 			}
 
-			LinkedModeModel model= new LinkedModeModel();
+			LinkedModeModel model = new LinkedModeModel();
 			model.addGroup(group);
 			model.forceInstall();
-			CEditor editor= getCEditor();
+			CEditor editor = getCEditor();
 			if (editor != null) {
 				model.addLinkingListener(new EditorHighlightingSynchronizer(editor));
 			}
 
-			LinkedModeUI ui= new EditorLinkedModeUI(model, viewer);
+			LinkedModeUI ui = new EditorLinkedModeUI(model, viewer);
 			ui.setExitPolicy(new DeleteBlockingExitPolicy(document));
 			ui.setExitPosition(viewer, offset, 0, LinkedPositionGroup.NO_STOP);
 			ui.enter();
 
 			if (fValueSuggestion != null) {
 				document.replace(fLocations[0].getOffset(), fLocations[0].getLength(), fValueSuggestion);
-				IRegion selectedRegion= ui.getSelectedRegion();
-				selection= new Point(selectedRegion.getOffset(), fValueSuggestion.length());
+				IRegion selectedRegion = ui.getSelectedRegion();
+				selection = new Point(selectedRegion.getOffset(), fValueSuggestion.length());
 			}
 
 			viewer.setSelectedRange(selection.x, selection.y); // By default full word is selected, restore original selection
@@ -217,7 +217,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	 * @return  the currently active C editor, or {@code null}
 	 */
 	private CEditor getCEditor() {
-		IEditorPart part= CUIPlugin.getActivePage().getActiveEditor();
+		IEditorPart part = CUIPlugin.getActivePage().getActiveEditor();
 		if (part instanceof CEditor) {
 			return (CEditor) part;
 		} else {
@@ -242,23 +242,22 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 
 	@Override
 	public String getDisplayString() {
-		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
+		String shortCutString = CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
-			return NLS.bind(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
-					fLabel, shortCutString);
+			return NLS.bind(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut, fLabel, shortCutString);
 		}
 		return fLabel;
 	}
-	
+
 	@Override
 	public StyledString getStyledDisplayString() {
-		StyledString str= new StyledString(fLabel);
-		
-		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
+		StyledString str = new StyledString(fLabel);
+
+		String shortCutString = CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
-			String decorated= NLS.bind(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
-					fLabel, shortCutString);
-			return ColoringLabelProvider.decorateStyledString(str, decorated, StyledString.QUALIFIER_STYLER); 
+			String decorated = NLS.bind(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut, fLabel,
+					shortCutString);
+			return ColoringLabelProvider.decorateStyledString(str, decorated, StyledString.QUALIFIER_STYLER);
 		}
 		return str;
 	}
@@ -297,7 +296,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	}
 
 	public void setRelevance(int relevance) {
-		fRelevance= relevance;
+		fRelevance = relevance;
 	}
 
 	@Override

@@ -68,7 +68,8 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 			protected IStatus run(IProgressMonitor monitor) {
 				IMarker marker;
 				try {
-					IMarker[] cur = problemMarkerInfo.file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
+					IMarker[] cur = problemMarkerInfo.file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false,
+							IResource.DEPTH_ONE);
 					/*
 					 * Try to find matching markers and don't put in duplicates
 					 */
@@ -77,13 +78,16 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 							int line = ((Integer) cur[i].getAttribute(IMarker.LINE_NUMBER)).intValue();
 							int sev = ((Integer) cur[i].getAttribute(IMarker.SEVERITY)).intValue();
 							String mesg = (String) cur[i].getAttribute(IMarker.MESSAGE);
-							if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && mesg.equals(problemMarkerInfo.description)) {
+							if (line == problemMarkerInfo.lineNumber
+									&& sev == mapMarkerSeverity(problemMarkerInfo.severity)
+									&& mesg.equals(problemMarkerInfo.description)) {
 								return Status.OK_STATUS;
 							}
 						}
 					}
 				} catch (CoreException e) {
-					return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), Messages.SCMarkerGenerator_Error_Adding_Markers, e);
+					return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(),
+							Messages.SCMarkerGenerator_Error_Adding_Markers, e);
 				}
 
 				try {
@@ -99,7 +103,8 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 					}
 					marker.setAttribute(IMarker.LOCATION, Messages.SCMarkerGenerator_Discovery_Options_Page);
 				} catch (CoreException e) {
-					return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), Messages.SCMarkerGenerator_Error_Adding_Markers, e);
+					return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(),
+							Messages.SCMarkerGenerator_Error_Adding_Markers, e);
 				}
 
 				return Status.OK_STATUS;
@@ -123,9 +128,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 					int location = ((Integer) marker.getAttribute(IMarker.LINE_NUMBER)).intValue();
 					String error = (String) marker.getAttribute(IMarker.MESSAGE);
 					int sev = ((Integer) marker.getAttribute(IMarker.SEVERITY)).intValue();
-					if (location == lineNumber &&
-							errorDesc.equals(error) &&
-							sev == severity) {
+					if (location == lineNumber && errorDesc.equals(error) && sev == severity) {
 						exactMarkers.add(marker);
 					}
 				}
@@ -134,21 +137,20 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 					FixitManager.getInstance().deleteMarkers(exactMarkers.toArray(new IMarker[0]));
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			MakeCorePlugin.log(e.getStatus());
 		}
 	}
 
 	int mapMarkerSeverity(int severity) {
 		switch (severity) {
-			case SEVERITY_ERROR_BUILD :
-			case SEVERITY_ERROR_RESOURCE :
-				return IMarker.SEVERITY_ERROR;
-			case SEVERITY_INFO :
-				return IMarker.SEVERITY_INFO;
-			case SEVERITY_WARNING :
-				return IMarker.SEVERITY_WARNING;
+		case SEVERITY_ERROR_BUILD:
+		case SEVERITY_ERROR_RESOURCE:
+			return IMarker.SEVERITY_ERROR;
+		case SEVERITY_INFO:
+			return IMarker.SEVERITY_INFO;
+		case SEVERITY_WARNING:
+			return IMarker.SEVERITY_WARNING;
 		}
 		return IMarker.SEVERITY_ERROR;
 	}

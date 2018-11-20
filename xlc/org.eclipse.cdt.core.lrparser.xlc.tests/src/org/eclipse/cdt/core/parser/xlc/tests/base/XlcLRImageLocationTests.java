@@ -24,11 +24,11 @@ public class XlcLRImageLocationTests extends LRImageLocationTests {
 	public static TestSuite suite() {
 		return suite(XlcLRImageLocationTests.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

@@ -36,56 +36,57 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * The ResourceNavigatorMoveAction is a resource move that aso updates the navigator
  * to show the result of the move.
  * It also delegates to MoveProjectAction as needed.
- * 
+ *
  * @since 2.0
  */
 public class CViewMoveAction extends MoveResourceAction {
 	private StructuredViewer viewer;
 	private MoveProjectAction moveProjectAction;
-	
-/**
- * Create a ResourceNavigatorMoveAction and use the supplied viewer to update the UI.
- * @param shellProvider provider for the shell
- * @param structureViewer StructuredViewer
- */
-public CViewMoveAction(IShellProvider shellProvider, StructuredViewer structureViewer) {
-	super(shellProvider);
-	PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.MOVE_ACTION);
-	this.viewer = structureViewer;
-	this.moveProjectAction = new MoveProjectAction(shellProvider);
-}
-/* (non-Javadoc)
- * Method declared on IAction.
- */
-@Override
-public void run() {
-	if (moveProjectAction.isEnabled()) {
-		moveProjectAction.run();
-		return;
+
+	/**
+	 * Create a ResourceNavigatorMoveAction and use the supplied viewer to update the UI.
+	 * @param shellProvider provider for the shell
+	 * @param structureViewer StructuredViewer
+	 */
+	public CViewMoveAction(IShellProvider shellProvider, StructuredViewer structureViewer) {
+		super(shellProvider);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.MOVE_ACTION);
+		this.viewer = structureViewer;
+		this.moveProjectAction = new MoveProjectAction(shellProvider);
 	}
-	
-	super.run();
-	List<?> destinations = getDestinations();
-	if (destinations != null && destinations.isEmpty() == false) {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		List<IResource> resources = new ArrayList<IResource>();
-		Iterator<?> iterator = destinations.iterator();
-	
-		while (iterator.hasNext()) {
-			IResource newResource = root.findMember((IPath) iterator.next());
-			if (newResource != null)
-				resources.add(newResource);
+
+	/* (non-Javadoc)
+	 * Method declared on IAction.
+	 */
+	@Override
+	public void run() {
+		if (moveProjectAction.isEnabled()) {
+			moveProjectAction.run();
+			return;
 		}
-	
-		this.viewer.setSelection(new StructuredSelection(resources), true);
+
+		super.run();
+		List<?> destinations = getDestinations();
+		if (destinations != null && destinations.isEmpty() == false) {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			List<IResource> resources = new ArrayList<IResource>();
+			Iterator<?> iterator = destinations.iterator();
+
+			while (iterator.hasNext()) {
+				IResource newResource = root.findMember((IPath) iterator.next());
+				if (newResource != null)
+					resources.add(newResource);
+			}
+
+			this.viewer.setSelection(new StructuredSelection(resources), true);
+		}
+
 	}
 
-}
-
-@Override
-protected boolean updateSelection(IStructuredSelection selection) {
-	moveProjectAction.selectionChanged(selection);
-	return super.updateSelection(selection) || moveProjectAction.isEnabled();
-}
+	@Override
+	protected boolean updateSelection(IStructuredSelection selection) {
+		moveProjectAction.selectionChanged(selection);
+		return super.updateSelection(selection) || moveProjectAction.isEnabled();
+	}
 
 }

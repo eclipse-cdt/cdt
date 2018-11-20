@@ -7,11 +7,12 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.part;
+
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
@@ -22,13 +23,17 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+
 /**
  * @version 	1.0
  */
 public class WizardCheckboxTablePart extends CheckboxTablePart {
-	public static final String KEY_SELECT_ALL = MakeUIPlugin.getResourceString("WizardCheckboxTablePart.WizardCheckboxTablePart.selectAll"); //$NON-NLS-1$
-	public static final String KEY_DESELECT_ALL = MakeUIPlugin.getResourceString("WizardCheckboxTablePart.WizardCheckboxTablePart.deselectAll"); //$NON-NLS-1$
-	public static final String KEY_COUNTER = MakeUIPlugin.getResourceString("WizardCheckboxTablePart.WizardCheckboxTablePart.counter"); //$NON-NLS-1$
+	public static final String KEY_SELECT_ALL = MakeUIPlugin
+			.getResourceString("WizardCheckboxTablePart.WizardCheckboxTablePart.selectAll"); //$NON-NLS-1$
+	public static final String KEY_DESELECT_ALL = MakeUIPlugin
+			.getResourceString("WizardCheckboxTablePart.WizardCheckboxTablePart.deselectAll"); //$NON-NLS-1$
+	public static final String KEY_COUNTER = MakeUIPlugin
+			.getResourceString("WizardCheckboxTablePart.WizardCheckboxTablePart.counter"); //$NON-NLS-1$
 
 	private final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private int selectAllIndex = -1;
@@ -46,9 +51,8 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	}
 
 	public WizardCheckboxTablePart(String mainLabel) {
-		this(
-			mainLabel,
-			new String[] { MakeUIPlugin.getResourceString(KEY_SELECT_ALL), MakeUIPlugin.getResourceString(KEY_DESELECT_ALL)});
+		this(mainLabel, new String[] { MakeUIPlugin.getResourceString(KEY_SELECT_ALL),
+				MakeUIPlugin.getResourceString(KEY_DESELECT_ALL) });
 		setSelectAllIndex(0);
 		setDeselectAllIndex(1);
 	}
@@ -56,6 +60,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	public void setSelectAllIndex(int index) {
 		this.selectAllIndex = index;
 	}
+
 	public void setDeselectAllIndex(int index) {
 		this.deselectAllIndex = index;
 	}
@@ -121,7 +126,8 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	protected void updateCounterLabel() {
 		String number = EMPTY_STRING + getSelectionCount();
 		String totalNumber = EMPTY_STRING + getTotalCount();
-		String message = MessageFormat.format(MakeUIPlugin.getResourceString(KEY_COUNTER), new Object[] { number, totalNumber });
+		String message = MessageFormat.format(MakeUIPlugin.getResourceString(KEY_COUNTER),
+				new Object[] { number, totalNumber });
 		counterLabel.setText(message);
 	}
 
@@ -149,6 +155,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		}
 		updateCounter(selected);
 	}
+
 	@Override
 	protected void elementChecked(Object element, boolean checked) {
 		int count = getSelectionCount();

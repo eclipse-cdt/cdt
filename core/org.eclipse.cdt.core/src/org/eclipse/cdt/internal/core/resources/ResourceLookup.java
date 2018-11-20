@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
  * Allows for looking up resources by location or name.
  */
 public class ResourceLookup {
-	private static ResourceLookupTree lookupTree= new ResourceLookupTree();
+	private static ResourceLookupTree lookupTree = new ResourceLookupTree();
 
 	public static void startup() {
 		lookupTree.startup();
@@ -96,13 +96,13 @@ public class ResourceLookup {
 	}
 
 	/**
-	 * Iterates through a list of 'file' resources, and selects the one with the highest "relevance score". 
-	 * 
+	 * Iterates through a list of 'file' resources, and selects the one with the highest "relevance score".
+	 *
 	 * NOTE: To compute the "relevance scores" this method may cause additional project-descriptions to load.
-	 * To avoid the expense of loading additional project-descriptions, we first perform a quick first-pass 
-	 * through the list of IFiles (which would normally be a very small list), to see if any of them is in 
-	 * the preferred project. In other words, if we know that the file within the preferred project is the 
-	 * one that's most relevant, then first try to find it directly - before getting to the more expensive 
+	 * To avoid the expense of loading additional project-descriptions, we first perform a quick first-pass
+	 * through the list of IFiles (which would normally be a very small list), to see if any of them is in
+	 * the preferred project. In other words, if we know that the file within the preferred project is the
+	 * one that's most relevant, then first try to find it directly - before getting to the more expensive
 	 * loop of computing the "relevance scores" for all the files.
 	 */
 	private static IFile selectFile(IFile[] files, IProject preferredProject, Object originalLocation) {
@@ -112,34 +112,34 @@ public class ResourceLookup {
 		if (files.length == 1)
 			return files[0];
 
-		IFile best= null;
+		IFile best = null;
 
-		/* FIX for Bug 405511: Try to find the file within the preferred project first - we want to avoid 
-		 * reaching the next for-loop - that loop is expensive as it might cause the loading of unnecessary 
+		/* FIX for Bug 405511: Try to find the file within the preferred project first - we want to avoid
+		 * reaching the next for-loop - that loop is expensive as it might cause the loading of unnecessary
 		 * project-descriptions.
 		 */
-		int filesInPreferredProject= 0;
+		int filesInPreferredProject = 0;
 		if (preferredProject != null) {
 			for (IFile file : files) {
 				if (file.getProject().equals(preferredProject) && file.isAccessible()) {
 					filesInPreferredProject++;
-					best= file;
+					best = file;
 				}
 			}
 		}
 		// One accessible file in preferred project.
 		if (filesInPreferredProject == 1)
 			return best;
-		
-		int bestRelevance= -1;
+
+		int bestRelevance = -1;
 		for (IFile file : files) {
-			if (filesInPreferredProject==0 || file.getProject().equals(preferredProject)) {
-				int relevance= FileRelevance.getRelevance(file, preferredProject, PathCanonicalizationStrategy.resolvesSymbolicLinks(), originalLocation);
-				if (best == null || relevance > bestRelevance ||
-						(relevance == bestRelevance &&
-						best.getFullPath().toString().compareTo(file.getFullPath().toString()) > 0)) {
-					bestRelevance= relevance;
-					best= file;
+			if (filesInPreferredProject == 0 || file.getProject().equals(preferredProject)) {
+				int relevance = FileRelevance.getRelevance(file, preferredProject,
+						PathCanonicalizationStrategy.resolvesSymbolicLinks(), originalLocation);
+				if (best == null || relevance > bestRelevance || (relevance == bestRelevance
+						&& best.getFullPath().toString().compareTo(file.getFullPath().toString()) > 0)) {
+					bestRelevance = relevance;
+					best = file;
 				}
 			}
 		}
@@ -158,8 +158,8 @@ public class ResourceLookup {
 		Collections.sort(Arrays.asList(filesToSort), new Comparator<IFile>() {
 			@Override
 			public int compare(IFile f1, IFile f2) {
-				int r1= FileRelevance.getRelevance(f1, preferredProject);
-				int r2= FileRelevance.getRelevance(f2, preferredProject);
+				int r1 = FileRelevance.getRelevance(f1, preferredProject);
+				int r2 = FileRelevance.getRelevance(f2, preferredProject);
 
 				if (r1 > r2)
 					return -1;
@@ -177,12 +177,14 @@ public class ResourceLookup {
 	public static void dump() {
 		lookupTree.dump();
 	}
+
 	/**
 	 * For testing, only.
 	 */
 	public static void unrefNodeMap() {
 		lookupTree.unrefNodeMap();
 	}
+
 	/**
 	 * For testing, only.
 	 */

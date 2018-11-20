@@ -91,8 +91,7 @@ public class CModelMock {
 		}
 
 		@Override
-		public ICStorageElement getStorage(String id, boolean create)
-				throws CoreException {
+		public ICStorageElement getStorage(String id, boolean create) throws CoreException {
 			return null;
 		}
 
@@ -139,20 +138,17 @@ public class CModelMock {
 		}
 
 		@Override
-		public void setActiveConfiguration(ICConfigurationDescription cfg)
-				throws WriteAccessException {
+		public void setActiveConfiguration(ICConfigurationDescription cfg) throws WriteAccessException {
 		}
 
 		@Override
-		public ICConfigurationDescription createConfiguration(String id,
-				String name, ICConfigurationDescription base)
+		public ICConfigurationDescription createConfiguration(String id, String name, ICConfigurationDescription base)
 				throws CoreException, WriteAccessException {
 			return null;
 		}
 
 		@Override
-		public ICConfigurationDescription createConfiguration(
-				String buildSystemId, CConfigurationData data)
+		public ICConfigurationDescription createConfiguration(String buildSystemId, CConfigurationData data)
 				throws CoreException, WriteAccessException {
 			return null;
 		}
@@ -168,13 +164,11 @@ public class CModelMock {
 		}
 
 		@Override
-		public void removeConfiguration(String name)
-				throws WriteAccessException {
+		public void removeConfiguration(String name) throws WriteAccessException {
 		}
 
 		@Override
-		public void removeConfiguration(ICConfigurationDescription cfg)
-				throws WriteAccessException {
+		public void removeConfiguration(ICConfigurationDescription cfg) throws WriteAccessException {
 		}
 
 		@Override
@@ -203,8 +197,7 @@ public class CModelMock {
 		}
 
 		@Override
-		public void setDefaultSettingConfiguration(
-				ICConfigurationDescription cfg) {
+		public void setDefaultSettingConfiguration(ICConfigurationDescription cfg) {
 		}
 
 		@Override
@@ -272,8 +265,7 @@ public class CModelMock {
 		}
 
 		@Override
-		public ICStorageElement getStorage(String id, boolean create)
-				throws CoreException {
+		public ICStorageElement getStorage(String id, boolean create) throws CoreException {
 			return null;
 		}
 
@@ -331,27 +323,23 @@ public class CModelMock {
 		}
 
 		@Override
-		public ICResourceDescription getResourceDescription(IPath path,
-				boolean exactPath) {
+		public ICResourceDescription getResourceDescription(IPath path, boolean exactPath) {
 			return null;
 		}
 
 		@Override
-		public void removeResourceDescription(ICResourceDescription des)
+		public void removeResourceDescription(ICResourceDescription des) throws CoreException, WriteAccessException {
+		}
+
+		@Override
+		public ICFileDescription createFileDescription(IPath path, ICResourceDescription base)
 				throws CoreException, WriteAccessException {
-		}
-
-		@Override
-		public ICFileDescription createFileDescription(IPath path,
-				ICResourceDescription base) throws CoreException,
-				WriteAccessException {
 			return null;
 		}
 
 		@Override
-		public ICFolderDescription createFolderDescription(IPath path,
-				ICFolderDescription base) throws CoreException,
-				WriteAccessException {
+		public ICFolderDescription createFolderDescription(IPath path, ICFolderDescription base)
+				throws CoreException, WriteAccessException {
 			return null;
 		}
 
@@ -412,9 +400,8 @@ public class CModelMock {
 		}
 
 		@Override
-		public ICExternalSetting createExternalSetting(String[] languageIDs,
-				String[] contentTypeIds, String[] extensions,
-				ICSettingEntry[] entries) throws WriteAccessException {
+		public ICExternalSetting createExternalSetting(String[] languageIDs, String[] contentTypeIds,
+				String[] extensions, ICSettingEntry[] entries) throws WriteAccessException {
 			return null;
 		}
 

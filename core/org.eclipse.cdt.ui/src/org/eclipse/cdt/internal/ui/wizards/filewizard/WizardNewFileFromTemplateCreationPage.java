@@ -62,11 +62,11 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 
 	private Combo fTemplatesCombo;
 	private Template[] fTemplates;
-	protected boolean fUseTemplate= true;
+	protected boolean fUseTemplate = true;
 
 	/**
 	 * Create a new 'file from template' page.
-	 * 
+	 *
 	 * @param pageName
 	 * @param selection
 	 */
@@ -79,39 +79,39 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 	 */
 	@Override
 	protected void createAdvancedControls(Composite parent) {
-		Composite groupComposite= new Composite(parent,SWT.NONE);
+		Composite groupComposite = new Composite(parent, SWT.NONE);
 		groupComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 3;
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
 		groupComposite.setLayout(layout);
 
-		final Button useTemplateButton= new Button(groupComposite, SWT.CHECK);
+		final Button useTemplateButton = new Button(groupComposite, SWT.CHECK);
 
 		useTemplateButton.setText(NewFileWizardMessages.WizardNewFileFromTemplateCreationPage_useTemplate_label);
 		useTemplateButton.setSelection(fUseTemplate);
-		SelectionListener useTemplateListener= new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					fUseTemplate= useTemplateButton.getSelection();
-					fTemplatesCombo.setEnabled(fUseTemplate);
-				}
-			};
+		SelectionListener useTemplateListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				fUseTemplate = useTemplateButton.getSelection();
+				fTemplatesCombo.setEnabled(fUseTemplate);
+			}
+		};
 		useTemplateButton.addSelectionListener(useTemplateListener);
 
-		fTemplatesCombo= new Combo(groupComposite, SWT.READ_ONLY);
+		fTemplatesCombo = new Combo(groupComposite, SWT.READ_ONLY);
 		fTemplatesCombo.setEnabled(fUseTemplate);
 		fTemplatesCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		final Button configureButton= new Button(groupComposite, SWT.PUSH);
+
+		final Button configureButton = new Button(groupComposite, SWT.PUSH);
 		configureButton.setText(NewFileWizardMessages.WizardNewFileFromTemplateCreationPage_configure_label);
 
-		SelectionListener changeTemplateListener= new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					editTemplates();
-				}
-			};
+		SelectionListener changeTemplateListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				editTemplates();
+			}
+		};
 		configureButton.addSelectionListener(changeTemplateListener);
 		updateTemplates();
 
@@ -119,18 +119,19 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 	}
 
 	protected void editTemplates() {
-		String prefPageId= CodeTemplatePreferencePage.PREF_ID;
-		Map<String, String> data= null;
-		String templateName= null;
-		Template template= getSelectedTemplate();
+		String prefPageId = CodeTemplatePreferencePage.PREF_ID;
+		Map<String, String> data = null;
+		String templateName = null;
+		Template template = getSelectedTemplate();
 		if (template != null) {
-			templateName= template.getName();
+			templateName = template.getName();
 		}
 		if (templateName != null) {
-			data= new HashMap<String, String>();
+			data = new HashMap<String, String>();
 			data.put(CodeTemplatePreferencePage.DATA_SELECT_TEMPLATE, templateName);
 		}
-		PreferenceDialog dialog= PreferencesUtil.createPreferenceDialogOn(getShell(), prefPageId, new String[] { prefPageId }, data);
+		PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(), prefPageId,
+				new String[] { prefPageId }, data);
 		if (dialog.open() == Window.OK) {
 			updateTemplates();
 		}
@@ -141,15 +142,15 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 	 */
 	@Override
 	protected InputStream getInitialContents() {
-		Template template= getSelectedTemplate();
+		Template template = getSelectedTemplate();
 		if (fUseTemplate && template != null) {
-			IFile fileHandle= createFileHandle(getContainerFullPath().append(getResourceName()));
-			String lineDelimiter= StubUtility.getLineDelimiterPreference(getContainterProject());
+			IFile fileHandle = createFileHandle(getContainerFullPath().append(getResourceName()));
+			String lineDelimiter = StubUtility.getLineDelimiterPreference(getContainterProject());
 			try {
-				String content= StubUtility.getFileContent(template, fileHandle, lineDelimiter);
+				String content = StubUtility.getFileContent(template, fileHandle, lineDelimiter);
 				if (content != null) {
 					try {
-						String charset= fileHandle.getParent().getDefaultCharset();
+						String charset = fileHandle.getParent().getDefaultCharset();
 						return new ByteArrayInputStream(content.getBytes(charset));
 					} catch (UnsupportedEncodingException exc) {
 						return new ByteArrayInputStream(content.getBytes());
@@ -171,20 +172,21 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 	}
 
 	protected void updateTemplates() {
-		Template selected= getSelectedTemplate();
-		boolean isDefaultSelected= (selected != null && fTemplates.length == 1) || (fTemplatesCombo != null && fTemplatesCombo.getSelectionIndex() == 0);
-		fTemplates= getApplicableTemplates();
-		int idx= 0;
-		String[] names= new String[fTemplates.length];
+		Template selected = getSelectedTemplate();
+		boolean isDefaultSelected = (selected != null && fTemplates.length == 1)
+				|| (fTemplatesCombo != null && fTemplatesCombo.getSelectionIndex() == 0);
+		fTemplates = getApplicableTemplates();
+		int idx = 0;
+		String[] names = new String[fTemplates.length];
 		for (int i = 0; i < names.length; i++) {
-			names[i]= fTemplates[i].getName();
+			names[i] = fTemplates[i].getName();
 			if (!isDefaultSelected && selected != null && selected.getName().equals(names[i])) {
-				idx= i;
+				idx = i;
 			}
 		}
 		if (fTemplatesCombo != null) {
 			if (names.length == 0) {
-				names= new String[] { NewFileWizardMessages.WizardNewFileFromTemplateCreationPage_noTemplate_name };
+				names = new String[] { NewFileWizardMessages.WizardNewFileFromTemplateCreationPage_noTemplate_name };
 			}
 			fTemplatesCombo.setItems(names);
 			fTemplatesCombo.select(idx);
@@ -196,11 +198,11 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 	 */
 	protected Template getSelectedTemplate() {
 		if (fTemplates != null) {
-			int index= 0;
+			int index = 0;
 			if (fTemplatesCombo != null) {
-				index= fTemplatesCombo.getSelectionIndex();
+				index = fTemplatesCombo.getSelectionIndex();
 				if (index < 0) {
-					index= 0;
+					index = 0;
 				}
 			}
 			if (index < fTemplates.length) {
@@ -211,8 +213,8 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 	}
 
 	private String getResourceName() {
-		String fileName= getFileName();
-		String fileExtension= getFileExtension();
+		String fileName = getFileName();
+		String fileExtension = getFileExtension();
 		if (fileExtension != null && fileExtension.length() > 0 && !fileName.endsWith('.' + fileExtension)) {
 			fileName += '.';
 			fileName += fileExtension;
@@ -221,7 +223,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 	}
 
 	private IProject getContainterProject() {
-		IPath containerPath= getContainerFullPath();
+		IPath containerPath = getContainerFullPath();
 		if (containerPath != null) {
 			return ResourcesPlugin.getWorkspace().getRoot().getProject(containerPath.segment(0));
 		}
@@ -229,46 +231,46 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 	}
 
 	/**
-     * Configure the set of selectable templates.
+	 * Configure the set of selectable templates.
 	 * @return the set of templates
 	 */
 	protected Template[] getApplicableTemplates() {
-		IProject project= getContainterProject();
-		String fileName= getResourceName();
-		String[] contentTypes= getAllContentTypeIdsForFileName(project, fileName);
+		IProject project = getContainterProject();
+		String fileName = getResourceName();
+		String[] contentTypes = getAllContentTypeIdsForFileName(project, fileName);
 		return StubUtility.getFileTemplatesForContentTypes(contentTypes, project);
 	}
 
 	private static String[] getAllContentTypeIdsForFileName(IProject project, String fileName) {
 		IContentTypeMatcher matcher;
 		if (project == null || !project.isAccessible()) {
-			IContentTypeManager contentTypeMgr= Platform.getContentTypeManager();
-			matcher= contentTypeMgr;
+			IContentTypeManager contentTypeMgr = Platform.getContentTypeManager();
+			matcher = contentTypeMgr;
 		} else {
 			try {
-				matcher= project.getContentTypeMatcher();
+				matcher = project.getContentTypeMatcher();
 			} catch (CoreException exc) {
-				IContentTypeManager contentTypeMgr= Platform.getContentTypeManager();
-				matcher= contentTypeMgr;
+				IContentTypeManager contentTypeMgr = Platform.getContentTypeManager();
+				matcher = contentTypeMgr;
 			}
 		}
-		IContentType[] contentTypes= matcher.findContentTypesFor(fileName);
-		List<String> result= new ArrayList<String>(contentTypes.length * 2);
+		IContentType[] contentTypes = matcher.findContentTypesFor(fileName);
+		List<String> result = new ArrayList<String>(contentTypes.length * 2);
 		for (int i = 0; i < contentTypes.length; i++) {
 			IContentType contentType = contentTypes[i];
-			String id= contentType.getId();
+			String id = contentType.getId();
 			result.add(id);
 		}
 		// add base types
 		for (int i = 0; i < contentTypes.length; i++) {
 			IContentType contentType = contentTypes[i].getBaseType();
 			while (contentType != null) {
-				String id= contentType.getId();
+				String id = contentType.getId();
 				if (result.contains(id)) {
 					break;
 				}
 				result.add(id);
-				contentType= contentType.getBaseType();
+				contentType = contentType.getBaseType();
 			}
 		}
 		if (result.isEmpty()) {

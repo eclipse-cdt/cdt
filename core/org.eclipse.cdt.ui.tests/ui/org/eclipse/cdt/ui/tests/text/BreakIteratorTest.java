@@ -18,35 +18,34 @@ import com.ibm.icu.text.BreakIterator;
 
 import junit.framework.TestCase;
 
-
 public class BreakIteratorTest extends TestCase {
 
 	protected BreakIterator fBreakIterator;
 
 	public void assertNextPositions(CharSequence ci, int position) {
-		assertNextPositions(ci, new int[] {position});
+		assertNextPositions(ci, new int[] { position });
 	}
 
 	public void assertNextPositions(CharSequence ci, int[] positions) {
 		fBreakIterator.setText(ci.toString());
-		
+
 		// test next()
 		for (int i = 0; i < positions.length; i++) {
-			int pos= fBreakIterator.next(); 
+			int pos = fBreakIterator.next();
 			assertEquals(positions[i], pos);
 		}
-		
+
 		// test following()
-		int idx= 0;
+		int idx = 0;
 		for (int i = 0; i < positions.length; i++) {
-			int position= positions[i];
+			int position = positions[i];
 			while (idx < position) {
 				if (!illegalPos(ci, idx))
 					assertEquals(position, fBreakIterator.following(idx));
 				idx++;
 			}
 		}
-		
+
 	}
 
 	/**
@@ -55,31 +54,31 @@ public class BreakIteratorTest extends TestCase {
 	 * @return
 	 */
 	private boolean illegalPos(CharSequence seq, int idx) {
-		String DELIMS= "\n\r";
+		String DELIMS = "\n\r";
 		if (idx == 0 || idx == seq.length())
 			return false;
-		char one= seq.charAt(idx - 1);
-		char two= seq.charAt(idx);
+		char one = seq.charAt(idx - 1);
+		char two = seq.charAt(idx);
 		return one != two && DELIMS.indexOf(one) != -1 && DELIMS.indexOf(two) != -1;
 	}
 
 	public void assertPreviousPositions(CharSequence ci, int position) {
-		assertPreviousPositions(ci, new int[] {position});
+		assertPreviousPositions(ci, new int[] { position });
 	}
 
 	public void assertPreviousPositions(CharSequence ci, int[] positions) {
 		fBreakIterator.setText(ci.toString());
 		fBreakIterator.last();
-		
+
 		for (int i = positions.length - 1; i >= 0; i--) {
-			int pos= fBreakIterator.previous(); 
+			int pos = fBreakIterator.previous();
 			assertEquals(positions[i], pos);
 		}
-	
+
 		// test preceding()
-		int idx= ci.length();
+		int idx = ci.length();
 		for (int i = positions.length - 1; i >= 0; i--) {
-			int position= positions[i];
+			int position = positions[i];
 			while (idx > position) {
 				if (!illegalPos(ci, idx))
 					assertEquals(position, fBreakIterator.preceding(idx));

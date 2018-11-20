@@ -21,28 +21,28 @@ import java.io.InputStreamReader;
 public class DiffUtil {
 	private static final String DIFF_CMD = "diff -ub";
 	private static DiffUtil fInstance;
-	
-	private DiffUtil(){
-		
+
+	private DiffUtil() {
+
 	}
-	
-	public static DiffUtil getInstance(){
-		if(fInstance == null)
+
+	public static DiffUtil getInstance() {
+		if (fInstance == null)
 			fInstance = new DiffUtil();
 		return fInstance;
 	}
-	
-	private static String createCommand(String location1, String location2){
+
+	private static String createCommand(String location1, String location2) {
 		StringBuilder buf = new StringBuilder();
 		buf.append(DIFF_CMD).append(" '").append(location1).append("' '").append(location2).append("'");
-		return buf.toString(); 
+		return buf.toString();
 	}
-	
-	public String diff(String location1, String location2){
+
+	public String diff(String location1, String location2) {
 		InputStream in = invokeDiff(location1, location2);
-		if(in == null)
+		if (in == null)
 			return null;
-		
+
 		BufferedReader br;
 		br = new BufferedReader(new InputStreamReader(in));
 		String line;
@@ -59,8 +59,8 @@ public class DiffUtil {
 		}
 		return buf.toString();
 	}
-	
-	private InputStream invokeDiff(String location1, String location2){
+
+	private InputStream invokeDiff(String location1, String location2) {
 		try {
 			Process p = Runtime.getRuntime().exec(createCommand(location1, location2));
 			return p.getInputStream();

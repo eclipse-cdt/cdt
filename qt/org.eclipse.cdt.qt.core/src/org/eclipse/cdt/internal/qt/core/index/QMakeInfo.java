@@ -36,7 +36,8 @@ public final class QMakeInfo implements IQMakeInfo {
 	/**
 	 * Instance that is used to present an invalid IQMakeInfo.
 	 */
-	public static final IQMakeInfo INVALID = new QMakeInfo(false, Collections.<String,String>emptyMap(), Collections.<String,String>emptyMap());
+	public static final IQMakeInfo INVALID = new QMakeInfo(false, Collections.<String, String>emptyMap(),
+			Collections.<String, String>emptyMap());
 
 	private final boolean valid;
 	private final Map<String, String> qmakeQueryMap;
@@ -53,16 +54,19 @@ public final class QMakeInfo implements IQMakeInfo {
 	private final List<String> formFiles;
 	private final List<String> otherFiles;
 
-	public QMakeInfo(boolean valid, Map<String,String> queryMap, Map<String,String> proMap) {
+	public QMakeInfo(boolean valid, Map<String, String> queryMap, Map<String, String> proMap) {
 		this.valid = valid;
 		this.qmakeQueryMap = Collections.unmodifiableMap(queryMap);
 
 		this.qtVersion = QMakeVersion.create(queryMap.get(QMakeParser.KEY_QT_VERSION));
-		List<String> tmpQtImportPaths = new ArrayList<String>(QMakeParser.singleValue(queryMap, QMakeParser.KEY_QT_INSTALL_IMPORTS));
-		List<String> tmpQtQmlPaths = new ArrayList<String>(QMakeParser.singleValue(queryMap, QMakeParser.KEY_QT_INSTALL_QML));
+		List<String> tmpQtImportPaths = new ArrayList<String>(
+				QMakeParser.singleValue(queryMap, QMakeParser.KEY_QT_INSTALL_IMPORTS));
+		List<String> tmpQtQmlPaths = new ArrayList<String>(
+				QMakeParser.singleValue(queryMap, QMakeParser.KEY_QT_INSTALL_QML));
 		this.qtDocPath = QMakeParser.singleValue(queryMap, QMakeParser.KEY_QT_INSTALL_DOCS);
 
-		this.involvedQMakeFiles = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_QMAKE_INTERNAL_INCLUDED_FILES);
+		this.involvedQMakeFiles = QMakeParser.qmake3DecodeValueList(proMap,
+				QMakeParser.KEY_QMAKE_INTERNAL_INCLUDED_FILES);
 		this.includePath = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_INCLUDEPATH);
 		this.defines = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_DEFINES);
 		this.sourceFiles = QMakeParser.qmake3DecodeValueList(proMap, QMakeParser.KEY_SOURCES);
@@ -95,7 +99,9 @@ public final class QMakeInfo implements IQMakeInfo {
 
 		// TODO - no support for pre-3.0
 		// for QMake version 3.0 or newer, run "qmake -E file.pro"
-		Map<String, String> qmake2 = version != null && version.getMajor() >= 3 ? exec(PATTERN_EVAL_LINE, extraEnv, qmakePath, "-E", proPath) : Collections.<String,String>emptyMap();
+		Map<String, String> qmake2 = version != null && version.getMajor() >= 3
+				? exec(PATTERN_EVAL_LINE, extraEnv, qmakePath, "-E", proPath)
+				: Collections.<String, String>emptyMap();
 		return new QMakeInfo(true, qmake1, qmake2);
 	}
 
@@ -131,7 +137,7 @@ public final class QMakeInfo implements IQMakeInfo {
 
 	@Override
 	public List<String> getQtDocPath() {
-	    return qtDocPath;
+		return qtDocPath;
 	}
 
 	@Override
@@ -166,7 +172,7 @@ public final class QMakeInfo implements IQMakeInfo {
 
 	@Override
 	public List<String> getOtherFiles() {
-	    return otherFiles;
+		return otherFiles;
 	}
 
 	/**
@@ -177,8 +183,8 @@ public final class QMakeInfo implements IQMakeInfo {
 	 * @param cmd the command line
 	 * @return the map of resolved key-value pairs
 	 */
-    private static Map<String, String> exec(Pattern regex, String[] extraEnv, String...command) {
-		if (command.length < 1 || ! new File(command[0]).exists()) {
+	private static Map<String, String> exec(Pattern regex, String[] extraEnv, String... command) {
+		if (command.length < 1 || !new File(command[0]).exists()) {
 			Activator.log("qmake: cannot run command: " + (command.length > 0 ? command[0] : ""));
 			return null;
 		}
@@ -192,14 +198,14 @@ public final class QMakeInfo implements IQMakeInfo {
 			}
 			reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			return QMakeParser.parse(regex, reader);
-		} catch(IOException e) {
+		} catch (IOException e) {
 			Activator.log(e);
 			return null;
 		} finally {
 			if (reader != null)
 				try {
 					reader.close();
-				} catch(IOException e) {
+				} catch (IOException e) {
 					/* ignore */
 				}
 			if (process != null) {

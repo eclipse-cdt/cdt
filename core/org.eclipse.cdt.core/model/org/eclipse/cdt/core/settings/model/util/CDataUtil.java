@@ -75,7 +75,7 @@ import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
 public class CDataUtil {
-	private static final String EMPTY = "";  //$NON-NLS-1$
+	private static final String EMPTY = ""; //$NON-NLS-1$
 	private static final String DELIM = " "; //$NON-NLS-1$
 
 	private static Random randomNumber;
@@ -103,8 +103,7 @@ public class CDataUtil {
 
 	public static String genId(String baseId) {
 		String suffix = Integer.toString(genRandomNumber());
-		return baseId != null ?
-				new StringBuilder(baseId).append(".").append(suffix).toString() : //$NON-NLS-1$
+		return baseId != null ? new StringBuilder(baseId).append(".").append(suffix).toString() : //$NON-NLS-1$
 				suffix;
 	}
 
@@ -115,7 +114,7 @@ public class CDataUtil {
 	}
 
 	public static String arrayToString(String[] array, String separator) {
-		return arrayToString((Object[])array, separator);
+		return arrayToString((Object[]) array, separator);
 	}
 
 	public static String arrayToString(Object[] array, String separator) {
@@ -161,11 +160,12 @@ public class CDataUtil {
 		return out.toArray(new ICSettingEntry[out.size()]);
 	}
 
-	public static ICLanguageSettingEntry[] resolveEntries(ICLanguageSettingEntry entries[], ICConfigurationDescription cfgDes) {
+	public static ICLanguageSettingEntry[] resolveEntries(ICLanguageSettingEntry entries[],
+			ICConfigurationDescription cfgDes) {
 		if (entries.length == 0)
 			return entries;
 
-		ICSettingEntry[] resolved = resolveEntries((ICSettingEntry[])entries, cfgDes);
+		ICSettingEntry[] resolved = resolveEntries((ICSettingEntry[]) entries, cfgDes);
 		ICLanguageSettingEntry[] resolvedLangEntries = new ICLanguageSettingEntry[resolved.length];
 		System.arraycopy(resolved, 0, resolvedLangEntries, 0, resolved.length);
 		return resolvedLangEntries;
@@ -175,7 +175,7 @@ public class CDataUtil {
 		if (entries.length == 0)
 			return entries;
 
-		ICSettingEntry[] resolved = resolveEntries((ICSettingEntry[])entries, cfgDes);
+		ICSettingEntry[] resolved = resolveEntries((ICSettingEntry[]) entries, cfgDes);
 		ICSourceEntry[] resolvedLangEntries = new ICSourceEntry[resolved.length];
 		System.arraycopy(resolved, 0, resolvedLangEntries, 0, resolved.length);
 		return resolvedLangEntries;
@@ -185,13 +185,14 @@ public class CDataUtil {
 		if (entries.length == 0)
 			return entries;
 
-		ICSettingEntry[] resolved = resolveEntries((ICSettingEntry[])entries, cfgDes);
+		ICSettingEntry[] resolved = resolveEntries((ICSettingEntry[]) entries, cfgDes);
 		ICOutputEntry[] resolvedLangEntries = new ICOutputEntry[resolved.length];
 		System.arraycopy(resolved, 0, resolvedLangEntries, 0, resolved.length);
 		return resolvedLangEntries;
 	}
 
-	private static ICSettingEntry[] createResolvedEntry(ICSettingEntry entry, ICConfigurationDescription cfg, ICdtVariableManager mngr) {
+	private static ICSettingEntry[] createResolvedEntry(ICSettingEntry entry, ICConfigurationDescription cfg,
+			ICdtVariableManager mngr) {
 		if (entry.isResolved())
 			return new ICSettingEntry[] { entry };
 
@@ -199,8 +200,7 @@ public class CDataUtil {
 
 		String[] names = new String[] { name }; // default value
 		try {
-			if ((entry.getKind() != ICSettingEntry.MACRO) &&
-					mngr.isStringListValue(name, cfg)) {
+			if ((entry.getKind() != ICSettingEntry.MACRO) && mngr.isStringListValue(name, cfg)) {
 				names = mngr.resolveStringListValue(name, EMPTY, DELIM, cfg);
 			} else {
 				names[0] = mngr.resolveValue(name, EMPTY, DELIM, cfg);
@@ -211,7 +211,7 @@ public class CDataUtil {
 
 		ICSettingEntry[] result = new ICSettingEntry[names.length];
 
-		for (int k=0; k<names.length; k++) {
+		for (int k = 0; k < names.length; k++) {
 			String value = null;
 			IPath[] exclusionFilters = null;
 			IPath srcPath = null, srcRootPath = null, srcPrefixMapping = null;
@@ -226,7 +226,7 @@ public class CDataUtil {
 				}
 				break;
 			case ICSettingEntry.LIBRARY_FILE:
-				ICLibraryFileEntry libFile = (ICLibraryFileEntry)entry;
+				ICLibraryFileEntry libFile = (ICLibraryFileEntry) entry;
 				srcPath = libFile.getSourceAttachmentPath();
 				srcRootPath = libFile.getSourceAttachmentRootPath();
 				srcPrefixMapping = libFile.getSourceAttachmentPrefixMapping();
@@ -239,7 +239,7 @@ public class CDataUtil {
 				break;
 			case ICSettingEntry.SOURCE_PATH:
 			case ICSettingEntry.OUTPUT_PATH:
-				exclusionFilters = ((ICExclusionPatternPathEntry)entry).getExclusionPatterns();
+				exclusionFilters = ((ICExclusionPatternPathEntry) entry).getExclusionPatterns();
 				for (int i = 0; i < exclusionFilters.length; i++) {
 					String exclString = exclusionFilters[i].toString();
 					try {
@@ -253,7 +253,8 @@ public class CDataUtil {
 			default:
 				break;
 			}
-			result[k] = createEntry(entry.getKind(), names[k], value, exclusionFilters, entry.getFlags() | ICSettingEntry.RESOLVED, srcPath, srcRootPath, srcPrefixMapping);
+			result[k] = createEntry(entry.getKind(), names[k], value, exclusionFilters,
+					entry.getFlags() | ICSettingEntry.RESOLVED, srcPath, srcRootPath, srcPrefixMapping);
 		}
 		return result;
 	}
@@ -324,13 +325,9 @@ public class CDataUtil {
 			entry = new CLibraryPathEntry(entry.getName(), flags);
 			break;
 		case ICSettingEntry.LIBRARY_FILE:
-			ICLibraryFileEntry libFile = (ICLibraryFileEntry)entry;
-			entry = new CLibraryFileEntry(entry.getName(),
-					flags,
-					libFile.getSourceAttachmentPath(),
-					libFile.getSourceAttachmentRootPath(),
-					libFile.getSourceAttachmentPrefixMapping()
-					);
+			ICLibraryFileEntry libFile = (ICLibraryFileEntry) entry;
+			entry = new CLibraryFileEntry(entry.getName(), flags, libFile.getSourceAttachmentPath(),
+					libFile.getSourceAttachmentRootPath(), libFile.getSourceAttachmentPrefixMapping());
 			break;
 		}
 		return getPooledEntry(entry);
@@ -340,7 +337,8 @@ public class CDataUtil {
 	 * Convenience method to create {@link ICSettingEntry} depending on kind.
 	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
 	 */
-	public static ICSettingEntry createEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags) {
+	public static ICSettingEntry createEntry(int kind, String name, String value, IPath[] exclusionPatterns,
+			int flags) {
 		return createEntry(kind, name, value, exclusionPatterns, flags, null, null, null);
 	}
 
@@ -348,7 +346,8 @@ public class CDataUtil {
 	 * Convenience method to create {@link ICSettingEntry} depending on kind.
 	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
 	 */
-	public static ICSettingEntry createEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IPath sourceAttachmentPrefixMapping) {
+	public static ICSettingEntry createEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags,
+			IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IPath sourceAttachmentPrefixMapping) {
 		ICSettingEntry entry = null;
 		switch (kind) {
 		case ICLanguageSettingEntry.INCLUDE_PATH:
@@ -367,7 +366,8 @@ public class CDataUtil {
 			entry = new CLibraryPathEntry(name, flags);
 			break;
 		case ICLanguageSettingEntry.LIBRARY_FILE:
-			entry = new CLibraryFileEntry(name, flags, sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping);
+			entry = new CLibraryFileEntry(name, flags, sourceAttachmentPath, sourceAttachmentRootPath,
+					sourceAttachmentPrefixMapping);
 			break;
 		case ICLanguageSettingEntry.OUTPUT_PATH:
 			entry = new COutputEntry(name, exclusionPatterns, flags);
@@ -485,25 +485,26 @@ public class CDataUtil {
 		return exts;
 	}
 
-	public static String[] getContentTypeFileSpecs (IProject project, IContentType type) {
+	public static String[] getContentTypeFileSpecs(IProject project, IContentType type) {
 		String[] globalSpecs = type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
 		IContentTypeSettings settings = null;
 		if (project != null) {
 			IScopeContext projectScope = new ProjectScope(project);
 			try {
 				settings = type.getSettings(projectScope);
-			} catch (Exception e) {}
+			} catch (Exception e) {
+			}
 			if (settings != null) {
 				String[] specs = settings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
 				if (specs.length > 0) {
 					int total = globalSpecs.length + specs.length;
 					String[] projSpecs = new String[total];
-					int i=0;
-					for (int j=0; j<specs.length; j++) {
+					int i = 0;
+					for (int j = 0; j < specs.length; j++) {
 						projSpecs[i] = specs[j];
 						i++;
 					}
-					for (int j=0; j<globalSpecs.length; j++) {
+					for (int j = 0; j < globalSpecs.length; j++) {
 						projSpecs[i] = globalSpecs[j];
 						i++;
 					}
@@ -524,32 +525,32 @@ public class CDataUtil {
 		//		if (setting == null)
 		//			setting = findLanguageSettingForContentTypeId(cType.getId(), settings, false);
 		//	}
-			CLanguageData data = null;
-			int index = fileName.lastIndexOf('.');
-			if (index > 0) {
-				String ext = fileName.substring(index + 1).trim();
-				if (ext.length() > 0) {
-					data = findLanguageDataForExtension(ext, datas);
-				}
+		CLanguageData data = null;
+		int index = fileName.lastIndexOf('.');
+		if (index > 0) {
+			String ext = fileName.substring(index + 1).trim();
+			if (ext.length() > 0) {
+				data = findLanguageDataForExtension(ext, datas);
 			}
-			return data;
 		}
+		return data;
+	}
 
 	public static CLanguageData findLanguageDataForExtension(String ext, CLanguageData datas[]/*, boolean src*/) {
 		CLanguageData data;
 		for (int i = 0; i < datas.length; i++) {
 			data = datas[i];
 			String exts[] = data.getSourceExtensions();
-/*			if (src) {
-				if (setting.getSourceContentType() == null) {
-					exts = setting.getSourceExtensions();
-				}
-			} else {
-				if (setting.getHeaderContentType() == null) {
-					exts = setting.getHeaderExtensions();
-				}
-			}
-*/
+			/*			if (src) {
+							if (setting.getSourceContentType() == null) {
+								exts = setting.getSourceExtensions();
+							}
+						} else {
+							if (setting.getHeaderContentType() == null) {
+								exts = setting.getHeaderExtensions();
+							}
+						}
+			*/
 			if (exts != null && exts.length != 0) {
 				for (int j = 0; j < exts.length; j++) {
 					if (ext.equals(exts[j]))
@@ -586,7 +587,8 @@ public class CDataUtil {
 		return h;
 	}
 
-	public static CConfigurationData createEmptyData(String id, String name, CDataFactory factory, boolean performLangAdjustment) {
+	public static CConfigurationData createEmptyData(String id, String name, CDataFactory factory,
+			boolean performLangAdjustment) {
 		if (id == null)
 			id = genId(null);
 
@@ -620,15 +622,15 @@ public class CDataUtil {
 		CResourceData[] rcDatas = cfg.getResourceDatas();
 		for (int i = 0; i < rcDatas.length; i++) {
 			if (rcDatas[i].getType() == ICSettingBase.SETTING_FOLDER) {
-				adjustFolderData(cfg, (CFolderData)rcDatas[i], factory, dess, new HashMap<>(map));
+				adjustFolderData(cfg, (CFolderData) rcDatas[i], factory, dess, new HashMap<>(map));
 			}
 		}
 
 		return cfg;
 	}
 
-
-	private static void adjustFolderData(CConfigurationData cfgData, CFolderData data, CDataFactory factory, ILanguageDescriptor dess[], HashMap<String, ILanguageDescriptor[]> map) {
+	private static void adjustFolderData(CConfigurationData cfgData, CFolderData data, CDataFactory factory,
+			ILanguageDescriptor dess[], HashMap<String, ILanguageDescriptor[]> map) {
 		Map<String, ILanguageDescriptor> langMap = new HashMap<>();
 		for (int i = 0; i < dess.length; i++) {
 			langMap.put(dess[i].getId(), dess[i]);
@@ -640,7 +642,7 @@ public class CDataUtil {
 			if (langId != null) {
 				ILanguageDescriptor des = langMap.remove(langId);
 				adjustLanguageData(data, lData, des);
-						continue;
+				continue;
 			} else {
 				String[] cTypeIds = lData.getSourceContentTypeIds();
 				for (int c = 0; c < cTypeIds.length; c++) {
@@ -664,7 +666,7 @@ public class CDataUtil {
 	}
 
 	private static CLanguageData adjustLanguageData(CFolderData data, CLanguageData lData, ILanguageDescriptor des) {
-		String [] cTypeIds = des.getContentTypeIds();
+		String[] cTypeIds = des.getContentTypeIds();
 		String srcIds[] = lData.getSourceContentTypeIds();
 
 		Set<String> landTypes = new HashSet<>(Arrays.asList(cTypeIds));
@@ -682,10 +684,11 @@ public class CDataUtil {
 		return lData;
 	}
 
-	private static void addLangs(CConfigurationData cfgData, CFolderData data, CDataFactory factory, Map<String, ILanguageDescriptor> langMap, Map<String, ILanguageDescriptor[]> cTypeToLangMap) {
+	private static void addLangs(CConfigurationData cfgData, CFolderData data, CDataFactory factory,
+			Map<String, ILanguageDescriptor> langMap, Map<String, ILanguageDescriptor[]> cTypeToLangMap) {
 		List<ILanguageDescriptor> list = new ArrayList<>(langMap.values());
 		ILanguageDescriptor des;
-		while(list.size() != 0) {
+		while (list.size() != 0) {
 			des = list.remove(list.size() - 1);
 			String[] ctypeIds = des.getContentTypeIds();
 			boolean addLang = false;
@@ -700,11 +703,9 @@ public class CDataUtil {
 			}
 
 			if (addLang) {
-				CLanguageData lData = factory.createLanguageData(cfgData, data, genId(data.getId()), des.getName(), des.getId(),
-						ICSettingEntry.INCLUDE_FILE
-						| ICSettingEntry.INCLUDE_PATH
-						| ICSettingEntry.MACRO
-						| ICSettingEntry.MACRO_FILE,
+				CLanguageData lData = factory.createLanguageData(
+						cfgData, data, genId(data.getId()), des.getName(), des.getId(), ICSettingEntry.INCLUDE_FILE
+								| ICSettingEntry.INCLUDE_PATH | ICSettingEntry.MACRO | ICSettingEntry.MACRO_FILE,
 						ctypeIds, true);
 				factory.link(data, lData);
 			}
@@ -753,7 +754,8 @@ public class CDataUtil {
 		try {
 			ICSourceEntry[] out = setExcluded(path, isFolder, excluded, entries, false);
 			return !isEqual(entries, out);
-		} catch (CoreException e) {	}
+		} catch (CoreException e) {
+		}
 		return false;
 	}
 
@@ -768,9 +770,9 @@ public class CDataUtil {
 			return (ein == null && aus == null);
 		if (ein.length != aus.length)
 			return false;
-		for (int i= 0; i < ein.length; i++) {
+		for (int i = 0; i < ein.length; i++) {
 			boolean found = false;
-			for (int j=0; j<aus.length; j++) {
+			for (int j = 0; j < aus.length; j++) {
 				if (!ein[i].equalsByName(aus[j]))
 					continue;
 				if (ein[i].equalsByContents(aus[j])) {
@@ -785,11 +787,13 @@ public class CDataUtil {
 		return true; // all entries are equal by name and contents
 	}
 
-	public static ICSourceEntry[] setExcluded(IPath path, boolean isFolder, boolean excluded, ICSourceEntry[] entries) throws CoreException {
+	public static ICSourceEntry[] setExcluded(IPath path, boolean isFolder, boolean excluded, ICSourceEntry[] entries)
+			throws CoreException {
 		return setExcluded(path, isFolder, excluded, entries, true);
 	}
 
-	public static ICSourceEntry[] setExcludedIfPossible(IPath path, boolean isFolder, boolean excluded, ICSourceEntry[] entries) {
+	public static ICSourceEntry[] setExcludedIfPossible(IPath path, boolean isFolder, boolean excluded,
+			ICSourceEntry[] entries) {
 		try {
 			ICSourceEntry[] newEntries = setExcluded(path, isFolder, excluded, entries, false);
 			if (newEntries == null)
@@ -800,7 +804,8 @@ public class CDataUtil {
 		return entries;
 	}
 
-	public static ICSourceEntry[] setExcluded(IPath path, boolean isFolder, boolean excluded, ICSourceEntry[] entries, boolean throwExceptionOnErr) throws CoreException {
+	public static ICSourceEntry[] setExcluded(IPath path, boolean isFolder, boolean excluded, ICSourceEntry[] entries,
+			boolean throwExceptionOnErr) throws CoreException {
 		if (isExcluded(path, entries) == excluded)
 			return entries;
 
@@ -834,7 +839,8 @@ public class CDataUtil {
 
 			if (!included) {
 				if (isFolder) {
-					includeList.add(new CSourceEntry(path, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED));
+					includeList.add(new CSourceEntry(path, null,
+							ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED));
 				} else {
 					if (throwExceptionOnErr)
 						throw ExceptionFactory.createCoreException("can not create a source entry for individual file"); //$NON-NLS-1$
@@ -880,7 +886,8 @@ public class CDataUtil {
 		return null;
 	}
 
-	private static void sortIncludingExcludingEntries(IPath path, ICSourceEntry[] entries, List<ICSourceEntry> including, List<ICSourceEntry> excluding) {
+	private static void sortIncludingExcludingEntries(IPath path, ICSourceEntry[] entries,
+			List<ICSourceEntry> including, List<ICSourceEntry> excluding) {
 		for (int i = 0; i < entries.length; i++) {
 			IPath entryPath = new Path(entries[i].getName());
 			if (entryPath.isPrefixOf(path)) {
@@ -899,9 +906,11 @@ public class CDataUtil {
 		ICSourceEntry entry;
 		if (absolute) {
 			if (project != null) {
-				entry = new CSourceEntry(project.getFullPath(), null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+				entry = new CSourceEntry(project.getFullPath(), null,
+						ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 			} else {
-				entry = new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+				entry = new CSourceEntry(Path.EMPTY, null,
+						ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 			}
 		} else {
 			entry = new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
@@ -913,9 +922,11 @@ public class CDataUtil {
 		ICOutputEntry entry;
 		if (absolute) {
 			if (project != null) {
-				entry = new COutputEntry(project.getFullPath(), null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+				entry = new COutputEntry(project.getFullPath(), null,
+						ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 			} else {
-				entry = new COutputEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+				entry = new COutputEntry(Path.EMPTY, null,
+						ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 			}
 		} else {
 			entry = new COutputEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
@@ -1005,46 +1016,46 @@ public class CDataUtil {
 	}
 
 	public static ICSourceEntry makeAbsolute(IProject project, ICSourceEntry entry) {
-		return (ICSourceEntry)makeAbsolute(project, entry, true);
+		return (ICSourceEntry) makeAbsolute(project, entry, true);
 	}
 
 	public static ICSourceEntry makeRelative(IProject project, ICSourceEntry entry) {
-		return (ICSourceEntry)makeRelative(project, entry, true);
+		return (ICSourceEntry) makeRelative(project, entry, true);
 	}
 
 	public static ICSourceEntry[] makeRelative(IProject project, ICSourceEntry[] entries) {
-		return (ICSourceEntry[])makeRelative(project, entries, true);
+		return (ICSourceEntry[]) makeRelative(project, entries, true);
 	}
 
 	public static ICSourceEntry[] makeAbsolute(IProject project, ICSourceEntry[] entries) {
-		return (ICSourceEntry[])makeAbsolute(project, entries, true);
+		return (ICSourceEntry[]) makeAbsolute(project, entries, true);
 	}
 
 	public static ICOutputEntry makeAbsolute(IProject project, ICOutputEntry entry) {
-		return (ICOutputEntry)makeAbsolute(project, entry, true);
+		return (ICOutputEntry) makeAbsolute(project, entry, true);
 	}
 
 	public static ICOutputEntry makeRelative(IProject project, ICOutputEntry entry) {
-		return (ICOutputEntry)makeRelative(project, entry, true);
+		return (ICOutputEntry) makeRelative(project, entry, true);
 	}
 
 	public static ICOutputEntry[] makeAbsolute(IProject project, ICOutputEntry[] entries) {
-		return (ICOutputEntry[])makeAbsolute(project, entries, true);
+		return (ICOutputEntry[]) makeAbsolute(project, entries, true);
 	}
 
 	public static ICOutputEntry[] makeRelative(IProject project, ICOutputEntry[] entries) {
-		return (ICOutputEntry[])makeRelative(project, entries, true);
+		return (ICOutputEntry[]) makeRelative(project, entries, true);
 	}
 
 	private static Collection<IPath> removePrefix(IPath prefix, Collection<IPath> paths, Collection<IPath> result) {
 		if (result == null)
 			result = new ArrayList<>(paths.size());
-		for (Iterator<IPath> iter = paths.iterator(); iter.hasNext(); ) {
+		for (Iterator<IPath> iter = paths.iterator(); iter.hasNext();) {
 			IPath path = iter.next();
 			if (prefix.isPrefixOf(path))
 				result.add(path.removeFirstSegments(prefix.segmentCount()));
-//			else
-//				result.add(path);
+			//			else
+			//				result.add(path);
 		}
 		return result;
 	}
@@ -1052,7 +1063,7 @@ public class CDataUtil {
 	public static ICSourceEntry addExcludePaths(ICSourceEntry entry, Collection<IPath> paths, boolean removePrefix) {
 		IPath entryPath = new Path(entry.getName());
 		IPath[] oldExclusions = entry.getExclusionPatterns();
-//		List newExList = new ArrayList(oldExclusions.length + paths.size());
+		//		List newExList = new ArrayList(oldExclusions.length + paths.size());
 		LinkedHashSet<IPath> newSet = new LinkedHashSet<>();
 		if (removePrefix) {
 			removePrefix(entryPath, paths, newSet);
@@ -1072,7 +1083,8 @@ public class CDataUtil {
 		return new CSourceEntry(entry.getName(), newExclusions, entry.getFlags());
 	}
 
-	private static void sortEntries(IPath path, boolean byExclude, ICSourceEntry[] entries, List<ICSourceEntry> included, List<ICSourceEntry> excluded) {
+	private static void sortEntries(IPath path, boolean byExclude, ICSourceEntry[] entries,
+			List<ICSourceEntry> included, List<ICSourceEntry> excluded) {
 		for (int i = 0; i < entries.length; i++) {
 			if (byExclude ? isExcluded(path, entries[i]) : !isOnSourceEntry(path, entries[i])) {
 				if (excluded != null)
@@ -1084,7 +1096,8 @@ public class CDataUtil {
 		}
 	}
 
-	public static Map<EntryNameKey, ICSettingEntry> fillEntriesMapByNameKey(Map<EntryNameKey, ICSettingEntry> map, ICSettingEntry[] entries) {
+	public static Map<EntryNameKey, ICSettingEntry> fillEntriesMapByNameKey(Map<EntryNameKey, ICSettingEntry> map,
+			ICSettingEntry[] entries) {
 		if (map == null)
 			map = new LinkedHashMap<>();
 
@@ -1095,7 +1108,8 @@ public class CDataUtil {
 		return map;
 	}
 
-	public static Map<EntryContentsKey, ICSettingEntry> fillEntriesMapByContentsKey(Map<EntryContentsKey, ICSettingEntry> map, ICSettingEntry[] entries) {
+	public static Map<EntryContentsKey, ICSettingEntry> fillEntriesMapByContentsKey(
+			Map<EntryContentsKey, ICSettingEntry> map, ICSettingEntry[] entries) {
 		if (map == null)
 			map = new LinkedHashMap<>();
 
@@ -1137,14 +1151,16 @@ public class CDataUtil {
 		el.setAttribute(attr, Integer.toString(value));
 	}
 
-	public static ICExclusionPatternPathEntry addRemoveExclusionsToEntry(ICExclusionPatternPathEntry entry, IPath[] paths, boolean add) throws IllegalArgumentException{
+	public static ICExclusionPatternPathEntry addRemoveExclusionsToEntry(ICExclusionPatternPathEntry entry,
+			IPath[] paths, boolean add) throws IllegalArgumentException {
 		if (paths == null || paths.length == 0)
 			return entry;
 
 		Set<IPath> set = mergeRemovingDups(entry.getExclusionPatterns(), paths, add);
 		IPath exclusions[] = set.toArray(new IPath[set.size()]);
 
-		return (ICExclusionPatternPathEntry)createEntry(entry.getKind(), entry.getName(), null, exclusions, entry.getFlags());
+		return (ICExclusionPatternPathEntry) createEntry(entry.getKind(), entry.getName(), null, exclusions,
+				entry.getFlags());
 	}
 
 	private static Set<IPath> mergeRemovingDups(IPath[] o1, IPath[] o2, boolean add) {
@@ -1158,7 +1174,8 @@ public class CDataUtil {
 		return set;
 	}
 
-	public static ICExclusionPatternPathEntry makeAbsolute(IProject project, ICExclusionPatternPathEntry entry, boolean force) {
+	public static ICExclusionPatternPathEntry makeAbsolute(IProject project, ICExclusionPatternPathEntry entry,
+			boolean force) {
 		if (!entry.isValueWorkspacePath() && !force)
 			return entry;
 
@@ -1166,12 +1183,14 @@ public class CDataUtil {
 		IPath projPath = project.getFullPath();
 		if (!path.isAbsolute() || (force && !projPath.isPrefixOf(path))) {
 			path = projPath.append(path).makeAbsolute();
-			return (ICExclusionPatternPathEntry) createEntry(entry.getKind(), path.toString(), null, entry.getExclusionPatterns(), entry.getFlags());
+			return (ICExclusionPatternPathEntry) createEntry(entry.getKind(), path.toString(), null,
+					entry.getExclusionPatterns(), entry.getFlags());
 		}
 		return entry;
 	}
 
-	public static ICExclusionPatternPathEntry makeRelative(IProject project, ICExclusionPatternPathEntry entry, boolean force) {
+	public static ICExclusionPatternPathEntry makeRelative(IProject project, ICExclusionPatternPathEntry entry,
+			boolean force) {
 		if (!entry.isValueWorkspacePath() && !force)
 			return entry;
 
@@ -1184,27 +1203,32 @@ public class CDataUtil {
 			} else if (force) {
 				path = path.makeRelative();
 			}
-			return (ICExclusionPatternPathEntry) createEntry(entry.getKind(), path.toString(), null, entry.getExclusionPatterns(), entry.getFlags());
+			return (ICExclusionPatternPathEntry) createEntry(entry.getKind(), path.toString(), null,
+					entry.getExclusionPatterns(), entry.getFlags());
 		}
 		return entry;
 	}
 
-	public static ICExclusionPatternPathEntry[] makeRelative(IProject project, ICExclusionPatternPathEntry[] entries, boolean force) {
+	public static ICExclusionPatternPathEntry[] makeRelative(IProject project, ICExclusionPatternPathEntry[] entries,
+			boolean force) {
 		if (entries == null)
 			return null;
 
-		ICExclusionPatternPathEntry[] relEntries = (ICExclusionPatternPathEntry[])Array.newInstance(entries.getClass().getComponentType(), entries.length);
+		ICExclusionPatternPathEntry[] relEntries = (ICExclusionPatternPathEntry[]) Array
+				.newInstance(entries.getClass().getComponentType(), entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			relEntries[i] = makeRelative(project, entries[i], force);
 		}
 		return relEntries;
 	}
 
-	public static ICExclusionPatternPathEntry[] makeAbsolute(IProject project, ICExclusionPatternPathEntry[] entries, boolean force) {
+	public static ICExclusionPatternPathEntry[] makeAbsolute(IProject project, ICExclusionPatternPathEntry[] entries,
+			boolean force) {
 		if (entries == null)
 			return null;
 
-		ICExclusionPatternPathEntry[] relEntries = (ICExclusionPatternPathEntry[])Array.newInstance(entries.getClass().getComponentType(), entries.length);
+		ICExclusionPatternPathEntry[] relEntries = (ICExclusionPatternPathEntry[]) Array
+				.newInstance(entries.getClass().getComponentType(), entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			relEntries[i] = makeAbsolute(project, entries[i], force);
 		}

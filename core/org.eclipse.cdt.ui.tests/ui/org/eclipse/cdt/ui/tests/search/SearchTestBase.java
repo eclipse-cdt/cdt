@@ -41,25 +41,27 @@ public abstract class SearchTestBase extends BaseUITestCase {
 	protected String fSourceContents;
 	protected IFile fSourceFile;
 	protected CharSequence[] fTestData;
-	
+
 	protected ITestStrategy fStrategy;
 
 	public void setStrategy(ITestStrategy strategy) {
 		fStrategy = strategy;
 	}
-	
+
 	protected interface ITestStrategy {
 		void setUp() throws Exception;
+
 		void tearDown() throws Exception;
-		
+
 		// The scope for searches.
 		ICElement[] getScope();
 	}
-	
+
 	protected class SingleProjectStrategy implements ITestStrategy {
 		@Override
 		public void setUp() throws Exception {
-			fCProject = CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER); 
+			fCProject = CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin",
+					IPDOMManager.ID_NO_INDEXER);
 			Bundle b = CTestPlugin.getDefault().getBundle();
 			fTestData = TestSourceReader.getContentsForTest(b, "ui", SearchTestBase.this.getClass(), getName(), 2);
 			assertEquals("Incomplete test data", 2, fTestData.length);
@@ -70,7 +72,8 @@ public abstract class SearchTestBase extends BaseUITestCase {
 			waitForIndexer(fCProject);
 
 			fSourceContents = fTestData[1].toString();
-			fSourceFile = TestSourceReader.createFile(fCProject.getProject(), new Path("references.cpp"), fSourceContents);
+			fSourceFile = TestSourceReader.createFile(fCProject.getProject(), new Path("references.cpp"),
+					fSourceContents);
 			waitForIndexer(fCProject);
 		}
 
@@ -80,68 +83,69 @@ public abstract class SearchTestBase extends BaseUITestCase {
 				fCProject.getProject().delete(true, npm());
 			}
 		}
-		
+
 		@Override
 		public ICElement[] getScope() {
 			return new ICElement[] { fCProject };
 		}
 	}
-	
+
 	protected class ReferencedProjectStrategy implements ITestStrategy {
 		private ICProject fReferencedCProject;
 
 		@Override
 		public void setUp() throws Exception {
-			fCProject = CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", 
+			fCProject = CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin",
 					IPDOMManager.ID_NO_INDEXER);
 			Bundle b = CTestPlugin.getDefault().getBundle();
 			fTestData = TestSourceReader.getContentsForTest(b, "ui", SearchTestBase.this.getClass(), getName(), 2);
 			assertEquals("Incomplete test data", 2, fTestData.length);
-			
-			fReferencedCProject = CProjectHelper.createCCProject("ReferencedContent" + getName() + System.currentTimeMillis(), 
-					"bin", IPDOMManager.ID_NO_INDEXER);
-			
+
+			fReferencedCProject = CProjectHelper.createCCProject(
+					"ReferencedContent" + getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+
 			fHeaderContents = fTestData[0].toString();
-			fHeaderFile = TestSourceReader.createFile(fReferencedCProject.getProject(), new Path("header.h"), 
+			fHeaderFile = TestSourceReader.createFile(fReferencedCProject.getProject(), new Path("header.h"),
 					fHeaderContents);
-			
+
 			CCorePlugin.getIndexManager().setIndexerId(fReferencedCProject, IPDOMManager.ID_FAST_INDEXER);
 			CCorePlugin.getIndexManager().reindex(fReferencedCProject);
 			waitForIndexer(fReferencedCProject);
-			
-			TestScannerProvider.sIncludes = new String[] { fReferencedCProject.getProject().getLocation().toOSString() };
-			
+
+			TestScannerProvider.sIncludes = new String[] {
+					fReferencedCProject.getProject().getLocation().toOSString() };
+
 			fSourceContents = fTestData[1].toString();
 			fSourceFile = TestSourceReader.createFile(fCProject.getProject(), new Path("refs.cpp"), fSourceContents);
-			
+
 			IProject[] refs = new IProject[] { fReferencedCProject.getProject() };
 			IProjectDescription desc = fCProject.getProject().getDescription();
 			desc.setReferencedProjects(refs);
 			fCProject.getProject().setDescription(desc, new NullProgressMonitor());
-			
+
 			CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);
 			CCorePlugin.getIndexManager().reindex(fCProject);
 			waitForIndexer(fCProject);
 		}
-		
+
 		@Override
 		public void tearDown() throws Exception {
 			if (fCProject != null) {
-				fCProject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, 
+				fCProject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
 						new NullProgressMonitor());
 			}
 			if (fReferencedCProject != null) {
-				fReferencedCProject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, 
+				fReferencedCProject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
 						new NullProgressMonitor());
 			}
 		}
-		
+
 		@Override
 		public ICElement[] getScope() {
 			return new ICElement[] { fReferencedCProject, fCProject };
 		}
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -158,9 +162,9 @@ public abstract class SearchTestBase extends BaseUITestCase {
 		query.run(npm());
 		return (CSearchResult) query.getSearchResult();
 	}
-	
+
 	protected void assertOccurrences(CSearchQuery query, int expected) {
-		CSearchResult result= getSearchResult(query);
+		CSearchResult result = getSearchResult(query);
 		assertEquals(expected, result.getMatchCount());
 	}
 }

@@ -28,21 +28,21 @@ import org.eclipse.core.runtime.Platform;
 
 public class CFoldingStructureProviderRegistry {
 
-	private static final String EXTENSION_POINT= "foldingStructureProviders"; //$NON-NLS-1$
-	
+	private static final String EXTENSION_POINT = "foldingStructureProviders"; //$NON-NLS-1$
+
 	/** The map of descriptors, indexed by their identifiers. */
 	private Map<String, CFoldingStructureProviderDescriptor> fDescriptors;
 
 	/**
-	 * Creates a new instance. 
+	 * Creates a new instance.
 	 */
 	public CFoldingStructureProviderRegistry() {
 	}
-	
+
 	/**
 	 * Returns an array of <code>ICFoldingProviderDescriptor</code> describing
 	 * all extension to the <code>foldingProviders</code> extension point.
-	 * 
+	 *
 	 * @return the list of extensions to the
 	 *         <code>quickDiffReferenceProvider</code> extension point.
 	 */
@@ -52,11 +52,11 @@ public class CFoldingStructureProviderRegistry {
 			return fDescriptors.values().toArray(new CFoldingStructureProviderDescriptor[fDescriptors.size()]);
 		}
 	}
-	
+
 	/**
 	 * Returns the folding provider with identifier <code>id</code> or
 	 * <code>null</code> if no such provider is registered.
-	 * 
+	 *
 	 * @param id the identifier for which a provider is wanted
 	 * @return the corresponding provider, or <code>null</code> if none can be
 	 *         found
@@ -67,16 +67,16 @@ public class CFoldingStructureProviderRegistry {
 			return fDescriptors.get(id);
 		}
 	}
-	
+
 	/**
 	 * Instantiates and returns the provider that is currently configured in the
 	 * preferences.
-	 * 
+	 *
 	 * @return the current provider according to the preferences
 	 */
 	public ICFoldingStructureProvider getCurrentFoldingProvider() {
-		String id= CUIPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.EDITOR_FOLDING_PROVIDER);
-		CFoldingStructureProviderDescriptor desc= getFoldingProviderDescriptor(id);
+		String id = CUIPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.EDITOR_FOLDING_PROVIDER);
+		CFoldingStructureProviderDescriptor desc = getFoldingProviderDescriptor(id);
 		if (desc != null) {
 			try {
 				return desc.createProvider();
@@ -86,7 +86,7 @@ public class CFoldingStructureProviderRegistry {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Ensures that the extensions are read and stored in
 	 * <code>fDescriptors</code>.
@@ -104,19 +104,19 @@ public class CFoldingStructureProviderRegistry {
 	 * </p>
 	 */
 	public void reloadExtensions() {
-		IExtensionRegistry registry= Platform.getExtensionRegistry();
-		Map<String, CFoldingStructureProviderDescriptor> map= new HashMap<String, CFoldingStructureProviderDescriptor>();
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		Map<String, CFoldingStructureProviderDescriptor> map = new HashMap<String, CFoldingStructureProviderDescriptor>();
 
-		IConfigurationElement[] elements= registry.getConfigurationElementsFor(CUIPlugin.getPluginId(), EXTENSION_POINT);
-		for (int i= 0; i < elements.length; i++) {
-			CFoldingStructureProviderDescriptor desc= new CFoldingStructureProviderDescriptor(elements[i]);
+		IConfigurationElement[] elements = registry.getConfigurationElementsFor(CUIPlugin.getPluginId(),
+				EXTENSION_POINT);
+		for (int i = 0; i < elements.length; i++) {
+			CFoldingStructureProviderDescriptor desc = new CFoldingStructureProviderDescriptor(elements[i]);
 			map.put(desc.getId(), desc);
 		}
-		
-		synchronized(this) {
-			fDescriptors= Collections.unmodifiableMap(map);
+
+		synchronized (this) {
+			fDescriptors = Collections.unmodifiableMap(map);
 		}
 	}
-
 
 }

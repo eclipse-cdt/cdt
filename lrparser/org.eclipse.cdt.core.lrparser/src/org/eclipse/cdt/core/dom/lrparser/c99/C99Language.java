@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,23 +30,21 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parser;
 
 /**
  * ILanguage implementation for the C99 parser.
- * 
+ *
  * @author Mike Kucera
  */
 public class C99Language extends BaseExtensibleLanguage {
 
-	public static final String ID = "org.eclipse.cdt.core.lrparser.c99"; //$NON-NLS-1$ 
-	
+	public static final String ID = "org.eclipse.cdt.core.lrparser.c99"; //$NON-NLS-1$
+
 	private static C99Language DEFAULT = new C99Language();
-	
-	
+
 	public static C99Language getDefault() {
 		return DEFAULT;
 	}
-	
-		
+
 	@Override
-	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties) {
+	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String, String> properties) {
 		return new C99Parser(scanner, DOMToC99TokenMap.DEFAULT_MAP, getBuiltinBindingsProvider(), index, properties);
 	}
 

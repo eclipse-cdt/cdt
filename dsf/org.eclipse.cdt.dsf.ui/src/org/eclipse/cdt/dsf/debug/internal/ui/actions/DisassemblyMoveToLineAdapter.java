@@ -35,7 +35,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Move to line target adapter for the DSF Disassembly view
- * 
+ *
  * @since 2.1
  */
 public class DisassemblyMoveToLineAdapter implements IMoveToLineTarget {
@@ -44,37 +44,36 @@ public class DisassemblyMoveToLineAdapter implements IMoveToLineTarget {
 	public void moveToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
 		if (part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
 			if (!(selection instanceof IDisassemblySelection)) {
-				selection = new DisassemblySelection((ITextSelection)selection, (IDisassemblyPart)part);
+				selection = new DisassemblySelection((ITextSelection) selection, (IDisassemblyPart) part);
 			}
-			IDisassemblySelection disassemblySelection = (IDisassemblySelection)selection;
+			IDisassemblySelection disassemblySelection = (IDisassemblySelection) selection;
 			final IAddress address = disassemblySelection.getStartAddress();
-	    	
-	    	if (address != null && target instanceof IAdaptable) {
-	    		final IMoveToAddress moveToAddress = ((IAdaptable)target).getAdapter(IMoveToAddress.class);
-	    		if (moveToAddress != null && moveToAddress.canMoveToAddress(address)) {
-	    			try {
-	    				moveToAddress.moveToAddress(address);								
-	    			}
-	    			catch(DebugException e) {
-	    				failed(e);
-	    			}								
-	    		}
-	    	}
+
+			if (address != null && target instanceof IAdaptable) {
+				final IMoveToAddress moveToAddress = ((IAdaptable) target).getAdapter(IMoveToAddress.class);
+				if (moveToAddress != null && moveToAddress.canMoveToAddress(address)) {
+					try {
+						moveToAddress.moveToAddress(address);
+					} catch (DebugException e) {
+						failed(e);
+					}
+				}
+			}
 		}
 	}
 
 	@Override
 	public boolean canMoveToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
 		if (target instanceof IAdaptable && part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
-			IMoveToAddress moveToAddress = ((IAdaptable)target).getAdapter(IMoveToAddress.class);
+			IMoveToAddress moveToAddress = ((IAdaptable) target).getAdapter(IMoveToAddress.class);
 			if (moveToAddress == null) {
 				return false;
 			}
-			
+
 			if (!(selection instanceof IDisassemblySelection)) {
-				selection = new DisassemblySelection((ITextSelection)selection, (IDisassemblyPart)part);
+				selection = new DisassemblySelection((ITextSelection) selection, (IDisassemblyPart) part);
 			}
-			IDisassemblySelection disassemblySelection = (IDisassemblySelection)selection;
+			IDisassemblySelection disassemblySelection = (IDisassemblySelection) selection;
 			final IAddress address = disassemblySelection.getStartAddress();
 			if (address == null) {
 				return false;
@@ -86,9 +85,11 @@ public class DisassemblyMoveToLineAdapter implements IMoveToLineTarget {
 		return false;
 	}
 
-	protected void failed( Throwable e ) {
-		MultiStatus ms = new MultiStatus(CDIDebugModel.getPluginIdentifier(), IDsfStatusConstants.REQUEST_FAILED, "MoveToLine failed", null); //$NON-NLS-1$
-		ms.add( new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), IDsfStatusConstants.REQUEST_FAILED, e.getMessage(), e));
+	protected void failed(Throwable e) {
+		MultiStatus ms = new MultiStatus(CDIDebugModel.getPluginIdentifier(), IDsfStatusConstants.REQUEST_FAILED,
+				"MoveToLine failed", null); //$NON-NLS-1$
+		ms.add(new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), IDsfStatusConstants.REQUEST_FAILED,
+				e.getMessage(), e));
 		DsfUIPlugin.log(ms);
 	}
 }

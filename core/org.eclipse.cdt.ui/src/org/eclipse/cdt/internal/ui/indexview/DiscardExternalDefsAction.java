@@ -22,7 +22,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
-
 /**
  * @author David Daoust
  *
@@ -31,9 +30,9 @@ public class DiscardExternalDefsAction extends IndexAction {
 	public DiscardExternalDefsAction(TreeViewer viewer, IndexView view) {
 		super(view, viewer, CUIPlugin.getResourceString("IndexView.ToggleExternals.name"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
 		setToolTipText(CUIPlugin.getResourceString("IndexView.ToggleExternals.tooltip")); //$NON-NLS-1$
-		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "public_co.gif"); //$NON-NLS-1$	
+		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "public_co.gif"); //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public void run() {
 		ISelection selection = viewer.getSelection();
@@ -41,7 +40,7 @@ public class DiscardExternalDefsAction extends IndexAction {
 			return;
 		indexView.toggleExternalDefs();
 	}
-	
+
 	@Override
 	public boolean valid() {
 		return false;

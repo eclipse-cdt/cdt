@@ -22,8 +22,8 @@ import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * Creates a breakpoint interactively, that is with user input as well as context 
- * information gathered from editor location. This action delegate can be 
+ * Creates a breakpoint interactively, that is with user input as well as context
+ * information gathered from editor location. This action delegate can be
  * contributed to an editor with the <code>editorActions</code> extension point.
  * This action is a factory that creates another action that performs the
  * actual breakpoint toggling. The created action acts on the editor's
@@ -47,15 +47,16 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * </pre>
  * </p>
  * <p>
- * Clients may refer to this class as an action delegate in plug-in XML. 
+ * Clients may refer to this class as an action delegate in plug-in XML.
  * </p>
  * @see IToggleBreakpointsTargetCExtension
  * @since 7.2
  * @noextend This class is not intended to be sub-classed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class CAddBreakpointInteractiveRulerActionDelegate extends AbstractRulerActionDelegate implements IActionDelegate2 {
-	
+public class CAddBreakpointInteractiveRulerActionDelegate extends AbstractRulerActionDelegate
+		implements IActionDelegate2 {
+
 	private IEditorPart fEditor = null;
 	private CAddBreakpointInteractiveRulerAction fDelegate = null;
 

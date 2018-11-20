@@ -58,7 +58,7 @@ public class BuildConsolePartitionerEditData {
 		 * All the streams that have been written to since the last update.
 		 */
 		List<IBuildConsoleStreamDecorator> getStreamsNeedingNotifcation();
-		
+
 		/**
 		 * True if partitions with problem markers have been added since the last
 		 * update.
@@ -104,13 +104,12 @@ public class BuildConsolePartitionerEditData {
 	 * Set of streams that have been updated since the last UI update.
 	 */
 	private Set<IBuildConsoleStreamDecorator> fEditStreams = new HashSet<>();
-	
+
 	/**
 	 * True if partitions with problem markers have been added since the last UI
 	 * update.
 	 */
 	private boolean fEditProblemsAdded = false;
-
 
 	public BuildConsolePartitionerEditData(int maxLines) {
 		fMaxLines = maxLines;
@@ -138,7 +137,7 @@ public class BuildConsolePartitionerEditData {
 	}
 
 	/**
-	 * 
+	 *
 	 * Adds the new text to the document.
 	 *
 	 * @param text
@@ -148,7 +147,7 @@ public class BuildConsolePartitionerEditData {
 	 * @param marker
 	 *            the marker associated with this line of console output, can be
 	 *            <code>null</code>
-	 * 
+	 *
 	 */
 	public void append(String text, IBuildConsoleStreamDecorator stream, ProblemMarkerInfo marker) {
 		int newlines = (int) text.chars().filter(ch -> ch == '\n').count();
@@ -170,8 +169,8 @@ public class BuildConsolePartitionerEditData {
 					fEditProblemsAdded = true;
 				}
 				if (fEditPartitions.isEmpty()) {
-					fEditPartitions.add(new BuildConsolePartition(stream, fEditStringBuilder.length(),
-							text.length(), partitionType, marker, newlines));
+					fEditPartitions.add(new BuildConsolePartition(stream, fEditStringBuilder.length(), text.length(),
+							partitionType, marker, newlines));
 				} else {
 					int index = fEditPartitions.size() - 1;
 					BuildConsolePartition last = fEditPartitions.get(index);
@@ -184,8 +183,7 @@ public class BuildConsolePartitionerEditData {
 					 * number of lines of the whole document, this significantly
 					 * simplifies the logic of checkOverflow.
 					 */
-					canBeCombined = canBeCombined
-							&& (fMaxLines <= 0 || (last.getNewlines() + newlines < fMaxLines));
+					canBeCombined = canBeCombined && (fMaxLines <= 0 || (last.getNewlines() + newlines < fMaxLines));
 					/*
 					 * Don't permit different partition types to be combined
 					 */
@@ -200,9 +198,8 @@ public class BuildConsolePartitionerEditData {
 						int combinedOffset = last.getOffset();
 						int combinedLength = last.getLength() + text.length();
 						int combinedNewlines = last.getNewlines() + newlines;
-						BuildConsolePartition partition2 = new BuildConsolePartition(last.getStream(),
-								combinedOffset, combinedLength, BuildConsolePartition.CONSOLE_PARTITION_TYPE,
-								null, combinedNewlines);
+						BuildConsolePartition partition2 = new BuildConsolePartition(last.getStream(), combinedOffset,
+								combinedLength, BuildConsolePartition.CONSOLE_PARTITION_TYPE, null, combinedNewlines);
 						fEditPartitions.set(index, partition2);
 					} else {
 						// different kinds - add a new parition
@@ -312,7 +309,7 @@ public class BuildConsolePartitionerEditData {
 	 * Obtain the next snapshot of data. This update must be processed by the
 	 * UI. i.e. don't call this method unless you are going to handle the update
 	 * now.
-	 * 
+	 *
 	 * @return see {@link UpdateUIData} for details on individual values
 	 *         returned.
 	 */
@@ -362,7 +359,7 @@ public class BuildConsolePartitionerEditData {
 			public long getOffset() {
 				return newOffset;
 			}
-			
+
 			@Override
 			public boolean hasProblemsAdded() {
 				return problemsAdded;

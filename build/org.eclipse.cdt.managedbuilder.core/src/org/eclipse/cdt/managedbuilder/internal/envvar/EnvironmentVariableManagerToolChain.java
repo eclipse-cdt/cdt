@@ -50,36 +50,39 @@ public class EnvironmentVariableManagerToolChain extends EnvironmentVariableMana
 	 */
 	private class ToolChainEnvironmentContextInfo implements IEnvironmentContextInfo {
 		private final ICoreEnvironmentVariableSupplier fToolchainSupplier;
+
 		private ToolChainEnvironmentContextInfo(IToolChain toolChain) {
 			fToolchainSupplier = new ToolChainEnvironmentVariableSupplier(toolChain);
 		}
+
 		@Override
 		public IEnvironmentContextInfo getNext() {
 			return null;
 		}
+
 		@Override
 		public ICoreEnvironmentVariableSupplier[] getSuppliers() {
-			return new ICoreEnvironmentVariableSupplier[] {
-					fUserSupplier,
-					fToolchainSupplier,
-					fEclipseSupplier,
-				};
+			return new ICoreEnvironmentVariableSupplier[] { fUserSupplier, fToolchainSupplier, fEclipseSupplier, };
 		}
+
 		@Override
 		public Object getContext() {
 			return null;
 		}
 	}
+
 	/**
 	 * Tool-chain variable supplier
 	 */
 	private class ToolChainEnvironmentVariableSupplier implements ICoreEnvironmentVariableSupplier {
-		private final IEnvironmentVariableProvider environmentVariableProvider = EnvironmentVariableProvider.getDefault();
+		private final IEnvironmentVariableProvider environmentVariableProvider = EnvironmentVariableProvider
+				.getDefault();
 		private final IConfigurationEnvironmentVariableSupplier toolchainSupplier;
 
 		private ToolChainEnvironmentVariableSupplier(IToolChain toolChain) {
 			this.toolchainSupplier = toolChain.getEnvironmentVariableSupplier();
 		}
+
 		@Override
 		public IEnvironmentVariable getVariable(String name, Object context) {
 			if (toolchainSupplier == null) {
@@ -87,6 +90,7 @@ public class EnvironmentVariableManagerToolChain extends EnvironmentVariableMana
 			}
 			return toolchainSupplier.getVariable(name, null, environmentVariableProvider);
 		}
+
 		@Override
 		public IEnvironmentVariable[] getVariables(Object context) {
 			if (toolchainSupplier == null) {
@@ -94,6 +98,7 @@ public class EnvironmentVariableManagerToolChain extends EnvironmentVariableMana
 			}
 			return toolchainSupplier.getVariables(null, environmentVariableProvider);
 		}
+
 		@Override
 		public boolean appendEnvironment(Object context) {
 			return true;
@@ -105,54 +110,61 @@ public class EnvironmentVariableManagerToolChain extends EnvironmentVariableMana
 	 */
 	private final class ToolChainCoreVariableContextInfo implements ICoreVariableContextInfo {
 		private final ToolChainCdtVariableSupplier fToolChainSupplier;
+
 		private ToolChainCoreVariableContextInfo(IToolChain toolChain) {
 			fToolChainSupplier = new ToolChainCdtVariableSupplier(toolChain);
 		}
+
 		@Override
 		public ICdtVariableSupplier[] getSuppliers() {
-			return new ICdtVariableSupplier[] {
-					CdtVariableManager.fUserDefinedMacroSupplier,
-					fToolChainSupplier,
-					CdtVariableManager.fEnvironmentMacroSupplier,
-					CdtVariableManager.fCdtMacroSupplier,
-					CdtVariableManager.fEclipseVariablesMacroSupplier,
-				};
+			return new ICdtVariableSupplier[] { CdtVariableManager.fUserDefinedMacroSupplier, fToolChainSupplier,
+					CdtVariableManager.fEnvironmentMacroSupplier, CdtVariableManager.fCdtMacroSupplier,
+					CdtVariableManager.fEclipseVariablesMacroSupplier, };
 		}
+
 		@Override
 		public IVariableContextInfo getNext() {
 			return null;
 		}
+
 		@Override
 		public int getContextType() {
 			return CONTEXT_WORKSPACE;
 		}
+
 		@Override
 		public Object getContextData() {
 			return null;
 		}
 	}
+
 	/**
 	 * Tool-chain supplier for variable substitution.
 	 */
 	private class ToolChainCdtVariableSupplier implements ICdtVariableSupplier {
 		private final IConfigurationEnvironmentVariableSupplier toolchainSupplier;
+
 		private ToolChainCdtVariableSupplier(IToolChain toolChain) {
 			this.toolchainSupplier = toolChain.getEnvironmentVariableSupplier();
 		}
+
 		@Override
 		public ICdtVariable getVariable(String macroName, IVariableContextInfo context) {
 			if (toolchainSupplier == null) {
 				return null;
 			}
-			IEnvironmentVariable var = toolchainSupplier.getVariable(macroName, null, ManagedBuildManager.getEnvironmentVariableProvider());
+			IEnvironmentVariable var = toolchainSupplier.getVariable(macroName, null,
+					ManagedBuildManager.getEnvironmentVariableProvider());
 			return CdtVariableManager.fEnvironmentMacroSupplier.createBuildMacro(var);
 		}
+
 		@Override
 		public ICdtVariable[] getVariables(IVariableContextInfo context) {
 			if (toolchainSupplier == null) {
 				return null;
 			}
-			IEnvironmentVariable[] vars = toolchainSupplier.getVariables(null, ManagedBuildManager.getEnvironmentVariableProvider());
+			IEnvironmentVariable[] vars = toolchainSupplier.getVariables(null,
+					ManagedBuildManager.getEnvironmentVariableProvider());
 			if (vars != null) {
 				ICdtVariable[] cdtVars = new ICdtVariable[vars.length];
 				for (int i = 0; i < vars.length; i++) {

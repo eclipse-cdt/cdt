@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 
 /**
  * AST node for names in C++ translation units.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 5.6
@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 public interface ICPPASTName extends IASTName, ICPPASTNameSpecifier {
 	@Override
 	public ICPPASTName copy();
-	
+
 	@Override
 	public ICPPASTName copy(CopyStyle style);
 }

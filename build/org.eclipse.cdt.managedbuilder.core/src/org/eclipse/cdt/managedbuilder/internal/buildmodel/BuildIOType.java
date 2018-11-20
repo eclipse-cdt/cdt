@@ -31,27 +31,28 @@ public class BuildIOType implements IBuildIOType {
 	private String fLinkId;
 	private IBuildObject fIoType;
 
-	protected BuildIOType(BuildStep action, boolean input, boolean primary,/* BuildPattern pattern,*/ IBuildObject ioType ) {
+	protected BuildIOType(BuildStep action, boolean input, boolean primary,
+			/* BuildPattern pattern,*/ IBuildObject ioType) {
 		fStep = action;
 		fIsInput = input;
 		fIsPrimary = primary;
-		if(ioType != null){
-			if(input){
-				if(ioType instanceof IInputType)
-					fLinkId = ((IInputType)ioType).getBuildVariable();
+		if (ioType != null) {
+			if (input) {
+				if (ioType instanceof IInputType)
+					fLinkId = ((IInputType) ioType).getBuildVariable();
 				else
-					throw new IllegalArgumentException("wrong arg");	//$NON-NLS-1$
+					throw new IllegalArgumentException("wrong arg"); //$NON-NLS-1$
 			} else {
-				if(ioType instanceof IOutputType) {
-					fLinkId = ((IOutputType)ioType).getBuildVariable();
+				if (ioType instanceof IOutputType) {
+					fLinkId = ((IOutputType) ioType).getBuildVariable();
 				} else
-					throw new IllegalArgumentException("wrong arg");	//$NON-NLS-1$
+					throw new IllegalArgumentException("wrong arg"); //$NON-NLS-1$
 			}
 			fIoType = ioType;
 		} else {
 			//TODO
 		}
-		((BuildDescription)fStep.getBuildDescription()).typeCreated(this);
+		((BuildDescription) fStep.getBuildDescription()).typeCreated(this);
 	}
 
 	@Override
@@ -64,27 +65,27 @@ public class BuildIOType implements IBuildIOType {
 		return fStep;
 	}
 
-	public void addResource(BuildResource rc){
+	public void addResource(BuildResource rc) {
 		fResources.add(rc);
 		rc.addToArg(this);
-		if(DbgUtil.DEBUG)
-			DbgUtil.trace("resource " + DbgUtil.resourceName(rc) + " added as "  	//$NON-NLS-1$	//$NON-NLS-2$
-					+ (fIsInput ? "input" : "output")	//$NON-NLS-1$	//$NON-NLS-2$
-					+ " to the action " + DbgUtil.stepName(fStep));	//$NON-NLS-1$
+		if (DbgUtil.DEBUG)
+			DbgUtil.trace("resource " + DbgUtil.resourceName(rc) + " added as " //$NON-NLS-1$	//$NON-NLS-2$
+					+ (fIsInput ? "input" : "output") //$NON-NLS-1$	//$NON-NLS-2$
+					+ " to the action " + DbgUtil.stepName(fStep)); //$NON-NLS-1$
 
-		((BuildDescription)fStep.getBuildDescription()).resourceAddedToType(this, rc);
+		((BuildDescription) fStep.getBuildDescription()).resourceAddedToType(this, rc);
 	}
 
-	public void removeResource(BuildResource rc){
+	public void removeResource(BuildResource rc) {
 		fResources.remove(rc);
 		rc.removeFromArg(this);
 
-		if(DbgUtil.DEBUG)
-			DbgUtil.trace("resource " + DbgUtil.resourceName(rc) + " removed as "  	//$NON-NLS-1$	//$NON-NLS-2$
-					+ (fIsInput ? "input" : "output")	//$NON-NLS-1$	//$NON-NLS-2$
-					+ " from the action " + DbgUtil.stepName(fStep));	//$NON-NLS-1$
+		if (DbgUtil.DEBUG)
+			DbgUtil.trace("resource " + DbgUtil.resourceName(rc) + " removed as " //$NON-NLS-1$	//$NON-NLS-2$
+					+ (fIsInput ? "input" : "output") //$NON-NLS-1$	//$NON-NLS-2$
+					+ " from the action " + DbgUtil.stepName(fStep)); //$NON-NLS-1$
 
-		((BuildDescription)fStep.getBuildDescription()).resourceRemovedFromType(this, rc);
+		((BuildDescription) fStep.getBuildDescription()).resourceRemovedFromType(this, rc);
 	}
 
 	@Override
@@ -92,19 +93,20 @@ public class BuildIOType implements IBuildIOType {
 		return fIsInput;
 	}
 
-	public boolean isPrimary(){
+	public boolean isPrimary() {
 		return fIsPrimary;
 	}
 
-	public String getLinkId(){
-		if(!fIsInput && fStep.getTool() != null && /*(fLinkId == null || fLinkId.length() == 0) && */
-				fStep.getTool().getCustomBuildStep()){
+	public String getLinkId() {
+		if (!fIsInput && fStep.getTool() != null && /*(fLinkId == null || fLinkId.length() == 0) && */
+				fStep.getTool().getCustomBuildStep()) {
 			IBuildResource rcs[] = getResources();
-			if(rcs.length != 0){
-				BuildDescription.ToolAndType tt = ((BuildDescription)fStep.getBuildDescription()).getToolAndType((BuildResource)rcs[0], false);
-				if(tt != null){
+			if (rcs.length != 0) {
+				BuildDescription.ToolAndType tt = ((BuildDescription) fStep.getBuildDescription())
+						.getToolAndType((BuildResource) rcs[0], false);
+				if (tt != null) {
 					IInputType type = tt.fTool.getPrimaryInputType();
-					if(type != null)
+					if (type != null)
 						fLinkId = type.getBuildVariable();
 				} else {
 				}
@@ -114,14 +116,14 @@ public class BuildIOType implements IBuildIOType {
 		return fLinkId;
 	}
 
-	public IBuildObject getIoType(){
+	public IBuildObject getIoType() {
 		return fIoType;
 	}
 
-	BuildResource[] remove(){
-		BuildResource rcs[] = (BuildResource[])getResources();
+	BuildResource[] remove() {
+		BuildResource rcs[] = (BuildResource[]) getResources();
 
-		for(int i = 0; i < rcs.length; i++){
+		for (int i = 0; i < rcs.length; i++) {
 			removeResource(rcs[i]);
 		}
 

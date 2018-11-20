@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *  IBM Rational Software - Initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,8 @@ import org.eclipse.cdt.core.parser.IProblem;
  * @author jcamelon
  */
 public interface IProblemFactory {
-	public IProblem createProblem(int id, int start, int end, int line, char[] file, String[] arg,
-			boolean warn, boolean error );
+	public IProblem createProblem(int id, int start, int end, int line, char[] file, String[] arg, boolean warn,
+			boolean error);
+
 	public String getRequiredAttributesForId(int id);
 }

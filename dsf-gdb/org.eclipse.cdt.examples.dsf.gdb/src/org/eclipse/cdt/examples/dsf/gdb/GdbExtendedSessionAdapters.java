@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -27,22 +27,22 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvi
 
 @SuppressWarnings("restriction")
 public class GdbExtendedSessionAdapters extends GdbSessionAdapters {
-    
+
 	public GdbExtendedSessionAdapters(ILaunch launch, DsfSession session, Class<?>[] launchAdapterTypes) {
 		super(launch, session, launchAdapterTypes);
 	}
-    
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <T> T createModelAdapter(Class<T> adapterType, ILaunch launch, DsfSession session) {
-		if (ITerminateHandler.class.equals(adapterType)) { 
-			return (T)new DsfExtendedTerminateCommand(session);
+		if (ITerminateHandler.class.equals(adapterType)) {
+			return (T) new DsfExtendedTerminateCommand(session);
 		}
 		if (IViewerInputProvider.class.equals(adapterType)) {
-			return (T)new GdbExtendedViewModelAdapter(session, getSteppingController());
+			return (T) new GdbExtendedViewModelAdapter(session, getSteppingController());
 		}
 		if (IShowVersionHandler.class.equals(adapterType)) {
-			return (T)new GdbShowVersionHandler(session);
+			return (T) new GdbShowVersionHandler(session);
 		}
 
 		return super.createModelAdapter(adapterType, launch, session);

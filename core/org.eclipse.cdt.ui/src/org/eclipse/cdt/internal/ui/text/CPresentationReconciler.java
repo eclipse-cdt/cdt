@@ -22,7 +22,7 @@ import org.eclipse.jface.text.presentation.PresentationReconciler;
 /**
  * Presentation reconciler, adding functionality for operation without a viewer.
  * Cloned from JDT.
- * 
+ *
  * @since 4.0
  */
 public class CPresentationReconciler extends PresentationReconciler {
@@ -44,7 +44,7 @@ public class CPresentationReconciler extends PresentationReconciler {
 		if (document != fLastDocument) {
 			setDocumentToDamagers(document);
 			setDocumentToRepairers(document);
-			fLastDocument= document;
+			fLastDocument = document;
 		}
 		return createPresentation(damage, document);
 	}

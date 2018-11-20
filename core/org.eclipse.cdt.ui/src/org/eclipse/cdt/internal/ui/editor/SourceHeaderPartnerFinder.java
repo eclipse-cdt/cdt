@@ -63,14 +63,14 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
  * and vice versa.
  */
 public final class SourceHeaderPartnerFinder {
-	
+
 	private static class Counter {
 		public int fCount;
 	}
-	
+
 	private SourceHeaderPartnerFinder() {
 	}
-	
+
 	/**
 	 * Compute the partner file for a translation unit.
 	 * The partner file is the corresponding source or header file
@@ -80,7 +80,7 @@ public final class SourceHeaderPartnerFinder {
 	 */
 	private static class PartnerFileComputer implements ASTRunnable {
 		PartnerFileVisitor fVisitor = null;
-		
+
 		@Override
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 			if (ast != null && ast.getIndex() != null) {
@@ -94,19 +94,19 @@ public final class SourceHeaderPartnerFinder {
 			if (fVisitor != null) {
 				return fVisitor.getPartnerFileLocation();
 			}
-			
+
 			return null;
 		}
 	}
-	
+
 	private static class PartnerFileVisitor extends ASTVisitor {
-		/** 
-		 * When this many times the same partner file is hit, 
+		/**
+		 * When this many times the same partner file is hit,
 		 * we are confident enough to take it.
 		 */
 		private static final int CONFIDENCE_LIMIT = 15;
-		/** 
-		 * When this many times no match was found in the index, 
+		/**
+		 * When this many times no match was found in the index,
 		 * we suspect that we won't get a good partner.
 		 */
 		private static final int SUSPECT_LIMIT = 15;
@@ -120,24 +120,24 @@ public final class SourceHeaderPartnerFinder {
 		private int fSuspect;
 		/** The current favorite partner file */
 		private IPath fFavoriteLocation;
-		
+
 		{
-			shouldVisitDeclarators= true;
+			shouldVisitDeclarators = true;
 			shouldVisitTranslationUnit = true;
 		}
 
 		public PartnerFileVisitor() {
-			fMap= new HashMap<IPath, Counter>();
+			fMap = new HashMap<IPath, Counter>();
 		}
 
 		@Override
 		public int visit(IASTTranslationUnit tu) {
-			fIndex= tu.getIndex();
+			fIndex = tu.getIndex();
 			if (fIndex == null) {
-				return PROCESS_ABORT;	
+				return PROCESS_ABORT;
 			}
-			
-			fFilePath= Path.fromOSString(tu.getFilePath());
+
+			fFilePath = Path.fromOSString(tu.getFilePath());
 			return super.visit(tu);
 		}
 
@@ -151,32 +151,32 @@ public final class SourceHeaderPartnerFinder {
 		@Override
 		public int visit(IASTDeclarator declarator) {
 			if (declarator instanceof IASTFunctionDeclarator) {
-				IASTName name= declarator.getName();
+				IASTName name = declarator.getName();
 				if (name != null && declarator.getNestedDeclarator() == null) {
-					IBinding binding= name.resolveBinding();
+					IBinding binding = name.resolveBinding();
 					if (binding != null && !(binding instanceof IProblemBinding)) {
-						boolean isDefinition= name.isDefinition();
+						boolean isDefinition = name.isDefinition();
 						final IIndexName[] partnerNames;
 						try {
 							if (isDefinition) {
-								partnerNames= fIndex.findNames(binding,
+								partnerNames = fIndex.findNames(binding,
 										IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 							} else {
-								partnerNames= fIndex.findNames(binding,
+								partnerNames = fIndex.findNames(binding,
 										IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 							}
 							if (partnerNames.length == 0) {
 								++fSuspect;
 								if (fSuspect == SUSPECT_LIMIT) {
-									fFavoriteLocation= null;
+									fFavoriteLocation = null;
 									return PROCESS_ABORT;
 								}
 							}
-							for (int i= 0; i < partnerNames.length; i++) {
-								IIndexName partnerName= partnerNames[i];
-								IASTFileLocation partnerLocation= partnerName.getFileLocation();
+							for (int i = 0; i < partnerNames.length; i++) {
+								IIndexName partnerName = partnerNames[i];
+								IASTFileLocation partnerLocation = partnerName.getFileLocation();
 								if (partnerLocation != null) {
-									IPath partnerFileLocation= Path.fromOSString(partnerLocation.getFileName());
+									IPath partnerFileLocation = Path.fromOSString(partnerLocation.getFileName());
 									if (!fFilePath.equals(partnerFileLocation)) {
 										addPotentialPartnerFileLocation(partnerFileLocation);
 										if (fConfidence == CONFIDENCE_LIMIT) {
@@ -195,29 +195,29 @@ public final class SourceHeaderPartnerFinder {
 		}
 
 		private void addPotentialPartnerFileLocation(IPath partnerFileLocation) {
-			Counter counter= fMap.get(partnerFileLocation);
+			Counter counter = fMap.get(partnerFileLocation);
 			if (counter == null) {
-				counter= new Counter();
+				counter = new Counter();
 				fMap.put(partnerFileLocation, counter);
 			}
 			++counter.fCount;
 			if (counter.fCount > fConfidence) {
-				fConfidence= counter.fCount;
-				fFavoriteLocation= partnerFileLocation;
+				fConfidence = counter.fCount;
+				fFavoriteLocation = partnerFileLocation;
 			}
 		}
 	}
-	
+
 	/**
 	 * Finds a file in the given resource container for the given basename.
-	 * 
+	 *
 	 * @param container
 	 * @param basename
 	 * @return a matching {@link IFile} or <code>null</code>, if no matching file was found
 	 */
 	private static IFile findInContainer(IContainer container, final String basename) {
-		final IFile[] result= { null };
-		IResourceProxyVisitor visitor= new IResourceProxyVisitor() {
+		final IFile[] result = { null };
+		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
 			@Override
 			public boolean visit(IResourceProxy proxy) throws CoreException {
 				if (!proxy.isAccessible()) {
@@ -236,7 +236,8 @@ public final class SourceHeaderPartnerFinder {
 					return false;
 				}
 				return true;
-			}};
+			}
+		};
 		try {
 			container.accept(visitor, 0);
 		} catch (CoreException e) {
@@ -244,74 +245,66 @@ public final class SourceHeaderPartnerFinder {
 		}
 		return result[0];
 	}
-	
+
 	private static IContentType[] getPartnerContentTypes(String contentTypeId) {
-		IContentTypeManager mgr= Platform.getContentTypeManager();
+		IContentTypeManager mgr = Platform.getContentTypeManager();
 		if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CHEADER)) {
-			return new IContentType[] {
-					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE),
-					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE)
-			};
+			return new IContentType[] { mgr.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE),
+					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE) };
 		}
 		if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CSOURCE)) {
-			return new IContentType[] {
-					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CHEADER),
-					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXHEADER)
-			};
+			return new IContentType[] { mgr.getContentType(CCorePlugin.CONTENT_TYPE_CHEADER),
+					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXHEADER) };
 		}
 		if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER)) {
-			return new IContentType[] {
-					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE),
-					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE)
-			};
+			return new IContentType[] { mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE),
+					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE) };
 		}
 		if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CXXSOURCE)) {
-			return new IContentType[] {
-					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXHEADER),
-					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CHEADER)
-			};
+			return new IContentType[] { mgr.getContentType(CCorePlugin.CONTENT_TYPE_CXXHEADER),
+					mgr.getContentType(CCorePlugin.CONTENT_TYPE_CHEADER) };
 		}
 		return new IContentType[0];
 	}
-	
+
 	/**
 	 * Finds a partner translation unit based on filename/extension matching.
-	 * 
+	 *
 	 * @param a partner translation unit or <code>null</code>
 	 */
 	private static ITranslationUnit getPartnerFileFromFilename(ITranslationUnit tu) {
-		IPath sourceFileLocation= tu.getLocation();
+		IPath sourceFileLocation = tu.getLocation();
 		if (sourceFileLocation == null) {
 			return null;
 		}
-		IPath partnerBasePath= sourceFileLocation.removeFileExtension();
-		IContentType[] contentTypes= getPartnerContentTypes(tu.getContentTypeId());
-		HashSet<String> extensionsTried= new HashSet<>();
+		IPath partnerBasePath = sourceFileLocation.removeFileExtension();
+		IContentType[] contentTypes = getPartnerContentTypes(tu.getContentTypeId());
+		HashSet<String> extensionsTried = new HashSet<>();
 		for (IContentType contentType : contentTypes) {
 			String[] partnerExtensions = contentType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
 			for (String ext : partnerExtensions) {
 				if (extensionsTried.add(ext)) {
-					String partnerFileBasename= partnerBasePath.addFileExtension(ext).lastSegment();
-					
-					IFile partnerFile= null;
+					String partnerFileBasename = partnerBasePath.addFileExtension(ext).lastSegment();
+
+					IFile partnerFile = null;
 					IResource resource = tu.getResource();
 					IContainer container = resource != null ? resource.getParent() : null;
 					while (container != null && partnerFile == null && !(container instanceof IWorkspaceRoot)) {
-						partnerFile= findInContainer(container, partnerFileBasename);
+						partnerFile = findInContainer(container, partnerFileBasename);
 						container = container.getParent();
 					}
 
 					if (partnerFile != null) {
-						ITranslationUnit partnerUnit= (ITranslationUnit) CoreModel.getDefault().create(partnerFile);
+						ITranslationUnit partnerUnit = (ITranslationUnit) CoreModel.getDefault().create(partnerFile);
 						if (partnerUnit != null) {
 							return partnerUnit;
 						}
 					}
 					// External translation unit - try in same directory
 					if (resource == null) {
-						IPath partnerFileLoation= partnerBasePath.removeLastSegments(1).append(partnerFileBasename);
-						ITranslationUnit partnerUnit= CoreModel.getDefault().createTranslationUnitFrom(
-								tu.getCProject(), partnerFileLoation);
+						IPath partnerFileLoation = partnerBasePath.removeLastSegments(1).append(partnerFileBasename);
+						ITranslationUnit partnerUnit = CoreModel.getDefault()
+								.createTranslationUnitFrom(tu.getCProject(), partnerFileLoation);
 						if (partnerUnit != null) {
 							return partnerUnit;
 						}
@@ -323,25 +316,25 @@ public final class SourceHeaderPartnerFinder {
 	}
 
 	public static ITranslationUnit getPartnerTranslationUnit(ITranslationUnit tu) {
-		ITranslationUnit partnerUnit= getPartnerFileFromFilename(tu);
+		ITranslationUnit partnerUnit = getPartnerFileFromFilename(tu);
 
 		if (partnerUnit == null) {
 			// Search partner file based on definition/declaration association
-			IProgressMonitor monitor= new NullProgressMonitor();
-			PartnerFileComputer computer= new PartnerFileComputer();
+			IProgressMonitor monitor = new NullProgressMonitor();
+			PartnerFileComputer computer = new PartnerFileComputer();
 			ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
 			partnerUnit = createTranslationUnit(computer.getPartnerFileLocation(), tu.getCProject());
 		}
 		return partnerUnit;
 	}
-	
+
 	public static ITranslationUnit getPartnerTranslationUnit(ITranslationUnit tu,
 			CRefactoringContext refactoringContext) throws CoreException {
-		ITranslationUnit partnerUnit= getPartnerFileFromFilename(tu);
+		ITranslationUnit partnerUnit = getPartnerFileFromFilename(tu);
 
 		if (partnerUnit == null) {
 			// Search partner file based on definition/declaration association
-			IProgressMonitor monitor= new NullProgressMonitor();
+			IProgressMonitor monitor = new NullProgressMonitor();
 			IASTTranslationUnit ast = refactoringContext.getAST(tu, monitor);
 			PartnerFileVisitor visitor = new PartnerFileVisitor();
 			ast.accept(visitor);
@@ -349,14 +342,13 @@ public final class SourceHeaderPartnerFinder {
 		}
 		return partnerUnit;
 	}
-	
+
 	private static ITranslationUnit createTranslationUnit(IPath partnerFileLoation, ICProject project) {
 		ITranslationUnit partnerUnit = null;
 		if (partnerFileLoation != null) {
-			partnerUnit= (ITranslationUnit) CoreModel.getDefault().create(partnerFileLoation);
+			partnerUnit = (ITranslationUnit) CoreModel.getDefault().create(partnerFileLoation);
 			if (partnerUnit == null) {
-				partnerUnit= CoreModel.getDefault().createTranslationUnitFrom(project,
-						partnerFileLoation);
+				partnerUnit = CoreModel.getDefault().createTranslationUnitFrom(project, partnerFileLoation);
 			}
 		}
 		return partnerUnit;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,12 +26,11 @@ public class TestSuite extends TestItem implements ITestSuite {
 
 	/**
 	 * Stores child test suites and test cases.
-	 * 
+	 *
 	 * @note Children order is important.
 	 */
 	private List<TestItem> children = new ArrayList<TestItem>();
-	
-	
+
 	public TestSuite(String name, TestSuite parent) {
 		super(name, parent);
 	}
@@ -56,7 +55,7 @@ public class TestSuite extends TestItem implements ITestSuite {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public boolean hasChildren() {
 		return !children.isEmpty();
@@ -78,11 +77,11 @@ public class TestSuite extends TestItem implements ITestSuite {
 
 	/**
 	 * Returns list of children for the test suite.
-	 * 
+	 *
 	 * @return children list
 	 */
 	public List<TestItem> getChildrenList() {
 		return children;
 	}
-	
+
 }

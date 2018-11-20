@@ -23,7 +23,7 @@ public class ProcessParameter {
 	public static final byte SIMPLE_ARRAY = 2;
 	public static final byte COMPLEX = 3;
 	public static final byte COMPLEX_ARRAY = 4;
-	
+
 	private static final String ELEM_NAME = "name"; //$NON-NLS-1$
 	private static final String ELEM_BASE_TYPE = "baseType"; //$NON-NLS-1$
 	private static final String ELEM_SIMPLE = "simple"; //$NON-NLS-1$
@@ -32,14 +32,14 @@ public class ProcessParameter {
 	private static final String ELEM_COMPLEX_ARRAY = "complexArray"; //$NON-NLS-1$
 	private static final String ELEM_EXTERNAL = "external"; //$NON-NLS-1$
 	private static final String ELEM_NULLABLE = "nullable"; //$NON-NLS-1$
-	
+
 	private String name;
 	private byte type;
-	
+
 	private ProcessParameter[] complexChildren;
 	private boolean external;
 	private boolean nullable;
-	
+
 	/**
 	 * Constructor to extract the parameter info.
 	 * @param element
@@ -55,7 +55,7 @@ public class ProcessParameter {
 			type = COMPLEX;
 			IConfigurationElement[] children = element.getChildren();
 			complexChildren = new ProcessParameter[children.length];
-			for(int i=0; i<children.length; i++) {
+			for (int i = 0; i < children.length; i++) {
 				complexChildren[i] = new ProcessParameter(children[i]);
 			}
 		} else if (elemName.equals(ELEM_COMPLEX_ARRAY)) {
@@ -63,31 +63,31 @@ public class ProcessParameter {
 			IConfigurationElement baseType = element.getChildren(ELEM_BASE_TYPE)[0];
 			IConfigurationElement[] children = baseType.getChildren();
 			complexChildren = new ProcessParameter[children.length];
-			for(int i=0; i<children.length; i++) {
+			for (int i = 0; i < children.length; i++) {
 				complexChildren[i] = new ProcessParameter(children[i]);
 			}
 		} else {
 			throw new IllegalArgumentException();
 		}
-		
-		external = Boolean.valueOf(element.getAttribute(ELEM_EXTERNAL)).booleanValue(); 
+
+		external = Boolean.valueOf(element.getAttribute(ELEM_EXTERNAL)).booleanValue();
 		nullable = Boolean.valueOf(element.getAttribute(ELEM_NULLABLE)).booleanValue();
 	}
-	
+
 	/**
 	 * Return the Element name.
 	 */
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Returns the Element Type.
 	 */
 	public byte getType() {
 		return type;
 	}
-	
+
 	/**
 	 * @return   the complexChildren
 	 */
@@ -96,7 +96,7 @@ public class ProcessParameter {
 	}
 
 	/**
-	 * Checks whether the element in external. 
+	 * Checks whether the element in external.
 	 */
 	public boolean isExternal() {
 		return external;

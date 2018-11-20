@@ -25,7 +25,7 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * Default implementation of IMarkerGenerator for API's that require such thing
- * 
+ *
  * @since 3.3
  */
 public class CodanMarkerGenerator implements IMarkerGenerator {
@@ -49,7 +49,8 @@ public class CodanMarkerGenerator implements IMarkerGenerator {
 
 	@Override
 	public void addMarker(ProblemMarkerInfo info) {
-		reporter.reportProblem(getProblemId(info.severity), createProblemLocation(info), info.description, info.variableName);
+		reporter.reportProblem(getProblemId(info.severity), createProblemLocation(info), info.description,
+				info.variableName);
 	}
 
 	protected String getProblemId(int severity) {

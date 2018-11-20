@@ -41,11 +41,11 @@ import org.eclipse.cdt.ui.CUIPlugin;
 /**
  * Default implementation of the {@link IWorkingSetProjectConfiguration} interface. Clients may extend this
  * class to implement additional project configuration settings.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
- * 
+ *
  */
 public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfiguration {
 	private final IWorkingSetConfiguration workingSetConfig;
@@ -54,7 +54,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 
 	/**
 	 * Initializes me with my parent working set configuration.
-	 * 
+	 *
 	 * @param parent
 	 *            my parent working set configuration
 	 */
@@ -75,7 +75,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 	/**
 	 * Sets my project name. Note that this <b>does not</b> change the name of the project that I represent.
 	 * Rather, it changes <i>which</i> project I represent.
-	 * 
+	 *
 	 * @param projectName
 	 *            my new project name
 	 */
@@ -132,8 +132,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 			}
 		}
 
-		return (result == null) ? Collections.<ICConfigurationDescription> emptyList() : Arrays
-				.asList(result);
+		return (result == null) ? Collections.<ICConfigurationDescription>emptyList() : Arrays.asList(result);
 	}
 
 	@Override
@@ -169,13 +168,13 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		ICConfigurationDescription config = resolveSelectedConfiguration();
 
 		if (config == null) {
-			result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, NLS.bind(
-					WorkingSetMessages.WSProjConfig_noConfig, getProjectName()));
+			result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+					NLS.bind(WorkingSetMessages.WSProjConfig_noConfig, getProjectName()));
 		} else {
 			if (!isActive()) {
 				activate();
-				result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, NLS.bind(
-						WorkingSetMessages.WSProjConfig_activatedWarning, config.getName(), getProjectName()));
+				result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+						NLS.bind(WorkingSetMessages.WSProjConfig_activatedWarning, config.getName(), getProjectName()));
 			}
 
 			monitor = SubMonitor.convert(monitor);
@@ -211,8 +210,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 	}
 
 	@Override
-	public ISnapshot createSnapshot(IWorkingSetConfiguration.ISnapshot workingSetConfig,
-			WorkspaceSnapshot workspace) {
+	public ISnapshot createSnapshot(IWorkingSetConfiguration.ISnapshot workingSetConfig, WorkspaceSnapshot workspace) {
 
 		return new Snapshot(workingSetConfig, this, workspace);
 	}
@@ -223,13 +221,13 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 
 	/**
 	 * Default implementation of the mutable project configuration snapshot.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
-	 * 
+	 *
 	 * @since 6.0
 	 */
-	public static class Snapshot extends WorkingSetProjectConfiguration implements
-			IWorkingSetProjectConfiguration.ISnapshot {
+	public static class Snapshot extends WorkingSetProjectConfiguration
+			implements IWorkingSetProjectConfiguration.ISnapshot {
 
 		private final IProject project;
 		private final WorkspaceSnapshot workspace;
@@ -238,7 +236,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		 * Initializes me with the project that I represent and the workspace snapshot. I discover the
 		 * currently defined configurations for my project and initially select the one that is currently
 		 * active, or the first available if none is active (which would be odd).
-		 * 
+		 *
 		 * @param parent
 		 *            my parent working set configuration
 		 * @param projectConfig

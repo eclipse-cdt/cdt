@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.Viewer;
 public class ToolListContentProvider implements ITreeContentProvider {
 
 	private ToolListElement[] elements;
-	
+
 	private ToolListElement[] createElements() {
 		ArrayList<ToolListElement> toolList = new ArrayList<>();
 		AutotoolsConfiguration.Option[] options = AutotoolsConfiguration.getTools();
@@ -32,8 +32,7 @@ public class ToolListContentProvider implements ITreeContentProvider {
 			String optName = opt.getName();
 			ToolListElement tool = new ToolListElement(optName, IConfigureOption.TOOL);
 			toolList.add(tool);
-			AutotoolsConfiguration.Option[] categories = 
-				AutotoolsConfiguration.getChildOptions(optName);
+			AutotoolsConfiguration.Option[] categories = AutotoolsConfiguration.getChildOptions(optName);
 			for (int j = 0; j < categories.length; ++j) {
 				String catName = categories[j].getName();
 				ToolListElement newItem = new ToolListElement(catName, IConfigureOption.CATEGORY);
@@ -42,23 +41,23 @@ public class ToolListContentProvider implements ITreeContentProvider {
 		}
 		return toolList.toArray(new ToolListElement[toolList.size()]);
 	}
-	
+
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof AutotoolsConfiguration) {
 			return elements.clone();
 		}
-		return ((ToolListElement)parentElement).getChildren();	
+		return ((ToolListElement) parentElement).getChildren();
 	}
 
 	@Override
 	public Object getParent(Object element) {
-		return ((ToolListElement)element).getParent();
+		return ((ToolListElement) element).getParent();
 	}
 
 	@Override
 	public boolean hasChildren(Object element) {
-		return ((ToolListElement)element).hasChildren();
+		return ((ToolListElement) element).hasChildren();
 	}
 
 	@Override

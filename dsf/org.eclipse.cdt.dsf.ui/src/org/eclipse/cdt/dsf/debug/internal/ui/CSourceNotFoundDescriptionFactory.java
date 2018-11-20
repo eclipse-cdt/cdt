@@ -85,7 +85,7 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 	/**
 	 * Creates a brief description of stack frame data. Based on code in
 	 * StackFrameVMNode.
-	 * 
+	 *
 	 * @param frame
 	 * @return the frame description
 	 */

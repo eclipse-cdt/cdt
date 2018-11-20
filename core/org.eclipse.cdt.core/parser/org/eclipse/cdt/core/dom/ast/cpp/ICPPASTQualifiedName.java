@@ -36,41 +36,41 @@ public interface ICPPASTQualifiedName extends ICPPASTName, IASTNameOwner {
 	 * @param name {@code IASTName}
 	 */
 	public void addName(IASTName name);
-	
+
 	/**
 	 * Adds a segment to the end of the qualifier.
-	 * 
+	 *
 	 * @since 5.6
 	 */
 	public void addNameSpecifier(ICPPASTNameSpecifier nameSpecifier);
-	
+
 	/**
 	 * Sets the last name.
-	 * 
+	 *
 	 * @since 5.6
 	 */
 	public void setLastName(ICPPASTName name);
 
 	/**
 	 * Returns all segments of the name but the last.
-	 * 
+	 *
 	 * @since 5.6
 	 */
 	public ICPPASTNameSpecifier[] getQualifier();
-	
+
 	/**
 	 * Returns all segments of the name.
-	 * 
-	 * This method is less efficient than calling getQualifier() and 
+	 *
+	 * This method is less efficient than calling getQualifier() and
 	 * getLastName() separately, because it constructs a new array.
 	 * It is provided mainly to ease transition of client code from
-	 * getNames() to getQualifier() and getLastName(). 
-	 * 
+	 * getNames() to getQualifier() and getLastName().
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 5.6
 	 */
 	public ICPPASTNameSpecifier[] getAllSegments();
-	
+
 	/**
 	 * The last name is often semantically significant.
 	 */

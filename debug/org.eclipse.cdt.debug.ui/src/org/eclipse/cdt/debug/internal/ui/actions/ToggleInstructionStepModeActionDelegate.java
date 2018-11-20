@@ -39,12 +39,11 @@ import org.eclipse.ui.actions.ActionDelegate;
 /**
  * Turns instruction step mode on/off for selected target.
  */
-public class ToggleInstructionStepModeActionDelegate extends ActionDelegate 
-    implements IViewActionDelegate, IWorkbenchWindowActionDelegate, IPropertyChangeListener, IDebugContextListener  
-{
+public class ToggleInstructionStepModeActionDelegate extends ActionDelegate
+		implements IViewActionDelegate, IWorkbenchWindowActionDelegate, IPropertyChangeListener, IDebugContextListener {
 
 	private ISteppingModeTarget fTarget = null;
-	
+
 	private IAction fAction = null;
 
 	private IWorkbenchWindow fWindow = null;
@@ -53,13 +52,13 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 	 */
 	@Override
-	public void propertyChange( PropertyChangeEvent event ) {
+	public void propertyChange(PropertyChangeEvent event) {
 		IAction action = getAction();
-		if ( action != null ) {
-			if ( event.getNewValue() instanceof Boolean ) {
-				boolean value = ((Boolean)event.getNewValue()).booleanValue();
-				if ( value != action.isChecked() )
-					action.setChecked( value );
+		if (action != null) {
+			if (event.getNewValue() instanceof Boolean) {
+				boolean value = ((Boolean) event.getNewValue()).booleanValue();
+				if (value != action.isChecked())
+					action.setChecked(value);
 			}
 		}
 	}
@@ -68,101 +67,99 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	@Override
-	public void init( IViewPart view ) {
+	public void init(IViewPart view) {
 		fWindow = view.getSite().getWorkbenchWindow();
 		DebugUITools.getDebugContextManager().getContextService(fWindow).addDebugContextListener(this);
 	}
 
 	@Override
 	public void init(IWorkbenchWindow window) {
-	    fWindow = window;
-        DebugUITools.getDebugContextManager().getContextService(fWindow).addDebugContextListener(this);
+		fWindow = window;
+		DebugUITools.getDebugContextManager().getContextService(fWindow).addDebugContextListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	@Override
 	public void dispose() {
-        DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(this);
-        ISteppingModeTarget target = getTarget();
-        if ( target != null && target instanceof ITargetProperties ) {
-            ((ITargetProperties)target).removePropertyChangeListener( this );
-        }
-        setTarget( null );
-        setAction( null );
-    }
+		DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(this);
+		ISteppingModeTarget target = getTarget();
+		if (target != null && target instanceof ITargetProperties) {
+			((ITargetProperties) target).removePropertyChangeListener(this);
+		}
+		setTarget(null);
+		setAction(null);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void init( IAction action ) {
-		setAction( action );
-		action.setChecked( false );
-		action.setEnabled( false );
+	public void init(IAction action) {
+		setAction(action);
+		action.setChecked(false);
+		action.setEnabled(false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void run( IAction action ) {
+	public void run(IAction action) {
 		boolean enabled = getAction().isChecked();
-        ISteppingModeTarget target = getTarget();
-        if ( target != null ) {
-            target.enableInstructionStepping( enabled );
-        }
+		ISteppingModeTarget target = getTarget();
+		if (target != null) {
+			target.enableInstructionStepping(enabled);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
 	@Override
-	public void runWithEvent( IAction action, Event event ) {
-		run( action );
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
 	}
 
 	@Override
 	public void debugContextChanged(DebugContextEvent event) {
-	    if (fAction == null) return;
-	    
-	    ISelection selection = event.getContext();
-	    ISteppingModeTarget newTarget = null;
-        if ( selection instanceof IStructuredSelection ) {
-            newTarget = getTargetFromSelection( ((IStructuredSelection)selection).getFirstElement() );
-        }
-        ISteppingModeTarget oldTarget = getTarget();
-        if ( oldTarget != null && !oldTarget.equals( newTarget ) ) {
-            if ( oldTarget instanceof ITargetProperties ) {
-                ((ITargetProperties)oldTarget).removePropertyChangeListener( this );
-            }
-            setTarget( null );
-            fAction.setChecked( false );
-        }
-        if ( newTarget != null && !isTerminated( newTarget ) ) {
-            setTarget( newTarget );
-            if ( newTarget instanceof ITargetProperties ) {
-                ((ITargetProperties)newTarget).addPropertyChangeListener( this );
-            }
-            fAction.setChecked( newTarget.isInstructionSteppingEnabled() );
-        }
-        fAction.setEnabled(
-                newTarget != null
-                && newTarget.supportsInstructionStepping()
-                && !isTerminated( newTarget ) );
+		if (fAction == null)
+			return;
+
+		ISelection selection = event.getContext();
+		ISteppingModeTarget newTarget = null;
+		if (selection instanceof IStructuredSelection) {
+			newTarget = getTargetFromSelection(((IStructuredSelection) selection).getFirstElement());
+		}
+		ISteppingModeTarget oldTarget = getTarget();
+		if (oldTarget != null && !oldTarget.equals(newTarget)) {
+			if (oldTarget instanceof ITargetProperties) {
+				((ITargetProperties) oldTarget).removePropertyChangeListener(this);
+			}
+			setTarget(null);
+			fAction.setChecked(false);
+		}
+		if (newTarget != null && !isTerminated(newTarget)) {
+			setTarget(newTarget);
+			if (newTarget instanceof ITargetProperties) {
+				((ITargetProperties) newTarget).addPropertyChangeListener(this);
+			}
+			fAction.setChecked(newTarget.isInstructionSteppingEnabled());
+		}
+		fAction.setEnabled(newTarget != null && newTarget.supportsInstructionStepping() && !isTerminated(newTarget));
 	}
 
-	private boolean isTerminated( ISteppingModeTarget target ) {
-        return ( (target instanceof ITerminate && ((ITerminate)target).isTerminated())
-                 || (target instanceof IDisconnect && ((IDisconnect)target).isDisconnected()) );
-    }
-	
+	private boolean isTerminated(ISteppingModeTarget target) {
+		return ((target instanceof ITerminate && ((ITerminate) target).isTerminated())
+				|| (target instanceof IDisconnect && ((IDisconnect) target).isDisconnected()));
+	}
+
 	private ISteppingModeTarget getTarget() {
 		return this.fTarget;
 	}
 
-	private void setTarget( ISteppingModeTarget target ) {
+	private void setTarget(ISteppingModeTarget target) {
 		this.fTarget = target;
 	}
 
@@ -170,26 +167,24 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate
 		return this.fAction;
 	}
 
-	private void setAction( IAction action ) {
+	private void setAction(IAction action) {
 		this.fAction = action;
 	}
 
-	private ISteppingModeTarget getTargetFromSelection( Object element ) {
-		ISteppingModeTarget target= null;
-		if ( element instanceof IDebugElement ) {
-			IDebugTarget debugTarget = ((IDebugElement)element).getDebugTarget();
+	private ISteppingModeTarget getTargetFromSelection(Object element) {
+		ISteppingModeTarget target = null;
+		if (element instanceof IDebugElement) {
+			IDebugTarget debugTarget = ((IDebugElement) element).getDebugTarget();
 			if (debugTarget instanceof ISteppingModeTarget) {
-				target= (ISteppingModeTarget) debugTarget;
+				target = (ISteppingModeTarget) debugTarget;
 			}
 		}
 		if (target == null) {
 			if (element instanceof IAdaptable) {
-				target= ((IAdaptable)element).getAdapter(ISteppingModeTarget.class);
+				target = ((IAdaptable) element).getAdapter(ISteppingModeTarget.class);
 			}
 		}
 		return target;
 	}
-	
-	
-	
+
 }

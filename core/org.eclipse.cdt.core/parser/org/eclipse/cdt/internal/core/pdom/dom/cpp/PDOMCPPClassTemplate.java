@@ -52,27 +52,26 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		implements ICPPClassTemplate, ICPPInstanceCache, IPDOMCPPTemplateParameterOwner {
 	private static final int PARAMETERS = PDOMCPPClassType.RECORD_SIZE + 0;
-	private static final short RELEVANT_PARAMETERS= PDOMCPPClassType.RECORD_SIZE + 4;
+	private static final short RELEVANT_PARAMETERS = PDOMCPPClassType.RECORD_SIZE + 4;
 	private static final int FIRST_PARTIAL = PDOMCPPClassType.RECORD_SIZE + 6;
-	
+
 	/**
 	 * The size in bytes of a PDOMCPPClassTemplate record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPClassType.RECORD_SIZE + 10;
-	
-	private volatile ICPPTemplateParameter[] params;  // Cached template parameters.
-	
+
+	private volatile ICPPTemplateParameter[] params; // Cached template parameters.
+
 	public PDOMCPPClassTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPClassTemplate template,
-			boolean visibleToAdlOnly)
-			throws CoreException, DOMException {
+			boolean visibleToAdlOnly) throws CoreException, DOMException {
 		super(linkage, parent, template, visibleToAdlOnly);
-		
+
 		final Database db = getDB();
-		ICPPTemplateParameter[] origParams= template.getTemplateParameters();
-		IPDOMCPPTemplateParameter[] params =
-				PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
-		long rec= PDOMTemplateParameterArray.putArray(db, params);
+		ICPPTemplateParameter[] origParams = template.getTemplateParameters();
+		IPDOMCPPTemplateParameter[] params = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this,
+				origParams);
+		long rec = PDOMTemplateParameterArray.putArray(db, params);
 		db.putRecPtr(record + PARAMETERS, rec);
 		db.putShort(record + RELEVANT_PARAMETERS, (short) params.length);
 		linkage.new ConfigureTemplateParameters(origParams, params);
@@ -91,26 +90,26 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CLASS_TEMPLATE;
 	}
-	
+
 	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		if (params == null) {
 			try {
 				final Database db = getDB();
-				long rec= db.getRecPtr(record + PARAMETERS);
-				int count= Math.max(0, db.getShort(record + RELEVANT_PARAMETERS));
+				long rec = db.getRecPtr(record + PARAMETERS);
+				int count = Math.max(0, db.getShort(record + RELEVANT_PARAMETERS));
 				if (rec == 0 || count == 0) {
-					params= ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
+					params = ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
 				} else {
 					IPDOMCPPTemplateParameter[] allParams = PDOMTemplateParameterArray.getArray(this, rec);
-					count= Math.min(count, allParams.length);
+					count = Math.min(count, allParams.length);
 					if (count == allParams.length) {
-						params= allParams;
+						params = allParams;
 					} else {
-						params= new ICPPTemplateParameter[count];
+						params = new ICPPTemplateParameter[count];
 						System.arraycopy(allParams, 0, params, 0, count);
 					}
-				} 
+				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 				params = ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
@@ -123,7 +122,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		super.update(linkage, newBinding);
 		if (newBinding instanceof ICPPClassTemplate) {
-			ICPPClassTemplate ct= (ICPPClassTemplate) newBinding;
+			ICPPClassTemplate ct = (ICPPClassTemplate) newBinding;
 			try {
 				updateTemplateParameters(linkage, ct.getTemplateParameters());
 			} catch (DOMException e) {
@@ -135,69 +134,70 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 	private void updateTemplateParameters(PDOMLinkage linkage, ICPPTemplateParameter[] newParams)
 			throws CoreException, DOMException {
 		final Database db = getDB();
-		long rec= db.getRecPtr(record + PARAMETERS);
+		long rec = db.getRecPtr(record + PARAMETERS);
 		IPDOMCPPTemplateParameter[] allParams;
 		if (rec == 0) {
-			allParams= IPDOMCPPTemplateParameter.EMPTY_ARRAY;
+			allParams = IPDOMCPPTemplateParameter.EMPTY_ARRAY;
 		} else {
 			allParams = PDOMTemplateParameterArray.getArray(this, rec);
 		}
-		
+
 		final int newParamLength = newParams.length;
-		int[] props= new int[allParams.length];
-		int[] result= new int[newParamLength];
-		int additionalPars= 0;
-		boolean reorder= false;
+		int[] props = new int[allParams.length];
+		int[] result = new int[newParamLength];
+		int additionalPars = 0;
+		boolean reorder = false;
 		for (int i = 0; i < props.length; i++) {
 			final IPDOMCPPTemplateParameter par = allParams[i];
-			props[i]= getProperty(par);
+			props[i] = getProperty(par);
 		}
 
 		outer: for (int i = 0; i < newParamLength; i++) {
 			ICPPTemplateParameter newPar = newParams[i];
-			int prop= getProperty(newPar);
+			int prop = getProperty(newPar);
 			for (int j = 0; j < props.length; j++) {
 				if (props[j] == prop) {
 					// Reuse param
-					result[i]= j;
-					props[j]= -1;
+					result[i] = j;
+					props[j] = -1;
 					allParams[j].update(linkage, newPar);
 					if (j != i)
-						reorder= true;
+						reorder = true;
 					continue outer;
 				}
 			}
-			result[i]= -1;
+			result[i] = -1;
 			additionalPars++;
 		}
-		
+
 		if (additionalPars > 0 || reorder) {
-			params= null;
-			IPDOMCPPTemplateParameter[] newAllParams= new IPDOMCPPTemplateParameter[allParams.length + additionalPars];
+			params = null;
+			IPDOMCPPTemplateParameter[] newAllParams = new IPDOMCPPTemplateParameter[allParams.length + additionalPars];
 			for (int j = 0; j < newParamLength; j++) {
-				int idx= result[j];
+				int idx = result[j];
 				if (idx >= 0) {
-					newAllParams[j]= allParams[idx];
-					allParams[idx]= null;
+					newAllParams[j] = allParams[idx];
+					allParams[idx] = null;
 				} else {
-					newAllParams[j]= PDOMTemplateParameterArray.createPDOMTemplateParameter(getLinkage(), this, newParams[j]);
+					newAllParams[j] = PDOMTemplateParameterArray.createPDOMTemplateParameter(getLinkage(), this,
+							newParams[j]);
 				}
 			}
-			int pos= newParamLength;
+			int pos = newParamLength;
 			for (IPDOMCPPTemplateParameter unused : allParams) {
 				if (unused != null)
-					newAllParams[pos++]= unused;
+					newAllParams[pos++] = unused;
 			}
 			if (rec != 0)
 				db.free(rec);
-			rec= PDOMTemplateParameterArray.putArray(db, newAllParams);
+			rec = PDOMTemplateParameterArray.putArray(db, newAllParams);
 			db.putRecPtr(record + PARAMETERS, rec);
 		}
 		db.putShort(record + RELEVANT_PARAMETERS, (short) newParamLength);
 	}
 
 	private int getProperty(ICPPTemplateParameter par) {
-		int result= par.getParameterPosition() & 0xffff;
+		int result = par.getParameterPosition() & 0xffff;
 		if (par instanceof ICPPTemplateTypeParameter)
 			return result;
 		if (par instanceof ICPPTemplateNonTypeParameter)
@@ -209,24 +209,22 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		long value = getDB().getRecPtr(record + FIRST_PARTIAL);
 		return value != 0 ? new PDOMCPPClassTemplatePartialSpecialization(getLinkage(), value) : null;
 	}
-	
+
 	public void addPartial(PDOMCPPClassTemplatePartialSpecialization partial) throws CoreException {
 		PDOMCPPClassTemplatePartialSpecialization first = getFirstPartial();
 		partial.setNextPartial(first);
 		getDB().putRecPtr(record + FIRST_PARTIAL, partial.getRecord());
 	}
-		
+
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		try {
-			ArrayList<PDOMCPPClassTemplatePartialSpecialization> partials =
-					new ArrayList<PDOMCPPClassTemplatePartialSpecialization>();
-			for (PDOMCPPClassTemplatePartialSpecialization partial = getFirstPartial();
-					partial != null;
-					partial = partial.getNextPartial()) {
+			ArrayList<PDOMCPPClassTemplatePartialSpecialization> partials = new ArrayList<PDOMCPPClassTemplatePartialSpecialization>();
+			for (PDOMCPPClassTemplatePartialSpecialization partial = getFirstPartial(); partial != null; partial = partial
+					.getNextPartial()) {
 				partials.add(partial);
 			}
-			
+
 			return partials.toArray(new ICPPClassTemplatePartialSpecialization[partials.size()]);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -239,31 +237,30 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
-		
+
 		if (type instanceof PDOMNode) {
-			PDOMNode node= (PDOMNode) type;
+			PDOMNode node = (PDOMNode) type;
 			if (node.getPDOM() == getPDOM()) {
 				return node.getRecord() == getRecord();
 			}
 		}
 
 		// Need a class template.
-		if (!(type instanceof ICPPClassTemplate) || type instanceof ProblemBinding) 
+		if (!(type instanceof ICPPClassTemplate) || type instanceof ProblemBinding)
 			return false;
-		
+
 		// Exclude other kinds of class templates.
-		if (type instanceof ICPPClassTemplatePartialSpecialization ||
-				type instanceof ICPPTemplateTemplateParameter ||
-				type instanceof ICPPClassSpecialization) {
+		if (type instanceof ICPPClassTemplatePartialSpecialization || type instanceof ICPPTemplateTemplateParameter
+				|| type instanceof ICPPClassSpecialization) {
 			return false;
 		}
-				
-		ICPPClassType ctype= (ICPPClassType) type;
+
+		ICPPClassType ctype = (ICPPClassType) type;
 		if (ctype.getKey() != getKey())
 			return false;
 		char[] nchars = ctype.getNameCharArray();
 		if (nchars.length == 0) {
-			nchars= ASTTypeUtil.createNameForAnonymous(ctype);
+			nchars = ASTTypeUtil.createNameForAnonymous(ctype);
 		}
 		if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
 			return false;
@@ -273,17 +270,17 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 
 	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
-		return PDOMInstanceCache.getCache(this).getInstance(arguments);	
+		return PDOMInstanceCache.getCache(this).getInstance(arguments);
 	}
 
 	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
-		PDOMInstanceCache.getCache(this).addInstance(arguments, instance);	
+		PDOMInstanceCache.getCache(this).addInstance(arguments, instance);
 	}
 
 	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
-		return PDOMInstanceCache.getCache(this).getAllInstances();	
+		return PDOMInstanceCache.getCache(this).getAllInstances();
 	}
 
 	@Override
@@ -291,11 +288,11 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		// Template parameters are identified by their position in the parameter list.
 		int pos = param.getParameterPosition();
 		ICPPTemplateParameter[] pars = getTemplateParameters();
-		
+
 		if (pars == null || pos >= pars.length)
 			return null;
-		
-		ICPPTemplateParameter result= pars[pos];
+
+		ICPPTemplateParameter result = pars[pos];
 		if (param instanceof ICPPTemplateTypeParameter) {
 			if (result instanceof ICPPTemplateTypeParameter)
 				return result;
@@ -308,14 +305,14 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		}
 		return null;
 	}
-	
+
 	@Override
 	public final ICPPDeferredClassInstance asDeferredInstance() {
-		PDOMInstanceCache cache= PDOMInstanceCache.getCache(this);
+		PDOMInstanceCache cache = PDOMInstanceCache.getCache(this);
 		synchronized (cache) {
-			ICPPDeferredClassInstance dci= cache.getDeferredInstance();
+			ICPPDeferredClassInstance dci = cache.getDeferredInstance();
 			if (dci == null) {
-				dci= CPPTemplates.createDeferredInstance(this);
+				dci = CPPTemplates.createDeferredInstance(this);
 				cache.putDeferredInstance(dci);
 			}
 			return dci;

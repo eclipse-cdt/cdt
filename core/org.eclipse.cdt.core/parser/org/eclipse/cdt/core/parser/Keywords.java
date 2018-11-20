@@ -135,7 +135,6 @@ public class Keywords {
 	public static final String XOR = "xor";
 	public static final String XOR_EQ = "xor_eq";
 
-
 	public static final char[] c_BOOL = "_Bool".toCharArray();
 	public static final char[] c_COMPLEX = "_Complex".toCharArray();
 	public static final char[] c_IMAGINARY = "_Imaginary".toCharArray();
@@ -217,7 +216,7 @@ public class Keywords {
 	public static final char[] cSIGNED = "signed".toCharArray();
 	public static final char[] cSIZEOF = "sizeof".toCharArray();
 	/** @since 5.3 */
-	public static final char[] cSIZEOFPACK= "sizeof...".toCharArray();
+	public static final char[] cSIZEOFPACK = "sizeof...".toCharArray();
 	public static final char[] cSTATIC = "static".toCharArray();
 	/** @since 5.2 */
 	public static final char[] cSTATIC_ASSERT = STATIC_ASSERT.toCharArray();
@@ -248,52 +247,52 @@ public class Keywords {
 	public static final char[] cpCOLONCOLON = "::".toCharArray();
 	public static final char[] cpCOLON = ":".toCharArray();
 	public static final char[] cpSEMI = ";".toCharArray();
-	public static final char[] cpCOMMA =	",".toCharArray();
+	public static final char[] cpCOMMA = ",".toCharArray();
 	public static final char[] cpQUESTION = "?".toCharArray();
-	public static final char[] cpLPAREN  = "(".toCharArray();
-	public static final char[] cpRPAREN  = ")".toCharArray();
+	public static final char[] cpLPAREN = "(".toCharArray();
+	public static final char[] cpRPAREN = ")".toCharArray();
 	public static final char[] cpLBRACKET = "[".toCharArray();
 	public static final char[] cpRBRACKET = "]".toCharArray();
 	public static final char[] cpLBRACE = "{".toCharArray();
 	public static final char[] cpRBRACE = "}".toCharArray();
-	public static final char[] cpPLUSASSIGN =	"+=".toCharArray();
-	public static final char[] cpINCR = 	"++".toCharArray();
-	public static final char[] cpPLUS = 	"+".toCharArray();
-	public static final char[] cpMINUSASSIGN =	"-=".toCharArray();
-	public static final char[] cpDECR = 	"--".toCharArray();
-	public static final char[] cpARROWSTAR =	"->*".toCharArray();
-	public static final char[] cpARROW = 	"->".toCharArray();
-	public static final char[] cpMINUS = 	"-".toCharArray();
-	public static final char[] cpSTARASSIGN =	"*=".toCharArray();
-	public static final char[] cpSTAR = 	"*".toCharArray();
-	public static final char[] cpMODASSIGN =	"%=".toCharArray();
-	public static final char[] cpMOD = 	"%".toCharArray();
-	public static final char[] cpXORASSIGN =	"^=".toCharArray();
-	public static final char[] cpXOR = 	"^".toCharArray();
-	public static final char[] cpAMPERASSIGN =	"&=".toCharArray();
-	public static final char[] cpAND = 	"&&".toCharArray();
-	public static final char[] cpAMPER =	"&".toCharArray();
-	public static final char[] cpBITORASSIGN =	"|=".toCharArray();
-	public static final char[] cpOR = 	"||".toCharArray();
-	public static final char[] cpBITOR =	"|".toCharArray();
-	public static final char[] cpCOMPL =	"~".toCharArray();
-	public static final char[] cpNOTEQUAL =	"!=".toCharArray();
-	public static final char[] cpNOT = 	"!".toCharArray();
-	public static final char[] cpEQUAL =	"==".toCharArray();
-	public static final char[] cpASSIGN ="=".toCharArray();
-	public static final char[] cpSHIFTL =	"<<".toCharArray();
-	public static final char[] cpLTEQUAL =	"<=".toCharArray();
-	public static final char[] cpLT = 	"<".toCharArray();
-	public static final char[] cpSHIFTRASSIGN =	">>=".toCharArray();
-	public static final char[] cpSHIFTR = 	">>".toCharArray();
-	public static final char[] cpGTEQUAL = 	">=".toCharArray();
-	public static final char[] cpGT = 	">".toCharArray();
-	public static final char[] cpSHIFTLASSIGN =	"<<=".toCharArray();
-	public static final char[] cpELLIPSIS = 	"...".toCharArray();
-	public static final char[] cpDOTSTAR = 	".*".toCharArray();
-	public static final char[] cpDOT = 	".".toCharArray();
-	public static final char[] cpDIVASSIGN =	"/=".toCharArray();
-	public static final char[] cpDIV = 	"/".toCharArray();
+	public static final char[] cpPLUSASSIGN = "+=".toCharArray();
+	public static final char[] cpINCR = "++".toCharArray();
+	public static final char[] cpPLUS = "+".toCharArray();
+	public static final char[] cpMINUSASSIGN = "-=".toCharArray();
+	public static final char[] cpDECR = "--".toCharArray();
+	public static final char[] cpARROWSTAR = "->*".toCharArray();
+	public static final char[] cpARROW = "->".toCharArray();
+	public static final char[] cpMINUS = "-".toCharArray();
+	public static final char[] cpSTARASSIGN = "*=".toCharArray();
+	public static final char[] cpSTAR = "*".toCharArray();
+	public static final char[] cpMODASSIGN = "%=".toCharArray();
+	public static final char[] cpMOD = "%".toCharArray();
+	public static final char[] cpXORASSIGN = "^=".toCharArray();
+	public static final char[] cpXOR = "^".toCharArray();
+	public static final char[] cpAMPERASSIGN = "&=".toCharArray();
+	public static final char[] cpAND = "&&".toCharArray();
+	public static final char[] cpAMPER = "&".toCharArray();
+	public static final char[] cpBITORASSIGN = "|=".toCharArray();
+	public static final char[] cpOR = "||".toCharArray();
+	public static final char[] cpBITOR = "|".toCharArray();
+	public static final char[] cpCOMPL = "~".toCharArray();
+	public static final char[] cpNOTEQUAL = "!=".toCharArray();
+	public static final char[] cpNOT = "!".toCharArray();
+	public static final char[] cpEQUAL = "==".toCharArray();
+	public static final char[] cpASSIGN = "=".toCharArray();
+	public static final char[] cpSHIFTL = "<<".toCharArray();
+	public static final char[] cpLTEQUAL = "<=".toCharArray();
+	public static final char[] cpLT = "<".toCharArray();
+	public static final char[] cpSHIFTRASSIGN = ">>=".toCharArray();
+	public static final char[] cpSHIFTR = ">>".toCharArray();
+	public static final char[] cpGTEQUAL = ">=".toCharArray();
+	public static final char[] cpGT = ">".toCharArray();
+	public static final char[] cpSHIFTLASSIGN = "<<=".toCharArray();
+	public static final char[] cpELLIPSIS = "...".toCharArray();
+	public static final char[] cpDOTSTAR = ".*".toCharArray();
+	public static final char[] cpDOT = ".".toCharArray();
+	public static final char[] cpDIVASSIGN = "/=".toCharArray();
+	public static final char[] cpDIV = "/".toCharArray();
 	public static final char[] cpPOUND = "#".toCharArray();
 	public static final char[] cpPOUNDPOUND = "##".toCharArray();
 
@@ -312,13 +311,12 @@ public class Keywords {
 	public static final char[] cERROR = "error".toCharArray();
 	public static final char[] cPRAGMA = "pragma".toCharArray();
 	public static final char[] cLINE = "line".toCharArray();
-	public static final char[] cDEFINED= "defined".toCharArray();
+	public static final char[] cDEFINED = "defined".toCharArray();
 	/** @since 5.11 */
 	public static final char[] c__HAS_FEATURE = "__has_feature".toCharArray();
 	/** @since 5.2*/
-	public static final char[] _Pragma= "_Pragma".toCharArray();
-	public static final char[] cVA_ARGS= "__VA_ARGS__".toCharArray();
-
+	public static final char[] _Pragma = "_Pragma".toCharArray();
+	public static final char[] cVA_ARGS = "__VA_ARGS__".toCharArray();
 
 	// Preprocessor extensions (supported by GCC).
 	public static final char[] cINCLUDE_NEXT = "include_next".toCharArray();
@@ -341,120 +339,120 @@ public class Keywords {
 
 	private static void addCommon(CharArrayIntMap words) {
 		words.put(Keywords._Pragma, IToken.t_PRAGMA);
-        words.put(Keywords.cAUTO, IToken.t_auto);
-        words.put(Keywords.cBREAK, IToken.t_break);
-        words.put(Keywords.cCASE, IToken.t_case);
-        words.put(Keywords.cCHAR, IToken.t_char);
-        words.put(Keywords.cCONST, IToken.t_const);
-        words.put(Keywords.cCONTINUE, IToken.t_continue);
-        words.put(Keywords.cDEFAULT, IToken.t_default);
-        words.put(Keywords.cDO, IToken.t_do);
-        words.put(Keywords.cDOUBLE, IToken.t_double);
-        words.put(Keywords.cELSE, IToken.t_else);
-        words.put(Keywords.cENUM, IToken.t_enum);
-        words.put(Keywords.cEXTERN, IToken.t_extern);
-        words.put(Keywords.cFLOAT, IToken.t_float);
-        words.put(Keywords.cFOR, IToken.t_for);
-        words.put(Keywords.cGOTO, IToken.t_goto);
-        words.put(Keywords.cIF, IToken.t_if);
-        words.put(Keywords.cINLINE, IToken.t_inline);
-        words.put(Keywords.cINT, IToken.t_int);
-        words.put(Keywords.cLONG, IToken.t_long);
-        words.put(Keywords.cREGISTER, IToken.t_register);
-        words.put(Keywords.cRETURN, IToken.t_return);
-        words.put(Keywords.cSHORT, IToken.t_short);
-        words.put(Keywords.cSIGNED, IToken.t_signed);
-        words.put(Keywords.cSIZEOF, IToken.t_sizeof);
-        words.put(Keywords.cSTATIC, IToken.t_static);
-        words.put(Keywords.cSTRUCT, IToken.t_struct);
-        words.put(Keywords.cSWITCH, IToken.t_switch);
-        words.put(Keywords.cTYPEDEF, IToken.t_typedef);
-        words.put(Keywords.cUNION, IToken.t_union);
-        words.put(Keywords.cUNSIGNED, IToken.t_unsigned);
-        words.put(Keywords.cVOID, IToken.t_void);
-        words.put(Keywords.cVOLATILE, IToken.t_volatile);
-        words.put(Keywords.cWHILE, IToken.t_while);
-        words.put(Keywords.cASM, IToken.t_asm);
+		words.put(Keywords.cAUTO, IToken.t_auto);
+		words.put(Keywords.cBREAK, IToken.t_break);
+		words.put(Keywords.cCASE, IToken.t_case);
+		words.put(Keywords.cCHAR, IToken.t_char);
+		words.put(Keywords.cCONST, IToken.t_const);
+		words.put(Keywords.cCONTINUE, IToken.t_continue);
+		words.put(Keywords.cDEFAULT, IToken.t_default);
+		words.put(Keywords.cDO, IToken.t_do);
+		words.put(Keywords.cDOUBLE, IToken.t_double);
+		words.put(Keywords.cELSE, IToken.t_else);
+		words.put(Keywords.cENUM, IToken.t_enum);
+		words.put(Keywords.cEXTERN, IToken.t_extern);
+		words.put(Keywords.cFLOAT, IToken.t_float);
+		words.put(Keywords.cFOR, IToken.t_for);
+		words.put(Keywords.cGOTO, IToken.t_goto);
+		words.put(Keywords.cIF, IToken.t_if);
+		words.put(Keywords.cINLINE, IToken.t_inline);
+		words.put(Keywords.cINT, IToken.t_int);
+		words.put(Keywords.cLONG, IToken.t_long);
+		words.put(Keywords.cREGISTER, IToken.t_register);
+		words.put(Keywords.cRETURN, IToken.t_return);
+		words.put(Keywords.cSHORT, IToken.t_short);
+		words.put(Keywords.cSIGNED, IToken.t_signed);
+		words.put(Keywords.cSIZEOF, IToken.t_sizeof);
+		words.put(Keywords.cSTATIC, IToken.t_static);
+		words.put(Keywords.cSTRUCT, IToken.t_struct);
+		words.put(Keywords.cSWITCH, IToken.t_switch);
+		words.put(Keywords.cTYPEDEF, IToken.t_typedef);
+		words.put(Keywords.cUNION, IToken.t_union);
+		words.put(Keywords.cUNSIGNED, IToken.t_unsigned);
+		words.put(Keywords.cVOID, IToken.t_void);
+		words.put(Keywords.cVOLATILE, IToken.t_volatile);
+		words.put(Keywords.cWHILE, IToken.t_while);
+		words.put(Keywords.cASM, IToken.t_asm);
 	}
 
-    // ANSI C keywords
+	// ANSI C keywords
 	private static void addC(CharArrayIntMap ckeywords) {
-        ckeywords.put(Keywords.cRESTRICT, IToken.t_restrict);
+		ckeywords.put(Keywords.cRESTRICT, IToken.t_restrict);
 		ckeywords.put(Keywords.c_ALIGNAS, IToken.t__Alignas);
 		ckeywords.put(Keywords.c_ALIGNOF, IToken.t__Alignof);
-        ckeywords.put(Keywords.c_BOOL, IToken.t__Bool);
-        ckeywords.put(Keywords.c_COMPLEX, IToken.t__Complex);
-        ckeywords.put(Keywords.c_IMAGINARY, IToken.t__Imaginary);
+		ckeywords.put(Keywords.c_BOOL, IToken.t__Bool);
+		ckeywords.put(Keywords.c_COMPLEX, IToken.t__Complex);
+		ckeywords.put(Keywords.c_IMAGINARY, IToken.t__Imaginary);
 	}
 
 	private static void addCpp(CharArrayIntMap cppkeywords) {
 		cppkeywords.put(Keywords.cALIGNAS, IToken.t_alignas);
 		cppkeywords.put(Keywords.cALIGNOF, IToken.t_alignof);
-        cppkeywords.put(Keywords.cBOOL, IToken.t_bool);
-        cppkeywords.put(Keywords.cCATCH, IToken.t_catch);
-        cppkeywords.put(Keywords.cCHAR16_T, IToken.t_char16_t);
-        cppkeywords.put(Keywords.cCHAR32_T, IToken.t_char32_t);
-        cppkeywords.put(Keywords.cCLASS, IToken.t_class);
-        cppkeywords.put(Keywords.cCONSTEXPR, IToken.t_constexpr);
-        cppkeywords.put(Keywords.cCONST_CAST, IToken.t_const_cast);
-        cppkeywords.put(Keywords.cDECLTYPE, IToken.t_decltype);
-        cppkeywords.put(Keywords.cDELETE, IToken.t_delete);
-        cppkeywords.put(Keywords.cDYNAMIC_CAST, IToken.t_dynamic_cast);
-        cppkeywords.put(Keywords.cEXPLICIT, IToken.t_explicit);
-        cppkeywords.put(Keywords.cEXPORT, IToken.t_export);
-        cppkeywords.put(Keywords.cFALSE, IToken.t_false);
-        cppkeywords.put(Keywords.cFRIEND, IToken.t_friend);
-        cppkeywords.put(Keywords.cMUTABLE, IToken.t_mutable);
-        cppkeywords.put(Keywords.cNAMESPACE, IToken.t_namespace);
-        cppkeywords.put(Keywords.cNEW, IToken.t_new);
-        cppkeywords.put(Keywords.cNOEXCEPT, IToken.t_noexcept);
-        cppkeywords.put(Keywords.cNULLPTR, IToken.t_nullptr);
-        cppkeywords.put(Keywords.cOPERATOR, IToken.t_operator);
-        cppkeywords.put(Keywords.cPRIVATE, IToken.t_private);
-        cppkeywords.put(Keywords.cPROTECTED, IToken.t_protected);
-        cppkeywords.put(Keywords.cPUBLIC, IToken.t_public);
-        cppkeywords.put(Keywords.cREINTERPRET_CAST, IToken.t_reinterpret_cast);
-        cppkeywords.put(Keywords.cSTATIC_ASSERT, IToken.t_static_assert);
-        cppkeywords.put(Keywords.cSTATIC_CAST, IToken.t_static_cast);
-        cppkeywords.put(Keywords.cTEMPLATE, IToken.t_template);
-        cppkeywords.put(Keywords.cTHIS, IToken.t_this);
-        cppkeywords.put(Keywords.cTHREAD_LOCAL, IToken.t_thread_local);
-        cppkeywords.put(Keywords.cTHROW, IToken.t_throw);
-        cppkeywords.put(Keywords.cTRUE, IToken.t_true);
-        cppkeywords.put(Keywords.cTRY, IToken.t_try);
-        cppkeywords.put(Keywords.cTYPEID, IToken.t_typeid);
-        cppkeywords.put(Keywords.cTYPENAME, IToken.t_typename);
-        cppkeywords.put(Keywords.cUSING, IToken.t_using);
-        cppkeywords.put(Keywords.cVIRTUAL, IToken.t_virtual);
-        cppkeywords.put(Keywords.cWCHAR_T, IToken.t_wchar_t);
+		cppkeywords.put(Keywords.cBOOL, IToken.t_bool);
+		cppkeywords.put(Keywords.cCATCH, IToken.t_catch);
+		cppkeywords.put(Keywords.cCHAR16_T, IToken.t_char16_t);
+		cppkeywords.put(Keywords.cCHAR32_T, IToken.t_char32_t);
+		cppkeywords.put(Keywords.cCLASS, IToken.t_class);
+		cppkeywords.put(Keywords.cCONSTEXPR, IToken.t_constexpr);
+		cppkeywords.put(Keywords.cCONST_CAST, IToken.t_const_cast);
+		cppkeywords.put(Keywords.cDECLTYPE, IToken.t_decltype);
+		cppkeywords.put(Keywords.cDELETE, IToken.t_delete);
+		cppkeywords.put(Keywords.cDYNAMIC_CAST, IToken.t_dynamic_cast);
+		cppkeywords.put(Keywords.cEXPLICIT, IToken.t_explicit);
+		cppkeywords.put(Keywords.cEXPORT, IToken.t_export);
+		cppkeywords.put(Keywords.cFALSE, IToken.t_false);
+		cppkeywords.put(Keywords.cFRIEND, IToken.t_friend);
+		cppkeywords.put(Keywords.cMUTABLE, IToken.t_mutable);
+		cppkeywords.put(Keywords.cNAMESPACE, IToken.t_namespace);
+		cppkeywords.put(Keywords.cNEW, IToken.t_new);
+		cppkeywords.put(Keywords.cNOEXCEPT, IToken.t_noexcept);
+		cppkeywords.put(Keywords.cNULLPTR, IToken.t_nullptr);
+		cppkeywords.put(Keywords.cOPERATOR, IToken.t_operator);
+		cppkeywords.put(Keywords.cPRIVATE, IToken.t_private);
+		cppkeywords.put(Keywords.cPROTECTED, IToken.t_protected);
+		cppkeywords.put(Keywords.cPUBLIC, IToken.t_public);
+		cppkeywords.put(Keywords.cREINTERPRET_CAST, IToken.t_reinterpret_cast);
+		cppkeywords.put(Keywords.cSTATIC_ASSERT, IToken.t_static_assert);
+		cppkeywords.put(Keywords.cSTATIC_CAST, IToken.t_static_cast);
+		cppkeywords.put(Keywords.cTEMPLATE, IToken.t_template);
+		cppkeywords.put(Keywords.cTHIS, IToken.t_this);
+		cppkeywords.put(Keywords.cTHREAD_LOCAL, IToken.t_thread_local);
+		cppkeywords.put(Keywords.cTHROW, IToken.t_throw);
+		cppkeywords.put(Keywords.cTRUE, IToken.t_true);
+		cppkeywords.put(Keywords.cTRY, IToken.t_try);
+		cppkeywords.put(Keywords.cTYPEID, IToken.t_typeid);
+		cppkeywords.put(Keywords.cTYPENAME, IToken.t_typename);
+		cppkeywords.put(Keywords.cUSING, IToken.t_using);
+		cppkeywords.put(Keywords.cVIRTUAL, IToken.t_virtual);
+		cppkeywords.put(Keywords.cWCHAR_T, IToken.t_wchar_t);
 
-        // C++ operator alternative
-        cppkeywords.put(Keywords.cAND, IToken.tAND);
-        cppkeywords.put(Keywords.cAND_EQ, IToken.tAMPERASSIGN);
-        cppkeywords.put(Keywords.cBITAND, IToken.tAMPER);
-        cppkeywords.put(Keywords.cBITOR, IToken.tBITOR);
-        cppkeywords.put(Keywords.cCOMPL, IToken.tBITCOMPLEMENT);
-        cppkeywords.put(Keywords.cNOT, IToken.tNOT);
-        cppkeywords.put(Keywords.cNOT_EQ, IToken.tNOTEQUAL);
-        cppkeywords.put(Keywords.cOR, IToken.tOR);
-        cppkeywords.put(Keywords.cOR_EQ, IToken.tBITORASSIGN);
-        cppkeywords.put(Keywords.cXOR, IToken.tXOR);
-        cppkeywords.put(Keywords.cXOR_EQ, IToken.tXORASSIGN);
+		// C++ operator alternative
+		cppkeywords.put(Keywords.cAND, IToken.tAND);
+		cppkeywords.put(Keywords.cAND_EQ, IToken.tAMPERASSIGN);
+		cppkeywords.put(Keywords.cBITAND, IToken.tAMPER);
+		cppkeywords.put(Keywords.cBITOR, IToken.tBITOR);
+		cppkeywords.put(Keywords.cCOMPL, IToken.tBITCOMPLEMENT);
+		cppkeywords.put(Keywords.cNOT, IToken.tNOT);
+		cppkeywords.put(Keywords.cNOT_EQ, IToken.tNOTEQUAL);
+		cppkeywords.put(Keywords.cOR, IToken.tOR);
+		cppkeywords.put(Keywords.cOR_EQ, IToken.tBITORASSIGN);
+		cppkeywords.put(Keywords.cXOR, IToken.tXOR);
+		cppkeywords.put(Keywords.cXOR_EQ, IToken.tXORASSIGN);
 	}
 
 	public static void addKeywordsPreprocessor(CharArrayIntMap ppKeywords) {
-        // Preprocessor keywords
-        ppKeywords.put(Keywords.cIF, IPreprocessorDirective.ppIf);
-        ppKeywords.put(Keywords.cIFDEF, IPreprocessorDirective.ppIfdef);
-        ppKeywords.put(Keywords.cIFNDEF, IPreprocessorDirective.ppIfndef);
-        ppKeywords.put(Keywords.cELIF, IPreprocessorDirective.ppElif);
-        ppKeywords.put(Keywords.cELSE, IPreprocessorDirective.ppElse);
-        ppKeywords.put(Keywords.cENDIF, IPreprocessorDirective.ppEndif);
-        ppKeywords.put(Keywords.cINCLUDE, IPreprocessorDirective.ppInclude);
-        ppKeywords.put(Keywords.cDEFINE, IPreprocessorDirective.ppDefine);
-        ppKeywords.put(Keywords.cUNDEF, IPreprocessorDirective.ppUndef);
-        ppKeywords.put(Keywords.cERROR, IPreprocessorDirective.ppError);
-        ppKeywords.put(Keywords.cPRAGMA, IPreprocessorDirective.ppPragma);
-        ppKeywords.put(Keywords.cLINE, IPreprocessorDirective.ppIgnore);
-    }
+		// Preprocessor keywords
+		ppKeywords.put(Keywords.cIF, IPreprocessorDirective.ppIf);
+		ppKeywords.put(Keywords.cIFDEF, IPreprocessorDirective.ppIfdef);
+		ppKeywords.put(Keywords.cIFNDEF, IPreprocessorDirective.ppIfndef);
+		ppKeywords.put(Keywords.cELIF, IPreprocessorDirective.ppElif);
+		ppKeywords.put(Keywords.cELSE, IPreprocessorDirective.ppElse);
+		ppKeywords.put(Keywords.cENDIF, IPreprocessorDirective.ppEndif);
+		ppKeywords.put(Keywords.cINCLUDE, IPreprocessorDirective.ppInclude);
+		ppKeywords.put(Keywords.cDEFINE, IPreprocessorDirective.ppDefine);
+		ppKeywords.put(Keywords.cUNDEF, IPreprocessorDirective.ppUndef);
+		ppKeywords.put(Keywords.cERROR, IPreprocessorDirective.ppError);
+		ppKeywords.put(Keywords.cPRAGMA, IPreprocessorDirective.ppPragma);
+		ppKeywords.put(Keywords.cLINE, IPreprocessorDirective.ppIgnore);
+	}
 }

@@ -37,20 +37,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class GenerateMakefileWithBuildDescription extends ProcessRunner{
+public class GenerateMakefileWithBuildDescription extends ProcessRunner {
 	/**
-	 * 
+	 *
 	 */
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		IProject projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(projectHandle);
-		if(info == null)
+		if (info == null)
 			throw new ProcessFailureException(ManagedMakeMessages.getString("GenerateMakefileWithBuildDescription.0")); //$NON-NLS-1$
-		
+
 		IConfiguration cfg = info.getDefaultConfiguration();
-		if(cfg == null)
+		if (cfg == null)
 			throw new ProcessFailureException(ManagedMakeMessages.getString("GenerateMakefileWithBuildDescription.1")); //$NON-NLS-1$
 
 		IBuildDescription des;
@@ -62,8 +63,8 @@ public class GenerateMakefileWithBuildDescription extends ProcessRunner{
 			gen.store(oStream);
 			byte[] bytes = oStream.toByteArray();
 			ByteArrayInputStream iStream = new ByteArrayInputStream(bytes);
-			
-			if(!file.exists()){
+
+			if (!file.exists()) {
 				file.create(iStream, true, monitor);
 			} else {
 				file.setContents(iStream, true, false, monitor);

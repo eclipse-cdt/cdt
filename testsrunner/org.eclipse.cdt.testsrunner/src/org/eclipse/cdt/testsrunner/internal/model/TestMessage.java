@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,7 +30,6 @@ public class TestMessage implements ITestMessage {
 	/** Test message text */
 	private String text;
 
-	
 	public TestMessage(TestLocation location, Level level, String text) {
 		this.location = location;
 		this.level = level;

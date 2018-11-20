@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -47,7 +47,7 @@ public class CfgScannerConfigProfileManagerTests extends BaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		fProject = ManagedBuildTestHelper.createProject("CfgScannerConfigProfileManagerProj",
-														"cdt.managedbuild.target.gnu.exe");
+				"cdt.managedbuild.target.gnu.exe");
 		ManagedBuildTestHelper.addManagedBuildNature(fProject);
 	}
 
@@ -59,7 +59,7 @@ public class CfgScannerConfigProfileManagerTests extends BaseTestCase {
 
 	/**
 	 * Basic testing of Config based ScannerConfigProfile management.
-	 * 
+	 *
 	 * This test runs through some of the funcationality used by the DiscoveryTab
 	 * @throws CoreException
 	 */
@@ -118,7 +118,7 @@ public class CfgScannerConfigProfileManagerTests extends BaseTestCase {
 		CoreModel.getDefault().setProjectDescription(fProject, prjDesc);
 		fProject.close(null);
 		fProject.open(null);
-		
+
 		// Check settings are back to original
 		prjDesc = CoreModel.getDefault().getProjectDescription(fProject);
 		cfg0 = ManagedBuildManager.getConfigurationForDescription(prjDesc.getConfigurations()[0]);

@@ -153,8 +153,8 @@ public class MinGW {
 	private static String findMingwInPath(String envPath) {
 		if (envPath == null) {
 			// $PATH from user preferences
-			IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager()
-					.getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
+			IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH,
+					(ICConfigurationDescription) null, true);
 			if (varPath != null) {
 				envPath = varPath.getValue();
 			}
@@ -271,7 +271,7 @@ public class MinGW {
 	 * <br>
 	 * If you use this do not cache results to ensure user preferences are
 	 * accounted for. Please rely on internal caching.
-	 * 
+	 *
 	 * @return MinGW root ("/") path in Windows format.
 	 */
 	public static String getMinGWHome() {
@@ -279,8 +279,8 @@ public class MinGW {
 			return null;
 		}
 
-		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager()
-				.getVariable(ENV_PATH, (ICConfigurationDescription) null, true);
+		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH,
+				(ICConfigurationDescription) null, true);
 		String envPathValue = varPath != null ? varPath.getValue() : null;
 		IEnvironmentVariable varMinGWHome = CCorePlugin.getDefault().getBuildEnvironmentManager()
 				.getVariable(ENV_MINGW_HOME, (ICConfigurationDescription) null, true);
@@ -307,7 +307,7 @@ public class MinGW {
 	 * <br>
 	 * If you use this do not cache results to ensure user preferences are
 	 * accounted for. Please rely on internal caching.
-	 * 
+	 *
 	 * @return MSys root ("/") path in Windows format.
 	 */
 	public static String getMSysHome() {

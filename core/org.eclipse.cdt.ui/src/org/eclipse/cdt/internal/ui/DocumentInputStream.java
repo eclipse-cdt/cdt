@@ -19,35 +19,36 @@ import java.io.InputStream;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+
 /**
  * Input stream which reads from a document
  */
 public class DocumentInputStream extends InputStream {
-	
+
 	private IDocument fDocument;
 	private int fCurrPos;
-	
+
 	public DocumentInputStream(IDocument document) {
-		fDocument= document;
-		fCurrPos= 0;
+		fDocument = document;
+		fCurrPos = 0;
 	}
-	
+
 	public IDocument getDocument() {
 		return fDocument;
 	}
-		
+
 	/**
 	 * {@inheritDoc}
 	 */
-	 @Override
+	@Override
 	public int read() throws IOException {
-	 	try {
-		 	if (fCurrPos < fDocument.getLength()) {
-		 	 	return fDocument.getChar(fCurrPos++);
-		 	}
-	 	} catch (BadLocationException e) {
-	 	}
-	 	return -1;
+		try {
+			if (fCurrPos < fDocument.getLength()) {
+				return fDocument.getChar(fCurrPos++);
+			}
+		} catch (BadLocationException e) {
+		}
+		return -1;
 	}
-	
+
 }

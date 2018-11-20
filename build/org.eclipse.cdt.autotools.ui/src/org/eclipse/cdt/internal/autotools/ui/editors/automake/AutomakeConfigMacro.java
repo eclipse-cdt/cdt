@@ -14,20 +14,18 @@
 
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-
-
 public class AutomakeConfigMacro extends Directive {
 	String name;
-	
+
 	public AutomakeConfigMacro(Directive parent, String name) {
 		super(parent);
 		this.name = name;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	@Override
 	public String toString() {
 		return name + "\n";

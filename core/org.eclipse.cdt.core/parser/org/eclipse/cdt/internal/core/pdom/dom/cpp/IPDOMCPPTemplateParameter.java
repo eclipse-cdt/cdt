@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -30,7 +30,7 @@ public interface IPDOMCPPTemplateParameter extends IInternalPDOMNode, ICPPTempla
 	 * may have to refer to the other template parameters.
 	 */
 	void configure(ICPPTemplateParameter templateParameter);
-	
+
 	/**
 	 * @see org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding#update(PDOMLinkage, IBinding)
 	 */
@@ -38,7 +38,7 @@ public interface IPDOMCPPTemplateParameter extends IInternalPDOMNode, ICPPTempla
 
 	/**
 	 * parameters of template template parameters need to be deleted.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	void forceDelete(PDOMLinkage pdom) throws CoreException;
 }

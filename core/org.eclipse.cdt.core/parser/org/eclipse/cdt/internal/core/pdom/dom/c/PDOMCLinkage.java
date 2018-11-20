@@ -63,14 +63,14 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	}
 
 	public PDOMCLinkage(PDOM pdom) throws CoreException {
-		super(pdom, C_LINKAGE_NAME, C_LINKAGE_NAME.toCharArray()); 
+		super(pdom, C_LINKAGE_NAME, C_LINKAGE_NAME.toCharArray());
 	}
 
 	@Override
 	public int getNodeType() {
 		return IIndexBindingConstants.LINKAGE;
 	}
-	
+
 	@Override
 	public String getLinkageName() {
 		return C_LINKAGE_NAME;
@@ -86,19 +86,19 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			return null;
 		}
 
-		PDOMBinding pdomBinding= attemptFastAdaptBinding(inputBinding);
-		
+		PDOMBinding pdomBinding = attemptFastAdaptBinding(inputBinding);
+
 		if (pdomBinding == null) {
 			// assign names to anonymous types.
-			IBinding binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(inputBinding);
-			if (binding == null) 
+			IBinding binding = PDOMASTAdapter.getAdapterForAnonymousASTBinding(inputBinding);
+			if (binding == null)
 				return null;
 
 			PDOMNode parent = getAdaptedParent(binding);
 			if (parent == null)
 				return null;
-		
-			long[] localToFileHolder= {0};
+
+			long[] localToFileHolder = { 0 };
 			pdomBinding = adaptBinding(parent, binding, localToFileHolder);
 			if (pdomBinding == null) {
 				pdomBinding = createBinding(parent, binding, localToFileHolder[0]);
@@ -115,7 +115,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 
 			getPDOM().putCachedResult(inputBinding, pdomBinding);
 		}
-		
+
 		if (shouldUpdate(pdomBinding, fromName)) {
 			IBinding fromBinding = fromName.getBinding();
 
@@ -133,14 +133,14 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		}
 		return pdomBinding;
 	}
-	
-	private PDOMBinding createBinding(PDOMNode parent, IBinding binding, long localToFile) throws CoreException {
-		PDOMBinding pdomBinding= null;
 
-		PDOMNode insertIntoIndex= null;
+	private PDOMBinding createBinding(PDOMNode parent, IBinding binding, long localToFile) throws CoreException {
+		PDOMBinding pdomBinding = null;
+
+		PDOMNode insertIntoIndex = null;
 		if (binding instanceof IField) { // must be before IVariable
 			if (parent instanceof IPDOMMemberOwner) {
-				pdomBinding = new PDOMCField(this, (IPDOMMemberOwner)parent, (IField) binding);
+				pdomBinding = new PDOMCField(this, (IPDOMMemberOwner) parent, (IField) binding);
 				// If the field is inside an anonymous struct or union, add it to the parent node as well.
 				if (parent instanceof ICompositeType && ((ICompositeType) parent).isAnonymous()) {
 					insertIntoIndex = parent.getParentNode();
@@ -150,10 +150,10 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 				}
 			}
 		} else if (binding instanceof IVariable) {
-			IVariable var= (IVariable) binding;
+			IVariable var = (IVariable) binding;
 			pdomBinding = new PDOMCVariable(this, parent, var);
 		} else if (binding instanceof IFunction) {
-			IFunction func= (IFunction) binding;
+			IFunction func = (IFunction) binding;
 			pdomBinding = new PDOMCFunction(this, parent, func);
 		} else if (binding instanceof ICompositeType) {
 			pdomBinding = new PDOMCStructure(this, parent, (ICompositeType) binding);
@@ -162,12 +162,12 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		} else if (binding instanceof IEnumerator) {
 			assert parent instanceof IEnumeration;
 			pdomBinding = new PDOMCEnumerator(this, parent, (IEnumerator) binding);
-			insertIntoIndex= parent.getParentNode();
+			insertIntoIndex = parent.getParentNode();
 			if (insertIntoIndex == null) {
-				insertIntoIndex= this;
+				insertIntoIndex = this;
 			}
 		} else if (binding instanceof ITypedef) {
-			pdomBinding = new PDOMCTypedef(this, parent, (ITypedef)binding);
+			pdomBinding = new PDOMCTypedef(this, parent, (ITypedef) binding);
 		}
 
 		if (pdomBinding != null) {
@@ -231,7 +231,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	}
 
 	/**
-	 * Adapts the parent of the given binding to an object contained in this linkage. May return 
+	 * Adapts the parent of the given binding to an object contained in this linkage. May return
 	 * <code>null</code> if the binding cannot be adapted or the binding does not exist and addParent
 	 * is set to <code>false</code>.
 	 * @param binding the binding to adapt
@@ -244,13 +244,13 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	 */
 	final private PDOMNode getAdaptedParent(IBinding binding) throws CoreException {
 		if (binding instanceof IIndexBinding) {
-			IIndexBinding ib= (IIndexBinding) binding;
+			IIndexBinding ib = (IIndexBinding) binding;
 			if (ib.isFileLocal()) {
 				return null;
 			}
-		} 
-		
-		IBinding owner= binding.getOwner();
+		}
+
+		IBinding owner = binding.getOwner();
 		if (owner == null) {
 			return this;
 		}
@@ -265,61 +265,63 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	public final PDOMBinding adaptBinding(final IBinding inputBinding, boolean includeLocal) throws CoreException {
 		return adaptBinding(null, inputBinding, includeLocal ? FILE_LOCAL_REC_DUMMY : null);
 	}
-	
-	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding, long[] localToFileHolder) throws CoreException {
+
+	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding, long[] localToFileHolder)
+			throws CoreException {
 		if (inputBinding instanceof CompositeIndexBinding) {
-			inputBinding= ((CompositeIndexBinding) inputBinding).getRawBinding();
+			inputBinding = ((CompositeIndexBinding) inputBinding).getRawBinding();
 		}
-		
+
 		if (cannotAdapt(inputBinding)) {
 			return null;
 		}
-		PDOMBinding result= attemptFastAdaptBinding(inputBinding);
+		PDOMBinding result = attemptFastAdaptBinding(inputBinding);
 		if (result != null) {
 			return result;
 		}
 
 		// assign names to anonymous types.
-		IBinding binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(inputBinding);
+		IBinding binding = PDOMASTAdapter.getAdapterForAnonymousASTBinding(inputBinding);
 		if (binding == null) {
 			return null;
 		}
 
-		result= doAdaptBinding(parent, binding, localToFileHolder);
+		result = doAdaptBinding(parent, binding, localToFileHolder);
 		if (result != null) {
 			getPDOM().putCachedResult(inputBinding, result);
 		}
 		return result;
 	}
 
-	private final PDOMBinding doAdaptBinding(PDOMNode parent, final IBinding binding, long[] localToFileHolder) throws CoreException {
+	private final PDOMBinding doAdaptBinding(PDOMNode parent, final IBinding binding, long[] localToFileHolder)
+			throws CoreException {
 		if (parent == null) {
-			parent= getAdaptedParent(binding);
+			parent = getAdaptedParent(binding);
 		}
 		if (parent == this) {
-			final int[] bindingTypes = new int[] {getBindingType(binding)};
+			final int[] bindingTypes = new int[] { getBindingType(binding) };
 			final char[] nameChars = binding.getNameCharArray();
-			PDOMBinding nonLocal= FindBinding.findBinding(getIndex(), this, nameChars, bindingTypes, 0);
-			if (localToFileHolder == null)
-				return nonLocal;
-			
-			long localToFileRec= getLocalToFileRec(parent, binding, nonLocal);
-			if (localToFileRec == 0)
-				return nonLocal;
-			localToFileHolder[0]= localToFileRec;
-			return FindBinding.findBinding(getIndex(), this, nameChars, bindingTypes, localToFileRec);
-		} 
-		if (parent instanceof IPDOMMemberOwner) {
-			final int[] bindingTypes = new int[] {getBindingType(binding)};
-			final char[] nameChars = binding.getNameCharArray();
-			PDOMBinding nonLocal= FindBinding.findBinding(parent, this, nameChars, bindingTypes, 0);
+			PDOMBinding nonLocal = FindBinding.findBinding(getIndex(), this, nameChars, bindingTypes, 0);
 			if (localToFileHolder == null)
 				return nonLocal;
 
-			long localToFileRec= getLocalToFileRec(parent, binding, nonLocal);
+			long localToFileRec = getLocalToFileRec(parent, binding, nonLocal);
 			if (localToFileRec == 0)
 				return nonLocal;
-			localToFileHolder[0]= localToFileRec;
+			localToFileHolder[0] = localToFileRec;
+			return FindBinding.findBinding(getIndex(), this, nameChars, bindingTypes, localToFileRec);
+		}
+		if (parent instanceof IPDOMMemberOwner) {
+			final int[] bindingTypes = new int[] { getBindingType(binding) };
+			final char[] nameChars = binding.getNameCharArray();
+			PDOMBinding nonLocal = FindBinding.findBinding(parent, this, nameChars, bindingTypes, 0);
+			if (localToFileHolder == null)
+				return nonLocal;
+
+			long localToFileRec = getLocalToFileRec(parent, binding, nonLocal);
+			if (localToFileRec == 0)
+				return nonLocal;
+			localToFileHolder[0] = localToFileRec;
 			return FindBinding.findBinding(parent, this, nameChars, bindingTypes, localToFileRec);
 		}
 		return null;
@@ -347,7 +349,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		assert false;
 		return null;
 	}
-	
+
 	@Override
 	public IBTreeComparator getIndexComparator() {
 		return new FindBinding.DefaultBindingBTreeComparator(this);
@@ -358,7 +360,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return PDOMCGlobalScope.INSTANCE;
 	}
 
-	@Override 
+	@Override
 	public PDOMBinding addTypeBinding(IBinding type) throws CoreException {
 		return addBinding(type, null);
 	}
@@ -367,11 +369,11 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	public IBinding unmarshalBinding(ITypeMarshalBuffer buffer) throws CoreException {
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a binding, first byte=" + buffer.getByte())); //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException {
-		short firstBytes= buffer.getShort();
-		switch((firstBytes & ITypeMarshalBuffer.KIND_MASK)) {
+		short firstBytes = buffer.getShort();
+		switch ((firstBytes & ITypeMarshalBuffer.KIND_MASK)) {
 		case ITypeMarshalBuffer.ARRAY_TYPE:
 			return CArrayType.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.BASIC_TYPE:
@@ -385,19 +387,19 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		case ITypeMarshalBuffer.PROBLEM_TYPE:
 			return ProblemType.unmarshal(firstBytes, buffer);
 		}
-		
+
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first bytes=" + firstBytes)); //$NON-NLS-1$
 	}
-	
+
 	@Override
-	public ICPPEvaluation unmarshalEvaluation(ITypeMarshalBuffer buffer)
-			throws CoreException {
-		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an evaluation, first byte=" + buffer.getByte())); //$NON-NLS-1$
+	public ICPPEvaluation unmarshalEvaluation(ITypeMarshalBuffer buffer) throws CoreException {
+		throw new CoreException(
+				CCorePlugin.createStatus("Cannot unmarshal an evaluation, first byte=" + buffer.getByte())); //$NON-NLS-1$
 	}
-	
+
 	@Override
-	public ICPPExecution unmarshalExecution(ITypeMarshalBuffer buffer)
-			throws CoreException {
-		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an execution, first byte=" + buffer.getByte())); //$NON-NLS-1$
+	public ICPPExecution unmarshalExecution(ITypeMarshalBuffer buffer) throws CoreException {
+		throw new CoreException(
+				CCorePlugin.createStatus("Cannot unmarshal an execution, first byte=" + buffer.getByte())); //$NON-NLS-1$
 	}
 }

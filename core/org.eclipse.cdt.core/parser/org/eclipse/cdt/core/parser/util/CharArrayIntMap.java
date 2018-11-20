@@ -35,21 +35,22 @@ public class CharArrayIntMap extends CharTable {
 		System.arraycopy(oldValueTable, 0, valueTable, 0, Math.min(size, oldValueTable.length));
 		super.resize(size);
 	}
-	
+
 	@Override
 	public void clear() {
 		super.clear();
-		for( int i = 0; i < capacity(); i++ )
+		for (int i = 0; i < capacity(); i++)
 			valueTable[i] = undefined;
 	}
+
 	@Override
-	public Object clone(){
-	    CharArrayIntMap newMap = (CharArrayIntMap) super.clone();
-	    newMap.valueTable = new int[ capacity() ];
-	    System.arraycopy(valueTable, 0, newMap.valueTable, 0, valueTable.length);
-	    return newMap;
+	public Object clone() {
+		CharArrayIntMap newMap = (CharArrayIntMap) super.clone();
+		newMap.valueTable = new int[capacity()];
+		System.arraycopy(valueTable, 0, newMap.valueTable, 0, valueTable.length);
+		return newMap;
 	}
-	
+
 	public int put(char[] key, int start, int length, int value) {
 		int i = addIndex(key, start, length);
 		int oldvalue = valueTable[i];
@@ -60,20 +61,20 @@ public class CharArrayIntMap extends CharTable {
 	public int put(char[] key, int value) {
 		return put(key, 0, key.length, value);
 	}
-	
+
 	public int get(char[] key, int start, int length) {
 		int i = lookup(key, start, length);
 		if (i >= 0)
 			return valueTable[i];
 		return undefined;
 	}
-	
+
 	public int get(int pos) {
-		if( pos < 0 || pos > currEntry )
+		if (pos < 0 || pos > currEntry)
 			return undefined;
 		return valueTable[pos];
 	}
-	
+
 	public int getKeyLocation(char[] key, int start, int length) {
 		int i = lookup(key, start, length);
 		if (i >= 0)
@@ -82,7 +83,7 @@ public class CharArrayIntMap extends CharTable {
 	}
 
 	public int get(char[] image) {
-		return get( image, 0, image.length );
+		return get(image, 0, image.length);
 	}
 
 	/**
@@ -91,7 +92,7 @@ public class CharArrayIntMap extends CharTable {
 	 */
 	public void putAll(CharArrayIntMap map) {
 		resize(size() + map.size());
-		for(int i=0; i<=map.currEntry; i++) {
+		for (int i = 0; i <= map.currEntry; i++) {
 			put(map.keyTable[i], map.valueTable[i]);
 		}
 	}

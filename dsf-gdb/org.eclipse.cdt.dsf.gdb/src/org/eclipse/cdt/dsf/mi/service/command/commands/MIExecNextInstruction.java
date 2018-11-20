@@ -19,22 +19,21 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *      -exec-next-instruction [count]
  *
  *   Asynchronous command.  Executes one machine instruction.  If the
  * instruction is a function call continues until the function returns.  If
  * the program stops at an instruction in the middle of a source line, the
  * address will be printed as well.
- * 
+ *
  */
-public class MIExecNextInstruction extends MICommand<MIInfo> 
-{
-    public MIExecNextInstruction(IExecutionDMContext dmc) {
-        this(dmc, 1);
-    }
+public class MIExecNextInstruction extends MICommand<MIInfo> {
+	public MIExecNextInstruction(IExecutionDMContext dmc) {
+		this(dmc, 1);
+	}
 
-    public MIExecNextInstruction(IExecutionDMContext dmc, int count) {
-        super(dmc, "-exec-next-instruction", new String[] { Integer.toString(count) }); //$NON-NLS-1$
-    }
+	public MIExecNextInstruction(IExecutionDMContext dmc, int count) {
+		super(dmc, "-exec-next-instruction", new String[] { Integer.toString(count) }); //$NON-NLS-1$
+	}
 }

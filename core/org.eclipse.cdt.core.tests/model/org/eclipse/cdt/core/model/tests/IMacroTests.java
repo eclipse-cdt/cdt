@@ -29,8 +29,8 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.tests.IntegratedCModelTest;
 
 /**
- * IMacroTest - Class for testing IMacro 
- * 
+ * IMacroTest - Class for testing IMacro
+ *
  * @author bnicolle
  *
  */
@@ -40,12 +40,12 @@ public class IMacroTests extends IntegratedCModelTest {
 	 *          containing all its public members named "test*"
 	 */
 	public static Test suite() {
-		TestSuite suite= new TestSuite( IMacroTests.class.getName() );
-		suite.addTest( new IMacroTests("testGetElementName"));
+		TestSuite suite = new TestSuite(IMacroTests.class.getName());
+		suite.addTest(new IMacroTests("testGetElementName"));
 		// TODO Bug# 38740: suite.addTest( new IMacroTest("testGetIdentifierList"));
 		// TODO Bug# 38740: suite.addTest( new IMacroTest("testGetTokenSequence"));
 		return suite;
-	}		
+	}
 
 	/**
 	 * @param name
@@ -72,52 +72,37 @@ public class IMacroTests extends IntegratedCModelTest {
 
 	public void testGetElementName() throws CModelException {
 		ITranslationUnit tu = getTU();
-		List arrayElements = tu.getChildrenOfType( ICElement.C_MACRO );
+		List arrayElements = tu.getChildrenOfType(ICElement.C_MACRO);
 
-		String expectedList[] =  new String[] {
-			"SINGLETON",
-			"NUMBER",
-			"PRINT"
-		};
-		assertEquals( expectedList.length, arrayElements.size() );
-		for( int i=0; i<expectedList.length; i++ )
-		{
+		String expectedList[] = new String[] { "SINGLETON", "NUMBER", "PRINT" };
+		assertEquals(expectedList.length, arrayElements.size());
+		for (int i = 0; i < expectedList.length; i++) {
 			IMacro iMacro = (IMacro) arrayElements.get(i);
-			assertEquals( expectedList[i], iMacro.getElementName() );
+			assertEquals(expectedList[i], iMacro.getElementName());
 		}
 	}
-		
+
 	public void testGetIdentifierList() throws CModelException {
 		ITranslationUnit tu = getTU();
-		List arrayElements = tu.getChildrenOfType( ICElement.C_MACRO );
+		List arrayElements = tu.getChildrenOfType(ICElement.C_MACRO);
 
-		String expectedList[] =  new String[] {
-			"",
-			"",
-			"string,msg"
-		};
-		assertEquals( expectedList.length, arrayElements.size() );
-		for( int i=0; i<expectedList.length; i++ )
-		{
+		String expectedList[] = new String[] { "", "", "string,msg" };
+		assertEquals(expectedList.length, arrayElements.size());
+		for (int i = 0; i < expectedList.length; i++) {
 			IMacro iMacro = (IMacro) arrayElements.get(i);
-			assertEquals( expectedList[i], iMacro.getIdentifierList() );
+			assertEquals(expectedList[i], iMacro.getIdentifierList());
 		}
 	}
 
 	public void testGetTokenSequence() throws CModelException {
 		ITranslationUnit tu = getTU();
-		List arrayElements = tu.getChildrenOfType( ICElement.C_MACRO );
+		List arrayElements = tu.getChildrenOfType(ICElement.C_MACRO);
 
-		String expectedList[] =  new String[] {
-			"",
-			"1",
-			"printf(string, msg)"
-		};
-		assertEquals( expectedList.length, arrayElements.size() );
-		for( int i=0; i<expectedList.length; i++ )
-		{
+		String expectedList[] = new String[] { "", "1", "printf(string, msg)" };
+		assertEquals(expectedList.length, arrayElements.size());
+		for (int i = 0; i < expectedList.length; i++) {
 			IMacro iMacro = (IMacro) arrayElements.get(i);
-			assertEquals( expectedList[i], iMacro.getTokenSequence() );
+			assertEquals(expectedList[i], iMacro.getTokenSequence());
 		}
-	}		
+	}
 }

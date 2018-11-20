@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,27 +21,27 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 
 /**
  * Object representing a bit field in the stack command results.
- * 
- * @see PDARegistersCommand 
+ *
+ * @see PDARegistersCommand
  */
 @Immutable
 public class PDABitField {
 
-    final public String fName;
-    final public int fOffset;
-    final public int fCount;
-    final public Map<String, String> fMnemonics;
-    
-    PDABitField(String bitFieldString) {
-        StringTokenizer st = new StringTokenizer(bitFieldString, "   ");
-        
-        fName = st.nextToken();
-        fOffset = Integer.parseInt(st.nextToken());
-        fCount = Integer.parseInt(st.nextToken());
-        
-        fMnemonics = new LinkedHashMap<String, String>(0);
-        while (st.hasMoreTokens()) {
-            fMnemonics.put(st.nextToken(), st.nextToken());
-        }
-    }
+	final public String fName;
+	final public int fOffset;
+	final public int fCount;
+	final public Map<String, String> fMnemonics;
+
+	PDABitField(String bitFieldString) {
+		StringTokenizer st = new StringTokenizer(bitFieldString, "   ");
+
+		fName = st.nextToken();
+		fOffset = Integer.parseInt(st.nextToken());
+		fCount = Integer.parseInt(st.nextToken());
+
+		fMnemonics = new LinkedHashMap<String, String>(0);
+		while (st.hasMoreTokens()) {
+			fMnemonics.put(st.nextToken(), st.nextToken());
+		}
+	}
 }

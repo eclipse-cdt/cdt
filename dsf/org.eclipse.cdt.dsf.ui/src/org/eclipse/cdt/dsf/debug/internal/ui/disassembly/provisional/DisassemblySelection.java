@@ -36,7 +36,7 @@ import org.eclipse.jface.text.Position;
 
 /**
  * Default implementation of {@link IDisassemblySelection}.
- * 
+ *
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -50,7 +50,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 
 	/**
 	 * Create a disassembly selection from a normal text selection and a disassembly part.
-	 * 
+	 *
 	 * @param selection  the text selection
 	 * @param part  the disassembly part
 	 */
@@ -91,7 +91,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 				fStartAddress = null;
 			}
 		}
-		
+
 		try {
 			Position labelPosition = document.getPosition(DisassemblyDocument.CATEGORY_LABELS, offset, true);
 			if (labelPosition != null) {
@@ -103,7 +103,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 			fLabel = null;
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.viewers.ISelection#isEmpty()
 	 */
@@ -203,7 +203,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	public IAddress getStartAddress() {
 		return fStartAddress;
 	}
-	
+
 	/**
 	 * @since 2.2
 	 */

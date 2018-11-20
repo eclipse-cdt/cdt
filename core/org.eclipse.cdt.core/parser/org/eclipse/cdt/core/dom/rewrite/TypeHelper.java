@@ -41,10 +41,10 @@ public class TypeHelper {
 	 * Returns <code>true</code> if it is preferable to pass parameters of the given type to methods
 	 * by reference, not by value. A parameter should be passed by reference if it is
 	 * a <code>class</code>, <code>struct</code>, or <code>union</code>, and either has a nontrivial
-	 * copy constructor or nontrivial destructor, or is larger than pointer. 
-	 * 
-	 * @param type the type in question. 
-	 * @param ast the AST used as a context. 
+	 * copy constructor or nontrivial destructor, or is larger than pointer.
+	 *
+	 * @param type the type in question.
+	 * @param ast the AST used as a context.
 	 * @return <code>true</code> is passing by reverence is preferable.
 	 */
 	public static boolean shouldBePassedByReference(IType type, IASTTranslationUnit ast) {
@@ -54,8 +54,7 @@ public class TypeHelper {
 				CPPSemantics.pushLookupPoint(ast);
 				if (type instanceof ICPPClassType) {
 					ICPPClassType classType = ((ICPPClassType) type);
-					if (!TypeTraits.hasTrivialCopyCtor(classType) ||
-							!TypeTraits.hasTrivialDestructor(classType)) {
+					if (!TypeTraits.hasTrivialCopyCtor(classType) || !TypeTraits.hasTrivialDestructor(classType)) {
 						return true;
 					}
 				}

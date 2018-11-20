@@ -37,16 +37,16 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CASTDeclarator extends ASTAttributeOwner implements IASTDeclarator, IASTAmbiguityParent {
-    private IASTInitializer initializer;
-    private IASTName name;
-    private IASTDeclarator nestedDeclarator;
-    private IASTPointerOperator[] pointerOps;
-    private int pointerOpsPos= -1;
+	private IASTInitializer initializer;
+	private IASTName name;
+	private IASTDeclarator nestedDeclarator;
+	private IASTPointerOperator[] pointerOps;
+	private int pointerOpsPos = -1;
 
-    public CASTDeclarator() {
+	public CASTDeclarator() {
 	}
 
-    public CASTDeclarator(IASTName name) {
+	public CASTDeclarator(IASTName name) {
 		setName(name);
 	}
 
@@ -77,137 +77,142 @@ public class CASTDeclarator extends ASTAttributeOwner implements IASTDeclarator,
 
 	@Override
 	public IASTPointerOperator[] getPointerOperators() {
-        if (pointerOps == null) return IASTPointerOperator.EMPTY_ARRAY;
-        pointerOps = ArrayUtil.trimAt(IASTPointerOperator.class, pointerOps, pointerOpsPos);
-        return pointerOps;
-    }
+		if (pointerOps == null)
+			return IASTPointerOperator.EMPTY_ARRAY;
+		pointerOps = ArrayUtil.trimAt(IASTPointerOperator.class, pointerOps, pointerOpsPos);
+		return pointerOps;
+	}
 
-    @Override
+	@Override
 	public IASTDeclarator getNestedDeclarator() {
-        return nestedDeclarator;
-    }
+		return nestedDeclarator;
+	}
 
-    @Override
+	@Override
 	public IASTName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public IASTInitializer getInitializer() {
-        return initializer;
-    }
+		return initializer;
+	}
 
-    @Override
+	@Override
 	public void setInitializer(IASTInitializer initializer) {
-        assertNotFrozen();
-        this.initializer = initializer;
-        if (initializer != null) {
+		assertNotFrozen();
+		this.initializer = initializer;
+		if (initializer != null) {
 			initializer.setParent(this);
 			initializer.setPropertyInParent(INITIALIZER);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void addPointerOperator(IASTPointerOperator operator) {
-        assertNotFrozen();
-    	if (operator != null) {
-    		operator.setParent(this);
-    		operator.setPropertyInParent(POINTER_OPERATOR);
-    		pointerOps = ArrayUtil.appendAt(IASTPointerOperator.class, pointerOps, ++pointerOpsPos, operator);
-    	}
-    }
+		assertNotFrozen();
+		if (operator != null) {
+			operator.setParent(this);
+			operator.setPropertyInParent(POINTER_OPERATOR);
+			pointerOps = ArrayUtil.appendAt(IASTPointerOperator.class, pointerOps, ++pointerOpsPos, operator);
+		}
+	}
 
-    @Override
+	@Override
 	public void setNestedDeclarator(IASTDeclarator nested) {
-        assertNotFrozen();
-        this.nestedDeclarator = nested;
-        if (nested != null) {
+		assertNotFrozen();
+		this.nestedDeclarator = nested;
+		if (nested != null) {
 			nested.setParent(this);
 			nested.setPropertyInParent(NESTED_DECLARATOR);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.name = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.name = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(DECLARATOR_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclarators) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclarators) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        for (int i = 0; i <= pointerOpsPos; i++) {
-            if (!pointerOps[i].accept(action))
-            	return false;
-        }
-
-        if (!acceptByAttributeSpecifiers(action)) return false;
-
-        if (getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR && nestedDeclarator == null) {
-            if (getParent() instanceof IASTDeclarator) {
-                IASTDeclarator outermostDeclarator = (IASTDeclarator) getParent();
-                while (outermostDeclarator.getParent() instanceof IASTDeclarator)
-                    outermostDeclarator = (IASTDeclarator) outermostDeclarator.getParent();
-                if (outermostDeclarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR &&
-                		name != null && !name.accept(action)) {
-                	return false;
-                }
-            } else if (name != null && !name.accept(action)) {
-            	return false;
-            }
+		for (int i = 0; i <= pointerOpsPos; i++) {
+			if (!pointerOps[i].accept(action))
+				return false;
 		}
-        if (nestedDeclarator != null && !nestedDeclarator.accept(action)) {
-        	return false;
-        }
 
-        if (!postAccept(action))
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+
+		if (getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR && nestedDeclarator == null) {
+			if (getParent() instanceof IASTDeclarator) {
+				IASTDeclarator outermostDeclarator = (IASTDeclarator) getParent();
+				while (outermostDeclarator.getParent() instanceof IASTDeclarator)
+					outermostDeclarator = (IASTDeclarator) outermostDeclarator.getParent();
+				if (outermostDeclarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR && name != null
+						&& !name.accept(action)) {
+					return false;
+				}
+			} else if (name != null && !name.accept(action)) {
+				return false;
+			}
+		}
+		if (nestedDeclarator != null && !nestedDeclarator.accept(action)) {
+			return false;
+		}
+
+		if (!postAccept(action))
 			return false;
 
 		if (action.shouldVisitDeclarators && action.leave(this) == ASTVisitor.PROCESS_ABORT) {
 			return false;
 		}
 		return true;
-    }
+	}
 
-    protected boolean postAccept(ASTVisitor action) {
-        if (initializer != null && !initializer.accept(action))
-        	return false;
+	protected boolean postAccept(ASTVisitor action) {
+		if (initializer != null && !initializer.accept(action))
+			return false;
 
 		return true;
-    }
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
 		if (n == this.name) {
 			IASTNode getParent = getParent();
-	        boolean fnDtor = (this instanceof IASTFunctionDeclarator);
+			boolean fnDtor = (this instanceof IASTFunctionDeclarator);
 			if (getParent instanceof IASTDeclaration) {
-                if (getParent instanceof IASTFunctionDefinition)
-                    return r_definition;
-                if (getParent instanceof IASTSimpleDeclaration) {
+				if (getParent instanceof IASTFunctionDefinition)
+					return r_definition;
+				if (getParent instanceof IASTSimpleDeclaration) {
 					IASTSimpleDeclaration sd = (IASTSimpleDeclaration) getParent;
-	                int storage = sd.getDeclSpecifier().getStorageClass();
+					int storage = sd.getDeclSpecifier().getStorageClass();
 					if (getInitializer() != null || storage == IASTDeclSpecifier.sc_typedef)
-	                    return r_definition;
+						return r_definition;
 
 					if (storage == IASTDeclSpecifier.sc_extern || storage == IASTDeclSpecifier.sc_static) {
-	                    return r_declaration;
-	                }
+						return r_declaration;
+					}
 
 					return fnDtor ? r_declaration : r_definition;
-                }
-            }
+				}
+			}
 			if (getParent instanceof IASTTypeId)
 				return r_reference;
 			if (getParent instanceof IASTDeclarator) {
@@ -215,35 +220,35 @@ public class CASTDeclarator extends ASTAttributeOwner implements IASTDeclarator,
 				while (t instanceof IASTDeclarator)
 					t = t.getParent();
 				if (t instanceof IASTDeclaration) {
-                    if (getParent instanceof IASTFunctionDefinition)
-                        return r_definition;
-                    if (getParent instanceof IASTSimpleDeclaration) {
+					if (getParent instanceof IASTFunctionDefinition)
+						return r_definition;
+					if (getParent instanceof IASTSimpleDeclaration) {
 						if (getInitializer() != null)
-                            return r_definition;
+							return r_definition;
 						IASTSimpleDeclaration sd = (IASTSimpleDeclaration) getParent;
-	                    int storage = sd.getDeclSpecifier().getStorageClass();
-                        if (storage == IASTDeclSpecifier.sc_extern || storage == IASTDeclSpecifier.sc_static) {
-                            return r_declaration;
-                        }
-                    }
-                    return fnDtor ? r_declaration : r_definition;
-                }
+						int storage = sd.getDeclSpecifier().getStorageClass();
+						if (storage == IASTDeclSpecifier.sc_extern || storage == IASTDeclSpecifier.sc_static) {
+							return r_declaration;
+						}
+					}
+					return fnDtor ? r_declaration : r_definition;
+				}
 				if (t instanceof IASTTypeId)
 					return r_reference;
 			}
 
-	        if (getParent instanceof IASTParameterDeclaration)
-	            return (n.toCharArray().length > 0) ? r_definition : r_declaration;
+			if (getParent instanceof IASTParameterDeclaration)
+				return (n.toCharArray().length > 0) ? r_definition : r_declaration;
 		}
 		return r_unclear;
 	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == nestedDeclarator) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            nestedDeclarator= (IASTDeclarator) other;
-        }
+		if (child == nestedDeclarator) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			nestedDeclarator = (IASTDeclarator) other;
+		}
 	}
 }

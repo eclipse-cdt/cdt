@@ -46,8 +46,7 @@ public class CoreBuildContainerLaunchConfigProvider extends AbstractLaunchConfig
 
 	@Override
 	public boolean supports(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
-		return target != null && ContainerTargetTypeProvider.TYPE_ID
-				.equals(target.getTypeId());
+		return target != null && ContainerTargetTypeProvider.TYPE_ID.equals(target.getTypeId());
 	}
 
 	@Override
@@ -66,10 +65,8 @@ public class CoreBuildContainerLaunchConfigProvider extends AbstractLaunchConfig
 			if (configMap == null) {
 				configMap = new HashMap<>();
 			}
-			String connection = target.getAttribute(
-					IContainerLaunchTarget.ATTR_CONNECTION_URI, ""); //$NON-NLS-1$
-			String imageId = target
-					.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, ""); //$NON-NLS-1$
+			String connection = target.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, ""); //$NON-NLS-1$
+			String imageId = target.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, ""); //$NON-NLS-1$
 			String imageName = connection + "-" + imageId; //$NON-NLS-1$
 			config = configMap.get(imageName);
 			if (config == null) {
@@ -81,15 +78,11 @@ public class CoreBuildContainerLaunchConfigProvider extends AbstractLaunchConfig
 		return config;
 	}
 
-	private String getImageName(ILaunchConfiguration config)
-			throws CoreException {
+	private String getImageName(ILaunchConfiguration config) throws CoreException {
 		IProject project = config.getMappedResources()[0].getProject();
-		ICBuildConfiguration cconfig = project.getActiveBuildConfig()
-				.getAdapter(ICBuildConfiguration.class);
-		String image = cconfig.getToolChain()
-				.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
-		String connection = cconfig.getToolChain()
-				.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI); // $NON-NLS-1$
+		ICBuildConfiguration cconfig = project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class);
+		String image = cconfig.getToolChain().getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
+		String connection = cconfig.getToolChain().getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI); // $NON-NLS-1$
 		String imageName = "unknown"; //$NON-NLS-1$
 		if (connection != null && image != null) {
 			imageName = connection + "-" + image; //$NON-NLS-1$
@@ -105,40 +98,29 @@ public class CoreBuildContainerLaunchConfigProvider extends AbstractLaunchConfig
 
 		// Set the project and the connection
 		IProject project = descriptor.getAdapter(IProject.class);
-		wc.setAttribute(
-				ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-				project.getName());
+		wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getName());
 		wc.setAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI,
-				target.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI,
-						null));
-		wc.setAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, target
-				.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, null));
+				target.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, null));
+		wc.setAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID,
+				target.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, null));
 
 		// DSF settings...use GdbUIPlugin preference store for defaults
-		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault()
-				.getPreferenceStore();
+		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
 		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
-				preferenceStore.getString(
-						IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND));
+				preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND));
 		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT,
-				preferenceStore.getString(
-						IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT));
+				preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT));
 		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-				preferenceStore.getBoolean(
-						IGdbDebugPreferenceConstants.PREF_DEFAULT_NON_STOP));
+				preferenceStore.getBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_NON_STOP));
 		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
-		wc.setAttribute(
-				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
+		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
 				IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
-		wc.setAttribute(
-				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
+		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
 				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
-		wc.setAttribute(
-				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
+		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_MODE_DEFAULT);
-		wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
-				(String) null); // default is the project directory
+		wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null); // default is the project directory
 
 		wc.setMappedResources(new IResource[] { project });
 	}
@@ -163,10 +145,8 @@ public class CoreBuildContainerLaunchConfigProvider extends AbstractLaunchConfig
 
 	@Override
 	public boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException {
-		for (Entry<IProject, Map<String, ILaunchConfiguration>> entry : configs
-				.entrySet()) {
-			for (Entry<String, ILaunchConfiguration> innerEntry : entry
-					.getValue().entrySet()) {
+		for (Entry<IProject, Map<String, ILaunchConfiguration>> entry : configs.entrySet()) {
+			for (Entry<String, ILaunchConfiguration> innerEntry : entry.getValue().entrySet()) {
 				if (configuration.equals(innerEntry.getValue())) {
 					entry.getValue().remove(innerEntry.getKey());
 					return true;

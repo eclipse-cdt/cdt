@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ public class InstructionPointerImageProvider implements IAnnotationImageProvider
 	 */
 	@Override
 	public Image getManagedImage(Annotation annotation) {
-		return ((IPAnnotation)annotation).getImage();
+		return ((IPAnnotation) annotation).getImage();
 	}
 
 	/* (non-Javadoc)
@@ -54,5 +54,5 @@ public class InstructionPointerImageProvider implements IAnnotationImageProvider
 	public ImageDescriptor getImageDescriptor(String imageDescritporId) {
 		return null;
 	}
-	
+
 }

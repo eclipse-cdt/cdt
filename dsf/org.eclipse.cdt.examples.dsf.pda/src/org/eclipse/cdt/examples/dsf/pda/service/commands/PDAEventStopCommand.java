@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,30 +18,30 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Sets what events cause the execution to stop.
- * 
+ *
  * <pre>
  *    C: eventstop {event_name} {0|1}
  *    R: ok
  *    ...
  *    E: suspended event {event_name}
  * </pre>
- * 
- * Where event_name could be <code>unimpinstr</code> or <code>nosuchlabel</code>.  
+ *
+ * Where event_name could be <code>unimpinstr</code> or <code>nosuchlabel</code>.
  */
 @Immutable
 public class PDAEventStopCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public enum Event { UNIMPINSTR, NOSUCHLABEL };
-    
-    public PDAEventStopCommand(PDAVirtualMachineDMContext context, Event event, boolean enable) {
-        super(context, 
-              "eventstop " + 
-              (event == Event.UNIMPINSTR ? "unimpinstr " : "nosuchlabel ") + 
-              (enable ? "1" : "0"));
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public enum Event {
+		UNIMPINSTR, NOSUCHLABEL
+	};
+
+	public PDAEventStopCommand(PDAVirtualMachineDMContext context, Event event, boolean enable) {
+		super(context,
+				"eventstop " + (event == Event.UNIMPINSTR ? "unimpinstr " : "nosuchlabel ") + (enable ? "1" : "0"));
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

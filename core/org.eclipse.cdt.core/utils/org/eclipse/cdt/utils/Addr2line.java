@@ -30,7 +30,7 @@ public class Addr2line {
 	private BufferedReader stdout;
 	private BufferedWriter stdin;
 	private String lastaddr, lastsymbol, lastline;
-	private static final Pattern OUTPUT_PATTERN = Pattern.compile("(.*)( \\(discriminator.*\\))");  //$NON-NLS-1$
+	private static final Pattern OUTPUT_PATTERN = Pattern.compile("(.*)( \\(discriminator.*\\))"); //$NON-NLS-1$
 	//private boolean isDisposed = false;
 
 	public Addr2line(String command, String[] params, String file) throws IOException {
@@ -40,14 +40,14 @@ public class Addr2line {
 	public Addr2line(String command, String file) throws IOException {
 		this(command, new String[0], file);
 	}
-	
+
 	public Addr2line(String file) throws IOException {
 		this("addr2line", file); //$NON-NLS-1$
 	}
 
 	protected void init(String command, String[] params, String file) throws IOException {
 		if (params == null || params.length == 0) {
-			args = new String[] {command, "-C", "-f", "-e", file}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			args = new String[] { command, "-C", "-f", "-e", file }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
 			args = new String[params.length + 1];
 			args[0] = command;
@@ -55,16 +55,16 @@ public class Addr2line {
 		}
 		addr2line = ProcessFactory.getFactory().exec(args);
 		stdin = new BufferedWriter(new OutputStreamWriter(addr2line.getOutputStream()));
-		stdout = new BufferedReader(new InputStreamReader(addr2line.getInputStream()));			
+		stdout = new BufferedReader(new InputStreamReader(addr2line.getInputStream()));
 	}
-	
+
 	protected void getOutput(String address) throws IOException {
-		if ( address.equals(lastaddr) == false ) {
-				stdin.write(address + "\n"); //$NON-NLS-1$
-				stdin.flush();
-				lastsymbol = stdout.readLine();
-				lastline = stdout.readLine();
-				lastaddr = address;
+		if (address.equals(lastaddr) == false) {
+			stdin.write(address + "\n"); //$NON-NLS-1$
+			stdin.flush();
+			lastsymbol = stdout.readLine();
+			lastline = stdout.readLine();
+			lastaddr = address;
 		}
 	}
 
@@ -76,7 +76,7 @@ public class Addr2line {
 	public String getFunction(IAddress address) throws IOException {
 		getOutput(address.toString(16));
 		return lastsymbol;
-	}	
+	}
 
 	/**
 	 * The format of the output:
@@ -115,8 +115,8 @@ public class Addr2line {
 		// since the symbol may not exactly align with debug info.
 		// In C line number 0 is invalid, line starts at 1 for file, we use
 		// this for validation.
-		
-		//IPF_TODO: check 
+
+		//IPF_TODO: check
 		for (int i = 0; i <= 20; i += 4, address = address.add(i)) {
 			String line = getLine(address);
 			line = parserOutput(line);
@@ -126,7 +126,7 @@ public class Addr2line {
 				if (!number.startsWith("0")) { //$NON-NLS-1$
 					try {
 						return Integer.parseInt(number);
-					} catch(Exception ex) {
+					} catch (Exception ex) {
 						return -1;
 					}
 				}
@@ -139,13 +139,13 @@ public class Addr2line {
 		try {
 			stdout.close();
 			stdin.close();
-			addr2line.getErrorStream().close();		
+			addr2line.getErrorStream().close();
 		} catch (IOException e) {
 		}
 		addr2line.destroy();
 		//isDisposed = true;
 	}
-	
+
 	private String parserOutput(String line) {
 		Matcher matcher = OUTPUT_PATTERN.matcher(line);
 		if (matcher.matches() && matcher.groupCount() > 1) {
@@ -154,5 +154,3 @@ public class Addr2line {
 		return line;
 	}
 }
-
-

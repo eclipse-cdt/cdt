@@ -48,7 +48,8 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 		public static ConditionalResolution createFrom(IConfigurationElement configurationElement) {
 			String rawPattern = configurationElement.getAttribute("messagePattern"); //$NON-NLS-1$
 			try {
-				return new ConditionalResolution(configurationElement, rawPattern != null ? Pattern.compile(rawPattern) : null);
+				return new ConditionalResolution(configurationElement,
+						rawPattern != null ? Pattern.compile(rawPattern) : null);
 			} catch (PatternSyntaxException e) {
 				CodanUIActivator.log("Invalid message pattern: " + rawPattern); //$NON-NLS-1$
 			}
@@ -62,7 +63,7 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 
 		public boolean isApplicableFor(IMarker marker) {
 			if (resolutionInstance instanceof ICodanMarkerResolution) {
-				if(!((ICodanMarkerResolution) resolutionInstance).isApplicable(marker)) {
+				if (!((ICodanMarkerResolution) resolutionInstance).isApplicable(marker)) {
 					return false;
 				}
 			}
@@ -117,19 +118,17 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 		ArrayList<IMarkerResolution> resolutions = new ArrayList<IMarkerResolution>();
 
 		if (candidates != null) {
-			candidates.stream()
-				.filter(candidate -> candidate.isApplicableFor(marker))
-				.peek(candidate -> candidate.setMarkerArguments(marker))
-				.map(ConditionalResolution::getResolution)
-				.forEach(resolutions::add);
+			candidates.stream().filter(candidate -> candidate.isApplicableFor(marker))
+					.peek(candidate -> candidate.setMarkerArguments(marker)).map(ConditionalResolution::getResolution)
+					.forEach(resolutions::add);
 		}
 
-		universalResolutions.stream()
-			.filter(res -> !(res instanceof ICodanMarkerResolution) || ((ICodanMarkerResolution) res).isApplicable(marker))
-			.forEach(resolutions::add);
+		universalResolutions.stream().filter(
+				res -> !(res instanceof ICodanMarkerResolution) || ((ICodanMarkerResolution) res).isApplicable(marker))
+				.forEach(resolutions::add);
 
 		return resolutions.stream().peek(res -> {
-			if(res instanceof ICodanMarkerResolutionExtension) {
+			if (res instanceof ICodanMarkerResolutionExtension) {
 				((ICodanMarkerResolutionExtension) res).prepareFor(marker);
 			}
 		}).toArray(IMarkerResolution[]::new);
@@ -141,7 +140,8 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 	 */
 
 	private static synchronized void readExtensions() {
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CodanUIActivator.PLUGIN_ID, EXTENSION_POINT_NAME);
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CodanUIActivator.PLUGIN_ID,
+				EXTENSION_POINT_NAME);
 		if (ep == null)
 			return;
 		try {
@@ -174,15 +174,14 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 				return;
 			}
 			addResolution(id, candidate);
-		}
-		else if (elementName.equals("universalResolution")) { //$NON-NLS-1$
+		} else if (elementName.equals("universalResolution")) { //$NON-NLS-1$
 			universalResolutions.add(instantiateResolution(configurationElement));
 		}
 	}
 
 	private static IMarkerResolution instantiateResolution(IConfigurationElement element) {
 		try {
-			return  (IMarkerResolution) element.createExecutableExtension("class");//$NON-NLS-1$
+			return (IMarkerResolution) element.createExecutableExtension("class");//$NON-NLS-1$
 		} catch (CoreException e) {
 			CodanUIActivator.log(e);
 		}

@@ -46,7 +46,7 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 
 	/**
 	 * Creates a translation unit context.
-	 * 
+	 *
 	 * @param type the context type
 	 * @param document the document
 	 * @param completionOffset the completion position within the document
@@ -56,25 +56,25 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 	protected TranslationUnitContext(TemplateContextType type, IDocument document, int completionOffset,
 			int completionLength, ITranslationUnit translationUnit) {
 		super(type, document, completionOffset, completionLength);
-		fTranslationUnit= translationUnit;
-		fIsManaged= false;
+		fTranslationUnit = translationUnit;
+		fIsManaged = false;
 	}
-	
+
 	/**
 	 * Creates a translation unit context.
-	 * 
+	 *
 	 * @param type the context type
 	 * @param document the document
 	 * @param completionPosition the completion position within the document
 	 * @param translationUnit the translation unit represented by the document
 	 */
-	protected TranslationUnitContext(TemplateContextType type, IDocument document, 
-			Position completionPosition, ITranslationUnit translationUnit) {
+	protected TranslationUnitContext(TemplateContextType type, IDocument document, Position completionPosition,
+			ITranslationUnit translationUnit) {
 		super(type, document, completionPosition);
-		fTranslationUnit= translationUnit;
-		fIsManaged= true;
+		fTranslationUnit = translationUnit;
+		fIsManaged = true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.templates.DocumentTemplateContext#canEvaluate(org.eclipse.jface.text.templates.Template)
 	 */
@@ -82,36 +82,32 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 	public boolean canEvaluate(Template template) {
 		if (fForceEvaluation)
 			return true;
-		
-		String key= getKey();
-		return template.matches(key, getContextType().getId())
-			&& key.length() != 0 && template.getName().startsWith(key);
+
+		String key = getKey();
+		return template.matches(key, getContextType().getId()) && key.length() != 0
+				&& template.getName().startsWith(key);
 	}
-
-
 
 	/*
 	 * @see org.eclipse.cdt.internal.corext.template.DocumentTemplateContext#getKey()
 	 */
 	@Override
 	public String getKey() {
-		if (getCompletionLength() == 0)		
+		if (getCompletionLength() == 0)
 			return super.getKey();
 
 		try {
-			IDocument document= getDocument();
+			IDocument document = getDocument();
 
-			int start= getStart();
-			int end= getCompletionOffset();
-			return start <= end
-			? document.get(start, end - start)
-					: ""; //$NON-NLS-1$
+			int start = getStart();
+			int end = getCompletionOffset();
+			return start <= end ? document.get(start, end - start) : ""; //$NON-NLS-1$
 
 		} catch (BadLocationException e) {
-			return super.getKey();			
+			return super.getKey();
 		}
 	}
-	
+
 	/**
 	 * Returns the translation unit if one is associated with this context, <code>null</code> otherwise.
 	 */
@@ -128,10 +124,10 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 			return null;
 
 		try {
-			ICElement element= fTranslationUnit.getElementAtOffset(getStart());
+			ICElement element = fTranslationUnit.getElementAtOffset(getStart());
 			while (element != null && element.getElementType() != elementType)
-				element= element.getParent();
-			
+				element = element.getParent();
+
 			return element;
 
 		} catch (CModelException e) {
@@ -141,40 +137,39 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 
 	/**
 	 * Sets whether evaluation is forced or not.
-	 * 
+	 *
 	 * @param evaluate <code>true</code> in order to force evaluation,
 	 *            <code>false</code> otherwise
 	 */
 	public void setForceEvaluation(boolean evaluate) {
-		fForceEvaluation= evaluate;	
+		fForceEvaluation = evaluate;
 	}
-	
+
 	/**
 	 * Get the associated <code>ICProject</code>.
 	 * @return the associated <code>ICProject</code> or <code>null</code>
 	 */
 	protected ICProject getCProject() {
-		ITranslationUnit translationUnit= getTranslationUnit();
-		ICProject project= translationUnit == null ? null : translationUnit.getCProject();
+		ITranslationUnit translationUnit = getTranslationUnit();
+		ICProject project = translationUnit == null ? null : translationUnit.getCProject();
 		return project;
-	}	
+	}
 
 	/**
 	 * Get the indentation level at the position of code completion.
 	 * @return the indentation level at the position of code completion
 	 */
 	protected int getIndentationLevel() {
-		int start= getStart();
-		IDocument document= getDocument();
+		int start = getStart();
+		IDocument document = getDocument();
 		try {
-			IRegion region= document.getLineInformationOfOffset(start);
-			String lineContent= document.get(region.getOffset(), region.getLength());
-			ICProject project= getCProject();
-			return Strings.computeIndentUnits(lineContent, CodeFormatterUtil.getTabWidth(project), CodeFormatterUtil.getIndentWidth(project));
+			IRegion region = document.getLineInformationOfOffset(start);
+			String lineContent = document.get(region.getOffset(), region.getLength());
+			ICProject project = getCProject();
+			return Strings.computeIndentUnits(lineContent, CodeFormatterUtil.getTabWidth(project),
+					CodeFormatterUtil.getIndentWidth(project));
 		} catch (BadLocationException e) {
 			return 0;
 		}
-	}	
+	}
 }
-
-

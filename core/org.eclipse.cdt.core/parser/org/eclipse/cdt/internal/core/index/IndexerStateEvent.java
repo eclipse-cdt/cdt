@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.index;
 
@@ -18,21 +18,21 @@ import org.eclipse.cdt.core.index.IIndexerStateEvent;
 
 public class IndexerStateEvent implements IIndexerStateEvent {
 
-	public static final int STATE_IDLE= 0;
-	public static final int STATE_BUSY= 1;
-	
+	public static final int STATE_IDLE = 0;
+	public static final int STATE_BUSY = 1;
+
 	private int fState;
 
 	public IndexerStateEvent() {
 		this(STATE_IDLE);
 	}
-	
+
 	public IndexerStateEvent(int state) {
-		fState= state;
+		fState = state;
 	}
 
 	public void setState(int state) {
-		fState= state;
+		fState = state;
 	}
 
 	@Override

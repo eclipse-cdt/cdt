@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *    Institute for Software - initial API and implementation
  *    Sergey Prigogin (Google)
  *    Thomas Corbat (IFS)
@@ -77,7 +77,7 @@ import org.eclipse.cdt.internal.ui.util.NameComposer;
 
 /**
  * The main class of the Extract Constant refactoring.
- * 
+ *
  * @author Mirko Stocker
  */
 public class ExtractConstantRefactoring extends CRefactoring {
@@ -93,8 +93,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 			if (SelectionHelper.nodeMatchesSelection(expression, selectedRegion)) {
 				selectedExpression = expression;
 				return PROCESS_ABORT;
-			} else if (expression instanceof IASTLiteralExpression &&
-					SelectionHelper.isSelectionInsideNode(expression, selectedRegion)) {
+			} else if (expression instanceof IASTLiteralExpression
+					&& SelectionHelper.isSelectionInsideNode(expression, selectedRegion)) {
 				selectedExpression = expression;
 				return PROCESS_ABORT;
 			}
@@ -104,8 +104,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 
 	private static final String PREFIX_FOR_NAME_WITH_LEADING_DIGIT = "_"; //$NON-NLS-1$
 
-	public static final String ID =
-			"org.eclipse.cdt.ui.refactoring.extractconstant.ExtractConstantRefactoring"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.cdt.ui.refactoring.extractconstant.ExtractConstantRefactoring"; //$NON-NLS-1$
 
 	private IASTExpression target;
 	private final ExtractConstantInfo info;
@@ -117,7 +116,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 	}
 
 	@Override
-	public RefactoringStatus checkInitialConditions(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
+	public RefactoringStatus checkInitialConditions(IProgressMonitor monitor)
+			throws CoreException, OperationCanceledException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 12);
 
 		RefactoringStatus status = super.checkInitialConditions(subMonitor.split(8));
@@ -155,7 +155,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		subMonitor.split(1);
 		IScope containingScope = CPPVisitor.getContainingScope(target);
 		IASTTranslationUnit ast = target.getTranslationUnit();
-		info.setNameUsedChecker((String name) -> { 
+		info.setNameUsedChecker((String name) -> {
 			IBinding[] bindingsForName = containingScope.find(name, ast);
 			return bindingsForName.length != 0;
 		});
@@ -183,8 +183,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		}
 		if (expression instanceof IASTBinaryExpression) {
 			IASTBinaryExpression binaryExpression = (IASTBinaryExpression) expression;
-			return isExtractableExpression(binaryExpression.getOperand1()) &&
-					isExtractableExpression(binaryExpression.getOperand2());
+			return isExtractableExpression(binaryExpression.getOperand1())
+					&& isExtractableExpression(binaryExpression.getOperand2());
 		}
 		return false;
 	}
@@ -206,10 +206,10 @@ public class ExtractConstantRefactoring extends CRefactoring {
 				PreferenceConstants.NAME_STYLE_CAPITALIZATION_UPPER_CASE, null);
 		String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
 				PreferenceConstants.NAME_STYLE_CONSTANT_WORD_DELIMITER, "_", null); //$NON-NLS-1$
-		String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
-				PreferenceConstants.NAME_STYLE_CONSTANT_PREFIX, "", null); //$NON-NLS-1$
-		String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
-				PreferenceConstants.NAME_STYLE_CONSTANT_SUFFIX, "", null); //$NON-NLS-1$
+		String prefix = preferences.getString(CUIPlugin.PLUGIN_ID, PreferenceConstants.NAME_STYLE_CONSTANT_PREFIX, "", //$NON-NLS-1$
+				null);
+		String suffix = preferences.getString(CUIPlugin.PLUGIN_ID, PreferenceConstants.NAME_STYLE_CONSTANT_SUFFIX, "", //$NON-NLS-1$
+				null);
 		NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
 		return composer;
 	}
@@ -229,8 +229,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 			@Override
 			public int visit(IASTExpression expression) {
 				if (expression instanceof IASTLiteralExpression) {
-					if (!(expression.getNodeLocations().length == 1 &&
-							expression.getNodeLocations()[0] instanceof IASTMacroExpansionLocation)) {
+					if (!(expression.getNodeLocations().length == 1
+							&& expression.getNodeLocations()[0] instanceof IASTMacroExpansionLocation)) {
 						IASTLiteralExpression literal = (IASTLiteralExpression) expression;
 						result.add(literal);
 					}
@@ -244,16 +244,17 @@ public class ExtractConstantRefactoring extends CRefactoring {
 
 	@Override
 	protected void collectModifications(IProgressMonitor monitor, ModificationCollector collector)
-			throws CoreException, OperationCanceledException{
+			throws CoreException, OperationCanceledException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 10);
 		Collection<IASTExpression> expressionsToReplace = findExpressionsToExtract(subMonitor.split(4));
-		Collection<IASTExpression> expressionsToReplaceInSameContext =
-				filterLiteralsInSameContext(expressionsToReplace, subMonitor.split(3));
+		Collection<IASTExpression> expressionsToReplaceInSameContext = filterLiteralsInSameContext(expressionsToReplace,
+				subMonitor.split(3));
 		replaceLiteralsWithConstant(expressionsToReplaceInSameContext, collector, subMonitor.split(2));
 		insertConstantDeclaration(collector, subMonitor.split(1));
 	}
 
-	private void insertConstantDeclaration(ModificationCollector collector, IProgressMonitor monitor) throws CoreException {
+	private void insertConstantDeclaration(ModificationCollector collector, IProgressMonitor monitor)
+			throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 10);
 
 		MethodContext context = info.getMethodContext();
@@ -262,7 +263,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		String constName = info.getName();
 		if (context.getType() == MethodContext.ContextType.METHOD) {
 			IASTDeclaration methodDeclaration = context.getMethodDeclaration();
-			ICPPASTCompositeTypeSpecifier classDefinition = (ICPPASTCompositeTypeSpecifier) methodDeclaration.getParent();
+			ICPPASTCompositeTypeSpecifier classDefinition = (ICPPASTCompositeTypeSpecifier) methodDeclaration
+					.getParent();
 			IASTDeclaration memberDeclaration = createConstantDeclarationForClass(constName);
 			ClassMemberInserter.createChange(classDefinition, info.getVisibility(), memberDeclaration, true, collector);
 		} else {
@@ -273,7 +275,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		}
 	}
 
-	private void replaceLiteralsWithConstant(Collection<IASTExpression> literals, ModificationCollector collector, IProgressMonitor monitor) {
+	private void replaceLiteralsWithConstant(Collection<IASTExpression> literals, ModificationCollector collector,
+			IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, literals.size());
 		String constName = info.getName();
 		for (IASTExpression each : literals) {
@@ -286,7 +289,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		}
 	}
 
-	private Collection<IASTExpression> filterLiteralsInSameContext(Collection<IASTExpression> literalsToReplace, IProgressMonitor monitor) throws CoreException {
+	private Collection<IASTExpression> filterLiteralsInSameContext(Collection<IASTExpression> literalsToReplace,
+			IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 
 		MethodContext context = info.getMethodContext();
@@ -294,7 +298,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		if (context.getType() == MethodContext.ContextType.METHOD) {
 			SubMonitor loopMonitor = subMonitor.split(literalsToReplace.size());
 			for (IASTExpression expression : literalsToReplace) {
-				MethodContext exprContext = NodeHelper.findMethodContext(expression, refactoringContext, loopMonitor.split(1));
+				MethodContext exprContext = NodeHelper.findMethodContext(expression, refactoringContext,
+						loopMonitor.split(1));
 				if (exprContext.getType() == MethodContext.ContextType.METHOD) {
 					if (context.getMethodQName() != null) {
 						if (MethodContext.isSameClass(exprContext.getMethodQName(), context.getMethodQName())) {
@@ -307,14 +312,14 @@ public class ExtractConstantRefactoring extends CRefactoring {
 			}
 		} else {
 			subMonitor.split(1);
-			literalsToReplace.stream()
-				.filter(expr -> expr.getTranslationUnit().getOriginatingTranslationUnit() != null)
-				.collect(Collectors.toCollection(() -> locLiteralsToReplace));
+			literalsToReplace.stream().filter(expr -> expr.getTranslationUnit().getOriginatingTranslationUnit() != null)
+					.collect(Collectors.toCollection(() -> locLiteralsToReplace));
 		}
 		return locLiteralsToReplace;
 	}
 
-	private Collection<IASTExpression> findExpressionsToExtract(IProgressMonitor monitor) throws OperationCanceledException, CoreException {
+	private Collection<IASTExpression> findExpressionsToExtract(IProgressMonitor monitor)
+			throws OperationCanceledException, CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 5);
 
 		final Collection<IASTExpression> result = new ArrayList<>();
@@ -325,12 +330,12 @@ public class ExtractConstantRefactoring extends CRefactoring {
 				{
 					shouldVisitExpressions = true;
 				}
-	
+
 				@Override
 				public int visit(IASTExpression expression) {
 					if (isSameExpressionTree(expression, target)) {
-						if (!(expression.getNodeLocations().length == 1 &&
-								expression.getNodeLocations()[0] instanceof IASTMacroExpansionLocation)) {
+						if (!(expression.getNodeLocations().length == 1
+								&& expression.getNodeLocations()[0] instanceof IASTMacroExpansionLocation)) {
 							result.add(expression);
 						}
 					}
@@ -349,8 +354,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		if (expression1 instanceof IASTLiteralExpression && expression2 instanceof IASTLiteralExpression) {
 			IASTLiteralExpression literalExpression1 = (IASTLiteralExpression) expression1;
 			IASTLiteralExpression literalExpression2 = (IASTLiteralExpression) expression2;
-			return literalExpression1.getKind() == literalExpression2.getKind() &&
-					String.valueOf(expression1).equals(String.valueOf(expression2));
+			return literalExpression1.getKind() == literalExpression2.getKind()
+					&& String.valueOf(expression1).equals(String.valueOf(expression2));
 		}
 		if (expression1 instanceof IASTUnaryExpression && expression2 instanceof IASTUnaryExpression) {
 			IASTUnaryExpression unaryExpression1 = (IASTUnaryExpression) expression1;
@@ -363,7 +368,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 			IASTBinaryExpression binaryExpression1 = (IASTBinaryExpression) expression1;
 			IASTBinaryExpression binaryExpression2 = (IASTBinaryExpression) expression2;
 			if (binaryExpression1.getOperator() == binaryExpression2.getOperator()) {
-				return isSameExpressionTree(binaryExpression1.getOperand1(), binaryExpression2.getOperand1()) 
+				return isSameExpressionTree(binaryExpression1.getOperand1(), binaryExpression2.getOperand1())
 						&& isSameExpressionTree(binaryExpression1.getOperand2(), binaryExpression2.getOperand2());
 			}
 		}
@@ -393,7 +398,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		arguments.put(CRefactoringDescriptor.SELECTION, selectedRegion.getOffset() + "," + selectedRegion.getLength()); //$NON-NLS-1$
 		arguments.put(ExtractConstantRefactoringDescriptor.NAME, info.getName());
 		arguments.put(ExtractConstantRefactoringDescriptor.VISIBILITY, info.getVisibility().toString());
-		arguments.put(ExtractConstantRefactoringDescriptor.REPLACE_ALL, Boolean.toString(info.isReplaceAllOccurences()));
+		arguments.put(ExtractConstantRefactoringDescriptor.REPLACE_ALL,
+				Boolean.toString(info.isReplaceAllOccurences()));
 		return arguments;
 	}
 
@@ -421,8 +427,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		IASTSimpleDeclaration simple = createConstantDeclaration(newName);
 
 		if (nodeFactory instanceof ICPPNodeFactory) {
-			ICPPASTNamespaceDefinition namespace =
-					((ICPPNodeFactory) nodeFactory).newNamespaceDefinition(nodeFactory.newName());
+			ICPPASTNamespaceDefinition namespace = ((ICPPNodeFactory) nodeFactory)
+					.newNamespaceDefinition(nodeFactory.newName());
 			namespace.addDeclaration(simple);
 			return namespace;
 		}

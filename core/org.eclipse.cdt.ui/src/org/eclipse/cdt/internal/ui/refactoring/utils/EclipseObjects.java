@@ -141,11 +141,11 @@ public class EclipseObjects {
 		Object o = selection.getFirstElement();
 
 		if (o instanceof ICElement) {
-			ICElement e= (ICElement) o;
-		    IResource r= e.getUnderlyingResource();
-		    if (r instanceof IFile) {
-		        return (IFile) r;
-		    }
+			ICElement e = (ICElement) o;
+			IResource r = e.getUnderlyingResource();
+			if (r instanceof IFile) {
+				return (IFile) r;
+			}
 		}
 
 		return null;

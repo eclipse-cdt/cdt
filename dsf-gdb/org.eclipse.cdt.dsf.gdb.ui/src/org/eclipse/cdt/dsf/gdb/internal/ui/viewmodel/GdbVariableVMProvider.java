@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Freescale Semiconductor - initial API and implementation
- *     Axel Mueller            - Bug 306555 - Add support for cast to type / view as array (IExpressions2)     
+ *     Axel Mueller            - Bug 306555 - Add support for cast to type / view as array (IExpressions2)
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel;
@@ -51,125 +51,127 @@ public class GdbVariableVMProvider extends VariableVMProvider {
 	/**
 	 * Constructor (passthru)
 	 */
-	public GdbVariableVMProvider(AbstractVMAdapter adapter,
-			IPresentationContext context, DsfSession session) {
+	public GdbVariableVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
 		super(adapter, context, session);
-		
-        final IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
-        
-        Integer childCountLimit = store.getInt(IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS);
-        if (childCountLimit != 0) {
-        	getPresentationContext().setProperty(IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS,
-        			childCountLimit);
-        }
 
-        fPreferencesListener = new IPropertyChangeListener() {
-            @Override
+		final IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
+
+		Integer childCountLimit = store
+				.getInt(IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS);
+		if (childCountLimit != 0) {
+			getPresentationContext().setProperty(
+					IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS, childCountLimit);
+		}
+
+		fPreferencesListener = new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(final PropertyChangeEvent event) {
 				handlePropertyChanged(store, event);
-			}};
-        store.addPropertyChangeListener(fPreferencesListener);
+			}
+		};
+		store.addPropertyChangeListener(fPreferencesListener);
 	}
 
-    @Override
+	@Override
 	public void dispose() {
 		super.dispose();
-		
-        final IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
+
+		final IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
 		store.removePropertyChangeListener(fPreferencesListener);
 	}
 
 	/* (non-Javadoc)
-     * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMProvider#configureLayout(org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.SyncVariableDataAccess)
-     */
-    @Override
+	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMProvider#configureLayout(org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.SyncVariableDataAccess)
+	 */
+	@Override
 	protected void configureLayout() {
-        // Create the variable data access routines.
-        SyncVariableDataAccess varAccess = new SyncVariableDataAccess(getSession()) ;
-    	
-        // Create the top level node to deal with the root selection.
-        IRootVMNode rootNode = new RootDMVMNode(this);
-        setRootNode(rootNode);
-        
-        // Create the next level which represents members of structs/unions/enums and elements of arrays.
-        IVMNode subExpressioNode = new GdbVariableVMNode(this, getSession(), varAccess);
-        addChildNodes(rootNode, new IVMNode[] { subExpressioNode });
+		// Create the variable data access routines.
+		SyncVariableDataAccess varAccess = new SyncVariableDataAccess(getSession());
+
+		// Create the top level node to deal with the root selection.
+		IRootVMNode rootNode = new RootDMVMNode(this);
+		setRootNode(rootNode);
+
+		// Create the next level which represents members of structs/unions/enums and elements of arrays.
+		IVMNode subExpressioNode = new GdbVariableVMNode(this, getSession(), varAccess);
+		addChildNodes(rootNode, new IVMNode[] { subExpressioNode });
 
 		/* Wire up the casting support. IExpressions2 service is always available
 		 * for gdb. No need to call hookUpCastingSupport */
-		((VariableVMNode) subExpressioNode).setCastToTypeSupport(
-				new DsfCastToTypeSupport(getSession(), GdbVariableVMProvider.this, varAccess));
-        
-        // Configure the sub-expression node to be a child of itself.  This way the content
-        // provider will recursively drill-down the variable hierarchy.
-        addChildNodes(subExpressioNode, new IVMNode[] { subExpressioNode });
-    }
+		((VariableVMNode) subExpressioNode)
+				.setCastToTypeSupport(new DsfCastToTypeSupport(getSession(), GdbVariableVMProvider.this, varAccess));
+
+		// Configure the sub-expression node to be a child of itself.  This way the content
+		// provider will recursively drill-down the variable hierarchy.
+		addChildNodes(subExpressioNode, new IVMNode[] { subExpressioNode });
+	}
 
 	@Override
 	public void handleEvent(Object event, final RequestMonitor rm) {
-        if (event instanceof DoubleClickEvent && !isDisposed()) {
+		if (event instanceof DoubleClickEvent && !isDisposed()) {
 
-        	final ISelection selection= ((DoubleClickEvent) event).getSelection();
-            if (selection instanceof IStructuredSelection) {
-            	
-                Object element= ((IStructuredSelection) selection).getFirstElement();
-                if (element instanceof IncompleteChildrenVMC) {
-                	
-                    IncompleteChildrenVMC incompleteChildrenVmc = ((IncompleteChildrenVMC) element); 
-                    IVMNode node = incompleteChildrenVmc.getVMNode();
-                    if (node instanceof GdbVariableVMNode && node.getVMProvider() == this) {
-                    	
-            			if (selection instanceof ITreeSelection) {
-            				
-            				ITreeSelection treeSelection = (ITreeSelection) selection;
-            				TreePath path = treeSelection.getPaths()[0];
-            				IExpressionDMContext exprCtx = incompleteChildrenVmc.getParentDMContext();
-            				((GdbVariableVMNode) node).incrementChildCountLimit(exprCtx);
+			final ISelection selection = ((DoubleClickEvent) event).getSelection();
+			if (selection instanceof IStructuredSelection) {
 
-            				// replace double click event with the fetch more children event.
-							final FetchMoreChildrenEvent fetchMoreChildrenEvent = new FetchMoreChildrenEvent(
-									exprCtx, path);
-            				getExecutor().execute(new DsfRunnable() {
-            	                @Override
-            					public void run() {
-            						handleEvent(fetchMoreChildrenEvent, rm);
-            					}
-            				});
-            				
-            				return;
-            			}
-                    }
-                }
-            }
-        }
-        
+				Object element = ((IStructuredSelection) selection).getFirstElement();
+				if (element instanceof IncompleteChildrenVMC) {
+
+					IncompleteChildrenVMC incompleteChildrenVmc = ((IncompleteChildrenVMC) element);
+					IVMNode node = incompleteChildrenVmc.getVMNode();
+					if (node instanceof GdbVariableVMNode && node.getVMProvider() == this) {
+
+						if (selection instanceof ITreeSelection) {
+
+							ITreeSelection treeSelection = (ITreeSelection) selection;
+							TreePath path = treeSelection.getPaths()[0];
+							IExpressionDMContext exprCtx = incompleteChildrenVmc.getParentDMContext();
+							((GdbVariableVMNode) node).incrementChildCountLimit(exprCtx);
+
+							// replace double click event with the fetch more children event.
+							final FetchMoreChildrenEvent fetchMoreChildrenEvent = new FetchMoreChildrenEvent(exprCtx,
+									path);
+							getExecutor().execute(new DsfRunnable() {
+								@Override
+								public void run() {
+									handleEvent(fetchMoreChildrenEvent, rm);
+								}
+							});
+
+							return;
+						}
+					}
+				}
+			}
+		}
+
 		super.handleEvent(event, rm);
 	}
-	
+
 	/**
 	 * @param store
 	 * @param event
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void handlePropertyChanged(final IPreferenceStore store, final PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS.equals(property)) {
-			Integer childCountLimit = store.getInt(IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS);
-			
-	        if (childCountLimit != 0) {
-	        	getPresentationContext().setProperty(IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS,
-	        			childCountLimit);
-	        } else {
-	        	getPresentationContext().setProperty(IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS,
-	        			null);
-	        }
-	        
+			Integer childCountLimit = store
+					.getInt(IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS);
+
+			if (childCountLimit != 0) {
+				getPresentationContext().setProperty(
+						IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS, childCountLimit);
+			} else {
+				getPresentationContext()
+						.setProperty(IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS, null);
+			}
+
 			getExecutor().execute(new DsfRunnable() {
-                @Override
-			    public void run() {
-			        handleEvent(event);
-			    }
+				@Override
+				public void run() {
+					handleEvent(event);
+				}
 			});
 		}
 	}

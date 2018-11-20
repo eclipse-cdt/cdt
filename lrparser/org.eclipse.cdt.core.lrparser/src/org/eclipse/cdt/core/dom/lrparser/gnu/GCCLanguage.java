@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,20 +30,20 @@ import org.eclipse.cdt.internal.core.dom.lrparser.gcc.GCCParser;
 
 /**
  * ILanguage implementation for the C99 parser.
- * 
+ *
  * @author Mike Kucera
  */
 public class GCCLanguage extends BaseExtensibleLanguage {
-	public static final String ID = "org.eclipse.cdt.core.lrparser.gcc"; //$NON-NLS-1$ 
-	
+	public static final String ID = "org.eclipse.cdt.core.lrparser.gcc"; //$NON-NLS-1$
+
 	private static GCCLanguage DEFAULT = new GCCLanguage();
-	
+
 	public static GCCLanguage getDefault() {
 		return DEFAULT;
 	}
-	
+
 	@Override
-	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties) {
+	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String, String> properties) {
 		return new GCCParser(scanner, DOMToGCCTokenMap.DEFAULT_MAP, getBuiltinBindingsProvider(), index, properties);
 	}
 

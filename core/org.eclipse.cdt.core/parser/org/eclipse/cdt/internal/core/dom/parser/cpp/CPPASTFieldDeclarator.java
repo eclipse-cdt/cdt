@@ -24,12 +24,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
  * Field declarator for c++.
  */
 public class CPPASTFieldDeclarator extends CPPASTDeclarator implements ICPPASTFieldDeclarator {
-    private IASTExpression bitField;
+	private IASTExpression bitField;
 
-    public CPPASTFieldDeclarator() {
+	public CPPASTFieldDeclarator() {
 	}
 
-    public CPPASTFieldDeclarator(IASTName name) {
+	public CPPASTFieldDeclarator(IASTName name) {
 		super(name);
 	}
 
@@ -52,20 +52,20 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements ICPPASTFi
 
 	@Override
 	public IASTExpression getBitFieldSize() {
-        return bitField;
-    }
+		return bitField;
+	}
 
-    @Override
+	@Override
 	public void setBitFieldSize(IASTExpression size) {
-        assertNotFrozen();
-        this.bitField = size;
-        if (size != null) {
+		assertNotFrozen();
+		this.bitField = size;
+		if (size != null) {
 			size.setParent(this);
 			size.setPropertyInParent(FIELD_SIZE);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	protected boolean postAccept(ASTVisitor action) {
 		if (bitField != null && !bitField.accept(action))
 			return false;
@@ -73,12 +73,12 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements ICPPASTFi
 		return super.postAccept(action);
 	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == bitField) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            bitField  = (IASTExpression) other;
-        }
-    }
+		if (child == bitField) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			bitField = (IASTExpression) other;
+		}
+	}
 }

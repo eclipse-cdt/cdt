@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Sets a watchpoint on a given variable
- * 
+ *
  * <pre>
  *    C: watch {function}::{variable_name} {watch_operation}
  *    R: ok
@@ -30,27 +30,30 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAWatchCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public enum WatchOperation { READ, WRITE, BOTH, NONE };
-    
-    private static int getWatchOperationCode(WatchOperation operation) {
-        switch (operation) {
-        case READ:
-            return 1;
-        case WRITE:
-            return 2;
-        case BOTH:
-            return 3;
-        default:
-            return 0;
-        }
-    }
-    
-    public PDAWatchCommand(PDAVirtualMachineDMContext context, String function, String variable, WatchOperation operation) {
-        super(context, "watch " + function+ "::" + variable + " " + getWatchOperationCode(operation));
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public enum WatchOperation {
+		READ, WRITE, BOTH, NONE
+	};
+
+	private static int getWatchOperationCode(WatchOperation operation) {
+		switch (operation) {
+		case READ:
+			return 1;
+		case WRITE:
+			return 2;
+		case BOTH:
+			return 3;
+		default:
+			return 0;
+		}
+	}
+
+	public PDAWatchCommand(PDAVirtualMachineDMContext context, String function, String variable,
+			WatchOperation operation) {
+		super(context, "watch " + function + "::" + variable + " " + getWatchOperationCode(operation));
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

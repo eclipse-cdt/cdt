@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -34,18 +34,18 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 class RefactoringJob extends Job {
 	public final static Object FAMILY_TOGGLE_DEFINITION = new Object();
 	private final ToggleRefactoring refactoring;
-	
+
 	RefactoringJob(ToggleRefactoring refactoring) {
 		super("Toggle Function Definition code automation"); //$NON-NLS-1$
 		this.refactoring = refactoring;
 		setPriority(Job.SHORT);
 	}
-	
+
 	@Override
 	public boolean belongsTo(Object family) {
 		return family == FAMILY_TOGGLE_DEFINITION;
 	}
-	
+
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		CRefactoringContext context = new CRefactoringContext(refactoring);
@@ -56,7 +56,8 @@ class RefactoringJob extends Job {
 		try {
 			RefactoringStatus status = refactoring.checkAllConditions(monitor);
 			if (status.hasFatalError())
-				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, status.getMessageMatchingSeverity(RefactoringStatus.ERROR));
+				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
+						status.getMessageMatchingSeverity(RefactoringStatus.ERROR));
 			change = refactoring.createChange(monitor);
 			change.initializeValidationData(monitor);
 			if (!change.isValid(monitor).isOK()) {

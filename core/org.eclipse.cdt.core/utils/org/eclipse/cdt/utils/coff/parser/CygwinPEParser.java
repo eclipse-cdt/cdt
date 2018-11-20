@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IPath;
  */
 public class CygwinPEParser extends PEParser {
 
-	
 	private DefaultCygwinToolFactory toolFactory;
 
 	/**
@@ -37,7 +36,7 @@ public class CygwinPEParser extends PEParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.coff.parser.PEParser#createBinaryArchive(org.eclipse.core.runtime.IPath)
 	 */
 	@Override
@@ -64,11 +63,11 @@ public class CygwinPEParser extends PEParser {
 	protected IBinaryShared createBinaryShared(IPath path) {
 		return new CygwinPEBinaryShared(this, path);
 	}
-	
+
 	protected DefaultCygwinToolFactory createToolFactory() {
 		return new DefaultCygwinToolFactory(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
@@ -77,7 +76,7 @@ public class CygwinPEParser extends PEParser {
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(ICygwinToolsFactroy.class)) {
 			if (toolFactory == null) {
-				toolFactory = createToolFactory(); 
+				toolFactory = createToolFactory();
 			}
 			return toolFactory;
 		}

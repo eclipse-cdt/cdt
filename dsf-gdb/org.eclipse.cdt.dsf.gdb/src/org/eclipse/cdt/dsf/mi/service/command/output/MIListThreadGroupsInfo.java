@@ -26,7 +26,7 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 
 /**
  * GDB/MI thread group parsing.
- * 
+ *
  *  The description field can be different depending on the target we are connected to.
  *
  *  -list-thread-groups --available:
@@ -36,21 +36,21 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  *                {id="166",type="process",description="name: JUnitProcess_PT, type 1094605, locked: N, system: N, state: Idle"}]
  *
  *          	  {id="3602",type="process",description="/usr/sbin/dhcdbd --system",user="root"}
- *          
- *  -list-thread-groups: 
+ *
+ *  -list-thread-groups:
  *  ^done,groups=[{id="162",type="process",pid="162"}]
  *
  *  -list-thread-groups GROUPID, in the case of a running thread or a stopped thread:
  *  ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT (Ready) 1030373359 44441",frame={level="0",addr="0x00000000",func="??",args=[]},state="stopped"}]
  *  ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT Idle 981333916 42692",state="running"}]
- *  
- *  As of GDB 7.1, a new 'core' output field has been added.  This field is a list 
- *  of integers, each identifying a core that one thread of the group is running on. 
+ *
+ *  As of GDB 7.1, a new 'core' output field has been added.  This field is a list
+ *  of integers, each identifying a core that one thread of the group is running on.
  *  This field may be absent if such information is not available.
- *  
+ *
  *  -list-thread-groups
  *  ^done,groups=[{id="12779",type="process",pid="12779",cores=["3"]}]
- *    
+ *
  *  -list-thread-groups 12779
  *   ^done,threads=[{id="10",
  *                   target-id="Thread 0xb3d58ba0 (LWP 12876)",
@@ -72,9 +72,9 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  *                   frame={level="0",addr="0x08048609",func="main",args=[],file="../src/NonStop.cpp",fullname="/local/runtime-TestDSF/NonStop/src/NonStop.cpp",line="44"},
  *                   state="stopped",
  *                   core="3"}]
- *                   
+ *
  *  As of GDB 7.1, the --recurse option has been added and causes a different output
- *  
+ *
  *  -list-thread-groups --recurse 1
  *  ^done,groups=[{id="12779",
  *                 type="process",
@@ -102,11 +102,11 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  *                           core="3"}
  *                         ]
  *                }]
- *  
+ *
  * Example of outputs by version on Linux
- * 
+ *
  * GDB 7.0
- *  
+ *
  *  (when no inferior is running)
  * -list-thread-groups
  * ^done,groups=[]
@@ -114,29 +114,29 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  * (with an inferior running)
  * -list-thread-groups
  * ^done,groups=[{id="19386",type="process",pid="19386"}]
- * 
+ *
  * -list-thread-groups 19386
  * ^done,threads=[{id="1",target-id="process 19386",frame={level="0",addr="0x08048618",func="main",args=[],file="a.cc",fullname="/local/lmckhou/testing/a.cc",line="9"},state="stopped"}]
- * 
- * -list-thread-groups --available 
+ *
+ * -list-thread-groups --available
  * ^done,groups=[{id="19371",type="process",description="gdb.7.0 -i mi testing/a.out",user="lmckhou"},{id="19386",type="process",description="/local/lmckhou/testing/a.out",user="lmckhou"},{id="19413",type="process",description="sleep 5",user="lmckhou"}]
- * 
+ *
  * GDB 7.1
- * 
+ *
  * (when no inferior is running)
  * -list-thread-groups
  * ^done,groups=[{id="0",type="process",pid="0"}]
- * 
+ *
  * (with an inferior running)
  * -list-thread-groups
  * ^done,groups=[{id="19424",type="process",pid="19424",cores=["3"]}]
- * 
+ *
  * -list-thread-groups 19424
  * ^done,threads=[{id="1",target-id="process 19424",frame={level="0",addr="0x08048618",func="main",args=[],file="a.cc",fullname="/local/lmckhou/testing/a.cc",line="9"},state="stopped",core="3"}]
- * 
+ *
  * -list-thread-groups --available
  * ^done,groups=[{id="19418",type="process",description="gdb.7.1 -i mi testing/a.out",user="lmckhou"},{id="19424",type="process",description="/local/lmckhou/testing/a.out",user="lmckhou"},{id="19438",type="process",description="sleep 5",user="lmckhou"}]
- * 
+ *
  * -list-thread-groups --recurse 1
  * ^done,groups=[{id="i2",type="process",pid="11805",executable="/home/lmckhou/Consumer",cores=["0","1"],
  *                threads=[{id="6",target-id="Thread 0xb6516b70 (LWP 11811)",state="running",core="1"},
@@ -153,23 +153,23 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  *                         {id="1",target-id="Thread 0xb7d1bb30 (LWP 11793)",state="running",core="1"}]}]
  *
  * GDB 7.2
- * 
+ *
  * (when no inferior is running)
  * -list-thread-groups
  * ^done,groups=[{id="i1",type="process",executable="/local/lmckhou/testing/a.out"}]
- * 
+ *
  * (with an inferior running)
  * -list-thread-groups
  * ^done,groups=[{id="i1",type="process",pid="19451",executable="/local/lmckhou/testing/a.out",cores=["2"]}]
- * 
+ *
  * -list-thread-groups i1
  * ^done,threads=[{id="1",target-id="process 19451",frame={level="0",addr="0x08048618",func="main",args=[],file="a.cc",fullname="/local/lmckhou/testing/a.cc",line="9"},state="stopped",core="2"}]
- * 
+ *
  * -list-thread-groups --available
  * ^done,groups=[{id="19445",type="process",description="gdb.7.2 -i mi testing/a.out",user="lmckhou"},{id="19451",type="process",description="/local/lmckhou/testing/a.out",user="lmckhou"},{id="19462",type="process",description="sleep 5",user="lmckhou"}]
  *
  * GDB 7.9
- * 
+ *
  * -list-thread-groups
  * ^done,groups=[{id="i1",type="process",exit-code="0",executable="/home/lmckhou/runtime-TestDSF/DSFTestApp/Debug/DSFTestApp"}]
  *
@@ -180,40 +180,47 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  */
 
 public class MIListThreadGroupsInfo extends MIInfo {
-	
+
 	/**
 	 * @noextend This interface is not intended to be extended by clients.
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	public interface IThreadGroupInfo {
 		String getGroupId();
+
 		String getPid();
+
 		String getName();
+
 		String getDesciption();
+
 		/**@since 4.0 */
 		String getUser();
+
 		/**@since 4.0 */
 		String getType();
+
 		/**@since 4.0 */
 		String[] getCores();
+
 		/**@since 4.0 */
 		String getExecutable();
-		
-		/** 
+
+		/**
 		 * @return the exit code of this thread group.
 		 *         null if not applicable or not available.
 		 * @since 4.7
 		 */
 		Integer getExitCode();
 	}
-	
+
 	/**
 	 * @since 4.1
 	 */
 	public interface IThreadGroupInfo2 extends IThreadGroupInfo {
 		MIThread[] getThreads();
 	}
-	
+
 	/** @since 4.4 */
 	@Immutable
 	protected static class ThreadGroupInfo implements IThreadGroupInfo2 {
@@ -228,93 +235,115 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		final MIThread[] fThreadList;
 		final Integer fExitCode;
 
-		public ThreadGroupInfo(String id, String description, String type, String pid, 
-	               String user, String[] cores, String exec, MIThread[] threads) {
+		public ThreadGroupInfo(String id, String description, String type, String pid, String user, String[] cores,
+				String exec, MIThread[] threads) {
 			this(id, description, type, pid, user, cores, exec, threads, null);
 		}
 
 		/** @since 4.7 */
-		public ThreadGroupInfo(String id, String description, String type, String pid, 
-				               String user, String[] cores, String exec, MIThread[] threads, Integer exitCode) {
+		public ThreadGroupInfo(String id, String description, String type, String pid, String user, String[] cores,
+				String exec, MIThread[] threads, Integer exitCode) {
 			fGroupId = id;
 			fDescription = description;
 			fType = type;
 			fUser = user;
 			fPid = pid;
-			fCores = cores;				
-			
+			fCores = cores;
+
 			fExecutable = exec;
-			
+
 			fName = parseName(fDescription);
-			
+
 			fThreadList = threads;
-			
+
 			fExitCode = exitCode;
 		}
-		
+
 		protected String parseName(String desc) {
 			String name = ""; //$NON-NLS-1$
 
 			// Find the string "name: " followed by the smallest set of characters that
 			// is followed by a comma, or by the end of the line.
 			Pattern pattern = Pattern.compile("name: (.*?)(, |$)", Pattern.MULTILINE); //$NON-NLS-1$
-        	Matcher matcher = pattern.matcher(desc);
-        	if (matcher.find()) {
-        		name = matcher.group(1);
-        	} else {
-        		// If we didn't get the form "name: " then we expect to have the form
-        		//   "/usr/sbin/dhcdbd --system"
-        		// or (starting with GDB 7.4)
-        		//   "[migration/0]"  where the integer represents the core, if the process 
-        		//                    has an instance of many cores
-        		//   "[kacpid]"       when the process only runs on one core
-        		//   "[async/mgr]"          
-        	    //   "[jbd2/dm-1-8]"
-        		//   The brackets indicate that the startup parameters are not available
-        		//   We handle this case by removing the brackets and the core indicator
-        		//   since GDB already tells us the core separately.
-        		if (!desc.isEmpty() && desc.charAt(0) == '[') {
-        			// Remove brackets
-        			name = desc.substring(1, desc.length()-1);
-        			
-        			// Look for [name/coreNum] pattern to remove /coreNum
-        			pattern = Pattern.compile("(.+?)(/\\d+)", Pattern.MULTILINE); //$NON-NLS-1$
-                	matcher = pattern.matcher(name);
-                	if (matcher.find()) {
-                		// Found a pattern /coreNum, so ignore it
-                		name = matcher.group(1);
-                	}
-                	// else, no /coreNum pattern, so the name is correct already
-        		} else {
-        			name = desc.split("\\s", 2)[0]; //$NON-NLS-1$
-        		}
-        	}
+			Matcher matcher = pattern.matcher(desc);
+			if (matcher.find()) {
+				name = matcher.group(1);
+			} else {
+				// If we didn't get the form "name: " then we expect to have the form
+				//   "/usr/sbin/dhcdbd --system"
+				// or (starting with GDB 7.4)
+				//   "[migration/0]"  where the integer represents the core, if the process
+				//                    has an instance of many cores
+				//   "[kacpid]"       when the process only runs on one core
+				//   "[async/mgr]"
+				//   "[jbd2/dm-1-8]"
+				//   The brackets indicate that the startup parameters are not available
+				//   We handle this case by removing the brackets and the core indicator
+				//   since GDB already tells us the core separately.
+				if (!desc.isEmpty() && desc.charAt(0) == '[') {
+					// Remove brackets
+					name = desc.substring(1, desc.length() - 1);
+
+					// Look for [name/coreNum] pattern to remove /coreNum
+					pattern = Pattern.compile("(.+?)(/\\d+)", Pattern.MULTILINE); //$NON-NLS-1$
+					matcher = pattern.matcher(name);
+					if (matcher.find()) {
+						// Found a pattern /coreNum, so ignore it
+						name = matcher.group(1);
+					}
+					// else, no /coreNum pattern, so the name is correct already
+				} else {
+					name = desc.split("\\s", 2)[0]; //$NON-NLS-1$
+				}
+			}
 
 			return name;
 		}
-		
-		@Override
-		public String getGroupId() { return fGroupId; }
-		@Override
-		public String getPid() { return fPid; }
 
 		@Override
-		public String getName() { return fName;	}
+		public String getGroupId() {
+			return fGroupId;
+		}
 
 		@Override
-		public String getDesciption() { return fDescription; }
-		@Override
-		public String[] getCores() { return fCores; }
-		@Override
-		public String getUser() { return fUser;	}
+		public String getPid() {
+			return fPid;
+		}
 
 		@Override
-		public String getType() { return fType;	}
-		@Override
-		public String getExecutable() { return fExecutable; }
+		public String getName() {
+			return fName;
+		}
 
 		@Override
-		public MIThread[] getThreads() { return fThreadList; }
+		public String getDesciption() {
+			return fDescription;
+		}
+
+		@Override
+		public String[] getCores() {
+			return fCores;
+		}
+
+		@Override
+		public String getUser() {
+			return fUser;
+		}
+
+		@Override
+		public String getType() {
+			return fType;
+		}
+
+		@Override
+		public String getExecutable() {
+			return fExecutable;
+		}
+
+		@Override
+		public MIThread[] getThreads() {
+			return fThreadList;
+		}
 
 		/** @since 4.7 */
 		@Override
@@ -322,32 +351,36 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			return fExitCode;
 		}
 	}
-	
-	
+
 	private IThreadGroupInfo[] fGroupList;
 	private MIThreadInfoInfo fThreadInfo;
-	
-    public MIListThreadGroupsInfo(MIOutput out) {
-        super(out);
-        parse();
+
+	public MIListThreadGroupsInfo(MIOutput out) {
+		super(out);
+		parse();
 	}
-	
-	public IThreadGroupInfo[] getGroupList() { return fGroupList; }
-	public MIThreadInfoInfo getThreadInfo() { return fThreadInfo; }
-	
+
+	public IThreadGroupInfo[] getGroupList() {
+		return fGroupList;
+	}
+
+	public MIThreadInfoInfo getThreadInfo() {
+		return fThreadInfo;
+	}
+
 	/** @since 4.4 */
 	protected void parse() {
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
 			if (rr != null) {
-				MIResult[] results =  rr.getMIResults();
+				MIResult[] results = rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 					if (var.equals("groups")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIList) {
-							parseGroups((MIList)val);
+							parseGroups((MIList) val);
 						}
 					} else if (var.equals("threads")) { //$NON-NLS-1$
 						// Re-use the MIThreadInfoInfo parsing
@@ -370,76 +403,76 @@ public class MIListThreadGroupsInfo extends MIInfo {
 	protected MIThreadInfoInfo createMIThreadInfoInfo(MIOutput output) {
 		return new MIThreadInfoInfo(output);
 	}
-	
+
 	/** @since 4.4 */
 	protected void parseGroups(MIList list) {
 		MIValue[] values = list.getMIValues();
 		fGroupList = new IThreadGroupInfo[values.length];
 		for (int i = 0; i < values.length; i++) {
-			MIResult[] results = ((MITuple)values[i]).getMIResults();
+			MIResult[] results = ((MITuple) values[i]).getMIResults();
 			String id, desc, type, pid, exec, user;
 			id = desc = type = pid = exec = user = "";//$NON-NLS-1$
 			MIThread[] threads = null;
 			Integer exitCode = null;
-			
+
 			String[] cores = null;
-			
+
 			for (MIResult result : results) {
 				String var = result.getVariable();
 				if (var.equals("id")) { //$NON-NLS-1$
 					MIValue value = result.getMIValue();
 					if (value instanceof MIConst) {
-						String str = ((MIConst)value).getCString();
+						String str = ((MIConst) value).getCString();
 						id = str.trim();
 					}
 				} else if (var.equals("description")) { //$NON-NLS-1$
 					MIValue value = result.getMIValue();
 					if (value instanceof MIConst) {
-						String str = ((MIConst)value).getCString();
+						String str = ((MIConst) value).getCString();
 						desc = str.trim();
 					}
 				} else if (var.equals("type")) { //$NON-NLS-1$
 					MIValue value = result.getMIValue();
 					if (value instanceof MIConst) {
-						String str = ((MIConst)value).getCString();
+						String str = ((MIConst) value).getCString();
 						type = str.trim();
 					}
 				} else if (var.equals("pid")) { //$NON-NLS-1$
 					MIValue value = result.getMIValue();
 					if (value instanceof MIConst) {
-						String str = ((MIConst)value).getCString();
+						String str = ((MIConst) value).getCString();
 						pid = str.trim();
 					}
-				}  else if (var.equals("user")) { //$NON-NLS-1$
+				} else if (var.equals("user")) { //$NON-NLS-1$
 					MIValue value = result.getMIValue();
 					if (value instanceof MIConst) {
-						String str = ((MIConst)value).getCString();
+						String str = ((MIConst) value).getCString();
 						user = str.trim();
 					}
 				} else if (var.equals("cores")) { //$NON-NLS-1$
 					// Starting with GDB 7.1
 					MIValue value = result.getMIValue();
 					if (value instanceof MIList) {
-						cores = parseCores((MIList)value);
+						cores = parseCores((MIList) value);
 					}
 				} else if (var.equals("executable")) { //$NON-NLS-1$
 					// Starting with GDB 7.2
 					MIValue value = result.getMIValue();
 					if (value instanceof MIConst) {
-						String str = ((MIConst)value).getCString();
+						String str = ((MIConst) value).getCString();
 						exec = str.trim();
 					}
 				} else if (var.equals("threads")) { //$NON-NLS-1$
 					// Starting with GDB 7.1
 					MIValue value = result.getMIValue();
 					if (value instanceof MIList) {
-						threads = parseThreads(((MIList)value));
+						threads = parseThreads(((MIList) value));
 					}
 				} else if (var.equals("exit-code")) { //$NON-NLS-1$
 					// Starting with GDB 7.9
 					MIValue value = result.getMIValue();
 					if (value instanceof MIConst) {
-						String str = ((MIConst)value).getCString();
+						String str = ((MIConst) value).getCString();
 						try {
 							// Must use 'decode' as GDB returns the value in octal format
 							exitCode = Integer.decode(str.trim());
@@ -465,15 +498,15 @@ public class MIListThreadGroupsInfo extends MIInfo {
 	protected MIThread[] parseThreads(MIList value) {
 		return MIThreadInfoInfo.parseThreads(value);
 	}
-	
+
 	/** @since 4.4 */
 	protected String[] parseCores(MIList list) {
 		List<String> cores = new ArrayList<String>();
-		
+
 		MIValue[] values = list.getMIValues();
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] instanceof MIConst) {
-				cores.add(((MIConst)values[i]).getCString());
+				cores.add(((MIConst) values[i]).getCString());
 			}
 		}
 		return cores.toArray(new String[cores.size()]);

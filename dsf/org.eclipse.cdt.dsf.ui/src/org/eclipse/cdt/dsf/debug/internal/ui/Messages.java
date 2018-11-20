@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Patrick Chuong (Texas Instruments) - Bug 315446: Invalid event breakpoint type (group) name 
+ *     Patrick Chuong (Texas Instruments) - Bug 315446: Invalid event breakpoint type (group) name
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support Register Groups (Bug 235747)
  *******************************************************************************/
@@ -30,7 +30,7 @@ public class Messages extends NLS {
 	public static String RegisterGroupConfirmRestoreMessage;
 	public static String RegisterGroupRestore;
 	public static String RegisterGroupRestoreCancel;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

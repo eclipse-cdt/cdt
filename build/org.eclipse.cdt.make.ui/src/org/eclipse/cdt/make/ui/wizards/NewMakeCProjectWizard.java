@@ -13,16 +13,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.wizards;
 
-
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 
 /**
  * This wizard was used for 3.X style projects. It is left here for compatibility
  * reasons only. The wizard is superseded by MBS C Project Wizard,
  * class {@link org.eclipse.cdt.ui.wizards.CProjectWizard}.
- * 
+ *
  * @deprecated as of CDT 4.0.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -46,11 +45,8 @@ public class NewMakeCProjectWizard extends NewMakeProjectWizard {
 	@Override
 	public void addPages() {
 		super.addPages();
-		addPage(
-			fOptionPage =
-				new MakeProjectWizardOptionPage(
-					MakeUIPlugin.getResourceString(WZ_SETTINGS_TITLE),
-					MakeUIPlugin.getResourceString(WZ_SETTINGS_DESC)));
+		addPage(fOptionPage = new MakeProjectWizardOptionPage(MakeUIPlugin.getResourceString(WZ_SETTINGS_TITLE),
+				MakeUIPlugin.getResourceString(WZ_SETTINGS_DESC)));
 	}
 
 }

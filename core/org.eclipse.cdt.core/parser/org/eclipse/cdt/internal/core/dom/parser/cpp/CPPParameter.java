@@ -48,11 +48,11 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPInternalBinding, ICPPTwoPhaseBinding {
 
-    public static class CPPParameterProblem extends ProblemBinding implements ICPPParameter {
-        public CPPParameterProblem(IASTNode node, int id, char[] arg) {
-            super(node, id, arg);
-        }
-    }
+	public static class CPPParameterProblem extends ProblemBinding implements ICPPParameter {
+		public CPPParameterProblem(IASTNode node, int id, char[] arg) {
+			super(node, id, arg);
+		}
+	}
 
 	private IType fType;
 	private IASTName[] fDeclarations;
@@ -60,28 +60,28 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 
 	public CPPParameter(IASTName name, int pos) {
 		this.fDeclarations = new IASTName[] { name };
-		fPosition= pos;
+		fPosition = pos;
 	}
 
 	public CPPParameter(IType type, int pos) {
-	    this.fType = type;
-	    fPosition= pos;
+		this.fType = type;
+		fPosition = pos;
 	}
 
-    @Override
+	@Override
 	public boolean isParameterPack() {
 		return getType() instanceof ICPPParameterPackType;
 	}
 
-    @Override
+	@Override
 	public IASTNode[] getDeclarations() {
-        return fDeclarations;
-    }
+		return fDeclarations;
+	}
 
-    @Override
+	@Override
 	public IASTNode getDefinition() {
-        return null;
-    }
+		return null;
+	}
 
 	@Override
 	public void addDeclaration(IASTNode node) {
@@ -89,14 +89,14 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 			return;
 		IASTName name = (IASTName) node;
 		if (fDeclarations == null || fDeclarations.length == 0) {
-	        fDeclarations = new IASTName[] { name };
+			fDeclarations = new IASTName[] { name };
 		} else {
-	        if (isDeclaredBefore((ASTNode) node, (ASTNode) fDeclarations[0])) {
+			if (isDeclaredBefore((ASTNode) node, (ASTNode) fDeclarations[0])) {
 				fDeclarations = ArrayUtil.prepend(IASTName.class, fDeclarations, name);
 			} else {
 				fDeclarations = ArrayUtil.append(IASTName.class, fDeclarations, name);
 			}
-	    }
+		}
 	}
 
 	private boolean isDeclaredBefore(ASTNode n1, ASTNode n2) {
@@ -108,18 +108,18 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	}
 
 	private IASTName getPrimaryDeclaration() {
-	    if (fDeclarations != null) {
-	        for (int i = 0; i < fDeclarations.length && fDeclarations[i] != null; i++) {
-	            IASTNode node = fDeclarations[i].getParent();
-	            while (!(node instanceof IASTDeclaration))
-	                node = node.getParent();
+		if (fDeclarations != null) {
+			for (int i = 0; i < fDeclarations.length && fDeclarations[i] != null; i++) {
+				IASTNode node = fDeclarations[i].getParent();
+				while (!(node instanceof IASTDeclaration))
+					node = node.getParent();
 
-	            if (node instanceof IASTFunctionDefinition)
-	                return fDeclarations[i];
-	        }
-	        return fDeclarations[0];
-	    }
-	    return null;
+				if (node instanceof IASTFunctionDefinition)
+					return fDeclarations[i];
+			}
+			return fDeclarations[0];
+		}
+		return null;
 	}
 
 	@Override
@@ -129,10 +129,10 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 
 	@Override
 	public char[] getNameCharArray() {
-	    IASTName name = getPrimaryDeclaration();
-	    if (name != null)
-	        return name.getSimpleID();
-	    return CharArrayUtils.EMPTY;
+		IASTName name = getPrimaryDeclaration();
+		if (name != null)
+			return name.getSimpleID();
+		return CharArrayUtils.EMPTY;
 	}
 
 	@Override
@@ -141,62 +141,62 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	}
 
 	public IASTNode getPhysicalNode() {
-	    if (fDeclarations != null)
-	        return fDeclarations[0];
+		if (fDeclarations != null)
+			return fDeclarations[0];
 		return null;
 	}
 
 	@Override
 	public IType getType() {
 		if (fType == null && fDeclarations != null) {
-			IASTNode parent= fDeclarations[0].getParent();
+			IASTNode parent = fDeclarations[0].getParent();
 			while (parent != null) {
 				if (parent instanceof ICPPASTParameterDeclaration) {
-					fType= CPPVisitor.createType((ICPPASTParameterDeclaration) parent, false);
+					fType = CPPVisitor.createType((ICPPASTParameterDeclaration) parent, false);
 					break;
 				}
-				parent= parent.getParent();
+				parent = parent.getParent();
 			}
 		}
 		return fType;
 	}
 
-    @Override
+	@Override
 	public boolean isStatic() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public String[] getQualifiedName() {
-        return new String[] { getName() };
-    }
+		return new String[] { getName() };
+	}
 
-    @Override
+	@Override
 	public char[][] getQualifiedNameCharArray() {
-        return new char[][] { getNameCharArray() };
-    }
+		return new char[][] { getNameCharArray() };
+	}
 
-    @Override
+	@Override
 	public boolean isGloballyQualified() {
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public void addDefinition(IASTNode node) {
 		addDeclaration(node);
 	}
 
-    @Override
+	@Override
 	public boolean isExtern() {
-        // 7.1.1-5 extern can not be used in the declaration of a parameter
-        return false;
-    }
+		// 7.1.1-5 extern can not be used in the declaration of a parameter
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isMutable() {
-        // 7.1.1-8 mutable can only apply to class members
-        return false;
-    }
+		// 7.1.1-8 mutable can only apply to class members
+		return false;
+	}
 
 	@Override
 	public boolean isConstexpr() {
@@ -205,15 +205,15 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 
 	@Override
 	public boolean isAuto() {
-        return hasStorageClass(IASTDeclSpecifier.sc_auto);
-    }
+		return hasStorageClass(IASTDeclSpecifier.sc_auto);
+	}
 
-    @Override
+	@Override
 	public boolean isRegister() {
-        return hasStorageClass(IASTDeclSpecifier.sc_register);
-    }
+		return hasStorageClass(IASTDeclSpecifier.sc_register);
+	}
 
-    public boolean hasStorageClass(int storage) {
+	public boolean hasStorageClass(int storage) {
 		IASTNode[] ns = getDeclarations();
 		if (ns == null)
 			return false;
@@ -277,15 +277,14 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 
 	@Override
 	public IBinding getOwner() {
-		IASTFunctionDeclarator decl =
-				ASTQueries.findAncestorWithType(fDeclarations[0], IASTFunctionDeclarator.class);
+		IASTFunctionDeclarator decl = ASTQueries.findAncestorWithType(fDeclarations[0], IASTFunctionDeclarator.class);
 		if (decl == null)
 			return null;
 		if (decl.getParent() instanceof ICPPASTLambdaExpression) {
 			CPPClosureType closure = (CPPClosureType) ((ICPPASTLambdaExpression) decl.getParent()).getExpressionType();
 			return closure.getFunctionCallOperator();
 		}
-		IASTName name= decl.getName();
+		IASTName name = decl.getName();
 		return name != null ? name.resolveBinding() : null;
 	}
 
@@ -297,18 +296,18 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	@Override
 	public IBinding resolveFinalBinding(CPPASTNameBase name) {
 		// Check if the binding has been updated.
-		IBinding current= name.getPreBinding();
+		IBinding current = name.getPreBinding();
 		if (current != this)
 			return current;
 
-		IASTNode node= getPrimaryDeclaration();
+		IASTNode node = getPrimaryDeclaration();
 		while (node != null && !(node instanceof IASTFunctionDeclarator)) {
-			node= node.getParent();
+			node = node.getParent();
 		}
 		if (node instanceof IASTFunctionDeclarator) {
-			IASTName funcName= ASTQueries.findInnermostDeclarator((IASTFunctionDeclarator) node).getName();
-			if (funcName != null) {  // will be null for lambda declarator
-				IBinding b= funcName.resolvePreBinding();
+			IASTName funcName = ASTQueries.findInnermostDeclarator((IASTFunctionDeclarator) node).getName();
+			if (funcName != null) { // will be null for lambda declarator
+				IBinding b = funcName.resolvePreBinding();
 				if (b instanceof ICPPInternalFunction) {
 					return ((ICPPInternalFunction) b).resolveParameter(this);
 				}

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,21 +17,21 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
- * Returns from the current frame without executing the rest of instructions.  
- * 
+ * Returns from the current frame without executing the rest of instructions.
+ *
  * <pre>
  * If VM running:
  *    C: drop {thread_id}
  *    R: ok
  *    E: resumed {thread_id} drop
  *    E: suspended {thread_id} drop
- *    
+ *
  * If VM suspended:
  *    C: drop {thread_id}
  *    R: ok
  *    E: vmresumed drop
  *    E: vmsuspended {thread_id} drop
- *    
+ *
  * Errors:
  *    error: invalid thread
  * </pre>
@@ -39,12 +39,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDADropFrameCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDADropFrameCommand(PDAThreadDMContext thread) {
-        super(thread, "drop " + thread.getID());
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDADropFrameCommand(PDAThreadDMContext thread) {
+		super(thread, "drop " + thread.getID());
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

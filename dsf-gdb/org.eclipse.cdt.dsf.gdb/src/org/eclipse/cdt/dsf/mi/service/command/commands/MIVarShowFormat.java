@@ -19,26 +19,25 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowFormatInfo;
 
 /**
- * 
+ *
  *    -var-show-format NAME
  *
  *  Returns the format used to display the value of the object NAME.
  *
  *     FORMAT ==>
  *     FORMAT-SPEC
- * 
+ *
  */
-public class MIVarShowFormat extends MICommand<MIVarShowFormatInfo> 
-{
+public class MIVarShowFormat extends MICommand<MIVarShowFormatInfo> {
 	/**
-     * @since 1.1
-     */
+	 * @since 1.1
+	 */
 	public MIVarShowFormat(ICommandControlDMContext ctx, String name) {
-		super(ctx, "-var-show-format", new String[]{name}); //$NON-NLS-1$
+		super(ctx, "-var-show-format", new String[] { name }); //$NON-NLS-1$
 	}
 
-    @Override
-    public MIVarShowFormatInfo getResult(MIOutput out) {
-        return new MIVarShowFormatInfo(out);
-    }
+	@Override
+	public MIVarShowFormatInfo getResult(MIOutput out) {
+		return new MIVarShowFormatInfo(out);
+	}
 }

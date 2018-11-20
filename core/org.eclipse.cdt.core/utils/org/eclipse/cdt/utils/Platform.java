@@ -39,38 +39,38 @@ public final class Platform {
 	// Unfortunately, the org.eclipse.core.runtime.Platform is final, so we cannot just
 	// extend it and and then override the getOSArch method, so getBundle and getOS just
 	// encapsulate calls to the same methods in org.eclipse.core.runtime.Platform.
-	
+
 	public static final String OS_LINUX = org.eclipse.core.runtime.Platform.OS_LINUX;
-	
+
 	private static String cachedArch = null;
-	
+
 	public static Bundle getBundle(String symbolicName) {
 		return org.eclipse.core.runtime.Platform.getBundle(symbolicName);
 	}
-	
+
 	public static String getOS() {
 		return org.eclipse.core.runtime.Platform.getOS();
 	}
-	
+
 	public static String getOSArch() {
 		if (cachedArch == null) {
 			String arch = org.eclipse.core.runtime.Platform.getOSArch();
 			if (arch.equals(org.eclipse.core.runtime.Platform.ARCH_PPC)) {
 				// Determine if the platform is actually a ppc64 machine
 				Process unameProcess;
-				String cmd[] = {"uname", "-p"};  //$NON-NLS-1$//$NON-NLS-2$
-	
+				String cmd[] = { "uname", "-p" }; //$NON-NLS-1$//$NON-NLS-2$
+
 				try {
 					unameProcess = Runtime.getRuntime().exec(cmd);
-	
+
 					InputStreamReader inputStreamReader = new InputStreamReader(unameProcess.getInputStream());
 					BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-					String unameOutput= bufferedReader.readLine();
+					String unameOutput = bufferedReader.readLine();
 					if (unameOutput != null) {
-						arch= unameOutput;
+						arch = unameOutput;
 					}
 					bufferedReader.close();
-					unameProcess.waitFor();	// otherwise the process becomes a zombie
+					unameProcess.waitFor(); // otherwise the process becomes a zombie
 				} catch (IOException e) {
 					CCorePlugin.log(e);
 				} catch (InterruptedException exc) {
@@ -82,12 +82,12 @@ public final class Platform {
 				Process unameProcess;
 				String cmd[];
 				if (org.eclipse.core.runtime.Platform.OS_WIN32.equals(getOS())) {
-					cmd = new String[] {"cmd", "/d", "/c", "set", "PROCESSOR_ARCHITECTURE"};  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					cmd = new String[] { "cmd", "/d", "/c", "set", "PROCESSOR_ARCHITECTURE" }; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 				} else {
 					// We don't use "uname -p" since it returns "unknown" on some Linux systems.
-					cmd = new String[] {"uname", "-m"};  //$NON-NLS-1$//$NON-NLS-2$
+					cmd = new String[] { "uname", "-m" }; //$NON-NLS-1$//$NON-NLS-2$
 				}
-	
+
 				try {
 					unameProcess = Runtime.getRuntime().exec(cmd);
 					unameProcess.getOutputStream().close();
@@ -96,10 +96,10 @@ public final class Platform {
 					BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 					String unameOutput = bufferedReader.readLine();
 					if (unameOutput != null && unameOutput.endsWith("64")) { //$NON-NLS-1$
-						arch= org.eclipse.core.runtime.Platform.ARCH_X86_64;
+						arch = org.eclipse.core.runtime.Platform.ARCH_X86_64;
 					}
 					bufferedReader.close();
-					unameProcess.waitFor();	// otherwise the process becomes a zombie
+					unameProcess.waitFor(); // otherwise the process becomes a zombie
 				} catch (IOException e) {
 					CCorePlugin.log(e);
 				} catch (InterruptedException exc) {
@@ -107,7 +107,7 @@ public final class Platform {
 					Thread.currentThread().interrupt();
 				}
 			}
-			cachedArch= arch;
+			cachedArch = arch;
 		}
 		return cachedArch;
 	}

@@ -51,7 +51,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	private StatusInfo fBuildPathStatus;
 
 	private ICElement fCurrCElement;
-	
+
 	private String fUserSettingsTimeStamp;
 	private long fFileTimeStamp;
 
@@ -78,16 +78,16 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	 * @return Returns the current class path (raw). Note that the entries
 	 *         returned must not be valid.
 	 */
-	public IPathEntry[] getRawCPath() throws CModelException{
+	public IPathEntry[] getRawCPath() throws CModelException {
 		List<CPElement> elements = getCPaths();
 
 		IPathEntry[] entries = getCProject().getRawPathEntries();
 		List<IPathEntry> cpath = new ArrayList<IPathEntry>(elements.size() + entries.length);
 
-		int[] applyTypes = getAppliedFilteredTypes(); 
+		int[] applyTypes = getAppliedFilteredTypes();
 		// create and set the paths
 		for (int i = 0; i < elements.size(); i++) {
-			CPElement entry = (elements.get(i));			
+			CPElement entry = (elements.get(i));
 			for (int applyType : applyTypes) {
 				if (entry.getEntryKind() == applyType) {
 					cpath.add(entry.getPathEntry());
@@ -110,7 +110,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 				cpath.add(entrie);
 			}
 		}
-		
+
 		return cpath.toArray(new IPathEntry[cpath.size()]);
 	}
 
@@ -118,7 +118,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	 * Initializes the paths for the given project. Multiple calls to init are
 	 * allowed, but all existing settings will be cleared and replace by the
 	 * given or default paths.
-	 * 
+	 *
 	 * @param element
 	 *        The C/C++ project to configure. Does not have to exist.
 	 * @param cpathEntries
@@ -135,7 +135,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 				cpathEntries = getCProject().getRawPathEntries();
 			} catch (CModelException e) {
 			}
-			
+
 		}
 		if (cpathEntries != null) {
 			newCPath = getFilteredElements(cpathEntries, getFilteredTypes());
@@ -146,7 +146,8 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	}
 
 	abstract protected int[] getFilteredTypes(); // path type which block would like access to
-	abstract protected int[] getAppliedFilteredTypes(); // path type which block modifies 
+
+	abstract protected int[] getAppliedFilteredTypes(); // path type which block modifies
 
 	abstract protected void initialize(ICElement element, List<CPElement> cPaths);
 
@@ -175,7 +176,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 
 	private String getEncodedSettings() {
 		StringBuilder buf = new StringBuilder();
-		
+
 		List<CPElement> elements = getCPaths();
 		int nElements = elements.size();
 		buf.append('[').append(nElements).append(']');
@@ -228,7 +229,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	}
 
 	private IStatus findMostSevereStatus() {
-		return StatusUtil.getMostSevere(new IStatus[] { fCPathStatus, fBuildPathStatus});
+		return StatusUtil.getMostSevere(new IStatus[] { fCPathStatus, fBuildPathStatus });
 	}
 
 	protected StatusInfo getPathStatus() {
@@ -252,7 +253,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#updateContainer()
 	 */
 	@Override
@@ -298,20 +299,20 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		return fCurrPage;
 	}
 
-	protected void internalConfigureCProject(List<CPElement> cPathEntries, IProgressMonitor monitor) throws CoreException,
-			InterruptedException {
+	protected void internalConfigureCProject(List<CPElement> cPathEntries, IProgressMonitor monitor)
+			throws CoreException, InterruptedException {
 		// 10 monitor steps to go
 
 		monitor.worked(2);
-		
+
 		IPathEntry[] entries = getCProject().getRawPathEntries();
-		
+
 		List<IPathEntry> cpath = new ArrayList<IPathEntry>(cPathEntries.size() + entries.length);
 
-		int[] applyTypes = getAppliedFilteredTypes(); 
+		int[] applyTypes = getAppliedFilteredTypes();
 		// create and set the paths
 		for (int i = 0; i < cPathEntries.size(); i++) {
-			CPElement entry = (cPathEntries.get(i));			
+			CPElement entry = (cPathEntries.get(i));
 			for (int applyType : applyTypes) {
 				if (entry.getEntryKind() == applyType) {
 					IResource res = entry.getResource();
@@ -350,7 +351,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.setTaskName(CPathEntryMessages.CPathsBlock_operationdesc_c); 
+		monitor.setTaskName(CPathEntryMessages.CPathsBlock_operationdesc_c);
 		monitor.beginTask("", 10); //$NON-NLS-1$
 
 		try {

@@ -22,78 +22,65 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-public class FPRenderingPlugin extends AbstractUIPlugin
-{
-    public static final String PLUGIN_ID = "org.eclipse.cdt.debug.ui.memory.floatingpoint"; //$NON-NLS-1$
+public class FPRenderingPlugin extends AbstractUIPlugin {
+	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.ui.memory.floatingpoint"; //$NON-NLS-1$
 
-    private static FPRenderingPlugin plugin;
+	private static FPRenderingPlugin plugin;
 
-    public FPRenderingPlugin()
-    {
-        super();
-    }
-
-    
-    @Override
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-        plugin = this;
+	public FPRenderingPlugin() {
+		super();
 	}
 
+	@Override
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		plugin = this;
+	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-        plugin = null;
+		plugin = null;
 		super.stop(context);
 	}
 
+	/**
+	 * Returns the shared instance.
+	 */
+	public static FPRenderingPlugin getDefault() {
+		return plugin;
+	}
 
 	/**
-     * Returns the shared instance.
-     */
-    public static FPRenderingPlugin getDefault()
-    {
-        return plugin;
-    }
+	 * Returns the unique identifier for this plugin.
+	 */
+	public static String getUniqueIdentifier() {
+		return PLUGIN_ID;
+	}
 
-    /**
-     * Returns the unique identifier for this plugin.
-     */
-    public static String getUniqueIdentifier()
-    {
-        return PLUGIN_ID;
-    }
+	/**
+	 * Returns the workbench's display.
+	 */
+	public static Display getStandardDisplay() {
+		return PlatformUI.getWorkbench().getDisplay();
+	}
 
-    /**
-     * Returns the workbench's display.
-     */
-    public static Display getStandardDisplay()
-    {
-        return PlatformUI.getWorkbench().getDisplay();
-    }
+	/**
+	 * Returns the currently active workbench window shell or <code>null</code>
+	 * if none.
+	 *
+	 * @return the currently active workbench window shell or <code>null</code>
+	 */
+	public static Shell getShell() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 
-    /**
-     * Returns the currently active workbench window shell or <code>null</code>
-     * if none.
-     * 
-     * @return the currently active workbench window shell or <code>null</code>
-     */
-    public static Shell getShell()
-    {
-        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        
-        if (window == null)
-        {
-            IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-            if (windows.length > 0)
-            {
-                return windows[0].getShell();
-            }
-        }
-        else
-        {
-            return window.getShell();
-        }
-        return null;
-    }
+		if (window == null) {
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			if (windows.length > 0) {
+				return windows[0].getShell();
+			}
+		} else {
+			return window.getShell();
+		}
+		return null;
+	}
 }

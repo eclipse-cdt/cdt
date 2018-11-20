@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 /**
  * A Job specialized to give access to the shared AST of the currently active editor.
  * Clients must implement {@link #runOnAST(ILanguage, IASTTranslationUnit)}.
- * 
+ *
  * @since 5.1
  */
 public abstract class SharedASTJob extends Job {
@@ -44,7 +44,7 @@ public abstract class SharedASTJob extends Job {
 
 	/**
 	 * Create a shared AST job for the given translation unit.
-	 * 
+	 *
 	 * @param name  the display name of this job
 	 * @param tUnit  the translation unit to get the AST for
 	 */
@@ -55,9 +55,9 @@ public abstract class SharedASTJob extends Job {
 
 	/**
 	 * Run an operation on the shared AST of the requested translation unit.
-	 * This method will only be called if the requested translation unit is open 
-	 * in the currently active editor. 
-	 * 
+	 * This method will only be called if the requested translation unit is open
+	 * in the currently active editor.
+	 *
 	 * @param lang  the associated <code>ILanguage</code> of the translation unit
 	 * @param ast  the AST object of the translation unit or <code>null</code>
 	 * @return A <code>Status</code> object reflecting the result of the operation
@@ -75,17 +75,18 @@ public abstract class SharedASTJob extends Job {
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				return SharedASTJob.this.runOnAST(lang, ast);
-			}});
+			}
+		});
 	}
 
-    @Override
+	@Override
 	public boolean shouldSchedule() {
-        return super.shouldSchedule() && PlatformUI.isWorkbenchRunning() && CUIPlugin.getDefault() != null;
-    }
+		return super.shouldSchedule() && PlatformUI.isWorkbenchRunning() && CUIPlugin.getDefault() != null;
+	}
 
-    @Override
+	@Override
 	public boolean shouldRun() {
-        return super.shouldRun() && PlatformUI.isWorkbenchRunning() && CUIPlugin.getDefault() != null;
-    }
+		return super.shouldRun() && PlatformUI.isWorkbenchRunning() && CUIPlugin.getDefault() != null;
+	}
 
 }

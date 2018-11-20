@@ -76,7 +76,7 @@ public class CDebugUtils {
 		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 		if (handler != null) {
 			try {
-				result = (Boolean)handler.handleStatus(status, source);
+				result = (Boolean) handler.handleStatus(status, source);
 			} catch (CoreException e) {
 			}
 		}
@@ -104,7 +104,7 @@ public class CDebugUtils {
 	}
 
 	public static char[] getByteText(byte b) {
-		return new char[]{ charFromByte((byte)((b >>> 4) & 0x0f)), charFromByte((byte)(b & 0x0f)) };
+		return new char[] { charFromByte((byte) ((b >>> 4) & 0x0f)), charFromByte((byte) (b & 0x0f)) };
 	}
 
 	public static byte textToByte(char[] text) {
@@ -139,7 +139,7 @@ public class CDebugUtils {
 
 	public static char bytesToChar(byte[] bytes) {
 		try {
-			return (char)Short.parseShort(new String(bytes), 16);
+			return (char) Short.parseShort(new String(bytes), 16);
 		} catch (RuntimeException e) {
 		}
 		return 0;
@@ -148,31 +148,31 @@ public class CDebugUtils {
 	public static byte toByte(char[] bytes, boolean le) {
 		if (bytes.length != 2)
 			return 0;
-		return (byte)Long.parseLong(bytesToString(bytes, le, true), 16);
+		return (byte) Long.parseLong(bytesToString(bytes, le, true), 16);
 	}
 
 	public static short toUnsignedByte(char[] bytes, boolean le) {
 		if (bytes.length != 2)
 			return 0;
-		return (short)Long.parseLong(bytesToString(bytes, le, false), 16);
+		return (short) Long.parseLong(bytesToString(bytes, le, false), 16);
 	}
 
 	public static short toShort(char[] bytes, boolean le) {
 		if (bytes.length != 4)
 			return 0;
-		return (short)Long.parseLong(bytesToString(bytes, le, true), 16);
+		return (short) Long.parseLong(bytesToString(bytes, le, true), 16);
 	}
 
 	public static int toUnsignedShort(char[] bytes, boolean le) {
 		if (bytes.length != 4)
 			return 0;
-		return (int)Long.parseLong(bytesToString(bytes, le, false), 16);
+		return (int) Long.parseLong(bytesToString(bytes, le, false), 16);
 	}
 
 	public static int toInt(char[] bytes, boolean le) {
 		if (bytes.length != 8)
 			return 0;
-		return (int)Long.parseLong(bytesToString(bytes, le, true), 16);
+		return (int) Long.parseLong(bytesToString(bytes, le, true), 16);
 	}
 
 	public static long toUnsignedInt(char[] bytes, boolean le) {
@@ -220,10 +220,10 @@ public class CDebugUtils {
 
 	/**
 	 * Serializes a XML document into a string - encoded in UTF8 format, with platform line separators.
-	 * 
+	 *
 	 * @param doc document to serialize
 	 * @param indent if the xml text should be indented.
-	 * 
+	 *
 	 * @return the document as a string
 	 */
 	public static String serializeDocument(Document doc, boolean indent) throws IOException, TransformerException {
@@ -235,12 +235,12 @@ public class CDebugUtils {
 		DOMSource source = new DOMSource(doc);
 		StreamResult outputTarget = new StreamResult(s);
 		transformer.transform(source, outputTarget);
-		return s.toString("UTF8"); //$NON-NLS-1$			
+		return s.toString("UTF8"); //$NON-NLS-1$
 	}
 
 	/**
 	 * Serializes a XML document into a string - encoded in UTF8 format, with platform line separators.
-	 * 
+	 *
 	 * @param doc document to serialize
 	 * @return the document as a string
 	 */
@@ -304,7 +304,8 @@ public class CDebugUtils {
 			} catch (CoreException e) {
 			}
 			for (int i = 0; i < refs.length; ++i) {
-				if (!list.contains(refs[i]) && refs[i] != null && !refs[i].equals(root) && refs[i].exists() && refs[i].isOpen()) {
+				if (!list.contains(refs[i]) && refs[i] != null && !refs[i].equals(root) && refs[i].exists()
+						&& refs[i].isOpen()) {
 					list.add(refs[i]);
 					getReferencedProjects(root, refs[i], list);
 				}
@@ -315,16 +316,16 @@ public class CDebugUtils {
 	public static String getBreakpointText(IBreakpoint breakpoint, boolean qualified) throws CoreException {
 		try {
 			if (breakpoint instanceof ICAddressBreakpoint) {
-				return getAddressBreakpointText((ICAddressBreakpoint)breakpoint, qualified);
+				return getAddressBreakpointText((ICAddressBreakpoint) breakpoint, qualified);
 			}
 			if (breakpoint instanceof ICFunctionBreakpoint) {
-				return getFunctionBreakpointText((ICFunctionBreakpoint)breakpoint, qualified);
+				return getFunctionBreakpointText((ICFunctionBreakpoint) breakpoint, qualified);
 			}
 			if (breakpoint instanceof ICLineBreakpoint) {
-				return getLineBreakpointText((ICLineBreakpoint)breakpoint, qualified);
+				return getLineBreakpointText((ICLineBreakpoint) breakpoint, qualified);
 			}
 			if (breakpoint instanceof ICWatchpoint) {
-				return getWatchpointText((ICWatchpoint)breakpoint, qualified);
+				return getWatchpointText((ICWatchpoint) breakpoint, qualified);
 			}
 			// This allows to create a new breakpoint without implementing one of the interfaces above and still see a label
 			Object message = breakpoint.getMarker().getAttribute(IMarker.MESSAGE);
@@ -347,7 +348,7 @@ public class CDebugUtils {
 		appendSourceName(breakpoint, label, qualified);
 		appendLineNumber(breakpoint, label);
 		if (breakpoint instanceof ICDynamicPrintf) {
-			appendPrintfString((ICDynamicPrintf)breakpoint, label);
+			appendPrintfString((ICDynamicPrintf) breakpoint, label);
 		}
 		appendBreakpointType(breakpoint, label);
 		appendExtensionMessage(breakpoint, label);
@@ -361,7 +362,7 @@ public class CDebugUtils {
 		appendSourceName(watchpoint, label, qualified);
 		appendWatchExpression(watchpoint, label);
 		if (watchpoint instanceof ICWatchpoint2) {
-			ICWatchpoint2 wp2 = (ICWatchpoint2)watchpoint;
+			ICWatchpoint2 wp2 = (ICWatchpoint2) watchpoint;
 			appendWatchMemorySpace(wp2, label);
 			appendWatchRange(wp2, label);
 		}
@@ -372,12 +373,13 @@ public class CDebugUtils {
 		return label.toString();
 	}
 
-	protected static String getAddressBreakpointText(ICAddressBreakpoint breakpoint, boolean qualified) throws CoreException {
+	protected static String getAddressBreakpointText(ICAddressBreakpoint breakpoint, boolean qualified)
+			throws CoreException {
 		StringBuffer label = new StringBuffer();
 		appendSourceName(breakpoint, label, qualified);
 		appendAddress(breakpoint, label);
 		if (breakpoint instanceof ICDynamicPrintf) {
-			appendPrintfString((ICDynamicPrintf)breakpoint, label);
+			appendPrintfString((ICDynamicPrintf) breakpoint, label);
 		}
 		appendBreakpointType(breakpoint, label);
 		appendExtensionMessage(breakpoint, label);
@@ -386,12 +388,13 @@ public class CDebugUtils {
 		return label.toString();
 	}
 
-	protected static String getFunctionBreakpointText(ICFunctionBreakpoint breakpoint, boolean qualified) throws CoreException {
+	protected static String getFunctionBreakpointText(ICFunctionBreakpoint breakpoint, boolean qualified)
+			throws CoreException {
 		StringBuffer label = new StringBuffer();
 		appendSourceName(breakpoint, label, qualified);
 		appendFunction(breakpoint, label);
 		if (breakpoint instanceof ICDynamicPrintf) {
-			appendPrintfString((ICDynamicPrintf)breakpoint, label);
+			appendPrintfString((ICDynamicPrintf) breakpoint, label);
 		}
 		appendBreakpointType(breakpoint, label);
 		appendExtensionMessage(breakpoint, label);
@@ -402,7 +405,7 @@ public class CDebugUtils {
 
 	/**
 	 * Append the Breakpoint Extension message to the breakpoint text in buffer.
-	 * 
+	 *
 	 * @param breakpoint C Breakpoint
 	 * @param buffer buffer to append message to
 	 * @see {@link ICBreakpointExtension#getExtensionMessage()
@@ -421,7 +424,8 @@ public class CDebugUtils {
 		}
 	}
 
-	protected static StringBuffer appendSourceName(ICBreakpoint breakpoint, StringBuffer label, boolean qualified) throws CoreException {
+	protected static StringBuffer appendSourceName(ICBreakpoint breakpoint, StringBuffer label, boolean qualified)
+			throws CoreException {
 		String handle = breakpoint.getSourceHandle();
 		if (!isEmpty(handle)) {
 			IPath path = new Path(handle);
@@ -432,29 +436,35 @@ public class CDebugUtils {
 		return label;
 	}
 
-	protected static StringBuffer appendLineNumber(ICLineBreakpoint breakpoint, StringBuffer label) throws CoreException {
+	protected static StringBuffer appendLineNumber(ICLineBreakpoint breakpoint, StringBuffer label)
+			throws CoreException {
 		int lineNumber = breakpoint.getLineNumber();
 		if (lineNumber > 0) {
 			label.append(' ');
-			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.0"), (Object[])new String[]{ Integer.toString(lineNumber) })); //$NON-NLS-1$
+			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.0"), //$NON-NLS-1$
+					(Object[]) new String[] { Integer.toString(lineNumber) }));
 		}
 		return label;
 	}
 
-	protected static StringBuffer appendAddress(ICAddressBreakpoint breakpoint, StringBuffer label) throws CoreException {
+	protected static StringBuffer appendAddress(ICAddressBreakpoint breakpoint, StringBuffer label)
+			throws CoreException {
 		try {
 			label.append(' ');
-			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.1"), (Object[])new String[]{ breakpoint.getAddress() })); //$NON-NLS-1$
+			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.1"), //$NON-NLS-1$
+					(Object[]) new String[] { breakpoint.getAddress() }));
 		} catch (NumberFormatException e) {
 		}
 		return label;
 	}
 
-	protected static StringBuffer appendFunction(ICFunctionBreakpoint breakpoint, StringBuffer label) throws CoreException {
+	protected static StringBuffer appendFunction(ICFunctionBreakpoint breakpoint, StringBuffer label)
+			throws CoreException {
 		String function = breakpoint.getFunction();
 		if (function != null && function.trim().length() > 0) {
 			label.append(' ');
-			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.2"), (Object[])new String[]{ function.trim() })); //$NON-NLS-1$
+			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.2"), //$NON-NLS-1$
+					(Object[]) new String[] { function.trim() }));
 		}
 		return label;
 	}
@@ -466,7 +476,8 @@ public class CDebugUtils {
 		String printfStr = dprintf.getPrintfString();
 		if (printfStr != null && printfStr.length() > 0) {
 			buffer.append(' ');
-			buffer.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.printfString"), (Object[])new String[] { printfStr })); //$NON-NLS-1$
+			buffer.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.printfString"), //$NON-NLS-1$
+					(Object[]) new String[] { printfStr }));
 		}
 	}
 
@@ -474,7 +485,8 @@ public class CDebugUtils {
 		int ignoreCount = breakpoint.getIgnoreCount();
 		if (ignoreCount > 0) {
 			label.append(' ');
-			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.3"), (Object[])new String[]{ Integer.toString(ignoreCount) })); //$NON-NLS-1$
+			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.3"), //$NON-NLS-1$
+					(Object[]) new String[] { Integer.toString(ignoreCount) }));
 		}
 		return label;
 	}
@@ -483,7 +495,8 @@ public class CDebugUtils {
 		String condition = breakpoint.getCondition();
 		if (condition != null && condition.length() > 0) {
 			buffer.append(' ');
-			buffer.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.4"), (Object[])new String[] { condition })); //$NON-NLS-1$
+			buffer.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.4"), //$NON-NLS-1$
+					(Object[]) new String[] { condition }));
 		}
 	}
 
@@ -491,7 +504,8 @@ public class CDebugUtils {
 		String expression = watchpoint.getExpression();
 		if (expression != null && expression.length() > 0) {
 			label.append(' ');
-			label.append(MessageFormat.format( DebugCoreMessages.getString("CDebugUtils.5"), (Object[])new String[] { expression })); //$NON-NLS-1$
+			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.5"), //$NON-NLS-1$
+					(Object[]) new String[] { expression }));
 		}
 	}
 
@@ -499,7 +513,8 @@ public class CDebugUtils {
 		String memorySpace = watchpoint.getMemorySpace();
 		if (memorySpace != null && memorySpace.length() > 0) {
 			label.append(' ');
-			label.append(MessageFormat.format( DebugCoreMessages.getString("CDebugUtils.6"), (Object[])new String[] { memorySpace })); //$NON-NLS-1$
+			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.6"), //$NON-NLS-1$
+					(Object[]) new String[] { memorySpace }));
 		}
 	}
 
@@ -507,11 +522,13 @@ public class CDebugUtils {
 		String range = watchpoint.getRange().toString();
 		if (range.length() > 0 && !range.equals("0")) { //$NON-NLS-1$
 			label.append(' ');
-			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.7"), (Object[])new String[]{ range })); //$NON-NLS-1$
+			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.7"), //$NON-NLS-1$
+					(Object[]) new String[] { range }));
 		}
 	}
-	
-	protected static StringBuffer appendBreakpointType(ICBreakpoint breakpoint, StringBuffer label) throws CoreException {
+
+	protected static StringBuffer appendBreakpointType(ICBreakpoint breakpoint, StringBuffer label)
+			throws CoreException {
 		if (breakpoint instanceof ICBreakpointType) {
 			String typeString = ""; //$NON-NLS-1$
 			int type = ((ICBreakpointType) breakpoint).getType();
@@ -526,21 +543,21 @@ public class CDebugUtils {
 				typeString = DebugCoreMessages.getString("CDebugUtils.Software"); //$NON-NLS-1$
 				break;
 			}
-			
+
 			// Now factor in the TEMPORARY qualifier to form, .e.,g "Hardware/Temporary"
 			// Thing is, a temporary breakpoint should never show in the GUI, so this is
 			// here as a just-in-case.
 			if ((type & ICBreakpointType.TEMPORARY) != 0) {
 				if (typeString.length() > 0) {
-					typeString += "/";	 //$NON-NLS-1$
+					typeString += "/"; //$NON-NLS-1$
 				}
 				typeString += DebugCoreMessages.getString("CDebugUtils.Temporary"); //$NON-NLS-1$
 			}
-			
+
 			if (typeString.length() > 0) {
 				label.append(' ');
-				label.append(MessageFormat.format(
-						DebugCoreMessages.getString("CDebugUtils.8"), (Object[])new String[] { typeString })); //$NON-NLS-1$
+				label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.8"), //$NON-NLS-1$
+						(Object[]) new String[] { typeString }));
 			}
 		}
 		return label;
@@ -549,11 +566,12 @@ public class CDebugUtils {
 	private static boolean isEmpty(String string) {
 		return (string == null || string.trim().length() == 0);
 	}
-	
+
 	private static CharsetDecoder fDecoder;
 
 	public static CharsetDecoder getCharsetDecoder() {
-		String charsetName = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET);
+		String charsetName = CDebugCorePlugin.getDefault().getPluginPreferences()
+				.getString(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET);
 		if (fDecoder == null || !fDecoder.charset().name().equals(charsetName)) {
 			Charset charset = Charset.forName(charsetName);
 			fDecoder = charset.newDecoder();
@@ -562,62 +580,64 @@ public class CDebugUtils {
 	}
 
 	/**
-     * Note: Moved from AbstractCLaunchDelegate
-     * @since 6.0
+	 * Note: Moved from AbstractCLaunchDelegate
+	 * @since 6.0
 	 */
-    public static ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
-        String projectName = getProjectName(configuration);
-        if (projectName != null) {
-            projectName = projectName.trim();
-            if (projectName.length() > 0) {
-                IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-                ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
-                if (cProject != null && cProject.exists()) {
-                    return cProject;
-                }
-            }
-        }
-        return null;
-    }
+	public static ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
+		String projectName = getProjectName(configuration);
+		if (projectName != null) {
+			projectName = projectName.trim();
+			if (projectName.length() > 0) {
+				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+				ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
+				if (cProject != null && cProject.exists()) {
+					return cProject;
+				}
+			}
+		}
+		return null;
+	}
 
-    /**
-     * Note: Moved from AbstractCLaunchDelegate
-     * @since 6.0
-     */
-    public static String getProjectName(ILaunchConfiguration configuration) throws CoreException {
-        return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
-    }
+	/**
+	 * Note: Moved from AbstractCLaunchDelegate
+	 * @since 6.0
+	 */
+	public static String getProjectName(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+	}
 
-    /**
-     * Note: Moved from AbstractCLaunchDelegate
-     * @since 6.0
-     */
-    public static String getProgramName(ILaunchConfiguration configuration) throws CoreException {
-        String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String) null);
-        if (programName != null) {
-        	programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
-        }
-        return programName;
-    }
+	/**
+	 * Note: Moved from AbstractCLaunchDelegate
+	 * @since 6.0
+	 */
+	public static String getProgramName(ILaunchConfiguration configuration) throws CoreException {
+		String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+				(String) null);
+		if (programName != null) {
+			programName = VariablesPlugin.getDefault().getStringVariableManager()
+					.performStringSubstitution(programName);
+		}
+		return programName;
+	}
 
-    /**
-     * Note: Moved from AbstractCLaunchDelegate
-     * @since 6.0
-     */
-    public static IPath getProgramPath(ILaunchConfiguration configuration) throws CoreException {
-        String path = getProgramName(configuration);
-        if (path == null || path.trim().length() == 0) {
-            return null;
-        }
-        return new Path(path);
-    }
+	/**
+	 * Note: Moved from AbstractCLaunchDelegate
+	 * @since 6.0
+	 */
+	public static IPath getProgramPath(ILaunchConfiguration configuration) throws CoreException {
+		String path = getProgramName(configuration);
+		if (path == null || path.trim().length() == 0) {
+			return null;
+		}
+		return new Path(path);
+	}
 
 	/**
 	 * Returns the ICProject associated with the project setting in the Main tab
 	 * of a CDT launch configuration, or throws a CoreException providing a
 	 * reason (e.g., the setting is empty, the project no longer exists, the
 	 * isn't a CDT one, etc).
-	 * 
+	 *
 	 * @param config
 	 *            the launch configuration
 	 * @return an ICProject; never null.
@@ -627,20 +647,21 @@ public class CDebugUtils {
 	public static ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
 		String name = CDebugUtils.getProjectName(config);
 		if (name == null) {
-			throwCoreException(DebugCoreMessages.getString("CDebugUtils.C_Project_not_specified"),  //$NON-NLS-1$
+			throwCoreException(DebugCoreMessages.getString("CDebugUtils.C_Project_not_specified"), //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
 		}
 		ICProject cproject = CDebugUtils.getCProject(config);
 		if (cproject == null) {
 			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (!proj.exists()) {
-				throwCoreException(DebugCoreMessages.getFormattedString("CDebugUtils.Project_NAME_does_not_exist", name),  //$NON-NLS-1$
+				throwCoreException(
+						DebugCoreMessages.getFormattedString("CDebugUtils.Project_NAME_does_not_exist", name), //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			} else if (!proj.isOpen()) {
 				throwCoreException(DebugCoreMessages.getFormattedString("CDebugUtils.Project_NAME_is_closed", name), //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			}
-			throwCoreException(DebugCoreMessages.getString("CDebugUtils.Not_a_C_CPP_project"),  //$NON-NLS-1$
+			throwCoreException(DebugCoreMessages.getString("CDebugUtils.Not_a_C_CPP_project"), //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 		}
 		return cproject;
@@ -655,7 +676,7 @@ public class CDebugUtils {
 	 * such possible reasons (a problem with the <i>Project</i> setting, an
 	 * empty <i>C/C++ Application</i> setting, the combined settings doesn't
 	 * resolve to an existing file, etc).
-	 * 
+	 *
 	 * @param config
 	 *            the launch configuration
 	 * @param ignoreProjectSetting
@@ -666,23 +687,24 @@ public class CDebugUtils {
 	 * @throws CoreException
 	 * @since 7.0
 	 */
-	public static IPath verifyProgramPath(ILaunchConfiguration config, boolean ignoreProjectSetting) throws CoreException {
+	public static IPath verifyProgramPath(ILaunchConfiguration config, boolean ignoreProjectSetting)
+			throws CoreException {
 		ICProject cproject = null;
 		if (!ignoreProjectSetting) {
-			cproject = verifyCProject(config);	// will throw exception if project setting not valid
+			cproject = verifyCProject(config); // will throw exception if project setting not valid
 		}
 		IPath programPath = CDebugUtils.getProgramPath(config);
 		if (programPath == null || programPath.isEmpty()) {
 			throwCoreException(DebugCoreMessages.getString("CDebugUtils.Program_file_not_specified"), //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
-		
-		if (programPath != null) {	// this check is here only to avoid warning; compiler can't tell we'll throw an exception above
+
+		if (programPath != null) { // this check is here only to avoid warning; compiler can't tell we'll throw an exception above
 			if (!programPath.isAbsolute() && (cproject != null)) {
 				// See if we can brute-force append the program path to the
 				// project location. This allows us to support the program file
 				// being outside the project, even outside the workspace, without
-				// requiring a linked resource (e.g., the setting could be 
+				// requiring a linked resource (e.g., the setting could be
 				// "..\..\some\dir\myprogram.exe")
 				IPath location = cproject.getProject().getLocation();
 				if (location != null) {
@@ -694,8 +716,8 @@ public class CDebugUtils {
 						try {
 							projFile = cproject.getProject().getFile(CDebugUtils.getProgramPath(config));
 						} catch (IllegalArgumentException exc) {
-							// thrown if relative path that resolves to a root file (e.g., "..\somefile")							
-						}	
+							// thrown if relative path that resolves to a root file (e.g., "..\somefile")
+						}
 						if (projFile != null && projFile.exists()) {
 							programPath = projFile.getLocation();
 						}
@@ -703,10 +725,9 @@ public class CDebugUtils {
 				}
 			}
 			if (!programPath.toFile().exists()) {
-				throwCoreException(
-						DebugCoreMessages.getString("CDebugUtils.Program_file_does_not_exist"), //$NON-NLS-1$
-						new FileNotFoundException(
-								DebugCoreMessages.getFormattedString("CDebugUtils.PROGRAM_PATH_not_found", programPath.toOSString())), //$NON-NLS-1$
+				throwCoreException(DebugCoreMessages.getString("CDebugUtils.Program_file_does_not_exist"), //$NON-NLS-1$
+						new FileNotFoundException(DebugCoreMessages
+								.getFormattedString("CDebugUtils.PROGRAM_PATH_not_found", programPath.toOSString())), //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 			}
 		}
@@ -717,13 +738,13 @@ public class CDebugUtils {
 	 * Variant that expects (requires) the launch configuration to have a valid
 	 * <i>Project</i> setting. See
 	 * {@link #verifyProgramPath(ILaunchConfiguration, boolean)}
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public static IPath verifyProgramPath(ILaunchConfiguration config) throws CoreException {
-		return verifyProgramPath(config, false); 
+		return verifyProgramPath(config, false);
 	}
-	
+
 	/** Throws a CoreException. Clutter-reducing utility method. */
 	private static void throwCoreException(String msg, int code) throws CoreException {
 		throwCoreException(msg, null, code);
@@ -731,14 +752,15 @@ public class CDebugUtils {
 
 	/** Throws a CoreException. Clutter-reducing utility method. */
 	private static void throwCoreException(String msg, Exception innerException, int code) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), code, msg, innerException));
+		throw new CoreException(
+				new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), code, msg, innerException));
 	}
-	
+
 	/**
 	 * Generic method to fetch an attribute from a Map that has keys of type String.  The defaultValue
 	 * parameter will be returned if the map does not contain the key, or if the matching value is not
 	 * of the correct type.
-	 * 
+	 *
 	 * @param <V> The type of the value we are looking for.  Specified by the type of defaultValue.
 	 * @param attributes The map with keys of type String, and values of any type.  Cannot be null.
 	 * @param key They key for which we want the value.
@@ -755,13 +777,13 @@ public class CDebugUtils {
 		}
 		return defaultValue;
 	}
-	
+
 	/**
-	 * Overrides the standard project ICBreakpoint toggle breakpoint factory with 
-	 * a custom toggle breakpoint factory. The ICBreakpoint toggle breakpoint factory 
-	 * will be disabled and it is up to the client to contribute it's own toggle 
-	 * breakpoint factory. 
-	 * 
+	 * Overrides the standard project ICBreakpoint toggle breakpoint factory with
+	 * a custom toggle breakpoint factory. The ICBreakpoint toggle breakpoint factory
+	 * will be disabled and it is up to the client to contribute it's own toggle
+	 * breakpoint factory.
+	 *
 	 * @param project a project
 	 * @param factoryId a breakpoint toggle factory identifier
 	 * @since 7.1
@@ -773,12 +795,12 @@ public class CDebugUtils {
 			pref.flush();
 		} catch (BackingStoreException e) {
 			CDebugCorePlugin.log(e);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Returns the toggle breakpoint factory identifier for the project
-	 * 
+	 *
 	 * @param project the project
 	 * @return the toggle breakpoint factory identifier, can be {@code null}
 	 * @since 7.1
@@ -787,10 +809,10 @@ public class CDebugUtils {
 		IEclipsePreferences pref = new ProjectScope(project.getProject()).getNode(CDebugCorePlugin.PLUGIN_ID);
 		return pref.get(ICDebugConstants.PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER, null);
 	}
-	
+
 	/**
 	 * Returns whether the project uses the standard ICBreakpoint toggle breakpoint factory.
-	 * 
+	 *
 	 * @param project the project
 	 * @return {@code true} if the project uses the standard ICBreakpoint breakpoint toggle factory
 	 * @since 7.1
@@ -800,9 +822,9 @@ public class CDebugUtils {
 	}
 
 	/**
-	 * Returns whether the custom toggle breakpoint factory should be consider when evaluating the 
+	 * Returns whether the custom toggle breakpoint factory should be consider when evaluating the
 	 * enablement of the standard ICBreakpoint toggle breakpoint factory.
-	 * 
+	 *
 	 * @return true if the custom model breakpoint system property is set
 	 * @since 7.1
 	 * @see ICDebugConstants#PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER
@@ -824,7 +846,7 @@ public class CDebugUtils {
 		/**
 		 * Returns the containing folder of the input file. Can be empty if the
 		 * input file was a filename.
-		 * 
+		 *
 		 * @return containing folder
 		 */
 		public String getFolder() {
@@ -834,7 +856,7 @@ public class CDebugUtils {
 		/**
 		 * Returns the filename (after last slash) of the input file. Can be
 		 * empty if input ended with a slash.
-		 * 
+		 *
 		 * @return file name
 		 */
 		public String getFileName() {
@@ -843,7 +865,7 @@ public class CDebugUtils {
 
 		/**
 		 * Returns the extension of {@link #getFileName()}
-		 * 
+		 *
 		 * @return the extension
 		 */
 		public String getExtension() {
@@ -853,19 +875,20 @@ public class CDebugUtils {
 		/**
 		 * CDebugUtils.getFileParts(String) should be called to create FileParts.
 		 */
-		private FileParts() {}
+		private FileParts() {
+		}
 	}
 
 	/**
 	 * Split a Windows or Unix style path into its constituent parts.
-	 * 
+	 *
 	 * The split does not modify or canonicalize the individual parts of the
 	 * file name. Nor does it convert between platforms.
-	 * 
+	 *
 	 * This method is useful for dealing with Windows paths when running on
 	 * Linux and vice versa, it is also useful for non-canonical paths (ones
 	 * with .. in them).
-	 * 
+	 *
 	 * @param file
 	 *            file name
 	 * @return parts of a file

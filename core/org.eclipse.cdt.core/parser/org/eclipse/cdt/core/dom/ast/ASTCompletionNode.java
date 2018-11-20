@@ -25,7 +25,7 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	private final IToken completionToken;
 	private final List<CompletionNameEntry> entries = new ArrayList<>();
 	private final IASTTranslationUnit translationUnit;
-	
+
 	public ASTCompletionNode(IToken completionToken, IASTTranslationUnit translationUnit) {
 		this.completionToken = completionToken;
 		this.translationUnit = translationUnit;

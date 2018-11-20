@@ -69,7 +69,6 @@ public class RadioButtonsArea extends Composite {
 	 */
 	protected Button[] radioButtons;
 
-
 	public RadioButtonsArea(Composite parent, String labelText, int numColumns, String[][] labelAndValues) {
 		super(parent, SWT.NULL);
 		Assert.isTrue(checkArray(labelAndValues));
@@ -117,14 +116,14 @@ public class RadioButtonsArea extends Composite {
 		gl.horizontalSpacing = 0;
 		this.setLayout(gl);
 
-		if(null != labelText) { // Create group box
+		if (null != labelText) { // Create group box
 			area = ControlFactory.createGroup(this, labelText, numColumns);
 		} else {
 			area = this;
 		}
 
 		radioButtons = new Button[labelsAndValues.length];
-		listener =  new SelectionAdapter() {
+		listener = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				value = (String) (event.widget.getData());
@@ -133,10 +132,8 @@ public class RadioButtonsArea extends Composite {
 		};
 
 		for (int i = 0; i < labelsAndValues.length; i++) {
-			radioButtons[i] = ControlFactory.createRadioButton(area,
-							  labelsAndValues[i][0],
-							  labelsAndValues[i][1],
-			  			      listener);
+			radioButtons[i] = ControlFactory.createRadioButton(area, labelsAndValues[i][0], labelsAndValues[i][1],
+					listener);
 		}
 
 		area.addDisposeListener(new DisposeListener() {
@@ -154,12 +151,12 @@ public class RadioButtonsArea extends Composite {
 	 * @param indent the indent (in pixels)
 	 */
 	public void setIndent(int indent) {
-		if(null == area)
+		if (null == area)
 			return;
 		if (indent < 0)
 			indent = 0;
-		for(int i = 0; i < radioButtons.length; ++i) {
-			((GridData)(radioButtons[i].getLayoutData())).horizontalIndent = indent;
+		for (int i = 0; i < radioButtons.length; ++i) {
+			((GridData) (radioButtons[i].getLayoutData())).horizontalIndent = indent;
 		}
 	}
 
@@ -196,28 +193,28 @@ public class RadioButtonsArea extends Composite {
 		return;
 	}
 
-    public void setSelectedButton(int index) {
-    	Button b;
+	public void setSelectedButton(int index) {
+		Button b;
 
-    	if((index < 0) || (index >= radioButtons.length))
-    		return;
+		if ((index < 0) || (index >= radioButtons.length))
+			return;
 
-		for(int i = 0; i < radioButtons.length; ++i) {
+		for (int i = 0; i < radioButtons.length; ++i) {
 			b = radioButtons[i];
 			boolean selected = b.getSelection();
-			if(i == index) {
-			   if(selected)
-			   	return;
+			if (i == index) {
+				if (selected)
+					return;
 			} else {
-				if(selected)
+				if (selected)
 					b.setSelection(false);
 			}
 		}
 
 		b = radioButtons[index];
-		this.value = (String)b.getData();
+		this.value = (String) b.getData();
 		b.setSelection(true);
-    }
+	}
 
 	public String getSelectedValue() {
 		return value;
@@ -238,7 +235,7 @@ public class RadioButtonsArea extends Composite {
 	}
 
 	public void addSelectionListener(SelectionListener s) {
-		if(externalListeners.contains(s))
+		if (externalListeners.contains(s))
 			return;
 		externalListeners.add(s);
 	}

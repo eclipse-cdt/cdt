@@ -16,18 +16,19 @@ package org.eclipse.cdt.internal.formatter;
 
 /**
  * Unchecked exception wrapping invalid input checked exception which may occur
- * when scanning original formatted source. 
- * 
+ * when scanning original formatted source.
+ *
  * @since 4.0
  */
 public class AbortFormatting extends RuntimeException {
 
-	private static final long serialVersionUID= -5796507276311428526L;
+	private static final long serialVersionUID = -5796507276311428526L;
 	Throwable nestedException;
-	
+
 	public AbortFormatting(String message) {
 		super(message);
 	}
+
 	public AbortFormatting(Throwable cause) {
 		super(cause);
 	}

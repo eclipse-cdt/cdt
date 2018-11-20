@@ -38,7 +38,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 2.0
  */
 /*package*/
@@ -65,19 +65,20 @@ public class PasteAction extends SelectionListenerAction {
 	 * @param shell the shell for any dialogs
 	 */
 	public PasteAction(Shell shell, Clipboard clipboard) {
-		super(CViewMessages.PasteAction_title); 
+		super(CViewMessages.PasteAction_title);
 		Assert.isNotNull(shell);
 		Assert.isNotNull(clipboard);
 		this.shell = shell;
 		this.clipboard = clipboard;
-		setToolTipText(CViewMessages.PasteAction_toolTip); 
+		setToolTipText(CViewMessages.PasteAction_toolTip);
 		setId(PasteAction.ID);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.PASTE_ACTION);
 	}
+
 	/**
 	 * Returns the actual target of the paste action. Returns null
 	 * if no valid target is selected.
-	 * 
+	 *
 	 * @return the actual target of the paste action
 	 */
 	private IResource getTarget() {
@@ -95,11 +96,12 @@ public class PasteAction extends SelectionListenerAction {
 		}
 		return null;
 	}
+
 	/**
 	 * Returns whether any of the given resources are linked resources.
-	 * 
+	 *
 	 * @param resources resource to check for linked type. may be null
-	 * @return true=one or more resources are linked. false=none of the 
+	 * @return true=one or more resources are linked. false=none of the
 	 * 	resources are linked
 	 */
 	private boolean isLinked(IResource[] resources) {
@@ -112,6 +114,7 @@ public class PasteAction extends SelectionListenerAction {
 		}
 		return false;
 	}
+
 	/**
 	 * Implementation of method defined on <code>IAction</code>.
 	 */
@@ -150,6 +153,7 @@ public class PasteAction extends SelectionListenerAction {
 			operation.copyFiles(fileData, container);
 		}
 	}
+
 	/**
 	 * Returns the container to hold the pasted resources.
 	 */
@@ -159,9 +163,10 @@ public class PasteAction extends SelectionListenerAction {
 			return ((IFile) selection.get(0)).getParent();
 		return (IContainer) selection.get(0);
 	}
+
 	/**
 	 * The <code>PasteAction</code> implementation of this
-	 * <code>SelectionListenerAction</code> method enables this action if 
+	 * <code>SelectionListenerAction</code> method enables this action if
 	 * a resource compatible with what is on the clipboard is selected.
 	 */
 	@Override
@@ -175,11 +180,11 @@ public class PasteAction extends SelectionListenerAction {
 			public void run() {
 				// clipboard must have resources or files
 				ResourceTransfer resTransfer = ResourceTransfer.getInstance();
-				clipboardData[0] = (IResource[])clipboard.getContents(resTransfer);
+				clipboardData[0] = (IResource[]) clipboard.getContents(resTransfer);
 			}
 		});
 		IResource[] resourceData = clipboardData[0];
-		if (resourceData != null && resourceData.length > 0	&& resourceData[0].getType() == IResource.PROJECT) {
+		if (resourceData != null && resourceData.length > 0 && resourceData[0].getType() == IResource.PROJECT) {
 			for (int i = 0; i < resourceData.length; i++) {
 				// make sure all resource data are open projects
 				// can paste open projects regardless of selection
@@ -194,8 +199,8 @@ public class PasteAction extends SelectionListenerAction {
 		if (getSelectedNonResources().size() > 0)
 			return false;
 
-		// targetResource is null if no valid target is selected or 
-		// selection is empty	
+		// targetResource is null if no valid target is selected or
+		// selection is empty
 		IResource targetResource = getTarget();
 		if (targetResource == null)
 			return false;
@@ -204,7 +209,7 @@ public class PasteAction extends SelectionListenerAction {
 		// open project) or multiple file selection with the same parent
 		List<?> selectedResources = getSelectedResources();
 		if (selectedResources.size() > 1) {
-			// if more than one resource is selected the selection has 
+			// if more than one resource is selected the selection has
 			// to be all files with the same parent
 			for (int i = 0; i < selectedResources.size(); i++) {
 				IResource resource = (IResource) selectedResources.get(i);

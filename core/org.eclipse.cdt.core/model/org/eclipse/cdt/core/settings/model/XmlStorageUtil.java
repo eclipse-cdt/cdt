@@ -21,26 +21,26 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * This class serves as a bridge from Xml Document trees to 
+ * This class serves as a bridge from Xml Document trees to
  * ICStorageElement trees.
- * 
+ *
  * This allows importing of old style Xml trees into ICStorageElement
  * based project descriptions
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 5.1
  */
 public class XmlStorageUtil {
 
 	/**
-	 * Return an ICStorageElement tree based around the specified 
+	 * Return an ICStorageElement tree based around the specified
 	 * document
-	 * 
+	 *
 	 * N.B. the tree is backed by the passed in document
 	 * so care should be taken to ensure that the tree is only
 	 * subsequently through the ICStorageElement interface
-	 * 
-	 * The ICStorageElement tree is based on the first Element 
+	 *
+	 * The ICStorageElement tree is based on the first Element
 	 * found in the Document
 	 * @param doc
 	 * @return ICStorageElement tree or null if impossible
@@ -49,20 +49,20 @@ public class XmlStorageUtil {
 		NodeList list = doc.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			if (list.item(i).getNodeType() == Node.ELEMENT_NODE) {
-				return createCStorageTree((Element)list.item(i));
+				return createCStorageTree((Element) list.item(i));
 			}
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Return an ICStorageElement tree based around the specified 
+	 * Return an ICStorageElement tree based around the specified
 	 * Element.
-	 * 
-	 * NB the returned ICStorageElement is backed by the passed in 
+	 *
+	 * NB the returned ICStorageElement is backed by the passed in
 	 * Element which should only be modified via the ICStorageElement
 	 * interface subsequent to this conversion.
-	 * 
+	 *
 	 * @param el input XML element
 	 * @return ICStorageElement tree
 	 */

@@ -48,27 +48,28 @@ import org.eclipse.cdt.internal.ui.cview.IncludeRefContainer;
 import org.eclipse.cdt.internal.ui.cview.IncludeReferenceProxy;
 
 /**
- * Base class for build configuration actions. 
+ * Base class for build configuration actions.
  */
 public class ChangeBuildConfigActionBase {
-	
+
 	/**
 	 * List of selected managed-built projects
 	 */
 	protected HashSet<IProject> fProjects = new HashSet<IProject>();
-	
+
 	/**
 	 * Fills the menu with build configurations which are common for all selected projects
 	 * @param menu The menu to fill
 	 */
-	protected void fillMenu(Menu menu)	{
-		// This should not happen 
-		if (menu == null) return;
+	protected void fillMenu(Menu menu) {
+		// This should not happen
+		if (menu == null)
+			return;
 
 		MenuItem[] items = menu.getItems();
 		for (MenuItem item2 : items)
 			item2.dispose();
-		
+
 		SortedSet<String> configNames = new TreeSet<String>();
 		String sCurrentConfig = null;
 		boolean bCurrentConfig = true;
@@ -79,9 +80,9 @@ public class ChangeBuildConfigActionBase {
 			// Store names and detect active configuration
 			for (ICConfigurationDescription cfgDesc : cfgDescs) {
 				String s = cfgDesc.getName();
-				if (!configNames.contains(s)) 
+				if (!configNames.contains(s))
 					configNames.add(s);
-				if (cfgDesc.isActive())	
+				if (cfgDesc.isActive())
 					sActiveConfig = s;
 			}
 
@@ -90,12 +91,12 @@ public class ChangeBuildConfigActionBase {
 				if (sCurrentConfig == null)
 					sCurrentConfig = sActiveConfig;
 				else {
-					if (!sCurrentConfig.equals(sActiveConfig)) 
+					if (!sCurrentConfig.equals(sActiveConfig))
 						bCurrentConfig = false;
 				}
 			}
 		}
-		
+
 		int accel = 0;
 		for (String sName : configNames) {
 			String sDesc = null;
@@ -115,8 +116,9 @@ public class ChangeBuildConfigActionBase {
 							if (firstProj) {
 								sDesc = sNewDesc;
 								firstProj = false;
-							} else if (sNewDesc == null && sDesc != null || sNewDesc != null && !sNewDesc.equals(sDesc)) {
-								commonDesc = false;	
+							} else if (sNewDesc == null && sDesc != null
+									|| sNewDesc != null && !sNewDesc.equals(sDesc)) {
+								commonDesc = false;
 							}
 						}
 						break;
@@ -131,15 +133,15 @@ public class ChangeBuildConfigActionBase {
 				StringBuffer builder = new StringBuffer(sName);
 				if (commonDesc) {
 					if (sDesc != null) {
-						builder.append(" (");	//$NON-NLS-1$
+						builder.append(" ("); //$NON-NLS-1$
 						builder.append(sDesc);
-						builder.append(")");	//$NON-NLS-1$
+						builder.append(")"); //$NON-NLS-1$
 					}
 				} else {
-					builder.append(" (...)");	//$NON-NLS-1$
+					builder.append(" (...)"); //$NON-NLS-1$
 				}
-					
-				IAction action = makeAction(sName ,builder, accel);
+
+				IAction action = makeAction(sName, builder, accel);
 				if (bCurrentConfig && sCurrentConfig != null && sCurrentConfig.equals(sName)) {
 					action.setChecked(true);
 				}
@@ -160,25 +162,25 @@ public class ChangeBuildConfigActionBase {
 	 */
 	private static class ImaginarySelection implements ISelection {
 		private IProject fProject;
-		
+
 		ImaginarySelection(IProject project) {
 			fProject = project;
 		}
-		
+
 		@Override
 		public boolean isEmpty() {
 			return fProject == null;
 		}
-		
+
 		IProject getProject() {
 			return fProject;
 		}
 	}
 
 	/**
-	 * selectionChanged() event handler. Fills the list of managed-built projects 
+	 * selectionChanged() event handler. Fills the list of managed-built projects
 	 * based on the selection. If some non-managed-built projects are selected,
-	 * disables the action. 
+	 * disables the action.
 	 * @param action The action
 	 * @param selection The selection
 	 */
@@ -186,9 +188,8 @@ public class ChangeBuildConfigActionBase {
 		fProjects.clear();
 
 		boolean badObject = false;
-		
-		if (selection != null )
-		{
+
+		if (selection != null) {
 			if (selection instanceof IStructuredSelection) {
 				if (selection.isEmpty()) {
 					// could be a form editor or something.  try to get the project from the active part
@@ -198,36 +199,36 @@ public class ChangeBuildConfigActionBase {
 						if (part != null) {
 							Object o = part.getAdapter(IResource.class);
 							if (o != null && o instanceof IResource) {
-								fProjects.add(((IResource)o).getProject());
+								fProjects.add(((IResource) o).getProject());
 							}
 						}
 					}
 				}
-				Iterator<?> iter = ((IStructuredSelection)selection).iterator();
+				Iterator<?> iter = ((IStructuredSelection) selection).iterator();
 				while (iter.hasNext()) {
 					Object selItem = iter.next();
 					IProject project = null;
 					if (selItem instanceof ICElement) {
-						ICProject cproject = ((ICElement)selItem).getCProject();
-						if (cproject != null) project = cproject.getProject();
-					}
-					else if (selItem instanceof IResource) {
-						project = ((IResource)selItem).getProject();
+						ICProject cproject = ((ICElement) selItem).getCProject();
+						if (cproject != null)
+							project = cproject.getProject();
+					} else if (selItem instanceof IResource) {
+						project = ((IResource) selItem).getProject();
 					} else if (selItem instanceof IncludeRefContainer) {
-						ICProject fCProject = ((IncludeRefContainer)selItem).getCProject();
+						ICProject fCProject = ((IncludeRefContainer) selItem).getCProject();
 						if (fCProject != null)
 							project = fCProject.getProject();
 					} else if (selItem instanceof IncludeReferenceProxy) {
-						IncludeRefContainer irc = ((IncludeReferenceProxy)selItem).getIncludeRefContainer();
+						IncludeRefContainer irc = ((IncludeReferenceProxy) selItem).getIncludeRefContainer();
 						if (irc != null) {
 							ICProject fCProject = irc.getCProject();
 							if (fCProject != null)
 								project = fCProject.getProject();
 						}
 					} else if (selItem instanceof IAdaptable) {
-						Object adapter = ((IAdaptable)selItem).getAdapter(IProject.class);
+						Object adapter = ((IAdaptable) selItem).getAdapter(IProject.class);
 						if (adapter != null && adapter instanceof IProject) {
-							project = (IProject)adapter;
+							project = (IProject) adapter;
 						}
 					}
 					// Check whether the project is CDT project
@@ -236,7 +237,8 @@ public class ChangeBuildConfigActionBase {
 							project = null;
 						else {
 							ICConfigurationDescription[] tmp = getCfgs(project);
-							if (tmp.length == 0)	project = null;
+							if (tmp.length == 0)
+								project = null;
 						}
 					}
 					if (project != null) {
@@ -246,9 +248,7 @@ public class ChangeBuildConfigActionBase {
 						break;
 					}
 				}
-			}
-			else
-			if (selection instanceof ITextSelection) {
+			} else if (selection instanceof ITextSelection) {
 				// If a text selection check the selected part to see if we can find
 				// an editor part that we can adapt to a resource and then
 				// back to a project.
@@ -260,31 +260,28 @@ public class ChangeBuildConfigActionBase {
 						if (part instanceof IEditorPart) {
 							IEditorPart epart = (IEditorPart) part;
 							IResource resource = epart.getEditorInput().getAdapter(IResource.class);
-							if (resource != null)
-							{
+							if (resource != null) {
 								IProject project = resource.getProject();
 								badObject = !(project != null && CoreModel.getDefault().isNewStyleProject(project));
 
 								if (!badObject) {
 									fProjects.add(project);
-								}									
+								}
 							}
 						}
 					}
 				}
 
-			}
-			else if (selection instanceof ImaginarySelection) {
-				fProjects.add(((ImaginarySelection)selection).getProject());
+			} else if (selection instanceof ImaginarySelection) {
+				fProjects.add(((ImaginarySelection) selection).getProject());
 			}
 		}
-		
-		
+
 		boolean enable = false;
 		if (!badObject && !fProjects.isEmpty()) {
 			Iterator<IProject> iter = fProjects.iterator();
 			ICConfigurationDescription[] firstConfigs = getCfgs(iter.next());
-			if (firstConfigs!=null) {
+			if (firstConfigs != null) {
 				for (ICConfigurationDescription firstConfig : firstConfigs) {
 					boolean common = true;
 					Iterator<IProject> iter2 = fProjects.iterator();
@@ -292,7 +289,7 @@ public class ChangeBuildConfigActionBase {
 						ICConfigurationDescription[] currentConfigs = getCfgs(iter2.next());
 						int j = 0;
 						for (; j < currentConfigs.length; j++) {
-							if (firstConfig.getName().equals(currentConfigs[j].getName())) 
+							if (firstConfig.getName().equals(currentConfigs[j].getName()))
 								break;
 						}
 						if (j == currentConfigs.length) {
@@ -308,7 +305,7 @@ public class ChangeBuildConfigActionBase {
 			}
 		}
 		action.setEnabled(enable);
-		
+
 		// Bug 375760
 		// If focus is on a view that doesn't provide a resource/project context. Use the selection in a
 		// project/resource view. We support three views. If more than one is open, nevermind. If there's only
@@ -318,11 +315,11 @@ public class ChangeBuildConfigActionBase {
 		// call ourselves recursively
 		//
 		if (badObject || fProjects.isEmpty()) {
-			// Check for lone CDT project in workspace 
+			// Check for lone CDT project in workspace
 			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			if (projects != null && projects.length == 1) {
 				IProject project = projects[0];
-				if (CoreModel.getDefault().isNewStyleProject(project) && (getCfgs(project).length > 0)) { 
+				if (CoreModel.getDefault().isNewStyleProject(project) && (getCfgs(project).length > 0)) {
 					onSelectionChanged(action, new ImaginarySelection(project));
 					return;
 				}
@@ -334,18 +331,18 @@ public class ChangeBuildConfigActionBase {
 			if (page != null) {
 				IViewReference theViewRef = null;
 				IViewReference viewRef = null;
-				
+
 				theViewRef = page.findViewReference("org.eclipse.cdt.ui.CView"); //$NON-NLS-1$
 				viewCount += (theViewRef != null) ? 1 : 0;
-					
+
 				viewRef = page.findViewReference("org.eclipse.ui.navigator.ProjectExplorer"); //$NON-NLS-1$
-				viewCount += (viewRef != null) ? 1 : 0;				
-				theViewRef = (theViewRef == null) ? viewRef : theViewRef; 
+				viewCount += (viewRef != null) ? 1 : 0;
+				theViewRef = (theViewRef == null) ? viewRef : theViewRef;
 
 				viewRef = page.findViewReference("org.eclipse.ui.views.ResourceNavigator"); //$NON-NLS-1$
 				viewCount += (viewRef != null) ? 1 : 0;
-				theViewRef = (theViewRef == null) ? viewRef : theViewRef;				
-				
+				theViewRef = (theViewRef == null) ? viewRef : theViewRef;
+
 				if (theViewRef != null && viewCount == 1) {
 					IViewPart view = theViewRef.getView(false);
 					if (view != null) {
@@ -362,16 +359,16 @@ public class ChangeBuildConfigActionBase {
 			}
 		}
 	}
-	
+
 	private ICConfigurationDescription[] getCfgs(IProject prj) {
 		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, false);
-		if (prjd != null) { 
+		if (prjd != null) {
 			ICConfigurationDescription[] cfgs = prjd.getConfigurations();
 			if (cfgs != null) {
 				return cfgs;
 			}
 		}
-		
+
 		return new ICConfigurationDescription[0];
 	}
 }

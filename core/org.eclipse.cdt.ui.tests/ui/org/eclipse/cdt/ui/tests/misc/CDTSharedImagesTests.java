@@ -39,7 +39,8 @@ public class CDTSharedImagesTests extends TestCase {
 	// sample image (IMG_OBJS_TUNIT) from CUIPlugin bundle
 	private static final String KEY_OBJS_TUNIT = CDTSharedImages.IMG_OBJS_TUNIT;
 	private static final IPath PATH_OBJS_TUNIT = new Path("icons/obj16/c_file_obj.gif");
-	private static final URL URL_OBJS_TUNIT= FileLocator.find(CUIPlugin.getDefault().getBundle(), PATH_OBJS_TUNIT, null);
+	private static final URL URL_OBJS_TUNIT = FileLocator.find(CUIPlugin.getDefault().getBundle(), PATH_OBJS_TUNIT,
+			null);
 
 	/**
 	 * Handling of missing keys.
@@ -91,7 +92,8 @@ public class CDTSharedImagesTests extends TestCase {
 			String[] overlayKeys = new String[5];
 			overlayKeys[IDecoration.BOTTOM_LEFT] = CDTSharedImages.IMG_OVR_WARNING;
 			Image imageOver1 = CDTSharedImages.getImageOverlaid(KEY_OBJS_TUNIT, overlayKeys);
-			Image imageOver2 = CDTSharedImages.getImageOverlaid(KEY_OBJS_TUNIT, CDTSharedImages.IMG_OVR_WARNING, IDecoration.BOTTOM_LEFT);
+			Image imageOver2 = CDTSharedImages.getImageOverlaid(KEY_OBJS_TUNIT, CDTSharedImages.IMG_OVR_WARNING,
+					IDecoration.BOTTOM_LEFT);
 			Image imageOver3 = CDTSharedImages.getImageWithWarning(KEY_OBJS_TUNIT);
 			assertSame(imageOver1, imageOver2);
 			assertSame(imageOver1, imageOver3);
@@ -108,12 +110,15 @@ public class CDTSharedImagesTests extends TestCase {
 		for (Field field : fields) {
 			String name = field.getName();
 			if (name.startsWith("IMG_")) {
-				assertEquals("CDTSharedImages."+name+" is not a String", String.class, field.getType());
-				assertTrue("CDTSharedImages."+name+" is not a static field", (field.getModifiers() & Modifier.STATIC) != 0);
-				assertTrue("CDTSharedImages."+name+" is not a public field", (field.getModifiers() & Modifier.PUBLIC) != 0);
+				assertEquals("CDTSharedImages." + name + " is not a String", String.class, field.getType());
+				assertTrue("CDTSharedImages." + name + " is not a static field",
+						(field.getModifiers() & Modifier.STATIC) != 0);
+				assertTrue("CDTSharedImages." + name + " is not a public field",
+						(field.getModifiers() & Modifier.PUBLIC) != 0);
 				String imageKey = (String) field.get(null);
 				ImageDescriptor descriptor = CDTSharedImages.getImageDescriptor(imageKey);
-				assertTrue("Missing image CDTSharedImages."+name+"=\""+imageKey+"\"", descriptor!=MISSING_IMAGE_DESCRIPTOR);
+				assertTrue("Missing image CDTSharedImages." + name + "=\"" + imageKey + "\"",
+						descriptor != MISSING_IMAGE_DESCRIPTOR);
 			}
 		}
 	}

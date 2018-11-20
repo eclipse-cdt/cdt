@@ -23,18 +23,21 @@ import org.eclipse.core.runtime.Assert;
 /**
  * Mock Language Settings Provider that keeps count how many times it has been registered.
  */
-public class MockListenerRegisterer extends LanguageSettingsSerializableProvider implements ILanguageSettingsEditableProvider, ICListenerAgent {
+public class MockListenerRegisterer extends LanguageSettingsSerializableProvider
+		implements ILanguageSettingsEditableProvider, ICListenerAgent {
 	private static MockListenerManager mockListenerManager = new MockListenerManager();
 
 	private static class MockListenerManager {
 		private class ListenerCount {
 			private MockListenerRegisterer listener;
 			private int count;
+
 			public ListenerCount(MockListenerRegisterer l, int cnt) {
 				listener = l;
 				count = cnt;
 			}
 		}
+
 		private List<ListenerCount> register = new ArrayList<ListenerCount>();
 
 		public void registerListener(MockListenerRegisterer listener) {
@@ -52,7 +55,7 @@ public class MockListenerRegisterer extends LanguageSettingsSerializableProvider
 			for (ListenerCount lc : register) {
 				if (lc.listener == listener) {
 					lc.count--;
-					Assert.isTrue(lc.count>=0);
+					Assert.isTrue(lc.count >= 0);
 					return;
 				}
 			}
@@ -80,9 +83,11 @@ public class MockListenerRegisterer extends LanguageSettingsSerializableProvider
 	public MockListenerRegisterer() {
 		super();
 	}
+
 	public MockListenerRegisterer(String id, String name) {
 		super(id, name);
 	}
+
 	@Override
 	public void registerListener(ICConfigurationDescription cfgDescription) {
 		mockListenerManager.registerListener(this);
@@ -92,10 +97,12 @@ public class MockListenerRegisterer extends LanguageSettingsSerializableProvider
 	public void unregisterListener() {
 		mockListenerManager.unregisterListener(this);
 	}
+
 	@Override
 	public MockListenerRegisterer cloneShallow() throws CloneNotSupportedException {
 		return (MockListenerRegisterer) super.cloneShallow();
 	}
+
 	@Override
 	public MockListenerRegisterer clone() throws CloneNotSupportedException {
 		return (MockListenerRegisterer) super.clone();

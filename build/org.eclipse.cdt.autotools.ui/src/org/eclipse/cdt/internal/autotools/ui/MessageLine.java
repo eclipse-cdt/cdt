@@ -19,10 +19,9 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 
-
 /**
- * A message line. It distinguishes between "normal" messages and errors. 
- * Setting an error message hides a currently displayed message until 
+ * A message line. It distinguishes between "normal" messages and errors.
+ * Setting an error message hides a currently displayed message until
  * <code>clearErrorMessage</code> is called.
  */
 public class MessageLine {
@@ -32,7 +31,7 @@ public class MessageLine {
 	private Color fNormalMsgAreaBackground;
 
 	private boolean hasErrorMessage;
-	
+
 	private CLabel clabel;
 
 	/**
@@ -47,14 +46,13 @@ public class MessageLine {
 	 */
 	public MessageLine(Composite parent, int style) {
 		clabel = new CLabel(parent, style);
-		fNormalMsgAreaBackground= clabel.getBackground();
+		fNormalMsgAreaBackground = clabel.getBackground();
 	}
 
-	
 	/**
-     * Display the given error message. A currently displayed message
-     * is saved and will be redisplayed when the error message is cleared.
-     */
+	 * Display the given error message. A currently displayed message
+	 * is saved and will be redisplayed when the error message is cleared.
+	 */
 	public void setErrorMessage(String message) {
 		if (message != null && message.length() > 0) {
 			hasErrorMessage = true;
@@ -64,16 +62,16 @@ public class MessageLine {
 			return;
 		}
 		hasErrorMessage = false;
-		clabel.setText(fMessage);	
+		clabel.setText(fMessage);
 		clabel.setImage(null);
-		clabel.setBackground(fNormalMsgAreaBackground);	
+		clabel.setBackground(fNormalMsgAreaBackground);
 	}
 
 	public void setMessage(String message) {
 		fMessage = message;
 		clabel.setText(message);
 	}
-	
+
 	public boolean hasErrorMessage() {
 		return hasErrorMessage;
 	}

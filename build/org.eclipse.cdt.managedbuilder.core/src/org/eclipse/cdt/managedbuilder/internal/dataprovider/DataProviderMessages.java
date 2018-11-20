@@ -20,8 +20,7 @@ import java.util.ResourceBundle;
 public class DataProviderMessages {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.internal.dataprovider.DataProviderMessages"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private DataProviderMessages() {
 	}
@@ -35,7 +34,7 @@ public class DataProviderMessages {
 			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
+
 	public static String getResourceString(String key) {
 		return getString(key);
 	}

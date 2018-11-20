@@ -36,7 +36,7 @@ public class LibraryRefContainer extends CElementGrouping {
 	private ICProject fCProject;
 
 	/**
-	 * 
+	 *
 	 */
 	public LibraryRefContainer(ICProject cproject) {
 		super(LIBRARY_REF_CONTAINER);
@@ -89,7 +89,7 @@ public class LibraryRefContainer extends CElementGrouping {
 	 */
 	@Override
 	public String getLabel(Object o) {
-		return CViewMessages.LibraryRefContainer_Libraries; 
+		return CViewMessages.LibraryRefContainer_Libraries;
 	}
 
 	/* (non-Javadoc)

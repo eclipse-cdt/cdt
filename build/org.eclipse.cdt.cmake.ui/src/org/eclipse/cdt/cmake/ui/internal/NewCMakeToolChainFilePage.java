@@ -78,7 +78,7 @@ public class NewCMakeToolChainFilePage extends WizardPage {
 
 		tcCombo = new Combo(comp, SWT.READ_ONLY);
 		tcCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
+
 		try {
 			IToolChainManager tcManager = Activator.getService(IToolChainManager.class);
 			toolchains = tcManager.getAllToolChains().toArray(new IToolChain[0]);

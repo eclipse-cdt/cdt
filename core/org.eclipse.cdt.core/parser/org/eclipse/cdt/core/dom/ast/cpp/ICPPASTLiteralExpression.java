@@ -18,12 +18,11 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 
 /**
  * C++ adds additional literal types to primary expression.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTLiteralExpression extends IASTLiteralExpression, ICPPASTExpression, 
-		IASTImplicitNameOwner {
+public interface ICPPASTLiteralExpression extends IASTLiteralExpression, ICPPASTExpression, IASTImplicitNameOwner {
 	/**
 	 * <code>lk_this</code> represents the 'this' keyword.
 	 */
@@ -45,7 +44,7 @@ public interface ICPPASTLiteralExpression extends IASTLiteralExpression, ICPPAST
 	 */
 	@Deprecated
 	public static final int lk_last = lk_false;
-	
+
 	/**
 	 * @since 5.1
 	 */

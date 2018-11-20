@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -26,8 +26,8 @@ public class GDBExamplePlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static GDBExamplePlugin plugin;
-	
-    private static BundleContext fgBundleContext;
+
+	private static BundleContext fgBundleContext;
 
 	/**
 	 * The constructor
@@ -36,8 +36,8 @@ public class GDBExamplePlugin extends AbstractUIPlugin {
 	}
 
 	@Override
-    public void start(BundleContext context) throws Exception {
-        fgBundleContext = context;
+	public void start(BundleContext context) throws Exception {
+		fgBundleContext = context;
 		super.start(context);
 		plugin = this;
 	}
@@ -47,12 +47,11 @@ public class GDBExamplePlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void stop(BundleContext context) throws Exception {
+	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
-        fgBundleContext = null;
+		fgBundleContext = null;
 	}
-
 
 	/**
 	 * Returns the shared instance
@@ -63,8 +62,8 @@ public class GDBExamplePlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 
-    public static BundleContext getBundleContext() {
-        return fgBundleContext;
-    }
+	public static BundleContext getBundleContext() {
+		return fgBundleContext;
+	}
 
 }

@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
@@ -31,15 +31,14 @@ class LocationCtxFile extends LocationCtxContainer {
 	private boolean fInsideIncludeExportBlock;
 	private int fOffsetOfIncludeExport = -1;
 
-	public LocationCtxFile(LocationCtxContainer parent, String filename, AbstractCharArray source,
-			int parentOffset, int parentEndOffset, int sequenceNumber,
-			ASTInclusionStatement inclusionStatement, boolean isSource) {
+	public LocationCtxFile(LocationCtxContainer parent, String filename, AbstractCharArray source, int parentOffset,
+			int parentEndOffset, int sequenceNumber, ASTInclusionStatement inclusionStatement, boolean isSource) {
 		super(parent, source, parentOffset, parentEndOffset, sequenceNumber);
-		fFilename= filename;
-		fASTInclude= inclusionStatement;
-		fIsSource= isSource;
+		fFilename = filename;
+		fASTInclude = inclusionStatement;
+		fIsSource = isSource;
 	}
-	
+
 	@Override
 	public final void addChildSequenceLength(int childLength) {
 		super.addChildSequenceLength(childLength);
@@ -53,44 +52,42 @@ class LocationCtxFile extends LocationCtxContainer {
 	@Override
 	public ASTFileLocation findMappedFileLocation(int sequenceNumber, int length) {
 		// Try to delegate to a child.
-		final int testEnd= length > 1 ? sequenceNumber + length - 1 : sequenceNumber;
-		final int sequenceEnd= sequenceNumber + length;
-		final LocationCtx child1= findChildLessOrEqualThan(sequenceNumber, false);
-		final LocationCtx child2= testEnd == sequenceNumber ?
-				child1 : findChildLessOrEqualThan(testEnd, false);
-	
-		if (child1 == child2 && child1 != null &&
-				child1.fSequenceNumber + child1.getSequenceLength() > testEnd) {
+		final int testEnd = length > 1 ? sequenceNumber + length - 1 : sequenceNumber;
+		final int sequenceEnd = sequenceNumber + length;
+		final LocationCtx child1 = findChildLessOrEqualThan(sequenceNumber, false);
+		final LocationCtx child2 = testEnd == sequenceNumber ? child1 : findChildLessOrEqualThan(testEnd, false);
+
+		if (child1 == child2 && child1 != null && child1.fSequenceNumber + child1.getSequenceLength() > testEnd) {
 			return child1.findMappedFileLocation(sequenceNumber, length);
 		}
-		
+
 		// Handle here.
 		int startOffset;
 		int endOffset;
-		
+
 		if (child1 == null) {
-			startOffset= sequenceNumber - fSequenceNumber;
+			startOffset = sequenceNumber - fSequenceNumber;
 		} else {
-			int childSequenceEnd= child1.fSequenceNumber + child1.getSequenceLength();
+			int childSequenceEnd = child1.fSequenceNumber + child1.getSequenceLength();
 			if (sequenceNumber < childSequenceEnd) {
-				startOffset= child1.fOffsetInParent;
-			} else {	// Start beyond child1
-				startOffset= child1.fEndOffsetInParent + sequenceNumber - childSequenceEnd;
+				startOffset = child1.fOffsetInParent;
+			} else { // Start beyond child1
+				startOffset = child1.fEndOffsetInParent + sequenceNumber - childSequenceEnd;
 			}
 		}
 		if (child2 == null) {
-			endOffset= sequenceEnd - fSequenceNumber;
+			endOffset = sequenceEnd - fSequenceNumber;
 		} else {
-			int childSequenceEnd= child2.fSequenceNumber + child2.getSequenceLength();
+			int childSequenceEnd = child2.fSequenceNumber + child2.getSequenceLength();
 			if (childSequenceEnd < sequenceEnd) { // Beyond child2
-				endOffset= child2.fEndOffsetInParent + sequenceEnd - childSequenceEnd;
+				endOffset = child2.fEndOffsetInParent + sequenceEnd - childSequenceEnd;
 			} else {
-				endOffset= child2.fEndOffsetInParent;
+				endOffset = child2.fEndOffsetInParent;
 			}
 		}
 		return new ASTFileLocation(this, startOffset, endOffset - startOffset);
 	}
-	
+
 	@Override
 	public ASTFileLocation createMappedFileLocation(int offset, int length) {
 		return new ASTFileLocation(this, offset, length);
@@ -109,36 +106,34 @@ class LocationCtxFile extends LocationCtxContainer {
 	public boolean isThisFile(int sequenceNumber) {
 		if (sequenceNumber < 0)
 			return false;
-		LocationCtx child= findChildLessOrEqualThan(sequenceNumber, false);
+		LocationCtx child = findChildLessOrEqualThan(sequenceNumber, false);
 		if (!(child instanceof LocationCtxFile))
 			return true;
 		return sequenceNumber >= child.fSequenceNumber + child.getSequenceLength();
 	}
 
-	public void collectMacroExpansions(int offset, int length,
-			ArrayList<IASTPreprocessorMacroExpansion> list) {
-		Collection<LocationCtx> children= getChildren();
+	public void collectMacroExpansions(int offset, int length, ArrayList<IASTPreprocessorMacroExpansion> list) {
+		Collection<LocationCtx> children = getChildren();
 		for (LocationCtx ctx : children) {
 			// Context must start before the end of the search range.
-			if (ctx.fOffsetInParent >= offset+length) {
+			if (ctx.fOffsetInParent >= offset + length) {
 				break;
 			}
 			if (ctx instanceof LocationCtxMacroExpansion) {
 				// Expansion must end after the search start.
 				if (ctx.fEndOffsetInParent > offset) {
-					IASTNode macroExpansion =
-							((LocationCtxMacroExpansion) ctx).getMacroReference().getParent();
+					IASTNode macroExpansion = ((LocationCtxMacroExpansion) ctx).getMacroReference().getParent();
 					list.add((IASTPreprocessorMacroExpansion) macroExpansion);
 				}
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean isSourceFile() {
 		return fIsSource;
 	}
-	
+
 	@Override
 	public String toString() {
 		return fFilename;

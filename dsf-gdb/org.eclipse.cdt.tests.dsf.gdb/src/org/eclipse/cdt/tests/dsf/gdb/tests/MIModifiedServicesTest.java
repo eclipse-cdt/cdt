@@ -77,7 +77,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 		public TestBackendBasicConsole(DsfSession session, ILaunchConfiguration lc) {
 			super(session, lc);
 		}
-		
+
 		@Override
 		public boolean isFullGdbConsoleSupported() {
 			return false;
@@ -101,7 +101,6 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 			return super.createBackendGDBService(session, lc);
 		}
 	}
-
 
 	@Override
 	public void doBeforeTest() throws Exception {
@@ -150,8 +149,8 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 				try {
 					ch = fis.read();
 				} catch (IOException e) {
-					Assert.fail("Problem inspecting file to see if it's a cygwin executable : "
-							+ e.getLocalizedMessage());
+					Assert.fail(
+							"Problem inspecting file to see if it's a cygwin executable : " + e.getLocalizedMessage());
 				}
 				if (ch == -1) { // EOF
 					break;
@@ -193,7 +192,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 						session.getId());
 
 				IMIProcesses procService = servicesTracker.getService(IMIProcesses.class);
-				IProcessDMContext procDmc = DMContexts.getAncestorOfType(fContainerDmc, IProcessDMContext.class); 
+				IProcessDMContext procDmc = DMContexts.getAncestorOfType(fContainerDmc, IProcessDMContext.class);
 				IThreadDMContext threadDmc = procService.createThreadContext(procDmc, "1");
 				fThreadExecDmc = procService.createExecutionContext(fContainerDmc, threadDmc, "1");
 
@@ -201,7 +200,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 				fBackend = servicesTracker.getService(IGDBBackend.class);
 
 				servicesTracker.dispose();
-				
+
 				rm.done();
 			}
 		};
@@ -223,8 +222,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 		setLaunchAttribute(ServiceFactoriesManager.DEBUG_SERVICES_FACTORY_KEY, servicesFactoryId);
 	}
 
-	private void resumeContainerContextExe()
-			throws InterruptedException, ExecutionException, TimeoutException {
+	private void resumeContainerContextExe() throws InterruptedException, ExecutionException, TimeoutException {
 
 		final ServiceEventWaitor<IResumedDMEvent> resumedWaitor = new ServiceEventWaitor<IResumedDMEvent>(
 				getGDBLaunch().getSession(), IResumedDMEvent.class);
@@ -264,7 +262,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 	 * environment e.g. Linux with GDB 7.12 This test case forces the use of the Basic console which triggers
 	 * async mode off, and will cause the program interrupt via the CLI (rather than MI -exec-interrupt which
 	 * is used with async mode)
-	 * 
+	 *
 	 * Note: This test case uses a modified Test Backend service which is instrumented before test execution,
 	 * see initializeLaunchAttributes
 	 */
@@ -317,7 +315,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 		assertTrue("Not using the expected backend service", fBackend instanceof TestBackendBasicConsole);
 
 		resumeContainerContextExe();
-		
+
 		// Verify that with the basic console, we cannot accept commands when the target is running.
 		assertFalse("Target should be running with async off, and should NOT be accepting commands",
 				fRunCtrl.isTargetAcceptingCommands());
@@ -325,7 +323,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Validate that with the basic console, interrupting a running target does work.
-	 * This would not be feasible to test with our standard services. 
+	 * This would not be feasible to test with our standard services.
 	 * This test case forces the use of the Basic console by using a test IGDBBackEnd service.
 	 */
 	@Test
@@ -340,7 +338,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 		assertTrue("Not using the expected backend service", fBackend instanceof TestBackendBasicConsole);
 
 		resumeContainerContextExe();
-		
+
 		interruptRunningTargetExe();
 	}
 }

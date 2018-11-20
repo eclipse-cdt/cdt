@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Texas Instruments Inc. - initial API and implementation
  *******************************************************************************/
@@ -22,18 +22,18 @@ import java.util.*;
 
 /**
  * The main plugin class to be used in the desktop.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class GnuUIPlugin extends Plugin {
-	
+
 	public static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.gnu.ui"; //$NON-NLS-1$
 	//The shared instance.
 	private static GnuUIPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	
+
 	/**
 	 * The constructor.
 	 */

@@ -29,17 +29,16 @@ public abstract class EntryStorageBasedLanguageData extends CDefaultLanguageData
 		super(id, base);
 	}
 
-	public EntryStorageBasedLanguageData(String id, String languageId,
-			String[] ids, boolean isContentTypes) {
+	public EntryStorageBasedLanguageData(String id, String languageId, String[] ids, boolean isContentTypes) {
 		super(id, languageId, ids, isContentTypes);
 	}
 
 	@Override
 	public ICLanguageSettingEntry[] getEntries(int kind) {
 		AbstractEntryStorage storage = getStorage(kind);
-		if(storage != null){
+		if (storage != null) {
 			List<ICLanguageSettingEntry> list = storage.getEntries(null);
-			return list.toArray(new ICLanguageSettingEntry[list.size()]); 
+			return list.toArray(new ICLanguageSettingEntry[list.size()]);
 		}
 		return new ICLanguageSettingEntry[0];
 	}
@@ -47,21 +46,21 @@ public abstract class EntryStorageBasedLanguageData extends CDefaultLanguageData
 	@Override
 	public void setEntries(int kind, ICLanguageSettingEntry[] entries) {
 		AbstractEntryStorage storage = getStorage(kind);
-		if(storage != null){
+		if (storage != null) {
 			storage.setEntries(entries);
 		}
 	}
-	
-	protected void setEntriesToStore(int kind, ICLanguageSettingEntry[] entries){
+
+	protected void setEntriesToStore(int kind, ICLanguageSettingEntry[] entries) {
 		fStore.storeEntries(kind, entries);
 	}
 
-	protected ICLanguageSettingEntry[] getEntriesFromStore(int kind){
+	protected ICLanguageSettingEntry[] getEntriesFromStore(int kind) {
 		return fStore.getEntries(kind);
 	}
-	
+
 	@Override
-	protected EntryStore createStore(){
+	protected EntryStore createStore() {
 		return new EntryStore(false);
 	}
 

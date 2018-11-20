@@ -15,13 +15,12 @@ package org.eclipse.cdt.core.parser;
 
 import org.eclipse.core.resources.IResource;
 
-
 public interface IScannerInfoChangeListener {
-	
+
 	/**
-	 * The listener must implement this method in order to receive the new 
+	 * The listener must implement this method in order to receive the new
 	 * information from the provider.
-	 * 
+	 *
 	 * @param info
 	 */
 	public void changeNotification(IResource project, IScannerInfo info);

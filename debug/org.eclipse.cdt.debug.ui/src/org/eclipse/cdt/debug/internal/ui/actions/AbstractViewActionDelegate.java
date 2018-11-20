@@ -40,10 +40,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
- * The superclass for action delegates of views different than the Debug view and 
+ * The superclass for action delegates of views different than the Debug view and
  * driven by the selection in the Debug view.
  */
-public abstract class AbstractViewActionDelegate extends ActionDelegate implements IViewActionDelegate, ISelectionListener, INullSelectionListener, IDebugEventSetListener {
+public abstract class AbstractViewActionDelegate extends ActionDelegate
+		implements IViewActionDelegate, ISelectionListener, INullSelectionListener, IDebugEventSetListener {
 
 	private IAction fAction;
 
@@ -55,16 +56,16 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	@Override
-	public void init( IViewPart view ) {
-		setView( view );
-		DebugPlugin.getDefault().addDebugEventListener( this );
+	public void init(IViewPart view) {
+		setView(view);
+		DebugPlugin.getDefault().addDebugEventListener(this);
 		IWorkbenchWindow window = getWindow();
-		if ( window != null ) {
-			window.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		if (window != null) {
+			window.getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		}
 		IAdaptable context = DebugUITools.getDebugContext();
-		IStructuredSelection ss = ( context != null ) ? new StructuredSelection( context ) : StructuredSelection.EMPTY;
-		selectionChanged( (IWorkbenchPart)null, ss );
+		IStructuredSelection ss = (context != null) ? new StructuredSelection(context) : StructuredSelection.EMPTY;
+		selectionChanged((IWorkbenchPart) null, ss);
 	}
 
 	/* (non-Javadoc)
@@ -73,10 +74,10 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	@Override
 	public void dispose() {
 		IWorkbenchWindow window = getWindow();
-		if ( window != null ) {
-			window.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		if (window != null) {
+			window.getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		}
-		DebugPlugin.getDefault().removeDebugEventListener( this );
+		DebugPlugin.getDefault().removeDebugEventListener(this);
 		super.dispose();
 	}
 
@@ -84,60 +85,58 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void init( IAction action ) {
-		setAction( action );
-		action.setEnabled( false );
-		super.init( action );
+	public void init(IAction action) {
+		setAction(action);
+		action.setEnabled(false);
+		super.init(action);
 	}
 
 	protected IDebugView getView() {
 		return fView;
 	}
 
-	private void setView( IViewPart view ) {
-		fView = (view instanceof IDebugView) ? (IDebugView)view : null;
+	private void setView(IViewPart view) {
+		fView = (view instanceof IDebugView) ? (IDebugView) view : null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
-	public void run( IAction action ) {
-		final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, "", null ); //$NON-NLS-1$
-		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
+	public void run(IAction action) {
+		final MultiStatus ms = new MultiStatus(CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, "", //$NON-NLS-1$
+				null);
+		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 
 			@Override
 			public void run() {
 				try {
 					doAction();
-				}
-				catch( DebugException e ) {
-					ms.merge( e.getStatus() );
+				} catch (DebugException e) {
+					ms.merge(e.getStatus());
 				}
 			}
-		} );
-		if ( !ms.isOK() ) {
+		});
+		if (!ms.isOK()) {
 			IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
-			if ( window != null ) {
-				CDebugUIPlugin.errorDialog( getErrorDialogMessage(), ms.getChildren()[0] );
-			}
-			else {
-				CDebugUIPlugin.log( ms );
+			if (window != null) {
+				CDebugUIPlugin.errorDialog(getErrorDialogMessage(), ms.getChildren()[0]);
+			} else {
+				CDebugUIPlugin.log(ms);
 			}
 		}
 	}
-
 
 	protected IAction getAction() {
 		return fAction;
 	}
 
-	private void setAction( IAction action ) {
+	private void setAction(IAction action) {
 		fAction = action;
 	}
 
 	private IWorkbenchWindow getWindow() {
-		if ( getView() != null ) {
+		if (getView() != null) {
 			return getView().getViewSite().getWorkbenchWindow();
 		}
 		return null;
@@ -147,8 +146,8 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
-		setSelection( selection );
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		setSelection(selection);
 		update();
 	}
 
@@ -156,42 +155,43 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 		return fSelection;
 	}
 
-	protected void setSelection( ISelection selection ) {
-		fSelection = (selection instanceof IStructuredSelection) ? (IStructuredSelection)selection : StructuredSelection.EMPTY;
+	protected void setSelection(ISelection selection) {
+		fSelection = (selection instanceof IStructuredSelection) ? (IStructuredSelection) selection
+				: StructuredSelection.EMPTY;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
 	@Override
-	public void handleDebugEvents( final DebugEvent[] events ) {
-		if ( getWindow() == null || getAction() == null ) {
+	public void handleDebugEvents(final DebugEvent[] events) {
+		if (getWindow() == null || getAction() == null) {
 			return;
 		}
 		Shell shell = getWindow().getShell();
-		if ( shell == null || shell.isDisposed() ) {
+		if (shell == null || shell.isDisposed()) {
 			return;
 		}
 		Runnable r = new Runnable() {
 
 			@Override
 			public void run() {
-				for( int i = 0; i < events.length; i++ ) {
-					if ( events[i].getSource() != null ) {
-						doHandleDebugEvent( events[i] );
+				for (int i = 0; i < events.length; i++) {
+					if (events[i].getSource() != null) {
+						doHandleDebugEvent(events[i]);
 					}
 				}
 			}
 		};
-		shell.getDisplay().asyncExec( r );
+		shell.getDisplay().asyncExec(r);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public void selectionChanged( IAction action, ISelection selection ) {
-		setSelection( selection );
+	public void selectionChanged(IAction action, ISelection selection) {
+		setSelection(selection);
 		update();
 	}
 
@@ -203,5 +203,5 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 
 	protected abstract void update();
 
-	protected abstract void doHandleDebugEvent( DebugEvent event );
+	protected abstract void doHandleDebugEvent(DebugEvent event);
 }

@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * This is the portion of the node that represents the portions when someone
  * declares a variable/type which is an array.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -35,14 +35,14 @@ public interface IASTArrayModifier extends IASTAttributeOwner {
 
 	/**
 	 * Get the constant expression that represents the size of the array.
-	 * 
+	 *
 	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getConstantExpression();
 
 	/**
 	 * Set the constant expression that represents the size of the array.
-	 * 
+	 *
 	 * @param expression
 	 *            <code>IASTExpression</code>
 	 */

@@ -59,8 +59,7 @@ public final class InstantiationContext {
 	 * @param contextSpecialization the specialization if instantiation happens inside a specialized
 	 *     type or function, otherwise {@code null}.
 	 */
-	public InstantiationContext(ICPPTemplateParameterMap parameterMap,
-			ICPPSpecialization contextSpecialization) {
+	public InstantiationContext(ICPPTemplateParameterMap parameterMap, ICPPSpecialization contextSpecialization) {
 		this(parameterMap, -1, contextSpecialization);
 	}
 
@@ -131,7 +130,8 @@ public final class InstantiationContext {
 	 * {@code null}.
 	 */
 	public final ICPPTypeSpecialization getContextTypeSpecialization() {
-		return contextSpecialization instanceof ICPPTypeSpecialization ? (ICPPTypeSpecialization) contextSpecialization : null;
+		return contextSpecialization instanceof ICPPTypeSpecialization ? (ICPPTypeSpecialization) contextSpecialization
+				: null;
 	}
 
 	/**

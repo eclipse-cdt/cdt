@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -43,29 +43,28 @@ public class TestingProcessFactory implements IProcessFactory {
 		private TestingSession testingSession;
 		private InputStream iStream;
 		private ProcessWrapper processWrapper;
-		
+
 		TestingSessionRunner(TestingSession testingSession, InputStream iStream, ProcessWrapper processWrapper) {
 			this.testingSession = testingSession;
 			this.iStream = iStream;
 			this.processWrapper = processWrapper;
 		}
-		
+
 		@Override
 		public void run() {
 			try {
 				testingSession.run(iStream);
-			}
-			finally {
+			} finally {
 				// Streams should be closed anyway to avoid testing process hang up
 				processWrapper.allowStreamsClosing();
 			}
 		}
 	}
-	
+
 	/**
 	 * Creates a wrapper for the specified process to handle its input or error
 	 * stream.
-	 * 
+	 *
 	 * @param launch launch
 	 * @param process process to wrap
 	 * @return wrapped process
@@ -74,19 +73,19 @@ public class TestingProcessFactory implements IProcessFactory {
 	private Process wrapProcess(ILaunch launch, Process process) throws CoreException {
 		TestingSession testingSession = TestsRunnerPlugin.getDefault().getTestingSessionsManager().newSession(launch);
 		ITestsRunnerProviderInfo testsRunnerProvider = testingSession.getTestsRunnerProviderInfo();
-		InputStream iStream = 
-				testsRunnerProvider.isOutputStreamRequired() ? process.getInputStream() :
-				testsRunnerProvider.isErrorStreamRequired() ? process.getErrorStream() : null;
-		ProcessWrapper processWrapper = new ProcessWrapper(process, testsRunnerProvider.isOutputStreamRequired(), testsRunnerProvider.isErrorStreamRequired());
+		InputStream iStream = testsRunnerProvider.isOutputStreamRequired() ? process.getInputStream()
+				: testsRunnerProvider.isErrorStreamRequired() ? process.getErrorStream() : null;
+		ProcessWrapper processWrapper = new ProcessWrapper(process, testsRunnerProvider.isOutputStreamRequired(),
+				testsRunnerProvider.isErrorStreamRequired());
 		Thread t = new Thread(new TestingSessionRunner(testingSession, iStream, processWrapper));
 		t.start();
 		return processWrapper;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public IProcess newProcess(ILaunch launch, Process process, String label, Map attributes) {
-		
+
 		try {
 			// Mimic the behavior of DSF GDBProcessFactory.
 			if (attributes != null) {
@@ -94,12 +93,12 @@ public class TestingProcessFactory implements IProcessFactory {
 				if (IGdbDebugConstants.GDB_PROCESS_CREATION_VALUE.equals(processTypeCreationAttrValue)) {
 					return new GDBProcess(launch, process, label, attributes);
 				}
-	
+
 				if (IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE.equals(processTypeCreationAttrValue)) {
 					return new InferiorRuntimeProcess(launch, wrapProcess(launch, process), label, attributes);
 				}
 
-			// Probably, it is CDI creating a new inferior process
+				// Probably, it is CDI creating a new inferior process
 			} else {
 				return new RuntimeProcess(launch, wrapProcess(launch, process), label, attributes);
 			}

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -42,16 +41,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-
 /**
- * Tests MIRunControl class for some reverse debugging scenarios. 
+ * Tests MIRunControl class for some reverse debugging scenarios.
  */
 @RunWith(Parameterized.class)
 public class MIRunControlReverseTest extends BaseParametrizedTestCase {
 
-	private DsfServicesTracker fServicesTracker;    
+	private DsfServicesTracker fServicesTracker;
 	private DsfSession fSession;
-    private IGDBControl fGDBCtrl;
+	private IGDBControl fGDBCtrl;
 	private IMIRunControl fRunCtrl;
 	private IExpressions fExpressions;
 
@@ -64,62 +62,57 @@ public class MIRunControlReverseTest extends BaseParametrizedTestCase {
 	public void doBeforeTest() throws Exception {
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_0);
 		super.doBeforeTest();
-		
-		fSession = getGDBLaunch().getSession();
-		
-        Runnable runnable = new Runnable() {
-            @Override
-			public void run() {
-            	fServicesTracker =
-            			new DsfServicesTracker(TestsPlugin.getBundleContext(), 
-            			                       fSession.getId());
-            	fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
-            	fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
-            	fExpressions = fServicesTracker.getService(IExpressions.class);
-            }
-        };
-        fSession.getExecutor().submit(runnable).get();
-	}
 
+		fSession = getGDBLaunch().getSession();
+
+		Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+				fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
+				fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
+				fExpressions = fServicesTracker.getService(IExpressions.class);
+			}
+		};
+		fSession.getExecutor().submit(runnable).get();
+	}
 
 	@Override
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
-		
-        if (fServicesTracker != null) {
-        	fServicesTracker.dispose();
-        }
+
+		if (fServicesTracker != null) {
+			fServicesTracker.dispose();
+		}
 	}
-	
+
 	@Override
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();
-		
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, 
-				           EXEC_PATH + EXEC_NAME);
+
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 	}
 
 	/**
-     * This test verifies that we properly handle a query sent from GDB.
-     * When running the basic console (GDB < 7.12) GDB answer's the query itself
-     * and so we should not answer again.  When using the full Console, GDB does
-     * not answer so we must answer ourselves.  When using the full console
-     * we have both an MI and a CLI channel open; this test verifies how
-     * we react to getting query on the MI-only channel, which is actually
-     * not something GDB should do, but at least in 7.12, it does happen.
-     */
+	 * This test verifies that we properly handle a query sent from GDB.
+	 * When running the basic console (GDB < 7.12) GDB answer's the query itself
+	 * and so we should not answer again.  When using the full Console, GDB does
+	 * not answer so we must answer ourselves.  When using the full console
+	 * we have both an MI and a CLI channel open; this test verifies how
+	 * we react to getting query on the MI-only channel, which is actually
+	 * not something GDB should do, but at least in 7.12, it does happen.
+	 */
 	@Test
 	public void testQueryHandling() throws Throwable {
 		SyncUtil.runToLocation("testLocals");
-		
+
 		assertTrue("Reverse debugging is not supported", fRunCtrl instanceof IReverseRunControl);
-		final IReverseRunControl reverseService = (IReverseRunControl)fRunCtrl;
+		final IReverseRunControl reverseService = (IReverseRunControl) fRunCtrl;
 
 		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
-				reverseService.enableReverseMode(fGDBCtrl.getContext(), true,
-						                         new ImmediateRequestMonitor(rm) {
+				reverseService.enableReverseMode(fGDBCtrl.getContext(), true, new ImmediateRequestMonitor(rm) {
 					@Override
 					protected void handleSuccess() {
 						reverseService.isReverseModeEnabled(fGDBCtrl.getContext(), rm);
@@ -127,7 +120,7 @@ public class MIRunControlReverseTest extends BaseParametrizedTestCase {
 				});
 			}
 		};
-		
+
 		fSession.getExecutor().execute(query);
 		Boolean enabled = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 		assertTrue("Reverse debugging should be enabled", enabled);
@@ -136,25 +129,25 @@ public class MIRunControlReverseTest extends BaseParametrizedTestCase {
 		SyncUtil.step(2, StepType.STEP_OVER);
 		// Step back once to start using the record buffer
 		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER, true);
-		
+
 		IExpressionDMContext expr = SyncUtil.createExpression(stoppedEvent.getDMContext(), "lIntVar");
-		
-		// Register an event listener to check that we don't send out a 'y' 
+
+		// Register an event listener to check that we don't send out a 'y'
 		// command when we don't need to.
 		boolean yesCommandSent[] = new boolean[1];
 		yesCommandSent[0] = false;
 		fGDBCtrl.addEventListener(new IEventListener() {
-			
+
 			@Override
 			public void eventReceived(Object output) {
-				for (MIOOBRecord oobr : ((MIOutput)output).getMIOOBRecords()) {
+				for (MIOOBRecord oobr : ((MIOutput) output).getMIOOBRecords()) {
 					if (oobr instanceof MILogStreamOutput) {
 						MILogStreamOutput stream = (MILogStreamOutput) oobr;
 						if (stream.getCString().indexOf("Undefined command: \"y") != -1) {
 							yesCommandSent[0] = true;
 						}
 					}
-				}				
+				}
 			}
 		});
 
@@ -172,11 +165,11 @@ public class MIRunControlReverseTest extends BaseParametrizedTestCase {
 		} catch (TimeoutException e) {
 			assert false : "Timed-out waiting to write to a variable, probably because of a query.";
 		}
-		
+
 		// Now verify that the write work and that GDB is answering
 		String value = SyncUtil.getExpressionValue(expr, IFormattedValues.DECIMAL_FORMAT);
 		assertEquals("Value was not writtent to variable", newValue, value);
-		
+
 		assertTrue("Sent a 'y' command unnecessarily", !yesCommandSent[0]); //$NON-NLS-1$
 	}
 }

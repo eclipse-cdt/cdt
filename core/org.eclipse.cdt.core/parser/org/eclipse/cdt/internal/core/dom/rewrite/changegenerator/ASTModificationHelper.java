@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Thomas Corbat (IFS)
  *******************************************************************************/
@@ -38,7 +38,8 @@ public class ASTModificationHelper {
 		this.modificationStore = stack;
 	}
 
-	public <T extends IASTNode> T[] createModifiedChildArray(IASTNode parent, T[] unmodifiedChildren, Class<T> clazz, NodeCommentMap commentMap) {
+	public <T extends IASTNode> T[] createModifiedChildArray(IASTNode parent, T[] unmodifiedChildren, Class<T> clazz,
+			NodeCommentMap commentMap) {
 		ArrayList<T> modifiedChildren = new ArrayList<T>(Arrays.asList(unmodifiedChildren));
 
 		for (ASTModification parentModification : modificationsForNode(parent)) {
@@ -51,7 +52,7 @@ public class ASTModificationHelper {
 				} else if (newNode instanceof ContainerNode) {
 					ContainerNode nodeContainer = (ContainerNode) newNode;
 					for (IASTNode currentNode : nodeContainer.getNodes()) {
-						T tnode= cast(currentNode, clazz);
+						T tnode = cast(currentNode, clazz);
 						if (tnode != null) {
 							modifiedChildren.add(tnode);
 						}
@@ -73,19 +74,22 @@ public class ASTModificationHelper {
 					case REPLACE:
 						if (castedNewNode != null) {
 							copyComments(castedNewNode, currentChild, commentMap);
-							modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()), castedNewNode);
+							modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()),
+									castedNewNode);
 						}
 						modifiedChildren.remove(childModification.getTargetNode());
 						break;
 					case INSERT_BEFORE:
 						if (castedNewNode != null) {
-							modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()), castedNewNode);
+							modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()),
+									castedNewNode);
 						} else if (newNode instanceof ContainerNode) {
 							ContainerNode nodeContainer = (ContainerNode) newNode;
 							for (IASTNode currentNode : nodeContainer.getNodes()) {
 								T tnode = cast(currentNode, clazz);
 								if (tnode != null) {
-									modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()), tnode);
+									modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()),
+											tnode);
 								}
 							}
 						}
@@ -107,24 +111,24 @@ public class ASTModificationHelper {
 		for (IASTComment comment : leadingComments) {
 			commentMap.addLeadingCommentToNode(newNode, comment);
 		}
-		
+
 		List<IASTComment> trailingComments = commentMap.getTrailingCommentsForNode(oldNode);
 		for (IASTComment comment : trailingComments) {
 			commentMap.addTrailingCommentToNode(newNode, comment);
 		}
-		
+
 		List<IASTComment> freestandingComments = commentMap.getFreestandingCommentsForNode(oldNode);
 		for (IASTComment comment : freestandingComments) {
 			commentMap.addFreestandingCommentToNode(newNode, comment);
 		}
-		
+
 		// Detach comments from oldNode (to avoid memory leak)
 		Map<IASTNode, List<IASTComment>> leadingMap = commentMap.getLeadingMap();
 		leadingMap.remove(oldNode);
-		
+
 		Map<IASTNode, List<IASTComment>> trailingMap = commentMap.getTrailingMap();
 		trailingMap.remove(oldNode);
-		
+
 		Map<IASTNode, List<IASTComment>> freestandingMap = commentMap.getFreestandingMap();
 		freestandingMap.remove(oldNode);
 	}
@@ -154,20 +158,20 @@ public class ASTModificationHelper {
 
 	public IASTInitializer getInitializer(IASTDeclarator decl) {
 		IASTInitializer initializer = decl.getInitializer();
-		
+
 		if (initializer != null) {
 			for (ASTModification childModification : modificationsForNode(initializer)) {
 				switch (childModification.getKind()) {
 				case REPLACE:
 					if (childModification.getNewNode() instanceof IASTInitializer) {
-						return (IASTInitializer)childModification.getNewNode();
+						return (IASTInitializer) childModification.getNewNode();
 					} else if (childModification.getNewNode() == null) {
 						return null;
 					}
 					throw new UnhandledASTModificationException(childModification);
 				case INSERT_BEFORE:
 					throw new UnhandledASTModificationException(childModification);
-					
+
 				case APPEND_CHILD:
 					throw new UnhandledASTModificationException(childModification);
 				}

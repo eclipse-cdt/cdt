@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTEqualsInitializer;
  * Initializer with equals sign (copy initialization)
  */
 public class CPPASTEqualsInitializer extends ASTEqualsInitializer {
-    public CPPASTEqualsInitializer() {
+	public CPPASTEqualsInitializer() {
 	}
 
 	public CPPASTEqualsInitializer(IASTInitializerClause arg) {

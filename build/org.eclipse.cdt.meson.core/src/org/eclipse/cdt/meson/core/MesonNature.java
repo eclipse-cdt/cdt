@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Red Hat Inc. - modified for use in Meson build plug-in
  *******************************************************************************/
 package org.eclipse.cdt.meson.core;
@@ -31,7 +31,7 @@ public class MesonNature implements IProjectNature {
 		CBuilder.setupBuilder(command);
 		projDesc.setBuildSpec(new ICommand[] { command });
 	}
-	
+
 	@Override
 	public void configure() throws CoreException {
 		IProjectDescription projDesc = project.getDescription();

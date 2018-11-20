@@ -78,27 +78,28 @@ public class DatabaseTest extends BaseTestCase {
 		if (!db.getLocation().delete()) {
 			db.getLocation().deleteOnExit();
 		}
-		db= null;
+		db = null;
 	}
 
 	public void testBlockSizeAndFirstBlock() throws Exception {
 		assertEquals(0, db.getVersion());
 
 		final int realsize = 42;
-		final int deltas = (realsize + Database.BLOCK_HEADER_SIZE + Database.BLOCK_SIZE_DELTA - 1) / Database.BLOCK_SIZE_DELTA;
+		final int deltas = (realsize + Database.BLOCK_HEADER_SIZE + Database.BLOCK_SIZE_DELTA - 1)
+				/ Database.BLOCK_SIZE_DELTA;
 		final int blocksize = deltas * Database.BLOCK_SIZE_DELTA;
-		final int freeDeltas= Database.CHUNK_SIZE / Database.BLOCK_SIZE_DELTA - deltas;
+		final int freeDeltas = Database.CHUNK_SIZE / Database.BLOCK_SIZE_DELTA - deltas;
 
 		long mem = db.malloc(realsize);
 		assertEquals(-blocksize, db.getShort(mem - Database.BLOCK_HEADER_SIZE));
 		db.free(mem);
 		assertEquals(blocksize, db.getShort(mem - Database.BLOCK_HEADER_SIZE));
-		assertEquals(mem, db.getRecPtr((deltas - Database.MIN_BLOCK_DELTAS +1 ) * Database.INT_SIZE));
+		assertEquals(mem, db.getRecPtr((deltas - Database.MIN_BLOCK_DELTAS + 1) * Database.INT_SIZE));
 		assertEquals(mem + blocksize, db.getRecPtr((freeDeltas - Database.MIN_BLOCK_DELTAS + 1) * Database.INT_SIZE));
 	}
 
 	public void testBug192437() throws Exception {
-		File tmp= File.createTempFile("readOnlyEmpty", ".db");
+		File tmp = File.createTempFile("readOnlyEmpty", ".db");
 		try {
 			tmp.setReadOnly();
 
@@ -123,9 +124,10 @@ public class DatabaseTest extends BaseTestCase {
 
 	public void testFreeBlockLinking() throws Exception {
 		final int realsize = 42;
-		final int deltas = (realsize + Database.BLOCK_HEADER_SIZE + Database.BLOCK_SIZE_DELTA - 1) / Database.BLOCK_SIZE_DELTA;
+		final int deltas = (realsize + Database.BLOCK_HEADER_SIZE + Database.BLOCK_SIZE_DELTA - 1)
+				/ Database.BLOCK_SIZE_DELTA;
 		final int blocksize = deltas * Database.BLOCK_SIZE_DELTA;
-		final int freeDeltas= Database.MIN_BLOCK_DELTAS - deltas;
+		final int freeDeltas = Database.MIN_BLOCK_DELTAS - deltas;
 
 		long mem1 = db.malloc(realsize);
 		long mem2 = db.malloc(realsize);
@@ -172,31 +174,9 @@ public class DatabaseTest extends BaseTestCase {
 	}
 
 	public void testStringsInBTree() throws Exception {
-		String[] names = {
-				"ARLENE",
-				"BRET",
-				"CINDY",
-				"DENNIS",
-				"EMILY",
-				"FRANKLIN",
-				"GERT",
-				"HARVEY",
-				"IRENE",
-				"JOSE",
-				"KATRINA",
-				"LEE",
-				"MARIA",
-				"NATE",
-				"OPHELIA",
-				"PHILIPPE",
-				"RITA",
-				"STAN",
-				"TAMMY",
-				"VINCE",
-				"WILMA",
-				"ALPHA",
-				"BETA"
-		};
+		String[] names = { "ARLENE", "BRET", "CINDY", "DENNIS", "EMILY", "FRANKLIN", "GERT", "HARVEY", "IRENE", "JOSE",
+				"KATRINA", "LEE", "MARIA", "NATE", "OPHELIA", "PHILIPPE", "RITA", "STAN", "TAMMY", "VINCE", "WILMA",
+				"ALPHA", "BETA" };
 
 		IBTreeComparator comparator = new IBTreeComparator() {
 			@Override
@@ -232,44 +212,44 @@ public class DatabaseTest extends BaseTestCase {
 	private final int GT = 1, LT = -1, EQ = 0;
 
 	public void testShortStringComparison() throws CoreException {
-		Random r= new Random(90210);
+		Random r = new Random(90210);
 
-		assertCMP("",  EQ, "", true);
-		assertCMP("",  EQ, "", false);
+		assertCMP("", EQ, "", true);
+		assertCMP("", EQ, "", false);
 
 		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH / 2, r, true);
 		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH / 2, r, false);
 		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH, r, true);
 		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH, r, false);
 
-		assertCMP("a",  LT, "b", true);
+		assertCMP("a", LT, "b", true);
 		assertCMP("aa", LT, "ab", true);
-		assertCMP("a",  EQ, "a", true);
+		assertCMP("a", EQ, "a", true);
 
-		assertCMP("a",  GT, "A", true);
+		assertCMP("a", GT, "A", true);
 		assertCMP("aa", GT, "aA", true);
-		assertCMP("a",  GT, "B", true);
+		assertCMP("a", GT, "B", true);
 
-		assertCMP("a",  EQ, "a", false);
-		assertCMP("a",  EQ, "A", false);
+		assertCMP("a", EQ, "a", false);
+		assertCMP("a", EQ, "A", false);
 	}
 
 	public void testLongStringComparison() throws CoreException {
-		Random r= new Random(314159265);
+		Random r = new Random(314159265);
 		doTrials(100, ShortString.MAX_BYTE_LENGTH + 1, ShortString.MAX_BYTE_LENGTH * 2, r, true);
 		doTrials(100, ShortString.MAX_BYTE_LENGTH + 1, ShortString.MAX_BYTE_LENGTH * 2, r, false);
 	}
 
 	private void doTrials(int n, int min, int max, Random r, boolean caseSensitive) throws CoreException {
 		long start = System.currentTimeMillis();
-		for (int i= 0; i < n; i++) {
+		for (int i = 0; i < n; i++) {
 			String a = randomString(min, max, r);
 			String b = randomString(min, max, r);
 			int expected = caseSensitive ? a.compareTo(b) : a.compareToIgnoreCase(b);
 			assertCMP(a, expected, b, caseSensitive);
 		}
-//		System.out.print("Trials: " + n + " Max length: " + max + " ignoreCase: " + !caseSensitive);
-//		System.out.println(" Time: " + (System.currentTimeMillis() - start));
+		//		System.out.print("Trials: " + n + " Max length: " + max + " ignoreCase: " + !caseSensitive);
+		//		System.out.println(" Time: " + (System.currentTimeMillis() - start));
 	}
 
 	private String randomString(int min, int max, Random r) {
@@ -279,7 +259,7 @@ public class DatabaseTest extends BaseTestCase {
 
 	private String randomString(int len, Random r) {
 		StringBuilder result = new StringBuilder(len);
-		for (int i= 0; i < len; i++) {
+		for (int i = 0; i < len; i++) {
 			result.append(randomChar(r));
 		}
 		return result.toString();
@@ -332,8 +312,8 @@ public class DatabaseTest extends BaseTestCase {
 	}
 
 	private void assertSignEquals(int a, int b) {
-		a= a < 0 ? -1 : (a > 0 ? 1 : 0);
-		b= b < 0 ? -1 : (b > 0 ? 1 : 0);
+		a = a < 0 ? -1 : (a > 0 ? 1 : 0);
+		b = b < 0 ? -1 : (b > 0 ? 1 : 0);
 		assertEquals(a, b);
 	}
 }

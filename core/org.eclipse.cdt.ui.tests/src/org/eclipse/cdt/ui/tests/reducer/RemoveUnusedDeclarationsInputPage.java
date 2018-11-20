@@ -66,7 +66,7 @@ public class RemoveUnusedDeclarationsInputPage extends UserInputWizardPage {
 		result.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-//				textModified(result.getText());
+				//				textModified(result.getText());
 			}
 		});
 		TextFieldNavigationHandler.install(result);

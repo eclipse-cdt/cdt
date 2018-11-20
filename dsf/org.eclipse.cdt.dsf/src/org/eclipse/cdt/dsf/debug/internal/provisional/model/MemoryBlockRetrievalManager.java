@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
  *******************************************************************************/
@@ -96,8 +96,8 @@ public class MemoryBlockRetrievalManager implements IMemoryBlockRetrievalManager
 				// Fire a terminate event for the memory retrieval object so
 				// that the hosting memory views can clean up. See 255120 and
 				// 283586
-				DebugPlugin.getDefault().fireDebugEventSet(
-						new DebugEvent[] { new DebugEvent(retrieval, DebugEvent.TERMINATE) });
+				DebugPlugin.getDefault()
+						.fireDebugEventSet(new DebugEvent[] { new DebugEvent(retrieval, DebugEvent.TERMINATE) });
 
 				Job removeJob = new Job("Removing memory blocks") { //$NON-NLS-1$
 

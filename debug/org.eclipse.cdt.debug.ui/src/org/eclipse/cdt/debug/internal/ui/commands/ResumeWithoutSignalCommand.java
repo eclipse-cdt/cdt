@@ -24,28 +24,29 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
  * The handler for the "Resume Without Signal" command.
- * 
- * @since 7.0 
+ *
+ * @since 7.0
  */
 public class ResumeWithoutSignalCommand extends AbstractDebugCommand implements IResumeWithoutSignalHandler {
 
 	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
-    	if (targets.length != 1) {
-    		return;
-    	}
+		if (targets.length != 1) {
+			return;
+		}
 
-		IResumeWithoutSignal target = (IResumeWithoutSignal)targets[0];
+		IResumeWithoutSignal target = (IResumeWithoutSignal) targets[0];
 		target.resumeWithoutSignal();
 	}
 
 	@Override
-	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request) throws CoreException {
-    	if (targets.length != 1) {
-    		return false;
-    	}
+	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
+			throws CoreException {
+		if (targets.length != 1) {
+			return false;
+		}
 
-		IResumeWithoutSignal target = (IResumeWithoutSignal)targets[0];
+		IResumeWithoutSignal target = (IResumeWithoutSignal) targets[0];
 		return target.canResumeWithoutSignal();
 	}
 

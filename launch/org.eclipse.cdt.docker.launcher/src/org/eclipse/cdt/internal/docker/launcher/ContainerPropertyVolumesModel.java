@@ -30,13 +30,11 @@ import org.eclipse.linuxtools.docker.core.IDockerImageInfo;
  * Databinding model for the {@link ContainerPropertyTab}
  *
  */
-public class ContainerPropertyVolumesModel
-		extends BaseDatabindingModel {
+public class ContainerPropertyVolumesModel extends BaseDatabindingModel {
 
 	public enum MountType {
 		NONE, HOST_FILE_SYSTEM, CONTAINER;
 	}
-
 
 	public static final String DATA_VOLUMES = "dataVolumes"; //$NON-NLS-1$
 
@@ -54,13 +52,11 @@ public class ContainerPropertyVolumesModel
 
 	private IDockerImage selectedImage;
 
-	public ContainerPropertyVolumesModel(
-			final IDockerConnection connection) {
+	public ContainerPropertyVolumesModel(final IDockerConnection connection) {
 		this.connection = connection;
 	}
 
-	public ContainerPropertyVolumesModel(
-			final IDockerImage selectedImage) throws DockerException {
+	public ContainerPropertyVolumesModel(final IDockerImage selectedImage) throws DockerException {
 		this(selectedImage.getConnection());
 		this.selectedImage = selectedImage;
 	}
@@ -76,32 +72,28 @@ public class ContainerPropertyVolumesModel
 
 	/**
 	 * Refreshes the list of Volumes to display in the for the given
-	 * 
+	 *
 	 * @param selectedImage
 	 */
 	public void setSelectedImage(final IDockerImage selectedImage) {
-		if (this.selectedImage == null
-				|| !this.selectedImage.equals(selectedImage)) {
+		if (this.selectedImage == null || !this.selectedImage.equals(selectedImage)) {
 			this.selectedImage = selectedImage;
 			if (selectedImage != null) {
-				this.imageInfo = selectedImage.getConnection()
-						.getImageInfo(selectedImage.id());
-				if (this.imageInfo.config() != null
-						&& this.imageInfo.config().volumes() != null) {
+				this.imageInfo = selectedImage.getConnection().getImageInfo(selectedImage.id());
+				if (this.imageInfo.config() != null && this.imageInfo.config().volumes() != null) {
 					for (DataVolumeModel dvm : previousVolumes) {
 						removeDataVolume(dvm);
 						selectedDataVolumes.remove(dvm);
 					}
 					final List<DataVolumeModel> volumes = new ArrayList<>();
-					for (String volume : this.imageInfo.config().volumes()
-							.keySet()) {
+					for (String volume : this.imageInfo.config().volumes().keySet()) {
 						volumes.add(new DataVolumeModel(volume));
 					}
 					setDataVolumes(volumes);
 					previousVolumes = volumes;
 				}
 			} else {
-				setDataVolumes(Collections.<DataVolumeModel> emptyList());
+				setDataVolumes(Collections.<DataVolumeModel>emptyList());
 			}
 		}
 
@@ -137,8 +129,7 @@ public class ContainerPropertyVolumesModel
 		return selectedDataVolumes;
 	}
 
-	public void setSelectedDataVolumes(
-			final Set<DataVolumeModel> selectedDataVolumes) {
+	public void setSelectedDataVolumes(final Set<DataVolumeModel> selectedDataVolumes) {
 		firePropertyChange(SELECTED_DATA_VOLUMES, this.selectedDataVolumes,
 				this.selectedDataVolumes = selectedDataVolumes);
 	}

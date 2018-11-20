@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -171,12 +171,12 @@ public class GdbMemoryAddressInfoVariablesRetrieval implements IGdbMemoryAddress
 				for (IVariableDMContext localDMC : localsDMCs) {
 					stackFrameService.getVariableData(localDMC,
 							new DataRequestMonitor<IVariableDMData>(dsfExecutor, crm) {
-						@Override
-						public void handleSuccess() {
-							localsDMData.add(getData());
-							crm.done();
-						}
-					});
+								@Override
+								public void handleSuccess() {
+									localsDMData.add(getData());
+									crm.done();
+								}
+							});
 
 					countRM++;
 				}

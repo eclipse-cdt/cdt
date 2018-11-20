@@ -30,25 +30,21 @@ import org.eclipse.swt.graphics.Image;
  *
  *  This class is wrapping our real content provider, and can be retargeted in one call -- after which
  *  refresh of TreeViewer sees consistent data.
- *  
+ *
  * @since 2.4
  * */
 public class ContentLabelProviderWrapper<U extends ITableLabelProvider & IStructuredContentProvider>
-implements ITableLabelProvider, IStructuredContentProvider
-{
+		implements ITableLabelProvider, IStructuredContentProvider {
 
-	public ContentLabelProviderWrapper(U realProvider)
-	{
+	public ContentLabelProviderWrapper(U realProvider) {
 		this.realProvider = realProvider;
 	}
 
-	public void setData(U realProvider)
-	{
+	public void setData(U realProvider) {
 		this.realProvider = realProvider;
 	}
 
-	public U getData()
-	{
+	public U getData() {
 		return realProvider;
 	}
 

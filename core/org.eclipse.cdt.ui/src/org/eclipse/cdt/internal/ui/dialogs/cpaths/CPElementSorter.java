@@ -41,30 +41,30 @@ public class CPElementSorter extends ViewerSorter {
 	@Override
 	public int category(Object obj) {
 		if (obj instanceof CPElement) {
-			switch ( ((CPElement)obj).getEntryKind()) {
-				case IPathEntry.CDT_LIBRARY :
-					return LIBRARY;
-				case IPathEntry.CDT_PROJECT :
-					return PROJECT;
-				case IPathEntry.CDT_SOURCE :
-					return SOURCE;
-				case IPathEntry.CDT_CONTAINER :
-					return CONTAINER;
+			switch (((CPElement) obj).getEntryKind()) {
+			case IPathEntry.CDT_LIBRARY:
+				return LIBRARY;
+			case IPathEntry.CDT_PROJECT:
+				return PROJECT;
+			case IPathEntry.CDT_SOURCE:
+				return SOURCE;
+			case IPathEntry.CDT_CONTAINER:
+				return CONTAINER;
 			}
 		} else if (obj instanceof CPElementGroup) {
-			switch ( ((CPElementGroup)obj).getEntryKind()) {
-				case IPathEntry.CDT_LIBRARY :
-					return LIBRARY;
-				case IPathEntry.CDT_PROJECT :
+			switch (((CPElementGroup) obj).getEntryKind()) {
+			case IPathEntry.CDT_LIBRARY:
+				return LIBRARY;
+			case IPathEntry.CDT_PROJECT:
+				return PROJECT;
+			case IPathEntry.CDT_SOURCE:
+				return SOURCE;
+			case IPathEntry.CDT_CONTAINER:
+				return CONTAINER;
+			case -1:
+				if (((CPElementGroup) obj).getResource() instanceof IProject) {
 					return PROJECT;
-				case IPathEntry.CDT_SOURCE :
-					return SOURCE;
-				case IPathEntry.CDT_CONTAINER :
-					return CONTAINER;
-				case -1 :
-					if ( ((CPElementGroup)obj).getResource() instanceof IProject) {
-						return PROJECT;
-					}
+				}
 			}
 		}
 		return OTHER;
@@ -78,7 +78,7 @@ public class CPElementSorter extends ViewerSorter {
 		List<CPElement> syms = new ArrayList<CPElement>(elements.length);
 		for (Object element : elements) {
 			if (element instanceof CPElement) {
-				CPElement cpelement = (CPElement)element;
+				CPElement cpelement = (CPElement) element;
 				if (cpelement.getEntryKind() == IPathEntry.CDT_INCLUDE) {
 					includes.add(cpelement);
 				} else if (cpelement.getEntryKind() == IPathEntry.CDT_MACRO) {

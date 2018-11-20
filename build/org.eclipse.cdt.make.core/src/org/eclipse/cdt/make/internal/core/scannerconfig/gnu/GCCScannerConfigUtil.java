@@ -26,12 +26,12 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * GCC related utility class
- * 
+ *
  * @author vhirsl
  */
 public class GCCScannerConfigUtil {
-	public static final String CPP_SPECS_FILE = "specs.cpp"; //$NON-NLS-1$ 
-	public static final String C_SPECS_FILE = "specs.c";  //$NON-NLS-1$
+	public static final String CPP_SPECS_FILE = "specs.cpp"; //$NON-NLS-1$
+	public static final String C_SPECS_FILE = "specs.c"; //$NON-NLS-1$
 
 	public static void createSpecs() {
 		IPath path = MakeCorePlugin.getWorkingDirectory();
@@ -52,9 +52,8 @@ public class GCCScannerConfigUtil {
 				file.write('\n');
 				file.close();
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR,
-						MakeCorePlugin.getUniqueIdentifier(), -1,
-						MakeMessages.getString("GCCScannerConfigUtil.Error_Message"), e));	//$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
+						MakeMessages.getString("GCCScannerConfigUtil.Error_Message"), e)); //$NON-NLS-1$
 			}
 		}
 	}

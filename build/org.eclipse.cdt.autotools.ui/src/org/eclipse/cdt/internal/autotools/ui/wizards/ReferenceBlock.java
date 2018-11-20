@@ -44,20 +44,20 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * @deprecated as of CDT 4.0. This Block was used for New Project Wizard
  * for 3.X style projects.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 @Deprecated
 public class ReferenceBlock extends AbstractCOptionPage {
 
-	private static final String PREFIX = "ReferenceBlock"; //$NON-NLS-1$ //$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$ //$NON-NLS-1$
-	private static final String DESC = PREFIX + ".desc"; //$NON-NLS-1$ //$NON-NLS-1$
+	private static final String PREFIX = "ReferenceBlock"; //$NON-NLS-1$
+	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
+	private static final String DESC = PREFIX + ".desc"; //$NON-NLS-1$
 
 	private CheckboxTableViewer referenceProjectsViewer;
 
 	private static final int PROJECT_LIST_MULTIPLIER = 10;
-	
+
 	public ReferenceBlock() {
 		super(CUIPlugin.getResourceString(LABEL));
 		setDescription(CUIPlugin.getResourceString(DESC));
@@ -81,7 +81,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 				if (!(element instanceof IWorkspace))
 					return new Object[0];
 				ArrayList<IProject> aList = new ArrayList<>(15);
-				final IProject[] projects = ((IWorkspace)element).getRoot().getProjects();
+				final IProject[] projects = ((IWorkspace) element).getRoot().getProjects();
 				for (int i = 0; i < projects.length; i++) {
 					if (CoreModel.hasCNature(projects[i])) {
 						// Do not show the actual project being look at
@@ -96,7 +96,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 		};
 	}
 
-	protected void initializeValues () {
+	protected void initializeValues() {
 		if (getContainer().getProject() != null) {
 			try {
 				IProject[] referenced = getContainer().getProject().getReferencedProjects();
@@ -115,7 +115,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 		Object[] elements = referenceProjectsViewer.getCheckedElements();
 		IProject[] projects = new IProject[elements.length];
 		System.arraycopy(elements, 0, projects, 0, elements.length);
-		return projects;	
+		return projects;
 	}
 
 	@Override
@@ -130,15 +130,10 @@ public class ReferenceBlock extends AbstractCOptionPage {
 		lbldata.horizontalSpan = 1;
 		label.setLayoutData(lbldata);
 
-
-		referenceProjectsViewer =
-			CheckboxTableViewer.newCheckList(composite, SWT.TOP | SWT.BORDER);
+		referenceProjectsViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
-		data.heightHint =
-			getDefaultFontHeight(
-				referenceProjectsViewer.getTable(),
-				PROJECT_LIST_MULTIPLIER);
+		data.heightHint = getDefaultFontHeight(referenceProjectsViewer.getTable(), PROJECT_LIST_MULTIPLIER);
 
 		//Only set a height hint if it will not result in a cut off dialog
 		referenceProjectsViewer.getTable().setLayoutData(data);
@@ -176,7 +171,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask(AutotoolsWizardMessages.getResourceString("ReferenceBlock_task_ReferenceProjects"), 1); 
+			monitor.beginTask(AutotoolsWizardMessages.getResourceString("ReferenceBlock_task_ReferenceProjects"), 1);
 			try {
 				IProjectDescription description = project.getDescription();
 				description.setReferencedProjects(refProjects);
@@ -184,7 +179,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 			} catch (CoreException e) {
 			}
 		}
-		
+
 	}
 
 	@Override

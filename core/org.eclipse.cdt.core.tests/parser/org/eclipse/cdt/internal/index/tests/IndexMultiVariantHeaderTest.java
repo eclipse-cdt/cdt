@@ -156,8 +156,8 @@ public class IndexMultiVariantHeaderTest extends IndexBindingResolutionTestBase 
 	//	a.cpp *
 	//	#include "a.h"
 	public void testSignificantMacroDetection_367753a() throws Exception {
-		IASTName includeName= findName("a.h", 0);
-		IASTPreprocessorIncludeStatement inc= (IASTPreprocessorIncludeStatement) includeName.getParent();
+		IASTName includeName = findName("a.h", 0);
+		IASTPreprocessorIncludeStatement inc = (IASTPreprocessorIncludeStatement) includeName.getParent();
 		assertTrue(inc.isResolved());
 		assertEquals("{}", inc.getSignificantMacros().toString());
 		assertNotNull(inc.getImportedIndexFile());
@@ -180,8 +180,8 @@ public class IndexMultiVariantHeaderTest extends IndexBindingResolutionTestBase 
 	//	a.cpp *
 	//	#include "a.h"
 	public void testSignificantMacroDetection_367753b() throws Exception {
-		IASTName includeName= findName("a.h", 0);
-		IASTPreprocessorIncludeStatement inc= (IASTPreprocessorIncludeStatement) includeName.getParent();
+		IASTName includeName = findName("a.h", 0);
+		IASTPreprocessorIncludeStatement inc = (IASTPreprocessorIncludeStatement) includeName.getParent();
 		assertTrue(inc.isResolved());
 		assertEquals("{}", inc.getSignificantMacros().toString());
 		assertNotNull(inc.getImportedIndexFile());

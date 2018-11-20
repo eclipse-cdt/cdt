@@ -24,8 +24,8 @@ public class VariableHandle extends CElementHandle implements org.eclipse.cdt.co
 
 	public VariableHandle(ICElement parent, IVariable var) {
 		super(parent, ICElement.C_VARIABLE, var.getName());
-		fTypeName= ASTTypeUtil.getType(var.getType(), false);
-		fIsStatic= var.isStatic();
+		fTypeName = ASTTypeUtil.getType(var.getType(), false);
+		fIsStatic = var.isStatic();
 	}
 
 	@Override

@@ -34,23 +34,23 @@ public class MakeStartup extends Job {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-        final IProject[] oldProject = UpdateMakeProjectAction.getOldProjects();
-        if (oldProject.length > 0) {
-            Display.getDefault().asyncExec(new Runnable() {
-                @Override
+		final IProject[] oldProject = UpdateMakeProjectAction.getOldProjects();
+		if (oldProject.length > 0) {
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
-                    Shell shell = MakeUIPlugin.getDefault().getShell();
-                    boolean shouldUpdate = MessageDialog.openQuestion(shell,
-                        MakeUIPlugin.getResourceString("MakeUIPlugin.update_project"), //$NON-NLS-1$
-                        MakeUIPlugin.getResourceString("MakeUIPlugin.update_project_message")); //$NON-NLS-1$
+					Shell shell = MakeUIPlugin.getDefault().getShell();
+					boolean shouldUpdate = MessageDialog.openQuestion(shell,
+							MakeUIPlugin.getResourceString("MakeUIPlugin.update_project"), //$NON-NLS-1$
+							MakeUIPlugin.getResourceString("MakeUIPlugin.update_project_message")); //$NON-NLS-1$
 
-                    if (shouldUpdate) {
-                        ProgressMonitorDialog pd = new ProgressMonitorDialog(shell);
-                        UpdateMakeProjectAction.run(false, pd, oldProject);
-                    }
-                }
-            });
-        }
-        return Status.OK_STATUS;
-    }
+					if (shouldUpdate) {
+						ProgressMonitorDialog pd = new ProgressMonitorDialog(shell);
+						UpdateMakeProjectAction.run(false, pd, oldProject);
+					}
+				}
+			});
+		}
+		return Status.OK_STATUS;
+	}
 }

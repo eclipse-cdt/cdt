@@ -59,16 +59,17 @@ public class CViewContentProvider extends CElementContentProvider {
 	 * @param provideMembers
 	 * @param provideWorkingCopy
 	 */
-	public CViewContentProvider(TreeViewer viewer, IWorkbenchPartSite site, boolean provideMembers, boolean provideWorkingCopy) {
+	public CViewContentProvider(TreeViewer viewer, IWorkbenchPartSite site, boolean provideMembers,
+			boolean provideWorkingCopy) {
 		super(provideMembers, provideWorkingCopy);
 		fManager = createContentManager(viewer, site);
 	}
 
 	protected RemoteTreeContentManager createContentManager(TreeViewer viewer, IWorkbenchPartSite site) {
 		if (site == null) {
-			return new RemoteTreeContentManager(this, (RemoteTreeViewer)viewer, null);
+			return new RemoteTreeContentManager(this, (RemoteTreeViewer) viewer, null);
 		}
-		return new RemoteTreeContentManager(this, (RemoteTreeViewer)viewer, site);
+		return new RemoteTreeContentManager(this, (RemoteTreeViewer) viewer, site);
 	}
 
 	/* (non-Javadoc)
@@ -95,13 +96,13 @@ public class CViewContentProvider extends CElementContentProvider {
 		Object[] extras = null;
 		try {
 			if (element instanceof ICProject) {
-				extras = getProjectChildren((ICProject)element);
+				extras = getProjectChildren((ICProject) element);
 			} else if (element instanceof IBinaryContainer) {
-				extras = getExecutables((IBinaryContainer)element);
+				extras = getExecutables((IBinaryContainer) element);
 			} else if (element instanceof IArchiveContainer) {
-				extras = getArchives((IArchiveContainer)element);
+				extras = getArchives((IArchiveContainer) element);
 			} else if (element instanceof IIncludeReference) {
-				extras = getIncludeReferenceChildren((IIncludeReference)element);
+				extras = getIncludeReferenceChildren((IIncludeReference) element);
 			}
 			/*
 			 * Do not to this for now, since ILibraryReference is an Archive.
@@ -134,11 +135,11 @@ public class CViewContentProvider extends CElementContentProvider {
 		Object[] extras = null;
 		IArchiveContainer archive = cproject.getArchiveContainer();
 		if (getArchives(archive).length > 0) {
-			extras = new Object[] {archive};
+			extras = new Object[] { archive };
 		}
 		IBinaryContainer bin = cproject.getBinaryContainer();
 		if (getExecutables(bin).length > 0) {
-			Object[] o = new Object[] {bin};
+			Object[] o = new Object[] { bin };
 			if (extras != null && extras.length > 0) {
 				extras = concatenate(extras, o);
 			} else {
@@ -148,7 +149,7 @@ public class CViewContentProvider extends CElementContentProvider {
 		LibraryRefContainer libRefCont = new LibraryRefContainer(cproject);
 		Object[] libRefs = libRefCont.getChildren(cproject);
 		if (libRefs != null && libRefs.length > 0) {
-			Object[] o = new Object[] {libRefCont};
+			Object[] o = new Object[] { libRefCont };
 			if (extras != null && extras.length > 0) {
 				extras = concatenate(extras, o);
 			} else {
@@ -159,7 +160,7 @@ public class CViewContentProvider extends CElementContentProvider {
 		IncludeRefContainer incRefCont = new IncludeRefContainer(cproject);
 		Object[] incRefs = incRefCont.getChildren(cproject);
 		if (incRefs != null && incRefs.length > 0) {
-			Object[]  o = new Object[] {incRefCont};
+			Object[] o = new Object[] { incRefCont };
 			if (extras != null && extras.length > 0) {
 				extras = concatenate(extras, o);
 			} else {
@@ -174,7 +175,7 @@ public class CViewContentProvider extends CElementContentProvider {
 		ArrayList<IBinary> list = new ArrayList<IBinary>(celements.length);
 		for (int i = 0; i < celements.length; i++) {
 			if (celements[i] instanceof IBinary) {
-				IBinary bin = (IBinary)celements[i];
+				IBinary bin = (IBinary) celements[i];
 				if (bin.showInBinaryContainer()) {
 					list.add(bin);
 				}
@@ -195,18 +196,19 @@ public class CViewContentProvider extends CElementContentProvider {
 		// to the container and containers refere to the project
 		Object parent = super.internalGetParent(element);
 		if (element instanceof IncludeReferenceProxy) {
-			parent = ((IncludeReferenceProxy)element).getIncludeRefContainer();
+			parent = ((IncludeReferenceProxy) element).getIncludeRefContainer();
 		} else if (element instanceof IncludeRefContainer) {
-			parent = ((IncludeRefContainer)element).getCProject();
+			parent = ((IncludeRefContainer) element).getCProject();
 		} else if (element instanceof ILibraryReference) {
 			if (parent instanceof ICProject) {
-				parent = new LibraryRefContainer((ICProject)parent);
+				parent = new LibraryRefContainer((ICProject) parent);
 			}
 		} else if (element instanceof LibraryRefContainer) {
-			parent = ((LibraryRefContainer)element).getCProject();
+			parent = ((LibraryRefContainer) element).getCProject();
 		}
 		return parent;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
@@ -221,7 +223,7 @@ public class CViewContentProvider extends CElementContentProvider {
 		}
 		if (element instanceof IBinaryContainer) {
 			try {
-				IBinaryContainer cont = (IBinaryContainer)element;
+				IBinaryContainer cont = (IBinaryContainer) element;
 				IBinary[] bins = getBinaries(cont);
 				return (bins != null) && bins.length > 0;
 			} catch (CModelException e) {
@@ -229,15 +231,16 @@ public class CViewContentProvider extends CElementContentProvider {
 			}
 		} else if (element instanceof IArchiveContainer) {
 			try {
-				IArchiveContainer cont = (IArchiveContainer)element;
+				IArchiveContainer cont = (IArchiveContainer) element;
 				IArchive[] ars = getArchives(cont);
 				return (ars != null) && ars.length > 0;
 			} catch (CModelException e) {
 				return false;
 			}
 		} else if (element instanceof IncludeReferenceProxy) {
-			IIncludeReference reference = ((IncludeReferenceProxy)element).getReference();
-			IContainer container = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(reference.getPath());
+			IIncludeReference reference = ((IncludeReferenceProxy) element).getReference();
+			IContainer container = ResourcesPlugin.getWorkspace().getRoot()
+					.getContainerForLocation(reference.getPath());
 			if (container != null) {
 				// do not allow to navigate to workspace containers inside "Includes" node
 				return false;

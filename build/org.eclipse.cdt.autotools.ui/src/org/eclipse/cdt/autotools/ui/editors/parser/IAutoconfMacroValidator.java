@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.autotools.ui.editors.parser;
 
-
 /**
  * Clients implement this interface to validate macro calls.
  * @author eswartz
@@ -25,7 +24,7 @@ public interface IAutoconfMacroValidator {
 	/**
 	 * Validate the given macro call.
 	 * @param element macro call, never <code>null</code>
-	 * @throws ParseException if the call doesn't match the expected number of elements 
+	 * @throws ParseException if the call doesn't match the expected number of elements
 	 */
 	void validateMacroCall(AutoconfMacroElement element) throws ParseException, InvalidMacroException;
 }

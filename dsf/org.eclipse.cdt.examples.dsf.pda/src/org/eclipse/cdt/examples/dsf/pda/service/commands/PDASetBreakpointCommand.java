@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Sets a breakpoint at given line
- * 
+ *
  * <pre>
  * Suspend a single thread:
  *    C: set {line_number} 0
@@ -26,7 +26,7 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
  *    C: resume {thread_id}
  *    E: resumed {thread_id} client
  *    E: suspended {thread_id} breakpoint line_number
- *    
+ *
  * Suspend the VM:
  *    C: set {line_number} 1
  *    R: ok
@@ -38,15 +38,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDASetBreakpointCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASetBreakpointCommand(PDAVirtualMachineDMContext context, int line, boolean stopVM) {
-        super(context, 
-              "set " + 
-              (line - 1) + " " + 
-              (stopVM ? "1" : "0"));
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDASetBreakpointCommand(PDAVirtualMachineDMContext context, int line, boolean stopVM) {
+		super(context, "set " + (line - 1) + " " + (stopVM ? "1" : "0"));
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

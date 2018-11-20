@@ -49,7 +49,8 @@ public class CFunctionTests extends PDOMTestBase {
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
-			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 		}
 	}
 
@@ -87,19 +88,19 @@ public class CFunctionTests extends PDOMTestBase {
 	public void testKnRStyleFunctionWithProblemParameters() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "KnRfunctionWithProblemParameters");
 		assertEquals(1, bindings.length);
-		IFunction f= (IFunction) bindings[0];
-		IParameter[] params= f.getParameters();
+		IFunction f = (IFunction) bindings[0];
+		IParameter[] params = f.getParameters();
 		assertEquals(3, params.length);
-		assertNull(params[0].getType()); // It's a problem binding in the DOM 
+		assertNull(params[0].getType()); // It's a problem binding in the DOM
 		assertTrue(params[1].getType() instanceof ICBasicType);
-		assertTrue(params[2].getType() instanceof ICBasicType); 
+		assertTrue(params[2].getType() instanceof ICBasicType);
 	}
-	
+
 	public void testFunctionWithRegisterParam() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "storageClassCFunction");
 		assertEquals(1, bindings.length);
-		IFunction f= (IFunction) bindings[0];
-		IParameter[] params= f.getParameters();
+		IFunction f = (IFunction) bindings[0];
+		IParameter[] params = f.getParameters();
 		assertEquals(2, params.length);
 		assertEquals(true, params[0].isRegister());
 		assertEquals(false, params[1].isRegister());

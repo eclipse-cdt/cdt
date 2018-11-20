@@ -29,7 +29,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 /**
  * String variable substitutor that resolves project_name, project_loc and project_path variables
  * in the context of the given project. Resolution of all other variables is delegated to
- * the default string variable manager. 
+ * the default string variable manager.
  */
 public class DebugStringVariableSubstitutor implements IStringVariableManager {
 	private static class ProjectVariable implements IDynamicVariable {
@@ -102,7 +102,8 @@ public class DebugStringVariableSubstitutor implements IStringVariableManager {
 	 *     selection.
 	 */
 	public DebugStringVariableSubstitutor(String projectName) {
-		this(projectName == null || projectName.isEmpty() ? null : ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
+		this(projectName == null || projectName.isEmpty() ? null
+				: ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
 	}
 
 	public IStringVariable[] getVariables() {
@@ -154,10 +155,9 @@ public class DebugStringVariableSubstitutor implements IStringVariableManager {
 		return performStringSubstitution(expression, true);
 	}
 
-	public String performStringSubstitution(String expression, boolean reportUndefinedVariables)
-			throws CoreException {
-		return new StringSubstitutionEngine().performStringSubstitution(expression,
-				reportUndefinedVariables, true, this);
+	public String performStringSubstitution(String expression, boolean reportUndefinedVariables) throws CoreException {
+		return new StringSubstitutionEngine().performStringSubstitution(expression, reportUndefinedVariables, true,
+				this);
 	}
 
 	public void validateStringVariables(String expression) throws CoreException {
@@ -168,8 +168,7 @@ public class DebugStringVariableSubstitutor implements IStringVariableManager {
 		return variableManager.newValueVariable(name, description);
 	}
 
-	public IValueVariable newValueVariable(String name, String description, boolean readOnly,
-			String value) {
+	public IValueVariable newValueVariable(String name, String description, boolean readOnly, String value) {
 		return variableManager.newValueVariable(name, description, readOnly, value);
 	}
 

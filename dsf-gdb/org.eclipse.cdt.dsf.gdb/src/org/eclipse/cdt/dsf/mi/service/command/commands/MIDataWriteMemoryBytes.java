@@ -33,24 +33,17 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  */
 public class MIDataWriteMemoryBytes extends MICommand<MIInfo> {
 
-	public MIDataWriteMemoryBytes(
-	        IDMContext ctx,
-			String address,
-			byte[] contents)
-	{
+	public MIDataWriteMemoryBytes(IDMContext ctx, String address, byte[] contents) {
 		super(ctx, "-data-write-memory-bytes"); //$NON-NLS-1$
 
 		// performance-oriented conversion of byte[] to hex string
-		final char[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+		final char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 		char[] hex = new char[contents.length * 2];
 		for (int n = 0; n < contents.length; n++) {
 			final int val = contents[n] & 0xFF;
-			hex[n*2] = digits[val >>> 4];
-			hex[n*2 + 1] = digits[val & 0x0F];
+			hex[n * 2] = digits[val >>> 4];
+			hex[n * 2 + 1] = digits[val & 0x0F];
 		}
-		setParameters(
-			new String[] {
-				address,
-				new String(hex)});
+		setParameters(new String[] { address, new String(hex) });
 	}
 }

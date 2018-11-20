@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Nokia - create and use backend service. 
+ *     Nokia - create and use backend service.
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -26,69 +26,71 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  */
 public interface IMIBackend extends IDsfService {
 
-    public enum State { NOT_INITIALIZED, STARTED, TERMINATED };
+	public enum State {
+		NOT_INITIALIZED, STARTED, TERMINATED
+	};
 
 	/**
 	 * Event indicating that the back end process has started or terminated.
 	 */
-    @Immutable
-    public static class BackendStateChangedEvent {
-        final private String fSessionId;
-        final private String fBackendId;
-        final private State fState;
-        
-        public BackendStateChangedEvent(String sessionId, String backendId, State state) {
-            fSessionId = sessionId;
-            fBackendId = backendId;
-            fState = state;
-        }
-        
-        public String getSessionId() {
-            return fSessionId;
-        }
-        
-        public String getBackendId() {
-            return fBackendId;
-        }
-        
-        public State getState() {
-            return fState;
-        }
-    }
+	@Immutable
+	public static class BackendStateChangedEvent {
+		final private String fSessionId;
+		final private String fBackendId;
+		final private State fState;
 
-    /**
-     * Returns the identifier of this backend service.  It can be used 
-     * to distinguish between multiple instances of this service in a 
-     * single session.   
-     */
-    public String getId();
-    
-    /**
-     * Requests that the backend be immediately terminated.
-     */
-    public void destroy();
+		public BackendStateChangedEvent(String sessionId, String backendId, State state) {
+			fSessionId = sessionId;
+			fBackendId = backendId;
+			fState = state;
+		}
 
-    /**
-     * Returns the current state of the backend.
-     * @return
-     */
-    public State getState();
+		public String getSessionId() {
+			return fSessionId;
+		}
 
-    /**
-     * Returns the exit code of the backend.  Returns <code>-1</code> if 
-     * the backend exit code is not available.
-     * @return
-     */
-    public int getExitCode();
+		public String getBackendId() {
+			return fBackendId;
+		}
 
-    /**
-     * Returns the backend command stream. 
-     */
-    public InputStream getMIInputStream();
+		public State getState() {
+			return fState;
+		}
+	}
 
-    /**
-     * Returns the backend result and event stream.
-     * @return
-     */
-    public OutputStream getMIOutputStream();
+	/**
+	 * Returns the identifier of this backend service.  It can be used
+	 * to distinguish between multiple instances of this service in a
+	 * single session.
+	 */
+	public String getId();
+
+	/**
+	 * Requests that the backend be immediately terminated.
+	 */
+	public void destroy();
+
+	/**
+	 * Returns the current state of the backend.
+	 * @return
+	 */
+	public State getState();
+
+	/**
+	 * Returns the exit code of the backend.  Returns <code>-1</code> if
+	 * the backend exit code is not available.
+	 * @return
+	 */
+	public int getExitCode();
+
+	/**
+	 * Returns the backend command stream.
+	 */
+	public InputStream getMIInputStream();
+
+	/**
+	 * Returns the backend result and event stream.
+	 * @return
+	 */
+	public OutputStream getMIOutputStream();
 }

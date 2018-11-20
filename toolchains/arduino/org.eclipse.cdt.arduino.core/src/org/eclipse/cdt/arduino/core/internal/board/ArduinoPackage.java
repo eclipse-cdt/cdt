@@ -73,7 +73,7 @@ public class ArduinoPackage {
 		// Redo calculated fields
 		installedPlatforms = null;
 		latestTools = null;
-		
+
 		if (other.platforms != null) {
 			if (platforms != null) {
 				platforms.addAll(other.platforms);
@@ -169,15 +169,17 @@ public class ArduinoPackage {
 		}
 		return platformMap.values();
 	}
-	
+
 	public Collection<ArduinoPlatform> getPlatformUpdates() throws CoreException {
 		initInstalledPlatforms();
 		Map<String, ArduinoPlatform> platformMap = new HashMap<>();
 		for (ArduinoPlatform platform : platforms) {
 			ArduinoPlatform installed = installedPlatforms.get(platform.getArchitecture());
-			if (installed != null && ArduinoManager.compareVersions(platform.getVersion(), installed.getVersion()) > 0) {
+			if (installed != null
+					&& ArduinoManager.compareVersions(platform.getVersion(), installed.getVersion()) > 0) {
 				ArduinoPlatform current = platformMap.get(platform.getArchitecture());
-				if (current == null || ArduinoManager.compareVersions(platform.getVersion(), current.getVersion()) > 0) {
+				if (current == null
+						|| ArduinoManager.compareVersions(platform.getVersion(), current.getVersion()) > 0) {
 					platformMap.put(platform.getArchitecture(), platform);
 				}
 			}
@@ -201,7 +203,7 @@ public class ArduinoPackage {
 	private void initLatestTools() {
 		if (latestTools == null) {
 			latestTools = new HashMap<>();
-			
+
 			for (ArduinoTool tool : tools) {
 				ArduinoTool current = latestTools.get(tool.getName());
 				if (current == null || ArduinoManager.compareVersions(tool.getVersion(), current.getVersion()) > 0) {

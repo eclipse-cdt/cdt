@@ -21,11 +21,11 @@ import org.eclipse.ui.PlatformUI;
 /**
  * This is an action template for actions that toggle whether
  * it links its selection to the active editor.
- * 
+ *
  * @since 3.0
  */
 public abstract class AbstractToggleLinkingAction extends Action {
-	
+
 	/**
 	 * Constructs a new action.
 	 */
@@ -33,7 +33,7 @@ public abstract class AbstractToggleLinkingAction extends Action {
 		super(ActionMessages.ToggleLinkingAction_label);
 		setDescription(ActionMessages.ToggleLinkingAction_description);
 		setToolTipText(ActionMessages.ToggleLinkingAction_tooltip);
-		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "synced.gif"); //$NON-NLS-1$		
+		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "synced.gif"); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.LINK_EDITOR_ACTION);
 	}
 

@@ -34,47 +34,48 @@ import org.eclipse.core.runtime.PlatformObject;
  * C-specific binding for enumerators.
  */
 public class CEnumerator extends PlatformObject implements IEnumerator {
-    public static class CEnumeratorProblem extends ProblemBinding implements IEnumerator {
-        public CEnumeratorProblem(IASTNode node, int id, char[] arg) {
-            super(node, id, arg);
-        }
+	public static class CEnumeratorProblem extends ProblemBinding implements IEnumerator {
+		public CEnumeratorProblem(IASTNode node, int id, char[] arg) {
+			super(node, id, arg);
+		}
+
 		@Override
 		public IValue getValue() {
 			return IntegralValue.UNKNOWN;
 		}
-    }
+	}
 
-    private final IASTName enumeratorName;
+	private final IASTName enumeratorName;
 
-    public CEnumerator(IASTEnumerator enumtor) {
+	public CEnumerator(IASTEnumerator enumtor) {
 		this.enumeratorName = enumtor.getName();
 		enumeratorName.setBinding(this);
 	}
 
-    public IASTNode getPhysicalNode() {
-        return enumeratorName;
-    }
+	public IASTNode getPhysicalNode() {
+		return enumeratorName;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
+	 */
+	@Override
 	public String getName() {
-        return enumeratorName.toString();
-    }
+		return enumeratorName.toString();
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return enumeratorName.toCharArray();
-    }
+		return enumeratorName.toCharArray();
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
+	 */
+	@Override
 	public IScope getScope() {
-        return CVisitor.getContainingScope(enumeratorName.getParent());
-    }
+		return CVisitor.getContainingScope(enumeratorName.getParent());
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IEnumerator#getType()
@@ -91,14 +92,14 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
 
 	@Override
 	public IBinding getOwner() {
-	    IASTEnumerator etor = (IASTEnumerator) enumeratorName.getParent();
+		IASTEnumerator etor = (IASTEnumerator) enumeratorName.getParent();
 		IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier) etor.getParent();
 		return enumSpec.getName().resolveBinding();
 	}
 
 	@Override
 	public IValue getValue() {
-		IASTNode parent= enumeratorName.getParent();
+		IASTNode parent = enumeratorName.getParent();
 		if (parent instanceof ASTEnumerator)
 			return ((ASTEnumerator) parent).getIntegralValue();
 

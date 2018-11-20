@@ -44,7 +44,7 @@ public class CHeaderRuleTest extends TestCase {
 	protected void setUp() throws Exception {
 		fToken = new Token(HEADER);
 		fScanner = new RuleBasedScanner();
-		fScanner.setRules(new IRule[] {  new CHeaderRule(fToken) });
+		fScanner.setRules(new IRule[] { new CHeaderRule(fToken) });
 		fDocument = new Document();
 	}
 
@@ -67,7 +67,7 @@ public class CHeaderRuleTest extends TestCase {
 	public void testHeaderExtraSpacesBetween() {
 		assertHeader("#include    <foo.h>", "<foo.h>", 12);
 	}
-	
+
 	public void testHeaderExtraSpacesBefore() {
 		assertHeader("  #include <foo.h>", "<foo.h>", 11);
 	}
@@ -79,11 +79,11 @@ public class CHeaderRuleTest extends TestCase {
 	public void testBooleanLogic() {
 		assertNotHeader("if (x < 10 && x > 20) return false;", 6);
 	}
-	
+
 	public void testVariableDeclaration() {
 		assertNotHeader("vector<int> foo;", 6);
 	}
-	
+
 	/**
 	 * Verifies that there is a header at the given character position.
 	 * @param string String to check.
@@ -102,7 +102,7 @@ public class CHeaderRuleTest extends TestCase {
 		assertEquals(header.length(), fScanner.getTokenLength());
 		assertEquals(string.indexOf(header), fScanner.getTokenOffset());
 	}
-	
+
 	/**
 	 * Verifies that string does not contain a header at the given position.
 	 * @param string The String to check.

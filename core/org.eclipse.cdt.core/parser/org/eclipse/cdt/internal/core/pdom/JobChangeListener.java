@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
@@ -25,9 +25,9 @@ class JobChangeListener implements IJobChangeListener {
 	private final PDOMManager fPDomManager;
 
 	JobChangeListener(PDOMManager pdomManager) {
-		fPDomManager= pdomManager;
+		fPDomManager = pdomManager;
 	}
-	
+
 	@Override
 	public void aboutToRun(IJobChangeEvent event) {
 	}

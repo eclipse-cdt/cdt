@@ -42,22 +42,32 @@ import junit.framework.TestSuite;
  */
 public class FindReferencesTest extends SearchTestBase {
 	public static class SingleProject extends FindReferencesTest {
-		public SingleProject() { setStrategy(new SingleProjectStrategy()); }
-		public static TestSuite suite() { return suite(SingleProject.class); }
+		public SingleProject() {
+			setStrategy(new SingleProjectStrategy());
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
-	
+
 	public static class ReferencedProject extends FindReferencesTest {
-		public ReferencedProject() { setStrategy(new ReferencedProjectStrategy()); }
-		public static TestSuite suite() { return suite(ReferencedProject.class); }
+		public ReferencedProject() {
+			setStrategy(new ReferencedProjectStrategy());
+		}
+
+		public static TestSuite suite() {
+			return suite(ReferencedProject.class);
+		}
 	}
-	
+
 	public static TestSuite suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTestSuite(SingleProject.class);
 		suite.addTestSuite(ReferencedProject.class);
 		return suite;
 	}
-	
+
 	public FindReferencesTest() {
 		// For convenience, to be able to run tests via right click -> Run As -> JUnit Plugin Test.
 		// Will use the SingleProjectStrategy when run this way.
@@ -113,7 +123,6 @@ public class FindReferencesTest extends SearchTestBase {
 		CSearchQuery query = makeSearchQuery(fHeaderFile, selectSection("waldo", "waldo() override", fHeaderContents));
 		assertOccurrences(query, 1);
 	}
-	
 
 	//	#define waldo()
 	//
@@ -122,7 +131,7 @@ public class FindReferencesTest extends SearchTestBase {
 	//	    waldo();
 	//	  }
 	//	};
-	
+
 	//	// empty file
 	public void testEnclosingDefinitionOfMacroReference_508216() throws Exception {
 		CSearchQuery query = makeSearchQuery(fHeaderFile, selectSection("waldo", "#define waldo", fHeaderContents));
@@ -134,18 +143,18 @@ public class FindReferencesTest extends SearchTestBase {
 		assertEquals(1, matches.length);
 		assertNotNull(matches[0].getEnclosingElement());
 	}
-	
+
 	//	namespace N {
 	//		void foo();
 	//	}
 	//	using N::foo;
-	
+
 	//	// empty file
 	public void testUsingDeclaration_399147() throws Exception {
 		CSearchQuery query = makeSearchQuery(fHeaderFile, selectSection("foo", "void foo", fHeaderContents));
 		assertOccurrences(query, 1);
 	}
-	
+
 	//	// empty file
 
 	//	namespace { struct A {}; }
@@ -162,12 +171,12 @@ public class FindReferencesTest extends SearchTestBase {
 		CSearchQuery query = makeSearchQuery(fSourceFile, selectSection("findMe", "findMe(b)", fSourceContents));
 		assertOccurrences(query, 1);
 	}
-	
+
 	//	template <typename T>
 	//	class Waldo {
 	//		void find();
 	//	};
-	
+
 	//	#include "header.h"
 	//	void foo() {
 	//		Waldo<int> waldo;

@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This interface represents expressions that access a field reference. e.g. a.b => a
  * is the expression, b is the field name. e.g. a()->def => a() is the
  * expression, def is the field name.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -40,46 +40,46 @@ public interface IASTFieldReference extends IASTExpression, IASTNameOwner {
 
 	/**
 	 * Returns an expression for the object containing the field.
-	 * 
+	 *
 	 * @return the field owner
 	 */
 	public IASTExpression getFieldOwner();
 
 	/**
 	 * Sets the expression for the object containing the field.
-	 * 
+	 *
 	 * @param expression
 	 */
 	public void setFieldOwner(IASTExpression expression);
 
 	/**
 	 * Returns the name of the field being dereferenced.
-	 * 
+	 *
 	 * @return the name of the field (<code>IASTName</code>)
 	 */
 	public IASTName getFieldName();
 
 	/**
 	 * Sets the name of the field.
-	 * 
+	 *
 	 * @param name the new name
 	 */
 	public void setFieldName(IASTName name);
 
 	/**
 	 * Returns true of this is the arrow operator and not the dot operator.
-	 * 
+	 *
 	 * @return is this a pointer dereference
 	 */
 	public boolean isPointerDereference();
 
 	/**
 	 * Sets whether or not this is a pointer dereference (default == no).
-	 * 
+	 *
 	 * @param value the new value
 	 */
 	public void setIsPointerDereference(boolean value);
-	
+
 	/**
 	 * @since 5.1
 	 */

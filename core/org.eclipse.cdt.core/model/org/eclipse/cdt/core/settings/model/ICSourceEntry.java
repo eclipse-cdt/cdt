@@ -13,5 +13,5 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-public interface ICSourceEntry extends ICExclusionPatternPathEntry{
+public interface ICSourceEntry extends ICExclusionPatternPathEntry {
 }

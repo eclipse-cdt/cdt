@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson           - initial API and implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
@@ -21,22 +21,22 @@ import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetChildrenInfo;
 public class ExprMetaGetChildren extends ExprMetaCommand<ExprMetaGetChildrenInfo> {
 
 	private int numChildLimit = IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED;
-	
+
 	public ExprMetaGetChildren(IExpressionDMContext ctx) {
 		super(ctx);
 	}
-	
+
 	/**
 	 * @param ctx
 	 * @param numChildLimit
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public ExprMetaGetChildren(IExpressionDMContext ctx, int numChildLimit) {
 		super(ctx);
 		this.numChildLimit = numChildLimit;
 	}
-	
+
 	/**
 	 * @since 4.0
 	 */

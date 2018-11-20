@@ -16,7 +16,7 @@ import org.eclipse.launchbar.core.target.ILaunchTargetProvider;
 import org.eclipse.launchbar.core.target.TargetStatus;
 
 /**
- * 
+ *
  * @since 8.3
  */
 public class GenericTargetTypeProvider implements ILaunchTargetProvider {

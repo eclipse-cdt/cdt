@@ -24,11 +24,11 @@ public class XlcLRCompletionBasicTest extends LRCompletionBasicTest {
 	public static TestSuite suite() {
 		return suite(XlcLRCompletionBasicTest.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

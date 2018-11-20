@@ -19,10 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
 public interface IUPCASTSynchronizationStatement extends IASTStatement {
 
-
 	public static final ASTNodeProperty BARRIER_EXPRESSION = new ASTNodeProperty(
-		"IUPCASTSynchronizationStatement.BARRIER_EXPRESSION - IASTExpression barrier for IUPCASTSynchronizationStatement"); //$NON-NLS-1$
-
+			"IUPCASTSynchronizationStatement.BARRIER_EXPRESSION - IASTExpression barrier for IUPCASTSynchronizationStatement"); //$NON-NLS-1$
 
 	public final int st_upc_notify = 1;
 
@@ -32,7 +30,6 @@ public interface IUPCASTSynchronizationStatement extends IASTStatement {
 
 	public final int st_upc_fence = 4;
 
-
 	public IASTExpression getBarrierExpression();
 
 	public void setBarrierExpression(IASTExpression expr);
@@ -40,7 +37,6 @@ public interface IUPCASTSynchronizationStatement extends IASTStatement {
 	public int getStatementKind();
 
 	public void setStatementKind(int kind);
-
 
 	@Override
 	public IUPCASTSynchronizationStatement copy();

@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
 
-
 /**
  * IMakefile:
  *
@@ -26,16 +25,16 @@ import java.net.URI;
  * rule :  inference_rule | target_rule | special_rule
  * inference_rule : target ':' [ ';' command ] <nl>
  *		 [ ( command ) * ]
- * target_rule : [ ( target ) + ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl> 
+ * target_rule : [ ( target ) + ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl>
  *               [ ( command ) *  ]
- * macro_definition : string '=' ( string )* 
+ * macro_definition : string '=' ( string )*
  * comments : ('#' ( string ) <nl>) *
  * empty : <nl>
  * command : <tab> prefix_command string <nl>
  * target : string
  * prefix_command : '-' | '@' | '+'
- * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
- * 
+ * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%"
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -53,7 +52,7 @@ public interface IMakefile extends IParent {
 
 	/**
 	 * @return IInferenceRule
-	 * 
+	 *
 	 */
 	IInferenceRule[] getInferenceRules();
 
@@ -92,7 +91,7 @@ public interface IMakefile extends IParent {
 	 * @since 7.3
 	 */
 	IBuiltinFunction[] getBuiltinFunctions();
-	
+
 	/**
 	 * @return all the built-in MacroDefintions
 	 */
@@ -103,7 +102,7 @@ public interface IMakefile extends IParent {
 	 * @since 7.3
 	 */
 	IAutomaticVariable[] getAutomaticVariables();
-	
+
 	/**
 	 * @return the built-in macro definition for name.
 	 */
@@ -116,7 +115,7 @@ public interface IMakefile extends IParent {
 
 	/**
 	 * @return line after expanding any macros.
-	 * 
+	 *
 	 * @param line - line to expand
 	 * @param recursive -  if true recursively expand.
 	 */
@@ -126,25 +125,24 @@ public interface IMakefile extends IParent {
 	 * @return  the makefile Reader provider used to create this makefile or <code>null</code>
 	 */
 	IMakefileReaderProvider getMakefileReaderProvider();
-	
+
 	/**
 	 * Clear all statements and (re)parse the Makefile
 	 */
 	void parse(String filePath, Reader makefile) throws IOException;
-	
+
 	/**
 	 * Clear all statements and (re)parse the Makefile
 	 */
 	void parse(URI fileURI, Reader makefile) throws IOException;
-	
+
 	/**
 	 * Clear the all statements and (re)parse the Makefile
 	 * using the given makefile Reader provider
-	 * 
+	 *
 	 * @param makefileReaderProvider provider, or <code>null</code> to use a FileReader
 	 */
 	void parse(URI fileURI, IMakefileReaderProvider makefileReaderProvider) throws IOException;
-	
 
 	/**
 	 * @return the <code>URI</code> of this makefile

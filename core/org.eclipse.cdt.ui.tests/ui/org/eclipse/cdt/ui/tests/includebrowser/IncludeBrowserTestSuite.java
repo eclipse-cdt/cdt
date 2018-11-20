@@ -19,8 +19,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-    BasicIncludeBrowserTest.class,
+@Suite.SuiteClasses({ BasicIncludeBrowserTest.class,
 
 })
 public class IncludeBrowserTestSuite {

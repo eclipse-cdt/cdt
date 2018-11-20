@@ -83,7 +83,7 @@ public class CodanProblemCategory extends CodanProblemElement implements IProble
 
 	/**
 	 * Find all categories in which problem with id present
-	 * 
+	 *
 	 * @param c - root category
 	 * @param id - problem id
 	 * @return list of categories
@@ -125,7 +125,7 @@ public class CodanProblemCategory extends CodanProblemElement implements IProble
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
@@ -149,7 +149,7 @@ public class CodanProblemCategory extends CodanProblemElement implements IProble
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.internal.core.model.CodanProblemElement#setProfile
 	 * (org.eclipse.cdt.codan.core.model.IProblemProfile)

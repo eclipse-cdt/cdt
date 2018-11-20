@@ -51,8 +51,8 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 	private BuildAction fCleanAction;
 
 	// Menu tags for the build
-	final String BUILD_GROUP_MARKER= "buildGroup"; //$NON-NLS-1$
-	final String BUILD_GROUP_MARKER_END= "end-buildGroup"; //$NON-NLS-1$
+	final String BUILD_GROUP_MARKER = "buildGroup"; //$NON-NLS-1$
+	final String BUILD_GROUP_MARKER_END = "end-buildGroup"; //$NON-NLS-1$
 
 	/**
 	 * Create action group associated with given view part.
@@ -84,39 +84,39 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 	 */
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection= (IStructuredSelection) getContext().getSelection();
-		boolean isProjectSelection= true;
-		boolean hasOpenProjects= false;
-		boolean hasClosedProjects= false;
-		boolean hasBuilder= true; // false if any project is closed or does
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
+		boolean isProjectSelection = true;
+		boolean hasOpenProjects = false;
+		boolean hasClosedProjects = false;
+		boolean hasBuilder = true; // false if any project is closed or does
 		// not have builder
 
-		Iterator<?> resources= selection.iterator();
+		Iterator<?> resources = selection.iterator();
 		while (resources.hasNext() && (!hasOpenProjects || !hasClosedProjects || hasBuilder || isProjectSelection)) {
-			Object next= resources.next();
-			IProject project= null;
+			Object next = resources.next();
+			IProject project = null;
 
 			if (next instanceof IProject) {
-				project= (IProject) next;
+				project = (IProject) next;
 			} else if (next instanceof IAdaptable) {
-				IResource res= ((IAdaptable)next).getAdapter(IResource.class);
+				IResource res = ((IAdaptable) next).getAdapter(IResource.class);
 				if (res instanceof IProject) {
-					project= (IProject) res;
+					project = (IProject) res;
 				}
 			}
 
 			if (project == null) {
-				isProjectSelection= false;
+				isProjectSelection = false;
 				continue;
 			}
 			if (project.isOpen()) {
-				hasOpenProjects= true;
+				hasOpenProjects = true;
 				if (hasBuilder && !hasBuilder(project)) {
-					hasBuilder= false;
+					hasBuilder = false;
 				}
 			} else {
-				hasClosedProjects= true;
-				hasBuilder= false;
+				hasClosedProjects = true;
+				hasBuilder = false;
 			}
 		}
 
@@ -127,8 +127,8 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 				if (oldBuild != null) {
 					menu.insertAfter(BuildAction.ID_BUILD, fCleanAction);
 					// Replace ResourceMgmtActionProvier's build action with our own
-					if (oldBuild instanceof ActionContributionItem &&
-							((ActionContributionItem)oldBuild).getAction() instanceof BuildAction) {
+					if (oldBuild instanceof ActionContributionItem
+							&& ((ActionContributionItem) oldBuild).getAction() instanceof BuildAction) {
 						menu.remove(oldBuild);
 						menu.insertBefore(fCleanAction.getId(), fBuildAction);
 					}
@@ -150,8 +150,9 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 	 */
 	boolean hasBuilder(IProject project) {
 		try {
-			ICommand[] commands= project.getDescription().getBuildSpec();
-			if (commands.length > 0) return true;
+			ICommand[] commands = project.getDescription().getBuildSpec();
+			if (commands.length > 0)
+				return true;
 		} catch (CoreException e) {
 			// Cannot determine if project has builders. Project is closed
 			// or does not exist. Fall through to return false.
@@ -161,8 +162,9 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 
 	@Override
 	protected void makeActions() {
-		fBuildAction = new BuildGroup.CDTBuildAction(getViewPart().getSite(), IncrementalProjectBuilder.INCREMENTAL_BUILD);
-		fCleanAction= new BuildGroup.CDTBuildAction(getViewPart().getSite(), IncrementalProjectBuilder.CLEAN_BUILD);
+		fBuildAction = new BuildGroup.CDTBuildAction(getViewPart().getSite(),
+				IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		fCleanAction = new BuildGroup.CDTBuildAction(getViewPart().getSite(), IncrementalProjectBuilder.CLEAN_BUILD);
 		fCleanAction.setText(CViewMessages.CleanAction_label);
 	}
 

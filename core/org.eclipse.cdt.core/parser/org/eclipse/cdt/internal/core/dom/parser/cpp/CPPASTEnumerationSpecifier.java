@@ -54,7 +54,6 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		setBaseType(baseType);
 	}
 
-
 	@Override
 	public CPPASTEnumerationSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -63,8 +62,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	@Override
 	public CPPASTEnumerationSpecifier copy(CopyStyle style) {
 		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(fScopeStyle,
-				fName == null ? null : fName.copy(style),
-				fBaseType == null ? null : fBaseType.copy(style));
+				fName == null ? null : fName.copy(style), fBaseType == null ? null : fBaseType.copy(style));
 		copy.fIsOpaque = fIsOpaque;
 		for (IASTEnumerator enumerator : getEnumerators()) {
 			copy.addEnumerator(enumerator == null ? null : enumerator.copy(style));
@@ -77,13 +75,13 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		if (fValuesComputed != null)
 			return false;
 
-		fValuesComputed= Boolean.FALSE;
+		fValuesComputed = Boolean.FALSE;
 		return true;
 	}
 
 	@Override
 	public void finishValueComputation() {
-		fValuesComputed= Boolean.TRUE;
+		fValuesComputed = Boolean.TRUE;
 	}
 
 	@Override
@@ -93,7 +91,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 
 	@Override
 	public void addEnumerator(IASTEnumerator enumerator) {
-        assertNotFrozen();
+		assertNotFrozen();
 		if (enumerator != null) {
 			enumerator.setParent(this);
 			enumerator.setPropertyInParent(ENUMERATOR);
@@ -109,7 +107,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 
 	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
+		assertNotFrozen();
 		fName = name;
 		if (name != null) {
 			name.setParent(this);
@@ -187,7 +185,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	@Override
 	public void setBaseType(ICPPASTDeclSpecifier baseType) {
 		assertNotFrozen();
-		fBaseType= baseType;
+		fBaseType = baseType;
 		if (baseType != null) {
 			baseType.setParent(this);
 			baseType.setPropertyInParent(BASE_TYPE);
@@ -202,7 +200,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	@Override
 	public void setIsOpaque(boolean isOpaque) {
 		assertNotFrozen();
-		fIsOpaque= isOpaque;
+		fIsOpaque = isOpaque;
 	}
 
 	@Override
@@ -215,7 +213,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		if (isOpaque())
 			return null;
 		if (fScope == null) {
-			fScope= new CPPEnumScope(this);
+			fScope = new CPPEnumScope(this);
 		}
 		return fScope;
 	}

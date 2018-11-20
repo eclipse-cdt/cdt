@@ -31,14 +31,15 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 /**
  * Block for C/C++ Project Paths page for 3.X projects.
- * 
+ *
  * @deprecated as of CDT 4.0. This option block was for property pages
  * for 3.X style projects.
  */
 @Deprecated
 public class CPathTabBlock extends AbstractPathOptionBlock {
-	
-	private final int[] pathTypes = {IPathEntry.CDT_SOURCE, IPathEntry.CDT_PROJECT, IPathEntry.CDT_OUTPUT, IPathEntry.CDT_LIBRARY,IPathEntry.CDT_CONTAINER};
+
+	private final int[] pathTypes = { IPathEntry.CDT_SOURCE, IPathEntry.CDT_PROJECT, IPathEntry.CDT_OUTPUT,
+			IPathEntry.CDT_LIBRARY, IPathEntry.CDT_CONTAINER };
 
 	private ListDialogField<CPElement> fCPathList;
 
@@ -67,9 +68,9 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 	public CPathTabBlock(IStatusChangeListener context, int pageToShow) {
 		super(context, pageToShow);
 
-		String[] buttonLabels = new String[]{ CPathEntryMessages.CPathsBlock_path_up_button, 
-				CPathEntryMessages.CPathsBlock_path_down_button, 
-				/* 2 */null, CPathEntryMessages.CPathsBlock_path_checkall_button, 
+		String[] buttonLabels = new String[] { CPathEntryMessages.CPathsBlock_path_up_button,
+				CPathEntryMessages.CPathsBlock_path_down_button, /* 2 */null,
+				CPathEntryMessages.CPathsBlock_path_checkall_button,
 				CPathEntryMessages.CPathsBlock_path_uncheckall_button
 
 		};
@@ -100,7 +101,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -143,6 +144,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 	protected int[] getAppliedFilteredTypes() {
 		return pathTypes;
 	}
+
 	/**
 	 * Validates the build path.
 	 */
@@ -171,7 +173,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 			if (nErrorEntries == 1 && entryError != null) {
 				getPathStatus().setWarning(entryError.getStatus().getMessage());
 			} else {
-				getPathStatus().setWarning(NLS.bind(CPathEntryMessages.CPElement_status_multiplePathErrors, 
+				getPathStatus().setWarning(NLS.bind(CPathEntryMessages.CPElement_status_multiplePathErrors,
 						String.valueOf(nErrorEntries)));
 			}
 		}

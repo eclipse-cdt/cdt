@@ -36,7 +36,7 @@ public class CqueryJsonParseTest {
 	}
 
 	@Test
-	public void testProgress(){
+	public void testProgress() {
 		String json = "{\"jsonrpc\": \"2.0\",\"method\": \"$cquery/progress\",\"params\": {" //$NON-NLS-1$
 				+ "\"indexRequestCount\": 4,\"doIdMapCount\": 5,\"loadPreviousIndexCount\": 6," //$NON-NLS-1$
 				+ "\"onIdMappedCount\": 7,\"onIndexedCount\": 8,\"activeThreads\": 9}}"; //$NON-NLS-1$
@@ -61,8 +61,8 @@ public class CqueryJsonParseTest {
 		Position pos2 = new Position(25, 10);
 		Position pos3 = new Position(35, 8);
 		Position pos4 = new Position(35, 15);
-		Range range1 = new Range(pos1,pos2);
-		Range range2 = new Range(pos3,pos4);
+		Range range1 = new Range(pos1, pos2);
+		Range range2 = new Range(pos3, pos4);
 		List<Range> regions = new ArrayList<>();
 		regions.add(range1);
 		regions.add(range2);
@@ -79,9 +79,9 @@ public class CqueryJsonParseTest {
 	public void testPublishSemanticHighlighting() {
 		String json = "{\"jsonrpc\": \"2.0\",\"method\": \"$cquery/publishSemanticHighlighting\"," //$NON-NLS-1$
 				+ "\"params\": {\"uri\": \"file:///home/foobar.cpp\",\"symbols\": [{\"stableId\": 21," //$NON-NLS-1$
-				+ "\"parentKind\": 8,\"kind\": 0,\"storage\": 3,\"ranges\": [{\"start\": {\"line\": 41,"  //$NON-NLS-1$
-				+ "\"character\": 1},\"end\": {\"line\": 41,\"character\": 5}}]},{\"stableId\": 19,"  //$NON-NLS-1$
-				+ "\"parentKind\": 12,\"kind\": 253,\"storage\": 5,\"ranges\": [{\"start\": {\"line\": 39,"  //$NON-NLS-1$
+				+ "\"parentKind\": 8,\"kind\": 0,\"storage\": 3,\"ranges\": [{\"start\": {\"line\": 41," //$NON-NLS-1$
+				+ "\"character\": 1},\"end\": {\"line\": 41,\"character\": 5}}]},{\"stableId\": 19," //$NON-NLS-1$
+				+ "\"parentKind\": 12,\"kind\": 253,\"storage\": 5,\"ranges\": [{\"start\": {\"line\": 39," //$NON-NLS-1$
 				+ "\"character\": 9},\"end\": {\"line\": 39,\"character\": 10}}]}]}}"; //$NON-NLS-1$
 
 		URI uri = URI.create("file:///home/foobar.cpp"); //$NON-NLS-1$
@@ -89,8 +89,8 @@ public class CqueryJsonParseTest {
 		Position pos2 = new Position(41, 5);
 		Position pos3 = new Position(39, 9);
 		Position pos4 = new Position(39, 10);
-		Range range1 = new Range(pos1,pos2);
-		Range range2 = new Range(pos3,pos4);
+		Range range1 = new Range(pos1, pos2);
+		Range range2 = new Range(pos3, pos4);
 		List<Range> ranges1 = new ArrayList<>();
 		List<Range> ranges2 = new ArrayList<>();
 		ranges1.add(range1);

@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 /**
  * Base interface for all template parameters (non-type, type and template).
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -24,7 +24,7 @@ public interface ICPPTemplateParameter extends ICPPBinding {
 	public static final ICPPTemplateParameter[] EMPTY_TEMPLATE_PARAMETER_ARRAY = {};
 
 	/**
-	 * Returns the zero-based position of this parameter within the template parameter list it belongs to. 
+	 * Returns the zero-based position of this parameter within the template parameter list it belongs to.
 	 * @since 5.1
 	 */
 	short getParameterPosition();
@@ -42,7 +42,7 @@ public interface ICPPTemplateParameter extends ICPPBinding {
 	 *       class Y2 {
 	 *          template typename<V> class Z { // nesting level 1
 	 *             void m();
-	 *          };  
+	 *          };
 	 *       };
 	 *    };
 	 * }
@@ -53,19 +53,19 @@ public interface ICPPTemplateParameter extends ICPPBinding {
 	 * @since 5.1
 	 */
 	short getTemplateNestingLevel();
-	
+
 	/**
 	 * Returns {@code (getTemplateNestingLevel() << 16) + getParameterPosition()}.
 	 * @since 5.1
 	 */
 	int getParameterID();
-	
+
 	/**
 	 * Returns the default value for this template parameter, or <code>null</code>.
 	 * @since 5.1
 	 */
 	ICPPTemplateArgument getDefaultValue();
-	
+
 	/**
 	 * Returns whether this template parameter is a parameter pack.
 	 * @since 5.2

@@ -30,26 +30,25 @@ public class ErrorStatusHandler implements IStatusHandler {
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	@Override
-	public Object handleStatus( final IStatus status, Object source ) throws CoreException {
-		if ( status != null && source != null ) {
+	public Object handleStatus(final IStatus status, Object source) throws CoreException {
+		if (status != null && source != null) {
 			String title = ""; //$NON-NLS-1$
-			if (source instanceof IDebugElement) { 
-				IDebugTarget target = ((IDebugElement)source).getDebugTarget();
+			if (source instanceof IDebugElement) {
+				IDebugTarget target = ((IDebugElement) source).getDebugTarget();
 				title = target.getName();
-			}
-			else {
-				// Source is sometimes an action delegate instance. Can't gather 
+			} else {
+				// Source is sometimes an action delegate instance. Can't gather
 				// anything useful from it. Use a generic title
 				title = CDebugUIMessages.getString("ErrorStatusHandler.1"); //$NON-NLS-1$
 			}
 			final String title_f = title;
-			CDebugUIPlugin.getStandardDisplay().asyncExec( new Runnable() {
+			CDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 
 				@Override
 				public void run() {
-					ErrorDialog.openError( CDebugUIPlugin.getActiveWorkbenchShell(), title_f, null, status );
+					ErrorDialog.openError(CDebugUIPlugin.getActiveWorkbenchShell(), title_f, null, status);
 				}
-			} );
+			});
 		}
 		return null;
 	}

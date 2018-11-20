@@ -45,7 +45,7 @@ final class DeltaProcessor {
 	 * The <code>CElementDelta</code> corresponding to the <code>IResourceDelta</code> being translated.
 	 */
 	private CElementDelta fCurrentDelta;
-	
+
 	static final ICElementDelta[] NO_DELTA = new ICElementDelta[0];
 
 	// Hold on the element being renamed.
@@ -63,14 +63,14 @@ final class DeltaProcessor {
 		CModelManager manager = CModelManager.getDefault();
 
 		boolean shouldProcess = true;
-		
+
 		// Check for C nature or if the was a CNature
 		if (!(resource instanceof IWorkspaceRoot)) {
 			IProject project = resource.getProject();
 			if (!(CoreModel.hasCNature(project) || CoreModel.hasCCNature(project))) {
 				shouldProcess = false;
 				CModel root = manager.getCModel();
-				CModelInfo rootInfo = (CModelInfo)manager.peekAtInfo(root);
+				CModelInfo rootInfo = (CModelInfo) manager.peekAtInfo(root);
 				if (rootInfo != null) {
 					ICElement[] celements = rootInfo.getChildren();
 					for (ICElement celement : celements) {
@@ -98,7 +98,7 @@ final class DeltaProcessor {
 				if (cproj != null && cproj.isOpen()) {
 					IBinaryContainer bin = cproj.getBinaryContainer();
 					if (bin.isOpen()) {
-						children = ((CElement)bin).getElementInfo().getChildren();
+						children = ((CElement) bin).getElementInfo().getChildren();
 						for (ICElement element : children) {
 							IResource res = element.getResource();
 							if (resource.equals(res)) {
@@ -117,7 +117,7 @@ final class DeltaProcessor {
 				if (cproj != null && cproj.isOpen()) {
 					IArchiveContainer ar = cproj.getArchiveContainer();
 					if (ar.isOpen()) {
-						children = ((CElement)ar).getElementInfo().getChildren();
+						children = ((CElement) ar).getElementInfo().getChildren();
 						for (ICElement element : children) {
 							IResource res = element.getResource();
 							if (resource.equals(res)) {
@@ -126,7 +126,7 @@ final class DeltaProcessor {
 							}
 						}
 					}
-				}				
+				}
 			}
 			//  It is not a C resource if the parent is a Binary/ArchiveContainer
 			// But we have to release too.
@@ -144,7 +144,7 @@ final class DeltaProcessor {
 	}
 
 	/**
-	 * Adds the given child handle to its parent's cache of children. 
+	 * Adds the given child handle to its parent's cache of children.
 	 */
 	protected void addToParentInfo(Openable child) throws CModelException {
 		Openable parent = (Openable) child.getParent();
@@ -160,7 +160,7 @@ final class DeltaProcessor {
 	/**
 	 * Removes the given element from its parents cache of children. If the
 	 * element does not have a parent, or the parent is not currently open,
-	 * this has no effect. 
+	 * this has no effect.
 	 */
 	private void removeFromParentInfo(ICElement child) throws CModelException {
 		CModelManager factory = CModelManager.getDefault();
@@ -181,7 +181,7 @@ final class DeltaProcessor {
 		if (type == ICElement.C_ARCHIVE) {
 			ICProject cproject = celement.getCProject();
 			IArchiveContainer container = cproject.getArchiveContainer();
-			fCurrentDelta.changed(container, ICElementDelta.CHANGED);		
+			fCurrentDelta.changed(container, ICElementDelta.CHANGED);
 		} else if (type == ICElement.C_BINARY) {
 			ICProject cproject = celement.getCProject();
 			IBinaryContainer container = cproject.getBinaryContainer();
@@ -190,7 +190,7 @@ final class DeltaProcessor {
 			// If an entire folder was deleted we need to update the
 			// BinaryContainer/ArchiveContainer also.
 			ICProject cproject = celement.getCProject();
-			CProjectInfo pinfo = (CProjectInfo)factory.peekAtInfo(cproject);
+			CProjectInfo pinfo = (CProjectInfo) factory.peekAtInfo(cproject);
 			if (pinfo != null && pinfo.vBin != null) {
 				if (factory.peekAtInfo(pinfo.vBin) != null) {
 					ICElement[] bins = pinfo.vBin.getChildren();
@@ -236,11 +236,11 @@ final class DeltaProcessor {
 	protected void elementAdded(ICElement element, IResourceDelta delta) throws CModelException {
 
 		if (element instanceof Openable) {
-			addToParentInfo((Openable)element);
+			addToParentInfo((Openable) element);
 		}
 		if ((delta.getFlags() & IResourceDelta.MOVED_FROM) != 0) {
 			//ICElement movedFromElement = createElement(delta.getMovedFromPath());
-			if  (movedFromElement == null) {
+			if (movedFromElement == null) {
 				movedFromElement = createElement(delta.getMovedFromPath());
 			}
 			fCurrentDelta.movedTo(element, movedFromElement);
@@ -265,7 +265,7 @@ final class DeltaProcessor {
 		if (element.getElementType() == ICElement.C_PROJECT) {
 			// treat project closing as removal
 			elementRemoved(element, delta);
-			CModelInfo rootInfo = (CModelInfo)CModelManager.getDefault().getCModel().getElementInfo();
+			CModelInfo rootInfo = (CModelInfo) CModelManager.getDefault().getCModel().getElementInfo();
 			rootInfo.setNonCResources(null);
 		} else {
 			fCurrentDelta.closed(element);
@@ -287,7 +287,7 @@ final class DeltaProcessor {
 			if (hasCNature(delta.getResource())) {
 				elementAdded(element, delta);
 			}
-			CModelInfo rootInfo = (CModelInfo)CModelManager.getDefault().getCModel().getElementInfo();
+			CModelInfo rootInfo = (CModelInfo) CModelManager.getDefault().getCModel().getElementInfo();
 			rootInfo.setNonCResources(null);
 
 		} else {
@@ -314,7 +314,7 @@ final class DeltaProcessor {
 	 */
 	private void closeBinary(ICElement celement) {
 		CModelManager factory = CModelManager.getDefault();
-		CElementInfo pinfo = (CElementInfo)factory.peekAtInfo(celement);
+		CElementInfo pinfo = (CElementInfo) factory.peekAtInfo(celement);
 		if (pinfo != null) {
 			ICElement[] celems = pinfo.getChildren();
 			for (int i = 0; i < celems.length; ++i) {
@@ -338,11 +338,11 @@ final class DeltaProcessor {
 		if (element instanceof IBinary || element instanceof IArchive) {
 			closeBinary(element);
 		} else if (element instanceof Openable) {
-			close((Openable)element);
+			close((Openable) element);
 		}
-		
+
 		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT);
-	
+
 	}
 
 	/**
@@ -381,16 +381,13 @@ final class DeltaProcessor {
 		ICElementDelta[] realDeltas = null;
 		int index = 0;
 		for (int i = 0; i < length; i++) {
-			CElementDelta delta = (CElementDelta)deltas[i];
+			CElementDelta delta = (CElementDelta) deltas[i];
 			if (delta == null) {
 				continue;
 			}
-			if (delta.getAffectedChildren().length > 0
-				|| delta.getKind() == ICElementDelta.ADDED
-				|| delta.getKind() == ICElementDelta.REMOVED
-				|| (delta.getFlags() & ICElementDelta.F_CLOSED) != 0
-				|| (delta.getFlags() & ICElementDelta.F_OPENED) != 0
-				|| delta.resourceDeltasCounter > 0) {
+			if (delta.getAffectedChildren().length > 0 || delta.getKind() == ICElementDelta.ADDED
+					|| delta.getKind() == ICElementDelta.REMOVED || (delta.getFlags() & ICElementDelta.F_CLOSED) != 0
+					|| (delta.getFlags() & ICElementDelta.F_OPENED) != 0 || delta.resourceDeltasCounter > 0) {
 
 				if (realDeltas == null) {
 					realDeltas = new ICElementDelta[length];
@@ -425,7 +422,7 @@ final class DeltaProcessor {
 	 * relevant <code>CModel</code>s.
 	 */
 	public ICElementDelta[] processResourceDelta(IResourceDelta changes) {
-		ICElement root = CModelManager.getDefault().getCModel();			
+		ICElement root = CModelManager.getDefault().getCModel();
 		// get the workspace delta, and start processing there.
 		IResourceDelta[] deltas = changes.getAffectedChildren();
 		ICElementDelta[] translatedDeltas = new CElementDelta[deltas.length];
@@ -436,12 +433,12 @@ final class DeltaProcessor {
 			traverseDelta(root, delta); // traverse delta
 			translatedDeltas[i] = fCurrentDelta;
 		}
-		ICElementDelta[] filteredDeltas= filterRealDeltas(translatedDeltas);
+		ICElementDelta[] filteredDeltas = filterRealDeltas(translatedDeltas);
 		// release deltas
-		fCurrentDelta= null;
+		fCurrentDelta = null;
 		return filteredDeltas;
 	}
-	
+
 	/**
 	 * Converts an <code>IResourceDelta</code> and its children into
 	 * the corresponding <code>ICElementDelta</code>s.
@@ -468,8 +465,8 @@ final class DeltaProcessor {
 			parent = current;
 		} catch (CModelException e) {
 		}
-		if (updateChildren){
-			IResourceDelta [] children = delta.getAffectedChildren();
+		if (updateChildren) {
+			IResourceDelta[] children = delta.getAffectedChildren();
 			for (IResourceDelta element : children) {
 				traverseDelta(parent, element);
 			}
@@ -482,25 +479,25 @@ final class DeltaProcessor {
 	 * @param delta
 	 */
 	protected void nonCResourcesChanged(ICElement parent, IResourceDelta delta) throws CModelException {
-		if (parent instanceof Openable && ((Openable)parent).isOpen()) {
-			CElementInfo info = ((Openable)parent).getElementInfo();
+		if (parent instanceof Openable && ((Openable) parent).isOpen()) {
+			CElementInfo info = ((Openable) parent).getElementInfo();
 			switch (parent.getElementType()) {
 			case ICElement.C_MODEL:
-				((CModelInfo)info).setNonCResources(null);
+				((CModelInfo) info).setNonCResources(null);
 				fCurrentDelta.addResourceDelta(delta);
 				return;
 			case ICElement.C_PROJECT: {
-				final CProjectInfo pInfo= (CProjectInfo)info;
+				final CProjectInfo pInfo = (CProjectInfo) info;
 				pInfo.setNonCResources(null);
-				
-				ISourceRoot[] roots= pInfo.sourceRoots;
+
+				ISourceRoot[] roots = pInfo.sourceRoots;
 				if (roots != null) {
-					ICProject cproject = (ICProject)parent;
+					ICProject cproject = (ICProject) parent;
 					if (isFolderAddition(delta)) {
 						// if source roots changed - refresh from scratch
 						// see http://bugs.eclipse.org/215112
-						pInfo.sourceRoots= null;
-						ISourceRoot[] newRoots= cproject.getAllSourceRoots();
+						pInfo.sourceRoots = null;
+						ISourceRoot[] newRoots = cproject.getAllSourceRoots();
 						if (!Arrays.equals(roots, newRoots)) {
 							cproject.close();
 							break;
@@ -513,7 +510,7 @@ final class DeltaProcessor {
 						if (r instanceof IProject) {
 							CElementInfo cinfo = (CElementInfo) CModelManager.getDefault().peekAtInfo(root);
 							if (cinfo instanceof CContainerInfo) {
-								((CContainerInfo)cinfo).setNonCResources(null);
+								((CContainerInfo) cinfo).setNonCResources(null);
 							}
 						}
 					}
@@ -521,7 +518,7 @@ final class DeltaProcessor {
 				break;
 			}
 			case ICElement.C_CCONTAINER:
-				((CContainerInfo)info).setNonCResources(null);
+				((CContainerInfo) info).setNonCResources(null);
 				break;
 			}
 		}
@@ -547,7 +544,7 @@ final class DeltaProcessor {
 			return false;
 		if (delta.getKind() == IResourceDelta.ADDED)
 			return true;
-		IResourceDelta[] children= delta.getAffectedChildren();
+		IResourceDelta[] children = delta.getAffectedChildren();
 		for (IResourceDelta element : children) {
 			if (isFolderAddition(element)) {
 				return true;
@@ -567,104 +564,104 @@ final class DeltaProcessor {
 		IResource resource = delta.getResource();
 
 		switch (delta.getKind()) {
-			case IResourceDelta.ADDED :
-				if (element != null) {
-					elementAdded(element, delta);
-					if (element instanceof ICContainer) {
-						ICContainer container = (ICContainer) element;
-						ICProject cProject = container.getCProject();
-						// Always check whether the container is open.
-						if (container.isOpen())
-							return true;
-						
-						// Check binary container, if the new folder is on an output entry,
-						// there may be new binaries to add
-						if (cProject.isOnOutputEntry(resource)) {
-							IBinaryContainer bin = cProject.getBinaryContainer();
-							IArchiveContainer archive = cProject.getArchiveContainer();
-							return bin.isOpen() || archive.isOpen();
-						}
-						return false;
-					} else if (element instanceof ICProject) {
-						return ((ICProject) element).isOpen();
-					} else if (element instanceof IBinary) {
-						if (((IBinary) element).showInBinaryContainer()) {
-							ICProject cProject = element.getCProject();
-							IBinaryContainer bin = cProject.getBinaryContainer();
-							fCurrentDelta.changed(bin, ICElementDelta.F_CONTENT);
-						}
-					} else if (element instanceof IArchive) {
-						ICProject cProject = element.getCProject();
-						IArchiveContainer archive = cProject.getArchiveContainer();
-						fCurrentDelta.changed(archive, ICElementDelta.F_CONTENT);
-					}
-				}
-				return false;
+		case IResourceDelta.ADDED:
+			if (element != null) {
+				elementAdded(element, delta);
+				if (element instanceof ICContainer) {
+					ICContainer container = (ICContainer) element;
+					ICProject cProject = container.getCProject();
+					// Always check whether the container is open.
+					if (container.isOpen())
+						return true;
 
-			case IResourceDelta.REMOVED :
-				if (element != null) {
-					elementRemoved(element, delta);
-				} else {
-					// Bug 349564 - The 'Binaries' node does not always disappear when project is cleaned
-					CModel cModel = CModelManager.getDefault().getCModel();
-					ICProject cProject = cModel.findCProject(resource.getProject());
-					if (cProject != null && cProject.isOnOutputEntry(resource)) {
+					// Check binary container, if the new folder is on an output entry,
+					// there may be new binaries to add
+					if (cProject.isOnOutputEntry(resource)) {
 						IBinaryContainer bin = cProject.getBinaryContainer();
-						if (!bin.isOpen())
-							fCurrentDelta.changed(bin, ICElementDelta.F_CONTENT);
 						IArchiveContainer archive = cProject.getArchiveContainer();
-						if (!archive.isOpen())
-							fCurrentDelta.changed(archive, ICElementDelta.F_CONTENT);
+						return bin.isOpen() || archive.isOpen();
 					}
+					return false;
+				} else if (element instanceof ICProject) {
+					return ((ICProject) element).isOpen();
+				} else if (element instanceof IBinary) {
+					if (((IBinary) element).showInBinaryContainer()) {
+						ICProject cProject = element.getCProject();
+						IBinaryContainer bin = cProject.getBinaryContainer();
+						fCurrentDelta.changed(bin, ICElementDelta.F_CONTENT);
+					}
+				} else if (element instanceof IArchive) {
+					ICProject cProject = element.getCProject();
+					IArchiveContainer archive = cProject.getArchiveContainer();
+					fCurrentDelta.changed(archive, ICElementDelta.F_CONTENT);
 				}
-				return element instanceof ICContainer;
+			}
+			return false;
 
-			case IResourceDelta.CHANGED :
-				int flags = delta.getFlags();
-				if ((flags & IResourceDelta.CONTENT) != 0) {
-					// content has changed
+		case IResourceDelta.REMOVED:
+			if (element != null) {
+				elementRemoved(element, delta);
+			} else {
+				// Bug 349564 - The 'Binaries' node does not always disappear when project is cleaned
+				CModel cModel = CModelManager.getDefault().getCModel();
+				ICProject cProject = cModel.findCProject(resource.getProject());
+				if (cProject != null && cProject.isOnOutputEntry(resource)) {
+					IBinaryContainer bin = cProject.getBinaryContainer();
+					if (!bin.isOpen())
+						fCurrentDelta.changed(bin, ICElementDelta.F_CONTENT);
+					IArchiveContainer archive = cProject.getArchiveContainer();
+					if (!archive.isOpen())
+						fCurrentDelta.changed(archive, ICElementDelta.F_CONTENT);
+				}
+			}
+			return element instanceof ICContainer;
+
+		case IResourceDelta.CHANGED:
+			int flags = delta.getFlags();
+			if ((flags & IResourceDelta.CONTENT) != 0) {
+				// content has changed
+				if (element != null) {
+					elementChanged(element, delta);
+				}
+			} else if (resource.getType() == IResource.PROJECT) {
+				if ((flags & IResourceDelta.OPEN) != 0) {
+					// project has been opened or closed
+					IProject project = (IProject) resource;
 					if (element != null) {
-						elementChanged(element, delta);
-					}
-				} else if (resource.getType() == IResource.PROJECT) {
-					if ((flags & IResourceDelta.OPEN) != 0) {
-						// project has been opened or closed
-						IProject project = (IProject)resource;
-						if (element != null) {
-							if (project.isOpen()) {
-								elementOpened(element, delta);
-								return element instanceof ICProject && ((ICProject) element).isOpen();
-							}
-							elementClosed(element, delta);
-							//Don't process children
-							return false; 
+						if (project.isOpen()) {
+							elementOpened(element, delta);
+							return element instanceof ICProject && ((ICProject) element).isOpen();
 						}
+						elementClosed(element, delta);
+						//Don't process children
 						return false;
-					} 
-					if ((flags & IResourceDelta.DESCRIPTION) != 0) {
-						IProject res = (IProject)delta.getResource();
-						CModel cModel = CModelManager.getDefault().getCModel();
-						boolean wasCProject = cModel.findCProject(res) != null;
-						boolean isCProject = CProject.hasCNature(res);
-						if (wasCProject != isCProject) {
-							// project's nature has been added or removed
-							if (element != null) {
-								// note its resources are still visible as roots to other projects
-								if (isCProject) {
-									elementOpened(element, delta);
-								} else {
-									elementRemoved(element, delta);
-								}
-								return true;
-							}
-						}
 					}
-				} else if ((flags & IResourceDelta.ENCODING) != 0) {
-					if (element != null) {
-						elementChanged(element, delta);
+					return false;
+				}
+				if ((flags & IResourceDelta.DESCRIPTION) != 0) {
+					IProject res = (IProject) delta.getResource();
+					CModel cModel = CModelManager.getDefault().getCModel();
+					boolean wasCProject = cModel.findCProject(res) != null;
+					boolean isCProject = CProject.hasCNature(res);
+					if (wasCProject != isCProject) {
+						// project's nature has been added or removed
+						if (element != null) {
+							// note its resources are still visible as roots to other projects
+							if (isCProject) {
+								elementOpened(element, delta);
+							} else {
+								elementRemoved(element, delta);
+							}
+							return true;
+						}
 					}
 				}
-				return true;
+			} else if ((flags & IResourceDelta.ENCODING) != 0) {
+				if (element != null) {
+					elementChanged(element, delta);
+				}
+			}
+			return true;
 		}
 		return true;
 	}

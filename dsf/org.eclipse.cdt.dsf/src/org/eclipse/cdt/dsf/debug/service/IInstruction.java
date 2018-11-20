@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -22,40 +22,40 @@ import java.math.BigInteger;
  * Implementers should extend {@link AbstractInstruction} instead of
  * implementing this interface directly.
  * </p>
- * 
+ *
  * @since 1.0
  * @see IInstructionWithSize
  */
 public interface IInstruction {
 
-    /**
-     * @return the instruction address.
-     */
-    BigInteger getAdress();
-    
-    /**
-     * @return the function name.
-     */
-    String getFuntionName();
-    
-    /**
-     * @return the offset of this machine instruction
-     */
-    long getOffset();
+	/**
+	 * @return the instruction address.
+	 */
+	BigInteger getAdress();
 
-    /**
-     * @return the instruction.
-     */
-    String getInstruction();
-  
-    /**
-    * @return the opcode
-    */
-    String getOpcode();
+	/**
+	 * @return the function name.
+	 */
+	String getFuntionName();
 
-    /**
-    * @return any arguments to the instruction
-    */
-    String getArgs();
+	/**
+	 * @return the offset of this machine instruction
+	 */
+	long getOffset();
+
+	/**
+	 * @return the instruction.
+	 */
+	String getInstruction();
+
+	/**
+	* @return the opcode
+	*/
+	String getOpcode();
+
+	/**
+	* @return any arguments to the instruction
+	*/
+	String getArgs();
 
 }

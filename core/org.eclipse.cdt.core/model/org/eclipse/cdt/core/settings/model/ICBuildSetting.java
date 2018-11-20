@@ -22,14 +22,14 @@ public interface ICBuildSetting extends ICSettingObject {
 	void setBuilderCWD(IPath path);
 
 	ICOutputEntry[] getOutputDirectories();
-	
+
 	ICOutputEntry[] getResolvedOutputDirectories();
-	
+
 	void setOutputDirectories(ICOutputEntry[] entries);
-	
+
 	String[] getErrorParserIDs();
 
 	void setErrorParserIDs(String[] ids);
-	
+
 	IEnvironmentContributor getBuildEnvironmentContributor();
 }

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
@@ -33,11 +33,11 @@ import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 /**
  * Which words should be recognized as task tags is specified under {@link CCorePreferenceConstants#TODO_TASK_TAGS} as a
  * comma delimited list.
- * 
+ *
  * @see CCorePreferenceConstants#TODO_TASK_TAGS
  * @since 5.0
  */
-public final class TaskTagRule extends CombinedWordRule implements IPropertyChangeParticipant {	
+public final class TaskTagRule extends CombinedWordRule implements IPropertyChangeParticipant {
 	private static class TaskTagDetector implements IWordDetector {
 		@Override
 		public boolean isWordStart(char c) {
@@ -56,18 +56,18 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 		/**
 		 * Uppercase words
 		 */
-		private Map<CharacterBuffer, IToken> fUppercaseWords= new HashMap<CharacterBuffer, IToken>();
+		private Map<CharacterBuffer, IToken> fUppercaseWords = new HashMap<CharacterBuffer, IToken>();
 		/**
 		 * <code>true</code> if task tag detection is case-sensitive.
 		 */
-		private boolean fCaseSensitive= true;
+		private boolean fCaseSensitive = true;
 		/**
 		 * Buffer for uppercase word
 		 */
-		private CharacterBuffer fBuffer= new CharacterBuffer(16);
+		private CharacterBuffer fBuffer = new CharacterBuffer(16);
 
 		public TaskTagMatcher(IToken token) {
-			fToken= token;
+			fToken = token;
 		}
 
 		/*
@@ -80,7 +80,7 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 		}
 
 		public synchronized void addTaskTags(String value) {
-			String[] taskTags= value.split(","); //$NON-NLS-1$
+			String[] taskTags = value.split(","); //$NON-NLS-1$
 			for (String tag : taskTags) {
 				if (tag.length() > 0) {
 					addWord(tag, fToken);
@@ -109,10 +109,10 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 				return super.evaluate(scanner, word);
 
 			fBuffer.clear();
-			for (int i= 0, n= word.length(); i < n; i++)
+			for (int i = 0, n = word.length(); i < n; i++)
 				fBuffer.append(Character.toUpperCase(word.charAt(i)));
 
-			IToken token= fUppercaseWords.get(fBuffer);
+			IToken token = fUppercaseWords.get(fBuffer);
 			if (token != null)
 				return token;
 			return Token.UNDEFINED;
@@ -124,18 +124,18 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 		 * @param caseSensitive <code>true</code> iff case-sensitivity should be enabled
 		 */
 		public void setCaseSensitive(boolean caseSensitive) {
-			fCaseSensitive= caseSensitive;
+			fCaseSensitive = caseSensitive;
 		}
 	}
 
-	private static final String TODO_TASK_TAGS= CCorePreferenceConstants.TODO_TASK_TAGS;
-	private static final String TODO_TASK_CASE_SENSITIVE= CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE;
+	private static final String TODO_TASK_TAGS = CCorePreferenceConstants.TODO_TASK_TAGS;
+	private static final String TODO_TASK_CASE_SENSITIVE = CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE;
 	private TaskTagMatcher fMatcher;
 
 	/**
 	 * Creates a new task tag rule
 	 * @param token the token to return for words recognized as task tags
-	 * @param defaultToken 
+	 * @param defaultToken
 	 * @param preferenceStore
 	 * @param corePreferenceStore
 	 */
@@ -144,21 +144,21 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 		super(new TaskTagDetector(), defaultToken);
 		fMatcher = new TaskTagMatcher(token);
 		addWordMatcher(fMatcher);
-		String taskWords= null;
+		String taskWords = null;
 		if (preferenceStore.contains(TODO_TASK_TAGS)) {
-			taskWords= preferenceStore.getString(TODO_TASK_TAGS);
+			taskWords = preferenceStore.getString(TODO_TASK_TAGS);
 		} else if (corePreferenceStore != null) {
-			taskWords= corePreferenceStore.getString(TODO_TASK_TAGS);
+			taskWords = corePreferenceStore.getString(TODO_TASK_TAGS);
 		}
 		if (taskWords != null) {
 			addTaskTags(taskWords);
 		}
 
-		boolean isCaseSensitive= true;
+		boolean isCaseSensitive = true;
 		if (preferenceStore.contains(TODO_TASK_CASE_SENSITIVE)) {
-			isCaseSensitive= preferenceStore.getBoolean(TODO_TASK_CASE_SENSITIVE);
+			isCaseSensitive = preferenceStore.getBoolean(TODO_TASK_CASE_SENSITIVE);
 		} else if (corePreferenceStore != null) {
-			isCaseSensitive= corePreferenceStore.getBoolean(TODO_TASK_CASE_SENSITIVE);
+			isCaseSensitive = corePreferenceStore.getBoolean(TODO_TASK_CASE_SENSITIVE);
 		}
 		fMatcher.setCaseSensitive(isCaseSensitive);
 	}
@@ -193,7 +193,7 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(TODO_TASK_TAGS)) {
-			Object value= event.getNewValue();
+			Object value = event.getNewValue();
 			if (value instanceof String) {
 				synchronized (fMatcher) {
 					fMatcher.clearWords();
@@ -201,7 +201,7 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 				}
 			}
 		} else if (event.getProperty().equals(TODO_TASK_CASE_SENSITIVE)) {
-			Object value= event.getNewValue();
+			Object value = event.getNewValue();
 			if (value instanceof String)
 				fMatcher.setCaseSensitive(Boolean.parseBoolean((String) value));
 		}

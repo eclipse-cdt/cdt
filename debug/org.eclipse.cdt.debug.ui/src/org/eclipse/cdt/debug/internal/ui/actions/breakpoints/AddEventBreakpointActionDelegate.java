@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2012 QNX Software Systems and others.
- * 
+ *
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,7 +35,8 @@ import org.eclipse.ui.actions.ActionDelegate;
 /**
  * A delegate for the "Add Event Breakpoint" action.
  */
-public class AddEventBreakpointActionDelegate extends ActionDelegate implements IViewActionDelegate, IObjectActionDelegate  {
+public class AddEventBreakpointActionDelegate extends ActionDelegate
+		implements IViewActionDelegate, IObjectActionDelegate {
 
 	private IViewPart fView;
 	private IWorkbenchPart fPart;
@@ -60,7 +61,7 @@ public class AddEventBreakpointActionDelegate extends ActionDelegate implements 
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-	    fSelection = selection;
+		fSelection = selection;
 	}
 
 	/* (non-Javadoc)
@@ -68,18 +69,19 @@ public class AddEventBreakpointActionDelegate extends ActionDelegate implements 
 	 */
 	@Override
 	public void run(IAction action) {
-	    IToggleBreakpointsTarget toggleTarget = DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
-	    IToggleBreakpointsTargetCExtension cToggleTarget = null;
-	    if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
-	        cToggleTarget = (IToggleBreakpointsTargetCExtension)toggleTarget;
-	    } else { 
-	        cToggleTarget = fDefaultToggleTarget;
-	    }
-        try {
-            cToggleTarget.createEventBreakpointsInteractive(fPart, fSelection);
-        } catch (CoreException e) {
-            CDebugUIPlugin.errorDialog( ActionMessages.getString("AddEventBreakpointActionDelegate.2"), e ); //$NON-NLS-1$
-        }
+		IToggleBreakpointsTarget toggleTarget = DebugUITools.getToggleBreakpointsTargetManager()
+				.getToggleBreakpointsTarget(fPart, fSelection);
+		IToggleBreakpointsTargetCExtension cToggleTarget = null;
+		if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
+			cToggleTarget = (IToggleBreakpointsTargetCExtension) toggleTarget;
+		} else {
+			cToggleTarget = fDefaultToggleTarget;
+		}
+		try {
+			cToggleTarget.createEventBreakpointsInteractive(fPart, fSelection);
+		} catch (CoreException e) {
+			CDebugUIPlugin.errorDialog(ActionMessages.getString("AddEventBreakpointActionDelegate.2"), e); //$NON-NLS-1$
+		}
 	}
 
 	protected void addEventBreakpoint(String id, String arg) {
@@ -98,7 +100,7 @@ public class AddEventBreakpointActionDelegate extends ActionDelegate implements 
 
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		 fPart = targetPart;		
+		fPart = targetPart;
 	}
 
 }

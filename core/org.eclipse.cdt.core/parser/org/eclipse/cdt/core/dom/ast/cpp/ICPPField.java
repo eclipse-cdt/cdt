@@ -21,13 +21,13 @@ import org.eclipse.cdt.core.dom.ast.IField;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPField extends IField, ICPPMember, ICPPVariable {
-    public static final ICPPField[] EMPTY_CPPFIELD_ARRAY = {};
-    
-    /**
-     * Returns the position of this field within its class owner's declared fields, or -1 if the position
-     * cannot be determined.
-     *
+	public static final ICPPField[] EMPTY_CPPFIELD_ARRAY = {};
+
+	/**
+	 * Returns the position of this field within its class owner's declared fields, or -1 if the position
+	 * cannot be determined.
+	 *
 	 * @since 6.2
 	 */
-    int getFieldPosition();
+	int getFieldPosition();
 }

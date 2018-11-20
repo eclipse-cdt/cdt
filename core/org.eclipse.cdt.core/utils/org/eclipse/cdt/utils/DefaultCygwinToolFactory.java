@@ -20,19 +20,18 @@ import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-
 public class DefaultCygwinToolFactory extends DefaultGnuToolFactory implements ICygwinToolsFactroy {
 
-	
 	/**
-	 * 
+	 *
 	 */
 	public DefaultCygwinToolFactory(ICExtension ext) {
 		super(ext);
 	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.CygwinToolsProvider#getCygPath()
 	 */
 	@Override

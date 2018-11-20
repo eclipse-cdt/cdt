@@ -20,21 +20,9 @@ package org.eclipse.cdt.core.parser;
 @SuppressWarnings("nls")
 public class Directives {
 
-	public static final String 
-		POUND_DEFINE  = "#define",
-		POUND_UNDEF   = "#undef",
-		POUND_IF      = "#if",
-		POUND_IFDEF   = "#ifdef",
-		POUND_IFNDEF  = "#ifndef",
-		POUND_ELSE    = "#else",
-		POUND_ENDIF   = "#endif",
-		POUND_INCLUDE = "#include",
-		POUND_LINE    = "#line",
-		POUND_ERROR   = "#error",
-		POUND_PRAGMA  = "#pragma",
-		POUND_ELIF    = "#elif",
-		POUND_BLANK   = "#",
-		_PRAGMA       = "_Pragma",
-	    DEFINED       = "defined";
-	
+	public static final String POUND_DEFINE = "#define", POUND_UNDEF = "#undef", POUND_IF = "#if",
+			POUND_IFDEF = "#ifdef", POUND_IFNDEF = "#ifndef", POUND_ELSE = "#else", POUND_ENDIF = "#endif",
+			POUND_INCLUDE = "#include", POUND_LINE = "#line", POUND_ERROR = "#error", POUND_PRAGMA = "#pragma",
+			POUND_ELIF = "#elif", POUND_BLANK = "#", _PRAGMA = "_Pragma", DEFINED = "defined";
+
 }

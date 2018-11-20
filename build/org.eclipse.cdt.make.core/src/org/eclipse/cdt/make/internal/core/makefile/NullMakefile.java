@@ -79,6 +79,7 @@ public class NullMakefile extends AbstractMakefile {
 
 	public void parse(String name, IMakefileReaderProvider makefileReaderProvider) throws IOException {
 	}
+
 	@Override
 	public void parse(URI fileURI, Reader makefile) throws IOException {
 	}

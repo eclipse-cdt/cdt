@@ -11,7 +11,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    IBM Corporation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.wizards.indexwizards;
 
@@ -38,7 +38,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * @since 4.0
  */
 public class StringVariableSelectionDialog extends ElementListSelectionDialog {
-	
+
 	// variable description
 	private Text fDescriptionText;
 	// the argument value
@@ -47,29 +47,29 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 
 	/**
 	 * Constructs a new string substitution variable selection dialog.
-	 *  
+	 *
 	 * @param parent parent shell
 	 */
 	public StringVariableSelectionDialog(Shell parent) {
 		super(parent, new StringVariableLabelProvider());
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		setTitle(Messages.StringVariableSelectionDialog_title); 
-		setMessage(Messages.StringVariableSelectionDialog_message); 
+		setTitle(Messages.StringVariableSelectionDialog_title);
+		setMessage(Messages.StringVariableSelectionDialog_message);
 		setMultipleSelection(false);
 		setElements(VariablesPlugin.getDefault().getStringVariableManager().getVariables());
 	}
-	
+
 	/**
 	 * Returns the variable expression the user generated from this
 	 * dialog, or <code>null</code> if none.
-	 *  
+	 *
 	 * @return variable expression the user generated from this
 	 * dialog, or <code>null</code> if none
 	 */
 	public String getVariableExpression() {
 		Object[] selected = getResult();
 		if (selected != null && selected.length == 1) {
-			IStringVariable variable = (IStringVariable)selected[0];
+			IStringVariable variable = (IStringVariable) selected[0];
 			StringBuilder buffer = new StringBuilder();
 			buffer.append("${"); //$NON-NLS-1$
 			buffer.append(variable.getName());
@@ -89,14 +89,14 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control control = super.createDialogArea(parent);
-		createArgumentArea((Composite)control);
+		createArgumentArea((Composite) control);
 		return control;
 	}
 
 	/**
 	 * Creates an area to display a description of the selected variable
 	 * and a button to configure the variable's argument.
-	 * 
+	 *
 	 * @param parent parent widget
 	 */
 	private void createArgumentArea(Composite parent) {
@@ -110,14 +110,14 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		container.setLayoutData(gd);
 		container.setFont(parent.getFont());
-				
+
 		Label desc = new Label(container, SWT.NONE);
 		desc.setFont(parent.getFont());
-		desc.setText(Messages.StringVariableSelectionDialog_columnArgument); 
+		desc.setText(Messages.StringVariableSelectionDialog_columnArgument);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		desc.setLayoutData(gd);		
-		
+		desc.setLayoutData(gd);
+
 		Composite args = new Composite(container, SWT.NONE);
 		layout = new GridLayout(2, false);
 		layout.marginHeight = 0;
@@ -127,25 +127,25 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		gd.horizontalSpan = 2;
 		args.setLayoutData(gd);
 		args.setFont(container.getFont());
-		
+
 		fArgumentText = new Text(args, SWT.BORDER);
 		fArgumentText.setFont(container.getFont());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fArgumentText.setLayoutData(gd);		
-		fArgumentText.getAccessible().addAccessibleListener(new AccessibleAdapter() {                       
-            @Override
+		fArgumentText.setLayoutData(gd);
+		fArgumentText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
-                    e.result = Messages.StringVariableSelectionDialog_columnArgument;
-            }
+				e.result = Messages.StringVariableSelectionDialog_columnArgument;
+			}
 		});
-		
+
 		desc = new Label(container, SWT.NONE);
 		desc.setFont(parent.getFont());
-		desc.setText(Messages.StringVariableSelectionDialog_columnDescription); 
+		desc.setText(Messages.StringVariableSelectionDialog_columnDescription);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		desc.setLayoutData(gd);
-		
+
 		fDescriptionText = new Text(container, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		fDescriptionText.setFont(container.getFont());
 		fDescriptionText.setEditable(false);
@@ -157,7 +157,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 
 	/**
 	 * Update variable description and argument button enablement.
-	 * 
+	 *
 	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#handleSelectionChanged()
 	 */
 	@Override
@@ -167,11 +167,11 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		boolean argEnabled = false;
 		String text = null;
 		if (objects.length == 1) {
-			IStringVariable variable = (IStringVariable)objects[0];
-			 if (variable instanceof IDynamicVariable) {
-			 	argEnabled = ((IDynamicVariable)variable).supportsArgument();
-			 }
-			 text = variable.getDescription();
+			IStringVariable variable = (IStringVariable) objects[0];
+			if (variable instanceof IDynamicVariable) {
+				argEnabled = ((IDynamicVariable) variable).supportsArgument();
+			}
+			text = variable.getDescription();
 		}
 		if (text == null) {
 			text = ""; //$NON-NLS-1$
@@ -191,23 +191,23 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
-	 * 
+	 *
 	 * @return String
 	 */
 	private String getDialogSettingsSectionName() {
 		return CUIPlugin.PLUGIN_ID + ".STRING_VARIABLE_SELECTION_DIALOG_SECTION"; //$NON-NLS-1$
 	}
-	
-	 /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-     */
-    @Override
+
+	/* (non-Javadoc)
+	* @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+	*/
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-    	 IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings();
-         IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
-         if (section == null) {
-             section = settings.addNewSection(getDialogSettingsSectionName());
-         } 
-         return section;
-    }
+		IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+		if (section == null) {
+			section = settings.addNewSection(getDialogSettingsSectionName());
+		}
+		return section;
+	}
 }

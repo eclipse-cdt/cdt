@@ -67,7 +67,7 @@ public class FullIntegration {
 
 		// What is Microsoft doing?
 		boards.add(arduinoManager.getBoard("Microsoft", "win10", "w10iotcore"));
-		
+
 		// TODO Need to add support for menu specific build properties
 		boards.add(arduinoManager.getBoard("arduino", "avr", "mini"));
 		boards.add(arduinoManager.getBoard("arduino", "avr", "lilypad"));
@@ -87,30 +87,30 @@ public class FullIntegration {
 			boards.add(arduinoManager.getBoard("Intel", "i586", "izmir_fg"));
 			boards.add(arduinoManager.getBoard("Intel", "i686", "izmir_ec"));
 		}
-		
+
 		if (Platform.getOS().equals(Platform.OS_LINUX)) {
 			// i586/pokysdk missing
 			boards.add(arduinoManager.getBoard("Intel", "i586", "izmir_fd"));
 			boards.add(arduinoManager.getBoard("Intel", "i586", "izmir_fg"));
 			boards.add(arduinoManager.getBoard("Intel", "i686", "izmir_ec"));
 		}
-		
+
 		return boards;
 	}
 
 	private Set<ArduinoBoard> getSkipUpload() throws Exception {
 		Set<ArduinoBoard> boards = new HashSet<>();
-		
+
 		// missing upload.protocol
 		boards.add(arduinoManager.getBoard("arduino", "avr", "gemma"));
 		boards.add(arduinoManager.getBoard("adafruit", "avr", "gemma"));
 		boards.add(arduinoManager.getBoard("adafruit", "avr", "trinket5"));
 		boards.add(arduinoManager.getBoard("adafruit", "avr", "trinket3"));
-		
+
 		// usbtiny missing
 		boards.add(arduinoManager.getBoard("adafruit", "avr", "protrinket3"));
 		boards.add(arduinoManager.getBoard("adafruit", "avr", "protrinket5"));
-		
+
 		return boards;
 	}
 
@@ -171,7 +171,8 @@ public class FullIntegration {
 		return generator.getProject();
 	}
 
-	private void buildBoard(IProject project, ArduinoBoard board, boolean upload, IProgressMonitor monitor) throws Exception {
+	private void buildBoard(IProject project, ArduinoBoard board, boolean upload, IProgressMonitor monitor)
+			throws Exception {
 		ArduinoRemoteConnection arduinoTarget = createTarget(board);
 		ArduinoBuildConfigurationProvider provider = (ArduinoBuildConfigurationProvider) buildConfigManager
 				.getProvider(ArduinoBuildConfigurationProvider.ID);

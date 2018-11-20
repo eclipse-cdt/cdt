@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ package org.eclipse.cdt.debug.internal.core;
 
 /**
  * @deprecated This interface has been moved to a public package.  Use
- * {@link org.eclipse.cdt.debug.core.ICWatchpointTarget} instead. 
+ * {@link org.eclipse.cdt.debug.core.ICWatchpointTarget} instead.
  */
 public interface ICWatchpointTarget extends org.eclipse.cdt.debug.core.ICWatchpointTarget {
 

@@ -37,7 +37,8 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 		super(title, image);
 	}
 
-	protected void fixNestingConflicts(List<CPElement> newEntries, List<CPElement> existingList, Set<CPElement> modifiedSourceEntries) {
+	protected void fixNestingConflicts(List<CPElement> newEntries, List<CPElement> existingList,
+			Set<CPElement> modifiedSourceEntries) {
 		ArrayList<CPElement> existing = new ArrayList<CPElement>(existingList);
 		for (int i = 0; i < newEntries.size(); i++) {
 			CPElement curr = newEntries.get(i);
@@ -56,7 +57,8 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 				if (currPath.isPrefixOf(entryPath) && !currPath.equals(entryPath)) {
 					IPath[] exclusionFilters = (IPath[]) curr.getAttribute(CPElement.EXCLUSION);
 					if (!CoreModelUtil.isExcludedPath(entryPath.removeFirstSegments(1), exclusionFilters)) {
-						IPath pathToExclude = entryPath.removeFirstSegments(currPath.segmentCount()).addTrailingSeparator();
+						IPath pathToExclude = entryPath.removeFirstSegments(currPath.segmentCount())
+								.addTrailingSeparator();
 						IPath[] newExclusionFilters = new IPath[exclusionFilters.length + 1];
 						System.arraycopy(exclusionFilters, 0, newExclusionFilters, 0, exclusionFilters.length);
 						newExclusionFilters[exclusionFilters.length] = pathToExclude;

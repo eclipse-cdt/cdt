@@ -73,7 +73,7 @@ public class CoreModel {
 	private static CoreModel cmodel;
 	private static final CModelManager manager = CModelManager.getDefault();
 	private static final PathEntryManager pathEntryManager = PathEntryManager.getDefault();
-	private static final  CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
+	private static final CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
 
 	public final static String CORE_MODEL_ID = CCorePlugin.PLUGIN_ID + ".coremodel"; //$NON-NLS-1$
 
@@ -175,7 +175,7 @@ public class CoreModel {
 	public boolean isSharedLib(IFile file) {
 		ICElement celement = create(file);
 		if (celement instanceof IBinary) {
-			return ((IBinary)celement).isSharedLib();
+			return ((IBinary) celement).isSharedLib();
 		}
 		return false;
 	}
@@ -246,12 +246,10 @@ public class CoreModel {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
 		if (contentType != null) {
 			String id = contentType.getId();
-			return CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)
-				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)
-				|| CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)
-				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)
-				|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)
-				|| LanguageManager.getInstance().isContributedContentType(id);
+			return CCorePlugin.CONTENT_TYPE_CHEADER.equals(id) || CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)
+					|| CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id) || CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)
+					|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)
+					|| LanguageManager.getInstance().isContributedContentType(id);
 		}
 		return false;
 	}
@@ -263,8 +261,7 @@ public class CoreModel {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
 		if (contentType != null) {
 			String id = contentType.getId();
-			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id) ||
-					CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
+			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id) || CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
 				return true;
 			}
 		}
@@ -278,15 +275,13 @@ public class CoreModel {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
 		if (contentType != null) {
 			String id = contentType.getId();
-			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)
-					|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
+			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id) || CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
 				return false;
 			}
 
-			return CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)
-				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)
-				|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)
-				|| LanguageManager.getInstance().isContributedContentType(id);
+			return CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id) || CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)
+					|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)
+					|| LanguageManager.getInstance().isContributedContentType(id);
 		}
 		return false;
 	}
@@ -524,9 +519,11 @@ public class CoreModel {
 	 * @return a new library entry
 	 *
 	 */
-	public static ILibraryEntry newLibraryEntry(IPath resourcePath, IPath basePath, IPath libraryPath, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath,
-			IPath sourceAttachmentPrefixMapping, boolean isExported) {
-		return new LibraryEntry(resourcePath, basePath, null, libraryPath, sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping, isExported);
+	public static ILibraryEntry newLibraryEntry(IPath resourcePath, IPath basePath, IPath libraryPath,
+			IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IPath sourceAttachmentPrefixMapping,
+			boolean isExported) {
+		return new LibraryEntry(resourcePath, basePath, null, libraryPath, sourceAttachmentPath,
+				sourceAttachmentRootPath, sourceAttachmentPrefixMapping, isExported);
 	}
 
 	/**
@@ -633,7 +630,8 @@ public class CoreModel {
 	 *            whether this include path should be consider a system include path
 	 * @return IIncludeEntry
 	 */
-	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath, boolean isSystemInclude) {
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath,
+			boolean isSystemInclude) {
 		return newIncludeEntry(resourcePath, basePath, includePath, isSystemInclude, APathEntry.NO_EXCLUSION_PATTERNS);
 	}
 
@@ -653,7 +651,8 @@ public class CoreModel {
 	 *            exclusion patterns in the resource if a container
 	 * @return IIincludeEntry
 	 */
-	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath, boolean isSystemInclude, IPath[] exclusionPatterns) {
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath,
+			boolean isSystemInclude, IPath[] exclusionPatterns) {
 		return newIncludeEntry(resourcePath, basePath, includePath, isSystemInclude, exclusionPatterns, false);
 	}
 
@@ -675,9 +674,10 @@ public class CoreModel {
 	 *            if the entry ix exported to reference projects
 	 * @return IIincludeEntry
 	 */
-	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath, boolean isSystemInclude,
-			 IPath[] exclusionPatterns, boolean isExported) {
-		return new IncludeEntry(resourcePath, basePath, null, includePath, isSystemInclude, exclusionPatterns, isExported);
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath,
+			boolean isSystemInclude, IPath[] exclusionPatterns, boolean isExported) {
+		return new IncludeEntry(resourcePath, basePath, null, includePath, isSystemInclude, exclusionPatterns,
+				isExported);
 	}
 
 	/**
@@ -717,8 +717,8 @@ public class CoreModel {
 	 *            if the entry ix exported to reference projects
 	 * @return IIincludeEntry
 	 */
-	public static IIncludeFileEntry newIncludeFileEntry(IPath resourcePath, IPath baseRef, IPath basePath, IPath includeFilePath,
-			 IPath[] exclusionPatterns, boolean isExported) {
+	public static IIncludeFileEntry newIncludeFileEntry(IPath resourcePath, IPath baseRef, IPath basePath,
+			IPath includeFilePath, IPath[] exclusionPatterns, boolean isExported) {
 		return new IncludeFileEntry(resourcePath, basePath, baseRef, includeFilePath, exclusionPatterns, isExported);
 	}
 
@@ -749,7 +749,8 @@ public class CoreModel {
 	 * @param exclusionPatterns
 	 *            exclusion patterns in the resource if a container
 	 */
-	public static IMacroEntry newMacroEntry(IPath resourcePath, String macroName, String macroValue, IPath[] exclusionPatterns) {
+	public static IMacroEntry newMacroEntry(IPath resourcePath, String macroName, String macroValue,
+			IPath[] exclusionPatterns) {
 		return newMacroEntry(resourcePath, macroName, macroValue, exclusionPatterns, false);
 	}
 
@@ -765,7 +766,8 @@ public class CoreModel {
 	 * @param exclusionPatterns
 	 *            exclusion patterns in the resource if a container
 	 */
-	public static IMacroEntry newMacroEntry(IPath resourcePath, String macroName, String macroValue, IPath[] exclusionPatterns, boolean isExported) {
+	public static IMacroEntry newMacroEntry(IPath resourcePath, String macroName, String macroValue,
+			IPath[] exclusionPatterns, boolean isExported) {
 		return new MacroEntry(resourcePath, null, macroName, macroValue, exclusionPatterns, isExported);
 	}
 
@@ -802,10 +804,10 @@ public class CoreModel {
 	 * @param exclusionPatterns
 	 *            exclusion patterns in the resource if a container
 	 */
-	public static IMacroFileEntry newMacroFileEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath macroFilePath, IPath[] exclusionPatterns, boolean isExported) {
+	public static IMacroFileEntry newMacroFileEntry(IPath resourcePath, IPath basePath, IPath baseRef,
+			IPath macroFilePath, IPath[] exclusionPatterns, boolean isExported) {
 		return new MacroFileEntry(resourcePath, basePath, baseRef, macroFilePath, exclusionPatterns, isExported);
 	}
-
 
 	/**
 	 * Answers the project specific value for a given container. In case this
@@ -843,7 +845,8 @@ public class CoreModel {
 	 * @see IPathEntryContainer
 	 * @see #setPathEntryContainer(ICProject[], IPathEntryContainer, IProgressMonitor)
 	 */
-	public static IPathEntryContainer getPathEntryContainer(IPath containerPath, ICProject project) throws CModelException {
+	public static IPathEntryContainer getPathEntryContainer(IPath containerPath, ICProject project)
+			throws CModelException {
 		return pathEntryManager.getPathEntryContainer(containerPath, project);
 	}
 
@@ -879,8 +882,8 @@ public class CoreModel {
 	 * @see #getPathEntryContainer(IPath, ICProject)
 	 * @see IPathEntryContainer
 	 */
-	public static void setPathEntryContainer(ICProject[] affectedProjects, IPathEntryContainer container, IProgressMonitor monitor)
-			throws CModelException {
+	public static void setPathEntryContainer(ICProject[] affectedProjects, IPathEntryContainer container,
+			IProgressMonitor monitor) throws CModelException {
 		pathEntryManager.setPathEntryContainer(affectedProjects, container, monitor);
 	}
 
@@ -894,7 +897,8 @@ public class CoreModel {
 	 * @param changes array of changes.
 	 * @param monitor progress monitor
 	 */
-	public static void pathEntryContainerUpdates(IPathEntryContainerExtension container, PathEntryContainerChanged[] changes, IProgressMonitor monitor) {
+	public static void pathEntryContainerUpdates(IPathEntryContainerExtension container,
+			PathEntryContainerChanged[] changes, IProgressMonitor monitor) {
 		pathEntryManager.pathEntryContainerUpdates(container, changes, monitor);
 	}
 
@@ -913,7 +917,8 @@ public class CoreModel {
 	 * @exception CModelException
 	 *                if the entries could not be set. Reasons include:
 	 */
-	public static void setRawPathEntries(ICProject cproject, IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
+	public static void setRawPathEntries(ICProject cproject, IPathEntry[] newEntries, IProgressMonitor monitor)
+			throws CModelException {
 		pathEntryManager.setRawPathEntries(cproject, newEntries, monitor);
 	}
 
@@ -1064,8 +1069,8 @@ public class CoreModel {
 	 *   <li> Source entry location can be null, if not they must be located inside the project,
 	 *   <li> A project entry cannot refer to itself directly (that is, a project cannot
 	 *        prerequisite itself).
-     *   <li> Source entries or output locations cannot coincide or be nested in each other, except
-     *        for the following scenarios listed below:
+	 *   <li> Source entries or output locations cannot coincide or be nested in each other, except
+	 *        for the following scenarios listed below:
 	 *      <ul>
 	 *        <li> A source folder can coincide with its own output location, in which case this
 	 *             output can then contain library archives. However, a specific output location
@@ -1110,7 +1115,8 @@ public class CoreModel {
 	 * @return a c model status describing the problem related to this entry if any, a status object
 	 *     with code {@code IStatus.OK} if the entry is fine
 	 */
-	public static ICModelStatus validatePathEntry(ICProject cProject, IPathEntry entry, boolean checkSourceAttachment, boolean recurseInContainers){
+	public static ICModelStatus validatePathEntry(ICProject cProject, IPathEntry entry, boolean checkSourceAttachment,
+			boolean recurseInContainers) {
 		return pathEntryManager.validatePathEntry(cProject, entry, checkSourceAttachment, recurseInContainers);
 	}
 
@@ -1182,6 +1188,7 @@ public class CoreModel {
 	public static void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException {
 		run(action, ResourcesPlugin.getWorkspace().getRoot(), monitor);
 	}
+
 	/**
 	 * Runs the given action as an atomic C model operation.
 	 * <p>
@@ -1201,7 +1208,7 @@ public class CoreModel {
 	 * If this method is called in the dynamic scope of another such
 	 * call, this method simply runs the action.
 	 * <p>
- 	 * The supplied scheduling rule is used to determine whether this operation can be
+	 * The supplied scheduling rule is used to determine whether this operation can be
 	 * run simultaneously with workspace changes in other threads. See
 	 * {@link IWorkspace#run} for more details.
 	 *
@@ -1213,7 +1220,8 @@ public class CoreModel {
 	 * @exception CoreException if the operation failed.
 	 * @since 3.0
 	 */
-	public static void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
+	public static void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonitor monitor)
+			throws CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		if (workspace.isTreeLocked()) {
 			new BatchOperation(action).run(monitor);
@@ -1237,31 +1245,33 @@ public class CoreModel {
 		IProject project = resource.getProject();
 		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
 		ICProjectDescription des = mngr.getProjectDescription(project, false);
-		if (des != null){
+		if (des != null) {
 			ICConfigurationDescription indexCfg = des.getDefaultSettingConfiguration();
-			if (indexCfg != null){
+			if (indexCfg != null) {
 				if (!mngr.isNewStyleCfg(indexCfg)) {
 					return oldIsScannerInformationEmpty(resource);
 				}
 
-				if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project) &&
-						indexCfg instanceof ILanguageSettingsProvidersKeeper) {
+				if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project)
+						&& indexCfg instanceof ILanguageSettingsProvidersKeeper) {
 					List<String> languageIds = LanguageSettingsManager.getLanguages(resource, indexCfg);
 					for (String langId : languageIds) {
-						List<ICLanguageSettingEntry> entries = LanguageSettingsManager.getSettingEntriesByKind(indexCfg, resource, langId,
-								ICSettingEntry.INCLUDE_PATH | ICSettingEntry.MACRO | ICSettingEntry.INCLUDE_FILE | ICSettingEntry.MACRO_FILE);
+						List<ICLanguageSettingEntry> entries = LanguageSettingsManager.getSettingEntriesByKind(indexCfg,
+								resource, langId, ICSettingEntry.INCLUDE_PATH | ICSettingEntry.MACRO
+										| ICSettingEntry.INCLUDE_FILE | ICSettingEntry.MACRO_FILE);
 						if (!(entries == null || entries.isEmpty())) {
 							return false;
 						}
 					}
 					return true;
 				} else {
-					ICLanguageSetting lSetting = indexCfg.getLanguageSettingForFile(resource.getProjectRelativePath(), false);
-					if (lSetting != null && lSetting instanceof CLanguageSettingCache){
-						if (!((CLanguageSettingCache)lSetting).containsDiscoveredScannerInfo())
+					ICLanguageSetting lSetting = indexCfg.getLanguageSettingForFile(resource.getProjectRelativePath(),
+							false);
+					if (lSetting != null && lSetting instanceof CLanguageSettingCache) {
+						if (!((CLanguageSettingCache) lSetting).containsDiscoveredScannerInfo())
 							lSetting = null;
 					}
-					if (lSetting != null){
+					if (lSetting != null) {
 						ICLanguageSettingEntry[] entries = lSetting.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 						if (entries.length != 0)
 							return false;
@@ -1285,8 +1295,8 @@ public class CoreModel {
 	}
 
 	private static boolean oldIsScannerInformationEmpty(IResource resource) {
-		final int PATH_ENTRY_MASK = IPathEntry.CDT_INCLUDE | IPathEntry.CDT_MACRO |
-									IPathEntry.CDT_INCLUDE_FILE | IPathEntry.CDT_MACRO_FILE;
+		final int PATH_ENTRY_MASK = IPathEntry.CDT_INCLUDE | IPathEntry.CDT_MACRO | IPathEntry.CDT_INCLUDE_FILE
+				| IPathEntry.CDT_MACRO_FILE;
 		boolean rc = true;
 		IPath resPath = resource.getFullPath();
 		IProject project = resource.getProject();
@@ -1298,8 +1308,7 @@ public class CoreModel {
 				for (IPathEntry pe : resolvedPE) {
 					// first check all containers
 					if (pe.getEntryKind() == IPathEntry.CDT_CONTAINER) {
-						IPathEntryContainer peContainer = CoreModel.getPathEntryContainer(
-								pe.getPath(), cProject);
+						IPathEntryContainer peContainer = CoreModel.getPathEntryContainer(pe.getPath(), cProject);
 						if (peContainer != null) {
 							if (peContainer instanceof IPathEntryContainerExtension) {
 								IPathEntryContainerExtension contExt = (IPathEntryContainerExtension) peContainer;
@@ -1307,8 +1316,7 @@ public class CoreModel {
 									rc = false;
 									break;
 								}
-							}
-							else if (peContainer.getPathEntries().length > 0) {
+							} else if (peContainer.getPathEntries().length > 0) {
 								rc = false;
 								break;
 							}
@@ -1334,7 +1342,7 @@ public class CoreModel {
 	 *
 	 * @see #createProjectDescription(IProject, boolean, boolean)
 	 */
-	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists) throws CoreException{
+	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists) throws CoreException {
 		return descriptionManager.createProjectDescription(project, loadIfExists);
 	}
 
@@ -1353,7 +1361,8 @@ public class CoreModel {
 	 * @return {@link ICProjectDescription}
 	 * @throws CoreException
 	 */
-	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists, boolean creating) throws CoreException{
+	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists, boolean creating)
+			throws CoreException {
 		return descriptionManager.createProjectDescription(project, loadIfExists, creating);
 	}
 
@@ -1371,7 +1380,7 @@ public class CoreModel {
 	 *
 	 * @see #getProjectDescription(IProject, boolean)
 	 */
-	public ICProjectDescription getProjectDescription(IProject project){
+	public ICProjectDescription getProjectDescription(IProject project) {
 		return descriptionManager.getProjectDescription(project);
 	}
 
@@ -1391,7 +1400,8 @@ public class CoreModel {
 		descriptionManager.setProjectDescription(project, des);
 	}
 
-	public void setProjectDescription(IProject project, ICProjectDescription des, boolean force, IProgressMonitor monitor) throws CoreException {
+	public void setProjectDescription(IProject project, ICProjectDescription des, boolean force,
+			IProgressMonitor monitor) throws CoreException {
 		descriptionManager.setProjectDescription(project, des, force, monitor);
 	}
 
@@ -1422,7 +1432,7 @@ public class CoreModel {
 	 * @return {@link ICProjectDescription} or null if the project does not contain the
 	 * CDT data associated with it.
 	 */
-	public ICProjectDescription getProjectDescription(IProject project, boolean write){
+	public ICProjectDescription getProjectDescription(IProject project, boolean write) {
 		return descriptionManager.getProjectDescription(project, write);
 	}
 
@@ -1435,7 +1445,7 @@ public class CoreModel {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public void updateProjectDescriptions(IProject projects[], IProgressMonitor monitor) throws CoreException{
+	public void updateProjectDescriptions(IProject projects[], IProgressMonitor monitor) throws CoreException {
 		descriptionManager.updateProjectDescriptions(projects, monitor);
 	}
 
@@ -1443,7 +1453,7 @@ public class CoreModel {
 	 * Answers whether the given project is a new-style project,
 	 * i.e. CConfigurationDataProvider-driven.
 	 */
-	public boolean isNewStyleProject(IProject project){
+	public boolean isNewStyleProject(IProject project) {
 		return descriptionManager.isNewStyleProject(project);
 	}
 
@@ -1451,23 +1461,23 @@ public class CoreModel {
 	 * Answers whether the given project is a new-style project,
 	 * i.e. CConfigurationDataProvider-driven
 	 */
-	public boolean isNewStyleProject(ICProjectDescription des){
+	public boolean isNewStyleProject(ICProjectDescription des) {
 		return descriptionManager.isNewStyleProject(des);
 	}
 
-	public void addCProjectDescriptionListener(ICProjectDescriptionListener listener, int eventTypes){
+	public void addCProjectDescriptionListener(ICProjectDescriptionListener listener, int eventTypes) {
 		descriptionManager.addCProjectDescriptionListener(listener, eventTypes);
 	}
 
-	public void removeCProjectDescriptionListener(ICProjectDescriptionListener listener){
+	public void removeCProjectDescriptionListener(ICProjectDescriptionListener listener) {
 		descriptionManager.removeCProjectDescriptionListener(listener);
 	}
 
 	public ICProjectDescriptionManager getProjectDescriptionManager() {
 		if (descriptionManager != null)
 			return descriptionManager;
-		
-		// The method was called while initialization of the CoreModel hasn't finished yet. 
+
+		// The method was called while initialization of the CoreModel hasn't finished yet.
 		return CProjectDescriptionManager.getInstance();
 	}
 }

@@ -19,7 +19,7 @@ import java.util.EventListener;
  * PatternEventListener will be implemented by UIPage. When PatternEvent is
  * fired by InputUIElement due to a mismatch of input entered by the user and
  * the expected pattern of input.
- * 
+ *
  * @since 4.0
  */
 
@@ -28,10 +28,10 @@ public interface PatternEventListener extends EventListener {
 	/**
 	 * This methods is implemented by calsses handling PatternEvent.
 	 * PatternEvent instance is the parameter to this method.
-	 * 
+	 *
 	 * @param aPet
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
 	public void patternPerformed(PatternEvent aPet);
 

@@ -32,55 +32,55 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
 public class NewBaseClassSelectionDialog extends ElementSelectionDialog {
-    private static final String DIALOG_SETTINGS = NewBaseClassSelectionDialog.class.getName();
-    private static final int[] VISIBLE_TYPES = { ICElement.C_CLASS, ICElement.C_STRUCT };
-    private static final int ADD_ID = IDialogConstants.CLIENT_ID + 1;
+	private static final String DIALOG_SETTINGS = NewBaseClassSelectionDialog.class.getName();
+	private static final int[] VISIBLE_TYPES = { ICElement.C_CLASS, ICElement.C_STRUCT };
+	private static final int ADD_ID = IDialogConstants.CLIENT_ID + 1;
 	private List<ITypeInfo> fTypeList;
 	private List<ITypeSelectionListener> fTypeListeners;
 
 	public interface ITypeSelectionListener {
-	    void typeAdded(ITypeInfo baseClass);
+		void typeAdded(ITypeInfo baseClass);
 	}
 
-    public NewBaseClassSelectionDialog(Shell parent) {
-        super(parent);
-        setTitle(NewClassWizardMessages.NewBaseClassSelectionDialog_title); 
-        setMessage(NewClassWizardMessages.NewBaseClassSelectionDialog_message); 
-        setDialogSettings(DIALOG_SETTINGS);
-        setVisibleTypes(VISIBLE_TYPES);
+	public NewBaseClassSelectionDialog(Shell parent) {
+		super(parent);
+		setTitle(NewClassWizardMessages.NewBaseClassSelectionDialog_title);
+		setMessage(NewClassWizardMessages.NewBaseClassSelectionDialog_message);
+		setDialogSettings(DIALOG_SETTINGS);
+		setVisibleTypes(VISIBLE_TYPES);
 		setStatusLineAboveButtons(true);
 		fTypeList = new ArrayList<ITypeInfo>();
 		fTypeListeners = new ArrayList<ITypeSelectionListener>();
-    }
+	}
 
-    public void addListener(ITypeSelectionListener listener) {
-        if (!fTypeListeners.contains(listener))
-            fTypeListeners.add(listener);
-    }
+	public void addListener(ITypeSelectionListener listener) {
+		if (!fTypeListeners.contains(listener))
+			fTypeListeners.add(listener);
+	}
 
-    public void removeListener(ITypeSelectionListener listener) {
-        fTypeListeners.remove(listener);
-    }
+	public void removeListener(ITypeSelectionListener listener) {
+		fTypeListeners.remove(listener);
+	}
 
-    private void notifyTypeAddedListeners(ITypeInfo type) {
-        // first copy listeners in case one calls removeListener
-        List<ITypeSelectionListener> list = new ArrayList<ITypeSelectionListener>(fTypeListeners);
-        for (Iterator<ITypeSelectionListener> i = list.iterator(); i.hasNext(); ) {
-            ITypeSelectionListener listener = i.next();
-            listener.typeAdded(type);
-        }
-    }
+	private void notifyTypeAddedListeners(ITypeInfo type) {
+		// first copy listeners in case one calls removeListener
+		List<ITypeSelectionListener> list = new ArrayList<ITypeSelectionListener>(fTypeListeners);
+		for (Iterator<ITypeSelectionListener> i = list.iterator(); i.hasNext();) {
+			ITypeSelectionListener listener = i.next();
+			listener.typeAdded(type);
+		}
+	}
 
-    public ITypeInfo[] getAddedTypes() {
-        return fTypeList.toArray(new ITypeInfo[fTypeList.size()]);
-    }
+	public ITypeInfo[] getAddedTypes() {
+		return fTypeList.toArray(new ITypeInfo[fTypeList.size()]);
+	}
 
-    /*
+	/*
 	 * @see Dialog#createButtonsForButtonBar
 	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, ADD_ID, NewClassWizardMessages.NewBaseClassSelectionDialog_addButton_label, true); 
+		createButton(parent, ADD_ID, NewClassWizardMessages.NewBaseClassSelectionDialog_addButton_label, true);
 		super.createButtonsForButtonBar(parent);
 	}
 
@@ -89,10 +89,10 @@ public class NewBaseClassSelectionDialog extends ElementSelectionDialog {
 	 */
 	@Override
 	protected void buttonPressed(int buttonId) {
-		if (buttonId == ADD_ID){
+		if (buttonId == ADD_ID) {
 			addType(getLowerSelectedElement());
 		}
-		super.buttonPressed(buttonId);	
+		super.buttonPressed(buttonId);
 	}
 
 	/*
@@ -100,76 +100,80 @@ public class NewBaseClassSelectionDialog extends ElementSelectionDialog {
 	 */
 	@Override
 	protected void okPressed() {
-	    addType(getLowerSelectedElement());
+		addType(getLowerSelectedElement());
 		super.okPressed();
 	}
 
 	private void addType(Object elem) {
 		if (elem instanceof ITypeInfo) {
-		    ITypeInfo type = (ITypeInfo)elem;
-		    if (fTypeList.contains(type)) {
-                String qualifiedName = type.getQualifiedTypeName().getFullyQualifiedName();
-                String message = NLS.bind(NewClassWizardMessages.NewBaseClassSelectionDialog_classalreadyadded_info, qualifiedName); 
-                updateStatus(new StatusInfo(IStatus.INFO, message));
-            } else {
+			ITypeInfo type = (ITypeInfo) elem;
+			if (fTypeList.contains(type)) {
 				String qualifiedName = type.getQualifiedTypeName().getFullyQualifiedName();
-				String message = NLS.bind(NewClassWizardMessages.NewBaseClassSelectionDialog_addingclass_info, qualifiedName); 
+				String message = NLS.bind(NewClassWizardMessages.NewBaseClassSelectionDialog_classalreadyadded_info,
+						qualifiedName);
+				updateStatus(new StatusInfo(IStatus.INFO, message));
+			} else {
+				String qualifiedName = type.getQualifiedTypeName().getFullyQualifiedName();
+				String message = NLS.bind(NewClassWizardMessages.NewBaseClassSelectionDialog_addingclass_info,
+						qualifiedName);
 				updateStatus(new StatusInfo(IStatus.INFO, message));
 
-                boolean canAdd = true;
-                if (verifyBaseClasses()) {
-                    IProgressService service = PlatformUI.getWorkbench().getProgressService();
-                    NewClassWizardUtil.resolveClassLocation(type, service);
-                    canAdd = (type.getResolvedReference() != null);
-                }
+				boolean canAdd = true;
+				if (verifyBaseClasses()) {
+					IProgressService service = PlatformUI.getWorkbench().getProgressService();
+					NewClassWizardUtil.resolveClassLocation(type, service);
+					canAdd = (type.getResolvedReference() != null);
+				}
 
-//				// Resolve location of base class
-//				if (type.getResolvedReference() == null) {
-//					final ITypeInfo[] typesToResolve = new ITypeInfo[] { type };
-//					IRunnableWithProgress runnable = new IRunnableWithProgress() {
-//						public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
-//							AllTypesCache.resolveTypeLocation(typesToResolve[0], progressMonitor);
-//							if (progressMonitor.isCanceled()) {
-//								throw new InterruptedException();
-//							}
-//						}
-//					};
-//
-//					IProgressService service = PlatformUI.getWorkbench().getProgressService();
-//					try {
-//						service.busyCursorWhile(runnable);
-//					} catch (InvocationTargetException e) {
-//						String title= NewClassWizardMessages.getString("NewBaseClassSelectionDialog.getClasses.exception.title"); //$NON-NLS-1$
-//						String errorMessage= NewClassWizardMessages.getString("NewBaseClassSelectionDialog.getClasses.exception.message"); //$NON-NLS-1$
-//						ExceptionHandler.handle(e, title, errorMessage);
-//					} catch (InterruptedException e) {
-//						// Cancelled by user
-//					}
-//				}
+				//				// Resolve location of base class
+				//				if (type.getResolvedReference() == null) {
+				//					final ITypeInfo[] typesToResolve = new ITypeInfo[] { type };
+				//					IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				//						public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
+				//							AllTypesCache.resolveTypeLocation(typesToResolve[0], progressMonitor);
+				//							if (progressMonitor.isCanceled()) {
+				//								throw new InterruptedException();
+				//							}
+				//						}
+				//					};
+				//
+				//					IProgressService service = PlatformUI.getWorkbench().getProgressService();
+				//					try {
+				//						service.busyCursorWhile(runnable);
+				//					} catch (InvocationTargetException e) {
+				//						String title= NewClassWizardMessages.getString("NewBaseClassSelectionDialog.getClasses.exception.title"); //$NON-NLS-1$
+				//						String errorMessage= NewClassWizardMessages.getString("NewBaseClassSelectionDialog.getClasses.exception.message"); //$NON-NLS-1$
+				//						ExceptionHandler.handle(e, title, errorMessage);
+				//					} catch (InterruptedException e) {
+				//						// Cancelled by user
+				//					}
+				//				}
 
-                if (canAdd) {
+				if (canAdd) {
 					fTypeList.add(type);
 
-					message = NLS.bind(NewClassWizardMessages.NewBaseClassSelectionDialog_classadded_info, qualifiedName); 
+					message = NLS.bind(NewClassWizardMessages.NewBaseClassSelectionDialog_classadded_info,
+							qualifiedName);
 					updateStatus(new StatusInfo(IStatus.INFO, message));
 
 					notifyTypeAddedListeners(type);
 				} else {
-					message = NLS.bind(NewClassWizardMessages.NewBaseClassSelectionDialog_error_classnotadded, qualifiedName); 
+					message = NLS.bind(NewClassWizardMessages.NewBaseClassSelectionDialog_error_classnotadded,
+							qualifiedName);
 					updateStatus(new StatusInfo(IStatus.ERROR, message));
 				}
-		    }
+			}
 		}
 	}
 
-    /**
-     * Checks if the base classes need to be verified (i.e. they must exist in the project)
-     * 
-     * @return <code>true</code> if the base classes should be verified
-     */
-    public boolean verifyBaseClasses() {
-        return NewClassWizardPrefs.verifyBaseClasses();
-    }
+	/**
+	 * Checks if the base classes need to be verified (i.e. they must exist in the project)
+	 *
+	 * @return <code>true</code> if the base classes should be verified
+	 */
+	public boolean verifyBaseClasses() {
+		return NewClassWizardPrefs.verifyBaseClasses();
+	}
 
 	/*
 	 * @see AbstractElementListSelectionDialog#handleDefaultSelected()

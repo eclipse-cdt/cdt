@@ -24,7 +24,8 @@ public class Messages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 
-	private Messages() {}
+	private Messages() {
+	}
 
 	public static String UpcProjectWizard_0;
 	public static String UpcProjectWizard_1;

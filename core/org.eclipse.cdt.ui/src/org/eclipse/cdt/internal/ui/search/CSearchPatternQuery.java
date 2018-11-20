@@ -59,126 +59,126 @@ public class CSearchPatternQuery extends CSearchQuery {
 	public static final int FIND_NAMESPACE = 0x4000;
 	public static final int FIND_TYPEDEF = 0x10000;
 	public static final int FIND_MACRO = 0x20000;
-	public static final int FIND_ALL_TYPES =
-			FIND_CLASS_STRUCT | FIND_FUNCTION | FIND_VARIABLE |
-			FIND_UNION | FIND_METHOD | FIND_FIELD | FIND_ENUM |
-			FIND_ENUMERATOR | FIND_NAMESPACE | FIND_TYPEDEF | FIND_MACRO;
-	
+	public static final int FIND_ALL_TYPES = FIND_CLASS_STRUCT | FIND_FUNCTION | FIND_VARIABLE | FIND_UNION
+			| FIND_METHOD | FIND_FIELD | FIND_ENUM | FIND_ENUMERATOR | FIND_NAMESPACE | FIND_TYPEDEF | FIND_MACRO;
+
 	private final String scopeDesc;
 	private final String patternStr;
 	private final Pattern[] pattern;
-	
-	public CSearchPatternQuery(
-			ICElement[] scope,
-			String scopeDesc,
-			String patternStr,
-			boolean isCaseSensitive,
+
+	public CSearchPatternQuery(ICElement[] scope, String scopeDesc, String patternStr, boolean isCaseSensitive,
 			int flags) throws PatternSyntaxException {
 		super(scope, flags);
 		this.scopeDesc = scopeDesc;
 
 		// adjust the pattern string to accomodate searches for operators
 		patternStr = CSearchUtil.adjustSearchStringForOperators(patternStr);
-		
+
 		// remove spurious whitespace, which will make the search fail 100% of the time
 		this.patternStr = patternStr.trim();
-		
+
 		// Parse the pattern string
 		List<Pattern> patternList = new ArrayList<Pattern>();
-    	StringBuilder buff = new StringBuilder();
-    	int n = patternStr.length();
-    	for (int i = 0; i < n; ++i) {
-    		char c = patternStr.charAt(i);
-    		switch (c) {
-    		case '\\':
-    			if (i+1 < n) {
-    				switch(patternStr.charAt(i+1)) {
-    				case '?':
-    					buff.append("\\?"); //$NON-NLS-1$
-    					break;
-    				case '*':
-    					buff.append("\\*"); //$NON-NLS-1$
-    					break;
-    				default:
-    					buff.append('\\');
-    				}
-    			} else {
-    				buff.append('\\');
-    			}
-    			break;
-    		case '*':
-    			buff.append(".*"); //$NON-NLS-1$
-    			break;
-    		case '?':
-    			buff.append('.');
-    			break;
-    		case ':':
-    			if (buff.length() > 0) {
-    				if (isCaseSensitive)
-    					patternList.add(Pattern.compile(buff.toString()));
-    				else
-    					patternList.add(Pattern.compile(buff.toString(),Pattern.CASE_INSENSITIVE));
-    				buff = new StringBuilder();
-    			}
-    			break;
-			case '|': case '+': case '^': case '(': case ')': case '[': case ']': 
+		StringBuilder buff = new StringBuilder();
+		int n = patternStr.length();
+		for (int i = 0; i < n; ++i) {
+			char c = patternStr.charAt(i);
+			switch (c) {
+			case '\\':
+				if (i + 1 < n) {
+					switch (patternStr.charAt(i + 1)) {
+					case '?':
+						buff.append("\\?"); //$NON-NLS-1$
+						break;
+					case '*':
+						buff.append("\\*"); //$NON-NLS-1$
+						break;
+					default:
+						buff.append('\\');
+					}
+				} else {
+					buff.append('\\');
+				}
+				break;
+			case '*':
+				buff.append(".*"); //$NON-NLS-1$
+				break;
+			case '?':
+				buff.append('.');
+				break;
+			case ':':
+				if (buff.length() > 0) {
+					if (isCaseSensitive)
+						patternList.add(Pattern.compile(buff.toString()));
+					else
+						patternList.add(Pattern.compile(buff.toString(), Pattern.CASE_INSENSITIVE));
+					buff = new StringBuilder();
+				}
+				break;
+			case '|':
+			case '+':
+			case '^':
+			case '(':
+			case ')':
+			case '[':
+			case ']':
 				buff.append('\\').append(c);
 				break;
-   			default:
-    			buff.append(c);
-    		}
-    	}
-    	
-    	if (buff.length() > 0) {
+			default:
+				buff.append(c);
+			}
+		}
+
+		if (buff.length() > 0) {
 			if (isCaseSensitive)
 				patternList.add(Pattern.compile(buff.toString()));
 			else
-				patternList.add(Pattern.compile(buff.toString(),Pattern.CASE_INSENSITIVE));
-    	}
-	    
-    	pattern = patternList.toArray(new Pattern[patternList.size()]); 
+				patternList.add(Pattern.compile(buff.toString(), Pattern.CASE_INSENSITIVE));
+		}
+
+		pattern = patternList.toArray(new Pattern[patternList.size()]);
 	}
-	
+
 	@Override
 	public IStatus runWithIndex(IIndex index, IProgressMonitor monitor) throws OperationCanceledException {
 		try {
-			IndexFilter filter= IndexFilter.ALL;
+			IndexFilter filter = IndexFilter.ALL;
 			IIndexBinding[] bindings = index.findBindings(pattern, false, filter, monitor);
 			ArrayList<IIndexBinding> matchedBindings = new ArrayList<IIndexBinding>();
 			for (int i = 0; i < bindings.length; ++i) {
 				IIndexBinding pdomBinding = bindings[i];
 
-				// Select the requested bindings  
-				boolean matches= false;
+				// Select the requested bindings
+				boolean matches = false;
 				if ((flags & FIND_ALL_TYPES) == FIND_ALL_TYPES) {
-					matches= true;
+					matches = true;
 				} else if (pdomBinding instanceof ICompositeType) {
-					ICompositeType ct= (ICompositeType) pdomBinding;
+					ICompositeType ct = (ICompositeType) pdomBinding;
 					switch (ct.getKey()) {
 					case ICompositeType.k_struct:
 					case ICPPClassType.k_class:
-						matches= (flags & FIND_CLASS_STRUCT) != 0;
+						matches = (flags & FIND_CLASS_STRUCT) != 0;
 						break;
 					case ICompositeType.k_union:
-						matches= (flags & FIND_UNION) != 0;
+						matches = (flags & FIND_UNION) != 0;
 						break;
 					}
 				} else if (pdomBinding instanceof IEnumeration) {
-					matches= (flags & FIND_ENUM) != 0;
+					matches = (flags & FIND_ENUM) != 0;
 				} else if (pdomBinding instanceof IEnumerator) {
-					matches= (flags & FIND_ENUMERATOR) != 0;
+					matches = (flags & FIND_ENUMERATOR) != 0;
 				} else if (pdomBinding instanceof IField) {
-					matches= (flags & FIND_FIELD) != 0;
+					matches = (flags & FIND_FIELD) != 0;
 				} else if (pdomBinding instanceof ICPPMethod) {
-					matches= (flags & FIND_METHOD) != 0;
+					matches = (flags & FIND_METHOD) != 0;
 				} else if (pdomBinding instanceof IVariable) {
-					matches= (flags & FIND_VARIABLE) != 0;
+					matches = (flags & FIND_VARIABLE) != 0;
 				} else if (pdomBinding instanceof IFunction) {
-					matches= (flags & FIND_FUNCTION) != 0;
+					matches = (flags & FIND_FUNCTION) != 0;
 				} else if (pdomBinding instanceof ICPPNamespace || pdomBinding instanceof ICPPNamespaceAlias) {
-					matches= (flags & FIND_NAMESPACE) != 0;
+					matches = (flags & FIND_NAMESPACE) != 0;
 				} else if (pdomBinding instanceof ITypedef) {
-					matches= (flags & FIND_TYPEDEF) != 0;
+					matches = (flags & FIND_TYPEDEF) != 0;
 				}
 				if (matches) {
 					matchedBindings.add(pdomBinding);
@@ -196,12 +196,12 @@ public class CSearchPatternQuery extends CSearchQuery {
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
-		
+
 		return Status.OK_STATUS;
 	}
 
 	@Override
 	public String getResultLabel(int numMatches) {
-		return getResultLabel(patternStr, scopeDesc, numMatches); 
+		return getResultLabel(patternStr, scopeDesc, numMatches);
 	}
 }

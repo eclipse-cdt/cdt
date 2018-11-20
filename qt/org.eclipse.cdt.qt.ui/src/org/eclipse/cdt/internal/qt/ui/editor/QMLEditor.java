@@ -54,11 +54,8 @@ public class QMLEditor extends TextEditor {
 	protected void initializeEditor() {
 		super.initializeEditor();
 		IPreferenceStore prefStore = new ChainedPreferenceStore(new IPreferenceStore[] {
-				Activator.getDefault().getPreferenceStore(),
-				CUIPlugin.getDefault().getPreferenceStore(),
-				CUIPlugin.getDefault().getCorePreferenceStore(),
-				EditorsUI.getPreferenceStore()
-			});
+				Activator.getDefault().getPreferenceStore(), CUIPlugin.getDefault().getPreferenceStore(),
+				CUIPlugin.getDefault().getCorePreferenceStore(), EditorsUI.getPreferenceStore() });
 		setPreferenceStore(prefStore);
 		setSourceViewerConfiguration(new QMLSourceViewerConfiguration(this, prefStore));
 	}
@@ -68,7 +65,7 @@ public class QMLEditor extends TextEditor {
 		((QMLSourceViewerConfiguration) getSourceViewerConfiguration()).handlePreferenceStoreChanged(event);
 		super.handlePreferenceStoreChanged(event);
 	}
-	
+
 	@Override
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		if (((QMLSourceViewerConfiguration) getSourceViewerConfiguration()).affectsTextPresentation(event)) {

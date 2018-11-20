@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2015, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences.
  *
  * This program and the accompanying materials
@@ -39,8 +39,7 @@ public class CompositeCPPFieldTemplate extends CompositeCPPVariableTemplate impl
 
 	@Override
 	public ICPPClassType getClassOwner() {
-		return (ICPPClassType) cf.getCompositeBinding(
-				(IIndexFragmentBinding) ((ICPPField)rbinding).getClassOwner());
+		return (ICPPClassType) cf.getCompositeBinding((IIndexFragmentBinding) ((ICPPField) rbinding).getClassOwner());
 	}
 
 	@Override

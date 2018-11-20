@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 public class MakefilePreferencesMessages {
 
 	/**
-	 * 
+	 *
 	 */
 	private MakefilePreferencesMessages() {
 	}
@@ -38,6 +38,6 @@ public class MakefilePreferencesMessages {
 		} catch (NullPointerException e) {
 			return '#' + key + '#';
 		}
-	}	
+	}
 
 }

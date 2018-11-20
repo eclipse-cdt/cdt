@@ -26,11 +26,10 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 
 /**
  * DSF session state object.
- * 
+ *
  * Encapsulates and manages DsfSession we're currently tracking.
  */
-public class DSFSessionState
-{
+public class DSFSessionState {
 	// --- members ---
 
 	/** Current session ID. */
@@ -38,48 +37,43 @@ public class DSFSessionState
 
 	/** Current set of session event listeners. */
 	protected List<Object> m_sessionListeners;
-	
+
 	/** Services tracker, used to access services. */
 	protected DsfServicesTracker m_servicesTracker;
 
 	// --- constructors/destructors ---
-		
+
 	public DSFSessionState(String sessionId) {
 		m_sessionId = sessionId;
 		m_sessionListeners = new ArrayList<Object>();
 		m_servicesTracker = new DsfServicesTracker(MulticoreVisualizerUIPlugin.getBundleContext(), m_sessionId);
 	}
-	
+
 	/** Dispose method. */
-	public void dispose()
-	{
+	public void dispose() {
 		if (m_sessionId != null) {
 			removeAllServiceEventListeners();
 			m_sessionId = null;
 			m_sessionListeners = null;
 		}
-		
+
 		if (m_servicesTracker != null) {
-			m_servicesTracker.dispose();				
+			m_servicesTracker.dispose();
 			m_servicesTracker = null;
 		}
 	}
-	
-	
+
 	// --- accessors ---
-	
+
 	/** Returns session ID. */
-	public String getSessionID()
-	{
+	public String getSessionID() {
 		return m_sessionId;
 	}
-	
-	
+
 	// --- listener management ---
 
 	/** Adds a service event listener. */
-	public void addServiceEventListener(Object listener)
-	{
+	public void addServiceEventListener(Object listener) {
 		final Object listener_f = listener;
 		final DsfSession session_f = getDsfSession();
 		if (session_f != null) {
@@ -91,15 +85,14 @@ public class DSFSessionState
 						m_sessionListeners.add(listener_f);
 					}
 				});
-    		} catch (RejectedExecutionException e) {
-                // Session is shut down.
-    		}
+			} catch (RejectedExecutionException e) {
+				// Session is shut down.
+			}
 		}
 	}
-	
+
 	/** Removes a service event listener. */
-	public void removeServiceEventListener(Object listener)
-	{
+	public void removeServiceEventListener(Object listener) {
 		final Object listener_f = listener;
 		final DsfSession session_f = getDsfSession();
 		if (session_f != null) {
@@ -113,15 +106,14 @@ public class DSFSessionState
 						}
 					}
 				});
-    		} catch (RejectedExecutionException e) {
-                // Session is shut down.
-    		}
+			} catch (RejectedExecutionException e) {
+				// Session is shut down.
+			}
 		}
 	}
-	
+
 	/** Removes all service event listeners. */
-	public void removeAllServiceEventListeners()
-	{
+	public void removeAllServiceEventListeners() {
 		final DsfSession session_f = getDsfSession();
 		if (session_f != null) {
 			try {
@@ -136,38 +128,34 @@ public class DSFSessionState
 						}
 					}
 				});
-    		} catch (RejectedExecutionException e) {
-                // Session is shut down.
-    		}
+			} catch (RejectedExecutionException e) {
+				// Session is shut down.
+			}
 		}
 	}
-	
-	
+
 	// --- methods ---
-	
+
 	/** Gets current DsfSession, if it's still active. */
 	protected DsfSession getDsfSession() {
 		return DsfSession.getSession(m_sessionId);
 	}
-	
+
 	/** Executes DsfRunnable. */
-	public void execute(DsfRunnable runnable)
-	{
+	public void execute(DsfRunnable runnable) {
 		try {
 			DsfSession session = getDsfSession();
 			if (session == null) {
 				// TODO: log this?
-			}
-			else {
+			} else {
 				session.getExecutor().execute(runnable);
 			}
-		}
-		catch (RejectedExecutionException e) {
+		} catch (RejectedExecutionException e) {
 			// TODO: log or handle this properly.
 			System.err.println("DSFSessionState.execute(): session rejected execution request."); //$NON-NLS-1$
 		}
 	}
-	
+
 	/** Gets service of the specified type. */
 	@ConfinedToDsfExecutor("getDsfSession().getExecutor()")
 	public <V> V getService(Class<V> serviceClass) {

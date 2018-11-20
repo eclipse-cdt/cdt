@@ -28,29 +28,29 @@ public class Exe {
 
 		public final static int EXEHDRSZ = 28;
 		public byte[] e_signature = new byte[2]; // 00-01 "MZ" - Link file .EXE signature
-		public short e_lastsize;  // 02-03 Length of EXE file modulo 512
-		public short e_nblocks;   // 04-05 Number of 512 pages (including the last page)
-		public short e_nreloc;    // 06-07 Number of relocation entries
-		public short e_hdrsize;   // 08-09 Size of header in 16 byte paragraphs,
-					  //       occupied by "EXE" header and relo table.
+		public short e_lastsize; // 02-03 Length of EXE file modulo 512
+		public short e_nblocks; // 04-05 Number of 512 pages (including the last page)
+		public short e_nreloc; // 06-07 Number of relocation entries
+		public short e_hdrsize; // 08-09 Size of header in 16 byte paragraphs,
+		//       occupied by "EXE" header and relo table.
 
-		public short e_minalloc;  // 0A-0B Minimum paragraphs of memory allocated
-		public short e_maxalloc;  // 0C-0D Maximum number of paragraphs allocated
-					  //       in addition to the code size
-		public short e_ss;        // 0E-0F Initial SS relative to start of executable
-		public short e_sp;        // 10-11 Initial SP
-		public short e_checksum;  // 12-13 Checksum (or 0) of executable
-		public short e_ip;        // 14-15 CS:IP relative to start of executable
-		public short e_cs;        // 16-17 CS:IP relative to start of executable
+		public short e_minalloc; // 0A-0B Minimum paragraphs of memory allocated
+		public short e_maxalloc; // 0C-0D Maximum number of paragraphs allocated
+		//       in addition to the code size
+		public short e_ss; // 0E-0F Initial SS relative to start of executable
+		public short e_sp; // 10-11 Initial SP
+		public short e_checksum; // 12-13 Checksum (or 0) of executable
+		public short e_ip; // 14-15 CS:IP relative to start of executable
+		public short e_cs; // 16-17 CS:IP relative to start of executable
 		public short e_relocoffs; // 18-19 Offset of relocation table;
-					  //       40h for new-(NE,LE,LX,W3,PE etc.) executable
-		public short e_noverlay;  // 1A-1B Overlay number (0h = main program)
+		//       40h for new-(NE,LE,LX,W3,PE etc.) executable
+		public short e_noverlay; // 1A-1B Overlay number (0h = main program)
 
-		protected ExeHeader(RandomAccessFile file)  throws IOException {
+		protected ExeHeader(RandomAccessFile file) throws IOException {
 			this(file, file.getFilePointer());
 		}
 
-		protected ExeHeader(RandomAccessFile file, long offset)  throws IOException {
+		protected ExeHeader(RandomAccessFile file, long offset) throws IOException {
 			file.seek(offset);
 			byte[] hdr = new byte[EXEHDRSZ];
 			file.readFully(hdr);
@@ -96,7 +96,7 @@ public class Exe {
 
 			buffer.append("EXE HEADER VALUES").append(NL); //$NON-NLS-1$
 			buffer.append("signature "); //$NON-NLS-1$
-			buffer.append((char)e_signature[0]).append(' ').append((char)e_signature[1]);
+			buffer.append((char) e_signature[0]).append(' ').append((char) e_signature[1]);
 			buffer.append(NL);
 
 			buffer.append("lastsize: 0x"); //$NON-NLS-1$

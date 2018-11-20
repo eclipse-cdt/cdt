@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -28,29 +28,26 @@ import org.eclipse.swt.widgets.Canvas;
  */
 public class DisassemblyIPAnnotation extends Annotation implements IAnnotationPresentation {
 
-    public static final String ID_TOP = IDebugUIConstants.ANNOTATION_TYPE_INSTRUCTION_POINTER_CURRENT;
-    public static final String ID_SECONDARY = IDebugUIConstants.ANNOTATION_TYPE_INSTRUCTION_POINTER_SECONDARY;
+	public static final String ID_TOP = IDebugUIConstants.ANNOTATION_TYPE_INSTRUCTION_POINTER_CURRENT;
+	public static final String ID_SECONDARY = IDebugUIConstants.ANNOTATION_TYPE_INSTRUCTION_POINTER_SECONDARY;
 
 	private Image fImage;
 	private int fContext = Integer.MIN_VALUE;
 
-    /**
+	/**
 	 * Annotation denoting the current instruction pointer.
 	 */
 	public DisassemblyIPAnnotation(boolean isTopFrame, int context) {
-		super(
-			isTopFrame ? ID_TOP : ID_SECONDARY,
-			false,
-			isTopFrame ? DisassemblyMessages.DisassemblyIPAnnotation_primary
-					   : DisassemblyMessages.DisassemblyIPAnnotation_secondary
-		);
+		super(isTopFrame ? ID_TOP : ID_SECONDARY, false,
+				isTopFrame ? DisassemblyMessages.DisassemblyIPAnnotation_primary
+						: DisassemblyMessages.DisassemblyIPAnnotation_secondary);
 		setContext(context);
 	}
 
 	public boolean isTopFrame() {
 		return ID_TOP.equals(getType());
 	}
-	
+
 	public void setContext(int context) {
 		if (context == fContext) {
 			return;
@@ -78,7 +75,8 @@ public class DisassemblyIPAnnotation extends Annotation implements IAnnotationPr
 	@Override
 	public void paint(GC gc, Canvas canvas, Rectangle bounds) {
 		Rectangle imageBounds = fImage.getBounds();
-		gc.drawImage(fImage, bounds.x + (bounds.width - imageBounds.width) / 2 , bounds.y + (bounds.height - imageBounds.height) / 2);
+		gc.drawImage(fImage, bounds.x + (bounds.width - imageBounds.width) / 2,
+				bounds.y + (bounds.height - imageBounds.height) / 2);
 	}
-	
+
 }

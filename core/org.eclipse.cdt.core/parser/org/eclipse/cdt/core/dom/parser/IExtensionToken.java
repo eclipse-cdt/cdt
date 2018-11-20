@@ -26,14 +26,14 @@ import org.eclipse.cdt.core.parser.IToken;
  * that it will remain the same. Please do not use this API without consulting
  * with the CDT team.
  * </p>
- * 
+ *
  * @since 4.0
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IExtensionToken {
 
-	int t__otherDeclSpecModifierFirst= IToken.FIRST_RESERVED_IExtensionToken;
-	int t__otherDeclSpecModifierLast= IToken.FIRST_RESERVED_IExtensionToken + 10;
+	int t__otherDeclSpecModifierFirst = IToken.FIRST_RESERVED_IExtensionToken;
+	int t__otherDeclSpecModifierLast = IToken.FIRST_RESERVED_IExtensionToken + 10;
 
 }

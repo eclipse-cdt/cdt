@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
@@ -19,5 +19,6 @@ package org.eclipse.cdt.core;
  */
 public interface IProcessInfo {
 	public int getPid();
+
 	public String getName();
 }

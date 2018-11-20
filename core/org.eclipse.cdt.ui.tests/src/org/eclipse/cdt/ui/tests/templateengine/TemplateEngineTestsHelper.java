@@ -38,21 +38,21 @@ import org.w3c.dom.NamedNodeMap;
 
 /**
  * All supporting functions which are not part of Testing class.
- * 
+ *
  * @since 4.0
 */
 public class TemplateEngineTestsHelper {
-	public static final String LOGGER_FILE_NAME = "TemplateEngineTests";	//$NON-NLS-1$
-	
+	public static final String LOGGER_FILE_NAME = "TemplateEngineTests"; //$NON-NLS-1$
+
 	/**
 	 * Returns the url of a xml template, by passing the xml file name.
 	 * @param templateName
 	 * @return URL
 	 */
-	public static URL getTemplateURL(String templateName){
+	public static URL getTemplateURL(String templateName) {
 		Bundle bundle = Platform.getBundle(CTestPlugin.PLUGIN_ID);
 		URL url = FileLocator.find(bundle, new Path("resources/templateengine/" + templateName), null); //$NON-NLS-1$
-		if (url != null) { 
+		if (url != null) {
 			try {
 				url = FileLocator.toFileURL(url);
 			} catch (IOException e) {
@@ -61,19 +61,19 @@ public class TemplateEngineTestsHelper {
 		}
 		return url;
 	}
-	
+
 	public static TemplateCore[] getTestTemplates() {
 		TemplateCore[] templates = TemplateEngine.getDefault().getTemplates();
-	    List<TemplateCore> testTemplates = new ArrayList<TemplateCore>();
+		List<TemplateCore> testTemplates = new ArrayList<TemplateCore>();
 		for (int i = 0; i < templates.length; i++) {
 			if (templates[i].getTemplateType().equals("TestTemplate")) {
 				testTemplates.add(templates[i]);
 			}
 		}
-		return testTemplates.toArray(new TemplateCore[testTemplates.size()]); 
+		return testTemplates.toArray(new TemplateCore[testTemplates.size()]);
 	}
-	
-	public static int getChildCount(TemplateDescriptor templateDescriptor, String propertyGroupID){
+
+	public static int getChildCount(TemplateDescriptor templateDescriptor, String propertyGroupID) {
 		List<Element> list = templateDescriptor.getPropertyGroupList();
 		for (int i = 0, l = list.size(); i < l; i++) {
 			Element element = list.get(i);
@@ -87,9 +87,9 @@ public class TemplateEngineTestsHelper {
 		}
 		return 0;
 	}
-	
+
 	public static boolean failIfErrorStatus(IStatus[] statuses) {
-		for(int i = 0; i < statuses.length; i++) {
+		for (int i = 0; i < statuses.length; i++) {
 			IStatus status = statuses[i];
 			if (status.getCode() == IStatus.ERROR) {
 				Assert.fail(status.getMessage());
@@ -104,7 +104,7 @@ public class TemplateEngineTestsHelper {
 		}
 		return false;
 	}
-	
+
 	public static void turnOffAutoBuild() throws CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceDescription workspaceDesc = workspace.getDescription();

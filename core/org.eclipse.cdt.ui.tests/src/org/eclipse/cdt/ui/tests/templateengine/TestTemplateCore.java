@@ -21,9 +21,9 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
  */
 public class TestTemplateCore extends BaseTestCase {
 
-    public TemplateCore[] templates = null;
-    
-    @Override
+	public TemplateCore[] templates = null;
+
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		templates = TemplateEngineTestsHelper.getTestTemplates();
@@ -44,30 +44,30 @@ public class TestTemplateCore extends BaseTestCase {
 	public TestTemplateCore(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * check that the Template contains a Non Null ValueStore
 	 */
-	public void testValueStoreNotNull(){
-		for (int i=0; i < templates.length; i++) {
+	public void testValueStoreNotNull() {
+		for (int i = 0; i < templates.length; i++) {
 			assertNotNull(templates[i].getValueStore());
 		}
 	}
-	
+
 	/**
 	 * Check the IDs to be persisited in SharedDefaults.
 	 */
-	public void testPersistTrueIDs(){
-		for (int i=0; i < templates.length; i++) {
+	public void testPersistTrueIDs() {
+		for (int i = 0; i < templates.length; i++) {
 			assertNotNull(templates[i].getPersistTrueIDs());
 		}
 	}
-	
-	public void testGetAllMissingMacrosInProcesses(){
-		for (int i=0; i < templates.length; i++) {
+
+	public void testGetAllMissingMacrosInProcesses() {
+		for (int i = 0; i < templates.length; i++) {
 			assertNotNull(templates[i].getAllMissingMacrosInProcesses());
 			assertTrue(templates[i].getAllMissingMacrosInProcesses().size() > 0);
 		}
 	}
-	
+
 }

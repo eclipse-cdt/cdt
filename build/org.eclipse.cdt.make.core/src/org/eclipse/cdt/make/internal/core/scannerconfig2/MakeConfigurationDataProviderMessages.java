@@ -19,8 +19,7 @@ import java.util.ResourceBundle;
 public class MakeConfigurationDataProviderMessages {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.make.internal.core.scannerconfig2.MakeConfigurationDataProvider"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private MakeConfigurationDataProviderMessages() {
 	}

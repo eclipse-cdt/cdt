@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.IToken;
 /**
  * Maps tokens returned by CPreprocessor to the corresponding
  * token kind used by an LPG based parser.
- * 
+ *
  * @author Mike Kucera
  */
 public interface IDOMTokenMap {
@@ -28,15 +28,15 @@ public interface IDOMTokenMap {
 	 * @throws NullPointerException if token is null
 	 */
 	int mapKind(IToken token);
-	
+
 	/**
 	 * Returns the LPG token type for End Of File (TK_EOF_TOKEN) token.
 	 */
-	int getEOFTokenKind(); 
-	
+	int getEOFTokenKind();
+
 	/**
 	 * Returns the LPG token type for End Of Completion (TK_EndOfCompletion) token.
 	 */
 	int getEOCTokenKind();
-	
+
 }

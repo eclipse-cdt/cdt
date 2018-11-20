@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -30,17 +30,19 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * @since 4.4
  */
 public class GDBControl_7_7 extends GDBControl_7_4 {
-    public GDBControl_7_7(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
-    	super(session, config, factory);
-    }
-    
+	public GDBControl_7_7(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
+		super(session, config, factory);
+	}
+
 	@Override
-	protected IEventProcessor createCLIEventProcessor(ICommandControlService connection, ICommandControlDMContext controlDmc) {
+	protected IEventProcessor createCLIEventProcessor(ICommandControlService connection,
+			ICommandControlDMContext controlDmc) {
 		return new CLIEventProcessor_7_7(connection, controlDmc);
 	}
 
-    @Override
-	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes, RequestMonitorWithProgress rm) {
+	@Override
+	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes,
+			RequestMonitorWithProgress rm) {
 		return new FinalLaunchSequence_7_7(getSession(), attributes, rm);
 	}
 }

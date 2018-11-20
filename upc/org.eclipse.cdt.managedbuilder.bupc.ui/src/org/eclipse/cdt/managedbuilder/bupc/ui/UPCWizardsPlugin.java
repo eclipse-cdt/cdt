@@ -27,7 +27,7 @@ public class UPCWizardsPlugin extends AbstractUIPlugin {
 	private static UPCWizardsPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -78,7 +78,8 @@ public class UPCWizardsPlugin extends AbstractUIPlugin {
 	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.managedbuilder.ui.tests.TestsPluginResources"); //$NON-NLS-1$
+				resourceBundle = ResourceBundle
+						.getBundle("org.eclipse.cdt.managedbuilder.ui.tests.TestsPluginResources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}

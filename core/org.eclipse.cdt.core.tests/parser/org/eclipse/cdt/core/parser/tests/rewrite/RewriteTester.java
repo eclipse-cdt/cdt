@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite;
@@ -38,13 +38,15 @@ import org.osgi.framework.Bundle;
  * @author Emanuel Graf
  */
 public class RewriteTester extends TestSuite {
-	enum MatcherState{skip, inTest, inSource, inExpectedResult}
-	
+	enum MatcherState {
+		skip, inTest, inSource, inExpectedResult
+	}
+
 	private static final String classRegexp = "//#(.*)\\s*(\\w*)*$"; //$NON-NLS-1$
 	private static final String testRegexp = "//!(.*)\\s*(\\w*)*$"; //$NON-NLS-1$
 	private static final String fileRegexp = "//@(.*)\\s*(\\w*)*$"; //$NON-NLS-1$
 	private static final String resultRegexp = "//=.*$"; //$NON-NLS-1$
-	
+
 	public static Test suite(String name, String file) throws Exception {
 		BufferedReader in = createReader(file);
 
@@ -52,14 +54,14 @@ public class RewriteTester extends TestSuite {
 		in.close();
 		return createSuite(testCases, name);
 	}
-	
+
 	protected static BufferedReader createReader(String file) throws IOException {
 		Bundle bundle = CTestPlugin.getDefault().getBundle();
 		Path path = new Path(file);
 		String file2 = FileLocator.toFileURL(FileLocator.find(bundle, path, null)).getFile();
 		return new BufferedReader(new FileReader(file2));
 	}
-	
+
 	private static ArrayList<RewriteBaseTest> createTests(BufferedReader inputReader) throws Exception {
 		String line;
 		List<TestSourceFile> files = new ArrayList<TestSourceFile>();
@@ -69,7 +71,7 @@ public class RewriteTester extends TestSuite {
 		String testName = null;
 		String className = null;
 		boolean bevorFirstTest = true;
-		
+
 		while ((line = inputReader.readLine()) != null) {
 			if (lineMatchesBeginOfTest(line)) {
 				if (!bevorFirstTest) {
@@ -95,7 +97,7 @@ public class RewriteTester extends TestSuite {
 				className = getNameOfClass(line);
 				continue;
 			}
-			
+
 			switch (matcherState) {
 			case inSource:
 				if (actFile != null) {
@@ -115,9 +117,9 @@ public class RewriteTester extends TestSuite {
 		testCases.add(test);
 		return testCases;
 	}
-	
-	private static RewriteBaseTest createTestClass(String className, String testName,
-			List<TestSourceFile> files) throws Exception {
+
+	private static RewriteBaseTest createTestClass(String className, String testName, List<TestSourceFile> files)
+			throws Exception {
 		try {
 			Class<?> refClass = Class.forName(className);
 			Constructor<?> ct = refClass.getConstructor(new Class[] { String.class, List.class });
@@ -132,20 +134,20 @@ public class RewriteTester extends TestSuite {
 			}
 			return test;
 		} catch (ClassNotFoundException e) {
-			throw new Exception("Unknown TestClass: " + e.getMessage() +
-					". Make sure the test's sourcefile specifies a valid test class."); 
+			throw new Exception("Unknown TestClass: " + e.getMessage()
+					+ ". Make sure the test's sourcefile specifies a valid test class.");
 		} catch (SecurityException e) {
-			throw new Exception("Security Exception during Test creation", e); 
+			throw new Exception("Security Exception during Test creation", e);
 		} catch (NoSuchMethodException e) {
-			throw new Exception("Test class does not provied required constructor."); 
+			throw new Exception("Test class does not provied required constructor.");
 		} catch (IllegalArgumentException e) {
-			throw new Exception("IllegalArgumentException during Test creation", e); 
+			throw new Exception("IllegalArgumentException during Test creation", e);
 		} catch (InstantiationException e) {
-			throw new Exception("InstantiationException during Test creation", e); 
+			throw new Exception("InstantiationException during Test creation", e);
 		} catch (IllegalAccessException e) {
-			throw new Exception("IllegalAccessException during Test creation", e); 
+			throw new Exception("IllegalAccessException during Test creation", e);
 		} catch (InvocationTargetException e) {
-			throw new Exception("InvocationTargetException during Test creation", e); 
+			throw new Exception("InvocationTargetException during Test creation", e);
 		}
 	}
 
@@ -166,11 +168,11 @@ public class RewriteTester extends TestSuite {
 	private static boolean lineMatchesBeginOfTest(String line) {
 		return createMatcherFromString(testRegexp, line).find();
 	}
-	
+
 	private static boolean lineMatchesClassName(String line) {
 		return createMatcherFromString(classRegexp, line).find();
 	}
-	
+
 	private static boolean lineMatchesFileName(String line) {
 		return createMatcherFromString(fileRegexp, line).find();
 	}
@@ -178,26 +180,25 @@ public class RewriteTester extends TestSuite {
 	protected static Matcher createMatcherFromString(String pattern, String line) {
 		return Pattern.compile(pattern).matcher(line);
 	}
-	
+
 	private static String getNameOfTest(String line) {
 		Matcher matcherBeginOfTest = createMatcherFromString(testRegexp, line);
 		if (matcherBeginOfTest.find())
 			return matcherBeginOfTest.group(1);
 		return "Not Named";
 	}
-	
+
 	private static boolean lineMatchesBeginOfResult(String line) {
 		return createMatcherFromString(resultRegexp, line).find();
 	}
-	
+
 	private static TestSuite createSuite(ArrayList<RewriteBaseTest> testCases, String name) {
 		TestSuite suite = new TestSuite(name);
 		Iterator<RewriteBaseTest> it = testCases.iterator();
 		while (it.hasNext()) {
-			RewriteBaseTest subject =it.next();
+			RewriteBaseTest subject = it.next();
 			suite.addTest(subject);
 		}
 		return suite;
 	}
 }
-

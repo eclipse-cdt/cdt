@@ -43,7 +43,7 @@ public class Messages extends NLS {
 
 	public static String GdbThreadFilterEditor_Thread;
 	public static String GdbThreadFilterEditor_RestrictToSelected;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

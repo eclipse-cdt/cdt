@@ -44,10 +44,10 @@ public class InOutFlowAnalyzer extends FlowAnalyzer {
 	}
 
 	public FlowInfo perform(IASTNode[] selectedNodes) {
-		FlowContext context= getFlowContext();
-		GenericSequentialFlowInfo result= createSequential();
-		for (int i= 0; i < selectedNodes.length; i++) {
-			IASTNode node= selectedNodes[i];
+		FlowContext context = getFlowContext();
+		GenericSequentialFlowInfo result = createSequential();
+		for (int i = 0; i < selectedNodes.length; i++) {
+			IASTNode node = selectedNodes[i];
 			node.accept(this);
 			result.merge(getFlowInfo(node), context);
 		}
@@ -97,7 +97,7 @@ public class InOutFlowAnalyzer extends FlowAnalyzer {
 	@Override
 	public int leave(IASTFunctionDefinition node) {
 		super.leave(node);
-		FlowInfo info= accessFlowInfo(node);
+		FlowInfo info = accessFlowInfo(node);
 		IASTFunctionDeclarator declarator = node.getDeclarator();
 		if (declarator instanceof IASTStandardFunctionDeclarator) {
 			for (IASTParameterDeclaration param : ((IASTStandardFunctionDeclarator) declarator).getParameters()) {
@@ -138,9 +138,8 @@ public class InOutFlowAnalyzer extends FlowAnalyzer {
 	private void clearAccessMode(FlowInfo info, IASTDeclarator declarator) {
 		declarator = CPPVisitor.findInnermostDeclarator(declarator);
 		IASTName name = declarator.getName();
-		IBinding binding= name.resolveBinding();
+		IBinding binding = name.resolveBinding();
 		if (binding instanceof IVariable && !(binding instanceof IField))
 			info.clearAccessMode((IVariable) binding, fFlowContext);
 	}
 }
-

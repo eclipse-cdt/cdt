@@ -18,19 +18,18 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowLanguageInfo;
 
 /**
- * 
+ *
  *     -gdb-show language
- *     
+ *
  * @since 4.3
- * 
+ *
  */
-public class MIGDBShowLanguage extends MIGDBShow<MIGDBShowLanguageInfo>
-{
-    public MIGDBShowLanguage(IDMContext ctx) {
-        super(ctx, new String[] {"language"}); //$NON-NLS-1$
-    }
+public class MIGDBShowLanguage extends MIGDBShow<MIGDBShowLanguageInfo> {
+	public MIGDBShowLanguage(IDMContext ctx) {
+		super(ctx, new String[] { "language" }); //$NON-NLS-1$
+	}
 
-    @Override
+	@Override
 	public MIGDBShowLanguageInfo getResult(MIOutput miResult) {
 		return new MIGDBShowLanguageInfo(miResult);
 	}

@@ -65,8 +65,7 @@ class BuiltinOperators {
 	private static final int SECOND = 1;
 	private static final IType PTR_DIFF = new CPPBasicType(Kind.eInt, 0);
 
-	public static ICPPFunction[] create(OverloadableOperator operator, ICPPEvaluation[] args,
-			Object[] globCandidates) {
+	public static ICPPFunction[] create(OverloadableOperator operator, ICPPEvaluation[] args, Object[] globCandidates) {
 		if (operator == null || args == null || args.length == 0)
 			return EMPTY;
 
@@ -77,31 +76,29 @@ class BuiltinOperators {
 	private final boolean fUnary;
 	private IType fType1;
 	private IType fType2;
-	private IType[][] fClassConversionTypes= { null, null };
-	private boolean[] fIsClass= { false, false };
+	private IType[][] fClassConversionTypes = { null, null };
+	private boolean[] fIsClass = { false, false };
 	private IScope fFileScope;
 	private List<ICPPFunction> fResult;
 	private Set<String> fSignatures;
 	private Object[] fGlobalCandidates;
 
-	BuiltinOperators(OverloadableOperator operator, ICPPEvaluation[] args,
-			Object[] globCandidates) {
+	BuiltinOperators(OverloadableOperator operator, ICPPEvaluation[] args, Object[] globCandidates) {
 		IASTNode point = CPPSemantics.getCurrentLookupPoint();
-		fFileScope= point == null ?
-				new CPPScope.CPPScopeProblem(null, IProblemBinding.SEMANTIC_BAD_SCOPE) :
-				point.getTranslationUnit().getScope();
-		fOperator= operator;
-		fUnary= args.length < 2;
-		fGlobalCandidates= globCandidates;
+		fFileScope = point == null ? new CPPScope.CPPScopeProblem(null, IProblemBinding.SEMANTIC_BAD_SCOPE)
+				: point.getTranslationUnit().getScope();
+		fOperator = operator;
+		fUnary = args.length < 2;
+		fGlobalCandidates = globCandidates;
 		if (args.length > 0) {
-			IType type= args[0].getType();
+			IType type = args[0].getType();
 			if (!(type instanceof ISemanticProblem))
-				fType1= type;
+				fType1 = type;
 		}
 		if (args.length > 1) {
-			IType type= args[1].getType();
+			IType type = args[1].getType();
 			if (!(type instanceof ISemanticProblem))
-				fType2= type;
+				fType2 = type;
 		}
 	}
 
@@ -242,25 +239,25 @@ class BuiltinOperators {
 
 	// 13.6-3, 13.6-4, 13.6-5
 	private void opIncOrDec() {
-		IType[] types= getClassConversionTypes(FIRST);
+		IType[] types = getClassConversionTypes(FIRST);
 		for (IType type : types) {
-			type= SemanticUtil.getNestedType(type, TDEF);
+			type = SemanticUtil.getNestedType(type, TDEF);
 			if (type instanceof ICPPReferenceType) {
-				IType nested=  ((ICPPReferenceType) type).getType();
-				CVQualifier cvq= SemanticUtil.getCVQualifier(nested);
+				IType nested = ((ICPPReferenceType) type).getType();
+				CVQualifier cvq = SemanticUtil.getCVQualifier(nested);
 				if (!cvq.isConst()) {
-					nested= SemanticUtil.getNestedType(nested, TDEF | CVTYPE);
-					boolean ok= false;
+					nested = SemanticUtil.getNestedType(nested, TDEF | CVTYPE);
+					boolean ok = false;
 					if (isArithmetic(nested)) {
 						// 13.6-3 and 1.3.6-4
 						if (fOperator == OverloadableOperator.INCR || !isBoolean(type)) {
-							ok= true;
+							ok = true;
 						}
 					} else if (isPointer(nested)) {
 						// 13.6-5
-						nested= ((IPointerType) nested).getType();
+						nested = ((IPointerType) nested).getType();
 						if (!(SemanticUtil.getNestedType(nested, TDEF) instanceof IFunctionType)) {
-							ok= true;
+							ok = true;
 						}
 					}
 					if (ok) {
@@ -277,13 +274,13 @@ class BuiltinOperators {
 
 	// 13.6-6, 13.6-7
 	private void opDeref() {
-		IType[] types= getClassConversionTypes(FIRST);
+		IType[] types = getClassConversionTypes(FIRST);
 		for (IType type : types) {
-			type= SemanticUtil.getNestedType(type, TDEF|REF);
+			type = SemanticUtil.getNestedType(type, TDEF | REF);
 			if (isPointer(type)) {
-				IType nested=  SemanticUtil.getNestedType(((IPointerType) type).getType(), TDEF);
+				IType nested = SemanticUtil.getNestedType(((IPointerType) type).getType(), TDEF);
 				if (nested instanceof ICPPFunctionType) {
-					ICPPFunctionType ft= (ICPPFunctionType) nested;
+					ICPPFunctionType ft = (ICPPFunctionType) nested;
 					if (ft.isConst() || ft.isVolatile())
 						return;
 				}
@@ -294,9 +291,9 @@ class BuiltinOperators {
 
 	// 13.6-8
 	private void unaryPointer() {
-		IType[] types= getClassConversionTypes(FIRST);
+		IType[] types = getClassConversionTypes(FIRST);
 		for (IType type : types) {
-			type= SemanticUtil.getNestedType(type, TDEF|REF);
+			type = SemanticUtil.getNestedType(type, TDEF | REF);
 			if (isPointer(type)) {
 				addFunction(type, type);
 			}
@@ -305,15 +302,15 @@ class BuiltinOperators {
 
 	// 13.6-9, 13.6-10
 	private void unaryPromotedArithmetic(boolean includeFloatingPoint) {
-		IType[] types= getClassConversionTypes(FIRST);
+		IType[] types = getClassConversionTypes(FIRST);
 		for (IType type : types) {
-			type= SemanticUtil.getNestedType(type, TDEF|REF|CVTYPE);
+			type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 			if (isFloatingPoint(type)) {
 				if (includeFloatingPoint) {
 					addFunction(type, type);
 				}
 			} else {
-				type= CPPArithmeticConversion.promoteCppType(type);
+				type = CPPArithmeticConversion.promoteCppType(type);
 				if (type != null) {
 					addFunction(type, type);
 				}
@@ -323,16 +320,16 @@ class BuiltinOperators {
 
 	// 13.6-11
 	private void opArrowStar() {
-		List<IPointerType> classPointers= null;
-		List<ICPPPointerToMemberType> memberPointers= null;
-		IType[] types= getClassConversionTypes(FIRST);
+		List<IPointerType> classPointers = null;
+		List<ICPPPointerToMemberType> memberPointers = null;
+		IType[] types = getClassConversionTypes(FIRST);
 		for (IType type : types) {
-			type= SemanticUtil.getNestedType(type, TDEF | REF);
+			type = SemanticUtil.getNestedType(type, TDEF | REF);
 			if (isPointer(type)) {
 				final IPointerType ptrType = (IPointerType) type;
 				if (SemanticUtil.getNestedType(ptrType.getType(), TDEF | CVTYPE) instanceof ICPPClassType) {
 					if (classPointers == null) {
-						classPointers= new ArrayList<>();
+						classPointers = new ArrayList<>();
 					}
 					classPointers.add(ptrType);
 				}
@@ -341,12 +338,12 @@ class BuiltinOperators {
 		if (classPointers == null)
 			return;
 
-		types= getClassConversionTypes(SECOND);
+		types = getClassConversionTypes(SECOND);
 		for (IType type : types) {
-			type= SemanticUtil.getNestedType(type, TDEF | REF);
+			type = SemanticUtil.getNestedType(type, TDEF | REF);
 			if (type instanceof ICPPPointerToMemberType) {
 				if (memberPointers == null) {
-					memberPointers= new ArrayList<>();
+					memberPointers = new ArrayList<>();
 				}
 				memberPointers.add((ICPPPointerToMemberType) type);
 			}
@@ -355,17 +352,18 @@ class BuiltinOperators {
 			return;
 
 		for (IPointerType clsPtr : classPointers) {
-			IType cvClass= SemanticUtil.getNestedType(clsPtr.getType(), TDEF);
-			CVQualifier cv1= SemanticUtil.getCVQualifier(cvClass);
-			ICPPClassType c1= (ICPPClassType) SemanticUtil.getNestedType(cvClass, TDEF | CVTYPE);
+			IType cvClass = SemanticUtil.getNestedType(clsPtr.getType(), TDEF);
+			CVQualifier cv1 = SemanticUtil.getCVQualifier(cvClass);
+			ICPPClassType c1 = (ICPPClassType) SemanticUtil.getNestedType(cvClass, TDEF | CVTYPE);
 			for (ICPPPointerToMemberType memPtr : memberPointers) {
-				IType t2= SemanticUtil.getNestedType(memPtr.getMemberOfClass(), TDEF);
+				IType t2 = SemanticUtil.getNestedType(memPtr.getMemberOfClass(), TDEF);
 				if (t2 instanceof ICPPClassType) {
-					ICPPClassType c2= (ICPPClassType) t2;
+					ICPPClassType c2 = (ICPPClassType) t2;
 					if (SemanticUtil.calculateInheritanceDepth(c1, c2) >= 0) {
-						IType cvt= SemanticUtil.getNestedType(memPtr.getType(), TDEF);
-						IType rt= new CPPReferenceType(
-								SemanticUtil.addQualifiers(cvt, cv1.isConst(), cv1.isVolatile(), cv1.isRestrict()), false);
+						IType cvt = SemanticUtil.getNestedType(memPtr.getType(), TDEF);
+						IType rt = new CPPReferenceType(
+								SemanticUtil.addQualifiers(cvt, cv1.isConst(), cv1.isVolatile(), cv1.isRestrict()),
+								false);
 						addFunction(rt, clsPtr, memPtr);
 					}
 				}
@@ -374,12 +372,15 @@ class BuiltinOperators {
 	}
 
 	// 13.6-12, 13.6-17
-	private static enum ReturnType {CONVERT, USE_FIRST, USE_BOOL}
-	private void binaryPromotedArithmetic(boolean fltPt, ReturnType rstrat) {
-		List<IType> p1= null, p2= null;
+	private static enum ReturnType {
+		CONVERT, USE_FIRST, USE_BOOL
+	}
 
-		IType[] types1= getClassConversionTypes(FIRST);
-		IType[] types2= getClassConversionTypes(SECOND);
+	private void binaryPromotedArithmetic(boolean fltPt, ReturnType rstrat) {
+		List<IType> p1 = null, p2 = null;
+
+		IType[] types1 = getClassConversionTypes(FIRST);
+		IType[] types2 = getClassConversionTypes(SECOND);
 		if (types1.length == 0 && types2.length == 0)
 			return;
 
@@ -389,23 +390,23 @@ class BuiltinOperators {
 		for (IType t : types2) {
 			p2 = addPromotedArithmetic(t, fltPt, p2);
 		}
-		p1= addPromotedArithmetic(fType1, fltPt, p1);
-		p2= addPromotedArithmetic(fType2, fltPt, p2);
+		p1 = addPromotedArithmetic(fType1, fltPt, p1);
+		p2 = addPromotedArithmetic(fType2, fltPt, p2);
 		if (p1 == null || p2 == null)
 			return;
 
 		for (IType t1 : p1) {
 			for (IType t2 : p2) {
-				IType rt= null;
+				IType rt = null;
 				switch (rstrat) {
 				case USE_BOOL:
-					rt= CPPBasicType.BOOLEAN;
+					rt = CPPBasicType.BOOLEAN;
 					break;
 				case USE_FIRST:
-					rt= t1;
+					rt = t1;
 					break;
 				case CONVERT:
-					rt= CPPArithmeticConversion.convertCppOperandTypes(IASTBinaryExpression.op_plus, t1, t2);
+					rt = CPPArithmeticConversion.convertCppOperandTypes(IASTBinaryExpression.op_plus, t1, t2);
 					break;
 				}
 				addFunction(rt, t1, t2);
@@ -414,17 +415,17 @@ class BuiltinOperators {
 	}
 
 	private List<IType> addPromotedArithmetic(IType t, boolean fltPt, List<IType> p1) {
-		IType type= SemanticUtil.getNestedType(t, TDEF|REF|CVTYPE);
+		IType type = SemanticUtil.getNestedType(t, TDEF | REF | CVTYPE);
 		if (isFloatingPoint(type)) {
 			if (!fltPt) {
-				type= null;
+				type = null;
 			}
 		} else {
-			type= CPPArithmeticConversion.promoteCppType(type);
+			type = CPPArithmeticConversion.promoteCppType(type);
 		}
 		if (type != null) {
 			if (p1 == null) {
-				p1= new ArrayList<>();
+				p1 = new ArrayList<>();
 			}
 			p1.add(type);
 		}
@@ -433,17 +434,17 @@ class BuiltinOperators {
 
 	// 13.6-13, 13.6.14
 	private void pointerArithmetic(boolean useRef, boolean isDiff) {
-		IType[] types= getClassConversionTypes(FIRST);
+		IType[] types = getClassConversionTypes(FIRST);
 		if (types.length == 0 && !fIsClass[FIRST]) {
-			types= new IType[] {fType1};
+			types = new IType[] { fType1 };
 		}
 		for (IType type : types) {
-			type= SemanticUtil.getNestedType(type, TDEF|REF);
+			type = SemanticUtil.getNestedType(type, TDEF | REF);
 			if (isPointer(type)) {
 				final IType ptrTarget = ((IPointerType) type).getType();
-				final IType uqPtrTarget = SemanticUtil.getNestedType(ptrTarget, TDEF|CVTYPE);
+				final IType uqPtrTarget = SemanticUtil.getNestedType(ptrTarget, TDEF | CVTYPE);
 				if (!(uqPtrTarget instanceof IFunctionType)) {
-					final IType retType= useRef ? new CPPReferenceType(ptrTarget, false) : type;
+					final IType retType = useRef ? new CPPReferenceType(ptrTarget, false) : type;
 					addFunction(retType, type, PTR_DIFF);
 					if (isDiff) {
 						addFunction(PTR_DIFF, type, type);
@@ -452,20 +453,20 @@ class BuiltinOperators {
 			}
 		}
 
-		types= getClassConversionTypes(SECOND);
+		types = getClassConversionTypes(SECOND);
 		if (types.length == 0 && !fIsClass[SECOND]) {
-			types= new IType[] {fType2};
+			types = new IType[] { fType2 };
 		}
 		for (IType type : types) {
-			type= SemanticUtil.getNestedType(type, TDEF|REF);
+			type = SemanticUtil.getNestedType(type, TDEF | REF);
 			if (isPointer(type)) {
 				final IType ptrTarget = ((IPointerType) type).getType();
-				final IType uqPtrTarget = SemanticUtil.getNestedType(ptrTarget, TDEF|CVTYPE);
+				final IType uqPtrTarget = SemanticUtil.getNestedType(ptrTarget, TDEF | CVTYPE);
 				if (!(uqPtrTarget instanceof IFunctionType)) {
 					if (isDiff) {
 						addFunction(PTR_DIFF, type, type);
 					} else {
-						final IType retType= useRef ? new CPPReferenceType(ptrTarget, false) : type;
+						final IType retType = useRef ? new CPPReferenceType(ptrTarget, false) : type;
 						addFunction(retType, PTR_DIFF, type);
 					}
 				}
@@ -476,9 +477,9 @@ class BuiltinOperators {
 	// 13.6-15, 13.6.16
 	private void comparison(boolean ordered) {
 		for (int i = FIRST; i <= SECOND; i++) {
-			IType[] types= getClassConversionTypes(i);
+			IType[] types = getClassConversionTypes(i);
 			for (IType type : types) {
-				type= SemanticUtil.getNestedType(type, TDEF|REF|CVTYPE);
+				type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 				if (isPointer(type) || isEnumeration(type) || (!ordered && isPointerToMember(type))) {
 					addFunction(CPPBasicType.BOOLEAN, type, type);
 				}
@@ -487,20 +488,23 @@ class BuiltinOperators {
 	}
 
 	// 13.6-18, 13.6-29, 13.6-20, 13.6-22
-	private static enum Assignment {WITHOUT_OPERATION, WITH_POINTER_OPERATION, WITH_OPERATION}
+	private static enum Assignment {
+		WITHOUT_OPERATION, WITH_POINTER_OPERATION, WITH_OPERATION
+	}
+
 	private void arithmeticAssignement(boolean fltPt, Assignment assign) {
-		IType[] types2= getClassConversionTypes(SECOND);
+		IType[] types2 = getClassConversionTypes(SECOND);
 		if (types2.length == 0)
 			return;
 
-		IType refType= SemanticUtil.getNestedType(fType1, TDEF);
+		IType refType = SemanticUtil.getNestedType(fType1, TDEF);
 		if (refType instanceof ICPPReferenceType) {
-			IType t= SemanticUtil.getNestedType(((ICPPReferenceType) refType).getType(), TDEF);
+			IType t = SemanticUtil.getNestedType(((ICPPReferenceType) refType).getType(), TDEF);
 			if (!SemanticUtil.getCVQualifier(t).isConst()) {
 				switch (assign) {
 				case WITHOUT_OPERATION:
 					if (isEnumeration(t) || isPointerToMember(t) || isPointer(t)) {
-						addFunction(refType, refType, SemanticUtil.getNestedType(t, TDEF|ALLCVQ));
+						addFunction(refType, refType, SemanticUtil.getNestedType(t, TDEF | ALLCVQ));
 						return;
 					}
 					break;
@@ -515,7 +519,7 @@ class BuiltinOperators {
 				}
 			}
 			if (fltPt ? isArithmetic(t) : isIntegral(t)) {
-				List<IType> p2= null;
+				List<IType> p2 = null;
 				for (IType t2 : types2) {
 					p2 = addPromotedArithmetic(t2, fltPt, p2);
 				}
@@ -531,9 +535,9 @@ class BuiltinOperators {
 	// 13.6-25
 	private void conditional() {
 		for (int i = FIRST; i <= SECOND; i++) {
-			IType[] types= getClassConversionTypes(i);
+			IType[] types = getClassConversionTypes(i);
 			for (IType type : types) {
-				type= SemanticUtil.getNestedType(type, TDEF|REF|CVTYPE);
+				type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 				if (isPointer(type) || isScopedEnumeration(type) || isPointerToMember(type)) {
 					addFunction(type, type, type);
 				}
@@ -542,19 +546,19 @@ class BuiltinOperators {
 	}
 
 	private void addFunction(IType returnType, IType p1) {
-		addFunction(returnType, new IType[] {p1});
+		addFunction(returnType, new IType[] { p1 });
 	}
 
 	private void addFunction(IType returnType, IType p1, IType p2) {
-		addFunction(returnType, new IType[] {p1, p2});
+		addFunction(returnType, new IType[] { p1, p2 });
 	}
 
 	private void addFunction(IType returnType, IType[] parameterTypes) {
 		ICPPParameter[] parameter = new ICPPParameter[parameterTypes.length];
 		ICPPFunctionType functionType = new CPPFunctionType(returnType, parameterTypes);
-		String sig= ASTTypeUtil.getType(functionType, true);
+		String sig = ASTTypeUtil.getType(functionType, true);
 		if (fSignatures == null) {
-			fSignatures= new HashSet<>();
+			fSignatures = new HashSet<>();
 			if (fGlobalCandidates != null) {
 				for (Object cand : fGlobalCandidates) {
 					if (cand instanceof IFunction && !(cand instanceof ICPPMethod)) {
@@ -566,12 +570,13 @@ class BuiltinOperators {
 		if (fSignatures.add(sig)) {
 			for (int i = 0; i < parameterTypes.length; i++) {
 				IType t = parameterTypes[i];
-				parameter[i]= new CPPBuiltinParameter(t);
+				parameter[i] = new CPPBuiltinParameter(t);
 			}
 			if (fResult == null) {
-				fResult= new ArrayList<>();
+				fResult = new ArrayList<>();
 			}
-			fResult.add(new CPPImplicitFunction(fOperator.toCharArray(), fFileScope, functionType, parameter, true, false));
+			fResult.add(
+					new CPPImplicitFunction(fOperator.toCharArray(), fFileScope, functionType, parameter, true, false));
 		}
 	}
 
@@ -597,7 +602,7 @@ class BuiltinOperators {
 
 	public static boolean isFloatingPoint(IType type) {
 		if (type instanceof IBasicType) {
-			IBasicType.Kind kind= ((IBasicType) type).getKind();
+			IBasicType.Kind kind = ((IBasicType) type).getKind();
 			switch (kind) {
 			case eDouble:
 			case eFloat:
@@ -624,7 +629,7 @@ class BuiltinOperators {
 
 	private static boolean isArithmetic(IType type) {
 		if (type instanceof IBasicType) {
-			IBasicType.Kind kind= ((IBasicType) type).getKind();
+			IBasicType.Kind kind = ((IBasicType) type).getKind();
 			switch (kind) {
 			case eBoolean:
 			case eChar:
@@ -651,7 +656,7 @@ class BuiltinOperators {
 
 	public static boolean isIntegral(IType type) {
 		if (type instanceof IBasicType) {
-			IBasicType.Kind kind= ((IBasicType) type).getKind();
+			IBasicType.Kind kind = ((IBasicType) type).getKind();
 			switch (kind) {
 			case eBoolean:
 			case eChar:
@@ -679,33 +684,33 @@ class BuiltinOperators {
 	private IType[] getClassConversionTypes(int idx) {
 		IType[] result = fClassConversionTypes[idx];
 		if (result == null) {
-			result= IType.EMPTY_TYPE_ARRAY;
-			IType type= idx == 0 ? fType1 : fType2;
+			result = IType.EMPTY_TYPE_ARRAY;
+			IType type = idx == 0 ? fType1 : fType2;
 			if (type != null) {
-				type= SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
+				type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 				if (type instanceof ICPPClassType) {
-					fIsClass[idx]= true;
+					fIsClass[idx] = true;
 					try {
 						ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) type);
-						result= new IType[ops.length];
-						int j= -1;
+						result = new IType[ops.length];
+						int j = -1;
 						for (ICPPMethod op : ops) {
 							if (op.isExplicit())
 								continue;
 							final ICPPFunctionType functionType = op.getType();
 							if (functionType != null) {
-								IType retType= functionType.getReturnType();
+								IType retType = functionType.getReturnType();
 								if (retType != null) {
-									result[++j]= retType;
+									result[++j] = retType;
 								}
 							}
 						}
-						result= ArrayUtil.trimAt(IType.class, result, j);
+						result = ArrayUtil.trimAt(IType.class, result, j);
 					} catch (DOMException e) {
 					}
 				}
 			}
-			fClassConversionTypes[idx]= result;
+			fClassConversionTypes[idx] = result;
 		}
 		return result;
 	}

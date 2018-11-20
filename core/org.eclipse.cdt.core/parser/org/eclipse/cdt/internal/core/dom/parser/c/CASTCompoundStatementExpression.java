@@ -30,9 +30,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
  */
 public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTCompoundStatementExpression {
 
-    private IASTCompoundStatement statement;
+	private IASTCompoundStatement statement;
 
-    public CASTCompoundStatementExpression() {
+	public CASTCompoundStatementExpression() {
 	}
 
 	public CASTCompoundStatementExpression(IASTCompoundStatement statement) {
@@ -53,41 +53,49 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
 
 	@Override
 	public IASTCompoundStatement getCompoundStatement() {
-        return statement;
-    }
+		return statement;
+	}
 
-    @Override
+	@Override
 	public void setCompoundStatement(IASTCompoundStatement statement) {
-        assertNotFrozen();
-        this.statement = statement;
-        if (statement != null) {
+		assertNotFrozen();
+		this.statement = statement;
+		if (statement != null) {
 			statement.setParent(this);
 			statement.setPropertyInParent(STATEMENT);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (statement != null) if (!statement.accept(action)) return false;
-        if (action.shouldVisitExpressions) {
-        	switch (action.leave(this)) {
-        		case ASTVisitor.PROCESS_ABORT : return false;
-        		case ASTVisitor.PROCESS_SKIP  : return true;
-        		default : break;
-        	}
-        }
-        return true;
-    }
+		if (statement != null)
+			if (!statement.accept(action))
+				return false;
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
 		IASTCompoundStatement compound = getCompoundStatement();
 		IASTStatement[] statements = compound.getStatements();

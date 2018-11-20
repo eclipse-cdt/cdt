@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui;
 
 import java.io.File;
@@ -27,10 +27,13 @@ import org.eclipse.core.runtime.IPath;
  * Provides common functionality for URI and IPath
  */
 abstract class LocationAdapter<T> {
-	
+
 	public abstract String extractName(T location);
+
 	public abstract IFile[] platformsFindFilesForLocation(T location);
+
 	public abstract String getCanonicalPath(T location);
+
 	public abstract T getLocation(IFile file);
 
 	public static final LocationAdapter<IPath> PATH = new LocationAdapter<IPath>() {
@@ -50,7 +53,7 @@ abstract class LocationAdapter<T> {
 
 		@Override
 		public String getCanonicalPath(IPath location) {
-			final File file= location.toFile();
+			final File file = location.toFile();
 			try {
 				return file.getCanonicalPath();
 			} catch (IOException e) {
@@ -68,9 +71,9 @@ abstract class LocationAdapter<T> {
 	public static final LocationAdapter<URI> URI = new LocationAdapter<URI>() {
 		@Override
 		public String extractName(URI location) {
-			String path= location.getPath();
-			int idx= path.lastIndexOf('/');
-			return path.substring(idx+1);
+			String path = location.getPath();
+			int idx = path.lastIndexOf('/');
+			return path.substring(idx + 1);
 		}
 
 		@Override
@@ -80,10 +83,10 @@ abstract class LocationAdapter<T> {
 
 		@Override
 		public String getCanonicalPath(URI location) {
-			if (!"file".equals(location.getScheme()))  //$NON-NLS-1$
+			if (!"file".equals(location.getScheme())) //$NON-NLS-1$
 				return null;
 
-			String path= location.getPath();
+			String path = location.getPath();
 			try {
 				return new File(path).getCanonicalPath();
 			} catch (IOException e) {

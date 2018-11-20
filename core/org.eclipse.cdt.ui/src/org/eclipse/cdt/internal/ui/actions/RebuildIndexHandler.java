@@ -21,7 +21,7 @@ package org.eclipse.cdt.internal.ui.actions;
  */
 public class RebuildIndexHandler extends AbstractUpdateIndexHandler {
 	private final RebuildIndexAction rebuildIndexAction = new RebuildIndexAction();
-	
+
 	@Override
 	public AbstractUpdateIndexAction getAction() {
 		return rebuildIndexAction;

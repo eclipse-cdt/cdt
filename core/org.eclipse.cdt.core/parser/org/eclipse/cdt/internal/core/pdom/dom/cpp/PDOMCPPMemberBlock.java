@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMCPPMemberBlock {
 	/*
 	 * The MAX_MEMBER_COUNT was chosen empirically by comparing PDOM file sizes of a real-life
-	 * project. Six members per block resulted in the most compact PDOM.  
+	 * project. Six members per block resulted in the most compact PDOM.
 	 */
 	private static final int MAX_MEMBER_COUNT = 6;
 	private static final int VISIBILITY_BITS = 2;
@@ -40,10 +40,9 @@ public class PDOMCPPMemberBlock {
 	private static final int VISIBILITY_VALUES_PER_BYTE = 8 / VISIBILITY_BITS;
 
 	private static final int MEMBER_POINTERS = 0;
-	private static final int MEMBER_VISIBILITIES =
-			MEMBER_POINTERS + Database.PTR_SIZE	* MAX_MEMBER_COUNT;
-	private static final int NEXT_MEMBER_BLOCK =
-			MEMBER_VISIBILITIES + (MAX_MEMBER_COUNT + VISIBILITY_VALUES_PER_BYTE - 1) / VISIBILITY_VALUES_PER_BYTE;
+	private static final int MEMBER_VISIBILITIES = MEMBER_POINTERS + Database.PTR_SIZE * MAX_MEMBER_COUNT;
+	private static final int NEXT_MEMBER_BLOCK = MEMBER_VISIBILITIES
+			+ (MAX_MEMBER_COUNT + VISIBILITY_VALUES_PER_BYTE - 1) / VISIBILITY_VALUES_PER_BYTE;
 
 	protected static final int RECORD_SIZE = NEXT_MEMBER_BLOCK + Database.PTR_SIZE;
 
@@ -58,7 +57,7 @@ public class PDOMCPPMemberBlock {
 	public PDOMCPPMemberBlock(PDOMLinkage linkage, long record) throws CoreException {
 		this.linkage = linkage;
 		this.record = record;
-		this.nextMemberPosition = -1;  // nextMemberPosition is unknown.
+		this.nextMemberPosition = -1; // nextMemberPosition is unknown.
 	}
 
 	public PDOMCPPMemberBlock(PDOMLinkage linkage) throws CoreException {
@@ -103,8 +102,7 @@ public class PDOMCPPMemberBlock {
 		addMember(this, member, visibility);
 	}
 
-	private static void addMember(PDOMCPPMemberBlock block, PDOMNode member, int visibility)
-			throws CoreException {
+	private static void addMember(PDOMCPPMemberBlock block, PDOMNode member, int visibility) throws CoreException {
 		assert member.getPDOM() == block.getPDOM();
 		while (true) {
 			int pos = block.getNextPosition();

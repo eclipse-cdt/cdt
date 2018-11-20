@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -27,32 +27,32 @@ import org.eclipse.ui.IViewPart;
  */
 public class ImportMemoryAction implements IViewActionDelegate {
 
-
 	private IMemoryRenderingSite fView;
 
 	public void init(IViewPart view) {
 		if (view instanceof IMemoryRenderingSite)
 			fView = (IMemoryRenderingSite) view;
 	}
-	
+
 	public void run(IAction action) {
 
-		ISelection selection = fView.getSite().getSelectionProvider()
-				.getSelection();
-		
+		ISelection selection = fView.getSite().getSelectionProvider().getSelection();
+
 		// use utility function in export code
-		ExportMemoryAction.BlockAndAddress blockAndAddr = ExportMemoryAction.getMemoryBlockAndInitialStartAddress(selection);
-		if(blockAndAddr.block == null)
+		ExportMemoryAction.BlockAndAddress blockAndAddr = ExportMemoryAction
+				.getMemoryBlockAndInitialStartAddress(selection);
+		if (blockAndAddr.block == null)
 			return;
-			
-		ImportMemoryDialog dialog = new ImportMemoryDialog(MemoryTransportPlugin.getShell(), blockAndAddr.block, blockAndAddr.addr, fView);
+
+		ImportMemoryDialog dialog = new ImportMemoryDialog(MemoryTransportPlugin.getShell(), blockAndAddr.block,
+				blockAndAddr.addr, fView);
 		dialog.open();
-		
+
 		dialog.getResult();
 	}
-	
+
 	public void selectionChanged(IAction action, ISelection selection) {
-		// use utility function in export code		
+		// use utility function in export code
 		action.setEnabled(ExportMemoryAction.getMemoryBlockAndInitialStartAddress(selection).block != null);
 	}
 

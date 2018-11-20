@@ -66,20 +66,20 @@ public class TableTextCellEditor extends CellEditor {
 	SubjectControlContentAssistant fContentAssistant;
 	private IActivationListener fActivationListener;
 
-    protected Text text;
+	protected Text text;
 
-    private boolean isSelection;
-    private boolean isDeleteable;
-    private boolean isSelectable;
+	private boolean isSelection;
+	private boolean isDeleteable;
+	private boolean isSelectable;
 
-    private static final int defaultStyle = SWT.SINGLE;
+	private static final int defaultStyle = SWT.SINGLE;
 	private ModifyListener fModifyListener;
 
 	public TableTextCellEditor(TableViewer tableViewer, int column) {
 		super(tableViewer.getTable(), defaultStyle);
-		fTableViewer= tableViewer;
-		fColumn= column;
-		fProperty= (String) tableViewer.getColumnProperties()[column];
+		fTableViewer = tableViewer;
+		fColumn = column;
+		fProperty = (String) tableViewer.getColumnProperties()[column];
 	}
 
 	@Override
@@ -87,12 +87,11 @@ public class TableTextCellEditor extends CellEditor {
 		super.activate();
 		if (fActivationListener != null)
 			fActivationListener.activate();
-		fOriginalValue= text.getText();
+		fOriginalValue = text.getText();
 	}
 
 	private void fireModifyEvent(Object newValue) {
-		fTableViewer.getCellModifier().modify(
-				((IStructuredSelection) fTableViewer.getSelection()).getFirstElement(),
+		fTableViewer.getCellModifier().modify(((IStructuredSelection) fTableViewer.getSelection()).getFirstElement(),
 				fProperty, newValue);
 	}
 
@@ -106,75 +105,75 @@ public class TableTextCellEditor extends CellEditor {
 	}
 
 	public void setContentAssistant(SubjectControlContentAssistant assistant) {
-		fContentAssistant= assistant;
+		fContentAssistant = assistant;
 	}
 
 	public void setActivationListener(IActivationListener listener) {
-		fActivationListener= listener;
+		fActivationListener = listener;
 	}
 
 	public Text getText() {
 		return text;
 	}
 
-    protected void checkDeleteable() {
-        boolean oldIsDeleteable = isDeleteable;
-        isDeleteable = isDeleteEnabled();
-        if (oldIsDeleteable != isDeleteable) {
-            fireEnablementChanged(DELETE);
-        }
-    }
-
-    protected void checkSelectable() {
-        boolean oldIsSelectable = isSelectable;
-        isSelectable = isSelectAllEnabled();
-        if (oldIsSelectable != isSelectable) {
-            fireEnablementChanged(SELECT_ALL);
-        }
-    }
-
-    protected void checkSelection() {
-        boolean oldIsSelection = isSelection;
-        isSelection = text.getSelectionCount() > 0;
-        if (oldIsSelection != isSelection) {
-            fireEnablementChanged(COPY);
-            fireEnablementChanged(CUT);
-        }
-    }
-
-	private ModifyListener getModifyListener() {
-	    if (fModifyListener == null) {
-	        fModifyListener = new ModifyListener() {
-	            @Override
-				public void modifyText(ModifyEvent e) {
-	                editOccured(e);
-	            }
-	        };
-	    }
-	    return fModifyListener;
+	protected void checkDeleteable() {
+		boolean oldIsDeleteable = isDeleteable;
+		isDeleteable = isDeleteEnabled();
+		if (oldIsDeleteable != isDeleteable) {
+			fireEnablementChanged(DELETE);
+		}
 	}
 
-    /* (non-Javadoc)
-     * Method declared on CellEditor.
-     */
-    @Override
+	protected void checkSelectable() {
+		boolean oldIsSelectable = isSelectable;
+		isSelectable = isSelectAllEnabled();
+		if (oldIsSelectable != isSelectable) {
+			fireEnablementChanged(SELECT_ALL);
+		}
+	}
+
+	protected void checkSelection() {
+		boolean oldIsSelection = isSelection;
+		isSelection = text.getSelectionCount() > 0;
+		if (oldIsSelection != isSelection) {
+			fireEnablementChanged(COPY);
+			fireEnablementChanged(CUT);
+		}
+	}
+
+	private ModifyListener getModifyListener() {
+		if (fModifyListener == null) {
+			fModifyListener = new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					editOccured(e);
+				}
+			};
+		}
+		return fModifyListener;
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on CellEditor.
+	 */
+	@Override
 	protected Control createControl(Composite parent) {
-        text= new Text(parent, getStyle());
-        text.addSelectionListener(new SelectionAdapter() {
-            @Override
+		text = new Text(parent, getStyle());
+		text.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-                handleDefaultSelection(e);
-            }
-        });
+				handleDefaultSelection(e);
+			}
+		});
 		text.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// support switching rows while editing:
 				if (e.stateMask == SWT.MOD1 || e.stateMask == SWT.MOD2) {
 					if (e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.ARROW_DOWN) {
-					    // allow starting multi-selection even if in edit mode
+						// allow starting multi-selection even if in edit mode
 						deactivate();
-						e.doit= false;
+						e.doit = false;
 						return;
 					}
 				}
@@ -184,23 +183,23 @@ public class TableTextCellEditor extends CellEditor {
 
 				switch (e.keyCode) {
 				case SWT.ARROW_DOWN:
-					e.doit= false;
-					int nextRow= fTableViewer.getTable().getSelectionIndex() + 1;
+					e.doit = false;
+					int nextRow = fTableViewer.getTable().getSelectionIndex() + 1;
 					if (nextRow >= fTableViewer.getTable().getItemCount())
 						break;
 					editRow(nextRow);
 					break;
 
 				case SWT.ARROW_UP:
-					e.doit= false;
-					int prevRow= fTableViewer.getTable().getSelectionIndex() - 1;
+					e.doit = false;
+					int prevRow = fTableViewer.getTable().getSelectionIndex() - 1;
 					if (prevRow < 0)
 						break;
 					editRow(prevRow);
 					break;
 
 				case SWT.F2:
-					e.doit= false;
+					e.doit = false;
 					deactivate();
 					break;
 				}
@@ -208,245 +207,243 @@ public class TableTextCellEditor extends CellEditor {
 
 			private void editRow(int row) {
 				fTableViewer.getTable().setSelection(row);
-				IStructuredSelection newSelection= (IStructuredSelection) fTableViewer.getSelection();
+				IStructuredSelection newSelection = (IStructuredSelection) fTableViewer.getSelection();
 				if (newSelection.size() == 1)
 					fTableViewer.editElement(newSelection.getFirstElement(), fColumn);
 			}
 		});
-        text.addKeyListener(new KeyAdapter() {
-            // hook key pressed - see PR 14201
-            @Override
+		text.addKeyListener(new KeyAdapter() {
+			// hook key pressed - see PR 14201
+			@Override
 			public void keyPressed(KeyEvent e) {
-                keyReleaseOccured(e);
+				keyReleaseOccured(e);
 
-                // as a result of processing the above call, clients may have
-                // disposed this cell editor
-                if ((getControl() == null) || getControl().isDisposed())
-                    return;
-                checkSelection(); // see explaination below
-                checkDeleteable();
-                checkSelectable();
-            }
-        });
-        text.addTraverseListener(new TraverseListener() {
-            @Override
+				// as a result of processing the above call, clients may have
+				// disposed this cell editor
+				if ((getControl() == null) || getControl().isDisposed())
+					return;
+				checkSelection(); // see explaination below
+				checkDeleteable();
+				checkSelectable();
+			}
+		});
+		text.addTraverseListener(new TraverseListener() {
+			@Override
 			public void keyTraversed(TraverseEvent e) {
-                if (e.detail == SWT.TRAVERSE_ESCAPE
-                        || e.detail == SWT.TRAVERSE_RETURN) {
-                    e.doit = false;
-                }
-            }
-        });
-        // We really want a selection listener but it is not supported so we
-        // use a key listener and a mouse listener to know when selection changes
-        // may have occurred
-        text.addMouseListener(new MouseAdapter() {
-            @Override
+				if (e.detail == SWT.TRAVERSE_ESCAPE || e.detail == SWT.TRAVERSE_RETURN) {
+					e.doit = false;
+				}
+			}
+		});
+		// We really want a selection listener but it is not supported so we
+		// use a key listener and a mouse listener to know when selection changes
+		// may have occurred
+		text.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseUp(MouseEvent e) {
-                checkSelection();
-                checkDeleteable();
-                checkSelectable();
-            }
-        });
-        text.addFocusListener(new FocusAdapter() {
-            @Override
+				checkSelection();
+				checkDeleteable();
+				checkSelectable();
+			}
+		});
+		text.addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusLost(FocusEvent e) {
-            	e.display.asyncExec(new Runnable() {
+				e.display.asyncExec(new Runnable() {
 					@Override
 					public void run() {
 						// without the asyncExec, focus has not had a chance to go to the content assist proposals
 						TableTextCellEditor.this.focusLost();
 					}
 				});
-            }
-        });
-        text.setFont(parent.getFont());
-        text.setBackground(parent.getBackground());
-        text.setText("");//$NON-NLS-1$
-        text.addModifyListener(getModifyListener());
+			}
+		});
+		text.setFont(parent.getFont());
+		text.setBackground(parent.getBackground());
+		text.setText("");//$NON-NLS-1$
+		text.addModifyListener(getModifyListener());
 
 		return text;
-    }
+	}
 
-    @Override
+	@Override
 	protected void fireCancelEditor() {
 		/* bug 58540: change signature refactoring interaction: validate as you type [refactoring] */
-    	text.setText(fOriginalValue);
+		text.setText(fOriginalValue);
 		super.fireApplyEditorValue();
-    }
+	}
 
-    /**
-     * The <code>TextCellEditor</code> implementation of
-     * this <code>CellEditor</code> framework method returns
-     * the text string.
-     *
-     * @return the text string
-     */
-    @Override
+	/**
+	 * The <code>TextCellEditor</code> implementation of
+	 * this <code>CellEditor</code> framework method returns
+	 * the text string.
+	 *
+	 * @return the text string
+	 */
+	@Override
 	protected Object doGetValue() {
-        return text.getText();
-    }
+		return text.getText();
+	}
 
-    @Override
+	@Override
 	protected void doSetFocus() {
-        if (text != null) {
-            text.selectAll();
-            text.setFocus();
-            checkSelection();
-            checkDeleteable();
-            checkSelectable();
-        }
-    }
+		if (text != null) {
+			text.selectAll();
+			text.setFocus();
+			checkSelection();
+			checkDeleteable();
+			checkSelectable();
+		}
+	}
 
-    /**
-     * The <code>TextCellEditor2</code> implementation of
-     * this <code>CellEditor</code> framework method accepts
-     * a text string (type <code>String</code>).
-     *
-     * @param value a text string (type <code>String</code>)
-     */
-    @Override
+	/**
+	 * The <code>TextCellEditor2</code> implementation of
+	 * this <code>CellEditor</code> framework method accepts
+	 * a text string (type <code>String</code>).
+	 *
+	 * @param value a text string (type <code>String</code>)
+	 */
+	@Override
 	protected void doSetValue(Object value) {
-        Assert.isTrue(text != null && (value instanceof String));
-        text.removeModifyListener(getModifyListener());
-        text.setText((String) value);
-        text.addModifyListener(getModifyListener());
-    }
+		Assert.isTrue(text != null && (value instanceof String));
+		text.removeModifyListener(getModifyListener());
+		text.setText((String) value);
+		text.addModifyListener(getModifyListener());
+	}
 
-    /**
-     * Processes a modify event that occurred in this text cell editor.
-     * This framework method performs validation and sets the error message
-     * accordingly, and then reports a change via <code>fireEditorValueChanged</code>.
-     * Subclasses should call this method at appropriate times. Subclasses
-     * may extend or reimplement.
-     *
-     * @param e the SWT modify event
-     */
-    protected void editOccured(ModifyEvent e) {
-        String value = text.getText();
-        boolean oldValidState = isValueValid();
-        boolean newValidState = isCorrect(value);
-        if (!newValidState) {
-            // Try to insert the current value into the error message.
-            setErrorMessage(NLS.bind(getErrorMessage(), value));
-        }
-        valueChanged(oldValidState, newValidState);
+	/**
+	 * Processes a modify event that occurred in this text cell editor.
+	 * This framework method performs validation and sets the error message
+	 * accordingly, and then reports a change via <code>fireEditorValueChanged</code>.
+	 * Subclasses should call this method at appropriate times. Subclasses
+	 * may extend or reimplement.
+	 *
+	 * @param e the SWT modify event
+	 */
+	protected void editOccured(ModifyEvent e) {
+		String value = text.getText();
+		boolean oldValidState = isValueValid();
+		boolean newValidState = isCorrect(value);
+		if (!newValidState) {
+			// Try to insert the current value into the error message.
+			setErrorMessage(NLS.bind(getErrorMessage(), value));
+		}
+		valueChanged(oldValidState, newValidState);
 		fireModifyEvent(text.getText()); // update model on-the-fly
-    }
+	}
 
-    @Override
+	@Override
 	public LayoutData getLayoutData() {
-        return new LayoutData();
-    }
+		return new LayoutData();
+	}
 
-    protected void handleDefaultSelection(SelectionEvent event) {
-        // same with enter-key handling code in keyReleaseOccured(e);
-        fireApplyEditorValue();
-        deactivate();
-    }
+	protected void handleDefaultSelection(SelectionEvent event) {
+		// same with enter-key handling code in keyReleaseOccured(e);
+		fireApplyEditorValue();
+		deactivate();
+	}
 
-    @Override
+	@Override
 	public boolean isCopyEnabled() {
-        if (text == null || text.isDisposed())
-            return false;
-        return text.getSelectionCount() > 0;
-    }
+		if (text == null || text.isDisposed())
+			return false;
+		return text.getSelectionCount() > 0;
+	}
 
-    @Override
+	@Override
 	public boolean isCutEnabled() {
-        if (text == null || text.isDisposed())
-            return false;
-        return text.getSelectionCount() > 0;
-    }
+		if (text == null || text.isDisposed())
+			return false;
+		return text.getSelectionCount() > 0;
+	}
 
-    @Override
+	@Override
 	public boolean isDeleteEnabled() {
-        if (text == null || text.isDisposed())
-            return false;
-        return text.getSelectionCount() > 0
-                || text.getCaretPosition() < text.getCharCount();
-    }
+		if (text == null || text.isDisposed())
+			return false;
+		return text.getSelectionCount() > 0 || text.getCaretPosition() < text.getCharCount();
+	}
 
-    @Override
+	@Override
 	public boolean isPasteEnabled() {
-        if (text == null || text.isDisposed())
-            return false;
-        return true;
-    }
+		if (text == null || text.isDisposed())
+			return false;
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean isSelectAllEnabled() {
-        if (text == null || text.isDisposed())
-            return false;
-        return text.getCharCount() > 0;
-    }
+		if (text == null || text.isDisposed())
+			return false;
+		return text.getCharCount() > 0;
+	}
 
-    @Override
+	@Override
 	protected void keyReleaseOccured(KeyEvent keyEvent) {
-        if (keyEvent.character == '\r') { // Return key
-            // Enter is handled in handleDefaultSelection.
-            // Do not apply the editor value in response to an Enter key event
-            // since this can be received from the IME when the intent is -not-
-            // to apply the value.
-            // See bug 39074 [CellEditors] [DBCS] canna input mode fires bogus event from Text Control
-            //
-            // An exception is made for Ctrl+Enter for multi-line texts, since
-            // a default selection event is not sent in this case.
-            if (text != null && !text.isDisposed() && (text.getStyle() & SWT.MULTI) != 0) {
-                if ((keyEvent.stateMask & SWT.CTRL) != 0) {
-                    super.keyReleaseOccured(keyEvent);
-                }
-            }
-            return;
-        }
-        super.keyReleaseOccured(keyEvent);
-    }
+		if (keyEvent.character == '\r') { // Return key
+			// Enter is handled in handleDefaultSelection.
+			// Do not apply the editor value in response to an Enter key event
+			// since this can be received from the IME when the intent is -not-
+			// to apply the value.
+			// See bug 39074 [CellEditors] [DBCS] canna input mode fires bogus event from Text Control
+			//
+			// An exception is made for Ctrl+Enter for multi-line texts, since
+			// a default selection event is not sent in this case.
+			if (text != null && !text.isDisposed() && (text.getStyle() & SWT.MULTI) != 0) {
+				if ((keyEvent.stateMask & SWT.CTRL) != 0) {
+					super.keyReleaseOccured(keyEvent);
+				}
+			}
+			return;
+		}
+		super.keyReleaseOccured(keyEvent);
+	}
 
-    @Override
+	@Override
 	public void performCopy() {
-        text.copy();
-    }
+		text.copy();
+	}
 
-    @Override
+	@Override
 	public void performCut() {
-        text.cut();
-        checkSelection();
-        checkDeleteable();
-        checkSelectable();
-    }
+		text.cut();
+		checkSelection();
+		checkDeleteable();
+		checkSelectable();
+	}
 
-    @Override
+	@Override
 	public void performDelete() {
-        if (text.getSelectionCount() > 0) {
-            // remove the contents of the current selection
-            text.insert(""); //$NON-NLS-1$
-        } else {
-            // remove the next character
-            int pos = text.getCaretPosition();
-            if (pos < text.getCharCount()) {
-                text.setSelection(pos, pos + 1);
-                text.insert(""); //$NON-NLS-1$
-            }
-        }
-        checkSelection();
-        checkDeleteable();
-        checkSelectable();
-    }
+		if (text.getSelectionCount() > 0) {
+			// remove the contents of the current selection
+			text.insert(""); //$NON-NLS-1$
+		} else {
+			// remove the next character
+			int pos = text.getCaretPosition();
+			if (pos < text.getCharCount()) {
+				text.setSelection(pos, pos + 1);
+				text.insert(""); //$NON-NLS-1$
+			}
+		}
+		checkSelection();
+		checkDeleteable();
+		checkSelectable();
+	}
 
-    @Override
+	@Override
 	public void performPaste() {
-        text.paste();
-        checkSelection();
-        checkDeleteable();
-        checkSelectable();
-    }
+		text.paste();
+		checkSelection();
+		checkDeleteable();
+		checkSelectable();
+	}
 
-    @Override
+	@Override
 	public void performSelectAll() {
-        text.selectAll();
-        checkSelection();
-        checkDeleteable();
-    }
+		text.selectAll();
+		checkSelection();
+		checkDeleteable();
+	}
 
 	@Override
 	protected boolean dependsOnExternalFocusListener() {

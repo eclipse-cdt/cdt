@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson	- Initial Implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
@@ -35,24 +35,25 @@ public class BackgroundRunner extends BlockJUnit4ClassRunner {
 		super(klass);
 	}
 
-	final static QualifiedName BACKGROUND_TEST_EXECUTION_FINISHED = new QualifiedName(TestsPlugin.getDefault().getBundle().getSymbolicName(), "background_test_execution_finished"); //$NON-NLS-1$
-	
+	final static QualifiedName BACKGROUND_TEST_EXECUTION_FINISHED = new QualifiedName(
+			TestsPlugin.getDefault().getBundle().getSymbolicName(), "background_test_execution_finished"); //$NON-NLS-1$
+
 	void invokeSuperRunImpl(RunNotifier notifier) {
 		super.run(notifier);
 	}
 
 	/*
-	 * This method overrides the one from TestClassRunner.  
-	 * What we do here is start a background job which will call 
+	 * This method overrides the one from TestClassRunner.
+	 * What we do here is start a background job which will call
 	 * TestClassRunner.run; this enables us to release
 	 * the main UI thread.
-	 * 
+	 *
 	 * This has been adapted from the JUnits tests of TargetManagement
 	 * (RSECoreTestCase and RSEWaitAndDispatchUtil)
 	 */
 	@Override
 	public void run(final RunNotifier notifier) {
-		
+
 		// Start the test in a background thread
 		Job job = new Job("GDB/MI JUnit Test Case Execution Job") {
 			@Override
@@ -60,29 +61,30 @@ public class BackgroundRunner extends BlockJUnit4ClassRunner {
 				invokeSuperRunImpl(notifier);
 				monitor.done();
 				setProperty(BACKGROUND_TEST_EXECUTION_FINISHED, Boolean.TRUE);
-				
+
 				// The job never fails. The test result is the real result.
 				return Status.OK_STATUS;
 			}
 		};
 
 		// The job is not complete yet
-	    job.setProperty(BACKGROUND_TEST_EXECUTION_FINISHED, Boolean.FALSE);
+		job.setProperty(BACKGROUND_TEST_EXECUTION_FINISHED, Boolean.FALSE);
 		// schedule the job to run immediatelly
 		job.schedule();
-		
+
 		// wait till the job finishes executing
 		waitAndDispatch(0, new BackgroundTestExecutionJobWaiter(job));
 	}
-	
+
 	public interface IInterruptCondition {
 		public boolean isTrue();
+
 		public void dispose();
 	}
 
 	private final static class BackgroundTestExecutionJobWaiter implements IInterruptCondition {
 		private final Job job;
-		
+
 		public BackgroundTestExecutionJobWaiter(Job job) {
 			assert job != null;
 			this.job = job;
@@ -91,19 +93,19 @@ public class BackgroundRunner extends BlockJUnit4ClassRunner {
 		@Override
 		public boolean isTrue() {
 			// Interrupt the wait method if the job signaled that it has finished.
-			return ((Boolean)job.getProperty(BACKGROUND_TEST_EXECUTION_FINISHED)).booleanValue();
+			return ((Boolean) job.getProperty(BACKGROUND_TEST_EXECUTION_FINISHED)).booleanValue();
 		}
-		
+
 		@Override
-		public void dispose() { 
+		public void dispose() {
 			// nothing to do
 		}
 	}
 
 	public static boolean waitAndDispatch(long timeout, IInterruptCondition condition) {
 		assert timeout >= 0 && condition != null;
-		
-		boolean isTimedOut= false;
+
+		boolean isTimedOut = false;
 		if (timeout >= 0 && condition != null) {
 			long start = System.currentTimeMillis();
 			Display display = Display.findDisplay(Thread.currentThread());
@@ -112,8 +114,10 @@ public class BackgroundRunner extends BlockJUnit4ClassRunner {
 				// display event dispatching running.
 				long current = System.currentTimeMillis();
 				while (timeout == 0 || (current - start) < timeout) {
-					if (condition.isTrue()) break;
-					if (!display.readAndDispatch()) display.sleep();
+					if (condition.isTrue())
+						break;
+					if (!display.readAndDispatch())
+						display.sleep();
 					current = System.currentTimeMillis();
 				}
 				isTimedOut = (current - start) >= timeout && timeout > 0;
@@ -122,18 +126,23 @@ public class BackgroundRunner extends BlockJUnit4ClassRunner {
 				// just block the thread here
 				long current = System.currentTimeMillis();
 				while (timeout == 0 || (current - start) < timeout) {
-					if (condition.isTrue()) break;
-					try { Thread.sleep(50); } catch (InterruptedException e) { /* ignored on purpose */ }
+					if (condition.isTrue())
+						break;
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						/* ignored on purpose */ }
 					current = System.currentTimeMillis();
 				}
 				isTimedOut = (current - start) >= timeout && timeout > 0;
 			}
 		}
-		
+
 		// Signal the interrupt condition that we are done here
 		// and it can cleanup whatever necessary.
-		if (condition != null) condition.dispose();
-		
+		if (condition != null)
+			condition.dispose();
+
 		return isTimedOut;
 	}
 

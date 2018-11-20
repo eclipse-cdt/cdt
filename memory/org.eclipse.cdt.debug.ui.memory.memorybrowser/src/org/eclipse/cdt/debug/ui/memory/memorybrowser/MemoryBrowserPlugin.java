@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public class MemoryBrowserPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static MemoryBrowserPlugin plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -77,25 +77,25 @@ public class MemoryBrowserPlugin extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
-	
+
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+
 	/**
 	 * Logs the specified throwable with this plug-in's log.
-	 * 
+	 *
 	 * @param t throwable to log
 	 */
 	public static void log(Throwable t) {
 		log(newErrorStatus("Error logged from Debug UI: ", t)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns a new error status for this plug-in with the given message
 	 * @param message the message to be included in the status

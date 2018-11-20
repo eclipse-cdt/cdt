@@ -38,7 +38,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
  * Test the Formatter.
  */
 public class FormatActionTest extends TestCase {
-	private static final String PROJECT= "FormatTests";
+	private static final String PROJECT = "FormatTests";
 
 	private static final class EmptyBundle extends ListResourceBundle {
 		@Override
@@ -50,29 +50,30 @@ public class FormatActionTest extends TestCase {
 	protected static class FormatTestSetup extends TestSetup {
 
 		private ICProject fCProject;
-		
+
 		public FormatTestSetup(Test test) {
 			super(test);
 		}
-		
+
 		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
-			
-			fCProject= EditorTestHelper.createCProject(PROJECT, "resources/formatter");
+
+			fCProject = EditorTestHelper.createCProject(PROJECT, "resources/formatter");
 			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.TAB);
 		}
 
 		@Override
-		protected void tearDown () throws Exception {
+		protected void tearDown() throws Exception {
 			if (fCProject != null)
 				CProjectHelper.delete(fCProject);
-			
+
 			super.tearDown();
 		}
 	}
-	
-	private static final Class<?> THIS= FormatActionTest.class;
+
+	private static final Class<?> THIS = FormatActionTest.class;
+
 	public static Test suite() {
 		return new FormatTestSetup(new TestSuite(THIS));
 	}
@@ -86,12 +87,12 @@ public class FormatActionTest extends TestCase {
 	 */
 	@Override
 	protected void setUp() throws Exception {
-		String filename= createFileName("Before");
-		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(filename), true);
-		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
-		fDocument= fSourceViewer.getDocument();
+		String filename = createFileName("Before");
+		fEditor = (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(filename), true);
+		fSourceViewer = EditorTestHelper.getSourceViewer(fEditor);
+		fDocument = fSourceViewer.getDocument();
 	}
-	
+
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
@@ -99,38 +100,38 @@ public class FormatActionTest extends TestCase {
 	protected void tearDown() throws Exception {
 		EditorTestHelper.closeEditor(fEditor);
 	}
-	
-	private void assertFormatResult() throws Exception {
-		String afterFile= createFileName("After");
-		String expected= ResourceTestHelper.read(afterFile).toString();
 
-		IAction formatAction= fEditor.getAction("Format");
+	private void assertFormatResult() throws Exception {
+		String afterFile = createFileName("After");
+		String expected = ResourceTestHelper.read(afterFile).toString();
+
+		IAction formatAction = fEditor.getAction("Format");
 		assertNotNull("No format action", formatAction);
 		formatAction.run();
-		
+
 		assertEquals(expected, fDocument.get());
 	}
 
 	private String createFileName(String qualifier) {
-		String name= getName();
-		name= name.substring(4, 5).toLowerCase() + name.substring(5);
+		String name = getName();
+		name = name.substring(4, 5).toLowerCase() + name.substring(5);
 		return "/" + PROJECT + "/src/" + name + "/" + qualifier + ".cpp";
 	}
-	
+
 	private void selectAll() {
 		fSourceViewer.setSelectedRange(0, fDocument.getLength());
 	}
-	
+
 	public void testTemplates() throws Exception {
 		selectAll();
 		assertFormatResult();
 	}
-	
+
 	public void testPreview() throws Exception {
 		selectAll();
 		assertFormatResult();
 	}
-	
+
 	public void testSample() throws Exception {
 		selectAll();
 		assertFormatResult();

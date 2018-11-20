@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Alena Laskavaia and others 
+ * Copyright (c) 2010, 2012 Alena Laskavaia and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,7 +60,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static CodanUIActivator getDefault() {
@@ -70,7 +70,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in
 	 * relative path
-	 * 
+	 *
 	 * @param path
 	 *        the path
 	 * @return the image descriptor
@@ -78,9 +78,9 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param key - key is usually plug-in relative path to image like icons/xxx.gif
 	 * @return Image loaded from key location or from registry cache, it will be stored in plug-in registry and disposed when plug-in unloads
 	 */
@@ -89,7 +89,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 		Image image = registry.get(key);
 		if (image == null) {
 			ImageDescriptor descriptor = imageDescriptorFromPlugin(PLUGIN_ID, key);
-			if (descriptor==null) {
+			if (descriptor == null) {
 				ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 				return sharedImages.getImage(key);
 			}
@@ -101,7 +101,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *        status to log
 	 */
@@ -111,7 +111,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified {@code Throwable}.
-	 * 
+	 *
 	 * @param e
 	 *        the exception to be logged
 	 */
@@ -121,7 +121,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *        the error message to log
 	 */
@@ -131,7 +131,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified message and {@code Throwable}.
-	 * 
+	 *
 	 * @param message
 	 *        the error message to log
 	 * @param e

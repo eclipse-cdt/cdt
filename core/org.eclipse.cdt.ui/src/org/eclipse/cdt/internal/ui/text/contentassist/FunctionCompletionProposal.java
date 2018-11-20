@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Eicher <eclipse@tom.eicher.name> - [content assist] prefix complete casted method proposals - https://bugs.eclipse.org/bugs/show_bug.cgi?id=247547
@@ -36,7 +36,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This is a modified version of org.eclipse.jdt.internal.ui.text.java.JavaMethodCompletionProposal
- * 
+ *
  * This class adds a linked mode function compilation proposal with exit policy.
  */
 public class FunctionCompletionProposal extends CCompletionProposal {
@@ -49,10 +49,10 @@ public class FunctionCompletionProposal extends CCompletionProposal {
 	protected IDocument fDocument;
 
 	public FunctionCompletionProposal(String replacementString, int replacementOffset, int replacementLength,
-			Image image, String displayString, String idString, int relevance, ITextViewer viewer,
-			IFunction function, int invocationOffset, int parseOffset, ITranslationUnit translationUnit, IDocument document) {
-		super(replacementString, replacementOffset, replacementLength, image, displayString, idString,
-				relevance, viewer);
+			Image image, String displayString, String idString, int relevance, ITextViewer viewer, IFunction function,
+			int invocationOffset, int parseOffset, ITranslationUnit translationUnit, IDocument document) {
+		super(replacementString, replacementOffset, replacementLength, image, displayString, idString, relevance,
+				viewer);
 		fFunctionParameters = function.getParameters();
 		fInvocationOffset = invocationOffset;
 		fParseOffset = parseOffset;
@@ -118,8 +118,7 @@ public class FunctionCompletionProposal extends CCompletionProposal {
 			int exit = getReplacementOffset() + getReplacementString().length();
 			try {
 				LinkedPositionGroup group = new LinkedPositionGroup();
-				group.addPosition(new LinkedPosition(document, fInvocationOffset, 0,
-						LinkedPositionGroup.NO_STOP));
+				group.addPosition(new LinkedPosition(document, fInvocationOffset, 0, LinkedPositionGroup.NO_STOP));
 
 				LinkedModeModel model = new LinkedModeModel();
 				model.addGroup(group);

@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
  * Interface for any element in the PDOM that can have the same name as
  * a sibling, but differ in other ways (i.e. function parameters, template
  * arguments).
- * 
+ *
  * @author Bryan Wilkinson
  */
 public interface IPDOMOverloader {

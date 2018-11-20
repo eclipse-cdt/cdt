@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine;
 
-
 /**
  * Represents an exception in initializing a template. Typically this will be caused
  * by an I/O or XML parsing failure.
@@ -24,11 +23,11 @@ public class TemplateInitializationException extends Exception {
 	public TemplateInitializationException() {
 		super();
 	}
-	
+
 	public TemplateInitializationException(String message) {
 		super(message);
 	}
-	
+
 	public TemplateInitializationException(String message, Throwable cause) {
 		super(message);
 		initCause(cause);

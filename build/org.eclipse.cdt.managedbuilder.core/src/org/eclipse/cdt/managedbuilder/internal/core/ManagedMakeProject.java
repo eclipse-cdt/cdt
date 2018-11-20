@@ -41,18 +41,18 @@ public class ManagedMakeProject implements ICOwner {
 		cproject.remove(CCorePlugin.BUILDER_MODEL_ID);
 		cproject.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 
-//		updateIndexers(cproject);
+		//		updateIndexers(cproject);
 	}
 
 	@Override
 	public void update(ICDescriptor cproject, String extensionID) throws CoreException {
-/*		if (extensionID.equals(CCorePlugin.BINARY_PARSER_UNIQ_ID)) {
-			updateBinaryParsers(cproject);
-		}
+		/*		if (extensionID.equals(CCorePlugin.BINARY_PARSER_UNIQ_ID)) {
+					updateBinaryParsers(cproject);
+				}
 
-		if (extensionID.equals(CCorePlugin.INDEXER_UNIQ_ID)) {
-			updateIndexers(cproject);
-		}
-*/
+				if (extensionID.equals(CCorePlugin.INDEXER_UNIQ_ID)) {
+					updateIndexers(cproject);
+				}
+		*/
 	}
 }

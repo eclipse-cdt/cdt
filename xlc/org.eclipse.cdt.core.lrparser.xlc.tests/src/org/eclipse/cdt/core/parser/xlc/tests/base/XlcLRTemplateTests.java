@@ -24,11 +24,11 @@ public class XlcLRTemplateTests extends LRTemplateTests {
 	public static TestSuite suite() {
 		return suite(XlcLRTemplateTests.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

@@ -26,9 +26,9 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
  * Property page for the configurations of a working set.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 public class WorkingSetConfigurationsPage extends PropertyPage {
@@ -40,7 +40,7 @@ public class WorkingSetConfigurationsPage extends PropertyPage {
 	 */
 	public WorkingSetConfigurationsPage() {
 		super();
-		
+
 		noDefaultAndApplyButton();
 	}
 
@@ -49,8 +49,7 @@ public class WorkingSetConfigurationsPage extends PropertyPage {
 		Composite result = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().margins(5, 5).applyTo(result);
 
-		final WorkspaceSnapshot workspace = WorkingSetConfigurationManager.getDefault()
-				.createWorkspaceSnapshot();
+		final WorkspaceSnapshot workspace = WorkingSetConfigurationManager.getDefault().createWorkspaceSnapshot();
 		final IWorkingSetProxy.ISnapshot workingSet = getWorkingSet(workspace);
 
 		if (workingSet == null) {
@@ -86,7 +85,7 @@ public class WorkingSetConfigurationsPage extends PropertyPage {
 
 		return result;
 	}
-	
+
 	@Override
 	public boolean performOk() {
 		if (!block.build()) {

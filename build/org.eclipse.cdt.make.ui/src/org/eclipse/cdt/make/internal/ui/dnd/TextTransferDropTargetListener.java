@@ -82,7 +82,7 @@ public class TextTransferDropTargetListener extends AbstractContainerAreaDropAda
 	public int dragOverOperation(int operation, IContainer dropContainer, Object dropTarget) {
 		// This class is intended only for drag/drop between eclipse instances,
 		// so DND_COPY always set and we don't bother checking if the target is the source
-		if (operation!=DND.DROP_NONE) {
+		if (operation != DND.DROP_NONE) {
 			return DND.DROP_COPY;
 		}
 		return operation;
@@ -97,9 +97,8 @@ public class TextTransferDropTargetListener extends AbstractContainerAreaDropAda
 	 */
 	@Override
 	public void dropToContainer(Object dropObject, IContainer dropContainer, int operation) {
-		if (dropObject instanceof String && ((String)dropObject).length()>0  && dropContainer != null) {
-			createMultilineTargetsUI((String)dropObject, dropContainer, operation,
-				fViewer.getControl().getShell());
+		if (dropObject instanceof String && ((String) dropObject).length() > 0 && dropContainer != null) {
+			createMultilineTargetsUI((String) dropObject, dropContainer, operation, fViewer.getControl().getShell());
 		}
 	}
 
@@ -112,7 +111,7 @@ public class TextTransferDropTargetListener extends AbstractContainerAreaDropAda
 	 * @return resulting array of {@code IMakeTarget}s.
 	 */
 	private static IMakeTarget[] prepareMakeTargetsFromString(String multilineText, IContainer container) {
-		if (container!=null) {
+		if (container != null) {
 			String[] lines = multilineText.split("[\n\r]"); //$NON-NLS-1$
 			List<IMakeTarget> makeTargets = new ArrayList<IMakeTarget>(lines.length);
 			for (String command : lines) {
@@ -122,9 +121,9 @@ public class TextTransferDropTargetListener extends AbstractContainerAreaDropAda
 					String buildCommand = command;
 					String buildTarget = null;
 					String defaultBuildCommand = MakeTargetDndUtil.getProjectBuildCommand(container.getProject());
-					if (command.startsWith(defaultBuildCommand+" ")) { //$NON-NLS-1$
+					if (command.startsWith(defaultBuildCommand + " ")) { //$NON-NLS-1$
 						buildCommand = defaultBuildCommand;
-						buildTarget = command.substring(defaultBuildCommand.length()+1).trim();
+						buildTarget = command.substring(defaultBuildCommand.length() + 1).trim();
 						name = buildTarget;
 					}
 					try {
@@ -157,18 +156,19 @@ public class TextTransferDropTargetListener extends AbstractContainerAreaDropAda
 	 * @see DND#DROP_MOVE
 	 * @see DND#DROP_LINK
 	 */
-	public static void createMultilineTargetsUI(String multilineText, IContainer dropContainer,
-		int operation, Shell shell) {
+	public static void createMultilineTargetsUI(String multilineText, IContainer dropContainer, int operation,
+			Shell shell) {
 
 		IMakeTarget[] makeTargets = prepareMakeTargetsFromString(multilineText, dropContainer);
 		boolean confirmed = true;
 		if (makeTargets.length > 1) {
 			String title = MakeUIPlugin.getResourceString("MakeTargetDnD.title.createFromTextConfirm"); //$NON-NLS-1$
-			String question = MessageFormat.format(MakeUIPlugin.getResourceString("MakeTargetDnD.message.createFromTextConfirm"), //$NON-NLS-1$
-				new Object[] { Integer.valueOf(makeTargets.length) });
+			String question = MessageFormat.format(
+					MakeUIPlugin.getResourceString("MakeTargetDnD.message.createFromTextConfirm"), //$NON-NLS-1$
+					new Object[] { Integer.valueOf(makeTargets.length) });
 
 			String topTargets = ""; //$NON-NLS-1$
-			for (int i=0;i<makeTargets.length;i++) {
+			for (int i = 0; i < makeTargets.length; i++) {
 				// limit dimensions of the confirm dialog
 				final int HEIGHT_LIMIT = 20;
 				final int LENGTH_LIMIT = 200;
@@ -178,7 +178,7 @@ public class TextTransferDropTargetListener extends AbstractContainerAreaDropAda
 				}
 				String name = makeTargets[i].getName();
 				if (name.length() > LENGTH_LIMIT) {
-					name = name.substring(0,LENGTH_LIMIT-3)+"..."; //$NON-NLS-1$
+					name = name.substring(0, LENGTH_LIMIT - 3) + "..."; //$NON-NLS-1$
 				}
 				topTargets = topTargets + name + "\n"; //$NON-NLS-1$
 			}

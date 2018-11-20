@@ -33,11 +33,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 /**
  * Provides information for the current word under the cursor based on the documentation hover
  * and spelling correction hover.
- * 
+ *
  * @see CTypeHover
  * @since 5.0
  */
-public class CInformationProvider implements IInformationProvider, IInformationProviderExtension, IInformationProviderExtension2 {
+public class CInformationProvider
+		implements IInformationProvider, IInformationProviderExtension, IInformationProviderExtension2 {
 
 	/**
 	 * Default control creator.
@@ -48,7 +49,6 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 			return new DefaultInformationControl(parent);
 		}
 	}
-	
 
 	/**
 	 * Part listener handling editor close.
@@ -57,19 +57,23 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 		@Override
 		public void partOpened(IWorkbenchPart part) {
 		}
+
 		@Override
 		public void partDeactivated(IWorkbenchPart part) {
 		}
+
 		@Override
 		public void partClosed(IWorkbenchPart part) {
 			if (part == fEditor) {
 				fEditor.getSite().getWorkbenchWindow().getPartService().removePartListener(fPartListener);
-				fPartListener= null;
+				fPartListener = null;
 			}
 		}
+
 		@Override
 		public void partActivated(IWorkbenchPart part) {
 		}
+
 		@Override
 		public void partBroughtToTop(IWorkbenchPart part) {
 		}
@@ -84,15 +88,15 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	 * The default presentation control creator.
 	 */
 	private IInformationControlCreator fPresenterControlCreator;
-	
+
 	public CInformationProvider(IEditorPart editor) {
-		fEditor= editor;
+		fEditor = editor;
 
 		if (fEditor != null) {
-			fPartListener= new EditorWatcher();
-			IWorkbenchWindow window= fEditor.getSite().getWorkbenchWindow();
+			fPartListener = new EditorWatcher();
+			IWorkbenchWindow window = fEditor.getSite().getWorkbenchWindow();
 			window.getPartService().addPartListener(fPartListener);
-			fImplementation= new CTypeHover();
+			fImplementation = new CTypeHover();
 			fImplementation.setEditor(fEditor);
 		}
 	}
@@ -114,7 +118,7 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	@Override
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		if (fImplementation != null) {
-			String s= fImplementation.getHoverInfo(textViewer, subject);
+			String s = fImplementation.getHoverInfo(textViewer, subject);
 			if (s != null && s.trim().length() > 0) {
 				return s;
 			}
@@ -141,7 +145,7 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 			return ((IInformationProviderExtension2) fImplementation).getInformationPresenterControlCreator();
 		}
 		if (fPresenterControlCreator == null)
-			fPresenterControlCreator= new ControlCreator();
+			fPresenterControlCreator = new ControlCreator();
 		return fPresenterControlCreator;
 	}
 }

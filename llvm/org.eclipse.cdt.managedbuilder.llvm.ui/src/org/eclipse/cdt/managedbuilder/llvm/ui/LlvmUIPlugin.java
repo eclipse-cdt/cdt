@@ -74,12 +74,10 @@ public class LlvmUIPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-//		LlvmEnvironmentVariableSupplier.initializePaths();
+		//		LlvmEnvironmentVariableSupplier.initializePaths();
 		//add resource change listeners to the workspace
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-				this.listener, IResourceChangeEvent.PRE_BUILD);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-				this.listener2, IResourceChangeEvent.POST_BUILD);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this.listener, IResourceChangeEvent.PRE_BUILD);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this.listener2, IResourceChangeEvent.POST_BUILD);
 	}
 
 	/*
@@ -121,7 +119,7 @@ public class LlvmUIPlugin extends AbstractUIPlugin {
 	public ResourceBundle getResourceBundle() {
 		try {
 			if (this.resourceBundle == null)
-				this.resourceBundle = ResourceBundle.getBundle(this.getClass().getName()+ "Resources"); //$NON-NLS-1$
+				this.resourceBundle = ResourceBundle.getBundle(this.getClass().getName() + "Resources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			this.resourceBundle = null;
 		}
@@ -151,12 +149,11 @@ public class LlvmUIPlugin extends AbstractUIPlugin {
 	 *
 	 * @return PropertyResourceBundle
 	 */
-	public PropertyResourceBundle getProperties(){
-		if (this.properties == null){
+	public PropertyResourceBundle getProperties() {
+		if (this.properties == null) {
 			try {
 				this.properties = new PropertyResourceBundle(
-						FileLocator.openStream(this.getBundle(),
-								new Path(PROPERTIES),false));
+						FileLocator.openStream(this.getBundle(), new Path(PROPERTIES), false));
 			} catch (IOException e) {
 				//log error
 				e.getMessage();

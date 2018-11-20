@@ -41,17 +41,18 @@ public class DebugNewExecutableHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
+
 		NewExecutableDialog dialog = new NewExecutableDialog(new Shell());
-		
+
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			NewExecutableInfo info = dialog.getExecutableInfo();
 			String executable = info.getHostPath();
 			String arguments = info.getArguments();
 			String buildLog = info.getBuildLog();
-			
+
 			try {
-				final ILaunchConfiguration config = DebugExecutable.importAndCreateLaunchConfig(new NullProgressMonitor(), executable, buildLog, arguments, false);
+				final ILaunchConfiguration config = DebugExecutable
+						.importAndCreateLaunchConfig(new NullProgressMonitor(), executable, buildLog, arguments, false);
 				if (config != null) {
 					final JobContainer LaunchJobs = new JobContainer();
 					Job.getJobManager().addJobChangeListener(new JobChangeAdapter() {
@@ -78,7 +79,7 @@ public class DebugNewExecutableHandler extends AbstractHandler {
 						try {
 							LaunchJobs.getLaunchJob().join();
 						} catch (InterruptedException e) {
-							IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+							IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0,
 									Messages.LaunchInterruptedError, e);
 							ResourcesPlugin.getPlugin().getLog().log(status);
 						}

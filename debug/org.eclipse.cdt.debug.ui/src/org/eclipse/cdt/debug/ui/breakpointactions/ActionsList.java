@@ -116,7 +116,7 @@ public class ActionsList extends Composite {
 
 	/**
 	 * Remove an action from the list
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public void removeAction(IBreakpointAction action) {
@@ -185,7 +185,8 @@ public class ActionsList extends Composite {
 
 		while (tok.hasMoreTokens()) {
 			String actionName = tok.nextToken();
-			IBreakpointAction action = CDebugCorePlugin.getDefault().getBreakpointActionManager().findBreakpointAction(actionName);
+			IBreakpointAction action = CDebugCorePlugin.getDefault().getBreakpointActionManager()
+					.findBreakpointAction(actionName);
 			if (action != null) {
 				final TableItem tableItem = new TableItem(table, SWT.NONE);
 				tableItem.setText(0, action.getName());

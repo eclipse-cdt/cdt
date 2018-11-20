@@ -16,12 +16,11 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * GDB/MI trace command output parsing.
- * 
+ *
  * ~"Tracepoint 2 at 0x4035a9: file /scratch/marc/test/src/main.cxx, line 109"
- * 
+ *
  * @since 3.0
  */
 public class CLITraceInfo extends MIInfo {
@@ -32,10 +31,10 @@ public class CLITraceInfo extends MIInfo {
 	}
 
 	private String fReference = null;
-	
+
 	/** @since 5.0 */
-	public String getTraceReference(){
-		return fReference; 
+	public String getTraceReference() {
+		return fReference;
 	}
 
 	protected void parse() {
@@ -46,7 +45,7 @@ public class CLITraceInfo extends MIInfo {
 				if (oobs[i] instanceof MIConsoleStreamOutput) {
 					MIStreamRecord cons = (MIStreamRecord) oobs[i];
 					String str = cons.getString().trim();
-					if(!str.isEmpty() ){
+					if (!str.isEmpty()) {
 						Pattern pattern = Pattern.compile("^Tracepoint\\s(\\d+)", Pattern.MULTILINE); //$NON-NLS-1$
 						Matcher matcher = pattern.matcher(str);
 						if (matcher.find()) {

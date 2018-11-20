@@ -47,7 +47,7 @@ public interface IStructure extends IInheritance, IParent, IStructureDeclaration
 	 * @return array of IMethodDeclaration.
 	 * @throws CModelException
 	 */
-	public IMethodDeclaration [] getMethods() throws CModelException;
+	public IMethodDeclaration[] getMethods() throws CModelException;
 
 	/**
 	 * Checks if the structure is abstract

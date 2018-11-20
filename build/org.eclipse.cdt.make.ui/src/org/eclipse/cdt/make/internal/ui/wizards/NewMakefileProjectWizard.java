@@ -42,13 +42,12 @@ public class NewMakefileProjectWizard extends TemplateWizard {
 			public void createControl(Composite parent) {
 				super.createControl(parent);
 				Composite comp = (Composite) getControl();
-				createWorkingSetGroup(comp, getSelection(),
-						new String[] { "org.eclipse.ui.resourceWorkingSetPage" }); //$NON-NLS-1$
+				createWorkingSetGroup(comp, getSelection(), new String[] { "org.eclipse.ui.resourceWorkingSetPage" }); //$NON-NLS-1$
 
 				Composite buttonComp = new Composite(comp, SWT.NONE);
 				buttonComp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 				buttonComp.setLayout(new GridLayout());
-				
+
 				Button genSourceButton = new Button(buttonComp, SWT.CHECK);
 				genSourceButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 				genSourceButton.setText("Generate Source and Makefile");

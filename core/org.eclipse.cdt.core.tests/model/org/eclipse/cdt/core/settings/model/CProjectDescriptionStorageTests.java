@@ -154,12 +154,14 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 
 		// create testChildInStorage
 		projDesc = CoreModel.getDefault().getProjectDescription(project, true);
-		ICStorageElement[] children = projDesc.getDefaultSettingConfiguration().getStorage(testingStorage, false).getChildrenByName(testChildInStorage);
+		ICStorageElement[] children = projDesc.getDefaultSettingConfiguration().getStorage(testingStorage, false)
+				.getChildrenByName(testChildInStorage);
 		assertTrue(children.length == 1);
 		projDesc.getDefaultSettingConfiguration().getStorage(testingStorage, false).removeChild(children[0]);
 		CoreModel.getDefault().setProjectDescription(project, projDesc);
 		projDesc = CoreModel.getDefault().getProjectDescription(project, false);
-		assertTrue(projDesc.getDefaultSettingConfiguration().getStorage(testingStorage, false).getChildrenByName(testChildInStorage).length == 0);
+		assertTrue(projDesc.getDefaultSettingConfiguration().getStorage(testingStorage, false)
+				.getChildrenByName(testChildInStorage).length == 0);
 
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		// Restore from backup
@@ -170,7 +172,8 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 
 		// Check that the project description no longer contains the testChildInStorage
 		projDesc = CoreModel.getDefault().getProjectDescription(project, false);
-		assertTrue(projDesc.getDefaultSettingConfiguration().getStorage(testingStorage, false).getChildrenByName(testChildInStorage).length == 1);
+		assertTrue(projDesc.getDefaultSettingConfiguration().getStorage(testingStorage, false)
+				.getChildrenByName(testChildInStorage).length == 1);
 
 		refreshJob.cancel();
 	}
@@ -242,7 +245,6 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 		refreshJob.cancel();
 	}
 
-
 	/**
 	 * Tests that a read-only project description file is picked up
 	 * @throws Exception
@@ -287,7 +289,8 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 	 * set files writable if no UI context has been provided.
 	 */
 	private void enableSetWritableWhenHeadless(boolean enable) {
-		InstanceScope.INSTANCE.getNode("org.eclipse.team.ui").putBoolean("org.eclipse.team.ui.validate_edit_with_no_context", enable);
+		InstanceScope.INSTANCE.getNode("org.eclipse.team.ui")
+				.putBoolean("org.eclipse.team.ui.validate_edit_with_no_context", enable);
 	}
 
 	/**
@@ -357,12 +360,11 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 			@Override
 			public boolean visit(IResource resource) throws CoreException {
 				assertTrue(resource instanceof IFile);
-				csettings.getFile(resource.getName()).create(((IFile)resource).getContents(), false, null);
+				csettings.getFile(resource.getName()).create(((IFile) resource).getContents(), false, null);
 				return false;
 			}
 		});
 	}
-
 
 	private void backUpCProjectFile(String uniqueKey) {
 		File cproj = cProj.getProject().getFile(".cproject").getLocation().toFile();
@@ -406,9 +408,15 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 			return true;
 		} finally {
 			if (in1 != null)
-				try {in1.close();} catch (Exception e) {/*Don't care*/}
+				try {
+					in1.close();
+				} catch (Exception e) {
+					/*Don't care*/}
 			if (in2 != null)
-				try {in2.close();} catch (Exception e) {/*Don't care*/}
+				try {
+					in2.close();
+				} catch (Exception e) {
+					/*Don't care*/}
 		}
 	}
 
@@ -427,9 +435,15 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 			fail("Exception copyingFile: " + src.getAbsolutePath() + " -> " + dst.getAbsolutePath());
 		} finally {
 			if (in != null)
-				try {in.close();} catch (Exception e) {/*Don't care*/}
+				try {
+					in.close();
+				} catch (Exception e) {
+					/*Don't care*/}
 			if (out != null)
-				try {out.close();} catch (Exception e) {/*Don't care*/}
+				try {
+					out.close();
+				} catch (Exception e) {
+					/*Don't care*/}
 		}
 
 		while (dst.lastModified() - initModificationTime == 0) {
@@ -452,6 +466,7 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 	private static class OurResourceChangeListener implements IResourceChangeListener {
 		boolean changeDetected;
 		private Set<IPath> filesToWatch = new HashSet<IPath>();
+
 		@Override
 		public synchronized void resourceChanged(IResourceChangeEvent event) {
 			IResourceDelta delta = event.getDelta();
@@ -464,12 +479,15 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 					break;
 				}
 		}
+
 		public synchronized void addFileToWatch(IPath file) {
 			filesToWatch.add(file);
 		}
+
 		public synchronized void reset() {
 			changeDetected = false;
 		}
+
 		public synchronized void waitForChange() {
 			try {
 				if (!changeDetected)

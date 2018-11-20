@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-
 // Copied from startup.jar. planned to be removed soon
 
 /**
@@ -146,7 +145,7 @@ public class Main {
 
 	/**
 	 * Executes the launch.
-	 * 
+	 *
 	 * @param args command-line arguments
 	 * @return the result of performing the launch
 	 * @exception Exception thrown if a problem occurs during the launch
@@ -166,7 +165,7 @@ public class Main {
 
 	/**
 	 * Returns the result of converting a list of comma-separated tokens into an array.
-	 * 
+	 *
 	 * @param prop the initial comma-separated string
 	 * @return the array of string tokens
 	 */
@@ -189,7 +188,7 @@ public class Main {
 	 * <code>null</code>, is the location of the boot loader code. If the value
 	 * is <code>null</code> then the boot loader is located relative to this
 	 * class.
-	 * 
+	 *
 	 * @param base the location of the boot loader
 	 * @return the new boot loader
 	 */
@@ -202,7 +201,7 @@ public class Main {
 	/**
 	 * Returns the <code>URL</code>-based class path describing where the boot
 	 * classes are located when running in development mode.
-	 * 
+	 *
 	 * @param base the base location
 	 * @return the url-based class path
 	 * @exception MalformedURLException if a problem occurs computing the class path
@@ -237,7 +236,7 @@ public class Main {
 	/**
 	 * Returns the <code>URL</code>-based class path describing where the boot
 	 * classes are located.
-	 * 
+	 *
 	 * @param base the base location
 	 * @return the url-based class path
 	 * @exception MalformedURLException if a problem occurs computing the class path
@@ -285,7 +284,7 @@ public class Main {
 	/**
 	 * Searches for a plugins root starting at a given location. If one is found
 	 * then this location is returned; otherwise an empty string is returned.
-	 * 
+	 *
 	 * @param start the location to begin searching at
 	 * @return the location where plugins were found, or an empty string
 	 */
@@ -305,7 +304,7 @@ public class Main {
 	 * Searches for a boot directory starting at a given location. If one is
 	 * found then this location is returned; otherwise an empty string is
 	 * returned.
-	 * 
+	 *
 	 * @param start the location to begin searching at
 	 * @return the location where plugins were found, or an empty string
 	 */
@@ -346,7 +345,7 @@ public class Main {
 
 	/**
 	 * Returns the update loader for the given boot path.
-	 * 
+	 *
 	 * @param base the boot path base
 	 * @return the update loader
 	 * @exception Exception thrown is a problem occurs determining this loader
@@ -367,7 +366,7 @@ public class Main {
 	 * <p>
 	 * Clients wishing to run the platform without a following
 	 * <code>System.exit</code> call should use <code>run()</code>.
-	 * 
+	 *
 	 * @param args the command line arguments
 	 *
 	 * @see #run
@@ -400,7 +399,7 @@ public class Main {
 
 	/**
 	 * Runs this launcher with the arguments specified in the given string.
-	 * 
+	 *
 	 * @param argString the arguments string
 	 * @exception Exception thrown if a problem occurs during launching
 	 */
@@ -413,7 +412,7 @@ public class Main {
 
 	/**
 	 * Processes the command line arguments
-	 * 
+	 *
 	 * @param args the command line arguments
 	 * @return the arguments to pass through to the launched application
 	 */
@@ -514,7 +513,7 @@ public class Main {
 
 	/**
 	 * Runs the application to be launched.
-	 * 
+	 *
 	 * @return the return value from the launched application
 	 * @param args the arguments to pass to the application
 	 * @exception Exception thrown if a problem occurs during launching
@@ -528,7 +527,7 @@ public class Main {
 
 	/**
 	 * Performs an update run.
-	 * 
+	 *
 	 * @return the return value from the update loader
 	 * @param flag
 	 *            flag to give to the update loader

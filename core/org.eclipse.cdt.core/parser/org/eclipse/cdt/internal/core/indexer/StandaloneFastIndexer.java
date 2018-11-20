@@ -29,20 +29,20 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A standalone tool for populating an index.  This indexer optimizes for 
+ * A standalone tool for populating an index.  This indexer optimizes for
  * speed at the expense of accuracy.
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will work or
  * that it will remain the same. Please do not use this API without consulting
  * with the CDT team.
  * </p>
- * 
+ *
  * @since 4.0
  */
-public class StandaloneFastIndexer extends StandaloneIndexer {	
-	
+public class StandaloneFastIndexer extends StandaloneIndexer {
+
 	/**
 	 * Construct a fast standalone indexer.
 	 * @param writableIndexFile - the file where the PDOM index is stored
@@ -55,13 +55,15 @@ public class StandaloneFastIndexer extends StandaloneIndexer {
 	 * @deprecated
 	 */
 	@Deprecated
-	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
-			IScannerInfo scanner, FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log) throws CoreException {
-		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings)), 
-				false, mapper, log, scanner, fileEncodingRegistry);
-	
+	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter,
+			Map<String, IPDOMLinkageFactory> linkageFactoryMappings, IScannerInfo scanner,
+			FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log)
+			throws CoreException {
+		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings)), false, mapper,
+				log, scanner, fileEncodingRegistry);
+
 	}
-	
+
 	/**
 	 * Construct a fast standalone indexer.
 	 * @param writableIndexFile - the file where the PDOM index is stored
@@ -72,13 +74,15 @@ public class StandaloneFastIndexer extends StandaloneIndexer {
 	 * @param log - logger
 	 * @throws CoreException
 	 */
-	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
-			IStandaloneScannerInfoProvider scannerProvider, FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log) throws CoreException {
-		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings)), 
-				false, mapper, log, scannerProvider, fileEncodingRegistry);
-	
+	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter,
+			Map<String, IPDOMLinkageFactory> linkageFactoryMappings, IStandaloneScannerInfoProvider scannerProvider,
+			FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log)
+			throws CoreException {
+		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings)), false, mapper,
+				log, scannerProvider, fileEncodingRegistry);
+
 	}
-	
+
 	/**
 	 * Construct a fast standalone indexer.
 	 * @param writableIndexFile - the file where the PDOM index is stored
@@ -88,14 +92,14 @@ public class StandaloneFastIndexer extends StandaloneIndexer {
 	 * @param log - logger
 	 * @throws CoreException
 	 */
-	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
-			FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log) throws CoreException {
-		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings)), 
-				false, mapper, log, (IStandaloneScannerInfoProvider)null, fileEncodingRegistry);
-	
+	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter,
+			Map<String, IPDOMLinkageFactory> linkageFactoryMappings, FileEncodingRegistry fileEncodingRegistry,
+			ILanguageMapper mapper, IParserLogService log) throws CoreException {
+		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings)), false, mapper,
+				log, (IStandaloneScannerInfoProvider) null, fileEncodingRegistry);
+
 	}
-	
-	
+
 	/**
 	 * Create a delegate standalone indexing task
 	 */
@@ -105,6 +109,5 @@ public class StandaloneFastIndexer extends StandaloneIndexer {
 		task.setLogService(getParserLog());
 		return task;
 	}
-
 
 }

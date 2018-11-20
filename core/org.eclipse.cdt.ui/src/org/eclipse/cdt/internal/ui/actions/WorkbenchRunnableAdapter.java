@@ -52,8 +52,8 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress, IThreadL
 	 * Runs a workspace runnable with the given lock or <code>null</code> to run with no lock at all.
 	 */
 	public WorkbenchRunnableAdapter(IWorkspaceRunnable runnable, ISchedulingRule rule) {
-		fWorkspaceRunnable= runnable;
-		fRule= rule;
+		fWorkspaceRunnable = runnable;
+		fRule = rule;
 	}
 
 	/**
@@ -66,9 +66,9 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress, IThreadL
 	 *            thread
 	 */
 	public WorkbenchRunnableAdapter(IWorkspaceRunnable runnable, ISchedulingRule rule, boolean transfer) {
-		fWorkspaceRunnable= runnable;
-		fRule= rule;
-		fTransfer= transfer;
+		fWorkspaceRunnable = runnable;
+		fRule = rule;
+		fTransfer = transfer;
 	}
 
 	public ISchedulingRule getSchedulingRule() {
@@ -96,7 +96,7 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress, IThreadL
 	}
 
 	public void runAsUserJob(String name, final Object jobFamiliy) {
-		Job buildJob = new Job(name){
+		Job buildJob = new Job(name) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
@@ -105,7 +105,7 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress, IThreadL
 				try {
 					WorkbenchRunnableAdapter.this.run(monitor);
 				} catch (InvocationTargetException e) {
-					Throwable cause= e.getCause();
+					Throwable cause = e.getCause();
 					if (cause instanceof CoreException) {
 						return ((CoreException) cause).getStatus();
 					}
@@ -117,6 +117,7 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress, IThreadL
 				}
 				return Status.OK_STATUS;
 			}
+
 			@Override
 			public boolean belongsTo(Object family) {
 				return jobFamiliy == family;
@@ -129,4 +130,3 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress, IThreadL
 		// TODO: should block until user pressed 'to background'
 	}
 }
-

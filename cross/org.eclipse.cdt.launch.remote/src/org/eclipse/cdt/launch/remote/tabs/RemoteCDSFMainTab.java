@@ -19,7 +19,7 @@
  * Anna Dushistova       (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
  * Anna Dushistova       (MontaVista) - [223728] [remotecdt] connection combo is not populated until RSE is activated
  * Anna Dushistova       (MontaVista) - [267951] [remotecdt] Support systemTypes without files subsystem
- * Anna Dushistova  (Mentor Graphics) - adapted from RemoteCMainTab 
+ * Anna Dushistova  (Mentor Graphics) - adapted from RemoteCMainTab
  * Anna Dushistova  (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
  * Anna Dushistova  (Mentor Graphics) - [318052] [remote launch] Properties are not saved/used
  * Anna Dushistova       (MontaVista) - [375067] [remote] Automated remote launch does not support project-less debug
@@ -97,7 +97,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 	private Label preRunLabel;
 
 	private boolean isInitializing = false;
-	
+
 	public RemoteCDSFMainTab() {
 		super(CMainTab.INCLUDE_BUILD_SETTINGS);
 	}
@@ -123,17 +123,13 @@ public class RemoteCDSFMainTab extends CMainTab {
 			}
 		});
 
-		PlatformUI
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(getControl(),
-						Activator.PLUGIN_ID + ".launchgroup"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), Activator.PLUGIN_ID + ".launchgroup"); //$NON-NLS-1$
 
 	}
 
 	/*
 	 * isValid
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid
 	 */
 	@Override
@@ -206,8 +202,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 			}
 		});
 
-		newRemoteConnectionButton = createPushButton(projComp,
-				Messages.RemoteCMainTab_New, null);
+		newRemoteConnectionButton = createPushButton(projComp, Messages.RemoteCMainTab_New, null);
 		newRemoteConnectionButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -217,9 +212,8 @@ public class RemoteCDSFMainTab extends CMainTab {
 				updateConnectionPulldown();
 			}
 		});
-		
-		editRemoteConnectionButton = createPushButton(projComp,
-				Messages.RemoteCMainTab_Edit, null);
+
+		editRemoteConnectionButton = createPushButton(projComp, Messages.RemoteCMainTab_Edit, null);
 		editRemoteConnectionButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -228,16 +222,14 @@ public class RemoteCDSFMainTab extends CMainTab {
 			}
 		});
 
-		remoteConnectionPropertiesButton = createPushButton(projComp,
-				Messages.RemoteCMainTab_Properties, null);
-		remoteConnectionPropertiesButton
-				.addSelectionListener(new SelectionAdapter() {
+		remoteConnectionPropertiesButton = createPushButton(projComp, Messages.RemoteCMainTab_Properties, null);
+		remoteConnectionPropertiesButton.addSelectionListener(new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(SelectionEvent evt) {
-						handleRemoteConnectionPropertiesSelected();
-					}
-				});
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+				handleRemoteConnectionPropertiesSelected();
+			}
+		});
 
 		updateConnectionPulldown();
 	}
@@ -273,8 +265,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 			}
 		});
 
-		remoteBrowseButton = createPushButton(mainComp,
-				Messages.RemoteCMainTab_Remote_Path_Browse_Button, null);
+		remoteBrowseButton = createPushButton(mainComp, Messages.RemoteCMainTab_Remote_Path_Browse_Button, null);
 		remoteBrowseButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -316,8 +307,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		mainComp.setLayoutData(gd);
 
-		skipDownloadButton = createCheckButton(mainComp,
-				SKIP_DOWNLOAD_BUTTON_TEXT);
+		skipDownloadButton = createCheckButton(mainComp, SKIP_DOWNLOAD_BUTTON_TEXT);
 		skipDownloadButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -331,49 +321,48 @@ public class RemoteCDSFMainTab extends CMainTab {
 	protected void handleNewRemoteConnectionSelected() {
 		RemoteUIHelper.newConnectionDialog(getControl().getShell());
 	}
-	
+
 	/**
 	 * Opens the <code>SystemConnectionPropertyPage</code> page for the selected connection.
 	 */
 	protected void handleEditRemoteConnectionSelected() {
-		RemoteUIHelper.editConnectionDialog(getCurrentConnection(),
-				getControl().getShell());
+		RemoteUIHelper.editConnectionDialog(getCurrentConnection(), getControl().getShell());
 	}
 
 	protected IRemoteConnection getCurrentConnection() {
 		int currentSelection = connectionCombo.getSelectionIndex();
-		String remoteConnection = currentSelection >= 0 ? connectionCombo
-				.getItem(currentSelection) : null;
+		String remoteConnection = currentSelection >= 0 ? connectionCombo.getItem(currentSelection) : null;
 		return RemoteHelper.getRemoteConnectionByName(remoteConnection);
 	}
 
 	protected void handleRemoteBrowseSelected() {
 		IRemoteConnection currentConnectionSelected = getCurrentConnection();
-		
+
 		// Try to open the connection before showing RemoteResourceBrowser
 		if (currentConnectionSelected != null && !currentConnectionSelected.isOpen()) {
 			if (currentConnectionSelected.getConnectionType().hasService(IRemoteUIConnectionService.class)) {
-				
-				IRemoteUIConnectionService uiConnService = currentConnectionSelected.getConnectionType().getService(IRemoteUIConnectionService.class);
-				uiConnService.openConnectionWithProgress(getShell(), new ProgressMonitorDialog(getShell()), currentConnectionSelected);
-				
+
+				IRemoteUIConnectionService uiConnService = currentConnectionSelected.getConnectionType()
+						.getService(IRemoteUIConnectionService.class);
+				uiConnService.openConnectionWithProgress(getShell(), new ProgressMonitorDialog(getShell()),
+						currentConnectionSelected);
+
 				// Don't show RemoteResourceBrowser if the connection cannot be opened
 				if (!currentConnectionSelected.isOpen())
 					return;
 			}
 		}
-		
-		RemoteResourceBrowser b = new RemoteResourceBrowser(getControl().getShell(),
-				SWT.NONE);
+
+		RemoteResourceBrowser b = new RemoteResourceBrowser(getControl().getShell(), SWT.NONE);
 		b.setConnection(currentConnectionSelected);
 		b.setTitle(Messages.RemoteCMainTab_Remote_Path_Browse_Button_Title);
 		int returnCode = b.open();
-		
+
 		// User cancelled the browse dialog?
 		if (returnCode == Window.CANCEL) {
 			return;
 		}
-		
+
 		IFileStore selectedFile = b.getResource();
 		if (selectedFile != null) {
 			String absPath = selectedFile.toURI().getPath();
@@ -399,15 +388,14 @@ public class RemoteCDSFMainTab extends CMainTab {
 			private Text fWSRoot;
 			private String fDialogTitle;
 
-			public RemoteConnectionPropertyDialog(Shell parentShell,
-					String dialogTitle, IRemoteConnection host) {
+			public RemoteConnectionPropertyDialog(Shell parentShell, String dialogTitle, IRemoteConnection host) {
 				super(parentShell);
 				fDialogTitle = dialogTitle;
 				fHost = host;
 				IRemoteServicesManager remoteServicesManager = Activator.getService(IRemoteServicesManager.class);
 				fbLocalHost = (fHost.getConnectionType() == remoteServicesManager.getLocalConnectionType());
 			}
-			
+
 			@Override
 			protected void configureShell(Shell shell) {
 				super.configureShell(shell);
@@ -417,37 +405,28 @@ public class RemoteCDSFMainTab extends CMainTab {
 			@Override
 			protected Control createDialogArea(Composite parent) {
 				// create composite
-				Composite composite = (Composite) super
-						.createDialogArea(parent);
+				Composite composite = (Composite) super.createDialogArea(parent);
 
 				Label label = new Label(composite, SWT.WRAP);
 				label.setText(Messages.RemoteCMainTab_Properties_Location);
-				GridData data = new GridData(GridData.GRAB_HORIZONTAL
-						| GridData.GRAB_VERTICAL
-						| GridData.HORIZONTAL_ALIGN_FILL
-						| GridData.VERTICAL_ALIGN_CENTER);
+				GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL
+						| GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 				data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 				label.setLayoutData(data);
 				label.setFont(parent.getFont());
 				fWSRoot = new Text(composite, SWT.SINGLE | SWT.BORDER);
-				fWSRoot.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-						| GridData.HORIZONTAL_ALIGN_FILL));
+				fWSRoot.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 
 				fSkipDownloadBtn = new Button(composite, SWT.CHECK);
-				fSkipDownloadBtn
-						.setText(Messages.RemoteCMainTab_Properties_Skip_default);
+				fSkipDownloadBtn.setText(Messages.RemoteCMainTab_Properties_Skip_default);
 				if (!fbLocalHost) {
 					String value = RemoteUIHelper.getConnectionProperty(fHost,
 							IRemoteConnectionHostConstants.REMOTE_WS_ROOT);
-					if(!value.isEmpty()) {
+					if (!value.isEmpty()) {
 						fWSRoot.setText(value);
 					}
-					fSkipDownloadBtn
-					.setSelection(Boolean
-							.valueOf(
-									RemoteUIHelper.getConnectionProperty(fHost,
-											IRemoteConnectionHostConstants.DEFAULT_SKIP_DOWNLOAD))
-							.booleanValue());
+					fSkipDownloadBtn.setSelection(Boolean.valueOf(RemoteUIHelper.getConnectionProperty(fHost,
+							IRemoteConnectionHostConstants.DEFAULT_SKIP_DOWNLOAD)).booleanValue());
 				} else {
 					fSkipDownloadBtn.setEnabled(false);
 					fWSRoot.setEnabled(false);
@@ -459,22 +438,17 @@ public class RemoteCDSFMainTab extends CMainTab {
 			@Override
 			protected void buttonPressed(int buttonId) {
 				if (!fbLocalHost && (buttonId == IDialogConstants.OK_ID)) {
-					RemoteUIHelper.setConnectionProperty(fHost,
-							IRemoteConnectionHostConstants.REMOTE_WS_ROOT,
+					RemoteUIHelper.setConnectionProperty(fHost, IRemoteConnectionHostConstants.REMOTE_WS_ROOT,
 							fWSRoot.getText());
-					RemoteUIHelper.setConnectionProperty(fHost,
-							IRemoteConnectionHostConstants.DEFAULT_SKIP_DOWNLOAD,
-							Boolean.toString(fSkipDownloadBtn
-									.getSelection()));
+					RemoteUIHelper.setConnectionProperty(fHost, IRemoteConnectionHostConstants.DEFAULT_SKIP_DOWNLOAD,
+							Boolean.toString(fSkipDownloadBtn.getSelection()));
 				}
 				super.buttonPressed(buttonId);
 			}
 		}
 		IRemoteConnection currentConnectionSelected = getCurrentConnection();
-		RemoteConnectionPropertyDialog dlg = new RemoteConnectionPropertyDialog(
-				getControl().getShell(),
-				Messages.RemoteCMainTab_Properties_title,
-				currentConnectionSelected);
+		RemoteConnectionPropertyDialog dlg = new RemoteConnectionPropertyDialog(getControl().getShell(),
+				Messages.RemoteCMainTab_Properties_title, currentConnectionSelected);
 		dlg.setBlockOnOpen(true);
 		dlg.open();
 	}
@@ -493,18 +467,15 @@ public class RemoteCDSFMainTab extends CMainTab {
 	}
 
 	private void updateConnectionButtons() {
-		if ((remoteConnectionPropertiesButton == null)
-				|| remoteConnectionPropertiesButton.isDisposed()) {
+		if ((remoteConnectionPropertiesButton == null) || remoteConnectionPropertiesButton.isDisposed()) {
 			return;
 		}
-		if ((editRemoteConnectionButton == null)
-				|| editRemoteConnectionButton.isDisposed()) {
+		if ((editRemoteConnectionButton == null) || editRemoteConnectionButton.isDisposed()) {
 			return;
 		}
 		boolean bEnable = false;
 		IRemoteConnection currentConnectionSelected = getCurrentConnection();
-		if (currentConnectionSelected != null &&
-				currentConnectionSelected.getConnectionType().canEdit()) {
+		if (currentConnectionSelected != null && currentConnectionSelected.getConnectionType().canEdit()) {
 			bEnable = true;
 		}
 		remoteConnectionPropertiesButton.setEnabled(bEnable);
@@ -514,8 +485,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 	protected void updateTargetProgFromConfig(ILaunchConfiguration config) {
 		String targetPath = null;
 		try {
-			targetPath = config.getAttribute(
-					IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
+			targetPath = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
 					REMOTE_PATH_DEFAULT);
 		} catch (CoreException e) {
 			// Ignore
@@ -524,10 +494,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 
 		String prelaunchCmd = null;
 		try {
-			prelaunchCmd = config
-					.getAttribute(
-							IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS,
-							""); //$NON-NLS-1$
+			prelaunchCmd = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS, ""); //$NON-NLS-1$
 		} catch (CoreException e) {
 			// Ignore
 		}
@@ -537,10 +504,8 @@ public class RemoteCDSFMainTab extends CMainTab {
 	protected void updateSkipDownloadFromConfig(ILaunchConfiguration config) {
 		boolean downloadToTarget = true;
 		try {
-			downloadToTarget = config
-					.getAttribute(
-							IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
-							getDefaultSkipDownload());
+			downloadToTarget = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
+					getDefaultSkipDownload());
 		} catch (CoreException e) {
 			// Ignore for now
 		}
@@ -570,8 +535,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 				exePath = project.getFile(programName).getLocation();
 
 				IPath wsRoot = project.getWorkspace().getRoot().getLocation();
-				exePath = makeRelativeToWSRootLocation(exePath, remoteWsRoot,
-						wsRoot);
+				exePath = makeRelativeToWSRootLocation(exePath, remoteWsRoot, wsRoot);
 			}
 			String path = exePath.toString();
 			remoteProgText.setText(path);
@@ -582,8 +546,9 @@ public class RemoteCDSFMainTab extends CMainTab {
 		// During initialization, we don't want to use the default
 		// values of the connection, but we want to use the ones
 		// that are part of the configuration
-		if (isInitializing) return;
-		
+		if (isInitializing)
+			return;
+
 		if ((remoteProgText != null) && !remoteProgText.isDisposed()) {
 			String remoteName = remoteProgText.getText().trim();
 			String remoteWsRoot = getRemoteWSRoot();
@@ -592,8 +557,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 			} else {
 				// try to use remote path
 				IPath wsRoot = Platform.getLocation();
-				IPath remotePath = makeRelativeToWSRootLocation(new Path(
-						remoteName), remoteWsRoot, wsRoot);
+				IPath remotePath = makeRelativeToWSRootLocation(new Path(remoteName), remoteWsRoot, wsRoot);
 				remoteProgText.setText(remotePath.toString());
 			}
 		}
@@ -614,14 +578,12 @@ public class RemoteCDSFMainTab extends CMainTab {
 		}
 	}
 
-	private IPath makeRelativeToWSRootLocation(IPath exePath,
-			String remoteWsRoot, IPath wsRoot) {
+	private IPath makeRelativeToWSRootLocation(IPath exePath, String remoteWsRoot, IPath wsRoot) {
 		if (remoteWsRoot.length() != 0) {
 			// use remoteWSRoot instead of Workspace Root
 			if (wsRoot.isPrefixOf(exePath)) {
-				return new Path(remoteWsRoot).append(exePath
-						.removeFirstSegments(wsRoot.segmentCount()).setDevice(
-								null));
+				return new Path(remoteWsRoot)
+						.append(exePath.removeFirstSegments(wsRoot.segmentCount()).setDevice(null));
 			}
 		}
 		return exePath;
@@ -629,10 +591,9 @@ public class RemoteCDSFMainTab extends CMainTab {
 
 	private String getRemoteWSRoot() {
 		IRemoteConnection host = getCurrentConnection();
-		if(host != null) {
-			String value = RemoteUIHelper.getConnectionProperty(host,
-					IRemoteConnectionHostConstants.REMOTE_WS_ROOT);
-			if(!value.isEmpty()) {
+		if (host != null) {
+			String value = RemoteUIHelper.getConnectionProperty(host, IRemoteConnectionHostConstants.REMOTE_WS_ROOT);
+			if (!value.isEmpty()) {
 				return value;
 			}
 		}
@@ -642,12 +603,12 @@ public class RemoteCDSFMainTab extends CMainTab {
 	private boolean getDefaultSkipDownload() {
 		IRemoteConnection host = getCurrentConnection();
 		if (host != null) {
-			if(RemoteHelper.getFileSubsystem(host) == null){
+			if (RemoteHelper.getFileSubsystem(host) == null) {
 				return true;
 			}
 			String value = RemoteUIHelper.getConnectionProperty(host,
 					IRemoteConnectionHostConstants.DEFAULT_SKIP_DOWNLOAD);
-			if(!value.isEmpty()) {
+			if (!value.isEmpty()) {
 				return Boolean.valueOf(value).booleanValue();
 			}
 		}
@@ -659,10 +620,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		isInitializing = true;
 		String remoteConnection = null;
 		try {
-			remoteConnection = config
-					.getAttribute(
-							IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
-							""); //$NON-NLS-1$
+			remoteConnection = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION, ""); //$NON-NLS-1$
 		} catch (CoreException ce) {
 			// Ignore
 		}
@@ -691,26 +649,19 @@ public class RemoteCDSFMainTab extends CMainTab {
 
 	/*
 	 * performApply
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply
 	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 
 		int currentSelection = connectionCombo.getSelectionIndex();
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
-				currentSelection >= 0 ? connectionCombo
-						.getItem(currentSelection) : null);
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
-				remoteProgText.getText());
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
+		config.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
+				currentSelection >= 0 ? connectionCombo.getItem(currentSelection) : null);
+		config.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH, remoteProgText.getText());
+		config.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
 				skipDownloadButton.getSelection());
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS,
-				preRunText.getText());
+		config.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS, preRunText.getText());
 		super.performApply(config);
 	}
 
@@ -722,18 +673,11 @@ public class RemoteCDSFMainTab extends CMainTab {
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		super.setDefaults(config);
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
-				EMPTY_STRING);
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
-				REMOTE_PATH_DEFAULT);
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
+		config.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION, EMPTY_STRING);
+		config.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH, REMOTE_PATH_DEFAULT);
+		config.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
 				SKIP_DOWNLOAD_TO_REMOTE_DEFAULT);
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS,
-				EMPTY_STRING);
+		config.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS, EMPTY_STRING);
 	}
 
 }

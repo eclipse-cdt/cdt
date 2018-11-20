@@ -7,18 +7,19 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.pda.service.command;
 
 /**
- * 
+ *
  */
 public class PDATestEvent {
-    final public String fEventText;
-    PDATestEvent(String event) {
-        fEventText = event;
-    }
+	final public String fEventText;
+
+	PDATestEvent(String event) {
+		fEventText = event;
+	}
 }

@@ -132,8 +132,8 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 		ast = getAST(tu, progress.newChild(1));
 		index = getIndex();
 		nodeFactory = ast.getASTNodeFactory();
-		region = selectedRegion.getLength() == 0 ?
-				new Region(0, ast.getFileLocation().getNodeLength()) : selectedRegion;
+		region = selectedRegion.getLength() == 0 ? new Region(0, ast.getFileLocation().getNodeLength())
+				: selectedRegion;
 
 		if (isProgressMonitorCanceled(progress, initStatus))
 			return initStatus;
@@ -171,8 +171,7 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 		IASTPreprocessorMacroExpansion[] macroExpansions = ast.getMacroExpansions();
 		for (IASTPreprocessorMacroExpansion macroExpansion : macroExpansions) {
 			IASTName name = macroExpansion.getMacroReference();
-			if (SelectionHelper.isNodeInsideRegion(name, region)
-					&& !containsProtectionToken(name, code)
+			if (SelectionHelper.isNodeInsideRegion(name, region) && !containsProtectionToken(name, code)
 					&& macroExpansion.getMacroDefinition().getExpansion().isEmpty()) {
 				nodesToDelete.add(macroExpansion);
 			}
@@ -184,8 +183,7 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 
 		for (int i = declarations.size(); --i >= 0;) {
 			IASTDeclaration declaration = declarations.get(i);
-			if (SelectionHelper.isNodeInsideRegion(declaration, region)
-					&& !containsProtectionToken(declaration, code)
+			if (SelectionHelper.isNodeInsideRegion(declaration, region) && !containsProtectionToken(declaration, code)
 					&& !problemFinder.containsProblemBinding(declaration)
 					&& !isPossiblyUsed(declaration, names, nodesToDelete)) {
 				nodesToDelete.add(declaration);
@@ -310,8 +308,9 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 			} else {
 				ASTNodeProperty property = declName.getPropertyInParent();
 				if (property == IASTCompositeTypeSpecifier.TYPE_NAME
-						|| property == ICPPASTEnumerationSpecifier.ENUMERATION_NAME && ((ICPPASTEnumerationSpecifier) declName.getParent()).isScoped()) {
-					// Start from the first forward declaration of class or scoped enumeration. 
+						|| property == ICPPASTEnumerationSpecifier.ENUMERATION_NAME
+								&& ((ICPPASTEnumerationSpecifier) declName.getParent()).isScoped()) {
+					// Start from the first forward declaration of class or scoped enumeration.
 					while (declName instanceof ICPPASTTemplateId) {
 						declName = ((ICPPASTTemplateId) declName).getTemplateName();
 					}
@@ -331,7 +330,7 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 					}
 				}
 			}
-			
+
 			if (declNameChars.length != 0 && declNameChars[0] == '~')
 				declNameChars = Arrays.copyOfRange(declNameChars, 1, declNameChars.length);
 
@@ -412,7 +411,7 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 		} else if (declaration instanceof ICPPASTUsingDeclaration) {
 			return Collections.singletonList(((ICPPASTUsingDeclaration) declaration).getName());
 		} else if (declaration instanceof ICPPASTNamespaceAlias) {
-		    return Collections.singletonList(((ICPPASTNamespaceAlias) declaration).getAlias());
+			return Collections.singletonList(((ICPPASTNamespaceAlias) declaration).getAlias());
 		} else if (declaration instanceof ICPPASTAliasDeclaration) {
 			return Collections.singletonList(((ICPPASTAliasDeclaration) declaration).getAlias());
 		}
@@ -431,19 +430,17 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 	private static IASTDeclaration findTopmostNonTemplateDeclaration(IASTName name) {
 		IASTNode node = name;
 		ASTNodeProperty property = name.getPropertyInParent();
-		while (property == ICPPASTTemplateId.TEMPLATE_NAME
-				|| property == ICPPASTQualifiedName.SEGMENT_NAME && node == ((ICPPASTQualifiedName) node.getParent()).getLastName()) {
+		while (property == ICPPASTTemplateId.TEMPLATE_NAME || property == ICPPASTQualifiedName.SEGMENT_NAME
+				&& node == ((ICPPASTQualifiedName) node.getParent()).getLastName()) {
 			node = node.getParent();
 			property = node.getPropertyInParent();
 		}
-		if (property == IASTDeclarator.DECLARATOR_NAME
-				|| property == IASTCompositeTypeSpecifier.TYPE_NAME
+		if (property == IASTDeclarator.DECLARATOR_NAME || property == IASTCompositeTypeSpecifier.TYPE_NAME
 				|| property == IASTElaboratedTypeSpecifier.TYPE_NAME) {
 			node = node.getParent().getParent();
 		}
 		for (IASTNode parent; (parent = node.getParent()) != null; node = parent) {
-			if (!(parent instanceof IASTDeclaration)
-					|| parent instanceof ICPPASTTemplateDeclaration
+			if (!(parent instanceof IASTDeclaration) || parent instanceof ICPPASTTemplateDeclaration
 					|| parent instanceof ICPPASTTemplateSpecialization
 					|| parent instanceof ICPPASTNamespaceDefinition) {
 				if (node instanceof IASTDeclaration) {
@@ -452,7 +449,7 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 				break;
 			}
 		}
-			
+
 		return null;
 	}
 
@@ -462,7 +459,8 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 	private static boolean isDeclaredBy(IASTName name, IASTDeclaration declaration) {
 		if (declaration.getPropertyInParent() == ICPPASTTemplateSpecialization.OWNED_DECLARATION)
 			return false;
-		if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME && ((ICPPASTTemplateId) name.getParent()).resolveBinding() instanceof ICPPPartialSpecialization)
+		if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME
+				&& ((ICPPASTTemplateId) name.getParent()).resolveBinding() instanceof ICPPPartialSpecialization)
 			return false;
 		if (declaration instanceof IASTSimpleDeclaration) {
 			IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
@@ -471,21 +469,21 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 		}
 
 		while (name instanceof ICPPASTTemplateId) {
-			name = ((ICPPASTTemplateId) name).getTemplateName(); 
+			name = ((ICPPASTTemplateId) name).getTemplateName();
 		}
 		char[] nameChars = name.getSimpleID();
 		Collection<IASTName> declaredNames = getDeclaredNames(declaration);
 		if (declaredNames != null) {
 			for (IASTName declaredName : declaredNames) {
 				while (declaredName instanceof ICPPASTTemplateId) {
-					declaredName = ((ICPPASTTemplateId) declaredName).getTemplateName(); 
+					declaredName = ((ICPPASTTemplateId) declaredName).getTemplateName();
 				}
 				char[] declaredNameChars = declaredName.getSimpleID();
 				if (Arrays.equals(nameChars, declaredNameChars))
 					return true;
 			}
 		}
-			
+
 		return false;
 	}
 
@@ -538,50 +536,50 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 	/**
 	 * Collects all simple names.
 	 */
-    private static class NameCollector extends ASTVisitor {
-        NavigableSet<IASTName> names = new SortedNodeSet<>();
+	private static class NameCollector extends ASTVisitor {
+		NavigableSet<IASTName> names = new SortedNodeSet<>();
 
-        static NavigableSet<IASTName> getContainedNames(IASTNode node) {
-    		NameCollector collector = new NameCollector();
-    		node.accept(collector);
-    		return collector.names;
-        }
+		static NavigableSet<IASTName> getContainedNames(IASTNode node) {
+			NameCollector collector = new NameCollector();
+			node.accept(collector);
+			return collector.names;
+		}
 
-    	NameCollector() {
-    		this.shouldVisitNames = true;
-    		this.shouldVisitImplicitNames = true;
-    	}
+		NameCollector() {
+			this.shouldVisitNames = true;
+			this.shouldVisitImplicitNames = true;
+		}
 
-        @Override
+		@Override
 		public int visit(IASTName name) {
-        	if (name instanceof ICPPASTQualifiedName || name instanceof ICPPASTTemplateId
-        			|| name instanceof ICPPASTConversionName) {
-        		return PROCESS_CONTINUE;
-        	}
-            names.add(name);
-            return PROCESS_CONTINUE;
-        }
-    }
+			if (name instanceof ICPPASTQualifiedName || name instanceof ICPPASTTemplateId
+					|| name instanceof ICPPASTConversionName) {
+				return PROCESS_CONTINUE;
+			}
+			names.add(name);
+			return PROCESS_CONTINUE;
+		}
+	}
 
-    /**
+	/**
 	 * A set of AST nodes sorted by their offsets, or, if the offsets are equal, by the end offsets
-	 * in the reverse order. 
+	 * in the reverse order.
 	 */
-    private static class SortedNodeSet<T extends IASTNode> extends TreeSet<T> {
-    	private static final Comparator<IASTNode> COMPARATOR = new Comparator<IASTNode>() {
-    		@Override
-    		public int compare(IASTNode node1, IASTNode node2) {
-    			int c = Integer.compare(ASTNodes.offset(node1), ASTNodes.offset(node2));
-    			if (c != 0)
-    				return c;
-    			return -Integer.compare(ASTNodes.endOffset(node1), ASTNodes.endOffset(node2));
-    		}
-    	};
+	private static class SortedNodeSet<T extends IASTNode> extends TreeSet<T> {
+		private static final Comparator<IASTNode> COMPARATOR = new Comparator<IASTNode>() {
+			@Override
+			public int compare(IASTNode node1, IASTNode node2) {
+				int c = Integer.compare(ASTNodes.offset(node1), ASTNodes.offset(node2));
+				if (c != 0)
+					return c;
+				return -Integer.compare(ASTNodes.endOffset(node1), ASTNodes.endOffset(node2));
+			}
+		};
 
-    	public SortedNodeSet() {
-    		super(COMPARATOR);
-    	}
-    }
+		public SortedNodeSet() {
+			super(COMPARATOR);
+		}
+	}
 
 	private static IASTDeclarationStatement getDeclarationStatement(IASTDeclaration declaration) {
 		while (true) {

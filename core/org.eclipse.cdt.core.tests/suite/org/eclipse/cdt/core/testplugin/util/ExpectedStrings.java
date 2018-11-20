@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin.util;
 
-
 import java.util.Stack;
+
 /**
  * @author Peter Graves
  *
@@ -23,11 +23,11 @@ import java.util.Stack;
  */
 public class ExpectedStrings {
 
-	public String [] expStrings;
-	private boolean[] foundStrings; 
-	private Stack extraStrings; 	/* A stack of the unecpected strings we 
-									 * recieved
-									 */
+	public String[] expStrings;
+	private boolean[] foundStrings;
+	private Stack extraStrings; /* A stack of the unecpected strings we
+								 * recieved
+								 */
 	private boolean extra;
 
 	/**
@@ -35,75 +35,81 @@ public class ExpectedStrings {
 	 */
 	public ExpectedStrings() {
 	}
+
 	/**
 	 * Constructor for ExpectedStrings that accepts a list of strings that
 	 * we expect to get.
 	 */
 	public ExpectedStrings(String[] values) {
 		int x;
-		expStrings=new String[values.length];
-		for (x=0;x<values.length;x++) {
-			expStrings[x]=values[x];
+		expStrings = new String[values.length];
+		for (x = 0; x < values.length; x++) {
+			expStrings[x] = values[x];
 		}
-		foundStrings=new boolean[values.length];
-		for (x=0;x<values.length;x++) {
-			foundStrings[x]=false;
+		foundStrings = new boolean[values.length];
+		for (x = 0; x < values.length; x++) {
+			foundStrings[x] = false;
 		}
-		extraStrings=new Stack();
-		extra=false;
+		extraStrings = new Stack();
+		extra = false;
 	}
-	
+
 	public int foundString(String current) {
 		int x;
-		for (x=0;x<expStrings.length;x++) {
+		for (x = 0; x < expStrings.length; x++) {
 			if (current.equals(expStrings[x])) {
-				foundStrings[x]=true;
-				return(0);
+				foundStrings[x] = true;
+				return (0);
 			}
 		}
 		/* If we arrive here, the strings was not found, so this is
 		 * and extra string
 		 */
 
-		 extraStrings.push(current);
-		 extra=true;
-		 return(1);
+		extraStrings.push(current);
+		extra = true;
+		return (1);
 	}
+
 	public int getNum(String name) {
 		int x;
-		for (x=0;x<expStrings.length;x++) {
+		for (x = 0; x < expStrings.length; x++) {
 			if (name.equals(expStrings[x]))
-				return(x);
+				return (x);
 		}
-		return(-1);
+		return (-1);
 	}
+
 	public boolean gotAll() {
 		int x;
-		for (x=0;x<expStrings.length;x++) {
-			if (foundStrings[x]==false)
-				return(false);
+		for (x = 0; x < expStrings.length; x++) {
+			if (foundStrings[x] == false)
+				return (false);
 		}
-		return(true);
+		return (true);
 	}
+
 	public boolean gotExtra() {
-		return(extra);
+		return (extra);
 	}
+
 	public String getMissingString() {
 		int x;
 		String missing = "Missing elements: ";
-		for (x=0;x<expStrings.length;x++) {
-			if (foundStrings[x]==false)
-				missing+=expStrings[x];
-				missing+=" ";
+		for (x = 0; x < expStrings.length; x++) {
+			if (foundStrings[x] == false)
+				missing += expStrings[x];
+			missing += " ";
 		}
-		return(missing);
+		return (missing);
 	}
+
 	public String getExtraString() {
-		String extra= "Extra elements: ";
+		String extra = "Extra elements: ";
 		while (!extraStrings.empty()) {
-			extra+=extraStrings.pop();
-			extra+=" ";
+			extra += extraStrings.pop();
+			extra += " ";
 		}
-		return(extra);
+		return (extra);
 	}
 }

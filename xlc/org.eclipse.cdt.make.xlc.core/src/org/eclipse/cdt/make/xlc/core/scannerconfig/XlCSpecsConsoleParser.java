@@ -43,26 +43,23 @@ import org.eclipse.cdt.core.CProjectNature;
 public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 
 	// pattern for the output line of interest
-	final Pattern linePattern = Pattern
-			.compile("exec:\\s(?!export)(?:.*)\\((.*)\\)"); //$NON-NLS-1$
+	final Pattern linePattern = Pattern.compile("exec:\\s(?!export)(?:.*)\\((.*)\\)"); //$NON-NLS-1$
 
 	// pattern for the symbols arguments
 	final Pattern symbolPattern = Pattern.compile("-D(.*)"); //$NON-NLS-1$
 
 	// pattern for the includes arguments
-	final Pattern includePattern = Pattern
-			.compile("-(?:qgcc_c_stdinc|qc_stdinc|qgcc_cpp_stdinc|qcpp_stdinc)=(.*)"); //$NON-NLS-1$
+	final Pattern includePattern = Pattern.compile("-(?:qgcc_c_stdinc|qc_stdinc|qgcc_cpp_stdinc|qcpp_stdinc)=(.*)"); //$NON-NLS-1$
 
 	final Pattern C_includePattern = Pattern.compile("-(?:qgcc_c_stdinc|qc_stdinc)=(.*)"); //$NON-NLS-1$
 	final Pattern CXX_includePattern = Pattern.compile("-(?:qgcc_cpp_stdinc|qcpp_stdinc)=(.*)"); //$NON-NLS-1$
-	
+
 	// xlC compiler constants
-	protected final static String [] compilerConstants = {
-	    	"_Builtin", //$NON-NLS-1$
+	protected final static String[] compilerConstants = { "_Builtin", //$NON-NLS-1$
 			"__IBMCPP__", //$NON-NLS-1$
-			"__xlC__",    //$NON-NLS-1$
-			"__IBMC__",   //$NON-NLS-1$
-			"__xlc__"     //$NON-NLS-1$
+			"__xlC__", //$NON-NLS-1$
+			"__IBMC__", //$NON-NLS-1$
+			"__xlc__" //$NON-NLS-1$
 	};
 
 	private IProject fProject = null;
@@ -71,11 +68,12 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 
 	protected List<String> symbols = new ArrayList<String>();
 
-	protected List<String> includes = new ArrayList<String>();	
+	protected List<String> includes = new ArrayList<String>();
 	protected List<String> c_includes = new ArrayList<String>();
 	protected List<String> cpp_includes = new ArrayList<String>();
-	
-	boolean c_lang;  // if language is C only search for the C include paths from the XL Compiler, otherwise get the C++ ones.
+
+	boolean c_lang; // if language is C only search for the C include paths from the XL Compiler, otherwise get the C++ ones.
+
 	public boolean isC_lang() {
 		return c_lang;
 	}
@@ -94,20 +92,19 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 * @since 1.0
 	 */
 	@Override
-	public void startup(IProject project, IPath workingDirectory,
-			IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
+	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector,
+			IMarkerGenerator markerGenerator) {
 		this.fProject = project;
 		this.fCollector = collector;
-		
+
 		try {
 			if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
 				// use C++ pattern
 				c_lang = false;
-			}
-			else {
+			} else {
 				// use C pattern
 				c_lang = true;
-			}			
+			}
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -129,10 +126,9 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	@Override
 	public boolean processLine(String line) {
 		boolean rc = false;
-		TraceUtil.outputTrace(
-				"XLCSpecsConsoleParser parsing line: [", line, "]"); //$NON-NLS-1$ //$NON-NLS-2$
+		TraceUtil.outputTrace("XLCSpecsConsoleParser parsing line: [", line, "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		line= line.trim();
+		line = line.trim();
 		if (line.length() == 0) {
 			return false;
 		}
@@ -147,18 +143,17 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 			for (int i = 0; i < args.length; i++) {
 				// getting the arguments of interest
 				Matcher symbolMatcher = symbolPattern.matcher(args[i]);
-				if (symbolMatcher.matches()
-						&& !symbols.contains(symbolMatcher.group(1))) {
+				if (symbolMatcher.matches() && !symbols.contains(symbolMatcher.group(1))) {
 					// if it is a symbol and it was not yet added
 					symbols.add(symbolMatcher.group(1));
 				} else {
 					// if it is not a symbol, check to see if it is an
 					// include
-					Matcher includeMatcher =  c_lang ? C_includePattern.matcher(args[i]) : CXX_includePattern.matcher(args[i]);
+					Matcher includeMatcher = c_lang ? C_includePattern.matcher(args[i])
+							: CXX_includePattern.matcher(args[i]);
 					if (includeMatcher.matches()) {
 						// if it is a set of include paths, split it
-						String[] includePaths = includeMatcher.group(1).split(
-								":"); //$NON-NLS-1$
+						String[] includePaths = includeMatcher.group(1).split(":"); //$NON-NLS-1$
 						for (int j = 0; j < includePaths.length; j++) {
 							if (!includes.contains(includePaths[j])) {
 								// if the include path was not yet added
@@ -193,7 +188,7 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 		scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
 
 		fCollector.contributeToScannerConfig(fProject, scannerInfo);
-		if(fCollector != null && fCollector instanceof IScannerInfoCollector2) {
+		if (fCollector != null && fCollector instanceof IScannerInfoCollector2) {
 			IScannerInfoCollector2 collector = (IScannerInfoCollector2) fCollector;
 			try {
 				collector.updateScannerConfiguration(null);
@@ -202,9 +197,8 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 				Activator.log(e);
 			}
 		}
-		TraceUtil.outputTrace(
-						"Scanner info from \'specs\' file", //$NON-NLS-1$
-						"Include paths", includes, new ArrayList<String>(), "Defined symbols", symbols); //$NON-NLS-1$ //$NON-NLS-2$
+		TraceUtil.outputTrace("Scanner info from \'specs\' file", //$NON-NLS-1$
+				"Include paths", includes, new ArrayList<String>(), "Defined symbols", symbols); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

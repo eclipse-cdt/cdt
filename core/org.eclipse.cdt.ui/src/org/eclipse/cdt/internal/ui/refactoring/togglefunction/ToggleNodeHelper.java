@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Martin Schwab & Thomas Kallenberg - initial API and implementation
  *     Marc-Andre Laperle (Ericsson)
  *     Thomas Corbat (IFS)
@@ -86,9 +86,8 @@ public class ToggleNodeHelper extends NodeHelper {
 	}
 
 	private static List<ICPPASTConstructorChainInitializer> getInitializerList(IASTFunctionDefinition definition) {
-		ArrayList<ICPPASTConstructorChainInitializer> initalizers = 
-				new ArrayList<ICPPASTConstructorChainInitializer>();
-	
+		ArrayList<ICPPASTConstructorChainInitializer> initalizers = new ArrayList<ICPPASTConstructorChainInitializer>();
+
 		for (IASTNode node : definition.getChildren()) {
 			if (node instanceof ICPPASTConstructorChainInitializer) {
 				initalizers.add(((ICPPASTConstructorChainInitializer) node).copy(CopyStyle.withLocations));
@@ -105,9 +104,8 @@ public class ToggleNodeHelper extends NodeHelper {
 		return newDeclaration;
 	}
 
-	static ICPPASTFunctionDefinition createFunctionSignatureWithEmptyBody(
-			IASTDeclSpecifier newDeclSpec, IASTFunctionDeclarator newFuncDecl, 
-			IASTFunctionDefinition oldDefinition) {
+	static ICPPASTFunctionDefinition createFunctionSignatureWithEmptyBody(IASTDeclSpecifier newDeclSpec,
+			IASTFunctionDeclarator newFuncDecl, IASTFunctionDefinition oldDefinition) {
 		ICPPASTFunctionDefinition newFunc = null;
 		newFuncDecl = adjustParamNames(newFuncDecl, oldDefinition);
 		if (oldDefinition instanceof ICPPASTFunctionWithTryBlock) {
@@ -118,15 +116,17 @@ public class ToggleNodeHelper extends NodeHelper {
 		copyInitializerList(newFunc, oldDefinition);
 		return newFunc;
 	}
-	
+
 	private static IASTFunctionDeclarator adjustParamNames(IASTFunctionDeclarator newFuncDecl,
 			IASTFunctionDefinition oldDefinition) {
 		if (oldDefinition.getDeclarator() instanceof IASTStandardFunctionDeclarator) {
 			IASTStandardFunctionDeclarator oldStdDec = (IASTStandardFunctionDeclarator) oldDefinition.getDeclarator();
 			IASTParameterDeclaration[] definitionParams = oldStdDec.getParameters();
-			IASTParameterDeclaration[] declarationParams = ((IASTStandardFunctionDeclarator)newFuncDecl).getParameters();
-			for(int i = 0; i < declarationParams.length; ++i) {
-				declarationParams[i].getDeclarator().setName(definitionParams[i].getDeclarator().getName().copy(CopyStyle.withLocations));
+			IASTParameterDeclaration[] declarationParams = ((IASTStandardFunctionDeclarator) newFuncDecl)
+					.getParameters();
+			for (int i = 0; i < declarationParams.length; ++i) {
+				declarationParams[i].getDeclarator()
+						.setName(definitionParams[i].getDeclarator().getName().copy(CopyStyle.withLocations));
 			}
 		}
 		return newFuncDecl;
@@ -139,15 +139,15 @@ public class ToggleNodeHelper extends NodeHelper {
 		}
 	}
 
-	static IASTFunctionDefinition getQualifiedNameDefinition(IASTFunctionDefinition oldDefinition, 
+	static IASTFunctionDefinition getQualifiedNameDefinition(IASTFunctionDefinition oldDefinition,
 			IASTTranslationUnit definitionUnit, IASTNode nameSpace) {
 		ICPPASTDeclSpecifier newDeclSpecifier = createDeclSpecifier(oldDefinition);
 		IASTFunctionDeclarator newDeclarator = oldDefinition.getDeclarator().copy(CopyStyle.withLocations);
 		newDeclarator.setName(getQualifiedName(oldDefinition.getDeclarator(), nameSpace));
 		removeParameterInitializations(newDeclarator);
 
-		ICPPASTFunctionDefinition newFunction = 
-				createFunctionSignatureWithEmptyBody(newDeclSpecifier, newDeclarator, oldDefinition);
+		ICPPASTFunctionDefinition newFunction = createFunctionSignatureWithEmptyBody(newDeclSpecifier, newDeclarator,
+				oldDefinition);
 		// Virt-specifiers are only valid in the class declaration.
 		if (newFunction.getDeclarator() instanceof ICPPASTFunctionDeclarator) {
 			ICPPASTFunctionDeclarator functionDeclarator = (ICPPASTFunctionDeclarator) newFunction.getDeclarator();
@@ -159,7 +159,8 @@ public class ToggleNodeHelper extends NodeHelper {
 
 	private static ICPPASTDeclSpecifier createDeclSpecifier(IASTFunctionDefinition oldDefinition) {
 		IASTDeclSpecifier originalDeclSpecifier = oldDefinition.getDeclSpecifier();
-		ICPPASTDeclSpecifier newDeclSpecifier = (ICPPASTDeclSpecifier) originalDeclSpecifier.copy(CopyStyle.withLocations);
+		ICPPASTDeclSpecifier newDeclSpecifier = (ICPPASTDeclSpecifier) originalDeclSpecifier
+				.copy(CopyStyle.withLocations);
 		if (newDeclSpecifier instanceof ICPPASTNamedTypeSpecifier) {
 			ICPPASTNamedTypeSpecifier newNamedTypeSpecifier = (ICPPASTNamedTypeSpecifier) newDeclSpecifier;
 			IASTName typename = ((ICPPASTNamedTypeSpecifier) originalDeclSpecifier).getName();
@@ -172,8 +173,7 @@ public class ToggleNodeHelper extends NodeHelper {
 		return newDeclSpecifier;
 	}
 
-	private static void adaptTemplateQualifiers(ICPPASTNamedTypeSpecifier newDeclSpecifier,
-			IBinding typenameBinding) {
+	private static void adaptTemplateQualifiers(ICPPASTNamedTypeSpecifier newDeclSpecifier, IBinding typenameBinding) {
 		if (typenameBinding instanceof ICPPBinding) {
 			try {
 				String[] nameParts = ((ICPPBinding) typenameBinding).getQualifiedName();
@@ -232,12 +232,14 @@ public class ToggleNodeHelper extends NodeHelper {
 		return newTemplateId;
 	}
 
-	private static ICPPASTTemplateId createTemplateIdForArguments(IASTName qualifierName, ICPPTemplateArgument[] templateArguments) {
+	private static ICPPASTTemplateId createTemplateIdForArguments(IASTName qualifierName,
+			ICPPTemplateArgument[] templateArguments) {
 		ICPPASTTemplateId newTemplateId = factory.newTemplateId(qualifierName);
 		for (ICPPTemplateArgument templateArgument : templateArguments) {
 			IType type = templateArgument.getOriginalTypeValue();
 			DeclarationGeneratorImpl declarationGeneratorImpl = new DeclarationGeneratorImpl(factory);
-			IASTDeclarator abstractDeclarator = declarationGeneratorImpl.createDeclaratorFromType(type, EMPTY_STRING.toCharArray());
+			IASTDeclarator abstractDeclarator = declarationGeneratorImpl.createDeclaratorFromType(type,
+					EMPTY_STRING.toCharArray());
 			IType ultimateType = SemanticUtil.getUltimateType(type, false);
 			IASTName templateParameterName = factory.newName(ASTTypeUtil.getType(ultimateType, false));
 			ICPPASTNamedTypeSpecifier typeSpecifier = factory.newNamedTypeSpecifier(templateParameterName);
@@ -260,8 +262,8 @@ public class ToggleNodeHelper extends NodeHelper {
 		return newTemplateId;
 	}
 
-	public static ICPPASTTemplateDeclaration getTemplateDeclaration(
-			IASTFunctionDefinition oldFunction, IASTFunctionDefinition newFunction) {
+	public static ICPPASTTemplateDeclaration getTemplateDeclaration(IASTFunctionDefinition oldFunction,
+			IASTFunctionDefinition newFunction) {
 		ArrayList<ICPPASTTemplateDeclaration> templateDeclarations = getAllTemplateDeclarations(oldFunction);
 		return addTemplateDeclarationsInOrder(templateDeclarations, newFunction);
 	}
@@ -296,17 +298,16 @@ public class ToggleNodeHelper extends NodeHelper {
 		return templdecs;
 	}
 
-	static IASTFunctionDefinition createInClassDefinition(IASTFunctionDeclarator dec, 
-			IASTFunctionDefinition def, IASTTranslationUnit insertionAst) {
+	static IASTFunctionDefinition createInClassDefinition(IASTFunctionDeclarator dec, IASTFunctionDefinition def,
+			IASTTranslationUnit insertionAst) {
 		IASTFunctionDeclarator declarator = dec.copy(CopyStyle.withLocations);
-		IASTDeclSpecifier declSpec =
-				def.getDeclSpecifier().copy(CopyStyle.withLocations);
+		IASTDeclSpecifier declSpec = def.getDeclSpecifier().copy(CopyStyle.withLocations);
 		declSpec.setInline(false);
 		if (declSpec instanceof ICPPASTDeclSpecifier && ToggleNodeHelper.isVirtual(dec)) {
 			((ICPPASTDeclSpecifier) declSpec).setVirtual(true);
 		}
 		declSpec.setStorageClass(getStorageClass(dec));
-		
+
 		return createFunctionSignatureWithEmptyBody(declSpec, declarator, def);
 	}
 
@@ -317,7 +318,7 @@ public class ToggleNodeHelper extends NodeHelper {
 		}
 		return false;
 	}
-	
+
 	static int getStorageClass(IASTFunctionDeclarator fdec) {
 		if (fdec.getParent() instanceof IASTSimpleDeclaration) {
 			IASTSimpleDeclaration dec = (IASTSimpleDeclaration) fdec.getParent();
@@ -328,8 +329,7 @@ public class ToggleNodeHelper extends NodeHelper {
 
 	static IASTNode getParentRemovePoint(IASTFunctionDefinition definition) {
 		IASTNode toremove = definition;
-		while (toremove.getParent() != null &&
-				toremove.getParent() instanceof ICPPASTTemplateDeclaration) {
+		while (toremove.getParent() != null && toremove.getParent() instanceof ICPPASTTemplateDeclaration) {
 			toremove = toremove.getParent();
 		}
 		return toremove;
@@ -362,8 +362,8 @@ public class ToggleNodeHelper extends NodeHelper {
 		return qName;
 	}
 
-	private static Stack<IASTNode> getQualifiedNames(IASTFunctionDeclarator declarator,
-			IASTNode limiter, IASTNode node) {
+	private static Stack<IASTNode> getQualifiedNames(IASTFunctionDeclarator declarator, IASTNode limiter,
+			IASTNode node) {
 		IASTName lastName = declarator.getName();
 		Stack<IASTNode> nodes = new Stack<IASTNode>();
 		while (node.getParent() != null && node.getParent() != limiter) {
@@ -379,15 +379,14 @@ public class ToggleNodeHelper extends NodeHelper {
 					nodes.pop();
 				ICPPASTTemplateId templateID = getTemplateParameter(node, lastName);
 				nodes.add(templateID);
-			} 
+			}
 		}
 		return nodes;
 	}
 
 	private static boolean shouldAddTemplateBrackets(IASTNode node) {
 		return node instanceof ICPPASTTemplateDeclaration
-				&& !(((ICPPASTTemplateDeclaration) node).getDeclaration() 
-						instanceof ICPPASTFunctionDefinition);
+				&& !(((ICPPASTTemplateDeclaration) node).getDeclaration() instanceof ICPPASTFunctionDefinition);
 	}
 
 	private static ICPPASTTemplateId getTemplateParameter(IASTNode node, IASTName name) {
@@ -415,11 +414,11 @@ public class ToggleNodeHelper extends NodeHelper {
 
 	/**
 	 * Will extract the innermost ICPPASTFunctionDefinition out of a template declaration.
-	 * 
+	 *
 	 * template<typename T>				// <-- input this node
 	 * template<typename U>
-	 * void function(T t, U u) { ... }  // <-- will find this node here 
-	 * 
+	 * void function(T t, U u) { ... }  // <-- will find this node here
+	 *
 	 * @param declaration the template declaration that should be searched for the function definition.
 	 * @return null if a declaration is found instead of a definition.
 	 */
@@ -439,35 +438,31 @@ public class ToggleNodeHelper extends NodeHelper {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gets comments inside the body of a function.
 	 * @return The body as a string and all the catch handlers
 	 */
 	public static String getBody(IASTFunctionDefinition oldDefinition, IASTTranslationUnit ast,
 			ModificationCollector modifications) {
-		return getBodyOnly(oldDefinition, ast, modifications)
-				+ getCatchHandlers(oldDefinition, ast, modifications);
+		return getBodyOnly(oldDefinition, ast, modifications) + getCatchHandlers(oldDefinition, ast, modifications);
 	}
 
 	private static String getBodyOnly(IASTFunctionDefinition oldDefinition, IASTTranslationUnit ast,
 			ModificationCollector modifications) {
-		String leadingComments = getCommentsAsString(getLeadingCommentsFromNode(oldDefinition.getBody(),
-				ast, modifications));
-		String trailingComments = getCommentsAsString(getTrailingComments(oldDefinition.getBody(),
-				ast, modifications));
+		String leadingComments = getCommentsAsString(
+				getLeadingCommentsFromNode(oldDefinition.getBody(), ast, modifications));
+		String trailingComments = getCommentsAsString(getTrailingComments(oldDefinition.getBody(), ast, modifications));
 		return leadingComments + oldDefinition.getBody().getRawSignature() + trailingComments;
 	}
 
 	private static String getCatchHandlers(IASTFunctionDefinition oldDefinition, IASTTranslationUnit ast,
 			ModificationCollector modifications) {
 		if (oldDefinition instanceof ICPPASTFunctionWithTryBlock) {
-			ICPPASTCatchHandler[] oldCatches =
-					((ICPPASTFunctionWithTryBlock) oldDefinition).getCatchHandlers();
+			ICPPASTCatchHandler[] oldCatches = ((ICPPASTFunctionWithTryBlock) oldDefinition).getCatchHandlers();
 			String allCatchHandlers = ""; //$NON-NLS-1$
 			for (int i = 0; i < oldCatches.length; i++) {
-				String lead = getCommentsAsString(getLeadingCommentsFromNode(oldCatches[i], ast,
-						modifications));
+				String lead = getCommentsAsString(getLeadingCommentsFromNode(oldCatches[i], ast, modifications));
 				String trail = getCommentsAsString(getTrailingComments(oldCatches[i], ast, modifications));
 				allCatchHandlers += lead + oldCatches[i].getRawSignature() + trail;
 			}
@@ -476,14 +471,14 @@ public class ToggleNodeHelper extends NodeHelper {
 		return ""; //$NON-NLS-1$
 	}
 
-	private static List<IASTComment> getLeadingCommentsFromNode(IASTNode existingNode,
-			IASTTranslationUnit ast, ModificationCollector modifications) {
+	private static List<IASTComment> getLeadingCommentsFromNode(IASTNode existingNode, IASTTranslationUnit ast,
+			ModificationCollector modifications) {
 		ASTRewrite rw = modifications.rewriterForTranslationUnit(ast);
 		return rw.getComments(existingNode, CommentPosition.leading);
 	}
 
-	private static List<IASTComment> getTrailingComments(IASTNode existingNode,
-			IASTTranslationUnit ast, ModificationCollector modifications) {
+	private static List<IASTComment> getTrailingComments(IASTNode existingNode, IASTTranslationUnit ast,
+			ModificationCollector modifications) {
 		ASTRewrite rw = modifications.rewriterForTranslationUnit(ast);
 		return rw.getComments(existingNode, CommentPosition.trailing);
 	}
@@ -503,7 +498,7 @@ public class ToggleNodeHelper extends NodeHelper {
 		}
 		return lastSeen;
 	}
-	
+
 	private static String getCommentsAsString(List<IASTComment> commentList) {
 		String comments = EMPTY_STRING;
 		for (IASTComment c : commentList) {

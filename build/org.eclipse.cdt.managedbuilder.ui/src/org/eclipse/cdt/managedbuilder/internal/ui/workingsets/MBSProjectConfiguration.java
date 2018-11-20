@@ -32,16 +32,16 @@ import org.eclipse.osgi.util.NLS;
 /**
  * A managed-build implementation of the working set project configuration. It
  * knows how to build the selected configuration without activating it.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 class MBSProjectConfiguration extends WorkingSetProjectConfiguration {
 
 	/**
 	 * Initializes me.
-	 * 
+	 *
 	 * @param parent
 	 *            my parent working set configuration
 	 */
@@ -51,38 +51,34 @@ class MBSProjectConfiguration extends WorkingSetProjectConfiguration {
 
 	@Override
 	public IStatus build(IProgressMonitor monitor) {
-		return MBSProjectConfiguration.build(resolveProject(),
-				resolveSelectedConfiguration(), monitor);
+		return MBSProjectConfiguration.build(resolveProject(), resolveSelectedConfiguration(), monitor);
 	}
 
 	/**
 	 * Builds the MBS configuration selected by the specified working set
 	 * project configuration.
-	 * 
+	 *
 	 * @param projectConfig
 	 *            a project configuration to build
 	 * @param monitor
 	 *            for reporting build progress
-	 * 
+	 *
 	 * @return the result of the MBS build
 	 */
-	static IStatus build(IProject project, ICConfigurationDescription config,
-			IProgressMonitor monitor) {
+	static IStatus build(IProject project, ICConfigurationDescription config, IProgressMonitor monitor) {
 
 		IStatus result = Status.OK_STATUS;
 
-		IConfiguration mbsConfig = (config == null) ? null
-				: ManagedBuildManager.getConfigurationForDescription(config);
+		IConfiguration mbsConfig = (config == null) ? null : ManagedBuildManager.getConfigurationForDescription(config);
 
 		if (mbsConfig == null) {
-			result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
-					NLS.bind(Messages.MBSProjectConfiguration_No_configuration_selected_for_project, project.getName()));
+			result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, NLS
+					.bind(Messages.MBSProjectConfiguration_No_configuration_selected_for_project, project.getName()));
 		} else {
 			monitor = SubMonitor.convert(monitor);
 
 			try {
-				ManagedBuildManager.buildConfigurations(
-						new IConfiguration[] { mbsConfig }, monitor);
+				ManagedBuildManager.buildConfigurations(new IConfiguration[] { mbsConfig }, monitor);
 			} catch (CoreException e) {
 				result = e.getStatus();
 			}

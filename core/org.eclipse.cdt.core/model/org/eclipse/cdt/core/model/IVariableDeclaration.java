@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.model;
 
 /**
  * Represents the declaration of a variable.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -26,7 +26,7 @@ public interface IVariableDeclaration extends IDeclaration {
 	 * @throws CModelException
 	 */
 	public String getTypeName() throws CModelException;
-	
+
 	/**
 	 * Sets the variable declaration type name.
 	 * @param type

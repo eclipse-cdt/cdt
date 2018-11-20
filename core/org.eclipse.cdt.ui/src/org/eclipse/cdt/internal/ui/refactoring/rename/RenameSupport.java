@@ -43,29 +43,35 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringStarter;
  */
 public class RenameSupport {
 	/** Flag indication that no additional update is to be performed. */
-	public static final int NONE= 0;
+	public static final int NONE = 0;
 
 	/** Flag indicating that references are to be updated as well. */
-	public static final int UPDATE_REFERENCES= 1 << 0;
+	public static final int UPDATE_REFERENCES = 1 << 0;
 
 	/**
 	 * Flag indicating that textual matches in comments and in string literals
 	 * are to be updated as well.
 	 */
-	public static final int UPDATE_TEXTUAL_MATCHES= 1 << 6;
+	public static final int UPDATE_TEXTUAL_MATCHES = 1 << 6;
 
 	/** Flag indicating that the getter method is to be updated as well. */
-	public static final int UPDATE_GETTER_METHOD= 1 << 4;
+	public static final int UPDATE_GETTER_METHOD = 1 << 4;
 
 	/** Flag indicating that the setter method is to be updated as well. */
-	public static final int UPDATE_SETTER_METHOD= 1 << 5;
+	public static final int UPDATE_SETTER_METHOD = 1 << 5;
 
-    /** @see #openDialog(Shell, CRenameRefactoring, DialogMode) */
-    private enum DialogMode { ALL_PAGES, PREVIEW_ONLY, CONDITIONAL_PREVIEW }
-    /** @see #openDialog(Shell, CRenameRefactoring, DialogMode) */
-    private enum DialogResult { OK, CANCELED, SKIPPED }
-    // Same as org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage#PAGE_NAME
-    private static final String ERROR_PAGE_NAME = "ErrorPage"; //$NON-NLS-1$
+	/** @see #openDialog(Shell, CRenameRefactoring, DialogMode) */
+	private enum DialogMode {
+		ALL_PAGES, PREVIEW_ONLY, CONDITIONAL_PREVIEW
+	}
+
+	/** @see #openDialog(Shell, CRenameRefactoring, DialogMode) */
+	private enum DialogResult {
+		OK, CANCELED, SKIPPED
+	}
+
+	// Same as org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage#PAGE_NAME
+	private static final String ERROR_PAGE_NAME = "ErrorPage"; //$NON-NLS-1$
 
 	private CRenameRefactoring fRefactoring;
 	private RefactoringStatus fPreCheckStatus;
@@ -104,7 +110,7 @@ public class RenameSupport {
 	 * @see #openDialog(Shell, boolean)
 	 */
 	public boolean openDialog(Shell shell) throws CoreException {
-        return openDialog(shell, false);
+		return openDialog(shell, false);
 	}
 
 	/**
@@ -133,8 +139,8 @@ public class RenameSupport {
 			return false;
 		}
 
-		DialogMode mode = showPreviewOnly ?	DialogMode.PREVIEW_ONLY : DialogMode.ALL_PAGES; 
-        return openDialog(shell, fRefactoring, mode) == DialogResult.OK;
+		DialogMode mode = showPreviewOnly ? DialogMode.PREVIEW_ONLY : DialogMode.ALL_PAGES;
+		return openDialog(shell, fRefactoring, mode) == DialogResult.OK;
 	}
 
 	/**
@@ -146,7 +152,7 @@ public class RenameSupport {
 	 * @see #openDialog(Shell, boolean)
 	 */
 	public static void openDialog(Shell shell, CRenameRefactoring refactoring) {
-        openDialog(shell, refactoring, DialogMode.ALL_PAGES);
+		openDialog(shell, refactoring, DialogMode.ALL_PAGES);
 	}
 
 	/**
@@ -169,56 +175,54 @@ public class RenameSupport {
 	static DialogResult openDialog(Shell shell, CRenameRefactoring refactoring, final DialogMode mode) {
 		try {
 			final boolean[] dialogSkipped = new boolean[1];
-    		CRenameRefactoringWizard wizard;
-    		if (mode == DialogMode.ALL_PAGES) {
-    			wizard = new CRenameRefactoringWizard(refactoring);
-    		} else {
-    			wizard = new CRenameRefactoringWizard(refactoring) {
+			CRenameRefactoringWizard wizard;
+			if (mode == DialogMode.ALL_PAGES) {
+				wizard = new CRenameRefactoringWizard(refactoring);
+			} else {
+				wizard = new CRenameRefactoringWizard(refactoring) {
 					@Override
 					protected void addUserInputPages() {
-    					// Nothing to add
-    				}
+						// Nothing to add
+					}
 
 					@Override
 					public IWizardPage getStartingPage() {
 						IWizardPage startingPage = super.getStartingPage();
-						if (mode == DialogMode.CONDITIONAL_PREVIEW &&
-								!startingPage.getName().equals(ERROR_PAGE_NAME)) {
+						if (mode == DialogMode.CONDITIONAL_PREVIEW && !startingPage.getName().equals(ERROR_PAGE_NAME)) {
 							dialogSkipped[0] = true;
 							return null;
 						}
 						return startingPage;
 					}
-    			};
-    			wizard.setForcePreviewReview(mode != DialogMode.ALL_PAGES);
-    		}
-    		RefactoringStarter starter = new RefactoringStarter();
+				};
+				wizard.setForcePreviewReview(mode != DialogMode.ALL_PAGES);
+			}
+			RefactoringStarter starter = new RefactoringStarter();
 			CRenameProcessor processor = refactoring.getProcessor();
-        	processor.lockIndex();
-        	try {
-        		RefactoringStatus status = processor.checkInitialConditions(new NullProgressMonitor());
-        		if (status.hasFatalError()) {
+			processor.lockIndex();
+			try {
+				RefactoringStatus status = processor.checkInitialConditions(new NullProgressMonitor());
+				if (status.hasFatalError()) {
 					showInformation(shell, status);
-        			return DialogResult.CANCELED;
-        		}
-        		if (starter.activate(wizard, shell, RenameMessages.CRefactory_title_rename,
-        				processor.getSaveMode())) {
-        			return DialogResult.OK;
-        		}
-        		if (dialogSkipped[0]) {
-        			// If the dialog was not shown, it is our responsibility to close it.
-        			wizard.getContainer().getShell().close();
-        			return DialogResult.SKIPPED;
-        		}
-        	} finally {
-        		processor.unlockIndex();
-        	}
-        } catch (InterruptedException e) {
+					return DialogResult.CANCELED;
+				}
+				if (starter.activate(wizard, shell, RenameMessages.CRefactory_title_rename, processor.getSaveMode())) {
+					return DialogResult.OK;
+				}
+				if (dialogSkipped[0]) {
+					// If the dialog was not shown, it is our responsibility to close it.
+					wizard.getContainer().getShell().close();
+					return DialogResult.SKIPPED;
+				}
+			} finally {
+				processor.unlockIndex();
+			}
+		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-        } catch (CoreException e) {
-        	CUIPlugin.log(e);
+		} catch (CoreException e) {
+			CUIPlugin.log(e);
 		}
-        return DialogResult.CANCELED;
+		return DialogResult.CANCELED;
 	}
 
 	/**
@@ -257,7 +261,8 @@ public class RenameSupport {
 	static DialogResult openRenameResourceDialog(Shell shell, final DialogMode mode, IResource resource) {
 		CResourceRenameRefactoringWizard wizard = new CResourceRenameRefactoringWizard(resource);
 		RefactoringStarter starter = new RefactoringStarter();
-		if (starter.activate(wizard, shell, RenameMessages.RenameSupport_rename_resource, RefactoringSaveHelper.SAVE_ALL)) {
+		if (starter.activate(wizard, shell, RenameMessages.RenameSupport_rename_resource,
+				RefactoringSaveHelper.SAVE_ALL)) {
 			return DialogResult.OK;
 		}
 
@@ -284,7 +289,8 @@ public class RenameSupport {
 	 * @see #openDialog(Shell)
 	 * @see IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
-	public boolean perform(Shell parent, IWorkbenchWindow context) throws InterruptedException, InvocationTargetException {
+	public boolean perform(Shell parent, IWorkbenchWindow context)
+			throws InterruptedException, InvocationTargetException {
 		try {
 			ensureChecked();
 			if (fPreCheckStatus.hasFatalError()) {
@@ -300,15 +306,14 @@ public class RenameSupport {
 					showInformation(parent, fPreCheckStatus);
 					return false;
 				}
-				DialogResult result = openDialog(context.getShell(), fRefactoring,
-						DialogMode.CONDITIONAL_PREVIEW);
+				DialogResult result = openDialog(context.getShell(), fRefactoring, DialogMode.CONDITIONAL_PREVIEW);
 				switch (result) {
 				case OK:
 					return true;
 				case SKIPPED:
-					RefactoringExecutionHelper helper= new RefactoringExecutionHelper(fRefactoring,
-							RefactoringCore.getConditionCheckingFailedSeverity(),
-							renameProcessor.getSaveMode(), parent, context);
+					RefactoringExecutionHelper helper = new RefactoringExecutionHelper(fRefactoring,
+							RefactoringCore.getConditionCheckingFailedSeverity(), renameProcessor.getSaveMode(), parent,
+							context);
 					Change change = fRefactoring.getChange();
 					Assert.isNotNull(change);
 					helper.performChange(change, true);
@@ -325,7 +330,7 @@ public class RenameSupport {
 	}
 
 	private RenameSupport(CRenameProcessor processor) {
-		fRefactoring= new CRenameRefactoring(processor);
+		fRefactoring = new CRenameRefactoring(processor);
 	}
 
 	/**
@@ -343,15 +348,15 @@ public class RenameSupport {
 	private void ensureChecked() throws CoreException {
 		if (fPreCheckStatus == null) {
 			if (!fRefactoring.isApplicable()) {
-				fPreCheckStatus= RefactoringStatus.createFatalErrorStatus(RenameMessages.RenameSupport_not_available);
+				fPreCheckStatus = RefactoringStatus.createFatalErrorStatus(RenameMessages.RenameSupport_not_available);
 			} else {
-				fPreCheckStatus= new RefactoringStatus();
+				fPreCheckStatus = new RefactoringStatus();
 			}
 		}
 	}
 
 	private static void showInformation(Shell parent, RefactoringStatus status) {
-		String message= status.getMessageMatchingSeverity(RefactoringStatus.FATAL);
+		String message = status.getMessageMatchingSeverity(RefactoringStatus.FATAL);
 		MessageDialog.openInformation(parent, RenameMessages.RenameSupport_dialog_title, message);
 	}
 }

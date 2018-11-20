@@ -77,7 +77,7 @@ public interface IWorkingCopy extends ITranslationUnit {
 	 * <p>
 	 * If this working copy is shared, it is destroyed only when the number of calls to
 	 * <code>destroy()</code> is the same as the number of calls to <code>
-	 * getSharedWorkingCopy(IProgressMonitor, IBufferFactory)</code>. 
+	 * getSharedWorkingCopy(IProgressMonitor, IBufferFactory)</code>.
 	 * A REMOVED CElementDelta is then reported on this working copy.
 	 */
 	void destroy();
@@ -85,7 +85,7 @@ public interface IWorkingCopy extends ITranslationUnit {
 	/**
 	 * Returns the original element the specified working copy element was created from,
 	 * or <code>null</code> if this is not a working copy element.
-	 * 
+	 *
 	 * @param workingCopyElement the specified working copy element
 	 * @return the original element the specified working copy element was created from,
 	 * or <code>null</code> if this is not a working copy element
@@ -95,39 +95,39 @@ public interface IWorkingCopy extends ITranslationUnit {
 	/**
 	 * Returns the original element this working copy was created from,
 	 * or <code>null</code> if this is not a working copy.
-	 */ 
+	 */
 	ITranslationUnit getOriginalElement();
-		
+
 	/**
 	 * Returns whether this working copy's original element's content
 	 * has not changed since the inception of this working copy.
-	 * 
+	 *
 	 * @return true if this working copy's original element's content
 	 * has not changed since the inception of this working copy, false otherwise
 	 */
 	boolean isBasedOn(IResource resource);
-	
+
 	/**
 	 * Reconciles the contents of this working copy.
-	 * It performs the reconciliation by locally caching the contents of 
-	 * the working copy, updating the contents, then creating a delta 
+	 * It performs the reconciliation by locally caching the contents of
+	 * the working copy, updating the contents, then creating a delta
 	 * over the cached contents and the new contents, and finally firing
 	 * this delta.
 	 * <p>
 	 * If the working copy hasn't changed, then no problem will be detected,
 	 * this is equivalent to <code>IWorkingCopy#reconcile(false, null)</code>.
 	 * <p>
-	 */	
+	 */
 	IMarker[] reconcile() throws CModelException;
-	
+
 	/**
 	 * Reconciles the contents of this working copy.
-	 * It performs the reconciliation by locally caching the contents of 
-	 * the working copy, updating the contents, then creating a delta 
+	 * It performs the reconciliation by locally caching the contents of
+	 * the working copy, updating the contents, then creating a delta
 	 * over the cached contents and the new contents, and finally firing
 	 * this delta.
 	 * <p>
-	 * @param forceProblemDetection  The boolean argument allows to force problem 
+	 * @param forceProblemDetection  The boolean argument allows to force problem
 	 * 		detection even if the working copy is already consistent.
 	 * @param monitor  a progress monitor
 	 * @throw CModelException if the contents of the original element
@@ -137,37 +137,38 @@ public interface IWorkingCopy extends ITranslationUnit {
 
 	/**
 	 * Reconciles the contents of this working copy.
-	 * It performs the reconciliation by locally caching the contents of 
-	 * the working copy, updating the contents, then creating a delta 
+	 * It performs the reconciliation by locally caching the contents of
+	 * the working copy, updating the contents, then creating a delta
 	 * over the cached contents and the new contents, and finally firing
 	 * this delta.
 	 * <p>
 	 * The boolean argument allows to force problem detection even if the
 	 * working copy is already consistent.
-	 * 
+	 *
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This method has been added as
 	 * part of a work in progress. There is no guarantee that this API will work or
 	 * that it will remain the same. Please do not use this API without consulting
 	 * with the CDT team.
 	 * </p>
-	 * 
+	 *
 	 * @param computeAST  flag to indicate if an AST should be returned
-	 * @param forceProblemDetection  The boolean argument allows to force problem 
+	 * @param forceProblemDetection  The boolean argument allows to force problem
 	 * 		detection even if the working copy is already consistent.
 	 * @param monitor  a progress monitor
 	 * @return the AST or <code>null</code>
 	 * @throw CModelException if the contents of the original element
 	 *		cannot be accessed
-	 * 
+	 *
 	 * @since 4.0
 	 */
-	IASTTranslationUnit reconcile(boolean computeAST, boolean forceProblemDetection, IProgressMonitor monitor) throws CModelException;
+	IASTTranslationUnit reconcile(boolean computeAST, boolean forceProblemDetection, IProgressMonitor monitor)
+			throws CModelException;
 
 	/**
 	 * Restores the contents of this working copy to the current contents of
 	 * this working copy's original element. Has no effect if this element
 	 * is not a working copy.
-	 */	
+	 */
 	void restore() throws CModelException;
 }

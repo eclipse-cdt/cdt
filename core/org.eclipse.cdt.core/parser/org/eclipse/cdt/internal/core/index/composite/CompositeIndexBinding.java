@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Represents a binding which is split over several index fragments.
  * <p>
- * Like the component IIndexBinding objects that make up a CompositeIndexBinding, the 
+ * Like the component IIndexBinding objects that make up a CompositeIndexBinding, the
  * it is only valid to call methods and obtain information while a read-lock is held on the
  * associated IIndex
  */
@@ -44,14 +44,14 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	 * contracts.
 	 */
 	protected final IIndexFragmentBinding rbinding;
-	
+
 	public CompositeIndexBinding(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		if (rbinding == null || cf == null)
 			throw new IllegalArgumentException();
 		this.cf = cf;
 		this.rbinding = rbinding;
 	}
-	
+
 	@Override
 	public ILinkage getLinkage() {
 		return rbinding.getLinkage();
@@ -80,25 +80,26 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	public String[] getQualifiedName() {
 		return new String[] { getName() };
 	}
-	
+
 	@Override
 	public IIndexScope getScope() {
 		return cf.getCompositeScope(rbinding.getScope());
 	}
-	
+
 	public boolean hasDefinition() throws CoreException {
-		fail(); return false;
+		fail();
+		return false;
 	}
-	
+
 	protected final void fail() {
 		throw new CompositingNotImplementedError("Compositing feature not implemented"); //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public String toString() {
 		return rbinding.toString();
 	}
-	
+
 	@Override
 	public boolean isFileLocal() throws CoreException {
 		return rbinding != null && rbinding.isFileLocal();
@@ -123,20 +124,20 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	public int hashCode() {
 		return rbinding.hashCode();
 	}
-	
+
 	@Override
 	public IIndexBinding getOwner() {
-		final IIndexFragmentBinding owner= rbinding.getOwner();
+		final IIndexFragmentBinding owner = rbinding.getOwner();
 		if (owner == null)
 			return null;
-		
+
 		return cf.getCompositeBinding(owner);
 	}
-	
+
 	public IIndexBinding getRawBinding() {
 		return rbinding;
 	}
-	
+
 	protected IIndexFragmentBinding adaptBinding(IBinding binding) {
 		if (binding instanceof IIndexFragmentBinding) {
 			return (IIndexFragmentBinding) binding;
@@ -145,7 +146,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		if (linkage instanceof PDOMLinkage) {
 			try {
 				return ((PDOMLinkage) linkage).adaptBinding(binding);
-			} catch(CoreException e) {
+			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,9 +27,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * Example demonstrate how to write checked using "C Model"
- * 
+ *
  * @author Alena
- * 
+ *
  */
 public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker implements ICheckerWithPreferences {
 	private static final String DEFAULT_PATTERN = "^[a-z]"; // name starts with english lowercase letter //$NON-NLS-1$
@@ -38,7 +38,7 @@ public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.ICIndexChecker#processUnit(org.eclipse
 	 * .cdt.core.model.ITranslationUnit)
@@ -68,7 +68,7 @@ public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.ICheckerWithPreferences#initParameters
 	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)

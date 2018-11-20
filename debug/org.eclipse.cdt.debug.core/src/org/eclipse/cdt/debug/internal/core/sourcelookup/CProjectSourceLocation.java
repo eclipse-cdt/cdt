@@ -49,7 +49,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Locates source elements in a C/C++ project. Returns instances of <code>IFile</code>.
- * 
+ *
  * @since Sep 23, 2002
  */
 public class CProjectSourceLocation implements IProjectSourceLocation {
@@ -88,7 +88,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 		Object result = null;
 		if (!isEmpty(name) && getProject() != null && !notFoundCacheLookup(name)) {
 			result = cacheLookup(name);
-			if (result == null) { 
+			if (result == null) {
 				result = doFindSourceElement(name);
 				if (result != null) {
 					cacheSourceElement(name, result);
@@ -115,7 +115,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 
 	/**
 	 * Sets the project in which source elements will be searched for.
-	 * 
+	 *
 	 * @param project the project
 	 */
 	private void setProject(IProject project) {
@@ -124,7 +124,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 
 	/**
 	 * Returns the project associated with this source location.
-	 * 
+	 *
 	 * @return project
 	 */
 	@Override
@@ -181,11 +181,11 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	private Object cacheLookup(String name) {
 		return fCache.get(name);
 	}
-	
+
 	private boolean notFoundCacheLookup(String name) {
 		return fNotFoundCache.contains(name);
 	}
-	
+
 	private void cacheSourceElement(String name, Object element) {
 		fCache.put(name, element);
 	}
@@ -205,24 +205,23 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	 */
 	@Override
 	public String getMemento() throws CoreException {
-        Document document = null;
-        Throwable ex = null;
-        try  {
-            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            Element node = document.createElement(ELEMENT_NAME);
-            document.appendChild(node);
-    		node.setAttribute(ATTR_PROJECT, getProject().getName());
-    		node.setAttribute(ATTR_GENERIC, String.valueOf(isGeneric()));
+		Document document = null;
+		Throwable ex = null;
+		try {
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			Element node = document.createElement(ELEMENT_NAME);
+			document.appendChild(node);
+			node.setAttribute(ATTR_PROJECT, getProject().getName());
+			node.setAttribute(ATTR_GENERIC, String.valueOf(isGeneric()));
 			return CDebugUtils.serializeDocument(document);
-        } catch (ParserConfigurationException e) {
-        	ex = e;
-        } catch (IOException e) {
+		} catch (ParserConfigurationException e) {
+			ex = e;
+		} catch (IOException e) {
 			ex = e;
 		} catch (TransformerException e) {
 			ex = e;
 		}
-		abort(NLS.bind(InternalSourceLookupMessages.CProjectSourceLocation_0,
-				getProject().getName()), ex);
+		abort(NLS.bind(InternalSourceLookupMessages.CProjectSourceLocation_0, getProject().getName()), ex);
 		// execution will not reach here
 		return null;
 	}
@@ -266,8 +265,8 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	 * Throws an internal error exception
 	 */
 	private void abort(String message, Throwable e) throws CoreException {
-		IStatus s = new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(),
-				CDebugCorePlugin.INTERNAL_ERROR, message, e);
+		IStatus s = new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR,
+				message, e);
 		throw new CoreException(s);
 	}
 
@@ -302,21 +301,19 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 		if (getProject() != null && getProject().exists()) {
 			list.add(getProject());
 			try {
-				getProject().accept(
-						new IResourceProxyVisitor() {
-							@Override
-							public boolean visit(IResourceProxy proxy) throws CoreException {
-								switch (proxy.getType()) {
-									case IResource.FILE:
-										return false;
-									case IResource.FOLDER:
-										list.addLast(proxy.requestResource());
-										return true;
-								}
-								return true;
-							}
-						}, 
-						IResource.NONE);
+				getProject().accept(new IResourceProxyVisitor() {
+					@Override
+					public boolean visit(IResourceProxy proxy) throws CoreException {
+						switch (proxy.getType()) {
+						case IResource.FILE:
+							return false;
+						case IResource.FOLDER:
+							list.addLast(proxy.requestResource());
+							return true;
+						}
+						return true;
+					}
+				}, IResource.NONE);
 			} catch (CoreException e) {
 			}
 		}

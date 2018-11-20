@@ -19,7 +19,7 @@ package org.eclipse.cdt.utils.debug;
  *
  */
 public final class DebugParameterKind {
-	
+
 	/* What is it ?? .  */
 	public final static DebugParameterKind UNKNOWN = new DebugParameterKind(0);
 	/* parameter on the stack*/
@@ -30,10 +30,11 @@ public final class DebugParameterKind {
 	public final static DebugParameterKind REFERENCE = new DebugParameterKind(3);
 	/* register reference parameter.  */
 	public final static DebugParameterKind REGISTER_REFERENCE = new DebugParameterKind(4);
- 
+
 	private int id;
+
 	/**
-	 * 
+	 *
 	 */
 	private DebugParameterKind(int id) {
 		this.id = id;
@@ -42,7 +43,7 @@ public final class DebugParameterKind {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DebugParameterKind) {
-			DebugParameterKind kind = (DebugParameterKind)obj;
+			DebugParameterKind kind = (DebugParameterKind) obj;
 			return kind.id == id;
 		}
 		return super.equals(obj);

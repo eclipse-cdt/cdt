@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.model.ICElement;
 public class ArchiveContainerInfo extends OpenableInfo {
 
 	/**
-	 * Constructs a new C Model Info 
+	 * Constructs a new C Model Info
 	 */
 	protected ArchiveContainerInfo(CElement element) {
 		super(element);

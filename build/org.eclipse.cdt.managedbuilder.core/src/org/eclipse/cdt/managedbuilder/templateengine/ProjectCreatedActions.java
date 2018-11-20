@@ -49,10 +49,10 @@ import org.eclipse.core.runtime.Preferences;
 
 /**
  * This class is a helper for creating general CDT projects
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
- * 
+ *
  * Note that this class is used by ISVs, see bug 318063.
  */
 public class ProjectCreatedActions {
@@ -62,15 +62,16 @@ public class ProjectCreatedActions {
 	String artifactExtension;
 	private static final String PROPERTY = "org.eclipse.cdt.build.core.buildType"; //$NON-NLS-1$
 	private static final String PROP_VAL = PROPERTY + ".debug"; //$NON-NLS-1$
-	
+
 	/*
 	 *  create a project and do things common to project creationr from the new project
 	 *  wizard.
 	 */
-	public ProjectCreatedActions() {}
+	public ProjectCreatedActions() {
+	}
 
 	Map<IConfiguration, IConfiguration> original2newConfigs;
-	
+
 	/**
 	 * Utility method that
 	 * <ul>
@@ -78,11 +79,12 @@ public class ProjectCreatedActions {
 	 * <li>Autoexpands the project in the C/C++ Projects view
 	 * </ul>
 	 * <p>
-	 * 
+	 *
 	 * @return an IManagedBuildInfo instance (from which the IManagedProject can be retrieved)
 	 */
-	public IManagedBuildInfo createProject(IProgressMonitor monitor, String indexerId, boolean isCProject) throws CoreException, BuildException {
-		if(!areFieldsValid()) {
+	public IManagedBuildInfo createProject(IProgressMonitor monitor, String indexerId, boolean isCProject)
+			throws CoreException, BuildException {
+		if (!areFieldsValid()) {
 			throw new IllegalArgumentException(Messages.ProjectCreatedActions_insufficient_information);
 		}
 
@@ -101,7 +103,7 @@ public class ProjectCreatedActions {
 		if (!project.isOpen()) {
 			project.open(monitor);
 		}
-		
+
 		if (isCProject) {
 			CProjectNature.addCNature(project, monitor);
 		} else {
@@ -115,14 +117,16 @@ public class ProjectCreatedActions {
 		ManagedProject newManagedProject = new ManagedProject(project, configs[0].getProjectType());
 		info.setManagedProject(newManagedProject);
 
-		original2newConfigs = new HashMap<IConfiguration,IConfiguration>();
+		original2newConfigs = new HashMap<IConfiguration, IConfiguration>();
 		ICConfigurationDescription active = null;
 		for (IConfiguration cfg : configs) {
 			if (cfg != null) {
 				String id = ManagedBuildManager.calculateChildId(cfg.getId(), null);
-				Configuration configuration = new Configuration(newManagedProject, (Configuration)cfg, id, false, true);
+				Configuration configuration = new Configuration(newManagedProject, (Configuration) cfg, id, false,
+						true);
 				CConfigurationData data = configuration.getConfigurationData();
-				ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+				ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID,
+						data);
 				configuration.setConfigurationDescription(cfgDes);
 				configuration.exportArtifactInfo();
 				configuration.setArtifactExtension(artifactExtension);
@@ -130,21 +134,22 @@ public class ProjectCreatedActions {
 
 				IBuilder builder = configuration.getEditableBuilder();
 				if (builder != null) {
-					builder.setManagedBuildOn(builder.isManagedBuildOn()); 
+					builder.setManagedBuildOn(builder.isManagedBuildOn());
 				}
 
 				configuration.setName(cfg.getName());
 				configuration.setArtifactName(newManagedProject.getDefaultArtifactName());
 
 				IBuildProperty buildProperty = configuration.getBuildProperties().getProperty(PROPERTY);
-				if (buildProperty != null && buildProperty.getValue() != null && PROP_VAL.equals(buildProperty.getValue().getId())) {
+				if (buildProperty != null && buildProperty.getValue() != null
+						&& PROP_VAL.equals(buildProperty.getValue().getId())) {
 					active = cfgDes;
-				} else if (active == null) {// select at least first configuration 
+				} else if (active == null) {// select at least first configuration
 					active = cfgDes;
 				}
 			}
 		}
-		
+
 		if (active != null) {
 			active.setActive();
 		}
@@ -162,18 +167,18 @@ public class ProjectCreatedActions {
 		// An attempt is made to do this earlier when the project is being
 		// created, but the build info may not be ready then.
 		CCorePlugin.getDefault().getCProjectDescription(project, false).get(CCorePlugin.BINARY_PARSER_UNIQ_ID, true);
-		
+
 		return info;
 	}
-	
+
 	protected boolean areFieldsValid() {
-		return project!=null && configs!=null && artifactExtension!=null;
+		return project != null && configs != null && artifactExtension != null;
 	}
-	
+
 	public IConfiguration getNewConfiguration(IConfiguration original) {
 		return original2newConfigs.get(original);
 	}
-	
+
 	public Set<IConfiguration> getNewConfigurations(Collection<IConfiguration> originalConfigs) {
 		Set<IConfiguration> result = new HashSet<IConfiguration>();
 		for (IConfiguration cfg : originalConfigs) {
@@ -181,7 +186,7 @@ public class ProjectCreatedActions {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Chooses the IConfiguration which should be considered the project default.
 	 * @param configs an array containing each of the newly created IConfigurations
@@ -198,14 +203,12 @@ public class ProjectCreatedActions {
 		this.artifactExtension = artifactExtension;
 	}
 
-
 	/**
 	 * @return  the configs
 	 */
 	public IConfiguration[] getConfigs() {
 		return configs;
 	}
-
 
 	/**
 	 * @param configs  the configs to set
@@ -214,14 +217,12 @@ public class ProjectCreatedActions {
 		this.configs = configs;
 	}
 
-
 	/**
 	 * @return  the project
 	 */
 	public IProject getProject() {
 		return project;
 	}
-
 
 	/**
 	 * @param project  the project to set
@@ -230,7 +231,6 @@ public class ProjectCreatedActions {
 		this.project = project;
 	}
 
-
 	/**
 	 * @return  the projectLocation
 	 */
@@ -238,14 +238,12 @@ public class ProjectCreatedActions {
 		return projectLocation;
 	}
 
-
 	/**
 	 * @param projectLocation  the projectLocation to set
 	 */
 	public void setProjectLocation(IPath projectLocation) {
 		this.projectLocation = projectLocation;
 	}
-
 
 	protected IConfiguration createNewConfiguration(IManagedProject managedProject, IConfiguration config) {
 		return managedProject.createConfiguration(config, config.getId() + "." + ManagedBuildManager.getRandomNumber()); //$NON-NLS-1$

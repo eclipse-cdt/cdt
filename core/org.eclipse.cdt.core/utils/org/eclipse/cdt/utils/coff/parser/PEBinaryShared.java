@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.core.runtime.IPath;
 
-
 public class PEBinaryShared extends PEBinaryObject implements IBinaryShared {
 
 	public PEBinaryShared(IBinaryParser parser, IPath p) {

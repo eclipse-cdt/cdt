@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 Wind River Systems, Inc. 
+ * Copyright (c) 2005, 2012 Wind River Systems, Inc.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,15 +24,15 @@ import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantRe
 
 /**
  * Launches an Extract Constant refactoring.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
- */          
+ */
 public class ExtractConstantAction extends RefactoringAction {
-    
-    public ExtractConstantAction() {
-        super(Messages.ExtractConstantAction_label);
-    }
-    
+
+	public ExtractConstantAction() {
+		super(Messages.ExtractConstantAction_label);
+	}
+
 	@Override
 	public void run(IShellProvider shellProvider, ICElement elem) {
 	}
@@ -44,9 +44,9 @@ public class ExtractConstantAction extends RefactoringAction {
 		}
 	}
 
-    @Override
+	@Override
 	public void updateSelection(ICElement elem) {
-    	super.updateSelection(elem);
-    	setEnabled(false);
-    }
+		super.updateSelection(elem);
+		setEnabled(false);
+	}
 }

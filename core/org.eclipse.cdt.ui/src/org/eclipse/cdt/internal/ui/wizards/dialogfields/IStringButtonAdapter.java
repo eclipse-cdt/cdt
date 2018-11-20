@@ -14,6 +14,6 @@
 package org.eclipse.cdt.internal.ui.wizards.dialogfields;
 
 public interface IStringButtonAdapter {
-	
+
 	void changeControlPressed(DialogField field);
 }

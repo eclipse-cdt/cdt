@@ -30,14 +30,13 @@ import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
  *
  * @since 3.0
  */
-public class ExternalExtensionEnvironmentSupplier implements
-		IEnvironmentVariableSupplier {
+public class ExternalExtensionEnvironmentSupplier implements IEnvironmentVariableSupplier {
 	private EnvironmentVariableProvider fProvider;
-	private static final String fNonOverloadableVariables[] = new String[]{
+	private static final String fNonOverloadableVariables[] = new String[] {
 			//tool-integrators not allowed currently to override the "CWD" and "PWD" variables
-			EnvVarOperationProcessor.normalizeName("CWD"),   //$NON-NLS-1$
-			EnvVarOperationProcessor.normalizeName("PWD")	  //$NON-NLS-1$
-		};
+			EnvVarOperationProcessor.normalizeName("CWD"), //$NON-NLS-1$
+			EnvVarOperationProcessor.normalizeName("PWD") //$NON-NLS-1$
+	};
 
 	/**
 	 * EnvironmentVariableProvider passed to the tool-integrator provided
@@ -47,36 +46,34 @@ public class ExternalExtensionEnvironmentSupplier implements
 	 * @since 3.0
 	 */
 
-	public ExternalExtensionEnvironmentSupplier(IEnvironmentVariableManager mngr){
+	public ExternalExtensionEnvironmentSupplier(IEnvironmentVariableManager mngr) {
 		fProvider = new EnvironmentVariableProvider(mngr);
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariable()
 	 */
 	@Override
 	public IEnvironmentVariable getVariable(String name, Object context) {
-		if(context == null)
+		if (context == null)
 			return null;
-		if((name = getValidName(name)) == null)
+		if ((name = getValidName(name)) == null)
 			return null;
 
-		else if(context instanceof IConfiguration){
-			IConfiguration cfg = (IConfiguration)context;
+		else if (context instanceof IConfiguration) {
+			IConfiguration cfg = (IConfiguration) context;
 			IConfigurationEnvironmentVariableSupplier supplier = cfg.getEnvironmentVariableSupplier();
-			if(supplier == null)
+			if (supplier == null)
 				return null;
-			return supplier.getVariable(name,cfg,fProvider);
-		}
-		else if (context instanceof IManagedProject) {
-			IManagedProject project = (IManagedProject)context;
+			return supplier.getVariable(name, cfg, fProvider);
+		} else if (context instanceof IManagedProject) {
+			IManagedProject project = (IManagedProject) context;
 			IProjectType pType = project.getProjectType();
-			IProjectEnvironmentVariableSupplier supplier = pType != null ?
-					pType.getEnvironmentVariableSupplier() : null;
-			if(supplier == null)
+			IProjectEnvironmentVariableSupplier supplier = pType != null ? pType.getEnvironmentVariableSupplier()
+					: null;
+			if (supplier == null)
 				return null;
-			return supplier.getVariable(name,project,fProvider);
+			return supplier.getVariable(name, project, fProvider);
 		}
 		return null;
 	}
@@ -86,67 +83,65 @@ public class ExternalExtensionEnvironmentSupplier implements
 	 */
 	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
-		if(context == null)
+		if (context == null)
 			return null;
 		IBuildEnvironmentVariable variables[] = null;
-		if(context instanceof IConfiguration){
-			IConfiguration cfg = (IConfiguration)context;
+		if (context instanceof IConfiguration) {
+			IConfiguration cfg = (IConfiguration) context;
 			IConfigurationEnvironmentVariableSupplier supplier = cfg.getEnvironmentVariableSupplier();
-			if(supplier == null)
+			if (supplier == null)
 				return null;
-			variables = supplier.getVariables(cfg,fProvider);
-		}
-		else if (context instanceof IManagedProject) {
-			IManagedProject project = (IManagedProject)context;
-			IProjectEnvironmentVariableSupplier supplier = project.getProjectType() != null ? project.getProjectType().getEnvironmentVariableSupplier() : null;
-			if(supplier == null)
+			variables = supplier.getVariables(cfg, fProvider);
+		} else if (context instanceof IManagedProject) {
+			IManagedProject project = (IManagedProject) context;
+			IProjectEnvironmentVariableSupplier supplier = project.getProjectType() != null
+					? project.getProjectType().getEnvironmentVariableSupplier()
+					: null;
+			if (supplier == null)
 				return null;
-			variables = supplier.getVariables(project,fProvider);
+			variables = supplier.getVariables(project, fProvider);
 		}
 
 		return filterVariables(variables);
 	}
 
-	protected IEnvironmentVariableSupplier[] filterValidSuppliers(IEnvironmentVariableSupplier suppliers[]){
-		if(suppliers == null)
+	protected IEnvironmentVariableSupplier[] filterValidSuppliers(IEnvironmentVariableSupplier suppliers[]) {
+		if (suppliers == null)
 			return null;
 
 		int i = 0, j = 0;
-		for(i = 0; i < suppliers.length; i++){
-			if(suppliers[i] == this)
+		for (i = 0; i < suppliers.length; i++) {
+			if (suppliers[i] == this)
 				break;
 		}
 
-
-		if(i >= suppliers.length)
+		if (i >= suppliers.length)
 			return null;
 
 		int startNum = i + 1;
 
+		IEnvironmentVariableSupplier validSuppliers[] = new IEnvironmentVariableSupplier[suppliers.length - startNum];
 
-		IEnvironmentVariableSupplier validSuppliers[] =
-			new IEnvironmentVariableSupplier[suppliers.length - startNum];
-
-		for(i = startNum, j = 0; i < suppliers.length; i++, j++)
+		for (i = startNum, j = 0; i < suppliers.length; i++, j++)
 			validSuppliers[j] = suppliers[i];
 
 		return validSuppliers;
 	}
 
-	protected String getValidName(String name){
+	protected String getValidName(String name) {
 		name = EnvVarOperationProcessor.normalizeName(name);
-		if(name == null)
+		if (name == null)
 			return null;
-		if(fNonOverloadableVariables != null){
-			for(int i = 0; i < fNonOverloadableVariables.length; i++){
-				if(name.equals(fNonOverloadableVariables[i]))
+		if (fNonOverloadableVariables != null) {
+			for (int i = 0; i < fNonOverloadableVariables.length; i++) {
+				if (name.equals(fNonOverloadableVariables[i]))
 					return null;
 			}
 		}
 		return name;
 	}
 
-	protected IEnvironmentVariable[] filterVariables(IBuildEnvironmentVariable variables[]){
-		return EnvVarOperationProcessor.filterVariables(variables,fNonOverloadableVariables);
+	protected IEnvironmentVariable[] filterVariables(IBuildEnvironmentVariable variables[]) {
+		return EnvVarOperationProcessor.filterVariables(variables, fNonOverloadableVariables);
 	}
 }

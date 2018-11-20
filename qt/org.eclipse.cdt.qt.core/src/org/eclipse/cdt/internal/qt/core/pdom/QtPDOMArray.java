@@ -20,9 +20,9 @@ import org.eclipse.core.runtime.CoreException;
 public class QtPDOMArray<T> {
 
 	private static int offsetInitializer = 0;
+
 	protected static enum Field {
-		Count(Database.INT_SIZE),
-		Data(0); // The size of the block is provided at runtime.
+		Count(Database.INT_SIZE), Data(0); // The size of the block is provided at runtime.
 
 		public final int offset;
 
@@ -68,7 +68,7 @@ public class QtPDOMArray<T> {
 
 		long elementRec = Field.Data.getRecord(record);
 		T[] array = codec.allocArray(count);
-		for(int i = 0; i < count; ++i, elementRec += codec.getElementSize())
+		for (int i = 0; i < count; ++i, elementRec += codec.getElementSize())
 			array[i] = codec.decode(linkage, elementRec);
 
 		return array;
@@ -100,7 +100,7 @@ public class QtPDOMArray<T> {
 
 		// Write the new content into the database.
 		long elementRec = Field.Data.getRecord(record);
-		for(int i = 0; i < array.length; ++i, elementRec += codec.getElementSize())
+		for (int i = 0; i < array.length; ++i, elementRec += codec.getElementSize())
 			codec.encode(linkage, elementRec, array[i]);
 
 		return record;
@@ -118,7 +118,7 @@ public class QtPDOMArray<T> {
 		int count = linkage.getDB().getInt(Field.Count.getRecord(record));
 		if (count > 0) {
 			long elementRec = Field.Data.getRecord(record);
-			for(int i = 0; i < count; ++i, elementRec += codec.getElementSize())
+			for (int i = 0; i < count; ++i, elementRec += codec.getElementSize())
 				codec.encode(linkage, elementRec, null);
 		}
 

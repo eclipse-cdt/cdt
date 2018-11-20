@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,10 +22,10 @@ import org.eclipse.swt.graphics.FontData;
  * @since 2.0
  */
 public class VariableLabelFont extends LabelFont {
-    
-    public VariableLabelFont() {
-        super(JFaceResources.getFontRegistry().getFontData(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT)[0]);
-    }
+
+	public VariableLabelFont() {
+		super(JFaceResources.getFontRegistry().getFontData(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT)[0]);
+	}
 
 	@Override
 	public FontData getFontData() {

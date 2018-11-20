@@ -47,8 +47,8 @@ public class Executable extends PlatformObject {
 
 	/**
 	 * Poorly named. This does not determine if the the file is an executable
-	 * but rather a binary. Use {@link #isBinaryFile(IPath)} instead. 
-	 * 
+	 * but rather a binary. Use {@link #isBinaryFile(IPath)} instead.
+	 *
 	 * @deprecated use {@link #isBinaryFile(IPath)}
 	 */
 	@Deprecated
@@ -62,7 +62,7 @@ public class Executable extends PlatformObject {
 	 * shared library. A binary can be an executable but it can also be an
 	 * instruction-containing artifact of a build, which typically is linked to
 	 * make an executable (.e.,g .o and .obj files)
-	 * 
+	 *
 	 * @param path
 	 * @return
 	 * @since 7.1
@@ -101,9 +101,8 @@ public class Executable extends PlatformObject {
 
 	@Override
 	public boolean equals(Object arg0) {
-		if (arg0 instanceof Executable)
-		{
-			Executable exe = (Executable)arg0;
+		if (arg0 instanceof Executable) {
+			Executable exe = (Executable) arg0;
 			return exe.getPath().equals(this.getPath());
 		}
 		return super.equals(arg0);
@@ -139,7 +138,7 @@ public class Executable extends PlatformObject {
 		this.project = project;
 		this.name = new File(path.toOSString()).getName();
 		this.resource = resource;
-		this.remappers = sourceFileRemappings;		
+		this.remappers = sourceFileRemappings;
 		remappedPaths = new HashMap<ITranslationUnit, String>();
 		sourceFiles = new ArrayList<ITranslationUnit>();
 		refreshSourceFiles = true;
@@ -169,7 +168,7 @@ public class Executable extends PlatformObject {
 				return (T) this.getProject();
 		return super.getAdapter(adapter);
 	}
-	
+
 	private String remapSourceFile(String filename) {
 		for (ISourceFileRemapping remapper : remappers) {
 			String remapped = remapper.remapSourceFile(this.getPath(), filename);
@@ -179,20 +178,21 @@ public class Executable extends PlatformObject {
 		}
 		return filename;
 	}
-	
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 6.0
 	 */
 	public synchronized ITranslationUnit[] getSourceFiles(IProgressMonitor monitor) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null);
-		
+		if (Trace.DEBUG_EXECUTABLES)
+			Trace.getTrace().traceEntry(null);
+
 		if (!refreshSourceFiles && !remapSourceFiles) {
-			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "returning cached result");			 //$NON-NLS-1$
-			return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
+			if (Trace.DEBUG_EXECUTABLES)
+				Trace.getTrace().trace(null, "returning cached result"); //$NON-NLS-1$
+			return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]);
 		}
-		
+
 		// Try to get the list of source files used to build the binary from the
 		// symbol information.
 
@@ -204,8 +204,7 @@ public class Executable extends PlatformObject {
 
 		ICProject cproject = factory.create(project);
 
-		if (refreshSourceFiles)
-		{
+		if (refreshSourceFiles) {
 			symReaderSources = ExecutablesManager.getExecutablesManager().getSourceFiles(this, monitor);
 		}
 		if (symReaderSources != null && symReaderSources.length > 0) {
@@ -253,7 +252,8 @@ public class Executable extends PlatformObject {
 					if (sourceFile.exists())
 						wkspFile = sourceFile;
 					else {
-						IFile[] filesInWP = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(URIUtil.toURI(sourcePath));
+						IFile[] filesInWP = ResourcesPlugin.getWorkspace().getRoot()
+								.findFilesForLocationURI(URIUtil.toURI(sourcePath));
 						for (IFile fileInWP : filesInWP) {
 							if (fileInWP.isAccessible()) {
 								wkspFile = fileInWP;
@@ -276,7 +276,8 @@ public class Executable extends PlatformObject {
 						// Be careful not to convert a unix path like
 						// "/src/home" to "c:\source\home" on Windows. See
 						// bugzilla 297781
-						URI uri = (isNativeAbsPath && sourcePath.toFile().exists()) ? URIUtil.toURI(sourcePath) : URIUtil.toURI(filename, true);						
+						URI uri = (isNativeAbsPath && sourcePath.toFile().exists()) ? URIUtil.toURI(sourcePath)
+								: URIUtil.toURI(filename, true);
 						tu = new ExternalTranslationUnit(cproject, uri, id);
 					}
 
@@ -290,10 +291,10 @@ public class Executable extends PlatformObject {
 				}
 			}
 		}
-		
+
 		refreshSourceFiles = false;
 		remapSourceFiles = false;
-		return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
+		return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]);
 	}
 
 	/**
@@ -302,16 +303,17 @@ public class Executable extends PlatformObject {
 	 * source files referenced in the executable. Digging into the binary for
 	 * that list can be expensive, so we cache the results. However, if the
 	 * executable is rebuilt, the cache can no longer be trusted.
-	 * 
+	 *
 	 * Note that calling this also invalidates any mappings we have cached, so
 	 * there is no need to call both this method and
 	 * {@link #setRemapSourceFiles(boolean)}. That latter is automatic.
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	public void setRefreshSourceFiles(boolean refreshSourceFiles) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, refreshSourceFiles);		
-				
+		if (Trace.DEBUG_EXECUTABLES)
+			Trace.getTrace().traceEntry(null, refreshSourceFiles);
+
 		this.refreshSourceFiles = refreshSourceFiles;
 	}
 
@@ -331,23 +333,24 @@ public class Executable extends PlatformObject {
 	 * in an executable to a usable path on the local machine. E.g., a user
 	 * debugging an executable built by someone else likely needs to configure
 	 * source locator(s) to point Eclipse to his local copy of the sources.
-	 * 
+	 *
 	 * <p>
 	 * Remapping source paths is expensive, so we cache the results. However, if
 	 * applicable source locators have been added, removed or changed, then the
 	 * cache can no longer be trusted.
-	 * 
+	 *
 	 * <p>
 	 * Note that we separately cache the (unmapped) file specifications
 	 * referenced in the executable, as that is also expensive to fetch. Calling
 	 * this method does not invalidate that cache. However, that cache can be
 	 * invalidated via {@link #setRefreshSourceFiles(boolean)}, which also ends
 	 * up invalidating any mappings we have cached.
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public void setRemapSourceFiles(boolean remapSourceFiles) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, remapSourceFiles);		
+		if (Trace.DEBUG_EXECUTABLES)
+			Trace.getTrace().traceEntry(null, remapSourceFiles);
 		this.remapSourceFiles = remapSourceFiles;
 	}
 

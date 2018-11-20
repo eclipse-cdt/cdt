@@ -19,16 +19,16 @@ package org.eclipse.cdt.debug.ui.disassembly;
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
- * 
+ *
  *  This interface is experimental.
  */
 public interface IDocumentElementLabelUpdate extends IDocumentUpdate {
 
-    /**
-     * Sets the text of the label of the specified attribute.
-     * 
-     * @param attribute the attribute name
-     * @param text the label text to set
-     */
-    public void setLabel( String attribute, String text );
+	/**
+	 * Sets the text of the label of the specified attribute.
+	 *
+	 * @param attribute the attribute name
+	 * @param text the label text to set
+	 */
+	public void setLabel(String attribute, String text);
 }

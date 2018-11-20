@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represent a preprocessor #ifndef statement.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -32,7 +32,7 @@ public interface IASTPreprocessorIfndefStatement extends IASTPreprocessorStateme
 	 * Returns the condition of the ifndef-statement.
 	 */
 	public char[] getCondition();
-	
+
 	/**
 	 * Returns the macro reference, or <code>null</code> if the macro does not exist.
 	 */

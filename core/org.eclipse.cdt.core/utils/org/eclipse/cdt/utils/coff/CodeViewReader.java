@@ -29,12 +29,12 @@ public class CodeViewReader implements ISymbolReader {
 	private List<String> fileList;
 	private String[] files = null;
 	private boolean parsed = false;
-	
+
 	public CodeViewReader(RandomAccessFile accessFile, int dataOffset, boolean littleEndian) {
 		file = accessFile;
 		cvData = dataOffset;
 		isLe = littleEndian;
-		
+
 		fileList = new ArrayList<String>();
 	}
 
@@ -42,7 +42,7 @@ public class CodeViewReader implements ISymbolReader {
 	public String[] getSourceFiles() {
 		if (!parsed) {
 			try {
-				parse();				
+				parse();
 			} catch (IOException e) {
 			}
 
@@ -66,13 +66,13 @@ public class CodeViewReader implements ISymbolReader {
 				tmp |= value & 0xFF;
 				value >>= 8;
 			}
-			
+
 			return tmp;
 		} else {
 			return value;
 		}
 	}
-	
+
 	private short getShort(short value) {
 		if (isLe) {
 			short tmp = value;
@@ -80,7 +80,7 @@ public class CodeViewReader implements ISymbolReader {
 			tmp &= 0xFF;
 			tmp <<= 8;
 			tmp |= (value >> 8) & 0xFF;
-			
+
 			return tmp;
 		} else {
 			return value;
@@ -90,10 +90,10 @@ public class CodeViewReader implements ISymbolReader {
 	private void parse() throws IOException {
 		if (cvData <= 0)
 			return;
-		
+
 		// seek to the start of the CodeView data
 		file.seek(cvData);
-		
+
 		// skip the next four bytes - signature "NB11"
 		file.skipBytes(4);
 
@@ -117,44 +117,44 @@ public class CodeViewReader implements ISymbolReader {
 
 		for (int i = 0; i < directoryCount; i++) {
 			// seek to the next directory
-			file.seek(directoryOffset + i*12);
+			file.seek(directoryOffset + i * 12);
 
 			// get the type of the subsection.  we only care about source modules
 			short subsectionType = getShort(file.readShort());
 			if (0x127 == subsectionType) {
-				
+
 				// skip the module index
 				file.skipBytes(2);
-				
+
 				// get the offset from the base address
 				int subsectionOffset = getInt(file.readInt());
-				
+
 				// seek to the start of the source module section
 				file.seek(cvData + subsectionOffset);
-				
+
 				// get the number of source files
 				short fileCount = getShort(file.readShort());
-				
+
 				// skip the number of segments
 				file.skipBytes(2);
-				
+
 				// save the file offset to the array of base offsets
 				long arrayOffset = file.getFilePointer();
-				
+
 				// loop through the files and add them to our list
 				for (int j = 0; j < fileCount; j++) {
 					// seek to the correct array entry
-					file.seek(arrayOffset + j*4);
+					file.seek(arrayOffset + j * 4);
 
 					// get the offset to the first entry and seek to it
 					int offset = getInt(file.readInt());
 					file.seek(cvData + subsectionOffset + offset);
-					
+
 					// get the number of segments
 					short segments = getShort(file.readShort());
-					
+
 					// now skip to the name length
-					file.skipBytes(2 + segments*4 + segments*8);
+					file.skipBytes(2 + segments * 4 + segments * 8);
 					int nameLength = file.readUnsignedByte();
 
 					// now extract the filename and add it to our list

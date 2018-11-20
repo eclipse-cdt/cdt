@@ -38,7 +38,7 @@ public class DeleteElementsOperation extends MultiOperation {
 	 * @see #processElements()  Keys are compilation units,
 	 * values are <code>IRegion</code>s of elements to be processed in each
 	 * compilation unit.
-	 */ 
+	 */
 	protected Map<ITranslationUnit, IRegion> fChildrenToRemove;
 
 	/**
@@ -49,7 +49,7 @@ public class DeleteElementsOperation extends MultiOperation {
 	public DeleteElementsOperation(ICElement[] elementsToDelete, boolean force) {
 		super(elementsToDelete, force);
 	}
-	
+
 	/**
 	 * @see MultiOperation
 	 */
@@ -87,6 +87,7 @@ public class DeleteElementsOperation extends MultiOperation {
 			fElementsToProcess[i++] = iter.next();
 		}
 	}
+
 	/**
 	 * Deletes this element from its compilation unit.
 	 * @see MultiOperation
@@ -94,15 +95,17 @@ public class DeleteElementsOperation extends MultiOperation {
 	@Override
 	protected void processElement(ICElement element) throws CModelException {
 		ITranslationUnit tu = (ITranslationUnit) element;
-	
+
 		IBuffer buffer = tu.getBuffer();
-		if (buffer == null) return;
+		if (buffer == null)
+			return;
 		CElementDelta delta = new CElementDelta(tu);
 		ICElement[] cuElements = fChildrenToRemove.get(tu).getElements();
 		for (ICElement e : cuElements) {
 			if (e.exists()) {
 				char[] contents = buffer.getCharacters();
-				if (contents == null) continue;
+				if (contents == null)
+					continue;
 				String tuName = tu.getElementName();
 				replaceElementInBuffer(buffer, e, tuName);
 				delta.removed(e);
@@ -112,7 +115,7 @@ public class DeleteElementsOperation extends MultiOperation {
 			tu.save(getSubProgressMonitor(1), fForce);
 			if (!tu.isWorkingCopy()) { // if unit is working copy, then save will have already fired the delta
 				addDelta(delta);
-//				this.setAttribute(HAS_MODIFIED_RESOURCE_ATTR, TRUE);
+				//				this.setAttribute(HAS_MODIFIED_RESOURCE_ATTR, TRUE);
 			}
 		}
 	}
@@ -121,15 +124,16 @@ public class DeleteElementsOperation extends MultiOperation {
 	 * @deprecated marked deprecated, future to use ASTRewrite
 	 */
 	@Deprecated
-	private void replaceElementInBuffer(IBuffer buffer, ICElement elementToRemove, String cuName) throws CModelException {
+	private void replaceElementInBuffer(IBuffer buffer, ICElement elementToRemove, String cuName)
+			throws CModelException {
 		if (elementToRemove instanceof ISourceReference) {
-			ISourceRange range = ((ISourceReference)elementToRemove).getSourceRange();
+			ISourceRange range = ((ISourceReference) elementToRemove).getSourceRange();
 			int startPosition = range.getStartPos();
 			int length = range.getLength();
 			// Copy the extra spaces and newLines like it is part of
 			// the element.  Note: the CopyElementAction is doing the same.
 			boolean newLineFound = false;
-			for (int offset = range.getStartPos() + range.getLength();;++offset) {
+			for (int offset = range.getStartPos() + range.getLength();; ++offset) {
 				try {
 					char c = buffer.getChar(offset);
 					// TODO:Bug in the Parser, it does not give the semicolon
@@ -139,7 +143,7 @@ public class DeleteElementsOperation extends MultiOperation {
 						newLineFound = true;
 						length++;
 					} else if (!newLineFound && c == ' ') { // Do not include the spaces after the newline
-						length++ ;
+						length++;
 					} else {
 						break;
 					}
@@ -161,6 +165,7 @@ public class DeleteElementsOperation extends MultiOperation {
 		groupElements();
 		super.processElements();
 	}
+
 	/**
 	 * @see MultiOperation
 	 */

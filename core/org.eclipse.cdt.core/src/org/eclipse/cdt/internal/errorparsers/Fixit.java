@@ -14,17 +14,17 @@
 package org.eclipse.cdt.internal.errorparsers;
 
 public class Fixit {
-	
+
 	private String change;
 	private int lineNumber;
 	private int columnNumber;
 	private int length;
-	
+
 	public Fixit(String range, String change) {
 		this.change = change;
 		parseRange(range);
 	}
-	
+
 	private void parseRange(String range) {
 		String[] region = range.split("-"); //$NON-NLS-1$
 		String start = region[0];
@@ -36,34 +36,34 @@ public class Fixit {
 		int endColumnNumber = Integer.valueOf(token[1]).intValue();
 		this.length = endColumnNumber - columnNumber;
 	}
-	
+
 	/**
 	 * Get line number.
-	 * 
+	 *
 	 * @return 1-based line number of fix-it
 	 */
 	public int getLineNumber() {
 		return lineNumber;
 	}
-	
+
 	/**
 	 * Get column number.
-	 * 
+	 *
 	 * @return 1-based column number of fix-it
 	 */
 	public int getColumnNumber() {
 		return columnNumber;
 	}
-	
+
 	/**
 	 * Get length.
-	 * 
+	 *
 	 * @return length of change for fix-it
 	 */
 	public int getLength() {
 		return length;
 	}
-	
+
 	/**
 	 * Get the change string.
 	 * @return the string to change the region to (can be empty).

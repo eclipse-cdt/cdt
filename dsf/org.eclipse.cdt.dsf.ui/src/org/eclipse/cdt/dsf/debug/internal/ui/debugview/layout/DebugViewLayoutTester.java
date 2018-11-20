@@ -18,32 +18,32 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.expressions.PropertyTester;
 
 /**
- * Property tester for debug view related commands - group, ungroup, hide, etc. 
- * 
+ * Property tester for debug view related commands - group, ungroup, hide, etc.
+ *
  * @since 2.2
  */
 
-public class DebugViewLayoutTester extends PropertyTester{
-	
+public class DebugViewLayoutTester extends PropertyTester {
+
 	public DebugViewLayoutTester() {
 	}
 
 	protected static final String IS_GROUP_VISIBLE = "isGroupDebugContextsVisible"; //$NON-NLS-1$
 	protected static final String IS_UNGROUP_VISIBLE = "isUngroupDebugContextsVisible"; //$NON-NLS-1$
-	
+
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 
-		if( IS_GROUP_VISIBLE.equals(property) || IS_UNGROUP_VISIBLE.equals(property)) {
-    		if (receiver instanceof IDMVMContext) {
-				return test((IDMVMContext)receiver);
-    		}
-    	}
-    	return false;
-    }   
-    
-    private boolean test(IDMVMContext dmContext) {
+		if (IS_GROUP_VISIBLE.equals(property) || IS_UNGROUP_VISIBLE.equals(property)) {
+			if (receiver instanceof IDMVMContext) {
+				return test((IDMVMContext) receiver);
+			}
+		}
+		return false;
+	}
+
+	private boolean test(IDMVMContext dmContext) {
 		String sessionId = dmContext.getDMContext().getSessionId();
 		return DsfSession.isSessionActive(sessionId);
-    }
+	}
 }

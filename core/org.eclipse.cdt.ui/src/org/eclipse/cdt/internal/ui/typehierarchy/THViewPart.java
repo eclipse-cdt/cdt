@@ -11,7 +11,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    IBM Corporation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.ArrayList;
@@ -113,15 +113,15 @@ import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
  */
 public class THViewPart extends ViewPart implements ITHModelPresenter {
 	private static final int MAX_HISTORY_SIZE = 10;
-    private static final String TRUE = String.valueOf(true);
-    private static final String KEY_WORKING_SET_FILTER = "workingSetFilter"; //$NON-NLS-1$
-    private static final String KEY_SHOW_FILES= "showFilesInLabels"; //$NON-NLS-1$
-    private static final String KEY_SHOW_INHERITED_MEMBERS= "showInheritedMembers"; //$NON-NLS-1$
-    private static final String KEY_FILTER_FIELDS= "filterFields"; //$NON-NLS-1$
-    private static final String KEY_FILTER_STATIC= "filterStatic"; //$NON-NLS-1$
-    private static final String KEY_FILTER_NON_PUBLIC= "filterNonPublic"; //$NON-NLS-1$
-    private static final String KEY_MODE= "hierarchyMode"; //$NON-NLS-1$
-    private static final String KEY_ORIENTATION= "viewOrientation"; //$NON-NLS-1$
+	private static final String TRUE = String.valueOf(true);
+	private static final String KEY_WORKING_SET_FILTER = "workingSetFilter"; //$NON-NLS-1$
+	private static final String KEY_SHOW_FILES = "showFilesInLabels"; //$NON-NLS-1$
+	private static final String KEY_SHOW_INHERITED_MEMBERS = "showInheritedMembers"; //$NON-NLS-1$
+	private static final String KEY_FILTER_FIELDS = "filterFields"; //$NON-NLS-1$
+	private static final String KEY_FILTER_STATIC = "filterStatic"; //$NON-NLS-1$
+	private static final String KEY_FILTER_NON_PUBLIC = "filterNonPublic"; //$NON-NLS-1$
+	private static final String KEY_MODE = "hierarchyMode"; //$NON-NLS-1$
+	private static final String KEY_ORIENTATION = "viewOrientation"; //$NON-NLS-1$
 	private static final String KEY_SPLITTER_W1 = "splitterWeight1"; //$NON-NLS-1$
 	private static final String KEY_SPLITTER_W2 = "splitterWeight2"; //$NON-NLS-1$
 
@@ -130,51 +130,53 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	private static final int ORIENTATION_HORIZONTAL = 1;
 	private static final int ORIENTATION_VERTICAL = 2;
 	private static final int ORIENTATION_SINGLE = 3;
-	
-	// options for label provider
-	private static final long MEMBER_LABEL_OPTIONS_SIMPLE = CElementLabels.M_PARAMETER_TYPES | CElementLabels.M_APP_RETURNTYPE | CElementLabels.F_APP_TYPE_SIGNATURE;
-	private static final long MEMBER_LABEL_OPTIONS_QUALIFIED = MEMBER_LABEL_OPTIONS_SIMPLE | CElementLabels.ALL_POST_QUALIFIED;
-	private static final int MEMBER_ICON_OPTIONS = CElementImageProvider.OVERLAY_ICONS;
-    
-	// state information
-    private IMemento fMemento;
-    private boolean fShowsMessage= true;
-	private int fCurrentViewOrientation= -1;
-	private boolean fInComputeOrientation= false;
-	private ArrayList<ICElement> fHistoryEntries= new ArrayList<ICElement>(MAX_HISTORY_SIZE);
-	private int fIgnoreSelectionChanges= 0;
 
-    // widgets
-    private PageBook fPagebook;
-    private Label fInfoText;
+	// options for label provider
+	private static final long MEMBER_LABEL_OPTIONS_SIMPLE = CElementLabels.M_PARAMETER_TYPES
+			| CElementLabels.M_APP_RETURNTYPE | CElementLabels.F_APP_TYPE_SIGNATURE;
+	private static final long MEMBER_LABEL_OPTIONS_QUALIFIED = MEMBER_LABEL_OPTIONS_SIMPLE
+			| CElementLabels.ALL_POST_QUALIFIED;
+	private static final int MEMBER_ICON_OPTIONS = CElementImageProvider.OVERLAY_ICONS;
+
+	// state information
+	private IMemento fMemento;
+	private boolean fShowsMessage = true;
+	private int fCurrentViewOrientation = -1;
+	private boolean fInComputeOrientation = false;
+	private ArrayList<ICElement> fHistoryEntries = new ArrayList<ICElement>(MAX_HISTORY_SIZE);
+	private int fIgnoreSelectionChanges = 0;
+
+	// widgets
+	private PageBook fPagebook;
+	private Label fInfoText;
 	private SashForm fSplitter;
 	private ViewForm fHierarchyViewForm;
 	private ViewForm fMemberViewForm;
 	private CLabel fMemberLabel;
 
-    // viewers and helpers
+	// viewers and helpers
 	private THHierarchyModel fModel;
 	private THLabelProvider fHierarchyLabelProvider;
 	private CUILabelProvider fMemberLabelProvider;
 	private TableViewer fMemberViewer;
 	private TreeViewer fHierarchyTreeViewer;
 
-    // filters
+	// filters
 	private WorkingSetFilterUI fWorkingSetFilterUI;
 	private ViewerFilter fFieldFilter;
 	private ViewerFilter fStaticFilter;
 	private ViewerFilter fNonPublicFilter;
 
-    // actions
+	// actions
 	private ToolBarManager fMemberToolbarManager;
-    
+
 	private Action fShowSuperTypeHierarchyAction;
-    private Action fShowSubTypeHierarchyAction;
-    private Action fShowTypeHierarchyAction;
-    
-    private Action fShowFilesInLabelsAction;
-    private Action fRefreshAction;
-    private Action fCancelAction;
+	private Action fShowSubTypeHierarchyAction;
+	private Action fShowTypeHierarchyAction;
+
+	private Action fShowFilesInLabelsAction;
+	private Action fRefreshAction;
+	private Action fCancelAction;
 	private Action fHistoryAction;
 	private Action fOpenElement;
 	private CopyTreeAction fCopyAction;
@@ -184,7 +186,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	private Action fAutomaticOrientation;
 	private Action fSingleOrientation;
 
-    private Action fShowInheritedMembersAction;
+	private Action fShowInheritedMembersAction;
 	private Action fFieldFilterAction;
 	private Action fStaticFilterAction;
 	private Action fNonPublicFilterAction;
@@ -194,135 +196,135 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	private SelectionSearchGroup fSelectionSearchGroup;
 	private CRefactoringActionGroup fRefactoringActionGroup;
 	private IContextActivation fContextActivation;
-    
-    @Override
-	public void setFocus() {
-        fPagebook.setFocus();
-    }
 
-    @Override
+	@Override
+	public void setFocus() {
+		fPagebook.setFocus();
+	}
+
+	@Override
 	public void setMessage(String msg) {
-        fInfoText.setText(msg);
-        fPagebook.showPage(fInfoText);
-        fShowsMessage= true;
-        updateDescription();
-        updateActionEnablement();
-    }
-    
-    void setInput(ICElement inputType, ICElement inputMember) {
-    	if (inputType == null) {
-            setMessage(Messages.THViewPart_instruction);
-            fHierarchyTreeViewer.setInput(null);
-            fMemberViewer.setInput(null);
-            return;
-    	}
-        fShowsMessage= false;
-        fModel.setInput(inputType, inputMember);
-        fHierarchyTreeViewer.setInput(fModel);
-        fMemberViewer.setInput(fModel);
-        fPagebook.showPage(fSplitter);
-        updateDescription();
-    	updateHistory(inputType);
-    	updateActionEnablement();
-    	fModel.computeGraph();
-    }
+		fInfoText.setText(msg);
+		fPagebook.showPage(fInfoText);
+		fShowsMessage = true;
+		updateDescription();
+		updateActionEnablement();
+	}
+
+	void setInput(ICElement inputType, ICElement inputMember) {
+		if (inputType == null) {
+			setMessage(Messages.THViewPart_instruction);
+			fHierarchyTreeViewer.setInput(null);
+			fMemberViewer.setInput(null);
+			return;
+		}
+		fShowsMessage = false;
+		fModel.setInput(inputType, inputMember);
+		fHierarchyTreeViewer.setInput(fModel);
+		fMemberViewer.setInput(fModel);
+		fPagebook.showPage(fSplitter);
+		updateDescription();
+		updateHistory(inputType);
+		updateActionEnablement();
+		fModel.computeGraph();
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
-        fPagebook = new PageBook(parent, SWT.NULL);
-        createInfoPage();
-        createViewerPage();
-                
-        initSelectionProvider();
+		fPagebook = new PageBook(parent, SWT.NULL);
+		createInfoPage();
+		createViewerPage();
 
-        initDragAndDrop();
-        createActions();
-        createContextMenu();
+		initSelectionProvider();
 
-        setMessage(Messages.THViewPart_instruction);
-        initializeActionStates();
-        
-    	IContextService ctxService = getSite().getService(IContextService.class);
-    	if (ctxService != null) {
-    		fContextActivation= ctxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
-    	}
+		initDragAndDrop();
+		createActions();
+		createContextMenu();
+
+		setMessage(Messages.THViewPart_instruction);
+		initializeActionStates();
+
+		IContextService ctxService = getSite().getService(IContextService.class);
+		if (ctxService != null) {
+			fContextActivation = ctxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
+		}
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fPagebook, ICHelpContextIds.TYPE_HIERARCHY_VIEW);
 	}
-	
+
 	@Override
 	public void dispose() {
 		if (fContextActivation != null) {
 			IContextService ctxService = getSite().getService(IContextService.class);
-	    	if (ctxService != null) {
-	    		ctxService.deactivateContext(fContextActivation);
-	    	}
+			if (ctxService != null) {
+				ctxService.deactivateContext(fContextActivation);
+			}
 		}
 
 		if (fOpenViewActionGroup != null) {
 			fOpenViewActionGroup.dispose();
-			fOpenViewActionGroup= null;
+			fOpenViewActionGroup = null;
 		}
 		if (fSelectionSearchGroup != null) {
 			fSelectionSearchGroup.dispose();
-			fSelectionSearchGroup= null;
+			fSelectionSearchGroup = null;
 		}
 		if (fRefactoringActionGroup != null) {
 			fRefactoringActionGroup.dispose();
-			fRefactoringActionGroup= null;
+			fRefactoringActionGroup = null;
 		}
 		if (fWorkingSetFilterUI != null) {
 			fWorkingSetFilterUI.dispose();
-			fWorkingSetFilterUI= null;
+			fWorkingSetFilterUI = null;
 		}
 		super.dispose();
 	}
-	
+
 	private void initSelectionProvider() {
-		SelectionProviderMediator mediator= new SelectionProviderMediator();
+		SelectionProviderMediator mediator = new SelectionProviderMediator();
 		mediator.addViewer(fHierarchyTreeViewer);
 		mediator.addViewer(fMemberViewer);
 		getSite().setSelectionProvider(new AdaptingSelectionProvider(ICElement.class, mediator));
 	}
 
-    private void initializeActionStates() {
-        int mode= THHierarchyModel.TYPE_HIERARCHY;
-        int orientation= ORIENTATION_AUTOMATIC;
-        boolean showFiles= false;
-        boolean showInheritedMembers= false;
-        boolean hideFields= false;
-        boolean hideStatic= false;
-        boolean hideNonPublic= false;
-        int[] weights= {35,65};
-        
-        if (fMemento != null) {
-            showFiles= TRUE.equals(fMemento.getString(KEY_SHOW_FILES));
-            showInheritedMembers= TRUE.equals(fMemento.getString(KEY_SHOW_INHERITED_MEMBERS));
-            hideFields= TRUE.equals(fMemento.getString(KEY_FILTER_FIELDS));
-            hideStatic= TRUE.equals(fMemento.getString(KEY_FILTER_STATIC));
-            hideNonPublic= TRUE.equals(fMemento.getString(KEY_FILTER_NON_PUBLIC));
-            Integer intval= fMemento.getInteger(KEY_MODE);
-            if (intval != null) {
-            	mode= intval.intValue();
-            }
-            intval= fMemento.getInteger(KEY_ORIENTATION);
-            if (intval != null) {
-            	orientation= intval.intValue();
-            }
-            intval= fMemento.getInteger(KEY_SPLITTER_W1);
-            Integer intval2= fMemento.getInteger(KEY_SPLITTER_W2);
-            if (intval != null && intval2 != null) {
-            	weights[0]= intval.intValue();
-            	weights[1]= intval2.intValue();
-            }
-        }
-        restoreOrientation(orientation);
-        restoreHierarchyKind(mode);
+	private void initializeActionStates() {
+		int mode = THHierarchyModel.TYPE_HIERARCHY;
+		int orientation = ORIENTATION_AUTOMATIC;
+		boolean showFiles = false;
+		boolean showInheritedMembers = false;
+		boolean hideFields = false;
+		boolean hideStatic = false;
+		boolean hideNonPublic = false;
+		int[] weights = { 35, 65 };
+
+		if (fMemento != null) {
+			showFiles = TRUE.equals(fMemento.getString(KEY_SHOW_FILES));
+			showInheritedMembers = TRUE.equals(fMemento.getString(KEY_SHOW_INHERITED_MEMBERS));
+			hideFields = TRUE.equals(fMemento.getString(KEY_FILTER_FIELDS));
+			hideStatic = TRUE.equals(fMemento.getString(KEY_FILTER_STATIC));
+			hideNonPublic = TRUE.equals(fMemento.getString(KEY_FILTER_NON_PUBLIC));
+			Integer intval = fMemento.getInteger(KEY_MODE);
+			if (intval != null) {
+				mode = intval.intValue();
+			}
+			intval = fMemento.getInteger(KEY_ORIENTATION);
+			if (intval != null) {
+				orientation = intval.intValue();
+			}
+			intval = fMemento.getInteger(KEY_SPLITTER_W1);
+			Integer intval2 = fMemento.getInteger(KEY_SPLITTER_W2);
+			if (intval != null && intval2 != null) {
+				weights[0] = intval.intValue();
+				weights[1] = intval2.intValue();
+			}
+		}
+		restoreOrientation(orientation);
+		restoreHierarchyKind(mode);
 		fSplitter.setWeights(weights);
 
 		fShowInheritedMembersAction.setChecked(showInheritedMembers);
 		fShowInheritedMembersAction.run();
-		
+
 		fFieldFilterAction.setChecked(hideFields);
 		fFieldFilterAction.run();
 		fStaticFilterAction.setChecked(hideStatic);
@@ -331,80 +333,76 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		fNonPublicFilterAction.run();
 
 		fHierarchyLabelProvider.setShowFiles(showFiles);
-        fShowFilesInLabelsAction.setChecked(showFiles);
-  
+		fShowFilesInLabelsAction.setChecked(showFiles);
+
 		fMemberToolbarManager.update(true);
-    }
+	}
 
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
-        fMemento= memento;
-        super.init(site, memento);
-    }
+		fMemento = memento;
+		super.init(site, memento);
+	}
 
-
-    @Override
+	@Override
 	public void saveState(IMemento memento) {
-        if (fWorkingSetFilterUI != null) {
-        	fWorkingSetFilterUI.saveState(memento, KEY_WORKING_SET_FILTER);
-        }
-    	memento.putString(KEY_SHOW_INHERITED_MEMBERS, String.valueOf(fShowInheritedMembersAction.isChecked()));
-        memento.putString(KEY_SHOW_FILES, String.valueOf(fShowFilesInLabelsAction.isChecked()));
-        memento.putString(KEY_FILTER_FIELDS, String.valueOf(fFieldFilterAction.isChecked()));
-        memento.putString(KEY_FILTER_STATIC, String.valueOf(fStaticFilterAction.isChecked()));
-        memento.putString(KEY_FILTER_NON_PUBLIC, String.valueOf(fNonPublicFilterAction.isChecked()));
-		int[] weights= fSplitter.getWeights();
-        memento.putInteger(KEY_SPLITTER_W1, weights[0]);
-        memento.putInteger(KEY_SPLITTER_W2, weights[1]);
-        if (fAutomaticOrientation.isChecked()) {
-        	memento.putInteger(KEY_ORIENTATION, ORIENTATION_AUTOMATIC);
-        }
-        else {
-        	memento.putInteger(KEY_ORIENTATION, fCurrentViewOrientation);
-        }
-        super.saveState(memento);
-    }
+		if (fWorkingSetFilterUI != null) {
+			fWorkingSetFilterUI.saveState(memento, KEY_WORKING_SET_FILTER);
+		}
+		memento.putString(KEY_SHOW_INHERITED_MEMBERS, String.valueOf(fShowInheritedMembersAction.isChecked()));
+		memento.putString(KEY_SHOW_FILES, String.valueOf(fShowFilesInLabelsAction.isChecked()));
+		memento.putString(KEY_FILTER_FIELDS, String.valueOf(fFieldFilterAction.isChecked()));
+		memento.putString(KEY_FILTER_STATIC, String.valueOf(fStaticFilterAction.isChecked()));
+		memento.putString(KEY_FILTER_NON_PUBLIC, String.valueOf(fNonPublicFilterAction.isChecked()));
+		int[] weights = fSplitter.getWeights();
+		memento.putInteger(KEY_SPLITTER_W1, weights[0]);
+		memento.putInteger(KEY_SPLITTER_W2, weights[1]);
+		if (fAutomaticOrientation.isChecked()) {
+			memento.putInteger(KEY_ORIENTATION, ORIENTATION_AUTOMATIC);
+		} else {
+			memento.putInteger(KEY_ORIENTATION, fCurrentViewOrientation);
+		}
+		super.saveState(memento);
+	}
 
-    private void createContextMenu() {
-        IWorkbenchPartSite site = getSite();
-    	
-        // hierarchy
-    	MenuManager manager = new MenuManager();
-    	manager.setRemoveAllWhenShown(true);
-    	manager.addMenuListener(new IMenuListener() {
-    		@Override
-			public void menuAboutToShow(IMenuManager m) {
-    			onContextMenuAboutToShow(m, true);
-    		}
-    	});
-    	Menu menu = manager.createContextMenu(fHierarchyTreeViewer.getControl());
-    	fHierarchyTreeViewer.getControl().setMenu(menu);
-    	site.registerContextMenu(CUIPlugin.ID_TYPE_HIERARCHY, manager, fHierarchyTreeViewer); 
+	private void createContextMenu() {
+		IWorkbenchPartSite site = getSite();
 
-    	manager = new MenuManager();
-    	manager.setRemoveAllWhenShown(true);
-    	manager.addMenuListener(new IMenuListener() {
-    		@Override
+		// hierarchy
+		MenuManager manager = new MenuManager();
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager m) {
-    			onContextMenuAboutToShow(m, false);
-    		}
-    	});
-    	menu = manager.createContextMenu(fMemberViewer.getControl());
-    	fMemberViewer.getControl().setMenu(menu);
-    	site.registerContextMenu(CUIPlugin.ID_TYPE_HIERARCHY + ".members", manager, fMemberViewer); //$NON-NLS-1$
-    }
+				onContextMenuAboutToShow(m, true);
+			}
+		});
+		Menu menu = manager.createContextMenu(fHierarchyTreeViewer.getControl());
+		fHierarchyTreeViewer.getControl().setMenu(menu);
+		site.registerContextMenu(CUIPlugin.ID_TYPE_HIERARCHY, manager, fHierarchyTreeViewer);
+
+		manager = new MenuManager();
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(new IMenuListener() {
+			@Override
+			public void menuAboutToShow(IMenuManager m) {
+				onContextMenuAboutToShow(m, false);
+			}
+		});
+		menu = manager.createContextMenu(fMemberViewer.getControl());
+		fMemberViewer.getControl().setMenu(menu);
+		site.registerContextMenu(CUIPlugin.ID_TYPE_HIERARCHY + ".members", manager, fMemberViewer); //$NON-NLS-1$
+	}
 
 	protected void onContextMenuAboutToShow(IMenuManager menu, boolean hierarchyView) {
 		CUIPlugin.createStandardGroups(menu);
-		StructuredViewer viewer= hierarchyView ? (StructuredViewer) fHierarchyTreeViewer : fMemberViewer;
-		final ICElement elem= selectionToElement(viewer.getSelection());
+		StructuredViewer viewer = hierarchyView ? (StructuredViewer) fHierarchyTreeViewer : fMemberViewer;
+		final ICElement elem = selectionToElement(viewer.getSelection());
 		if (elem != null) {
 			menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenElement);
 			if (hierarchyView && !elem.equals(fModel.getInput())) {
-				String label= MessageFormat.format(Messages.THViewPart_FocusOn, 
-						new Object[] {
-						CElementLabels.getTextLabel(elem, CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.M_PARAMETER_TYPES)
-				});
+				String label = MessageFormat.format(Messages.THViewPart_FocusOn, new Object[] { CElementLabels
+						.getTextLabel(elem, CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.M_PARAMETER_TYPES) });
 				menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, new Action(label) {
 					@Override
 					public void run() {
@@ -413,7 +411,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 				});
 			}
 		}
-		
+
 		// action groups
 		ISelection selection = getSite().getSelectionProvider().getSelection();
 		if (OpenViewActionGroup.canActionBeAdded(selection)) {
@@ -421,7 +419,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		}
 
 		if (hierarchyView && fCopyAction.canActionBeAdded()) {
-        	menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, fCopyAction);
+			menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, fCopyAction);
 		}
 
 		if (SelectionSearchGroup.canActionBeAdded(selection)) {
@@ -431,12 +429,13 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	}
 
 	private void createViewerPage() {
-		fSplitter= new SashForm(fPagebook, SWT.VERTICAL);
+		fSplitter = new SashForm(fPagebook, SWT.VERTICAL);
 		fSplitter.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fSplitter.addControlListener(new ControlListener() {
 			@Override
 			public void controlMoved(ControlEvent e) {
 			}
+
 			@Override
 			public void controlResized(ControlEvent e) {
 				if (fAutomaticOrientation.isChecked()) {
@@ -445,21 +444,21 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 			}
 		});
 
-		fHierarchyViewForm= new ViewForm(fSplitter, SWT.NONE);
-		Control hierarchyControl= createHierarchyControl(fHierarchyViewForm);
+		fHierarchyViewForm = new ViewForm(fSplitter, SWT.NONE);
+		Control hierarchyControl = createHierarchyControl(fHierarchyViewForm);
 		fHierarchyViewForm.setContent(hierarchyControl);
-				
-		fMemberViewForm= new ViewForm(fSplitter, SWT.NONE);
-		Control memberControl= createMemberControl(fMemberViewForm);
+
+		fMemberViewForm = new ViewForm(fSplitter, SWT.NONE);
+		Control memberControl = createMemberControl(fMemberViewForm);
 		fMemberViewForm.setContent(memberControl);
-		
+
 		fMemberLabel = new CLabel(fMemberViewForm, SWT.NONE);
-    	fMemberLabel.setText(Messages.THViewPart_MethodPane_title); 
+		fMemberLabel.setText(Messages.THViewPart_MethodPane_title);
 		fMemberViewForm.setTopLeft(fMemberLabel);
 	}
-   
+
 	private Control createMemberControl(ViewForm parent) {
-		fMemberLabelProvider= new AppearanceAwareLabelProvider(MEMBER_LABEL_OPTIONS_SIMPLE, MEMBER_ICON_OPTIONS);
+		fMemberLabelProvider = new AppearanceAwareLabelProvider(MEMBER_LABEL_OPTIONS_SIMPLE, MEMBER_ICON_OPTIONS);
 		fMemberViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		fMemberViewer.setContentProvider(new THMemberContentProvider());
 		fMemberViewer.setLabelProvider(new DecoratingCLabelProvider(fMemberLabelProvider, true));
@@ -469,38 +468,41 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 				onOpenElement(event.getSelection());
 			}
 		});
-    	fMemberViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		fMemberViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				onMemberSelectionChanged(event);
 			}
-    	});
-    	fMemberViewer.setSorter(new ViewerSorter() {
-    		@Override
+		});
+		fMemberViewer.setSorter(new ViewerSorter() {
+			@Override
 			public int category(Object element) {
-    			if (element instanceof ICElement) {
-    				ICElement celem= (ICElement)element;
-    				switch (celem.getElementType()) {
-    					case ICElement.C_FIELD: return 1;
-    					case ICElement.C_METHOD: 
-    					case ICElement.C_METHOD_DECLARATION:
-    						IMethodDeclaration md= (IMethodDeclaration) celem;
-    						try {
-								if (md.isConstructor()) return 2;
-								if (md.isDestructor()) return 3;
-							} catch (CModelException e) {
-								CUIPlugin.log(e);
-							}
-    						break;
-    				}
-    			}
-    			return 10;
-    		}
-    	});   
-        
-		final ToolBar memberToolBar= new ToolBar(parent, SWT.FLAT | SWT.WRAP);
+				if (element instanceof ICElement) {
+					ICElement celem = (ICElement) element;
+					switch (celem.getElementType()) {
+					case ICElement.C_FIELD:
+						return 1;
+					case ICElement.C_METHOD:
+					case ICElement.C_METHOD_DECLARATION:
+						IMethodDeclaration md = (IMethodDeclaration) celem;
+						try {
+							if (md.isConstructor())
+								return 2;
+							if (md.isDestructor())
+								return 3;
+						} catch (CModelException e) {
+							CUIPlugin.log(e);
+						}
+						break;
+					}
+				}
+				return 10;
+			}
+		});
+
+		final ToolBar memberToolBar = new ToolBar(parent, SWT.FLAT | SWT.WRAP);
 		parent.setTopCenter(memberToolBar);
-		
+
 		memberToolBar.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
@@ -516,339 +518,351 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 			}
 		});
 
-		fMemberToolbarManager= new ToolBarManager(memberToolBar);
-    	return fMemberViewer.getControl();
+		fMemberToolbarManager = new ToolBarManager(memberToolBar);
+		return fMemberViewer.getControl();
 	}
 
 	protected void onMemberSelectionChanged(SelectionChangedEvent event) {
 		if (fIgnoreSelectionChanges == 0) {
-			ICElement elem= selectionToElement(event.getSelection());
+			ICElement elem = selectionToElement(event.getSelection());
 			fModel.onMemberSelectionChanged(elem);
 			fHierarchyTreeViewer.refresh();
 		}
 	}
 
 	private Control createHierarchyControl(ViewForm parent) {
-		Display display= getSite().getShell().getDisplay();
-		fModel= new THHierarchyModel(this, display, false);
-		fHierarchyLabelProvider= new THLabelProvider(display, fModel);
-    	fHierarchyTreeViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-    	fHierarchyTreeViewer.setContentProvider(new THContentProvider());
-    	fHierarchyTreeViewer.setLabelProvider(new DecoratingCLabelProvider(fHierarchyLabelProvider, true));
-    	fHierarchyTreeViewer.setSorter(new ViewerSorter());
-    	fHierarchyTreeViewer.setUseHashlookup(true);
-    	fHierarchyTreeViewer.addOpenListener(new IOpenListener() {
+		Display display = getSite().getShell().getDisplay();
+		fModel = new THHierarchyModel(this, display, false);
+		fHierarchyLabelProvider = new THLabelProvider(display, fModel);
+		fHierarchyTreeViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		fHierarchyTreeViewer.setContentProvider(new THContentProvider());
+		fHierarchyTreeViewer.setLabelProvider(new DecoratingCLabelProvider(fHierarchyLabelProvider, true));
+		fHierarchyTreeViewer.setSorter(new ViewerSorter());
+		fHierarchyTreeViewer.setUseHashlookup(true);
+		fHierarchyTreeViewer.addOpenListener(new IOpenListener() {
 			@Override
 			public void open(OpenEvent event) {
 				onOpenElement(event.getSelection());
 			}
 		});
 
-    	fHierarchyTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		fHierarchyTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				onHierarchySelectionChanged(event);
 			}
-    	});
-    	    	    
-    	return fHierarchyTreeViewer.getControl();
-   	}	
+		});
 
-    protected void onHierarchySelectionChanged(SelectionChangedEvent event) {
+		return fHierarchyTreeViewer.getControl();
+	}
+
+	protected void onHierarchySelectionChanged(SelectionChangedEvent event) {
 		if (fIgnoreSelectionChanges == 0) {
-			THNode node= selectionToNode(event.getSelection());
+			THNode node = selectionToNode(event.getSelection());
 			fModel.onHierarchySelectionChanged(node);
 			updateView();
 		}
 	}
 
 	private void createInfoPage() {
-    	fInfoText = new Label(fPagebook, SWT.TOP | SWT.LEFT | SWT.WRAP);
-    }
+		fInfoText = new Label(fPagebook, SWT.TOP | SWT.LEFT | SWT.WRAP);
+	}
 
-    private void initDragAndDrop() {
-        THDropTargetListener dropListener= new THDropTargetListener(this);
-        Transfer[] localSelectionTransfer= new Transfer[] {	LocalSelectionTransfer.getTransfer() };
-        DropTarget dropTarget = new DropTarget(fPagebook, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK | DND.DROP_DEFAULT);
-        dropTarget.setTransfer(localSelectionTransfer);
-        dropTarget.addDropListener(dropListener);
-    }
+	private void initDragAndDrop() {
+		THDropTargetListener dropListener = new THDropTargetListener(this);
+		Transfer[] localSelectionTransfer = new Transfer[] { LocalSelectionTransfer.getTransfer() };
+		DropTarget dropTarget = new DropTarget(fPagebook,
+				DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK | DND.DROP_DEFAULT);
+		dropTarget.setTransfer(localSelectionTransfer);
+		dropTarget.addDropListener(dropListener);
+	}
 
-    private void createActions() {
-    	// action groups
-    	fOpenViewActionGroup= new OpenViewActionGroup(this);
-    	fOpenViewActionGroup.setSuppressTypeHierarchy(true);
-    	fOpenViewActionGroup.setSuppressProperties(true);
-    	fOpenViewActionGroup.setEnableIncludeBrowser(true);
-    	fSelectionSearchGroup= new SelectionSearchGroup(getSite());
-    	fRefactoringActionGroup= new CRefactoringActionGroup(this);
-    	
-    	fWorkingSetFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
-            @Override
+	private void createActions() {
+		// action groups
+		fOpenViewActionGroup = new OpenViewActionGroup(this);
+		fOpenViewActionGroup.setSuppressTypeHierarchy(true);
+		fOpenViewActionGroup.setSuppressProperties(true);
+		fOpenViewActionGroup.setEnableIncludeBrowser(true);
+		fSelectionSearchGroup = new SelectionSearchGroup(getSite());
+		fRefactoringActionGroup = new CRefactoringActionGroup(this);
+
+		fWorkingSetFilterUI = new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
+			@Override
 			protected void onWorkingSetChange() {
-                updateWorkingSetFilter(this);
-            }
-            @Override
-			protected void onWorkingSetNameChange() {
-                updateDescription();
-            }
-        };
+				updateWorkingSetFilter(this);
+			}
 
-		fHorizontalOrientation= new Action(Messages.THViewPart_HorizontalOrientation, IAction.AS_RADIO_BUTTON) {
+			@Override
+			protected void onWorkingSetNameChange() {
+				updateDescription();
+			}
+		};
+
+		fHorizontalOrientation = new Action(Messages.THViewPart_HorizontalOrientation, IAction.AS_RADIO_BUTTON) {
 			@Override
 			public void run() {
 				setOrientation(ORIENTATION_HORIZONTAL);
 			}
 		};
-		CPluginImages.setImageDescriptors(fHorizontalOrientation, CPluginImages.T_LCL, CPluginImages.IMG_LCL_HORIZONTAL_ORIENTATION);
+		CPluginImages.setImageDescriptors(fHorizontalOrientation, CPluginImages.T_LCL,
+				CPluginImages.IMG_LCL_HORIZONTAL_ORIENTATION);
 
-		fVerticalOrientation= new Action(Messages.THViewPart_VerticalOrientation, IAction.AS_RADIO_BUTTON) {
+		fVerticalOrientation = new Action(Messages.THViewPart_VerticalOrientation, IAction.AS_RADIO_BUTTON) {
 			@Override
 			public void run() {
 				setOrientation(ORIENTATION_VERTICAL);
 			}
 		};
-		CPluginImages.setImageDescriptors(fVerticalOrientation, CPluginImages.T_LCL, CPluginImages.IMG_LCL_VERTICAL_ORIENTATION);
+		CPluginImages.setImageDescriptors(fVerticalOrientation, CPluginImages.T_LCL,
+				CPluginImages.IMG_LCL_VERTICAL_ORIENTATION);
 
-		fAutomaticOrientation= new Action(Messages.THViewPart_AutomaticOrientation, IAction.AS_RADIO_BUTTON) {
+		fAutomaticOrientation = new Action(Messages.THViewPart_AutomaticOrientation, IAction.AS_RADIO_BUTTON) {
 			@Override
 			public void run() {
 				setOrientation(ORIENTATION_AUTOMATIC);
 			}
 		};
-		CPluginImages.setImageDescriptors(fAutomaticOrientation, CPluginImages.T_LCL, CPluginImages.IMG_LCL_AUTOMATIC_ORIENTATION);
+		CPluginImages.setImageDescriptors(fAutomaticOrientation, CPluginImages.T_LCL,
+				CPluginImages.IMG_LCL_AUTOMATIC_ORIENTATION);
 
-		fSingleOrientation= new Action(Messages.THViewPart_SinglePaneOrientation, IAction.AS_RADIO_BUTTON) {
+		fSingleOrientation = new Action(Messages.THViewPart_SinglePaneOrientation, IAction.AS_RADIO_BUTTON) {
 			@Override
 			public void run() {
 				setOrientation(ORIENTATION_SINGLE);
 			}
 		};
-		CPluginImages.setImageDescriptors(fSingleOrientation, CPluginImages.T_LCL, CPluginImages.IMG_LCL_SINGLE_ORIENTATION);
+		CPluginImages.setImageDescriptors(fSingleOrientation, CPluginImages.T_LCL,
+				CPluginImages.IMG_LCL_SINGLE_ORIENTATION);
 
-		fShowTypeHierarchyAction= new Action(Messages.THViewPart_CompleteTypeHierarchy, IAction.AS_RADIO_BUTTON) {
+		fShowTypeHierarchyAction = new Action(Messages.THViewPart_CompleteTypeHierarchy, IAction.AS_RADIO_BUTTON) {
 			@Override
 			public void run() {
 				if (isChecked()) {
 					onSetHierarchyKind(THHierarchyModel.TYPE_HIERARCHY);
 				}
 			}
-        };
-        fShowTypeHierarchyAction.setToolTipText(Messages.THViewPart_CompleteTypeHierarchy_tooltip);
-        CPluginImages.setImageDescriptors(fShowTypeHierarchyAction, CPluginImages.T_LCL, CPluginImages.IMG_LCL_TYPE_HIERARCHY);       
+		};
+		fShowTypeHierarchyAction.setToolTipText(Messages.THViewPart_CompleteTypeHierarchy_tooltip);
+		CPluginImages.setImageDescriptors(fShowTypeHierarchyAction, CPluginImages.T_LCL,
+				CPluginImages.IMG_LCL_TYPE_HIERARCHY);
 
-		fShowSubTypeHierarchyAction= new Action(Messages.THViewPart_SubtypeHierarchy, IAction.AS_RADIO_BUTTON) {
+		fShowSubTypeHierarchyAction = new Action(Messages.THViewPart_SubtypeHierarchy, IAction.AS_RADIO_BUTTON) {
 			@Override
 			public void run() {
 				if (isChecked()) {
 					onSetHierarchyKind(THHierarchyModel.SUB_TYPE_HIERARCHY);
 				}
 			}
-        };
-        fShowSubTypeHierarchyAction.setToolTipText(Messages.THViewPart_SubtypeHierarchy_tooltip);
-        CPluginImages.setImageDescriptors(fShowSubTypeHierarchyAction, CPluginImages.T_LCL, CPluginImages.IMG_LCL_SUB_TYPE_HIERARCHY);       
+		};
+		fShowSubTypeHierarchyAction.setToolTipText(Messages.THViewPart_SubtypeHierarchy_tooltip);
+		CPluginImages.setImageDescriptors(fShowSubTypeHierarchyAction, CPluginImages.T_LCL,
+				CPluginImages.IMG_LCL_SUB_TYPE_HIERARCHY);
 
-		fShowSuperTypeHierarchyAction= new Action(Messages.THViewPart_SupertypeHierarchy, IAction.AS_RADIO_BUTTON) {
+		fShowSuperTypeHierarchyAction = new Action(Messages.THViewPart_SupertypeHierarchy, IAction.AS_RADIO_BUTTON) {
 			@Override
 			public void run() {
 				if (isChecked()) {
 					onSetHierarchyKind(THHierarchyModel.SUPER_TYPE_HIERARCHY);
 				}
 			}
-        };
-        fShowSuperTypeHierarchyAction.setToolTipText(Messages.THViewPart_SupertypeHierarchy_tooltip);
-        CPluginImages.setImageDescriptors(fShowSuperTypeHierarchyAction, CPluginImages.T_LCL, CPluginImages.IMG_LCL_SUPER_TYPE_HIERARCHY);       
+		};
+		fShowSuperTypeHierarchyAction.setToolTipText(Messages.THViewPart_SupertypeHierarchy_tooltip);
+		CPluginImages.setImageDescriptors(fShowSuperTypeHierarchyAction, CPluginImages.T_LCL,
+				CPluginImages.IMG_LCL_SUPER_TYPE_HIERARCHY);
 
-		fShowInheritedMembersAction= new Action(Messages.THViewPart_ShowInherited_label, IAction.AS_CHECK_BOX) {
+		fShowInheritedMembersAction = new Action(Messages.THViewPart_ShowInherited_label, IAction.AS_CHECK_BOX) {
 			@Override
 			public void run() {
 				onShowInheritedMembers(isChecked());
 			}
-        };
-        fShowInheritedMembersAction.setToolTipText(Messages.THViewPart_ShowInherited_tooltip);
-        CPluginImages.setImageDescriptors(fShowInheritedMembersAction, CPluginImages.T_LCL, CPluginImages.IMG_LCL_SHOW_INHERITED_MEMBERS);       
+		};
+		fShowInheritedMembersAction.setToolTipText(Messages.THViewPart_ShowInherited_tooltip);
+		CPluginImages.setImageDescriptors(fShowInheritedMembersAction, CPluginImages.T_LCL,
+				CPluginImages.IMG_LCL_SHOW_INHERITED_MEMBERS);
 
-        fFieldFilter= new ViewerFilter() {
-            @Override
+		fFieldFilter = new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-                if (element instanceof ICElement) {
-                	ICElement node= (ICElement) element;
-                	switch (node.getElementType()) {
-                	case ICElement.C_ENUMERATOR:
-                	case ICElement.C_FIELD:
-                	case ICElement.C_TEMPLATE_VARIABLE:
-                	case ICElement.C_VARIABLE:
-                	case ICElement.C_VARIABLE_DECLARATION:
-                	case ICElement.C_VARIABLE_LOCAL:
-                		return false;
-                	}
-                }
-                return true;
-            }
-        };
-        fStaticFilter= new ViewerFilter() {
-            @Override
+				if (element instanceof ICElement) {
+					ICElement node = (ICElement) element;
+					switch (node.getElementType()) {
+					case ICElement.C_ENUMERATOR:
+					case ICElement.C_FIELD:
+					case ICElement.C_TEMPLATE_VARIABLE:
+					case ICElement.C_VARIABLE:
+					case ICElement.C_VARIABLE_DECLARATION:
+					case ICElement.C_VARIABLE_LOCAL:
+						return false;
+					}
+				}
+				return true;
+			}
+		};
+		fStaticFilter = new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-                if (element instanceof IDeclaration) {
-                	IDeclaration node= (IDeclaration) element;
-                	try {
+				if (element instanceof IDeclaration) {
+					IDeclaration node = (IDeclaration) element;
+					try {
 						return !node.isStatic();
 					} catch (CModelException e) {
 						CUIPlugin.log(e);
 					}
-                }
-                return true;
-            }
-        };
-        fNonPublicFilter= new ViewerFilter() {
-            @Override
+				}
+				return true;
+			}
+		};
+		fNonPublicFilter = new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-                if (element instanceof IMember) {
-                	IMember node= (IMember) element;
-                	try {
+				if (element instanceof IMember) {
+					IMember node = (IMember) element;
+					try {
 						return ASTAccessVisibility.PUBLIC.equals(node.getVisibility());
 					} catch (CModelException e) {
 						CUIPlugin.log(e);
 					}
-                }
-                return true;
-            }
-        };
-        fFieldFilterAction= new Action(Messages.THViewPart_HideFields_label, IAction.AS_CHECK_BOX) {
-            @Override
+				}
+				return true;
+			}
+		};
+		fFieldFilterAction = new Action(Messages.THViewPart_HideFields_label, IAction.AS_CHECK_BOX) {
+			@Override
 			public void run() {
-                if (isChecked()) {
-                    fMemberViewer.addFilter(fFieldFilter);
-                }
-                else {
-                	fMemberViewer.removeFilter(fFieldFilter);
-                }
-            }
-        };
-        fFieldFilterAction.setToolTipText(Messages.THViewPart_HideFields_tooltip);
-        CPluginImages.setImageDescriptors(fFieldFilterAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_FIELDS);       
+				if (isChecked()) {
+					fMemberViewer.addFilter(fFieldFilter);
+				} else {
+					fMemberViewer.removeFilter(fFieldFilter);
+				}
+			}
+		};
+		fFieldFilterAction.setToolTipText(Messages.THViewPart_HideFields_tooltip);
+		CPluginImages.setImageDescriptors(fFieldFilterAction, CPluginImages.T_LCL,
+				CPluginImages.IMG_ACTION_HIDE_FIELDS);
 
-        fStaticFilterAction= new Action(Messages.THViewPart_HideStatic_label, IAction.AS_CHECK_BOX) {
-            @Override
+		fStaticFilterAction = new Action(Messages.THViewPart_HideStatic_label, IAction.AS_CHECK_BOX) {
+			@Override
 			public void run() {
-                if (isChecked()) {
-                    fMemberViewer.addFilter(fStaticFilter);
-                } else {
-                	fMemberViewer.removeFilter(fStaticFilter);
-                }
-            }
-        };
-        fStaticFilterAction.setToolTipText(Messages.THViewPart_HideStatic_tooltip);
-        CPluginImages.setImageDescriptors(fStaticFilterAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_STATIC);       
+				if (isChecked()) {
+					fMemberViewer.addFilter(fStaticFilter);
+				} else {
+					fMemberViewer.removeFilter(fStaticFilter);
+				}
+			}
+		};
+		fStaticFilterAction.setToolTipText(Messages.THViewPart_HideStatic_tooltip);
+		CPluginImages.setImageDescriptors(fStaticFilterAction, CPluginImages.T_LCL,
+				CPluginImages.IMG_ACTION_HIDE_STATIC);
 
-        fNonPublicFilterAction= new Action(Messages.THViewPart_HideNonPublic_label, IAction.AS_CHECK_BOX) {
-            @Override
+		fNonPublicFilterAction = new Action(Messages.THViewPart_HideNonPublic_label, IAction.AS_CHECK_BOX) {
+			@Override
 			public void run() {
-                if (isChecked()) {
-                    fMemberViewer.addFilter(fNonPublicFilter);
-                } else {
-                	fMemberViewer.removeFilter(fNonPublicFilter);
-                }
-            }
-        };
-        fNonPublicFilterAction.setToolTipText(Messages.THViewPart_HideNonPublic_tooltip);
-        CPluginImages.setImageDescriptors(fNonPublicFilterAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_PUBLIC);       
+				if (isChecked()) {
+					fMemberViewer.addFilter(fNonPublicFilter);
+				} else {
+					fMemberViewer.removeFilter(fNonPublicFilter);
+				}
+			}
+		};
+		fNonPublicFilterAction.setToolTipText(Messages.THViewPart_HideNonPublic_tooltip);
+		CPluginImages.setImageDescriptors(fNonPublicFilterAction, CPluginImages.T_LCL,
+				CPluginImages.IMG_ACTION_SHOW_PUBLIC);
 
-        fOpenElement= new Action(Messages.THViewPart_Open) {
-        	@Override
+		fOpenElement = new Action(Messages.THViewPart_Open) {
+			@Override
 			public void run() {
-        		onOpenElement(getSite().getSelectionProvider().getSelection());
-        	}
-        };
-        fOpenElement.setToolTipText(Messages.THViewPart_Open_tooltip);
-        fOpenElement.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
+				onOpenElement(getSite().getSelectionProvider().getSelection());
+			}
+		};
+		fOpenElement.setToolTipText(Messages.THViewPart_Open_tooltip);
+		fOpenElement.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
 
-        fShowFilesInLabelsAction= new Action(Messages.THViewPart_ShowFileNames, IAction.AS_CHECK_BOX) {
-            @Override
+		fShowFilesInLabelsAction = new Action(Messages.THViewPart_ShowFileNames, IAction.AS_CHECK_BOX) {
+			@Override
 			public void run() {
-                onShowFilesInLabels(isChecked());
-            }
-        };
-        fShowFilesInLabelsAction.setToolTipText(Messages.THViewPart_ShowFileNames_tooltip);
+				onShowFilesInLabels(isChecked());
+			}
+		};
+		fShowFilesInLabelsAction.setToolTipText(Messages.THViewPart_ShowFileNames_tooltip);
 
-        fRefreshAction = new Action(Messages.THViewPart_Refresh) {
-            @Override
+		fRefreshAction = new Action(Messages.THViewPart_Refresh) {
+			@Override
 			public void run() {
-                onRefresh();
-            }
-        };
-        fRefreshAction.setToolTipText(Messages.THViewPart_Refresh_tooltip); 
-        CPluginImages.setImageDescriptors(fRefreshAction, CPluginImages.T_LCL, CPluginImages.IMG_REFRESH);       
+				onRefresh();
+			}
+		};
+		fRefreshAction.setToolTipText(Messages.THViewPart_Refresh_tooltip);
+		CPluginImages.setImageDescriptors(fRefreshAction, CPluginImages.T_LCL, CPluginImages.IMG_REFRESH);
 
-        fCancelAction = new Action(Messages.THViewPart_Cancel) {
-            @Override
+		fCancelAction = new Action(Messages.THViewPart_Cancel) {
+			@Override
 			public void run() {
-                onCancel();
-            }
-        };
-        fCancelAction.setToolTipText(Messages.THViewPart_Cancel_tooltip); 
-        CPluginImages.setImageDescriptors(fCancelAction, CPluginImages.T_LCL, CPluginImages.IMG_LCL_CANCEL);       
+				onCancel();
+			}
+		};
+		fCancelAction.setToolTipText(Messages.THViewPart_Cancel_tooltip);
+		CPluginImages.setImageDescriptors(fCancelAction, CPluginImages.T_LCL, CPluginImages.IMG_LCL_CANCEL);
 
-        fHistoryAction = new THHistoryDropDownAction(this);
+		fHistoryAction = new THHistoryDropDownAction(this);
 
-        fCopyAction= new CopyTypeHierarchyAction(this, fHierarchyTreeViewer);
+		fCopyAction = new CopyTypeHierarchyAction(this, fHierarchyTreeViewer);
 
-        // setup action bar
-        // global action hooks
-        IActionBars actionBars = getViewSite().getActionBars();
-        fRefactoringActionGroup.fillActionBars(actionBars);
-        fOpenViewActionGroup.fillActionBars(actionBars);
-        fSelectionSearchGroup.fillActionBars(actionBars);
-        
-        actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_DECLARATION, fOpenElement);
-        actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fRefreshAction);
-        actionBars.updateActionBars();
-        
-        // local toolbar
-        IToolBarManager tm = actionBars.getToolBarManager();
-        tm.add(fShowTypeHierarchyAction);
-        tm.add(fShowSuperTypeHierarchyAction);
-        tm.add(fShowSubTypeHierarchyAction);
+		// setup action bar
+		// global action hooks
+		IActionBars actionBars = getViewSite().getActionBars();
+		fRefactoringActionGroup.fillActionBars(actionBars);
+		fOpenViewActionGroup.fillActionBars(actionBars);
+		fSelectionSearchGroup.fillActionBars(actionBars);
+
+		actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_DECLARATION, fOpenElement);
+		actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fRefreshAction);
+		actionBars.updateActionBars();
+
+		// local toolbar
+		IToolBarManager tm = actionBars.getToolBarManager();
+		tm.add(fShowTypeHierarchyAction);
+		tm.add(fShowSuperTypeHierarchyAction);
+		tm.add(fShowSubTypeHierarchyAction);
 		tm.add(fHistoryAction);
-        tm.add(fRefreshAction);
-        tm.add(fCancelAction);
+		tm.add(fRefreshAction);
+		tm.add(fCancelAction);
 
-        // local menu
-        IMenuManager mm = actionBars.getMenuManager();
+		// local menu
+		IMenuManager mm = actionBars.getMenuManager();
 
-        fWorkingSetFilterUI.fillActionBars(actionBars);
-        mm.add(new Separator(IContextMenuConstants.GROUP_SHOW));
-        mm.add(fShowTypeHierarchyAction);
-        mm.add(fShowSuperTypeHierarchyAction);
-        mm.add(fShowSubTypeHierarchyAction);
-        mm.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
+		fWorkingSetFilterUI.fillActionBars(actionBars);
+		mm.add(new Separator(IContextMenuConstants.GROUP_SHOW));
+		mm.add(fShowTypeHierarchyAction);
+		mm.add(fShowSuperTypeHierarchyAction);
+		mm.add(fShowSubTypeHierarchyAction);
+		mm.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
 
-        MenuManager submenu= new MenuManager(Messages.THViewPart_LayoutMenu);
+		MenuManager submenu = new MenuManager(Messages.THViewPart_LayoutMenu);
 		submenu.add(fHorizontalOrientation);
 		submenu.add(fVerticalOrientation);
 		submenu.add(fAutomaticOrientation);
 		submenu.add(fSingleOrientation);
 
 		mm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, submenu);
-        mm.add(new Separator());
-        mm.add(fShowFilesInLabelsAction);
-        
-        // member toolbar
-        fMemberToolbarManager.add(fShowInheritedMembersAction);
-        fMemberToolbarManager.add(new Separator());
-        fMemberToolbarManager.add(fFieldFilterAction);
-        fMemberToolbarManager.add(fStaticFilterAction);
-        fMemberToolbarManager.add(fNonPublicFilterAction);        
-    }
-            
+		mm.add(new Separator());
+		mm.add(fShowFilesInLabelsAction);
+
+		// member toolbar
+		fMemberToolbarManager.add(fShowInheritedMembersAction);
+		fMemberToolbarManager.add(new Separator());
+		fMemberToolbarManager.add(fFieldFilterAction);
+		fMemberToolbarManager.add(fStaticFilterAction);
+		fMemberToolbarManager.add(fNonPublicFilterAction);
+	}
+
 	protected void onOpenElement(ISelection selection) {
-    	ICElement elem= selectionToElement(selection);
-    	openElement(elem);
+		ICElement elem = selectionToElement(selection);
+		openElement(elem);
 	}
 
 	private void openElement(ICElement elem) {
 		if (elem != null) {
-			IWorkbenchPage page= getSite().getPage();
+			IWorkbenchPage page = getSite().getPage();
 			try {
 				EditorOpener.open(page, elem);
 			} catch (CModelException e) {
@@ -857,67 +871,67 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		}
 	}
 
-    protected void onRefresh() {
-    	fModel.refresh();
-    	updateActionEnablement();
-    }
-
-    protected void onCancel() {
-    	fModel.stopGraphComputation();
-    	updateView();
-    }
-
-    protected void onShowFilesInLabels(boolean show) {
-    	fHierarchyLabelProvider.setShowFiles(show);
-    	fHierarchyTreeViewer.refresh();
-    }
-
-    private void updateHistory(ICElement input) {
-    	if (input != null) {
-    		fHistoryEntries.remove(input);
-    		fHistoryEntries.add(0, input);
-    		if (fHistoryEntries.size() > MAX_HISTORY_SIZE) {
-    			fHistoryEntries.remove(MAX_HISTORY_SIZE-1);
-    		}
-    	}
+	protected void onRefresh() {
+		fModel.refresh();
+		updateActionEnablement();
 	}
-    
-    private void updateDescription() {
-        String message= ""; //$NON-NLS-1$
-        if (!fShowsMessage) {
-        	ICElement elem= getInput();
-            if (elem != null) {
-                String label;
-            	
-                // label
-                label= CElementLabels.getElementLabel(elem, 0);
-            	
-                // scope
-                IWorkingSet workingSet= fWorkingSetFilterUI.getWorkingSet();
-            	if (workingSet == null) {	
-            		message= label;
-            	} else {
-            		String scope= workingSet.getLabel();
-                	message= MessageFormat.format("{0} - {1}", new Object[] {label, scope}); //$NON-NLS-1$
-            	}
-            	
-            	label= ""; //$NON-NLS-1$
-            	Image image= null;
-            	THNode node= fModel.getSelectionInHierarchy();
-            	if (node != null) {
-            		elem= node.getElement();
-            		if (elem != null) {
-            			label= CElementLabels.getElementLabel(elem, 0);
-            			image= fHierarchyLabelProvider.getImage(elem);
-            		}
-            	}
-            	fMemberLabel.setText(label);
-            	fMemberLabel.setImage(image);
-            }
-        }
-        setContentDescription(message);
-    }
-    
+
+	protected void onCancel() {
+		fModel.stopGraphComputation();
+		updateView();
+	}
+
+	protected void onShowFilesInLabels(boolean show) {
+		fHierarchyLabelProvider.setShowFiles(show);
+		fHierarchyTreeViewer.refresh();
+	}
+
+	private void updateHistory(ICElement input) {
+		if (input != null) {
+			fHistoryEntries.remove(input);
+			fHistoryEntries.add(0, input);
+			if (fHistoryEntries.size() > MAX_HISTORY_SIZE) {
+				fHistoryEntries.remove(MAX_HISTORY_SIZE - 1);
+			}
+		}
+	}
+
+	private void updateDescription() {
+		String message = ""; //$NON-NLS-1$
+		if (!fShowsMessage) {
+			ICElement elem = getInput();
+			if (elem != null) {
+				String label;
+
+				// label
+				label = CElementLabels.getElementLabel(elem, 0);
+
+				// scope
+				IWorkingSet workingSet = fWorkingSetFilterUI.getWorkingSet();
+				if (workingSet == null) {
+					message = label;
+				} else {
+					String scope = workingSet.getLabel();
+					message = MessageFormat.format("{0} - {1}", new Object[] { label, scope }); //$NON-NLS-1$
+				}
+
+				label = ""; //$NON-NLS-1$
+				Image image = null;
+				THNode node = fModel.getSelectionInHierarchy();
+				if (node != null) {
+					elem = node.getElement();
+					if (elem != null) {
+						label = CElementLabels.getElementLabel(elem, 0);
+						image = fHierarchyLabelProvider.getImage(elem);
+					}
+				}
+				fMemberLabel.setText(label);
+				fMemberLabel.setImage(image);
+			}
+		}
+		setContentDescription(message);
+	}
+
 	private void updateActionEnablement() {
 		fHistoryAction.setEnabled(!fHistoryEntries.isEmpty());
 		fRefreshAction.setEnabled(!fShowsMessage);
@@ -927,63 +941,62 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		fShowTypeHierarchyAction.setEnabled(!fShowsMessage);
 	}
 
-    private void updateWorkingSetFilter(WorkingSetFilterUI filterUI) {
-    	fModel.setWorkingSetFilter(filterUI);
-    	updateView();
-    }
-    
-    public void onSetHierarchyKind(int kind) {
-    	if (fModel.getHierarchyKind() != kind) {
-    		fModel.setHierarchyKind(kind);
-    		updateView();
-    	}
-    }
-
-    protected void onShowInheritedMembers(boolean show) {
-    	if (fModel.isShowInheritedMembers() != show) {
-    		fModel.setShowInheritedMembers(show);
-    		fMemberLabelProvider.setTextFlags(show ? 
-    				MEMBER_LABEL_OPTIONS_QUALIFIED : MEMBER_LABEL_OPTIONS_SIMPLE);
-    		updateViewers();
-    	}
-    }
-
-    private void updateViewers() {
-    	if (!fShowsMessage) {
-    		fIgnoreSelectionChanges++;
-    		try {
-    			fHierarchyLabelProvider.setMarkImplementers(!fModel.hasTrivialHierarchy());
-    			fHierarchyTreeViewer.refresh();
-    			fMemberViewer.refresh();
-    			setSelections();
-    		} finally {
-    			fIgnoreSelectionChanges--;
-    		}
-    	}
+	private void updateWorkingSetFilter(WorkingSetFilterUI filterUI) {
+		fModel.setWorkingSetFilter(filterUI);
+		updateView();
 	}
 
-    private void updateView() {
-    	if (!fShowsMessage) {
-    		fIgnoreSelectionChanges++;
-    		try {
-    			updateViewers();
-    			updateDescription();
-    			updateActionEnablement();
-    		} finally {
-    			fIgnoreSelectionChanges--;
-    		}
-    	}
+	public void onSetHierarchyKind(int kind) {
+		if (fModel.getHierarchyKind() != kind) {
+			fModel.setHierarchyKind(kind);
+			updateView();
+		}
+	}
+
+	protected void onShowInheritedMembers(boolean show) {
+		if (fModel.isShowInheritedMembers() != show) {
+			fModel.setShowInheritedMembers(show);
+			fMemberLabelProvider.setTextFlags(show ? MEMBER_LABEL_OPTIONS_QUALIFIED : MEMBER_LABEL_OPTIONS_SIMPLE);
+			updateViewers();
+		}
+	}
+
+	private void updateViewers() {
+		if (!fShowsMessage) {
+			fIgnoreSelectionChanges++;
+			try {
+				fHierarchyLabelProvider.setMarkImplementers(!fModel.hasTrivialHierarchy());
+				fHierarchyTreeViewer.refresh();
+				fMemberViewer.refresh();
+				setSelections();
+			} finally {
+				fIgnoreSelectionChanges--;
+			}
+		}
+	}
+
+	private void updateView() {
+		if (!fShowsMessage) {
+			fIgnoreSelectionChanges++;
+			try {
+				updateViewers();
+				updateDescription();
+				updateActionEnablement();
+			} finally {
+				fIgnoreSelectionChanges--;
+			}
+		}
 	}
 
 	private void setSelections() {
 		fIgnoreSelectionChanges++;
 		try {
-			THNode node= fModel.getSelectionInHierarchy();
+			THNode node = fModel.getSelectionInHierarchy();
 			if (node != null) {
 				fHierarchyTreeViewer.setSelection(new StructuredSelection(node));
 				fHierarchyTreeViewer.expandToLevel(node, 1);
 			}
-			ICElement elem= fModel.getSelectedMember();
+			ICElement elem = fModel.getSelectedMember();
 			if (elem != null) {
 				fMemberViewer.setSelection(new StructuredSelection(elem));
 			}
@@ -994,14 +1007,14 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 
 	private ICElement selectionToElement(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss= (IStructuredSelection) selection;
-			for (Iterator<?> iter = ss.iterator(); iter.hasNext(); ) {
-				Object cand= iter.next();
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			for (Iterator<?> iter = ss.iterator(); iter.hasNext();) {
+				Object cand = iter.next();
 				if (cand instanceof ICElement) {
 					return (ICElement) cand;
 				}
 				if (cand instanceof IAdaptable) {
-					ICElement elem= ((IAdaptable) cand).getAdapter(ICElement.class);
+					ICElement elem = ((IAdaptable) cand).getAdapter(ICElement.class);
 					if (elem != null) {
 						return elem;
 					}
@@ -1013,9 +1026,9 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 
 	private THNode selectionToNode(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss= (IStructuredSelection) selection;
-			for (Iterator<?> iter = ss.iterator(); iter.hasNext(); ) {
-				Object cand= iter.next();
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			for (Iterator<?> iter = ss.iterator(); iter.hasNext();) {
+				Object cand = iter.next();
 				if (cand instanceof THNode) {
 					return (THNode) cand;
 				}
@@ -1038,11 +1051,11 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	}
 
 	ICElement getInput() {
-        Object input= fModel.getInput();
-        if (input instanceof ICElement) {
-        	return (ICElement) input;
-        }
-        return null;
+		Object input = fModel.getInput();
+		if (input instanceof ICElement) {
+			return (ICElement) input;
+		}
+		return null;
 	}
 
 	public TreeViewer getHiearchyViewer() {
@@ -1052,28 +1065,28 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	public TableViewer getMemberViewer() {
 		return fMemberViewer;
 	}
-	
+
 	private void restoreOrientation(int orientation) {
-		switch(orientation) {
-			case ORIENTATION_HORIZONTAL:
-				fHorizontalOrientation.setChecked(true);
-				break;
-			case ORIENTATION_VERTICAL:
-				fVerticalOrientation.setChecked(true);
-				break;
-			case ORIENTATION_SINGLE:
-				fSingleOrientation.setChecked(true);
-				break;
-			default:
-				orientation= ORIENTATION_AUTOMATIC;
-				fAutomaticOrientation.setChecked(true);
-				break;
+		switch (orientation) {
+		case ORIENTATION_HORIZONTAL:
+			fHorizontalOrientation.setChecked(true);
+			break;
+		case ORIENTATION_VERTICAL:
+			fVerticalOrientation.setChecked(true);
+			break;
+		case ORIENTATION_SINGLE:
+			fSingleOrientation.setChecked(true);
+			break;
+		default:
+			orientation = ORIENTATION_AUTOMATIC;
+			fAutomaticOrientation.setChecked(true);
+			break;
 		}
 		setOrientation(orientation);
 	}
-	
-    private void restoreHierarchyKind(int kind) {
-		switch(kind) {
+
+	private void restoreHierarchyKind(int kind) {
+		switch (kind) {
 		case THHierarchyModel.SUB_TYPE_HIERARCHY:
 			fShowSubTypeHierarchyAction.setChecked(true);
 			break;
@@ -1081,10 +1094,10 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 			fShowSuperTypeHierarchyAction.setChecked(true);
 			break;
 		default:
-			kind= THHierarchyModel.TYPE_HIERARCHY;
+			kind = THHierarchyModel.TYPE_HIERARCHY;
 			fShowTypeHierarchyAction.setChecked(true);
 			break;
-		}			
+		}
 		fModel.setHierarchyKind(kind);
 	}
 
@@ -1092,12 +1105,12 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		if (fInComputeOrientation) {
 			return;
 		}
-		fInComputeOrientation= true;
+		fInComputeOrientation = true;
 		try {
 			if (fCurrentViewOrientation != orientation) {
 				if (fSplitter != null && !fSplitter.isDisposed()) {
 					if (orientation == ORIENTATION_AUTOMATIC) {
-						orientation= getBestOrientation();
+						orientation = getBestOrientation();
 					}
 					if (orientation == ORIENTATION_SINGLE) {
 						fMemberViewForm.setVisible(false);
@@ -1105,21 +1118,21 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 						if (fCurrentViewOrientation == ORIENTATION_SINGLE) {
 							fMemberViewForm.setVisible(true);
 						}
-						boolean horizontal= orientation == ORIENTATION_HORIZONTAL;
+						boolean horizontal = orientation == ORIENTATION_HORIZONTAL;
 						fSplitter.setOrientation(horizontal ? SWT.HORIZONTAL : SWT.VERTICAL);
 					}
 					fSplitter.layout();
 				}
-				fCurrentViewOrientation= orientation;
+				fCurrentViewOrientation = orientation;
 			}
 		} finally {
-			fInComputeOrientation= false;
+			fInComputeOrientation = false;
 		}
 	}
 
 	private int getBestOrientation() {
-		Point size= fSplitter.getSize();
-		if (size.x != 0 && size.y != 0 && 3 * size.x < 2 * size.y) { 
+		Point size = fSplitter.getSize();
+		if (size.x != 0 && size.y != 0 && 3 * size.x < 2 * size.y) {
 			return ORIENTATION_VERTICAL;
 		}
 		return ORIENTATION_HORIZONTAL;
@@ -1131,12 +1144,12 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		case THHierarchyModel.END_OF_COMPUTATION:
 			updateView();
 			break;
-		}		
+		}
 	}
 
 	@Override
 	public IWorkbenchSiteProgressService getProgressService() {
-		return getSite().getAdapter(IWorkbenchSiteProgressService.class);	
+		return getSite().getAdapter(IWorkbenchSiteProgressService.class);
 	}
 
 	private static class CopyTypeHierarchyAction extends CopyTreeAction {

@@ -30,44 +30,43 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 
 	private IType fType;
 
-    public CPPTypedefSpecialization(IBinding specialized, IBinding owner,
-    		ICPPTemplateParameterMap tpmap, IType type) {
-        super(specialized, owner, tpmap);
-        fType= type;
-    }
+	public CPPTypedefSpecialization(IBinding specialized, IBinding owner, ICPPTemplateParameterMap tpmap, IType type) {
+		super(specialized, owner, tpmap);
+		fType = type;
+	}
 
-    @Override
+	@Override
 	public IType getType() {
-    	return fType;
-    }
+		return fType;
+	}
 
-    @Override
+	@Override
 	public Object clone() {
-    	IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Not going to happen.
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Not going to happen.
+		}
+		return t;
+	}
 
-    @Override
+	@Override
 	public boolean isSameType(IType o) {
-        if (o == this)
-            return true;
-	    if (o instanceof ITypedef) {
-            IType t = getType();
+		if (o == this)
+			return true;
+		if (o instanceof ITypedef) {
+			IType t = getType();
 			if (t != null)
-			    return t.isSameType(((ITypedef) o).getType());
+				return t.isSameType(((ITypedef) o).getType());
 			return false;
-	    }
+		}
 
-        IType t = getType();
+		IType t = getType();
 		if (t != null)
-		    return t.isSameType(o);
-	    return false;
-    }
+			return t.isSameType(o);
+		return false;
+	}
 
 	@Override
 	public void setType(IType type) {

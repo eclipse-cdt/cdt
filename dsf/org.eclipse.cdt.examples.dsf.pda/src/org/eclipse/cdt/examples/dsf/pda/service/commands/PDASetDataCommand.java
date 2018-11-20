@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,11 +18,11 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
  * Sets a data value in the data stack at the given location
- * 
+ *
  * <pre>
  *    C: setdata {thread_id} {index} {value}
  *    R: ok
- *    
+ *
  * Errors:
  *    error: invalid thread
  * </pre>
@@ -30,12 +30,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDASetDataCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDASetDataCommand(PDAThreadDMContext thread, int index, String value) {
-        super(thread, "setdata " + thread.getID() + " " + index + " " + value);
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDASetDataCommand(PDAThreadDMContext thread, int index, String value) {
+		super(thread, "setdata " + thread.getID() + " " + index + " " + value);
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

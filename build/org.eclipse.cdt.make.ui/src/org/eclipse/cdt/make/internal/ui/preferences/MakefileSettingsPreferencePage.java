@@ -46,7 +46,8 @@ public class MakefileSettingsPreferencePage extends FieldEditorPreferencePage im
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IMakeHelpContextIds.MAKE_SETTINGS_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				IMakeHelpContextIds.MAKE_SETTINGS_PREFERENCE_PAGE);
 	}
 
 	/**
@@ -54,17 +55,15 @@ public class MakefileSettingsPreferencePage extends FieldEditorPreferencePage im
 	 */
 	@Override
 	protected void createFieldEditors() {
-		String[][] personalities = {{POSIX_MAKE_LABEL, POSIX_MAKE_VALUE}, {GNU_MAKE_LABEL, GNU_MAKE_VALUE}};
+		String[][] personalities = { { POSIX_MAKE_LABEL, POSIX_MAKE_VALUE }, { GNU_MAKE_LABEL, GNU_MAKE_VALUE } };
 		RadioGroupFieldEditor combo = new RadioGroupFieldEditor(MakeCorePlugin.MAKEFILE_STYLE,
-				MakefilePreferencesMessages.getString("MakefileSettingsPreferencePage.style"),//$NON-NLS-1$
-				2,
-				personalities,
-				getFieldEditorParent());
+				MakefilePreferencesMessages.getString("MakefileSettingsPreferencePage.style"), //$NON-NLS-1$
+				2, personalities, getFieldEditorParent());
 		addField(combo);
 
 		PathEditor pathEditor = new PathEditor(MakeCorePlugin.MAKEFILE_DIRS,
 				MakefilePreferencesMessages.getString("MakefileSettingsPreferencePage.path.label"), //$NON-NLS-1$
-				MakefilePreferencesMessages.getString("MakefileSettingsPreferencePage.path.browse"),//$NON-NLS-1$
+				MakefilePreferencesMessages.getString("MakefileSettingsPreferencePage.path.browse"), //$NON-NLS-1$
 				getFieldEditorParent());
 		addField(pathEditor);
 	}

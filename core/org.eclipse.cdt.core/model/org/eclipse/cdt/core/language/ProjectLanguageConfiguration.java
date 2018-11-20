@@ -24,31 +24,31 @@ import org.eclipse.core.resources.IFile;
 
 /**
  * Provides programmatic access to language mappings for a project.
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will work or
  * that it will remain the same. Please do not use this API without consulting
  * with the CDT team.
  * </p>
- * 
+ *
  * @since 4.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ProjectLanguageConfiguration {
 	private static final String ALL_CONFIGURATIONS = ""; //$NON-NLS-1$
-	
+
 	/**
 	 * Project-wide content type mappings (Configuration ID -> (Content Type ID -> Language ID)).
 	 */
-	private Map<String,Map<String,String>> fConfigurationContentTypeMappings;
+	private Map<String, Map<String, String>> fConfigurationContentTypeMappings;
 
 	/**
 	 * Per-file mappings (Path -> (Configuration ID -> Language ID)).
 	 */
-	private Map<String,Map<String,String>> fFileConfigurationMappings;
-	
+	private Map<String, Map<String, String>> fFileConfigurationMappings;
+
 	/**
 	 * Creates a new <code>ProjectLanguageConfiguration</code> with no
 	 * language mappings defined.
@@ -57,13 +57,13 @@ public class ProjectLanguageConfiguration {
 		fConfigurationContentTypeMappings = new TreeMap<String, Map<String, String>>();
 		fFileConfigurationMappings = new TreeMap<String, Map<String, String>>();
 	}
-	
+
 	/**
 	 * Returns the language id that is mapped to the given content type when
 	 * the given configuration is active.
 	 * If <code>configuration</code> is <code>null</code>, the configuration-agnostic
 	 * mapping is returned.
-	 * @return the language id that is mapped to the given content type. 
+	 * @return the language id that is mapped to the given content type.
 	 */
 	public String getLanguageForContentType(ICConfigurationDescription configuration, String contentTypeId) {
 		String configurationId = getId(configuration);
@@ -73,7 +73,7 @@ public class ProjectLanguageConfiguration {
 		}
 		return contentTypeMappings.get(contentTypeId);
 	}
-	
+
 	/**
 	 * Returns the language id that is mapped to the given file when the given
 	 * configuration is active.
@@ -84,7 +84,7 @@ public class ProjectLanguageConfiguration {
 	public String getLanguageForFile(ICConfigurationDescription configuration, IFile file) {
 		return getLanguageForFile(configuration, file.getProjectRelativePath().toPortableString());
 	}
-	
+
 	/**
 	 * Returns the language id that is mapped to the file located at the given path
 	 * when the given configuration is active.
@@ -101,8 +101,7 @@ public class ProjectLanguageConfiguration {
 		String configurationId = getId(configuration);
 		return configurationMappings.get(configurationId);
 	}
-	
-	
+
 	/**
 	 * Sets the language for a content type.
 	 * If <code>configuration</code> is not <code>null</code>, the language mapping
@@ -138,7 +137,7 @@ public class ProjectLanguageConfiguration {
 			fConfigurationContentTypeMappings.remove(configurationId);
 		}
 	}
-	
+
 	/**
 	 * Sets the language for a file.
 	 * If <code>configuration</code> is not <code>null</code>, the language mapping
@@ -150,7 +149,7 @@ public class ProjectLanguageConfiguration {
 	public void addFileMapping(ICConfigurationDescription configuration, IFile file, String language) {
 		addFileMapping(configuration, file.getProjectRelativePath().toPortableString(), language);
 	}
-	
+
 	/**
 	 * Sets the language for a file.
 	 * If <code>configuration</code> is not <code>null</code>, the language mapping
@@ -168,7 +167,7 @@ public class ProjectLanguageConfiguration {
 		String configurationId = getId(configuration);
 		configurationMappings.put(configurationId, language);
 	}
-	
+
 	/**
 	 * Removes the given file mapping (if it exists).
 	 * If <code>configuration</code> is <code>null</code>, the configuration-agnostic
@@ -178,7 +177,7 @@ public class ProjectLanguageConfiguration {
 	public void removeFileMapping(ICConfigurationDescription configuration, IFile file) {
 		removeFileMapping(configuration, file.getProjectRelativePath().toPortableString());
 	}
-	
+
 	/**
 	 * Removes the given file mapping (if it exists).
 	 * If <code>configuration</code> is <code>null</code>, the configuration-agnostic
@@ -196,7 +195,7 @@ public class ProjectLanguageConfiguration {
 			fFileConfigurationMappings.remove(configurationId);
 		}
 	}
-	
+
 	/**
 	 * Removes all language mappings for the given file.
 	 * @param filePath
@@ -204,7 +203,7 @@ public class ProjectLanguageConfiguration {
 	public void removeAllFileMappings(String filePath) {
 		fFileConfigurationMappings.remove(filePath);
 	}
-	
+
 	/**
 	 * Removes all language mappings for the given file.
 	 * @param file
@@ -215,9 +214,9 @@ public class ProjectLanguageConfiguration {
 
 	/**
 	 * Returns a copy of all the per-configuration content type mappings stored in this configuration.
-	 * 
+	 *
 	 * This method is used internally by CDT and should not be used outside of the CDT framework.
-	 * @return a copy of all the per-configuration content type mappings 
+	 * @return a copy of all the per-configuration content type mappings
 	 */
 	public Map<String, Map<String, String>> getContentTypeMappings() {
 		return copyLanguageMappings(fConfigurationContentTypeMappings, false);
@@ -232,7 +231,7 @@ public class ProjectLanguageConfiguration {
 
 	/**
 	 * Returns a copy of all the per-file content type mappings stored in this configuration.
-	 * 
+	 *
 	 * This method is used internally by CDT and should not be used outside of the CDT framework.
 	 * @return a copy of all the per-file content type mappings
 	 */
@@ -242,13 +241,15 @@ public class ProjectLanguageConfiguration {
 
 	/**
 	 * This method is used internally by CDT and should not be used outside of the CDT framework.
-	 * @param file 
+	 * @param file
 	 */
 	public void setFileMappings(IFile file, Map<String, String> mappings) {
-		fFileConfigurationMappings.put(file.getProjectRelativePath().toPortableString(), new TreeMap<String, String>(mappings));
+		fFileConfigurationMappings.put(file.getProjectRelativePath().toPortableString(),
+				new TreeMap<String, String>(mappings));
 	}
 
-	private Map<String, Map<String, String>> copyLanguageMappings(Map<String, Map<String, String>> mappings, boolean isReadOnly) {
+	private Map<String, Map<String, String>> copyLanguageMappings(Map<String, Map<String, String>> mappings,
+			boolean isReadOnly) {
 		Map<String, Map<String, String>> result = new TreeMap<String, Map<String, String>>();
 		Iterator<Entry<String, Map<String, String>>> entries = mappings.entrySet().iterator();
 		while (entries.hasNext()) {
@@ -269,12 +270,12 @@ public class ProjectLanguageConfiguration {
 
 	/**
 	 * This method is used internally by CDT and should not be used outside of the CDT framework.
-	 * @param mappings 
+	 * @param mappings
 	 */
 	public void setFileMappings(Map<String, Map<String, String>> mappings) {
 		fFileConfigurationMappings = copyLanguageMappings(mappings, false);
 	}
-	
+
 	private String getId(ICConfigurationDescription configuration) {
 		if (configuration == null) {
 			return ALL_CONFIGURATIONS;

@@ -43,7 +43,7 @@ import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
  * A project in the workspace. Source is searched for in the root project
  * folder and all folders within the project recursively. Optionally,
  * referenced projects may be searched as well.
- * 
+ *
  * Source elements returned from <code>findSourceElements(...)</code> are instances of
  * <code>IFile</code>.
  * <p>
@@ -57,9 +57,8 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	 * Unique identifier for the project source container type
 	 * (value <code>org.eclipse.cdt.debug.core.containerType.project</code>).
 	 */
-	public static final String TYPE_ID =
-			CDebugCorePlugin.getUniqueIdentifier() + ".containerType.project"; //$NON-NLS-1$
-	private final IProject fOwnProject;  // Project assigned to this container at construction time.
+	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.project"; //$NON-NLS-1$
+	private final IProject fOwnProject; // Project assigned to this container at construction time.
 	private IProject fProject;
 	private boolean fSearchReferencedProjects;
 	private URI fRootURI;
@@ -68,7 +67,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 
 	/**
 	 * Constructs a project source container.
-	 * 
+	 *
 	 * @param project the project to search for source in
 	 * @param referenced whether referenced projects should be considered
 	 */
@@ -80,7 +79,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 
 	/**
 	 * Returns the project this source container references.
-	 * 
+	 *
 	 * @return the project this source container references
 	 */
 	public IProject getProject() {
@@ -121,11 +120,11 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 
 		ArrayList<Object> sources = new ArrayList<Object>();
 
-		// An IllegalArgumentException is thrown from the "getFile" method 
-		// if the path created by appending the file name to the container 
+		// An IllegalArgumentException is thrown from the "getFile" method
+		// if the path created by appending the file name to the container
 		// path doesn't conform with Eclipse resource restrictions.
-		// To prevent the interruption of the search procedure we check 
-		// if the path is valid before passing it to "getFile".		
+		// To prevent the interruption of the search procedure we check
+		// if the path is valid before passing it to "getFile".
 		if (validateFile(name)) {
 			IFile file = fProject.getFile(new Path(name));
 			if (file.exists()) {
@@ -147,12 +146,12 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 						}
 					} else if (files.length > 0) {
 						sources.add(files[0]);
-					}					
+					}
 				}
 			}
 		}
 
-		// Check sub-folders		
+		// Check sub-folders
 		if ((isFindDuplicates() && true) || (sources.isEmpty() && true)) {
 			ISourceContainer[] containers = getSourceContainers();
 			for (int i = 0; i < containers.length; i++) {
@@ -168,18 +167,18 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 					break;
 				}
 			}
-		}			
-		
+		}
+
 		if (sources.isEmpty())
 			return EMPTY;
 		return sources.toArray();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
 	 */
 	@Override
-	public String getName() {		
+	public String getName() {
 		return fProject != null ? fProject.getName() : InternalSourceLookupMessages.CProjectSourceContainer_0;
 	}
 
@@ -191,10 +190,10 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 		if (obj != null && obj instanceof CProjectSourceContainer) {
 			CProjectSourceContainer loc = (CProjectSourceContainer) obj;
 			return fProject == null ? loc.fProject == null : fProject.equals(loc.fProject);
-		}	
+		}
 		return false;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -229,7 +228,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 					}
 				}
 				return containers.toArray(new ISourceContainer[containers.size()]);
-			} 
+			}
 			return createFolderSourceContainers(fProject);
 		}
 		return new ISourceContainer[0];
@@ -246,13 +245,13 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 		ISourceContainer[] containers = list.toArray(new ISourceContainer[list.size()]);
 		for (ISourceContainer container : containers) {
 			container.init(getDirector());
-		}			
+		}
 		return containers;
 	}
 
 	/**
-	 * Validates the given string as a path for a file in this container. 
-	 * 
+	 * Validates the given string as a path for a file in this container.
+	 *
 	 * @param name path name
 	 */
 	private boolean validateFile(String name) {
@@ -265,7 +264,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 
 	/**
 	 * Returns whether referenced projects are considered.
-	 * 
+	 *
 	 * @return whether referenced projects are considered
 	 */
 	public boolean isSearchReferencedProjects() {

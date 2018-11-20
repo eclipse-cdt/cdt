@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -37,137 +37,139 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 
 public class GdbMemoryBlockAddressInfoRetrieval implements IMemoryBlockAddressInfoRetrieval {
 
-    private final DsfSession fSession;
-    private final Set<IAddressInfoUpdateListener> fListeners = new HashSet<>();
+	private final DsfSession fSession;
+	private final Set<IAddressInfoUpdateListener> fListeners = new HashSet<>();
 
-    public GdbMemoryBlockAddressInfoRetrieval(DsfSession session) {
-        fSession = session;
-        fSession.getExecutor().execute(new DsfRunnable() {
-            @Override
-            public void run() {
-                fSession.addServiceEventListener(GdbMemoryBlockAddressInfoRetrieval.this, null);
-            }
-        });
-    }
+	public GdbMemoryBlockAddressInfoRetrieval(DsfSession session) {
+		fSession = session;
+		fSession.getExecutor().execute(new DsfRunnable() {
+			@Override
+			public void run() {
+				fSession.addServiceEventListener(GdbMemoryBlockAddressInfoRetrieval.this, null);
+			}
+		});
+	}
 
-    protected IGdbMemoryAddressInfoTypeRetrieval[] resolveMemoryAddressInfoProviders() {
-        return new IGdbMemoryAddressInfoTypeRetrieval[] {new GdbMemoryAddressInfoVariablesRetrieval(fSession), new GdbMemoryAddressInfoRegistersRetrieval(fSession)};
-    }
+	protected IGdbMemoryAddressInfoTypeRetrieval[] resolveMemoryAddressInfoProviders() {
+		return new IGdbMemoryAddressInfoTypeRetrieval[] { new GdbMemoryAddressInfoVariablesRetrieval(fSession),
+				new GdbMemoryAddressInfoRegistersRetrieval(fSession) };
+	}
 
-    @Override
-    public void getMemoryBlockAddressInfo(Object selection, final IMemoryBlock memBlock,
-            final IGetMemoryBlockAddressInfoReq request) {
-        IDMContext memBlockContext = null;
-        if (memBlock instanceof DsfMemoryBlock) {
-            memBlockContext = ((DsfMemoryBlock) memBlock).getContext();
+	@Override
+	public void getMemoryBlockAddressInfo(Object selection, final IMemoryBlock memBlock,
+			final IGetMemoryBlockAddressInfoReq request) {
+		IDMContext memBlockContext = null;
+		if (memBlock instanceof DsfMemoryBlock) {
+			memBlockContext = ((DsfMemoryBlock) memBlock).getContext();
 
-            if (selection instanceof IDMVMContext) {
-                IDMContext context = ((IDMVMContext) selection).getDMContext();
-                final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(context, IFrameDMContext.class);
-                if (frameCtx != null) {
-                    // Resolve container context of selection
-                    IContainerDMContext selectedContainerCtx = DMContexts.getAncestorOfType(frameCtx,
-                            IContainerDMContext.class);
+			if (selection instanceof IDMVMContext) {
+				IDMContext context = ((IDMVMContext) selection).getDMContext();
+				final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(context, IFrameDMContext.class);
+				if (frameCtx != null) {
+					// Resolve container context of selection
+					IContainerDMContext selectedContainerCtx = DMContexts.getAncestorOfType(frameCtx,
+							IContainerDMContext.class);
 
-                    // Resolve container context of memory block
-                    IContainerDMContext memoryContainerCtx = DMContexts.getAncestorOfType(memBlockContext,
-                            IContainerDMContext.class);
+					// Resolve container context of memory block
+					IContainerDMContext memoryContainerCtx = DMContexts.getAncestorOfType(memBlockContext,
+							IContainerDMContext.class);
 
-                    // Continue if the selected container matches the container for the memory context
-                    if (memoryContainerCtx != null && memoryContainerCtx.equals(selectedContainerCtx)) {
-                        fSession.getExecutor().execute(new DsfRunnable() {
-                            @Override
-                            public void run() {
-                            	// Resolve the memory address info providers
-                                IGdbMemoryAddressInfoTypeRetrieval[] infoTypeProviders = resolveMemoryAddressInfoProviders();
-                                if (infoTypeProviders == null || infoTypeProviders.length == 0) {
-                                    // No providers available
-                                    request.done();
-                                    return;
-                                }
+					// Continue if the selected container matches the container for the memory context
+					if (memoryContainerCtx != null && memoryContainerCtx.equals(selectedContainerCtx)) {
+						fSession.getExecutor().execute(new DsfRunnable() {
+							@Override
+							public void run() {
+								// Resolve the memory address info providers
+								IGdbMemoryAddressInfoTypeRetrieval[] infoTypeProviders = resolveMemoryAddressInfoProviders();
+								if (infoTypeProviders == null || infoTypeProviders.length == 0) {
+									// No providers available
+									request.done();
+									return;
+								}
 
-                                final CountingRequestMonitor crm = new CountingRequestMonitor(fSession.getExecutor(),
-                                        null) {
-                                    // mark the request done when all available infoTypeProviders have
-                                    // returned its information
-                                    @Override
-                                    protected void handleCompleted() {
-                                        request.done();
-                                    };
-                                };
+								final CountingRequestMonitor crm = new CountingRequestMonitor(fSession.getExecutor(),
+										null) {
+									// mark the request done when all available infoTypeProviders have
+									// returned its information
+									@Override
+									protected void handleCompleted() {
+										request.done();
+									};
+								};
 
-                                for (final IGdbMemoryAddressInfoTypeRetrieval infoProvider : infoTypeProviders) {
-                                    infoProvider.itemsRequest(frameCtx, memBlock,
-                                            new DataRequestMonitor<IMemoryBlockAddressInfoItem[]>(
-                                                    fSession.getExecutor(), crm) {
-                                        @Override
-                                        protected void handleCompleted() {
-                                            if (isSuccess()) {
-                                            	// Load the information from this provider
-                                                request.setAddressInfoItems(infoProvider.getInfoType(), getData());
-                                            } else {
-                                                request.setStatus(getStatus());
-                                            }
-                                            crm.done();
-                                        }
-                                    });
-                                }
+								for (final IGdbMemoryAddressInfoTypeRetrieval infoProvider : infoTypeProviders) {
+									infoProvider.itemsRequest(frameCtx, memBlock,
+											new DataRequestMonitor<IMemoryBlockAddressInfoItem[]>(
+													fSession.getExecutor(), crm) {
+												@Override
+												protected void handleCompleted() {
+													if (isSuccess()) {
+														// Load the information from this provider
+														request.setAddressInfoItems(infoProvider.getInfoType(),
+																getData());
+													} else {
+														request.setStatus(getStatus());
+													}
+													crm.done();
+												}
+											});
+								}
 
-                                crm.setDoneCount(infoTypeProviders.length);
-                            }
+								crm.setDoneCount(infoTypeProviders.length);
+							}
 
-                        });
-                    } else {
-                        request.done();
-                    }
-                } else {
-                    // The selection context does not match the block memory context, 
-                    // Simply close the request
-                    request.done();
-                }
-            } else {
-                request.done();
-            }
-        } else {
-            request.done();
-        }
-    }
+						});
+					} else {
+						request.done();
+					}
+				} else {
+					// The selection context does not match the block memory context,
+					// Simply close the request
+					request.done();
+				}
+			} else {
+				request.done();
+			}
+		} else {
+			request.done();
+		}
+	}
 
-    // The GdbSessionAdapters class will call this method automatically when it cleans up
-    public void dispose() {
-        fListeners.clear();
-    }
+	// The GdbSessionAdapters class will call this method automatically when it cleans up
+	public void dispose() {
+		fListeners.clear();
+	}
 
-    @Override
-    public void addAddressInfoUpdateListener(IAddressInfoUpdateListener listener) {
-        synchronized(fListeners) {
-            fListeners.add(listener);            
-        }
-    }
+	@Override
+	public void addAddressInfoUpdateListener(IAddressInfoUpdateListener listener) {
+		synchronized (fListeners) {
+			fListeners.add(listener);
+		}
+	}
 
-    @Override
-    public void removeAddressInfoUpdateListener(IAddressInfoUpdateListener listener) {
-        synchronized(fListeners) {
-            fListeners.remove(listener);
-        }
-    }
+	@Override
+	public void removeAddressInfoUpdateListener(IAddressInfoUpdateListener listener) {
+		synchronized (fListeners) {
+			fListeners.remove(listener);
+		}
+	}
 
-    @DsfServiceEventHandler
-    public void eventDispatched(IRegisterChangedDMEvent e) {
-        synchronized(fListeners) {
-            for (IAddressInfoUpdateListener listener : fListeners) {
-                listener.handleAddressInfoUpdate(EventType.VALUE_CHANGED, null);
-            }
-        }
+	@DsfServiceEventHandler
+	public void eventDispatched(IRegisterChangedDMEvent e) {
+		synchronized (fListeners) {
+			for (IAddressInfoUpdateListener listener : fListeners) {
+				listener.handleAddressInfoUpdate(EventType.VALUE_CHANGED, null);
+			}
+		}
 
-    }
-    
-    @DsfServiceEventHandler
-    public void eventDispatched(IExpressionChangedDMEvent e) {
-        synchronized(fListeners) {
-            for (IAddressInfoUpdateListener listener : fListeners) {
-                listener.handleAddressInfoUpdate(EventType.VALUE_CHANGED, null);
-            }
-        }
-    }
+	}
+
+	@DsfServiceEventHandler
+	public void eventDispatched(IExpressionChangedDMEvent e) {
+		synchronized (fListeners) {
+			for (IAddressInfoUpdateListener listener : fListeners) {
+				listener.handleAddressInfoUpdate(EventType.VALUE_CHANGED, null);
+			}
+		}
+	}
 }

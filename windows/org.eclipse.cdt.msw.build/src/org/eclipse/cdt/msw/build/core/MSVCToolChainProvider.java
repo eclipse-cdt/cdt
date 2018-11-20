@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Toolchain provider for Microsoft's Visual C++ Compiler (MSVC).
- * 
+ *
  * This implementation only supports Microsoft Build Tools 2017 and
  * the Windows 10 SDK (Kit).
  */
@@ -47,12 +47,12 @@ public class MSVCToolChainProvider implements IToolChainProvider {
 		if (!Files.exists(vsPath)) {
 			return;
 		}
-		
+
 		Path vs2017Path = vsPath.resolve("2017"); //$NON-NLS-1$
 		if (!Files.exists(vs2017Path)) {
 			return;
 		}
-		
+
 		Path msvcPath = vs2017Path.resolve("BuildTools").resolve("VC").resolve("Tools").resolve("MSVC"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (!Files.exists(msvcPath)) {
 			return;
@@ -60,7 +60,7 @@ public class MSVCToolChainProvider implements IToolChainProvider {
 
 		String hostPath = Platform.getOSArch().equals(Platform.ARCH_X86) ? "HostX86" : "HostX64"; //$NON-NLS-1$ //$NON-NLS-2$
 		String archPath = Platform.getOSArch().equals(Platform.ARCH_X86) ? "x86" : "x64"; //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		try {
 			Files.find(msvcPath, 6, (path, attr) -> {
 				return path.getFileName().toString().equalsIgnoreCase("cl.exe") //$NON-NLS-1$

@@ -19,17 +19,17 @@ import org.eclipse.cdt.dsf.mi.service.command.output.CLIThreadInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- * 
+ *
  *    thread
- *    
+ *
  *    [Current thread is 1 (Thread 0xb7cc56b0 (LWP 5488))]
- *    
+ *
  * @since 3.0
  *
  */
 public class CLIThread extends CLICommand<CLIThreadInfo> {
 
-    public CLIThread(IContainerDMContext ctx) {
+	public CLIThread(IContainerDMContext ctx) {
 		super(ctx, "thread"); //$NON-NLS-1$
 	}
 

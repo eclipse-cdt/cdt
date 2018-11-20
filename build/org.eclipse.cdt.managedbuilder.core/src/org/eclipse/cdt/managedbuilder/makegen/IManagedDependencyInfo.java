@@ -19,12 +19,12 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * @since 3.1
- * 
- * This interface is the base interface for IManagedDependencyCalculator, 
+ *
+ * This interface is the base interface for IManagedDependencyCalculator,
  * IManagedDependencyCommands and IManagedDependencyPreBuild.  See these
  * interfaces and IManagedDependencyGenerator2 for more information on
  * writing a dependency calculator.
- * 
+ *
  * The methods below simply return the arguments passed to the
  * IManagedDependencyGenerator2.getDependency*Info call that created the
  * IManagedDependencyInfo instance.
@@ -32,7 +32,10 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IManagedDependencyInfo {
 	public IPath getSource();
+
 	public IBuildObject getBuildContext();
+
 	public ITool getTool();
+
 	public IPath getTopBuildDirectory();
 }

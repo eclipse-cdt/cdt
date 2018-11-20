@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * Provide support for linking view selection with active editor.
- * 
+ *
  * @since 4.0
  */
 public class CNavigatorLinkHelper implements ILinkHelper {
@@ -45,8 +45,8 @@ public class CNavigatorLinkHelper implements ILinkHelper {
 	public void activateEditor(IWorkbenchPage page, IStructuredSelection selection) {
 		if (selection == null || selection.isEmpty())
 			return;
-		Object element= selection.getFirstElement();
-		IEditorPart part= EditorUtility.isOpenInEditor(element);
+		Object element = selection.getFirstElement();
+		IEditorPart part = EditorUtility.isOpenInEditor(element);
 		if (part != null) {
 			page.bringToTop(part);
 			if (element instanceof ICElement && !(element instanceof ITranslationUnit)) {
@@ -61,23 +61,23 @@ public class CNavigatorLinkHelper implements ILinkHelper {
 	 */
 	@Override
 	public IStructuredSelection findSelection(IEditorInput input) {
-		IWorkingCopyManager mgr= CUIPlugin.getDefault().getWorkingCopyManager();
-		Object element= mgr.getWorkingCopy(input);
+		IWorkingCopyManager mgr = CUIPlugin.getDefault().getWorkingCopyManager();
+		Object element = mgr.getWorkingCopy(input);
 		if (element == null) {
 			IFile file = ResourceUtil.getFile(input);
 			if (file != null && CoreModel.hasCNature(file.getProject())) {
-				element= CoreModel.getDefault().create(file);
+				element = CoreModel.getDefault().create(file);
 			}
 		} else {
-			ITranslationUnit tUnit= ((IWorkingCopy) element).getOriginalElement();
-			IFile file= (IFile) tUnit.getResource();
+			ITranslationUnit tUnit = ((IWorkingCopy) element).getOriginalElement();
+			IFile file = (IFile) tUnit.getResource();
 			if (file != null) {
-				element= CoreModel.getDefault().create(file);
+				element = CoreModel.getDefault().create(file);
 				if (element == null) {
-					element= file;
+					element = file;
 				}
 			} else {
-				element= tUnit;
+				element = tUnit;
 			}
 		}
 		return (element != null) ? new StructuredSelection(element) : StructuredSelection.EMPTY;

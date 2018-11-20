@@ -45,7 +45,7 @@ public class SoundActionComposite extends Composite {
 
 	/**
 	 * Create the composite
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 * @param page

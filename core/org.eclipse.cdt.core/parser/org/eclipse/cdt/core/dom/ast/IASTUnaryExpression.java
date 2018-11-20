@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface is used to represent a unary expression in the AST.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -71,7 +71,7 @@ public interface IASTUnaryExpression extends IASTExpression {
 
 	/**
 	 * sizeof.
-	 * {@code op_sizeof}: sizeof exp  
+	 * {@code op_sizeof}: sizeof exp
 	 */
 	public static final int op_sizeof = 8;
 
@@ -109,7 +109,7 @@ public interface IASTUnaryExpression extends IASTExpression {
 	 */
 	@Deprecated
 	public static final int op_typeof = 14;
-	
+
 	/**
 	 * For GCC parsers, only. {@code op_alignOf} is used for __alignOf( unaryExpression ) type
 	 * expressions.
@@ -138,34 +138,33 @@ public interface IASTUnaryExpression extends IASTExpression {
 	 * {@code OPERAND} represents the relationship between an {@code IASTUnaryExpression} and
 	 * it's nested {@code IASTExpression}.
 	 */
-	public static final ASTNodeProperty OPERAND =
-			new ASTNodeProperty("IASTUnaryExpression.OPERAND - IASTExpression (operand) for IASTUnaryExpression"); //$NON-NLS-1$
-
+	public static final ASTNodeProperty OPERAND = new ASTNodeProperty(
+			"IASTUnaryExpression.OPERAND - IASTExpression (operand) for IASTUnaryExpression"); //$NON-NLS-1$
 
 	/**
 	 * Returns the operator/kind.
-	 * 
+	 *
 	 * @return the operator, one of {@code op_*} constants defined in this interface.
 	 */
 	public int getOperator();
 
 	/**
 	 * Sets the operator/kind.
-	 * 
+	 *
 	 * @param operator the operator, one of {@code op_*} constants defined in this interface.
 	 */
 	public void setOperator(int operator);
 
 	/**
 	 * Returns the operand.
-	 * 
+	 *
 	 * @return {@code IASTExpression}
 	 */
 	public IASTExpression getOperand();
 
 	/**
 	 * Sets the operand.
-	 * 
+	 *
 	 * @param expression {@code IASTExpression}
 	 */
 	public void setOperand(IASTExpression expression);

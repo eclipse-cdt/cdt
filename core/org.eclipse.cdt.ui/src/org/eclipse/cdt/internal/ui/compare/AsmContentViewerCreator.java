@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * Creates a merge viewer for assembly code.
  */
-public class AsmContentViewerCreator  implements IViewerCreator {
+public class AsmContentViewerCreator implements IViewerCreator {
 
 	/*
 	 * @see org.eclipse.compare.IViewerCreator#createViewer(org.eclipse.swt.widgets.Composite, org.eclipse.compare.CompareConfiguration)

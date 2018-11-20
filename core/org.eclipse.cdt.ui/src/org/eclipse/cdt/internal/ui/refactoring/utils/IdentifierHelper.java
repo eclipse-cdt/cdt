@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     IBM Corporation
  *******************************************************************************/
@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 
 /**
  * Class to verify that an identifier meets the C++ rules for valid names.
- * 
+ *
  * @author Thomas Corbat
  */
 public class IdentifierHelper {
@@ -45,18 +45,23 @@ public class IdentifierHelper {
 		}
 		if (isValidIdentifier(identifier)) {
 			if (isKeyword(identifier)) {
-				return new IdentifierResult(IdentifierResult.KEYWORD, NLS.bind(Messages.IdentifierHelper_isKeyword, identifier)); 
+				return new IdentifierResult(IdentifierResult.KEYWORD,
+						NLS.bind(Messages.IdentifierHelper_isKeyword, identifier));
 			}
-			return new IdentifierResult(IdentifierResult.VALID, NLS.bind(Messages.IdentifierHelper_isValid, identifier));
+			return new IdentifierResult(IdentifierResult.VALID,
+					NLS.bind(Messages.IdentifierHelper_isValid, identifier));
 		} else if (isLeadingADigit(identifier)) {
-			return new IdentifierResult(IdentifierResult.DIGIT_FIRST, NLS.bind(Messages.IdentifierHelper_leadingDigit, identifier)); 
+			return new IdentifierResult(IdentifierResult.DIGIT_FIRST,
+					NLS.bind(Messages.IdentifierHelper_leadingDigit, identifier));
 		} else if (identifier.length() == 0) {
-			return new IdentifierResult(IdentifierResult.EMPTY, Messages.IdentifierHelper_emptyIdentifier); 
+			return new IdentifierResult(IdentifierResult.EMPTY, Messages.IdentifierHelper_emptyIdentifier);
 		} else if (hasIllegalCharacters(identifier)) {
-			return new IdentifierResult(IdentifierResult.ILLEGAL_CHARACTER, NLS.bind(Messages.IdentifierHelper_illegalCharacter, identifier)); 
+			return new IdentifierResult(IdentifierResult.ILLEGAL_CHARACTER,
+					NLS.bind(Messages.IdentifierHelper_illegalCharacter, identifier));
 		}
-		
-		return new IdentifierResult(IdentifierResult.UNKNOWN, NLS.bind(Messages.IdentifierHelper_unidentifiedMistake, identifier)); 
+
+		return new IdentifierResult(IdentifierResult.UNKNOWN,
+				NLS.bind(Messages.IdentifierHelper_unidentifiedMistake, identifier));
 	}
 
 	private static boolean isKeyword(String identifier) {

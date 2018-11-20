@@ -14,38 +14,47 @@
 package org.eclipse.cdt.autotools.ui.editors;
 
 public class ParseException extends Exception {
-	
+
 	static final long serialVersionUID = 1;
 	String message;
 	int severity;
 	int lineNumber;
 	int startColumn;
 	int endColumn;
+
 	public int getEndColumn() {
 		return endColumn;
 	}
+
 	public void setEndColumn(int endColumn) {
 		this.endColumn = endColumn;
 	}
+
 	public int getLineNumber() {
 		return lineNumber;
 	}
+
 	public void setLineNumber(int lineNumber) {
 		this.lineNumber = lineNumber;
 	}
+
 	@Override
 	public String getMessage() {
 		return message;
 	}
+
 	public void setMessage(String message) {
 		this.message = message;
 	}
+
 	public int getStartColumn() {
 		return startColumn;
 	}
+
 	public void setStartColumn(int startColumn) {
 		this.startColumn = startColumn;
 	}
+
 	public ParseException(String message, int lineNumber, int startColumn, int endColumn, int severity) {
 		super();
 		this.message = message;
@@ -54,9 +63,11 @@ public class ParseException extends Exception {
 		this.endColumn = endColumn;
 		this.severity = severity;
 	}
+
 	public int getSeverity() {
 		return severity;
 	}
+
 	public void setSeverity(int severity) {
 		this.severity = severity;
 	}

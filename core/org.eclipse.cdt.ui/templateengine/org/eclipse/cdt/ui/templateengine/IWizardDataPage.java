@@ -20,7 +20,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 /**
  * IWizardDataPage is a page which can participate in a custom project template
  * wizard sequence.
- * 
+ *
  * @since 4.0
  */
 public interface IWizardDataPage extends IWizardPage {
@@ -29,7 +29,7 @@ public interface IWizardDataPage extends IWizardPage {
 	 * associated project template's value store.
 	 */
 	Map<String, String> getPageData();
-	
+
 	/**
 	 * Set the page that follows this one. Implementations must ensure
 	 * {@link IWizardPage#getNextPage()} returns the specified value

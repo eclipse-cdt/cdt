@@ -84,16 +84,16 @@ public class CPPAliasTemplate extends PlatformObject
 		return type.isSameType(aliasedType);
 	}
 
-    @Override
+	@Override
 	public Object clone() {
-        IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Not going to happen
-        }
-        return t;
-    }
+		IType t = null;
+		try {
+			t = (IType) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Not going to happen
+		}
+		return t;
+	}
 
 	@Override
 	public String[] getQualifiedName() throws DOMException {
@@ -120,7 +120,7 @@ public class CPPAliasTemplate extends PlatformObject
 			IBinding p = null;
 			ICPPTemplateParameter[] result = null;
 			for (ICPPASTTemplateParameter param : params) {
-				p= CPPTemplates.getTemplateParameterName(param).resolveBinding();
+				p = CPPTemplates.getTemplateParameterName(param).resolveBinding();
 				if (p instanceof ICPPTemplateParameter) {
 					result = ArrayUtil.append(ICPPTemplateParameter.class, result, (ICPPTemplateParameter) p);
 				}
@@ -132,14 +132,14 @@ public class CPPAliasTemplate extends PlatformObject
 
 	@Override
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter templateParameter) {
-		int pos= templateParameter.getParameterPosition();
+		int pos = templateParameter.getParameterPosition();
 
 		ICPPASTTemplateParameter[] params = CPPTemplates.getTemplateDeclaration(aliasName).getTemplateParameters();
 		if (pos < params.length) {
 			final IASTName oName = CPPTemplates.getTemplateParameterName(params[pos]);
 			return oName.resolvePreBinding();
 		}
-    	return templateParameter;
+		return templateParameter;
 	}
 
 	@Override

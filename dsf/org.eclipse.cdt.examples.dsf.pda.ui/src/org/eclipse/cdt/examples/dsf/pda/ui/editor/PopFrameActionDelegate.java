@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -22,9 +22,8 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-
 public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDelegate2 {
-	
+
 	//private PDAThread fThread = null;
 
 	/* (non-Javadoc)
@@ -37,7 +36,7 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-	    /*
+		/*
 		try {
 		fThread.pop();
 		} catch (DebugException e) {
@@ -48,26 +47,26 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-	/*	if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection) selection;
-			Object element = ss.getFirstElement();
-			if (element instanceof PDAStackFrame) {
-				PDAStackFrame frame = (PDAStackFrame) element;
-				//#ifdef ex5
-//#				// TODO: Exercise 5 - enable the action if the frame's thread supports it				
-				//#else
-				fThread = (PDAThread) frame.getThread();
-				try {
-					action.setEnabled(fThread.canPop() && fThread.getTopStackFrame().equals(frame));
-				} catch (DebugException e) {
+		/*	if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				Object element = ss.getFirstElement();
+				if (element instanceof PDAStackFrame) {
+					PDAStackFrame frame = (PDAStackFrame) element;
+					//#ifdef ex5
+		//#				// TODO: Exercise 5 - enable the action if the frame's thread supports it
+					//#else
+					fThread = (PDAThread) frame.getThread();
+					try {
+						action.setEnabled(fThread.canPop() && fThread.getTopStackFrame().equals(frame));
+					} catch (DebugException e) {
+					}
+					return;
+					//#endif
 				}
-				return;
-				//#endif
+
 			}
-			
-		}
-		action.setEnabled(false);
-		*/
+			action.setEnabled(false);
+			*/
 	}
 
 	/* (non-Javadoc)

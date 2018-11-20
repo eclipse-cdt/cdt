@@ -15,10 +15,10 @@
 package org.eclipse.cdt.internal.formatter;
 
 /**
- * A location maintains positional information both in original source 
+ * A location maintains positional information both in original source
  * and in the output source.
  * It remembers source offsets, line/column and indentation level.
- * 
+ *
  * @since 4.0
  */
 public class Location {
@@ -32,18 +32,18 @@ public class Location {
 
 	// chunk management
 	public int lastNumberOfNewLines;
-	
+
 	// edits management
 	int editsIndex;
 	OptimizedReplaceEdit textEdit;
-	
+
 	public Runnable tailFormatter;
 
-	public Location(Scribe scribe, int sourceRestart){
+	public Location(Scribe scribe, int sourceRestart) {
 		update(scribe, sourceRestart);
 	}
-	
-	public void update(Scribe scribe, int sourceRestart){
+
+	public void update(Scribe scribe, int sourceRestart) {
 		this.inputOffset = sourceRestart;
 		this.outputLine = scribe.line;
 		this.outputColumn = scribe.column;

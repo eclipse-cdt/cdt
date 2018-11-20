@@ -45,10 +45,9 @@ public class Bug_303953 extends AbstractBuilderTest {
 		setActiveConfigurationByName(app, "Debug");
 
 		ResourceDeltaVerifier verifier = new ResourceDeltaVerifier();
-		verifier.addExpectedChange(buildOutputResources.toArray(new IResource[buildOutputResources.size()]), IResourceDelta.ADDED, IResourceDelta.NO_CHANGE);
-		verifier.addIgnore(new IResource[]{
-				getWorkspace().getRoot(), app,
-				app.getFile(".project")});
+		verifier.addExpectedChange(buildOutputResources.toArray(new IResource[buildOutputResources.size()]),
+				IResourceDelta.ADDED, IResourceDelta.NO_CHANGE);
+		verifier.addIgnore(new IResource[] { getWorkspace().getRoot(), app, app.getFile(".project") });
 		verifyBuild(app, IncrementalProjectBuilder.FULL_BUILD, verifier);
 
 		// Delete helloworldC
@@ -63,11 +62,11 @@ public class Bug_303953 extends AbstractBuilderTest {
 
 		verifier = new ResourceDeltaVerifier();
 		// These files should be removed
-		IResource[] removed = new IResource[] {app.getFile("Debug/src/helloworldC.o"),
-											   app.getFile("Debug/src/helloworldC.d")};
+		IResource[] removed = new IResource[] { app.getFile("Debug/src/helloworldC.o"),
+				app.getFile("Debug/src/helloworldC.d") };
 		verifier.addExpectedChange(removed, IResourceDelta.REMOVED, IResourceDelta.NO_CHANGE);
 		// subdir.mk has been updated
-		IResource[] expected = new IResource[] {app.getFile("Debug/src/subdir.mk")};
+		IResource[] expected = new IResource[] { app.getFile("Debug/src/subdir.mk") };
 		verifier.addExpectedChange(expected, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
 
 		// Ignore other resources

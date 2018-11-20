@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.MultiStatus;
  *
  */
 public class BuildMultiStatus extends MultiStatus {
-	
-	public BuildMultiStatus(String message, Throwable exception){
+
+	public BuildMultiStatus(String message, Throwable exception) {
 		super(ManagedBuilderCorePlugin.getUniqueIdentifier(), 0, message, exception);
 	}
 

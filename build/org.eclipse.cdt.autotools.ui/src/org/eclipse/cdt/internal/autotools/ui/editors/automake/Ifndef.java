@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-
 public class Ifndef extends Conditional {
 
-    private static final String EMPTY = ""; //$NON-NLS-1$
+	private static final String EMPTY = ""; //$NON-NLS-1$
+
 	public Ifndef(Directive parent, String var) {
 		super(parent, var, EMPTY, EMPTY);
 	}

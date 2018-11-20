@@ -52,26 +52,26 @@ class PDOMCache {
 
 	/**
 	 * Returns the mapped PDOM for the path specified, if such a pdom is not already known about
-	 * then one is created using the location converter specified. 
+	 * then one is created using the location converter specified.
 	 * @param path
 	 * @param converter
 	 * @return a PDOM instance or null if the PDOM version was too old
 	 */
 	public PDOM getPDOM(IPath path, IIndexLocationConverter converter) {
-		if (path == null){
+		if (path == null) {
 			return null;
 		}
 
-		PDOM result= null;
+		PDOM result = null;
 		File file = path.toFile();
 
 		synchronized (path2pdom) {
 			if (path2pdom.containsKey(file)) {
-				result= path2pdom.get(file);
+				result = path2pdom.get(file);
 			}
 			if (result == null) {
 				try {
-					result= new PDOM(file, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+					result = new PDOM(file, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 					path2pdom.put(file, result);
 				} catch (CoreException ce) {
 					CCorePlugin.log(ce);

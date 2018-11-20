@@ -25,13 +25,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 
-
 @SuppressWarnings("deprecation")
 public class ManagedProjectOptionBlock extends TabFolderOptionBlock {
 
 	private ErrorParserBlock errParserBlock;
 	private BinaryParserBlock binaryParserBlock;
-	
+
 	/**
 	 * @param parent
 	 */
@@ -49,29 +48,30 @@ public class ManagedProjectOptionBlock extends TabFolderOptionBlock {
 	public BinaryParserBlock getBinaryParserBlock() {
 		return binaryParserBlock;
 	}
-	
+
 	public ErrorParserBlock getErrorParserBlock() {
 		return errParserBlock;
 	}
-	
+
 	@Override
 	public Control createContents(Composite parent) {
-		Control control = super.createContents( parent );
-		((GridLayout)((Composite)control).getLayout()).marginWidth = 1;
+		Control control = super.createContents(parent);
+		((GridLayout) ((Composite) control).getLayout()).marginWidth = 1;
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		((Composite)control).setLayoutData(gd);
+		((Composite) control).setLayoutData(gd);
 
-		if (getErrorParserBlock()!= null)
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(getErrorParserBlock().getControl(), CDTHelpContextIds.MAN_PROJ_ERROR_PARSER);
+		if (getErrorParserBlock() != null)
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(getErrorParserBlock().getControl(),
+					CDTHelpContextIds.MAN_PROJ_ERROR_PARSER);
 
 		return control;
-	}	
+	}
 
 	public void updateValues() {
-		if (getErrorParserBlock()!= null) {
+		if (getErrorParserBlock() != null) {
 			getErrorParserBlock().updateValues();
 		}
-		if (getBinaryParserBlock()!= null) {
+		if (getBinaryParserBlock() != null) {
 			// TODO
 			//getBinaryParserBlock().updateValues();
 		}

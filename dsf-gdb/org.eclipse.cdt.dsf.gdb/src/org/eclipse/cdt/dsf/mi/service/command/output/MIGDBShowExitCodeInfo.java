@@ -12,30 +12,30 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *******************************************************************************/
- 
+
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
  * GDB/MI show parsing.
- * (gdb) 
+ * (gdb)
  * -data-evaluate-expression $_exitcode
  * ^done,value="10"
  * (gdb)
  */
 public class MIGDBShowExitCodeInfo extends MIDataEvaluateExpressionInfo {
 
-    public MIGDBShowExitCodeInfo(MIOutput o) {
-        super(o);
-    }
+	public MIGDBShowExitCodeInfo(MIOutput o) {
+		super(o);
+	}
 
-    public int getCode() {
-        int code = 0;
-        String exp = getValue();
-        try {
-            code = Integer.parseInt(exp);
-        } catch (NumberFormatException e) {
-        }
-        return code;
-    }
+	public int getCode() {
+		int code = 0;
+		String exp = getValue();
+		try {
+			code = Integer.parseInt(exp);
+		} catch (NumberFormatException e) {
+		}
+		return code;
+	}
 
 }

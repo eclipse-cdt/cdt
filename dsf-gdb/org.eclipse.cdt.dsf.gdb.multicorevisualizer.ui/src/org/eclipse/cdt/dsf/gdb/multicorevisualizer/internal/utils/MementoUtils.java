@@ -44,7 +44,6 @@ public class MementoUtils {
 	protected static final String ELEMENT_TAGNAME = "elem"; //$NON-NLS-1$
 	protected static final String ATTRIBUTE_KEY = "key"; //$NON-NLS-1$
 	protected static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
-	
 
 	/** Returns a XML memento, that encodes a single String parameter */
 	public static String encodeStringIntoMemento(String str) {
@@ -57,7 +56,7 @@ public class MementoUtils {
 	public static String decodeStringFromMemento(String memento) {
 		return decodeListFromMemento(memento).get(0);
 	}
-	
+
 	/** Returns a XML memento, that encodes a Map of Strings */
 	public static String encodeMapIntoMemento(Map<String, String> keyPairValues) {
 		String returnValue = null;
@@ -96,8 +95,7 @@ public class MementoUtils {
 		}
 		return returnValue;
 	}
-	
-	
+
 	/** Returns a Map of Strings, decoded from a XML memento */
 	public static Map<String, String> decodeMapFromMemento(String memento) {
 		Map<String, String> keyPairValues = new HashMap<>();
@@ -116,22 +114,20 @@ public class MementoUtils {
 					NamedNodeMap nodeMap = elem.getAttributes();
 					String key = null;
 					String value = null;
-					for(int idx = 0; idx < nodeMap.getLength(); idx++) {
+					for (int idx = 0; idx < nodeMap.getLength(); idx++) {
 						Node attrNode = nodeMap.item(idx);
 						if (attrNode.getNodeType() == Node.ATTRIBUTE_NODE) {
 							Attr attr = (Attr) attrNode;
 							if (attr.getName().equals(ATTRIBUTE_KEY)) {
 								key = attr.getValue();
-							}
-							else if (attr.getName().equals(ATTRIBUTE_VALUE)) {
+							} else if (attr.getName().equals(ATTRIBUTE_VALUE)) {
 								value = attr.getValue();
 							}
 						}
 					}
 					if (key != null && value != null) {
 						keyPairValues.put(key, value);
-					}
-					else {
+					} else {
 						throw new Exception();
 					}
 				}
@@ -141,7 +137,6 @@ public class MementoUtils {
 		}
 		return keyPairValues;
 	}
-
 
 	/** Returns a XML memento, that encodes a List of Strings */
 	public static String encodeListIntoMemento(List<String> labels) {
@@ -198,8 +193,7 @@ public class MementoUtils {
 					String value = elem.getAttribute(ATTRIBUTE_VALUE);
 					if (value != null) {
 						list.add(value);
-					}
-					else {
+					} else {
 						throw new Exception();
 					}
 				}

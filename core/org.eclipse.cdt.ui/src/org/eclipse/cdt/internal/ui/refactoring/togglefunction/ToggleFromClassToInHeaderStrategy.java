@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
@@ -46,8 +46,7 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 	}
 
 	private boolean isInClass(IASTNode node) {
-		return node != null &&
-				ASTQueries.findAncestorWithType(node, ICPPASTCompositeTypeSpecifier.class) != null;
+		return node != null && ASTQueries.findAncestorWithType(node, ICPPASTCompositeTypeSpecifier.class) != null;
 	}
 
 	@Override
@@ -57,15 +56,14 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 		IASTSimpleDeclaration newDeclaration = getNewDeclaration();
 		ASTRewrite rewriter = replaceDefinitionWithDeclaration(modifications, newDeclaration);
 		IASTNode insertion_point = getInsertionPoint(parentNamespace);
-		rewriter.insertBefore(parentNamespace, 
-				insertion_point, newDefinition, infoText);
+		rewriter.insertBefore(parentNamespace, insertion_point, newDefinition, infoText);
 	}
 
 	private IASTNode getNewDefinition(IASTNode parentNamespace) {
-		IASTNode newDefinition = ToggleNodeHelper.getQualifiedNameDefinition(
-				context.getDefinition(), context.getDefinitionAST(), parentNamespace);
-		((IASTFunctionDefinition) newDefinition).setBody(
-				context.getDefinition().getBody().copy(CopyStyle.withLocations));
+		IASTNode newDefinition = ToggleNodeHelper.getQualifiedNameDefinition(context.getDefinition(),
+				context.getDefinitionAST(), parentNamespace);
+		((IASTFunctionDefinition) newDefinition)
+				.setBody(context.getDefinition().getBody().copy(CopyStyle.withLocations));
 		if (newDefinition instanceof ICPPASTFunctionWithTryBlock) {
 			ICPPASTFunctionWithTryBlock newTryFun = (ICPPASTFunctionWithTryBlock) newDefinition;
 			ICPPASTFunctionWithTryBlock oldTryFun = (ICPPASTFunctionWithTryBlock) context.getDefinition();
@@ -73,8 +71,8 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 				newTryFun.addCatchHandler(catchH.copy(CopyStyle.withLocations));
 			}
 		}
-		ICPPASTTemplateDeclaration templdecl = ToggleNodeHelper.getTemplateDeclaration(
-				context.getDefinition(), (IASTFunctionDefinition) newDefinition);
+		ICPPASTTemplateDeclaration templdecl = ToggleNodeHelper.getTemplateDeclaration(context.getDefinition(),
+				(IASTFunctionDefinition) newDefinition);
 		if (templdecl != null) {
 			newDefinition = templdecl;
 		}
@@ -83,8 +81,8 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 	}
 
 	private IASTNode getParentNamespace() {
-		IASTNode parentNamespace =
-				ASTQueries.findAncestorWithType(context.getDefinition(), ICPPASTNamespaceDefinition.class);
+		IASTNode parentNamespace = ASTQueries.findAncestorWithType(context.getDefinition(),
+				ICPPASTNamespaceDefinition.class);
 		if (parentNamespace == null)
 			parentNamespace = context.getDefinitionAST();
 		return parentNamespace;
@@ -92,28 +90,24 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 
 	private IASTNode getInsertionPoint(IASTNode parentNamespace) {
 		IASTTranslationUnit unit = parentNamespace.getTranslationUnit();
-		IASTNode insertion_point = InsertionPointFinder.findInsertionPoint(
-				unit, unit, context.getDefinition().getDeclarator());
+		IASTNode insertion_point = InsertionPointFinder.findInsertionPoint(unit, unit,
+				context.getDefinition().getDeclarator());
 		return insertion_point;
 	}
 
-	private ASTRewrite replaceDefinitionWithDeclaration(
-			ModificationCollector modifications,
+	private ASTRewrite replaceDefinitionWithDeclaration(ModificationCollector modifications,
 			IASTSimpleDeclaration newDeclaration) {
-		ASTRewrite rewriter = modifications.rewriterForTranslationUnit(
-				context.getDefinitionAST());
+		ASTRewrite rewriter = modifications.rewriterForTranslationUnit(context.getDefinitionAST());
 		rewriter.replace(context.getDefinition(), newDeclaration, infoText);
 		return rewriter;
 	}
 
 	private IASTSimpleDeclaration getNewDeclaration() {
 		INodeFactory factory = context.getDefinitionAST().getASTNodeFactory();
-		IASTDeclSpecifier newDeclSpecifier =
-				context.getDefinition().getDeclSpecifier().copy(CopyStyle.withLocations);
+		IASTDeclSpecifier newDeclSpecifier = context.getDefinition().getDeclSpecifier().copy(CopyStyle.withLocations);
 		newDeclSpecifier.setInline(false);
 		IASTSimpleDeclaration newDeclaration = factory.newSimpleDeclaration(newDeclSpecifier);
-		IASTFunctionDeclarator newDeclarator =
-				context.getDefinition().getDeclarator().copy(CopyStyle.withLocations);
+		IASTFunctionDeclarator newDeclarator = context.getDefinition().getDeclarator().copy(CopyStyle.withLocations);
 		newDeclaration.addDeclarator(newDeclarator);
 		newDeclaration.setParent(context.getDefinition().getParent());
 		return newDeclaration;

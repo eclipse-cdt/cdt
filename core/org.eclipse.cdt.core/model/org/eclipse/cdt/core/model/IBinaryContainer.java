@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 /**
  * Represents a container of all the IBinary's found in the project
  * while inspecting the project.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

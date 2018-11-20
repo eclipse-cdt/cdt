@@ -26,93 +26,92 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * An example is the built-in variable __func__.
  */
 public class CPPBuiltinVariable extends CPPVariable {
-    private IType type;
-    private char[] name;
-    private IScope scope;
+	private IType type;
+	private char[] name;
+	private IScope scope;
 
-    public CPPBuiltinVariable(IType type, char[] name, IScope scope) {
-        super(null);
-        this.type = type;
-        this.name = name;
-        this.scope = scope;
-    }
+	public CPPBuiltinVariable(IType type, char[] name, IScope scope) {
+		super(null);
+		this.type = type;
+		this.name = name;
+		this.scope = scope;
+	}
 
-    @Override
+	@Override
 	public IType getType() {
-        return type;
-    }
+		return type;
+	}
 
-    @Override
+	@Override
 	public String getName() {
-        return String.valueOf(name);
-    }
+		return String.valueOf(name);
+	}
 
-    @Override
+	@Override
 	public char[] getNameCharArray() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public IScope getScope() {
-        return scope;
-    }
+		return scope;
+	}
 
-    /**
-     * Returns null.
-     */
-    @Override
+	/**
+	 * Returns null.
+	 */
+	@Override
 	public IASTName[] getDeclarations() {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Returns null.
-     */
-    @Override
+	/**
+	 * Returns null.
+	 */
+	@Override
 	public IASTNode getDefinition() {
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Does nothing.
-     */
-    @Override
+	/**
+	 * Does nothing.
+	 */
+	@Override
 	public void addDefinition(IASTNode node) {
-        // do nothing
-    }
+		// do nothing
+	}
 
-    /**
-     * Does nothing.
-     */
-    @Override
+	/**
+	 * Does nothing.
+	 */
+	@Override
 	public void addDeclaration(IASTNode node) {
-        // do nothing
-    }
+		// do nothing
+	}
 
-    @Override
+	@Override
 	public String[] getQualifiedName() {
-        String[] temp = new String[1];
-        temp[0] = String.valueOf(name);
+		String[] temp = new String[1];
+		temp[0] = String.valueOf(name);
 
-        return temp;
-    }
+		return temp;
+	}
 
-
-    @Override
+	@Override
 	public char[][] getQualifiedNameCharArray() {
-        char[][] temp = new char[1][];
-        temp[0] = name;
+		char[][] temp = new char[1][];
+		temp[0] = name;
 
-        return temp;
-    }
+		return temp;
+	}
 
-    /**
-     * Returns true.
-     */
-    @Override
+	/**
+	 * Returns true.
+	 */
+	@Override
 	public boolean isGloballyQualified() {
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public IBinding getOwner() {

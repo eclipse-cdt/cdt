@@ -24,11 +24,11 @@ public class XlcLRQuickParser2Tests extends LRQuickParser2Tests {
 	public static TestSuite suite() {
 		return new TestSuite(XlcLRQuickParser2Tests.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

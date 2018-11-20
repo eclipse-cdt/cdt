@@ -17,13 +17,13 @@ import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * A type used to represent the result of applying an unary
- * type transformation operator like __underlying_type(T). 
- * 
+ * type transformation operator like __underlying_type(T).
+ *
  * This representation is only used when T is dependent (and thus
- * we cannot evaluate the type transformation yet). If T is not 
+ * we cannot evaluate the type transformation yet). If T is not
  * dependent, we simply use the result of evaluating the type
- * transformation. 
- * 
+ * transformation.
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.6
@@ -33,14 +33,14 @@ public interface ICPPUnaryTypeTransformation extends IType {
 	 * Identifies the type transformation operator being applied.
 	 */
 	public enum Operator {
-		underlying_type  // the integer type underlying an enumeration type 
+		underlying_type // the integer type underlying an enumeration type
 	}
 
 	/**
 	 * Returns the type transformation operator being applied.
 	 */
 	Operator getOperator();
-	
+
 	/**
 	 * Returns the type to which the type transformation operator is being applied.
 	 */

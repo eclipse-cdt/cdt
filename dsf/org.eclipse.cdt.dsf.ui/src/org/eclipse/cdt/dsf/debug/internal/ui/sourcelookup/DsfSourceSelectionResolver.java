@@ -30,7 +30,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class DsfSourceSelectionResolver implements Runnable  {
+public class DsfSourceSelectionResolver implements Runnable {
 	private ITextEditor fEditorPage = null;
 	private ITextSelection fSelection = null;
 	private LineLocation fLineLocation = new LineLocation();
@@ -40,19 +40,19 @@ public class DsfSourceSelectionResolver implements Runnable  {
 	public class LineLocation {
 		private String fileName = null;
 		private int lineNumber = 0;
-	
+
 		public String getFileName() {
 			return fileName;
 		}
-	
+
 		public void setFileName(String fileName) {
 			this.fileName = fileName;
 		}
-	
+
 		public int getLineNumber() {
 			return lineNumber;
 		}
-	
+
 		public void setLineNumber(int lineNumber) {
 			this.lineNumber = lineNumber;
 		}
@@ -63,7 +63,7 @@ public class DsfSourceSelectionResolver implements Runnable  {
 	}
 
 	public DsfSourceSelectionResolver() {
-		
+
 	}
 
 	public DsfSourceSelectionResolver(ITextEditor editor, ITextSelection selection) {
@@ -108,7 +108,7 @@ public class DsfSourceSelectionResolver implements Runnable  {
 		if (fEditorPage != null) {
 			return fEditorPage;
 		}
-		
+
 		final IWorkbench wb = DsfUIPlugin.getDefault().getWorkbench();
 		// Run in UI thread to access UI resources
 		ResolveEditorRunnable reditorRunnable = new ResolveEditorRunnable() {
@@ -135,13 +135,13 @@ public class DsfSourceSelectionResolver implements Runnable  {
 
 		Display.getDefault().syncExec(reditorRunnable);
 		return reditorRunnable.getEditor();
-	}		
-	
+	}
+
 	private LineLocation resolveSelectedLine() {
 		String errorMessage = ""; //$NON-NLS-1$
 		IEditorInput input = fEditorPage.getEditorInput();
 		if (input == null) {
-			errorMessage = "Invalid Editor input on selection"; //$NON-NLS-1$				
+			errorMessage = "Invalid Editor input on selection"; //$NON-NLS-1$
 		} else {
 			IDocument document = fEditorPage.getDocumentProvider().getDocument(input);
 			if (document == null) {
@@ -178,21 +178,21 @@ public class DsfSourceSelectionResolver implements Runnable  {
 		DsfUIPlugin.logErrorMessage(errorMessage);
 		return null;
 	}
-	
+
 	public ITextSelection resolveSelection() {
 		if (fSelection != null) {
 			//Value received at construction time
 			return fSelection;
 		}
-		
+
 		ISelection selection = fEditorPage.getEditorSite().getSelectionProvider().getSelection();
 		if (selection instanceof ITextSelection) {
 			return (ITextSelection) selection;
 		}
-		
+
 		return null;
 	}
-	
+
 	private IFunctionDeclaration[] resolveSelectedFunction(ITextSelection textSelection) {
 		if (textSelection != null) {
 			SelectionToDeclarationJob job;
@@ -207,11 +207,11 @@ public class DsfSourceSelectionResolver implements Runnable  {
 				DsfUIPlugin.log(e);
 				return null;
 			}
-			
-			//fetch the result 
+
+			//fetch the result
 			return job.getSelectedFunctions();
 		}
-		
+
 		return null;
 	}
 

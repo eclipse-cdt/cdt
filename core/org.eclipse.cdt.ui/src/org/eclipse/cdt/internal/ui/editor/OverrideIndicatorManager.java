@@ -54,7 +54,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class OverrideIndicatorManager implements ICReconcilingListener {
 	public static final String ANNOTATION_TYPE = "org.eclipse.cdt.ui.overrideIndicator"; //$NON-NLS-1$
-	private final HashMap<ICPPClassType, ICPPMethod[]> methodsCache = new HashMap<>(); 
+	private final HashMap<ICPPClassType, ICPPMethod[]> methodsCache = new HashMap<>();
 
 	public static final int ANNOTATION_IMPLEMENTS = 0;
 	public static final int ANNOTATION_OVERRIDES = 1;
@@ -85,11 +85,11 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 
 	private final IAnnotationModel fAnnotationModel;
 	private Annotation[] fOverrideAnnotations;
-	
+
 	private final Object fAnnotationModelLockObject;
 	private int annotationKind;
 	private String annotationMessage;
-	
+
 	public OverrideIndicatorManager(IAnnotationModel annotationModel, IASTTranslationUnit ast) {
 		fAnnotationModel = annotationModel;
 		fAnnotationModelLockObject = getLockObject(fAnnotationModel);
@@ -110,14 +110,14 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 		}
 		return annotationModel;
 	}
-	
+
 	protected void updateAnnotations(IASTTranslationUnit ast, IProgressMonitor progressMonitor) {
 		if (ast == null || progressMonitor.isCanceled())
 			return;
-		
+
 		final IIndex index = ast.getIndex();
-		final Map<Annotation, Position> annotationMap= new HashMap<Annotation, Position>(50);
-		
+		final Map<Annotation, Position> annotationMap = new HashMap<Annotation, Position>(50);
+
 		class MethodFinder extends ASTVisitor {
 			{
 				shouldVisitDeclarators = true;
@@ -139,18 +139,22 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 							ICPPMethod overriddenMethod = testForOverride(method);
 							if (overriddenMethod != null) {
 								try {
-									ICElementHandle baseDeclaration = IndexUI.findAnyDeclaration(index, null, overriddenMethod);
+									ICElementHandle baseDeclaration = IndexUI.findAnyDeclaration(index, null,
+											overriddenMethod);
 									if (baseDeclaration == null) {
-										ICElementHandle[] allDefinitions = IndexUI.findAllDefinitions(index, overriddenMethod);
+										ICElementHandle[] allDefinitions = IndexUI.findAllDefinitions(index,
+												overriddenMethod);
 										if (allDefinitions.length > 0) {
 											baseDeclaration = allDefinitions[0];
 										}
 									}
-									
-									OverrideIndicator indicator = new OverrideIndicator(annotationKind, annotationMessage, baseDeclaration);
-									
+
+									OverrideIndicator indicator = new OverrideIndicator(annotationKind,
+											annotationMessage, baseDeclaration);
+
 									IASTFileLocation fileLocation = declarator.getFileLocation();
-									Position position = new Position(fileLocation.getNodeOffset(), fileLocation.getNodeLength());
+									Position position = new Position(fileLocation.getNodeOffset(),
+											fileLocation.getNodeLength());
 									annotationMap.put(indicator, position);
 								} catch (CoreException e) {
 								}
@@ -164,54 +168,54 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 				return PROCESS_CONTINUE;
 			}
 		}
-			
+
 		try {
 			ast.accept(new MethodFinder());
 		} finally {
 			methodsCache.clear();
 		}
-		
+
 		if (progressMonitor.isCanceled())
 			return;
 
 		synchronized (fAnnotationModelLockObject) {
 			if (fAnnotationModel instanceof IAnnotationModelExtension) {
-				((IAnnotationModelExtension)fAnnotationModel).replaceAnnotations(fOverrideAnnotations, annotationMap);
+				((IAnnotationModelExtension) fAnnotationModel).replaceAnnotations(fOverrideAnnotations, annotationMap);
 			} else {
 				removeAnnotations();
 				for (Map.Entry<Annotation, Position> entry : annotationMap.entrySet()) {
 					fAnnotationModel.addAnnotation(entry.getKey(), entry.getValue());
 				}
 			}
-			fOverrideAnnotations= annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
+			fOverrideAnnotations = annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
 		}
 	}
-	
+
 	private ICPPMethod testForOverride(ICPPMethod method) throws DOMException {
 		if (method.isDestructor() || method.isPureVirtual()) {
 			return null;
 		}
-		
+
 		ICPPBase[] bases = method.getClassOwner().getBases();
 		if (bases.length == 0) {
 			return null;
 		}
-				
+
 		ICPPClassType owningClass = method.getClassOwner();
 		ICPPMethod overriddenMethod = getOverriddenMethodInBaseClass(owningClass, method);
-		
+
 		if (overriddenMethod != null) {
 			StringBuilder sb = new StringBuilder();
 			if (annotationKind == ANNOTATION_IMPLEMENTS) {
 				sb.append(CEditorMessages.OverrideIndicatorManager_implements);
-			} else if (annotationKind == ANNOTATION_OVERRIDES){
+			} else if (annotationKind == ANNOTATION_OVERRIDES) {
 				sb.append(CEditorMessages.OverrideIndicatorManager_overrides);
 			} else if (annotationKind == ANNOTATION_SHADOWS) {
 				sb.append(CEditorMessages.OverrideIndicatorManager_shadows);
 			}
 			sb.append(' ');
 			sb.append(ASTStringUtil.join(overriddenMethod.getQualifiedName(), "::")); //$NON-NLS-1$
-			
+
 			if (bases.length > 1) {
 				boolean foundInDirectlyDerivedBaseClass = false;
 				ICPPClassType matchedMethodOwner = overriddenMethod.getClassOwner();
@@ -239,14 +243,15 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 					}
 				}
 			}
-			
+
 			annotationMessage = sb.toString();
 			return overriddenMethod;
 		}
 		return null;
 	}
 
-	private ICPPMethod getOverriddenMethodInBaseClass(ICPPClassType aClass, ICPPMethod testedMethod) throws DOMException {
+	private ICPPMethod getOverriddenMethodInBaseClass(ICPPClassType aClass, ICPPMethod testedMethod)
+			throws DOMException {
 		final String testedMethodName = testedMethod.getName();
 
 		ICPPMethod[] allInheritedMethods;
@@ -254,10 +259,9 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 			allInheritedMethods = methodsCache.get(aClass);
 		} else {
 			ICPPMethod[] inheritedMethods = null;
-			ICPPClassType[] bases= ClassTypeHelper.getAllBases(aClass);
+			ICPPClassType[] bases = ClassTypeHelper.getAllBases(aClass);
 			for (ICPPClassType base : bases) {
-				inheritedMethods = ArrayUtil.addAll(ICPPMethod.class, inheritedMethods, 
-						base.getDeclaredMethods());
+				inheritedMethods = ArrayUtil.addAll(ICPPMethod.class, inheritedMethods, base.getDeclaredMethods());
 			}
 			allInheritedMethods = ArrayUtil.trim(ICPPMethod.class, inheritedMethods);
 			methodsCache.put(aClass, allInheritedMethods);
@@ -303,12 +307,12 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 
 		synchronized (fAnnotationModelLockObject) {
 			if (fAnnotationModel instanceof IAnnotationModelExtension) {
-				((IAnnotationModelExtension)fAnnotationModel).replaceAnnotations(fOverrideAnnotations, null);
+				((IAnnotationModelExtension) fAnnotationModel).replaceAnnotations(fOverrideAnnotations, null);
 			} else {
-				for (int i= 0, length= fOverrideAnnotations.length; i < length; i++)
+				for (int i = 0, length = fOverrideAnnotations.length; i < length; i++)
 					fAnnotationModel.removeAnnotation(fOverrideAnnotations[i]);
 			}
-			fOverrideAnnotations= null;
+			fOverrideAnnotations = null;
 		}
 	}
 

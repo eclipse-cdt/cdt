@@ -22,7 +22,7 @@ public class GenericDevice extends DefaultGDBJtagDeviceImpl {
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#doDelay(int, java.util.Collection)
 	 */
 	@Override
-	public void doDelay(int delay, Collection <String>commands) {
+	public void doDelay(int delay, Collection<String> commands) {
 	}
 
 	/* (non-Javadoc)

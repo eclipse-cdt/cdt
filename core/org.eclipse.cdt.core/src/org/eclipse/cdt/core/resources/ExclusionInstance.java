@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,16 +21,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
  * Represents a particular instance of an exclusion. E.g., if an exclusion allowed for the exclusion of a list
  * individual resources, there would be one exclusion instance per resource. Each exclusion instance is
  * presented in the user interface as a child of the exclusion.
- * 
+ *
  * Clients may extend this class to provide custom implementations for their exclusion type.
- * 
+ *
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
  * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
- * 
+ *
  * @author crecoskie
  * @since 5.3
- * 
+ *
  */
 public class ExclusionInstance {
 
@@ -85,8 +85,7 @@ public class ExclusionInstance {
 		String resourcePath = instanceElement.getAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME);
 
 		if (resourcePath != null) {
-			newInstance.fResource = ResourcesPlugin.getWorkspace().getRoot()
-					.findMember(resourcePath);
+			newInstance.fResource = ResourcesPlugin.getWorkspace().getRoot().findMember(resourcePath);
 		}
 
 		// load display string
@@ -119,7 +118,7 @@ public class ExclusionInstance {
 
 	/**
 	 * Returns the parent exclusion of this exclusion instance.
-	 * 
+	 *
 	 * @return RefreshExclusion
 	 */
 	public synchronized RefreshExclusion getParentExclusion() {
@@ -128,7 +127,7 @@ public class ExclusionInstance {
 
 	/**
 	 * If there is a resource directly associated with this exclusion instance, returns the resource.
-	 * 
+	 *
 	 * @return IResource
 	 */
 	public synchronized IResource getResource() {
@@ -172,8 +171,7 @@ public class ExclusionInstance {
 
 		// persist resource path
 		if (fResource != null) {
-			instanceElement.setAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME, fResource.getFullPath()
-					.toString());
+			instanceElement.setAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME, fResource.getFullPath().toString());
 		}
 
 		// persist display string

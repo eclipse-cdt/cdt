@@ -48,25 +48,28 @@ import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
 abstract public class FoldingTestBase extends BaseUITestCase {
 
 	protected static class ProjectionPosition extends Position implements IProjectionPosition, IRegion {
-			private int fCaptionOffset;
-			ProjectionPosition(int offset, int length, int captionOffset) {
-				super(offset, length);
-				fCaptionOffset= captionOffset;
-			}
-			@Override
-			public int computeCaptionOffset(IDocument document) throws BadLocationException {
-				return fCaptionOffset;
-			}
-			@Override
-			public IRegion[] computeProjectionRegions(IDocument document) throws BadLocationException {
-				return new IRegion[] { this };
-			}
+		private int fCaptionOffset;
+
+		ProjectionPosition(int offset, int length, int captionOffset) {
+			super(offset, length);
+			fCaptionOffset = captionOffset;
 		}
+
+		@Override
+		public int computeCaptionOffset(IDocument document) throws BadLocationException {
+			return fCaptionOffset;
+		}
+
+		@Override
+		public IRegion[] computeProjectionRegions(IDocument document) throws BadLocationException {
+			return new IRegion[] { this };
+		}
+	}
 
 	protected static class PositionAndCollapsed {
 		public Position position;
 		public boolean isCollapsed;
-	
+
 		public PositionAndCollapsed(Position position, boolean isCollapsed) {
 			this.position = position;
 			this.isCollapsed = isCollapsed;
@@ -91,10 +94,10 @@ abstract public class FoldingTestBase extends BaseUITestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		
+
 		super.setUp();
-		fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
-		
+		fCProject = EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
+
 		StringBuilder[] contents = getContentsForTest(1);
 		assertEquals("test requires exactly one test block", 1, contents.length);
 		String code = contents[0].toString();
@@ -105,15 +108,15 @@ abstract public class FoldingTestBase extends BaseUITestCase {
 			TestSourceReader.createFile(fCProject.getProject(), new Path("FoldingTest.cpp"), code);
 			filename = "/FoldingTest/FoldingTest.cpp";
 		}
-	
+
 		fFileUnderTest = ResourceTestHelper.findFile(filename);
-	
+
 		openEditor();
 	}
 
 	private void openEditor() throws PartInitException {
-		fEditor= (CEditor) EditorTestHelper.openInEditor(fFileUnderTest, true);
-		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
+		fEditor = (CEditor) EditorTestHelper.openInEditor(fFileUnderTest, true);
+		fSourceViewer = EditorTestHelper.getSourceViewer(fEditor);
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 300));
 	}
 
@@ -124,7 +127,7 @@ abstract public class FoldingTestBase extends BaseUITestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		closeEditor();
-	
+
 		if (fCProject != null)
 			CProjectHelper.delete(fCProject);
 		super.tearDown();
@@ -164,26 +167,27 @@ abstract public class FoldingTestBase extends BaseUITestCase {
 		DocCommentOwnerManager.getInstance().setWorkspaceCommentOwner(doxygenOwner);
 	}
 
-	protected void assertEqualPositions(PositionAndCollapsed[] expected, PositionAndCollapsed[] actual) throws BadLocationException {
+	protected void assertEqualPositions(PositionAndCollapsed[] expected, PositionAndCollapsed[] actual)
+			throws BadLocationException {
 		assertEquals(expected.length, actual.length);
-		IDocument document= fSourceViewer.getDocument();
-		for (int i= 0, n= expected.length; i < n; i++) {
+		IDocument document = fSourceViewer.getDocument();
+		for (int i = 0, n = expected.length; i < n; i++) {
 			final Position exp = expected[i].position;
-			int expectedStartLine= document.getLineOfOffset(exp.getOffset());
-			int expectedEndLine= document.getLineOfOffset(exp.getOffset()+exp.getLength());
+			int expectedStartLine = document.getLineOfOffset(exp.getOffset());
+			int expectedEndLine = document.getLineOfOffset(exp.getOffset() + exp.getLength());
 			final Position act = actual[i].position;
-			int actualStartLine= document.getLineOfOffset(act.getOffset());
-			int actualEndLine= document.getLineOfOffset(act.getOffset()+exp.getLength());
+			int actualStartLine = document.getLineOfOffset(act.getOffset());
+			int actualEndLine = document.getLineOfOffset(act.getOffset() + exp.getLength());
 			assertEquals(exp.isDeleted(), act.isDeleted());
 			assertEquals(expectedStartLine, actualStartLine);
 			assertEquals(expectedEndLine, actualEndLine);
 			if (exp instanceof IProjectionPosition) {
-				int expectedCaptionOffset= ((IProjectionPosition)exp).computeCaptionOffset(document);
-				int expectedCaptionLine= document.getLineOfOffset(exp.getOffset() + expectedCaptionOffset);
-				int actualCaptionLine= actualStartLine;
+				int expectedCaptionOffset = ((IProjectionPosition) exp).computeCaptionOffset(document);
+				int expectedCaptionLine = document.getLineOfOffset(exp.getOffset() + expectedCaptionOffset);
+				int actualCaptionLine = actualStartLine;
 				if (act instanceof IProjectionPosition) {
-					int actualCaptionOffset= ((IProjectionPosition)act).computeCaptionOffset(document);
-					actualCaptionLine= document.getLineOfOffset(exp.getOffset() + actualCaptionOffset);
+					int actualCaptionOffset = ((IProjectionPosition) act).computeCaptionOffset(document);
+					actualCaptionLine = document.getLineOfOffset(exp.getOffset() + actualCaptionOffset);
 				}
 				assertEquals(expectedCaptionLine, actualCaptionLine);
 			}
@@ -195,39 +199,42 @@ abstract public class FoldingTestBase extends BaseUITestCase {
 		return createPosition(startLine, endLine, false);
 	}
 
-	protected PositionAndCollapsed createPosition(int startLine, int endLine, boolean collapsed) throws BadLocationException {
-		IDocument document= fSourceViewer.getDocument();
-		int startOffset= document.getLineOffset(startLine);
-		int endOffset= document.getLineOffset(endLine) + document.getLineLength(endLine);
+	protected PositionAndCollapsed createPosition(int startLine, int endLine, boolean collapsed)
+			throws BadLocationException {
+		IDocument document = fSourceViewer.getDocument();
+		int startOffset = document.getLineOffset(startLine);
+		int endOffset = document.getLineOffset(endLine) + document.getLineLength(endLine);
 		Position position = new Position(startOffset, endOffset - startOffset);
 		return new PositionAndCollapsed(position, collapsed);
 	}
 
-	protected PositionAndCollapsed createPosition(int startLine, int endLine, int captionLine) throws BadLocationException {
+	protected PositionAndCollapsed createPosition(int startLine, int endLine, int captionLine)
+			throws BadLocationException {
 		return createPosition(startLine, endLine, captionLine, false);
 	}
 
-	protected PositionAndCollapsed createPosition(int startLine, int endLine, int captionLine, boolean collapsed) throws BadLocationException {
-		IDocument document= fSourceViewer.getDocument();
-		int startOffset= document.getLineOffset(startLine);
-		int endOffset= document.getLineOffset(endLine) + document.getLineLength(endLine);
-		int captionOffset= document.getLineOffset(captionLine);
+	protected PositionAndCollapsed createPosition(int startLine, int endLine, int captionLine, boolean collapsed)
+			throws BadLocationException {
+		IDocument document = fSourceViewer.getDocument();
+		int startOffset = document.getLineOffset(startLine);
+		int endOffset = document.getLineOffset(endLine) + document.getLineLength(endLine);
+		int captionOffset = document.getLineOffset(captionLine);
 		Position position = new ProjectionPosition(startOffset, endOffset - startOffset, captionOffset - startOffset);
 		return new PositionAndCollapsed(position, collapsed);
 	}
 
 	protected String toString(PositionAndCollapsed[] positionAndCollapseds) throws BadLocationException {
-		StringBuilder buf= new StringBuilder();
-		IDocument document= fSourceViewer.getDocument();
+		StringBuilder buf = new StringBuilder();
+		IDocument document = fSourceViewer.getDocument();
 		buf.append("PositionAndCollapsed[] expected= new PositionAndCollapsed[] {\n");
-		for (int i= 0, n= positionAndCollapseds.length; i < n; i++) {
-			Position position= positionAndCollapseds[i].position;
-			int startLine= document.getLineOfOffset(position.getOffset());
-			int endLine= document.getLineOfOffset(position.getOffset()+position.getLength()-1);
-			int captionLine= startLine;
+		for (int i = 0, n = positionAndCollapseds.length; i < n; i++) {
+			Position position = positionAndCollapseds[i].position;
+			int startLine = document.getLineOfOffset(position.getOffset());
+			int endLine = document.getLineOfOffset(position.getOffset() + position.getLength() - 1);
+			int captionLine = startLine;
 			if (position instanceof IProjectionPosition) {
-				final int captionOffset = ((IProjectionPosition)position).computeCaptionOffset(document);
-				captionLine= document.getLineOfOffset(position.getOffset() + captionOffset);
+				final int captionOffset = ((IProjectionPosition) position).computeCaptionOffset(document);
+				captionLine = document.getLineOfOffset(position.getOffset() + captionOffset);
 			}
 			buf.append("\tcreatePosition(");
 			buf.append(startLine);
@@ -247,20 +254,22 @@ abstract public class FoldingTestBase extends BaseUITestCase {
 	}
 
 	protected PositionAndCollapsed[] getFoldingPositions() {
-		List<PositionAndCollapsed> positionAndCollapseds= new ArrayList<PositionAndCollapsed>();
-		ProjectionAnnotationModel model= (ProjectionAnnotationModel)fEditor.getAdapter(ProjectionAnnotationModel.class);
+		List<PositionAndCollapsed> positionAndCollapseds = new ArrayList<PositionAndCollapsed>();
+		ProjectionAnnotationModel model = (ProjectionAnnotationModel) fEditor
+				.getAdapter(ProjectionAnnotationModel.class);
 		assertNotNull(model);
-		for (Iterator<Annotation> iter= model.getAnnotationIterator(); iter.hasNext(); ) {
-			Annotation ann= iter.next();
-			ProjectionAnnotation proAnn = (ProjectionAnnotation)ann;
-			Position pos= model.getPosition(ann);
+		for (Iterator<Annotation> iter = model.getAnnotationIterator(); iter.hasNext();) {
+			Annotation ann = iter.next();
+			ProjectionAnnotation proAnn = (ProjectionAnnotation) ann;
+			Position pos = model.getPosition(ann);
 			positionAndCollapseds.add(new PositionAndCollapsed(pos, proAnn.isCollapsed()));
 		}
 		Collections.sort(positionAndCollapseds, new Comparator<PositionAndCollapsed>() {
 			@Override
 			public int compare(PositionAndCollapsed p0, PositionAndCollapsed p1) {
 				return p0.position.offset - p1.position.offset;
-			}});
+			}
+		});
 		return positionAndCollapseds.toArray(new PositionAndCollapsed[positionAndCollapseds.size()]);
 	}
 

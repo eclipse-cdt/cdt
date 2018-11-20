@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * Editor action to toggle between source and header files.
- * 
+ *
  * @since 4.0
  */
 public class ToggleSourceAndHeaderAction extends TextEditorAction {
@@ -41,7 +41,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 
 	/**
 	 * Create a toggle source/header action for the given editor.
-	 * 
+	 *
 	 * @param bundle  the resource bundle to take the label, tooltip and description from.
 	 * @param prefix  the prefix to be prepended to the resource bundle keys
 	 * @param editor  the text editor this action is associated with
@@ -53,14 +53,14 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 
 	@Override
 	public void run() {
-		IWorkingCopy currentUnit= getWorkingCopy();
+		IWorkingCopy currentUnit = getWorkingCopy();
 		if (currentUnit == null) {
 			return;
 		}
-		ITranslationUnit partnerUnit= computePartnerFile(currentUnit);
+		ITranslationUnit partnerUnit = computePartnerFile(currentUnit);
 		if (partnerUnit != null) {
-			fgLastSourceUnit= currentUnit.getOriginalElement();
-			fgLastPartnerUnit= partnerUnit;
+			fgLastSourceUnit = currentUnit.getOriginalElement();
+			fgLastPartnerUnit = partnerUnit;
 			try {
 				EditorUtility.openInEditor(partnerUnit);
 			} catch (PartInitException exc) {
@@ -76,8 +76,8 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		if (editor == null) {
 			return null;
 		}
-		IEditorInput input= editor.getEditorInput();
-		IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
+		IEditorInput input = editor.getEditorInput();
+		IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
 		return manager.getWorkingCopy(input);
 	}
 
@@ -88,7 +88,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 
 	/**
 	 * Compute the corresponding translation unit for the given unit.
-	 * 
+	 *
 	 * @param tUnit  the current source/header translation unit
 	 * @return the partner translation unit
 	 */
@@ -97,9 +97,9 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		if (fgLastPartnerUnit != null) {
 			final ITranslationUnit originalUnit;
 			if (tUnit instanceof IWorkingCopy) {
-				originalUnit= ((IWorkingCopy)tUnit).getOriginalElement();
+				originalUnit = ((IWorkingCopy) tUnit).getOriginalElement();
 			} else {
-				originalUnit= tUnit;
+				originalUnit = tUnit;
 			}
 			if (originalUnit.getTranslationUnit().equals(fgLastPartnerUnit)) {
 				if (fgLastSourceUnit.exists()) {

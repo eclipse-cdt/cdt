@@ -39,10 +39,10 @@ public abstract class MultiOperation extends CModelOperation {
 	/**
 	 * The list of renamings supplied to the operation
 	 */
-	protected String[] fRenamingsList= null;
+	protected String[] fRenamingsList = null;
 
 	/**
-	 * Table specifying the new parent for elements being 
+	 * Table specifying the new parent for elements being
 	 * copied/moved/renamed.
 	 * Keyed by elements being processed, and
 	 * values are the corresponding destination parent.
@@ -50,12 +50,12 @@ public abstract class MultiOperation extends CModelOperation {
 	protected Map<ICElement, ICElement> fParentElements;
 
 	/**
-	 * Table specifying insertion positions for elements being 
+	 * Table specifying insertion positions for elements being
 	 * copied/moved/renamed. Keyed by elements being processed, and
 	 * values are the corresponding insertion point.
 	 * @see #processElements()
 	 */
-	protected Map<ICElement, ICElement> fInsertBeforeElements= new HashMap<ICElement, ICElement>(1);
+	protected Map<ICElement, ICElement> fInsertBeforeElements = new HashMap<ICElement, ICElement>(1);
 
 	/**
 	 * This table presents the data in <code>fRenamingList</code> in a more
@@ -214,7 +214,7 @@ public abstract class MultiOperation extends CModelOperation {
 			} catch (CModelException jme) {
 				if (errorsCounter == errors.length) {
 					// resize
-					System.arraycopy(errors, 0, (errors = new ICModelStatus[errorsCounter*2]), 0, errorsCounter);
+					System.arraycopy(errors, 0, (errors = new ICModelStatus[errorsCounter * 2]), 0, errorsCounter);
 				}
 				errors[errorsCounter++] = jme.getCModelStatus();
 			} finally {
@@ -230,7 +230,7 @@ public abstract class MultiOperation extends CModelOperation {
 				System.arraycopy(errors, 0, (errors = new ICModelStatus[errorsCounter]), 0, errorsCounter);
 			}
 			throw new CModelException(CModelStatus.newMultiStatus(errors));
-			}
+		}
 	}
 
 	/**
@@ -275,13 +275,12 @@ public abstract class MultiOperation extends CModelOperation {
 	protected void verifyDestination(ICElement element, ICElement destination) throws CModelException {
 		if (destination == null || !destination.exists()) {
 			error(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, destination);
-		}
-		else if (element.getElementType() == ICElement.C_UNIT) {
+		} else if (element.getElementType() == ICElement.C_UNIT) {
 			IResource res = destination.getResource();
 			if (!(res instanceof IContainer)) {
 				error(ICModelStatusConstants.INVALID_DESTINATION, element);
 			}
-			ITranslationUnit tu = (ITranslationUnit)element;
+			ITranslationUnit tu = (ITranslationUnit) element;
 			if (isMove() && tu.isWorkingCopy() /*&& !cu.isPrimary() */) {
 				error(ICModelStatusConstants.INVALID_ELEMENT_TYPES, element);
 			}

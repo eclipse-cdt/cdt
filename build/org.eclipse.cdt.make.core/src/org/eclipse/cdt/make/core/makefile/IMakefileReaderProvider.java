@@ -26,10 +26,10 @@ import java.net.URI;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMakefileReaderProvider {
-	/** 
+	/**
 	 * Get a reader for the contents of the file at filename.
 	 * @param fileURI the file to read.  It's up to the implementation how to read
-	 * it, but usually EFS.getFileStore(fileURI).getInputStream(...) is the best bet. 
+	 * it, but usually EFS.getFileStore(fileURI).getInputStream(...) is the best bet.
 	 * @return Reader a reader for the contents of the existing file
 	 * @throws IOException if the file cannot be found according to the implementation
 	 */

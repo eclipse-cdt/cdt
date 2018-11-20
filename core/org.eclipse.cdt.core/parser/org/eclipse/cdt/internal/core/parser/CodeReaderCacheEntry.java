@@ -20,7 +20,7 @@ import org.eclipse.cdt.internal.core.util.ILRUCacheable;
 /**
  * This is a wrapper for entries to put into the OverflowingLRUCache (required to determine the
  * size of entries relative to the CodeReader's file size).
- * 
+ *
  * Although the size of the CodeReaderCache is specified in terms of MB, the actual granularity of
  * the cache is KB.
  * @deprecated
@@ -34,14 +34,14 @@ class CodeReaderCacheEntry implements ILRUCacheable {
 
 	public CodeReaderCacheEntry(CodeReader value) {
 		this.reader = value;
-		size = (int)Math.ceil(reader.buffer.length / CHAR_TO_KB_FACTOR); // get the size of the file in terms of KB 
+		size = (int) Math.ceil(reader.buffer.length / CHAR_TO_KB_FACTOR); // get the size of the file in terms of KB
 	}
 
 	@Override
 	public int getCacheFootprint() {
 		return size;
 	}
-	
+
 	public CodeReader getCodeReader() {
 		return reader;
 	}

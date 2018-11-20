@@ -68,7 +68,7 @@ public class QuickFixSuppressProblemTest extends QuickFixTestCase {
 
 	//int func() { }
 	public void testMarkerOnLastLineNoNewline_495842() throws Exception {
-		try(BufferedWriter writer = new BufferedWriter(new FileWriter(loadcode("", false)))) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(loadcode("", false)))) {
 			writer.write(getAboveComment().trim());
 		}
 		PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.ENSURE_NEWLINE_AT_EOF, false);

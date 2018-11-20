@@ -51,8 +51,9 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
-public class BuildSystem40Tests  extends TestCase {
-	private IPath resourcesLocation = new Path(CTestPlugin.getFileInPlugin(new Path("resources/test40Projects/")).getAbsolutePath());
+public class BuildSystem40Tests extends TestCase {
+	private IPath resourcesLocation = new Path(
+			CTestPlugin.getFileInPlugin(new Path("resources/test40Projects/")).getAbsolutePath());
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(BuildSystem40Tests.class);
@@ -67,20 +68,10 @@ public class BuildSystem40Tests  extends TestCase {
 		return winPath;
 	}
 
-	public void test40() throws Exception{
-		String[] makefiles = {
-				 "makefile",
-				 "objects.mk",
-				 "sources.mk",
-				 "d1/subdir.mk",
-				 "d1/d2/subdir.mk",
-				 "d1/d2/d3/subdir.mk",
-				 "d1_1/subdir.mk",
-				 "d1_1/d2_1/subdir.mk",
-				 "dir1/dd/excluded_c/subdir.mk",
-				 "dir1/dd/excluded_c/asd/subdir.mk",
-				 "dir1/dd/ff/subdir.mk",
-			};
+	public void test40() throws Exception {
+		String[] makefiles = { "makefile", "objects.mk", "sources.mk", "d1/subdir.mk", "d1/d2/subdir.mk",
+				"d1/d2/d3/subdir.mk", "d1_1/subdir.mk", "d1_1/d2_1/subdir.mk", "dir1/dd/excluded_c/subdir.mk",
+				"dir1/dd/excluded_c/asd/subdir.mk", "dir1/dd/ff/subdir.mk", };
 		IProject[] projects = createProjects("test_40", null, null, true);
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		ICProjectDescription des = mngr.getProjectDescription(projects[0]);
@@ -104,19 +95,18 @@ public class BuildSystem40Tests  extends TestCase {
 		ICFolderDescription foDes = cfgDes.getRootFolderDescription();
 		ICLanguageSetting ls = foDes.getLanguageSettingForFile("foo.cpp");
 		IFolderInfo foInfo = cfg.getRootFolderInfo();
-		Tool tool = (Tool)foInfo.getToolFromInputExtension("cpp");
+		Tool tool = (Tool) foInfo.getToolFromInputExtension("cpp");
 		IOption option = tool.getOptionsOfType(IOption.INCLUDE_PATH)[0];
 		OptionStringValue[] value = option.getBasicStringListValueElements();
 		ICLanguageSettingEntry[] entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 		ICLanguageSettingEntry[] expectedEntries = new ICLanguageSettingEntry[] {
-				new CIncludePathEntry("dbg 3/rel/path", 0),
-				new CIncludePathEntry("proj/rel/path", 0),
+				new CIncludePathEntry("dbg 3/rel/path", 0), new CIncludePathEntry("proj/rel/path", 0),
 				new CIncludePathEntry("/abs/path", 0),
 				new CIncludePathEntry(platformDependentPath("dbg 3", "c:/abs/path"), 0),
-				new CIncludePathEntry("/test_40/dir1/dir2/dir3", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
+				new CIncludePathEntry("/test_40/dir1/dir2/dir3",
+						ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
 				new CIncludePathEntry("/test_40", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
-				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\docs\\incs"), 0),
-		};
+				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\docs\\incs"), 0), };
 
 		assertTrue(Arrays.equals(entries, expectedEntries));
 
@@ -152,46 +142,38 @@ public class BuildSystem40Tests  extends TestCase {
 
 		assertTrue(Arrays.equals(value, modifiedValue));
 
-		foDes = (ICFolderDescription)cfgDes.getResourceDescription(new Path("d1/d2"), true);
-		foInfo = (IFolderInfo)cfg.getResourceInfo(new Path("d1/d2"), true);
+		foDes = (ICFolderDescription) cfgDes.getResourceDescription(new Path("d1/d2"), true);
+		foInfo = (IFolderInfo) cfg.getResourceInfo(new Path("d1/d2"), true);
 
 		ls = foDes.getLanguageSettingForFile("foo.cpp");
-		tool = (Tool)foInfo.getToolFromInputExtension("cpp");
+		tool = (Tool) foInfo.getToolFromInputExtension("cpp");
 		option = tool.getOptionsOfType(IOption.INCLUDE_PATH)[0];
 
-		expectedEntries = new ICLanguageSettingEntry[] {
-				new CIncludePathEntry("dbg 3/d2_rel/path", 0),
-				new CIncludePathEntry("d2_proj/rel/path", 0),
-				new CIncludePathEntry("/d2_abs/path", 0),
+		expectedEntries = new ICLanguageSettingEntry[] { new CIncludePathEntry("dbg 3/d2_rel/path", 0),
+				new CIncludePathEntry("d2_proj/rel/path", 0), new CIncludePathEntry("/d2_abs/path", 0),
 				new CIncludePathEntry(platformDependentPath("dbg 3", "c:/d2_abs/path"), 0),
-				new CIncludePathEntry("dbg 3/d1_rel/path", 0),
-				new CIncludePathEntry("d1_proj/rel/path", 0),
+				new CIncludePathEntry("dbg 3/d1_rel/path", 0), new CIncludePathEntry("d1_proj/rel/path", 0),
 				new CIncludePathEntry("/d1_abs/path", 0),
 				new CIncludePathEntry(platformDependentPath("dbg 3", "c:/d1_abs/path"), 0),
-				new CIncludePathEntry("dbg 3/rel/path", 0),
-				new CIncludePathEntry("proj/rel/path", 0),
+				new CIncludePathEntry("dbg 3/rel/path", 0), new CIncludePathEntry("proj/rel/path", 0),
 				new CIncludePathEntry("/abs/path", 0),
 				new CIncludePathEntry(platformDependentPath("dbg 3", "c:/abs/path"), 0),
-				new CIncludePathEntry("/test_40/dir1/dir2/dir3", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
+				new CIncludePathEntry("/test_40/dir1/dir2/dir3",
+						ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
 				new CIncludePathEntry("/test_40", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
 				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\docs\\incs"), 0),
 				new CIncludePathEntry(platformDependentPath("dbg 3", "E:\\tmp\\w"), 0),
 				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\d1_docs\\incs"), 0),
-				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\d2_docs\\incs"), 0),
-		};
+				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\d2_docs\\incs"), 0), };
 
 		entries = ls.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
 
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
 
-		OptionStringValue[] expectedValue = new OptionStringValue[] {
-				new OptionStringValue("d2_rel/path"),
-				new OptionStringValue("../d2_proj/rel/path"),
-				new OptionStringValue("/d2_abs/path"),
-				new OptionStringValue("c:/d2_abs/path"),
-				new OptionStringValue("${IncludeDefaults}"),
-				new OptionStringValue("\"D:\\d2_docs\\incs\""),
-		};
+		OptionStringValue[] expectedValue = new OptionStringValue[] { new OptionStringValue("d2_rel/path"),
+				new OptionStringValue("../d2_proj/rel/path"), new OptionStringValue("/d2_abs/path"),
+				new OptionStringValue("c:/d2_abs/path"), new OptionStringValue("${IncludeDefaults}"),
+				new OptionStringValue("\"D:\\d2_docs\\incs\""), };
 
 		value = option.getBasicStringListValueElements();
 		BuildSystemTestHelper.checkDiff(expectedValue, value);
@@ -211,26 +193,18 @@ public class BuildSystem40Tests  extends TestCase {
 
 		option = tool.getOptionsOfType(IOption.INCLUDE_PATH)[0];
 
-		expectedValue = new OptionStringValue[] {
-				new OptionStringValue("d2_rel/path"),
-				new OptionStringValue("../d2_proj/rel/path"),
-				new OptionStringValue("/d2_abs/path"),
-				new OptionStringValue("c:/d2_abs/path"),
-				new OptionStringValue("d1_rel/path"),
+		expectedValue = new OptionStringValue[] { new OptionStringValue("d2_rel/path"),
+				new OptionStringValue("../d2_proj/rel/path"), new OptionStringValue("/d2_abs/path"),
+				new OptionStringValue("c:/d2_abs/path"), new OptionStringValue("d1_rel/path"),
 				new OptionStringValue("../d1_proj/rel/path"),
-//removed				new OptionStringValue("/d1_abs/path"),
-				new OptionStringValue("c:/d1_abs/path"),
-				new OptionStringValue("rel/path"),
-				new OptionStringValue("../proj/rel/path"),
-				new OptionStringValue("/abs/path"),
+				//removed				new OptionStringValue("/d1_abs/path"),
+				new OptionStringValue("c:/d1_abs/path"), new OptionStringValue("rel/path"),
+				new OptionStringValue("../proj/rel/path"), new OptionStringValue("/abs/path"),
 				new OptionStringValue("c:/abs/path"),
 				new OptionStringValue("\"${workspace_loc:/test_40/dir1/dir2/dir3}\""),
-				new OptionStringValue("\"${workspace_loc:/test_40}\""),
-				new OptionStringValue("\"D:\\docs\\incs\""),
-				new OptionStringValue("\"E:\\tmp\\w\""),
-				new OptionStringValue("\"D:\\d1_docs\\incs\""),
-				new OptionStringValue("\"D:\\d2_docs\\incs\""),
-		};
+				new OptionStringValue("\"${workspace_loc:/test_40}\""), new OptionStringValue("\"D:\\docs\\incs\""),
+				new OptionStringValue("\"E:\\tmp\\w\""), new OptionStringValue("\"D:\\d1_docs\\incs\""),
+				new OptionStringValue("\"D:\\d2_docs\\incs\""), };
 
 		value = option.getBasicStringListValueElements();
 		BuildSystemTestHelper.checkDiff(expectedValue, value);
@@ -241,11 +215,12 @@ public class BuildSystem40Tests  extends TestCase {
 		foDes = cfgDes.getRootFolderDescription();
 		foInfo = cfg.getRootFolderInfo();
 		ls = foDes.getLanguageSettingForFile("foo.cpp");
-		tool = (Tool)foInfo.getToolFromInputExtension("cpp");
+		tool = (Tool) foInfo.getToolFromInputExtension("cpp");
 		option = tool.getOptionsOfType(IOption.INCLUDE_PATH)[0];
 
 		{
-			ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>(Arrays.asList(option.getBasicStringListValueElements()));
+			ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>(
+					Arrays.asList(option.getBasicStringListValueElements()));
 			assertTrue(list.remove(new OptionStringValue("${IncludeDefaults}")));
 			list.add(0, new OptionStringValue("${IncludeDefaults}"));
 			expectedValue = list.toArray(new OptionStringValue[0]);
@@ -253,16 +228,14 @@ public class BuildSystem40Tests  extends TestCase {
 			value = option.getBasicStringListValueElements();
 		}
 
-		expectedEntries = new ICLanguageSettingEntry[] {
-				new CIncludePathEntry("dbg 3/rel/path", 0),
-				new CIncludePathEntry("proj/rel/path", 0),
-				new CIncludePathEntry("/abs/path", 0),
+		expectedEntries = new ICLanguageSettingEntry[] { new CIncludePathEntry("dbg 3/rel/path", 0),
+				new CIncludePathEntry("proj/rel/path", 0), new CIncludePathEntry("/abs/path", 0),
 				new CIncludePathEntry(platformDependentPath("dbg 3", "c:/abs/path"), 0),
-				new CIncludePathEntry("/test_40/dir1/dir2/dir3", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
+				new CIncludePathEntry("/test_40/dir1/dir2/dir3",
+						ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
 				new CIncludePathEntry("/test_40", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
 				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\docs\\incs"), 0),
-				new CIncludePathEntry(platformDependentPath("dbg 3", "E:\\tmp\\w"), 0),
-		};
+				new CIncludePathEntry(platformDependentPath("dbg 3", "E:\\tmp\\w"), 0), };
 
 		entries = ls.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
 
@@ -279,9 +252,9 @@ public class BuildSystem40Tests  extends TestCase {
 		BuildSystemTestHelper.checkDiff(expectedValue, value);
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
 
-
 		{
-			ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>(Arrays.asList(option.getBasicStringListValueElements()));
+			ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>(
+					Arrays.asList(option.getBasicStringListValueElements()));
 			assertTrue(list.remove(new OptionStringValue("${IncludeDefaults}")));
 			list.add(list.size(), new OptionStringValue("${IncludeDefaults}"));
 			expectedValue = list.toArray(new OptionStringValue[0]);
@@ -289,16 +262,14 @@ public class BuildSystem40Tests  extends TestCase {
 			value = option.getBasicStringListValueElements();
 		}
 
-		expectedEntries = new ICLanguageSettingEntry[] {
-				new CIncludePathEntry("dbg 3/rel/path", 0),
-				new CIncludePathEntry("proj/rel/path", 0),
-				new CIncludePathEntry("/abs/path", 0),
+		expectedEntries = new ICLanguageSettingEntry[] { new CIncludePathEntry("dbg 3/rel/path", 0),
+				new CIncludePathEntry("proj/rel/path", 0), new CIncludePathEntry("/abs/path", 0),
 				new CIncludePathEntry(platformDependentPath("dbg 3", "c:/abs/path"), 0),
-				new CIncludePathEntry("/test_40/dir1/dir2/dir3", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
+				new CIncludePathEntry("/test_40/dir1/dir2/dir3",
+						ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
 				new CIncludePathEntry("/test_40", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
 				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\docs\\incs"), 0),
-				new CIncludePathEntry(platformDependentPath("dbg 3", "E:\\tmp\\w"), 0),
-		};
+				new CIncludePathEntry(platformDependentPath("dbg 3", "E:\\tmp\\w"), 0), };
 
 		entries = ls.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
 
@@ -315,9 +286,8 @@ public class BuildSystem40Tests  extends TestCase {
 		BuildSystemTestHelper.checkDiff(expectedValue, value);
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
 
-
 		//deletion is performed in case if no fail occured
-		for(int i = 0; i < projects.length; i++){
+		for (int i = 0; i < projects.length; i++) {
 			try {
 				ResourceHelper.cleanUp(getName());
 				projects[i].delete(true, null);
@@ -343,20 +313,16 @@ public class BuildSystem40Tests  extends TestCase {
 		ICFolderDescription foDes = cfgDes.getRootFolderDescription();
 		ICLanguageSetting ls = foDes.getLanguageSettingForFile("foo.cpp");
 		IFolderInfo foInfo = cfg.getRootFolderInfo();
-		Tool tool = (Tool)foInfo.getToolFromInputExtension("cpp");
+		Tool tool = (Tool) foInfo.getToolFromInputExtension("cpp");
 		IOption option = tool.getOptionsOfType(IOption.INCLUDE_PATH)[0];
 		OptionStringValue[] value = option.getBasicStringListValueElements();
 		ICLanguageSettingEntry[] entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 
-		OptionStringValue[] expectedValue = new OptionStringValue[] {
-				new OptionStringValue("../rel"),
-				new OptionStringValue("/abs"),
-		};
+		OptionStringValue[] expectedValue = new OptionStringValue[] { new OptionStringValue("../rel"),
+				new OptionStringValue("/abs"), };
 
-		ICLanguageSettingEntry[] expectedEntries = new ICLanguageSettingEntry[] {
-				new CIncludePathEntry("rel", 0),
-				new CIncludePathEntry("/test/abs", 0),
-		};
+		ICLanguageSettingEntry[] expectedEntries = new ICLanguageSettingEntry[] { new CIncludePathEntry("rel", 0),
+				new CIncludePathEntry("/test/abs", 0), };
 
 		BuildSystemTestHelper.checkDiff(expectedValue, value);
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
@@ -374,11 +340,8 @@ public class BuildSystem40Tests  extends TestCase {
 		list.add(new CIncludePathEntry("/test/another/abs", 0));
 		expectedEntries = list.toArray(new ICLanguageSettingEntry[0]);
 
-		expectedValue = new OptionStringValue[] {
-				new OptionStringValue("../rel"),
-				new OptionStringValue("/abs"),
-				new OptionStringValue("/another/abs"),
-		};
+		expectedValue = new OptionStringValue[] { new OptionStringValue("../rel"), new OptionStringValue("/abs"),
+				new OptionStringValue("/another/abs"), };
 
 		ls.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, list);
 
@@ -390,23 +353,17 @@ public class BuildSystem40Tests  extends TestCase {
 		BuildSystemTestHelper.checkDiff(expectedValue, value);
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
 
-
 		//testing one-way converter
 		ls = foDes.getLanguageSettingForFile("foo.c");
-		tool = (Tool)foInfo.getToolFromInputExtension("c");
+		tool = (Tool) foInfo.getToolFromInputExtension("c");
 		option = tool.getOptionsOfType(IOption.INCLUDE_PATH)[0];
 		value = option.getBasicStringListValueElements();
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 
-		expectedValue = new OptionStringValue[] {
-				new OptionStringValue("../rel"),
-				new OptionStringValue("/abs"),
-		};
+		expectedValue = new OptionStringValue[] { new OptionStringValue("../rel"), new OptionStringValue("/abs"), };
 
-		expectedEntries = new ICLanguageSettingEntry[] {
-				new CIncludePathEntry("rel", 0),
-				new CIncludePathEntry("/test/abs", 0),
-		};
+		expectedEntries = new ICLanguageSettingEntry[] { new CIncludePathEntry("rel", 0),
+				new CIncludePathEntry("/test/abs", 0), };
 
 		BuildSystemTestHelper.checkDiff(expectedValue, value);
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
@@ -423,17 +380,11 @@ public class BuildSystem40Tests  extends TestCase {
 		list.addAll(Arrays.asList(entries));
 		list.add(new CIncludePathEntry("/another/abs", 0));
 
-		expectedEntries = new ICLanguageSettingEntry[] {
-				new CIncludePathEntry("rel", 0),
-				new CIncludePathEntry("/test/abs", 0),
-				new CIncludePathEntry("/test/another/abs", 0),
-		};
+		expectedEntries = new ICLanguageSettingEntry[] { new CIncludePathEntry("rel", 0),
+				new CIncludePathEntry("/test/abs", 0), new CIncludePathEntry("/test/another/abs", 0), };
 
-		expectedValue = new OptionStringValue[] {
-				new OptionStringValue("../rel"),
-				new OptionStringValue("/abs"),
-				new OptionStringValue("/another/abs"),
-		};
+		expectedValue = new OptionStringValue[] { new OptionStringValue("../rel"), new OptionStringValue("/abs"),
+				new OptionStringValue("/another/abs"), };
 
 		ls.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, list);
 
@@ -446,7 +397,7 @@ public class BuildSystem40Tests  extends TestCase {
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
 
 		//deletion is performed in case if no fail occured
-		for(int i = 0; i < projects.length; i++){
+		for (int i = 0; i < projects.length; i++) {
 			ResourceHelper.cleanUp(getName());
 			projects[i].delete(true, null);
 			assertNull(mngr.getProjectDescription(projects[i]));
@@ -461,10 +412,10 @@ public class BuildSystem40Tests  extends TestCase {
 	}
 
 	private void buildProjectsWorker(IProject projects[], String[] files, boolean compareBenchmark) {
-		if(projects == null || projects.length == 0)
+		if (projects == null || projects.length == 0)
 			return;
 
-		for (int i = 0; i < projects.length; i++){
+		for (int i = 0; i < projects.length; i++) {
 			IProject curProject = projects[i];
 
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(curProject);
@@ -473,16 +424,15 @@ public class BuildSystem40Tests  extends TestCase {
 			boolean isCompatible = true;//UpdateManagedProjectManager.isCompatibleProject(info);
 			//assertTrue(isCompatible);
 
-			if (isCompatible){
+			if (isCompatible) {
 				// Build the project in order to generate the makefiles
-				try{
-					curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,null);
-				}
-				catch(CoreException e){
+				try {
+					curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+				} catch (CoreException e) {
 					fail(e.getStatus().getMessage());
-				}
-				catch(OperationCanceledException e){
-					fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: " + e.getMessage());
+				} catch (OperationCanceledException e) {
+					fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: "
+							+ e.getMessage());
 				}
 
 				//compare the generated makefiles to their benchmarks
@@ -490,14 +440,15 @@ public class BuildSystem40Tests  extends TestCase {
 					if (i == 0) {
 						String configName = info.getDefaultConfiguration().getName();
 						IPath buildDir = Path.fromOSString(configName);
-						if (compareBenchmark){
+						if (compareBenchmark) {
 							IPath benchmarkLocationBase = resourcesLocation.append(curProject.getName());
 							IPath buildLocationBase = curProject.getLocation();
 							IPath[] paths = new IPath[files.length];
-							for (int ii=0;ii<files.length;ii++) {
+							for (int ii = 0; ii < files.length; ii++) {
 								paths[ii] = buildDir.append(files[ii]);
 							}
-							ManagedBuildTestHelper.compareBenchmarks(curProject, buildLocationBase, paths, benchmarkLocationBase);
+							ManagedBuildTestHelper.compareBenchmarks(curProject, buildLocationBase, paths,
+									benchmarkLocationBase);
 						}
 					}
 				}
@@ -510,52 +461,54 @@ public class BuildSystem40Tests  extends TestCase {
 		return projects;
 	}
 
-	private IProject[] createProject(String projName, IPath location, String projectTypeId, boolean containsZip){
+	private IProject[] createProject(String projName, IPath location, String projectTypeId, boolean containsZip) {
 		ArrayList<IProject> projectList = null;
 		if (containsZip) {
 			File testDir = CTestPlugin.getFileInPlugin(new Path("resources/test40Projects/" + projName));
-			if(testDir == null) {
+			if (testDir == null) {
 				fail("Test project directory " + projName + " is missing.");
 				return null;
 			}
 
-			File projectZips[] = testDir.listFiles(new FileFilter(){
+			File projectZips[] = testDir.listFiles(new FileFilter() {
 				@Override
-				public boolean accept(File pathname){
-					if(pathname.isDirectory())
+				public boolean accept(File pathname) {
+					if (pathname.isDirectory())
 						return false;
 					return true;
 				}
 			});
 
 			projectList = new ArrayList<IProject>(projectZips.length);
-			for(int i = 0; i < projectZips.length; i++){
-				try{
+			for (int i = 0; i < projectZips.length; i++) {
+				try {
 					String projectName = projectZips[i].getName();
-					if(!projectName.endsWith(".zip"))
+					if (!projectName.endsWith(".zip"))
 						continue;
 
-					projectName = projectName.substring(0,projectName.length()-".zip".length());
-					if(projectName.length() == 0)
+					projectName = projectName.substring(0, projectName.length() - ".zip".length());
+					if (projectName.length() == 0)
 						continue;
-					IProject project = ManagedBuildTestHelper.createProject(projectName, projectZips[i], location, projectTypeId);
-					if(project != null)
+					IProject project = ManagedBuildTestHelper.createProject(projectName, projectZips[i], location,
+							projectTypeId);
+					if (project != null)
 						projectList.add(project);
-				}
-				catch(Exception e){
+				} catch (Exception e) {
 				}
 			}
-			if(projectList.size() == 0) {
-				fail("No projects found in test project directory " + testDir.getName() + ".  The .zip file may be missing or corrupt.");
+			if (projectList.size() == 0) {
+				fail("No projects found in test project directory " + testDir.getName()
+						+ ".  The .zip file may be missing or corrupt.");
 				return null;
 			}
 		} else {
-			try{
+			try {
 				IProject project = ManagedBuildTestHelper.createProject(projName, null, location, projectTypeId);
-				if(project != null)
+				if (project != null)
 					projectList = new ArrayList<IProject>(1);
-					projectList.add(project);
-			} catch(Exception e){}
+				projectList.add(project);
+			} catch (Exception e) {
+			}
 		}
 
 		return projectList.toArray(new IProject[projectList.size()]);

@@ -53,16 +53,16 @@ import org.eclipse.cdt.internal.core.resources.ResourceExclusion;
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
  * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
- * 
+ *
  * @author vkong
  * @since 5.3
- * 
+ *
  */
 public class ResourceExclusionContributor extends RefreshExclusionContributor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.resources.RefreshExclusionContributor#createExclusion()
 	 */
 	@Override
@@ -77,7 +77,7 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.ui.resources.RefreshExclusionContributor#createProperiesUI(org.eclipse.swt.widgets.
 	 * Composite, org.eclipse.cdt.core.resources.RefreshExclusion)
@@ -139,15 +139,14 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see
 			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				CheckedTreeSelectionDialog dialog = new CheckedTreeSelectionDialog(shell,
-						WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
-						new ITreeContentProvider() {
+						WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), new ITreeContentProvider() {
 
 							@Override
 							public void dispose() {
@@ -202,8 +201,7 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 				dialog.setInput(getResourceRoot(exclusion));
 
 				if (exclusionInstanceResources.values().size() > 0) {
-					dialog.setInitialElementSelections(Arrays.asList(exclusionInstanceResources.values()
-							.toArray()));
+					dialog.setInitialElementSelections(Arrays.asList(exclusionInstanceResources.values().toArray()));
 				}
 				dialog.setMessage(Messages.RefreshPolicyExceptionDialog_SelectResourceDialogMessage);
 				dialog.setTitle(Messages.RefreshPolicyExceptionDialog_SelectResourceDialogTitle);
@@ -220,12 +218,10 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 						Object selected = selection[i];
 						if (selected instanceof IFolder) {
 							IPath path = ((IFolder) selected).getFullPath();
-							IPath relativePath = path
-									.makeRelativeTo(getResourceRoot(exclusion).getFullPath());
+							IPath relativePath = path.makeRelativeTo(getResourceRoot(exclusion).getFullPath());
 
 							exceptionsList.add(relativePath.toString());
-							ExclusionInstance instance = oldExclusionInstanceStrings.get(relativePath
-									.toString());
+							ExclusionInstance instance = oldExclusionInstanceStrings.get(relativePath.toString());
 							if (instance == null) {
 								instance = new ExclusionInstance();
 								instance.setExclusionType(ExclusionType.FOLDER);
@@ -266,7 +262,7 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see
 			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */

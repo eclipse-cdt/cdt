@@ -29,10 +29,7 @@ public interface IQMethod extends IQElement, IQObject.IMember {
 	 * Signal or Slot.
 	 */
 	public static enum Kind {
-		Unspecified,
-		Invokable,
-		Signal,
-		Slot;
+		Unspecified, Invokable, Signal, Slot;
 	}
 
 	/**

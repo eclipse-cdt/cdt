@@ -27,106 +27,106 @@ import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
  * This class implements the "merging" functionality of environment variables
  * Used by the EnvironmentVariableProvider to "merge" the sets of macros returned
  * by different suppliers into one set returned to the user
- *  
+ *
  * @since 3.0
  *
  */
 public class EnvVarCollector {
 	private Map<String, EnvVarDescriptor> fMap = null;
-	public EnvVarCollector(){
-		
+
+	public EnvVarCollector() {
+
 	}
-	
+
 	/**
 	 * adds an array of environment variables to the set of variables held by this collector
 	 * performing environment variable operations
 	 * @param vars
 	 */
-	public void add(IEnvironmentVariable vars[]){
-		add(vars,null,-1, null);
+	public void add(IEnvironmentVariable vars[]) {
+		add(vars, null, -1, null);
 	}
-	
-	public void add(IEnvironmentVariable vars[], IEnvironmentContextInfo info, int num, ICoreEnvironmentVariableSupplier supplier){
-		if(vars == null)
+
+	public void add(IEnvironmentVariable vars[], IEnvironmentContextInfo info, int num,
+			ICoreEnvironmentVariableSupplier supplier) {
+		if (vars == null)
 			return;
 		boolean isCaseInsensitive = !EnvironmentVariableManager.getDefault().isVariableCaseSensitive();
-		for(int i = 0; i < vars.length; i ++) {
+		for (int i = 0; i < vars.length; i++) {
 			IEnvironmentVariable var = vars[i];
 			if (var != null) {
 				String name = var.getName();
-				if(isCaseInsensitive)
+				if (isCaseInsensitive)
 					name = name.toUpperCase();
-				
+
 				boolean noCheck = false;
-				
-				if(fMap == null){
+
+				if (fMap == null) {
 					noCheck = true;
 					fMap = new HashMap<String, EnvVarDescriptor>();
 				}
-				
+
 				EnvVarDescriptor des = null;
-				if(noCheck || (des = fMap.get(name)) == null){
-					des = new EnvVarDescriptor(var,info,num, supplier);
-					fMap.put(name,des);
-				}
-				else {
+				if (noCheck || (des = fMap.get(name)) == null) {
+					des = new EnvVarDescriptor(var, info, num, supplier);
+					fMap.put(name, des);
+				} else {
 					des.setContextInfo(info);
 					des.setSupplierNum(num);
-					des.setVariable(EnvVarOperationProcessor.performOperation(des.getOriginalVariable(),var));
+					des.setVariable(EnvVarOperationProcessor.performOperation(des.getOriginalVariable(), var));
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns an array of variables held by this collector
-	 * 
+	 *
 	 * @param includeRemoved true if removed variables should be included in the resulting array
 	 * @return IBuildEnvironmentVariable[]
 	 */
-	public EnvVarDescriptor[] toArray(boolean includeRemoved){
-		if(fMap == null)
+	public EnvVarDescriptor[] toArray(boolean includeRemoved) {
+		if (fMap == null)
 			return new EnvVarDescriptor[0];
 		Collection<EnvVarDescriptor> values = fMap.values();
 		List<EnvVarDescriptor> list = new ArrayList<EnvVarDescriptor>();
 		Iterator<EnvVarDescriptor> iter = values.iterator();
-		while(iter.hasNext()){
+		while (iter.hasNext()) {
 			EnvVarDescriptor des = iter.next();
-			if(des != null && 
-					(includeRemoved || des.getOperation() != IEnvironmentVariable.ENVVAR_REMOVE))
+			if (des != null && (includeRemoved || des.getOperation() != IEnvironmentVariable.ENVVAR_REMOVE))
 				list.add(des);
 		}
 		return list.toArray(new EnvVarDescriptor[list.size()]);
 	}
-	
+
 	/**
 	 * Returns a variable of a given name held by this collector
-	 * 
+	 *
 	 * @param name a variable name
 	 * @return IBuildEnvironmentVariable
 	 */
-	public EnvVarDescriptor getVariable(String name){
-		if(fMap == null)
+	public EnvVarDescriptor getVariable(String name) {
+		if (fMap == null)
 			return null;
-		
-		if(!EnvironmentVariableManager.getDefault().isVariableCaseSensitive())
+
+		if (!EnvironmentVariableManager.getDefault().isVariableCaseSensitive())
 			name = name.toUpperCase();
 
 		return fMap.get(name);
 	}
-	
+
 	/**
 	 * Returns an array of variables held by this collector
 	 * The call to this method is equivalent of calling toArray(true)
-	 * 
+	 *
 	 * @return IBuildEnvironmentVariable[]
 	 */
-	public EnvVarDescriptor[] getVariables(){
+	public EnvVarDescriptor[] getVariables() {
 		return toArray(true);
 	}
-	
-	public void clear(){
-		if(fMap != null)
+
+	public void clear() {
+		if (fMap != null)
 			fMap.clear();
 	}
 

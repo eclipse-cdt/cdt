@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - initial implementation
  *******************************************************************************/
@@ -24,8 +24,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class SWTImagesFactory {
 	// The plug-in registry
-	private static ImageRegistry imageRegistry = Activator.getPlugin()
-			.getImageRegistry();
+	private static ImageRegistry imageRegistry = Activator.getPlugin().getImageRegistry();
 
 	// Sub-directory (under the package containing this class) where 16 color
 	// images are
@@ -33,8 +32,7 @@ public class SWTImagesFactory {
 
 	static {
 		try {
-			fgIconBaseURL = new URL(Activator.getPlugin().getBundle()
-					.getEntry("/"), "icons/"); //$NON-NLS-1$ //$NON-NLS-2$
+			fgIconBaseURL = new URL(Activator.getPlugin().getBundle().getEntry("/"), "icons/"); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (MalformedURLException e) {
 			Activator.log(e);
 		}
@@ -42,15 +40,13 @@ public class SWTImagesFactory {
 	private static final String NAME_PREFIX = Activator.PLUGIN_ID + '.';
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
 	public static final String IMG_MESON = NAME_PREFIX + "meson-logo.png"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_MESON = createManaged("",
-			IMG_MESON);
-	
+	public static final ImageDescriptor DESC_MESON = createManaged("", IMG_MESON);
+
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
 	}
 
-	private static ImageDescriptor createManaged(ImageRegistry registry,
-			String prefix, String name) {
+	private static ImageDescriptor createManaged(ImageRegistry registry, String prefix, String name) {
 		ImageDescriptor result = ImageDescriptor
 				.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
 		registry.put(name, result);
@@ -78,7 +74,7 @@ public class SWTImagesFactory {
 
 	/**
 	 * Sets all available image descriptors for the given action.
-	 * 
+	 *
 	 * @param action
 	 *            - action
 	 * @param type
@@ -86,8 +82,7 @@ public class SWTImagesFactory {
 	 * @param relPath
 	 *            - relative path
 	 */
-	public static void setImageDescriptors(IAction action, String type,
-			String relPath) {
+	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		if (relPath.startsWith(NAME_PREFIX)) {
 			relPath = relPath.substring(NAME_PREFIX_LENGTH);
 		}
@@ -104,4 +99,3 @@ public class SWTImagesFactory {
 	}
 
 }
-

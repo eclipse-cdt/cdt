@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.ui.CUIStatus;
  * Either a rewriter is directly passed in the constructor or method {@link #getRewrite()}
  * is overridden to provide the AST rewriter that is evaluated to the document when the
  * proposal is applied.
- * 
+ *
  * @since 5.1
  */
 public class ASTRewriteCorrectionProposal extends TUCorrectionProposal {
@@ -41,7 +41,7 @@ public class ASTRewriteCorrectionProposal extends TUCorrectionProposal {
 
 	/**
 	 * Constructs a AST rewrite correction proposal.
-	 * 
+	 *
 	 * @param name the display name of the proposal.
 	 * @param tu the translation unit that is modified.
 	 * @param rewrite the AST rewrite that is invoked when the proposal is applied or
@@ -50,15 +50,16 @@ public class ASTRewriteCorrectionProposal extends TUCorrectionProposal {
 	 * @param image The image that is displayed for this proposal or {@code null} if no
 	 * image is desired.
 	 */
-	public ASTRewriteCorrectionProposal(String name, ITranslationUnit tu, ASTRewrite rewrite, int relevance, Image image) {
+	public ASTRewriteCorrectionProposal(String name, ITranslationUnit tu, ASTRewrite rewrite, int relevance,
+			Image image) {
 		super(name, tu, relevance, image);
-		fRewrite= rewrite;
+		fRewrite = rewrite;
 	}
 
 	@Override
 	protected void addEdits(IDocument document, TextEdit editRoot) throws CoreException {
 		super.addEdits(document, editRoot);
-		ASTRewrite rewrite= getRewrite();
+		ASTRewrite rewrite = getRewrite();
 		if (rewrite != null) {
 			try {
 				Change change = rewrite.rewriteAST();
@@ -87,13 +88,13 @@ public class ASTRewriteCorrectionProposal extends TUCorrectionProposal {
 	/**
 	 * Returns the rewriter that has been passed in the constructor. Implementors can override this
 	 * method to create the rewriter lazy. This method will only be called once.
-	 * 
+	 *
 	 * @return returns the rewriter to be used.
 	 * @throws CoreException an exception is thrown when the rewriter could not be created.
 	 */
 	protected ASTRewrite getRewrite() throws CoreException {
 		if (fRewrite == null) {
-			IStatus status= CUIStatus.createError(IStatus.ERROR, "Rewriter not initialized", null); //$NON-NLS-1$
+			IStatus status = CUIStatus.createError(IStatus.ERROR, "Rewriter not initialized", null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return fRewrite;

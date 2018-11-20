@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 /**
- * A controller for on-demand indexing of files opened in C/C++ editors. 
+ * A controller for on-demand indexing of files opened in C/C++ editors.
  */
 public class IndexUpdateRequestor implements IPreferenceChangeListener {
 	private static class IndexUpdateRequestorJob extends Job {
@@ -77,7 +77,7 @@ public class IndexUpdateRequestor implements IPreferenceChangeListener {
 		IProject newProject;
 		synchronized (this) {
 			oldProject = fTu == null ? null : fTu.getCProject().getProject();
-			newProject = tu == null ?  null : tu.getCProject().getProject();
+			newProject = tu == null ? null : tu.getCProject().getProject();
 			fTu = tu;
 		}
 
@@ -92,7 +92,8 @@ public class IndexUpdateRequestor implements IPreferenceChangeListener {
 
 		if (tu != null) {
 			IProject project = tu.getCProject().getProject();
-			if (!String.valueOf(true).equals(IndexerPreferences.get(project, IndexerPreferences.KEY_INDEX_ON_OPEN, null))) {
+			if (!String.valueOf(true)
+					.equals(IndexerPreferences.get(project, IndexerPreferences.KEY_INDEX_ON_OPEN, null))) {
 				tu = null;
 			}
 		}

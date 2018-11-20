@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Intel Corporation - Initial API and implementation
  **********************************************************************/
 package org.eclipse.cdt.internal.ui.text;
@@ -26,7 +26,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * This class represents the CHelpBook settings
- * 
+ *
  * @since 2.1
  */
 public class CHelpBookDescriptor {
@@ -38,99 +38,99 @@ public class CHelpBookDescriptor {
 
 	private boolean fEnabled = true;
 	private ICHelpBook fCHelpBook;
-	
-	CHelpBookDescriptor(ICHelpBook book){
-		this(book,null);
+
+	CHelpBookDescriptor(ICHelpBook book) {
+		this(book, null);
 	}
 
-	CHelpBookDescriptor(ICHelpBook book, Element parentElement){
+	CHelpBookDescriptor(ICHelpBook book, Element parentElement) {
 		fCHelpBook = book;
-		
-		if(parentElement == null)
+
+		if (parentElement == null)
 			return;
-		
+
 		NodeList bookElements = parentElement.getElementsByTagName(ELEMENT_BOOK);
-		if(bookElements.getLength() == 0)
+		if (bookElements.getLength() == 0)
 			return;
-		
+
 		String title = book.getTitle();
-		for(int i = 0; i < bookElements.getLength(); i++){
-			Element bookElement = (Element)bookElements.item(i);
-			if(title.equals(bookElement.getAttribute(ATTRIBUTE_TITLE))){
+		for (int i = 0; i < bookElements.getLength(); i++) {
+			Element bookElement = (Element) bookElements.item(i);
+			if (title.equals(bookElement.getAttribute(ATTRIBUTE_TITLE))) {
 				fEnabled = VALUE_TRUE.equalsIgnoreCase(bookElement.getAttribute(ATTRIBUTE_ENABLED));
 				break;
 			}
 		}
 	}
-	
-	public boolean isEnabled(){
+
+	public boolean isEnabled() {
 		return fEnabled;
 	}
-	
-	public boolean matches(ICHelpInvocationContext context){
+
+	public boolean matches(ICHelpInvocationContext context) {
 		ITranslationUnit unit = context.getTranslationUnit();
-		if(unit != null)
+		if (unit != null)
 			return matches(unit);
 		IProject project = context.getProject();
-		if(project != null)
+		if (project != null)
 			return matches(project);
 		return true;
 	}
-	
-	public boolean matches(IProject project){
+
+	public boolean matches(IProject project) {
 		ICHelpBook book = getCHelpBook();
 		boolean bMatches = false;
-		switch(book.getCHelpType()){
-			case ICHelpBook.HELP_TYPE_CPP:
-				try{
-					bMatches = project.hasNature(CCProjectNature.CC_NATURE_ID);
-				}catch(CoreException e){
-				}
-				break;
-			case ICHelpBook.HELP_TYPE_C:
-			case ICHelpBook.HELP_TYPE_ASM:
-				try{
-					bMatches = project.hasNature(CProjectNature.C_NATURE_ID);
-				}catch(CoreException e){
-				}
-				break;
-			default:
-				bMatches = true;
+		switch (book.getCHelpType()) {
+		case ICHelpBook.HELP_TYPE_CPP:
+			try {
+				bMatches = project.hasNature(CCProjectNature.CC_NATURE_ID);
+			} catch (CoreException e) {
+			}
+			break;
+		case ICHelpBook.HELP_TYPE_C:
+		case ICHelpBook.HELP_TYPE_ASM:
+			try {
+				bMatches = project.hasNature(CProjectNature.C_NATURE_ID);
+			} catch (CoreException e) {
+			}
+			break;
+		default:
+			bMatches = true;
 		}
 		return bMatches;
 	}
-	
-	public boolean matches(ITranslationUnit unit){
+
+	public boolean matches(ITranslationUnit unit) {
 		ICHelpBook book = getCHelpBook();
 		boolean bMatches = false;
-		switch(book.getCHelpType()){
-			case ICHelpBook.HELP_TYPE_CPP:
-				bMatches = unit.isCXXLanguage();
-				break;
-			case ICHelpBook.HELP_TYPE_C:
-				bMatches = unit.isCLanguage() || unit.isCXXLanguage();
-				break;
-			case ICHelpBook.HELP_TYPE_ASM:
-				bMatches = unit.isASMLanguage();
-				break;
-			default:
-				bMatches = true;
+		switch (book.getCHelpType()) {
+		case ICHelpBook.HELP_TYPE_CPP:
+			bMatches = unit.isCXXLanguage();
+			break;
+		case ICHelpBook.HELP_TYPE_C:
+			bMatches = unit.isCLanguage() || unit.isCXXLanguage();
+			break;
+		case ICHelpBook.HELP_TYPE_ASM:
+			bMatches = unit.isASMLanguage();
+			break;
+		default:
+			bMatches = true;
 		}
 		return bMatches;
 	}
-	
-	public void enable(boolean enable){
+
+	public void enable(boolean enable) {
 		fEnabled = enable;
 	}
-	
-	public ICHelpBook getCHelpBook(){
+
+	public ICHelpBook getCHelpBook() {
 		return fCHelpBook;
 	}
-	
-	public void serialize(Document doc, Element parentElement){
+
+	public void serialize(Document doc, Element parentElement) {
 		Element bookElement = doc.createElement(ELEMENT_BOOK);
-		bookElement.setAttribute(ATTRIBUTE_TITLE,getCHelpBook().getTitle());
-		bookElement.setAttribute(ATTRIBUTE_ENABLED,fEnabled ? VALUE_TRUE : VALUE_FALSE);
+		bookElement.setAttribute(ATTRIBUTE_TITLE, getCHelpBook().getTitle());
+		bookElement.setAttribute(ATTRIBUTE_ENABLED, fEnabled ? VALUE_TRUE : VALUE_FALSE);
 		parentElement.appendChild(bookElement);
 	}
 }

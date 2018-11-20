@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 public class TokenWithImage extends Token {
@@ -18,11 +18,11 @@ public class TokenWithImage extends Token {
 
 	public TokenWithImage(int kind, Object source, int offset, int endOffset, char[] image) {
 		super(kind, source, offset, endOffset);
-		fImage= image;
+		fImage = image;
 	}
 
 	@Override
 	public char[] getCharImage() {
-		return fImage; 
+		return fImage;
 	}
 }

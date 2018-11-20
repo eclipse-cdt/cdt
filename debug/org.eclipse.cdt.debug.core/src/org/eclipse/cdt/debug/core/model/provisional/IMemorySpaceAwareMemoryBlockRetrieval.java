@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Texas Instruments, Freescale Semiconductor - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
  * An extension of the IMemoryBlockRetrievalExtension interface that supports
  * memory spaces. The memory space interface is provisional, thus this class
  * cannot yet be API.
- * 
+ *
  * @author Alain Lee and John Cortell
  */
 public interface IMemorySpaceAwareMemoryBlockRetrieval extends IMemoryBlockRetrievalExtension {
@@ -34,6 +34,7 @@ public interface IMemorySpaceAwareMemoryBlockRetrieval extends IMemoryBlockRetri
 	 */
 	interface GetMemorySpacesRequest extends IRequest {
 		String[] getMemorySpaces();
+
 		void setMemorySpaces(String[] memorySpaceIds);
 	}
 
@@ -41,7 +42,7 @@ public interface IMemorySpaceAwareMemoryBlockRetrieval extends IMemoryBlockRetri
 	 * Provides the string encoding of a memory space qualified address. This
 	 * method is called when having to represent a memory-space qualified
 	 * address as a single string.
-	 * 
+	 *
 	 * @param expression
 	 *            the expression representing a location within a memory space.
 	 *            This can be a simple numeric expression like "0x10000" or
@@ -55,7 +56,7 @@ public interface IMemorySpaceAwareMemoryBlockRetrieval extends IMemoryBlockRetri
 
 	/**
 	 * The inverse of {@link #encodeAddress(String, String)}.
-	 * 
+	 *
 	 * @param str
 	 *            the encoded string
 	 * @return the result of decoding the string into its components; never null
@@ -66,12 +67,13 @@ public interface IMemorySpaceAwareMemoryBlockRetrieval extends IMemoryBlockRetri
 
 	interface DecodeResult {
 		String getMemorySpaceId();
+
 		String getExpression();
 	}
-	
+
 	/**
 	 * Provides the memory spaces available for the given debug context.
-	 * 
+	 *
 	 * @param context
 	 *            a debug context
 	 * @param request
@@ -82,7 +84,7 @@ public interface IMemorySpaceAwareMemoryBlockRetrieval extends IMemoryBlockRetri
 
 	/**
 	 * Retrieves and returns a memory block.
-	 * 
+	 *
 	 * @param expression
 	 *            expression to be evaluated to an address
 	 * @param context
@@ -94,7 +96,8 @@ public interface IMemorySpaceAwareMemoryBlockRetrieval extends IMemoryBlockRetri
 	 * @throws DebugException
 	 *             if unable to retrieve the specified memory
 	 */
-	public IMemorySpaceAwareMemoryBlock getMemoryBlock(String expression, Object context, String memorySpaceID) throws DebugException;
+	public IMemorySpaceAwareMemoryBlock getMemoryBlock(String expression, Object context, String memorySpaceID)
+			throws DebugException;
 
 	/**
 	 * Return true if creating a memory block with a null memory space ID is NOT

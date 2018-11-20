@@ -12,7 +12,7 @@
  *     Andrew Ferguson (Symbian) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
 import java.net.URI;
@@ -30,10 +30,10 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Factory for obtaining instances of IIndexFileLocation for workspace and external files, and
- * some utility methods for going in the opposite direction. 
- * 
+ * some utility methods for going in the opposite direction.
+ *
  * @since 4.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -56,7 +56,7 @@ public class IndexLocationFactory {
 		}
 		return getAbsolutePath(location);
 	}
-	
+
 	/**
 	 * Returns the absolute file path of a location, or {@code null}
 	 * if the location is not a file-system path.
@@ -64,7 +64,7 @@ public class IndexLocationFactory {
 	public static IPath getAbsolutePath(IIndexFileLocation location) {
 		return UNCPathConverter.toPath(location.getURI());
 	}
-	
+
 	/**
 	 * Equivalent to the overloaded form with the ICProject parameter set to null
 	 * @see IndexLocationFactory#getIFLExpensive(ICProject, String)
@@ -72,7 +72,7 @@ public class IndexLocationFactory {
 	public static IIndexFileLocation getIFLExpensive(String absolutePath) {
 		return getIFLExpensive(null, absolutePath);
 	}
-		
+
 	/**
 	 * Returns an IIndexFileLocation by searching the workspace for resources that are mapped
 	 * onto the specified absolute path.
@@ -91,14 +91,14 @@ public class IndexLocationFactory {
 	 *   path if possible.
 	 */
 	public static IIndexFileLocation getIFLExpensive(ICProject cproject, String absolutePath) {
-		final IProject preferredProject= cproject == null ? null : cproject.getProject();
-		IFile file= ResourceLookup.selectFileForLocation(new Path(absolutePath), preferredProject);
+		final IProject preferredProject = cproject == null ? null : cproject.getProject();
+		IFile file = ResourceLookup.selectFileForLocation(new Path(absolutePath), preferredProject);
 		if (file != null && file.exists())
 			return getWorkspaceIFL(file);
 
 		return getExternalIFL(absolutePath);
 	}
-	
+
 	/**
 	 * Returns an IIndexFileLocation for the specified absolute path, with no associated full path.
 	 * @param absolutePath
@@ -107,16 +107,16 @@ public class IndexLocationFactory {
 	public static IIndexFileLocation getExternalIFL(String absolutePath) {
 		return getExternalIFL(new Path(absolutePath));
 	}
-	
+
 	/**
 	 * Returns an IIndexFileLocation for the specified absolute path, with no associated full path.
 	 * @param absolutePath
 	 * @return an IIndexFileLocation for the specified absolute path, with no associated full path.
 	 */
 	public static IIndexFileLocation getExternalIFL(IPath absolutePath) {
-		return new IndexFileLocation(UNCPathConverter.getInstance().toURI(absolutePath), null);	
+		return new IndexFileLocation(UNCPathConverter.getInstance().toURI(absolutePath), null);
 	}
-	
+
 	/**
 	 * Returns an IIndexFileLocation for the specified workspace file, or <code>null</code>
 	 * if it does not have a location.
@@ -130,7 +130,7 @@ public class IndexLocationFactory {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns<ul>
 	 * <li> a workspace IIndexFileLocation if the translation unit has an associated resource

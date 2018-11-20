@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * An {@link IntegerFieldEditor} with field decoration.
- * 
+ *
  * @since 1.1
  */
 public class DecoratingIntegerFieldEditor extends IntegerFieldEditor {
@@ -35,25 +35,25 @@ public class DecoratingIntegerFieldEditor extends IntegerFieldEditor {
 	protected DecoratingIntegerFieldEditor() {
 	}
 
-    /**
-     * Creates an integer field editor.
-     * 
-     * @param name the name of the preference this field editor works on
-     * @param labelText the label text of the field editor
-     * @param parent the parent of the field editor's control
-     */
+	/**
+	 * Creates an integer field editor.
+	 *
+	 * @param name the name of the preference this field editor works on
+	 * @param labelText the label text of the field editor
+	 * @param parent the parent of the field editor's control
+	 */
 	public DecoratingIntegerFieldEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, parent);
 	}
 
-    /**
-     * Creates an integer field editor.
-     * 
-     * @param name the name of the preference this field editor works on
-     * @param labelText the label text of the field editor
-     * @param parent the parent of the field editor's control
-     * @param textLimit the maximum number of characters in the text.
-     */
+	/**
+	 * Creates an integer field editor.
+	 *
+	 * @param name the name of the preference this field editor works on
+	 * @param labelText the label text of the field editor
+	 * @param parent the parent of the field editor's control
+	 * @param textLimit the maximum number of characters in the text.
+	 */
 	public DecoratingIntegerFieldEditor(String name, String labelText, Composite parent, int textLimit) {
 		super(name, labelText, parent, textLimit);
 	}
@@ -63,21 +63,22 @@ public class DecoratingIntegerFieldEditor extends IntegerFieldEditor {
 		Text control = super.getTextControl(parent);
 		if (fDecoration == null) {
 			fDecoration = new ControlDecoration(control, SWT.LEFT | SWT.TOP);
-			FieldDecoration errorDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
+			FieldDecoration errorDecoration = FieldDecorationRegistry.getDefault()
+					.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
 			fDecoration.setImage(errorDecoration.getImage());
 			fDecoration.setDescriptionText(getErrorMessage());
 
 			// validate on focus gain
-            control.addFocusListener(new FocusAdapter() {
-                @Override
+			control.addFocusListener(new FocusAdapter() {
+				@Override
 				public void focusGained(FocusEvent e) {
-                    refreshValidState();
-                }
-            });
+					refreshValidState();
+				}
+			});
 		}
 		return control;
 	}
-	
+
 	@Override
 	protected void showErrorMessage(String msg) {
 		super.showErrorMessage(msg);

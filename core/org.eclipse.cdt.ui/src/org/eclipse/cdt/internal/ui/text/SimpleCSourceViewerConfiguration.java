@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
@@ -29,7 +29,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.ui.text.IColorManager;
 
-
 /**
  * A simple {@linkplain org.eclipse.cdt.ui.text.CSourceViewerConfiguration C source viewer configuration}.
  * <p>
@@ -38,7 +37,6 @@ import org.eclipse.cdt.ui.text.IColorManager;
  * </p>
  */
 public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration {
-
 
 	private boolean fConfigureFormatter;
 
@@ -52,11 +50,12 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	 * @param partitioning the document partitioning for this configuration, or <code>null</code> for the default partitioning
 	 * @param configureFormatter <code>true</code> if a content formatter should be configured
 	 */
-	public SimpleCSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore preferenceStore, ITextEditor editor, String partitioning, boolean configureFormatter) {
+	public SimpleCSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore preferenceStore,
+			ITextEditor editor, String partitioning, boolean configureFormatter) {
 		super(colorManager, preferenceStore, editor, partitioning);
-		fConfigureFormatter= configureFormatter;
+		fConfigureFormatter = configureFormatter;
 	}
-	
+
 	/*
 	 * @see SourceViewerConfiguration#getAutoEditStrategies(ISourceViewer, String)
 	 */
@@ -138,7 +137,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 		return null;
 	}
-	
+
 	/*
 	 * @see CSourceViewerConfiguration#getOutlinePresenter(ISourceViewer)
 	 */

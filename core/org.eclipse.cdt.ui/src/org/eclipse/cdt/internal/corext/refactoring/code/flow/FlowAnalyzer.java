@@ -102,11 +102,11 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 
 	static protected class SwitchData {
 		private boolean fHasDefaultCase;
-		private final List<IRegion> fRanges= new ArrayList<IRegion>(4);
-		private final List<FlowInfo> fInfos= new ArrayList<FlowInfo>(4);
+		private final List<IRegion> fRanges = new ArrayList<IRegion>(4);
+		private final List<FlowInfo> fInfos = new ArrayList<FlowInfo>(4);
 
 		public void setHasDefaultCase() {
-			fHasDefaultCase= true;
+			fHasDefaultCase = true;
 		}
 
 		public boolean hasDefaultCase() {
@@ -136,7 +136,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 
 	public FlowAnalyzer(FlowContext context) {
 		super(true);
-		fFlowContext= context;
+		fFlowContext = context;
 	}
 
 	protected abstract boolean shouldCreateReturnFlowInfo(IASTReturnStatement node);
@@ -225,7 +225,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	protected FlowInfo assignFlowInfo(IASTNode target, IASTNode source) {
-		FlowInfo result= getFlowInfo(source);
+		FlowInfo result = getFlowInfo(source);
 		setFlowInfo(target, result);
 		return result;
 	}
@@ -237,26 +237,26 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	//---- Helpers to process sequential flow infos -------------------------------------
 
 	protected GenericSequentialFlowInfo processSequential(IASTNode parent, IASTNode[] nodes) {
-		GenericSequentialFlowInfo result= createSequential(parent);
+		GenericSequentialFlowInfo result = createSequential(parent);
 		process(result, nodes);
 		return result;
 	}
 
 	protected GenericSequentialFlowInfo processSequential(IASTNode parent, Iterable<IASTNode> nodes) {
-		GenericSequentialFlowInfo result= createSequential(parent);
+		GenericSequentialFlowInfo result = createSequential(parent);
 		process(result, nodes);
 		return result;
 	}
 
 	protected GenericSequentialFlowInfo processSequential(IASTNode parent, IASTNode node) {
-		GenericSequentialFlowInfo result= createSequential(parent);
+		GenericSequentialFlowInfo result = createSequential(parent);
 		if (node != null)
 			result.merge(getFlowInfo(node), fFlowContext);
 		return result;
 	}
 
 	protected GenericSequentialFlowInfo processSequential(IASTNode parent, IASTNode node1, IASTNode node2) {
-		GenericSequentialFlowInfo result= createSequential(parent);
+		GenericSequentialFlowInfo result = createSequential(parent);
 		if (node1 != null)
 			result.merge(getFlowInfo(node1), fFlowContext);
 		if (node2 != null)
@@ -265,13 +265,13 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	protected GenericSequentialFlowInfo createSequential(IASTNode parent) {
-		GenericSequentialFlowInfo result= createSequential();
+		GenericSequentialFlowInfo result = createSequential();
 		setFlowInfo(parent, result);
 		return result;
 	}
 
 	protected GenericSequentialFlowInfo createSequential(IASTNode[] nodes) {
-		GenericSequentialFlowInfo result= createSequential();
+		GenericSequentialFlowInfo result = createSequential();
 		process(result, nodes);
 		return result;
 	}
@@ -357,60 +357,60 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	public int visit(IASTBreakStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTCaseStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTDefaultStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTCompoundStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTContinueStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTDeclarationStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTDoStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTExpressionStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTForStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTGotoStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTIfStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTLabelStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTNullStatement node) {
 		// Null statements aren't of any interest.
 		return PROCESS_SKIP;
 	}
-	
+
 	public int visit(ICPPASTRangeBasedForStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(ICPPASTTryBlockStatement node) {
 		if (traverseNode(node)) {
 			fFlowContext.pushExceptions(node);
@@ -422,19 +422,19 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 		}
 		return PROCESS_SKIP;
 	}
-	
+
 	public int visit(ICPPASTCatchHandler node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTReturnStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTSwitchStatement node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	public int visit(IASTWhileStatement node) {
 		return PROCESS_CONTINUE;
 	}
@@ -442,7 +442,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	//---- Helper to process switch statement ----------------------------------------
 
 	protected SwitchData createSwitchData(IASTSwitchStatement node) {
-		SwitchData result= new SwitchData();
+		SwitchData result = new SwitchData();
 		IASTStatement[] statements;
 		IASTStatement body = node.getBody();
 		if (body instanceof IASTCompoundStatement) {
@@ -453,9 +453,9 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 		if (statements.length == 0)
 			return result;
 
-		int start= -1;
-		int end= -1;
-		GenericSequentialFlowInfo info= null;
+		int start = -1;
+		int end = -1;
+		GenericSequentialFlowInfo info = null;
 
 		for (IASTStatement statement : statements) {
 			IASTFileLocation location = statement.getFileLocation();
@@ -464,24 +464,24 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 					result.setHasDefaultCase();
 				}
 				if (info == null) {
-					info= createSequential();
-					start= location.getNodeOffset();
+					info = createSequential();
+					start = location.getNodeOffset();
 				} else {
 					if (info.isReturn() || info.isPartialReturn() || info.branches()) {
 						result.add(new Region(start, end - start + 1), info);
-						info= createSequential();
-						start= location.getNodeOffset();
+						info = createSequential();
+						start = location.getNodeOffset();
 					}
 				}
 			} else {
 				if (info == null) {
-					info= createSequential();
-					start= location.getNodeOffset();
+					info = createSequential();
+					start = location.getNodeOffset();
 				} else {
 					info.merge(getFlowInfo(statement), fFlowContext);
 				}
 			}
-			end= location.getNodeOffset() + location.getNodeLength() - 1;
+			end = location.getNodeOffset() + location.getNodeLength() - 1;
 		}
 		result.add(new Region(start, end - start + 1), info);
 		return result;
@@ -551,7 +551,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(IASTCompoundStatement node) {
-		BlockFlowInfo info= createBlock();
+		BlockFlowInfo info = createBlock();
 		setFlowInfo(node, info);
 		process(info, node.getStatements());
 		return PROCESS_SKIP;
@@ -568,7 +568,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(IASTDoStatement node) {
-		DoWhileFlowInfo info= createDoWhile();
+		DoWhileFlowInfo info = createDoWhile();
 		setFlowInfo(node, info);
 		info.mergeAction(getFlowInfo(node.getBody()), fFlowContext);
 		info.mergeCondition(getFlowInfo(node.getCondition()), fFlowContext);
@@ -582,7 +582,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(IASTForStatement node) {
-		ForFlowInfo forInfo= createFor();
+		ForFlowInfo forInfo = createFor();
 		setFlowInfo(node, forInfo);
 		forInfo.mergeInitializer(createSequential(node.getInitializerStatement()), fFlowContext);
 		forInfo.mergeCondition(getFlowInfo(node.getConditionExpression()), fFlowContext);
@@ -599,7 +599,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(IASTIfStatement node) {
-		IfFlowInfo info= createIf();
+		IfFlowInfo info = createIf();
 		setFlowInfo(node, info);
 		info.mergeCondition(getFlowInfo(node.getConditionExpression()), fFlowContext);
 		info.merge(getFlowInfo(node.getThenClause()), getFlowInfo(node.getElseClause()), fFlowContext);
@@ -617,7 +617,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(ICPPASTRangeBasedForStatement node) {
-		RangeBasedForFlowInfo forInfo= createRangeBasedFor();
+		RangeBasedForFlowInfo forInfo = createRangeBasedFor();
 		setFlowInfo(node, forInfo);
 		forInfo.mergeDeclaration(getFlowInfo(node.getDeclaration()), fFlowContext);
 		forInfo.mergeInitializerClause(getFlowInfo(node.getInitializerClause()), fFlowContext);
@@ -627,7 +627,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(ICPPASTTryBlockStatement node) {
-		TryFlowInfo info= createTry();
+		TryFlowInfo info = createTry();
 		setFlowInfo(node, info);
 		info.mergeTry(getFlowInfo(node.getTryBody()), fFlowContext);
 		for (ICPPASTCatchHandler catchHandler : node.getCatchHandlers()) {
@@ -643,7 +643,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 
 	public int leave(IASTReturnStatement node) {
 		if (shouldCreateReturnFlowInfo(node)) {
-			ReturnFlowInfo info= createReturn(node);
+			ReturnFlowInfo info = createReturn(node);
 			setFlowInfo(node, info);
 			info.merge(getFlowInfo(node.getReturnArgument()), fFlowContext);
 		} else {
@@ -657,11 +657,11 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	protected int leave(IASTSwitchStatement node, SwitchData data) {
-		SwitchFlowInfo switchFlowInfo= createSwitch();
+		SwitchFlowInfo switchFlowInfo = createSwitch();
 		setFlowInfo(node, switchFlowInfo);
 		switchFlowInfo.mergeTest(getFlowInfo(node.getControllerExpression()), fFlowContext);
-		FlowInfo[] cases= data.getInfos();
-		for (int i= 0; i < cases.length; i++) {
+		FlowInfo[] cases = data.getInfos();
+		for (int i = 0; i < cases.length; i++) {
 			switchFlowInfo.mergeCase(cases[i], fFlowContext);
 		}
 		switchFlowInfo.mergeDefault(data.hasDefaultCase(), fFlowContext);
@@ -670,12 +670,11 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(IASTWhileStatement node) {
-		WhileFlowInfo info= createWhile();
+		WhileFlowInfo info = createWhile();
 		setFlowInfo(node, info);
 		info.mergeCondition(getFlowInfo(node.getCondition()), fFlowContext);
 		if (node instanceof ICPPASTWhileStatement) {
-			info.mergeCondition(getFlowInfo(((ICPPASTWhileStatement) node).getConditionDeclaration()),
-					fFlowContext);
+			info.mergeCondition(getFlowInfo(((ICPPASTWhileStatement) node).getConditionDeclaration()), fFlowContext);
 		}
 		info.mergeAction(getFlowInfo(node.getBody()), fFlowContext);
 		info.removeLabel(null);
@@ -728,11 +727,11 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(IASTConditionalExpression node) {
-		ConditionalFlowInfo info= createConditional();
+		ConditionalFlowInfo info = createConditional();
 		setFlowInfo(node, info);
 		info.mergeCondition(getFlowInfo(node.getLogicalConditionExpression()), fFlowContext);
-		info.merge(getFlowInfo(node.getPositiveResultExpression()),
-				getFlowInfo(node.getNegativeResultExpression()), fFlowContext);
+		info.merge(getFlowInfo(node.getPositiveResultExpression()), getFlowInfo(node.getNegativeResultExpression()),
+				fFlowContext);
 		return PROCESS_SKIP;
 	}
 
@@ -754,7 +753,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(IASTFunctionDefinition node) {
-		GenericSequentialFlowInfo info= processSequential(node, node.getDeclSpecifier());
+		GenericSequentialFlowInfo info = processSequential(node, node.getDeclSpecifier());
 		process(info, node.getDeclarator());
 		process(info, node.getBody());
 		if (node instanceof ICPPASTFunctionWithTryBlock) {
@@ -764,7 +763,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(IASTSimpleDeclaration node) {
-		GenericSequentialFlowInfo info= processSequential(node, node.getDeclSpecifier());
+		GenericSequentialFlowInfo info = processSequential(node, node.getDeclSpecifier());
 		process(info, node.getDeclarators());
 		return PROCESS_SKIP;
 	}
@@ -773,7 +772,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	public int leave(IASTParameterDeclaration node) {
 		if (skipNode(node))
 			return PROCESS_SKIP;
-		GenericSequentialFlowInfo info= processSequential(node, node.getDeclSpecifier());
+		GenericSequentialFlowInfo info = processSequential(node, node.getDeclSpecifier());
 		process(info, node.getDeclarator());
 		return PROCESS_SKIP;
 	}
@@ -785,7 +784,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 		IASTNode nestedOrName = node.getNestedDeclarator();
 		if (nestedOrName == null)
 			nestedOrName = node.getName();
-		GenericSequentialFlowInfo info= processSequential(node, nestedOrName);
+		GenericSequentialFlowInfo info = processSequential(node, nestedOrName);
 		if (node instanceof IASTArrayDeclarator)
 			process(info, ((IASTArrayDeclarator) node).getArrayModifiers());
 		IASTNode[] parameters = null;
@@ -825,19 +824,19 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 		case IASTBinaryExpression.op_plusAssign:
 		case IASTBinaryExpression.op_shiftLeftAssign:
 		case IASTBinaryExpression.op_shiftRightAssign:
-			FlowInfo lhs= getFlowInfo(node.getOperand1());
-			FlowInfo rhs= getFlowInfo(node.getOperand2());
+			FlowInfo lhs = getFlowInfo(node.getOperand1());
+			FlowInfo rhs = getFlowInfo(node.getOperand2());
 			if (lhs instanceof LocalFlowInfo) {
-				LocalFlowInfo llhs= (LocalFlowInfo) lhs;
+				LocalFlowInfo llhs = (LocalFlowInfo) lhs;
 				llhs.setWriteAccess(fFlowContext);
 				if (operator != IASTBinaryExpression.op_assign) {
-					GenericSequentialFlowInfo tmp= createSequential();
+					GenericSequentialFlowInfo tmp = createSequential();
 					tmp.merge(new LocalFlowInfo(llhs, FlowInfo.READ, fFlowContext), fFlowContext);
 					tmp.merge(rhs, fFlowContext);
-					rhs= tmp;
+					rhs = tmp;
 				}
 			}
-			GenericSequentialFlowInfo info= createSequential(node);
+			GenericSequentialFlowInfo info = createSequential(node);
 			// First process right and side and then left hand side.
 			info.merge(rhs, fFlowContext);
 			info.merge(lhs, fFlowContext);
@@ -855,7 +854,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 		// Leaf node.
 		return PROCESS_SKIP;
 	}
-	
+
 	public int leave(IASTIdExpression node) {
 		assignFlowInfo(node, node.getName());
 		return PROCESS_SKIP;
@@ -878,24 +877,23 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 		case IASTUnaryExpression.op_prefixDecr:
 		case IASTUnaryExpression.op_postFixIncr:
 		case IASTUnaryExpression.op_postFixDecr: {
-			FlowInfo info= getFlowInfo(node.getOperand());
+			FlowInfo info = getFlowInfo(node.getOperand());
 			if (info instanceof LocalFlowInfo) {
 				// Normally this should be done in the parent node since the write access takes
 				// place later. But there seems to be no case where this influences the flow
 				// analysis. So it is kept here to simplify the code.
-				GenericSequentialFlowInfo result= createSequential(node);
+				GenericSequentialFlowInfo result = createSequential(node);
 				result.merge(info, fFlowContext);
-				result.merge(new LocalFlowInfo((LocalFlowInfo)info, FlowInfo.WRITE, fFlowContext),
-						fFlowContext);
+				result.merge(new LocalFlowInfo((LocalFlowInfo) info, FlowInfo.WRITE, fFlowContext), fFlowContext);
 			} else {
 				setFlowInfo(node, info);
 			}
 			break;
 		}
 		case IASTUnaryExpression.op_throw: {
-			ThrowFlowInfo info= createThrow();
+			ThrowFlowInfo info = createThrow();
 			setFlowInfo(node, info);
-			IASTExpression expression= node.getOperand();
+			IASTExpression expression = node.getOperand();
 			info.merge(getFlowInfo(expression), fFlowContext);
 			break;
 		}
@@ -916,9 +914,9 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	public int leave(IASTName node) {
 		if (skipNode(node) || node.isDeclaration() || node instanceof ICPPASTQualifiedName)
 			return PROCESS_SKIP;
-		IBinding binding= node.resolveBinding();
+		IBinding binding = node.resolveBinding();
 		if (binding instanceof IVariable) {
-			IVariable variable= (IVariable) binding;
+			IVariable variable = (IVariable) binding;
 			if (!(variable instanceof IField)) {
 				int index = fFlowContext.getIndexFromLocal(variable);
 				if (index >= 0) {
@@ -955,7 +953,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(ICPPASTNewExpression node) {
-		GenericSequentialFlowInfo info= processSequential(node, node.getTypeId());
+		GenericSequentialFlowInfo info = processSequential(node, node.getTypeId());
 		process(info, node.getPlacementArguments());
 		process(info, node.getInitializer());
 		return PROCESS_SKIP;
@@ -1022,11 +1020,11 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 		return PROCESS_SKIP;
 	}
 
-	private void processFunctionCall(IASTFunctionCallExpression node,
-			IASTExpression functionNameExpression, IASTInitializerClause[] arguments) {
+	private void processFunctionCall(IASTFunctionCallExpression node, IASTExpression functionNameExpression,
+			IASTInitializerClause[] arguments) {
 		if (skipNode(node))
 			return;
-		FunctionCallFlowInfo info= createFunctionCallFlowInfo();
+		FunctionCallFlowInfo info = createFunctionCallFlowInfo();
 		setFlowInfo(node, info);
 		info.mergeReceiver(getFlowInfo(functionNameExpression), fFlowContext);
 		for (IASTInitializerClause arg : arguments) {

@@ -17,7 +17,6 @@ package org.eclipse.cdt.visualizer.ui.util;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 // ---------------------------------------------------------------------------
 // Timer
 // ---------------------------------------------------------------------------
@@ -25,20 +24,17 @@ import java.awt.event.ActionListener;
 /**
  * Periodic event timer class.
  */
-public class Timer
-	implements ActionListener, Runnable
-{
+public class Timer implements ActionListener, Runnable {
 	// --- members ---
-	
+
 	/** Actual timer */
 	// NOTE: we delegate rather than subclassing, because
 	// Timer class implements ISerializable, so every derived type
 	// must either declare a serialization ID, or suppress the warning.
 	protected javax.swing.Timer m_timer = null;
-	
-	
+
 	// --- constructors/destructors ---
-	
+
 	/** Constructor. */
 	public Timer(int intervalMilliseconds) {
 		m_timer = new javax.swing.Timer(intervalMilliseconds, null);
@@ -47,7 +43,7 @@ public class Timer
 		m_timer.setCoalesce(true);
 		m_timer.start();
 	}
-	
+
 	/** Dispose method. */
 	public void dispose() {
 		if (m_timer != null) {
@@ -58,44 +54,44 @@ public class Timer
 		}
 	}
 
-	
-    // --- methods ---
-    
-    /** Gets whether timer repeatedly fires events. */
-    public boolean isRepeating() {
-    	return m_timer.isRepeats();
-    }
-    
-    /** Sets whether timer repeatedly fires events. */
-    public void setRepeating(boolean repeats) {
-    	m_timer.setRepeats(repeats);
-    }
-    
-    /** Starts/restarts timer.
-     *  Has no effect if timer is already running
-     */
-    public void start() {
-    	if (! m_timer.isRunning()) m_timer.start();
-    }
-    
-    /** Stops timer.
-     *  Has no effect if timer is already stopped.
-     */
-    public void stop() {
-    	if (m_timer.isRunning()) m_timer.stop();
-    }
+	// --- methods ---
 
-    
+	/** Gets whether timer repeatedly fires events. */
+	public boolean isRepeating() {
+		return m_timer.isRepeats();
+	}
+
+	/** Sets whether timer repeatedly fires events. */
+	public void setRepeating(boolean repeats) {
+		m_timer.setRepeats(repeats);
+	}
+
+	/** Starts/restarts timer.
+	 *  Has no effect if timer is already running
+	 */
+	public void start() {
+		if (!m_timer.isRunning())
+			m_timer.start();
+	}
+
+	/** Stops timer.
+	 *  Has no effect if timer is already stopped.
+	 */
+	public void stop() {
+		if (m_timer.isRunning())
+			m_timer.stop();
+	}
+
 	// --- ActionListener implementation ---
 
-    /**
-     * Invoked each time the timer fires.
-     * Default implementation invokes the run() method on the UI thread.
-     */
-    public void actionPerformed(ActionEvent e) {
+	/**
+	 * Invoked each time the timer fires.
+	 * Default implementation invokes the run() method on the UI thread.
+	 */
+	public void actionPerformed(ActionEvent e) {
 		GUIUtils.exec(this);
-    }
-    
+	}
+
 	/** Invoked each time the timer fires. */
 	public void run() {
 	}

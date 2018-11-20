@@ -10,7 +10,7 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
- * Anna Dushistova (MontaVista) - bug [247087] 
+ * Anna Dushistova (MontaVista) - bug [247087]
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.export;
 
@@ -48,18 +48,18 @@ import org.eclipse.equinox.app.IApplicationContext;
 public class GeneratePDOMApplication implements IApplication {
 	private static final String EXPORT_PROJECT_PROVIDER = "ExportProjectProvider"; //$NON-NLS-1$
 	private static final String DEFAULT_PROJECT_PROVIDER = ExternalExportProjectProvider.class.getName();
-	public static final String OPT_PROJECTPROVIDER= "-pprovider"; //$NON-NLS-1$
-	public static final String OPT_TARGET= "-target"; //$NON-NLS-1$
-	public static final String OPT_QUIET= "-quiet"; //$NON-NLS-1$
-	public static final String OPT_INDEXER_ID= "-indexer"; //$NON-NLS-1$
+	public static final String OPT_PROJECTPROVIDER = "-pprovider"; //$NON-NLS-1$
+	public static final String OPT_TARGET = "-target"; //$NON-NLS-1$
+	public static final String OPT_QUIET = "-quiet"; //$NON-NLS-1$
+	public static final String OPT_INDEXER_ID = "-indexer"; //$NON-NLS-1$
 
 	/**
 	 * Applications needing to fail in an expected way (without stack dump), should throw
 	 * CoreExceptions with this error code.
 	 */
-	public static final int ECODE_EXPECTED_FAILURE= 1;
-	
-	private static Map<String,IExportProjectProvider> projectInitializers;
+	public static final int ECODE_EXPECTED_FAILURE = 1;
+
+	private static Map<String, IExportProjectProvider> projectInitializers;
 
 	/**
 	 * Starts this application
@@ -67,12 +67,12 @@ public class GeneratePDOMApplication implements IApplication {
 	 */
 	@Override
 	public Object start(IApplicationContext context) throws CoreException {
-		Object result= IApplication.EXIT_OK;
+		Object result = IApplication.EXIT_OK;
 		try {
-			result= startImpl(context);
-		} catch(CoreException ce) {
-			IStatus s= ce.getStatus();
-			if(s.getCode()==ECODE_EXPECTED_FAILURE) {
+			result = startImpl(context);
+		} catch (CoreException ce) {
+			IStatus s = ce.getStatus();
+			if (s.getCode() == ECODE_EXPECTED_FAILURE) {
 				output(s.getMessage());
 			} else {
 				throw ce;
@@ -80,56 +80,57 @@ public class GeneratePDOMApplication implements IApplication {
 		}
 		return result;
 	}
-	
+
 	private Object startImpl(IApplicationContext context) throws CoreException {
-		String[] appArgs= (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
-		Map<String,List<String>> arguments= CLIUtil.parseToMap(appArgs);
+		String[] appArgs = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
+		Map<String, List<String>> arguments = CLIUtil.parseToMap(appArgs);
 		output(Messages.GeneratePDOMApplication_Initializing);
 
 		setupCLIProgressProvider();
 
 		String pproviderFQN;
-		if(!arguments.containsKey(OPT_PROJECTPROVIDER)) {
-			output(MessageFormat.format(Messages.GeneratePDOMApplication_UsingDefaultProjectProvider, new Object[] {DEFAULT_PROJECT_PROVIDER}));
-			pproviderFQN= DEFAULT_PROJECT_PROVIDER;
+		if (!arguments.containsKey(OPT_PROJECTPROVIDER)) {
+			output(MessageFormat.format(Messages.GeneratePDOMApplication_UsingDefaultProjectProvider,
+					new Object[] { DEFAULT_PROJECT_PROVIDER }));
+			pproviderFQN = DEFAULT_PROJECT_PROVIDER;
 		} else {
-			pproviderFQN= CLIUtil.getArg(arguments, OPT_PROJECTPROVIDER, 1).get(0);
+			pproviderFQN = CLIUtil.getArg(arguments, OPT_PROJECTPROVIDER, 1).get(0);
 		}
-		String target= CLIUtil.getArg(arguments, OPT_TARGET, 1).get(0); 
-		boolean quiet= arguments.get(OPT_QUIET)!=null;
+		String target = CLIUtil.getArg(arguments, OPT_TARGET, 1).get(0);
+		boolean quiet = arguments.get(OPT_QUIET) != null;
 
-		String indexerID= IPDOMManager.ID_FAST_INDEXER;
-		List<String> indexerIDs= arguments.get(OPT_INDEXER_ID);
-		if(indexerIDs!=null) {
-			if(indexerIDs.size()==1) {
-				indexerID= indexerIDs.get(0);
-			} else if(indexerIDs.size()>1) {
-				fail(MessageFormat.format(Messages.GeneratePDOMApplication_InvalidIndexerID, new Object[] {OPT_INDEXER_ID}));
+		String indexerID = IPDOMManager.ID_FAST_INDEXER;
+		List<String> indexerIDs = arguments.get(OPT_INDEXER_ID);
+		if (indexerIDs != null) {
+			if (indexerIDs.size() == 1) {
+				indexerID = indexerIDs.get(0);
+			} else if (indexerIDs.size() > 1) {
+				fail(MessageFormat.format(Messages.GeneratePDOMApplication_InvalidIndexerID,
+						new Object[] { OPT_INDEXER_ID }));
 			}
 		}
-		
-		String[] oldvals= null;
-		if(!quiet) {
-			oldvals= new String[] {
-					System.getProperty(IPDOMIndexerTask.TRACE_ACTIVITY),
+
+		String[] oldvals = null;
+		if (!quiet) {
+			oldvals = new String[] { System.getProperty(IPDOMIndexerTask.TRACE_ACTIVITY),
 					System.getProperty(IPDOMIndexerTask.TRACE_PROBLEMS),
-					System.getProperty(IPDOMIndexerTask.TRACE_STATISTICS),
-			};
+					System.getProperty(IPDOMIndexerTask.TRACE_STATISTICS), };
 			System.setProperty(IPDOMIndexerTask.TRACE_ACTIVITY, Boolean.TRUE.toString());
 			System.setProperty(IPDOMIndexerTask.TRACE_PROBLEMS, Boolean.TRUE.toString());
 			System.setProperty(IPDOMIndexerTask.TRACE_STATISTICS, Boolean.TRUE.toString());
 		}
 		try {
 			IExportProjectProvider pprovider = getExportProjectProvider(pproviderFQN);
-			if(pprovider==null) {
-				fail(MessageFormat.format(Messages.GeneratePDOMApplication_CouldNotFindInitializer, new Object[]{pproviderFQN}));
+			if (pprovider == null) {
+				fail(MessageFormat.format(Messages.GeneratePDOMApplication_CouldNotFindInitializer,
+						new Object[] { pproviderFQN }));
 			}
 			File targetLocation = new File(target);
 
-			GeneratePDOM generate = new GeneratePDOM(pprovider,	appArgs, targetLocation, indexerID);
+			GeneratePDOM generate = new GeneratePDOM(pprovider, appArgs, targetLocation, indexerID);
 			output(Messages.GeneratePDOMApplication_GenerationStarts);
 			IStatus status = generate.run(); // CoreException handled in start method
-			if(!status.isOK()){
+			if (!status.isOK()) {
 				output(status.getMessage());
 			}
 			output(Messages.GeneratePDOMApplication_GenerationEnds);
@@ -167,11 +168,11 @@ public class GeneratePDOMApplication implements IApplication {
 	 * @throws CoreException
 	 */
 	public static final void fail(String message) throws CoreException {
-		IStatus status= new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, ECODE_EXPECTED_FAILURE, message, null);
+		IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, ECODE_EXPECTED_FAILURE, message, null);
 		CCorePlugin.log(status);
 		throw new CoreException(status);
 	}
-	
+
 	/**
 	 * Returns the IExportProjectProvider registered in the plug-in registry under the
 	 * specified fully qualified class name
@@ -180,7 +181,7 @@ public class GeneratePDOMApplication implements IApplication {
 	 * @return
 	 */
 	private static synchronized IExportProjectProvider getExportProjectProvider(String fqn) {
-		if(projectInitializers==null) {
+		if (projectInitializers == null) {
 			projectInitializers = new HashMap<String, IExportProjectProvider>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint indexExtensions = registry.getExtensionPoint(CCorePlugin.INDEX_UNIQ_ID);
@@ -189,11 +190,12 @@ public class GeneratePDOMApplication implements IApplication {
 				IConfigurationElement[] ce = extension.getConfigurationElements();
 
 				for (IConfigurationElement element : ce) {
-					if(element.getName().equals(EXPORT_PROJECT_PROVIDER)) {
+					if (element.getName().equals(EXPORT_PROJECT_PROVIDER)) {
 						try {
-							IExportProjectProvider epp = (IExportProjectProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
+							IExportProjectProvider epp = (IExportProjectProvider) element
+									.createExecutableExtension("class"); //$NON-NLS-1$
 							projectInitializers.put(epp.getClass().getName(), epp);
-						} catch(CoreException cee) {
+						} catch (CoreException cee) {
 							CCorePlugin.log(cee);
 						}
 					}
@@ -214,20 +216,23 @@ public class GeneratePDOMApplication implements IApplication {
 				public IndexingStreamProgressMonitor(PrintStream writer) {
 					super(writer);
 				}
+
 				@Override
 				protected boolean shouldOutput() {
-					return taskName!=null && taskName.equals(CCorePlugin.getResourceString("pdom.indexer.task")); //$NON-NLS-1$
+					return taskName != null && taskName.equals(CCorePlugin.getResourceString("pdom.indexer.task")); //$NON-NLS-1$
 				}
 			}
+
 			@Override
 			public IProgressMonitor createMonitor(Job job) {
 				return new IndexingStreamProgressMonitor(System.out);
 			}
+
 			@Override
-			public IProgressMonitor createMonitor(Job job,
-					IProgressMonitor group, int ticks) {
+			public IProgressMonitor createMonitor(Job job, IProgressMonitor group, int ticks) {
 				return new NullProgressMonitor();
 			}
+
 			@Override
 			public IProgressMonitor createProgressGroup() {
 				return new NullProgressMonitor();
@@ -256,22 +261,25 @@ public class GeneratePDOMApplication implements IApplication {
 		@Override
 		public void done() {
 		}
+
 		@Override
 		public void worked(int work) {
 			internalWorked(work);
 		}
+
 		@Override
 		public void beginTask(String name, int total) {
 			this.taskName = name;
 			this.totalWork = total;
 		}
+
 		@Override
 		public void internalWorked(double work) {
-			synchronized(mutex) {
+			synchronized (mutex) {
 				worked += work;
-				int pc = totalWork<1 ? 0 : (int) ((worked*100D)/totalWork);
-				if(shouldOutput()) {
-					writer.println(pc+"% "+subTask);  //$NON-NLS-1$
+				int pc = totalWork < 1 ? 0 : (int) ((worked * 100D) / totalWork);
+				if (shouldOutput()) {
+					writer.println(pc + "% " + subTask); //$NON-NLS-1$
 				}
 			}
 		}
@@ -285,13 +293,15 @@ public class GeneratePDOMApplication implements IApplication {
 		public void setCanceled(boolean value) {
 			canceled = value;
 		}
+
 		@Override
 		public void setTaskName(String name) {
 			taskName = name;
 		}
+
 		@Override
 		public void subTask(String name) {
 			subTask = name;
 		}
-	}	
+	}
 }

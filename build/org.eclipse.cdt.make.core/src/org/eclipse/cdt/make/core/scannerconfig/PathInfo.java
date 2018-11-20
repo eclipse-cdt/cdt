@@ -30,142 +30,145 @@ public final class PathInfo {
 	public final static PathInfo EMPTY_INFO = new PathInfo(null, null, null, null, null);
 
 	private static int EMPTY_CODE = 53;
-	
+
 	private IPath[] fIncludePaths;
 	private IPath[] fQuoteIncludePaths;
 	private HashMap<String, String> fSymbols;
 	private IPath[] fIncludeFiles;
 	private IPath[] fMacroFiles;
 	private int fHash;
-	
-	public PathInfo(IPath[] includePaths,
-			IPath[] quoteIncludePaths,
-			Map<String, String> symbols,
-			IPath[] includeFiles,
-			IPath[] macroFiles){
-		fIncludePaths = includePaths != null && includePaths.length != 0 ? (IPath[])includePaths.clone() : EMPTY_PATH_ARRAY;
-		fQuoteIncludePaths = quoteIncludePaths != null && quoteIncludePaths.length != 0 ? (IPath[])quoteIncludePaths.clone() : EMPTY_PATH_ARRAY;
-		fSymbols = symbols != null && symbols.size() != 0 ? getInternedHashMap(symbols) : new HashMap<String, String>(0);
-		fIncludeFiles = includeFiles != null && includeFiles.length != 0 ? (IPath[])includeFiles.clone() : EMPTY_PATH_ARRAY;
-		fMacroFiles = macroFiles != null && macroFiles.length != 0 ? (IPath[])macroFiles.clone() : EMPTY_PATH_ARRAY;
+
+	public PathInfo(IPath[] includePaths, IPath[] quoteIncludePaths, Map<String, String> symbols, IPath[] includeFiles,
+			IPath[] macroFiles) {
+		fIncludePaths = includePaths != null && includePaths.length != 0 ? (IPath[]) includePaths.clone()
+				: EMPTY_PATH_ARRAY;
+		fQuoteIncludePaths = quoteIncludePaths != null && quoteIncludePaths.length != 0
+				? (IPath[]) quoteIncludePaths.clone()
+				: EMPTY_PATH_ARRAY;
+		fSymbols = symbols != null && symbols.size() != 0 ? getInternedHashMap(symbols)
+				: new HashMap<String, String>(0);
+		fIncludeFiles = includeFiles != null && includeFiles.length != 0 ? (IPath[]) includeFiles.clone()
+				: EMPTY_PATH_ARRAY;
+		fMacroFiles = macroFiles != null && macroFiles.length != 0 ? (IPath[]) macroFiles.clone() : EMPTY_PATH_ARRAY;
 	}
 
 	/**
 	 * Returns a new HashMap whereby all the strings used as keys and values are interned.
-	 * 
+	 *
 	 * @param oldMap
 	 * @return HashMap<String, String>
 	 */
 	protected HashMap<String, String> getInternedHashMap(Map<String, String> oldMap) {
-		if(oldMap ==  null)
+		if (oldMap == null)
 			return null;
-		
-		if(oldMap.isEmpty())
+
+		if (oldMap.isEmpty())
 			return new HashMap<String, String>(oldMap);
-		
+
 		HashMap<String, String> newMap = new HashMap<String, String>(oldMap.size());
-		for(String key : oldMap.keySet()) {
+		for (String key : oldMap.keySet()) {
 			newMap.put(SafeStringInterner.safeIntern(key), SafeStringInterner.safeIntern(oldMap.get(key)));
 		}
-		
+
 		return newMap;
 	}
 
-    /**
-     * Get include paths  
-     */
-    public IPath[] getIncludePaths(){
-    	return fIncludePaths.length != 0 ? (IPath[])fIncludePaths.clone() : EMPTY_PATH_ARRAY;
-    }
-    /**
-     * Get quote include paths (for #include "...") 
-     */
-    public IPath[] getQuoteIncludePaths(){
-    	return fQuoteIncludePaths.length != 0 ? (IPath[])fQuoteIncludePaths.clone() : EMPTY_PATH_ARRAY;
-    }
-    /**
-     * Get defined symbols  
-     */
-    @SuppressWarnings("unchecked")
-    public Map<String, String> getSymbols(){
-        return (Map<String, String>)fSymbols.clone();
-    }
-    
-    /**
-     * Get include files (gcc option -include)
-     */
-    public IPath[] getIncludeFiles(){
-    	return fIncludeFiles.length != 0 ? (IPath[])fIncludeFiles.clone() : EMPTY_PATH_ARRAY;
-    }
-    /**
-     * Get macro files (gcc option -imacros) 
-     */
-    public IPath[] getMacroFiles(){
-    	return fMacroFiles.length != 0 ? (IPath[])fMacroFiles.clone() : EMPTY_PATH_ARRAY;
-    }
+	/**
+	 * Get include paths
+	 */
+	public IPath[] getIncludePaths() {
+		return fIncludePaths.length != 0 ? (IPath[]) fIncludePaths.clone() : EMPTY_PATH_ARRAY;
+	}
+
+	/**
+	 * Get quote include paths (for #include "...")
+	 */
+	public IPath[] getQuoteIncludePaths() {
+		return fQuoteIncludePaths.length != 0 ? (IPath[]) fQuoteIncludePaths.clone() : EMPTY_PATH_ARRAY;
+	}
+
+	/**
+	 * Get defined symbols
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, String> getSymbols() {
+		return (Map<String, String>) fSymbols.clone();
+	}
+
+	/**
+	 * Get include files (gcc option -include)
+	 */
+	public IPath[] getIncludeFiles() {
+		return fIncludeFiles.length != 0 ? (IPath[]) fIncludeFiles.clone() : EMPTY_PATH_ARRAY;
+	}
+
+	/**
+	 * Get macro files (gcc option -imacros)
+	 */
+	public IPath[] getMacroFiles() {
+		return fMacroFiles.length != 0 ? (IPath[]) fMacroFiles.clone() : EMPTY_PATH_ARRAY;
+	}
+
 	/**
 	 * Returns if there is any discovered scanner info
 	 */
-	public boolean isEmpty(){
-		return fIncludePaths.length == 0
-			&& fQuoteIncludePaths.length == 0
-			&& fSymbols.size() == 0
-			&& fIncludeFiles.length == 0
-			&& fMacroFiles.length == 0;
+	public boolean isEmpty() {
+		return fIncludePaths.length == 0 && fQuoteIncludePaths.length == 0 && fSymbols.size() == 0
+				&& fIncludeFiles.length == 0 && fMacroFiles.length == 0;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if(this == obj)
+		if (this == obj)
 			return true;
-		
-		if(!(obj instanceof PathInfo))
+
+		if (!(obj instanceof PathInfo))
 			return false;
-		
-		PathInfo other = (PathInfo)obj;
-		
-		if(!Arrays.equals(fIncludePaths, other.fIncludePaths))
+
+		PathInfo other = (PathInfo) obj;
+
+		if (!Arrays.equals(fIncludePaths, other.fIncludePaths))
 			return false;
-		if(!Arrays.equals(fQuoteIncludePaths, other.fQuoteIncludePaths))
+		if (!Arrays.equals(fQuoteIncludePaths, other.fQuoteIncludePaths))
 			return false;
-		if(!fSymbols.equals(other.fSymbols))
+		if (!fSymbols.equals(other.fSymbols))
 			return false;
-		if(!Arrays.equals(fIncludeFiles, other.fIncludeFiles))
+		if (!Arrays.equals(fIncludeFiles, other.fIncludeFiles))
 			return false;
-		if(!Arrays.equals(fMacroFiles, other.fMacroFiles))
+		if (!Arrays.equals(fMacroFiles, other.fMacroFiles))
 			return false;
-		
+
 		return true;
 	}
 
 	@Override
 	public int hashCode() {
 		int hash = fHash;
-		if(hash == 0){
+		if (hash == 0) {
 			hash = EMPTY_CODE;
-			
-			if(fIncludePaths.length != 0){
-				for(int i = 0; i < fIncludePaths.length; i++){
+
+			if (fIncludePaths.length != 0) {
+				for (int i = 0; i < fIncludePaths.length; i++) {
 					hash += fIncludePaths[i].hashCode();
 				}
 			}
 
-			if(fQuoteIncludePaths.length != 0){
-				for(int i = 0; i < fQuoteIncludePaths.length; i++){
+			if (fQuoteIncludePaths.length != 0) {
+				for (int i = 0; i < fQuoteIncludePaths.length; i++) {
 					hash += fQuoteIncludePaths[i].hashCode();
 				}
 			}
-			
+
 			hash += fSymbols.hashCode();
-			
-			if(fIncludeFiles.length != 0){
-				for(int i = 0; i < fIncludeFiles.length; i++){
+
+			if (fIncludeFiles.length != 0) {
+				for (int i = 0; i < fIncludeFiles.length; i++) {
 					hash += fIncludeFiles[i].hashCode();
 				}
 			}
-			
-			if(fMacroFiles.length != 0){
-				for(int i = 0; i < fMacroFiles.length; i++){
+
+			if (fMacroFiles.length != 0) {
+				for (int i = 0; i < fMacroFiles.length; i++) {
 					hash += fMacroFiles[i].hashCode();
 				}
 			}

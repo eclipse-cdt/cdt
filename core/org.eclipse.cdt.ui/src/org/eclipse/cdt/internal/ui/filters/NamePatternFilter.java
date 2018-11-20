@@ -29,49 +29,48 @@ import org.eclipse.jface.viewers.ViewerFilter;
  *   ? => any character
  *   * => any string
  * </p>
- * 
+ *
  * @since 2.0
  */
 public class NamePatternFilter extends ViewerFilter {
 	private String[] fPatterns;
 	private StringMatcher[] fMatchers;
-	
+
 	/**
 	 * Return the currently configured StringMatchers.
 	 */
 	private StringMatcher[] getMatchers() {
 		return fMatchers;
 	}
-	
+
 	/**
 	 * Gets the patterns for the receiver.
 	 */
 	public String[] getPatterns() {
 		return fPatterns;
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * Method declared on ViewerFilter.
 	 */
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		String matchName= null;
+		String matchName = null;
 		if (element instanceof ICElement) {
-			matchName= ((ICElement) element).getElementName();
+			matchName = ((ICElement) element).getElementName();
 		} else if (element instanceof IAdaptable) {
-			IAdaptable adaptable= (IAdaptable) element;
-			ICElement javaElement= adaptable.getAdapter(ICElement.class);
+			IAdaptable adaptable = (IAdaptable) element;
+			ICElement javaElement = adaptable.getAdapter(ICElement.class);
 			if (javaElement != null)
-				matchName= javaElement.getElementName();
+				matchName = javaElement.getElementName();
 			else {
-				IResource resource= adaptable.getAdapter(IResource.class);
+				IResource resource = adaptable.getAdapter(IResource.class);
 				if (resource != null)
-					matchName= resource.getName();
+					matchName = resource.getName();
 			}
 		}
 		if (matchName != null) {
-			StringMatcher[] testMatchers= getMatchers();
+			StringMatcher[] testMatchers = getMatchers();
 			for (int i = 0; i < testMatchers.length; i++) {
 				if (testMatchers[i].match(matchName))
 					return false;
@@ -80,7 +79,7 @@ public class NamePatternFilter extends ViewerFilter {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Sets the patterns to filter out for the receiver.
 	 * <p>
@@ -94,7 +93,7 @@ public class NamePatternFilter extends ViewerFilter {
 		fMatchers = new StringMatcher[newPatterns.length];
 		for (int i = 0; i < newPatterns.length; i++) {
 			//Reset the matchers to prevent constructor overhead
-			fMatchers[i]= new StringMatcher(newPatterns[i], true, false);
+			fMatchers[i] = new StringMatcher(newPatterns[i], true, false);
 		}
 	}
 }

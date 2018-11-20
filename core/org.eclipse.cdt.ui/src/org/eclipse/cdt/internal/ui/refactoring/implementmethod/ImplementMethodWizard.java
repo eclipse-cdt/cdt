@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Marc-Andre Laperle
  *******************************************************************************/
@@ -29,9 +29,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * @author Mirko Stocker
  */
 public class ImplementMethodWizard extends RefactoringWizard {
-   private final ImplementMethodRefactoring refactoring;
-   private Map<MethodToImplementConfig, ParameterNamesInputPage> pagesMap =
-		   new HashMap<MethodToImplementConfig, ParameterNamesInputPage>();
+	private final ImplementMethodRefactoring refactoring;
+	private Map<MethodToImplementConfig, ParameterNamesInputPage> pagesMap = new HashMap<MethodToImplementConfig, ParameterNamesInputPage>();
 
 	public ImplementMethodWizard(ImplementMethodRefactoring refactoring) {
 		super(refactoring, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);
@@ -51,7 +50,7 @@ public class ImplementMethodWizard extends RefactoringWizard {
 			}
 		}
 	}
-	
+
 	public ParameterNamesInputPage getPageForConfig(MethodToImplementConfig config) {
 		return pagesMap.get(config);
 	}
@@ -60,7 +59,7 @@ public class ImplementMethodWizard extends RefactoringWizard {
 	 * When canceling the wizard, CRefactoringContext gets disposed and releases the lock on
 	 * the index but the preview jobs might still be running and access the index or an index-based
 	 * AST so we need to make sure they are done before disposing the cache
-	 * <p> 
+	 * <p>
 	 * When proceeding to the last page and finishing the wizard, the refactoring will run
 	 * and possibly use concurrently the same ASTs that the jobs use, so we need to make
 	 * sure the jobs are joined.
@@ -70,7 +69,7 @@ public class ImplementMethodWizard extends RefactoringWizard {
 		for (ParameterNamesInputPage parameterNamesInputPage : pagesMap.values()) {
 			isOnePreviewJobRunning |= parameterNamesInputPage.cancelPreviewJob();
 		}
-		
+
 		// There are good chances that one job is still running, show a progress bar to the user,
 		// join everything.
 		if (isOnePreviewJobRunning) {

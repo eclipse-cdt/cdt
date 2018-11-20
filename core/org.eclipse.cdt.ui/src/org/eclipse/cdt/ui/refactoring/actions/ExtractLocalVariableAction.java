@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 Wind River Systems, Inc. 
+ * Copyright (c) 2005, 2012 Wind River Systems, Inc.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,13 +26,13 @@ import org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocal
  * Launches an Extract Local Variable refactoring.
  * @since 5.1
  * @noextend This class is not intended to be subclassed by clients.
- */          
+ */
 public class ExtractLocalVariableAction extends RefactoringAction {
-    
-    public ExtractLocalVariableAction() {
-        super(Messages.ExtractLocalVariableAction_label);
-    }
-    
+
+	public ExtractLocalVariableAction() {
+		super(Messages.ExtractLocalVariableAction_label);
+	}
+
 	@Override
 	public void run(IShellProvider shellProvider, ICElement elem) {
 	}
@@ -44,9 +44,9 @@ public class ExtractLocalVariableAction extends RefactoringAction {
 		}
 	}
 
-    @Override
+	@Override
 	public void updateSelection(ICElement elem) {
-    	super.updateSelection(elem);
-    	setEnabled(false);
-    }
+		super.updateSelection(elem);
+		setEnabled(false);
+	}
 }

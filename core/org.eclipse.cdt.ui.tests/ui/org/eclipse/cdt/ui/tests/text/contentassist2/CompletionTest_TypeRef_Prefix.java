@@ -19,33 +19,31 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Type_Reference, with prefix
  * Bug#50471 : Wrong completion kind after the "using" keyword
  *
  */
-public class CompletionTest_TypeRef_Prefix  extends CompletionProposalsBaseTest{
-	
+public class CompletionTest_TypeRef_Prefix extends CompletionProposalsBaseTest {
+
 	private final String fileName = "CompletionTestStart25.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedPrefix = "a"; 
-	private final String[] expectedResults = {
-			"aNamespace"
-	};
-	
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
+	private final String expectedPrefix = "a";
+	private final String[] expectedResults = { "aNamespace" };
+
 	public CompletionTest_TypeRef_Prefix(String name) {
 		super(name);
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_TypeRef_Prefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_TypeRef_Prefix.class.getName());
 		suite.addTest(new CompletionTest_TypeRef_Prefix("testCompletionProposals"));
 		return suite;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -85,6 +83,7 @@ public class CompletionTest_TypeRef_Prefix  extends CompletionProposalsBaseTest{
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

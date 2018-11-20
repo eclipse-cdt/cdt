@@ -29,10 +29,10 @@ public abstract class APathEntry extends PathEntry {
 	IPath basePath;
 	IPath baseRef;
 	private final static char[][] UNINIT_PATTERNS = new char[][] { "Non-initialized yet".toCharArray() }; //$NON-NLS-1$
-	char[][]fullCharExclusionPatterns = UNINIT_PATTERNS;
+	char[][] fullCharExclusionPatterns = UNINIT_PATTERNS;
 
 	/**
-	 * 
+	 *
 	 * @param kind
 	 * @param basePath
 	 * @param baseRef
@@ -40,7 +40,8 @@ public abstract class APathEntry extends PathEntry {
 	 * @param exclusionPatterns
 	 * @param isExported
 	 */
-	public APathEntry (int kind, IPath basePath, IPath baseRef, IPath path, IPath[] exclusionPatterns, boolean isExported) {
+	public APathEntry(int kind, IPath basePath, IPath baseRef, IPath path, IPath[] exclusionPatterns,
+			boolean isExported) {
 		super(kind, path, isExported);
 		this.basePath = (basePath == null) ? Path.EMPTY : basePath;
 		this.baseRef = (baseRef == null) ? Path.EMPTY : baseRef;
@@ -76,8 +77,8 @@ public abstract class APathEntry extends PathEntry {
 			this.fullCharExclusionPatterns = new char[length][];
 			IPath prefixPath = this.path.removeTrailingSeparator();
 			for (int i = 0; i < length; i++) {
-				this.fullCharExclusionPatterns[i] = 
-					prefixPath.append(this.exclusionPatterns[i]).toString().toCharArray();
+				this.fullCharExclusionPatterns[i] = prefixPath.append(this.exclusionPatterns[i]).toString()
+						.toCharArray();
 			}
 		}
 		return this.fullCharExclusionPatterns;
@@ -96,7 +97,7 @@ public abstract class APathEntry extends PathEntry {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof APathEntry) {
-			APathEntry otherEntry = (APathEntry)obj;
+			APathEntry otherEntry = (APathEntry) obj;
 			if (!super.equals(otherEntry)) {
 				return false;
 			}
@@ -106,10 +107,10 @@ public abstract class APathEntry extends PathEntry {
 				if (otherExcludes.length != excludeLength) {
 					return false;
 				}
-				
+
 				Set<String> excludeSet = new HashSet<String>();
 				Set<String> otherSet = new HashSet<String>();
-				for (int i=0; i < excludeLength; i++) {
+				for (int i = 0; i < excludeLength; i++) {
 					if (exclusionPatterns[i] != otherExcludes[i]) {
 						// compare toStrings instead of IPaths
 						// since IPath.equals is specified to ignore trailing separators
@@ -137,7 +138,7 @@ public abstract class APathEntry extends PathEntry {
 		}
 		return super.equals(obj);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

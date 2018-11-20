@@ -13,7 +13,7 @@
  *     Ken Ryall (Nokia) - bug 178731
  *     Ericsson - Support for tracepoint post-mortem debugging
  *     IBM Corporation
- *     Marc Khouzam (Ericsson) - Support setting the path in which the core file 
+ *     Marc Khouzam (Ericsson) - Support setting the path in which the core file
  *                               dialog should start (Bug 362039)
  *     Anton Gorenkov
  *     Marc Khouzam (Ericsson) - Move from dsf.gdb to cdt.launch
@@ -74,23 +74,23 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 public class CMainTab2 extends CAbstractMainTab {
 
-    /**
-     * Tab identifier used for ordering of tabs added using the 
-     * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
-     * extension point.
-     */
+	/**
+	 * Tab identifier used for ordering of tabs added using the
+	 * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
+	 * extension point.
+	 */
 	// Keep the same id as the original Run launch main tab for backwards-compatibility
-    public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.mainTab"; //$NON-NLS-1$
-    
-    private static final String CORE_FILE = LaunchMessages.CMainTab2_CoreFile_type;
-    private static final String TRACE_FILE = LaunchMessages.CMainTab2_TraceFile_type;
-    
-    /**
-     * Combo box to select which type of post mortem file should be used.
-     * We currently support core files and trace files.
-     */
-    protected Combo fCoreTypeCombo;
-    
+	public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.mainTab"; //$NON-NLS-1$
+
+	private static final String CORE_FILE = LaunchMessages.CMainTab2_CoreFile_type;
+	private static final String TRACE_FILE = LaunchMessages.CMainTab2_TraceFile_type;
+
+	/**
+	 * Combo box to select which type of post mortem file should be used.
+	 * We currently support core files and trace files.
+	 */
+	protected Combo fCoreTypeCombo;
+
 	private final boolean fDontCheckProgram;
 	private final boolean fSpecifyCoreFile;
 	private final boolean fIncludeBuildSettings;
@@ -98,7 +98,7 @@ public class CMainTab2 extends CAbstractMainTab {
 	public static final int DONT_CHECK_PROGRAM = 2;
 	public static final int SPECIFY_CORE_FILE = 4;
 	public static final int INCLUDE_BUILD_SETTINGS = 8;
-	
+
 	public CMainTab2() {
 		this(INCLUDE_BUILD_SETTINGS);
 	}
@@ -108,13 +108,14 @@ public class CMainTab2 extends CAbstractMainTab {
 		fSpecifyCoreFile = (flags & SPECIFY_CORE_FILE) != 0;
 		fIncludeBuildSettings = (flags & INCLUDE_BUILD_SETTINGS) != 0;
 	}
-	
-    @Override
+
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 
-		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
+		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+				ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
 
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);
@@ -123,14 +124,14 @@ public class CMainTab2 extends CAbstractMainTab {
 		createProjectGroup(comp, 1);
 		createExeFileGroup(comp, 1);
 
-		if (fIncludeBuildSettings){
-			createBuildOptionGroup(comp, 1);			
+		if (fIncludeBuildSettings) {
+			createBuildOptionGroup(comp, 1);
 		}
 		createVerticalSpacer(comp, 1);
 		if (fSpecifyCoreFile) {
 			createCoreFileGroup(comp, 1);
 		}
-		
+
 		LaunchUIPlugin.setDialogShell(parent.getShell());
 	}
 
@@ -151,7 +152,7 @@ public class CMainTab2 extends CAbstractMainTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProgText.setLayoutData(gd);
 		fProgText.addModifyListener(new ModifyListener() {
-            @Override
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -188,7 +189,7 @@ public class CMainTab2 extends CAbstractMainTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-	}	
+	}
 
 	/*
 	 * Overridden to add the possibility to choose a trace file as a post mortem debug file.
@@ -204,7 +205,7 @@ public class CMainTab2 extends CAbstractMainTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = colSpan;
 		coreComp.setLayoutData(gd);
-		
+
 		Label comboLabel = new Label(coreComp, SWT.NONE);
 		comboLabel.setText(LaunchMessages.CMainTab2_Post_mortem_file_type);
 		comboLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
@@ -220,7 +221,7 @@ public class CMainTab2 extends CAbstractMainTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fCoreText.setLayoutData(gd);
 		fCoreText.addModifyListener(new ModifyListener() {
-            @Override
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -248,15 +249,15 @@ public class CMainTab2 extends CAbstractMainTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		fCoreTypeCombo.addSelectionListener(new SelectionListener() {
-            @Override
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateCoreFileLabel();
 				updateLaunchConfigurationDialog();
 			}
 
-            @Override
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -266,7 +267,7 @@ public class CMainTab2 extends CAbstractMainTab {
 	/**
 	 * Show a dialog that lets the user select a file.
 	 * This method allows to set the title of the dialog.
-	 * 
+	 *
 	 * @param title The title the dialog should show.
 	 */
 	protected String handleBrowseButtonSelected(String title) {
@@ -276,7 +277,7 @@ public class CMainTab2 extends CAbstractMainTab {
 		return fileDialog.open();
 	}
 
-    @Override
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		filterPlatform = getPlatform(config);
 		updateProjectFromConfig(config);
@@ -284,7 +285,7 @@ public class CMainTab2 extends CAbstractMainTab {
 		updateCoreFromConfig(config);
 		updateBuildOptionFromConfig(config);
 	}
-	
+
 	protected void updateCoreFromConfig(ILaunchConfiguration config) {
 		if (fCoreText != null) {
 			String coreName = EMPTY_STRING;
@@ -292,7 +293,7 @@ public class CMainTab2 extends CAbstractMainTab {
 			try {
 				coreName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, EMPTY_STRING);
 				coreType = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
-						                       ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
+						ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
 			} catch (CoreException ce) {
 				LaunchUIPlugin.log(ce);
 			}
@@ -303,12 +304,12 @@ public class CMainTab2 extends CAbstractMainTab {
 				fCoreTypeCombo.setText(TRACE_FILE);
 			} else {
 				assert false : "Unknown core file type"; //$NON-NLS-1$
-			fCoreTypeCombo.setText(CORE_FILE);
+				fCoreTypeCombo.setText(CORE_FILE);
 			}
 			updateCoreFileLabel();
 		}
 	}
-	
+
 	protected String getSelectedCoreType() {
 		int selectedIndex = fCoreTypeCombo.getSelectionIndex();
 		if (fCoreTypeCombo.getItem(selectedIndex).equals(CORE_FILE)) {
@@ -337,8 +338,7 @@ public class CMainTab2 extends CAbstractMainTab {
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		super.performApply(config);
 		ICProject cProject = this.getCProject();
-		if (cProject != null && cProject.exists())
-		{
+		if (cProject != null && cProject.exists()) {
 			config.setMappedResources(new IResource[] { cProject.getProject() });
 		} else {
 			config.setMappedResources(null);
@@ -360,7 +360,7 @@ public class CMainTab2 extends CAbstractMainTab {
 		if (getCProject() == null) {
 			MessageDialog.openInformation(getShell(), LaunchMessages.CMainTab_Project_required,
 					LaunchMessages.CMainTab_Enter_project_before_searching_for_program);
-					               
+
 			return;
 		}
 
@@ -368,23 +368,23 @@ public class CMainTab2 extends CAbstractMainTab {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
-					IBinary bin = (IBinary)element;
+					IBinary bin = (IBinary) element;
 					StringBuilder name = new StringBuilder();
 					name.append(bin.getPath().lastSegment());
 					return name.toString();
 				}
 				return super.getText(element);
 			}
-			
+
 			@Override
 			public Image getImage(Object element) {
-				if (! (element instanceof ICElement)) {
+				if (!(element instanceof ICElement)) {
 					return super.getImage(element);
 				}
-				ICElement celement = (ICElement)element;
+				ICElement celement = (ICElement) element;
 
 				if (celement.getElementType() == ICElement.C_BINARY) {
-					IBinary belement = (IBinary)celement;
+					IBinary belement = (IBinary) celement;
 					if (belement.isExecutable()) {
 						return DebugUITools.getImage(IDebugUIConstants.IMG_ACT_RUN);
 					}
@@ -398,7 +398,7 @@ public class CMainTab2 extends CAbstractMainTab {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
-					IBinary bin = (IBinary)element;
+					IBinary bin = (IBinary) element;
 					StringBuilder name = new StringBuilder();
 					name.append(bin.getCPU()).append(bin.isLittleEndian() ? "le" : "be"); //$NON-NLS-1$ //$NON-NLS-2$
 					name.append(" - "); //$NON-NLS-1$
@@ -409,7 +409,8 @@ public class CMainTab2 extends CAbstractMainTab {
 			}
 		};
 
-		TwoPaneElementSelector dialog = new TwoPaneElementSelector(getShell(), programLabelProvider, qualifierLabelProvider);
+		TwoPaneElementSelector dialog = new TwoPaneElementSelector(getShell(), programLabelProvider,
+				qualifierLabelProvider);
 		dialog.setElements(getBinaryFiles(getCProject()));
 		dialog.setMessage(LaunchMessages.CMainTab_Choose_program_to_run);
 		dialog.setTitle(LaunchMessages.CMainTab_Program_Selection);
@@ -418,7 +419,7 @@ public class CMainTab2 extends CAbstractMainTab {
 		dialog.setMultipleSelection(false);
 		// dialog.set
 		if (dialog.open() == Window.OK) {
-			IBinary binary = (IBinary)dialog.getFirstResult();
+			IBinary binary = (IBinary) dialog.getFirstResult();
 			fProgText.setText(binary.getResource().getProjectRelativePath().toString());
 		}
 	}
@@ -430,8 +431,9 @@ public class CMainTab2 extends CAbstractMainTab {
 
 		if (!fDontCheckProgram) {
 			String programName = fProgText.getText().trim();
-       		try {
-				programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
+			try {
+				programName = VariablesPlugin.getDefault().getStringVariableManager()
+						.performStringSubstitution(programName);
 			} catch (CoreException e) {
 				// Silently ignore substitution failure (for consistency with "Arguments" and "Work directory" fields)
 			}
@@ -481,7 +483,7 @@ public class CMainTab2 extends CAbstractMainTab {
 			// check is too expensive to be done on the UI thread.
 			// See "https://bugs.eclipse.org/bugs/show_bug.cgi?id=328012".
 		}
-		
+
 		if (fCoreText != null) {
 			String coreName = fCoreText.getText().trim();
 			// We accept an empty string.  This should trigger a prompt to the user
@@ -491,12 +493,13 @@ public class CMainTab2 extends CAbstractMainTab {
 			if (!coreName.equals(EMPTY_STRING)) {
 				try {
 					// Replace the variables
-					coreName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(coreName, false);
+					coreName = VariablesPlugin.getDefault().getStringVariableManager()
+							.performStringSubstitution(coreName, false);
 				} catch (CoreException e) {
 					setErrorMessage(e.getMessage());
 					return false;
 				}
-				
+
 				coreName = coreName.trim();
 				File filePath = new File(coreName);
 				if (!filePath.isDirectory() && !filePath.exists()) {
@@ -509,7 +512,7 @@ public class CMainTab2 extends CAbstractMainTab {
 		return true;
 	}
 
-    @Override
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		// We set empty attributes for project & program so that when one config is
 		// compared to another, the existence of empty attributes doesn't cause and
@@ -542,10 +545,10 @@ public class CMainTab2 extends CAbstractMainTab {
 	protected void initializeProgramName(ICElement cElement, ILaunchConfigurationWorkingCopy config) {
 		boolean renamed = false;
 
-		if (!(cElement instanceof IBinary))	{
+		if (!(cElement instanceof IBinary)) {
 			cElement = cElement.getCProject();
 		}
-		
+
 		if (cElement instanceof ICProject) {
 			IProject project = cElement.getCProject().getProject();
 			String name = project.getName();
@@ -561,20 +564,19 @@ public class CMainTab2 extends CAbstractMainTab {
 
 		IBinary binary = null;
 		if (cElement instanceof ICProject) {
-			IBinary[] bins = getBinaryFiles((ICProject)cElement);
+			IBinary[] bins = getBinaryFiles((ICProject) cElement);
 			if (bins != null && bins.length == 1) {
 				binary = bins[0];
 			}
 		} else if (cElement instanceof IBinary) {
-			binary = (IBinary)cElement;
+			binary = (IBinary) cElement;
 		}
 
 		if (binary != null) {
 			String path;
 			path = binary.getResource().getProjectRelativePath().toOSString();
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, path);
-			if (!renamed)
-			{
+			if (!renamed) {
 				String name = binary.getElementName();
 				int index = name.lastIndexOf('.');
 				if (index > 0) {
@@ -582,34 +584,34 @@ public class CMainTab2 extends CAbstractMainTab {
 				}
 				name = getLaunchConfigurationDialog().generateName(name);
 				config.rename(name);
-				renamed = true;				
+				renamed = true;
 			}
 		}
-		
+
 		if (!renamed) {
 			String name = getLaunchConfigurationDialog().generateName(cElement.getCProject().getElementName());
 			config.rename(name);
 		}
 	}
 
-    @Override
-    public String getId() {
-        return TAB_ID;
-    }
-    
+	@Override
+	public String getId() {
+		return TAB_ID;
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
-    @Override
+	@Override
 	public String getName() {
 		return LaunchMessages.CMainTab_Main;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	@Override

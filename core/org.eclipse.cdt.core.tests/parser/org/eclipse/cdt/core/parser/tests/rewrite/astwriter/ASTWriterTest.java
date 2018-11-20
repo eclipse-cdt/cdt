@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.astwriter;
@@ -48,9 +48,9 @@ import org.eclipse.core.resources.IFile;
  */
 public class ASTWriterTest extends RewriteBaseTest {
 	private static final IParserLogService NULL_LOG = new NullLogService();
-	
-	private	IFile file;
-	
+
+	private IFile file;
+
 	public ASTWriterTest(String name, ASTWriterTestSourceFile file) {
 		super(name);
 		fileMap.put(file.getName(), file);
@@ -65,13 +65,13 @@ public class ASTWriterTest extends RewriteBaseTest {
 			}
 		}
 	}
-	
+
 	@Override
 	protected void runTest() throws Throwable {
 		file = project.getFile("ASTWritterTest.h"); //$NON-NLS-1$
 		compareFiles(fileMap);
 	}
-	
+
 	@Override
 	protected void compareFiles(Map<String, TestSourceFile> testResourceFiles) throws Exception {
 		for (String fileName : testResourceFiles.keySet()) {
@@ -81,48 +81,48 @@ public class ASTWriterTest extends RewriteBaseTest {
 					TestHelper.unifyNewLines(code + System.getProperty("line.separator"))); //$NON-NLS-1$
 		}
 	}
-	
+
 	public String generateSource(TestSourceFile testFile) throws Exception {
 		IASTTranslationUnit unit = getParser(testFile).parse();
-		NodeCommentMap commentMap = ASTCommenter.getCommentedNodeMap(unit);		
+		NodeCommentMap commentMap = ASTCommenter.getCommentedNodeMap(unit);
 		ASTModificationMap map = new ASTModificationMap();
 		map.getModificationsForNode(unit.getDeclarations()[0]);
 		ASTWriter writer = new ASTWriter();
 		return writer.write(unit, commentMap);
 	}
-	
+
 	protected ISourceCodeParser getParser(TestSourceFile testFile) throws Exception {
-        FileContent codeReader = FileContent.create(file);
+		FileContent codeReader = FileContent.create(file);
 
-        ScannerInfo scannerInfo = new ScannerInfo();
-        ParserLanguage language = getLanguage(testFile);
-    	boolean useGNUExtensions = getGNUExtension(testFile);
-                
-        IScanner scanner = AST2TestBase.createScanner(codeReader, language, ParserMode.COMPLETE_PARSE, scannerInfo);
-        
-        ISourceCodeParser parser = null;
-        if (language == ParserLanguage.CPP) {
-            ICPPParserExtensionConfiguration config = null;
-            if (useGNUExtensions) {
-            	config = new GPPParserExtensionConfiguration();
-            } else {
-            	config = new ANSICPPParserExtensionConfiguration();
-            }
-            parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
-        } else {
-            ICParserExtensionConfiguration config = null;
+		ScannerInfo scannerInfo = new ScannerInfo();
+		ParserLanguage language = getLanguage(testFile);
+		boolean useGNUExtensions = getGNUExtension(testFile);
 
-            if (useGNUExtensions) {
-            	config = new GCCParserExtensionConfiguration();	
-            } else {
-            	config = new ANSICParserExtensionConfiguration();
-            }
-            
-            parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
-        }
-        return parser;
+		IScanner scanner = AST2TestBase.createScanner(codeReader, language, ParserMode.COMPLETE_PARSE, scannerInfo);
+
+		ISourceCodeParser parser = null;
+		if (language == ParserLanguage.CPP) {
+			ICPPParserExtensionConfiguration config = null;
+			if (useGNUExtensions) {
+				config = new GPPParserExtensionConfiguration();
+			} else {
+				config = new ANSICPPParserExtensionConfiguration();
+			}
+			parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
+		} else {
+			ICParserExtensionConfiguration config = null;
+
+			if (useGNUExtensions) {
+				config = new GCCParserExtensionConfiguration();
+			} else {
+				config = new ANSICParserExtensionConfiguration();
+			}
+
+			parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
+		}
+		return parser;
 	}
-	
+
 	private boolean getGNUExtension(TestSourceFile file) {
 		if (file instanceof ASTWriterTestSourceFile)
 			return ((ASTWriterTestSourceFile) file).isUseGNUExtensions();

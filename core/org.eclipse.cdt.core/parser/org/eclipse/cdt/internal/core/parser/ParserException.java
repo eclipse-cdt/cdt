@@ -17,6 +17,6 @@ public class ParserException extends Exception {
 	private static final long serialVersionUID = -1589821762220079641L;
 
 	public ParserException(String msg) {
-		super(msg); 
+		super(msg);
 	}
 }

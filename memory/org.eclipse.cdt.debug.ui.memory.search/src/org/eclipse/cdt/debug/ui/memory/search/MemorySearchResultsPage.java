@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -54,43 +54,53 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 	private TreeViewer fTreeViewer;
 	private Composite fViewerContainer;
 	private IQueryListener fQueryListener;
-	
+
 	private ISearchResultViewPart fPart;
-	
-	public void queryAdded(ISearchQuery query) {}
-	public void queryFinished(ISearchQuery query) {}
-	public void queryRemoved(ISearchQuery query) {}
-	public void queryStarting(ISearchQuery query) {}
-	
+
+	public void queryAdded(ISearchQuery query) {
+	}
+
+	public void queryFinished(ISearchQuery query) {
+	}
+
+	public void queryRemoved(ISearchQuery query) {
+	}
+
+	public void queryStarting(ISearchQuery query) {
+	}
+
 	public String getID() {
-		
+
 		return MemorySearchPlugin.getUniqueIdentifier();
 	}
 
 	public String getLabel() {
-		if(fQuery == null)
+		if (fQuery == null)
 			return Messages.getString("MemorySearchResultsPage.LabelMemorySearch"); //$NON-NLS-1$
 		else
 			return fQuery.getLabel();
 	}
 
 	public Object getUIState() {
-		
+
 		return fTreeViewer.getSelection();
 	}
 
-	public void restoreState(IMemento memento) {}
-	public void saveState(IMemento memento) {}
-	public void setID(String id) {}
+	public void restoreState(IMemento memento) {
+	}
+
+	public void saveState(IMemento memento) {
+	}
+
+	public void setID(String id) {
+	}
 
 	public void setInput(ISearchResult search, Object uiState) {
-		if(search instanceof MemorySearchResult) {
-			((MemorySearchResult) search).addListener(new ISearchResultListener()
-			{
+		if (search instanceof MemorySearchResult) {
+			((MemorySearchResult) search).addListener(new ISearchResultListener() {
 				public void searchResultChanged(SearchResultEvent e) {
 					Display.getDefault().asyncExec(new Runnable() {
-						public void run()
-						{
+						public void run() {
 							fTreeViewer.refresh();
 						}
 					});
@@ -102,22 +112,22 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 	public void setViewPart(ISearchResultViewPart part) {
 		fPart = part;
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		fViewerContainer = new Composite(parent, SWT.NULL);
 		fViewerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewerContainer.setSize(100, 100);
 		fViewerContainer.setLayout(new FillLayout());
-		
+
 		fTreeViewer = new TreeViewer(fViewerContainer, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		
+
 		fTreeViewer.setContentProvider(new ITreeContentProvider() {
 
-			public void dispose() {}
+			public void dispose() {
+			}
 
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				viewer.refresh();
 			}
 
@@ -134,43 +144,42 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 			}
 
 			public Object[] getElements(Object inputElement) {
-				
-				if(fQuery == null)
+
+				if (fQuery == null)
 					return new Object[0];
-				else
-				{
+				else {
 					return ((MemorySearchResult) fQuery.getSearchResult()).getMatches();
 				}
 			}
 		});
-		
+
 		fTreeViewer.setInput(new Object());
-		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener(){
+		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public void selectionChanged(final SelectionChangedEvent event) {
-				if( event.getSelection() instanceof StructuredSelection)
-				{
-					IMemoryRenderingContainer containers[] = ((IMemorySearchQuery) fQuery).getMemoryView().getMemoryRenderingContainers();
+				if (event.getSelection() instanceof StructuredSelection) {
+					IMemoryRenderingContainer containers[] = ((IMemorySearchQuery) fQuery).getMemoryView()
+							.getMemoryRenderingContainers();
 					MemoryMatch match = (MemoryMatch) ((StructuredSelection) event.getSelection()).getFirstElement();
-					if ( match != null ) {
-						for(int i = 0; i < containers.length; i++)
-						{
+					if (match != null) {
+						for (int i = 0; i < containers.length; i++) {
 							IMemoryRendering rendering = containers[i].getActiveRendering();
-							if(rendering instanceof IRepositionableMemoryRendering)
-							{
+							if (rendering instanceof IRepositionableMemoryRendering) {
 								try {
 									((IRepositionableMemoryRendering) rendering).goToAddress(match.getStartAddress());
 								} catch (DebugException e) {
-									MemorySearchPlugin.logError(Messages.getString("MemorySearchResultsPage.RepositioningMemoryViewFailed"), e); //$NON-NLS-1$
+									MemorySearchPlugin.logError(
+											Messages.getString("MemorySearchResultsPage.RepositioningMemoryViewFailed"), //$NON-NLS-1$
+											e);
 								}
 							}
 
-							if(rendering != null)
-							{
+							if (rendering != null) {
 								// Temporary, until platform accepts/adds new interface for setting the selection
 								try {
-									Method m = rendering.getClass().getMethod("setSelection", new Class[] { BigInteger.class, BigInteger.class } ); //$NON-NLS-1$
-									if(m != null)
+									Method m = rendering.getClass().getMethod("setSelection", //$NON-NLS-1$
+											new Class[] { BigInteger.class, BigInteger.class });
+									if (m != null)
 										m.invoke(rendering, match.getStartAddress(), match.getEndAddress());
 								} catch (Exception e) {
 									// do nothing
@@ -181,33 +190,45 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 				}
 			}
 		});
-		
+
 		fTreeViewer.setLabelProvider(new ILabelProvider() {
 
 			public String getText(Object element) {
-				if(element instanceof MemoryMatch)
+				if (element instanceof MemoryMatch)
 					return "0x" + ((MemoryMatch) element).getStartAddress().toString(16); //$NON-NLS-1$
-				
+
 				return element.toString();
 			}
 
-			public Image getImage(Object element) {	return null; }
-			public void addListener(ILabelProviderListener listener) {}
-			public void dispose() {}
-			public boolean isLabelProperty(Object element, String property) { return false;	}
-			public void removeListener(ILabelProviderListener listener) {}
+			public Image getImage(Object element) {
+				return null;
+			}
+
+			public void addListener(ILabelProviderListener listener) {
+			}
+
+			public void dispose() {
+			}
+
+			public boolean isLabelProperty(Object element, String property) {
+				return false;
+			}
+
+			public void removeListener(ILabelProviderListener listener) {
+			}
 		});
-		
+
 		fQueryListener = createQueryListener();
-		
-		NewSearchUI.addQueryListener(fQueryListener); 
+
+		NewSearchUI.addQueryListener(fQueryListener);
 	}
-	
+
 	private ISearchQuery fQuery;
-	
+
 	private IQueryListener createQueryListener() {
 		return new IQueryListener() {
-			public void queryAdded(ISearchQuery query) {}
+			public void queryAdded(ISearchQuery query) {
+			}
 
 			public void queryRemoved(ISearchQuery query) {
 				queryStarting(query);
@@ -215,22 +236,22 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 
 			public void queryStarting(final ISearchQuery query) {
 				fQuery = query;
-				
+
 				Display.getDefault().asyncExec(new Runnable() {
-					public void run()
-					{
+					public void run() {
 						fPart.updateLabel();
-						
-						if(!fTreeViewer.getControl().isDisposed())
+
+						if (!fTreeViewer.getControl().isDisposed())
 							fTreeViewer.refresh();
 					}
 				});
 			}
 
-			public void queryFinished(final ISearchQuery query) {}
+			public void queryFinished(final ISearchQuery query) {
+			}
 		};
 	}
-	
+
 	@Override
 	public void dispose() {
 		fTreeViewer.getControl().dispose();
@@ -243,7 +264,10 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 	}
 
 	@Override
-	public void setActionBars(IActionBars actionBars) {}
+	public void setActionBars(IActionBars actionBars) {
+	}
+
 	@Override
-	public void setFocus() {}
+	public void setFocus() {
+	}
 }

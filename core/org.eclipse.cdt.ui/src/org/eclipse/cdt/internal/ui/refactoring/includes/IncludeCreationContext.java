@@ -58,28 +58,28 @@ public final class IncludeCreationContext extends InclusionContext {
 		return getTranslationUnit().isCXXLanguage();
 	}
 
-    /**
-     * Removes headers that are exported by other headers that will be included.
-     */
-    public void removeExportedHeaders() throws CoreException {
-    	// Index files keyed by their absolute paths.
-    	Map<IPath, IIndexFile> filesByPath = new HashMap<>();
-    	for (IIndexFile file : fIndex.getAllFiles()) {
-    		IPath path = getPath(file);
-    		filesByPath.put(path, file);
-    	}
+	/**
+	 * Removes headers that are exported by other headers that will be included.
+	 */
+	public void removeExportedHeaders() throws CoreException {
+		// Index files keyed by their absolute paths.
+		Map<IPath, IIndexFile> filesByPath = new HashMap<>();
+		for (IIndexFile file : fIndex.getAllFiles()) {
+			IPath path = getPath(file);
+			filesByPath.put(path, file);
+		}
 
-    	removeExportedHeaders(fHeadersAlreadyIncluded, filesByPath);
-    	removeExportedHeaders(fHeadersToInclude, filesByPath);
-    }
+		removeExportedHeaders(fHeadersAlreadyIncluded, filesByPath);
+		removeExportedHeaders(fHeadersToInclude, filesByPath);
+	}
 
-	private void removeExportedHeaders(Set<IPath> exportingHeaders,
-			Map<IPath, IIndexFile> filesByPath) throws CoreException {
+	private void removeExportedHeaders(Set<IPath> exportingHeaders, Map<IPath, IIndexFile> filesByPath)
+			throws CoreException {
 		Set<IPath> exportedHeaders = new HashSet<>();
 		for (IPath path : exportingHeaders) {
 			if (!exportedHeaders.contains(path)) {
 				IIndexFile file = filesByPath.get(path);
-				if (file != null) {  // file can be null if the header was not indexed.
+				if (file != null) { // file can be null if the header was not indexed.
 					ArrayDeque<IIndexFile> queue = new ArrayDeque<>();
 					queue.add(file);
 					while ((file = queue.pollFirst()) != null) {
@@ -164,8 +164,7 @@ public final class IncludeCreationContext extends InclusionContext {
 	 * file, or if it is already included by some other file.
 	 */
 	public final boolean canBeIncluded(IIndexFile indexFile) throws CoreException {
-		return !IncludeUtil.isSource(indexFile, getProject()) ||
-				fIndex.findIncludedBy(indexFile, 0).length != 0;
+		return !IncludeUtil.isSource(indexFile, getProject()) || fIndex.findIncludedBy(indexFile, 0).length != 0;
 	}
 
 	public final boolean isHeaderFile(String filename) {

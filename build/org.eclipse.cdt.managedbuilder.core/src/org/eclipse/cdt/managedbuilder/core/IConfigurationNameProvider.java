@@ -12,16 +12,15 @@
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
 
-
 package org.eclipse.cdt.managedbuilder.core;
 
 public interface IConfigurationNameProvider {
-	
+
 	/*
 	 * Returns the new  unique configuration name based on the 'configuration'
 	 * object and the list of configuration names already in use in the project.
-	 *  
+	 *
 	 */
 
-	String getNewConfigurationName(IConfiguration configuration, String [] usedConfigurationNames );
+	String getNewConfigurationName(IConfiguration configuration, String[] usedConfigurationNames);
 }

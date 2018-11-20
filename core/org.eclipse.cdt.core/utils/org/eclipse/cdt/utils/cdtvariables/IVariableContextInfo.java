@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.cdtvariables;
 
-
-
 /**
  * This interface represents the context information.
  *

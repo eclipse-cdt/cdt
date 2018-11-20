@@ -103,8 +103,7 @@ public class ControlFlowGraphBuilder {
 			exits.add(returnExit);
 			for (IBasicBlock ds : dead) {
 				IBasicBlock dl = findLast(ds);
-				if (dl != null && !(dl instanceof IExitNode) && dl.getOutgoingSize() == 0 &&
-						dl != returnExit) {
+				if (dl != null && !(dl instanceof IExitNode) && dl.getOutgoingSize() == 0 && dl != returnExit) {
 					((AbstractBasicBlock) dl).addOutgoing(returnExit);
 				}
 			}
@@ -154,7 +153,8 @@ public class ControlFlowGraphBuilder {
 			for (IASTStatement statement : comp.getStatements()) {
 				prev = createSubGraph(prev, statement);
 			}
-		} else if (body instanceof IASTExpressionStatement || body instanceof IASTDeclarationStatement || body instanceof IASTNullStatement) {
+		} else if (body instanceof IASTExpressionStatement || body instanceof IASTDeclarationStatement
+				|| body instanceof IASTNullStatement) {
 			if (isThrowStatement(body) || isExitStatement(body)) {
 				CxxExitNode node = createExitNode(prev, body);
 				return node;
@@ -284,7 +284,7 @@ public class ControlFlowGraphBuilder {
 	/**
 	 * labeled statement consists of connector for jumps,
 	 * branch for label and statement
-	 * 
+	 *
 	 * @param prev
 	 * @param labelName
 	 * @return
@@ -319,7 +319,7 @@ public class ControlFlowGraphBuilder {
 	}
 
 	protected void fixConnector(IConnectorNode mergeNode) {
-		if (mergeNode.getIncomingSize()==0)
+		if (mergeNode.getIncomingSize() == 0)
 			dead.add(mergeNode); // dead connector node
 	}
 

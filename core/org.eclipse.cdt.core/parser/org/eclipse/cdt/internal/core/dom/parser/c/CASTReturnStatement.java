@@ -25,9 +25,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 public class CASTReturnStatement extends ASTAttributeOwner implements IASTReturnStatement, IASTAmbiguityParent {
-    private IASTExpression retValue;
+	private IASTExpression retValue;
 
-    public CASTReturnStatement() {
+	public CASTReturnStatement() {
 	}
 
 	public CASTReturnStatement(IASTExpression retValue) {
@@ -41,29 +41,28 @@ public class CASTReturnStatement extends ASTAttributeOwner implements IASTReturn
 
 	@Override
 	public CASTReturnStatement copy(CopyStyle style) {
-		CASTReturnStatement copy =
-				new CASTReturnStatement(retValue == null ? null : retValue.copy(style));
+		CASTReturnStatement copy = new CASTReturnStatement(retValue == null ? null : retValue.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public IASTExpression getReturnValue() {
-        return retValue;
-    }
+		return retValue;
+	}
 
-    @Override
+	@Override
 	public void setReturnValue(IASTExpression returnValue) {
-        assertNotFrozen();
-        retValue = returnValue;
-        if (returnValue != null) {
+		assertNotFrozen();
+		retValue = returnValue;
+		if (returnValue != null) {
 			returnValue.setParent(this);
 			returnValue.setPropertyInParent(RETURNVALUE);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public IASTInitializerClause getReturnArgument() {
-    	return getReturnValue();
+		return getReturnValue();
 	}
 
 	@Override
@@ -77,33 +76,41 @@ public class CASTReturnStatement extends ASTAttributeOwner implements IASTReturn
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        if (retValue != null && !retValue.accept(action)) return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (retValue != null && !retValue.accept(action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == retValue) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            retValue  = (IASTExpression) other;
-        }
-    }
+		if (child == retValue) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			retValue = (IASTExpression) other;
+		}
+	}
 }

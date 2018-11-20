@@ -67,8 +67,7 @@ public class QMLDirectoryLexer {
 			this.raw = raw;
 			this.start = start;
 			this.end = end;
-			this.location = new SourceLocation(null,
-					new Position(line, start - lineStart),
+			this.location = new SourceLocation(null, new Position(line, start - lineStart),
 					new Position(line, end - lineStart));
 		}
 

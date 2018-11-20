@@ -72,7 +72,6 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.IVerticalRulerListener;
 import org.eclipse.jface.text.source.VerticalRulerEvent;
 
-
 /**
  * A control that can display a number of annotations. The control can decide how it layouts the
  * annotations to present them to the user.
@@ -83,8 +82,8 @@ import org.eclipse.jface.text.source.VerticalRulerEvent;
  *
  * @since 6.1
  */
-public class AnnotationExpansionControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, IInformationControlExtension5 {
-
+public class AnnotationExpansionControl implements IInformationControl, IInformationControlExtension,
+		IInformationControlExtension2, IInformationControlExtension5 {
 
 	public interface ICallback {
 		void run(IInformationControlExtension2 control);
@@ -113,25 +112,25 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		StyleRange[] oldStyles;
 
 		public void selected() {
-			Display disp= fShell.getDisplay();
+			Display disp = fShell.getDisplay();
 			canvas.setCursor(getHandCursor(disp));
 			// TODO: shade - for now: set grey background
 			canvas.setBackground(getSelectionColor(disp));
 
 			// highlight the viewer background at its position
-			oldStyles= setViewerBackground(fAnnotation);
+			oldStyles = setViewerBackground(fAnnotation);
 
 			// set the selection
-			fSelection= this;
+			fSelection = this;
 
 			if (fHoverManager == null) {
-				fHoverManager= createHoverManager(fComposite, true);
+				fHoverManager = createHoverManager(fComposite, true);
 			} else {
 				fHoverManager.showInformation();
 			}
 
 			if (fInput.fAnnotationListener != null) {
-				VerticalRulerEvent event= new VerticalRulerEvent(fAnnotation);
+				VerticalRulerEvent event = new VerticalRulerEvent(fAnnotation);
 				fInput.fAnnotationListener.annotationSelected(event);
 			}
 
@@ -139,18 +138,18 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 
 		public void defaultSelected(MouseEvent e) {
 			if (fInput.fAnnotationListener != null) {
-				Event swtEvent= new Event();
-				swtEvent.type= SWT.MouseDown;
-				swtEvent.display= e.display;
-				swtEvent.widget= e.widget;
-				swtEvent.time= e.time;
-				swtEvent.data= e.data;
-				swtEvent.x= e.x;
-				swtEvent.y= e.y;
-				swtEvent.button= e.button;
-				swtEvent.stateMask= e.stateMask;
-				swtEvent.count= e.count;
-				VerticalRulerEvent event= new VerticalRulerEvent(fAnnotation, swtEvent);
+				Event swtEvent = new Event();
+				swtEvent.type = SWT.MouseDown;
+				swtEvent.display = e.display;
+				swtEvent.widget = e.widget;
+				swtEvent.time = e.time;
+				swtEvent.data = e.data;
+				swtEvent.x = e.x;
+				swtEvent.y = e.y;
+				swtEvent.button = e.button;
+				swtEvent.stateMask = e.stateMask;
+				swtEvent.count = e.count;
+				VerticalRulerEvent event = new VerticalRulerEvent(fAnnotation, swtEvent);
 				fInput.fAnnotationListener.annotationDefaultSelected(event);
 			}
 
@@ -159,15 +158,15 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 
 		public void deselect() {
 			// hide the popup
-//			fHoverManager.disposeInformationControl();
+			//			fHoverManager.disposeInformationControl();
 
 			// deselect
-			fSelection= null;
+			fSelection = null;
 
 			resetViewerBackground(oldStyles);
-			oldStyles= null;
+			oldStyles = null;
 
-			Display disp= fShell.getDisplay();
+			Display disp = fShell.getDisplay();
 			canvas.setCursor(null);
 			// TODO: remove shading - for now: set standard background
 			canvas.setBackground(disp.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
@@ -185,11 +184,11 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		 */
 		@Override
 		public void widgetDisposed(DisposeEvent e) {
-			Item item= (Item) ((Widget) e.getSource()).getData();
+			Item item = (Item) ((Widget) e.getSource()).getData();
 			item.deselect();
-			item.canvas= null;
-			item.fAnnotation= null;
-			item.oldStyles= null;
+			item.canvas = null;
+			item.fAnnotation = null;
+			item.oldStyles = null;
 
 			((Widget) e.getSource()).setData(null);
 		}
@@ -208,9 +207,9 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 				// TODO: show per-item menu
 				// for now: show ruler context menu
 				if (fInput != null) {
-					Control ruler= fInput.fRulerInfo.getControl();
+					Control ruler = fInput.fRulerInfo.getControl();
 					if (ruler != null && !ruler.isDisposed()) {
-						Menu menu= ruler.getMenu();
+						Menu menu = ruler.getMenu();
 						if (menu != null && !menu.isDisposed()) {
 							menu.setLocation(event.x, event.y);
 							menu.addMenuListener(new MenuListener() {
@@ -233,7 +232,6 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		}
 	}
 
-
 	/**
 	 * Listener on mouse events on the items.
 	 */
@@ -243,38 +241,38 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		 */
 		@Override
 		public void mouseDoubleClick(MouseEvent e) {
-			Item item= (Item) ((Widget) e.getSource()).getData();
+			Item item = (Item) ((Widget) e.getSource()).getData();
 			if (e.button == 1 && item.fAnnotation == fInput.fAnnotations[0] && fInput.fDoubleClickListener != null) {
 				fInput.fDoubleClickListener.doubleClick(null);
 				// special code for JDT to renew the annotation set.
 				if (fInput.redoAction != null)
 					fInput.redoAction.run(AnnotationExpansionControl.this);
 			}
-//			dispose();
+			//			dispose();
 			// TODO special action to invoke double-click action on the vertical ruler
 			// how about
-//					Canvas can= (Canvas) e.getSource();
-//					Annotation a= (Annotation) can.getData();
-//					if (a != null) {
-//						a.getDoubleClickAction().run();
-//					}
+			//					Canvas can= (Canvas) e.getSource();
+			//					Annotation a= (Annotation) can.getData();
+			//					if (a != null) {
+			//						a.getDoubleClickAction().run();
+			//					}
 		}
 
 		/*
 		 * JDT uses mouseDown here rather than mouseUp to fix a bug
 		 * (details see https://bugs.eclipse.org/bugs/show_bug.cgi?id=165533)
-		 * 
+		 *
 		 * However this causes an issue where the top annotation is fired if the user
 		 * click the 1st item in the expansion control. Due to mouseUp going to the ruler
 		 * after the expansion is close.
-		 * 
+		 *
 		 * Bug as described in JDT does not seems to affect CDT so reverting to mouseUp.
 		 *
 		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 		 */
 		@Override
 		public void mouseUp(MouseEvent e) {
-			Item item= (Item) ((Widget) e.getSource()).getData();
+			Item item = (Item) ((Widget) e.getSource()).getData();
 			// TODO for now, to make double click work: disable single click on the first item
 			// disable later when the annotationlistener selectively handles input
 			if (item != null && e.button == 1) // && item.fAnnotation != fInput.fAnnotations[0])
@@ -292,7 +290,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		 */
 		@Override
 		public void mouseEnter(MouseEvent e) {
-			Item item= (Item) ((Widget) e.getSource()).getData();
+			Item item = (Item) ((Widget) e.getSource()).getData();
 			if (item != null)
 				item.selected();
 		}
@@ -303,25 +301,24 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		@Override
 		public void mouseExit(MouseEvent e) {
 
-			Item item= (Item) ((Widget) e.getSource()).getData();
+			Item item = (Item) ((Widget) e.getSource()).getData();
 			if (item != null)
 				item.deselect();
 
 			// if the event lies outside the entire popup, dispose
-			org.eclipse.swt.graphics.Region region= fShell.getRegion();
-			Canvas can= (Canvas) e.getSource();
-			Point p= can.toDisplay(e.x, e.y);
+			org.eclipse.swt.graphics.Region region = fShell.getRegion();
+			Canvas can = (Canvas) e.getSource();
+			Point p = can.toDisplay(e.x, e.y);
 			if (region == null) {
-				Rectangle bounds= fShell.getBounds();
-//				p= fShell.toControl(p);
+				Rectangle bounds = fShell.getBounds();
+				//				p= fShell.toControl(p);
 				if (!bounds.contains(p))
 					dispose();
 			} else {
-				p= fShell.toControl(p);
+				p = fShell.toControl(p);
 				if (!region.contains(p))
 					dispose();
 			}
-
 
 		}
 
@@ -331,16 +328,16 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		@Override
 		public void mouseHover(MouseEvent e) {
 			if (fHoverManager == null) {
-				fHoverManager= createHoverManager(fComposite, true);
+				fHoverManager = createHoverManager(fComposite, true);
 			}
 		}
 	}
-	
+
 	private HoverManager createHoverManager(Composite target, boolean show) {
 		HoverManager hoverManager = new HoverManager();
 		hoverManager.takesFocusWhenVisible(false);
 		hoverManager.install(target);
-		if(show) {
+		if (show) {
 			hoverManager.showInformation();
 		}
 		return hoverManager;
@@ -351,23 +348,23 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 	 */
 	public class LinearLayouter {
 
-		private static final int ANNOTATION_SIZE= 14;
-		private static final int BORDER_WIDTH= 2;
+		private static final int ANNOTATION_SIZE = 14;
+		private static final int BORDER_WIDTH = 2;
 
 		public Layout getLayout(int itemCount) {
 			// simple layout: a row of items
-			GridLayout layout= new GridLayout(itemCount, true);
-			layout.horizontalSpacing= 1;
-			layout.verticalSpacing= 0;
-			layout.marginHeight= 1;
-			layout.marginWidth= 1;
+			GridLayout layout = new GridLayout(itemCount, true);
+			layout.horizontalSpacing = 1;
+			layout.verticalSpacing = 0;
+			layout.marginHeight = 1;
+			layout.marginWidth = 1;
 			return layout;
 		}
 
 		public Object getLayoutData() {
-			GridData gridData= new GridData(ANNOTATION_SIZE + 2 * BORDER_WIDTH, ANNOTATION_SIZE + 2 * BORDER_WIDTH);
-			gridData.horizontalAlignment= GridData.CENTER;
-			gridData.verticalAlignment= GridData.CENTER;
+			GridData gridData = new GridData(ANNOTATION_SIZE + 2 * BORDER_WIDTH, ANNOTATION_SIZE + 2 * BORDER_WIDTH);
+			gridData.horizontalAlignment = GridData.CENTER;
+			gridData.verticalAlignment = GridData.CENTER;
 			return gridData;
 		}
 
@@ -392,7 +389,6 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 
 	}
 
-
 	/**
 	 * Listener on paint events on the items. Paints the annotation image on the given <code>GC</code>.
 	 */
@@ -402,10 +398,11 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		 */
 		@Override
 		public void paintControl(PaintEvent e) {
-			Canvas can= (Canvas) e.getSource();
-			Annotation a= ((Item) can.getData()).fAnnotation;
+			Canvas can = (Canvas) e.getSource();
+			Annotation a = ((Item) can.getData()).fAnnotation;
 			if (a != null) {
-				Rectangle rect= new Rectangle(fLayouter.getBorderWidth(), fLayouter.getBorderWidth(), fLayouter.getAnnotationSize(), fLayouter.getAnnotationSize());
+				Rectangle rect = new Rectangle(fLayouter.getBorderWidth(), fLayouter.getBorderWidth(),
+						fLayouter.getAnnotationSize(), fLayouter.getAnnotationSize());
 				if (fAnnotationAccessExtension != null)
 					fAnnotationAccessExtension.paint(a, e.gc, can, rect);
 			}
@@ -430,7 +427,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 
 			setMargins(5, 10);
 			setAnchor(ANCHOR_BOTTOM);
-			setFallbackAnchors(new Anchor[] {ANCHOR_BOTTOM, ANCHOR_LEFT, ANCHOR_RIGHT} );
+			setFallbackAnchors(new Anchor[] { ANCHOR_BOTTOM, ANCHOR_LEFT, ANCHOR_RIGHT });
 		}
 
 		/*
@@ -439,18 +436,17 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		@Override
 		protected void computeInformation() {
 			if (fSelection != null) {
-				Rectangle subjectArea= fSelection.canvas.getBounds();
-				Annotation annotation= fSelection.fAnnotation;
+				Rectangle subjectArea = fSelection.canvas.getBounds();
+				Annotation annotation = fSelection.fAnnotation;
 				String msg;
 				if (annotation != null)
-					msg= annotation.getText();
+					msg = annotation.getText();
 				else
-					msg= null;
+					msg = null;
 
 				setInformation(msg, subjectArea);
 			}
 		}
-
 
 	}
 
@@ -466,7 +462,6 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 	private HoverManager fHoverManager;
 	/** The annotation access extension. */
 	private IAnnotationAccessExtension fAnnotationAccessExtension;
-
 
 	/* listener legion */
 	private final MyPaintListener fPaintListener;
@@ -486,12 +481,12 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 	 * @param access the annotation access
 	 */
 	public AnnotationExpansionControl(Shell parent, int shellStyle, IAnnotationAccess access) {
-		fPaintListener= new MyPaintListener();
-		fMouseTrackListener= new MyMouseTrackListener();
-		fMouseListener= new MyMouseListener();
-		fMenuDetectListener= new MyMenuDetectListener();
-		fDisposeListener= new MyDisposeListener();
-		fViewportListener= new IViewportListener() {
+		fPaintListener = new MyPaintListener();
+		fMouseTrackListener = new MyMouseTrackListener();
+		fMouseListener = new MyMouseListener();
+		fMenuDetectListener = new MyMenuDetectListener();
+		fDisposeListener = new MyDisposeListener();
+		fViewportListener = new IViewportListener() {
 
 			@Override
 			public void viewportChanged(int verticalOffset) {
@@ -499,36 +494,36 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 			}
 
 		};
-		fLayouter= new LinearLayouter();
+		fLayouter = new LinearLayouter();
 
 		if (access instanceof IAnnotationAccessExtension)
-			fAnnotationAccessExtension= (IAnnotationAccessExtension) access;
+			fAnnotationAccessExtension = (IAnnotationAccessExtension) access;
 
-		fShell= new Shell(parent, shellStyle | SWT.NO_FOCUS | SWT.ON_TOP);
-		Display display= fShell.getDisplay();
+		fShell = new Shell(parent, shellStyle | SWT.NO_FOCUS | SWT.ON_TOP);
+		Display display = fShell.getDisplay();
 		fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		fComposite= new Composite(fShell, SWT.NO_FOCUS | SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM);
-//		fComposite= new Composite(fShell, SWT.NO_FOCUS | SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM | SWT.V_SCROLL);
+		fComposite = new Composite(fShell, SWT.NO_FOCUS | SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM);
+		//		fComposite= new Composite(fShell, SWT.NO_FOCUS | SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM | SWT.V_SCROLL);
 
-		GridLayout layout= new GridLayout(1, true);
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
+		GridLayout layout = new GridLayout(1, true);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		fShell.setLayout(layout);
 
-		GridData data= new GridData(GridData.FILL_BOTH);
-		data.heightHint= fLayouter.getAnnotationSize() + 2 * fLayouter.getBorderWidth() + 4;
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = fLayouter.getAnnotationSize() + 2 * fLayouter.getBorderWidth() + 4;
 		fComposite.setLayoutData(data);
 		fComposite.addMouseTrackListener(new MouseTrackAdapter() {
 
 			@Override
 			public void mouseExit(MouseEvent e) {
 				if (fComposite == null)
-						return;
-				Control[] children= fComposite.getChildren();
-				Rectangle bounds= null;
-				for (int i= 0; i < children.length; i++) {
+					return;
+				Control[] children = fComposite.getChildren();
+				Rectangle bounds = null;
+				for (int i = 0; i < children.length; i++) {
 					if (bounds == null)
-						bounds= children[i].getBounds();
+						bounds = children[i].getBounds();
 					else
 						bounds.add(children[i].getBounds());
 					if (bounds.contains(e.x, e.y))
@@ -541,18 +536,18 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 
 		});
 
-//		fComposite.getVerticalBar().addListener(SWT.Selection, new Listener() {
-//
-//			public void handleEvent(Event event) {
-//				Rectangle bounds= fShell.getBounds();
-//				int x= bounds.x - fLayouter.getAnnotationSize() - fLayouter.getBorderWidth();
-//				int y= bounds.y;
-//				fShell.setBounds(x, y, bounds.width, bounds.height);
-//			}
-//
-//		});
+		//		fComposite.getVerticalBar().addListener(SWT.Selection, new Listener() {
+		//
+		//			public void handleEvent(Event event) {
+		//				Rectangle bounds= fShell.getBounds();
+		//				int x= bounds.x - fLayouter.getAnnotationSize() - fLayouter.getBorderWidth();
+		//				int y= bounds.y;
+		//				fShell.setBounds(x, y, bounds.width, bounds.height);
+		//			}
+		//
+		//		});
 
-		Cursor handCursor= getHandCursor(display);
+		Cursor handCursor = getHandCursor(display);
 		fShell.setCursor(handCursor);
 		fComposite.setCursor(handCursor);
 
@@ -560,7 +555,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 	}
 
 	private void setInfoSystemColor() {
-		Display display= fShell.getDisplay();
+		Display display = fShell.getDisplay();
 		setForegroundColor(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		setBackgroundColor(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 	}
@@ -573,7 +568,6 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		setInput(null);
 	}
 
-
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension2#setInput(java.lang.Object)
 	 */
@@ -583,15 +577,15 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 			fInput.fViewer.removeViewportListener(fViewportListener);
 
 		if (input instanceof AnnotationHoverInput)
-			fInput= (AnnotationHoverInput) input;
+			fInput = (AnnotationHoverInput) input;
 		else
-			fInput= null;
+			fInput = null;
 
 		inputChanged(fInput, null);
 	}
 
 	/**
-     * Internal hook method called when the input is
+	 * Internal hook method called when the input is
 	 * initially set or subsequently changed.
 	 *
 	 * @param newInput the new input
@@ -615,15 +609,15 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 
 		fShell.setRegion(fLayouter.getShellRegion(fInput.fAnnotations.length));
 
-		Layout layout= fLayouter.getLayout(fInput.fAnnotations.length);
+		Layout layout = fLayouter.getLayout(fInput.fAnnotations.length);
 		fComposite.setLayout(layout);
 
-		Control[] children= fComposite.getChildren();
-		for (int i= 0; i < fInput.fAnnotations.length; i++) {
-			Canvas canvas= (Canvas) children[i];
-			Item item= new Item();
-			item.canvas= canvas;
-			item.fAnnotation= fInput.fAnnotations[i];
+		Control[] children = fComposite.getChildren();
+		for (int i = 0; i < fInput.fAnnotations.length; i++) {
+			Canvas canvas = (Canvas) children[i];
+			Item item = new Item();
+			item.canvas = canvas;
+			item.fAnnotation = fInput.fAnnotations[i];
 			canvas.setData(item);
 			canvas.redraw();
 		}
@@ -634,16 +628,16 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		if (fComposite == null)
 			return;
 
-		Control[] children= fComposite.getChildren();
-		int oldSize= children.length;
-		int newSize= fInput == null ? 0 : fInput.fAnnotations.length;
+		Control[] children = fComposite.getChildren();
+		int oldSize = children.length;
+		int newSize = fInput == null ? 0 : fInput.fAnnotations.length;
 
-		Display display= fShell.getDisplay();
+		Display display = fShell.getDisplay();
 
 		// add missing items
-		for (int i= oldSize; i < newSize; i++) {
-			Canvas canvas= new Canvas(fComposite, SWT.NONE);
-			Object gridData= fLayouter.getLayoutData();
+		for (int i = oldSize; i < newSize; i++) {
+			Canvas canvas = new Canvas(fComposite, SWT.NONE);
+			Object gridData = fLayouter.getLayoutData();
 			canvas.setLayoutData(gridData);
 			canvas.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 
@@ -659,8 +653,8 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		}
 
 		// dispose of exceeding resources
-		for (int i= oldSize; i > newSize; i--) {
-			Item item= (Item) children[i - 1].getData();
+		for (int i = oldSize; i > newSize; i--) {
+			Item item = (Item) children[i - 1].getData();
 			item.deselect();
 			children[i - 1].dispose();
 		}
@@ -673,18 +667,18 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 	@Override
 	public void setVisible(boolean visible) {
 		fShell.setVisible(visible);
-		if(visible) {
+		if (visible) {
 			/*
 			 * Force 1st item to be selected when made visible
-			 * 
+			 *
 			 * This causes the tooltip to be displayed without additional
 			 * delay.
 			 */
-			Control[] children= fComposite.getChildren();
-			if(fHoverManager == null && children.length > 0) {
+			Control[] children = fComposite.getChildren();
+			if (fHoverManager == null && children.length > 0) {
 				Object data = children[0].getData();
-				if(data instanceof Item) {
-					((Item)data).selected();
+				if (data instanceof Item) {
+					((Item) data).selected();
 				}
 			}
 		}
@@ -698,12 +692,12 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		if (fShell != null) {
 			if (!fShell.isDisposed())
 				fShell.dispose();
-			fShell= null;
-			fComposite= null;
+			fShell = null;
+			fComposite = null;
 			if (fHoverManager != null)
 				fHoverManager.dispose();
-			fHoverManager= null;
-			fSelection= null;
+			fHoverManager = null;
+			fSelection = null;
 		}
 	}
 
@@ -813,38 +807,38 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 	}
 
 	private StyleRange[] setViewerBackground(Annotation annotation) {
-		StyledText text= fInput.fViewer.getTextWidget();
+		StyledText text = fInput.fViewer.getTextWidget();
 		if (text == null || text.isDisposed())
 			return null;
 
-		Display disp= text.getDisplay();
+		Display disp = text.getDisplay();
 
-		Position pos= fInput.model.getPosition(annotation);
+		Position pos = fInput.model.getPosition(annotation);
 		if (pos == null)
 			return null;
 
-		IRegion region= ((TextViewer)fInput.fViewer).modelRange2WidgetRange(new Region(pos.offset, pos.length));
+		IRegion region = ((TextViewer) fInput.fViewer).modelRange2WidgetRange(new Region(pos.offset, pos.length));
 		if (region == null)
 			return null;
 
-		StyleRange[] ranges= text.getStyleRanges(region.getOffset(), region.getLength());
+		StyleRange[] ranges = text.getStyleRanges(region.getOffset(), region.getLength());
 
-		List<StyleRange> undoRanges= new ArrayList<>(ranges.length);
-		for (int i= 0; i < ranges.length; i++) {
-			undoRanges.add((StyleRange)ranges[i].clone());
+		List<StyleRange> undoRanges = new ArrayList<>(ranges.length);
+		for (int i = 0; i < ranges.length; i++) {
+			undoRanges.add((StyleRange) ranges[i].clone());
 		}
 
-		int offset= region.getOffset();
-		StyleRange current= undoRanges.size() > 0 ? undoRanges.get(0) : null;
-		int curStart= current != null ? current.start : region.getOffset() + region.getLength();
-		int curEnd= current != null ? current.start + current.length : -1;
-		int index= 0;
+		int offset = region.getOffset();
+		StyleRange current = undoRanges.size() > 0 ? undoRanges.get(0) : null;
+		int curStart = current != null ? current.start : region.getOffset() + region.getLength();
+		int curEnd = current != null ? current.start + current.length : -1;
+		int index = 0;
 
 		// fill no-style regions
 		while (curEnd < region.getOffset() + region.getLength()) {
 			// add empty range
 			if (curStart > offset) {
-				StyleRange undoRange= new StyleRange(offset, curStart - offset, null, null);
+				StyleRange undoRange = new StyleRange(offset, curStart - offset, null, null);
 				undoRanges.add(index, undoRange);
 				index++;
 			}
@@ -852,30 +846,30 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 			// step
 			index++;
 			if (index < undoRanges.size()) {
-				offset= curEnd;
-				current= undoRanges.get(index);
-				curStart= current.start;
-				curEnd= current.start + current.length;
+				offset = curEnd;
+				current = undoRanges.get(index);
+				curStart = current.start;
+				curEnd = current.start + current.length;
 			} else if (index == undoRanges.size()) {
 				// last one
-				offset= curEnd;
-				current= null;
-				curStart= region.getOffset() + region.getLength();
-				curEnd= -1;
+				offset = curEnd;
+				current = null;
+				curStart = region.getOffset() + region.getLength();
+				curEnd = -1;
 			} else
-				curEnd= region.getOffset() + region.getLength();
+				curEnd = region.getOffset() + region.getLength();
 		}
 
 		// create modified styles (with background)
-		List<StyleRange> shadedRanges= new ArrayList<>(undoRanges.size());
-		for (Iterator<StyleRange> it= undoRanges.iterator(); it.hasNext(); ) {
-			StyleRange range= (StyleRange) it.next().clone();
+		List<StyleRange> shadedRanges = new ArrayList<>(undoRanges.size());
+		for (Iterator<StyleRange> it = undoRanges.iterator(); it.hasNext();) {
+			StyleRange range = (StyleRange) it.next().clone();
 			shadedRanges.add(range);
-			range.background= getHighlightColor(disp);
+			range.background = getHighlightColor(disp);
 		}
 
 		// set the ranges one by one
-		for (Iterator<StyleRange> iter= shadedRanges.iterator(); iter.hasNext(); ) {
+		for (Iterator<StyleRange> iter = shadedRanges.iterator(); iter.hasNext();) {
 			text.setStyleRange(iter.next());
 
 		}
@@ -891,12 +885,12 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		if (fInput == null)
 			return;
 
-		StyledText text= fInput.fViewer.getTextWidget();
+		StyledText text = fInput.fViewer.getTextWidget();
 		if (text == null || text.isDisposed())
 			return;
 
 		// set the ranges one by one
-		for (int i= 0; i < oldRanges.length; i++) {
+		for (int i = 0; i < oldRanges.length; i++) {
 			text.setStyleRange(oldRanges[i]);
 		}
 	}
@@ -933,7 +927,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 				return true;
 			if (control instanceof Shell)
 				return false;
-			control= control.getParent();
+			control = control.getParent();
 		} while (control != null);
 		return false;
 	}

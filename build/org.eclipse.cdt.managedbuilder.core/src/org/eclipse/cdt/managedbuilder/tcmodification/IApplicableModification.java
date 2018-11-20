@@ -15,7 +15,6 @@ package org.eclipse.cdt.managedbuilder.tcmodification;
 
 import org.eclipse.core.runtime.CoreException;
 
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -23,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 public interface IApplicableModification extends IModification {
 	/**
 	 * applies the settings made to the given modification to the underlying
-	 * resource info 
+	 * resource info
 	 */
 	void apply() throws CoreException;
 }

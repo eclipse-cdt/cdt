@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * 	   Institute for Software - initial API and implementation
  * 	   Sergey Prigogin (Google)
  *******************************************************************************/
@@ -41,10 +41,9 @@ public class GenerateGettersAndSettersRefactoringRunner extends RefactoringRunne
 	@Override
 	public void run() {
 		if (getActiveEditor() instanceof ITextEditor) {
-			GenerateGettersAndSettersRefactoring refactoring =
-					new GenerateGettersAndSettersRefactoring(element, selection, project);
-			RefactoringWizard wizard =
-					new GenerateGettersAndSettersWizard(refactoring);
+			GenerateGettersAndSettersRefactoring refactoring = new GenerateGettersAndSettersRefactoring(element,
+					selection, project);
+			RefactoringWizard wizard = new GenerateGettersAndSettersWizard(refactoring);
 			run(wizard, refactoring, RefactoringSaveHelper.SAVE_REFACTORING);
 		}
 	}

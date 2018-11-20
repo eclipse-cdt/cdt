@@ -21,17 +21,12 @@ import org.junit.runners.Suite;
  * This is a TestSuite, the TestCases created to test Template engine are
  * added to testsuite.
  * The test suite will execute all the Testcases added to the Suite.
- * 
+ *
  * @since 4.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	TestTemplateEngine.class,
-	TestTemplateCore.class,
-	TestValueStore.class,
-	TestSharedDefaults.class,
-	TestProcesses.class,
-	TestTemplateEngineBugs.class,
+@Suite.SuiteClasses({ TestTemplateEngine.class, TestTemplateCore.class, TestValueStore.class, TestSharedDefaults.class,
+		TestProcesses.class, TestTemplateEngineBugs.class,
 
 })
 public class AllTemplateEngineTests {

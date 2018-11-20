@@ -96,18 +96,19 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 
 	/**
 	 * Default configuration.
-	 * 
+	 *
 	 * @param config
 	 */
-	ArduinoBuildConfiguration(IBuildConfiguration config, String name, String launchMode, ArduinoBoard defaultBoard, IToolChain toolChain) throws CoreException {
+	ArduinoBuildConfiguration(IBuildConfiguration config, String name, String launchMode, ArduinoBoard defaultBoard,
+			IToolChain toolChain) throws CoreException {
 		super(config, ".default", toolChain); //$NON-NLS-1$
 		this.target = null;
 		this.launchMode = launchMode;
 		this.defaultBoard = defaultBoard;
 	}
 
-	ArduinoBuildConfiguration(IBuildConfiguration config, String name, String launchMode, ArduinoRemoteConnection target,
-			IToolChain toolChain) throws CoreException {
+	ArduinoBuildConfiguration(IBuildConfiguration config, String name, String launchMode,
+			ArduinoRemoteConnection target, IToolChain toolChain) throws CoreException {
 		super(config, name, toolChain);
 		this.target = target;
 		this.launchMode = launchMode;
@@ -279,7 +280,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 			}
 			includes += '"' + pathString(include) + '"';
 		}
-		
+
 		for (ArduinoLibrary lib : manager.getLibraries(project)) {
 			for (Path include : lib.getIncludePath()) {
 				includes += " -I\"" + pathString(include) + '"'; //$NON-NLS-1$
@@ -664,8 +665,8 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 
 			ExtendedScannerInfo baseInfo = new ExtendedScannerInfo(null, includes);
 			List<String> command = splitCommand(commandString);
-			IScannerInfo info = getToolChain().getScannerInfo(getBuildConfiguration(), command,
-					baseInfo, resource, getBuildDirectoryURI());
+			IScannerInfo info = getToolChain().getScannerInfo(getBuildConfiguration(), command, baseInfo, resource,
+					getBuildDirectoryURI());
 
 			// cache the results
 			cachedScannerInfo = info;

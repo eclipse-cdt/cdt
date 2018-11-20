@@ -27,7 +27,7 @@ public interface IName {
 	/**
 	 * @since 5.2
 	 */
-	public static final IName[] EMPTY_ARRAY= {};
+	public static final IName[] EMPTY_ARRAY = {};
 
 	/**
 	 * Returns the name without qualification and without template arguments.
@@ -44,29 +44,29 @@ public interface IName {
 	 */
 	@Deprecated
 	public char[] toCharArray();
-	
+
 	/**
 	 * Is this name being used in the AST as the introduction of a declaration?
 	 * @return boolean
 	 */
 	public boolean isDeclaration();
-	
+
 	/**
 	 * Is this name being used in the AST as a reference rather than a declaration?
 	 * @return boolean
 	 */
-    
-	public boolean isReference();
-    
-    /**
-     * Is this name being used in the AST as a definition rather than a declaration?
-     * @return boolean
-     */
-    public boolean isDefinition();
 
-    /**
-     * Same as {@link IASTNode#getFileLocation()}
-     * @return the file location of this name.
-     */
+	public boolean isReference();
+
+	/**
+	 * Is this name being used in the AST as a definition rather than a declaration?
+	 * @return boolean
+	 */
+	public boolean isDefinition();
+
+	/**
+	 * Same as {@link IASTNode#getFileLocation()}
+	 * @return the file location of this name.
+	 */
 	public IASTFileLocation getFileLocation();
 }

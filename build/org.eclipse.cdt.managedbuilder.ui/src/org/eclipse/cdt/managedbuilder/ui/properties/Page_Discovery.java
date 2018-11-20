@@ -21,5 +21,7 @@ import org.eclipse.cdt.ui.newui.AbstractPage;
  */
 public class Page_Discovery extends AbstractPage {
 	@Override
-	protected boolean isSingle() { return true; }
+	protected boolean isSingle() {
+		return true;
+	}
 }

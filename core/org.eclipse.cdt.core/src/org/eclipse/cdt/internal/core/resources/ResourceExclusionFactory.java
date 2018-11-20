@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,12 +19,12 @@ import org.eclipse.cdt.core.resources.RefreshExclusionFactory;
 
 /**
  * @author crecoskie
- * 
+ *
  */
 public class ResourceExclusionFactory extends RefreshExclusionFactory {
 
 	/**
-	 * 
+	 *
 	 */
 	public ResourceExclusionFactory() {
 		// TODO Auto-generated constructor stub
@@ -32,7 +32,7 @@ public class ResourceExclusionFactory extends RefreshExclusionFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.resources.RefreshExclusionFactory#createNewExclusion()
 	 */
 	@Override
@@ -42,7 +42,7 @@ public class ResourceExclusionFactory extends RefreshExclusionFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.resources.RefreshExclusionFactory#createNewExclusionInstance()
 	 */
 	@Override
@@ -53,7 +53,7 @@ public class ResourceExclusionFactory extends RefreshExclusionFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.resources.RefreshExclusionFactory#getExclusionClassname()
 	 */
 	@Override
@@ -63,7 +63,7 @@ public class ResourceExclusionFactory extends RefreshExclusionFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.resources.RefreshExclusionFactory#getInstanceClassname()
 	 */
 	@Override

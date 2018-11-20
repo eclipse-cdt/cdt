@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,6 @@
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
-
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -51,14 +50,14 @@ import org.eclipse.swt.widgets.Shell;
  * Shows the testing sessions history in drop down list.
  */
 public class HistoryDropDownAction extends Action {
-	
+
 	/**
 	 * The dialog for testing sessions history management. Allows to browse,
 	 * activate and remove the selected testing sessions and to set testing
 	 * sessions history size limit.
 	 */
 	private class HistoryListDialog extends StatusDialog {
-		
+
 		/** Max value for the history size limit that may be set via the dialog. */
 		private static final int MAX_HISTORY_SIZE_LIMIT = 100;
 
@@ -67,13 +66,12 @@ public class HistoryDropDownAction extends Action {
 
 		/** String field that allows to set testing sessions history size limit. */
 		private StringDialogField historySizeLimitField;
-		
+
 		/** Currently set testing sessions history size limit. */
 		private int historySizeLimit;
 
 		/** The currently selected active testing session. */
 		private ITestingSession resultActiveSession;
-
 
 		/**
 		 * Label provider for the dialog testing sessions list.
@@ -82,12 +80,11 @@ public class HistoryDropDownAction extends Action {
 
 			@Override
 			public String getText(Object element) {
-				return ((ITestingSession)element).getName();
+				return ((ITestingSession) element).getName();
 			}
 
 		}
 
-		
 		private HistoryListDialog(Shell shell) {
 			super(shell);
 			setHelpAvailable(false);
@@ -111,6 +108,7 @@ public class HistoryDropDownAction extends Action {
 				public void customButtonPressed(ListDialogField<ITestingSession> field, int index) {
 					doCustomButtonPressed(index);
 				}
+
 				@Override
 				public void selectionChanged(ListDialogField<ITestingSession> field) {
 					doSelectionChanged();
@@ -121,7 +119,8 @@ public class HistoryDropDownAction extends Action {
 					doDoubleClicked();
 				}
 			};
-			String[] buttonLabels = new String[] { ActionsMessages.HistoryAction_dialog_button_remove, ActionsMessages.HistoryAction_dialog_button_remove_all };
+			String[] buttonLabels = new String[] { ActionsMessages.HistoryAction_dialog_button_remove,
+					ActionsMessages.HistoryAction_dialog_button_remove_all };
 			LabelProvider labelProvider = new TestRunLabelProvider();
 			historyList = new ListDialogField<ITestingSession>(adapter, buttonLabels, labelProvider);
 			historyList.setLabelText(ActionsMessages.HistoryAction_dialog_list_title);
@@ -149,11 +148,10 @@ public class HistoryDropDownAction extends Action {
 					} catch (NumberFormatException e) {
 						valid = false;
 					}
-					IStatus status = valid ? StatusInfo.OK_STATUS : new StatusInfo(IStatus.ERROR, 
-							MessageFormat.format(ActionsMessages.HistoryAction_dialog_limit_label_error, 
-								Integer.toString(MAX_HISTORY_SIZE_LIMIT)
-							)
-						);
+					IStatus status = valid ? StatusInfo.OK_STATUS
+							: new StatusInfo(IStatus.ERROR,
+									MessageFormat.format(ActionsMessages.HistoryAction_dialog_limit_label_error,
+											Integer.toString(MAX_HISTORY_SIZE_LIMIT)));
 					updateStatus(status);
 				}
 			});
@@ -170,7 +168,9 @@ public class HistoryDropDownAction extends Action {
 			inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 			inner.setFont(composite.getFont());
 
-			LayoutUtil.doDefaultLayout(inner, new DialogField[] { historyList, new org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator() }, true);
+			LayoutUtil.doDefaultLayout(inner,
+					new DialogField[] { historyList, new org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator() },
+					true);
 			LayoutUtil.setHeightHint(historyList.getListControl(null), convertHeightInCharsToPixels(12));
 			LayoutUtil.setHorizontalGrabbing(historyList.getListControl(null));
 
@@ -184,22 +184,22 @@ public class HistoryDropDownAction extends Action {
 		}
 
 		/**
-		 * Processes dialog custom button pressing. 
-		 * 
+		 * Processes dialog custom button pressing.
+		 *
 		 * @param index index of the button
 		 */
 		private void doCustomButtonPressed(int index) {
 			switch (index) {
-				case 0: // remove
-					historyList.removeElements(historyList.getSelectedElements());
-					historyList.selectFirstElement();
-					break;
+			case 0: // remove
+				historyList.removeElements(historyList.getSelectedElements());
+				historyList.selectFirstElement();
+				break;
 
-				case 1: // remove all
-					historyList.removeAllElements();
-					break;
-				default:
-					break;
+			case 1: // remove all
+				historyList.removeAllElements();
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -225,7 +225,7 @@ public class HistoryDropDownAction extends Action {
 
 		/**
 		 * Provides access to the active session currently selected by user.
-		 * 
+		 *
 		 * @return testing session
 		 */
 		public ITestingSession getResultActiveSession() {
@@ -234,7 +234,7 @@ public class HistoryDropDownAction extends Action {
 
 		/**
 		 * Provides access to the testing sessions history list edited by user.
-		 * 
+		 *
 		 * @return list of testing sessions
 		 */
 		public List<ITestingSession> getResultSessions() {
@@ -243,7 +243,7 @@ public class HistoryDropDownAction extends Action {
 
 		/**
 		 * Provides access to value of history size limit specified by user.
-		 * 
+		 *
 		 * @return history size limit
 		 */
 		public int getResultHistorySizeLimit() {
@@ -251,12 +251,11 @@ public class HistoryDropDownAction extends Action {
 		}
 	}
 
-	
 	/**
-	 * Represents a testing sessions history item. 
+	 * Represents a testing sessions history item.
 	 */
 	private class HistoryAction extends Action {
-		
+
 		/** Testing session of the history item. */
 		private final ITestingSession testingSession;
 
@@ -268,7 +267,8 @@ public class HistoryDropDownAction extends Action {
 			String label = testingSession.getName();
 			if (testingSessionIndex < 10) {
 				// Add the numerical accelerator
-				label = new StringBuilder().append('&').append(testingSessionIndex).append(' ').append(label).toString();
+				label = new StringBuilder().append('&').append(testingSessionIndex).append(' ').append(label)
+						.toString();
 			}
 			setText(label);
 		}
@@ -280,8 +280,7 @@ public class HistoryDropDownAction extends Action {
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * Provides access to the history list management dialog.
 	 */
@@ -298,13 +297,12 @@ public class HistoryDropDownAction extends Action {
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * Removes the terminated testing sessions from the history list.
 	 */
 	private class ClearAction extends Action {
-		
+
 		public ClearAction() {
 			setText(ActionsMessages.HistoryAction_history_item_clear_text);
 
@@ -333,7 +331,6 @@ public class HistoryDropDownAction extends Action {
 		}
 	}
 
-	
 	/**
 	 * Represents the testing sessions history menu factory.
 	 */
@@ -365,13 +362,13 @@ public class HistoryDropDownAction extends Action {
 
 				private boolean addHistoryItems(IMenuManager manager) {
 					boolean checkOthers = true;
-					
+
 					int sessionsCount = testingSessionsManager.getSessionsCount();
 					if (sessionsCount == 0) {
 						return false;
 					}
 					int menuItemsCount = Math.min(sessionsCount, RESULTS_IN_DROP_DOWN_MENU);
-					
+
 					ITestingSession activeSession = testingSessionsManager.getActiveSession();
 					int testingSessionIndex = 0;
 					for (ITestingSession testingSession : testingSessionsManager.getSessions()) {
@@ -387,7 +384,7 @@ public class HistoryDropDownAction extends Action {
 						manager.add(action);
 						testingSessionIndex++;
 					}
-					
+
 					return checkOthers;
 				}
 			});
@@ -404,21 +401,19 @@ public class HistoryDropDownAction extends Action {
 			}
 		}
 	}
-	
-	
+
 	/** Defines how many history items should be showed in drop down history menu. */
 	public static final int RESULTS_IN_DROP_DOWN_MENU = 10;
 
 	/** Accessor to the Testing Sessions Plug-in Manager. */
 	private TestingSessionsManager testingSessionsManager;
-	
+
 	/** Required for the history dialog. */
 	private Shell shell;
-	
+
 	/** Drop down menu */
 	private Menu menu;
 
-	
 	public HistoryDropDownAction(TestingSessionsManager testingSessionsManager, Shell shell) {
 		super(ActionsMessages.HistoryAction_history_text);
 		setToolTipText(ActionsMessages.HistoryAction_history_tooltip);
@@ -441,11 +436,10 @@ public class HistoryDropDownAction extends Action {
 			testingSessionsManager.setSessions(dialog.getResultSessions());
 		}
 	}
-	
+
 	@Override
 	public void run() {
 		runHistoryDialog();
 	}
-	
-}
 
+}

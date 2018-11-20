@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -20,13 +20,20 @@ import org.eclipse.debug.core.DebugException;
 
 public interface IViewportCache {
 
-    public void dispose();
-    public void refresh();
-    public TraditionalMemoryByte[] getBytes(BigInteger address, int bytesRequested) throws DebugException;
-    public void archiveDeltas();
-    public void setEditedValue(BigInteger address, TraditionalMemoryByte[] bytes);
-    public void clearEditBuffer();
-    public void writeEditBuffer();
-    public boolean containsEditedCell(BigInteger address);
-    //    private void queueRequest(BigInteger startAddress, BigInteger endAddress);
+	public void dispose();
+
+	public void refresh();
+
+	public TraditionalMemoryByte[] getBytes(BigInteger address, int bytesRequested) throws DebugException;
+
+	public void archiveDeltas();
+
+	public void setEditedValue(BigInteger address, TraditionalMemoryByte[] bytes);
+
+	public void clearEditBuffer();
+
+	public void writeEditBuffer();
+
+	public boolean containsEditedCell(BigInteger address);
+	//    private void queueRequest(BigInteger startAddress, BigInteger endAddress);
 }

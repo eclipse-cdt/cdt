@@ -57,7 +57,7 @@ public class LLDBCDebuggerPage extends AbstractCDebuggerPage {
 		fLLDBCommandText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent evt) {
-					updateLaunchConfigurationDialog();
+				updateLaunchConfigurationDialog();
 			}
 		});
 
@@ -78,7 +78,7 @@ public class LLDBCDebuggerPage extends AbstractCDebuggerPage {
 					String cmd = lldbCommand.substring(0, lastSeparatorIndex);
 					// remove double quotes, since they interfere with
 					// "setFilterPath()" below
-					cmd = cmd.replaceAll("\\\"", "");  //$NON-NLS-1$//$NON-NLS-2$
+					cmd = cmd.replaceAll("\\\"", ""); //$NON-NLS-1$//$NON-NLS-2$
 					dialog.setFilterPath(cmd);
 				}
 				String res = dialog.open();

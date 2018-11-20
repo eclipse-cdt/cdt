@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson)  - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,9 @@ public class MIMetaGetCPUInfoInfo implements ICommandResult {
 		fCoresInfo = info;
 	}
 
-	public ICoreInfo[] getInfo() { return fCoresInfo; }
+	public ICoreInfo[] getInfo() {
+		return fCoresInfo;
+	}
 
 	@Override
 	public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {

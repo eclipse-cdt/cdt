@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2012, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences.
  *
  * This program and the accompanying materials
@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 public interface ICPPAliasTemplateInstance extends ITypedef, ICPPTemplateInstance {
 	/**
 	 * Returns the alias template specialized by this instance.
-	 * 
+	 *
 	 * @since 6.4
 	 */
 	@Override

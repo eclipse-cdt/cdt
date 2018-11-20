@@ -30,51 +30,41 @@ public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
 	private int fType;
 	private Object fData;
 
-	public DefaultVariableContextInfo(int type, Object data){
+	public DefaultVariableContextInfo(int type, Object data) {
 		fType = type;
 		fData = data;
 	}
 
-	protected DefaultVariableContextInfo(int type, Object data, ICdtVariableSupplier suppliers[]){
+	protected DefaultVariableContextInfo(int type, Object data, ICdtVariableSupplier suppliers[]) {
 		fType = type;
 		fData = data;
 		fSuppliers = suppliers;
 	}
 
-	protected ICdtVariableSupplier[] getSuppliers(int type, Object data){
-		switch(type){
+	protected ICdtVariableSupplier[] getSuppliers(int type, Object data) {
+		switch (type) {
 		case CONTEXT_CONFIGURATION:
-			if(data instanceof ICConfigurationDescription){
-				return new ICdtVariableSupplier[]{
-						CdtVariableManager.fUserDefinedMacroSupplier,
-						CdtVariableManager.fBuildSystemVariableSupplier,
-						CdtVariableManager.fEnvironmentMacroSupplier,
-						CdtVariableManager.fCdtMacroSupplier
-				};
+			if (data instanceof ICConfigurationDescription) {
+				return new ICdtVariableSupplier[] { CdtVariableManager.fUserDefinedMacroSupplier,
+						CdtVariableManager.fBuildSystemVariableSupplier, CdtVariableManager.fEnvironmentMacroSupplier,
+						CdtVariableManager.fCdtMacroSupplier };
 			}
 			break;
 		case CONTEXT_WORKSPACE:
-			if(data == null || data instanceof IWorkspace){
-				return new ICdtVariableSupplier[]{
-						CdtVariableManager.fUserDefinedMacroSupplier,
-						CdtVariableManager.fEnvironmentMacroSupplier,
-						CdtVariableManager.fCdtMacroSupplier,
-						CdtVariableManager.fEclipseVariablesMacroSupplier
-				};
+			if (data == null || data instanceof IWorkspace) {
+				return new ICdtVariableSupplier[] { CdtVariableManager.fUserDefinedMacroSupplier,
+						CdtVariableManager.fEnvironmentMacroSupplier, CdtVariableManager.fCdtMacroSupplier,
+						CdtVariableManager.fEclipseVariablesMacroSupplier };
 			}
 			break;
 		case CONTEXT_INSTALLATIONS:
-			if(data == null){
-				return new ICdtVariableSupplier[]{
-						CdtVariableManager.fCdtMacroSupplier
-				};
+			if (data == null) {
+				return new ICdtVariableSupplier[] { CdtVariableManager.fCdtMacroSupplier };
 			}
 			break;
 		case CONTEXT_ECLIPSEENV:
-			if(data == null){
-				return new ICdtVariableSupplier[]{
-						CdtVariableManager.fEnvironmentMacroSupplier
-				};
+			if (data == null) {
+				return new ICdtVariableSupplier[] { CdtVariableManager.fEnvironmentMacroSupplier };
 			}
 			break;
 		}
@@ -102,7 +92,7 @@ public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
 	 */
 	@Override
 	public ICdtVariableSupplier[] getSuppliers() {
-		if(fSuppliers == null)
+		if (fSuppliers == null)
 			fSuppliers = getSuppliers(fType, fData);
 		return fSuppliers;
 	}
@@ -112,32 +102,26 @@ public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
 	 */
 	@Override
 	public IVariableContextInfo getNext() {
-		switch(fType){
+		switch (fType) {
 		case CONTEXT_CONFIGURATION:
-			if(fData instanceof ICConfigurationDescription){
+			if (fData instanceof ICConfigurationDescription) {
 				IWorkspace wsp = ResourcesPlugin.getWorkspace();
-				if(wsp != null)
-					return new DefaultVariableContextInfo(
-							CONTEXT_WORKSPACE,
-							wsp);
+				if (wsp != null)
+					return new DefaultVariableContextInfo(CONTEXT_WORKSPACE, wsp);
 			}
 			break;
 		case CONTEXT_WORKSPACE:
-			if(fData instanceof IWorkspace){
-				return new DefaultVariableContextInfo(
-						CONTEXT_INSTALLATIONS,
-						null);
+			if (fData instanceof IWorkspace) {
+				return new DefaultVariableContextInfo(CONTEXT_INSTALLATIONS, null);
 			}
 			break;
 		case CONTEXT_INSTALLATIONS:
-			if(fData == null){
-				return new DefaultVariableContextInfo(
-						CONTEXT_ECLIPSEENV,
-						null);
+			if (fData == null) {
+				return new DefaultVariableContextInfo(CONTEXT_ECLIPSEENV, null);
 			}
 			break;
 		case CONTEXT_ECLIPSEENV:
-			if(fData == null){
+			if (fData == null) {
 				return null;
 			}
 			break;

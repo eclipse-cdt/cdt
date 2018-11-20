@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -23,7 +23,7 @@ public interface ISkippedIndexedFilesListener {
 
 	/**
 	 * Notifies the listeners that an include file has been skipped.
-	 * @param offset offset at which the file is included (see {@link ASTNode#getOffset()} 
+	 * @param offset offset at which the file is included (see {@link ASTNode#getOffset()}
 	 * @param fileContent information about the skipped file.
 	 */
 	void skippedFile(int offset, InternalFileContent fileContent);

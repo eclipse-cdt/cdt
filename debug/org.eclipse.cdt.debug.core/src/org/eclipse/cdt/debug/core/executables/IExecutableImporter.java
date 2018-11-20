@@ -29,13 +29,13 @@ public interface IExecutableImporter {
 	 * @since 6.0
 	 */
 	public static final int HIGH_PRIORITY = 75;
-	
+
 	/**
 	 * Gets the priority to be used when importing these executables.
 	 * The priority is used by the Executables Manager when multiple IExecutableImporters are available.
-	 * IExecutableImporter.importExecutables will be called for each one in priority order and will 
+	 * IExecutableImporter.importExecutables will be called for each one in priority order and will
 	 * stop with the first one that returns TRUE.
-	 * 
+	 *
 	 * @param executable
 	 * @return the priority level to be used for this ISourceFilesProvider
 	 * @since 6.0

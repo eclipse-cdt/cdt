@@ -22,7 +22,7 @@ import com.ibm.icu.text.MessageFormat;
  * @noreference This class is not intended to be referenced by clients.
  */
 public class CoreModelMessages {
-	private static final String RESOURCE_BUNDLE= "org.eclipse.cdt.internal.core.model.CoreModelMessages"; //$NON-NLS-1$
+	private static final String RESOURCE_BUNDLE = "org.eclipse.cdt.internal.core.model.CoreModelMessages"; //$NON-NLS-1$
 	private static ResourceBundle fgResourceBundle;
 	static {
 		try {
@@ -31,10 +31,10 @@ public class CoreModelMessages {
 			fgResourceBundle = null;
 		}
 	}
-	
+
 	private CoreModelMessages() {
 	}
-		
+
 	public static String getString(String key) {
 		try {
 			return fgResourceBundle.getString(key);
@@ -47,7 +47,7 @@ public class CoreModelMessages {
 
 	/**
 	 * Returns a string from the resource bundle and formats it with the argument
-	 * 
+	 *
 	 * @param key the string used to get the bundle value, must not be {@code null}
 	 */
 	public static String getFormattedString(String key) {
@@ -56,7 +56,7 @@ public class CoreModelMessages {
 
 	/**
 	 * Returns a string from the resource bundle and formats it with the argument
-	 * 
+	 *
 	 * @param key the string used to get the bundle value, must not be {@code null}
 	 */
 	public static String getFormattedString(String key, Object arg) {
@@ -65,7 +65,7 @@ public class CoreModelMessages {
 
 	/**
 	 * Returns a string from the resource bundle and formats it with arguments
-	 */	
+	 */
 	public static String getFormattedString(String key, Object[] args) {
 		return MessageFormat.format(getString(key), args);
 	}

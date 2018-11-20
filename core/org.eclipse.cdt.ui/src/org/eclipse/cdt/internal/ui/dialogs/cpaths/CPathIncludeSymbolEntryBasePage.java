@@ -24,14 +24,15 @@ import org.eclipse.cdt.core.model.ICElement;
  */
 public abstract class CPathIncludeSymbolEntryBasePage extends CPathBasePage {
 
-    public CPathIncludeSymbolEntryBasePage(String title) {
-        super(title);
-    }
+	public CPathIncludeSymbolEntryBasePage(String title) {
+		super(title);
+	}
 
-    public CPathIncludeSymbolEntryBasePage(String title, ImageDescriptor image) {
-        super(title, image);
-    }
+	public CPathIncludeSymbolEntryBasePage(String title, ImageDescriptor image) {
+		super(title, image);
+	}
 
-    public abstract void init(ICElement cElement, List<CPElement> cPaths);
-    public abstract List<CPElement> getCPaths();
+	public abstract void init(ICElement cElement, List<CPElement> cPaths);
+
+	public abstract List<CPElement> getCPaths();
 }

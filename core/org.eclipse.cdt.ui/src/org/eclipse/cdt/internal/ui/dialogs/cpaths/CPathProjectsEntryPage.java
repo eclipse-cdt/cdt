@@ -43,7 +43,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 /**
  * Projects tab for C/C++ Project Paths page for 3.X projects.
- * 
+ *
  * @deprecated as of CDT 4.0. This tab was used for property pages
  * for 3.X style projects.
  */
@@ -55,16 +55,16 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	private ListDialogField<CPElement> fCPathList;
 
 	public CPathProjectsEntryPage(ListDialogField<CPElement> cPathList) {
-		super(CPathEntryMessages.ProjectsEntryPage_title); 
-		setDescription(CPathEntryMessages.ProjectsEntryPage_description); 
+		super(CPathEntryMessages.ProjectsEntryPage_title);
+		setDescription(CPathEntryMessages.ProjectsEntryPage_description);
 		ProjectsListListener listener = new ProjectsListListener();
 
-		String[] buttonLabels = new String[] { CPathEntryMessages.ProjectsEntryPage_projects_checkall_button, 
-		CPathEntryMessages.ProjectsEntryWorkbookPage_projects_uncheckall_button}; 
+		String[] buttonLabels = new String[] { CPathEntryMessages.ProjectsEntryPage_projects_checkall_button,
+				CPathEntryMessages.ProjectsEntryWorkbookPage_projects_uncheckall_button };
 
 		fProjectsList = new CheckedListDialogField<CPElement>(null, buttonLabels, new CPElementLabelProvider());
 		fProjectsList.setDialogFieldListener(listener);
-		fProjectsList.setLabelText(CPathEntryMessages.ProjectsEntryPage_projects_label); 
+		fProjectsList.setLabelText(CPathEntryMessages.ProjectsEntryPage_projects_label);
 		fProjectsList.setCheckAllButtonIndex(0);
 		fProjectsList.setUncheckAllButtonIndex(1);
 
@@ -79,7 +79,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -88,7 +88,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	@Override
@@ -97,7 +97,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -108,13 +108,14 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 
 		setControl(composite);
 
-		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fProjectsList}, true);
+		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fProjectsList }, true);
 		LayoutUtil.setHorizontalGrabbing(fProjectsList.getListControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
 		fProjectsList.setButtonsMinWidth(buttonBarWidth);
-		
-		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_PATHS_PROJECTS);
+
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite,
+				ICHelpContextIds.PROJECT_PATHS_PROJECTS);
 	}
 
 	private class ProjectsListListener implements IDialogFieldListener {
@@ -141,11 +142,11 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 		final List<CPElement> checkedProjects = new ArrayList<CPElement>();
 		try {
 			ICProject[] cprojects = cmodel.getCProjects();
-			
+
 			// a vector remembering all projects that dont have to be added anymore
 			List<IResource> existingProjects = new ArrayList<IResource>(cprojects.length);
 			existingProjects.add(currCProject.getProject());
-			
+
 			// add the projects-cpentries that are already on the C Path
 			List<CPElement> cpelements = fCPathList.getElements();
 			for (int i = cpelements.size() - 1; i >= 0; i--) {
@@ -156,7 +157,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 					checkedProjects.add(cpelem);
 				}
 			}
-			
+
 			for (ICProject cproject : cprojects) {
 				IProject proj = cproject.getProject();
 				if (!existingProjects.contains(proj)) {
@@ -212,7 +213,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathBasePage#isEntryKind(int)
 	 */
 	@Override

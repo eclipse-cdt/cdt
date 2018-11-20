@@ -24,7 +24,7 @@ import java.util.Map;
 
 /**
  * Useful utility methods for dealing with Collections.
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class CollectionUtils {
@@ -37,21 +37,23 @@ public final class CollectionUtils {
 	 * Returns an iterator that iterates backwards over the given list.
 	 * The remove() method is not implemented and will throw UnsupportedOperationException.
 	 * The returned iterator does not support the remove() method.
-	 * 
+	 *
 	 * @throws NullPointerException if list is {@code null}
 	 */
 	public static <T> Iterator<T> reverseIterator(final List<T> list) {
-		return new Iterator<T>() {	
+		return new Iterator<T>() {
 			ListIterator<T> iterator = list.listIterator(list.size());
-			
+
 			@Override
 			public boolean hasNext() {
 				return iterator.hasPrevious();
 			}
+
 			@Override
 			public T next() {
 				return iterator.previous();
 			}
+
 			@Override
 			public void remove() {
 				throw new UnsupportedOperationException("remove() not supported"); //$NON-NLS-1$
@@ -61,13 +63,13 @@ public final class CollectionUtils {
 
 	/**
 	 * Allows a foreach loop to iterate backwards over a list from the end to the start.
-	 * 
+	 *
 	 * <p>
 	 * Example use:
 	 * <pre>
 	 *     for (Object o : reverseIterable(list)) { ... }
 	 * </pre>
-	 * 
+	 *
 	 * @throws NullPointerException if list is null
 	 */
 	public static <T> Iterable<T> reverseIterable(final List<T> list) {
@@ -76,21 +78,21 @@ public final class CollectionUtils {
 
 	/**
 	 * Creates an Iterable instance that just returns the given Iterator from its iterator() method.
-	 * 
+	 *
 	 * This is useful for using an iterator in a foreach loop directly.
-	 * 
+	 *
 	 * <p>
 	 * Example use:
 	 * <pre>
 	 *     for (Object o : iterable(iterator)) { ... }
 	 * </pre>
-	 * 
+	 *
 	 * @throws NullPointerException if list is {@code null}
 	 */
 	public static <T> Iterable<T> iterable(final Iterator<T> iter) {
 		if (iter == null)
 			throw new NullPointerException("iter parameter is null"); //$NON-NLS-1$
-			
+
 		return new Iterable<T>() {
 			@Override
 			public Iterator<T> iterator() {
@@ -100,11 +102,11 @@ public final class CollectionUtils {
 	}
 
 	/**
-	 * Finds the first object in the heterogeneous list that is an instance of 
+	 * Finds the first object in the heterogeneous list that is an instance of
 	 * the given class, removes it from the list, and returns it.
 	 * If there is not object in the list of the given type the list is left
 	 * unmodified and null is returned.
-	 * 
+	 *
 	 * @throws NullPointerException if list or clazz is null
 	 * @throws UnsupportedOperationException if the list's Iterator does not support the remove()
 	 *     method
@@ -155,9 +157,9 @@ public final class CollectionUtils {
 		}
 		return result;
 	}
-	
-    /**
-     * Filter the elements of a collection down to just the ones that match the given predicate.
+
+	/**
+	 * Filter the elements of a collection down to just the ones that match the given predicate.
 	 * @since 5.6
 	 */
 	public static <T> Collection<T> filter(Collection<T> collection, IUnaryPredicate<T> predicate) {
@@ -182,5 +184,5 @@ public final class CollectionUtils {
 			}
 		}
 		return result == null ? collection : result;
-    }
+	}
 }

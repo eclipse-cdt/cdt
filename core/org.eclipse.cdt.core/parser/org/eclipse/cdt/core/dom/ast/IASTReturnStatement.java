@@ -24,7 +24,7 @@ public interface IASTReturnStatement extends IASTStatement {
 
 	/**
 	 * This is the optional return value for this function.
-	 * 
+	 *
 	 * @return the return expression or {@code null}.
 	 */
 	public IASTExpression getReturnValue();

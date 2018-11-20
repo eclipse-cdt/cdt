@@ -26,28 +26,25 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
  * Action used for the include browser forward / backward buttons
  */
 public class CHHistoryAction extends Action {
-	final static long LABEL_OPTIONS= 
-			CElementLabels.M_PARAMETER_TYPES | 
-			CElementLabels.ALL_FULLY_QUALIFIED |
-			CElementLabels.TEMPLATE_ARGUMENTS |
-			CElementLabels.MF_POST_FILE_QUALIFIED;
+	final static long LABEL_OPTIONS = CElementLabels.M_PARAMETER_TYPES | CElementLabels.ALL_FULLY_QUALIFIED
+			| CElementLabels.TEMPLATE_ARGUMENTS | CElementLabels.MF_POST_FILE_QUALIFIED;
 
 	private CHViewPart fViewPart;
 	private ICElement fElement;
 
 	public CHHistoryAction(CHViewPart viewPart, ICElement element) {
-        super("", AS_RADIO_BUTTON); //$NON-NLS-1$
-		fViewPart= viewPart;
-		fElement= element;		
-	
-		String elementName= CElementLabels.getElementLabel(element, LABEL_OPTIONS);
+		super("", AS_RADIO_BUTTON); //$NON-NLS-1$
+		fViewPart = viewPart;
+		fElement = element;
+
+		String elementName = CElementLabels.getElementLabel(element, LABEL_OPTIONS);
 		setText(elementName);
 		setImageDescriptor(getImageDescriptor(element));
 	}
 
 	private ImageDescriptor getImageDescriptor(ICElement elem) {
-		CElementImageProvider imageProvider= new CElementImageProvider();
-		ImageDescriptor desc= imageProvider.getBaseImageDescriptor(elem, 0);
+		CElementImageProvider imageProvider = new CElementImageProvider();
+		ImageDescriptor desc = imageProvider.getBaseImageDescriptor(elem, 0);
 		imageProvider.dispose();
 		return desc;
 	}
@@ -55,5 +52,5 @@ public class CHHistoryAction extends Action {
 	@Override
 	public void run() {
 		fViewPart.setInput(fElement);
-	}	
+	}
 }

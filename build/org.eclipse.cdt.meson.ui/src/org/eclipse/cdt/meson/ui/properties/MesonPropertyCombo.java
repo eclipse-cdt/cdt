@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - initial implementation
  *******************************************************************************/
@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class MesonPropertyCombo implements IMesonPropertyPageControl {
-	
+
 	private String name;
 	private String initialValue;
 	private Combo combo;
-	
+
 	public MesonPropertyCombo(Composite composite, String name, String[] values, String initialValue, String tooltip) {
 		this.name = name;
 		this.initialValue = initialValue;
@@ -39,7 +39,6 @@ public class MesonPropertyCombo implements IMesonPropertyPageControl {
 		combo.setText(initialValue);
 		combo.setToolTipText(tooltip);
 	}
-
 
 	@Override
 	public String getFieldValue() {
@@ -60,7 +59,7 @@ public class MesonPropertyCombo implements IMesonPropertyPageControl {
 	public boolean isValid() {
 		return true;
 	}
-	
+
 	@Override
 	public String getErrorMessage() {
 		return null;

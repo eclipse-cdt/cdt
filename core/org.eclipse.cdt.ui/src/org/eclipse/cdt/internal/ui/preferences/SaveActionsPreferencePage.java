@@ -52,20 +52,17 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
 
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
-				FORMAT_SOURCE_CODE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, FORMAT_SOURCE_CODE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				FORMAT_SOURCE_CODE_LIMIT_TO_EDITED_LINES));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
-				REMOVE_TRAILING_WHITESPACE));
+		overlayKeys
+				.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, REMOVE_TRAILING_WHITESPACE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
-				ENSURE_NEWLINE_AT_EOF));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
-				ALIGN_ALL_CONST));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ENSURE_NEWLINE_AT_EOF));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ALIGN_ALL_CONST));
 
-        OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
+		OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
 		return keys;
 	}
@@ -73,8 +70,7 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
-				ICHelpContextIds.SAVE_ACTIONS_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.SAVE_ACTIONS_PREFERENCE_PAGE);
 	}
 
 	/**
@@ -92,17 +88,15 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 	}
 
 	private Control createConfigurationBlock(Composite parent) {
-		Composite composite= ControlFactory.createComposite(parent, 1);
+		Composite composite = ControlFactory.createComposite(parent, 1);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		Button checkboxFormat = addCheckBox(composite,
-				PreferencesMessages.SaveActionsPreferencePage_formatSourceCode, FORMAT_SOURCE_CODE, 0);
+		Button checkboxFormat = addCheckBox(composite, PreferencesMessages.SaveActionsPreferencePage_formatSourceCode,
+				FORMAT_SOURCE_CODE, 0);
 		Composite group = createRadioContainer(composite);
-		fRadioFormatAllLines = addRadioButton(group,
-				PreferencesMessages.SaveActionsPreferencePage_formatAllLines,
-				null, 0);
-		fRadioFormatEditedLines = addRadioButton(group,
-				PreferencesMessages.SaveActionsPreferencePage_formatEditedLines,
+		fRadioFormatAllLines = addRadioButton(group, PreferencesMessages.SaveActionsPreferencePage_formatAllLines, null,
+				0);
+		fRadioFormatEditedLines = addRadioButton(group, PreferencesMessages.SaveActionsPreferencePage_formatEditedLines,
 				REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES, 0);
 		createDependency(checkboxFormat, FORMAT_SOURCE_CODE, fRadioFormatAllLines);
 		createDependency(checkboxFormat, FORMAT_SOURCE_CODE, fRadioFormatEditedLines);
@@ -110,29 +104,23 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 		ControlFactory.createEmptySpace(composite, 1);
 
 		Button checkboxTrailingWhitespace = addCheckBox(composite,
-				PreferencesMessages.SaveActionsPreferencePage_removeTrailingWhitespace,
-				REMOVE_TRAILING_WHITESPACE, 0);
+				PreferencesMessages.SaveActionsPreferencePage_removeTrailingWhitespace, REMOVE_TRAILING_WHITESPACE, 0);
 		group = createRadioContainer(composite);
 		fRadioTrailingWhitespaceAllLines = addRadioButton(group,
-				PreferencesMessages.SaveActionsPreferencePage_inAllLines,
-				null, 0);
+				PreferencesMessages.SaveActionsPreferencePage_inAllLines, null, 0);
 		fRadioTrailingWhitespaceEditedLines = addRadioButton(group,
 				PreferencesMessages.SaveActionsPreferencePage_inEditedLines,
 				REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES, 0);
-		createDependency(checkboxTrailingWhitespace, REMOVE_TRAILING_WHITESPACE,
-				fRadioTrailingWhitespaceAllLines);
-		createDependency(checkboxTrailingWhitespace, REMOVE_TRAILING_WHITESPACE,
-				fRadioTrailingWhitespaceEditedLines);
+		createDependency(checkboxTrailingWhitespace, REMOVE_TRAILING_WHITESPACE, fRadioTrailingWhitespaceAllLines);
+		createDependency(checkboxTrailingWhitespace, REMOVE_TRAILING_WHITESPACE, fRadioTrailingWhitespaceEditedLines);
 
 		ControlFactory.createEmptySpace(composite, 1);
 
-		addCheckBox(composite, PreferencesMessages.SaveActionsPreferencePage_ensureNewline,
-				ENSURE_NEWLINE_AT_EOF, 0);
+		addCheckBox(composite, PreferencesMessages.SaveActionsPreferencePage_ensureNewline, ENSURE_NEWLINE_AT_EOF, 0);
 
 		ControlFactory.createEmptySpace(composite, 1);
 
-		addCheckBox(composite, PreferencesMessages.SaveActionsPreferencePage_alignConst,
-				ALIGN_ALL_CONST, 0);
+		addCheckBox(composite, PreferencesMessages.SaveActionsPreferencePage_alignConst, ALIGN_ALL_CONST, 0);
 
 		return composite;
 	}

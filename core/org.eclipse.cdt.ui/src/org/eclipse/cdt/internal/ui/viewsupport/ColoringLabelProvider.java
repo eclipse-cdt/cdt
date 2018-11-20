@@ -27,14 +27,17 @@ import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.jface.viewers.StyledString.Styler;
 
 public class ColoringLabelProvider extends DecoratingStyledCellLabelProvider implements ILabelProvider {
-	public static final Styler HIGHLIGHT_STYLE= StyledString.createColorRegistryStyler(null, ColoredViewersManager.HIGHLIGHT_BG_COLOR_NAME);
-	public static final Styler HIGHLIGHT_WRITE_STYLE= StyledString.createColorRegistryStyler(null, ColoredViewersManager.HIGHLIGHT_WRITE_BG_COLOR_NAME);
-	
+	public static final Styler HIGHLIGHT_STYLE = StyledString.createColorRegistryStyler(null,
+			ColoredViewersManager.HIGHLIGHT_BG_COLOR_NAME);
+	public static final Styler HIGHLIGHT_WRITE_STYLE = StyledString.createColorRegistryStyler(null,
+			ColoredViewersManager.HIGHLIGHT_WRITE_BG_COLOR_NAME);
+
 	public ColoringLabelProvider(IStyledLabelProvider labelProvider) {
 		this(labelProvider, null, null);
 	}
-	
-	public ColoringLabelProvider(IStyledLabelProvider labelProvider, ILabelDecorator decorator, IDecorationContext decorationContext) {
+
+	public ColoringLabelProvider(IStyledLabelProvider labelProvider, ILabelDecorator decorator,
+			IDecorationContext decorationContext) {
 		super(labelProvider, decorator, decorationContext);
 	}
 
@@ -42,23 +45,23 @@ public class ColoringLabelProvider extends DecoratingStyledCellLabelProvider imp
 	public void initialize(ColumnViewer viewer, ViewerColumn column) {
 		ColoredViewersManager.install(this);
 		setOwnerDrawEnabled(ColoredViewersManager.showColoredLabels());
-		
+
 		super.initialize(viewer, column);
 	}
-		
+
 	@Override
 	public void dispose() {
 		super.dispose();
 		ColoredViewersManager.uninstall(this);
 	}
-	
+
 	public void refresh() {
-		ColumnViewer viewer= getViewer();
-		
+		ColumnViewer viewer = getViewer();
+
 		if (viewer == null) {
 			return;
 		}
-		boolean showColoredLabels= ColoredViewersManager.showColoredLabels();
+		boolean showColoredLabels = ColoredViewersManager.showColoredLabels();
 		if (showColoredLabels != isOwnerDrawEnabled()) {
 			setOwnerDrawEnabled(showColoredLabels);
 			viewer.refresh();
@@ -66,32 +69,32 @@ public class ColoringLabelProvider extends DecoratingStyledCellLabelProvider imp
 			viewer.refresh();
 		}
 	}
-	
+
 	@Override
 	protected StyleRange prepareStyleRange(StyleRange styleRange, boolean applyColors) {
 		if (!applyColors && styleRange.background != null) {
-			styleRange= super.prepareStyleRange(styleRange, applyColors);
-			styleRange.borderStyle= SWT.BORDER_DOT;
+			styleRange = super.prepareStyleRange(styleRange, applyColors);
+			styleRange.borderStyle = SWT.BORDER_DOT;
 			return styleRange;
 		}
 		return super.prepareStyleRange(styleRange, applyColors);
 	}
-	
+
 	@Override
 	public String getText(Object element) {
 		return getStyledText(element).getString();
 	}
 
 	public static StyledString decorateStyledString(StyledString string, String decorated, Styler color) {
-		String label= string.getString();
-		int originalStart= decorated.indexOf(label);
+		String label = string.getString();
+		int originalStart = decorated.indexOf(label);
 		if (originalStart == -1) {
 			return new StyledString(decorated); // the decorator did something wild
 		}
 		if (originalStart > 0) {
-			StyledString newString= new StyledString(decorated.substring(0, originalStart), color);
+			StyledString newString = new StyledString(decorated.substring(0, originalStart), color);
 			newString.append(string);
-			string= newString;
+			string = newString;
 		}
 		if (decorated.length() > originalStart + label.length()) { // decorator appended something
 			return string.append(decorated.substring(originalStart + label.length()), color);

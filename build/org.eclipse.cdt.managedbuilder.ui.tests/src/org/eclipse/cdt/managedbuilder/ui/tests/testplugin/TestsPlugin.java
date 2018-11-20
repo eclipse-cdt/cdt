@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Texas Instruments - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ public class TestsPlugin extends AbstractUIPlugin {
 	private static TestsPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -80,7 +80,8 @@ public class TestsPlugin extends AbstractUIPlugin {
 	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.managedbuilder.ui.tests.TestsPluginResources");
+				resourceBundle = ResourceBundle
+						.getBundle("org.eclipse.cdt.managedbuilder.ui.tests.TestsPluginResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}

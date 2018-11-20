@@ -27,16 +27,16 @@ import org.osgi.util.tracker.ServiceTracker;
  * utility for troubleshooting race condition bugs. Each trace statement
  * contains the thread and the time (in millisecond granularity). The trace goes
  * to the file: {workspace}/.metadata/trace.log
- * 
+ *
  * <p>
  * For performance reasons, trace statements should explicitly check a trace
  * flag before calling into a DebugTrace method. E.g.,
- * 
+ *
  * <p>
  * <code>
  * if (Trace.DEBUG_EXECUTABLES) DebugTrace.getTrace.trace(null, ...);
  * </code>
- * 
+ *
  * <p>
  * The alternative is to have DebugTrace check the debug option for you (i.e.,
  * don't pass null for first param), but this incurs a relatively heavy price
@@ -44,12 +44,12 @@ import org.osgi.util.tracker.ServiceTracker;
  * asking DebugTrace to do the check is that is that it supports trace options
  * changing during the workbench lifetime. However that's an unlikely and
  * esoteric scenario.
- * 
+ *
  * <p>
  * This class is also a central location for trace flags. They are public static
  * fields, so checking them in trace statements is very efficient. They are set
  * at plugin startup.
- * 
+ *
  * <p>
  * DebugTrace objects are particular to a plugin. Plugins can reuse most of this
  * class definition. However, since it's all based on static methods and fields,
@@ -70,21 +70,36 @@ public class Trace {
 	 */
 	private static final DebugTrace NULL_TRACE = new DebugTrace() {
 		@Override
-		public void trace(String option, String message) {}
+		public void trace(String option, String message) {
+		}
+
 		@Override
-		public void trace(String option, String message, Throwable error) {}
+		public void trace(String option, String message, Throwable error) {
+		}
+
 		@Override
-		public void traceDumpStack(String option) {}
+		public void traceDumpStack(String option) {
+		}
+
 		@Override
-		public void traceEntry(String option) {}
+		public void traceEntry(String option) {
+		}
+
 		@Override
-		public void traceEntry(String option, Object methodArgument) {}
+		public void traceEntry(String option, Object methodArgument) {
+		}
+
 		@Override
-		public void traceEntry(String option, Object[] methodArguments) {}
+		public void traceEntry(String option, Object[] methodArguments) {
+		}
+
 		@Override
-		public void traceExit(String option) {}
+		public void traceExit(String option) {
+		}
+
 		@Override
-		public void traceExit(String option, Object result) {}
+		public void traceExit(String option, Object result) {
+		}
 	};
 
 	/** Should be called by plugin's  startup method() */
@@ -94,13 +109,14 @@ public class Trace {
 		String option = Platform.getDebugOption(CDebugCorePlugin.PLUGIN_ID + "/debug/executables"); //$NON-NLS-1$
 		DEBUG_EXECUTABLES = DEBUG && ((option != null) ? option.equalsIgnoreCase("true") : false); //$NON-NLS-1$
 	}
+
 	/** Singleton trace object */
 	private static DebugTrace trace;
 
 	/**
 	 * Gets the singleton trace object, or a null trace object if a real one
 	 * isn't available
-	 * 
+	 *
 	 * @return trace object; never null
 	 */
 	synchronized public static DebugTrace getTrace() {
@@ -111,15 +127,15 @@ public class Trace {
 				if (bundle != null) {
 					BundleContext context = bundle.getBundleContext();
 					if (context != null) {
-						ServiceTracker<DebugOptions, DebugOptions> tracker = new ServiceTracker<DebugOptions, DebugOptions>(context, DebugOptions.class.getName(), null);
+						ServiceTracker<DebugOptions, DebugOptions> tracker = new ServiceTracker<DebugOptions, DebugOptions>(
+								context, DebugOptions.class.getName(), null);
 						try {
 							tracker.open();
 							DebugOptions debugOptions = tracker.getService();
 							if (debugOptions != null) {
 								trace = debugOptions.newDebugTrace(bundle.getSymbolicName());
 							}
-						}
-						finally {
+						} finally {
 							tracker.close();
 						}
 					}

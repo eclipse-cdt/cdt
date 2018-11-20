@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * IBuildConfiguration to this interface will get you one of these. From here,
  * adapt to the specific interface that you need and the configuration will
  * provide one.
- * 
+ *
  * @since 6.0
  */
 public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
@@ -38,7 +38,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * It needs a real name for the name of the build directory, for example.
 	 */
 	public static final String DEFAULT_NAME = "default"; //$NON-NLS-1$
-	
+
 	/**
 	 * @since 6.4
 	 */
@@ -52,21 +52,21 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	/**
 	 * Returns the resources build configuration that this CDT build configuration
 	 * is associated with.
-	 * 
+	 *
 	 * @return resources build configuration
 	 */
 	IBuildConfiguration getBuildConfiguration() throws CoreException;
 
 	/**
 	 * Build Configurations are configurations for a given toolchain.
-	 * 
+	 *
 	 * @return the toolchain for this build configuration
 	 */
 	IToolChain getToolChain() throws CoreException;
-	
+
 	/**
 	 * Return the launch mode associated with this build configuration.
-	 * 
+	 *
 	 * @since 6.4
 	 */
 	default String getLaunchMode() {
@@ -76,7 +76,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	/**
 	 * Ids for the Binary Parsers to use when checking whether a file is a
 	 * binary that can be launched.
-	 * 
+	 *
 	 * @return binary parser ids
 	 * @throws CoreException
 	 */
@@ -84,7 +84,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 
 	/**
 	 * Return a build environment variable with a given name.
-	 * 
+	 *
 	 * @param name
 	 *            build environment variable name
 	 * @return value of the build environment variable.
@@ -94,7 +94,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 
 	/**
 	 * Return all of the build environment variables for this configuration.
-	 * 
+	 *
 	 * @return environment variables
 	 * @throws CoreException
 	 */
@@ -102,7 +102,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 
 	/**
 	 * Perform the build.
-	 * 
+	 *
 	 * @param kind
 	 *            build type
 	 * @param args
@@ -115,11 +115,12 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 *         next time it is run or <code>null</code> if none
 	 * @throws CoreException
 	 */
-	IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor) throws CoreException;
+	IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor)
+			throws CoreException;
 
 	/**
 	 * Perform clean.
-	 * 
+	 *
 	 * @param console
 	 *            console to show clean output
 	 * @param monitor
@@ -127,10 +128,10 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * @throws CoreException
 	 */
 	void clean(IConsole console, IProgressMonitor monitor) throws CoreException;
-	
+
 	/**
 	 * The binaries produced by the build.
-	 * 
+	 *
 	 * @return binaries produced by the build.
 	 * @throws CoreException
 	 * @since 6.1
@@ -142,7 +143,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	/**
 	 * Set the environment for the builds. Generally the environment from a
 	 * ProcessBuilder would be passed here.
-	 * 
+	 *
 	 * @param env
 	 *            build environment
 	 * @since 6.1
@@ -153,7 +154,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	/**
 	 * Set the properties for this build configuration. These will often come
 	 * from launch configurations which have build settings as attributes.
-	 * 
+	 *
 	 * @param properties
 	 *            build properties
 	 * @return whether the properties have changed
@@ -165,7 +166,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 
 	/**
 	 * Return the properties for this build configuration.
-	 * 
+	 *
 	 * @return default properties
 	 * @since 6.2
 	 */
@@ -175,7 +176,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 
 	/**
 	 * Returns the default values for the properties.
-	 * 
+	 *
 	 * @since 6.2
 	 */
 	default Map<String, String> getDefaultProperties() {
@@ -184,7 +185,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 
 	/**
 	 * Set a property to the given value.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the property
 	 * @param the
@@ -199,7 +200,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 
 	/**
 	 * Remove the named property.
-	 * 
+	 *
 	 * @param name
 	 *            name of the property
 	 * @since 6.4
@@ -212,7 +213,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 
 	/**
 	 * Return the named property.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the property
 	 * @since 6.4
@@ -224,7 +225,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	/**
 	 * Returns whether this build configuration supports the given build
 	 * properties.
-	 * 
+	 *
 	 * @param properties
 	 *            build properties
 	 * @return whether this build configuration supports those properties

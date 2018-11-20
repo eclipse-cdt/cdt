@@ -10,12 +10,12 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- * Ken Ryall (Nokia) - Added support for AbsoluteSourceContainer(159833) 
+ * Ken Ryall (Nokia) - Added support for AbsoluteSourceContainer(159833)
  * Ken Ryall (Nokia) - Added support for CSourceNotFoundElement (167305)
  * Ken Ryall (Nokia) - Option to open disassembly view when no source (81353)
  * James Blackburn (Broadcom Corp.) - Linked Resources / Nested Projects (247948)
 *******************************************************************************/
-package org.eclipse.cdt.debug.internal.core.sourcelookup; 
+package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.File;
 import java.util.Collections;
@@ -31,7 +31,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
- 
+
 /**
  * A source lookup participant that searches for C/C++ source code.
  */
@@ -43,11 +43,11 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	private static final NoSourceElement gfNoSource = new NoSourceElement();
 
 	private ListenerList fListeners;
-	
+
 	private Map<Object, Object[]> fCachedResults = Collections.synchronizedMap(new HashMap<Object, Object[]>());
 
-	/** 
-	 * Constructor for CSourceLookupParticipant. 
+	/**
+	 * Constructor for CSourceLookupParticipant.
 	 */
 	public CSourceLookupParticipant() {
 		super();
@@ -60,7 +60,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	@Override
 	public String getSourceName(Object object) throws CoreException {
 		if (object instanceof String) {
-			return (String)object;
+			return (String) object;
 		}
 		return null;
 	}
@@ -74,12 +74,12 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 		Object[] results = fCachedResults.get(object);
 		if (results != null)
 			return results;
-		
-		// Workaround for cases when the stack frame doesn't contain the source file name 
+
+		// Workaround for cases when the stack frame doesn't contain the source file name
 		String name = null;
 		IBreakpoint breakpoint = null;
 		if (object instanceof String) {
-			name = (String)object;
+			name = (String) object;
 		}
 
 		// Actually query the source containers for the requested resource
@@ -91,7 +91,8 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 			if (new File(name).exists()) {
 				foundElements = new AbsolutePathSourceContainer().findSourceElements(name);
 			} else {
-				foundElements = new Object[] { new CSourceNotFoundElement((IDebugElement) object, ((IDebugElement) object).getLaunch().getLaunchConfiguration(), name) };
+				foundElements = new Object[] { new CSourceNotFoundElement((IDebugElement) object,
+						((IDebugElement) object).getLaunch().getLaunchConfiguration(), name) };
 			}
 		}
 
@@ -109,7 +110,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 				}
 			}
 		}
-		fCachedResults.put(object, foundElements); 
+		fCachedResults.put(object, foundElements);
 		return foundElements;
 	}
 
@@ -137,10 +138,10 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	public void sourceContainersChanged(ISourceLookupDirector director) {
 		// clear the cache
 		fCachedResults.clear();
-		
+
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; ++i)
-			((ISourceLookupChangeListener)listeners[i]).sourceContainersChanged(director);
+			((ISourceLookupChangeListener) listeners[i]).sourceContainersChanged(director);
 		super.sourceContainersChanged(director);
 	}
 }

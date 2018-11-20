@@ -19,25 +19,25 @@ public abstract class DbgUtilBase {
 	protected int fFlags = ~0;
 	protected PrintStream fOut = System.out;
 	protected boolean fDbgOn;
-	
-	public void traceln(int flags, String str){
-		if(dbgOn(flags))
+
+	public void traceln(int flags, String str) {
+		if (dbgOn(flags))
 			doTraceln(str);
 	}
-	
-	protected void doTraceln(String str){
+
+	protected void doTraceln(String str) {
 		fOut.println(str);
 	}
 
-	protected boolean dbgOn(int flags){
-		return fDbgOn && checkFlags(flags); 
+	protected boolean dbgOn(int flags) {
+		return fDbgOn && checkFlags(flags);
 	}
 
-	protected boolean checkFlags(int check){
+	protected boolean checkFlags(int check) {
 		return checkFlags(fFlags, check);
 	}
 
-	protected static boolean checkFlags(int flags, int check){
+	protected static boolean checkFlags(int flags, int check) {
 		return (flags & check) == check;
 	}
 }

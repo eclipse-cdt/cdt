@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
@@ -27,10 +27,10 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
 
 /**
- * The NodeCommentMap is the map where all the comments are assigned to a node. For better 
- * performance the comments are stored in three different maps which have the same name as 
+ * The NodeCommentMap is the map where all the comments are assigned to a node. For better
+ * performance the comments are stored in three different maps which have the same name as
  * the relative position of the comment.
- * 
+ *
  * @author Guido Zgraggen IFS
  */
 public class NodeCommentMap {
@@ -38,7 +38,7 @@ public class NodeCommentMap {
 	protected final Map<IASTNode, List<IASTComment>> trailingMap = new HashMap<IASTNode, List<IASTComment>>();
 	protected final Map<IASTNode, List<IASTComment>> freestandingMap = new HashMap<IASTNode, List<IASTComment>>();
 	protected final List<IASTTranslationUnit> coveredUnits = new ArrayList<IASTTranslationUnit>();
-	
+
 	/**
 	 * Add a comment to the map with the trailing comments.
 	 * @param node The node is the key.
@@ -52,9 +52,9 @@ public class NodeCommentMap {
 		comments.add(comment);
 		trailingMap.put(node, comments);
 	}
-	
+
 	/**
-	 * Returns a List for the given node. This List contains all the comments 
+	 * Returns a List for the given node. This List contains all the comments
 	 * which are assigned to this specific node. If no comments are available an empty
 	 * List is returned.
 	 * @param node The key to fetch the associated comments.
@@ -64,7 +64,7 @@ public class NodeCommentMap {
 		List<IASTComment> list = trailingMap.get(node);
 		return list != null ? list : new ArrayList<IASTComment>();
 	}
-	
+
 	/**
 	 * Add a comment to the map with the leading comments.
 	 * @param node The node is the key.
@@ -78,9 +78,9 @@ public class NodeCommentMap {
 		comments.add(comment);
 		leadingMap.put(node, comments);
 	}
-	
+
 	/**
-	 * Returns a List for the given node. This List contains all the comments 
+	 * Returns a List for the given node. This List contains all the comments
 	 * which are assigned to this specific node. If no comments are available an empty
 	 * List is returned.
 	 * @param node The key to fetch the associated comments.
@@ -90,7 +90,7 @@ public class NodeCommentMap {
 		List<IASTComment> list = leadingMap.get(node);
 		return list != null ? list : new ArrayList<IASTComment>();
 	}
-	
+
 	/**
 	 * Add a comment to the map with the freestanding comments.
 	 * @param node The node is the key.
@@ -104,9 +104,9 @@ public class NodeCommentMap {
 		comments.add(comment);
 		freestandingMap.put(node, comments);
 	}
-	
+
 	/**
-	 * Returns a List for the given node. This List contains all the comments 
+	 * Returns a List for the given node. This List contains all the comments
 	 * which are assigned to this specific node. If no comments are available an empty
 	 * List is returned.
 	 * @param node The key to fetch the associated comments.
@@ -142,7 +142,7 @@ public class NodeCommentMap {
 	}
 
 	/**
-	 * Returns an List for the given node. This List contains all the comments 
+	 * Returns an List for the given node. This List contains all the comments
 	 * which are assigned to this specific node. If no comments are available an empty
 	 * List is returned.
 	 * @param node The key to fetch the associated comments.

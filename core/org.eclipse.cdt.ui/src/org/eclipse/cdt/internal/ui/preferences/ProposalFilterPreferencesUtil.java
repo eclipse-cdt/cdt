@@ -47,8 +47,8 @@ public class ProposalFilterPreferencesUtil {
 	public static String[] getProposalFilterNames() {
 		ArrayList<String> names = new ArrayList<String>();
 		try {
-			IExtensionPoint point = Platform.getExtensionRegistry()
-					.getExtensionPoint(CUIPlugin.PLUGIN_ID, "ProposalFilter"); //$NON-NLS-1$
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
+					"ProposalFilter"); //$NON-NLS-1$
 			if (point != null) {
 				IExtension[] extensions = point.getExtensions();
 				for (IExtension extension : extensions) {
@@ -73,7 +73,7 @@ public class ProposalFilterPreferencesUtil {
 	}
 
 	/**
-	 * Look up all contributed completion proposal filters 
+	 * Look up all contributed completion proposal filters
 	 * and return their names as a semicolon-separated list
 	 * plus a leading entry for the selected index 0,
 	 * plus a leading <default> entry. <br>
@@ -92,30 +92,27 @@ public class ProposalFilterPreferencesUtil {
 	}
 
 	/**
-	 * Return the configuration element which corresponds 
+	 * Return the configuration element which corresponds
 	 * to the human-readable filter name
 	 * @param filterName The human-readable filter name
 	 * @return The configuration element, or null if there is none
 	 */
 	public static IConfigurationElement getElementForName(String filterName) {
 		IConfigurationElement element = null;
-		IExtensionPoint point = Platform.getExtensionRegistry()
-				.getExtensionPoint(CUIPlugin.PLUGIN_ID, "ProposalFilter"); //$NON-NLS-1$
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
+				"ProposalFilter"); //$NON-NLS-1$
 		if (point != null) {
 			try {
 				IExtension[] extensions = point.getExtensions();
 				if (extensions.length >= 1) {
 					for (IExtension extension : extensions) {
-						IConfigurationElement[] elements = extension
-								.getConfigurationElements();
+						IConfigurationElement[] elements = extension.getConfigurationElements();
 
 						for (int j = 0; j < elements.length; ++j) {
 							IConfigurationElement testElement = elements[j];
 							if ("ProposalFilter".equals(testElement.getName())) { //$NON-NLS-1$
-								String testName = testElement
-										.getAttribute("name"); //$NON-NLS-1$
-								if ((null != testName)
-										&& (filterName.equals(testName))) {
+								String testName = testElement.getAttribute("name"); //$NON-NLS-1$
+								if ((null != testName) && (filterName.equals(testName))) {
 									element = testElement;
 									break;
 								}
@@ -137,7 +134,7 @@ public class ProposalFilterPreferencesUtil {
 	/**
 	 * The state of a Combo consists of the list of entries
 	 * and the index of the selected entry.
-	 * This method converts the state of the given Combo 
+	 * This method converts the state of the given Combo
 	 * to a string representation for storage in a preference store. <br>
 	 * The string contains a semicolon-separated list of entries.
 	 * The first entry is the index of the selected entry.
@@ -175,8 +172,7 @@ public class ProposalFilterPreferencesUtil {
 			if (endFirstEntry > 0) { // First entry must contain at least one character
 				String selectedString = text.substring(0, endFirstEntry);
 				int selectedIndex = Integer.parseInt(selectedString);
-				String[] entryList = text.substring(endFirstEntry + 1,
-						text.length()).split(";"); //$NON-NLS-1$
+				String[] entryList = text.substring(endFirstEntry + 1, text.length()).split(";"); //$NON-NLS-1$
 				combo.setItems(entryList);
 				combo.select(selectedIndex);
 			}
@@ -194,22 +190,20 @@ public class ProposalFilterPreferencesUtil {
 		public String[] items;
 	}
 
-	/** 
+	/**
 	 * Convenience method to extract the state of a Combo
 	 * from the state string stored e.g. in a preference store
 	 * @param comboPreference The state string
-	 * @return A ComboState instance. 
+	 * @return A ComboState instance.
 	 */
 	public static ComboState getComboState(String comboPreference) {
 		ComboState state = new ComboState();
 		try {
 			int endFirstEntry = comboPreference.indexOf(";"); //$NON-NLS-1$
 			if (endFirstEntry > 0) { // First entry must contain at least one character
-				String selectedString = comboPreference.substring(0,
-						endFirstEntry);
+				String selectedString = comboPreference.substring(0, endFirstEntry);
 				state.selectedIndex = Integer.parseInt(selectedString);
-				state.items = comboPreference.substring(endFirstEntry + 1,
-						comboPreference.length()).split(";"); //$NON-NLS-1$
+				state.items = comboPreference.substring(endFirstEntry + 1, comboPreference.length()).split(";"); //$NON-NLS-1$
 			}
 		} catch (NumberFormatException e) {
 			// If this fails we return an empty ComboState
@@ -226,10 +220,8 @@ public class ProposalFilterPreferencesUtil {
 	public static IConfigurationElement getPreferredFilterElement() {
 		IConfigurationElement preferredElement = null;
 		try {
-			IPreferenceStore store = CUIPlugin.getDefault()
-					.getPreferenceStore();
-			String filterComboStateString = store
-					.getString(ContentAssistPreference.PROPOSALS_FILTER);
+			IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+			String filterComboStateString = store.getString(ContentAssistPreference.PROPOSALS_FILTER);
 			ComboState state = getComboState(filterComboStateString);
 			preferredElement = getElementForName(state.items[state.selectedIndex]);
 		} catch (Exception e) {

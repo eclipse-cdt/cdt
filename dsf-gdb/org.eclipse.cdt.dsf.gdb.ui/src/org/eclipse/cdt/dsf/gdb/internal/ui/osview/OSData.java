@@ -29,10 +29,7 @@ import org.eclipse.swt.graphics.Image;
  * of specific class. Constructed from MI output. Once constructed,
  * this class is immutable.
  */
-class OSData
-extends LabelProvider
-implements ITableLabelProvider, IStructuredContentProvider
-{
+class OSData extends LabelProvider implements ITableLabelProvider, IStructuredContentProvider {
 	private IResourcesInformation data;
 	private boolean[] columnIsInteger;
 	private List<Integer> remap;
@@ -45,19 +42,18 @@ implements ITableLabelProvider, IStructuredContentProvider
 		for (int i = 0; i < data.getColumnNames().length; ++i)
 			remap.add(i);
 
-		if (resourceClass.equals("processes"))  //$NON-NLS-1$
-			sendToEnd("Command");  //$NON-NLS-1$
+		if (resourceClass.equals("processes")) //$NON-NLS-1$
+			sendToEnd("Command"); //$NON-NLS-1$
 
-		if (resourceClass.equals("threads"))  //$NON-NLS-1$
-			sendToEnd("Command");  //$NON-NLS-1$
+		if (resourceClass.equals("threads")) //$NON-NLS-1$
+			sendToEnd("Command"); //$NON-NLS-1$
 
-		if (resourceClass.equals("modules"))  //$NON-NLS-1$
-			sendToEnd("Dependencies");  //$NON-NLS-1$
+		if (resourceClass.equals("modules")) //$NON-NLS-1$
+			sendToEnd("Dependencies"); //$NON-NLS-1$
 	}
 
 	// Determine column types, for the purpose of proper sorting
-	private void determineColumnTypes()
-	{
+	private void determineColumnTypes() {
 		String[] columnNames = data.getColumnNames();
 		String[][] content = data.getContent();
 
@@ -67,22 +63,19 @@ implements ITableLabelProvider, IStructuredContentProvider
 		boolean[] columnHasOther = new boolean[columnNames.length];
 
 		for (int i = 0; i < content.length; ++i) {
-				for (int j = 0; j < content[i].length; ++j) {
-					if (!columnHasOther[j])
-					{
-						try {
-							Integer.parseInt(content[i][j]);
-							columnHasInteger[j] = true;
-						}
-						catch(NumberFormatException e) {
-							columnHasOther[j] = true;
-						}
-						catch(Throwable e) {
-							e.printStackTrace();
-						}
+			for (int j = 0; j < content[i].length; ++j) {
+				if (!columnHasOther[j]) {
+					try {
+						Integer.parseInt(content[i][j]);
+						columnHasInteger[j] = true;
+					} catch (NumberFormatException e) {
+						columnHasOther[j] = true;
+					} catch (Throwable e) {
+						e.printStackTrace();
 					}
-
 				}
+
+			}
 		}
 
 		for (int j = 0; j < data.getColumnNames().length; ++j) {
@@ -91,8 +84,7 @@ implements ITableLabelProvider, IStructuredContentProvider
 	}
 
 	/* Make column named 'column' appear last in UI. */
-	private void sendToEnd(String column)
-	{
+	private void sendToEnd(String column) {
 		// Find index in the remap array (which is equal to index in UI)
 		// at which column named 'column' is found.
 		int index = -1;
@@ -108,13 +100,11 @@ implements ITableLabelProvider, IStructuredContentProvider
 		remap.add(remap.remove(index));
 	}
 
-	public int getColumnCount()
-	{
+	public int getColumnCount() {
 		return remap.size();
 	}
 
-	public String getColumnName(int i)
-	{
+	public String getColumnName(int i) {
 		return data.getColumnNames()[remap.get(i)];
 	}
 
@@ -150,14 +140,15 @@ implements ITableLabelProvider, IStructuredContentProvider
 		// split into array of resource information for each raw
 		String[][] content = data.getContent();
 		IResourcesInformation[] split_ri = new IResourcesInformation[content.length];
-		for (int i = 0; i< content.length; ++i) {
+		for (int i = 0; i < content.length; ++i) {
 			final String[][] row_content = new String[1][content[i].length];
 			row_content[0] = content[i];
-			split_ri[i]=new IResourcesInformation() {
+			split_ri[i] = new IResourcesInformation() {
 				@Override
 				public String[] getColumnNames() {
 					return data.getColumnNames();
 				}
+
 				@Override
 				public String[][] getContent() {
 					return row_content;

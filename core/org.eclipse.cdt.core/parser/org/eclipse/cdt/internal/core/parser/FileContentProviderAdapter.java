@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
 import java.io.IOException;
@@ -35,10 +35,10 @@ public class FileContentProviderAdapter extends InternalFileContentProvider {
 	public static InternalFileContentProvider adapt(ICodeReaderFactory fileCreator) {
 		if (fileCreator == null)
 			return null;
-		
+
 		if (!(fileCreator instanceof AbstractCodeReaderFactory))
 			throw new IllegalArgumentException("Invalid code reader factory"); //$NON-NLS-1$
-		
+
 		if (fileCreator instanceof CodeReaderFactoryAdapter) {
 			return ((CodeReaderFactoryAdapter) fileCreator).getFileContentProvider();
 		}
@@ -46,9 +46,11 @@ public class FileContentProviderAdapter extends InternalFileContentProvider {
 	}
 
 	private AbstractCodeReaderFactory fDelegate;
+
 	private FileContentProviderAdapter(AbstractCodeReaderFactory factory) {
-		fDelegate= factory;
-		setIncludeResolutionHeuristics((IIncludeFileResolutionHeuristics) factory.getAdapter(IIncludeFileResolutionHeuristics.class));
+		fDelegate = factory;
+		setIncludeResolutionHeuristics(
+				(IIncludeFileResolutionHeuristics) factory.getAdapter(IIncludeFileResolutionHeuristics.class));
 	}
 
 	/**

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andrew Gvozdev (Quoin Inc.) - contributed to CDT from org.eclipse.core.tests.resources v20090320
@@ -165,7 +165,8 @@ public class MemoryTree {
 		}
 	}
 
-	static final int[] ALL_ATTRIBUTES = new int[] {EFS.ATTRIBUTE_ARCHIVE, EFS.ATTRIBUTE_EXECUTABLE, EFS.ATTRIBUTE_HIDDEN, EFS.ATTRIBUTE_READ_ONLY,};
+	static final int[] ALL_ATTRIBUTES = new int[] { EFS.ATTRIBUTE_ARCHIVE, EFS.ATTRIBUTE_EXECUTABLE,
+			EFS.ATTRIBUTE_HIDDEN, EFS.ATTRIBUTE_READ_ONLY, };
 
 	public static final MemoryTree TREE = new MemoryTree();
 
@@ -218,7 +219,7 @@ public class MemoryTree {
 
 	/**
 	 * Returns the node at the given path, or null if not found.
-	 * 
+	 *
 	 * @param path
 	 * @return
 	 */

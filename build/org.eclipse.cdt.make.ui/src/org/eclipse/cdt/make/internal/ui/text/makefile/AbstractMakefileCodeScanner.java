@@ -37,11 +37,11 @@ import org.eclipse.swt.graphics.RGB;
  */
 public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 
-	private Map<String, Token> fTokenMap= new HashMap<String, Token>();
+	private Map<String, Token> fTokenMap = new HashMap<String, Token>();
 	private String[] fPropertyNamesColor;
 	/**
 	 * Preference keys for boolean preferences which are <code>true</code>,
-	 * iff the corresponding token should be rendered bold. 
+	 * iff the corresponding token should be rendered bold.
 	 */
 	private String[] fPropertyNamesBold;
 	/**
@@ -49,42 +49,41 @@ public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 	 * iff the corresponding token should be rendered italic.
 	 */
 	private String[] fPropertyNamesItalic;
-	
 
-	/** 
+	/**
 	 * Returns the list of preference keys which define the tokens
 	 * used in the rules of this scanner.
 	 */
 	abstract protected String[] getTokenProperties();
-		
+
 	/**
 	 * Creates the list of rules controlling this scanner.
 	 */
 	abstract protected List<IRule> createRules();
-		
+
 	/**
 	 * Must be called after the constructor has been called.
 	 */
 	public final void initialize() {
-		
-		fPropertyNamesColor= getTokenProperties();
-		int length= fPropertyNamesColor.length;
-		fPropertyNamesBold= new String[length];
-		fPropertyNamesItalic= new String[length];
 
-		for (int i= 0; i < length; i++) {
-			fPropertyNamesBold[i]= fPropertyNamesColor[i] + MakefileEditorPreferenceConstants.EDITOR_BOLD_SUFFIX;
-			fPropertyNamesItalic[i]= fPropertyNamesColor[i] + MakefileEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX;
+		fPropertyNamesColor = getTokenProperties();
+		int length = fPropertyNamesColor.length;
+		fPropertyNamesBold = new String[length];
+		fPropertyNamesItalic = new String[length];
+
+		for (int i = 0; i < length; i++) {
+			fPropertyNamesBold[i] = fPropertyNamesColor[i] + MakefileEditorPreferenceConstants.EDITOR_BOLD_SUFFIX;
+			fPropertyNamesItalic[i] = fPropertyNamesColor[i] + MakefileEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX;
 			addToken(fPropertyNamesColor[i], fPropertyNamesBold[i], fPropertyNamesItalic[i]);
 		}
-		
+
 		initializeRules();
 	}
 
 	private void initializeRules() {
-		List<IRule> rules= createRules();
+		List<IRule> rules = createRules();
 		if (rules != null) {
-			IRule[] result= new IRule[rules.size()];
+			IRule[] result = new IRule[rules.size()];
 			rules.toArray(result);
 			setRules(result);
 		}
@@ -100,24 +99,25 @@ public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 
 	private int indexOf(String property) {
 		if (property != null) {
-			int length= fPropertyNamesColor.length;
-			for (int i= 0; i < length; i++) {
-				if (property.equals(fPropertyNamesColor[i]) || property.equals(fPropertyNamesBold[i]) || property.equals(fPropertyNamesItalic[i]))
+			int length = fPropertyNamesColor.length;
+			for (int i = 0; i < length; i++) {
+				if (property.equals(fPropertyNamesColor[i]) || property.equals(fPropertyNamesBold[i])
+						|| property.equals(fPropertyNamesItalic[i]))
 					return i;
 			}
 		}
 		return -1;
 	}
-	
+
 	public boolean affectsBehavior(PropertyChangeEvent event) {
 		return indexOf(event.getProperty()) >= 0;
 	}
-	
+
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
-		String p= event.getProperty();
-		int index= indexOf(p);
+		String p = event.getProperty();
+		int index = indexOf(p);
 		if (index >= 0) {
-			Token token= getToken(fPropertyNamesColor[index]);
+			Token token = getToken(fPropertyNamesColor[index]);
 			if (fPropertyNamesColor[index].equals(p))
 				adaptToColorChange(event, token);
 			else if (fPropertyNamesBold[index].equals(p))
@@ -128,49 +128,51 @@ public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 	}
 
 	protected void adaptToColorChange(PropertyChangeEvent event, Token token) {
-		RGB rgb= null;
-		Object value= event.getNewValue();
+		RGB rgb = null;
+		Object value = event.getNewValue();
 		if (value instanceof RGB) {
-			rgb= (RGB) value;
+			rgb = (RGB) value;
 		} else if (value instanceof String) {
-			rgb= StringConverter.asRGB((String) value);
+			rgb = StringConverter.asRGB((String) value);
 		}
-			
+
 		if (rgb != null) {
-			TextAttribute attr= (TextAttribute) token.getData();
-			token.setData(new TextAttribute(ColorManager.getDefault().getColor(rgb), attr.getBackground(), attr.getStyle()));
+			TextAttribute attr = (TextAttribute) token.getData();
+			token.setData(
+					new TextAttribute(ColorManager.getDefault().getColor(rgb), attr.getBackground(), attr.getStyle()));
 		}
 	}
 
 	protected void adaptToStyleChange(PropertyChangeEvent event, Token token, int styleAttribute) {
-	 	if (token == null) {
+		if (token == null) {
 			return;
 		}
-		boolean eventValue= false;
-		Object value= event.getNewValue();
+		boolean eventValue = false;
+		Object value = event.getNewValue();
 		if (value instanceof Boolean) {
-			eventValue= ((Boolean) value).booleanValue();
+			eventValue = ((Boolean) value).booleanValue();
 		} else if (IPreferenceStore.TRUE.equals(value)) {
-			eventValue= true;
+			eventValue = true;
 		}
-		
-		TextAttribute attr= (TextAttribute) token.getData();
-		boolean activeValue= (attr.getStyle() & styleAttribute) == styleAttribute;
-		if (activeValue != eventValue) { 
-			token.setData(new TextAttribute(attr.getForeground(), attr.getBackground(), eventValue ? attr.getStyle() | styleAttribute : attr.getStyle() & ~styleAttribute));
+
+		TextAttribute attr = (TextAttribute) token.getData();
+		boolean activeValue = (attr.getStyle() & styleAttribute) == styleAttribute;
+		if (activeValue != eventValue) {
+			token.setData(new TextAttribute(attr.getForeground(), attr.getBackground(),
+					eventValue ? attr.getStyle() | styleAttribute : attr.getStyle() & ~styleAttribute));
 		}
 	}
 
 	protected TextAttribute createTextAttribute(String colorID, String boldKey, String italicKey) {
-		Color color= null;
+		Color color = null;
 		if (colorID != null) {
-			color= MakeUIPlugin.getPreferenceColor(colorID);
+			color = MakeUIPlugin.getPreferenceColor(colorID);
 		}
-		IPreferenceStore store= MakeUIPlugin.getDefault().getPreferenceStore();
-		int style= store.getBoolean(boldKey) ? SWT.BOLD : SWT.NORMAL;
+		IPreferenceStore store = MakeUIPlugin.getDefault().getPreferenceStore();
+		int style = store.getBoolean(boldKey) ? SWT.BOLD : SWT.NORMAL;
 		if (store.getBoolean(italicKey)) {
 			style |= SWT.ITALIC;
-		}		
+		}
 		return new TextAttribute(color, null, style);
 	}
 }

@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 
 /**
  * Represents the relationship between a class and one of its base classes.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

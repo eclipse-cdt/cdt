@@ -37,24 +37,24 @@ public class MapStorageElement implements ICStorageElement {
 	private List<MapStorageElement> fChildren = new ArrayList<MapStorageElement>();
 	private String fValue;
 
-	public MapStorageElement(String name, MapStorageElement parent){
+	public MapStorageElement(String name, MapStorageElement parent) {
 		fName = name;
 		fParent = parent;
 		fMap = new HashMap<String, String>();
 	}
 
-	public MapStorageElement(Map<String, String> map, MapStorageElement parent){
+	public MapStorageElement(Map<String, String> map, MapStorageElement parent) {
 		fName = map.get(getMapKey(NAME_KEY));
 		fValue = map.get(getMapKey(VALUE_KEY));
 		fMap = new HashMap<String, String>(map);
 		fParent = parent;
 
 		String children = map.get(getMapKey(CHILDREN_KEY));
-		if(children != null){
+		if (children != null) {
 			List<String> childrenStrList = decodeList(children);
 			int size = childrenStrList.size();
-			if(size != 0){
-				for(int i = 0; i < size; i++){
+			if (size != 0) {
+				for (int i = 0; i < size; i++) {
 					Map<String, String> childMap = decodeMap(childrenStrList.get(i));
 					MapStorageElement child = createChildElement(childMap);
 					fChildren.add(child);
@@ -63,31 +63,31 @@ public class MapStorageElement implements ICStorageElement {
 		}
 	}
 
-	protected MapStorageElement createChildElement(Map<String, String> childMap){
+	protected MapStorageElement createChildElement(Map<String, String> childMap) {
 		return new MapStorageElement(childMap, this);
 	}
 
-	protected String getMapKey(String name){
+	protected String getMapKey(String name) {
 		return name;
 	}
 
-	public Map<String, String> toStringMap(){
+	public Map<String, String> toStringMap() {
 		@SuppressWarnings("unchecked")
-		Map<String, String> map = (Map<String, String>)fMap.clone();
-		if(fName != null)
+		Map<String, String> map = (Map<String, String>) fMap.clone();
+		if (fName != null)
 			map.put(getMapKey(NAME_KEY), fName);
 		else
 			map.remove(getMapKey(NAME_KEY));
 
-		if(fValue != null)
+		if (fValue != null)
 			map.put(getMapKey(VALUE_KEY), fValue);
 		else
 			map.remove(getMapKey(VALUE_KEY));
 
 		int size = fChildren.size();
-		if(size != 0){
+		if (size != 0) {
 			List<String> childrenStrList = new ArrayList<String>(size);
-			for(int i = 0; i < size; i++){
+			for (int i = 0; i < size; i++) {
 				MapStorageElement child = fChildren.get(i);
 				Map<String, String> childStrMap = child.toStringMap();
 				String str = encodeMap(childStrMap);
@@ -103,7 +103,7 @@ public class MapStorageElement implements ICStorageElement {
 		return map;
 	}
 
-	protected boolean isSystemKey(String key){
+	protected boolean isSystemKey(String key) {
 		return key.indexOf('?') == 0 && key.lastIndexOf('?') == key.length() - 1;
 	}
 
@@ -119,15 +119,15 @@ public class MapStorageElement implements ICStorageElement {
 		return child;
 	}
 
-	protected MapStorageElement createChildElement(String name){
+	protected MapStorageElement createChildElement(String name) {
 		return new MapStorageElement(name, this);
 	}
 
 	@Override
 	public String getAttribute(String name) {
 		Object o = fMap.get(getMapKey(name));
-		if(o instanceof String)
-			return (String)o;
+		if (o instanceof String)
+			return (String) o;
 		return null;
 	}
 
@@ -166,10 +166,10 @@ public class MapStorageElement implements ICStorageElement {
 	}
 
 	@Override
-	public void removeChild(ICStorageElement child){
+	public void removeChild(ICStorageElement child) {
 		fChildren.remove(child);
-		if(child instanceof MapStorageElement){
-			((MapStorageElement)child).removed();
+		if (child instanceof MapStorageElement) {
+			((MapStorageElement) child).removed();
 		}
 	}
 
@@ -192,7 +192,7 @@ public class MapStorageElement implements ICStorageElement {
 		HashMap<String, String> map = new HashMap<String, String>();
 		char escapeChar = '\\';
 
-		for(int i = 0; i < list.size(); i++){
+		for (int i = 0; i < list.size(); i++) {
 			StringBuilder line = new StringBuilder(list.get(i));
 			int lndx = 0;
 			while (lndx < line.length()) {
@@ -206,7 +206,8 @@ public class MapStorageElement implements ICStorageElement {
 				}
 				lndx++;
 			}
-			map.put(SafeStringInterner.safeIntern(line.substring(0, lndx)), SafeStringInterner.safeIntern(line.substring(lndx + 1)));
+			map.put(SafeStringInterner.safeIntern(line.substring(0, lndx)),
+					SafeStringInterner.safeIntern(line.substring(lndx + 1)));
 		}
 
 		return map;
@@ -237,19 +238,19 @@ public class MapStorageElement implements ICStorageElement {
 						ndx++;
 					}
 					StringBuilder line = new StringBuilder(envStr.substring(0, ndx));
-/*					int lndx = 0;
-					while (lndx < line.length()) {
-						if (line.charAt(lndx) == '=') {
-							if (line.charAt(lndx - 1) == escapeChar) {
-								// escaped '=' - remove '\' and continue on.
-								line.deleteCharAt(lndx - 1);
-							} else {
-								break;
-							}
-						}
-						lndx++;
-					}
-*/
+					/*					int lndx = 0;
+										while (lndx < line.length()) {
+											if (line.charAt(lndx) == '=') {
+												if (line.charAt(lndx - 1) == escapeChar) {
+													// escaped '=' - remove '\' and continue on.
+													line.deleteCharAt(lndx - 1);
+												} else {
+													break;
+												}
+											}
+											lndx++;
+										}
+					*/
 					list.add(SafeStringInterner.safeIntern(line.toString()));
 					envStr.delete(0, ndx + 1);
 				}
@@ -305,8 +306,7 @@ public class MapStorageElement implements ICStorageElement {
 	}
 
 	@Override
-	public ICStorageElement importChild(ICStorageElement el)
-			throws UnsupportedOperationException {
+	public ICStorageElement importChild(ICStorageElement el) throws UnsupportedOperationException {
 		// TODO
 		throw new UnsupportedOperationException();
 	}
@@ -317,7 +317,7 @@ public class MapStorageElement implements ICStorageElement {
 		Set<Entry<String, String>> entrySet = fMap.entrySet();
 		for (Entry<String, String> entry : entrySet) {
 			String key = entry.getKey();
-			if(!isSystemKey(key)){
+			if (!isSystemKey(key)) {
 				list.add(key);
 			}
 		}
@@ -326,7 +326,7 @@ public class MapStorageElement implements ICStorageElement {
 	}
 
 	@Override
-	public 	ICStorageElement createCopy() throws UnsupportedOperationException, CoreException {
+	public ICStorageElement createCopy() throws UnsupportedOperationException, CoreException {
 		throw new UnsupportedOperationException();
 	}
 

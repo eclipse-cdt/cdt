@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 
@@ -129,9 +129,11 @@ public class AppendTests extends ChangeGeneratorTest {
 			public int visit(IASTDeclaration decl) {
 				if (decl instanceof ICPPASTFunctionDefinition) {
 					IASTIdExpression idExpression = factory.newIdExpression(factory.newName("a".toCharArray()));
-					IASTInitializer initExpr = factory.newConstructorInitializer(new IASTInitializerClause[] { idExpression });
+					IASTInitializer initExpr = factory
+							.newConstructorInitializer(new IASTInitializerClause[] { idExpression });
 					IASTName initName = factory.newName("alpha".toCharArray());
-					ICPPASTConstructorChainInitializer newInitializer = factory.newConstructorChainInitializer(initName, initExpr);
+					ICPPASTConstructorChainInitializer newInitializer = factory.newConstructorChainInitializer(initName,
+							initExpr);
 					addModification(null, APPEND_CHILD, decl, newInitializer);
 					return PROCESS_ABORT;
 				}
@@ -187,7 +189,8 @@ public class AppendTests extends ChangeGeneratorTest {
 					IASTName name = factory.newName("c".toCharArray());
 					IASTIdExpression leftOperand = factory.newIdExpression(name);
 					ICPPASTLiteralExpression rightOperand = factory.newLiteralExpression(lk_integer_constant, "9");
-					ICPPASTBinaryExpression binEx = factory.newBinaryExpression(IASTBinaryExpression.op_assign, leftOperand, rightOperand);
+					ICPPASTBinaryExpression binEx = factory.newBinaryExpression(IASTBinaryExpression.op_assign,
+							leftOperand, rightOperand);
 					addModification(null, APPEND_CHILD, expression, binEx);
 					return PROCESS_ABORT;
 				}
@@ -248,7 +251,8 @@ public class AppendTests extends ChangeGeneratorTest {
 					paramDeclarator.setName(parameterName);
 					ICPPASTSimpleDeclSpecifier declSpec = factory.newSimpleDeclSpecifier();
 					declSpec.setType(IASTSimpleDeclSpecifier.t_int);
-					ICPPASTParameterDeclaration insertedParameter = factory.newParameterDeclaration(declSpec, paramDeclarator);
+					ICPPASTParameterDeclaration insertedParameter = factory.newParameterDeclaration(declSpec,
+							paramDeclarator);
 					addModification(null, APPEND_CHILD, declarator, insertedParameter);
 					return PROCESS_ABORT;
 				}
@@ -275,7 +279,8 @@ public class AppendTests extends ChangeGeneratorTest {
 					ICPPASTDeclarator parameterDeclarator = factory.newDeclarator(parameterName);
 					ICPPASTSimpleDeclSpecifier parameterDeclSpec = factory.newSimpleDeclSpecifier();
 					parameterDeclSpec.setType(IASTSimpleDeclSpecifier.t_int);
-					ICPPASTParameterDeclaration insertedParameter = factory.newParameterDeclaration(parameterDeclSpec, parameterDeclarator);
+					ICPPASTParameterDeclaration insertedParameter = factory.newParameterDeclaration(parameterDeclSpec,
+							parameterDeclarator);
 					addModification(null, APPEND_CHILD, declarator, insertedParameter);
 					return PROCESS_ABORT;
 				}

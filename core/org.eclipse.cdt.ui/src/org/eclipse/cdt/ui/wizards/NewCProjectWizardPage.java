@@ -37,31 +37,30 @@ public class NewCProjectWizardPage extends WizardNewProjectCreationPage {
 	 *  Unique string ID for this page.  Used by Managed Build's custom page manager to refer to this page.
 	 */
 	public static final String PAGE_ID = "org.eclipse.cdt.ui.wizard.basicPage"; //$NON-NLS-1$
-	
+
 	/* TODO: Implement proper data publishing from this wizard page.
-	 * 
+	 *
 	 * The following items would in theory be used to publish the project name and location with
 	 * the managed build system's custom wizard page manager.  However, this would create a dependency
 	 * on MBS by the core, which is not very attractive.  It seems like it might be worthwhile in the future
 	 * to move the data publishing capabilities of the page manager out into another, more generic class
 	 * in the core.
-	 * 
+	 *
 	 * For now, interested parties can obtain the IWizard page of this page from the page manager, cast it
 	 * to a NewCProjectWizardPage, and obtain the data via its public methods.  Messy, but it avoids
-	 * the unwanted dependency. 
-	 * 
-	 * 
+	 * the unwanted dependency.
+	 *
+	 *
 	public static final String PROJECT_NAME = "projectName"; //$NON-NLS-1$
 	public static final String PROJECT_LOCATION = "projectLocation"; //$NON-NLS-1$
 	*/
-	
-	
+
 	public NewCProjectWizardPage(String pageName) {
 		super(pageName);
 	}
 
 	/**
-	 * Returns whether this page's controls currently all contain valid 
+	 * Returns whether this page's controls currently all contain valid
 	 * values.
 	 *
 	 * @return <code>true</code> if all controls are valid, and
@@ -84,8 +83,7 @@ public class NewCProjectWizardPage extends WizardNewProjectCreationPage {
 				setErrorMessage(validLocation.getMessage());
 				return false;
 			}
-			
-			
+
 			return true;
 		}
 		return false;

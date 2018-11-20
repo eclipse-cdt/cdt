@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.internal.core.model;
 
-
 import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -70,7 +69,7 @@ public class CreateIncludeOperation extends CreateElementInTUOperation {
 	 * @see CreateElementInTUOperation#getMainTaskName
 	 */
 	@Override
-	public String getMainTaskName(){
+	public String getMainTaskName() {
 		return "operation.createIncludeProgress"; //$NON-NLS-1$
 	}
 

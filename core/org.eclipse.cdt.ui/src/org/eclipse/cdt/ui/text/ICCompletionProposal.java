@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
@@ -24,19 +24,18 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
  * </p>
  */
 public interface ICCompletionProposal extends ICompletionProposal {
-	
+
 	/**
 	 * Returns the relevance of the proposal.
 	 */
 	int getRelevance();
 
-    /**
-     * Returns an id string that uniquely identifies this proposal. For most things this is the
-     * same as the display name. For functions, this strips off the parameter names and the
-     * return type.
-     * 
-     * @return the string that uniquely identifies this proposal
-     */
-    String getIdString();
+	/**
+	 * Returns an id string that uniquely identifies this proposal. For most things this is the
+	 * same as the display name. For functions, this strips off the parameter names and the
+	 * return type.
+	 *
+	 * @return the string that uniquely identifies this proposal
+	 */
+	String getIdString();
 }
-

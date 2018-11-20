@@ -14,10 +14,9 @@
 
 package org.eclipse.cdt.utils.debug;
 
-
 /**
  * DebugStructType
- *  
+ *
  */
 public class DebugStructType extends DebugType {
 
@@ -28,7 +27,7 @@ public class DebugStructType extends DebugType {
 	DebugField[] fields;
 
 	/**
-	 *  
+	 *
 	 */
 	public DebugStructType(String name, int size, boolean union) {
 		this.name = name;

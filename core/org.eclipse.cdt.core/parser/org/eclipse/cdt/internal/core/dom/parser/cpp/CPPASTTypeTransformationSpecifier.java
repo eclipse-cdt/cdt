@@ -22,7 +22,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 /**
  * Implementation of ICPPASTTypeTransformationSpecifier.
  */
-public class CPPASTTypeTransformationSpecifier extends CPPASTBaseDeclSpecifier implements ICPPASTTypeTransformationSpecifier {
+public class CPPASTTypeTransformationSpecifier extends CPPASTBaseDeclSpecifier
+		implements ICPPASTTypeTransformationSpecifier {
 	private Operator fOperator;
 	private ICPPASTTypeId fOperand;
 
@@ -58,23 +59,29 @@ public class CPPASTTypeTransformationSpecifier extends CPPASTBaseDeclSpecifier i
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclSpecifiers) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default: break;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
 			}
 		}
 
-        if (!fOperand.accept(action))
-        	return false;
+		if (!fOperand.accept(action))
+			return false;
 
-        if (action.shouldVisitDeclSpecifiers) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        return true;
+		return true;
 	}
 }

@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -50,13 +49,13 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	// Widgets
 	//1
 	private Button b_useDefault;
-	private Combo  c_builderType;
-	private Text   t_buildCmd; 
+	private Combo c_builderType;
+	private Text t_buildCmd;
 	//2
 	private Button b_genMakefileAuto;
 	private Button b_expandVars;
 	//5
-	private Text   t_dir;
+	private Text t_dir;
 	private Button b_dirWsp;
 	private Button b_dirFile;
 	private Button b_dirVars;
@@ -65,61 +64,63 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	private IBuilder bldr;
 	private IConfiguration icfg;
 	private boolean canModify = true;
-	
+
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(1, false));
 
 		// Builder group
-		Group g1 = setupGroup(usercomp, Messages.BuilderSettingsTab_0, 3, GridData.FILL_HORIZONTAL); 
-		setupLabel(g1, Messages.BuilderSettingsTab_1, 1, GridData.BEGINNING); 
+		Group g1 = setupGroup(usercomp, Messages.BuilderSettingsTab_0, 3, GridData.FILL_HORIZONTAL);
+		setupLabel(g1, Messages.BuilderSettingsTab_1, 1, GridData.BEGINNING);
 		c_builderType = new Combo(g1, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		setupControl(c_builderType, 2, GridData.FILL_HORIZONTAL);
-		c_builderType.add(Messages.BuilderSettingsTab_2); 
-		c_builderType.add(Messages.BuilderSettingsTab_3); 
+		c_builderType.add(Messages.BuilderSettingsTab_2);
+		c_builderType.add(Messages.BuilderSettingsTab_3);
 		c_builderType.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				enableInternalBuilder(c_builderType.getSelectionIndex() == 1);
 				updateButtons();
-			}});
-		
-		b_useDefault = setupCheck(g1, Messages.BuilderSettingsTab_4, 3, GridData.BEGINNING); 
-		
-		setupLabel(g1, Messages.BuilderSettingsTab_5, 1, GridData.BEGINNING); 
+			}
+		});
+
+		b_useDefault = setupCheck(g1, Messages.BuilderSettingsTab_4, 3, GridData.BEGINNING);
+
+		setupLabel(g1, Messages.BuilderSettingsTab_5, 1, GridData.BEGINNING);
 		t_buildCmd = setupBlock(g1, b_useDefault);
 		t_buildCmd.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				if (! canModify)
+				if (!canModify)
 					return;
-	        	String fullCommand = t_buildCmd.getText().trim();
-	        	String buildCommand = parseMakeCommand(fullCommand);
-	        	String buildArgs = fullCommand.substring(buildCommand.length()).trim();
-	        	if(!buildCommand.equals(bldr.getCommand()) 
-	        			|| !buildArgs.equals(bldr.getArguments())){
-		        	setCommand(buildCommand);
-		        	setArguments(buildArgs);
-		        }
-			}});
-				
-		Group g2 = setupGroup(usercomp, Messages.BuilderSettingsTab_6, 2, GridData.FILL_HORIZONTAL); 
-		((GridLayout)(g2.getLayout())).makeColumnsEqualWidth = true;
-		
-		b_genMakefileAuto = setupCheck(g2, Messages.BuilderSettingsTab_7, 1, GridData.BEGINNING); 
-		b_expandVars  = setupCheck(g2, Messages.BuilderSettingsTab_8, 1, GridData.BEGINNING); 
+				String fullCommand = t_buildCmd.getText().trim();
+				String buildCommand = parseMakeCommand(fullCommand);
+				String buildArgs = fullCommand.substring(buildCommand.length()).trim();
+				if (!buildCommand.equals(bldr.getCommand()) || !buildArgs.equals(bldr.getArguments())) {
+					setCommand(buildCommand);
+					setArguments(buildArgs);
+				}
+			}
+		});
+
+		Group g2 = setupGroup(usercomp, Messages.BuilderSettingsTab_6, 2, GridData.FILL_HORIZONTAL);
+		((GridLayout) (g2.getLayout())).makeColumnsEqualWidth = true;
+
+		b_genMakefileAuto = setupCheck(g2, Messages.BuilderSettingsTab_7, 1, GridData.BEGINNING);
+		b_expandVars = setupCheck(g2, Messages.BuilderSettingsTab_8, 1, GridData.BEGINNING);
 
 		// Build location group
-		group_dir = setupGroup(usercomp, Messages.BuilderSettingsTab_21, 2, GridData.FILL_HORIZONTAL); 
-		setupLabel(group_dir, Messages.BuilderSettingsTab_22, 1, GridData.BEGINNING); 
+		group_dir = setupGroup(usercomp, Messages.BuilderSettingsTab_21, 2, GridData.FILL_HORIZONTAL);
+		setupLabel(group_dir, Messages.BuilderSettingsTab_22, 1, GridData.BEGINNING);
 		t_dir = setupText(group_dir, 1, GridData.FILL_HORIZONTAL);
 		t_dir.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				if (canModify)
 					setBuildPath(t_dir.getText());
-			}} );
+			}
+		});
 		Composite c = new Composite(group_dir, SWT.NONE);
 		setupControl(c, 2, GridData.FILL_HORIZONTAL);
 		GridLayout f = new GridLayout(4, false);
@@ -136,35 +137,32 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		page.informPages(MANAGEDBUILDSTATE, null);
 		updateButtons();
 	}
-	
+
 	/**
 	 * sets widgets states
 	 */
 	@Override
 	protected void updateButtons() {
 		bldr = icfg.getEditableBuilder();
-		
+
 		canModify = false; // avoid extra update from modifyListeners
 		int[] extStates = BuildBehaviourTab.calc3states(page, icfg, 0);
 
 		b_genMakefileAuto.setEnabled(icfg.supportsBuild(true));
 		if (extStates == null) { // no extended states available
-			BuildBehaviourTab.setTriSelection(b_genMakefileAuto, 
-				bldr.isManagedBuildOn());
-			BuildBehaviourTab.setTriSelection(b_useDefault, 
-				bldr.isDefaultBuildCmd());
+			BuildBehaviourTab.setTriSelection(b_genMakefileAuto, bldr.isManagedBuildOn());
+			BuildBehaviourTab.setTriSelection(b_useDefault, bldr.isDefaultBuildCmd());
 			// b_expandVars.setGrayed(false);
-			if(!bldr.canKeepEnvironmentVariablesInBuildfile())
+			if (!bldr.canKeepEnvironmentVariablesInBuildfile())
 				b_expandVars.setEnabled(false);
 			else {
 				b_expandVars.setEnabled(true);
-				BuildBehaviourTab.setTriSelection(b_expandVars, 
-					!bldr.keepEnvironmentVariablesInBuildfile());
+				BuildBehaviourTab.setTriSelection(b_expandVars, !bldr.keepEnvironmentVariablesInBuildfile());
 			}
 		} else {
 			BuildBehaviourTab.setTriSelection(b_genMakefileAuto, extStates[0]);
 			BuildBehaviourTab.setTriSelection(b_useDefault, extStates[1]);
-			if(extStates[2] != BuildBehaviourTab.TRI_YES)
+			if (extStates[2] != BuildBehaviourTab.TRI_YES)
 				b_expandVars.setEnabled(false);
 			else {
 				b_expandVars.setEnabled(true);
@@ -172,12 +170,10 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			}
 		}
 		c_builderType.select(isInternalBuilderEnabled() ? 1 : 0);
-		c_builderType.setEnabled(
-				canEnableInternalBuilder(true) &&
-				canEnableInternalBuilder(false));
-		
+		c_builderType.setEnabled(canEnableInternalBuilder(true) && canEnableInternalBuilder(false));
+
 		t_buildCmd.setText(getMakeCommand());
-		
+
 		if (page.isMultiCfg()) {
 			group_dir.setVisible(false);
 		} else {
@@ -188,38 +184,39 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			b_dirVars.setEnabled(!mbOn);
 			b_dirWsp.setEnabled(!mbOn);
 			b_dirFile.setEnabled(!mbOn);
-		}		
+		}
 		boolean external = (c_builderType.getSelectionIndex() == 0);
-		
+
 		b_useDefault.setEnabled(external);
 		t_buildCmd.setEnabled(external);
-		((Control)t_buildCmd.getData()).setEnabled(external & ! b_useDefault.getSelection());
-		
+		((Control) t_buildCmd.getData()).setEnabled(external & !b_useDefault.getSelection());
+
 		b_genMakefileAuto.setEnabled(external && icfg.supportsBuild(true));
 		if (b_expandVars.getEnabled())
 			b_expandVars.setEnabled(external && b_genMakefileAuto.getSelection());
-		
+
 		if (external) { // just set relatet text widget state,
-			checkPressed(b_useDefault, false); // do not update 
+			checkPressed(b_useDefault, false); // do not update
 		}
 		canModify = true;
 	}
-	
+
 	private Button setupBottomButton(Composite c, String name) {
 		Button b = new Button(c, SWT.PUSH);
 		b.setText(name);
 		GridData fd = new GridData(GridData.CENTER);
-		fd.minimumWidth = BUTTON_WIDTH; 
+		fd.minimumWidth = BUTTON_WIDTH;
 		b.setLayoutData(fd);
 		b.setData(t_dir);
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				buttonVarPressed(event);
-			}});
+			}
+		});
 		return b;
 	}
-	
+
 	/**
 	 * Sets up text + corresponding button
 	 * Checkbox can be implemented either by Button or by TriButton
@@ -233,64 +230,74 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				buttonVarPressed(event);
-			}});
-		if (check != null) check.setData(t);
+			}
+		});
+		if (check != null)
+			check.setData(t);
 		return t;
 	}
-	
+
 	/*
 	 * Unified handler for "Variables" buttons
 	 */
 	private void buttonVarPressed(SelectionEvent e) {
 		Widget b = e.widget;
-		if (b == null || b.getData() == null) return; 
+		if (b == null || b.getData() == null)
+			return;
 		if (b.getData() instanceof Text) {
 			String x = null;
 			if (b.equals(b_dirWsp)) {
 				x = getWorkspaceDirDialog(usercomp.getShell(), EMPTY_STR);
-				if (x != null) ((Text)b.getData()).setText(x);
+				if (x != null)
+					((Text) b.getData()).setText(x);
 			} else if (b.equals(b_dirFile)) {
 				x = getFileSystemDirDialog(usercomp.getShell(), EMPTY_STR);
-				if (x != null) ((Text)b.getData()).setText(x);
-			} else { 
+				if (x != null)
+					((Text) b.getData()).setText(x);
+			} else {
 				x = AbstractCPropertyTab.getVariableDialog(usercomp.getShell(), getResDesc().getConfiguration());
-				if (x != null) ((Text)b.getData()).insert(x);
+				if (x != null)
+					((Text) b.getData()).insert(x);
 			}
 		}
 	}
-	
+
 	@Override
 	public void checkPressed(SelectionEvent e) {
-		checkPressed((Control)e.widget, true);
+		checkPressed((Control) e.widget, true);
 		updateButtons();
 	}
-	
-	private void checkPressed(Control b, boolean needUpdate) {	
-		if (b == null) return;
-		
+
+	private void checkPressed(Control b, boolean needUpdate) {
+		if (b == null)
+			return;
+
 		boolean val = false;
-		if (b instanceof Button) val = ((Button)b).getSelection();
-		
+		if (b instanceof Button)
+			val = ((Button) b).getSelection();
+
 		if (b.getData() instanceof Text) {
-			Text t = (Text)b.getData();
-			if (b == b_useDefault) { val = !val; }
+			Text t = (Text) b.getData();
+			if (b == b_useDefault) {
+				val = !val;
+			}
 			t.setEnabled(val);
 			if (t.getData() != null && t.getData() instanceof Control) {
-				Control c = (Control)t.getData();
+				Control c = (Control) t.getData();
 				c.setEnabled(val);
 			}
 		}
 		// call may be used just to set text state above
 		// in this case, settings update is not required
-		if (! needUpdate)	
+		if (!needUpdate)
 			return;
-		
+
 		if (b == b_useDefault) {
 			setUseDefaultBuildCmd(!val);
 		} else if (b == b_genMakefileAuto) {
 			setManagedBuild(val);
 		} else if (b == b_expandVars) {
-			if(bldr.canKeepEnvironmentVariablesInBuildfile()) 
+			if (bldr.canKeepEnvironmentVariablesInBuildfile())
 				setKeepEnvironmentVariablesInBuildfile(!val);
 		}
 	}
@@ -307,13 +314,15 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		}
 		return EMPTY_STR;
 	}
+
 	/**
 	 * Performs common settings for all controls
 	 * (Copy from config to widgets)
 	 */
 	@Override
 	public void updateData(ICResourceDescription cfgd) {
-		if (cfgd == null) return;
+		if (cfgd == null)
+			return;
 		icfg = getCfg(cfgd.getConfiguration());
 		updateButtons();
 	}
@@ -322,9 +331,9 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		BuildBehaviourTab.apply(src, dst, page.isMultiCfg());
 	}
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * @param string
 	 * @return
 	 */
@@ -334,60 +343,61 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			return result[0];
 		else
 			return rawCommand;
-		
+
 	}
+
 	// This page can be displayed for project only
 	@Override
 	public boolean canBeVisible() {
 		return page.isForProject() || page.isForPrefs();
 	}
-	
+
 	@Override
-	public void setVisible (boolean b) {
+	public void setVisible(boolean b) {
 		super.setVisible(b);
 	}
 
 	@Override
 	protected void performDefaults() {
 		if (icfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
-			for (int i=0; i<cfs.length; i++) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) icfg).getItems();
+			for (int i = 0; i < cfs.length; i++) {
 				IBuilder b = cfs[i].getEditableBuilder();
 				BuildBehaviourTab.copyBuilders(b.getSuperClass(), b);
 			}
-		} else 
+		} else
 			BuildBehaviourTab.copyBuilders(bldr.getSuperClass(), bldr);
 		updateData(getResDesc());
 	}
-	
+
 	private boolean canEnableInternalBuilder(boolean v) {
-		if (icfg instanceof Configuration) 
-			return ((Configuration)icfg).canEnableInternalBuilder(v);
+		if (icfg instanceof Configuration)
+			return ((Configuration) icfg).canEnableInternalBuilder(v);
 		if (icfg instanceof IMultiConfiguration)
-			return ((IMultiConfiguration)icfg).canEnableInternalBuilder(v);
+			return ((IMultiConfiguration) icfg).canEnableInternalBuilder(v);
 		return false;
 	}
-	
+
 	private void enableInternalBuilder(boolean v) {
-		if (icfg instanceof Configuration) 
-			((Configuration)icfg).enableInternalBuilder(v);
+		if (icfg instanceof Configuration)
+			((Configuration) icfg).enableInternalBuilder(v);
 		if (icfg instanceof IMultiConfiguration)
-			((IMultiConfiguration)icfg).enableInternalBuilder(v);
+			((IMultiConfiguration) icfg).enableInternalBuilder(v);
 	}
-	
+
 	private boolean isInternalBuilderEnabled() {
-		if (icfg instanceof Configuration) 
-			return ((Configuration)icfg).isInternalBuilderEnabled();
+		if (icfg instanceof Configuration)
+			return ((Configuration) icfg).isInternalBuilderEnabled();
 		if (icfg instanceof IMultiConfiguration)
-			return ((MultiConfiguration)icfg).isInternalBuilderEnabled();
+			return ((MultiConfiguration) icfg).isInternalBuilderEnabled();
 		return false;
 	}
-	
+
 	private void setUseDefaultBuildCmd(boolean val) {
 		try {
 			if (icfg instanceof IMultiConfiguration) {
-				IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
-				for (int i=0; i<cfs.length; i++) {
+				IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) icfg).getItems();
+				for (int i = 0; i < cfs.length; i++) {
 					IBuilder b = cfs[i].getEditableBuilder();
 					if (b != null)
 						b.setUseDefaultBuildCmd(val);
@@ -402,8 +412,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 
 	private void setKeepEnvironmentVariablesInBuildfile(boolean val) {
 		if (icfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
-			for (int i=0; i<cfs.length; i++) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) icfg).getItems();
+			for (int i = 0; i < cfs.length; i++) {
 				IBuilder b = cfs[i].getEditableBuilder();
 				if (b != null)
 					b.setKeepEnvironmentVariablesInBuildfile(val);
@@ -415,8 +425,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 
 	private void setCommand(String buildCommand) {
 		if (icfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
-			for (int i=0; i<cfs.length; i++) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) icfg).getItems();
+			for (int i = 0; i < cfs.length; i++) {
 				IBuilder b = cfs[i].getEditableBuilder();
 				b.setCommand(buildCommand);
 			}
@@ -424,11 +434,11 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			icfg.getEditableBuilder().setCommand(buildCommand);
 		}
 	}
-	
+
 	private void setArguments(String makeArgs) {
 		if (icfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
-			for (int i=0; i<cfs.length; i++) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) icfg).getItems();
+			for (int i = 0; i < cfs.length; i++) {
 				IBuilder b = cfs[i].getEditableBuilder();
 				b.setArguments(makeArgs);
 			}
@@ -439,8 +449,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 
 	private void setBuildPath(String path) {
 		if (icfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
-			for (int i=0; i<cfs.length; i++) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) icfg).getItems();
+			for (int i = 0; i < cfs.length; i++) {
 				IBuilder b = cfs[i].getEditableBuilder();
 				b.setBuildPath(path);
 			}
@@ -448,12 +458,12 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			icfg.getEditableBuilder().setBuildPath(path);
 		}
 	}
-	
+
 	private void setManagedBuildOn(boolean on) {
 		try {
 			if (icfg instanceof IMultiConfiguration) {
-				IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
-				for (int i=0; i<cfs.length; i++) {
+				IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) icfg).getItems();
+				for (int i = 0; i < cfs.length; i++) {
 					IBuilder b = cfs[i].getEditableBuilder();
 					b.setManagedBuildOn(on);
 				}

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     John Dallaway - Report command execution error (Bug 539455)
@@ -58,39 +58,40 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * this class is used, other service implementations, such as stack and
  * expressions, can use it to avoid requesting data from debugger back end if
  * another step is about to be executed.
- * 
+ *
  * @since 1.1
  */
 @ConfinedToDsfExecutor("#getExecutor()")
 public final class SteppingController {
-    /**
-     * Default delay in milliseconds, that it takes the SteppingTimedOutEvent 
-     * event to be issued after a step is started. 
-     * @see SteppingTimedOutEvent
-     * @see #setStepTimeout(int)
-     * @see #getStepTimeout()
-     */
-    public final static int STEPPING_TIMEOUT = 500;
-    
-    /**
-     * The depth of the step queue.  In other words, the maximum number of steps 
-     * that are queued before the step queue manager is throwing them away. 
-     */
-    public final static int STEP_QUEUE_DEPTH = 2;
+	/**
+	 * Default delay in milliseconds, that it takes the SteppingTimedOutEvent
+	 * event to be issued after a step is started.
+	 * @see SteppingTimedOutEvent
+	 * @see #setStepTimeout(int)
+	 * @see #getStepTimeout()
+	 */
+	public final static int STEPPING_TIMEOUT = 500;
+
+	/**
+	 * The depth of the step queue.  In other words, the maximum number of steps
+	 * that are queued before the step queue manager is throwing them away.
+	 */
+	public final static int STEP_QUEUE_DEPTH = 2;
 
 	/**
 	 * The maximum delay (in milliseconds) between steps when synchronized
 	 * stepping is enabled. This also serves as a safeguard in the case stepping
 	 * control participants fail to indicate completion of event processing.
 	 */
-    public final static int MAX_STEP_DELAY= 5000;
+	public final static int MAX_STEP_DELAY = 5000;
 
-    private final static boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/stepping")); //$NON-NLS-1$
+	private final static boolean DEBUG = Boolean
+			.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/stepping")); //$NON-NLS-1$
 
-    /**
-     * Indicates that the given context has been stepping for some time, 
-     * and the UI (views and actions) may need to be updated accordingly. 
-     */
+	/**
+	 * Indicates that the given context has been stepping for some time,
+	 * and the UI (views and actions) may need to be updated accordingly.
+	 */
 	public static final class SteppingTimedOutEvent extends AbstractDMEvent<IExecutionDMContext> {
 		private SteppingTimedOutEvent(IExecutionDMContext execCtx) {
 			super(execCtx);
@@ -107,7 +108,7 @@ public final class SteppingController {
 	 * blocked until all stepping control participants have indicated completion
 	 * of event processing or the maximum timeout
 	 * {@link SteppingController#MAX_STEP_DELAY} has been reached.
-	 * 
+	 *
 	 * @see SteppingController#addSteppingControlParticipant(ISteppingControlParticipant)
 	 * @see SteppingController#removeSteppingControlParticipant(ISteppingControlParticipant)
 	 */
@@ -116,61 +117,60 @@ public final class SteppingController {
 
 	private static class StepRequest {
 		IExecutionDMContext fContext;
-        StepType fStepType;
-        boolean inProgress = false;
-        StepRequest(IExecutionDMContext execCtx, StepType type) {
-        	fContext = execCtx;
-            fStepType = type;
-        }
-    }
+		StepType fStepType;
+		boolean inProgress = false;
 
-	private class TimeOutRunnable extends DsfRunnable{
-		
+		StepRequest(IExecutionDMContext execCtx, StepType type) {
+			fContext = execCtx;
+			fStepType = type;
+		}
+	}
+
+	private class TimeOutRunnable extends DsfRunnable {
+
 		TimeOutRunnable(IExecutionDMContext dmc) {
 			fDmc = dmc;
 		}
-		
+
 		private final IExecutionDMContext fDmc;
-		
+
 		@Override
 		public void run() {
 			fTimedOutFutures.remove(fDmc);
 
-            if (getSession().isActive()) {
-                fTimedOutFlags.put(fDmc, Boolean.TRUE);
-                enableStepping(fDmc);
-                // Issue the stepping time-out event.
-                getSession().dispatchEvent(
-                    new SteppingTimedOutEvent(fDmc), 
-                    null);
-            }
-        }
+			if (getSession().isActive()) {
+				fTimedOutFlags.put(fDmc, Boolean.TRUE);
+				enableStepping(fDmc);
+				// Issue the stepping time-out event.
+				getSession().dispatchEvent(new SteppingTimedOutEvent(fDmc), null);
+			}
+		}
 	}
-	
+
 	private final DsfSession fSession;
 	private final DsfServicesTracker fServicesTracker;
 
-    private IRunControl fRunControl;
-    private int fQueueDepth = STEP_QUEUE_DEPTH;
-    
-    private final Map<IExecutionDMContext,List<StepRequest>> fStepQueues = new HashMap<IExecutionDMContext,List<StepRequest>>();
-    private final Map<IExecutionDMContext,Boolean> fTimedOutFlags = new HashMap<IExecutionDMContext,Boolean>();
-    private final Map<IExecutionDMContext,ScheduledFuture<?>> fTimedOutFutures = new HashMap<IExecutionDMContext,ScheduledFuture<?>>();
+	private IRunControl fRunControl;
+	private int fQueueDepth = STEP_QUEUE_DEPTH;
+
+	private final Map<IExecutionDMContext, List<StepRequest>> fStepQueues = new HashMap<IExecutionDMContext, List<StepRequest>>();
+	private final Map<IExecutionDMContext, Boolean> fTimedOutFlags = new HashMap<IExecutionDMContext, Boolean>();
+	private final Map<IExecutionDMContext, ScheduledFuture<?>> fTimedOutFutures = new HashMap<IExecutionDMContext, ScheduledFuture<?>>();
 
 	/**
 	 * Records the time of the last step for an execution context.
 	 */
-	private final Map<IExecutionDMContext, Long> fLastStepTimes= new HashMap<IExecutionDMContext, Long>();
+	private final Map<IExecutionDMContext, Long> fLastStepTimes = new HashMap<IExecutionDMContext, Long>();
 
 	/**
 	 * Minimum step interval in milliseconds.
 	 */
 	private volatile int fMinStepInterval;
 
-    /**
-     * Step timeout in milliseconds.
-     */
-    private volatile int fStepTimeout = STEPPING_TIMEOUT;
+	/**
+	 * Step timeout in milliseconds.
+	 */
+	private volatile int fStepTimeout = STEPPING_TIMEOUT;
 
 	/**
 	 * Map of execution contexts for which a step is in progress.
@@ -180,81 +180,83 @@ public final class SteppingController {
 	/**
 	 * List of registered stepping control participants.
 	 */
-	private final List<ISteppingControlParticipant> fParticipants = Collections.synchronizedList(new ArrayList<ISteppingControlParticipant>());
+	private final List<ISteppingControlParticipant> fParticipants = Collections
+			.synchronizedList(new ArrayList<ISteppingControlParticipant>());
 
 	/**
 	 * Property change listener.  It updates the stepping control settings.
 	 */
 	private IPropertyChangeListener fPreferencesListener;
 
-    public SteppingController(DsfSession session) {
-        fSession = session;
-        fServicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
-        
-        final IPreferenceStore store= DsfUIPlugin.getDefault().getPreferenceStore();
+	public SteppingController(DsfSession session) {
+		fSession = session;
+		fServicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
 
-        fPreferencesListener = new IPropertyChangeListener() {
-            @Override
+		final IPreferenceStore store = DsfUIPlugin.getDefault().getPreferenceStore();
+
+		fPreferencesListener = new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(final PropertyChangeEvent event) {
-                handlePropertyChanged(store, event);
-            }};
-        store.addPropertyChangeListener(fPreferencesListener);
-        
-        setMinimumStepInterval(store.getInt(IDsfDebugUIConstants.PREF_MIN_STEP_INTERVAL));
-    }
+				handlePropertyChanged(store, event);
+			}
+		};
+		store.addPropertyChangeListener(fPreferencesListener);
 
-    @ThreadSafe
-    public void dispose() {
-        try {
-            fSession.getExecutor().execute(new DsfRunnable() {
-                @Override
+		setMinimumStepInterval(store.getInt(IDsfDebugUIConstants.PREF_MIN_STEP_INTERVAL));
+	}
+
+	@ThreadSafe
+	public void dispose() {
+		try {
+			fSession.getExecutor().execute(new DsfRunnable() {
+				@Override
 				public void run() {
-                    if (fRunControl != null) {
-                        getSession().removeServiceEventListener(SteppingController.this);
-                    }
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            // Session already gone.
-        }
-    	
-        IPreferenceStore store= DsfUIPlugin.getDefault().getPreferenceStore();
-        store.removePropertyChangeListener(fPreferencesListener);
+					if (fRunControl != null) {
+						getSession().removeServiceEventListener(SteppingController.this);
+					}
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Session already gone.
+		}
 
-        fServicesTracker.dispose();
-    }
+		IPreferenceStore store = DsfUIPlugin.getDefault().getPreferenceStore();
+		store.removePropertyChangeListener(fPreferencesListener);
 
-    /**
-     * Configure the minimum time (in milliseconds) to wait between steps.
-     * 
-     * @param interval
-     */
-    @ThreadSafe
-    public void setMinimumStepInterval(int interval) {
-    	fMinStepInterval = interval;
-    }
+		fServicesTracker.dispose();
+	}
 
-    /**
-     * Configure the step timeout value. This controls the delay how long it takes
-     * to send out the {@link SteppingTimedOutEvent} after a step has been issued.
-     * 
-     * @param timeout  The timeout value in milliseconds (must be non-negative).
-     * @since 2.2
-     */
-    @ThreadSafe
-    public void setStepTimeout(int timeout) {
-        assert timeout >= 0;
-        fStepTimeout = timeout;
-    }
-    
-    /**
-     * @return the currently configured step timeout value
-     * @since 2.2
-     */
-    @ThreadSafe
-    public int getStepTimeout() {
-        return fStepTimeout;
-    }
+	/**
+	 * Configure the minimum time (in milliseconds) to wait between steps.
+	 *
+	 * @param interval
+	 */
+	@ThreadSafe
+	public void setMinimumStepInterval(int interval) {
+		fMinStepInterval = interval;
+	}
+
+	/**
+	 * Configure the step timeout value. This controls the delay how long it takes
+	 * to send out the {@link SteppingTimedOutEvent} after a step has been issued.
+	 *
+	 * @param timeout  The timeout value in milliseconds (must be non-negative).
+	 * @since 2.2
+	 */
+	@ThreadSafe
+	public void setStepTimeout(int timeout) {
+		assert timeout >= 0;
+		fStepTimeout = timeout;
+	}
+
+	/**
+	 * @return the currently configured step timeout value
+	 * @since 2.2
+	 */
+	@ThreadSafe
+	public int getStepTimeout() {
+		return fStepTimeout;
+	}
 
 	/**
 	 * Register given stepping control participant.
@@ -266,53 +268,55 @@ public final class SteppingController {
 	 * stepping is disabled until all participants have indicated completion of
 	 * processing the event.
 	 * </p>
-	 * 
+	 *
 	 * @param participant
 	 */
-    @ThreadSafe
-    public void addSteppingControlParticipant(ISteppingControlParticipant participant) {
-    	fParticipants.add(participant);
-    }
+	@ThreadSafe
+	public void addSteppingControlParticipant(ISteppingControlParticipant participant) {
+		fParticipants.add(participant);
+	}
 
-    /**
-     * Unregister given stepping control participant.
-     * 
-     * @param participant
-     */
-    @ThreadSafe
-    public void removeSteppingControlParticipant(final ISteppingControlParticipant participant) {
-    	fParticipants.remove(participant);
-    }
+	/**
+	 * Unregister given stepping control participant.
+	 *
+	 * @param participant
+	 */
+	@ThreadSafe
+	public void removeSteppingControlParticipant(final ISteppingControlParticipant participant) {
+		fParticipants.remove(participant);
+	}
 
-    /**
-     * Indicate that participant has completed processing of the last step.
-     * 
-     * @param execCtx
-     */
-    public void doneStepping(final IExecutionDMContext execCtx, final ISteppingControlParticipant participant) {
-    	if (DEBUG) System.out.println("[SteppingController] doneStepping participant=" + participant.getClass().getSimpleName()); //$NON-NLS-1$
-    	List<ISteppingControlParticipant> participants = fStepInProgress.get(execCtx);
-    	if (participants != null) {
-    		participants.remove(participant);
-    		if (participants.isEmpty()) {
-    			doneStepping(execCtx);
-    		}
-    	} else {
-    		for (IExecutionDMContext disabledCtx : fStepInProgress.keySet()) {
-    			if (DMContexts.isAncestorOf(disabledCtx, execCtx)) {
-    				participants = fStepInProgress.get(disabledCtx);
-    		    	if (participants != null) {
-    		    		participants.remove(participant);
-    		    		if (participants.isEmpty()) {
-    		    			doneStepping(disabledCtx);
-    		    		}
-    		    	}
-    			}
-    		}
-    	}
-    }
+	/**
+	 * Indicate that participant has completed processing of the last step.
+	 *
+	 * @param execCtx
+	 */
+	public void doneStepping(final IExecutionDMContext execCtx, final ISteppingControlParticipant participant) {
+		if (DEBUG)
+			System.out
+					.println("[SteppingController] doneStepping participant=" + participant.getClass().getSimpleName()); //$NON-NLS-1$
+		List<ISteppingControlParticipant> participants = fStepInProgress.get(execCtx);
+		if (participants != null) {
+			participants.remove(participant);
+			if (participants.isEmpty()) {
+				doneStepping(execCtx);
+			}
+		} else {
+			for (IExecutionDMContext disabledCtx : fStepInProgress.keySet()) {
+				if (DMContexts.isAncestorOf(disabledCtx, execCtx)) {
+					participants = fStepInProgress.get(disabledCtx);
+					if (participants != null) {
+						participants.remove(participant);
+						if (participants.isEmpty()) {
+							doneStepping(disabledCtx);
+						}
+					}
+				}
+			}
+		}
+	}
 
-    @ThreadSafe
+	@ThreadSafe
 	public DsfSession getSession() {
 		return fSession;
 	}
@@ -321,80 +325,81 @@ public final class SteppingController {
 	 * All access to this class should happen through this executor.
 	 * @return the executor this class is confined to
 	 */
-    @ThreadSafe
+	@ThreadSafe
 	public DsfExecutor getExecutor() {
 		return getSession().getExecutor();
 	}
-	
+
 	private DsfServicesTracker getServicesTracker() {
 		return fServicesTracker;
 	}
 
 	private IRunControl getRunControl() {
 		if (fRunControl == null) {
-	        fRunControl = getServicesTracker().getService(IRunControl.class);
-	        getSession().addServiceEventListener(this, null);
+			fRunControl = getServicesTracker().getService(IRunControl.class);
+			getSession().addServiceEventListener(this, null);
 		}
 		return fRunControl;
 	}
 
 	/**
-     * Checks whether a step command can be queued up for given context.
-     */
-    public void canEnqueueStep(IExecutionDMContext execCtx, StepType stepType, DataRequestMonitor<Boolean> rm) {
-        if (doCanEnqueueStep(execCtx, stepType)) {
-            rm.setData(true);
-            rm.done();
-        } else {
-            getRunControl().canStep(execCtx, stepType, rm);
-        }
-    }
+	 * Checks whether a step command can be queued up for given context.
+	 */
+	public void canEnqueueStep(IExecutionDMContext execCtx, StepType stepType, DataRequestMonitor<Boolean> rm) {
+		if (doCanEnqueueStep(execCtx, stepType)) {
+			rm.setData(true);
+			rm.done();
+		} else {
+			getRunControl().canStep(execCtx, stepType, rm);
+		}
+	}
 
-    private boolean doCanEnqueueStep(IExecutionDMContext execCtx, StepType stepType) {
-        return getRunControl().isStepping(execCtx) && !isSteppingTimedOut(execCtx); 
-    }
+	private boolean doCanEnqueueStep(IExecutionDMContext execCtx, StepType stepType) {
+		return getRunControl().isStepping(execCtx) && !isSteppingTimedOut(execCtx);
+	}
 
-    /**
-     * Check whether the next step on the given execution context should be delayed
-     * based on the configured step delay.
-     * 
+	/**
+	 * Check whether the next step on the given execution context should be delayed
+	 * based on the configured step delay.
+	 *
 	 * @param execCtx
 	 * @return <code>true</code> if the step should be delayed
 	 */
 	private boolean shouldDelayStep(IExecutionDMContext execCtx) {
-        final int stepDelay= getStepDelay(execCtx);
-        if (DEBUG) System.out.println("[SteppingController] shouldDelayStep delay=" + stepDelay); //$NON-NLS-1$
+		final int stepDelay = getStepDelay(execCtx);
+		if (DEBUG)
+			System.out.println("[SteppingController] shouldDelayStep delay=" + stepDelay); //$NON-NLS-1$
 		return stepDelay > 0;
 	}
 
 	/**
 	 * Compute the delay in milliseconds before the next step for the given context may be executed.
-	 * 
+	 *
 	 * @param execCtx
 	 * @return  the number of milliseconds before the next possible step
 	 */
 	private int getStepDelay(IExecutionDMContext execCtx) {
-	    int minStepInterval = fMinStepInterval;
+		int minStepInterval = fMinStepInterval;
 		if (minStepInterval > 0) {
-	        for (IExecutionDMContext lastStepCtx : fLastStepTimes.keySet()) {
-	            if (execCtx.equals(lastStepCtx) || DMContexts.isAncestorOf(execCtx, lastStepCtx)) {
-	                long now = System.currentTimeMillis();
-					int delay= (int) (fLastStepTimes.get(lastStepCtx) + minStepInterval - now);
+			for (IExecutionDMContext lastStepCtx : fLastStepTimes.keySet()) {
+				if (execCtx.equals(lastStepCtx) || DMContexts.isAncestorOf(execCtx, lastStepCtx)) {
+					long now = System.currentTimeMillis();
+					int delay = (int) (fLastStepTimes.get(lastStepCtx) + minStepInterval - now);
 					return Math.max(delay, 0);
-	            }
-	        }
+				}
+			}
 		}
-        return 0;
+		return 0;
 	}
 
 	private void updateLastStepTime(IExecutionDMContext execCtx) {
-        long now = System.currentTimeMillis();
+		long now = System.currentTimeMillis();
 		fLastStepTimes.put(execCtx, now);
-        for (IExecutionDMContext lastStepCtx : fLastStepTimes.keySet()) {
-            if (!execCtx.equals(lastStepCtx) && DMContexts.isAncestorOf(execCtx, lastStepCtx)) {
+		for (IExecutionDMContext lastStepCtx : fLastStepTimes.keySet()) {
+			if (!execCtx.equals(lastStepCtx) && DMContexts.isAncestorOf(execCtx, lastStepCtx)) {
 				fLastStepTimes.put(lastStepCtx, now);
-            }
-        }
+			}
+		}
 	}
 
 	private long getLastStepTime(IExecutionDMContext execCtx) {
@@ -410,99 +415,103 @@ public final class SteppingController {
 	}
 
 	/**
-     * Returns the number of step commands that are queued for given execution
-     * context.
-     */
-    public int getPendingStepCount(IExecutionDMContext execCtx) {
-        List<StepRequest> stepQueue = getStepQueue(execCtx);
-        if (stepQueue == null) return 0;
-        return stepQueue.size();
-    }
+	 * Returns the number of step commands that are queued for given execution
+	 * context.
+	 */
+	public int getPendingStepCount(IExecutionDMContext execCtx) {
+		List<StepRequest> stepQueue = getStepQueue(execCtx);
+		if (stepQueue == null)
+			return 0;
+		return stepQueue.size();
+	}
 
-    /**
-     * Adds a step command to the execution queue for given context.
-     * @param execCtx Execution context that should perform the step. 
-     * @param stepType Type of step to execute.
-     */
-    public void enqueueStep(final IExecutionDMContext execCtx, final StepType stepType) {
-    	if (DEBUG) System.out.println("[SteppingController] enqueueStep ctx=" + execCtx); //$NON-NLS-1$
-        if (!shouldDelayStep(execCtx) || doCanEnqueueStep(execCtx, stepType)) {
-            doEnqueueStep(execCtx, stepType);
-            processStepQueue(execCtx);
-        }
-    }
+	/**
+	 * Adds a step command to the execution queue for given context.
+	 * @param execCtx Execution context that should perform the step.
+	 * @param stepType Type of step to execute.
+	 */
+	public void enqueueStep(final IExecutionDMContext execCtx, final StepType stepType) {
+		if (DEBUG)
+			System.out.println("[SteppingController] enqueueStep ctx=" + execCtx); //$NON-NLS-1$
+		if (!shouldDelayStep(execCtx) || doCanEnqueueStep(execCtx, stepType)) {
+			doEnqueueStep(execCtx, stepType);
+			processStepQueue(execCtx);
+		}
+	}
 
 	private void doStep(final IExecutionDMContext execCtx, final StepType stepType) {
-		if (DEBUG) System.out.println("[SteppingController] doStep ctx="+execCtx); //$NON-NLS-1$
-	    disableStepping(execCtx);
-        updateLastStepTime(execCtx);
-        
+		if (DEBUG)
+			System.out.println("[SteppingController] doStep ctx=" + execCtx); //$NON-NLS-1$
+		disableStepping(execCtx);
+		updateLastStepTime(execCtx);
+
 		getRunControl().step(execCtx, stepType, new RequestMonitor(getExecutor(), null) {
-		    @Override
-		    protected void handleSuccess() {
-	            fTimedOutFlags.remove(execCtx);
-	            ScheduledFuture<?> currentTimeOutFuture = fTimedOutFutures.get(execCtx);
-	            if (currentTimeOutFuture != null) {
-	            	currentTimeOutFuture.cancel(false);
-	            }
-	            fTimedOutFutures.put(execCtx, getExecutor().schedule(new TimeOutRunnable(execCtx), fStepTimeout, TimeUnit.MILLISECONDS));
-		    }
-		    
-		    @Override
-		    protected void handleFailure() {
-		    	// in case of a failed step - enable stepping again (bug 265267)
-		    	enableStepping(execCtx);
-		        if (getStatus().getCode() == IDsfStatusConstants.INVALID_STATE) {
-	                // Ignore errors.  During fast stepping there can be expected race
-	                // conditions leading to stepping errors.
-		            return;
-		        } 
-		        super.handleFailure();
-		    }
-		    
-		    @Override
-		    protected void handleError() {
-		        super.handleError();
-		        CDebugUtils.error(getStatus(), SteppingController.this);
-		    }
+			@Override
+			protected void handleSuccess() {
+				fTimedOutFlags.remove(execCtx);
+				ScheduledFuture<?> currentTimeOutFuture = fTimedOutFutures.get(execCtx);
+				if (currentTimeOutFuture != null) {
+					currentTimeOutFuture.cancel(false);
+				}
+				fTimedOutFutures.put(execCtx,
+						getExecutor().schedule(new TimeOutRunnable(execCtx), fStepTimeout, TimeUnit.MILLISECONDS));
+			}
+
+			@Override
+			protected void handleFailure() {
+				// in case of a failed step - enable stepping again (bug 265267)
+				enableStepping(execCtx);
+				if (getStatus().getCode() == IDsfStatusConstants.INVALID_STATE) {
+					// Ignore errors.  During fast stepping there can be expected race
+					// conditions leading to stepping errors.
+					return;
+				}
+				super.handleFailure();
+			}
+
+			@Override
+			protected void handleError() {
+				super.handleError();
+				CDebugUtils.error(getStatus(), SteppingController.this);
+			}
 		});
 	}
 
 	/**
 	 * Enqueue the given step for later execution.
-	 * 
+	 *
 	 * @param execCtx
 	 * @param stepType
 	 */
 	private void doEnqueueStep(final IExecutionDMContext execCtx, final StepType stepType) {
 		List<StepRequest> stepQueue = fStepQueues.get(execCtx);
 		if (stepQueue == null) {
-		    stepQueue = new LinkedList<StepRequest>();
-		    fStepQueues.put(execCtx, stepQueue);
+			stepQueue = new LinkedList<StepRequest>();
+			fStepQueues.put(execCtx, stepQueue);
 		}
 		if (stepQueue.size() < fQueueDepth) {
-		    stepQueue.add(new StepRequest(execCtx, stepType));
+			stepQueue.add(new StepRequest(execCtx, stepType));
 		}
 	}
 
-    /**
-     * Returns whether the step instruction for the given context has timed out.
-     */
-    public boolean isSteppingTimedOut(IExecutionDMContext execCtx) {
-        for (IExecutionDMContext timedOutCtx : fTimedOutFlags.keySet()) {
-            if (execCtx.equals(timedOutCtx) || DMContexts.isAncestorOf(execCtx, timedOutCtx)) {
-                return fTimedOutFlags.get(timedOutCtx);
-            }
-        }
-        return false;
-    }
-    
+	/**
+	 * Returns whether the step instruction for the given context has timed out.
+	 */
+	public boolean isSteppingTimedOut(IExecutionDMContext execCtx) {
+		for (IExecutionDMContext timedOutCtx : fTimedOutFlags.keySet()) {
+			if (execCtx.equals(timedOutCtx) || DMContexts.isAncestorOf(execCtx, timedOutCtx)) {
+				return fTimedOutFlags.get(timedOutCtx);
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Process next step on queue if any.
 	 * @param execCtx
 	 */
 	private void processStepQueue(final IExecutionDMContext execCtx) {
-        final List<StepRequest> queue = getStepQueue(execCtx);
+		final List<StepRequest> queue = getStepQueue(execCtx);
 		if (queue != null) {
 			final int stepDelay = getStepDelay(execCtx);
 			if (stepDelay > 0) {
@@ -514,49 +523,50 @@ public final class SteppingController {
 				}, stepDelay, TimeUnit.MILLISECONDS);
 				return;
 			}
-            final StepRequest request = queue.get(0);
-    		if (DEBUG) System.out.println("[SteppingController] processStepQueue request-in-progress="+request.inProgress); //$NON-NLS-1$
-            if (!request.inProgress) {
-        		if (isSteppingDisabled(request.fContext)) {
-        			return;
-        		}
-                request.inProgress = true;
-                getRunControl().canStep(
-                    request.fContext, request.fStepType, 
-                    new DataRequestMonitor<Boolean>(getExecutor(), null) {
-                        @Override
-                        protected void handleCompleted() {
-                            if (isSuccess() && getData()) {
-                        		queue.remove(0);
-                                if (queue.isEmpty()) fStepQueues.remove(request.fContext);                               
-                        		doStep(request.fContext, request.fStepType);
-                            } else { 
-                                // For whatever reason we can't step anymore, so clear out
-                                // the step queue.
-                                fStepQueues.remove(request.fContext);
-                            }
-                        }
-                    });
-            } 
-        }
+			final StepRequest request = queue.get(0);
+			if (DEBUG)
+				System.out.println("[SteppingController] processStepQueue request-in-progress=" + request.inProgress); //$NON-NLS-1$
+			if (!request.inProgress) {
+				if (isSteppingDisabled(request.fContext)) {
+					return;
+				}
+				request.inProgress = true;
+				getRunControl().canStep(request.fContext, request.fStepType,
+						new DataRequestMonitor<Boolean>(getExecutor(), null) {
+							@Override
+							protected void handleCompleted() {
+								if (isSuccess() && getData()) {
+									queue.remove(0);
+									if (queue.isEmpty())
+										fStepQueues.remove(request.fContext);
+									doStep(request.fContext, request.fStepType);
+								} else {
+									// For whatever reason we can't step anymore, so clear out
+									// the step queue.
+									fStepQueues.remove(request.fContext);
+								}
+							}
+						});
+			}
+		}
 	}
 
 	private List<StepRequest> getStepQueue(IExecutionDMContext execCtx) {
 		List<StepRequest> queue = fStepQueues.get(execCtx);
 		if (queue == null) {
-	        for (IExecutionDMContext stepCtx : fStepQueues.keySet()) {
-	            if (DMContexts.isAncestorOf(stepCtx, execCtx)) {
-	            	queue = fStepQueues.get(stepCtx);
-	            	break;
-	            }
-	        }
+			for (IExecutionDMContext stepCtx : fStepQueues.keySet()) {
+				if (DMContexts.isAncestorOf(stepCtx, execCtx)) {
+					queue = fStepQueues.get(stepCtx);
+					break;
+				}
+			}
 		}
 		return queue;
 	}
 
 	/**
 	 * Disable stepping for the given execution context.
-	 * 
+	 *
 	 * @param execCtx
 	 */
 	private void disableStepping(IExecutionDMContext execCtx) {
@@ -565,25 +575,26 @@ public final class SteppingController {
 		}
 	}
 
-    /**
-     * Indicate that processing of the last step has completed and
-     * the next step can be issued.
-     * 
-     * @param execCtx
-     */
-    private void doneStepping(final IExecutionDMContext execCtx) {
-    	if (DEBUG) System.out.println("[SteppingController] doneStepping ctx=" + execCtx); //$NON-NLS-1$
-        enableStepping(execCtx);
-        processStepQueue(execCtx);
-    }
+	/**
+	 * Indicate that processing of the last step has completed and
+	 * the next step can be issued.
+	 *
+	 * @param execCtx
+	 */
+	private void doneStepping(final IExecutionDMContext execCtx) {
+		if (DEBUG)
+			System.out.println("[SteppingController] doneStepping ctx=" + execCtx); //$NON-NLS-1$
+		enableStepping(execCtx);
+		processStepQueue(execCtx);
+	}
 
 	/**
 	 * Enable stepping for the given execution context.
-	 * 
+	 *
 	 * @param execCtx
 	 */
 	public void enableStepping(final IExecutionDMContext execCtx) {
-        fStepInProgress.remove(execCtx);
+		fStepInProgress.remove(execCtx);
 		for (IExecutionDMContext disabledCtx : fStepInProgress.keySet()) {
 			if (DMContexts.isAncestorOf(disabledCtx, execCtx)) {
 				fStepInProgress.remove(disabledCtx);
@@ -592,25 +603,26 @@ public final class SteppingController {
 	}
 
 	private boolean isSteppingDisabled(IExecutionDMContext execCtx) {
-        boolean disabled= fStepInProgress.containsKey(execCtx);
-        if (!disabled) {
-	        for (IExecutionDMContext disabledCtx : fStepInProgress.keySet()) {
+		boolean disabled = fStepInProgress.containsKey(execCtx);
+		if (!disabled) {
+			for (IExecutionDMContext disabledCtx : fStepInProgress.keySet()) {
 				if (DMContexts.isAncestorOf(execCtx, disabledCtx)) {
 					disabled = true;
 					break;
 				}
 			}
-        }
-        if (disabled) {
-        	long now = System.currentTimeMillis();
-        	long lastStepTime = getLastStepTime(execCtx);
-        	if (now - lastStepTime > MAX_STEP_DELAY) {
-        		if (DEBUG) System.out.println("[SteppingController] stepping control participant(s) timed out"); //$NON-NLS-1$
-        		enableStepping(execCtx);
-        		disabled = false;
-        	}
-        }
-        return disabled;
+		}
+		if (disabled) {
+			long now = System.currentTimeMillis();
+			long lastStepTime = getLastStepTime(execCtx);
+			if (now - lastStepTime > MAX_STEP_DELAY) {
+				if (DEBUG)
+					System.out.println("[SteppingController] stepping control participant(s) timed out"); //$NON-NLS-1$
+				enableStepping(execCtx);
+				disabled = false;
+			}
+		}
+		return disabled;
 	}
 
 	protected void handlePropertyChanged(final IPreferenceStore store, final PropertyChangeEvent event) {
@@ -620,71 +632,73 @@ public final class SteppingController {
 		}
 	}
 
+	///////////////////////////////////////////////////////////////////////////
 
-    ///////////////////////////////////////////////////////////////////////////
+	@DsfServiceEventHandler
+	public void eventDispatched(final ISuspendedDMEvent e) {
+		// Take care of the stepping time out
+		boolean timedOut = false;
+		IExecutionDMContext dmc = e.getDMContext();
+		for (Iterator<Map.Entry<IExecutionDMContext, Boolean>> itr = fTimedOutFlags.entrySet().iterator(); itr
+				.hasNext();) {
+			Map.Entry<IExecutionDMContext, Boolean> entry = itr.next();
+			IExecutionDMContext nextDmc = entry.getKey();
+			if (nextDmc.equals(dmc) || DMContexts.isAncestorOf(nextDmc, dmc)) {
+				if (entry.getValue()) {
+					// after step timeout do not process queued steps
+					fStepQueues.remove(dmc);
+					timedOut = true;
+				}
+				itr.remove();
+			}
+		}
 
-    @DsfServiceEventHandler 
-    public void eventDispatched(final ISuspendedDMEvent e) {
-        // Take care of the stepping time out
-    	boolean timedOut = false;
-        IExecutionDMContext dmc = e.getDMContext();
-        for (Iterator<Map.Entry<IExecutionDMContext, Boolean>> itr = fTimedOutFlags.entrySet().iterator(); itr.hasNext();) {
-            Map.Entry<IExecutionDMContext,Boolean> entry = itr.next();
-            IExecutionDMContext nextDmc = entry.getKey();
-            if (nextDmc.equals(dmc) || DMContexts.isAncestorOf(nextDmc, dmc)) {
-                if (entry.getValue()) {
-                    // after step timeout do not process queued steps
-                    fStepQueues.remove(dmc);
-                    timedOut = true;
-                }
-                itr.remove();
-            }
-        }
-        
-        // Cancel all time-out futures related to the event context.  I.e.
-        // - If event is on a container, all child threads are suspended and 
-        // should not issue a stepping time-out event.
-        // - If event is on a thread, and resumed event was on a container then 
-        // stepping timeout for container should be canceled as it would affect
-        // suspended thread.
-        for (Iterator<Map.Entry<IExecutionDMContext, ScheduledFuture<?>>> itr = fTimedOutFutures.entrySet().iterator(); itr.hasNext();) {
-            Map.Entry<IExecutionDMContext, ScheduledFuture<?>> entry = itr.next();
-            IExecutionDMContext nextDmc = entry.getKey();
-            if (nextDmc.equals(dmc) || DMContexts.isAncestorOf(nextDmc, dmc) || DMContexts.isAncestorOf(dmc, nextDmc)) {
-                entry.getValue().cancel(false);
-                itr.remove();
-            }            
-        }
-        
-        if (e.getReason() != StateChangeReason.STEP) {
-        	// after any non-step suspend reason do not process queued steps for given context
-        	fStepQueues.remove(dmc);
-        } else if (!timedOut){
-        	// Check if there's a step pending, if so execute it
-        	processStepQueue(dmc);
-        }
-    }
+		// Cancel all time-out futures related to the event context.  I.e.
+		// - If event is on a container, all child threads are suspended and
+		// should not issue a stepping time-out event.
+		// - If event is on a thread, and resumed event was on a container then
+		// stepping timeout for container should be canceled as it would affect
+		// suspended thread.
+		for (Iterator<Map.Entry<IExecutionDMContext, ScheduledFuture<?>>> itr = fTimedOutFutures.entrySet()
+				.iterator(); itr.hasNext();) {
+			Map.Entry<IExecutionDMContext, ScheduledFuture<?>> entry = itr.next();
+			IExecutionDMContext nextDmc = entry.getKey();
+			if (nextDmc.equals(dmc) || DMContexts.isAncestorOf(nextDmc, dmc) || DMContexts.isAncestorOf(dmc, nextDmc)) {
+				entry.getValue().cancel(false);
+				itr.remove();
+			}
+		}
 
-    @DsfServiceEventHandler 
-    public void eventDispatched(final IResumedDMEvent e) {
-        if (e.getReason().equals(StateChangeReason.STEP)) {
-            final IExecutionDMContext dmc = e.getDMContext();
-            fTimedOutFlags.remove(dmc);
-            
-            
-            // Find any time-out futures for contexts that are children of the 
-            // resumed context, and cancel them as they'll be replaced.
-            if (!fTimedOutFutures.containsKey(dmc)) {
-	            for (Iterator<Map.Entry<IExecutionDMContext, ScheduledFuture<?>>> itr = fTimedOutFutures.entrySet().iterator(); itr.hasNext();) {
-	                Map.Entry<IExecutionDMContext, ScheduledFuture<?>> entry = itr.next();
-	                if (DMContexts.isAncestorOf(entry.getKey(), dmc)) {
-	                    entry.getValue().cancel(false);
-	                    itr.remove();
-	                }            
-	            }
-	            
-	            fTimedOutFutures.put(dmc, getExecutor().schedule(new TimeOutRunnable(dmc), fStepTimeout, TimeUnit.MILLISECONDS));
-            }
-        } 
-    }    
+		if (e.getReason() != StateChangeReason.STEP) {
+			// after any non-step suspend reason do not process queued steps for given context
+			fStepQueues.remove(dmc);
+		} else if (!timedOut) {
+			// Check if there's a step pending, if so execute it
+			processStepQueue(dmc);
+		}
+	}
+
+	@DsfServiceEventHandler
+	public void eventDispatched(final IResumedDMEvent e) {
+		if (e.getReason().equals(StateChangeReason.STEP)) {
+			final IExecutionDMContext dmc = e.getDMContext();
+			fTimedOutFlags.remove(dmc);
+
+			// Find any time-out futures for contexts that are children of the
+			// resumed context, and cancel them as they'll be replaced.
+			if (!fTimedOutFutures.containsKey(dmc)) {
+				for (Iterator<Map.Entry<IExecutionDMContext, ScheduledFuture<?>>> itr = fTimedOutFutures.entrySet()
+						.iterator(); itr.hasNext();) {
+					Map.Entry<IExecutionDMContext, ScheduledFuture<?>> entry = itr.next();
+					if (DMContexts.isAncestorOf(entry.getKey(), dmc)) {
+						entry.getValue().cancel(false);
+						itr.remove();
+					}
+				}
+
+				fTimedOutFutures.put(dmc,
+						getExecutor().schedule(new TimeOutRunnable(dmc), fStepTimeout, TimeUnit.MILLISECONDS));
+			}
+		}
+	}
 }

@@ -16,8 +16,8 @@
 package org.eclipse.cdt.debug.application;
 
 /**
- * This class provides information required to start 
- * debugging an executable. 
+ * This class provides information required to start
+ * debugging an executable.
  */
 public class CoreFileInfo {
 	private String fHostPath;
@@ -30,23 +30,23 @@ public class CoreFileInfo {
 		fTargetPath = targetPath;
 		fCoreFilePath = coreFilePath;
 	}
-	
+
 	/**
 	 * Returns the path of the executable on the host
 	 */
 	public String getHostPath() {
 		return fHostPath;
 	}
-	
+
 	/**
 	 * Sets the path of the executable on the host
 	 */
 	public void setHostPath(String path) {
 		fHostPath = path;
 	}
-	
+
 	/**
-	 * For remote sessions returns the path of the executable 
+	 * For remote sessions returns the path of the executable
 	 * on the target. Otherwise returns null.
 	 */
 	public String getTargetPath() {
@@ -59,23 +59,23 @@ public class CoreFileInfo {
 	public void setTargetPath(String path) {
 		fTargetPath = path;
 	}
-	
+
 	/**
 	 * Get the build log path.
-	 * 
+	 *
 	 * @return the build log path or null
 	 */
 	public String getCoreFilePath() {
 		return fCoreFilePath;
 	}
-	
+
 	/**
 	 * Sets the build log path.
-	 * 
+	 *
 	 * @param path
 	 */
 	public void setCoreFilePath(String path) {
 		fCoreFilePath = path;
 	}
-	
+
 }

@@ -57,8 +57,10 @@ public class StringListModeControl {
 			@Override
 			public void handleEvent(Event event) {
 				// Use event.text to tell which link was used
-				int result = PreferencesUtil.createPreferenceDialogOn(parent.getShell(), STRING_LIST_MODE_PREFERENCE_PAGE, null, null).open();
-				if (result!=Window.CANCEL) {
+				int result = PreferencesUtil
+						.createPreferenceDialogOn(parent.getShell(), STRING_LIST_MODE_PREFERENCE_PAGE, null, null)
+						.open();
+				if (result != Window.CANCEL) {
 					updateStringListModeControl();
 					for (Listener listener : listeners) {
 						listener.handleEvent(event);
@@ -88,7 +90,7 @@ public class StringListModeControl {
 	 * @param eventType the type of event to listen for, currently not used.
 	 * @param listener the listener which should no longer be notified.
 	 */
-	protected void removeListener (int eventType, Listener listener) {
+	protected void removeListener(int eventType, Listener listener) {
 		listeners.remove(listener);
 	}
 
@@ -129,8 +131,8 @@ public class StringListModeControl {
 				break;
 			}
 
-			linkStringListMode.setText(Messages.AbstractLangsListTab_StringListMode +
-					" <a href=\"workspace-settings\">"+modeDisplay+"</a> + <a href=\"workspace-settings\">"+modeWrite+"</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			linkStringListMode.setText(Messages.AbstractLangsListTab_StringListMode + " <a href=\"workspace-settings\">" //$NON-NLS-1$
+					+ modeDisplay + "</a> + <a href=\"workspace-settings\">" + modeWrite + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		linkStringListMode.getParent().layout();
 	}

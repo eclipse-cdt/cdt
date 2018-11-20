@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - modified for use in Meson build
  *******************************************************************************/
@@ -168,7 +168,7 @@ public class MesonPreferencePage extends PreferencePage implements IWorkbenchPre
 		for (IMesonToolChainFile file : filesToRemove.values()) {
 			files.remove(file.getPath());
 		}
-		
+
 		for (IMesonToolChainFile file : filesToAdd.values()) {
 			files.put(file.getPath(), file);
 		}
@@ -185,10 +185,10 @@ public class MesonPreferencePage extends PreferencePage implements IWorkbenchPre
 		for (IMesonToolChainFile file : filesToAdd.values()) {
 			manager.addToolChainFile(file);
 		}
-		
+
 		filesToAdd.clear();
 		filesToRemove.clear();
-		
+
 		return true;
 	}
 

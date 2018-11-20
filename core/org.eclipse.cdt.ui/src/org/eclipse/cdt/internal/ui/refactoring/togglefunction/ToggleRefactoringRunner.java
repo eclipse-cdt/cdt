@@ -1,17 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
- *     Sergey Prigogin (Google) 
+ *     Sergey Prigogin (Google)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -33,8 +33,8 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
  */
 public class ToggleRefactoringRunner extends RefactoringRunner {
 
-	public ToggleRefactoringRunner(ICElement element, ITextSelection selection,
-			IShellProvider shellProvider, ICProject project) {
+	public ToggleRefactoringRunner(ICElement element, ITextSelection selection, IShellProvider shellProvider,
+			ICProject project) {
 		super(element, selection, shellProvider, project);
 	}
 
@@ -42,15 +42,14 @@ public class ToggleRefactoringRunner extends RefactoringRunner {
 	public void run() {
 		Job[] jobs = Job.getJobManager().find(RefactoringJob.FAMILY_TOGGLE_DEFINITION);
 		if (jobs.length > 0) {
-			CUIPlugin.log("No concurrent toggling allowed", new NotSupportedException(""));  //$NON-NLS-1$//$NON-NLS-2$
+			CUIPlugin.log("No concurrent toggling allowed", new NotSupportedException("")); //$NON-NLS-1$//$NON-NLS-2$
 			return;
 		}
-		RefactoringSaveHelper saveHelper= new RefactoringSaveHelper(RefactoringSaveHelper.SAVE_REFACTORING);
+		RefactoringSaveHelper saveHelper = new RefactoringSaveHelper(RefactoringSaveHelper.SAVE_REFACTORING);
 		if (!saveHelper.saveEditors(shellProvider.getShell()))
 			return;
 
-		ToggleRefactoring refactoring =
-				new ToggleRefactoring(element, (ITextSelection) selection, project);
+		ToggleRefactoring refactoring = new ToggleRefactoring(element, (ITextSelection) selection, project);
 		new RefactoringJob(refactoring).schedule();
 	}
 }

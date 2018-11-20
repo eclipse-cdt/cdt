@@ -56,7 +56,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 	protected class OutputStreamWrapper extends OutputStream {
 		private OutputStream fOut;
 
-		public OutputStreamWrapper(OutputStream out){
+		public OutputStreamWrapper(OutputStream out) {
 			fOut = out;
 		}
 
@@ -86,12 +86,12 @@ public class CommandBuilder implements IBuildModelBuilder {
 
 	}
 
-	public CommandBuilder(IBuildCommand cmd, IResourceRebuildStateContainer cr, IProject project){
+	public CommandBuilder(IBuildCommand cmd, IResourceRebuildStateContainer cr, IProject project) {
 		fCmd = cmd;
 		fProject = project;
 	}
 
-	protected OutputStream wrap(OutputStream out){
+	protected OutputStream wrap(OutputStream out) {
 		return new OutputStreamWrapper(out);
 	}
 
@@ -109,7 +109,8 @@ public class CommandBuilder implements IBuildModelBuilder {
 			ICommandLauncher launcher = createLauncher();
 			launcher.showCommand(true);
 
-			fProcess = launcher.execute(fCmd.getCommand(), fCmd.getArgs(), mapToStringArray(fCmd.getEnvironment()), fCmd.getCWD(), monitor);
+			fProcess = launcher.execute(fCmd.getCommand(), fCmd.getArgs(), mapToStringArray(fCmd.getEnvironment()),
+					fCmd.getCWD(), monitor);
 			if (fProcess != null) {
 				try {
 					// Close the input of the process since we will never write to it
@@ -118,7 +119,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 				}
 
 				// Wrapping out and err streams to avoid their closure
-				int st = launcher.waitAndRead(wrap(out), wrap(err), new SubProgressMonitor(monitor,	getNumCommands()));
+				int st = launcher.waitAndRead(wrap(out), wrap(err), new SubProgressMonitor(monitor, getNumCommands()));
 				switch (st) {
 				case ICommandLauncher.OK:
 					// assuming that compiler returns error code after compilation errors
@@ -157,8 +158,8 @@ public class CommandBuilder implements IBuildModelBuilder {
 		return fErrMsg;
 	}
 
-	private String[] mapToStringArray(Map<String, String> map){
-		if(map == null)
+	private String[] mapToStringArray(Map<String, String> map) {
+		if (map == null)
 			return null;
 
 		List<String> list = new ArrayList<String>();
@@ -171,7 +172,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 		return list.toArray(new String[list.size()]);
 	}
 
-	protected void printMessage(String msg, OutputStream os){
+	protected void printMessage(String msg, OutputStream os) {
 		if (os != null) {
 			try {
 				os.write((msg + NEWLINE).getBytes());

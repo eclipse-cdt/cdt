@@ -16,11 +16,10 @@ package org.eclipse.cdt.debug.core.executables;
 
 import java.util.List;
 
-
 /**
  * Extension of IExecutablesChangeListener which allows listeners to more
  * precisely find out when an Executable is added or removed from the workspace
- * 
+ *
  * @since 7.1
  */
 public interface IExecutablesChangeListener2 extends IExecutablesChangeListener {
@@ -30,11 +29,11 @@ public interface IExecutablesChangeListener2 extends IExecutablesChangeListener 
 	 * workspace
 	 */
 	public void executablesAdded(List<Executable> executables);
-	
+
 	/**
 	 * Called when one or more Executable objects have been removed from the
 	 * workspace
 	 */
-	public void executablesRemoved(List<Executable> executables);	
+	public void executablesRemoved(List<Executable> executables);
 
 }

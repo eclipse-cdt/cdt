@@ -43,10 +43,10 @@ public class QObjectTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj_B1 = qtIndex.findQObject(new String[]{ "B1" });
+		IQObject qobj_B1 = qtIndex.findQObject(new String[] { "B1" });
 		if (!isIndexOk("B1", qobj_B1))
 			return;
-		IQObject qobj_D1 = qtIndex.findQObject(new String[]{ "D1" });
+		IQObject qobj_D1 = qtIndex.findQObject(new String[] { "D1" });
 		assertNotNull(qobj_B1);
 		assertNotNull(qobj_D1);
 
@@ -58,7 +58,7 @@ public class QObjectTests extends BaseQtTestCase {
 		assertEquals("B2", iterator.next().getName());
 
 		// D2 is not a QObject because it doesn't expand the Q_OBJECT macro
-		IQObject qobj_D2 = qtIndex.findQObject(new String[]{ "D2" });
+		IQObject qobj_D2 = qtIndex.findQObject(new String[] { "D2" });
 		assertNull(qobj_D2);
 	}
 
@@ -86,7 +86,7 @@ public class QObjectTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		IQObject qobj = qtIndex.findQObject(new String[] { "Q" });
 		if (!isIndexOk("Q", qobj))
 			return;
 		assertNotNull(qobj);
@@ -94,7 +94,7 @@ public class QObjectTests extends BaseQtTestCase {
 		Collection<IQEnum> qEnums = qobj.getEnums();
 		assertNotNull(qEnums);
 		assertEquals(3, qEnums.size());
-		for(IQEnum qEnum : qEnums) {
+		for (IQEnum qEnum : qEnums) {
 			String name = qEnum.getName();
 			assertFalse(qEnum.isFlag());
 			if ("E0".equals(name)) {
@@ -110,7 +110,7 @@ public class QObjectTests extends BaseQtTestCase {
 					else
 						fail("unexpected " + name + "::" + enumerator.getName() + " = " + String.valueOf(ordinal));
 				}
-			} else if("E1".equals(name)) {
+			} else if ("E1".equals(name)) {
 				Collection<IQEnum.Enumerator> enumerators = qEnum.getEnumerators();
 				assertNotNull(enumerators);
 				assertEquals(2, enumerators.size());
@@ -123,7 +123,7 @@ public class QObjectTests extends BaseQtTestCase {
 					else
 						fail("unexpected " + name + "::" + enumerator.getName() + " = " + String.valueOf(ordinal));
 				}
-			} else if("Q0::EB".equals(name)) {
+			} else if ("Q0::EB".equals(name)) {
 				Collection<IQEnum.Enumerator> enumerators = qEnum.getEnumerators();
 				assertNotNull(enumerators);
 				assertEquals(1, enumerators.size());
@@ -160,7 +160,7 @@ public class QObjectTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		IQObject qobj = qtIndex.findQObject(new String[] { "Q" });
 		if (!isIndexOk("Q", qobj))
 			return;
 		assertNotNull(qobj);
@@ -169,7 +169,7 @@ public class QObjectTests extends BaseQtTestCase {
 		assertNotNull(qEnums);
 		assertEquals(2, qEnums.size());
 
-		for(IQEnum qEnum : qEnums) {
+		for (IQEnum qEnum : qEnums) {
 			assertNotNull(qEnum);
 			assertTrue(qEnum.isFlag());
 			if ("Flag".equals(qEnum.getName())) {
@@ -177,7 +177,7 @@ public class QObjectTests extends BaseQtTestCase {
 				assertNotNull(enumerators);
 				assertEquals(1, enumerators.size());
 				assertEquals("e0", enumerators.iterator().next().getName());
-			} else if("Flag2".equals(qEnum.getName())) {
+			} else if ("Flag2".equals(qEnum.getName())) {
 				Collection<IQEnum.Enumerator> enumerators = qEnum.getEnumerators();
 				assertNotNull(enumerators);
 				assertEquals(1, enumerators.size());
@@ -187,21 +187,21 @@ public class QObjectTests extends BaseQtTestCase {
 		}
 	}
 
-    // #include "junit-QObject.hh"
-    // class B : public QObject
-    // {
-    // Q_OBJECT
-    // Q_PROPERTY(bool allowed READ isAllowed)
-    // public:
-    //     bool isAllowed() const { return false; }
-    // };
+	// #include "junit-QObject.hh"
+	// class B : public QObject
+	// {
+	// Q_OBJECT
+	// Q_PROPERTY(bool allowed READ isAllowed)
+	// public:
+	//     bool isAllowed() const { return false; }
+	// };
 	public void testOwner() throws Exception {
 		loadComment("owner.hh");
 
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj = qtIndex.findQObject(new String[]{ "B" });
+		IQObject qobj = qtIndex.findQObject(new String[] { "B" });
 		if (!isIndexOk("B", qobj))
 			return;
 		assertNotNull(qobj);
@@ -252,54 +252,48 @@ public class QObjectTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		IQObject qobj = qtIndex.findQObject(new String[] { "Q" });
 		if (!isIndexOk("Q", qobj))
 			return;
 		assertNotNull(qobj);
 
-		assert_checkQProperties(
-			qobj,
-			new ExpectedQProperty("bool",      "prop1", Attribute.READ, "getProp"),
-			new ExpectedQProperty("T<bool>",   "prop2", Attribute.READ, "getProp"),
-			new ExpectedQProperty("T<bool *>", "prop3", Attribute.READ, "getProp"),
-			new ExpectedQProperty("bool *",    "prop4", Attribute.READ, "getProp"),
-			new ExpectedQProperty("bool",      "prop5"),
-			new ExpectedQProperty("bool *",    "prop6"),
+		assert_checkQProperties(qobj, new ExpectedQProperty("bool", "prop1", Attribute.READ, "getProp"),
+				new ExpectedQProperty("T<bool>", "prop2", Attribute.READ, "getProp"),
+				new ExpectedQProperty("T<bool *>", "prop3", Attribute.READ, "getProp"),
+				new ExpectedQProperty("bool *", "prop4", Attribute.READ, "getProp"),
+				new ExpectedQProperty("bool", "prop5"), new ExpectedQProperty("bool *", "prop6"),
 
-			new ExpectedQProperty("bool", "read1", Attribute.READ, "readMethod"),
-			new ExpectedQProperty("bool", "read2", Attribute.READ ,"readMethod2", Attribute.FINAL),
+				new ExpectedQProperty("bool", "read1", Attribute.READ, "readMethod"),
+				new ExpectedQProperty("bool", "read2", Attribute.READ, "readMethod2", Attribute.FINAL),
 
-			new ExpectedQProperty("Namespace::Type",    "allowedAreas1" ),
-			new ExpectedQProperty("Qt::ToolBarAreas",   "allowedAreas2",
-							      Attribute.READ,       "allowedAreas",
-							      Attribute.WRITE,      "setAllowedAreas",
-							      Attribute.DESIGNABLE, "(qobject_cast<QMainWindow *>(parentWidget()) != 0)",
-							      Attribute.NOTIFY,     "allowedAreasChanged")
-		);
+				new ExpectedQProperty("Namespace::Type", "allowedAreas1"),
+				new ExpectedQProperty("Qt::ToolBarAreas", "allowedAreas2", Attribute.READ, "allowedAreas",
+						Attribute.WRITE, "setAllowedAreas", Attribute.DESIGNABLE,
+						"(qobject_cast<QMainWindow *>(parentWidget()) != 0)", Attribute.NOTIFY, "allowedAreasChanged"));
 	}
 
-    // #include "junit-QObject.hh"
-    // class B : public QObject
-    // {
-    // Q_OBJECT
-    // Q_PROPERTY(bool allowed READ isAllowed)
-    // public:
-    //     bool isAllowed() const { return false; }
-    // };
-    // class D1 : public B
-    // {
-    // Q_OBJECT
-    // Q_PROPERTY(bool allowed READ isAllowed_d)
-    // public:
-    //     bool isAllowed_d() const { return false; }
-    // };
+	// #include "junit-QObject.hh"
+	// class B : public QObject
+	// {
+	// Q_OBJECT
+	// Q_PROPERTY(bool allowed READ isAllowed)
+	// public:
+	//     bool isAllowed() const { return false; }
+	// };
+	// class D1 : public B
+	// {
+	// Q_OBJECT
+	// Q_PROPERTY(bool allowed READ isAllowed_d)
+	// public:
+	//     bool isAllowed_d() const { return false; }
+	// };
 	public void testGetOverridden() throws Exception {
 		loadComment("getOverridden.hh");
 
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject base_qobj = qtIndex.findQObject(new String[]{ "B" });
+		IQObject base_qobj = qtIndex.findQObject(new String[] { "B" });
 		if (!isIndexOk("B", base_qobj))
 			return;
 		assertNotNull(base_qobj);
@@ -310,7 +304,7 @@ public class QObjectTests extends BaseQtTestCase {
 		assertEquals(1, base_qprops.locals().size());
 		assertEquals(1, base_qprops.withoutOverrides().size());
 
-		IQObject derived_qobj1 = qtIndex.findQObject(new String[]{ "D1" });
+		IQObject derived_qobj1 = qtIndex.findQObject(new String[] { "D1" });
 		assertNotNull(derived_qobj1);
 		IQObject.IMembers<IQProperty> derived_qprops1 = derived_qobj1.getProperties();
 		assertNotNull(derived_qprops1);
@@ -319,36 +313,36 @@ public class QObjectTests extends BaseQtTestCase {
 		assertEquals(1, derived_qprops1.withoutOverrides().size());
 	}
 
-    // #include "junit-QObject.hh"
-    // class B : public QObject
-    // {
-    // Q_OBJECT
-    // Q_CLASSINFO( "key1", "value1" )
-    // Q_CLASSINFO( "key2", "value\"2" )
-    // public:
-    //     bool isAllowed() const { return false; }
-    // };
-    // class D : public B
-    // {
-    // Q_OBJECT
-    // Q_CLASSINFO( "key2", "overridden value" )
-    // public:
-    //     bool isAllowed() const { return false; }
-    // };
+	// #include "junit-QObject.hh"
+	// class B : public QObject
+	// {
+	// Q_OBJECT
+	// Q_CLASSINFO( "key1", "value1" )
+	// Q_CLASSINFO( "key2", "value\"2" )
+	// public:
+	//     bool isAllowed() const { return false; }
+	// };
+	// class D : public B
+	// {
+	// Q_OBJECT
+	// Q_CLASSINFO( "key2", "overridden value" )
+	// public:
+	//     bool isAllowed() const { return false; }
+	// };
 	public void testClassInfos() throws Exception {
 		loadComment("classinfos.hh");
 
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj_b = qtIndex.findQObject(new String[]{ "B" });
+		IQObject qobj_b = qtIndex.findQObject(new String[] { "B" });
 		if (!isIndexOk("B", qobj_b))
 			return;
 		assertNotNull(qobj_b);
 		assertEquals("value1", qobj_b.getClassInfo("key1"));
 		assertEquals("value\\\"2", qobj_b.getClassInfo("key2"));
 
-		IQObject qobj_d = qtIndex.findQObject(new String[]{ "D" });
+		IQObject qobj_d = qtIndex.findQObject(new String[] { "D" });
 		assertNotNull(qobj_d);
 		assertEquals("value1", qobj_d.getClassInfo("key1")); // inherited
 		assertEquals("overridden value", qobj_d.getClassInfo("key2"));
@@ -358,6 +352,7 @@ public class QObjectTests extends BaseQtTestCase {
 		public final String type;
 		public final String name;
 		Object[] attributes;
+
 		public ExpectedQProperty(String type, String name, Object... attributes) {
 			this.type = type;
 			this.name = name;
@@ -369,17 +364,18 @@ public class QObjectTests extends BaseQtTestCase {
 	 * A utility method for testing Q_PROPERTYs.  The given object is checked for the list of
 	 * values.  Only the locally declared properties are checked and the list must be complete.
 	 */
-	private static void assert_checkQProperties(IQObject qobj, ExpectedQProperty... expectedProperties) throws Exception {
+	private static void assert_checkQProperties(IQObject qobj, ExpectedQProperty... expectedProperties)
+			throws Exception {
 
 		// this map is used to make sure that all expected attributes are found
 		Map<String, ExpectedQProperty> qprops = new HashMap<String, QObjectTests.ExpectedQProperty>();
-		for(ExpectedQProperty qprop : expectedProperties)
+		for (ExpectedQProperty qprop : expectedProperties)
 			if (qprops.containsKey(qprop.name))
 				fail("duplicate properties in expected list " + qprop.name);
 			else
 				qprops.put(qprop.name, qprop);
 
-		for(IQProperty qprop : qobj.getProperties().locals()) {
+		for (IQProperty qprop : qobj.getProperties().locals()) {
 			ExpectedQProperty expected = qprops.remove(qprop.getName());
 			assertNotNull("unexpected or duplicate attribute " + qprop.getName(), expected);
 			assertEquals("unexpected type for " + expected.name, expected.type, qprop.getType());
@@ -388,17 +384,16 @@ public class QObjectTests extends BaseQtTestCase {
 			// make sure that all attributes that were found were expected
 			Set<Attribute> allAttrs = new HashSet<Attribute>(Arrays.asList(Attribute.values()));
 
-			for(int i = 0; i < expected.attributes.length; ++i) {
-				Attribute attr = (Attribute)expected.attributes[i];
+			for (int i = 0; i < expected.attributes.length; ++i) {
+				Attribute attr = (Attribute) expected.attributes[i];
 
 				// make sure the test is valid -- search for each attribute at most once
 				assertTrue(allAttrs.remove(attr));
 
 				if (!attr.hasValue)
 					assertNotNull("missing " + attr.toString(), attr.valueIn(qprop));
-				else if(i >= (expected.attributes.length - 1)
-					 || expected.attributes[i + 1] instanceof Attribute)
-					fail("INVALID TEST CASE: " + attr + " should have a value, but one was not provided" );
+				else if (i >= (expected.attributes.length - 1) || expected.attributes[i + 1] instanceof Attribute)
+					fail("INVALID TEST CASE: " + attr + " should have a value, but one was not provided");
 				else {
 					Object exp = expected.attributes[++i];
 					assertEquals(attr.toString(), exp, attr.valueIn(qprop));
@@ -406,13 +401,13 @@ public class QObjectTests extends BaseQtTestCase {
 			}
 
 			// make sure there is no value for all other attributes
-			for(Attribute attr : allAttrs)
+			for (Attribute attr : allAttrs)
 				assertTrue("unexpectedly found value for " + attr, attr.valueIn(qprop) == null);
 		}
 
 		// make sure that all expected properties were found
 		StringBuilder missingAttrs = new StringBuilder();
-		for(String propName : qprops.keySet()) {
+		for (String propName : qprops.keySet()) {
 			if (missingAttrs.length() > 0)
 				missingAttrs.append(", ");
 			missingAttrs.append(propName);
@@ -421,22 +416,22 @@ public class QObjectTests extends BaseQtTestCase {
 	}
 
 	// #include "junit-QObject.hh"
-    // class Q : public QObject
-    // {
-    // Q_OBJECT
+	// class Q : public QObject
+	// {
+	// Q_OBJECT
 	// signals:
 	// public:    void notASignal();
 	// Q_SIGNALS: void signal();
 	// public:    void notAnotherSignal();
 	// Q_SIGNAL   void anotherSignal();
-    // };
+	// };
 	public void testSimpleSignal() throws Exception {
 		loadComment("simple_signal.hh");
 
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		IQObject qobj = qtIndex.findQObject(new String[] { "Q" });
 		if (!isIndexOk("Q", qobj))
 			return;
 		assertNotNull(qobj);
@@ -456,12 +451,12 @@ public class QObjectTests extends BaseQtTestCase {
 	}
 
 	// #include "junit-QObject.hh"
-    // namespace N {
+	// namespace N {
 	//     class Q : public QObject
-    //     {
-    //     Q_OBJECT
+	//     {
+	//     Q_OBJECT
 	//     Q_SIGNAL void aSignal();
-    //     };
+	//     };
 	// }
 	public void testQObjectInNamespace() throws Exception {
 		loadComment("namespace_qobj.hh");
@@ -469,7 +464,7 @@ public class QObjectTests extends BaseQtTestCase {
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj = qtIndex.findQObject(new String[]{ "N", "Q" });
+		IQObject qobj = qtIndex.findQObject(new String[] { "N", "Q" });
 		if (!isIndexOk("N::Q", qobj))
 			return;
 		assertNotNull(qobj);
@@ -486,7 +481,8 @@ public class QObjectTests extends BaseQtTestCase {
 		assertFalse(i.hasNext());
 	}
 
-	private static void assert_checkQMethod(IQMethod method, IQObject expectedOwner, String expectedName, IQMethod.Kind expectedKind, Long expectedRevision) throws Exception {
+	private static void assert_checkQMethod(IQMethod method, IQObject expectedOwner, String expectedName,
+			IQMethod.Kind expectedKind, Long expectedRevision) throws Exception {
 		assertEquals(expectedKind, method.getKind());
 		assertEquals(expectedName, method.getName());
 		assertSame(method.getName(), expectedOwner, method.getOwner());
@@ -494,30 +490,30 @@ public class QObjectTests extends BaseQtTestCase {
 	}
 
 	// #include "junit-QObject.hh"
-    // class Q : public QObject
-    // {
-    // Q_OBJECT
+	// class Q : public QObject
+	// {
+	// Q_OBJECT
 	//
-    // // From the QML test suite -- this is not valid C++.  The Qt moc generates duplicate const,
+	// // From the QML test suite -- this is not valid C++.  The Qt moc generates duplicate const,
 	// // but our CDT-based implementation is not able to do the same.  Instead we generate what
 	// // would be the correct C++ signature.
-    // Q_INVOKABLE void someFunc(const QList<const QString const*> const &p1, QString p2 = "Hello");
-    //
-    // // variations on the above
-    // Q_INVOKABLE void someFunc1(const QList<const QString const*> &p1, QString p2 = "Hello");
-    // Q_INVOKABLE void someFunc2(QList<const QString const*> const &p1, QString p2 = "Hello");
-    // Q_INVOKABLE void someFunc3(const QList<const QString *> &p1, QString p2 = "Hello");
-    // Q_INVOKABLE void someFunc4(const QList<QString const*> &p1, QString p2 = "Hello");
-    // Q_INVOKABLE void someFunc5(const QList<const QString *> &p1, QString p2 = "Hello") const;
-    // Q_INVOKABLE void someFunc6(const QList<QString *const> &p1, QString p2 = "Hello");
-    // };
+	// Q_INVOKABLE void someFunc(const QList<const QString const*> const &p1, QString p2 = "Hello");
+	//
+	// // variations on the above
+	// Q_INVOKABLE void someFunc1(const QList<const QString const*> &p1, QString p2 = "Hello");
+	// Q_INVOKABLE void someFunc2(QList<const QString const*> const &p1, QString p2 = "Hello");
+	// Q_INVOKABLE void someFunc3(const QList<const QString *> &p1, QString p2 = "Hello");
+	// Q_INVOKABLE void someFunc4(const QList<QString const*> &p1, QString p2 = "Hello");
+	// Q_INVOKABLE void someFunc5(const QList<const QString *> &p1, QString p2 = "Hello") const;
+	// Q_INVOKABLE void someFunc6(const QList<QString *const> &p1, QString p2 = "Hello");
+	// };
 	public void testInvokables() throws Exception {
 		loadComment("invokables.hh");
 
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);
 
-		IQObject qobj = qtIndex.findQObject(new String[]{ "Q" });
+		IQObject qobj = qtIndex.findQObject(new String[] { "Q" });
 		if (!isIndexOk("Q", qobj))
 			return;
 		assertNotNull(qobj);
@@ -526,7 +522,7 @@ public class QObjectTests extends BaseQtTestCase {
 		assertNotNull(invokables);
 		assertEquals(7, invokables.locals().size());
 
-		for(IQMethod invokable : invokables.locals()) {
+		for (IQMethod invokable : invokables.locals()) {
 
 			assertTrue(invokable.getName(), qobj == invokable.getOwner());
 			assertEquals(invokable.getName(), IQMethod.Kind.Invokable, invokable.getKind());
@@ -689,14 +685,14 @@ public class QObjectTests extends BaseQtTestCase {
 		assertNotNull(fIndex);
 		fIndex.acquireReadLock();
 		try {
-			char[][] Q_signal1_qn = new char[][]{ "Q".toCharArray(), "signal1".toCharArray() };
+			char[][] Q_signal1_qn = new char[][] { "Q".toCharArray(), "signal1".toCharArray() };
 			IIndexBinding[] Q_signal1s = fIndex.findBindings(Q_signal1_qn, IndexFilter.CPP_DECLARED_OR_IMPLICIT, npm());
 			assertNotNull(Q_signal1s);
 			assertEquals(1, Q_signal1s.length);
 			IIndexBinding Q_signal1 = Q_signal1s[0];
 			assertNotNull(Q_signal1);
 
-			char[][] Q_slot1_qn = new char[][]{ "Q".toCharArray(), "slot1".toCharArray() };
+			char[][] Q_slot1_qn = new char[][] { "Q".toCharArray(), "slot1".toCharArray() };
 			IIndexBinding[] Q_slot1s = fIndex.findBindings(Q_slot1_qn, IndexFilter.CPP_DECLARED_OR_IMPLICIT, npm());
 			assertNotNull(Q_slot1s);
 			assertEquals(1, Q_slot1s.length);

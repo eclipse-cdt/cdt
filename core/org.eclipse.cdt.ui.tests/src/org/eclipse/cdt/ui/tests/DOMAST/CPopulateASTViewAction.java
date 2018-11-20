@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     IBM Rational Software - Initial API and implementation 
+ *     IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
@@ -48,92 +48,92 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 	private static final int INITIAL_PROBLEM_SIZE = 4;
 
 	{
-		shouldVisitNames          = true;
-		shouldVisitDeclarations   = true;
-		shouldVisitInitializers   = true;
+		shouldVisitNames = true;
+		shouldVisitDeclarations = true;
+		shouldVisitInitializers = true;
 		shouldVisitParameterDeclarations = true;
-		shouldVisitDeclarators    = true;
+		shouldVisitDeclarators = true;
 		shouldVisitDeclSpecifiers = true;
-		shouldVisitDesignators 	  = true;
-		shouldVisitExpressions    = true;
-		shouldVisitStatements     = true;
-		shouldVisitTypeIds        = true;
-		shouldVisitEnumerators    = true;
+		shouldVisitDesignators = true;
+		shouldVisitExpressions = true;
+		shouldVisitStatements = true;
+		shouldVisitTypeIds = true;
+		shouldVisitEnumerators = true;
 	}
 
 	DOMASTNodeParent root;
 	IProgressMonitor monitor;
 	IASTProblem[] astProblems = new IASTProblem[INITIAL_PROBLEM_SIZE];
-	
+
 	public CPopulateASTViewAction(IASTTranslationUnit tu, IProgressMonitor monitor) {
 		root = new DOMASTNodeParent(tu);
 		this.monitor = monitor;
 	}
-	
+
 	private class DOMASTNodeLeafContinue extends DOMASTNodeLeaf {
 		public DOMASTNodeLeafContinue(IASTNode node) {
 			super(node);
 		}
 	}
 
-	/** 
+	/**
 	 * Returns {@code null} if the algorithm should stop (monitor was cancelled).
 	 * Returns DOMASTNodeLeafContinue if the algorithm should continue but no valid DOMASTNodeLeaf
 	 * was added (i.e. node was {@code null}). Return the DOMASTNodeLeaf added to the DOM AST view's
-	 * model otherwise 
+	 * model otherwise
 	 */
 	private DOMASTNodeLeaf addRoot(IASTNode node) {
 		if (monitor != null && monitor.isCanceled())
 			return null;
 		if (node == null)
 			return new DOMASTNodeLeafContinue(null);
-		
-        // Only do length check for ASTNode (getNodeLocations on PreprocessorStatements is very expensive).
-        if (node instanceof ASTNode && ((ASTNode) node).getLength() <= 0)
-            return new DOMASTNodeLeafContinue(null);
-        
-        DOMASTNodeParent parent = null;
-        
-        // If it's a preprocessor statement being merged then do a special search for parent (no search).
-        if (node instanceof IASTPreprocessorStatement) {
-            parent = root;  
-        } else {
-            IASTNode tempParent = node.getParent();
-            if (tempParent instanceof IASTPreprocessorStatement) {
-                parent = root.findTreeParentForMergedNode(node);
-            } else {
-                parent = root.findTreeParentForNode(node);              
-            }
-        }
-        
-        if (parent == null)
-            parent = root;
-        
-        return createNode(parent, node);
+
+		// Only do length check for ASTNode (getNodeLocations on PreprocessorStatements is very expensive).
+		if (node instanceof ASTNode && ((ASTNode) node).getLength() <= 0)
+			return new DOMASTNodeLeafContinue(null);
+
+		DOMASTNodeParent parent = null;
+
+		// If it's a preprocessor statement being merged then do a special search for parent (no search).
+		if (node instanceof IASTPreprocessorStatement) {
+			parent = root;
+		} else {
+			IASTNode tempParent = node.getParent();
+			if (tempParent instanceof IASTPreprocessorStatement) {
+				parent = root.findTreeParentForMergedNode(node);
+			} else {
+				parent = root.findTreeParentForNode(node);
+			}
+		}
+
+		if (parent == null)
+			parent = root;
+
+		return createNode(parent, node);
 	}
-    
-    private DOMASTNodeLeaf createNode(DOMASTNodeParent parent, IASTNode node) {
-        DOMASTNodeParent tree = new DOMASTNodeParent(node);
-        parent.addChild(tree);
-        
-        // set filter flags
-        if (node instanceof IASTProblemHolder || node instanceof IASTProblem) { 
-            tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PROBLEM);
-            
-            if (node instanceof IASTProblemHolder) {
-                astProblems = ArrayUtil.append(astProblems, ((IASTProblemHolder) node).getProblem());
-            } else {
-                astProblems = ArrayUtil.append(astProblems, (IASTProblem) node);
-            }
-        }
-        if (node instanceof IASTPreprocessorStatement)
-            tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PREPROCESSOR);
-        if (node instanceof IASTPreprocessorIncludeStatement)
-            tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_INCLUDE_STATEMENTS);
-		
+
+	private DOMASTNodeLeaf createNode(DOMASTNodeParent parent, IASTNode node) {
+		DOMASTNodeParent tree = new DOMASTNodeParent(node);
+		parent.addChild(tree);
+
+		// set filter flags
+		if (node instanceof IASTProblemHolder || node instanceof IASTProblem) {
+			tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PROBLEM);
+
+			if (node instanceof IASTProblemHolder) {
+				astProblems = ArrayUtil.append(astProblems, ((IASTProblemHolder) node).getProblem());
+			} else {
+				astProblems = ArrayUtil.append(astProblems, (IASTProblem) node);
+			}
+		}
+		if (node instanceof IASTPreprocessorStatement)
+			tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PREPROCESSOR);
+		if (node instanceof IASTPreprocessorIncludeStatement)
+			tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_INCLUDE_STATEMENTS);
+
 		return tree;
-    }
-	
+	}
+
 	@Override
 	public int visit(IASTDeclaration declaration) {
 		DOMASTNodeLeaf temp = addRoot(declaration);
@@ -141,28 +141,28 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 			return PROCESS_ABORT;
 		return PROCESS_CONTINUE;
 	}
-	
+
 	@Override
 	public int visit(IASTDeclarator declarator) {
 		DOMASTNodeLeaf temp = addRoot(declarator);
-		
+
 		IASTPointerOperator[] ops = declarator.getPointerOperators();
 		for (IASTPointerOperator op : ops) {
 			addRoot(op);
 		}
-		
+
 		if (declarator instanceof IASTArrayDeclarator) {
-			IASTArrayModifier[] mods = ((IASTArrayDeclarator)declarator).getArrayModifiers();
+			IASTArrayModifier[] mods = ((IASTArrayDeclarator) declarator).getArrayModifiers();
 			for (IASTArrayModifier mod : mods) {
 				addRoot(mod);
 			}
 		}
-		
+
 		if (temp == null)
 			return PROCESS_ABORT;
 		return PROCESS_CONTINUE;
 	}
-	
+
 	@Override
 	public int visit(ICASTDesignator designator) {
 		DOMASTNodeLeaf temp = addRoot(designator);
@@ -170,7 +170,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 			return PROCESS_ABORT;
 		return PROCESS_CONTINUE;
 	}
-	
+
 	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
 		DOMASTNodeLeaf temp = addRoot(declSpec);
@@ -178,7 +178,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 			return PROCESS_ABORT;
 		return PROCESS_CONTINUE;
 	}
-	
+
 	@Override
 	public int visit(IASTEnumerator enumerator) {
 		DOMASTNodeLeaf temp = addRoot(enumerator);
@@ -186,7 +186,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 			return PROCESS_ABORT;
 		return PROCESS_CONTINUE;
 	}
-	
+
 	@Override
 	public int visit(IASTExpression expression) {
 		DOMASTNodeLeaf temp = addRoot(expression);
@@ -194,7 +194,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 			return PROCESS_ABORT;
 		return PROCESS_CONTINUE;
 	}
-	
+
 	@Override
 	public int visit(IASTInitializer initializer) {
 		DOMASTNodeLeaf temp = addRoot(initializer);
@@ -202,7 +202,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 			return PROCESS_ABORT;
 		return PROCESS_CONTINUE;
 	}
-	
+
 	@Override
 	public int visit(IASTName name) {
 		DOMASTNodeLeaf temp = null;
@@ -213,7 +213,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 			return PROCESS_ABORT;
 		return PROCESS_CONTINUE;
 	}
-	
+
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
 		DOMASTNodeLeaf temp = addRoot(parameterDeclaration);
@@ -221,7 +221,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 			return PROCESS_ABORT;
 		return PROCESS_CONTINUE;
 	}
-	
+
 	@Override
 	public int visit(IASTStatement statement) {
 		DOMASTNodeLeaf temp = addRoot(statement);
@@ -229,7 +229,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 			return PROCESS_ABORT;
 		return PROCESS_CONTINUE;
 	}
-	
+
 	@Override
 	public int visit(IASTTypeId typeId) {
 		DOMASTNodeLeaf temp = addRoot(typeId);
@@ -237,60 +237,59 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 			return PROCESS_ABORT;
 		return PROCESS_CONTINUE;
 	}
-	
+
 	private DOMASTNodeLeaf mergeNode(ASTNode node) {
 		DOMASTNodeLeaf temp = addRoot(node);
-		
+
 		if (node instanceof IASTPreprocessorMacroDefinition)
 			addRoot(((IASTPreprocessorMacroDefinition) node).getName());
-		
+
 		return temp;
 	}
-	
+
 	@Override
 	public DOMASTNodeLeaf[] mergePreprocessorStatements(IASTPreprocessorStatement[] statements) {
 		DOMASTNodeLeaf[] leaves = new DOMASTNodeLeaf[statements.length];
-		for (int i= 0; i < statements.length; i++) {
+		for (int i = 0; i < statements.length; i++) {
 			if (monitor != null && monitor.isCanceled())
 				return leaves;
-			
+
 			if (statements[i] instanceof ASTNode)
 				leaves[i] = mergeNode((ASTNode) statements[i]);
 		}
-		
+
 		return leaves;
 	}
-	
+
 	@Override
 	public void mergePreprocessorProblems(IASTProblem[] problems) {
 		for (IASTProblem problem : problems) {
 			if (monitor != null && monitor.isCanceled())
 				return;
-			
+
 			if (problem instanceof ASTNode)
-			   mergeNode((ASTNode) problem);
+				mergeNode((ASTNode) problem);
 		}
 	}
-	
+
 	@Override
 	public DOMASTNodeParent getTree() {
 		return root;
 	}
-	
+
 	@Override
 	public void groupIncludes(DOMASTNodeLeaf[] treeIncludes) {
-		// Loop through the includes and make sure that all of the nodes 
+		// Loop through the includes and make sure that all of the nodes
 		// that are children of the TU are in the proper include (based on offset)
-		for (int i= treeIncludes.length; --i >= 0;) {
+		for (int i = treeIncludes.length; --i >= 0;) {
 			final DOMASTNodeLeaf nodeLeaf = treeIncludes[i];
 			if (nodeLeaf == null || !(nodeLeaf.getNode() instanceof IASTPreprocessorIncludeStatement))
 				continue;
 
-			final String path= ((IASTPreprocessorIncludeStatement) nodeLeaf.getNode()).getPath();
+			final String path = ((IASTPreprocessorIncludeStatement) nodeLeaf.getNode()).getPath();
 			final DOMASTNodeLeaf[] children = root.getChildren(false);
 			for (DOMASTNodeLeaf child : children) {
-				if (child != null && child != nodeLeaf &&
-						child.getNode().getContainingFilename().equals(path)) {
+				if (child != null && child != nodeLeaf && child.getNode().getContainingFilename().equals(path)) {
 					root.removeChild(child);
 					((DOMASTNodeParent) nodeLeaf).addChild(child);
 				}

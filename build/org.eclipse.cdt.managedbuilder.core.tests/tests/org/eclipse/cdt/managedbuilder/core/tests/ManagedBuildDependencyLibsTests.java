@@ -51,59 +51,50 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 	private IProject fTapp, fTlib, fTobjs;
 
 	private IToolChain[] allToolChains;
-	
+
 	public ManagedBuildDependencyLibsTests(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ManagedBuildDependencyLibsTests.class.getName());
-		
+
 		suite.addTest(new ManagedBuildDependencyLibsTests("testDepLibs"));
 		suite.addTest(new ManagedBuildDependencyLibsTests("testDepUObjs"));
 		suite.addTest(new ManagedBuildDependencyLibsTests("testGetArtifactTimeStampEscapeURI_bug377295"));
 		return suite;
 	}
 
-	private void buildProject(IProject curProject) {	
-		
+	private void buildProject(IProject curProject) {
+
 		try {
 			IProject[] referencedProjects = curProject.getReferencedProjects();
-			for(int i = 0; i < referencedProjects.length; ++i)
+			for (int i = 0; i < referencedProjects.length; ++i)
 				buildProject(referencedProjects[i]);
-		
-			// Build the project in order to generate the makefiles 
-			curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,new NullProgressMonitor());
-		}
-		catch(CoreException e){
+
+			// Build the project in order to generate the makefiles
+			curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new NullProgressMonitor());
+		} catch (CoreException e) {
 			fail(e.getStatus().getMessage());
+		} catch (OperationCanceledException e) {
+			fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: "
+					+ e.getMessage());
 		}
-		catch(OperationCanceledException e){
-			fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: " + e.getMessage());
-		}
-		
-		
+
 	}
-
-
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		allToolChains = ManagedBuildManager.
-		getRealToolChains();		
-		IWorkspaceDescription wsDescription =	ResourcesPlugin.getWorkspace().getDescription();
+		allToolChains = ManagedBuildManager.getRealToolChains();
+		IWorkspaceDescription wsDescription = ResourcesPlugin.getWorkspace().getDescription();
 		wsDescription.setAutoBuilding(false);
 		ResourcesPlugin.getWorkspace().setDescription(wsDescription);
-		assertNotNull("Cannot create tapp project", 
-				fTapp = ManagedBuildTestHelper.loadProject("tapp", PROJ_PATH));
-		assertNotNull("Cannot create tlib project", 
-				fTlib = ManagedBuildTestHelper.loadProject("tlib", PROJ_PATH));
-		assertNotNull("Cannot create tobjs project", 
-				fTobjs = ManagedBuildTestHelper.loadProject("tobjs", PROJ_PATH));
+		assertNotNull("Cannot create tapp project", fTapp = ManagedBuildTestHelper.loadProject("tapp", PROJ_PATH));
+		assertNotNull("Cannot create tlib project", fTlib = ManagedBuildTestHelper.loadProject("tlib", PROJ_PATH));
+		assertNotNull("Cannot create tobjs project", fTobjs = ManagedBuildTestHelper.loadProject("tobjs", PROJ_PATH));
 		IProjectDescription projDescription = fTapp.getDescription();
-		projDescription.setReferencedProjects(new IProject[] 
-			{fTlib, fTobjs});
+		projDescription.setReferencedProjects(new IProject[] { fTlib, fTobjs });
 		fTapp.setDescription(projDescription, new NullProgressMonitor());
 		IToolChain toolChain = setToolChain(fTapp, null);
 		assertNotNull("No compatible tool chain.", toolChain);
@@ -119,24 +110,23 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 		ManagedBuildTestHelper.removeProject(fTobjs.getName());
 	}
 
-	private void findFiles(IResource dir, String pattern,  List<IFile> files) {
+	private void findFiles(IResource dir, String pattern, List<IFile> files) {
 		IResource resource = null;
 		try {
 			IResource[] members;
-			if(dir instanceof IContainer)
-				members = ((IContainer)dir).members(IFolder.INCLUDE_PHANTOMS);
-			else
-			if(dir instanceof IFolder)
-				members = ((IFolder)dir).members(IFolder.INCLUDE_PHANTOMS);
+			if (dir instanceof IContainer)
+				members = ((IContainer) dir).members(IFolder.INCLUDE_PHANTOMS);
+			else if (dir instanceof IFolder)
+				members = ((IFolder) dir).members(IFolder.INCLUDE_PHANTOMS);
 			else // Not possible
-				return; 
-			for(int i = 0; i < members.length; ++i) {
+				return;
+			for (int i = 0; i < members.length; ++i) {
 				resource = members[i];
-				if(resource.getType() == IResource.FOLDER)
+				if (resource.getType() == IResource.FOLDER)
 					findFiles(resource, pattern, files);
 				else {
-					if(resource.getName().matches(pattern)) 
-						files.add((IFile)resource);
+					if (resource.getName().matches(pattern))
+						files.add((IFile) resource);
 				}
 			}
 		} catch (CoreException e) {
@@ -144,58 +134,52 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 			fail("Error while collecting files." + MESSAGE_TAIL);
 		}
 	}
-	
+
 	private IToolChain setToolChain(IProject project, IToolChain setTo) {
 		try {
 			IConfiguration cfg = getProjectConfiguration(project);
 			IToolChain currentToolChain = cfg.getToolChain();
 
-			IToolChainModificationManager mngr = 
-				ManagedBuildManager.getToolChainModificationManager();
-			IConfigurationModification cfgM = 
-				(IConfigurationModification)mngr.
-					createModification(cfg.getRootFolderInfo());
-			FolderInfo folderInfo = (FolderInfo)cfg.getRootFolderInfo();
-			
-			if(setTo == null) {
-				for(int i = 0; i < allToolChains.length; ++i) {
+			IToolChainModificationManager mngr = ManagedBuildManager.getToolChainModificationManager();
+			IConfigurationModification cfgM = (IConfigurationModification) mngr
+					.createModification(cfg.getRootFolderInfo());
+			FolderInfo folderInfo = (FolderInfo) cfg.getRootFolderInfo();
+
+			if (setTo == null) {
+				for (int i = 0; i < allToolChains.length; ++i) {
 					// If predefined tool chain supported, leave it alone
-					if(allToolChains[i].equals(currentToolChain))
+					if (allToolChains[i].equals(currentToolChain))
 						return currentToolChain;
 					// In the same loop try to find compatible tool chain
-					if(setTo == null) {
-						IBuilder builder = allToolChains[i].getBuilder(); 
-						if(cfg.isBuilderCompatible(builder) && 
-								folderInfo.isToolChainCompatible(allToolChains[i]))
-						setTo = allToolChains[i];
-					}					
+					if (setTo == null) {
+						IBuilder builder = allToolChains[i].getBuilder();
+						if (cfg.isBuilderCompatible(builder) && folderInfo.isToolChainCompatible(allToolChains[i]))
+							setTo = allToolChains[i];
+					}
 				}
 			}
-			if(null != setTo) {
+			if (null != setTo) {
 				cfgM.setToolChain(setTo);
 				assertEquals(setTo, cfgM.getToolChain());
 				assertEquals(setTo.getBuilder(), cfgM.getBuilder());
 			}
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail("Error. " + MESSAGE_TAIL); 
+			fail("Error. " + MESSAGE_TAIL);
 		}
 		return setTo;
 	}
 
 	private IConfiguration getProjectConfiguration(IProject project) throws CoreException {
-		ICProjectDescription cProjDescription = CoreModel.getDefault().
-			createProjectDescription(project, true);
-		return   ManagedBuildManager.
-			getConfigurationForDescription(
-				cProjDescription.getConfigurations()[0]);
-		
+		ICProjectDescription cProjDescription = CoreModel.getDefault().createProjectDescription(project, true);
+		return ManagedBuildManager.getConfigurationForDescription(cProjDescription.getConfigurations()[0]);
+
 	}
-	
+
 	private void rebuildArtefact(IProject project) {
-//		deleteFiles(getProjectFolder(project), 
-//				getArtefactFullName(project),  
-//				new NullProgressMonitor());
+		//		deleteFiles(getProjectFolder(project),
+		//				getArtefactFullName(project),
+		//				new NullProgressMonitor());
 		try {
 			project.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());
 		} catch (CoreException e) {
@@ -204,11 +188,11 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 		}
 		buildProject(project);
 	}
-	
+
 	private long getArtifactTimeStamp(IProject project) {
 		List<IFile> files = new ArrayList<IFile>();
-		findFiles(project,	getArtefactFullName(project), files);
-		if(files.size() == 0) // File not exists
+		findFiles(project, getArtefactFullName(project), files);
+		if (files.size() == 0) // File not exists
 			return 0;
 		IFile artefact = files.iterator().next();
 		return artefact.getModificationStamp();
@@ -220,65 +204,64 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 			cfg = getProjectConfiguration(project);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			fail("Error. " + MESSAGE_TAIL); 
+			fail("Error. " + MESSAGE_TAIL);
 		}
 		String name = cfg.getArtifactName();
 		String ext = cfg.getArtifactExtension();
-		if((null != ext) && (ext.length() > 0)) {
+		if ((null != ext) && (ext.length() > 0)) {
 			name += '.';
 			name += ext;
 		}
 		return name;
 	}
-	
-	
+
 	public void testDepLibs() {
 		buildProject(fTapp);
 		long timeStamp = getArtifactTimeStamp(fTapp);
-		if(timeStamp == 0) {
+		if (timeStamp == 0) {
 			fail("Cannot build project " + fTapp.getName());
 		}
 		try { // To be sure that in case of build the time should be changed
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			// Do nothing
-		} 
+		}
 		// Check if no build any more
 		buildProject(fTapp);
-		if(timeStamp != getArtifactTimeStamp(fTapp)) {
+		if (timeStamp != getArtifactTimeStamp(fTapp)) {
 			fail("Error. This time it should be nothing to build");
 		}
 		rebuildArtefact(fTlib);
 		buildProject(fTapp);
-		if(timeStamp == getArtifactTimeStamp(fTapp)) {
+		if (timeStamp == getArtifactTimeStamp(fTapp)) {
 			fail("Error. This time it should build application.");
 		}
 	}
-	
+
 	public void testDepUObjs() {
 		buildProject(fTapp);
 		long timeStamp = getArtifactTimeStamp(fTapp);
-		if(timeStamp == 0) {
+		if (timeStamp == 0) {
 			fail("Cannot build project " + fTapp.getName());
 		}
 		try { // To be sure that in case of build the time should be changed
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			// Do nothing
-		} 
+		}
 		// Check if no build any more
 		buildProject(fTapp);
-		if(timeStamp != getArtifactTimeStamp(fTapp)) {
+		if (timeStamp != getArtifactTimeStamp(fTapp)) {
 			fail("Error. This time it should be nothing to build");
 		}
-//		deleteFiles(getProjectFolder(fTobjs), "*.o", new NullProgressMonitor());
+		//		deleteFiles(getProjectFolder(fTobjs), "*.o", new NullProgressMonitor());
 		rebuildArtefact(fTobjs);
 		buildProject(fTapp);
-		if(timeStamp == getArtifactTimeStamp(fTapp)) {
+		if (timeStamp == getArtifactTimeStamp(fTapp)) {
 			fail("Error. This time it should build application.");
 		}
 	}
-	
+
 	// Tests that the URI used to get the time stamp of the artifact is escaped correctly
 	// See AdditionalInput.getArtifactTimeStamp(IToolChain toolChain)
 	public void testGetArtifactTimeStampEscapeURI_bug377295() throws CoreException {
@@ -289,7 +272,7 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 		for (IConfiguration configuration : configs) {
 			configuration.setArtifactName("test [377295]");
 		}
-		
+
 		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
 		// This will trigger AdditionalInput.getArtifactTimeStamp to get called, no IllegalArgumentException should be thrown
 		project.build(IncrementalProjectBuilder.FULL_BUILD, null);

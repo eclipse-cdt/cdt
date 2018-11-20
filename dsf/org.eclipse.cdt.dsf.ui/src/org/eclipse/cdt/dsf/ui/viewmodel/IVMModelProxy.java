@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,71 +22,71 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * View Model extension to the platform IModelProxy interface.  This extension
  * allows the IVMProvider implementation to delegate the model proxy implementation
- * into a separate object. 
- * <br/> 
- * Note: The IVMModelProxy.init() may be called twice when installed, as a 
- * workaround for bug 241024. 
- * 
+ * into a separate object.
+ * <br/>
+ * Note: The IVMModelProxy.init() may be called twice when installed, as a
+ * workaround for bug 241024.
+ *
  * @since 1.0
  */
 public interface IVMModelProxy extends IModelProxy {
 
-    /**
-     * Returns the root element that this model proxy was created for.  
-     */
-    public Object getRootElement();
-    
-    /**
-     * Returns whether the given event applies to the root element and the 
-     * nodes in this model proxy. 
-     * <p>
-     * This method is the equivalent of calling 
-     * <code> getEventDeltaFlags(event) != IModelDelta.NO_CHANGE </code>.
-     * </p>
-     */
-    public boolean isDeltaEvent(Object event);
+	/**
+	 * Returns the root element that this model proxy was created for.
+	 */
+	public Object getRootElement();
 
-    /**
-     * Creates a model delta for the given event.
-     */
-    public void createDelta(final Object event, final DataRequestMonitor<IModelDelta> rm);
+	/**
+	 * Returns whether the given event applies to the root element and the
+	 * nodes in this model proxy.
+	 * <p>
+	 * This method is the equivalent of calling
+	 * <code> getEventDeltaFlags(event) != IModelDelta.NO_CHANGE </code>.
+	 * </p>
+	 */
+	public boolean isDeltaEvent(Object event);
 
-    /**
-     * Sends the given delta to this model proxy's listeners.
-     */
-    public void fireModelChanged(IModelDelta delta);
+	/**
+	 * Creates a model delta for the given event.
+	 */
+	public void createDelta(final Object event, final DataRequestMonitor<IModelDelta> rm);
 
-    /**
-     * Returns the viewer.
-     * 
-     * @since 2.0
-     */
-    public Viewer getViewer();
+	/**
+	 * Sends the given delta to this model proxy's listeners.
+	 */
+	public void fireModelChanged(IModelDelta delta);
 
-    /**
-     * Returns the viewer input that was set to the viewer when this proxy 
-     * was created.  
-     * 
-     * @since 2.0
-     */
-    public Object getViewerInput();
+	/**
+	 * Returns the viewer.
+	 *
+	 * @since 2.0
+	 */
+	public Viewer getViewer();
 
-    /**
-     * Returns the full path for the root element.  If the path is empty, it
-     * means that the root element is the viewer input.
-     * 
-     * @since 2.0
-     */
-    public TreePath getRootPath();
+	/**
+	 * Returns the viewer input that was set to the viewer when this proxy
+	 * was created.
+	 *
+	 * @since 2.0
+	 */
+	public Object getViewerInput();
 
-    /**
-     * Returns the delta flags associated with this event.  This method is   
-     * 
-     * @param event 
-     * @return
-     * 
-     * @since 2.1
-     */
-    public int getEventDeltaFlags(Object event);
+	/**
+	 * Returns the full path for the root element.  If the path is empty, it
+	 * means that the root element is the viewer input.
+	 *
+	 * @since 2.0
+	 */
+	public TreePath getRootPath();
+
+	/**
+	 * Returns the delta flags associated with this event.  This method is
+	 *
+	 * @param event
+	 * @return
+	 *
+	 * @since 2.1
+	 */
+	public int getEventDeltaFlags(Object event);
 
 }

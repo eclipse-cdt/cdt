@@ -41,4 +41,3 @@ class TryFlowInfo extends FlowInfo {
 		mergeSequential(info, context);
 	}
 }
-

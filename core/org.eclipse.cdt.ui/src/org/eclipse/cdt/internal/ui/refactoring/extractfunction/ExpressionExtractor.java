@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2017 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -51,7 +51,7 @@ import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 
 /**
  * Handles the extraction of expression nodes, for example, return type determination.
- * 
+ *
  * @author Mirko Stocker
  */
 public class ExpressionExtractor extends FunctionExtractor {
@@ -87,7 +87,7 @@ public class ExpressionExtractor extends FunctionExtractor {
 	@Override
 	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation nameInfo,
 			List<IASTPointerOperator> pointerOperators) {
-		IType returnType = determineReturnType(extractedNode); 
+		IType returnType = determineReturnType(extractedNode);
 		INodeFactory factory = extractedNode.getTranslationUnit().getASTNodeFactory();
 		DeclarationGenerator generator = DeclarationGenerator.create(factory);
 		IASTDeclarator declarator = generator.createDeclaratorFromType(returnType, null);
@@ -116,7 +116,7 @@ public class ExpressionExtractor extends FunctionExtractor {
 			{
 				shouldVisitExpressions = true;
 			}
-			
+
 			@Override
 			public int visit(IASTExpression expression) {
 				if (expression instanceof IASTIdExpression) {
@@ -141,8 +141,7 @@ public class ExpressionExtractor extends FunctionExtractor {
 	}
 
 	@Override
-	public IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt,
-			IASTExpression callExpression) {
+	public IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt, IASTExpression callExpression) {
 		return callExpression;
 	}
 }

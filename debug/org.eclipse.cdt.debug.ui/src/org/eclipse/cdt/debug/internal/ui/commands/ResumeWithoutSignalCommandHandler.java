@@ -18,12 +18,12 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
 
 /**
  * Command handler to trigger a resume without signal operation
- * 
+ *
  * @since 7.0
  */
 public class ResumeWithoutSignalCommandHandler extends DebugCommandHandler {
-    @Override
-    protected Class<?> getCommandType() {
-        return IResumeWithoutSignalHandler.class;
-    }
+	@Override
+	protected Class<?> getCommandType() {
+		return IResumeWithoutSignalHandler.class;
+	}
 }

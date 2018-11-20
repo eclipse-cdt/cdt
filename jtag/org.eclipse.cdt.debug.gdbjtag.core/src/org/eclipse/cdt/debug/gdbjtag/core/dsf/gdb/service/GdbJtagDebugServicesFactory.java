@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Added support for the different GDBControl versions (Bug 324101)
@@ -29,7 +29,7 @@ public class GdbJtagDebugServicesFactory extends GdbDebugServicesFactory {
 	/** @since 9.0 */
 	public GdbJtagDebugServicesFactory(String version, ILaunchConfiguration config) {
 		super(version, config);
-	}	
+	}
 
 	@Override
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {

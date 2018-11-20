@@ -30,7 +30,6 @@ import org.eclipse.ui.texteditor.TextOperationAction;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
-
 /**
  * Groups the CDT folding actions.
  *
@@ -70,8 +69,6 @@ public class FoldingActionGroup extends ActionGroup {
 	private TextOperationAction fCollapseAll;
 	private PreferenceAction fRestoreDefaults;
 
-
-
 	/**
 	 * Creates a new projection action group for <code>editor</code>. If the
 	 * supplied viewer is not an instance of <code>ProjectionViewer</code>, the
@@ -82,23 +79,24 @@ public class FoldingActionGroup extends ActionGroup {
 	 */
 	public FoldingActionGroup(final ITextEditor editor, ITextViewer viewer) {
 		if (!(viewer instanceof ProjectionViewer)) {
-			fToggle= null;
-			fExpand= null;
-			fCollapse= null;
-			fExpandAll= null;
-			fCollapseAll= null;
-			fRestoreDefaults= null;
-			fProjectionListener= null;
+			fToggle = null;
+			fExpand = null;
+			fCollapse = null;
+			fExpandAll = null;
+			fCollapseAll = null;
+			fRestoreDefaults = null;
+			fProjectionListener = null;
 			return;
 		}
 
-		fViewer= (ProjectionViewer) viewer;
+		fViewer = (ProjectionViewer) viewer;
 
-		fProjectionListener= new IProjectionListener() {
+		fProjectionListener = new IProjectionListener() {
 			@Override
 			public void projectionEnabled() {
 				update();
 			}
+
 			@Override
 			public void projectionDisabled() {
 				update();
@@ -107,31 +105,36 @@ public class FoldingActionGroup extends ActionGroup {
 
 		fViewer.addProjectionListener(fProjectionListener);
 
-		fToggle= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.Toggle.", editor, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
+		fToggle = new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.Toggle.", editor, //$NON-NLS-1$
+				ProjectionViewer.TOGGLE, true);
 		fToggle.setActionDefinitionId(IFoldingCommandIds.FOLDING_TOGGLE);
 		editor.setAction("FoldingToggle", fToggle); //$NON-NLS-1$
 
-		fExpandAll= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.ExpandAll.", editor, ProjectionViewer.EXPAND_ALL, true); //$NON-NLS-1$
+		fExpandAll = new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.ExpandAll.", editor, //$NON-NLS-1$
+				ProjectionViewer.EXPAND_ALL, true);
 		fExpandAll.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND_ALL);
 		editor.setAction("FoldingExpandAll", fExpandAll); //$NON-NLS-1$
 
-		fCollapseAll= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.CollapseAll.", editor, ProjectionViewer.COLLAPSE_ALL, true); //$NON-NLS-1$
+		fCollapseAll = new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.CollapseAll.", editor, //$NON-NLS-1$
+				ProjectionViewer.COLLAPSE_ALL, true);
 		fCollapseAll.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
 		editor.setAction("FoldingCollapseAll", fCollapseAll); //$NON-NLS-1$
 
-		fExpand= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.Expand.", editor, ProjectionViewer.EXPAND, true); //$NON-NLS-1$
+		fExpand = new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.Expand.", editor, //$NON-NLS-1$
+				ProjectionViewer.EXPAND, true);
 		fExpand.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND);
 		editor.setAction("FoldingExpand", fExpand); //$NON-NLS-1$
 
-		fCollapse= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.Collapse.", editor, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
+		fCollapse = new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.Collapse.", editor, //$NON-NLS-1$
+				ProjectionViewer.COLLAPSE, true);
 		fCollapse.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE);
 		editor.setAction("FoldingCollapse", fCollapse); //$NON-NLS-1$
 
-		fRestoreDefaults= new FoldingAction(FoldingMessages.getResourceBundle(), "Projection.Restore.") { //$NON-NLS-1$
+		fRestoreDefaults = new FoldingAction(FoldingMessages.getResourceBundle(), "Projection.Restore.") { //$NON-NLS-1$
 			@Override
 			public void run() {
 				if (editor instanceof CEditor) {
-					CEditor cEditor= (CEditor) editor;
+					CEditor cEditor = (CEditor) editor;
 					cEditor.resetProjection();
 				}
 			}
@@ -159,7 +162,7 @@ public class FoldingActionGroup extends ActionGroup {
 	public void dispose() {
 		if (isEnabled()) {
 			fViewer.removeProjectionListener(fProjectionListener);
-			fViewer= null;
+			fViewer = null;
 		}
 		super.dispose();
 	}

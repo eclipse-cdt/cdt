@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.console.IOConsolePage;
 /**
  * Page used for a basic GDB console.  Each Debug session which uses the basic GDB console will
  * use its own instance of this page.  The basic console is used for older GDB versions.
- * 
+ *
  * Contributions to this page's context menu can be done using id "GdbBasicCliConsole.#ContextMenu".
  * For example, using the extension point:<br>
  * <code>
@@ -43,7 +43,7 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 	private final ILaunch fLaunch;
 	private final IConsoleView fView;
 	private final IDebuggerConsole fConsole;
-	
+
 	private GdbConsoleTerminateLaunchAction fTerminateLaunchAction;
 	private GdbConsoleShowPreferencesAction fShowPreferencePageAction;
 
@@ -57,13 +57,15 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 	@Override
 	public void dispose() {
 		super.dispose();
-		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow())
+				.removeDebugContextListener(this);
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow())
+				.addDebugContextListener(this);
 	}
 
 	@Override
@@ -81,16 +83,16 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 	protected void contextMenuAboutToShow(IMenuManager menuManager) {
 		menuManager.add(fTerminateLaunchAction);
 		menuManager.add(new Separator());
-		
+
 		// Other plug-ins can contribute their actions here
 		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
 		menuManager.add(fShowPreferencePageAction);
 	}
-	
+
 	/**
 	 * Returns the launch to which the current selection belongs.
-	 * 
+	 *
 	 * @return the launch to which the current selection belongs.
 	 */
 	protected ILaunch getCurrentLaunch() {
@@ -100,7 +102,7 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {

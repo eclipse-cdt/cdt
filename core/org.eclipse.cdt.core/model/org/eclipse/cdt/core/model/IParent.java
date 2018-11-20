@@ -27,11 +27,12 @@ public interface IParent {
 	 *      exception occurs while accessing its corresponding resource
 	 */
 	ICElement[] getChildren() throws CModelException;
-	
+
 	/**
 	 * returns the children of a certain type
 	 */
 	public List<ICElement> getChildrenOfType(int type) throws CModelException;
+
 	/**
 	 * Returns whether this element has one or more immediate children.
 	 * This is a convenience method, and may be more efficient than

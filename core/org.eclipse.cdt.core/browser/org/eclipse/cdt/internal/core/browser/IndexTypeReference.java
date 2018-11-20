@@ -31,7 +31,7 @@ import org.eclipse.jface.text.Region;
 
 /**
  * A {@link IndexTypeReference} tailored for index bindings.
- * 
+ *
  * @since 4.0
  */
 public class IndexTypeReference extends TypeReference {
@@ -40,22 +40,22 @@ public class IndexTypeReference extends TypeReference {
 
 	public IndexTypeReference(IBinding binding, IPath path, IProject project, int offset, int length) {
 		super(path, project, offset, length);
-		fCElement= createCElement(binding);
+		fCElement = createCElement(binding);
 	}
-	
+
 	public IndexTypeReference(IBinding binding, IResource resource, IProject project, int offset, int length) {
 		super(resource, project, offset, length);
-		fCElement= createCElement(binding);
+		fCElement = createCElement(binding);
 	}
 
 	public IndexTypeReference(IIndexMacro macro, IPath path, IProject project, int offset, int length) {
 		super(path, project, offset, length);
-		fCElement= createCElement(macro);
+		fCElement = createCElement(macro);
 	}
-	
+
 	public IndexTypeReference(IIndexMacro macro, IResource resource, IProject project, int offset, int length) {
 		super(resource, project, offset, length);
-		fCElement= createCElement(macro);
+		fCElement = createCElement(macro);
 	}
 
 	/**
@@ -63,10 +63,10 @@ public class IndexTypeReference extends TypeReference {
 	 * @param binding
 	 */
 	private ICElement createCElement(IBinding binding) {
-		ITranslationUnit tu= getTranslationUnit();
+		ITranslationUnit tu = getTranslationUnit();
 		if (tu != null) {
-			long timestamp= tu.getResource() != null ? tu.getResource().getLocalTimeStamp() : 0;
-			IRegion region= new Region(getOffset(), getLength());
+			long timestamp = tu.getResource() != null ? tu.getResource().getLocalTimeStamp() : 0;
+			IRegion region = new Region(getOffset(), getLength());
 			try {
 				return CElementHandleFactory.create(tu, binding, true, region, timestamp);
 			} catch (CoreException e) {
@@ -80,10 +80,10 @@ public class IndexTypeReference extends TypeReference {
 	 * Compute the C element handle for the given macro.
 	 */
 	private ICElement createCElement(IIndexMacro macro) {
-		ITranslationUnit tu= getTranslationUnit();
+		ITranslationUnit tu = getTranslationUnit();
 		if (tu != null) {
-			long timestamp= tu.getResource() != null ? tu.getResource().getLocalTimeStamp() : 0;
-			IRegion region= new Region(getOffset(), getLength());
+			long timestamp = tu.getResource() != null ? tu.getResource().getLocalTimeStamp() : 0;
+			IRegion region = new Region(getOffset(), getLength());
 			try {
 				return CElementHandleFactory.create(tu, macro, region, timestamp);
 			} catch (CoreException e) {

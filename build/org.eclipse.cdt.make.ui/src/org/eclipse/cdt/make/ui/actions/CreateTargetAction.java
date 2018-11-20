@@ -25,7 +25,7 @@ public class CreateTargetAction extends AbstractTargetAction {
 
 	@Override
 	public void run(IAction action) {
-		if ( getSelectedContainer() != null ) {
+		if (getSelectedContainer() != null) {
 			MakeTargetDialog dialog;
 			try {
 				dialog = new MakeTargetDialog(getShell(), getSelectedContainer());

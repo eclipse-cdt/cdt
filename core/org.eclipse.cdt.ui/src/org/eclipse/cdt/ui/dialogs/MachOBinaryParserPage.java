@@ -82,7 +82,8 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 				}
 			}
 			if (cext != null && cext.length > 0) {
-				IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
+				IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
+						"BinaryParserPage"); //$NON-NLS-1$
 				IConfigurationElement[] infos = point.getConfigurationElements();
 				for (int i = 0; i < infos.length; i++) {
 					String id = infos[i].getAttribute("parserID"); //$NON-NLS-1$

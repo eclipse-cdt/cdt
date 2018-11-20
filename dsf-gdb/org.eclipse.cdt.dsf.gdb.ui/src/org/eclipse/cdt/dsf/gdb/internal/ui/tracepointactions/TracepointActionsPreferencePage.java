@@ -47,8 +47,10 @@ public class TracepointActionsPreferencePage extends PreferencePage implements I
 		container.setLayout(gridLayout);
 
 		final Label breakpointActionsAvailableLabel = new Label(container, SWT.NONE);
-		breakpointActionsAvailableLabel.setText(MessagesForTracepointActions.TracepointActions_Preferences_Actions_Available);
-		final TracepointGlobalActionsList actionsList = new TracepointGlobalActionsList(container, SWT.NONE, false, null, false);
+		breakpointActionsAvailableLabel
+				.setText(MessagesForTracepointActions.TracepointActions_Preferences_Actions_Available);
+		final TracepointGlobalActionsList actionsList = new TracepointGlobalActionsList(container, SWT.NONE, false,
+				null, false);
 		actionsList.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
 		actionsList.getDeleteButton().addSelectionListener(new SelectionAdapter() {
@@ -57,14 +59,13 @@ public class TracepointActionsPreferencePage extends PreferencePage implements I
 				actionsList.HandleDeleteButton();
 			}
 		});
-		String helpContextID = GdbUIPlugin.PLUGIN_ID + "." + contextHelpID; //$NON-NLS-1$	
+		String helpContextID = GdbUIPlugin.PLUGIN_ID + "." + contextHelpID; //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(super.getControl(), helpContextID);
 
 		return container;
 	}
 
-
-    @Override
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 

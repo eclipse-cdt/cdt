@@ -24,7 +24,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
- * 
+ *
  * @noextend This class is not intended to be subclassed by Clients
  */
 public class DockerLaunchUIPlugin extends AbstractUIPlugin {
@@ -43,7 +43,7 @@ public class DockerLaunchUIPlugin extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
 	 * )
@@ -56,7 +56,7 @@ public class DockerLaunchUIPlugin extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
 	 * )
@@ -76,8 +76,7 @@ public class DockerLaunchUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static Shell getActiveWorkbenchShell() {
-		IWorkbenchWindow window = getDefault().getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = getDefault().getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
 			return window.getShell();
 		}
@@ -88,14 +87,13 @@ public class DockerLaunchUIPlugin extends AbstractUIPlugin {
 		if (getActiveWorkbenchShell() != null) {
 			return getActiveWorkbenchShell();
 		}
-		IWorkbenchWindow[] windows = getDefault().getWorkbench()
-				.getWorkbenchWindows();
+		IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
 		return windows[0].getShell();
 	}
 
 	/**
 	 * Convenience method which returns the unique identifier of this plugin.
-	 * 
+	 *
 	 * @return The identifier.
 	 */
 	public static String getUniqueIdentifier() {
@@ -127,8 +125,7 @@ public class DockerLaunchUIPlugin extends AbstractUIPlugin {
 	 * @since 1.1
 	 */
 	public static void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR,
-				message, null));
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, message, null));
 	}
 
 	/**
@@ -138,8 +135,7 @@ public class DockerLaunchUIPlugin extends AbstractUIPlugin {
 	 *            the exception to be logged
 	 */
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR,
-				e.getMessage(), e));
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e.getMessage(), e));
 	}
 
 	public static void log(int status, String msg, Throwable e) {

@@ -44,8 +44,7 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
  */
 public class CRefactoringContext extends RefactoringContext {
 	private static final int PARSE_MODE = ITranslationUnit.AST_SKIP_ALL_HEADERS
-			| ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
-			| ITranslationUnit.AST_PARSE_INACTIVE_CODE;
+			| ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_PARSE_INACTIVE_CODE;
 
 	private final Map<ITranslationUnit, IASTTranslationUnit> fASTCache;
 	private IIndex fIndex;
@@ -75,46 +74,45 @@ public class CRefactoringContext extends RefactoringContext {
 			throws CoreException, OperationCanceledException {
 		if (isDisposed())
 			throw new IllegalStateException("CRefactoringContext is already disposed."); //$NON-NLS-1$
-        getIndex();  // Make sure the index is locked.
+		getIndex(); // Make sure the index is locked.
 		if (pm != null && pm.isCanceled())
 			throw new OperationCanceledException();
 
-		tu= CModelUtil.toWorkingCopy(tu);
-    	// Try to get a shared AST before creating our own.
-    	IASTTranslationUnit ast= fASTCache.get(tu);
-    	if (ast == null) {
-    		if (fSharedAST != null && tu.equals(fSharedAST.getOriginatingTranslationUnit())) {
-    			ast = fSharedAST;
-    		} else {
-	        	ast = ASTProvider.getASTProvider().acquireSharedAST(tu, fIndex,
-	        			ASTProvider.WAIT_ACTIVE_ONLY, pm);
+		tu = CModelUtil.toWorkingCopy(tu);
+		// Try to get a shared AST before creating our own.
+		IASTTranslationUnit ast = fASTCache.get(tu);
+		if (ast == null) {
+			if (fSharedAST != null && tu.equals(fSharedAST.getOriginatingTranslationUnit())) {
+				ast = fSharedAST;
+			} else {
+				ast = ASTProvider.getASTProvider().acquireSharedAST(tu, fIndex, ASTProvider.WAIT_ACTIVE_ONLY, pm);
 				if (ast != null && ast.hasNodesOmitted()) {
 					// Don't use an incomplete AST.
 					ASTProvider.getASTProvider().releaseSharedAST(ast);
 					ast = null;
 				}
-	        	if (ast == null) {
-	        		if (pm != null && pm.isCanceled())
+				if (ast == null) {
+					if (pm != null && pm.isCanceled())
 						throw new OperationCanceledException();
-					ast= tu.getAST(fIndex, PARSE_MODE);
-		        	fASTCache.put(tu, ast);
-	        	} else {
-	        		if (fSharedAST != null) {
-	        			ASTProvider.getASTProvider().releaseSharedAST(fSharedAST);
-	        		}
-	        		fSharedAST = ast;
-	        	}
-    		}
-    	}
-        if (pm != null) {
-        	pm.done();
-        }
-       	return ast;
-    }
+					ast = tu.getAST(fIndex, PARSE_MODE);
+					fASTCache.put(tu, ast);
+				} else {
+					if (fSharedAST != null) {
+						ASTProvider.getASTProvider().releaseSharedAST(fSharedAST);
+					}
+					fSharedAST = ast;
+				}
+			}
+		}
+		if (pm != null) {
+			pm.done();
+		}
+		return ast;
+	}
 
 	/**
 	 * Returns the index that can be safely used for reading until the cache is disposed.
-	 * 
+	 *
 	 * @return The index.
 	 */
 	public IIndex getIndex() throws CoreException, OperationCanceledException {

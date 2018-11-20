@@ -74,7 +74,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 			fOverlayStore.setValue(fTextFields.get(text), text.getText());
 		}
 	};
-	
+
 	protected Map<Object, String> fComboBoxes = new HashMap<>();
 	private ModifyListener fComboBoxListener = new ModifyListener() {
 		@Override
@@ -84,12 +84,13 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 			fOverlayStore.setValue(fComboBoxes.get(combo), state);
 		}
 	};
-	
+
 	protected Map<Object, String> fCheckBoxes = new HashMap<>();
 	private SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button = (Button) e.widget;
@@ -115,6 +116,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			ColorSelector editor = (ColorSelector) e.widget.getData();
@@ -127,9 +129,8 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	protected Button addRadioButton(Composite parent, String label, String key, int indentation) {
 		return addRadioButton(parent, label, key, null, indentation);
 	}
-	
-	protected Button addRadioButton(Composite parent, String label, String key, String value,
-			int indentation) {
+
+	protected Button addRadioButton(Composite parent, String label, String key, String value, int indentation) {
 		Button radioButton = new Button(parent, SWT.RADIO);
 		radioButton.setText(label);
 		if (value != null)
@@ -147,7 +148,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 
 		return radioButton;
 	}
-	
+
 	protected Button addCheckBox(Composite parent, String label, String key, int indentation) {
 		Button checkBox = new Button(parent, SWT.CHECK);
 		checkBox.setText(label);
@@ -175,8 +176,8 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		return group;
 	}
 
-	protected Control addTextField(Composite composite, String label, String key, int textLimit,
-			int indentation, boolean isNumber) {
+	protected Control addTextField(Composite composite, String label, String key, int textLimit, int indentation,
+			boolean isNumber) {
 		Label labelControl = new Label(composite, SWT.NONE);
 		labelControl.setText(label);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -199,15 +200,14 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		return textControl;
 	}
 
-	protected void addComboBox(Composite composite, String label, String key, int textLimit,
-			int indentation) {
+	protected void addComboBox(Composite composite, String label, String key, int textLimit, int indentation) {
 		Label labelControl = new Label(composite, SWT.NONE);
 		labelControl.setText(label);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent = indentation;
 		labelControl.setLayoutData(gd);
 
-		Combo comboControl = new Combo(composite, SWT.BORDER | SWT.SINGLE | SWT.READ_ONLY);  // TODO: When will the combo be disposed?
+		Combo comboControl = new Combo(composite, SWT.BORDER | SWT.SINGLE | SWT.READ_ONLY); // TODO: When will the combo be disposed?
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		if (textLimit != NO_TEXT_LIMIT) {
 			gd.widthHint = convertWidthInCharsToPixels(textLimit + 1);
@@ -215,30 +215,31 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		}
 		comboControl.setLayoutData(gd);
 		fComboBoxes.put(comboControl, key);
-		comboControl.addModifyListener(fComboBoxListener);  // TODO: When will the listener be removed? 
+		comboControl.addModifyListener(fComboBoxListener); // TODO: When will the listener be removed?
 	}
 
 	protected void addFiller(Composite composite) {
-		PixelConverter pixelConverter= new PixelConverter(composite);
-		Label filler= new Label(composite, SWT.LEFT );
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
+		PixelConverter pixelConverter = new PixelConverter(composite);
+		Label filler = new Label(composite, SWT.LEFT);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		gd.heightHint = pixelConverter.convertHeightInCharsToPixels(1) / 2;
 		filler.setLayoutData(gd);
 	}
 
 	protected void createDependency(final Button master, String masterKey, final Control slave) {
 		indent(slave);
-		boolean masterState= fOverlayStore.getBoolean(masterKey);
+		boolean masterState = fOverlayStore.getBoolean(masterKey);
 		slave.setEnabled(masterState);
-		SelectionListener listener= new SelectionListener() {
+		SelectionListener listener = new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				slave.setEnabled(master.getSelection());
 			}
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
 		};
 		master.addSelectionListener(listener);
 		fMasters.add(master);
@@ -255,14 +256,14 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	private IStatus validatePositiveNumber(String number) {
 		StatusInfo status = new StatusInfo();
 		if (number.length() == 0) {
-			status.setError(PreferencesMessages.CEditorPreferencePage_empty_input); 
+			status.setError(PreferencesMessages.CEditorPreferencePage_empty_input);
 		} else {
 			try {
 				int value = Integer.parseInt(number);
 				if (value < 0)
-					status.setError(NLS.bind(PreferencesMessages.CEditorPreferencePage_invalid_input, number)); 
+					status.setError(NLS.bind(PreferencesMessages.CEditorPreferencePage_invalid_input, number));
 			} catch (NumberFormatException e) {
-				status.setError(NLS.bind(PreferencesMessages.CEditorPreferencePage_invalid_input, number)); 
+				status.setError(NLS.bind(PreferencesMessages.CEditorPreferencePage_invalid_input, number));
 			}
 		}
 		return status;
@@ -282,9 +283,9 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	}
 
 	protected void indent(Control control) {
-		GridData gridData= new GridData();
-		gridData.horizontalIndent= 20;
-		control.setLayoutData(gridData);		
+		GridData gridData = new GridData();
+		gridData.horizontalIndent = 20;
+		control.setLayoutData(gridData);
 	}
 
 	protected Control addColorButton(Composite parent, String label, String key, int indentation) {
@@ -321,13 +322,13 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	}
 
 	public AbstractPreferencePage() {
-		super();		
+		super();
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());
 		fOverlayStore = new OverlayPreferenceStore(getPreferenceStore(), createOverlayStoreKeys());
 	}
 
 	protected abstract OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys();
-	
+
 	protected void initializeFields() {
 		Iterator<Object> e = fColorButtons.keySet().iterator();
 		while (e.hasNext()) {
@@ -364,7 +365,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 			// Interpret the state string as a Combo state description
 			ProposalFilterPreferencesUtil.restoreComboFromString(c, state);
 		}
-		
+
 		// Notify listeners for control dependencies.
 		Iterator<Button> buttonIter = fMasters.iterator();
 		while (buttonIter.hasNext()) {

@@ -24,12 +24,12 @@ public interface ICFolderDescription extends ICResourceDescription {
 	ICResourceDescription[] getNestedResourceDescriptions();
 
 	ICLanguageSetting[] getLanguageSettings();
-	
+
 	ICLanguageSetting getLanguageSettingForFile(String fileName);
 
 	ICLanguageSetting createLanguageSettingForContentTypes(String languageId, String cTypeIds[]) throws CoreException;
 
 	ICLanguageSetting createLanguageSettingForExtensions(String languageId, String extensions[]) throws CoreException;
-	
+
 	boolean isRoot();
 }

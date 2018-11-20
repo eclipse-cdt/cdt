@@ -75,23 +75,23 @@ import junit.framework.TestSuite;
 public class IndexProviderManagerTest extends IndexTestBase {
 	private static final int A_FRAGMENT_OPTION = IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION;
 
-	final static DummyProviderTraces DPT= DummyProviderTraces.getInstance();
-	final static Class DP1= Providers.Dummy1.class;
-	final static Class DP2= Providers.Dummy2.class;
-	final static Class DP3= Providers.Dummy3.class;
-	final static Class DP4= Providers.Dummy4.class;
-	final static Class DP5= Providers.Dummy5.class;
-	final static Class[] DPS= new Class[] {DP4, DP2, DP1, DP3, DP5};
+	final static DummyProviderTraces DPT = DummyProviderTraces.getInstance();
+	final static Class DP1 = Providers.Dummy1.class;
+	final static Class DP2 = Providers.Dummy2.class;
+	final static Class DP3 = Providers.Dummy3.class;
+	final static Class DP4 = Providers.Dummy4.class;
+	final static Class DP5 = Providers.Dummy5.class;
+	final static Class[] DPS = new Class[] { DP4, DP2, DP1, DP3, DP5 };
 
 	/*
 	 * Fictional compatibility ranges for testing
 	 */
-	final static VersionRange VERSION_400= new VersionRange("36");
-	final static VersionRange VERSION_401= new VersionRange("[36,37]");
-	final static VersionRange VERSION_405= new VersionRange("[37,39]");
-	final static VersionRange VERSION_502= new VersionRange("[89,91]");
+	final static VersionRange VERSION_400 = new VersionRange("36");
+	final static VersionRange VERSION_401 = new VersionRange("[36,37]");
+	final static VersionRange VERSION_405 = new VersionRange("[37,39]");
+	final static VersionRange VERSION_502 = new VersionRange("[89,91]");
 
-	final CCorePlugin core= CCorePlugin.getDefault();
+	final CCorePlugin core = CCorePlugin.getDefault();
 
 	public IndexProviderManagerTest() {
 		super("IndexProviderManagerTest");
@@ -110,8 +110,9 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	@Override
 	protected void tearDown() throws Exception {
 		DPT.enabled = false;
-		IndexProviderManager ipm= ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
-		ipm.reset(); ipm.startup();
+		IndexProviderManager ipm = ((PDOMManager) CCorePlugin.getIndexManager()).getIndexProviderManager();
+		ipm.reset();
+		ipm.startup();
 	}
 
 	public void testProvider_SimpleLifeCycle_200958() throws Exception {
@@ -120,24 +121,26 @@ public class IndexProviderManagerTest extends IndexTestBase {
 
 		List cprojects = new ArrayList(), expectedTrace = new ArrayList();
 		try {
-			for(int i=0; i<3; i++) {
-				ICProject cproject = CProjectHelper.createCProject("P"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			for (int i = 0; i < 3; i++) {
+				ICProject cproject = CProjectHelper.createCProject("P" + System.currentTimeMillis(), "bin",
+						IPDOMManager.ID_NO_INDEXER);
 				IIndex index = CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 				cprojects.add(cproject);
 				expectedTrace.add(cproject);
 			}
 			for (Class element : DPS)
 				assertEquals(expectedTrace, DPT.getProjectsTrace(element));
-			for(int i=0; i<expectedTrace.size(); i++) {
+			for (int i = 0; i < expectedTrace.size(); i++) {
 				ICProject cproject = (ICProject) expectedTrace.get(i);
 				IIndex index = CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			}
 			for (Class element : DPS)
 				assertEquals(expectedTrace, DPT.getProjectsTrace(element));
 		} finally {
-			for(int i=0; i<cprojects.size(); i++) {
+			for (int i = 0; i < cprojects.size(); i++) {
 				ICProject cproject = (ICProject) expectedTrace.get(i);
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 		}
 	}
@@ -148,20 +151,22 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		List expectedTrace = new ArrayList();
 		ICProject cproject = null;
 		try {
-			String name = "P"+System.currentTimeMillis();
+			String name = "P" + System.currentTimeMillis();
 			cproject = CProjectHelper.createCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
 			IIndex index = CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			expectedTrace.add(cproject);
 			assertEquals(expectedTrace, DPT.getProjectsTrace(DP1));
 
-			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 			cproject = CProjectHelper.createCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
 			index = CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			expectedTrace.add(cproject);
 			assertEquals(expectedTrace, DPT.getProjectsTrace(DP1));
 		} finally {
-			if(cproject!=null) {
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			if (cproject != null) {
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 		}
 	}
@@ -177,7 +182,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 
 		ICProject cproject = null;
 		try {
-			String name = "P"+System.currentTimeMillis();
+			String name = "P" + System.currentTimeMillis();
 			cproject = CProjectHelper.createCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
 			IIndex index = CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			expectedTrace.add(cproject);
@@ -192,50 +197,48 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			index = CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			assertEquals(expectedTrace, DPT.getProjectsTrace(DP1));
 		} finally {
-			if(cproject!=null) {
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			if (cproject != null) {
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 		}
 	}
 
 	public void testVersioning_IncompatibleIgnored() throws Exception {
-		IndexProviderManager ipm= ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
+		IndexProviderManager ipm = ((PDOMManager) CCorePlugin.getIndexManager()).getIndexProviderManager();
 
 		ICProject cproject = null;
 		try {
-			cproject= CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
-			IProject project= cproject.getProject();
-
+			cproject = CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
+			IProject project = cproject.getProject();
 
 			MockState mockState = new MockState(cproject);
 			mockState.setConfig(MockState.REL_V1_ID);
 
-			IIndexProvider provider1= new IIndexFragmentProvider() {
-				IIndexFragment[] fragments= new IIndexFragment[] {
-					new MockPDOM("contentID.contentA", "36"),
-					new MockPDOM("contentID.contentA", "37"),
-					new MockPDOM("contentID.foo", "90"),
-					new MockPDOM("contentID.bar", "91"),
-					new MockPDOM("contentID.baz", "89")
-				};
+			IIndexProvider provider1 = new IIndexFragmentProvider() {
+				IIndexFragment[] fragments = new IIndexFragment[] { new MockPDOM("contentID.contentA", "36"),
+						new MockPDOM("contentID.contentA", "37"), new MockPDOM("contentID.foo", "90"),
+						new MockPDOM("contentID.bar", "91"), new MockPDOM("contentID.baz", "89") };
+
 				@Override
 				public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) {
 					return fragments;
 				}
+
 				@Override
 				public boolean providesFor(ICProject project) throws CoreException {
 					return true;
 				}
 			};
-			IIndexProvider provider2= new IIndexFragmentProvider() {
-				IIndexFragment[] fragments= new IIndexFragment[] {
-						new MockPDOM("contentID.baz", "90"),
-						new MockPDOM("contentID.contentA", "38"),
-				};
+			IIndexProvider provider2 = new IIndexFragmentProvider() {
+				IIndexFragment[] fragments = new IIndexFragment[] { new MockPDOM("contentID.baz", "90"),
+						new MockPDOM("contentID.contentA", "38"), };
+
 				@Override
 				public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) {
 					return fragments;
 				}
+
 				@Override
 				public boolean providesFor(ICProject project) throws CoreException {
 					return true;
@@ -244,56 +247,56 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			waitForIndexer(cproject);
 			setExpectedNumberOfLoggedNonOKStatusObjects(3); // foo, bar and baz have no compatible fragments available
 
-			ipm.reset(VERSION_405); ipm.startup();
-			ipm.addIndexProvider(provider1);  ipm.addIndexProvider(provider2);
+			ipm.reset(VERSION_405);
+			ipm.startup();
+			ipm.addIndexProvider(provider1);
+			ipm.addIndexProvider(provider2);
 
 			IIndexFragment[] actual = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), -1);
 			assertEquals(1, actual.length);
 			assertFragmentPresent("contentID.contentA", "38", actual);
 		} finally {
-			if(cproject!=null) {
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			if (cproject != null) {
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 		}
 	}
 
 	public void testVersioning_NoCompatibleVersionsFound() throws Exception {
-		IndexProviderManager ipm= ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
+		IndexProviderManager ipm = ((PDOMManager) CCorePlugin.getIndexManager()).getIndexProviderManager();
 
 		ICProject cproject = null;
 		try {
-			cproject= CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
-			IProject project= cproject.getProject();
-
+			cproject = CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
+			IProject project = cproject.getProject();
 
 			MockState mockState = new MockState(cproject);
 			mockState.setConfig(MockState.REL_V1_ID);
 
-			IIndexProvider provider1= new IIndexFragmentProvider() {
-				IIndexFragment[] fragments= new IIndexFragment[] {
-					new MockPDOM("contentID.contentA", "36"),
-					new MockPDOM("contentID.contentA", "37"),
-					new MockPDOM("contentID.foo", "90"),
-					new MockPDOM("contentID.bar", "91"),
-					new MockPDOM("contentID.baz", "89")
-				};
+			IIndexProvider provider1 = new IIndexFragmentProvider() {
+				IIndexFragment[] fragments = new IIndexFragment[] { new MockPDOM("contentID.contentA", "36"),
+						new MockPDOM("contentID.contentA", "37"), new MockPDOM("contentID.foo", "90"),
+						new MockPDOM("contentID.bar", "91"), new MockPDOM("contentID.baz", "89") };
+
 				@Override
 				public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) {
 					return fragments;
 				}
+
 				@Override
 				public boolean providesFor(ICProject project) throws CoreException {
 					return true;
 				}
 			};
-			IIndexProvider provider2= new IIndexFragmentProvider() {
-				IIndexFragment[] fragments= new IIndexFragment[] {
-					new MockPDOM("contentID.contentA", "41"),
-				};
+			IIndexProvider provider2 = new IIndexFragmentProvider() {
+				IIndexFragment[] fragments = new IIndexFragment[] { new MockPDOM("contentID.contentA", "41"), };
+
 				@Override
 				public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) {
 					return fragments;
 				}
+
 				@Override
 				public boolean providesFor(ICProject project) throws CoreException {
 					return true;
@@ -303,8 +306,10 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			waitForIndexer(cproject);
 			setExpectedNumberOfLoggedNonOKStatusObjects(1); // contentA has no compatible fragments available
 
-			ipm.reset(VERSION_502); ipm.startup();
-			ipm.addIndexProvider(provider1);  ipm.addIndexProvider(provider2);
+			ipm.reset(VERSION_502);
+			ipm.startup();
+			ipm.addIndexProvider(provider1);
+			ipm.addIndexProvider(provider2);
 
 			IIndexFragment[] actual = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), -1);
 			assertEquals(3, actual.length);
@@ -312,26 +317,27 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			assertFragmentPresent("contentID.bar", "91", actual);
 			assertFragmentPresent("contentID.baz", "89", actual);
 		} finally {
-			if(cproject!=null) {
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			if (cproject != null) {
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 		}
 	}
 
 	private void assertFragmentPresent(String id, String version, IIndexFragment[] fragments) throws Exception {
 		for (IIndexFragment candidate : fragments) {
-			String cid= null, csver= null;
+			String cid = null, csver = null;
 			try {
 				candidate.acquireReadLock();
-				cid= candidate.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
-				csver= candidate.getProperty(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION);
+				cid = candidate.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+				csver = candidate.getProperty(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION);
 			} finally {
 				candidate.releaseReadLock();
 			}
-			if(id.equals(cid) && version.equals(csver))
+			if (id.equals(cid) && version.equals(csver))
 				return;
 		}
-		fail("Fragment matching (id="+id+",version="+version+") was not present");
+		fail("Fragment matching (id=" + id + ",version=" + version + ") was not present");
 	}
 
 	public void testIndexFactoryConfigurationUsage() throws Exception {
@@ -339,17 +345,17 @@ public class IndexProviderManagerTest extends IndexTestBase {
 
 		ICProject cproject = null;
 		// Modifying the .project file triggers an indexer job, suppress that:
-		DeltaAnalyzer.sSuppressPotentialTUs= true;
+		DeltaAnalyzer.sSuppressPotentialTUs = true;
 		try {
 			cproject = CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
-			IProject project= cproject.getProject();
+			IProject project = cproject.getProject();
 
-			ICProjectDescription pd= core.getProjectDescription(project);
-			ICConfigurationDescription cfg1= newCfg(pd, "project", "config1");
-			ICConfigurationDescription cfg2= newCfg(pd, "project", "config2");
+			ICProjectDescription pd = core.getProjectDescription(project);
+			ICConfigurationDescription cfg1 = newCfg(pd, "project", "config1");
+			ICConfigurationDescription cfg2 = newCfg(pd, "project", "config2");
 			core.setProjectDescription(project, pd);
 
-			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
+			index = CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			waitForIndexer(cproject);
 
 			DPT.reset(DP1);
@@ -359,17 +365,17 @@ public class IndexProviderManagerTest extends IndexTestBase {
 
 			changeActiveConfiguration(cproject, cfg1);
 			DPT.reset(DP1);
-			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
+			index = CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(1, DPT.getCfgsTrace(DP1).size());
-			assertEquals("project.config1", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
+			assertEquals("project.config1", ((ICConfigurationDescription) DPT.getCfgsTrace(DP1).get(0)).getId());
 
 			changeActiveConfiguration(cproject, cfg2);
 			DPT.reset(DP1);
-			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
+			index = CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(1, DPT.getCfgsTrace(DP1).size());
-			assertEquals("project.config2", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
+			assertEquals("project.config2", ((ICConfigurationDescription) DPT.getCfgsTrace(DP1).get(0)).getId());
 
 			DPT.reset(DP1);
 			changeConfigRelations(cproject, ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT);
@@ -378,36 +384,38 @@ public class IndexProviderManagerTest extends IndexTestBase {
 
 			changeActiveConfiguration(cproject, cfg1);
 			DPT.reset(DP1);
-			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
+			index = CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(1, DPT.getCfgsTrace(DP1).size());
 			// should still be config2, as the change in active configuration does not matter
-			assertEquals("project.config2", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
+			assertEquals("project.config2", ((ICConfigurationDescription) DPT.getCfgsTrace(DP1).get(0)).getId());
 
 			changeActiveConfiguration(cproject, cfg2);
 			DPT.reset(DP1);
-			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
+			index = CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(1, DPT.getCfgsTrace(DP1).size());
 			// there should be no change from the previous state (also config2)
-			assertEquals("project.config2", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
+			assertEquals("project.config2", ((ICConfigurationDescription) DPT.getCfgsTrace(DP1).get(0)).getId());
 		} finally {
-			DeltaAnalyzer.sSuppressPotentialTUs= false;
+			DeltaAnalyzer.sSuppressPotentialTUs = false;
 			if (cproject != null) {
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 		}
 	}
 
 	public void testGetProvidedFragments() throws Exception {
-		ICProject cproject= CProjectHelper.createCProject("IndexProviderManagerTest", "bin", IPDOMManager.ID_NO_INDEXER);
+		ICProject cproject = CProjectHelper.createCProject("IndexProviderManagerTest", "bin",
+				IPDOMManager.ID_NO_INDEXER);
 
 		try {
 			MockState mockState = new MockState(cproject);
 			MockStateIndexFragmentProvider provider1 = new MockStateIndexFragmentProvider(cproject);
 			MockStateIndexFragmentProvider provider2 = new MockStateIndexFragmentProvider(cproject);
 
-			IndexProviderManager ipm = ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
+			IndexProviderManager ipm = ((PDOMManager) CCorePlugin.getIndexManager()).getIndexProviderManager();
 			ipm.addIndexProvider(provider1);
 			ipm.addIndexProvider(provider2);
 
@@ -501,72 +509,77 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[3]));
 		} finally {
 			if (cproject != null) {
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 		}
 	}
 
 	public void testProviderUsageFilter() throws Exception {
 		// The provider 'Providers.Counter' is registered 7 times with different usage filters.
-		ICProject cproject= null;
+		ICProject cproject = null;
 		try {
-			cproject = CProjectHelper.createCProject("P"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			cproject = CProjectHelper.createCProject("P" + System.currentTimeMillis(), "bin",
+					IPDOMManager.ID_NO_INDEXER);
 
-			Providers.Counter.fCounter= 0;
+			Providers.Counter.fCounter = 0;
 			CCorePlugin.getIndexManager().getIndex(cproject, IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
 			assertEquals(7, Providers.Counter.fCounter);
 
-			Providers.Counter.fCounter= 0;
+			Providers.Counter.fCounter = 0;
 			CCorePlugin.getIndexManager().getIndex(cproject, IIndexManager.ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY);
 			assertEquals(6, Providers.Counter.fCounter);
 
-			Providers.Counter.fCounter= 0;
+			Providers.Counter.fCounter = 0;
 			CCorePlugin.getIndexManager().getIndex(cproject, IIndexManager.ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST);
 			assertEquals(5, Providers.Counter.fCounter);
 
-			Providers.Counter.fCounter= 0;
+			Providers.Counter.fCounter = 0;
 			CCorePlugin.getIndexManager().getIndex(cproject, IIndexManager.ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER);
 			assertEquals(4, Providers.Counter.fCounter);
 
-			Providers.Counter.fCounter= 0;
+			Providers.Counter.fCounter = 0;
 			CCorePlugin.getIndexManager().getIndex(cproject, IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION);
 			assertEquals(3, Providers.Counter.fCounter);
 
-			Providers.Counter.fCounter= 0;
+			Providers.Counter.fCounter = 0;
 			CCorePlugin.getIndexManager().getIndex(cproject, IIndexManager.ADD_EXTENSION_FRAGMENTS_SEARCH);
 			assertEquals(2, Providers.Counter.fCounter);
 
-			Providers.Counter.fCounter= 0;
+			Providers.Counter.fCounter = 0;
 			CCorePlugin.getIndexManager().getIndex(cproject, IIndexManager.ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY);
 			assertEquals(1, Providers.Counter.fCounter);
 
-			Providers.Counter.fCounter= 0;
+			Providers.Counter.fCounter = 0;
 			CCorePlugin.getIndexManager().getIndex(cproject);
 			assertEquals(0, Providers.Counter.fCounter);
 
 		} finally {
 			if (cproject != null) {
-				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						new NullProgressMonitor());
 			}
 		}
 	}
 
-
-	private ICConfigurationDescription newCfg(ICProjectDescription des, String project, String config) throws CoreException {
-		CDefaultConfigurationData data= new CDefaultConfigurationData(project+"."+config, project+" "+config+" name", null);
+	private ICConfigurationDescription newCfg(ICProjectDescription des, String project, String config)
+			throws CoreException {
+		CDefaultConfigurationData data = new CDefaultConfigurationData(project + "." + config,
+				project + " " + config + " name", null);
 		data.initEmptyData();
 		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);
 	}
 
-	private void changeActiveConfiguration(ICProject cproject, ICConfigurationDescription cfg) throws CoreException, InterruptedException {
-		ICProjectDescription pd= core.getProjectDescription(cproject.getProject());
+	private void changeActiveConfiguration(ICProject cproject, ICConfigurationDescription cfg)
+			throws CoreException, InterruptedException {
+		ICProjectDescription pd = core.getProjectDescription(cproject.getProject());
 		pd.setActiveConfiguration(pd.getConfigurationById(cfg.getId()));
 		core.setProjectDescription(cproject.getProject(), pd);
 		waitForIndexer(cproject);
 	}
 
 	private void changeConfigRelations(ICProject cproject, int option) throws CoreException, InterruptedException {
-		ICProjectDescription pd= core.getProjectDescription(cproject.getProject());
+		ICProjectDescription pd = core.getProjectDescription(cproject.getProject());
 		pd.setConfigurationRelations(option);
 		core.setProjectDescription(cproject.getProject(), pd);
 		waitForIndexer(cproject);
@@ -598,21 +611,22 @@ class MockStateIndexFragmentProvider extends MockStateIndexProvider implements I
 		super(cproject);
 
 		fragments = new IIndexFragment[MockState.states.size()];
-		for(int i=0; i<MockState.states.size(); i++) {
-			fragments[i] = new MockPDOM("mock.test.index."+System.identityHashCode(this)+"."+i, PDOM.versionString(PDOM.getDefaultVersion()));
+		for (int i = 0; i < MockState.states.size(); i++) {
+			fragments[i] = new MockPDOM("mock.test.index." + System.identityHashCode(this) + "." + i,
+					PDOM.versionString(PDOM.getDefaultVersion()));
 		}
 	}
 
 	@Override
 	public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) throws CoreException {
 		int index = MockState.states.indexOf(config.getId());
-		index = invert ? (fragments.length-1)-index : index;
+		index = invert ? (fragments.length - 1) - index : index;
 
 		// nb. we're checking this after inverting on purpose
-		if(index == MockState.states.indexOf(MockState.DBG_V1_ID)) {
+		if (index == MockState.states.indexOf(MockState.DBG_V1_ID)) {
 			return new IIndexFragment[0];
 		} else {
-			return new IIndexFragment[] {fragments[index]};
+			return new IIndexFragment[] { fragments[index] };
 		}
 	}
 }
@@ -622,8 +636,8 @@ class MockConfig implements ICConfigurationDescription {
 	IProject project;
 
 	MockConfig(String id, IProject project) {
-		this.id= id;
-		this.project= project;
+		this.id = id;
+		this.project = project;
 	}
 
 	@Override
@@ -632,29 +646,25 @@ class MockConfig implements ICConfigurationDescription {
 	}
 
 	@Override
-	public ICConfigExtensionReference create(String extensionPoint,
-			String extension) throws CoreException {
+	public ICConfigExtensionReference create(String extensionPoint, String extension) throws CoreException {
 		return null;
 	}
 
 	@Override
-	public ICExternalSetting createExternalSetting(String[] languageIDs,
-			String[] contentTypeIds, String[] extensions,
+	public ICExternalSetting createExternalSetting(String[] languageIDs, String[] contentTypeIds, String[] extensions,
 			ICSettingEntry[] entries) throws WriteAccessException {
 		return null;
 	}
 
 	@Override
-	public ICFileDescription createFileDescription(IPath path,
-			ICResourceDescription base) throws CoreException,
-			WriteAccessException {
+	public ICFileDescription createFileDescription(IPath path, ICResourceDescription base)
+			throws CoreException, WriteAccessException {
 		return null;
 	}
 
 	@Override
-	public ICFolderDescription createFolderDescription(IPath path,
-			ICFolderDescription base) throws CoreException,
-			WriteAccessException {
+	public ICFolderDescription createFolderDescription(IPath path, ICFolderDescription base)
+			throws CoreException, WriteAccessException {
 		return null;
 	}
 
@@ -714,8 +724,7 @@ class MockConfig implements ICConfigurationDescription {
 	}
 
 	@Override
-	public ICResourceDescription getResourceDescription(IPath path,
-			boolean exactPath) {
+	public ICResourceDescription getResourceDescription(IPath path, boolean exactPath) {
 		return null;
 	}
 
@@ -725,64 +734,128 @@ class MockConfig implements ICConfigurationDescription {
 	}
 
 	@Override
-	public ICFolderDescription getRootFolderDescription() {return null;}
+	public ICFolderDescription getRootFolderDescription() {
+		return null;
+	}
+
 	@Override
-	public Object getSessionProperty(QualifiedName name) {return null;}
+	public Object getSessionProperty(QualifiedName name) {
+		return null;
+	}
+
 	@Override
-	public ICSourceEntry[] getSourceEntries() {return null;}
+	public ICSourceEntry[] getSourceEntries() {
+		return null;
+	}
+
 	@Override
-	public ICTargetPlatformSetting getTargetPlatformSetting() {return null;}
+	public ICTargetPlatformSetting getTargetPlatformSetting() {
+		return null;
+	}
+
 	@Override
-	public boolean isActive() {return false;}
+	public boolean isActive() {
+		return false;
+	}
+
 	@Override
-	public boolean isModified() {return false;}
+	public boolean isModified() {
+		return false;
+	}
+
 	@Override
-	public boolean isPreferenceConfiguration() {return false;}
+	public boolean isPreferenceConfiguration() {
+		return false;
+	}
+
 	@Override
-	public void remove(ICConfigExtensionReference ext) throws CoreException {}
+	public void remove(ICConfigExtensionReference ext) throws CoreException {
+	}
+
 	@Override
-	public void remove(String extensionPoint) throws CoreException {}
+	public void remove(String extensionPoint) throws CoreException {
+	}
+
 	@Override
-	public void removeExternalSetting(ICExternalSetting setting) throws WriteAccessException {}
+	public void removeExternalSetting(ICExternalSetting setting) throws WriteAccessException {
+	}
+
 	@Override
-	public void removeExternalSettings() throws WriteAccessException {}
+	public void removeExternalSettings() throws WriteAccessException {
+	}
+
 	@Override
-	public void removeResourceDescription(ICResourceDescription des)
-	throws CoreException, WriteAccessException {}
+	public void removeResourceDescription(ICResourceDescription des) throws CoreException, WriteAccessException {
+	}
+
 	@Override
-	public void setActive() throws WriteAccessException {}
+	public void setActive() throws WriteAccessException {
+	}
+
 	@Override
-	public void setConfigurationData(String buildSystemId,
-			CConfigurationData data) throws WriteAccessException {}
+	public void setConfigurationData(String buildSystemId, CConfigurationData data) throws WriteAccessException {
+	}
+
 	@Override
-	public void setDescription(String des) throws WriteAccessException {}
+	public void setDescription(String des) throws WriteAccessException {
+	}
+
 	@Override
-	public void setName(String name) throws WriteAccessException {}
+	public void setName(String name) throws WriteAccessException {
+	}
+
 	@Override
-	public void setReferenceInfo(Map<String, String> refs) throws WriteAccessException {}
+	public void setReferenceInfo(Map<String, String> refs) throws WriteAccessException {
+	}
+
 	@Override
-	public void setSessionProperty(QualifiedName name, Object value) {}
+	public void setSessionProperty(QualifiedName name, Object value) {
+	}
+
 	@Override
-	public void setSourceEntries(ICSourceEntry[] entries) throws CoreException,
-	WriteAccessException {}
+	public void setSourceEntries(ICSourceEntry[] entries) throws CoreException, WriteAccessException {
+	}
+
 	@Override
-	public ICSettingObject[] getChildSettings() {return null;}
+	public ICSettingObject[] getChildSettings() {
+		return null;
+	}
+
 	@Override
-	public ICConfigurationDescription getConfiguration() {return null;}
+	public ICConfigurationDescription getConfiguration() {
+		return null;
+	}
+
 	@Override
-	public String getName() {return null;}
+	public String getName() {
+		return null;
+	}
+
 	@Override
-	public ICSettingContainer getParent() {return null;}
+	public ICSettingContainer getParent() {
+		return null;
+	}
+
 	@Override
-	public int getType() {return 0;}
+	public int getType() {
+		return 0;
+	}
+
 	@Override
-	public boolean isReadOnly() {return false;}
+	public boolean isReadOnly() {
+		return false;
+	}
+
 	@Override
-	public boolean isValid() {return false;}
+	public boolean isValid() {
+		return false;
+	}
+
 	@Override
 	public ICStorageElement getStorage(String id, boolean create) throws CoreException {
 		return null;
 	}
+
 	@Override
 	public ICStorageElement importStorage(String id, ICStorageElement storage) {
 		return null;
@@ -803,10 +876,12 @@ class MockConfig implements ICConfigurationDescription {
 	}
 
 	@Override
-	public void setExternalSettingsProviderIds(String[] ids) {}
+	public void setExternalSettingsProviderIds(String[] ids) {
+	}
 
 	@Override
-	public void updateExternalSettingsProviders(String[] ids) {}
+	public void updateExternalSettingsProviders(String[] ids) {
+	}
 
 	@Override
 	public ICSourceEntry[] getResolvedSourceEntries() {
@@ -819,7 +894,8 @@ class MockConfig implements ICConfigurationDescription {
 	}
 
 	@Override
-	public void setReadOnly(boolean readOnly, boolean keepModify) {}
+	public void setReadOnly(boolean readOnly, boolean keepModify) {
+	}
 }
 
 /*
@@ -830,14 +906,15 @@ class MockState {
 	public static final String REL_V2_ID = "rel_v2";
 	public static final String DBG_V1_ID = "dbg_v1";
 	public static final String DBG_V2_ID = "dbg_v2";
-	public static final List states = new ArrayList(Arrays.asList(new String[]{REL_V1_ID, REL_V2_ID, DBG_V1_ID, DBG_V2_ID}));
+	public static final List states = new ArrayList(
+			Arrays.asList(new String[] { REL_V1_ID, REL_V2_ID, DBG_V1_ID, DBG_V2_ID }));
 
 	private final IProject project;
 	private String currentConfig;
 
 	public MockState(ICProject cproject) {
 		this.currentConfig = REL_V1_ID;
-		this.project= cproject.getProject();
+		this.project = cproject.getProject();
 	}
 
 	public ICConfigurationDescription getCurrentConfig() {
@@ -854,19 +931,19 @@ class MockPDOM extends EmptyIndexFragment {
 	String version;
 
 	MockPDOM(String id, String version) {
-		this.id= id;
-		this.version= version;
+		this.id = id;
+		this.version = version;
 	}
 
 	@Override
 	public String getProperty(String propertyName) throws CoreException {
-		if(IIndexFragment.PROPERTY_FRAGMENT_ID.equals(propertyName)) {
+		if (IIndexFragment.PROPERTY_FRAGMENT_ID.equals(propertyName)) {
 			return id;
 		}
-		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName)) {
+		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName)) {
 			return PDOM.FRAGMENT_PROPERTY_VALUE_FORMAT_ID;
 		}
-		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
+		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
 			return version;
 		}
 		return null;
@@ -874,6 +951,6 @@ class MockPDOM extends EmptyIndexFragment {
 
 	@Override
 	public String toString() {
-		return "[Mock index fragment "+id+"."+System.identityHashCode(this)+"]";
+		return "[Mock index fragment " + id + "." + System.identityHashCode(this) + "]";
 	}
 }

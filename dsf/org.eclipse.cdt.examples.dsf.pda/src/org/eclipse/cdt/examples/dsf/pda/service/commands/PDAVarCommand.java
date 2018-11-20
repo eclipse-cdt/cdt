@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,12 +17,12 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
- * Retrieves variable value 
- * 
+ * Retrieves variable value
+ *
  * <pre>
  *    C: var  {thread_id} {frame_number} {variable_name}
  *    R: {variable_value}
- *    
+ *
  * Errors:
  *    error: invalid thread
  *    error: variable undefined
@@ -31,12 +31,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 @Immutable
 public class PDAVarCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAVarCommand(PDAThreadDMContext thread, int frameId, String name) {
-        super(thread, "var " + thread.getID() + " " + frameId + " " + name);
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAVarCommand(PDAThreadDMContext thread, int frameId, String name) {
+		super(thread, "var " + thread.getID() + " " + frameId + " " + name);
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

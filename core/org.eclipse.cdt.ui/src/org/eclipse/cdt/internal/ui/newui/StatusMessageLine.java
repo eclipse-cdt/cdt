@@ -29,17 +29,17 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class StatusMessageLine {
 	private CLabel fLabel;
-	
+
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param parent - parent element.
 	 * @param style - the style of the control. Refer to {@link CLabel#CLabel(Composite, int)}.
 	 * @param span - how many columns it should span.
 	 */
 	public StatusMessageLine(Composite parent, int style, int span) {
 		fLabel = new CLabel(parent, style);
-		if (span!=1) {
+		if (span != 1) {
 			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.horizontalSpan = span;
 			fLabel.setLayoutData(gd);
@@ -65,7 +65,7 @@ public class StatusMessageLine {
 	/**
 	 * Assign {@link IStatus} object to the message line. The status should provide
 	 * severity for the icon and message to display.
-	 * 
+	 *
 	 * @param status - status object for the message line.
 	 */
 	public void setErrorStatus(IStatus status) {
@@ -78,7 +78,7 @@ public class StatusMessageLine {
 				return;
 			}
 		}
-		fLabel.setText(""); //$NON-NLS-1$	
+		fLabel.setText(""); //$NON-NLS-1$
 		fLabel.setImage(null);
 	}
 }

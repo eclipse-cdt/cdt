@@ -27,10 +27,7 @@ public class WordPartDetector {
 	private WORDPART_TYPE type = WORDPART_TYPE.UNDETERMINED;
 
 	private enum WORDPART_TYPE {
-		MACRO,
-		FUNCTION_CALL,
-		INCLUDE,
-		UNDETERMINED,
+		MACRO, FUNCTION_CALL, INCLUDE, UNDETERMINED,
 	}
 
 	/**
@@ -83,10 +80,10 @@ public class WordPartDetector {
 			for (int index = offset - 1; index > 0; index--) {
 				char c = document.getChar(index);
 				if (!Character.isJavaIdentifierPart(c) && c != '-' && c != ' ') {
-					boolean isFunction = (c == '(' || c == '{') && document.getChar(index-1) == '$';
+					boolean isFunction = (c == '(' || c == '{') && document.getChar(index - 1) == '$';
 					if (isFunction) {
-						String builtinFun = document.get(index + 1,4);
-						if (builtinFun.equals(GNUMakefileConstants.FUNCTION_CALL)) { 
+						String builtinFun = document.get(index + 1, 4);
+						if (builtinFun.equals(GNUMakefileConstants.FUNCTION_CALL)) {
 							type = WORDPART_TYPE.FUNCTION_CALL;
 							int nameOffset = index + 2 + GNUMakefileConstants.FUNCTION_CALL.length();
 							int endIndex = offset;
@@ -97,7 +94,7 @@ public class WordPartDetector {
 									break;
 								}
 							}
-							wordPart = document.get(nameOffset,endIndex-nameOffset);
+							wordPart = document.get(nameOffset, endIndex - nameOffset);
 							return;
 						}
 					}
@@ -139,7 +136,7 @@ public class WordPartDetector {
 
 	/**
 	 * Check if the cursor is in macro.
-	 * 
+	 *
 	 * @return {@code true} if the cursor is located in macro, {@code false} otherwise.
 	 */
 	public boolean isMacro() {
@@ -148,7 +145,7 @@ public class WordPartDetector {
 
 	/**
 	 * Check if the cursor is in function call $(call user-fun).
-	 * 
+	 *
 	 * @return {@code true} if the cursor is located in function call, {@code false} otherwise.
 	 */
 	public boolean isFunctionCall() {
@@ -157,7 +154,7 @@ public class WordPartDetector {
 
 	/**
 	 * Check if the cursor sits on an include directive line.
-	 * 
+	 *
 	 * @return {@code true} if the cursor is located on include line, {@code false} otherwise.
 	 */
 	public boolean isIncludeDirective() {
@@ -200,7 +197,7 @@ public class WordPartDetector {
 		return wordPart;
 	}
 
-	public int getOffset(){
+	public int getOffset() {
 		return offset;
 	}
 

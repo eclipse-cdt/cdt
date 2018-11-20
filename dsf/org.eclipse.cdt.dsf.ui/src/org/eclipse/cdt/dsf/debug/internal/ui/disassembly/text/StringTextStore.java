@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -47,7 +47,7 @@ public class StringTextStore implements ITextStore {
 		if (length == fText.length()) {
 			return fText;
 		}
-		return new String(fText.substring(offset, offset+length));
+		return new String(fText.substring(offset, offset + length));
 	}
 
 	/* (non-Javadoc)

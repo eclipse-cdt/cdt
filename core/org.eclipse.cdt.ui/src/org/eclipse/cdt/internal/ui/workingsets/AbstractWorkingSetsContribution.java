@@ -29,9 +29,9 @@ import org.eclipse.cdt.ui.CUIPlugin;
 /**
  * A dynamic contribution of sub-menus for working set configuration actions, with further sub-menus showing
  * the configurations to choose from.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 abstract class AbstractWorkingSetsContribution extends CompoundContributionItem {
@@ -47,7 +47,7 @@ abstract class AbstractWorkingSetsContribution extends CompoundContributionItem 
 
 	/**
 	 * Initializes me with my identifier.
-	 * 
+	 *
 	 * @param id
 	 *            my identifier
 	 */
@@ -62,8 +62,7 @@ abstract class AbstractWorkingSetsContribution extends CompoundContributionItem 
 
 		int i = 0;
 		for (IWorkingSet recent : getWorkingsetManager().getRecentWorkingSets()) {
-			IWorkingSetProxy proxy = WorkingSetConfigurationManager.getDefault().getWorkingSet(
-					recent.getName());
+			IWorkingSetProxy proxy = WorkingSetConfigurationManager.getDefault().getWorkingSet(recent.getName());
 
 			if (proxy != null) {
 				IContributionItem item = createMenu(proxy, i++);
@@ -102,7 +101,7 @@ abstract class AbstractWorkingSetsContribution extends CompoundContributionItem 
 
 	/**
 	 * Creates a contribution item for a working set.
-	 * 
+	 *
 	 * @param workingSet
 	 *            a working set
 	 * @return the contribution

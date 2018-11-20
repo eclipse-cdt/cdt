@@ -33,7 +33,7 @@ public class MakefileEditorTogglePresentationAction extends TextEditorAction {
 
 	@Override
 	public void run() {
-		ITextEditor editor= getTextEditor();
+		ITextEditor editor = getTextEditor();
 		editor.resetHighlightRange();
 		boolean show = editor.showsHighlightRangeOnly();
 		setChecked(!show);

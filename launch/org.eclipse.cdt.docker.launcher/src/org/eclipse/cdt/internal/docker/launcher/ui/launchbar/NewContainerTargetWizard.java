@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - initial contribution
  *******************************************************************************/
@@ -41,8 +41,7 @@ import org.eclipse.launchbar.ui.target.LaunchTargetWizard;
 public class NewContainerTargetWizard extends LaunchTargetWizard {
 
 	private NewContainerTargetWizardPage page;
-	protected IToolChainManager toolChainManager = CDebugCorePlugin
-			.getService(IToolChainManager.class);
+	protected IToolChainManager toolChainManager = CDebugCorePlugin.getService(IToolChainManager.class);
 
 	public NewContainerTargetWizard() {
 		if (getLaunchTarget() == null) {
@@ -62,8 +61,7 @@ public class NewContainerTargetWizard extends LaunchTargetWizard {
 
 	@Override
 	public boolean performFinish() {
-		ILaunchTargetManager manager = CDebugUIPlugin
-				.getService(ILaunchTargetManager.class);
+		ILaunchTargetManager manager = CDebugUIPlugin.getService(ILaunchTargetManager.class);
 		String typeId = ContainerTargetTypeProvider.TYPE_ID;
 		String id = page.getTargetName();
 
@@ -75,12 +73,9 @@ public class NewContainerTargetWizard extends LaunchTargetWizard {
 		ILaunchTargetWorkingCopy wc = target.getWorkingCopy();
 		wc.setId(id);
 		wc.setAttribute(ILaunchTarget.ATTR_OS, Platform.getOS());
-		wc.setAttribute(ILaunchTarget.ATTR_ARCH,
-				ContainerTargetTypeProvider.CONTAINER_LINUX);
-		wc.setAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI,
-				page.getConnectionURI());
-		wc.setAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID,
-				page.getImageId());
+		wc.setAttribute(ILaunchTarget.ATTR_ARCH, ContainerTargetTypeProvider.CONTAINER_LINUX);
+		wc.setAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, page.getConnectionURI());
+		wc.setAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, page.getImageId());
 		wc.save();
 
 		// Pick the first one that matches
@@ -109,8 +104,7 @@ public class NewContainerTargetWizard extends LaunchTargetWizard {
 
 	@Override
 	public void performDelete() {
-		ILaunchTargetManager manager = Activator
-				.getService(ILaunchTargetManager.class);
+		ILaunchTargetManager manager = Activator.getService(ILaunchTargetManager.class);
 		ILaunchTarget target = getLaunchTarget();
 		if (target != null) {
 			manager.removeLaunchTarget(getLaunchTarget());

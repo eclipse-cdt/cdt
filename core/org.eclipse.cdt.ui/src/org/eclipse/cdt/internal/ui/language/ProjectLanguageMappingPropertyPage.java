@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *  IBM Corporation - Initial API and implementation
  *******************************************************************************/
@@ -50,14 +50,14 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 	private WorkspaceLanguageMappingWidget fInheritedMappingWidget;
 	private ProjectLanguageConfiguration fMappings;
 	private ILanguageMappingChangeListener fInheritedMappingsChangeListener;
-	
+
 	public ProjectLanguageMappingPropertyPage() {
 		super();
 		fMappingWidget = new ProjectLanguageMappingWidget();
-		
+
 		fInheritedMappingWidget = new WorkspaceLanguageMappingWidget();
 		fInheritedMappingWidget.setReadOnly(true);
-		
+
 		fMappingWidget.setChild(fInheritedMappingWidget);
 	}
 
@@ -67,19 +67,20 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 	@Override
 	protected Control createContents(Composite parent) {
 		fMappingWidget.setElement(getProject());
-		
+
 		Composite contents = new Composite(parent, SWT.NONE);
 		contents.setLayout(new GridLayout(1, false));
-		
+
 		fetchMappings(getProject());
-		Composite contentTypeMappings = fMappingWidget.createContents(contents, PreferencesMessages.ProjectLanguagesPropertyPage_description);
+		Composite contentTypeMappings = fMappingWidget.createContents(contents,
+				PreferencesMessages.ProjectLanguagesPropertyPage_description);
 		contentTypeMappings.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
+
 		Group group = new Group(contents, SWT.SHADOW_IN);
 		group.setText(PreferencesMessages.ProjectLanguagesPropertyPage_inheritedWorkspaceMappingsGroup);
 		group.setLayout(new FillLayout());
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
+
 		fetchWorkspaceMappings();
 		fInheritedMappingWidget.createContents(group, null);
 		fInheritedMappingsChangeListener = new ILanguageMappingChangeListener() {
@@ -97,8 +98,7 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 							}
 						});
 					}
-				}
-				else if (event.getType() == ILanguageMappingChangeEvent.TYPE_PROJECT) {
+				} else if (event.getType() == ILanguageMappingChangeEvent.TYPE_PROJECT) {
 					if (ProjectLanguageMappingPropertyPage.this.isControlCreated()) {
 						Display.getDefault().asyncExec(new Runnable() {
 							@Override
@@ -114,7 +114,7 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 			}
 		};
 		LanguageManager.getInstance().registerLanguageChangeListener(fInheritedMappingsChangeListener);
-		
+
 		return contents;
 	}
 
@@ -122,15 +122,17 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 		try {
 			LanguageManager manager = LanguageManager.getInstance();
 			fMappings = manager.getLanguageConfiguration(project);
-			
+
 			ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project);
 			Map<String, ILanguage> availableLanguages = LanguageVerifier.computeAvailableLanguages();
-			Set<String> missingLanguages = LanguageVerifier.removeMissingLanguages(fMappings, description, availableLanguages);
+			Set<String> missingLanguages = LanguageVerifier.removeMissingLanguages(fMappings, description,
+					availableLanguages);
 			if (missingLanguages.size() > 0) {
 				MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK);
 				messageBox.setText(PreferencesMessages.LanguageMappings_missingLanguageTitle);
 				String affectedLanguages = LanguageVerifier.computeAffectedLanguages(missingLanguages);
-				messageBox.setMessage(Messages.format(PreferencesMessages.ProjectLanguagesPropertyPage_missingLanguage, affectedLanguages));
+				messageBox.setMessage(Messages.format(PreferencesMessages.ProjectLanguagesPropertyPage_missingLanguage,
+						affectedLanguages));
 				messageBox.open();
 			}
 
@@ -139,19 +141,21 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 			CUIPlugin.log(e);
 		}
 	}
-	
+
 	private void fetchWorkspaceMappings() {
 		try {
 			LanguageManager manager = LanguageManager.getInstance();
 			WorkspaceLanguageConfiguration workspaceMappings = manager.getWorkspaceLanguageConfiguration();
 
 			Map<String, ILanguage> availableLanguages = LanguageVerifier.computeAvailableLanguages();
-			Set<String> missingLanguages = LanguageVerifier.removeMissingLanguages(workspaceMappings, availableLanguages);
+			Set<String> missingLanguages = LanguageVerifier.removeMissingLanguages(workspaceMappings,
+					availableLanguages);
 			if (missingLanguages.size() > 0) {
 				MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.OK);
 				messageBox.setText(PreferencesMessages.LanguageMappings_missingLanguageTitle);
 				String affectedLanguages = LanguageVerifier.computeAffectedLanguages(missingLanguages);
-				messageBox.setMessage(Messages.format(PreferencesMessages.WorkspaceLanguagesPreferencePage_missingLanguage, affectedLanguages));
+				messageBox.setMessage(Messages.format(
+						PreferencesMessages.WorkspaceLanguagesPreferencePage_missingLanguage, affectedLanguages));
 				messageBox.open();
 			}
 
@@ -174,7 +178,7 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 			if (!fMappingWidget.isChanged()) {
 				return true;
 			}
-			
+
 			fMappings.setContentTypeMappings(fMappingWidget.getContentTypeMappings());
 			IContentType[] affectedContentTypes = fMappingWidget.getAffectedContentTypes();
 			LanguageManager.getInstance().storeLanguageMappingConfiguration(getProject(), affectedContentTypes);
@@ -185,7 +189,7 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		super.dispose();

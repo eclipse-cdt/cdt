@@ -53,7 +53,7 @@ public class CompositeCPPVariableInstance extends CompositeCPPVariable implement
 
 	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
-		IBinding owner= getOwner();
+		IBinding owner = getOwner();
 		if (owner instanceof ICPPSpecialization)
 			return ((ICPPSpecialization) owner).getTemplateParameterMap();
 

@@ -41,34 +41,34 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 	static class QuickParseJob extends Job {
 		final Executable executable;
 		ITranslationUnit[] tus;
-		
+
 		public QuickParseJob(Executable executable) {
-			super (Messages.SourceFilesContentProvider_ReadingDebugSymbolInformationLabel 
-					+ executable.getName());
+			super(Messages.SourceFilesContentProvider_ReadingDebugSymbolInformationLabel + executable.getName());
 			this.executable = executable;
 		}
-		
+
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Quick parsing of executable for source files has begun (" + this + ')');			 //$NON-NLS-1$
-			
+			if (Trace.DEBUG_EXECUTABLES)
+				Trace.getTrace().trace(null, "Quick parsing of executable for source files has begun (" + this + ')'); //$NON-NLS-1$
+
 			// Ask the Executable for its source files. This could take a while...
 			ITranslationUnit[] mytus = executable.getSourceFiles(monitor);
-			
+
 			IStatus status;
 			if (!monitor.isCanceled()) {
 				tus = mytus;
 				status = Status.OK_STATUS;
-			}
-			else { 
+			} else {
 				status = Status.CANCEL_STATUS;
 			}
-			
-			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Quick parsing of executable has finished, status is " + status);			 //$NON-NLS-1$
+
+			if (Trace.DEBUG_EXECUTABLES)
+				Trace.getTrace().trace(null, "Quick parsing of executable has finished, status is " + status); //$NON-NLS-1$
 			return status;
 		}
 	}
-	
+
 	/**
 	 * The collection of running file parsing jobs. Each executable file (not
 	 * object) can independently be parsed, and these parses can happen
@@ -78,40 +78,40 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 	 * first one is canceled. We cancel the first one, remove it from this list,
 	 * schedule a new one, then add that to the list. It's safe to assume the
 	 * canceled one will complete before the new one.
-	 * 
-	 * <p> This collection must be accessed only from the UI thread 
+	 *
+	 * <p> This collection must be accessed only from the UI thread
 	 */
 	private Map<IPath, QuickParseJob> pathToJobMap = new HashMap<IPath, SourceFilesContentProvider.QuickParseJob>();
-	
+
 	/** those executables for which we asked the question and got a result.
 	 * NOTE: this contains a duplicate of into in Executable, because we can't
 	 * guarantee or check whether Executable still has the info itself. */
-	private static class TUData{
+	private static class TUData {
 		/** Constructor used when search completes successfully */
 		public TUData(ITranslationUnit[] tus, long timestamp) {
 			this.tus = tus;
 			this.timestamp = timestamp;
 		}
-		
+
 		/** Constructor used when search is canceled */
 		public TUData() {
 			this.canceled = true;
 		}
-		
+
 		ITranslationUnit[] tus;
-		/** IResource.getModificationStamp value of when this data was last updated */ 
+		/** IResource.getModificationStamp value of when this data was last updated */
 		long timestamp;
-		
+
 		boolean canceled;
 	}
 
 	/**
-	 * The cached file info. Key is the path of the executable. This collection must be accessed only on the UI thread. 
+	 * The cached file info. Key is the path of the executable. This collection must be accessed only on the UI thread.
 	 */
 	private Map<IPath, TUData> fetchedExecutables = new HashMap<IPath, TUData>();
 
 	private final SourceFilesViewer viewer;
-	
+
 	public SourceFilesContentProvider(SourceFilesViewer viewer) {
 		super(true, true);
 		this.viewer = viewer;
@@ -134,12 +134,12 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 		}.schedule();
 		super.dispose();
 	}
-	
+
 	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof ITranslationUnit) {
-			TranslationUnitInfo info = SourceFilesViewer.fetchTranslationUnitInfo(
-					(Executable) viewer.getInput(), element);
+			TranslationUnitInfo info = SourceFilesViewer.fetchTranslationUnitInfo((Executable) viewer.getInput(),
+					element);
 			if (info != null && !info.exists)
 				return false;
 		}
@@ -151,12 +151,13 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 	 */
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, inputElement);
-		
+		if (Trace.DEBUG_EXECUTABLES)
+			Trace.getTrace().traceEntry(null, inputElement);
+
 		if (inputElement instanceof Executable) {
 			final Executable executable = (Executable) inputElement;
 			final IPath exePath = executable.getPath();
-			
+
 			// look for a job that is currently fetching this info
 			QuickParseJob job;
 			job = pathToJobMap.get(exePath);
@@ -167,7 +168,7 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 			// create a background job to look for the sources but don't start it yet
 			job = new QuickParseJob(executable);
 			pathToJobMap.put(exePath, job);
-			
+
 			// See if we have the result cached for this executable. If so
 			// return that. It's also possible that the most resent search was
 			// canceled
@@ -175,7 +176,7 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 			TUData tud = fetchedExecutables.get(exePath);
 			if (tud != null) {
 				if (tud.canceled)
-					cachedResult = new String[]{Messages.SourceFilesContentProvider_Canceled};
+					cachedResult = new String[] { Messages.SourceFilesContentProvider_Canceled };
 				else
 					cachedResult = tud.tus;
 			}
@@ -183,24 +184,24 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 				pathToJobMap.remove(exePath); // removed the unused search job
 				return cachedResult;
 			}
-			
+
 			// Schedule the job; once it finishes, update the viewer
 			final QuickParseJob theJob = job;
 			job.addJobChangeListener(new JobChangeAdapter() {
 				@Override
 				public void done(final IJobChangeEvent event) {
-					new WorkbenchJob("refreshing source files viewer"){ //$NON-NLS-1$
+					new WorkbenchJob("refreshing source files viewer") { //$NON-NLS-1$
 						@Override
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 							if (event.getResult().isOK()) {
-								fetchedExecutables.put(exePath, new TUData(theJob.tus, theJob.executable.getResource().getModificationStamp()));
-							}
-							else {
+								fetchedExecutables.put(exePath,
+										new TUData(theJob.tus, theJob.executable.getResource().getModificationStamp()));
+							} else {
 								fetchedExecutables.put(exePath, new TUData());
 							}
 
 							pathToJobMap.values().remove(theJob);
-							
+
 							refreshViewer(executable);
 							return Status.OK_STATUS;
 						}
@@ -209,13 +210,12 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 			});
 
 			job.schedule();
-			
+
 			// show the user a string that lets him know we're searching
 			return new String[] { Messages.SourceFilesContentProvider_Refreshing };
 		}
 		return new Object[] {};
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.executables.IExecutablesChangeListener#executablesListChanged()
@@ -225,14 +225,14 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 		// we react via IExecutablesChangeListener2 methods
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.executables.IExecutablesChangeListener#executablesChanged(java.util.List)
 	 */
 	@Override
 	public void executablesChanged(final List<Executable> executables) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, executables);
-	
+		if (Trace.DEBUG_EXECUTABLES)
+			Trace.getTrace().traceEntry(null, executables);
+
 		new WorkbenchJob("Refreshing viewer") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -241,12 +241,13 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 					fetchedExecutables.remove(exePath);
 					QuickParseJob job = pathToJobMap.get(exePath);
 					if (job != null) {
-						if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Cancelling QuickParseJob: " + job); 						 //$NON-NLS-1$
+						if (Trace.DEBUG_EXECUTABLES)
+							Trace.getTrace().trace(null, "Cancelling QuickParseJob: " + job); //$NON-NLS-1$
 						job.cancel();
 						pathToJobMap.remove(exePath);
 					}
 				}
-				
+
 				if (!viewer.getControl().isDisposed()) {
 					// See if our current input is one of the executables that has changed.
 					for (Executable executable : executables) {
@@ -254,7 +255,7 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 							// Executable.equals() is not a simple reference
 							// check. Two Executable objects are equal if they
 							// represent the same file on disk. I.e., our input
-							// object might not be one of the instances on the  
+							// object might not be one of the instances on the
 							// changed-list, but for sure the file on disk has
 							// changed. Now, the manager that called this
 							// listener has already told the Executable
@@ -266,7 +267,7 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 							// tell that Executable to flush its source file
 							// cache so that refreshing the viewer will cause a
 							// fresh fetch of the source file information.
-							Executable execInput = (Executable)fInput;
+							Executable execInput = (Executable) fInput;
 							if (executable != execInput) {
 								execInput.setRefreshSourceFiles(true);
 							}
@@ -277,23 +278,22 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 				}
 				return Status.OK_STATUS;
 			}
-			
+
 		}.schedule();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.CElementContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, final Object newInput) {
 		super.inputChanged(viewer, oldInput, newInput);
-		
+
 		new WorkbenchJob("Refreshing viewer") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				// pack because the quick parse job won't run
-				if (newInput instanceof Executable 
-						&& fetchedExecutables.containsKey(((Executable) newInput).getPath()))
+				if (newInput instanceof Executable && fetchedExecutables.containsKey(((Executable) newInput).getPath()))
 					SourceFilesContentProvider.this.viewer.packColumns();
 				return Status.OK_STATUS;
 			}
@@ -305,8 +305,9 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 	 */
 	@Override
 	public void executablesAdded(final List<Executable> executables) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, executables);
-		
+		if (Trace.DEBUG_EXECUTABLES)
+			Trace.getTrace().traceEntry(null, executables);
+
 		// Throw out our cached translation units for the executable *file* but
 		// only if the file hasn't changed. Executable objects come and go
 		// independently of the file on disk.
@@ -321,7 +322,7 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 						fetchedExecutables.remove(exePath);
 					}
 				}
-				
+
 				if (!viewer.getControl().isDisposed()) {
 					// See if current viewer input is one of the executables that
 					// was added. If so, this is likely an exec that was rebuilt
@@ -336,13 +337,15 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 					// message in the viewer table.
 					for (Executable executable : executables) {
 						if (executable.equals(fInput)) {
-							if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "refreshing viewer; added executable is our current input"); //$NON-NLS-1$
-							refreshViewer((Executable)fInput);
+							if (Trace.DEBUG_EXECUTABLES)
+								Trace.getTrace().trace(null,
+										"refreshing viewer; added executable is our current input"); //$NON-NLS-1$
+							refreshViewer((Executable) fInput);
 							break;
 						}
 					}
 				}
-				
+
 				return Status.OK_STATUS;
 			}
 		}.schedule();
@@ -353,8 +356,9 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 	 */
 	@Override
 	public void executablesRemoved(final List<Executable> executables) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, executables);
-		
+		if (Trace.DEBUG_EXECUTABLES)
+			Trace.getTrace().traceEntry(null, executables);
+
 		// The fact that the Executable was removed from the workspace doesn't
 		// mean we need to throw out the source file info we've cached. If a
 		// project is closed then reopened, we are able to reuse the info as
@@ -367,7 +371,8 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 					final IPath exePath = exec.getPath();
 					QuickParseJob job = pathToJobMap.get(exePath);
 					if (job != null) {
-						if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Cancelling QuickParseJob: " + job); 						 //$NON-NLS-1$
+						if (Trace.DEBUG_EXECUTABLES)
+							Trace.getTrace().trace(null, "Cancelling QuickParseJob: " + job); //$NON-NLS-1$
 						job.cancel();
 						pathToJobMap.remove(exePath);
 					}
@@ -380,20 +385,20 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 	/**
 	 * Restarts a parse of the current input (Executable) if and only if its
 	 * last search was canceled. The viewer is refresh accordingly.
-	 * 
+	 *
 	 * <p>
 	 * Must be called on the UI thread
-	 * 
+	 *
 	 */
 	public void restartCanceledExecutableParse() {
 		assert Display.getCurrent() != null;
-		
+
 		Object input = viewer.getInput();
 		if (input instanceof Executable) {
-			final Executable executable = (Executable)input;
+			final Executable executable = (Executable) input;
 			final IPath exePath = executable.getPath();
 
-			// Ignore restart if there's an ongoing search. 
+			// Ignore restart if there's an ongoing search.
 			QuickParseJob job;
 			job = pathToJobMap.get(exePath);
 			if (job != null) {
@@ -416,15 +421,15 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 			job.addJobChangeListener(new JobChangeAdapter() {
 				@Override
 				public void done(final IJobChangeEvent event) {
-					
-					new WorkbenchJob("refreshing source files viewer"){ //$NON-NLS-1$
+
+					new WorkbenchJob("refreshing source files viewer") { //$NON-NLS-1$
 						@Override
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 							// Update the model with the search results
 							if (event.getResult().isOK()) {
-								fetchedExecutables.put(exePath, new TUData(theJob.tus, theJob.executable.getResource().getModificationStamp()));
-							}
-							else {
+								fetchedExecutables.put(exePath,
+										new TUData(theJob.tus, theJob.executable.getResource().getModificationStamp()));
+							} else {
 								// The search job apparently always completes
 								// successfully or it was canceled (failure was
 								// not a considered outcome). If it was canceled,
@@ -432,7 +437,7 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 								fetchedExecutables.put(exePath, new TUData());
 							}
 							pathToJobMap.values().remove(theJob);
-							
+
 							refreshViewer(executable);
 							return Status.OK_STATUS;
 						}
@@ -448,12 +453,12 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 			refreshViewer(executable);
 		}
 	}
-	
+
 	/**
 	 * Utility method to invoke a viewer refresh for the given element
 	 * @param input the Executable to show content for
-	 * 
-	 * <p> Must be called on the UI thread 
+	 *
+	 * <p> Must be called on the UI thread
 	 */
 	private void refreshViewer(Executable input) {
 		if (!viewer.getControl().isDisposed()) {
@@ -464,4 +469,3 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 		}
 	}
 }
-

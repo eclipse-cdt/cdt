@@ -26,7 +26,8 @@ public class ExecIf implements ICPPExecution {
 	private final ICPPExecution thenClauseExec;
 	private final ICPPExecution elseClauseExec;
 
-	public ExecIf(boolean isConstexpr, ICPPExecution initStmtExec, ICPPEvaluation conditionExprEval, ExecSimpleDeclaration conditionDeclExec, ICPPExecution thenClauseExec, ICPPExecution elseClauseExec) {
+	public ExecIf(boolean isConstexpr, ICPPExecution initStmtExec, ICPPEvaluation conditionExprEval,
+			ExecSimpleDeclaration conditionDeclExec, ICPPExecution thenClauseExec, ICPPExecution elseClauseExec) {
 		this.isConstexpr = isConstexpr;
 		this.initStmtExec = initStmtExec;
 		this.conditionExprEval = conditionExprEval;
@@ -58,8 +59,12 @@ public class ExecIf implements ICPPExecution {
 	@Override
 	public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
 		ICPPExecution newInitStmtExec = initStmtExec != null ? initStmtExec.instantiate(context, maxDepth) : null;
-		ICPPEvaluation newConditionExprEval = conditionExprEval != null ? conditionExprEval.instantiate(context, maxDepth) : null;
-		ExecSimpleDeclaration newConditionDeclExec = conditionDeclExec != null ? (ExecSimpleDeclaration) conditionDeclExec.instantiate(context, maxDepth) : null;
+		ICPPEvaluation newConditionExprEval = conditionExprEval != null
+				? conditionExprEval.instantiate(context, maxDepth)
+				: null;
+		ExecSimpleDeclaration newConditionDeclExec = conditionDeclExec != null
+				? (ExecSimpleDeclaration) conditionDeclExec.instantiate(context, maxDepth)
+				: null;
 
 		ICPPExecution newThenClauseExec = null;
 		ICPPExecution newElseClauseExec = null;
@@ -68,7 +73,7 @@ public class ExecIf implements ICPPExecution {
 			if (newConditionExprEval.getValue().numberValue().intValue() != 0) {
 				/*
 				 * We can't just "return newThenClauseExec" here, because the condition
-				 * might have side effects so it needs to be preserved in the instantiated 
+				 * might have side effects so it needs to be preserved in the instantiated
 				 * execution even if one of its branch has become null
 				 */
 				newThenClauseExec = thenClauseExec.instantiate(context, maxDepth);
@@ -80,11 +85,13 @@ public class ExecIf implements ICPPExecution {
 			newElseClauseExec = elseClauseExec != null ? elseClauseExec.instantiate(context, maxDepth) : null;
 		}
 
-		if (newInitStmtExec == initStmtExec && newConditionExprEval == conditionExprEval && newConditionDeclExec == conditionDeclExec
-				&& newThenClauseExec == thenClauseExec && newElseClauseExec == elseClauseExec) {
+		if (newInitStmtExec == initStmtExec && newConditionExprEval == conditionExprEval
+				&& newConditionDeclExec == conditionDeclExec && newThenClauseExec == thenClauseExec
+				&& newElseClauseExec == elseClauseExec) {
 			return this;
 		}
-		return new ExecIf(isConstexpr, newInitStmtExec, newConditionExprEval, newConditionDeclExec, newThenClauseExec, newElseClauseExec);
+		return new ExecIf(isConstexpr, newInitStmtExec, newConditionExprEval, newConditionDeclExec, newThenClauseExec,
+				newElseClauseExec);
 	}
 
 	@Override
@@ -108,6 +115,7 @@ public class ExecIf implements ICPPExecution {
 		ExecSimpleDeclaration conditionDeclExec = (ExecSimpleDeclaration) buffer.unmarshalExecution();
 		ICPPExecution thenClauseExec = buffer.unmarshalExecution();
 		ICPPExecution elseClauseExec = buffer.unmarshalExecution();
-		return new ExecIf(isConstexpr, initStmtExec, conditionExprEval, conditionDeclExec, thenClauseExec, elseClauseExec);
+		return new ExecIf(isConstexpr, initStmtExec, conditionExprEval, conditionDeclExec, thenClauseExec,
+				elseClauseExec);
 	}
 }

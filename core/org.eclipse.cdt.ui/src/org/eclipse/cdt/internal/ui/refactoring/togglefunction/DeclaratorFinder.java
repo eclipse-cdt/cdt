@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
  *     Sergey Prigogin (Google)
  ******************************************************************************/
@@ -54,16 +54,14 @@ public class DeclaratorFinder {
 		return foundDeclarator.getName();
 	}
 
-	private IASTFunctionDeclarator findDeclaratorInSelection(ITextSelection selection,
-			IASTTranslationUnit unit) {
+	private IASTFunctionDeclarator findDeclaratorInSelection(ITextSelection selection, IASTTranslationUnit unit) {
 		IASTNodeSelector nodeSelector = unit.getNodeSelector(null);
-		IASTNode firstNodeInsideSelection =
-				nodeSelector.findFirstContainedNode(selection.getOffset(), selection.getLength());
+		IASTNode firstNodeInsideSelection = nodeSelector.findFirstContainedNode(selection.getOffset(),
+				selection.getLength());
 		IASTFunctionDeclarator declarator = findDeclaratorInAncestors(firstNodeInsideSelection);
-		
+
 		if (declarator == null) {
-			firstNodeInsideSelection = nodeSelector.findEnclosingNode(
-					selection.getOffset(), selection.getLength());
+			firstNodeInsideSelection = nodeSelector.findEnclosingNode(selection.getOffset(), selection.getLength());
 			declarator = findDeclaratorInAncestors(firstNodeInsideSelection);
 		}
 		return declarator;
@@ -101,7 +99,7 @@ public class DeclaratorFinder {
 			if (declarators.length > 1) {
 				throw new NotSupportedException(Messages.DeclaratorFinder_MultipleDeclarators);
 			}
-			
+
 			if (declarators.length == 1 && declarators[0] instanceof IASTFunctionDeclarator)
 				return (IASTFunctionDeclarator) declarators[0];
 		}

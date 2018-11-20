@@ -61,11 +61,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWri
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 /**
- * Checks that class members of simple types (int, float, pointers, 
- * enumeration types, ...) are properly initialized in constructor. 
- * Not initialized members may cause to unstable or random behavior 
+ * Checks that class members of simple types (int, float, pointers,
+ * enumeration types, ...) are properly initialized in constructor.
+ * Not initialized members may cause to unstable or random behavior
  * of methods that are working with their value.
- * 
+ *
  * @author Anton Gorenkov
  */
 public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
@@ -93,7 +93,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 			ICPPConstructor constructor = getConstructor(declaration);
 			if (constructor != null) {
 				Set<IField> fieldsInConstructor = constructorsStack.push(new HashSet<IField>());
-				
+
 				// Add all class fields
 				try {
 					CPPSemantics.pushLookupPoint(declaration);
@@ -122,12 +122,13 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 			}
 			return PROCESS_CONTINUE;
 		}
-		
+
 		@Override
 		public int visit(IASTExpression expression) {
 			boolean skipCurrentConstructor = false;
-			
-			if (skipConstructorsWithFCalls && !constructorsStack.empty() && expression instanceof IASTFunctionCallExpression) {
+
+			if (skipConstructorsWithFCalls && !constructorsStack.empty()
+					&& expression instanceof IASTFunctionCallExpression) {
 				Set<IField> actualConstructorFields = constructorsStack.peek();
 				if (!actualConstructorFields.isEmpty()) {
 					IASTFunctionCallExpression fCall = (IASTFunctionCallExpression) expression;
@@ -143,7 +144,8 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 					if (fBinding != null) {
 						if (fBinding instanceof ICPPMethod) {
 							ICPPMethod method = (ICPPMethod) fBinding;
-							ICompositeType constructorOwner = actualConstructorFields.iterator().next().getCompositeTypeOwner();
+							ICompositeType constructorOwner = actualConstructorFields.iterator().next()
+									.getCompositeTypeOwner();
 							if (constructorOwner.equals(method.getClassOwner()) && !method.getType().isConst()) {
 								skipCurrentConstructor = true;
 							}
@@ -158,7 +160,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 					}
 				}
 			}
-			
+
 			// Bug 368420 - Skip constructor if pattern is *this = toBeCopied;
 			if (expression instanceof IASTBinaryExpression) {
 				IASTBinaryExpression binaryExpression = (IASTBinaryExpression) expression;
@@ -166,13 +168,13 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 					skipCurrentConstructor = true;
 				}
 			}
-			
+
 			if (skipCurrentConstructor && !constructorsStack.empty()) {
 				constructorsStack.peek().clear();
 			}
 			return PROCESS_CONTINUE;
 		}
-		
+
 		/**
 		 * Checks whether expression references this (directly, by pointer or by reference)
 		 */
@@ -185,10 +187,10 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 			} else if (expr instanceof ICPPASTUnaryExpression) {
 				ICPPASTUnaryExpression unExpr = (ICPPASTUnaryExpression) expr;
 				switch (unExpr.getOperator()) {
-					case IASTUnaryExpression.op_amper:
-					case IASTUnaryExpression.op_star:
-					case IASTUnaryExpression.op_bracketedPrimary:
-						return referencesThis(unExpr.getOperand());
+				case IASTUnaryExpression.op_amper:
+				case IASTUnaryExpression.op_star:
+				case IASTUnaryExpression.op_bracketedPrimary:
+					return referencesThis(unExpr.getOperand());
 				}
 			}
 			return false;
@@ -201,8 +203,8 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 				if (!actualConstructorFields.isEmpty()) {
 					IBinding binding = name.resolveBinding();
 					if (binding != null && !(binding instanceof IProblemBinding)) {
-						IField equivalentFieldBinding = getContainedEquivalentBinding(
-								actualConstructorFields, binding, name.getTranslationUnit().getIndex());
+						IField equivalentFieldBinding = getContainedEquivalentBinding(actualConstructorFields, binding,
+								name.getTranslationUnit().getIndex());
 						if (equivalentFieldBinding != null) {
 							if ((CPPVariableReadWriteFlags.getReadWriteFlags(name) & PDOMName.WRITE_ACCESS) != 0) {
 								actualConstructorFields.remove(equivalentFieldBinding);
@@ -213,17 +215,17 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 			}
 			return PROCESS_CONTINUE;
 		}
-		
+
 		private IField getContainedEquivalentBinding(Iterable<IField> fields, IBinding binding, IIndex index) {
 			for (IField field : fields) {
 				if (areEquivalentBindings(binding, field, index)) {
 					return field;
 				}
 			}
-			
+
 			return null;
 		}
-		
+
 		private boolean areEquivalentBindings(IBinding binding1, IBinding binding2, IIndex index) {
 			if (binding1.equals(binding2)) {
 				return true;
@@ -243,9 +245,9 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 			}
 			return false;
 		}
-		
+
 		/** Checks whether class member of the specified type should be initialized
-		 * 
+		 *
 		 * @param type	Type to check
 		 * @return true if type is:
 		 *     - basic type (int, float, ...)
@@ -253,7 +255,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 		 *     - enum
 		 *     - reference (should be initialized in initialization list)
 		 *     - typedef to the another native type.
-		 *     
+		 *
 		 * @note: Not supported types (but maybe should be):
 		 *     - array
 		 *     - union
@@ -261,14 +263,12 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 		 *     - template parameter (need user preference?)
 		 */
 		private boolean isSimpleType(IType type) {
-			return (type instanceof IBasicType ||
-					type instanceof IPointerType ||
-					type instanceof IEnumeration ||
-					type instanceof ICPPReferenceType ||
-					(type instanceof ITypedef && isSimpleType(((ITypedef) type).getType())));
+			return (type instanceof IBasicType || type instanceof IPointerType || type instanceof IEnumeration
+					|| type instanceof ICPPReferenceType
+					|| (type instanceof ITypedef && isSimpleType(((ITypedef) type).getType())));
 		}
 
-		/** Checks that specified declaration is a class constructor 
+		/** Checks that specified declaration is a class constructor
 		 *  (it is a class member and its name is equal to the class name)
 		 */
 		private ICPPConstructor getConstructor(IASTDeclaration decl) {
@@ -285,11 +285,12 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 					if (constructor.getClassOwner().getKey() == ICompositeType.k_union)
 						return null;
 					// Skip delegating constructors.
-					for (ICPPASTConstructorChainInitializer memberInitializer : functionDefinition.getMemberInitializers()) {
+					for (ICPPASTConstructorChainInitializer memberInitializer : functionDefinition
+							.getMemberInitializers()) {
 						IASTName memberName = memberInitializer.getMemberInitializerId();
 						if (memberName != null) {
 							IBinding memberBinding = memberName.resolveBinding();
-							ICPPClassType classType = null; 
+							ICPPClassType classType = null;
 							if (memberBinding instanceof ICPPClassType) {
 								classType = (ICPPClassType) memberBinding;
 							} else if (memberBinding instanceof ICPPConstructor) {
@@ -305,7 +306,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 					return constructor;
 				}
 			}
-			
+
 			return null;
 		}
 	}
@@ -313,7 +314,8 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_SKIP, CheckersMessages.ClassMembersInitializationChecker_SkipConstructorsWithFCalls, Boolean.TRUE);
+		addPreference(problem, PARAM_SKIP,
+				CheckersMessages.ClassMembersInitializationChecker_SkipConstructorsWithFCalls, Boolean.TRUE);
 	}
 
 	public boolean skipConstructorsWithFCalls() {

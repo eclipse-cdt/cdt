@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Rational Software - initial implementation
  *     Sergey Prigogin (Google)
@@ -36,11 +36,11 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CConventions {
-	private static final String scopeResolutionOperator= "::"; //$NON-NLS-1$
-	private static final char fgDot= '.';
+	private static final String scopeResolutionOperator = "::"; //$NON-NLS-1$
+	private static final char fgDot = '.';
 
 	private static final String ILLEGAL_FILE_CHARS = "/\\:<>?*|\""; //$NON-NLS-1$
-	
+
 	public static boolean isLegalIdentifier(String name) {
 		if (name == null) {
 			return false;
@@ -87,18 +87,18 @@ public class CConventions {
 	 */
 	public static IStatus validateClassName(String name) {
 		if (name == null) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_nullName, null); 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_nullName, null);
 		}
 		String trimmed = name.trim();
-		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){ //$NON-NLS-1$
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_nameWithBlanks, null); 
+		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1)) { //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_nameWithBlanks, null);
 		}
 		int index = name.lastIndexOf(scopeResolutionOperator);
 		char[] scannedID;
 		if (index == -1) {
 			// simple name
 			IStatus status = validateIdentifier(name, GPPLanguage.getDefault());
-			if (!status.isOK()){
+			if (!status.isOK()) {
 				return status;
 			}
 
@@ -112,7 +112,7 @@ public class CConventions {
 			}
 			String type = name.substring(index + scopeResolutionOperator.length()).trim();
 			status = validateIdentifier(type, GPPLanguage.getDefault());
-			if (!status.isOK()){
+			if (!status.isOK()) {
 				return status;
 			}
 			scannedID = type.toCharArray();
@@ -120,17 +120,21 @@ public class CConventions {
 
 		if (scannedID != null) {
 			if (CharOperation.contains('$', scannedID)) {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_dollarName, null); 
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_dollarName,
+						null);
 			}
 			if (scannedID.length > 0 && scannedID[0] == '_') {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_leadingUnderscore, null); 
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1,
+						Messages.convention_class_leadingUnderscore, null);
 			}
 			if (scannedID.length > 0 && Character.isLowerCase(scannedID[0])) {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_lowercaseName, null); 
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_class_lowercaseName,
+						null);
 			}
 			return CModelStatus.VERIFIED_OK;
 		}
-		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_class_invalidName, name), null); 
+		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+				NLS.bind(Messages.convention_class_invalidName, name), null);
 	}
 
 	/**
@@ -148,18 +152,19 @@ public class CConventions {
 	 */
 	public static IStatus validateNamespaceName(String name) {
 		if (name == null) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_namespace_nullName, null); 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_namespace_nullName, null);
 		}
 		String trimmed = name.trim();
-		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){ //$NON-NLS-1$
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_namespace_nameWithBlanks, null); 
+		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1)) { //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_namespace_nameWithBlanks,
+					null);
 		}
 		int index = name.lastIndexOf(scopeResolutionOperator);
 		char[] scannedID;
 		if (index == -1) {
 			// simple name
 			IStatus status = validateIdentifier(name, GPPLanguage.getDefault());
-			if (!status.isOK()){
+			if (!status.isOK()) {
 				return status;
 			}
 
@@ -173,7 +178,7 @@ public class CConventions {
 			}
 			String type = name.substring(index + scopeResolutionOperator.length()).trim();
 			status = validateIdentifier(type, GPPLanguage.getDefault());
-			if (!status.isOK()){
+			if (!status.isOK()) {
 				return status;
 			}
 			scannedID = type.toCharArray();
@@ -181,17 +186,20 @@ public class CConventions {
 
 		if (scannedID != null) {
 			if (CharOperation.contains('$', scannedID)) {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_namespace_dollarName, null); 
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_namespace_dollarName,
+						null);
 			}
 			if (scannedID.length > 0 && scannedID[0] == '_') {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_namespace_leadingUnderscore, null); 
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1,
+						Messages.convention_namespace_leadingUnderscore, null);
 			}
-//			if (scannedID.length > 0 && Character.isLowerCase(scannedID[0])) {
-//				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention.namespace.lowercaseName"), null); //$NON-NLS-1$
-//			}
+			//			if (scannedID.length > 0 && Character.isLowerCase(scannedID[0])) {
+			//				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention.namespace.lowercaseName"), null); //$NON-NLS-1$
+			//			}
 			return CModelStatus.VERIFIED_OK;
 		}
-		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_class_invalidName, name), null); 
+		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+				NLS.bind(Messages.convention_class_invalidName, name), null);
 	}
 
 	/**
@@ -203,17 +211,17 @@ public class CConventions {
 	 */
 	public static IStatus validateScopeName(String name) {
 		if (name == null) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_nullName, null); 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_nullName, null);
 		}
 		int length;
 		if ((length = name.length()) == 0) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_emptyName, null); 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_emptyName, null);
 		}
-		if (name.charAt(0) == fgDot || name.charAt(length-1) == fgDot) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_dotName, null); 
+		if (name.charAt(0) == fgDot || name.charAt(length - 1) == fgDot) {
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_dotName, null);
 		}
 		if (CharOperation.isWhitespace(name.charAt(0)) || CharOperation.isWhitespace(name.charAt(name.length() - 1))) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_nameWithBlanks, null); 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_nameWithBlanks, null);
 		}
 
 		StringTokenizer st = new StringTokenizer(name, scopeResolutionOperator);
@@ -223,13 +231,16 @@ public class CConventions {
 			typeName = typeName.trim(); // grammar allows spaces
 			char[] scannedID = typeName.toCharArray();
 			if (scannedID == null) {
-				return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_illegalIdentifier, typeName), null); 
+				return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+						NLS.bind(Messages.convention_illegalIdentifier, typeName), null);
 			}
 			if (firstToken && scannedID.length > 0 && scannedID[0] == '_') {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_leadingUnderscore, null); 
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1,
+						Messages.convention_scope_leadingUnderscore, null);
 			}
 			if (firstToken && scannedID.length > 0 && Character.isLowerCase(scannedID[0])) {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_lowercaseName, null); 
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_lowercaseName,
+						null);
 			}
 			firstToken = false;
 		}
@@ -265,11 +276,13 @@ public class CConventions {
 	@Deprecated
 	public static IStatus validateIdentifier(String id) {
 		if (!isLegalIdentifier(id)) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_illegalIdentifier, id), null); 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+					NLS.bind(Messages.convention_illegalIdentifier, id), null);
 		}
 
 		if (!isValidIdentifier(id)) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_invalid, id), null); 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_invalid, id),
+					null);
 		}
 
 		return CModelStatus.VERIFIED_OK;
@@ -288,15 +301,18 @@ public class CConventions {
 	 */
 	public static IStatus validateIdentifier(String id, AbstractCLikeLanguage language) {
 		if (!isLegalIdentifier(id)) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_illegalIdentifier, id), null); 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+					NLS.bind(Messages.convention_illegalIdentifier, id), null);
 		}
 
 		if (!isValidIdentifier(id)) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_invalid, id), null); 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_invalid, id),
+					null);
 		}
 
 		if (isReservedKeyword(id, language) || isBuiltinType(id, language)) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_reservedKeyword, id), null);
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+					NLS.bind(Messages.convention_reservedKeyword, id), null);
 		}
 
 		return CModelStatus.VERIFIED_OK;
@@ -329,7 +345,7 @@ public class CConventions {
 	 *
 	 * @param name the include declaration
 	 * @return a status object with code <code>IStatus.OK</code> if
-	 *		the given name is valid as an include name, otherwise a status 
+	 *		the given name is valid as an include name, otherwise a status
 	 *		object indicating what is wrong with the name
 	 */
 
@@ -349,11 +365,11 @@ public class CConventions {
 		return CModelStatus.VERIFIED_OK;
 	}
 
-	public static boolean isValidIdentifier(String name){
+	public static boolean isValidIdentifier(String name) {
 		// Create a scanner and get the type of the token
 		// assuming that you are given a valid identifier
 		IToken token = null;
-		Lexer lexer= new Lexer(name.toCharArray(), new Lexer.LexerOptions(), ILexerLog.NULL, null);
+		Lexer lexer = new Lexer(name.toCharArray(), new Lexer.LexerOptions(), ILexerLog.NULL, null);
 		try {
 			token = lexer.nextToken();
 			if (token.getType() == IToken.tIDENTIFIER && lexer.nextToken().getType() == IToken.tEND_OF_INPUT) {
@@ -363,7 +379,7 @@ public class CConventions {
 		}
 		return false;
 	}
-	
+
 	private static boolean isReservedKeyword(String name, AbstractCLikeLanguage language) {
 		String[] keywords = language.getKeywords();
 		for (String kw : keywords) {
@@ -388,11 +404,11 @@ public class CConventions {
 		}
 
 		//TODO we need platform-independent validation, see bug#24152
-		
+
 		int len = name.length();
-//		if (Character.isWhitespace(name.charAt(0)) || Character.isWhitespace(name.charAt(len - 1))) {
-//			return false;
-//		}
+		//		if (Character.isWhitespace(name.charAt(0)) || Character.isWhitespace(name.charAt(len - 1))) {
+		//			return false;
+		//		}
 		for (int i = 0; i < len; i++) {
 			char c = name.charAt(i);
 			if (ILLEGAL_FILE_CHARS.indexOf(c) != -1) {
@@ -401,7 +417,7 @@ public class CConventions {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Validate the given file name.
 	 * The name must be the short file name (including the extension).
@@ -418,22 +434,24 @@ public class CConventions {
 	public static IStatus validateFileName(String name) {
 		//TODO could use a preferences option for file naming conventions
 		if (name == null || name.length() == 0) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_filename_nullName, null); 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_filename_nullName, null);
 		}
 		if (!isLegalFilename(name)) {
 			//TODO we need platform-independent validation, see bug#24152
 			//return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention.filename.invalid"), null); //$NON-NLS-1$
-			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_filename_possiblyInvalid, null); 
+			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_filename_possiblyInvalid,
+					null);
 		}
 
 		String trimmed = name.trim();
 		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1)) { //$NON-NLS-1$
-			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_filename_nameWithBlanks, null); 
+			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_filename_nameWithBlanks,
+					null);
 		}
-		
+
 		return CModelStatus.VERIFIED_OK;
 	}
-	
+
 	/**
 	 * Validate the given header file name.
 	 * The name must be the short file name (including the extension).
@@ -449,18 +467,19 @@ public class CConventions {
 	 */
 	public static IStatus validateHeaderFileName(IProject project, String name) {
 		//TODO could use a preferences option for header file naming conventions
-	    IStatus val = validateFileName(name);
-	    if (val.getSeverity() == IStatus.ERROR) {
-	        return val;
-	    }
+		IStatus val = validateFileName(name);
+		if (val.getSeverity() == IStatus.ERROR) {
+			return val;
+		}
 
-	    if (!CoreModel.isValidHeaderUnitName(project, name)) {
-			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_headerFilename_filetype, null); 
-	    }
+		if (!CoreModel.isValidHeaderUnitName(project, name)) {
+			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_headerFilename_filetype,
+					null);
+		}
 
 		return val;
 	}
-	
+
 	/**
 	 * Validate the given source file name.
 	 * The name must be the short file name (including the extension).
@@ -476,14 +495,15 @@ public class CConventions {
 	 */
 	public static IStatus validateSourceFileName(IProject project, String name) {
 		//TODO could use a preferences option for source file naming conventions
-	    IStatus val = validateFileName(name);
-	    if (val.getSeverity() == IStatus.ERROR) {
-	        return val;
-	    }
+		IStatus val = validateFileName(name);
+		if (val.getSeverity() == IStatus.ERROR) {
+			return val;
+		}
 
-	    if (!CoreModel.isValidSourceUnitName(project, name)) {
-			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_sourceFilename_filetype, null); 
-	    }
+		if (!CoreModel.isValidSourceUnitName(project, name)) {
+			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_sourceFilename_filetype,
+					null);
+		}
 
 		return val;
 	}
@@ -504,21 +524,21 @@ public class CConventions {
 	 */
 	public static IStatus validateEnumName(String name) {
 		if (name == null) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_nullName, null); 
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_nullName, null);
 		}
 		String trimmed = name.trim();
-		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){ //$NON-NLS-1$
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_nameWithBlanks, null); 
+		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1)) { //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_nameWithBlanks, null);
 		}
 		int index = name.lastIndexOf(scopeResolutionOperator);
 		char[] scannedID;
 		if (index == -1) {
 			// simple name
 			IStatus status = validateIdentifier(name, GPPLanguage.getDefault());
-			if (!status.isOK()){
+			if (!status.isOK()) {
 				return status;
 			}
-	
+
 			scannedID = name.toCharArray();
 		} else {
 			// qualified name
@@ -529,24 +549,27 @@ public class CConventions {
 			}
 			String type = name.substring(index + scopeResolutionOperator.length()).trim();
 			status = validateIdentifier(type, GPPLanguage.getDefault());
-			if (!status.isOK()){
+			if (!status.isOK()) {
 				return status;
 			}
 			scannedID = type.toCharArray();
 		}
-	
+
 		if (scannedID != null) {
 			if (CharOperation.contains('$', scannedID)) {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_dollarName, null); 
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_dollarName,
+						null);
 			}
 			if (scannedID.length > 0 && scannedID[0] == '_') {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_leadingUnderscore, null); 
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1,
+						Messages.convention_enum_leadingUnderscore, null);
 			}
 			if (scannedID.length > 0 && Character.isLowerCase(scannedID[0])) {
-				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_lowercaseName, null); 
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_lowercaseName,
+						null);
 			}
 			return CModelStatus.VERIFIED_OK;
 		}
-		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_invalidName, null);  
+		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_enum_invalidName, null);
 	}
 }

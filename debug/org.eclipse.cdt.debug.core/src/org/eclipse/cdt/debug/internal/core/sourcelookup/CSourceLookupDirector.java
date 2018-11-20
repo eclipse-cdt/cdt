@@ -11,10 +11,10 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Nokia - Added support for AbsoluteSourceContainer(159833)
- *     Texas Instruments - added extension point for source container type (279473) 
+ *     Texas Instruments - added extension point for source container type (279473)
  *     Sergey Prigogin (Google)
 *******************************************************************************/
-package org.eclipse.cdt.debug.internal.core.sourcelookup; 
+package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,14 +33,14 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 
 /**
  * C/C++ source lookup director.
- * 
+ *
  * Most instantiations of this class are transient, created through
  * {@link ILaunchManager#newSourceLocator(String)}. A singleton is also created
  * to represent the global source locators.
- * 
+ *
  * An instance is either associated with a particular launch configuration or it
  * has no association (global).
- * 
+ *
  * This class is created by the {@link ILaunchManager#newSourceLocator(String)}
  * (e.g. DebugPlugin.getDefault().getLaunchManager().newSourceLocator(type)) and
  * must have a no-arguments constructor.
@@ -92,10 +92,10 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		synchronized (fSupportedTypesLock) {
 			if (fSupportedTypes == null) {
 				fSupportedTypes = new HashSet<String>();
-				String name = CDebugCorePlugin.PLUGIN_ID + ".supportedSourceContainerTypes"; //$NON-NLS-1$; 
+				String name = CDebugCorePlugin.PLUGIN_ID + ".supportedSourceContainerTypes"; //$NON-NLS-1$;
 				IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(name);
-				if (extensionPoint != null) {  
-					for (IExtension extension : extensionPoint.getExtensions()) { 
+				if (extensionPoint != null) {
+					for (IExtension extension : extensionPoint.getExtensions()) {
 						for (IConfigurationElement configurationElements : extension.getConfigurationElements()) {
 							String id = configurationElements.getAttribute("id"); //$NON-NLS-1$;
 							if (id != null)

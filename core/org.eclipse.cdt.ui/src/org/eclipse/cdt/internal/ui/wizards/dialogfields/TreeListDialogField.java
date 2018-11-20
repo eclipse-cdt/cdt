@@ -148,10 +148,10 @@ public class TreeListDialogField<T> extends DialogField {
 
 	/**
 	 * Sets the viewerSorter.
-	 * 
+	 *
 	 * @param viewerSorter
 	 *        The viewerSorter to set
-	 *        
+	 *
 	 * @deprecated Use {@link #setViewerComparator(ViewerComparator)} instead.
 	 */
 	@Deprecated
@@ -161,7 +161,7 @@ public class TreeListDialogField<T> extends DialogField {
 
 	/**
 	 * Sets the viewerComparator.
-	 * 
+	 *
 	 * @param viewerComparator
 	 *        The viewerComparator to set
 	 */
@@ -186,7 +186,7 @@ public class TreeListDialogField<T> extends DialogField {
 
 	/**
 	 * Checks if the button pressed is handled internally
-	 * 
+	 *
 	 * @return Returns true if button has been handled.
 	 */
 	protected boolean managedButtonPressed(int index) {
@@ -239,7 +239,7 @@ public class TreeListDialogField<T> extends DialogField {
 		gd.horizontalSpan = 1;
 		buttons.setLayoutData(gd);
 
-		return new Control[] { label, list, buttons};
+		return new Control[] { label, list, buttons };
 	}
 
 	/*
@@ -265,8 +265,8 @@ public class TreeListDialogField<T> extends DialogField {
 	/**
 	 * Returns the tree control. When called the first time, the control will be
 	 * created.
-	 * 
-	 * @param parent 
+	 *
+	 * @param parent
 	 *        parent composite when called the first time, or <code>null</code>
 	 *        after.
 	 */
@@ -352,7 +352,7 @@ public class TreeListDialogField<T> extends DialogField {
 	/**
 	 * Returns the composite containing the buttons. When called the first time,
 	 * the control will be created.
-	 * 
+	 *
 	 * @param parent
 	 *        parent composite when called the first time, or <code>null</code>
 	 *        after.
@@ -898,7 +898,7 @@ public class TreeListDialogField<T> extends DialogField {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
 		 */
 		@Override

@@ -53,21 +53,21 @@ public class RenameConfigurationDialog extends Dialog {
 
 	private String originalName;
 	final private String title;
+
 	/**
 	 */
-	protected RenameConfigurationDialog(Shell parentShell,
-			ICConfigurationDescription _renameConfig,
-			ICConfigurationDescription[] _cfgds,
-			String _title) {
+	protected RenameConfigurationDialog(Shell parentShell, ICConfigurationDescription _renameConfig,
+			ICConfigurationDescription[] _cfgds, String _title) {
 		super(parentShell);
 		title = _title;
 		renameConfig = _renameConfig;
 		cfgds = _cfgds;
 
-		setShellStyle(getShellStyle()|SWT.RESIZE);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		newName = renameConfig.getName();
 		newDescription = renameConfig.getDescription();
-		if(newDescription == null) newDescription = ""; //$NON-NLS-1$
+		if (newDescription == null)
+			newDescription = ""; //$NON-NLS-1$
 		originalName = renameConfig.getName();
 	}
 
@@ -91,7 +91,8 @@ public class RenameConfigurationDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		if (title != null) shell.setText(title);
+		if (title != null)
+			shell.setText(title);
 	}
 
 	/* (non-Javadoc)
@@ -159,26 +160,26 @@ public class RenameConfigurationDialog extends Dialog {
 			}
 		});
 
-//		 Add a label and a text widget for Configuration's description
-        final Label descriptionLabel = new Label(group1, SWT.LEFT);
-        descriptionLabel.setFont(parent.getFont());
-        descriptionLabel.setText(Messages.RenameConfiguration_label_description);
+		//		 Add a label and a text widget for Configuration's description
+		final Label descriptionLabel = new Label(group1, SWT.LEFT);
+		descriptionLabel.setFont(parent.getFont());
+		descriptionLabel.setText(Messages.RenameConfiguration_label_description);
 
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = 1;
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
 		gd.grabExcessHorizontalSpace = false;
-        descriptionLabel.setLayoutData(gd);
-        configDescription = new Text(group1, SWT.SINGLE | SWT.BORDER);
-        configDescription.setFont(group1.getFont());
+		descriptionLabel.setLayoutData(gd);
+		configDescription = new Text(group1, SWT.SINGLE | SWT.BORDER);
+		configDescription.setFont(group1.getFont());
 		configDescription.setText(getNewDescription());
 		configDescription.setFocus();
 
-        gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
-        gd.horizontalSpan = 2;
-        gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-        configDescription.setLayoutData(gd);
+		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		configDescription.setLayoutData(gd);
 
-        statusLabel = new Label(parent, SWT.CENTER);
+		statusLabel = new Label(parent, SWT.CENTER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		statusLabel.setLayoutData(gd);
@@ -188,19 +189,23 @@ public class RenameConfigurationDialog extends Dialog {
 	}
 
 	protected boolean isDuplicateName(String newName) {
-		if(newName.equals(originalName)) return false;
+		if (newName.equals(originalName))
+			return false;
 		// Return true if there is already a config of that name defined
 		for (int i = 0; i < cfgds.length; i++) {
-			if (cfgds[i].getName().equals(newName)) return true;
+			if (cfgds[i].getName().equals(newName))
+				return true;
 		}
 		return false;
 	}
 
 	protected boolean isSimilarName(String newName) {
-		if(newName.equalsIgnoreCase(originalName))	return false;
+		if (newName.equalsIgnoreCase(originalName))
+			return false;
 		// Return true if there is already a config of that name defined on the target
 		for (int i = 0; i < cfgds.length; i++) {
-			if (cfgds[i].getName().equalsIgnoreCase(newName)) return true;
+			if (cfgds[i].getName().equalsIgnoreCase(newName))
+				return true;
 		}
 		return false;
 	}
@@ -237,6 +242,7 @@ public class RenameConfigurationDialog extends Dialog {
 		}
 		return true;
 	}
+
 	/* (non-Javadoc)
 	 * Update the status message and button state based on the input selected
 	 * by the user
@@ -247,8 +253,8 @@ public class RenameConfigurationDialog extends Dialog {
 		String currentName = configName.getText().trim();
 		// Make sure that the name is at least one character in length
 		if (currentName.length() == 0) {
-			s = "";	//$NON-NLS-1$
-		 	// Make sure the name is not a duplicate
+			s = ""; //$NON-NLS-1$
+			// Make sure the name is not a duplicate
 		} else if (isDuplicateName(currentName)) {
 			s = NLS.bind(Messages.RenameConfiguration_error_duplicateName, currentName);
 		} else if (isSimilarName(currentName)) {
@@ -260,14 +266,21 @@ public class RenameConfigurationDialog extends Dialog {
 		if (s != null) {
 			statusLabel.setText(s);
 			statusLabel.setVisible(true);
-			if (b != null) b.setEnabled(false);
+			if (b != null)
+				b.setEnabled(false);
 		} else {
 			statusLabel.setVisible(false);
-			if (b != null) b.setEnabled(true);
+			if (b != null)
+				b.setEnabled(true);
 		}
 		return;
 	}
 
-	public String getNewName() { return newName; }
-	public String getNewDescription() { return newDescription; }
+	public String getNewName() {
+		return newName;
+	}
+
+	public String getNewDescription() {
+		return newDescription;
+	}
 }

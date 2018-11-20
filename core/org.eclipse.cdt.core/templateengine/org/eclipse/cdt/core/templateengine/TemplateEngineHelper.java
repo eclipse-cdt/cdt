@@ -33,11 +33,11 @@ import org.osgi.framework.Bundle;
 
 /**
  * Acts as an Helper class for Template Engine
- * 
+ *
  * @since 4.0
  */
 public class TemplateEngineHelper {
-	public static final String US = "_";  //$NON-NLS-1$
+	public static final String US = "_"; //$NON-NLS-1$
 	public static final String OPEN_MARKER = "$("; //$NON-NLS-1$
 	public static final String CLOSE_MARKER = ")"; //$NON-NLS-1$
 	public static final String STRING_EXTERNALIZATION_MARKER = "%"; //$NON-NLS-1$
@@ -64,11 +64,11 @@ public class TemplateEngineHelper {
 	 * Gets the backup shareddefaults XML file. Presence of the file indicates
 	 * that the template engine or the application underwent some crash or
 	 * destruction.
-	 * 
+	 *
 	 * @param sharedLocation
 	 * @return sharedXMLFile
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
 
 	public static File getSharedDefaultLocation(String sharedLocation) {
@@ -78,11 +78,11 @@ public class TemplateEngineHelper {
 
 	/**
 	 * Finds the location of the shareddefaults backup and original xml file.
-	 * 
+	 *
 	 * @param fileLocation
 	 * @return file
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
 	private static File findLocation(String fileLocation) {
 		Plugin plugin = CCorePlugin.getDefault();
@@ -95,16 +95,16 @@ public class TemplateEngineHelper {
 	/**
 	 * Stores the shareddefaults xml file in
 	 * "${workspace}/.metadata/.plugins/${plugin.name}/shareddefaults.xml" path.
-	 * 
+	 *
 	 * @param sharedLocation the relative path within the plug-in
 	 * @return a File object corresponding to the location within the plug-in
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
 	public static File storeSharedDefaultLocation(String sharedLocation) {
 		File sharedXMLFile = findLocation(sharedLocation);
 		try {
-			if(!sharedXMLFile.exists()) {
+			if (!sharedXMLFile.exists()) {
 				sharedXMLFile.createNewFile();
 			}
 		} catch (IOException e) {
@@ -115,10 +115,10 @@ public class TemplateEngineHelper {
 
 	/**
 	 * This method returns the workspace path present in the workspace
-	 * 
+	 *
 	 * @return String Example : file:/C:/eclipse/workspace/
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
 	public static IPath getWorkspacePath() {
 
@@ -132,14 +132,14 @@ public class TemplateEngineHelper {
 	/**
 	 * @param markerString
 	 * @return the first content of a region matching $(.*) e.g. given a String of the form "foo $(ID) bar", return ID.
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
 	public static String getFirstMarkerID(String markerString) {
 		String key = null;
 		if (markerString.indexOf(OPEN_MARKER) != -1) {
-			key = markerString.substring(markerString.indexOf(OPEN_MARKER) + OPEN_MARKER.length(), markerString
-					.indexOf(CLOSE_MARKER));
+			key = markerString.substring(markerString.indexOf(OPEN_MARKER) + OPEN_MARKER.length(),
+					markerString.indexOf(CLOSE_MARKER));
 		}
 		return key;
 	}
@@ -147,11 +147,11 @@ public class TemplateEngineHelper {
 	/**
 	 * Check whether there is a directory existing in present workspace, with
 	 * the given name.
-	 * 
+	 *
 	 * @param directoryName
 	 * @return true, if directory exists.
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
 	public static boolean checkDirectoryInWorkspace(String directoryName) {
 
@@ -168,14 +168,15 @@ public class TemplateEngineHelper {
 		}
 		return retVal;
 	}
+
 	/**
 	 * Return Template Source path as URL
 	 * @param pluginId
 	 * @param resourcePath
 	 * @return URL, of the Template Resource
 	 * @throws IOException
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
 
 	public static URL getTemplateResourceURL(String pluginId, String resourcePath) throws IOException {
@@ -183,16 +184,17 @@ public class TemplateEngineHelper {
 	}
 
 	/**
-	 * 
-	 * Returns the Template Resource Relative Path as URL 
+	 *
+	 * Returns the Template Resource Relative Path as URL
 	 * @param template
 	 * @param resourcePath
 	 * @return URL, of the Template Resource
 	 * @throws IOException
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
-	public static URL getTemplateResourceURLRelativeToTemplate(TemplateCore template, String resourcePath) throws IOException {
+	public static URL getTemplateResourceURLRelativeToTemplate(TemplateCore template, String resourcePath)
+			throws IOException {
 		TemplateInfo templateInfo = template.getTemplateInfo();
 		String path = templateInfo.getTemplatePath();
 		int slash = path.lastIndexOf("/"); //$NON-NLS-1$
@@ -214,7 +216,7 @@ public class TemplateEngineHelper {
 			String path = ti.getTemplatePath();
 			IPath p = new Path(path);
 			String propertiesPath = TEMPLATE_PROPERTIES;
-			if(p.segmentCount() != 0){
+			if (p.segmentCount() != 0) {
 				p = p.removeLastSegments(1);
 				propertiesPath = p.append(propertiesPath).toString();
 			}
@@ -224,7 +226,7 @@ public class TemplateEngineHelper {
 	}
 
 	public static String externalizeTemplateString(String pluginId, String location, String key) {
-		String value= null;
+		String value = null;
 		if (key != null && key.startsWith(STRING_EXTERNALIZATION_MARKER)) {
 			try {
 				value = location != null ? getValueFromProperties(pluginId, location, key.substring(1)) : null;
@@ -238,21 +240,22 @@ public class TemplateEngineHelper {
 		}
 		return value == null ? key : value;
 	}
-	
-	private static String getValueFromProperties(String pluginId, String propertiesFile, String key) throws IOException {
+
+	private static String getValueFromProperties(String pluginId, String propertiesFile, String key)
+			throws IOException {
 		String value = null;
 		Bundle b = Platform.getBundle(pluginId);
-		URL url= getResourceURL(b, propertiesFile);
+		URL url = getResourceURL(b, propertiesFile);
 		if (url != null) {
-			InputStream in= url.openStream();
+			InputStream in = url.openStream();
 			Properties p = new Properties();
 			p.load(in);
 			value = (String) p.get(key);
 		}
 		return value;
-		
+
 	}
-	
+
 	private static URL getResourceURL(Bundle bundle, String propertiesFile) {
 		return FileLocator.find(bundle, new Path(propertiesFile), null);
 	}

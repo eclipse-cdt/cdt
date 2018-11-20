@@ -27,15 +27,15 @@ public class AutomatedIntegrationSuite {
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(AutomatedIntegrationSuite.suite());
 	}
+
 	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"Test for org.eclipse.cdt.managedbuilder.ui.tests");
+		TestSuite suite = new TestSuite("Test for org.eclipse.cdt.managedbuilder.ui.tests");
 		//$JUnit-BEGIN$
-// TODO uncoment this		
+		// TODO uncoment this
 		suite.addTest(TestCustomPageManager.suite());
 		suite.addTestSuite(TestCProjectPlatformPage.class);
 		suite.addTest(ToolListContentProviderTests.suite());
-		
+
 		//$JUnit-END$
 		return suite;
 	}

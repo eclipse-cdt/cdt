@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * HP-UX SOM binary parser
- * 
+ *
  * @author vhirsl
  */
 public class SOMParser extends AbstractCExtension implements IBinaryParser {
@@ -52,27 +52,27 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 					// continue, the array was to small.
 				}
 			}
-			
-			//Take a second run at it if the data array failed. 			
-			if(attribute == null) {
+
+			//Take a second run at it if the data array failed.
+			if (attribute == null) {
 				attribute = SOM.getAttributes(path.toOSString());
 			}
-			
+
 			if (attribute != null) {
 				switch (attribute.getType()) {
-				case SOM.Attribute.SOM_TYPE_EXE :
+				case SOM.Attribute.SOM_TYPE_EXE:
 					binary = createBinaryExecutable(path);
 					break;
-					
-				case SOM.Attribute.SOM_TYPE_SHLIB :
+
+				case SOM.Attribute.SOM_TYPE_SHLIB:
 					binary = createBinaryShared(path);
 					break;
-					
-				case SOM.Attribute.SOM_TYPE_OBJ :
+
+				case SOM.Attribute.SOM_TYPE_OBJ:
 					binary = createBinaryObject(path);
 					break;
-					
-				case SOM.Attribute.SOM_TYPE_CORE :
+
+				case SOM.Attribute.SOM_TYPE_CORE:
 					binary = createBinaryCore(path);
 					break;
 				}
@@ -112,7 +112,7 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 	 */
 	@Override
 	public int getHintBufferSize() {
-		return 512;	// size of file header
+		return 512; // size of file header
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 	protected DefaultGnuToolFactory createGNUToolFactory() {
 		return new DefaultGnuToolFactory(this);
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  * 	   Sergey Prigogin (Google)
@@ -74,31 +74,31 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 	public CCorrectionAssistant(ITextEditor editor) {
 		super();
 		Assert.isNotNull(editor);
-		fEditor= editor;
+		fEditor = editor;
 
-		CCorrectionProcessor processor= new CCorrectionProcessor(this);
+		CCorrectionProcessor processor = new CCorrectionProcessor(this);
 
 		setQuickAssistProcessor(processor);
-		enableColoredLabels(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
+		enableColoredLabels(
+				PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 
 		setInformationControlCreator(getInformationControlCreator());
 
-		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
-		IColorManager manager= textTools.getColorManager();
+		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
+		IColorManager manager = textTools.getColorManager();
 
-		IPreferenceStore store=  CUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 
-		Color c= getColor(store, PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
+		Color c = getColor(store, PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
 		setProposalSelectorForeground(c);
 
-		c= getColor(store, PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
+		c = getColor(store, PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
 		setProposalSelectorBackground(c);
 	}
 
 	public IEditorPart getEditor() {
 		return fEditor;
 	}
-
 
 	private IInformationControlCreator getInformationControlCreator() {
 		return new IInformationControlCreator() {
@@ -110,7 +110,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 	}
 
 	private static Color getColor(IPreferenceStore store, String key, IColorManager manager) {
-		RGB rgb= PreferenceConverter.getColor(store, key);
+		RGB rgb = PreferenceConverter.getColor(store, key);
 		return manager.getColor(rgb);
 	}
 
@@ -120,9 +120,9 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 	@Override
 	public void install(ISourceViewer sourceViewer) {
 		super.install(sourceViewer);
-		fViewer= sourceViewer;
+		fViewer = sourceViewer;
 
-		fLightBulbUpdater= new QuickAssistLightBulbUpdater(fEditor, sourceViewer);
+		fLightBulbUpdater = new QuickAssistLightBulbUpdater(fEditor, sourceViewer);
 		fLightBulbUpdater.install();
 	}
 
@@ -133,7 +133,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 	public void uninstall() {
 		if (fLightBulbUpdater != null) {
 			fLightBulbUpdater.uninstall();
-			fLightBulbUpdater= null;
+			fLightBulbUpdater = null;
 		}
 		super.uninstall();
 	}
@@ -149,22 +149,21 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 	 */
 	@Override
 	public String showPossibleQuickAssists() {
-		fPosition= null;
-		fCurrentAnnotations= null;
-		
+		fPosition = null;
+		fCurrentAnnotations = null;
+
 		if (fViewer == null || fViewer.getDocument() == null)
 			// Let superclass deal with this
 			return super.showPossibleQuickAssists();
 
-
-		ArrayList<Annotation> resultingAnnotations= new ArrayList<Annotation>(20);
+		ArrayList<Annotation> resultingAnnotations = new ArrayList<Annotation>(20);
 		try {
-			Point selectedRange= fViewer.getSelectedRange();
-			int currOffset= selectedRange.x;
-			int currLength= selectedRange.y;
-			boolean goToClosest= (currLength == 0);
-			
-			int newOffset= collectQuickFixableAnnotations(fEditor, currOffset, goToClosest, resultingAnnotations);
+			Point selectedRange = fViewer.getSelectedRange();
+			int currOffset = selectedRange.x;
+			int currLength = selectedRange.y;
+			boolean goToClosest = (currLength == 0);
+
+			int newOffset = collectQuickFixableAnnotations(fEditor, currOffset, goToClosest, resultingAnnotations);
 			if (newOffset != currOffset) {
 				storePosition(currOffset, currLength);
 				fViewer.setSelectedRange(newOffset, 0);
@@ -173,60 +172,61 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 		} catch (BadLocationException e) {
 			CUIPlugin.log(e);
 		}
-		fCurrentAnnotations= resultingAnnotations.toArray(new Annotation[resultingAnnotations.size()]);
+		fCurrentAnnotations = resultingAnnotations.toArray(new Annotation[resultingAnnotations.size()]);
 
 		return super.showPossibleQuickAssists();
 	}
-	
-	
+
 	private static IRegion getRegionOfInterest(ITextEditor editor, int invocationLocation) throws BadLocationException {
-		IDocumentProvider documentProvider= editor.getDocumentProvider();
+		IDocumentProvider documentProvider = editor.getDocumentProvider();
 		if (documentProvider == null) {
 			return null;
 		}
-		IDocument document= documentProvider.getDocument(editor.getEditorInput());
+		IDocument document = documentProvider.getDocument(editor.getEditorInput());
 		if (document == null) {
 			return null;
 		}
 		return document.getLineInformationOfOffset(invocationLocation);
 	}
-	
-	public static int collectQuickFixableAnnotations(ITextEditor editor, int invocationLocation, boolean goToClosest, ArrayList<Annotation> resultingAnnotations) throws BadLocationException {
-		IAnnotationModel model= CUIPlugin.getDefault().getDocumentProvider().getAnnotationModel(editor.getEditorInput());
+
+	public static int collectQuickFixableAnnotations(ITextEditor editor, int invocationLocation, boolean goToClosest,
+			ArrayList<Annotation> resultingAnnotations) throws BadLocationException {
+		IAnnotationModel model = CUIPlugin.getDefault().getDocumentProvider()
+				.getAnnotationModel(editor.getEditorInput());
 		if (model == null) {
 			return invocationLocation;
 		}
-		
+
 		ensureUpdatedAnnotations(editor);
-		
-		Iterator<?> iter= model.getAnnotationIterator();
+
+		Iterator<?> iter = model.getAnnotationIterator();
 		if (goToClosest) {
-			IRegion lineInfo= getRegionOfInterest(editor, invocationLocation);
+			IRegion lineInfo = getRegionOfInterest(editor, invocationLocation);
 			if (lineInfo == null) {
 				return invocationLocation;
 			}
-			int rangeStart= lineInfo.getOffset();
-			int rangeEnd= rangeStart + lineInfo.getLength();
-			
-			ArrayList<Annotation> allAnnotations= new ArrayList<Annotation>();
-			ArrayList<Position> allPositions= new ArrayList<Position>();
-			int bestOffset= Integer.MAX_VALUE;
+			int rangeStart = lineInfo.getOffset();
+			int rangeEnd = rangeStart + lineInfo.getLength();
+
+			ArrayList<Annotation> allAnnotations = new ArrayList<Annotation>();
+			ArrayList<Position> allPositions = new ArrayList<Position>();
+			int bestOffset = Integer.MAX_VALUE;
 			while (iter.hasNext()) {
-				Annotation annot= (Annotation) iter.next();
+				Annotation annot = (Annotation) iter.next();
 				if (CCorrectionProcessor.isQuickFixableType(annot)) {
-					Position pos= model.getPosition(annot);
+					Position pos = model.getPosition(annot);
 					if (pos != null && isInside(pos.offset, rangeStart, rangeEnd)) { // inside our range?
 						allAnnotations.add(annot);
 						allPositions.add(pos);
-						bestOffset= processAnnotation(annot, pos, invocationLocation, bestOffset);
+						bestOffset = processAnnotation(annot, pos, invocationLocation, bestOffset);
 					}
 				}
 			}
 			if (bestOffset == Integer.MAX_VALUE) {
 				return invocationLocation;
 			}
-			for (int i= 0; i < allPositions.size(); i++) {
-				Position pos= allPositions.get(i);
+			for (int i = 0; i < allPositions.size(); i++) {
+				Position pos = allPositions.get(i);
 				if (isInside(bestOffset, pos.offset, pos.offset + pos.length)) {
 					resultingAnnotations.add(allAnnotations.get(i));
 				}
@@ -234,9 +234,9 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 			return bestOffset;
 		}
 		while (iter.hasNext()) {
-			Annotation annot= (Annotation) iter.next();
+			Annotation annot = (Annotation) iter.next();
 			if (CCorrectionProcessor.isQuickFixableType(annot)) {
-				Position pos= model.getPosition(annot);
+				Position pos = model.getPosition(annot);
 				if (pos != null && isInside(invocationLocation, pos.offset, pos.offset + pos.length)) {
 					resultingAnnotations.add(annot);
 				}
@@ -246,26 +246,27 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 	}
 
 	private static void ensureUpdatedAnnotations(ITextEditor editor) {
-		Object inputElement= editor.getEditorInput().getAdapter(ICElement.class);
+		Object inputElement = editor.getEditorInput().getAdapter(ICElement.class);
 		if (inputElement instanceof ITranslationUnit) {
-			final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
-			astProvider.runOnAST((ITranslationUnit) inputElement, ASTProvider.WAIT_ACTIVE_ONLY, null, new ASTCache.ASTRunnable() {
-				@Override
-				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
-					return Status.OK_STATUS;
-				}
-			});
+			final ASTProvider astProvider = CUIPlugin.getDefault().getASTProvider();
+			astProvider.runOnAST((ITranslationUnit) inputElement, ASTProvider.WAIT_ACTIVE_ONLY, null,
+					new ASTCache.ASTRunnable() {
+						@Override
+						public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
+							return Status.OK_STATUS;
+						}
+					});
 		}
 	}
 
 	private static int processAnnotation(Annotation annot, Position pos, int invocationLocation, int bestOffset) {
-		int posBegin= pos.offset;
-		int posEnd= posBegin + pos.length;
+		int posBegin = pos.offset;
+		int posEnd = posBegin + pos.length;
 		if (isInside(invocationLocation, posBegin, posEnd)) { // covers invocation location?
 			return invocationLocation;
 		} else if (bestOffset != invocationLocation) {
-			int newClosestPosition= computeBestOffset(posBegin, invocationLocation, bestOffset);
-			if (newClosestPosition != -1) { 
+			int newClosestPosition = computeBestOffset(posBegin, invocationLocation, bestOffset);
+			if (newClosestPosition != -1) {
 				if (newClosestPosition != bestOffset) { // new best
 					if (CCorrectionProcessor.hasCorrections(annot)) { // only jump to it if there are proposals
 						return newClosestPosition;
@@ -316,7 +317,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 	}
 
 	private void storePosition(int currOffset, int currLength) {
-		fPosition= new Position(currOffset, currLength);
+		fPosition = new Position(currOffset, currLength);
 	}
 
 	private void restorePosition() {
@@ -324,7 +325,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 			fViewer.setSelectedRange(fPosition.offset, fPosition.length);
 			fViewer.revealRange(fPosition.offset, fPosition.length);
 		}
-		fPosition= null;
+		fPosition = null;
 	}
 
 	/**

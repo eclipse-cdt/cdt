@@ -41,9 +41,8 @@ public class CMakeProjectGenerator extends FMProjectGenerator {
 
 	@Override
 	protected void initProjectDescription(IProjectDescription description) {
-		description
-				.setNatureIds(
-						new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, CMakeNature.ID });
+		description.setNatureIds(
+				new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, CMakeNature.ID });
 		ICommand command = description.newCommand();
 		CBuilder.setupBuilder(command);
 		description.setBuildSpec(new ICommand[] { command });

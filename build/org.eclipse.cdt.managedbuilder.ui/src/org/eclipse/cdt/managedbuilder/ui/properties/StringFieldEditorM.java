@@ -18,43 +18,43 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * This class behaves in the same way as its parent, 
- * but gives public access to its Text widget, and 
+ * This class behaves in the same way as its parent,
+ * but gives public access to its Text widget, and
  * valueChanged() can be called outside.
- * 
+ *
  * It allows to add extra listeners to Text widget.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class StringFieldEditorM extends StringFieldEditor {
-    public StringFieldEditorM(String name, String labelText, Composite parent) {
-        super(name, labelText, parent);
-    }
+	public StringFieldEditorM(String name, String labelText, Composite parent) {
+		super(name, labelText, parent);
+	}
 
-    @Override
+	@Override
 	public Text getTextControl() {
-        return super.getTextControl();
-    }
-       
-    @Override
+		return super.getTextControl();
+	}
+
+	@Override
 	public void valueChanged() {
-        setPresentsDefaultValue(false);
-        boolean oldState = super.isValid();
-        super.refreshValidState();
-        if (super.isValid() != oldState) {
+		setPresentsDefaultValue(false);
+		boolean oldState = super.isValid();
+		super.refreshValidState();
+		if (super.isValid() != oldState) {
 			fireStateChanged(IS_VALID, oldState, super.isValid());
 		}
-        String newValue = this.getTextControl().getText();             
-        if (!newValue.equals(oldValue)) {  
-        	String oldValueTmp =oldValue;
-        	oldValue = newValue;        	
-            try {
+		String newValue = this.getTextControl().getText();
+		if (!newValue.equals(oldValue)) {
+			String oldValueTmp = oldValue;
+			oldValue = newValue;
+			try {
 				fireValueChanged(VALUE, oldValueTmp, newValue);
 			} catch (Exception e) {
 				oldValue = oldValueTmp;
 				ManagedBuilderUIPlugin.log(e);
-			}            
-        }
-    }
+			}
+		}
+	}
 }

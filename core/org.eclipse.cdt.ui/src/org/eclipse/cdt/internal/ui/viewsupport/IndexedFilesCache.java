@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.ArrayList;
@@ -53,6 +53,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
+
 		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
@@ -63,16 +64,16 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 		return INSTANCE;
 	}
 
-	private final HashMap<String, Set<Integer>> fIndexedFiles= new HashMap<String, Set<Integer>>();
-	private boolean fIsDirty= false;
-	private boolean fActive= false;
+	private final HashMap<String, Set<Integer>> fIndexedFiles = new HashMap<String, Set<Integer>>();
+	private boolean fIsDirty = false;
+	private boolean fActive = false;
 
 	private void scheduleInitialize() {
-		Job j= new Job(Messages.IndexedFilesCache_jobName) {
+		Job j = new Job(Messages.IndexedFilesCache_jobName) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					ICProject[] prj= CoreModel.getDefault().getCModel().getCProjects();
+					ICProject[] prj = CoreModel.getDefault().getCModel().getCProjects();
 					for (ICProject project : prj) {
 						initialize(project);
 					}
@@ -85,19 +86,20 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 				checkTriggerDecorator(1);
 				return Status.OK_STATUS;
 			}
+
 			@Override
 			public boolean belongsTo(Object family) {
 				return family == IndexedFilesCache.this;
 			}
-			
+
 		};
 		j.setSystem(true);
 		j.setRule(RULE);
-		j.schedule();		
+		j.schedule();
 	}
 
 	private void scheduleInitialize(final ICProject project) {
-		Job j= new Job(Messages.IndexedFilesCache_jobName) {
+		Job j = new Job(Messages.IndexedFilesCache_jobName) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -111,6 +113,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 				checkTriggerDecorator(1);
 				return Status.OK_STATUS;
 			}
+
 			@Override
 			public boolean belongsTo(Object family) {
 				return family == IndexedFilesCache.this;
@@ -118,44 +121,42 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 		};
 		j.setSystem(true);
 		j.setRule(RULE);
-		j.schedule();		
+		j.schedule();
 	}
 
 	final protected void initialize(ICProject prj) throws CoreException, InterruptedException {
-		IIndex index= CCorePlugin.getIndexManager().getIndex(prj);
-		List<IIndexFileLocation> list= new ArrayList<IIndexFileLocation>();
+		IIndex index = CCorePlugin.getIndexManager().getIndex(prj);
+		List<IIndexFileLocation> list = new ArrayList<IIndexFileLocation>();
 		index.acquireReadLock();
 		try {
-			IIndexFile[] files= index.getAllFiles();
+			IIndexFile[] files = index.getAllFiles();
 			for (IIndexFile ifile : files) {
 				if (ifile.getTimestamp() >= 0) {
 					list.add(ifile.getLocation());
 				}
 			}
 			if (!list.isEmpty()) {
-				final String prjName= prj.getElementName();
-				synchronized(fIndexedFiles) {
-					Set<Integer> cache= fIndexedFiles.get(prjName);
+				final String prjName = prj.getElementName();
+				synchronized (fIndexedFiles) {
+					Set<Integer> cache = fIndexedFiles.get(prjName);
 					if (cache == null) {
-						cache= new HashSet<Integer>();
+						cache = new HashSet<Integer>();
 						fIndexedFiles.put(prjName, cache);
-					}
-					else {
+					} else {
 						if (!cache.isEmpty()) {
 							cache.clear();
-							fIsDirty= true;
+							fIsDirty = true;
 						}
 					}
-					for (IIndexFileLocation ifl: list) { 
-						final int h= computeHash(ifl);
+					for (IIndexFileLocation ifl : list) {
+						final int h = computeHash(ifl);
 						if (cache.add(h)) {
-							fIsDirty= true;
+							fIsDirty = true;
 						}
 					}
 				}
 			}
-		}
-		finally {
+		} finally {
 			index.releaseReadLock();
 		}
 	}
@@ -163,7 +164,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 	@Override
 	public void indexChanged(IIndexChangeEvent e) {
 		// the index manager has reported a change to an index
-		ICProject cproject= e.getAffectedProject();
+		ICProject cproject = e.getAffectedProject();
 		if (cproject == null) {
 			return;
 		}
@@ -173,32 +174,31 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 			}
 			if (e.isReloaded()) {
 				scheduleInitialize(cproject);
-			}
-			else {
+			} else {
 				final String prjName = cproject.getElementName();
 				if (e.isCleared()) {
 					if (fIndexedFiles.remove(prjName) != null) {
-						fIsDirty= true;
+						fIsDirty = true;
 					}
-				} 
+				}
 				final Set<IIndexFileLocation> filesCleared = e.getFilesCleared();
 				final Set<IIndexFileLocation> filesWritten = e.getFilesWritten();
 				if (!(filesCleared.isEmpty() && filesWritten.isEmpty())) {
-					Set<Integer> cache= fIndexedFiles.get(prjName);
+					Set<Integer> cache = fIndexedFiles.get(prjName);
 					if (cache == null) {
-						cache= new HashSet<Integer>();
+						cache = new HashSet<Integer>();
 						fIndexedFiles.put(prjName, cache);
 					}
-					for (IIndexFileLocation ifl: filesCleared) { 
-						final int h= computeHash(ifl);
+					for (IIndexFileLocation ifl : filesCleared) {
+						final int h = computeHash(ifl);
 						if (cache.remove(h)) {
-							fIsDirty= true;
+							fIsDirty = true;
 						}
 					}
-					for (IIndexFileLocation ifl: filesWritten) { 
-						final int h= computeHash(ifl);
+					for (IIndexFileLocation ifl : filesWritten) {
+						final int h = computeHash(ifl);
 						if (cache.add(h)) {
-							fIsDirty= true;
+							fIsDirty = true;
 						}
 					}
 				}
@@ -215,7 +215,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 
 	private void activate() {
 		synchronized (fIndexedFiles) {
-			fActive= true;
+			fActive = true;
 			PlatformUI.getWorkbench().getDecoratorManager().addListener(this);
 			final IIndexManager indexManager = CCorePlugin.getIndexManager();
 			indexManager.addIndexChangeListener(IndexedFilesCache.this);
@@ -226,7 +226,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 
 	private void deactivate() {
 		synchronized (fIndexedFiles) {
-			fActive= false;
+			fActive = false;
 			fIndexedFiles.clear();
 			final IIndexManager indexManager = CCorePlugin.getIndexManager();
 			indexManager.removeIndexChangeListener(IndexedFilesCache.this);
@@ -235,48 +235,46 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 		}
 	}
 
-
 	final protected void checkTriggerDecorator(int jobCount) {
-		if (fIsDirty && CCorePlugin.getIndexManager().isIndexerIdle() && 
-				Job.getJobManager().find(this).length == jobCount) {
-			fIsDirty= false;
-			final IWorkbench workbench= PlatformUI.getWorkbench();
+		if (fIsDirty && CCorePlugin.getIndexManager().isIndexerIdle()
+				&& Job.getJobManager().find(this).length == jobCount) {
+			fIsDirty = false;
+			final IWorkbench workbench = PlatformUI.getWorkbench();
 			try {
-				workbench.getDisplay().asyncExec(new Runnable(){
+				workbench.getDisplay().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						workbench.getDecoratorManager().update(DECORATOR_ID);			
+						workbench.getDecoratorManager().update(DECORATOR_ID);
 					}
 				});
-			}
-			catch (SWTException e) {
+			} catch (SWTException e) {
 				// in case the display is no longer valid
 			}
 		}
 	}
-	
+
 	public boolean isIndexed(IProject project, IIndexFileLocation ifl) {
 		// request from a label provider
-		synchronized(fIndexedFiles) {
+		synchronized (fIndexedFiles) {
 			if (!fActive) {
 				activate();
 			}
-			Set<Integer> cache= fIndexedFiles.get(project.getName());
+			Set<Integer> cache = fIndexedFiles.get(project.getName());
 			return cache != null && cache.contains(computeHash(ifl));
 		}
 	}
 
 	private int computeHash(IIndexFileLocation ifl) {
-		final String fp= ifl.getFullPath();
-		final int h1= fp == null ? 0 : fp.hashCode() * 43;
+		final String fp = ifl.getFullPath();
+		final int h1 = fp == null ? 0 : fp.hashCode() * 43;
 		return h1 + ifl.getURI().hashCode();
 	}
 
 	@Override
 	public void labelProviderChanged(LabelProviderChangedEvent event) {
-		final Object src= event.getSource();
+		final Object src = event.getSource();
 		if (src instanceof IDecoratorManager) {
-			IDecoratorManager mng= (IDecoratorManager) src;
+			IDecoratorManager mng = (IDecoratorManager) src;
 			if (!mng.getEnabled(DECORATOR_ID)) {
 				deactivate();
 			}

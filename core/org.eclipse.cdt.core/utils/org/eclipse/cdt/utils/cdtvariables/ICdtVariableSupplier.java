@@ -16,18 +16,17 @@ package org.eclipse.cdt.utils.cdtvariables;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 
 /**
- * 
+ *
  * @since 3.0
  */
 public interface ICdtVariableSupplier {
-	
+
 	/**
 	 * @param macroName macro name
 	 * @return IBuildMacro
 	 */
-	public ICdtVariable getVariable(String macroName,
-			IVariableContextInfo context);
-	
+	public ICdtVariable getVariable(String macroName, IVariableContextInfo context);
+
 	/**
 	 * @return IBuildMacro[]
 	 */

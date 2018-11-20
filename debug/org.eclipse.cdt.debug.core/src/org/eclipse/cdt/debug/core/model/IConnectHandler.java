@@ -17,7 +17,7 @@ import org.eclipse.debug.core.commands.IDebugCommandHandler;
 
 /**
  * Handler interface to for the connect command
- * 
+ *
  * @since 7.3
  */
 public interface IConnectHandler extends IDebugCommandHandler {

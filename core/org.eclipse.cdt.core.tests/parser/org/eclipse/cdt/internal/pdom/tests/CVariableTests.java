@@ -49,10 +49,11 @@ public class CVariableTests extends PDOMTestBase {
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
-			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 		}
 	}
-	
+
 	public void testCAutoVariable() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "autoCVariable");
 		assertEquals(1, bindings.length);
@@ -75,7 +76,7 @@ public class CVariableTests extends PDOMTestBase {
 	}
 
 	public void testCStaticVariable() throws Exception {
-		// static elements cannot be found on global scope, see bug 161216		
+		// static elements cannot be found on global scope, see bug 161216
 		IBinding[] bindings = findUnqualifiedName(pdom, "staticCVariable");
 		assertEquals(1, bindings.length);
 		IVariable variable = (IVariable) bindings[0];

@@ -87,7 +87,7 @@ public class HeaderFileMoveParticipant extends MoveParticipant implements IShara
 				final IPath destinationLocation = destination.getLocation();
 				if (destinationLocation.equals(movedResource.getLocation().removeLastSegments(1)))
 					continue;
-		
+
 				if (movedResource instanceof IFolder) {
 					IFolder folder = (IFolder) movedResource;
 					final int prefixLength = folder.getFullPath().segmentCount() - 1;
@@ -98,7 +98,8 @@ public class HeaderFileMoveParticipant extends MoveParticipant implements IShara
 								return false;
 							if (proxy.getType() == IResource.FILE) {
 								IFile file = (IFile) proxy.requestResource();
-								movedFiles.put(file, destination.getFile(file.getFullPath().removeFirstSegments(prefixLength)));
+								movedFiles.put(file,
+										destination.getFile(file.getFullPath().removeFirstSegments(prefixLength)));
 								return false;
 							}
 							return true;
@@ -111,7 +112,7 @@ public class HeaderFileMoveParticipant extends MoveParticipant implements IShara
 			}
 
 			HeaderFileReferenceAdjuster includeAdjuster = new HeaderFileReferenceAdjuster(movedFiles,
-					Collections.<IContainer, IContainer>emptyMap(),	getProcessor());
+					Collections.<IContainer, IContainer>emptyMap(), getProcessor());
 			change = includeAdjuster.createChange(context, pm);
 		} catch (CoreException e) {
 			return RefactoringStatus.create(e.getStatus());

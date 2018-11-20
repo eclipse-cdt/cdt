@@ -20,9 +20,8 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  *    Copy file targetfile from the target system to hostfile on the host system.
  * @since 4.1
  */
-public class CLIRemoteGet extends CLIRemote 
-{
+public class CLIRemoteGet extends CLIRemote {
 	public CLIRemoteGet(ICommandControlDMContext ctx, String targetfile, String hostfile) {
-        super(ctx, new String[] { "get", targetfile, hostfile }); //$NON-NLS-1$
-    }
+		super(ctx, new String[] { "get", targetfile, hostfile }); //$NON-NLS-1$
+	}
 }

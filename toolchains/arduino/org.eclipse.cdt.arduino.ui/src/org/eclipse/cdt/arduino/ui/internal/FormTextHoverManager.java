@@ -156,161 +156,161 @@ public abstract class FormTextHoverManager extends AbstractHoverInformationContr
 			}
 		});
 
-		getInternalAccessor().setInformationControlReplacer(new InformationControlReplacer(
-				new AbstractReusableInformationControlCreator() {
+		getInternalAccessor().setInformationControlReplacer(
+				new InformationControlReplacer(new AbstractReusableInformationControlCreator() {
 					@Override
 					protected IInformationControl doCreateInformationControl(Shell parent) {
 						return new FormTextInformationControl(parent, true);
 					}
 				}) {
-			{
-				this.setCloser(new Closer());
-			}
-
-			class Closer implements IInformationControlCloser, ControlListener, MouseListener, KeyListener,
-					FocusListener, Listener {
-				protected boolean isActive;
-				protected Display display;
-				protected Control subjectControl;
-				protected IInformationControl informationControl;
-
-				@Override
-				public void setSubjectControl(Control control) {
-					subjectControl = control;
-				}
-
-				@Override
-				public void setInformationControl(IInformationControl control) {
-					this.informationControl = control;
-				}
-
-				@Override
-				public void start(Rectangle informationArea) {
-					if (!isActive) {
-						isActive = true;
-
-						if (subjectControl != null && !subjectControl.isDisposed()) {
-							subjectControl.addControlListener(this);
-							subjectControl.addMouseListener(this);
-							subjectControl.addKeyListener(this);
-						}
-
-						if (informationControl != null) {
-							informationControl.addFocusListener(this);
-						}
-
-						display = subjectControl.getDisplay();
-						if (!display.isDisposed()) {
-							display.addFilter(SWT.MouseMove, this);
-							display.addFilter(SWT.FocusOut, this);
-						}
+					{
+						this.setCloser(new Closer());
 					}
-				}
 
-				@Override
-				public void stop() {
-					if (isActive) {
-						isActive = false;
+					class Closer implements IInformationControlCloser, ControlListener, MouseListener, KeyListener,
+							FocusListener, Listener {
+						protected boolean isActive;
+						protected Display display;
+						protected Control subjectControl;
+						protected IInformationControl informationControl;
 
-						if (subjectControl != null && !subjectControl.isDisposed()) {
-							subjectControl.removeControlListener(this);
-							subjectControl.removeMouseListener(this);
-							subjectControl.removeKeyListener(this);
+						@Override
+						public void setSubjectControl(Control control) {
+							subjectControl = control;
 						}
 
-						if (informationControl != null) {
-							informationControl.removeFocusListener(this);
+						@Override
+						public void setInformationControl(IInformationControl control) {
+							this.informationControl = control;
 						}
 
-						if (display != null && !display.isDisposed()) {
-							display.removeFilter(SWT.MouseMove, this);
-							display.removeFilter(SWT.FocusOut, this);
-						}
-						display = null;
-					}
-				}
+						@Override
+						public void start(Rectangle informationArea) {
+							if (!isActive) {
+								isActive = true;
 
-				@Override
-				public void controlResized(ControlEvent event) {
-					hideInformationControl();
-				}
-
-				@Override
-				public void controlMoved(ControlEvent event) {
-					hideInformationControl();
-				}
-
-				@Override
-				public void mouseDown(MouseEvent event) {
-					hideInformationControl();
-				}
-
-				@Override
-				public void mouseUp(MouseEvent event) {
-					// Ignore.
-				}
-
-				@Override
-				public void mouseDoubleClick(MouseEvent event) {
-					hideInformationControl();
-				}
-
-				@Override
-				public void keyPressed(KeyEvent event) {
-					hideInformationControl();
-				}
-
-				@Override
-				public void keyReleased(KeyEvent event) {
-					// Ignore.
-				}
-
-				@Override
-				public void focusGained(FocusEvent event) {
-					// Ignore.
-				}
-
-				@Override
-				public void focusLost(FocusEvent event) {
-					if (display != null && !display.isDisposed()) {
-						display.asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								hideInformationControl();
-							}
-						});
-					}
-				}
-
-				@Override
-				public void handleEvent(Event event) {
-					if (event.type == SWT.MouseMove) {
-						if (event.widget instanceof Control && event.widget.isDisposed()) {
-							if (informationControl != null && !informationControl.isFocusControl()
-									&& informationControl instanceof IInformationControlExtension3) {
-								Rectangle controlBounds = ((IInformationControlExtension3) informationControl)
-										.getBounds();
-								if (controlBounds != null) {
-									Point mouseLocation = event.display.map((Control) event.widget, null, event.x,
-											event.y);
-									if (!controlBounds.contains(mouseLocation)) {
-										hideInformationControl();
-									}
+								if (subjectControl != null && !subjectControl.isDisposed()) {
+									subjectControl.addControlListener(this);
+									subjectControl.addMouseListener(this);
+									subjectControl.addKeyListener(this);
 								}
-							} else {
+
+								if (informationControl != null) {
+									informationControl.addFocusListener(this);
+								}
+
+								display = subjectControl.getDisplay();
+								if (!display.isDisposed()) {
+									display.addFilter(SWT.MouseMove, this);
+									display.addFilter(SWT.FocusOut, this);
+								}
+							}
+						}
+
+						@Override
+						public void stop() {
+							if (isActive) {
+								isActive = false;
+
+								if (subjectControl != null && !subjectControl.isDisposed()) {
+									subjectControl.removeControlListener(this);
+									subjectControl.removeMouseListener(this);
+									subjectControl.removeKeyListener(this);
+								}
+
+								if (informationControl != null) {
+									informationControl.removeFocusListener(this);
+								}
+
 								if (display != null && !display.isDisposed()) {
 									display.removeFilter(SWT.MouseMove, this);
+									display.removeFilter(SWT.FocusOut, this);
+								}
+								display = null;
+							}
+						}
+
+						@Override
+						public void controlResized(ControlEvent event) {
+							hideInformationControl();
+						}
+
+						@Override
+						public void controlMoved(ControlEvent event) {
+							hideInformationControl();
+						}
+
+						@Override
+						public void mouseDown(MouseEvent event) {
+							hideInformationControl();
+						}
+
+						@Override
+						public void mouseUp(MouseEvent event) {
+							// Ignore.
+						}
+
+						@Override
+						public void mouseDoubleClick(MouseEvent event) {
+							hideInformationControl();
+						}
+
+						@Override
+						public void keyPressed(KeyEvent event) {
+							hideInformationControl();
+						}
+
+						@Override
+						public void keyReleased(KeyEvent event) {
+							// Ignore.
+						}
+
+						@Override
+						public void focusGained(FocusEvent event) {
+							// Ignore.
+						}
+
+						@Override
+						public void focusLost(FocusEvent event) {
+							if (display != null && !display.isDisposed()) {
+								display.asyncExec(new Runnable() {
+									@Override
+									public void run() {
+										hideInformationControl();
+									}
+								});
+							}
+						}
+
+						@Override
+						public void handleEvent(Event event) {
+							if (event.type == SWT.MouseMove) {
+								if (event.widget instanceof Control && event.widget.isDisposed()) {
+									if (informationControl != null && !informationControl.isFocusControl()
+											&& informationControl instanceof IInformationControlExtension3) {
+										Rectangle controlBounds = ((IInformationControlExtension3) informationControl)
+												.getBounds();
+										if (controlBounds != null) {
+											Point mouseLocation = event.display.map((Control) event.widget, null,
+													event.x, event.y);
+											if (!controlBounds.contains(mouseLocation)) {
+												hideInformationControl();
+											}
+										}
+									} else {
+										if (display != null && !display.isDisposed()) {
+											display.removeFilter(SWT.MouseMove, this);
+										}
+									}
+								}
+							} else if (event.type == SWT.FocusOut) {
+								if (informationControl != null && !informationControl.isFocusControl()) {
+									hideInformationControl();
 								}
 							}
 						}
-					} else if (event.type == SWT.FocusOut) {
-						if (informationControl != null && !informationControl.isFocusControl()) {
-							hideInformationControl();
-						}
 					}
-				}
-			}
-		});
+				});
 	}
 
 	@Override

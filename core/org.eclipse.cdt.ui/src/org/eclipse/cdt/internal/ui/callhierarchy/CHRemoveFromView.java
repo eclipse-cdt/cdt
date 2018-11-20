@@ -27,12 +27,12 @@ public class CHRemoveFromView extends Action {
 
 	/**
 	 * Constructs a Remove From View action.
-	 * 
+	 *
 	 * @param view the Call Hierarchy view
 	 */
 	public CHRemoveFromView(CHViewPart view) {
 		super(CHMessages.CHViewPart_RemoveFromView_label);
-		fView= view;
+		fView = view;
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_ELCL_REMOVE));
 		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));

@@ -15,7 +15,6 @@ package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
 import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
-
 public class Ifeq extends Conditional {
 
 	public Ifeq(Directive parent, String cond) {

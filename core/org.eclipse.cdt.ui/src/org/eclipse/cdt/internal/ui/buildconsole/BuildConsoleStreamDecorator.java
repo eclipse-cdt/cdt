@@ -24,7 +24,7 @@ public class BuildConsoleStreamDecorator implements IBuildConsoleStreamDecorator
 
 	/**
 	 * Constructs a new stream connected to the given console.
-	 * 
+	 *
 	 */
 	public BuildConsoleStreamDecorator() {
 	}
@@ -35,7 +35,7 @@ public class BuildConsoleStreamDecorator implements IBuildConsoleStreamDecorator
 
 	/**
 	 * Sets the color of this message stream
-	 * 
+	 *
 	 * @param color
 	 *            color of this message stream, possibly <code>null</code>
 	 */

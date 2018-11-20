@@ -31,47 +31,51 @@ public class CHelpEntry {
 	private boolean isValid = true;
 	private CHelpTopic[] hts = null;
 	private CFunctionSummary[] fss = null;
-	
+
 	public CHelpEntry(Element e) {
 		keyword = e.getAttribute(ATTR_KEYWD).trim();
 		ArrayList<CFunctionSummary> obs1 = new ArrayList<CFunctionSummary>();
 		ArrayList<CHelpTopic> obs2 = new ArrayList<CHelpTopic>();
 		NodeList list = e.getChildNodes();
-		for(int i = 0; i < list.getLength(); i++){
+		for (int i = 0; i < list.getLength(); i++) {
 			Node node = list.item(i);
 			if (node.getNodeType() != Node.ELEMENT_NODE)
 				continue;
-			if (NODE_FSUMM.equals(node.getNodeName())){
-				obs1.add(new CFunctionSummary((Element)node, keyword));
+			if (NODE_FSUMM.equals(node.getNodeName())) {
+				obs1.add(new CFunctionSummary((Element) node, keyword));
 			} else if (NODE_TOPIC.equals(node.getNodeName())) {
-				obs2.add(new CHelpTopic((Element)node, keyword));
+				obs2.add(new CHelpTopic((Element) node, keyword));
 			}
 		}
 		fss = obs1.toArray(new CFunctionSummary[obs1.size()]);
 		hts = obs2.toArray(new CHelpTopic[obs2.size()]);
-		
+
 		if (fss.length == 0 && hts.length == 0)
 			isValid = false; // nothing to display
 	}
 
 	/**
 	 * Returns true if help entry is correct
-	 * Returns false if entry is empty or when 
-	 *   subsequent processing failed somehow. 
+	 * Returns false if entry is empty or when
+	 *   subsequent processing failed somehow.
 	 * @return entry state
 	 */
 	public boolean isValid() {
 		return isValid;
 	}
+
 	public String getKeyword() {
 		return keyword;
 	}
+
 	public IFunctionSummary[] getFunctionSummary() {
 		return fss;
 	}
+
 	public IHelpResource[] getHelpResource() {
 		return hts;
 	}
+
 	@Override
 	public String toString() {
 		return "<entry keyword=\"" + keyword + "\">"; //$NON-NLS-1$ //$NON-NLS-2$

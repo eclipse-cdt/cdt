@@ -38,8 +38,8 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 
 	public CPPFunctionSet(ICPPFunction[] bindingList, ICPPTemplateArgument[] args, IASTName name) {
 		fBindings = ArrayUtil.removeNulls(bindingList);
-		fTemplateArguments= args;
-		fName= name;
+		fTemplateArguments = args;
+		fName = name;
 	}
 
 	@Override
@@ -115,15 +115,14 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 			return super.toString();
 		}
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof CPPFunctionSet)) {
 			return false;
 		}
 		CPPFunctionSet o = (CPPFunctionSet) other;
-		return CPPEvaluation.areEquivalentBindings(fBindings, o.fBindings)
-			&& fName == o.fName
-			&& CPPEvaluation.areEquivalentArguments(fTemplateArguments, o.fTemplateArguments);
+		return CPPEvaluation.areEquivalentBindings(fBindings, o.fBindings) && fName == o.fName
+				&& CPPEvaluation.areEquivalentArguments(fTemplateArguments, o.fTemplateArguments);
 	}
 }

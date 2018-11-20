@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
@@ -48,40 +48,40 @@ public class NamespaceHelper {
 	/**
 	 * Returns the qualified name of all namespaces that are defined at the specified translation
 	 * unit and offset.
-	 * 
+	 *
 	 * @param translationUnit
 	 * @param offset
 	 * @param astCache
 	 * @return ICPPASTQualifiedName with the names of all namespaces
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
-	public static ICPPASTName[] getSurroundingNamespace(final ITranslationUnit translationUnit,
-			final int offset, CRefactoringContext astCache) throws CoreException {
+	public static ICPPASTName[] getSurroundingNamespace(final ITranslationUnit translationUnit, final int offset,
+			CRefactoringContext astCache) throws CoreException {
 		final List<ICPPASTName> names = new ArrayList<>();
-	
+
 		astCache.getAST(translationUnit, null).accept(new CPPASTAllVisitor() {
 			@Override
 			public int visit(IASTDeclSpecifier declSpec) {
-				if (declSpec instanceof ICPPASTCompositeTypeSpecifier &&
-						checkFileNameAndLocation(translationUnit.getLocation(), offset, declSpec)) {
+				if (declSpec instanceof ICPPASTCompositeTypeSpecifier
+						&& checkFileNameAndLocation(translationUnit.getLocation(), offset, declSpec)) {
 					names.add((ICPPASTName) createNameWithTemplates(declSpec));
 				}
 				return super.visit(declSpec);
 			}
-		
+
 			@Override
 			public int visit(ICPPASTNamespaceDefinition namespace) {
 				if (checkFileNameAndLocation(translationUnit.getLocation(), offset, namespace)) {
-					names.add((ICPPASTName) namespace.getName().copy(CopyStyle.withLocations)); 
+					names.add((ICPPASTName) namespace.getName().copy(CopyStyle.withLocations));
 				}
-				
+
 				return super.visit(namespace);
 			}
 		});
 
 		return names.toArray(new ICPPASTName[names.size()]);
 	}
-	
+
 	private static boolean checkFileNameAndLocation(final IPath path, final int offset, IASTNode namespace) {
 		IASTFileLocation fileLoc = namespace.getFileLocation();
 		if (fileLoc == null) {
@@ -91,7 +91,7 @@ public class NamespaceHelper {
 		if (!fileNameOk) {
 			return false;
 		}
-		
+
 		for (IASTNodeLocation nodeLocation : namespace.getNodeLocations()) {
 			int nodeOffset = nodeLocation.getNodeOffset();
 			boolean locationOk = offset >= nodeOffset && offset < nodeOffset + nodeLocation.getNodeLength();
@@ -99,40 +99,40 @@ public class NamespaceHelper {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	private static IASTName createNameWithTemplates(IASTNode declarationParent) {
-		IASTName parentName = ((ICPPASTCompositeTypeSpecifier) declarationParent).getName().copy(
-				CopyStyle.withLocations);
-		
+		IASTName parentName = ((ICPPASTCompositeTypeSpecifier) declarationParent).getName()
+				.copy(CopyStyle.withLocations);
+
 		if (classHasTemplates(declarationParent)) {
 			CPPASTTemplateId templateId = new CPPASTTemplateId();
 			templateId.setTemplateName(parentName);
-				
-			for (ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) declarationParent.getParent().getParent()).getTemplateParameters()) {
+
+			for (ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) declarationParent
+					.getParent().getParent()).getTemplateParameters()) {
 				if (templateParameter instanceof CPPASTSimpleTypeTemplateParameter) {
 					CPPASTSimpleTypeTemplateParameter simpleTypeTemplateParameter = (CPPASTSimpleTypeTemplateParameter) templateParameter;
-					
+
 					CPPASTTypeId id = new CPPASTTypeId();
-					
+
 					CPPASTNamedTypeSpecifier namedTypeSpecifier = new CPPASTNamedTypeSpecifier();
-					namedTypeSpecifier.setName(simpleTypeTemplateParameter.getName().copy(
-							CopyStyle.withLocations));
+					namedTypeSpecifier.setName(simpleTypeTemplateParameter.getName().copy(CopyStyle.withLocations));
 					id.setDeclSpecifier(namedTypeSpecifier);
-					
+
 					templateId.addTemplateArgument(id);
 				}
 			}
-			
+
 			parentName = templateId;
 		}
 		return parentName;
 	}
 
 	private static boolean classHasTemplates(IASTNode declarationParent) {
-		return declarationParent.getParent() != null 
-			&& declarationParent.getParent().getParent() instanceof ICPPASTTemplateDeclaration;
+		return declarationParent.getParent() != null
+				&& declarationParent.getParent().getParent() instanceof ICPPASTTemplateDeclaration;
 	}
 }

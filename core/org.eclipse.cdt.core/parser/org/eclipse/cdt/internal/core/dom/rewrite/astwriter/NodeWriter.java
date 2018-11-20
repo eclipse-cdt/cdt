@@ -2,14 +2,14 @@
  * Copyright (c) 2008, 2015 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 /**
  * Base class for node writers. This class contains methods and string constants
  * used by multiple node writers.
- * 
+ *
  * @author Emanuel Graf IFS
  */
 public class NodeWriter {
@@ -48,7 +48,10 @@ public class NodeWriter {
 	protected static final String CLOSING_SQUARE_BRACKET = "]"; //$NON-NLS-1$
 	protected static final String OPENING_PARENTHESIS = "("; //$NON-NLS-1$
 	protected static final String CLOSING_PARENTHESIS = ")"; //$NON-NLS-1$
-	protected enum SpaceLocation {BEFORE, AFTER}
+
+	protected enum SpaceLocation {
+		BEFORE, AFTER
+	}
 
 	public NodeWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super();
@@ -65,7 +68,7 @@ public class NodeWriter {
 			}
 		}
 	}
-	
+
 	protected void visitNodeIfNotNull(IASTNode node) {
 		if (node != null) {
 			node.accept(visitor);

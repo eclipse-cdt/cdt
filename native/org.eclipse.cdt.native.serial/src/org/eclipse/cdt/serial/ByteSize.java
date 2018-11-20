@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
@@ -18,10 +18,7 @@ package org.eclipse.cdt.serial;
  */
 public enum ByteSize {
 
-	B5(5),
-	B6(6),
-	B7(7),
-	B8(8);
+	B5(5), B6(6), B7(7), B8(8);
 
 	private final int size;
 
@@ -33,23 +30,17 @@ public enum ByteSize {
 		return size;
 	}
 
-	private static final String[] strings = {
-		"5", //$NON-NLS-1$
-		"6", //$NON-NLS-1$
-		"7", //$NON-NLS-1$
-		"8" //$NON-NLS-1$
+	private static final String[] strings = { "5", //$NON-NLS-1$
+			"6", //$NON-NLS-1$
+			"7", //$NON-NLS-1$
+			"8" //$NON-NLS-1$
 	};
 
 	public static String[] getStrings() {
 		return strings;
 	}
 
-	private static final ByteSize[] sizes = {
-		B5,
-		B6,
-		B7,
-		B8
-	};
+	private static final ByteSize[] sizes = { B5, B6, B7, B8 };
 
 	public static ByteSize fromStringIndex(int size) {
 		return sizes[size];

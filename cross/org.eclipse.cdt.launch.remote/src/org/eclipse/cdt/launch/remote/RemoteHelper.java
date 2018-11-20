@@ -62,7 +62,7 @@ public class RemoteHelper {
 			return null;
 		}
 		List<IRemoteConnection> conns = manager.getAllRemoteConnections();
-		for (IRemoteConnection conn: conns) {
+		for (IRemoteConnection conn : conns) {
 			if (conn.getName().contentEquals(remoteConnection)) {
 				return conn;
 			}
@@ -83,22 +83,19 @@ public class RemoteHelper {
 			return null;
 		ArrayList<IRemoteConnection> suitableConnections = new ArrayList<>();
 		List<IRemoteConnection> allConnections = manager.getAllRemoteConnections();
-		for (IRemoteConnection conn: allConnections) {
+		for (IRemoteConnection conn : allConnections) {
 			if (conn.hasService(IRemoteCommandShellService.class)) {
 				suitableConnections.add(conn);
 			}
 		}
-		return suitableConnections.toArray(new IRemoteConnection[]{});
+		return suitableConnections.toArray(new IRemoteConnection[] {});
 	}
 
-	public static void remoteFileDownload(ILaunchConfiguration config,
-			ILaunch launch, String localExePath, String remoteExePath,
-			IProgressMonitor monitor) throws CoreException {
+	public static void remoteFileDownload(ILaunchConfiguration config, ILaunch launch, String localExePath,
+			String remoteExePath, IProgressMonitor monitor) throws CoreException {
 
-		boolean skipDownload = config
-				.getAttribute(
-						IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
-						false);
+		boolean skipDownload = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
+				false);
 
 		if (skipDownload) {
 			// Nothing to do. Download is skipped.
@@ -131,8 +128,7 @@ public class RemoteHelper {
 
 			remoteFile.putInfo(remoteFileInfo, EFS.SET_ATTRIBUTES, subMonitor.split(5));
 		} catch (CoreException e) {
-			abort(Messages.RemoteRunLaunchDelegate_6, e,
-					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			abort(Messages.RemoteRunLaunchDelegate_6, e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		} finally {
 			monitor.done();
 		}
@@ -145,29 +141,24 @@ public class RemoteHelper {
 		return inputString.replaceAll(" ", "\\\\ "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public static IRemoteConnection getCurrentConnection(ILaunchConfiguration config)
-			throws CoreException {
-		String remoteConnection = config.getAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
+	public static IRemoteConnection getCurrentConnection(ILaunchConfiguration config) throws CoreException {
+		String remoteConnection = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
 				""); //$NON-NLS-1$
 		IRemoteConnection connection = getRemoteConnectionByName(remoteConnection);
 		if (connection == null) {
-			abort(Messages.RemoteRunLaunchDelegate_13, null,
-					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			abort(Messages.RemoteRunLaunchDelegate_13, null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
 		return connection;
 	}
 
-	public static Process remoteShellExec(ILaunchConfiguration config,
-			String prelaunchCmd, String remoteCommandPath, String arguments,
-			IProgressMonitor monitor) throws CoreException {
+	public static Process remoteShellExec(ILaunchConfiguration config, String prelaunchCmd, String remoteCommandPath,
+			String arguments, IProgressMonitor monitor) throws CoreException {
 		// The exit command is called to force the remote shell to close after
 		// our command
 		// is executed. This is to prevent a running process at the end of the
 		// debug session.
 		// See Bug 158786.
-		monitor.beginTask(NLS.bind(Messages.RemoteRunLaunchDelegate_8,
-				remoteCommandPath, arguments), 10);
+		monitor.beginTask(NLS.bind(Messages.RemoteRunLaunchDelegate_8, remoteCommandPath, arguments), 10);
 		String realRemoteCommand = arguments == null ? spaceEscapify(remoteCommandPath)
 				: spaceEscapify(remoteCommandPath) + " " + arguments; //$NON-NLS-1$
 
@@ -189,23 +180,20 @@ public class RemoteHelper {
 			os.write(remoteCommand.getBytes());
 			os.flush();
 		} catch (IOException e) {
-			abort(Messages.RemoteRunLaunchDelegate_7, e,
-					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			abort(Messages.RemoteRunLaunchDelegate_7, e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
 		monitor.done();
 		return p;
 	}
 
-	public static IRemoteProcess execCmdInRemoteShell(ILaunchConfiguration config,
-			String prelaunchCmd, String remoteCommandPath, String arguments,
-			IProgressMonitor monitor) throws Exception {
+	public static IRemoteProcess execCmdInRemoteShell(ILaunchConfiguration config, String prelaunchCmd,
+			String remoteCommandPath, String arguments, IProgressMonitor monitor) throws Exception {
 		// The exit command is called to force the remote shell to close after
 		// our command
 		// is executed. This is to prevent a running process at the end of the
 		// debug session.
 		// See Bug 158786.
-		monitor.beginTask(NLS.bind(Messages.RemoteRunLaunchDelegate_8,
-				remoteCommandPath, arguments), 10);
+		monitor.beginTask(NLS.bind(Messages.RemoteRunLaunchDelegate_8, remoteCommandPath, arguments), 10);
 		String realRemoteCommand = arguments == null ? spaceEscapify(remoteCommandPath)
 				: spaceEscapify(remoteCommandPath) + " " + arguments; //$NON-NLS-1$
 
@@ -214,10 +202,10 @@ public class RemoteHelper {
 		if (!prelaunchCmd.trim().equals("")) //$NON-NLS-1$
 			remoteCommand = prelaunchCmd + CMD_DELIMITER + remoteCommand;
 
-        IRemoteConnection conn = getCurrentConnection(config);
-        if (!conn.isOpen()) {
-            conn.open(monitor);
-        }
+		IRemoteConnection conn = getCurrentConnection(config);
+		if (!conn.isOpen()) {
+			conn.open(monitor);
+		}
 
 		IRemoteCommandShellService shellService = conn.getService(IRemoteCommandShellService.class);
 		IRemoteProcess p = null;
@@ -229,9 +217,7 @@ public class RemoteHelper {
 		return p;
 	}
 
-
-	public static String getRemoteHostname(ILaunchConfiguration config)
-			throws CoreException {
+	public static String getRemoteHostname(ILaunchConfiguration config) throws CoreException {
 		IRemoteConnection currentConnection = getCurrentConnection(config);
 		IRemoteConnectionHostService hostService = currentConnection.getService(IRemoteConnectionHostService.class);
 		return hostService.getHostname();
@@ -240,7 +226,7 @@ public class RemoteHelper {
 	/**
 	 * Throws a core exception with an error status object built from the given
 	 * message, lower level exception, and error code.
-	 * 
+	 *
 	 * @param message
 	 *            the status message
 	 * @param exception
@@ -253,10 +239,11 @@ public class RemoteHelper {
 		IStatus status;
 		if (exception != null) {
 			MultiStatus multiStatus = new MultiStatus(Activator.PLUGIN_ID, code, message, exception);
-			multiStatus.add(new Status(IStatus.ERROR, Activator.PLUGIN_ID, code, exception.getLocalizedMessage(), exception));
-			status= multiStatus;
+			multiStatus.add(
+					new Status(IStatus.ERROR, Activator.PLUGIN_ID, code, exception.getLocalizedMessage(), exception));
+			status = multiStatus;
 		} else {
-			status= new Status(IStatus.ERROR, Activator.PLUGIN_ID, code, message, null);
+			status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, code, message, null);
 		}
 		throw new CoreException(status);
 	}

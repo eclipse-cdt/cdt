@@ -22,20 +22,20 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * A C project represents a view of a project resource in terms of C 
+ * A C project represents a view of a project resource in terms of C
  * elements such as , ICContainer, ITranslationUnit ....
  * <code>CoreModel.create(project)</code>.
  * </p>
  *
  * @see CoreModel#create(org.eclipse.core.resources.IProject)
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICProject extends IParent, IOpenable, ICElement {
 	/**
 	 * Returns the <code>ICElement</code> corresponding to the given
-	 * path, or <code>null</code> if no such 
+	 * path, or <code>null</code> if no such
 	 * <code>ICElement</code> is found.
 	 *
 	 * @exception CModelException if the given path is <code>null</code>
@@ -57,9 +57,9 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 
 	/**
 	 * Returns the source root folders of the project.
-	 * 
+	 *
 	 * <p>NOTE: This is equivalent to <code>getChildren()</code>.
-	 * 
+	 *
 	 * @return ISourceRoot - root folders
 	 * @exception CModelException
 	 */
@@ -76,7 +76,7 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	ISourceRoot[] getAllSourceRoots() throws CModelException;
 
 	/**
-	 * 
+	 *
 	 * @param entry
 	 * @return ISourceRoot
 	 * @throws CModelException
@@ -84,12 +84,12 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	ISourceRoot getSourceRoot(ISourceEntry entry) throws CModelException;
 
 	ISourceRoot findSourceRoot(IResource resource);
-	
+
 	ISourceRoot findSourceRoot(IPath path);
 
 	/**
 	 * Return the output entries.
-	 * 
+	 *
 	 * @throws CModelException
 	 */
 	public IOutputEntry[] getOutputEntries() throws CModelException;
@@ -111,14 +111,14 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 
 	/**
 	 * Return the library references for this project.
-	 * 
+	 *
 	 * @return [] ILibraryReference
 	 */
 	ILibraryReference[] getLibraryReferences() throws CModelException;
 
 	/**
 	 * Return the include paths set on the project.
-	 * 
+	 *
 	 * @throws CModelException
 	 */
 	IIncludeReference[] getIncludeReferences() throws CModelException;
@@ -136,7 +136,7 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	String[] getRequiredProjectNames() throws CModelException;
 
 	/**
-	 * 
+	 *
 	 * @return IProject
 	 */
 	IProject getProject();
@@ -147,7 +147,7 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	 * <p>
 	 * For a complete description of the configurable options, see <code>CCorePlugin#getDefaultOptions</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param optionName the name of an option
 	 * @param inheritCCoreOptions - boolean indicating whether CCorePlugin options should be inherited as well
 	 * @return the String value of a given option
@@ -162,9 +162,9 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	 * <p>
 	 * For a complete description of the configurable options, see <code>CCorePlugin#getDefaultOptions</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param inheritCCoreOptions - boolean indicating whether CCorePlugin options should be inherited as well
-	 * @return table of current settings of all options 
+	 * @return table of current settings of all options
 	 *   (key type: <code>String</code>; value type: <code>String</code>)
 	 * @see CCorePlugin#getDefaultOptions
 	 */
@@ -175,7 +175,7 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	 * <p>
 	 * For a complete description of the configurable options, see <code>CCorePlugin#getDefaultOptions</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param optionName the name of an option
 	 * @param optionValue the value of the option to set
 	 * @see CCorePlugin#getDefaultOptions
@@ -183,13 +183,13 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	void setOption(String optionName, String optionValue);
 
 	/**
-	 * Sets the project custom options. All and only the options explicitly included in the given table 
+	 * Sets the project custom options. All and only the options explicitly included in the given table
 	 * are remembered; all previous option settings are forgotten, including ones not explicitly
 	 * mentioned.
 	 * <p>
 	 * For a complete description of the configurable options, see <code>CCorePlugin#getDefaultOptions</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param newOptions the new options (key type: <code>String</code>; value type: <code>String</code>),
 	 *   or <code>null</code> to flush all custom options (clients will automatically get the global CCorePlugin options).
 	 * @see CCorePlugin#getDefaultOptions
@@ -238,7 +238,7 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	 * <p>
 	 * Non-C resources includes files, folders, projects  not accounted for.
 	 * </p>
-	 * 
+	 *
 	 * @return an array of non-C resources directly contained in this project
 	 * @exception CModelException if this element does not exist or if an
 	 *              exception occurs while accessing its corresponding resource

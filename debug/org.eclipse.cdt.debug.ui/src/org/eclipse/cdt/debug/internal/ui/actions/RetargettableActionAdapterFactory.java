@@ -20,34 +20,32 @@ import org.eclipse.debug.ui.actions.IRunToLineTarget;
 
 /**
  * Creates adapters for retargettable actions in debug platform.
- * Contributed via <code>org.eclipse.core.runtime.adapters</code> 
- * extension point. 
+ * Contributed via <code>org.eclipse.core.runtime.adapters</code>
+ * extension point.
  */
 public class RetargettableActionAdapterFactory implements IAdapterFactory {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getAdapter( Object adaptableObject, Class<T> adapterType ) {
-		if ( adapterType == IRunToLineTarget.class ) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+		if (adapterType == IRunToLineTarget.class) {
 			return (T) new RunToLineAdapter();
-		} 
-		if ( adapterType == IResumeAtLineTarget.class ) {
+		}
+		if (adapterType == IResumeAtLineTarget.class) {
 			return (T) new ResumeAtLineAdapter();
 		}
-		if ( adapterType == IMoveToLineTarget.class ) {
+		if (adapterType == IMoveToLineTarget.class) {
 			return (T) new MoveToLineAdapter();
-		} 		
-		if ( adapterType == IResumeWithoutSignalHandler.class ) {
+		}
+		if (adapterType == IResumeWithoutSignalHandler.class) {
 			return (T) new ResumeWithoutSignalCommand();
-		} 
+		}
 		return null;
 	}
 
 	@Override
 	public Class<?>[] getAdapterList() {
-		return new Class[]{ IRunToLineTarget.class, 
-				            IResumeAtLineTarget.class, 
-				            IMoveToLineTarget.class,
-				            IResumeWithoutSignalHandler.class };
+		return new Class[] { IRunToLineTarget.class, IResumeAtLineTarget.class, IMoveToLineTarget.class,
+				IResumeWithoutSignalHandler.class };
 	}
 }

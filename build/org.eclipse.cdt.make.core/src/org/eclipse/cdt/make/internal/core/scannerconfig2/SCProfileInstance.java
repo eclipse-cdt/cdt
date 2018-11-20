@@ -30,7 +30,7 @@ import org.eclipse.core.resources.IProject;
 
 /**
  * Instantiated scanner config profile
- * 
+ *
  * @author vhirsl
  */
 public class SCProfileInstance {
@@ -38,8 +38,9 @@ public class SCProfileInstance {
 	private ScannerConfigProfile profile;
 	private IScannerInfoCollector collector;
 	private InfoContext context;
+
 	/**
-	 * 
+	 *
 	 */
 	public SCProfileInstance(IProject project, ScannerConfigProfile profile) {
 		this(project, new InfoContext(project), profile);
@@ -52,46 +53,46 @@ public class SCProfileInstance {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void instantiateCollector() {
 		// create collector object
 		collector = createScannerInfoCollector();
-        if (collector != null) {
-        	// call collector.setProject(project) if class supports it
-        	Class<? extends IScannerInfoCollector> clazz = collector.getClass();
-        	try {
-//				Method setProjectMethod = clazz.getMethod("setProject", new Class[] {IProject.class});//$NON-NLS-1$
-//				setProjectMethod.invoke(collector, new Object[] {project});
-        		Object[] args = null;
+		if (collector != null) {
+			// call collector.setProject(project) if class supports it
+			Class<? extends IScannerInfoCollector> clazz = collector.getClass();
+			try {
+				//				Method setProjectMethod = clazz.getMethod("setProject", new Class[] {IProject.class});//$NON-NLS-1$
+				//				setProjectMethod.invoke(collector, new Object[] {project});
+				Object[] args = null;
 				Method setMethod = null;
-				if(context != null){
+				if (context != null) {
 					try {
-						setMethod = clazz.getMethod("setInfoContext", new Class[] {InfoContext.class});//$NON-NLS-1$
-						args = new Object[]{context};
-					} catch(NoSuchMethodException e) {
+						setMethod = clazz.getMethod("setInfoContext", new Class[] { InfoContext.class });//$NON-NLS-1$
+						args = new Object[] { context };
+					} catch (NoSuchMethodException e) {
 					}
 				}
-				
-				if(setMethod == null){
+
+				if (setMethod == null) {
 					try {
-						setMethod = clazz.getMethod("setProject", new Class[] {IProject.class});//$NON-NLS-1$
-						args = new Object[]{project};
-					} catch(NoSuchMethodException e) {
+						setMethod = clazz.getMethod("setProject", new Class[] { IProject.class });//$NON-NLS-1$
+						args = new Object[] { project };
+					} catch (NoSuchMethodException e) {
 					}
 				}
-				if(setMethod != null)
+				if (setMethod != null)
 					setMethod.invoke(collector, args);
 
 			} catch (SecurityException e) {
 				MakeCorePlugin.log(e);
-//			} catch (NoSuchMethodException e) {
+				//			} catch (NoSuchMethodException e) {
 			} catch (IllegalArgumentException e) {
 			} catch (IllegalAccessException e) {
 			} catch (InvocationTargetException e) {
 				MakeCorePlugin.log(e.getCause());
 			}
-        }
+		}
 		// all other objects are created on request
 	}
 
@@ -108,7 +109,7 @@ public class SCProfileInstance {
 		}
 		return collector;
 	}
-	
+
 	public IScannerInfoCollector createScannerInfoCollector() {
 		ScannerInfoCollector collector = profile.getScannerInfoCollectorElement();
 		if (collector != null) {
@@ -116,33 +117,35 @@ public class SCProfileInstance {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @return Creates new buildOutputProvider user object.
 	 */
 	public IExternalScannerInfoProvider createBuildOutputProvider() {
-        BuildOutputProvider bop = profile.getBuildOutputProviderElement();
-        if (bop != null) {
-    		Action action = bop.getAction();
-    		if (action != null) {
-    			return (IExternalScannerInfoProvider) action.createExternalScannerInfoProvider();
-    		}
-        }
-		return null; 
+		BuildOutputProvider bop = profile.getBuildOutputProviderElement();
+		if (bop != null) {
+			Action action = bop.getAction();
+			if (action != null) {
+				return (IExternalScannerInfoProvider) action.createExternalScannerInfoProvider();
+			}
+		}
+		return null;
 	}
+
 	/**
 	 * @return Creates new buildOutputParser user object.
 	 */
 	public IScannerInfoConsoleParser createBuildOutputParser() {
-        BuildOutputProvider bop = profile.getBuildOutputProviderElement();
-        if (bop != null) {
-    		ScannerInfoConsoleParser parserElement = bop.getScannerInfoConsoleParser();
-    		if (parserElement != null) {
-    			return (IScannerInfoConsoleParser) parserElement.createScannerInfoConsoleParser();
-    		}
-        }
+		BuildOutputProvider bop = profile.getBuildOutputProviderElement();
+		if (bop != null) {
+			ScannerInfoConsoleParser parserElement = bop.getScannerInfoConsoleParser();
+			if (parserElement != null) {
+				return (IScannerInfoConsoleParser) parserElement.createScannerInfoConsoleParser();
+			}
+		}
 		return null;
 	}
+
 	/**
 	 * @return Creates new externalSIProvider user object.
 	 */
@@ -153,6 +156,7 @@ public class SCProfileInstance {
 		}
 		return null;
 	}
+
 	/**
 	 * @return Creates new esiProviderOutputParser user object.
 	 */

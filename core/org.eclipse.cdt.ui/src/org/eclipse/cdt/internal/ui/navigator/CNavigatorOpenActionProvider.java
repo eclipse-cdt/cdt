@@ -26,7 +26,7 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 /**
  * A Common Navigator action provider providing the contributions
  * from the open editor action group.
- * 
+ *
  * @see CNavigatorOpenEditorActionGroup
  */
 public class CNavigatorOpenActionProvider extends CommonActionProvider {

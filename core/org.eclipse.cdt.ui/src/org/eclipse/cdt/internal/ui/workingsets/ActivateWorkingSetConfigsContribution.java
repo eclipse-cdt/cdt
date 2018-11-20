@@ -21,9 +21,9 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * A dynamic contribution of items to activate configurations of a working set.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 public class ActivateWorkingSetConfigsContribution extends AbstractWorkingSetConfigsContribution {
@@ -38,7 +38,7 @@ public class ActivateWorkingSetConfigsContribution extends AbstractWorkingSetCon
 
 	/**
 	 * Initializes me with my working set.
-	 * 
+	 *
 	 * @param workingSet
 	 *            my working set
 	 */
@@ -59,8 +59,7 @@ public class ActivateWorkingSetConfigsContribution extends AbstractWorkingSetCon
 		private IWorkingSetConfiguration workingSetConfig;
 
 		ActivateConfigAction(IWorkingSetConfiguration workingSetConfig, int ordinal) {
-			super(NLS.bind(WorkingSetMessages.WorkingSetMenus_enumPattern, ordinal, workingSetConfig
-					.getName()));
+			super(NLS.bind(WorkingSetMessages.WorkingSetMenus_enumPattern, ordinal, workingSetConfig.getName()));
 
 			this.workingSetConfig = workingSetConfig;
 		}

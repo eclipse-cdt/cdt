@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Allow user to edit the register groups (Bug 235747)
@@ -41,13 +41,13 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static DsfUIPlugin fgPlugin;
-	
-    private static BundleContext fgBundleContext; 
 
-    // The document provider for source documents in the disassembly.
-    private SourceDocumentProvider fSourceDocumentProvider;
+	private static BundleContext fgBundleContext;
 
-    public static boolean DEBUG = false;
+	// The document provider for source documents in the disassembly.
+	private SourceDocumentProvider fSourceDocumentProvider;
+
+	public static boolean DEBUG = false;
 
 	/**
 	 * The constructor
@@ -61,23 +61,23 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void start(BundleContext context) throws Exception {
-        fgBundleContext = context;
+	public void start(BundleContext context) throws Exception {
+		fgBundleContext = context;
 		super.start(context);
-	    DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug"));  //$NON-NLS-1$
+		DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug")); //$NON-NLS-1$
 
-        fSourceDocumentProvider = new SourceDocumentProvider();
-        
+		fSourceDocumentProvider = new SourceDocumentProvider();
+
 		EvaluationContextManager.startup();
-        
+
 		// Register the DSF backend for our disassembly view (the CDT debug UI
 		// plugin registers the CDI one)
-        Platform.getAdapterManager().registerAdapters(new DisassemblyBackendDsfFactory(), IDMVMContext.class);
+		Platform.getAdapterManager().registerAdapters(new DisassemblyBackendDsfFactory(), IDMVMContext.class);
 		// Register the factory that provides descriptions of stack frames
-        // to the CSourceNotFoundEditor.
-        Platform.getAdapterManager().registerAdapters(new CSourceNotFoundDescriptionFactory(), IFrameDMContext.class);
+		// to the CSourceNotFoundEditor.
+		Platform.getAdapterManager().registerAdapters(new CSourceNotFoundDescriptionFactory(), IFrameDMContext.class);
 
-        DsfDebugUITools.enableActivity("org.eclipse.cdt.debug.ui.cdtActivity", true); //$NON-NLS-1$
+		DsfDebugUITools.enableActivity("org.eclipse.cdt.debug.ui.cdtActivity", true); //$NON-NLS-1$
 	}
 
 	/*
@@ -85,11 +85,11 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void stop(BundleContext context) throws Exception {
-        fSourceDocumentProvider.dispose();
-        fSourceDocumentProvider = null;
+	public void stop(BundleContext context) throws Exception {
+		fSourceDocumentProvider.dispose();
+		fSourceDocumentProvider = null;
 		fgPlugin = null;
-        fgBundleContext = null;
+		fgBundleContext = null;
 		super.stop(context);
 	}
 
@@ -102,82 +102,82 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 		return fgPlugin;
 	}
 
-    public static BundleContext getBundleContext() {
-        return fgBundleContext;
-    }
-    
-    /**
-     * Returns an image descriptor for the image file at the given
-     * plug-in relative path
-     *
-     * @param path the path
-     * @return the image descriptor
-     */
-    public static ImageDescriptor getImageDescriptor(String path) {
-        return imageDescriptorFromPlugin(PLUGIN_ID, path);
-    }
+	public static BundleContext getBundleContext() {
+		return fgBundleContext;
+	}
 
-    public static SourceDocumentProvider getSourceDocumentProvider() {
-        return getDefault().fSourceDocumentProvider;
-    }
-    
+	/**
+	 * Returns an image descriptor for the image file at the given
+	 * plug-in relative path
+	 *
+	 * @param path the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
 
-    /**
-     * If the debug flag is set the specified message is printed to the console
-     * @param message
-     */
-    public static void debug(String message) {
-        if (DEBUG) {
-            System.out.println(message);
-        }
-    }
+	public static SourceDocumentProvider getSourceDocumentProvider() {
+		return getDefault().fSourceDocumentProvider;
+	}
 
-    /**
-     * Logs the specified status with this plug-in's log.
-     * 
-     * @param status status to log
-     */
-    public static void log(IStatus status) {
-        getDefault().getLog().log(status);
-    }
+	/**
+	 * If the debug flag is set the specified message is printed to the console
+	 * @param message
+	 */
+	public static void debug(String message) {
+		if (DEBUG) {
+			System.out.println(message);
+		}
+	}
 
-    /**
-     * Logs the specified throwable with this plug-in's log.
-     * 
-     * @param t throwable to log 
-     */
-    public static void log(Throwable t) {
-        log(newErrorStatus(IDsfStatusConstants.INTERNAL_ERROR, "Error logged from Debug UI: ", t)); //$NON-NLS-1$
-    }
-    
-    /**
-     * Logs an internal error with the specified message.
-     * 
-     * @param message the error message to log
-     */
-    public static void logErrorMessage(String message) {
-        // this message is intentionally not internationalized, as an exception may
-        // be due to the resource bundle itself
-        log(newErrorStatus(IDsfStatusConstants.INTERNAL_ERROR, "Internal message logged from Debug UI: " + message, null)); //$NON-NLS-1$   
-    }
-    
-    /**
-     * Returns a new error status for this plug-in with the given message
-     * 
-     * @param message the message to be included in the status
-     * @param error code
-     * @param exception the exception to be included in the status or <code>null</code> if none
-     * @return a new error status
-     * 
-     * @since 2.0
-     */
-    public static IStatus newErrorStatus(int code, String message, Throwable exception) {
-        return new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, code, message, exception);
-    }
-	
+	/**
+	 * Logs the specified status with this plug-in's log.
+	 *
+	 * @param status status to log
+	 */
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+
+	/**
+	 * Logs the specified throwable with this plug-in's log.
+	 *
+	 * @param t throwable to log
+	 */
+	public static void log(Throwable t) {
+		log(newErrorStatus(IDsfStatusConstants.INTERNAL_ERROR, "Error logged from Debug UI: ", t)); //$NON-NLS-1$
+	}
+
+	/**
+	 * Logs an internal error with the specified message.
+	 *
+	 * @param message the error message to log
+	 */
+	public static void logErrorMessage(String message) {
+		// this message is intentionally not internationalized, as an exception may
+		// be due to the resource bundle itself
+		log(newErrorStatus(IDsfStatusConstants.INTERNAL_ERROR, "Internal message logged from Debug UI: " + message, //$NON-NLS-1$
+				null));
+	}
+
+	/**
+	 * Returns a new error status for this plug-in with the given message
+	 *
+	 * @param message the message to be included in the status
+	 * @param error code
+	 * @param exception the exception to be included in the status or <code>null</code> if none
+	 * @return a new error status
+	 *
+	 * @since 2.0
+	 */
+	public static IStatus newErrorStatus(int code, String message, Throwable exception) {
+		return new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, code, message, exception);
+	}
+
 	/**
 	 * Returns the active workbench shell or <code>null</code> if none
-	 * 
+	 *
 	 * @return the active workbench shell or <code>null</code> if none
 	 */
 	public static Shell getActiveWorkbenchShell() {
@@ -185,7 +185,7 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 		if (window != null) {
 			return window.getShell();
 		}
-		
+
 		return null;
 	}
 

@@ -43,7 +43,7 @@ import org.eclipse.ui.console.IOConsole;
  * Any input to this console is read and discarded, since this console should be
  * read-only.  We don't actually make the console read-only because it is nice
  * for the user to be able to add delimiters such as empty lines within the traces.
- * 
+ *
  * @since 2.1
  * This class was moved from package org.eclipse.cdt.dsf.gdb.internal.ui.tracing
  */
@@ -56,148 +56,151 @@ public class TracingConsole extends IOConsole {
 	public TracingConsole(ILaunch launch, String label) {
 		super("", null, null, false); //$NON-NLS-1$
 		fLaunch = launch;
-        fTracingStream = newOutputStream();
-        fSession = ((GdbLaunch)launch).getSession();
-        fLabel = label;
+		fTracingStream = newOutputStream();
+		fSession = ((GdbLaunch) launch).getSession();
+		fLabel = label;
 
 		resetName();
 
-        // Start a job to swallow all the input from the user
+		// Start a job to swallow all the input from the user
 		new InputReadJob().schedule();
 
-        // This is needed if the service has already been created.
-        // For example, if we turn on tracing after a launch is started.
-        setStreamInService();
+		// This is needed if the service has already been created.
+		// For example, if we turn on tracing after a launch is started.
+		setStreamInService();
 	}
-	
-    @Override
+
+	@Override
 	protected void init() {
-        super.init();
-        fSession.getExecutor().submit(new DsfRunnable() {
-            @Override
-        	public void run() {
-        		fSession.addServiceEventListener(TracingConsole.this, null);
-        	}
-        });
-    }
-    
+		super.init();
+		fSession.getExecutor().submit(new DsfRunnable() {
+			@Override
+			public void run() {
+				fSession.addServiceEventListener(TracingConsole.this, null);
+			}
+		});
+	}
+
 	@Override
 	protected void dispose() {
-        try {
+		try {
 			fTracingStream.close();
 		} catch (IOException e) {
 		}
-        try {
-        	fSession.getExecutor().submit(new DsfRunnable() {
-                @Override
-        		public void run() {
-        			fSession.removeServiceEventListener(TracingConsole.this);
-        		}
-        	});
+		try {
+			fSession.getExecutor().submit(new DsfRunnable() {
+				@Override
+				public void run() {
+					fSession.removeServiceEventListener(TracingConsole.this);
+				}
+			});
 		} catch (RejectedExecutionException e) {
 			// Session already disposed
 		}
 		super.dispose();
 	}
-	
-	public ILaunch getLaunch() { return fLaunch; }
-    
-    private void setStreamInService() {
-    	try {
-    		fSession.getExecutor().submit(new DsfRunnable() {
-                @Override
-    			public void run() {
-    				DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), fSession.getId());
-    				IGDBControl control = tracker.getService(IGDBControl.class);
-    				tracker.dispose();
-    				if (control != null) {
-    					// Special method that need not be called on the executor
-    					control.setTracingStream(fTracingStream);
-    				}
-    			}
-    		});
-	    } catch (RejectedExecutionException e) {
-	    }
+
+	public ILaunch getLaunch() {
+		return fLaunch;
 	}
-	
-    protected String computeName() {
-        String label = fLabel;
 
-        ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
-        if (config != null && !DebugUITools.isPrivate(config)) {
-        	String type = null;
-        	try {
-        		type = config.getType().getName();
-        	} catch (CoreException e) {
-        	}
-        	StringBuilder buffer = new StringBuilder();
-        	buffer.append(config.getName());
-        	if (type != null) {
-        		buffer.append(" ["); //$NON-NLS-1$
-        		buffer.append(type);
-        		buffer.append("] "); //$NON-NLS-1$
-        	}
-        	buffer.append(label);
-        	label = buffer.toString();
-        }
+	private void setStreamInService() {
+		try {
+			fSession.getExecutor().submit(new DsfRunnable() {
+				@Override
+				public void run() {
+					DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(),
+							fSession.getId());
+					IGDBControl control = tracker.getService(IGDBControl.class);
+					tracker.dispose();
+					if (control != null) {
+						// Special method that need not be called on the executor
+						control.setTracingStream(fTracingStream);
+					}
+				}
+			});
+		} catch (RejectedExecutionException e) {
+		}
+	}
 
-        if (fLaunch.isTerminated()) {
-        	return ConsoleMessages.ConsoleMessages_console_terminated + label; 
-        }
-        
-        return label;
-    }
-    
-    public void resetName() {
-    	final String newName = computeName();
-    	String name = getName();
-    	if (!name.equals(newName)) {
-    		Display display = PlatformUI.getWorkbench().getDisplay();
-    		if (!display.isDisposed()) {
-    			display.asyncExec(() -> setName(newName));
-    		}
-    	}
-    }
-    
-    @DsfServiceEventHandler
-    public final void eventDispatched(ICommandControlInitializedDMEvent event) {
-    	// Now that the service is started, we can set the stream.
-    	// We won't receive this event if we enable tracing after a launch
-    	// has been started.
-    	setStreamInService();
-    }
+	protected String computeName() {
+		String label = fLabel;
+
+		ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
+		if (config != null && !DebugUITools.isPrivate(config)) {
+			String type = null;
+			try {
+				type = config.getType().getName();
+			} catch (CoreException e) {
+			}
+			StringBuilder buffer = new StringBuilder();
+			buffer.append(config.getName());
+			if (type != null) {
+				buffer.append(" ["); //$NON-NLS-1$
+				buffer.append(type);
+				buffer.append("] "); //$NON-NLS-1$
+			}
+			buffer.append(label);
+			label = buffer.toString();
+		}
+
+		if (fLaunch.isTerminated()) {
+			return ConsoleMessages.ConsoleMessages_console_terminated + label;
+		}
+
+		return label;
+	}
+
+	public void resetName() {
+		final String newName = computeName();
+		String name = getName();
+		if (!name.equals(newName)) {
+			Display display = PlatformUI.getWorkbench().getDisplay();
+			if (!display.isDisposed()) {
+				display.asyncExec(() -> setName(newName));
+			}
+		}
+	}
+
+	@DsfServiceEventHandler
+	public final void eventDispatched(ICommandControlInitializedDMEvent event) {
+		// Now that the service is started, we can set the stream.
+		// We won't receive this event if we enable tracing after a launch
+		// has been started.
+		setStreamInService();
+	}
 
 	/**
 	 * A reading Job which will prevent the input stream
 	 * from filling up.  We don't actually do anything with
 	 * the data we read, since the Trace console should not
 	 * accept input.
-	 * 
+	 *
 	 * But instead of making the console read-only, we allow
 	 * the user to type things to allow for comments to be
 	 * inserted within the traces.
 	 */
-    private class InputReadJob extends Job {
-    	{
-    		setSystem(true); 
-    	}
-    	
-        InputReadJob() {
-            super("Traces Input Job"); //$NON-NLS-1$
-        }
+	private class InputReadJob extends Job {
+		{
+			setSystem(true);
+		}
 
-        @Override
+		InputReadJob() {
+			super("Traces Input Job"); //$NON-NLS-1$
+		}
+
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-            try {
-                byte[] b = new byte[1024];
-                int read = 0;
-                while (getInputStream() != null && read >= 0) {
-                	// Read the input and swallow it.
-                	read = getInputStream().read(b);
-                }
-            } catch (IOException e) {
-            }
-            return Status.OK_STATUS;
-        }
-    }
+			try {
+				byte[] b = new byte[1024];
+				int read = 0;
+				while (getInputStream() != null && read >= 0) {
+					// Read the input and swallow it.
+					read = getInputStream().read(b);
+				}
+			} catch (IOException e) {
+			}
+			return Status.OK_STATUS;
+		}
+	}
 }

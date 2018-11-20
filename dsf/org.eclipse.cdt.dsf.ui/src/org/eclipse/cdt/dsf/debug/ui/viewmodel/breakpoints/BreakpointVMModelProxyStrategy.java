@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -25,40 +25,39 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Breakpoints VM model proxy that includes an ICheckboxModelProxy implementation.
- * 
+ *
  * @since 2.1
  */
 public class BreakpointVMModelProxyStrategy extends DefaultVMModelProxyStrategy implements ICheckboxModelProxy {
-    
-    public BreakpointVMModelProxyStrategy(AbstractVMProvider provider, Object rootElement) {
-        super(provider, rootElement);
-    }
-    
-    @Override
+
+	public BreakpointVMModelProxyStrategy(AbstractVMProvider provider, Object rootElement) {
+		super(provider, rootElement);
+	}
+
+	@Override
 	public boolean setChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked) {
-        Object lastSegment = path.getLastSegment();
-        if (lastSegment instanceof IBreakpointContainer) {
-            IBreakpoint[] breakpoints = ((IBreakpointContainer) lastSegment).getBreakpoints();
-            for (int i = 0; i < breakpoints.length; ++i) {
-                try {
-                    breakpoints[i].setEnabled(checked);
-                } catch (CoreException e) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        else {
-            IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(lastSegment, IBreakpoint.class);
-            if (breakpoint != null) {
-                try {
-                    breakpoint.setEnabled(checked);
-                } catch (CoreException e) {
-                    return false;
-                }
-                return true;
-            }
-        } 
-        return false;
-    }
+		Object lastSegment = path.getLastSegment();
+		if (lastSegment instanceof IBreakpointContainer) {
+			IBreakpoint[] breakpoints = ((IBreakpointContainer) lastSegment).getBreakpoints();
+			for (int i = 0; i < breakpoints.length; ++i) {
+				try {
+					breakpoints[i].setEnabled(checked);
+				} catch (CoreException e) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			IBreakpoint breakpoint = (IBreakpoint) DebugPlugin.getAdapter(lastSegment, IBreakpoint.class);
+			if (breakpoint != null) {
+				try {
+					breakpoint.setEnabled(checked);
+				} catch (CoreException e) {
+					return false;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
 }

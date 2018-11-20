@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - modified for use with Docker Container launching
  *******************************************************************************/
@@ -46,8 +46,7 @@ import org.eclipse.linuxtools.docker.core.IDockerImage;
  * @author jjohnstn
  *
  */
-public class ContainerTargetTypeProvider
-		implements ILaunchTargetProvider, IDockerConnectionManagerListener {
+public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDockerConnectionManagerListener {
 
 	public static final String TYPE_ID = "org.eclipse.cdt.docker.launcher.launchTargetType.container"; //$NON-NLS-1$
 	public static final String CONTAINER_LINUX = "linux-container"; //$NON-NLS-1$
@@ -57,24 +56,21 @@ public class ContainerTargetTypeProvider
 	@Override
 	public synchronized void init(ILaunchTargetManager targetManager) {
 		this.targetManager = targetManager;
-		ILaunchBarManager launchbarManager = CDebugCorePlugin
-				.getService(ILaunchBarManager.class);
+		ILaunchBarManager launchbarManager = CDebugCorePlugin.getService(ILaunchBarManager.class);
 		ILaunchTarget defaultTarget = null;
 		try {
 			defaultTarget = launchbarManager.getActiveLaunchTarget();
 		} catch (CoreException e) {
 			// ignore
 		}
-		IDockerConnection[] connections = DockerConnectionManager.getInstance()
-				.getConnections();
+		IDockerConnection[] connections = DockerConnectionManager.getInstance().getConnections();
 		Map<String, IDockerConnection> establishedConnectionMap = new HashMap<>();
 		Set<String> imageNames = new HashSet<>();
 		for (IDockerConnection connection : connections) {
 			// Get Images before checking state as the state may be
 			// unknown until a request is made
 			List<IDockerImage> images = connection.getImages();
-			if (connection
-					.getState() == EnumDockerConnectionState.ESTABLISHED) {
+			if (connection.getState() == EnumDockerConnectionState.ESTABLISHED) {
 				establishedConnectionMap.put(connection.getUri(), connection);
 			}
 			for (IDockerImage image : images) {
@@ -87,20 +83,15 @@ public class ContainerTargetTypeProvider
 						imageName += "[" + connection.getName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					imageNames.add(imageName);
-					ILaunchTarget target = targetManager
-							.getLaunchTarget(TYPE_ID, imageName);
+					ILaunchTarget target = targetManager.getLaunchTarget(TYPE_ID, imageName);
 					if (target == null) {
-						target = targetManager.addLaunchTarget(TYPE_ID,
-								imageName);
+						target = targetManager.addLaunchTarget(TYPE_ID, imageName);
 					}
 					ILaunchTargetWorkingCopy wc = target.getWorkingCopy();
 					wc.setAttribute(ILaunchTarget.ATTR_OS, CONTAINER_LINUX);
-					wc.setAttribute(ILaunchTarget.ATTR_ARCH,
-							Platform.getOSArch());
-					wc.setAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI,
-							connection.getUri());
-					wc.setAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID,
-							image.repoTags().get(0));
+					wc.setAttribute(ILaunchTarget.ATTR_ARCH, Platform.getOSArch());
+					wc.setAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, connection.getUri());
+					wc.setAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, image.repoTags().get(0));
 
 					wc.save();
 				}
@@ -111,8 +102,7 @@ public class ContainerTargetTypeProvider
 		ILaunchTarget[] targets = targetManager.getLaunchTargetsOfType(TYPE_ID);
 		for (ILaunchTarget target : targets) {
 			try {
-				String uri = target.getAttribute(
-						IContainerLaunchTarget.ATTR_CONNECTION_URI, ""); //$NON-NLS-1$
+				String uri = target.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, ""); //$NON-NLS-1$
 				if (!establishedConnectionMap.containsKey(uri)) {
 					targetManager.removeLaunchTarget(target);
 				}
@@ -123,8 +113,7 @@ public class ContainerTargetTypeProvider
 
 		// add a Docker Connection listener to handle enablement/disablement of
 		// Connections
-		DockerConnectionManager.getInstance()
-				.addConnectionManagerListener(this);
+		DockerConnectionManager.getInstance().addConnectionManagerListener(this);
 
 		// re-check configs in case an enabled Connection has made old configs
 		// valid again do this in a separate job to prevent a possible
@@ -136,8 +125,7 @@ public class ContainerTargetTypeProvider
 				// call the recheckConfigs method in case any disabled targets
 				// are now
 				// ok
-				ICBuildConfigurationManager mgr = CCorePlugin
-						.getService(ICBuildConfigurationManager.class);
+				ICBuildConfigurationManager mgr = CCorePlugin.getService(ICBuildConfigurationManager.class);
 				ICBuildConfigurationManager2 cbuildmanager = (ICBuildConfigurationManager2) mgr;
 				cbuildmanager.recheckConfigs();
 				return Status.OK_STATUS;
@@ -161,32 +149,27 @@ public class ContainerTargetTypeProvider
 	}
 
 	@Override
-	public synchronized void changeEvent(final IDockerConnection connection,
-			final int type) {
+	public synchronized void changeEvent(final IDockerConnection connection, final int type) {
 		Job checkConfigs = new Job("Check configs") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 
-				ICBuildConfigurationManager mgr = CCorePlugin
-						.getService(ICBuildConfigurationManager.class);
+				ICBuildConfigurationManager mgr = CCorePlugin.getService(ICBuildConfigurationManager.class);
 				ICBuildConfigurationManager2 manager = (ICBuildConfigurationManager2) mgr;
 
 				if (type == IDockerConnectionManagerListener.ADD_EVENT
 						|| type == IDockerConnectionManagerListener.ENABLE_EVENT) {
-					ILaunchBarManager launchbarManager = CDebugCorePlugin
-							.getService(ILaunchBarManager.class);
+					ILaunchBarManager launchbarManager = CDebugCorePlugin.getService(ILaunchBarManager.class);
 					ILaunchTarget defaultTarget = null;
 					try {
-						defaultTarget = launchbarManager
-								.getActiveLaunchTarget();
+						defaultTarget = launchbarManager.getActiveLaunchTarget();
 					} catch (CoreException e) {
 						// ignore
 					}
 
 					List<IDockerImage> images = connection.getImages();
 					for (IDockerImage image : images) {
-						if (!image.isDangling()
-								&& !image.isIntermediateImage()) {
+						if (!image.isDangling() && !image.isIntermediateImage()) {
 
 							String imageName = "[" //$NON-NLS-1$
 									+ image.repoTags().get(0).replace(':', '_')
@@ -194,35 +177,24 @@ public class ContainerTargetTypeProvider
 									+ "]"; //$NON-NLS-1$
 							String imageName2 = imageName + "[" //$NON-NLS-1$
 									+ connection.getName() + "]"; //$NON-NLS-1$
-							ILaunchTarget target = targetManager
-									.getLaunchTarget(TYPE_ID, imageName2);
+							ILaunchTarget target = targetManager.getLaunchTarget(TYPE_ID, imageName2);
 							if (target != null) {
 								continue;
 							}
-							target = targetManager.getLaunchTarget(TYPE_ID,
-									imageName);
+							target = targetManager.getLaunchTarget(TYPE_ID, imageName);
 							if (target != null) {
-								if (target.getAttribute(
-										IContainerLaunchTarget.ATTR_CONNECTION_URI,
-										"").equals(connection.getUri())) {
+								if (target.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, "")
+										.equals(connection.getUri())) {
 									continue;
 								}
 								imageName = imageName2;
 							}
-							target = targetManager.addLaunchTarget(TYPE_ID,
-									imageName);
-							ILaunchTargetWorkingCopy wc = target
-									.getWorkingCopy();
-							wc.setAttribute(ILaunchTarget.ATTR_OS,
-									CONTAINER_LINUX);
-							wc.setAttribute(ILaunchTarget.ATTR_ARCH,
-									Platform.getOSArch());
-							wc.setAttribute(
-									IContainerLaunchTarget.ATTR_CONNECTION_URI,
-									connection.getUri());
-							wc.setAttribute(
-									IContainerLaunchTarget.ATTR_IMAGE_ID,
-									image.repoTags().get(0));
+							target = targetManager.addLaunchTarget(TYPE_ID, imageName);
+							ILaunchTargetWorkingCopy wc = target.getWorkingCopy();
+							wc.setAttribute(ILaunchTarget.ATTR_OS, CONTAINER_LINUX);
+							wc.setAttribute(ILaunchTarget.ATTR_ARCH, Platform.getOSArch());
+							wc.setAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, connection.getUri());
+							wc.setAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, image.repoTags().get(0));
 
 							wc.save();
 						}
@@ -231,8 +203,7 @@ public class ContainerTargetTypeProvider
 					// reset the default target back again
 					if (defaultTarget != null) {
 						try {
-							launchbarManager
-									.setActiveLaunchTarget(defaultTarget);
+							launchbarManager.setActiveLaunchTarget(defaultTarget);
 						} catch (CoreException e) {
 							DockerLaunchUIPlugin.log(e);
 						}
@@ -245,11 +216,9 @@ public class ContainerTargetTypeProvider
 				} else if (type == IDockerConnectionManagerListener.REMOVE_EVENT
 						|| type == IDockerConnectionManagerListener.DISABLE_EVENT) {
 					String connectionURI = connection.getUri();
-					ILaunchTarget[] targets = targetManager
-							.getLaunchTargetsOfType(TYPE_ID);
+					ILaunchTarget[] targets = targetManager.getLaunchTargetsOfType(TYPE_ID);
 					for (ILaunchTarget target : targets) {
-						String uri = target.getAttribute(
-								IContainerLaunchTarget.ATTR_CONNECTION_URI, ""); //$NON-NLS-1$
+						String uri = target.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, ""); //$NON-NLS-1$
 						if (connectionURI.equals(uri)) {
 							targetManager.removeLaunchTarget(target);
 						}

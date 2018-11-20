@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousCastVsFunctionCallEx
 
 public class CASTAmbiguousCastVsFunctionCallExpression extends ASTAmbiguousCastVsFunctionCallExpression {
 
-    public CASTAmbiguousCastVsFunctionCallExpression(IASTCastExpression castExpr, IASTFunctionCallExpression funcCall) {
-    	super(castExpr, funcCall);
+	public CASTAmbiguousCastVsFunctionCallExpression(IASTCastExpression castExpr, IASTFunctionCallExpression funcCall) {
+		super(castExpr, funcCall);
 	}
 }

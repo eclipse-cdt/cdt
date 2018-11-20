@@ -33,7 +33,7 @@ public class CygwinPEBinaryArchive extends PEBinaryArchive {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryArchive#addArchiveMembers(org.eclipse.cdt.utils.AR.ARHeader[],
 	 *      java.util.ArrayList)
 	 */

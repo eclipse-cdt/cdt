@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,9 +29,8 @@ import org.eclipse.ui.actions.ActionDelegate;
 
 import org.eclipse.cdt.core.model.ICModelMarker;
 
-public class DeleteTaskAction extends ActionDelegate implements IObjectActionDelegate
-{
-	private IStructuredSelection  selection;
+public class DeleteTaskAction extends ActionDelegate implements IObjectActionDelegate {
+	private IStructuredSelection selection;
 
 	/**
 	 * @see ActionDelegate#run(IAction)
@@ -49,9 +47,9 @@ public class DeleteTaskAction extends ActionDelegate implements IObjectActionDel
 				List<IMarker> listMarkers = new ArrayList<IMarker>();
 				Iterator<?> iterator = list.iterator();
 				while (iterator.hasNext()) {
-					IMarker marker = (IMarker)iterator.next();
+					IMarker marker = (IMarker) iterator.next();
 					if (marker.isSubtypeOf(ICModelMarker.C_MODEL_PROBLEM_MARKER)
-						|| marker.isSubtypeOf(ICModelMarker.C_MODEL_MARKER_VARIABLE)) {
+							|| marker.isSubtypeOf(ICModelMarker.C_MODEL_MARKER_VARIABLE)) {
 						listMarkers.add(marker);
 					}
 				}
@@ -85,10 +83,10 @@ public class DeleteTaskAction extends ActionDelegate implements IObjectActionDel
 				try {
 					IMarker marker = (IMarker) object;
 					if (marker.isSubtypeOf(ICModelMarker.C_MODEL_PROBLEM_MARKER)
-						|| marker.isSubtypeOf(ICModelMarker.C_MODEL_MARKER_VARIABLE)) {
-							enable = true;
+							|| marker.isSubtypeOf(ICModelMarker.C_MODEL_MARKER_VARIABLE)) {
+						enable = true;
 					}
-					this.selection = (IStructuredSelection)selection;
+					this.selection = (IStructuredSelection) selection;
 					action.setEnabled(enable);
 				} catch (CoreException e) {
 				}

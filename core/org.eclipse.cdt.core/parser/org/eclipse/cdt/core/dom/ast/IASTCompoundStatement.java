@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This represents a block of statements.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -29,25 +29,25 @@ public interface IASTCompoundStatement extends IASTStatement {
 
 	/**
 	 * Returns the statements in this block.
-	 * 
+	 *
 	 * @return Array of IASTStatement
 	 */
 	public IASTStatement[] getStatements();
 
 	/**
 	 * Adds a statement to the compound block.
-	 * 
+	 *
 	 * @param statement the statement to be added
 	 */
 	public void addStatement(IASTStatement statement);
 
 	/**
 	 * Returns {@code IScope} node that this node eludes to in the logical tree.
-	 * 
+	 *
 	 * @return the {@code IScope}
 	 */
 	public IScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */

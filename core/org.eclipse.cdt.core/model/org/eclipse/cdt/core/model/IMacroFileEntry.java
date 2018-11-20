@@ -29,7 +29,7 @@ public interface IMacroFileEntry extends IPathEntry {
 	IPath getMacroFilePath();
 
 	/**
-	 * the path is completed if it relative. 
+	 * the path is completed if it relative.
 	 */
 	IPath getFullMacroFilePath();
 

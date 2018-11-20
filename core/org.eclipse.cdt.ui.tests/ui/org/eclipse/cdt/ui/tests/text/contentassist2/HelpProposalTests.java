@@ -20,15 +20,15 @@ import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 import junit.framework.Test;
 
 /**
- * Tests for {@link org.eclipse.cdt.internal.ui.text.contentassist.HelpCompletionProposalComputer}. 
+ * Tests for {@link org.eclipse.cdt.internal.ui.text.contentassist.HelpCompletionProposalComputer}.
  */
 public class HelpProposalTests extends CompletionTestBase {
 	private boolean fOldTestInfoProviderEnablement;
-	
+
 	public HelpProposalTests(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
 		return BaseTestCase.suite(HelpProposalTests.class, "_");
 	}
@@ -39,17 +39,17 @@ public class HelpProposalTests extends CompletionTestBase {
 		fOldTestInfoProviderEnablement = CHelpTestInfoProvider.fgEnabled;
 		CHelpTestInfoProvider.fgEnabled = true;
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		CHelpTestInfoProvider.fgEnabled = fOldTestInfoProviderEnablement;
 		super.tearDown();
 	}
-	
+
 	// Note: The help proposal completions for C library functions that are proposed
 	//       in this test are defined in the CHelpProposalTester.CHelpBook constructor.
 	//       When writing a new test case, add any necessary new functions there.
-	
+
 	//	int main() {
 	//	    setvbuf(file, NULL, _IOLBF, /*cursor*/);
 	//	}
@@ -62,7 +62,7 @@ public class HelpProposalTests extends CompletionTestBase {
 		assertEquals("", proposal.getReplacementString());
 		assertNotNull(proposal.getContextInformation());
 	}
-	
+
 	//	struct Waldo {
 	//		Waldo(int, int);
 	//	};
@@ -73,7 +73,7 @@ public class HelpProposalTests extends CompletionTestBase {
 		String[] expected = new String[] { "Waldo(const Waldo &)", "Waldo(int, int)" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
-	
+
 	//	void foo() {
 	//	#ifdef MYMACRO
 	//		setv/*cursor*/

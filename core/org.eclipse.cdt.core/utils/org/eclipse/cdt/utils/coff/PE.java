@@ -12,7 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
- 
+
 package org.eclipse.cdt.utils.coff;
 
 import java.io.IOException;
@@ -69,7 +69,6 @@ import org.eclipse.cdt.utils.debug.stabs.StabsReader;
  */
 public class PE {
 
-	
 	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	RandomAccessFile rfile;
 	String filename;
@@ -84,10 +83,10 @@ public class PE {
 	byte[] stringTable;
 
 	public static class Attribute {
-		public static final int PE_TYPE_EXE   = 1;
+		public static final int PE_TYPE_EXE = 1;
 		public static final int PE_TYPE_SHLIB = 2;
-		public static final int PE_TYPE_OBJ   = 3;
-		public static final int PE_TYPE_CORE  = 4;
+		public static final int PE_TYPE_OBJ = 3;
+		public static final int PE_TYPE_CORE = 4;
 
 		String cpu;
 		int type;
@@ -99,11 +98,11 @@ public class PE {
 		public String getCPU() {
 			return cpu;
 		}
-                
+
 		public int getType() {
 			return type;
 		}
-                
+
 		public boolean hasDebug() {
 			return bDebug;
 		}
@@ -121,10 +120,10 @@ public class PE {
 	 */
 	public static class DOSHeader {
 		final static int DOSHDRSZ = 100;
-		byte[] e_res = new byte[8];      /* Reserved words, all 0x0.  */
-		byte[] e_oemid = new byte[2];    /* OEM identifier (for e_oeminfo), 0x0.  */
-		byte[] e_oeminfo = new byte[2];  /* OEM information; e_oemid specific, 0x0.  */
-		byte[] e_res2 = new byte[20];    /* Reserved words, all 0x0.  */
+		byte[] e_res = new byte[8]; /* Reserved words, all 0x0.  */
+		byte[] e_oemid = new byte[2]; /* OEM identifier (for e_oeminfo), 0x0.  */
+		byte[] e_oeminfo = new byte[2]; /* OEM information; e_oemid specific, 0x0.  */
+		byte[] e_res2 = new byte[20]; /* Reserved words, all 0x0.  */
 		int e_lfanew; /* 4 byte File address of new exe header, offset 60(0x3c), 0x80. */
 		byte[] dos_message = new byte[64]; /* Other stuff, always follow DOS header.  */
 
@@ -199,7 +198,7 @@ public class PE {
 	}
 
 	public static class IMAGE_DATA_DIRECTORY {
-		
+
 		public int VirtualAddress;
 		public int Size;
 	}
@@ -207,27 +206,27 @@ public class PE {
 	public static class NTOptionalHeader {
 
 		public final static int NTHDRSZ = 196;
-		public int  ImageBase;                     // 4 bytes.
-		public int  SectionAlignment;              // 4 bytes.
-		public int  FileAlignment;                 // 4 bytes.
-		public short  MajorOperatingSystemVersion; // 2 bytes.
-		public short  MinorOperatingSystemVersion; // 2 bytes.
-		public short  MajorImageVersion;           // 2 bytes.
-		public short  MinorImageVersion;           // 2 bytes.
-		public short  MajorSubsystemVersion;       // 2 bytes.
-		public short  MinorSubsystemVersion;       // 2 bytes.
-		public byte[]  Reserved = new byte[4];     // 4 bytes.
-		public int  SizeOfImage;                   // 4 bytes. 
-		public int  SizeOfHeaders;                 // 4 bytes. 
-		public int  CheckSum;                      // 4 bytes. 
-		public short Subsystem;                    // 2 bytes.
-		public short DLLCharacteristics;           // 2 bytes.
-		public int  SizeOfStackReserve;            // 4 bytes. 
-		public int  SizeOfStackCommit;             // 4 bytes. 
-		public int  SizeOfHeapReserve;             // 4 bytes. 
-		public int  SizeOfHeapCommit;              // 4 bytes. 
-		public int  LoaderFlags;                   // 4 bytes. 
-		public int  NumberOfRvaAndSizes;           // 4 bytes. 
+		public int ImageBase; // 4 bytes.
+		public int SectionAlignment; // 4 bytes.
+		public int FileAlignment; // 4 bytes.
+		public short MajorOperatingSystemVersion; // 2 bytes.
+		public short MinorOperatingSystemVersion; // 2 bytes.
+		public short MajorImageVersion; // 2 bytes.
+		public short MinorImageVersion; // 2 bytes.
+		public short MajorSubsystemVersion; // 2 bytes.
+		public short MinorSubsystemVersion; // 2 bytes.
+		public byte[] Reserved = new byte[4]; // 4 bytes.
+		public int SizeOfImage; // 4 bytes.
+		public int SizeOfHeaders; // 4 bytes.
+		public int CheckSum; // 4 bytes.
+		public short Subsystem; // 2 bytes.
+		public short DLLCharacteristics; // 2 bytes.
+		public int SizeOfStackReserve; // 4 bytes.
+		public int SizeOfStackCommit; // 4 bytes.
+		public int SizeOfHeapReserve; // 4 bytes.
+		public int SizeOfHeapCommit; // 4 bytes.
+		public int LoaderFlags; // 4 bytes.
+		public int NumberOfRvaAndSizes; // 4 bytes.
 		public IMAGE_DATA_DIRECTORY DataDirectory[];
 
 		public NTOptionalHeader(RandomAccessFile file) throws IOException {
@@ -261,7 +260,7 @@ public class PE {
 			LoaderFlags = memory.getInt();
 			NumberOfRvaAndSizes = memory.getInt();
 
-			DataDirectory = new IMAGE_DATA_DIRECTORY[NumberOfRvaAndSizes]; // 8*16=128 bytes			
+			DataDirectory = new IMAGE_DATA_DIRECTORY[NumberOfRvaAndSizes]; // 8*16=128 bytes
 			for (int i = 0; i < NumberOfRvaAndSizes; i++) {
 				DataDirectory[i] = new IMAGE_DATA_DIRECTORY();
 				DataDirectory[i].VirtualAddress = memory.getInt();
@@ -352,7 +351,7 @@ public class PE {
 		}
 	}
 
-	public PE (String filename) throws IOException {
+	public PE(String filename) throws IOException {
 		this(filename, 0);
 	}
 
@@ -360,22 +359,21 @@ public class PE {
 		this(filename, pos, true);
 	}
 
-	public PE (String filename, long pos, boolean filter) throws IOException {
+	public PE(String filename, long pos, boolean filter) throws IOException {
 		try {
 			rfile = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 			this.filename = filename;
 			rfile.seek(pos);
-		
+
 			// Object files do not have exe/dos header.
 			try {
 				exeHeader = new ExeHeader(rfile);
 				dosHeader = new DOSHeader(rfile);
 				// Jump the Coff header, and Check the sig.
 				rfile.seek(dosHeader.e_lfanew);
-				byte[] sig = new byte[4]; 
+				byte[] sig = new byte[4];
 				rfile.readFully(sig);
-				if (!((sig[0] == 'P') && (sig[1] == 'E')
-				   && (sig[2] == '\0') && (sig[3] == '\0'))) {
+				if (!((sig[0] == 'P') && (sig[1] == 'E') && (sig[2] == '\0') && (sig[3] == '\0'))) {
 					throw new IOException(CCorePlugin.getResourceString("Util.exception.notPE")); //$NON-NLS-1$
 				}
 			} catch (IOException e) {
@@ -404,89 +402,89 @@ public class PE {
 	public static boolean isValidMachine(int magic) {
 		// Check if this a valid machine.
 		switch (magic) {
-			case PEConstants.IMAGE_FILE_MACHINE_ALPHA:
-			case PEConstants.IMAGE_FILE_MACHINE_ARM:
-			case PEConstants.IMAGE_FILE_MACHINE_ARM2:
-			case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
-			case PEConstants.IMAGE_FILE_MACHINE_AMD64:
-			case PEConstants.IMAGE_FILE_MACHINE_I386:
-			case PEConstants.IMAGE_FILE_MACHINE_IA64:
-			case PEConstants.IMAGE_FILE_MACHINE_M68K:
-			case PEConstants.IMAGE_FILE_MACHINE_MIPS16:
-			case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU:
-			case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU16:
-			case PEConstants.IMAGE_FILE_MACHINE_POWERPC:
-			case PEConstants.IMAGE_FILE_MACHINE_R3000:
-			case PEConstants.IMAGE_FILE_MACHINE_R4000:
-			case PEConstants.IMAGE_FILE_MACHINE_R10000:
-			case PEConstants.IMAGE_FILE_MACHINE_SH3:
-			case PEConstants.IMAGE_FILE_MACHINE_SH4:
-			case PEConstants.IMAGE_FILE_MACHINE_THUMB:
-				// Ok;
-				return true;
-			//throw new IOException("Unknow machine/format");
+		case PEConstants.IMAGE_FILE_MACHINE_ALPHA:
+		case PEConstants.IMAGE_FILE_MACHINE_ARM:
+		case PEConstants.IMAGE_FILE_MACHINE_ARM2:
+		case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
+		case PEConstants.IMAGE_FILE_MACHINE_AMD64:
+		case PEConstants.IMAGE_FILE_MACHINE_I386:
+		case PEConstants.IMAGE_FILE_MACHINE_IA64:
+		case PEConstants.IMAGE_FILE_MACHINE_M68K:
+		case PEConstants.IMAGE_FILE_MACHINE_MIPS16:
+		case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU:
+		case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU16:
+		case PEConstants.IMAGE_FILE_MACHINE_POWERPC:
+		case PEConstants.IMAGE_FILE_MACHINE_R3000:
+		case PEConstants.IMAGE_FILE_MACHINE_R4000:
+		case PEConstants.IMAGE_FILE_MACHINE_R10000:
+		case PEConstants.IMAGE_FILE_MACHINE_SH3:
+		case PEConstants.IMAGE_FILE_MACHINE_SH4:
+		case PEConstants.IMAGE_FILE_MACHINE_THUMB:
+			// Ok;
+			return true;
+		//throw new IOException("Unknow machine/format");
 		}
 		return false;
 	}
-	
+
 	public static Attribute getAttributes(FileHeader filhdr) {
 		Attribute attrib = new Attribute();
 		// Machine type.
 		switch (filhdr.f_magic) {
-			case PEConstants.IMAGE_FILE_MACHINE_UNKNOWN:
-				attrib.cpu = "none"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_UNKNOWN:
+			attrib.cpu = "none"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_ALPHA:
-				attrib.cpu = "alpha"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_ALPHA:
+			attrib.cpu = "alpha"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_ARM:
-			case PEConstants.IMAGE_FILE_MACHINE_ARM2:
-				attrib.cpu = "arm"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_ARM:
+		case PEConstants.IMAGE_FILE_MACHINE_ARM2:
+			attrib.cpu = "arm"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
-				attrib.cpu = "arm64"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
+			attrib.cpu = "arm64"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_AMD64:
-				attrib.cpu = "amd64"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_AMD64:
+			attrib.cpu = "amd64"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_I386:
-				attrib.cpu = "x86"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_I386:
+			attrib.cpu = "x86"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_IA64:
-				attrib.cpu = "ia64"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_IA64:
+			attrib.cpu = "ia64"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_M68K:
-				attrib.cpu = "m68k"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_M68K:
+			attrib.cpu = "m68k"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_MIPS16:
-				attrib.cpu = "mips16"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_MIPS16:
+			attrib.cpu = "mips16"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU:
-				attrib.cpu = "mipsfpu"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU:
+			attrib.cpu = "mipsfpu"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU16:
-				attrib.cpu = "mipsfpu16"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU16:
+			attrib.cpu = "mipsfpu16"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_POWERPC:
-				attrib.cpu = "powerpc"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_POWERPC:
+			attrib.cpu = "powerpc"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_R3000:
-				attrib.cpu = "r3000"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_R3000:
+			attrib.cpu = "r3000"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_R4000:
-				attrib.cpu = "r4000"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_R4000:
+			attrib.cpu = "r4000"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_R10000:
-				attrib.cpu = "r10000"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_R10000:
+			attrib.cpu = "r10000"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_SH3:
-				attrib.cpu = "sh3"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_SH3:
+			attrib.cpu = "sh3"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_SH4:
-				attrib.cpu = "sh4"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_SH4:
+			attrib.cpu = "sh4"; //$NON-NLS-1$
 			break;
-			case PEConstants.IMAGE_FILE_MACHINE_THUMB:
-				attrib.cpu = "thumb"; //$NON-NLS-1$
+		case PEConstants.IMAGE_FILE_MACHINE_THUMB:
+			attrib.cpu = "thumb"; //$NON-NLS-1$
 			break;
 		}
 
@@ -516,7 +514,7 @@ public class PE {
 		} else {
 			attrib.bDebug = true;
 		}
-		
+
 		// sizeof word.
 		if ((filhdr.f_flags & PEConstants.IMAGE_FILE_16BIT_MACHINE) != 0) {
 			attrib.word = 16;
@@ -524,8 +522,8 @@ public class PE {
 		if ((filhdr.f_flags & PEConstants.IMAGE_FILE_32BIT_MACHINE) != 0) {
 			attrib.word = 32;
 		}
-		
-		attrib.addrFactory = new Addr32Factory(); 
+
+		attrib.addrFactory = new Addr32Factory();
 		return attrib;
 	}
 
@@ -549,8 +547,8 @@ public class PE {
 			// Jump the Coff header, and Check the sig.
 			idx = dosHdr.e_lfanew;
 			if (idx + 4 < data.length) {
-				if (!((data[idx + 0] == 'P') && (data[idx + 1] == 'E')
-						&& (data[idx + 2] == '\0') && (data[idx + 3] == '\0'))) {
+				if (!((data[idx + 0] == 'P') && (data[idx + 1] == 'E') && (data[idx + 2] == '\0')
+						&& (data[idx + 3] == '\0'))) {
 					throw new IOException(CCorePlugin.getResourceString("Util.exception.notPE")); //$NON-NLS-1$
 				}
 				idx += 4;
@@ -561,7 +559,7 @@ public class PE {
 			byte[] bytes = new byte[data.length - idx];
 			System.arraycopy(data, idx, bytes, 0, data.length - idx);
 			Coff.FileHeader filehdr = new Coff.FileHeader(bytes, true);
-			if (isValidMachine(filehdr.f_magic)) {	
+			if (isValidMachine(filehdr.f_magic)) {
 				return getAttributes(filehdr);
 			}
 		}
@@ -574,7 +572,6 @@ public class PE {
 		pe.dispose();
 		return attrib;
 	}
-
 
 	public void dispose() throws IOException {
 		if (rfile != null) {
@@ -591,7 +588,7 @@ public class PE {
 			super.finalize();
 		}
 	}
-	
+
 	public ExeHeader getExeHeader() {
 		return exeHeader;
 	}
@@ -633,6 +630,7 @@ public class PE {
 		}
 		return dataDirectories;
 	}
+
 	public SectionHeader[] getSectionHeaders() throws IOException {
 		if (scnhdrs == null) {
 			RandomAccessFile accessFile = getRandomAccessFile();
@@ -659,22 +657,21 @@ public class PE {
 			symbolTable = new Symbol[fileHeader.f_nsyms];
 			for (int i = 0; i < symbolTable.length; i++, offset += Symbol.SYMSZ) {
 				Symbol newSym = new Symbol(accessFile, offset, (fileHeader.f_flags & FileHeader.F_AR32WR) == 0);
-				
+
 				// Now convert section offset of the symbol to image offset.
-				if (newSym.n_scnum >= 1 && newSym.n_scnum <= secHeaders.length)	// valid section #
-					newSym.n_value += secHeaders[newSym.n_scnum-1].s_vaddr;
-				
+				if (newSym.n_scnum >= 1 && newSym.n_scnum <= secHeaders.length) // valid section #
+					newSym.n_value += secHeaders[newSym.n_scnum - 1].s_vaddr;
+
 				// convert to absolute address.
 				if (ntHeader != null)
 					newSym.n_value += ntHeader.ImageBase;
-				
+
 				symbolTable[i] = newSym;
-			}				
+			}
 		}
 		return symbolTable;
 	}
 
-	
 	public byte[] getStringTable() throws IOException {
 		if (stringTable == null) {
 			if (fileHeader.f_nsyms > 0) {
@@ -756,7 +753,7 @@ public class PE {
 		return buffer.toString();
 	}
 
-	RandomAccessFile getRandomAccessFile () throws IOException {
+	RandomAccessFile getRandomAccessFile() throws IOException {
 		if (rfile == null) {
 			rfile = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 		}
@@ -770,7 +767,7 @@ public class PE {
 		try {
 			// the debug directory is the 6th entry
 			NTOptionalHeader ntHeader = getNTOptionalHeader();
-			if (ntHeader==null || ntHeader.NumberOfRvaAndSizes < IMAGE_DIRECTORY_ENTRY_DEBUG)
+			if (ntHeader == null || ntHeader.NumberOfRvaAndSizes < IMAGE_DIRECTORY_ENTRY_DEBUG)
 				return null;
 
 			int debugDir = ntHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress;
@@ -794,8 +791,7 @@ public class PE {
 
 					// loop through the debug directories looking for CodeView (type 2)
 					for (int j = 0; j < debugFormats; j++) {
-						PE.IMAGE_DEBUG_DIRECTORY dir = new PE.IMAGE_DEBUG_DIRECTORY(
-								accessFile, fileOffset);
+						PE.IMAGE_DEBUG_DIRECTORY dir = new PE.IMAGE_DEBUG_DIRECTORY(accessFile, fileOffset);
 
 						if ((2 == dir.Type) && (dir.SizeOfData > 0)) {
 							// CodeView found, seek to actual data
@@ -807,8 +803,7 @@ public class PE {
 							String s2 = accessFile.readLine();
 							if (s2.startsWith("NB11")) { //$NON-NLS-1$
 								Attribute att = getAttribute();
-								symReader = new CodeViewReader(accessFile,
-										debugBase, att.isLittleEndian());
+								symReader = new CodeViewReader(accessFile, debugBase, att.isLittleEndian());
 								return symReader;
 							}
 						}
@@ -878,8 +873,7 @@ public class PE {
 	/**
 	 * @since 5.1
 	 */
-	public String getStringTableEntry(int offset) throws IOException
-	{
+	public String getStringTableEntry(int offset) throws IOException {
 		byte[] bytes = getStringTable();
 		offset = offset - 4;
 		for (int i = offset; i < bytes.length; i++) {
@@ -887,7 +881,7 @@ public class PE {
 				return new String(bytes, offset, i - offset);
 			}
 		}
-		
+
 		return ""; //$NON-NLS-1$
 	}
 

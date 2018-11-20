@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Dialog that allows to customise problems
- * 
+ *
  */
 public class CustomizeProblemDialog extends TitleAreaDialog {
 	private CustomizeProblemComposite comp;
@@ -78,7 +78,7 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 
 	/**
 	 * Stores edit values into problem working copy
-	 * 
+	 *
 	 * @param problem
 	 *        - problem working copy
 	 */
@@ -88,7 +88,7 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse
 	 * .swt.widgets.Composite)
@@ -124,7 +124,7 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	@Override

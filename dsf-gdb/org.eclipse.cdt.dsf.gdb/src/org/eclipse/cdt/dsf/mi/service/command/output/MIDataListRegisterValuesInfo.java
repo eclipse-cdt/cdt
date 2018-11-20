@@ -27,81 +27,81 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataListRegisterValues;
  */
 public class MIDataListRegisterValuesInfo extends MIInfo {
 
-    MIRegisterValue[] registers;
+	MIRegisterValue[] registers;
 
-    public MIDataListRegisterValuesInfo(MIOutput rr) {
-        super(rr);
-        registers = null;
-        if (isDone()) {
-            MIOutput out = getMIOutput();
-            MIResultRecord outr = out.getMIResultRecord();
-            if (outr != null) {
-                MIResult[] results =  outr.getMIResults();
-                for (int i = 0; i < results.length; i++) {
-                    String var = results[i].getVariable();
-                    if (var.equals("register-values")) { //$NON-NLS-1$
-                        MIValue value = results[i].getMIValue();
-                        if (value instanceof MIList) {
-                            registers = MIRegisterValue.getMIRegisterValues((MIList)value);
-                        }
-                    }
-                }
-            }
-        }
-        if (registers == null) {
-            registers = new MIRegisterValue[0];
-        }
-    }
-    
-    /*
-     * Returns the array of registers values.
-     */
+	public MIDataListRegisterValuesInfo(MIOutput rr) {
+		super(rr);
+		registers = null;
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord outr = out.getMIResultRecord();
+			if (outr != null) {
+				MIResult[] results = outr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					if (var.equals("register-values")) { //$NON-NLS-1$
+						MIValue value = results[i].getMIValue();
+						if (value instanceof MIList) {
+							registers = MIRegisterValue.getMIRegisterValues((MIList) value);
+						}
+					}
+				}
+			}
+		}
+		if (registers == null) {
+			registers = new MIRegisterValue[0];
+		}
+	}
 
-    public MIRegisterValue[] getMIRegisterValues() {
-        
-        /*
-         * The expectation is that we return an empty list. The
-         * constructor quarantees this so we are good here.
-         */
-        return registers;
-    }
+	/*
+	 * Returns the array of registers values.
+	 */
 
-    /**
-     * Returns the desired subset of results. When this function is being called
-     * the data here represents a coalesced request which is a superset of at 
-     * least two original requests. We are extracting the data associated with 
-     * the specified original request which we know is contained in this result.
-     */
-    @Override
-    public <V extends ICommandResult> V getSubsetResult(ICommand<V> cmd) {
-        if (cmd instanceof MIDataListRegisterValues) {
-            MIDataListRegisterValues command = (MIDataListRegisterValues) cmd;
-            List<MIRegisterValue> aList = new ArrayList<MIRegisterValue>();
-            int[] wantedRegNos = command.getRegList();
-            
-            /*
-             * Search through the larger answer set finding the ones we want.
-             */
-            for (MIRegisterValue regVal : registers) {
-                for ( int curRegNo : wantedRegNos  ) {
-                    if ( regVal.getNumber() == curRegNo ) {
-                        aList.add( regVal );
-                    }
-                }
-            }
-            
-            /*
-             * Now construct a new complete answer.
-             */
-            MIRegisterValue[] finalRegSet = aList.toArray(new MIRegisterValue[aList.size()]);
-            MIDataListRegisterValuesInfo finalSubset = new MIDataListRegisterValuesInfo( getMIOutput());
-            finalSubset.registers = finalRegSet;
-            
-            @SuppressWarnings("unchecked")
-            V vFinalSubset = (V)finalSubset;
-            return vFinalSubset ;
-        } else {
-            return super.getSubsetResult(cmd);
-        }
-    }
+	public MIRegisterValue[] getMIRegisterValues() {
+
+		/*
+		 * The expectation is that we return an empty list. The
+		 * constructor quarantees this so we are good here.
+		 */
+		return registers;
+	}
+
+	/**
+	 * Returns the desired subset of results. When this function is being called
+	 * the data here represents a coalesced request which is a superset of at
+	 * least two original requests. We are extracting the data associated with
+	 * the specified original request which we know is contained in this result.
+	 */
+	@Override
+	public <V extends ICommandResult> V getSubsetResult(ICommand<V> cmd) {
+		if (cmd instanceof MIDataListRegisterValues) {
+			MIDataListRegisterValues command = (MIDataListRegisterValues) cmd;
+			List<MIRegisterValue> aList = new ArrayList<MIRegisterValue>();
+			int[] wantedRegNos = command.getRegList();
+
+			/*
+			 * Search through the larger answer set finding the ones we want.
+			 */
+			for (MIRegisterValue regVal : registers) {
+				for (int curRegNo : wantedRegNos) {
+					if (regVal.getNumber() == curRegNo) {
+						aList.add(regVal);
+					}
+				}
+			}
+
+			/*
+			 * Now construct a new complete answer.
+			 */
+			MIRegisterValue[] finalRegSet = aList.toArray(new MIRegisterValue[aList.size()]);
+			MIDataListRegisterValuesInfo finalSubset = new MIDataListRegisterValuesInfo(getMIOutput());
+			finalSubset.registers = finalRegSet;
+
+			@SuppressWarnings("unchecked")
+			V vFinalSubset = (V) finalSubset;
+			return vFinalSubset;
+		} else {
+			return super.getSubsetResult(cmd);
+		}
+	}
 }

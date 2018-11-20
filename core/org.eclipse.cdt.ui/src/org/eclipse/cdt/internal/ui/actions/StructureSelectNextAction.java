@@ -37,11 +37,11 @@ public class StructureSelectNextAction extends StructureSelectionAction {
 	public ISourceRange doExpand(IASTTranslationUnit ast, SourceRange current) {
 		ISourceRange newSourceRange = expandToNext(ast, current);
 		if (newSourceRange == null) {
-			newSourceRange = StructureSelectEnclosingAction.expandToEnclosing(ast, current); 
+			newSourceRange = StructureSelectEnclosingAction.expandToEnclosing(ast, current);
 		}
 		if (newSourceRange != null) {
 			history.remember(current);
-		}			
+		}
 		return newSourceRange;
 	}
 

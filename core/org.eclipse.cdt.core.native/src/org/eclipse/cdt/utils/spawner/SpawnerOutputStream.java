@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
-
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -39,12 +38,7 @@ public class SpawnerOutputStream extends OutputStream {
 	public void write(byte[] b, int off, int len) throws IOException {
 		if (b == null) {
 			throw new NullPointerException();
-		} else if (
-			(off < 0)
-				|| (off > b.length)
-				|| (len < 0)
-				|| ((off + len) > b.length)
-				|| ((off + len) < 0)) {
+		} else if ((off < 0) || (off > b.length) || (len < 0) || ((off + len) > b.length) || ((off + len) < 0)) {
 			throw new IndexOutOfBoundsException();
 		} else if (len == 0) {
 			return;
@@ -53,6 +47,7 @@ public class SpawnerOutputStream extends OutputStream {
 		System.arraycopy(b, off, tmpBuf, off, len);
 		write0(fd, tmpBuf, len);
 	}
+
 	/**
 	 * Implementation of read for the InputStream.
 	 *
@@ -85,6 +80,7 @@ public class SpawnerOutputStream extends OutputStream {
 	}
 
 	private native int write0(int fd, byte[] b, int len) throws IOException;
+
 	private native int close0(int fd);
 
 	static {

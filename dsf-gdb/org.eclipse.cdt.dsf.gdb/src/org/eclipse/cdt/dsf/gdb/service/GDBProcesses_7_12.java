@@ -39,9 +39,8 @@ public class GDBProcesses_7_12 extends GDBProcesses_7_11 {
 	}
 
 	@Override
-	protected Sequence getStartOrRestartProcessSequence(DsfExecutor executor,
-			IContainerDMContext containerDmc, Map<String, Object> attributes, boolean restart,
-			DataRequestMonitor<IContainerDMContext> rm) {
+	protected Sequence getStartOrRestartProcessSequence(DsfExecutor executor, IContainerDMContext containerDmc,
+			Map<String, Object> attributes, boolean restart, DataRequestMonitor<IContainerDMContext> rm) {
 		return new StartOrRestartProcessSequence_7_12(executor, containerDmc, attributes, restart, rm);
 	}
 
@@ -59,36 +58,35 @@ public class GDBProcesses_7_12 extends GDBProcesses_7_11 {
 		// to get the prompt back, and only then kill the process.
 		// https://sourceware.org/bugzilla/show_bug.cgi?id=20766
 		if (thread instanceof IMIProcessDMContext) {
-			getDebuggingContext(
-				thread, 
-				new ImmediateDataRequestMonitor<IDMContext>(rm) {
-					@Override
-					protected void handleSuccess() {
-						if (getData() instanceof IMIContainerDMContext) {
-							IMIContainerDMContext containerDmc = (IMIContainerDMContext)getData();
-							IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
-							if (runControl != null && !runControl.isSuspended(containerDmc)) {
-								runControl.suspend(containerDmc, new ImmediateRequestMonitor(rm) {
-									@Override
-									protected void handleCompleted() {
-										GDBProcesses_7_12.super.terminate(thread, rm);
-									}
-								});
-							} else {
-								GDBProcesses_7_12.super.terminate(thread, rm);
-							}
+			getDebuggingContext(thread, new ImmediateDataRequestMonitor<IDMContext>(rm) {
+				@Override
+				protected void handleSuccess() {
+					if (getData() instanceof IMIContainerDMContext) {
+						IMIContainerDMContext containerDmc = (IMIContainerDMContext) getData();
+						IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+						if (runControl != null && !runControl.isSuspended(containerDmc)) {
+							runControl.suspend(containerDmc, new ImmediateRequestMonitor(rm) {
+								@Override
+								protected void handleCompleted() {
+									GDBProcesses_7_12.super.terminate(thread, rm);
+								}
+							});
 						} else {
-							rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
+							GDBProcesses_7_12.super.terminate(thread, rm);
 						}
+					} else {
+						rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR,
+								"Invalid process context.", null)); //$NON-NLS-1$
 					}
-				});         
+				}
+			});
 		} else {
 			super.terminate(thread, rm);
 		}
 	}
-	
+
 	@Override
-    public void detachDebuggerFromProcess(IDMContext dmc, RequestMonitor rm) {
+	public void detachDebuggerFromProcess(IDMContext dmc, RequestMonitor rm) {
 		if (DMContexts.getAncestorOfType(dmc, MIExitedProcessDMC.class) != null) {
 			super.detachDebuggerFromProcess(dmc, rm);
 			return;
@@ -119,9 +117,9 @@ public class GDBProcesses_7_12 extends GDBProcesses_7_11 {
 					GDBProcesses_7_12.super.detachDebuggerFromProcess(dmc, rm);
 				}
 			});
-    	} else {
+		} else {
 			super.detachDebuggerFromProcess(dmc, rm);
-	    }
+		}
 	}
 
 	/**

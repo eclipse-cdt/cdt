@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
  */
 public interface IConnect {
 	/**
-	 * Returns whether this element can currently attempt to 
+	 * Returns whether this element can currently attempt to
 	 * connect to a new process.
 	 */
 	public boolean canConnect();

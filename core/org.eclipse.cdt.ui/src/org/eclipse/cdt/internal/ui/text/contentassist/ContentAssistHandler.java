@@ -27,12 +27,13 @@ import org.eclipse.cdt.internal.ui.editor.SpecificContentAssistExecutor;
 
 /**
  * A command handler to invoke a content assist for a specific proposal category.
- * 
+ *
  * @since 4.0
  */
 public final class ContentAssistHandler extends AbstractHandler {
-	private final SpecificContentAssistExecutor fExecutor= new SpecificContentAssistExecutor(CompletionProposalComputerRegistry.getDefault());
-	
+	private final SpecificContentAssistExecutor fExecutor = new SpecificContentAssistExecutor(
+			CompletionProposalComputerRegistry.getDefault());
+
 	public ContentAssistHandler() {
 	}
 
@@ -41,25 +42,25 @@ public final class ContentAssistHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ITextEditor editor= getActiveEditor();
+		ITextEditor editor = getActiveEditor();
 		if (editor == null)
 			return null;
-		
-		String categoryId= event.getParameter("org.eclipse.cdt.ui.specific_content_assist.category_id"); //$NON-NLS-1$
+
+		String categoryId = event.getParameter("org.eclipse.cdt.ui.specific_content_assist.category_id"); //$NON-NLS-1$
 		if (categoryId == null)
 			return null;
-		
+
 		fExecutor.invokeContentAssist(editor, categoryId);
 
 		return null;
 	}
 
 	private ITextEditor getActiveEditor() {
-		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
-			IWorkbenchPage page= window.getActivePage();
+			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
-				IEditorPart editor= page.getActiveEditor();
+				IEditorPart editor = page.getActiveEditor();
 				if (editor instanceof ITextEditor)
 					return (ITextEditor) editor;
 			}

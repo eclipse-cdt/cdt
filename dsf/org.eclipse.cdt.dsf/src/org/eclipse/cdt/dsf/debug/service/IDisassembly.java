@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -22,16 +22,17 @@ import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
  * Disassembly service interface
- * 
+ *
  * @since 1.0
  */
 public interface IDisassembly extends IDsfService {
 
-    public interface IDisassemblyDMContext extends IDMContext {}
+	public interface IDisassemblyDMContext extends IDMContext {
+	}
 
 	/**
 	 * Gets a block of disassembled code given an address range.
-	 * 
+	 *
 	 * @param context
 	 *            Context of the disassembly code
 	 * @param startAddress
@@ -44,16 +45,13 @@ public interface IDisassembly extends IDsfService {
 	 * @param drm
 	 *            Disassembled code
 	 */
-    public void getInstructions(
-            IDisassemblyDMContext context,
-            BigInteger startAddress, 
-            BigInteger endAddress,
-            DataRequestMonitor<IInstruction[]> drm);
+	public void getInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			DataRequestMonitor<IInstruction[]> drm);
 
 	/**
 	 * Gets a block of disassembled code given a filename, line number, and line
 	 * count.
-	 * 
+	 *
 	 * @param context
 	 *            Context of the disassembly code
 	 * @param filename
@@ -65,20 +63,16 @@ public interface IDisassembly extends IDsfService {
 	 * @param instructionCount
 	 *            Number of instructions to disassemble. -1 means all
 	 *            available instructions (starting at [linenum])
-	 * 
+	 *
 	 * @param drm
 	 *            Disassembled code
 	 */
-    public void getInstructions(
-            IDisassemblyDMContext context,
-            String filename, 
-            int    linenum, 
-            int    instrtuctionCount,
-            DataRequestMonitor<IInstruction[]> drm);
+	public void getInstructions(IDisassemblyDMContext context, String filename, int linenum, int instrtuctionCount,
+			DataRequestMonitor<IInstruction[]> drm);
 
 	/**
 	 * Gets a block of mixed disassembled code given an address range.
-	 * 
+	 *
 	 * @param context
 	 *            Context of the disassembly code
 	 * @param startAddress
@@ -89,15 +83,12 @@ public interface IDisassembly extends IDsfService {
 	 * @param drm
 	 *            Disassembled code
 	 */
-    public void getMixedInstructions(
-            IDisassemblyDMContext context,
-            BigInteger startAddress, 
-            BigInteger endAddress,
-            DataRequestMonitor<IMixedInstruction[]> drm);
+	public void getMixedInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
+			DataRequestMonitor<IMixedInstruction[]> drm);
 
 	/**
 	 * Gets a block of mixed disassembled code given a filename, line number, and line count.
-	 * 
+	 *
 	 * @param context
 	 *            Context of the disassembly code
 	 * @param filename
@@ -112,11 +103,7 @@ public interface IDisassembly extends IDsfService {
 	 * @param drm
 	 *            Disassembled code
 	 */
-    public void getMixedInstructions(
-            IDisassemblyDMContext context,
-            String filename, 
-            int    linenum, 
-            int    instructionCount,
-            DataRequestMonitor<IMixedInstruction[]> drm);
+	public void getMixedInstructions(IDisassemblyDMContext context, String filename, int linenum, int instructionCount,
+			DataRequestMonitor<IMixedInstruction[]> drm);
 
 }

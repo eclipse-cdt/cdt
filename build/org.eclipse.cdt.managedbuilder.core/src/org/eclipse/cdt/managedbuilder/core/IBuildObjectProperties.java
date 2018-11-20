@@ -23,6 +23,6 @@ import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
  */
 public interface IBuildObjectProperties extends IBuildProperties, IBuildPropertiesRestriction {
 	IBuildPropertyType[] getSupportedTypes();
-	
+
 	IBuildPropertyValue[] getSupportedValues(String typeId);
 }

@@ -63,29 +63,29 @@ public class BaseTestCase extends TestCase {
 	private static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
 	/**
 	 * Indexer timeout used by tests. To avoid this timeout expiring during debugging add
-	 * -Dindexer.timeout=some_large_number to VM arguments of the test launch configuration. 
+	 * -Dindexer.timeout=some_large_number to VM arguments of the test launch configuration.
 	 */
-	protected static final int INDEXER_TIMEOUT_SEC =
-			Integer.parseInt(System.getProperty(INDEXER_TIMEOUT_PROPERTY, DEFAULT_INDEXER_TIMEOUT_SEC));
-	protected static final int INDEXER_TIMEOUT_MILLISEC= INDEXER_TIMEOUT_SEC * 1000;
-	
+	protected static final int INDEXER_TIMEOUT_SEC = Integer
+			.parseInt(System.getProperty(INDEXER_TIMEOUT_PROPERTY, DEFAULT_INDEXER_TIMEOUT_SEC));
+	protected static final int INDEXER_TIMEOUT_MILLISEC = INDEXER_TIMEOUT_SEC * 1000;
+
 	/**
 	 * The GCC version to emulate when running tests.
 	 * We emulate the latest version whose extensions we support.
 	 */
 	protected static final int GCC_MAJOR_VERSION_FOR_TESTS = 8;
 	protected static final int GCC_MINOR_VERSION_FOR_TESTS = 1;
-	
+
 	/**
 	 * This provides the systems new line separator. Use this if you do String comparisons in tests
 	 * instead of hard coding '\n' or '\r\n' respectively.
 	 */
 	protected static final String NL = System.getProperty("line.separator");
-	
+
 	private boolean fExpectFailure;
 	private int fBugNumber;
 	private int fExpectedLoggedNonOK;
-	private Deque<File> filesToDeleteOnTearDown= new ArrayDeque<>();
+	private Deque<File> filesToDeleteOnTearDown = new ArrayDeque<>();
 
 	public BaseTestCase() {
 		super();
@@ -102,9 +102,9 @@ public class BaseTestCase extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		CPPASTNameBase.sAllowRecursionBindings= false;
-		CPPASTNameBase.sAllowNameComputation= false;
-		CModelListener.sSuppressUpdateOfLastRecentlyUsed= true;
+		CPPASTNameBase.sAllowRecursionBindings = false;
+		CPPASTNameBase.sAllowNameComputation = false;
+		CModelListener.sSuppressUpdateOfLastRecentlyUsed = true;
 	}
 
 	@Override
@@ -128,8 +128,7 @@ public class BaseTestCase extends TestCase {
 	}
 
 	protected File nonExistentTempFile(String prefix, String suffix) {
-		File file= new File(System.getProperty("java.io.tmpdir"),
-				prefix + System.currentTimeMillis() + suffix);
+		File file = new File(System.getProperty("java.io.tmpdir"), prefix + System.currentTimeMillis() + suffix);
 		filesToDeleteOnTearDown.add(file);
 		return file;
 	}
@@ -139,8 +138,8 @@ public class BaseTestCase extends TestCase {
 	}
 
 	protected static TestSuite suite(Class clazz, String failingTestPrefix) {
-		TestSuite suite= new TestSuite(clazz);
-		Test failing= getFailingTests(clazz, failingTestPrefix);
+		TestSuite suite = new TestSuite(clazz);
+		Test failing = getFailingTests(clazz, failingTestPrefix);
 		if (failing != null) {
 			suite.addTest(failing);
 		}
@@ -148,15 +147,15 @@ public class BaseTestCase extends TestCase {
 	}
 
 	private static Test getFailingTests(Class clazz, String prefix) {
-		TestSuite suite= new TestSuite("Failing Tests");
-		HashSet names= new HashSet();
-		Class superClass= clazz;
+		TestSuite suite = new TestSuite("Failing Tests");
+		HashSet names = new HashSet();
+		Class superClass = clazz;
 		while (Test.class.isAssignableFrom(superClass) && !TestCase.class.equals(superClass)) {
-			Method[] methods= superClass.getDeclaredMethods();
+			Method[] methods = superClass.getDeclaredMethods();
 			for (Method method : methods) {
 				addFailingMethod(suite, method, names, clazz, prefix);
 			}
-			superClass= superClass.getSuperclass();
+			superClass = superClass.getSuperclass();
 		}
 		if (suite.countTestCases() == 0) {
 			return null;
@@ -165,7 +164,7 @@ public class BaseTestCase extends TestCase {
 	}
 
 	private static void addFailingMethod(TestSuite suite, Method m, Set names, Class clazz, String prefix) {
-		String name= m.getName();
+		String name = m.getName();
 		if (!names.add(name)) {
 			return;
 		}
@@ -176,10 +175,10 @@ public class BaseTestCase extends TestCase {
 			return;
 		}
 		if (Modifier.isPublic(m.getModifiers())) {
-			Class[] parameters= m.getParameterTypes();
-			Class returnType= m.getReturnType();
+			Class[] parameters = m.getParameterTypes();
+			Class returnType = m.getReturnType();
 			if (parameters.length == 0 && returnType.equals(Void.TYPE)) {
-				Test test= TestSuite.createTest(clazz, name);
+				Test test = TestSuite.createTest(clazz, name);
 				((BaseTestCase) test).setExpectFailure(0);
 				suite.addTest(test);
 			}
@@ -188,8 +187,8 @@ public class BaseTestCase extends TestCase {
 
 	@Override
 	public void runBare() throws Throwable {
-		final List<IStatus> statusLog= Collections.synchronizedList(new ArrayList());
-		ILogListener logListener= new ILogListener() {
+		final List<IStatus> statusLog = Collections.synchronizedList(new ArrayList());
+		ILogListener logListener = new ILogListener() {
 			@Override
 			public void logging(IStatus status, String plugin) {
 				if (!status.isOK() && status.getSeverity() != IStatus.INFO) {
@@ -210,30 +209,32 @@ public class BaseTestCase extends TestCase {
 			corePlugin.getLog().addLogListener(logListener);
 		}
 
-		Throwable testThrowable= null;
+		Throwable testThrowable = null;
 		try {
 			try {
 				super.runBare();
 			} catch (Throwable e) {
-				testThrowable= e;
+				testThrowable = e;
 			}
 
 			if (statusLog.size() != fExpectedLoggedNonOK) {
-				StringBuilder msg= new StringBuilder("Expected number (").append(fExpectedLoggedNonOK).append(") of ");
-				msg.append("Non-OK status objects in log differs from actual (").append(statusLog.size()).append(").\n");
-				Throwable cause= null;
+				StringBuilder msg = new StringBuilder("Expected number (").append(fExpectedLoggedNonOK).append(") of ");
+				msg.append("Non-OK status objects in log differs from actual (").append(statusLog.size())
+						.append(").\n");
+				Throwable cause = null;
 				if (!statusLog.isEmpty()) {
 					synchronized (statusLog) {
 						for (IStatus status : statusLog) {
-							IStatus[] ss= {status};
-							ss= status instanceof MultiStatus ? ((MultiStatus) status).getChildren() : ss;
+							IStatus[] ss = { status };
+							ss = status instanceof MultiStatus ? ((MultiStatus) status).getChildren() : ss;
 							for (IStatus s : ss) {
 								msg.append('\t').append(s.getMessage()).append(' ');
 
-								Throwable t= s.getException();
-								cause= cause != null ? cause : t;
+								Throwable t = s.getException();
+								cause = cause != null ? cause : t;
 								if (t != null) {
-									msg.append(t.getMessage() != null ? t.getMessage() : t.getClass().getCanonicalName());
+									msg.append(
+											t.getMessage() != null ? t.getMessage() : t.getClass().getCanonicalName());
 								}
 
 								msg.append("\n");
@@ -241,8 +242,8 @@ public class BaseTestCase extends TestCase {
 						}
 					}
 				}
-				cause= cause != null ? cause : testThrowable;
-				AssertionFailedError afe= new AssertionFailedError(msg.toString());
+				cause = cause != null ? cause : testThrowable;
+				AssertionFailedError afe = new AssertionFailedError(msg.toString());
 				afe.initCause(cause);
 				throw afe;
 			}
@@ -256,57 +257,57 @@ public class BaseTestCase extends TestCase {
 			throw testThrowable;
 	}
 
-    @Override
+	@Override
 	public void run(TestResult result) {
-    	if (!fExpectFailure || Boolean.parseBoolean(System.getProperty("SHOW_EXPECTED_FAILURES"))) {
-    		super.run(result);
-    		return;
-    	}
+		if (!fExpectFailure || Boolean.parseBoolean(System.getProperty("SHOW_EXPECTED_FAILURES"))) {
+			super.run(result);
+			return;
+		}
 
-        result.startTest(this);
+		result.startTest(this);
 
-        TestResult r = new TestResult();
-        super.run(r);
-        if (r.failureCount() == 1) {
-        	TestFailure failure= r.failures().nextElement();
-        	String msg= failure.exceptionMessage();
-        	if (msg != null && msg.startsWith("Method \"" + getName() + "\"")) {
-        		result.addFailure(this, new AssertionFailedError(msg));
-        	}
-        } else if (r.errorCount() == 0 && r.failureCount() == 0) {
-            String err = "Unexpected success of " + getName();
-            if (fBugNumber > 0) {
-                err += ", bug #" + fBugNumber;
-            }
-            result.addFailure(this, new AssertionFailedError(err));
-        }
+		TestResult r = new TestResult();
+		super.run(r);
+		if (r.failureCount() == 1) {
+			TestFailure failure = r.failures().nextElement();
+			String msg = failure.exceptionMessage();
+			if (msg != null && msg.startsWith("Method \"" + getName() + "\"")) {
+				result.addFailure(this, new AssertionFailedError(msg));
+			}
+		} else if (r.errorCount() == 0 && r.failureCount() == 0) {
+			String err = "Unexpected success of " + getName();
+			if (fBugNumber > 0) {
+				err += ", bug #" + fBugNumber;
+			}
+			result.addFailure(this, new AssertionFailedError(err));
+		}
 
-        result.endTest(this);
-    }
+		result.endTest(this);
+	}
 
-    public void setExpectFailure(int bugNumber) {
-    	fExpectFailure= true;
-    	fBugNumber= bugNumber;
-    }
+	public void setExpectFailure(int bugNumber) {
+		fExpectFailure = true;
+		fBugNumber = bugNumber;
+	}
 
-    /**
-     * The last value passed to this method in the body of a testXXX method
-     * will be used to determine whether or not the presence of non-OK status objects
-     * in the log should fail the test. If the logged number of non-OK status objects
-     * differs from the last value passed, the test is failed. If this method is not called
-     * at all, the expected number defaults to zero.
-     * @param count the expected number of logged error and warning messages
-     */
-    public void setExpectedNumberOfLoggedNonOKStatusObjects(int count) {
-    	fExpectedLoggedNonOK= count;
-    }
+	/**
+	 * The last value passed to this method in the body of a testXXX method
+	 * will be used to determine whether or not the presence of non-OK status objects
+	 * in the log should fail the test. If the logged number of non-OK status objects
+	 * differs from the last value passed, the test is failed. If this method is not called
+	 * at all, the expected number defaults to zero.
+	 * @param count the expected number of logged error and warning messages
+	 */
+	public void setExpectedNumberOfLoggedNonOKStatusObjects(int count) {
+		fExpectedLoggedNonOK = count;
+	}
 
-    /**
-     * Some test steps need synchronizing against a CModel event. This class
-     * is a very basic means of doing that.
-     */
-    static protected class ModelJoiner implements IElementChangedListener {
-		private final boolean[] changed= new boolean[1];
+	/**
+	 * Some test steps need synchronizing against a CModel event. This class
+	 * is a very basic means of doing that.
+	 */
+	static protected class ModelJoiner implements IElementChangedListener {
+		private final boolean[] changed = new boolean[1];
 
 		public ModelJoiner() {
 			CoreModel.getDefault().addElementChangedListener(this);
@@ -314,14 +315,14 @@ public class BaseTestCase extends TestCase {
 
 		public void clear() {
 			synchronized (changed) {
-				changed[0]= false;
+				changed[0] = false;
 				changed.notifyAll();
 			}
 		}
 
 		public void join() throws CoreException {
 			try {
-				synchronized(changed) {
+				synchronized (changed) {
 					while (!changed[0]) {
 						changed.wait();
 					}
@@ -342,13 +343,13 @@ public class BaseTestCase extends TestCase {
 				return;
 
 			synchronized (changed) {
-				changed[0]= true;
+				changed[0] = true;
 				changed.notifyAll();
 			}
 		}
 	}
 
-    public static void waitForIndexer(ICProject project) throws InterruptedException {
+	public static void waitForIndexer(ICProject project) throws InterruptedException {
 		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
 		assertTrue(CCoreInternals.getPDOMManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
 	}
@@ -358,7 +359,7 @@ public class BaseTestCase extends TestCase {
 	}
 
 	// Assertion helpers
-	
+
 	protected static <T> T assertInstance(Object o, Class<T> clazz, Class... cs) {
 		assertNotNull("Expected object of " + clazz.getName() + " but got a null value", o);
 		assertTrue("Expected " + clazz.getName() + " but got " + o.getClass().getName(), clazz.isInstance(o));
@@ -368,13 +369,13 @@ public class BaseTestCase extends TestCase {
 		}
 		return clazz.cast(o);
 	}
-	
+
 	protected static void assertValue(IValue value, long expectedValue) {
 		assertNotNull(value);
 		assertTrue(value.numberValue() instanceof Long);
 		assertEquals(expectedValue, value.numberValue().longValue());
 	}
-	
+
 	protected static void assertVariableValue(IVariable var, long expectedValue) {
 		assertValue(var.getInitialValue(), expectedValue);
 	}
@@ -382,7 +383,7 @@ public class BaseTestCase extends TestCase {
 	protected static String formatForPrinting(IASTName name) {
 		String signature = name.getRawSignature();
 		boolean saved = CPPASTNameBase.sAllowNameComputation;
-			CPPASTNameBase.sAllowNameComputation = true;
+		CPPASTNameBase.sAllowNameComputation = true;
 		try {
 			String nameStr = name.toString();
 			if (signature.replace(" ", "").equals(nameStr.replace(" ", "")))

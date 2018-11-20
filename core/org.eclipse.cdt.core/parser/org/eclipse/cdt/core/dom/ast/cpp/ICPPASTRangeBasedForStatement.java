@@ -71,7 +71,7 @@ public interface ICPPASTRangeBasedForStatement
 	/**
 	 * Not allowed on frozen AST.
 	 */
-    void setInitializerClause(IASTInitializerClause statement);
+	void setInitializerClause(IASTInitializerClause statement);
 
 	/**
 	 * Not allowed on frozen AST.

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Clears any breakpoint set on given line
- * 
+ *
  * <pre>
  *    C: clear {line}
  *    R: ok
@@ -28,12 +28,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAClearBreakpointCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAClearBreakpointCommand(PDAVirtualMachineDMContext context, int line) {
-        super(context, "clear " + (line - 1));
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAClearBreakpointCommand(PDAVirtualMachineDMContext context, int line) {
+		super(context, "clear " + (line - 1));
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

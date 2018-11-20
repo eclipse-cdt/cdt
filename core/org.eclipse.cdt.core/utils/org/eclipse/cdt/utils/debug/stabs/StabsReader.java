@@ -32,8 +32,9 @@ public class StabsReader implements ISymbolReader {
 	String currentFile;
 
 	public StabsReader(byte[] data, byte[] stabstr, boolean littleEndian) {
-		this(data,stabstr,littleEndian,false);
+		this(data, stabstr, littleEndian, false);
 	}
+
 	/**
 	 * @since 5.2
 	 */
@@ -49,7 +50,7 @@ public class StabsReader implements ISymbolReader {
 	public String[] getSourceFiles() {
 		if (!parsed) {
 			parse();
-			
+
 			parsed = true;
 
 			files = new String[fileList.size()];
@@ -75,15 +76,11 @@ public class StabsReader implements ISymbolReader {
 
 	private int read_4_bytes(byte[] bytes, int offset) {
 		if (isLe) {
-			return (((bytes[offset + 3] & 0xff) << 24)
-				| ((bytes[offset + 2] & 0xff) << 16)
-				| ((bytes[offset + 1] & 0xff) << 8)
-				| (bytes[offset] & 0xff));
+			return (((bytes[offset + 3] & 0xff) << 24) | ((bytes[offset + 2] & 0xff) << 16)
+					| ((bytes[offset + 1] & 0xff) << 8) | (bytes[offset] & 0xff));
 		}
-		return (((bytes[offset] & 0xff) << 24)
-			| ((bytes[offset + 1] & 0xff) << 16)
-			| ((bytes[offset + 2] & 0xff) << 8)
-			| (bytes[offset + 3] & 0xff));
+		return (((bytes[offset] & 0xff) << 24) | ((bytes[offset + 1] & 0xff) << 16) | ((bytes[offset + 2] & 0xff) << 8)
+				| (bytes[offset + 3] & 0xff));
 	}
 
 	private short read_2_bytes(byte[] bytes, int offset) {
@@ -92,32 +89,26 @@ public class StabsReader implements ISymbolReader {
 		}
 		return (short) (((bytes[offset] & 0xff) << 8) | (bytes[offset + 1] & 0xff));
 	}
+
 	private long read_8_bytes(byte[] bytes, int offset) throws IndexOutOfBoundsException {
-	
+
 		if (isLe) {
-			return (((bytes[offset + 7] & 0xff) << 56)
-				| ((bytes[offset +6] & 0xff) << 48)
-				| ((bytes[offset +5] & 0xff) << 40)
-				| ((bytes[offset +4] & 0xff) << 32)
-				| ((bytes[offset +3] & 0xff) << 24)
-				| ((bytes[offset +2] & 0xff) << 16)
-				| ((bytes[offset +1] & 0xff) << 8)
-				| (bytes[offset +0] & 0xff));
+			return (((bytes[offset + 7] & 0xff) << 56) | ((bytes[offset + 6] & 0xff) << 48)
+					| ((bytes[offset + 5] & 0xff) << 40) | ((bytes[offset + 4] & 0xff) << 32)
+					| ((bytes[offset + 3] & 0xff) << 24) | ((bytes[offset + 2] & 0xff) << 16)
+					| ((bytes[offset + 1] & 0xff) << 8) | (bytes[offset + 0] & 0xff));
 		}
-	
-		return (((bytes[offset +0] & 0xff) << 56)
-			| ((bytes[offset +1] & 0xff) << 48)
-			| ((bytes[offset +2] & 0xff) << 40)
-			| ((bytes[offset +3] & 0xff) << 32)
-			| ((bytes[offset +4] & 0xff) << 24)
-			| ((bytes[offset +5] & 0xff) << 16)
-			| ((bytes[offset +6] & 0xff) << 8)
-			| (bytes[offset +7] & 0xff));
+
+		return (((bytes[offset + 0] & 0xff) << 56) | ((bytes[offset + 1] & 0xff) << 48)
+				| ((bytes[offset + 2] & 0xff) << 40) | ((bytes[offset + 3] & 0xff) << 32)
+				| ((bytes[offset + 4] & 0xff) << 24) | ((bytes[offset + 5] & 0xff) << 16)
+				| ((bytes[offset + 6] & 0xff) << 8) | (bytes[offset + 7] & 0xff));
 	}
+
 	private String fixUpPath(String path) {
 		// some compilers generate extra back slashes
-		path = path.replaceAll("\\\\\\\\", "\\\\");  //$NON-NLS-1$//$NON-NLS-2$
-		
+		path = path.replaceAll("\\\\\\\\", "\\\\"); //$NON-NLS-1$//$NON-NLS-2$
+
 		// translate any cygwin drive paths, e.g. //G/System/main.cpp or /cygdrive/c/system/main.c
 		if (path.startsWith("/cygdrive/") && ('/' == path.charAt(11))) { //$NON-NLS-1$
 			char driveLetter = path.charAt(10);
@@ -143,13 +134,13 @@ public class StabsReader implements ISymbolReader {
 
 			path = buf.toString();
 		}
-		
+
 		return path;
 	}
-	
+
 	private void parse() {
 		int size = is64 ? StabConstant.SIZE_64 : StabConstant.SIZE;
-		long nstab =  stabData.length / size;
+		long nstab = stabData.length / size;
 		int i, offset;
 		String holder = null;
 		long stroff = 0;
@@ -162,7 +153,7 @@ public class StabsReader implements ISymbolReader {
 
 			// get the type; 1 byte;
 			type = 0xff & stabData[offset + 4];
-			
+
 			// ignoring anything other than N_SO and N_SOL because these are source or
 			// object file entries
 			if (type == StabConstant.N_SO || type == StabConstant.N_SOL) {
@@ -172,7 +163,7 @@ public class StabsReader implements ISymbolReader {
 				desc = read_2_bytes(stabData, offset + 6);
 				// get the value
 				value = is64 ? read_8_bytes(stabData, offset + 8) : read_4_bytes(stabData, offset + 8);
-				
+
 				// get the offset for the string; 4 bytes
 				stroff = read_4_bytes(stabData, offset);
 
@@ -202,54 +193,53 @@ public class StabsReader implements ISymbolReader {
 				}
 				parseStabEntry(field, type, other, desc, value);
 			}
-		}		
+		}
 	}
 
 	void parseStabEntry(String field, int type, int other, short desc, long value) {
 		// Parse the string
 		switch (type) {
-			case StabConstant.N_SOL :
-				// include file
-				if (field != null && field.length() > 0) {
-					
-					field = fixUpPath(field);
+		case StabConstant.N_SOL:
+			// include file
+			if (field != null && field.length() > 0) {
 
-					if (!fileList.contains(field))
-						fileList.add(field);					
-				}
-				break;
+				field = fixUpPath(field);
 
-			case StabConstant.N_SO :
-				// source file
-				if (field != null && field.length() > 0) {
-					// if it ends with "/" then the next entry will be the rest of the string.
-					if (field.endsWith("/")) { //$NON-NLS-1$
-						currentFile = field;							
-					} else {
-						if (currentFile != null) {
-							// if this entry is an absolute path then just throw away the existing currentFile
-							if (new File(field).isAbsolute()) {
-								currentFile = field;
-							} else {
-								currentFile += field;
-							}
-						} else {
+				if (!fileList.contains(field))
+					fileList.add(field);
+			}
+			break;
+
+		case StabConstant.N_SO:
+			// source file
+			if (field != null && field.length() > 0) {
+				// if it ends with "/" then the next entry will be the rest of the string.
+				if (field.endsWith("/")) { //$NON-NLS-1$
+					currentFile = field;
+				} else {
+					if (currentFile != null) {
+						// if this entry is an absolute path then just throw away the existing currentFile
+						if (new File(field).isAbsolute()) {
 							currentFile = field;
+						} else {
+							currentFile += field;
 						}
-
-
-						currentFile = fixUpPath(currentFile);
-
-						if (!fileList.contains(currentFile))
-							fileList.add(currentFile);					
-
-						currentFile = null;
+					} else {
+						currentFile = field;
 					}
+
+					currentFile = fixUpPath(currentFile);
+
+					if (!fileList.contains(currentFile))
+						fileList.add(currentFile);
+
+					currentFile = null;
 				}
+			}
 			break;
 		}
 	}
-	
+
 	/**
 	 * @since 5.2
 	 */

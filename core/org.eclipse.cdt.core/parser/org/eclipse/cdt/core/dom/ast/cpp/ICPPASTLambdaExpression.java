@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -20,27 +20,30 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 
 /**
  * Lambda expression, introduced in C++11.
- * 
+ *
  * @since 5.3
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTLambdaExpression extends ICPPASTExpression, IASTImplicitNameOwner {
 	ASTNodeProperty CAPTURE = new ASTNodeProperty("ICPPASTLambdaExpression - CAPTURE [ICPPASTCapture]"); //$NON-NLS-1$
-	ASTNodeProperty DECLARATOR = new ASTNodeProperty("ICPPASTLambdaExpression - DECLARATOR [ICPPASTFunctionDeclarator]"); //$NON-NLS-1$
+	ASTNodeProperty DECLARATOR = new ASTNodeProperty(
+			"ICPPASTLambdaExpression - DECLARATOR [ICPPASTFunctionDeclarator]"); //$NON-NLS-1$
 	ASTNodeProperty BODY = new ASTNodeProperty("ICPPASTLambdaExpression - BODY [IASTCompoundStatement]"); //$NON-NLS-1$
 
 	/**
 	 * The capture default can be by copy, by reference or unspecified.
 	 */
-	enum CaptureDefault {UNSPECIFIED, BY_COPY, BY_REFERENCE}
+	enum CaptureDefault {
+		UNSPECIFIED, BY_COPY, BY_REFERENCE
+	}
 
 	/**
 	 * Returns the capture default for this lambda expression.
 	 */
 	CaptureDefault getCaptureDefault();
-	
-	/** 
+
+	/**
 	 * Returns the array of captures for this lambda expression.
 	 */
 	ICPPASTCapture[] getCaptures();
@@ -55,13 +58,13 @@ public interface ICPPASTLambdaExpression extends ICPPASTExpression, IASTImplicit
 	 * in case it was not specified.
 	 */
 	ICPPASTFunctionDeclarator getDeclarator();
-	
+
 	/**
 	 * Returns an implicit name that represents the implicit function call operator of
 	 * the closure.
 	 */
 	IASTImplicitName getFunctionCallOperatorName();
-	
+
 	/**
 	 * Returns the compound statement of this lambda expression. Can be <code>null</code>
 	 * when creating AST for content assist.
@@ -79,7 +82,7 @@ public interface ICPPASTLambdaExpression extends ICPPASTExpression, IASTImplicit
 	 * @see #getCaptures()
 	 */
 	void addCapture(ICPPASTCapture capture);
-	
+
 	/**
 	 * Not allowed on frozen AST.
 	 * @see #getDeclarator()

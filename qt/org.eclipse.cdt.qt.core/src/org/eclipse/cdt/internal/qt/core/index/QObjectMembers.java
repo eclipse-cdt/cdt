@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class QObjectMembers<T extends IQObject.IMember> implements IQObject.IMembers<T>  {
+public class QObjectMembers<T extends IQObject.IMember> implements IQObject.IMembers<T> {
 
 	private final List<T> all;
 	private final Collection<T> locals;
@@ -70,9 +70,9 @@ public class QObjectMembers<T extends IQObject.IMember> implements IQObject.IMem
 					//      o1 o2
 
 					ArrayList<T> filtered = new ArrayList<T>(all.size());
-					for(T member : all) {
+					for (T member : all) {
 						boolean isOverridden = false;
-						for(Iterator<T> i = filtered.iterator(); !isOverridden && i.hasNext(); )
+						for (Iterator<T> i = filtered.iterator(); !isOverridden && i.hasNext();)
 							isOverridden = member.isOverride(i.next());
 						if (!isOverridden)
 							filtered.add(member);

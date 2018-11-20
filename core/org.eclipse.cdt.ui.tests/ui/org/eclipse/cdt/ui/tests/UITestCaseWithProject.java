@@ -48,34 +48,35 @@ public class UITestCaseWithProject extends BaseUITestCase {
 	protected IFile currentIFile;
 	IProgressMonitor monitor = new NullProgressMonitor();
 	static FileManager fileManager = new FileManager();
-	
+
 	/**
 	 * Override for c++ (i.e. at least one c++ test)
-	 * 
+	 *
 	 * @return is c++ tests
 	 */
 	public boolean isCpp() {
 		return false;
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		removeLeftOverProjects();
 		cproject = createProject(isCpp());
 		tmpDir = cproject.getProject().getLocation().makeAbsolute().toFile();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		if (cproject != null) {
-			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 		}
 
 		super.tearDown();
 	}
-	
+
 	private void removeLeftOverProjects() throws CoreException {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject[] projects = workspace.getRoot().getProjects();
@@ -98,9 +99,9 @@ public class UITestCaseWithProject extends BaseUITestCase {
 				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					// Create the cproject
-					ICProject cproject = cpp ?
-							CProjectHelper.createCCProject(projectName, null, IPDOMManager.ID_NO_INDEXER) :
-							CProjectHelper.createCProject(projectName, null, IPDOMManager.ID_NO_INDEXER);
+					ICProject cproject = cpp
+							? CProjectHelper.createCCProject(projectName, null, IPDOMManager.ID_NO_INDEXER)
+							: CProjectHelper.createCProject(projectName, null, IPDOMManager.ID_NO_INDEXER);
 					cprojects[0] = cproject;
 				}
 			}, null);
@@ -124,7 +125,7 @@ public class UITestCaseWithProject extends BaseUITestCase {
 		CCorePlugin.getIndexManager().reindex(cproject);
 		waitForIndexer(cproject);
 	}
-	
+
 	protected int pos2Line(int pos) throws IOException {
 		FileInputStream st = new FileInputStream(currentFile);
 		try {
@@ -143,7 +144,7 @@ public class UITestCaseWithProject extends BaseUITestCase {
 		}
 		return 0;
 	}
-	
+
 	public File loadCode(String code, boolean cpp) {
 		String fileKey = "@file:";
 		int indf = code.indexOf(fileKey);

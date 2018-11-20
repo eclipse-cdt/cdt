@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -31,9 +31,10 @@ public class DisassemblyWithSourcePosition extends DisassemblyPosition {
 	 * @param addressOffset
 	 * @param addressLength
 	 * @param functionOffset
-	 * @param opcode 
+	 * @param opcode
 	 */
-	public DisassemblyWithSourcePosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength, String functionOffset, BigInteger opcode, String file, int lineNr) {
+	public DisassemblyWithSourcePosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength,
+			String functionOffset, BigInteger opcode, String file, int lineNr) {
 		super(offset, length, addressOffset, addressLength, functionOffset, opcode);
 		fFile = file;
 		fLine = lineNr;
@@ -54,7 +55,7 @@ public class DisassemblyWithSourcePosition extends DisassemblyPosition {
 	 */
 	@Override
 	public String toString() {
-		return super.toString() + "->["+fFile + ':' + fLine + ']';  //$NON-NLS-1$
+		return super.toString() + "->[" + fFile + ':' + fLine + ']'; //$NON-NLS-1$
 	}
-	
+
 }

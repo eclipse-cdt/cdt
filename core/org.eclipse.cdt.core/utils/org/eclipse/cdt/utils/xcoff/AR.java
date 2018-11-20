@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.CCorePlugin;
  *  of these objects can then be turned into an XCOFF32 object for performing XCOFF32
  *  class operations.
  *  @see MemberHeader
- * 
+ *
  * @author vhirsl
  */
 public class AR {
@@ -38,24 +38,24 @@ public class AR {
 
 	/**
 	 * Content of an archive in AIX XCOFF32 format
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public class ARHeader {
 		private final static int SAIAMAG = 8;
-		
+
 		private byte[] fl_magic = new byte[SAIAMAG];// Archive magic string
-		private byte[] fl_memoff = new byte[20];	// Offset to member table
-		private byte[] fl_gstoff = new byte[20];	// Offset to global symbol table
-		private byte[] fl_gst64off = new byte[20];	// Offset to global symbol table for 64-bit objects  
-		private byte[] fl_fstmoff = new byte[20];	// Offset to first archive member
-		private byte[] fl_lstmoff = new byte[20];	// Offset to last archive member
-		private byte[] fl_freeoff = new byte[20];	// Offset to first member on free list
-		
+		private byte[] fl_memoff = new byte[20]; // Offset to member table
+		private byte[] fl_gstoff = new byte[20]; // Offset to global symbol table
+		private byte[] fl_gst64off = new byte[20]; // Offset to global symbol table for 64-bit objects
+		private byte[] fl_fstmoff = new byte[20]; // Offset to first archive member
+		private byte[] fl_lstmoff = new byte[20]; // Offset to last archive member
+		private byte[] fl_freeoff = new byte[20]; // Offset to first member on free list
+
 		private long fstmoff = 0;
 		private long lstmoff = 0;
-//		private long memoff = 0;
-		
+		//		private long memoff = 0;
+
 		public ARHeader() throws IOException {
 			try {
 				RandomAccessFile file = getRandomAccessFile();
@@ -70,9 +70,9 @@ public class AR {
 					file.read(fl_freeoff);
 					fstmoff = Long.parseLong(removeBlanks(new String(fl_fstmoff)));
 					lstmoff = Long.parseLong(removeBlanks(new String(fl_lstmoff)));
-//					memoff = Long.parseLong(removeBlanks(new String(fl_memoff)));
+					//					memoff = Long.parseLong(removeBlanks(new String(fl_memoff)));
 				}
-				
+
 			} catch (IOException e) {
 				dispose();
 				CCorePlugin.log(e);
@@ -89,7 +89,7 @@ public class AR {
 	}
 
 	/**
-	 *  Creates a new <code>AR</code> object from the contents of 
+	 *  Creates a new <code>AR</code> object from the contents of
 	 *  the given file.
 	 *
 	 *  @param filename The file to process.
@@ -125,43 +125,36 @@ public class AR {
 	}
 
 	public static boolean isARHeader(byte[] ident) {
-		if (ident == null || ident.length < 8
-			|| ident[0] != '<'
-			|| ident[1] != 'b'
-			|| ident[2] != 'i'
-			|| ident[3] != 'g'
-			|| ident[4] != 'a'
-			|| ident[5] != 'f'
-			|| ident[6] != '>'
-			|| ident[7] != '\n')
+		if (ident == null || ident.length < 8 || ident[0] != '<' || ident[1] != 'b' || ident[2] != 'i'
+				|| ident[3] != 'g' || ident[4] != 'a' || ident[5] != 'f' || ident[6] != '>' || ident[7] != '\n')
 			return false;
 		return true;
 	}
 
 	/**
-	 * The <code>ARHeader</code> class is used to store the per-object file 
+	 * The <code>ARHeader</code> class is used to store the per-object file
 	 *  archive headers.  It can also create an XCOFF32 object for inspecting
 	 *  the object file data.
 	 */
 	public class MemberHeader {
-		byte[] ar_size = new byte[20];		// File member size - decimal
-		byte[] ar_nxtmem = new byte[20];	// Next member offset - decimal
-		byte[] ar_prvmem = new byte[20];	// Previous member offset - decimal
-		byte[] ar_date = new byte[12];		// File member date - decimal
-		byte[] ar_uid = new byte[12];		// File member userid - decimal
-		byte[] ar_gid = new byte[12];		// File member group id - decimal
-		byte[] ar_mode = new byte[12];		// File member mode - octal
-		byte[] ar_namlen = new byte[4];		// File member name length -decimal
-		byte[] ar_name;						// Start of member name
-		byte[] ar_fmag = new byte[2];		// AIAFMAG - string to end "`\n"
-		
+		byte[] ar_size = new byte[20]; // File member size - decimal
+		byte[] ar_nxtmem = new byte[20]; // Next member offset - decimal
+		byte[] ar_prvmem = new byte[20]; // Previous member offset - decimal
+		byte[] ar_date = new byte[12]; // File member date - decimal
+		byte[] ar_uid = new byte[12]; // File member userid - decimal
+		byte[] ar_gid = new byte[12]; // File member group id - decimal
+		byte[] ar_mode = new byte[12]; // File member mode - octal
+		byte[] ar_namlen = new byte[4]; // File member name length -decimal
+		byte[] ar_name; // Start of member name
+		byte[] ar_fmag = new byte[2]; // AIAFMAG - string to end "`\n"
+
 		// converted values
 		long size;
 		long nxtmem;
 		long prvmem;
 		int namlen;
 		String name;
-		
+
 		long file_offset;
 
 		/**
@@ -175,39 +168,39 @@ public class AR {
 
 		/**
 		 * Look up the name stored in the archive's string table based
-		 * on the offset given. 
+		 * on the offset given.
 		 *
 		 * Maintains <code>file</code> file location.
 		 *
-		 * @param offset 
+		 * @param offset
 		 *    Offset into the string table for first character of the name.
-		 * @throws IOException 
+		 * @throws IOException
 		 *    <code>offset</code> not in string table bounds.
 		 */
-//		private String nameFromStringTable(long offset) throws IOException {
-//			StringBuilder name = new StringBuilder(0);
-//			long pos = file.getFilePointer();
-//
-//			try {
-//				if (strtbl_pos != -1) {
-//					byte temp;
-//					file.seek(strtbl_pos + offset);
-//					while ((temp = file.readByte()) != '\n')
-//						name.append((char) temp);
-//				}
-//			} finally {
-//				file.seek(pos);
-//			}
-//
-//			return name.toString();
-//		}
+		//		private String nameFromStringTable(long offset) throws IOException {
+		//			StringBuilder name = new StringBuilder(0);
+		//			long pos = file.getFilePointer();
+		//
+		//			try {
+		//				if (strtbl_pos != -1) {
+		//					byte temp;
+		//					file.seek(strtbl_pos + offset);
+		//					while ((temp = file.readByte()) != '\n')
+		//						name.append((char) temp);
+		//				}
+		//			} finally {
+		//				file.seek(pos);
+		//			}
+		//
+		//			return name.toString();
+		//		}
 
 		/**
-		 * Creates a new archive header object.  
+		 * Creates a new archive header object.
 		 *
 		 * Assumes that file is already at the correct location in the file.
 		 *
-		 * @throws IOException 
+		 * @throws IOException
 		 *    There was an error processing the header data from the file.
 		 */
 		public MemberHeader() throws IOException {
@@ -232,7 +225,7 @@ public class AR {
 			nxtmem = Long.parseLong(removeBlanks(new String(ar_nxtmem)));
 			prvmem = Long.parseLong(removeBlanks(new String(ar_prvmem)));
 			name = new String(ar_name, 0, namlen);
-			
+
 			//
 			// Save this location so we can create the XCOFF32 object later.
 			//
@@ -251,7 +244,7 @@ public class AR {
 		public long getSize() {
 			return size;
 		}
-		
+
 		public String getArchiveName() {
 			return filename;
 		}
@@ -259,7 +252,7 @@ public class AR {
 		public long getObjectDataOffset() {
 			return file_offset;
 		}
-		
+
 		public byte[] getObjectData() throws IOException {
 			byte[] temp = new byte[(int) size];
 			RandomAccessFile file = getRandomAccessFile();
@@ -285,7 +278,7 @@ public class AR {
 				file.seek(pos);
 				aHeader = new MemberHeader();
 				v.add(aHeader);
-				if (pos == 0 || pos == header.lstmoff) {	// end of double linked list
+				if (pos == 0 || pos == header.lstmoff) { // end of double linked list
 					break;
 				}
 			}
@@ -296,8 +289,8 @@ public class AR {
 
 	/**
 	 *  Get an array of all the object file headers for this archive.
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 *    Unable to process the archive file.
 	 * @return An array of headers, one for each object within the archive.
 	 * @see ARHeader
@@ -355,7 +348,7 @@ public class AR {
 		return extractFiles(outdir, null);
 	}
 
-	protected RandomAccessFile getRandomAccessFile () throws IOException {
+	protected RandomAccessFile getRandomAccessFile() throws IOException {
 		if (file == null) {
 			file = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 		}
@@ -373,4 +366,3 @@ public class AR {
 		}
 	}
 }
-

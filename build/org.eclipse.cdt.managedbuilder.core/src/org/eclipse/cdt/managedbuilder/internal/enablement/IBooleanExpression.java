@@ -20,10 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 
 public interface IBooleanExpression {
-	public boolean evaluate(IResourceInfo rcInfo, 
-            IHoldsOptions holder, 
-            IOption option);
-	public boolean evaluate(IResourceInfo rcInfo, 
-            IHoldsOptions holder, 
-            IOptionCategory category);
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOption option);
+
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOptionCategory category);
 }

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.rewrite;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -25,7 +25,7 @@ import org.eclipse.text.edits.ReplaceEdit;
  * @since 5.0
  */
 public abstract class MacroExpansionExplorer {
-	
+
 	/**
 	 * Representation of a single expansion step or a complete expansion.
 	 */
@@ -34,6 +34,7 @@ public abstract class MacroExpansionExplorer {
 		 * Returns the code before this step.
 		 */
 		String getCodeBeforeStep();
+
 		/**
 		 * Returns the code after this step.
 		 */
@@ -44,20 +45,20 @@ public abstract class MacroExpansionExplorer {
 		 * this step to the code after this step.
 		 */
 		ReplaceEdit[] getReplacements();
-		
+
 		/**
 		 * Returns the macro that gets expanded in this step, or <code>null</code> for
-		 * a step representing a full expansion. 
+		 * a step representing a full expansion.
 		 */
 		IMacroBinding getExpandedMacro();
-		
+
 		/**
-		 * Returns the location of the macro-definition that gets expanded in this step, 
-		 * or <code>null</code> for built-in macros or for a step representing a full expansion. 
+		 * Returns the location of the macro-definition that gets expanded in this step,
+		 * or <code>null</code> for built-in macros or for a step representing a full expansion.
 		 */
 		IASTFileLocation getLocationOfExpandedMacroDefinition();
 	}
-	
+
 	/**
 	 * Creates a macro expansion explorer for a given file location in a translation unit.
 	 */
@@ -66,7 +67,7 @@ public abstract class MacroExpansionExplorer {
 	}
 
 	/**
-	 * Creates a macro expansion explorer for a given region in the outermost file of a 
+	 * Creates a macro expansion explorer for a given region in the outermost file of a
 	 * translation unit.
 	 */
 	public static MacroExpansionExplorer create(IASTTranslationUnit tu, IRegion loc) {
@@ -83,7 +84,7 @@ public abstract class MacroExpansionExplorer {
 	 * explorer.
 	 */
 	public abstract int getExpansionStepCount();
-	
+
 	/**
 	 * Returns a description for the requested step within the expansion of the region of this
 	 * expansion explorer.

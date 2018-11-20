@@ -51,7 +51,8 @@ import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
  *
  * @since 5.0
  */
-public abstract class AbstractSourceViewerInformationControl extends org.eclipse.jface.text.AbstractInformationControl implements IInformationControlExtension2, DisposeListener {
+public abstract class AbstractSourceViewerInformationControl extends org.eclipse.jface.text.AbstractInformationControl
+		implements IInformationControlExtension2, DisposeListener {
 
 	private ISourceViewer fSourceViewer;
 	private Color fBackgroundColor;
@@ -94,43 +95,44 @@ public abstract class AbstractSourceViewerInformationControl extends org.eclipse
 	}
 
 	private void initializeColors() {
-		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		RGB bgRGB;
 		if (store.getBoolean(PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT)) {
-			bgRGB= SourceViewerInformationControl.getVisibleBackgroundColor(getShell().getDisplay());
+			bgRGB = SourceViewerInformationControl.getVisibleBackgroundColor(getShell().getDisplay());
 		} else {
-			bgRGB= PreferenceConverter.getColor(store, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR);
+			bgRGB = PreferenceConverter.getColor(store, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR);
 		}
 		if (bgRGB != null) {
-			fBackgroundColor= new Color(getShell().getDisplay(), bgRGB);
-			fIsSystemBackgroundColor= false;
+			fBackgroundColor = new Color(getShell().getDisplay(), bgRGB);
+			fIsSystemBackgroundColor = false;
 		} else {
-			fBackgroundColor= getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-			fIsSystemBackgroundColor= true;
+			fBackgroundColor = getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			fIsSystemBackgroundColor = true;
 		}
 	}
-	
+
 	@Override
 	public void createContent(Composite parent) {
-		Composite content= new Composite(parent, SWT.NONE);
-		final GridLayout gridLayout= new GridLayout();
-		gridLayout.marginWidth= 0;
-		gridLayout.marginHeight= 0;
-		gridLayout.verticalSpacing= 0;
+		Composite content = new Composite(parent, SWT.NONE);
+		final GridLayout gridLayout = new GridLayout();
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		gridLayout.verticalSpacing = 0;
 		content.setLayout(gridLayout);
 
 		if (hasHeader()) {
 			createTitleLabel(content);
 		}
-		fSourceViewer= createSourceViewer(content, SWT.NONE);
+		fSourceViewer = createSourceViewer(content, SWT.NONE);
 
-		final StyledText text= fSourceViewer.getTextWidget();
+		final StyledText text = fSourceViewer.getTextWidget();
 		text.addKeyListener(new KeyListener() {
 			@Override
-			public void keyPressed(KeyEvent e)  {
+			public void keyPressed(KeyEvent e) {
 				if (e.character == 0x1B) // ESC
 					dispose();
 			}
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 				// do nothing
@@ -139,38 +141,39 @@ public abstract class AbstractSourceViewerInformationControl extends org.eclipse
 
 		addDisposeListener(this);
 	}
-	
+
 	protected final ISourceViewer createSourceViewer(Composite parent, int style) {
-		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-		SourceViewer sourceViewer= new CSourceViewer(parent, null, null, false, style, store);
-		CTextTools tools= CUIPlugin.getDefault().getTextTools();
-		sourceViewer.configure(new SimpleCSourceViewerConfiguration(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING, false));
+		IPreferenceStore store = CUIPlugin.getDefault().getCombinedPreferenceStore();
+		SourceViewer sourceViewer = new CSourceViewer(parent, null, null, false, style, store);
+		CTextTools tools = CUIPlugin.getDefault().getTextTools();
+		sourceViewer.configure(new SimpleCSourceViewerConfiguration(tools.getColorManager(), store, null,
+				ICPartitions.C_PARTITIONING, false));
 		sourceViewer.setEditable(false);
 
-		fText= sourceViewer.getTextWidget();
-		GridData gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
+		fText = sourceViewer.getTextWidget();
+		GridData gd = new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
 		fText.setLayoutData(gd);
 		initializeColors();
 		fText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fText.setBackground(fBackgroundColor);
-		
-		fTextFont= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
+
+		fTextFont = JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
 		fText.setFont(fTextFont);
 
 		return sourceViewer;
 	}
 
 	private void createTitleLabel(Composite parent) {
-		fTitleLabel= new Label(parent, SWT.LEFT);
+		fTitleLabel = new Label(parent, SWT.LEFT);
 		fTitleLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		Label separator= new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		fTitleLabel.setFont(JFaceResources.getDialogFont());
 
-		Display display= parent.getDisplay();
-		Color foreground= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-		Color background= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		Display display = parent.getDisplay();
+		Color foreground = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		Color background = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 		fTitleLabel.setForeground(foreground);
 		fTitleLabel.setBackground(background);
 	}
@@ -183,7 +186,7 @@ public abstract class AbstractSourceViewerInformationControl extends org.eclipse
 
 	/**
 	 * Returns the source viewer.
-	 * 
+	 *
 	 * @return the source viewer.
 	 */
 	protected final ISourceViewer getSourceViewer() {
@@ -197,7 +200,7 @@ public abstract class AbstractSourceViewerInformationControl extends org.eclipse
 			return;
 		}
 
-		IDocument doc= new Document(content);
+		IDocument doc = new Document(content);
 		CUIPlugin.getDefault().getTextTools().setupCDocument(doc);
 		fSourceViewer.setDocument(doc);
 	}
@@ -205,7 +208,7 @@ public abstract class AbstractSourceViewerInformationControl extends org.eclipse
 	@Override
 	public void setInput(Object input) {
 		if (input instanceof String)
-			setInformation((String)input);
+			setInformation((String) input);
 		else
 			setInformation(null);
 	}
@@ -227,7 +230,7 @@ public abstract class AbstractSourceViewerInformationControl extends org.eclipse
 	 */
 	@Override
 	public void widgetDisposed(DisposeEvent event) {
-		fSourceViewer= null;
+		fSourceViewer = null;
 	}
 
 	@Override
@@ -243,10 +246,10 @@ public abstract class AbstractSourceViewerInformationControl extends org.eclipse
 
 	@Override
 	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
-		GC gc= new GC(fText);
+		GC gc = new GC(fText);
 		gc.setFont(fTextFont);
-		int width= gc.getFontMetrics().getAverageCharWidth();
-		int height= gc.getFontMetrics().getHeight();
+		int width = gc.getFontMetrics().getAverageCharWidth();
+		int height = gc.getFontMetrics().getHeight();
 		gc.dispose();
 
 		return new Point(widthInChars * width, heightInChars * height);
@@ -255,19 +258,19 @@ public abstract class AbstractSourceViewerInformationControl extends org.eclipse
 	@Override
 	public Point computeSizeHint() {
 		// compute the preferred size
-		int x= SWT.DEFAULT;
-		int y= SWT.DEFAULT;
-		Point size= getShell().computeSize(x, y);
-		Point constraints= getSizeConstraints();
+		int x = SWT.DEFAULT;
+		int y = SWT.DEFAULT;
+		Point size = getShell().computeSize(x, y);
+		Point constraints = getSizeConstraints();
 		if (constraints != null) {
 			if (size.x > constraints.x)
-				x= constraints.x;
+				x = constraints.x;
 			if (size.y > constraints.y)
-				y= constraints.y;
+				y = constraints.y;
 		}
 		// recompute using the constraints if the preferred size is larger than the constraints
 		if (x != SWT.DEFAULT || y != SWT.DEFAULT)
-			size= getShell().computeSize(x, y, false);
+			size = getShell().computeSize(x, y, false);
 
 		return size;
 	}

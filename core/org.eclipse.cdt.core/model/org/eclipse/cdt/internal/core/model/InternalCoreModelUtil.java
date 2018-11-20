@@ -39,16 +39,16 @@ import org.eclipse.core.runtime.Path;
  * Non-API methods for manipulating C/C++ projects.
  */
 public class InternalCoreModelUtil {
-	public static void addSourceEntry(IProject project, IFolder folder, boolean removeProject,
-			IProgressMonitor monitor) throws CoreException {
-		ICSourceEntry newEntry = new CSourceEntry(folder, null, 0); 
+	public static void addSourceEntry(IProject project, IFolder folder, boolean removeProject, IProgressMonitor monitor)
+			throws CoreException {
+		ICSourceEntry newEntry = new CSourceEntry(folder, null, 0);
 		ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, true);
 		addEntryToAllCfgs(des, newEntry, removeProject);
 		CCorePlugin.getDefault().setProjectDescription(project, des, false, monitor);
 	}
-	
-	private static void addEntryToAllCfgs(ICProjectDescription des, ICSourceEntry entry,
-			boolean removeProject) throws WriteAccessException, CoreException {
+
+	private static void addEntryToAllCfgs(ICProjectDescription des, ICSourceEntry entry, boolean removeProject)
+			throws WriteAccessException, CoreException {
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
 		for (ICConfigurationDescription cfg : cfgs) {
 			ICSourceEntry[] entries = cfg.getSourceEntries();
@@ -56,9 +56,8 @@ public class InternalCoreModelUtil {
 			cfg.setSourceEntries(entries);
 		}
 	}
-	
-	private static ICSourceEntry[] addEntry(ICSourceEntry[] entries, ICSourceEntry sourceEntry,
-			boolean removeProject) {
+
+	private static ICSourceEntry[] addEntry(ICSourceEntry[] entries, ICSourceEntry sourceEntry, boolean removeProject) {
 		Set<ICSourceEntry> set = new HashSet<>();
 		for (ICSourceEntry entry : entries) {
 			if (removeProject && new Path(entry.getValue()).segmentCount() == 1)
@@ -71,19 +70,19 @@ public class InternalCoreModelUtil {
 
 	public static void addExclusionPatterns(IPathEntry newEntry, List<IPathEntry> existing,
 			Set<IPathEntry> modifiedEntries) {
-		IPath entryPath= newEntry.getPath();
-		for (int i= 0; i < existing.size(); i++) {
-			IPathEntry curr= existing.get(i);
-			IPath currPath= curr.getPath();
+		IPath entryPath = newEntry.getPath();
+		for (int i = 0; i < existing.size(); i++) {
+			IPathEntry curr = existing.get(i);
+			IPath currPath = curr.getPath();
 			if (curr.getEntryKind() == IPathEntry.CDT_SOURCE && currPath.isPrefixOf(entryPath)) {
-				IPath[] exclusionFilters= ((ISourceEntry) curr).getExclusionPatterns();
+				IPath[] exclusionFilters = ((ISourceEntry) curr).getExclusionPatterns();
 				if (!isExcludedPath(entryPath, exclusionFilters)) {
-					IPath pathToExclude= entryPath.removeFirstSegments(currPath.segmentCount()).addTrailingSeparator();
-					IPath[] newExclusionFilters= new IPath[exclusionFilters.length + 1];
+					IPath pathToExclude = entryPath.removeFirstSegments(currPath.segmentCount()).addTrailingSeparator();
+					IPath[] newExclusionFilters = new IPath[exclusionFilters.length + 1];
 					System.arraycopy(exclusionFilters, 0, newExclusionFilters, 0, exclusionFilters.length);
-					newExclusionFilters[exclusionFilters.length]= pathToExclude;
-					
-					IPathEntry updated= CoreModel.newSourceEntry(currPath, newExclusionFilters);
+					newExclusionFilters[exclusionFilters.length] = pathToExclude;
+
+					IPathEntry updated = CoreModel.newSourceEntry(currPath, newExclusionFilters);
 					existing.set(i, updated);
 					modifiedEntries.add(updated);
 				}

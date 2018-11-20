@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import org.eclipse.jface.action.IAction;
@@ -33,10 +33,10 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.browser.opentype.ElementSelectionDialog;
 
 public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionDelegate {
-	private static final int[] VISIBLE_TYPES = { 
-		ICElement.C_FUNCTION, ICElement.C_METHOD, ICElement.C_VARIABLE, ICElement.C_ENUMERATOR,
-		ICElement.C_FUNCTION_DECLARATION, ICElement.C_METHOD_DECLARATION, ICElement.C_VARIABLE_DECLARATION };
-	
+	private static final int[] VISIBLE_TYPES = { ICElement.C_FUNCTION, ICElement.C_METHOD, ICElement.C_VARIABLE,
+			ICElement.C_ENUMERATOR, ICElement.C_FUNCTION_DECLARATION, ICElement.C_METHOD_DECLARATION,
+			ICElement.C_VARIABLE_DECLARATION };
+
 	private IWorkbenchWindow fWorkbenchWindow;
 
 	public OpenElementInCallHierarchyAction() {
@@ -49,15 +49,15 @@ public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionD
 		int result = dialog.open();
 		if (result != IDialogConstants.OK_ID)
 			return;
-		
+
 		ITypeInfo info = (ITypeInfo) dialog.getFirstResult();
 		if (info == null)
 			return;
-		
-		ICElement[] elements= null;
+
+		ICElement[] elements = null;
 		ITypeReference location = info.getResolvedReference();
 		if (location != null) {
-			elements= location.getCElements();
+			elements = location.getCElements();
 		}
 		if (elements == null || elements.length == 0) {
 			String title = CHMessages.OpenElementInCallHierarchyAction_errorDlgTitle;
@@ -68,7 +68,7 @@ public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionD
 			CallHierarchyUI.open(fWorkbenchWindow, elements[0]);
 		}
 	}
-	
+
 	private void configureDialog(ElementSelectionDialog dialog) {
 		dialog.setDialogSettings(getClass().getName());
 		dialog.setVisibleTypes(VISIBLE_TYPES);
@@ -77,13 +77,13 @@ public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionD
 		dialog.setMessage(CHMessages.OpenElementInCallHierarchyAction_message);
 
 		if (fWorkbenchWindow != null) {
-			IWorkbenchPage page= fWorkbenchWindow.getActivePage();
+			IWorkbenchPage page = fWorkbenchWindow.getActivePage();
 			if (page != null) {
-				IWorkbenchPart part= page.getActivePart();
+				IWorkbenchPart part = page.getActivePart();
 				if (part instanceof ITextEditor) {
-					ISelection sel= ((ITextEditor) part).getSelectionProvider().getSelection();
+					ISelection sel = ((ITextEditor) part).getSelectionProvider().getSelection();
 					if (sel instanceof ITextSelection) {
-						String txt= ((ITextSelection) sel).getText();
+						String txt = ((ITextSelection) sel).getText();
 						if (txt.length() > 0 && txt.length() < 80) {
 							dialog.setFilter(txt, true);
 						}
@@ -99,14 +99,14 @@ public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionD
 
 	@Override
 	public void dispose() {
-		fWorkbenchWindow= null;
+		fWorkbenchWindow = null;
 	}
-	
+
 	@Override
 	public void init(IWorkbenchWindow window) {
-		fWorkbenchWindow= window;
+		fWorkbenchWindow = window;
 	}
-	
+
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}

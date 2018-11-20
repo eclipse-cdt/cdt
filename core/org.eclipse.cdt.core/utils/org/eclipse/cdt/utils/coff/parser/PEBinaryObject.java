@@ -46,11 +46,11 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	public PEBinaryObject(IBinaryParser parser, IPath path, AR.ARHeader header) {
 		super(parser, path, IBinaryFile.OBJECT);
 	}
-	
+
 	public PEBinaryObject(IBinaryParser parser, IPath p, int type) {
 		super(parser, p, type);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
 	 */
@@ -60,7 +60,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 			return header.getObjectName();
 		}
 		return super.getName();
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
@@ -72,7 +72,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		}
 		return super.getContents();
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
 	 */
@@ -90,7 +90,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
 	 */
 	@Override
@@ -125,7 +125,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		}
 		return super.getAdapter(adapter);
 	}
-	
+
 	protected PE getPE() throws IOException {
 		if (header != null) {
 			return new PE(getPath().toOSString(), header.getObjectDataOffset());
@@ -173,6 +173,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		Arrays.sort(symbols);
 		list.clear();
 	}
+
 	protected void loadSymbols(PE pe, List<Symbol> list) throws IOException {
 		Coff.Symbol[] peSyms = pe.getSymbols();
 		byte[] table = pe.getStringTable();
@@ -191,8 +192,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 			}
 		}
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
 	 */

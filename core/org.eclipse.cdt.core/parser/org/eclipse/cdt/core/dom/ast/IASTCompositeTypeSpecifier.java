@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * A composite type specifier represents a composite structure (contains declarations).
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -51,7 +51,7 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier, IASTNameO
 
 	/**
 	 * Returns the type (key) of this composite specifier.
-	 * 
+	 *
 	 * @return key for this type
 	 * @see #k_struct
 	 * @see #k_union
@@ -60,7 +60,7 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier, IASTNameO
 
 	/**
 	 * Sets the type (key) of this composite specifier.
-	 * 
+	 *
 	 * @param key
 	 * @see #k_struct
 	 * @see #k_union
@@ -70,28 +70,28 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier, IASTNameO
 	/**
 	 * Returns the name for this composite type. If this is an anonymous type,
 	 * this will return an empty name.
-	 * 
+	 *
 	 * @return the name of the type
 	 */
 	public IASTName getName();
 
 	/**
 	 * Sets the name for this composite type.
-	 * 
+	 *
 	 * @param name
 	 */
 	public void setName(IASTName name);
 
 	/**
 	 * Returns a list of member declarations.
-	 * 
+	 *
 	 * @return List of IASTDeclaration
 	 */
 	public IASTDeclaration[] getMembers();
 
 	/**
 	 * Adds a member declaration.
-	 * 
+	 *
 	 * @param declaration
 	 */
 	public void addMemberDeclaration(IASTDeclaration declaration);
@@ -100,7 +100,7 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier, IASTNameO
 	 * Returns the scope that this interface eludes to in the logical tree.
 	 */
 	public IScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */

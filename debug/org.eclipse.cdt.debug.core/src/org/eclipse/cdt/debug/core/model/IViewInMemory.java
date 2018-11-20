@@ -23,11 +23,11 @@ public interface IViewInMemory extends IAdaptable {
 
 	/**
 	 * Returns whether this element can currently be viewed in the memory view.
-	 * 
+	 *
 	 * @return whether this element can currently be viewed in the memory view.
 	 */
 	boolean canViewInMemory();
-	
+
 	/**
 	 * Displays the element in the memory view.
 	 */

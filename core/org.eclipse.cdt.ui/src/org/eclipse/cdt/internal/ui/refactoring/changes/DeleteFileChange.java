@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik 
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -31,8 +31,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * The counterpart to the {@link CreateFileChange}, a change to delete a file. 
- * 
+ * The counterpart to the {@link CreateFileChange}, a change to delete a file.
+ *
  * @author Emanuel Graf
  */
 public class DeleteFileChange extends Change {
@@ -50,7 +50,7 @@ public class DeleteFileChange extends Change {
 
 	@Override
 	public String getName() {
-		return NLS.bind(Messages.DeleteFileChange_delete_file, path.toOSString()); 
+		return NLS.bind(Messages.DeleteFileChange_delete_file, path.toOSString());
 	}
 
 	@Override
@@ -63,42 +63,42 @@ public class DeleteFileChange extends Change {
 		RefactoringStatus status = new RefactoringStatus();
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		if (!file.exists()) {
-			status.addFatalError(NLS.bind(Messages.DeleteFileChange_file_does_not_exist, path.toString())); 
+			status.addFatalError(NLS.bind(Messages.DeleteFileChange_file_does_not_exist, path.toString()));
 		}
 		return status;
 	}
-	
+
 	private String getSource(IFile file) throws CoreException {
-		String encoding= null;
+		String encoding = null;
 		try {
-			encoding= file.getCharset();
+			encoding = file.getCharset();
 		} catch (CoreException e) {
 			// fall through. Take default encoding.
 		}
-		StringBuilder sb= new StringBuilder();
-		BufferedReader br= null;
-		InputStream in= null;
+		StringBuilder sb = new StringBuilder();
+		BufferedReader br = null;
+		InputStream in = null;
 		try {
-			in= file.getContents();
-		    if (encoding != null) {
-		        br= new BufferedReader(new InputStreamReader(in, encoding));	
-		    } else {
-		        br= new BufferedReader(new InputStreamReader(in));
-		    }
-			int read= 0;
-			while ((read= br.read()) != -1) {
+			in = file.getContents();
+			if (encoding != null) {
+				br = new BufferedReader(new InputStreamReader(in, encoding));
+			} else {
+				br = new BufferedReader(new InputStreamReader(in));
+			}
+			int read = 0;
+			while ((read = br.read()) != -1) {
 				sb.append((char) read);
 			}
 			br.close();
-		} catch (IOException e){
-			
+		} catch (IOException e) {
+
 		}
 		return sb.toString();
 	}
 
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		source = getSource(file);
 		Change undo = new CreateFileChange(file.getFullPath(), source, file.getCharset());
 		file.delete(true, true, pm);

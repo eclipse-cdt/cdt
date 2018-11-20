@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Alena Laskavaia 
+ * Copyright (c) 2009, 2015 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,7 +37,8 @@ public class CxxCodanReconciler {
 			return;
 		try {
 			if (project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-				CodanRuntime.getInstance().getBuilder().processResource(resource, monitor, CheckerLaunchMode.RUN_AS_YOU_TYPE, ast);
+				CodanRuntime.getInstance().getBuilder().processResource(resource, monitor,
+						CheckerLaunchMode.RUN_AS_YOU_TYPE, ast);
 			}
 		} catch (CoreException e) {
 			// ignore

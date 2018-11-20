@@ -183,8 +183,7 @@ public class RebuildConfigurationsDialog extends MessageDialog {
 	public RebuildConfigurationsDialog(IProject[] projects) {
 		super(CUIPlugin.getActiveWorkbenchShell(), Messages.RebuildConfigurationsDialog_RebuildConfigurations, null,
 				Messages.RebuildConfigurationsDialog_SelectConfigurations, NONE,
-				new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL },
-				0);
+				new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
 		this.projects = projects;
 	}
 
@@ -202,13 +201,13 @@ public class RebuildConfigurationsDialog extends MessageDialog {
 			List<ICConfigurationDescription> cfgDescriptions = new ArrayList<>();
 			for (Object sel : selected) {
 				if (sel instanceof ICConfigurationDescription) {
-					cfgDescriptions.add((ICConfigurationDescription)sel);
+					cfgDescriptions.add((ICConfigurationDescription) sel);
 				}
 			}
 
 			if (cleanKind != 0 || buildKind != 0) {
-				ICConfigurationDescription[] cfgdArray =
-						cfgDescriptions.toArray(new ICConfigurationDescription[cfgDescriptions.size()]);
+				ICConfigurationDescription[] cfgdArray = cfgDescriptions
+						.toArray(new ICConfigurationDescription[cfgDescriptions.size()]);
 				Job buildJob = new BuildConfigurationsJob(cfgdArray, cleanKind, buildKind);
 				buildJob.schedule();
 			}

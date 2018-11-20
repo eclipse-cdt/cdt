@@ -63,7 +63,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	private ICPPNamespaceScope[] fEnclosingNamespaceSet;
 	private List<ICPPASTNamespaceDefinition> fInlineNamespaceDefinitions;
 	private ICPPInternalNamespaceScope[] fInlineNamespaces;
-	
+
 	// The set of names declared in this scope that are currently only visible to argument-dependent lookup.
 	private CharArraySet fVisibleToAdlOnly = new CharArraySet(0);
 
@@ -88,7 +88,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 
 	private void initUsingDirectives() {
 		if (fUsingDirectives == null) {
-			fUsingDirectives= new ArrayList<>(1);
+			fUsingDirectives = new ArrayList<>(1);
 			// Insert a using directive for every inline namespace found in the index.
 			for (ICPPInternalNamespaceScope inline : getIndexInlineNamespaces()) {
 				if (!(inline instanceof CPPNamespaceScope)) {
@@ -104,87 +104,87 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		fUsingDirectives.add(directive);
 	}
 
-    @Override
+	@Override
 	public IName getScopeName() {
-        IASTNode node = getPhysicalNode();
-        if (node instanceof ICPPASTNamespaceDefinition) {
-            return ((ICPPASTNamespaceDefinition) node).getName();
-        }
-        return null;
-    }
+		IASTNode node = getPhysicalNode();
+		if (node instanceof ICPPASTNamespaceDefinition) {
+			return ((ICPPASTNamespaceDefinition) node).getName();
+		}
+		return null;
+	}
 
-    public IScope findNamespaceScope(IIndexScope scope) {
-    	final ArrayList<IBinding> parentChain = new ArrayList<>();
-	    for (IBinding binding= scope.getScopeBinding(); binding != null; binding= binding.getOwner()) {
-	    	parentChain.add(binding);
-	    }
+	public IScope findNamespaceScope(IIndexScope scope) {
+		final ArrayList<IBinding> parentChain = new ArrayList<>();
+		for (IBinding binding = scope.getScopeBinding(); binding != null; binding = binding.getOwner()) {
+			parentChain.add(binding);
+		}
 
-    	final IScope[] result= { null };
-    	final ASTVisitor visitor= new ASTVisitor() {
-    		private int position = parentChain.size();
+		final IScope[] result = { null };
+		final ASTVisitor visitor = new ASTVisitor() {
+			private int position = parentChain.size();
 
-    		{
-    			shouldVisitNamespaces= shouldVisitDeclarations= true;
-    		}
+			{
+				shouldVisitNamespaces = shouldVisitDeclarations = true;
+			}
 
-    		@Override
-    		public int visit(IASTDeclaration declaration) {
-    			if (declaration instanceof ICPPASTLinkageSpecification)
-    				return PROCESS_CONTINUE;
-    			return PROCESS_SKIP;
-    		}
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				if (declaration instanceof ICPPASTLinkageSpecification)
+					return PROCESS_CONTINUE;
+				return PROCESS_SKIP;
+			}
 
-    		@Override
-    		public int visit(ICPPASTNamespaceDefinition namespace) {
-    			final char[] name = namespace.getName().toCharArray();
-    			IBinding binding = parentChain.get(--position);
-    			if (!CharArrayUtils.equals(name, binding.getNameCharArray())) {
-    				++position;
-        			return PROCESS_SKIP;
-    			}
+			@Override
+			public int visit(ICPPASTNamespaceDefinition namespace) {
+				final char[] name = namespace.getName().toCharArray();
+				IBinding binding = parentChain.get(--position);
+				if (!CharArrayUtils.equals(name, binding.getNameCharArray())) {
+					++position;
+					return PROCESS_SKIP;
+				}
 				if (position == 0) {
-					result[0]= namespace.getScope();
+					result[0] = namespace.getScope();
 					return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;
-    		}
+			}
 
-    		@Override
-    		public int leave(ICPPASTNamespaceDefinition namespace) {
-   				++position;
-    			return PROCESS_CONTINUE;
-    		}
-    	};
+			@Override
+			public int leave(ICPPASTNamespaceDefinition namespace) {
+				++position;
+				return PROCESS_CONTINUE;
+			}
+		};
 
-    	getPhysicalNode().accept(visitor);
-    	return result[0];
-    }
+		getPhysicalNode().accept(visitor);
+		return result[0];
+	}
 
-    @Override
+	@Override
 	public void addName(IASTName name, boolean adlOnly) {
-    	if (name instanceof ICPPASTQualifiedName && !canDenoteNamespaceMember((ICPPASTQualifiedName) name))
-    		return;
-    	super.addName(name, adlOnly);
-    	if (adlOnly) {
-    		fVisibleToAdlOnly.put(name.getLookupKey());
-    	} else {
-    		fVisibleToAdlOnly.remove(name.getLookupKey());
-    	}
-    }
-    
-    @Override
-    protected boolean nameIsVisibleToLookup(ScopeLookupData lookup) {
-    	if (lookup.isArgumentDependent()) {
-    		return true;
-    	}
-    	return !fVisibleToAdlOnly.containsKey(lookup.getLookupKey());
-    }
+		if (name instanceof ICPPASTQualifiedName && !canDenoteNamespaceMember((ICPPASTQualifiedName) name))
+			return;
+		super.addName(name, adlOnly);
+		if (adlOnly) {
+			fVisibleToAdlOnly.put(name.getLookupKey());
+		} else {
+			fVisibleToAdlOnly.remove(name.getLookupKey());
+		}
+	}
+
+	@Override
+	protected boolean nameIsVisibleToLookup(ScopeLookupData lookup) {
+		if (lookup.isArgumentDependent()) {
+			return true;
+		}
+		return !fVisibleToAdlOnly.containsKey(lookup.getLookupKey());
+	}
 
 	public boolean canDenoteNamespaceMember(ICPPASTQualifiedName name) {
-		IScope scope= this;
-		ICPPASTNameSpecifier[] segments= name.getQualifier();
+		IScope scope = this;
+		ICPPASTNameSpecifier[] segments = name.getQualifier();
 		try {
-			for (int i= segments.length; --i >= 0;) {
+			for (int i = segments.length; --i >= 0;) {
 				if (scope == null)
 					return false;
 				IName scopeName = scope.getScopeName();
@@ -193,18 +193,18 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 
 				if (segments[i] instanceof IASTName) {
 					IASTName segmentName = (IASTName) segments[i];
-					if (segmentName instanceof ICPPASTTemplateId ||
-							!CharArrayUtils.equals(scopeName.getSimpleID(), segmentName.getSimpleID())) {
+					if (segmentName instanceof ICPPASTTemplateId
+							|| !CharArrayUtils.equals(scopeName.getSimpleID(), segmentName.getSimpleID())) {
 						return false;
 					}
 				} else {
 					IBinding segmentBinding = segments[i].resolveBinding();
-					if (segmentBinding instanceof ICPPTemplateInstance ||
-							!CharArrayUtils.equals(scopeName.getSimpleID(), segmentBinding.getNameCharArray())) {
+					if (segmentBinding instanceof ICPPTemplateInstance
+							|| !CharArrayUtils.equals(scopeName.getSimpleID(), segmentBinding.getNameCharArray())) {
 						return false;
 					}
 				}
-				scope= scope.getParent();
+				scope = scope.getParent();
 			}
 			if (!name.isFullyQualified() || scope == null) {
 				return true;
@@ -218,14 +218,14 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	@Override
 	public boolean isInlineNamepace() {
 		if (!fIsInlineInitialized) {
-			fIsInline= computeIsInline();
-			fIsInlineInitialized= true;
+			fIsInline = computeIsInline();
+			fIsInlineInitialized = true;
 		}
 		return fIsInline;
 	}
 
 	public boolean computeIsInline() {
-		final IASTNode node= getPhysicalNode();
+		final IASTNode node = getPhysicalNode();
 		if (!(node instanceof ICPPASTNamespaceDefinition)) {
 			return false;
 		}
@@ -233,12 +233,12 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		if (((ICPPASTNamespaceDefinition) node).isInline())
 			return true;
 
-		IASTTranslationUnit tu= node.getTranslationUnit();
+		IASTTranslationUnit tu = node.getTranslationUnit();
 		if (tu != null) {
-			final IIndex index= tu.getIndex();
-			IIndexFileSet fileSet= tu.getASTFileSet();
+			final IIndex index = tu.getIndex();
+			IIndexFileSet fileSet = tu.getASTFileSet();
 			if (index != null && fileSet != null) {
-				fileSet= fileSet.invert();
+				fileSet = fileSet.invert();
 				ICPPNamespace nsBinding = getNamespaceIndexBinding(index);
 				if (nsBinding != null && nsBinding.isInline()) {
 					try {
@@ -260,7 +260,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	@Override
 	public ICPPNamespaceScope[] getEnclosingNamespaceSet() {
 		if (fEnclosingNamespaceSet == null) {
-			return fEnclosingNamespaceSet= computeEnclosingNamespaceSet(this);
+			return fEnclosingNamespaceSet = computeEnclosingNamespaceSet(this);
 		}
 		return fEnclosingNamespaceSet;
 	}
@@ -271,16 +271,16 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 			return NO_NAMESPACE_SCOPES;
 
 		if (fInlineNamespaces == null) {
-			fInlineNamespaces= computeInlineNamespaces();
+			fInlineNamespaces = computeInlineNamespaces();
 		}
 		return fInlineNamespaces;
 	}
 
 	ICPPInternalNamespaceScope[] computeInlineNamespaces() {
 		populateCache();
-		Set<ICPPInternalNamespaceScope> result= null;
+		Set<ICPPInternalNamespaceScope> result = null;
 		if (fInlineNamespaceDefinitions != null) {
-			result= new HashSet<>(fInlineNamespaceDefinitions.size());
+			result = new HashSet<>(fInlineNamespaceDefinitions.size());
 			for (ICPPASTNamespaceDefinition nsdef : fInlineNamespaceDefinitions) {
 				final IScope scope = nsdef.getScope();
 				if (scope instanceof ICPPInternalNamespaceScope) {
@@ -302,29 +302,29 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	}
 
 	private ICPPInternalNamespaceScope[] getIndexInlineNamespaces() {
-		IASTTranslationUnit tu= getPhysicalNode().getTranslationUnit();
+		IASTTranslationUnit tu = getPhysicalNode().getTranslationUnit();
 		if (tu instanceof CPPASTTranslationUnit) {
-			CPPASTTranslationUnit ast= (CPPASTTranslationUnit) tu;
-			IIndex index= tu.getIndex();
+			CPPASTTranslationUnit ast = (CPPASTTranslationUnit) tu;
+			IIndex index = tu.getIndex();
 			if (index != null) {
-				IScope[] inlineScopes= null;
-				ICPPNamespace namespace= getNamespaceIndexBinding(index);
+				IScope[] inlineScopes = null;
+				ICPPNamespace namespace = getNamespaceIndexBinding(index);
 				try {
 					if (namespace != null) {
 						ICPPNamespaceScope scope = namespace.getNamespaceScope();
-						inlineScopes= scope.getInlineNamespaces();
+						inlineScopes = scope.getInlineNamespaces();
 					} else if (getKind() == EScopeKind.eGlobal) {
-						inlineScopes= index.getInlineNamespaces();
+						inlineScopes = index.getInlineNamespaces();
 					}
 				} catch (CoreException e) {
 				}
 				if (inlineScopes != null) {
-					List<ICPPInternalNamespaceScope> result= null;
+					List<ICPPInternalNamespaceScope> result = null;
 					for (IScope scope : inlineScopes) {
-						scope= ast.mapToASTScope(scope);
+						scope = ast.mapToASTScope(scope);
 						if (scope instanceof ICPPInternalNamespaceScope) {
 							if (result == null) {
-								result= new ArrayList<>();
+								result = new ArrayList<>();
 							}
 							result.add((ICPPInternalNamespaceScope) scope);
 						}
@@ -343,7 +343,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	 */
 	public void addInlineNamespace(ICPPASTNamespaceDefinition nsDef) {
 		if (fInlineNamespaceDefinitions == null) {
-			fInlineNamespaceDefinitions= new ArrayList<>();
+			fInlineNamespaceDefinitions = new ArrayList<>();
 		}
 		fInlineNamespaceDefinitions.add(nsDef);
 	}
@@ -351,7 +351,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	public static ICPPNamespaceScope[] computeEnclosingNamespaceSet(ICPPInternalNamespaceScope nsScope) {
 		if (nsScope.isInlineNamepace()) {
 			try {
-				IScope parent= nsScope.getParent();
+				IScope parent = nsScope.getParent();
 				if (parent instanceof ICPPInternalNamespaceScope) {
 					return ((ICPPInternalNamespaceScope) parent).getEnclosingNamespaceSet();
 				}
@@ -360,13 +360,14 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 			}
 		}
 
-		Set<ICPPInternalNamespaceScope> result= new HashSet<>();
+		Set<ICPPInternalNamespaceScope> result = new HashSet<>();
 		result.add(nsScope);
 		addInlineNamespaces(nsScope, result);
 		return result.toArray(new ICPPNamespaceScope[result.size()]);
 	}
 
-	private static void addInlineNamespaces(ICPPInternalNamespaceScope nsScope, Set<ICPPInternalNamespaceScope> result) {
+	private static void addInlineNamespaces(ICPPInternalNamespaceScope nsScope,
+			Set<ICPPInternalNamespaceScope> result) {
 		ICPPInternalNamespaceScope[] inlineNss = nsScope.getInlineNamespaces();
 		for (ICPPInternalNamespaceScope inlineNs : inlineNss) {
 			if (result.add(inlineNs)) {

@@ -11,7 +11,7 @@
  * Contributors:
  *    Tomasz Wesolowski - initial API and implementation
  *    Jens Elmenthaler - further tweaking
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.core.parser.tests;
 
@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.parser.util.SegmentMatcher;
 
 public class SegmentMatcherTest extends TestCase {
-	
 
 	public void testSimple() {
 
@@ -53,17 +52,17 @@ public class SegmentMatcherTest extends TestCase {
 		assertFalse(matchSegments("fBBBarBaz", "fooBarBaz"));
 		assertFalse(matchSegments("foooBarBaz", "fooBarBaz"));
 		assertFalse(matchSegments("foBrBaz", "fooBarBaz"));
-		
+
 	}
-	
+
 	public void testSuffix() {
 
 		assertTrue(matchSegments("fooBar", "fooBar123"));
 		assertTrue(matchSegments("fooBar", "fooBarrr"));
 		assertTrue(matchSegments("fooBar", "fooBarr__"));
-		
+
 	}
-	
+
 	public void testNumeric() {
 
 		assertTrue(matchSegments("fBBaz", "foo29BarBaz"));
@@ -71,14 +70,14 @@ public class SegmentMatcherTest extends TestCase {
 		assertTrue(matchSegments("fB100Baz1", "fooBar100Baz10"));
 		assertTrue(matchSegments("fB100Baz10", "fooBar100Baz10"));
 		assertTrue(matchSegments("fooBar100Baz10", "fooBar100Baz10"));
-		
+
 		assertFalse(matchSegments("fBar100Ba", "fooBarBaz"));
 		assertTrue(matchSegments("f100Baz", "fooBar100Baz10"));
 		assertFalse(matchSegments("fB1000Baz", "fooBar100Baz"));
 		assertFalse(matchSegments("sV", "seed48"));
-		
+
 	}
-	
+
 	public void testSeparator() {
 
 		assertTrue(matchSegments("fBB", "foo_Bar_Baz"));
@@ -95,23 +94,23 @@ public class SegmentMatcherTest extends TestCase {
 		assertFalse(matchSegments("fB_B", "foo__bar__baz"));
 		assertFalse(matchSegments("f___b", "foo__bar"));
 		assertFalse(matchSegments("f__bb", "foo__bar__baz"));
-		
+
 		assertFalse(matchSegments("f_B_B", "fooBarBaz"));
 		assertFalse(matchSegments("f_B", "foo_bar"));
 		assertFalse(matchSegments("foo_B", "foo_bar"));
 		assertFalse(matchSegments("foo_Bar", "foo_bar"));
 		assertFalse(matchSegments("fO_bar", "foo_bar"));
 		assertFalse(matchSegments("f__b", "foo_bar"));
-		
+
 	}
-	
+
 	public void testPrefixChars() {
 
-		assertFalse(matchSegments("$asd","_asd"));
-		assertFalse(matchSegments("_$$","__"));
-		assertFalse(matchSegments("__$","__"));
+		assertFalse(matchSegments("$asd", "_asd"));
+		assertFalse(matchSegments("_$$", "__"));
+		assertFalse(matchSegments("__$", "__"));
 
-		// require everything to be exactly the same from start up until the first section 
+		// require everything to be exactly the same from start up until the first section
 		assertTrue(matchSegments("__f", "__fooBar"));
 		assertTrue(matchSegments("__fooB", "__fooBar"));
 		assertFalse(matchSegments("_fooB", "__fooBar"));
@@ -154,7 +153,7 @@ public class SegmentMatcherTest extends TestCase {
 		assertEquals("$__foo", getPrefixForBinarySearch("$__foo3"));
 		assertEquals("$__foo", getPrefixForBinarySearch("$__foo_"));
 	}
-	
+
 	/**
 	 * Only checks segment matching (i.e. without case-insensitive prefix matching)
 	 */
@@ -162,7 +161,7 @@ public class SegmentMatcherTest extends TestCase {
 		SegmentMatcher matcher = new SegmentMatcher(pattern.toCharArray());
 		return matcher.matchSegments(name.toCharArray());
 	}
-	
+
 	private String getPrefixForBinarySearch(String pattern) {
 		SegmentMatcher matcher = new SegmentMatcher(pattern.toCharArray());
 		return String.valueOf(matcher.getPrefixForBinarySearch());

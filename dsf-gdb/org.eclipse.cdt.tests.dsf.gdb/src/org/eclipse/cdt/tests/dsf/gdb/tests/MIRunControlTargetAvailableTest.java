@@ -7,12 +7,11 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson	AB		  - Initial implementation of Test cases
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
-
 
 import static org.junit.Assert.fail;
 
@@ -43,15 +42,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-
 /**
- * Tests MIRunControl class for for the execWhileTargetAvailable() method. 
+ * Tests MIRunControl class for for the execWhileTargetAvailable() method.
  */
 @RunWith(Parameterized.class)
 public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
-	private DsfServicesTracker fServicesTracker;    
+	private DsfServicesTracker fServicesTracker;
 
-    private IGDBControl fGDBCtrl;
+	private IGDBControl fGDBCtrl;
 	private IMIRunControl fRunCtrl;
 
 	private IContainerDMContext fContainerDmc;
@@ -64,415 +62,425 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 	@Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
-		
+
 		final DsfSession session = getGDBLaunch().getSession();
-		
-        Runnable runnable = new Runnable() {
-            @Override
+
+		Runnable runnable = new Runnable() {
+			@Override
 			public void run() {
-           	fServicesTracker = 
-            		new DsfServicesTracker(TestsPlugin.getBundleContext(), 
-            				session.getId());
-            	fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
-            	
-            	fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
-            }
-        };
-        session.getExecutor().submit(runnable).get();
+				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
+				fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
 
-        fContainerDmc = SyncUtil.getContainerContext();
+				fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
+			}
+		};
+		session.getExecutor().submit(runnable).get();
+
+		fContainerDmc = SyncUtil.getContainerContext();
 	}
-
 
 	@Override
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
-		
-        if (fServicesTracker!=null) fServicesTracker.dispose();
+
+		if (fServicesTracker != null)
+			fServicesTracker.dispose();
 	}
-	
+
 	@Override
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();
-		
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, 
-				           EXEC_PATH + EXEC_NAME);
+
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 	}
 
-    /**
-     * Test that the executeWhileTargetAvailale interface works properly
-     * for a single operation with a single step when the target is stopped. 
-     */
-    @Test
-    public void executeSingleStepSingleOpWhileTargetStopped() throws Throwable {
-    	// The target is currently stopped.
- 
-        // A single step that will set a breakpoint at PrintHello, which we will then make sure hits
-    	final Step[] steps = new Step[] {
-        	new Step() {
-        		@Override
-        		public void execute(RequestMonitor rm) {
-        	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-        	    	
-        	        fGDBCtrl.queueCommand(
-        	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, "PrintHello", "0"),
-        	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-        		}}
-        };
-        
-        Query<Boolean> query = new Query<Boolean>() {
+	/**
+	 * Test that the executeWhileTargetAvailale interface works properly
+	 * for a single operation with a single step when the target is stopped.
+	 */
+	@Test
+	public void executeSingleStepSingleOpWhileTargetStopped() throws Throwable {
+		// The target is currently stopped.
+
+		// A single step that will set a breakpoint at PrintHello, which we will then make sure hits
+		final Step[] steps = new Step[] { new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(
+						fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0,
+								"PrintHello", "0"),
+						new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		} };
+
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
-				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
+				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
 			}
-        };
-    	{
-    		fRunCtrl.getExecutor().execute(query);
-    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	}
-    	
-    	// Now resume the target and check that we stop at the breakpoint.
-    	       	
-        ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-        		getGDBLaunch().getSession(),
-        		ISuspendedDMEvent.class);
+		};
+		{
+			fRunCtrl.getExecutor().execute(query);
+			query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		}
 
-    	SyncUtil.resume();
-    	
-        // Wait up to 3 second for the target to suspend. Should happen within 2 second.
-        suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
-    }
-    
-    /**
-     * Test that the executeWhileTargetAvailale interface works properly
-     * for a single operation with a single step when the target is running. 
-     */
-    @Test
-    public void executeSingleStepSingleOpWhileTargetRunning() throws Throwable {
-        // A single step that will set a breakpoint at PrintHello, which we will then make sure hits
-    	final Step[] steps = new Step[] {
-        	new Step() {
-        		@Override
-        		public void execute(RequestMonitor rm) {
-        	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-        	    	
-        	        fGDBCtrl.queueCommand(
-        	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, "PrintHello", "0"),
-        	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-        		}}
-        };
-        
-    	// The target is currently stopped so we resume it
-        ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-        		getGDBLaunch().getSession(),
-        		ISuspendedDMEvent.class);
+		// Now resume the target and check that we stop at the breakpoint.
 
-    	SyncUtil.resume();
-    	
-        Query<Boolean> query = new Query<Boolean>() {
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
+
+		SyncUtil.resume();
+
+		// Wait up to 3 second for the target to suspend. Should happen within 2 second.
+		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
+	}
+
+	/**
+	 * Test that the executeWhileTargetAvailale interface works properly
+	 * for a single operation with a single step when the target is running.
+	 */
+	@Test
+	public void executeSingleStepSingleOpWhileTargetRunning() throws Throwable {
+		// A single step that will set a breakpoint at PrintHello, which we will then make sure hits
+		final Step[] steps = new Step[] { new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(
+						fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0,
+								"PrintHello", "0"),
+						new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		} };
+
+		// The target is currently stopped so we resume it
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
+
+		SyncUtil.resume();
+
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
-				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
+				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
 			}
-        };
-    	{
-    		fRunCtrl.getExecutor().execute(query);
-    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	}
-    	
-    	// Now check that the target is stopped at the breakpoint.
-        // Wait up to 3 second for the target to suspend. Should happen at most in 2 seconds.
-        suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
-    }
-    
-    /**
-     * Test that the executeWhileTargetAvailale interface works properly
-     * for a single operation with multiple steps when the target is stopped. 
-     */
-    @Test
-    public void executeMultiStepSingleOpWhileTargetStopped() throws Throwable {
-    	// The target is currently stopped.
+		};
+		{
+			fRunCtrl.getExecutor().execute(query);
+			query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		}
 
-        // Multiple steps that will set three temp breakpoints at three different lines
-        // We then check that the target will stop three times
-    	final Step[] steps = new Step[] {
-        	new Step() {
-        		@Override
-        		public void execute(RequestMonitor rm) {
-        	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-        	    	
-        	        fGDBCtrl.queueCommand(
-        	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, "PrintHello", "0"),
-        	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-        		}},
-           	new Step() {
-           		@Override
-           		public void execute(RequestMonitor rm) {
-           	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-           	    	
-           	        fGDBCtrl.queueCommand(
-           	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, "PrintHi", "0"),
-           	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-           		}},
-           	new Step() {
-           		@Override
-           		public void execute(RequestMonitor rm) {
-           	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-           	    	
-           	        fGDBCtrl.queueCommand(
-           	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, "PrintBonjour", "0"),
-           	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-           		}}
-        };
-        
-        Query<Boolean> query = new Query<Boolean>() {
+		// Now check that the target is stopped at the breakpoint.
+		// Wait up to 3 second for the target to suspend. Should happen at most in 2 seconds.
+		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
+	}
+
+	/**
+	 * Test that the executeWhileTargetAvailale interface works properly
+	 * for a single operation with multiple steps when the target is stopped.
+	 */
+	@Test
+	public void executeMultiStepSingleOpWhileTargetStopped() throws Throwable {
+		// The target is currently stopped.
+
+		// Multiple steps that will set three temp breakpoints at three different lines
+		// We then check that the target will stop three times
+		final Step[] steps = new Step[] { new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(
+						fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0,
+								"PrintHello", "0"),
+						new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		}, new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null,
+						0, "PrintHi", "0"), new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		}, new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(
+						fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0,
+								"PrintBonjour", "0"),
+						new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		} };
+
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
-				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
+				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
 			}
-        };
-    	{
-    		fRunCtrl.getExecutor().execute(query);
-    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	}
-    	
-    	// Now resume the target three times and check that we stop three times.
-    	for (int i=0; i<steps.length; i++) {
-            ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-            		getGDBLaunch().getSession(),
-            		ISuspendedDMEvent.class);
+		};
+		{
+			fRunCtrl.getExecutor().execute(query);
+			query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		}
 
-        	SyncUtil.resume();
+		// Now resume the target three times and check that we stop three times.
+		for (int i = 0; i < steps.length; i++) {
+			ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+					getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
-    		// Wait up to 3 second for the target to suspend. Should happen within 2 seconds.
-    		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
-    	}
-    }
-    
-    /**
-     * Test that the executeWhileTargetAvailale interface works properly
-     * for a single operation with multiple steps when the target is stopped
-     * and one of the steps fails. 
-     */
-    @Test
-    public void executeMultiStepSingleOpWhileTargetStoppedWithError() throws Throwable {
-    	// The target is currently stopped.
+			SyncUtil.resume();
 
-        // Multiple steps that will set three temp breakpoints at three different lines
-        // We then check that the target will stop three times
-    	final Step[] steps = new Step[] {
-        	new Step() {
-        		@Override
-        		public void execute(RequestMonitor rm) {
-        	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-        	    	
-        	        fGDBCtrl.queueCommand(
-        	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, "PrintHello", "0"),
-        	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-        		}},
-           	new Step() {
-           		@Override
-           		public void execute(RequestMonitor rm) {
-           	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-           	    	
-           	        fGDBCtrl.queueCommand(
-           	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, "invalid condition", 0, "PrintHi", "0"),
-           	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-           		}},
-           	new Step() {
-           		@Override
-           		public void execute(RequestMonitor rm) {
-           	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-           	    	
-           	        fGDBCtrl.queueCommand(
-           	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, "PrintBonjour", "0"),
-           	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-           		}}
-        };
-        
-        Query<Boolean> query = new Query<Boolean>() {
+			// Wait up to 3 second for the target to suspend. Should happen within 2 seconds.
+			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
+		}
+	}
+
+	/**
+	 * Test that the executeWhileTargetAvailale interface works properly
+	 * for a single operation with multiple steps when the target is stopped
+	 * and one of the steps fails.
+	 */
+	@Test
+	public void executeMultiStepSingleOpWhileTargetStoppedWithError() throws Throwable {
+		// The target is currently stopped.
+
+		// Multiple steps that will set three temp breakpoints at three different lines
+		// We then check that the target will stop three times
+		final Step[] steps = new Step[] { new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(
+						fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0,
+								"PrintHello", "0"),
+						new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		}, new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(
+						fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, "invalid condition",
+								0, "PrintHi", "0"),
+						new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		}, new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(
+						fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0,
+								"PrintBonjour", "0"),
+						new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		} };
+
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
-				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
+				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
 			}
-        };
-    	try {
-    		fRunCtrl.getExecutor().execute(query);
-    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (ExecutionException e) {
-    		// We want to detect the error, so this is success
-    		return;
-    	}
-    	
-    	fail("Did not detect the error of the step");
-    }
-    
-    /**
-     * Test that the executeWhileTargetAvailale interface works properly
-     * for a single operation with multiple steps when the target is running. 
-     */
-    @Test
-    public void executeMultiStepSingleOpWhileTargetRunning() throws Throwable {
-        // Multiple steps that will set three temp breakpoints at three different lines
-        // We then check that the target will stop three times
-    	final Step[] steps = new Step[] {
-        	new Step() {
-        		@Override
-        		public void execute(RequestMonitor rm) {
-        	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-        	    	
-        	        fGDBCtrl.queueCommand(
-        	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, "PrintHello", "0"),
-        	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-        		}},
-           	new Step() {
-           		@Override
-           		public void execute(RequestMonitor rm) {
-           	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-           	    	
-           	        fGDBCtrl.queueCommand(
-           	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, "PrintHi", "0"),
-           	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-           		}},
-           	new Step() {
-           		@Override
-           		public void execute(RequestMonitor rm) {
-           	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-           	    	
-           	        fGDBCtrl.queueCommand(
-           	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, "PrintBonjour", "0"),
-           	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-           		}}
-        };
-        
-    	// The target is currently stopped so we resume it
-        ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-        		getGDBLaunch().getSession(),
-        		ISuspendedDMEvent.class);
+		};
+		try {
+			fRunCtrl.getExecutor().execute(query);
+			query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		} catch (ExecutionException e) {
+			// We want to detect the error, so this is success
+			return;
+		}
 
-    	SyncUtil.resume();
+		fail("Did not detect the error of the step");
+	}
 
-        Query<Boolean> query = new Query<Boolean>() {
+	/**
+	 * Test that the executeWhileTargetAvailale interface works properly
+	 * for a single operation with multiple steps when the target is running.
+	 */
+	@Test
+	public void executeMultiStepSingleOpWhileTargetRunning() throws Throwable {
+		// Multiple steps that will set three temp breakpoints at three different lines
+		// We then check that the target will stop three times
+		final Step[] steps = new Step[] { new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(
+						fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0,
+								"PrintHello", "0"),
+						new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		}, new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null,
+						0, "PrintHi", "0"), new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		}, new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(
+						fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0,
+								"PrintBonjour", "0"),
+						new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		} };
+
+		// The target is currently stopped so we resume it
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
+
+		SyncUtil.resume();
+
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
-				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
+				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
 			}
-        };
-    	{
-    		fRunCtrl.getExecutor().execute(query);
-    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	}
-    	
-    	// Now resume the target three times and check that we stop three times.
-    	for (int i=0; i<steps.length; i++) {
-    		// Wait up to 3 second for the target to suspend. Should happen within two seconds.
-    		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
+		};
+		{
+			fRunCtrl.getExecutor().execute(query);
+			query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		}
 
-    		suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-            		getGDBLaunch().getSession(),
-            		ISuspendedDMEvent.class);
+		// Now resume the target three times and check that we stop three times.
+		for (int i = 0; i < steps.length; i++) {
+			// Wait up to 3 second for the target to suspend. Should happen within two seconds.
+			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
 
-        	SyncUtil.resume();
+			suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(getGDBLaunch().getSession(),
+					ISuspendedDMEvent.class);
 
-    	}
-    }
-    
-    /**
-     * Test that the executeWhileTargetAvailale interface works properly
-     * for a single operation with multiple steps when the target is running
-     * and one of the steps fails. 
-     */
-    @Test
-    public void executeMultiStepSingleOpWhileTargetRunningWithError() throws Throwable {
-        // Multiple steps that will set three temp breakpoints at three different lines
-        // We then check that the target will stop three times
-    	final Step[] steps = new Step[] {
-        	new Step() {
-        		@Override
-        		public void execute(RequestMonitor rm) {
-        	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-        	    	
-        	        fGDBCtrl.queueCommand(
-        	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, "PrintHello", "0"),
-        	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-        		}},
-           	new Step() {
-           		@Override
-           		public void execute(RequestMonitor rm) {
-           	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-           	    	
-           	        fGDBCtrl.queueCommand(
-           	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, "invalid condition", 0, "PrintHi", "0"),
-           	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-           		}},
-           	new Step() {
-           		@Override
-           		public void execute(RequestMonitor rm) {
-           	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-           	    	
-           	        fGDBCtrl.queueCommand(
-           	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, "PrintBonjour", "0"),
-           	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-           		}}
-        };
-        
-    	// The target is currently stopped so we resume it
-        ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-        		getGDBLaunch().getSession(),
-        		ISuspendedDMEvent.class);
+			SyncUtil.resume();
 
-    	SyncUtil.resume();
+		}
+	}
 
-        Query<Boolean> query = new Query<Boolean>() {
+	/**
+	 * Test that the executeWhileTargetAvailale interface works properly
+	 * for a single operation with multiple steps when the target is running
+	 * and one of the steps fails.
+	 */
+	@Test
+	public void executeMultiStepSingleOpWhileTargetRunningWithError() throws Throwable {
+		// Multiple steps that will set three temp breakpoints at three different lines
+		// We then check that the target will stop three times
+		final Step[] steps = new Step[] { new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(
+						fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0,
+								"PrintHello", "0"),
+						new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		}, new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(
+						fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, "invalid condition",
+								0, "PrintHi", "0"),
+						new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		}, new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(
+						fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0,
+								"PrintBonjour", "0"),
+						new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+			}
+		} };
+
+		// The target is currently stopped so we resume it
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
+
+		SyncUtil.resume();
+
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
-				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
+				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
 			}
-        };
-        
-        boolean caughtError = false;
-    	try {
-    		fRunCtrl.getExecutor().execute(query);
-    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	} catch (ExecutionException e) {
-    		caughtError = true;
-    	}
-    	
-    	Assert.assertTrue("Did not catch the error of the step", caughtError);
-    	
-    	// Now make sure the target stop of the first breakpoint
-  		// Wait up to 3 second for the target to suspend. Should happen within two seconds.
-   		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
-    }
+		};
 
-    /**
-     * Test that the executeWhileTargetAvailale interface works properly
-     * for concurrent operations with a single step when the target is stopped. 
-     */
-    @Test
-    public void executeSingleStepConcurrentOpWhileTargetStopped() throws Throwable {
-    	// The target is currently stopped.
- 
-    	final int NUM_CONCURRENT = 3;
-    	
-    	String[] locations = { "PrintHello", "PrintHi", "PrintBonjour" };
-    	final Step[][] steps = new Step[NUM_CONCURRENT][1]; // one step for each concurrent operation
-    	for (int i=0; i<steps.length; i++) {
-    		final String location = locations[i];
-           	steps[i] = new Step[] {
-           			new Step() {
-           		@Override
-           		public void execute(RequestMonitor rm) {
-           	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-           	    	
-           	        fGDBCtrl.queueCommand(
-           	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, location, "0"),
-           	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-           		}}
-          };
-    	}
-            
-        Query<Boolean> query = new Query<Boolean>() {
+		boolean caughtError = false;
+		try {
+			fRunCtrl.getExecutor().execute(query);
+			query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		} catch (ExecutionException e) {
+			caughtError = true;
+		}
+
+		Assert.assertTrue("Did not catch the error of the step", caughtError);
+
+		// Now make sure the target stop of the first breakpoint
+		// Wait up to 3 second for the target to suspend. Should happen within two seconds.
+		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
+	}
+
+	/**
+	 * Test that the executeWhileTargetAvailale interface works properly
+	 * for concurrent operations with a single step when the target is stopped.
+	 */
+	@Test
+	public void executeSingleStepConcurrentOpWhileTargetStopped() throws Throwable {
+		// The target is currently stopped.
+
+		final int NUM_CONCURRENT = 3;
+
+		String[] locations = { "PrintHello", "PrintHi", "PrintBonjour" };
+		final Step[][] steps = new Step[NUM_CONCURRENT][1]; // one step for each concurrent operation
+		for (int i = 0; i < steps.length; i++) {
+			final String location = locations[i];
+			steps[i] = new Step[] { new Step() {
+				@Override
+				public void execute(RequestMonitor rm) {
+					IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+							IBreakpointsTargetDMContext.class);
+
+					fGDBCtrl.queueCommand(
+							fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0,
+									location, "0"),
+							new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+				}
+			} };
+		}
+
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				CountingRequestMonitor crm = new CountingRequestMonitor(fGDBCtrl.getExecutor(), null) {
@@ -481,67 +489,65 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 						rm.done();
 					};
 				};
-				
 
 				int index;
-				for (index=0; index<steps.length; index++) {
+				for (index = 0; index < steps.length; index++) {
 					fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps[index], crm);
 				}
-				
+
 				crm.setDoneCount(index);
 			}
-        };
-    	{
-    		fRunCtrl.getExecutor().execute(query);
-    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	}
-    	
-    	for (int i=0; i<steps.length; i++) {
-    		// Now resume the target and check that we stop at all the breakpoints.
-    		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-    				getGDBLaunch().getSession(),
-    				ISuspendedDMEvent.class);
+		};
+		{
+			fRunCtrl.getExecutor().execute(query);
+			query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		}
 
-    		SyncUtil.resume();
+		for (int i = 0; i < steps.length; i++) {
+			// Now resume the target and check that we stop at all the breakpoints.
+			ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+					getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
-    		// Wait up to 3 second for the target to suspend. Should happen within 2 second.
-    		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
-    	}
-    }
-    
-    /**
-     * Test that the executeWhileTargetAvailale interface works properly
-     * for concurrent operations with a single step when the target is running. 
-     */
-    @Test
-    public void executeSingleStepConcurrentOpWhileTargetRunning() throws Throwable { 
-    	final int NUM_CONCURRENT = 3;
-    	
-    	String[] locations = { "PrintHello", "PrintHi", "PrintBonjour" };
-    	final Step[][] steps = new Step[NUM_CONCURRENT][1]; // one step for each concurrent operation
-    	for (int i=0; i<steps.length; i++) {
-    		final String location = locations[i];
-           	steps[i] = new Step[] {
-           			new Step() {
-           		@Override
-           		public void execute(RequestMonitor rm) {
-           	        IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-           	    	
-           	        fGDBCtrl.queueCommand(
-           	        		fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, location, "0"),
-           	        		new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm));
-           		}}
-          };
-    	}
-            
-    	// The target is currently stopped so we resume it
-        ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-        		getGDBLaunch().getSession(),
-        		ISuspendedDMEvent.class);
+			SyncUtil.resume();
 
-    	SyncUtil.resume();
+			// Wait up to 3 second for the target to suspend. Should happen within 2 second.
+			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
+		}
+	}
 
-        Query<Boolean> query = new Query<Boolean>() {
+	/**
+	 * Test that the executeWhileTargetAvailale interface works properly
+	 * for concurrent operations with a single step when the target is running.
+	 */
+	@Test
+	public void executeSingleStepConcurrentOpWhileTargetRunning() throws Throwable {
+		final int NUM_CONCURRENT = 3;
+
+		String[] locations = { "PrintHello", "PrintHi", "PrintBonjour" };
+		final Step[][] steps = new Step[NUM_CONCURRENT][1]; // one step for each concurrent operation
+		for (int i = 0; i < steps.length; i++) {
+			final String location = locations[i];
+			steps[i] = new Step[] { new Step() {
+				@Override
+				public void execute(RequestMonitor rm) {
+					IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+							IBreakpointsTargetDMContext.class);
+
+					fGDBCtrl.queueCommand(
+							fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0,
+									location, "0"),
+							new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm));
+				}
+			} };
+		}
+
+		// The target is currently stopped so we resume it
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
+
+		SyncUtil.resume();
+
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				CountingRequestMonitor crm = new CountingRequestMonitor(fGDBCtrl.getExecutor(), null) {
@@ -550,289 +556,289 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 						rm.done();
 					};
 				};
-				
 
 				int index;
-				for (index=0; index<steps.length; index++) {
+				for (index = 0; index < steps.length; index++) {
 					fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps[index], crm);
 				}
-				
+
 				crm.setDoneCount(index);
 			}
-        };
-    	{
-    		fRunCtrl.getExecutor().execute(query);
-    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	}
-    	
-    	for (int i=0; i<steps.length; i++) {
-    		// Wait up to 3 second for the target to suspend. Should happen within 2 seconds.
-    		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
+		};
+		{
+			fRunCtrl.getExecutor().execute(query);
+			query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		}
 
-    		// Now resume the target and check that we stop at all the breakpoints.
-    		suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-    				getGDBLaunch().getSession(),
-    				ISuspendedDMEvent.class);
+		for (int i = 0; i < steps.length; i++) {
+			// Wait up to 3 second for the target to suspend. Should happen within 2 seconds.
+			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
 
-    		SyncUtil.resume();
-    	}
-    }
-    
-    /**
-     * Test that the executeWhileTargetAvailale interface works properly
-     * for concurrent operations with a single step when the target is stopped. 
-     * This tests verifies that we properly handle concurrent operations that are sent
-     * while other operations are already being run.
-     */
-    @Test
-    public void executeSingleStepConcurrentButDelayedOpWhileTargetStopped() throws Throwable {
-    	// The target is currently stopped.
+			// Now resume the target and check that we stop at all the breakpoints.
+			suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(getGDBLaunch().getSession(),
+					ISuspendedDMEvent.class);
 
-    	final String location = "PrintHello";
-    	final String location2 = "PrintHi";
-    	final Step[] steps = new  Step[] {
-    			new Step() {
-    				@Override
-    				public void execute(final RequestMonitor rm) {
-    					final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
+			SyncUtil.resume();
+		}
+	}
 
-    					fGDBCtrl.queueCommand(
-    							fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, location, "0"),
-    							new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm) {
-    								@Override
-    								protected void handleSuccess() {
-    									// Now that time has elapsed, send another command
-    									fRunCtrl.executeWithTargetAvailable(fContainerDmc, new Step[] {
-    											new Step() {
-    												@Override
-    												public void execute(final RequestMonitor rm) {
-    													fGDBCtrl.queueCommand(
-    															fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, location2, "0"),
-    															new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), null));
-    												}}}, new RequestMonitor(fGDBCtrl.getExecutor(), null));
+	/**
+	 * Test that the executeWhileTargetAvailale interface works properly
+	 * for concurrent operations with a single step when the target is stopped.
+	 * This tests verifies that we properly handle concurrent operations that are sent
+	 * while other operations are already being run.
+	 */
+	@Test
+	public void executeSingleStepConcurrentButDelayedOpWhileTargetStopped() throws Throwable {
+		// The target is currently stopped.
 
-    									// Complete the first operation because the two are supposed to be independent
-    									rm.done();
-    								}});
-    				}}
-          };
-            
-        Query<Boolean> query = new Query<Boolean>() {
+		final String location = "PrintHello";
+		final String location2 = "PrintHi";
+		final Step[] steps = new Step[] { new Step() {
+			@Override
+			public void execute(final RequestMonitor rm) {
+				final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null,
+						0, location, "0"), new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								// Now that time has elapsed, send another command
+								fRunCtrl.executeWithTargetAvailable(fContainerDmc, new Step[] { new Step() {
+									@Override
+									public void execute(final RequestMonitor rm) {
+										fGDBCtrl.queueCommand(
+												fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true,
+														false, null, 0, location2, "0"),
+												new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(),
+														null));
+									}
+								} }, new RequestMonitor(fGDBCtrl.getExecutor(), null));
+
+								// Complete the first operation because the two are supposed to be independent
+								rm.done();
+							}
+						});
+			}
+		} };
+
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
-				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
+				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
 			}
-        };
-    	{
-    		fRunCtrl.getExecutor().execute(query);
-    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	}
-    	
-    	for (int i=0; i<2; i++) {
-    	   	// The target is currently stopped so we resume it
-            ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-            		getGDBLaunch().getSession(),
-            		ISuspendedDMEvent.class);
+		};
+		{
+			fRunCtrl.getExecutor().execute(query);
+			query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		}
 
-        	SyncUtil.resume();
+		for (int i = 0; i < 2; i++) {
+			// The target is currently stopped so we resume it
+			ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+					getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
-    		// Wait up to 3 second for the target to suspend. Should happen within 2 seconds.
-    		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
-    	}
-    }
-    
-    /**
-     * Test that the executeWhileTargetAvailale interface works properly
-     * for concurrent operations with a single step when the target is running. 
-     * This tests verifies that we properly handle concurrent operations that are sent
-     * while other operations are already being run.
-     */
-    @Test
-    public void executeSingleStepConcurrentButDelayedOpWhileTargetRunning() throws Throwable {    	
-    	final String location = "PrintHello";
-    	final String location2 = "PrintHi";
-    	final Step[] steps = new  Step[] {
-    			new Step() {
-    				@Override
-    				public void execute(final RequestMonitor rm) {
-    					final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
+			SyncUtil.resume();
 
-    					fGDBCtrl.queueCommand(
-    							fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, location, "0"),
-    							new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm) {
-    								@Override
-    								protected void handleSuccess() {
-    									// Now that time has elapsed, send another command
-    									fRunCtrl.executeWithTargetAvailable(fContainerDmc, new Step[] {
-    											new Step() {
-    												@Override
-    												public void execute(final RequestMonitor otherRm) {
-    													fGDBCtrl.queueCommand(
-    															fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, location2, "0"),
-    															new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), otherRm));
-    												}}}, new RequestMonitor(fGDBCtrl.getExecutor(), null));
+			// Wait up to 3 second for the target to suspend. Should happen within 2 seconds.
+			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
+		}
+	}
 
-    									// Complete the first operation because the two are supposed to be independent
-    									rm.done();
-    								}});
-    				}}
-          };
-            
-    	// The target is currently stopped so we resume it
-        ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-        		getGDBLaunch().getSession(),
-        		ISuspendedDMEvent.class);
+	/**
+	 * Test that the executeWhileTargetAvailale interface works properly
+	 * for concurrent operations with a single step when the target is running.
+	 * This tests verifies that we properly handle concurrent operations that are sent
+	 * while other operations are already being run.
+	 */
+	@Test
+	public void executeSingleStepConcurrentButDelayedOpWhileTargetRunning() throws Throwable {
+		final String location = "PrintHello";
+		final String location2 = "PrintHi";
+		final Step[] steps = new Step[] { new Step() {
+			@Override
+			public void execute(final RequestMonitor rm) {
+				final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
 
-    	SyncUtil.resume();
+				fGDBCtrl.queueCommand(fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null,
+						0, location, "0"), new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								// Now that time has elapsed, send another command
+								fRunCtrl.executeWithTargetAvailable(fContainerDmc, new Step[] { new Step() {
+									@Override
+									public void execute(final RequestMonitor otherRm) {
+										fGDBCtrl.queueCommand(
+												fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true,
+														false, null, 0, location2, "0"),
+												new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(),
+														otherRm));
+									}
+								} }, new RequestMonitor(fGDBCtrl.getExecutor(), null));
 
-        Query<Boolean> query = new Query<Boolean>() {
+								// Complete the first operation because the two are supposed to be independent
+								rm.done();
+							}
+						});
+			}
+		} };
+
+		// The target is currently stopped so we resume it
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
+
+		SyncUtil.resume();
+
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
-				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
+				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
 			}
-        };
-    	{
-    		fRunCtrl.getExecutor().execute(query);
-    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	}
-    	
-    	for (int i=0; i<2; i++) {
-    		// Wait up to 3 second for the target to suspend. Should happen within 2 seconds.
-    		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
+		};
+		{
+			fRunCtrl.getExecutor().execute(query);
+			query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		}
 
-    		// Now resume the target and check that we stop at all the breakpoints.
-    		suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-    				getGDBLaunch().getSession(),
-    				ISuspendedDMEvent.class);
+		for (int i = 0; i < 2; i++) {
+			// Wait up to 3 second for the target to suspend. Should happen within 2 seconds.
+			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
 
-    		SyncUtil.resume();
-    	}
-    }
+			// Now resume the target and check that we stop at all the breakpoints.
+			suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(getGDBLaunch().getSession(),
+					ISuspendedDMEvent.class);
 
-    /**
-     * Test that the executeWhileTargetAvailale interface works properly
-     * for concurrent operations with a single step when the target is stopped. 
-     * This tests verifies that we properly handle concurrent operations that are
-     * dependent on each other; this means that the second operation needs to complete
-     * for the second one to complete.
-     */
-    @Test
-    public void executeSingleStepConcurrentAndDependentOpWhileTargetStopped() throws Throwable {
-    	// The target is currently stopped.
+			SyncUtil.resume();
+		}
+	}
 
-    	final String location = "PrintHello";
-    	final String location2 = "PrintHi";
-    	final Step[] steps = new  Step[] {
-    			new Step() {
-    				@Override
-    				public void execute(final RequestMonitor rm) {
-    					final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
+	/**
+	 * Test that the executeWhileTargetAvailale interface works properly
+	 * for concurrent operations with a single step when the target is stopped.
+	 * This tests verifies that we properly handle concurrent operations that are
+	 * dependent on each other; this means that the second operation needs to complete
+	 * for the second one to complete.
+	 */
+	@Test
+	public void executeSingleStepConcurrentAndDependentOpWhileTargetStopped() throws Throwable {
+		// The target is currently stopped.
 
-    					fGDBCtrl.queueCommand(
-    							fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, location, "0"),
-    							new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm) {
-    								@Override
-    								protected void handleSuccess() {
-    									// Send another such operation and wait for it to complete to mark the original one as completed
-    									fRunCtrl.executeWithTargetAvailable(fContainerDmc, new Step[] {
-    											new Step() {
-    												@Override
-    												public void execute(final RequestMonitor otherRm) {
-    													fGDBCtrl.queueCommand(
-    															fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, location2, "0"),
-    															new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), otherRm));
-    												}}}, rm);
-    								}});
-    				}}
-          };
-            
-        Query<Boolean> query = new Query<Boolean>() {
+		final String location = "PrintHello";
+		final String location2 = "PrintHi";
+		final Step[] steps = new Step[] { new Step() {
+			@Override
+			public void execute(final RequestMonitor rm) {
+				final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
+
+				fGDBCtrl.queueCommand(fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null,
+						0, location, "0"), new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								// Send another such operation and wait for it to complete to mark the original one as completed
+								fRunCtrl.executeWithTargetAvailable(fContainerDmc, new Step[] { new Step() {
+									@Override
+									public void execute(final RequestMonitor otherRm) {
+										fGDBCtrl.queueCommand(
+												fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true,
+														false, null, 0, location2, "0"),
+												new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(),
+														otherRm));
+									}
+								} }, rm);
+							}
+						});
+			}
+		} };
+
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
-				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
+				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
 			}
-        };
-    	{
-    		fRunCtrl.getExecutor().execute(query);
-    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	}
-    	
-    	for (int i=0; i<2; i++) {
-    	   	// The target is currently stopped so we resume it
-            ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-            		getGDBLaunch().getSession(),
-            		ISuspendedDMEvent.class);
+		};
+		{
+			fRunCtrl.getExecutor().execute(query);
+			query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		}
 
-        	SyncUtil.resume();
+		for (int i = 0; i < 2; i++) {
+			// The target is currently stopped so we resume it
+			ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+					getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
-    		// Wait up to 3 second for the target to suspend. Should happen within 2 seconds.
-    		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
-    	}
-    }
-    
-    /**
-     * Test that the executeWhileTargetAvailale interface works properly
-     * for concurrent operations with a single step when the target is running. 
-     * This tests verifies that we properly handle concurrent operations that are
-     * dependent on each other; this means that the second operation needs to complete
-     * for the second one to complete.
-     */
-    @Test
-    public void executeSingleStepConcurrentAndDependentOpWhileTargetRunning() throws Throwable {    	
-    	final String location = "PrintHello";
-    	final String location2 = "PrintHi";
-    	final Step[] steps = new  Step[] {
-    			new Step() {
-    				@Override
-    				public void execute(final RequestMonitor rm) {
-    					final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
+			SyncUtil.resume();
 
-    					fGDBCtrl.queueCommand(
-    							fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, location, "0"),
-    							new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), rm) {
-    								@Override
-    								protected void handleSuccess() {
-    									// Send another such operation and wait for it to complete to mark the original one as completed
-    									fRunCtrl.executeWithTargetAvailable(fContainerDmc, new Step[] {
-    											new Step() {
-    												@Override
-    												public void execute(final RequestMonitor otherRm) {
-    													fGDBCtrl.queueCommand(
-    															fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null, 0, location2, "0"),
-    															new DataRequestMonitor<MIBreakInsertInfo> (fGDBCtrl.getExecutor(), otherRm));
-    												}}}, rm);
-    								}});
-    				}}
-          };
-            
-    	// The target is currently stopped so we resume it
-        ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-        		getGDBLaunch().getSession(),
-        		ISuspendedDMEvent.class);
+			// Wait up to 3 second for the target to suspend. Should happen within 2 seconds.
+			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
+		}
+	}
 
-    	SyncUtil.resume();
+	/**
+	 * Test that the executeWhileTargetAvailale interface works properly
+	 * for concurrent operations with a single step when the target is running.
+	 * This tests verifies that we properly handle concurrent operations that are
+	 * dependent on each other; this means that the second operation needs to complete
+	 * for the second one to complete.
+	 */
+	@Test
+	public void executeSingleStepConcurrentAndDependentOpWhileTargetRunning() throws Throwable {
+		final String location = "PrintHello";
+		final String location2 = "PrintHi";
+		final Step[] steps = new Step[] { new Step() {
+			@Override
+			public void execute(final RequestMonitor rm) {
+				final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc,
+						IBreakpointsTargetDMContext.class);
 
-        Query<Boolean> query = new Query<Boolean>() {
+				fGDBCtrl.queueCommand(fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true, false, null,
+						0, location, "0"), new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								// Send another such operation and wait for it to complete to mark the original one as completed
+								fRunCtrl.executeWithTargetAvailable(fContainerDmc, new Step[] { new Step() {
+									@Override
+									public void execute(final RequestMonitor otherRm) {
+										fGDBCtrl.queueCommand(
+												fGDBCtrl.getCommandFactory().createMIBreakInsert(bpTargetDmc, true,
+														false, null, 0, location2, "0"),
+												new DataRequestMonitor<MIBreakInsertInfo>(fGDBCtrl.getExecutor(),
+														otherRm));
+									}
+								} }, rm);
+							}
+						});
+			}
+		} };
+
+		// The target is currently stopped so we resume it
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
+
+		SyncUtil.resume();
+
+		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
-				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);				
+				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
 			}
-        };
-    	{
-    		fRunCtrl.getExecutor().execute(query);
-    		query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-    	}
-    	
-    	for (int i=0; i<2; i++) {
-    		// Wait up to 3 second for the target to suspend. Should happen within 2 seconds.
-    		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
+		};
+		{
+			fRunCtrl.getExecutor().execute(query);
+			query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		}
 
-    		// Now resume the target and check that we stop at all the breakpoints.
-    		suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
-    				getGDBLaunch().getSession(),
-    				ISuspendedDMEvent.class);
+		for (int i = 0; i < 2; i++) {
+			// Wait up to 3 second for the target to suspend. Should happen within 2 seconds.
+			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
 
-    		SyncUtil.resume();
-    	}
-    }
+			// Now resume the target and check that we stop at all the breakpoints.
+			suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(getGDBLaunch().getSession(),
+					ISuspendedDMEvent.class);
+
+			SyncUtil.resume();
+		}
+	}
 }

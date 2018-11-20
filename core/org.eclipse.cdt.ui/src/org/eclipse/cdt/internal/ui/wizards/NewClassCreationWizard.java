@@ -49,7 +49,7 @@ public class NewClassCreationWizard extends NewElementWizard {
 
 	/**
 	 * Sets the class name for creation in the wizard.
-	 * 
+	 *
 	 * @param className
 	 *            Name of the class or null, null will indicate default behavior
 	 *            which is extract class name from editor context. Setting an

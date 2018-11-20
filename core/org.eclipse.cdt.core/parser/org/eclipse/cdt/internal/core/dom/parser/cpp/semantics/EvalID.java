@@ -78,26 +78,24 @@ public class EvalID extends CPPDependentEvaluation {
 	private final boolean fIsPointerDeref;
 	private final ICPPTemplateArgument[] fTemplateArgs;
 
-	public EvalID(ICPPEvaluation fieldOwner, IBinding nameOwner, char[] simpleID, boolean addressOf,
-			boolean qualified, boolean isPointerDeref, ICPPTemplateArgument[] templateArgs,
-			IASTNode pointOfDefinition) {
+	public EvalID(ICPPEvaluation fieldOwner, IBinding nameOwner, char[] simpleID, boolean addressOf, boolean qualified,
+			boolean isPointerDeref, ICPPTemplateArgument[] templateArgs, IASTNode pointOfDefinition) {
 		this(fieldOwner, nameOwner, simpleID, addressOf, qualified, isPointerDeref, templateArgs,
 				findEnclosingTemplate(pointOfDefinition));
 	}
 
-	public EvalID(ICPPEvaluation fieldOwner, IBinding nameOwner, char[] simpleID, boolean addressOf,
-			boolean qualified, boolean isPointerDeref, ICPPTemplateArgument[] templateArgs,
-			IBinding templateDefinition) {
+	public EvalID(ICPPEvaluation fieldOwner, IBinding nameOwner, char[] simpleID, boolean addressOf, boolean qualified,
+			boolean isPointerDeref, ICPPTemplateArgument[] templateArgs, IBinding templateDefinition) {
 		super(templateDefinition);
 		if (simpleID == null)
 			throw new NullPointerException("simpleID"); //$NON-NLS-1$
-		fFieldOwner= fieldOwner;
-		fName= simpleID;
-		fNameOwner= nameOwner;
-		fAddressOf= addressOf;
-		fQualified= qualified;
-		fIsPointerDeref= isPointerDeref;
-		fTemplateArgs= templateArgs;
+		fFieldOwner = fieldOwner;
+		fName = simpleID;
+		fNameOwner = nameOwner;
+		fAddressOf = addressOf;
+		fQualified = qualified;
+		fIsPointerDeref = isPointerDeref;
+		fTemplateArgs = templateArgs;
 	}
 
 	/**
@@ -165,15 +163,11 @@ public class EvalID extends CPPDependentEvaluation {
 			return false;
 		}
 		EvalID o = (EvalID) other;
-		return areEquivalentOrNull(fFieldOwner, o.fFieldOwner)
-			&& CharArrayUtils.equals(fName, o.fName)
-			&& fNameOwner == o.fNameOwner
-			&& fAddressOf == o.fAddressOf
-			&& fQualified == o.fQualified
-			&& fIsPointerDeref == o.fIsPointerDeref
-			&& areEquivalentArguments(fTemplateArgs, o.fTemplateArgs);
+		return areEquivalentOrNull(fFieldOwner, o.fFieldOwner) && CharArrayUtils.equals(fName, o.fName)
+				&& fNameOwner == o.fNameOwner && fAddressOf == o.fAddressOf && fQualified == o.fQualified
+				&& fIsPointerDeref == o.fIsPointerDeref && areEquivalentArguments(fTemplateArgs, o.fTemplateArgs);
 	}
-	
+
 	@Override
 	public IType getType() {
 		return new TypeOfDependentExpression(this);
@@ -216,23 +210,22 @@ public class EvalID extends CPPDependentEvaluation {
 	}
 
 	public static ICPPEvaluation unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
-		final boolean addressOf= (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
-		final boolean qualified= (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
-		final boolean isPointerDeref= (firstBytes & ITypeMarshalBuffer.FLAG4) != 0;
-		ICPPEvaluation fieldOwner= buffer.unmarshalEvaluation();
-		char[] name= buffer.getCharArray();
-		IBinding nameOwner= buffer.unmarshalBinding();
-		ICPPTemplateArgument[] args= null;
+		final boolean addressOf = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
+		final boolean qualified = (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
+		final boolean isPointerDeref = (firstBytes & ITypeMarshalBuffer.FLAG4) != 0;
+		ICPPEvaluation fieldOwner = buffer.unmarshalEvaluation();
+		char[] name = buffer.getCharArray();
+		IBinding nameOwner = buffer.unmarshalBinding();
+		ICPPTemplateArgument[] args = null;
 		if ((firstBytes & ITypeMarshalBuffer.FLAG3) != 0) {
-			int len= buffer.getInt();
+			int len = buffer.getInt();
 			args = new ICPPTemplateArgument[len];
 			for (int i = 0; i < args.length; i++) {
-				args[i]= buffer.unmarshalTemplateArgument();
+				args[i] = buffer.unmarshalTemplateArgument();
 			}
 		}
-		IBinding templateDefinition= buffer.unmarshalBinding();
-		return new EvalID(fieldOwner, nameOwner, name, addressOf, qualified, isPointerDeref, args,
-				templateDefinition);
+		IBinding templateDefinition = buffer.unmarshalBinding();
+		return new EvalID(fieldOwner, nameOwner, name, addressOf, qualified, isPointerDeref, args, templateDefinition);
 	}
 
 	public static ICPPEvaluation create(IASTIdExpression expr) {
@@ -249,12 +242,12 @@ public class EvalID extends CPPDependentEvaluation {
 			if (binding instanceof ICPPDeferredVariableInstance) {
 				return new EvalBinding(binding, null, expr);
 			}
-			
+
 			ICPPTemplateArgument[] templateArgs = null;
 			final IASTName lastName = name.getLastName();
 			if (lastName instanceof ICPPASTTemplateId) {
 				try {
-					templateArgs= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) lastName);
+					templateArgs = CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) lastName);
 				} catch (DOMException e) {
 					return EvalFixed.INCOMPLETE;
 				}
@@ -275,10 +268,10 @@ public class EvalID extends CPPDependentEvaluation {
 			if (owner instanceof IProblemBinding)
 				return EvalFixed.INCOMPLETE;
 
-			ICPPEvaluation fieldOwner= null;
-			IType fieldOwnerType= withinNonStaticMethod(expr);
+			ICPPEvaluation fieldOwner = null;
+			IType fieldOwnerType = withinNonStaticMethod(expr);
 			if (fieldOwnerType != null) {
-				fieldOwner= new EvalFixed(fieldOwnerType, ValueCategory.LVALUE, IntegralValue.UNKNOWN);
+				fieldOwner = new EvalFixed(fieldOwnerType, ValueCategory.LVALUE, IntegralValue.UNKNOWN);
 			}
 
 			return new EvalID(fieldOwner, owner, name.getSimpleID(), isAddressOf(expr),
@@ -287,18 +280,18 @@ public class EvalID extends CPPDependentEvaluation {
 		/**
 		 * 9.3.1-3 Transformation to class member access within a non-static member function.
 		 */
-		if (binding instanceof ICPPMember && !(binding instanceof IType)
-				&& !(binding instanceof ICPPConstructor) &&!((ICPPMember) binding).isStatic()) {
-			IType fieldOwnerType= withinNonStaticMethod(expr);
+		if (binding instanceof ICPPMember && !(binding instanceof IType) && !(binding instanceof ICPPConstructor)
+				&& !((ICPPMember) binding).isStatic()) {
+			IType fieldOwnerType = withinNonStaticMethod(expr);
 			if (fieldOwnerType != null) {
 				return new EvalMemberAccess(fieldOwnerType, LVALUE, binding, true, expr);
 			}
 		}
 
 		if (binding instanceof IEnumerator) {
-			IType type= ((IEnumerator) binding).getType();
+			IType type = ((IEnumerator) binding).getType();
 			if (type instanceof ICPPEnumeration) {
-				ICPPEnumeration enumType= (ICPPEnumeration) type;
+				ICPPEnumeration enumType = (ICPPEnumeration) type;
 				// [dcl.enum] 7.2-5
 				if (isInsideEnum(expr, enumType)) {
 					if (binding instanceof ICPPInternalEnumerator) {
@@ -331,12 +324,12 @@ public class EvalID extends CPPDependentEvaluation {
 	}
 
 	private static IType withinNonStaticMethod(IASTExpression expr) {
-		IASTNode parent= expr.getParent();
+		IASTNode parent = expr.getParent();
 		while (parent != null && !(parent instanceof ICPPASTFunctionDefinition)) {
-			parent= parent.getParent();
+			parent = parent.getParent();
 		}
 		if (parent instanceof ICPPASTFunctionDefinition) {
-			ICPPASTFunctionDefinition fdef= (ICPPASTFunctionDefinition) parent;
+			ICPPASTFunctionDefinition fdef = (ICPPASTFunctionDefinition) parent;
 			// Resolution of the method name triggers name resolution inside the
 			// decl-specifier of the method definition. If we are currently
 			// resolving something inside the decl-specifier, this can lead to
@@ -357,9 +350,9 @@ public class EvalID extends CPPDependentEvaluation {
 		IASTNode e = expr.getParent();
 		while (e instanceof IASTUnaryExpression) {
 			final IASTUnaryExpression unary = (IASTUnaryExpression) e;
-			final int op= unary.getOperator();
+			final int op = unary.getOperator();
 			if (op == IASTUnaryExpression.op_bracketedPrimary) {
-				e= unary.getOperand();
+				e = unary.getOperand();
 			} else {
 				return op == IASTUnaryExpression.op_amper;
 			}
@@ -373,7 +366,7 @@ public class EvalID extends CPPDependentEvaluation {
 		if (templateArgs != null) {
 			templateArgs = instantiateArguments(templateArgs, context, false);
 		}
-		
+
 		char[] name = fName;
 		name = CPPTemplates.instantiateName(name, context, getTemplateDefinition());
 
@@ -425,11 +418,11 @@ public class EvalID extends CPPDependentEvaluation {
 			IType fieldOwnerTypeSimplifiedCV = SemanticUtil.getNestedType(fieldOwnerType, TDEF | REF);
 			IType fieldOwnerTypeSimplified = SemanticUtil.getNestedType(fieldOwnerTypeSimplifiedCV, CVTYPE);
 			if (fieldOwnerTypeSimplified instanceof ICPPClassType) {
-				ICPPEvaluation eval = resolveName(name, (ICPPClassType) fieldOwnerTypeSimplified, fieldOwner, 
+				ICPPEvaluation eval = resolveName(name, (ICPPClassType) fieldOwnerTypeSimplified, fieldOwner,
 						templateArgs, fieldOwnerTypeSimplifiedCV);
 				if (eval != null)
 					return eval;
-				if (!CPPTemplates.isDependentType(fieldOwnerTypeSimplified)) 
+				if (!CPPTemplates.isDependentType(fieldOwnerTypeSimplified))
 					return EvalFixed.INCOMPLETE;
 			} else if (fieldOwnerTypeSimplified instanceof ICPPBasicType) {
 				// Handle pseudo-destructor of basic type, e.g. "T().~T" instantiated with [T = int].
@@ -454,11 +447,12 @@ public class EvalID extends CPPDependentEvaluation {
 		if (fieldOwner == fFieldOwner) {
 			return this;
 		}
-		EvalID newEvalID = new EvalID(fieldOwner, fNameOwner, fName, fAddressOf, fQualified, fIsPointerDeref, fTemplateArgs, getTemplateDefinition());
+		EvalID newEvalID = new EvalID(fieldOwner, fNameOwner, fName, fAddressOf, fQualified, fIsPointerDeref,
+				fTemplateArgs, getTemplateDefinition());
 		return newEvalID;
 	}
 
-	private ICPPEvaluation resolveName(char[] name, ICPPClassType nameOwner, ICPPEvaluation ownerEval, 
+	private ICPPEvaluation resolveName(char[] name, ICPPClassType nameOwner, ICPPEvaluation ownerEval,
 			ICPPTemplateArgument[] templateArgs, IType impliedObjectType) {
 		IASTNode point = CPPSemantics.getCurrentLookupPoint();
 		LookupData data = new LookupData(name, templateArgs, point);
@@ -473,12 +467,12 @@ public class EvalID extends CPPDependentEvaluation {
 			if (binding instanceof ICPPFunction) {
 				ICPPFunction[] functions = new ICPPFunction[bindings.length];
 				System.arraycopy(bindings, 0, functions, 0, bindings.length);
-				return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fQualified,
-						fAddressOf, impliedObjectType, getTemplateDefinition());
+				return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fQualified, fAddressOf,
+						impliedObjectType, getTemplateDefinition());
 			}
 			if (binding instanceof CPPFunctionSet) {
-				return new EvalFunctionSet((CPPFunctionSet) binding, fQualified, fAddressOf,
-						impliedObjectType, getTemplateDefinition());
+				return new EvalFunctionSet((CPPFunctionSet) binding, fQualified, fAddressOf, impliedObjectType,
+						getTemplateDefinition());
 			}
 			if (binding instanceof IEnumerator) {
 				return new EvalBinding(binding, null, getTemplateDefinition());
@@ -489,9 +483,11 @@ public class EvalID extends CPPDependentEvaluation {
 					return new EvalBinding(binding, null, getTemplateDefinition());
 				}
 				if (ownerEval != null) {
-					return new EvalMemberAccess(nameOwner, ownerEval.getValueCategory(), binding, ownerEval, false, point);
+					return new EvalMemberAccess(nameOwner, ownerEval.getValueCategory(), binding, ownerEval, false,
+							point);
 				} else {
-					return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false, getTemplateDefinition());
+					return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false,
+							getTemplateDefinition());
 				}
 			}
 		}
@@ -502,9 +498,9 @@ public class EvalID extends CPPDependentEvaluation {
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		int r = fFieldOwner != null ? fFieldOwner.determinePackSize(tpMap) : CPPTemplates.PACK_SIZE_NOT_FOUND;
 		if (fNameOwner instanceof ICPPTemplateParameter) {
-			r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize((ICPPTemplateParameter) fNameOwner, tpMap));
-		}
-		else if (fNameOwner instanceof ICPPUnknownBinding) {
+			r = CPPTemplates.combinePackSize(r,
+					CPPTemplates.determinePackSize((ICPPTemplateParameter) fNameOwner, tpMap));
+		} else if (fNameOwner instanceof ICPPUnknownBinding) {
 			r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize((ICPPUnknownBinding) fNameOwner, tpMap));
 		}
 		if (fTemplateArgs != null) {

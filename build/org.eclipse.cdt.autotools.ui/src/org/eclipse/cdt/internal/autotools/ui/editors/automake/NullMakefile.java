@@ -25,15 +25,15 @@ import org.eclipse.cdt.make.core.makefile.IDirective;
  * statement :   rule | macro_definition | comments | empty
  * rule :  inference_rule | target_rule
  * inference_rule : target ':' <nl> ( <tab> command <nl> ) +
- * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl> 
+ * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl>
                  [ ( command ) * ]
- * macro_definition : string '=' (string)* 
+ * macro_definition : string '=' (string)*
  * comments : ('#' (string) <nl>) *
  * empty : <nl>
  * command : <tab> prefix_command string <nl>
  * target : string
  * prefix_command : '-' | '@' | '+'
- * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
+ * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%"
  */
 
 public class NullMakefile extends AbstractMakefile {
@@ -65,11 +65,11 @@ public class NullMakefile extends AbstractMakefile {
 	@Override
 	public void parse(String name, Reader makefile) {
 	}
-	
+
 	@Override
 	public void parse(URI fileURI, Reader reader) {
 	}
-	
+
 	protected void parse(URI fileURI, MakefileReader reader) {
 	}
 

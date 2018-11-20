@@ -17,7 +17,7 @@ import org.eclipse.cdt.debug.core.breakpointactions.IBreakpointAction;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * 
+ *
  * THIS INTERFACE IS PROVISIONAL AND WILL CHANGE IN THE FUTURE
  * PLUG-INS USING THIS INTERFACE WILL NEED
  * TO BE REVISED TO WORK WITH FUTURE VERSIONS OF CDT.

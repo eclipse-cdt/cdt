@@ -28,7 +28,7 @@ public class AutotoolsConfigurePrefStore implements IPreferenceStore {
 
 	public final static String EMPTY_STRING = "";
 	public final static String ALL_OPTIONS_ID = EMPTY_STRING;
-	
+
 	private static AutotoolsConfigurePrefStore instance = null;
 	private ToolListElement selectedElement;
 	private IAConfiguration cfg;
@@ -38,18 +38,18 @@ public class AutotoolsConfigurePrefStore implements IPreferenceStore {
 	private AutotoolsConfigurePrefStore() {
 		// private constructor
 	}
-	
+
 	public static AutotoolsConfigurePrefStore getInstance() {
 		if (instance == null)
 			instance = new AutotoolsConfigurePrefStore();
 		return instance;
 	}
-	
+
 	public void setSelection(IAConfiguration cfg, ToolListElement element) {
 		this.cfg = cfg;
 		selectedElement = element;
 	}
-	
+
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		listenerList.add(listener);
@@ -61,16 +61,13 @@ public class AutotoolsConfigurePrefStore implements IPreferenceStore {
 	}
 
 	@Override
-	public void firePropertyChangeEvent(String name, Object oldValue,
-			Object newValue) {
+	public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
 		Object[] listeners = listenerList.getListeners();
-		if (listeners.length > 0 && (oldValue == null || !oldValue.equals(newValue))) 
-		{
+		if (listeners.length > 0 && (oldValue == null || !oldValue.equals(newValue))) {
 			PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
-			for (int i = 0; i < listeners.length; ++i) 
-			{
-				IPropertyChangeListener l = (IPropertyChangeListener)listeners[i];
-				l.propertyChange( pe );
+			for (int i = 0; i < listeners.length; ++i) {
+				IPropertyChangeListener l = (IPropertyChangeListener) listeners[i];
+				l.propertyChange(pe);
 			}
 		}
 	}
@@ -78,8 +75,8 @@ public class AutotoolsConfigurePrefStore implements IPreferenceStore {
 	@Override
 	public boolean getBoolean(String name) {
 		IConfigureOption option = cfg.getOption(name);
-		if (option != null && (option.getType() == IConfigureOption.BIN ||
-				option.getType() == IConfigureOption.FLAGVALUE)) {
+		if (option != null
+				&& (option.getType() == IConfigureOption.BIN || option.getType() == IConfigureOption.FLAGVALUE)) {
 			return Boolean.parseBoolean(option.getValue());
 		}
 		// otherwise punt
@@ -172,39 +169,50 @@ public class AutotoolsConfigurePrefStore implements IPreferenceStore {
 	protected void setDirty(boolean isdirty) {
 		this.isdirty = isdirty;
 	}
-	
-	@Override
-	public void setDefault(String name, double value) {}
 
 	@Override
-	public void setDefault(String name, float value) {}
+	public void setDefault(String name, double value) {
+	}
 
 	@Override
-	public void setDefault(String name, int value) {}
+	public void setDefault(String name, float value) {
+	}
 
 	@Override
-	public void setDefault(String name, long value) {}
+	public void setDefault(String name, int value) {
+	}
 
 	@Override
-	public void setDefault(String name, String defaultObject) {}
+	public void setDefault(String name, long value) {
+	}
 
 	@Override
-	public void setDefault(String name, boolean value) {}
+	public void setDefault(String name, String defaultObject) {
+	}
 
 	@Override
-	public void setToDefault(String name) {}
+	public void setDefault(String name, boolean value) {
+	}
 
 	@Override
-	public void setValue(String name, double value) {}
+	public void setToDefault(String name) {
+	}
 
 	@Override
-	public void setValue(String name, float value) {}
+	public void setValue(String name, double value) {
+	}
 
 	@Override
-	public void setValue(String name, int value) {}
+	public void setValue(String name, float value) {
+	}
 
 	@Override
-	public void setValue(String name, long value) {}
+	public void setValue(String name, int value) {
+	}
+
+	@Override
+	public void setValue(String name, long value) {
+	}
 
 	@Override
 	public void setValue(String name, String value) {

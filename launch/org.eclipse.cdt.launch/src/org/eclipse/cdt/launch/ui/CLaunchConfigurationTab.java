@@ -52,7 +52,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	 * settings, or <code>null</code> if none. Note, if possible we will
 	 * return the IBinary based on config entry as this may be more usefull then
 	 * just the project.
-	 * 
+	 *
 	 * @return C element context.
 	 */
 	protected ICElement getContext(ILaunchConfiguration config, String platform) {
@@ -61,10 +61,11 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		IWorkbenchPage page = LaunchUIPlugin.getActivePage();
 		Object obj = null;
 		try {
-			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
-			programName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
+			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+			programName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String) null);
 			if (programName != null) {
-				programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
+				programName = VariablesPlugin.getDefault().getStringVariableManager()
+						.performStringSubstitution(programName);
 			}
 		} catch (CoreException e) {
 		}
@@ -78,7 +79,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			if (page != null) {
 				ISelection selection = page.getSelection();
 				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection ss = (IStructuredSelection)selection;
+					IStructuredSelection ss = (IStructuredSelection) selection;
 					if (!ss.isEmpty()) {
 						obj = ss.getFirstElement();
 					}
@@ -97,8 +98,8 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			if (platform != null && !platform.equals("*")) { //$NON-NLS-1$
 				ICDescriptor descriptor;
 				try {
-					descriptor = CCorePlugin.getDefault().getCProjectDescription(((ICElement) obj).getCProject().getProject(),
-							false);
+					descriptor = CCorePlugin.getDefault()
+							.getCProjectDescription(((ICElement) obj).getCProject().getProject(), false);
 					if (descriptor != null) {
 						String projectPlatform = descriptor.getPlatform();
 						if (!projectPlatform.equals(platform) && !projectPlatform.equals("*")) { //$NON-NLS-1$
@@ -114,7 +115,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				}
 				ICElement ce = (ICElement) obj;
 				IProject project;
-				project = (IProject)ce.getCProject().getResource();
+				project = (IProject) ce.getCProject().getResource();
 				IPath programFile = project.getFile(programName).getLocation();
 				ce = CCorePlugin.getDefault().getCoreModel().create(programFile);
 				if (ce != null && ce.exists()) {
@@ -128,9 +129,8 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			if (part != null) {
 				IEditorInput input = part.getEditorInput();
 				if (input instanceof IFileEditorInput) {
-					IFile file = ((IFileEditorInput)input).getFile();
-					if (file != null)
-					{
+					IFile file = ((IFileEditorInput) input).getFile();
+					if (file != null) {
 						ICElement ce = CoreModel.getDefault().create(file);
 						if (ce == null) {
 							IProject pro = file.getProject();
@@ -152,14 +152,14 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		String name = null;
 		if (cProject != null && cProject.exists()) {
 			name = cProject.getElementName();
-			config.setMappedResources(new IResource[] {cProject.getProject()});
-			
+			config.setMappedResources(new IResource[] { cProject.getProject() });
+
 			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(cProject.getProject());
 			if (projDes != null) {
 				String buildConfigID = projDes.getActiveConfiguration().getId();
 				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);
 			}
-			
+
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);
 	}
@@ -172,14 +172,14 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			return platform;
 		}
 	}
-	
+
 	/**
 	 * Creates a button that allows user to insert build variables.
-	 * 
+	 *
 	 * @since 7.1
 	 */
 	protected Button createVariablesButton(Composite parent, String label, final Text textField) {
-		Button variablesButton = createPushButton(parent, label, null); 
+		Button variablesButton = createPushButton(parent, label, null);
 		variablesButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {

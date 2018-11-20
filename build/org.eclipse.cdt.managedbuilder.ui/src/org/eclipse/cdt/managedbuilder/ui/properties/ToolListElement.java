@@ -25,16 +25,16 @@ import org.eclipse.cdt.managedbuilder.internal.core.OptionCategory;
 /**
  * This class represent the elements in the TreeViewer that displays the tools
  * and categories in the tool options property pages.  The reason for these
- * elements is illustrated by bugzilla #123461.  We used to use the ToolChain, 
+ * elements is illustrated by bugzilla #123461.  We used to use the ToolChain,
  * Tool and OptionCategory objects themselves as the elements in the TreeViewer,
  * but the same OptionCategory can appear more than once in the list of Tree
  * Viewer items, and this caused problems.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ToolListElement {
-	
+
 	/*
 	 * Bookeeping variables
 	 */
@@ -60,31 +60,35 @@ public class ToolListElement {
 	public ToolListElement(ITool tool) {
 		this.tool = tool;
 	}
-	
+
 	public boolean isEquivalentTo(ToolListElement e) {
-	
+
 		if (tool != null) {
 			//  Look for a matching tool
 			ITool matchTool = e.getTool();
-			if (matchTool == tool) return true;
-			if (matchTool == null) return false;
-			if (matchTool.getName().equals(tool.getUniqueRealName())) return true;
+			if (matchTool == tool)
+				return true;
+			if (matchTool == null)
+				return false;
+			if (matchTool.getName().equals(tool.getUniqueRealName()))
+				return true;
 			return false;
 		}
-	
+
 		if (optionCategory != null) {
 			IOptionCategory matchCategory = e.getOptionCategory();
 			IHoldsOptions matchHolder = e.getHoldOptions();
-			if (matchCategory == optionCategory &&
-				matchHolder == optionHolder) return true;
-			if (matchCategory == null) return false;
-			
+			if (matchCategory == optionCategory && matchHolder == optionHolder)
+				return true;
+			if (matchCategory == null)
+				return false;
+
 			//String matchCategoryName = matchCategory.getName();
 			//String optionCategoryName = optionCategory.getName();
 			String matchCategoryName = OptionCategory.makeMatchName(matchCategory);
 			String optionCategoryName = OptionCategory.makeMatchName(optionCategory);
-			if (matchHolder.getName().equals(optionHolder.getName()) &&
-				matchCategoryName.equals(optionCategoryName)) return true;
+			if (matchHolder.getName().equals(optionHolder.getName()) && matchCategoryName.equals(optionCategoryName))
+				return true;
 
 			return false;
 		}
@@ -97,19 +101,19 @@ public class ToolListElement {
 	public ToolListElement getParent() {
 		return parent;
 	}
-	
+
 	public IHoldsOptions getHoldOptions() {
 		return optionHolder;
 	}
-	
+
 	public IOptionCategory getOptionCategory() {
 		return optionCategory;
 	}
-	
+
 	public ITool getTool() {
 		return tool;
 	}
-	
+
 	/*
 	 * Children handling
 	 */
@@ -119,7 +123,7 @@ public class ToolListElement {
 		else
 			return new ToolListElement[0];
 	}
-	
+
 	public void addChildElement(ToolListElement element) {
 		if (childElements == null)
 			childElements = new ArrayList<ToolListElement>();

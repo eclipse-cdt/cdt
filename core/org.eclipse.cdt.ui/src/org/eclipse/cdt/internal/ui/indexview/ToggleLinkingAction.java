@@ -19,12 +19,12 @@ import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
 /**
  * This action toggles whether this navigator links its selection to the active
  * editor.
- * 
+ *
  */
 public class ToggleLinkingAction extends AbstractToggleLinkingAction {
-	
-    IndexView fCView;
-    
+
+	IndexView fCView;
+
 	/**
 	 * Constructs a new action.
 	 */
@@ -38,7 +38,7 @@ public class ToggleLinkingAction extends AbstractToggleLinkingAction {
 	 */
 	@Override
 	public void run() {
-	    fCView.toggleLinking();
+		fCView.toggleLinking();
 	}
 
 }

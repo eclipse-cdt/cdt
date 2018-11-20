@@ -45,20 +45,20 @@ import org.eclipse.core.runtime.Preferences;
  * mainPage.setDescription("Create a new project resource.");
  * </pre>
  * </p>
- * 
+ *
  * @deprecated as of CDT 4.0. This option page was used for New Project Wizard
  * for 3.X style projects.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 @Deprecated
 public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
-	MakeWizardOptionBlock makeWizardBlock; 
-	
+	MakeWizardOptionBlock makeWizardBlock;
+
 	public class MakeWizardOptionBlock extends MakeProjectOptionBlock {
 		IndexerBlock indexBlock;
-		
+
 		public MakeWizardOptionBlock(ICOptionContainer parent) {
 			super(parent);
 		}
@@ -67,26 +67,38 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 		protected void addTabs() {
 			addTab(new ReferenceBlock());
 			super.addTabs();
-			addTab(indexBlock = new IndexerBlock()); 
+			addTab(indexBlock = new IndexerBlock());
 		}
-		
-		public void setupHelpContextIds(){
+
+		public void setupHelpContextIds() {
 			List<ICOptionPage> pages = getOptionPages();
-			
+
 			Iterator<ICOptionPage> iter = pages.iterator();
-			for( int i = 0; i < 6 && iter.hasNext(); i++ ) {
+			for (int i = 0; i < 6 && iter.hasNext(); i++) {
 				ICOptionPage page = iter.next();
-				
+
 				String id = null;
-				switch( i ){
-					case 0 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_PROJECTS_TAB;     break;
-					case 1 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_MAKEBUILDER_TAB;  break;
-					case 2 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_ERRORPARSER_TAB;  break;
-					case 3 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_BINARYPARSER_TAB; break;
-					case 4 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_DISCOVERY_TAB;    break;
-					case 5 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_INDEXER_TAB;      break;
+				switch (i) {
+				case 0:
+					id = IMakeHelpContextIds.MAKE_PROJ_WIZ_PROJECTS_TAB;
+					break;
+				case 1:
+					id = IMakeHelpContextIds.MAKE_PROJ_WIZ_MAKEBUILDER_TAB;
+					break;
+				case 2:
+					id = IMakeHelpContextIds.MAKE_PROJ_WIZ_ERRORPARSER_TAB;
+					break;
+				case 3:
+					id = IMakeHelpContextIds.MAKE_PROJ_WIZ_BINARYPARSER_TAB;
+					break;
+				case 4:
+					id = IMakeHelpContextIds.MAKE_PROJ_WIZ_DISCOVERY_TAB;
+					break;
+				case 5:
+					id = IMakeHelpContextIds.MAKE_PROJ_WIZ_INDEXER_TAB;
+					break;
 				}
-				MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(page.getControl(), id);	
+				MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(page.getControl(), id);
 			}
 		}
 	}
@@ -99,12 +111,12 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 
 	@Override
 	protected TabFolderOptionBlock createOptionBlock() {
-		return (makeWizardBlock  = new MakeWizardOptionBlock(this));
+		return (makeWizardBlock = new MakeWizardOptionBlock(this));
 	}
 
 	@Override
 	public IProject getProject() {
-		return ((NewCProjectWizard)getWizard()).getNewProject();
+		return ((NewCProjectWizard) getWizard()).getNewProject();
 	}
 
 	/* (non-Javadoc)
@@ -114,14 +126,14 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 	public Preferences getPreferences() {
 		return MakeCorePlugin.getDefault().getPluginPreferences();
 	}
-	
-	public boolean isIndexerEnabled(){
-//    isIndexEnabled() * @deprecated always returns false		
-//	  return makeWizardBlock.indexBlock.isIndexEnabled();
-	  return false;
+
+	public boolean isIndexerEnabled() {
+		//    isIndexEnabled() * @deprecated always returns false
+		//	  return makeWizardBlock.indexBlock.isIndexEnabled();
+		return false;
 	}
 
-	public void setupHelpContextIds(){
+	public void setupHelpContextIds() {
 		makeWizardBlock.setupHelpContextIds();
 	}
 }

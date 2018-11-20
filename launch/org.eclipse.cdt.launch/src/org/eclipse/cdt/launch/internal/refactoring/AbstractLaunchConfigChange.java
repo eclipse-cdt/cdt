@@ -25,11 +25,11 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 /**
  * Common implementation of launch configuration changes.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
- * 
+ *
  */
 public abstract class AbstractLaunchConfigChange extends Change {
 
@@ -37,7 +37,7 @@ public abstract class AbstractLaunchConfigChange extends Change {
 
 	/**
 	 * Initializes me with the launch configuration that I change.
-	 * 
+	 *
 	 * @param launchConfig
 	 *            my launch configuration
 	 */
@@ -60,8 +60,7 @@ public abstract class AbstractLaunchConfigChange extends Change {
 	}
 
 	@Override
-	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException,
-			OperationCanceledException {
+	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 
 		return new RefactoringStatus();
 	}
@@ -71,17 +70,17 @@ public abstract class AbstractLaunchConfigChange extends Change {
 	 * The pattern of usage is:
 	 * <pre>
 	 *   Change change = null;
-	 *   
+	 *
 	 *   for (<i>whatever</i>) {
 	 *       change = AbstractLaunchConfigChange.append(change, createNextChange(...));
 	 *   }
-	 *   
+	 *
 	 *   // do something with the change
 	 * </pre>
-	 * 
+	 *
 	 * @param change a change to add to, or <code>null</code> to start a new (potentially conposite) change
 	 * @param toAppend the change to add.  Must not be <code>null</code>
-	 * 
+	 *
 	 * @return the resulting change, which may or may not be a composite
 	 */
 	public static Change append(Change change, Change toAppend) {
@@ -91,8 +90,7 @@ public abstract class AbstractLaunchConfigChange extends Change {
 			((CompositeChange) change).add(toAppend);
 			return change;
 		} else {
-			return new CompositeChange(LaunchMessages.AbstractChange_compositeName0, 
-					new Change[] { change, toAppend });
+			return new CompositeChange(LaunchMessages.AbstractChange_compositeName0, new Change[] { change, toAppend });
 		}
 	}
 }

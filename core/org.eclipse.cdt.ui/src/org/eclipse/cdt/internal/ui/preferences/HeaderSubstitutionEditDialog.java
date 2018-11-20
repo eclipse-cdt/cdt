@@ -57,7 +57,8 @@ public class HeaderSubstitutionEditDialog extends ResizableStatusDialog {
 		fTargetField.setLabelText(PreferencesMessages.HeaderSubstitutionEditDialog_target);
 		fTargetField.setDialogFieldListener(listener);
 		fRequiredSubstitutionCheckBox = new SelectionButtonDialogField(SWT.CHECK);
-		fRequiredSubstitutionCheckBox.setLabelText(PreferencesMessages.HeaderSubstitutionEditDialog_required_substitution);
+		fRequiredSubstitutionCheckBox
+				.setLabelText(PreferencesMessages.HeaderSubstitutionEditDialog_required_substitution);
 
 		if (rule != null) {
 			fSourceField.setText(rule.getSource());
@@ -99,9 +100,9 @@ public class HeaderSubstitutionEditDialog extends ResizableStatusDialog {
 		fTargetField.doFillIntoGrid(inner, 2);
 		fRequiredSubstitutionCheckBox.doFillIntoGrid(composite, 2);
 
-	    applyDialogFont(composite);
+		applyDialogFont(composite);
 
-	    validate();
+		validate();
 
 		return composite;
 	}
@@ -119,7 +120,8 @@ public class HeaderSubstitutionEditDialog extends ResizableStatusDialog {
 		} else if (!isValidHeader(target)) {
 			status = new StatusInfo(IStatus.WARNING, PreferencesMessages.HeaderSubstitutionEditDialog_invalid_target);
 		} else if (target.equals(source)) {
-			status = new StatusInfo(IStatus.WARNING, PreferencesMessages.HeaderSubstitutionEditDialog_error_replacement_by_itself);
+			status = new StatusInfo(IStatus.WARNING,
+					PreferencesMessages.HeaderSubstitutionEditDialog_error_replacement_by_itself);
 		}
 		updateStatus(status);
 	}
@@ -133,7 +135,7 @@ public class HeaderSubstitutionEditDialog extends ResizableStatusDialog {
 	private boolean isValidHeader(String header) {
 		if (header.isEmpty())
 			return false;
-		if (header.startsWith("<") != header.endsWith(">"))  //$NON-NLS-1$//$NON-NLS-2$
+		if (header.startsWith("<") != header.endsWith(">")) //$NON-NLS-1$//$NON-NLS-2$
 			return false;
 		if (header.startsWith("<") && header.length() < 3) //$NON-NLS-1$
 			return false;

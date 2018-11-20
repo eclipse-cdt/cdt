@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,24 +19,24 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
  * Special type of the view model node, which can be used as a root node
  * for a hierarchy.  The root node of a layout hierarchy has to implement this
  * interface.
- * 
+ *
  * @since 1.0
  */
-public interface IRootVMNode extends IVMNode{
-    
-    /**
-     * Returns whether the given event should be processed for delta generation.
-     * Root node is different than other nodes in that there is only one root
-     * element in the view model provider hierarchy.  This method allows the root
-     * node to match up the root object of the provider with the given event.  If 
-     * the root node can determine that the given event does not apply to the root
-     * object, it should return false so that the event is ignored.
-     *  
-     * @param rootObject The root object of the VM provider 
-     * @param event
-     * @return
-     */
-    public boolean isDeltaEvent(Object rootObject, Object event);
+public interface IRootVMNode extends IVMNode {
+
+	/**
+	 * Returns whether the given event should be processed for delta generation.
+	 * Root node is different than other nodes in that there is only one root
+	 * element in the view model provider hierarchy.  This method allows the root
+	 * node to match up the root object of the provider with the given event.  If
+	 * the root node can determine that the given event does not apply to the root
+	 * object, it should return false so that the event is ignored.
+	 *
+	 * @param rootObject The root object of the VM provider
+	 * @param event
+	 * @return
+	 */
+	public boolean isDeltaEvent(Object rootObject, Object event);
 
 	/**
 	 * The VM proxy calls this to produce the starting point for a delta, which
@@ -51,8 +51,8 @@ public interface IRootVMNode extends IVMNode{
 	 * of delta nodes that reflect the path to the VMProvider's root element,
 	 * since deltas sent to the viewer must take into account the entire model.
 	 * However, the specific delta node returned should be the one associated
-	 * with [rootObject]--i.e., the last node in the chain. 
-	 * 
+	 * with [rootObject]--i.e., the last node in the chain.
+	 *
 	 * @param rootObject
 	 *            the root model element being represented by our VMProvider
 	 * @param event

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,18 +27,18 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * A RefreshExclusion represents a rule for excluding certain resources from being refreshed.
- * 
+ *
  * Clients should extend this class to provide support for their own custom exclusions.
- * 
+ *
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
  * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
- * 
+ *
  * @author crecoskie
  * @since 5.3
- * 
+ *
  */
-public abstract class RefreshExclusion implements Cloneable{
+public abstract class RefreshExclusion implements Cloneable {
 
 	public static final String CLASS_ATTRIBUTE_NAME = "class"; //$NON-NLS-1$
 	public static final String CONTRIBUTOR_ID_ATTRIBUTE_NAME = "contributorId"; //$NON-NLS-1$
@@ -70,8 +70,8 @@ public abstract class RefreshExclusion implements Cloneable{
 				RefreshExclusion newExclusion = manager.getExclusionForClassName(className);
 
 				if (newExclusion == null) {
-					throw new CoreException(CCorePlugin.createStatus(MessageFormat.format(
-							Messages.RefreshExclusion_0, className)));
+					throw new CoreException(
+							CCorePlugin.createStatus(MessageFormat.format(Messages.RefreshExclusion_0, className)));
 				}
 
 				// load the exclusion type
@@ -116,15 +116,13 @@ public abstract class RefreshExclusion implements Cloneable{
 					else if (grandchild.getName().equals(INSTANCE_ELEMENT_NAME)) {
 
 						// load the instance data
-						ExclusionInstance instance = ExclusionInstance.loadInstanceData(grandchild,
-								manager);
+						ExclusionInstance instance = ExclusionInstance.loadInstanceData(grandchild, manager);
 						newExclusion.fExclusionInstanceList.add(instance);
 					}
 				}
 
 				// load nested exclusions
-				List<RefreshExclusion> nestedExclusions = loadData(child, newExclusion, null,
-						manager);
+				List<RefreshExclusion> nestedExclusions = loadData(child, newExclusion, null, manager);
 
 				// add to parent
 				for (RefreshExclusion nestedExclusion : nestedExclusions) {
@@ -150,7 +148,7 @@ public abstract class RefreshExclusion implements Cloneable{
 
 	/**
 	 * Adds an instance to the list of instances of this exclusion.
-	 * 
+	 *
 	 * @param exclusionInstance
 	 */
 	public synchronized void addExclusionInstance(ExclusionInstance exclusionInstance) {
@@ -188,7 +186,7 @@ public abstract class RefreshExclusion implements Cloneable{
 	public abstract String getName();
 
 	/**
-	 * 
+	 *
 	 * @return an unmodifiable list of exclusions to this exclusion.
 	 */
 	public synchronized List<RefreshExclusion> getNestedExclusions() {
@@ -197,7 +195,7 @@ public abstract class RefreshExclusion implements Cloneable{
 
 	/**
 	 * If this is a nested exclusion, returns the exclusion which is the direct parent of this one.
-	 * 
+	 *
 	 * @return RefreshExclusion
 	 */
 	public synchronized RefreshExclusion getParentExclusion() {
@@ -206,7 +204,7 @@ public abstract class RefreshExclusion implements Cloneable{
 
 	/**
 	 * If this exclusion is a direct descendant of a resource, returns that resource. Otherwise, returns null;
-	 * 
+	 *
 	 * @return IResource
 	 */
 	public synchronized IResource getParentResource() {
@@ -255,8 +253,7 @@ public abstract class RefreshExclusion implements Cloneable{
 		}
 
 		// provide a place for extenders to store their own data
-		ICStorageElement extensionElement = exclusionElement
-				.createChild(EXTENSION_DATA_ELEMENT_NAME);
+		ICStorageElement extensionElement = exclusionElement.createChild(EXTENSION_DATA_ELEMENT_NAME);
 
 		// call extender to store any extender-specific data
 		persistExtendedData(extensionElement);
@@ -273,7 +270,7 @@ public abstract class RefreshExclusion implements Cloneable{
 
 	/**
 	 * Removes an exclusion instance from the list of instances of this exclusion.
-	 * 
+	 *
 	 * @param exclusionInstance
 	 */
 	public synchronized void removeExclusionInstance(ExclusionInstance exclusionInstance) {
@@ -282,7 +279,7 @@ public abstract class RefreshExclusion implements Cloneable{
 
 	/**
 	 * Removes the given nested exclusion. The exclusion must be a direct child of this exclusion.
-	 * 
+	 *
 	 * @param exclusion
 	 */
 	public synchronized void removeNestedExclusion(RefreshExclusion exclusion) {
@@ -303,7 +300,7 @@ public abstract class RefreshExclusion implements Cloneable{
 
 	/**
 	 * Sets the parent resource of this exclusion.
-	 * 
+	 *
 	 * @param parentResource
 	 *            the parent resource to set
 	 */
@@ -318,7 +315,7 @@ public abstract class RefreshExclusion implements Cloneable{
 
 	/**
 	 * Tests a given resource to see if this exclusion applies to it.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource to be tested.
 	 * @return true if the resource triggers the exclusion, false otherwise (including if this exclusion does
@@ -329,7 +326,7 @@ public abstract class RefreshExclusion implements Cloneable{
 	/**
 	 * Tests this exclusion and recursively test all of its nested exclusions to determine whether this
 	 * exclusion should be triggered or not.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource to be tested
 	 * @return true if the exclusion is triggered, false otherwise (including if this exclusion does not
@@ -360,17 +357,17 @@ public abstract class RefreshExclusion implements Cloneable{
 		return currentValue;
 
 	}
-	
+
 	/**
 	 * Duplicate this refresh exclusion to the given one.
 	 * @param destination - the refresh exclusion to be modified
 	 * @since 5.4
 	 */
-	protected void copyTo (RefreshExclusion destination) {
+	protected void copyTo(RefreshExclusion destination) {
 		destination.setContributorId(getContributorId());
 		destination.setExclusionType(getExclusionType());
 		destination.setParentResource(getParentResource());
-		
+
 		Iterator<RefreshExclusion> iterator = getNestedExclusions().iterator();
 		while (iterator.hasNext()) {
 			RefreshExclusion nestedExclusion = iterator.next();
@@ -379,10 +376,10 @@ public abstract class RefreshExclusion implements Cloneable{
 			clone.setParentExclusion(destination);
 			destination.addNestedExclusion(clone);
 		}
-		
+
 		Iterator<ExclusionInstance> exclusionInstances = getExclusionInstances().iterator();
-		
-		while(exclusionInstances.hasNext()) {
+
+		while (exclusionInstances.hasNext()) {
 			ExclusionInstance next = exclusionInstances.next();
 			ExclusionInstance newInstance = new ExclusionInstance();
 			newInstance.setDisplayString(next.getDisplayString());

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
@@ -30,22 +30,23 @@ import org.eclipse.cdt.ui.text.ITokenStoreFactory;
  * task tags.
  */
 public class CCommentScanner extends AbstractCScanner {
-	private static String TASK_TAG_KEY= PreferenceConstants.EDITOR_TASK_TAG_COLOR;
-		
+	private static String TASK_TAG_KEY = PreferenceConstants.EDITOR_TASK_TAG_COLOR;
+
 	public CCommentScanner(ITokenStoreFactory tokenStoreFactory, String defaultTokenProperty) {
 		this(tokenStoreFactory, defaultTokenProperty, new String[] { defaultTokenProperty, TASK_TAG_KEY });
 	}
 
-	private CCommentScanner(ITokenStoreFactory tokenStoreFactory, String defaultTokenProperty, String[] tokenProperties) {
+	private CCommentScanner(ITokenStoreFactory tokenStoreFactory, String defaultTokenProperty,
+			String[] tokenProperties) {
 		super(tokenStoreFactory.createTokenStore(tokenProperties));
 		setRules(createRules(defaultTokenProperty));
 	}
 
-	 protected List<IRule> createRules(String defaultTokenProperty) {
-		 setDefaultReturnToken(getToken(defaultTokenProperty));
-		 IPreferenceStore store= fTokenStore.getPreferenceStore();
-		 TaskTagRule taskTagRule= new TaskTagRule(getToken(TASK_TAG_KEY), fDefaultReturnToken, store, null);
-		 addPropertyChangeParticipant(taskTagRule);
-		 return Collections.singletonList((IRule) taskTagRule);
-	 }
+	protected List<IRule> createRules(String defaultTokenProperty) {
+		setDefaultReturnToken(getToken(defaultTokenProperty));
+		IPreferenceStore store = fTokenStore.getPreferenceStore();
+		TaskTagRule taskTagRule = new TaskTagRule(getToken(TASK_TAG_KEY), fDefaultReturnToken, store, null);
+		addPropertyChangeParticipant(taskTagRule);
+		return Collections.singletonList((IRule) taskTagRule);
+	}
 }

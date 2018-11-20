@@ -21,5 +21,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IPDOMMemberOwner {
 	public void accept(IPDOMVisitor visitor) throws CoreException;
+
 	public void addChild(PDOMNode member) throws CoreException;
 }

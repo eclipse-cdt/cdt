@@ -28,26 +28,26 @@ public class ListenerList {
 	 * to an array of size capacity the first time a listener is added.
 	 * Maintains invariant: listeners != null if and only if fSize != 0
 	 */
-	private Object[] fListeners= null;
+	private Object[] fListeners = null;
 
 	/**
 	 * The empty array singleton instance, returned by getListeners()
 	 * when size == 0.
 	 */
-	private static final Object[] EmptyArray= new Object[0];
+	private static final Object[] EmptyArray = new Object[0];
 
 	/**
 	 * Creates a listener list with the given initial capacity.
 	 *
-	 * @param capacity the number of listeners which this list can initially accept 
+	 * @param capacity the number of listeners which this list can initially accept
 	 *    without growing its internal representation; must be at least 1
 	 */
 	public ListenerList(int capacity) {
 		if (capacity < 1) {
 			throw new IllegalArgumentException();
 		}
-		fListeners= new Object[capacity];
-		fSize= 0;
+		fListeners = new Object[capacity];
+		fSize = 0;
 	}
 
 	/**
@@ -61,18 +61,18 @@ public class ListenerList {
 			throw new IllegalArgumentException();
 		}
 		// check for duplicates using identity
-		for (int i= 0; i < fSize; ++i) {
+		for (int i = 0; i < fSize; ++i) {
 			if (fListeners[i] == listener) {
 				return;
 			}
 		}
 		// grow array if necessary
 		if (fSize == fListeners.length) {
-			Object[] temp= new Object[(fSize * 2) + 1];
+			Object[] temp = new Object[(fSize * 2) + 1];
 			System.arraycopy(fListeners, 0, temp, 0, fSize);
-			fListeners= temp;
+			fListeners = temp;
 		}
-		fListeners[fSize++]= listener;
+		fListeners[fSize++] = listener;
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class ListenerList {
 		if (fSize == 0) {
 			return EmptyArray;
 		}
-		Object[] result= new Object[fSize];
+		Object[] result = new Object[fSize];
 		System.arraycopy(fListeners, 0, result, 0, fSize);
 		return result;
 	}
@@ -104,15 +104,15 @@ public class ListenerList {
 			throw new IllegalArgumentException();
 		}
 
-		for (int i= 0; i < fSize; ++i) {
+		for (int i = 0; i < fSize; ++i) {
 			if (fListeners[i] == listener) {
 				if (--fSize == 0) {
-					fListeners= new Object[1];
+					fListeners = new Object[1];
 				} else {
 					if (i < fSize) {
-						fListeners[i]= fListeners[fSize];
+						fListeners[i] = fListeners[fSize];
 					}
-					fListeners[fSize]= null;
+					fListeners[fSize] = null;
 				}
 				return;
 			}
@@ -123,8 +123,8 @@ public class ListenerList {
 	 * Removes all the listeners from the list.
 	 */
 	public void removeAll() {
-		fListeners= new Object[0];
-		fSize= 0;
+		fListeners = new Object[0];
+		fSize = 0;
 	}
 
 	/**
@@ -136,4 +136,3 @@ public class ListenerList {
 		return fSize;
 	}
 }
-

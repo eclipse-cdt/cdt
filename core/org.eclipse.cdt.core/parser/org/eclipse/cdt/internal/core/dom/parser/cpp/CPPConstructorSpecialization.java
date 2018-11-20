@@ -26,15 +26,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 /**
  * Specialization of a constructor for a class-template or class-template specialization.
  */
-public class CPPConstructorSpecialization extends CPPMethodSpecialization 
-		implements ICPPConstructorSpecialization {
+public class CPPConstructorSpecialization extends CPPMethodSpecialization implements ICPPConstructorSpecialization {
 
-	public CPPConstructorSpecialization(ICPPConstructor orig, ICPPClassType owner,
-			ICPPTemplateParameterMap argMap, ICPPFunctionType type, IType[] exceptionSpecs) {
+	public CPPConstructorSpecialization(ICPPConstructor orig, ICPPClassType owner, ICPPTemplateParameterMap argMap,
+			ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(orig, owner, argMap, type, exceptionSpecs);
 	}
-	static <T extends ICPPConstructorSpecialization & ICPPInternalBinding> ICPPExecution 
-			getConstructorChainExecution(T functionSpec) {
+
+	static <T extends ICPPConstructorSpecialization & ICPPInternalBinding> ICPPExecution getConstructorChainExecution(
+			T functionSpec) {
 		if (!functionSpec.isConstexpr()) {
 			return null;
 		}
@@ -50,7 +50,7 @@ public class CPPConstructorSpecialization extends CPPMethodSpecialization
 	public ICPPExecution getConstructorChainExecution() {
 		return getConstructorChainExecution(this);
 	}
-	
+
 	@Override
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
 		return getConstructorChainExecution();

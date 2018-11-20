@@ -25,7 +25,7 @@ public class CPPASTReferenceOperator extends CPPASTAttributeOwner implements ICP
 	private final boolean fIsRValue;
 
 	public CPPASTReferenceOperator(boolean isRValueReference) {
-		fIsRValue= isRValueReference;
+		fIsRValue = isRValueReference;
 	}
 
 	@Override
@@ -44,12 +44,14 @@ public class CPPASTReferenceOperator extends CPPASTAttributeOwner implements ICP
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitPointerOperators) {
 			switch (action.visit(this)) {
-			case ASTVisitor.PROCESS_ABORT: return false;
-			case ASTVisitor.PROCESS_SKIP: return true;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
 			}
 		}
 
@@ -59,7 +61,7 @@ public class CPPASTReferenceOperator extends CPPASTAttributeOwner implements ICP
 		if (action.shouldVisitPointerOperators) {
 			if (action.leave(this) == ASTVisitor.PROCESS_ABORT)
 				return false;
-    	}
+		}
 		return true;
-    }
+	}
 }

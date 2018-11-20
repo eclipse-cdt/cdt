@@ -51,7 +51,9 @@ public class SemanticQueries {
 		return isCopyOrMoveConstructor(constructor, CopyOrMoveConstructorKind.COPY);
 	}
 
-	private enum CopyOrMoveConstructorKind { COPY, MOVE, COPY_OR_MOVE }
+	private enum CopyOrMoveConstructorKind {
+		COPY, MOVE, COPY_OR_MOVE
+	}
 
 	private static boolean isCopyOrMoveConstructor(ICPPConstructor constructor, CopyOrMoveConstructorKind kind) {
 		// 12.8/2-3 [class.copy]:
@@ -82,8 +84,7 @@ public class SemanticQueries {
 	}
 
 	private static boolean isCallableWithNumberOfArguments(ICPPFunction function, int numArguments) {
-		return function.getParameters().length >= numArguments
-			&& function.getRequiredArgumentCount() <= numArguments;
+		return function.getParameters().length >= numArguments && function.getRequiredArgumentCount() <= numArguments;
 	}
 
 	/**
@@ -115,7 +116,7 @@ public class SemanticQueries {
 		}
 		return pureVirtualMethods.toArray(new ICPPMethod[pureVirtualMethods.size()]);
 	}
-	
+
 	/**
 	 * @deprecated Use {@link SemanticQueries}{@link #getPureVirtualMethods(ICPPClassType)} instead.
 	 * @since 5.6
@@ -124,7 +125,7 @@ public class SemanticQueries {
 	public static ICPPMethod[] getPureVirtualMethods(ICPPClassType classType, IASTNode point) {
 		return getPureVirtualMethods(classType);
 	}
-	
+
 	/**
 	 * Returns whether a problem binding represents a name resolution error due to an unknown built-in.
 	 * Importantly, this will not return true for a misuse of a known builtin, which we want to diagnose.
@@ -134,8 +135,8 @@ public class SemanticQueries {
 	 */
 	public static boolean isUnknownBuiltin(IProblemBinding binding, IASTNode node) {
 		char[] name = binding.getNameCharArray();
-		boolean isBuiltin = binding.getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND &&
-				CharArrayUtils.startsWith(name, "__builtin_");  //$NON-NLS-1$
+		boolean isBuiltin = binding.getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND
+				&& CharArrayUtils.startsWith(name, "__builtin_"); //$NON-NLS-1$
 		if (isBuiltin) {
 			if (node != null) {
 				IASTTranslationUnit tu = node.getTranslationUnit();
@@ -143,7 +144,7 @@ public class SemanticQueries {
 					return !((ASTTranslationUnit) tu).isKnownBuiltin(name);
 				}
 			}
-			return true;	
+			return true;
 		}
 		return false;
 	}

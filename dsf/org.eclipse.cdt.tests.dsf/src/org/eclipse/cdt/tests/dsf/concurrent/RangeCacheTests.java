@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -47,432 +47,441 @@ import org.junit.Test;
  */
 public class RangeCacheTests {
 
-    class TestRangeCache extends RangeCache<Integer> {
-        
-        public TestRangeCache() {
-            super(new ImmediateInDsfExecutor(fExecutor));
-        }
-        
-        @Override
-        protected void retrieve(long offset, int count, DataRequestMonitor<List<Integer>> rm) {
-            fRetrieveInfos.add(new RetrieveInfo(offset, count, rm));
-        }
-        
-        @Override
-        public void reset() {
-            super.reset();
-        }
+	class TestRangeCache extends RangeCache<Integer> {
 
-        @Override
-        public void set(long offset, int count, List<Integer> data, IStatus status) {
-            super.set(offset, count, data, status);
-        }
-    }
+		public TestRangeCache() {
+			super(new ImmediateInDsfExecutor(fExecutor));
+		}
 
-    class TestQuery extends Query<List<Integer>> {
-        long fOffset;
-        int fCount;
-        TestQuery(long offset, int count) {
-            fOffset = offset;
-            fCount = count;
-        }        
-        
-        @Override
-        protected void execute(final DataRequestMonitor<List<Integer>> rm) {
-            fRangeCache = fTestCache.getRange(fOffset, fCount);
-            fRangeCache.update(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
-                @Override
-                protected void handleSuccess() {
-                    rm.setData(fRangeCache.getData());
-                    rm.done();
-                }
-            });
-        }
-    }
+		@Override
+		protected void retrieve(long offset, int count, DataRequestMonitor<List<Integer>> rm) {
+			fRetrieveInfos.add(new RetrieveInfo(offset, count, rm));
+		}
 
-    class RetrieveInfo implements Comparable<RetrieveInfo> {
-        long fOffset;
-        int fCount;
-        DataRequestMonitor<List<Integer>> fRm;
-        RetrieveInfo(long offset, int count, DataRequestMonitor<List<Integer>> rm) {
-            fOffset = offset;
-            fCount = count;
-            fRm = rm;
-        }
-        
-        @Override
-	public int compareTo(RetrieveInfo o) {
-            if (fOffset > o.fOffset) {
-                return 1;
-            } else if (fOffset == o.fOffset) {
-                return 0;
-            } else /*if (fOffset < o.fOffset)*/ {
-                return -1;
-            }
-        }
-    }
+		@Override
+		public void reset() {
+			super.reset();
+		}
 
-    TestDsfExecutor fExecutor;
-    TestRangeCache fTestCache;    
-    SortedSet<RetrieveInfo> fRetrieveInfos;
-    ICache<List<Integer>> fRangeCache;
-    
-    private List<Integer> makeList(long offset, int count) {
-        List<Integer> list = new ArrayList<Integer>(count);
-        for (int i = 0; i < count; i++) {
-            list.add((int)(i + offset));
-        }
-        return list;
-    }
-    
-    /**
-     * There's no rule on how quickly the cache has to start data retrieval
-     * after it has been requested.  It could do it immediately, or it could
-     * wait a dispatch cycle, etc..
-     */
-    private void waitForRetrieveRm(int size) {
-        synchronized(this) {
-            while (fRetrieveInfos.size() < size) {
-                try {
-                    wait(100);
-                } catch (InterruptedException e) {
-                    return;
-                } 
-            }
-        }
-    }
-    
-    @Before 
-    public void startExecutor() throws ExecutionException, InterruptedException {
-        fExecutor = new TestDsfExecutor();
-        fTestCache = new TestRangeCache();
-        fRetrieveInfos = new TreeSet<RetrieveInfo>();
-        fRangeCache = null;
-    }   
-    
-    @After 
-    public void shutdownExecutor() throws ExecutionException, InterruptedException {
-        fExecutor.submit(new DsfRunnable() { @Override
-	public void run() {
-            fExecutor.shutdown();
-        }}).get();
-        if (fExecutor.exceptionsCaught()) {
-            Throwable[] exceptions = fExecutor.getExceptions();
-            throw new ExecutionException(exceptions[0]);
-        }
-        fTestCache = null;
-        fExecutor = null;
-    }
+		@Override
+		public void set(long offset, int count, List<Integer> data, IStatus status) {
+			super.set(offset, count, data, status);
+		}
+	}
 
-    private void assertCacheValidWithData(ICache<List<Integer>> cache, long offset, int count) {
-        assertTrue(cache.isValid());
-        assertEquals(makeList(offset, count), cache.getData());
-        assertTrue(cache.getStatus().isOK());
-    }
+	class TestQuery extends Query<List<Integer>> {
+		long fOffset;
+		int fCount;
 
-    private void assertCacheValidWithError(ICache<List<Integer>> cache) {
-        assertTrue(cache.isValid());
-        assertFalse(cache.getStatus().isOK());
-    }
-    
-    private void assertCacheWaiting(ICache<List<Integer>> cache) {
-        assertFalse(cache.isValid());
-        try {
-            cache.getData();
-            fail("Expected an IllegalStateException");
-        } catch (IllegalStateException e) {}
-        try {
-            cache.getStatus();
-            fail("Expected an IllegalStateException");
-        } catch (IllegalStateException e) {}
-    }
+		TestQuery(long offset, int count) {
+			fOffset = offset;
+			fCount = count;
+		}
 
-    private void completeInfo(RetrieveInfo info, long offset, int count) {
-        assertEquals(offset, info.fOffset);
-        assertEquals(count, info.fCount);
-        info.fRm.setData(makeList(offset, count));
-        info.fRm.done();
-    }
-    
-    private void getRange(long queryOffset, int queryCount, long[] retrieveOffsets, int retrieveCounts[]) throws InterruptedException, ExecutionException {
-        assert retrieveOffsets.length == retrieveCounts.length;
-        int retrieveCount = retrieveOffsets.length;
-        
-        // Request data from cache
-        TestQuery q = new TestQuery(queryOffset, queryCount);
+		@Override
+		protected void execute(final DataRequestMonitor<List<Integer>> rm) {
+			fRangeCache = fTestCache.getRange(fOffset, fCount);
+			fRangeCache.update(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+				@Override
+				protected void handleSuccess() {
+					rm.setData(fRangeCache.getData());
+					rm.done();
+				}
+			});
+		}
+	}
 
-        fRangeCache = null;
-        fRetrieveInfos.clear();
-        
-        fExecutor.execute(q);
-        
-        // Wait until the cache requests the data.
-        waitForRetrieveRm(retrieveOffsets.length);
-        
-        if (retrieveCount != 0) {
-            assertCacheWaiting(fRangeCache);
-            
-            // Set the data without using an executor.
-            assertEquals(retrieveCount, fRetrieveInfos.size());
-            int i = 0; 
-            for (RetrieveInfo info : fRetrieveInfos) {
-                completeInfo(info, retrieveOffsets[i], retrieveCounts[i]);
-                i++;
-            }
-        }
-        
-        // Wait for data.
-        assertEquals(makeList(queryOffset, queryCount), q.get());
-        
-        // Check state while waiting for data
-        assertCacheValidWithData(fRangeCache, queryOffset, queryCount);
-    }
-    
-    @Test 
-    public void getOneRangeTest() throws InterruptedException, ExecutionException {
-        getRange(0, 100, new long[] { 0 }, new int[] { 100 });
-    }
-    
-    @Test 
-    public void getMultipleRangesTest() throws InterruptedException, ExecutionException {
-        // Retrieve a range in-between two cached ranges
-        getRange(0, 100, new long[] { 0 }, new int[] { 100 });
-        getRange(200, 100, new long[] { 200 }, new int[] { 100 });
-        getRange(0, 300, new long[] { 100 }, new int[] { 100 });
+	class RetrieveInfo implements Comparable<RetrieveInfo> {
+		long fOffset;
+		int fCount;
+		DataRequestMonitor<List<Integer>> fRm;
 
-        // Retrieve a range overlapping two cached ranges
-        getRange(1000, 100, new long[] { 1000 }, new int[] { 100 });
-        getRange(1200, 100, new long[] { 1200 }, new int[] { 100 });
-        getRange(900, 500, new long[] { 900, 1100, 1300 }, new int[] { 100, 100, 100 });
+		RetrieveInfo(long offset, int count, DataRequestMonitor<List<Integer>> rm) {
+			fOffset = offset;
+			fCount = count;
+			fRm = rm;
+		}
 
-        // Retrieve a range that's a subset of a cached range.
-        getRange(2000, 100, new long[] { 2000 }, new int[] { 100 });
-        getRange(2000, 50, new long[] {}, new int[] {});
-        getRange(2025, 50, new long[] {}, new int[] {});
-        getRange(2050, 50, new long[] {}, new int[] {});
-    }
+		@Override
+		public int compareTo(RetrieveInfo o) {
+			if (fOffset > o.fOffset) {
+				return 1;
+			} else if (fOffset == o.fOffset) {
+				return 0;
+			} else /*if (fOffset < o.fOffset)*/ {
+				return -1;
+			}
+		}
+	}
 
-    private void cancelRange(long queryOffset, int queryCount, long[] retrieveOffsets, int retrieveCounts[]) throws Exception {
-        int retrieveCount = retrieveOffsets.length;
-        
-        // Request data from cache
-        TestQuery q = new TestQuery(queryOffset, queryCount);
+	TestDsfExecutor fExecutor;
+	TestRangeCache fTestCache;
+	SortedSet<RetrieveInfo> fRetrieveInfos;
+	ICache<List<Integer>> fRangeCache;
 
-        fRangeCache = null;
-        fRetrieveInfos.clear();
-        
-        fExecutor.execute(q);
-        
-        // Wait until the cache requests the data.
-        waitForRetrieveRm(retrieveCount);
-        
-        assertCacheWaiting(fRangeCache);
+	private List<Integer> makeList(long offset, int count) {
+		List<Integer> list = new ArrayList<Integer>(count);
+		for (int i = 0; i < count; i++) {
+			list.add((int) (i + offset));
+		}
+		return list;
+	}
 
-        // Set the data without using an executor.
-        assertEquals(retrieveCount, fRetrieveInfos.size());
-        int i = 0; 
-        for (RetrieveInfo info : fRetrieveInfos) {
-            assertEquals(retrieveOffsets[i], info.fOffset);
-            assertEquals(retrieveCounts[i], info.fCount);
-            assertFalse(info.fRm.isCanceled());
-            i++;
-        }
-        
-        q.cancel(true);
-        try {
-            q.get();
-            fail("Expected a cancellation exception");
-        } catch (CancellationException e) {} // Expected exception;
-        
-        for (RetrieveInfo info : fRetrieveInfos) {
-            assertTrue(info.fRm.isCanceled());
-        }
-    }
+	/**
+	 * There's no rule on how quickly the cache has to start data retrieval
+	 * after it has been requested.  It could do it immediately, or it could
+	 * wait a dispatch cycle, etc..
+	 */
+	private void waitForRetrieveRm(int size) {
+		synchronized (this) {
+			while (fRetrieveInfos.size() < size) {
+				try {
+					wait(100);
+				} catch (InterruptedException e) {
+					return;
+				}
+			}
+		}
+	}
 
-    @Test 
-    public void cancelOneRangeTest() throws Exception {
-        cancelRange(0, 100, new long[] { 0 }, new int[] { 100 });
-    }
+	@Before
+	public void startExecutor() throws ExecutionException, InterruptedException {
+		fExecutor = new TestDsfExecutor();
+		fTestCache = new TestRangeCache();
+		fRetrieveInfos = new TreeSet<RetrieveInfo>();
+		fRangeCache = null;
+	}
 
-    @Test 
-    public void cancelMultipleRangesTest() throws Exception {
-        // Cancel a couple of ranges.
-        cancelRange(0, 100, new long[] { 0 }, new int[] { 100 });
-        cancelRange(200, 100, new long[] { 200 }, new int[] { 100 });
-        
-        // Cancel a range overlapping two previously canceled ranges.
-        cancelRange(0, 300, new long[] { 0 }, new int[] { 300 });
-    }
+	@After
+	public void shutdownExecutor() throws ExecutionException, InterruptedException {
+		fExecutor.submit(new DsfRunnable() {
+			@Override
+			public void run() {
+				fExecutor.shutdown();
+			}
+		}).get();
+		if (fExecutor.exceptionsCaught()) {
+			Throwable[] exceptions = fExecutor.getExceptions();
+			throw new ExecutionException(exceptions[0]);
+		}
+		fTestCache = null;
+		fExecutor = null;
+	}
 
-    @Test
-    public void getAndCancelMultipleRangesTest() throws Exception {
-        // Cancel a range, then retrieve the same range 
-        cancelRange(0, 100, new long[] { 0 }, new int[] { 100 });
-        getRange(0, 100, new long[] { 0 }, new int[] { 100 });
-        
-        // Cancel a range overlapping a cached range.
-        cancelRange(0, 200, new long[] { 100 }, new int[] { 100 });
-    }
+	private void assertCacheValidWithData(ICache<List<Integer>> cache, long offset, int count) {
+		assertTrue(cache.isValid());
+		assertEquals(makeList(offset, count), cache.getData());
+		assertTrue(cache.getStatus().isOK());
+	}
 
-    @Test 
-    public void resetOneRangeTest() throws InterruptedException, ExecutionException {
-        getRange(0, 100, new long[] { 0 }, new int[] { 100 });
-        
-        fExecutor.submit(new DsfRunnable() {
-            @Override
-	    public void run() {
-                fTestCache.reset();
-            };
-        }).get();
-        
-        getRange(0, 100, new long[] { 0 }, new int[] { 100 });
-    }
-    
-    @Test 
-    public void resetMultipleRangesTest() throws InterruptedException, ExecutionException {
-        // Retrieve a range in-between two cached ranges
-        getRange(0, 100, new long[] { 0 }, new int[] { 100 });
-        getRange(200, 100, new long[] { 200 }, new int[] { 100 });
-        getRange(0, 300, new long[] { 100 }, new int[] { 100 });
+	private void assertCacheValidWithError(ICache<List<Integer>> cache) {
+		assertTrue(cache.isValid());
+		assertFalse(cache.getStatus().isOK());
+	}
 
-        // Retrieve a range overlapping two cached ranges
-        getRange(1000, 100, new long[] { 1000 }, new int[] { 100 });
-        getRange(1200, 100, new long[] { 1200 }, new int[] { 100 });
-        getRange(900, 500, new long[] { 900, 1100, 1300 }, new int[] { 100, 100, 100 });
+	private void assertCacheWaiting(ICache<List<Integer>> cache) {
+		assertFalse(cache.isValid());
+		try {
+			cache.getData();
+			fail("Expected an IllegalStateException");
+		} catch (IllegalStateException e) {
+		}
+		try {
+			cache.getStatus();
+			fail("Expected an IllegalStateException");
+		} catch (IllegalStateException e) {
+		}
+	}
 
-        // Retrieve a range that's a subset of a cached range.
-        getRange(2000, 100, new long[] { 2000 }, new int[] { 100 });
-        getRange(2000, 50, new long[] {}, new int[] {});
-        getRange(2025, 50, new long[] {}, new int[] {});
-        getRange(2050, 50, new long[] {}, new int[] {});
-        
-        fExecutor.submit(new DsfRunnable() {
-            @Override
-	    public void run() {
-                fTestCache.reset();
-            };
-        }).get();
-        
-        // Retrieve a range in-between two cached ranges
-        getRange(0, 100, new long[] { 0 }, new int[] { 100 });
-        getRange(200, 100, new long[] { 200 }, new int[] { 100 });
-        getRange(0, 300, new long[] { 100 }, new int[] { 100 });
+	private void completeInfo(RetrieveInfo info, long offset, int count) {
+		assertEquals(offset, info.fOffset);
+		assertEquals(count, info.fCount);
+		info.fRm.setData(makeList(offset, count));
+		info.fRm.done();
+	}
 
-        // Retrieve a range overlapping two cached ranges
-        getRange(1000, 100, new long[] { 1000 }, new int[] { 100 });
-        getRange(1200, 100, new long[] { 1200 }, new int[] { 100 });
-        getRange(900, 500, new long[] { 900, 1100, 1300 }, new int[] { 100, 100, 100 });
+	private void getRange(long queryOffset, int queryCount, long[] retrieveOffsets, int retrieveCounts[])
+			throws InterruptedException, ExecutionException {
+		assert retrieveOffsets.length == retrieveCounts.length;
+		int retrieveCount = retrieveOffsets.length;
 
-        // Retrieve a range that's a subset of a cached range.
-        getRange(2000, 100, new long[] { 2000 }, new int[] { 100 });
-        getRange(2000, 50, new long[] {}, new int[] {});
-        getRange(2025, 50, new long[] {}, new int[] {});
-        getRange(2050, 50, new long[] {}, new int[] {});
-    }
+		// Request data from cache
+		TestQuery q = new TestQuery(queryOffset, queryCount);
 
-    @Test 
-    public void resetWhileInvalidTest() throws InterruptedException, ExecutionException {
-        // Request data from cache
-        TestQuery q = new TestQuery(10, 100);
+		fRangeCache = null;
+		fRetrieveInfos.clear();
 
-        fRangeCache = null;
-        fRetrieveInfos.clear();
-        
-        fExecutor.execute(q);
-        
-        // Wait until the cache requests the data.
-        waitForRetrieveRm(1);
-        
-        assertCacheWaiting(fRangeCache);
-        
-        fExecutor.submit(new DsfRunnable() {
-            @Override
-	    public void run() {
-                fTestCache.reset();
-            };
-        }).get();
-        
-        // Set the data without using an executor.
-        assertEquals(1, fRetrieveInfos.size());
-        completeInfo(fRetrieveInfos.first(), 10, 100);
-        
-        // Wait for data.
-        assertEquals(makeList(10, 100), q.get());
-        
-        // Check state while waiting for data
-        assertCacheValidWithData(fRangeCache, 10, 100);
-    }
+		fExecutor.execute(q);
 
-    @Test 
-    public void setRangeErrorTest() throws InterruptedException, ExecutionException {
-        
-        // Retrieve a range of data.
-        getRange(0, 100, new long[] { 0 }, new int[] { 100 });
-        
-        // Force an error status into the range cache.
-        fExecutor.submit(new DsfRunnable() {
-            @Override
-	    public void run() {
-                fTestCache.set(0, 100, null, new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Cache invalid", null));
-            };
-        }).get();
+		// Wait until the cache requests the data.
+		waitForRetrieveRm(retrieveOffsets.length);
 
-        // Retrieve a range cache and check that it immediately contains the error status in it.
-        fRangeCache = null;
-        fExecutor.submit(new DsfRunnable() {
-            @Override
-	    public void run() {
-                fRangeCache = fTestCache.getRange(0, 100);
-            }
-        }).get();
+		if (retrieveCount != 0) {
+			assertCacheWaiting(fRangeCache);
 
-        assertCacheValidWithError(fRangeCache);
-        
-        // Request an update from the range and check for exception. 
-        TestQuery q = new TestQuery(10, 100);
+			// Set the data without using an executor.
+			assertEquals(retrieveCount, fRetrieveInfos.size());
+			int i = 0;
+			for (RetrieveInfo info : fRetrieveInfos) {
+				completeInfo(info, retrieveOffsets[i], retrieveCounts[i]);
+				i++;
+			}
+		}
 
-        fRangeCache = null;
-        fRetrieveInfos.clear();
-        
-        fExecutor.execute(q);
+		// Wait for data.
+		assertEquals(makeList(queryOffset, queryCount), q.get());
 
-        try {
-            q.get();
-            fail("Expected an ExecutionException");            
-        } catch (ExecutionException e) {}
-    }
+		// Check state while waiting for data
+		assertCacheValidWithData(fRangeCache, queryOffset, queryCount);
+	}
 
-    @Test 
-    public void getOneRangeUsingDifferentRangeInstanceTest() throws InterruptedException, ExecutionException {
-        // Request data from cache
-        TestQuery q = new TestQuery(0, 100);
+	@Test
+	public void getOneRangeTest() throws InterruptedException, ExecutionException {
+		getRange(0, 100, new long[] { 0 }, new int[] { 100 });
+	}
 
-        fRangeCache = null;
-        fRetrieveInfos.clear();
-        
-        fExecutor.execute(q);
-        
-        // Wait until the cache requests the data.
-        waitForRetrieveRm(1);
-        
-        assertCacheWaiting(fRangeCache);
-        
-        // Set the data without using an executor.
-        assertEquals(1, fRetrieveInfos.size());
-        RetrieveInfo info = fRetrieveInfos.iterator().next();
-        completeInfo(info, 0, 100);
+	@Test
+	public void getMultipleRangesTest() throws InterruptedException, ExecutionException {
+		// Retrieve a range in-between two cached ranges
+		getRange(0, 100, new long[] { 0 }, new int[] { 100 });
+		getRange(200, 100, new long[] { 200 }, new int[] { 100 });
+		getRange(0, 300, new long[] { 100 }, new int[] { 100 });
 
-        fExecutor.submit(new DsfRunnable() {
-            @Override
-	    public void run() {
-                fRangeCache = fTestCache.getRange(0, 100);
-            }
-        }).get();
-        
-        // Check state while waiting for data
-        assertCacheValidWithData(fRangeCache, 0, 100);
-    }
-    
-    
-    
+		// Retrieve a range overlapping two cached ranges
+		getRange(1000, 100, new long[] { 1000 }, new int[] { 100 });
+		getRange(1200, 100, new long[] { 1200 }, new int[] { 100 });
+		getRange(900, 500, new long[] { 900, 1100, 1300 }, new int[] { 100, 100, 100 });
+
+		// Retrieve a range that's a subset of a cached range.
+		getRange(2000, 100, new long[] { 2000 }, new int[] { 100 });
+		getRange(2000, 50, new long[] {}, new int[] {});
+		getRange(2025, 50, new long[] {}, new int[] {});
+		getRange(2050, 50, new long[] {}, new int[] {});
+	}
+
+	private void cancelRange(long queryOffset, int queryCount, long[] retrieveOffsets, int retrieveCounts[])
+			throws Exception {
+		int retrieveCount = retrieveOffsets.length;
+
+		// Request data from cache
+		TestQuery q = new TestQuery(queryOffset, queryCount);
+
+		fRangeCache = null;
+		fRetrieveInfos.clear();
+
+		fExecutor.execute(q);
+
+		// Wait until the cache requests the data.
+		waitForRetrieveRm(retrieveCount);
+
+		assertCacheWaiting(fRangeCache);
+
+		// Set the data without using an executor.
+		assertEquals(retrieveCount, fRetrieveInfos.size());
+		int i = 0;
+		for (RetrieveInfo info : fRetrieveInfos) {
+			assertEquals(retrieveOffsets[i], info.fOffset);
+			assertEquals(retrieveCounts[i], info.fCount);
+			assertFalse(info.fRm.isCanceled());
+			i++;
+		}
+
+		q.cancel(true);
+		try {
+			q.get();
+			fail("Expected a cancellation exception");
+		} catch (CancellationException e) {
+		} // Expected exception;
+
+		for (RetrieveInfo info : fRetrieveInfos) {
+			assertTrue(info.fRm.isCanceled());
+		}
+	}
+
+	@Test
+	public void cancelOneRangeTest() throws Exception {
+		cancelRange(0, 100, new long[] { 0 }, new int[] { 100 });
+	}
+
+	@Test
+	public void cancelMultipleRangesTest() throws Exception {
+		// Cancel a couple of ranges.
+		cancelRange(0, 100, new long[] { 0 }, new int[] { 100 });
+		cancelRange(200, 100, new long[] { 200 }, new int[] { 100 });
+
+		// Cancel a range overlapping two previously canceled ranges.
+		cancelRange(0, 300, new long[] { 0 }, new int[] { 300 });
+	}
+
+	@Test
+	public void getAndCancelMultipleRangesTest() throws Exception {
+		// Cancel a range, then retrieve the same range
+		cancelRange(0, 100, new long[] { 0 }, new int[] { 100 });
+		getRange(0, 100, new long[] { 0 }, new int[] { 100 });
+
+		// Cancel a range overlapping a cached range.
+		cancelRange(0, 200, new long[] { 100 }, new int[] { 100 });
+	}
+
+	@Test
+	public void resetOneRangeTest() throws InterruptedException, ExecutionException {
+		getRange(0, 100, new long[] { 0 }, new int[] { 100 });
+
+		fExecutor.submit(new DsfRunnable() {
+			@Override
+			public void run() {
+				fTestCache.reset();
+			};
+		}).get();
+
+		getRange(0, 100, new long[] { 0 }, new int[] { 100 });
+	}
+
+	@Test
+	public void resetMultipleRangesTest() throws InterruptedException, ExecutionException {
+		// Retrieve a range in-between two cached ranges
+		getRange(0, 100, new long[] { 0 }, new int[] { 100 });
+		getRange(200, 100, new long[] { 200 }, new int[] { 100 });
+		getRange(0, 300, new long[] { 100 }, new int[] { 100 });
+
+		// Retrieve a range overlapping two cached ranges
+		getRange(1000, 100, new long[] { 1000 }, new int[] { 100 });
+		getRange(1200, 100, new long[] { 1200 }, new int[] { 100 });
+		getRange(900, 500, new long[] { 900, 1100, 1300 }, new int[] { 100, 100, 100 });
+
+		// Retrieve a range that's a subset of a cached range.
+		getRange(2000, 100, new long[] { 2000 }, new int[] { 100 });
+		getRange(2000, 50, new long[] {}, new int[] {});
+		getRange(2025, 50, new long[] {}, new int[] {});
+		getRange(2050, 50, new long[] {}, new int[] {});
+
+		fExecutor.submit(new DsfRunnable() {
+			@Override
+			public void run() {
+				fTestCache.reset();
+			};
+		}).get();
+
+		// Retrieve a range in-between two cached ranges
+		getRange(0, 100, new long[] { 0 }, new int[] { 100 });
+		getRange(200, 100, new long[] { 200 }, new int[] { 100 });
+		getRange(0, 300, new long[] { 100 }, new int[] { 100 });
+
+		// Retrieve a range overlapping two cached ranges
+		getRange(1000, 100, new long[] { 1000 }, new int[] { 100 });
+		getRange(1200, 100, new long[] { 1200 }, new int[] { 100 });
+		getRange(900, 500, new long[] { 900, 1100, 1300 }, new int[] { 100, 100, 100 });
+
+		// Retrieve a range that's a subset of a cached range.
+		getRange(2000, 100, new long[] { 2000 }, new int[] { 100 });
+		getRange(2000, 50, new long[] {}, new int[] {});
+		getRange(2025, 50, new long[] {}, new int[] {});
+		getRange(2050, 50, new long[] {}, new int[] {});
+	}
+
+	@Test
+	public void resetWhileInvalidTest() throws InterruptedException, ExecutionException {
+		// Request data from cache
+		TestQuery q = new TestQuery(10, 100);
+
+		fRangeCache = null;
+		fRetrieveInfos.clear();
+
+		fExecutor.execute(q);
+
+		// Wait until the cache requests the data.
+		waitForRetrieveRm(1);
+
+		assertCacheWaiting(fRangeCache);
+
+		fExecutor.submit(new DsfRunnable() {
+			@Override
+			public void run() {
+				fTestCache.reset();
+			};
+		}).get();
+
+		// Set the data without using an executor.
+		assertEquals(1, fRetrieveInfos.size());
+		completeInfo(fRetrieveInfos.first(), 10, 100);
+
+		// Wait for data.
+		assertEquals(makeList(10, 100), q.get());
+
+		// Check state while waiting for data
+		assertCacheValidWithData(fRangeCache, 10, 100);
+	}
+
+	@Test
+	public void setRangeErrorTest() throws InterruptedException, ExecutionException {
+
+		// Retrieve a range of data.
+		getRange(0, 100, new long[] { 0 }, new int[] { 100 });
+
+		// Force an error status into the range cache.
+		fExecutor.submit(new DsfRunnable() {
+			@Override
+			public void run() {
+				fTestCache.set(0, 100, null, new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID,
+						IDsfStatusConstants.INVALID_STATE, "Cache invalid", null));
+			};
+		}).get();
+
+		// Retrieve a range cache and check that it immediately contains the error status in it.
+		fRangeCache = null;
+		fExecutor.submit(new DsfRunnable() {
+			@Override
+			public void run() {
+				fRangeCache = fTestCache.getRange(0, 100);
+			}
+		}).get();
+
+		assertCacheValidWithError(fRangeCache);
+
+		// Request an update from the range and check for exception.
+		TestQuery q = new TestQuery(10, 100);
+
+		fRangeCache = null;
+		fRetrieveInfos.clear();
+
+		fExecutor.execute(q);
+
+		try {
+			q.get();
+			fail("Expected an ExecutionException");
+		} catch (ExecutionException e) {
+		}
+	}
+
+	@Test
+	public void getOneRangeUsingDifferentRangeInstanceTest() throws InterruptedException, ExecutionException {
+		// Request data from cache
+		TestQuery q = new TestQuery(0, 100);
+
+		fRangeCache = null;
+		fRetrieveInfos.clear();
+
+		fExecutor.execute(q);
+
+		// Wait until the cache requests the data.
+		waitForRetrieveRm(1);
+
+		assertCacheWaiting(fRangeCache);
+
+		// Set the data without using an executor.
+		assertEquals(1, fRetrieveInfos.size());
+		RetrieveInfo info = fRetrieveInfos.iterator().next();
+		completeInfo(info, 0, 100);
+
+		fExecutor.submit(new DsfRunnable() {
+			@Override
+			public void run() {
+				fRangeCache = fTestCache.getRange(0, 100);
+			}
+		}).get();
+
+		// Check state while waiting for data
+		assertCacheValidWithData(fRangeCache, 0, 100);
+	}
+
 }

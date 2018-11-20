@@ -52,7 +52,8 @@ public interface IEnvironmentVariableProvider {
 	 * @deprecated use {@link IEnvironmentVariableProvider#getVariable(String, IConfiguration, boolean)} instead
 	 */
 	@Deprecated
-	public IBuildEnvironmentVariable getVariable(String variableName, Object level, boolean includeParentLevels, boolean resolveMacros);
+	public IBuildEnvironmentVariable getVariable(String variableName, Object level, boolean includeParentLevels,
+			boolean resolveMacros);
 
 	/**
 	 * Get variable for the given configuration, normally including those defined in project properties
@@ -113,7 +114,6 @@ public interface IEnvironmentVariableProvider {
 	 */
 	IEnvironmentVariableSupplier[] getSuppliers(Object level);
 
-
 	/**
 	 * @return the array of String that holds the build paths of the specified type
 	 *
@@ -137,4 +137,3 @@ public interface IEnvironmentVariableProvider {
 	 */
 	void unsubscribe(IEnvironmentBuildPathsChangeListener listener);
 }
-

@@ -20,7 +20,7 @@ import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
  * Makefile : ( statement ) *
- * statement : command | ..  
+ * statement : command | ..
  * command : <tab> prefix_command string <nl>
  * prefix_command : '-' | '@' | '+'
  */
@@ -84,7 +84,7 @@ public class Command extends Directive implements ICommand {
 	@Override
 	public String toString() {
 		StringBuilder cmd = new StringBuilder();
-		cmd.append( '\t');
+		cmd.append('\t');
 		if (getPrefix() != 0) {
 			cmd.append(getPrefix());
 		}
@@ -103,7 +103,7 @@ public class Command extends Directive implements ICommand {
 	public int hashCode() {
 		return toString().hashCode();
 	}
-	
+
 	char getPrefix() {
 		return prefix;
 	}
@@ -121,7 +121,7 @@ public class Command extends Directive implements ICommand {
 
 	@Override
 	public Process execute(String shell, String[] envp, File dir) throws IOException {
-		String[] cmdArray = new String[] { shell, "-c", command}; //$NON-NLS-1$
+		String[] cmdArray = new String[] { shell, "-c", command }; //$NON-NLS-1$
 		return Runtime.getRuntime().exec(cmdArray, envp, dir);
 	}
 

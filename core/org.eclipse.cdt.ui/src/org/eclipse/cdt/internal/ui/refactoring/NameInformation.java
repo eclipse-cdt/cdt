@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -45,10 +45,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
 
 /**
- * Additional information about an IASTName in code being refactored. 
+ * Additional information about an IASTName in code being refactored.
  */
 public class NameInformation {
-	public static enum Indirection { NONE, POINTER, REFERENCE }
+	public static enum Indirection {
+		NONE, POINTER, REFERENCE
+	}
 
 	public static final int INDEX_FOR_ADDED = -1;
 
@@ -73,9 +75,8 @@ public class NameInformation {
 		referencesInSelection = new ArrayList<>();
 	}
 
-	public static NameInformation createInfoForAddedParameter(String type, String name,
-			String defaultValue) {
-		NameInformation info= new NameInformation(null);
+	public static NameInformation createInfoForAddedParameter(String type, String name, String defaultValue) {
+		NameInformation info = new NameInformation(null);
 		info.setTypeName(type);
 		info.setNewName(name);
 		info.setDefaultValue(defaultValue);
@@ -157,7 +158,7 @@ public class NameInformation {
 
 	public void markAsDeleted() {
 		Assert.isTrue(!isAdded()); // Added parameters should be simply removed from the list
-		isDeleted= true;
+		isDeleted = true;
 	}
 
 	public boolean isAdded() {
@@ -171,7 +172,7 @@ public class NameInformation {
 
 	public void setDefaultValue(String value) {
 		Assert.isNotNull(value);
-		defaultValue= value;
+		defaultValue = value;
 	}
 
 	public IASTName getDeclarationName() {
@@ -193,8 +194,8 @@ public class NameInformation {
 	}
 
 	void setDeclarationName(IASTName declarationName) {
-		Assert.isTrue(declarationName.getPropertyInParent() == IASTDeclarator.DECLARATOR_NAME ||
-				declarationName.getPropertyInParent() == IASTLabelStatement.NAME);
+		Assert.isTrue(declarationName.getPropertyInParent() == IASTDeclarator.DECLARATOR_NAME
+				|| declarationName.getPropertyInParent() == IASTLabelStatement.NAME);
 		this.declarationName = declarationName;
 		indirection = null;
 	}
@@ -204,7 +205,7 @@ public class NameInformation {
 	}
 
 	public boolean isRenamed() {
-		return name == null ? newName != null : !String.valueOf(name.getSimpleID()).equals(newName); 
+		return name == null ? newName != null : !String.valueOf(name.getSimpleID()).equals(newName);
 	}
 
 	void addReference(IASTName name, int startOffset, int endOffset) {
@@ -229,7 +230,7 @@ public class NameInformation {
 
 	public void setTypeName(String type) {
 		Assert.isNotNull(type);
-		newTypeName= type;
+		newTypeName = type;
 	}
 
 	public String getReturnType() {
@@ -259,13 +260,12 @@ public class NameInformation {
 		IASTDeclarator sourceDeclarator = getDeclarator();
 		IASTDeclSpecifier declSpec;
 		IASTDeclarator declarator;
-		if (sourceDeclSpec instanceof IASTSimpleDeclSpecifier &&
-				((IASTSimpleDeclSpecifier) sourceDeclSpec).getType() == IASTSimpleDeclSpecifier.t_auto) {
+		if (sourceDeclSpec instanceof IASTSimpleDeclSpecifier
+				&& ((IASTSimpleDeclSpecifier) sourceDeclSpec).getType() == IASTSimpleDeclSpecifier.t_auto) {
 			IType type = CPPVisitor.createType(sourceDeclarator);
 			DeclarationGenerator generator = DeclarationGenerator.create(nodeFactory);
 			declSpec = generator.createDeclSpecFromType(type);
-			declarator = generator.createDeclaratorFromType(type,
-					paramName == null ? null : paramName.toCharArray());
+			declarator = generator.createDeclaratorFromType(type, paramName == null ? null : paramName.toCharArray());
 		} else {
 			declSpec = safeCopy(sourceDeclSpec);
 			declarator = createDeclarator(nodeFactory, sourceDeclarator, paramName);
@@ -313,10 +313,8 @@ public class NameInformation {
 		return indirection;
 	}
 
-	private IASTDeclarator createDeclarator(INodeFactory nodeFactory, IASTDeclarator sourceDeclarator,
-			String name) {
-		IASTName astName = name != null ?
-				nodeFactory.newName(name.toCharArray()) : nodeFactory.newName();
+	private IASTDeclarator createDeclarator(INodeFactory nodeFactory, IASTDeclarator sourceDeclarator, String name) {
+		IASTName astName = name != null ? nodeFactory.newName(name.toCharArray()) : nodeFactory.newName();
 		IASTDeclarator declarator;
 		if (sourceDeclarator instanceof IASTArrayDeclarator) {
 			IASTArrayDeclarator arrDeclarator = (IASTArrayDeclarator) sourceDeclarator;
@@ -325,7 +323,7 @@ public class NameInformation {
 			for (IASTArrayModifier arrayModifier : arrayModifiers) {
 				arrayDeclarator.addArrayModifier(arrayModifier.copy(CopyStyle.withLocations));
 			}
-			declarator= arrayDeclarator;
+			declarator = arrayDeclarator;
 		} else {
 			declarator = nodeFactory.newDeclarator(astName);
 		}

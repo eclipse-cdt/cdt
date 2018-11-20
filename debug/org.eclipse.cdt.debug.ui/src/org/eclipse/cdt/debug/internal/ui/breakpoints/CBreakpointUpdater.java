@@ -32,7 +32,7 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 	private static CBreakpointUpdater fInstance;
 
 	public static CBreakpointUpdater getInstance() {
-		if ( fInstance == null ) {
+		if (fInstance == null) {
 			fInstance = new CBreakpointUpdater();
 		}
 		return fInstance;
@@ -40,84 +40,83 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#installingBreakpoint(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	@Override
-	public boolean installingBreakpoint( IDebugTarget target, IBreakpoint breakpoint ) {
+	public boolean installingBreakpoint(IDebugTarget target, IBreakpoint breakpoint) {
 		return true;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointInstalled(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	@Override
-	public void breakpointInstalled( final IDebugTarget target, IBreakpoint breakpoint ) {
+	public void breakpointInstalled(final IDebugTarget target, IBreakpoint breakpoint) {
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint, java.util.Map)
 	 */
 	@Override
-	public void breakpointChanged( IDebugTarget target, final IBreakpoint breakpoint, @SuppressWarnings("rawtypes") final Map attributes ) {
-		asyncExec( new Runnable() {
+	public void breakpointChanged(IDebugTarget target, final IBreakpoint breakpoint,
+			@SuppressWarnings("rawtypes") final Map attributes) {
+		asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					Boolean enabled = (Boolean)attributes.get( IBreakpoint.ENABLED );
-					breakpoint.setEnabled( (enabled != null) ? enabled.booleanValue() : false );
-					Integer ignoreCount = (Integer)attributes.get( ICBreakpoint.IGNORE_COUNT );
-					((ICBreakpoint)breakpoint).setIgnoreCount( (ignoreCount != null) ? ignoreCount.intValue() : 0 );
-					String condition = (String)attributes.get( ICBreakpoint.CONDITION );
-					((ICBreakpoint)breakpoint).setCondition( (condition != null) ? condition : "" ); //$NON-NLS-1$
-				}
-				catch( CoreException e ) {
-					CDebugUIPlugin.log( e.getStatus() );
+					Boolean enabled = (Boolean) attributes.get(IBreakpoint.ENABLED);
+					breakpoint.setEnabled((enabled != null) ? enabled.booleanValue() : false);
+					Integer ignoreCount = (Integer) attributes.get(ICBreakpoint.IGNORE_COUNT);
+					((ICBreakpoint) breakpoint).setIgnoreCount((ignoreCount != null) ? ignoreCount.intValue() : 0);
+					String condition = (String) attributes.get(ICBreakpoint.CONDITION);
+					((ICBreakpoint) breakpoint).setCondition((condition != null) ? condition : ""); //$NON-NLS-1$
+				} catch (CoreException e) {
+					CDebugUIPlugin.log(e.getStatus());
 				}
 			}
-		} );
+		});
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint[])
 	 */
 	@Override
-	public void breakpointsRemoved( IDebugTarget target, final IBreakpoint[] breakpoints ) {
-		asyncExec( new Runnable() {
+	public void breakpointsRemoved(IDebugTarget target, final IBreakpoint[] breakpoints) {
+		asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
-				for ( int i = 0; i < breakpoints.length; ++i ) {
+				for (int i = 0; i < breakpoints.length; ++i) {
 					try {
-						if ( ((ICBreakpoint)breakpoints[i]).decrementInstallCount() == 0 )
-							DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( breakpoints[i] );
-					}
-					catch( CoreException e ) {
-						// ensureMarker throws this exception 
-						// if breakpoint has already been deleted 
+						if (((ICBreakpoint) breakpoints[i]).decrementInstallCount() == 0)
+							DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(breakpoints[i]);
+					} catch (CoreException e) {
+						// ensureMarker throws this exception
+						// if breakpoint has already been deleted
 					}
 				}
 			}
-		} );
+		});
 	}
 
 	public void dispose() {
 	}
 
-	private void asyncExec( Runnable r ) {
+	private void asyncExec(Runnable r) {
 		Display display = Display.getDefault();
-		if ( display != null )
-			display.asyncExec( r );
+		if (display != null)
+			display.asyncExec(r);
 	}
 }

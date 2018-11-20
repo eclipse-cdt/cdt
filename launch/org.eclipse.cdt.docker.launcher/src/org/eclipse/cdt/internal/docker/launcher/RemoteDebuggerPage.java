@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2018 PalmSource, Inc. and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0 
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * Ewa Matejska (PalmSource)
- * 
+ *
  * Referenced GDBDebuggerPage code to write this.
  * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
  * Red Hat Inc. - modified to work with CDT Container Launcher
@@ -62,13 +62,10 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 		super.setDefaults(configuration);
 		configuration.setAttribute(ILaunchConstants.ATTR_GDBSERVER_COMMAND,
 				ILaunchConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
-		configuration.setAttribute(ILaunchConstants.ATTR_GDBSERVER_PORT,
-				ILaunchConstants.ATTR_GDBSERVER_PORT_DEFAULT);
-		configuration.setAttribute(
-				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
+		configuration.setAttribute(ILaunchConstants.ATTR_GDBSERVER_PORT, ILaunchConstants.ATTR_GDBSERVER_PORT_DEFAULT);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
 				LaunchUtils.getRemoteTimeoutEnabledDefault());
-		configuration.setAttribute(
-				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
 				LaunchUtils.getRemoteTimeoutValueDefault());
 	}
 
@@ -80,14 +77,12 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 		boolean remoteTimeoutEnabled = false;
 		String remoteTimeoutValue = null;
 		try {
-			gdbserverCommand = configuration.getAttribute(
-					ILaunchConstants.ATTR_GDBSERVER_COMMAND,
+			gdbserverCommand = configuration.getAttribute(ILaunchConstants.ATTR_GDBSERVER_COMMAND,
 					ILaunchConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
 		} catch (CoreException e) {
 		}
 		try {
-			gdbserverPortNumber = configuration.getAttribute(
-					ILaunchConstants.ATTR_GDBSERVER_PORT,
+			gdbserverPortNumber = configuration.getAttribute(ILaunchConstants.ATTR_GDBSERVER_PORT,
 					ILaunchConstants.ATTR_GDBSERVER_PORT_DEFAULT);
 		} catch (CoreException e) {
 		}
@@ -115,20 +110,15 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 		super.performApply(configuration);
 		String str = fGDBServerCommandText.getText();
 		str.trim();
-		configuration
-				.setAttribute(ILaunchConstants.ATTR_GDBSERVER_COMMAND, str);
+		configuration.setAttribute(ILaunchConstants.ATTR_GDBSERVER_COMMAND, str);
 		str = fGDBServerPortNumberText.getText();
 		str.trim();
 		configuration.setAttribute(ILaunchConstants.ATTR_GDBSERVER_PORT, str);
 		boolean b = fRemoteTimeoutEnabledCheckbox.getSelection();
-		configuration.setAttribute(
-				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
-				b);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED, b);
 		str = fRemoteTimeoutValueText.getText();
 		str.trim();
-		configuration.setAttribute(
-				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
-				str);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE, str);
 	}
 
 	protected void createGdbserverSettingsTab(TabFolder tabFolder) {
@@ -178,27 +168,22 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 		});
 
 		fRemoteTimeoutEnabledCheckbox = new Button(subComp, SWT.CHECK);
-		fRemoteTimeoutEnabledCheckbox
-				.setText(Messages.Gdbserver_Settings_Remotetimeout_label);
-		fRemoteTimeoutEnabledCheckbox
-				.setToolTipText(
-						Messages.Gdbserver_Settings_Remotetimeout_tooltip);
+		fRemoteTimeoutEnabledCheckbox.setText(Messages.Gdbserver_Settings_Remotetimeout_label);
+		fRemoteTimeoutEnabledCheckbox.setToolTipText(Messages.Gdbserver_Settings_Remotetimeout_tooltip);
 		gd = new GridData();
 		fRemoteTimeoutEnabledCheckbox.setLayoutData(gd);
-		fRemoteTimeoutEnabledCheckbox
-				.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						remoteTimeoutEnabledChanged();
-						updateLaunchConfigurationDialog();
-					}
-				});
+		fRemoteTimeoutEnabledCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				remoteTimeoutEnabledChanged();
+				updateLaunchConfigurationDialog();
+			}
+		});
 
 		fRemoteTimeoutValueText = new Text(subComp, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(SWT.FILL, SWT.TOP, true, false);
 		fRemoteTimeoutValueText.setLayoutData(data);
-		fRemoteTimeoutValueText.setToolTipText(
-				Messages.Gdbserver_Settings_Remotetimeout_tooltip);
+		fRemoteTimeoutValueText.setToolTipText(Messages.Gdbserver_Settings_Remotetimeout_tooltip);
 		fRemoteTimeoutValueText.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent evt) {
@@ -209,13 +194,12 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 	}
 
 	private void remoteTimeoutEnabledChanged() {
-		fRemoteTimeoutValueText
-				.setEnabled(fRemoteTimeoutEnabledCheckbox.getSelection());
+		fRemoteTimeoutValueText.setEnabled(fRemoteTimeoutEnabledCheckbox.getSelection());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#createTabs(org.eclipse
 	 * .swt.widgets.TabFolder)

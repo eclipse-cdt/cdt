@@ -19,26 +19,26 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * Contributors to the <code>org.eclipse.cdt.ui.foldingStructureProvider</code> extension point
- * can specify an implementation of this interface to be displayed on the C/C++ &gt; Editor &gt; 
+ * can specify an implementation of this interface to be displayed on the C/C++ &gt; Editor &gt;
  * Folding preference page.
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  */
 public interface ICFoldingPreferenceBlock {
 
 	/**
 	 * Creates the control that will be displayed on the C/C++ &gt; Editor &gt; Folding
 	 * preference page.
-	 * 
+	 *
 	 * @param parent the parent composite to which to add the preferences control
-	 * @return the control that was added to <code>parent</code> 
+	 * @return the control that was added to <code>parent</code>
 	 */
 	Control createControl(Composite parent);
 
 	/**
-	 * Called after creating the control. Implementations should load the 
+	 * Called after creating the control. Implementations should load the
 	 * preferences values and update the controls accordingly.
 	 */
 	void initialize();

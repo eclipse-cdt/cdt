@@ -107,13 +107,12 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 		if (!(entry instanceof ACSettingEntry))
 			return false;
 
-		ACSettingEntry e = (ACSettingEntry)entry;
+		ACSettingEntry e = (ACSettingEntry) entry;
 
 		if (getKind() != e.getKind())
 			return false;
 
-		if (getByNameMatchFlags()
-				!= e.getByNameMatchFlags())
+		if (getByNameMatchFlags() != e.getByNameMatchFlags())
 			return false;
 
 		if (!fName.equals(e.fName))

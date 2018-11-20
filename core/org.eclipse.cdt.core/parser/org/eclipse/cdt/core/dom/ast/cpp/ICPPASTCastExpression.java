@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 
 /**
  * C++ adds in additional cast-style expressions.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -46,7 +46,7 @@ public interface ICPPASTCastExpression extends IASTCastExpression, ICPPASTExpres
 	 * <code>op_last</code> is for subinterfaces to extend.
 	 */
 	public static final int op_last = op_const_cast;
-	
+
 	/**
 	 * @since 5.1
 	 */

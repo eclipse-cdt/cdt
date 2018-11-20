@@ -32,13 +32,13 @@ class PDOMCAnnotations {
 	private static final int NO_RETURN_OFFSET = 4;
 	private static final int REGISTER_OFFSET = 5;
 	private static final int AUTO_OFFSET = 6;
-	
+
 	/**
 	 * Encodes annotations applicable to functions.
-	 * 
+	 *
 	 * @param function the function whose annotations will be encoded
 	 * @return a bit vector of the annotations
-	 */	
+	 */
 	public static byte encodeFunctionAnnotations(IFunction function) {
 		byte annotation = 0;
 		if (function.isExtern())
@@ -61,7 +61,7 @@ class PDOMCAnnotations {
 
 	/**
 	 * Encodes annotations applicable to variables.
-	 * 
+	 *
 	 * @param variable the IBinding whose annotation will be encoded.
 	 * @return a bit vector of the annotation.
 	 */

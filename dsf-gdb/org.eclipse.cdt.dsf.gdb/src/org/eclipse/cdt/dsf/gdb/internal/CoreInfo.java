@@ -18,7 +18,7 @@ import org.eclipse.cdt.internal.core.ICoreInfo;
 public class CoreInfo implements ICoreInfo {
 	private String fId;
 	private String fPhysicalId;
-	
+
 	public CoreInfo(String id, String pId) {
 		fId = id;
 		fPhysicalId = pId;
@@ -32,5 +32,5 @@ public class CoreInfo implements ICoreInfo {
 	@Override
 	public String getPhysicalId() {
 		return fPhysicalId;
-	}		
+	}
 }

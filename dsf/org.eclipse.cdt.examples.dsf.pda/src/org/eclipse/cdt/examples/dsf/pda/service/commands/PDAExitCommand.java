@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Instructs the debugger to exit.
- * 
+ *
  * <pre>
  *    C: exit
  *    R: ok
@@ -27,12 +27,12 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 @Immutable
 public class PDAExitCommand extends AbstractPDACommand<PDACommandResult> {
 
-    public PDAExitCommand(PDAVirtualMachineDMContext context) {
-        super(context, "exit");
-    }
-    
-    @Override
-    public PDACommandResult createResult(String resultText) {
-        return new PDACommandResult(resultText);
-    }
+	public PDAExitCommand(PDAVirtualMachineDMContext context) {
+		super(context, "exit");
+	}
+
+	@Override
+	public PDACommandResult createResult(String resultText) {
+		return new PDACommandResult(resultText);
+	}
 }

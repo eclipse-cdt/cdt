@@ -55,7 +55,7 @@ import org.eclipse.ui.part.Page;
 /**
  * Page used for a full GDB console.  Each Debug session which uses the full GDB console will
  * use its own instance of this page.  GDB 7.12 is required to use the full GDB console.
- * 
+ *
  * Contributions to this page's context menu can be done using id "GdbFullCliConsole.#ContextMenu".
  * For example, using the extension point:<br>
  * <code>
@@ -71,7 +71,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	private final IDebuggerConsoleView fView;
 	private final IDebuggerConsole fConsole;
 	private final IGdbTerminalControlConnector fGdbTerminalControlConnector;
-	
+
 	private MenuManager fMenuManager;
 
 	private GdbConsoleTerminateLaunchAction fTerminateLaunchAction;
@@ -114,28 +114,28 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		fView = view;
 		fLaunch = gdbConsole.getLaunch();
 		fGdbPty = pty;
-		
+
 		GdbUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPreferenceListener);
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		DebugUITools.getDebugContextManager().getContextService(
-				getSite().getWorkbenchWindow()).removeDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow())
+				.removeDebugContextListener(this);
 		fTerminalControl.disposeTerminal();
 		fMenuManager.dispose();
 		GdbUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPreferenceListener);
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		fMainComposite = new Composite(parent, SWT.NONE);
 		fMainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fMainComposite.setLayout(new FillLayout());
 
-		DebugUITools.getDebugContextManager().getContextService(
-				getSite().getWorkbenchWindow()).addDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow())
+				.addDebugContextListener(this);
 
 		createTerminalControl();
 		createContextMenu();
@@ -152,26 +152,26 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		// Create the terminal control that will be used to interact with GDB
 		// Don't use common terminal preferences as GDB consoles are having their own
 		boolean useCommonPrefs = false;
-		fTerminalControl = TerminalViewControlFactory.makeControl(
-				new ITerminalListener() {
-					@Override public void setState(TerminalState state) {}
-					@Override public void setTerminalTitle(final String title) {}
-		        },
-				fMainComposite,
-				new ITerminalConnector[] {}, 
-				useCommonPrefs);
+		fTerminalControl = TerminalViewControlFactory.makeControl(new ITerminalListener() {
+			@Override
+			public void setState(TerminalState state) {
+			}
+
+			@Override
+			public void setTerminalTitle(final String title) {
+			}
+		}, fMainComposite, new ITerminalConnector[] {}, useCommonPrefs);
 
 		fTerminalControl.setConnector(new GdbTerminalPageConnector(fGdbTerminalControlConnector, fGdbPty));
-		
+
 		try {
 			fTerminalControl.setEncoding(Charset.defaultCharset().name());
 		} catch (UnsupportedEncodingException e) {
 		}
 		if (fTerminalControl instanceof ITerminalControl) {
-			((ITerminalControl)fTerminalControl).setConnectOnEnterIfClosed(false);
-			((ITerminalControl)fTerminalControl).setVT100LineWrapping(true);
+			((ITerminalControl) fTerminalControl).setConnectOnEnterIfClosed(false);
+			((ITerminalControl) fTerminalControl).setVT100LineWrapping(true);
 		}
-
 
 		// Must use syncExec because the logic within must complete before the rest
 		// of the class methods (specifically getProcess()) is called
@@ -181,7 +181,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 				if (fTerminalControl != null && !fTerminalControl.isDisposed()) {
 					fTerminalControl.clearTerminal();
 					fTerminalControl.connectTerminal();
-					
+
 					// The actual terminal widget initializes its defaults in the line above,
 					// lets override them with our application defaults right after.
 					setDefaults();
@@ -191,12 +191,14 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	}
 
 	protected void createContextMenu() {
-		// Choose the id to be similar in format to what 
+		// Choose the id to be similar in format to what
 		// the GdbBasicCliConsole has as id, for consistency
 		String id = "GdbFullCliConsole.#ContextMenu"; //$NON-NLS-1$
 		fMenuManager = new MenuManager(id, id);
 		fMenuManager.setRemoveAllWhenShown(true);
-		fMenuManager.addMenuListener((menuManager) -> { contextMenuAboutToShow(menuManager); });
+		fMenuManager.addMenuListener((menuManager) -> {
+			contextMenuAboutToShow(menuManager);
+		});
 		Menu menu = fMenuManager.createContextMenu(fTerminalControl.getControl());
 		fTerminalControl.getControl().setMenu(menu);
 
@@ -230,17 +232,17 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 
 		menuManager.add(fClearAction);
 		menuManager.add(new Separator());
-		
+
 		menuManager.add(fScrollLockAction);
 		menuManager.add(new Separator());
-		
+
 		menuManager.add(fTerminateLaunchAction);
 		menuManager.add(fAutoTerminateAction);
 		menuManager.add(new Separator());
-				
+
 		// Other plug-ins can contribute their actions here
 		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		
+
 		menuManager.add(fShowPreferencePageAction);
 	}
 
@@ -253,11 +255,10 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	public void setFocus() {
 		fTerminalControl.setFocus();
 	}
-	
 
 	/**
 	 * Returns the launch to which the current selection belongs.
-	 * 
+	 *
 	 * @return the launch to which the current selection belongs.
 	 */
 	protected ILaunch getCurrentLaunch() {
@@ -267,7 +268,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
@@ -290,7 +291,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 			fTerminalControl.setBufferLineLimit(bufferLines);
 		}
 	}
-	
+
 	public ITerminalViewControl getTerminalViewControl() {
 		return fTerminalControl;
 	}

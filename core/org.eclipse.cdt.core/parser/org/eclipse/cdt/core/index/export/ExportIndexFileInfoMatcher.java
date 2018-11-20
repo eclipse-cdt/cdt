@@ -24,21 +24,21 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * FileInfoMatcher that will match a given project relative path for a directory we want to exclude.
- * 
+ *
  * @author dschaefer
  * @since 5.7
  */
 public class ExportIndexFileInfoMatcher extends AbstractFileInfoMatcher {
-	
+
 	public static String ID = "org.eclipse.cdt.core.exportIndexFileInfoMatcher"; //$NON-NLS-1$
-	
+
 	private IProject project;
-	private IPath excludedFolder; 
+	private IPath excludedFolder;
 
 	public static FileInfoMatcherDescription getDescription(String excludePath) {
 		return new FileInfoMatcherDescription(ID, excludePath);
 	}
-	
+
 	public ExportIndexFileInfoMatcher() {
 	}
 
@@ -46,10 +46,10 @@ public class ExportIndexFileInfoMatcher extends AbstractFileInfoMatcher {
 	public boolean matches(IContainer parent, IFileInfo fileInfo) throws CoreException {
 		if (excludedFolder == null || project == null)
 			return false;
-		
+
 		if (!project.equals(parent.getProject()))
 			return false;
-		
+
 		// Remove the project and the linked folder from the path
 		IPath testPath = parent.getFullPath().removeFirstSegments(2).append(fileInfo.getName());
 		boolean matches = excludedFolder.isPrefixOf(testPath);
@@ -62,7 +62,7 @@ public class ExportIndexFileInfoMatcher extends AbstractFileInfoMatcher {
 	public void initialize(IProject project, Object arguments) throws CoreException {
 		this.project = project;
 		if (arguments instanceof String)
-			excludedFolder = new Path((String)arguments);
+			excludedFolder = new Path((String) arguments);
 	}
 
 }

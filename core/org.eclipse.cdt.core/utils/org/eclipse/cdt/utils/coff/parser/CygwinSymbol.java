@@ -26,7 +26,6 @@ import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.core.runtime.IPath;
 
-
 /**
  * @author DInglis
  *
@@ -45,8 +44,8 @@ class CygwinSymbol extends Symbol {
 	 * @param startLine
 	 * @param endLine
 	 */
-	public CygwinSymbol(CygwinPEBinaryObject binary, String name, int type, IAddress addr, long size, IPath sourceFile, int startLine,
-			int endLine) {
+	public CygwinSymbol(CygwinPEBinaryObject binary, String name, int type, IAddress addr, long size, IPath sourceFile,
+			int startLine, int endLine) {
 		super(binary, name, type, addr, size, sourceFile, startLine, endLine);
 	}
 
@@ -67,7 +66,7 @@ class CygwinSymbol extends Symbol {
 	@Override
 	public int getLineNumber(long offset) {
 		int line = -1;
-		Addr2line addr2line = ((CygwinPEBinaryObject)binary).getAddr2line(true);
+		Addr2line addr2line = ((CygwinPEBinaryObject) binary).getAddr2line(true);
 		if (addr2line != null) {
 			try {
 				return addr2line.getLineNumber(getAddress().add(offset));

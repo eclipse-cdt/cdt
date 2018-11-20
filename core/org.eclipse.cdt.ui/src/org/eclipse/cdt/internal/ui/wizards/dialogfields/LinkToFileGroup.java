@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * This class is part of the NewClassWizard.
- * It handles the Link to file part. 
+ * It handles the Link to file part.
  */
 public class LinkToFileGroup extends StringButtonDialogField {
 	protected Listener listener;
@@ -64,56 +64,56 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	private Label resolvedPathLabelText;
 	private Label resolvedPathLabelData;
 	boolean preventDialogFieldChanged = false;
-	
+
 	public LinkToFileGroup(IStringButtonAdapter adapter, Listener listener) {
 		super(adapter);
 		this.listener = listener;
 		this.type = IResource.FILE;
 	}
-	
+
 	@Override
 	public Control[] doFillIntoGrid(Composite parent, int nColumns) {
 		assertEnoughColumns(nColumns);
 		//initializeDialogUnits(parent);
-		
-		Label label= getLabelControl(parent);
-		label.setLayoutData(gridDataForLabel(1));
-			
-		getLinkCheckButtonControl(parent);		
 
-		Text text= getTextControl(parent);
+		Label label = getLabelControl(parent);
+		label.setLayoutData(gridDataForLabel(1));
+
+		getLinkCheckButtonControl(parent);
+
+		Text text = getTextControl(parent);
 		text.setLayoutData(gridDataForText(2));
 
-		Button browseButton = getBrowseButtonControl(parent);		
+		Button browseButton = getBrowseButtonControl(parent);
 		browseButton.setLayoutData(gridDataForButton(browseButton, 1));
-		
+
 		DialogField.createEmptySpace(parent);
 
 		resolvedPathLabelText = new Label(parent, SWT.SINGLE);
-		resolvedPathLabelText.setText(NewWizardMessages.CreateLinkedResourceGroup_resolvedPathLabel); 
-		resolvedPathLabelText.setVisible(true);		
-		
+		resolvedPathLabelText.setText(NewWizardMessages.CreateLinkedResourceGroup_resolvedPathLabel);
+		resolvedPathLabelText.setVisible(true);
+
 		resolvedPathLabelData = new Label(parent, SWT.SINGLE);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;
 		resolvedPathLabelData.setLayoutData(data);
 		resolvedPathLabelData.setVisible(true);
-		
+
 		return null;
 	}
-	
+
 	/*
 	 * @see DialogField#getNumberOfControls
-	 */		
+	 */
 	@Override
 	public int getNumberOfControls() {
-		return 4;	
+		return 4;
 	}
-	
-	public Button getLinkCheckButtonControl(Composite parent){
-		if (linkButton == null){
+
+	public Button getLinkCheckButtonControl(Composite parent) {
+		if (linkButton == null) {
 			linkButton = new Button(parent, SWT.CHECK);
-			linkButton.setText(NewWizardMessages.NewClassWizardPage_files_linkFileButton); 
+			linkButton.setText(NewWizardMessages.NewClassWizardPage_files_linkFileButton);
 			linkButton.setSelection(createLink);
 			linkButton.setFont(parent.getFont());
 			SelectionListener selectionListener = new SelectionAdapter() {
@@ -133,12 +133,12 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		}
 		return linkButton;
 	}
-	
+
 	@Override
 	public String getText() {
 		return linkTargetField.getText();
 	}
-	
+
 	@Override
 	public void setText(String text) {
 		if (isOkToUse(linkTargetField)) {
@@ -146,12 +146,12 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			linkTargetField.setText(text);
 			preventDialogFieldChanged = false;
 		}
-//		dialogFieldChanged();
+		//		dialogFieldChanged();
 	}
-	
+
 	@Override
-	public Text getTextControl(Composite parent){
-		if (linkTargetField == null){
+	public Text getTextControl(Composite parent) {
+		if (linkTargetField == null) {
 			assertCompositeNotNull(parent);
 			linkTargetField = new Text(parent, SWT.BORDER);
 			linkTargetField.setFont(parent.getFont());
@@ -169,26 +169,26 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			if (initialLinkTarget != null)
 				linkTargetField.setText(initialLinkTarget);
 		}
-		return 	linkTargetField;
+		return linkTargetField;
 	}
-	
-	public static GridData gridDataForText(int span){
+
+	public static GridData gridDataForText(int span) {
 		GridData data = new GridData();
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		data.horizontalAlignment= GridData.FILL;
-		data.grabExcessHorizontalSpace= false;
-		data.horizontalSpan= span;		
+		data.horizontalAlignment = GridData.FILL;
+		data.grabExcessHorizontalSpace = false;
+		data.horizontalSpan = span;
 		return data;
 	}
-	
-	public Button getBrowseButtonControl(Composite parent){
+
+	public Button getBrowseButtonControl(Composite parent) {
 		// browse button
-		if (browseButton == null){
+		if (browseButton == null) {
 			assertCompositeNotNull(parent);
 			browseButton = new Button(parent, SWT.PUSH);
 			//setButtonLayoutData(browseButton);
 			browseButton.setFont(parent.getFont());
-			browseButton.setText(NewWizardMessages.CreateLinkedResourceGroup_browseButton); 
+			browseButton.setText(NewWizardMessages.CreateLinkedResourceGroup_browseButton);
 			browseButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
@@ -202,19 +202,15 @@ public class LinkToFileGroup extends StringButtonDialogField {
 
 	/**
 	 * Returns a new status object with the given severity and message.
-	 * 
+	 *
 	 * @return a new status object with the given severity and message.
 	 */
 	private IStatus createStatus(int severity, String message) {
-		return new Status(
-			severity,
-			CUIPlugin.getPluginId(),
-			severity,
-			message,	
-			null);
-	}	
+		return new Status(severity, CUIPlugin.getPluginId(), severity, message, null);
+	}
+
 	/**
-	 * Returns the link target location entered by the user. 
+	 * Returns the link target location entered by the user.
 	 *
 	 * @return the link target location entered by the user. null if the user
 	 * 	chose not to create a link.
@@ -240,43 +236,43 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		String linkTargetName = linkTargetField.getText();
 		File file = null;
 		String selection = null;
-	
-		if ("".equals(linkTargetName) == false) {	//$NON-NLS-1$
+
+		if ("".equals(linkTargetName) == false) { //$NON-NLS-1$
 			file = new File(linkTargetName);
 			if (file.exists() == false)
 				file = null;
 		}
 		if (type == IResource.FILE) {
 			FileDialog dialog = new FileDialog(linkTargetField.getShell());
-			dialog.setText(NewWizardMessages.CreateLinkedResourceGroup_open); 
+			dialog.setText(NewWizardMessages.CreateLinkedResourceGroup_open);
 			if (file != null) {
 				if (file.isFile())
 					dialog.setFileName(linkTargetName);
 				else
 					dialog.setFilterPath(linkTargetName);
 			}
-			selection = dialog.open();		
-		}
-		else {
+			selection = dialog.open();
+		} else {
 			DirectoryDialog dialog = new DirectoryDialog(linkTargetField.getShell());
-			dialog.setText(NewWizardMessages.CreateLinkedResourceGroup_open); 
+			dialog.setText(NewWizardMessages.CreateLinkedResourceGroup_open);
 			if (file != null) {
 				if (file.isFile())
 					linkTargetName = file.getParent();
 				if (linkTargetName != null)
 					dialog.setFilterPath(linkTargetName);
 			}
-			dialog.setMessage(NewWizardMessages.CreateLinkedResourceGroup_targetSelectionLabel); 
+			dialog.setMessage(NewWizardMessages.CreateLinkedResourceGroup_targetSelectionLabel);
 			selection = dialog.open();
-		}					
+		}
 		if (selection != null) {
 			linkTargetField.setText(selection);
 			if (!preventDialogFieldChanged)
 				dialogFieldChanged();
 		}
 	}
+
 	/**
-	 * Tries to resolve the value entered in the link target field as 
+	 * Tries to resolve the value entered in the link target field as
 	 * a variable, if the value is a relative path.
 	 * Displays the resolved value if the entered value is a variable.
 	 */
@@ -285,16 +281,17 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			resolvedPathLabelData.setText(""); //$NON-NLS-1$
 			return;
 		}
-			
+
 		IPathVariableManager pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
 		IPath path = new Path(linkTargetField.getText());
 		IPath resolvedPath = pathVariableManager.resolvePath(path);
-	
+
 		resolvedPathLabelData.setText(resolvedPath.toOSString());
 	}
+
 	/**
 	 * Sets the value of the link target field
-	 * 
+	 *
 	 * @param target the value of the link target field
 	 */
 	public void setLinkTarget(String target) {
@@ -305,44 +302,42 @@ public class LinkToFileGroup extends StringButtonDialogField {
 				dialogFieldChanged();
 		}
 	}
+
 	/**
 	 * Validates the type of the given file against the link type specified
 	 * in the constructor.
-	 * 
+	 *
 	 * @param linkTargetFile file to validate
-	 * @return IStatus indicating the validation result. IStatus.OK if the 
+	 * @return IStatus indicating the validation result. IStatus.OK if the
 	 * 	given file is valid.
 	 */
 	private IStatus validateFileType(File linkTargetFile) {
 		if (type == IResource.FILE && linkTargetFile.isFile() == false) {
-			return createStatus(
-				IStatus.ERROR,
-				NewWizardMessages.CreateLinkedResourceGroup_linkTargetNotFile);	
+			return createStatus(IStatus.ERROR, NewWizardMessages.CreateLinkedResourceGroup_linkTargetNotFile);
 		} else if (type == IResource.FOLDER && linkTargetFile.isDirectory() == false) {
-			return createStatus(
-				IStatus.ERROR,
-				NewWizardMessages.CreateLinkedResourceGroup_linkTargetNotFolder);	
+			return createStatus(IStatus.ERROR, NewWizardMessages.CreateLinkedResourceGroup_linkTargetNotFolder);
 		}
 		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 	}
+
 	/**
 	 * Validates this page's controls.
 	 *
-	 * @return IStatus indicating the validation result. IStatus.OK if the 
+	 * @return IStatus indicating the validation result. IStatus.OK if the
 	 * 	specified link target is valid given the linkHandle.
 	 */
 	public IStatus validateLinkLocation(IResource linkHandle) {
 		if (linkTargetField == null || linkTargetField.isDisposed())
-			return createStatus(IStatus.OK, "");	//$NON-NLS-1$
-	
+			return createStatus(IStatus.OK, ""); //$NON-NLS-1$
+
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		String linkTargetName = linkTargetField.getText();
 		IPath path = new Path(linkTargetName);
-	
+
 		if (createLink == false)
 			return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 
-		IStatus locationStatus = workspace.validateLinkLocation(linkHandle,	path);
+		IStatus locationStatus = workspace.validateLinkLocation(linkHandle, path);
 		if (locationStatus.getSeverity() == IStatus.ERROR)
 			return locationStatus;
 
@@ -356,14 +351,12 @@ public class LinkToFileGroup extends StringButtonDialogField {
 				return fileTypeStatus;
 		} else if (locationStatus.getSeverity() == IStatus.OK) {
 			// locationStatus takes precedence over missing location warning.
-			return createStatus(
-				IStatus.WARNING,
-				NewWizardMessages.CreateLinkedResourceGroup_linkTargetNonExistent);	
+			return createStatus(IStatus.WARNING, NewWizardMessages.CreateLinkedResourceGroup_linkTargetNonExistent);
 		}
 		return locationStatus;
 	}
-	
-	public boolean linkCreated (){
+
+	public boolean linkCreated() {
 		return createLink;
 	}
 }

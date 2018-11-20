@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 /**
  * C-style array designator. e.g. struct ABC { int def[10] }; struct ABC
  * instance = { def[0] = 9 };
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -33,14 +33,14 @@ public interface ICASTArrayDesignator extends ICASTDesignator {
 
 	/**
 	 * Get the subsript expression.
-	 * 
+	 *
 	 * @return value <code>IASTExpression</code>
 	 */
 	public IASTExpression getSubscriptExpression();
 
 	/**
 	 * Set the subscript expression.
-	 * 
+	 *
 	 * @param value
 	 *            <code>IASTExpression</code>
 	 */

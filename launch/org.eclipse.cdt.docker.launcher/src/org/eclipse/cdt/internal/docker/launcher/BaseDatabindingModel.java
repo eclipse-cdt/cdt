@@ -19,7 +19,7 @@ import java.beans.PropertyChangeSupport;
 
 /**
  * Base class for all model classes that need Databinding support
- * 
+ *
  */
 public abstract class BaseDatabindingModel {
 

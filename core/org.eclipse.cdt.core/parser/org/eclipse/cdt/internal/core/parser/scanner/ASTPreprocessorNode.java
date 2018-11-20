@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
@@ -67,18 +67,18 @@ abstract class ASTPreprocessorNode extends ASTNode {
 		setOffset(startNumber);
 		setLength(endNumber - startNumber);
 	}
-	
+
 	protected char[] getSource(int offset, int length) {
-		final IASTTranslationUnit ast= getTranslationUnit();
-        if (ast != null) {
-        	ILocationResolver lr= ast.getAdapter(ILocationResolver.class);
-        	if (lr != null) {
-        		final IASTFileLocation loc= lr.getMappedFileLocation(offset, length);
-        		if (loc != null) {
-        			return lr.getUnpreprocessedSignature(loc);
-        		}
-        	}
-        }
+		final IASTTranslationUnit ast = getTranslationUnit();
+		if (ast != null) {
+			ILocationResolver lr = ast.getAdapter(ILocationResolver.class);
+			if (lr != null) {
+				final IASTFileLocation loc = lr.getMappedFileLocation(offset, length);
+				if (loc != null) {
+					return lr.getUnpreprocessedSignature(loc);
+				}
+			}
+		}
 		return CharArrayUtils.EMPTY;
 	}
 
@@ -88,7 +88,7 @@ abstract class ASTPreprocessorNode extends ASTNode {
 	void findNode(ASTNodeSpecification<?> nodeSpec) {
 		nodeSpec.visit(this);
 	}
-	
+
 	@Override
 	public IASTNode copy() {
 		throw new UnsupportedOperationException();
@@ -108,7 +108,7 @@ abstract class ASTPreprocessorNode extends ASTNode {
 	public IToken getTrailingSyntax() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.valueOf(getRawSignatureChars());
@@ -121,23 +121,23 @@ class ASTComment extends ASTPreprocessorNode implements IASTComment {
 
 	public ASTComment(IASTTranslationUnit parent, String filePath, int offset, int endOffset, boolean isBlockComment) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, offset, endOffset);
-		fIsBlockComment= isBlockComment;
-		fFilePath= filePath;
+		fIsBlockComment = isBlockComment;
+		fFilePath = filePath;
 	}
 
 	@Override
 	public int getOffset() {
 		if (fFilePath != null) {
 			// Perform lazy conversion to sequence number.
-			ILocationResolver lr= getTranslationUnit().getAdapter(ILocationResolver.class);
+			ILocationResolver lr = getTranslationUnit().getAdapter(ILocationResolver.class);
 			if (lr != null) {
 				setOffset(lr.getSequenceNumberForFileOffset(fFilePath, super.getOffset()));
-				fFilePath= null;
+				fFilePath = null;
 			}
 		}
 		return super.getOffset();
 	}
-	
+
 	@Override
 	public char[] getComment() {
 		return getRawSignatureChars();
@@ -154,27 +154,28 @@ class ASTComment extends ASTPreprocessorNode implements IASTComment {
 	}
 }
 
-
 abstract class ASTDirectiveWithCondition extends ASTPreprocessorNode {
 	protected final int fConditionOffset;
-    private final boolean fTaken;
-	public ASTDirectiveWithCondition(IASTTranslationUnit parent, int startNumber, int condNumber, int endNumber, boolean taken) {
+	private final boolean fTaken;
+
+	public ASTDirectiveWithCondition(IASTTranslationUnit parent, int startNumber, int condNumber, int endNumber,
+			boolean taken) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
-		fConditionOffset= condNumber;
-		fTaken= taken;
+		fConditionOffset = condNumber;
+		fTaken = taken;
 	}
 
-    public boolean taken() {
-        return fTaken;
-    }
-        
-    public String getConditionString() {
-    	return new String(getSource(fConditionOffset, getOffset() + getLength() - fConditionOffset));
-    }
-    
-    public char[] getCondition() {
-    	return getConditionString().toCharArray();
-    }
+	public boolean taken() {
+		return fTaken;
+	}
+
+	public String getConditionString() {
+		return new String(getSource(fConditionOffset, getOffset() + getLength() - fConditionOffset));
+	}
+
+	public char[] getCondition() {
+		return getConditionString().toCharArray();
+	}
 }
 
 class ASTEndif extends ASTPreprocessorNode implements IASTPreprocessorEndifStatement {
@@ -186,29 +187,32 @@ class ASTEndif extends ASTPreprocessorNode implements IASTPreprocessorEndifState
 class ASTElif extends ASTDirectiveWithCondition implements IASTPreprocessorElifStatement {
 	public ASTElif(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean taken) {
 		super(parent, startNumber, condNumber, condEndNumber, taken);
-    }
+	}
 }
 
 class ASTElse extends ASTPreprocessorNode implements IASTPreprocessorElseStatement {
 	private final boolean fTaken;
-    public ASTElse(IASTTranslationUnit parent, int startNumber, int endNumber, boolean taken) {
+
+	public ASTElse(IASTTranslationUnit parent, int startNumber, int endNumber, boolean taken) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
-		fTaken= taken;
+		fTaken = taken;
 	}
 
-    @Override
+	@Override
 	public boolean taken() {
-        return fTaken;
-    }
+		return fTaken;
+	}
 }
 
 class ASTIfndef extends ASTDirectiveWithCondition implements IASTPreprocessorIfndefStatement {
 	private ASTMacroReferenceName fMacroRef;
 
-	public ASTIfndef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean taken, IMacroBinding macro) {
+	public ASTIfndef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean taken,
+			IMacroBinding macro) {
 		super(parent, startNumber, condNumber, condEndNumber, taken);
 		if (macro != null) {
-			fMacroRef= new ASTMacroReferenceName(this, IASTPreprocessorStatement.MACRO_NAME, condNumber, condEndNumber, macro, null);
+			fMacroRef = new ASTMacroReferenceName(this, IASTPreprocessorStatement.MACRO_NAME, condNumber, condEndNumber,
+					macro, null);
 		}
 	}
 
@@ -220,10 +224,13 @@ class ASTIfndef extends ASTDirectiveWithCondition implements IASTPreprocessorIfn
 
 class ASTIfdef extends ASTDirectiveWithCondition implements IASTPreprocessorIfdefStatement {
 	private ASTMacroReferenceName fMacroRef;
-	public ASTIfdef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean taken, IMacroBinding macro) {
+
+	public ASTIfdef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean taken,
+			IMacroBinding macro) {
 		super(parent, startNumber, condNumber, condEndNumber, taken);
 		if (macro != null) {
-			fMacroRef= new ASTMacroReferenceName(this, IASTPreprocessorStatement.MACRO_NAME, condNumber, condEndNumber, macro, null);
+			fMacroRef = new ASTMacroReferenceName(this, IASTPreprocessorStatement.MACRO_NAME, condNumber, condEndNumber,
+					macro, null);
 		}
 	}
 
@@ -269,16 +276,17 @@ class ASTPragma extends ASTDirectiveWithCondition implements IASTPreprocessorPra
 class ASTPragmaOperator extends ASTPragma {
 	private final int fConditionEndOffset;
 
-	public ASTPragmaOperator(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, int endNumber) {
+	public ASTPragmaOperator(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber,
+			int endNumber) {
 		super(parent, startNumber, condNumber, endNumber);
-		fConditionEndOffset= condEndNumber;
+		fConditionEndOffset = condEndNumber;
 	}
 
 	@Override
-    public String getConditionString() {
-    	return new String(getSource(fConditionOffset, fConditionEndOffset));
-    }
-	
+	public String getConditionString() {
+		return new String(getSource(fConditionOffset, fConditionEndOffset));
+	}
+
 	@Override
 	public boolean isPragmaOperator() {
 		return true;
@@ -287,7 +295,7 @@ class ASTPragmaOperator extends ASTPragma {
 
 class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreprocessorIncludeStatement {
 	private static final ISignificantMacros[] NO_VERSIONS = {};
-	
+
 	private final ASTPreprocessorName fName;
 	private final String fPath;
 	private final boolean fIsResolved;
@@ -305,20 +313,19 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private long fIncludedFileReadTime;
 	private boolean fErrorInIncludedFile;
 
-	public ASTInclusionStatement(IASTTranslationUnit parent, 
-			int startNumber, int nameStartNumber, int nameEndNumber, int endNumber,
-			char[] headerName, String filePath, boolean userInclude, boolean active, boolean heuristic, 
+	public ASTInclusionStatement(IASTTranslationUnit parent, int startNumber, int nameStartNumber, int nameEndNumber,
+			int endNumber, char[] headerName, String filePath, boolean userInclude, boolean active, boolean heuristic,
 			boolean exportedFile, IFileNomination nominationDelegate) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
-		fName= new ASTPreprocessorName(this, IASTPreprocessorIncludeStatement.INCLUDE_NAME,
-				nameStartNumber, nameEndNumber, headerName, null);
-		fPath= filePath == null ? "" : filePath; //$NON-NLS-1$
-		fIsResolved= filePath != null;
-		fIsSystemInclude= !userInclude;
-		fFoundByHeuristics= heuristic;
-		fSignificantMacros= ISignificantMacros.NONE;
-		fNominationDelegate= nominationDelegate;
-		fIncludedFileExported= exportedFile;
+		fName = new ASTPreprocessorName(this, IASTPreprocessorIncludeStatement.INCLUDE_NAME, nameStartNumber,
+				nameEndNumber, headerName, null);
+		fPath = filePath == null ? "" : filePath; //$NON-NLS-1$
+		fIsResolved = filePath != null;
+		fIsSystemInclude = !userInclude;
+		fFoundByHeuristics = heuristic;
+		fSignificantMacros = ISignificantMacros.NONE;
+		fNominationDelegate = nominationDelegate;
+		fIncludedFileExported = exportedFile;
 		if (!active) {
 			setInactive();
 		}
@@ -343,7 +350,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	public boolean isSystemInclude() {
 		return fIsSystemInclude;
 	}
-	
+
 	@Override
 	void findNode(ASTNodeSpecification<?> nodeSpec) {
 		super.findNode(nodeSpec);
@@ -362,13 +369,13 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 				return fNominationDelegate.hasPragmaOnceSemantics();
 			} catch (CoreException e) {
 			}
-		} 	
+		}
 		return fPragmaOnce;
 	}
-	
+
 	public void setPragamOnceSemantics(boolean value) {
 		assert fNominationDelegate == null;
-		fPragmaOnce= value;
+		fPragmaOnce = value;
 	}
 
 	@Override
@@ -378,89 +385,89 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 				return fNominationDelegate.getSignificantMacros();
 			} catch (CoreException e) {
 			}
-		} 	
+		}
 		return fSignificantMacros;
 	}
-	
+
 	public void setSignificantMacros(ISignificantMacros sig) {
 		assert sig != null;
 		assert fNominationDelegate == null;
-		fSignificantMacros= sig;
+		fSignificantMacros = sig;
 	}
 
 	public void setLoadedVersions(ISignificantMacros[] versions) {
-		fLoadedVersions= versions;
+		fLoadedVersions = versions;
 	}
 
 	@Override
 	public ISignificantMacros[] getLoadedVersions() {
 		return fLoadedVersions;
 	}
-	
+
 	@Override
 	public long getIncludedFileTimestamp() {
 		if (fNominationDelegate != null) {
 			return 0;
-		} 	
+		}
 		return fIncludedFileTimestamp;
 	}
-	
+
 	public void setIncludedFileTimestamp(long timestamp) {
 		assert fNominationDelegate == null;
-		fIncludedFileTimestamp= timestamp;
+		fIncludedFileTimestamp = timestamp;
 	}
 
 	@Override
 	public long getIncludedFileReadTime() {
 		if (fNominationDelegate != null) {
 			return 0;
-		} 	
+		}
 		return fIncludedFileReadTime;
 	}
 
 	public void setIncludedFileReadTime(long time) {
 		assert fNominationDelegate == null;
-		fIncludedFileReadTime= time;
+		fIncludedFileReadTime = time;
 	}
 
 	@Override
 	public long getIncludedFileSize() {
 		if (fNominationDelegate != null) {
 			return 0;
-		} 	
+		}
 		return fIncludedFileSize;
 	}
-	
+
 	public void setIncludedFileSize(long size) {
 		assert fNominationDelegate == null;
-		fIncludedFileSize= size;
+		fIncludedFileSize = size;
 	}
 
 	@Override
 	public long getIncludedFileContentsHash() {
 		if (fNominationDelegate != null) {
 			return 0;
-		} 	
+		}
 		return fIncludedFileContentsHash;
 	}
-	
+
 	public void setIncludedFileContentsHash(long hash) {
 		assert fNominationDelegate == null;
-		fCreatesAST= true;
-		fIncludedFileContentsHash= hash;
+		fCreatesAST = true;
+		fIncludedFileContentsHash = hash;
 	}
 
 	@Override
 	public boolean isErrorInIncludedFile() {
 		if (fNominationDelegate != null) {
 			return false;
-		} 	
+		}
 		return fErrorInIncludedFile;
 	}
-	
+
 	public void setErrorInIncludedFile(boolean error) {
 		assert fNominationDelegate == null;
-		fErrorInIncludedFile= error;
+		fErrorInIncludedFile = error;
 	}
 
 	@Override
@@ -472,12 +479,12 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	public boolean createsAST() {
 		return fCreatesAST;
 	}
-	
+
 	@Override
 	public IIndexFile getImportedIndexFile() {
 		if (fNominationDelegate instanceof IIndexFile)
 			return (IIndexFile) fNominationDelegate;
-		
+
 		return null;
 	}
 }
@@ -486,29 +493,32 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 	private final ASTPreprocessorName fName;
 	protected final int fExpansionNumber;
 	private final int fExpansionOffset;
-	
+
 	/**
 	 * Regular constructor.
 	 */
-	public ASTMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, 
-			int startNumber, int nameNumber, int nameEndNumber, int expansionNumber, int endNumber, boolean active) {
+	public ASTMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, int startNumber, int nameNumber,
+			int nameEndNumber, int expansionNumber, int endNumber, boolean active) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
-		fExpansionNumber= expansionNumber;
-		fExpansionOffset= -1;
-		fName= new ASTPreprocessorDefinition(this, IASTPreprocessorMacroDefinition.MACRO_NAME, nameNumber, nameEndNumber, macro.getNameCharArray(), macro);
+		fExpansionNumber = expansionNumber;
+		fExpansionOffset = -1;
+		fName = new ASTPreprocessorDefinition(this, IASTPreprocessorMacroDefinition.MACRO_NAME, nameNumber,
+				nameEndNumber, macro.getNameCharArray(), macro);
 		if (!active)
 			setInactive();
 	}
 
 	/**
 	 * Constructor for built-in macros
-	 * @param expansionOffset 
+	 * @param expansionOffset
 	 */
-	public ASTMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, IName originalDefinition, int expansionOffset) {
+	public ASTMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, IName originalDefinition,
+			int expansionOffset) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, -1, -1);
-		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, originalDefinition, macro.getNameCharArray(), macro);
-		fExpansionNumber= -1;
-		fExpansionOffset= expansionOffset;
+		fName = new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, originalDefinition,
+				macro.getNameCharArray(), macro);
+		fExpansionNumber = -1;
+		fExpansionOffset = expansionOffset;
 	}
 
 	@Override
@@ -522,7 +532,7 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 	protected IMacroBinding getMacro() {
 		return (IMacroBinding) fName.getBinding();
 	}
-	
+
 	@Override
 	public String getExpansion() {
 		return new String(getMacro().getExpansion());
@@ -549,14 +559,14 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 		if (fExpansionNumber >= 0) {
 			IASTTranslationUnit ast = getTranslationUnit();
 			if (ast != null) {
-				ILocationResolver lr= ast.getAdapter(ILocationResolver.class);
+				ILocationResolver lr = ast.getAdapter(ILocationResolver.class);
 				if (lr != null) {
 					return lr.getMappedFileLocation(fExpansionNumber, getOffset() + getLength() - fExpansionNumber);
 				}
 			}
 		}
 		if (fExpansionOffset >= 0) {
-			String fileName= fName.getContainingFilename();
+			String fileName = fName.getContainingFilename();
 			if (fileName != null) {
 				final char[] expansionImage = getMacro().getExpansionImage();
 				return new ASTFileLocationForBuiltins(fileName, fExpansionOffset, expansionImage.length);
@@ -564,19 +574,20 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getName().toString() + '=' + getExpansion();
 	}
 }
 
-class ASTMacroParameter extends ASTPreprocessorNode implements IASTFunctionStyleMacroParameter  {
+class ASTMacroParameter extends ASTPreprocessorNode implements IASTFunctionStyleMacroParameter {
 	private final String fParameter;
-	
-	public ASTMacroParameter(IASTPreprocessorFunctionStyleMacroDefinition parent, char[] param, int offset, int endOffset) {
+
+	public ASTMacroParameter(IASTPreprocessorFunctionStyleMacroDefinition parent, char[] param, int offset,
+			int endOffset) {
 		super(parent, IASTPreprocessorFunctionStyleMacroDefinition.PARAMETER, offset, endOffset);
-		fParameter= new String(param);
+		fParameter = new String(param);
 	}
 
 	@Override
@@ -585,71 +596,76 @@ class ASTMacroParameter extends ASTPreprocessorNode implements IASTFunctionStyle
 	}
 
 	@Override
-	public void setParameter(String value) {assert false;}
+	public void setParameter(String value) {
+		assert false;
+	}
 }
 
-class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition implements IASTPreprocessorFunctionStyleMacroDefinition {
+class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition
+		implements IASTPreprocessorFunctionStyleMacroDefinition {
 	/**
 	 * Regular constructor.
 	 */
-	public ASTFunctionStyleMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, 
-			int startNumber, int nameNumber, int nameEndNumber, int expansionNumber, int endNumber, boolean active) {
+	public ASTFunctionStyleMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, int startNumber,
+			int nameNumber, int nameEndNumber, int expansionNumber, int endNumber, boolean active) {
 		super(parent, macro, startNumber, nameNumber, nameEndNumber, expansionNumber, endNumber, active);
 	}
 
 	/**
 	 * Constructor for builtins
 	 */
-	public ASTFunctionStyleMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, 
-			IName originalDefinition, int expansionOffset) {
+	public ASTFunctionStyleMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, IName originalDefinition,
+			int expansionOffset) {
 		super(parent, macro, originalDefinition, expansionOffset);
 	}
 
 	@Override
 	public IASTFunctionStyleMacroParameter[] getParameters() {
-    	IMacroBinding macro= getMacro();
-    	char[][] paramList= macro.getParameterList();
-    	IASTFunctionStyleMacroParameter[] result= new IASTFunctionStyleMacroParameter[paramList.length];
-    	char[] image= getRawSignatureChars();
-    	int idx= 0;
-    	int defOffset = getOffset();
-		int endIdx= Math.min(fExpansionNumber - defOffset, image.length);
-    	char start= '(';
-    	for (int i = 0; i < result.length; i++) {
-        	while (idx < endIdx && image[idx] != start) 
-        		idx++;
-        	idx++;
-        	while (idx < endIdx && Character.isWhitespace(image[idx]))
-        		idx++;
-        	start= ',';
-        	
+		IMacroBinding macro = getMacro();
+		char[][] paramList = macro.getParameterList();
+		IASTFunctionStyleMacroParameter[] result = new IASTFunctionStyleMacroParameter[paramList.length];
+		char[] image = getRawSignatureChars();
+		int idx = 0;
+		int defOffset = getOffset();
+		int endIdx = Math.min(fExpansionNumber - defOffset, image.length);
+		char start = '(';
+		for (int i = 0; i < result.length; i++) {
+			while (idx < endIdx && image[idx] != start)
+				idx++;
+			idx++;
+			while (idx < endIdx && Character.isWhitespace(image[idx]))
+				idx++;
+			start = ',';
+
 			char[] param = paramList[i];
-			int poffset= -1;
-			int pendOffset= -1;
-        	if (idx + param.length <= endIdx) {
-        		poffset= defOffset+idx;
-        		pendOffset= poffset+param.length;
-        	}
-			result[i]= new ASTMacroParameter(this, param, poffset, pendOffset);
+			int poffset = -1;
+			int pendOffset = -1;
+			if (idx + param.length <= endIdx) {
+				poffset = defOffset + idx;
+				pendOffset = poffset + param.length;
+			}
+			result[i] = new ASTMacroParameter(this, param, poffset, pendOffset);
 		}
-        return result;
-    }
+		return result;
+	}
 
 	@Override
-	public void addParameter(IASTFunctionStyleMacroParameter parm) {assert false;}
-	
+	public void addParameter(IASTFunctionStyleMacroParameter parm) {
+		assert false;
+	}
+
 	@Override
 	public String toString() {
-		StringBuilder result= new StringBuilder();
+		StringBuilder result = new StringBuilder();
 		result.append(getName().getSimpleID());
 		result.append('(');
-		boolean needComma= false;
+		boolean needComma = false;
 		for (IASTFunctionStyleMacroParameter param : getParameters()) {
 			if (needComma) {
 				result.append(',');
 			}
 			result.append(param.getParameter());
-			needComma= true;
+			needComma = true;
 		}
 		result.append(')');
 		result.append('=');
@@ -661,9 +677,11 @@ class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition implements IAST
 class ASTUndef extends ASTPreprocessorNode implements IASTPreprocessorUndefStatement {
 	private final ASTPreprocessorName fName;
 
-	public ASTUndef(IASTTranslationUnit parent, char[] name, int startNumber, int nameNumber, int nameEndNumber, IBinding binding, boolean isActive) {
+	public ASTUndef(IASTTranslationUnit parent, char[] name, int startNumber, int nameNumber, int nameEndNumber,
+			IBinding binding, boolean isActive) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, nameEndNumber);
-		fName= new ASTPreprocessorName(this, IASTPreprocessorStatement.MACRO_NAME, nameNumber, nameEndNumber, name, binding);
+		fName = new ASTPreprocessorName(this, IASTPreprocessorStatement.MACRO_NAME, nameNumber, nameEndNumber, name,
+				binding);
 		if (!isActive)
 			setInactive();
 	}
@@ -679,7 +697,7 @@ class ASTInclusionNode implements IASTInclusionNode {
 	private IASTInclusionNode[] fInclusions;
 
 	public ASTInclusionNode(LocationCtx ctx) {
-		fLocationCtx= ctx;
+		fLocationCtx = ctx;
 	}
 
 	@Override
@@ -690,9 +708,9 @@ class ASTInclusionNode implements IASTInclusionNode {
 	@Override
 	public IASTInclusionNode[] getNestedInclusions() {
 		if (fInclusions == null) {
-			ArrayList<IASTInclusionNode> result= new ArrayList<IASTInclusionNode>();
+			ArrayList<IASTInclusionNode> result = new ArrayList<IASTInclusionNode>();
 			fLocationCtx.getInclusions(result);
-			fInclusions= result.toArray(new IASTInclusionNode[result.size()]);
+			fInclusions = result.toArray(new IASTInclusionNode[result.size()]);
 		}
 		return fInclusions;
 	}
@@ -720,9 +738,9 @@ class ASTFileLocation implements IASTFileLocation {
 	private int fLength;
 
 	public ASTFileLocation(LocationCtxFile fileLocationCtx, int startOffset, int length) {
-		fLocationCtx= fileLocationCtx;
-		fOffset= startOffset;
-		fLength= length;
+		fLocationCtx = fileLocationCtx;
+		fOffset = startOffset;
+		fLength = length;
 	}
 
 	@Override
@@ -747,7 +765,7 @@ class ASTFileLocation implements IASTFileLocation {
 
 	@Override
 	public int getEndingLineNumber() {
-		int end= fLength > 0 ? fOffset + fLength - 1 : fOffset;
+		int end = fLength > 0 ? fOffset + fLength - 1 : fOffset;
 		return fLocationCtx.getLineNumber(end);
 	}
 
@@ -759,20 +777,20 @@ class ASTFileLocation implements IASTFileLocation {
 	public char[] getSource() {
 		return fLocationCtx.getSource(fOffset, fLength);
 	}
-	
+
 	@Override
 	public String toString() {
-		return getFileName() + "[" + fOffset + "," + (fOffset + fLength) + "]";  //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		return getFileName() + "[" + fOffset + "," + (fOffset + fLength) + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	public int getSequenceNumber() {
 		return fLocationCtx.getSequenceNumberForOffset(fOffset, true);
 	}
-	
+
 	public int getSequenceEndNumber() {
 		return fLocationCtx.getSequenceNumberForOffset(fOffset + fLength, true);
 	}
-	
+
 	public LocationCtxFile getLocationContext() {
 		return fLocationCtx;
 	}
@@ -807,7 +825,7 @@ class ASTMacroExpansion extends ASTPreprocessorNode implements IASTPreprocessorM
 	}
 
 	void setContext(LocationCtxMacroExpansion expansionCtx) {
-		fContext= expansionCtx;
+		fContext = expansionCtx;
 	}
 
 	@Override
@@ -837,9 +855,9 @@ class ASTMacroExpansionLocation implements IASTMacroExpansionLocation, org.eclip
 	private int fLength;
 
 	public ASTMacroExpansionLocation(LocationCtxMacroExpansion macroExpansionCtx, int offset, int length) {
-		fContext= macroExpansionCtx;
-		fOffset= offset;
-		fLength= length;
+		fContext = macroExpansionCtx;
+		fOffset = offset;
+		fLength = length;
 	}
 
 	@Override
@@ -849,15 +867,15 @@ class ASTMacroExpansionLocation implements IASTMacroExpansionLocation, org.eclip
 
 	@Override
 	public IASTNodeLocation[] getExpansionLocations() {
-		final IASTFileLocation fl= asFileLocation();
-		return fl == null ? new IASTNodeLocation[0] : new IASTNodeLocation[] {fl};
+		final IASTFileLocation fl = asFileLocation();
+		return fl == null ? new IASTNodeLocation[0] : new IASTNodeLocation[] { fl };
 	}
 
 	@Override
 	public IASTPreprocessorMacroDefinition getMacroDefinition() {
 		return fContext.getMacroDefinition();
 	}
-	
+
 	@Override
 	public IASTName getMacroReference() {
 		return fContext.getMacroReference();
@@ -881,7 +899,7 @@ class ASTMacroExpansionLocation implements IASTMacroExpansionLocation, org.eclip
 
 	@Override
 	public String toString() {
-		return fContext.getMacroDefinition().getName().toString() + "[" + fOffset + "," + (fOffset+fLength) + "]";    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		return fContext.getMacroDefinition().getName().toString() + "[" + fOffset + "," + (fOffset + fLength) + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	public IASTImageLocation getImageLocation() {
@@ -895,9 +913,9 @@ class ASTFileLocationForBuiltins implements IASTFileLocation {
 	private int fLength;
 
 	public ASTFileLocationForBuiltins(String file, int startOffset, int length) {
-		fFile= file;
-		fOffset= startOffset;
-		fLength= length;
+		fFile = file;
+		fOffset = startOffset;
+		fLength = length;
 	}
 
 	@Override
@@ -941,7 +959,7 @@ class ASTImageLocation extends ASTFileLocationForBuiltins implements IASTImageLo
 
 	public ASTImageLocation(int kind, String file, int offset, int length) {
 		super(file, offset, length);
-		fKind= kind;
+		fKind = kind;
 	}
 
 	@Override

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -32,23 +32,25 @@ public class MIMetaGetCPUInfo implements ICommand<MIMetaGetCPUInfoInfo> {
 	}
 
 	@Override
-	public ICommand<? extends ICommandResult> coalesceWith( ICommand<? extends ICommandResult> command ) {
-		return null ;
-	}  
+	public ICommand<? extends ICommandResult> coalesceWith(ICommand<? extends ICommandResult> command) {
+		return null;
+	}
 
 	@Override
-	public IDMContext getContext(){
+	public IDMContext getContext() {
 		return fCtx;
 	}
 
 	@Override
 	public boolean equals(Object other) {
-		if (other == null) return false;
-		if (!(other.getClass().equals(getClass()))) return false;
+		if (other == null)
+			return false;
+		if (!(other.getClass().equals(getClass())))
+			return false;
 
 		// Since other is the same class is this, we are sure it is of type MIMetaGetCPUInfo also
-		MIMetaGetCPUInfo otherCmd = (MIMetaGetCPUInfo)other;
-		return fCtx == null ? otherCmd.fCtx == null : fCtx.equals(otherCmd.fCtx);	
+		MIMetaGetCPUInfo otherCmd = (MIMetaGetCPUInfo) other;
+		return fCtx == null ? otherCmd.fCtx == null : fCtx.equals(otherCmd.fCtx);
 	}
 
 	@Override

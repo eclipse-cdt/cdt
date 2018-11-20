@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -42,13 +42,12 @@ public class ExportMemoryAction implements IViewActionDelegate {
 			fView = (IMemoryRenderingSite) view;
 	}
 
-
 	/**
 	 * Utility PODS to return a memory block and an address from a method
 	 */
 	static class BlockAndAddress {
-		
-		static public final BlockAndAddress EMPTY = new BlockAndAddress(null, BigInteger.valueOf(0)); 
+
+		static public final BlockAndAddress EMPTY = new BlockAndAddress(null, BigInteger.valueOf(0));
 
 		public BlockAndAddress(IMemoryBlock block, BigInteger addr) {
 			this.block = block;
@@ -62,15 +61,14 @@ public class ExportMemoryAction implements IViewActionDelegate {
 	/**
 	 * Returns the memory block and initial base address for the export
 	 * operation.
-	 * 
+	 *
 	 * @return a result object; null is never returned
 	 */
-	static BlockAndAddress getMemoryBlockAndInitialStartAddress(ISelection selection)
-	{
+	static BlockAndAddress getMemoryBlockAndInitialStartAddress(ISelection selection) {
 
 		IMemoryBlock memBlock = null;
 		BigInteger initialStartAddr = null;
-		
+
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection strucSel = (IStructuredSelection) selection;
 
@@ -83,48 +81,47 @@ public class ExportMemoryAction implements IViewActionDelegate {
 			if (obj == null)
 				return BlockAndAddress.EMPTY;
 
-			// Get the initial start address for the operation. 
+			// Get the initial start address for the operation.
 			if (obj instanceof IMemoryRendering) {
 				memBlock = ((IMemoryRendering) obj).getMemoryBlock();
 				if (obj instanceof IRepositionableMemoryRendering) {
-					initialStartAddr = ((IRepositionableMemoryRendering)obj).getSelectedAddress();
+					initialStartAddr = ((IRepositionableMemoryRendering) obj).getSelectedAddress();
 				}
 			} else if (obj instanceof IMemoryBlock) {
 				memBlock = (IMemoryBlock) obj;
 			}
-			
+
 			if (initialStartAddr == null) {
 				if (memBlock instanceof IMemoryBlockExtension) {
 					try {
-						initialStartAddr = ((IMemoryBlockExtension)memBlock).getBigBaseAddress();
+						initialStartAddr = ((IMemoryBlockExtension) memBlock).getBigBaseAddress();
 					} catch (DebugException e) {
 						initialStartAddr = BigInteger.valueOf(memBlock.getStartAddress());
 					}
-				}
-				else {
+				} else {
 					if (memBlock != null) {
 						initialStartAddr = BigInteger.valueOf(memBlock.getStartAddress());
 					}
 				}
 			}
 		}
-		
-		return new BlockAndAddress(memBlock, initialStartAddr); 
+
+		return new BlockAndAddress(memBlock, initialStartAddr);
 	}
-	
+
 	public void run(IAction action) {
 
-		ISelection selection = fView.getSite().getSelectionProvider()
-			.getSelection();
+		ISelection selection = fView.getSite().getSelectionProvider().getSelection();
 		BlockAndAddress blockAndAddr = getMemoryBlockAndInitialStartAddress(selection);
-		if(blockAndAddr.block == null)
+		if (blockAndAddr.block == null)
 			return;
-		ExportMemoryDialog dialog = new ExportMemoryDialog(MemoryTransportPlugin.getShell(), blockAndAddr.block, blockAndAddr.addr);
+		ExportMemoryDialog dialog = new ExportMemoryDialog(MemoryTransportPlugin.getShell(), blockAndAddr.block,
+				blockAndAddr.addr);
 		dialog.open();
-		
+
 		dialog.getResult();
 	}
-	
+
 	public void selectionChanged(IAction action, ISelection selection) {
 		action.setEnabled(getMemoryBlockAndInitialStartAddress(selection).block != null);
 	}

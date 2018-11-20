@@ -78,56 +78,54 @@ final class ImplicitsAnalysis {
 	 * Returns the number of implicit methods to declare not counting the inherited constructors.
 	 */
 	public int getImplicitsToDeclareCount() {
-		return (!hasDestructor ? 1 : 0)
-			+ (!hasConstructor ? 1 : 0)
-			+ (!hasCopyConstructor ? 1 : 0)
-			+ (!hasCopyAssignmentOperator ? 1 : 0);
+		return (!hasDestructor ? 1 : 0) + (!hasConstructor ? 1 : 0) + (!hasCopyConstructor ? 1 : 0)
+				+ (!hasCopyAssignmentOperator ? 1 : 0);
 	}
 
 	private void analyzeMembers(ICPPASTCompositeTypeSpecifier compositeTypeSpecifier) {
 		IASTDeclaration[] members = compositeTypeSpecifier.getMembers();
 		char[] name = compositeTypeSpecifier.getName().getLookupKey();
-        for (IASTDeclaration member : members) {
-    		IASTDeclarator dcltor = null;
-    		IASTDeclSpecifier spec = null;
+		for (IASTDeclaration member : members) {
+			IASTDeclarator dcltor = null;
+			IASTDeclSpecifier spec = null;
 			if (member instanceof IASTSimpleDeclaration) {
-			    IASTDeclarator[] dtors = ((IASTSimpleDeclaration) member).getDeclarators();
-			    if (dtors.length != 1)
-			    	continue;
-			    dcltor = dtors[0];
-			    spec = ((IASTSimpleDeclaration) member).getDeclSpecifier();
+				IASTDeclarator[] dtors = ((IASTSimpleDeclaration) member).getDeclarators();
+				if (dtors.length != 1)
+					continue;
+				dcltor = dtors[0];
+				spec = ((IASTSimpleDeclaration) member).getDeclSpecifier();
 			} else if (member instanceof IASTFunctionDefinition) {
-			    dcltor = ((IASTFunctionDefinition) member).getDeclarator();
-			    spec = ((IASTFunctionDefinition) member).getDeclSpecifier();
+				dcltor = ((IASTFunctionDefinition) member).getDeclarator();
+				spec = ((IASTFunctionDefinition) member).getDeclSpecifier();
 			}
 
 			if (!(dcltor instanceof ICPPASTFunctionDeclarator))
 				continue;
 
-			char[] declName= ASTQueries.findInnermostDeclarator(dcltor).getName().getLookupKey();
+			char[] declName = ASTQueries.findInnermostDeclarator(dcltor).getName().getLookupKey();
 
-			if (spec instanceof IASTSimpleDeclSpecifier &&
-					((IASTSimpleDeclSpecifier) spec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
+			if (spec instanceof IASTSimpleDeclSpecifier
+					&& ((IASTSimpleDeclSpecifier) spec).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
 				if (CharArrayUtils.equals(declName, name)) {
 					hasConstructor = true;
 					IASTParameterDeclaration[] params = ((ICPPASTFunctionDeclarator) dcltor).getParameters();
-		        	if (params.length != 0 && hasTypeReferenceToClassType(params[0])
-		        			&& parametersHaveInitializers(params, 1)) {
-		        		hasCopyConstructor = true;
-		        	}
-				} else if (declName.length != 0 && declName[0] == '~' &&
-						CharArrayUtils.equals(declName, 1, name.length, name)) {
+					if (params.length != 0 && hasTypeReferenceToClassType(params[0])
+							&& parametersHaveInitializers(params, 1)) {
+						hasCopyConstructor = true;
+					}
+				} else if (declName.length != 0 && declName[0] == '~'
+						&& CharArrayUtils.equals(declName, 1, name.length, name)) {
 					hasDestructor = true;
 				}
 			} else if (CharArrayUtils.equals(declName, OverloadableOperator.ASSIGN.toCharArray())) {
 				IASTParameterDeclaration[] params = ((ICPPASTFunctionDeclarator) dcltor).getParameters();
-	        	if (params.length == 1 && hasTypeReferenceToClassType(params[0]))
-	        		hasCopyAssignmentOperator = true;
+				if (params.length == 1 && hasTypeReferenceToClassType(params[0]))
+					hasCopyAssignmentOperator = true;
 			}
 
 			if (hasCopyConstructor && hasDestructor && hasCopyAssignmentOperator)
 				break;
-        }
+		}
 	}
 
 	private boolean hasTypeReferenceToClassType(IASTParameterDeclaration decl) {
@@ -136,7 +134,7 @@ final class ImplicitsAnalysis {
 			if (t != null) {
 				t = SemanticUtil.getNestedType(t, TDEF);
 				if (t instanceof ICPPReferenceType && !((ICPPReferenceType) t).isRValueReference()) {
-					t = SemanticUtil.getNestedType(t, TDEF|REF|CVTYPE);
+					t = SemanticUtil.getNestedType(t, TDEF | REF | CVTYPE);
 					return classType.isSameType(t);
 				}
 			}

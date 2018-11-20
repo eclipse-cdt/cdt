@@ -32,4 +32,3 @@ class WhileFlowInfo extends FlowInfo {
 		mergeSequential(info, context);
 	}
 }
-

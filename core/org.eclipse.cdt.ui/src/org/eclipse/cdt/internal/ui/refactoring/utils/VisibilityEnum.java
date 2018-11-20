@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -22,18 +22,18 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
  */
 public enum VisibilityEnum {
 	// The values are ordered by increasing visibility.
-	v_private("private", ICPPASTVisibilityLabel.v_private),  //$NON-NLS-1$
-	v_protected("protected", ICPPASTVisibilityLabel.v_protected),   //$NON-NLS-1$
+	v_private("private", ICPPASTVisibilityLabel.v_private), //$NON-NLS-1$
+	v_protected("protected", ICPPASTVisibilityLabel.v_protected), //$NON-NLS-1$
 	v_public("public", ICPPASTVisibilityLabel.v_public); //$NON-NLS-1$
 
 	private final String stringRepresentation;
 	private final int visibilityLabelValue;
-	
+
 	private VisibilityEnum(String stringRepresentation, int visibilityLabelValue) {
 		this.stringRepresentation = stringRepresentation;
 		this.visibilityLabelValue = visibilityLabelValue;
 	}
-	
+
 	public static VisibilityEnum from(ICPPASTVisibilityLabel visibility) {
 		switch (visibility.getVisibility()) {
 		case ICPPASTVisibilityLabel.v_private:
@@ -45,11 +45,11 @@ public enum VisibilityEnum {
 		}
 		return null;
 	}
-	
+
 	public int getVisibilityLabelValue() {
 		return visibilityLabelValue;
 	}
-	
+
 	public static VisibilityEnum getEnumForStringRepresentation(String visibility) {
 		if (VisibilityEnum.v_private.toString().equals(visibility)) {
 			return VisibilityEnum.v_private;
@@ -60,7 +60,7 @@ public enum VisibilityEnum {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 		return stringRepresentation;

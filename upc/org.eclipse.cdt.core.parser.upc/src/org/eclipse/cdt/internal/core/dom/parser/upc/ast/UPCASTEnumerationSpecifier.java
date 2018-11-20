@@ -26,7 +26,6 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier impleme
 	private int sharedQualifier;
 	private IASTExpression blockSizeExpression;
 
-
 	public UPCASTEnumerationSpecifier() {
 	}
 
@@ -71,7 +70,7 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier impleme
 	@Override
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
-		if(expr != null) {
+		if (expr != null) {
 			expr.setParent(this);
 			expr.setPropertyInParent(BLOCK_SIZE_EXPRESSION);
 		}
@@ -88,29 +87,40 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier impleme
 	}
 
 	@Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+	public boolean accept(ASTVisitor action) {
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        if( getName() != null ) if( !getName().accept( action ) ) return false;
-        if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;
+		if (getName() != null)
+			if (!getName().accept(action))
+				return false;
+		if (blockSizeExpression != null)
+			if (!blockSizeExpression.accept(action))
+				return false;
 
-        IASTEnumerator[] etors = getEnumerators();
-        for ( int i = 0; i < etors.length; i++ ) {
-            if( !etors[i].accept( action ) ) return false;
-        }
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		IASTEnumerator[] etors = getEnumerators();
+		for (int i = 0; i < etors.length; i++) {
+			if (!etors[i].accept(action))
+				return false;
 		}
-        return true;
-    }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 
 }

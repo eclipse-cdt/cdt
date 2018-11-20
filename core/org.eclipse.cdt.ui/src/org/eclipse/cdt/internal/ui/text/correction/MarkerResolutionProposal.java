@@ -36,8 +36,8 @@ public class MarkerResolutionProposal implements ICCompletionProposal {
 	 * Constructor for MarkerResolutionProposal.
 	 */
 	public MarkerResolutionProposal(IMarkerResolution resolution, IMarker marker) {
-		fResolution= resolution;
-		fMarker= marker;
+		fResolution = resolution;
+		fMarker = marker;
 	}
 
 	/* (non-Javadoc)
@@ -60,9 +60,8 @@ public class MarkerResolutionProposal implements ICCompletionProposal {
 			return ((ICCompletionProposal) fResolution).getAdditionalProposalInfo();
 		}
 		try {
-			String problemDesc= (String) fMarker.getAttribute(IMarker.MESSAGE);
-			return NLS.bind(CorrectionMessages.MarkerResolutionProposal_additionaldesc,
-					problemDesc);
+			String problemDesc = (String) fMarker.getAttribute(IMarker.MESSAGE);
+			return NLS.bind(CorrectionMessages.MarkerResolutionProposal_additionaldesc, problemDesc);
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		}

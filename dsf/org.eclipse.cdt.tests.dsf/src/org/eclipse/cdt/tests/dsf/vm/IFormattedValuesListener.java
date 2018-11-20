@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContex
  * @since 2.2
  */
 public interface IFormattedValuesListener {
-    
-    public void formattedValueUpdated(FormattedValueDMContext formattedValueDmc);
-    
+
+	public void formattedValueUpdated(FormattedValueDMContext formattedValueDmc);
+
 }

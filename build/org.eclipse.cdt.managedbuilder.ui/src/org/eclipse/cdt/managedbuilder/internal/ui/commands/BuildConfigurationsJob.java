@@ -46,10 +46,10 @@ public class BuildConfigurationsJob extends Job {
 					new Object[] { cfgDescriptions.length, firstProjectName, firstConfigurationName });
 		}
 	}
-	
+
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param cfgDescriptions - a list of configurations to build, possibly from different projects
 	 * @param cleanKind - pass {@link IncrementalProjectBuilder#CLEAN_BUILD} to clean before building
 	 * @param buildKind - kind of build. Can be
@@ -71,7 +71,7 @@ public class BuildConfigurationsJob extends Job {
 		CUIPlugin.getDefault().startGlobalConsole();
 
 		IConfiguration[] cfgs = new IConfiguration[cfgDescriptions.length];
-		for (int i= 0; i < cfgDescriptions.length; i++) {
+		for (int i = 0; i < cfgDescriptions.length; i++) {
 			cfgs[i] = ManagedBuildManager.getConfigurationForDescription(cfgDescriptions[i]);
 		}
 		try {

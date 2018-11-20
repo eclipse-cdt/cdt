@@ -113,8 +113,8 @@ public class TestSourceReader {
 	 *     test in the source code.
 	 * @throws IOException
 	 */
-	public static StringBuilder[] getContentsForTest(Bundle bundle, String srcRoot, Class clazz,
-			final String testName, int numSections) throws IOException {
+	public static StringBuilder[] getContentsForTest(Bundle bundle, String srcRoot, Class clazz, final String testName,
+			int numSections) throws IOException {
 		// Walk up the class inheritance chain until we find the test method.
 		try {
 			while (clazz.getMethod(testName).getDeclaringClass() != clazz) {
@@ -131,7 +131,7 @@ public class TestSourceReader {
 			String fqn = clazz.getName().replace('.', '/');
 			fqn = fqn.indexOf("$") == -1 ? fqn : fqn.substring(0, fqn.indexOf("$"));
 			String classFile = fqn + ".java";
-			IPath filePath= new Path(srcRoot + '/' + classFile);
+			IPath filePath = new Path(srcRoot + '/' + classFile);
 
 			InputStream in;
 			Class superclass = clazz.getSuperclass();
@@ -149,43 +149,43 @@ public class TestSourceReader {
 				continue;
 			}
 
-		    BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		    try {
-		    	// Read the java file collecting comments until we encounter the test method.
-			    List<StringBuilder> contents = new ArrayList<StringBuilder>();
-			    StringBuilder content = new StringBuilder();
-			    for (String line = br.readLine(); line != null; line = br.readLine()) {
-			    	line = line.replaceFirst("^\\s*", ""); // Replace leading whitespace, preserve trailing
-			    	// Trailing whitespace can be removed by editor/clean-up actions. To enforce whitespace
-			    	// at end of line, use ${whitspace_eol}, which will be removed, but cause the
-			    	// whitespace to the left of it to be preserved.
-			    	line = line.replace("${whitespace_eol}", "");
-			    	if (line.startsWith("//")) {
-			    		content.append(line.substring(2)).append('\n');
-			    	} else {
-			    		if (!line.startsWith("@") && content.length() > 0) {
-			    			contents.add(content);
-			    			if (numSections > 0 && contents.size() == numSections + 1)
-			    				contents.remove(0);
-			    			content = new StringBuilder();
-			    		}
-			    		if (line.length() > 0 && !contents.isEmpty()) {
-			    			int idx= line.indexOf(testName);
-			    			if (idx != -1 && !Character.isJavaIdentifierPart(line.charAt(idx + testName.length()))) {
-			    				return contents.toArray(new StringBuilder[contents.size()]);
-			    			}
-			    			if (!line.startsWith("@")) {
-			    				contents.clear();
-			    			}
-			    		}
-			    	}
-			    }
-		    } finally {
-		    	br.close();
-		    }
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			try {
+				// Read the java file collecting comments until we encounter the test method.
+				List<StringBuilder> contents = new ArrayList<StringBuilder>();
+				StringBuilder content = new StringBuilder();
+				for (String line = br.readLine(); line != null; line = br.readLine()) {
+					line = line.replaceFirst("^\\s*", ""); // Replace leading whitespace, preserve trailing
+					// Trailing whitespace can be removed by editor/clean-up actions. To enforce whitespace
+					// at end of line, use ${whitspace_eol}, which will be removed, but cause the
+					// whitespace to the left of it to be preserved.
+					line = line.replace("${whitespace_eol}", "");
+					if (line.startsWith("//")) {
+						content.append(line.substring(2)).append('\n');
+					} else {
+						if (!line.startsWith("@") && content.length() > 0) {
+							contents.add(content);
+							if (numSections > 0 && contents.size() == numSections + 1)
+								contents.remove(0);
+							content = new StringBuilder();
+						}
+						if (line.length() > 0 && !contents.isEmpty()) {
+							int idx = line.indexOf(testName);
+							if (idx != -1 && !Character.isJavaIdentifierPart(line.charAt(idx + testName.length()))) {
+								return contents.toArray(new StringBuilder[contents.size()]);
+							}
+							if (!line.startsWith("@")) {
+								contents.clear();
+							}
+						}
+					}
+				}
+			} finally {
+				br.close();
+			}
 
 			if (superclass == null || !superclass.getPackage().equals(clazz.getPackage())) {
-			    throw new IOException("Test data not found for " + clazz.getName() + "." + testName);
+				throw new IOException("Test data not found for " + clazz.getName() + "." + testName);
 			}
 			clazz = superclass;
 		}
@@ -201,17 +201,17 @@ public class TestSourceReader {
 	 * @since 4.0
 	 */
 	public static int indexOfInFile(String lookfor, Path fullPath) throws Exception {
-		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(fullPath);
-		Reader reader= new BufferedReader(new InputStreamReader(file.getContents(), file.getCharset()));
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(fullPath);
+		Reader reader = new BufferedReader(new InputStreamReader(file.getContents(), file.getCharset()));
 		Assert.assertTrue(lookfor.indexOf('\n') == -1);
 		try {
-			int c= 0;
-			int offset= 0;
-			StringBuilder buf= new StringBuilder();
+			int c = 0;
+			int offset = 0;
+			StringBuilder buf = new StringBuilder();
 			while ((c = reader.read()) >= 0) {
 				buf.append((char) c);
 				if (c == '\n') {
-					int idx= buf.indexOf(lookfor);
+					int idx = buf.indexOf(lookfor);
 					if (idx >= 0) {
 						return idx + offset;
 					}
@@ -219,7 +219,7 @@ public class TestSourceReader {
 					buf.setLength(0);
 				}
 			}
-			int idx= buf.indexOf(lookfor);
+			int idx = buf.indexOf(lookfor);
 			if (idx >= 0) {
 				return idx + offset;
 			}
@@ -230,12 +230,12 @@ public class TestSourceReader {
 	}
 
 	public static int getLineNumber(int offset, Path fullPath) throws Exception {
-		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(fullPath);
-		Reader reader= new BufferedReader(new InputStreamReader(file.getContents(), file.getCharset()));
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(fullPath);
+		Reader reader = new BufferedReader(new InputStreamReader(file.getContents(), file.getCharset()));
 		try {
 			int line = 1;
 			for (int i = 0; i < offset; i++) {
-				int c= reader.read();
+				int c = reader.read();
 				Assert.assertTrue(c >= 0);
 				if (c == '\n')
 					line++;
@@ -251,41 +251,42 @@ public class TestSourceReader {
 	 * is started with '// {tag}' and ends with the first line not started by '//'
 	 * @since 4.0
 	 */
-	public static String readTaggedComment(Bundle bundle, String srcRoot, Class clazz, final String tag) throws IOException {
-	    IPath filePath= new Path(srcRoot + '/' + clazz.getName().replace('.', '/') + ".java");
+	public static String readTaggedComment(Bundle bundle, String srcRoot, Class clazz, final String tag)
+			throws IOException {
+		IPath filePath = new Path(srcRoot + '/' + clazz.getName().replace('.', '/') + ".java");
 
-	    InputStream in= FileLocator.openStream(bundle, filePath, false);
-	    LineNumberReader reader= new LineNumberReader(new InputStreamReader(in));
-	    boolean found= false;
-	    final StringBuilder content= new StringBuilder();
-	    try {
-	        String line= reader.readLine();
-	        while (line != null) {
-	        	line= line.trim();
-	            if (line.startsWith("//")) {
-	                line= line.substring(2);
-	                if (found) {
-	                    content.append(line);
-	                    content.append('\n');
-	                } else {
-	                    line= line.trim();
-	                    if (line.startsWith("{" + tag)) {
-	                        if (line.length() == tag.length() + 1 ||
-	                                !Character.isJavaIdentifierPart(line.charAt(tag.length() + 1))) {
-	                            found= true;
-	                        }
-	                    }
-	                }
-	            } else if (found) {
-	                break;
-	            }
-	            line= reader.readLine();
-	        }
-	    } finally {
-	        reader.close();
-	    }
-	    Assert.assertTrue("Tag '" + tag + "' is not defined inside of '" + filePath + "'.", found);
-	    return content.toString();
+		InputStream in = FileLocator.openStream(bundle, filePath, false);
+		LineNumberReader reader = new LineNumberReader(new InputStreamReader(in));
+		boolean found = false;
+		final StringBuilder content = new StringBuilder();
+		try {
+			String line = reader.readLine();
+			while (line != null) {
+				line = line.trim();
+				if (line.startsWith("//")) {
+					line = line.substring(2);
+					if (found) {
+						content.append(line);
+						content.append('\n');
+					} else {
+						line = line.trim();
+						if (line.startsWith("{" + tag)) {
+							if (line.length() == tag.length() + 1
+									|| !Character.isJavaIdentifierPart(line.charAt(tag.length() + 1))) {
+								found = true;
+							}
+						}
+					}
+				} else if (found) {
+					break;
+				}
+				line = reader.readLine();
+			}
+		} finally {
+			reader.close();
+		}
+		Assert.assertTrue("Tag '" + tag + "' is not defined inside of '" + filePath + "'.", found);
+		return content.toString();
 	}
 
 	/**
@@ -298,8 +299,8 @@ public class TestSourceReader {
 	 * @throws CoreException
 	 * @since 4.0
 	 */
-	public static IFile createFile(final IContainer container, final IPath filePath,
-			final CharSequence contents) throws CoreException {
+	public static IFile createFile(final IContainer container, final IPath filePath, final CharSequence contents)
+			throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final IFile result[] = new IFile[1];
 		ws.run(new IWorkspaceRunnable() {
@@ -316,7 +317,7 @@ public class TestSourceReader {
 				}
 				// Create file input stream
 				if (file.exists()) {
-					long timestamp= file.getLocalTimeStamp();
+					long timestamp = file.getLocalTimeStamp();
 					file.setContents(stream, false, false, new NullProgressMonitor());
 					if (file.getLocalTimeStamp() == timestamp) {
 						file.setLocalTimeStamp(timestamp + 1000);
@@ -325,11 +326,11 @@ public class TestSourceReader {
 					createFolders(file);
 					file.create(stream, true, new NullProgressMonitor());
 				}
-				result[0]= file;
+				result[0] = file;
 			}
 
 			private void createFolders(IResource res) throws CoreException {
-				IContainer container= res.getParent();
+				IContainer container = res.getParent();
 				if (!container.exists() && container instanceof IFolder) {
 					createFolders(container);
 					((IFolder) container).create(true, true, new NullProgressMonitor());
@@ -364,18 +365,18 @@ public class TestSourceReader {
 		long fileTimestamp = file.getLocalTimeStamp();
 		IIndexFileLocation indexFileLocation = IndexLocationFactory.getWorkspaceIFL(file);
 
-		long endTime= System.currentTimeMillis() + maxmillis;
-		int timeLeft= maxmillis;
+		long endTime = System.currentTimeMillis() + maxmillis;
+		int timeLeft = maxmillis;
 		while (timeLeft >= 0) {
 			Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
 			index.acquireReadLock();
 			try {
-				IIndexFile[] files= index.getFiles(ILinkage.CPP_LINKAGE_ID, indexFileLocation);
+				IIndexFile[] files = index.getFiles(ILinkage.CPP_LINKAGE_ID, indexFileLocation);
 				if (files.length > 0 && areAllFilesNotOlderThan(files, fileTimestamp)) {
 					Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
 					return;
 				}
-				files= index.getFiles(ILinkage.C_LINKAGE_ID, indexFileLocation);
+				files = index.getFiles(ILinkage.C_LINKAGE_ID, indexFileLocation);
 				if (files.length > 0 && areAllFilesNotOlderThan(files, fileTimestamp)) {
 					Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
 					return;
@@ -385,7 +386,7 @@ public class TestSourceReader {
 			}
 
 			Thread.sleep(50);
-			timeLeft= (int) (endTime - System.currentTimeMillis());
+			timeLeft = (int) (endTime - System.currentTimeMillis());
 		}
 		Assert.fail("Indexing of " + file.getFullPath() + " did not complete in " + maxmillis / 1000. + " sec");
 	}
@@ -399,13 +400,14 @@ public class TestSourceReader {
 		return true;
 	}
 
-	public static IASTTranslationUnit createIndexBasedAST(IIndex index, ICProject project, IFile file) throws CModelException, CoreException {
-    	ICElement elem= project.findElement(file.getFullPath());
-    	if (elem instanceof ITranslationUnit) {
-    		ITranslationUnit tu= (ITranslationUnit) elem;
-   			return tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
-    	}
-    	Assert.fail("Could not create AST for " + file.getFullPath());
-    	return null;
-    }
+	public static IASTTranslationUnit createIndexBasedAST(IIndex index, ICProject project, IFile file)
+			throws CModelException, CoreException {
+		ICElement elem = project.findElement(file.getFullPath());
+		if (elem instanceof ITranslationUnit) {
+			ITranslationUnit tu = (ITranslationUnit) elem;
+			return tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+		}
+		Assert.fail("Could not create AST for " + file.getFullPath());
+		return null;
+	}
 }

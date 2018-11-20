@@ -146,34 +146,33 @@ public class CPPASTFieldReference extends ASTNode
 
 	@Override
 	public IASTImplicitName[] getImplicitNames() {
-    	if (fImplicitNames == null) {
-    		if (!fIsDeref)
-    			return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+		if (fImplicitNames == null) {
+			if (!fIsDeref)
+				return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 
-    		CPPSemantics.pushLookupPoint(this);
-    		try {
-	    		// Collect the function bindings
+			CPPSemantics.pushLookupPoint(this);
+			try {
+				// Collect the function bindings
 				List<ICPPFunction> functionBindings = new ArrayList<>();
 				EvalMemberAccess.getFieldOwnerType(fOwner.getExpressionType(), fIsDeref, functionBindings, false);
 				if (functionBindings.isEmpty())
 					return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-	
+
 				// Create a name to wrap each binding
 				fImplicitNames = new IASTImplicitName[functionBindings.size()];
 				int i = -1;
 				for (ICPPFunction op : functionBindings) {
 					if (op != null && !(op instanceof CPPImplicitFunction)) {
-						CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.ARROW,
-								this);
+						CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.ARROW, this);
 						operatorName.setBinding(op);
 						operatorName.computeOperatorOffsets(fOwner, true);
 						fImplicitNames[++i] = operatorName;
 					}
 				}
 				fImplicitNames = ArrayUtil.trimAt(IASTImplicitName.class, fImplicitNames, i);
-    		} finally {
-    			CPPSemantics.popLookupPoint();
-    		}
+			} finally {
+				CPPSemantics.popLookupPoint();
+			}
 		}
 
 		return fImplicitNames;
@@ -251,7 +250,7 @@ public class CPPASTFieldReference extends ASTNode
 		CPPSemantics.pushLookupPoint(this);
 		try {
 			IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
-	
+
 			int j = 0;
 			for (int i = 0; i < bindings.length; i++) {
 				IBinding binding = bindings[i];
@@ -259,10 +258,9 @@ public class CPPASTFieldReference extends ASTNode
 					if (i != j)
 						bindings[j] = binding;
 					j++;
-					}
 				}
-	
-	
+			}
+
 			if (j < bindings.length)
 				return Arrays.copyOfRange(bindings, 0, j);
 			return bindings;
@@ -299,36 +297,38 @@ public class CPPASTFieldReference extends ASTNode
 			CPPSemantics.pushLookupPoint(this);
 			ICPPEvaluation ownerEval = fOwner.getEvaluation();
 			if (!ownerEval.isTypeDependent()) {
-				IType ownerType= EvalMemberAccess.getFieldOwnerType(ownerEval.getType(), fIsDeref, null, false);
+				IType ownerType = EvalMemberAccess.getFieldOwnerType(ownerEval.getType(), fIsDeref, null, false);
 				if (ownerType != null) {
 					IBinding binding = fName.resolvePreBinding();
 					if (binding instanceof CPPFunctionSet)
-						binding= fName.resolveBinding();
-	
-					if (binding instanceof IProblemBinding || binding instanceof IType || binding instanceof ICPPConstructor) {
+						binding = fName.resolveBinding();
+
+					if (binding instanceof IProblemBinding || binding instanceof IType
+							|| binding instanceof ICPPConstructor) {
 						return EvalFixed.INCOMPLETE;
 					}
-	
-					return new EvalMemberAccess(ownerType, ownerEval.getValueCategory(), binding, ownerEval, fIsDeref, this);
+
+					return new EvalMemberAccess(ownerType, ownerEval.getValueCategory(), binding, ownerEval, fIsDeref,
+							this);
 				}
 			}
-	
-			IBinding qualifier= null;
-			ICPPTemplateArgument[] args= null;
-			IASTName n= fName;
+
+			IBinding qualifier = null;
+			ICPPTemplateArgument[] args = null;
+			IASTName n = fName;
 			if (n instanceof ICPPASTQualifiedName) {
-				ICPPASTQualifiedName qn= (ICPPASTQualifiedName) n;
-				ICPPASTNameSpecifier[] ns= qn.getQualifier();
+				ICPPASTQualifiedName qn = (ICPPASTQualifiedName) n;
+				ICPPASTNameSpecifier[] ns = qn.getQualifier();
 				if (ns.length < 1)
 					return EvalFixed.INCOMPLETE;
-				qualifier= ns[ns.length - 1].resolveBinding();
+				qualifier = ns[ns.length - 1].resolveBinding();
 				if (qualifier instanceof IProblemBinding)
 					return EvalFixed.INCOMPLETE;
-				n= qn.getLastName();
+				n = qn.getLastName();
 			}
 			if (n instanceof ICPPASTTemplateId) {
 				try {
-					args= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) n);
+					args = CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) n);
 				} catch (DOMException e) {
 					return EvalFixed.INCOMPLETE;
 				}
@@ -363,7 +363,7 @@ public class CPPASTFieldReference extends ASTNode
 
 	@Override
 	public IType getExpressionType() {
-    	return CPPEvaluation.getType(this);
+		return CPPEvaluation.getType(this);
 	}
 
 	@Override

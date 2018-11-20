@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Anton Gorenkov 
+ * Copyright (c) 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,14 +30,14 @@ public interface ITestsRunnerConstants {
 	 * Specifies the default launch delegate for a Tests Run session.
 	 */
 	public static final String PREFERRED_RUN_TESTS_LAUNCH_DELEGATE = "org.eclipse.cdt.testsrunner.launch.runTests"; //$NON-NLS-1$
-	
-    /**
+
+	/**
 	 * Specifies the default launch delegate for a Tests Debug session.
 	 */
-    public static final String PREFERRED_DEBUG_TESTS_LAUNCH_DELEGATE = "org.eclipse.cdt.testsrunner.launch.dsf.runTests"; //$NON-NLS-1$
+	public static final String PREFERRED_DEBUG_TESTS_LAUNCH_DELEGATE = "org.eclipse.cdt.testsrunner.launch.dsf.runTests"; //$NON-NLS-1$
 
-    /**
+	/**
 	 * Specifies the ID of the Tests Runner main view for browsing results.
 	 */
-    public static final String TESTS_RUNNER_RESULTS_VIEW_ID = "org.eclipse.cdt.testsrunner.resultsview"; //$NON-NLS-1$
+	public static final String TESTS_RUNNER_RESULTS_VIEW_ID = "org.eclipse.cdt.testsrunner.resultsview"; //$NON-NLS-1$
 }

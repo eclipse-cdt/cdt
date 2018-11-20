@@ -12,7 +12,7 @@
  *     Markus Schorn - initial API and implementation
  *     Thomas Corbat (IFS)
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -59,8 +59,8 @@ public class PDOMASTAdapter {
 		private IASTFileLocation fLocation;
 
 		public AnonymousASTName(IASTName name, final IASTFileLocation loc) {
-			fDelegate= name;
-			fLocation= new IASTFileLocation() {
+			fDelegate = name;
+			fLocation = new IASTFileLocation() {
 				@Override
 				public int getEndingLineNumber() {
 					return loc.getStartingLineNumber();
@@ -222,7 +222,7 @@ public class PDOMASTAdapter {
 		public char[] getSimpleID() {
 			return fDelegate.getSimpleID();
 		}
-		
+
 		@Override
 		public char[] getLookupKey() {
 			return fDelegate.getLookupKey();
@@ -237,7 +237,7 @@ public class PDOMASTAdapter {
 		public boolean isPartOfTranslationUnitFile() {
 			return fLocation.getFileName().equals(fDelegate.getTranslationUnit().getFilePath());
 		}
-		
+
 		@Override
 		public String toString() {
 			return fDelegate.toString();
@@ -249,28 +249,25 @@ public class PDOMASTAdapter {
 		}
 
 		@Override
-		public IToken getSyntax() throws ExpansionOverlapsBoundaryException,
-				UnsupportedOperationException {
+		public IToken getSyntax() throws ExpansionOverlapsBoundaryException, UnsupportedOperationException {
 			return fDelegate.getSyntax();
 		}
 
 		@Override
-		public IToken getLeadingSyntax() throws ExpansionOverlapsBoundaryException,
-				UnsupportedOperationException {
+		public IToken getLeadingSyntax() throws ExpansionOverlapsBoundaryException, UnsupportedOperationException {
 			return fDelegate.getLeadingSyntax();
 		}
 
 		@Override
-		public IToken getTrailingSyntax() throws ExpansionOverlapsBoundaryException,
-				UnsupportedOperationException {
+		public IToken getTrailingSyntax() throws ExpansionOverlapsBoundaryException, UnsupportedOperationException {
 			return fDelegate.getTrailingSyntax();
 		}
-		
+
 		@Override
 		public boolean isFrozen() {
 			return fDelegate.isFrozen();
 		}
-			
+
 		@Override
 		public boolean isActive() {
 			return fDelegate.isFrozen();
@@ -307,8 +304,8 @@ public class PDOMASTAdapter {
 		private char[] fName;
 
 		public AnonymousEnumeration(char[] name, IEnumeration delegate) {
-			fName= name;
-			fDelegate= delegate;
+			fName = name;
+			fDelegate = delegate;
 		}
 
 		@Override
@@ -355,7 +352,7 @@ public class PDOMASTAdapter {
 		public IBinding getOwner() {
 			return fDelegate.getOwner();
 		}
-		
+
 		@Override
 		public long getMinValue() {
 			return fDelegate.getMinValue();
@@ -372,8 +369,8 @@ public class PDOMASTAdapter {
 		private char[] fName;
 
 		public AnonymousCompositeType(char[] name, ICompositeType delegate) {
-			fName= name;
-			fDelegate= delegate;
+			fName = name;
+			fDelegate = delegate;
 		}
 
 		@Override
@@ -430,7 +427,7 @@ public class PDOMASTAdapter {
 		public boolean isSameType(IType type) {
 			return fDelegate.isSameType(type);
 		}
-		
+
 		@Override
 		public IBinding getOwner() {
 			return fDelegate.getOwner();
@@ -447,10 +444,10 @@ public class PDOMASTAdapter {
 		private char[] fName;
 
 		public AnonymousCPPBinding(char[] name, ICPPBinding delegate) {
-			fName= name;
-			fDelegate= delegate;
+			fName = name;
+			fDelegate = delegate;
 		}
-		
+
 		@Override
 		public Object clone() {
 			throw new UnsupportedOperationException();
@@ -468,21 +465,21 @@ public class PDOMASTAdapter {
 
 		@Override
 		public String[] getQualifiedName() throws DOMException {
-			String[] qn= fDelegate.getQualifiedName();
+			String[] qn = fDelegate.getQualifiedName();
 			if (qn.length < 1) {
-				qn= new String[]{null};
+				qn = new String[] { null };
 			}
-			qn[qn.length - 1]= new String(fName);
+			qn[qn.length - 1] = new String(fName);
 			return qn;
 		}
 
 		@Override
 		public char[][] getQualifiedNameCharArray() throws DOMException {
-			char[][] qn= fDelegate.getQualifiedNameCharArray();
+			char[][] qn = fDelegate.getQualifiedNameCharArray();
 			if (qn.length < 1) {
-				qn= new char[][]{null};
+				qn = new char[][] { null };
 			}
-			qn[qn.length - 1]= fName;
+			qn[qn.length - 1] = fName;
 			return qn;
 		}
 
@@ -556,30 +553,30 @@ public class PDOMASTAdapter {
 		public boolean isSameType(IType type) {
 			return ((IEnumeration) fDelegate).isSameType(type);
 		}
-		
+
 		@Override
 		public long getMinValue() {
-			return ((IEnumeration)fDelegate).getMinValue();
+			return ((IEnumeration) fDelegate).getMinValue();
 		}
 
 		@Override
 		public long getMaxValue() {
-			return ((IEnumeration)fDelegate).getMaxValue();
+			return ((IEnumeration) fDelegate).getMaxValue();
 		}
 
 		@Override
 		public boolean isScoped() {
-			return ((ICPPEnumeration)fDelegate).isScoped();
+			return ((ICPPEnumeration) fDelegate).isScoped();
 		}
 
 		@Override
 		public IType getFixedType() {
-			return ((ICPPEnumeration)fDelegate).getFixedType();
+			return ((ICPPEnumeration) fDelegate).getFixedType();
 		}
 
 		@Override
 		public ICPPScope asScope() {
-			return ((ICPPEnumeration)fDelegate).asScope();
+			return ((ICPPEnumeration) fDelegate).asScope();
 		}
 	}
 
@@ -587,7 +584,7 @@ public class PDOMASTAdapter {
 		public AnonymousClassType(char[] name, ICPPClassType delegate) {
 			super(name, delegate);
 		}
-		
+
 		@Override
 		public IField findField(String name) {
 			return ((ICPPClassType) fDelegate).findField(name);
@@ -647,7 +644,7 @@ public class PDOMASTAdapter {
 		public ICPPClassType[] getNestedClasses() {
 			return ((ICPPClassType) fDelegate).getNestedClasses();
 		}
-		
+
 		@Override
 		public ICPPUsingDeclaration[] getUsingDeclarations() {
 			return ((ICPPClassType) fDelegate).getUsingDeclarations();
@@ -673,13 +670,12 @@ public class PDOMASTAdapter {
 			return ((ICPPClassType) fDelegate).getVisibility(member);
 		}
 	}
-	
-	private static class AnonymousClassSpecialization extends AnonymousClassType 
-			implements ICPPClassSpecialization {
+
+	private static class AnonymousClassSpecialization extends AnonymousClassType implements ICPPClassSpecialization {
 		public AnonymousClassSpecialization(char[] name, ICPPClassSpecialization delegate) {
 			super(name, delegate);
 		}
-		
+
 		private ICPPClassSpecialization getDelegate() {
 			return (ICPPClassSpecialization) fDelegate;
 		}
@@ -756,14 +752,14 @@ public class PDOMASTAdapter {
 	}
 
 	/**
-	 * If the provided binding is anonymous, either an adapter is returned 
+	 * If the provided binding is anonymous, either an adapter is returned
 	 * that computes a name for the binding, or <code>null</code> if that
 	 * is not appropriate (e.g. binding is not a type).
 	 * Otherwise, if the binding has a name it is returned unchanged.
 	 */
 	public static IBinding getAdapterForAnonymousASTBinding(IBinding binding) {
 		if (binding != null && !(binding instanceof IIndexBinding)) {
-			char[] name= binding.getNameCharArray();
+			char[] name = binding.getNameCharArray();
 			if (name.length == 0) {
 				if (binding instanceof IEnumeration) {
 					name = ASTTypeUtil.createNameForAnonymous(binding);
@@ -773,7 +769,7 @@ public class PDOMASTAdapter {
 						}
 						return new AnonymousEnumeration(name, (IEnumeration) binding);
 					}
-				} else if (binding instanceof ICPPClassSpecialization) { 
+				} else if (binding instanceof ICPPClassSpecialization) {
 					name = ASTTypeUtil.createNameForAnonymous(binding);
 					if (name != null) {
 						return new AnonymousClassSpecialization(name, (ICPPClassSpecialization) binding);
@@ -804,7 +800,7 @@ public class PDOMASTAdapter {
 	/**
 	 * Retrieves the original binding from an adapter previously returned by
 	 * {@link #getAdapterForAnonymousASTBinding(IBinding)}. If the parameter binding is not
-	 * an adapter, returns the binding itself. 
+	 * an adapter, returns the binding itself.
 	 */
 	public static IBinding getOriginalForAdaptedBinding(IBinding binding) {
 		if (binding instanceof AnonymousCPPBinding) {
@@ -814,18 +810,18 @@ public class PDOMASTAdapter {
 	}
 
 	/**
-	 * If the name is empty and has no file location, either an adapter 
-	 * that has a file location is returned, or <code>null</code> if that 
+	 * If the name is empty and has no file location, either an adapter
+	 * that has a file location is returned, or <code>null</code> if that
 	 * is not possible (no parent with a file location).
-	 * Otherwise if the provided name is not empty or has a file location, 
+	 * Otherwise if the provided name is not empty or has a file location,
 	 * it is returned unchanged.
 	 */
 	public static IASTName getAdapterIfAnonymous(IASTName name) {
 		if (name.getLookupKey().length == 0) {
 			if (name.getFileLocation() == null) {
-				IASTNode parent= name.getParent();
+				IASTNode parent = name.getParent();
 				if (parent != null) {
-					IASTFileLocation loc= parent.getFileLocation();
+					IASTFileLocation loc = parent.getFileLocation();
 					if (loc != null) {
 						return new AnonymousASTName(name, loc);
 					}

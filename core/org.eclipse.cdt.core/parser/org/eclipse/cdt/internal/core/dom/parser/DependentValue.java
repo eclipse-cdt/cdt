@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents the value of an expression, which is not simplified yet,
- * usually because it depends on the value of a template parameter. 
+ * usually because it depends on the value of a template parameter.
  */
 public class DependentValue implements IValue {
 	public static final int MAX_RECURSION_DEPTH = 25;
@@ -58,7 +58,7 @@ public class DependentValue implements IValue {
 	}
 
 	public static IValue unmarshal(short firstBytes, ITypeMarshalBuffer buf) throws CoreException {
-		ICPPEvaluation eval= buf.unmarshalEvaluation();
+		ICPPEvaluation eval = buf.unmarshalEvaluation();
 		if (eval != null)
 			return new DependentValue(eval);
 		return IntegralValue.UNKNOWN;

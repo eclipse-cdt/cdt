@@ -29,22 +29,21 @@ import org.eclipse.core.runtime.PlatformObject;
 public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef, ITypeContainer, ITypeable {
 	private IType type;
 	private String name;
-	
+
 	private IScope scope;
-	
-	
+
 	public C99Typedef() {
 	}
-	
+
 	public C99Typedef(IType type) {
 		this.type = type;
 	}
-	
+
 	public C99Typedef(IType type, String name) {
 		this.type = type;
 		this.name = name;
 	}
-	
+
 	@Override
 	public IType getType() {
 		return type;
@@ -52,14 +51,14 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 
 	@Override
 	public void setType(IType type) {
-		this.type = type;	
+		this.type = type;
 	}
 
 	@Override
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -71,11 +70,11 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 
 	@Override
 	public boolean isSameType(IType t) {
-		if(t == this)
+		if (t == this)
 			return true;
-		
-		if(t instanceof ITypedef)
-			return type.isSameType(((ITypedef)t).getType());
+
+		if (t instanceof ITypedef)
+			return type.isSameType(((ITypedef) t).getType());
 		return type.isSameType(t);
 	}
 
@@ -90,7 +89,7 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 			return null;
 		}
 	}
-	
+
 	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;

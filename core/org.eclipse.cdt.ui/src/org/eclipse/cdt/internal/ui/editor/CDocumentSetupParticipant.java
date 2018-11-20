@@ -25,17 +25,16 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 
-
 /**
  * CDocumentSetupParticipant
  */
 public class CDocumentSetupParticipant implements IDocumentSetupParticipant, IDocumentSetupParticipantExtension {
 	/**
-	 * 
+	 *
 	 */
 	public CDocumentSetupParticipant() {
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant#setup(org.eclipse.jface.text.IDocument)
 	 */
@@ -43,13 +42,13 @@ public class CDocumentSetupParticipant implements IDocumentSetupParticipant, IDo
 	public void setup(IDocument document) {
 		setup(document, null, null);
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension#setup(org.eclipse.jface.text.IDocument, org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
 	 */
 	@Override
 	public void setup(IDocument document, IPath location, LocationKind locationKind) {
-		CTextTools tools= CUIPlugin.getDefault().getTextTools();
+		CTextTools tools = CUIPlugin.getDefault().getTextTools();
 		tools.setupCDocument(document, location, locationKind);
 	}
 }

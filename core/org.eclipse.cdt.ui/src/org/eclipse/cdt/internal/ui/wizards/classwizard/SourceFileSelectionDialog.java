@@ -70,199 +70,192 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 
 public class SourceFileSelectionDialog extends SelectionStatusDialog {
-    
-    TreeViewer fViewer;
-    private final ITreeContentProvider fContentProvider = new CElementContentProvider();
-    private final ILabelProvider fLabelProvider = new CElementLabelProvider(CElementLabelProvider.SHOW_DEFAULT);
-    IStatus fCurrStatus = new StatusInfo();
-    IStatus fFolderNameStatus = new StatusInfo();
-    IStatus fFileNameStatus = new StatusInfo();
-    ICElement fInput;
-    private int fWidth = 60;
-    private int fHeight = 18;
-    StringDialogField fFolderNameDialogField;
-    StringDialogField fFileNameDialogField;
-    private IWorkspaceRoot fWorkspaceRoot;
-    private final FieldsAdapter fFieldsAdapter = new FieldsAdapter();
-    
+
+	TreeViewer fViewer;
+	private final ITreeContentProvider fContentProvider = new CElementContentProvider();
+	private final ILabelProvider fLabelProvider = new CElementLabelProvider(CElementLabelProvider.SHOW_DEFAULT);
+	IStatus fCurrStatus = new StatusInfo();
+	IStatus fFolderNameStatus = new StatusInfo();
+	IStatus fFileNameStatus = new StatusInfo();
+	ICElement fInput;
+	private int fWidth = 60;
+	private int fHeight = 18;
+	StringDialogField fFolderNameDialogField;
+	StringDialogField fFileNameDialogField;
+	private IWorkspaceRoot fWorkspaceRoot;
+	private final FieldsAdapter fFieldsAdapter = new FieldsAdapter();
+
 	private ICElement fCurrentFolder = null;
 	private String fCurrentFileString = null;
-    String fInitialFolderName = null;
-    String fInitialFileName = null;
-    
-    private final class FieldsAdapter extends SelectionAdapter
-    	implements ISelectionChangedListener, IDoubleClickListener, IDialogFieldListener {
-        
-        // -- SelectionAdapter --
-        @Override
+	String fInitialFolderName = null;
+	String fInitialFileName = null;
+
+	private final class FieldsAdapter extends SelectionAdapter
+			implements ISelectionChangedListener, IDoubleClickListener, IDialogFieldListener {
+
+		// -- SelectionAdapter --
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
-            doStatusUpdate();
-            if (fCurrStatus.isOK())
-                buttonPressed(IDialogConstants.OK_ID);
-        }
-        
-        // -- ISelectionChangedListener --
-        @Override
+			doStatusUpdate();
+			if (fCurrStatus.isOK())
+				buttonPressed(IDialogConstants.OK_ID);
+		}
+
+		// -- ISelectionChangedListener --
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
-            setResult(((IStructuredSelection) event.getSelection()).toList());
-            ISelection sel = event.getSelection();
-            if (sel instanceof IStructuredSelection) {
-                Object obj = ((IStructuredSelection) sel).getFirstElement();
-                if (obj instanceof ICElement) {
-                    ICElement elem = (ICElement) obj;
-                    IPath path = elem.getPath();
-                    String fileName = fFileNameDialogField.getText();
-                    String folderName = fFolderNameDialogField.getText();
-                    if (elem instanceof ICContainer || elem instanceof ICProject) {
-                        folderName = path.toString();
-                    } else {
-                        folderName = path.removeLastSegments(1).toString();
-                        fileName = path.lastSegment();
-                    }
-                    setPathFields(folderName, fileName);
-                }
-            }
-            doStatusUpdate();
-        }
-        
-        // -- IDoubleClickListener --
-        @Override
+			setResult(((IStructuredSelection) event.getSelection()).toList());
+			ISelection sel = event.getSelection();
+			if (sel instanceof IStructuredSelection) {
+				Object obj = ((IStructuredSelection) sel).getFirstElement();
+				if (obj instanceof ICElement) {
+					ICElement elem = (ICElement) obj;
+					IPath path = elem.getPath();
+					String fileName = fFileNameDialogField.getText();
+					String folderName = fFolderNameDialogField.getText();
+					if (elem instanceof ICContainer || elem instanceof ICProject) {
+						folderName = path.toString();
+					} else {
+						folderName = path.removeLastSegments(1).toString();
+						fileName = path.lastSegment();
+					}
+					setPathFields(folderName, fileName);
+				}
+			}
+			doStatusUpdate();
+		}
+
+		// -- IDoubleClickListener --
+		@Override
 		public void doubleClick(DoubleClickEvent event) {
-            doStatusUpdate();
-            
-            ISelection selection = event.getSelection();
-            if (selection instanceof IStructuredSelection) {
-                Object item = ((IStructuredSelection)selection).getFirstElement();
-	            if (fCurrStatus.getSeverity() != IStatus.ERROR) {
-                    if (item instanceof ITranslationUnit) {
-                        setResult(((IStructuredSelection)selection).toList());
-                        close();
-                        return;
-                    }
-	            }
-                if (fViewer.getExpandedState(item))
-                    fViewer.collapseToLevel(item, 1);
-                else
-                    fViewer.expandToLevel(item, 1);
-            }
-        }
+			doStatusUpdate();
 
-        // -- IDialogFieldListener --
-        @Override
+			ISelection selection = event.getSelection();
+			if (selection instanceof IStructuredSelection) {
+				Object item = ((IStructuredSelection) selection).getFirstElement();
+				if (fCurrStatus.getSeverity() != IStatus.ERROR) {
+					if (item instanceof ITranslationUnit) {
+						setResult(((IStructuredSelection) selection).toList());
+						close();
+						return;
+					}
+				}
+				if (fViewer.getExpandedState(item))
+					fViewer.collapseToLevel(item, 1);
+				else
+					fViewer.expandToLevel(item, 1);
+			}
+		}
+
+		// -- IDialogFieldListener --
+		@Override
 		public void dialogFieldChanged(DialogField field) {
-            if (field == fFolderNameDialogField) {
-    			fFolderNameStatus = folderNameChanged();
-    			fFileNameStatus = fileNameChanged();
-            } else if (field == fFileNameDialogField) {
-    			fFileNameStatus = fileNameChanged();
-            }
-            doStatusUpdate();
-        }
-    }
-    
-    static final Class<?>[] FILTER_TYPES = new Class[] {
-            ICModel.class,
-            ICProject.class,
-            ICContainer.class,
-            ITranslationUnit.class
-        };
+			if (field == fFolderNameDialogField) {
+				fFolderNameStatus = folderNameChanged();
+				fFileNameStatus = fileNameChanged();
+			} else if (field == fFileNameDialogField) {
+				fFileNameStatus = fileNameChanged();
+			}
+			doStatusUpdate();
+		}
+	}
 
-    private final class Filter extends TypedViewerFilter {
-        
-        private Filter() {
-            super(FILTER_TYPES);
-        }
-        
-        @Override
+	static final Class<?>[] FILTER_TYPES = new Class[] { ICModel.class, ICProject.class, ICContainer.class,
+			ITranslationUnit.class };
+
+	private final class Filter extends TypedViewerFilter {
+
+		private Filter() {
+			super(FILTER_TYPES);
+		}
+
+		@Override
 		public boolean select(Viewer viewer, Object parent, Object obj) {
-            if (obj instanceof ICElement) {
-                ICElement elem = (ICElement)obj;
-                if (!(fInput instanceof ICModel)) {
-                    return elem.getCProject().equals(fInput.getCProject());
-                }
-                return true;
-            }
-            return super.select(viewer, parent, obj);
-        }
-    }
-    
-    /**
-     * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
-     * 
-     * @param parent
-     *            The parent shell for the dialog
-     */
-    public SourceFileSelectionDialog(Shell parent) {
-        super(parent);
-        
-        fWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-        fInput = CoreModel.create(fWorkspaceRoot);
-        
-        fFolderNameDialogField = new StringDialogField();
-        fFolderNameDialogField.setDialogFieldListener(fFieldsAdapter);
-        fFolderNameDialogField.setLabelText(NewClassWizardMessages.SourceFileSelectionDialog_folderName_label); 
-        
-        fFileNameDialogField = new StringDialogField();
-        fFileNameDialogField.setDialogFieldListener(fFieldsAdapter);
-        fFileNameDialogField.setLabelText(NewClassWizardMessages.SourceFileSelectionDialog_fileName_label); 
-        
+			if (obj instanceof ICElement) {
+				ICElement elem = (ICElement) obj;
+				if (!(fInput instanceof ICModel)) {
+					return elem.getCProject().equals(fInput.getCProject());
+				}
+				return true;
+			}
+			return super.select(viewer, parent, obj);
+		}
+	}
+
+	/**
+	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
+	 *
+	 * @param parent
+	 *            The parent shell for the dialog
+	 */
+	public SourceFileSelectionDialog(Shell parent) {
+		super(parent);
+
+		fWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		fInput = CoreModel.create(fWorkspaceRoot);
+
+		fFolderNameDialogField = new StringDialogField();
+		fFolderNameDialogField.setDialogFieldListener(fFieldsAdapter);
+		fFolderNameDialogField.setLabelText(NewClassWizardMessages.SourceFileSelectionDialog_folderName_label);
+
+		fFileNameDialogField = new StringDialogField();
+		fFileNameDialogField.setDialogFieldListener(fFieldsAdapter);
+		fFileNameDialogField.setLabelText(NewClassWizardMessages.SourceFileSelectionDialog_fileName_label);
+
 		setResult(new ArrayList<Object>(0));
-        setStatusLineAboveButtons(true);
-        
-        int shellStyle = getShellStyle();
-        setShellStyle(shellStyle | SWT.MAX | SWT.RESIZE);
-    }
-    
-    /**
-     * Sets the tree input.
-     * 
-     * @param input
-     *            the tree input.
-     */
-    public void setInput(ICElement input) {
-        fInput = input;
-    }
-    
- 	protected void doStatusUpdate() {
+		setStatusLineAboveButtons(true);
+
+		int shellStyle = getShellStyle();
+		setShellStyle(shellStyle | SWT.MAX | SWT.RESIZE);
+	}
+
+	/**
+	 * Sets the tree input.
+	 *
+	 * @param input
+	 *            the tree input.
+	 */
+	public void setInput(ICElement input) {
+		fInput = input;
+	}
+
+	protected void doStatusUpdate() {
 		// status of all used components
-		IStatus[] status = new IStatus[] {
-			fFolderNameStatus,
-			fFileNameStatus
-		};
-		
+		IStatus[] status = new IStatus[] { fFolderNameStatus, fFileNameStatus };
+
 		// the mode severe status will be displayed and the ok button enabled/disabled.
 		updateStatus(status);
 	}
-    
+
 	/**
 	 * Updates the status line and the ok button according to the given status
-	 * 
+	 *
 	 * @param status status to apply
 	 */
 	@Override
 	protected void updateStatus(IStatus status) {
 		fCurrStatus = status;
-	    super.updateStatus(status);
+		super.updateStatus(status);
 	}
-	
+
 	/**
 	 * Updates the status line and the ok button according to the status evaluate from
-	 * an array of status. The most severe error is taken.  In case that two status with 
+	 * an array of status. The most severe error is taken.  In case that two status with
 	 * the same severity exists, the status with lower index is taken.
-	 * 
+	 *
 	 * @param status the array of status
 	 */
 	protected void updateStatus(IStatus[] status) {
 		updateStatus(StatusUtil.getMostSevere(status));
 	}
-	
+
 	IStatus folderNameChanged() {
-        StatusInfo status = new StatusInfo();
-        
+		StatusInfo status = new StatusInfo();
+
 		fCurrentFolder = null;
-        String str = fFolderNameDialogField.getText();
+		String str = fFolderNameDialogField.getText();
 		if (str.length() == 0) {
-			status.setError(NewClassWizardMessages.SourceFileSelectionDialog_error_EnterFolderName); 
+			status.setError(NewClassWizardMessages.SourceFileSelectionDialog_error_EnterFolderName);
 			return status;
 		}
 
@@ -273,41 +266,42 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 			if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
 				IProject proj = res.getProject();
 				if (!proj.isOpen()) {
-					status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotAFolder, str)); 
+					status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotAFolder, str));
 					return status;
 				}
-			    ICElement e = CoreModel.getDefault().create(res.getFullPath());
-			    fCurrentFolder = CModelUtil.getSourceFolder(e);
+				ICElement e = CoreModel.getDefault().create(res.getFullPath());
+				fCurrentFolder = CModelUtil.getSourceFolder(e);
 				if (fCurrentFolder == null) {
-					status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotASourceFolder, str)); 
+					status.setError(
+							NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotASourceFolder, str));
 					return status;
 				}
-			    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+				if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
 					if (resType == IResource.PROJECT) {
-						status.setError(NewClassWizardMessages.SourceFileSelectionDialog_warning_NotACProject); 
+						status.setError(NewClassWizardMessages.SourceFileSelectionDialog_warning_NotACProject);
 						return status;
 					}
-					status.setWarning(NewClassWizardMessages.SourceFileSelectionDialog_warning_NotInACProject); 
+					status.setWarning(NewClassWizardMessages.SourceFileSelectionDialog_warning_NotInACProject);
 				}
 			} else {
-				status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotAFolder, str)); 
+				status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotAFolder, str));
 				return status;
 			}
 		} else {
-			status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_FolderDoesNotExist, str)); 
+			status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_FolderDoesNotExist, str));
 			return status;
 		}
-        return status;
+		return status;
 	}
 
 	IStatus fileNameChanged() {
-        StatusInfo status = new StatusInfo();
-        
-        fCurrentFileString = null;
+		StatusInfo status = new StatusInfo();
+
+		fCurrentFileString = null;
 		ICElement existingFile = null;
-        String str = fFileNameDialogField.getText();
+		String str = fFileNameDialogField.getText();
 		if (str.length() == 0) {
-			status.setError(NewClassWizardMessages.SourceFileSelectionDialog_error_EnterFileName); 
+			status.setError(NewClassWizardMessages.SourceFileSelectionDialog_error_EnterFileName);
 			return status;
 		}
 
@@ -322,252 +316,256 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 				if (resType == IResource.FILE) {
 					IProject proj = res.getProject();
 					if (!proj.isOpen()) {
-						status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotAFile, str)); 
+						status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotAFile, str));
 						return status;
 					}
-				    ICElement e = CoreModel.getDefault().create(res.getFullPath());
-				    if (e instanceof ITranslationUnit) {
-				        existingFile = e;
-				    }
+					ICElement e = CoreModel.getDefault().create(res.getFullPath());
+					if (e instanceof ITranslationUnit) {
+						existingFile = e;
+					}
 					if (existingFile == null) {
-						status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotASourceFile, str)); 
+						status.setError(
+								NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotASourceFile, str));
 						return status;
 					}
-				    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
-						status.setWarning(NewClassWizardMessages.SourceFileSelectionDialog_warning_NotInACProject); 
+					if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+						status.setWarning(NewClassWizardMessages.SourceFileSelectionDialog_warning_NotInACProject);
 					}
 				} else {
-					status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotAFile, str)); 
+					status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotAFile, str));
 					return status;
 				}
 			}
 		}
 		if (existingFile != null) {
-			status.setWarning(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_warning_SourceFileExists, str)); 
+			status.setWarning(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_warning_SourceFileExists, str));
 		}
 		fCurrentFileString = str;
-        return status;
+		return status;
 	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.window.Window#open()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.jface.window.Window#open()
+	 */
+	@Override
 	public int open() {
-        super.open();
-        return getReturnCode();
-    }
-    
-    /**
-     * Handles cancel button pressed event.
-     */
-    @Override
-	protected void cancelPressed() {
-        setResult(null);
-        super.cancelPressed();
-    }
-    
-    /*
-     * @see SelectionStatusDialog#computeResult()
-     */
-    @Override
-	protected void computeResult() {
-        setResult(((IStructuredSelection) fViewer.getSelection()).toList());
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.window.Window#create()
-     */
-    @Override
-	public void create() {
-        BusyIndicator.showWhile(null, new Runnable() {
-            @Override
-			public void run() {
-                superCreate();
-                fViewer.setSelection(new StructuredSelection(getInitialElementSelections()), true);
-                setPathFields(fInitialFolderName, fInitialFileName);
-                fFileNameDialogField.setFocus();
-                doStatusUpdate();
-            }
-        });
-    }
-    void superCreate() {
-        super.create();
-    }
-    
-    /*
-     * @see Dialog#createDialogArea(Composite)
-     */
-    @Override
-	protected Control createDialogArea(Composite parent) {
-        Composite composite = (Composite) super.createDialogArea(parent);
-        // Label messageLabel = createMessageArea(composite);
-        int nColumns = 4;
-        fFolderNameDialogField.doFillIntoGrid(composite, nColumns - 1);
-        DialogField.createEmptySpace(composite);
-        LayoutUtil.setWidthHint(fFolderNameDialogField.getTextControl(null), getMaxFieldWidth());
-        
-        TreeViewer treeViewer = createTreeViewer(composite);
-        
-        GridData data = new GridData(GridData.FILL_BOTH);
-        data.widthHint = convertWidthInCharsToPixels(fWidth);
-        data.heightHint = convertHeightInCharsToPixels(fHeight);
-        
-        Tree treeWidget = treeViewer.getTree();
-        treeWidget.setLayoutData(data);
-        treeWidget.setFont(parent.getFont());
-        
-        fFileNameDialogField.doFillIntoGrid(composite, nColumns - 1);
-        DialogField.createEmptySpace(composite);
-        LayoutUtil.setWidthHint(fFileNameDialogField.getTextControl(null), getMaxFieldWidth());
-        
-        return composite;
-    }
-    
-    /**
-     * Returns the recommended maximum width for text fields (in pixels). This
-     * method requires that createContent has been called before this method is
-     * call. Subclasses may override to change the maximum width for text
-     * fields.
-     * 
-     * @return the recommended maximum width for text fields.
-     */
-    protected int getMaxFieldWidth() {
-        return convertWidthInCharsToPixels(60);
-    }
-    
-    /**
-     * Creates the tree viewer.
-     * 
-     * @param parent
-     *            the parent composite
-     * @return the tree viewer
-     */
-    protected TreeViewer createTreeViewer(Composite parent) {
-        int style = (SWT.BORDER | SWT.SINGLE);
-        
-        fViewer = new TreeViewer(new Tree(parent, style));
-        fViewer.setContentProvider(fContentProvider);
-        fViewer.setLabelProvider(fLabelProvider);
-        fViewer.addSelectionChangedListener(fFieldsAdapter);
-        
-        fViewer.setSorter(new CElementSorter());
-        fViewer.addFilter(new Filter());
-        
-        Tree tree = fViewer.getTree();
-        tree.addSelectionListener(fFieldsAdapter);
-        fViewer.addDoubleClickListener(fFieldsAdapter);
-        
-        fViewer.setInput(fInput.getCModel());
-        
-        return fViewer;
-    }
-    
-    /**
-     * Returns the tree viewer.
-     * 
-     * @return the tree viewer
-     */
-    protected TreeViewer getTreeViewer() {
-        return fViewer;
-    }
-    
-    /**
-     * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
-     */
-    @Override
-	protected void handleShellCloseEvent() {
-        super.handleShellCloseEvent();
-        
-        //Handle the closing of the shell by selecting the close icon
-        if (getReturnCode() == CANCEL)
-            setResult(null);
-    }
-    
-    public String getFolderName() {
-        if (fCurrentFolder != null) {
-            return fCurrentFolder.getPath().toString();
-        }
-        return null;
-    }
-    
-    public String getFileName() {
-        return fCurrentFileString;
-    }
-    
-    public IPath getFilePath() {
-        IPath path = null;
-        if (fCurrentFolder != null) {
-            path = fCurrentFolder.getPath();
-            if (fCurrentFileString != null)
-                path = path.append(fCurrentFileString);
-        } else if (fCurrentFileString != null) {
-            path = new Path(fCurrentFileString);
-        }
-        return path;
-    }
+		super.open();
+		return getReturnCode();
+	}
 
-    void setPathFields(String folderName, String fileName) {
-	    fFolderNameDialogField.setTextWithoutUpdate(folderName != null ? folderName : ""); //$NON-NLS-1$
-	    fFileNameDialogField.setTextWithoutUpdate(fileName != null ? fileName : ""); //$NON-NLS-1$
+	/**
+	 * Handles cancel button pressed event.
+	 */
+	@Override
+	protected void cancelPressed() {
+		setResult(null);
+		super.cancelPressed();
+	}
+
+	/*
+	 * @see SelectionStatusDialog#computeResult()
+	 */
+	@Override
+	protected void computeResult() {
+		setResult(((IStructuredSelection) fViewer.getSelection()).toList());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.jface.window.Window#create()
+	 */
+	@Override
+	public void create() {
+		BusyIndicator.showWhile(null, new Runnable() {
+			@Override
+			public void run() {
+				superCreate();
+				fViewer.setSelection(new StructuredSelection(getInitialElementSelections()), true);
+				setPathFields(fInitialFolderName, fInitialFileName);
+				fFileNameDialogField.setFocus();
+				doStatusUpdate();
+			}
+		});
+	}
+
+	void superCreate() {
+		super.create();
+	}
+
+	/*
+	 * @see Dialog#createDialogArea(Composite)
+	 */
+	@Override
+	protected Control createDialogArea(Composite parent) {
+		Composite composite = (Composite) super.createDialogArea(parent);
+		// Label messageLabel = createMessageArea(composite);
+		int nColumns = 4;
+		fFolderNameDialogField.doFillIntoGrid(composite, nColumns - 1);
+		DialogField.createEmptySpace(composite);
+		LayoutUtil.setWidthHint(fFolderNameDialogField.getTextControl(null), getMaxFieldWidth());
+
+		TreeViewer treeViewer = createTreeViewer(composite);
+
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = convertWidthInCharsToPixels(fWidth);
+		data.heightHint = convertHeightInCharsToPixels(fHeight);
+
+		Tree treeWidget = treeViewer.getTree();
+		treeWidget.setLayoutData(data);
+		treeWidget.setFont(parent.getFont());
+
+		fFileNameDialogField.doFillIntoGrid(composite, nColumns - 1);
+		DialogField.createEmptySpace(composite);
+		LayoutUtil.setWidthHint(fFileNameDialogField.getTextControl(null), getMaxFieldWidth());
+
+		return composite;
+	}
+
+	/**
+	 * Returns the recommended maximum width for text fields (in pixels). This
+	 * method requires that createContent has been called before this method is
+	 * call. Subclasses may override to change the maximum width for text
+	 * fields.
+	 *
+	 * @return the recommended maximum width for text fields.
+	 */
+	protected int getMaxFieldWidth() {
+		return convertWidthInCharsToPixels(60);
+	}
+
+	/**
+	 * Creates the tree viewer.
+	 *
+	 * @param parent
+	 *            the parent composite
+	 * @return the tree viewer
+	 */
+	protected TreeViewer createTreeViewer(Composite parent) {
+		int style = (SWT.BORDER | SWT.SINGLE);
+
+		fViewer = new TreeViewer(new Tree(parent, style));
+		fViewer.setContentProvider(fContentProvider);
+		fViewer.setLabelProvider(fLabelProvider);
+		fViewer.addSelectionChangedListener(fFieldsAdapter);
+
+		fViewer.setSorter(new CElementSorter());
+		fViewer.addFilter(new Filter());
+
+		Tree tree = fViewer.getTree();
+		tree.addSelectionListener(fFieldsAdapter);
+		fViewer.addDoubleClickListener(fFieldsAdapter);
+
+		fViewer.setInput(fInput.getCModel());
+
+		return fViewer;
+	}
+
+	/**
+	 * Returns the tree viewer.
+	 *
+	 * @return the tree viewer
+	 */
+	protected TreeViewer getTreeViewer() {
+		return fViewer;
+	}
+
+	/**
+	 * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
+	 */
+	@Override
+	protected void handleShellCloseEvent() {
+		super.handleShellCloseEvent();
+
+		//Handle the closing of the shell by selecting the close icon
+		if (getReturnCode() == CANCEL)
+			setResult(null);
+	}
+
+	public String getFolderName() {
+		if (fCurrentFolder != null) {
+			return fCurrentFolder.getPath().toString();
+		}
+		return null;
+	}
+
+	public String getFileName() {
+		return fCurrentFileString;
+	}
+
+	public IPath getFilePath() {
+		IPath path = null;
+		if (fCurrentFolder != null) {
+			path = fCurrentFolder.getPath();
+			if (fCurrentFileString != null)
+				path = path.append(fCurrentFileString);
+		} else if (fCurrentFileString != null) {
+			path = new Path(fCurrentFileString);
+		}
+		return path;
+	}
+
+	void setPathFields(String folderName, String fileName) {
+		fFolderNameDialogField.setTextWithoutUpdate(folderName != null ? folderName : ""); //$NON-NLS-1$
+		fFileNameDialogField.setTextWithoutUpdate(fileName != null ? fileName : ""); //$NON-NLS-1$
 		fFolderNameStatus = folderNameChanged();
 		fFileNameStatus = fileNameChanged();
-    }
-    
-    /**
-     * Sets the initial selection. Convenience method.
-     */
-    public void setInitialSelection(String folderName, String fileName) {
-        fInitialFileName = (fileName != null && fileName.length() > 0) ? fileName : null;
-        fInitialFolderName = null;
-        if (folderName != null && folderName.length() > 0) {
-	        // find a folder that actually exists
-            IPath initialFolderPath = new Path(folderName);
-            final IPath folderPath = PathUtil.getValidEnclosingFolder(initialFolderPath);
-            if (folderPath != null) {
-                fInitialFolderName = folderPath.toString();
+	}
+
+	/**
+	 * Sets the initial selection. Convenience method.
+	 */
+	public void setInitialSelection(String folderName, String fileName) {
+		fInitialFileName = (fileName != null && fileName.length() > 0) ? fileName : null;
+		fInitialFolderName = null;
+		if (folderName != null && folderName.length() > 0) {
+			// find a folder that actually exists
+			IPath initialFolderPath = new Path(folderName);
+			final IPath folderPath = PathUtil.getValidEnclosingFolder(initialFolderPath);
+			if (folderPath != null) {
+				fInitialFolderName = folderPath.toString();
 				if (fInput != null) {
-		            final ICElement[] foundElem = {/*base_folder*/ null, /*exact_folder*/ null, /*exact_file*/ null};
-		            try {
-			            fInput.accept(new ICElementVisitor() {
-			                @Override
+					final ICElement[] foundElem = { /*base_folder*/ null, /*exact_folder*/ null, /*exact_file*/ null };
+					try {
+						fInput.accept(new ICElementVisitor() {
+							@Override
 							public boolean visit(ICElement elem) {
-			                    IPath path = elem.getPath();
-			                    if (path.isPrefixOf(folderPath)) {
-			                        if (foundElem[0] == null || path.segmentCount() > foundElem[0].getPath().segmentCount()) {
-			                            foundElem[0] = elem; /*base_folder*/
-			                        }
-		                            if (path.equals(folderPath)) {
-		                                foundElem[1] = elem; /*exact_folder*/
-			                            if (fInitialFileName == null)
-			                                return false; // no need to search children
-		                            } else if (fInitialFileName != null && elem.getElementName().equals(fInitialFileName)) {
-		                                foundElem[2] = elem; /*exact_file*/
-		                                return false; // no need to search children
-		                            }
-		                            return true;
-			                    }
-			                    return false;
-			                }
-			            });
-		
-			            ICElement selectedElement = foundElem[2]; /*exact_file*/
-			            if (selectedElement == null)
-			                selectedElement = foundElem[1]; /*exact_folder*/
-			            if (selectedElement == null)
-			                selectedElement = foundElem[0]; /*base_folder*/
-		
-			            if (selectedElement != null) {
-			                setInitialSelections(new Object[] { selectedElement });
-			            }
-			        } catch (CoreException e) {
-			        }
-		        }
-	        }
-        }
-    }
+								IPath path = elem.getPath();
+								if (path.isPrefixOf(folderPath)) {
+									if (foundElem[0] == null
+											|| path.segmentCount() > foundElem[0].getPath().segmentCount()) {
+										foundElem[0] = elem; /*base_folder*/
+									}
+									if (path.equals(folderPath)) {
+										foundElem[1] = elem; /*exact_folder*/
+										if (fInitialFileName == null)
+											return false; // no need to search children
+									} else if (fInitialFileName != null
+											&& elem.getElementName().equals(fInitialFileName)) {
+										foundElem[2] = elem; /*exact_file*/
+										return false; // no need to search children
+									}
+									return true;
+								}
+								return false;
+							}
+						});
+
+						ICElement selectedElement = foundElem[2]; /*exact_file*/
+						if (selectedElement == null)
+							selectedElement = foundElem[1]; /*exact_folder*/
+						if (selectedElement == null)
+							selectedElement = foundElem[0]; /*base_folder*/
+
+						if (selectedElement != null) {
+							setInitialSelections(new Object[] { selectedElement });
+						}
+					} catch (CoreException e) {
+					}
+				}
+			}
+		}
+	}
 }

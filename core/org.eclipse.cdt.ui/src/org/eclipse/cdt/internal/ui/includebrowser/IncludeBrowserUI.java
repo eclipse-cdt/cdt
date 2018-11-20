@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Martin Oberhuber (Wind River) - bug 398195: consider external API in IB
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
@@ -40,48 +40,51 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 public class IncludeBrowserUI {
 
 	public static void open(final IWorkbenchWindow window, final ICElement input) {
-        try {
-        	ITranslationUnit tu= convertToTranslationUnit(input);
-        	if (tu != null) {
-        		IWorkbenchPage page= window.getActivePage();
-        		IBViewPart result= (IBViewPart) page.showView(CUIPlugin.ID_INCLUDE_BROWSER);
-        		result.setInput(tu);
-        	}
-        } catch (CoreException e) {
-            ExceptionHandler.handle(e, window.getShell(), IBMessages.OpenIncludeBrowserAction_label, null); 
-        } catch (InterruptedException e) {
-        	Thread.currentThread().interrupt();
+		try {
+			ITranslationUnit tu = convertToTranslationUnit(input);
+			if (tu != null) {
+				IWorkbenchPage page = window.getActivePage();
+				IBViewPart result = (IBViewPart) page.showView(CUIPlugin.ID_INCLUDE_BROWSER);
+				result.setInput(tu);
+			}
+		} catch (CoreException e) {
+			ExceptionHandler.handle(e, window.getShell(), IBMessages.OpenIncludeBrowserAction_label, null);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
-    }
+	}
 
 	public static void open(final ITextEditor editor, final ITextSelection sel) {
 		if (editor != null) {
-			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
+			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager()
+					.getWorkingCopy(editor.getEditorInput());
 			open(editor.getSite().getWorkbenchWindow(), inputCElement);
 		}
-    }
+	}
 
-    private static ITranslationUnit convertToTranslationUnit(ICElement input) throws CoreException, InterruptedException {
-    	ITranslationUnit result= null;
-    	if (input instanceof IInclude) {
-    		result= findTargetTranslationUnit((IInclude) input);
-    	}
-    	if (result == null && input instanceof ISourceReference) {
-    		result= ((ISourceReference) input).getTranslationUnit();
-    	}
+	private static ITranslationUnit convertToTranslationUnit(ICElement input)
+			throws CoreException, InterruptedException {
+		ITranslationUnit result = null;
+		if (input instanceof IInclude) {
+			result = findTargetTranslationUnit((IInclude) input);
+		}
+		if (result == null && input instanceof ISourceReference) {
+			result = ((ISourceReference) input).getTranslationUnit();
+		}
 		return result;
 	}
 
-	private static ITranslationUnit findTargetTranslationUnit(IInclude input) throws CoreException, InterruptedException {
-		ICProject project= input.getCProject();
+	private static ITranslationUnit findTargetTranslationUnit(IInclude input)
+			throws CoreException, InterruptedException {
+		ICProject project = input.getCProject();
 		if (project != null) {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(project, 
+			IIndex index = CCorePlugin.getIndexManager().getIndex(project,
 					IIndexManager.ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER);
 			index.acquireReadLock();
 			try {
-				IIndexInclude include= IndexUI.elementToInclude(index, input);
+				IIndexInclude include = IndexUI.elementToInclude(index, input);
 				if (include != null) {
-					IIndexFileLocation loc= include.getIncludesLocation();
+					IIndexFileLocation loc = include.getIncludesLocation();
 					if (loc != null) {
 						return CoreModelUtil.findTranslationUnitForLocation(loc, project);
 					}

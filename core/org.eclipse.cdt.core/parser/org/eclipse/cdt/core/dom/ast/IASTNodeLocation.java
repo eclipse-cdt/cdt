@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * A NodeLocation represents the source location of a given node. Most often
  * this is a file it may be other fancy things like macro expansions.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -34,8 +34,8 @@ public interface IASTNodeLocation {
 	 */
 	public int getNodeLength();
 
-    /**
-     * Return a file location that best maps into this location.
-     */
-    public IASTFileLocation asFileLocation();
+	/**
+	 * Return a file location that best maps into this location.
+	 */
+	public IASTFileLocation asFileLocation();
 }

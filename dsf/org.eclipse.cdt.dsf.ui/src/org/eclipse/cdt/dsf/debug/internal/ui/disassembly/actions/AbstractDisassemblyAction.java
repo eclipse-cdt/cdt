@@ -28,18 +28,18 @@ public abstract class AbstractDisassemblyAction extends Action implements IUpdat
 
 	/**
 	 * Create a disassembly action.
-	 * 
+	 *
 	 * @param disassemblyPart
 	 */
 	public AbstractDisassemblyAction(IDisassemblyPart disassemblyPart) {
 		Assert.isLegal(disassemblyPart != null);
-		fDisassemblyPart= disassemblyPart;
+		fDisassemblyPart = disassemblyPart;
 		fDisassemblyPart.addPropertyListener(this);
 	}
 
 	/**
 	 * Create a disassembly action.
-	 * 
+	 *
 	 * @param disassemblyPart
 	 * @param style
 	 *            one of <code>AS_PUSH_BUTTON</code>,
@@ -50,10 +50,9 @@ public abstract class AbstractDisassemblyAction extends Action implements IUpdat
 	public AbstractDisassemblyAction(IDisassemblyPart disassemblyPart, int style) {
 		super(null, style);
 		Assert.isLegal(disassemblyPart != null);
-		fDisassemblyPart= disassemblyPart;
+		fDisassemblyPart = disassemblyPart;
 		fDisassemblyPart.addPropertyListener(this);
 	}
-
 
 	/**
 	 * @return the disassembly part
@@ -61,7 +60,7 @@ public abstract class AbstractDisassemblyAction extends Action implements IUpdat
 	public final IDisassemblyPart getDisassemblyPart() {
 		return fDisassemblyPart;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
@@ -70,10 +69,10 @@ public abstract class AbstractDisassemblyAction extends Action implements IUpdat
 
 	@Override
 	public void update() {
-		boolean enabled= fDisassemblyPart == null || fDisassemblyPart.isConnected();
+		boolean enabled = fDisassemblyPart == null || fDisassemblyPart.isConnected();
 		setEnabled(enabled);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
 	 */

@@ -21,7 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 /**
  * A class to represent source folders added to Make Targets View on top.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  *
@@ -29,20 +29,20 @@ import org.eclipse.core.resources.ResourcesPlugin;
  */
 public class TargetSourceContainer {
 	private IContainer container;
-	
+
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param srcEntry - source entry backing the container.
 	 */
 	public TargetSourceContainer(ICSourceEntry srcEntry) {
 		IWorkspaceRoot wspRoot = ResourcesPlugin.getWorkspace().getRoot();
 		container = wspRoot.getFolder(srcEntry.getFullPath());
 	}
-	
+
 	/**
 	 * Returns resource container associated with the source entry.
-	 * 
+	 *
 	 * @return resource container.
 	 */
 	public IContainer getContainer() {

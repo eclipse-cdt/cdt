@@ -64,7 +64,8 @@ public class ArduinoBuildConfigurationProvider implements ICBuildConfigurationPr
 			IRemoteConnectionType connectionType = remoteManager.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
 			IRemoteConnection connection = connectionType.getConnection(name);
 			if (connection == null) {
-				throw Activator.coreException(String.format(Messages.ArduinoBuildConfigurationProvider_UnknownConnection, name), null);
+				throw Activator.coreException(
+						String.format(Messages.ArduinoBuildConfigurationProvider_UnknownConnection, name), null);
 			}
 
 			ArduinoRemoteConnection target = connection.getService(ArduinoRemoteConnection.class);

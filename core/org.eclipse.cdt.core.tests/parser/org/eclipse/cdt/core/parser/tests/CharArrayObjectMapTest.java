@@ -46,10 +46,9 @@ public class CharArrayObjectMapTest extends TestCase {
 
 	public void testDuplicates() {
 		CharArrayObjectMap map = new CharArrayObjectMap(4);
-		String[] keys = new String[] {
-				"a", "b", "c", "c", "value", "value", "context", "context", "result", "d", "e", "f", "g", "h", "i", "j",
-				"k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "z"
-		};
+		String[] keys = new String[] { "a", "b", "c", "c", "value", "value", "context", "context", "result", "d", "e",
+				"f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+				"z" };
 		for (int i = 0; i < keys.length; i++) {
 			String key = keys[i];
 			map.put(key.toCharArray(), key + i);
@@ -70,8 +69,8 @@ public class CharArrayObjectMapTest extends TestCase {
 			int r = random.nextInt();
 			map.put(("key" + Integer.toUnsignedString(i)).toCharArray(), i);
 			double collisionRatio = (double) map.countCollisions() / map.size();
-			assertTrue(String.format("Collision ratio %.3f is unexpectedly high for map size of %d.", collisionRatio, map.size()),
-					collisionRatio <= 0.4);
+			assertTrue(String.format("Collision ratio %.3f is unexpectedly high for map size of %d.", collisionRatio,
+					map.size()), collisionRatio <= 0.4);
 		}
 	}
 }

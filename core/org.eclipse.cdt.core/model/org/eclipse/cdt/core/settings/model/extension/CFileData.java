@@ -18,14 +18,14 @@ import org.eclipse.cdt.core.settings.model.ICSettingBase;
 public abstract class CFileData extends CResourceData {
 
 	public CFileData() {
-		
+
 	}
 
 	@Override
-	public final int getType(){
+	public final int getType() {
 		return ICSettingBase.SETTING_FILE;
 	}
 
-	public abstract CLanguageData getLanguageData(); 
+	public abstract CLanguageData getLanguageData();
 
 }

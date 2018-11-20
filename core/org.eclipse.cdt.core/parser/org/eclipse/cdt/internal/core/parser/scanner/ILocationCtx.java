@@ -10,11 +10,11 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 /**
- * Interface between location map and preprocessor for modeling contexts that can deal with offsets. 
+ * Interface between location map and preprocessor for modeling contexts that can deal with offsets.
  * These are:
  * synthetic contexts used for pre-included files, file-contexts, macro-expansions.
  * @since 5.0

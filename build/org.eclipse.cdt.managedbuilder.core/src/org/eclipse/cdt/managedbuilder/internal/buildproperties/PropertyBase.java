@@ -13,40 +13,38 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildproperties;
 
-
-
 public abstract class PropertyBase {
 	private String fId;
 	private String fName;
-	
-	PropertyBase(String id, String name){
+
+	PropertyBase(String id, String name) {
 		fId = id;
 		fName = name;
 	}
 
-	public String getId(){
+	public String getId() {
 		return fId;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return fName;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getId();
 	}
-	
+
 	@Override
-	public boolean equals(Object o){
-		if(!o.getClass().equals(getClass()))
+	public boolean equals(Object o) {
+		if (!o.getClass().equals(getClass()))
 			return false;
-		
-		return fId.equals(((PropertyBase)o).getId());
+
+		return fId.equals(((PropertyBase) o).getId());
 	}
-	
+
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		return fId.hashCode();
 	}
 }

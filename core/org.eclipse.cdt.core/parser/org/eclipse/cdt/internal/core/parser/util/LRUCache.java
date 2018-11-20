@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.parser.util;
 
@@ -25,7 +25,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
 	public LRUCache(int limit) {
 		super(16, 0.75f, true);
-		fLimit= limit;
+		fLimit = limit;
 	}
 
 	@Override

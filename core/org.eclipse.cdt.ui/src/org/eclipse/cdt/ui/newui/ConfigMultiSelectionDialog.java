@@ -61,7 +61,9 @@ public class ConfigMultiSelectionDialog extends Dialog {
 		return null;
 	}
 
-	public ConfigMultiSelectionDialog(Shell parentShell) { super(parentShell); }
+	public ConfigMultiSelectionDialog(Shell parentShell) {
+		super(parentShell);
+	}
 
 	@Override
 	protected void configureShell(Shell shell) {
@@ -91,7 +93,8 @@ public class ConfigMultiSelectionDialog extends Dialog {
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// Create the current config table
-		table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+		table = new Table(composite,
+				SWT.CHECK | SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		table.setLayoutData(new GridData(GridData.FILL));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -111,17 +114,24 @@ public class ConfigMultiSelectionDialog extends Dialog {
 		tv = new CheckboxTableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {
 			@Override
-			public Object[] getElements(Object inputElement) { return cfgds; }
+			public Object[] getElements(Object inputElement) {
+				return cfgds;
+			}
+
 			@Override
-			public void dispose() {}
+			public void dispose() {
+			}
+
 			@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
 		});
 		tv.addCheckStateListener(new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				boolean enabled = (tv.getCheckedElements().length > 1);
-				if (b_ok != null) b_ok.setEnabled(enabled);
+				if (b_ok != null)
+					b_ok.setEnabled(enabled);
 				message.setVisible(!enabled);
 				if (enabled) {
 					Object[] ob = tv.getCheckedElements();
@@ -129,26 +139,41 @@ public class ConfigMultiSelectionDialog extends Dialog {
 					System.arraycopy(ob, 0, result, 0, ob.length);
 				} else
 					result = null;
-			}});
+			}
+		});
 		tv.setLabelProvider(new ITableLabelProvider() {
 			@Override
-			public Image getColumnImage(Object element, int columnIndex) { return null; }
+			public Image getColumnImage(Object element, int columnIndex) {
+				return null;
+			}
+
 			@Override
-			public void addListener(ILabelProviderListener listener) {}
+			public void addListener(ILabelProviderListener listener) {
+			}
+
 			@Override
-			public void dispose() {}
+			public void dispose() {
+			}
+
 			@Override
-			public boolean isLabelProperty(Object element, String property) { return false;}
+			public boolean isLabelProperty(Object element, String property) {
+				return false;
+			}
+
 			@Override
-			public void removeListener(ILabelProviderListener listener) {}
+			public void removeListener(ILabelProviderListener listener) {
+			}
 
 			@Override
 			public String getColumnText(Object element, int index) {
-				ICConfigurationDescription cfg = (ICConfigurationDescription)element;
-				if (index == 0) return cfg.getName();
-				if (index == 1) return cfg.getDescription();
+				ICConfigurationDescription cfg = (ICConfigurationDescription) element;
+				if (index == 0)
+					return cfg.getName();
+				if (index == 1)
+					return cfg.getDescription();
 				return AbstractPage.EMPTY_STR;
-			}});
+			}
+		});
 		tv.setInput(cfgds);
 		table.setFocus();
 		return composite;

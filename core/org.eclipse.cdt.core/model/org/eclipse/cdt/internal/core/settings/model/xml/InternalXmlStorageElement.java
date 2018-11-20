@@ -33,15 +33,14 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 	private boolean fIsReadOnly;
 	XmlStorage fStorage;
 
-	public InternalXmlStorageElement(Element element, ICStorageElement parent,
-			String[] attributeFilters,
+	public InternalXmlStorageElement(Element element, ICStorageElement parent, String[] attributeFilters,
 			String[] childFilters, boolean readOnly) {
 		super(element, parent, attributeFilters, childFilters);
 		fIsReadOnly = readOnly;
 	}
 
-	public InternalXmlStorageElement(Element element, ICStorageElement parent,
-			boolean alowReferencingParent, boolean readOnly) {
+	public InternalXmlStorageElement(Element element, ICStorageElement parent, boolean alowReferencingParent,
+			boolean readOnly) {
 		super(element, parent, alowReferencingParent);
 		fIsReadOnly = readOnly;
 	}
@@ -51,57 +50,57 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 		fIsReadOnly = readOnly;
 	}
 
-	public boolean isReadOnly(){
+	public boolean isReadOnly() {
 		return fIsReadOnly;
 	}
 
-	public void setReadOnly(boolean readOnly){
+	public void setReadOnly(boolean readOnly) {
 		setReadOnly(readOnly, true);
 	}
 
-	public void setReadOnly(boolean readOnly, boolean keepModify){
+	public void setReadOnly(boolean readOnly, boolean keepModify) {
 		fIsReadOnly = readOnly;
 		fIsDirty &= keepModify;
 
 		ICStorageElement children[] = getChildren(false);
-		for(int i = 0; i < children.length; i++){
-			((InternalXmlStorageElement)children[i]).setReadOnly(readOnly, keepModify);
+		for (int i = 0; i < children.length; i++) {
+			((InternalXmlStorageElement) children[i]).setReadOnly(readOnly, keepModify);
 		}
 
 	}
 
-	public boolean isModified(){
-		if(fIsDirty)
+	public boolean isModified() {
+		if (fIsDirty)
 			return true;
 
 		if (fStorage != null && fStorage.isModified())
 			return true;
 
 		ICStorageElement children[] = getChildren();
-		for(int i = 0; i < children.length; i++){
-			if(((InternalXmlStorageElement)children[i]).isModified())
+		for (int i = 0; i < children.length; i++) {
+			if (((InternalXmlStorageElement) children[i]).isModified())
 				return true;
 		}
 
 		return false;
 	}
 
-	public void setDirty(boolean dirty){
+	public void setDirty(boolean dirty) {
 		fIsDirty = dirty;
 
-		if(!dirty){
+		if (!dirty) {
 			if (fStorage != null)
 				fStorage.setDirty(false);
 
 			ICStorageElement children[] = getChildren();
-			for(int i = 0; i < children.length; i++){
-				((InternalXmlStorageElement)children[i]).setDirty(false);
+			for (int i = 0; i < children.length; i++) {
+				((InternalXmlStorageElement) children[i]).setDirty(false);
 			}
 		}
 	}
-	
+
 	public void storageCreated(XmlStorage storage) {
-//		Assert.isTrue(fStorage == null, "Storage created on an XmlStorageElement already exists");
+		//		Assert.isTrue(fStorage == null, "Storage created on an XmlStorageElement already exists");
 		fStorage = storage;
 	}
 
@@ -112,18 +111,16 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 	}
 
 	@Override
-	protected XmlStorageElement createChild(Element element,
-			boolean alowReferencingParent, String[] attributeFilters,
+	protected XmlStorageElement createChild(Element element, boolean alowReferencingParent, String[] attributeFilters,
 			String[] childFilters) {
-/*		if(fIsReadOnly)
-			throw ExceptionFactory.createIsReadOnlyException();
-*/
+		/*		if(fIsReadOnly)
+					throw ExceptionFactory.createIsReadOnlyException();
+		*/
 		return new InternalXmlStorageElement(element, this, attributeFilters, childFilters, fIsReadOnly);
 	}
 
 	@Override
-	public ICStorageElement createChild(String name,
-			boolean alowReferencingParent, String[] attributeFilters,
+	public ICStorageElement createChild(String name, boolean alowReferencingParent, String[] attributeFilters,
 			String[] childFilters) {
 		makeModification();
 		return super.createChild(name, alowReferencingParent, attributeFilters, childFilters);
@@ -166,7 +163,8 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 	}
 
 	@Override
-	public ICSettingsStorage createSettingStorage(boolean readOnly) throws CoreException, UnsupportedOperationException {
+	public ICSettingsStorage createSettingStorage(boolean readOnly)
+			throws CoreException, UnsupportedOperationException {
 		if (!isReadOnly() && readOnly)
 			return new XmlStorage(fElement, true);
 		return new XmlStorage(this);
@@ -180,7 +178,7 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 	 *  then throw write access exception.
 	 */
 	private void makeModification() {
-		if(fIsReadOnly)
+		if (fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
 		fIsDirty = true;
 	}

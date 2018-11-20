@@ -53,17 +53,17 @@ public class GeneratePDOM {
 
 	/**
 	 * Runnable to export a PDOM.
-	 * @param checkIndexStatus <code>true</code> to check index completeness before exporting, or 
+	 * @param checkIndexStatus <code>true</code> to check index completeness before exporting, or
 	 *     <code>false</code> to export the index without checking anything
 	 * @since 5.5
 	 */
-	public GeneratePDOM(IExportProjectProvider pm, String[] applicationArguments, File targetLocation,
-			String indexerID, boolean checkIndexStatus) {
-		this.pm= pm;
-		this.applicationArguments= applicationArguments;
-		this.targetLocation= targetLocation;
-		this.indexerID= indexerID;
-		this.checkIndexStatus= checkIndexStatus;
+	public GeneratePDOM(IExportProjectProvider pm, String[] applicationArguments, File targetLocation, String indexerID,
+			boolean checkIndexStatus) {
+		this.pm = pm;
+		this.applicationArguments = applicationArguments;
+		this.targetLocation = targetLocation;
+		this.indexerID = indexerID;
+		this.checkIndexStatus = checkIndexStatus;
 	}
 
 	public GeneratePDOM(IExportProjectProvider pm, String[] applicationArguments, File targetLocation,
@@ -77,11 +77,11 @@ public class GeneratePDOM {
 	 * @param deleteOnExit
 	 */
 	public void setDeleteOnExit(boolean deleteOnExit) {
-		this.deleteOnExit= deleteOnExit;
+		this.deleteOnExit = deleteOnExit;
 	}
 
 	/**
-	 * Executes the PDOM generation 
+	 * Executes the PDOM generation
 	 * @return {@link IStatus#OK} if the generated content is complete, {@link IStatus#ERROR} otherwise.
 	 * @throws CoreException if an internal or invalid configuration error occurs
 	 */
@@ -94,16 +94,16 @@ public class GeneratePDOM {
 					new Object[] { pm.getClass().getName() }));
 			return null; // Cannot be reached, inform the compiler
 		}
-		
-		IIndexLocationConverter converter= pm.getLocationConverter(cproject);
+
+		IIndexLocationConverter converter = pm.getLocationConverter(cproject);
 		if (converter == null) {
 			fail(MessageFormat.format(Messages.GeneratePDOM_NullLocationConverter,
 					new Object[] { pm.getClass().getName() }));
 		}
-		
+
 		// Index the project
 		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, indexerID);
-		
+
 		try {
 			final IIndexManager manager = CCorePlugin.getIndexManager();
 			for (int i = 0; i < 20; i++) {
@@ -115,31 +115,32 @@ public class GeneratePDOM {
 				}
 				Thread.sleep(200);
 			}
-		
+
 			if (checkIndexStatus) {
 				// Check status
 				IStatus syncStatus = CCoreInternals.getPDOMManager().getProjectContentSyncState(cproject);
 				if (syncStatus != null) {
 					// Add message and error severity
-					IStatus myStatus = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, Messages.GeneratePDOM_Incomplete);
-					MultiStatus m = new MultiStatus(CCorePlugin.PLUGIN_ID, 1, new IStatus[] {myStatus, syncStatus},
+					IStatus myStatus = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
+							Messages.GeneratePDOM_Incomplete);
+					MultiStatus m = new MultiStatus(CCorePlugin.PLUGIN_ID, 1, new IStatus[] { myStatus, syncStatus },
 							Messages.GeneratePDOM_Incomplete, null);
 					// Log the status right away since legacy clients did not return any status details
 					CCorePlugin.log(m);
-					return m;	
+					return m;
 				}
 			}
 			// Export a .pdom file
 			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter, null);
 
 			// Write properties to exported PDOM
-			WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter,
+			WritablePDOM exportedPDOM = new WritablePDOM(targetLocation, converter,
 					LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 			exportedPDOM.acquireWriteLock(0, null);
 			try {
-				Map<String, String> exportProperties= pm.getExportProperties();
+				Map<String, String> exportProperties = pm.getExportProperties();
 				if (exportProperties != null) {
-					for(Map.Entry<String, String> entry : exportProperties.entrySet()) {
+					for (Map.Entry<String, String> entry : exportProperties.entrySet()) {
 						exportedPDOM.setProperty(entry.getKey(), entry.getValue());
 					}
 				}
@@ -148,17 +149,18 @@ public class GeneratePDOM {
 				exportedPDOM.releaseWriteLock();
 			}
 		} catch (InterruptedException ie) {
-			String msg= MessageFormat.format(Messages.GeneratePDOM_GenericGenerationFailed, new Object[] {ie.getMessage()});
+			String msg = MessageFormat.format(Messages.GeneratePDOM_GenericGenerationFailed,
+					new Object[] { ie.getMessage() });
 			throw new CoreException(CCorePlugin.createStatus(msg, ie));
 		} finally {
 			if (deleteOnExit) {
 				cproject.getProject().delete(true, new NullProgressMonitor());
 			}
 		}
-		
+
 		return new Status(IStatus.OK, CCorePlugin.PLUGIN_ID, Messages.GeneratePDOM_Success);
 	}
-	
+
 	private void fail(String message) throws CoreException {
 		GeneratePDOMApplication.fail(message);
 	}

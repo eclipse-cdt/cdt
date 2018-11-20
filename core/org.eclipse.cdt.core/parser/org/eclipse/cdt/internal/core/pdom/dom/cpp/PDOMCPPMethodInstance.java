@@ -32,12 +32,12 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionInstance.RECORD_SIZE + 0;
-	
-	public PDOMCPPMethodInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method, 
-			PDOMBinding instantiated) throws CoreException {
+
+	public PDOMCPPMethodInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method, PDOMBinding instantiated)
+			throws CoreException {
 		super(linkage, parent, method, instantiated);
 	}
-	
+
 	public PDOMCPPMethodInstance(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
@@ -51,7 +51,7 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_METHOD_INSTANCE;
 	}
-	
+
 	@Override
 	public boolean isDestructor() {
 		return ((ICPPMethod) getTemplateDefinition()).isDestructor();
@@ -74,14 +74,14 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 
 	@Override
 	public boolean isPureVirtual() {
-		return ((ICPPMethod) getTemplateDefinition()).isPureVirtual();		
+		return ((ICPPMethod) getTemplateDefinition()).isPureVirtual();
 	}
 
 	@Override
 	public boolean isExplicit() {
 		return ((ICPPMethod) getTemplateDefinition()).isExplicit();
 	}
-	
+
 	@Override
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();

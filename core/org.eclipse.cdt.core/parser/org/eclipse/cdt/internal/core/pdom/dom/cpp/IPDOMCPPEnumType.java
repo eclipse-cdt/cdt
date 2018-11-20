@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public interface IPDOMCPPEnumType extends ICPPEnumeration, IPDOMBinding, IIndexT
 	 * Returns the scope name, for use in {@link IScope#getScopeName()}
 	 */
 	IIndexName getScopeName();
-	
+
 	@Override
 	IEnumerator[] getEnumerators();
 

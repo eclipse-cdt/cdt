@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -42,6 +42,7 @@ public class UIMessages {
 	private static String toNlsFormatKey(String key) {
 		return key.replace('.', '_');
 	}
+
 	public static String getFormattedString(String key, String arg) {
 		key = toNlsFormatKey(key);
 		return MessageFormat.format(getString(key), new Object[] { arg });
@@ -49,7 +50,7 @@ public class UIMessages {
 
 	public static String getFormattedString(String key, String[] args) {
 		key = toNlsFormatKey(key);
-		return MessageFormat.format(getString(key), (Object[])args);
+		return MessageFormat.format(getString(key), (Object[]) args);
 	}
 
 	public static String getString(String key) {

@@ -14,8 +14,8 @@
 package org.eclipse.cdt.ui.templateengine.uitree;
 
 /**
- * This class contains the patter strings for a text widget 
- * 
+ * This class contains the patter strings for a text widget
+ *
  * @since 4.0
  */
 public class IPatternMatchingTable {

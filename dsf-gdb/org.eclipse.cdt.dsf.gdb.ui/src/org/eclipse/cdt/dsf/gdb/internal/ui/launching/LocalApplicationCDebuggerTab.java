@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 /**
  * Debugger tab to use for a local application launch configuration.
- * 
+ *
  * @since 2.0
  */
 public class LocalApplicationCDebuggerTab extends CDebuggerTab {
@@ -38,30 +38,30 @@ public class LocalApplicationCDebuggerTab extends CDebuggerTab {
 	 * Bug 281970
 	 */
 	private final static String DEFAULTS_SET = "org.eclipse.cdt.dsf.gdb.internal.ui.launching.LocalApplicationCDebuggerTab.DEFAULTS_SET"; //$NON-NLS-1$
-	
-    public LocalApplicationCDebuggerTab() {
-        super(SessionType.LOCAL, false);
-    }
-    
-    @Override
-    public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+
+	public LocalApplicationCDebuggerTab() {
+		super(SessionType.LOCAL, false);
+	}
+
+	@Override
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(DEFAULTS_SET, true);
-    	
-    	super.setDefaults(config);
-    }
-    
-    @Override
-    public void initializeFrom(ILaunchConfiguration config) {
-    	try {
-    		if (config.hasAttribute(DEFAULTS_SET) == false) {
-    			ILaunchConfigurationWorkingCopy wc;
-    			wc = config.getWorkingCopy();
-    			setDefaults(wc);
-    			wc.doSave();
-    		}
-    	} catch (CoreException e) {
-    	}
+
+		super.setDefaults(config);
+	}
+
+	@Override
+	public void initializeFrom(ILaunchConfiguration config) {
+		try {
+			if (config.hasAttribute(DEFAULTS_SET) == false) {
+				ILaunchConfigurationWorkingCopy wc;
+				wc = config.getWorkingCopy();
+				setDefaults(wc);
+				wc.doSave();
+			}
+		} catch (CoreException e) {
+		}
 
 		super.initializeFrom(config);
-    }
+	}
 }

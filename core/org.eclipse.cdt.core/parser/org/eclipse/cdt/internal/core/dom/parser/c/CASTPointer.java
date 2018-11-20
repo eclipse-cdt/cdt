@@ -21,11 +21,11 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 
 public class CASTPointer extends ASTAttributeOwner implements ICASTPointer {
 
-    private boolean isRestrict;
-    private boolean isVolatile;
-    private boolean isConst;
+	private boolean isRestrict;
+	private boolean isVolatile;
+	private boolean isConst;
 
-    @Override
+	@Override
 	public CASTPointer copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -41,44 +41,46 @@ public class CASTPointer extends ASTAttributeOwner implements ICASTPointer {
 
 	@Override
 	public boolean isRestrict() {
-        return isRestrict;
-    }
+		return isRestrict;
+	}
 
-    @Override
+	@Override
 	public void setRestrict(boolean value) {
-        assertNotFrozen();
-        isRestrict = value;
-    }
+		assertNotFrozen();
+		isRestrict = value;
+	}
 
-    @Override
+	@Override
 	public boolean isConst() {
-        return isConst;
-    }
+		return isConst;
+	}
 
-    @Override
+	@Override
 	public boolean isVolatile() {
-        return isVolatile;
-    }
+		return isVolatile;
+	}
 
-    @Override
+	@Override
 	public void setConst(boolean value) {
-        assertNotFrozen();
-        isConst = value;
-    }
+		assertNotFrozen();
+		isConst = value;
+	}
 
-    @Override
+	@Override
 	public void setVolatile(boolean value) {
-        assertNotFrozen();
-        isVolatile = value;
-    }
+		assertNotFrozen();
+		isVolatile = value;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitPointerOperators) {
 			switch (action.visit(this)) {
-    		case ASTVisitor.PROCESS_ABORT : return false;
-    		case ASTVisitor.PROCESS_SKIP  : return true;
-    		}
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			}
 		}
 
 		if (!acceptByAttributeSpecifiers(action))
@@ -87,7 +89,7 @@ public class CASTPointer extends ASTAttributeOwner implements ICASTPointer {
 		if (action.shouldVisitPointerOperators) {
 			if (action.leave(this) == ASTVisitor.PROCESS_ABORT)
 				return false;
-    	}
+		}
 		return true;
-    }
+	}
 }

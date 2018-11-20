@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -20,13 +20,11 @@ import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
  * This interface provides a method for accessing the command factory.
  * @since 3.0
  */
-public interface IMICommandControl extends ICommandControlService
-{
+public interface IMICommandControl extends ICommandControlService {
 	/**
 	 * Returns a command factory that creates different<code>ICommand</code>
 	 * to be sent to the backend.  This factory can easily be overridden
 	 * to specialize certain commands.
 	 */
-   public CommandFactory getCommandFactory();
+	public CommandFactory getCommandFactory();
 }
-

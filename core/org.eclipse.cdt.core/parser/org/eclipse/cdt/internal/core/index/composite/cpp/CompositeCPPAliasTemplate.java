@@ -26,7 +26,8 @@ class CompositeCPPAliasTemplate extends CompositeCPPBinding implements ICPPAlias
 
 	@Override
 	public Object clone() {
-		fail(); return null;
+		fail();
+		return null;
 	}
 
 	@Override

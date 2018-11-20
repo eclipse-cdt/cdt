@@ -35,49 +35,45 @@ import org.eclipse.core.runtime.Platform;
  */
 public class PDOMLocationTests extends BaseTestCase {
 	ICProject cproject;
-	
+
 	public static Test suite() {
 		return suite(PDOMLocationTests.class);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
-		cproject= CProjectHelper.createCCProject("PDOMLocationTests" + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+		cproject = CProjectHelper.createCCProject("PDOMLocationTests" + System.currentTimeMillis(), "bin",
+				IPDOMManager.ID_NO_INDEXER);
 		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		if (cproject != null) {
-			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 		}
 		super.tearDown();
 	}
 
 	public void testLocationConverter() {
 		PDOMProjectIndexLocationConverter converter = new PDOMProjectIndexLocationConverter(cproject.getProject());
-		String[] winExternals= new String[] {
-				"c:/a/b/c/d.foo",
-				"c:\\a\\b\\c\\d\\e.foo",
-				"d:/foo.bar",
-				"d:\\Documents and Settings\\JDoe\\Eclipse Workspaces\\ProjectX\\foo.bar"
-		};
-		String[] linuxExternals = new String[] {
-				"/home/jdoe/workspaces/projectx/foo",
-				"/home/jdoe/eclipse workspaces/projectx/foo.bar"
-		};
-		
-		Set<String> externals= new HashSet();
+		String[] winExternals = new String[] { "c:/a/b/c/d.foo", "c:\\a\\b\\c\\d\\e.foo", "d:/foo.bar",
+				"d:\\Documents and Settings\\JDoe\\Eclipse Workspaces\\ProjectX\\foo.bar" };
+		String[] linuxExternals = new String[] { "/home/jdoe/workspaces/projectx/foo",
+				"/home/jdoe/eclipse workspaces/projectx/foo.bar" };
+
+		Set<String> externals = new HashSet();
 		externals.addAll(Arrays.asList(linuxExternals));
 		if (Platform.getOS().equals("win32")) {
 			externals.addAll(Arrays.asList(winExternals));
 		}
-		
+
 		for (String ext : externals) {
 			IIndexFileLocation loc = IndexLocationFactory.getExternalIFL(ext);
 			String raw = converter.toInternalFormat(loc);
 			IIndexFileLocation roundtrip = converter.fromInternalFormat(raw);
-			assertTrue(roundtrip!=null);
+			assertTrue(roundtrip != null);
 			assertEquals(roundtrip.getFullPath(), loc.getFullPath());
 			assertEquals(roundtrip.getURI(), loc.getURI());
 		}

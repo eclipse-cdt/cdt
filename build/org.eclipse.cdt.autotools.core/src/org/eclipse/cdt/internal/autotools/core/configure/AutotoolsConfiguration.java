@@ -30,7 +30,6 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
-
 public class AutotoolsConfiguration implements IAConfiguration {
 
 	public static class Option {
@@ -39,24 +38,24 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		private String superClassId;
 		private int type;
 		private String defaultValue;
-		
+
 		public Option(String name, int type) {
 			this(name, name, type);
 		}
-		
+
 		public Option(String name, String transformedName, int type) {
 			this.name = name;
 			this.transformedName = transformedName;
 			this.type = type;
 		}
-		
+
 		public Option(String name, String transformedName, String defaultValue, int type) {
 			this.name = name;
 			this.transformedName = transformedName;
 			this.type = type;
 			this.defaultValue = defaultValue;
 		}
-		
+
 		public Option(String name, String transformedName, String defaultValue, String superClassId, int type) {
 			this.name = name;
 			this.transformedName = transformedName;
@@ -68,15 +67,15 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		public String getName() {
 			return name;
 		}
-		
+
 		public int getType() {
 			return type;
 		}
-		
+
 		public String getDefaultValue() {
 			return defaultValue;
 		}
-		
+
 		public String getSuperClassId() {
 			return superClassId;
 		}
@@ -84,64 +83,66 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		public String getDescription() {
 			return ConfigureMessages.getConfigureDescription(transformedName);
 		}
-		
+
 		public String getToolTip() {
 			return ConfigureMessages.getConfigureTip(transformedName);
 		}
 	}
-	
+
 	// Configure options and categories.  List below is ordered.
 	// All options following a category are children of that category
 	// in a tree view, up to the next category.
 	private static Option[] configOpts = new Option[] {
-		new Option(AutotoolsOptionConstants.TOOL_CONFIGURE, IConfigureOption.TOOL),
-		new Option(AutotoolsOptionConstants.CATEGORY_GENERAL, IConfigureOption.CATEGORY),
-		new Option(AutotoolsOptionConstants.OPT_CONFIGDIR, IConfigureOption.INTERNAL),
-		new Option(AutotoolsOptionConstants.OPT_CACHE_FILE, "cache_file", IConfigureOption.STRING), //$NON-NLS-1$
-		new Option(AutotoolsOptionConstants.OPT_HELP, IConfigureOption.BIN),
-		new Option(AutotoolsOptionConstants.OPT_NO_CREATE, "no_create", IConfigureOption.BIN), //$NON-NLS-1$
-		new Option(AutotoolsOptionConstants.OPT_QUIET, IConfigureOption.BIN),
-		new Option(AutotoolsOptionConstants.OPT_VERSION, IConfigureOption.BIN),
-		new Option(AutotoolsOptionConstants.CATEGORY_PLATFORM, IConfigureOption.CATEGORY),
-		new Option(AutotoolsOptionConstants.OPT_HOST, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_BUILD, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_TARGET, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.CATEGORY_DIRECTORIES, IConfigureOption.CATEGORY),
-		new Option(AutotoolsOptionConstants.OPT_PREFIX, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_EXEC_PREFIX, "exec_prefix", IConfigureOption.STRING), //$NON-NLS-1$
-		new Option(AutotoolsOptionConstants.OPT_LIBDIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_BINDIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_SBINDIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_INCLUDEDIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_DATADIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_SYSCONFDIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_INFODIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_MANDIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_SRCDIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_LOCALSTATEDIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_SHAREDSTATEDIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_LIBEXECDIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.OPT_OLDINCLUDEDIR, IConfigureOption.STRING),
-		new Option(AutotoolsOptionConstants.CATEGORY_FILENAMES, IConfigureOption.CATEGORY),
-		new Option(AutotoolsOptionConstants.OPT_PROGRAM_PREFIX, "program_prefix", IConfigureOption.STRING), //$NON-NLS-1$
-		new Option(AutotoolsOptionConstants.OPT_PROGRAM_SUFFIX, "program_suffix", IConfigureOption.STRING), //$NON-NLS-1$
-		new Option(AutotoolsOptionConstants.OPT_PROGRAM_TRANSFORM_NAME, "program_transform_name", IConfigureOption.STRING), //$NON-NLS-1$
-		new Option(AutotoolsOptionConstants.CATEGORY_ENVVAR, IConfigureOption.CATEGORY),
-		new Option(AutotoolsOptionConstants.OPT_ENVVAR, IConfigureOption.ENVVAR),
-		new Option(AutotoolsOptionConstants.CATEGORY_FEATURES, IConfigureOption.CATEGORY),
-		new Option(AutotoolsOptionConstants.OPT_ENABLE_MAINTAINER_MODE, "enable_maintainer_mode", IConfigureOption.BIN), //$NON-NLS-1$
-		new Option(AutotoolsOptionConstants.FLAG_CFLAGS, "cflags", AutotoolsOptionConstants.FLAG_CFLAGS_FLAGS, IConfigureOption.FLAG), //$NON-NLS-1$
-		new Option(AutotoolsOptionConstants.OPT_CFLAGS_DEBUG, "cflags_debug", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$
-		new Option(AutotoolsOptionConstants.OPT_CFLAGS_GPROF, "cflags_gprof", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$ 
-		new Option(AutotoolsOptionConstants.OPT_CFLAGS_GCOV, "cflags_gcov", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$ 
-		new Option(AutotoolsOptionConstants.OPT_USER, IConfigureOption.MULTIARG),
-		new Option(AutotoolsOptionConstants.TOOL_AUTOGEN, "autogen", "autogen.sh", IConfigureOption.TOOL), //$NON-NLS-1$
-		new Option(AutotoolsOptionConstants.CATEGORY_OPTIONS, IConfigureOption.CATEGORY),
-		new Option(AutotoolsOptionConstants.OPT_AUTOGENOPTS, IConfigureOption.MULTIARG),
-	};
-	
+			new Option(AutotoolsOptionConstants.TOOL_CONFIGURE, IConfigureOption.TOOL),
+			new Option(AutotoolsOptionConstants.CATEGORY_GENERAL, IConfigureOption.CATEGORY),
+			new Option(AutotoolsOptionConstants.OPT_CONFIGDIR, IConfigureOption.INTERNAL),
+			new Option(AutotoolsOptionConstants.OPT_CACHE_FILE, "cache_file", IConfigureOption.STRING), //$NON-NLS-1$
+			new Option(AutotoolsOptionConstants.OPT_HELP, IConfigureOption.BIN),
+			new Option(AutotoolsOptionConstants.OPT_NO_CREATE, "no_create", IConfigureOption.BIN), //$NON-NLS-1$
+			new Option(AutotoolsOptionConstants.OPT_QUIET, IConfigureOption.BIN),
+			new Option(AutotoolsOptionConstants.OPT_VERSION, IConfigureOption.BIN),
+			new Option(AutotoolsOptionConstants.CATEGORY_PLATFORM, IConfigureOption.CATEGORY),
+			new Option(AutotoolsOptionConstants.OPT_HOST, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_BUILD, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_TARGET, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.CATEGORY_DIRECTORIES, IConfigureOption.CATEGORY),
+			new Option(AutotoolsOptionConstants.OPT_PREFIX, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_EXEC_PREFIX, "exec_prefix", IConfigureOption.STRING), //$NON-NLS-1$
+			new Option(AutotoolsOptionConstants.OPT_LIBDIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_BINDIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_SBINDIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_INCLUDEDIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_DATADIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_SYSCONFDIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_INFODIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_MANDIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_SRCDIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_LOCALSTATEDIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_SHAREDSTATEDIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_LIBEXECDIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.OPT_OLDINCLUDEDIR, IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.CATEGORY_FILENAMES, IConfigureOption.CATEGORY),
+			new Option(AutotoolsOptionConstants.OPT_PROGRAM_PREFIX, "program_prefix", IConfigureOption.STRING), //$NON-NLS-1$
+			new Option(AutotoolsOptionConstants.OPT_PROGRAM_SUFFIX, "program_suffix", IConfigureOption.STRING), //$NON-NLS-1$
+			new Option(AutotoolsOptionConstants.OPT_PROGRAM_TRANSFORM_NAME, "program_transform_name", //$NON-NLS-1$
+					IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.CATEGORY_ENVVAR, IConfigureOption.CATEGORY),
+			new Option(AutotoolsOptionConstants.OPT_ENVVAR, IConfigureOption.ENVVAR),
+			new Option(AutotoolsOptionConstants.CATEGORY_FEATURES, IConfigureOption.CATEGORY),
+			new Option(AutotoolsOptionConstants.OPT_ENABLE_MAINTAINER_MODE, "enable_maintainer_mode", //$NON-NLS-1$
+					IConfigureOption.BIN),
+			new Option(AutotoolsOptionConstants.FLAG_CFLAGS, "cflags", AutotoolsOptionConstants.FLAG_CFLAGS_FLAGS, //$NON-NLS-1$
+					IConfigureOption.FLAG),
+			new Option(AutotoolsOptionConstants.OPT_CFLAGS_DEBUG, "cflags_debug", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$
+			new Option(AutotoolsOptionConstants.OPT_CFLAGS_GPROF, "cflags_gprof", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$
+			new Option(AutotoolsOptionConstants.OPT_CFLAGS_GCOV, "cflags_gcov", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$
+			new Option(AutotoolsOptionConstants.OPT_USER, IConfigureOption.MULTIARG),
+			new Option(AutotoolsOptionConstants.TOOL_AUTOGEN, "autogen", "autogen.sh", IConfigureOption.TOOL), //$NON-NLS-1$
+			new Option(AutotoolsOptionConstants.CATEGORY_OPTIONS, IConfigureOption.CATEGORY),
+			new Option(AutotoolsOptionConstants.OPT_AUTOGENOPTS, IConfigureOption.MULTIARG), };
+
 	private static Option[] toolList;
-	
+
 	private String id;
 	private boolean isDirty;
 	private boolean isParmsDirty;
@@ -156,7 +157,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 	public AutotoolsConfiguration(IProject project, String name) {
 		this(project, name, true);
 	}
-		
+
 	private AutotoolsConfiguration(IProject project, String name, boolean initialize) {
 		this.id = name;
 		this.project = project;
@@ -165,7 +166,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 			initConfigOptions();
 		isParmsDirty = true;
 	}
-	
+
 	private void initConfigOptions() {
 		// Put configure options in hash map.  Ignore categories.
 		ArrayList<Option> tools = new ArrayList<>();
@@ -214,8 +215,8 @@ public class AutotoolsConfiguration implements IAConfiguration {
 								"org.eclipse.linuxtools.cdt.autotools.core.buildType.debug")) { //$NON-NLS-1$
 							defaultValue = "CFLAGS='-g -O0'"; //$NON-NLS-1$
 							try {
-							if (project.hasNature(CCProjectNature.CC_NATURE_ID))
-								defaultValue += " CXXFLAGS='-g -O0'"; //$NON-NLS-1$
+								if (project.hasNature(CCProjectNature.CC_NATURE_ID))
+									defaultValue += " CXXFLAGS='-g -O0'"; //$NON-NLS-1$
 							} catch (CoreException e) {
 								// do nothing
 							}
@@ -244,9 +245,8 @@ public class AutotoolsConfiguration implements IAConfiguration {
 				configOptions.put(opt.name, f);
 				break;
 			case IConfigureOption.FLAGVALUE:
-				FlagValueConfigureOption fv 
-					= new FlagValueConfigureOption(opt.name, opt.transformedName, 
-							this, ConfigureMessages.getParameter(opt.transformedName));
+				FlagValueConfigureOption fv = new FlagValueConfigureOption(opt.name, opt.transformedName, this,
+						ConfigureMessages.getParameter(opt.transformedName));
 				if (defaultValue != null)
 					fv.setValue(defaultValue);
 				lastFlag.addChild(opt.name);
@@ -262,7 +262,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		}
 		toolList = tools.toArray(new Option[tools.size()]);
 	}
-	
+
 	public static Option[] getOptionList() {
 		return configOpts.clone();
 	}
@@ -276,8 +276,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 					for (int j = i + 1; j < configOpts.length; ++j) {
 						Option o = configOpts[j];
 						int type = o.getType();
-						if (type != IConfigureOption.CATEGORY &&
-								type != IConfigureOption.TOOL)
+						if (type != IConfigureOption.CATEGORY && type != IConfigureOption.TOOL)
 							options.add(o);
 						else
 							return options.toArray(new Option[options.size()]);
@@ -290,17 +289,17 @@ public class AutotoolsConfiguration implements IAConfiguration {
 							options.add(o);
 						else if (type == IConfigureOption.TOOL)
 							return options.toArray(new Option[options.size()]);
-					}	
+					}
 				}
 			}
 		}
 		return options.toArray(new Option[options.size()]);
 	}
-	
+
 	public static Option[] getTools() {
 		return toolList.clone();
 	}
-	
+
 	@Override
 	public IConfigureOption getOption(String name) {
 		return configOptions.get(name);
@@ -310,7 +309,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 	public IAConfiguration copy() {
 		return copy(this.id);
 	}
-	
+
 	@Override
 	public IAConfiguration copy(String newId) {
 		AutotoolsConfiguration cfg = new AutotoolsConfiguration(project, newId, false);
@@ -325,29 +324,29 @@ public class AutotoolsConfiguration implements IAConfiguration {
 			cfg.setDirty(true); // we are cloning with a new id, treat it as never built/dirty
 		return cfg;
 	}
-	
+
 	@Override
 	public String getId() {
 		return id;
 	}
-	
+
 	@Override
 	public boolean isDirty() {
 		return isDirty;
 	}
-	
+
 	@Override
 	public void setDirty(boolean value) {
 		isDirty = value;
 		if (isDirty)
 			isParmsDirty = true;
 	}
-	
+
 	@Override
 	public Map<String, IConfigureOption> getOptions() {
 		return configOptions;
 	}
-	
+
 	@Override
 	public String getToolParameters(String name) {
 		StringBuilder buf = new StringBuilder();
@@ -404,7 +403,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 			}
 		}
 	}
-	
+
 	@Override
 	public void setConfigToolDirectory(String configToolDirectory) {
 		setOption("configdir", configToolDirectory);

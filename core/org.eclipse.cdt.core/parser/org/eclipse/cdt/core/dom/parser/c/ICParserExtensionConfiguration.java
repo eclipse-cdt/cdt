@@ -20,11 +20,11 @@ import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 
 /**
  * C parser extension configuration interface.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * Clients can subclass {@link AbstractCParserExtensionConfiguration} instead.
  * @noextend This interface is not intended to be extended by clients.
- * 
+ *
  * @see "http://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html"
  * @since 4.0
  */
@@ -32,7 +32,7 @@ public interface ICParserExtensionConfiguration {
 
 	/**
 	 * Support for GNU extension "Statements and Declarations in Expressions".
-	 * 
+	 *
 	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
@@ -41,7 +41,7 @@ public interface ICParserExtensionConfiguration {
 
 	/**
 	 * Support for GNU extension "Designated Initializers".
-	 * 
+	 *
 	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
@@ -50,7 +50,7 @@ public interface ICParserExtensionConfiguration {
 
 	/**
 	 * Support for GNU extension "Referring to a Type with typeof".
-	 * 
+	 *
 	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Typeof.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
@@ -59,7 +59,7 @@ public interface ICParserExtensionConfiguration {
 
 	/**
 	 * Support for GNU extension "Inquiring on Alignment of Types or Variables".
-	 * 
+	 *
 	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Alignment.html"
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
@@ -68,7 +68,7 @@ public interface ICParserExtensionConfiguration {
 
 	/**
 	 * Support for Kernighan and Richie (K&R) C.
-	 * 
+	 *
 	 * @return <code>true</code> if support for K&R C should be enabled
 	 */
 	public boolean supportKnRC();
@@ -76,7 +76,7 @@ public interface ICParserExtensionConfiguration {
 	/**
 	 * See http://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html for more
 	 * information on GCC's Attribute Specifiers.
-	 * 
+	 *
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -84,7 +84,7 @@ public interface ICParserExtensionConfiguration {
 
 	/**
 	 * Win32 compiler extensions also supported by GCC on Win32
-	 * 
+	 *
 	 * @return <code>true</code> if support for the extension should be
 	 *         enabled
 	 */
@@ -92,7 +92,7 @@ public interface ICParserExtensionConfiguration {
 
 	/**
 	 * Provide additional built-in bindings.
-	 * 
+	 *
 	 * @return an instance of {@link IBuiltinBindingsProvider} or
 	 *         <code>null</code>
 	 */
@@ -105,21 +105,21 @@ public interface ICParserExtensionConfiguration {
 	 * @since 5.1
 	 */
 	public boolean supportParameterInfoBlock();
-	
+
 	/**
 	 * Support additional parameters for the sizeof operator:
 	 * 'sizeof' '(' typeid ',' expression-list ')'
 	 * @since 5.1
 	 */
 	public boolean supportExtendedSizeofOperator();
-	
+
 	/**
 	 * Support function style assembler definitions:
 	 * 'asm' ['volatile'] [return-type] name '(' parameter-list ')' '{' assembler-code '}'
 	 * @since 5.1
 	 */
 	public boolean supportFunctionStyleAssembler();
-	
+
 	/**
 	 * @deprecated use {@link #getBuiltinBindingsProvider()} instead.
 	 * @noreference This method is not intended to be referenced by clients.

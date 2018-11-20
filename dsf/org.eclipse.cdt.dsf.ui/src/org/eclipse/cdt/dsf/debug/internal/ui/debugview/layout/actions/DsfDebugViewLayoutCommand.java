@@ -35,86 +35,84 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
 /**
  * @since 2.2
  */
-public abstract class DsfDebugViewLayoutCommand implements IDebugCommandHandler{
-	
-    protected final DsfExecutor fExecutor;
-    protected final DsfServicesTracker fTracker;
-    protected static IExecutionDMContext[] EMPTY_ARRAY = new IExecutionDMContext[0];
-	
-    public DsfDebugViewLayoutCommand(DsfSession session) {
-        fExecutor = session.getExecutor();
-        fTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
-    }    
+public abstract class DsfDebugViewLayoutCommand implements IDebugCommandHandler {
 
-    public void dispose() {
-        fTracker.dispose();
-    }
+	protected final DsfExecutor fExecutor;
+	protected final DsfServicesTracker fTracker;
+	protected static IExecutionDMContext[] EMPTY_ARRAY = new IExecutionDMContext[0];
 
-    /**
-     * 
-     * @param request
-     * @return set of IExecutionDMContext if: 
-     * 		- all elements are from a DSF session. 
-     * 		- all elements are from the same DSF session.
-     */
-    protected IExecutionDMContext[] getDMContexts(IDebugCommandRequest request) {
-    	
-    	HashSet<IExecutionDMContext> ret = new HashSet<>();
-    	String sessionId = null; 
-    	
-    	for (Object obj : request.getElements()) {
-    		if (!(obj instanceof IDMVMContext)) {
-    			return EMPTY_ARRAY;
-    		}
-    		
-    		IDMContext dmContext = ((IDMVMContext)obj).getDMContext(); 
-    		IExecutionDMContext exeContext = DMContexts.getAncestorOfType(dmContext, IExecutionDMContext.class);
-    		
-    		if (exeContext == null) {
-    			return EMPTY_ARRAY;
-    		}
+	public DsfDebugViewLayoutCommand(DsfSession session) {
+		fExecutor = session.getExecutor();
+		fTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
+	}
 
-    		// make sure all elements are from the same DSF session. 
-    		if (sessionId == null) {
-    			sessionId = dmContext.getSessionId();
-    		}
-    		else {
-    			if (!sessionId.equals(dmContext.getSessionId())) {
-    				return EMPTY_ARRAY;
-    			}
-    		}
-    		
-    		ret.add(exeContext);	
-    	}
-    	return ret.toArray(new IExecutionDMContext[ret.size()]);
-    }
-    
+	public void dispose() {
+		fTracker.dispose();
+	}
+
+	/**
+	 *
+	 * @param request
+	 * @return set of IExecutionDMContext if:
+	 * 		- all elements are from a DSF session.
+	 * 		- all elements are from the same DSF session.
+	 */
+	protected IExecutionDMContext[] getDMContexts(IDebugCommandRequest request) {
+
+		HashSet<IExecutionDMContext> ret = new HashSet<>();
+		String sessionId = null;
+
+		for (Object obj : request.getElements()) {
+			if (!(obj instanceof IDMVMContext)) {
+				return EMPTY_ARRAY;
+			}
+
+			IDMContext dmContext = ((IDMVMContext) obj).getDMContext();
+			IExecutionDMContext exeContext = DMContexts.getAncestorOfType(dmContext, IExecutionDMContext.class);
+
+			if (exeContext == null) {
+				return EMPTY_ARRAY;
+			}
+
+			// make sure all elements are from the same DSF session.
+			if (sessionId == null) {
+				sessionId = dmContext.getSessionId();
+			} else {
+				if (!sessionId.equals(dmContext.getSessionId())) {
+					return EMPTY_ARRAY;
+				}
+			}
+
+			ret.add(exeContext);
+		}
+		return ret.toArray(new IExecutionDMContext[ret.size()]);
+	}
+
 	@Override
 	public void canExecute(final IEnabledStateRequest request) {
 		final IExecutionDMContext[] executionContexts = getDMContexts(request);
 		if (executionContexts.length > 0 && !fExecutor.isTerminated()) {
-	        fExecutor.submit(new DsfRunnable() {
+			fExecutor.submit(new DsfRunnable() {
 				@Override
 				public void run() {
 					IExecutionContextTranslator translator = fTracker.getService(IExecutionContextTranslator.class);
 					if (translator != null) {
-						canExecuteOnDsfThread(translator, executionContexts, 
-		                    new DataRequestMonitor<Boolean>(fExecutor, null) {
-			                    @Override
-			                    protected void handleCompleted() {
-			                    	boolean canExecute = isSuccess() && getData();
-			                    	request.setEnabled(canExecute);
-			                    	request.done();
-			                    }
-			                });
+						canExecuteOnDsfThread(translator, executionContexts,
+								new DataRequestMonitor<Boolean>(fExecutor, null) {
+									@Override
+									protected void handleCompleted() {
+										boolean canExecute = isSuccess() && getData();
+										request.setEnabled(canExecute);
+										request.done();
+									}
+								});
 					} else {
 						request.setEnabled(false);
 						request.done();
 					}
-				} 
-	        });
-		} 
-		else {
+				}
+			});
+		} else {
 			request.setEnabled(false);
 			request.done();
 		}
@@ -124,30 +122,31 @@ public abstract class DsfDebugViewLayoutCommand implements IDebugCommandHandler{
 	public boolean execute(final IDebugCommandRequest request) {
 		final IExecutionDMContext[] executionContexts = getDMContexts(request);
 		if (executionContexts.length > 0 && !fExecutor.isTerminated()) {
-	        fExecutor.submit(new DsfRunnable() {
+			fExecutor.submit(new DsfRunnable() {
 				@Override
 				public void run() {
 					IExecutionContextTranslator translator = fTracker.getService(IExecutionContextTranslator.class);
 					if (translator != null) {
-						executeOnDsfThread(translator, executionContexts, 
-		                    new RequestMonitor(fExecutor, null) {
-			                    @Override
-			                    protected void handleCompleted() {
-			                    	request.done();
-			                    }
-			                });
-					}
-					else {
+						executeOnDsfThread(translator, executionContexts, new RequestMonitor(fExecutor, null) {
+							@Override
+							protected void handleCompleted() {
+								request.done();
+							}
+						});
+					} else {
 						request.done();
 					}
-				} 
-	        });
+				}
+			});
 			return false;
 		}
-        request.done();
+		request.done();
 		return true;
 	}
-	
-	abstract void executeOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, RequestMonitor rm);
-	abstract void canExecuteOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm);
+
+	abstract void executeOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts,
+			RequestMonitor rm);
+
+	abstract void canExecuteOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts,
+			DataRequestMonitor<Boolean> rm);
 }

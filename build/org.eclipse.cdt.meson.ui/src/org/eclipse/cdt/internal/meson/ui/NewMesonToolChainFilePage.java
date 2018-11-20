@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - modified for use in Meson build
  *******************************************************************************/
@@ -82,7 +82,7 @@ public class NewMesonToolChainFilePage extends WizardPage {
 
 		tcCombo = new Combo(comp, SWT.READ_ONLY);
 		tcCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
+
 		try {
 			IToolChainManager tcManager = Activator.getService(IToolChainManager.class);
 			toolchains = tcManager.getAllToolChains().toArray(new IToolChain[0]);

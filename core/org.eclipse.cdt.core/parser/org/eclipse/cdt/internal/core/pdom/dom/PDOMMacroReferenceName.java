@@ -36,24 +36,24 @@ import org.eclipse.core.runtime.IPath;
 public final class PDOMMacroReferenceName implements IIndexFragmentName {
 	private final PDOMLinkage linkage;
 	private final long record;
-	
-	private static final int FILE_REC_OFFSET     = 0;
-	private static final int FILE_NEXT_OFFSET	 = 4;
-	private static final int CONTAINER_REC_OFFSET  = 8;
+
+	private static final int FILE_REC_OFFSET = 0;
+	private static final int FILE_NEXT_OFFSET = 4;
+	private static final int CONTAINER_REC_OFFSET = 8;
 	private static final int CONTAINER_PREV_OFFSET = 12;
 	private static final int CONTAINER_NEXT_OFFSET = 16;
-	private static final int NODE_OFFSET_OFFSET  = 20; 
-	private static final int NODE_LENGTH_OFFSET  = 24; 
+	private static final int NODE_OFFSET_OFFSET = 20;
+	private static final int NODE_LENGTH_OFFSET = 24;
 	private static final int CALLER_REC_OFFSET = 26;
 
-	private static final int RECORD_SIZE = 30;	// 30 yields a 32-byte block. (31 would trigger a 40-byte block)	
+	private static final int RECORD_SIZE = 30; // 30 yields a 32-byte block. (31 would trigger a 40-byte block)
 
-	public PDOMMacroReferenceName(PDOMLinkage linkage, IASTName name, PDOMFile file,
-			PDOMMacroContainer container, PDOMName caller) throws CoreException {
+	public PDOMMacroReferenceName(PDOMLinkage linkage, IASTName name, PDOMFile file, PDOMMacroContainer container,
+			PDOMName caller) throws CoreException {
 		this.linkage = linkage;
 		Database db = linkage.getDB();
 		record = db.malloc(RECORD_SIZE);
-		
+
 		db.putRecPtr(record + CONTAINER_REC_OFFSET, container.getRecord());
 		db.putRecPtr(record + FILE_REC_OFFSET, file.getRecord());
 
@@ -62,7 +62,7 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName {
 		db.putInt(record + NODE_OFFSET_OFFSET, fileloc != null ? fileloc.getNodeOffset() : 0);
 		db.putShort(record + NODE_LENGTH_OFFSET, fileloc != null ? (short) fileloc.getNodeLength() : 0);
 		container.addReference(this);
-		
+
 		if (caller != null) {
 			db.putRecPtr(record + CALLER_REC_OFFSET, caller.getRecord());
 		}
@@ -72,7 +72,7 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName {
 		this.linkage = linkage;
 		this.record = nameRecord;
 	}
-	
+
 	public long getRecord() {
 		return record;
 	}
@@ -115,11 +115,11 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName {
 	public PDOMMacroReferenceName getNextInContainer() throws CoreException {
 		return getNameField(CONTAINER_NEXT_OFFSET);
 	}
-	
+
 	void setNextInContainer(PDOMMacroReferenceName name) throws CoreException {
 		setNameField(CONTAINER_NEXT_OFFSET, name);
 	}
-	
+
 	@Override
 	public PDOMFile getFile() throws CoreException {
 		long filerec = linkage.getDB().getRecPtr(record + FILE_REC_OFFSET);
@@ -137,11 +137,11 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName {
 	PDOMMacroReferenceName getNextInFile() throws CoreException {
 		return getNameField(FILE_NEXT_OFFSET);
 	}
-	
+
 	void setNextInFile(PDOMMacroReferenceName name) throws CoreException {
 		setNameField(FILE_NEXT_OFFSET, name);
 	}
-		
+
 	/**
 	 * @deprecated use {@link #getSimpleID()}.
 	 */
@@ -150,7 +150,7 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName {
 	public char[] toCharArray() {
 		return getSimpleID();
 	}
-	
+
 	@Override
 	public char[] getSimpleID() {
 		try {
@@ -165,17 +165,17 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName {
 	public String toString() {
 		return new String(getSimpleID());
 	}
-	
+
 	@Override
 	public boolean isBaseSpecifier() throws CoreException {
 		return false;
 	}
-	
+
 	@Override
 	public boolean couldBePolymorphicMethodCall() throws CoreException {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isPotentialMatch() throws CoreException {
 		return false;

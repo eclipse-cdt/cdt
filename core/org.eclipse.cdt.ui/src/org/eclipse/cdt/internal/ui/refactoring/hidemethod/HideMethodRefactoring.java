@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -85,49 +85,51 @@ public class HideMethodRefactoring extends CRefactoring {
 		super(element, selection, project);
 		name = Messages.HideMethodRefactoring_HIDE_METHOD;
 	}
-	
+
 	@Override
-	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
+			throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 		try {
 			super.checkInitialConditions(sm.newChild(8));
-	
+
 			if (initStatus.hasFatalError()) {
 				return initStatus;
 			}
-	
+
 			if (isProgressMonitorCanceled(sm, initStatus))
 				return initStatus;
-	
+
 			List<IASTName> names = findAllMarkedNames();
 			if (names.isEmpty()) {
-				initStatus.addFatalError(Messages.HideMethodRefactoring_NoNameSelected);  
+				initStatus.addFatalError(Messages.HideMethodRefactoring_NoNameSelected);
 				return initStatus;
 			}
 			IASTName name = names.get(names.size() - 1);
 
 			methodName = DefinitionFinder.getMemberDeclaration(name, refactoringContext, sm.newChild(1));
 			if (methodName == null) {
-				initStatus.addFatalError(Messages.HideMethodRefactoring_NoMethodNameSelected); 
+				initStatus.addFatalError(Messages.HideMethodRefactoring_NoMethodNameSelected);
 				return initStatus;
 			}
 
 			IASTDeclarator decl = (IASTDeclarator) methodName.getParent();
 			decl = CPPVisitor.findOutermostDeclarator(decl);
 			methodDeclaration = (IASTDeclaration) decl.getParent();
-			if (methodDeclaration == null ||
-					!(methodDeclaration.getParent() instanceof ICPPASTCompositeTypeSpecifier)) {
-				initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods); 
+			if (methodDeclaration == null
+					|| !(methodDeclaration.getParent() instanceof ICPPASTCompositeTypeSpecifier)) {
+				initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods);
 				return initStatus;
 			}
-	
+
 			if (isProgressMonitorCanceled(sm, initStatus))
 				return initStatus;
 			if (methodDeclaration instanceof IASTFunctionDefinition) {
 				IASTDeclarator declarator = ((IASTFunctionDefinition) methodDeclaration).getDeclarator();
-				if (ASTQueries.findInnermostDeclarator(declarator).getName().getRawSignature().equals(name.getRawSignature())) {
+				if (ASTQueries.findInnermostDeclarator(declarator).getName().getRawSignature()
+						.equals(name.getRawSignature())) {
 					if (!(declarator instanceof IASTFunctionDeclarator)) {
-						initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods); 
+						initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods);
 						return initStatus;
 					}
 				}
@@ -135,22 +137,22 @@ public class HideMethodRefactoring extends CRefactoring {
 				for (IASTDeclarator declarator : ((IASTSimpleDeclaration) methodDeclaration).getDeclarators()) {
 					if (declarator.getName().getRawSignature().equals(name.getRawSignature())) {
 						if (!(declarator instanceof IASTFunctionDeclarator)) {
-							initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods); 
+							initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods);
 							return initStatus;
 						}
 					}
-				}			
+				}
 			} else {
-				initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods); 
+				initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods);
 				return initStatus;
 			}
-	
-			IASTCompositeTypeSpecifier classNode =
-					ASTQueries.findAncestorWithType(methodName, IASTCompositeTypeSpecifier.class);
+
+			IASTCompositeTypeSpecifier classNode = ASTQueries.findAncestorWithType(methodName,
+					IASTCompositeTypeSpecifier.class);
 			if (classNode == null) {
 				initStatus.addError(Messages.HideMethodRefactoring_EnclosingClassNotFound);
 			}
-	
+
 			if (checkIfPrivate(classNode, methodDeclaration)) {
 				initStatus.addError(Messages.HideMethodRefactoring_IsAlreadyPrivate);
 			}
@@ -165,12 +167,12 @@ public class HideMethodRefactoring extends CRefactoring {
 		int currentVisibility = ICPPASTVisibilityLabel.v_private;
 		if (IASTCompositeTypeSpecifier.k_struct == classNode.getKey()) {
 			currentVisibility = ICPPASTVisibilityLabel.v_public;
-		}		
+		}
 		for (IASTDeclaration declaration : members) {
 			if (declaration instanceof ICPPASTVisibilityLabel) {
-				currentVisibility =((ICPPASTVisibilityLabel) declaration).getVisibility();
+				currentVisibility = ((ICPPASTVisibilityLabel) declaration).getVisibility();
 			}
-			
+
 			if (declaration != null) {
 				if (decl == declaration) {
 					break;
@@ -182,10 +184,10 @@ public class HideMethodRefactoring extends CRefactoring {
 		}
 		return false;
 	}
-	
+
 	@Override
-	public RefactoringStatus checkFinalConditions(IProgressMonitor pm,
-			CheckConditionsContext checkContext) throws CoreException, OperationCanceledException {
+	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext checkContext)
+			throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 		try {
 			RefactoringStatus status = new RefactoringStatus();
@@ -203,8 +205,8 @@ public class HideMethodRefactoring extends CRefactoring {
 				}
 				IEditorInput editorInput = editor.getEditorInput();
 				if (editorInput instanceof ITranslationUnitEditorInput) {
-					ITranslationUnit tu =
-							CModelUtil.toWorkingCopy(((ITranslationUnitEditorInput) editorInput).getTranslationUnit());
+					ITranslationUnit tu = CModelUtil
+							.toWorkingCopy(((ITranslationUnitEditorInput) editorInput).getTranslationUnit());
 					searchedFiles.add(tu.getLocation().toOSString());
 					IASTTranslationUnit ast = getAST(tu, loopProgress.newChild(1));
 					for (IASTName reference : ast.getReferences(methodBinding)) {
@@ -215,7 +217,7 @@ public class HideMethodRefactoring extends CRefactoring {
 					}
 				}
 			}
-			
+
 			IIndexName[] referencesFromIndex = index.findReferences(methodBinding);
 			int remainingCount = referencesFromIndex.length;
 			loopProgress = sm.newChild(6).setWorkRemaining(remainingCount);
@@ -223,8 +225,7 @@ public class HideMethodRefactoring extends CRefactoring {
 				if (sm.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-				ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(
-						name.getFile().getLocation(), null);
+				ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(name.getFile().getLocation(), null);
 				if (searchedFiles.add(tu.getLocation().toOSString())) {
 					IASTTranslationUnit ast = getAST(tu, loopProgress.newChild(1));
 					for (IASTName reference : ast.getReferences(methodBinding)) {
@@ -237,7 +238,7 @@ public class HideMethodRefactoring extends CRefactoring {
 				}
 				loopProgress.setWorkRemaining(--remainingCount);
 			}
-	
+
 			return status;
 		} finally {
 			sm.done();
@@ -245,12 +246,15 @@ public class HideMethodRefactoring extends CRefactoring {
 	}
 
 	@Override
-	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector) throws CoreException,	OperationCanceledException {
+	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
+			throws CoreException, OperationCanceledException {
 		ASTRewrite rewriter = collector.rewriterForTranslationUnit(methodName.getTranslationUnit());
-		TextEditGroup editGroup = new TextEditGroup(Messages.HideMethodRefactoring_FILE_CHANGE_TEXT+ methodName.getRawSignature());
+		TextEditGroup editGroup = new TextEditGroup(
+				Messages.HideMethodRefactoring_FILE_CHANGE_TEXT + methodName.getRawSignature());
 
 		ICPPASTCompositeTypeSpecifier classDefinition = (ICPPASTCompositeTypeSpecifier) methodDeclaration.getParent();
-		ClassMemberInserter.createChange(classDefinition, VisibilityEnum.v_private, methodDeclaration, false, collector);
+		ClassMemberInserter.createChange(classDefinition, VisibilityEnum.v_private, methodDeclaration, false,
+				collector);
 
 		rewriter.remove(methodDeclaration, editGroup);
 	}
@@ -266,7 +270,8 @@ public class HideMethodRefactoring extends CRefactoring {
 
 			@Override
 			public int visit(IASTName name) {
-				if (name.isPartOfTranslationUnitFile() && SelectionHelper.doesNodeOverlapWithRegion(name, selectedRegion)) {
+				if (name.isPartOfTranslationUnitFile()
+						&& SelectionHelper.doesNodeOverlapWithRegion(name, selectedRegion)) {
 					if (!(name instanceof ICPPASTQualifiedName)) {
 						namesVector.add(name);
 					}
@@ -280,7 +285,8 @@ public class HideMethodRefactoring extends CRefactoring {
 	@Override
 	protected RefactoringDescriptor getRefactoringDescriptor() {
 		Map<String, String> arguments = getArgumentMap();
-		RefactoringDescriptor desc = new HideMethodRefactoringDescriptor( project.getProject().getName(), "Hide Method Refactoring", "Hide Method " + methodName.getRawSignature(), arguments);  //$NON-NLS-1$//$NON-NLS-2$
+		RefactoringDescriptor desc = new HideMethodRefactoringDescriptor(project.getProject().getName(),
+				"Hide Method Refactoring", "Hide Method " + methodName.getRawSignature(), arguments); //$NON-NLS-1$//$NON-NLS-2$
 		return desc;
 	}
 

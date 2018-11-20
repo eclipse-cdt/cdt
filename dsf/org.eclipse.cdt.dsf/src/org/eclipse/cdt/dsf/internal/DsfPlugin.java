@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
- * 
+ *
  * @since 1.0
  */
 public class DsfPlugin extends Plugin {
@@ -30,11 +30,11 @@ public class DsfPlugin extends Plugin {
 	// The shared instance
 	private static DsfPlugin fgPlugin;
 
-    // BundleContext of this plugin
-    private static BundleContext fgBundleContext; 
+	// BundleContext of this plugin
+	private static BundleContext fgBundleContext;
 
-    // Debugging flag
-    public static boolean DEBUG = false;
+	// Debugging flag
+	public static boolean DEBUG = false;
 
 	/**
 	 * The constructor
@@ -44,15 +44,15 @@ public class DsfPlugin extends Plugin {
 	}
 
 	@Override
-    public void start(BundleContext context) throws Exception {
-        fgBundleContext = context;
+	public void start(BundleContext context) throws Exception {
+		fgBundleContext = context;
 		super.start(context);
-        DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf/debug"));  //$NON-NLS-1$
-    }
+		DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf/debug")); //$NON-NLS-1$
+	}
 
 	@Override
-    public void stop(BundleContext context) throws Exception {
-        fgBundleContext = null;
+	public void stop(BundleContext context) throws Exception {
+		fgBundleContext = null;
 		super.stop(context);
 	}
 
@@ -65,21 +65,21 @@ public class DsfPlugin extends Plugin {
 		return fgPlugin;
 	}
 
-    public static BundleContext getBundleContext() {
-        return fgBundleContext;
-    }
+	public static BundleContext getBundleContext() {
+		return fgBundleContext;
+	}
 
 	/**
 	 * Writes [message] to stdout, but only if the top level 'debug' tracing
 	 * option for this plugin has been turned on
-	 * 
+	 *
 	 * @param message
 	 */
-    public static void debug(String message) {
-        if (DEBUG) {
-            System.out.println(message);
-        }
-    }
+	public static void debug(String message) {
+		if (DEBUG) {
+			System.out.println(message);
+		}
+	}
 
 	/**
 	 * Returns a relative timestamp in the form "seconds,milliseconds". Each
@@ -90,20 +90,24 @@ public class DsfPlugin extends Plugin {
 	 * the relative time between two events, since the counter will flip to zero
 	 * roughly every 16 minutes.
 	 */
-    public static String getDebugTime() {
-        StringBuilder traceBuilder = new StringBuilder();
-        
-        // Record the time
-        long time = System.currentTimeMillis();
-        long seconds = (time / 1000) % 1000;
-        if (seconds < 100) traceBuilder.append('0');
-        if (seconds < 10) traceBuilder.append('0');
-        traceBuilder.append(seconds);
-        traceBuilder.append(',');
-        long millis = time % 1000;
-        if (millis < 100) traceBuilder.append('0');
-        if (millis < 10) traceBuilder.append('0');
-        traceBuilder.append(millis);
-        return traceBuilder.toString();
-    }
+	public static String getDebugTime() {
+		StringBuilder traceBuilder = new StringBuilder();
+
+		// Record the time
+		long time = System.currentTimeMillis();
+		long seconds = (time / 1000) % 1000;
+		if (seconds < 100)
+			traceBuilder.append('0');
+		if (seconds < 10)
+			traceBuilder.append('0');
+		traceBuilder.append(seconds);
+		traceBuilder.append(',');
+		long millis = time % 1000;
+		if (millis < 100)
+			traceBuilder.append('0');
+		if (millis < 10)
+			traceBuilder.append('0');
+		traceBuilder.append(millis);
+		return traceBuilder.toString();
+	}
 }

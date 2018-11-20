@@ -37,7 +37,7 @@ import org.eclipse.cdt.core.IErrorParserNamed;
 public class RegexErrorParser implements IErrorParserNamed {
 	private String fId;
 	private String fName;
-	private final List<RegexErrorPattern> fPatterns= new ArrayList<RegexErrorPattern>();
+	private final List<RegexErrorPattern> fPatterns = new ArrayList<RegexErrorPattern>();
 
 	/**
 	 * Default constructor will initialize the error parser with the name of the class
@@ -109,7 +109,7 @@ public class RegexErrorParser implements IErrorParserNamed {
 	 */
 	@Override
 	public String toString() {
-		return "id="+fId+", name="+fName;  //$NON-NLS-1$//$NON-NLS-2$
+		return "id=" + fId + ", name=" + fName; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**
@@ -135,7 +135,6 @@ public class RegexErrorParser implements IErrorParserNamed {
 		return fPatterns.toArray(new RegexErrorPattern[0]);
 	}
 
-
 	/**
 	 * Parse a line of build output and register errors/warnings/infos for
 	 * Problems view in internal list of {@link ErrorParserManager}.
@@ -150,8 +149,8 @@ public class RegexErrorParser implements IErrorParserNamed {
 			try {
 				if (pattern.processLine(line, epManager))
 					return true;
-			} catch (Exception e){
-				String message = "Error parsing line [" + line + "]";  //$NON-NLS-1$//$NON-NLS-2$
+			} catch (Exception e) {
+				String message = "Error parsing line [" + line + "]"; //$NON-NLS-1$//$NON-NLS-2$
 				CCorePlugin.log(message, e);
 			}
 
@@ -164,10 +163,8 @@ public class RegexErrorParser implements IErrorParserNamed {
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof RegexErrorParser) {
-			RegexErrorParser that = (RegexErrorParser)o;
-			return this.fId.equals(that.fId)
-				&& this.fName.equals(that.fName)
-				&& this.fPatterns.equals(that.fPatterns);
+			RegexErrorParser that = (RegexErrorParser) o;
+			return this.fId.equals(that.fId) && this.fName.equals(that.fName) && this.fPatterns.equals(that.fPatterns);
 		}
 		return false;
 
@@ -180,7 +177,7 @@ public class RegexErrorParser implements IErrorParserNamed {
 	public Object clone() throws CloneNotSupportedException {
 		RegexErrorParser that = new RegexErrorParser(fId, fName);
 		for (RegexErrorPattern pattern : fPatterns) {
-			that.addPattern((RegexErrorPattern)pattern.clone());
+			that.addPattern((RegexErrorPattern) pattern.clone());
 		}
 		return that;
 	}

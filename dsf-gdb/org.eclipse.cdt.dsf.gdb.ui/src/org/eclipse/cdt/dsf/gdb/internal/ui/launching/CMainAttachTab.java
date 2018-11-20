@@ -7,20 +7,19 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
-
 /**
  * Main tab to use for an attach launch configuration.
- * 
+ *
  * @since 2.0
  */
 public class CMainAttachTab extends CMainTab {
-    public CMainAttachTab() {
-        super(CMainTab.DONT_CHECK_PROGRAM | CMainTab.INCLUDE_BUILD_SETTINGS);
-    }
+	public CMainAttachTab() {
+		super(CMainTab.DONT_CHECK_PROGRAM | CMainTab.INCLUDE_BUILD_SETTINGS);
+	}
 }

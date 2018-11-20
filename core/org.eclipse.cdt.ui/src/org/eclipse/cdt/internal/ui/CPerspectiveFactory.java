@@ -39,21 +39,21 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 	 */
 	@Override
 	public void createInitialLayout(IPageLayout layout) {
- 		String editorArea = layout.getEditorArea();
+		String editorArea = layout.getEditorArea();
 
-		IFolderLayout folder1= layout.createFolder("topLeft", IPageLayout.LEFT, (float)0.25, editorArea); //$NON-NLS-1$
+		IFolderLayout folder1 = layout.createFolder("topLeft", IPageLayout.LEFT, (float) 0.25, editorArea); //$NON-NLS-1$
 		folder1.addView(ProjectExplorer.VIEW_ID);
 		folder1.addPlaceholder(CUIPlugin.CVIEW_ID);
 		folder1.addPlaceholder(IPageLayout.ID_RES_NAV);
 		folder1.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 
-		IFolderLayout folder2= layout.createFolder("bottom", IPageLayout.BOTTOM, (float)0.75, editorArea); //$NON-NLS-1$
+		IFolderLayout folder2 = layout.createFolder("bottom", IPageLayout.BOTTOM, (float) 0.75, editorArea); //$NON-NLS-1$
 		folder2.addView(IPageLayout.ID_PROBLEM_VIEW);
 		folder2.addView(IPageLayout.ID_TASK_LIST);
 		folder2.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		folder2.addView(IPageLayout.ID_PROP_SHEET);
 
-		IFolderLayout folder3= layout.createFolder("topRight", IPageLayout.RIGHT,(float)0.75, editorArea); //$NON-NLS-1$
+		IFolderLayout folder3 = layout.createFolder("topRight", IPageLayout.RIGHT, (float) 0.75, editorArea); //$NON-NLS-1$
 		folder3.addView(IPageLayout.ID_OUTLINE);
 
 		layout.addActionSet(CUIPlugin.SEARCH_ACTION_SET_ID);

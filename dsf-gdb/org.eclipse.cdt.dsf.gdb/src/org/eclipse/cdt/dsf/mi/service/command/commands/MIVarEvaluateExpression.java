@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarEvaluateExpressionInfo;
 
 /**
- * 
+ *
  *     -var-evaluate-expression NAME
  *
  *  Evaluates the expression that is represented by the specified
@@ -29,19 +29,19 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarEvaluateExpressionInfo
  * specified for the object:
  *
  *      value=VALUE
- * 
+ *
  */
 public class MIVarEvaluateExpression extends MICommand<MIVarEvaluateExpressionInfo> {
-    
-    /**
-     * @since 1.1
-     */
-    public MIVarEvaluateExpression(ICommandControlDMContext dmc, String name) {
-        super(dmc, "-var-evaluate-expression", new String[] { name }); //$NON-NLS-1$
-    }
-    
-    @Override
-    public MIVarEvaluateExpressionInfo getResult(MIOutput out) {
-        return new MIVarEvaluateExpressionInfo(out);
-    }
+
+	/**
+	 * @since 1.1
+	 */
+	public MIVarEvaluateExpression(ICommandControlDMContext dmc, String name) {
+		super(dmc, "-var-evaluate-expression", new String[] { name }); //$NON-NLS-1$
+	}
+
+	@Override
+	public MIVarEvaluateExpressionInfo getResult(MIOutput out) {
+		return new MIVarEvaluateExpressionInfo(out);
+	}
 }

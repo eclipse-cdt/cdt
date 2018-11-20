@@ -87,11 +87,24 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 
 	protected class BinaryParserConfiguration {
 		IExtension fExtension;
-		public BinaryParserConfiguration(IExtension extension) { fExtension = extension; }
-		public String getID() {	return fExtension.getUniqueIdentifier();}
-		public String getName() { return fExtension.getLabel();	}
+
+		public BinaryParserConfiguration(IExtension extension) {
+			fExtension = extension;
+		}
+
+		public String getID() {
+			return fExtension.getUniqueIdentifier();
+		}
+
+		public String getName() {
+			return fExtension.getLabel();
+		}
+
 		@Override
-		public String toString() { return fExtension.getUniqueIdentifier();	}
+		public String toString() {
+			return fExtension.getUniqueIdentifier();
+		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof BinaryParserConfiguration) {
@@ -104,9 +117,11 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	protected class BinaryParserPageConfiguration {
 		ICOptionPage dynamicPage;
 		IConfigurationElement fElement;
+
 		public BinaryParserPageConfiguration(IConfigurationElement element) {
 			fElement = element;
 		}
+
 		public ICOptionPage getPage() throws CoreException {
 			if (dynamicPage == null) {
 				dynamicPage = (ICOptionPage) fElement.createExecutableExtension("class"); //$NON-NLS-1$
@@ -145,24 +160,29 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				handleBinaryParserChanged();
 				updateButtons();
-		}});
+			}
+		});
 		tv = new CheckboxTableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement) {
-				return (Object[])inputElement;
+				return (Object[]) inputElement;
 			}
+
 			@Override
-			public void dispose() {}
+			public void dispose() {
+			}
+
 			@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
 		});
 		tv.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				String txt = (element != null) ? element.toString() : EMPTY_STR;
 				if (element instanceof BinaryParserConfiguration)
-					txt = ((BinaryParserConfiguration)element).getName();
+					txt = ((BinaryParserConfiguration) element).getName();
 				return txt;
 			}
 		});
@@ -171,12 +191,13 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				saveChecked();
-			}});
+			}
+		});
 
 		// get "standard" buttons on my own place
 		Composite c = new Composite(c1, SWT.NONE);
 		c.setLayoutData(new GridData(GridData.END));
-		initButtons(c, new String[] {MOVEUP_STR, MOVEDOWN_STR});
+		initButtons(c, new String[] { MOVEUP_STR, MOVEDOWN_STR });
 
 		parserGroup = new Composite(sashForm, SWT.NULL);
 		GridData gd = new GridData();
@@ -191,23 +212,23 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		gd.horizontalSpan = 2;
 		parserGroup.setLayoutData(gd);
 
-  	    sashForm.setWeights(new int[] {100, 100});
+		sashForm.setWeights(new int[] { 100, 100 });
 		initializeParserList();
 		initializeParserPageMap();
 		handleBinaryParserChanged();
 	}
 
-    @Override
+	@Override
 	public void setVisible(boolean _visible) {
-    	super.setVisible(_visible);
-    	page.enableConfigSelection(!_visible);
-    }
+		super.setVisible(_visible);
+		page.enableConfigSelection(!_visible);
+	}
 
 	@Override
 	public void updateData(ICResourceDescription cfgd) {
 		String[] ids = null;
 		if (page.isForPrefs()) { // prefs
-			if (cfgd != null &&	cfgd.getConfiguration() != null) {
+			if (cfgd != null && cfgd.getConfiguration() != null) {
 				tps = cfgd.getConfiguration().getTargetPlatformSetting();
 				if (tps != null)
 					ids = tps.getBinaryParserIds();
@@ -222,13 +243,13 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		HashMap<String, BinaryParserConfiguration> clone = new HashMap<String, BinaryParserConfiguration>(configMap);
 		// add checked elements
 		int i;
-		for (i=0; i<ids.length; i++) {
+		for (i = 0; i < ids.length; i++) {
 			data[i] = clone.get(ids[i]);
 			clone.remove(ids[i]);
 		}
 		// add remaining parsers (unchecked)
 		Iterator<String> it = clone.keySet().iterator();
-//		i = 0;
+		//		i = 0;
 		while (it.hasNext()) {
 			String s = it.next();
 			data[i++] = clone.get(s);
@@ -236,7 +257,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		tv.setInput(data);
 		tv.setAllChecked(false);
 		// set check marks
-		for (i=0; i<ids.length; i++) {
+		for (i = 0; i < ids.length; i++) {
 			if (configMap.containsKey(ids[i])) {
 				tv.setChecked(configMap.get(ids[i]), true);
 			}
@@ -245,7 +266,8 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	}
 
 	private void initializeParserList() {
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.BINARY_PARSER_SIMPLE_ID);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
+				CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
 			configMap = new HashMap<String, BinaryParserConfiguration>(exts.length);
@@ -260,7 +282,8 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	private void initializeParserPageMap() {
 		fParserPageMap = new HashMap<String, BinaryParserPageConfiguration>(5);
 
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
+				"BinaryParserPage"); //$NON-NLS-1$
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 		for (IConfigurationElement info : infos) {
 			if (info.getName().equals("parserPage")) { //$NON-NLS-1$
@@ -271,7 +294,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	}
 
 	private boolean isExtensionVisible(IExtension ext) {
- 		IConfigurationElement[] elements = ext.getConfigurationElements();
+		IConfigurationElement[] elements = ext.getConfigurationElements();
 		for (IConfigurationElement element : elements) {
 			IConfigurationElement[] children = element.getChildren(ATTR_FILTER);
 			for (IConfigurationElement element2 : children) {
@@ -295,6 +318,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		buttonSetEnabled(0, pos > 0);
 		buttonSetEnabled(1, pos != -1 && pos < (cnt - 1));
 	}
+
 	protected void handleBinaryParserChanged() {
 		String[] enabled = getBinaryParserIDs();
 		ICOptionPage dynamicPage;
@@ -312,7 +336,9 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		// Retrieve the dynamic UI for the current parser
 		String parserID = getCurrentBinaryParserID();
 		dynamicPage = getBinaryParserPage(parserID);
-		if (dynamicPage != null) { dynamicPage.setVisible(true); }
+		if (dynamicPage != null) {
+			dynamicPage.setVisible(true);
+		}
 	}
 
 	protected String[] getBinaryParserIDs() {
@@ -324,22 +350,24 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		if (configElement != null) {
 			try {
 				return configElement.getPage();
-			} catch (CoreException e) {}
+			} catch (CoreException e) {
+			}
 		}
 		return null;
 	}
 
 	protected String getCurrentBinaryParserID() {
 		int x = table.getSelectionIndex();
-		if (x < 0) return null;
-		return ((BinaryParserConfiguration)table.getItem(x).getData()).getID();
+		if (x < 0)
+			return null;
+		return ((BinaryParserConfiguration) table.getItem(x).getData()).getID();
 	}
 
 	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		if (page.isMultiCfg()) {
-			src = ((ICResourceDescription[])((ICMultiResourceDescription)src).getItems())[0];
-			dst = ((ICResourceDescription[])((ICMultiResourceDescription)dst).getItems())[0];
+			src = ((ICResourceDescription[]) ((ICMultiResourceDescription) src).getItems())[0];
+			dst = ((ICResourceDescription[]) ((ICMultiResourceDescription) dst).getItems())[0];
 		}
 		ICTargetPlatformSetting tps1 = src.getConfiguration().getTargetPlatformSetting();
 		ICTargetPlatformSetting tps2 = dst.getConfiguration().getTargetPlatformSetting();
@@ -352,9 +380,8 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	protected void performDefaults() {
 		if (page.isForProject())
 			CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(), null);
-		else
-			if (tps != null)
-				tps.setBinaryParserIds(null);
+		else if (tps != null)
+			tps.setBinaryParserIds(null);
 		informPages(false);
 		updateData(getResDesc());
 	}
@@ -372,7 +399,8 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 					else
 						dynamicPage.performDefaults();
 				}
-			} catch (CoreException e) {}
+			} catch (CoreException e) {
+			}
 		}
 	}
 
@@ -393,9 +421,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	// Move item up / down
 	private void moveItem(boolean up) {
 		int n = table.getSelectionIndex();
-		if (n < 0 ||
-				(up && n == 0) ||
-				(!up && n+1 == table.getItemCount()))
+		if (n < 0 || (up && n == 0) || (!up && n + 1 == table.getItemCount()))
 			return;
 		Object d = tv.getElementAt(n);
 		boolean checked = tv.getChecked(d);
@@ -413,16 +439,18 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		String[] ids = null;
 		if (objs != null) {
 			ids = new String[objs.length];
-			for (int i=0; i<objs.length; i++) {
-				ids[i] = ((BinaryParserConfiguration)objs[i]).getID();
+			for (int i = 0; i < objs.length; i++) {
+				ids[i] = ((BinaryParserConfiguration) objs[i]).getID();
 			}
 		}
 		if (page.isForPrefs()) {
-			if (tps != null) tps.setBinaryParserIds(ids);
+			if (tps != null)
+				tps.setBinaryParserIds(ids);
 		} else {
 			CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(), ids);
 		}
 	}
+
 	// This page can be displayed for project only
 	@Override
 	public boolean canBeVisible() {

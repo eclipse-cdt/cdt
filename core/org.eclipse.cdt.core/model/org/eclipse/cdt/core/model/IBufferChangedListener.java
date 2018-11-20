@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
-
 /**
  * A listener, which gets notified when the contents of a specific buffer
  * have changed, or when the buffer is closed.
@@ -23,11 +21,11 @@ package org.eclipse.cdt.core.model;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * 
+ *
  * This interface is similar to the JDT IBufferChangedListener interface
  */
 public interface IBufferChangedListener {
-	/** 
+	/**
 	 * Notifies that the given event has occurred.
 	 *
 	 * @param event the change event

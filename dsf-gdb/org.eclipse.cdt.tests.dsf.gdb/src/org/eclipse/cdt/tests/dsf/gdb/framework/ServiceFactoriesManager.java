@@ -23,13 +23,13 @@ import org.eclipse.core.runtime.Status;
  * This is a Debug Service Factories Manager which keeps track of the factories provided by specific test cases.
  * This allow individual tests to override DSF-GDB Services which is sometimes needed to validate different
  * code paths.
- * 
+ *
  * The test is in charge of providing a unique id for the given factory, however this class will trigger an
  * exception if a duplicate id is detected.
- * 
+ *
  * This id can then be shared via launch attributes, since each individual test method has its
- * own launch configuration there is no possibility to override the launch attributes by other tests 
- * 
+ * own launch configuration there is no possibility to override the launch attributes by other tests
+ *
  * Users can then retrieve/remove the registered factory via the unique factory id provided by the test
  */
 public class ServiceFactoriesManager {
@@ -37,8 +37,7 @@ public class ServiceFactoriesManager {
 
 	private final Map<String, GdbDebugServicesFactory> fTestServiceFactoriesMap = new HashMap<>();
 
-	public void addTestServicesFactory(String id, GdbDebugServicesFactory servicesFactory)
-			throws CoreException {
+	public void addTestServicesFactory(String id, GdbDebugServicesFactory servicesFactory) throws CoreException {
 		if (fTestServiceFactoriesMap.containsKey(id)) {
 			throw new CoreException(new Status(IStatus.ERROR, TestsPlugin.getUniqueIdentifier(),
 					"A factory with this id already exists " + id));

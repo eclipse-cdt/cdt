@@ -19,26 +19,26 @@ import org.eclipse.core.runtime.IAdapterFactory;
 
 /**
  * Adapter factory adapting an {@link ICStackFrame} to an {@link ICEditorTextHover}.
- * 
+ *
  * @since 7.0
  */
 public class DebugTextHoverAdapterFactory implements IAdapterFactory {
 
-    private static final Class<?>[] TYPES = { ICEditorTextHover.class };
-    private static final Object fDebugTextHover= new DebugTextHover();
-    
-    @SuppressWarnings("unchecked")
-	@Override
-    public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-        if (adaptableObject instanceof ICStackFrame) {
-            return (T) fDebugTextHover;
-        }
-        return null;
-    }
+	private static final Class<?>[] TYPES = { ICEditorTextHover.class };
+	private static final Object fDebugTextHover = new DebugTextHover();
 
-    @Override
-    public Class<?>[] getAdapterList() {
-        return TYPES;
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+		if (adaptableObject instanceof ICStackFrame) {
+			return (T) fDebugTextHover;
+		}
+		return null;
+	}
+
+	@Override
+	public Class<?>[] getAdapterList() {
+		return TYPES;
+	}
 
 }

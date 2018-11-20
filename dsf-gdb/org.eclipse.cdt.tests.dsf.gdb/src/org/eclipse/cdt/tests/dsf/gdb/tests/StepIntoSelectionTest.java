@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *     Simon Marchi (Ericsson) - Fix atDoubleMethod* tests for older gdb (<= 7.3)
@@ -45,7 +45,7 @@ import org.junit.runners.Parameterized;
 
 /**
  * Tests Non Stop GDB RunControl "Step into Selection feature"
- * 
+ *
  */
 @SuppressWarnings("restriction")
 @RunWith(Parameterized.class)
@@ -66,15 +66,9 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	protected int ADD_WITH_ARG_LINE;
 	protected int ADD_NO_ARG_LINE;
 
-	protected static final String[] SOURCE_LINE_TAGS = {
-		"FOO_LINE",
-		"BAR_LINE",
-		"ADD_WITH_ARG_LINE",
-		"ADD_NO_ARG_LINE",
-	};
-	protected static final String[] HEADER_LINE_TAGS = {
-		"VALUE_LINE",
-	};
+	protected static final String[] SOURCE_LINE_TAGS = { "FOO_LINE", "BAR_LINE", "ADD_WITH_ARG_LINE",
+			"ADD_NO_ARG_LINE", };
+	protected static final String[] HEADER_LINE_TAGS = { "VALUE_LINE", };
 
 	//Target Functions
 	private final static FunctionDeclaration funcFoo = new FunctionDeclaration(null, "foo");
@@ -85,24 +79,24 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	private final static FunctionDeclaration funcAddWithArg = new FunctionDeclaration(null, "add");
 
 	static {
-		funcBar.setParameterTypes(new String[]{"int"});
-		funcRecursive.setParameterTypes(new String[]{"int"});
-		funcAddWithArg.setParameterTypes(new String[]{"int"});
+		funcBar.setParameterTypes(new String[] { "int" });
+		funcRecursive.setParameterTypes(new String[] { "int" });
+		funcAddWithArg.setParameterTypes(new String[] { "int" });
 	}
 
 	class ResultContext {
 		MIStoppedEvent fEvent = null;
 		IExecutionDMContext fContext = null;
-	
+
 		public ResultContext(MIStoppedEvent event, IExecutionDMContext context) {
 			this.fEvent = event;
 			this.fContext = context;
 		}
-		
+
 		public MIStoppedEvent getEvent() {
 			return fEvent;
 		}
-	
+
 		public IExecutionDMContext getContext() {
 			return fContext;
 		}
@@ -136,7 +130,8 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
 
-        if (fServicesTracker!=null) fServicesTracker.dispose();
+		if (fServicesTracker != null)
+			fServicesTracker.dispose();
 	}
 
 	@Override
@@ -145,32 +140,30 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 	}
 
-	private void validateLocation(ISuspendedDMEvent suspendedEvent, String expectedFunction, 
-			                      String expectedFile, int expectedLine, int expectedDepth) throws Throwable {
+	private void validateLocation(ISuspendedDMEvent suspendedEvent, String expectedFunction, String expectedFile,
+			int expectedLine, int expectedDepth) throws Throwable {
 		assertNotNull(suspendedEvent);
 
 		assertTrue("Expected suspended event to be IMIDMEvent, but it was not.", suspendedEvent instanceof IMIDMEvent);
-		Object miEvent = ((IMIDMEvent)suspendedEvent).getMIEvent();
-		
+		Object miEvent = ((IMIDMEvent) suspendedEvent).getMIEvent();
+
 		assertTrue("Expected mi event to be MIStoppedEvent, but it was not.", miEvent instanceof MIStoppedEvent);
-		MIStoppedEvent stoppedEvent = (MIStoppedEvent)miEvent;
-		
+		MIStoppedEvent stoppedEvent = (MIStoppedEvent) miEvent;
+
 		// Validate that the last stopped frame received is at the specified location
 		MIFrame frame = stoppedEvent.getFrame();
-		assertTrue("Not inside the expected function.  Expected " +
-				   expectedFunction + " but got " +
-				   frame.getFunction(), 
-				   frame.getFunction().endsWith(expectedFunction));
+		assertTrue(
+				"Not inside the expected function.  Expected " + expectedFunction + " but got " + frame.getFunction(),
+				frame.getFunction().endsWith(expectedFunction));
 		assertEquals(expectedLine, frame.getLine());
-		
-		assertTrue("Not inside the expected file.  Expected " +
-				   expectedFile + " but got " + frame.getFile(), 
-				   frame.getFile().endsWith(expectedFile));
+
+		assertTrue("Not inside the expected file.  Expected " + expectedFile + " but got " + frame.getFile(),
+				frame.getFile().endsWith(expectedFile));
 
 		int newDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 		assertEquals(expectedDepth, newDepth);
 
-		checkGdbIsSuspended();	
+		checkGdbIsSuspended();
 	}
 
 	private void checkGdbIsSuspended() throws Throwable {
@@ -182,7 +175,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 			}
 		};
 		fSession.getExecutor().execute(query);
-		
+
 		boolean suspended = query.get(TestsPlugin.massageTimeout(5000), TimeUnit.SECONDS);
 		assertTrue("Target is running. It should have been suspended", suspended);
 	}
@@ -191,14 +184,10 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	 * Perform a stepIntoSelection operation and return the SuspendedEvent indicating the
 	 * stepInto has been completed.
 	 */
-	private ISuspendedDMEvent triggerStepIntoSelection(final IExecutionDMContext exeContext, 
-			                                        final String sourceName, 
-			                                        final int targetLine, 
-			                                        final IFunctionDeclaration function, 
-			                                        final boolean skipBreakPoints)
-	throws Throwable {
-		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor =
-				new ServiceEventWaitor<ISuspendedDMEvent>(fSession, ISuspendedDMEvent.class);
+	private ISuspendedDMEvent triggerStepIntoSelection(final IExecutionDMContext exeContext, final String sourceName,
+			final int targetLine, final IFunctionDeclaration function, final boolean skipBreakPoints) throws Throwable {
+		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(fSession,
+				ISuspendedDMEvent.class);
 
 		Query<Object> query = new Query<Object>() {
 			@Override
@@ -208,21 +197,18 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 		};
 		fSession.getExecutor().execute(query);
 		query.get();
-		
-		return eventWaitor.waitForEvent(TestsPlugin.massageTimeout(10000));			
+
+		return eventWaitor.waitForEvent(TestsPlugin.massageTimeout(10000));
 	}
 
 	/**
 	 * Perform a stepIntoSelection operation and return the SuspendedEvent indicating the
 	 * stepInto has been completed.
 	 */
-	private ISuspendedDMEvent triggerRunToLine(final IExecutionDMContext exeContext, 
-			                                   final String sourceName, 
-			                                   final int targetLine, 
-			                                   final boolean skipBreakPoints)
-	throws Throwable {
-		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor =
-				new ServiceEventWaitor<ISuspendedDMEvent>(fSession, ISuspendedDMEvent.class);
+	private ISuspendedDMEvent triggerRunToLine(final IExecutionDMContext exeContext, final String sourceName,
+			final int targetLine, final boolean skipBreakPoints) throws Throwable {
+		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(fSession,
+				ISuspendedDMEvent.class);
 
 		Query<Object> query = new Query<Object>() {
 			@Override
@@ -232,8 +218,8 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 		};
 		fSession.getExecutor().execute(query);
 		query.get();
-		
-		return eventWaitor.waitForEvent(TestsPlugin.massageTimeout(10000));			
+
+		return eventWaitor.waitForEvent(TestsPlugin.massageTimeout(10000));
 	}
 
 	/**
@@ -241,33 +227,33 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void atSameLine() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("sameLineTest");
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("sameLineTest");
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
-        FunctionDeclaration targetFunction = funcFoo;
-        
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-        															stoppedEvent.getFrame().getLine(), targetFunction, false);
-        
-        validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, FOO_LINE, originalDepth + 1);
+		FunctionDeclaration targetFunction = funcFoo;
+
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
+				stoppedEvent.getFrame().getLine(), targetFunction, false);
+
+		validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, FOO_LINE, originalDepth + 1);
 	}
-	
+
 	/**
 	 * This test verifies that we can step into a selection from a later line than where we are currently.
 	 */
 	@Test
 	public void atLaterLine() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("laterLineTest");
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("laterLineTest");
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
-        FunctionDeclaration targetFunction = funcFoo;
-        int line = stoppedEvent.getFrame().getLine() + 3; // The method to stepInto is three lines below the start of the method
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-        															line, targetFunction, false);
+		FunctionDeclaration targetFunction = funcFoo;
+		int line = stoppedEvent.getFrame().getLine() + 3; // The method to stepInto is three lines below the start of the method
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
+				targetFunction, false);
 
-        validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, FOO_LINE, originalDepth + 1);
+		validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, FOO_LINE, originalDepth + 1);
 	}
 
 	/**
@@ -275,34 +261,34 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void atLaterLineOnDifferentFile() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("laterLineDifferentFileTest");
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("laterLineDifferentFileTest");
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
-        FunctionDeclaration targetFunction = funcValue;
-        int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-        															line, targetFunction, false);
+		FunctionDeclaration targetFunction = funcValue;
+		int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
+				targetFunction, false);
 
-        validateLocation(suspendedEvent, targetFunction.getElementName(), HEADER_NAME, VALUE_LINE, originalDepth + 1);
+		validateLocation(suspendedEvent, targetFunction.getElementName(), HEADER_NAME, VALUE_LINE, originalDepth + 1);
 	}
-	
+
 	/**
 	 * This test verifies that we can step into a selection than has two method calls.
 	 * We try to step into the deepest call.
 	 */
 	@Test
 	public void atDoubleMethodDeepCall() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("doubleMethodTest");
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("doubleMethodTest");
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
-        FunctionDeclaration targetFunction = funcFoo;
-        int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-        															line, targetFunction, false);
+		FunctionDeclaration targetFunction = funcFoo;
+		int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
+				targetFunction, false);
 
-        validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, FOO_LINE, originalDepth + 1);
+		validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, FOO_LINE, originalDepth + 1);
 	}
 
 	/**
@@ -311,16 +297,16 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void atDoubleMethodShalowCall() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("doubleMethodTest");
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("doubleMethodTest");
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
-        FunctionDeclaration targetFunction = funcBar;
-        int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-        															line, targetFunction, false);
+		FunctionDeclaration targetFunction = funcBar;
+		int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
+				targetFunction, false);
 
-        validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, BAR_LINE, originalDepth + 1);
+		validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, BAR_LINE, originalDepth + 1);
 	}
 
 	/**
@@ -328,20 +314,20 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void recursiveMethod() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("recursiveTest");
-        int finalLine = stoppedEvent.getFrame().getLine();
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("recursiveTest");
+		int finalLine = stoppedEvent.getFrame().getLine();
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
-        FunctionDeclaration targetFunction = funcRecursive;
+		FunctionDeclaration targetFunction = funcRecursive;
 
-        int line = stoppedEvent.getFrame().getLine() + 2; // The method to stepInto is two lines below the start of the method
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-        															line, targetFunction, false);
-        
-        validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, finalLine, originalDepth + 1);
+		int line = stoppedEvent.getFrame().getLine() + 2; // The method to stepInto is two lines below the start of the method
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
+				targetFunction, false);
+
+		validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, finalLine, originalDepth + 1);
 	}
-	
+
 	/**
 	 * This test verifies that if we try to step into a selection from an earlier line we will end up
 	 * stopping at the first breakpoint that hits.
@@ -349,26 +335,26 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	@Test
 	public void atPreviousLine() throws Throwable {
 		String functionName = "laterLineTest";
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(functionName);
-        int originalLine = stoppedEvent.getFrame().getLine();
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(functionName);
+		int originalLine = stoppedEvent.getFrame().getLine();
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
 		// Step past the function call
-        stoppedEvent = SyncUtil.step(4, StepType.STEP_OVER); 
-        // Set a bp one line below.  We will check that this breakpoint hits when a stepInto is done
-        int bpline = originalLine + 4 + 1;
-        SyncUtil.addBreakpoint(Integer.toString(bpline));
+		stoppedEvent = SyncUtil.step(4, StepType.STEP_OVER);
+		// Set a bp one line below.  We will check that this breakpoint hits when a stepInto is done
+		int bpline = originalLine + 4 + 1;
+		SyncUtil.addBreakpoint(Integer.toString(bpline));
 
-        FunctionDeclaration targetFunction = funcFoo;
-        int line = originalLine + 3; // The method to stepInto is three lines below the start of the method
-        
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-        															line, targetFunction, false);
+		FunctionDeclaration targetFunction = funcFoo;
+		int line = originalLine + 3; // The method to stepInto is three lines below the start of the method
 
-        validateLocation(suspendedEvent, functionName, SOURCE_NAME, bpline, originalDepth);
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
+				targetFunction, false);
+
+		validateLocation(suspendedEvent, functionName, SOURCE_NAME, bpline, originalDepth);
 	}
-	
+
 	/**
 	 * This test verifies that if we try to step into a selection from a later line that we will not reach, we will end up
 	 * stopping at the first breakpoint that hits.
@@ -377,29 +363,28 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	public void atLaterLineThatIsNotHit() throws Throwable {
 		String functionName = "laterLineNotHitTest";
 		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(functionName);
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
-        FunctionDeclaration targetFunction = funcFoo;
-        int line = stoppedEvent.getFrame().getLine() + 2; // The method to stepInto is two lines below the start of the method
-        												  // Except we'll never reach it
-        // Set a bp a couple of lines below.  We will check that this breakpoint hits and the stepInto is cancelled
-        int bpline = line + 2;
-        SyncUtil.addBreakpoint(Integer.toString(bpline));
+		FunctionDeclaration targetFunction = funcFoo;
+		int line = stoppedEvent.getFrame().getLine() + 2; // The method to stepInto is two lines below the start of the method
+															// Except we'll never reach it
+															// Set a bp a couple of lines below.  We will check that this breakpoint hits and the stepInto is cancelled
+		int bpline = line + 2;
+		SyncUtil.addBreakpoint(Integer.toString(bpline));
 
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-        															line, targetFunction, false); // Don't skip breakpoints
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
+				targetFunction, false); // Don't skip breakpoints
 
-        validateLocation(suspendedEvent, functionName, SOURCE_NAME, bpline, originalDepth);
+		validateLocation(suspendedEvent, functionName, SOURCE_NAME, bpline, originalDepth);
 
-        // Make sure the step to selection operation is no longer active by triggering a run to line before the step into selection line
-        suspendedEvent = triggerRunToLine(stoppedEvent.getDMContext(), SOURCE_NAME,
-										  bpline + 1, false);
-        
-        validateLocation(suspendedEvent, functionName, SOURCE_NAME, bpline + 1, originalDepth);
+		// Make sure the step to selection operation is no longer active by triggering a run to line before the step into selection line
+		suspendedEvent = triggerRunToLine(stoppedEvent.getDMContext(), SOURCE_NAME, bpline + 1, false);
+
+		validateLocation(suspendedEvent, functionName, SOURCE_NAME, bpline + 1, originalDepth);
 
 	}
-	
+
 	/**
 	 * This test verifies that when specified, we stop at a breakpoint that is hit before the StepIntoSelection
 	 * is completed.
@@ -407,50 +392,49 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	@Test
 	public void atLaterLineStopAtBreakpoint() throws Throwable {
 		String functionName = "laterLineTest";
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(functionName);
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
-        int originalLine = stoppedEvent.getFrame().getLine();
-        
-        // Set a breakpoint before the stepInto line
-        SyncUtil.addBreakpoint(Integer.toString(originalLine+1));
-        
-        int line = originalLine + 3; // The method to stepInto is three lines below the start of the method
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-        															line, funcFoo, false);
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(functionName);
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+		int originalLine = stoppedEvent.getFrame().getLine();
 
-        validateLocation(suspendedEvent, functionName, SOURCE_NAME, originalLine + 1, originalDepth);
+		// Set a breakpoint before the stepInto line
+		SyncUtil.addBreakpoint(Integer.toString(originalLine + 1));
+
+		int line = originalLine + 3; // The method to stepInto is three lines below the start of the method
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
+				funcFoo, false);
+
+		validateLocation(suspendedEvent, functionName, SOURCE_NAME, originalLine + 1, originalDepth);
 
 		// Make sure the step to selection operation is no longer active by triggering a run to line before the step into selection line
-        suspendedEvent = triggerRunToLine(stoppedEvent.getDMContext(), SOURCE_NAME,
-										  originalLine + 2, false);
-        
-        validateLocation(suspendedEvent, functionName, SOURCE_NAME, originalLine + 2, originalDepth);
+		suspendedEvent = triggerRunToLine(stoppedEvent.getDMContext(), SOURCE_NAME, originalLine + 2, false);
+
+		validateLocation(suspendedEvent, functionName, SOURCE_NAME, originalLine + 2, originalDepth);
 	}
-	
+
 	/**
 	 * This test verifies that when specified, we ignore all breakpoints that are hit before the StepIntoSelection
 	 * is completed.
 	 */
 	@Test
 	public void atLaterLineSkipBreakpoints() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("laterLineTest");
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
-        int originalLine = stoppedEvent.getFrame().getLine();
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("laterLineTest");
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+		int originalLine = stoppedEvent.getFrame().getLine();
 
-        // Set two breakpoints before the stepInto line
-        SyncUtil.addBreakpoint(Integer.toString(originalLine+1));
-        SyncUtil.addBreakpoint(Integer.toString(originalLine+2));
-        
-        int line = originalLine + 3; // The method to stepInto is three lines below the start of the method
+		// Set two breakpoints before the stepInto line
+		SyncUtil.addBreakpoint(Integer.toString(originalLine + 1));
+		SyncUtil.addBreakpoint(Integer.toString(originalLine + 2));
 
-        FunctionDeclaration targetFunction = funcFoo;
+		int line = originalLine + 3; // The method to stepInto is three lines below the start of the method
 
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-        															line, targetFunction, true);
+		FunctionDeclaration targetFunction = funcFoo;
 
-        validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, FOO_LINE, originalDepth + 1);
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
+				targetFunction, true);
+
+		validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, FOO_LINE, originalDepth + 1);
 	}
 
 	private void atDoubleMethodStopAtBreakpointCommon(int foo_line) throws Throwable {
@@ -464,10 +448,10 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 		FunctionDeclaration targetFunction = funcBar;
 		int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
 		// StepInto the method
-		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-																	line, targetFunction, false);  // Set not to skip breakpoints, but it should have no effect
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
+				targetFunction, false); // Set not to skip breakpoints, but it should have no effect
 
-			validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, BAR_LINE, originalDepth + 1);
+		validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, BAR_LINE, originalDepth + 1);
 	}
 
 	/**
@@ -504,8 +488,8 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 		FunctionDeclaration targetFunction = funcBar;
 		int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
 		// StepInto the method
-		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-																	line, targetFunction, true);  // Set skip breakpoints, which should have non impact
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
+				targetFunction, true); // Set skip breakpoints, which should have non impact
 
 		validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, BAR_LINE, originalDepth + 1);
 	}
@@ -540,27 +524,29 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void diffMethodByArgsNumber() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("methodWithDiffArgsNumberTest");
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("methodWithDiffArgsNumberTest");
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
-        FunctionDeclaration targetFunction = funcAddWithArg;
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-        															stoppedEvent.getFrame().getLine(), targetFunction, false);
+		FunctionDeclaration targetFunction = funcAddWithArg;
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
+				stoppedEvent.getFrame().getLine(), targetFunction, false);
 
-        validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, ADD_WITH_ARG_LINE, originalDepth + 1);
+		validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, ADD_WITH_ARG_LINE,
+				originalDepth + 1);
 	}
 
 	@Test
 	public void diffMethodByArgsNumber2() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("methodWithDiffArgsNumberTest");
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("methodWithDiffArgsNumberTest");
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
-        FunctionDeclaration targetFunction = funcAddNoArg;
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
-        															stoppedEvent.getFrame().getLine(), targetFunction, false);
+		FunctionDeclaration targetFunction = funcAddNoArg;
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
+				stoppedEvent.getFrame().getLine(), targetFunction, false);
 
-        validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, ADD_NO_ARG_LINE, originalDepth + 1);
+		validateLocation(suspendedEvent, targetFunction.getElementName(), SOURCE_NAME, ADD_NO_ARG_LINE,
+				originalDepth + 1);
 	}
 }

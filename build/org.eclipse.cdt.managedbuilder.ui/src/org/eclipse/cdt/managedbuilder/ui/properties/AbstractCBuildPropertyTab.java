@@ -29,31 +29,34 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Proposed parent for Build System property tabs.
- * 
+ *
  * In addition to AbstractCPropertyTab functionality,
  * provides several utility methods for configurations
  * handling.
  */
 public abstract class AbstractCBuildPropertyTab extends AbstractCPropertyTab {
-	public IConfiguration getConfigurationFromHoldsOptions(IHoldsOptions ho){
-		if(ho instanceof IToolChain)
-			return ((IToolChain)ho).getParent();
-		else if(ho instanceof ITool)
-			return getConfigurationFromTool((ITool)ho);
+	public IConfiguration getConfigurationFromHoldsOptions(IHoldsOptions ho) {
+		if (ho instanceof IToolChain)
+			return ((IToolChain) ho).getParent();
+		else if (ho instanceof ITool)
+			return getConfigurationFromTool((ITool) ho);
 		return null;
 	}
-	public IConfiguration getConfigurationFromTool(ITool tool){
+
+	public IConfiguration getConfigurationFromTool(ITool tool) {
 		return tool.getParentResourceInfo().getParent();
 	}
-	
+
 	public IConfiguration getCfg() {
 		return getCfg(getResDesc().getConfiguration());
 	}
+
 	public static IConfiguration getCfg(ICConfigurationDescription cfgd) {
 		if (cfgd instanceof ICMultiConfigDescription) {
-			ICConfigurationDescription[] cfds = (ICConfigurationDescription[])((ICMultiConfigDescription)cfgd).getItems();
+			ICConfigurationDescription[] cfds = (ICConfigurationDescription[]) ((ICMultiConfigDescription) cfgd)
+					.getItems();
 			return new MultiConfiguration(cfds);
-		} else 
+		} else
 			return ManagedBuildManager.getConfigurationForDescription(cfgd);
 	}
 
@@ -65,27 +68,25 @@ public abstract class AbstractCBuildPropertyTab extends AbstractCPropertyTab {
 	 */
 	public IResourceInfo getResCfg(ICResourceDescription cfgd) {
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd.getConfiguration());
-		
-		if (page.isForProject()) 
+
+		if (page.isForProject())
 			return cfg.getRootFolderInfo();
-		
+
 		IPath p = cfgd.getPath();
 		IResourceInfo f = null;
 		f = cfg.getResourceInfo(p, false);
-		
+
 		if (f != null && (!p.equals(f.getPath()))) {
 			String s = p.toString().replace('/', '_').replace('\\', '_');
-			if (page.isForFile()) 
-				f = cfg.createFileInfo(p, (IFolderInfo)f, null,
-						f.getId()+ s, f.getName() + s);
+			if (page.isForFile())
+				f = cfg.createFileInfo(p, (IFolderInfo) f, null, f.getId() + s, f.getName() + s);
 			else
-				f = cfg.createFolderInfo(p, (IFolderInfo)f, 
-						f.getId() + s, f.getName() + s);
+				f = cfg.createFolderInfo(p, (IFolderInfo) f, f.getId() + s, f.getName() + s);
 		}
 		if (f == null) {
-			if (page.isForFile()) 
+			if (page.isForFile())
 				f = cfg.createFileInfo(p);
-			
+
 			else
 				f = cfg.createFolderInfo(p);
 		}

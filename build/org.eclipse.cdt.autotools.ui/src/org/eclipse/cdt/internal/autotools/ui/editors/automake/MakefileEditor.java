@@ -56,7 +56,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-
 public class MakefileEditor extends TextEditor implements ISelectionChangedListener, IReconcilingParticipant {
 
 	/**
@@ -73,11 +72,10 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 */
 	private ListenerList<IReconcilingParticipant> fReconcilingListeners = new ListenerList<>(ListenerList.IDENTITY);
 
-
 	MakefileSourceConfiguration getMakefileSourceConfiguration() {
 		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
 		if (configuration instanceof MakefileSourceConfiguration) {
-			return (MakefileSourceConfiguration)configuration;
+			return (MakefileSourceConfiguration) configuration;
 		}
 		return null;
 	}
@@ -113,13 +111,14 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	public void dispose() {
 		if (fProjectionMakefileUpdater != null) {
 			fProjectionMakefileUpdater.uninstall();
-			fProjectionMakefileUpdater= null;
+			fProjectionMakefileUpdater = null;
 		}
 		super.dispose();
 	}
 
 	boolean isFoldingEnabled() {
-		return AutotoolsPlugin.getDefault().getPreferenceStore().getBoolean(MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
+		return AutotoolsPlugin.getDefault().getPreferenceStore()
+				.getBoolean(MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
 
 	@Override
@@ -142,9 +141,9 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
 		}
 
-//		ProjectionAnnotationModel model= (ProjectionAnnotationModel) getAdapter(ProjectionAnnotationModel.class);
+		//		ProjectionAnnotationModel model= (ProjectionAnnotationModel) getAdapter(ProjectionAnnotationModel.class);
 
-		fProjectionMakefileUpdater= new ProjectionMakefileUpdater();
+		fProjectionMakefileUpdater = new ProjectionMakefileUpdater();
 		if (fProjectionMakefileUpdater != null) {
 			fProjectionMakefileUpdater.install(this, projectionViewer);
 			fProjectionMakefileUpdater.initialize();
@@ -153,11 +152,12 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 
 	@Override
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		ISourceViewer viewer = new ProjectionViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
+		ISourceViewer viewer = new ProjectionViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(),
+				styles);
 
 		// ensure decoration support has been created and configured.
 		getSourceViewerDecorationSupport(viewer);
-		
+
 		return viewer;
 	}
 
@@ -191,7 +191,8 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 
 		ResourceBundle bundle = MakeUIMessages.getResourceBundle();
 
-		IAction a = new TextOperationAction(bundle, "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
+		IAction a = new TextOperationAction(bundle, "ContentAssistProposal.", this, //$NON-NLS-1$
+				ISourceViewer.CONTENTASSIST_PROPOSALS);
 		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssistProposal", a); //$NON-NLS-1$
 
@@ -203,7 +204,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		a.setActionDefinitionId(IMakefileEditorActionDefinitionIds.COMMENT);
 		setAction("Comment", a); //$NON-NLS-1$
 		markAsStateDependentAction("Comment", true); //$NON-NLS-1$
- 
+
 		a = new TextOperationAction(bundle, "Uncomment.", this, ITextOperationTarget.STRIP_PREFIX); //$NON-NLS-1$
 		a.setActionDefinitionId(IMakefileEditorActionDefinitionIds.UNCOMMENT);
 		setAction("Uncomment", a); //$NON-NLS-1$
@@ -221,13 +222,13 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		ISelection selection = event.getSelection();
 		if (selection.isEmpty()) {
 			resetHighlightRange();
-		} else if (selection instanceof IStructuredSelection){                                                                                                                         
+		} else if (selection instanceof IStructuredSelection) {
 			if (!isActivePart() && AutotoolsUIPlugin.getActivePage() != null) {
 				AutotoolsUIPlugin.getActivePage().bringToTop(this);
-			}                                                                                                                 
-			Object element =  ((IStructuredSelection) selection).getFirstElement();
+			}
+			Object element = ((IStructuredSelection) selection).getFirstElement();
 			if (element instanceof IDirective) {
-				IDirective statement = (IDirective)element;
+				IDirective statement = (IDirective) element;
 				setSelection(statement, !isActivePart());
 			}
 		}
@@ -237,21 +238,21 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 * Returns whether the editor is active.
 	 */
 	private boolean isActivePart() {
-		IWorkbenchWindow window= getSite().getWorkbenchWindow();
-		IPartService service= window.getPartService();
-		IWorkbenchPart part= service.getActivePart();
+		IWorkbenchWindow window = getSite().getWorkbenchWindow();
+		IPartService service = window.getPartService();
+		IWorkbenchPart part = service.getActivePart();
 		return part != null && part.equals(this);
 	}
 
 	/**
 	 * Returns the find/replace document adapter.
-	 * 
+	 *
 	 * @return the find/replace document adapter.
 	 */
 	private FindReplaceDocumentAdapter getFindRepalceDocumentAdapter() {
 		if (fFindReplaceDocumentAdapter == null) {
 			IDocument doc = getDocumentProvider().getDocument(getEditorInput());
-			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(doc);
+			fFindReplaceDocumentAdapter = new FindReplaceDocumentAdapter(doc);
 		}
 		return fFindReplaceDocumentAdapter;
 	}
@@ -308,7 +309,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	/**
 	 * Adds the given listener.
 	 * Has no effect if an identical listener was not already registered.
-	 * 
+	 *
 	 * @param listener	The reconcile listener to be added
 	 * @since 3.0
 	 */
@@ -317,11 +318,11 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 			fReconcilingListeners.add(listener);
 		}
 	}
-	
+
 	/**
 	 * Removes the given listener.
 	 * Has no effect if an identical listener was not already registered.
-	 * 
+	 *
 	 * @param listener	the reconcile listener to be removed
 	 * @since 3.0
 	 */
@@ -330,65 +331,64 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 			fReconcilingListeners.remove(listener);
 		}
 	}
-	
+
 	@Override
-	public void reconciled() {		
+	public void reconciled() {
 		// Notify listeners
-		for (IReconcilingParticipant listener: fReconcilingListeners) {
+		for (IReconcilingParticipant listener : fReconcilingListeners) {
 			listener.reconciled();
 		}
 	}
 
 	@Override
 	protected void performRevert() {
-		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
+		ProjectionViewer projectionViewer = (ProjectionViewer) getSourceViewer();
 		projectionViewer.setRedraw(false);
 		try {
-			
-			boolean projectionMode= projectionViewer.isProjectionMode();
+
+			boolean projectionMode = projectionViewer.isProjectionMode();
 			if (projectionMode) {
-				projectionViewer.disableProjection();				
+				projectionViewer.disableProjection();
 				if (fProjectionMakefileUpdater != null)
 					fProjectionMakefileUpdater.uninstall();
 			}
-			
+
 			super.performRevert();
-			
+
 			if (projectionMode) {
 				if (fProjectionMakefileUpdater != null)
-					fProjectionMakefileUpdater.install(this, projectionViewer);	
+					fProjectionMakefileUpdater.install(this, projectionViewer);
 				projectionViewer.enableProjection();
 			}
-			
+
 		} finally {
 			projectionViewer.setRedraw(true);
 		}
 	}
 
-
 	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		ISourceViewer sourceViewer= getSourceViewer();
+		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer == null)
 			return;
 
-        String property = event.getProperty();
+		String property = event.getProperty();
 
-        MakefileSourceConfiguration makeConf = getMakefileSourceConfiguration();
-        if (makeConf != null) {
-        	if (makeConf.affectsBehavior(event)) {
-        		makeConf.adaptToPreferenceChange(event);
-        		sourceViewer.invalidateTextPresentation();
-        	}
-        }
+		MakefileSourceConfiguration makeConf = getMakefileSourceConfiguration();
+		if (makeConf != null) {
+			if (makeConf.affectsBehavior(event)) {
+				makeConf.adaptToPreferenceChange(event);
+				sourceViewer.invalidateTextPresentation();
+			}
+		}
 
-        if (MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED.equals(property)) {
+		if (MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED.equals(property)) {
 			if (sourceViewer instanceof ProjectionViewer) {
-				ProjectionViewer projectionViewer= (ProjectionViewer) sourceViewer;
+				ProjectionViewer projectionViewer = (ProjectionViewer) sourceViewer;
 				if (fProjectionMakefileUpdater != null)
 					fProjectionMakefileUpdater.uninstall();
 				// either freshly enabled or provider changed
-				fProjectionMakefileUpdater= new ProjectionMakefileUpdater();
+				fProjectionMakefileUpdater = new ProjectionMakefileUpdater();
 				if (fProjectionMakefileUpdater != null) {
 					fProjectionMakefileUpdater.install(this, projectionViewer);
 				}

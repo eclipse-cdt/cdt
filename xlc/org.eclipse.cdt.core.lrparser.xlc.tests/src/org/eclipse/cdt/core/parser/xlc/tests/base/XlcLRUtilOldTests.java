@@ -24,11 +24,11 @@ public class XlcLRUtilOldTests extends LRUtilOldTests {
 	public static TestSuite suite() {
 		return suite(XlcLRUtilOldTests.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

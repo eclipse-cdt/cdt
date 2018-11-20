@@ -10,16 +10,16 @@
  *
  * Contributors:
  *     Vladimir Prus (CodeSourcery) - Initial API and implementation
- *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)     
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
 import org.eclipse.debug.core.model.MemoryByte;
 
-/** 
+/**
  * Example output is:
- * 
+ *
  *     (gdb)
  *     -data-read-memory-bytes &a 10
  *     ^done,memory=[{begin="0xbffff154",offset="0x00000000",
@@ -28,7 +28,7 @@ import org.eclipse.debug.core.model.MemoryByte;
  * @since 4.0
  */
 public class MIDataReadMemoryBytesInfo extends MIInfo {
-	
+
 	/**
 	 * Default Addressable size in octets
 	 */
@@ -39,7 +39,7 @@ public class MIDataReadMemoryBytesInfo extends MIInfo {
 	public MIDataReadMemoryBytesInfo(MIOutput output, int size) {
 		this(output, size, DEFAULT_WORD_SIZE);
 	}
-	
+
 	/**
 	 * @param count - Number of Addressable units
 	 * @param word_size - Addressable size in octets
@@ -49,17 +49,16 @@ public class MIDataReadMemoryBytesInfo extends MIInfo {
 		super(output);
 		parse(count, word_size);
 	}
-		
+
 	/**
 	 * Return the memory block
 	 */
-	public MemoryByte[] getMIMemoryBlock() {		
-		return fBlock;		
+	public MemoryByte[] getMIMemoryBlock() {
+		return fBlock;
 	}
-	
-	private void parse(int count, int word_size)
-	{		
-		fBlock = new MemoryByte[count*word_size];
+
+	private void parse(int count, int word_size) {
+		fBlock = new MemoryByte[count * word_size];
 		// Fill the block with invalid bytes, initially.
 		for (int i = 0; i < fBlock.length; i++)
 			fBlock[i] = new MemoryByte((byte) 0, (byte) 0);
@@ -69,7 +68,7 @@ public class MIDataReadMemoryBytesInfo extends MIInfo {
 		for (int i = 0; i < results.length; i++) {
 
 			if (results[i].getVariable().equals("memory")) //$NON-NLS-1$
-			{	
+			{
 				MIList v = (MIList) (results[i].getMIValue());
 				try {
 					for (int j = 0; j < v.getMIValues().length; ++j) {
@@ -80,8 +79,7 @@ public class MIDataReadMemoryBytesInfo extends MIInfo {
 							MIResult r = b.getMIResults()[k];
 							if (r.getVariable().equals("offset")) //$NON-NLS-1$
 							{
-								String offset_s = ((MIConst) r.getMIValue())
-								.getCString();
+								String offset_s = ((MIConst) r.getMIValue()).getCString();
 								offset = Integer.decode(offset_s);
 							} else if (r.getVariable().equals("contents")) //$NON-NLS-1$
 							{
@@ -89,17 +87,13 @@ public class MIDataReadMemoryBytesInfo extends MIInfo {
 							}
 						}
 
-						if (offset*word_size + contents.length()/2 <= count*word_size)
+						if (offset * word_size + contents.length() / 2 <= count * word_size)
 							for (int k = 0; k < contents.length() / 2; ++k) {
-								fBlock[offset*word_size + k] = new MemoryByte(
-										(byte) Integer.parseInt(
-												contents.substring(k * 2, k * 2 + 2),
-												16));
+								fBlock[offset * word_size + k] = new MemoryByte(
+										(byte) Integer.parseInt(contents.substring(k * 2, k * 2 + 2), 16));
 							}
 					}
-				}
-				catch(NumberFormatException e)
-				{
+				} catch (NumberFormatException e) {
 					// Something went wrong. Stop processing this memory range.
 				}
 			}

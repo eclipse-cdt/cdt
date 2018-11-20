@@ -36,10 +36,10 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * This class will open the C/C++ Projects view and highlight the
  * selected resource matching the current resouce being edited in
- * the C/C++ Editor.  It uses the IShowInSource/IShowInTarget to 
+ * the C/C++ Editor.  It uses the IShowInSource/IShowInTarget to
  * accomplish this task so as to provide some additional portability
  * and future proofing.
- * 
+ *
  * @deprecated Use generic IShowInTarget support instead.
  */
 @Deprecated
@@ -52,17 +52,17 @@ public class ShowInCViewAction extends SelectionProviderAction {
 		this(site.getPage(), site.getSelectionProvider());
 	}
 
-	public ShowInCViewAction(ITextEditor editor) {	
+	public ShowInCViewAction(ITextEditor editor) {
 		this(editor.getEditorSite().getWorkbenchWindow().getActivePage(), editor.getSelectionProvider());
 		fEditor = editor;
 	}
 
 	public ShowInCViewAction(IWorkbenchPage page, ISelectionProvider viewer) {
-		super(viewer, CEditorMessages.ShowInCView_label); 
-		setToolTipText(CEditorMessages.ShowInCView_tooltip); 
-		setDescription(CEditorMessages.ShowInCView_description); 
+		super(viewer, CEditorMessages.ShowInCView_label);
+		setToolTipText(CEditorMessages.ShowInCView_tooltip);
+		setDescription(CEditorMessages.ShowInCView_description);
 		this.page = page;
-		setDescription(CEditorMessages.ShowInCView_tooltip); 
+		setDescription(CEditorMessages.ShowInCView_tooltip);
 		//WorkbenchHelp.setHelp(this, ICHelpContextIds.SHOW_IN_CVIEW_ACTION);
 	}
 
@@ -72,7 +72,7 @@ public class ShowInCViewAction extends SelectionProviderAction {
 		if (selection instanceof ITextSelection) {
 			run(fEditor);
 		} else if (selection instanceof IStructuredSelection) {
-			run((IStructuredSelection)selection);
+			run((IStructuredSelection) selection);
 		}
 
 	}
@@ -91,7 +91,7 @@ public class ShowInCViewAction extends SelectionProviderAction {
 			if (part instanceof ISetSelectionTarget) {
 				((ISetSelectionTarget) part).selectReveal(selection);
 			}
-		} catch(PartInitException ex) {
+		} catch (PartInitException ex) {
 		}
 	}
 
@@ -117,4 +117,3 @@ public class ShowInCViewAction extends SelectionProviderAction {
 	}
 
 }
-

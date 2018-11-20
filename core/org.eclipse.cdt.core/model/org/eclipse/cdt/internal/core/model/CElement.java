@@ -59,9 +59,9 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	protected String fName;
 
 	protected CElement(ICElement parent, String name, int type) {
-		fParent= parent;
-		fName= name;
-		fType= type;
+		fParent = parent;
+		fName = name;
+		fType = type;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -69,7 +69,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	public Object getAdapter(Class adapter) {
 		// handle all kinds of resources
 		if (IResource.class.isAssignableFrom(adapter)) {
-			IResource r= getResource();
+			IResource r = getResource();
 			if (r != null && adapter.isAssignableFrom(r.getClass())) {
 				return r;
 			}
@@ -79,15 +79,15 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 	// setters
 
-	public void setElementType (int type) {
-		fType= type;
+	public void setElementType(int type) {
+		fType = type;
 	}
 
 	public void setElementName(String name) {
 		fName = name;
 	}
 
-	public void setParent (ICElement parent) {
+	public void setParent(ICElement parent) {
 		fParent = parent;
 	}
 
@@ -193,11 +193,11 @@ public abstract class CElement extends PlatformObject implements ICElement {
 			list.toArray(children);
 			return children;
 		}
-		return new ICElement[]{this};
+		return new ICElement[] { this };
 	}
 
 	@Override
-	public boolean isReadOnly () {
+	public boolean isReadOnly() {
 		IResource r = getUnderlyingResource();
 		if (r != null) {
 			ResourceAttributes attributes = r.getResourceAttributes();
@@ -214,7 +214,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 
 	@Override
-	public ICModel getCModel () {
+	public ICModel getCModel() {
 		ICElement current = this;
 		do {
 			if (current instanceof ICModel)
@@ -256,7 +256,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 * Tests if an element has the same name, type and an equal parent.
 	 */
 	@Override
-	public boolean equals (Object o) {
+	public boolean equals(Object o) {
 		if (this == o)
 			return true;
 		if (o instanceof ICElement) {
@@ -272,10 +272,9 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		if (lhs.getElementType() != rhs.getElementType()) {
 			return false;
 		}
-		String lhsName= lhs.getElementName();
-		String rhsName= rhs.getElementName();
-		if (lhsName == null || rhsName == null || lhsName.length() != rhsName.length() ||
-				!lhsName.equals(rhsName)) {
+		String lhsName = lhs.getElementName();
+		String rhsName = rhs.getElementName();
+		if (lhsName == null || rhsName == null || lhsName.length() != rhsName.length() || !lhsName.equals(rhsName)) {
 			return false;
 		}
 
@@ -285,8 +284,8 @@ public abstract class CElement extends PlatformObject implements ICElement {
 			}
 		}
 
-		ICElement lhsParent= lhs.getParent();
-		ICElement rhsParent= rhs.getParent();
+		ICElement lhsParent = lhs.getParent();
+		ICElement rhsParent = rhs.getParent();
 		if (lhsParent == rhsParent) {
 			return true;
 		}
@@ -298,7 +297,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		return getElementInfo(null);
 	}
 
-	public CElementInfo getElementInfo (IProgressMonitor monitor) throws CModelException {
+	public CElementInfo getElementInfo(IProgressMonitor monitor) throws CModelException {
 		CModelManager manager = CModelManager.getDefault();
 		CElementInfo info = (CElementInfo) manager.getInfo(this);
 		if (info != null) {
@@ -321,54 +320,54 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	// util
 	public String getTypeString() {
 		switch (getElementType()) {
-			case C_MODEL:
-				return "CMODEL";  //$NON-NLS-1$
-			case C_PROJECT:
-				return "CPROJECT";  //$NON-NLS-1$
-			case C_CCONTAINER:
-				if (this instanceof ISourceRoot) {
-					return "SOURCE_ROOT"; //$NON-NLS-1$
-				}
-				return "CCONTAINER"; //$NON-NLS-1$
-			case C_UNIT:
-				if (this instanceof IWorkingCopy) {
-					return "WORKING_UNIT";  //$NON-NLS-1$
-				}
-				return "TRANSLATION_UNIT";  //$NON-NLS-1$
-			case C_FUNCTION:
-				return "C_FUNCTION";  //$NON-NLS-1$
-			case C_FUNCTION_DECLARATION:
-				return "C_FUNCTION_DECLARATION";  //$NON-NLS-1$
-			case C_VARIABLE:
-				return "C_VARIABLE";  //$NON-NLS-1$
-			case C_VARIABLE_DECLARATION:
-				return "C_VARIABLE_DECLARATION";  //$NON-NLS-1$
-			case C_INCLUDE:
-				return "C_INCLUDE";  //$NON-NLS-1$
-			case C_MACRO:
-				return "C_MACRO"; 			 //$NON-NLS-1$
-			case C_STRUCT:
-				return "C_STRUCT"; //$NON-NLS-1$
-			case C_CLASS:
-				return "C_CLASS"; //$NON-NLS-1$
-			case C_UNION:
-				return "C_UNION"; //$NON-NLS-1$
-			case C_FIELD:
-				return "C_FIELD";  //$NON-NLS-1$
-			case C_METHOD:
-				return "C_METHOD"; 	//$NON-NLS-1$
-			case C_NAMESPACE:
-				return "C_NAMESPACE";  //$NON-NLS-1$
-			case C_USING:
-				return "C_USING";  //$NON-NLS-1$
-			case C_VCONTAINER:
-				return "C_CONTAINER"; //$NON-NLS-1$
-			case C_BINARY:
-				return "C_BINARY"; //$NON-NLS-1$
-			case C_ARCHIVE:
-				return "C_ARCHIVE"; //$NON-NLS-1$
-			default:
-				return "UNKNOWN"; //$NON-NLS-1$
+		case C_MODEL:
+			return "CMODEL"; //$NON-NLS-1$
+		case C_PROJECT:
+			return "CPROJECT"; //$NON-NLS-1$
+		case C_CCONTAINER:
+			if (this instanceof ISourceRoot) {
+				return "SOURCE_ROOT"; //$NON-NLS-1$
+			}
+			return "CCONTAINER"; //$NON-NLS-1$
+		case C_UNIT:
+			if (this instanceof IWorkingCopy) {
+				return "WORKING_UNIT"; //$NON-NLS-1$
+			}
+			return "TRANSLATION_UNIT"; //$NON-NLS-1$
+		case C_FUNCTION:
+			return "C_FUNCTION"; //$NON-NLS-1$
+		case C_FUNCTION_DECLARATION:
+			return "C_FUNCTION_DECLARATION"; //$NON-NLS-1$
+		case C_VARIABLE:
+			return "C_VARIABLE"; //$NON-NLS-1$
+		case C_VARIABLE_DECLARATION:
+			return "C_VARIABLE_DECLARATION"; //$NON-NLS-1$
+		case C_INCLUDE:
+			return "C_INCLUDE"; //$NON-NLS-1$
+		case C_MACRO:
+			return "C_MACRO"; //$NON-NLS-1$
+		case C_STRUCT:
+			return "C_STRUCT"; //$NON-NLS-1$
+		case C_CLASS:
+			return "C_CLASS"; //$NON-NLS-1$
+		case C_UNION:
+			return "C_UNION"; //$NON-NLS-1$
+		case C_FIELD:
+			return "C_FIELD"; //$NON-NLS-1$
+		case C_METHOD:
+			return "C_METHOD"; //$NON-NLS-1$
+		case C_NAMESPACE:
+			return "C_NAMESPACE"; //$NON-NLS-1$
+		case C_USING:
+			return "C_USING"; //$NON-NLS-1$
+		case C_VCONTAINER:
+			return "C_CONTAINER"; //$NON-NLS-1$
+		case C_BINARY:
+			return "C_BINARY"; //$NON-NLS-1$
+		case C_ARCHIVE:
+			return "C_ARCHIVE"; //$NON-NLS-1$
+		default:
+			return "UNKNOWN"; //$NON-NLS-1$
 		}
 	}
 
@@ -461,9 +460,9 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		ICElement element = this;
 		while (element != null) {
 			if (element.getElementType() == ancestorType) {
-				 return element;
+				return element;
 			}
-			element= element.getParent();
+			element = element.getParent();
 		}
 		return null;
 	}
@@ -473,9 +472,9 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 * otherwise false.
 	 */
 	public boolean isAncestorOf(ICElement e) {
-		ICElement parent= e.getParent();
+		ICElement parent = e.getParent();
 		while (parent != null && !parent.equals(this)) {
-			parent= parent.getParent();
+			parent = parent.getParent();
 		}
 		return parent != null;
 	}
@@ -501,7 +500,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 
 	public static int hashCode(ICElement elem) {
-		ICElement parent= elem.getParent();
+		ICElement parent = elem.getParent();
 		if (parent == null) {
 			return System.identityHashCode(elem);
 		}
@@ -512,7 +511,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 * Checks if two objects are identical
 	 * Subclasses should override accordingly
 	 */
-	public boolean isIdentical(CElement otherElement){
+	public boolean isIdentical(CElement otherElement) {
 		return this.equals(otherElement);
 	}
 
@@ -524,7 +523,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 		// If I am a Parent, visit my children
 		if (this instanceof IParent) {
-			ICElement [] children = ((IParent) this).getChildren();
+			ICElement[] children = ((IParent) this).getChildren();
 			for (int i = 0; i < children.length; ++i) {
 				children[i].accept(visitor);
 			}
@@ -541,7 +540,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 *
 	 * @return  the string representation
 	 */
-	public String getHandleMemento(){
+	public String getHandleMemento() {
 		StringBuilder buff = new StringBuilder();
 		getHandleMemento(buff);
 		return buff.toString();
@@ -570,7 +569,8 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 * @param memento  the memento tokenizer
 	 */
 	public ICElement getHandleFromMemento(MementoTokenizer memento) {
-		if (!memento.hasMoreTokens()) return this;
+		if (!memento.hasMoreTokens())
+			return this;
 		String token = memento.nextToken();
 		return getHandleFromMemento(token, memento);
 	}

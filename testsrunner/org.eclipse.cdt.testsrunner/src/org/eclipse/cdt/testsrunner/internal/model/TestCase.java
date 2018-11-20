@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,12 +36,11 @@ public class TestCase extends TestItem implements ITestCase {
 	 */
 	private List<TestMessage> testMessages = new ArrayList<TestMessage>();
 
-	
 	public TestCase(String name, TestSuite parent) {
 		super(name, parent);
 		reset();
 	}
-	
+
 	@Override
 	public Status getStatus() {
 		return status;
@@ -56,7 +55,7 @@ public class TestCase extends TestItem implements ITestCase {
 	public TestMessage[] getTestMessages() {
 		return testMessages.toArray(new TestMessage[testMessages.size()]);
 	}
-	
+
 	@Override
 	public void visit(IModelVisitor visitor) {
 		visitor.visit(this);
@@ -77,7 +76,7 @@ public class TestCase extends TestItem implements ITestCase {
 
 	/**
 	 * Modifies the status of the test case.
-	 * 
+	 *
 	 * @param status new test status
 	 */
 	public void setStatus(Status status) {
@@ -86,7 +85,7 @@ public class TestCase extends TestItem implements ITestCase {
 
 	/**
 	 * Modifies the execution time of the test case.
-	 * 
+	 *
 	 * @param testingTime new test execution time
 	 */
 	public void setTestingTime(int testingTime) {
@@ -95,7 +94,7 @@ public class TestCase extends TestItem implements ITestCase {
 
 	/**
 	 * Adds a new test message to the test case.
-	 * 
+	 *
 	 * @param testMessage message
 	 */
 	public void addTestMessage(TestMessage testMessage) {

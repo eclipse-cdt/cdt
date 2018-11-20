@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
@@ -56,16 +56,16 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 	private boolean isFreeFunction(IASTFunctionDefinition definition) {
 		return definition.getDeclarator().getName() instanceof ICPPASTQualifiedName;
 	}
-	
+
 	@Override
 	public void run(ModificationCollector modifications) throws CoreException {
 		newFileCheck();
 		ASTRewrite implAst = modifications.rewriterForTranslationUnit(context.getDefinitionAST());
-		List<IASTComment>leadingComments = implAst.getComments(context.getDefinition(), CommentPosition.leading);
+		List<IASTComment> leadingComments = implAst.getComments(context.getDefinition(), CommentPosition.leading);
 		removeDefinitionFromImplementation(implAst);
 		if (includeNode != null) {
-			implAst.insertBefore(context.getDefinitionAST(), 
-					context.getDefinitionAST().getChildren()[0], includeNode, infoText);
+			implAst.insertBefore(context.getDefinitionAST(), context.getDefinitionAST().getChildren()[0], includeNode,
+					infoText);
 		}
 		if (context.getDeclarationAST() != null) {
 			addDefinitionToClass(modifications, leadingComments);
@@ -87,7 +87,8 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 					otherAst = context.getAST(file, null);
 					includeNode = new ASTLiteralNode(fileCreator.getIncludeStatement() + "\n\n"); //$NON-NLS-1$
 				} else {
-					throw new NotSupportedException(Messages.ToggleFromImplementationToHeaderOrClassStrategy_CanNotCreateNewFile);
+					throw new NotSupportedException(
+							Messages.ToggleFromImplementationToHeaderOrClassStrategy_CanNotCreateNewFile);
 				}
 			}
 		}
@@ -102,27 +103,25 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 		newDefinition.setParent(otherAst);
 		headerRewrite.insertBefore(otherAst.getTranslationUnit(), null, newDefinition, infoText);
 		restoreBody(headerRewrite, newDefinition, modifications);
-		for (IASTComment comment : leadingComments) {			
+		for (IASTComment comment : leadingComments) {
 			headerRewrite.addComment(newDefinition, comment, CommentPosition.leading);
 		}
 	}
 
 	private void addDefinitionToClass(ModificationCollector modifications, List<IASTComment> leadingComments) {
-		ASTRewrite headerRewrite = modifications.rewriterForTranslationUnit(
-				context.getDeclarationAST());
-		IASTFunctionDefinition newDefinition = ToggleNodeHelper.createInClassDefinition(
-				context.getDeclaration(), context.getDefinition(), context.getDeclarationAST());
+		ASTRewrite headerRewrite = modifications.rewriterForTranslationUnit(context.getDeclarationAST());
+		IASTFunctionDefinition newDefinition = ToggleNodeHelper.createInClassDefinition(context.getDeclaration(),
+				context.getDefinition(), context.getDeclarationAST());
 		newDefinition.setParent(getParent());
 		restoreBody(headerRewrite, newDefinition, modifications);
 		headerRewrite.replace(context.getDeclaration().getParent(), newDefinition, infoText);
-		for (IASTComment comment : leadingComments) {			
+		for (IASTComment comment : leadingComments) {
 			headerRewrite.addComment(newDefinition, comment, CommentPosition.leading);
 		}
 	}
 
 	private IASTNode getParent() {
-		IASTNode parent = ASTQueries.findAncestorWithType(context.getDefinition(),
-				ICPPASTCompositeTypeSpecifier.class);
+		IASTNode parent = ASTQueries.findAncestorWithType(context.getDefinition(), ICPPASTCompositeTypeSpecifier.class);
 		IASTNode parentnode = null;
 		if (parent != null) {
 			parentnode = parent;
@@ -136,18 +135,19 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 			ModificationCollector modifications) {
 		IASTFunctionDefinition oldDefinition = context.getDefinition();
 		newDefinition.setBody(oldDefinition.getBody().copy(CopyStyle.withLocations));
-		
-		if (newDefinition instanceof ICPPASTFunctionWithTryBlock &&
-				oldDefinition instanceof ICPPASTFunctionWithTryBlock) {
+
+		if (newDefinition instanceof ICPPASTFunctionWithTryBlock
+				&& oldDefinition instanceof ICPPASTFunctionWithTryBlock) {
 			ICPPASTFunctionWithTryBlock newTryDef = (ICPPASTFunctionWithTryBlock) newDefinition;
 			ICPPASTFunctionWithTryBlock oldTryDef = (ICPPASTFunctionWithTryBlock) oldDefinition;
 			for (ICPPASTCatchHandler handler : oldTryDef.getCatchHandlers()) {
 				newTryDef.addCatchHandler(handler.copy(CopyStyle.withLocations));
 			}
 		}
-		copyAllCommentsToNewLocation(oldDefinition, modifications.rewriterForTranslationUnit(oldDefinition.getTranslationUnit()), headerRewrite);
+		copyAllCommentsToNewLocation(oldDefinition,
+				modifications.rewriterForTranslationUnit(oldDefinition.getTranslationUnit()), headerRewrite);
 	}
-	
+
 	private void copyAllCommentsToNewLocation(IASTNode node, final ASTRewrite oldRw, final ASTRewrite newRw) {
 		//Bug 486036: In case oldRw == newRw (same file), there's no need to copy anything, the comments will follow along.
 		if (oldRw == newRw) {
@@ -155,7 +155,7 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 		}
 		node.accept(new CPPASTAllVisitor() {
 			@Override
-			public int visitAll(IASTNode node){
+			public int visitAll(IASTNode node) {
 				copyComments(oldRw, newRw, node, CommentPosition.leading);
 				copyComments(oldRw, newRw, node, CommentPosition.trailing);
 				copyComments(oldRw, newRw, node, CommentPosition.freestanding);
@@ -182,7 +182,8 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 	}
 
 	private ICPPASTNamespaceDefinition findOutermostNonemptyNamspace() {
-		List<ICPPASTNamespaceDefinition> namespaces = ToggleNodeHelper.findSurroundingNamespaces(context.getDefinition());
+		List<ICPPASTNamespaceDefinition> namespaces = ToggleNodeHelper
+				.findSurroundingNamespaces(context.getDefinition());
 		Collections.reverse(namespaces);
 		IASTFunctionDefinition definition = context.getDefinition();
 		ICPPASTNamespaceDefinition ns = null;
@@ -196,8 +197,7 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 		return ns;
 	}
 
-	private boolean isSingleElementInNamespace(ICPPASTNamespaceDefinition ns,
-			IASTFunctionDefinition definition) {
+	private boolean isSingleElementInNamespace(ICPPASTNamespaceDefinition ns, IASTFunctionDefinition definition) {
 		return ns.getChildren().length == 2 && (ns.contains(definition));
 	}
 }

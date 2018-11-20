@@ -79,10 +79,9 @@ public class PTY {
 	 * @return whether PTY support for given mode is available on this platform
 	 * @since 5.6
 	 */
-	public static boolean isSupported(Mode mode ) {
+	public static boolean isSupported(Mode mode) {
 		return hasPTY && (isConsoleModeSupported || mode == Mode.TERMINAL);
 	}
-	
 
 	/**
 	 * Create PTY for use with Eclipse console.
@@ -94,7 +93,7 @@ public class PTY {
 
 	/**
 	 * Create PTY for given mode.
-	 * 
+	 *
 	 * <p>
 	 * The provided mode indicates whether the pseudo terminal is used with the interactive
 	 * Eclipse console or a terminal emulation:
@@ -119,7 +118,7 @@ public class PTY {
 
 	/**
 	 * Create pseudo terminal.
-	 * 
+	 *
 	 * <p>
 	 * The provided flag indicates whether the pseudo terminal is used with the interactive
 	 * Eclipse console:
@@ -134,7 +133,7 @@ public class PTY {
 	 * </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param console  whether terminal is used with Eclipse console
 	 * @throws IOException  if the PTY could not be created
 	 * @deprecated Use {@link #PTY(Mode)} instead
@@ -146,7 +145,7 @@ public class PTY {
 		if (console && !isConsoleModeSupported) {
 			throw new IOException(Messages.Util_exception_cannotCreatePty);
 		}
-		slave= hasPTY ? openMaster(console) : null;
+		slave = hasPTY ? openMaster(console) : null;
 
 		if (slave == null) {
 			throw new IOException(Messages.Util_exception_cannotCreatePty);
@@ -179,17 +178,17 @@ public class PTY {
 
 	/**
 	 * @return whether this pseudo terminal is for use with the Eclipse console.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public final boolean isConsole() {
 		return console;
 	}
-	
+
 	public PTYOutputStream getOutputStream() {
 		return out;
 	}
-	
+
 	public PTYInputStream getInputStream() {
 		return in;
 	}
@@ -198,7 +197,7 @@ public class PTY {
 	 * Change terminal window size to given width and height.
 	 * <p>
 	 * This should only be used when the pseudo terminal is configured
-	 * for use with a terminal emulation, i.e. when {@link #isConsole()} 
+	 * for use with a terminal emulation, i.e. when {@link #isConsole()}
 	 * returns <code>false</code>.
 	 * </p>
 	 * <p>
@@ -206,7 +205,7 @@ public class PTY {
 	 * Known platforms which support this method are:
 	 * <code>linux-x86</code>, <code>linux-x86_64</code>, <code>solaris-sparc</code>, <code>macosx</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public final void setTerminalSize(int width, int height) {
@@ -251,7 +250,8 @@ public class PTY {
 	/**
 	 * Native method when executing with a terminal emulation (winpty only).
 	 */
-	native int exec2(String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD, boolean console) throws IOException;
+	native int exec2(String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD,
+			boolean console) throws IOException;
 
 	/**
 	 * Native method to wait for process to terminate (winpty only).
@@ -274,5 +274,5 @@ public class PTY {
 			//CCorePlugin.log(e);
 		}
 	}
-	
+
 }

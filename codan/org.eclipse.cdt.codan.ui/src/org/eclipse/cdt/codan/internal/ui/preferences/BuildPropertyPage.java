@@ -35,12 +35,11 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements IWor
 
 	@Override
 	protected void createFieldEditors() {
-		addField(new LabelFieldEditor(CodanUIMessages.BuildPropertyPage_Description,
-				getFieldEditorParent()));
-		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_ON_BUILD, CodanUIMessages.BuildPropertyPage_RunWithBuild,
-				getFieldEditorParent()));
-		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_IN_EDITOR, CodanUIMessages.BuildPropertyPage_RunAsYouType,
-				getFieldEditorParent()));
+		addField(new LabelFieldEditor(CodanUIMessages.BuildPropertyPage_Description, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_ON_BUILD,
+				CodanUIMessages.BuildPropertyPage_RunWithBuild, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_IN_EDITOR,
+				CodanUIMessages.BuildPropertyPage_RunAsYouType, getFieldEditorParent()));
 	}
 
 	@Override
@@ -69,7 +68,7 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements IWor
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
 	@Override
@@ -81,7 +80,7 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements IWor
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
 	 */
 	@Override

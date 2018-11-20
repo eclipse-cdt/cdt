@@ -22,9 +22,7 @@ class BranchFlowInfo extends FlowInfo {
 
 	public BranchFlowInfo(IASTName label, FlowContext context) {
 		super(NO_RETURN);
-		fBranches= new HashSet<String>(2);
+		fBranches = new HashSet<String>(2);
 		fBranches.add(makeString(label));
 	}
 }
-
-

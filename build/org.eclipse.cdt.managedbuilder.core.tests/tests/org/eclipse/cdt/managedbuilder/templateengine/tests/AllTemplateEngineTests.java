@@ -20,10 +20,10 @@ import junit.framework.TestSuite;
  * This is a TestSuite, the TestCases created to test Template engine are
  * added to test-suite. The test suite will execute all the test cases added
  * to the Suite.
- * 
+ *
  * @since 4.0
  */
-public class AllTemplateEngineTests extends TestSuite{
+public class AllTemplateEngineTests extends TestSuite {
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(AllTemplateEngineTests.suite());
@@ -35,7 +35,7 @@ public class AllTemplateEngineTests extends TestSuite{
 	 * UIPages are added.  The Wizard is launched from here.
 	 * The TestCases created to test the TemplateEngine is initialized here.
 	 * @return
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static Test suite() {

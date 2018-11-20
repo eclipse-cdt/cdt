@@ -15,7 +15,6 @@
 
 package org.eclipse.cdt.core.model;
 
-
 /**
  * A C model region describes a hierarchical set of elements.
  * Regions are often used to describe a set of elements to be considered
@@ -24,7 +23,7 @@ package org.eclipse.cdt.core.model;
  * projects.
  * <p>
  * When an element is included in a region, all of its children
- * are considered to be included. Children of an included element 
+ * are considered to be included. Children of an included element
  * <b>cannot</b> be selectively excluded.
  * </p>
  * @noextend This interface is not intended to be extended by clients.
@@ -37,31 +36,34 @@ public interface IRegion {
 	 * ancestors is already included, this has no effect. If the element
 	 * being added is an ancestor of an element already contained in this
 	 * region, the ancestor subsumes the descendent.
-	 * 
+	 *
 	 * @param element the given element
 	 */
 	void add(ICElement element);
+
 	/**
 	 * Returns whether the given element is contained in this region.
-	 * 
+	 *
 	 * @param element the given element
 	 * @return true if the given element is contained in this region, false otherwise
 	 */
 	boolean contains(ICElement element);
+
 	/**
 	 * Returns the top level elements in this region.
 	 * All descendents of these elements are also included in this region.
-	 * 
+	 *
 	 * @return the top level elements in this region
 	 */
 	ICElement[] getElements();
+
 	/**
 	 * Removes the specified element from the region and returns
 	 * <code>true</code> if successful, <code>false</code> if the remove
 	 * fails. If an ancestor of the given element is included, the
 	 * remove fails (in other words, it is not possible to selectively
 	 * exclude descendants of included ancestors).
-	 * 
+	 *
 	 * @param element the given element
 	 * @return <code>true</code> if successful, <code>false</code> if the remove fails
 	 */

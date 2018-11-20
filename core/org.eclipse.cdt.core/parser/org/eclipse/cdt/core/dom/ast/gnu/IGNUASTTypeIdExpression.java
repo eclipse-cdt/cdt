@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Markus Schorn (Wind River Systems) 
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.gnu;
 
@@ -32,7 +32,7 @@ public interface IGNUASTTypeIdExpression extends IASTTypeIdExpression {
 	 * expressions.
 	 */
 	public static final int op_alignof = IASTTypeIdExpression.op_alignof;
-	
+
 	/**
 	 * @since 5.1
 	 */

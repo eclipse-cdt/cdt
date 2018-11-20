@@ -60,7 +60,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 
 /**
  * Libraries tab for C/C++ Project Paths page for 3.X projects.
- * 
+ *
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
  * for 3.X style projects.
  */
@@ -81,28 +81,24 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	private final int IDX_EXPORT = 7;
 
 	public CPathLibraryEntryPage(ListDialogField<CPElement> cPathList) {
-		super(CPathEntryMessages.LibrariesEntryPage_title); 
-		setDescription(CPathEntryMessages.LibrariesEntryPage_description); 
+		super(CPathEntryMessages.LibrariesEntryPage_title);
+		setDescription(CPathEntryMessages.LibrariesEntryPage_description);
 
 		fWorkspaceRoot = CUIPlugin.getWorkspace().getRoot();
 		fCPathList = cPathList;
 
 		LibrariesAdapter adapter = new LibrariesAdapter();
 
-		String[] buttonLabels= new String[] { 
-			CPathEntryMessages.LibrariesEntryPage_libraries_addextlib_button, 
-			CPathEntryMessages.LibrariesEntryPage_libraries_addworkspacelib_button, 
-			CPathEntryMessages.LibrariesEntryPage_libraries_addcontriblib_button, 
-			/* */ null,  
-			CPathEntryMessages.LibrariesEntryPage_libraries_edit_button, 
-			CPathEntryMessages.LibrariesEntryPage_libraries_remove_button, 
-			null,
-			CPathEntryMessages.LibrariesEntryPage_libraries_export_button
-		};		
+		String[] buttonLabels = new String[] { CPathEntryMessages.LibrariesEntryPage_libraries_addextlib_button,
+				CPathEntryMessages.LibrariesEntryPage_libraries_addworkspacelib_button,
+				CPathEntryMessages.LibrariesEntryPage_libraries_addcontriblib_button, /* */ null,
+				CPathEntryMessages.LibrariesEntryPage_libraries_edit_button,
+				CPathEntryMessages.LibrariesEntryPage_libraries_remove_button, null,
+				CPathEntryMessages.LibrariesEntryPage_libraries_export_button };
 
 		fLibrariesList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
 		fLibrariesList.setDialogFieldListener(adapter);
-		fLibrariesList.setLabelText(CPathEntryMessages.LibrariesEntryPage_libraries_label); 
+		fLibrariesList.setLabelText(CPathEntryMessages.LibrariesEntryPage_libraries_label);
 
 		fLibrariesList.setViewerComparator(new CPElementSorter());
 		fLibrariesList.enableButton(IDX_EDIT, false);
@@ -125,7 +121,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	private void updateLibrariesList() {
 		List<CPElement> cpelements = filterList(fCPathList.getElements());
 		fLibrariesList.setElements(cpelements);
-	}		
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathBasePage#getSelection()
@@ -173,7 +169,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		PixelConverter converter = new PixelConverter(parent);
 		Composite composite = new Composite(parent, SWT.NONE);
 
-		LayoutUtil.doDefaultLayout(composite, new DialogField[] {fLibrariesList}, true);
+		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fLibrariesList }, true);
 		LayoutUtil.setHorizontalGrabbing(fLibrariesList.getTreeControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
@@ -182,29 +178,30 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		fLibrariesList.getTreeViewer().setSorter(new CPElementSorter());
 
 		setControl(composite);
-		
-		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_PATHS_LIBRARIES);
+
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite,
+				ICHelpContextIds.PROJECT_PATHS_LIBRARIES);
 	}
 
 	private class LibrariesAdapter implements IDialogFieldListener, ITreeListAdapter<CPElement> {
-		private final Object[] EMPTY_ARR= new Object[0];
-		
+		private final Object[] EMPTY_ARR = new Object[0];
+
 		// -------- IListAdapter --------
 		@Override
 		public void customButtonPressed(TreeListDialogField<CPElement> field, int index) {
 			libraryPageCustomButtonPressed(field, index);
 		}
-		
+
 		@Override
 		public void selectionChanged(TreeListDialogField<CPElement> field) {
 			libraryPageSelectionChanged(field);
 		}
-		
+
 		@Override
 		public void doubleClicked(TreeListDialogField<CPElement> field) {
 			libraryPageDoubleClicked(field);
 		}
-		
+
 		@Override
 		public void keyPressed(TreeListDialogField<CPElement> field, KeyEvent event) {
 			libraryPageKeyPressed(field, event);
@@ -228,28 +225,28 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 
 		@Override
 		public boolean hasChildren(TreeListDialogField<CPElement> field, Object element) {
-//			return (element instanceof CPElement);
+			//			return (element instanceof CPElement);
 			return false;
-		}		
-			
+		}
+
 		// ---------- IDialogFieldListener --------
-	
+
 		@Override
 		public void dialogFieldChanged(DialogField field) {
 		}
 	}
 
 	protected void libraryPageCustomButtonPressed(DialogField field, int index) {
-		CPElement[] libentries= null;
+		CPElement[] libentries = null;
 		switch (index) {
 		case IDX_ADD_LIB: /* add jar */
-			libentries= openLibFileDialog(null);
+			libentries = openLibFileDialog(null);
 			break;
 		case IDX_ADD_LIBEXT: /* add external jar */
-			libentries= openExtLibFileDialog(null);
+			libentries = openExtLibFileDialog(null);
 			break;
 		case IDX_ADD_CONTRIBUTED: /* add variable */
-			libentries= openContainerSelectionDialog(null);
+			libentries = openContainerSelectionDialog(null);
 			break;
 		case IDX_EDIT: /* edit */
 			editEntry();
@@ -257,20 +254,20 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		case IDX_REMOVE: /* remove */
 			removeEntry();
 			return;
-		case IDX_EXPORT :
+		case IDX_EXPORT:
 			/* export */
 			exportEntry();
-			return;		
+			return;
 		}
-		
+
 		if (libentries != null) {
-			int nElementsChosen= libentries.length;					
+			int nElementsChosen = libentries.length;
 			// remove duplicates
-			List<CPElement> cplist= fLibrariesList.getElements();
-			List<CPElement> elementsToAdd= new ArrayList<CPElement>(nElementsChosen);
-			
-			for (int i= 0; i < nElementsChosen; i++) {
-				CPElement curr= libentries[i];
+			List<CPElement> cplist = fLibrariesList.getElements();
+			List<CPElement> elementsToAdd = new ArrayList<CPElement>(nElementsChosen);
+
+			for (int i = 0; i < nElementsChosen; i++) {
+				CPElement curr = libentries[i];
 				if (!cplist.contains(curr) && !elementsToAdd.contains(curr)) {
 					elementsToAdd.add(curr);
 					//curr.setAttribute(CPElement.SOURCEATTACHMENT, BuildPathSupport.guessSourceAttachment(curr));
@@ -292,11 +289,11 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		for (int i = 0; i < selElements.size(); i++) {
 			Object elem = selElements.get(i);
 			if (elem instanceof CPElement) {
-				CPElement curr = (CPElement)elem;
+				CPElement curr = (CPElement) elem;
 				if (curr.getParentContainer() != null) {
 					return false;
 				}
-				IPath base_ref = (IPath)curr.getAttribute(CPElement.BASE_REF);
+				IPath base_ref = (IPath) curr.getAttribute(CPElement.BASE_REF);
 				if (base_ref != null && !base_ref.equals(Path.EMPTY))
 					return false;
 
@@ -312,13 +309,13 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		}
 		Object elem = selElements.get(0);
 		if (fLibrariesList.getIndexOfElement(elem) != -1) {
-			((CPElement)elem).setExported(!((CPElement)elem).isExported()); // toggle export
+			((CPElement) elem).setExported(!((CPElement) elem).isExported()); // toggle export
 			fLibrariesList.refresh(elem);
 		}
 	}
-	
+
 	protected void libraryPageDoubleClicked(TreeListDialogField<CPElement> field) {
-		List<?> selection= fLibrariesList.getSelectedElements();
+		List<?> selection = fLibrariesList.getSelectedElements();
 		if (canEdit(selection)) {
 			editEntry();
 		}
@@ -327,22 +324,22 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	protected void libraryPageKeyPressed(TreeListDialogField<CPElement> field, KeyEvent event) {
 		if (field == fLibrariesList) {
 			if (event.character == SWT.DEL && event.stateMask == 0) {
-				List<?> selection= field.getSelectedElements();
+				List<?> selection = field.getSelectedElements();
 				if (canRemove(selection)) {
 					removeEntry();
 				}
 			}
-		}	
-	}	
+		}
+	}
 
 	private void removeEntry() {
-		List<?> selElements= fLibrariesList.getSelectedElements();
-		for (int i= selElements.size() - 1; i >= 0 ; i--) {
-			Object elem= selElements.get(i);
+		List<?> selElements = fLibrariesList.getSelectedElements();
+		for (int i = selElements.size() - 1; i >= 0; i--) {
+			Object elem = selElements.get(i);
 			if (elem instanceof CPElementAttribute) {
-				CPElementAttribute attrib= (CPElementAttribute) elem;
+				CPElementAttribute attrib = (CPElementAttribute) elem;
 				attrib.getParent().setAttribute(attrib.getKey(), null);
-				selElements.remove(i);				
+				selElements.remove(i);
 			}
 		}
 		if (selElements.isEmpty()) {
@@ -358,44 +355,44 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		if (selElements.size() == 0) {
 			return false;
 		}
-		for (int i= 0; i < selElements.size(); i++) {
-			Object elem= selElements.get(i);
+		for (int i = 0; i < selElements.size(); i++) {
+			Object elem = selElements.get(i);
 			if (elem instanceof CPElementAttribute) {
-				if (((CPElementAttribute)elem).getValue() == null) {
+				if (((CPElementAttribute) elem).getValue() == null) {
 					return false;
 				}
 			} else if (elem instanceof CPElement) {
-				CPElement curr= (CPElement) elem;
+				CPElement curr = (CPElement) elem;
 				if (curr.getParentContainer() != null) {
 					return false;
 				}
 			}
 		}
 		return true;
-	}	
+	}
 
 	/**
 	 * Method editEntry.
 	 */
 	private void editEntry() {
-		List<?> selElements= fLibrariesList.getSelectedElements();
+		List<?> selElements = fLibrariesList.getSelectedElements();
 		if (selElements.size() != 1) {
 			return;
 		}
-		Object elem= selElements.get(0);
+		Object elem = selElements.get(0);
 		if (fLibrariesList.getIndexOfElement(elem) != -1) {
 			editElementEntry((CPElement) elem);
 		} else if (elem instanceof CPElementAttribute) {
 			editAttributeEntry((CPElementAttribute) elem);
 		}
 	}
-	
+
 	private void editAttributeEntry(CPElementAttribute elem) {
-		String key= elem.getKey();
+		String key = elem.getKey();
 		if (key.equals(CPElement.SOURCEATTACHMENT)) {
-			CPElement selElement= elem.getParent();
-			ILibraryEntry libEntry = (ILibraryEntry)selElement.getPathEntry();
-			SourceAttachmentDialog dialog= new SourceAttachmentDialog(getShell(), libEntry, fCurrCProject, true);
+			CPElement selElement = elem.getParent();
+			ILibraryEntry libEntry = (ILibraryEntry) selElement.getPathEntry();
+			SourceAttachmentDialog dialog = new SourceAttachmentDialog(getShell(), libEntry, fCurrCProject, true);
 			if (dialog.open() == Window.OK) {
 				selElement.setAttribute(CPElement.SOURCEATTACHMENT, dialog.getSourceAttachmentPath());
 				fLibrariesList.refresh();
@@ -405,38 +402,38 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	}
 
 	private void editElementEntry(CPElement elem) {
-		CPElement[] res= null;
+		CPElement[] res = null;
 		switch (elem.getEntryKind()) {
-			case IPathEntry.CDT_LIBRARY:
-				IPath p = (IPath)elem.getAttribute(CPElement.LIBRARY);
-				if (p.isAbsolute()) {
-					res= openExtLibFileDialog(elem);
-				} else {
-					res= openLibFileDialog(elem);			
-				}
+		case IPathEntry.CDT_LIBRARY:
+			IPath p = (IPath) elem.getAttribute(CPElement.LIBRARY);
+			if (p.isAbsolute()) {
+				res = openExtLibFileDialog(elem);
+			} else {
+				res = openLibFileDialog(elem);
+			}
 			break;
 		}
 		if (res != null && res.length > 0) {
-			CPElement curr= res[0];
+			CPElement curr = res[0];
 			curr.setExported(elem.isExported());
 			fLibrariesList.replaceElement(elem, curr);
-		}					
+		}
 	}
 
 	protected void libraryPageSelectionChanged(DialogField field) {
-		List<?> selElements= fLibrariesList.getSelectedElements();
+		List<?> selElements = fLibrariesList.getSelectedElements();
 		fLibrariesList.enableButton(IDX_EDIT, canEdit(selElements));
 		fLibrariesList.enableButton(IDX_REMOVE, canRemove(selElements));
 		fLibrariesList.enableButton(IDX_EXPORT, canExport(selElements));
 	}
 
 	private IFile[] getUsedLibFiles(CPElement existing) {
-		List<IResource> res= new ArrayList<IResource>();
-		List<CPElement> cplist= fLibrariesList.getElements();
-		for (int i= 0; i < cplist.size(); i++) {
-			CPElement elem= cplist.get(i);
+		List<IResource> res = new ArrayList<IResource>();
+		List<CPElement> cplist = fLibrariesList.getElements();
+		for (int i = 0; i < cplist.size(); i++) {
+			CPElement elem = cplist.get(i);
 			if (elem.getEntryKind() == IPathEntry.CDT_LIBRARY && (elem != existing)) {
-				IResource resource= elem.getResource();
+				IResource resource = elem.getResource();
 				if (resource instanceof IFile) {
 					res.add(resource);
 				}
@@ -452,46 +449,49 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	}
 
 	private CPElement[] openExtLibFileDialog(CPElement existing) {
-		String title= CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_new_title; 
-		
-		FileDialog dialog= new FileDialog(getShell(), existing == null ? SWT.MULTI : SWT.SINGLE);
+		String title = CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_new_title;
+
+		FileDialog dialog = new FileDialog(getShell(), existing == null ? SWT.MULTI : SWT.SINGLE);
 		dialog.setText(title);
-		dialog.setFilterExtensions(new String[] {"*.a;*.so;*.dll;*.lib"}); //$NON-NLS-1$
+		dialog.setFilterExtensions(new String[] { "*.a;*.so;*.dll;*.lib" }); //$NON-NLS-1$
 		//dialog.setFilterPath(lastUsedPath);
 		if (existing != null) {
 			dialog.setFileName(existing.getPath().lastSegment());
 		}
-		
-		String res= dialog.open();
+
+		String res = dialog.open();
 		if (res == null) {
 			return null;
 		}
-		String[] fileNames= dialog.getFileNames();
-		int nChosen= fileNames.length;
-			
-		IPath filterPath= new Path(dialog.getFilterPath());
-		CPElement[] elems= new CPElement[nChosen];
-		for (int i= 0; i < nChosen; i++) {
-			IPath path= filterPath.append(fileNames[i]).makeAbsolute();	
-			elems[i]= newCPLibraryElement(path);
+		String[] fileNames = dialog.getFileNames();
+		int nChosen = fileNames.length;
+
+		IPath filterPath = new Path(dialog.getFilterPath());
+		CPElement[] elems = new CPElement[nChosen];
+		for (int i = 0; i < nChosen; i++) {
+			IPath path = filterPath.append(fileNames[i]).makeAbsolute();
+			elems[i] = newCPLibraryElement(path);
 		}
 		//fDialogSettings.put(IUIConstants.DIALOGSTORE_LASTEXTJAR, filterPath.toOSString());
-		
-		return elems;	
+
+		return elems;
 	}
 
 	private CPElement[] openLibFileDialog(CPElement existing) {
-		Class<?>[] acceptedClasses= new Class[] { IFile.class };
-		TypedElementSelectionValidator validator= new TypedElementSelectionValidator(acceptedClasses, existing == null);
-		ViewerFilter filter= new ArchiveFileFilter(getUsedLibFiles(existing), true);
-		
-		ILabelProvider lp= new WorkbenchLabelProvider();
-		ITreeContentProvider cp= new WorkbenchContentProvider();
-		
-		String title= (existing == null) ? CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_new_title : CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_edit_title; 
-		String message= (existing == null) ? CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_new_description : CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_edit_description; 
-		
-		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), lp, cp);
+		Class<?>[] acceptedClasses = new Class[] { IFile.class };
+		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,
+				existing == null);
+		ViewerFilter filter = new ArchiveFileFilter(getUsedLibFiles(existing), true);
+
+		ILabelProvider lp = new WorkbenchLabelProvider();
+		ITreeContentProvider cp = new WorkbenchContentProvider();
+
+		String title = (existing == null) ? CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_new_title
+				: CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_edit_title;
+		String message = (existing == null) ? CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_new_description
+				: CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_edit_description;
+
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), lp, cp);
 		dialog.setValidator(validator);
 		dialog.setTitle(title);
 		dialog.setMessage(message);
@@ -499,17 +499,17 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		dialog.setInput(fWorkspaceRoot);
 		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		if (existing == null) {
-			dialog.setInitialSelection(fCurrCProject.getProject());		
+			dialog.setInitialSelection(fCurrCProject.getProject());
 		} else {
 			dialog.setInitialSelection(existing.getResource());
 		}
-		
+
 		if (dialog.open() == Window.OK) {
-			Object[] elements= dialog.getResult();
-			CPElement[] res= new CPElement[elements.length];
-			for (int i= 0; i < res.length; i++) {
-				IPath path= ((IResource)elements[i]).getLocation();
-				res[i]= newCPLibraryElement(path);
+			Object[] elements = dialog.getResult();
+			CPElement[] res = new CPElement[elements.length];
+			for (int i = 0; i < res.length; i++) {
+				IPath path = ((IResource) elements[i]).getLocation();
+				res[i] = newCPLibraryElement(path);
 			}
 			return res;
 		}
@@ -529,13 +529,13 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		IContainerEntry elem = null;
 		String title;
 		if (existing == null) {
-			title = CPathEntryMessages.LibrariesEntryPage_ContainerDialog_new_title; 
+			title = CPathEntryMessages.LibrariesEntryPage_ContainerDialog_new_title;
 		} else {
-			title = CPathEntryMessages.LibrariesEntryPage_ContainerDialog_edit_title; 
-			elem = (IContainerEntry)existing.getPathEntry();
+			title = CPathEntryMessages.LibrariesEntryPage_ContainerDialog_edit_title;
+			elem = (IContainerEntry) existing.getPathEntry();
 		}
 		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, fCurrCProject, getRawPathEntries(),
-				new int[] {IPathEntry.CDT_LIBRARY});
+				new int[] { IPathEntry.CDT_LIBRARY });
 		wizard.setWindowTitle(title);
 		if (CPathContainerWizard.openWizard(getShell(), wizard) == Window.OK) {
 			IPathEntry parent = wizard.getEntriesParent();
@@ -545,7 +545,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 				CPElement[] res = new CPElement[elements.length];
 				for (int i = 0; i < res.length; i++) {
 					res[i] = new CPElement(fCurrCProject, IPathEntry.CDT_LIBRARY, fProjPath, null);
-					res[i].setAttribute(CPElement.LIBRARY, ((ILibraryEntry)elements[i]).getLibraryPath());
+					res[i].setAttribute(CPElement.LIBRARY, ((ILibraryEntry) elements[i]).getLibraryPath());
 					res[i].setAttribute(CPElement.BASE_REF, parent.getPath());
 				}
 				return res;
@@ -558,9 +558,9 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		if (selElements.size() != 1) {
 			return false;
 		}
-		Object elem= selElements.get(0);
+		Object elem = selElements.get(0);
 		if (elem instanceof CPElement) {
-			CPElement curr= (CPElement) elem;
+			CPElement curr = (CPElement) elem;
 			return !(curr.getResource() instanceof IFolder) && curr.getParentContainer() == null;
 		}
 		if (elem instanceof CPElementAttribute) {

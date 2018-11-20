@@ -13,12 +13,13 @@ package org.eclipse.cdt.internal.qt.core.pdom;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.core.runtime.CoreException;
 
-public class QtEnumName extends AbstractQObjectMemberName implements IQtASTName  {
+public class QtEnumName extends AbstractQObjectMemberName implements IQtASTName {
 
 	private final IASTName cppEnumName;
 	private final boolean isFlag;
 
-	public QtEnumName(IQtASTName qobjName, IASTName ast, String qtEnumName, IASTName cppEnumName, QtASTImageLocation location, boolean isFlag) {
+	public QtEnumName(IQtASTName qobjName, IASTName ast, String qtEnumName, IASTName cppEnumName,
+			QtASTImageLocation location, boolean isFlag) {
 		super(qobjName, ast, qtEnumName, location);
 		this.cppEnumName = cppEnumName;
 		this.isFlag = isFlag;

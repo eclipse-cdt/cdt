@@ -28,56 +28,56 @@ public interface IMILaunchConfigurationComponent {
 	 * <p>
 	 * Implementors are responsible for ensuring that the created control can be accessed via <code>getControl</code>
 	 * </p>
-	 * 
+	 *
 	 * @param parent the parent composite
 	 */
-	public void createControl( Composite parent );
+	public void createControl(Composite parent);
 
 	/**
 	 * Returns the top level control for this component.
 	 * <p>
 	 * May return <code>null</code> if the control has not been created yet.
 	 * </p>
-	 * 
+	 *
 	 * @return the top level control or <code>null</code>
 	 */
 	public Control getControl();
 
 	/**
-	 * Initializes the given component with default values. 
+	 * Initializes the given component with default values.
 	 * This method may be called before this tab's control is created.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 */
-	public void setDefaults( ILaunchConfigurationWorkingCopy configuration );
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration);
 
 	/**
-	 * Initializes this component's controls with values from the given 
+	 * Initializes this component's controls with values from the given
 	 * launch configuration.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 */
-	public void initializeFrom( ILaunchConfiguration configuration );
+	public void initializeFrom(ILaunchConfiguration configuration);
 
 	/**
-	 * Notifies this component that it has been disposed. 
-	 * Marks the end of this component's lifecycle, allowing 
+	 * Notifies this component that it has been disposed.
+	 * Marks the end of this component's lifecycle, allowing
 	 * to perform any cleanup required.
 	 */
 	public void dispose();
 
 	/**
 	 * Copies values from this component into the given launch configuration.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 */
-	public void performApply( ILaunchConfigurationWorkingCopy configuration );
+	public void performApply(ILaunchConfigurationWorkingCopy configuration);
 
 	/**
-	 * Returns whether this component is in a valid state in the context 
+	 * Returns whether this component is in a valid state in the context
 	 * of the specified launch configuration.
 	 *
-	 * @param launchConfig launch configuration which provides context 
+	 * @param launchConfig launch configuration which provides context
 	 * 		   for validating this component.
 	 *         This value must not be <code>null</code>.
 	 *

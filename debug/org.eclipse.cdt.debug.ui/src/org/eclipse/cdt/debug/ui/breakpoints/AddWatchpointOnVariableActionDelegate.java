@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.breakpoints;
 
-
 import org.eclipse.cdt.debug.core.ICWatchpointTarget;
 import org.eclipse.cdt.debug.internal.core.CRequest;
 import org.eclipse.debug.core.DebugPlugin;
@@ -24,10 +23,10 @@ import org.eclipse.jface.viewers.TreeSelection;
 
 /**
  * Invoked when user right clicks on an element in the Variables or Expressions
- * view and selects 'Add Watchpoint (C/C++)'  Clients can register this action for 
- * their specific element type which adapts to {@link ICWatchpointTarget}. 
- * 
- * 
+ * view and selects 'Add Watchpoint (C/C++)'  Clients can register this action for
+ * their specific element type which adapts to {@link ICWatchpointTarget}.
+ *
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 7.2
  */
@@ -35,7 +34,7 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 
 	/** The target variable/expression */
 	private ICWatchpointTarget fVar;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -45,10 +44,12 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 
 	private class CanCreateWatchpointRequest extends CRequest implements ICWatchpointTarget.CanCreateWatchpointRequest {
 		boolean fCanCreate;
+
 		@Override
 		public boolean getCanCreate() {
 			return fCanCreate;
 		}
+
 		@Override
 		public void setCanCreate(boolean value) {
 			fCanCreate = value;
@@ -57,21 +58,21 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 
 	/**
 	 * Record the target variable/expression
-	 * 
+	 *
 	 * @see org.eclipse.ui.actions.ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
 	public void selectionChanged(final IAction action, ISelection selection) {
-	    super.selectionChanged(action, selection);
+		super.selectionChanged(action, selection);
 		fVar = null;
 		if (selection == null || selection.isEmpty()) {
 			action.setEnabled(false);
 			return;
 		}
 		if (selection instanceof TreeSelection) {
-			Object obj = ((TreeSelection)selection).getFirstElement();
-			fVar = (ICWatchpointTarget)DebugPlugin.getAdapter(obj, ICWatchpointTarget.class);
+			Object obj = ((TreeSelection) selection).getFirstElement();
+			fVar = (ICWatchpointTarget) DebugPlugin.getAdapter(obj, ICWatchpointTarget.class);
 			if (fVar != null) {
 				final ICWatchpointTarget.CanCreateWatchpointRequest request = new CanCreateWatchpointRequest() {
 					@Override
@@ -83,12 +84,11 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 				return;
 			}
 			assert false : "action should not have been available for object " + obj; //$NON-NLS-1$
-		}
-		else if (selection instanceof StructuredSelection) {
+		} else if (selection instanceof StructuredSelection) {
 			// Not sure why, but sometimes we get an extraneous empty StructuredSelection. Seems harmless enough
-			assert ((StructuredSelection)selection).getFirstElement() == null : "action installed in unexpected type of view/part"; //$NON-NLS-1$
-		}
-		else {
+			assert ((StructuredSelection) selection)
+					.getFirstElement() == null : "action installed in unexpected type of view/part"; //$NON-NLS-1$
+		} else {
 			assert false : "action installed in unexpected type of view/part"; //$NON-NLS-1$
 		}
 		action.setEnabled(false);

@@ -16,7 +16,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.model.CModelException;
@@ -60,7 +59,7 @@ public class BinaryRunner {
 
 		@Override
 		protected void executeOperation() throws CModelException {
-			ICProject cproj = (ICProject)getElementsToProcess()[0];
+			ICProject cproj = (ICProject) getElementsToProcess()[0];
 			IParent[] containers = new IParent[2];
 			containers[0] = cproj.getBinaryContainer();
 			containers[1] = cproj.getArchiveContainer();
@@ -74,7 +73,7 @@ public class BinaryRunner {
 				}
 				ICElement[] children = container.getChildren();
 				if (children.length > 0) {
-					cdelta.added((ICElement)container);
+					cdelta.added((ICElement) container);
 					for (ICElement element : children) {
 						cdelta.added(element);
 					}
@@ -86,13 +85,13 @@ public class BinaryRunner {
 	}
 
 	private final ICProject cproject;
-	private final Job runnerJob;		// final fields don't need synchronization
+	private final Job runnerJob; // final fields don't need synchronization
 	private IOutputEntry[] entries = new IOutputEntry[0];
-	private boolean isStopped= false;   // access to isStopped must be synchronized.
+	private boolean isStopped = false; // access to isStopped must be synchronized.
 
 	public BinaryRunner(IProject prj) {
 		cproject = CModelManager.getDefault().create(prj);
-		runnerJob= createRunnerJob();
+		runnerJob = createRunnerJob();
 		try {
 			entries = cproject.getOutputEntries();
 		} catch (CModelException e) {
@@ -101,8 +100,8 @@ public class BinaryRunner {
 
 	private Job createRunnerJob() {
 		String taskName = CCorePlugin.getResourceString("CoreModel.BinaryRunner.Binary_Search_Thread"); //$NON-NLS-1$
-		taskName += " (" + cproject.getElementName() + ")";  //$NON-NLS-1$//$NON-NLS-2$
-		Job job= new Job(taskName) {
+		taskName += " (" + cproject.getElementName() + ")"; //$NON-NLS-1$//$NON-NLS-2$
+		Job job = new Job(taskName) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status = Status.OK_STATUS;
@@ -119,7 +118,8 @@ public class BinaryRunner {
 						vbin.removeChildren();
 
 						// traverse project, but only if at least one binary parser is configured
-						BinaryParserConfig[] parsers = CModelManager.getDefault().getBinaryParser(cproject.getProject());
+						BinaryParserConfig[] parsers = CModelManager.getDefault()
+								.getBinaryParser(cproject.getProject());
 						if (parsers.length > 0) {
 							cproject.getProject().accept(new Visitor(monitor), IContainer.INCLUDE_PHANTOMS);
 						}
@@ -170,7 +170,7 @@ public class BinaryRunner {
 	 */
 	public void stop() {
 		synchronized (runnerJob) {
-			isStopped= true;	// make sure job is not scheduled afterwards
+			isStopped = true; // make sure job is not scheduled afterwards
 			runnerJob.cancel();
 		}
 	}
@@ -239,7 +239,8 @@ public class BinaryRunner {
 		}
 
 		private boolean isOnOutputEntry(IOutputEntry entry, IPath path) {
-			if (entry.getPath().isPrefixOf(path) && !CoreModelUtil.isExcluded(path, entry.fullExclusionPatternChars())) {
+			if (entry.getPath().isPrefixOf(path)
+					&& !CoreModelUtil.isExcluded(path, entry.fullExclusionPatternChars())) {
 				return true;
 			}
 			return false;

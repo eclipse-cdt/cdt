@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @since 5.1
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -33,28 +33,35 @@ public class PrefPage_NewCDTProject extends AbstractPrefPage {
 	private ICConfigurationDescription prefCfgd = null;
 
 	@Override
-	protected boolean isSingle() { return false; }
+	protected boolean isSingle() {
+		return false;
+	}
 
 	@Override
 	public ICResourceDescription getResDesc() {
 		if (prefCfgd == null)
 			try {
-				prefCfgd = CCorePlugin.getDefault().getPreferenceConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID);
-			} catch (CoreException e) { return null; }
+				prefCfgd = CCorePlugin.getDefault()
+						.getPreferenceConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID);
+			} catch (CoreException e) {
+				return null;
+			}
 		return prefCfgd.getRootFolderDescription();
 	}
-	
+
 	@Override
 	public boolean performOk() {
 		forEach(ICPropertyTab.OK, null);
 		try {
 			CCorePlugin.getDefault().setPreferenceConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, prefCfgd);
-		} catch (CoreException e) { return false; }
+		} catch (CoreException e) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
-	protected String getHeader() { 
-		return  Messages.AbstractPrefPage_0; 
+	protected String getHeader() {
+		return Messages.AbstractPrefPage_0;
 	}
 }

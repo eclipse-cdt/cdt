@@ -21,65 +21,65 @@ import org.eclipse.debug.core.DebugException;
  * @since: Mar 5, 2004
  */
 public interface ICSignal extends ICDebugElement {
-	
+
 	/**
 	 * Returns the name of this signal
-	 * 
+	 *
 	 * @return this signal's name
 	 * @throws DebugException if this method fails.
 	 */
 	public String getName() throws DebugException;
-	
+
 	/**
 	 * Returns the description of this signal.
-	 * 
+	 *
 	 * @return this signal's description
 	 * @throws DebugException if this method fails.
 	 */
 	public String getDescription() throws DebugException;
-	
+
 	/**
 	 * Returns whether "pass" is in effect for this signal.
-	 * 
+	 *
 	 * @return whether "pass" is in effect for this signal
 	 * @throws DebugException if this method fails.
 	 */
 	public boolean isPassEnabled() throws DebugException;
-	
+
 	/**
 	 * Returns whether "stop" is in effect for this signal.
-	 * 
+	 *
 	 * @return whether "stop" is in effect for this signal
 	 * @throws DebugException if this method fails.
 	 */
 	public boolean isStopEnabled() throws DebugException;
-	
+
 	/**
 	 * Enables/disables the "pass" flag of this signal.
-	 * 
+	 *
 	 * @param enable the flag value to set
 	 * @throws DebugException if this method fails.
 	 */
-	public void setPassEnabled( boolean enable ) throws DebugException;
-	
+	public void setPassEnabled(boolean enable) throws DebugException;
+
 	/**
 	 * Enables/disables the "stop" flag of this signal.
-	 * 
+	 *
 	 * @param enable the flag value to set
 	 * @throws DebugException if this method fails.
 	 */
-	public void setStopEnabled( boolean enable ) throws DebugException;
+	public void setStopEnabled(boolean enable) throws DebugException;
 
 	/**
 	 * Resumes execution, but immediately gives the target this signal.
-	 * 
+	 *
 	 * @throws DebugException if this method fails.
 	 */
 	public void signal() throws DebugException;
-	
+
 	/**
 	 * Returns whether modification is allowed for this signal's parameters.
-	 * 
+	 *
 	 * @return whether modification is allowed for this signal's parameters
 	 */
 	public boolean canModify();

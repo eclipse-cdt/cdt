@@ -28,7 +28,7 @@ public interface ITemplate {
 	String[] getTemplateParameterTypes();
 
 	/**
-	 * Returns the template arguments in a printable format. For templates that are no specialization, 
+	 * Returns the template arguments in a printable format. For templates that are no specialization,
 	 * this will return the names of the template parameters.
 	 * @since 5.2
 	 */
@@ -36,14 +36,14 @@ public interface ITemplate {
 
 	/**
 	 * Returns the template signature
-	 * The signature depends on the type of template. 
-	 * If it is a template of a structure or a variable, it will include the structure name 
-	 * and the list of parameters. If it is a template of a method or a function,  it might 
+	 * The signature depends on the type of template.
+	 * If it is a template of a structure or a variable, it will include the structure name
+	 * and the list of parameters. If it is a template of a method or a function,  it might
 	 * include the class name with its template parameters (if any), as well as the function/method
 	 * name, its  template parameters, followed by its normal parameters.
 	 * @return String
 	 * @throws CModelException
-	 */	
+	 */
 	String getTemplateSignature() throws CModelException;
 
 	/**

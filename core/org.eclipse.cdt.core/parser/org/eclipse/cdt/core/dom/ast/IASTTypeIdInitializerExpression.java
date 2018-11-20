@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Compound literal: type-id { initializer }
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.1
@@ -27,8 +27,8 @@ public interface IASTTypeIdInitializerExpression extends IASTExpression {
 	 * <code>IASTTypeIdInitializerExpression</code> and
 	 * <code>IASTTypeId</code>.
 	 */
-	public static final ASTNodeProperty TYPE_ID =
-			new ASTNodeProperty("IASTTypeIdInitializerExpression.TYPE_ID - IASTTypeId for IASTTypeIdInitializerExpression"); //$NON-NLS-1$
+	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty(
+			"IASTTypeIdInitializerExpression.TYPE_ID - IASTTypeId for IASTTypeIdInitializerExpression"); //$NON-NLS-1$
 
 	/**
 	 * <code>INITIALIZER</code> represents the relationship between an
@@ -57,7 +57,7 @@ public interface IASTTypeIdInitializerExpression extends IASTExpression {
 	 * Sets the initializer, must not be called on frozen ast.
 	 */
 	public void setInitializer(IASTInitializer initializer);
-	
+
 	@Override
 	public IASTTypeIdInitializerExpression copy();
 

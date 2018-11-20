@@ -84,13 +84,13 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	class AddDirectoryDialog extends Dialog {
 
 		protected Text fText;
-		
+
 		private Button fBrowseButton;
 
 		private IPath fValue;
 
-		/** 
-		 * Constructor for AddDirectoryDialog. 
+		/**
+		 * Constructor for AddDirectoryDialog.
 		 */
 		public AddDirectoryDialog(Shell parentShell) {
 			super(parentShell);
@@ -98,11 +98,12 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 
 		@Override
 		protected Control createDialogArea(Composite parent) {
-			Composite composite = (Composite)super.createDialogArea(parent);
+			Composite composite = (Composite) super.createDialogArea(parent);
 
 			Composite subComp = ControlFactory.createCompositeEx(composite, 2, GridData.FILL_HORIZONTAL);
-			((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
-			GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
+			((GridLayout) subComp.getLayout()).makeColumnsEqualWidth = false;
+			GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL
+					| GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			subComp.setLayoutData(data);
 			subComp.setFont(parent.getFont());
@@ -117,7 +118,8 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 				}
 			});
 
-			fBrowseButton = ControlFactory.createPushButton(subComp, LaunchUIMessages.getString("GDBServerDebuggerPage.7")); //$NON-NLS-1$
+			fBrowseButton = ControlFactory.createPushButton(subComp,
+					LaunchUIMessages.getString("GDBServerDebuggerPage.7")); //$NON-NLS-1$
 			data = new GridData();
 			data.horizontalAlignment = GridData.FILL;
 			fBrowseButton.setLayoutData(data);
@@ -156,8 +158,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		protected void buttonPressed(int buttonId) {
 			if (buttonId == IDialogConstants.OK_ID) {
 				setValue(fText.getText());
-			}
-			else {
+			} else {
 				setValue(null);
 			}
 			super.buttonPressed(buttonId);
@@ -211,14 +212,13 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		}
 	}
 
-	private static String[] fgStaticButtonLabels = new String[] {
-			LaunchUIMessages.getString("SolibSearchPathBlock.0"), //$NON-NLS-1$
+	private static String[] fgStaticButtonLabels = new String[] { LaunchUIMessages.getString("SolibSearchPathBlock.0"), //$NON-NLS-1$
 			LaunchUIMessages.getString("SolibSearchPathBlock.1"), //$NON-NLS-1$
 			LaunchUIMessages.getString("SolibSearchPathBlock.2"), //$NON-NLS-1$
 			LaunchUIMessages.getString("SolibSearchPathBlock.3"), //$NON-NLS-1$
 			LaunchUIMessages.getString("SolibSearchPathBlock.6"), //$NON-NLS-1$
 			null, // separator
-		};
+	};
 
 	private IProject fProject;
 
@@ -229,7 +229,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	private IListAdapter fCustomListAdapter;
 
 	private File[] fAutoSolibs = new File[0];
-	
+
 	public SolibSearchPathBlock() {
 		this(new String[0], null);
 	}
@@ -251,6 +251,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			public void customButtonPressed(DialogField field, int index) {
 				buttonPressed(index);
 			}
+
 			@Override
 			public void selectionChanged(DialogField field) {
 			}
@@ -259,7 +260,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			@Override
 			public String getText(Object element) {
 				if (element instanceof IPath)
-					return ((IPath)element).toOSString();
+					return ((IPath) element).toOSString();
 				return super.getText(element);
 			}
 		};
@@ -268,20 +269,20 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		fDirList.setUpButtonIndex(1);
 		fDirList.setDownButtonIndex(2);
 		fDirList.setRemoveButtonIndex(3);
-		
+
 		fDirList.setDialogFieldListener(this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#createControl(org.eclipse.swt.widgets.Composite)
 	 */
-    @Override
+	@Override
 	public void createControl(Composite parent) {
 		fShell = parent.getShell();
 		Composite comp = ControlFactory.createCompositeEx(parent, 2, GridData.FILL_BOTH);
-		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
-		((GridLayout)comp.getLayout()).marginHeight = 0;
-		((GridLayout)comp.getLayout()).marginWidth = 0;
+		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
+		((GridLayout) comp.getLayout()).marginHeight = 0;
+		((GridLayout) comp.getLayout()).marginWidth = 0;
 		comp.setFont(parent.getFont());
 		PixelConverter converter = new PixelConverter(comp);
 		fDirList.doFillIntoGrid(comp, 3);
@@ -294,52 +295,51 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-    @Override
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		IProject project = null;
 		try {
-			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
+					(String) null);
 			if (projectName != null) {
 				projectName = projectName.trim();
 				if (!projectName.isEmpty()) {
 					project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 				}
 			}
-		}
-		catch(CoreException e) {
+		} catch (CoreException e) {
 		}
 		setProject(project);
 
 		if (fDirList != null) {
 			try {
 				@SuppressWarnings("unchecked")
-				List<String> values = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, 
-						                                 Collections.EMPTY_LIST);
+				List<String> values = configuration.getAttribute(
+						IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
 				ArrayList<Path> paths = new ArrayList<Path>(values.size());
 				Iterator<String> it = values.iterator();
-				while(it.hasNext()) {
+				while (it.hasNext()) {
 					paths.add(new Path(it.next()));
 				}
 				fDirList.addElements(paths);
-			}
-			catch(CoreException e) {
+			} catch (CoreException e) {
 			}
 		}
 
 		try {
 			fAutoSolibs = getAutoSolibs(configuration);
-		}
-		catch(CoreException e) {
+		} catch (CoreException e) {
 		}
 	}
 
 	public static File[] getAutoSolibs(ILaunchConfiguration configuration) throws CoreException {
 		@SuppressWarnings("unchecked")
-		List<String> autoSolibs = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB_LIST, Collections.EMPTY_LIST );
+		List<String> autoSolibs = configuration
+				.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB_LIST, Collections.EMPTY_LIST);
 
 		List<File> list = new ArrayList<File>(autoSolibs.size());
 		Iterator<String> it = autoSolibs.iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			list.add(new File(it.next()));
 		}
 		return list.toArray(new File[list.size()]);
@@ -348,7 +348,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
-    @Override
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
 	}
@@ -356,16 +356,16 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
-    @Override
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fDirList != null) {
-			
+
 			@SuppressWarnings("unchecked")
 			List<IPath> elements = fDirList.getElements();
-			
+
 			ArrayList<String> values = new ArrayList<String>(elements.size());
 			Iterator<IPath> it = elements.iterator();
-			while(it.hasNext()) {
+			while (it.hasNext()) {
 				values.add((it.next()).toOSString());
 			}
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, values);
@@ -373,18 +373,16 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		ArrayList<String> autoLibs = new ArrayList<String>(fAutoSolibs.length);
 		for (int i = 0; i < fAutoSolibs.length; ++i)
 			autoLibs.add(fAutoSolibs[i].getPath());
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB_LIST, autoLibs); 
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB_LIST, autoLibs);
 	}
 
 	protected void buttonPressed(int index) {
-		boolean changed = false; 
+		boolean changed = false;
 		if (index == 0) { // Add button
 			changed = addDirectory();
-		}
-		else if (index == 4) { //Select from list
+		} else if (index == 4) { //Select from list
 			changed = selectFromList();
-		}
-		else if (index >= fgStaticButtonLabels.length && fCustomListAdapter != null) {
+		} else if (index >= fgStaticButtonLabels.length && fCustomListAdapter != null) {
 			fCustomListAdapter.customButtonPressed(fDirList, index);
 			changed = true;
 		}
@@ -412,7 +410,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		IPath result = dialog.getValue();
 		if (result != null && !contains(result)) {
 			fDirList.addElement(result);
-			changed = true; 
+			changed = true;
 		}
 		return changed;
 	}
@@ -420,7 +418,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#dispose()
 	 */
-    @Override
+	@Override
 	public void dispose() {
 		deleteObservers();
 	}
@@ -428,7 +426,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#getControl()
 	 */
-    @Override
+	@Override
 	public Control getControl() {
 		return fControl;
 	}
@@ -436,7 +434,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-    @Override
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		// TODO Auto-generated method stub
 		return false;
@@ -445,9 +443,9 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	private boolean contains(IPath path) {
 		@SuppressWarnings("unchecked")
 		List<IPath> list = fDirList.getElements();
-		
+
 		Iterator<IPath> it = list.iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			IPath p = it.next();
 			if (p.toFile().equals(path.toFile()))
 				return true;
@@ -465,48 +463,53 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 
 	protected boolean selectFromList() {
 		boolean changed = false;
-		
+
 		@SuppressWarnings("unchecked")
 		List<IPath> dirList = fDirList.getSelectedElements();
-		
+
 		final HashSet<IPath> libs = new HashSet<IPath>(10);
 		if (generateLibraryList(dirList.toArray(new IPath[dirList.size()]), libs)) {
 			ITreeContentProvider cp = new ITreeContentProvider() {
-                @Override
+				@Override
 				public Object[] getChildren(Object parentElement) {
 					return getElements(parentElement);
 				}
-                @Override
+
+				@Override
 				public Object getParent(Object element) {
 					if (libs.contains(element))
 						return libs;
 					return null;
 				}
-                @Override
+
+				@Override
 				public boolean hasChildren(Object element) {
 					return false;
 				}
-                @Override
+
+				@Override
 				public Object[] getElements(Object inputElement) {
 					if (inputElement instanceof Set) {
-						return ((Set)inputElement).toArray();
+						return ((Set) inputElement).toArray();
 					}
 					return new Object[0];
 				}
-                @Override
+
+				@Override
 				public void dispose() {
 				}
-                @Override
+
+				@Override
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-				}	
+				}
 			};
-	
+
 			LabelProvider lp = new LabelProvider() {
-	
+
 				@Override
 				public String getText(Object element) {
 					if (element instanceof File)
-						return ((File)element).getName();
+						return ((File) element).getName();
 					return super.getText(element);
 				}
 			};
@@ -530,7 +533,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		boolean result = true;
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-            @Override
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 				for (int i = 0; i < paths.length; ++i) {
@@ -551,13 +554,11 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 				}
 			}
 		};
-        try {
-        	IRunnableContext context = new ProgressMonitorDialog(getShell());
+		try {
+			IRunnableContext context = new ProgressMonitorDialog(getShell());
 			context.run(true, true, runnable);
-		}
-		catch(InvocationTargetException e) {
-		}
-		catch(InterruptedException e) {
+		} catch (InvocationTargetException e) {
+		} catch (InterruptedException e) {
 			result = false;
 		}
 		return result;
@@ -570,21 +571,20 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		if (project != null) {
 			IPath fullPath = new Path(file.getPath());
 			try {
-				ICConfigExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(project);
-				for(int i = 0; i < binaryParsersExt.length; i++) {
+				ICConfigExtensionReference[] binaryParsersExt = CCorePlugin.getDefault()
+						.getDefaultBinaryParserExtensions(project);
+				for (int i = 0; i < binaryParsersExt.length; i++) {
 					IBinaryParser parser = CoreModelUtil.getBinaryParser(binaryParsersExt[i]);
 					try {
 						IBinaryFile bin = parser.getBinary(fullPath);
 						if (bin instanceof IBinaryShared) {
-							String soname = ((IBinaryShared)bin).getSoName();
+							String soname = ((IBinaryShared) bin).getSoName();
 							return (soname.length() != 0) ? soname : file.getName();
 						}
-					}
-					catch(IOException e) {
+					} catch (IOException e) {
 					}
 				}
-			}
-			catch(CoreException e) {
+			} catch (CoreException e) {
 			}
 			return null;
 		}
@@ -604,18 +604,17 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		if (project != null) {
 			IPath fullPath = new Path(file.getPath());
 			try {
-				ICConfigExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(project);
-				for(int i = 0; i < binaryParsersExt.length; i++) {
+				ICConfigExtensionReference[] binaryParsersExt = CCorePlugin.getDefault()
+						.getDefaultBinaryParserExtensions(project);
+				for (int i = 0; i < binaryParsersExt.length; i++) {
 					IBinaryParser parser = CoreModelUtil.getBinaryParser(binaryParsersExt[i]);
 					try {
 						IBinaryFile bin = parser.getBinary(fullPath);
 						return (bin instanceof IBinaryShared);
-					}
-					catch(IOException e) {
+					} catch (IOException e) {
 					}
 				}
-			}
-			catch(CoreException e) {
+			} catch (CoreException e) {
 			}
 			return false;
 		}
@@ -628,7 +627,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		return (name.indexOf(".so.") >= 0); //$NON-NLS-1$
 	}
 
-    @Override
+	@Override
 	public void dialogFieldChanged(DialogField field) {
 		setChanged();
 		notifyObservers();

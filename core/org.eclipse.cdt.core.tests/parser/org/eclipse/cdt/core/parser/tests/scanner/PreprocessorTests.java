@@ -487,11 +487,11 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
-    // #define ONE(a, ...) int x
-    // #define TWO(b, args...) int y
-    // ONE("string");
-    // TWO("string");
-    public void testSkippingVarags() throws Exception {
+	// #define ONE(a, ...) int x
+	// #define TWO(b, args...) int y
+	// ONE("string");
+	// TWO("string");
+	public void testSkippingVarags() throws Exception {
 		initializeScanner();
 		validateToken(IToken.t_int);
 		validateIdentifier("x");
@@ -503,12 +503,12 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 		validateEOF();
 		validateProblemCount(0);
-    }
+	}
 
-    // #define eval(f,x) f(x)
-    // #define m(x) m[x]
-    // eval(m,y);
-    public void testReconsiderArgsForExpansion() throws Exception {
+	// #define eval(f,x) f(x)
+	// #define m(x) m[x]
+	// eval(m,y);
+	public void testReconsiderArgsForExpansion() throws Exception {
 		initializeScanner();
 		validateIdentifier("m");
 		validateToken(IToken.tLBRACKET);
@@ -518,38 +518,38 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 		validateEOF();
 		validateProblemCount(0);
-    }
+	}
 
-    //#define f\
-    //(x) ok
-    // f(x)
-    public void testLineSpliceInMacroDefinition() throws Exception {
+	//#define f\
+	//(x) ok
+	// f(x)
+	public void testLineSpliceInMacroDefinition() throws Exception {
 		initializeScanner();
 		validateIdentifier("ok");
 		validateEOF();
 		validateProblemCount(0);
-    }
+	}
 
-    // #define f() fval
-    // #define nospace f()f()
-    // #define space f() f()
-    // #define str(x) #x
-    // #define xstr(x) str(x)
-    // #define tp1(x,y,z) [x ## y ## z]
-    // #define tp2(x,y,z) [ x ## y ## z ]
-    // #define tstr1(x,y) [#x#y]
-    // #define tstr2(x,y) [ #x #y ]
-    // #define spaceBeforeStr(x) a #x b
-    // xstr(nospace);
-    // xstr(space);
-    // xstr(tp1(a b, c d , e f));
-    // xstr(tp2(a b, c d , e f));
-    // xstr(tp1(a-b, c-d , e-f));
-    // xstr(tp2(a-b, c-d , e-f));
-    // xstr(tstr1(a b, c d));
-    // xstr(tstr2(a b, c d));
-    // xstr(spaceBeforeStr(c));
-    public void testSpaceInStringify() throws Exception {
+	// #define f() fval
+	// #define nospace f()f()
+	// #define space f() f()
+	// #define str(x) #x
+	// #define xstr(x) str(x)
+	// #define tp1(x,y,z) [x ## y ## z]
+	// #define tp2(x,y,z) [ x ## y ## z ]
+	// #define tstr1(x,y) [#x#y]
+	// #define tstr2(x,y) [ #x #y ]
+	// #define spaceBeforeStr(x) a #x b
+	// xstr(nospace);
+	// xstr(space);
+	// xstr(tp1(a b, c d , e f));
+	// xstr(tp2(a b, c d , e f));
+	// xstr(tp1(a-b, c-d , e-f));
+	// xstr(tp2(a-b, c-d , e-f));
+	// xstr(tstr1(a b, c d));
+	// xstr(tstr2(a b, c d));
+	// xstr(spaceBeforeStr(c));
+	public void testSpaceInStringify() throws Exception {
 		initializeScanner();
 		validateString("fvalfval");
 		validateToken(IToken.tSEMI);
@@ -580,17 +580,17 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 		validateEOF();
 		validateProblemCount(0);
-    }
+	}
 
-    // #define empty
-    // #define paste1(y) x##y z
-    // #define paste2(x) x##empty z
-    // paste1();
-    // paste1(empty);
-    // paste2();
-    // paste2(empty);
-    // paste2(a);
-    public void testTokenPasteWithEmptyParam() throws Exception {
+	// #define empty
+	// #define paste1(y) x##y z
+	// #define paste2(x) x##empty z
+	// paste1();
+	// paste1(empty);
+	// paste2();
+	// paste2(empty);
+	// paste2(a);
+	public void testTokenPasteWithEmptyParam() throws Exception {
 		initializeScanner();
 		validateIdentifier("x");
 		validateIdentifier("z");
@@ -613,17 +613,17 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 		validateEOF();
 		validateProblemCount(0);
-    }
+	}
 
-    // #define empty
-    // #define paste1(y) x##y z
-    // #define paste2(x) x##empty z
-    // paste1();
-    // paste1(empty);
-    // paste2();
-    // paste2(empty);
-    // paste2(a);
-    public void testSpacesBeforeStringify() throws Exception {
+	// #define empty
+	// #define paste1(y) x##y z
+	// #define paste2(x) x##empty z
+	// paste1();
+	// paste1(empty);
+	// paste2();
+	// paste2(empty);
+	// paste2(a);
+	public void testSpacesBeforeStringify() throws Exception {
 		initializeScanner();
 		validateIdentifier("x");
 		validateIdentifier("z");
@@ -646,13 +646,13 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 		validateEOF();
 		validateProblemCount(0);
-    }
+	}
 
-    // #define paste(x,y,z) x##y##z
-    // paste(a,b,c);
-    // paste(1,2,3);
-    public void testTokenPasteChain() throws Exception {
-    	initializeScanner();
+	// #define paste(x,y,z) x##y##z
+	// paste(a,b,c);
+	// paste(1,2,3);
+	public void testTokenPasteChain() throws Exception {
+		initializeScanner();
 		validateIdentifier("abc");
 		validateToken(IToken.tSEMI);
 
@@ -661,38 +661,38 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 		validateEOF();
 		validateProblemCount(0);
-    }
+	}
 
 	// #define A(x,y,z) x + y + z
 	// #define _t t
 	// A ( _t , , _t )
-    public void testEmptyToken() throws Exception {
-    	initializeScanner();
-    	validateIdentifier("t");
+	public void testEmptyToken() throws Exception {
+		initializeScanner();
+		validateIdentifier("t");
 		validateToken(IToken.tPLUS);
 		validateToken(IToken.tPLUS);
-    	validateIdentifier("t");
-    }
+		validateIdentifier("t");
+	}
 
-    // #define FOO 5
-    // # define BAR 10
-    // int x = FOO + BAR;
-    public void testSimpleObjectLike1() throws Exception {
-    	initializeScanner();
-    	validateToken(IToken.t_int);
-    	validateIdentifier("x");
-    	validateToken(IToken.tASSIGN);
-    	validateInteger("5");
-    	validateToken(IToken.tPLUS);
-    	validateInteger("10");
-    	validateToken(IToken.tSEMI);
-    	validateEOF();
+	// #define FOO 5
+	// # define BAR 10
+	// int x = FOO + BAR;
+	public void testSimpleObjectLike1() throws Exception {
+		initializeScanner();
+		validateToken(IToken.t_int);
+		validateIdentifier("x");
+		validateToken(IToken.tASSIGN);
+		validateInteger("5");
+		validateToken(IToken.tPLUS);
+		validateInteger("10");
+		validateToken(IToken.tSEMI);
+		validateEOF();
 		validateProblemCount(0);
 	}
 
-    // #define FOO BAR
-    // # define BAR 10
-    // int x = BAR;
+	// #define FOO BAR
+	// # define BAR 10
+	// int x = BAR;
 	public void testSimpleObjectLike2() throws Exception {
 		initializeScanner();
 		validateToken(IToken.t_int);
@@ -829,23 +829,12 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	}
 
 	private static StringBuffer getExample3Defines() {
-		return new StringBuffer()
-			.append("#define x 3 \n")
-			.append("#define f(a) f(x * (a)) \n")
-			.append("#undef x \n")
-			.append("#define x 2 \n")
-			.append("#define g f \n")
-			.append("#define z z[0] \n")
-			.append("#define h g(~ \n")
-			.append("#define m(a) a(w) \n")
-			.append("#define w 0,1 \n")
-			.append("#define t(a) a \n")
-			.append("#define p() int \n")
-			.append("#define q(x) x \n")
-			.append("#define r(x,y) x ## y \n")
-			.append("#define str(x) # x \n");
+		return new StringBuffer().append("#define x 3 \n").append("#define f(a) f(x * (a)) \n").append("#undef x \n")
+				.append("#define x 2 \n").append("#define g f \n").append("#define z z[0] \n")
+				.append("#define h g(~ \n").append("#define m(a) a(w) \n").append("#define w 0,1 \n")
+				.append("#define t(a) a \n").append("#define p() int \n").append("#define q(x) x \n")
+				.append("#define r(x,y) x ## y \n").append("#define str(x) # x \n");
 	}
-
 
 	public void testSpecExample3_1() throws Exception {
 		StringBuffer sb = getExample3Defines();
@@ -960,7 +949,6 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
-
 	public void testSpecExample3_3() throws Exception {
 		StringBuffer sb = getExample3Defines();
 		sb.append("p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) }; \n");
@@ -990,7 +978,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 	public void testSpecExample3_4() throws Exception {
 		StringBuffer sb = getExample3Defines();
-		sb.append("char c[2][6] = { str(hello), str() }; \n");   //31
+		sb.append("char c[2][6] = { str(hello), str() }; \n"); //31
 
 		// char c[2][6] = { "hello", "" }; //15
 		initializeScanner(sb.toString());
@@ -1015,21 +1003,16 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	}
 
 	private static StringBuffer getExample4Defines() {
-		return new StringBuffer()
-			.append("#define str(s) # s \n")
-			.append("#define xstr(s) str(s) \n")
-			.append("#define debug(s, t) printf(\"x\" # s \"= %d, x\" # t \"= %s\", \\ \n")
-			.append("x ## s, x ## t) \n")
-			.append("#define INCFILE(n) vers ## n \n")
-			.append("#define glue(a, b) a ## b \n")
-			.append("#define xglue(a, b) glue(a, b) \n")
-			.append("#define HIGHLOW \"hello\" \n")
-			.append("#define LOW LOW \", world\" \n");
+		return new StringBuffer().append("#define str(s) # s \n").append("#define xstr(s) str(s) \n")
+				.append("#define debug(s, t) printf(\"x\" # s \"= %d, x\" # t \"= %s\", \\ \n")
+				.append("x ## s, x ## t) \n").append("#define INCFILE(n) vers ## n \n")
+				.append("#define glue(a, b) a ## b \n").append("#define xglue(a, b) glue(a, b) \n")
+				.append("#define HIGHLOW \"hello\" \n").append("#define LOW LOW \", world\" \n");
 	}
 
 	public void testSpecExample4_1() throws Exception {
 		StringBuffer sb = getExample4Defines();
-		sb.append("debug(1, 2); \n");  //31
+		sb.append("debug(1, 2); \n"); //31
 
 		// printf("x1= %d, x2= %s", x1, x2); // 9
 		initializeScanner(sb.toString());
@@ -1124,11 +1107,9 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	}
 
 	public StringBuffer getExample7Defines() {
-		return new StringBuffer()
-			.append("#define debug(...) fprintf(stderr, __VA_ARGS__) \n ")
-			.append("#define showlist(...) puts(#__VA_ARGS__)\n ")
-			.append("#define report(test, ...) ((test)?puts(#test):\\ \n ")
-			.append("printf(__VA_ARGS__))  \n ");
+		return new StringBuffer().append("#define debug(...) fprintf(stderr, __VA_ARGS__) \n ")
+				.append("#define showlist(...) puts(#__VA_ARGS__)\n ")
+				.append("#define report(test, ...) ((test)?puts(#test):\\ \n ").append("printf(__VA_ARGS__))  \n ");
 	}
 
 	public void testSpecExample7_1() throws Exception {
@@ -1185,7 +1166,6 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
-
 	public void testSpecExample7_4() throws Exception {
 		StringBuffer sb = getExample7Defines();
 		sb.append("report(x>y, \"x is %d but y is %d\", x, y); \n");
@@ -1206,7 +1186,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateToken(IToken.tRPAREN);
 		validateToken(IToken.tCOLON);
 		validateIdentifier("printf");
-		validateToken(IToken.tLPAREN );
+		validateToken(IToken.tLPAREN);
 		validateString("x is %d but y is %d");
 		validateToken(IToken.tCOMMA);
 		validateIdentifier("x");
@@ -1218,7 +1198,6 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
-
 
 	// #define foo g g g
 	// #define g f##oo
@@ -1304,15 +1283,15 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	public void testC99_6_7_5_3_5_Bug104869() throws Exception {
 		initializeScanner();
 		// read in expected tokens
-		List<IToken> expect= new ArrayList<IToken>();
-		IToken t= fScanner.nextToken();
-		while(t.getType() != IToken.tDECR) {
+		List<IToken> expect = new ArrayList<IToken>();
+		IToken t = fScanner.nextToken();
+		while (t.getType() != IToken.tDECR) {
 			expect.add(t);
-			t= fScanner.nextToken();
+			t = fScanner.nextToken();
 		}
 
 		for (IToken et : expect) {
-			t= fScanner.nextToken();
+			t = fScanner.nextToken();
 			assertEquals(et.getImage(), t.getImage());
 			assertEquals(et.getType(), t.getType());
 		}

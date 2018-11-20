@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.propertypages; 
+package org.eclipse.cdt.debug.internal.ui.propertypages;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import com.ibm.icu.text.MessageFormat;
- 
+
 /**
  * The property page for a signal.
  */
@@ -47,52 +47,51 @@ public class SignalPropertyPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-	protected Control createContents( Composite parent ) {
+	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
-		Composite composite = new Composite( parent, SWT.NONE );
+		Composite composite = new Composite(parent, SWT.NONE);
 		Font font = parent.getFont();
-		composite.setFont( font );
-		composite.setLayout( new GridLayout() );
-		composite.setLayoutData( new GridData( GridData.FILL_BOTH ) );
+		composite.setFont(font);
+		composite.setLayout(new GridLayout());
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Create description field
 		try {
 			String description = getSignal().getDescription();
-			Label label = new Label( composite, SWT.WRAP );
-			label.setText( MessageFormat.format( PropertyPageMessages.getString( "SignalPropertyPage.0" ), new Object[] { description } ) ); //$NON-NLS-1$
-			GridData data = new GridData( GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER );
-			data.widthHint = convertHorizontalDLUsToPixels( IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH );
-			label.setLayoutData( data );
-			label.setFont( font );
-		}
-		catch( DebugException e1 ) {
+			Label label = new Label(composite, SWT.WRAP);
+			label.setText(MessageFormat.format(PropertyPageMessages.getString("SignalPropertyPage.0"), //$NON-NLS-1$
+					new Object[] { description }));
+			GridData data = new GridData(
+					GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
+			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
+			label.setLayoutData(data);
+			label.setFont(font);
+		} catch (DebugException e1) {
 		}
 
 		// Create pass button
 		try {
 			boolean pass = getSignal().isPassEnabled();
-			fPassButton = new SelectionButtonDialogField( SWT.CHECK );
-			fPassButton.setLabelText( PropertyPageMessages.getString( "SignalPropertyPage.1" ) ); //$NON-NLS-1$
-			fPassButton.setSelection( pass );
-			fPassButton.setEnabled( getSignal().canModify() );
-			fPassButton.doFillIntoGrid( composite, 1 );
-		}
-		catch( DebugException e ) {
+			fPassButton = new SelectionButtonDialogField(SWT.CHECK);
+			fPassButton.setLabelText(PropertyPageMessages.getString("SignalPropertyPage.1")); //$NON-NLS-1$
+			fPassButton.setSelection(pass);
+			fPassButton.setEnabled(getSignal().canModify());
+			fPassButton.doFillIntoGrid(composite, 1);
+		} catch (DebugException e) {
 		}
 
 		// Create stop button
 		try {
 			boolean stop = getSignal().isStopEnabled();
-			fStopButton = new SelectionButtonDialogField( SWT.CHECK );
-			fStopButton.setLabelText( PropertyPageMessages.getString( "SignalPropertyPage.2" ) ); //$NON-NLS-1$
-			fStopButton.setSelection( stop );
-			fStopButton.setEnabled( getSignal().canModify() );
-			fStopButton.doFillIntoGrid( composite, 1 );
-		}
-		catch( DebugException e ) {
+			fStopButton = new SelectionButtonDialogField(SWT.CHECK);
+			fStopButton.setLabelText(PropertyPageMessages.getString("SignalPropertyPage.2")); //$NON-NLS-1$
+			fStopButton.setSelection(stop);
+			fStopButton.setEnabled(getSignal().canModify());
+			fStopButton.doFillIntoGrid(composite, 1);
+		} catch (DebugException e) {
 		}
 
-		setValid( true );
+		setValid(true);
 		return composite;
 	}
 
@@ -105,7 +104,7 @@ public class SignalPropertyPage extends PropertyPage {
 	}
 
 	public ICSignal getSignal() {
-		return (ICSignal)getElement();
+		return (ICSignal) getElement();
 	}
 
 	/* (non-Javadoc)
@@ -114,38 +113,37 @@ public class SignalPropertyPage extends PropertyPage {
 	@Override
 	public boolean performOk() {
 		boolean result = super.performOk();
-		if ( result ) {
-			DebugPlugin.getDefault().asyncExec( 
-					new Runnable() {
-						@Override
-						public void run() {
-							if ( !getSignal().canModify() )
-								return;
-							if ( getPassButton() != null ) { 
-								try {
-									getSignal().setPassEnabled( getPassButton().isSelected() );
-								}
-								catch( DebugException e ) {
-									failed( PropertyPageMessages.getString( "SignalPropertyPage.5" ), e ); //$NON-NLS-1$
-								}
-							}
-							if ( getStopButton() != null ) { 
-								try {
-									getSignal().setStopEnabled( getStopButton().isSelected() );
-								}
-								catch( DebugException e ) {
-									failed( PropertyPageMessages.getString( "SignalPropertyPage.5" ), e ); //$NON-NLS-1$
-								}
-							}
+		if (result) {
+			DebugPlugin.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (!getSignal().canModify())
+						return;
+					if (getPassButton() != null) {
+						try {
+							getSignal().setPassEnabled(getPassButton().isSelected());
+						} catch (DebugException e) {
+							failed(PropertyPageMessages.getString("SignalPropertyPage.5"), e); //$NON-NLS-1$
 						}
-					} );
+					}
+					if (getStopButton() != null) {
+						try {
+							getSignal().setStopEnabled(getStopButton().isSelected());
+						} catch (DebugException e) {
+							failed(PropertyPageMessages.getString("SignalPropertyPage.5"), e); //$NON-NLS-1$
+						}
+					}
+				}
+			});
 		}
 		return result;
 	}
 
-	protected void failed( String message, Throwable e ) {
-		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, message, null );
-		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), null ) );
-		CDebugUtils.error( ms, getSignal() );
+	protected void failed(String message, Throwable e) {
+		MultiStatus ms = new MultiStatus(CDIDebugModel.getPluginIdentifier(),
+				ICDebugInternalConstants.STATUS_CODE_ERROR, message, null);
+		ms.add(new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
+				ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), null));
+		CDebugUtils.error(ms, getSignal());
 	}
 }

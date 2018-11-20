@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -35,23 +35,24 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 		setText(CHMessages.OpenCallHierarchyAction_label);
 		setToolTipText(CHMessages.OpenCallHierarchyAction_tooltip);
 	}
-	
+
 	public OpenCallHierarchyAction(ITextEditor editor) {
 		this(editor.getSite());
-		fEditor= editor;
-		setEnabled(fEditor != null && CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput()) != null);
+		fEditor = editor;
+		setEnabled(fEditor != null
+				&& CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput()) != null);
 	}
 
 	@Override
 	public void run(ITextSelection sel) {
 		CallHierarchyUI.open(fEditor, sel);
 	}
-	
+
 	@Override
 	public void run(IStructuredSelection selection) {
 		if (!selection.isEmpty()) {
-			Object selectedObject= selection.getFirstElement();
-			ICElement elem= getAdapter(selectedObject, ICElement.class);
+			Object selectedObject = selection.getFirstElement();
+			ICElement elem = getAdapter(selectedObject, ICElement.class);
 			if (elem != null) {
 				CallHierarchyUI.open(getSite().getWorkbenchWindow(), elem);
 			}
@@ -61,16 +62,16 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 	@Override
 	public void selectionChanged(ITextSelection sel) {
 	}
-			
+
 	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			setEnabled(false);
 			return;
 		}
-		
-		Object selectedObject= selection.getFirstElement();
-		ICElement elem= getAdapter(selectedObject, ICElement.class);
+
+		Object selectedObject = selection.getFirstElement();
+		ICElement elem = getAdapter(selectedObject, ICElement.class);
 		if (elem != null) {
 			setEnabled(isValidElement(elem));
 		} else {
@@ -97,7 +98,7 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 			return (T) object;
 		}
 		if (object instanceof IAdaptable) {
-			IAdaptable adaptable= (IAdaptable) object;
+			IAdaptable adaptable = (IAdaptable) object;
 			return adaptable.getAdapter(desiredClass);
 		}
 		return null;

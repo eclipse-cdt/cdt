@@ -20,25 +20,23 @@ import org.eclipse.swt.graphics.GC;
 /**
  * Graphic object for MulticoreVisualizer.
  */
-public class MulticoreVisualizerGraphicObject extends GraphicObject
-{
+public class MulticoreVisualizerGraphicObject extends GraphicObject {
 	// --- members ---
 
 	// --- constructors/destructors ---
-	
+
 	/** Constructor */
 	public MulticoreVisualizerGraphicObject() {
 	}
-	
+
 	/** Dispose method */
 	@Override
 	public void dispose() {
 		super.dispose();
 	}
 
-	
 	// --- methods ---
-	
+
 	/** Invoked to allow element to paint itself on the viewer canvas */
 	@Override
 	public void paintContent(GC gc) {

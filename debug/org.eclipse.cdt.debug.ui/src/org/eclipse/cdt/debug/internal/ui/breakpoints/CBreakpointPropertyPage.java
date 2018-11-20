@@ -91,12 +91,12 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	private Composite fEventBPComposite;
 	private Composite fEventArgsComposite;
 	private List<FieldEditor> fEventArgsFEs = null;
-	
+
 	class BreakpointIntegerFieldEditor extends IntegerFieldEditor {
 
-		public BreakpointIntegerFieldEditor( String name, String labelText, Composite parent ) {
-			super( name, labelText, parent );
-			setErrorMessage( BreakpointsMessages.getString( "CBreakpointPropertyPage.0" ) ); //$NON-NLS-1$
+		public BreakpointIntegerFieldEditor(String name, String labelText, Composite parent) {
+			super(name, labelText, parent);
+			setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.0")); //$NON-NLS-1$
 		}
 
 		/**
@@ -105,7 +105,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		@Override
 		protected boolean checkState() {
 			Text control = getTextControl();
-			if ( !control.isEnabled() ) {
+			if (!control.isEnabled()) {
 				clearErrorMessage();
 				return true;
 			}
@@ -122,13 +122,13 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 		/**
 		 * Only store if the text control is enabled
-		 * 
+		 *
 		 * @see FieldEditor#doStore()
 		 */
 		@Override
 		protected void doStore() {
 			Text text = getTextControl();
-			if ( text.isEnabled() ) {
+			if (text.isEnabled()) {
 				super.doStore();
 			}
 		}
@@ -138,14 +138,13 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		 */
 		@Override
 		protected void clearErrorMessage() {
-			if ( getPage() != null ) {
+			if (getPage() != null) {
 				String message = getPage().getErrorMessage();
-				if ( message != null ) {
-					if ( getErrorMessage().equals( message ) ) {
+				if (message != null) {
+					if (getErrorMessage().equals(message)) {
 						super.clearErrorMessage();
 					}
-				}
-				else {
+				} else {
 					super.clearErrorMessage();
 				}
 			}
@@ -154,8 +153,8 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	class BreakpointStringFieldEditor extends StringFieldEditor {
 
-		public BreakpointStringFieldEditor( String name, String labelText, Composite parent ) {
-			super( name, labelText, parent );
+		public BreakpointStringFieldEditor(String name, String labelText, Composite parent) {
+			super(name, labelText, parent);
 		}
 
 		@Override
@@ -177,7 +176,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		@Override
 		protected boolean checkState() {
 			Text control = getTextControl();
-			if ( !control.isEnabled() ) {
+			if (!control.isEnabled()) {
 				clearErrorMessage();
 				return true;
 			}
@@ -187,14 +186,15 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		@Override
 		protected void doStore() {
 			Text text = getTextControl();
-			if ( text.isEnabled() ) {
+			if (text.isEnabled()) {
 				super.doStore();
 			}
 		}
+
 		@Override
-		protected void doLoad()  {
+		protected void doLoad() {
 			String value = getPreferenceStore().getString(getPreferenceName());
-            setStringValue(value);
+			setStringValue(value);
 		}
 
 		/**
@@ -210,14 +210,13 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		 */
 		@Override
 		protected void clearErrorMessage() {
-			if ( getPage() != null ) {
+			if (getPage() != null) {
 				String message = getPage().getErrorMessage();
-				if ( message != null ) {
-					if ( getErrorMessage().equals( message ) ) {
+				if (message != null) {
+					if (getErrorMessage().equals(message)) {
 						super.clearErrorMessage();
 					}
-				}
-				else {
+				} else {
 					super.clearErrorMessage();
 				}
 			}
@@ -243,7 +242,8 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			super.doFillIntoGrid(parent, numColumns);
 
 			composite = new Composite(parent, SWT.NONE);
-			composite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(getNumberOfControls(), 1).align(SWT.END, SWT.FILL).create());
+			composite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(getNumberOfControls(), 1)
+					.align(SWT.END, SWT.FILL).create());
 			composite.setLayout(new FillLayout());
 			Button browseWorkspace = new Button(composite, SWT.PUSH);
 			browseWorkspace.setText(BreakpointsMessages.getString("CBreakpointPropertyPage.workspace_button")); //$NON-NLS-1$
@@ -251,7 +251,8 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			browseWorkspace.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent evt) {
-					FilteredResourcesSelectionDialog dialog = new FilteredResourcesSelectionDialog(getShell(), false, ResourcesPlugin.getWorkspace().getRoot(), IResource.FILE);
+					FilteredResourcesSelectionDialog dialog = new FilteredResourcesSelectionDialog(getShell(), false,
+							ResourcesPlugin.getWorkspace().getRoot(), IResource.FILE);
 					String text = getTextControl().getText();
 					IPath path = Path.fromOSString(text);
 					String filename;
@@ -277,7 +278,6 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 				}
 			});
 
-
 			Button browseFileSystem = new Button(composite, SWT.PUSH);
 			browseFileSystem.setText(BreakpointsMessages.getString("CBreakpointPropertyPage.file_system_button")); //$NON-NLS-1$
 			browseFileSystem.setFont(parent.getFont());
@@ -296,7 +296,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 		@Override
 		protected boolean doCheckState() {
-			// Check that the file name supplied is absolute and exists so that we can 
+			// Check that the file name supplied is absolute and exists so that we can
 			// associate it to an IResource later for creating a breakpoint marker.
 			String stringValue = getStringValue();
 			if (stringValue == null) {
@@ -309,226 +309,227 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 			return super.doCheckState();
 		}
-		
+
 	}
 
-    class WatchpointRangeFieldEditor extends IntegerFieldEditor {
+	class WatchpointRangeFieldEditor extends IntegerFieldEditor {
 
-        private static final String DISABLED_VALUE = "0"; //$NON-NLS-1$
-        private Button fCheckbox;
-        private boolean fWasSelected;
-        
-        public WatchpointRangeFieldEditor( String name, String labelText, Composite parent ) {
-            super( name, labelText, parent );
-        }
-        
-        @Override
-        protected void doFillIntoGrid(Composite parent, int numColumns) {
-            getCheckboxControl(parent);
-            super.doFillIntoGrid(parent, numColumns);
-        }
+		private static final String DISABLED_VALUE = "0"; //$NON-NLS-1$
+		private Button fCheckbox;
+		private boolean fWasSelected;
 
-        private Button getCheckboxControl(Composite parent) {
-            if (fCheckbox == null) {
-                Composite inner= new Composite(parent, SWT.NULL);
-                final GridLayout layout= new GridLayout(2, false);
-                layout.marginWidth = 0;
-                inner.setLayout(layout);
-                fCheckbox= new Button(inner, SWT.CHECK);
-                fCheckbox.setFont(parent.getFont());
-                fCheckbox.setText(getLabelText());
-                // create and hide label from base class
-                Label label = getLabelControl(inner);
-                label.setText(""); //$NON-NLS-1$
-                label.setVisible(false);
-                fCheckbox.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        boolean isSelected = fCheckbox.getSelection();
-                        valueChanged(fWasSelected, isSelected);
-                        fWasSelected = isSelected;
-                    }
-                });
-            } else {
-                checkParent(fCheckbox.getParent(), parent);
-            }
-            return fCheckbox;
-        }
+		public WatchpointRangeFieldEditor(String name, String labelText, Composite parent) {
+			super(name, labelText, parent);
+		}
 
-        @Override
-        protected boolean checkState() {
-            if (fCheckbox != null && !fCheckbox.getSelection()) {
-                clearErrorMessage();
-                return true;
-            }
-            return super.checkState();
-        }
-        
-        @Override
-        public Label getLabelControl(Composite parent) {
-            final Label label= getLabelControl();
-            if (label == null) {
-                return super.getLabelControl(parent);
-            } else {
-                checkParent(label.getParent(), parent);
-            }
-            return label;
-        }
+		@Override
+		protected void doFillIntoGrid(Composite parent, int numColumns) {
+			getCheckboxControl(parent);
+			super.doFillIntoGrid(parent, numColumns);
+		}
 
-        @Override
-        protected void doLoad() {
-            if (getTextControl() != null && fCheckbox != null && getLabelControl() != null) {
-                oldValue = getPreferenceStore().getString(getPreferenceName());
-                boolean enabled = !DISABLED_VALUE.equals(oldValue);
-                getTextControl().setText(enabled ? oldValue : ""); //$NON-NLS-1$
-                fCheckbox.setSelection(enabled);
-                fWasSelected = enabled;
-                getTextControl().setEnabled(enabled);
-                getLabelControl().setEnabled(enabled);
-            }
-        }
+		private Button getCheckboxControl(Composite parent) {
+			if (fCheckbox == null) {
+				Composite inner = new Composite(parent, SWT.NULL);
+				final GridLayout layout = new GridLayout(2, false);
+				layout.marginWidth = 0;
+				inner.setLayout(layout);
+				fCheckbox = new Button(inner, SWT.CHECK);
+				fCheckbox.setFont(parent.getFont());
+				fCheckbox.setText(getLabelText());
+				// create and hide label from base class
+				Label label = getLabelControl(inner);
+				label.setText(""); //$NON-NLS-1$
+				label.setVisible(false);
+				fCheckbox.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						boolean isSelected = fCheckbox.getSelection();
+						valueChanged(fWasSelected, isSelected);
+						fWasSelected = isSelected;
+					}
+				});
+			} else {
+				checkParent(fCheckbox.getParent(), parent);
+			}
+			return fCheckbox;
+		}
 
-        @Override
-        protected void doStore() {
-            if (fCheckbox != null && !fCheckbox.getSelection()) {
-                getPreferenceStore().setValue(getPreferenceName(), DISABLED_VALUE);
-            } else {
-                Text text = getTextControl();
-                if (text != null) {
-                    getPreferenceStore().setValue(getPreferenceName(), text.getText().trim());
-                }
-            }
-        }
+		@Override
+		protected boolean checkState() {
+			if (fCheckbox != null && !fCheckbox.getSelection()) {
+				clearErrorMessage();
+				return true;
+			}
+			return super.checkState();
+		}
 
-        @Override
-        public int getIntValue() throws NumberFormatException {
-            if (fCheckbox != null && !fCheckbox.getSelection()) {
-                return 0;
-            } else {
-                return super.getIntValue();
-            }
-        }
-        
-        protected void valueChanged(boolean oldValue, boolean newValue) {
-            if (oldValue != newValue) {
-                valueChanged();
-                fireStateChanged(VALUE, oldValue, newValue);
-                getTextControl().setEnabled(newValue);
-                getLabelControl().setEnabled(newValue);
-            }
-        }
-        
-    }
+		@Override
+		public Label getLabelControl(Composite parent) {
+			final Label label = getLabelControl();
+			if (label == null) {
+				return super.getLabelControl(parent);
+			} else {
+				checkParent(label.getParent(), parent);
+			}
+			return label;
+		}
 
-    class WatchpointMemorySpaceFieldEditor extends ComboFieldEditor {
+		@Override
+		protected void doLoad() {
+			if (getTextControl() != null && fCheckbox != null && getLabelControl() != null) {
+				oldValue = getPreferenceStore().getString(getPreferenceName());
+				boolean enabled = !DISABLED_VALUE.equals(oldValue);
+				getTextControl().setText(enabled ? oldValue : ""); //$NON-NLS-1$
+				fCheckbox.setSelection(enabled);
+				fWasSelected = enabled;
+				getTextControl().setEnabled(enabled);
+				getLabelControl().setEnabled(enabled);
+			}
+		}
 
-        private static final String DISABLED_VALUE = ""; //$NON-NLS-1$
-        private Button fCheckbox;
-        private boolean fWasSelected;
-        
-        public WatchpointMemorySpaceFieldEditor( String name, String labelText, String[] memorySpaces, Composite parent ) {
-            super( name, labelText, makeArray2D(memorySpaces), parent );
-        }        
-        
-        @Override
-        protected void doFillIntoGrid(Composite parent, int numColumns) {
-            getCheckboxControl(parent);
-            super.doFillIntoGrid(parent, numColumns);
-        }
+		@Override
+		protected void doStore() {
+			if (fCheckbox != null && !fCheckbox.getSelection()) {
+				getPreferenceStore().setValue(getPreferenceName(), DISABLED_VALUE);
+			} else {
+				Text text = getTextControl();
+				if (text != null) {
+					getPreferenceStore().setValue(getPreferenceName(), text.getText().trim());
+				}
+			}
+		}
 
-        private Button getCheckboxControl(Composite parent) {
-            if (fCheckbox == null) {
-                Composite inner= new Composite(parent, SWT.NULL);
-                final GridLayout layout= new GridLayout(2, false);
-                layout.marginWidth = 0;
-                inner.setLayout(layout);
-                fCheckbox= new Button(inner, SWT.CHECK);
-                fCheckbox.setFont(parent.getFont());
-                fCheckbox.setText(getLabelText());
-                // create and hide label from base class
-                Label label = getLabelControl(inner);
-                label.setText(""); //$NON-NLS-1$
-                label.setVisible(false);
-                fCheckbox.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        boolean isSelected = fCheckbox.getSelection();
-                        valueChanged(fWasSelected, isSelected);
-                        fWasSelected = isSelected;
-                    }
-                });
-            } else {
-                checkParent(fCheckbox.getParent(), parent);
-            }
-            return fCheckbox;
-        }
+		@Override
+		public int getIntValue() throws NumberFormatException {
+			if (fCheckbox != null && !fCheckbox.getSelection()) {
+				return 0;
+			} else {
+				return super.getIntValue();
+			}
+		}
 
-        @Override
-        public Label getLabelControl(Composite parent) {
-            final Label label= getLabelControl();
-            if (label == null) {
-                return super.getLabelControl(parent);
-            } else {
-                checkParent(label.getParent(), parent);
-            }
-            return label;
-        }
+		protected void valueChanged(boolean oldValue, boolean newValue) {
+			if (oldValue != newValue) {
+				valueChanged();
+				fireStateChanged(VALUE, oldValue, newValue);
+				getTextControl().setEnabled(newValue);
+				getLabelControl().setEnabled(newValue);
+			}
+		}
 
-        @Override
-        protected void doLoad() {
-            super.doLoad();
-            if (fCheckbox != null && getLabelControl() != null) {
-                String value = getPreferenceStore().getString(getPreferenceName());
-                boolean enabled = !DISABLED_VALUE.equals(value);
-                fCheckbox.setSelection(enabled);
-                fWasSelected = enabled;
-                getComboBoxControl().setEnabled(enabled);
-                getLabelControl().setEnabled(enabled);
-            }
-        }
+	}
 
-        @Override
-        protected void doStore() {
-            if (fCheckbox != null && !fCheckbox.getSelection()) {
-                getPreferenceStore().setValue(getPreferenceName(), DISABLED_VALUE);
-            } else {
-                super.doStore();
-            }
-        }
+	class WatchpointMemorySpaceFieldEditor extends ComboFieldEditor {
 
-        protected void valueChanged(boolean oldValue, boolean newValue) {
-            if (oldValue != newValue) {
-                fireStateChanged(VALUE, oldValue, newValue);
-                getComboBoxControl().setEnabled(newValue);
-                getLabelControl().setEnabled(newValue);
-            }
-        }
-        
-    }
+		private static final String DISABLED_VALUE = ""; //$NON-NLS-1$
+		private Button fCheckbox;
+		private boolean fWasSelected;
 
-    private String[][] makeArray2D(String[] array) {
-        String[][] array2d = new String[array.length][];
-        for (int i = 0; i < array.length; i++) {
-            array2d[i] = new String[2];
-            array2d[i][0] = array2d[i][1] =  array[i];
-        }
-        return array2d;
-    }
+		public WatchpointMemorySpaceFieldEditor(String name, String labelText, String[] memorySpaces,
+				Composite parent) {
+			super(name, labelText, makeArray2D(memorySpaces), parent);
+		}
 
-    private String[][] joinToArray2D(String[] labels, String[] values) {
-        String[][] array2d = new String[labels.length][];
-        for (int i = 0; i < labels.length; i++) {
-            array2d[i] = new String[2];
-            array2d[i][0] = labels[i];
-            array2d[i][1] = values[i];
-        }
-        return array2d;
-    }
+		@Override
+		protected void doFillIntoGrid(Composite parent, int numColumns) {
+			getCheckboxControl(parent);
+			super.doFillIntoGrid(parent, numColumns);
+		}
+
+		private Button getCheckboxControl(Composite parent) {
+			if (fCheckbox == null) {
+				Composite inner = new Composite(parent, SWT.NULL);
+				final GridLayout layout = new GridLayout(2, false);
+				layout.marginWidth = 0;
+				inner.setLayout(layout);
+				fCheckbox = new Button(inner, SWT.CHECK);
+				fCheckbox.setFont(parent.getFont());
+				fCheckbox.setText(getLabelText());
+				// create and hide label from base class
+				Label label = getLabelControl(inner);
+				label.setText(""); //$NON-NLS-1$
+				label.setVisible(false);
+				fCheckbox.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						boolean isSelected = fCheckbox.getSelection();
+						valueChanged(fWasSelected, isSelected);
+						fWasSelected = isSelected;
+					}
+				});
+			} else {
+				checkParent(fCheckbox.getParent(), parent);
+			}
+			return fCheckbox;
+		}
+
+		@Override
+		public Label getLabelControl(Composite parent) {
+			final Label label = getLabelControl();
+			if (label == null) {
+				return super.getLabelControl(parent);
+			} else {
+				checkParent(label.getParent(), parent);
+			}
+			return label;
+		}
+
+		@Override
+		protected void doLoad() {
+			super.doLoad();
+			if (fCheckbox != null && getLabelControl() != null) {
+				String value = getPreferenceStore().getString(getPreferenceName());
+				boolean enabled = !DISABLED_VALUE.equals(value);
+				fCheckbox.setSelection(enabled);
+				fWasSelected = enabled;
+				getComboBoxControl().setEnabled(enabled);
+				getLabelControl().setEnabled(enabled);
+			}
+		}
+
+		@Override
+		protected void doStore() {
+			if (fCheckbox != null && !fCheckbox.getSelection()) {
+				getPreferenceStore().setValue(getPreferenceName(), DISABLED_VALUE);
+			} else {
+				super.doStore();
+			}
+		}
+
+		protected void valueChanged(boolean oldValue, boolean newValue) {
+			if (oldValue != newValue) {
+				fireStateChanged(VALUE, oldValue, newValue);
+				getComboBoxControl().setEnabled(newValue);
+				getLabelControl().setEnabled(newValue);
+			}
+		}
+
+	}
+
+	private String[][] makeArray2D(String[] array) {
+		String[][] array2d = new String[array.length][];
+		for (int i = 0; i < array.length; i++) {
+			array2d[i] = new String[2];
+			array2d[i][0] = array2d[i][1] = array[i];
+		}
+		return array2d;
+	}
+
+	private String[][] joinToArray2D(String[] labels, String[] values) {
+		String[][] array2d = new String[labels.length][];
+		for (int i = 0; i < labels.length; i++) {
+			array2d[i] = new String[2];
+			array2d[i][0] = labels[i];
+			array2d[i][1] = values[i];
+		}
+		return array2d;
+	}
 
 	class LabelFieldEditor extends ReadOnlyFieldEditor {
 		private String fValue;
 
-		public LabelFieldEditor( Composite parent, String title, String value ) {
+		public LabelFieldEditor(Composite parent, String title, String value) {
 			super(title, title, parent);
 			fValue = value;
 		}
@@ -539,6 +540,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 				textField.setText(fValue);
 			}
 		}
+
 		@Override
 		protected void doLoadDefault() {
 			// nothing
@@ -555,19 +557,19 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	private BreakpointFileNameFieldEditor fFileEditor;
 	private BreakpointIntegerFieldEditor fLineEditor;
 	private BreakpointIntegerFieldEditor fIgnoreCount;
-	
+
 	private IAdaptable fElement;
 
-	/** 
+	/**
 	 * Indicates if the page currently aims to create
 	 * a breakpoint that already exits.
 	 */
 	private boolean fDuplicateBreakpoint;
 
 	/**
-	 * The preference store used to interface between the breakpoint and the 
+	 * The preference store used to interface between the breakpoint and the
 	 * breakpoint preference page.  This preference store is initialized only
-	 * when the preference store cannot be retrieved from the preference 
+	 * when the preference store cannot be retrieved from the preference
 	 * dialog's element.
 	 * @see #getPreferenceStore()
 	 */
@@ -575,14 +577,14 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	/**
 	 * Constructor for CBreakpointPropertyPage.
-	 * 
+	 *
 	 * @param breakpoint
 	 */
 	public CBreakpointPropertyPage() {
-		super( GRID );
+		super(GRID);
 		noDefaultAndApplyButton();
-//		Control control = getControl();
-//		fCBreakpointPreferenceStore = new CBreakpointPreferenceStore();
+		//		Control control = getControl();
+		//		fCBreakpointPreferenceStore = new CBreakpointPreferenceStore();
 	}
 
 	@Override
@@ -590,110 +592,109 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		ICBreakpoint breakpoint = getBreakpoint();
 		createMainLabel(breakpoint);
 		createContributedFieldEditors(breakpoint, ICBreakpointsUIContribution.BREAKPOINT_LABELS);
-		createTypeSpecificLabelFieldEditors( breakpoint );
-		createEnabledField( getFieldEditorParent() );
-		createConditionEditor( getFieldEditorParent() );
-		createIgnoreCountEditor( getFieldEditorParent() );
-        createContributedFieldEditors(breakpoint, ICBreakpointsUIContribution.BREAKPOINT_EDITORS);
+		createTypeSpecificLabelFieldEditors(breakpoint);
+		createEnabledField(getFieldEditorParent());
+		createConditionEditor(getFieldEditorParent());
+		createIgnoreCountEditor(getFieldEditorParent());
+		createContributedFieldEditors(breakpoint, ICBreakpointsUIContribution.BREAKPOINT_EDITORS);
 	}
 
 	private void createMainLabel(ICBreakpoint breakpoint) {
-	    String label = getBreakpointMainLabel(breakpoint); 
-		addField( createLabelEditor( 
-		    getFieldEditorParent(), 
-		    BreakpointsMessages.getString( "CBreakpointPropertyPage.breakpointType_label" ),  //$NON-NLS-1$
-		    label) );
+		String label = getBreakpointMainLabel(breakpoint);
+		addField(createLabelEditor(getFieldEditorParent(),
+				BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_label"), //$NON-NLS-1$
+				label));
 	}
 
 	/**
 	 * Method createTypeSpecificLabelFieldEditors.
-	 * 
+	 *
 	 * @param breakpoint
 	 */
-	private void createTypeSpecificLabelFieldEditors( ICBreakpoint breakpoint ) {
+	private void createTypeSpecificLabelFieldEditors(ICBreakpoint breakpoint) {
 
-		if ( breakpoint instanceof ICFunctionBreakpoint ) {
-		    createFunctionEditor(getFieldEditorParent());
-		}
-		else if ( breakpoint instanceof ICAddressBreakpoint ) {
-	        String title = BreakpointsMessages.getString( "CBreakpointPropertyPage.address_label" ); //$NON-NLS-1$
-	        
-            String address = getPreferenceStore().getString(ICLineBreakpoint.ADDRESS);
-            if (address == null || address.trim().length() == 0) {
-                address = BreakpointsMessages.getString( "CBreakpointPropertyPage.address_valueNotAvailable_label" ); //$NON-NLS-1$
-            }
-            addField( createLabelEditor( getFieldEditorParent(), title, address ) ); 
-		}
-		else if ( breakpoint instanceof ICWatchpoint ) {
+		if (breakpoint instanceof ICFunctionBreakpoint) {
+			createFunctionEditor(getFieldEditorParent());
+		} else if (breakpoint instanceof ICAddressBreakpoint) {
+			String title = BreakpointsMessages.getString("CBreakpointPropertyPage.address_label"); //$NON-NLS-1$
+
+			String address = getPreferenceStore().getString(ICLineBreakpoint.ADDRESS);
+			if (address == null || address.trim().length() == 0) {
+				address = BreakpointsMessages.getString("CBreakpointPropertyPage.address_valueNotAvailable_label"); //$NON-NLS-1$
+			}
+			addField(createLabelEditor(getFieldEditorParent(), title, address));
+		} else if (breakpoint instanceof ICWatchpoint) {
 			IResource resource = getResource();
 			if (resource != null) {
-    			IProject project = resource.getProject();
-    			if ( project != null ) {
-    				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.project_label" ), project.getName() ) ); //$NON-NLS-1$
-    			}
-			} 
+				IProject project = resource.getProject();
+				if (project != null) {
+					addField(createLabelEditor(getFieldEditorParent(),
+							BreakpointsMessages.getString("CBreakpointPropertyPage.project_label"), project.getName())); //$NON-NLS-1$
+				}
+			}
 			String filename = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
 			if (filename != null && !filename.isEmpty()) {
-				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.sourceHandle_label" ), filename ) ); //$NON-NLS-1$
+				addField(createLabelEditor(getFieldEditorParent(),
+						BreakpointsMessages.getString("CBreakpointPropertyPage.sourceHandle_label"), filename)); //$NON-NLS-1$
 			}
 			createWatchExpressionEditor(getFieldEditorParent());
-            createWatchMemorySpaceEditor(getFieldEditorParent());
+			createWatchMemorySpaceEditor(getFieldEditorParent());
 			createWatchRangeEditor(getFieldEditorParent());
 			createWatchTypeEditors(getFieldEditorParent());
-			
-		}
-		else if ( breakpoint instanceof ILineBreakpoint ) {
+
+		} else if (breakpoint instanceof ILineBreakpoint) {
 			createFileLineNumberEditor(getFieldEditorParent());
-		}
-		else if ( breakpoint instanceof CEventBreakpoint ) {
-			createEventBreakpointEditor( breakpoint, ICBreakpointsUIContribution.BREAKPOINT_LABELS);
+		} else if (breakpoint instanceof CEventBreakpoint) {
+			createEventBreakpointEditor(breakpoint, ICBreakpointsUIContribution.BREAKPOINT_LABELS);
 		}
 	}
 
 	private String getBreakpointMainLabel(ICBreakpoint breakpoint) {
-	    if (breakpoint instanceof ICWatchpoint  && breakpoint.getMarker() != null) {
-	        // For an existing breakpoint, calculate watchpoint label based 
-	        // on read/write type.
-            boolean isReadType = getPreferenceStore().getBoolean(ICWatchpoint.READ);
-            boolean isWriteType = getPreferenceStore().getBoolean(ICWatchpoint.WRITE);
-            if (isReadType && !isWriteType) {
-                return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_read_label"); //$NON-NLS-1$
-            } else if (!isReadType && isWriteType) {
-                return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_label"); //$NON-NLS-1$
-            } else {
-                return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_access_label"); //$NON-NLS-1$
-            }
-	    }
-	    
-	    IWorkbenchAdapter labelProvider = getElement().getAdapter(IWorkbenchAdapter.class);
-	    if (labelProvider != null) {
-	        return labelProvider.getLabel(getElement());
-	    }
-        // default main label is the label of marker type for the breakpoint
-        return CDIDebugModel.calculateMarkerType(breakpoint);
+		if (breakpoint instanceof ICWatchpoint && breakpoint.getMarker() != null) {
+			// For an existing breakpoint, calculate watchpoint label based
+			// on read/write type.
+			boolean isReadType = getPreferenceStore().getBoolean(ICWatchpoint.READ);
+			boolean isWriteType = getPreferenceStore().getBoolean(ICWatchpoint.WRITE);
+			if (isReadType && !isWriteType) {
+				return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_read_label"); //$NON-NLS-1$
+			} else if (!isReadType && isWriteType) {
+				return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_label"); //$NON-NLS-1$
+			} else {
+				return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_access_label"); //$NON-NLS-1$
+			}
+		}
+
+		IWorkbenchAdapter labelProvider = getElement().getAdapter(IWorkbenchAdapter.class);
+		if (labelProvider != null) {
+			return labelProvider.getLabel(getElement());
+		}
+		// default main label is the label of marker type for the breakpoint
+		return CDIDebugModel.calculateMarkerType(breakpoint);
 	}
-	
-    protected void createFunctionEditor( Composite parent ) {
-            
-        ICBreakpoint breakpoint = getBreakpoint();
-        String title = BreakpointsMessages.getString("CBreakpointPropertyPage.function_label"); //$NON-NLS-1$
-        if (breakpoint == null || breakpoint.getMarker() == null) {
-            BreakpointStringFieldEditor expressionEditor = new BreakpointStringFieldEditor(
-                ICLineBreakpoint.FUNCTION, title, parent);
-            expressionEditor.setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.function_value_errorMessage")); //$NON-NLS-1$
-            expressionEditor.setEmptyStringAllowed(false);
-            addField(expressionEditor);
-        } else {
-            String function = getPreferenceStore().getString(ICLineBreakpoint.FUNCTION); 
-            if ( function == null ) { 
-                function = BreakpointsMessages.getString( "CBreakpointPropertyPage.function_valueNotAvailable_label" ); //$NON-NLS-1$
-            }
-            addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.function_label" ), function ) ); //$NON-NLS-1$
+
+	protected void createFunctionEditor(Composite parent) {
+
+		ICBreakpoint breakpoint = getBreakpoint();
+		String title = BreakpointsMessages.getString("CBreakpointPropertyPage.function_label"); //$NON-NLS-1$
+		if (breakpoint == null || breakpoint.getMarker() == null) {
+			BreakpointStringFieldEditor expressionEditor = new BreakpointStringFieldEditor(ICLineBreakpoint.FUNCTION,
+					title, parent);
+			expressionEditor.setErrorMessage(
+					BreakpointsMessages.getString("CBreakpointPropertyPage.function_value_errorMessage")); //$NON-NLS-1$
+			expressionEditor.setEmptyStringAllowed(false);
+			addField(expressionEditor);
+		} else {
+			String function = getPreferenceStore().getString(ICLineBreakpoint.FUNCTION);
+			if (function == null) {
+				function = BreakpointsMessages.getString("CBreakpointPropertyPage.function_valueNotAvailable_label"); //$NON-NLS-1$
+			}
+			addField(createLabelEditor(getFieldEditorParent(),
+					BreakpointsMessages.getString("CBreakpointPropertyPage.function_label"), function)); //$NON-NLS-1$
 		}
 	}
 
-	protected void createFileLineNumberEditor( Composite parent ) {
-		String title = BreakpointsMessages.getString( "CBreakpointPropertyPage.sourceHandle_label" ); //$NON-NLS-1$
+	protected void createFileLineNumberEditor(Composite parent) {
+		String title = BreakpointsMessages.getString("CBreakpointPropertyPage.sourceHandle_label"); //$NON-NLS-1$
 		ICBreakpoint breakpoint = getBreakpoint();
 
 		boolean isNewBreakpoint = breakpoint == null || breakpoint.getMarker() == null;
@@ -701,8 +702,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		boolean isFilenameEditable = fileName != null && fileName.isEmpty();
 
 		if (isNewBreakpoint && isFilenameEditable) {
-			fFileEditor = new BreakpointFileNameFieldEditor(
-					ICLineBreakpoint.SOURCE_HANDLE, title, parent);
+			fFileEditor = new BreakpointFileNameFieldEditor(ICLineBreakpoint.SOURCE_HANDLE, title, parent);
 			fFileEditor.setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.fileName_errorMessage")); //$NON-NLS-1$
 			fFileEditor.setEmptyStringAllowed(false);
 			addField(fFileEditor);
@@ -721,102 +721,100 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			createLineNumberEditor(parent);
 		}
 	}
-	
-	protected void createLineNumberEditor( Composite parent ) {
-		 String title = BreakpointsMessages.getString( "CBreakpointPropertyPage.lineNumber_label" ); //$NON-NLS-1$
-		 fLineEditor = new BreakpointIntegerFieldEditor(IMarker.LINE_NUMBER ,title, parent);
-		 fLineEditor.setValidRange(1, Integer.MAX_VALUE);
-		 fLineEditor.setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.lineNumber_errorMessage")); //$NON-NLS-1$
-		 addField(fLineEditor);
+
+	protected void createLineNumberEditor(Composite parent) {
+		String title = BreakpointsMessages.getString("CBreakpointPropertyPage.lineNumber_label"); //$NON-NLS-1$
+		fLineEditor = new BreakpointIntegerFieldEditor(IMarker.LINE_NUMBER, title, parent);
+		fLineEditor.setValidRange(1, Integer.MAX_VALUE);
+		fLineEditor.setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.lineNumber_errorMessage")); //$NON-NLS-1$
+		addField(fLineEditor);
 	}
 
-    protected void createWatchExpressionEditor( Composite parent ) {
-        ICBreakpoint breakpoint = getBreakpoint();
-        if (breakpoint == null || breakpoint.getMarker() == null) {
-            BreakpointStringFieldEditor expressionEditor =new BreakpointStringFieldEditor(
-                 ICWatchpoint.EXPRESSION,
-                 BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_expression_label"), //$NON-NLS-1$
-                 parent);
-            expressionEditor.setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_expression_errorMessage")); //$NON-NLS-1$
-            expressionEditor.setEmptyStringAllowed(false);
-            addField(expressionEditor);
-        } else {
-            addField(createLabelEditor(
-                parent, 
-                BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_expression_label"), //$NON-NLS-1$
-                getPreferenceStore().getString(ICWatchpoint.EXPRESSION) ));
-        }
-    }
-
-    protected void createWatchMemorySpaceEditor( Composite parent ) {
-        ICBreakpoint breakpoint = getBreakpoint();
-        if (breakpoint == null || breakpoint.getMarker() == null) {
-            // XXX: In pre-CDI removal this set up additional field by getting memory space 
-            // from ICDIMemorySpaceManagement. post-CDT removal memory space is still displayed
-            // (else below) but cannot be set on new breakpoints
-        } else {
-            String memorySpace = getPreferenceStore().getString(ICWatchpoint2.MEMORYSPACE);
-            if (memorySpace != null && memorySpace.length() != 0) {
-                addField(createLabelEditor(
-                    parent, 
-                    BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_memorySpace_label"), //$NON-NLS-1$
-                    getPreferenceStore().getString(ICWatchpoint2.MEMORYSPACE) ));
-            }
-        }
-    }
-    
-    protected void createWatchRangeEditor( Composite parent ) {
-        ICBreakpoint breakpoint = getBreakpoint();
-        if (breakpoint == null || breakpoint.getMarker() == null) {
-            addField( new WatchpointRangeFieldEditor(
-                 ICWatchpoint2.RANGE,
-                 BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_range_label"), //$NON-NLS-1$
-                 parent) ); 
-        } else {
-            addField(createLabelEditor(
-                parent, 
-                BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_range_label"), //$NON-NLS-1$
-                getPreferenceStore().getString(ICWatchpoint2.RANGE) ));
-        }
-    }
-
-    protected void createWatchTypeEditors( Composite parent ) {
-        // Edit read/write options only when creating the breakpoint.
-        ICBreakpoint breakpoint = getBreakpoint();
-        if (breakpoint != null && breakpoint.getMarker() == null) {
-            addField( new BooleanFieldEditor(
-                 ICWatchpoint.READ,
-                 BreakpointsMessages.getString("CBreakpointPropertyPage.watchpointType_read_label"), //$NON-NLS-1$
-                 parent) );
-            addField( new BooleanFieldEditor(
-                ICWatchpoint.WRITE,
-                BreakpointsMessages.getString("CBreakpointPropertyPage.watchpointType_write_label"), //$NON-NLS-1$
-                parent) );
-        }
-    }
-
-	protected void createEnabledField( Composite parent ) {
-		fEnabled = new BooleanFieldEditor( ICBreakpoint.ENABLED, BreakpointsMessages.getString( "CBreakpointPropertyPage.enabled_label" ), parent ); //$NON-NLS-1$
-		addField( fEnabled );
+	protected void createWatchExpressionEditor(Composite parent) {
+		ICBreakpoint breakpoint = getBreakpoint();
+		if (breakpoint == null || breakpoint.getMarker() == null) {
+			BreakpointStringFieldEditor expressionEditor = new BreakpointStringFieldEditor(ICWatchpoint.EXPRESSION,
+					BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_expression_label"), //$NON-NLS-1$
+					parent);
+			expressionEditor.setErrorMessage(
+					BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_expression_errorMessage")); //$NON-NLS-1$
+			expressionEditor.setEmptyStringAllowed(false);
+			addField(expressionEditor);
+		} else {
+			addField(createLabelEditor(parent,
+					BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_expression_label"), //$NON-NLS-1$
+					getPreferenceStore().getString(ICWatchpoint.EXPRESSION)));
+		}
 	}
 
-	protected void createConditionEditor( Composite parent ) {
-		fCondition = new BreakpointStringFieldEditor( ICBreakpoint.CONDITION, BreakpointsMessages.getString( "CBreakpointPropertyPage.condition_label" ), parent ); //$NON-NLS-1$
-		fCondition.setEmptyStringAllowed( true );
-		fCondition.setErrorMessage( BreakpointsMessages.getString( "CBreakpointPropertyPage.condition_invalidValue_message" ) ); //$NON-NLS-1$
-		addField( fCondition );
+	protected void createWatchMemorySpaceEditor(Composite parent) {
+		ICBreakpoint breakpoint = getBreakpoint();
+		if (breakpoint == null || breakpoint.getMarker() == null) {
+			// XXX: In pre-CDI removal this set up additional field by getting memory space
+			// from ICDIMemorySpaceManagement. post-CDT removal memory space is still displayed
+			// (else below) but cannot be set on new breakpoints
+		} else {
+			String memorySpace = getPreferenceStore().getString(ICWatchpoint2.MEMORYSPACE);
+			if (memorySpace != null && memorySpace.length() != 0) {
+				addField(createLabelEditor(parent,
+						BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_memorySpace_label"), //$NON-NLS-1$
+						getPreferenceStore().getString(ICWatchpoint2.MEMORYSPACE)));
+			}
+		}
 	}
 
-	protected void createIgnoreCountEditor( Composite parent ) {
-		fIgnoreCount = new BreakpointIntegerFieldEditor( ICBreakpoint.IGNORE_COUNT, BreakpointsMessages.getString( "CBreakpointPropertyPage.ignoreCount_label" ), parent ); //$NON-NLS-1$
-		fIgnoreCount.setValidRange( 0, Integer.MAX_VALUE );
-		fIgnoreCountTextControl = fIgnoreCount.getTextControl( parent );
-		fIgnoreCountTextControl.setEnabled( getPreferenceStore().getInt(ICBreakpoint.IGNORE_COUNT) >= 0 );
-		addField( fIgnoreCount );
+	protected void createWatchRangeEditor(Composite parent) {
+		ICBreakpoint breakpoint = getBreakpoint();
+		if (breakpoint == null || breakpoint.getMarker() == null) {
+			addField(new WatchpointRangeFieldEditor(ICWatchpoint2.RANGE,
+					BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_range_label"), //$NON-NLS-1$
+					parent));
+		} else {
+			addField(createLabelEditor(parent,
+					BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_range_label"), //$NON-NLS-1$
+					getPreferenceStore().getString(ICWatchpoint2.RANGE)));
+		}
 	}
 
-	protected FieldEditor createLabelEditor( Composite parent, String title, String value ) {
-		return new LabelFieldEditor( parent, title, value );
+	protected void createWatchTypeEditors(Composite parent) {
+		// Edit read/write options only when creating the breakpoint.
+		ICBreakpoint breakpoint = getBreakpoint();
+		if (breakpoint != null && breakpoint.getMarker() == null) {
+			addField(new BooleanFieldEditor(ICWatchpoint.READ,
+					BreakpointsMessages.getString("CBreakpointPropertyPage.watchpointType_read_label"), //$NON-NLS-1$
+					parent));
+			addField(new BooleanFieldEditor(ICWatchpoint.WRITE,
+					BreakpointsMessages.getString("CBreakpointPropertyPage.watchpointType_write_label"), //$NON-NLS-1$
+					parent));
+		}
+	}
+
+	protected void createEnabledField(Composite parent) {
+		fEnabled = new BooleanFieldEditor(ICBreakpoint.ENABLED,
+				BreakpointsMessages.getString("CBreakpointPropertyPage.enabled_label"), parent); //$NON-NLS-1$
+		addField(fEnabled);
+	}
+
+	protected void createConditionEditor(Composite parent) {
+		fCondition = new BreakpointStringFieldEditor(ICBreakpoint.CONDITION,
+				BreakpointsMessages.getString("CBreakpointPropertyPage.condition_label"), parent); //$NON-NLS-1$
+		fCondition.setEmptyStringAllowed(true);
+		fCondition.setErrorMessage(
+				BreakpointsMessages.getString("CBreakpointPropertyPage.condition_invalidValue_message")); //$NON-NLS-1$
+		addField(fCondition);
+	}
+
+	protected void createIgnoreCountEditor(Composite parent) {
+		fIgnoreCount = new BreakpointIntegerFieldEditor(ICBreakpoint.IGNORE_COUNT,
+				BreakpointsMessages.getString("CBreakpointPropertyPage.ignoreCount_label"), parent); //$NON-NLS-1$
+		fIgnoreCount.setValidRange(0, Integer.MAX_VALUE);
+		fIgnoreCountTextControl = fIgnoreCount.getTextControl(parent);
+		fIgnoreCountTextControl.setEnabled(getPreferenceStore().getInt(ICBreakpoint.IGNORE_COUNT) >= 0);
+		addField(fIgnoreCount);
+	}
+
+	protected FieldEditor createLabelEditor(Composite parent, String title, String value) {
+		return new LabelFieldEditor(parent, title, value);
 	}
 
 	@Override
@@ -824,16 +822,14 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		// Don't allow to create a duplicate breakpoint
 		return super.isValid() && !fDuplicateBreakpoint;
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		super.propertyChange(event);
 
 		ICBreakpoint currentBp = getBreakpoint();
-		if (!(currentBp instanceof ICFunctionBreakpoint) &&
-				!(currentBp instanceof ICAddressBreakpoint) &&
-				!(currentBp instanceof ICWatchpoint) &&
-				!(currentBp instanceof ICEventBreakpoint)) {
+		if (!(currentBp instanceof ICFunctionBreakpoint) && !(currentBp instanceof ICAddressBreakpoint)
+				&& !(currentBp instanceof ICWatchpoint) && !(currentBp instanceof ICEventBreakpoint)) {
 			// Check for duplication of line breakpoints
 			if (event.getProperty().equals(FieldEditor.VALUE)) {
 				if (super.isValid()) {
@@ -844,7 +840,8 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 					fDuplicateBreakpoint = isDuplicateBreakpoint();
 					if (oldValue != fDuplicateBreakpoint) {
 						if (fDuplicateBreakpoint) {
-							setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.breakpoint_already_exists_errorMessage")); //$NON-NLS-1$
+							setErrorMessage(BreakpointsMessages
+									.getString("CBreakpointPropertyPage.breakpoint_already_exists_errorMessage")); //$NON-NLS-1$
 						} else {
 							setErrorMessage(null);
 						}
@@ -859,7 +856,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			}
 		}
 	}
-	
+
 	private boolean isDuplicateBreakpoint() {
 		String source = null;
 		if (fFileEditor != null) {
@@ -869,13 +866,13 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			// it from the preference store
 			source = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
 		}
-		
+
 		// We only check duplicates for Breakpoints with lines numbers
 		if (fLineEditor == null) {
 			return false;
 		}
-		
- 		int line = fLineEditor.getIntValue();
+
+		int line = fLineEditor.getIntValue();
 
 		// Look for any breakpoint that has the same source file and line number as what
 		// is currently being inputed.  Careful not to compare with the current breakpoint
@@ -902,72 +899,70 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	protected ICBreakpoint getBreakpoint() {
 		IAdaptable element = getElement();
 		if (element instanceof ICBreakpoint) {
-		    return (ICBreakpoint)element;
+			return (ICBreakpoint) element;
 		} else if (element instanceof ICBreakpointContext) {
-		    return ((ICBreakpointContext)element).getBreakpoint();
+			return ((ICBreakpointContext) element).getBreakpoint();
 		} else {
-		    return element.getAdapter(ICBreakpoint.class);
+			return element.getAdapter(ICBreakpoint.class);
 		}
 	}
 
 	protected Object getDebugContext() {
-        IDebugContextProvider provider = getElement().getAdapter(IDebugContextProvider.class);
-        if (provider != null) {
-            ISelection selection = provider.getActiveContext();
-            if (selection instanceof IStructuredSelection) {
-                return ((IStructuredSelection) selection).getFirstElement();
-            }
-            return null;
-        }
-        return DebugUITools.getDebugContext();        
+		IDebugContextProvider provider = getElement().getAdapter(IDebugContextProvider.class);
+		if (provider != null) {
+			ISelection selection = provider.getActiveContext();
+			if (selection instanceof IStructuredSelection) {
+				return ((IStructuredSelection) selection).getFirstElement();
+			}
+			return null;
+		}
+		return DebugUITools.getDebugContext();
 	}
 
-	
 	protected IResource getResource() {
-        IAdaptable element = getElement();
-        if (element instanceof ICBreakpoint) {
-            IMarker marker = ((ICBreakpoint)element).getMarker();
-            if (marker != null) {
-                return marker.getResource();
-            }
-        } else if (element instanceof ICBreakpointContext) {
-            return ((ICBreakpointContext)element).getResource();
-        } 
-        return null;
+		IAdaptable element = getElement();
+		if (element instanceof ICBreakpoint) {
+			IMarker marker = ((ICBreakpoint) element).getMarker();
+			if (marker != null) {
+				return marker.getResource();
+			}
+		} else if (element instanceof ICBreakpointContext) {
+			return ((ICBreakpointContext) element).getResource();
+		}
+		return null;
 	}
 
 	@Override
 	public IPreferenceStore getPreferenceStore() {
-	    IAdaptable element = getElement();
-	    if (element instanceof ICBreakpointContext) {
-	        return ((ICBreakpointContext)element).getPreferenceStore();
-	    }
+		IAdaptable element = getElement();
+		if (element instanceof ICBreakpointContext) {
+			return ((ICBreakpointContext) element).getPreferenceStore();
+		}
 
-	    if (fCBreakpointPreferenceStore == null) {
-	        CBreakpointContext bpContext = element instanceof CBreakpointContext ? 
-	            (CBreakpointContext)element : null;
-	        fCBreakpointPreferenceStore = new CBreakpointPreferenceStore(bpContext, null);
-	    }
-	    return fCBreakpointPreferenceStore;
+		if (fCBreakpointPreferenceStore == null) {
+			CBreakpointContext bpContext = element instanceof CBreakpointContext ? (CBreakpointContext) element : null;
+			fCBreakpointPreferenceStore = new CBreakpointPreferenceStore(bpContext, null);
+		}
+		return fCBreakpointPreferenceStore;
 	}
 
 	@Override
 	public boolean performCancel() {
-	    IPreferenceStore store = getPreferenceStore();
-	    if (store instanceof CBreakpointPreferenceStore) {
-	        ((CBreakpointPreferenceStore)store).setCanceled(true);
-	    }
-	    return super.performCancel();
+		IPreferenceStore store = getPreferenceStore();
+		if (store instanceof CBreakpointPreferenceStore) {
+			((CBreakpointPreferenceStore) store).setCanceled(true);
+		}
+		return super.performCancel();
 	}
 
 	@Override
-    public boolean performOk() {
-        IPreferenceStore store = getPreferenceStore();
-        if (store instanceof CBreakpointPreferenceStore) {
-            ((CBreakpointPreferenceStore)store).setCanceled(false);
-        }
-        return super.performOk();
-    }
+	public boolean performOk() {
+		IPreferenceStore store = getPreferenceStore();
+		if (store instanceof CBreakpointPreferenceStore) {
+			((CBreakpointPreferenceStore) store).setCanceled(false);
+		}
+		return super.performOk();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
@@ -981,80 +976,79 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
 	 */
 	@Override
-	public void setElement( IAdaptable element ) {
+	public void setElement(IAdaptable element) {
 		if (element instanceof ICBreakpoint) {
-			fElement = new CBreakpointContext((ICBreakpoint)element, null);
-		}
-		else {
+			fElement = new CBreakpointContext((ICBreakpoint) element, null);
+		} else {
 			fElement = element;
 		}
 	}
 
 	protected String[] getDebugModelIds() {
-        String[] debugModelIds = null;
-        Object debugContext = getDebugContext();
-        IDebugModelProvider debugModelProvider = (IDebugModelProvider)
-            DebugPlugin.getAdapter(debugContext, IDebugModelProvider.class);
-        if (debugModelProvider != null) {
-            debugModelIds = debugModelProvider.getModelIdentifiers();
-        } else if (debugContext instanceof IDebugElement) {
-            debugModelIds = new String[] { ((IDebugElement)debugContext).getModelIdentifier() };
-        }
-        return debugModelIds;
+		String[] debugModelIds = null;
+		Object debugContext = getDebugContext();
+		IDebugModelProvider debugModelProvider = (IDebugModelProvider) DebugPlugin.getAdapter(debugContext,
+				IDebugModelProvider.class);
+		if (debugModelProvider != null) {
+			debugModelIds = debugModelProvider.getModelIdentifiers();
+		} else if (debugContext instanceof IDebugElement) {
+			debugModelIds = new String[] { ((IDebugElement) debugContext).getModelIdentifier() };
+		}
+		return debugModelIds;
 	}
-	
-	private void createEventBreakpointEditor( ICBreakpoint breakpoint, String conMainElement) {
+
+	private void createEventBreakpointEditor(ICBreakpoint breakpoint, String conMainElement) {
 		boolean bAddEventType = true;
-		Composite parent = getFieldEditorParent();		
+		Composite parent = getFieldEditorParent();
 		String[] debugModelIds = getDebugModelIds();
 		try {
-		    ICBreakpointsUIContribution[] cons;
-		    CBreakpointUIContributionFactory factory = CBreakpointUIContributionFactory.getInstance();
-		    IPreferenceStore prefStore = getPreferenceStore();
-		    if (prefStore instanceof CBreakpointPreferenceStore) {
-		        cons = factory.getBreakpointUIContributions(
-		            debugModelIds, breakpoint, ((CBreakpointPreferenceStore) prefStore).getAttributes());
-		    } else {
-                cons = factory.getBreakpointUIContributions(breakpoint);
-		    }
-		    
-		    setupEventTypeFieldEditor(cons, breakpoint, conMainElement, parent);
-			for (ICBreakpointsUIContribution con : cons) {
-			    if ( conMainElement.equals(con.getMainElement()) ) {
-			    	FieldEditor fieldEditor = null;
-			    	if (breakpoint.getMarker() == null && con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
-			    		continue;
-			    	}
-			    	else if (con.getMarkerType().equalsIgnoreCase(ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER)) {
-			    		if ( breakpoint.getMarker() == null ) {
-			    			setupArgsComposite(parent);
-			    			fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", fEventArgsComposite); //$NON-NLS-1$			    			
-			    			if ( fieldEditor != null ) {
-			    				addEditorToComposite(fieldEditor);
-			    				fEventArgsComposite.setVisible(true);
-			    			}
-			    			else { 
-			    				fEventArgsComposite.setVisible(false);
-			    			}
-			    		}
-			    		else {
-			    			if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
-			    				if (bAddEventType == true) bAddEventType = false;
-			    				else continue;
-			    			}
-				    		fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", parent); //$NON-NLS-1$
-			    		}
-			    	}
+			ICBreakpointsUIContribution[] cons;
+			CBreakpointUIContributionFactory factory = CBreakpointUIContributionFactory.getInstance();
+			IPreferenceStore prefStore = getPreferenceStore();
+			if (prefStore instanceof CBreakpointPreferenceStore) {
+				cons = factory.getBreakpointUIContributions(debugModelIds, breakpoint,
+						((CBreakpointPreferenceStore) prefStore).getAttributes());
+			} else {
+				cons = factory.getBreakpointUIContributions(breakpoint);
+			}
 
-    				if (fieldEditor != null) {
-    					addField(fieldEditor);
-    				}
-			    }
+			setupEventTypeFieldEditor(cons, breakpoint, conMainElement, parent);
+			for (ICBreakpointsUIContribution con : cons) {
+				if (conMainElement.equals(con.getMainElement())) {
+					FieldEditor fieldEditor = null;
+					if (breakpoint.getMarker() == null && con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
+						continue;
+					} else if (con.getMarkerType().equalsIgnoreCase(ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER)) {
+						if (breakpoint.getMarker() == null) {
+							setupArgsComposite(parent);
+							fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", fEventArgsComposite); //$NON-NLS-1$
+							if (fieldEditor != null) {
+								addEditorToComposite(fieldEditor);
+								fEventArgsComposite.setVisible(true);
+							} else {
+								fEventArgsComposite.setVisible(false);
+							}
+						} else {
+							if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
+								if (bAddEventType == true)
+									bAddEventType = false;
+								else
+									continue;
+							}
+							fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", parent); //$NON-NLS-1$
+						}
+					}
+
+					if (fieldEditor != null) {
+						addField(fieldEditor);
+					}
+				}
 			}
 		} catch (CoreException ce) {
 			CDebugUIPlugin.log(ce);
-		}		
+		}
 	}
+
 	/**
 	 * Creates field editors contributed using breakpointUIContribution extension point
 	 */
@@ -1062,74 +1056,72 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		Composite parent = getFieldEditorParent();
 		String[] debugModelIds = getDebugModelIds();
 		try {
-		    ICBreakpointsUIContribution[] cons;
-		    CBreakpointUIContributionFactory factory = CBreakpointUIContributionFactory.getInstance();
-		    IPreferenceStore prefStore = getPreferenceStore();
-		    if (prefStore instanceof CBreakpointPreferenceStore) {
-		        cons = factory.getBreakpointUIContributions(
-		            debugModelIds, breakpoint, ((CBreakpointPreferenceStore) prefStore).getAttributes());
-		    } else {
-                cons = factory.getBreakpointUIContributions(breakpoint);
-		    }
-		    
+			ICBreakpointsUIContribution[] cons;
+			CBreakpointUIContributionFactory factory = CBreakpointUIContributionFactory.getInstance();
+			IPreferenceStore prefStore = getPreferenceStore();
+			if (prefStore instanceof CBreakpointPreferenceStore) {
+				cons = factory.getBreakpointUIContributions(debugModelIds, breakpoint,
+						((CBreakpointPreferenceStore) prefStore).getAttributes());
+			} else {
+				cons = factory.getBreakpointUIContributions(breakpoint);
+			}
+
 			for (ICBreakpointsUIContribution con : cons) {
-			    if ( conMainElement.equals(con.getMainElement()) ) {
-			    	if (con.getMarkerType().equals(ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER)) {
-			    		continue;
-			    	}
-			    	FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", parent); //$NON-NLS-1$
-    				if (fieldEditor != null) {
-    					addField(fieldEditor);
-    				}
-			    }
+				if (conMainElement.equals(con.getMainElement())) {
+					if (con.getMarkerType().equals(ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER)) {
+						continue;
+					}
+					FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", parent); //$NON-NLS-1$
+					if (fieldEditor != null) {
+						addField(fieldEditor);
+					}
+				}
 			}
 		} catch (CoreException ce) {
 			CDebugUIPlugin.log(ce);
 		}
 	}
-	
-	private void setupEventTypeFieldEditor(ICBreakpointsUIContribution[] cons, ICBreakpoint breakpoint, String conMainElement, Composite parent) {
+
+	private void setupEventTypeFieldEditor(ICBreakpointsUIContribution[] cons, ICBreakpoint breakpoint,
+			String conMainElement, Composite parent) {
 		String id = null;
 		ArrayList<String> eventTypeValueList = new ArrayList<String>();
-		ArrayList<String> eventTypeLabelList = new ArrayList<String>();		
-		
+		ArrayList<String> eventTypeLabelList = new ArrayList<String>();
+
 		// The filter of the debugModelIds should already be done.
 		for (ICBreakpointsUIContribution con : cons) {
-		    if ( conMainElement.equals(con.getMainElement()) ) {
-		    	if (breakpoint instanceof CEventBreakpoint && breakpoint.getMarker() == null &&
-		    			con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
-		    		id = con.getId();
-		    		for (String value : con.getPossibleValues()) {
-		    			eventTypeValueList.add(value);
-		    			eventTypeLabelList.add(con.getLabelForValue(value));
-		    		}
-		    	}
-		    }
+			if (conMainElement.equals(con.getMainElement())) {
+				if (breakpoint instanceof CEventBreakpoint && breakpoint.getMarker() == null
+						&& con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
+					id = con.getId();
+					for (String value : con.getPossibleValues()) {
+						eventTypeValueList.add(value);
+						eventTypeLabelList.add(con.getLabelForValue(value));
+					}
+				}
+			}
 		}
 		if (eventTypeValueList.size() != 0) {
-			EventTypeFieldEditor fieldEditor = new EventTypeFieldEditor(
-					id, 
+			EventTypeFieldEditor fieldEditor = new EventTypeFieldEditor(id,
 					BreakpointsMessages.getString("CBreakpointPropertyPage.eventType_label"), //$NON-NLS-1$
 					eventTypeLabelList.toArray(new String[eventTypeLabelList.size()]),
-					eventTypeValueList.toArray(new String[eventTypeValueList.size()]),
-					parent, 
-					breakpoint);
+					eventTypeValueList.toArray(new String[eventTypeValueList.size()]), parent, breakpoint);
 			addField(fieldEditor);
 			setupArgsComposite(parent);
 			fieldEditor.initializeComboBox(getPreferenceStore(), this);
 		}
 	}
-	
+
 	void addEditorToComposite(FieldEditor fieldEditor) {
 		if (fEventArgsFEs == null) {
-		    fEventArgsFEs = new ArrayList<FieldEditor>();
+			fEventArgsFEs = new ArrayList<FieldEditor>();
 		}
 		fEventArgsFEs.add(fieldEditor);
 	}
 
 	void cleanEditorsFromComposite() {
 		if (fEventArgsFEs != null) {
-			for (FieldEditor editor : fEventArgsFEs){
+			for (FieldEditor editor : fEventArgsFEs) {
 				editor.setPreferenceStore(null);
 				editor.setPage(null);
 			}
@@ -1143,50 +1135,51 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			fEventArgsComposite = null;
 		}
 		if (fEventBPComposite == null || fEventBPComposite.isDisposed()) {
-			fEventBPComposite = new Composite(parent,SWT.NONE);
+			fEventBPComposite = new Composite(parent, SWT.NONE);
 			fEventBPComposite.setLayout(parent.getLayout());
 			fEventBPComposite.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
 			GridDataFactory.defaultsFor(fEventBPComposite).grab(true, false).span(2, 1).applyTo(fEventBPComposite);
 		}
-		fEventArgsComposite = new Composite(fEventBPComposite,SWT.NONE);
+		fEventArgsComposite = new Composite(fEventBPComposite, SWT.NONE);
 		fEventArgsComposite.setLayout(fEventBPComposite.getLayout());
 		GridDataFactory.defaultsFor(fEventArgsComposite).grab(true, false).span(2, 1).applyTo(fEventArgsComposite);
-		GridData gridData = (GridData)fEventArgsComposite.getLayoutData();
+		GridData gridData = (GridData) fEventArgsComposite.getLayoutData();
 		gridData.horizontalIndent = 10;
 		fEventArgsComposite.setLayoutData(gridData);
 		fEventArgsComposite.setVisible(false);
 	}
-	
+
 	private void displayEventArgs(ICBreakpoint breakpoint, Composite parent) {
 		boolean result = false;
 		String[] debugModelIds = getDebugModelIds();
 
 		try {
-		    ICBreakpointsUIContribution[] cons;
-		    CBreakpointUIContributionFactory factory = CBreakpointUIContributionFactory.getInstance();
-		    IPreferenceStore prefStore = getPreferenceStore();
-		    if (prefStore instanceof CBreakpointPreferenceStore) {
-		        cons = factory.getBreakpointUIContributions(
-		            debugModelIds, breakpoint, ((CBreakpointPreferenceStore) prefStore).getAttributes());
-		    } else {
-		        cons = factory.getBreakpointUIContributions(breakpoint);
-		    }
-		    for (ICBreakpointsUIContribution con : cons) {
-		        if (con.getMarkerType().equalsIgnoreCase(ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER) &&
-		            !con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
-		            setupArgsComposite(parent);
-		            FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", fEventArgsComposite); //$NON-NLS-1$
-		            if ( fieldEditor != null ) {
-		                fieldEditor.setPreferenceStore(getPreferenceStore());
-		                fieldEditor.setPage(this);
-		                addEditorToComposite(fieldEditor);
-		                addField(fieldEditor);			    			 
-		                result = true;
-		            }
-		        }
-		    }
+			ICBreakpointsUIContribution[] cons;
+			CBreakpointUIContributionFactory factory = CBreakpointUIContributionFactory.getInstance();
+			IPreferenceStore prefStore = getPreferenceStore();
+			if (prefStore instanceof CBreakpointPreferenceStore) {
+				cons = factory.getBreakpointUIContributions(debugModelIds, breakpoint,
+						((CBreakpointPreferenceStore) prefStore).getAttributes());
+			} else {
+				cons = factory.getBreakpointUIContributions(breakpoint);
+			}
+			for (ICBreakpointsUIContribution con : cons) {
+				if (con.getMarkerType().equalsIgnoreCase(ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER)
+						&& !con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
+					setupArgsComposite(parent);
+					FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", //$NON-NLS-1$
+							fEventArgsComposite);
+					if (fieldEditor != null) {
+						fieldEditor.setPreferenceStore(getPreferenceStore());
+						fieldEditor.setPage(this);
+						addEditorToComposite(fieldEditor);
+						addField(fieldEditor);
+						result = true;
+					}
+				}
+			}
 		} catch (CoreException ce) {
-		    CDebugUIPlugin.log(ce);
+			CDebugUIPlugin.log(ce);
 		}
 
 		if (fEventArgsComposite != null && !fEventArgsComposite.isDisposed()) {
@@ -1196,49 +1189,50 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		}
 	}
 
-    class EventTypeFieldEditor extends ComboFieldEditor {
+	class EventTypeFieldEditor extends ComboFieldEditor {
 
-    	final Combo fCombo;
-    	final Composite fParent;
-    	final ICBreakpoint fBreakpoint;
-    	
-    	class EventTypeSelectionListener implements SelectionListener {
-    		@Override
-    		public void widgetSelected(SelectionEvent e) {
-    			doStore();
-    		    displayEventArgs(fBreakpoint, fParent);
-    		    fParent.layout();
-    		}
-    		@Override
-    		public void widgetDefaultSelected(SelectionEvent e) {
-    		    widgetSelected(e);
-    		}
-    	}
-    	
-        public EventTypeFieldEditor( String name, String labelText, String[] eventTypesLabels, String[] eventTypesValues, Composite parent, ICBreakpoint breakpoint ) {
-        	super( name, labelText, joinToArray2D(eventTypesLabels,eventTypesValues), parent);
-            fBreakpoint = breakpoint;
-            fParent = parent;
-            fCombo = this.getComboBoxControl();
-        	fCombo.select(0);        	            
-            fCombo.addSelectionListener(new EventTypeSelectionListener());
-        }
-      
-        public void initializeComboBox(IPreferenceStore prefStore, CBreakpointPropertyPage page) {
-            if (getPage() == null) {
-                setPage(page);
-            }
-        	if (getPreferenceStore() == null) {
-        		setPreferenceStore(prefStore);
-        	}
-        	else
-        		prefStore = getPreferenceStore();
-        	
-        	String value = getValueForName(fCombo.getText());
-		    if (prefStore instanceof CBreakpointPreferenceStore) {
-		    	prefStore.setValue(ICEventBreakpoint.EVENT_TYPE_ID, value);
-		    }
-		    displayEventArgs(fBreakpoint, fParent);
-        }
-    }
+		final Combo fCombo;
+		final Composite fParent;
+		final ICBreakpoint fBreakpoint;
+
+		class EventTypeSelectionListener implements SelectionListener {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doStore();
+				displayEventArgs(fBreakpoint, fParent);
+				fParent.layout();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		}
+
+		public EventTypeFieldEditor(String name, String labelText, String[] eventTypesLabels, String[] eventTypesValues,
+				Composite parent, ICBreakpoint breakpoint) {
+			super(name, labelText, joinToArray2D(eventTypesLabels, eventTypesValues), parent);
+			fBreakpoint = breakpoint;
+			fParent = parent;
+			fCombo = this.getComboBoxControl();
+			fCombo.select(0);
+			fCombo.addSelectionListener(new EventTypeSelectionListener());
+		}
+
+		public void initializeComboBox(IPreferenceStore prefStore, CBreakpointPropertyPage page) {
+			if (getPage() == null) {
+				setPage(page);
+			}
+			if (getPreferenceStore() == null) {
+				setPreferenceStore(prefStore);
+			} else
+				prefStore = getPreferenceStore();
+
+			String value = getValueForName(fCombo.getText());
+			if (prefStore instanceof CBreakpointPreferenceStore) {
+				prefStore.setValue(ICEventBreakpoint.EVENT_TYPE_ID, value);
+			}
+			displayEventArgs(fBreakpoint, fParent);
+		}
+	}
 }

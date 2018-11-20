@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -40,27 +40,27 @@ import org.osgi.framework.BundleContext;
  * The main plugin class to be used in the desktop.
  */
 public class PDAPlugin extends Plugin {
-    
-    public static String PLUGIN_ID = "org.eclipse.cdt.examples.dsf.pda"; 
-    
-    // Debugging flag
-    public static boolean DEBUG = false;
+
+	public static String PLUGIN_ID = "org.eclipse.cdt.examples.dsf.pda";
+
+	// Debugging flag
+	public static boolean DEBUG = false;
 
 	//The shared instance.
 	private static PDAPlugin plugin;
-	
+
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 
 	// Bundle context used in registering and retrieving DSF (OSGi) services.
 	private static BundleContext fContext;
-	
+
 	/**
-	 * Unique identifier for the PDA debug model (value 
+	 * Unique identifier for the PDA debug model (value
 	 * <code>pda.debugModel</code>).
 	 */
 	public static final String ID_PDA_DEBUG_MODEL = "org.eclipse.cdt.examples.dsf.pda.debugModel";
-	
+
 	/**
 	 * Name of the string substitution variable that resolves to the
 	 * location of a local Perl executable (value <code>perlExecutable</code>).
@@ -70,16 +70,16 @@ public class PDAPlugin extends Plugin {
 	/**
 	 * Launch configuration attribute key. Value is a path to a perl
 	 * program. The path is a string representing a full path
-	 * to a perl program in the workspace. 
+	 * to a perl program in the workspace.
 	 */
 	public static final String ATTR_PDA_PROGRAM = ID_PDA_DEBUG_MODEL + ".ATTR_PDA_PROGRAM";
-	
+
 	/**
 	 * Identifier for the PDA launch configuration type
 	 * (value <code>pda.launchType</code>)
 	 */
-	public static final String ID_PDA_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.cdt.examples.dsf.pda.launchType";	
-	
+	public static final String ID_PDA_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.cdt.examples.dsf.pda.launchType";
+
 	/**
 	 * The constructor.
 	 */
@@ -92,18 +92,18 @@ public class PDAPlugin extends Plugin {
 	 * This method is called upon plug-in activation
 	 */
 	@Override
-    public void start(BundleContext context) throws Exception {
-        fContext = context;
-        DEBUG = Boolean.parseBoolean(Platform.getDebugOption(PLUGIN_ID + "/debug"));  //$NON-NLS-1$
+	public void start(BundleContext context) throws Exception {
+		fContext = context;
+		DEBUG = Boolean.parseBoolean(Platform.getDebugOption(PLUGIN_ID + "/debug")); //$NON-NLS-1$
 		super.start(context);
 	}
 
 	/**
 	 * This method is called when the plug-in is stopped
 	 */
-    @Override
+	@Override
 	public void stop(BundleContext context) throws Exception {
-        shutdownActiveLaunches();
+		shutdownActiveLaunches();
 		super.stop(context);
 		plugin = null;
 		resourceBundle = null;
@@ -136,80 +136,81 @@ public class PDAPlugin extends Plugin {
 	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.debug.examples.core.pda.DebugCorePluginResources");
+				resourceBundle = ResourceBundle
+						.getBundle("org.eclipse.debug.examples.core.pda.DebugCorePluginResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
 		return resourceBundle;
 	}
-	
+
 	public static BundleContext getBundleContext() {
-	    return fContext;
+		return fContext;
 	}
-	
+
 	/**
 	 * Return a <code>java.io.File</code> object that corresponds to the specified
 	 * <code>IPath</code> in the plugin directory, or <code>null</code> if none.
 	 */
 	public static File getFileInPlugin(IPath path) {
 		try {
-			URL installURL =
-				new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
+			URL installURL = new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
 			URL localURL = Platform.asLocalURL(installURL);
 			return new File(localURL.getFile());
 		} catch (IOException ioe) {
 			return null;
 		}
-	}	
-	
-	/** 
-	 * Shuts down any active launches.  We must shutdown any active sessions 
+	}
+
+	/**
+	 * Shuts down any active launches.  We must shutdown any active sessions
 	 * and services associated with this plugin before this plugin is stopped.
 	 * Any attempts to use the plugins {@link BundleContext} after the plugin
-	 * is shut down will result in exceptions. 
+	 * is shut down will result in exceptions.
 	 */
 	private void shutdownActiveLaunches() {
-	    for (ILaunch launch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
-	        if (launch instanceof PDALaunch && !((PDALaunch)launch).isShutDown()) {
-	            final PDALaunch pdaLaunch = (PDALaunch)launch;
-	            
-	            Query<Object> launchShutdownQuery = new Query<Object>() {
-	                @Override
-	                protected void execute(DataRequestMonitor<Object> rm) {
-	                    pdaLaunch.shutdownServices(rm);
-	                }
-	            };
-	            
-	            try {
-	                pdaLaunch.getSession().getExecutor().execute(launchShutdownQuery);
-	            } catch (RejectedExecutionException e) {
-	                // We can get this exception if the session is shutdown concurrently
-	                // to this method running.
-	                break;
-	            }
+		for (ILaunch launch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
+			if (launch instanceof PDALaunch && !((PDALaunch) launch).isShutDown()) {
+				final PDALaunch pdaLaunch = (PDALaunch) launch;
 
-	            // The Query.get() method is a synchronous call which blocks until the 
-	            // query completes.  
-	            try {
-                    launchShutdownQuery.get();
-                } catch (InterruptedException e) { 
-                    getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, "InterruptedException while shutting down PDA debugger launch " + pdaLaunch, e.getCause()));
-                } catch (ExecutionException e) {
-                    getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, "Exception while shutting down PDA debugger launch " + pdaLaunch, e.getCause()));
-                }
-	        }
-	    }
+				Query<Object> launchShutdownQuery = new Query<Object>() {
+					@Override
+					protected void execute(DataRequestMonitor<Object> rm) {
+						pdaLaunch.shutdownServices(rm);
+					}
+				};
+
+				try {
+					pdaLaunch.getSession().getExecutor().execute(launchShutdownQuery);
+				} catch (RejectedExecutionException e) {
+					// We can get this exception if the session is shutdown concurrently
+					// to this method running.
+					break;
+				}
+
+				// The Query.get() method is a synchronous call which blocks until the
+				// query completes.
+				try {
+					launchShutdownQuery.get();
+				} catch (InterruptedException e) {
+					getLog().log(new Status(IStatus.ERROR, PLUGIN_ID,
+							"InterruptedException while shutting down PDA debugger launch " + pdaLaunch, e.getCause()));
+				} catch (ExecutionException e) {
+					getLog().log(new Status(IStatus.ERROR, PLUGIN_ID,
+							"Exception while shutting down PDA debugger launch " + pdaLaunch, e.getCause()));
+				}
+			}
+		}
 	}
-	
-    
-    public static void failRequest(RequestMonitor rm, int code, String message) {
-        rm.setStatus(new Status(IStatus.ERROR, PLUGIN_ID, code, message, null));
-        rm.done();
-    }
-    
-    public static void debug(String debugString) {
-        if (DEBUG) {
-            System.out.println(debugString);
-        }
-    }
+
+	public static void failRequest(RequestMonitor rm, int code, String message) {
+		rm.setStatus(new Status(IStatus.ERROR, PLUGIN_ID, code, message, null));
+		rm.done();
+	}
+
+	public static void debug(String debugString) {
+		if (DEBUG) {
+			System.out.println(debugString);
+		}
+	}
 }

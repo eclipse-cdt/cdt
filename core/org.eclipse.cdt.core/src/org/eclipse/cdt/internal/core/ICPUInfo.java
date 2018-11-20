@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - Initial API and implementation
  *******************************************************************************/
@@ -17,5 +17,6 @@ package org.eclipse.cdt.internal.core;
  */
 public interface ICPUInfo {
 	public String getId();
+
 	public String getNumOfCores();
 }

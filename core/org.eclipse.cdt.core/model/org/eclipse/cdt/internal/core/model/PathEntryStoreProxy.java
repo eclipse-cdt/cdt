@@ -55,7 +55,8 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 	}
 
 	private void fireContentChangedEvent(IProject project) {
-		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, project, PathEntryStoreChangedEvent.CONTENT_CHANGED);
+		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, project,
+				PathEntryStoreChangedEvent.CONTENT_CHANGED);
 		notifyListeners(evt);
 	}
 
@@ -70,7 +71,8 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 	@Override
 	public void close() {
 		super.close();
-		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, getProject(), PathEntryStoreChangedEvent.STORE_CLOSED);
+		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, getProject(),
+				PathEntryStoreChangedEvent.STORE_CLOSED);
 		IPathEntryStoreListener[] observers = new IPathEntryStoreListener[fListeners.size()];
 		fListeners.toArray(observers);
 		for (int i = 0; i < observers.length; i++) {
@@ -121,14 +123,14 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 
 	@Override
 	protected void deinitializeProvider(Object o) {
-		IPathEntryStore store = (IPathEntryStore)o;
+		IPathEntryStore store = (IPathEntryStore) o;
 		store.removePathEntryStoreListener(this);
 		store.close();
 	}
 
 	@Override
 	protected void initializeProvider(Object o) {
-		IPathEntryStore store = (IPathEntryStore)o;
+		IPathEntryStore store = (IPathEntryStore) o;
 		fStore = store;
 		store.addPathEntryStoreListener(this);
 	}
@@ -140,8 +142,8 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 
 	@Override
 	protected void postProcessProviderChange(Object newProvider, Object oldProvider) {
-//		if (oldProvider != null)
-			fireContentChangedEvent(getProject());
+		//		if (oldProvider != null)
+		fireContentChangedEvent(getProject());
 	}
 
 	@Override

@@ -54,29 +54,31 @@ public class BuildDescriptionGnuMakefileGenerator {
 
 	private class DescriptionVisitor implements IStepVisitor {
 		Writer fWriter;
-		DescriptionVisitor(Writer writer){
+
+		DescriptionVisitor(Writer writer) {
 			fWriter = writer;
 		}
 
 		@Override
 		public int visit(IBuildStep step) throws CoreException {
-			if(step == fDes.getInputStep() || step == fDes.getOutputStep())
+			if (step == fDes.getInputStep() || step == fDes.getOutputStep())
 				return VISIT_CONTINUE;
 
 			try {
 				write(fWriter, step);
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), ManagedMakeMessages.getString("BuildDescriptionGnuMakefileGenerator.0"), e)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
+						ManagedMakeMessages.getString("BuildDescriptionGnuMakefileGenerator.0"), e)); //$NON-NLS-1$
 			}
 			return VISIT_CONTINUE;
 		}
 	}
 
-	public BuildDescriptionGnuMakefileGenerator(IBuildDescription des){
+	public BuildDescriptionGnuMakefileGenerator(IBuildDescription des) {
 		fDes = des;
 	}
 
-	public void store(OutputStream stream) throws CoreException{
+	public void store(OutputStream stream) throws CoreException {
 		Writer writer = createWriter(stream);
 
 		try {
@@ -109,12 +111,13 @@ public class BuildDescriptionGnuMakefileGenerator {
 
 			writer.flush();
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), ManagedMakeMessages.getString("BuildDescriptionGnuMakefileGenerator.1"), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					ManagedMakeMessages.getString("BuildDescriptionGnuMakefileGenerator.1"), e)); //$NON-NLS-1$
 		}
 
 	}
 
-	protected Writer createWriter(OutputStream stream){
+	protected Writer createWriter(OutputStream stream) {
 		try {
 			return new OutputStreamWriter(stream, ENCODING);
 		} catch (UnsupportedEncodingException e1) {
@@ -124,7 +127,7 @@ public class BuildDescriptionGnuMakefileGenerator {
 
 	}
 
-	protected String createVarRef(String var){
+	protected String createVarRef(String var) {
 		return new StringBuilder().append(VARREF_PREFIX).append(var).append(VARREF_SUFFIX).toString();
 	}
 
@@ -132,10 +135,10 @@ public class BuildDescriptionGnuMakefileGenerator {
 		writer.write(LINE_SEPARATOR);
 
 		String target, deps;
-		if(step == fDes.getOutputStep()){
+		if (step == fDes.getOutputStep()) {
 			target = OUT_STEP_RULE;
 			deps = createVarRef(VAR_TARGETS);
-		} else if (step == fDes.getInputStep()){
+		} else if (step == fDes.getInputStep()) {
 			target = IN_STEP_RULE;
 			deps = ""; //$NON-NLS-1$
 		} else {
@@ -148,7 +151,7 @@ public class BuildDescriptionGnuMakefileGenerator {
 		writeRuleHeader(writer, target, deps);
 
 		IBuildCommand[] cmds = step.getCommands(null, null, null, true);
-		for(int i = 0; i < cmds.length; i++){
+		for (int i = 0; i < cmds.length; i++) {
 			String cmdStr = toString(cmds[i]);
 			writeCommand(writer, cmdStr);
 		}
@@ -158,24 +161,24 @@ public class BuildDescriptionGnuMakefileGenerator {
 
 	}
 
-	protected void writeCommand(Writer writer, String cmd) throws IOException{
+	protected void writeCommand(Writer writer, String cmd) throws IOException {
 		writer.write(TAB);
 		writer.write(cmd);
 		writer.write(LINE_SEPARATOR);
 	}
 
-	protected String toString(IBuildCommand cmd){
+	protected String toString(IBuildCommand cmd) {
 		StringBuilder buf = new StringBuilder();
 		buf.append(cmd.getCommand());
 		String argsString = CDataUtil.arrayToString(cmd.getArgs(), SPACE);
-		if(argsString != null && argsString.length() != 0){
+		if (argsString != null && argsString.length() != 0) {
 			buf.append(SPACE);
 			buf.append(argsString);
 		}
 		return removeDotDotSlashesAndBackSlashesHack(buf.toString());
 	}
 
-	protected void writeRuleHeader(Writer writer, String target, String deps) throws IOException{
+	protected void writeRuleHeader(Writer writer, String target, String deps) throws IOException {
 		writer.write(target);
 		writer.write(TARGET_SEPARATOR);
 		writer.write(SPACE);
@@ -183,10 +186,10 @@ public class BuildDescriptionGnuMakefileGenerator {
 		writer.write(LINE_SEPARATOR);
 	}
 
-	protected String toString(IBuildResource[] rcs){
+	protected String toString(IBuildResource[] rcs) {
 		StringBuilder buf = new StringBuilder();
-		for(int i = 0; i < rcs.length; i++){
-			if(i != 0)
+		for (int i = 0; i < rcs.length; i++) {
+			if (i != 0)
 				buf.append(SPACE);
 			buf.append(toString(rcs[i]));
 
@@ -194,8 +197,9 @@ public class BuildDescriptionGnuMakefileGenerator {
 		return buf.toString();
 	}
 
-	protected String toString(IBuildResource rc){
-		return removeDotDotSlashesAndBackSlashesHack(BuildDescriptionManager.getRelPath(fDes.getDefaultBuildDirLocation(), rc.getLocation()).toString());
+	protected String toString(IBuildResource rc) {
+		return removeDotDotSlashesAndBackSlashesHack(
+				BuildDescriptionManager.getRelPath(fDes.getDefaultBuildDirLocation(), rc.getLocation()).toString());
 	}
 
 	/*
@@ -203,17 +207,17 @@ public class BuildDescriptionGnuMakefileGenerator {
 	 * this is needed to overcome an assumption that the source root is ../
 	 * the BuildDescription calculation mechanism should be fixed to remove this assumption
 	 */
-	private String removeDotDotSlashesAndBackSlashesHack(String str){
+	private String removeDotDotSlashesAndBackSlashesHack(String str) {
 		str = removeDotDotSlashes(str);
 		return removeDotDotBackslashes(str);
 	}
 
-	private String removeDotDotSlashes(String str){
+	private String removeDotDotSlashes(String str) {
 		int index = str.indexOf(DOT_DOT_SLASH, 0);
-		if(index != -1){
+		if (index != -1) {
 			StringBuilder buf = new StringBuilder();
 			int start = 0;
-			for(; index != -1; index = str.indexOf(DOT_DOT_SLASH, start)){
+			for (; index != -1; index = str.indexOf(DOT_DOT_SLASH, start)) {
 				buf.append(str.substring(start, index));
 				start = index + DOT_DOT_SLASH.length();
 			}
@@ -223,12 +227,12 @@ public class BuildDescriptionGnuMakefileGenerator {
 		return str;
 	}
 
-	private String removeDotDotBackslashes(String str){
+	private String removeDotDotBackslashes(String str) {
 		int index = str.indexOf(DOT_DOT_BACKSLASH, 0);
-		if(index != -1){
+		if (index != -1) {
 			StringBuilder buf = new StringBuilder();
 			int start = 0;
-			for(; index != -1; index = str.indexOf(DOT_DOT_BACKSLASH, start)){
+			for (; index != -1; index = str.indexOf(DOT_DOT_BACKSLASH, start)) {
 				buf.append(str.substring(start, index));
 				start = index + DOT_DOT_BACKSLASH.length();
 			}

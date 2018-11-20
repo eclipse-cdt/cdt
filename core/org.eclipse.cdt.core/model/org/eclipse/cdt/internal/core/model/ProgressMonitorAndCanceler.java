@@ -27,7 +27,7 @@ public class ProgressMonitorAndCanceler extends NullProgressMonitor implements I
 
 	@Override
 	public void setCancelable(ICancelable cancelable) {
-		fCancelable= cancelable;
+		fCancelable = cancelable;
 		checkCanceled();
 	}
 
@@ -40,7 +40,7 @@ public class ProgressMonitorAndCanceler extends NullProgressMonitor implements I
 	private void checkCanceled() {
 		if (fCancelable != null && isCanceled()) {
 			fCancelable.cancel();
-			fCancelable= null;
+			fCancelable = null;
 		}
 	}
 }

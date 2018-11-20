@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 
@@ -128,9 +128,11 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 					ICPPASTConstructorChainInitializer ctorInitializer = functionDefinition.getMemberInitializers()[0];
 					IASTName name = factory.newName("a".toCharArray());
 					IASTIdExpression idExpression = factory.newIdExpression(name);
-					IASTInitializer initExpression = factory.newConstructorInitializer(new IASTInitializerClause[] { idExpression });
+					IASTInitializer initExpression = factory
+							.newConstructorInitializer(new IASTInitializerClause[] { idExpression });
 					IASTName initName = factory.newName("alpha".toCharArray());
-					ICPPASTConstructorChainInitializer newInitializer = factory.newConstructorChainInitializer(initName, initExpression);
+					ICPPASTConstructorChainInitializer newInitializer = factory.newConstructorChainInitializer(initName,
+							initExpression);
 					addModification(null, INSERT_BEFORE, ctorInitializer, newInitializer);
 					return PROCESS_ABORT;
 				}
@@ -191,7 +193,8 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 					IASTName name = factory.newName("c".toCharArray());
 					IASTIdExpression leftOperand = factory.newIdExpression(name);
 					ICPPASTLiteralExpression rightOperand = factory.newLiteralExpression(0, "9");
-					ICPPASTBinaryExpression binEx = factory.newBinaryExpression(IASTBinaryExpression.op_assign, leftOperand, rightOperand);
+					ICPPASTBinaryExpression binEx = factory.newBinaryExpression(IASTBinaryExpression.op_assign,
+							leftOperand, rightOperand);
 					addModification(null, INSERT_BEFORE, expressions[1], binEx);
 					return PROCESS_ABORT;
 				}
@@ -223,7 +226,8 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 							ICPPASTDeclarator newDeclarator = factory.newDeclarator(parameterName);
 							ICPPASTSimpleDeclSpecifier paramDeclSpec = factory.newSimpleDeclSpecifier();
 							paramDeclSpec.setType(IASTSimpleDeclSpecifier.t_int);
-							ICPPASTParameterDeclaration insertedParameter = factory.newParameterDeclaration(paramDeclSpec, newDeclarator);
+							ICPPASTParameterDeclaration insertedParameter = factory
+									.newParameterDeclaration(paramDeclSpec, newDeclarator);
 							addModification(null, INSERT_BEFORE, curParam, insertedParameter);
 						}
 					}
@@ -254,7 +258,8 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTStatement statement) {
 				if (statement instanceof IASTCompoundStatement) {
-					ASTModification compoundReplacement = addModification(null, ModificationKind.REPLACE, statement, statement);
+					ASTModification compoundReplacement = addModification(null, ModificationKind.REPLACE, statement,
+							statement);
 					IASTNode secondStatement = statement.getChildren()[1];
 					IASTNode firstNewStatement = createStatement("s1");
 					IASTNode secondNewStatement = createStatement("s2");
@@ -292,7 +297,8 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTStatement statement) {
 				if (statement instanceof IASTCompoundStatement) {
-					ASTModification compoundReplacement = addModification(null, ModificationKind.REPLACE, statement, statement);
+					ASTModification compoundReplacement = addModification(null, ModificationKind.REPLACE, statement,
+							statement);
 					IASTNode secondStatement = statement.getChildren()[1];
 					addModification(compoundReplacement, INSERT_BEFORE, secondStatement, secondStatement);
 					return PROCESS_ABORT;

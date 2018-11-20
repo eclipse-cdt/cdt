@@ -25,33 +25,27 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
-public class AlwaysPresentWizardPage extends MBSCustomPage
-{
+public class AlwaysPresentWizardPage extends MBSCustomPage {
 
 	private Composite composite;
 
-	public AlwaysPresentWizardPage()
-	{
+	public AlwaysPresentWizardPage() {
 		pageID = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage";
 	}
 
 	@Override
-	public boolean canFlipToNextPage()
-	{
+	public boolean canFlipToNextPage() {
 
 		return (MBSCustomPageManager.getNextPage(pageID) != null);
 	}
 
 	@Override
-	public String getName()
-	{
+	public String getName() {
 		return "Always Present Page";
 	}
 
-
 	@Override
-	public void createControl(Composite parent)
-	{
+	public void createControl(Composite parent) {
 
 		composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
@@ -65,87 +59,74 @@ public class AlwaysPresentWizardPage extends MBSCustomPage
 	}
 
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		composite.dispose();
 
 	}
 
 	@Override
-	public Control getControl()
-	{
+	public Control getControl() {
 		return composite;
 	}
 
 	@Override
-	public String getDescription()
-	{
+	public String getDescription() {
 		return "This page is for testing, please ignore it.";
 	}
 
 	@Override
-	public String getErrorMessage()
-	{
+	public String getErrorMessage() {
 		return null;
 	}
 
 	@Override
-	public Image getImage()
-	{
+	public Image getImage() {
 		return wizard.getDefaultPageImage();
 	}
 
 	@Override
-	public String getMessage()
-	{
+	public String getMessage() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getTitle()
-	{
+	public String getTitle() {
 		return "Test Page";
 	}
 
 	@Override
-	public void performHelp()
-	{
+	public void performHelp() {
 		// do nothing
 
 	}
 
 	@Override
-	public void setDescription(String description)
-	{
+	public void setDescription(String description) {
 		// do nothing
 
 	}
 
 	@Override
-	public void setImageDescriptor(ImageDescriptor image)
-	{
+	public void setImageDescriptor(ImageDescriptor image) {
 		// do nothing
 
 	}
 
 	@Override
-	public void setTitle(String title)
-	{
+	public void setTitle(String title) {
 		// do nothing
 
 	}
 
 	@Override
-	public void setVisible(boolean visible)
-	{
+	public void setVisible(boolean visible) {
 		composite.setVisible(visible);
 
 	}
 
 	@Override
-	protected boolean isCustomPageComplete()
-	{
+	protected boolean isCustomPageComplete() {
 		return true;
 	}
 

@@ -62,7 +62,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 
 /**
  * Output tab for C/C++ Project Paths page for 3.X projects.
- * 
+ *
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
  * for 3.X style projects.
  */
@@ -82,8 +82,8 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	private final int IDX_REMOVE = 3;
 
 	public CPathOutputEntryPage(ListDialogField<CPElement> cPathList) {
-		super(CPathEntryMessages.OutputPathEntryPage_title); 
-		setDescription(CPathEntryMessages.OutputPathEntryPage_description); 
+		super(CPathEntryMessages.OutputPathEntryPage_title);
+		setDescription(CPathEntryMessages.OutputPathEntryPage_description);
 
 		fWorkspaceRoot = CUIPlugin.getWorkspace().getRoot();
 		fCPathList = cPathList;
@@ -92,15 +92,13 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 		String[] buttonLabels;
 
-		buttonLabels = new String[]{
-		CPathEntryMessages.OutputPathEntryPage_folders_add_button, 
-				/* 1 */null, CPathEntryMessages.OutputPathEntryPage_folders_edit_button, 
-				CPathEntryMessages.OutputPathEntryPage_folders_remove_button
-		};
+		buttonLabels = new String[] { CPathEntryMessages.OutputPathEntryPage_folders_add_button, /* 1 */null,
+				CPathEntryMessages.OutputPathEntryPage_folders_edit_button,
+				CPathEntryMessages.OutputPathEntryPage_folders_remove_button };
 
 		fOutputList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
 		fOutputList.setDialogFieldListener(adapter);
-		fOutputList.setLabelText(CPathEntryMessages.OutputPathEntryPage_folders_label); 
+		fOutputList.setLabelText(CPathEntryMessages.OutputPathEntryPage_folders_label);
 
 		fOutputList.setViewerComparator(new CPElementSorter());
 		fOutputList.enableButton(IDX_EDIT, false);
@@ -126,7 +124,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 		for (int i = 0; i < folders.size(); i++) {
 			CPElement cpe = folders.get(i);
-			IPath[] patterns = (IPath[])cpe.getAttribute(CPElement.EXCLUSION);
+			IPath[] patterns = (IPath[]) cpe.getAttribute(CPElement.EXCLUSION);
 			if (patterns.length > 0) {
 				fOutputList.expandElement(cpe, 3);
 			}
@@ -138,7 +136,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		PixelConverter converter = new PixelConverter(parent);
 		Composite composite = new Composite(parent, SWT.NONE);
 
-		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fOutputList}, true);
+		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fOutputList }, true);
 		LayoutUtil.setHorizontalGrabbing(fOutputList.getTreeControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
@@ -148,13 +146,13 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		List<CPElement> elements = fOutputList.getElements();
 		for (int i = 0; i < elements.size(); i++) {
 			CPElement elem = elements.get(i);
-			IPath[] patterns = (IPath[])elem.getAttribute(CPElement.EXCLUSION);
+			IPath[] patterns = (IPath[]) elem.getAttribute(CPElement.EXCLUSION);
 			if (patterns.length > 0) {
 				fOutputList.expandElement(elem, 3);
 			}
 		}
 		setControl(composite);
-		
+
 		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_PATHS_OUTPUT);
 	}
 
@@ -186,7 +184,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		@Override
 		public Object[] getChildren(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElement) {
-				return ((CPElement)element).getChildren();
+				return ((CPElement) element).getChildren();
 			}
 			return EMPTY_ARR;
 		}
@@ -194,7 +192,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		@Override
 		public Object getParent(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElementAttribute) {
-				return ((CPElementAttribute)element).getParent();
+				return ((CPElementAttribute) element).getParent();
 			}
 			return null;
 		}
@@ -302,9 +300,9 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		}
 		Object elem = selElements.get(0);
 		if (fOutputList.getIndexOfElement(elem) != -1) {
-			editElementEntry((CPElement)elem);
+			editElementEntry((CPElement) elem);
 		} else if (elem instanceof CPElementAttribute) {
-			editAttributeEntry((CPElementAttribute)elem);
+			editAttributeEntry((CPElementAttribute) elem);
 		}
 	}
 
@@ -342,7 +340,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		for (int i = selElements.size() - 1; i >= 0; i--) {
 			Object elem = selElements.get(i);
 			if (elem instanceof CPElementAttribute) {
-				CPElementAttribute attrib = (CPElementAttribute)elem;
+				CPElementAttribute attrib = (CPElementAttribute) elem;
 				String key = attrib.getKey();
 				Object value = key.equals(CPElement.EXCLUSION) ? new Path[0] : null;
 				attrib.getParent().setAttribute(key, value);
@@ -364,16 +362,16 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		for (int i = 0; i < selElements.size(); i++) {
 			Object elem = selElements.get(i);
 			if (elem instanceof CPElementAttribute) {
-				CPElementAttribute attrib = (CPElementAttribute)elem;
+				CPElementAttribute attrib = (CPElementAttribute) elem;
 				if (attrib.getKey().equals(CPElement.EXCLUSION)) {
-					if ( ((IPath[])attrib.getValue()).length == 0) {
+					if (((IPath[]) attrib.getValue()).length == 0) {
 						return false;
 					}
 				} else if (attrib.getValue() == null) {
 					return false;
 				}
 			} else if (elem instanceof CPElement) {
-				CPElement curr = (CPElement)elem;
+				CPElement curr = (CPElement) elem;
 				if (curr.getParentContainer() != null) {
 					return false;
 				}
@@ -442,16 +440,17 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		if (includeLinked) {
 			NewFolderDialog dialog = new NewFolderDialog(getShell(), fCurrCProject.getProject());
 			if (dialog.open() == Window.OK) {
-				IResource createdFolder = (IResource)dialog.getResult()[0];
+				IResource createdFolder = (IResource) dialog.getResult()[0];
 				return newCPOutputElement(createdFolder);
 			}
 			return null;
 		}
 		String title = (existing == null) ? CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_new_title
-				: CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_edit_title; 
+				: CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_edit_title;
 		IProject proj = fCurrCProject.getProject();
-		NewSourceFolderDialog dialog = new NewSourceFolderDialog(getShell(), title, proj, getExistingContainers(existing), existing);
-		dialog.setMessage(NLS.bind(CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_description, 
+		NewSourceFolderDialog dialog = new NewSourceFolderDialog(getShell(), title, proj,
+				getExistingContainers(existing), existing);
+		dialog.setMessage(NLS.bind(CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_description,
 				fProjPath.toString()));
 		if (dialog.open() == Window.OK) {
 			IResource folder = dialog.getSourceFolder();
@@ -463,15 +462,15 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	private void askForAddingExclusionPatternsDialog(List<CPElement> newEntries, Set<CPElement> modifiedEntries) {
 		fixNestingConflicts(newEntries, fOutputList.getElements(), modifiedEntries);
 		if (!modifiedEntries.isEmpty()) {
-			String title = CPathEntryMessages.OutputPathEntryPage_exclusion_added_title; 
-			String message = CPathEntryMessages.OutputPathEntryPage_exclusion_added_message; 
+			String title = CPathEntryMessages.OutputPathEntryPage_exclusion_added_title;
+			String message = CPathEntryMessages.OutputPathEntryPage_exclusion_added_message;
 			MessageDialog.openInformation(getShell(), title, message);
 		}
 	}
 
 	private CPElement[] openOutputContainerDialog(CPElement existing) {
 
-		Class<?>[] acceptedClasses = new Class[]{IProject.class, IFolder.class};
+		Class<?>[] acceptedClasses = new Class[] { IProject.class, IFolder.class };
 		List<IContainer> existingContainers = getExistingContainers(null);
 
 		IProject[] allProjects = fWorkspaceRoot.getProjects();
@@ -488,12 +487,11 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		ILabelProvider lp = new WorkbenchLabelProvider();
 		ITreeContentProvider cp = new BaseWorkbenchContentProvider();
 
-		String title = (existing == null)
-				? CPathEntryMessages.OutputPathEntryPage_ExistingOutputFolderDialog_new_title
-				: CPathEntryMessages.OutputPathEntryPage_ExistingOutputFolderDialog_edit_title; 
+		String title = (existing == null) ? CPathEntryMessages.OutputPathEntryPage_ExistingOutputFolderDialog_new_title
+				: CPathEntryMessages.OutputPathEntryPage_ExistingOutputFolderDialog_edit_title;
 		String message = (existing == null)
 				? CPathEntryMessages.OutputPathEntryPage_ExistingOutputFolderDialog_new_description
-				: CPathEntryMessages.OutputPathEntryPage_ExistingOutputFolderDialog_edit_description; 
+				: CPathEntryMessages.OutputPathEntryPage_ExistingOutputFolderDialog_edit_description;
 
 		MultipleFolderSelectionDialog dialog = new MultipleFolderSelectionDialog(getShell(), lp, cp);
 		dialog.setExisting(existingContainers.toArray());
@@ -510,7 +508,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 			Object[] elements = dialog.getResult();
 			CPElement[] res = new CPElement[elements.length];
 			for (int i = 0; i < res.length; i++) {
-				IResource elem = (IResource)elements[i];
+				IResource elem = (IResource) elements[i];
 				res[i] = newCPOutputElement(elem);
 			}
 			return res;
@@ -556,7 +554,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathBasePage#isEntryKind(int)
 	 */
 	@Override
@@ -566,7 +564,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -575,7 +573,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	@Override

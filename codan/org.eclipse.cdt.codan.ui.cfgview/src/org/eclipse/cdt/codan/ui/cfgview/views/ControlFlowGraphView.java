@@ -103,7 +103,6 @@ public class ControlFlowGraphView extends ViewPart {
 	private DrillDownAdapter drillDownAdapter;
 	private Action actionSync;
 
-
 	class DeadNodes extends ArrayList<IBasicBlock> {
 	}
 
@@ -159,7 +158,8 @@ public class ControlFlowGraphView extends ViewPart {
 				blocks.add(((IDecisionNode) parent).getMergeNode());
 				return blocks.toArray();
 			} else if (parent instanceof IBranchNode) {
-				Collection<IBasicBlock> blocks = getFlat(((IBranchNode) parent).getOutgoing(), new ArrayList<IBasicBlock>());
+				Collection<IBasicBlock> blocks = getFlat(((IBranchNode) parent).getOutgoing(),
+						new ArrayList<IBasicBlock>());
 				return blocks.toArray();
 			}
 			return new Object[0];

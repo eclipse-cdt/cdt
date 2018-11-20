@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -30,6 +30,7 @@ public final class REDFileRider implements IFileRider {
 	public REDFileRider(REDFile f) throws IOException {
 		set(f, 0);
 	}
+
 	public REDFileRider(REDFile f, int limit) throws IOException {
 		fLimit = limit;
 		set(f, 0);
@@ -47,7 +48,7 @@ public final class REDFileRider implements IFileRider {
 
 	/**
 	 * Set rider to file and position
-	 * 
+	 *
 	 * @param f    the file the rider should operate on
 	 * @param pos  is normalized to be in range [0, f.length()]
 	 * @pre f != null
@@ -137,14 +138,14 @@ public final class REDFileRider implements IFileRider {
 	@Override
 	public void readChars(char[] buf, int off, int n) throws IOException {
 		int count = fFile.readBuffered(buf, off, n);
-		fResult = n-count;
+		fResult = n - count;
 		fEof = fResult > 0;
 	}
 
 	@Override
 	public void readChars(StringBuffer buf, int n) throws IOException {
 		int count = fFile.readBuffered(buf, n);
-		fResult = n-count;
+		fResult = n - count;
 		fEof = fResult > 0;
 	}
 

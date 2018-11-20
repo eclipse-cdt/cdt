@@ -36,7 +36,7 @@ public class ResourcePropertyTester extends PropertyTester {
 				ICommand[] buildSpec = description.getBuildSpec();
 				for (ICommand builder : buildSpec) {
 					if (builder.getBuilderName().equals(expectedValue))
-						return true; 
+						return true;
 				}
 			} catch (CoreException e) {
 				// Ignore to return false;

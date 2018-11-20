@@ -19,25 +19,25 @@ public interface IPropertyChangeManager {
 
 	/**
 	 * Add a project property listener for given project.
-	 * 
+	 *
 	 * @param project the project to which the listener is interested
 	 * @param listener the listener to notify
 	 */
 	void addProjectPropertyListener(IProject project, IProjectPropertyListener listener);
-	
+
 	/**
 	 * Remove a project property listener.
-	 * 
+	 *
 	 * @param listener the listener to remove
 	 */
 	void removeProjectPropertyListener(IProject project, IProjectPropertyListener listener);
-	
+
 	/**
 	 * Notify all listeners of project that a property has changed.
-	 * 
+	 *
 	 * @param project the project for which the property has changed
 	 * @param property the property that has changed
 	 */
 	void notifyPropertyListeners(IProject project, String property);
-	
+
 }

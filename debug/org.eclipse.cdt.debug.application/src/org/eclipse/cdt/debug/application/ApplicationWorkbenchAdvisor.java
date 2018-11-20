@@ -27,11 +27,11 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		super.initialize(configurer);
 		configurer.setSaveAndRestore(false);
 	}
-	
-    @Override
+
+	@Override
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
-        return new ApplicationWorkbenchWindowAdvisor(configurer);
-    }
+		return new ApplicationWorkbenchWindowAdvisor(configurer);
+	}
 
 	@Override
 	public String getInitialWindowPerspectiveId() {

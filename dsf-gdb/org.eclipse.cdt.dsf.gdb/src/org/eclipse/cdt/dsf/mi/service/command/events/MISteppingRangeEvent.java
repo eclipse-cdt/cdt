@@ -27,16 +27,15 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 @Immutable
 public class MISteppingRangeEvent extends MIStoppedEvent {
 
-    protected MISteppingRangeEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame) {
-        super(ctx, token, results, frame);
-    }  
-    
-    /**
-     * @since 1.1
-     */
-    public static MISteppingRangeEvent parse(IExecutionDMContext dmc, int token, MIResult[] results)
-    {
-    	MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
-    	return new MISteppingRangeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
-    }
+	protected MISteppingRangeEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame) {
+		super(ctx, token, results, frame);
+	}
+
+	/**
+	 * @since 1.1
+	 */
+	public static MISteppingRangeEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
+		MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
+		return new MISteppingRangeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
+	}
 }

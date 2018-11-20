@@ -26,8 +26,8 @@ import java.util.NoSuchElementException;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 
 public class PatternNameMap {
-	private static final char[] SPEC_CHARS = new char[]{'*', '?'};
-	static final String DOUBLE_STAR_PATTERN = "**";  //$NON-NLS-1$
+	private static final char[] SPEC_CHARS = new char[] { '*', '?' };
+	static final String DOUBLE_STAR_PATTERN = "**"; //$NON-NLS-1$
 
 	private Map<String, PathSettingsContainer> fChildrenMap;
 	private Map<StringCharArray, PathSettingsContainer> fPatternMap;
@@ -38,12 +38,12 @@ public class PatternNameMap {
 		private String fString;
 		private char[] fCharArray;
 
-		StringCharArray(String string){
+		StringCharArray(String string) {
 			fString = string;
 		}
 
-		char[] getCharArray(){
-			if(fCharArray == null){
+		char[] getCharArray() {
+			if (fCharArray == null) {
 				fCharArray = fString.toCharArray();
 			}
 			return fCharArray;
@@ -51,13 +51,13 @@ public class PatternNameMap {
 
 		@Override
 		public boolean equals(Object obj) {
-			if(obj == this)
+			if (obj == this)
 				return true;
 
-			if(!(obj instanceof StringCharArray))
+			if (!(obj instanceof StringCharArray))
 				return false;
 
-			return fString.equals(((StringCharArray)obj).fString);
+			return fString.equals(((StringCharArray) obj).fString);
 		}
 
 		@Override
@@ -71,7 +71,7 @@ public class PatternNameMap {
 		}
 	}
 
-	private class EmptyIterator implements Iterator<PathSettingsContainer>{
+	private class EmptyIterator implements Iterator<PathSettingsContainer> {
 
 		@Override
 		public boolean hasNext() {
@@ -96,9 +96,10 @@ public class PatternNameMap {
 			private Iterator<Entry<String, PathSettingsContainer>> fEntrySetIter;
 			private Entry<String, PathSettingsContainer> fCur;
 
-			Iter (Iterator<Entry<String, PathSettingsContainer>> entryIter){
+			Iter(Iterator<Entry<String, PathSettingsContainer>> entryIter) {
 				this.fEntrySetIter = entryIter;
 			}
+
 			@Override
 			public boolean hasNext() {
 				return fEntrySetIter.hasNext();
@@ -114,7 +115,7 @@ public class PatternNameMap {
 			public void remove() {
 				fEntrySetIter.remove();
 				String name = fCur.getKey();
-				if(DOUBLE_STAR_PATTERN.equals(name)){
+				if (DOUBLE_STAR_PATTERN.equals(name)) {
 					fContainsDoubleStar = false;
 				} else {
 					removePattern(name);
@@ -133,64 +134,65 @@ public class PatternNameMap {
 		}
 
 		@Override
-		public void clear(){
+		public void clear() {
 			PatternNameMap.this.clear();
 		}
 
 		@Override
-		public boolean contains(Object o){
+		public boolean contains(Object o) {
 			return fChildrenMap != null ? fChildrenMap.containsValue(o) : false;
 		}
 	}
 
-	public /* PathSettingsContainer */ Object get(String name){
+	public /* PathSettingsContainer */ Object get(String name) {
 		return fChildrenMap != null ? fChildrenMap.get(name) : null;
 	}
 
-	public int size(){
+	public int size() {
 		return fChildrenMap != null ? fChildrenMap.size() : 0;
 	}
 
-	public boolean isEmpty(){
+	public boolean isEmpty() {
 		return fChildrenMap == null || fChildrenMap.isEmpty();
 	}
 
-	public boolean hasPatterns(){
+	public boolean hasPatterns() {
 		return fContainsDoubleStar || hasPatternsMap();
 	}
 
-	public boolean hasPatternsMap(){
+	public boolean hasPatternsMap() {
 		return (fPatternMap != null && fPatternMap.size() != 0);
 	}
 
-	public List<PathSettingsContainer> getValues(String name){
-		if(fChildrenMap == null)
+	public List<PathSettingsContainer> getValues(String name) {
+		if (fChildrenMap == null)
 			return null;
 
 		PathSettingsContainer val = fChildrenMap.get(name);
-		if(hasPatternsMap()){
+		if (hasPatternsMap()) {
 			List<PathSettingsContainer> list;
-			if(val != null){
+			if (val != null) {
 				list = new ArrayList<PathSettingsContainer>(3);
 				list.add(val);
 			} else {
 				list = null;
 			}
 
-			Map.Entry<PatternNameMap.StringCharArray,PathSettingsContainer> entry;
+			Map.Entry<PatternNameMap.StringCharArray, PathSettingsContainer> entry;
 			StringCharArray strCA;
 			char[] nameCharArray = name.toCharArray();
-			for(Iterator<Map.Entry<PatternNameMap.StringCharArray,PathSettingsContainer>> iter = fPatternMap.entrySet().iterator(); iter.hasNext();){
+			for (Iterator<Map.Entry<PatternNameMap.StringCharArray, PathSettingsContainer>> iter = fPatternMap
+					.entrySet().iterator(); iter.hasNext();) {
 				entry = iter.next();
 				strCA = entry.getKey();
-				if(CoreModelUtil.match(strCA.getCharArray(), nameCharArray, true)){
-					if(list == null)
+				if (CoreModelUtil.match(strCA.getCharArray(), nameCharArray, true)) {
+					if (list == null)
 						list = new ArrayList<PathSettingsContainer>(2);
 					list.add(entry.getValue());
 				}
 			}
 			return list;
-		} else if (val != null){
+		} else if (val != null) {
 			List<PathSettingsContainer> list = new ArrayList<PathSettingsContainer>(1);
 			list.add(val);
 			return list;
@@ -198,20 +200,20 @@ public class PatternNameMap {
 		return null;
 	}
 
-	public boolean containsDoubleStar(){
+	public boolean containsDoubleStar() {
 		return fContainsDoubleStar;
 	}
 
-	public /* PathSettingsContainer */ Object put(String name, /* PathSettingsContainer */Object value){
-		return put(name, (PathSettingsContainer)value);
+	public /* PathSettingsContainer */ Object put(String name, /* PathSettingsContainer */Object value) {
+		return put(name, (PathSettingsContainer) value);
 	}
 
-	private PathSettingsContainer put(String name, PathSettingsContainer value){
-		if(value == null)
-			return (PathSettingsContainer)remove(name);
+	private PathSettingsContainer put(String name, PathSettingsContainer value) {
+		if (value == null)
+			return (PathSettingsContainer) remove(name);
 
 		PathSettingsContainer oldValue;
-		if(fChildrenMap == null){
+		if (fChildrenMap == null) {
 			fChildrenMap = new HashMap<String, PathSettingsContainer>();
 			oldValue = null;
 		} else {
@@ -220,11 +222,11 @@ public class PatternNameMap {
 
 		fChildrenMap.put(name, value);
 
-		if(DOUBLE_STAR_PATTERN.equals(name)){
+		if (DOUBLE_STAR_PATTERN.equals(name)) {
 			fContainsDoubleStar = true;
-		} else if(isPatternName(name)){
+		} else if (isPatternName(name)) {
 			StringCharArray strCA = new StringCharArray(name);
-			if(fPatternMap == null)
+			if (fPatternMap == null)
 				fPatternMap = new HashMap<StringCharArray, PathSettingsContainer>();
 
 			fPatternMap.put(strCA, value);
@@ -233,14 +235,14 @@ public class PatternNameMap {
 		return oldValue;
 	}
 
-	public /* PathSettingsContainer */ Object remove(String name){
-		if(fChildrenMap != null){
+	public /* PathSettingsContainer */ Object remove(String name) {
+		if (fChildrenMap != null) {
 			PathSettingsContainer oldVal = fChildrenMap.remove(name);
-			if(fChildrenMap.size() == 0){
+			if (fChildrenMap.size() == 0) {
 				fChildrenMap = null;
 				fPatternMap = null;
 				fContainsDoubleStar = false;
-			} else if(DOUBLE_STAR_PATTERN.equals(name)){
+			} else if (DOUBLE_STAR_PATTERN.equals(name)) {
 				fContainsDoubleStar = false;
 			} else {
 				removePattern(name);
@@ -250,37 +252,36 @@ public class PatternNameMap {
 		return null;
 	}
 
-	private void removePattern(String name){
-		if (fPatternMap != null){
+	private void removePattern(String name) {
+		if (fPatternMap != null) {
 			fPatternMap.remove(new StringCharArray(name));
-			if(fPatternMap.size() == 0)
+			if (fPatternMap.size() == 0)
 				fPatternMap = null;
 		}
 	}
 
-	private static boolean hasSpecChars(String str){
-		for(int i = 0; i < SPEC_CHARS.length; i++){
-			if(str.indexOf(SPEC_CHARS[i]) != -1)
+	private static boolean hasSpecChars(String str) {
+		for (int i = 0; i < SPEC_CHARS.length; i++) {
+			if (str.indexOf(SPEC_CHARS[i]) != -1)
 				return true;
 		}
 		return false;
 	}
 
-	public static boolean isPatternName(String str){
+	public static boolean isPatternName(String str) {
 		//TODO: check escape chars
 		return hasSpecChars(str);
 	}
 
-	public void clear(){
+	public void clear() {
 		fChildrenMap = null;
 		fPatternMap = null;
 		fContainsDoubleStar = false;
 	}
 
-	public Collection<PathSettingsContainer> values(){
-		if(fValues == null)
+	public Collection<PathSettingsContainer> values() {
+		if (fValues == null)
 			fValues = new ValuesCollection();
 		return fValues;
 	}
 }
-

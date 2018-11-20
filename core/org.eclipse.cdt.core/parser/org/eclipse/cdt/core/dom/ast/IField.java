@@ -19,11 +19,11 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IField extends IVariable {
-    public static final IField[] EMPTY_FIELD_ARRAY = {};
+	public static final IField[] EMPTY_FIELD_ARRAY = {};
 
-    /**
-     * Returns the composite type that owns the field.
-     * @since 4.0
-     */
+	/**
+	 * Returns the composite type that owns the field.
+	 * @since 4.0
+	 */
 	ICompositeType getCompositeTypeOwner();
 }

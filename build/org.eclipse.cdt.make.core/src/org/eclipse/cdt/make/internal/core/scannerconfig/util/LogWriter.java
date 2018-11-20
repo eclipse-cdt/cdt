@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *******************************************************************************/
@@ -29,14 +29,14 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * Log writer utility
- * 
+ *
  * @author vhirsl
  */
 public class LogWriter {
 	protected File logFile = null;
 	protected Writer log = null;
 	protected boolean newSession = true;
-	
+
 	protected static final String SESSION = "*** SESSION";//$NON-NLS-1$
 	protected static final String ENTRY = "ENTRY";//$NON-NLS-1$
 	protected static final String SUBENTRY = "SUBENTRY";//$NON-NLS-1$
@@ -52,16 +52,16 @@ public class LogWriter {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public LogWriter(File log) {
 		this.logFile = log;
-		if(log.length() > MAXLOG_SIZE){
-		  log.delete();
+		if (log.length() > MAXLOG_SIZE) {
+			log.delete();
 		}
 		openLogFile();
 	}
-	
+
 	protected void closeLogFile() throws IOException {
 		try {
 			if (log != null) {
@@ -72,10 +72,11 @@ public class LogWriter {
 			log = null;
 		}
 	}
-	
+
 	protected void openLogFile() {
 		try {
-			log = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile.getAbsolutePath(), true), "UTF-8"));//$NON-NLS-1$
+			log = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(logFile.getAbsolutePath(), true), "UTF-8"));//$NON-NLS-1$
 			if (newSession) {
 				writeHeader();
 				newSession = false;
@@ -85,6 +86,7 @@ public class LogWriter {
 			//log = logForStream(System.err);
 		}
 	}
+
 	protected void writeHeader() throws IOException {
 		writeln();
 		write(SESSION);
@@ -92,12 +94,12 @@ public class LogWriter {
 		String date = getDate();
 		write(date);
 		writeSpace();
-		for (int i=SESSION.length()+date.length(); i<78; i++) {
+		for (int i = SESSION.length() + date.length(); i < 78; i++) {
 			write("-");//$NON-NLS-1$
 		}
 		writeln();
 	}
-	
+
 	protected String getDate() {
 		try {
 			DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
@@ -117,6 +119,7 @@ public class LogWriter {
 		write(s);
 		writeln();
 	}
+
 	/**
 	 * Shuts down the log.
 	 */
@@ -151,17 +154,18 @@ public class LogWriter {
 			writeln("0");//$NON-NLS-1$
 		throwable.printStackTrace(new PrintWriter(log));
 		if (isCoreException) {
-		 CoreException e = (CoreException) throwable;
-		 write(e.getStatus(), 0);
+			CoreException e = (CoreException) throwable;
+			write(e.getStatus(), 0);
 		}
 	}
 
-	public synchronized void log(IStatus status){
+	public synchronized void log(IStatus status) {
 		try {
 			this.write(status, 0);
 		} catch (IOException e) {
 		}
 	}
+
 	protected void write(IStatus status, int depth) throws IOException {
 		if (depth == 0) {
 			write(ENTRY);
@@ -190,7 +194,7 @@ public class LogWriter {
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
 			for (int i = 0; i < children.length; i++) {
-				write(children[i], depth+1);
+				write(children[i], depth + 1);
 			}
 		}
 	}
@@ -198,19 +202,21 @@ public class LogWriter {
 	protected void writeln() throws IOException {
 		write(LINE_SEPARATOR);
 	}
+
 	protected void write(String message) throws IOException {
 		if (message != null)
 			log.write(message);
 	}
+
 	protected void writeSpace() throws IOException {
 		write(" ");//$NON-NLS-1$
 	}
-	
-	public synchronized void flushLog(){
+
+	public synchronized void flushLog() {
 		try {
 			log.flush();
-		} catch (IOException e) {}
+		} catch (IOException e) {
+		}
 	}
-
 
 }

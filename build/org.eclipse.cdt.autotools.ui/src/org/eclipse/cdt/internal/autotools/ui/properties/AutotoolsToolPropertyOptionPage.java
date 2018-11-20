@@ -26,17 +26,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class AutotoolsToolPropertyOptionPage extends
-		AbstractConfigurePropertyOptionsPage {
+public class AutotoolsToolPropertyOptionPage extends AbstractConfigurePropertyOptionsPage {
 
 	private static final int MARGIN = 3;
 	private String toolName = "";
 	private IAConfiguration cfg;
-	
+
 	public AutotoolsToolPropertyOptionPage(ToolListElement element, IAConfiguration cfg) {
- 		super(element.getName());
- 		this.toolName = element.getName();
- 		this.cfg = cfg;
+		super(element.getName());
+		this.toolName = element.getName();
+		this.cfg = cfg;
 	}
 
 	@Override
@@ -53,11 +52,9 @@ public class AutotoolsToolPropertyOptionPage extends
 		area.setLayout(gl);
 		area.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		FontMetrics fm = AbstractCPropertyTab.getFontMetrics(area);
-		commandStringField = new StringFieldEditor(toolName,
-				ConfigureMessages.getString(COMMAND),
-				area);
+		commandStringField = new StringFieldEditor(toolName, ConfigureMessages.getString(COMMAND), area);
 		commandStringField.setEmptyStringAllowed(false);
-		GridData gd = ((GridData)commandStringField.getTextControl(area).getLayoutData());
+		GridData gd = ((GridData) commandStringField.getTextControl(area).getLayoutData());
 		gd.grabExcessHorizontalSpace = true;
 		gd.minimumWidth = Dialog.convertWidthInCharsToPixels(fm, 3);
 		addField(commandStringField);
@@ -65,7 +62,7 @@ public class AutotoolsToolPropertyOptionPage extends
 		allOptionFieldEditor = new MultiLineTextFieldEditor(AutotoolsConfigurePrefStore.ALL_OPTIONS_ID,
 				ConfigureMessages.getString(ALL_OPTIONS), area);
 		allOptionFieldEditor.getTextControl(area).setEditable(false);
-//		gd = ((GridData)allOptionFieldEditor.getTextControl().getLayoutData());
+		//		gd = ((GridData)allOptionFieldEditor.getTextControl().getLayoutData());
 		gd.grabExcessHorizontalSpace = true;
 		gd.minimumWidth = Dialog.convertWidthInCharsToPixels(fm, 20);
 		addField(allOptionFieldEditor);
@@ -87,22 +84,22 @@ public class AutotoolsToolPropertyOptionPage extends
 	public void updateFields() {
 		allOptionFieldEditor.load();
 	}
-	
+
 	@Override
-	public void setValues(){
+	public void setValues() {
 		commandStringField.load();
 		updateFields();
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		// allow superclass to handle as well
 		super.propertyChange(event);
 
-		if(event.getSource() == commandStringField){
+		if (event.getSource() == commandStringField) {
 			cfg.setOption(toolName, commandStringField.getStringValue());
 			updateFields();
 		}
 	}
-	
+
 }

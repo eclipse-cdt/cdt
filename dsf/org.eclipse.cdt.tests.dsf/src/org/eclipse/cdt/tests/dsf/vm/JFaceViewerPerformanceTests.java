@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -24,18 +24,18 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.6
  */
 public class JFaceViewerPerformanceTests extends PerformanceTests {
-    
-    public JFaceViewerPerformanceTests(String name) {
-        super(name);
-    }
 
-    @Override
-    protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
-        return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer"));
-    }
-    
-    @Override
-    protected int getTestModelDepth() {
-        return 5;
-    }
+	public JFaceViewerPerformanceTests(String name) {
+		super(name);
+	}
+
+	@Override
+	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
+		return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer"));
+	}
+
+	@Override
+	protected int getTestModelDepth() {
+		return 5;
+	}
 }

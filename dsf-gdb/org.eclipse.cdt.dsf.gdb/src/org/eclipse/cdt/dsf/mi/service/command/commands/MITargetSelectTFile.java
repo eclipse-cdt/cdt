@@ -17,7 +17,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 
 /**
  * This command sets up a connection with a trace data  file.
- * 
+ *
  * Available with GDB 7.1
  *
  * @since 3.0
@@ -25,6 +25,6 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 public class MITargetSelectTFile extends MITargetSelect {
 
 	public MITargetSelectTFile(IDMContext ctx, String traceFilePath) {
-		super(ctx, new String[] { "tfile", traceFilePath}); //$NON-NLS-1$
+		super(ctx, new String[] { "tfile", traceFilePath }); //$NON-NLS-1$
 	}
 }

@@ -16,46 +16,45 @@ package org.eclipse.cdt.internal.core.settings.model;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.core.settings.model.extension.CDataObject;
 
-public abstract class CDataProxyContainer extends CDataProxy implements ICDataProxyContainer{
+public abstract class CDataProxyContainer extends CDataProxy implements ICDataProxyContainer {
 	private IProxyProvider fChildProxyProvider;
 
 	CDataProxyContainer(CDataObject data, ICDataProxyContainer parent, CConfigurationDescription cfg) {
 		super(data, parent, cfg);
 	}
 
-/*	protected class ChildrenDataScope implements ICDataScope{
-		public boolean isStatic() {
-			return isWritable();
-		}
+	/*	protected class ChildrenDataScope implements ICDataScope{
+			public boolean isStatic() {
+				return isWritable();
+			}
 
-		public CDataObject[] getChildren() {
-			ICDataParent data = (ICDataParent)CDataProxyContainer.this.getData(false);
-			return data.getChildren();
+			public CDataObject[] getChildren() {
+				ICDataParent data = (ICDataParent)CDataProxyContainer.this.getData(false);
+				return data.getChildren();
+			}
 		}
-	}
-*/
+	*/
 
-	public ICSettingObject getChildById(String id){
+	public ICSettingObject getChildById(String id) {
 		IProxyProvider provider = getChildrenProxyProvider();
 
-		if(provider == null)
+		if (provider == null)
 			throw new IllegalStateException();
 
 		return provider.getProxy(id);
 	}
 
-	public ICSettingObject[] getChildrenOfKind(int kind){
+	public ICSettingObject[] getChildrenOfKind(int kind) {
 		IProxyProvider provider = getChildrenProxyProvider();
 
-		if(provider == null)
+		if (provider == null)
 			throw new IllegalStateException();
 
 		return provider.getProxiesOfKind(kind);
 	}
 
-
-	protected IProxyProvider getChildrenProxyProvider(){
-		if(fChildProxyProvider == null)
+	protected IProxyProvider getChildrenProxyProvider() {
+		if (fChildProxyProvider == null)
 			fChildProxyProvider = createChildProxyProvider();
 		return fChildProxyProvider;
 	}
@@ -66,26 +65,26 @@ public abstract class CDataProxyContainer extends CDataProxy implements ICDataPr
 	public ICSettingObject[] getChildSettings() {
 		IProxyProvider provider = getChildrenProxyProvider();
 
-		if(provider == null)
+		if (provider == null)
 			throw new IllegalStateException();
 
 		return provider.getProxies();
 	}
 
 	@Override
-	public void updateChild(CDataProxy child, boolean write){
+	public void updateChild(CDataProxy child, boolean write) {
 		getData(write);
 		getChildrenProxyProvider().cacheValues();
 	}
 
 	@Override
-	protected void setRescan(boolean rescan){
-		if(isRescan() == rescan)
+	protected void setRescan(boolean rescan) {
+		if (isRescan() == rescan)
 			return;
 
 		super.setRescan(rescan);
 
-		if(rescan){
+		if (rescan) {
 			setRescanChildren();
 		}
 	}
@@ -96,15 +95,15 @@ public abstract class CDataProxyContainer extends CDataProxy implements ICDataPr
 		setRescanChildren();
 	}
 
-	protected void setRescanChildren(){
+	protected void setRescanChildren() {
 		IProxyProvider provider = getChildrenProxyProvider();
-		if(provider == null)
+		if (provider == null)
 			throw new IllegalStateException();
 
 		provider.invalidateCache();
 
 		CDataProxy proxies[] = provider.getCachedProxies();
-		for(int i = 0; i < proxies.length; i++){
+		for (int i = 0; i < proxies.length; i++) {
 			proxies[i].setRescan(true);
 		}
 
@@ -113,6 +112,5 @@ public abstract class CDataProxyContainer extends CDataProxy implements ICDataPr
 	public ICSettingObject getChildSettingById(String id) {
 		return getChildrenProxyProvider().getProxy(id);
 	}
-
 
 }

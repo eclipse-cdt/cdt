@@ -194,10 +194,10 @@ public class PDOMExternalReferencesList {
 		private PDOMName advance() throws CoreException {
 			// Look through all linkage nodes to find the next one that has a non-empty
 			// names list.
-			while(true) {
+			while (true) {
 				// Skip over all nodes that don't have any names in their list.
 				long nextNameRec = 0;
-				while(nodeAddr != 0) {
+				while (nodeAddr != 0) {
 					node = pdom.getDB().getRecPtr(nodeAddr);
 					if (node == 0)
 						return null;
@@ -209,8 +209,7 @@ public class PDOMExternalReferencesList {
 				}
 
 				// If nothing is found then there is no more iterating.
-				if (nodeAddr == 0
-				 || nextNameRec == 0)
+				if (nodeAddr == 0 || nextNameRec == 0)
 					return null;
 
 				// If a node is found that has a name in the list, then update this iterator to

@@ -25,10 +25,10 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
  * Array declarator for c++.
  */
 public class CPPASTArrayDeclarator extends CPPASTDeclarator implements ICPPASTArrayDeclarator {
-    private IASTArrayModifier[] arrayMods = null;
-    private int arrayModsPos = -1;
+	private IASTArrayModifier[] arrayMods = null;
+	private int arrayModsPos = -1;
 
-    public CPPASTArrayDeclarator(IASTName name, IASTInitializer initializer) {
+	public CPPASTArrayDeclarator(IASTName name, IASTInitializer initializer) {
 		super(name, initializer);
 	}
 
@@ -36,10 +36,10 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements ICPPASTAr
 		super(name);
 	}
 
-    public CPPASTArrayDeclarator() {
+	public CPPASTArrayDeclarator() {
 	}
 
-    @Override
+	@Override
 	public CPPASTArrayDeclarator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -55,25 +55,23 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements ICPPASTAr
 
 	@Override
 	public IASTArrayModifier[] getArrayModifiers() {
-        if (arrayMods == null)
-        	return IASTArrayModifier.EMPTY_ARRAY;
-        arrayMods = ArrayUtil.trimAt(IASTArrayModifier.class,
-        		arrayMods, arrayModsPos);
-        return arrayMods;
-    }
+		if (arrayMods == null)
+			return IASTArrayModifier.EMPTY_ARRAY;
+		arrayMods = ArrayUtil.trimAt(IASTArrayModifier.class, arrayMods, arrayModsPos);
+		return arrayMods;
+	}
 
-    @Override
+	@Override
 	public void addArrayModifier(IASTArrayModifier arrayModifier) {
-        assertNotFrozen();
-    	if (arrayModifier != null) {
-    		arrayMods = ArrayUtil.appendAt(IASTArrayModifier.class, arrayMods,
-    				++arrayModsPos, arrayModifier);
-    		arrayModifier.setParent(this);
+		assertNotFrozen();
+		if (arrayModifier != null) {
+			arrayMods = ArrayUtil.appendAt(IASTArrayModifier.class, arrayMods, ++arrayModsPos, arrayModifier);
+			arrayModifier.setParent(this);
 			arrayModifier.setPropertyInParent(ARRAY_MODIFIER);
-    	}
-    }
+		}
+	}
 
-    @Override
+	@Override
 	protected boolean postAccept(ASTVisitor action) {
 		IASTArrayModifier[] mods = getArrayModifiers();
 		for (int i = 0; i < mods.length; i++) {

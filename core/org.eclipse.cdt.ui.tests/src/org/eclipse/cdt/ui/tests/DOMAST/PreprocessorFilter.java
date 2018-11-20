@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
+ * IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
@@ -28,9 +28,9 @@ public class PreprocessorFilter extends ViewerFilter {
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof DOMASTNodeLeaf) {
-			int flag = ((DOMASTNodeLeaf)element).getFiltersFlag() & DOMASTNodeLeaf.FLAG_PREPROCESSOR;
+			int flag = ((DOMASTNodeLeaf) element).getFiltersFlag() & DOMASTNodeLeaf.FLAG_PREPROCESSOR;
 			if (flag > 0) {
-				if (((DOMASTNodeLeaf)element).getNode() instanceof IASTPreprocessorStatement)
+				if (((DOMASTNodeLeaf) element).getNode() instanceof IASTPreprocessorStatement)
 					return false;
 
 				return true;

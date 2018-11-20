@@ -64,7 +64,7 @@ public class LaunchUtils {
 		public BuildProgressMonitor(IProgressMonitor monitor, int ticks, int style) {
 			super(monitor, ticks, style);
 		}
-		
+
 		public BuildProgressMonitor(IProgressMonitor monitor, int ticks) {
 			this(monitor, ticks, 0);
 		}
@@ -84,7 +84,7 @@ public class LaunchUtils {
 	}
 
 	/**
-	 * For given launch configuration returns the program arguments as 
+	 * For given launch configuration returns the program arguments as
 	 * an array of individual arguments.
 	 */
 	public static String[] getProgramArgumentsArray(ILaunchConfiguration config) throws CoreException {
@@ -101,7 +101,7 @@ public class LaunchUtils {
 		}
 		return args;
 	}
-	
+
 	/**
 	 * @since 6.0
 	 */
@@ -110,7 +110,7 @@ public class LaunchUtils {
 		for (int i = 0; i < parserRef.length; i++) {
 			try {
 				IBinaryParser parser = CoreModelUtil.getBinaryParser(parserRef[i]);
-				IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);				
+				IBinaryObject exe = (IBinaryObject) parser.getBinary(exePath);
 				if (exe != null) {
 					return exe;
 				}
@@ -120,39 +120,35 @@ public class LaunchUtils {
 		}
 		IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
 		try {
-			IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
+			IBinaryObject exe = (IBinaryObject) parser.getBinary(exePath);
 			return exe;
 		} catch (ClassCastException e) {
 		} catch (IOException e) {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @since 6.0
 	 */
-	public static IBinaryObject getBinary(String programName, String projectName)
-		throws CoreException
-	{
-		if (programName != null ) {
+	public static IBinaryObject getBinary(String programName, String projectName) throws CoreException {
+		if (programName != null) {
 			IPath exePath = new Path(programName);
 			IProject project = null;
 			if (projectName != null && !projectName.isEmpty()) {
 				project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-				if (project == null || project.getLocation() == null)
-				{
+				if (project == null || project.getLocation() == null) {
 					return null;
 				}
 				if (!exePath.isAbsolute()) {
 					exePath = project.getLocation().append(exePath);
 				}
-			}		
+			}
 			return getBinary(project, exePath);
 		}
 		return null;
 	}
 
-	
 	/**
 	 * Convenience method.
 	 */
@@ -163,15 +159,13 @@ public class LaunchUtils {
 	private static String[] parseArguments(String args) {
 		return CommandLineUtil.argumentsToArray(args);
 	}
-	
+
 	/**
 	 * @since 6.1
 	 */
 	@SuppressWarnings("unchecked")
-	public static void enableActivity(final String activityID, final boolean enableit)
-	{
-		if (PlatformUI.isWorkbenchRunning())
-		{
+	public static void enableActivity(final String activityID, final boolean enableit) {
+		if (PlatformUI.isWorkbenchRunning()) {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
@@ -180,9 +174,9 @@ public class LaunchUtils {
 					Set<String> enabledActivityIds = new HashSet<String>(activityManager.getEnabledActivityIds());
 					boolean changed = false;
 					if (enableit)
-						changed = enabledActivityIds.add(activityID);		
+						changed = enabledActivityIds.add(activityID);
 					else
-						changed = enabledActivityIds.remove(activityID);		
+						changed = enabledActivityIds.remove(activityID);
 					if (changed)
 						workbenchActivitySupport.setEnabledActivityIds(enabledActivityIds);
 				}
@@ -194,7 +188,7 @@ public class LaunchUtils {
 	 * Get the build configuration that most likely builds the given program path.
 	 * The build configuration is chosen as the one that outputs to a directory that contains
 	 * the given program.
-	 * 
+	 *
 	 * @param projectDesc The description for the project in which to search for the configuration.
 	 * @param programPath The path to the program to search the build configurations for
 	 * @return The build configuration that builds programName; or null if none or more than one were found.

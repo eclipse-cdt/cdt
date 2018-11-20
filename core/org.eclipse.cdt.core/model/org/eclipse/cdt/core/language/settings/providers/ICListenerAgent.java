@@ -16,7 +16,6 @@ package org.eclipse.cdt.core.language.settings.providers;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 
-
 /**
  * Helper class to allow listeners of arbitrary events self-register/dispose.
  *
@@ -36,7 +35,7 @@ public interface ICListenerAgent {
 	 * Provides an opportunity for the provider to register specific listeners.
 	 * Called by CDT core when {@linkplain ICListenerAgent} added
 	 * to the list of {@link ILanguageSettingsProvider}s managed by the model.
-	 * 
+	 *
 	 * @param cfgDescription - configuration description for the listener.
 	 */
 	public void registerListener(ICConfigurationDescription cfgDescription);

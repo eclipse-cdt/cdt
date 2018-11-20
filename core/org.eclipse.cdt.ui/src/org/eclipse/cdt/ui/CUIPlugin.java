@@ -127,10 +127,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static final String CVIEW_ID = PLUGIN_ID + ".CView"; //$NON-NLS-1$
 	public static final String C_PROBLEMMARKER = PLUGIN_CORE_ID + ".problem"; //$NON-NLS-1$
 
-	public static final String ID_COMMENT_OWNER= PLUGIN_ID+".DocCommentOwner"; //$NON-NLS-1$
+	public static final String ID_COMMENT_OWNER = PLUGIN_ID + ".DocCommentOwner"; //$NON-NLS-1$
 
-    public static final String ID_INCLUDE_BROWSER= PLUGIN_ID + ".includeBrowser"; //$NON-NLS-1$
-    public static final String ID_CALL_HIERARCHY= PLUGIN_ID + ".callHierarchy"; //$NON-NLS-1$
+	public static final String ID_INCLUDE_BROWSER = PLUGIN_ID + ".includeBrowser"; //$NON-NLS-1$
+	public static final String ID_CALL_HIERARCHY = PLUGIN_ID + ".callHierarchy"; //$NON-NLS-1$
 	public static final String ID_TYPE_HIERARCHY = PLUGIN_ID + ".typeHierarchy"; //$NON-NLS-1$
 
 	public static final String C_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCWizard"; //$NON-NLS-1$
@@ -147,7 +147,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private static CUIPlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
 
-	private static final String CONTENTASSIST = CUIPlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
+	private static final String CONTENTASSIST = CUIPlugin.PLUGIN_ID + "/debug/contentassist"; //$NON-NLS-1$
 
 	/**
 	 * The id of the C perspective
@@ -222,7 +222,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * The key to store customized templates.
 	 * @since 3.0
 	 */
-	private static final String CUSTOM_TEMPLATES_KEY= "org.eclipse.cdt.ui.text.templates.custom"; //$NON-NLS-1$
+	private static final String CUSTOM_TEMPLATES_KEY = "org.eclipse.cdt.ui.text.templates.custom"; //$NON-NLS-1$
 
 	/**
 	 * The id of the C Element Creation action set
@@ -230,7 +230,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 *
 	 * @since 2.0
 	 */
-	public static final String ID_CELEMENT_CREATION_ACTION_SET= "org.eclipse.cdt.ui.CElementCreationActionSet"; //$NON-NLS-1$
+	public static final String ID_CELEMENT_CREATION_ACTION_SET = "org.eclipse.cdt.ui.CElementCreationActionSet"; //$NON-NLS-1$
 
 	/**
 	 * The id of the scope used by all the CDT views
@@ -243,7 +243,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * The key to store customized code templates.
 	 * @since 5.0
 	 */
-	private static final String CODE_TEMPLATES_KEY= "org.eclipse.cdt.ui.text.custom_code_templates"; //$NON-NLS-1$
+	private static final String CODE_TEMPLATES_KEY = "org.eclipse.cdt.ui.text.custom_code_templates"; //$NON-NLS-1$
 
 	// -------- static methods --------
 
@@ -307,11 +307,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static Shell getActiveWorkbenchShell() {
-		 IWorkbenchWindow window= getActiveWorkbenchWindow();
-		 if (window != null) {
-		 	return window.getShell();
-		 }
-		 return null;
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.getShell();
+		}
+		return null;
 	}
 
 	public static CUIPlugin getDefault() {
@@ -377,7 +377,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	*/
 	public static void errorDialog(Shell shell, String title, String message, IStatus s, boolean logError) {
 		if (logError)
-		    log(s);
+			log(s);
 
 		// if the 'message' resource string and the IStatus' message are the same,
 		// don't show both in the dialog
@@ -558,7 +558,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		Assert.isNotNull(contextId);
 
 		BuildConsoleManager manager = fBuildConsoleManagers.get(contextId);
-		if (manager == null ) {
+		if (manager == null) {
 			manager = new BuildConsoleManager();
 			fBuildConsoleManagers.put(contextId, manager);
 			manager.startup(name, contextId, iconUrl);
@@ -586,11 +586,12 @@ public class CUIPlugin extends AbstractUIPlugin {
 			// Initialize AST provider
 			getASTProvider();
 
-			fThemeListener= new IPropertyChangeListener() {
+			fThemeListener = new IPropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
-						CUIPreferenceInitializer.setThemeBasedPreferences(PreferenceConstants.getPreferenceStore(), true);
+						CUIPreferenceInitializer.setThemeBasedPreferences(PreferenceConstants.getPreferenceStore(),
+								true);
 				}
 			};
 			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener);
@@ -618,15 +619,15 @@ public class CUIPlugin extends AbstractUIPlugin {
 		prefsJob.schedule();
 
 		// Start make.ui plug-in, such that it can check for project conversions.
-		Job job= new Job(Messages.CUIPlugin_jobStartMakeUI) {
+		Job job = new Job(Messages.CUIPlugin_jobStartMakeUI) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				Bundle bundle= Platform.getBundle("org.eclipse.cdt.make.ui"); //$NON-NLS-1$
+				Bundle bundle = Platform.getBundle("org.eclipse.cdt.make.ui"); //$NON-NLS-1$
 				try {
 					if (bundle != null) {
 						switch (bundle.getState()) {
 						case Bundle.RESOLVED:
-						case Bundle.STARTING:  // Because make.ui uses lazy activation, we need to start it.
+						case Bundle.STARTING: // Because make.ui uses lazy activation, we need to start it.
 							bundle.start(Bundle.START_TRANSIENT);
 							break;
 						}
@@ -646,20 +647,20 @@ public class CUIPlugin extends AbstractUIPlugin {
 		CDTContextActivator.getInstance().uninstall();
 		if (fASTProvider != null) {
 			fASTProvider.dispose();
-			fASTProvider= null;
+			fASTProvider = null;
 		}
 		if (fTextTools != null) {
 			fTextTools.dispose();
-			fTextTools= null;
+			fTextTools = null;
 		}
 		if (fImageDescriptorRegistry != null) {
 			fImageDescriptorRegistry.dispose();
-			fImageDescriptorRegistry= null;
+			fImageDescriptorRegistry = null;
 		}
-		if (fBuildConsoleManagers != null ) {
+		if (fBuildConsoleManagers != null) {
 			Object[] bcm = fBuildConsoleManagers.values().toArray();
 			for (Object element : bcm) {
-				BuildConsoleManager m = (BuildConsoleManager)element;
+				BuildConsoleManager m = (BuildConsoleManager) element;
 				if (m != null)
 					m.shutdown();
 			}
@@ -672,19 +673,19 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 		if (fWorkingCopyManager != null) {
 			fWorkingCopyManager.shutdown();
-			fWorkingCopyManager= null;
+			fWorkingCopyManager = null;
 		}
 
 		if (fDocumentProvider != null) {
 			fDocumentProvider.shutdown();
-			fDocumentProvider= null;
+			fDocumentProvider = null;
 		}
 
 		ContentAssistPreference.shutdown();
 
 		if (fThemeListener != null) {
 			PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(fThemeListener);
-			fThemeListener= null;
+			fThemeListener = null;
 		}
 
 		// Do this last.
@@ -751,7 +752,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		if (isDebugging()) {
 			String option = Platform.getDebugOption(CONTENTASSIST);
 			if (option != null)
-				Util.VERBOSE_CONTENTASSIST = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+				Util.VERBOSE_CONTENTASSIST = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 
@@ -764,11 +765,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public IPreferenceStore getCombinedPreferenceStore() {
 		if (fCombinedPreferenceStore == null) {
-			fCombinedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] {
-					getPreferenceStore(),
-					getCorePreferenceStore(),
-					EditorsUI.getPreferenceStore()
-			});
+			fCombinedPreferenceStore = new ChainedPreferenceStore(new IPreferenceStore[] { getPreferenceStore(),
+					getCorePreferenceStore(), EditorsUI.getPreferenceStore() });
 		}
 		return fCombinedPreferenceStore;
 	}
@@ -780,7 +778,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public IPreferenceStore getCorePreferenceStore() {
 		if (fCorePreferenceStore == null) {
-			fCorePreferenceStore= new ScopedPreferenceStore(InstanceScope.INSTANCE, PLUGIN_CORE_ID);
+			fCorePreferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, PLUGIN_CORE_ID);
 		}
 		return fCorePreferenceStore;
 	}
@@ -793,10 +791,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @since 5.3
 	 */
 	public IDialogSettings getDialogSettingsSection(String name) {
-		IDialogSettings dialogSettings= getDialogSettings();
-		IDialogSettings section= dialogSettings.getSection(name);
+		IDialogSettings dialogSettings = getDialogSettings();
+		IDialogSettings section = dialogSettings.getSection(name);
 		if (section == null) {
-			section= dialogSettings.addNewSection(name);
+			section = dialogSettings.addNewSection(name);
 		}
 		return section;
 	}
@@ -808,15 +806,15 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @return an array of all dirty editor parts.
 	 */
 	public static IEditorPart[] getDirtyEditors() {
-		Set<IEditorInput> inputs= new HashSet<IEditorInput>();
-		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
-		IWorkbench workbench= getDefault().getWorkbench();
+		Set<IEditorInput> inputs = new HashSet<IEditorInput>();
+		List<IEditorPart> result = new ArrayList<IEditorPart>(0);
+		IWorkbench workbench = getDefault().getWorkbench();
 		for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
 			for (IWorkbenchPage page : window.getPages()) {
 				for (IEditorReference editorRef : page.getEditorReferences()) {
-					IEditorPart ep= editorRef.getEditor(false);
-					if (ep instanceof ITextEditor && ep.isDirty()) { 
-						IEditorInput input= ep.getEditorInput();
+					IEditorPart ep = editorRef.getEditor(false);
+					if (ep instanceof ITextEditor && ep.isDirty()) {
+						IEditorInput input = ep.getEditorInput();
 						if (!inputs.contains(input)) {
 							inputs.add(input);
 							result.add(ep);
@@ -827,20 +825,20 @@ public class CUIPlugin extends AbstractUIPlugin {
 		}
 		return result.toArray(new IEditorPart[result.size()]);
 	}
-	
+
 	/**
 	 * Returns an array of all instantiated editors.
 	 */
 	public static IEditorPart[] getInstanciatedEditors() {
-		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
-		IWorkbench workbench= getDefault().getWorkbench();
-		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
+		List<IEditorPart> result = new ArrayList<IEditorPart>(0);
+		IWorkbench workbench = getDefault().getWorkbench();
+		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {
-			IWorkbenchPage[] pages= window.getPages();
+			IWorkbenchPage[] pages = window.getPages();
 			for (IWorkbenchPage page : pages) {
-				IEditorReference[] references= page.getEditorReferences();
+				IEditorReference[] references = page.getEditorReferences();
 				for (IEditorReference reference : references) {
-					IEditorPart editor= reference.getEditor(false);
+					IEditorPart editor = reference.getEditor(false);
 					if (editor != null)
 						result.add(editor);
 				}
@@ -855,9 +853,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * display is returned. Otherwise the method returns the default display.
 	 */
 	public static Display getStandardDisplay() {
-		Display display= Display.getCurrent();
+		Display display = Display.getCurrent();
 		if (display == null) {
-			display= Display.getDefault();
+			display = Display.getDefault();
 		}
 		return display;
 	}
@@ -892,52 +890,53 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public CEditorTextHoverDescriptor[] getCEditorTextHoverDescriptors() {
 		if (fCEditorTextHoverDescriptors == null) {
-			fCEditorTextHoverDescriptors= CEditorTextHoverDescriptor.getContributedHovers();
-			ConfigurationElementSorter sorter= new ConfigurationElementSorter() {
+			fCEditorTextHoverDescriptors = CEditorTextHoverDescriptor.getContributedHovers();
+			ConfigurationElementSorter sorter = new ConfigurationElementSorter() {
 				/**
 				 * {@inheritDoc}
 				 */
 				@Override
 				public IConfigurationElement getConfigurationElement(Object object) {
-					return ((CEditorTextHoverDescriptor)object).getConfigurationElement();
+					return ((CEditorTextHoverDescriptor) object).getConfigurationElement();
 				}
 			};
 			sorter.sort(fCEditorTextHoverDescriptors);
 
 			// The Problem hover has to be the first and the Annotation hover has to be the last one in the CDT UI's hover list
-			int length= fCEditorTextHoverDescriptors.length;
-			int first= -1;
-			int last= length - 1;
-			int problemHoverIndex= -1;
-			int annotationHoverIndex= -1;
-			for (int i= 0; i < length; i++) {
+			int length = fCEditorTextHoverDescriptors.length;
+			int first = -1;
+			int last = length - 1;
+			int problemHoverIndex = -1;
+			int annotationHoverIndex = -1;
+			for (int i = 0; i < length; i++) {
 				if (!fCEditorTextHoverDescriptors[i].getId().startsWith(PLUGIN_ID)) {
 					if (problemHoverIndex == -1 || annotationHoverIndex == -1) {
 						continue;
 					}
-					last= i - 1;
+					last = i - 1;
 					break;
 				}
 				if (first == -1)
-					first= i;
+					first = i;
 
 				if (fCEditorTextHoverDescriptors[i].getId().equals("org.eclipse.cdt.ui.AnnotationHover")) { //$NON-NLS-1$
-					annotationHoverIndex= i;
+					annotationHoverIndex = i;
 					continue;
 				}
 				if (fCEditorTextHoverDescriptors[i].getId().equals("org.eclipse.cdt.ui.ProblemHover")) { //$NON-NLS-1$
-					problemHoverIndex= i;
+					problemHoverIndex = i;
 					continue;
 				}
 			}
 
-			CEditorTextHoverDescriptor hoverDescriptor= null;
+			CEditorTextHoverDescriptor hoverDescriptor = null;
 
 			if (first > -1 && problemHoverIndex > -1 && problemHoverIndex > first) {
 				// move problem hover to beginning
-				hoverDescriptor= fCEditorTextHoverDescriptors[problemHoverIndex];
-				System.arraycopy(fCEditorTextHoverDescriptors, first, fCEditorTextHoverDescriptors, first+1, problemHoverIndex - first);
-				fCEditorTextHoverDescriptors[first]= hoverDescriptor;
+				hoverDescriptor = fCEditorTextHoverDescriptors[problemHoverIndex];
+				System.arraycopy(fCEditorTextHoverDescriptors, first, fCEditorTextHoverDescriptors, first + 1,
+						problemHoverIndex - first);
+				fCEditorTextHoverDescriptors[first] = hoverDescriptor;
 
 				// update annotation hover index if needed
 				if (annotationHoverIndex >= first && annotationHoverIndex < problemHoverIndex)
@@ -946,19 +945,20 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 			if (annotationHoverIndex > -1 && annotationHoverIndex < last) {
 				// move annotation hover to end
-				hoverDescriptor= fCEditorTextHoverDescriptors[annotationHoverIndex];
-				System.arraycopy(fCEditorTextHoverDescriptors, annotationHoverIndex+1, fCEditorTextHoverDescriptors, annotationHoverIndex, last - annotationHoverIndex);
-				fCEditorTextHoverDescriptors[last]= hoverDescriptor;
+				hoverDescriptor = fCEditorTextHoverDescriptors[annotationHoverIndex];
+				System.arraycopy(fCEditorTextHoverDescriptors, annotationHoverIndex + 1, fCEditorTextHoverDescriptors,
+						annotationHoverIndex, last - annotationHoverIndex);
+				fCEditorTextHoverDescriptors[last] = hoverDescriptor;
 			}
 
 			// Move Best Match hover to front
-			for (int i= 0; i < length; i++) {
+			for (int i = 0; i < length; i++) {
 				if (PreferenceConstants.ID_BESTMATCH_HOVER.equals(fCEditorTextHoverDescriptors[i].getId())) {
 					if (i > 0) {
 						// move to top
-						CEditorTextHoverDescriptor bestMatchHover= fCEditorTextHoverDescriptors[i];
+						CEditorTextHoverDescriptor bestMatchHover = fCEditorTextHoverDescriptors[i];
 						System.arraycopy(fCEditorTextHoverDescriptors, 0, fCEditorTextHoverDescriptors, 1, i);
-						fCEditorTextHoverDescriptors[0]= bestMatchHover;
+						fCEditorTextHoverDescriptors[0] = bestMatchHover;
 					}
 					break;
 				}
@@ -977,7 +977,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 *
 	 */
 	public void resetCEditorTextHoverDescriptors() {
-		fCEditorTextHoverDescriptors= null;
+		fCEditorTextHoverDescriptors = null;
 	}
 
 	/**
@@ -991,7 +991,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public synchronized CFoldingStructureProviderRegistry getFoldingStructureProviderRegistry() {
 		if (fFoldingStructureProviderRegistry == null)
-			fFoldingStructureProviderRegistry= new CFoldingStructureProviderRegistry();
+			fFoldingStructureProviderRegistry = new CFoldingStructureProviderRegistry();
 		return fFoldingStructureProviderRegistry;
 	}
 
@@ -1003,7 +1003,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public ContextTypeRegistry getTemplateContextRegistry() {
 		if (fContextTypeRegistry == null) {
-			fContextTypeRegistry= new ContributionContextTypeRegistry(EDITOR_ID);
+			fContextTypeRegistry = new ContributionContextTypeRegistry(EDITOR_ID);
 			fContextTypeRegistry.addContextType(CContextType.ID);
 			fContextTypeRegistry.addContextType(CommentContextType.ID);
 			fContextTypeRegistry.addContextType(DocCommentContextType.ID);
@@ -1019,7 +1019,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public TemplateStore getTemplateStore() {
 		if (fTemplateStore == null) {
-			fTemplateStore = new ContributionTemplateStore(getTemplateContextRegistry(), getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
+			fTemplateStore = new ContributionTemplateStore(getTemplateContextRegistry(), getPreferenceStore(),
+					CUSTOM_TEMPLATES_KEY);
 			try {
 				fTemplateStore.load();
 			} catch (IOException e) {
@@ -1039,7 +1040,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public ContextTypeRegistry getCodeTemplateContextRegistry() {
 		if (fCodeTemplateContextTypeRegistry == null) {
-			fCodeTemplateContextTypeRegistry= new ContributionContextTypeRegistry("org.eclipse.cdt.ui.codeTemplates"); //$NON-NLS-1$
+			fCodeTemplateContextTypeRegistry = new ContributionContextTypeRegistry("org.eclipse.cdt.ui.codeTemplates"); //$NON-NLS-1$
 
 			CodeTemplateContextType.registerContextTypes(fCodeTemplateContextTypeRegistry);
 			FileTemplateContextType.registerContextTypes(fCodeTemplateContextTypeRegistry);
@@ -1056,8 +1057,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public TemplateStore getCodeTemplateStore() {
 		if (fCodeTemplateStore == null) {
-			IPreferenceStore store= getPreferenceStore();
-			fCodeTemplateStore= new ContributionTemplateStore(getCodeTemplateContextRegistry(), store, CODE_TEMPLATES_KEY);
+			IPreferenceStore store = getPreferenceStore();
+			fCodeTemplateStore = new ContributionTemplateStore(getCodeTemplateContextRegistry(), store,
+					CODE_TEMPLATES_KEY);
 
 			try {
 				fCodeTemplateStore.load();
@@ -1081,7 +1083,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public synchronized ASTProvider getASTProvider() {
 		if (fASTProvider == null)
-			fASTProvider= new ASTProvider();
+			fASTProvider = new ASTProvider();
 
 		return fASTProvider;
 	}

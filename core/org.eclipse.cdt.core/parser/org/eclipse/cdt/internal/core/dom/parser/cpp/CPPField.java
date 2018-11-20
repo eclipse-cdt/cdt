@@ -30,23 +30,23 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  * Binding for a field.
  */
 public class CPPField extends CPPVariable implements ICPPField {
-    public static class CPPFieldProblem extends ProblemBinding implements ICPPField {
-        private ICPPClassType fOwner;
+	public static class CPPFieldProblem extends ProblemBinding implements ICPPField {
+		private ICPPClassType fOwner;
 
 		public CPPFieldProblem(ICPPClassType owner, IASTNode node, int id, char[] arg) {
-            super(node, id, arg);
-            fOwner= owner;
-        }
+			super(node, id, arg);
+			fOwner = owner;
+		}
 
-        @Override
+		@Override
 		public int getVisibility() {
-            return v_private;
-        }
+			return v_private;
+		}
 
-        @Override
+		@Override
 		public ICPPClassType getClassOwner() {
-            return fOwner;
-        }
+			return fOwner;
+		}
 
 		@Override
 		public ICompositeType getCompositeTypeOwner() {
@@ -57,7 +57,7 @@ public class CPPField extends CPPVariable implements ICPPField {
 		public int getFieldPosition() {
 			return -1;
 		}
-    }
+	}
 
 	public CPPField(IASTName name) {
 		super(name);
@@ -74,11 +74,11 @@ public class CPPField extends CPPVariable implements ICPPField {
 		return scope.getClassType();
 	}
 
-    @Override
+	@Override
 	public boolean isStatic() {
-        // Definition of a static field doesn't necessarily say static.
+		// Definition of a static field doesn't necessarily say static.
 		if (getDeclarations() == null) {
-			IASTNode def= getDefinition();
+			IASTNode def = getDefinition();
 			if (def instanceof ICPPASTQualifiedName) {
 				return true;
 			}
@@ -86,16 +86,16 @@ public class CPPField extends CPPVariable implements ICPPField {
 		return super.isStatic();
 	}
 
-    @Override
+	@Override
 	public boolean isMutable() {
-        return hasStorageClass(IASTDeclSpecifier.sc_mutable);
-    }
+		return hasStorageClass(IASTDeclSpecifier.sc_mutable);
+	}
 
-    @Override
+	@Override
 	public boolean isExtern() {
-        // 7.1.1-5 The extern specifier can not be used in the declaration of class members.
-        return false;
-    }
+		// 7.1.1-5 The extern specifier can not be used in the declaration of class members.
+		return false;
+	}
 
 	@Override
 	public ICompositeType getCompositeTypeOwner() {

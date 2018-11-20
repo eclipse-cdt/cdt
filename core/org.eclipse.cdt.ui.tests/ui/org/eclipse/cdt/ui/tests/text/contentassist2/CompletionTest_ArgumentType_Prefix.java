@@ -18,37 +18,32 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Argument_Type completion kind , with a prefix
  * Bug#50642 : Wrong completion kind when declaring an argument type
  *
  */
-public class CompletionTest_ArgumentType_Prefix  extends CompletionProposalsBaseTest{
+public class CompletionTest_ArgumentType_Prefix extends CompletionProposalsBaseTest {
 	private final String fileName = "CompletionTestStart16.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "a";
-	private final String[] expectedResults = {
-			"aClass",
-			"anotherClass",
-			"aNamespace",
-			"anEnumeration",
-			"AStruct",
-			"AMacro(x)"
-	};
-	
+	private final String[] expectedResults = { "aClass", "anotherClass", "aNamespace", "anEnumeration", "AStruct",
+			"AMacro(x)" };
+
 	public CompletionTest_ArgumentType_Prefix(String name) {
 		super(name);
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
 		// setExpectFailure(109724);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_ArgumentType_Prefix.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_ArgumentType_Prefix.class.getName());
 		suite.addTest(new CompletionTest_ArgumentType_Prefix("testCompletionProposals"));
 		return suite;
-	}		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
@@ -88,6 +83,7 @@ public class CompletionTest_ArgumentType_Prefix  extends CompletionProposalsBase
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

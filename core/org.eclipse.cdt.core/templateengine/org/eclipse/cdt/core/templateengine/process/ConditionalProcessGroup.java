@@ -30,17 +30,16 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Element;
 
-
 /**
  * ConditionalProcess encloses an &lt;if condition="..."&gt;&lt;/if&gt; block of the template.
- * The currently supported conditions are equals and not equals operations performed on two 
+ * The currently supported conditions are equals and not equals operations performed on two
  * Strings. The respective operators are == and !=. Any spaces will be treated as part of the
  * operands. The two operands will be evaluated for simple String equals and not equals after
  * performing a single pass  replace of any replace markers with their values in the template's
  * value store.
  */
 public class ConditionalProcessGroup {
-	
+
 	private TemplateCore template;
 	private Set<String> macros;
 	private String conditionString;
@@ -49,29 +48,31 @@ public class ConditionalProcessGroup {
 	private Operator operator;
 	private List<Process> processes;
 	private String id;
-	
+
 	/**
 	 * @author   BalaT
 	 */
 	private static class Operator {
 		final static Operator EQUALS = new Operator("="); //$NON-NLS-1$
 		final static Operator NOT_EQUALS = new Operator("!="); //$NON-NLS-1$
-		
+
 		String id;
+
 		Operator(String id) {
 			this.id = id;
 		}
+
 		@Override
 		public boolean equals(Object arg0) {
-			if(arg0 instanceof Operator) {
-				return id.equals(((Operator)arg0).id);
+			if (arg0 instanceof Operator) {
+				return id.equals(((Operator) arg0).id);
 			}
 			return false;
 		}
 	}
 
 	/**
-	 * Constructs a ConditionalProcess element from the supplied conditionElement (&lt;if&gt;) while building Process 
+	 * Constructs a ConditionalProcess element from the supplied conditionElement (&lt;if&gt;) while building Process
 	 * objects out of each of the element's &lt;process&gt; children.
 	 */
 	public ConditionalProcessGroup(TemplateCore template, Element conditionElement, int id) {
@@ -92,17 +93,18 @@ public class ConditionalProcessGroup {
 						this.operator = Operator.NOT_EQUALS;
 						lValue = conditionString.substring(0, op);
 						rValue = conditionString.substring(op + ProcessHelper.NOT_EQUALS.length());
-					}//else an unsupported operation where this condition is ignored.
+					} //else an unsupported operation where this condition is ignored.
 				}
 				collectMacros(lValue);
 				collectMacros(rValue);
 			}
 		}
-		createProcessObjects(template, TemplateEngine.getChildrenOfElementByTag(conditionElement, TemplateDescriptor.PROCESS));
+		createProcessObjects(template,
+				TemplateEngine.getChildrenOfElementByTag(conditionElement, TemplateDescriptor.PROCESS));
 	}
 
 	/**
-	 * Adds values passed as parameter to the macros object 
+	 * Adds values passed as parameter to the macros object
 	 * @param value
 	 */
 	private void collectMacros(String value) {
@@ -115,9 +117,9 @@ public class ConditionalProcessGroup {
 	}
 
 	/**
-	 * Constructs a ConditionalProcess element from the supplied process elements while building Process 
+	 * Constructs a ConditionalProcess element from the supplied process elements while building Process
 	 * objects out of each of the supplied process elements (&lt;process&gt;). The condition in this case is evaluated to true.
-	 * 
+	 *
 	 * This Constructor is expected to be used to evaluate all those process elements that are children of the template root element.
 	 */
 	public ConditionalProcessGroup(TemplateCore template, Element[] processElements) {
@@ -136,12 +138,13 @@ public class ConditionalProcessGroup {
 		for (int j = 0, l = processElements.size(); j < l; j++) {
 			Element processElem = processElements.get(j);
 			if (processElem.getNodeName().equals(TemplateDescriptor.PROCESS)) {
-				String processId = id + "--> Process " + (j + 1) + " (" + processElem.getAttribute(Process.ELEM_TYPE) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				String processId = id + "--> Process " + (j + 1) + " (" + processElem.getAttribute(Process.ELEM_TYPE) //$NON-NLS-1$//$NON-NLS-2$
+						+ ")"; //$NON-NLS-1$
 				processes.add(new Process(templateCore, processElem, processId));
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if this conditional process group is completely ready to be processed.
 	 */
@@ -150,26 +153,26 @@ public class ConditionalProcessGroup {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return boolean, as true if the Processes are ready to process
 	 */
 	private boolean areProcessesReady() {
-		for(Process process : processes) {
+		for (Process process : processes) {
 			if (!process.isReadyToProcess()) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return boolean, true if Macros For Condition Evaluation Expandable.
 	 */
 	private boolean areMacrosForConditionEvaluationExpandable() {
 		if (macros != null) {
 			Map<String, String> valueStore = template.getValueStore();
-			for(String value : macros) {
+			for (String value : macros) {
 				if (valueStore.get(value) == null) {
 					return false;
 				}
@@ -177,9 +180,9 @@ public class ConditionalProcessGroup {
 		}
 		return true;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return boolean, true if Condition Value is True.
 	 */
 	public boolean isConditionValueTrue() {
@@ -192,19 +195,19 @@ public class ConditionalProcessGroup {
 		Map<String, String> valueStore = template.getValueStore();
 		String processedLValue = ProcessHelper.getValueAfterExpandingMacros(lValue, macros, valueStore);
 		String processedRValue = ProcessHelper.getValueAfterExpandingMacros(rValue, macros, valueStore);
-		if(operator.equals(Operator.EQUALS)) {
+		if (operator.equals(Operator.EQUALS)) {
 			return processedLValue.equals(processedRValue);
-		} else if(operator.equals(Operator.NOT_EQUALS)) {
+		} else if (operator.equals(Operator.NOT_EQUALS)) {
 			return !processedLValue.equals(processedRValue);
 		} else {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Process and Returns the Status of the prosses as a List.
-	 * @param monitor 
-	 * @return List contains the IStatus. 
+	 * @param monitor
+	 * @return List contains the IStatus.
 	 * @throws ProcessFailureException
 	 */
 	public List<IStatus> process(IProgressMonitor monitor) throws ProcessFailureException {
@@ -213,11 +216,12 @@ public class ConditionalProcessGroup {
 		}
 		if (!isConditionValueTrue()) {
 			List<IStatus> statuses = new ArrayList<IStatus>(1);
-			statuses.add(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.INFO, Messages.getString("ConditionalProcessGroup.notExecuting") + id, null)); //$NON-NLS-1$
+			statuses.add(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.INFO,
+					Messages.getString("ConditionalProcessGroup.notExecuting") + id, null)); //$NON-NLS-1$
 			return statuses;
 		}
 		List<IStatus> statuses = new ArrayList<IStatus>(processes.size());
-		for(Process process : processes) {
+		for (Process process : processes) {
 			try {
 				statuses.add(process.process(monitor));
 			} catch (ProcessFailureException e) {
@@ -234,7 +238,7 @@ public class ConditionalProcessGroup {
 	private String getUnexpandableMacroMessage() {
 		if (macros != null) {
 			Map<String, String> valueStore = template.getValueStore();
-			for(String value : macros) {			
+			for (String value : macros) {
 				if (valueStore.get(value) == null) {
 					return Messages.getString("ConditionalProcessGroup.unexpandableMacro") + value; //$NON-NLS-1$
 				}
@@ -260,7 +264,7 @@ public class ConditionalProcessGroup {
 			set = new HashSet<String>();
 			set.addAll(macros);
 		}
-		for(Process process : processes) {
+		for (Process process : processes) {
 			Set<String> subSet = process.getMacros();
 			if (subSet != null) {
 				if (set == null) {

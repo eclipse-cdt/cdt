@@ -75,7 +75,8 @@ public class PDOMSearchTest extends PDOMTestBase {
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
-			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+					new NullProgressMonitor());
 		}
 	}
 
@@ -105,7 +106,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals(namespace2, namespaces[0]);
 
 		/* Namespace references */
-		IName[] refs = pdom.findNames(namespace1,IIndex.FIND_REFERENCES);
+		IName[] refs = pdom.findNames(namespace1, IIndex.FIND_REFERENCES);
 		assertEquals(3, refs.length);
 		IASTFileLocation loc = refs[0].getFileLocation();
 		assertEquals(offset("main.cpp", "namespace1::Class1"), loc.getNodeOffset()); //character offset
@@ -160,7 +161,9 @@ public class PDOMSearchTest extends PDOMTestBase {
 		methods = class2.getDeclaredMethods();
 		assertEquals(2, methods.length);
 		if (methods[0].getName().equals("~Class1")) {
-			IBinding h= methods[1]; methods[1]= methods[0]; methods[0]= h;
+			IBinding h = methods[1];
+			methods[1] = methods[0];
+			methods[0] = h;
 		}
 		assertEquals("Class1", methods[0].getName());
 		assertEquals("~Class1", methods[1].getName());

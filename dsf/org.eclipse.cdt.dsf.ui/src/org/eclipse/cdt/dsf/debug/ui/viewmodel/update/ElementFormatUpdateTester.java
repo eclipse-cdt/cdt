@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.TreePath;
  * An update tester for element format event (ElementFormatEvent). This tester
  * flushes partial properties for elements that are affected by a change of
  * element format.
- * 
+ *
  * @since 2.2
  */
 public class ElementFormatUpdateTester implements IElementUpdateTesterExtension {
@@ -64,8 +64,7 @@ public class ElementFormatUpdateTester implements IElementUpdateTesterExtension 
 	}
 
 	@Override
-	public Collection<String> getPropertiesToFlush(Object viewerInput,
-			TreePath path, boolean isDirty) {
+	public Collection<String> getPropertiesToFlush(Object viewerInput, TreePath path, boolean isDirty) {
 		return propertiesWithPrefixes;
 	}
 
@@ -75,8 +74,7 @@ public class ElementFormatUpdateTester implements IElementUpdateTesterExtension 
 			return true;
 		}
 		if (tester instanceof ElementFormatUpdateTester) {
-			return formatEvent.getElements().containsAll(
-					((ElementFormatUpdateTester) tester).formatEvent.getElements())
+			return formatEvent.getElements().containsAll(((ElementFormatUpdateTester) tester).formatEvent.getElements())
 					&& propertiesWithPrefixes.containsAll(((ElementFormatUpdateTester) tester).propertiesWithPrefixes)
 					&& formatEvent.getApplyDepth() == ((ElementFormatUpdateTester) tester).formatEvent.getApplyDepth();
 		}

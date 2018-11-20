@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -23,8 +23,8 @@ import java.io.InputStream;
 
 public interface IMIBackend2 extends IMIBackend {
 
-    /**
-     * Returns the backend error stream.
-     */
-    public InputStream getMIErrorStream();
+	/**
+	 * Returns the backend error stream.
+	 */
+	public InputStream getMIErrorStream();
 }

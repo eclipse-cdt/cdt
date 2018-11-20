@@ -26,13 +26,12 @@ import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.ui.text.IInvocationContext;
 
-
 /**
  * Proposal to disable spell checking.
  */
 public class DisableSpellCheckingProposal implements ICCompletionProposal {
 	private final String ID_DISABLE = "DISABLE"; //$NON-NLS-1$
-	
+
 	/** The invocation context */
 	private IInvocationContext fContext;
 
@@ -42,7 +41,7 @@ public class DisableSpellCheckingProposal implements ICCompletionProposal {
 	 * @param context the invocation context
 	 */
 	public DisableSpellCheckingProposal(IInvocationContext context) {
-		fContext= context;
+		fContext = context;
 	}
 
 	/*
@@ -50,7 +49,7 @@ public class DisableSpellCheckingProposal implements ICCompletionProposal {
 	 */
 	@Override
 	public final void apply(final IDocument document) {
-		IPreferenceStore store= EditorsUI.getPreferenceStore();
+		IPreferenceStore store = EditorsUI.getPreferenceStore();
 		store.setValue(SpellingService.PREFERENCE_SPELLING_ENABLED, false);
 	}
 
@@ -101,7 +100,7 @@ public class DisableSpellCheckingProposal implements ICCompletionProposal {
 	public final Point getSelection(final IDocument document) {
 		return new Point(fContext.getSelectionOffset(), fContext.getSelectionLength());
 	}
-	
+
 	@Override
 	public String getIdString() {
 		return ID_DISABLE;

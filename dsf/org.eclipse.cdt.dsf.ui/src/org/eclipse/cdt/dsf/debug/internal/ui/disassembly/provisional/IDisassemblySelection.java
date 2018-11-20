@@ -35,25 +35,25 @@ public interface IDisassemblySelection extends ITextSelection {
 	 * @return the address associated with the start of the selection, may be <code>null</code>
 	 */
 	IAddress getStartAddress();
-	
+
 	/**
 	 * @return the {@link IFile} associated with the selection, may be <code>null</code>
 	 */
 	IFile getSourceFile();
-	
+
 	/**
 	 * @return the source location {@link URI} of the associated source file, may be <code>null</code>
 	 */
 	URI getSourceLocationURI();
-	
+
 	/**
 	 * @return the 0-based line number of the source file associated with the selection, -1 if not available
 	 */
 	int getSourceLine();
-	
+
 	/**
 	 * @return the label, may be <code>null</code>
-	 * 
+	 *
 	 * @since 2.2
 	 */
 	String getLabel();

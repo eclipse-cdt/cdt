@@ -30,7 +30,7 @@ class MacroDefinitionRule implements IPredicateRule {
 	private IToken token;
 	private StringBuilder buffer = new StringBuilder();
 	protected IToken defaultToken;
-	
+
 	public MacroDefinitionRule(IToken token, IToken defaultToken) {
 		this.token = token;
 		this.defaultToken = defaultToken;
@@ -51,45 +51,45 @@ class MacroDefinitionRule implements IPredicateRule {
 
 		for (int c = scanner.read(); c != ICharacterScanner.EOF; c = scanner.read()) {
 			switch (state) {
-				case INIT_STATE :
-					if (c != '\n' && Character.isWhitespace((char) c)) {
-						break;
-					}
-					if (isValidCharacter(c)) {
-						state = VAR_STATE;
-					} else {
-						state = ERROR_STATE;
-					}
+			case INIT_STATE:
+				if (c != '\n' && Character.isWhitespace((char) c)) {
 					break;
-				case VAR_STATE :
-					if (isValidCharacter(c)) {
-						break;
+				}
+				if (isValidCharacter(c)) {
+					state = VAR_STATE;
+				} else {
+					state = ERROR_STATE;
+				}
+				break;
+			case VAR_STATE:
+				if (isValidCharacter(c)) {
+					break;
+				}
+			case END_VAR_STATE:
+				if (c != '\n' && Character.isWhitespace((char) c)) {
+					state = END_VAR_STATE;
+				} else if (c == ':' || c == '+') {
+					state = EQUAL_STATE;
+				} else if (c == '=') {
+					state = FINISH_STATE;
+				} else {
+					if (state == END_VAR_STATE) {
+						scanner.unread(); // Return back to the space
 					}
-				case END_VAR_STATE :
-					if (c != '\n' && Character.isWhitespace((char) c)) {
-						state = END_VAR_STATE;
-					} else if (c == ':' || c == '+') {
-						state = EQUAL_STATE;
-					} else if (c == '=') {
-						state = FINISH_STATE;
-					} else {
-						if (state == END_VAR_STATE) {
-							scanner.unread(); // Return back to the space
-						}
-						state = ERROR_STATE;
-					}
-					break;
-				case EQUAL_STATE :
-					if (c == '=') {
-						state = FINISH_STATE;
-					} else {
-						state = ERROR_STATE;
-					}
-					break;
-				case FINISH_STATE :
-					break;
-				default :
-					break;
+					state = ERROR_STATE;
+				}
+				break;
+			case EQUAL_STATE:
+				if (c == '=') {
+					state = FINISH_STATE;
+				} else {
+					state = ERROR_STATE;
+				}
+				break;
+			case FINISH_STATE:
+				break;
+			default:
+				break;
 			}
 			if (state >= FINISH_STATE) {
 				break;
@@ -141,7 +141,7 @@ class MacroDefinitionRule implements IPredicateRule {
 	}
 
 	private void scanToBeginOfLine(ICharacterScanner scanner) {
-		while(scanner.getColumn() != 0) {
+		while (scanner.getColumn() != 0) {
 			scanner.unread();
 		}
 	}
@@ -162,6 +162,7 @@ class MacroDefinitionRule implements IPredicateRule {
 
 		return true;
 	}
+
 	protected boolean isValidCharacter(int c) {
 		char c0 = (char) c;
 		return Character.isLetterOrDigit(c0) || (c0 == '_');

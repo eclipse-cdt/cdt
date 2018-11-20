@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IAR Systems - initial API and implementation
  *******************************************************************************/
@@ -58,13 +58,13 @@ import org.eclipse.ui.dialogs.PropertyPage;
 /**
  * Property page for CMake projects. The only thing we have here at the moment is a button
  * to launch the CMake GUI configurator (cmake-qt-gui).
- * 
+ *
  * We assume that the build directory is in project/build/configname, which is where
- * the CMake project wizard puts it. We also assume that "cmake-gui" is in the user's 
+ * the CMake project wizard puts it. We also assume that "cmake-gui" is in the user's
  * PATH.
  */
 public class CMakePropertyPage extends PropertyPage {
-	
+
 	private List<ICMakePropertyPageControl> componentList = new ArrayList<>();
 
 	@Override
@@ -72,53 +72,55 @@ public class CMakePropertyPage extends PropertyPage {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout());
-		
+
 		boolean isContainerBuild = false;
 		ICBuildConfiguration cconfig = null;
 		IProject project = (IProject) getElement();
 		try {
 			IBuildConfiguration config = project.getActiveBuildConfig();
-		    cconfig = config.getAdapter(ICBuildConfiguration.class);
-		    IToolChain toolChain = cconfig.getToolChain();
-		    String os = toolChain.getProperty(IToolChain.ATTR_OS);
-		    isContainerBuild = os.equals("linux-container"); //$NON-NLS-1$
+			cconfig = config.getAdapter(ICBuildConfiguration.class);
+			IToolChain toolChain = cconfig.getToolChain();
+			String os = toolChain.getProperty(IToolChain.ATTR_OS);
+			isContainerBuild = os.equals("linux-container"); //$NON-NLS-1$
 		} catch (CoreException e2) {
-			MessageDialog.openError(parent.getShell(), Messages.CMakePropertyPage_FailedToGetOS_Title, 
+			MessageDialog.openError(parent.getShell(), Messages.CMakePropertyPage_FailedToGetOS_Title,
 					Messages.CMakePropertyPage_FailedToGetOS_Body + e2.getMessage());
 		}
-		
+
 		if (isContainerBuild) {
 			try {
-			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
-			launcher.setProject(project);
-			if (launcher instanceof ICBuildCommandLauncher) {
-				((ICBuildCommandLauncher)launcher).setBuildConfiguration(cconfig);
-			}
-			IPath buildPath = project.getLocation().append("build").append(((CBuildConfiguration)cconfig).getName());
-			Process p = launcher.execute(new Path("cmake"), new String[] { "-LAH", "."}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					new String[0], buildPath, new NullProgressMonitor());
-			if (p != null) {
-				ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-				ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-				int rc = -1;
-				try {
-					if (launcher.waitAndRead(stdout, stderr, new NullProgressMonitor()) == ICommandLauncher.OK) {
-						p.waitFor();
+				ICommandLauncher launcher = CommandLauncherManager.getInstance()
+						.getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
+				launcher.setProject(project);
+				if (launcher instanceof ICBuildCommandLauncher) {
+					((ICBuildCommandLauncher) launcher).setBuildConfiguration(cconfig);
+				}
+				IPath buildPath = project.getLocation().append("build")
+						.append(((CBuildConfiguration) cconfig).getName());
+				Process p = launcher.execute(new Path("cmake"), new String[] { "-LAH", "." }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						new String[0], buildPath, new NullProgressMonitor());
+				if (p != null) {
+					ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+					ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+					int rc = -1;
+					try {
+						if (launcher.waitAndRead(stdout, stderr, new NullProgressMonitor()) == ICommandLauncher.OK) {
+							p.waitFor();
+						}
+						rc = p.exitValue();
+					} catch (InterruptedException e) {
+						// ignore for now
 					}
-					rc = p.exitValue();
-				} catch (InterruptedException e) {
-					// ignore for now
+					if (rc == 0) {
+						componentList = parseConfigureOutput(stdout, composite);
+					}
 				}
-				if (rc == 0) {
-					componentList = parseConfigureOutput(stdout, composite);
-				}
-			}
 			} catch (CoreException e) {
-				MessageDialog.openError(parent.getShell(), Messages.CMakePropertyPage_FailedToGetCMakeConfiguration_Title, 
+				MessageDialog.openError(parent.getShell(),
+						Messages.CMakePropertyPage_FailedToGetCMakeConfiguration_Title,
 						Messages.CMakePropertyPage_FailedToGetCMakeConfiguration_Body + e.getMessage());
 			}
 
-			
 		} else {
 
 			Button b = new Button(composite, SWT.NONE);
@@ -134,16 +136,17 @@ public class CMakePropertyPage extends PropertyPage {
 
 						Runtime.getRuntime().exec(new String[] { "cmake-gui", "-H" + sourceDir, "-B" + buildDir }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					} catch (CoreException | IOException e1) {
-						MessageDialog.openError(parent.getShell(), Messages.CMakePropertyPage_FailedToStartCMakeGui_Title, 
+						MessageDialog.openError(parent.getShell(),
+								Messages.CMakePropertyPage_FailedToStartCMakeGui_Title,
 								Messages.CMakePropertyPage_FailedToStartCMakeGui_Body + e1.getMessage());
 					}
 				}
 			});
 		}
-		
+
 		return composite;
 	}
-	
+
 	@Override
 	public boolean performOk() {
 		List<String> args = new ArrayList<>();
@@ -159,15 +162,17 @@ public class CMakePropertyPage extends PropertyPage {
 		try {
 			IProject project = (IProject) getElement();
 			ICBuildConfiguration buildConfig = project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class);
-			String configName = ((CBuildConfiguration)buildConfig).getName();
+			String configName = ((CBuildConfiguration) buildConfig).getName();
 			IPath buildDir = project.getLocation().append("build").append(configName); //$NON-NLS-1$
-			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
+			ICommandLauncher launcher = CommandLauncherManager.getInstance()
+					.getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
 			launcher.setProject(project);
 			if (launcher instanceof ICBuildCommandLauncher) {
-				((ICBuildCommandLauncher)launcher).setBuildConfiguration(buildConfig);
+				((ICBuildCommandLauncher) launcher).setBuildConfiguration(buildConfig);
 			}
 			args.add(".");
-			Process p = launcher.execute(new Path("cmake"), args.toArray(new String[0]), new String[0], buildDir, new NullProgressMonitor()); //$NON-NLS-1$
+			Process p = launcher.execute(new Path("cmake"), args.toArray(new String[0]), new String[0], buildDir, //$NON-NLS-1$
+					new NullProgressMonitor());
 			int rc = -1;
 			IConsole console = CCorePlugin.getDefault().getConsole();
 			console.start(project);
@@ -209,9 +214,8 @@ public class CMakePropertyPage extends PropertyPage {
 		return true;
 	}
 
-	
-	public enum ParseState { 
-		INIT, SEENCOMMENT 
+	public enum ParseState {
+		INIT, SEENCOMMENT
 	};
 
 	/**
@@ -222,7 +226,7 @@ public class CMakePropertyPage extends PropertyPage {
 	 */
 	List<ICMakePropertyPageControl> parseConfigureOutput(ByteArrayOutputStream stdout, Composite composite) {
 		List<ICMakePropertyPageControl> controls = new ArrayList<>();
-		
+
 		try {
 			ParseState state = ParseState.INIT;
 
@@ -231,7 +235,7 @@ public class CMakePropertyPage extends PropertyPage {
 			Pattern commentPattern = Pattern.compile("//(.*)"); //$NON-NLS-1$
 			Pattern argPattern = Pattern.compile("(\\w+):([a-zA-Z]+)=(.*)"); //$NON-NLS-1$
 			Pattern optionPattern = Pattern.compile(".*?options are:((\\s+\\w+(\\(.*\\))?)+).*"); //$NON-NLS-1$
-			
+
 			String lastComment = ""; //$NON-NLS-1$
 			for (String line : lines) {
 				line = line.trim();
@@ -240,7 +244,7 @@ public class CMakePropertyPage extends PropertyPage {
 					Matcher commentMatcher = commentPattern.matcher(line);
 					if (commentMatcher.matches()) {
 						state = ParseState.SEENCOMMENT;
-						
+
 						lastComment = commentMatcher.group(1);
 					}
 					break;
@@ -257,25 +261,30 @@ public class CMakePropertyPage extends PropertyPage {
 							for (int i = 0; i < options.length; ++i) {
 								options[i] = options[i].replaceAll("\\(.*?\\)", "").trim(); //$NON-NLS-1$
 							}
-							ICMakePropertyPageControl control = new CMakePropertyCombo(composite, name, options, initialValue, lastComment);
+							ICMakePropertyPageControl control = new CMakePropertyCombo(composite, name, options,
+									initialValue, lastComment);
 							controls.add(control);
 						} else {
 							if ("BOOL".equals(type)) {
 								if ("ON".equals(initialValue) || ("OFF".equals(initialValue))) {
-									ICMakePropertyPageControl control = new CMakePropertyCombo(composite, name, new String[] {"ON","OFF"}, //$NON-NLS-1$ //$NON-NLS-2$
+									ICMakePropertyPageControl control = new CMakePropertyCombo(composite, name,
+											new String[] { "ON", "OFF" }, //$NON-NLS-1$ //$NON-NLS-2$
 											initialValue, lastComment);
 									controls.add(control);
 								} else if ("YES".equals(initialValue) || "NO".equals(initialValue)) {
-									ICMakePropertyPageControl control = new CMakePropertyCombo(composite, name, new String[] {"YES","NO"}, //$NON-NLS-1$ //$NON-NLS-2$ 
+									ICMakePropertyPageControl control = new CMakePropertyCombo(composite, name,
+											new String[] { "YES", "NO" }, //$NON-NLS-1$ //$NON-NLS-2$
 											initialValue, lastComment);
 									controls.add(control);
 								} else {
-									ICMakePropertyPageControl control = new CMakePropertyCombo(composite, name, new String[] {"TRUE", "FALSE"}, //$NON-NLS-1$ //$NON-NLS-2$
+									ICMakePropertyPageControl control = new CMakePropertyCombo(composite, name,
+											new String[] { "TRUE", "FALSE" }, //$NON-NLS-1$ //$NON-NLS-2$
 											"TRUE".equals(initialValue) ? "TRUE" : "FALSE", lastComment); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 									controls.add(control);
 								}
 							} else {
-								ICMakePropertyPageControl control = new CMakePropertyText(composite, name, initialValue, lastComment);
+								ICMakePropertyPageControl control = new CMakePropertyText(composite, name, initialValue,
+										lastComment);
 								controls.add(control);
 							}
 						}
@@ -284,11 +293,11 @@ public class CMakePropertyPage extends PropertyPage {
 					break;
 				}
 			}
-		
+
 		} catch (UnsupportedEncodingException e) {
 			return controls;
 		}
-	
+
 		return controls;
 	}
 

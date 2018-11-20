@@ -11,23 +11,23 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.propertypages; 
+package org.eclipse.cdt.debug.internal.ui.propertypages;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.eclipse.cdt.debug.core.model.ICModule;
- 
+
 /**
- * A module's properties store. 
+ * A module's properties store.
  */
 public class ModuleProperties {
 
-	final static public String TYPE = "type";  //$NON-NLS-1$
-	final static public String CPU = "cpu";  //$NON-NLS-1$
-	final static public String BASE_ADDRESS = "baseAddress";  //$NON-NLS-1$
-	final static public String SIZE = "size";  //$NON-NLS-1$
-	final static public String SYMBOLS_LOADED = "symbolsLoaded";  //$NON-NLS-1$
-	final static public String SYMBOLS_FILE = "symbolsFile";  //$NON-NLS-1$
+	final static public String TYPE = "type"; //$NON-NLS-1$
+	final static public String CPU = "cpu"; //$NON-NLS-1$
+	final static public String BASE_ADDRESS = "baseAddress"; //$NON-NLS-1$
+	final static public String SIZE = "size"; //$NON-NLS-1$
+	final static public String SYMBOLS_LOADED = "symbolsLoaded"; //$NON-NLS-1$
+	final static public String SYMBOLS_FILE = "symbolsFile"; //$NON-NLS-1$
 
 	public class Property {
 
@@ -37,7 +37,7 @@ public class ModuleProperties {
 		/**
 		 * Constructor for Property.
 		 */
-		public Property( String key, Object value ) {
+		public Property(String key, Object value) {
 			fKey = key;
 			fValue = value;
 		}
@@ -53,9 +53,9 @@ public class ModuleProperties {
 		@Override
 		public String toString() {
 			String result = ""; //$NON-NLS-1$
-			if ( getKey() != null  )
+			if (getKey() != null)
 				result += getKey();
-			if ( getValue() != null ) {
+			if (getValue() != null) {
 				result += "="; //$NON-NLS-1$
 				result += getValue().toString();
 			}
@@ -67,36 +67,36 @@ public class ModuleProperties {
 
 	private boolean fIsDirty = false;
 
-	static ModuleProperties create( ICModule module ) {
-		return new ModuleProperties( module );
+	static ModuleProperties create(ICModule module) {
+		return new ModuleProperties(module);
 	}
 
-	/** 
-	 * Constructor for ModuleProperties. 
+	/**
+	 * Constructor for ModuleProperties.
 	 */
-	private ModuleProperties( ICModule module ) {
-		fProperties = new ArrayList<>( 10 );
-		fProperties.add( new Property( TYPE, Integer.valueOf(module.getType()) ) );
-		fProperties.add( new Property( CPU, module.getCPU() ) );
-		fProperties.add( new Property( BASE_ADDRESS, module.getBaseAddress() ) );
-		fProperties.add( new Property( SIZE, Long.valueOf( module.getSize() ) ) );
-		fProperties.add( new Property( SYMBOLS_LOADED, Boolean.valueOf( module.areSymbolsLoaded() ) ) );
-		fProperties.add( new Property( SYMBOLS_FILE, module.getSymbolsFileName() ) );
+	private ModuleProperties(ICModule module) {
+		fProperties = new ArrayList<>(10);
+		fProperties.add(new Property(TYPE, Integer.valueOf(module.getType())));
+		fProperties.add(new Property(CPU, module.getCPU()));
+		fProperties.add(new Property(BASE_ADDRESS, module.getBaseAddress()));
+		fProperties.add(new Property(SIZE, Long.valueOf(module.getSize())));
+		fProperties.add(new Property(SYMBOLS_LOADED, Boolean.valueOf(module.areSymbolsLoaded())));
+		fProperties.add(new Property(SYMBOLS_FILE, module.getSymbolsFileName()));
 	}
 
 	public Property[] getProperties() {
-		return fProperties.toArray( new Property[fProperties.size()] );
+		return fProperties.toArray(new Property[fProperties.size()]);
 	}
 
-	public Object getProperty( String key ) {
-		return find( key ).getValue();
+	public Object getProperty(String key) {
+		return find(key).getValue();
 	}
 
-	public void setProperty( String key, Object value ) {
-		Property p = find( key );
-		if ( !p.getValue().equals( value ) ) {
-			fProperties.set( fProperties.indexOf( p ), new Property( key, value ) );
-			setDirty( true );
+	public void setProperty(String key, Object value) {
+		Property p = find(key);
+		if (!p.getValue().equals(value)) {
+			fProperties.set(fProperties.indexOf(p), new Property(key, value));
+			setDirty(true);
 		}
 	}
 
@@ -108,18 +108,18 @@ public class ModuleProperties {
 		fProperties.clear();
 	}
 
-	private void setDirty( boolean dirty ) {
+	private void setDirty(boolean dirty) {
 		fIsDirty = dirty;
 	}
 
-	private Property find( String key ) {
+	private Property find(String key) {
 		Iterator<Property> it = fProperties.iterator();
-		while( it.hasNext() ) {
+		while (it.hasNext()) {
 			Property p = it.next();
-			if ( p.getKey().equals( key ) ) {
+			if (p.getKey().equals(key)) {
 				return p;
 			}
 		}
-		throw new IllegalArgumentException( key );
+		throw new IllegalArgumentException(key);
 	}
 }

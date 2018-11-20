@@ -49,28 +49,28 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecIncomplete;
 /**
  * C++ specific declarator.
  */
-public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDeclarator,
-		IASTImplicitNameOwner, ICPPExecutionOwner {
-    private IASTInitializer initializer;
-    private IASTName name;
+public class CPPASTDeclarator extends CPPASTAttributeOwner
+		implements ICPPASTDeclarator, IASTImplicitNameOwner, ICPPExecutionOwner {
+	private IASTInitializer initializer;
+	private IASTName name;
 	private IASTImplicitName[] implicitNames;
-    private IASTDeclarator nested;
-    private IASTPointerOperator[] pointerOps;
-    private boolean isPackExpansion;
+	private IASTDeclarator nested;
+	private IASTPointerOperator[] pointerOps;
+	private boolean isPackExpansion;
 
-    public CPPASTDeclarator() {
+	public CPPASTDeclarator() {
 	}
 
 	public CPPASTDeclarator(IASTName name) {
 		setName(name);
 	}
 
-    public CPPASTDeclarator(IASTName name, IASTInitializer initializer) {
+	public CPPASTDeclarator(IASTName name, IASTInitializer initializer) {
 		this(name);
 		setInitializer(initializer);
 	}
 
-    @Override
+	@Override
 	public CPPASTDeclarator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -85,7 +85,7 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDec
 		copy.setName(name == null ? null : name.copy(style));
 		copy.setInitializer(initializer == null ? null : initializer.copy(style));
 		copy.setNestedDeclarator(nested == null ? null : nested.copy(style));
-		((CPPASTDeclarator) copy).isPackExpansion= isPackExpansion;
+		((CPPASTDeclarator) copy).isPackExpansion = isPackExpansion;
 		for (IASTPointerOperator pointer : getPointerOperators()) {
 			copy.addPointerOperator(pointer.copy(style));
 		}
@@ -99,45 +99,46 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDec
 
 	@Override
 	public IASTPointerOperator[] getPointerOperators() {
-        if (pointerOps == null) return IASTPointerOperator.EMPTY_ARRAY;
-        pointerOps = ArrayUtil.trim(IASTPointerOperator.class, pointerOps);
-        return pointerOps;
-    }
+		if (pointerOps == null)
+			return IASTPointerOperator.EMPTY_ARRAY;
+		pointerOps = ArrayUtil.trim(IASTPointerOperator.class, pointerOps);
+		return pointerOps;
+	}
 
-    @Override
+	@Override
 	public IASTDeclarator getNestedDeclarator() {
-        return nested;
-    }
+		return nested;
+	}
 
-    @Override
+	@Override
 	public IASTName getName() {
-        return name;
-    }
+		return name;
+	}
 
-    @Override
+	@Override
 	public IASTInitializer getInitializer() {
-        return initializer;
-    }
+		return initializer;
+	}
 
-    @Override
+	@Override
 	public void setInitializer(IASTInitializer initializer) {
-        assertNotFrozen();
-        this.initializer = initializer;
-        if (initializer != null) {
+		assertNotFrozen();
+		this.initializer = initializer;
+		if (initializer != null) {
 			initializer.setParent(this);
 			initializer.setPropertyInParent(INITIALIZER);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void addPointerOperator(IASTPointerOperator operator) {
-        assertNotFrozen();
-    	if (operator != null) {
-    		operator.setParent(this);
+		assertNotFrozen();
+		if (operator != null) {
+			operator.setParent(this);
 			operator.setPropertyInParent(POINTER_OPERATOR);
-    		pointerOps = ArrayUtil.append(IASTPointerOperator.class, pointerOps, operator);
-    	}
-    }
+			pointerOps = ArrayUtil.append(IASTPointerOperator.class, pointerOps, operator);
+		}
+	}
 
 	/**
 	 * Remove a pointer operator from the pointer operators
@@ -148,135 +149,140 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDec
 		ArrayUtil.remove(pointerOps, operator);
 	}
 
-    @Override
+	@Override
 	public void setNestedDeclarator(IASTDeclarator nested) {
-        assertNotFrozen();
-        this.nested = nested;
-        if (nested != null) {
+		assertNotFrozen();
+		this.nested = nested;
+		if (nested != null) {
 			nested.setParent(this);
 			nested.setPropertyInParent(NESTED_DECLARATOR);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.name = name;
-        if (name != null) {
+		assertNotFrozen();
+		this.name = name;
+		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(DECLARATOR_NAME);
 		}
-    }
+	}
 
-    @Override
+	@Override
 	public void setDeclaresParameterPack(boolean val) {
-    	assertNotFrozen();
-    	isPackExpansion= val;
+		assertNotFrozen();
+		isPackExpansion = val;
 	}
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitDeclarators) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitDeclarators) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (pointerOps != null) {
-        	for (IASTPointerOperator op : pointerOps) {
-        		if (op == null)
-        			break;
-                if (!op.accept(action))
-                	return false;
-        	}
-        }
-
-        if (!acceptByAttributeSpecifiers(action))
-        	return false;
-
-        if (nested == null && name != null) {
-        	IASTDeclarator outermost= ASTQueries.findOutermostDeclarator(this);
-        	if (outermost.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR) {
-        		if (!name.accept(action))
-        			return false;
-                if (action.shouldVisitImplicitNames) {
-                	for (IASTImplicitName implicitName : getImplicitNames()) {
-                		if (!implicitName.accept(action))
-                			return false;
-                	}
-                }
-            }
+		if (pointerOps != null) {
+			for (IASTPointerOperator op : pointerOps) {
+				if (op == null)
+					break;
+				if (!op.accept(action))
+					return false;
+			}
 		}
 
-        if (nested != null && !nested.accept(action))
-        	return false;
-
-        if (!postAccept(action))
-        	return false;
-
-        if (action.shouldVisitDeclarators && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+		if (!acceptByAttributeSpecifiers(action))
 			return false;
 
-        return true;
-    }
+		if (nested == null && name != null) {
+			IASTDeclarator outermost = ASTQueries.findOutermostDeclarator(this);
+			if (outermost.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR) {
+				if (!name.accept(action))
+					return false;
+				if (action.shouldVisitImplicitNames) {
+					for (IASTImplicitName implicitName : getImplicitNames()) {
+						if (!implicitName.accept(action))
+							return false;
+					}
+				}
+			}
+		}
 
-    protected boolean postAccept(ASTVisitor action) {
+		if (nested != null && !nested.accept(action))
+			return false;
+
+		if (!postAccept(action))
+			return false;
+
+		if (action.shouldVisitDeclarators && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
+
+		return true;
+	}
+
+	protected boolean postAccept(ASTVisitor action) {
 		return initializer == null || initializer.accept(action);
-    }
+	}
 
 	@Override
 	public int getRoleForName(IASTName n) {
 		// 3.1.2
-        IASTNode parent = ASTQueries.findOutermostDeclarator(this).getParent();
-        if (parent instanceof IASTDeclaration) {
-        	// a declaration is a definition unless ...
-            if (parent instanceof IASTFunctionDefinition)
-                return r_definition;
+		IASTNode parent = ASTQueries.findOutermostDeclarator(this).getParent();
+		if (parent instanceof IASTDeclaration) {
+			// a declaration is a definition unless ...
+			if (parent instanceof IASTFunctionDefinition)
+				return r_definition;
 
-            if (parent instanceof IASTSimpleDeclaration) {
-            	final IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) parent;
+			if (parent instanceof IASTSimpleDeclaration) {
+				final IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) parent;
 
-            	// unless it declares a function without body
-            	if (this instanceof IASTFunctionDeclarator) {
-            		return r_declaration;
-            	}
+				// unless it declares a function without body
+				if (this instanceof IASTFunctionDeclarator) {
+					return r_declaration;
+				}
 
 				final int storage = sdecl.getDeclSpecifier().getStorageClass();
-            	// unless it contains the extern specifier or a linkage-specification and neither initializer nor function-body
-            	if (getInitializer() == null && (storage == IASTDeclSpecifier.sc_extern || isSimpleLinkageSpec(sdecl))) {
-            		return r_declaration;
-            	}
-            	// unless it declares a static data member in a class declaration
-            	if (storage == IASTDeclSpecifier.sc_static && CPPVisitor.getContainingScope(parent) instanceof ICPPClassScope) {
-            		return r_declaration;
-            	}
-            	// unless it is a class name declaration: no declarator in this case
-            	// unless it is a typedef declaration
-            	if (storage == IASTDeclSpecifier.sc_typedef)
-            		return r_definition; // should actually be a declaration
+				// unless it contains the extern specifier or a linkage-specification and neither initializer nor function-body
+				if (getInitializer() == null
+						&& (storage == IASTDeclSpecifier.sc_extern || isSimpleLinkageSpec(sdecl))) {
+					return r_declaration;
+				}
+				// unless it declares a static data member in a class declaration
+				if (storage == IASTDeclSpecifier.sc_static
+						&& CPPVisitor.getContainingScope(parent) instanceof ICPPClassScope) {
+					return r_declaration;
+				}
+				// unless it is a class name declaration: no declarator in this case
+				// unless it is a typedef declaration
+				if (storage == IASTDeclSpecifier.sc_typedef)
+					return r_definition; // should actually be a declaration
 
-            	// unless it is a using-declaration or using-directive: no declarator in this case
-            }
+				// unless it is a using-declaration or using-directive: no declarator in this case
+			}
 
-            // all other cases
-        	return r_definition;
-        }
+			// all other cases
+			return r_definition;
+		}
 
-        if (parent instanceof IASTTypeId)
-            return r_reference;
+		if (parent instanceof IASTTypeId)
+			return r_reference;
 
-        if (parent instanceof IASTParameterDeclaration)
-            return (n.getLookupKey().length > 0) ? r_definition : r_declaration;
+		if (parent instanceof IASTParameterDeclaration)
+			return (n.getLookupKey().length > 0) ? r_definition : r_declaration;
 
-        return r_unclear;
+		return r_unclear;
 	}
 
 	private boolean isSimpleLinkageSpec(IASTSimpleDeclaration sdecl) {
-		IASTNode parent= sdecl.getParent();
+		IASTNode parent = sdecl.getParent();
 		if (parent instanceof ICPPASTLinkageSpecification) {
-			ICPPASTLinkageSpecification spec= (ICPPASTLinkageSpecification) parent;
+			ICPPASTLinkageSpecification spec = (ICPPASTLinkageSpecification) parent;
 			// todo distinction between braced enclose and simple linkage specification
 			if (spec.getDeclarations().length == 1) {
 				return true;
@@ -304,9 +310,9 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDec
 				ctorName.setOffsetAndLength((ASTNode) id);
 				implicitNames = new IASTImplicitName[] { ctorName };
 			}
-    	}
+		}
 
-    	return implicitNames;
+		return implicitNames;
 	}
 
 	@Override
@@ -314,7 +320,7 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDec
 		if (child == nested) {
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
-			nested= (IASTDeclarator) other;
+			nested = (IASTDeclarator) other;
 			return;
 		}
 		super.replace(child, other);
@@ -323,7 +329,7 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner implements ICPPASTDec
 	@Override
 	public ICPPExecution getExecution() {
 		final IBinding binding = getName().resolveBinding();
-		if (!(binding instanceof ICPPBinding))  // ProblemBinding
+		if (!(binding instanceof ICPPBinding)) // ProblemBinding
 			return ExecIncomplete.INSTANCE;
 		ICPPEvaluation initializerEval = null;
 		if (binding instanceof CPPVariable) {

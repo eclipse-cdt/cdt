@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Binary file in HP-UX SOM format
- * 
+ *
  * @author vhirsl
  */
 public class SOMBinaryObject extends BinaryObjectAdapter {
@@ -74,7 +74,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
 	 */
 	@Override
@@ -91,7 +91,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
 	 */
 	@Override
@@ -108,7 +108,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
 	 */
 	@Override
@@ -118,10 +118,10 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		}
 		return super.getName();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
 	@Override
@@ -323,7 +323,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		}
 		return super.getAdapter(adapter);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
 	 */
@@ -334,5 +334,5 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		}
 		return addressFactory;
 	}
-	
+
 }

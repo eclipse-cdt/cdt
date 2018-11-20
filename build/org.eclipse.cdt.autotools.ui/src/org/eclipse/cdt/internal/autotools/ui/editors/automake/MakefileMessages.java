@@ -19,43 +19,42 @@ import java.util.ResourceBundle;
 
 public class MakefileMessages {
 
-    private static final String BUNDLE_NAME = MakefileMessages.class.getName();
+	private static final String BUNDLE_NAME = MakefileMessages.class.getName();
 
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
-    private MakefileMessages() {
-    }
+	private MakefileMessages() {
+	}
 
 	public static ResourceBundle getResourceBundle() {
 		return RESOURCE_BUNDLE;
 	}
-	
+
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @return the resource bundle message
 	 */
-    public static String getString(String key) {
-        try {
-            return RESOURCE_BUNDLE.getString(key);
-        } catch (MissingResourceException e) {
-            return '!' + key + '!';
-        }
-    }
-    
+	public static String getString(String key) {
+		try {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
+			return '!' + key + '!';
+		}
+	}
+
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @param args an array of substitution strings
 	 * @return the resource bundle message
 	 */
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getString(key), (Object[])args);
+		return MessageFormat.format(getString(key), (Object[]) args);
 	}
 
 }

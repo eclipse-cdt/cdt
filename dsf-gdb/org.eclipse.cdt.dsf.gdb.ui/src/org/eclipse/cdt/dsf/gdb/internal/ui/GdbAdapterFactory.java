@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Navid Mehregani (TI) - Bug 289526 - Migrate the Restart feature to the new one, as supported by the platform
@@ -43,140 +43,135 @@ import org.eclipse.debug.ui.contexts.ISuspendTrigger;
  * for the launch object.  But it also manages the creation and destruction
  * of the session-based adapters which are returned by the
  * IDMContext.getAdapter() methods.
- * 
+ *
  * When extending the GdbAdapterFactory, it is important to register all the
  * types declaratively (in the plugin.xml) that the factory can adapt the
  * extended launch to.
- * 
+ *
  * See the plugin.xml that references GdbAdapterFactory for the current list,
  * and it should match {@link #getAdapterList()}.
  */
 @ThreadSafe
 public class GdbAdapterFactory implements IAdapterFactory, ILaunchesListener2 {
-    /**
-     * Active adapter sets.  They are accessed using the launch instance 
-     * which owns the debug services session. 
-     */
-    private static Map<GdbLaunch, GdbSessionAdapters> fgLaunchAdapterSets =
-        Collections.synchronizedMap(new HashMap<>());
+	/**
+	 * Active adapter sets.  They are accessed using the launch instance
+	 * which owns the debug services session.
+	 */
+	private static Map<GdbLaunch, GdbSessionAdapters> fgLaunchAdapterSets = Collections
+			.synchronizedMap(new HashMap<>());
 
-    /**
-     * Map of launches for which adapter sets have already been disposed.
-     * This map (used as a set) is maintained in order to avoid re-creating an 
-     * adapter set after the launch was removed from the launch manager, but 
-     * while the launch is still being held by other classes which may 
-     * request its adapters.  A weak map is used to avoid leaking 
-     * memory once the launches are no longer referenced.
-     * <p>
-     * Access to this map is synchronized using the fgLaunchAdapterSets 
-     * instance.
-     * </p>
-     */
-    private static Map<ILaunch, GdbSessionAdapters> fgDisposedLaunchAdapterSets = new WeakHashMap<>();
+	/**
+	 * Map of launches for which adapter sets have already been disposed.
+	 * This map (used as a set) is maintained in order to avoid re-creating an
+	 * adapter set after the launch was removed from the launch manager, but
+	 * while the launch is still being held by other classes which may
+	 * request its adapters.  A weak map is used to avoid leaking
+	 * memory once the launches are no longer referenced.
+	 * <p>
+	 * Access to this map is synchronized using the fgLaunchAdapterSets
+	 * instance.
+	 * </p>
+	 */
+	private static Map<ILaunch, GdbSessionAdapters> fgDisposedLaunchAdapterSets = new WeakHashMap<>();
 
-    static void disposeAdapterSet(ILaunch launch) {
-    	synchronized(fgLaunchAdapterSets) {
-    		if (fgLaunchAdapterSets.containsKey(launch)) {
-    			fgLaunchAdapterSets.remove(launch).dispose();
-    			fgDisposedLaunchAdapterSets.put(launch, null);
-    		}
-    	}
-    }
+	static void disposeAdapterSet(ILaunch launch) {
+		synchronized (fgLaunchAdapterSets) {
+			if (fgLaunchAdapterSets.containsKey(launch)) {
+				fgLaunchAdapterSets.remove(launch).dispose();
+				fgDisposedLaunchAdapterSets.put(launch, null);
+			}
+		}
+	}
 
-    public GdbAdapterFactory() {
-        DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
-    }
+	public GdbAdapterFactory() {
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+	}
 
-    /**
-     * This method only actually returns adapters for the launch object.
-     */
-    @Override
+	/**
+	 * This method only actually returns adapters for the launch object.
+	 */
+	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-        if (!(adaptableObject instanceof GdbLaunch)) return null;
+		if (!(adaptableObject instanceof GdbLaunch))
+			return null;
 
-        GdbLaunch launch = (GdbLaunch)adaptableObject;
+		GdbLaunch launch = (GdbLaunch) adaptableObject;
 
-        // Check for valid session.  
-        // Note: even if the session is no longer active, the adapter set 
-        // should still be returned.  This is because the view model may still
-        // need to show elements representing a terminated process/thread/etc.
-        DsfSession session = launch.getSession();
-        if (session == null) return null;
+		// Check for valid session.
+		// Note: even if the session is no longer active, the adapter set
+		// should still be returned.  This is because the view model may still
+		// need to show elements representing a terminated process/thread/etc.
+		DsfSession session = launch.getSession();
+		if (session == null)
+			return null;
 
-        // Find the correct set of adapters based on the launch session-ID.  If not found
-        // it means that we have a new launch and new session, and we have to create a
-        // new set of adapters.
+		// Find the correct set of adapters based on the launch session-ID.  If not found
+		// it means that we have a new launch and new session, and we have to create a
+		// new set of adapters.
 
-        GdbSessionAdapters adapterSet;
-        synchronized(fgLaunchAdapterSets) {
-            // The adapter set for the given launch was already disposed.  
-            // Return a null adapter.
-            if (fgDisposedLaunchAdapterSets.containsKey(launch)) {
-                return null;
-            }
-            adapterSet = fgLaunchAdapterSets.get(launch);
-            if (adapterSet == null) {
-            	// If the first time we attempt to create an adapterSet is once the session is
-            	// already inactive, we should not create it and return null.
-            	// This can happen, for example, when we run JUnit tests and we don't actually
-            	// have a need for any adapters until the launch is actually being removed.
-            	// Note that we must do this here because fgDisposedLaunchAdapterSets
-            	// may not already know that the launch has been removed because of a race
-            	// condition with the caller which is also processing a launchRemoved method.
-            	// Bug 334687 
-            	if (session.isActive() == false) {
-            		return null;
-            	}
-                adapterSet = createGdbSessionAdapters(launch, session);
-                fgLaunchAdapterSets.put(launch, adapterSet);
-            }
-        }
-        
-        // Returns the adapter type for the launch object.
-        return adapterSet.getLaunchAdapter(adapterType);
-    }
+		GdbSessionAdapters adapterSet;
+		synchronized (fgLaunchAdapterSets) {
+			// The adapter set for the given launch was already disposed.
+			// Return a null adapter.
+			if (fgDisposedLaunchAdapterSets.containsKey(launch)) {
+				return null;
+			}
+			adapterSet = fgLaunchAdapterSets.get(launch);
+			if (adapterSet == null) {
+				// If the first time we attempt to create an adapterSet is once the session is
+				// already inactive, we should not create it and return null.
+				// This can happen, for example, when we run JUnit tests and we don't actually
+				// have a need for any adapters until the launch is actually being removed.
+				// Note that we must do this here because fgDisposedLaunchAdapterSets
+				// may not already know that the launch has been removed because of a race
+				// condition with the caller which is also processing a launchRemoved method.
+				// Bug 334687
+				if (session.isActive() == false) {
+					return null;
+				}
+				adapterSet = createGdbSessionAdapters(launch, session);
+				fgLaunchAdapterSets.put(launch, adapterSet);
+			}
+		}
 
-    /**
-     * This list must match the list in the plugin.xml. See class comment.
-     */
-    @Override
-    public Class<?>[] getAdapterList() {
-        return new Class<?>[] {
-            IElementContentProvider.class, 
-            IModelProxyFactory.class, 
-            ISuspendTrigger.class,
-            IColumnPresentationFactory.class,
-        	ITerminateHandler.class,
-        	IConnectHandler.class,
-        	IDisconnectHandler.class,
-        	IDebugNewExecutableHandler.class,
-        };
-    }
+		// Returns the adapter type for the launch object.
+		return adapterSet.getLaunchAdapter(adapterType);
+	}
 
-    @Override
-    public void launchesRemoved(ILaunch[] launches) {
-        // Dispose the set of adapters for a launch only after the launch is
-        // removed.
-        for (ILaunch launch : launches) {
-            if (launch instanceof GdbLaunch) {
-                disposeAdapterSet(launch);
-            }
-        }
-    }
+	/**
+	 * This list must match the list in the plugin.xml. See class comment.
+	 */
+	@Override
+	public Class<?>[] getAdapterList() {
+		return new Class<?>[] { IElementContentProvider.class, IModelProxyFactory.class, ISuspendTrigger.class,
+				IColumnPresentationFactory.class, ITerminateHandler.class, IConnectHandler.class,
+				IDisconnectHandler.class, IDebugNewExecutableHandler.class, };
+	}
 
-    @Override
-    public void launchesTerminated(ILaunch[] launches) {
-    }
+	@Override
+	public void launchesRemoved(ILaunch[] launches) {
+		// Dispose the set of adapters for a launch only after the launch is
+		// removed.
+		for (ILaunch launch : launches) {
+			if (launch instanceof GdbLaunch) {
+				disposeAdapterSet(launch);
+			}
+		}
+	}
 
-    @Override
-    public void launchesAdded(ILaunch[] launches) {
-    }
-    
-    @Override
-    public void launchesChanged(ILaunch[] launches) {
-    }
-    
-    protected GdbSessionAdapters createGdbSessionAdapters(ILaunch launch, DsfSession session) {
-    	return new GdbSessionAdapters(launch, session, getAdapterList());
-    }
+	@Override
+	public void launchesTerminated(ILaunch[] launches) {
+	}
+
+	@Override
+	public void launchesAdded(ILaunch[] launches) {
+	}
+
+	@Override
+	public void launchesChanged(ILaunch[] launches) {
+	}
+
+	protected GdbSessionAdapters createGdbSessionAdapters(ILaunch launch, DsfSession session) {
+		return new GdbSessionAdapters(launch, session, getAdapterList());
+	}
 }

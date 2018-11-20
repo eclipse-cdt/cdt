@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,7 +35,7 @@ public class DummyUISession implements ITestingSession {
 	public int getTotalCounter() {
 		return 0;
 	}
-	
+
 	@Override
 	public int getCount(ITestItem.Status status) {
 		return 0;

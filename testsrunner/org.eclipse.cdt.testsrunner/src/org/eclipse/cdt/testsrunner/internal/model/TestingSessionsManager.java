@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,7 +31,7 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
  * Manages all the testing sessions (creates, activates, stores history).
  */
 public class TestingSessionsManager implements ILaunchConfigurationListener {
-	
+
 	/** Tests Runners Plug-ins Manager. */
 	private TestsRunnerProvidersManager testsRunnersManager;
 
@@ -40,10 +40,10 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 
 	/** Currently active testing session. */
 	private TestingSession activeSession;
-	
+
 	/** Listeners collection. */
 	private List<ITestingSessionsManagerListener> listeners = new ArrayList<ITestingSessionsManagerListener>();
-	
+
 	/** The size limit of the testing sessions history. */
 	private int historySizeLimit = 10;
 
@@ -51,11 +51,11 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 		this.testsRunnersManager = testsRunnersManager;
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
 	}
-	
+
 	/**
 	 * Tries to find the last testing session for the specified launch
 	 * configuration and Tests Runner provide plug-in.
-	 * 
+	 *
 	 * <p>
 	 * Usually testing frameworks do not provide the information about tests
 	 * hierarchy and total tests count before the testing is finished. So we try
@@ -68,12 +68,13 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 	 * </ul>
 	 * This function tries to find a such session.
 	 * </p>
-	 * 
+	 *
 	 * @param launchConfiguration required launch configuration
 	 * @param testsRunnerProviderInfo required Tests Runner provide plug-in
 	 * @return testing session or null if not found
 	 */
-	private TestingSession findActualPreviousSession(ILaunchConfiguration launchConfiguration, TestsRunnerProviderInfo testsRunnerProviderInfo) {
+	private TestingSession findActualPreviousSession(ILaunchConfiguration launchConfiguration,
+			TestsRunnerProviderInfo testsRunnerProviderInfo) {
 		String testsRunnerName = testsRunnerProviderInfo.getName();
 		for (TestingSession session : sessions) {
 			// Find the latest testing session that matches the next requirements:
@@ -82,10 +83,9 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 			//   - should not be stopped by user (the same as terminated)
 			//   - should have the same tests runner
 			if (session != null) {
-				if (launchConfiguration.equals(session.getLaunch().getLaunchConfiguration())
-					&& session.isFinished()
-					&& !session.wasStopped()
-					&& session.getTestsRunnerProviderInfo().getName().equals(testsRunnerName)) {
+				if (launchConfiguration.equals(session.getLaunch().getLaunchConfiguration()) && session.isFinished()
+						&& !session.wasStopped()
+						&& session.getTestsRunnerProviderInfo().getName().equals(testsRunnerName)) {
 					return session;
 				}
 			}
@@ -95,33 +95,35 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 
 	/**
 	 * Creates a new testing session for the specified launch.
-	 * 
+	 *
 	 * @param launch launch
 	 * @return new testing session
 	 */
 	public TestingSession newSession(ILaunch launch) throws CoreException {
-		TestsRunnerProviderInfo testsRunnerProviderInfo = testsRunnersManager.getTestsRunnerProviderInfo(launch.getLaunchConfiguration());
-		TestingSession previousSession = findActualPreviousSession(launch.getLaunchConfiguration(), testsRunnerProviderInfo);
+		TestsRunnerProviderInfo testsRunnerProviderInfo = testsRunnersManager
+				.getTestsRunnerProviderInfo(launch.getLaunchConfiguration());
+		TestingSession previousSession = findActualPreviousSession(launch.getLaunchConfiguration(),
+				testsRunnerProviderInfo);
 		TestingSession newTestingSession = new TestingSession(launch, testsRunnerProviderInfo, previousSession);
 		sessions.addFirst(newTestingSession);
 		setActiveSession(newTestingSession);
 		truncateHistory();
 		return newTestingSession;
 	}
-	
+
 	/**
 	 * Returns the testing sessions history (the first is the newest).
-	 * 
+	 *
 	 * @return testing sessions list
 	 */
 	public List<? extends ITestingSession> getSessions() {
 		return sessions;
 	}
-	
+
 	/**
 	 * Rewrites the testing sessions history with the specified list. Truncates
 	 * the history if necessary.
-	 * 
+	 *
 	 * @return testing sessions list
 	 */
 	public void setSessions(List<ITestingSession> newSessions) {
@@ -131,28 +133,28 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 		}
 		truncateHistory();
 	}
-	
+
 	/**
 	 * Returns the testing sessions history size.
-	 * 
+	 *
 	 * @return history size
 	 */
 	public int getSessionsCount() {
 		return sessions.size();
 	}
-	
+
 	/**
 	 * Accesses the currently active testing session.
-	 * 
+	 *
 	 * @return testing session
 	 */
 	public ITestingSession getActiveSession() {
 		return activeSession;
 	}
-	
+
 	/**
 	 * Sets the new active testing session.
-	 * 
+	 *
 	 * @param newActiveSession testing session
 	 */
 	public void setActiveSession(ITestingSession newActiveSession) {
@@ -164,7 +166,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds the given listener to this registered listeners collection.
 	 * Has no effect if an identical listener is already registered.
@@ -187,7 +189,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 
 	/**
 	 * Returns the size limit of the testing sessions history.
-	 * 
+	 *
 	 * @return history size limit
 	 */
 	public int getHistorySizeLimit() {
@@ -196,14 +198,14 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 
 	/**
 	 * Sets the size limit of the testing sessions history.
-	 * 
+	 *
 	 * @param historySizeLimit new history size limit
 	 */
 	public void setHistorySizeLimit(int historySizeLimit) {
 		this.historySizeLimit = historySizeLimit;
 		truncateHistory();
 	}
-	
+
 	/**
 	 * Truncates the history list if it is longer than size limit.
 	 */
@@ -218,7 +220,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 			setActiveSession(newActiveSession);
 		}
 	}
-	
+
 	/** @since 8.1 */
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
@@ -236,8 +238,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 		for (Iterator<TestingSession> iterator = sessions.iterator(); iterator.hasNext();) {
 			TestingSession session = iterator.next();
-			if (session.getLaunch().getLaunchConfiguration()
-					.equals(configuration)) {
+			if (session.getLaunch().getLaunchConfiguration().equals(configuration)) {
 				iterator.remove();
 			}
 		}

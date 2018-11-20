@@ -48,15 +48,15 @@ import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 public class CHelpProvider implements ICHelpProvider {
 
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.HelpInfo"; //$NON-NLS-1$
-	private static final String ELEMENT_NAME  = "helpInfo"; //$NON-NLS-1$
-	private static final String ATTRIB_FILE   = "file"; //$NON-NLS-1$
+	private static final String ELEMENT_NAME = "helpInfo"; //$NON-NLS-1$
+	private static final String ATTRIB_FILE = "file"; //$NON-NLS-1$
 	private static final String NODE_HEAD = "documentation"; //$NON-NLS-1$
 	private static final String NODE_BOOK = "helpBook"; //$NON-NLS-1$
 
 	private boolean Done = false;
-	
+
 	ICHelpBook[] hbs = null;
-	
+
 	@Override
 	public ICHelpBook[] getCHelpBooks() {
 		waitForDone();
@@ -64,13 +64,10 @@ public class CHelpProvider implements ICHelpProvider {
 	}
 
 	@Override
-	public IFunctionSummary getFunctionInfo(
-			ICHelpInvocationContext context,
-			ICHelpBook[] helpBooks, 
-			String name) {
-		for (int i=0; i<helpBooks.length; i++) {
+	public IFunctionSummary getFunctionInfo(ICHelpInvocationContext context, ICHelpBook[] helpBooks, String name) {
+		for (int i = 0; i < helpBooks.length; i++) {
 			if (helpBooks[i] instanceof CHelpBook) {
-				IFunctionSummary fs = ((CHelpBook)helpBooks[i]).getFunctionInfo(context, name);
+				IFunctionSummary fs = ((CHelpBook) helpBooks[i]).getFunctionInfo(context, name);
 				if (fs != null) // if null, try with another book
 					return fs;
 			}
@@ -79,14 +76,13 @@ public class CHelpProvider implements ICHelpProvider {
 	}
 
 	@Override
-	public ICHelpResourceDescriptor[] getHelpResources(
-			ICHelpInvocationContext context, ICHelpBook[] helpBooks, String name) {
+	public ICHelpResourceDescriptor[] getHelpResources(ICHelpInvocationContext context, ICHelpBook[] helpBooks,
+			String name) {
 
 		ArrayList<ICHelpResourceDescriptor> lst = new ArrayList<ICHelpResourceDescriptor>();
 		for (ICHelpBook h : helpBooks) {
 			if (h instanceof CHelpBook) {
-				ICHelpResourceDescriptor hrd = 
-					((CHelpBook)h).getHelpResources(context, name);
+				ICHelpResourceDescriptor hrd = ((CHelpBook) h).getHelpResources(context, name);
 				if (hrd != null)
 					lst.add(hrd);
 			}
@@ -97,13 +93,12 @@ public class CHelpProvider implements ICHelpProvider {
 	}
 
 	@Override
-	public IFunctionSummary[] getMatchingFunctions(
-			ICHelpInvocationContext context, ICHelpBook[] helpBooks,
+	public IFunctionSummary[] getMatchingFunctions(ICHelpInvocationContext context, ICHelpBook[] helpBooks,
 			String prefix) {
 		ArrayList<IFunctionSummary> lst = new ArrayList<IFunctionSummary>();
-		for (int i=0; i<helpBooks.length; i++) {
+		for (int i = 0; i < helpBooks.length; i++) {
 			if (helpBooks[i] instanceof CHelpBook) {
-				List<IFunctionSummary> fs = ((CHelpBook)helpBooks[i]).getMatchingFunctions(context, prefix);
+				List<IFunctionSummary> fs = ((CHelpBook) helpBooks[i]).getMatchingFunctions(context, prefix);
 				if (fs != null) // if null, try with another book
 					lst.addAll(fs);
 			}
@@ -115,32 +110,32 @@ public class CHelpProvider implements ICHelpProvider {
 
 	@Override
 	public void initialize() {
-//		(new Thread() {
-//		public void run() {
-			loadExtensions();
-//		  }
-//	    }).run();
+		//		(new Thread() {
+		//		public void run() {
+		loadExtensions();
+		//		  }
+		//	    }).run();
 	}
 
 	private void waitForDone() {
 		if (hbs != null)
 			return;
 		try {
-			while (! Done ) Thread.sleep(10);
-		} catch (InterruptedException e) {}
+			while (!Done)
+				Thread.sleep(10);
+		} catch (InterruptedException e) {
+		}
 	}
-	
-	private void loadExtensions()
-	{
+
+	private void loadExtensions() {
 		try {
-			IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-			.getExtensionPoint(EXTENSION_POINT_ID);
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
 			if (extensionPoint != null) {
 				IExtension[] extensions = extensionPoint.getExtensions();
 				if (extensions != null) {
 					ArrayList<ICHelpBook> chbl = new ArrayList<ICHelpBook>();
-					for (IExtension ex: extensions)	{
-						String pluginId = ex.getNamespaceIdentifier();			
+					for (IExtension ex : extensions) {
+						String pluginId = ex.getNamespaceIdentifier();
 						for (IConfigurationElement el : ex.getConfigurationElements()) {
 							if (el.getName().equals(ELEMENT_NAME)) {
 								loadFile(el, chbl, pluginId);
@@ -156,20 +151,26 @@ public class CHelpProvider implements ICHelpProvider {
 			Done = true;
 		}
 	}
-	
+
 	private void loadFile(IConfigurationElement el, ArrayList<ICHelpBook> chbl, String pluginId) {
 		String fname = el.getAttribute(ATTRIB_FILE);
-		if (fname == null || fname.trim().length() == 0) return;
+		if (fname == null || fname.trim().length() == 0)
+			return;
 		URL x = FileLocator.find(Platform.getBundle(pluginId), new Path(fname), null);
-		if (x == null) return;
-		try { x = FileLocator.toFileURL(x);
-		} catch (IOException e) { return; }
+		if (x == null)
+			return;
+		try {
+			x = FileLocator.toFileURL(x);
+		} catch (IOException e) {
+			return;
+		}
 		fname = x.getPath();
-		if (fname == null || fname.trim().length() == 0) return;
+		if (fname == null || fname.trim().length() == 0)
+			return;
 
-		// format is not supported for now 
+		// format is not supported for now
 		// String format = el.getAttribute(ATTRIB_FORMAT);
-		
+
 		Document doc = null;
 		try {
 			InputStream stream = new FileInputStream(fname);
@@ -178,13 +179,14 @@ public class CHelpProvider implements ICHelpProvider {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			doc = builder.parse(src);
 			Element e = doc.getDocumentElement();
-			if(NODE_HEAD.equals(e.getNodeName())){
+			if (NODE_HEAD.equals(e.getNodeName())) {
 				NodeList list = e.getChildNodes();
-				for(int j = 0; j < list.getLength(); j++){
+				for (int j = 0; j < list.getLength(); j++) {
 					Node node = list.item(j);
-					if(node.getNodeType() != Node.ELEMENT_NODE)	continue;
-					if(NODE_BOOK.equals(node.getNodeName())){
-						chbl.add(new CHelpBook((Element)node));
+					if (node.getNodeType() != Node.ELEMENT_NODE)
+						continue;
+					if (NODE_BOOK.equals(node.getNodeName())) {
+						chbl.add(new CHelpBook((Element) node));
 					}
 				}
 			}
@@ -192,5 +194,5 @@ public class CHelpProvider implements ICHelpProvider {
 		} catch (SAXException e) {
 		} catch (IOException e) {
 		}
-	}	
+	}
 }

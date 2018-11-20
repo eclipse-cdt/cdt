@@ -20,11 +20,11 @@ import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
  * Interface implemented by plug-ins that wish to contribute breakpoint actions.
- * 
+ *
  * THIS INTERFACE IS PROVISIONAL AND WILL CHANGE IN THE FUTURE BREAKPOINT ACTION
  * CONTRIBUTIONS USING THIS INTERFACE WILL NEED TO BE REVISED TO WORK WITH
  * FUTURE VERSIONS OF CDT.
- * 
+ *
  */
 public interface IBreakpointAction {
 

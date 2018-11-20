@@ -120,8 +120,8 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 		BindingAssertionHelper ah = getAssertionHelper(ParserLanguage.CPP);
 
 		ICPPFieldTemplate template = ah.assertNonProblem("pi<int>", "pi", ICPPFieldTemplate.class);
-		ICPPVariableInstance inst = ah.assertNonProblem("pi<int>", "pi<int>",
-				ICPPVariableInstance.class, ICPPField.class);
+		ICPPVariableInstance inst = ah.assertNonProblem("pi<int>", "pi<int>", ICPPVariableInstance.class,
+				ICPPField.class);
 
 		assertEquals("3", inst.getInitialValue().toString());
 		assertEquals(template, inst.getSpecializedBinding());
@@ -159,8 +159,8 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 		BindingAssertionHelper ah = getAssertionHelper(ParserLanguage.CPP);
 
 		ICPPFieldTemplate template = ah.assertNonProblem("pi<int>", "pi", ICPPFieldTemplate.class);
-		ICPPVariableInstance inst = ah.assertNonProblem("pi<int> = ", "pi<int>",
-				ICPPVariableInstance.class, ICPPField.class);
+		ICPPVariableInstance inst = ah.assertNonProblem("pi<int> = ", "pi<int>", ICPPVariableInstance.class,
+				ICPPField.class);
 		ICPPVariableInstance ref = ah.assertNonProblem("pi<int>;", "pi<int>", ICPPVariableInstance.class);
 
 		assertEquals("4", inst.getInitialValue().toString());
@@ -284,8 +284,8 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 
 		BindingAssertionHelper ah = getAssertionHelper(ParserLanguage.CPP);
 
-		ICPPFieldTemplate template = ah.assertNonProblem("once = ", "once",
-				ICPPField.class, ICPPTemplateDefinition.class);
+		ICPPFieldTemplate template = ah.assertNonProblem("once = ", "once", ICPPField.class,
+				ICPPTemplateDefinition.class);
 		CPPFieldTemplateSpecialization useName = ah.assertNonProblem("S<Vec>::once<int>", "once");
 		ICPPVariableInstance useId = ah.assertNonProblem("S<Vec>::once<int>", ICPPField.class);
 
@@ -320,7 +320,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	//	struct meta {
 	//		static const bool value = true;
 	//	};
-	//	
+	//
 	//  template <typename T>
 	//  constexpr bool var = meta<T>::value;
 	//
@@ -334,7 +334,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	//	}
 	public void test_bug494216() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper ah = getAssertionHelper(ParserLanguage.CPP);
 		ICPPVariable waldo = ah.assertNonProblem("waldo");
 		IType type = waldo.getType();
@@ -343,7 +343,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 		assertEquals(1, args.length);
 		assertValue(args[0].getNonTypeValue(), 1);
 	}
-	
+
 	//	template<typename T, typename = class _, typename... P>
 	//	constexpr bool type_in_pack{type_in_pack<T, P...>};
 	//
@@ -357,14 +357,14 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	//	constexpr bool waldo2 = type_in_pack<int, float, char>;
 	public void testStackOverflow_513429() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper ah = getAssertionHelper(ParserLanguage.CPP);
 		ICPPVariable waldo1 = ah.assertNonProblem("waldo1");
 		assertVariableValue(waldo1, 1);
 		ICPPVariable waldo2 = ah.assertNonProblem("waldo2");
 		assertVariableValue(waldo2, 0);
 	}
-	
+
 	//	template <typename R>
 	//	auto L = []{ return R{}; };
 	//

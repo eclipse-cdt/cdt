@@ -23,35 +23,34 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-/** 
- * Class representing the state of the data to display in the MulticoreVisualizer. 
+/**
+ * Class representing the state of the data to display in the MulticoreVisualizer.
  */
-public class VisualizerModel
-{
+public class VisualizerModel {
 	// --- members ---
-	
+
 	/** List of cpus (and cores) */
 	protected ArrayList<VisualizerCPU> m_cpus;
-	
+
 	/** Lookup table for CPUs */
 	protected Hashtable<Integer, VisualizerCPU> m_cpuMap;
-	
+
 	/** List of threads */
 	protected ArrayList<VisualizerThread> m_threads;
-	
+
 	// Setting to remove exited threads, or keep them shown.
 	// If we are to support this, we should have a preference
 	// and a way to for the user to clean up old threads,
 	// or maybe a timeout to remove them.
 	private boolean m_keepExitedThreads = false;
-	
+
 	protected boolean m_loadMetersEnabled = false;
-	
+
 	/** data source corresponding to this model  */
 	protected String m_sessionId = null;
-	
+
 	// --- constructors/destructors ---
-	
+
 	/** Constructor */
 	public VisualizerModel(String sessionId) {
 		m_sessionId = sessionId;
@@ -59,7 +58,7 @@ public class VisualizerModel
 		m_cpuMap = new Hashtable<Integer, VisualizerCPU>();
 		m_threads = new ArrayList<VisualizerThread>();
 	}
-	
+
 	/** Dispose method */
 	public void dispose() {
 		if (m_cpus != null) {
@@ -80,75 +79,75 @@ public class VisualizerModel
 		}
 		m_sessionId = null;
 	}
-	
-	
+
 	// --- accessors ---
 
-	public void setLoadMetersEnabled (boolean enable) {
+	public void setLoadMetersEnabled(boolean enable) {
 		m_loadMetersEnabled = enable;
 	}
-	
-	public boolean getLoadMetersEnabled () {
+
+	public boolean getLoadMetersEnabled() {
 		return m_loadMetersEnabled;
 	}
-	
+
 	/**	Gets the unique id for the source this model was build from */
 	public String getSessionId() {
 		return m_sessionId;
 	}
-		
+
 	// --- methods ---
-	
+
 	/** Sorts cores, cpus, etc. by IDs. */
 	public void sort() {
 		Collections.sort(m_cpus);
-		for (VisualizerCPU cpu : m_cpus) cpu.sort();
+		for (VisualizerCPU cpu : m_cpus)
+			cpu.sort();
 		Collections.sort(m_threads);
 	}
-	
-	
+
 	// --- core/cpu management ---
-	
+
 	/** Gets number of CPUs. */
 	public int getCPUCount() {
 		return m_cpus.size();
 	}
-	
+
 	/** Gets number of cores. */
 	public int getCoreCount() {
 		int count = 0;
-		
-		for(VisualizerCPU cpu : m_cpus) {
+
+		for (VisualizerCPU cpu : m_cpus) {
 			count += cpu.getCoreCount();
 		}
 		return count;
 	}
-	
+
 	/** Gets number of threads. */
-	public int getThreadCount () {
+	public int getThreadCount() {
 		return m_threads.size();
 	}
-	
+
 	/** Gets CPU with specified ID. */
 	public VisualizerCPU getCPU(int id) {
 		return m_cpuMap.get(id);
 	}
-	
+
 	/** Gets Core with specified ID. */
 	public VisualizerCore getCore(int id) {
 		VisualizerCore result = null;
-		for (VisualizerCPU cpu: m_cpus) {
+		for (VisualizerCPU cpu : m_cpus) {
 			result = cpu.getCore(id);
-			if (result != null) break;
+			if (result != null)
+				break;
 		}
 		return result;
 	}
-	
+
 	/** Gets CPU set. */
 	public List<VisualizerCPU> getCPUs() {
 		return m_cpus;
 	}
-	
+
 	/** Adds CPU. */
 	public VisualizerCPU addCPU(VisualizerCPU cpu) {
 		m_cpus.add(cpu);
@@ -162,26 +161,25 @@ public class VisualizerModel
 		m_cpuMap.remove(cpu.getID());
 	}
 
-	
 	/** Gets maximum number of cores per CPU. */
 	public int getCoresPerCPU() {
 		int maxCores = 1;
 		for (VisualizerCPU cpu : m_cpus) {
 			int cores = cpu.getCoreCount();
-			if (cores > maxCores) maxCores = cores;
+			if (cores > maxCores)
+				maxCores = cores;
 		}
 		return maxCores;
 	}
-	
-	
+
 	// --- thread management ---
-	
+
 	/** Gets threads. */
 	public List<VisualizerThread> getThreads() {
 		return m_threads;
 	}
 
-	/** 
+	/**
 	 * Finds thread(s) by process ID.
 	 * If no threads are found, returns null rather
 	 * than an empty list.
@@ -190,14 +188,15 @@ public class VisualizerModel
 		List<VisualizerThread> result = null;
 		for (VisualizerThread thread : m_threads) {
 			if (thread.getPID() == processId) {
-				if (result == null) result = new ArrayList<VisualizerThread>();
+				if (result == null)
+					result = new ArrayList<VisualizerThread>();
 				result.add(thread);
 			}
 		}
 		return result;
 	}
 
-	/** 
+	/**
 	 * Find a thread by GDB threadId.
 	 * Since thread ids are unique across a GDB session,
 	 * we can uniquely find a thread based on its id.
@@ -224,7 +223,7 @@ public class VisualizerModel
 		m_threads.remove(thread);
 	}
 
-	/** 
+	/**
 	 * Removes thread by GDB threadId.
 	 */
 	public void removeThread(int threadId) {
@@ -237,7 +236,7 @@ public class VisualizerModel
 			}
 		}
 	}
-	
+
 	/**
 	 * Mark the specified thread as having exited.
 	 */

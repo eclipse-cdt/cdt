@@ -69,7 +69,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * the ExecutablesManager. This view has two subviews: one that shows the list
  * of executables and another that shows the list of source files in the
  * selected executable.
- * 
+ *
  */
 public class ExecutablesView extends ViewPart {
 
@@ -130,8 +130,10 @@ public class ExecutablesView extends ViewPart {
 	 * names and should not be localized. Display names are set when the columns
 	 * are created in the sub views.
 	 */
-	private String[] columnNames = { Messages.ExecutablesView_ExeName, Messages.ExecutablesView_ExeProject, Messages.ExecutablesView_ExeLocation, Messages.ExecutablesView_ExeSize, Messages.ExecutablesView_ExeData,
-			Messages.ExecutablesView_ExeType, Messages.ExecutablesView_SrcName, Messages.ExecutablesView_SrcLocation, Messages.ExecutablesView_SrcOrgLocation, Messages.ExecutablesView_SrcSize, Messages.ExecutablesView_SrcDate,
+	private String[] columnNames = { Messages.ExecutablesView_ExeName, Messages.ExecutablesView_ExeProject,
+			Messages.ExecutablesView_ExeLocation, Messages.ExecutablesView_ExeSize, Messages.ExecutablesView_ExeData,
+			Messages.ExecutablesView_ExeType, Messages.ExecutablesView_SrcName, Messages.ExecutablesView_SrcLocation,
+			Messages.ExecutablesView_SrcOrgLocation, Messages.ExecutablesView_SrcSize, Messages.ExecutablesView_SrcDate,
 			Messages.ExecutablesView_SrcType };
 
 	/**
@@ -151,7 +153,7 @@ public class ExecutablesView extends ViewPart {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
 			@Override
@@ -161,7 +163,7 @@ public class ExecutablesView extends ViewPart {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
 			@Override
@@ -170,7 +172,7 @@ public class ExecutablesView extends ViewPart {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
@@ -197,13 +199,14 @@ public class ExecutablesView extends ViewPart {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
 		@Override
 		public void run() {
-			ListSelectionDialog dialog = new ListSelectionDialog(ExecutablesView.this.getExecutablesViewer().getTree().getShell(), this,
-					new ColumnContentProvider(), new ColumnLabelProvider(), Messages.ExecutablesView_SelectColumns);
+			ListSelectionDialog dialog = new ListSelectionDialog(
+					ExecutablesView.this.getExecutablesViewer().getTree().getShell(), this, new ColumnContentProvider(),
+					new ColumnLabelProvider(), Messages.ExecutablesView_SelectColumns);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, CONFIGURE_COLUMNS_DIALOG);
 			String[] visibleColumns = getVisibleColumns();
 			List<String> initialSelection = new ArrayList<String>(visibleColumns.length);
@@ -239,13 +242,13 @@ public class ExecutablesView extends ViewPart {
 	private Action configureColumnsAction;
 
 	private IMemento memento;
-	
+
 	private IStructuredSelection oldSelection;
 	private ISelectionProvider focusedViewer;
 
 	/**
 	 * Create contents of the Executables View
-	 * 
+	 *
 	 * @param parent
 	 */
 	@Override
@@ -261,10 +264,11 @@ public class ExecutablesView extends ViewPart {
 		sourceFilesViewer = new SourceFilesViewer(this, sashForm, SWT.BORDER | SWT.MULTI);
 
 		executablesViewer.getTree().addFocusListener(new FocusListener() {
-			
+
 			@Override
-			public void focusLost(FocusEvent e) {}
-			
+			public void focusLost(FocusEvent e) {
+			}
+
 			@Override
 			public void focusGained(FocusEvent e) {
 				focusedViewer = executablesViewer;
@@ -272,35 +276,35 @@ public class ExecutablesView extends ViewPart {
 		});
 
 		sourceFilesViewer.getTree().addFocusListener(new FocusListener() {
-			
+
 			@Override
-			public void focusLost(FocusEvent e) {}
-			
+			public void focusLost(FocusEvent e) {
+			}
+
 			@Override
 			public void focusGained(FocusEvent e) {
 				focusedViewer = sourceFilesViewer;
 			}
 		});
-		
+
 		ExecutablesView.this.getViewSite().setSelectionProvider(new ISelectionProvider() {
-			
+
 			@Override
 			public void setSelection(ISelection selection) {
 				getFocusedViewer().setSelection(selection);
 			}
-			
+
 			@Override
-			public void removeSelectionChangedListener(
-					ISelectionChangedListener listener) {
+			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 				executablesViewer.removeSelectionChangedListener(listener);
 				sourceFilesViewer.removeSelectionChangedListener(listener);
 			}
-			
+
 			@Override
 			public ISelection getSelection() {
 				return getFocusedViewer().getSelection();
 			}
-			
+
 			@Override
 			public void addSelectionChangedListener(ISelectionChangedListener listener) {
 				executablesViewer.addSelectionChangedListener(listener);
@@ -337,9 +341,8 @@ public class ExecutablesView extends ViewPart {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection newSelection = event.getSelection();
 				if (newSelection instanceof IStructuredSelection) {
-					
-					if (oldSelection == null || !oldSelection.equals(newSelection))
-					{
+
+					if (oldSelection == null || !oldSelection.equals(newSelection)) {
 						// update the remove action
 						removeAction.setEnabled(!newSelection.isEmpty());
 
@@ -348,7 +351,7 @@ public class ExecutablesView extends ViewPart {
 						final Object firstElement = ((IStructuredSelection) newSelection).getFirstElement();
 
 						sourceFilesViewer.setInput(firstElement);
-						
+
 						oldSelection = (IStructuredSelection) newSelection;
 					}
 				}
@@ -409,70 +412,70 @@ public class ExecutablesView extends ViewPart {
 
 		importAction = createImportAction();
 		toolBarManager.add(importAction);
-		
+
 		removeAction = createRemoveAction();
 		toolBarManager.add(removeAction);
 
 		configureColumnsAction = createConfigureColumnsAction();
 		toolBarManager.add(configureColumnsAction);
-		
+
 		copyAction = createCopyAction();
-		bars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction );
+		bars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
 
 	}
 
 	private Action createCopyAction() {
 		Action action = new Action("Copy") { //$NON-NLS-1$
-			
+
 		};
 		return action;
-		
+
 	}
-	
+
 	private Action createRemoveAction() {
 		Action action = new Action(Messages.ExecutablesView_Remove) {
-			
+
 			@Override
-			public void run() {				
+			public void run() {
 				ISelection selection = getExecutablesViewer().getSelection();
-				if (selection instanceof IStructuredSelection)
-				{
-					Object[] selectedObjects = ((IStructuredSelection)selection).toArray();
+				if (selection instanceof IStructuredSelection) {
+					Object[] selectedObjects = ((IStructuredSelection) selection).toArray();
 					ArrayList<Executable> selectedExes = new ArrayList<Executable>();
 					for (Object object : selectedObjects) {
 						if (object instanceof Executable)
-							selectedExes.add((Executable) object);						
+							selectedExes.add((Executable) object);
 					}
 					final Executable[] selectedExesArray = selectedExes.toArray(new Executable[selectedExes.size()]);
-					
-					boolean confirm = MessageDialog.openConfirm(getSite().getShell(), Messages.ExecutablesView_ConfirmRemoveExe, Messages.ExecutablesView_ConfirmRemoveSelected);
-					
-					if (confirm)
-					{
+
+					boolean confirm = MessageDialog.openConfirm(getSite().getShell(),
+							Messages.ExecutablesView_ConfirmRemoveExe, Messages.ExecutablesView_ConfirmRemoveSelected);
+
+					if (confirm) {
 						Job removeJob = new WorkbenchJob(Messages.ExecutablesView_RemoveExes) {
 
-						@Override
-						public IStatus runInUIThread(IProgressMonitor monitor) {
-								IStatus result = ExecutablesManager.getExecutablesManager().removeExecutables(selectedExesArray, monitor);					
-								if (result.getSeverity() != IStatus.OK)
-								{
+							@Override
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+								IStatus result = ExecutablesManager.getExecutablesManager()
+										.removeExecutables(selectedExesArray, monitor);
+								if (result.getSeverity() != IStatus.OK) {
 									StringBuilder message = new StringBuilder(result.getMessage());
 									if (result.isMultiStatus()) {
 										IStatus[] children = result.getChildren();
 										for (int i = 0; i < children.length && i < 6; i++) {
 											message.append(SEPARATOR);
-											message.append(children[i].getMessage()); 
+											message.append(children[i].getMessage());
 										}
 									}
-									MessageDialog.openWarning(getSite().getShell(), Messages.ExecutablesView_RemoveExes, message.toString());
+									MessageDialog.openWarning(getSite().getShell(), Messages.ExecutablesView_RemoveExes,
+											message.toString());
 								}
 								return result;
 							}
 						};
-						removeJob.schedule();						
+						removeJob.schedule();
 					}
 				}
-				
+
 			}
 		};
 		action.setToolTipText(Messages.ExecutablesView_RemoveSelectedExes);

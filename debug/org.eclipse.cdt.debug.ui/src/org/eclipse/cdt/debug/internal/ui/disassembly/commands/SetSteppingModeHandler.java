@@ -34,76 +34,76 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.menus.UIElement;
 
 /**
- * org.eclipse.cdt.debug.internal.ui.disassembly.commands.SetSteppingModeHandler: 
+ * org.eclipse.cdt.debug.internal.ui.disassembly.commands.SetSteppingModeHandler:
  * //TODO Add description.
  */
 public class SetSteppingModeHandler extends AbstractHandler implements IElementUpdater {
 
-    private static final String ID_PARAMETER_MODE = "com.arm.eclipse.rvd.ui.command.steppingMode.parameterMode"; //$NON-NLS-1$
+	private static final String ID_PARAMETER_MODE = "com.arm.eclipse.rvd.ui.command.steppingMode.parameterMode"; //$NON-NLS-1$
 
-    private String fCurrentValue = null;
+	private String fCurrentValue = null;
 
-    public SetSteppingModeHandler() {
-        super();
-        fCurrentValue = CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_STEP_MODE );
-    }
+	public SetSteppingModeHandler() {
+		super();
+		fCurrentValue = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_STEP_MODE);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-     */
-    @Override
-	public Object execute( ExecutionEvent event ) throws ExecutionException {
-        String param = event.getParameter( ID_PARAMETER_MODE );
-        if ( param == null || param.equals( fCurrentValue ) )
-            return null;
-        
-        fCurrentValue = param;
-        CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_STEP_MODE, fCurrentValue );
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 */
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		String param = event.getParameter(ID_PARAMETER_MODE);
+		if (param == null || param.equals(fCurrentValue))
+			return null;
 
-        IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked( event );
-        ICommandService service = window.getService( ICommandService.class );
-        service.refreshElements( event.getCommand().getId(), null );
+		fCurrentValue = param;
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_STEP_MODE, fCurrentValue);
 
-        return null;
-    }
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+		ICommandService service = window.getService(ICommandService.class);
+		service.refreshElements(event.getCommand().getId(), null);
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement, java.util.Map)
-     */
-    @Override
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement, java.util.Map)
+	 */
+	@Override
 	@SuppressWarnings("rawtypes")
-    public void updateElement( UIElement element, Map parameters ) {
-        String param = (String)parameters.get( ID_PARAMETER_MODE );
-        if ( param != null ) {
-            element.setChecked( ( fCurrentValue != null && fCurrentValue.equals( param ) ) );
-        }
-    }
+	public void updateElement(UIElement element, Map parameters) {
+		String param = (String) parameters.get(ID_PARAMETER_MODE);
+		if (param != null) {
+			element.setChecked((fCurrentValue != null && fCurrentValue.equals(param)));
+		}
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
-     */
-    @Override
-    public boolean isEnabled() {
-        IWorkbenchWindow window = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
-        return ( window != null && getSteppingModeTarget( window ) != null );
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
+	 */
+	@Override
+	public boolean isEnabled() {
+		IWorkbenchWindow window = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return (window != null && getSteppingModeTarget(window) != null);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.commands.AbstractHandler#isHandled()
-     */
-    @Override
-    public boolean isHandled() {
-        IWorkbenchWindow window = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
-        return ( window != null && getSteppingModeTarget( window ) != null );
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#isHandled()
+	 */
+	@Override
+	public boolean isHandled() {
+		IWorkbenchWindow window = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return (window != null && getSteppingModeTarget(window) != null);
+	}
 
-    private ISteppingModeTarget getSteppingModeTarget( IWorkbenchWindow window ) {
-        ISelection selection = DebugUITools.getDebugContextManager().getContextService( window ).getActiveContext();
-        if ( selection instanceof IStructuredSelection ) {
-            Object element = ((IStructuredSelection)selection).getFirstElement();
-            if ( element instanceof IAdaptable )
-                return ((IAdaptable)element).getAdapter( ISteppingModeTarget.class );
-        }
-        return null;
-    }
+	private ISteppingModeTarget getSteppingModeTarget(IWorkbenchWindow window) {
+		ISelection selection = DebugUITools.getDebugContextManager().getContextService(window).getActiveContext();
+		if (selection instanceof IStructuredSelection) {
+			Object element = ((IStructuredSelection) selection).getFirstElement();
+			if (element instanceof IAdaptable)
+				return ((IAdaptable) element).getAdapter(ISteppingModeTarget.class);
+		}
+		return null;
+	}
 }

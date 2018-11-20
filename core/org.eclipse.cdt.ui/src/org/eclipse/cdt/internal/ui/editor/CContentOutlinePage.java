@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -43,12 +43,11 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 
-
 /**
  * Outline page for C/C++ translation units.
  */
 public class CContentOutlinePage extends AbstractCModelOutlinePage {
-	
+
 	private Composite fParent;
 	private StackLayout fStackLayout;
 	private Composite fOutlinePage;
@@ -64,7 +63,7 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 	 * @returns the CEditor corresponding to this CContentOutlinePage.
 	 */
 	public CEditor getEditor() {
-		return (CEditor)fEditor;
+		return (CEditor) fEditor;
 	}
 
 	@Override
@@ -85,13 +84,14 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 	}
 
 	private Control createStatusPage(Composite parent) {
-		final Link link= new Link(parent, SWT.NONE);
+		final Link link = new Link(parent, SWT.NONE);
 		link.setText(CEditorMessages.Scalability_outlineDisabled);
 		link.setToolTipText(CEditorMessages.Scalability_linkToolTip);
 		link.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PreferencesUtil.createPreferenceDialogOn(link.getShell(), "org.eclipse.cdt.ui.preferences.CScalabilityPreferences", null, null).open(); //$NON-NLS-1$
+				PreferencesUtil.createPreferenceDialogOn(link.getShell(),
+						"org.eclipse.cdt.ui.preferences.CScalabilityPreferences", null, null).open(); //$NON-NLS-1$
 			}
 		});
 		return link;
@@ -99,8 +99,8 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 
 	@Override
 	public void setInput(ITranslationUnit unit) {
-		final CEditor editor= getEditor();
-		if (editor.isEnableScalablilityMode() 
+		final CEditor editor = getEditor();
+		if (editor.isEnableScalablilityMode()
 				&& PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_RECONCILER)) {
 			fScalabilityMode = true;
 			super.setInput(null);
@@ -135,7 +135,7 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 
 	@Override
 	protected ActionGroup createOpenViewActionGroup() {
-		OpenViewActionGroup ovag= new OpenViewActionGroup(this, getEditor());
+		OpenViewActionGroup ovag = new OpenViewActionGroup(this, getEditor());
 		ovag.setEnableIncludeBrowser(true);
 		return ovag;
 	}
@@ -144,7 +144,6 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 	protected ActionGroup createRefactoringActionGroup() {
 		return new CRefactoringActionGroup(this);
 	}
-	
 
 	@Override
 	protected ActionGroup createSourceActionGroup() {
@@ -160,10 +159,10 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 	protected ActionGroup createMemberFilterActionGroup() {
 		return new MemberFilterActionGroup(getTreeViewer(), "COutlineViewer"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * This action toggles namespace grouping
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	protected static class NamespaceGroupingAction extends Action {
@@ -175,7 +174,7 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 			this.setImageDescriptor(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_NAMESPACE));
 			this.setDisabledImageDescriptor(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_NAMESPACE));
 
-			boolean enabled= isNamspacesGroupingEnabled();
+			boolean enabled = isNamspacesGroupingEnabled();
 			setChecked(enabled);
 		}
 
@@ -184,17 +183,18 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 		 */
 		@Override
 		public void run() {
-			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_NAMESPACES, isChecked());
+			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_NAMESPACES,
+					isChecked());
 		}
 
-		public boolean isNamspacesGroupingEnabled () {
+		public boolean isNamspacesGroupingEnabled() {
 			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES);
 		}
 	}
-	
+
 	/**
 	 * This action toggles member definition grouping
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	protected static class MemberGroupingAction extends Action {
@@ -205,7 +205,7 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 			setToolTipText(ActionMessages.MemberGroupingAction_tooltip);
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_PUBLIC);
 
-			boolean enabled= isMemberGroupingEnabled();
+			boolean enabled = isMemberGroupingEnabled();
 			setChecked(enabled);
 		}
 
@@ -217,19 +217,19 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_MEMBERS, isChecked());
 		}
 
-		public boolean isMemberGroupingEnabled () {
+		public boolean isMemberGroupingEnabled() {
 			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
 		}
 	}
-	
+
 	@Override
 	protected void registerActionBars(IActionBars actionBars) {
 		super.registerActionBars(actionBars);
-		IMenuManager menu= actionBars.getMenuManager();
+		IMenuManager menu = actionBars.getMenuManager();
 
 		// appendToGroup does not work reliably (bug 326748)
-//		menu.appendToGroup("group.layout", new MemberGroupingAction(this)); //$NON-NLS-1$
-//		menu.appendToGroup("group.layout", new NamespaceGroupingAction(this)); //$NON-NLS-1$
+		//		menu.appendToGroup("group.layout", new MemberGroupingAction(this)); //$NON-NLS-1$
+		//		menu.appendToGroup("group.layout", new NamespaceGroupingAction(this)); //$NON-NLS-1$
 
 		// add actions directly instead
 		menu.add(new MemberGroupingAction(this));

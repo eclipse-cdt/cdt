@@ -11,7 +11,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Ed Swartz (Nokia)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.net.URI;
@@ -50,25 +50,24 @@ import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
  * An utility to open editors for references or elements.
  */
 public class EditorOpener {
-	
+
 	/**
 	 * Opens the editor selecting the given region.
 	 */
 	public static void open(IWorkbenchPage page, IFile file, IRegion region, long timestamp) {
 		if (file.getLocationURI() != null) {
-			IEditorPart editor= null;
+			IEditorPart editor = null;
 			if (timestamp == 0) {
-				timestamp= file.getLocalTimeStamp();
+				timestamp = file.getLocalTimeStamp();
 			}
 			try {
 				// Bug 328321: Linked resources of closed projects report wrong location.
 				if (!file.exists()) {
 					final IWorkbenchPartSite site = page.getActivePart().getSite();
-					showStatus(site, 3000,
-							NLS.bind(Messages.EditorOpener_fileDoesNotExist, file.getName()));
+					showStatus(site, 3000, NLS.bind(Messages.EditorOpener_fileDoesNotExist, file.getName()));
 					return;
 				}
-				editor= IDE.openEditor(page, file, false);
+				editor = IDE.openEditor(page, file, false);
 			} catch (PartInitException e) {
 				CUIPlugin.log(e);
 			}
@@ -78,7 +77,7 @@ public class EditorOpener {
 
 	private static void showStatus(final IWorkbenchPartSite site, int duration, String msg) {
 		StatusLineHandler.showStatusLineMessage(site, msg);
-		 Display.getCurrent().timerExec(duration, new Runnable() {
+		Display.getCurrent().timerExec(duration, new Runnable() {
 			@Override
 			public void run() {
 				StatusLineHandler.clearStatusLine(site);
@@ -88,57 +87,60 @@ public class EditorOpener {
 
 	private static void selectRegion(IPath filebufferKey, IRegion region, long timestamp, IEditorPart editor) {
 		if (editor instanceof ITextEditor) {
-            ITextEditor te= (ITextEditor) editor;
-            IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(filebufferKey, timestamp);
-            if (pc != null) {
-            	region= pc.historicToActual(region);
-            }
-            te.selectAndReveal(region.getOffset(), region.getLength());
-        }
+			ITextEditor te = (ITextEditor) editor;
+			IPositionConverter pc = CCorePlugin.getPositionTrackerManager().findPositionConverter(filebufferKey,
+					timestamp);
+			if (pc != null) {
+				region = pc.historicToActual(region);
+			}
+			te.selectAndReveal(region.getOffset(), region.getLength());
+		}
 	}
-	
+
 	private static void selectRegion(URI locationURI, IRegion region, long timestamp, IEditorPart editor) {
 		if (editor instanceof ITextEditor) {
-            ITextEditor te= (ITextEditor) editor;
-            IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(locationURI, timestamp);
-            if (pc != null) {
-            	region= pc.historicToActual(region);
-            }
-            te.selectAndReveal(region.getOffset(), region.getLength());
-        }
+			ITextEditor te = (ITextEditor) editor;
+			IPositionConverter pc = CCorePlugin.getPositionTrackerManager().findPositionConverter(locationURI,
+					timestamp);
+			if (pc != null) {
+				region = pc.historicToActual(region);
+			}
+			te.selectAndReveal(region.getOffset(), region.getLength());
+		}
 	}
 
 	/**
 	 * Opens the editor for an external location, selecting the given region.
 	 */
 	public static void openExternalFile(IWorkbenchPage page, IPath location, IRegion region, long timestamp) {
-		IEditorPart editor= null;
+		IEditorPart editor = null;
 		try {
-			editor= EditorUtility.openInEditor(location, null);
-	        if (timestamp == 0) {
-	        	timestamp= location.toFile().lastModified();
-	        }
-	        selectRegion(location, region, timestamp, editor);
+			editor = EditorUtility.openInEditor(location, null);
+			if (timestamp == 0) {
+				timestamp = location.toFile().lastModified();
+			}
+			selectRegion(location, region, timestamp, editor);
 		} catch (PartInitException e) {
 			CUIPlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * Opens the editor for an external EFS location, selecting the given region.
 	 */
-	public static void openExternalFile(IWorkbenchPage page, URI locationURI, IRegion region, long timestamp, ICElement context) {
-		IEditorPart editor= null;
+	public static void openExternalFile(IWorkbenchPage page, URI locationURI, IRegion region, long timestamp,
+			ICElement context) {
+		IEditorPart editor = null;
 		try {
-			editor= EditorUtility.openInEditor(locationURI, context);
-	        if (timestamp == 0) {
-	        	try {
-					timestamp= EFS.getStore(locationURI).fetchInfo().getLastModified();
+			editor = EditorUtility.openInEditor(locationURI, context);
+			if (timestamp == 0) {
+				try {
+					timestamp = EFS.getStore(locationURI).fetchInfo().getLastModified();
 				} catch (CoreException e) {
 					CUIPlugin.log(e);
 				}
-	        }
-	        selectRegion(locationURI, region, timestamp, editor);
+			}
+			selectRegion(locationURI, region, timestamp, editor);
 		} catch (PartInitException e) {
 			CUIPlugin.log(e);
 		}
@@ -146,16 +148,16 @@ public class EditorOpener {
 
 	/**
 	 * Opens the editor for an ICElement, selecting the id.
-	 * @throws CModelException 
+	 * @throws CModelException
 	 */
 	public static void open(IWorkbenchPage page, ICElement element) throws CModelException {
 		if (element instanceof ISourceReference) {
-			ISourceReference sr= (ISourceReference) element;
-			ITranslationUnit tu= sr.getTranslationUnit();
-			ISourceRange range= sr.getSourceRange();
-			long timestamp= 0; // last modified of file.
+			ISourceReference sr = (ISourceReference) element;
+			ITranslationUnit tu = sr.getTranslationUnit();
+			ISourceRange range = sr.getSourceRange();
+			long timestamp = 0; // last modified of file.
 			if (tu.isWorkingCopy() || element instanceof ICElementHandle) {
-				timestamp= -1; 
+				timestamp = -1;
 			}
 			open(page, tu, new Region(range.getIdStartPos(), range.getIdLength()), timestamp);
 		}
@@ -166,14 +168,13 @@ public class EditorOpener {
 	 */
 	public static void open(IWorkbenchPage page, ITranslationUnit tu, Region region, long timestamp) {
 		if (tu != null) {
-			IResource r= tu.getResource();
+			IResource r = tu.getResource();
 			if (r instanceof IFile) {
 				if (r.getLocationURI() != null) {
 					EditorOpener.open(page, (IFile) r, region, timestamp);
 				}
-			}
-			else {
-				IPath location= tu.getPath();
+			} else {
+				IPath location = tu.getPath();
 				if (location != null) {
 					EditorOpener.openExternalFile(page, location, region, timestamp);
 				}

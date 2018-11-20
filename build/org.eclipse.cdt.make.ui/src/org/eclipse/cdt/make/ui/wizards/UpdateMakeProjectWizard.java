@@ -23,7 +23,7 @@ import org.eclipse.jface.wizard.Wizard;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class UpdateMakeProjectWizard extends Wizard {
-	private static final String MAKE_UPDATE_WINDOW_TITLE = "MakeWizardUpdate.window_title";  //$NON-NLS-1$
+	private static final String MAKE_UPDATE_WINDOW_TITLE = "MakeWizardUpdate.window_title"; //$NON-NLS-1$
 
 	private UpdateMakeProjectWizardPage page1;
 	private IProject[] selected;

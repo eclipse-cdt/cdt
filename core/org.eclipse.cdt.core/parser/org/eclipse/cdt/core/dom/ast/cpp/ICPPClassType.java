@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 
 /**
  * Represents a C++ class.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -57,7 +57,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * The method is restated here to point out that this method looks through the inheritance tree
 	 * of this class while looking for a field with the given name. If no field is found, {@code null} is
 	 * returned, if the name is found to be ambiguous a IProblemBinding is returned.
-	 * 
+	 *
 	 * @param name
 	 */
 	@Override
@@ -66,7 +66,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	/**
 	 * Returns a list of ICPPField objects representing fields declared in this class. It does not
 	 * include fields inherited from base classes.
-	 * 
+	 *
 	 * @return List of ICPPField
 	 */
 	public ICPPField[] getDeclaredFields();
@@ -74,7 +74,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	/**
 	 * Returns a list of ICPPMethod objects representing all methods defined for this class
 	 * including those declared, inherited, or generated (e.g. default constructors and the like).
-	 * 
+	 *
 	 * @return List of ICPPMethod
 	 */
 	public ICPPMethod[] getMethods();
@@ -82,7 +82,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	/**
 	 * Returns a list of ICPPMethod objects representing all method explicitly declared by this
 	 * class and inherited from base classes. It does not include automatically generated methods.
-	 * 
+	 *
 	 * @return List of ICPPMethod
 	 */
 	public ICPPMethod[] getAllDeclaredMethods();
@@ -90,7 +90,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	/**
 	 * Returns a list of ICPPMethod objects representing all methods explicitly declared by this
 	 * class. It does not include inherited methods or automatically generated methods.
-	 * 
+	 *
 	 * @return List of ICPPMethod
 	 */
 	public ICPPMethod[] getDeclaredMethods();
@@ -105,12 +105,12 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * Returns an array of bindings for those classes/functions declared as friends of this class.
 	 */
 	public IBinding[] getFriends();
-	
+
 	/**
 	 * Returns an array of nested classes/structures
 	 */
 	public ICPPClassType[] getNestedClasses();
-	
+
 	/**
 	 * Returns an array of using declarations in this class.
 	 *
@@ -120,7 +120,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 
 	/**
 	 * Returns whether this type is declared final.
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public boolean isFinal();

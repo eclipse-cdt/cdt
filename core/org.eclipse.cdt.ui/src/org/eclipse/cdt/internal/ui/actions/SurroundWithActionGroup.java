@@ -31,8 +31,8 @@ public class SurroundWithActionGroup extends ActionGroup {
 	private final String fGroup;
 
 	public SurroundWithActionGroup(CEditor editor, String group) {
-		fEditor= editor;
-		fGroup= group;
+		fEditor = editor;
+		fGroup = group;
 	}
 
 	/**
@@ -41,24 +41,26 @@ public class SurroundWithActionGroup extends ActionGroup {
 	 */
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
-		ISelectionProvider selectionProvider= fEditor.getSelectionProvider();
+		ISelectionProvider selectionProvider = fEditor.getSelectionProvider();
 		if (selectionProvider == null)
 			return;
 
-		ISelection selection= selectionProvider.getSelection();
+		ISelection selection = selectionProvider.getSelection();
 		if (!(selection instanceof ITextSelection))
 			return;
 
-		ITextSelection textSelection= (ITextSelection)selection;
+		ITextSelection textSelection = (ITextSelection) selection;
 		if (textSelection.getLength() == 0)
 			return;
 
-		String menuText= ActionMessages.SurroundWithTemplateMenuAction_SubMenuName;
+		String menuText = ActionMessages.SurroundWithTemplateMenuAction_SubMenuName;
 
-		MenuManager subMenu = new MenuManager(menuText, SurroundWithTemplateMenuAction.SURROUND_WITH_QUICK_MENU_ACTION_ID);
+		MenuManager subMenu = new MenuManager(menuText,
+				SurroundWithTemplateMenuAction.SURROUND_WITH_QUICK_MENU_ACTION_ID);
 		subMenu.setActionDefinitionId(SurroundWithTemplateMenuAction.SURROUND_WITH_QUICK_MENU_ACTION_ID);
 		menu.appendToGroup(fGroup, subMenu);
-		subMenu.add(new Action() {});
+		subMenu.add(new Action() {
+		});
 		subMenu.addMenuListener(new IMenuListener() {
 			@Override
 			public void menuAboutToShow(IMenuManager manager) {

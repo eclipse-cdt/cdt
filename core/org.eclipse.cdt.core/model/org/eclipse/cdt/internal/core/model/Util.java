@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Rational Software - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -81,14 +81,12 @@ public class Util implements ICLogConstants {
 	 * Returns the given input stream's contents as a character array. If a
 	 * length is specified (ie. if length != -1), only length chars are
 	 * returned. Otherwise all chars in the stream are returned. Closes the stream.
-	 * 
+	 *
 	 * @throws IOException
 	 *             if a problem occured reading the stream.
 	 */
-	public static char[] getInputStreamAsCharArray(InputStream stream,
-			int length, String encoding) throws IOException {
-		final InputStreamReader reader = encoding == null
-				? new InputStreamReader(stream)
+	public static char[] getInputStreamAsCharArray(InputStream stream, int length, String encoding) throws IOException {
+		final InputStreamReader reader = encoding == null ? new InputStreamReader(stream)
 				: new InputStreamReader(stream, encoding);
 		try {
 			char[] contents;
@@ -100,8 +98,7 @@ public class Util implements ICLogConstants {
 					int available = stream.available();
 					// resize contents if needed
 					if (contentsLength + available > contents.length) {
-						System.arraycopy(contents, 0,
-								contents = new char[contentsLength + available], 0,
+						System.arraycopy(contents, 0, contents = new char[contentsLength + available], 0,
 								contentsLength);
 					}
 					// read as many chars as possible
@@ -113,8 +110,7 @@ public class Util implements ICLogConstants {
 				} while (charsRead > 0);
 				// resize contents if necessary
 				if (contentsLength < contents.length) {
-					System.arraycopy(contents, 0,
-							contents = new char[contentsLength], 0, contentsLength);
+					System.arraycopy(contents, 0, contents = new char[contentsLength], 0, contentsLength);
 				}
 			} else {
 				contents = new char[length];
@@ -132,8 +128,7 @@ public class Util implements ICLogConstants {
 				// than one byte for each
 				// character
 				if (len != length)
-					System.arraycopy(contents, 0, (contents = new char[len]), 0,
-							len);
+					System.arraycopy(contents, 0, (contents = new char[len]), 0, len);
 			}
 			return contents;
 		} finally {
@@ -144,8 +139,7 @@ public class Util implements ICLogConstants {
 	/**
 	 * Returns the given file's contents as a character array.
 	 */
-	public static char[] getResourceContentsAsCharArray(IFile file)
-			throws CModelException {
+	public static char[] getResourceContentsAsCharArray(IFile file) throws CModelException {
 		try {
 			return getResourceContentsAsCharArray(file, file.getCharset());
 		} catch (CoreException exc) {
@@ -153,14 +147,12 @@ public class Util implements ICLogConstants {
 		}
 	}
 
-	public static char[] getResourceContentsAsCharArray(IFile file,
-			String encoding) throws CModelException {
+	public static char[] getResourceContentsAsCharArray(IFile file, String encoding) throws CModelException {
 		InputStream stream = null;
 		try {
 			stream = new BufferedInputStream(file.getContents(true));
 		} catch (CoreException e) {
-			throw new CModelException(e,
-					ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST);
+			throw new CModelException(e, ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST);
 		}
 		try {
 			return Util.getInputStreamAsCharArray(stream, -1, encoding);
@@ -178,7 +170,7 @@ public class Util implements ICLogConstants {
 	 * Add a log entry
 	 */
 	public static void log(Throwable e, String message, LogConst logType) {
-		IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, message,e);
+		IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, message, e);
 		Util.log(status, logType);
 	}
 
@@ -191,7 +183,7 @@ public class Util implements ICLogConstants {
 	}
 
 	public static void log(String message, LogConst logType) {
-		IStatus status = new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, IStatus.INFO, message,	null);
+		IStatus status = new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, IStatus.INFO, message, null);
 		Util.log(status, logType);
 	}
 
@@ -199,15 +191,14 @@ public class Util implements ICLogConstants {
 		Util.debugLog(message, client, true);
 	}
 
-	public static void debugLog(String message, DebugLogConstants client,
-			boolean addTimeStamp) {
+	public static void debugLog(String message, DebugLogConstants client, boolean addTimeStamp) {
 		if (CCorePlugin.getDefault() == null)
 			return;
 		if (CCorePlugin.getDefault().isDebugging() && isActive(client)) {
 			// Time stamp
 			if (addTimeStamp)
-				message = MessageFormat.format("[{0}] {1}", new Object[]{ //$NON-NLS-1$
-						Long.valueOf(System.currentTimeMillis()), message}); 
+				message = MessageFormat.format("[{0}] {1}", new Object[] { //$NON-NLS-1$
+						Long.valueOf(System.currentTimeMillis()), message });
 			while (message.length() > 100) {
 				String partial = message.substring(0, 100);
 				message = message.substring(100);
@@ -313,48 +304,49 @@ public class Util implements ICLogConstants {
 		CharArrayBuffer result = new CharArrayBuffer();
 		int lineStart = 0;
 		int length = text.length;
-		if (length == 0) return text;
+		if (length == 0)
+			return text;
 		String lineSeparator = getLineSeparator(text, buffer);
 		char nextChar = text[0];
 		for (int i = 0; i < length; i++) {
 			char currentChar = nextChar;
-			nextChar = i < length-1 ? text[i+1] : ' ';
+			nextChar = i < length - 1 ? text[i + 1] : ' ';
 			switch (currentChar) {
-				case '\n':
-					int lineLength = i-lineStart;
-					char[] line = new char[lineLength];
+			case '\n':
+				int lineLength = i - lineStart;
+				char[] line = new char[lineLength];
+				System.arraycopy(text, lineStart, line, 0, lineLength);
+				result.append(line);
+				result.append(lineSeparator);
+				lineStart = i + 1;
+				break;
+			case '\r':
+				lineLength = i - lineStart;
+				if (lineLength >= 0) {
+					line = new char[lineLength];
 					System.arraycopy(text, lineStart, line, 0, lineLength);
 					result.append(line);
 					result.append(lineSeparator);
-					lineStart = i+1;
-					break;
-				case '\r':
-					lineLength = i-lineStart;
-					if (lineLength >= 0) {
-						line = new char[lineLength];
-						System.arraycopy(text, lineStart, line, 0, lineLength);
-						result.append(line);
-						result.append(lineSeparator);
-						if (nextChar == '\n') {
-							nextChar = ' ';
-							lineStart = i+2;
-						} else {
-							// when line separator are mixed in the same file
-							// \r might not be followed by a \n. If not, we should increment
-							// lineStart by one and not by two.
-							lineStart = i+1;
-						}
+					if (nextChar == '\n') {
+						nextChar = ' ';
+						lineStart = i + 2;
 					} else {
 						// when line separator are mixed in the same file
-						// we need to prevent NegativeArraySizeException
-						lineStart = i+1;
+						// \r might not be followed by a \n. If not, we should increment
+						// lineStart by one and not by two.
+						lineStart = i + 1;
 					}
-					break;
+				} else {
+					// when line separator are mixed in the same file
+					// we need to prevent NegativeArraySizeException
+					lineStart = i + 1;
+				}
+				break;
 			}
 		}
 		char[] lastLine;
 		if (lineStart > 0) {
-			int lastLineLength = length-lineStart;
+			int lastLineLength = length - lineStart;
 			if (lastLineLength > 0) {
 				lastLine = new char[lastLineLength];
 				System.arraycopy(text, lineStart, lastLine, 0, lastLineLength);
@@ -406,10 +398,12 @@ public class Util implements ICLogConstants {
 			char nextChar = text[0];
 			for (int i = 0; i < length; i++) {
 				char currentChar = nextChar;
-				nextChar = i < length-1 ? text[i+1] : ' ';
+				nextChar = i < length - 1 ? text[i + 1] : ' ';
 				switch (currentChar) {
-					case '\n': return "\n"; //$NON-NLS-1$
-					case '\r': return nextChar == '\n' ? "\r\n" : "\r"; //$NON-NLS-1$ //$NON-NLS-2$
+				case '\n':
+					return "\n"; //$NON-NLS-1$
+				case '\r':
+					return nextChar == '\n' ? "\r\n" : "\r"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -433,7 +427,7 @@ public class Util implements ICLogConstants {
 
 	/**
 	 * Returns the first line separator found in the given file.
-	 * 
+	 *
 	 * @param fileUri - URI if the file on the local file-system.
 	 * @return the first line separator in the given file or {@code null} if none was read.
 	 */
@@ -462,7 +456,7 @@ public class Util implements ICLogConstants {
 	/**
 	 * Returns the line separator for the given file. If line separator is not found in the file
 	 * default value for the project or workspace is returned.
-	 * 
+	 *
 	 * @param file - the file to look for a line separator.
 	 * @return the line separator for the given file. The method does not return {@code null}.
 	 */
@@ -498,7 +492,7 @@ public class Util implements ICLogConstants {
 	 *   <li> Line separator defined in default preferences.
 	 *   <li> Operating system default line separator.
 	 * </ol>
-	 * 
+	 *
 	 * @param project - the project. If {@code null} no project preferences are inquired.
 	 * @return line separator for the given project. The method does not return {@code null}.
 	 */
@@ -543,7 +537,7 @@ public class Util implements ICLogConstants {
 
 	/**
 	 * Returns the first line separator used by the input stream.
-	 * 
+	 *
 	 * @param input - input stream to inspect.
 	 * @return line separator for the given input stream or {@code null} if no line separator was read.
 	 */
@@ -572,7 +566,7 @@ public class Util implements ICLogConstants {
 	public static boolean isNonZeroLengthFile(IPath path) {
 		return isNonZeroLengthFile(URIUtil.toURI(path));
 	}
-	
+
 	/**
 	 * Return true if the file referred to by the URI is not a directory and has length > 0
 	 */

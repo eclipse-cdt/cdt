@@ -15,14 +15,14 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represents enumerations in C and C++.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwner {
 	/**
 	 * This interface represents an enumerator member of an enum specifier.
-	 * 
+	 *
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	public interface IASTEnumerator extends IASTNameOwner, IASTAttributeOwner {
@@ -47,32 +47,32 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 
 		/**
 		 * Set the enumerator's name.
-		 * 
+		 *
 		 * @param name
 		 */
 		public void setName(IASTName name);
 
 		/**
 		 * Get the enumerator's name.
-		 * 
+		 *
 		 * @return {@code IASTName}
 		 */
 		public IASTName getName();
 
 		/**
 		 * Sets enumerator value.
-		 * 
+		 *
 		 * @param expression
 		 */
 		public void setValue(IASTExpression expression);
 
 		/**
 		 * Returns enumerator value.
-		 * 
+		 *
 		 * @return {@code IASTExpression} value
 		 */
 		public IASTExpression getValue();
-		
+
 		/**
 		 * @since 5.1
 		 */
@@ -103,21 +103,21 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 
 	/**
 	 * Adds an enumerator.
-	 * 
+	 *
 	 * @param enumerator {@code IASTEnumerator}
 	 */
 	public void addEnumerator(IASTEnumerator enumerator);
 
 	/**
 	 * Returns enumerators.
-	 * 
+	 *
 	 * @return {@code IASTEnumerator[]} array
 	 */
 	public IASTEnumerator[] getEnumerators();
 
 	/**
 	 * Sets the enum's name.
-	 * 
+	 *
 	 * @param name
 	 */
 	public void setName(IASTName name);

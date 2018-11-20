@@ -53,9 +53,9 @@ import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
 /**
  * A block of UI controls for management of working set configurations. These collect the selection of project
  * configurations for the member projects of the working sets into named presets.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 public class WorkingSetConfigurationBlock {
@@ -75,7 +75,7 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Initializes me. I take the most recently used working set as my initial selection.
-	 * 
+	 *
 	 * @param workspace
 	 *            the workspace snapshot to edit
 	 */
@@ -85,22 +85,21 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Initializes me with my initial selection.
-	 * 
+	 *
 	 * @param workspace
 	 *            the workspace snapshot to edit
 	 * @param initialSelection
 	 *            my initial selection
 	 */
-	public WorkingSetConfigurationBlock(WorkspaceSnapshot workspace,
-			IWorkingSetProxy.ISnapshot initialSelection) {
-		
+	public WorkingSetConfigurationBlock(WorkspaceSnapshot workspace, IWorkingSetProxy.ISnapshot initialSelection) {
+
 		this.workspace = workspace;
 		this.initialSelection = initialSelection;
 	}
 
 	/**
 	 * Queries the working set filter, if any, that restricts the display of working sets.
-	 * 
+	 *
 	 * @return my working-set filter
 	 */
 	public IFilter getWorkingSetFilter() {
@@ -109,7 +108,7 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Assigns a filter to restrict the working sets that are shown.
-	 * 
+	 *
 	 * @param filter
 	 *            a working-set filter
 	 */
@@ -119,10 +118,10 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Creates the contents of the working set configuration management control block.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite in which to create my controls
-	 * 
+	 *
 	 * @return my controls
 	 */
 	public Control createContents(Composite parent) {
@@ -141,13 +140,13 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Creates the "working set configurations" pane in the upper part of the sash form.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param layoutFactory
 	 *            a layout-factory to use to lay out the composite in a grid, possibly pre-configured. Its use
 	 *            is optional
-	 * 
+	 *
 	 * @return the working set configurations pane
 	 */
 	protected Composite createWorkingSetConfigsArea(Composite parent, GridLayoutFactory layoutFactory) {
@@ -224,13 +223,13 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Creates the "project configurations" pane in the lower part of the sash form.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param layoutFactory
 	 *            a layout-factory to use to lay out the composite in a grid, possibly pre-configured. Its use
 	 *            is optional
-	 * 
+	 *
 	 * @return the project configurations pane
 	 */
 	protected Composite createProjectConfigsArea(Composite parent, GridLayoutFactory layoutFactory) {
@@ -275,7 +274,7 @@ public class WorkingSetConfigurationBlock {
 	 * Builds the projects that were reconfigured by the dialog, if any. The user is prompted (if prompting is
 	 * not disabled via the preference) before building. The user has the options to build, not build, or
 	 * cancel. The result indicates cancellation.
-	 * 
+	 *
 	 * @return <code>true</code> if the user opted to save changes and exit the dialog (with or without
 	 *         build); <code>false</code> if the user cancelled and the dialog should remain open and unsaved
 	 */
@@ -291,9 +290,9 @@ public class WorkingSetConfigurationBlock {
 
 			int button = OptionalMessageDialog.open(BUILD_PROMPT_DIALOG_ID, contents.getShell(),
 					WorkingSetMessages.WSConfigDialog_buildPrompt_title, null,
-					WorkingSetMessages.WSConfigDialog_buildPrompt_message, MessageDialog.QUESTION,
-					new String[] { IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL,
-							IDialogConstants.YES_LABEL }, defaultButton);
+					WorkingSetMessages.WSConfigDialog_buildPrompt_message, MessageDialog.QUESTION, new String[] {
+							IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL, IDialogConstants.YES_LABEL },
+					defaultButton);
 
 			if (button == OptionalMessageDialog.NOT_SHOWN) {
 				// handle the case where the dialog was suppressed. Get the current default
@@ -326,7 +325,7 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Simple content provider for the working set configurations tree.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
 	 */
 	private class WSConfigsContentProvider implements ITreeContentProvider {
@@ -362,8 +361,8 @@ public class WorkingSetConfigurationBlock {
 
 		@Override
 		public Object getParent(Object element) {
-			return (element instanceof IWorkingSetConfiguration) ? ((IWorkingSetConfiguration) element)
-					.getWorkingSet() : null;
+			return (element instanceof IWorkingSetConfiguration) ? ((IWorkingSetConfiguration) element).getWorkingSet()
+					: null;
 		}
 
 		@Override
@@ -393,7 +392,7 @@ public class WorkingSetConfigurationBlock {
 	 * Label provider for working sets and their configurations. The active configuration is highlighted in
 	 * bold and affixed with an "(active)" decoration. The special read-only configuration is further
 	 * differentiated with an italic font.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
 	 */
 	private class WSConfigsLabelProvider extends LabelProvider implements IFontProvider {
@@ -413,8 +412,8 @@ public class WorkingSetConfigurationBlock {
 
 				if (config.isActive()) {
 					return WorkingSetConfiguration.isReadOnly(config)
-							? WorkingSetMessages.WSConfigDialog_implicit_config : NLS.bind(
-									WorkingSetMessages.WSConfigDialog_active_config, config.getName());
+							? WorkingSetMessages.WSConfigDialog_implicit_config
+							: NLS.bind(WorkingSetMessages.WSConfigDialog_active_config, config.getName());
 				}
 				return config.getName();
 			} else if (element instanceof IWorkingSetProxy) {

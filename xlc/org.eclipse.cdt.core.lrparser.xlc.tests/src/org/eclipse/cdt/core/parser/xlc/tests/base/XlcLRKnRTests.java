@@ -24,11 +24,11 @@ public class XlcLRKnRTests extends LRKnRTests {
 	public static TestSuite suite() {
 		return suite(XlcLRKnRTests.class);
 	}
-	
+
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
-	
+
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

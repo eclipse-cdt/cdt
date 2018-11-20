@@ -10,16 +10,16 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 /**
  * Interface for specializations of partial specializations.
- * 
+ *
  * @since 5.1
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPClassTemplatePartialSpecializationSpecialization
-		extends	ICPPClassTemplatePartialSpecialization, ICPPClassSpecialization {
+		extends ICPPClassTemplatePartialSpecialization, ICPPClassSpecialization {
 }

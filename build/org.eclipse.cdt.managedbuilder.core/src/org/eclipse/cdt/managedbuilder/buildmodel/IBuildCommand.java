@@ -25,33 +25,33 @@ import org.eclipse.core.runtime.IPath;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBuildCommand {
-	
+
 	/**
 	 * returns the executable path
 	 * the paths could be either relative or absolute
-	 * 
+	 *
 	 * @return IPath
 	 */
 	IPath getCommand();
-	
+
 	/**
 	 * Returns the array of arguments to be passed to the executable
-	 * 
+	 *
 	 * @return String[]
 	 */
 	String[] getArgs();
-	
+
 	/**
 	 * Returns the Map representing the environment to be used for the executable process
 	 * The map contains the String to String pairs representing the variable name and value respectively
-	 * 
+	 *
 	 * @return Map
 	 */
 	Map<String, String> getEnvironment();
-	
+
 	/**
 	 * Returns the working directory to be used for the process
-	 * 
+	 *
 	 * @return IPath
 	 */
 	IPath getCWD();

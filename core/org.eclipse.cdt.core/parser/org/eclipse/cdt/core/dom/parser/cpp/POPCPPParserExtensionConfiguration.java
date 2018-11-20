@@ -10,16 +10,16 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
 /**
- * Configures the parser to accept POP C++, 
+ * Configures the parser to accept POP C++,
  * see <a href=http://gridgroup.tic.hefr.ch/popc/index.php/Documentation>Documentation</a>
  * @since 5.1
  */
 public class POPCPPParserExtensionConfiguration extends GPPParserExtensionConfiguration {
-	private static POPCPPParserExtensionConfiguration sInstance= new POPCPPParserExtensionConfiguration();
+	private static POPCPPParserExtensionConfiguration sInstance = new POPCPPParserExtensionConfiguration();
 
 	public static POPCPPParserExtensionConfiguration getInstance() {
 		return sInstance;

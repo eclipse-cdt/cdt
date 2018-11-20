@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -54,34 +54,32 @@ public class ResultsView extends ViewPart {
 
 	/**
 	 * Represents view orientation
-	 * 
+	 *
 	 * @note <code>Auto</code> state may be not acceptable for some methods (see
 	 * their comments for details).
 	 */
 	public enum Orientation {
-		Horizontal,
-		Vertical,
-		Auto,
+		Horizontal, Vertical, Auto,
 	}
-	
+
 	/** View parent. */
 	private Composite parent;
-	
+
 	/** Child widget: statistics viewer. */
 	private ProgressCountPanel progressCountPanel;
-	
+
 	/** Tests hierarchy and message viewer. */
 	private ResultsPanel resultsPanel;
-	
+
 	/** User interface updater instance. */
 	private UIUpdater uiUpdater;
-	
+
 	/** The reference to the testing sessions manager instance. */
 	private TestingSessionsManager sessionsManager;
-	
+
 	/** Shows whether the results view was disposed. */
 	private boolean isDisposed = false;
-	
+
 	// Toolbar & view menu actions
 	private Action nextAction;
 	private Action previousAction;
@@ -99,18 +97,18 @@ public class ResultsView extends ViewPart {
 	 * The current orientation preference (Horizontal, Vertical, Auto).
 	 */
 	private Orientation orientation = Orientation.Auto;
-	
+
 	/**
 	 * The current view orientation (Horizontal or Vertical).
 	 */
 	private Orientation currentOrientation;
-	
+
 	/**
 	 * Previously saved state. It is used to store the same state if the view
 	 * was not opened.
 	 */
 	private IMemento memento;
-	
+
 	// Persistence tags
 	static final String TAG_ORIENTATION = "orientation"; //$NON-NLS-1$
 	static final String TAG_SHOW_FAILED_ONLY = "showFailedOnly"; //$NON-NLS-1$
@@ -119,8 +117,7 @@ public class ResultsView extends ViewPart {
 	static final String TAG_SCROLL_LOCK = "scrollLock"; //$NON-NLS-1$
 	static final String TAG_SHOW_FILE_NAME_ONLY_ACTION = "showFileNameOnly"; //$NON-NLS-1$
 	static final String TAG_HISTORY_SIZE = "history_size"; //$NON-NLS-1$
-	
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		sessionsManager = TestsRunnerPlugin.getDefault().getTestingSessionsManager();
@@ -138,17 +135,18 @@ public class ResultsView extends ViewPart {
 		resultsPanel = new ResultsPanel(parent, sessionsManager, workbench, getViewSite(), clipboard);
 		uiUpdater = new UIUpdater(this, resultsPanel.getTestsHierarchyViewer(), progressCountPanel, sessionsManager);
 		configureActionsBars();
-		
+
 		parent.addControlListener(new ControlListener() {
 			@Override
 			public void controlMoved(ControlEvent e) {
 			}
+
 			@Override
 			public void controlResized(ControlEvent e) {
 				computeOrientation();
 			}
 		});
-		
+
 		restoreState(memento);
 		uiUpdater.reapplyActiveSession();
 	}
@@ -166,10 +164,9 @@ public class ResultsView extends ViewPart {
 
 		// Create common action
 		toggleOrientationActions = new ToggleOrientationAction[] {
-			new ToggleOrientationAction(this, Orientation.Vertical),
-			new ToggleOrientationAction(this, Orientation.Horizontal),
-			new ToggleOrientationAction(this, Orientation.Auto),
-		};
+				new ToggleOrientationAction(this, Orientation.Vertical),
+				new ToggleOrientationAction(this, Orientation.Horizontal),
+				new ToggleOrientationAction(this, Orientation.Auto), };
 
 		nextAction = new ShowNextFailureAction(resultsPanel.getTestsHierarchyViewer());
 		nextAction.setEnabled(false);
@@ -178,7 +175,7 @@ public class ResultsView extends ViewPart {
 		previousAction = new ShowPreviousFailureAction(resultsPanel.getTestsHierarchyViewer());
 		previousAction.setEnabled(false);
 		actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), previousAction);
-		
+
 		showFailedOnly = new ShowFailedOnlyAction(resultsPanel);
 		showTestsInHierarchyAction = new ShowTestsInHierarchyAction(resultsPanel.getTestsHierarchyViewer());
 		showTimeAction = new ShowTimeAction(resultsPanel.getTestsHierarchyViewer());
@@ -188,9 +185,9 @@ public class ResultsView extends ViewPart {
 		rerunAction.setEnabled(false);
 		stopAction = new StopAction(sessionsManager);
 		stopAction.setEnabled(false);
-		
+
 		historyAction = new HistoryDropDownAction(sessionsManager, parent.getShell());
-		
+
 		// Configure toolbar
 		IToolBarManager toolBar = actionBars.getToolBarManager();
 		toolBar.add(nextAction);
@@ -201,7 +198,7 @@ public class ResultsView extends ViewPart {
 		toolBar.add(rerunAction);
 		toolBar.add(stopAction);
 		toolBar.add(historyAction);
-		
+
 		// Configure view menu
 		IMenuManager viewMenu = actionBars.getMenuManager();
 		viewMenu.add(showTestsInHierarchyAction);
@@ -224,17 +221,17 @@ public class ResultsView extends ViewPart {
 			uiUpdater.dispose();
 		}
 	}
-	
+
 	/**
 	 * Changes the view orientation
-	 * 
+	 *
 	 * @param orientation new view orientation (Horizontal, Vertical, Auto)
 	 */
 	public void setOrientation(Orientation orientation) {
 		this.orientation = orientation;
 		computeOrientation();
 	}
-	
+
 	/**
 	 * Checks whether actual orientation is changed and changes orientation of
 	 * the child widgets.
@@ -251,22 +248,22 @@ public class ResultsView extends ViewPart {
 			parent.layout();
 		}
 	}
-	
+
 	/**
 	 * Recalculates actual view orientation depending on the specified by user
 	 * orientation value and current view size.
-	 * 
+	 *
 	 * @param orientation by user specified orientation
 	 * @return actual orientation
 	 */
 	private Orientation getActualOrientation() {
 		switch (orientation) {
-			case Horizontal:
-			case Vertical:
-				return orientation;
-			case Auto:
-				Point size = parent.getSize();
-				return (size.x > size.y) ? Orientation.Horizontal : Orientation.Vertical;
+		case Horizontal:
+		case Vertical:
+			return orientation;
+		case Auto:
+			Point size = parent.getSize();
+			return (size.x > size.y) ? Orientation.Horizontal : Orientation.Vertical;
 		}
 		return null;
 	}
@@ -285,22 +282,22 @@ public class ResultsView extends ViewPart {
 
 	/**
 	 * Changes the view caption.
-	 * 
+	 *
 	 * @param message new view caption
 	 */
 	public void setCaption(String message) {
 		setContentDescription(message);
 	}
-	
+
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		this.memento = memento;
 	}
-	
+
 	/**
 	 * Restores the value of the checkable action.
-	 * 
+	 *
 	 * @param memento previously saved state to restore the action value from
 	 * @param key tag name that is used to restore the value
 	 * @param action action to restore
@@ -315,7 +312,7 @@ public class ResultsView extends ViewPart {
 
 	/**
 	 * Restores the state of the view.
-	 * 
+	 *
 	 * @param memento previously saved state
 	 */
 	private void restoreState(IMemento memento) {
@@ -341,12 +338,12 @@ public class ResultsView extends ViewPart {
 	public void saveState(IMemento memento) {
 		//Keep the old state;
 		if (parent == null) {
-			if (this.memento != null) { 
+			if (this.memento != null) {
 				memento.putMemento(this.memento);
 			}
 			return;
 		}
-		
+
 		memento.putInteger(TAG_ORIENTATION, orientation.ordinal());
 		resultsPanel.saveState(memento);
 		memento.putBoolean(TAG_SHOW_FAILED_ONLY, showFailedOnly.isChecked());
@@ -359,11 +356,11 @@ public class ResultsView extends ViewPart {
 
 	/**
 	 * Returns whether the view was disposed.
-	 * 
+	 *
 	 * @return true if the view was disposed
 	 */
 	public boolean isDisposed() {
 		return isDisposed;
 	}
-	
+
 }

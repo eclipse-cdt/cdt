@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - added support for IToggleBreakpointsTargetFactory
@@ -41,30 +41,30 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * Action to interactively create a breakpoint from the vertical ruler of a 
- * workbench part containing a document. The part must provide an 
+ * Action to interactively create a breakpoint from the vertical ruler of a
+ * workbench part containing a document. The part must provide an
  * <code>IToggleBreakpointsTargetExtension2</code> adapter.
  * <p>
- * Clients may instantiate this class. 
+ * Clients may instantiate this class.
  * </p>
  * @since 7.2
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate
  */
 public class CAddBreakpointInteractiveRulerAction extends Action implements IUpdate {
-	
+
 	private IWorkbenchPart fPart;
 	private IDocument fDocument;
 	private IVerticalRulerInfo fRulerInfo;
 	private IToggleBreakpointsTargetManagerListener fListener = new IToggleBreakpointsTargetManagerListener() {
-	    public void preferredTargetsChanged() {
-	        update();	        
-	    }
+		public void preferredTargetsChanged() {
+			update();
+		}
 	};
 
 	/**
 	 * Constructs a new action to toggle a breakpoint in the given
 	 * part containing the given document and ruler.
-	 * 
+	 *
 	 * @param part the part in which to toggle the breakpoint - provides
 	 *  an <code>IToggleBreakpointsTarget</code> adapter
 	 * @param document the document breakpoints are being set in or
@@ -74,61 +74,61 @@ public class CAddBreakpointInteractiveRulerAction extends Action implements IUpd
 	 */
 	public CAddBreakpointInteractiveRulerAction(IWorkbenchPart part, IDocument document, IVerticalRulerInfo rulerInfo) {
 		super(ActionMessages.getString("CAddBreakpointInteractiveRulerAction_label") + "\t" + //$NON-NLS-1$ //$NON-NLS-2$
-		    CDebugUIUtils.formatKeyBindingString(SWT.MOD1, ActionMessages.getString("CRulerToggleBreakpointAction_accelerator")) );  //$NON-NLS-1$
+				CDebugUIUtils.formatKeyBindingString(SWT.MOD1,
+						ActionMessages.getString("CRulerToggleBreakpointAction_accelerator"))); //$NON-NLS-1$
 		fPart = part;
 		fDocument = document;
 		fRulerInfo = rulerInfo;
 		DebugUITools.getToggleBreakpointsTargetManager().addChangedListener(fListener);
 	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		IDocument document= getDocument();
+		IDocument document = getDocument();
 		if (document == null) {
 			return;
 		}
 
 		int line = fRulerInfo.getLineOfLastMouseButtonActivity();
-		
+
 		// Test if line is valid
 		if (line == -1)
 			return;
 
 		try {
 			ITextSelection selection = getTextSelection(document, line);
-			IToggleBreakpointsTarget toggleTarget = 
-			    DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, selection);
+			IToggleBreakpointsTarget toggleTarget = DebugUITools.getToggleBreakpointsTargetManager()
+					.getToggleBreakpointsTarget(fPart, selection);
 			if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
-                IToggleBreakpointsTargetCExtension extension = (IToggleBreakpointsTargetCExtension) toggleTarget;
-                if (extension.canCreateLineBreakpointsInteractive(fPart, selection)) {
-                    extension.createLineBreakpointsInteractive(fPart, selection);
-                }                    
-            } 
+				IToggleBreakpointsTargetCExtension extension = (IToggleBreakpointsTargetCExtension) toggleTarget;
+				if (extension.canCreateLineBreakpointsInteractive(fPart, selection)) {
+					extension.createLineBreakpointsInteractive(fPart, selection);
+				}
+			}
 		} catch (BadLocationException e) {
 			reportException(e);
 		} catch (CoreException e) {
 			reportException(e);
 		}
 	}
-	
+
 	/**
 	 * Report an error to the user.
-	 * 
+	 *
 	 * @param e underlying exception
 	 */
 	private void reportException(Exception e) {
-        IStatus status= new Status(IStatus.ERROR, CDebugUIPlugin.PLUGIN_ID, "Error creating breakpoint: ", e); //$NON-NLS-1$
-	    ErrorDialog.openError(
-	        fPart.getSite().getShell(), 
-	        ActionMessages.getString("CAddBreakpointInteractiveRulerAction_error_title"),  //$NON-NLS-1$
-	        ActionMessages.getString("CAddBreakpointInteractiveRulerAction_error_message"), //$NON-NLS-1$
-	        status);
-	    CDebugUIPlugin.log(status); //
+		IStatus status = new Status(IStatus.ERROR, CDebugUIPlugin.PLUGIN_ID, "Error creating breakpoint: ", e); //$NON-NLS-1$
+		ErrorDialog.openError(fPart.getSite().getShell(),
+				ActionMessages.getString("CAddBreakpointInteractiveRulerAction_error_title"), //$NON-NLS-1$
+				ActionMessages.getString("CAddBreakpointInteractiveRulerAction_error_message"), //$NON-NLS-1$
+				status);
+		CDebugUIPlugin.log(status); //
 	}
-	
+
 	/**
 	 * Disposes this action. Clients must call this method when
 	 * this action is no longer needed.
@@ -137,60 +137,60 @@ public class CAddBreakpointInteractiveRulerAction extends Action implements IUpd
 		fDocument = null;
 		fPart = null;
 		fRulerInfo = null;
-	    DebugUITools.getToggleBreakpointsTargetManager().removeChangedListener(fListener);
+		DebugUITools.getToggleBreakpointsTargetManager().removeChangedListener(fListener);
 	}
 
 	/**
 	 * Returns the document on which this action operates.
-	 * 
+	 *
 	 * @return the document or <code>null</code> if none
 	 */
 	private IDocument getDocument() {
 		if (fDocument != null)
 			return fDocument;
-		
+
 		if (fPart instanceof ITextEditor) {
-			ITextEditor editor= (ITextEditor)fPart;
+			ITextEditor editor = (ITextEditor) fPart;
 			IDocumentProvider provider = editor.getDocumentProvider();
 			if (provider != null)
 				return provider.getDocument(editor.getEditorInput());
 		}
-		
+
 		IDocument doc = fPart.getAdapter(IDocument.class);
 		if (doc != null) {
 			return doc;
 		}
-		
+
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
-		IDocument document= getDocument();
+		IDocument document = getDocument();
 		if (document != null) {
-		    int line = fRulerInfo.getLineOfLastMouseButtonActivity();
-		    if (line > -1) {
-		        try {
-		            ITextSelection selection = getTextSelection(document, line);
-                   
-                    IToggleBreakpointsTarget adapter = 
-                        DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, selection);
-                    if (adapter == null) {
-                        setEnabled(false);
-                        return;
-                    }
-                    if (adapter instanceof IToggleBreakpointsTargetCExtension) {
-                        IToggleBreakpointsTargetCExtension extension = (IToggleBreakpointsTargetCExtension) adapter;
-                        if (extension.canCreateLineBreakpointsInteractive(fPart, selection)) {
-                            setEnabled(true);
-                            return;
-                        }
-                    }
-                } catch (BadLocationException e) {
-                    reportException(e);
-                }
+			int line = fRulerInfo.getLineOfLastMouseButtonActivity();
+			if (line > -1) {
+				try {
+					ITextSelection selection = getTextSelection(document, line);
+
+					IToggleBreakpointsTarget adapter = DebugUITools.getToggleBreakpointsTargetManager()
+							.getToggleBreakpointsTarget(fPart, selection);
+					if (adapter == null) {
+						setEnabled(false);
+						return;
+					}
+					if (adapter instanceof IToggleBreakpointsTargetCExtension) {
+						IToggleBreakpointsTargetCExtension extension = (IToggleBreakpointsTargetCExtension) adapter;
+						if (extension.canCreateLineBreakpointsInteractive(fPart, selection)) {
+							setEnabled(true);
+							return;
+						}
+					}
+				} catch (BadLocationException e) {
+					reportException(e);
+				}
 			}
 		}
 		setEnabled(false);
@@ -198,9 +198,9 @@ public class CAddBreakpointInteractiveRulerAction extends Action implements IUpd
 
 	/**
 	 * Determines the text selection for the breakpoint action.  If clicking on the ruler inside
-	 * the highlighted text, return the text selection for the highlighted text.  Otherwise, 
+	 * the highlighted text, return the text selection for the highlighted text.  Otherwise,
 	 * return a text selection representing the start of the line.
-	 * 
+	 *
 	 * @param document	The IDocument backing the Editor.
 	 * @param line	The line clicked on in the ruler.
 	 * @return	An ITextSelection as described.
@@ -210,13 +210,12 @@ public class CAddBreakpointInteractiveRulerAction extends Action implements IUpd
 		IRegion region = document.getLineInformation(line);
 		ITextSelection textSelection = new TextSelection(document, region.getOffset(), 0);
 		ISelectionProvider provider = fPart.getSite().getSelectionProvider();
-		if (provider != null){
+		if (provider != null) {
 			ISelection selection = provider.getSelection();
-			if (selection instanceof ITextSelection
-					&& ((ITextSelection) selection).getStartLine() <= line
+			if (selection instanceof ITextSelection && ((ITextSelection) selection).getStartLine() <= line
 					&& ((ITextSelection) selection).getEndLine() >= line) {
 				textSelection = (ITextSelection) selection;
-			} 
+			}
 		}
 		return textSelection;
 	}

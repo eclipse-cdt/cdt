@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.utils;
@@ -35,7 +35,7 @@ public class PseudoNameGeneratorTest extends TestCase {
 	protected void setUp() throws Exception {
 		pseudoNameGenerator = new PseudoNameGenerator();
 	}
-	
+
 	public void testNonConflictingCase() {
 		assertEquals(INT1, pseudoNameGenerator.generateNewName(INT));
 	}
@@ -57,11 +57,11 @@ public class PseudoNameGeneratorTest extends TestCase {
 		assertEquals(INT3, pseudoNameGenerator.generateNewName(INT));
 		assertEquals(CHAR2, pseudoNameGenerator.generateNewName(CHAR));
 	}
-	
+
 	public void testWithNamespace() {
-		assertEquals("string", pseudoNameGenerator.generateNewName("std::string"));  //$NON-NLS-1$//$NON-NLS-2$
+		assertEquals("string", pseudoNameGenerator.generateNewName("std::string")); //$NON-NLS-1$//$NON-NLS-2$
 	}
-	
+
 	public void testBug288736TemplateParam() {
 		assertEquals("tempClass", pseudoNameGenerator.generateNewName("tempClass<int>"));
 	}

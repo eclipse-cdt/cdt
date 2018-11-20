@@ -18,12 +18,11 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 import java.util.Arrays;
 import java.util.Comparator;
 
-
 /**
  * GDB/MI thread list parsing.
- * 
+ *
  * Example 1:
- * 
+ *
  * -thread-info
  * ^done,threads=[
  * 	{id="2",target-id="Thread 0xb7c8ab90 (LWP 7010)",
@@ -35,10 +34,10 @@ import java.util.Comparator;
  * 			file="my_test.cc",fullname="/home/francois/GDB/my_test.cc",line="39"},
  * 		state="stopped"}
  * 	],current-thread-id="2"
- * 
- * 
+ *
+ *
  * Example 2:
- * 
+ *
  * -thread-info 2
  * ^done,threads=[
  * 	{id="2",target-id="Thread 0xb7c8ab90 (LWP 7010)",
@@ -46,8 +45,8 @@ import java.util.Comparator;
  * 			file="my_test.cc",fullname="/home/francois/GDB/my_test.cc",line="26"},
  * 		state="stopped"}
  *  ]
- * 
- * 
+ *
+ *
  * Example 3 (non-stop):
  *
  * -thread-info
@@ -58,16 +57,16 @@ import java.util.Comparator;
  * 			file="my_test.cc",fullname="/home/francois/GDB/my_test.cc",line="39"},
  * 		state="stopped"}
  * 	],current-thread-id="1"
- * 
- * 
+ *
+ *
  * Example 4 (non-stop):
- * 
+ *
  * -thread-info 1
  * ^done,threads=[{id="1",target-id="Thread 0xb7d6d6b0 (LWP 14494)",state="running"}]
  *
  *
  * Example 5 (Dicos):
- * 
+ *
  * -thread-info 1
  * ^done,threads=[
  *  {id="1",target-id="Thread 162.32942",details="JUnitProcess_PT (Ready) 175417582794 8572423",
@@ -75,10 +74,10 @@ import java.util.Comparator;
  *            file="/local/home/lmckhou/TSP/TADE/example/JUnitProcess_OU/src/ExpressionTestApp.cc",
  *            fullname="/local/home/lmckhou/TSP/TADE/example/JUnitProcess_OU/src/ExpressionTestApp.cc",line="279"},
  *        state="stopped"}]
- *        
+ *
  * With GDB 7.1, a new 'core' field is present to indicate which core the thread is on.
  * The parsing of this new field is handled by {@link MIThread}
- * 
+ *
  * -thread-info
  * ^done,threads=[
  *  {id="1",target-id="process 1307",
@@ -87,7 +86,7 @@ import java.util.Comparator;
  *   state="stopped",
  *   core="2"}],
  *  current-thread-id="1"
- *  
+ *
  * @since 1.1
  */
 public class MIThreadInfoInfo extends MIInfo {
@@ -116,7 +115,7 @@ public class MIThreadInfoInfo extends MIInfo {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
 			if (rr != null) {
-				MIResult[] results =  rr.getMIResults();
+				MIResult[] results = rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 					if (var.equals("threads")) { //$NON-NLS-1$
@@ -124,8 +123,7 @@ public class MIThreadInfoInfo extends MIInfo {
 						if (val instanceof MIList) {
 							fThreadList = parseThreadsImpl((MIList) val);
 						}
-					}
-					else if (var.equals("current-thread-id")) { //$NON-NLS-1$
+					} else if (var.equals("current-thread-id")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
 							fCurrentThread = ((MIConst) value).getCString().trim();
@@ -151,7 +149,7 @@ public class MIThreadInfoInfo extends MIInfo {
 	static MIThread[] parseThreads(MIList list) {
 		MIValue[] values = list.getMIValues();
 		MIThread[] threadList = new MIThread[values.length];
-		
+
 		for (int i = 0; i < values.length; i++) {
 			threadList[i] = MIThread.parse((MITuple) values[i]);
 		}
@@ -161,8 +159,7 @@ public class MIThreadInfoInfo extends MIInfo {
 			public int compare(MIThread o1, MIThread o2) {
 				try {
 					return Integer.parseInt(o1.getThreadId()) - Integer.parseInt(o2.getThreadId());
-				}
-				catch(NumberFormatException e) {
+				} catch (NumberFormatException e) {
 					return 0;
 				}
 			}
@@ -170,4 +167,3 @@ public class MIThreadInfoInfo extends MIInfo {
 		return threadList;
 	}
 }
-

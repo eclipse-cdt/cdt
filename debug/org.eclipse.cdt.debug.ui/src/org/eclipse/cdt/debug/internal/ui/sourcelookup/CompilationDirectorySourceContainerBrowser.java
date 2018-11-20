@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
  * The browser for adding a compilation directory source container.
  */
 public class CompilationDirectorySourceContainerBrowser extends AbstractSourceContainerBrowser {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -36,10 +36,11 @@ public class CompilationDirectorySourceContainerBrowser extends AbstractSourceCo
 		if (dialog.open() == Window.OK) {
 			String directory = dialog.getDirectory();
 			if (directory != null) {
-				containers[0] = new CompilationDirectorySourceContainer(new Path(directory), dialog.isCompilationSubfolders());			
-				return containers;			
+				containers[0] = new CompilationDirectorySourceContainer(new Path(directory),
+						dialog.isCompilationSubfolders());
+				return containers;
 			}
-		}		
+		}
 		return new ISourceContainer[0];
 	}
 
@@ -48,23 +49,27 @@ public class CompilationDirectorySourceContainerBrowser extends AbstractSourceCo
 	 */
 	@Override
 	public boolean canEditSourceContainers(ISourceLookupDirector director, ISourceContainer[] containers) {
-		return containers.length == 1 && CompilationDirectorySourceContainer.TYPE_ID.equals(containers[0].getType().getId());
+		return containers.length == 1
+				&& CompilationDirectorySourceContainer.TYPE_ID.equals(containers[0].getType().getId());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser#editSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
 	 */
 	@Override
-	public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers) {
-		if (containers.length == 1 && CompilationDirectorySourceContainer.TYPE_ID.equals(containers[0].getType().getId()) ) {
+	public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director,
+			ISourceContainer[] containers) {
+		if (containers.length == 1
+				&& CompilationDirectorySourceContainer.TYPE_ID.equals(containers[0].getType().getId())) {
 			CompilationDirectorySourceContainer c = (CompilationDirectorySourceContainer) containers[0];
-			CompilationDirectorySourceContainerDialog dialog =
-					new CompilationDirectorySourceContainerDialog(shell, c.getDirectory().getPath(), c.isComposite());
+			CompilationDirectorySourceContainerDialog dialog = new CompilationDirectorySourceContainerDialog(shell,
+					c.getDirectory().getPath(), c.isComposite());
 			if (dialog.open() == Window.OK) {
 				String directory = dialog.getDirectory();
 				if (directory != null) {
 					containers[0].dispose();
-					return new ISourceContainer[] { new CompilationDirectorySourceContainer(new Path(directory), dialog.isCompilationSubfolders()) };			
+					return new ISourceContainer[] { new CompilationDirectorySourceContainer(new Path(directory),
+							dialog.isCompilationSubfolders()) };
 				}
 			}
 		}

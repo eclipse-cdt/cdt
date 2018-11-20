@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,6 @@
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
-
 
 import org.eclipse.cdt.testsrunner.model.ITestingSession;
 import org.eclipse.debug.core.ILaunchManager;
@@ -34,6 +33,5 @@ public class RedebugSelectedAction extends RelaunchSelectedAction {
 	protected String getLaunchMode() {
 		return ILaunchManager.DEBUG_MODE;
 	}
-	
-}
 
+}

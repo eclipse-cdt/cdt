@@ -19,9 +19,8 @@ class FunctionInfo extends SourceManipulationInfo {
 	protected boolean isStatic;
 	protected boolean isVolatile;
 	protected boolean isConst;
-	
 
-	protected FunctionInfo (CElement element) {
+	protected FunctionInfo(CElement element) {
 		super(element);
 	}
 
@@ -59,11 +58,9 @@ class FunctionInfo extends SourceManipulationInfo {
 
 	@Override
 	public boolean hasSameContentsAs(SourceManipulationInfo otherInfo) {
-		return (super.hasSameContentsAs(otherInfo)
-		&& (this.isStatic() == ((FunctionInfo)otherInfo).isStatic())
-		&& (this.isVolatile() == ((FunctionInfo)otherInfo).isVolatile())
-		&& (this.isConst() == ((FunctionInfo)otherInfo).isConst())
-		);
+		return (super.hasSameContentsAs(otherInfo) && (this.isStatic() == ((FunctionInfo) otherInfo).isStatic())
+				&& (this.isVolatile() == ((FunctionInfo) otherInfo).isVolatile())
+				&& (this.isConst() == ((FunctionInfo) otherInfo).isConst()));
 	}
 
 	/**

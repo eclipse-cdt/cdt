@@ -11,7 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	private final boolean caseSensitive;
 	private IProgressMonitor monitor;
 	private int monitorCheckCounter;
-	
+
 	private List<PDOMNamedNode> nodes = new ArrayList<>();
 
 	/**
@@ -51,7 +51,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 
 	/**
 	 * Collects all nodes with given name, passing the filter.
-	 * 
+	 *
 	 * @param linkage
 	 * @param name
 	 * @param prefixLookup
@@ -64,56 +64,56 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	 * @param caseSensitive
 	 *            Ignored if <code>contentAssistLookup</code> is true.
 	 */
-	public NamedNodeCollector(PDOMLinkage linkage, char[] name, boolean prefixLookup,
-			boolean contentAssistLookup, boolean caseSensitive) {
-		this.linkage= linkage;
+	public NamedNodeCollector(PDOMLinkage linkage, char[] name, boolean prefixLookup, boolean contentAssistLookup,
+			boolean caseSensitive) {
+		this.linkage = linkage;
 		if (contentAssistLookup) {
-			IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(name); 
-			this.contentAssistMatcher =  matcher.matchRequiredAfterBinarySearch() ? matcher : null;
- 			this.matchChars = matcher.getPrefixForBinarySearch();
- 			this.prefixLookup= true;
- 			this.caseSensitive= false;
+			IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(name);
+			this.contentAssistMatcher = matcher.matchRequiredAfterBinarySearch() ? matcher : null;
+			this.matchChars = matcher.getPrefixForBinarySearch();
+			this.prefixLookup = true;
+			this.caseSensitive = false;
 		} else {
 			this.contentAssistMatcher = null;
 			this.matchChars = name;
-			this.prefixLookup= prefixLookup;
-			this.caseSensitive= caseSensitive;
+			this.prefixLookup = prefixLookup;
+			this.caseSensitive = caseSensitive;
 		}
 	}
-	
+
 	/**
 	 * Allows to cancel a visit. If set a visit may throw an OperationCancelledException.
 	 * @since 4.0
 	 */
 	public void setMonitor(IProgressMonitor pm) {
-		monitor= pm;
+		monitor = pm;
 	}
-		
+
 	@Override
 	final public int compare(long record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
-		IString rhsName= PDOMNamedNode.getDBName(linkage.getDB(), record);
+		IString rhsName = PDOMNamedNode.getDBName(linkage.getDB(), record);
 		return compare(rhsName);
 	}
 
 	private int compare(IString rhsName) throws CoreException {
 		int cmp;
 		if (prefixLookup) {
-			cmp= rhsName.comparePrefix(matchChars, false);
+			cmp = rhsName.comparePrefix(matchChars, false);
 			if (caseSensitive) {
-				cmp= cmp == 0 ? rhsName.comparePrefix(matchChars, true) : cmp;
+				cmp = cmp == 0 ? rhsName.comparePrefix(matchChars, true) : cmp;
 			}
 		} else {
 			if (caseSensitive) {
-				cmp= rhsName.compareCompatibleWithIgnoreCase(matchChars);
+				cmp = rhsName.compareCompatibleWithIgnoreCase(matchChars);
 			} else {
-				cmp= rhsName.compare(matchChars, false);
+				cmp = rhsName.compare(matchChars, false);
 			}
 		}
 		return cmp;
 	}
-	
+
 	@Override
 	final public boolean visit(long record) throws CoreException {
 		if (monitor != null)
@@ -121,8 +121,8 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 
 		if (record == 0)
 			return true;
-		
-		PDOMNode node= PDOMNode.load(linkage.getPDOM(), record);
+
+		PDOMNode node = PDOMNode.load(linkage.getPDOM(), record);
 		if (node instanceof PDOMNamedNode) {
 			return addNode((PDOMNamedNode) node);
 		}
@@ -131,7 +131,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 
 	/**
 	 * Return true to continue the visit.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	protected boolean addNode(PDOMNamedNode node) throws CoreException {
 		if ((contentAssistMatcher == null) || contentAssistMatcher.match(node.getDBName().getChars())) {
@@ -139,11 +139,11 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 		}
 		return true; // look for more
 	}
-	
+
 	final protected List<PDOMNamedNode> getNodeList() {
 		return nodes;
 	}
-	
+
 	final public PDOMNamedNode[] getNodes() {
 		return nodes.toArray(new PDOMNamedNode[nodes.size()]);
 	}
@@ -152,14 +152,14 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	final public boolean visit(IPDOMNode node) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
-		
+
 		if (node instanceof PDOMNamedNode) {
-			PDOMNamedNode pb= (PDOMNamedNode) node;
+			PDOMNamedNode pb = (PDOMNamedNode) node;
 			if (compare(pb.getDBName()) == 0) {
 				addNode(pb);
 			}
 		}
-		return false;	// don't visit children
+		return false; // don't visit children
 	}
 
 	private void checkCancelled() {

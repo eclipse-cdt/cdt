@@ -46,16 +46,15 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, IPDOMMemberOwner {
 	private static final int OFFSET_ENUMERATOR_LIST = PDOMBinding.RECORD_SIZE;
-	private static final int OFFSET_MIN_VALUE= OFFSET_ENUMERATOR_LIST + Database.PTR_SIZE;
-	private static final int OFFSET_MAX_VALUE= OFFSET_MIN_VALUE + 8;
+	private static final int OFFSET_MIN_VALUE = OFFSET_ENUMERATOR_LIST + Database.PTR_SIZE;
+	private static final int OFFSET_MAX_VALUE = OFFSET_MIN_VALUE + 8;
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = OFFSET_MAX_VALUE + 8;
 
-	private Long fMinValue;  // No need for volatile, all fields of Long are final.
-	private Long fMaxValue;  // No need for volatile, all fields of Long are final.
-	
-	public PDOMCEnumeration(PDOMLinkage linkage, PDOMNode parent, IEnumeration enumeration)
-			throws CoreException {
+	private Long fMinValue; // No need for volatile, all fields of Long are final.
+	private Long fMaxValue; // No need for volatile, all fields of Long are final.
+
+	public PDOMCEnumeration(PDOMLinkage linkage, PDOMNode parent, IEnumeration enumeration) throws CoreException {
 		super(linkage, parent, enumeration.getNameCharArray());
 		storeValueBounds(enumeration);
 	}
@@ -63,27 +62,27 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 	public PDOMCEnumeration(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
-	
+
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		storeValueBounds((IEnumeration) newBinding);
 	}
 
 	private void storeValueBounds(IEnumeration enumeration) throws CoreException {
-		final Database db= getDB();
+		final Database db = getDB();
 		final long minValue = enumeration.getMinValue();
 		final long maxValue = enumeration.getMaxValue();
 		db.putLong(record + OFFSET_MIN_VALUE, minValue);
 		db.putLong(record + OFFSET_MAX_VALUE, maxValue);
-		fMinValue= minValue;
-		fMaxValue= maxValue;
+		fMinValue = minValue;
+		fMaxValue = maxValue;
 	}
 
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
-	
+
 	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CENUMERATION;
@@ -96,22 +95,22 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 	}
 
 	private List<PDOMCEnumerator> getCachedEnumerators(boolean create) {
-		final Long key= record;
+		final Long key = record;
 		final PDOM pdom = getPDOM();
 		@SuppressWarnings("unchecked")
-		Reference<List<PDOMCEnumerator>> cached= (Reference<List<PDOMCEnumerator>>) pdom.getCachedResult(key);
-		List<PDOMCEnumerator> result= cached == null ? null : cached.get();
+		Reference<List<PDOMCEnumerator>> cached = (Reference<List<PDOMCEnumerator>>) pdom.getCachedResult(key);
+		List<PDOMCEnumerator> result = cached == null ? null : cached.get();
 
 		if (result == null && create) {
 			// there is no cache, build it:
-			result= loadEnumerators();
+			result = loadEnumerators();
 			pdom.putCachedResult(key, new SoftReference<List<PDOMCEnumerator>>(result));
 		}
 		return result;
 	}
 
 	private List<PDOMCEnumerator> loadEnumerators() {
-		final ArrayList<PDOMCEnumerator> result= new ArrayList<PDOMCEnumerator>();
+		final ArrayList<PDOMCEnumerator> result = new ArrayList<PDOMCEnumerator>();
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + OFFSET_ENUMERATOR_LIST);
 			list.accept(new IPDOMVisitor() {
@@ -122,8 +121,10 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 					}
 					return true;
 				}
+
 				@Override
-				public void leave(IPDOMNode node) {}
+				public void leave(IPDOMNode node) {
+				}
 			});
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -156,18 +157,17 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 		return true;
 	}
 
-
 	@Override
 	public long getMinValue() {
 		if (fMinValue != null) {
 			return fMinValue.longValue();
 		}
-		long minValue= 0;
+		long minValue = 0;
 		try {
-			minValue= getDB().getLong(record + OFFSET_MIN_VALUE);
+			minValue = getDB().getLong(record + OFFSET_MIN_VALUE);
 		} catch (CoreException e) {
 		}
-		fMinValue= minValue;
+		fMinValue = minValue;
 		return minValue;
 	}
 
@@ -176,12 +176,12 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 		if (fMaxValue != null) {
 			return fMaxValue.longValue();
 		}
-		long maxValue= 0;
+		long maxValue = 0;
 		try {
-			maxValue= getDB().getLong(record + OFFSET_MAX_VALUE);
+			maxValue = getDB().getLong(record + OFFSET_MAX_VALUE);
 		} catch (CoreException e) {
 		}
-		fMaxValue= maxValue;
+		fMaxValue = maxValue;
 		return maxValue;
 	}
 
@@ -190,23 +190,23 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
-		
+
 		if (type instanceof PDOMNode) {
-			PDOMNode node= (PDOMNode) type;
+			PDOMNode node = (PDOMNode) type;
 			if (node.getPDOM() == getPDOM()) {
 				return node.getRecord() == getRecord();
 			}
 		}
-		
+
 		if (type instanceof IEnumeration) {
-			IEnumeration etype= (IEnumeration) type;
+			IEnumeration etype = (IEnumeration) type;
 			char[] nchars = etype.getNameCharArray();
 			if (nchars.length == 0) {
-				nchars= ASTTypeUtil.createNameForAnonymous(etype);
+				nchars = ASTTypeUtil.createNameForAnonymous(etype);
 			}
 			if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
 				return false;
-			
+
 			return SemanticUtil.haveSameOwner(this, etype);
 		}
 		return false;

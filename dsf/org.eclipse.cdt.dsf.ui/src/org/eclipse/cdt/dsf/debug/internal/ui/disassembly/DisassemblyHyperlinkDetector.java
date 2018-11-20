@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -37,8 +37,8 @@ class DisassemblyHyperlinkDetector extends AbstractHyperlinkDetector {
 		 * @param region
 		 */
 		public DisassemblyHyperlink(String symbol, IRegion region) {
-			fSymbol= symbol;
-			fRegion= region;
+			fSymbol = symbol;
+			fRegion = region;
 		}
 
 		/*
@@ -71,7 +71,7 @@ class DisassemblyHyperlinkDetector extends AbstractHyperlinkDetector {
 		@Override
 		public void open() {
 			if (fPart != null) {
- 				fPart.gotoSymbol(fSymbol);
+				fPart.gotoSymbol(fSymbol);
 			}
 		}
 
@@ -80,16 +80,15 @@ class DisassemblyHyperlinkDetector extends AbstractHyperlinkDetector {
 	private DisassemblyPart fPart;
 
 	public DisassemblyHyperlinkDetector(DisassemblyPart part) {
-		fPart= part;
+		fPart = part;
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
 	 */
 	@Override
-	public IHyperlink[] detectHyperlinks(ITextViewer textViewer,
-			IRegion region, boolean canShowMultipleHyperlinks) {
-		IDocument document= textViewer.getDocument();
+	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
+		IDocument document = textViewer.getDocument();
 		if (document == null) {
 			return null;
 		}
@@ -97,7 +96,7 @@ class DisassemblyHyperlinkDetector extends AbstractHyperlinkDetector {
 		if (wordRegion != null && wordRegion.getLength() != 0) {
 			String word;
 			try {
-				word= document.get(wordRegion.getOffset(), wordRegion.getLength());
+				word = document.get(wordRegion.getOffset(), wordRegion.getLength());
 				return new IHyperlink[] { new DisassemblyHyperlink(word, wordRegion) };
 			} catch (BadLocationException e) {
 			}

@@ -19,34 +19,32 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
-
-
 public class GotoAnnotationAction extends TextEditorAction {
-		
+
 	private boolean fForward;
-	
+
 	public GotoAnnotationAction(String prefix, boolean forward) {
 		super(ConstructedCEditorMessages.getResourceBundle(), prefix, null);
-		fForward= forward;
+		fForward = forward;
 		if (forward)
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.GOTO_NEXT_ERROR_ACTION);
 		else
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.GOTO_PREVIOUS_ERROR_ACTION);
 	}
-	
+
 	@Override
 	public void run() {
-		CEditor e= (CEditor) getTextEditor();
+		CEditor e = (CEditor) getTextEditor();
 		e.gotoAnnotation(fForward);
 	}
-	
+
 	@Override
 	public void setEditor(ITextEditor editor) {
-		if (editor instanceof CEditor) 
+		if (editor instanceof CEditor)
 			super.setEditor(editor);
 		update();
 	}
-	
+
 	@Override
 	public void update() {
 		setEnabled(getTextEditor() instanceof CEditor);

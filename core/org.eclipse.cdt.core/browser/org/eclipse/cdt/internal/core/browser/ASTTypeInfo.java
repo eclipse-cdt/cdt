@@ -62,21 +62,21 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 			String[] fqn;
 			int elementType;
 			final IBinding binding = name.resolveBinding();
-			final ASTTypeReference ref= createReference(name);
+			final ASTTypeReference ref = createReference(name);
 			elementType = IndexModelUtil.getElementType(binding);
 			if (binding instanceof ICPPBinding) {
-				fqn= ((ICPPBinding) binding).getQualifiedName();
+				fqn = ((ICPPBinding) binding).getQualifiedName();
 			} else if (binding instanceof IField) {
-				IField field= (IField) binding;
-				ICompositeType owner= field.getCompositeTypeOwner();
-				fqn= new String[] { owner.getName(), field.getName() };
+				IField field = (IField) binding;
+				ICompositeType owner = field.getCompositeTypeOwner();
+				fqn = new String[] { owner.getName(), field.getName() };
 			} else {
-				fqn= new String[] { binding.getName() };
+				fqn = new String[] { binding.getName() };
 			}
 			if (binding instanceof IFunction) {
-				final IFunction function= (IFunction)binding;
-				final String[] paramTypes= IndexModelUtil.extractParameterTypes(function);
-				final String returnType= IndexModelUtil.extractReturnType(function);
+				final IFunction function = (IFunction) binding;
+				final String[] paramTypes = IndexModelUtil.extractParameterTypes(function);
+				final String returnType = IndexModelUtil.extractReturnType(function);
 				return new ASTTypeInfo(fqn, elementType, paramTypes, returnType, ref);
 			}
 			return new ASTTypeInfo(fqn, elementType, null, null, ref);
@@ -87,14 +87,13 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 		return null;
 	}
 
-
 	private ASTTypeInfo(String[] fqn, int elementType, String[] params, String returnType, ASTTypeReference reference) {
 		Assert.isNotNull(reference);
-		this.fqn= fqn;
-		this.elementType= elementType;
-		this.params= params;
-		this.returnType= returnType;
-		this.reference= reference;
+		this.fqn = fqn;
+		this.elementType = elementType;
+		this.params = params;
+		this.returnType = returnType;
+		this.reference = reference;
 	}
 
 	private static int hashCode(String[] array) {
@@ -130,7 +129,7 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 
 	@Override
 	public ITypeReference[] getReferences() {
-		return new ITypeReference[] {reference};
+		return new ITypeReference[] { reference };
 	}
 
 	@Override
@@ -190,22 +189,22 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 	}
 
 	private static ASTTypeReference createReference(IASTName name) {
-		IASTFileLocation floc= name.getFileLocation();
+		IASTFileLocation floc = name.getFileLocation();
 		if (floc != null) {
-			String filename= floc.getFileName();
-			IIndexFileLocation ifl= IndexLocationFactory.getIFLExpensive(filename);
-			String fullPath= ifl.getFullPath();
+			String filename = floc.getFileName();
+			IIndexFileLocation ifl = IndexLocationFactory.getIFLExpensive(filename);
+			String fullPath = ifl.getFullPath();
 			if (fullPath != null) {
 				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
 				if (file != null) {
-					return new ASTTypeReference(ifl, name.resolveBinding(), file,
-							floc.getNodeOffset(), floc.getNodeLength());
+					return new ASTTypeReference(ifl, name.resolveBinding(), file, floc.getNodeOffset(),
+							floc.getNodeLength());
 				}
 			} else {
 				IPath path = URIUtil.toPath(ifl.getURI());
 				if (path != null) {
-					return new ASTTypeReference(ifl, name.resolveBinding(), path,
-							floc.getNodeOffset(), floc.getNodeLength());
+					return new ASTTypeReference(ifl, name.resolveBinding(), path, floc.getNodeOffset(),
+							floc.getNodeLength());
 				}
 			}
 		}

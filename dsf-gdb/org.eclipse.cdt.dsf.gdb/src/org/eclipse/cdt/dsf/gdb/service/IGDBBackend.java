@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IGDBBackend extends IMIBackend {
 
-	/** 
+	/**
 	 * ID to use when requesting that the interruptAndWait call wait for an
 	 * implementation-specific default.
 	 * @since 3.0 */
@@ -52,15 +52,15 @@ public interface IGDBBackend extends IMIBackend {
 
 	/**
 	 * Get path of the debugged program on host.
-	 * 
+	 *
 	 * @return IPath
 	 */
 	public IPath getProgramPath();
 
 	/**
 	 * Get init file for GDB.
-	 * 
-	 * @return file name, may have relative or absolute path, or empty string ("") 
+	 *
+	 * @return file name, may have relative or absolute path, or empty string ("")
 	 *         indicating an init file is not specified.
 	 * @throws CoreException
 	 *             - error in getting the option.
@@ -69,7 +69,7 @@ public interface IGDBBackend extends IMIBackend {
 
 	/**
 	 * get arguments for the debugged program.
-	 * 
+	 *
 	 * @return String
 	 * @throws CoreException
 	 *             - error in getting the option.
@@ -77,8 +77,8 @@ public interface IGDBBackend extends IMIBackend {
 	public String getProgramArguments() throws CoreException;
 
 	/**
-	 * Get working directory for GDB. 
-	 * 
+	 * Get working directory for GDB.
+	 *
 	 * @return IPath - null if no meaningful value found.
 	 * @throws CoreException
 	 *             - if any error occurs.
@@ -95,35 +95,35 @@ public interface IGDBBackend extends IMIBackend {
 	 * Returns the list of user-specified variables.
 	 * If no variables are specified, should return an empty list.
 	 * Should not return null.
-	 * 
-	 *  @since 3.0 
+	 *
+	 *  @since 3.0
 	 */
 	public Properties getEnvironmentVariables() throws CoreException;
-	
-	/** 
+
+	/**
 	 * Returns whether the native environment should be cleared before
 	 * setting the user-specified environment variables.
-	 * 
+	 *
 	 * @since 3.0 */
 	public boolean getClearEnvironment() throws CoreException;
-	
+
 	/**
 	 * Sends an interrupt signal to the GDB process.
 	 */
 	public void interrupt();
-	
+
 	/**
-	 * Interrupts the backend and wait to confirm the interrupt 
-	 * succeeded.  The request monitor indicates to the caller if 
+	 * Interrupts the backend and wait to confirm the interrupt
+	 * succeeded.  The request monitor indicates to the caller if
 	 * the interrupt succeeded or not.
-	 * 
+	 *
 	 * @param timeout Maximum number of milliseconds to wait to confirm
 	 *                that the backend has been interrupted.  A value
-	 *                of INTERRUPT_TIMEOUT_DEFAULT specifies to use an 
+	 *                of INTERRUPT_TIMEOUT_DEFAULT specifies to use an
 	 *                implementation-specific default value.
 	 *                Using a value of 0 or a negative value has unspecified
-	 *                behavior. 
- 	 *
+	 *                behavior.
+	 *
 	 * @since 3.0
 	 */
 	public void interruptAndWait(int timeout, RequestMonitor rm);
@@ -144,7 +144,7 @@ public interface IGDBBackend extends IMIBackend {
 
 	/**
 	 * @return true if the ongoing session is attaching to a program locally or remotely.
-	 */	
+	 */
 	public boolean getIsAttachSession();
 
 	/**
@@ -156,20 +156,20 @@ public interface IGDBBackend extends IMIBackend {
 	 * doesn't find out about new or destroyed threads unless it polls gdb. The
 	 * user will enable this behavior if he is debugging such a target
 	 * (typically an embedded one)
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public boolean getUpdateThreadListOnSuspend() throws CoreException;
-	
+
 	/**
 	 * @return True if the full GDB console should be used.  False otherwise.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	default boolean isFullGdbConsoleSupported() {
 		return false;
 	}
-	
+
 	/**
 	 * @return The real GDB process that was started for the debug session
 	 * @since 5.2
@@ -177,7 +177,7 @@ public interface IGDBBackend extends IMIBackend {
 	default Process getProcess() {
 		throw new RuntimeException();
 	}
-	
+
 	/**
 	 * Returns the PTY used when starting the GDB process.
 	 * Can be null if no PTY was used.

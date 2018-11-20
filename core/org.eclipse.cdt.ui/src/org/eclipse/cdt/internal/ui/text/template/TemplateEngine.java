@@ -56,20 +56,20 @@ import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public class TemplateEngine {
 
-	private static final String $_LINE_SELECTION= "${" + GlobalTemplateVariables.LineSelection.NAME + '}'; //$NON-NLS-1$
-	private static final String $_WORD_SELECTION= "${" + GlobalTemplateVariables.WordSelection.NAME + '}'; //$NON-NLS-1$
+	private static final String $_LINE_SELECTION = "${" + GlobalTemplateVariables.LineSelection.NAME + '}'; //$NON-NLS-1$
+	private static final String $_WORD_SELECTION = "${" + GlobalTemplateVariables.WordSelection.NAME + '}'; //$NON-NLS-1$
 
 	/** The context type. */
-	private final TemplateContextType fContextType;	
+	private final TemplateContextType fContextType;
 	/** The result proposals. */
-	private final ArrayList<ICompletionProposal> fProposals= new ArrayList<ICompletionProposal>();
+	private final ArrayList<ICompletionProposal> fProposals = new ArrayList<ICompletionProposal>();
 	/** Positions created on the key documents to remove in reset. */
-	private final Map<IDocument, Position> fPositions= new HashMap<IDocument, Position>();
+	private final Map<IDocument, Position> fPositions = new HashMap<IDocument, Position>();
 	/** Pattern to match the start of a line content */
 	private final Pattern fStartOfLineContentPattern = Pattern.compile("[^ \t]"); //$NON-NLS-1$
 
 	public static class CTemplateProposal extends TemplateProposal implements ICCompletionProposal {
-		
+
 		@Override
 		public IInformationControlCreator getInformationControlCreator() {
 			return new IInformationControlCreator() {
@@ -82,22 +82,24 @@ public class TemplateEngine {
 		}
 
 		public CTemplateProposal(Template template, TemplateContext context, IRegion region, Image image) {
-			super(template, context, region, image, RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.TEMPLATE_TYPE_RELEVANCE);
+			super(template, context, region, image,
+					RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.TEMPLATE_TYPE_RELEVANCE);
 		}
 
-        @Override
+		@Override
 		public String getIdString() {
-            return getDisplayString();
-        }
-        
+			return getDisplayString();
+		}
+
 	}
+
 	/**
 	 * Creates the template engine for a particular context type.
 	 * See <code>TemplateContext</code> for supported context types.
 	 */
 	public TemplateEngine(TemplateContextType contextType) {
 		Assert.isNotNull(contextType);
-		fContextType= contextType;
+		fContextType = contextType;
 	}
 
 	/**
@@ -106,9 +108,9 @@ public class TemplateEngine {
 	public void reset() {
 		fProposals.clear();
 		for (Entry<IDocument, Position> entry2 : fPositions.entrySet()) {
-			Entry<IDocument, Position> entry= entry2;
-			IDocument doc= entry.getKey();
-			Position position= entry.getValue();
+			Entry<IDocument, Position> entry = entry2;
+			IDocument doc = entry.getKey();
+			Position position = entry.getValue();
 			doc.removePosition(position);
 		}
 		fPositions.clear();
@@ -132,9 +134,9 @@ public class TemplateEngine {
 		if (!(fContextType instanceof TranslationUnitContextType))
 			return;
 
-	    IDocument document= viewer.getDocument();
-		Point selection= viewer.getSelectedRange();
-		boolean linesSelected= areLinesSelected(viewer);
+		IDocument document = viewer.getDocument();
+		Point selection = viewer.getSelectedRange();
+		boolean linesSelected = areLinesSelected(viewer);
 		boolean showLineSelectionTemplates = linesSelected;
 		boolean showWordSelectionTemplates = !linesSelected || isOnlyWordOnLine(viewer);
 		if (linesSelected) {
@@ -142,34 +144,36 @@ public class TemplateEngine {
 			try {
 				IRegion startLine = document.getLineInformationOfOffset(selection.x);
 				IRegion endLine = document.getLineInformationOfOffset(selection.x + selection.y - 1);
-				completionPosition= selection.x= startLine.getOffset();
-				selection.y= endLine.getOffset() + endLine.getLength() - startLine.getOffset();
+				completionPosition = selection.x = startLine.getOffset();
+				selection.y = endLine.getOffset() + endLine.getLength() - startLine.getOffset();
 			} catch (BadLocationException exc) {
 			}
 		}
-		Position position= new Position(completionPosition, selection.y);
+		Position position = new Position(completionPosition, selection.y);
 
 		// remember selected text
-		String selectedText= null;
+		String selectedText = null;
 		if (selection.y != 0) {
 			try {
-				selectedText= document.get(selection.x, selection.y);
+				selectedText = document.get(selection.x, selection.y);
 				document.addPosition(position);
 				fPositions.put(document, position);
-			} catch (BadLocationException e) {}
+			} catch (BadLocationException e) {
+			}
 		}
 
-		TranslationUnitContext context= ((TranslationUnitContextType) fContextType).createContext(document, position, translationUnit);
+		TranslationUnitContext context = ((TranslationUnitContextType) fContextType).createContext(document, position,
+				translationUnit);
 		context.setVariable("selection", selectedText); //$NON-NLS-1$
-		int start= context.getStart();
-		int end= context.getEnd();
-		IRegion region= new Region(start, end - start);
+		int start = context.getStart();
+		int end = context.getEnd();
+		IRegion region = new Region(start, end - start);
 
-		Template[] templates= CUIPlugin.getDefault().getTemplateStore().getTemplates();
+		Template[] templates = CUIPlugin.getDefault().getTemplateStore().getTemplates();
 
-		Image image= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TEMPLATE);
+		Image image = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TEMPLATE);
 		if (selection.y == 0) {
-			for (int i= 0; i != templates.length; i++)
+			for (int i = 0; i != templates.length; i++)
 				if (context.canEvaluate(templates[i]))
 					fProposals.add(new CTemplateProposal(templates[i], context, region, image));
 
@@ -178,13 +182,13 @@ public class TemplateEngine {
 			if (linesSelected || context.getKey().length() == 0)
 				context.setForceEvaluation(true);
 
-			for (int i= 0; i != templates.length; i++) {
-				Template template= templates[i];
-				if (context.canEvaluate(template) &&
-					template.getContextTypeId().equals(context.getContextType().getId()) &&
-					((showWordSelectionTemplates && template.getPattern().indexOf($_WORD_SELECTION)	!= -1 || 
-					 (showLineSelectionTemplates &&	template.getPattern().indexOf($_LINE_SELECTION) != -1))))
-				{
+			for (int i = 0; i != templates.length; i++) {
+				Template template = templates[i];
+				if (context.canEvaluate(template)
+						&& template.getContextTypeId().equals(context.getContextType().getId())
+						&& ((showWordSelectionTemplates && template.getPattern().indexOf($_WORD_SELECTION) != -1
+								|| (showLineSelectionTemplates
+										&& template.getPattern().indexOf($_LINE_SELECTION) != -1)))) {
 					fProposals.add(new CTemplateProposal(templates[i], context, region, image));
 				}
 			}
@@ -196,58 +200,58 @@ public class TemplateEngine {
 	 * Returns <code>true</code> if one line is completely selected or if multiple lines are selected. Being
 	 * completely selected means that all characters are selected except the new line characters and
 	 * leading/trailing spaces.
-	 * 
+	 *
 	 * @return <code>true</code> if one or multiple lines are selected
 	 */
 	private boolean areLinesSelected(ITextViewer viewer) {
 		if (viewer == null)
 			return false;
 
-		Point s= viewer.getSelectedRange();
+		Point s = viewer.getSelectedRange();
 		if (s.y == 0)
 			return false;
 
 		try {
 
-			IDocument document= viewer.getDocument();
-			int startLine= document.getLineOfOffset(s.x);
-			IRegion line= document.getLineInformation(startLine);
-			
+			IDocument document = viewer.getDocument();
+			int startLine = document.getLineOfOffset(s.x);
+			IRegion line = document.getLineInformation(startLine);
+
 			String lineContent = document.get(line.getOffset(), line.getLength());
 			Matcher m = fStartOfLineContentPattern.matcher(lineContent);
 			int lineContentStart = 0;
-			if(m.find())
+			if (m.find())
 				lineContentStart = m.start() + line.getOffset();
 			int lineContentLength = lineContent.trim().length();
-			
+
 			return s.x <= lineContentStart && s.x + s.y >= lineContentStart + lineContentLength;
 
 		} catch (BadLocationException x) {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if there's only one word on the line
-	 * 
+	 *
 	 * @return <code>true</code> if only one word is on the line
 	 */
 	private boolean isOnlyWordOnLine(ITextViewer viewer) {
 		if (viewer == null)
 			return false;
 
-		Point s= viewer.getSelectedRange();
+		Point s = viewer.getSelectedRange();
 		if (s.y == 0)
 			return false;
 
 		try {
 
-			IDocument document= viewer.getDocument();
-			int startLine= document.getLineOfOffset(s.x);
-			IRegion line= document.getLineInformation(startLine);
-			
+			IDocument document = viewer.getDocument();
+			int startLine = document.getLineOfOffset(s.x);
+			IRegion line = document.getLineInformation(startLine);
+
 			String lineContent = document.get(line.getOffset(), line.getLength());
-			
+
 			return lineContent.trim().lastIndexOf(' ', s.x) == -1;
 
 		} catch (BadLocationException x) {
@@ -255,4 +259,3 @@ public class TemplateEngine {
 		}
 	}
 }
-

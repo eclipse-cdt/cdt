@@ -32,7 +32,7 @@ public class FileBasedErrorParserTests extends GenericErrorParserTests {
 		super("testErrorsInFiles");
 		errorFile = file;
 	}
-	
+
 	@Override
 	public String getName() {
 		return super.getName() + " " + errorFile.getName();
@@ -41,7 +41,7 @@ public class FileBasedErrorParserTests extends GenericErrorParserTests {
 	public void testErrorsInFiles() throws IOException {
 		InputStream stream = new FileInputStream(errorFile);
 
-		runParserTest(stream, -1, -1, null, null, new String[]{GCC_ERROR_PARSER_ID});
+		runParserTest(stream, -1, -1, null, null, new String[] { GCC_ERROR_PARSER_ID });
 		stream.close();
 	}
 

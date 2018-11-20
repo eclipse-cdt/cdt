@@ -41,14 +41,14 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 	// the size
 	private Point fSize;
 
-	public OverlayImageDescriptor( Image base, ImageDescriptor[] overlays ) {
-		this( base, overlays, new Point( DEFAULT_WIDTH, DEFAULT_HEIGHT ) );
+	public OverlayImageDescriptor(Image base, ImageDescriptor[] overlays) {
+		this(base, overlays, new Point(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 	}
 
-	public OverlayImageDescriptor( Image base, ImageDescriptor[] overlays, Point size ) {
-		setBase( base );
-		setOverlays( overlays );
-		setSize( size );
+	public OverlayImageDescriptor(Image base, ImageDescriptor[] overlays, Point size) {
+		setBase(base);
+		setOverlays(overlays);
+		setSize(size);
 	}
 
 	/**
@@ -57,44 +57,44 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 	protected void drawOverlays(ImageDescriptor[] overlays) {
 		Point size = getSize();
 
-		for ( int i = 0; i < overlays.length; i++ ) {
+		for (int i = 0; i < overlays.length; i++) {
 			ImageDescriptor overlay = overlays[i];
-			if ( overlay == null )
+			if (overlay == null)
 				continue;
 			ImageData overlayData = overlay.getImageData();
 			//Use the missing descriptor if it is not there.
-			if ( overlayData == null )
+			if (overlayData == null)
 				overlayData = ImageDescriptor.getMissingImageDescriptor().getImageData();
-			switch( i ) {
-				case TOP_LEFT:
-					drawImage( overlayData, 0, 0 );
-					break;
-				case TOP_RIGHT:
-					drawImage( overlayData, size.x - overlayData.width, 0 );
-					break;
-				case BOTTOM_LEFT:
-					drawImage( overlayData, 0, size.y - overlayData.height );
-					break;
-				case BOTTOM_RIGHT:
-					drawImage( overlayData, size.x - overlayData.width, size.y - overlayData.height );
-					break;
+			switch (i) {
+			case TOP_LEFT:
+				drawImage(overlayData, 0, 0);
+				break;
+			case TOP_RIGHT:
+				drawImage(overlayData, size.x - overlayData.width, 0);
+				break;
+			case BOTTOM_LEFT:
+				drawImage(overlayData, 0, size.y - overlayData.height);
+				break;
+			case BOTTOM_RIGHT:
+				drawImage(overlayData, size.x - overlayData.width, size.y - overlayData.height);
+				break;
 			}
 		}
 	}
 
 	@Override
-	public boolean equals( Object o ) {
-		if ( !(o instanceof OverlayImageDescriptor) )
+	public boolean equals(Object o) {
+		if (!(o instanceof OverlayImageDescriptor))
 			return false;
-		OverlayImageDescriptor other = (OverlayImageDescriptor)o;
-		return getBase().equals( other.getBase() ) && Arrays.equals( getOverlays(), other.getOverlays() );
+		OverlayImageDescriptor other = (OverlayImageDescriptor) o;
+		return getBase().equals(other.getBase()) && Arrays.equals(getOverlays(), other.getOverlays());
 	}
 
 	@Override
 	public int hashCode() {
 		int code = getBase().hashCode();
 		for (int i = 0; i < getOverlays().length; i++) {
-			if ( getOverlays()[i] != null )
+			if (getOverlays()[i] != null)
 				code ^= getOverlays()[i].hashCode();
 		}
 		return code;
@@ -102,19 +102,19 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int,
 	 *      int)
 	 */
 	@Override
-	protected void drawCompositeImage( int width, int height ) {
-		drawImage( getBase().getImageData(), 0, 0 );
-		drawOverlays( getOverlays() );
+	protected void drawCompositeImage(int width, int height) {
+		drawImage(getBase().getImageData(), 0, 0);
+		drawOverlays(getOverlays());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
 	 */
 	@Override
@@ -126,7 +126,7 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 		return this.fBase;
 	}
 
-	private void setBase( Image base ) {
+	private void setBase(Image base) {
 		this.fBase = base;
 	}
 
@@ -134,11 +134,11 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 		return this.fOverlays;
 	}
 
-	private void setOverlays( ImageDescriptor[] overlays ) {
+	private void setOverlays(ImageDescriptor[] overlays) {
 		this.fOverlays = overlays;
 	}
 
-	private void setSize( Point size ) {
+	private void setSize(Point size) {
 		this.fSize = size;
 	}
 }

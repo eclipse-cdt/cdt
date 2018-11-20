@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
  *     Sergey Prigogin (Google)
  ******************************************************************************/
@@ -58,7 +58,7 @@ public class ToggleRefactoringContext {
 
 	public ToggleRefactoringContext(CRefactoringContext refactoringContext, IIndex index,
 			ITranslationUnit translationUnit, ITextSelection selection)
-					throws OperationCanceledException, CoreException {
+			throws OperationCanceledException, CoreException {
 		this.refactoringContext = refactoringContext;
 		this.index = index;
 		this.selectionTU = translationUnit;
@@ -76,7 +76,7 @@ public class ToggleRefactoringContext {
 	public void findBinding() {
 		try {
 			binding = index.findBinding(selectionName);
-			if(binding == null) {
+			if (binding == null) {
 				binding = selectionName.resolveBinding();
 			}
 		} catch (CoreException e) {
@@ -89,12 +89,10 @@ public class ToggleRefactoringContext {
 		try {
 			IIndexName[] decnames = index.findNames(binding, IIndex.FIND_DECLARATIONS);
 			if (decnames.length > 1)
-				throw new NotSupportedException(
-						Messages.ToggleRefactoringContext_MultipleDeclarations);
+				throw new NotSupportedException(Messages.ToggleRefactoringContext_MultipleDeclarations);
 			for (IIndexName iname : decnames) {
 				selectionAST = getASTForIndexName(iname);
-				IASTName astname = IndexToASTNameHelper.findMatchingASTName(
-						selectionAST, iname, index);
+				IASTName astname = IndexToASTNameHelper.findMatchingASTName(selectionAST, iname, index);
 				if (astname != null) {
 					targetDeclaration = findFunctionDeclarator(astname);
 					targetDeclarationAST = selectionAST;
@@ -153,8 +151,7 @@ public class ToggleRefactoringContext {
 	}
 
 	public IASTTranslationUnit getASTForPartnerFile() throws CoreException {
-		ITranslationUnit tu =
-				SourceHeaderPartnerFinder.getPartnerTranslationUnit(selectionTU, refactoringContext);
+		ITranslationUnit tu = SourceHeaderPartnerFinder.getPartnerTranslationUnit(selectionTU, refactoringContext);
 		if (tu == null)
 			return null;
 		return refactoringContext.getAST(tu, null);
@@ -166,21 +163,18 @@ public class ToggleRefactoringContext {
 			throw new NotSupportedException(Messages.ToggleRefactoringContext_NoTuFound);
 	}
 
-	private IASTTranslationUnit getASTForIndexName(IIndexName indexName)
-			throws CModelException, CoreException {
+	private IASTTranslationUnit getASTForIndexName(IIndexName indexName) throws CModelException, CoreException {
 		if (isSameFileAsInTU(indexName)) {
 			return selectionAST;
 		}
-		ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(
-				indexName.getFile().getLocation(), null);
+		ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(indexName.getFile().getLocation(), null);
 		if (tu == null)
 			return null;
 		return refactoringContext.getAST(tu, null);
 	}
 
 	private boolean isSameFileAsInTU(IIndexName indexName) {
-		return indexName.getFileLocation().getFileName().equals(
-				selectionAST.getFileLocation().getFileName());
+		return indexName.getFileLocation().getFileName().equals(selectionAST.getFileLocation().getFileName());
 	}
 
 	private IASTFunctionDeclarator findFunctionDeclarator(IASTNode node) {

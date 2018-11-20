@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
 /**
  * This interface has methods which returns a UIElement, given an Element.
  * Method to return a List of Elements, given an Element.
- * 
+ *
  * @since 4.0
  */
 
@@ -27,8 +27,8 @@ public interface IUIElementTreeBuilderHelper {
 	 * Returns the UIElement.
 	 * @param element
 	 * @return UIElement
-     * 
-     * @since 4.0
+	 *
+	 * @since 4.0
 	 */
 	public UIElement getUIElement(Element element);
 }

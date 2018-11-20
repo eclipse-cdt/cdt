@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -28,165 +28,164 @@ import org.eclipse.jface.viewers.TreePath;
 /**
  * @since 2.2
  */
-public class TestModelUpdatesListener extends ViewerUpdatesListener
-{
-    
-    private final static Comparator<String> fStringComparator = new Comparator<String>() {
-        
-        @Override
-	public int compare(String s1, String s2) {
-            int l1 = s1.length();
-            int l2 = s2.length();
-            int lmin = l1;
-            int result = 0;
-            if (l1 < l2) {
-                result = -1;
-            } else if (l1 > l2) {
-                result = 1;
-                lmin = l2;
-            }
+public class TestModelUpdatesListener extends ViewerUpdatesListener {
 
-            char c1 = 0;
-            char c2 = 0;
-            int i = 0;
-            for (; i < lmin; i++) {
-                c1 = s1.charAt(i);
-                c2 = s2.charAt(i);
-                if (c1 != c2) {
-                    break;
-                }
-            }
+	private final static Comparator<String> fStringComparator = new Comparator<String>() {
 
-            if (i == lmin) {
-                return result;
-            }
-            return c1 - c2;
-        };
-    };
-    
-    private final static Comparator<TreePath> fTestElementVMCComparator = new Comparator<TreePath>() {
-        @Override
-	public int compare(TreePath p1, TreePath p2) {
-            int l1 = p1.getSegmentCount();
-            int l2 = p2.getSegmentCount();
-            int lmin = l1;
-            int result = 0;
-            if (l1 < l2) {
-                result = -1;
-            } else if (l1 > l2) {
-                result = 1;
-                lmin = l2;
-            }
+		@Override
+		public int compare(String s1, String s2) {
+			int l1 = s1.length();
+			int l2 = s2.length();
+			int lmin = l1;
+			int result = 0;
+			if (l1 < l2) {
+				result = -1;
+			} else if (l1 > l2) {
+				result = 1;
+				lmin = l2;
+			}
 
-            TestElement e1 = null;
-            TestElement e2 = null;
-            int i = 0;
-            for (; i < lmin; i++) {
-                e1 = getTestElement(p1.getSegment(i));
-                e2 = getTestElement(p2.getSegment(i));
-                if ((e1 == null && e2 != null) || (e1 != null && !e1.equals(e2))) {
-                    break;
-                }
-            }
+			char c1 = 0;
+			char c2 = 0;
+			int i = 0;
+			for (; i < lmin; i++) {
+				c1 = s1.charAt(i);
+				c2 = s2.charAt(i);
+				if (c1 != c2) {
+					break;
+				}
+			}
 
-            if (i == lmin) {
-                return result;
-            }
-            String id1 = e1 == null ? "" : e1.getID();
-            String id2 = e2 == null ? "" : e2.getID();
-            return fStringComparator.compare(id1, id2);
-        }
-        
-        private TestElement getTestElement(Object o) {
-            if (o instanceof TestElement) {
-                return (TestElement)o;
-            } else if (o instanceof TestElementVMContext) {
-                return ((TestElementVMContext)o).getElement();
-            } 
-            return null;
-        }
-            
-    };
+			if (i == lmin) {
+				return result;
+			}
+			return c1 - c2;
+		};
+	};
+
+	private final static Comparator<TreePath> fTestElementVMCComparator = new Comparator<TreePath>() {
+		@Override
+		public int compare(TreePath p1, TreePath p2) {
+			int l1 = p1.getSegmentCount();
+			int l2 = p2.getSegmentCount();
+			int lmin = l1;
+			int result = 0;
+			if (l1 < l2) {
+				result = -1;
+			} else if (l1 > l2) {
+				result = 1;
+				lmin = l2;
+			}
+
+			TestElement e1 = null;
+			TestElement e2 = null;
+			int i = 0;
+			for (; i < lmin; i++) {
+				e1 = getTestElement(p1.getSegment(i));
+				e2 = getTestElement(p2.getSegment(i));
+				if ((e1 == null && e2 != null) || (e1 != null && !e1.equals(e2))) {
+					break;
+				}
+			}
+
+			if (i == lmin) {
+				return result;
+			}
+			String id1 = e1 == null ? "" : e1.getID();
+			String id2 = e2 == null ? "" : e2.getID();
+			return fStringComparator.compare(id1, id2);
+		}
+
+		private TestElement getTestElement(Object o) {
+			if (o instanceof TestElement) {
+				return (TestElement) o;
+			} else if (o instanceof TestElementVMContext) {
+				return ((TestElementVMContext) o).getElement();
+			}
+			return null;
+		}
+
+	};
 
 	@Override
-    protected Set<TreePath> makeTreePathSet() {
-	    return new TreeSet<TreePath>(fTestElementVMCComparator);
+	protected Set<TreePath> makeTreePathSet() {
+		return new TreeSet<TreePath>(fTestElementVMCComparator);
 	}
-	
-    @Override
-    protected <V> Map<TreePath, V> makeTreePathMap() {
-        return new TreeMap<TreePath, V>(fTestElementVMCComparator);
-    }
-	
 
-    public TestModelUpdatesListener() {
-        super();
-    }
+	@Override
+	protected <V> Map<TreePath, V> makeTreePathMap() {
+		return new TreeMap<TreePath, V>(fTestElementVMCComparator);
+	}
 
-    public TestModelUpdatesListener(ITreeModelViewer viewer, boolean failOnRedundantUpdates, boolean failOnMultipleModelUpdateSequences) {
-        super(viewer, failOnRedundantUpdates, failOnMultipleModelUpdateSequences);
-    }
-    
-    public void reset(TreePath path, TestElement element, int levels, boolean failOnRedundantUpdates, boolean failOnMultipleUpdateSequences) {
-        reset(failOnRedundantUpdates, failOnMultipleUpdateSequences);
-        addUpdates(path, element, levels);
-    }
+	public TestModelUpdatesListener() {
+		super();
+	}
 
-    public void reset(boolean failOnRedundantUpdates, boolean failOnMultipleUpdateSequences) {
-        reset();
-        setFailOnRedundantUpdates(failOnRedundantUpdates);
-        setFailOnMultipleModelUpdateSequences(failOnMultipleUpdateSequences);
-        setFailOnMultipleLabelUpdateSequences(false);
-    }
+	public TestModelUpdatesListener(ITreeModelViewer viewer, boolean failOnRedundantUpdates,
+			boolean failOnMultipleModelUpdateSequences) {
+		super(viewer, failOnRedundantUpdates, failOnMultipleModelUpdateSequences);
+	}
 
-    public void addUpdates(TreePath path, TestElement element, int levels) {
-        addUpdates(path, element, levels, ALL_UPDATES_COMPLETE);
-    }
+	public void reset(TreePath path, TestElement element, int levels, boolean failOnRedundantUpdates,
+			boolean failOnMultipleUpdateSequences) {
+		reset(failOnRedundantUpdates, failOnMultipleUpdateSequences);
+		addUpdates(path, element, levels);
+	}
 
-    public void addStateUpdates(IInternalTreeModelViewer viewer, TreePath path, TestElement element) {
-        addUpdates(viewer, path, element, -1, STATE_UPDATES);
-    }
-    
-    public void addUpdates(TreePath path, TestElement element, int levels, int flags) {
-        addUpdates(null, path, element, levels, flags);
-    }
+	public void reset(boolean failOnRedundantUpdates, boolean failOnMultipleUpdateSequences) {
+		reset();
+		setFailOnRedundantUpdates(failOnRedundantUpdates);
+		setFailOnMultipleModelUpdateSequences(failOnMultipleUpdateSequences);
+		setFailOnMultipleLabelUpdateSequences(false);
+	}
 
-    public void addUpdates(IInternalTreeModelViewer viewer, TreePath path, TestElement element, int levels, int flags) {
-        if (!path.equals(TreePath.EMPTY)) {
-            if ((flags & LABEL_UPDATES) != 0) {
-                addLabelUpdate(path);
-            }
-            if ((flags & PROPERTY_UPDATES) != 0) {
-                addPropertiesUpdate(path);
-            }
-            if ((flags & HAS_CHILDREN_UPDATES) != 0) {
-                addHasChildrenUpdate(path);
-            }
-        }
+	public void addUpdates(TreePath path, TestElement element, int levels) {
+		addUpdates(path, element, levels, ALL_UPDATES_COMPLETE);
+	}
 
-        if (levels-- != 0) {
-            TestElement[] children = element.getChildren();
-            if (children.length > 0 && (viewer == null || path.getSegmentCount() == 0 || viewer.getExpandedState(path))) {
-                if ((flags & CHILD_COUNT_UPDATES) != 0) {
-                    addChildCountUpdate(path);
-                }
-                if ((flags & CHILDREN_UPDATES) != 0) {
-                    for (int i = 0; i < children.length; i++) {
-                        addChildreUpdate(path, i);
-                    }
-                }
+	public void addStateUpdates(IInternalTreeModelViewer viewer, TreePath path, TestElement element) {
+		addUpdates(viewer, path, element, -1, STATE_UPDATES);
+	}
 
-                if ((flags & STATE_UPDATES) != 0 && viewer != null) {
-                    addStateUpdate(path);
-                }
+	public void addUpdates(TreePath path, TestElement element, int levels, int flags) {
+		addUpdates(null, path, element, levels, flags);
+	}
 
-                for (int i = 0; i < children.length; i++) {
-                    addUpdates(viewer, path.createChildPath(children[i]), children[i], levels, flags);
-                }
-            }
-        
-        }
-    }
+	public void addUpdates(IInternalTreeModelViewer viewer, TreePath path, TestElement element, int levels, int flags) {
+		if (!path.equals(TreePath.EMPTY)) {
+			if ((flags & LABEL_UPDATES) != 0) {
+				addLabelUpdate(path);
+			}
+			if ((flags & PROPERTY_UPDATES) != 0) {
+				addPropertiesUpdate(path);
+			}
+			if ((flags & HAS_CHILDREN_UPDATES) != 0) {
+				addHasChildrenUpdate(path);
+			}
+		}
+
+		if (levels-- != 0) {
+			TestElement[] children = element.getChildren();
+			if (children.length > 0
+					&& (viewer == null || path.getSegmentCount() == 0 || viewer.getExpandedState(path))) {
+				if ((flags & CHILD_COUNT_UPDATES) != 0) {
+					addChildCountUpdate(path);
+				}
+				if ((flags & CHILDREN_UPDATES) != 0) {
+					for (int i = 0; i < children.length; i++) {
+						addChildreUpdate(path, i);
+					}
+				}
+
+				if ((flags & STATE_UPDATES) != 0 && viewer != null) {
+					addStateUpdate(path);
+				}
+
+				for (int i = 0; i < children.length; i++) {
+					addUpdates(viewer, path.createChildPath(children[i]), children[i], levels, flags);
+				}
+			}
+
+		}
+	}
 }
-
-

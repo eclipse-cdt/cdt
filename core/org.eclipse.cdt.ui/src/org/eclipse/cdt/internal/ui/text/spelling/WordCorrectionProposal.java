@@ -60,17 +60,18 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 	 * @param context the invocation context for this proposal
 	 * @param relevance the relevance of this proposal
 	 */
-	public WordCorrectionProposal(final String word, final String[] arguments, final int offset,
-			final int length, final IInvocationContext context, final int relevance) {
-		fWord= Character.isUpperCase(arguments[0].charAt(0)) ?
-				Character.toUpperCase(word.charAt(0)) + word.substring(1) : word;
+	public WordCorrectionProposal(final String word, final String[] arguments, final int offset, final int length,
+			final IInvocationContext context, final int relevance) {
+		fWord = Character.isUpperCase(arguments[0].charAt(0))
+				? Character.toUpperCase(word.charAt(0)) + word.substring(1)
+				: word;
 
-		fOffset= offset;
-		fLength= length;
-		fContext= context;
-		fRelevance= relevance;
+		fOffset = offset;
+		fLength = length;
+		fContext = context;
+		fRelevance = relevance;
 
-		final StringBuilder buffer= new StringBuilder(80);
+		final StringBuilder buffer = new StringBuilder(80);
 
 		buffer.append("...<br>"); //$NON-NLS-1$
 		buffer.append(getHtmlRepresentation(arguments[1]));
@@ -80,7 +81,7 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 		buffer.append(getHtmlRepresentation(arguments[2]));
 		buffer.append("<br>..."); //$NON-NLS-1$
 
-		fLine= buffer.toString();
+		fLine = buffer.toString();
 	}
 
 	/*
@@ -140,10 +141,10 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 	 */
 	@Override
 	public final Point getSelection(final IDocument document) {
-		int offset= fContext.getSelectionOffset();
-		int length= fContext.getSelectionLength();
+		int offset = fContext.getSelectionOffset();
+		int length = fContext.getSelectionLength();
 
-		final int delta= fWord.length() - fLength;
+		final int delta = fWord.length() - fLength;
 		if (offset <= fOffset && offset + length >= fOffset) {
 			length += delta;
 		} else if (offset > fOffset && offset + length > fOffset + fLength) {
@@ -155,7 +156,7 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 
 		return new Point(offset, length);
 	}
-	
+
 	/**
 	 * Returns the html representation of the specified string.
 	 *
@@ -163,11 +164,11 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 	 * @return The html representation for the string
 	 */
 	public static String getHtmlRepresentation(final String string) {
-		final int length= string.length();
-		final StringBuilder buffer= new StringBuilder(string);
+		final int length = string.length();
+		final StringBuilder buffer = new StringBuilder(string);
 
-		for (int offset= length - 1; offset >= 0; offset--) {
-			for (int index= 0; index < IHtmlTagConstants.HTML_ENTITY_CHARACTERS.length; index++) {
+		for (int offset = length - 1; offset >= 0; offset--) {
+			for (int index = 0; index < IHtmlTagConstants.HTML_ENTITY_CHARACTERS.length; index++) {
 				if (string.charAt(offset) == IHtmlTagConstants.HTML_ENTITY_CHARACTERS[index]) {
 					buffer.replace(offset, offset + 1, String.valueOf(IHtmlTagConstants.HTML_ENTITY_CODES[index]));
 					break;

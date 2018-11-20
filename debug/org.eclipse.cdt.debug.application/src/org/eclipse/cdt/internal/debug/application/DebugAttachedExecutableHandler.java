@@ -29,9 +29,10 @@ public class DebugAttachedExecutableHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
+
 		try {
-			final ILaunchConfiguration config = DebugAttachedExecutable.createLaunchConfig(new NullProgressMonitor(), null);
+			final ILaunchConfiguration config = DebugAttachedExecutable.createLaunchConfig(new NullProgressMonitor(),
+					null);
 			if (config != null) {
 				Display.getDefault().syncExec(new Runnable() {
 

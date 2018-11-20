@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- * 
+ *
  *     -data-list-register-names [ ( REGNO )+ ]
  *
  *   Show a list of register names for the current target.  If no
@@ -31,25 +31,24 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  * include empty register names.
  *
  */
-public class MIDataListRegisterNames extends MICommand<MIDataListRegisterNamesInfo> 
-{
-    public MIDataListRegisterNames(IContainerDMContext ctx) {
-        super(ctx, "-data-list-register-names"); //$NON-NLS-1$
-    }
+public class MIDataListRegisterNames extends MICommand<MIDataListRegisterNamesInfo> {
+	public MIDataListRegisterNames(IContainerDMContext ctx) {
+		super(ctx, "-data-list-register-names"); //$NON-NLS-1$
+	}
 
-    public MIDataListRegisterNames(IContainerDMContext ctx, int [] regnos) {
-        this(ctx);
-        if (regnos != null && regnos.length > 0) {
-            String[] array = new String[regnos.length];
-            for (int i = 0; i < regnos.length; i++) {
-                array[i] = Integer.toString(regnos[i]);
-            }
-            setParameters(array);
-        }
-    }
-    
-    @Override
-    public MIDataListRegisterNamesInfo getResult(MIOutput output) {
-        return new MIDataListRegisterNamesInfo(output);
-    }
+	public MIDataListRegisterNames(IContainerDMContext ctx, int[] regnos) {
+		this(ctx);
+		if (regnos != null && regnos.length > 0) {
+			String[] array = new String[regnos.length];
+			for (int i = 0; i < regnos.length; i++) {
+				array[i] = Integer.toString(regnos[i]);
+			}
+			setParameters(array);
+		}
+	}
+
+	@Override
+	public MIDataListRegisterNamesInfo getResult(MIOutput output) {
+		return new MIDataListRegisterNamesInfo(output);
+	}
 }

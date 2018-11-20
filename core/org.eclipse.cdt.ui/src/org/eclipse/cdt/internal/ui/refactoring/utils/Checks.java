@@ -48,7 +48,7 @@ public class Checks {
 	/*
 	 * no instances
 	 */
-	private Checks(){
+	private Checks() {
 	}
 
 	public static boolean startsWithUpperCase(String s) {
@@ -62,12 +62,12 @@ public class Checks {
 		}
 	}
 
-	public static boolean startsWithLowerCase(String s){
+	public static boolean startsWithLowerCase(String s) {
 		if (s == null) {
 			return false;
 		} else if (s.isEmpty()) {
 			return false;
-	    } else {
+		} else {
 			// Workaround for JDK bug (see 26529)
 			return s.charAt(0) == Character.toLowerCase(s.charAt(0));
 		}
@@ -111,26 +111,26 @@ public class Checks {
 	 * @return RefactoringStatus based on the given status or the name, if empty.
 	 */
 	public static RefactoringStatus checkName(String name, IStatus status) {
-		RefactoringStatus result= new RefactoringStatus();
+		RefactoringStatus result = new RefactoringStatus();
 		if (name.isEmpty())
 			return RefactoringStatus.createFatalErrorStatus(Messages.Checks_choose_name);
 
 		if (status.isOK())
 			return result;
 
-		switch (status.getSeverity()){
-			case IStatus.ERROR:
-				return RefactoringStatus.createFatalErrorStatus(status.getMessage());
-			case IStatus.WARNING:
-				return RefactoringStatus.createWarningStatus(status.getMessage());
-			case IStatus.INFO:
-				return RefactoringStatus.createInfoStatus(status.getMessage());
-			default: // Nothing
-				return new RefactoringStatus();
+		switch (status.getSeverity()) {
+		case IStatus.ERROR:
+			return RefactoringStatus.createFatalErrorStatus(status.getMessage());
+		case IStatus.WARNING:
+			return RefactoringStatus.createWarningStatus(status.getMessage());
+		case IStatus.INFO:
+			return RefactoringStatus.createInfoStatus(status.getMessage());
+		default: // Nothing
+			return new RefactoringStatus();
 		}
 	}
 
-	public static boolean resourceExists(IPath resourcePath){
+	public static boolean resourceExists(IPath resourcePath) {
 		return ResourcesPlugin.getWorkspace().getRoot().findMember(resourcePath) != null;
 	}
 
@@ -147,22 +147,22 @@ public class Checks {
 	}
 
 	public static boolean isReadOnly(IResource res) throws CModelException {
-		ResourceAttributes attributes= res.getResourceAttributes();
+		ResourceAttributes attributes = res.getResourceAttributes();
 		if (attributes != null && attributes.isReadOnly())
 			return true;
 
 		if (!(res instanceof IContainer))
 			return false;
 
-		IContainer container= (IContainer)res;
+		IContainer container = (IContainer) res;
 		IResource[] children;
 		try {
 			children = container.members();
-			for (int i= 0; i < children.length; i++) {
+			for (int i = 0; i < children.length; i++) {
 				if (isReadOnly(children[i]))
 					return true;
 			}
-		} catch (CModelException e){
+		} catch (CModelException e) {
 			throw e;
 		} catch (CoreException e) {
 			throw new CModelException(e);
@@ -173,11 +173,11 @@ public class Checks {
 	//-------- validateEdit checks ----
 
 	public static RefactoringStatus validateModifiesFiles(IFile[] filesToModify, Object context) {
-		RefactoringStatus result= new RefactoringStatus();
-		IStatus status= Resources.checkInSync(filesToModify);
+		RefactoringStatus result = new RefactoringStatus();
+		IStatus status = Resources.checkInSync(filesToModify);
 		if (!status.isOK())
 			result.merge(RefactoringStatus.create(status));
-		status= Resources.makeCommittable(filesToModify, context);
+		status = Resources.makeCommittable(filesToModify, context);
 		if (!status.isOK()) {
 			result.merge(RefactoringStatus.create(status));
 			if (!result.hasFatalError()) {
@@ -188,23 +188,23 @@ public class Checks {
 	}
 
 	public static void addModifiedFilesToChecker(IFile[] filesToModify, CheckConditionsContext context) {
-		ResourceChangeChecker checker= context.getChecker(ResourceChangeChecker.class);
-		IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
+		ResourceChangeChecker checker = context.getChecker(ResourceChangeChecker.class);
+		IResourceChangeDescriptionFactory deltaFactory = checker.getDeltaFactory();
 
-		for (int i= 0; i < filesToModify.length; i++) {
+		for (int i = 0; i < filesToModify.length; i++) {
 			deltaFactory.change(filesToModify[i]);
 		}
 	}
 
 	public static RefactoringStatus validateEdit(ITranslationUnit tu, Object context) {
-		IResource resource= CModelUtil.toOriginal(tu).getResource();
-		RefactoringStatus result= new RefactoringStatus();
+		IResource resource = CModelUtil.toOriginal(tu).getResource();
+		RefactoringStatus result = new RefactoringStatus();
 		if (resource == null)
 			return result;
-		IStatus status= Resources.checkInSync(resource);
+		IStatus status = Resources.checkInSync(resource);
 		if (!status.isOK())
 			result.merge(RefactoringStatus.create(status));
-		status= Resources.makeCommittable(resource, context);
+		status = Resources.makeCommittable(resource, context);
 		if (!status.isOK()) {
 			result.merge(RefactoringStatus.create(status));
 			if (!result.hasFatalError()) {

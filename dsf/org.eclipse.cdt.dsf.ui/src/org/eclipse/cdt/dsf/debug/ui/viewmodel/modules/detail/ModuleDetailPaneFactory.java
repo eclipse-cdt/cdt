@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     Ericsson AB		  - Modules view for DSF implementation
  *******************************************************************************/
@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 	public static final String MODULE_DETAIL_PANE_ID = ModuleDetailPane.ID;
+
 	@Override
 	public IDetailPane createDetailPane(String paneID) {
 		return new ModuleDetailPane();
@@ -34,7 +35,7 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 
 	@Override
 	public String getDetailPaneDescription(String paneID) {
-		if (paneID.equals(ModuleDetailPane.ID)){
+		if (paneID.equals(ModuleDetailPane.ID)) {
 			return ModuleDetailPane.DESCRIPTION;
 		}
 		return null;
@@ -42,7 +43,7 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 
 	@Override
 	public String getDetailPaneName(String paneID) {
-		if (paneID.equals(ModuleDetailPane.ID)){
+		if (paneID.equals(ModuleDetailPane.ID)) {
 			return ModuleDetailPane.NAME;
 		}
 		return null;

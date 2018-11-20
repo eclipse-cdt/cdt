@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
@@ -24,8 +24,9 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 public class ModifiedASTStatementWriter extends StatementWriter {
 	private final ASTModificationHelper modificationHelper;
-	
-	public ModifiedASTStatementWriter(Scribe scribe, ASTWriterVisitor visitor, ModificationScopeStack stack, NodeCommentMap commentMap) {
+
+	public ModifiedASTStatementWriter(Scribe scribe, ASTWriterVisitor visitor, ModificationScopeStack stack,
+			NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		this.modificationHelper = new ASTModificationHelper(stack);
 	}
@@ -44,7 +45,7 @@ public class ModifiedASTStatementWriter extends StatementWriter {
 
 	@Override
 	protected IASTStatement[] getNestedStatements(IASTCompoundStatement compoundStatement) {
-		return modificationHelper.createModifiedChildArray(compoundStatement,
-				compoundStatement.getStatements(), IASTStatement.class, commentMap);
+		return modificationHelper.createModifiedChildArray(compoundStatement, compoundStatement.getStatements(),
+				IASTStatement.class, commentMap);
 	}
 }

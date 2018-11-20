@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 public class AutotoolsPreferencesMessages {
 
 	/**
-	 * 
+	 *
 	 */
 	private AutotoolsPreferencesMessages() {
 	}
@@ -38,6 +38,6 @@ public class AutotoolsPreferencesMessages {
 		} catch (NullPointerException e) {
 			return '#' + key + '#';
 		}
-	}	
+	}
 
 }

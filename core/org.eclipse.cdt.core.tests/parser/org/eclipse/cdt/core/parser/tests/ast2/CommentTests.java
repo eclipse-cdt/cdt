@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik 
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- * Emanuel Graf & Guido Zgraggen - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * Emanuel Graf & Guido Zgraggen - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -24,10 +24,10 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
  * @author Guido Zgraggen
- * 
+ *
  */
 public class CommentTests extends AST2TestBase {
-	
+
 	public static TestSuite suite() {
 		return suite(CommentTests.class);
 	}
@@ -38,7 +38,7 @@ public class CommentTests extends AST2TestBase {
 
 		assertEquals(9, comments.length);
 	}
-	
+
 	public void testCommentsInHeaderFile() throws ParserException {
 		IASTTranslationUnit tu = parse(getHSource(), ParserLanguage.CPP, false, true);
 		IASTComment[] comments = tu.getComments();
@@ -53,18 +53,18 @@ public class CommentTests extends AST2TestBase {
 		assertEquals("//value field", new String(comments[7].getComment()));
 		assertEquals("//Endcomment h", new String(comments[8].getComment()));
 	}
-	
+
 	public void testCountCommentsInCPPFile() throws ParserException {
 		IASTTranslationUnit tu = parse(getCppSource(), ParserLanguage.CPP, false, true);
 		IASTComment[] comments = tu.getComments();
-		
+
 		assertEquals(10, comments.length);
 	}
 
 	public void testCommentsInCPPFile() throws ParserException {
 		IASTTranslationUnit tu = parse(getCppSource(), ParserLanguage.CPP, false, true);
 		IASTComment[] comments = tu.getComments();
-		
+
 		assertEquals("// Comment in cpp", new String(comments[0].getComment()));
 		assertEquals("/*The magic 5 */", new String(comments[1].getComment()));
 		assertEquals("// Another comment", new String(comments[2].getComment()));
@@ -76,18 +76,18 @@ public class CommentTests extends AST2TestBase {
 		assertEquals("//Last comment in cpp", new String(comments[8].getComment()));
 		assertEquals("//An integer", new String(comments[9].getComment()));
 	}
-	
+
 	public void testCountCommentsInCFile() throws ParserException {
 		IASTTranslationUnit tu = parse(getCSource(), ParserLanguage.C, false, true);
 		IASTComment[] comments = tu.getComments();
-		
+
 		assertEquals(4, comments.length);
 	}
-	
+
 	public void testCommentsInCFile() throws ParserException {
 		IASTTranslationUnit tu = parse(getCSource(), ParserLanguage.C, false, true);
 		IASTComment[] comments = tu.getComments();
-		
+
 		assertEquals("//A little input/output programm", new String(comments[0].getComment()));
 		assertEquals("//Read the number", new String(comments[1].getComment()));
 		assertEquals("/*\n			 * That is the answer ;-)\n			 */", new String(comments[2].getComment()));
@@ -119,8 +119,8 @@ public class CommentTests extends AST2TestBase {
 		buffer.append("};\n");
 		buffer.append("#endif\n");
 		return buffer.toString();
-	}	
-	
+	}
+
 	private String getCppSource() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("void CppClass()\n");
@@ -169,7 +169,7 @@ public class CommentTests extends AST2TestBase {
 		buffer.append("}\n");
 		return buffer.toString();
 	}
-	
+
 	private String getCSource() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("//A little input/output programm\n");
@@ -196,59 +196,59 @@ public class CommentTests extends AST2TestBase {
 		buffer.append("	return 0; //The end\n");
 		buffer.append("}\n");
 		return buffer.toString();
-	}	
-	
+	}
+
 	// #ifdef xxx
 	// // comment1
-	// #else 
+	// #else
 	// // comment2
 	// #endif
 	public void testCommentsInInactiveCode_bug183930() throws Exception {
-		CharSequence code= getContents(1)[0];
+		CharSequence code = getContents(1)[0];
 		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, true);
 		IASTComment[] comments = tu.getComments();
-		
+
 		assertEquals(2, comments.length);
 		assertEquals("// comment1", new String(comments[0].getComment()));
 		assertEquals("// comment2", new String(comments[1].getComment()));
 	}
-	
+
 	// //comment
 	public void testCommentLocation_bug186337() throws Exception {
-		CharSequence code= getContents(1)[0];
+		CharSequence code = getContents(1)[0];
 		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, true);
 		IASTComment[] comments = tu.getComments();
-		
+
 		assertEquals(1, comments.length);
 		assertNotNull(comments[0].getFileLocation());
 		assertNotNull(comments[0].getNodeLocations());
 
 		tu = parse(code.toString(), ParserLanguage.C, false, true);
 		comments = tu.getComments();
-		
+
 		assertEquals(1, comments.length);
 		assertNotNull(comments[0].getFileLocation());
 		assertNotNull(comments[0].getNodeLocations());
 	}
-	
-	// // TODO: shows up in task list 
+
+	// // TODO: shows up in task list
 	// #include "somefile.h"  // TODO: ignored
-    //
+	//
 	// #ifdef WHATEVA // TODO: ignored
 	// #endif // TODO: ignored
 	// // TODO: shows up in task list
 	public void testCommentInDirectives_bug192546() throws Exception {
-		CharSequence code= getContents(1)[0];
+		CharSequence code = getContents(1)[0];
 		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, false);
 		IASTComment[] comments = tu.getComments();
-		
+
 		assertEquals(5, comments.length);
 		assertNotNull(comments[0].getFileLocation());
 		assertNotNull(comments[0].getNodeLocations());
 		for (IASTComment comment : comments) {
-			IASTFileLocation loc= comment.getFileLocation();
-			int idx= loc.getNodeOffset() + comment.getRawSignature().indexOf("TODO");
-			assertEquals("TODO", code.subSequence(idx, idx + 4));			
+			IASTFileLocation loc = comment.getFileLocation();
+			int idx = loc.getNodeOffset() + comment.getRawSignature().indexOf("TODO");
+			assertEquals("TODO", code.subSequence(idx, idx + 4));
 		}
 	}
 }

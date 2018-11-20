@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.Objects;
@@ -21,20 +21,19 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 public class CHMultiDefNode extends CHNode {
 	private CHNode[] fChildren;
 
-	public CHMultiDefNode(CHNode parent, ITranslationUnit tu, long timestamp, ICElement[] elements,
-			int linkageID) {
+	public CHMultiDefNode(CHNode parent, ITranslationUnit tu, long timestamp, ICElement[] elements, int linkageID) {
 		super(parent, tu, timestamp, null, linkageID);
 		if (elements.length == 0) {
 			throw new IllegalArgumentException();
 		}
 		fHashCode += elements[0].hashCode();
-		fChildren= new CHNode[elements.length];
+		fChildren = new CHNode[elements.length];
 		for (int i = 0; i < elements.length; i++) {
 			ICElement element = elements[i];
-			fChildren[i]= new CHMultiDefChildNode(this, tu, timestamp, element, linkageID);
+			fChildren[i] = new CHMultiDefChildNode(this, tu, timestamp, element, linkageID);
 		}
 	}
-	
+
 	public CHNode[] getChildNodes() {
 		return fChildren;
 	}
@@ -49,7 +48,6 @@ public class CHMultiDefNode extends CHNode {
 		return fChildren[0].isVariableOrEnumerator();
 	}
 
-	
 	@Override
 	public ICElement getOneRepresentedDeclaration() {
 		return fChildren[0].getRepresentedDeclaration();
@@ -59,13 +57,13 @@ public class CHMultiDefNode extends CHNode {
 	public boolean isMultiDef() {
 		return true;
 	}
-    
-    @Override
-	public boolean equals(Object o) {
-    	if (!super.equals(o) || !(o instanceof CHMultiDefNode)) 
-    		return false;
 
-    	final CHMultiDefNode rhs = (CHMultiDefNode) o;
+	@Override
+	public boolean equals(Object o) {
+		if (!super.equals(o) || !(o instanceof CHMultiDefNode))
+			return false;
+
+		final CHMultiDefNode rhs = (CHMultiDefNode) o;
 		return Objects.equals(getOneRepresentedDeclaration(), rhs.getOneRepresentedDeclaration());
-    }
+	}
 }

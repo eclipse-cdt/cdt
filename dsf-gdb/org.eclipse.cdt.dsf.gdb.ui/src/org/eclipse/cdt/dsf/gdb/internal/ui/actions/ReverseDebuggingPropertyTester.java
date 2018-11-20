@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -20,33 +20,34 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.expressions.PropertyTester;
 
 /**
- * Property tester for reverse debugging information available through the given 
+ * Property tester for reverse debugging information available through the given
  * object.  The object being tested is an {@link IDMVMContext}.
  * <p>
  * One property is supported:
  * <ul>
- * <li> "isReverseDebuggingEnabled" - Checks whether reverse debugging is currently 
+ * <li> "isReverseDebuggingEnabled" - Checks whether reverse debugging is currently
  * enabled given the receiver.</li>
  * </ul>
  * </p>
  */
 public class ReverseDebuggingPropertyTester extends PropertyTester {
 
-    private static final String ENABLED = "isReverseDebuggingEnabled"; //$NON-NLS-1$
+	private static final String ENABLED = "isReverseDebuggingEnabled"; //$NON-NLS-1$
 
-    @Override
-    public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-    	if (ENABLED.equals(property)) {
-    		if (receiver instanceof IDMVMContext) {
-				return test((IDMVMContext)receiver);
-    		}
-    	}
-    	return false;
-    }   
-    
-    private boolean test(IDMVMContext context) {
-    	boolean result = false;
-		ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(context.getDMContext(), ICommandControlDMContext.class);
+	@Override
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+		if (ENABLED.equals(property)) {
+			if (receiver instanceof IDMVMContext) {
+				return test((IDMVMContext) receiver);
+			}
+		}
+		return false;
+	}
+
+	private boolean test(IDMVMContext context) {
+		boolean result = false;
+		ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(context.getDMContext(),
+				ICommandControlDMContext.class);
 		if (controlDmc != null) {
 			IReverseToggleHandler toggle = (controlDmc.getAdapter(IReverseToggleHandler.class));
 			if (toggle != null) {
@@ -54,5 +55,5 @@ public class ReverseDebuggingPropertyTester extends PropertyTester {
 			}
 		}
 		return result;
-    }
+	}
 }

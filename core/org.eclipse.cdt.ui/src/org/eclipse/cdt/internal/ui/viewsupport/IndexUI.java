@@ -111,16 +111,17 @@ public class IndexUI {
 	public static IIndexBinding elementToBinding(IIndex index, ICElement element, int linkageID) throws CoreException {
 		if (element instanceof ISourceReference) {
 			ISourceReference sf = ((ISourceReference) element);
-			ISourceRange range= sf.getSourceRange();
+			ISourceRange range = sf.getSourceRange();
 			if (range.getIdLength() != 0) {
-				IIndexName name= elementToName(index, element, linkageID);
+				IIndexName name = elementToName(index, element, linkageID);
 				if (name != null) {
 					return index.findBinding(name);
 				}
 			} else {
-				String name= element.getElementName();
-				name= name.substring(name.lastIndexOf(':') + 1);
-				IIndexBinding[] bindings= index.findBindings(name.toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
+				String name = element.getElementName();
+				name = name.substring(name.lastIndexOf(':') + 1);
+				IIndexBinding[] bindings = index.findBindings(name.toCharArray(), IndexFilter.ALL,
+						new NullProgressMonitor());
 				for (IIndexBinding binding : bindings) {
 					if (checkBinding(binding, element)) {
 						return binding;
@@ -139,16 +140,13 @@ public class IndexUI {
 			return binding instanceof ICPPNamespace;
 		case ICElement.C_STRUCT_DECLARATION:
 		case ICElement.C_STRUCT:
-			return binding instanceof ICompositeType &&
-				((ICompositeType) binding).getKey() == ICompositeType.k_struct;
+			return binding instanceof ICompositeType && ((ICompositeType) binding).getKey() == ICompositeType.k_struct;
 		case ICElement.C_CLASS:
 		case ICElement.C_CLASS_DECLARATION:
-			return binding instanceof ICPPClassType &&
-				((ICompositeType) binding).getKey() == ICPPClassType.k_class;
+			return binding instanceof ICPPClassType && ((ICompositeType) binding).getKey() == ICPPClassType.k_class;
 		case ICElement.C_UNION:
 		case ICElement.C_UNION_DECLARATION:
-			return binding instanceof ICompositeType &&
-				((ICompositeType) binding).getKey() == ICompositeType.k_union;
+			return binding instanceof ICompositeType && ((ICompositeType) binding).getKey() == ICompositeType.k_union;
 		case ICElement.C_TYPEDEF:
 			return binding instanceof ITypedef;
 		case ICElement.C_METHOD:
@@ -190,18 +188,19 @@ public class IndexUI {
 	public static IIndexName elementToName(IIndex index, ICElement element, int linkageID) throws CoreException {
 		if (element instanceof ISourceReference) {
 			ISourceReference sf = ((ISourceReference) element);
-			ITranslationUnit tu= sf.getTranslationUnit();
+			ITranslationUnit tu = sf.getTranslationUnit();
 			if (tu != null) {
-				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
+				IIndexFileLocation location = IndexLocationFactory.getIFL(tu);
 				if (location != null) {
-					IIndexFile[] files= index.getFiles(location);
+					IIndexFile[] files = index.getFiles(location);
 					for (IIndexFile file : files) {
 						if (linkageID == -1 || file.getLinkageID() == linkageID) {
-							String elementName= element.getElementName();
-							int idx= elementName.lastIndexOf(":") + 1; //$NON-NLS-1$
-							ISourceRange pos= sf.getSourceRange();
-							IRegion region = getConvertedRegion(tu, file, pos.getIdStartPos() + idx, pos.getIdLength() - idx);
-							IIndexName[] names= file.findNames(region.getOffset(), region.getLength());
+							String elementName = element.getElementName();
+							int idx = elementName.lastIndexOf(":") + 1; //$NON-NLS-1$
+							ISourceRange pos = sf.getSourceRange();
+							IRegion region = getConvertedRegion(tu, file, pos.getIdStartPos() + idx,
+									pos.getIdLength() - idx);
+							IIndexName[] names = file.findNames(region.getOffset(), region.getLength());
 							for (IIndexName name2 : names) {
 								IIndexName name = name2;
 								if (!name.isReference() && elementName.endsWith(new String(name.getSimpleID()))) {
@@ -219,11 +218,11 @@ public class IndexUI {
 	public static boolean isIndexed(IIndex index, ICElement element) throws CoreException {
 		if (element instanceof ISourceReference) {
 			ISourceReference sf = ((ISourceReference) element);
-			ITranslationUnit tu= sf.getTranslationUnit();
+			ITranslationUnit tu = sf.getTranslationUnit();
 			if (tu != null) {
-				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
+				IIndexFileLocation location = IndexLocationFactory.getIFL(tu);
 				if (location != null) {
-					IIndexFile[] files= index.getFiles(location);
+					IIndexFile[] files = index.getFiles(location);
 					return files.length > 0;
 				}
 			}
@@ -231,40 +230,40 @@ public class IndexUI {
 		return false;
 	}
 
-	private static IRegion getConvertedRegion(ITranslationUnit tu, IIndexFile file, int pos,
-			int length) throws CoreException {
-		IRegion region= new Region(pos, length);
-		IPositionConverter converter=
-				CCorePlugin.getPositionTrackerManager().findPositionConverter(tu, file.getTimestamp());
+	private static IRegion getConvertedRegion(ITranslationUnit tu, IIndexFile file, int pos, int length)
+			throws CoreException {
+		IRegion region = new Region(pos, length);
+		IPositionConverter converter = CCorePlugin.getPositionTrackerManager().findPositionConverter(tu,
+				file.getTimestamp());
 		if (converter != null) {
-			region= converter.actualToHistoric(region);
+			region = converter.actualToHistoric(region);
 		}
 		return region;
 	}
 
 	public static IIndexInclude elementToInclude(IIndex index, IInclude include) throws CoreException {
 		if (include != null) {
-			ITranslationUnit tu= include.getTranslationUnit();
+			ITranslationUnit tu = include.getTranslationUnit();
 			if (tu != null) {
-				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
+				IIndexFileLocation location = IndexLocationFactory.getIFL(tu);
 				if (location != null) {
-					IIndexFile[] files= index.getFiles(location);
+					IIndexFile[] files = index.getFiles(location);
 					for (IIndexFile file : files) {
-						String elementName= include.getElementName();
-						ISourceRange pos= include.getSourceRange();
-						IRegion region= getConvertedRegion(tu, file, pos.getIdStartPos(), pos.getIdLength());
+						String elementName = include.getElementName();
+						ISourceRange pos = include.getSourceRange();
+						IRegion region = getConvertedRegion(tu, file, pos.getIdStartPos(), pos.getIdLength());
 
-						IIndexInclude[] includes= index.findIncludes(file);
-						int bestDiff= Integer.MAX_VALUE;
-						IIndexInclude best= null;
+						IIndexInclude[] includes = index.findIncludes(file);
+						int bestDiff = Integer.MAX_VALUE;
+						IIndexInclude best = null;
 						for (IIndexInclude candidate : includes) {
-							int diff= Math.abs(candidate.getNameOffset() - region.getOffset());
+							int diff = Math.abs(candidate.getNameOffset() - region.getOffset());
 							if (diff > bestDiff) {
 								break;
 							}
 							if (candidate.getFullName().endsWith(elementName)) {
-								bestDiff= diff;
-								best= candidate;
+								bestDiff = diff;
+								best = candidate;
 							}
 						}
 						if (best != null)
@@ -295,11 +294,12 @@ public class IndexUI {
 
 	public static ICElementHandle[] findAllDefinitions(IIndex index, IBinding binding) throws CoreException {
 		if (binding != null) {
-			IIndexName[] defs= index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+			IIndexName[] defs = index.findNames(binding,
+					IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 
 			Set<ICElementHandle> result = new LinkedHashSet<>();
 			for (IIndexName in : defs) {
-				ICElementHandle definition= getCElementForName((ICProject) null, index, in);
+				ICElementHandle definition = getCElementForName((ICProject) null, index, in);
 				if (definition != null) {
 					result.add(definition);
 				}
@@ -320,22 +320,23 @@ public class IndexUI {
 	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IASTName declName)
 			throws CoreException {
 		assert !declName.isReference();
-		IBinding binding= declName.resolveBinding();
+		IBinding binding = declName.resolveBinding();
 		if (binding != null) {
-			ITranslationUnit tu= getTranslationUnit(declName);
+			ITranslationUnit tu = getTranslationUnit(declName);
 			if (tu != null) {
 				if (tu instanceof IWorkingCopy)
 					tu = ((IWorkingCopy) tu).getOriginalElement();
-				IFile file= (IFile) tu.getResource();
-				long timestamp= file != null ? file.getLocalTimeStamp() : 0;
-				IASTFileLocation loc= declName.getFileLocation();
+				IFile file = (IFile) tu.getResource();
+				long timestamp = file != null ? file.getLocalTimeStamp() : 0;
+				IASTFileLocation loc = declName.getFileLocation();
 				if (loc == null) {
 					return null;
 				}
-				IRegion region= new Region(loc.getNodeOffset(), loc.getNodeLength());
-				IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu, timestamp);
+				IRegion region = new Region(loc.getNodeOffset(), loc.getNodeLength());
+				IPositionConverter converter = CCorePlugin.getPositionTrackerManager().findPositionConverter(tu,
+						timestamp);
 				if (converter != null) {
-					region= converter.actualToHistoric(region);
+					region = converter.actualToHistoric(region);
 				}
 				return CElementHandleFactory.create(tu, binding, declName.isDefinition(), region, timestamp);
 			}
@@ -359,7 +360,7 @@ public class IndexUI {
 
 	private static ITranslationUnit getTranslationUnit(ICProject cproject, final IASTFileLocation fileLocation) {
 		if (fileLocation != null) {
-			IPath path= Path.fromOSString(fileLocation.getFileName());
+			IPath path = Path.fromOSString(fileLocation.getFileName());
 			try {
 				return CoreModelUtil.findTranslationUnitForLocation(path, cproject);
 			} catch (CModelException e) {
@@ -368,19 +369,18 @@ public class IndexUI {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Given a 'source' and a 'target' translation unit, return a translation unit
 	 * that resolves to the same file as 'target' and has a workspace path that
 	 * matches the workspace path of 'source' as closely as possible.
-	 * 
+	 *
 	 * Most commonly, 'target' will be the only trasnlation unit that resolves to
 	 * the file in question, and 'target' is returned. In the presence of linked
 	 * folders, however, multiple workspace paths can refer to the same file, and
 	 * this function chooses the one that's closest to 'source'.
 	 */
-	public static ITranslationUnit getPreferredTranslationUnit(ITranslationUnit target, 
-			ITranslationUnit source) {
+	public static ITranslationUnit getPreferredTranslationUnit(ITranslationUnit target, ITranslationUnit source) {
 		// Get the files corresponding to the source and target translation units.
 		// These files encode the workspace paths.
 		IFile sourceFile = source.getFile();
@@ -388,25 +388,25 @@ public class IndexUI {
 		if (sourceFile == null || targetFile == null) {
 			return target;
 		}
-		
+
 		// Resolve the location of the target in the filesystem.
 		IPath targetLocation = targetFile.getLocation();
 		if (targetLocation == null) {
 			return target;
 		}
-		
+
 		// Find all files that resolve to the same location.
 		IFile[] candidates = ResourceLookup.findFilesForLocation(targetLocation);
-		
+
 		// In the common case that there is one only file that resolves to that
 		// location, or if the search found no results, return the original target.
 		if (candidates.length <= 1) {
 			return target;
 		}
-		
+
 		// Get the workspace path of the source translation unit's file.
 		final IPath sourcePath = sourceFile.getFullPath();
-				
+
 		// Sort the candidates files by how closely they match 'sourcePath'.
 		Arrays.sort(candidates, new Comparator<IFile>() {
 			@Override
@@ -414,7 +414,7 @@ public class IndexUI {
 				// Get the workspace paths of the files being compared.
 				IPath p1 = f1.getFullPath();
 				IPath p2 = f2.getFullPath();
-				
+
 				// Closeness of the match is defined by how many segments of
 				// the candidate's workspace path match 'sourcePath'.
 				int s1 = p1.matchingFirstSegments(sourcePath);
@@ -423,12 +423,12 @@ public class IndexUI {
 					return -1;
 				if (s1 < s2)
 					return 1;
-				
+
 				// Fall back on alphabetical comparison.
 				return p1.toString().compareTo(p2.toString());
 			}
 		});
-		
+
 		// Processing in the sorted order, return the first file for which
 		// a translation unit can be found.
 		for (IFile candidate : candidates) {
@@ -437,7 +437,7 @@ public class IndexUI {
 				return tu;
 			}
 		}
-		
+
 		// Fall back on returning the original target.
 		return target;
 	}
@@ -445,7 +445,7 @@ public class IndexUI {
 	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IIndexName declName)
 			throws CoreException {
 		assert !declName.isReference();
-		ITranslationUnit tu= getTranslationUnit(preferProject, declName);
+		ITranslationUnit tu = getTranslationUnit(preferProject, declName);
 		if (tu != null) {
 			return getCElementForName(tu, index, declName);
 		}
@@ -454,19 +454,20 @@ public class IndexUI {
 
 	public static ICElementHandle getCElementForName(ITranslationUnit tu, IIndex index, IIndexName declName)
 			throws CoreException {
-		IRegion region= new Region(declName.getNodeOffset(), declName.getNodeLength());
-		long timestamp= declName.getFile().getTimestamp();
-		return CElementHandleFactory.create(tu, index.findBinding(declName), declName.isDefinition(), region, timestamp);
+		IRegion region = new Region(declName.getNodeOffset(), declName.getNodeLength());
+		long timestamp = declName.getFile().getTimestamp();
+		return CElementHandleFactory.create(tu, index.findBinding(declName), declName.isDefinition(), region,
+				timestamp);
 	}
 
 	public static ICElementHandle getCElementForMacro(ICProject preferProject, IIndex index, IIndexMacro macro)
 			throws CoreException {
-		ITranslationUnit tu= getTranslationUnit(preferProject, macro.getFileLocation());
+		ITranslationUnit tu = getTranslationUnit(preferProject, macro.getFileLocation());
 		if (tu != null) {
-			IIndexName name= macro.getDefinition();
+			IIndexName name = macro.getDefinition();
 			if (name != null) {
-				IRegion region= new Region(name.getNodeOffset(), name.getNodeLength());
-				long timestamp= macro.getFile().getTimestamp();
+				IRegion region = new Region(name.getNodeOffset(), name.getNodeLength());
+				long timestamp = macro.getFile().getTimestamp();
 				return CElementHandleFactory.create(tu, macro, region, timestamp);
 			}
 		}
@@ -476,9 +477,9 @@ public class IndexUI {
 	public static ICElementHandle findAnyDeclaration(IIndex index, ICProject preferProject, IBinding binding)
 			throws CoreException {
 		if (binding != null) {
-			IIndexName[] names= index.findNames(binding, IIndex.FIND_DECLARATIONS);
+			IIndexName[] names = index.findNames(binding, IIndex.FIND_DECLARATIONS);
 			for (IIndexName name : names) {
-				ICElementHandle elem= getCElementForName(preferProject, index, name);
+				ICElementHandle elem = getCElementForName(preferProject, index, name);
 				if (elem != null) {
 					return elem;
 				}
@@ -500,42 +501,43 @@ public class IndexUI {
 		if (workingCopy == null)
 			return null;
 
-		final IASTName[] result= {null};
+		final IASTName[] result = { null };
 		ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_ACTIVE_ONLY, null, new ASTRunnable() {
 			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 				if (ast != null) {
 					final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
-					IASTName name= nodeSelector.findEnclosingName(offset, length);
+					IASTName name = nodeSelector.findEnclosingName(offset, length);
 					if (name == null) {
-						name= nodeSelector.findImplicitName(offset, length);
+						name = nodeSelector.findImplicitName(offset, length);
 					}
 					if (name != null && name.getParent() instanceof IASTPreprocessorMacroExpansion) {
-						IASTFileLocation floc= name.getParent().getFileLocation();
-						IASTNode node= nodeSelector.findEnclosingNodeInExpansion(floc.getNodeOffset(), floc.getNodeLength());
+						IASTFileLocation floc = name.getParent().getFileLocation();
+						IASTNode node = nodeSelector.findEnclosingNodeInExpansion(floc.getNodeOffset(),
+								floc.getNodeLength());
 						if (node instanceof IASTName) {
-							name= (IASTName) node;
-						} else if (node instanceof IASTFunctionCallExpression){
-							IASTExpression expr= ((IASTFunctionCallExpression) node).getFunctionNameExpression();
+							name = (IASTName) node;
+						} else if (node instanceof IASTFunctionCallExpression) {
+							IASTExpression expr = ((IASTFunctionCallExpression) node).getFunctionNameExpression();
 							if (expr instanceof IASTIdExpression) {
-								name= ((IASTIdExpression) expr).getName();
+								name = ((IASTIdExpression) expr).getName();
 							}
 						} else {
 							if (node instanceof IASTSimpleDeclaration) {
-								IASTNode[] dtors= ((IASTSimpleDeclaration) node).getDeclarators();
+								IASTNode[] dtors = ((IASTSimpleDeclaration) node).getDeclarators();
 								if (dtors != null && dtors.length > 0) {
-									node= dtors[0];
+									node = dtors[0];
 								}
 							} else if (node instanceof IASTFunctionDefinition) {
-								node= ((IASTFunctionDefinition) node).getDeclarator();
+								node = ((IASTFunctionDefinition) node).getDeclarator();
 							}
 							if (node instanceof IASTDeclarator) {
-								IASTDeclarator dtor= ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) node);
-								name= dtor.getName();
+								IASTDeclarator dtor = ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) node);
+								name = dtor.getName();
 							}
 						}
 					}
-					result[0]= name;
+					result[0] = name;
 				}
 				return Status.OK_STATUS;
 			}
@@ -544,24 +546,26 @@ public class IndexUI {
 	}
 
 	public static String getFileNotIndexedMessage(ICElement input) {
-		ITranslationUnit tu= null;
+		ITranslationUnit tu = null;
 		if (input instanceof ISourceReference) {
-			ISourceReference ref= (ISourceReference) input;
-			tu= ref.getTranslationUnit();
+			ISourceReference ref = (ISourceReference) input;
+			tu = ref.getTranslationUnit();
 		}
 		if (tu == null) {
 			return NLS.bind(Messages.IndexUI_infoNotInSource, input.getElementName());
 		}
 
-		String msg= NLS.bind(Messages.IndexUI_infoNotInIndex, tu.getElementName());
+		String msg = NLS.bind(Messages.IndexUI_infoNotInIndex, tu.getElementName());
 
-		IResource res= tu.getResource();
+		IResource res = tu.getResource();
 		if (res != null) {
-			Properties props= IndexerPreferences.getProperties(res.getProject());
-			if (props == null || !Boolean.parseBoolean((String) props.get(IndexerPreferences.KEY_INDEX_ALL_FILES)) ||
-					(!Boolean.parseBoolean((String) props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG)) &&
-					 !Boolean.parseBoolean((String) props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG)))) {
-				msg= msg + " " + Messages.IndexUI_infoSelectIndexAllFiles; //$NON-NLS-1$
+			Properties props = IndexerPreferences.getProperties(res.getProject());
+			if (props == null || !Boolean.parseBoolean((String) props.get(IndexerPreferences.KEY_INDEX_ALL_FILES))
+					|| (!Boolean.parseBoolean(
+							(String) props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG))
+							&& !Boolean.parseBoolean((String) props
+									.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG)))) {
+				msg = msg + " " + Messages.IndexUI_infoSelectIndexAllFiles; //$NON-NLS-1$
 			}
 		}
 		return msg;
@@ -571,9 +575,9 @@ public class IndexUI {
 		if (input instanceof ICElementHandle) {
 			return input;
 		}
-		IIndexName name= elementToName(index, input);
+		IIndexName name = elementToName(index, input);
 		if (name != null) {
-			ICElement handle= getCElementForName(input.getCProject(), index, name);
+			ICElement handle = getCElementForName(input.getCProject(), index, name);
 			if (handle != null) {
 				return handle;
 			}
@@ -584,17 +588,16 @@ public class IndexUI {
 	/**
 	 * Searches for all specializations that depend on the definition of the given binding.
 	 */
-	public static List<? extends IBinding> findSpecializations(IIndex index, IBinding binding)
-			throws CoreException {
-		List<IBinding> result= null;
+	public static List<? extends IBinding> findSpecializations(IIndex index, IBinding binding) throws CoreException {
+		List<IBinding> result = null;
 
 		// Check for instances of the given binding.
 		if (binding instanceof ICPPInstanceCache) {
-			ICPPTemplateInstance[] instances= ((ICPPInstanceCache) binding).getAllInstances();
+			ICPPTemplateInstance[] instances = ((ICPPInstanceCache) binding).getAllInstances();
 			for (ICPPTemplateInstance inst : instances) {
 				if (!ASTInternal.hasDeclaration(inst)) {
 					if (result == null)
-						result= new ArrayList<>(instances.length);
+						result = new ArrayList<>(instances.length);
 					result.add(inst);
 				}
 			}
@@ -608,14 +611,15 @@ public class IndexUI {
 				if (specOwner instanceof ICPPClassSpecialization) {
 					// Add the specialized member.
 					IBinding specializedMember = ((ICPPClassSpecialization) specOwner).specializeMember(binding);
-					specializedMember= index.adaptBinding(specializedMember);
+					specializedMember = index.adaptBinding(specializedMember);
 					if (specializedMember != null) {
 						if (result == null)
-							result= new ArrayList<>(specializations.size());
+							result = new ArrayList<>(specializations.size());
 						result.add(specializedMember);
 						// Also add instances of the specialized member.
 						if (specializedMember instanceof ICPPInstanceCache) {
-							ICPPTemplateInstance[] instances= ((ICPPInstanceCache) specializedMember).getAllInstances();
+							ICPPTemplateInstance[] instances = ((ICPPInstanceCache) specializedMember)
+									.getAllInstances();
 							for (ICPPTemplateInstance inst : instances) {
 								if (!ASTInternal.hasDeclaration(inst)) {
 									result.add(inst);

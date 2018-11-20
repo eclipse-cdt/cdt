@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
@@ -62,8 +62,7 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 
 	@Override
 	protected CRefactoring createRefactoring() {
-		refactoring = new ExtractConstantRefactoring(getSelectedTranslationUnit(), getSelection(),
-				getCProject());
+		refactoring = new ExtractConstantRefactoring(getSelectedTranslationUnit(), getSelection(), getCProject());
 		return refactoring;
 	}
 
@@ -947,7 +946,6 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 		assertRefactoringSuccess();
 	}
 
-
 	//A.cpp
 	//int i = /*$*/42/*$$*/;
 	public void testDefaultNameForIntegerLiteral() throws Exception {
@@ -985,19 +983,13 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 		runUpToInitialConditions();
 		ExtractConstantInfo refactoringInfo = refactoring.getRefactoringInfo();
 
-		String[] expectedOccupiedNames = { "free_function", "function",
-				"global_variable", "i_in_NS2", "j_in_NS1", "local_after",
-				"local_at", "local_before", "member_function",
-				"member_variable", "parameter", "NS_1", "NS_2", "S",
-				"S_in_NS2" };
+		String[] expectedOccupiedNames = { "free_function", "function", "global_variable", "i_in_NS2", "j_in_NS1",
+				"local_after", "local_at", "local_before", "member_function", "member_variable", "parameter", "NS_1",
+				"NS_2", "S", "S_in_NS2" };
 		String[] expectedFreeNames = { "_42", "i_in_NS1", "nested", "S_in_NS1" };
 		String[] allNames = combine(expectedOccupiedNames, expectedFreeNames);
-		String[] usedNames = Arrays.stream(allNames)
-								.filter(refactoringInfo::isNameUsed)
-								.toArray(String[]::new);
-		String[] freeNames = Arrays.stream(allNames)
-								.filter(not(refactoringInfo::isNameUsed))
-								.toArray(String[]::new);
+		String[] usedNames = Arrays.stream(allNames).filter(refactoringInfo::isNameUsed).toArray(String[]::new);
+		String[] freeNames = Arrays.stream(allNames).filter(not(refactoringInfo::isNameUsed)).toArray(String[]::new);
 
 		assertEquals(Arrays.toString(expectedOccupiedNames), Arrays.toString(usedNames));
 		assertEquals(Arrays.toString(expectedFreeNames), Arrays.toString(freeNames));

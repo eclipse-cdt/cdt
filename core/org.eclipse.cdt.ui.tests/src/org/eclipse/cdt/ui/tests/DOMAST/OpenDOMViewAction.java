@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
+ * IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
@@ -38,15 +38,14 @@ public class OpenDOMViewAction implements IViewActionDelegate, IEditorActionDele
 
 	IViewPart viewPart = null;
 	ISelection selection = null;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	@Override
 	public void init(IViewPart view) {
 		this.viewPart = view;
-		
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -55,8 +54,8 @@ public class OpenDOMViewAction implements IViewActionDelegate, IEditorActionDele
 	@Override
 	public void run(IAction action) {
 		// TODO Auto-generated method stub
-	
-		Object obj = ((IStructuredSelection)selection).getFirstElement();
+
+		Object obj = ((IStructuredSelection) selection).getFirstElement();
 		ITranslationUnit tu = null;
 		IEditorPart part = null;
 		if (obj instanceof ISourceReference) {
@@ -67,30 +66,32 @@ public class OpenDOMViewAction implements IViewActionDelegate, IEditorActionDele
 						try {
 							part = EditorUtility.openInEditor(obj);
 						} catch (CModelException cme) {
-						} catch (PartInitException pie) {}
-					
+						} catch (PartInitException pie) {
+						}
+
 					}
 				}
 			}
 		}
-		
+
 		IViewPart tempView = null;
 
 		try {
 			tempView = viewPart.getSite().getPage().showView(DOMAST.VIEW_ID);
-		} catch (PartInitException pie) {}
-		
+		} catch (PartInitException pie) {
+		}
+
 		if (tempView != null) {
 			if (tempView instanceof DOMAST) {
-				((DOMAST)tempView).setTranslationUnit(tu);
-				((DOMAST)tempView).setPart(part);
-				((DOMAST)tempView).setContentProvider(((DOMAST)tempView).new ViewContentProvider(tu));
+				((DOMAST) tempView).setTranslationUnit(tu);
+				((DOMAST) tempView).setPart(part);
+				((DOMAST) tempView).setContentProvider(((DOMAST) tempView).new ViewContentProvider(tu));
 			}
 		}
 
 		viewPart.getSite().getPage().activate(tempView);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -112,5 +113,5 @@ public class OpenDOMViewAction implements IViewActionDelegate, IEditorActionDele
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
-	
+
 }

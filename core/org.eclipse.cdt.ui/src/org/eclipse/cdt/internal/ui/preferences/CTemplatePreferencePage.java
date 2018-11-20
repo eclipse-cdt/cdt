@@ -55,23 +55,25 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	 */
 	protected class CEditTemplateDialog extends EditTemplateDialog {
 
-		public CEditTemplateDialog(Shell shell, Template template,
-				boolean edit, boolean isNameModifiable,
+		public CEditTemplateDialog(Shell shell, Template template, boolean edit, boolean isNameModifiable,
 				ContextTypeRegistry contextTypeRegistry) {
 			super(shell, template, edit, isNameModifiable, contextTypeRegistry);
 		}
+
 		/*
 		 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage.EditTemplateDialog#createViewer(org.eclipse.swt.widgets.Composite)
 		 */
 		@Override
 		protected SourceViewer createViewer(Composite parent) {
-			IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-			CSourceViewer viewer= new CSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL, store);
-			CTextTools tools= CUIPlugin.getDefault().getTextTools();
-			CSourceViewerConfiguration configuration= new CSourceViewerConfiguration(tools.getColorManager(), store, null, tools.getDocumentPartitioning()) {
+			IPreferenceStore store = CUIPlugin.getDefault().getCombinedPreferenceStore();
+			CSourceViewer viewer = new CSourceViewer(parent, null, null, false,
+					SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL, store);
+			CTextTools tools = CUIPlugin.getDefault().getTextTools();
+			CSourceViewerConfiguration configuration = new CSourceViewerConfiguration(tools.getColorManager(), store,
+					null, tools.getDocumentPartitioning()) {
 				@Override
 				public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-					ContentAssistant assistant= new ContentAssistant();
+					ContentAssistant assistant = new ContentAssistant();
 					assistant.enableAutoActivation(true);
 					assistant.enableAutoInsert(true);
 					assistant.setContentAssistProcessor(getTemplateProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
@@ -86,11 +88,12 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 			viewer.configure(configuration);
 			viewer.setEditable(true);
 			viewer.setDocument(document);
-		
-			Font font= JFaceResources.getFontRegistry().get(PreferenceConstants.EDITOR_TEXT_FONT);
+
+			Font font = JFaceResources.getFontRegistry().get(PreferenceConstants.EDITOR_TEXT_FONT);
 			viewer.getTextWidget().setFont(font);
-		
-			CSourcePreviewerUpdater.registerPreviewer(viewer, configuration, CUIPlugin.getDefault().getCombinedPreferenceStore());
+
+			CSourcePreviewerUpdater.registerPreviewer(viewer, configuration,
+					CUIPlugin.getDefault().getCombinedPreferenceStore());
 			return viewer;
 		}
 	}
@@ -100,7 +103,7 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 		setTemplateStore(CUIPlugin.getDefault().getTemplateStore());
 		setContextTypeRegistry(CUIPlugin.getDefault().getTemplateContextRegistry());
 	}
-	
+
 	/*
 	 * @see PreferencePage#createControl(Composite)
 	 */
@@ -123,7 +126,8 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	 */
 	@Override
 	protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable) {
-		CEditTemplateDialog dialog= new CEditTemplateDialog(getShell(), template, edit, isNameModifiable, getContextTypeRegistry());
+		CEditTemplateDialog dialog = new CEditTemplateDialog(getShell(), template, edit, isNameModifiable,
+				getContextTypeRegistry());
 		if (dialog.open() == Window.OK) {
 			return dialog.getTemplate();
 		}
@@ -135,31 +139,35 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	 */
 	@Override
 	protected SourceViewer createViewer(Composite parent) {
-		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-		CSourceViewer viewer= new CSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL, store);
-		CTextTools tools= CUIPlugin.getDefault().getTextTools();
-		CSourceViewerConfiguration configuration = new CSourceViewerConfiguration(tools.getColorManager(), store, null, tools.getDocumentPartitioning());
+		IPreferenceStore store = CUIPlugin.getDefault().getCombinedPreferenceStore();
+		CSourceViewer viewer = new CSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL,
+				store);
+		CTextTools tools = CUIPlugin.getDefault().getTextTools();
+		CSourceViewerConfiguration configuration = new CSourceViewerConfiguration(tools.getColorManager(), store, null,
+				tools.getDocumentPartitioning());
 		IDocument document = new Document();
 		tools.setupCDocument(document);
 		viewer.configure(configuration);
 		viewer.setEditable(false);
 		viewer.setDocument(document);
-	
-		Font font= JFaceResources.getFontRegistry().get(PreferenceConstants.EDITOR_TEXT_FONT);
+
+		Font font = JFaceResources.getFontRegistry().get(PreferenceConstants.EDITOR_TEXT_FONT);
 		viewer.getTextWidget().setFont(font);
-		
-		Control control= viewer.getControl();
-		GridData data= new GridData(GridData.FILL_BOTH);
-		data.heightHint= convertHeightInCharsToPixels(5);
+
+		Control control = viewer.getControl();
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = convertHeightInCharsToPixels(5);
 		control.setLayoutData(data);
-	
-		control.getAccessible().addAccessibleListener(new AccessibleAdapter() {			
+
+		control.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
-				e.result = PreferencesMessages.TemplatePreferencePage_Viewer_preview; 
-		}});
-		
-		CSourcePreviewerUpdater.registerPreviewer(viewer, configuration, CUIPlugin.getDefault().getCombinedPreferenceStore());
+				e.result = PreferencesMessages.TemplatePreferencePage_Viewer_preview;
+			}
+		});
+
+		CSourcePreviewerUpdater.registerPreviewer(viewer, configuration,
+				CUIPlugin.getDefault().getCombinedPreferenceStore());
 		return viewer;
 	}
 

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ import org.eclipse.ui.IEditorInput;
  */
 public class SourceFileInfo {
 	public final String fFileKey;
-	public final IStorage fFile;	// fEdition is subject to change; this records value given to us at construction
+	public final IStorage fFile; // fEdition is subject to change; this records value given to us at construction
 	public IStorage fEdition;
 	public BigInteger[] fLine2Addr;
 	public Addr2Line[] fAddr2Line;
@@ -52,7 +52,7 @@ public class SourceFileInfo {
 	public volatile Job fEditionJob;
 	public ISourcePresentationCreator fPresentationCreator;
 	public BigInteger fStartAddress = BigInteger.ONE.shiftLeft(64).subtract(BigInteger.ONE);
-	public BigInteger fEndAddress= BigInteger.ZERO;
+	public BigInteger fEndAddress = BigInteger.ZERO;
 
 	public SourceFileInfo(String fileKey, IStorage file) {
 		fFileKey = fileKey;
@@ -84,19 +84,19 @@ public class SourceFileInfo {
 		IEditorInput input = new SourceEditorInput(fEdition);
 		IDocument doc = provider.getDocument(input);
 		if (doc != null) {
-			IContentType contentType= null;
+			IContentType contentType = null;
 			if (fEdition instanceof IFile) {
-				IFile file= (IFile)fEdition;
-				contentType= CCorePlugin.getContentType(file.getProject(), file.getName());
+				IFile file = (IFile) fEdition;
+				contentType = CCorePlugin.getContentType(file.getProject(), file.getName());
 			} else {
-				contentType= CCorePlugin.getContentType(fEdition.getName());
+				contentType = CCorePlugin.getContentType(fEdition.getName());
 			}
-			ILanguage language= null;
+			ILanguage language = null;
 			if (contentType != null) {
-				language= LanguageManager.getInstance().getLanguage(contentType);
+				language = LanguageManager.getInstance().getLanguage(contentType);
 			}
 			if (language != null) {
-				fPresentationCreator= SourcePresentationCreatorFactory.create(language, fEdition, viewer);
+				fPresentationCreator = SourcePresentationCreatorFactory.create(language, fEdition, viewer);
 			}
 			int lines = doc.getNumberOfLines();
 			fLine2Addr = new BigInteger[lines];
@@ -126,7 +126,7 @@ public class SourceFileInfo {
 		}
 		fSource = null;
 		fValid = false;
-//		fLinesNode = null;
+		//		fLinesNode = null;
 	}
 
 	public String getLine(int lineNr) {
@@ -137,8 +137,8 @@ public class SourceFileInfo {
 		try {
 			int startOffset = fSource.getLineOffset(first);
 			int endOffset;
-			if (last < fSource.getNumberOfLines()-1) {
-				IRegion lastRegion = fSource.getLineInformation(last+1);
+			if (last < fSource.getNumberOfLines() - 1) {
+				IRegion lastRegion = fSource.getLineInformation(last + 1);
 				endOffset = lastRegion.getOffset();
 			} else {
 				// last line
@@ -186,12 +186,12 @@ public class SourceFileInfo {
 		}
 		return -1;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return fEdition.toString(); 
+		return fEdition.toString();
 	}
 }

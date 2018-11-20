@@ -31,7 +31,7 @@ public class CHeaderRule implements IRule {
 
 	/**
 	 * Creates a new CHeaderRule.
-	 * 
+	 *
 	 * @param token
 	 *            Style token.
 	 */
@@ -57,13 +57,13 @@ public class CHeaderRule implements IRule {
 					if (contentLength < 1) {
 						break;
 					}
-					
+
 					// Rewind and check for an #include.
 					seek(scanner, -lookAhead);
 					if (!followsIncludeDirective(scanner)) {
 						return Token.UNDEFINED;
 					}
-					
+
 					seek(scanner, lookAhead);
 					return fToken;
 				}
@@ -77,7 +77,7 @@ public class CHeaderRule implements IRule {
 
 	/**
 	 * Repositions the scanner.
-	 * 
+	 *
 	 * @param scanner
 	 *            Scanner.
 	 * @param characters
@@ -101,7 +101,7 @@ public class CHeaderRule implements IRule {
 	/**
 	 * Returns true if the previous contents of the scanner is an #include
 	 * directive.
-	 * 
+	 *
 	 * @param scanner
 	 *            Scanner.
 	 * @return true if the previous contents of the scanner is an #include
@@ -121,7 +121,7 @@ public class CHeaderRule implements IRule {
 		}
 		scanner.read();
 		--lookBehind;
-		if (current == 'e' && searchBackwards(scanner, "include") ||  //$NON-NLS-1$
+		if (current == 'e' && searchBackwards(scanner, "include") || //$NON-NLS-1$
 				current == 't' && searchBackwards(scanner, "include_next")) { //$NON-NLS-1$
 			result = true;
 		}
@@ -133,7 +133,7 @@ public class CHeaderRule implements IRule {
 	/**
 	 * Returns true if the given String was the last String read from the
 	 * scanner.
-	 * 
+	 *
 	 * @param scanner
 	 *            Scanner.
 	 * @param string
@@ -156,7 +156,7 @@ public class CHeaderRule implements IRule {
 
 	/**
 	 * Unreads a single character from the scanner.
-	 * 
+	 *
 	 * @param scanner
 	 *            Scanner.
 	 * @return the last character read from the scanner.

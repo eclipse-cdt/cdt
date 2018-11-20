@@ -41,37 +41,36 @@ import org.osgi.framework.Bundle;
 // ---------------------------------------------------------------------------
 
 /** Simple control that displays a graph based on a source text selection. */
-public class SourceGraphControl extends BufferedCanvas
-{	
+public class SourceGraphControl extends BufferedCanvas {
 	// --- constants ---
-	
+
 	/** Margin used in drawing graph and computing control height. */
-	public static final int MARGIN = 10;	
-	
+	public static final int MARGIN = 10;
+
 	/** Line height used in drawing graph and computing control height. */
-	public static final int LINE_HEIGHT = 20;	
-	
+	public static final int LINE_HEIGHT = 20;
+
 	/** Path for the banner image, relative to plug-in root path */
 	protected static final String BANNER_FILE = "images/sgv-banner.png"; //$NON-NLS-1$
 	protected static final int BANNER_HEIGHT = 50;
-	
+
 	// --- members ---
-	
+
 	/** Text we're currently displaying. */
 	protected String m_sourceText = ""; //$NON-NLS-1$
-	
+
 	protected GraphicObject m_banner;
-	
+
 	/** Data structure used to hold character stats. */
-	class CharStat
-		implements Comparable<CharStat>
-	{
+	class CharStat implements Comparable<CharStat> {
 		public String characters;
 		public int count;
+
 		public CharStat(String c) {
 			characters = c;
 			count = 0;
 		}
+
 		@Override
 		public int compareTo(CharStat o) {
 			int c1 = count;
@@ -79,70 +78,65 @@ public class SourceGraphControl extends BufferedCanvas
 			int cmp = (c1 < c2) ? -1 : (c1 > c2) ? 1 : 0;
 			// we want to sort in descending order, so negate result
 			return -cmp;
-		};	
+		};
 	};
-	
+
 	/** List of characters we discovered and their occurrences. */
 	ArrayList<CharStat> m_characters;
-	
-	
+
 	// --- constructors/destructors ---
-	
+
 	/** Constructor. */
 	public SourceGraphControl(Composite parent) {
 		super(parent);
 		m_characters = new ArrayList<CharStat>();
 		m_banner = new GraphicObject();
 	}
-	
+
 	/** Dispose method. */
 	@Override
 	public void dispose() {
 		super.dispose();
 	}
 
-	
 	// --- accessors ---
-	
+
 	/** Sets source text to graph. */
-	public void setSourceText(String text)
-	{
+	public void setSourceText(String text) {
 		processText(text);
 		SourceGraphControl.this.update();
 	}
 
-	
 	// --- text processing methods ---
-	
+
 	/** Processes text into digested display form. */
-	public void processText(String text)
-	{
-		if (text == null) text = ""; //$NON-NLS-1$
+	public void processText(String text) {
+		if (text == null)
+			text = ""; //$NON-NLS-1$
 		m_sourceText = text;
 
 		// TODO: reuse the array/hashtable and stat objects
-		
-		Hashtable<String, CharStat> characters = 
-			new Hashtable<String, CharStat>();
-		
+
+		Hashtable<String, CharStat> characters = new Hashtable<String, CharStat>();
+
 		int len = m_sourceText.length();
 		int fragment_length = 2;
 		if (len >= fragment_length) {
-			for (int i = 0; i<len-fragment_length+1; ++i) {
-				String c = m_sourceText.substring(i,i+fragment_length);
-				
+			for (int i = 0; i < len - fragment_length + 1; ++i) {
+				String c = m_sourceText.substring(i, i + fragment_length);
+
 				// Don't bother with fragments containing spaces
 				// and non-printing chars.
 				boolean skip = false;
-				for (int j=0; j<c.length(); ++j)
-				{
+				for (int j = 0; j < c.length(); ++j) {
 					if (c.charAt(j) <= 32 || c.charAt(j) > 127) {
 						skip = true;
 						break;
 					}
 				}
-				if (skip) continue;
-				
+				if (skip)
+					continue;
+
 				CharStat cs = characters.get(c);
 				if (cs == null) {
 					cs = new CharStat(c);
@@ -151,24 +145,24 @@ public class SourceGraphControl extends BufferedCanvas
 				++cs.count;
 			}
 		}
-		
+
 		m_characters.clear();
 		m_characters.addAll(characters.values());
 		Collections.sort(m_characters);
-		
+
 		characters.clear();
-		
+
 		Rectangle bounds = getBounds();
 		int height = MARGIN * 2 + m_characters.size() * LINE_HEIGHT;
-		
+
 		// reserve space for banner at the top
 		height = height + BANNER_HEIGHT;
-		
+
 		bounds.height = height;
 		setBounds(bounds);
-		
+
 	}
-	
+
 	// --- painting methods ---
 
 	/** Invoked when canvas repaint event is raised.
@@ -182,35 +176,35 @@ public class SourceGraphControl extends BufferedCanvas
 		clearCanvas(gc);
 
 		int margin = MARGIN;
-		int tw  = 90;
+		int tw = 90;
 		int tw2 = 45;
 		int lh = LINE_HEIGHT;
-		
+
 		int x = margin;
-		// skip banner space 
+		// skip banner space
 		int y = BANNER_HEIGHT + margin;
-		
+
 		Rectangle area = getClientArea();
-		int w  = area.width - margin*2 - tw;
-		
+		int w = area.width - margin * 2 - tw;
+
 		// position and size banner container object
 		m_banner.setBounds(new Rectangle(x - margin, margin, area.width, BANNER_HEIGHT - margin));
-		
+
 		// draw banner
 		try {
 			m_banner.drawImage(gc, getAbsFilePath(BANNER_FILE), GraphicObject.ImageSizeAndPosition.MAXSIZE);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 		int maxcount = 0;
-		for (CharStat cs : m_characters)
-		{
+		for (CharStat cs : m_characters) {
 			// We're sorted in descending order, so first element
 			// that we draw will always have the largest count.
-			if (maxcount == 0) maxcount = cs.count;
-			
-			gc.drawText("[" + cs.characters + "]",  x, y); //$NON-NLS-1$ //$NON-NLS-2$
+			if (maxcount == 0)
+				maxcount = cs.count;
+
+			gc.drawText("[" + cs.characters + "]", x, y); //$NON-NLS-1$ //$NON-NLS-2$
 			gc.drawText("(" + cs.count + ")", x + tw2, y); //$NON-NLS-1$ //$NON-NLS-2$
 
 			double proportion = cs.count * 1.0 / maxcount;
@@ -220,15 +214,14 @@ public class SourceGraphControl extends BufferedCanvas
 				gc.setBackground(Colors.GREEN);
 			else if (proportion > .40)
 				gc.setBackground(Colors.YELLOW);
-			else 
+			else
 				gc.setBackground(Colors.RED);
-			gc.fillRectangle(x + tw, y, bw, lh-5);
+			gc.fillRectangle(x + tw, y, bw, lh - 5);
 			gc.setBackground(oldb);
 
 			y += lh;
 		}
 	}
-
 
 	// --- update methods ---
 
@@ -246,7 +239,7 @@ public class SourceGraphControl extends BufferedCanvas
 	public void resized(Rectangle bounds) {
 		refresh();
 	}
-	
+
 	/** Get the absolute path of a file, from the path relative to plugin root. */
 	private String getAbsFilePath(String relPath) {
 		Bundle bundle = Platform.getBundle(VisualizerExamplesPlugin.PLUGIN_ID);

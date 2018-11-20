@@ -64,34 +64,32 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 	}
 
 	private void doInitialize(final RequestMonitor rm) {
-        fCommandControl = getServicesTracker().getService(IMICommandControl.class);
-        fGDBBackEnd = getServicesTracker().getService(IGDBBackend.class);
+		fCommandControl = getServicesTracker().getService(IMICommandControl.class);
+		fGDBBackEnd = getServicesTracker().getService(IGDBBackend.class);
 
-        fCommandFactory = fCommandControl.getCommandFactory();
-		
-		register(new String[]{ GDBRunControl_7_12.class.getName() }, 
-		         new Hashtable<String,String>());
+		fCommandFactory = fCommandControl.getCommandFactory();
+
+		register(new String[] { GDBRunControl_7_12.class.getName() }, new Hashtable<String, String>());
 
 		rm.done();
 	}
 
-    @Override
-    public void suspend(IExecutionDMContext context, final RequestMonitor rm){
-        canSuspend(
-            context, 
-            new DataRequestMonitor<Boolean>(getExecutor(), rm) {
-                @Override
-                protected void handleSuccess() {
-                    if (getData()) {
-						// Thread or Process
-						doSuspend(context, rm);
-                    } else {
-                        rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Context cannot be suspended.", null)); //$NON-NLS-1$
-                    }
-                }
-            });
-    }
-	
+	@Override
+	public void suspend(IExecutionDMContext context, final RequestMonitor rm) {
+		canSuspend(context, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				if (getData()) {
+					// Thread or Process
+					doSuspend(context, rm);
+				} else {
+					rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+							"Context cannot be suspended.", null)); //$NON-NLS-1$
+				}
+			}
+		});
+	}
+
 	private void doSuspend(IExecutionDMContext context, final RequestMonitor rm) {
 		// We use the MI interrupt command when working in async mode.
 		// Since this run control service is specifically for all-stop mode,
@@ -126,7 +124,7 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 
 	@Override
 	public boolean isTargetAcceptingCommands() {
-		// We shall directly return true if the async mode is ON, 
+		// We shall directly return true if the async mode is ON,
 		// Since this run control service is specifically for all-stop mode,
 		//   The only possibility to be running asynchronously is if the Full GDB console
 		// is being used.
@@ -140,30 +138,32 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 	/**
 	 * @since 5.2
 	 */
-	@DsfServiceEventHandler 
-    public void eventDispatched(ISuspendedDMEvent event) {
+	@DsfServiceEventHandler
+	public void eventDispatched(ISuspendedDMEvent event) {
 		assert event instanceof IMIDMEvent;
-		
+
 		if (event instanceof IMIDMEvent) {
-			Object evt = ((IMIDMEvent)event).getMIEvent();
+			Object evt = ((IMIDMEvent) event).getMIEvent();
 
 			if (evt instanceof MIBreakpointHitEvent) {
-				MIBreakpointHitEvent miEvt = (MIBreakpointHitEvent)evt;
-				
+				MIBreakpointHitEvent miEvt = (MIBreakpointHitEvent) evt;
+
 				for (EnableReverseAtLocOperation enableReverse : fBpIdToReverseOpMap.values()) {
 					if (breakpointHitMatchesLocation(miEvt, enableReverse)) {
 						// We are now stopped at the right place to initiate the recording for reverse mode
 						// Remove the operation from our internal map and process it
 						fBpIdToReverseOpMap.remove(enableReverse.fBpId);
 						IContainerDMContext containerContext = enableReverse.getContainerContext();
-						ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(containerContext, ICommandControlDMContext.class);
+						ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(containerContext,
+								ICommandControlDMContext.class);
 						ReverseDebugMethod reverseMethod = enableReverse.getReverseDebugMethod();
 						if (controlDmc != null && reverseMethod != null) {
 							enableReverseMode(controlDmc, reverseMethod, new RequestMonitor(getExecutor(), null) {
 								@Override
 								protected void handleSuccess() {
 									if (enableReverse.shouldTriggerContinue()) {
-										fCommandControl.queueCommand(fCommandFactory.createMIExecContinue(containerContext),
+										fCommandControl.queueCommand(
+												fCommandFactory.createMIExecContinue(containerContext),
 												new ImmediateDataRequestMonitor<MIInfo>());
 									}
 								}
@@ -231,10 +231,8 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 				if (fContainerContext != null
 						&& fContainerContext.equals(((EnableReverseAtLocOperation) other).fContainerContext)
 						&& fTraceMethod != null
-						&& fTraceMethod.equals(((EnableReverseAtLocOperation) other).fTraceMethod) 
-						&& fBpId != null
-						&& fBpId.equals(((EnableReverseAtLocOperation) other).fBpId) 
-						&& fFileLocation != null
+						&& fTraceMethod.equals(((EnableReverseAtLocOperation) other).fTraceMethod) && fBpId != null
+						&& fBpId.equals(((EnableReverseAtLocOperation) other).fBpId) && fFileLocation != null
 						&& fFileLocation.equals(((EnableReverseAtLocOperation) other).fFileLocation)
 						&& fAddrLocation != null
 						&& fAddrLocation.equals(((EnableReverseAtLocOperation) other).fAddrLocation)
@@ -248,34 +246,34 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 
 	/**
 	 * Changes the reverse debugging method as soon as the program is suspended at the specified breakpoint location
-	 * 
+	 *
 	 * It is recommended to use this request before the program runs or restarts in order to prevent timing issues and
 	 * miss a suspend event
-	 * 
+	 *
 	 * Note, using the break point id to determine the stop location would be sufficient although in the case where
 	 * multiple break points are inserted in the same location, GDB will only report one of them (e.g. GDB 7.12)
-	 * 
+	 *
 	 * Having the MIBreakpoint will give us access to the address, file and line number as well which can be used as
 	 * alternatives to determine a matched location.
-	 * 
-	 * This method is specially useful when using async mode with i.e. with GDB 7.12. 
-	 * Activating reverse debugging when the target is running may trigger an unresponsive GDB, this triggered the 
+	 *
+	 * This method is specially useful when using async mode with i.e. with GDB 7.12.
+	 * Activating reverse debugging when the target is running may trigger an unresponsive GDB, this triggered the
 	 * creation of this method
-	 * 
+	 *
 	 */
 	void enableReverseModeAtBpLocation(final IContainerDMContext containerContext, final ReverseDebugMethod traceMethod,
-			MIBreakpoint bp,  boolean triggerContinue) {
+			MIBreakpoint bp, boolean triggerContinue) {
 
 		// Using an internal convention for file location i.e. file:lineNumber
 		String fileLoc = bp.getFile() + ":" + bp.getLine(); //$NON-NLS-1$
 
-		fBpIdToReverseOpMap.put(bp.getNumber(), new EnableReverseAtLocOperation(containerContext, traceMethod, 
-				bp.getNumber(), fileLoc, bp.getAddress(),  triggerContinue));
+		fBpIdToReverseOpMap.put(bp.getNumber(), new EnableReverseAtLocOperation(containerContext, traceMethod,
+				bp.getNumber(), fileLoc, bp.getAddress(), triggerContinue));
 	}
 
-    private boolean breakpointHitMatchesLocation(MIBreakpointHitEvent e, EnableReverseAtLocOperation enableReverse) {
-    	if (enableReverse != null) {
-    		String bpId = e.getNumber();
+	private boolean breakpointHitMatchesLocation(MIBreakpointHitEvent e, EnableReverseAtLocOperation enableReverse) {
+		if (enableReverse != null) {
+			String bpId = e.getNumber();
 
 			// Here we check three different things to see if we are stopped at the right place
 			// 1- The actual location in the file.  But this does not work for breakpoints that
@@ -292,87 +290,86 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 			boolean equalAddrLocation = false;
 			boolean equalBpId = bpId.equals(enableReverse.getBreakointId());
 			MIFrame frame = e.getFrame();
-			if(frame != null) {
-				String fileLocation = frame.getFile() + ":" + frame.getLine();  //$NON-NLS-1$
+			if (frame != null) {
+				String fileLocation = frame.getFile() + ":" + frame.getLine(); //$NON-NLS-1$
 				String addrLocation = frame.getAddress();
 				equalFileLocation = fileLocation.equals(enableReverse.getFileLocation());
 				equalAddrLocation = addrLocation.equals(enableReverse.getAddrLocation());
 			}
-			
+
 			if (equalFileLocation || equalAddrLocation || equalBpId) {
-    			// We stopped at the right place
+				// We stopped at the right place
 				return true;
-    		}
-    	}
-    	
-    	return false;
-    }
+			}
+		}
 
-    protected class MonitorSuspendJob extends Job {
-    	// Bug 310274.  Until we have a preference to configure timeouts,
-    	// we need a large enough default timeout to accommodate slow
-    	// remote sessions.
-    	private final static int TIMEOUT_DEFAULT_VALUE = 5000;
+		return false;
+	}
 
-        private final RequestMonitor fRequestMonitor;
+	protected class MonitorSuspendJob extends Job {
+		// Bug 310274.  Until we have a preference to configure timeouts,
+		// we need a large enough default timeout to accommodate slow
+		// remote sessions.
+		private final static int TIMEOUT_DEFAULT_VALUE = 5000;
 
-        public MonitorSuspendJob(int timeout, RequestMonitor rm) {
-            super("Suspend monitor job."); //$NON-NLS-1$
-            setSystem(true);
-            fRequestMonitor = rm;
-            
-            if (timeout <= 0) {
-            	timeout = TIMEOUT_DEFAULT_VALUE; // default of 5 seconds
-            }
-            
-            // Register to listen for the stopped event
-    		getSession().addServiceEventListener(this, null);
+		private final RequestMonitor fRequestMonitor;
 
-           	schedule(timeout);
-        }
+		public MonitorSuspendJob(int timeout, RequestMonitor rm) {
+			super("Suspend monitor job."); //$NON-NLS-1$
+			setSystem(true);
+			fRequestMonitor = rm;
 
-        /**
-         * Cleanup job and cancel it.
-         * This method is required because super.canceling() is only called
-         * if the job is actually running.
-         */
-        public boolean cleanAndCancel() {
-        	if (getExecutor().isInExecutorThread()) {
-        		getSession().removeServiceEventListener(this); 
-        	} else {
-        		getExecutor().submit(
-       				new DsfRunnable() {
-       					@Override
-       					public void run() {
-       						getSession().removeServiceEventListener(MonitorSuspendJob.this);
-       					}
-       				});
-        	}
-        	return cancel();
-        }
-        
-        @DsfServiceEventHandler
-    	public void eventDispatched(MIStoppedEvent e) {
-    		if (e.getDMContext() != null && e.getDMContext() instanceof IMIExecutionDMContext ) {
-    			// For all-stop, this means all threads have stopped
-    			if (cleanAndCancel()) {
-    				fRequestMonitor.done();
-    			}
-    		}
-    	}
-    	
-        @Override
-        protected IStatus run(IProgressMonitor monitor) {
-        	// This will be called when the timeout is hit and no *stopped event was received
-        	getExecutor().submit(
-                new DsfRunnable() {
-                  	@Override
-                    public void run() {
-                		getSession().removeServiceEventListener(MonitorSuspendJob.this);
-                       	fRequestMonitor.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Suspend operation timeout.", null)); //$NON-NLS-1$
-                    }
-                });
-        	return Status.OK_STATUS;
-        }
-    }
+			if (timeout <= 0) {
+				timeout = TIMEOUT_DEFAULT_VALUE; // default of 5 seconds
+			}
+
+			// Register to listen for the stopped event
+			getSession().addServiceEventListener(this, null);
+
+			schedule(timeout);
+		}
+
+		/**
+		 * Cleanup job and cancel it.
+		 * This method is required because super.canceling() is only called
+		 * if the job is actually running.
+		 */
+		public boolean cleanAndCancel() {
+			if (getExecutor().isInExecutorThread()) {
+				getSession().removeServiceEventListener(this);
+			} else {
+				getExecutor().submit(new DsfRunnable() {
+					@Override
+					public void run() {
+						getSession().removeServiceEventListener(MonitorSuspendJob.this);
+					}
+				});
+			}
+			return cancel();
+		}
+
+		@DsfServiceEventHandler
+		public void eventDispatched(MIStoppedEvent e) {
+			if (e.getDMContext() != null && e.getDMContext() instanceof IMIExecutionDMContext) {
+				// For all-stop, this means all threads have stopped
+				if (cleanAndCancel()) {
+					fRequestMonitor.done();
+				}
+			}
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			// This will be called when the timeout is hit and no *stopped event was received
+			getExecutor().submit(new DsfRunnable() {
+				@Override
+				public void run() {
+					getSession().removeServiceEventListener(MonitorSuspendJob.this);
+					fRequestMonitor.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+							IDsfStatusConstants.REQUEST_FAILED, "Suspend operation timeout.", null)); //$NON-NLS-1$
+				}
+			});
+			return Status.OK_STATUS;
+		}
+	}
 }

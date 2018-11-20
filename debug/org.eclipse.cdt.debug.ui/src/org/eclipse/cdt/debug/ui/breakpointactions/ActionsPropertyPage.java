@@ -112,7 +112,7 @@ public class ActionsPropertyPage extends PropertyPage {
 
 	/**
 	 * Clean up attached actions that were just deleted from the GlobalActionList
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	protected void HandleDeleteButton() {
@@ -144,7 +144,8 @@ public class ActionsPropertyPage extends PropertyPage {
 	public boolean performOk() {
 		try {
 			CDebugCorePlugin.getDefault().getBreakpointActionManager().saveActionData();
-			breakpointMarker.setAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE, actionsList.getActionNames());
+			breakpointMarker.setAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE,
+					actionsList.getActionNames());
 		} catch (CoreException e) {
 		}
 		return super.performOk();

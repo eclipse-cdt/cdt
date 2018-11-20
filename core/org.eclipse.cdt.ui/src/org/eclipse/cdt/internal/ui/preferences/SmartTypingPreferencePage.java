@@ -32,20 +32,20 @@ public final class SmartTypingPreferencePage extends AbstractConfigurationBlockP
 
 	@Override
 	protected void setDescription() {
-		String description= PreferencesMessages.CEditorPreferencePage_typing_tabTitle; 
+		String description = PreferencesMessages.CEditorPreferencePage_typing_tabTitle;
 		setDescription(description);
 	}
-	
+
 	@Override
 	protected void setPreferenceStore() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 	}
-	
+
 	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		return null; // no description for new look.
 	}
-	
+
 	@Override
 	protected IPreferenceConfigurationBlock createConfigurationBlock(OverlayPreferenceStore overlayPreferenceStore) {
 		return new SmartTypingConfigurationBlock(overlayPreferenceStore);

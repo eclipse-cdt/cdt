@@ -31,11 +31,11 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 public class TargetProjectSourceContainerDialog extends SelectionDialog {
 	private boolean fAddReferencedProjects;
 
-    public TargetProjectSourceContainerDialog(Shell parentShell) {
-        super(parentShell);
-        setTitle(SourceLookupUIMessages.TargetProjectSourceContainerDialog_title);
-        setMessage(SourceLookupUIMessages.TargetProjectSourceContainerDialog_description);
-    }
+	public TargetProjectSourceContainerDialog(Shell parentShell) {
+		super(parentShell);
+		setTitle(SourceLookupUIMessages.TargetProjectSourceContainerDialog_title);
+		setMessage(SourceLookupUIMessages.TargetProjectSourceContainerDialog_description);
+	}
 
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
@@ -43,15 +43,15 @@ public class TargetProjectSourceContainerDialog extends SelectionDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
-		
-        // Page group
-        Composite composite = (Composite) super.createDialogArea(parent);
-        initializeDialogUnits(composite);
 
-        createMessageArea(composite);
+		// Page group
+		Composite composite = (Composite) super.createDialogArea(parent);
+		initializeDialogUnits(composite);
+
+		createMessageArea(composite);
 
 		final Button addRequired = new Button(composite, SWT.CHECK);
-		addRequired.setText(SourceLookupUIMessages.TargetProjectSourceContainerDialog_referencedLabel);  
+		addRequired.setText(SourceLookupUIMessages.TargetProjectSourceContainerDialog_referencedLabel);
 		addRequired.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -59,17 +59,17 @@ public class TargetProjectSourceContainerDialog extends SelectionDialog {
 			}
 		});
 		addRequired.setSelection(fAddReferencedProjects);
-		addRequired.setFont(font);		
-		
+		addRequired.setFont(font);
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(),
 				ICDebugHelpContextIds.ADD_TARGET_PROJECT_CONTAINER_DIALOG);
-        applyDialogFont(composite);
+		applyDialogFont(composite);
 		return composite;
 	}
 
 	/**
 	 * Returns whether the user has selected to add referenced projects.
-	 * 
+	 *
 	 * @return whether the user has selected to add referenced projects
 	 */
 	public boolean isAddReferencedProjects() {

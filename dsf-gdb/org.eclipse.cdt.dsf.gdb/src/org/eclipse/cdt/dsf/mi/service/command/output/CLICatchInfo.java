@@ -16,7 +16,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 /**
  * Processes the result of a gdb 'catch' command. Even though the command has
  * been around since gdb 6.6, it's still not supported in gdb 7.0 MI.
- * 
+ *
  * @since 3.0
  */
 public class CLICatchInfo extends MIInfo {
@@ -41,7 +41,7 @@ public class CLICatchInfo extends MIInfo {
 			for (MIOOBRecord oob : out.getMIOOBRecords()) {
 				if (oob instanceof MIConsoleStreamOutput) {
 					// We are interested in the catchpoint info
-					fMiBreakpoint = parseCatchpoint(((MIConsoleStreamOutput)oob).getString().trim());
+					fMiBreakpoint = parseCatchpoint(((MIConsoleStreamOutput) oob).getString().trim());
 					if (fMiBreakpoint != null) {
 						return;
 					}
@@ -56,7 +56,7 @@ public class CLICatchInfo extends MIInfo {
 
 	/**
 	 * Create a target specific MIBreakpoint
-	 * 
+	 *
 	 * @param value
 	 *            tuple suitable for passing to MIBreakpoint constructor
 	 * @return new breakpoint
@@ -68,7 +68,7 @@ public class CLICatchInfo extends MIInfo {
 
 	/**
 	 * Return an MIBreakpoint object for the catchpoint that was created.
-	 * 
+	 *
 	 * @return an MIBreakpoint object or null if the command result had
 	 *         unexpected data
 	 */

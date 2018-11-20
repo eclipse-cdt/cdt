@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
@@ -35,47 +35,47 @@ import org.eclipse.osgi.util.NLS;
 public class StringSubstitutionEngine {
 	// Delimiters.
 	private static final String VARIABLE_START = "${"; //$NON-NLS-1$
-	private static final char VARIABLE_END = '}'; 
-	private static final char VARIABLE_ARG = ':'; 
+	private static final char VARIABLE_END = '}';
+	private static final char VARIABLE_ARG = ':';
 	// Parsing states.
 	private static final int SCAN_FOR_START = 0;
 	private static final int SCAN_FOR_END = 1;
-	
+
 	/**
 	 * Resulting string
 	 */
 	private StringBuilder fResult;
-	
+
 	/**
 	 * Whether substitutions were performed
 	 */
 	private boolean fSubs;
-	
+
 	/**
 	 * Stack of variables to resolve
 	 */
 	private Stack<VariableReference> fStack;
-	
+
 	class VariableReference {
 		// The text inside the variable reference.
 		private StringBuilder fText;
-		
+
 		public VariableReference() {
 			fText = new StringBuilder();
 		}
-		
+
 		public void append(String text) {
 			fText.append(text);
 		}
-		
+
 		public String getText() {
 			return fText.toString();
 		}
 	}
-	
+
 	/**
 	 * Performs recursive string substitution and returns the resulting string.
-	 * 
+	 *
 	 * @param expression expression to resolve
 	 * @param reportUndefinedVariables whether to report undefined variables as an error
 	 * @param resolveVariables if the variables should be resolved during the substitution
@@ -89,8 +89,8 @@ public class StringSubstitutionEngine {
 		substitute(expression, reportUndefinedVariables, resolveVariables, manager);
 		List<HashSet<String>> resolvedVariableSets = new ArrayList<HashSet<String>>();
 		while (fSubs) {
-			HashSet<String> resolved = substitute(fResult.toString(), reportUndefinedVariables, true, manager);			
-			
+			HashSet<String> resolved = substitute(fResult.toString(), reportUndefinedVariables, true, manager);
+
 			for (int i = resolvedVariableSets.size(); --i >= 0;) {
 				HashSet<String> prevSet = resolvedVariableSets.get(i);
 
@@ -99,24 +99,26 @@ public class StringSubstitutionEngine {
 					for (HashSet<String> set : resolvedVariableSets) {
 						conflictingSet.addAll(set);
 					}
-					
+
 					StringBuilder problemVariableList = new StringBuilder();
 					for (String var : conflictingSet) {
 						problemVariableList.append(var.toString());
 						problemVariableList.append(", "); //$NON-NLS-1$
 					}
 					problemVariableList.setLength(problemVariableList.length() - 2); // Truncate the last ", "
-					throw new CoreException(new Status(IStatus.ERROR,
-							CDebugCorePlugin.getUniqueIdentifier(),	CDebugCorePlugin.INTERNAL_ERROR,
-							NLS.bind(InternalDebugCoreMessages.StringSubstitutionEngine_undefined_variable, problemVariableList.toString()), null)); 
-				}				
-			}		
-			
-			resolvedVariableSets.add(resolved);			
+					throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(),
+							CDebugCorePlugin.INTERNAL_ERROR,
+							NLS.bind(InternalDebugCoreMessages.StringSubstitutionEngine_undefined_variable,
+									problemVariableList.toString()),
+							null));
+				}
+			}
+
+			resolvedVariableSets.add(resolved);
 		}
 		return fResult.toString();
 	}
-	
+
 	/**
 	 * Performs recursive string validation to ensure that all of the variables
 	 * contained in the expression exist.
@@ -126,15 +128,14 @@ public class StringSubstitutionEngine {
 	 * @exception CoreException if a referenced variable does not exist or if a cycle exists
 	 *     in referenced variables
 	 */
-	public void validateStringVariables(String expression, IStringVariableManager manager)
-			throws CoreException {
+	public void validateStringVariables(String expression, IStringVariableManager manager) throws CoreException {
 		performStringSubstitution(expression, true, false, manager);
 	}
-	
+
 	/**
 	 * Makes a substitution pass of the given expression returns a Set of the variables that were
 	 * resolved in this pass.
-	 *  
+	 *
 	 * @param expression source expression
 	 * @param reportUndefinedVariables whether to report undefined variables as an error
 	 * @param resolveVariables whether to resolve the value of any variables
@@ -142,79 +143,79 @@ public class StringSubstitutionEngine {
 	 * @return the set of {@link String}s resolved from the given expression
 	 * @exception CoreException if unable to resolve a variable
 	 */
-	private HashSet<String> substitute(String expression, boolean reportUndefinedVariables,
-			boolean resolveVariables, IStringVariableManager manager) throws CoreException {
+	private HashSet<String> substitute(String expression, boolean reportUndefinedVariables, boolean resolveVariables,
+			IStringVariableManager manager) throws CoreException {
 		fResult = new StringBuilder(expression.length());
 		fStack = new Stack<VariableReference>();
 		fSubs = false;
-		
+
 		HashSet<String> resolvedVariables = new HashSet<String>();
 
 		int pos = 0;
 		int state = SCAN_FOR_START;
 		while (pos < expression.length()) {
 			switch (state) {
-				case SCAN_FOR_START:
-					int start = expression.indexOf(VARIABLE_START, pos);
-					if (start >= 0) {
+			case SCAN_FOR_START:
+				int start = expression.indexOf(VARIABLE_START, pos);
+				if (start >= 0) {
+					int length = start - pos;
+					// Copy non-variable text to the result.
+					if (length > 0) {
+						fResult.append(expression.substring(pos, start));
+					}
+					pos = start + 2;
+					state = SCAN_FOR_END;
+
+					fStack.push(new VariableReference());
+				} else {
+					// Done - no more variables.
+					fResult.append(expression.substring(pos));
+					pos = expression.length();
+				}
+				break;
+			case SCAN_FOR_END:
+				// Be careful of nested variables.
+				start = expression.indexOf(VARIABLE_START, pos);
+				int end = expression.indexOf(VARIABLE_END, pos);
+				if (end < 0) {
+					// Variables are not completed.
+					VariableReference tos = fStack.peek();
+					tos.append(expression.substring(pos));
+					pos = expression.length();
+				} else {
+					if (start >= 0 && start < end) {
+						// Start of a nested variable.
 						int length = start - pos;
-						// Copy non-variable text to the result.
 						if (length > 0) {
-							fResult.append(expression.substring(pos, start));
+							VariableReference tos = fStack.peek();
+							tos.append(expression.substring(pos, start));
 						}
 						pos = start + 2;
-						state = SCAN_FOR_END;
+						fStack.push(new VariableReference());
+					} else {
+						// End of variable reference.
+						VariableReference tos = fStack.pop();
+						String substring = expression.substring(pos, end);
+						tos.append(substring);
+						resolvedVariables.add(substring);
 
-						fStack.push(new VariableReference());						
-					} else {
-						// Done - no more variables.
-						fResult.append(expression.substring(pos));
-						pos = expression.length();
-					}
-					break;
-				case SCAN_FOR_END:
-					// Be careful of nested variables.
-					start = expression.indexOf(VARIABLE_START, pos);
-					int end = expression.indexOf(VARIABLE_END, pos);
-					if (end < 0) {
-						// Variables are not completed.
-						VariableReference tos = fStack.peek();
-						tos.append(expression.substring(pos));
-						pos = expression.length();
-					} else {
-						if (start >= 0 && start < end) {
-							// Start of a nested variable.
-							int length = start - pos;
-							if (length > 0) {
-								VariableReference tos = fStack.peek();
-								tos.append(expression.substring(pos, start));
-							}
-							pos = start + 2;
-							fStack.push(new VariableReference());	
+						pos = end + 1;
+						String value = resolve(tos, reportUndefinedVariables, resolveVariables, manager);
+						if (value == null) {
+							value = ""; //$NON-NLS-1$
+						}
+						if (fStack.isEmpty()) {
+							// Append to result.
+							fResult.append(value);
+							state = SCAN_FOR_START;
 						} else {
-							// End of variable reference.
-							VariableReference tos = fStack.pop();
-							String substring = expression.substring(pos, end);							
-							tos.append(substring);
-							resolvedVariables.add(substring);
-							
-							pos = end + 1;
-							String value= resolve(tos, reportUndefinedVariables, resolveVariables, manager);
-							if (value == null) {
-								value = ""; //$NON-NLS-1$
-							}
-							if (fStack.isEmpty()) {
-								// Append to result.
-								fResult.append(value);
-								state = SCAN_FOR_START;
-							} else {
-								// Append to previous variable.
-								tos = fStack.peek();
-								tos.append(value);
-							}
+							// Append to previous variable.
+							tos = fStack.peek();
+							tos.append(value);
 						}
 					}
-					break;
+				}
+				break;
 			}
 		}
 		// Process incomplete variable references.
@@ -229,14 +230,13 @@ public class StringSubstitutionEngine {
 				var.append(tos.getText());
 			}
 		}
-		
 
 		return resolvedVariables;
 	}
 
 	/**
-	 * Resolve and return the value of the given variable reference, possibly {@code null}. 
-	 * 
+	 * Resolve and return the value of the given variable reference, possibly {@code null}.
+	 *
 	 * @param var the {@link VariableReference} to try and resolve
 	 * @param reportUndefinedVariables whether to report undefined variables as an error
 	 * @param resolveVariables whether to resolve the variables value or just to validate that
@@ -245,8 +245,8 @@ public class StringSubstitutionEngine {
 	 * @return variable value, possibly {@code null}
 	 * @exception CoreException if unable to resolve a value
 	 */
-	private String resolve(VariableReference var, boolean reportUndefinedVariables,
-			boolean resolveVariables, IStringVariableManager manager) throws CoreException {
+	private String resolve(VariableReference var, boolean reportUndefinedVariables, boolean resolveVariables,
+			IStringVariableManager manager) throws CoreException {
 		String text = var.getText();
 		int pos = text.indexOf(VARIABLE_ARG);
 		String name = null;
@@ -256,7 +256,7 @@ public class StringSubstitutionEngine {
 			pos++;
 			if (pos < text.length()) {
 				arg = text.substring(pos);
-			} 
+			}
 		} else {
 			name = text;
 		}
@@ -266,35 +266,37 @@ public class StringSubstitutionEngine {
 			if (dynamicVariable == null) {
 				// No variables with the given name.
 				if (reportUndefinedVariables) {
-					throw new CoreException(new Status(IStatus.ERROR,
-							CDebugCorePlugin.getUniqueIdentifier(),	CDebugCorePlugin.INTERNAL_ERROR,
-							NLS.bind(InternalDebugCoreMessages.StringSubstitutionEngine_undefined_variable, name), null)); 
-				} 
+					throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(),
+							CDebugCorePlugin.INTERNAL_ERROR,
+							NLS.bind(InternalDebugCoreMessages.StringSubstitutionEngine_undefined_variable, name),
+							null));
+				}
 				// Leave as is.
 				return getOriginalVarText(var);
-			} 
-			
+			}
+
 			if (resolveVariables) {
 				fSubs = true;
 				return dynamicVariable.getValue(arg);
-			} 
+			}
 			// Leave as is.
 			return getOriginalVarText(var);
-		} 
-		
+		}
+
 		if (arg == null) {
 			if (resolveVariables) {
 				fSubs = true;
 				return valueVariable.getValue();
-			} 
+			}
 			// Leave as is.
 			return getOriginalVarText(var);
-		} 
+		}
 		// Error - an argument specified for a value variable.
-		throw new CoreException(new Status(IStatus.ERROR,
-				CDebugCorePlugin.getUniqueIdentifier(),	CDebugCorePlugin.INTERNAL_ERROR,
-				NLS.bind(InternalDebugCoreMessages.StringSubstitutionEngine_unexpected_argument,
-						valueVariable.getName()), null)); 
+		throw new CoreException(
+				new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR,
+						NLS.bind(InternalDebugCoreMessages.StringSubstitutionEngine_unexpected_argument,
+								valueVariable.getName()),
+						null));
 	}
 
 	private String getOriginalVarText(VariableReference var) {

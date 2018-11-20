@@ -31,30 +31,31 @@ import org.eclipse.jface.viewers.TreePath;
  * An update strategy decorator specialized for delayed stack frame refresh. The
  * strategy flushes only the cached top stack frame in case of an normal {@link ISuspendedDMEvent},
  * while in case of a special {@link FullStackRefreshEvent} everything is invalidated.
- * 
+ *
  * <p>
  * The underlying base update policy is considered for container contexts only.
  * In other cases the cache data is always flushed.
  * </p>
- * 
+ *
  * @since 1.1
  */
 public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
 
 	private static final class DelayedStackRefreshUpdateTester implements IElementUpdateTester {
 
-	    private final IElementUpdateTester fBaseTester;
-	    
-        /** Indicates whether only the top stack frame should be updated */
-        private final boolean fLazyStackFrameMode;
+		private final IElementUpdateTester fBaseTester;
+
+		/** Indicates whether only the top stack frame should be updated */
+		private final boolean fLazyStackFrameMode;
 
 		DelayedStackRefreshUpdateTester(IElementUpdateTester baseTester, boolean lazyStackFrameMode) {
-		    fBaseTester = baseTester;
-		    fLazyStackFrameMode = lazyStackFrameMode;
+			fBaseTester = baseTester;
+			fLazyStackFrameMode = lazyStackFrameMode;
 		}
+
 		@Override
 		public int getUpdateFlags(Object viewerInput, TreePath path) {
-            Object element = path.getSegmentCount() != 0 ? path.getLastSegment() : viewerInput;
+			Object element = path.getSegmentCount() != 0 ? path.getLastSegment() : viewerInput;
 			if (element instanceof IDMVMContext) {
 				IDMContext dmc = ((IDMVMContext) element).getDMContext();
 				if (fLazyStackFrameMode) {
@@ -75,92 +76,92 @@ public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
 
 		@Override
 		public boolean includes(IElementUpdateTester tester) {
-		    // A non-lazy tester includes a lazy tester, but not vice versa.  
-		    // This allows entries that were marked as dirty by a flush with
-		    // the lazy mode to be superseded by a non-lazy update which 
-		    // actually clears the entries that were marked as dirty.
+			// A non-lazy tester includes a lazy tester, but not vice versa.
+			// This allows entries that were marked as dirty by a flush with
+			// the lazy mode to be superseded by a non-lazy update which
+			// actually clears the entries that were marked as dirty.
 			if (tester instanceof DelayedStackRefreshUpdateTester) {
-			    DelayedStackRefreshUpdateTester sfTester = (DelayedStackRefreshUpdateTester)tester;
-			    if (fLazyStackFrameMode) {
-			    	if (sfTester.fLazyStackFrameMode) {
-			    	    return fBaseTester.includes(sfTester.fBaseTester);
-			    	}
-			    } else {
-			    	if (!sfTester.fLazyStackFrameMode) {
-			    	    return fBaseTester.includes(sfTester.fBaseTester);
-			    	}
-			    	// non-lazy includes lazy
-			        return true;
-			    }
+				DelayedStackRefreshUpdateTester sfTester = (DelayedStackRefreshUpdateTester) tester;
+				if (fLazyStackFrameMode) {
+					if (sfTester.fLazyStackFrameMode) {
+						return fBaseTester.includes(sfTester.fBaseTester);
+					}
+				} else {
+					if (!sfTester.fLazyStackFrameMode) {
+						return fBaseTester.includes(sfTester.fBaseTester);
+					}
+					// non-lazy includes lazy
+					return true;
+				}
 			}
 			return false;
 		}
-		
-        @Override
-        public String toString() {
-            return "Delayed stack refresh (lazy = " + fLazyStackFrameMode + ", base = " + fBaseTester + ") update tester"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
+
+		@Override
+		public String toString() {
+			return "Delayed stack refresh (lazy = " + fLazyStackFrameMode + ", base = " + fBaseTester //$NON-NLS-1$//$NON-NLS-2$
+					+ ") update tester"; //$NON-NLS-1$
+		}
 
 	}
 
 	private static final class ThreadsUpdateTester implements IElementUpdateTester {
 
-        private final IElementUpdateTester fBaseTester;
-        
-        private final boolean fRefreshAll;
-        
-        ThreadsUpdateTester(IElementUpdateTester baseTester, boolean refreshAll) {
-            fBaseTester = baseTester;
-            fRefreshAll = refreshAll;
-        }
+		private final IElementUpdateTester fBaseTester;
 
-        @Override
+		private final boolean fRefreshAll;
+
+		ThreadsUpdateTester(IElementUpdateTester baseTester, boolean refreshAll) {
+			fBaseTester = baseTester;
+			fRefreshAll = refreshAll;
+		}
+
+		@Override
 		public int getUpdateFlags(Object viewerInput, TreePath path) {
-            Object element = path.getSegmentCount() != 0 ? path.getLastSegment() : viewerInput;
-            
-            if (!fRefreshAll && element instanceof IDMVMContext) {
-                IDMContext dmc = ((IDMVMContext) element).getDMContext();
-                if (dmc instanceof IContainerDMContext) {
-                    return fBaseTester.getUpdateFlags(viewerInput, path);
-                }
-            }
-            
-            // If the element is not a container or if the flush all flag is set, 
-            // always flush it.
-            return FLUSH;
-        }
-        
-        @Override
+			Object element = path.getSegmentCount() != 0 ? path.getLastSegment() : viewerInput;
+
+			if (!fRefreshAll && element instanceof IDMVMContext) {
+				IDMContext dmc = ((IDMVMContext) element).getDMContext();
+				if (dmc instanceof IContainerDMContext) {
+					return fBaseTester.getUpdateFlags(viewerInput, path);
+				}
+			}
+
+			// If the element is not a container or if the flush all flag is set,
+			// always flush it.
+			return FLUSH;
+		}
+
+		@Override
 		public boolean includes(IElementUpdateTester tester) {
-            // A refresh-all tester includes a non-refresh-all tester, but not 
-            // vice versa. This allows entries that were marked as dirty by 
-            // a flush with
-            // the non-refresh-all to be superseded by a refresh-all update which 
-            // actually clears the entries that were marked as dirty.
-            if (tester instanceof ThreadsUpdateTester) {
-                ThreadsUpdateTester threadsTester = (ThreadsUpdateTester)tester;
-                if (fRefreshAll) {
-                    if (threadsTester.fRefreshAll) {
-                        return fBaseTester.includes(threadsTester.fBaseTester);
-                    }
-                    // refresh-all includes the non-refresh-all
-                    return true;
-                } else {
-                    if (!threadsTester.fRefreshAll) {
-                        return fBaseTester.includes(threadsTester.fBaseTester);
-                    }
-                }
-            }
-            return false;
-        }
-        
-        @Override
-        public String toString() {
-            return "Threads update tester (base = " + fBaseTester + ") update tester"; //$NON-NLS-1$ //$NON-NLS-2$ 
-        }
+			// A refresh-all tester includes a non-refresh-all tester, but not
+			// vice versa. This allows entries that were marked as dirty by
+			// a flush with
+			// the non-refresh-all to be superseded by a refresh-all update which
+			// actually clears the entries that were marked as dirty.
+			if (tester instanceof ThreadsUpdateTester) {
+				ThreadsUpdateTester threadsTester = (ThreadsUpdateTester) tester;
+				if (fRefreshAll) {
+					if (threadsTester.fRefreshAll) {
+						return fBaseTester.includes(threadsTester.fBaseTester);
+					}
+					// refresh-all includes the non-refresh-all
+					return true;
+				} else {
+					if (!threadsTester.fRefreshAll) {
+						return fBaseTester.includes(threadsTester.fBaseTester);
+					}
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public String toString() {
+			return "Threads update tester (base = " + fBaseTester + ") update tester"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
-	
 	public DelayedStackRefreshUpdatePolicy(IVMUpdatePolicy base) {
 		super(base);
 	}
@@ -170,24 +171,23 @@ public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
 		if (event instanceof ISuspendedDMEvent) {
 			return new DelayedStackRefreshUpdateTester(getBaseUpdatePolicy().getElementUpdateTester(event), true);
 		} else if (event instanceof FullStackRefreshEvent) {
-            return new DelayedStackRefreshUpdateTester(getBaseUpdatePolicy().getElementUpdateTester(event), false);
-		} else if (event instanceof IExitedDMEvent &&
-		           ((IExitedDMEvent)event).getDMContext() instanceof IContainerDMContext) 
-		{
-            // container exit should always trigger a refresh
-            return new ThreadsUpdateTester(super.getElementUpdateTester(event), true);
+			return new DelayedStackRefreshUpdateTester(getBaseUpdatePolicy().getElementUpdateTester(event), false);
+		} else if (event instanceof IExitedDMEvent
+				&& ((IExitedDMEvent) event).getDMContext() instanceof IContainerDMContext) {
+			// container exit should always trigger a refresh
+			return new ThreadsUpdateTester(super.getElementUpdateTester(event), true);
 		} else {
-		    return new ThreadsUpdateTester(super.getElementUpdateTester(event), false);
+			return new ThreadsUpdateTester(super.getElementUpdateTester(event), false);
 		}
 	}
-	
+
 	@Override
 	public Object[] getInitialRootElementChildren(Object rootElement) {
-	    return null;
+		return null;
 	}
 
-    @Override
+	@Override
 	public Map<String, Object> getInitialRootElementProperties(Object rootElement) {
-        return null;
-    }
+		return null;
+	}
 }

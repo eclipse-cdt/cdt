@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,28 +23,28 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Object representing a frame in the stack command results.
- * 
- * @see PDAStackCommand 
+ *
+ * @see PDAStackCommand
  */
 @Immutable
 public class PDAFrame {
 
-    final public IPath fFilePath;
-    final public int fLine;
-    final public String fFunction;
-    final public String[] fVariables;
-    
-    PDAFrame(String frameString) {
-        StringTokenizer st = new StringTokenizer(frameString, "|");
-        
-        fFilePath = new Path(st.nextToken());
-        fLine = Integer.parseInt(st.nextToken());
-        fFunction = st.nextToken();
-        
-        List<String> variablesList = new ArrayList<String>();
-        while (st.hasMoreTokens()) {
-            variablesList.add(st.nextToken());
-        }
-        fVariables = variablesList.toArray(new String[variablesList.size()]);
-    }
+	final public IPath fFilePath;
+	final public int fLine;
+	final public String fFunction;
+	final public String[] fVariables;
+
+	PDAFrame(String frameString) {
+		StringTokenizer st = new StringTokenizer(frameString, "|");
+
+		fFilePath = new Path(st.nextToken());
+		fLine = Integer.parseInt(st.nextToken());
+		fFunction = st.nextToken();
+
+		List<String> variablesList = new ArrayList<String>();
+		while (st.hasMoreTokens()) {
+			variablesList.add(st.nextToken());
+		}
+		fVariables = variablesList.toArray(new String[variablesList.size()]);
+	}
 }

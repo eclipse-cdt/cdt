@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * Dynamic menu contribution that restores the element number format in the current
  * selection of the view to view's preference.
- * 
+ *
  * We pull 'restore to preference' menu item out from ElementNumberFormatsContribution
  * so that clients can add extra contribution before or after it. See 371012.
  * @since 2.3
@@ -48,11 +48,11 @@ public class RestoreNumberFormatPreferenceContribution extends ElementNumberForm
 		IVMNode[] nodes = new IVMNode[elementPaths.length];
 		Object viewerInput = null;
 		if (context.getPart() instanceof AbstractDebugView) {
-			Viewer viewer = ((AbstractDebugView)context.getPart()).getViewer();
+			Viewer viewer = ((AbstractDebugView) context.getPart()).getViewer();
 			if (viewer != null) {
 				viewerInput = viewer.getInput();
 			}
-		} 
+		}
 		for (int i = 0; i < elementPaths.length; i++) {
 			Object segment = elementPaths[i].getLastSegment();
 			if (segment instanceof IVMContext) {
@@ -62,8 +62,8 @@ public class RestoreNumberFormatPreferenceContribution extends ElementNumberForm
 			}
 		}
 		IContributionItem[] items = new IContributionItem[1];
-		items[0] = new ActionContributionItem(new SelectFormatAction(
-				(IElementFormatProvider) provider, context, nodes, viewerInput, elementPaths, null));
+		items[0] = new ActionContributionItem(new SelectFormatAction((IElementFormatProvider) provider, context, nodes,
+				viewerInput, elementPaths, null));
 		return items;
 	}
 }

@@ -45,17 +45,17 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
  */
 public class SelectionListenerWithASTManager {
 	private static SelectionListenerWithASTManager fgDefault;
-	
+
 	/**
 	 * @return Returns the default manager instance.
 	 */
 	public static SelectionListenerWithASTManager getDefault() {
 		if (fgDefault == null) {
-			fgDefault= new SelectionListenerWithASTManager();
+			fgDefault = new SelectionListenerWithASTManager();
 		}
 		return fgDefault;
 	}
-	
+
 	private final static class PartListenerGroup {
 		private ITextEditor fPart;
 		private ISelectionListener fPostSelectionListener;
@@ -63,22 +63,22 @@ public class SelectionListenerWithASTManager {
 		private Job fCurrentJob;
 		private ListenerList<ISelectionListenerWithAST> fAstListeners;
 		/** Rule to make sure only one job is running at a time */
-		private final ILock fJobLock= Job.getJobManager().newLock();
+		private final ILock fJobLock = Job.getJobManager().newLock();
 		private ISelectionValidator fValidator;
-		
+
 		public PartListenerGroup(ITextEditor editorPart) {
-			fPart= editorPart;
-			fCurrentJob= null;
-			fAstListeners= new ListenerList<>(ListenerList.IDENTITY);
-			
-			fSelectionListener= event -> {
-				ISelection selection= event.getSelection();
+			fPart = editorPart;
+			fCurrentJob = null;
+			fAstListeners = new ListenerList<>(ListenerList.IDENTITY);
+
+			fSelectionListener = event -> {
+				ISelection selection = event.getSelection();
 				if (selection instanceof ITextSelection) {
 					fireSelectionChanged((ITextSelection) selection);
 				}
 			};
-			
-			fPostSelectionListener= (part, selection) -> {
+
+			fPostSelectionListener = (part, selection) -> {
 				if (part == fPart && selection instanceof ITextSelection)
 					firePostSelectionChanged((ITextSelection) selection);
 			};
@@ -91,50 +91,52 @@ public class SelectionListenerWithASTManager {
 		public void install(ISelectionListenerWithAST listener) {
 			if (isEmpty()) {
 				fPart.getEditorSite().getPage().addPostSelectionListener(fPostSelectionListener);
-				ISelectionProvider selectionProvider= fPart.getSelectionProvider();
+				ISelectionProvider selectionProvider = fPart.getSelectionProvider();
 				if (selectionProvider != null) {
 					selectionProvider.addSelectionChangedListener(fSelectionListener);
 					if (selectionProvider instanceof ISelectionValidator) {
-						fValidator= (ISelectionValidator) selectionProvider;
+						fValidator = (ISelectionValidator) selectionProvider;
 					}
 				}
 			}
 			fAstListeners.add(listener);
 		}
-		
+
 		public void uninstall(ISelectionListenerWithAST listener) {
 			fAstListeners.remove(listener);
 			if (isEmpty()) {
 				fPart.getEditorSite().getPage().removePostSelectionListener(fPostSelectionListener);
-				ISelectionProvider selectionProvider= fPart.getSelectionProvider();
+				ISelectionProvider selectionProvider = fPart.getSelectionProvider();
 				if (selectionProvider != null) {
 					selectionProvider.removeSelectionChangedListener(fSelectionListener);
 				}
-				fValidator= null;
+				fValidator = null;
 			}
 		}
-		
+
 		public void fireSelectionChanged(final ITextSelection selection) {
 			if (fCurrentJob != null) {
 				fCurrentJob.cancel();
 			}
 		}
-		
+
 		public void firePostSelectionChanged(final ITextSelection selection) {
 			if (fCurrentJob != null) {
 				fCurrentJob.cancel();
 			}
-			
-			final IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fPart.getEditorInput());
+
+			final IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager()
+					.getWorkingCopy(fPart.getEditorInput());
 			if (workingCopy == null)
 				return;
-			
-			fCurrentJob= new Job(Messages.SelectionListenerWithASTManager_jobName) { 
+
+			fCurrentJob = new Job(Messages.SelectionListenerWithASTManager_jobName) {
 				@Override
 				public IStatus run(IProgressMonitor monitor) {
 					try {
 						// Try to acquire the lock
-						while (!monitor.isCanceled() && !fJobLock.acquire(10)) {}
+						while (!monitor.isCanceled() && !fJobLock.acquire(10)) {
+						}
 						if (!monitor.isCanceled() && isSelectionValid(selection)) {
 							return calculateASTandInform(workingCopy, selection, monitor);
 						}
@@ -153,7 +155,7 @@ public class SelectionListenerWithASTManager {
 
 		/**
 		 * Verify that selection is still valid.
-		 * 
+		 *
 		 * @param selection
 		 * @return <code>true</code> if selection is valid
 		 */
@@ -161,41 +163,43 @@ public class SelectionListenerWithASTManager {
 			return fValidator == null || fValidator.isValid(selection);
 		}
 
-		protected IStatus calculateASTandInform(final IWorkingCopy workingCopy, final ITextSelection selection, final IProgressMonitor monitor) {
-			return ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_ACTIVE_ONLY, monitor, new ASTRunnable() {
-				@Override
-				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) {
-					if (astRoot != null && !monitor.isCanceled() && isSelectionValid(selection)) {
-						Object[] listeners;
-						synchronized (PartListenerGroup.this) {
-							listeners= fAstListeners.getListeners();
-						}
-						for (int i= 0; i < listeners.length; i++) {
-							final Object l = listeners[i];
-							try {
-								((ISelectionListenerWithAST) l).selectionChanged(fPart, selection, astRoot);
-							} catch (RuntimeException e) {
-								CUIPlugin.log(e);
-								fAstListeners.remove(l);
-							} catch (OutOfMemoryError e) {
-								CUIPlugin.log(e);
-								fAstListeners.remove(l);
+		protected IStatus calculateASTandInform(final IWorkingCopy workingCopy, final ITextSelection selection,
+				final IProgressMonitor monitor) {
+			return ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_ACTIVE_ONLY, monitor,
+					new ASTRunnable() {
+						@Override
+						public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) {
+							if (astRoot != null && !monitor.isCanceled() && isSelectionValid(selection)) {
+								Object[] listeners;
+								synchronized (PartListenerGroup.this) {
+									listeners = fAstListeners.getListeners();
+								}
+								for (int i = 0; i < listeners.length; i++) {
+									final Object l = listeners[i];
+									try {
+										((ISelectionListenerWithAST) l).selectionChanged(fPart, selection, astRoot);
+									} catch (RuntimeException e) {
+										CUIPlugin.log(e);
+										fAstListeners.remove(l);
+									} catch (OutOfMemoryError e) {
+										CUIPlugin.log(e);
+										fAstListeners.remove(l);
+									}
+								}
+								return Status.OK_STATUS;
 							}
+							return Status.CANCEL_STATUS;
 						}
-						return Status.OK_STATUS;
-					}
-					return Status.CANCEL_STATUS;
-				}
-			});
+					});
 		}
 	}
-	
+
 	private Map<ITextEditor, PartListenerGroup> fListenerGroups;
-	
+
 	private SelectionListenerWithASTManager() {
-		fListenerGroups= new HashMap<ITextEditor, PartListenerGroup>();
+		fListenerGroups = new HashMap<ITextEditor, PartListenerGroup>();
 	}
-	
+
 	/**
 	 * Registers a selection listener for the given editor part.
 	 * @param part The editor part to listen to.
@@ -203,9 +207,9 @@ public class SelectionListenerWithASTManager {
 	 */
 	public void addListener(ITextEditor part, ISelectionListenerWithAST listener) {
 		synchronized (this) {
-			PartListenerGroup partListener= fListenerGroups.get(part);
+			PartListenerGroup partListener = fListenerGroups.get(part);
 			if (partListener == null) {
-				partListener= new PartListenerGroup(part);
+				partListener = new PartListenerGroup(part);
 				fListenerGroups.put(part, partListener);
 			}
 			partListener.install(listener);
@@ -219,7 +223,7 @@ public class SelectionListenerWithASTManager {
 	 */
 	public void removeListener(ITextEditor part, ISelectionListenerWithAST listener) {
 		synchronized (this) {
-			PartListenerGroup partListener= fListenerGroups.get(part);
+			PartListenerGroup partListener = fListenerGroups.get(part);
 			if (partListener != null) {
 				partListener.uninstall(listener);
 				if (partListener.isEmpty()) {

@@ -10,14 +10,14 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 
 /**
  * Models a function defined with a try block, which is a function definition:
- * <pre> void func() try { 
+ * <pre> void func() try {
  * } catch (...) {
  * }
  * @since 5.1
@@ -42,7 +42,7 @@ public interface ICPPASTFunctionWithTryBlock extends ICPPASTFunctionDefinition {
 	 * Returns an array of catch handlers.
 	 */
 	public ICPPASTCatchHandler[] getCatchHandlers();
-	
+
 	/**
 	 * @since 5.1
 	 */

@@ -37,8 +37,8 @@ public class AsmLabel extends SourceManipulation implements IAsmLabel, IParent {
 	 */
 	public AsmLabel(ICElement parent, String name, boolean global, int index) {
 		super(parent, name, ICElement.ASM_LABEL);
-		fIsGlobal= global;
-		fIndex= index;
+		fIsGlobal = global;
+		fIndex = index;
 	}
 
 	/*

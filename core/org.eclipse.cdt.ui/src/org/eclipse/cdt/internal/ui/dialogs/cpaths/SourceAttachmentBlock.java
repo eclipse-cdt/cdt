@@ -72,7 +72,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 /**
  * UI to set the source attachment archive and root. Same implementation for both setting attachments for libraries from variable
  * entries and for normal (internal or external) jar.
- * 
+ *
  * @deprecated as of CDT 4.0. This class was used for property pages
  * for 3.X style projects.
  */
@@ -110,7 +110,7 @@ public class SourceAttachmentBlock {
 	 * @param project
 	 *            Project to which the entry belongs. Can be <code>null</code> if <code>getRunnable</code> is not run and the
 	 *            entry does not belong to a container.
-	 *  
+	 *
 	 */
 	public SourceAttachmentBlock(IStatusChangeListener context, ILibraryEntry entry, ICProject project) {
 		Assert.isNotNull(entry);
@@ -127,16 +127,16 @@ public class SourceAttachmentBlock {
 
 		fFileNameField = new StringButtonDialogField(adapter);
 		fFileNameField.setDialogFieldListener(adapter);
-		fFileNameField.setLabelText(CPathEntryMessages.SourceAttachmentBlock_filename_label); 
-		fFileNameField.setButtonLabel(CPathEntryMessages.SourceAttachmentBlock_filename_externalfile_button); 
+		fFileNameField.setLabelText(CPathEntryMessages.SourceAttachmentBlock_filename_label);
+		fFileNameField.setButtonLabel(CPathEntryMessages.SourceAttachmentBlock_filename_externalfile_button);
 
 		fWorkspaceButton = new SelectionButtonDialogField(SWT.PUSH);
 		fWorkspaceButton.setDialogFieldListener(adapter);
-		fWorkspaceButton.setLabelText(CPathEntryMessages.SourceAttachmentBlock_filename_internal_button); 
+		fWorkspaceButton.setLabelText(CPathEntryMessages.SourceAttachmentBlock_filename_internal_button);
 
 		fExternalFolderButton = new SelectionButtonDialogField(SWT.PUSH);
 		fExternalFolderButton.setDialogFieldListener(adapter);
-		fExternalFolderButton.setLabelText(CPathEntryMessages.SourceAttachmentBlock_filename_externalfolder_button); 
+		fExternalFolderButton.setLabelText(CPathEntryMessages.SourceAttachmentBlock_filename_externalfolder_button);
 
 		// set the old settings
 		setDefaults();
@@ -197,8 +197,8 @@ public class SourceAttachmentBlock {
 
 		Label message = new Label(composite, SWT.LEFT);
 		message.setLayoutData(gd);
-		message.setText(NLS.bind(
-				CPathEntryMessages.SourceAttachmentBlock_message, fEntry.getLibraryPath().lastSegment()));
+		message.setText(
+				NLS.bind(CPathEntryMessages.SourceAttachmentBlock_message, fEntry.getLibraryPath().lastSegment()));
 
 		fWorkspaceButton.doFillIntoGrid(composite, 1);
 
@@ -272,7 +272,7 @@ public class SourceAttachmentBlock {
 			fFullPathResolvedLabel.setText(getResolvedLabelString(fFileNameField.getText(), true));
 		}
 
-		IStatus status = StatusUtil.getMostSevere(new IStatus[]{fNameStatus});
+		IStatus status = StatusUtil.getMostSevere(new IStatus[] { fNameStatus });
 		fContext.statusChanged(status);
 	}
 
@@ -307,7 +307,7 @@ public class SourceAttachmentBlock {
 			return status;
 		}
 		if (!Path.EMPTY.isValidPath(fileName)) {
-			status.setError(CPathEntryMessages.SourceAttachmentBlock_filename_error_notvalid); 
+			status.setError(CPathEntryMessages.SourceAttachmentBlock_filename_error_notvalid);
 			return status;
 		}
 		IPath filePath = new Path(fileName);
@@ -317,8 +317,8 @@ public class SourceAttachmentBlock {
 			file = res.getLocation().toFile();
 		}
 		if (!file.exists()) {
-			String message = NLS.bind(
-					CPathEntryMessages.SourceAttachmentBlock_filename_error_filenotexists, filePath.toString());
+			String message = NLS.bind(CPathEntryMessages.SourceAttachmentBlock_filename_error_filenotexists,
+					filePath.toString());
 			status.setError(message);
 			return status;
 		}
@@ -339,8 +339,8 @@ public class SourceAttachmentBlock {
 		}
 
 		FileDialog dialog = new FileDialog(getShell());
-		dialog.setText(CPathEntryMessages.SourceAttachmentBlock_extjardialog_text); 
-		dialog.setFilterExtensions(new String[]{"*.jar;*.zip"}); //$NON-NLS-1$
+		dialog.setText(CPathEntryMessages.SourceAttachmentBlock_extjardialog_text);
+		dialog.setFilterExtensions(new String[] { "*.jar;*.zip" }); //$NON-NLS-1$
 		dialog.setFilterPath(currPath.toOSString());
 		String res = dialog.open();
 		if (res != null) {
@@ -359,7 +359,7 @@ public class SourceAttachmentBlock {
 		}
 
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setText(CPathEntryMessages.SourceAttachmentBlock_extfolderdialog_text); 
+		dialog.setText(CPathEntryMessages.SourceAttachmentBlock_extfolderdialog_text);
 		dialog.setFilterPath(currPath.toOSString());
 		String res = dialog.open();
 		if (res != null) {
@@ -374,7 +374,7 @@ public class SourceAttachmentBlock {
 	private IPath chooseInternalJarFile() {
 		String initSelection = fFileNameField.getText();
 
-		Class<?>[] acceptedClasses = new Class<?>[]{IFolder.class, IFile.class};
+		Class<?>[] acceptedClasses = new Class<?>[] { IFolder.class, IFile.class };
 		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, false);
 
 		ViewerFilter filter = new ArchiveFileFilter(null, false);
@@ -394,12 +394,12 @@ public class SourceAttachmentBlock {
 		dialog.setAllowMultiple(false);
 		dialog.setValidator(validator);
 		dialog.addFilter(filter);
-		dialog.setTitle(CPathEntryMessages.SourceAttachmentBlock_intjardialog_title); 
-		dialog.setMessage(CPathEntryMessages.SourceAttachmentBlock_intjardialog_message); 
+		dialog.setTitle(CPathEntryMessages.SourceAttachmentBlock_intjardialog_title);
+		dialog.setMessage(CPathEntryMessages.SourceAttachmentBlock_intjardialog_message);
 		dialog.setInput(fWorkspaceRoot);
 		dialog.setInitialSelection(initSel);
 		if (dialog.open() == Window.OK) {
-			IResource res = (IResource)dialog.getFirstResult();
+			IResource res = (IResource) dialog.getFirstResult();
 			return res.getFullPath();
 		}
 		return null;
@@ -441,12 +441,13 @@ public class SourceAttachmentBlock {
 		boolean isExported = fEntry.isExported();
 		ILibraryEntry newEntry;
 		newEntry = CoreModel.newLibraryEntry(fEntry.getPath(), fEntry.getBasePath(), fEntry.getLibraryPath(),
-				getSourceAttachmentPath(), getSourceAttachmentRootPath(), getSourceAttachmentPrefixMapping(), isExported);
+				getSourceAttachmentPath(), getSourceAttachmentRootPath(), getSourceAttachmentPrefixMapping(),
+				isExported);
 		updateProjectPathEntry(shell, fProject, newEntry, monitor);
 	}
 
-	private void updateProjectPathEntry(Shell shell, ICProject cproject, ILibraryEntry newEntry, IProgressMonitor monitor)
-			throws CModelException {
+	private void updateProjectPathEntry(Shell shell, ICProject cproject, ILibraryEntry newEntry,
+			IProgressMonitor monitor) throws CModelException {
 		IPathEntry[] oldClasspath = cproject.getRawPathEntries();
 		int nEntries = oldClasspath.length;
 		ArrayList<IPathEntry> newEntries = new ArrayList<IPathEntry>(nEntries + 1);
@@ -480,8 +481,8 @@ public class SourceAttachmentBlock {
 
 			@Override
 			public void run() {
-				String title = CPathEntryMessages.SourceAttachmentBlock_putoncpdialog_title; 
-				String message = CPathEntryMessages.SourceAttachmentBlock_putoncpdialog_message; 
+				String title = CPathEntryMessages.SourceAttachmentBlock_putoncpdialog_title;
+				String message = CPathEntryMessages.SourceAttachmentBlock_putoncpdialog_message;
 				result[0] = MessageDialog.openQuestion(CUIPlugin.getActiveWorkbenchShell(), title, message);
 			}
 		});

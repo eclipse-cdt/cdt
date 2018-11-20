@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -43,62 +43,58 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
-public class ExportMemoryDialog extends SelectionDialog 
-{
+public class ExportMemoryDialog extends SelectionDialog {
 
 	private static final String EXPORT_SETTINGS = "EXPORT_DIALOG"; //$NON-NLS-1$
 
 	private static final String SELECTED_EXPORTER = "SELECTED_EXPORTER"; //$NON-NLS-1$
 
 	private Combo fFormatCombo;
-	
+
 	private IMemoryBlock fMemoryBlock;
-	
+
 	private Control fCurrentControl = null;
-	
+
 	private IMemoryExporter fFormatExporters[];
 	private String fFormatNames[];
-	
+
 	private IDialogSettings fProperties = MemoryTransportPlugin.getDefault().getDialogSettings(EXPORT_SETTINGS);
-	
+
 	private final String INITIAL_ADDRESS = "Initial address";
 
-	public ExportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, BigInteger initialStartAddr)
-	{
+	public ExportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, BigInteger initialStartAddr) {
 		super(parent);
-		super.setTitle(Messages.getString("ExportMemoryDialog.Title"));  //$NON-NLS-1$
+		super.setTitle(Messages.getString("ExportMemoryDialog.Title")); //$NON-NLS-1$
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		
+
 		fMemoryBlock = memoryBlock;
-		
+
 		String addrstr = "0x" + initialStartAddr.toString(16); //$NON-NLS-1$
-		
+
 		String initialAddress = fProperties.get(INITIAL_ADDRESS);
-		
-		if ( initialAddress == null ) {
+
+		if (initialAddress == null) {
 			fProperties.put(IMemoryExporter.TRANSFER_START, addrstr);
 			fProperties.put(IMemoryExporter.TRANSFER_END, addrstr);
-			fProperties.put(INITIAL_ADDRESS , addrstr);
-		} 
-		else {
-			if ( ! initialAddress.equals(addrstr) ) {
+			fProperties.put(INITIAL_ADDRESS, addrstr);
+		} else {
+			if (!initialAddress.equals(addrstr)) {
 				fProperties.put(IMemoryExporter.TRANSFER_START, addrstr);
 				fProperties.put(IMemoryExporter.TRANSFER_END, addrstr);
-				fProperties.put(INITIAL_ADDRESS , addrstr);
-			}
-			else {
+				fProperties.put(INITIAL_ADDRESS, addrstr);
+			} else {
 				String startAddr = fProperties.get(IMemoryExporter.TRANSFER_START);
-				String endAddr   = fProperties.get(IMemoryExporter.TRANSFER_END);
+				String endAddr = fProperties.get(IMemoryExporter.TRANSFER_END);
 
-				if ( startAddr == null || endAddr == null ) {
+				if (startAddr == null || endAddr == null) {
 					fProperties.put(IMemoryExporter.TRANSFER_START, addrstr);
 					fProperties.put(IMemoryExporter.TRANSFER_END, addrstr);
-					fProperties.put(INITIAL_ADDRESS , addrstr);
+					fProperties.put(INITIAL_ADDRESS, addrstr);
 				}
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
@@ -112,14 +108,13 @@ public class ExportMemoryDialog extends SelectionDialog
 	 */
 	@Override
 	public Object[] getResult() {
-		
+
 		Object[] results = super.getResult();
-		
-		if (results != null)
-		{	
+
+		if (results != null) {
 			return results;
 		}
-        return new Object[0];
+		return new Object[0];
 	}
 
 	/* (non-Javadoc)
@@ -127,9 +122,9 @@ public class ExportMemoryDialog extends SelectionDialog
 	 */
 	@Override
 	protected void cancelPressed() {
-		
+
 		setResult(null);
-		
+
 		super.cancelPressed();
 	}
 
@@ -138,16 +133,15 @@ public class ExportMemoryDialog extends SelectionDialog
 	 */
 	@Override
 	protected void okPressed() {
-		if(fCurrentControl != null)
+		if (fCurrentControl != null)
 			fCurrentControl.dispose();
 		IMemoryExporter currentExporter = getCurrentExporter();
 		currentExporter.exportMemory();
-	
+
 		fProperties.put(SELECTED_EXPORTER, currentExporter.getId());
-	
+
 		super.okPressed();
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
@@ -155,134 +149,129 @@ public class ExportMemoryDialog extends SelectionDialog
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, MemoryTransportPlugin.getUniqueIdentifier() + ".ExportMemoryDialog_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				MemoryTransportPlugin.getUniqueIdentifier() + ".ExportMemoryDialog_context"); //$NON-NLS-1$
 		Composite composite = new Composite(parent, SWT.NONE);
 		FormLayout formLayout = new FormLayout();
 		formLayout.spacing = 5;
 		formLayout.marginWidth = formLayout.marginHeight = 9;
 		composite.setLayout(formLayout);
-		
+
 		// format
-		
+
 		Label textLabel = new Label(composite, SWT.NONE);
-		textLabel.setText(Messages.getString("ExportMemoryDialog.Format"));  //$NON-NLS-1$
-		
+		textLabel.setText(Messages.getString("ExportMemoryDialog.Format")); //$NON-NLS-1$
+
 		fFormatCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-		
+
 		FormData data = new FormData();
 		data.top = new FormAttachment(fFormatCombo, 0, SWT.CENTER);
 		textLabel.setLayoutData(data);
-		
+
 		data = new FormData();
 		data.left = new FormAttachment(textLabel);
 		fFormatCombo.setLayoutData(data);
-		
+
 		Vector<IMemoryExporter> exporters = new Vector<IMemoryExporter>();
-		
+
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IExtensionPoint extensionPoint =
-	         registry.getExtensionPoint("org.eclipse.cdt.debug.ui.memory.transport.memoryTransport"); //$NON-NLS-1$
-	    IConfigurationElement points[] =
-	         extensionPoint.getConfigurationElements();
-	    
-		for (int i = 0; i < points.length; i++) 
-		{
+		IExtensionPoint extensionPoint = registry
+				.getExtensionPoint("org.eclipse.cdt.debug.ui.memory.transport.memoryTransport"); //$NON-NLS-1$
+		IConfigurationElement points[] = extensionPoint.getConfigurationElements();
+
+		for (int i = 0; i < points.length; i++) {
 			IConfigurationElement element = points[i];
-			if("exporter".equals(element.getName())) //$NON-NLS-1$
+			if ("exporter".equals(element.getName())) //$NON-NLS-1$
 			{
 				String maxSizeStr = element.getAttribute("maxmemorysize");
-				if ( maxSizeStr != null ) {
-					if ( fMemoryBlock instanceof IMemoryBlockExtension ) {
+				if (maxSizeStr != null) {
+					if (fMemoryBlock instanceof IMemoryBlockExtension) {
 						IMemoryBlockExtension memBlock = (IMemoryBlockExtension) fMemoryBlock;
 						try {
-							BigInteger endAddress =  memBlock.getBigBaseAddress();
-							BigInteger length =  memBlock.getBigLength();
-							if ( length != null && ! length.equals(new BigInteger("-1",10) ) ) {
-								endAddress = endAddress.add( length ) ;
+							BigInteger endAddress = memBlock.getBigBaseAddress();
+							BigInteger length = memBlock.getBigLength();
+							if (length != null && !length.equals(new BigInteger("-1", 10))) {
+								endAddress = endAddress.add(length);
 							}
 							int maxAddressSizeInBits = endAddress.bitLength();
 							int maxSupportedAddressSizeInBits = Integer.decode(maxSizeStr);
-							if ( maxAddressSizeInBits > maxSupportedAddressSizeInBits ) {
+							if (maxAddressSizeInBits > maxSupportedAddressSizeInBits) {
 								continue;
 							}
 						} catch (DebugException e1) {
 							continue;
 						}
-					}
-					else {
+					} else {
 						int maxSupportedAddressSizeInBits = Integer.decode(maxSizeStr);
-						if ( maxSupportedAddressSizeInBits < 32 ) {
+						if (maxSupportedAddressSizeInBits < 32) {
 							continue;
 						}
 					}
 				}
-				
-				try 
-				{
+
+				try {
 					exporters.addElement((IMemoryExporter) element.createExecutableExtension("class")); //$NON-NLS-1$
-				}
-				catch(Exception e) {
-					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.INTERNAL_ERROR, "Failure", e)); //$NON-NLS-1$
+				} catch (Exception e) {
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
+							MemoryTransportPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR, "Failure", e)); //$NON-NLS-1$
 				}
 			}
 		}
-		
-        fFormatExporters = new IMemoryExporter[exporters.size()];
+
+		fFormatExporters = new IMemoryExporter[exporters.size()];
 		fFormatNames = new String[exporters.size()];
-		for(int i = 0; i < fFormatExporters.length; i++)
-		{
+		for (int i = 0; i < fFormatExporters.length; i++) {
 			fFormatExporters[i] = exporters.elementAt(i);
 			fFormatNames[i] = exporters.elementAt(i).getName();
 		}
-		
+
 		final Composite container = new Composite(composite, SWT.NONE);
 		data = new FormData();
 		data.top = new FormAttachment(fFormatCombo);
 		data.left = new FormAttachment(0);
 		container.setLayoutData(data);
-		
+
 		fFormatCombo.setItems(fFormatNames);
-		
-		fFormatCombo.addSelectionListener(new SelectionAdapter(){
+
+		fFormatCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(fCurrentControl != null) {
+				if (fCurrentControl != null) {
 					fCurrentControl.dispose();
 				}
-				fCurrentControl = getCurrentExporter().createControl(container,	fMemoryBlock, fProperties, ExportMemoryDialog.this);
+				fCurrentControl = getCurrentExporter().createControl(container, fMemoryBlock, fProperties,
+						ExportMemoryDialog.this);
 			}
 		});
-		
-		
+
 		setCurrentExporter(fProperties.get(SELECTED_EXPORTER));
 
-		fCurrentControl = getCurrentExporter().createControl(container, fMemoryBlock, fProperties, ExportMemoryDialog.this);
-		
+		fCurrentControl = getCurrentExporter().createControl(container, fMemoryBlock, fProperties,
+				ExportMemoryDialog.this);
+
 		return composite;
 	}
 
-	public void setValid(boolean isValid)
-	{
+	public void setValid(boolean isValid) {
 		getButton(IDialogConstants.OK_ID).setEnabled(isValid);
 	}
 
 	private IMemoryExporter getCurrentExporter() {
 		return fFormatExporters[fFormatCombo.getSelectionIndex()];
 	}
-	
+
 	private void setCurrentExporter(String id) {
-		if ( id == null || id.length() == 0 ) {
+		if (id == null || id.length() == 0) {
 			fFormatCombo.select(0);
 		}
-		
-		for (int index = 0; index< fFormatExporters.length; ++index) {
-			if (fFormatExporters[index].getId().equals(id)){
+
+		for (int index = 0; index < fFormatExporters.length; ++index) {
+			if (fFormatExporters[index].getId().equals(id)) {
 				fFormatCombo.select(index);
 				return;
 			}
 		}
-		
+
 		fFormatCombo.select(0);
 	}
 

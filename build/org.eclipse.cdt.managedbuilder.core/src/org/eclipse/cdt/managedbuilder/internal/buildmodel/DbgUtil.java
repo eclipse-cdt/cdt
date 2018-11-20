@@ -28,119 +28,118 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 public class DbgUtil {
 	public static boolean DEBUG = false;
 	private static PrintStream out = System.out;
-	private static final String TRACE_PREFIX = "BuildModel[ ";	//$NON-NLS-1$
-	private static final String TRACE_SUFIX = " ]";	//$NON-NLS-1$
+	private static final String TRACE_PREFIX = "BuildModel[ "; //$NON-NLS-1$
+	private static final String TRACE_SUFIX = " ]"; //$NON-NLS-1$
 
-	
-	public static void trace(String str){
+	public static void trace(String str) {
 		out.println(formatMsg(str));
 	}
-	
-	public static String formatMsg(String msg){
+
+	public static String formatMsg(String msg) {
 		return TRACE_PREFIX + msg + TRACE_SUFIX;
 	}
-	
-	public static String stepName(IBuildStep action){
-		ITool tool = action instanceof BuildStep ? ((BuildStep)action).getTool() : null;
-		if(tool != null)
+
+	public static String stepName(IBuildStep action) {
+		ITool tool = action instanceof BuildStep ? ((BuildStep) action).getTool() : null;
+		if (tool != null)
 			return tool.getName();
-		if(action.getBuildDescription().getInputStep() == action)
-			return "input step";	//$NON-NLS-1$
-		if(action.getBuildDescription().getOutputStep() == action)
-			return "output step";	//$NON-NLS-1$
-		return "<undefined name>";	//$NON-NLS-1$
+		if (action.getBuildDescription().getInputStep() == action)
+			return "input step"; //$NON-NLS-1$
+		if (action.getBuildDescription().getOutputStep() == action)
+			return "output step"; //$NON-NLS-1$
+		return "<undefined name>"; //$NON-NLS-1$
 	}
 
-	public static String resourceName(IBuildResource rc){
-		if(rc.getFullPath() != null)
+	public static String resourceName(IBuildResource rc) {
+		if (rc.getFullPath() != null)
 			return rc.getFullPath().toString();
 		return rc.getLocation().toString();
 	}
 
-	public static String dumpType(IBuildIOType type){
+	public static String dumpType(IBuildIOType type) {
 		StringBuilder buf = new StringBuilder();
 
-		buf.append("dumping type: ");	//$NON-NLS-1$
-		buf.append(type.isInput() ? "INPUT" : "OUTPUT");	//$NON-NLS-1$	//$NON-NLS-2$
+		buf.append("dumping type: "); //$NON-NLS-1$
+		buf.append(type.isInput() ? "INPUT" : "OUTPUT"); //$NON-NLS-1$	//$NON-NLS-2$
 		buf.append(ioTypeResources(type));
-		buf.append("end dumping type");	//$NON-NLS-1$
+		buf.append("end dumping type"); //$NON-NLS-1$
 
 		return buf.toString();
 	}
-	
-	public static String ioTypeResources(IBuildIOType type){
+
+	public static String ioTypeResources(IBuildIOType type) {
 		StringBuilder buf = new StringBuilder();
-		
+
 		IBuildResource rcs[] = type.getResources();
 
-		buf.append("\n");	//$NON-NLS-1$
-		
-		for(int i = 0; i < rcs.length; i++){
+		buf.append("\n"); //$NON-NLS-1$
+
+		for (int i = 0; i < rcs.length; i++) {
 			buf.append(resourceName(rcs[i]));
-			buf.append("\n");	//$NON-NLS-1$
+			buf.append("\n"); //$NON-NLS-1$
 		}
-		
+
 		return buf.toString();
 	}
-	
+
 	public static String dumpStep(IBuildStep step, boolean inputs) {
 		StringBuilder buf = new StringBuilder();
-		
-		buf.append("dumping step ").append(stepName(step)).append(inputs ? " inputs" : " outputs");	//$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$
-		
+
+		buf.append("dumping step ").append(stepName(step)).append(inputs ? " inputs" : " outputs"); //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$
+
 		IBuildIOType types[] = inputs ? step.getInputIOTypes() : step.getOutputIOTypes();
-		
+
 		buf.append('\n');
-		
-		for(int i = 0; i < types.length; i++){
+
+		for (int i = 0; i < types.length; i++) {
 			buf.append("ioType ").append(i).append(':'); //$NON-NLS-1$
 			buf.append(ioTypeResources(types[i]));
 		}
-		
-		buf.append("end dump step\n");	//$NON-NLS-1$
+
+		buf.append("end dump step\n"); //$NON-NLS-1$
 		return buf.toString();
 	}
-	
-	public static String dumpStep(IBuildStep step){
+
+	public static String dumpStep(IBuildStep step) {
 		return dumpStep(step, true) + dumpStep(step, false);
 	}
 
-	public static String dumpResource(IBuildResource rc){
-		return dumpResource(rc, true) + dumpResource(rc, false); 
+	public static String dumpResource(IBuildResource rc) {
+		return dumpResource(rc, true) + dumpResource(rc, false);
 	}
 
-	public static String dumpResource(IBuildResource rc, boolean producer){
+	public static String dumpResource(IBuildResource rc, boolean producer) {
 		StringBuilder buf = new StringBuilder();
-		
-		buf.append("dumping resource ").append(resourceName(rc)).append(producer ? " producer:" : " deps:");	//$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$
-		
-		if(producer){
-			if(rc.getProducerIOType() != null)
+
+		buf.append("dumping resource ").append(resourceName(rc)).append(producer ? " producer:" : " deps:"); //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$
+
+		if (producer) {
+			if (rc.getProducerIOType() != null)
 				buf.append(dumpStep(rc.getProducerIOType().getStep()));
 			else
-				buf.append("\nresourse has no producer\n");	//$NON-NLS-1$
+				buf.append("\nresourse has no producer\n"); //$NON-NLS-1$
 		} else {
 			IBuildIOType types[] = rc.getDependentIOTypes();
-			
-			if(types.length > 0){
+
+			if (types.length > 0) {
 				Set<IBuildStep> set = new HashSet<IBuildStep>();
 
-				for(int i = 0; i < types.length; i++){
-					if(set.add(types[i].getStep())){
+				for (int i = 0; i < types.length; i++) {
+					if (set.add(types[i].getStep())) {
 						buf.append(dumpStep(types[i].getStep()));
 					}
 				}
 			} else {
-				buf.append("\n resource has no deps\n");	//$NON-NLS-1$
+				buf.append("\n resource has no deps\n"); //$NON-NLS-1$
 			}
-			
+
 		}
 
-		buf.append("end dump resource\n");	//$NON-NLS-1$
+		buf.append("end dump resource\n"); //$NON-NLS-1$
 		return buf.toString();
 	}
-	
-	public static void flush(){
+
+	public static void flush() {
 		out.flush();
 	}
 }

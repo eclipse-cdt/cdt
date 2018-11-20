@@ -36,8 +36,8 @@ public class LocaleSensitiveSpellDictionary extends AbstractSpellDictionary {
 	 * @param location   The location of the locale sensitive dictionaries
 	 */
 	public LocaleSensitiveSpellDictionary(final Locale locale, final URL location) {
-		fLocation= location;
-		fLocale= locale;
+		fLocation = location;
+		fLocale = locale;
 	}
 
 	/**
@@ -54,6 +54,6 @@ public class LocaleSensitiveSpellDictionary extends AbstractSpellDictionary {
 	 */
 	@Override
 	protected final URL getURL() throws MalformedURLException {
-		return new URL(fLocation, fLocale.toString() + ".dictionary");  //$NON-NLS-1$
+		return new URL(fLocation, fLocale.toString() + ".dictionary"); //$NON-NLS-1$
 	}
 }

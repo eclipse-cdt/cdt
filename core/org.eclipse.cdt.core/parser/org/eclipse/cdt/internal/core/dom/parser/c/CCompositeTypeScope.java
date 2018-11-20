@@ -35,34 +35,35 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
  * Implementation of scope for structs and unions.
  */
 public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope {
-    public CCompositeTypeScope(ICASTCompositeTypeSpecifier compTypeSpec) {
-        super(compTypeSpec, EScopeKind.eClassType);
-    }
+	public CCompositeTypeScope(ICASTCompositeTypeSpecifier compTypeSpec) {
+		super(compTypeSpec, EScopeKind.eClassType);
+	}
 
-    @Override
+	@Override
 	public IBinding getBinding(char[] name) {
-        return super.getBinding(NAMESPACE_TYPE_OTHER, name);
-    }
+		return super.getBinding(NAMESPACE_TYPE_OTHER, name);
+	}
 
-    @Override
+	@Override
 	public IBinding[] find(String name) {
-        CollectNamesAction action = new CollectNamesAction(name.toCharArray());
-        getPhysicalNode().accept(action);
+		CollectNamesAction action = new CollectNamesAction(name.toCharArray());
+		getPhysicalNode().accept(action);
 
-        IASTName[] names = action.getNames();
-        IBinding[] result = null;
-        for (IASTName astName : names) {
-            IBinding b = astName.resolveBinding();
-            if (b == null) continue;
-            try {
-                if (b.getScope() == this)
-                    result = ArrayUtil.append(IBinding.class, result, b);
-            } catch (DOMException e) {
-            }
-        }
+		IASTName[] names = action.getNames();
+		IBinding[] result = null;
+		for (IASTName astName : names) {
+			IBinding b = astName.resolveBinding();
+			if (b == null)
+				continue;
+			try {
+				if (b.getScope() == this)
+					result = ArrayUtil.append(IBinding.class, result, b);
+			} catch (DOMException e) {
+			}
+		}
 
-        return ArrayUtil.trim(IBinding.class, result);
-    }
+		return ArrayUtil.trim(IBinding.class, result);
+	}
 
 	@Override
 	public ICompositeType getCompositeType() {
@@ -71,7 +72,8 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
 		if (binding instanceof ICompositeType)
 			return (ICompositeType) binding;
 
-		return new CStructure.CStructureProblem(compSpec.getName(), ISemanticProblem.BINDING_NO_CLASS, compSpec.getName().toCharArray());
+		return new CStructure.CStructureProblem(compSpec.getName(), ISemanticProblem.BINDING_NO_CLASS,
+				compSpec.getName().toCharArray());
 	}
 
 	@Override
@@ -91,8 +93,10 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
 						ASTInternal.addName(this, dtorName);
 					}
 					// anonymous structures and unions
-					if (declarators.length == 0 && ((IASTSimpleDeclaration) node).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) {
-						ICASTCompositeTypeSpecifier declSpec = (ICASTCompositeTypeSpecifier) ((IASTSimpleDeclaration) node).getDeclSpecifier();
+					if (declarators.length == 0 && ((IASTSimpleDeclaration) node)
+							.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) {
+						ICASTCompositeTypeSpecifier declSpec = (ICASTCompositeTypeSpecifier) ((IASTSimpleDeclaration) node)
+								.getDeclSpecifier();
 						IASTName n = declSpec.getName();
 						if (n.toCharArray().length == 0) {
 							specStack = ArrayUtil.append(ICASTCompositeTypeSpecifier.class, specStack, declSpec);

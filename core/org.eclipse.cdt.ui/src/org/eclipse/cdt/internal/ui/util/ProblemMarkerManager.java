@@ -41,7 +41,8 @@ import org.eclipse.cdt.internal.ui.editor.TranslationUnitAnnotationModelEvent;
  * IMarker.PROBLEM Viewers showing error ticks should register as listener to
  * this type.
  */
-public class ProblemMarkerManager implements IResourceChangeListener, IAnnotationModelListener, IAnnotationModelListenerExtension {
+public class ProblemMarkerManager
+		implements IResourceChangeListener, IAnnotationModelListener, IAnnotationModelListenerExtension {
 
 	/**
 	 * Visitors used to filter the element delta changes
@@ -58,7 +59,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource res = delta.getResource();
 			if (res instanceof IProject && delta.getKind() == IResourceDelta.CHANGED) {
-				IProject project = (IProject)res;
+				IProject project = (IProject) res;
 				if (!project.isAccessible()) {
 					// only track open C projects
 					return false;
@@ -80,7 +81,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 		}
 
 		private boolean isErrorDelta(IResourceDelta delta) {
-			if ( (delta.getFlags() & IResourceDelta.MARKERS) != 0) {
+			if ((delta.getFlags() & IResourceDelta.MARKERS) != 0) {
 				IMarkerDelta[] markerDeltas = delta.getMarkerDeltas();
 				for (IMarkerDelta markerDelta : markerDeltas) {
 					if (markerDelta.isSubtypeOf(IMarker.PROBLEM)) {
@@ -131,13 +132,13 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 	@Override
 	public void modelChanged(AnnotationModelEvent event) {
 		if (event instanceof TranslationUnitAnnotationModelEvent) {
-			TranslationUnitAnnotationModelEvent cuEvent = (TranslationUnitAnnotationModelEvent)event;
+			TranslationUnitAnnotationModelEvent cuEvent = (TranslationUnitAnnotationModelEvent) event;
 			if (cuEvent.includesProblemMarkerAnnotationChanges()) {
 				//IResource[] changes= new IResource[]
 				// {cuEvent.getUnderlyingResource()};
 				IResource res = cuEvent.getUnderlyingResource();
 				if (res != null) {
-					fireChanges(new IResource[]{res}, false);
+					fireChanges(new IResource[] { res }, false);
 				}
 			}
 		}
@@ -176,4 +177,3 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 		}
 	}
 }
-

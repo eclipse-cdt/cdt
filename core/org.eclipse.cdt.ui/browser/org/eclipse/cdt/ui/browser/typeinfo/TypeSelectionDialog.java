@@ -53,7 +53,7 @@ import org.eclipse.cdt.internal.ui.util.StringMatcher;
 
 /**
  * A dialog to select a type from a list of types.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class TypeSelectionDialog extends TwoPaneElementSelector {
@@ -61,13 +61,13 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	private static class TypeFilterMatcher implements FilteredList.FilterMatcher {
 		private static final char END_SYMBOL = '<';
 		private static final char ANY_STRING = '*';
-		
+
 		private StringMatcher fNameMatcher;
 		private StringMatcher[] fSegmentMatchers;
 		private boolean fMatchGlobalNamespace;
 		private Collection<Integer> fVisibleTypes = new HashSet<Integer>();
 		private boolean fShowLowLevelTypes;
-		
+
 		@Override
 		public void setFilter(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
 			// parse pattern into segments
@@ -77,7 +77,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 			// append wildcard to innermost segment
 			segments[length - 1] = adjustPattern(segments[length - 1]);
-			
+
 			fMatchGlobalNamespace = false;
 			fSegmentMatchers = new StringMatcher[length];
 			int count = 0;
@@ -105,13 +105,13 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 				}
 			}
 			// match simple name with innermost segment
-			fNameMatcher = fSegmentMatchers[fSegmentMatchers.length-1];
+			fNameMatcher = fSegmentMatchers[fSegmentMatchers.length - 1];
 		}
-		
+
 		public Collection<Integer> getVisibleTypes() {
 			return fVisibleTypes;
 		}
-		
+
 		public void setShowLowLevelTypes(boolean show) {
 			fShowLowLevelTypes = show;
 		}
@@ -127,16 +127,16 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 			ITypeInfo info = (ITypeInfo) element;
 			IQualifiedTypeName qualifiedName = info.getQualifiedTypeName();
-			
+
 			if (fVisibleTypes != null && !fVisibleTypes.contains(Integer.valueOf(info.getCElementType())))
 				return false;
 
 			if (!fShowLowLevelTypes && qualifiedName.isLowLevel())
 				return false;
-			
+
 			if (fSegmentMatchers.length == 1 && !fMatchGlobalNamespace)
 				return fNameMatcher.match(qualifiedName.getName());
-			
+
 			return matchQualifiedName(info);
 		}
 
@@ -144,13 +144,13 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			IQualifiedTypeName qualifiedName = info.getQualifiedTypeName();
 			if (fSegmentMatchers.length != qualifiedName.segmentCount())
 				return false;
-			
+
 			if (fMatchGlobalNamespace) {
 				// must match global namespace (eg ::foo)
 				if (!qualifiedName.segment(0).isEmpty())
 					return false;
 			}
-			
+
 			boolean matchFound = true;
 			int max = Math.min(fSegmentMatchers.length, qualifiedName.segmentCount());
 			for (int i = 0; i < max; ++i) {
@@ -177,16 +177,16 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			return pattern + ANY_STRING;
 		}
 	}
-	
+
 	private static class StringComparator implements Comparator<String> {
-	    @Override
+		@Override
 		public int compare(String left, String right) {
-	     	int result = left.compareToIgnoreCase(right);			
+			int result = left.compareToIgnoreCase(right);
 			if (result == 0)
 				result = left.compareTo(right);
 
 			return result;
-	    }
+		}
 	}
 
 	private static final String DIALOG_SETTINGS = TypeSelectionDialog.class.getName();
@@ -209,15 +209,13 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	private static final TypeInfoLabelProvider fElementRenderer = new TypeInfoLabelProvider(
 			TypeInfoLabelProvider.SHOW_NAME_ONLY | TypeInfoLabelProvider.SHOW_PARAMETERS);
 	private static final TypeInfoLabelProvider fQualifierRenderer = new TypeInfoLabelProvider(
-			TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED |
-			TypeInfoLabelProvider.SHOW_PARAMETERS |
-			TypeInfoLabelProvider.SHOW_PATH);
-	
+			TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED | TypeInfoLabelProvider.SHOW_PARAMETERS
+					| TypeInfoLabelProvider.SHOW_PATH);
+
 	private static final StringComparator fStringComparator = new StringComparator();
 
-	private static final int[] ALL_TYPES = { ICElement.C_NAMESPACE, ICElement.C_CLASS,
-			ICElement.C_STRUCT, ICElement.C_TYPEDEF, ICElement.C_ENUMERATION,
-			ICElement.C_UNION, ICElement.C_FUNCTION, ICElement.C_VARIABLE, 
+	private static final int[] ALL_TYPES = { ICElement.C_NAMESPACE, ICElement.C_CLASS, ICElement.C_STRUCT,
+			ICElement.C_TYPEDEF, ICElement.C_ENUMERATION, ICElement.C_UNION, ICElement.C_FUNCTION, ICElement.C_VARIABLE,
 			ICElement.C_ENUMERATOR, ICElement.C_MACRO };
 
 	// the filter matcher contains state information, must not be static
@@ -229,7 +227,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	private String fDialogSection;
 	private Point fLocation;
 	private Point fSize;
- 
+
 	/**
 	 * Constructs a type selection dialog.
 	 * @param parent  the parent shell.
@@ -237,12 +235,12 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	public TypeSelectionDialog(Shell parent) {
 		super(parent, fElementRenderer, fQualifierRenderer);
 		setMatchEmptyString(false);
-		setUpperListLabel(TypeInfoMessages.TypeSelectionDialog_upperLabel); 
-		setLowerListLabel(TypeInfoMessages.TypeSelectionDialog_lowerLabel); 
+		setUpperListLabel(TypeInfoMessages.TypeSelectionDialog_upperLabel);
+		setLowerListLabel(TypeInfoMessages.TypeSelectionDialog_lowerLabel);
 		setVisibleTypes(ALL_TYPES);
 		setDialogSettings(DIALOG_SETTINGS);
 	}
-	
+
 	/**
 	 * Sets the filter pattern.
 	 * @param filter the filter pattern.
@@ -256,7 +254,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 	/**
 	 * Sets which CElement types are visible in the dialog.
-	 * 
+	 *
 	 * @param types Array of CElement types.
 	 */
 	public void setVisibleTypes(int[] types) {
@@ -265,10 +263,10 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			fKnownTypes.add(types[i]);
 		}
 	}
-	
+
 	/**
 	 * Answer whether the given type is visible in the dialog.
-	 * 
+	 *
 	 * @param type the type constant, see {@link ICElement}
 	 * @return <code>true</code> if the given type is visible,
 	 *         <code>false</code> otherwise
@@ -279,38 +277,36 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 	/**
 	 * Sets section name to use when storing the dialog settings.
-	 * 
+	 *
 	 * @param section Name of section.
 	 */
 	public void setDialogSettings(String section) {
 		fDialogSection = section + "Settings"; //$NON-NLS-1$
 	}
 
- 	@Override
+	@Override
 	protected Text createFilterText(Composite parent) {
- 		fTextWidget = super.createFilterText(parent);
+		fTextWidget = super.createFilterText(parent);
 
 		// create type checkboxes below filter text
- 		createTypeFilterArea(parent);
-		
- 		return fTextWidget;
+		createTypeFilterArea(parent);
+
+		return fTextWidget;
 	}
-	
- 	@Override
+
+	@Override
 	protected FilteredList createFilteredList(Composite parent) {
- 		fNewFilteredList = super.createFilteredList(parent);
+		fNewFilteredList = super.createFilteredList(parent);
 		fNewFilteredList.setFilterMatcher(fFilterMatcher);
 		fNewFilteredList.setComparator(fStringComparator);
 		//bug 189330 - adding label to element list for accessiblity
 		if (fNewFilteredList != null) {
-			fNewFilteredList.getAccessible().addAccessibleListener(
-	            new AccessibleAdapter() {                       
-	                @Override
-					public void getName(AccessibleEvent e) {
-	                        e.result = TypeInfoMessages.TypeSelectionDialog_upperLabel;
-	                }
-	            }
-	        );
+			fNewFilteredList.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+				@Override
+				public void getName(AccessibleEvent e) {
+					e.result = TypeInfoMessages.TypeSelectionDialog_upperLabel;
+				}
+			});
 		}
 		return fNewFilteredList;
 	}
@@ -342,34 +338,34 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		int type = typeObject.intValue();
 		switch (type) {
 		case ICElement.C_NAMESPACE:
-			name = TypeInfoMessages.TypeSelectionDialog_filterNamespaces; 
+			name = TypeInfoMessages.TypeSelectionDialog_filterNamespaces;
 			break;
 		case ICElement.C_CLASS:
-			name = TypeInfoMessages.TypeSelectionDialog_filterClasses; 
+			name = TypeInfoMessages.TypeSelectionDialog_filterClasses;
 			break;
 		case ICElement.C_STRUCT:
-			name = TypeInfoMessages.TypeSelectionDialog_filterStructs; 
+			name = TypeInfoMessages.TypeSelectionDialog_filterStructs;
 			break;
 		case ICElement.C_TYPEDEF:
-			name = TypeInfoMessages.TypeSelectionDialog_filterTypedefs; 
+			name = TypeInfoMessages.TypeSelectionDialog_filterTypedefs;
 			break;
 		case ICElement.C_ENUMERATION:
-			name = TypeInfoMessages.TypeSelectionDialog_filterEnums; 
+			name = TypeInfoMessages.TypeSelectionDialog_filterEnums;
 			break;
 		case ICElement.C_UNION:
-			name = TypeInfoMessages.TypeSelectionDialog_filterUnions; 
+			name = TypeInfoMessages.TypeSelectionDialog_filterUnions;
 			break;
 		case ICElement.C_FUNCTION:
-			name = TypeInfoMessages.TypeSelectionDialog_filterFunctions; 
+			name = TypeInfoMessages.TypeSelectionDialog_filterFunctions;
 			break;
 		case ICElement.C_VARIABLE:
-			name = TypeInfoMessages.TypeSelectionDialog_filterVariables; 
+			name = TypeInfoMessages.TypeSelectionDialog_filterVariables;
 			break;
 		case ICElement.C_ENUMERATOR:
-			name = TypeInfoMessages.TypeSelectionDialog_filterEnumerators; 
+			name = TypeInfoMessages.TypeSelectionDialog_filterEnumerators;
 			break;
 		case ICElement.C_MACRO:
-			name = TypeInfoMessages.TypeSelectionDialog_filterMacros; 
+			name = TypeInfoMessages.TypeSelectionDialog_filterMacros;
 			break;
 		default:
 			return;
@@ -377,10 +373,10 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		Image icon = TypeInfoLabelProvider.getTypeIcon(type);
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout(2, false);
+		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
-		
+
 		final Integer fTypeObject = typeObject;
 		Button checkbox = new Button(composite, SWT.CHECK);
 		checkbox.setFont(composite.getFont());
@@ -404,14 +400,14 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 	/**
 	 * Creates an area to filter types.
-	 * 
+	 *
 	 * @param parent area to create controls in
 	 */
 	private void createTypeFilterArea(Composite parent) {
-		createLabel(parent, TypeInfoMessages.TypeSelectionDialog_filterLabel); 
-		
+		createLabel(parent, TypeInfoMessages.TypeSelectionDialog_filterLabel);
+
 		Composite upperRow = new Composite(parent, SWT.NONE);
-		int columns= fKnownTypes.size() > 6 ? 4 : 3;
+		int columns = fKnownTypes.size() > 6 ? 4 : 3;
 		GridLayout upperLayout = new GridLayout(columns, true);
 		upperLayout.verticalSpacing = 2;
 		upperLayout.marginHeight = 0;
@@ -434,12 +430,12 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			lowerRow.setLayout(lowerLayout);
 
 			Composite composite = new Composite(lowerRow, SWT.NONE);
-			GridLayout layout= new GridLayout(2, false);
+			GridLayout layout = new GridLayout(2, false);
 			layout.marginHeight = 0;
 			layout.marginWidth = 0;
 			composite.setLayout(layout);
 
-			String name = TypeInfoMessages.TypeSelectionDialog_filterLowLevelTypes; 
+			String name = TypeInfoMessages.TypeSelectionDialog_filterLowLevelTypes;
 			Button checkbox = new Button(composite, SWT.CHECK);
 			checkbox.setFont(composite.getFont());
 			checkbox.setText(name);
@@ -456,7 +452,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			});
 		}
 	}
-	
+
 	/**
 	 * Forces redraw of elements list.
 	 */
@@ -464,7 +460,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		fNewFilteredList.setFilter(fTextWidget.getText());
 		handleSelectionChanged();
 	}
-	
+
 	/**
 	 * Returns the dialog settings object used to save state
 	 * for this dialog.
@@ -473,14 +469,14 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	 */
 	protected IDialogSettings getDialogSettings() {
 		IDialogSettings allSettings = CUIPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = allSettings.getSection(fDialogSection);		
+		IDialogSettings section = allSettings.getSection(fDialogSection);
 		if (section == null) {
 			section = allSettings.addNewSection(fDialogSection);
 			writeDefaultSettings(section);
 		}
 		return section;
 	}
-	
+
 	/**
 	 * Stores current configuration in the dialog store.
 	 */
@@ -495,16 +491,26 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			section.put(SETTINGS_WIDTH, size.x);
 			section.put(SETTINGS_HEIGHT, size.y);
 		}
-		section.put(SETTINGS_SHOW_NAMESPACES, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_NAMESPACE)));
-		section.put(SETTINGS_SHOW_CLASSES, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_CLASS)));
-		section.put(SETTINGS_SHOW_STRUCTS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_STRUCT)));
-		section.put(SETTINGS_SHOW_TYPEDEFS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_TYPEDEF)));
-		section.put(SETTINGS_SHOW_ENUMS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_ENUMERATION)));
-		section.put(SETTINGS_SHOW_UNIONS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_UNION)));
-		section.put(SETTINGS_SHOW_FUNCTIONS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_FUNCTION)));
-		section.put(SETTINGS_SHOW_VARIABLES, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_VARIABLE)));
-		section.put(SETTINGS_SHOW_ENUMERATORS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_ENUMERATOR)));
-		section.put(SETTINGS_SHOW_MACROS, fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_MACRO)));
+		section.put(SETTINGS_SHOW_NAMESPACES,
+				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_NAMESPACE)));
+		section.put(SETTINGS_SHOW_CLASSES,
+				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_CLASS)));
+		section.put(SETTINGS_SHOW_STRUCTS,
+				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_STRUCT)));
+		section.put(SETTINGS_SHOW_TYPEDEFS,
+				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_TYPEDEF)));
+		section.put(SETTINGS_SHOW_ENUMS,
+				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_ENUMERATION)));
+		section.put(SETTINGS_SHOW_UNIONS,
+				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_UNION)));
+		section.put(SETTINGS_SHOW_FUNCTIONS,
+				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_FUNCTION)));
+		section.put(SETTINGS_SHOW_VARIABLES,
+				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_VARIABLE)));
+		section.put(SETTINGS_SHOW_ENUMERATORS,
+				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_ENUMERATOR)));
+		section.put(SETTINGS_SHOW_MACROS,
+				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_MACRO)));
 		section.put(SETTINGS_SHOW_LOWLEVEL, fFilterMatcher.getShowLowLevelTypes());
 	}
 
@@ -512,7 +518,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	 * Stores default dialog settings.
 	 */
 	protected void writeDefaultSettings(IDialogSettings section) {
-		section.put(SETTINGS_SHOW_NAMESPACES, true); 
+		section.put(SETTINGS_SHOW_NAMESPACES, true);
 		section.put(SETTINGS_SHOW_CLASSES, true);
 		section.put(SETTINGS_SHOW_STRUCTS, true);
 		section.put(SETTINGS_SHOW_TYPEDEFS, true);
@@ -598,7 +604,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			fFilterMatcher.setShowLowLevelTypes(true);
 		}
 	}
-	
+
 	/**
 	 * @return whether the low level filter checkbox should be shown
 	 */
@@ -618,7 +624,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		}
 		return result;
 	}
-	
+
 	@Override
 	protected Point getInitialLocation(Point initialSize) {
 		Point result = super.getInitialLocation(initialSize);
@@ -628,43 +634,43 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			Rectangle display = getShell().getDisplay().getClientArea();
 			int xe = result.x + initialSize.x;
 			if (xe > display.width) {
-				result.x -= xe - display.width; 
+				result.x -= xe - display.width;
 			}
 			int ye = result.y + initialSize.y;
 			if (ye > display.height) {
-				result.y -= ye - display.height; 
+				result.y -= ye - display.height;
 			}
 		}
 		return result;
-	}	
-	
+	}
+
 	@Override
 	protected void computeResult() {
 		ITypeInfo selection = (ITypeInfo) getLowerSelectedElement();
 		if (selection == null)
 			return;
-			
+
 		List<ITypeInfo> result = new ArrayList<>(1);
 		result.add(selection);
 		setResult(result);
 	}
-	
-    @Override
+
+	@Override
 	public Object[] getFoldedElements(int index) {
-    	ArrayList<IndexTypeInfo> result= new ArrayList<>();
-    	Object[] typeInfos= super.getFoldedElements(index);
-    	if (typeInfos != null) {
-    		for (Object typeInfo : typeInfos) {
-    			if (typeInfo instanceof IndexTypeInfo) {
-    				addFoldedElements((IndexTypeInfo) typeInfo, result);
-    			}
-    		}
-    	}
-    	return result.toArray();
-    }
+		ArrayList<IndexTypeInfo> result = new ArrayList<>();
+		Object[] typeInfos = super.getFoldedElements(index);
+		if (typeInfos != null) {
+			for (Object typeInfo : typeInfos) {
+				if (typeInfo instanceof IndexTypeInfo) {
+					addFoldedElements((IndexTypeInfo) typeInfo, result);
+				}
+			}
+		}
+		return result.toArray();
+	}
 
 	private void addFoldedElements(IndexTypeInfo typeInfo, ArrayList<IndexTypeInfo> result) {
-		ITypeReference[] refs= typeInfo.getReferences();
+		ITypeReference[] refs = typeInfo.getReferences();
 		for (ITypeReference ref : refs) {
 			result.add(IndexTypeInfo.create(typeInfo, ref));
 		}

@@ -26,22 +26,22 @@ import org.eclipse.jface.wizard.WizardPage;
 public abstract class NewElementWizardPage extends WizardPage {
 
 	private IStatus fCurrStatus;
-	
+
 	private boolean fPageVisible;
 
 	/**
 	 * Creates a <code>NewElementWizardPage</code>.
-	 * 
+	 *
 	 * @param name the wizard page's name
-	 */	
+	 */
 	public NewElementWizardPage(String name) {
 		super(name);
 		fPageVisible = false;
-		fCurrStatus =  new StatusInfo();
+		fCurrStatus = new StatusInfo();
 	}
-		
+
 	// ---- WizardPage ----------------
-	
+
 	/*
 	 * @see WizardPage#becomesVisible
 	 */
@@ -52,15 +52,15 @@ public abstract class NewElementWizardPage extends WizardPage {
 		// policy: wizards are not allowed to come up with an error message
 		if (visible && fCurrStatus.matches(IStatus.ERROR)) {
 			StatusInfo status = new StatusInfo();
-			status.setError("");  //$NON-NLS-1$
+			status.setError(""); //$NON-NLS-1$
 			fCurrStatus = status;
-		} 
+		}
 		updateStatus(fCurrStatus);
-	}	
+	}
 
 	/**
 	 * Updates the status line and the ok button according to the given status
-	 * 
+	 *
 	 * @param status status to apply
 	 */
 	protected void updateStatus(IStatus status) {
@@ -70,16 +70,16 @@ public abstract class NewElementWizardPage extends WizardPage {
 			StatusUtil.applyToStatusLine(this, status);
 		}
 	}
-	
+
 	/**
 	 * Updates the status line and the ok button according to the status evaluate from
-	 * an array of status. The most severe error is taken.  In case that two status with 
+	 * an array of status. The most severe error is taken.  In case that two status with
 	 * the same severity exists, the status with lower index is taken.
-	 * 
+	 *
 	 * @param status the array of status
 	 */
 	protected void updateStatus(IStatus[] status) {
 		updateStatus(StatusUtil.getMostSevere(status));
-	}	
-			
+	}
+
 }

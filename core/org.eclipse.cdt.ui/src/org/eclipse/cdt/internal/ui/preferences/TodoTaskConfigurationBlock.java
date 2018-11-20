@@ -54,26 +54,26 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogFie
 public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	private static final Key PREF_TODO_TASK_TAGS = getCDTCoreKey(CCorePreferenceConstants.TODO_TASK_TAGS);
 	private static final Key PREF_TODO_TASK_PRIORITIES = getCDTCoreKey(CCorePreferenceConstants.TODO_TASK_PRIORITIES);
-	private static final Key PREF_TODO_TASK_CASE_SENSITIVE = getCDTCoreKey(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE);	
+	private static final Key PREF_TODO_TASK_CASE_SENSITIVE = getCDTCoreKey(
+			CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE);
 
-	private static final Key[] ALL_KEYS = new Key[] {
-		PREF_TODO_TASK_TAGS, PREF_TODO_TASK_PRIORITIES, PREF_TODO_TASK_CASE_SENSITIVE
-	};
+	private static final Key[] ALL_KEYS = new Key[] { PREF_TODO_TASK_TAGS, PREF_TODO_TASK_PRIORITIES,
+			PREF_TODO_TASK_CASE_SENSITIVE };
 
 	private static final String TASK_PRIORITY_HIGH = CCorePreferenceConstants.TASK_PRIORITY_HIGH;
 	private static final String TASK_PRIORITY_NORMAL = CCorePreferenceConstants.TASK_PRIORITY_NORMAL;
 	private static final String TASK_PRIORITY_LOW = CCorePreferenceConstants.TASK_PRIORITY_LOW;
-	
+
 	public static class TodoTask {
 		public String name;
 		public String priority;
 	}
-	
+
 	private class TodoTaskLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider {
 
 		public TodoTaskLabelProvider() {
 		}
-		
+
 		@Override
 		public Image getImage(Object element) {
 			return null;
@@ -83,7 +83,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
-		
+
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
@@ -95,18 +95,18 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			if (columnIndex == 0) {
 				String name = task.name;
 				if (isDefaultTask(task)) {
-					name = Messages.format(PreferencesMessages.TodoTaskConfigurationBlock_tasks_default, name); 
+					name = Messages.format(PreferencesMessages.TodoTaskConfigurationBlock_tasks_default, name);
 				}
 				return name;
 			}
 			if (TASK_PRIORITY_HIGH.equals(task.priority)) {
-				return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_high_priority; 
+				return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_high_priority;
 			} else if (TASK_PRIORITY_NORMAL.equals(task.priority)) {
-				return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_normal_priority; 
+				return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_normal_priority;
 			} else if (TASK_PRIORITY_LOW.equals(task.priority)) {
-				return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_low_priority; 
+				return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_low_priority;
 			}
-			return ""; //$NON-NLS-1$	
+			return ""; //$NON-NLS-1$
 		}
 
 		@Override
@@ -117,7 +117,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			return null;
 		}
 	}
-	
+
 	private static class TodoTaskSorter extends ViewerComparator {
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
@@ -129,39 +129,35 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	private static final int IDX_EDIT = 1;
 	private static final int IDX_REMOVE = 2;
 	private static final int IDX_DEFAULT = 4;
-	
+
 	private IStatus fTaskTagsStatus;
 	private final ListDialogField<TodoTask> fTodoTasksList;
 	private final SelectionButtonDialogField fCaseSensitiveCheckBox;
 
-
-	public TodoTaskConfigurationBlock(IStatusChangeListener context, IProject project, IWorkbenchPreferenceContainer container) {
+	public TodoTaskConfigurationBlock(IStatusChangeListener context, IProject project,
+			IWorkbenchPreferenceContainer container) {
 		super(context, project, ALL_KEYS, container);
-						
+
 		TaskTagAdapter adapter = new TaskTagAdapter();
-		String[] buttons = new String[] {
-			PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_add_button, 
-			PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_edit_button, 
-			PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_remove_button, 
-			null,
-			PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_setdefault_button, 
-		};
+		String[] buttons = new String[] { PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_add_button,
+				PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_edit_button,
+				PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_remove_button, null,
+				PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_setdefault_button, };
 		fTodoTasksList = new ListDialogField<TodoTask>(adapter, buttons, new TodoTaskLabelProvider());
 		fTodoTasksList.setDialogFieldListener(adapter);
 		fTodoTasksList.setRemoveButtonIndex(IDX_REMOVE);
-		
+
 		String[] columnsHeaders = new String[] {
-			PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_name_column, 
-			PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_priority_column, 
-		};
-		
+				PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_name_column,
+				PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_priority_column, };
+
 		fTodoTasksList.setTableColumns(new ListDialogField.ColumnsDescription(columnsHeaders, true));
 		fTodoTasksList.setViewerComparator(new TodoTaskSorter());
-		
+
 		fCaseSensitiveCheckBox = new SelectionButtonDialogField(SWT.CHECK);
-		fCaseSensitiveCheckBox.setLabelText(PreferencesMessages.TodoTaskConfigurationBlock_casesensitive_label); 
+		fCaseSensitiveCheckBox.setLabelText(PreferencesMessages.TodoTaskConfigurationBlock_casesensitive_label);
 		fCaseSensitiveCheckBox.setDialogFieldListener(adapter);
-		
+
 		unpackTodoTasks();
 		if (fTodoTasksList.getSize() > 0) {
 			fTodoTasksList.selectFirstElement();
@@ -169,19 +165,19 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			fTodoTasksList.enableButton(IDX_EDIT, false);
 			fTodoTasksList.enableButton(IDX_DEFAULT, false);
 		}
-		
-		fTaskTagsStatus = new StatusInfo();		
+
+		fTaskTagsStatus = new StatusInfo();
 	}
-	
+
 	public void setEnabled(boolean isEnabled) {
 		fTodoTasksList.setEnabled(isEnabled);
 		fCaseSensitiveCheckBox.setEnabled(isEnabled);
 	}
-	
+
 	final boolean isDefaultTask(TodoTask task) {
 		return fTodoTasksList.getIndexOfElement(task) == 0;
 	}
-	
+
 	private void setToDefaultTask(TodoTask task) {
 		List<TodoTask> elements = fTodoTasksList.getElements();
 		elements.remove(task);
@@ -189,12 +185,12 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		fTodoTasksList.setElements(elements);
 		fTodoTasksList.enableButton(IDX_DEFAULT, false);
 	}
-	
+
 	public class TaskTagAdapter implements IListAdapter<TodoTask>, IDialogFieldListener {
 		private boolean canEdit(List<TodoTask> selectedElements) {
 			return selectedElements.size() == 1;
 		}
-		
+
 		private boolean canSetToDefault(List<TodoTask> selectedElements) {
 			return selectedElements.size() == 1 && !isDefaultTask(selectedElements.get(0));
 		}
@@ -210,7 +206,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			field.enableButton(IDX_EDIT, canEdit(selectedElements));
 			field.enableButton(IDX_DEFAULT, canSetToDefault(selectedElements));
 		}
-			
+
 		@Override
 		public void doubleClicked(ListDialogField<TodoTask> field) {
 			if (canEdit(field.getSelectedElements())) {
@@ -221,9 +217,9 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		@Override
 		public void dialogFieldChanged(DialogField field) {
 			updateModel(field);
-		}			
+		}
 	}
-		
+
 	@Override
 	protected Control createContents(Composite parent) {
 		setShell(parent.getShell());
@@ -231,25 +227,25 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		layout.numColumns = 2;
-		
+
 		PixelConverter conv = new PixelConverter(parent);
-		
+
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(layout);
 		composite.setFont(parent.getFont());
-		
+
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = conv.convertWidthInCharsToPixels(50);
 		Control listControl = fTodoTasksList.getListControl(composite);
 		listControl.setLayoutData(data);
-		
+
 		Control buttonsControl = fTodoTasksList.getButtonBox(composite);
 		buttonsControl.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING));
-		
+
 		fCaseSensitiveCheckBox.doFillIntoGrid(composite, 2);
-		
+
 		validateSettings(null, null, null);
-	
+
 		return composite;
 	}
 
@@ -258,7 +254,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		if (!areSettingsEnabled()) {
 			return;
 		}
-		
+
 		if (changedKey != null) {
 			if (PREF_TODO_TASK_TAGS.equals(changedKey)) {
 				fTaskTagsStatus = validateTaskTags();
@@ -267,15 +263,15 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			}
 		} else {
 			fTaskTagsStatus = validateTaskTags();
-		}		
+		}
 		IStatus status = fTaskTagsStatus; //StatusUtil.getMostSevere(new IStatus[] { fTaskTagsStatus });
 		fContext.statusChanged(status);
 	}
-	
+
 	private IStatus validateTaskTags() {
 		return new StatusInfo();
 	}
-	
+
 	private void updateModel(DialogField field) {
 		if (field == fTodoTasksList) {
 			StringBuilder tags = new StringBuilder();
@@ -298,14 +294,14 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			setValue(PREF_TODO_TASK_CASE_SENSITIVE, state);
 		}
 	}
-	
+
 	@Override
 	protected void updateControls() {
 		unpackTodoTasks();
 	}
-	
+
 	private void unpackTodoTasks() {
-		String currTags = getValue(PREF_TODO_TASK_TAGS);	
+		String currTags = getValue(PREF_TODO_TASK_TAGS);
 		String currPrios = getValue(PREF_TODO_TASK_PRIORITIES);
 		String[] tags = getTokens(currTags, ","); //$NON-NLS-1$
 		String[] prios = getTokens(currPrios, ","); //$NON-NLS-1$
@@ -317,11 +313,11 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			elements.add(task);
 		}
 		fTodoTasksList.setElements(elements);
-		
+
 		boolean isCaseSensitive = getBooleanValue(PREF_TODO_TASK_CASE_SENSITIVE);
 		fCaseSensitiveCheckBox.setSelection(isCaseSensitive);
 	}
-	
+
 	private void doTodoButtonPressed(int index) {
 		TodoTask edited = null;
 		if (index != IDX_ADD) {

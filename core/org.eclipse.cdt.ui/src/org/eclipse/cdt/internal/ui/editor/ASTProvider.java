@@ -57,7 +57,7 @@ public final class ASTProvider {
 		String fName;
 
 		private WAIT_FLAG(String name) {
-			fName= name;
+			fName = name;
 		}
 
 		@Override
@@ -74,7 +74,7 @@ public final class ASTProvider {
 	 * If not yet cached and if the translation unit is open, an AST will be created by
 	 * this AST provider.
 	 */
-	public static final WAIT_FLAG WAIT_IF_OPEN= new WAIT_FLAG("wait if open"); //$NON-NLS-1$
+	public static final WAIT_FLAG WAIT_IF_OPEN = new WAIT_FLAG("wait if open"); //$NON-NLS-1$
 
 	/**
 	 * Wait flag indicating that a client requesting an AST
@@ -83,7 +83,7 @@ public final class ASTProvider {
 	 * <p>
 	 * No AST will be created by the AST provider.
 	 */
-	public static final WAIT_FLAG WAIT_ACTIVE_ONLY= new WAIT_FLAG("wait active only"); //$NON-NLS-1$
+	public static final WAIT_FLAG WAIT_ACTIVE_ONLY = new WAIT_FLAG("wait active only"); //$NON-NLS-1$
 
 	/**
 	 * Wait flag indicating that a client requesting an AST
@@ -91,12 +91,12 @@ public final class ASTProvider {
 	 * <p>
 	 * No AST will be created by the AST provider.
 	 */
-	public static final WAIT_FLAG WAIT_NO= new WAIT_FLAG("don't wait"); //$NON-NLS-1$
+	public static final WAIT_FLAG WAIT_NO = new WAIT_FLAG("don't wait"); //$NON-NLS-1$
 
 	/** Full parse mode (no PDOM) */
-	public static int PARSE_MODE_FULL= 0;
+	public static int PARSE_MODE_FULL = 0;
 	/** Fast parse mode (use PDOM) */
-	public static int PARSE_MODE_FAST= ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
+	public static int PARSE_MODE_FAST = ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 
 	/**
 	 * Internal activation listener.
@@ -149,7 +149,7 @@ public final class ASTProvider {
 
 		@Override
 		public void windowActivated(IWorkbenchWindow window) {
-			IWorkbenchPartReference ref= window.getPartService().getActivePartReference();
+			IWorkbenchPartReference ref = window.getPartService().getActivePartReference();
 			if (isCEditor(ref) && !isActiveEditor(ref))
 				activeEditorChanged(ref.getPart(true));
 		}
@@ -160,7 +160,8 @@ public final class ASTProvider {
 
 		@Override
 		public void windowClosed(IWorkbenchWindow window) {
-			if (fActiveEditor != null && fActiveEditor.getSite() != null && window == fActiveEditor.getSite().getWorkbenchWindow()) {
+			if (fActiveEditor != null && fActiveEditor.getSite() != null
+					&& window == fActiveEditor.getSite().getWorkbenchWindow()) {
 				activeEditorChanged(null);
 			}
 			window.getPartService().removePartListener(this);
@@ -183,7 +184,7 @@ public final class ASTProvider {
 			if (ref == null)
 				return false;
 
-			String id= ref.getId();
+			String id = ref.getId();
 			if (CUIPlugin.EDITOR_ID.equals(id))
 				return true;
 
@@ -198,7 +199,7 @@ public final class ASTProvider {
 		}
 	}
 
-	private final ASTCache fCache= new ASTCache();
+	private final ASTCache fCache = new ASTCache();
 	private ActivationListener fActivationListener;
 	private IWorkbenchPart fActiveEditor;
 	private long fTimeStamp;
@@ -226,12 +227,12 @@ public final class ASTProvider {
 	void install() {
 		if (PlatformUI.isWorkbenchRunning()) {
 			// Create and register activation listener
-			fActivationListener= new ActivationListener();
+			fActivationListener = new ActivationListener();
 			PlatformUI.getWorkbench().addWindowListener(fActivationListener);
 
 			// Ensure existing windows get connected
-			IWorkbenchWindow[] windows= PlatformUI.getWorkbench().getWorkbenchWindows();
-			for (int i= 0, length= windows.length; i < length; i++) {
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			for (int i = 0, length = windows.length; i < length; i++) {
 				windows[i].getPartService().addPartListener(fActivationListener);
 			}
 		}
@@ -246,8 +247,8 @@ public final class ASTProvider {
 		}
 
 		synchronized (this) {
-			fActiveEditor= editor;
-			fTimeStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
+			fActiveEditor = editor;
+			fTimeStamp = IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 			fCache.setActiveElement(tu);
 		}
 
@@ -270,24 +271,24 @@ public final class ASTProvider {
 	}
 
 	private boolean updateModificationStamp() {
-		long timeStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
-		ITextEditor textEditor= null;
+		long timeStamp = IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
+		ITextEditor textEditor = null;
 		synchronized (this) {
 			if (fActiveEditor instanceof ITextEditor) {
-				textEditor= (ITextEditor) fActiveEditor;
-				timeStamp= fTimeStamp;
+				textEditor = (ITextEditor) fActiveEditor;
+				timeStamp = fTimeStamp;
 			}
 		}
 		if (textEditor != null) {
-			IEditorInput editorInput= textEditor.getEditorInput();
-			IDocument document= textEditor.getDocumentProvider().getDocument(editorInput);
+			IEditorInput editorInput = textEditor.getEditorInput();
+			IDocument document = textEditor.getDocumentProvider().getDocument(editorInput);
 			if (document instanceof IDocumentExtension4) {
-				IDocumentExtension4 docExt= (IDocumentExtension4) document;
-				long newTimeStamp= docExt.getModificationStamp();
+				IDocumentExtension4 docExt = (IDocumentExtension4) document;
+				long newTimeStamp = docExt.getModificationStamp();
 				if (newTimeStamp != timeStamp) {
 					synchronized (this) {
 						if (fActiveEditor == textEditor && fTimeStamp == timeStamp) {
-							fTimeStamp= newTimeStamp;
+							fTimeStamp = newTimeStamp;
 							return true;
 						}
 					}
@@ -304,7 +305,7 @@ public final class ASTProvider {
 		if (fActivationListener != null) {
 			// Dispose activation listener
 			PlatformUI.getWorkbench().removeWindowListener(fActivationListener);
-			fActivationListener= null;
+			fActivationListener = null;
 		}
 		fCache.setActiveElement(null);
 	}
@@ -355,8 +356,8 @@ public final class ASTProvider {
 	 * @param monitor a progress monitor, may be {@code null}.
 	 * @return the shared AST, or {@code null} if the shared AST is not available.
 	 */
-	public final IASTTranslationUnit acquireSharedAST(ITranslationUnit tu, IIndex index,
-			WAIT_FLAG waitFlag, IProgressMonitor monitor) {
+	public final IASTTranslationUnit acquireSharedAST(ITranslationUnit tu, IIndex index, WAIT_FLAG waitFlag,
+			IProgressMonitor monitor) {
 		if (!prepareForUsingCache(tu, waitFlag))
 			return null;
 		return fCache.acquireSharedAST(tu, index, waitFlag != WAIT_NO, monitor);
@@ -388,7 +389,7 @@ public final class ASTProvider {
 
 		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=342506 explains
 		// benign nature of the race conditions in the code below.
-		final boolean isActive= fCache.isActiveElement(tu);
+		final boolean isActive = fCache.isActiveElement(tu);
 		if (waitFlag == WAIT_ACTIVE_ONLY && !isActive) {
 			return false;
 		}

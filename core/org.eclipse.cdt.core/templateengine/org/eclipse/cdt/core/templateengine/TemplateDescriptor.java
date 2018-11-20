@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
- * This class contains methods to get first process block element, next process block 
+ * This class contains methods to get first process block element, next process block
  * element and checks for next process block element.
  */
 public class TemplateDescriptor {
@@ -38,10 +38,10 @@ public class TemplateDescriptor {
 	public static final String IF = "if"; //$NON-NLS-1$
 	public static final String ID = "id"; //$NON-NLS-1$
 	public static final String DEFAULT = "default"; //$NON-NLS-1$
-    public static final String PERSIST = "persist";                 //$NON-NLS-1$
-    public static final String BOOL_TRUE = "true";                   //$NON-NLS-1$
+	public static final String PERSIST = "persist"; //$NON-NLS-1$
+	public static final String BOOL_TRUE = "true"; //$NON-NLS-1$
 
-    private Document document;
+	private Document document;
 	private Element rootElement;
 	private List<String> persistVector;
 	private String pluginId;
@@ -52,14 +52,14 @@ public class TemplateDescriptor {
 	 * @throws TemplateInitializationException
 	 */
 	public TemplateDescriptor(URL descriptorURL, String pluginId) throws TemplateInitializationException {
-		String msg= NLS.bind(Messages.TemplateCore_init_failed, descriptorURL.toString());
+		String msg = NLS.bind(Messages.TemplateCore_init_failed, descriptorURL.toString());
 		try {
 			this.document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(descriptorURL.openStream());
-		} catch(ParserConfigurationException pce) {
+		} catch (ParserConfigurationException pce) {
 			throw new TemplateInitializationException(msg, pce);
-		} catch(IOException ioe) {
+		} catch (IOException ioe) {
 			throw new TemplateInitializationException(msg, ioe);
-		} catch(SAXException se) {
+		} catch (SAXException se) {
 			throw new TemplateInitializationException(msg, se);
 		}
 		this.rootElement = document.getDocumentElement();
@@ -70,7 +70,7 @@ public class TemplateDescriptor {
 	/**
 	 * This method is to get the default key value pair (HashMap) form template
 	 * descriptor root element.
-	 * 
+	 *
 	 * @return default values with keys
 	 */
 	public Map<String, String> getTemplateDefaults(Element element) {
@@ -92,20 +92,21 @@ public class TemplateDescriptor {
 	 * @param element
 	 * @return
 	 */
-	private boolean isNestedElement(Element element){
-		boolean result=false;
-		if (element!=null){
+	private boolean isNestedElement(Element element) {
+		boolean result = false;
+		if (element != null) {
 			List<Element> children = TemplateEngine.getChildrenOfElement(element);
 			String elementName = element.getNodeName();
 			Element testElement;
 			String testElementName = null;
-			if (children.size() > 0){
+			if (children.size() > 0) {
 				testElement = children.get(0);
-				testElementName=testElement.getNodeName();
+				testElementName = testElement.getNodeName();
 			}
-			if(elementName.equals(testElementName))
-				result=true;
-			else result=false;
+			if (elementName.equals(testElementName))
+				result = true;
+			else
+				result = false;
 		}
 		return result;
 	}
@@ -113,7 +114,7 @@ public class TemplateDescriptor {
 	/**
 	 * This method is to get the list of property-group elements from template
 	 * descriptor root element.
-	 * 
+	 *
 	 * @return list of property-group elements
 	 */
 	public List<Element> getPropertyGroupList() {
@@ -137,7 +138,7 @@ public class TemplateDescriptor {
 	 * This method is to get the complex property-group from template descriptor
 	 * root element. complex means a property-group contains other
 	 * property-group(s)
-	 * 
+	 *
 	 * @param element
 	 *            root element of type JDOM Element
 	 * @return property-group root element of type JDOM Element
@@ -167,7 +168,7 @@ public class TemplateDescriptor {
 	/**
 	 * This private method is used in getTemplateDefaults() to get defaults from
 	 * property elements
-	 * 
+	 *
 	 * @param defaults
 	 *            HashMap to store deraults
 	 * @param propertyGroupElement
@@ -199,13 +200,13 @@ public class TemplateDescriptor {
 
 	/**
 	 * return the list of IDs whose Persist attribute is true.
-	 * 
+	 *
 	 * @return Vector.
 	 */
 	public List<String> getPersistTrueIDs() {
 		return persistVector;
 	}
-	
+
 	public String getPluginId() {
 		return pluginId;
 	}

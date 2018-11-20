@@ -25,34 +25,42 @@ public class ObjectMap extends ObjectTable<Object> {
 	/**
 	 * An empty immutable {@code ObjectMap}.
 	 */
-    public static final ObjectMap EMPTY_MAP = new ObjectMap(0) {
-        @Override
-		public Object clone() { return this; }
-        @Override
-		public List<Object> toList() { return Collections.emptyList(); }
-        @Override
-		public Object put(Object key, Object value) { throw new UnsupportedOperationException(); }
-    };
+	public static final ObjectMap EMPTY_MAP = new ObjectMap(0) {
+		@Override
+		public Object clone() {
+			return this;
+		}
+
+		@Override
+		public List<Object> toList() {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public Object put(Object key, Object value) {
+			throw new UnsupportedOperationException();
+		}
+	};
 
 	private Object[] valueTable;
 
 	public ObjectMap(int initialSize) {
-	    super(initialSize);
+		super(initialSize);
 		valueTable = new Object[capacity()];
 	}
 
 	@Override
 	public Object clone() {
-	    ObjectMap newMap = (ObjectMap) super.clone();
-	    newMap.valueTable = new Object[capacity()];
-	    System.arraycopy(valueTable, 0, newMap.valueTable, 0, valueTable.length);
-	    return newMap;
+		ObjectMap newMap = (ObjectMap) super.clone();
+		newMap.valueTable = new Object[capacity()];
+		System.arraycopy(valueTable, 0, newMap.valueTable, 0, valueTable.length);
+		return newMap;
 	}
 
 	@Override
 	final public void clear() {
-	    super.clear();
-	    Arrays.fill(valueTable, null);
+		super.clear();
+		Arrays.fill(valueTable, null);
 	}
 
 	@Override
@@ -78,15 +86,15 @@ public class ObjectMap extends ObjectTable<Object> {
 	}
 
 	final public Object getAt(int i) {
-	    if (i < 0 || i > currEntry)
-	        return null;
+		if (i < 0 || i > currEntry)
+			return null;
 
-	    return valueTable[i];
+		return valueTable[i];
 	}
 
 	final public Object remove(Object key) {
-	    if (key == null)
-	        return null;
+		if (key == null)
+			return null;
 		int i = lookup(key);
 		if (i < 0)
 			return null;
@@ -109,40 +117,40 @@ public class ObjectMap extends ObjectTable<Object> {
 	}
 
 	@Override
-    protected int partition(Comparator<Object> c, int p, int r) {
-        Object x = keyTable[p];
-        Object temp = null;
-        int i = p;
-        int j = r;
+	protected int partition(Comparator<Object> c, int p, int r) {
+		Object x = keyTable[p];
+		Object temp = null;
+		int i = p;
+		int j = r;
 
-        while (true) {
-            while (c.compare(keyTable[j], x) > 0) {
-            	j--;
-            }
-            if (i < j) {
-                while (c.compare(keyTable[i], x) < 0) {
-                	i++;
-                }
-            }
+		while (true) {
+			while (c.compare(keyTable[j], x) > 0) {
+				j--;
+			}
+			if (i < j) {
+				while (c.compare(keyTable[i], x) < 0) {
+					i++;
+				}
+			}
 
-            if (i < j) {
-                temp = keyTable[j];
-                keyTable[j] = keyTable[i];
-                keyTable[i] = temp;
+			if (i < j) {
+				temp = keyTable[j];
+				keyTable[j] = keyTable[i];
+				keyTable[i] = temp;
 
-                temp = valueTable[j];
-                valueTable[j] = valueTable[i];
-                valueTable[i] = temp;
-            } else {
-                return j;
-            }
-        }
-    }
+				temp = valueTable[j];
+				valueTable[j] = valueTable[i];
+				valueTable[i] = temp;
+			} else {
+				return j;
+			}
+		}
+	}
 
 	public Object[] valueArray() {
 		Object[] vals = new Object[size()];
 		System.arraycopy(valueTable, 0, vals, 0, vals.length);
-	    return vals;
+		return vals;
 	}
 
 	public boolean isEquivalent(ObjectMap other, IObjectMatcher matcher) {

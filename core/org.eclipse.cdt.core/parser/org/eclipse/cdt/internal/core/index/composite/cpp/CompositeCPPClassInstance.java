@@ -44,7 +44,7 @@ public class CompositeCPPClassInstance extends CompositeCPPClassSpecialization i
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		return TemplateInstanceUtil.getTemplateParameterMap(cf, (ICPPTemplateInstance) rbinding);
 	}
-	
+
 	@Override
 	public boolean isExplicitSpecialization() {
 		return ((ICPPTemplateInstance) rbinding).isExplicitSpecialization();

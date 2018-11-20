@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,6 @@
  *     Anton Gorenkov - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view.actions;
-
 
 import java.util.Iterator;
 
@@ -35,7 +34,6 @@ public class CopySelectedTestsAction extends Action {
 	private TreeViewer treeViewer;
 	private Clipboard clipboard;
 
-
 	public CopySelectedTestsAction(TreeViewer treeViewer, Clipboard clipboard) {
 		super(ActionsMessages.CopySelectedTestsAction_text);
 		setToolTipText(ActionsMessages.CopySelectedTestsAction_tooltip);
@@ -46,7 +44,7 @@ public class CopySelectedTestsAction extends Action {
 
 	@Override
 	public void run() {
-		IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		if (!selection.isEmpty()) {
 			StringBuilder sb = new StringBuilder();
 			boolean needEOL = false;
@@ -56,13 +54,10 @@ public class CopySelectedTestsAction extends Action {
 				} else {
 					needEOL = true;
 				}
-				sb.append(TestPathUtils.getTestItemPath((ITestItem)it.next()));
+				sb.append(TestPathUtils.getTestItemPath((ITestItem) it.next()));
 			}
-			clipboard.setContents(
-					new String[]{ sb.toString() },
-					new Transfer[]{ TextTransfer.getInstance() });
+			clipboard.setContents(new String[] { sb.toString() }, new Transfer[] { TextTransfer.getInstance() });
 		}
 	}
-	
-}
 
+}

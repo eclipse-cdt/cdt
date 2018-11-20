@@ -69,12 +69,13 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 	public boolean runInEditor() {
 		return true;
 	}
-	
+
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
 		// This checker should not run on full or incremental build
-		getLaunchModePreference(problem).enableInLaunchModes(CheckerLaunchMode.RUN_AS_YOU_TYPE, CheckerLaunchMode.RUN_ON_DEMAND);
+		getLaunchModePreference(problem).enableInLaunchModes(CheckerLaunchMode.RUN_AS_YOU_TYPE,
+				CheckerLaunchMode.RUN_ON_DEMAND);
 	}
 
 	@Override
@@ -106,7 +107,8 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 							}
 							if (id == IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP) {
 								String candidatesString = getCandidatesString(problemBinding);
-								reportProblem(ERR_ID_AmbiguousProblem, name, name.getRawSignature(), candidatesString, contextFlagsString);
+								reportProblem(ERR_ID_AmbiguousProblem, name, name.getRawSignature(), candidatesString,
+										contextFlagsString);
 								return PROCESS_CONTINUE;
 							}
 							if (id == IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE) {
@@ -120,15 +122,18 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 									problemNode = name;
 									typeString = name.getRawSignature();
 								}
-								reportProblem(ERR_ID_CircularReferenceProblem, problemNode, typeString, contextFlagsString);
+								reportProblem(ERR_ID_CircularReferenceProblem, problemNode, typeString,
+										contextFlagsString);
 								return PROCESS_CONTINUE;
 							}
 							if (id == IProblemBinding.SEMANTIC_INVALID_REDECLARATION) {
-								reportProblem(ERR_ID_RedeclarationProblem, name, name.getRawSignature(), contextFlagsString);
+								reportProblem(ERR_ID_RedeclarationProblem, name, name.getRawSignature(),
+										contextFlagsString);
 								return PROCESS_CONTINUE;
 							}
 							if (id == IProblemBinding.SEMANTIC_INVALID_REDEFINITION) {
-								reportProblem(ERR_ID_RedefinitionProblem, name, name.getRawSignature(), contextFlagsString);
+								reportProblem(ERR_ID_RedefinitionProblem, name, name.getRawSignature(),
+										contextFlagsString);
 								return PROCESS_CONTINUE;
 							}
 							if (id == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND) {
@@ -136,7 +141,8 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 								return PROCESS_CONTINUE;
 							}
 							if (id == IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND) {
-								reportProblem(ERR_ID_LabelStatementNotFoundProblem, name, name.getRawSignature(), contextFlagsString);
+								reportProblem(ERR_ID_LabelStatementNotFoundProblem, name, name.getRawSignature(),
+										contextFlagsString);
 								return PROCESS_CONTINUE;
 							}
 							if (id == IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS) {
@@ -147,23 +153,25 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 								return PROCESS_CONTINUE;
 							}
 							if (id == IProblemBinding.SEMANTIC_INVALID_TYPE) {
-								reportProblem(ERR_ID_TypeResolutionProblem, name, name.getRawSignature(), contextFlagsString);
+								reportProblem(ERR_ID_TypeResolutionProblem, name, name.getRawSignature(),
+										contextFlagsString);
 								return PROCESS_CONTINUE;
 							}
-							// From this point, we'll deal only with NAME_NOT_FOUND problems. 
+							// From this point, we'll deal only with NAME_NOT_FOUND problems.
 							// If it's something else continue because we don't want to give bad messages.
 							if (id != IProblemBinding.SEMANTIC_NAME_NOT_FOUND) {
 								return PROCESS_CONTINUE;
 							}
 							if (SemanticQueries.isUnknownBuiltin(problemBinding, name)) {
-								return PROCESS_CONTINUE;  // Ignore an unknown built-in.
+								return PROCESS_CONTINUE; // Ignore an unknown built-in.
 							}
 							if (isFunctionCall(name, parentNode)) {
 								handleFunctionProblem(name, problemBinding, contextFlagsString);
 							} else if (parentNode instanceof IASTFieldReference) {
 								handleMemberProblem(name, parentNode, problemBinding, contextFlagsString);
 							} else if (parentNode instanceof IASTNamedTypeSpecifier) {
-								reportProblem(ERR_ID_TypeResolutionProblem, name, name.getRawSignature(), contextFlagsString);
+								reportProblem(ERR_ID_TypeResolutionProblem, name, name.getRawSignature(),
+										contextFlagsString);
 							} else {
 								// Probably a variable.
 								handleVariableProblem(name, contextFlagsString);
@@ -209,38 +217,44 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 		return (function != null);
 	}
 
-	private void handleFunctionProblem(IASTName name, IProblemBinding problemBinding, String contextFlagsString) throws DOMException {
+	private void handleFunctionProblem(IASTName name, IProblemBinding problemBinding, String contextFlagsString)
+			throws DOMException {
 		if (problemBinding.getCandidateBindings().length == 0) {
-			reportProblem(ERR_ID_FunctionResolutionProblem, name.getLastName(), new String(name.getSimpleID()), contextFlagsString);
+			reportProblem(ERR_ID_FunctionResolutionProblem, name.getLastName(), new String(name.getSimpleID()),
+					contextFlagsString);
 		} else {
 			String candidatesString = getCandidatesString(problemBinding);
 			reportProblem(ERR_ID_InvalidArguments, name.getLastName(), candidatesString, contextFlagsString);
 		}
 	}
 
-	private void handleMemberProblem(IASTName name, IASTNode parentNode, IProblemBinding problemBinding, String contextFlagsString)
-			throws DOMException {
+	private void handleMemberProblem(IASTName name, IASTNode parentNode, IProblemBinding problemBinding,
+			String contextFlagsString) throws DOMException {
 		IASTNode parentParentNode = parentNode.getParent();
-		
+
 		// An IASTFieldReference corresponds to a method if it's the first child in the parent function call expression
-		// For example, 
+		// For example,
 		//   func(x.y()); the field reference is first in the x.y() function call expression -> y is a method
 		//   func(x.y); the field reference is second in the func(x.y) function call expression, func is first as a Id Expression -> y is a field
-		boolean isMethod = parentParentNode instanceof IASTFunctionCallExpression && parentParentNode.getChildren()[0] == parentNode;
+		boolean isMethod = parentParentNode instanceof IASTFunctionCallExpression
+				&& parentParentNode.getChildren()[0] == parentNode;
 		if (isMethod) {
 			if (problemBinding.getCandidateBindings().length == 0) {
-				reportProblem(ERR_ID_MethodResolutionProblem, name.getLastName(), new String(name.getSimpleID()), contextFlagsString);
+				reportProblem(ERR_ID_MethodResolutionProblem, name.getLastName(), new String(name.getSimpleID()),
+						contextFlagsString);
 			} else {
 				String candidatesString = getCandidatesString(problemBinding);
 				reportProblem(ERR_ID_InvalidArguments, name.getLastName(), candidatesString, contextFlagsString);
 			}
 		} else {
-			reportProblem(ERR_ID_FieldResolutionProblem, name.getLastName(), name.getRawSignature(), contextFlagsString);
+			reportProblem(ERR_ID_FieldResolutionProblem, name.getLastName(), name.getRawSignature(),
+					contextFlagsString);
 		}
 	}
 
 	private void handleVariableProblem(IASTName name, String contextFlagsString) {
-		reportProblem(ERR_ID_VariableResolutionProblem, name, name.getBinding().getName(), contextFlagsString, name.getRawSignature());
+		reportProblem(ERR_ID_VariableResolutionProblem, name, name.getBinding().getName(), contextFlagsString,
+				name.getRawSignature());
 	}
 
 	private boolean isFunctionCall(IASTName name, IASTNode parentNode) {
@@ -270,7 +284,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 
 	/**
 	 * Returns a string of the candidates for the binding
-	 * 
+	 *
 	 * @param problemBinding
 	 * @return A string of the candidates, one per line
 	 * @throws DOMException
@@ -307,7 +321,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 
 	/**
 	 * Returns a string of the function signature : returntype + function + parameters
-	 * 
+	 *
 	 * @param functionBinding The function to get the signature
 	 * @return A string of the function signature
 	 * @throws DOMException

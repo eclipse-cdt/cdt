@@ -54,7 +54,7 @@ class CodanPartListener implements IPartListener2 {
 			partListener.partOpened(ref);
 		}
 	}
-	
+
 	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 	}
@@ -116,12 +116,12 @@ class CodanPartListener implements IPartListener2 {
 			reconciler.uninstall((CEditor) part);
 		}
 	}
-	
+
 	private boolean isCEditor(IWorkbenchPart part) {
-		// We need to be very careful since this code may be executed in an environment where CDT is 
-		// installed, but is not actively used. 
-		// By checking for ICEditor first we avoid loading CEditor class if the part is not a C/C++ 
-		// editor. Loading of CEditor class can be very expensive since it triggers loading of many 
+		// We need to be very careful since this code may be executed in an environment where CDT is
+		// installed, but is not actively used.
+		// By checking for ICEditor first we avoid loading CEditor class if the part is not a C/C++
+		// editor. Loading of CEditor class can be very expensive since it triggers loading of many
 		// other classes.
 		return part instanceof ICEditor && part instanceof CEditor;
 	}

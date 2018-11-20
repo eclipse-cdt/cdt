@@ -2,14 +2,14 @@
  * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * 	   Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
@@ -47,14 +47,14 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 /**
  * Generates source code of declaration specifier nodes. The actual string operations are delegated
  * to the <code>Scribe</code> class.
- * 
+ *
  * @see Scribe
  * @see IASTDeclSpecifier
  * @author Emanuel Graf IFS
  */
 public class DeclSpecWriter extends NodeWriter {
 	private boolean constRight = false;
-	
+
 	public DeclSpecWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
@@ -70,7 +70,7 @@ public class DeclSpecWriter extends NodeWriter {
 		} else if (declSpec instanceof ICASTDeclSpecifier) {
 			writeCDeclSpec((ICASTDeclSpecifier) declSpec);
 		}
-		if(constRight && declSpec.isConst()) {
+		if (constRight && declSpec.isConst()) {
 			scribe.printSpace();
 			scribe.printStringSpace(Keywords.CONST);
 		}
@@ -79,7 +79,7 @@ public class DeclSpecWriter extends NodeWriter {
 	private String getCPPSimpleDecSpecifier(ICPPASTSimpleDeclSpecifier simpDeclSpec) {
 		return getASTSimpleDecSpecifier(simpDeclSpec.getType(), true);
 	}
-	
+
 	private String getCSimpleDecSpecifier(ICASTSimpleDeclSpecifier simpDeclSpec) {
 		return getASTSimpleDecSpecifier(simpDeclSpec.getType(), false);
 	}
@@ -109,10 +109,10 @@ public class DeclSpecWriter extends NodeWriter {
 			return GCCKeywords._DECIMAL64;
 		case IASTSimpleDeclSpecifier.t_decimal128:
 			return GCCKeywords._DECIMAL128;
-			
+
 		case IASTSimpleDeclSpecifier.t_bool:
 			return isCpp ? Keywords.BOOL : Keywords._BOOL;
-			
+
 		case IASTSimpleDeclSpecifier.t_wchar_t:
 			if (isCpp)
 				return Keywords.WCHAR_T;
@@ -147,7 +147,7 @@ public class DeclSpecWriter extends NodeWriter {
 		if (cDeclSpec.isRestrict()) {
 			scribe.printStringSpace(Keywords.RESTRICT);
 		}
-		
+
 		if (cDeclSpec instanceof ICASTCompositeTypeSpecifier) {
 			writeCompositeTypeSpecifier((ICASTCompositeTypeSpecifier) cDeclSpec);
 		} else if (cDeclSpec instanceof ICASTEnumerationSpecifier) {
@@ -188,7 +188,7 @@ public class DeclSpecWriter extends NodeWriter {
 			return Keywords.UNION;
 		case ICPPASTElaboratedTypeSpecifier.k_class:
 			return Keywords.CLASS;
-			
+
 		default:
 			throw new IllegalArgumentException("Unknown elaborated type: " + kind); //$NON-NLS-1$
 		}
@@ -213,7 +213,7 @@ public class DeclSpecWriter extends NodeWriter {
 		if (cppDelcSpec.getStorageClass() == IASTDeclSpecifier.sc_mutable) {
 			scribe.printStringSpace(Keywords.MUTABLE);
 		}
-		
+
 		if (cppDelcSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			writeCompositeTypeSpecifier((ICPPASTCompositeTypeSpecifier) cppDelcSpec);
 		} else if (cppDelcSpec instanceof IASTEnumerationSpecifier) {
@@ -297,7 +297,7 @@ public class DeclSpecWriter extends NodeWriter {
 						scribe.print(COMMA_SPACE);
 					}
 				}
-				hasTrailingComments = hasTrailingComments(baseSpecifiers[baseSpecifiers.length-1].getNameSpecifier());
+				hasTrailingComments = hasTrailingComments(baseSpecifiers[baseSpecifiers.length - 1].getNameSpecifier());
 			}
 		}
 		if (!hasTrailingComments) {
@@ -308,7 +308,7 @@ public class DeclSpecWriter extends NodeWriter {
 		scribe.incrementIndentationLevel();
 		visitor.setSuppressLeadingBlankLine(true);
 		IASTDeclaration[] decls = getMembers(compDeclSpec);
-		
+
 		if (decls.length > 0) {
 			for (IASTDeclaration declaration : decls) {
 				declaration.accept(visitor);
@@ -316,13 +316,13 @@ public class DeclSpecWriter extends NodeWriter {
 		}
 
 		if (hasFreestandingComments(compDeclSpec)) {
-			writeFreestandingComments(compDeclSpec);			
+			writeFreestandingComments(compDeclSpec);
 		}
 		scribe.decrementIndentationLevel();
 		scribe.print('}');
 
 		if (hasTrailingComments(compDeclSpec)) {
-			writeTrailingComments(compDeclSpec);			
+			writeTrailingComments(compDeclSpec);
 		}
 	}
 
@@ -342,7 +342,7 @@ public class DeclSpecWriter extends NodeWriter {
 			scribe.printStringSpace(Keywords.PRIVATE);
 			break;
 		}
-		
+
 		if (specifier.isVirtual()) {
 			scribe.printStringSpace(Keywords.VIRTUAL);
 		}
@@ -418,14 +418,14 @@ public class DeclSpecWriter extends NodeWriter {
 			scribe.print(')');
 		}
 	}
-	
+
 	private void printQualifiers(IASTSimpleDeclSpecifier simpDeclSpec) {
 		if (simpDeclSpec.isSigned()) {
 			scribe.printStringSpace(Keywords.SIGNED);
 		} else if (simpDeclSpec.isUnsigned()) {
 			scribe.printStringSpace(Keywords.UNSIGNED);
 		}
-		
+
 		if (simpDeclSpec.isShort()) {
 			scribe.printStringSpace(Keywords.SHORT);
 		} else if (simpDeclSpec.isLong()) {

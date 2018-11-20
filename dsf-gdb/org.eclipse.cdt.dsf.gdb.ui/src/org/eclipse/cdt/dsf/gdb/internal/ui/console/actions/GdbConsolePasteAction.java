@@ -22,6 +22,7 @@ import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 public class GdbConsolePasteAction extends Action {
 
 	private final ITerminalViewControl fTerminalCtrl;
+
 	public GdbConsolePasteAction(ITerminalViewControl terminalControl) {
 		fTerminalCtrl = terminalControl;
 		if (fTerminalCtrl == null || fTerminalCtrl.isDisposed()) {

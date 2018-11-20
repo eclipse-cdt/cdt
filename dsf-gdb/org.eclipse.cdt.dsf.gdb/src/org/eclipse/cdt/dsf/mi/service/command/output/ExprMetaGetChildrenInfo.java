@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson           - initial API and implementation
  *******************************************************************************/
@@ -18,24 +18,25 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions.ExpressionInfo;
 
 public class ExprMetaGetChildrenInfo implements ICommandResult {
-    
+
 	private final ExpressionInfo[] childrenExpressions;
 
-    public ExprMetaGetChildrenInfo(ExpressionInfo[] c) {
-    	childrenExpressions = c;
-    }
-    
-    public ExpressionInfo[] getChildrenExpressions() { return childrenExpressions; }
-    
+	public ExprMetaGetChildrenInfo(ExpressionInfo[] c) {
+		childrenExpressions = c;
+	}
+
+	public ExpressionInfo[] getChildrenExpressions() {
+		return childrenExpressions;
+	}
+
 	@Override
 	public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " [Array of " +  //$NON-NLS-1$
-				(getChildrenExpressions() == null ? 0 : getChildrenExpressions().length) +
-				" children]"; //$NON-NLS-1$
+		return getClass().getSimpleName() + " [Array of " + //$NON-NLS-1$
+				(getChildrenExpressions() == null ? 0 : getChildrenExpressions().length) + " children]"; //$NON-NLS-1$
 	}
 }

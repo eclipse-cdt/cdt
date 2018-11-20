@@ -37,8 +37,8 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 		super(definedSymbols, includePaths);
 	}
 
-	public ExtendedScannerInfo(Map<String, String> definedSymbols, String[] includePaths,
-			String[] macroFiles, String[] includeFiles) {
+	public ExtendedScannerInfo(Map<String, String> definedSymbols, String[] includePaths, String[] macroFiles,
+			String[] includeFiles) {
 		super(definedSymbols, includePaths);
 		this.macroFiles = macroFiles;
 		this.includeFiles = includeFiles;
@@ -47,8 +47,8 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 	/**
 	 * @since 5.3
 	 */
-	public ExtendedScannerInfo(Map<String, String> definedSymbols, String[] includePaths,
-			String[] macroFiles, String[] includeFiles, String[] localIncludePaths) {
+	public ExtendedScannerInfo(Map<String, String> definedSymbols, String[] includePaths, String[] macroFiles,
+			String[] includeFiles, String[] localIncludePaths) {
 		super(definedSymbols, includePaths);
 		this.macroFiles = macroFiles;
 		this.includeFiles = includeFiles;
@@ -69,7 +69,7 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 			parserSettings = extendedScannerInfo.parserSettings;
 		}
 	}
-	
+
 	@Override
 	public String[] getMacroFiles() {
 		if (macroFiles == null)
@@ -110,8 +110,8 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 	 * @since 5.5
 	 */
 	public void setIncludeExportPatterns(IncludeExportPatterns patterns) {
-    	includeExportPatterns= patterns;
-    }
+		includeExportPatterns = patterns;
+	}
 
 	/**
 	 * Returns additional settings for the parser.

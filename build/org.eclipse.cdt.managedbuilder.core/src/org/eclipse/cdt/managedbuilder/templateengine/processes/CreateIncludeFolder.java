@@ -30,7 +30,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-
 /**
  * Creates a include Folder to the project.
  *
@@ -44,7 +43,8 @@ public class CreateIncludeFolder extends CreateSourceFolder {
 	 *
 	 */
 	@Override
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)
+			throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		String targetPath = args[1].getSimpleValue();
 		createSourceFolder(projectName, targetPath, monitor);
@@ -68,7 +68,8 @@ public class CreateIncludeFolder extends CreateSourceFolder {
 		ManagedBuildManager.saveBuildInfo(projectHandle, true);
 	}
 
-	private void setIncludePathOptionForConfig(String path, IConfiguration config, IOption[] options, IHoldsOptions optionHolder) throws BuildException {
+	private void setIncludePathOptionForConfig(String path, IConfiguration config, IOption[] options,
+			IHoldsOptions optionHolder) throws BuildException {
 		for (IOption option : options) {
 			if (option.getValueType() == IOption.INCLUDE_PATH) {
 				String[] includePaths = option.getIncludePaths();

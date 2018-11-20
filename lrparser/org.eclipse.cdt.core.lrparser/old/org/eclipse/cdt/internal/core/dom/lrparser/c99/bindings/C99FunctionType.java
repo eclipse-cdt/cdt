@@ -23,12 +23,12 @@ public class C99FunctionType implements IFunctionType {
 
 	private IType returnType;
 	private List<IType> parameterTypes = new ArrayList<IType>();
-	
+
 	@Override
 	public IType[] getParameterTypes() {
 		return parameterTypes.toArray(new IType[parameterTypes.size()]);
 	}
-	
+
 	public void addParameterType(IType parameterType) {
 		parameterTypes.add(parameterType);
 	}
@@ -37,7 +37,7 @@ public class C99FunctionType implements IFunctionType {
 	public IType getReturnType() {
 		return returnType;
 	}
-	
+
 	public void setReturnType(IType returnType) {
 		this.returnType = returnType;
 	}
@@ -52,17 +52,17 @@ public class C99FunctionType implements IFunctionType {
 	public C99FunctionType clone() {
 		try {
 			C99FunctionType clone = (C99FunctionType) super.clone();
-			clone.setReturnType((IType)returnType.clone());
+			clone.setReturnType((IType) returnType.clone());
 			clone.parameterTypes = new ArrayList<IType>();
-			for(IType parameterType : parameterTypes) {
-				clone.addParameterType((IType)parameterType.clone());
+			for (IType parameterType : parameterTypes) {
+				clone.addParameterType((IType) parameterType.clone());
 			}
 			return clone;
 		} catch (CloneNotSupportedException e) {
 			assert false;
 			return null;
 		}
-		
+
 	}
 
 	@Override

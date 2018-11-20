@@ -46,8 +46,8 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	 */
 	@Override
 	public boolean canExclude(boolean exclude) {
-		for (int i=0; i<fRess.length; i++)
-			if (! fRess[i].canExclude(exclude))
+		for (int i = 0; i < fRess.length; i++)
+			if (!fRess[i].canExclude(exclude))
 				return false;
 		return true;
 	}
@@ -69,7 +69,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	public IPath getPath() {
 		IPath p = fRess[0].getPath();
 		if (p != null) {
-			for (int i=1; i<fRess.length; i++) {
+			for (int i = 1; i < fRess.length; i++) {
 				if (!p.equals(fRess[i].getPath()))
 					throw new UnsupportedOperationException();
 			}
@@ -83,8 +83,8 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	 */
 	@Override
 	public boolean isExcluded() {
-		for (int i=0; i<fRess.length; i++)
-			if (! fRess[i].isExcluded())
+		for (int i = 0; i < fRess.length; i++)
+			if (!fRess[i].isExcluded())
 				return false;
 		return true;
 	}
@@ -94,7 +94,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	 */
 	@Override
 	public void setExcluded(boolean excluded) throws WriteAccessException {
-		for (int i=0; i<fRess.length; i++)
+		for (int i = 0; i < fRess.length; i++)
 			fRess[i].setExcluded(excluded);
 	}
 
@@ -103,7 +103,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	 */
 	@Override
 	public void setPath(IPath path) throws WriteAccessException {
-		for (int i=0; i<fRess.length; i++)
+		for (int i = 0; i < fRess.length; i++)
 			fRess[i].setPath(path);
 	}
 
@@ -126,7 +126,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	public ICConfigurationDescription getConfiguration() {
 		if (fCfg == null) {
 			ICConfigurationDescription[] cfgs = new ICConfigurationDescription[fRess.length];
-			for (int i=0; i<fRess.length; i++)
+			for (int i = 0; i < fRess.length; i++)
 				cfgs[i] = fRess[i].getConfiguration();
 			fCfg = new MultiConfigDescription(cfgs);
 		}
@@ -160,7 +160,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		ICSettingContainer sc = fRess[0].getParent();
 		if (sc == null)
 			return null;
-		for (int i=1; i<fRess.length; i++)
+		for (int i = 1; i < fRess.length; i++)
 			if (!sc.equals(fRess[i].getParent()))
 				return null;
 		return sc;
@@ -175,7 +175,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	@Override
 	public int getType() {
 		int t = fRess[0].getType();
-		for (int i=1; i<fRess.length; i++)
+		for (int i = 1; i < fRess.length; i++)
 			if (t != fRess[i].getType())
 				return 0;
 		return t;
@@ -186,8 +186,8 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	 */
 	@Override
 	public boolean isReadOnly() {
-		for (int i=0; i<fRess.length; i++)
-			if (! fRess[i].isReadOnly())
+		for (int i = 0; i < fRess.length; i++)
+			if (!fRess[i].isReadOnly())
 				return false;
 		return true;
 	}
@@ -197,8 +197,8 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	 */
 	@Override
 	public boolean isValid() {
-		for (int i=0; i<fRess.length; i++)
-			if (! fRess[i].isValid())
+		for (int i = 0; i < fRess.length; i++)
+			if (!fRess[i].isValid())
 				return false;
 		return true;
 	}
@@ -213,18 +213,18 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 
 	@Override
 	public void setSettingEntries(ICLanguageSetting lang, int kind, List<ICLanguageSettingEntry> incs, boolean toAll) {
-		for (int i=0; i<fRess.length; i++) {
+		for (int i = 0; i < fRess.length; i++) {
 			if (fRess[i] instanceof ICFolderDescription) {
 				String n = lang.getName();
-				ICLanguageSetting[] l = ((ICFolderDescription)fRess[i]).getLanguageSettings();
-				for (int j=0; j<l.length; j++) {
+				ICLanguageSetting[] l = ((ICFolderDescription) fRess[i]).getLanguageSettings();
+				for (int j = 0; j < l.length; j++) {
 					if (toAll || n.equals(l[j].getName())) {
 						l[j].setSettingEntries(kind, incs);
 						break;
 					}
 				}
 			} else if (fRess[i] instanceof ICFileDescription) {
-				ICLanguageSetting l = ((ICFileDescription)fRess[i]).getLanguageSetting();
+				ICLanguageSetting l = ((ICFileDescription) fRess[i]).getLanguageSetting();
 				if (l.getName().equals(lang.getName()))
 					l.setSettingEntries(kind, incs);
 			}

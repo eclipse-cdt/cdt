@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Red Hat Inc. - initial version
  *******************************************************************************/
 package org.eclipse.cdt.meson.core;
@@ -33,9 +33,8 @@ public class Activator implements BundleActivator {
 	//The shared instance.
 	private static Activator plugin;
 	private ResourceBundle resourceBundle;
-	
-	public static final String PLUGIN_ID = "org.eclipse.cdt.meson.core"; //$NON-NLS-1$
 
+	public static final String PLUGIN_ID = "org.eclipse.cdt.meson.core"; //$NON-NLS-1$
 
 	public Activator() {
 		Assert.isTrue(plugin == null);
@@ -46,11 +45,11 @@ public class Activator implements BundleActivator {
 			resourceBundle = null;
 		}
 	}
-	
+
 	public static String getPluginId() {
 		return PLUGIN_ID;
 	}
-	
+
 	public static String getUniqueIdentifier() {
 		if (getDefault() == null) {
 			// If the default instance is not yet initialized,
@@ -60,7 +59,7 @@ public class Activator implements BundleActivator {
 		}
 		return context.getBundle().getSymbolicName();
 	}
-	
+
 	public Bundle getBundle() {
 		return context.getBundle();
 	}
@@ -71,10 +70,10 @@ public class Activator implements BundleActivator {
 	public static Activator getDefault() {
 		return plugin;
 	}
-	
+
 	/**
 	 * Return the OSGi service with the given service interface.
-	 * 
+	 *
 	 * @param service service interface
 	 * @return the specified service or null if it's not registered
 	 * @since 1.5
@@ -86,7 +85,7 @@ public class Activator implements BundleActivator {
 		}
 		return null;
 	}
-	
+
 	public static void error(String message, Throwable cause) {
 		log(errorStatus(message, cause));
 	}
@@ -98,7 +97,7 @@ public class Activator implements BundleActivator {
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @return the resource bundle message
 	 */
@@ -114,13 +113,13 @@ public class Activator implements BundleActivator {
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @param args an array of substituition strings
 	 * @return the resource bundle message
 	 */
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getResourceString(key), (Object[])args);
+		return MessageFormat.format(getResourceString(key), (Object[]) args);
 	}
 
 	/**
@@ -151,8 +150,6 @@ public class Activator implements BundleActivator {
 		log(status);
 	}
 
-
-	
 	static BundleContext getContext() {
 		return context;
 	}

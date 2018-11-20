@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -37,7 +37,7 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 	private Label fContentDescriptionLabel;
 
 	/**
-	 * 
+	 *
 	 */
 	public DisassemblyEditor() {
 		super();
@@ -70,7 +70,7 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 		inner.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		super.createPartControl(inner);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.part.WorkbenchPart#setContentDescription(java.lang.String)
 	 */
@@ -105,7 +105,7 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 	 */
 	@Override
 	public IEditorSite getEditorSite() {
-		return (IEditorSite)getSite();
+		return (IEditorSite) getSite();
 	}
 
 	/*

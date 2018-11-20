@@ -36,7 +36,6 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 
-
 /**
  * MakefileCompletionProcessor
  */
@@ -66,7 +65,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		}
 	}
 
-	public static class DirectiveComparator implements Comparator<Object>{
+	public static class DirectiveComparator implements Comparator<Object> {
 
 		@Override
 		public int compare(Object o1, Object o2) {
@@ -74,26 +73,27 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			String name2;
 
 			if (o1 instanceof IMacroDefinition) {
-				name1 = ((IMacroDefinition)o1).getName();
+				name1 = ((IMacroDefinition) o1).getName();
 			} else if (o1 instanceof IRule) {
-				name1 = ((IRule)o1).getTarget().toString();
+				name1 = ((IRule) o1).getTarget().toString();
 			} else {
-				name1 =""; //$NON-NLS-1$
+				name1 = ""; //$NON-NLS-1$
 			}
 
 			if (o2 instanceof IMacroDefinition) {
-				name2 = ((IMacroDefinition)o1).getName();
+				name2 = ((IMacroDefinition) o1).getName();
 			} else if (o2 instanceof IRule) {
-				name2 = ((IRule)o1).getTarget().toString();
+				name2 = ((IRule) o1).getTarget().toString();
 			} else {
-				name2 =""; //$NON-NLS-1$
+				name2 = ""; //$NON-NLS-1$
 			}
 
 			//return String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
 			return name1.compareToIgnoreCase(name2);
 		}
-		
+
 	}
+
 	protected IContextInformationValidator fValidator = new Validator();
 	protected Image imageMacro = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_MACRO);
 	protected Image imageTarget = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_TARGET_RULE);
@@ -104,7 +104,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 
 	public MakefileCompletionProcessor(IEditorPart editor) {
 		fEditor = editor;
-		fManager =  AutomakeEditorFactory.getDefault().getWorkingCopyManager();
+		fManager = AutomakeEditorFactory.getDefault().getWorkingCopyManager();
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			if (statements[i] instanceof IMacroDefinition) {
 				name = ((IMacroDefinition) statements[i]).getName();
 				image = imageMacro;
-				infoString = ((IMacroDefinition)statements[i]).getValue().toString();
+				infoString = ((IMacroDefinition) statements[i]).getValue().toString();
 			} else if (statements[i] instanceof IRule) {
 				name = ((IRule) statements[i]).getTarget().toString();
 				image = imageTarget;
@@ -142,16 +142,8 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			if (name != null && name.startsWith(wordPart.toString())) {
 				IContextInformation info = new ContextInformation(name, infoString);
 				String displayString = (name.equals(infoString) ? name : name + " - " + infoString); //$NON-NLS-1$
-				ICompletionProposal result =
-					new CompletionProposal(
-						name,
-						wordPart.getOffset(),
-						wordPart.toString().length(),
-						name.length(),
-						image,
-						displayString,
-						info,
-						infoString);
+				ICompletionProposal result = new CompletionProposal(name, wordPart.getOffset(),
+						wordPart.toString().length(), name.length(), image, displayString, info, infoString);
 				proposalList.add(result);
 			}
 		}
@@ -169,13 +161,13 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		if (macro) {
 			IMacroDefinition[] statements = makefile.getMacroDefinitions();
 			for (int i = 0; i < statements.length; i++) {
-					String name = statements[i].getName();
-					if (name != null && name.equals(wordPart.toString())) {
-						String value = statements[i].getValue().toString();
-						if (value != null && value.length() > 0) {
-							contextList.add(value);
-						}
+				String name = statements[i].getName();
+				if (name != null && name.equals(wordPart.toString())) {
+					String value = statements[i].getValue().toString();
+					if (value != null && value.length() > 0) {
+						contextList.add(value);
 					}
+				}
 			}
 			statements = makefile.getBuiltinMacroDefinitions();
 			for (int i = 0; i < statements.length; i++) {

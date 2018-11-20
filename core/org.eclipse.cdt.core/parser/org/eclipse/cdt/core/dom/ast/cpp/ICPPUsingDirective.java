@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -18,10 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
- * Interface to model using directives. Needed to bridge between directives found in the 
+ * Interface to model using directives. Needed to bridge between directives found in the
  * AST and the ones found in the index.
  * @since 5.0
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

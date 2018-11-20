@@ -23,7 +23,7 @@ import org.osgi.service.prefs.Preferences;
 /**
  * This class represents the Environment variable that could be loaded
  * and stored in XML
- * 
+ *
  * @since 3.0
  */
 public class StorableEnvVar extends EnvironmentVariable {
@@ -32,99 +32,98 @@ public class StorableEnvVar extends EnvironmentVariable {
 	public static final String VALUE = "value"; //$NON-NLS-1$
 	public static final String OPERATION = "operation"; //$NON-NLS-1$
 	public static final String DELIMITER = "delimiter"; //$NON-NLS-1$
-	
+
 	public static final String REPLACE = "replace"; //$NON-NLS-1$
 	public static final String REMOVE = "remove"; //$NON-NLS-1$
 	public static final String APPEND = "append"; //$NON-NLS-1$
 	public static final String PREPEND = "prepend"; //$NON-NLS-1$
-	
-	public StorableEnvVar(String name, String value, int op, String delimiter){
-		super(name,value,op,delimiter);
+
+	public StorableEnvVar(String name, String value, int op, String delimiter) {
+		super(name, value, op, delimiter);
 	}
-	
-	public StorableEnvVar(String name){
-		this(name,null,ENVVAR_REPLACE,null);
+
+	public StorableEnvVar(String name) {
+		this(name, null, ENVVAR_REPLACE, null);
 	}
-	
-	public StorableEnvVar(String name, String value){
-		this(name,value,ENVVAR_REPLACE,null);	
+
+	public StorableEnvVar(String name, String value) {
+		this(name, value, ENVVAR_REPLACE, null);
 	}
-	
-	public StorableEnvVar(String name, String value, String delimiter){
-		this(name,value,ENVVAR_REPLACE,delimiter);	
+
+	public StorableEnvVar(String name, String value, String delimiter) {
+		this(name, value, ENVVAR_REPLACE, delimiter);
 	}
 
 	/**
 	 * Load the environment variable from the ICStorageElement
 	 * @param element
 	 */
-	public StorableEnvVar(ICStorageElement element){
+	public StorableEnvVar(ICStorageElement element) {
 		fName = SafeStringInterner.safeIntern(element.getAttribute(NAME));
 
 		fValue = SafeStringInterner.safeIntern(element.getAttribute(VALUE));
 
 		fOperation = opStringToInt(element.getAttribute(OPERATION));
-			
+
 		fDelimiter = element.getAttribute(DELIMITER);
-		if("".equals(fDelimiter)) //$NON-NLS-1$
+		if ("".equals(fDelimiter)) //$NON-NLS-1$
 			fDelimiter = null;
 	}
 
 	/**
-	 * Load the Environment Variable directly from a Preference element 
+	 * Load the Environment Variable directly from a Preference element
 	 * @param name
 	 * @param element
 	 * @since 5.2
 	 */
-	public StorableEnvVar(String name, Preferences element){
+	public StorableEnvVar(String name, Preferences element) {
 		fName = SafeStringInterner.safeIntern(name);
 		fValue = SafeStringInterner.safeIntern(element.get(VALUE, null));
 		fOperation = opStringToInt(element.get(OPERATION, null));
 		fDelimiter = element.get(DELIMITER, null);
 	}
 
-	
-	private int opStringToInt(String op){
+	private int opStringToInt(String op) {
 		int operation;
-		
-		if(REMOVE.equals(op))
+
+		if (REMOVE.equals(op))
 			operation = ENVVAR_REMOVE;
-		else if(APPEND.equals(op))
+		else if (APPEND.equals(op))
 			operation = ENVVAR_APPEND;
-		else if(PREPEND.equals(op))
+		else if (PREPEND.equals(op))
 			operation = ENVVAR_PREPEND;
 		else
 			operation = ENVVAR_REPLACE;
-		
-		return operation;
-	}
-	
-	private String opIntToString(int op){
-		String operation;
-		
-		if(ENVVAR_REMOVE == op)
-			operation = REMOVE;
-		else if(ENVVAR_APPEND == op)
-			operation = APPEND;
-		else if(ENVVAR_PREPEND == op)
-			operation = PREPEND;
-		else
-			operation = REPLACE;
-		
+
 		return operation;
 	}
 
-	public void serialize(ICStorageElement element){
-		if(fName != null)
-			element.setAttribute(NAME,fName);
-		
-		if(fValue != null)
-			element.setAttribute(VALUE,fValue);
-		
-		element.setAttribute(OPERATION,opIntToString(fOperation));
-		
-		if(fDelimiter != null)
-			element.setAttribute(DELIMITER,fDelimiter);
+	private String opIntToString(int op) {
+		String operation;
+
+		if (ENVVAR_REMOVE == op)
+			operation = REMOVE;
+		else if (ENVVAR_APPEND == op)
+			operation = APPEND;
+		else if (ENVVAR_PREPEND == op)
+			operation = PREPEND;
+		else
+			operation = REPLACE;
+
+		return operation;
+	}
+
+	public void serialize(ICStorageElement element) {
+		if (fName != null)
+			element.setAttribute(NAME, fName);
+
+		if (fValue != null)
+			element.setAttribute(VALUE, fValue);
+
+		element.setAttribute(OPERATION, opIntToString(fOperation));
+
+		if (fDelimiter != null)
+			element.setAttribute(DELIMITER, fDelimiter);
 	}
 
 	/**
@@ -134,12 +133,12 @@ public class StorableEnvVar extends EnvironmentVariable {
 	 * @since 5.2
 	 */
 	public void serialize(Preferences element) {
-		if(fValue != null)
+		if (fValue != null)
 			element.put(VALUE, fValue);
 
 		element.put(OPERATION, opIntToString(fOperation));
 
-		if(fDelimiter != null)
+		if (fDelimiter != null)
 			element.put(DELIMITER, fDelimiter);
 	}
 }

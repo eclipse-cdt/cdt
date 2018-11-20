@@ -12,7 +12,7 @@
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.utils.macho.parser;
- 
+
 import java.io.IOException;
 
 import org.eclipse.cdt.core.AbstractCExtension;
@@ -39,7 +39,6 @@ public class MachOParser64 extends AbstractCExtension implements IBinaryParser {
 		return getBinary(null, path);
 	}
 
-
 	@Override
 	public IBinaryFile getBinary(byte[] hints, IPath path) throws IOException {
 		if (path == null) {
@@ -57,28 +56,28 @@ public class MachOParser64 extends AbstractCExtension implements IBinaryParser {
 				}
 			}
 
-			//Take a second run at it if the data array failed. 			
- 			if(attribute == null) {
+			//Take a second run at it if the data array failed.
+			if (attribute == null) {
 				attribute = MachO64.getAttributes(path.toOSString());
- 			}
+			}
 
 			if (attribute != null) {
 				switch (attribute.getType()) {
-					case Attribute.MACHO_TYPE_EXE :
-						binary = createBinaryExecutable(path);
-						break;
+				case Attribute.MACHO_TYPE_EXE:
+					binary = createBinaryExecutable(path);
+					break;
 
-					case Attribute.MACHO_TYPE_SHLIB :
-						binary = createBinaryShared(path);
-						break;
+				case Attribute.MACHO_TYPE_SHLIB:
+					binary = createBinaryShared(path);
+					break;
 
-					case Attribute.MACHO_TYPE_OBJ :
-						binary = createBinaryObject(path);
-						break;
+				case Attribute.MACHO_TYPE_OBJ:
+					binary = createBinaryObject(path);
+					break;
 
-					case Attribute.MACHO_TYPE_CORE :
-						binary = createBinaryCore(path);
-						break;
+				case Attribute.MACHO_TYPE_CORE:
+					binary = createBinaryCore(path);
+					break;
 				}
 			}
 		} catch (IOException e) {
@@ -117,7 +116,7 @@ public class MachOParser64 extends AbstractCExtension implements IBinaryParser {
 	public CPPFilt getCPPFilt() {
 		IPath cppFiltPath = getCPPFiltPath();
 		CPPFilt cppfilt = null;
-		if (cppFiltPath != null && ! cppFiltPath.isEmpty()) {
+		if (cppFiltPath != null && !cppFiltPath.isEmpty()) {
 			try {
 				cppfilt = new CPPFilt(cppFiltPath.toOSString());
 			} catch (IOException e2) {

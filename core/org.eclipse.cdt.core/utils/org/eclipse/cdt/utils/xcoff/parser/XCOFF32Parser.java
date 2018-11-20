@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * XCOFF 32bit binary parser for AIX
- * 
+ *
  * @author vhirsl
  */
 public class XCOFF32Parser extends AbstractCExtension implements IBinaryParser {
@@ -36,7 +36,7 @@ public class XCOFF32Parser extends AbstractCExtension implements IBinaryParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(byte[],
 	 *      org.eclipse.core.runtime.IPath)
 	 */
@@ -56,27 +56,27 @@ public class XCOFF32Parser extends AbstractCExtension implements IBinaryParser {
 					// continue, the array was to small.
 				}
 			}
-			
+
 			//Take a second run at it if the data array failed.
 			if (attribute == null) {
 				attribute = XCoff32.getAttributes(path.toOSString());
 			}
-			
+
 			if (attribute != null) {
 				switch (attribute.getType()) {
-				case XCoff32.Attribute.XCOFF_TYPE_EXE :
+				case XCoff32.Attribute.XCOFF_TYPE_EXE:
 					binary = createBinaryExecutable(path);
 					break;
-					
-				case XCoff32.Attribute.XCOFF_TYPE_SHLIB :
+
+				case XCoff32.Attribute.XCOFF_TYPE_SHLIB:
 					binary = createBinaryShared(path);
 					break;
-					
-				case XCoff32.Attribute.XCOFF_TYPE_OBJ :
+
+				case XCoff32.Attribute.XCOFF_TYPE_OBJ:
 					binary = createBinaryObject(path);
 					break;
-					
-				case XCoff32.Attribute.XCOFF_TYPE_CORE :
+
+				case XCoff32.Attribute.XCOFF_TYPE_CORE:
 					binary = createBinaryCore(path);
 					break;
 				}
@@ -89,7 +89,7 @@ public class XCOFF32Parser extends AbstractCExtension implements IBinaryParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
 	 */
 	@Override
@@ -99,7 +99,7 @@ public class XCOFF32Parser extends AbstractCExtension implements IBinaryParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser#getFormat()
 	 */
 	@Override
@@ -109,7 +109,7 @@ public class XCOFF32Parser extends AbstractCExtension implements IBinaryParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[],
 	 *      org.eclipse.core.runtime.IPath)
 	 */
@@ -120,7 +120,7 @@ public class XCOFF32Parser extends AbstractCExtension implements IBinaryParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser#getHintBufferSize()
 	 */
 	@Override

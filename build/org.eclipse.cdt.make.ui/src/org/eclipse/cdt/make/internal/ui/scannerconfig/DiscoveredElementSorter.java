@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 /**
  * @deprecated as of CDT 4.0. This class was used to set preferences/properties
  * for 3.X style projects.
- * 
+ *
  * @author vhirsl
  */
 @Deprecated
@@ -39,20 +39,21 @@ public class DiscoveredElementSorter extends ViewerSorter {
 		if (element instanceof DiscoveredElement) {
 			DiscoveredElement elem = (DiscoveredElement) element;
 			switch (elem.getEntryKind()) {
-				case DiscoveredElement.CONTAINER:
-					return CONTAINER;
-				case DiscoveredElement.PATHS_GROUP:
-					return PATHS_GROUP;
-				case DiscoveredElement.SYMBOLS_GROUP:
-					return SYMBOLS_GROUP;
-				case DiscoveredElement.INCLUDE_FILE_GROUP:
-					return INCLUDE_FILE_GROUP;
-				case DiscoveredElement.MACROS_FILE_GROUP:
-					return MACROS_FILE_GROUP;
+			case DiscoveredElement.CONTAINER:
+				return CONTAINER;
+			case DiscoveredElement.PATHS_GROUP:
+				return PATHS_GROUP;
+			case DiscoveredElement.SYMBOLS_GROUP:
+				return SYMBOLS_GROUP;
+			case DiscoveredElement.INCLUDE_FILE_GROUP:
+				return INCLUDE_FILE_GROUP;
+			case DiscoveredElement.MACROS_FILE_GROUP:
+				return MACROS_FILE_GROUP;
 			}
 		}
 		return OTHER;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerSorter#sort(org.eclipse.jface.viewers.Viewer, java.lang.Object[])
 	 */
@@ -61,11 +62,11 @@ public class DiscoveredElementSorter extends ViewerSorter {
 		if (elements.length > 0 && elements[0] instanceof DiscoveredElement) {
 			DiscoveredElement firstElem = (DiscoveredElement) elements[0];
 			switch (firstElem.getEntryKind()) {
-				case DiscoveredElement.INCLUDE_PATH:
-				case DiscoveredElement.SYMBOL_DEFINITION:
-				case DiscoveredElement.INCLUDE_FILE:
-				case DiscoveredElement.MACROS_FILE:
-					return;
+			case DiscoveredElement.INCLUDE_PATH:
+			case DiscoveredElement.SYMBOL_DEFINITION:
+			case DiscoveredElement.INCLUDE_FILE:
+			case DiscoveredElement.MACROS_FILE:
+				return;
 			}
 		}
 		super.sort(viewer, elements);

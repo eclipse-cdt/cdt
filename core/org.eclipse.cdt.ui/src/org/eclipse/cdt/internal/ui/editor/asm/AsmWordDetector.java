@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.ui.editor.asm;
 
 import org.eclipse.jface.text.rules.IWordDetector;
 
-
 /**
  * A C aware word detector.
  */
@@ -27,32 +26,34 @@ public class AsmWordDetector implements IWordDetector {
 
 	public AsmWordDetector() {
 	}
-	
+
 	public AsmWordDetector(boolean strict) {
 		fStrictStart = strict;
 	}
-	
+
 	public AsmWordDetector(char extra) {
 		fExtra = extra;
 	}
-	
+
 	public AsmWordDetector(char prefix, char extra) {
 		fPrefix = prefix;
 		fExtra = extra;
 	}
+
 	/*
 	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
 	 */
 	@Override
 	public boolean isWordStart(char c) {
-		if(fPrefix != 0) {
+		if (fPrefix != 0) {
 			return (fPrefix == c);
 		}
-		if(fStrictStart) {
+		if (fStrictStart) {
 			return (Character.isJavaIdentifierStart(c) || (c == fExtra));
 		}
 		return (Character.isJavaIdentifierPart(c) || (c == fExtra));
 	}
+
 	/*
 	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
 	 */

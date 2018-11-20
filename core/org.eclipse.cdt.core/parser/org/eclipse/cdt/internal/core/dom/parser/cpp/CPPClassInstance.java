@@ -41,7 +41,7 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 	public CPPClassInstance(ICPPClassType orig, IBinding owner, ICPPTemplateParameterMap argMap,
 			ICPPTemplateArgument[] args) {
 		super(orig, owner, argMap);
-		this.arguments= args;
+		this.arguments = args;
 	}
 
 	@Override
@@ -104,14 +104,14 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 		assert classInstance instanceof ICPPTemplateInstance;
 
 		// Require a class instance.
-		if (!(type instanceof ICPPClassSpecialization) || !(type instanceof ICPPTemplateInstance) ||
-				type instanceof IProblemBinding) {
+		if (!(type instanceof ICPPClassSpecialization) || !(type instanceof ICPPTemplateInstance)
+				|| type instanceof IProblemBinding) {
 			return false;
 		}
 
 		final ICPPClassSpecialization classSpec2 = (ICPPClassSpecialization) type;
-		final ICPPClassType orig1= classInstance.getSpecializedBinding();
-		final ICPPClassType orig2= classSpec2.getSpecializedBinding();
+		final ICPPClassType orig1 = classInstance.getSpecializedBinding();
+		final ICPPClassType orig2 = classSpec2.getSpecializedBinding();
 		if (!orig1.isSameType(orig2))
 			return false;
 

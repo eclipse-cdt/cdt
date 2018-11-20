@@ -16,7 +16,6 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * Parses the GDB "tdump" command printout, as returned by GDB, to make it a
  * bit more human-friendly.
@@ -29,8 +28,8 @@ public class CLITraceDumpInfo extends MIInfo {
 
 	// Here is what this pattern looks-for - the first line of the tdump printout:
 	//~"Data collected at tracepoint 2, trace frame 555:\n"
-	private static final Pattern RESULT_PATTERN_TPINFO = Pattern.compile(
-			"Data collected at tracepoint (\\d+), trace frame (\\d+)",  Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+	private static final Pattern RESULT_PATTERN_TPINFO = Pattern
+			.compile("Data collected at tracepoint (\\d+), trace frame (\\d+)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
 	// raw output of command
 	private String fOutput = null;
@@ -51,10 +50,10 @@ public class CLITraceDumpInfo extends MIInfo {
 		super(out);
 		parse(KEEP_HEADER);
 	}
-	
+
 	/**
 	 * Alternative constructor.  Use this one to have control if the tdump
-	 * header is kept or not in the result.  
+	 * header is kept or not in the result.
 	 * @param out the output of the tdump printout
 	 * @param keepHeader keep the tdump header in result or not
 	 */
@@ -63,29 +62,28 @@ public class CLITraceDumpInfo extends MIInfo {
 		parse(keepHeader);
 	}
 
-	
 	/**
-	 * Do a quick parse of the tdump printout.  The tdump command printout is 
+	 * Do a quick parse of the tdump printout.  The tdump command printout is
 	 * split in short pieces (records), each one wrapped like this:
 	 * <p>
 	 * ~"eax            0x10"
 	 * <p>
-	 * Also, tabs and newlines are represented by symbols: \n and \t . 
-	 * <p> 
-	 * In this method, we strip the wrapping off each record and translate the 
+	 * Also, tabs and newlines are represented by symbols: \n and \t .
+	 * <p>
+	 * In this method, we strip the wrapping off each record and translate the
 	 * symbols to their value.   The resulting string is not parsed further.
 	 * <p>
 	 * See an example of a tdump printout at the end of this file.
 	 */
 	private void parse(boolean keepHeader) {
-		final Pattern RESULT_PATTERN_UNWRAPRECORD = Pattern.compile("~\"(.*)\"",  Pattern.CANON_EQ); //$NON-NLS-1$
+		final Pattern RESULT_PATTERN_UNWRAPRECORD = Pattern.compile("~\"(.*)\"", Pattern.CANON_EQ); //$NON-NLS-1$
 		StringBuilder buf = new StringBuilder();
 		String unwrapped;
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			// save raw output of command
 			fOutput = out.toString();
-			
+
 			MIOOBRecord[] oobs = out.getMIOOBRecords();
 			for (MIOOBRecord oob : oobs) {
 				if (oob instanceof MIConsoleStreamOutput) {
@@ -100,24 +98,24 @@ public class CLITraceDumpInfo extends MIInfo {
 			// convert buffer into string
 			fParsedOutput = buf.toString();
 			// extract the tracepoint and frame numbers
-			Matcher matcher = RESULT_PATTERN_TPINFO.matcher(fParsedOutput);	
+			Matcher matcher = RESULT_PATTERN_TPINFO.matcher(fParsedOutput);
 			if (matcher.find()) {
 				fTracepointNum = matcher.group(1).trim();
 				fTraceFrameNumber = matcher.group(2).trim();
 			}
 
-			// command result has the substrings "\n" and "\t" in it. 
+			// command result has the substrings "\n" and "\t" in it.
 			// replace them by their actual meaning (real newline and tab)
-			fParsedOutput = fParsedOutput.replaceAll("\\\\n", "\n");   //$NON-NLS-1$ //$NON-NLS-2$
-			fParsedOutput = fParsedOutput.replaceAll("\\\\t+", "\t");   //$NON-NLS-1$ //$NON-NLS-2$
+			fParsedOutput = fParsedOutput.replaceAll("\\\\n", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			fParsedOutput = fParsedOutput.replaceAll("\\\\t+", "\t"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			// Optionaly remove the header line from tdump printout 
-			if(!keepHeader) {
-				fParsedOutput = fParsedOutput.replaceFirst("Data collected at tracepoint \\d+, trace frame \\d+:\\n", "");   //$NON-NLS-1$ //$NON-NLS-2$
+			// Optionaly remove the header line from tdump printout
+			if (!keepHeader) {
+				fParsedOutput = fParsedOutput.replaceFirst("Data collected at tracepoint \\d+, trace frame \\d+:\\n", //$NON-NLS-1$
+						""); //$NON-NLS-1$
 			}
 		}
 	}
-
 
 	/**
 	 * @return the raw output of tdump.
@@ -134,14 +132,13 @@ public class CLITraceDumpInfo extends MIInfo {
 	public String getContent() {
 		return fParsedOutput;
 	}
-	
+
 	/**
 	 * @return the tracepoint number
 	 */
 	public String getTracepointNumber() {
 		return fTracepointNum;
 	}
-
 
 	/**
 	 * @return the trace's frame number
@@ -160,8 +157,7 @@ public class CLITraceDumpInfo extends MIInfo {
 	}
 }
 
-
-/*  
+/*
  * Example of raw output from command tdump:
 
 &"tdump\n"

@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * The switch statement.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -33,18 +33,19 @@ public interface IASTSwitchStatement extends IASTStatement {
 	 * <code>IASTSwitchStatement</code> and it's nested
 	 * <code>IASTStatement</code>.
 	 */
-	public static final ASTNodeProperty BODY = new ASTNodeProperty("IASTSwitchStatement.BODY - IASTStatment (body) for IASTSwitchStatement"); //$NON-NLS-1$
+	public static final ASTNodeProperty BODY = new ASTNodeProperty(
+			"IASTSwitchStatement.BODY - IASTStatment (body) for IASTSwitchStatement"); //$NON-NLS-1$
 
 	/**
 	 * This returns the expression which determines which case to take.
-	 * 
+	 *
 	 * @return the controller expression
 	 */
 	public IASTExpression getControllerExpression();
 
 	/**
 	 * Set the controlling expression for the switch.
-	 * 
+	 *
 	 * @param controller
 	 *            <code>IASTExpression</code>
 	 */
@@ -52,16 +53,16 @@ public interface IASTSwitchStatement extends IASTStatement {
 
 	/**
 	 * Returns the body of the switch statement.
-	 * 
+	 *
 	 * TODO - finding the cases could be a logical thing
-	 * 
+	 *
 	 * @return <code>IASTStatement</code>
 	 */
 	public IASTStatement getBody();
 
 	/**
 	 * Set the body for the switch statement.
-	 * 
+	 *
 	 * @param body
 	 *            <code>IASTStatement</code>
 	 */

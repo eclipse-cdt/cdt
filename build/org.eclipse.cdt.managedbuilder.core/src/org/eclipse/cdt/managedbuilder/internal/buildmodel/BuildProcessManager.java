@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * This class implements process pool management for internal builder 
+ * This class implements process pool management for internal builder
  */
 public class BuildProcessManager {
 	protected OutputStream out;
@@ -35,10 +35,10 @@ public class BuildProcessManager {
 	protected boolean show;
 	protected Vector<ProcessLauncher> processes;
 	protected int maxProcesses;
-	
+
 	/**
 	 * Initializes process manager
-	 * 
+	 *
 	 * @param _out Output stream
 	 * @param _err Error output stream
 	 * @param _show If true, print command line before launching
@@ -50,34 +50,36 @@ public class BuildProcessManager {
 		maxProcesses = _procNumber;
 		processes = new Vector<ProcessLauncher>(Math.min(10, maxProcesses), 10);
 	}
-	
+
 	/**
 	 * Returns maximum number of processes
 	 */
 	public int getMaxProcesses() {
 		return maxProcesses;
 	}
-	
+
 	/**
-	 * Performs an attempt to launch new process. Returns BuildProcessLauncher 
-	 * if it was successfully launched, null if there is no room for it yet in 
+	 * Performs an attempt to launch new process. Returns BuildProcessLauncher
+	 * if it was successfully launched, null if there is no room for it yet in
 	 * the process pool.
-	 * 
+	 *
 	 * @param cmd Command to launch
 	 * @param cwd Command working directory
-	 * @param monitor Progress monitor for this task 
+	 * @param monitor Progress monitor for this task
 	 */
 	public ProcessLauncher launchProcess(IBuildCommand cmd, IPath cwd, IProgressMonitor monitor) {
 		for (int i = 0; i < maxProcesses; i++) {
 			if (i >= processes.size()) {
-				ProcessLauncher process = new ProcessLauncher(cmd.getCommand(), cmd.getArgs(), mapToStringArray(cmd.getEnvironment()), cwd, out, err, monitor, show);
+				ProcessLauncher process = new ProcessLauncher(cmd.getCommand(), cmd.getArgs(),
+						mapToStringArray(cmd.getEnvironment()), cwd, out, err, monitor, show);
 				processes.add(process);
 				process.launch();
 				return process;
-				
+
 			}
 			if (processes.get(i).queryState() == ProcessLauncher.STATE_DONE) {
-				ProcessLauncher process = new ProcessLauncher(cmd.getCommand(), cmd.getArgs(), mapToStringArray(cmd.getEnvironment()), cwd, out, err, monitor, show);
+				ProcessLauncher process = new ProcessLauncher(cmd.getCommand(), cmd.getArgs(),
+						mapToStringArray(cmd.getEnvironment()), cwd, out, err, monitor, show);
 				processes.set(i, process);
 				process.launch();
 				return process;
@@ -85,9 +87,9 @@ public class BuildProcessManager {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Checks states of all currently running processes. If it finds 
+	 * Checks states of all currently running processes. If it finds
 	 * one with state other than STATE_DONE or STATE_RUNNING, it is
 	 * returned as a result. Otherwise this method returns null.
 	 */
@@ -97,19 +99,19 @@ public class BuildProcessManager {
 			if (state != ProcessLauncher.STATE_RUNNING && state != ProcessLauncher.STATE_DONE)
 				return process;
 		}
-		
+
 		return null;
 	}
 
 	/**
-	 * Checks states of all currently running processes. 
+	 * Checks states of all currently running processes.
 	 */
 	public boolean hasEmpty() {
 		if (processes.size() < maxProcesses)
 			return true;
-		
+
 		for (ProcessLauncher process : processes) {
-			if (process.queryState() != ProcessLauncher.STATE_RUNNING) 
+			if (process.queryState() != ProcessLauncher.STATE_RUNNING)
 				return true;
 		}
 		return false;
@@ -121,26 +123,24 @@ public class BuildProcessManager {
 	public int getThreadsUsed() {
 		return processes.size();
 	}
-	
 
-	
 	/**
 	 * Converts map to strings array
 	 */
-	protected String[] mapToStringArray(Map<String, String> map){
-		if(map == null)
+	protected String[] mapToStringArray(Map<String, String> map) {
+		if (map == null)
 			return null;
-		
+
 		List<String> list = new ArrayList<String>();
-		
+
 		Set<Entry<String, String>> entrySet = map.entrySet();
 		for (Entry<String, String> entry : entrySet) {
 			list.add(entry.getKey() + '=' + entry.getValue());
 		}
-		
+
 		return list.toArray(new String[list.size()]);
 	}
-	
+
 	/**
 	 * @return Number of processors detected
 	 * @deprecated since CDT 9.0 - just use Runtime.getRuntime().availableProcessors()

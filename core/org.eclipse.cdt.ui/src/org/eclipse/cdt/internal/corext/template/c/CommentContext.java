@@ -36,72 +36,71 @@ public class CommentContext extends TranslationUnitContext {
 
 	/**
 	 * Creates a comment template context.
-	 * 
+	 *
 	 * @param type the context type.
 	 * @param document the document.
 	 * @param completionOffset the completion offset within the document.
 	 * @param completionLength the completion length within the document.
 	 * @param translationUnit the translation unit (may be <code>null</code>).
 	 */
-	public CommentContext(TemplateContextType type, IDocument document,
-			int completionOffset, int completionLength, ITranslationUnit translationUnit) {
+	public CommentContext(TemplateContextType type, IDocument document, int completionOffset, int completionLength,
+			ITranslationUnit translationUnit) {
 		super(type, document, completionOffset, completionLength, translationUnit);
 	}
 
 	/**
 	 * Creates a comment template context.
-	 * 
+	 *
 	 * @param type the context type.
 	 * @param document the document.
 	 * @param completionPosition the completion position within the document
 	 * @param translationUnit the translation unit (may be <code>null</code>).
 	 */
-	public CommentContext(TemplateContextType type, IDocument document,
-			Position completionPosition, ITranslationUnit translationUnit) {
+	public CommentContext(TemplateContextType type, IDocument document, Position completionPosition,
+			ITranslationUnit translationUnit) {
 		super(type, document, completionPosition, translationUnit);
 	}
 
 	/*
 	 * @see DocumentTemplateContext#getStart()
-	 */ 
+	 */
 	@Override
 	public int getStart() {
 		if (fIsManaged && getCompletionLength() > 0)
 			return super.getStart();
-		
+
 		try {
-			IDocument document= getDocument();
+			IDocument document = getDocument();
 
 			if (getCompletionLength() == 0) {
-				int start= getCompletionOffset();
-		
+				int start = getCompletionOffset();
+
 				while ((start != 0) && !Character.isWhitespace(document.getChar(start - 1)))
 					start--;
-				
+
 				if ((start != 0) && !Character.isWhitespace(document.getChar(start - 1)))
 					start--;
-		
-				return start;
-				
-			} 
 
-			int start= getCompletionOffset();
-			int end= getCompletionOffset() + getCompletionLength();
-			
+				return start;
+
+			}
+
+			int start = getCompletionOffset();
+			int end = getCompletionOffset() + getCompletionLength();
+
 			while (start != 0 && !Character.isWhitespace(document.getChar(start - 1)))
 				start--;
-			
+
 			while (start != end && Character.isWhitespace(document.getChar(start)))
 				start++;
-			
+
 			if (start == end)
-				start= getCompletionOffset();	
-			
-			return start;					
-			
+				start = getCompletionOffset();
+
+			return start;
 
 		} catch (BadLocationException e) {
-			return getCompletionOffset();	
+			return getCompletionOffset();
 		}
 	}
 
@@ -110,23 +109,23 @@ public class CommentContext extends TranslationUnitContext {
 	 */
 	@Override
 	public int getEnd() {
-		if (fIsManaged || getCompletionLength() == 0)		
+		if (fIsManaged || getCompletionLength() == 0)
 			return super.getEnd();
 
-		try {			
-			IDocument document= getDocument();
+		try {
+			IDocument document = getDocument();
 
-			int start= getCompletionOffset();
-			int end= getCompletionOffset() + getCompletionLength();
-			
+			int start = getCompletionOffset();
+			int end = getCompletionOffset() + getCompletionLength();
+
 			while (start != end && Character.isWhitespace(document.getChar(end - 1)))
 				end--;
-			
-			return end;	
+
+			return end;
 
 		} catch (BadLocationException e) {
 			return super.getEnd();
-		}		
+		}
 	}
 
 	/*
@@ -134,18 +133,19 @@ public class CommentContext extends TranslationUnitContext {
 	 */
 	@Override
 	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
-		TemplateTranslator translator= new TemplateTranslator();
-		TemplateBuffer buffer= translator.translate(template);
+		TemplateTranslator translator = new TemplateTranslator();
+		TemplateBuffer buffer = translator.translate(template);
 
 		getContextType().resolve(buffer, this);
-		
-		// don't use code formatter for comment templates
-		boolean useCodeFormatter= false;
 
-		ICProject project= getCProject();
-		CFormatter formatter= new CFormatter(TextUtilities.getDefaultLineDelimiter(getDocument()), getIndentationLevel(), useCodeFormatter, project);
+		// don't use code formatter for comment templates
+		boolean useCodeFormatter = false;
+
+		ICProject project = getCProject();
+		CFormatter formatter = new CFormatter(TextUtilities.getDefaultLineDelimiter(getDocument()),
+				getIndentationLevel(), useCodeFormatter, project);
 		formatter.format(buffer, this);
-			
+
 		return buffer;
 	}
 

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -30,29 +30,29 @@ import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
 
-
 /**
  * Computes the default source lookup path for a PDA launch configuration.
- * The default source lookup path is the folder or project containing 
+ * The default source lookup path is the folder or project containing
  * the PDA program being launched. If the program is not specified, the workspace
  * is searched by default.
  * <p>
- * This class is identical to the corresponding in PDA debugger implemented in 
+ * This class is identical to the corresponding in PDA debugger implemented in
  * org.eclipse.debug.examples.
  * </p>
  */
 public class PDASourcePathComputerDelegate implements ISourcePathComputerDelegate {
-	
+
 	@Override
-	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		String path = configuration.getAttribute(PDAPlugin.ATTR_PDA_PROGRAM, (String)null);
+	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor)
+			throws CoreException {
+		String path = configuration.getAttribute(PDAPlugin.ATTR_PDA_PROGRAM, (String) null);
 		ISourceContainer sourceContainer = null;
 		if (path != null) {
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(path));
 			if (resource != null) {
 				IContainer container = resource.getParent();
 				if (container.getType() == IResource.PROJECT) {
-					sourceContainer = new ProjectSourceContainer((IProject)container, false);
+					sourceContainer = new ProjectSourceContainer((IProject) container, false);
 				} else if (container.getType() == IResource.FOLDER) {
 					sourceContainer = new FolderSourceContainer(container, false);
 				}
@@ -61,6 +61,6 @@ public class PDASourcePathComputerDelegate implements ISourcePathComputerDelegat
 		if (sourceContainer == null) {
 			sourceContainer = new WorkspaceSourceContainer();
 		}
-		return new ISourceContainer[]{sourceContainer};
+		return new ISourceContainer[] { sourceContainer };
 	}
 }

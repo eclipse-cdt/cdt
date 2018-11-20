@@ -26,24 +26,25 @@ import org.eclipse.cdt.internal.core.dom.lrparser.gcc.GCCSizeofExpressionParser;
 public class GCCSecondaryParserFactory implements ISecondaryParserFactory {
 
 	public static final GCCSecondaryParserFactory DEFAULT_INSTANCE = new GCCSecondaryParserFactory();
-	
+
 	public static GCCSecondaryParserFactory getDefault() {
 		return DEFAULT_INSTANCE;
 	}
-	
-	
+
 	@Override
-	public ISecondaryParser<IASTExpression> getExpressionParser(ITokenStream stream, Map<String,String> properties) {
-		return new C99ExpressionParser(stream, properties); 
+	public ISecondaryParser<IASTExpression> getExpressionParser(ITokenStream stream, Map<String, String> properties) {
+		return new C99ExpressionParser(stream, properties);
 	}
 
 	@Override
-	public ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream, Map<String,String> properties) {
+	public ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream,
+			Map<String, String> properties) {
 		return new C99NoCastExpressionParser(stream, properties);
 	}
-	
+
 	@Override
-	public ISecondaryParser<IASTExpression> getSizeofExpressionParser(ITokenStream stream, Map<String,String> properties) {
+	public ISecondaryParser<IASTExpression> getSizeofExpressionParser(ITokenStream stream,
+			Map<String, String> properties) {
 		return new GCCSizeofExpressionParser(stream, properties);
 	}
 }

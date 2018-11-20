@@ -44,7 +44,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
 	private String fNewLabel, fCreateLabel;
 	private ImageDescriptor fIncludeIcon, fMacroIcon, fLibWSrcIcon, fLibIcon;
-    private ImageDescriptor fQuoteIncludeIcon, fIncludeFileIcon, fMacrosFileIcon;
+	private ImageDescriptor fQuoteIncludeIcon, fIncludeFileIcon, fMacrosFileIcon;
 	private ImageDescriptor fFolderImage, fOutputImage, fProjectImage, fContainerImage;
 	private boolean bShowExported;
 	private boolean bShowParentInfo;
@@ -55,17 +55,17 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	}
 
 	public CPElementLabelProvider(boolean showExported, boolean showParentInfo) {
-		fNewLabel = CPathEntryMessages.CPElementLabelProvider_new; 
-		fCreateLabel = CPathEntryMessages.CPElementLabelProvider_willbecreated; 
+		fNewLabel = CPathEntryMessages.CPElementLabelProvider_new;
+		fCreateLabel = CPathEntryMessages.CPElementLabelProvider_willbecreated;
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
 
 		fLibIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_ARCHIVE);
 		fLibWSrcIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_ARCHIVE);
 		fIncludeIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER);
-        fQuoteIncludeIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_QUOTE_INCLUDES_FOLDER);
-        fIncludeFileIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
+		fQuoteIncludeIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_QUOTE_INCLUDES_FOLDER);
+		fIncludeFileIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
 		fMacroIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO);
-        fMacrosFileIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
+		fMacrosFileIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
 		fFolderImage = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SOURCE_ROOT);
 		fOutputImage = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CONTAINER);
 		fContainerImage = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LIBRARY);
@@ -83,64 +83,64 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	@Override
 	public void dispose() {
 		inDirect.dispose();
-		inDirect= null;
+		inDirect = null;
 		super.dispose();
 	}
-	
+
 	@Override
 	public String getText(Object element) {
 		if (element instanceof CPElement) {
-			return getCPElementText((CPElement)element);
+			return getCPElementText((CPElement) element);
 		} else if (element instanceof CPElementAttribute) {
-			return getCPElementAttributeText((CPElementAttribute)element);
+			return getCPElementAttributeText((CPElementAttribute) element);
 		} else if (element instanceof IPathEntry) {
-			return getCPElementText(CPElement.createFromExisting((IPathEntry)element, null));
+			return getCPElementText(CPElement.createFromExisting((IPathEntry) element, null));
 		} else if (element instanceof CPElementGroup) {
-			return (getCPContainerGroupText((CPElementGroup)element));
+			return (getCPContainerGroupText((CPElementGroup) element));
 		}
 		return super.getText(element);
 	}
 
 	private String getCPContainerGroupText(CPElementGroup group) {
 		switch (group.getEntryKind()) {
-			case IPathEntry.CDT_INCLUDE :
-				return CPathEntryMessages.CPElementLabelProvider_Includes; 
-            case IPathEntry.CDT_INCLUDE_FILE :
-                return CPathEntryMessages.CPElementLabelProvider_IncludeFiles; 
-			case IPathEntry.CDT_MACRO :
-				return CPathEntryMessages.CPElementLabelProvider_PreprocessorSymbols; 
-            case IPathEntry.CDT_MACRO_FILE :
-                return CPathEntryMessages.CPElementLabelProvider_MacrosFiles; 
-			case IPathEntry.CDT_LIBRARY :
-				return CPathEntryMessages.CPElementLabelProvider_Libraries; 
-			case -1 :
-				if (group.getResource().getType() == IResource.PROJECT) {
-					return group.getResource().getName();
-				}
-				StringBuilder label = new StringBuilder(group.getResource().getProjectRelativePath().toString());
-				if (!group.getResource().exists()) {
-					label.append(fCreateLabel);
-				}
-				return label.toString();
+		case IPathEntry.CDT_INCLUDE:
+			return CPathEntryMessages.CPElementLabelProvider_Includes;
+		case IPathEntry.CDT_INCLUDE_FILE:
+			return CPathEntryMessages.CPElementLabelProvider_IncludeFiles;
+		case IPathEntry.CDT_MACRO:
+			return CPathEntryMessages.CPElementLabelProvider_PreprocessorSymbols;
+		case IPathEntry.CDT_MACRO_FILE:
+			return CPathEntryMessages.CPElementLabelProvider_MacrosFiles;
+		case IPathEntry.CDT_LIBRARY:
+			return CPathEntryMessages.CPElementLabelProvider_Libraries;
+		case -1:
+			if (group.getResource().getType() == IResource.PROJECT) {
+				return group.getResource().getName();
+			}
+			StringBuilder label = new StringBuilder(group.getResource().getProjectRelativePath().toString());
+			if (!group.getResource().exists()) {
+				label.append(fCreateLabel);
+			}
+			return label.toString();
 		}
 		return ""; //$NON-NLS-1$
 	}
 
 	public String getCPElementAttributeText(CPElementAttribute attrib) {
-		String notAvailable = CPathEntryMessages.CPElementLabelProvider_none; 
+		String notAvailable = CPathEntryMessages.CPElementLabelProvider_none;
 		StringBuilder buf = new StringBuilder();
 		String key = attrib.getKey();
 		if (key.equals(CPElement.SOURCEATTACHMENT)) {
-			buf.append(CPathEntryMessages.CPElementLabelProvider_source_attachment_label); 
-			IPath path = (IPath)attrib.getValue();
+			buf.append(CPathEntryMessages.CPElementLabelProvider_source_attachment_label);
+			IPath path = (IPath) attrib.getValue();
 			if (path != null && !path.isEmpty()) {
 				buf.append(getPathString(path, path.getDevice() != null));
 			} else {
 				buf.append(notAvailable);
 			}
 		} else if (key.equals(CPElement.SOURCEATTACHMENTROOT)) {
-			buf.append(CPathEntryMessages.CPElementLabelProvider_source_attachment_root_label); 
-			IPath path = (IPath)attrib.getValue();
+			buf.append(CPathEntryMessages.CPElementLabelProvider_source_attachment_root_label);
+			IPath path = (IPath) attrib.getValue();
 			if (path != null && !path.isEmpty()) {
 				buf.append(path.toString());
 			} else {
@@ -148,12 +148,12 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 			}
 		}
 		if (key.equals(CPElement.EXCLUSION)) {
-			buf.append(CPathEntryMessages.CPElementLabelProvider_exclusion_filter_label); 
-			IPath[] patterns = (IPath[])attrib.getValue();
+			buf.append(CPathEntryMessages.CPElementLabelProvider_exclusion_filter_label);
+			IPath[] patterns = (IPath[]) attrib.getValue();
 			if (patterns != null && patterns.length > 0) {
 				for (int i = 0; i < patterns.length; i++) {
 					if (i > 0) {
-						buf.append(CPathEntryMessages.CPElementLabelProvider_exclusion_filter_separator); 
+						buf.append(CPathEntryMessages.CPElementLabelProvider_exclusion_filter_separator);
 					}
 					buf.append(patterns[i].toString());
 				}
@@ -167,80 +167,82 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	public String getCPElementText(CPElement cpentry) {
 		IPath path = cpentry.getPath();
 		switch (cpentry.getEntryKind()) {
-			case IPathEntry.CDT_LIBRARY : {
-				IPath libPath = (IPath)cpentry.getAttribute(CPElement.LIBRARY);
-				StringBuilder str = new StringBuilder();
-				addBaseString(libPath, cpentry, str);
-				addExport(cpentry, str);
-				addParentInfo(cpentry, str);
-				return str.toString();
-			}
-			case IPathEntry.CDT_PROJECT :
-				return path.lastSegment();
-			case IPathEntry.CDT_INCLUDE : {
-				IPath incPath = ((IPath)cpentry.getAttribute(CPElement.INCLUDE));
-				StringBuilder str = new StringBuilder();
-				addBaseString(incPath, cpentry, str);
-				addExport(cpentry, str);
-				addParentInfo(cpentry, str);
-				return str.toString();
-			}
-            case IPathEntry.CDT_INCLUDE_FILE : {
-                IPath incFilePath = ((IPath)cpentry.getAttribute(CPElement.INCLUDE_FILE));
-                StringBuilder str = new StringBuilder();
-                addBaseString(incFilePath, cpentry, str);
-                addExport(cpentry, str);
-                addParentInfo(cpentry, str);
-                return str.toString();
-            }
-			case IPathEntry.CDT_MACRO : {
-				StringBuilder str = new StringBuilder((String)cpentry.getAttribute(CPElement.MACRO_NAME) + "=" //$NON-NLS-1$
-						+ (String)cpentry.getAttribute(CPElement.MACRO_VALUE));
-				addBaseString(null, cpentry, str);
-				addExport(cpentry, str);
-				addParentInfo(cpentry, str);
-				return str.toString();
-			}
-            case IPathEntry.CDT_MACRO_FILE : {
-                IPath macroFilePath = ((IPath)cpentry.getAttribute(CPElement.MACROS_FILE));
-                StringBuilder str = new StringBuilder();
-                addBaseString(macroFilePath, cpentry, str);
-                addExport(cpentry, str);
-                addParentInfo(cpentry, str);
-                return str.toString();
-            }
-			case IPathEntry.CDT_CONTAINER : {
-				StringBuilder str = new StringBuilder(path.toString());
-				try {
-					IPathEntryContainer container = CoreModel.getPathEntryContainer(cpentry.getPath(), cpentry.getCProject());
-					if (container != null) {
-						str.setLength(0);
-						str.append(container.getDescription());
-					}
-				} catch (CModelException e) {
-				}
-				addExport(cpentry, str);
-				return str.toString();
-			}
-			case IPathEntry.CDT_SOURCE :
-			case IPathEntry.CDT_OUTPUT : {
-				StringBuilder buf = new StringBuilder(path.makeRelative().toString());
-				IResource resource = cpentry.getResource();
-				if (resource != null && !resource.exists()) {
-					buf.append(' ');
-					if (cpentry.getStatus().getSeverity() != IStatus.OK) { // only valid error for src/output would missing path...
-						buf.append(fCreateLabel);
-					} else {
-						buf.append(fNewLabel);
-					}
-				}
-				return buf.toString();
-			}
-			default :
-		// pass
+		case IPathEntry.CDT_LIBRARY: {
+			IPath libPath = (IPath) cpentry.getAttribute(CPElement.LIBRARY);
+			StringBuilder str = new StringBuilder();
+			addBaseString(libPath, cpentry, str);
+			addExport(cpentry, str);
+			addParentInfo(cpentry, str);
+			return str.toString();
 		}
-		return CPathEntryMessages.CPElementLabelProvider_unknown_element_label; 
+		case IPathEntry.CDT_PROJECT:
+			return path.lastSegment();
+		case IPathEntry.CDT_INCLUDE: {
+			IPath incPath = ((IPath) cpentry.getAttribute(CPElement.INCLUDE));
+			StringBuilder str = new StringBuilder();
+			addBaseString(incPath, cpentry, str);
+			addExport(cpentry, str);
+			addParentInfo(cpentry, str);
+			return str.toString();
+		}
+		case IPathEntry.CDT_INCLUDE_FILE: {
+			IPath incFilePath = ((IPath) cpentry.getAttribute(CPElement.INCLUDE_FILE));
+			StringBuilder str = new StringBuilder();
+			addBaseString(incFilePath, cpentry, str);
+			addExport(cpentry, str);
+			addParentInfo(cpentry, str);
+			return str.toString();
+		}
+		case IPathEntry.CDT_MACRO: {
+			StringBuilder str = new StringBuilder((String) cpentry.getAttribute(CPElement.MACRO_NAME) + "=" //$NON-NLS-1$
+					+ (String) cpentry.getAttribute(CPElement.MACRO_VALUE));
+			addBaseString(null, cpentry, str);
+			addExport(cpentry, str);
+			addParentInfo(cpentry, str);
+			return str.toString();
+		}
+		case IPathEntry.CDT_MACRO_FILE: {
+			IPath macroFilePath = ((IPath) cpentry.getAttribute(CPElement.MACROS_FILE));
+			StringBuilder str = new StringBuilder();
+			addBaseString(macroFilePath, cpentry, str);
+			addExport(cpentry, str);
+			addParentInfo(cpentry, str);
+			return str.toString();
+		}
+		case IPathEntry.CDT_CONTAINER: {
+			StringBuilder str = new StringBuilder(path.toString());
+			try {
+				IPathEntryContainer container = CoreModel.getPathEntryContainer(cpentry.getPath(),
+						cpentry.getCProject());
+				if (container != null) {
+					str.setLength(0);
+					str.append(container.getDescription());
+				}
+			} catch (CModelException e) {
+			}
+			addExport(cpentry, str);
+			return str.toString();
+		}
+		case IPathEntry.CDT_SOURCE:
+		case IPathEntry.CDT_OUTPUT: {
+			StringBuilder buf = new StringBuilder(path.makeRelative().toString());
+			IResource resource = cpentry.getResource();
+			if (resource != null && !resource.exists()) {
+				buf.append(' ');
+				if (cpentry.getStatus().getSeverity() != IStatus.OK) { // only valid error for src/output would missing path...
+					buf.append(fCreateLabel);
+				} else {
+					buf.append(fNewLabel);
+				}
+			}
+			return buf.toString();
+		}
+		default:
+			// pass
+		}
+		return CPathEntryMessages.CPElementLabelProvider_unknown_element_label;
 	}
+
 	/**
 	 * @param cpentry
 	 * @param str
@@ -251,7 +253,8 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 			if (parent != null) {
 				str.append(" ["); //$NON-NLS-1$
 				try {
-					IPathEntryContainer container = CoreModel.getPathEntryContainer(cpentry.getPath(), cpentry.getCProject());
+					IPathEntryContainer container = CoreModel.getPathEntryContainer(cpentry.getPath(),
+							cpentry.getCProject());
 					if (container != null) {
 						str.append(container.getDescription());
 					}
@@ -266,12 +269,12 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	private void addExport(CPElement cpentry, StringBuilder str) {
 		if (bShowExported && cpentry.isExported()) {
 			str.append(' ');
-			str.append(CPathEntryMessages.CPElementLabelProvider_export_label); 
+			str.append(CPathEntryMessages.CPElementLabelProvider_export_label);
 		}
 	}
 
 	private void addBaseString(IPath endPath, CPElement cpentry, StringBuilder str) {
-		IPath baseRef = (IPath)cpentry.getAttribute(CPElement.BASE_REF);
+		IPath baseRef = (IPath) cpentry.getAttribute(CPElement.BASE_REF);
 		if (!baseRef.isEmpty()) {
 			if (baseRef.isAbsolute()) {
 				//				str.append("From project ");
@@ -297,7 +300,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 				str.append(')');
 			}
 		} else {
-			IPath path = (IPath)cpentry.getAttribute(CPElement.BASE);
+			IPath path = (IPath) cpentry.getAttribute(CPElement.BASE);
 			if (!path.isEmpty()) {
 				if (endPath != null) {
 					path = path.append(endPath);
@@ -326,38 +329,38 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
 	private ImageDescriptor getCPElementBaseImage(CPElement cpentry) {
 		switch (cpentry.getEntryKind()) {
-			case IPathEntry.CDT_OUTPUT :
-				if (cpentry.getPath().segmentCount() == 1) {
-					return fProjectImage;
-				}
-				return fOutputImage;
-			case IPathEntry.CDT_SOURCE :
-				if (cpentry.getPath().segmentCount() == 1) {
-					return fProjectImage;
-				}
-				return fFolderImage;
-			case IPathEntry.CDT_LIBRARY :
-				IPath path = (IPath)cpentry.getAttribute(CPElement.SOURCEATTACHMENT);
-				if (path == null || path.isEmpty()) {
-					return fLibIcon;
-				}
-				return fLibWSrcIcon;
-			case IPathEntry.CDT_PROJECT :
+		case IPathEntry.CDT_OUTPUT:
+			if (cpentry.getPath().segmentCount() == 1) {
 				return fProjectImage;
-			case IPathEntry.CDT_CONTAINER :
-				return fContainerImage;
-			case IPathEntry.CDT_INCLUDE :
-                if (((Boolean)cpentry.getAttribute(CPElement.SYSTEM_INCLUDE)).booleanValue())
-				    return fIncludeIcon;
-                return fQuoteIncludeIcon;
-            case IPathEntry.CDT_INCLUDE_FILE :
-                return fIncludeFileIcon;
-			case IPathEntry.CDT_MACRO :
-				return fMacroIcon;
-            case IPathEntry.CDT_MACRO_FILE :
-                return fMacrosFileIcon;
-			default :
-				return null;
+			}
+			return fOutputImage;
+		case IPathEntry.CDT_SOURCE:
+			if (cpentry.getPath().segmentCount() == 1) {
+				return fProjectImage;
+			}
+			return fFolderImage;
+		case IPathEntry.CDT_LIBRARY:
+			IPath path = (IPath) cpentry.getAttribute(CPElement.SOURCEATTACHMENT);
+			if (path == null || path.isEmpty()) {
+				return fLibIcon;
+			}
+			return fLibWSrcIcon;
+		case IPathEntry.CDT_PROJECT:
+			return fProjectImage;
+		case IPathEntry.CDT_CONTAINER:
+			return fContainerImage;
+		case IPathEntry.CDT_INCLUDE:
+			if (((Boolean) cpentry.getAttribute(CPElement.SYSTEM_INCLUDE)).booleanValue())
+				return fIncludeIcon;
+			return fQuoteIncludeIcon;
+		case IPathEntry.CDT_INCLUDE_FILE:
+			return fIncludeFileIcon;
+		case IPathEntry.CDT_MACRO:
+			return fMacroIcon;
+		case IPathEntry.CDT_MACRO_FILE:
+			return fMacrosFileIcon;
+		default:
+			return null;
 		}
 	}
 
@@ -366,50 +369,54 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof CPElement) {
-			CPElement cpentry = (CPElement)element;
+			CPElement cpentry = (CPElement) element;
 			ImageDescriptor imageDescriptor = getCPElementBaseImage(cpentry);
 			if (imageDescriptor != null) {
 				switch (cpentry.getStatus().getSeverity()) {
-					case IStatus.WARNING :
-						imageDescriptor = new CPListImageDescriptor(imageDescriptor, CPListImageDescriptor.WARNING, SMALL_SIZE);
-						break;
-					case IStatus.ERROR :
-						imageDescriptor = new CPListImageDescriptor(imageDescriptor, CPListImageDescriptor.ERROR, SMALL_SIZE);
-						break;
+				case IStatus.WARNING:
+					imageDescriptor = new CPListImageDescriptor(imageDescriptor, CPListImageDescriptor.WARNING,
+							SMALL_SIZE);
+					break;
+				case IStatus.ERROR:
+					imageDescriptor = new CPListImageDescriptor(imageDescriptor, CPListImageDescriptor.ERROR,
+							SMALL_SIZE);
+					break;
 				}
 				if (cpentry.getInherited() != null) {
-					imageDescriptor = new CPListImageDescriptor(imageDescriptor, CPListImageDescriptor.PATH_INHERIT, SMALL_SIZE);
+					imageDescriptor = new CPListImageDescriptor(imageDescriptor, CPListImageDescriptor.PATH_INHERIT,
+							SMALL_SIZE);
 				}
 				return fRegistry.get(imageDescriptor);
 			}
 		} else if (element instanceof CPElementAttribute) {
-			String key = ((CPElementAttribute)element).getKey();
+			String key = ((CPElementAttribute) element).getKey();
 			if (key.equals(CPElement.SOURCEATTACHMENT)) {
 				return fRegistry.get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SOURCE_ATTACH_ATTRIB));
 			} else if (key.equals(CPElement.EXCLUSION)) {
 				return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_EXCLUSION_FILTER_ATTRIB);
 			}
 		} else if (element instanceof IPathEntry) {
-			return getImage(CPElement.createFromExisting((IPathEntry)element, null));
+			return getImage(CPElement.createFromExisting((IPathEntry) element, null));
 		} else if (element instanceof CPElementGroup) {
-			switch ( ((CPElementGroup)element).getEntryKind()) {
-				case IPathEntry.CDT_INCLUDE :
-					return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDES_CONTAINER);
-				case IPathEntry.CDT_MACRO :
-					return fRegistry.get(fMacroIcon);
-                case IPathEntry.CDT_INCLUDE_FILE :
-                case IPathEntry.CDT_MACRO_FILE :
-                    return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDE);
-				case IPathEntry.CDT_LIBRARY :
-					return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_LIBRARY);
-				case -1 :
-					IResource res = ((CPElementGroup)element).getResource();
-					IWorkbenchAdapter adapter = res.getAdapter(IWorkbenchAdapter.class);
-					ImageDescriptor imageDescriptor = adapter.getImageDescriptor(res);
-					if (!res.exists()) {
-						imageDescriptor = new CPListImageDescriptor(imageDescriptor, CPListImageDescriptor.WARNING, SMALL_SIZE);
-					}
-					return fRegistry.get(imageDescriptor);
+			switch (((CPElementGroup) element).getEntryKind()) {
+			case IPathEntry.CDT_INCLUDE:
+				return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDES_CONTAINER);
+			case IPathEntry.CDT_MACRO:
+				return fRegistry.get(fMacroIcon);
+			case IPathEntry.CDT_INCLUDE_FILE:
+			case IPathEntry.CDT_MACRO_FILE:
+				return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDE);
+			case IPathEntry.CDT_LIBRARY:
+				return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_LIBRARY);
+			case -1:
+				IResource res = ((CPElementGroup) element).getResource();
+				IWorkbenchAdapter adapter = res.getAdapter(IWorkbenchAdapter.class);
+				ImageDescriptor imageDescriptor = adapter.getImageDescriptor(res);
+				if (!res.exists()) {
+					imageDescriptor = new CPListImageDescriptor(imageDescriptor, CPListImageDescriptor.WARNING,
+							SMALL_SIZE);
+				}
+				return fRegistry.get(imageDescriptor);
 			}
 		}
 		return null;
@@ -417,13 +424,13 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
 	@Override
 	public Color getForeground(Object element) {
 		if (element instanceof CPElement) {
-			if ( ((CPElement)element).getInherited() != null) {
+			if (((CPElement) element).getInherited() != null) {
 				return inDirect;
 			}
 		}
@@ -432,7 +439,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
 	@Override

@@ -38,7 +38,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 	}
 
 	public void setName(String n) {
-		name = (n == null) ? "" : n.trim() ; //$NON-NLS-1$
+		name = (n == null) ? "" : n.trim(); //$NON-NLS-1$
 	}
 
 	@Override

@@ -20,8 +20,7 @@ import java.util.ResourceBundle;
 public class InvokeMessages {
 	private static final String BUNDLE_NAME = InvokeMessages.class.getName();
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private InvokeMessages() {
 	}
@@ -29,7 +28,7 @@ public class InvokeMessages {
 	/**
 	 * Returns the string from the resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @return the resource bundle message
 	 */
@@ -40,17 +39,17 @@ public class InvokeMessages {
 			return '!' + key + '!';
 		}
 	}
-	
+
 	/**
 	 * Returns the formatted string from the resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @param args an array of substituition strings
 	 * @return the resource bundle message
 	 */
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getString(key), (Object[])args);
+		return MessageFormat.format(getString(key), (Object[]) args);
 	}
 
 }

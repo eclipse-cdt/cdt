@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 /**
  * Interface to be implemented by contributors to the extension point
  * <code>org.eclipse.cdt.ui.quickFixProcessors</code>.
- * 
+ *
  * @since 5.0
  */
 public interface IQuickFixProcessor {
@@ -45,6 +45,6 @@ public interface IQuickFixProcessor {
 	 * 			can be offered
 	 * @throws CoreException CoreException can be thrown if the operation fails
 	 */
-	ICCompletionProposal[] getCorrections(IInvocationContext context,
-			IProblemLocation[] locations) throws CoreException;
+	ICCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations)
+			throws CoreException;
 }

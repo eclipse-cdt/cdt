@@ -30,7 +30,8 @@ public class Symbol implements ISymbol {
 	private final int endLine;
 	private final IPath sourceFile;
 
-	public Symbol(BinaryObjectAdapter binary, String name, int type, IAddress addr, long size, IPath sourceFile, int startLine, int endLine) {
+	public Symbol(BinaryObjectAdapter binary, String name, int type, IAddress addr, long size, IPath sourceFile,
+			int startLine, int endLine) {
 		this.binary = binary;
 		this.name = name;
 		this.type = type;
@@ -59,7 +60,7 @@ public class Symbol implements ISymbol {
 	public IBinaryObject getBinaryObject() {
 		return binary;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getFilename()
 	 */
@@ -86,7 +87,7 @@ public class Symbol implements ISymbol {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getAdress()
 	 */
 	@Override
@@ -96,7 +97,7 @@ public class Symbol implements ISymbol {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getEndLine()
 	 */
 	@Override
@@ -106,7 +107,7 @@ public class Symbol implements ISymbol {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getStartLine()
 	 */
 	@Override
@@ -116,7 +117,7 @@ public class Symbol implements ISymbol {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getLineNumber(long)
 	 */
 	@Override
@@ -126,7 +127,7 @@ public class Symbol implements ISymbol {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getSize()
 	 */
 	@Override

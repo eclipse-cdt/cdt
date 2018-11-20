@@ -15,20 +15,30 @@ package org.eclipse.cdt.core.cdtvariables;
 
 /**
  * Public interface to access StorableCdtVariables class methods
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IStorableCdtVariables {
 	ICdtVariable getMacro(String name);
+
 	ICdtVariable[] getMacros();
+
 	boolean deleteAll();
+
 	boolean contains(ICdtVariable var);
+
 	ICdtVariable deleteMacro(String name);
+
 	boolean isChanged();
+
 	ICdtVariable createMacro(ICdtVariable copy);
+
 	ICdtVariable createMacro(String name, int type, String value);
+
 	ICdtVariable createMacro(String name, int type, String value[]);
+
 	void createMacros(ICdtVariable macros[]);
+
 	boolean isEmpty();
 }

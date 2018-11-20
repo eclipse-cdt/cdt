@@ -42,8 +42,6 @@ public class LibraryReferenceArchive extends Archive implements ILibraryReferenc
 		return null;
 	}
 
-
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
 	 */

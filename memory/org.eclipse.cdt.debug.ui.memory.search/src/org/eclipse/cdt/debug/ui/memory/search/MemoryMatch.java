@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -16,10 +16,9 @@ package org.eclipse.cdt.debug.ui.memory.search;
 
 import java.math.BigInteger;
 
-public class MemoryMatch 
-{
+public class MemoryMatch {
 	BigInteger fStartAddress;
-	
+
 	public BigInteger getStartAddress() {
 		return fStartAddress;
 	}
@@ -37,15 +36,13 @@ public class MemoryMatch
 	}
 
 	BigInteger fLength;
-	
-	public MemoryMatch(BigInteger startAddress, BigInteger length)
-	{
+
+	public MemoryMatch(BigInteger startAddress, BigInteger length) {
 		fStartAddress = startAddress;
 		fLength = length;
 	}
-	
-	public BigInteger getEndAddress()
-	{
+
+	public BigInteger getEndAddress() {
 		return getStartAddress().add(getLength());
 	}
 }

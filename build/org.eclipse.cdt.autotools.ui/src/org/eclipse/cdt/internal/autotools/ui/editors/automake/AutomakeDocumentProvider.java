@@ -26,48 +26,47 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
+public class AutomakeDocumentProvider extends TextFileDocumentProvider implements IMakefileDocumentProvider {
 
-public class AutomakeDocumentProvider extends TextFileDocumentProvider implements IMakefileDocumentProvider  {
-	
 	/**
 	 * Remembers a IMakefile for each element.
 	 */
-	protected class AutomakefileFileInfo extends FileInfo {		
+	protected class AutomakefileFileInfo extends FileInfo {
 		public IMakefile fCopy;
 	}
-	
+
 	@Override
 	protected FileInfo createEmptyFileInfo() {
 		return new AutomakefileFileInfo();
 	}
-	
+
 	@Override
 	protected FileInfo createFileInfo(Object element) throws CoreException {
 		IMakefile original = null;
-		if (element instanceof IFileEditorInput) {	
-			IFileEditorInput input= (IFileEditorInput) element;
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput input = (IFileEditorInput) element;
 			if (input.getFile().exists())
-				original= createMakefile(input.getFile().getLocation().toOSString());
+				original = createMakefile(input.getFile().getLocation().toOSString());
 		} else if (element instanceof IURIEditorInput) {
-			IURIEditorInput input = (IURIEditorInput)element;
+			IURIEditorInput input = (IURIEditorInput) element;
 			original = createMakefile(input.getURI().getPath().toString());
 		}
 		if (original == null)
 			return null;
 
-		FileInfo info= super.createFileInfo(element);
+		FileInfo info = super.createFileInfo(element);
 		if (!(info instanceof AutomakefileFileInfo)) {
 			return null;
 		}
 
-		AutomakefileFileInfo makefileInfo= (AutomakefileFileInfo) info;
+		AutomakefileFileInfo makefileInfo = (AutomakefileFileInfo) info;
 		setUpSynchronization(makefileInfo);
 
 		makefileInfo.fCopy = original;
 
 		return makefileInfo;
 	}
-	
+
 	/**
 	 */
 	private IMakefile createMakefile(String fileName) {
@@ -80,37 +79,37 @@ public class AutomakeDocumentProvider extends TextFileDocumentProvider implement
 		makefile = automakefile;
 		return makefile;
 	}
-	
+
 	@Override
 	public IMakefile getWorkingCopy(Object element) {
-		FileInfo fileInfo= getFileInfo(element);		
+		FileInfo fileInfo = getFileInfo(element);
 		if (fileInfo instanceof AutomakefileFileInfo) {
 			return ((AutomakefileFileInfo) fileInfo).fCopy;
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void shutdown() {
 		Iterator<?> e = getConnectedElementsIterator();
 		while (e.hasNext())
 			disconnect(e.next());
 	}
-	
+
 	@Override
 	public void connect(Object element) throws CoreException {
 		super.connect(element);
 		IMakefile makefile = getWorkingCopy(element);
-		AutomakeErrorHandler errorHandler = new AutomakeErrorHandler((IEditorInput)element);
+		AutomakeErrorHandler errorHandler = new AutomakeErrorHandler((IEditorInput) element);
 		errorHandler.update(makefile);
 	}
-	
+
 	@Override
 	public IDocument getDocument(Object element) {
-		FileInfo info= getFileInfo(element);
+		FileInfo info = getFileInfo(element);
 		if (info != null)
 			return info.fTextFileBuffer.getDocument();
 		return getParentProvider().getDocument(element);
 	}
-	
+
 }

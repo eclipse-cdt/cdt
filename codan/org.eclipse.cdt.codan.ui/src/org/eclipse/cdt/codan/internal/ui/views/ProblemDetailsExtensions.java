@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Alena Laskavaia 
+ * Copyright (c) 2010, 2011 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,7 +37,8 @@ public class ProblemDetailsExtensions {
 	private static synchronized void readExtensions() {
 		if (extensionsLoaded)
 			return;
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CodanUIActivator.PLUGIN_ID, EXTENSION_POINT_NAME);
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CodanUIActivator.PLUGIN_ID,
+				EXTENSION_POINT_NAME);
 		if (ep == null)
 			return;
 		try {
@@ -84,7 +85,7 @@ public class ProblemDetailsExtensions {
 
 	/**
 	 * Remove provider from the list
-	 * 
+	 *
 	 * @param id - codan problem id or ALL
 	 * @param el - details provider (class extending
 	 *        AbstractCodanProblemDetailsProvider) or ElementConfiguration (user
@@ -134,7 +135,7 @@ public class ProblemDetailsExtensions {
 
 	/**
 	 * Add extension (details provider) using API
-	 * 
+	 *
 	 * @param id - codan problem id or ALL
 	 * @param provider - class extending AbstractCodanProblemDetailsProvider
 	 */

@@ -18,8 +18,7 @@ package org.eclipse.cdt.debug.ui.memory.floatingpoint;
 /**
  * Constant definitions for plug-in preferences
  */
-public class FPRenderingPreferenceConstants
-{
+public class FPRenderingPreferenceConstants {
 	public static final String MEM_COLOR_CHANGED = "memoryColorChanged"; //$NON-NLS-1$
 	public static final String MEM_USE_GLOBAL_BACKGROUND = "memUseGlobalBackground"; //$NON-NLS-1$
 	public static final String MEM_COLOR_BACKGROUND = "memoryColorBackground"; //$NON-NLS-1$

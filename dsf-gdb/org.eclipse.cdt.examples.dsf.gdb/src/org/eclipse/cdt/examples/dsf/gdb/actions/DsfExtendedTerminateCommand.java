@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * This class extends the existing "Terminate" command by adding a popup 
+ * This class extends the existing "Terminate" command by adding a popup
  * confirmation before terminating the session.
  */
 public class DsfExtendedTerminateCommand extends DsfTerminateCommand {
@@ -44,11 +44,9 @@ public class DsfExtendedTerminateCommand extends DsfTerminateCommand {
 				public void run() {
 					Shell shell = display.getActiveShell();
 					if (shell != null) {
-						boolean confirmed = MessageDialog.openConfirm(
-								shell, 
-								ActionMessages.DsfExtendedTerminateCommand_Confirm_Termination, 
-								ActionMessages.DsfExtendedTerminateCommand_Terminate_the_session
-								);
+						boolean confirmed = MessageDialog.openConfirm(shell,
+								ActionMessages.DsfExtendedTerminateCommand_Confirm_Termination,
+								ActionMessages.DsfExtendedTerminateCommand_Terminate_the_session);
 						if (!confirmed) {
 							request.cancel();
 							return;

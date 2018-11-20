@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
 
 /**
  * This is a pointer to member pointer operator for declarators.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -33,7 +33,7 @@ public interface ICPPASTPointerToMember extends IASTPointer, IASTNameOwner {
 
 	/**
 	 * Set the name.
-	 * 
+	 *
 	 * @param name
 	 *            <code>IASTName</code>
 	 */
@@ -41,11 +41,11 @@ public interface ICPPASTPointerToMember extends IASTPointer, IASTNameOwner {
 
 	/**
 	 * Get the name.
-	 * 
+	 *
 	 * @return <code>IASTName</code>
 	 */
 	public IASTName getName();
-	
+
 	/**
 	 * @since 5.1
 	 */

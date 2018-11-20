@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -21,245 +21,190 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
-public class AddressPane extends AbstractPane
-{
-    public AddressPane(Rendering parent)
-    {
-        super(parent);
-    }
+public class AddressPane extends AbstractPane {
+	public AddressPane(Rendering parent) {
+		super(parent);
+	}
 
-    @Override
-	protected BigInteger getViewportAddress(int col, int row)
-        throws DebugException
-    {
-        BigInteger address = fRendering.getViewportStartAddress();
-        address = address.add(BigInteger.valueOf((row
-            * fRendering.getColumnCount() + col)
-            * fRendering.getAddressesPerColumn()));
+	@Override
+	protected BigInteger getViewportAddress(int col, int row) throws DebugException {
+		BigInteger address = fRendering.getViewportStartAddress();
+		address = address.add(
+				BigInteger.valueOf((row * fRendering.getColumnCount() + col) * fRendering.getAddressesPerColumn()));
 
-        return address;
-    }
+		return address;
+	}
 
-    @Override
-	protected void appendSelection(int x, int y)
-    {
-        try
-        {
-            if(this.fSelectionStartAddress == null)
-            	return;
+	@Override
+	protected void appendSelection(int x, int y) {
+		try {
+			if (this.fSelectionStartAddress == null)
+				return;
 
-            BigInteger address = getViewportAddress(x / getCellWidth(), y
-                / getCellHeight());
+			BigInteger address = getViewportAddress(x / getCellWidth(), y / getCellHeight());
 
-            if(address.compareTo(this.fSelectionStartAddress) == 0)
-            {
-                fRendering.getSelection().setEnd(null, null);
-            }
-            else
-            {
-                fRendering.getSelection().setEnd(address.add(BigInteger
-                    .valueOf(fRendering.getAddressesPerColumn() * fRendering.getColumnCount())), address);
-            }
-        }
-        catch(DebugException e)
-        {
-            fRendering
-                .logError(
-                    TraditionalRenderingMessages
-                        .getString("TraditionalRendering.FAILURE_APPEND_SELECTION"), e); //$NON-NLS-1$
-        }
-    }
+			if (address.compareTo(this.fSelectionStartAddress) == 0) {
+				fRendering.getSelection().setEnd(null, null);
+			} else {
+				fRendering.getSelection()
+						.setEnd(address.add(
+								BigInteger.valueOf(fRendering.getAddressesPerColumn() * fRendering.getColumnCount())),
+								address);
+			}
+		} catch (DebugException e) {
+			fRendering.logError(TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_APPEND_SELECTION"), //$NON-NLS-1$
+					e);
+		}
+	}
 
-    @Override
-	public Point computeSize(int wHint, int hHint)
-    {
-        return new Point(getCellWidth() + fRendering.getRenderSpacing(), 100);
-    }
+	@Override
+	public Point computeSize(int wHint, int hHint) {
+		return new Point(getCellWidth() + fRendering.getRenderSpacing(), 100);
+	}
 
-    @Override
-	protected int getCellCharacterCount()
-    {
-        // two characters per byte of hex address
-        
-        return fRendering.getAddressBytes() * 2 
-            + 2; // 0x
-    }
+	@Override
+	protected int getCellCharacterCount() {
+		// two characters per byte of hex address
 
-    @Override
-	protected int getCellWidth()
-    {     
-    	GC gc = new GC(this);
-        StringBuilder buf = new StringBuilder();
-        for(int i = 0; i < getCellCharacterCount(); i++)
-        	buf.append("0");
-        int width = gc.textExtent(buf.toString()).x;
-        gc.dispose();
-        return width;
-    }
+		return fRendering.getAddressBytes() * 2 + 2; // 0x
+	}
 
-    private int getColumnCount()
-    {
-        return 0;
-    }
+	@Override
+	protected int getCellWidth() {
+		GC gc = new GC(this);
+		StringBuilder buf = new StringBuilder();
+		for (int i = 0; i < getCellCharacterCount(); i++)
+			buf.append("0");
+		int width = gc.textExtent(buf.toString()).x;
+		gc.dispose();
+		return width;
+	}
 
-    private BigInteger getCellAddressAt(int x, int y) throws DebugException
-    {
-        BigInteger address = fRendering.getViewportStartAddress();
+	private int getColumnCount() {
+		return 0;
+	}
 
-        int col = x / getCellWidth();
-        int row = y / getCellHeight();
+	private BigInteger getCellAddressAt(int x, int y) throws DebugException {
+		BigInteger address = fRendering.getViewportStartAddress();
 
-        if(col > getColumnCount())
-            return null;
+		int col = x / getCellWidth();
+		int row = y / getCellHeight();
 
-        address = address.add(BigInteger.valueOf(row
-            * fRendering.getColumnCount() * fRendering.getAddressesPerColumn()
-            / fRendering.getBytesPerCharacter()));
+		if (col > getColumnCount())
+			return null;
 
-        address = address.add(BigInteger.valueOf(col
-            * fRendering.getAddressesPerColumn()));
+		address = address.add(BigInteger.valueOf(row * fRendering.getColumnCount() * fRendering.getAddressesPerColumn()
+				/ fRendering.getBytesPerCharacter()));
 
-        return address;
-    }
+		address = address.add(BigInteger.valueOf(col * fRendering.getAddressesPerColumn()));
 
-    @Override
-	protected Point getCellLocation(BigInteger cellAddress)
-    {
-        try
-        {
-            BigInteger address = fRendering.getViewportStartAddress();
+		return address;
+	}
 
-            int cellOffset = cellAddress.subtract(address).intValue();
-            
-            cellOffset *= fRendering.getAddressableSize();
+	@Override
+	protected Point getCellLocation(BigInteger cellAddress) {
+		try {
+			BigInteger address = fRendering.getViewportStartAddress();
 
-            if(fRendering.getColumnCount() == 0) // avoid divide by zero
-            	return new Point(0,0);
-            
-            int row = cellOffset
-                / (fRendering.getColumnCount() * fRendering.getBytesPerColumn() / fRendering
-                    .getBytesPerCharacter());
-     
-            cellOffset -= row * fRendering.getColumnCount()
-                * fRendering.getBytesPerColumn()
-                / fRendering.getBytesPerCharacter();
+			int cellOffset = cellAddress.subtract(address).intValue();
 
-            int col = cellOffset / fRendering.getBytesPerColumn()
-                / fRendering.getBytesPerCharacter();
+			cellOffset *= fRendering.getAddressableSize();
 
-            int x = col * getCellWidth() + fRendering.getCellPadding();
-            int y = row * getCellHeight() + fRendering.getCellPadding();
+			if (fRendering.getColumnCount() == 0) // avoid divide by zero
+				return new Point(0, 0);
 
-            return new Point(x, y);
-        }
-        catch(Exception e)
-        {
-            fRendering
-                .logError(
-                    TraditionalRenderingMessages
-                        .getString("TraditionalRendering.FAILURE_DETERMINE_CELL_LOCATION"), e); //$NON-NLS-1$
-            return null;
-        }
-    }
+			int row = cellOffset / (fRendering.getColumnCount() * fRendering.getBytesPerColumn()
+					/ fRendering.getBytesPerCharacter());
 
-    @Override
-	protected int getNumberOfBytesRepresentedByColumn()
-    {
-        return fRendering.getBytesPerRow();
-    } 
-    
-    @Override
-	protected void positionCaret(int x, int y)
-    {
-        try
-        {
-            BigInteger cellAddress = getCellAddressAt(x, y);
-            if(cellAddress != null)
-            {
-                Point cellPosition = getCellLocation(cellAddress);
+			cellOffset -= row * fRendering.getColumnCount() * fRendering.getBytesPerColumn()
+					/ fRendering.getBytesPerCharacter();
 
-                int offset = x - cellPosition.x;
-                int x2 = offset / getCellCharacterWidth();
+			int col = cellOffset / fRendering.getBytesPerColumn() / fRendering.getBytesPerCharacter();
 
-                if(x2 >= this.getCellCharacterCount())
-                {
-                    cellAddress = cellAddress.add(BigInteger.valueOf(this
-                        .getNumberOfBytesRepresentedByColumn()));
-                    x2 = 0;
-                    cellPosition = getCellLocation(cellAddress);
-                }
+			int x = col * getCellWidth() + fRendering.getCellPadding();
+			int y = row * getCellHeight() + fRendering.getCellPadding();
 
-                fCaret.setLocation(cellPosition.x + x2
-                    * getCellCharacterWidth(), cellPosition.y);
+			return new Point(x, y);
+		} catch (Exception e) {
+			fRendering.logError(
+					TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_DETERMINE_CELL_LOCATION"), e); //$NON-NLS-1$
+			return null;
+		}
+	}
 
-                this.fCaretAddress = cellAddress;
-                this.fSubCellCaretPosition = x2;
-                setCaretAddress(fCaretAddress);
-            }
-        }
-        catch(Exception e)
-        {
-            fRendering
-                .logError(
-                    TraditionalRenderingMessages
-                        .getString("TraditionalRendering.FAILURE_POSITION_CURSOR"), e); //$NON-NLS-1$
-        }
-    }
+	@Override
+	protected int getNumberOfBytesRepresentedByColumn() {
+		return fRendering.getBytesPerRow();
+	}
 
-    @Override
-	protected void paint(PaintEvent pe)
-    {
-        super.paint(pe);
+	@Override
+	protected void positionCaret(int x, int y) {
+		try {
+			BigInteger cellAddress = getCellAddressAt(x, y);
+			if (cellAddress != null) {
+				Point cellPosition = getCellLocation(cellAddress);
 
-        GC gc = pe.gc;
+				int offset = x - cellPosition.x;
+				int x2 = offset / getCellCharacterWidth();
 
-        int cellHeight =  getCellHeight();
+				if (x2 >= this.getCellCharacterCount()) {
+					cellAddress = cellAddress.add(BigInteger.valueOf(this.getNumberOfBytesRepresentedByColumn()));
+					x2 = 0;
+					cellPosition = getCellLocation(cellAddress);
+				}
 
-        try
-        {
-            BigInteger start = fRendering.getViewportStartAddress();
+				fCaret.setLocation(cellPosition.x + x2 * getCellCharacterWidth(), cellPosition.y);
 
-            for(int i = 0; i < fRendering.getRowCount(); i++)
-            {
-                gc.setForeground(fRendering.getTraditionalRendering().getColorText());
-                BigInteger lineAddress = start.add(BigInteger.valueOf(i
-                    * fRendering.getColumnCount()
-                    * fRendering.getAddressesPerColumn()));
+				this.fCaretAddress = cellAddress;
+				this.fSubCellCaretPosition = x2;
+				setCaretAddress(fCaretAddress);
+			}
+		} catch (Exception e) {
+			fRendering.logError(TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_POSITION_CURSOR"), //$NON-NLS-1$
+					e);
+		}
+	}
 
-                if(fRendering.getSelection().isSelected(lineAddress))
-                {
-                    gc.setBackground(fRendering.getTraditionalRendering().getColorSelection());
-                    gc.fillRectangle(fRendering.getCellPadding() * 2,
-                        cellHeight * i, getCellWidth(), cellHeight);
+	@Override
+	protected void paint(PaintEvent pe) {
+		super.paint(pe);
 
-                    gc.setForeground(fRendering.getTraditionalRendering().getColorBackground());
-                }
-                else
-                {
-                    gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
+		GC gc = pe.gc;
 
-                    gc.fillRectangle(fRendering.getCellPadding() * 2,
-                        cellHeight * i, getCellWidth(), cellHeight);
+		int cellHeight = getCellHeight();
 
-                    // Allow subclass to override this method to do its own coloring
-                    applyCustomColor(gc);
-                }
+		try {
+			BigInteger start = fRendering.getViewportStartAddress();
 
-                gc.drawText(fRendering.getAddressString(lineAddress),
-                    fRendering.getCellPadding() * 2, cellHeight * i
-                        + fRendering.getCellPadding());
-            }
-        }
-        catch(Exception e)
-        {
-            fRendering.logError(TraditionalRenderingMessages
-                .getString("TraditionalRendering.FAILURE_PAINT"), e); //$NON-NLS-1$
-        }
-    }
+			for (int i = 0; i < fRendering.getRowCount(); i++) {
+				gc.setForeground(fRendering.getTraditionalRendering().getColorText());
+				BigInteger lineAddress = start
+						.add(BigInteger.valueOf(i * fRendering.getColumnCount() * fRendering.getAddressesPerColumn()));
 
-    // Allow subclass to override this method to do its own coloring
-    protected void applyCustomColor(GC gc)
-    {
-        gc.setForeground(fRendering.getTraditionalRendering().getColorText());
-    }
+				if (fRendering.getSelection().isSelected(lineAddress)) {
+					gc.setBackground(fRendering.getTraditionalRendering().getColorSelection());
+					gc.fillRectangle(fRendering.getCellPadding() * 2, cellHeight * i, getCellWidth(), cellHeight);
+
+					gc.setForeground(fRendering.getTraditionalRendering().getColorBackground());
+				} else {
+					gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
+
+					gc.fillRectangle(fRendering.getCellPadding() * 2, cellHeight * i, getCellWidth(), cellHeight);
+
+					// Allow subclass to override this method to do its own coloring
+					applyCustomColor(gc);
+				}
+
+				gc.drawText(fRendering.getAddressString(lineAddress), fRendering.getCellPadding() * 2,
+						cellHeight * i + fRendering.getCellPadding());
+			}
+		} catch (Exception e) {
+			fRendering.logError(TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_PAINT"), e); //$NON-NLS-1$
+		}
+	}
+
+	// Allow subclass to override this method to do its own coloring
+	protected void applyCustomColor(GC gc) {
+		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
+	}
 }

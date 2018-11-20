@@ -27,10 +27,10 @@ public class PreviousErrorAction extends Action {
 	private BuildConsolePage fConsolePage;
 
 	public PreviousErrorAction(BuildConsolePage page) {
-		super(ConsoleMessages.PreviousErrorAction_Tooltip); 
+		super(ConsoleMessages.PreviousErrorAction_Tooltip);
 		fConsolePage = page;
 		setEnabled(true);
-		setToolTipText(ConsoleMessages.PreviousErrorAction_Tooltip); 
+		setToolTipText(ConsoleMessages.PreviousErrorAction_Tooltip);
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_PREV);
 	}
 

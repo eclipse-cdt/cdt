@@ -38,12 +38,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class BuildOptionsParser implements IWorkspaceRunnable, IMarkerGenerator {
-	
+
 	private final IProject project;
 	private final File buildLog;
-	private static final String GCC_BUILD_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$ 
-	
-	public BuildOptionsParser (IProject project, File buildLog) {
+	private static final String GCC_BUILD_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$
+
+	public BuildOptionsParser(IProject project, File buildLog) {
 		this.project = project;
 		this.buildLog = buildLog;
 	}
@@ -56,27 +56,24 @@ public class BuildOptionsParser implements IWorkspaceRunnable, IMarkerGenerator 
 			br = new BufferedReader(new FileReader(buildLog));
 			// Calculate how many source files we have to process and use that as a basis
 			monitor.beginTask(Messages.GetBuildOptions, 10);
-			
+
 			// Find the GCCBuildCommandParser for the configuration.
-			ICProjectDescriptionManager projDescManager = CCorePlugin
-					.getDefault().getProjectDescriptionManager();
-			ICProjectDescription projDesc = projDescManager
-					.getProjectDescription(project,
-							false);
-			ICConfigurationDescription ccdesc = projDesc
-					.getActiveConfiguration();
+			ICProjectDescriptionManager projDescManager = CCorePlugin.getDefault().getProjectDescriptionManager();
+			ICProjectDescription projDesc = projDescManager.getProjectDescription(project, false);
+			ICConfigurationDescription ccdesc = projDesc.getActiveConfiguration();
 			GCCBuildCommandParser parser = null;
 			if (ccdesc instanceof ILanguageSettingsProvidersKeeper) {
-				ILanguageSettingsProvidersKeeper keeper = (ILanguageSettingsProvidersKeeper)ccdesc;
+				ILanguageSettingsProvidersKeeper keeper = (ILanguageSettingsProvidersKeeper) ccdesc;
 				List<ILanguageSettingsProvider> list = keeper.getLanguageSettingProviders();
 				for (ILanguageSettingsProvider p : list) {
 					//						System.out.println("language settings provider " + p.getId());
 					if (p.getId().equals(GCC_BUILD_OPTIONS_PROVIDER_ID)) {
-						parser = (GCCBuildCommandParser)p;
+						parser = (GCCBuildCommandParser) p;
 					}
 				}
 			}
-			ErrorParserManager epm = new ErrorParserManager(project, this, new String[]{"org.eclipse.cdt.core.CWDLocator"}); //$NON-NLS-1$
+			ErrorParserManager epm = new ErrorParserManager(project, this,
+					new String[] { "org.eclipse.cdt.core.CWDLocator" }); //$NON-NLS-1$
 			// Start up the parser and process lines generated from the .debug_macro section.
 			parser.startup(ccdesc, epm);
 			monitor.beginTask(Messages.GetBuildOptions, 10);
@@ -88,20 +85,19 @@ public class BuildOptionsParser implements IWorkspaceRunnable, IMarkerGenerator 
 			parser.shutdown();
 			if (br != null)
 				br.close();
-			
+
 		} catch (CoreException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
+		}
 		monitor.done();
 	}
 
 	@Override
-	public void addMarker(IResource file, int lineNumber, String errorDesc,
-			int severity, String errorVar) {
+	public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 		// do nothing
 	}
 

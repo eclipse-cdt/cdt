@@ -46,16 +46,16 @@ public class AnnotationTestCase extends UITestCaseWithProject {
 	private CEditor fEditor;
 
 	protected String testedAnnotationId = Annotation.TYPE_UNKNOWN;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
-	
+
 	public boolean checkAnnotationType(Annotation a) {
 		return true;
 	}
-	
+
 	public Annotation checkAnnotationLine(int i) {
 		return checkAnnotationLine(currentFile, i);
 	}
@@ -79,7 +79,7 @@ public class AnnotationTestCase extends UITestCaseWithProject {
 		assertTrue("No annotations found but should", annotations.length > 0); //$NON-NLS-1$
 		int line = 0;
 		Annotation a = null;
-		for (Annotation annotation : annotations) {  
+		for (Annotation annotation : annotations) {
 			line = getLine(annotation);
 			if (line == expectedLine && (annotationId == null || annotationId.equals(annotation.getType()))) {
 				a = annotation;
@@ -94,7 +94,7 @@ public class AnnotationTestCase extends UITestCaseWithProject {
 		return a;
 	}
 
-	private int getLine(Annotation annotation) {   
+	private int getLine(Annotation annotation) {
 		int line = 0;
 		IDocument document = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		Position position = fAnnotationModel.getPosition(annotation);
@@ -137,15 +137,15 @@ public class AnnotationTestCase extends UITestCaseWithProject {
 	protected void runInEditor() {
 		try {
 			annotations = null;
-			fEditor= openCEditor(currentIFile);
+			fEditor = openCEditor(currentIFile);
 			assertNotNull(fEditor);
 			EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(fEditor), 100, 1000000, 1000);
-			
-			fAnnotationModel= fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
+
+			fAnnotationModel = fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
 			fAnnotationModelLockObject = getLockObject(fAnnotationModel);
 			synchronized (fAnnotationModelLockObject) {
-				for (Iterator<Annotation> iter= fAnnotationModel.getAnnotationIterator(); iter.hasNext();) {
-					Annotation anotation= iter.next();
+				for (Iterator<Annotation> iter = fAnnotationModel.getAnnotationIterator(); iter.hasNext();) {
+					Annotation anotation = iter.next();
 					if (anotation != null && (testedAnnotationId.equals(anotation.getType()))) {
 						annotations = ArrayUtil.append(Annotation.class, annotations, anotation);
 					}
@@ -165,7 +165,7 @@ public class AnnotationTestCase extends UITestCaseWithProject {
 		}
 		return annotationModel;
 	}
-	
+
 	private CEditor openCEditor(IFile file) {
 		assertNotNull(file);
 		assertTrue(file.exists());

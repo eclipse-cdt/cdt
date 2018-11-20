@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Interface for an include directive stored in the index.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 4.0
@@ -40,29 +40,29 @@ public interface IIndexInclude {
 	 * @throws CoreException
 	 */
 	IIndexFileLocation getIncludedByLocation() throws CoreException;
-	
+
 	/**
 	 * Returns the IIndexFileLocation of the file that is included by this
 	 * directive. In case of an unresolved include {@code null}
 	 * will be returned.
-	 * 
+	 *
 	 * @return the IIndexFileLocation of the file that is included by this directive or {@code null}
 	 *     if the include is unresolved or inactive
 	 * @throws CoreException
 	 */
 	IIndexFileLocation getIncludesLocation() throws CoreException;
-	
+
 	/**
 	 * Returns the simple name of the directive. This skips any leading
 	 * directories. E.g. for {@code <sys/types.h>} {@code "types.h"} will be returned.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	String getName() throws CoreException;
 
 	/**
 	 * Returns the name of the include. The name does not include the enclosing quotes
 	 * or angle brackets. E.g. for {@code <sys/types.h>} {@code "sys/types.h"} will be returned.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 * @since 5.1
 	 */
 	String getFullName() throws CoreException;
@@ -70,21 +70,21 @@ public interface IIndexInclude {
 	/**
 	 * Returns the character offset of the name of the include in its source file.
 	 * The name does not include the enclosing quotes or angle brackets.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	int getNameOffset() throws CoreException;
 
 	/**
 	 * Returns the length of the name of the include. The name does
 	 * not include the enclosing quotes or angle brackets.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	int getNameLength() throws CoreException;
 
-	/** 
+	/**
 	 * Returns whether this is a system include (an include specified within angle
 	 * brackets).
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	boolean isSystemInclude() throws CoreException;
 

@@ -12,37 +12,37 @@
  * Symbian - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
  * Testing operator is not followed on pointer to class with overloaded operator ->
  */
-public class CompletionTest_MemberReference_Arrow_NoPrefix3  extends CompletionProposalsBaseTest{
+public class CompletionTest_MemberReference_Arrow_NoPrefix3 extends CompletionProposalsBaseTest {
 	private final String fileName = "CompletionTestStart42.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileFullPath = "resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart41.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String headerFileFullPath = "resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
-	private final String[] expectedResults = {
-			"B", "bar(void) : void"
-	};
-	
+	private final String[] expectedResults = { "B", "bar(void) : void" };
+
 	public CompletionTest_MemberReference_Arrow_NoPrefix3(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_MemberReference_Arrow_NoPrefix3.class.getName());
+		TestSuite suite = new TestSuite(CompletionTest_MemberReference_Arrow_NoPrefix3.class.getName());
 		suite.addTest(new CompletionTest_MemberReference_Arrow_NoPrefix3("testCompletionProposals"));
 		return suite;
-	}		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	@Override
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf("a->")+3;
+		return getBuffer().indexOf("a->") + 3;
 	}
 
 	/* (non-Javadoc)
@@ -76,6 +76,7 @@ public class CompletionTest_MemberReference_Arrow_NoPrefix3  extends CompletionP
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */

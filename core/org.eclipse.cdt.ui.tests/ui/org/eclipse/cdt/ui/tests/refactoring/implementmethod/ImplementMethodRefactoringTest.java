@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -41,8 +41,7 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 
 	@Override
 	protected CRefactoring createRefactoring() {
-		return new ImplementMethodRefactoring(getSelectedTranslationUnit(), getSelection(),
-				getCProject());
+		return new ImplementMethodRefactoring(getSelectedTranslationUnit(), getSelection(), getCProject());
 	}
 
 	//A.h
@@ -794,7 +793,7 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 	public void testExplicitConstructor_Bug363111() throws Exception {
 		assertRefactoringSuccess();
 	}
-	
+
 	//A.h
 	//
 	//class TestClass {
@@ -810,7 +809,7 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 	public void testEmptyThowsClause_Bug393833() throws Exception {
 		assertRefactoringSuccess();
 	}
-	
+
 	//A.h
 	//
 	//class TestClass {

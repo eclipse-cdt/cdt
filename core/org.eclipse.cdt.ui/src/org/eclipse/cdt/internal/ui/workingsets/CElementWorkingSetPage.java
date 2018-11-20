@@ -63,17 +63,17 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 
 /**
- * The C element working set page allows the user to create 
+ * The C element working set page allows the user to create
  * and edit a C element working set.
  * <p>
  * Working set elements are presented as a C element tree.
  * </p>
- * 
+ *
  */
 public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
-	final private static String PAGE_TITLE= WorkingSetMessages.CElementWorkingSetPage_title; 
-	final private static String PAGE_ID= "CElementWorkingSetPage"; //$NON-NLS-1$
+	final private static String PAGE_TITLE = WorkingSetMessages.CElementWorkingSetPage_title;
+	final private static String PAGE_ID = "CElementWorkingSetPage"; //$NON-NLS-1$
 
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 50;
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
@@ -81,7 +81,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	private Text fWorkingSetName;
 	private CheckboxTreeViewer fTree;
 	private IWorkingSet fWorkingSet;
-	private boolean fFirstCheck;		// set to true if selection is set in setSelection
+	private boolean fFirstCheck; // set to true if selection is set in setSelection
 	private ITreeContentProvider fTreeContentProvider;
 
 	/**
@@ -89,8 +89,8 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 */
 	public CElementWorkingSetPage() {
 		super(PAGE_ID, PAGE_TITLE, CPluginImages.DESC_WIZABAN_C_APP);
-		setDescription(WorkingSetMessages.CElementWorkingSetPage_description); 
-		fFirstCheck= true;
+		setDescription(WorkingSetMessages.CElementWorkingSetPage_description);
+		fFirstCheck = true;
 	}
 
 	/*
@@ -100,30 +100,29 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
-		Composite composite= new Composite(parent, SWT.NULL);
+		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		setControl(composite);
 
 		Label label = new Label(composite, SWT.WRAP);
-		label.setText(WorkingSetMessages.CElementWorkingSetPage_name); 
-		GridData gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
+		label.setText(WorkingSetMessages.CElementWorkingSetPage_name);
+		GridData gd = new GridData(
+				GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
 
 		fWorkingSetName = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fWorkingSetName.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-		fWorkingSetName.addModifyListener(
-			new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validateInput();
-				}
+		fWorkingSetName.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				validateInput();
 			}
-		);
+		});
 		fWorkingSetName.setFocus();
-		
+
 		label = new Label(composite, SWT.WRAP);
-		label.setText(WorkingSetMessages.CElementWorkingSetPage_content); 
+		label.setText(WorkingSetMessages.CElementWorkingSetPage_content);
 		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
 
@@ -133,15 +132,13 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		gd.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 		fTree.getControl().setLayoutData(gd);
 
-		fTreeContentProvider= new CElementWorkingSetPageContentProvider();
+		fTreeContentProvider = new CElementWorkingSetPageContentProvider();
 		fTree.setContentProvider(fTreeContentProvider);
 
-		AppearanceAwareLabelProvider cElementLabelProvider= 
-			new AppearanceAwareLabelProvider(
+		AppearanceAwareLabelProvider cElementLabelProvider = new AppearanceAwareLabelProvider(
 				AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS,
-				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS | CElementImageProvider.SMALL_ICONS
-			);
-		
+				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS | CElementImageProvider.SMALL_ICONS);
+
 		fTree.setLabelProvider(new DecoratingCLabelProvider(cElementLabelProvider));
 		fTree.setSorter(new CElementSorter());
 		fTree.setUseHashlookup(true);
@@ -159,6 +156,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 			@Override
 			public void treeCollapsed(TreeExpansionEvent event) {
 			}
+
 			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
 				final Object element = event.getElement();
@@ -179,8 +177,8 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		validateInput();
 
 		Dialog.applyDialogFont(composite);
-		// TODO Set help for the page 
-//		CUIHelp.setHelp(fTree, ICHelpContextIds.C_WORKING_SET_PAGE);
+		// TODO Set help for the page
+		//		CUIHelp.setHelp(fTree, ICHelpContextIds.C_WORKING_SET_PAGE);
 	}
 
 	/*
@@ -188,25 +186,26 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 */
 	@Override
 	public void finish() {
-		String workingSetName= fWorkingSetName.getText();
-		ArrayList<Object> elements= new ArrayList<Object>(10);
+		String workingSetName = fWorkingSetName.getText();
+		ArrayList<Object> elements = new ArrayList<Object>(10);
 		findCheckedElements(elements, fTree.getInput());
 		if (fWorkingSet == null) {
-			IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
-			fWorkingSet= workingSetManager.createWorkingSet(workingSetName, elements.toArray(new IAdaptable[elements.size()]));
+			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+			fWorkingSet = workingSetManager.createWorkingSet(workingSetName,
+					elements.toArray(new IAdaptable[elements.size()]));
 		} else {
 			// Add inaccessible resources
-			IAdaptable[] oldItems= fWorkingSet.getElements();
-			HashSet<IProject> closedWithChildren= new HashSet<IProject>(elements.size());
+			IAdaptable[] oldItems = fWorkingSet.getElements();
+			HashSet<IProject> closedWithChildren = new HashSet<IProject>(elements.size());
 			for (IAdaptable oldItem : oldItems) {
-				IResource oldResource= null;
+				IResource oldResource = null;
 				if (oldItem instanceof IResource) {
-					oldResource= (IResource)oldItem;
+					oldResource = (IResource) oldItem;
 				} else {
-					oldResource= oldItem.getAdapter(IResource.class);
+					oldResource = oldItem.getAdapter(IResource.class);
 				}
 				if (oldResource != null && oldResource.isAccessible() == false) {
-					IProject project= oldResource.getProject();
+					IProject project = oldResource.getProject();
 					if (closedWithChildren.contains(project) || elements.contains(project)) {
 						elements.add(oldItem);
 						elements.remove(project);
@@ -217,7 +216,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 			fWorkingSet.setName(workingSetName);
 			fWorkingSet.setElements(elements.toArray(new IAdaptable[elements.size()]));
 		}
-	}	
+	}
 
 	/*
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#getSelection()
@@ -229,16 +228,16 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 
 	/**
 	 * Called when the checked state of a tree item changes.
-	 * 
+	 *
 	 * @param event the checked state change event.
 	 */
 	void handleCheckStateChange(final CheckStateChangedEvent event) {
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			@Override
 			public void run() {
-				IAdaptable element= (IAdaptable) event.getElement();
+				IAdaptable element = (IAdaptable) event.getElement();
 				boolean state = event.getChecked();
-				
+
 				fTree.setGrayed(element, false);
 				if (isExpandable(element)) {
 					setSubtreeChecked(element, state, true);
@@ -248,10 +247,9 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 			}
 		});
 	}
-	
+
 	private boolean isExpandable(Object element) {
-		return (element instanceof ICProject || element instanceof ICContainer
-				|| element instanceof CElementGrouping
+		return (element instanceof ICProject || element instanceof ICContainer || element instanceof CElementGrouping
 				|| element instanceof ICModel || element instanceof IContainer);
 	}
 
@@ -259,37 +257,37 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		if (child == null)
 			return;
 		if (child instanceof IAdaptable) {
-			IResource resource= ((IAdaptable)child).getAdapter(IResource.class);
+			IResource resource = ((IAdaptable) child).getAdapter(IResource.class);
 			if (resource != null && !resource.isAccessible())
 				return;
 		}
-		Object parent= fTreeContentProvider.getParent(child);
+		Object parent = fTreeContentProvider.getParent(child);
 		if (parent == null)
 			return;
-		
+
 		updateObjectState(parent, baseChildState);
 	}
 
-	private void updateObjectState(Object element, boolean baseChildState) {		
+	private void updateObjectState(Object element, boolean baseChildState) {
 
-		boolean allSameState= true;
-		Object[] children= fTreeContentProvider.getChildren(element);
+		boolean allSameState = true;
+		Object[] children = fTreeContentProvider.getChildren(element);
 
-		for (int i= children.length -1; i >= 0; i--) {
+		for (int i = children.length - 1; i >= 0; i--) {
 			if (fTree.getChecked(children[i]) != baseChildState || fTree.getGrayed(children[i])) {
-				allSameState= false;
+				allSameState = false;
 				break;
 			}
 		}
-	
+
 		fTree.setGrayed(element, !allSameState);
 		fTree.setChecked(element, !allSameState || baseChildState);
-		
+
 		updateParentState(element, baseChildState);
 	}
 
 	/**
-	 * Sets the checked state of tree items based on the initial 
+	 * Sets the checked state of tree items based on the initial
 	 * working set, if any.
 	 */
 	private void initializeCheckedState() {
@@ -299,49 +297,49 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 				Object[] elements;
 				if (fWorkingSet == null) {
 					// Use current part's selection for initialization
-					IWorkbenchPage page= CUIPlugin.getActivePage();
+					IWorkbenchPage page = CUIPlugin.getActivePage();
 					if (page == null)
 						return;
-					
-					IWorkbenchPart part= CUIPlugin.getActivePage().getActivePart();
+
+					IWorkbenchPart part = CUIPlugin.getActivePage().getActivePart();
 					if (part == null)
 						return;
-					
+
 					try {
-						elements= SelectionConverter.getStructuredSelection(part).toArray();
-						for (int i= 0; i < elements.length; i++) {
+						elements = SelectionConverter.getStructuredSelection(part).toArray();
+						for (int i = 0; i < elements.length; i++) {
 							if (elements[i] instanceof IResource) {
-								ICElement ce= ((IResource)elements[i]).getAdapter(ICElement.class);
-								if (ce != null && ce.exists() &&  ce.getCProject().isOnSourceRoot((IResource)elements[i]))
-									elements[i]= ce;
+								ICElement ce = ((IResource) elements[i]).getAdapter(ICElement.class);
+								if (ce != null && ce.exists()
+										&& ce.getCProject().isOnSourceRoot((IResource) elements[i]))
+									elements[i] = ce;
 							}
 						}
 					} catch (CModelException e) {
 						return;
 					}
-				}
-				else
-					elements= fWorkingSet.getElements();
+				} else
+					elements = fWorkingSet.getElements();
 
 				for (int i = 0; i < elements.length; i++) {
 					Object element = elements[i];
 					if (element instanceof IResource) {
-						IProject project= ((IResource)element).getProject();
+						IProject project = ((IResource) element).getProject();
 						if (!project.isAccessible()) {
-							elements[i]= project;
+							elements[i] = project;
 						} else {
 							// for backwards compatibility: adapt to ICElement if possible
-							if(CoreModel.hasCNature(project)) {
-								ICElement cElement= CoreModel.getDefault().create((IResource)element);
+							if (CoreModel.hasCNature(project)) {
+								ICElement cElement = CoreModel.getDefault().create((IResource) element);
 								if (cElement != null) {
-									elements[i]= cElement;
+									elements[i] = cElement;
 								}
 							}
 						}
 					} else if (element instanceof ICElement) {
-						ICProject cProject= ((ICElement)element).getCProject();
-						if (cProject != null && !cProject.getProject().isAccessible()) 
-							elements[i]= cProject.getProject();
+						ICProject cProject = ((ICElement) element).getCProject();
+						if (cProject != null && !cProject.getProject().isAccessible())
+							elements[i] = cProject.getProject();
 					}
 				}
 				fTree.setCheckedElements(elements);
@@ -349,17 +347,17 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 				for (Object element : elements) {
 					if (isExpandable(element))
 						setSubtreeChecked(element, true, true);
-						
+
 					if (element instanceof IAdaptable) {
-						IResource resource= ((IAdaptable)element).getAdapter(IResource.class);
+						IResource resource = ((IAdaptable) element).getAdapter(IResource.class);
 						if (resource != null && !resource.isAccessible())
 							continue;
 					}
-					Object parent= fTreeContentProvider.getParent(element);
+					Object parent = fTreeContentProvider.getParent(element);
 					if (parent != null)
 						parents.add(parent);
 				}
-				
+
 				for (Object object : parents)
 					updateObjectState(object, true);
 			}
@@ -381,31 +379,31 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 			initializeCheckedState();
 			validateInput();
 		}
-	}	
+	}
+
 	/**
 	 * Sets the checked state of the container's members.
-	 * 
+	 *
 	 * @param parent the parent whose children should be checked/unchecked
-	 * @param state true=check all members in the container. false=uncheck all 
+	 * @param state true=check all members in the container. false=uncheck all
 	 * 	members in the container.
-	 * @param checkExpandedState true=recurse into sub-containers and set the 
+	 * @param checkExpandedState true=recurse into sub-containers and set the
 	 * 	checked state. false=only set checked state of members of this container
 	 */
 	private void setSubtreeChecked(Object parent, boolean state, boolean checkExpandedState) {
 		if (!(parent instanceof IAdaptable))
 			return;
-		IContainer container= ((IAdaptable)parent).getAdapter(IContainer.class);
+		IContainer container = ((IAdaptable) parent).getAdapter(IContainer.class);
 		if ((!fTree.getExpandedState(parent) && checkExpandedState) || (container != null && !container.isAccessible()))
 			return;
-		
-		Object[] children= fTreeContentProvider.getChildren(parent);
-		for (int i= children.length - 1; i >= 0; i--) {
-			Object element= children[i];
+
+		Object[] children = fTreeContentProvider.getChildren(parent);
+		for (int i = children.length - 1; i >= 0; i--) {
+			Object element = children[i];
 			if (state) {
 				fTree.setChecked(element, true);
 				fTree.setGrayed(element, false);
-			}
-			else
+			} else
 				fTree.setGrayChecked(element, false);
 			if (isExpandable(element))
 				setSubtreeChecked(element, state, true);
@@ -413,7 +411,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	}
 
 	/**
-	 * Validates the working set name and the checked state of the 
+	 * Validates the working set name and the checked state of the
 	 * resource tree.
 	 */
 	void validateInput() {
@@ -421,30 +419,30 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		String newText = fWorkingSetName.getText();
 
 		if (newText.equals(newText.trim()) == false) {
-			errorMessage = WorkingSetMessages.CElementWorkingSetPage_warning_nameMustNotBeEmpty; 
+			errorMessage = WorkingSetMessages.CElementWorkingSetPage_warning_nameMustNotBeEmpty;
 		}
 		if (newText.isEmpty()) {
 			if (fFirstCheck) {
 				setPageComplete(false);
-				fFirstCheck= false;
+				fFirstCheck = false;
 				return;
 			}
-			errorMessage = WorkingSetMessages.CElementWorkingSetPage_warning_nameMustNotBeEmpty; 
+			errorMessage = WorkingSetMessages.CElementWorkingSetPage_warning_nameMustNotBeEmpty;
 		}
 
-		fFirstCheck= false;
+		fFirstCheck = false;
 
 		if (errorMessage == null && (fWorkingSet == null || newText.equals(fWorkingSet.getName()) == false)) {
 			IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
 			for (IWorkingSet workingSet : workingSets) {
 				if (newText.equals(workingSet.getName())) {
-					errorMessage = WorkingSetMessages.CElementWorkingSetPage_warning_workingSetExists; 
+					errorMessage = WorkingSetMessages.CElementWorkingSetPage_warning_workingSetExists;
 				}
 			}
 		}
-		
+
 		if (errorMessage == null && fTree.getCheckedElements().length == 0) {
-			String infoMessage = WorkingSetMessages.CElementWorkingSetPage_warning_resourceMustBeChecked; 
+			String infoMessage = WorkingSetMessages.CElementWorkingSetPage_warning_resourceMustBeChecked;
 			setMessage(infoMessage, INFORMATION);
 		}
 		setErrorMessage(errorMessage);
@@ -453,12 +451,12 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 
 	/**
 	 * Collects all checked elements of the given parent.
-	 * 
+	 *
 	 * @param checkedElements the output, list of checked elements
 	 * @param parent the parent to collect checked elements in
 	 */
 	private void findCheckedElements(List<Object> checkedElements, Object parent) {
-		Object[] children= fTreeContentProvider.getChildren(parent);
+		Object[] children = fTreeContentProvider.getChildren(parent);
 		for (Object element : children) {
 			if (fTree.getGrayed(element))
 				findCheckedElements(checkedElements, element);

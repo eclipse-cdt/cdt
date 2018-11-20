@@ -21,7 +21,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * Wrapper for debug elements that have missing source, for example a stack
  * frame whose source file can not be located. Used to enable the
  * CSourceNotFoundEditor that will let you find the missing file.
- * 
+ *
  */
 public class CSourceNotFoundElement {
 
@@ -36,7 +36,7 @@ public class CSourceNotFoundElement {
 	public CSourceNotFoundElement(IAdaptable element, ILaunchConfiguration launch, String file) {
 		this.element = element;
 		this.launch = launch;
-		
+
 		// client assumes empty string rather than null
 		this.file = file != null ? file : ""; //$NON-NLS-1$
 	}

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * Anna Dushistova (Mentor Graphics) - initial API and implementation
  * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
@@ -77,8 +77,7 @@ public class RemoteCDSFDebuggerTab extends CDebuggerTab {
 			return;
 		}
 		// Ask the dynamic UI to create its Control
-		debuggerPage
-				.setLaunchConfigurationDialog(getLaunchConfigurationDialog());
+		debuggerPage.setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 		debuggerPage.createControl(dynamicTabHolder);
 		debuggerPage.getControl().setVisible(true);
 		dynamicTabHolder.layout(true);

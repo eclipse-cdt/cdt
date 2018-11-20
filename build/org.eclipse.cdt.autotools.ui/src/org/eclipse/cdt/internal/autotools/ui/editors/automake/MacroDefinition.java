@@ -38,7 +38,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 	}
 
 	public void setName(String n) {
-		name = (n == null) ? "" : n.trim() ; //$NON-NLS-1$
+		name = (n == null) ? "" : n.trim(); //$NON-NLS-1$
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 	@Override
 	public boolean equals(Object v) {
 		if (v instanceof MacroDefinition)
-			return ((MacroDefinition)v).getName().equals(getName());
+			return ((MacroDefinition) v).getName().equals(getName());
 		return false;
 	}
 
@@ -64,7 +64,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 	public int hashCode() {
 		return getName().hashCode();
 	}
-	
+
 	public void setFromCommand(boolean from) {
 		fromCommand = from;
 	}

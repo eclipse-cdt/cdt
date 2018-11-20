@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      QNX Software Systems - initial API and implementation
  *      Freescale Semiconductor
@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Label;
 public class ComboControlledStackComposite extends Composite {
 	private Composite fArea;
 	private Combo fCombo;
-	private Map<String, Composite> tabMap; // label ==> tab 
+	private Map<String, Composite> tabMap; // label ==> tab
 	private StackLayout layout;
 	private Label fLabel;
 
@@ -49,10 +49,11 @@ public class ComboControlledStackComposite extends Composite {
 	public void setLabelText(String label) {
 		fLabel.setText(label);
 	}
+
 	public void addItem(String label, Composite tab) {
 		tabMap.put(label, tab);
 		fCombo.add(label);
-		if (layout.topControl==null) {
+		if (layout.topControl == null) {
 			layout.topControl = tab;
 			fCombo.setText(label);
 		}
@@ -86,7 +87,6 @@ public class ComboControlledStackComposite extends Composite {
 		fArea.setLayoutData(agd);
 	}
 
-
 	public Composite getStackParent() {
 		return fArea;
 	}
@@ -107,12 +107,11 @@ public class ComboControlledStackComposite extends Composite {
 		return comp;
 	}
 
-
 	protected Label createLabel(Composite parent) {
 		Label label = new Label(parent, SWT.WRAP);
-	    return label;
-    }
-	
+		return label;
+	}
+
 	protected Combo createCombo(Composite parent) {
 		Combo box = new Combo(parent, SWT.READ_ONLY);
 		box.addSelectionListener(new SelectionAdapter() {
@@ -133,8 +132,8 @@ public class ComboControlledStackComposite extends Composite {
 		layout.topControl = tabMap.get(label);
 		getStackParent().layout();
 	}
-	
+
 	public Control getTopControl() {
-		return layout != null ? layout.topControl : null; 
+		return layout != null ? layout.topControl : null;
 	}
 }

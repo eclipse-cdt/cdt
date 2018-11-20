@@ -14,15 +14,14 @@
 
 package org.eclipse.cdt.utils.debug;
 
-
 /**
  * DebugPointerType
- *  
+ *
  */
 public class DebugPointerType extends DebugDerivedType {
 
 	/**
-	 *  
+	 *
 	 */
 	public DebugPointerType(DebugType type) {
 		super(type);

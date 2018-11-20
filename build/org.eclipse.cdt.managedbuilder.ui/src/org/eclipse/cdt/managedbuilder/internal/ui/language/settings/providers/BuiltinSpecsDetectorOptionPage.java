@@ -93,7 +93,8 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 	 * Create input control for compiler command.
 	 */
 	private void createCompilerCommandInputControl(Composite composite, AbstractBuiltinSpecsDetector provider) {
-		Label label = ControlFactory.createLabel(composite, Messages.BuiltinSpecsDetectorOptionPage_CompilerSpecsCommand);
+		Label label = ControlFactory.createLabel(composite,
+				Messages.BuiltinSpecsDetectorOptionPage_CompilerSpecsCommand);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -101,7 +102,7 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 
 		inputCommand = ControlFactory.createTextField(composite, SWT.SINGLE | SWT.BORDER);
 		String command = provider.getCommand();
-		inputCommand.setText(command!=null ? command : ""); //$NON-NLS-1$
+		inputCommand.setText(command != null ? command : ""); //$NON-NLS-1$
 		inputCommand.setEnabled(fEditable);
 		inputCommand.addModifyListener(new ModifyListener() {
 			@Override
@@ -163,6 +164,7 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 					refreshItem(selectedProvider);
 				}
 			}
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
@@ -181,10 +183,11 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 			IToolChain toolchain = ManagedBuildManager.getExtensionToolChain(toolchainId);
 			if (toolchain == null) {
 				fStatusLine.setErrorStatus(new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(),
-						IStatus.ERROR, "Toolchain support for CDT is not installed. Toolchain id=[" + toolchainId + "].", null));
+						IStatus.ERROR,
+						"Toolchain support for CDT is not installed. Toolchain id=[" + toolchainId + "].", null));
 			} else if (!toolchain.isSupported()) {
-				fStatusLine.setErrorStatus(new Status(IStatus.INFO, ManagedBuilderUIPlugin.getUniqueIdentifier(), IStatus.INFO,
-						"Toolchain " + toolchain.getName() + " is not detected on this system.", null));
+				fStatusLine.setErrorStatus(new Status(IStatus.INFO, ManagedBuilderUIPlugin.getUniqueIdentifier(),
+						IStatus.INFO, "Toolchain " + toolchain.getName() + " is not detected on this system.", null));
 			}
 		}
 	}
@@ -194,7 +197,9 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 		ILanguageSettingsProvider provider = providerTab.getProvider(providerId);
 		if ((provider instanceof AbstractBuiltinSpecsDetector)) { // basically check for working copy
 			ILanguageSettingsProvider initialProvider = providerTab.getInitialProvider(providerId);
-			if (!(initialProvider instanceof AbstractBuiltinSpecsDetector) || !((AbstractBuiltinSpecsDetector) initialProvider).getCommand().equals(((AbstractBuiltinSpecsDetector) provider).getCommand())) {
+			if (!(initialProvider instanceof AbstractBuiltinSpecsDetector)
+					|| !((AbstractBuiltinSpecsDetector) initialProvider).getCommand()
+							.equals(((AbstractBuiltinSpecsDetector) provider).getCommand())) {
 				// clear and reset isExecuted flag
 				((AbstractBuiltinSpecsDetector) provider).clear();
 			}

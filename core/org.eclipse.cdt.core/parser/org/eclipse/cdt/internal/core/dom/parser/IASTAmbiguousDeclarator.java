@@ -22,15 +22,15 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
  */
 public interface IASTAmbiguousDeclarator extends IASTDeclarator {
 
-    public static final ASTNodeProperty SUBDECLARATOR = new ASTNodeProperty("IASTAmbiguousDeclarator.SUBDECLARATOR"); //$NON-NLS-1$
+	public static final ASTNodeProperty SUBDECLARATOR = new ASTNodeProperty("IASTAmbiguousDeclarator.SUBDECLARATOR"); //$NON-NLS-1$
 
-    /**
-     * Add an alternative to this ambiguous declarator.
-     */
-    public void addDeclarator(IASTDeclarator e);
+	/**
+	 * Add an alternative to this ambiguous declarator.
+	 */
+	public void addDeclarator(IASTDeclarator e);
 
-    /**
-     * Return an array of all alternatives for this ambiguous declarator.
-     */
-    public IASTDeclarator[] getDeclarators();
+	/**
+	 * Return an array of all alternatives for this ambiguous declarator.
+	 */
+	public IASTDeclarator[] getDeclarators();
 }

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
 
 /**
  * Command handler to select the previous trace record
- * 
+ *
  * @since 2.1
  */
 public class SelectPrevTraceRecordCommandHandler extends DebugCommandHandler {

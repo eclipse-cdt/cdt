@@ -25,26 +25,25 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.graphics.Point;
 
-
 public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 
 	AutomakeEditor editor;
-	
+
 	public AutomakeTextHover(AutomakeEditor editor) {
 		this.editor = editor;
 	}
-	
+
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		TargetRule target = null;
 		String[] preReqs = null;
-		
+
 		if (hoverRegion == null || hoverRegion.getLength() == 0)
 			return null;
 		Automakefile makefile = (Automakefile) editor.getMakefile();
 		if (makefile == null)
 			return null;
-		
+
 		String hoverText;
 		int hoverLine;
 		try {
@@ -53,7 +52,7 @@ public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 		} catch (BadLocationException e) {
 			return null;
 		}
-		
+
 		// Automatic variables
 		if (hoverText.startsWith("$")) {
 			IDirective containingDirective = makefile.getDirectiveContainingLine(hoverLine);
@@ -71,8 +70,8 @@ public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 					return preReqs[0];
 				break;
 			// FIXME:  implement $* ?
-//			case '*':
-//				break;
+			//			case '*':
+			//				break;
 			case '?':
 				preReqs = target.getPrerequisites();
 				if (preReqs != null && preReqs.length > 0) {
@@ -85,12 +84,12 @@ public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 				}
 				break;
 			case '%':
-//				if (target instanceOf ArchiveTarget) {
-//					return target.getMember();
-//				} else {
-//					error;
-//				}
-//				break;
+				//				if (target instanceOf ArchiveTarget) {
+				//					return target.getMember();
+				//				} else {
+				//					error;
+				//				}
+				//				break;
 			default:
 				break;
 			}
@@ -103,21 +102,20 @@ public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 					return definition.getValue().toString();
 			}
 		}
-		
+
 		return "";
 	}
 
 	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
-		
+
 		if (textViewer != null) {
 			/*
 			 * If the hover offset falls within the selection range return the
 			 * region for the whole selection.
 			 */
 			Point selectedRange = textViewer.getSelectedRange();
-			if (selectedRange.x >= 0 && selectedRange.y > 0
-					&& offset >= selectedRange.x
+			if (selectedRange.x >= 0 && selectedRange.y > 0 && offset >= selectedRange.x
 					&& offset <= selectedRange.x + selectedRange.y)
 				return new Region(selectedRange.x, selectedRange.y);
 			else {
@@ -137,8 +135,8 @@ public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 
 			while (pos >= 0) {
 				c = document.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c) &&
-						(c != '@') && (c != '<') && (c != '*') && (c != '?') && (c != '%'))
+				if (!Character.isJavaIdentifierPart(c) && (c != '@') && (c != '<') && (c != '*') && (c != '?')
+						&& (c != '%'))
 					break;
 				--pos;
 			}
@@ -150,8 +148,8 @@ public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 
 			while (pos < length) {
 				c = document.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c) &&
-						(c != '@') && (c != '<') && (c != '*') && (c != '?') && (c != '%'))
+				if (!Character.isJavaIdentifierPart(c) && (c != '@') && (c != '<') && (c != '*') && (c != '?')
+						&& (c != '%'))
 					break;
 				++pos;
 			}

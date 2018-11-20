@@ -35,31 +35,29 @@ public class FindDeclarationsAction extends IndexAction {
 	public FindDeclarationsAction(IndexView view, TreeViewer viewer) {
 		super(view, viewer, CUIPlugin.getResourceString("IndexView.findDeclarations.name")); //$NON-NLS-1$
 	}
-	
+
 	private IndexNode getBindingNode() {
 		ISelection selection = viewer.getSelection();
 		if (!(selection instanceof IStructuredSelection))
 			return null;
-		Object[] objs = ((IStructuredSelection)selection).toArray();
+		Object[] objs = ((IStructuredSelection) selection).toArray();
 		if (objs.length == 1 && objs[0] instanceof IndexNode) {
-			IndexNode node= (IndexNode) objs[0];
+			IndexNode node = (IndexNode) objs[0];
 			if (node.fObject instanceof IIndexBinding) {
 				return node;
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void run() {
 		IndexNode binding = getBindingNode();
 		if (binding != null) {
-			ICProject cproject= binding.getProject();
+			ICProject cproject = binding.getProject();
 			if (cproject != null) {
-				IndexViewSearchQuery query = new IndexViewSearchQuery(
-						null,
-						cproject, indexView.getLastWriteAccess(cproject),
-						(IIndexBinding) binding.fObject, binding.fText,
+				IndexViewSearchQuery query = new IndexViewSearchQuery(null, cproject,
+						indexView.getLastWriteAccess(cproject), (IIndexBinding) binding.fObject, binding.fText,
 						CSearchQuery.FIND_DECLARATIONS | CSearchQuery.FIND_DEFINITIONS);
 
 				NewSearchUI.activateSearchResultView();
@@ -67,7 +65,7 @@ public class FindDeclarationsAction extends IndexAction {
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean valid() {
 		return getBindingNode() != null;

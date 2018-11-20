@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @author jcamelon
  */
 public class CPPASTVisibilityLabel extends ASTNode implements ICPPASTVisibilityLabel {
-    private int visibility;
+	private int visibility;
 
 	public CPPASTVisibilityLabel(int visibility) {
 		this.visibility = visibility;
@@ -39,38 +39,38 @@ public class CPPASTVisibilityLabel extends ASTNode implements ICPPASTVisibilityL
 
 	@Override
 	public int getVisibility() {
-        return visibility;
-    }
+		return visibility;
+	}
 
-    @Override
+	@Override
 	public void setVisibility(int visibility) {
-        assertNotFrozen();
-        this.visibility = visibility;
-    }
+		assertNotFrozen();
+		this.visibility = visibility;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-    	if (action.shouldVisitDeclarations) {
-            switch (action.visit(this)) {
-            case ASTVisitor.PROCESS_ABORT:
-                return false;
-            case ASTVisitor.PROCESS_SKIP:
-                return true;
-            default:
-                break;
-            }
-        }
+		if (action.shouldVisitDeclarations) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
 
-        if (action.shouldVisitDeclarations) {
-            switch (action.leave(this)) {
-            case ASTVisitor.PROCESS_ABORT:
-                return false;
-            case ASTVisitor.PROCESS_SKIP:
-                return true;
-            default:
-                break;
-            }
-        }
-        return true;
-    }
+		if (action.shouldVisitDeclarations) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
 }

@@ -28,37 +28,37 @@ public class DefaultIndexerDependencyCalculator implements IManagedDependencyGen
 	 */
 	@Override
 	public IResource[] findDependencies(IResource resource, IProject project) {
-//		PathCollector pathCollector = new PathCollector();
-//		ICSearchScope scope = SearchEngine.createWorkspaceScope();
-//		CSearchPattern pattern = CSearchPattern.createPattern(resource.getLocation().toOSString(), ICSearchConstants.INCLUDE, ICSearchConstants.REFERENCES, ICSearchConstants.EXACT_MATCH, true);
-//		IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-//		indexManager.performConcurrentJob(
-//			new PatternSearchJob(
-//				(CSearchPattern) pattern,
-//				scope,
-//				pathCollector,
-//				indexManager),
-//			ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-//			null, null);
-//
-//		// We will get back an array of resource names relative to the workspace
-//		String[] deps = pathCollector.getPaths();
-//
-//		// Convert them to something useful
-//		List depList = new ArrayList();
-//		IResource res = null;
-//		IWorkspaceRoot root = null;
-//		if (project != null) {
-//			root = project.getWorkspace().getRoot();
-//		}
-//		for (int index = 0; index < deps.length; ++index) {
-//			res = root.findMember(deps[index]);
-//			if (res != null) {
-//				depList.add(res);
-//			}
-//		}
-//
-//		return (IResource[]) depList.toArray(new IResource[depList.size()]);
+		//		PathCollector pathCollector = new PathCollector();
+		//		ICSearchScope scope = SearchEngine.createWorkspaceScope();
+		//		CSearchPattern pattern = CSearchPattern.createPattern(resource.getLocation().toOSString(), ICSearchConstants.INCLUDE, ICSearchConstants.REFERENCES, ICSearchConstants.EXACT_MATCH, true);
+		//		IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+		//		indexManager.performConcurrentJob(
+		//			new PatternSearchJob(
+		//				(CSearchPattern) pattern,
+		//				scope,
+		//				pathCollector,
+		//				indexManager),
+		//			ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+		//			null, null);
+		//
+		//		// We will get back an array of resource names relative to the workspace
+		//		String[] deps = pathCollector.getPaths();
+		//
+		//		// Convert them to something useful
+		//		List depList = new ArrayList();
+		//		IResource res = null;
+		//		IWorkspaceRoot root = null;
+		//		if (project != null) {
+		//			root = project.getWorkspace().getRoot();
+		//		}
+		//		for (int index = 0; index < deps.length; ++index) {
+		//			res = root.findMember(deps[index]);
+		//			if (res != null) {
+		//				depList.add(res);
+		//			}
+		//		}
+		//
+		//		return (IResource[]) depList.toArray(new IResource[depList.size()]);
 		// TODO this needs to be redone to fit on the PDOM
 		return new IResource[0];
 	}

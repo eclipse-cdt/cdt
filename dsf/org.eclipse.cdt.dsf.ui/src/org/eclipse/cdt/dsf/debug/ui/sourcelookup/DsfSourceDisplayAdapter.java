@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - initial API and implementation
@@ -118,9 +118,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Debuggers can override the default source editor used by the source display
  * adapter by registering their own ISourcePresentation adapter.
  * </p>
- * 
+ *
  * @see ISourcePresentation
- * 
+ *
  * @since 1.0
  */
 @ThreadSafe
@@ -159,7 +159,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 		/**
 		 * Test whether the given frame data instance refers to the very same
 		 * location.
-		 * 
+		 *
 		 * @param frameData
 		 * @return <code>true</code> if the frame data refers to the same
 		 *         location
@@ -543,7 +543,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 
 		/**
 		 * Scroll the given line into the visible area if it is not yet visible.
-		 * 
+		 *
 		 * @param focusLine
 		 * @see org.eclipse.jface.text.TextViewer#revealRange(int, int)
 		 */
@@ -722,10 +722,10 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	/**
 	 * Configure the delay (in milliseconds) before the selection in the editor
 	 * is changed to the IP location.
-	 * 
+	 *
 	 * @param delay
 	 *            the delay in milliseconds, a non-negative integer
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public void setSelectionChangeDelay(int delay) {

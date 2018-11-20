@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views;
 
- 
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.action.IStatusLineManager;
 
@@ -30,22 +29,22 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 
 	/**
 	 * Sets the event handler for this view
-	 * 
+	 *
 	 * @param eventHandler event handler
 	 */
 	protected void setEventHandler(AbstractDebugEventHandler eventHandler) {
 		this.fEventHandler = eventHandler;
 	}
-	
+
 	/**
 	 * Returns the event handler for this view
-	 * 
+	 *
 	 * @return The event handler for this view
 	 */
 	protected AbstractDebugEventHandler getEventHandler() {
 		return this.fEventHandler;
-	}	
-	
+	}
+
 	/**
 	 * @see IWorkbenchPart#dispose()
 	 */
@@ -54,9 +53,9 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 		super.dispose();
 		if (getEventHandler() != null) {
 			getEventHandler().dispose();
-		}	
+		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesHidden()
 	 */
@@ -74,9 +73,9 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 		super.becomesVisible();
 		getEventHandler().viewBecomesVisible();
 	}
-	
+
 	protected void clearStatusLine() {
-		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager(); 
+		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
 		manager.setErrorMessage(null);
 		manager.setMessage(null);
 	}

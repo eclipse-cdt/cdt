@@ -18,7 +18,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
 
 /**
  * Plain node has one incoming arc and one outgoing arc
- * 
+ *
  */
 public class PlainNode extends AbstractSingleIncomingNode implements IPlainNode {
 	protected IBasicBlock next;
@@ -50,7 +50,7 @@ public class PlainNode extends AbstractSingleIncomingNode implements IPlainNode 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock#addOutgoing
 	 * (org.eclipse.cdt.codan.core.model.cfg.IBasicBlock)

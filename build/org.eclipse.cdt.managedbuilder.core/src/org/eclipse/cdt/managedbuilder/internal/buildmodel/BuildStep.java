@@ -59,7 +59,7 @@ public class BuildStep implements IBuildStep {
 	 * On Windows XP and above, the maximum command line length is 8191, on Linux it is at least 131072, but
 	 * that includes the environment. We want to limit the invocation of a single command to this number of
 	 * characters, and we want to ensure that the number isn't so low as to slow down operation.
-	 * 
+	 *
 	 * Doing each rm in its own command would be very slow, especially on Windows.
 	 */
 	private static final int MAX_CLEAN_LENGTH = 6000;
@@ -98,8 +98,7 @@ public class BuildStep implements IBuildStep {
 
 	@Override
 	public boolean needsRebuild() {
-		if (fNeedsRebuild || (fTool != null && fTool.needsRebuild())
-				|| (fLibTool != null && fLibTool.needsRebuild()))
+		if (fNeedsRebuild || (fTool != null && fTool.needsRebuild()) || (fLibTool != null && fLibTool.needsRebuild()))
 			return true;
 
 		if (fBuildGroup != null && fBuildGroup.needsRebuild())
@@ -242,8 +241,7 @@ public class BuildStep implements IBuildStep {
 	}
 
 	@Override
-	public IBuildCommand[] getCommands(IPath cwd, Map inputArgValues, Map outputArgValues,
-			boolean resolveAll) {
+	public IBuildCommand[] getCommands(IPath cwd, Map inputArgValues, Map outputArgValues, boolean resolveAll) {
 		if (cwd == null)
 			cwd = calcCWD();
 
@@ -260,8 +258,7 @@ public class BuildStep implements IBuildStep {
 					}
 
 					List<String> cleanCmdArgs = convertStringToArguments(commands[commands.length - 1]);
-					final int initialLen = cleanCmdArgs.stream()
-							.mapToInt(w -> w.length() + PER_ARGUMENT_PADDING).sum();
+					final int initialLen = cleanCmdArgs.stream().mapToInt(w -> w.length() + PER_ARGUMENT_PADDING).sum();
 					IPath cleanCmdPath = new Path(cleanCmdArgs.get(0));
 					Map<String, String> env = getEnvironment();
 
@@ -292,8 +289,8 @@ public class BuildStep implements IBuildStep {
 					}
 
 					// add remaining files
-					BuildCommand buildCommand = new BuildCommand(cleanCmdPath,
-							args.toArray(new String[args.size()]), env, cwd, this);
+					BuildCommand buildCommand = new BuildCommand(cleanCmdPath, args.toArray(new String[args.size()]),
+							env, cwd, this);
 					list.add(buildCommand);
 
 					return list.toArray(new BuildCommand[list.size()]);
@@ -314,8 +311,7 @@ public class BuildStep implements IBuildStep {
 
 						List<IBuildCommand> list = new ArrayList<IBuildCommand>();
 						for (int i = 0; i < commands.length; i++) {
-							IBuildCommand cmds[] = createCommandsFromString(commands[i], cwd,
-									getEnvironment());
+							IBuildCommand cmds[] = createCommandsFromString(commands[i], cwd, getEnvironment());
 							for (int j = 0; j < cmds.length; j++) {
 								list.add(cmds[j]);
 							}
@@ -345,8 +341,7 @@ public class BuildStep implements IBuildStep {
 				listToString(resourcesToStrings(cwd, getPrimaryResources(false), outPrefix), " "), //$NON-NLS-1$
 				getInputResources(cwd, getPrimaryResources(true)), fTool.getCommandLinePattern());
 
-		return createCommandsFromString(resolveMacros(info.getCommandLine(), data, true), cwd,
-				getEnvironment());
+		return createCommandsFromString(resolveMacros(info.getCommandLine(), data, true), cwd, getEnvironment());
 	}
 
 	private IPath rmNamePrefix(IPath path, String prefix) {
@@ -555,8 +550,7 @@ public class BuildStep implements IBuildStep {
 				IConfiguration cfg = getBuildDescription().getConfiguration();
 				IBuilder builder = cfg.getBuilder();
 				return ((Tool) fTool).getToolCommandFlags(inRcPath, outRcPath,
-						createSubstitutor(cfg, builder,
-								new FileContextData(inRcPath, outRcPath, null, fTool)),
+						createSubstitutor(cfg, builder, new FileContextData(inRcPath, outRcPath, null, fTool)),
 						BuildMacroProvider.getDefault());
 			}
 			return fTool.getToolCommandFlags(inRcPath, outRcPath);
@@ -666,8 +660,7 @@ public class BuildStep implements IBuildStep {
 							if (j != 0) {
 								optVal += " "; //$NON-NLS-1$
 							}
-							optVal += BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation())
-									.toOSString();
+							optVal += BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toOSString();
 						}
 						ManagedBuildManager.setOption(cfg, fTool, assignToOption, optVal);
 					} else if (optType == IOption.STRING_LIST || optType == IOption.LIBRARIES
@@ -675,18 +668,15 @@ public class BuildStep implements IBuildStep {
 							|| optType == IOption.PREPROCESSOR_SYMBOLS || optType == IOption.INCLUDE_FILES
 							|| optType == IOption.LIBRARY_PATHS || optType == IOption.LIBRARY_FILES
 							|| optType == IOption.MACRO_FILES || optType == IOption.UNDEF_INCLUDE_PATH
-							|| optType == IOption.UNDEF_PREPROCESSOR_SYMBOLS
-							|| optType == IOption.UNDEF_INCLUDE_FILES
-							|| optType == IOption.UNDEF_LIBRARY_PATHS
-							|| optType == IOption.UNDEF_LIBRARY_FILES
+							|| optType == IOption.UNDEF_PREPROCESSOR_SYMBOLS || optType == IOption.UNDEF_INCLUDE_FILES
+							|| optType == IOption.UNDEF_LIBRARY_PATHS || optType == IOption.UNDEF_LIBRARY_FILES
 							|| optType == IOption.UNDEF_MACRO_FILES) {
 						// Mote that when using the enumerated inputs, the path(s) must be translated from
 						// project relative
 						// to top build directory relative
 						String[] paths = new String[bRcs.length];
 						for (int j = 0; j < bRcs.length; j++) {
-							paths[j] = BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation())
-									.toOSString();
+							paths[j] = BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toOSString();
 						}
 						ManagedBuildManager.setOption(cfg, fTool, assignToOption, paths);
 					} else if (optType == IOption.BOOLEAN) {
@@ -697,8 +687,8 @@ public class BuildStep implements IBuildStep {
 						}
 					} else if (optType == IOption.ENUMERATED || optType == IOption.TREE) {
 						if (bRcs.length > 0) {
-							ManagedBuildManager.setOption(cfg, fTool, assignToOption, BuildDescriptionManager
-									.getRelPath(cwd, bRcs[0].getLocation()).toOSString());
+							ManagedBuildManager.setOption(cfg, fTool, assignToOption,
+									BuildDescriptionManager.getRelPath(cwd, bRcs[0].getLocation()).toOSString());
 						}
 					}
 				} catch (BuildException ex) {

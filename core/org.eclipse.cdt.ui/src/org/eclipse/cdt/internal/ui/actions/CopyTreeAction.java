@@ -40,24 +40,24 @@ import org.eclipse.cdt.internal.ui.util.SelectionUtil;
  * Copies contents of a TreeViewer to the clipboard.
  */
 public class CopyTreeAction extends Action {
-	private static final char INDENTATION= '\t';
+	private static final char INDENTATION = '\t';
 
 	private ViewPart fView;
 	private TreeViewer fViewer;
 
 	public CopyTreeAction(String label, ViewPart view, TreeViewer viewer) {
 		super(label);
-		fView= view;
-		fViewer= viewer;
+		fView = view;
+		fViewer = viewer;
 	}
 
 	public boolean canActionBeAdded() {
-		Object element= SelectionUtil.getSingleElement(getSelection());
+		Object element = SelectionUtil.getSingleElement(getSelection());
 		return element != null;
 	}
 
 	private ISelection getSelection() {
-		ISelectionProvider provider= fView.getSite().getSelectionProvider();
+		ISelectionProvider provider = fView.getSite().getSelectionProvider();
 
 		if (provider != null) {
 			return provider.getSelection();
@@ -71,20 +71,19 @@ public class CopyTreeAction extends Action {
 	 */
 	@Override
 	public void run() {
-		StringBuilder buf= new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		addChildren(fViewer.getTree().getSelection()[0], 0, buf);
 
-		TextTransfer plainTextTransfer= TextTransfer.getInstance();
-		Clipboard clipboard= new Clipboard(fView.getSite().getShell().getDisplay());
+		TextTransfer plainTextTransfer = TextTransfer.getInstance();
+		Clipboard clipboard = new Clipboard(fView.getSite().getShell().getDisplay());
 		try {
-			clipboard.setContents(
-					new String[] { convertLineTerminators(buf.toString()) },
+			clipboard.setContents(new String[] { convertLineTerminators(buf.toString()) },
 					new Transfer[] { plainTextTransfer });
 		} catch (SWTError e) {
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(fView.getViewSite().getShell(),
-					ActionMessages.CopyTreeAction_problem, ActionMessages.CopyTreeAction_clipboard_busy)) {
+			if (MessageDialog.openQuestion(fView.getViewSite().getShell(), ActionMessages.CopyTreeAction_problem,
+					ActionMessages.CopyTreeAction_clipboard_busy)) {
 				run();
 			}
 		} finally {
@@ -94,13 +93,13 @@ public class CopyTreeAction extends Action {
 
 	/**
 	 * Adds the specified {@link TreeItem}'s text to the StringBuilder.
-	 * 
+	 *
 	 * @param item the tree item
 	 * @param indent the indent size
 	 * @param buf the string buffer
 	 */
 	private void addChildren(TreeItem item, int indent, StringBuilder buf) {
-		for (int i= 0; i < indent; i++) {
+		for (int i = 0; i < indent; i++) {
 			buf.append(INDENTATION);
 		}
 
@@ -108,7 +107,7 @@ public class CopyTreeAction extends Action {
 		buf.append('\n');
 
 		if (item.getExpanded()) {
-			TreeItem[] items= item.getItems();
+			TreeItem[] items = item.getItems();
 			for (TreeItem item2 : items) {
 				addChildren(item2, indent + 1, buf);
 			}
@@ -116,15 +115,15 @@ public class CopyTreeAction extends Action {
 	}
 
 	static String convertLineTerminators(String in) {
-		StringWriter stringWriter= new StringWriter();
-		PrintWriter printWriter= new PrintWriter(stringWriter);
-		StringReader stringReader= new StringReader(in);
-		BufferedReader bufferedReader= new BufferedReader(stringReader);
+		StringWriter stringWriter = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(stringWriter);
+		StringReader stringReader = new StringReader(in);
+		BufferedReader bufferedReader = new BufferedReader(stringReader);
 		try {
-			String line= bufferedReader.readLine();
+			String line = bufferedReader.readLine();
 			while (line != null) {
 				printWriter.print(line);
-				line= bufferedReader.readLine();
+				line = bufferedReader.readLine();
 				if (line != null && line.length() != 0)
 					printWriter.println();
 

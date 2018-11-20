@@ -43,8 +43,7 @@ import org.eclipse.core.runtime.Path;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class DefaultGCCDependencyCalculator2Commands implements
-	IManagedDependencyCommands {
+public class DefaultGCCDependencyCalculator2Commands implements IManagedDependencyCommands {
 
 	//  Member variables set by the constructor
 	IPath source;
@@ -61,18 +60,19 @@ public class DefaultGCCDependencyCalculator2Commands implements
 	Boolean genericCommands = null;
 
 	/**
-     * Constructor
+	 * Constructor
 	 *
-     * @param source  The source file for which dependencies should be calculated
-     *    The IPath can be either relative to the project directory, or absolute in the file system.
-     * @param resource The IResource corresponding to the source file.
-     * @param buildContext  The IConfiguration or IResourceConfiguration that
-     *   contains the context in which the source file will be built
-     * @param tool  The tool associated with the source file
-     * @param topBuildDirectory  The top build directory of the configuration.  This is
-     *   the working directory for the tool.  This IPath is relative to the project directory.
+	 * @param source  The source file for which dependencies should be calculated
+	 *    The IPath can be either relative to the project directory, or absolute in the file system.
+	 * @param resource The IResource corresponding to the source file.
+	 * @param buildContext  The IConfiguration or IResourceConfiguration that
+	 *   contains the context in which the source file will be built
+	 * @param tool  The tool associated with the source file
+	 * @param topBuildDirectory  The top build directory of the configuration.  This is
+	 *   the working directory for the tool.  This IPath is relative to the project directory.
 	 */
-	public DefaultGCCDependencyCalculator2Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
+	public DefaultGCCDependencyCalculator2Commands(IPath source, IResource resource, IBuildObject buildContext,
+			ITool tool, IPath topBuildDirectory) {
 		this.source = source;
 		this.resource = resource;
 		this.buildContext = buildContext;
@@ -81,10 +81,10 @@ public class DefaultGCCDependencyCalculator2Commands implements
 
 		//  Compute the project
 		if (buildContext instanceof IConfiguration) {
-			IConfiguration config = (IConfiguration)buildContext;
-			project = (IProject)config.getOwner();
+			IConfiguration config = (IConfiguration) buildContext;
+			project = (IProject) config.getOwner();
 		} else if (buildContext instanceof IResourceInfo) {
-			IResourceInfo rcInfo = (IResourceInfo)buildContext;
+			IResourceInfo rcInfo = (IResourceInfo) buildContext;
 			project = rcInfo.getParent().getOwner().getProject();
 		}
 
@@ -104,23 +104,21 @@ public class DefaultGCCDependencyCalculator2Commands implements
 		*/
 		boolean resourceNameRequiresExplicitRule = true;
 
-		if(resource != null)
-		{
-			resourceNameRequiresExplicitRule = (resource.isLinked() && GnuMakefileGenerator
-						.containsSpecialCharacters(sourceLocation.toString()))
-				|| (!resource.isLinked() && GnuMakefileGenerator
-						.containsSpecialCharacters(resource.getProjectRelativePath().toString()));
+		if (resource != null) {
+			resourceNameRequiresExplicitRule = (resource.isLinked()
+					&& GnuMakefileGenerator.containsSpecialCharacters(sourceLocation.toString()))
+					|| (!resource.isLinked() && GnuMakefileGenerator
+							.containsSpecialCharacters(resource.getProjectRelativePath().toString()));
 		}
 
-		needExplicitRuleForFile = resourceNameRequiresExplicitRule ||
-				BuildMacroProvider.getReferencedExplitFileMacros(tool).length > 0
-				|| BuildMacroProvider.getReferencedExplitFileMacros(
-						tool.getToolCommand(),
+		needExplicitRuleForFile = resourceNameRequiresExplicitRule
+				|| BuildMacroProvider.getReferencedExplitFileMacros(tool).length > 0
+				|| BuildMacroProvider.getReferencedExplitFileMacros(tool.getToolCommand(),
 						IBuildMacroProvider.CONTEXT_FILE,
-						new FileContextData(sourceLocation, outputLocation,
-								null, tool)).length > 0;
+						new FileContextData(sourceLocation, outputLocation, null, tool)).length > 0;
 
-		if (needExplicitRuleForFile) genericCommands = false;
+		if (needExplicitRuleForFile)
+			genericCommands = false;
 	}
 
 	/**
@@ -147,11 +145,10 @@ public class DefaultGCCDependencyCalculator2Commands implements
 	 *
 	 * @see #DefaultGCCDependencyCalculator2Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	 */
-	public DefaultGCCDependencyCalculator2Commands(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
-	{
+	public DefaultGCCDependencyCalculator2Commands(IPath source, IBuildObject buildContext, ITool tool,
+			IPath topBuildDirectory) {
 		this(source, (IResource) null, buildContext, tool, topBuildDirectory);
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -159,7 +156,8 @@ public class DefaultGCCDependencyCalculator2Commands implements
 	 */
 	@Override
 	public boolean areCommandsGeneric() {
-		if (genericCommands == null) genericCommands = true;
+		if (genericCommands == null)
+			genericCommands = true;
 		return genericCommands.booleanValue();
 	}
 
@@ -172,27 +170,27 @@ public class DefaultGCCDependencyCalculator2Commands implements
 
 		String[] options = new String[4];
 		// -MMD
-		options[0] = "-MMD";						//$NON-NLS-1$
+		options[0] = "-MMD"; //$NON-NLS-1$
 		// -MP
-		options[1] = "-MP";							//$NON-NLS-1$
+		options[1] = "-MP"; //$NON-NLS-1$
 		// -MF$(@:%.o=%.d)
 		// Due to bug in GNU make $(@:%.o=%.d) applied to "/buggy   path_with_3_spaces/f.o"
 		// becomes "/buggy path_with_3_spaces/f.d". To avoid this we have to insert
 		// filename explicitly instead of substitution rule
-		if ( needExplicitRuleForFile ) {
+		if (needExplicitRuleForFile) {
 			IPath outPath = getDependencyFiles()[0];
-			options[2] = "-MF\"" + outPath.toString() + "\"";	//$NON-NLS-1$ //$NON-NLS-2$
+			options[2] = "-MF\"" + outPath.toString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			options[2] = "-MF\"$(@:%.o=%.d)\"";			//$NON-NLS-1$
+			options[2] = "-MF\"$(@:%.o=%.d)\""; //$NON-NLS-1$
 		}
-		if( buildContext instanceof IResourceConfiguration || needExplicitRuleForFile ) {
+		if (buildContext instanceof IResourceConfiguration || needExplicitRuleForFile) {
 			IPath outPath = getDependencyFiles()[0];
 			// -MT"dependency-file-name"
-			String optTxt = "-MT\"" + GnuMakefileGenerator.escapeWhitespaces(outPath.toString()) + "\"";	//$NON-NLS-1$ //$NON-NLS-2$
+			String optTxt = "-MT\"" + GnuMakefileGenerator.escapeWhitespaces(outPath.toString()) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 			options[3] = optTxt;
 		} else {
 			// -MT"$(@:%.o=%.d) %.o"
-			options[3] = "-MT\"$(@)\"";			//$NON-NLS-1$
+			options[3] = "-MT\"$(@)\""; //$NON-NLS-1$
 		}
 
 		return options;

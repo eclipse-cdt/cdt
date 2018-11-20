@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -24,72 +24,71 @@ import org.eclipse.ui.IWorkingSet;
 
 public class WorkingSetFilter {
 
-    private static final Object ACCEPT = new Object();
-    private static final Object REJECT = new Object();
+	private static final Object ACCEPT = new Object();
+	private static final Object REJECT = new Object();
 
-    private HashMap<IPath, Object> fResourceFilter= null;
+	private HashMap<IPath, Object> fResourceFilter = null;
 
-    public synchronized boolean isPartOfWorkingSet(ICElement elem) {
-        if (fResourceFilter == null) {
-            return true;
-        }
-        if (elem == null) {
-        	return false;
-        }
-        IPath path= elem.getPath();
-        if (path == null) {
-            return false;
-        }
-        Object check= fResourceFilter.get(path);
-        if (check == null) {
-            check= checkWorkingSet(path);
-            fResourceFilter.put(path, check);
-        }
-        return check == ACCEPT;
-    }
+	public synchronized boolean isPartOfWorkingSet(ICElement elem) {
+		if (fResourceFilter == null) {
+			return true;
+		}
+		if (elem == null) {
+			return false;
+		}
+		IPath path = elem.getPath();
+		if (path == null) {
+			return false;
+		}
+		Object check = fResourceFilter.get(path);
+		if (check == null) {
+			check = checkWorkingSet(path);
+			fResourceFilter.put(path, check);
+		}
+		return check == ACCEPT;
+	}
 
-    public synchronized boolean isPartOfWorkingSet(IPath resourceOrExternalPath) {
-        if (fResourceFilter == null) {
-            return true;
-        }
-        if (resourceOrExternalPath == null) {
-            return false;
-        }
-        Object check= fResourceFilter.get(resourceOrExternalPath);
-        if (check == null) {
-            check= checkWorkingSet(resourceOrExternalPath);
-            fResourceFilter.put(resourceOrExternalPath, check);
-        }
-        return check == ACCEPT;
-    }
+	public synchronized boolean isPartOfWorkingSet(IPath resourceOrExternalPath) {
+		if (fResourceFilter == null) {
+			return true;
+		}
+		if (resourceOrExternalPath == null) {
+			return false;
+		}
+		Object check = fResourceFilter.get(resourceOrExternalPath);
+		if (check == null) {
+			check = checkWorkingSet(resourceOrExternalPath);
+			fResourceFilter.put(resourceOrExternalPath, check);
+		}
+		return check == ACCEPT;
+	}
 
-    private synchronized Object checkWorkingSet(IPath path) {
-        if (path.segmentCount() == 0) {
-            return REJECT;
-        }
+	private synchronized Object checkWorkingSet(IPath path) {
+		if (path.segmentCount() == 0) {
+			return REJECT;
+		}
 
-        Object result= fResourceFilter.get(path);
-        if (result == null) {
-            result= checkWorkingSet(path.removeLastSegments(1));
-            fResourceFilter.put(path, result);
-        }
-        return result;
-    }
+		Object result = fResourceFilter.get(path);
+		if (result == null) {
+			result = checkWorkingSet(path.removeLastSegments(1));
+			fResourceFilter.put(path, result);
+		}
+		return result;
+	}
 
-    public synchronized void setWorkingSet(IWorkingSet workingSetFilter) {
-        if (workingSetFilter == null) {
-            fResourceFilter= null;
-        }
-        else {
-            IAdaptable[] input = workingSetFilter.getElements();
-            fResourceFilter = new HashMap<IPath, Object>();
-            for (int i = 0; i < input.length; i++) {
-                IAdaptable adaptable = input[i];
-                IResource res = adaptable.getAdapter(IResource.class);
-                if (res != null) {
-                    fResourceFilter.put(res.getFullPath(), ACCEPT);
-                }
-            }
-        }
-    }
+	public synchronized void setWorkingSet(IWorkingSet workingSetFilter) {
+		if (workingSetFilter == null) {
+			fResourceFilter = null;
+		} else {
+			IAdaptable[] input = workingSetFilter.getElements();
+			fResourceFilter = new HashMap<IPath, Object>();
+			for (int i = 0; i < input.length; i++) {
+				IAdaptable adaptable = input[i];
+				IResource res = adaptable.getAdapter(IResource.class);
+				if (res != null) {
+					fResourceFilter.put(res.getFullPath(), ACCEPT);
+				}
+			}
+		}
+	}
 }

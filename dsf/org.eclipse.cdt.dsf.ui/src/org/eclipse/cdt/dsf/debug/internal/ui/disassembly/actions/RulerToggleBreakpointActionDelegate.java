@@ -22,7 +22,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
  * Ruler toggle breakpoint action delegate for disassembly parts.
  *
  * @since 2.1
- * 
+ *
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate
  */
 public class RulerToggleBreakpointActionDelegate extends AbstractDisassemblyRulerActionDelegate {
@@ -37,7 +37,8 @@ public class RulerToggleBreakpointActionDelegate extends AbstractDisassemblyRule
 		if (fDelegate != null) {
 			fDelegate.dispose();
 		}
-		return fDelegate = new ToggleBreakpointAction(disassemblyPart, disassemblyPart.getTextViewer().getDocument(), rulerInfo);
+		return fDelegate = new ToggleBreakpointAction(disassemblyPart, disassemblyPart.getTextViewer().getDocument(),
+				rulerInfo);
 	}
 
 	/*

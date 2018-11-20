@@ -37,9 +37,9 @@ public final class QMakeParser {
 	public static final String KEY_HEADERS = "HEADERS";
 	public static final String KEY_INCLUDEPATH = "INCLUDEPATH";
 	public static final String KEY_DEFINES = "DEFINES";
-    public static final String KEY_RESOURCES = "RESOURCES";
-    public static final String KEY_FORMS = "FORMS";
-    public static final String KEY_OTHER_FILES = "OTHER_FILES";
+	public static final String KEY_RESOURCES = "RESOURCES";
+	public static final String KEY_FORMS = "FORMS";
+	public static final String KEY_OTHER_FILES = "OTHER_FILES";
 	public static final String KEY_QML_IMPORT_PATH = "QML_IMPORT_PATH";
 
 	/**
@@ -54,7 +54,7 @@ public final class QMakeParser {
 		Map<String, String> result = new LinkedHashMap<String, String>();
 
 		String line;
-		while((line = reader.readLine()) != null) {
+		while ((line = reader.readLine()) != null) {
 			Matcher m = regex.matcher(line);
 			if (!m.matches() || m.groupCount() != 2) {
 				Activator.log("qmake: cannot decode query line '" + line + '\'');
@@ -115,43 +115,43 @@ public final class QMakeParser {
 			length = value.length();
 		}
 		StringBuilder sb = new StringBuilder(length);
-		for (int i = 0; i < length; i ++) {
+		for (int i = 0; i < length; i++) {
 			char c = value.charAt(i);
 			if (c == '\\') {
-				++ i;
+				++i;
 				if (i < length) {
 					char next = value.charAt(i);
 					switch (next) {
-						case 'r':
-							sb.append('\r');
-							break;
-						case 'n':
-							sb.append ('\n');
-							break;
-						case 't':
-							sb.append ('\t');
-							break;
-						case '\\':
-						case '\'':
-						case '"':
-							sb.append (next);
-							break;
-						case 'x':
-							i += 2;
-							if (i < length) {
-								char first = value.charAt(i - 1);
-								char second = value.charAt(i);
-								if (first >= '0' && first <= '9' && second >= '0' && second <= '9') {
-									sb.append ((char) ((first - '0') * 16 + (second - '0')));
-								}
+					case 'r':
+						sb.append('\r');
+						break;
+					case 'n':
+						sb.append('\n');
+						break;
+					case 't':
+						sb.append('\t');
+						break;
+					case '\\':
+					case '\'':
+					case '"':
+						sb.append(next);
+						break;
+					case 'x':
+						i += 2;
+						if (i < length) {
+							char first = value.charAt(i - 1);
+							char second = value.charAt(i);
+							if (first >= '0' && first <= '9' && second >= '0' && second <= '9') {
+								sb.append((char) ((first - '0') * 16 + (second - '0')));
 							}
+						}
 					}
 				}
 			} else {
-				sb.append (c);
+				sb.append(c);
 			}
 		}
-	    return sb.toString();
+		return sb.toString();
 	}
 
 	/**
@@ -166,7 +166,7 @@ public final class QMakeParser {
 		char quote = 0;
 		boolean hadWord = false;
 		final int length = value.length();
-		for (int i = 0; i < length; i ++) {
+		for (int i = 0; i < length; i++) {
 			char c = value.charAt(i);
 			if (quote == c) {
 				quote = 0;
@@ -198,7 +198,7 @@ public final class QMakeParser {
 					if (nextChar == '\'' || nextChar == '"' || nextChar == '\\') {
 						sb.append(c);
 						c = nextChar;
-						++ i;
+						++i;
 					}
 				}
 				//$FALL-THROUGH$
@@ -206,7 +206,7 @@ public final class QMakeParser {
 				hadWord = true;
 				break;
 			}
-			sb.append (c);
+			sb.append(c);
 		}
 
 		if (hadWord) {

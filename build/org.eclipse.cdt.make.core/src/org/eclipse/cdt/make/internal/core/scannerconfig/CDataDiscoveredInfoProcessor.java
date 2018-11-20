@@ -35,106 +35,102 @@ import org.eclipse.core.runtime.Path;
 
 public abstract class CDataDiscoveredInfoProcessor {
 
-	public void applyDiscoveredInfo(CConfigurationData cfgData, DiscoveredSettingInfo dsIinfo){
+	public void applyDiscoveredInfo(CConfigurationData cfgData, DiscoveredSettingInfo dsIinfo) {
 		Map<IPath, CResourceData> map = CDataUtil.createPathRcDataMap(cfgData);
 		IRcSettingInfo info;
 
 		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
-		
+
 		IRcSettingInfo[] infos = dsIinfo.getRcSettingInfos();
-		
-		for(int i = 0; i < infos.length; i++){
+
+		for (int i = 0; i < infos.length; i++) {
 			info = infos[i];
 			applyInfo(cfgData, info, cr);
 			map.remove(info.getResourceData().getPath());
 		}
-		
-		if(map.size() != 0){
+
+		if (map.size() != 0) {
 			CResourceData rcData = map.get(Path.EMPTY);
-			if(rcData != null){
-				info = CDataDiscoveredInfoCalculator.createEmptyRcSettingInfo((CFolderData)rcData);
+			if (rcData != null) {
+				info = CDataDiscoveredInfoCalculator.createEmptyRcSettingInfo((CFolderData) rcData);
 				applyInfo(cfgData, info, cr);
 				map.remove(Path.EMPTY);
 			}
-			
-			if(map.size() != 0){
+
+			if (map.size() != 0) {
 				Set<Entry<IPath, CResourceData>> entries = map.entrySet();
 				for (Entry<IPath, CResourceData> entry : entries) {
 					IPath path = entry.getKey();
 					PathSettingsContainer curCr = cr.getChildContainer(path, false, false);
 					rcData = entry.getValue();
-					info = (IRcSettingInfo)curCr.getValue();
+					info = (IRcSettingInfo) curCr.getValue();
 					applyInfo(cfgData, rcData, info);
 				}
 			}
 		}
 	}
 
-	protected void applyInfo(CConfigurationData cfgData, CResourceData rcData, IRcSettingInfo info){
+	protected void applyInfo(CConfigurationData cfgData, CResourceData rcData, IRcSettingInfo info) {
 		CLanguageData[] lDatas = getLangDatas(rcData);
 		ILangSettingInfo lInfo;
 		ILangSettingInfo lInfos[] = info.getLangInfos();
 		CLanguageData lData;
-		for(int k = 0; k < lDatas.length; k++){
+		for (int k = 0; k < lDatas.length; k++) {
 			lData = lDatas[k];
 			lInfo = getMatch(lData, lInfos);
-			if(lInfo != null){
-				setInfoForData(cfgData, 
-						rcData, 
-						lData, 
-						lInfo.getFilePathInfo(), 
-						info.getResourceData(),
+			if (lInfo != null) {
+				setInfoForData(cfgData, rcData, lData, lInfo.getFilePathInfo(), info.getResourceData(),
 						lInfo.getLanguageData());
 			} else {
 				setInfoForData(cfgData, rcData, lData, null, null, null);
 			}
 		}
 	}
-	
-	protected CLanguageData[] getLangDatas(CResourceData rcData){
-		if(rcData.getType() == ICSettingBase.SETTING_FILE){
-			CLanguageData lData = ((CFileData)rcData).getLanguageData();
-			if(lData != null)
-				return new CLanguageData[]{lData};
+
+	protected CLanguageData[] getLangDatas(CResourceData rcData) {
+		if (rcData.getType() == ICSettingBase.SETTING_FILE) {
+			CLanguageData lData = ((CFileData) rcData).getLanguageData();
+			if (lData != null)
+				return new CLanguageData[] { lData };
 			return new CLanguageData[0];
 		}
-		return ((CFolderData)rcData).getLanguageDatas();
+		return ((CFolderData) rcData).getLanguageDatas();
 	}
 
-	protected ILangSettingInfo getMatch(CLanguageData lData, ILangSettingInfo lInfos[]){
+	protected ILangSettingInfo getMatch(CLanguageData lData, ILangSettingInfo lInfos[]) {
 		ILangSettingInfo lInfo;
-		for(int i = 0; i < lInfos.length; i++){
+		for (int i = 0; i < lInfos.length; i++) {
 			lInfo = lInfos[i];
-			if(langDatasMatch(lData, lInfo.getLanguageData()))
+			if (langDatasMatch(lData, lInfo.getLanguageData()))
 				return lInfo;
 		}
 		return null;
 	}
 
-	protected CLanguageData getMatch(CLanguageData lData, CLanguageData[] datas){
-		for(int i = 0; i < datas.length; i++){
-			if(langDatasMatch(lData, datas[i]))
+	protected CLanguageData getMatch(CLanguageData lData, CLanguageData[] datas) {
+		for (int i = 0; i < datas.length; i++) {
+			if (langDatasMatch(lData, datas[i]))
 				return datas[i];
 		}
 		return null;
 	}
 
-	protected boolean langDatasMatch(CLanguageData lData1, CLanguageData lData2){
-		if(!CDataUtil.objectsEqual(lData1.getLanguageId(), lData2.getLanguageId()))
+	protected boolean langDatasMatch(CLanguageData lData1, CLanguageData lData2) {
+		if (!CDataUtil.objectsEqual(lData1.getLanguageId(), lData2.getLanguageId()))
 			return false;
-		
+
 		String[] tmp = lData1.getSourceContentTypeIds();
-		if(tmp != null && tmp.length != 0){
-			if(!Arrays.equals(tmp, lData2.getSourceContentTypeIds()))
+		if (tmp != null && tmp.length != 0) {
+			if (!Arrays.equals(tmp, lData2.getSourceContentTypeIds()))
 				return false;
 		} else {
-			if(!Arrays.equals(lData1.getSourceExtensions(), lData2.getSourceExtensions()))
+			if (!Arrays.equals(lData1.getSourceExtensions(), lData2.getSourceExtensions()))
 				return false;
 		}
 		return true;
 	}
 
-	protected void applyInfo(CConfigurationData cfgData, IRcSettingInfo info, PathSettingsContainer cr){
+	protected void applyInfo(CConfigurationData cfgData, IRcSettingInfo info, PathSettingsContainer cr) {
 		CResourceData rcData;
 		CLanguageData lData;
 		ILangSettingInfo lInfo;
@@ -143,18 +139,14 @@ public abstract class CDataDiscoveredInfoProcessor {
 		PathSettingsContainer curCr = cr.getChildContainer(path, true, true);
 		curCr.setValue(info);
 		ILangSettingInfo lInfos[] = info.getLangInfos();
-		for(int k = 0; k < lInfos.length; k++){
+		for (int k = 0; k < lInfos.length; k++) {
 			lInfo = lInfos[k];
 			lData = lInfo.getLanguageData();
 			setInfoForData(cfgData, rcData, lData, lInfo.getFilePathInfo(), null, null);
 		}
 	}
-	
-	protected abstract void setInfoForData(CConfigurationData cfgData, 
-			CResourceData rcData, 
-			CLanguageData lData,
-			PathInfo pi,
-			CResourceData baseRcData,
-			CLanguageData baseLangData);
-	
+
+	protected abstract void setInfoForData(CConfigurationData cfgData, CResourceData rcData, CLanguageData lData,
+			PathInfo pi, CResourceData baseRcData, CLanguageData baseLangData);
+
 }

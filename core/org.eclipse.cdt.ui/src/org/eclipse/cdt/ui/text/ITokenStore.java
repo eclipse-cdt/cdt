@@ -24,9 +24,9 @@ import org.eclipse.cdt.ui.PreferenceConstants;
  * <ul>
  * <li> Reacting to changes to preferences in a specified {@link IPreferenceStore}
  * <li> Managing whether further styles (bold, italic, strikethrough, underline) should be applied
- * <li> Coping with 
+ * <li> Coping with
  * </ul>
- * 
+ *
  * ITokenStore assumes style preferences are stored under the following names
  * <p>
  * Preference color key + {@link PreferenceConstants#EDITOR_BOLD_SUFFIX} are used
@@ -54,10 +54,10 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 public interface ITokenStore extends IPropertyChangeParticipant {
 	/**
 	 * Ensures any IToken objects that will be <em>or have been</em> returned are
-     * initialized for display.
+	 * initialized for display.
 	 */
 	void ensureTokensInitialised();
-	
+
 	/**
 	 * @param property
 	 * @return a token for the specified property. The Token may not be suitable for use if the
@@ -65,7 +65,7 @@ public interface ITokenStore extends IPropertyChangeParticipant {
 	 * point of token use in case this token store was originally initialized before a display was available.
 	 */
 	IToken getToken(String property);
-	
+
 	/**
 	 * @return The preference store used to read token styling preferences from.
 	 */

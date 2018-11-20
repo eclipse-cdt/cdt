@@ -45,12 +45,12 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 public class CompilerOptionParser implements IWorkspaceRunnable {
-	
-	private static final String GCC_COMPILE_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.debug.application.DwarfLanguageSettingsProvider"; //$NON-NLS-1$ 
+
+	private static final String GCC_COMPILE_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.debug.application.DwarfLanguageSettingsProvider"; //$NON-NLS-1$
 	private final IProject project;
 	private final String executable;
-	
-	public CompilerOptionParser (IProject project, String executable) {
+
+	public CompilerOptionParser(IProject project, String executable) {
 		this.project = project;
 		this.executable = executable;
 	}
@@ -63,7 +63,7 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 		}
 
 	}
-	
+
 	@Override
 	public void run(IProgressMonitor monitor) {
 		try {
@@ -103,25 +103,18 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 			}
 
 			ISymbolReader reader = bf.getAdapter(ISymbolReader.class);
-			String[] sourceFiles = reader
-					.getSourceFiles();
+			String[] sourceFiles = reader.getSourceFiles();
 			monitor.beginTask(Messages.GetCompilerOptions, sourceFiles.length * 2 + 1);
-			
+
 			for (String sourceFile : sourceFiles) {
-				IPath sourceFilePath = new Path(
-						sourceFile);
-				String sourceName = sourceFilePath
-						.lastSegment();
-				IContainer c = createFromRoot(project,
-						new Path(sourceFile));
-				Path sourceNamePath = new Path(
-						sourceName);
-				IFile source = c
-						.getFile(sourceNamePath);
+				IPath sourceFilePath = new Path(sourceFile);
+				String sourceName = sourceFilePath.lastSegment();
+				IContainer c = createFromRoot(project, new Path(sourceFile));
+				Path sourceNamePath = new Path(sourceName);
+				IFile source = c.getFile(sourceNamePath);
 				if (!source.isLinked()) {
 					try {
-						source.createLink(sourceFilePath, 0,
-								null);
+						source.createLink(sourceFilePath, 0, null);
 					} catch (Exception e) {
 						// ignore file not found errors since certain headers might not be found
 						// or are a different version from that used to compile the source (e.g. std headers)
@@ -129,24 +122,20 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 				}
 				monitor.worked(1);
 			}
-			
+
 			// Find the GCCCompileOptions LanguageSettingsProvider for the configuration.
 			IWorkingDirectoryTracker cwdTracker = new CWDTracker();
-			ICProjectDescriptionManager projDescManager = CCorePlugin
-					.getDefault().getProjectDescriptionManager();
-			ICProjectDescription projDesc = projDescManager
-					.getProjectDescription(project,
-							false);
-			ICConfigurationDescription ccdesc = projDesc
-					.getActiveConfiguration();
+			ICProjectDescriptionManager projDescManager = CCorePlugin.getDefault().getProjectDescriptionManager();
+			ICProjectDescription projDesc = projDescManager.getProjectDescription(project, false);
+			ICConfigurationDescription ccdesc = projDesc.getActiveConfiguration();
 			GCCCompileOptionsParser parser = null;
 			if (ccdesc instanceof ILanguageSettingsProvidersKeeper) {
-				ILanguageSettingsProvidersKeeper keeper = (ILanguageSettingsProvidersKeeper)ccdesc;
+				ILanguageSettingsProvidersKeeper keeper = (ILanguageSettingsProvidersKeeper) ccdesc;
 				List<ILanguageSettingsProvider> list = keeper.getLanguageSettingProviders();
 				for (ILanguageSettingsProvider p : list) {
 					//						System.out.println("language settings provider " + p.getId());
 					if (p.getId().equals(GCC_COMPILE_OPTIONS_PROVIDER_ID)) {
-						parser = (GCCCompileOptionsParser)p;
+						parser = (GCCCompileOptionsParser) p;
 					}
 				}
 			}
@@ -154,14 +143,11 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 			parser.startup(ccdesc, cwdTracker);
 			// Get compile options for each source file and process via the parser
 			// to generate LanguageSettingsEntries.
-			if (reader instanceof
-					ICompileOptionsFinder) {
-				ICompileOptionsFinder f =
-						(ICompileOptionsFinder) reader;
+			if (reader instanceof ICompileOptionsFinder) {
+				ICompileOptionsFinder f = (ICompileOptionsFinder) reader;
 				for (String fileName : sourceFiles) {
 					parser.setCurrentResourceName(fileName);
-					parser.processLine(f
-							.getCompileOptions(fileName));
+					parser.processLine(f.getCompileOptions(fileName));
 					monitor.worked(1);
 				}
 				parser.shutdown(); // this will serialize the data to an xml file and create an event.
@@ -174,17 +160,16 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 		}
 		monitor.done();
 	}
-	
-	private IContainer createFromRoot(IProject exeProject, IPath path)
-			throws CoreException {
+
+	private IContainer createFromRoot(IProject exeProject, IPath path) throws CoreException {
 		int segmentCount = path.segmentCount() - 1;
 		IContainer currentFolder = exeProject;
 
 		for (int i = 0; i < segmentCount; i++) {
 			currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
 			if (!currentFolder.exists()) {
-				((IFolder) currentFolder).create(IResource.VIRTUAL
-						| IResource.DERIVED, true, new NullProgressMonitor());
+				((IFolder) currentFolder).create(IResource.VIRTUAL | IResource.DERIVED, true,
+						new NullProgressMonitor());
 			}
 		}
 

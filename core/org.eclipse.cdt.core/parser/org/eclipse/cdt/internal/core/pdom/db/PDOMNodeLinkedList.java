@@ -28,7 +28,7 @@ public class PDOMNodeLinkedList {
 	private long offset;
 	private PDOMLinkage linkage;
 	private boolean allowsNull;
-	
+
 	private static final int FIRST_MEMBER = 0;
 	protected static final int RECORD_SIZE = 4;
 
@@ -37,7 +37,7 @@ public class PDOMNodeLinkedList {
 		this.linkage = linkage;
 		this.allowsNull = allowsNulls;
 	}
-	
+
 	/**
 	 * Creates an object representing a linked list at the specified offset of the specified pdom.
 	 * The linked list created may not hold null items
@@ -51,24 +51,24 @@ public class PDOMNodeLinkedList {
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
-	
+
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		Database db = linkage.getDB();
 		long firstItem = db.getRecPtr(offset + FIRST_MEMBER);
 		if (firstItem == 0)
 			return;
-		
+
 		long item = firstItem;
 		do {
 			PDOMNode node;
-			final long record= db.getRecPtr(item + ListItem.ITEM);
+			final long record = db.getRecPtr(item + ListItem.ITEM);
 			if (record == 0) {
 				if (!allowsNull) {
 					throw new NullPointerException();
 				}
-				node= null;
+				node = null;
 			} else {
-				node= PDOMNode.load(linkage.getPDOM(), record);
+				node = PDOMNode.load(linkage.getPDOM(), record);
 			}
 			if (visitor.visit(node) && node != null) {
 				node.accept(visitor);
@@ -76,7 +76,7 @@ public class PDOMNodeLinkedList {
 			visitor.leave(node);
 		} while ((item = db.getRecPtr(item + ListItem.NEXT)) != firstItem);
 	}
-	
+
 	private ListItem getFirstMemberItem() throws CoreException {
 		Database db = linkage.getDB();
 		long item = db.getRecPtr(offset + FIRST_MEMBER);
@@ -85,7 +85,7 @@ public class PDOMNodeLinkedList {
 
 	/**
 	 * Returns node at position {@code pos}. Not recommended to be used in a loop since
-	 * such a loop would be more expensive that a single {@code accept(IPDOMVisitor)} call. 
+	 * such a loop would be more expensive that a single {@code accept(IPDOMVisitor)} call.
 	 * @param pos A zero-based position in the list.
 	 * @return The node at position {@code pos}, or {@code null} if no such node exists.
 	 */
@@ -113,9 +113,9 @@ public class PDOMNodeLinkedList {
 	}
 
 	public void addMember(PDOMNode member) throws CoreException {
-		addMember(allowsNull && member==null ? 0 : member.getRecord());
+		addMember(allowsNull && member == null ? 0 : member.getRecord());
 	}
-	
+
 	protected void addMember(long record) throws CoreException {
 		Database db = linkage.getDB();
 		ListItem firstMember = getFirstMemberItem();
@@ -139,14 +139,13 @@ public class PDOMNodeLinkedList {
 	public void deleteListItems() throws CoreException {
 		ListItem item = getFirstMemberItem();
 		if (item != null) {
-			long firstRec= item.record;
+			long firstRec = item.record;
 
 			do {
-				ListItem nextItem= item.getNext();
+				ListItem nextItem = item.getNext();
 				item.delete();
-				item= nextItem;
-			}
-			while (item.record != firstRec && item.record != 0);
+				item = nextItem;
+			} while (item.record != firstRec && item.record != 0);
 		}
 	}
 }

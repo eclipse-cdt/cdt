@@ -68,16 +68,16 @@ import org.eclipse.cdt.internal.ui.editor.EditorHighlightingSynchronizer;
 
 /**
  * This class is based on org.eclipse.jdt.internal.ui.text.java.ParameterGuessingProposal
- * 
+ *
  * Extents the basic Function Completion Proposal to add a linked mode for each of the function parameters
  * with a list of suggestions for each parameter.
  */
 public class ParameterGuessingProposal extends FunctionCompletionProposal {
-	private ICompletionProposal[][] fChoices;  // Initialized by guessParameters()
-	private Position[] fPositions;             // Initialized by guessParameters()
-	private IRegion fSelectedRegion;           // Initialized by apply()
+	private ICompletionProposal[][] fChoices; // Initialized by guessParameters()
+	private Position[] fPositions; // Initialized by guessParameters()
+	private IRegion fSelectedRegion; // Initialized by apply()
 	private IPositionUpdater fUpdater;
-	private String fFullPrefix;  // The string from the start of the statement to the invocation offset.
+	private String fFullPrefix; // The string from the start of the statement to the invocation offset.
 	private CEditor fCEditor;
 	private char[][] fParametersNames;
 	private IType[] fParametersTypes;
@@ -85,8 +85,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	private IASTCompletionNode fCompletionNode;
 
 	public static ParameterGuessingProposal createProposal(CContentAssistInvocationContext context,
-			List<IBinding> availableElements, CCompletionProposal proposal, IFunction function,
-			String prefix) {
+			List<IBinding> availableElements, CCompletionProposal proposal, IFunction function, String prefix) {
 		String replacement = getParametersList(function);
 		String fullPrefix = function.getName() + "("; //$NON-NLS-1$
 		int replacementOffset = proposal.getReplacementOffset();
@@ -120,10 +119,10 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 			replacementOffset = proposal.getReplacementOffset();
 		}
 		replacementLength = prefix.length();
-		ParameterGuessingProposal ret = new ParameterGuessingProposal(replacement, replacementOffset,
-				replacementLength, proposal.getImage(), proposal.getDisplayString(), proposal.getIdString(),
-				proposal.getRelevance(), context.getViewer(), function, invocationOffset, parseOffset,
-				context.getTranslationUnit(), document, context.getCompletionNode());
+		ParameterGuessingProposal ret = new ParameterGuessingProposal(replacement, replacementOffset, replacementLength,
+				proposal.getImage(), proposal.getDisplayString(), proposal.getIdString(), proposal.getRelevance(),
+				context.getViewer(), function, invocationOffset, parseOffset, context.getTranslationUnit(), document,
+				context.getCompletionNode());
 		ret.setContextInformation(proposal.getContextInformation());
 		ret.fFullPrefix = fullPrefix;
 		ret.fCEditor = getCEditor(context.getEditor());
@@ -150,11 +149,11 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	}
 
 	public ParameterGuessingProposal(String replacementString, int replacementOffset, int replacementLength,
-			Image image, String displayString, String idString, int relevance, ITextViewer viewer,
-			IFunction function, int invocationOffset, int parseOffset, ITranslationUnit tu,
-			IDocument document, IASTCompletionNode completionNode) {
-		super(replacementString, replacementOffset, replacementLength, image, displayString, idString,
-				relevance, viewer, function, invocationOffset, parseOffset, tu, document);
+			Image image, String displayString, String idString, int relevance, ITextViewer viewer, IFunction function,
+			int invocationOffset, int parseOffset, ITranslationUnit tu, IDocument document,
+			IASTCompletionNode completionNode) {
+		super(replacementString, replacementOffset, replacementLength, image, displayString, idString, relevance,
+				viewer, function, invocationOffset, parseOffset, tu, document);
 		fCompletionNode = completionNode;
 	}
 
@@ -181,7 +180,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		super.apply(document, trigger, offset);
 
 		generateParameterGuesses();
-		
+
 		int baseOffset = getReplacementOffset();
 		String replacement = getReplacementString();
 		try {
@@ -230,8 +229,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 						} else if (event.character == ')' && exitChar != ')') {
 							// exit from link mode when user is in the last ')' position.
 							Position position = fPositions[fPositions.length - 1];
-							if (position.offset <= offset2
-									&& offset2 + length <= position.offset + position.length) {
+							if (position.offset <= offset2 && offset2 + length <= position.offset + position.length) {
 								return new ExitFlags(ILinkedModeListener.UPDATE_CARET, false);
 							}
 						}
@@ -258,24 +256,24 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 
 		return new Point(fSelectedRegion.getOffset(), fSelectedRegion.getLength());
 	}
-	
+
 	public void generateParameterGuesses() {
-		IStatus status = ASTProvider.getASTProvider().runOnAST(fTranslationUnit,  ASTProvider.WAIT_NO, 
+		IStatus status = ASTProvider.getASTProvider().runOnAST(fTranslationUnit, ASTProvider.WAIT_NO,
 				new NullProgressMonitor(), new ASTRunnable() {
-			@Override
-			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
-				try {
-					CPPSemantics.pushLookupPoint(fCompletionNode.getTranslationUnit());
-					guessParameters();
-				} catch (Exception e) {
-					CUIPlugin.log(e);
-					return Status.CANCEL_STATUS;
-				} finally {
-					CPPSemantics.popLookupPoint();
-				}
-				return Status.OK_STATUS;
-			}
-		});
+					@Override
+					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
+						try {
+							CPPSemantics.pushLookupPoint(fCompletionNode.getTranslationUnit());
+							guessParameters();
+						} catch (Exception e) {
+							CUIPlugin.log(e);
+							return Status.CANCEL_STATUS;
+						} finally {
+							CPPSemantics.popLookupPoint();
+						}
+						return Status.OK_STATUS;
+					}
+				});
 		if (Status.CANCEL_STATUS == status)
 			return;
 	}
@@ -297,8 +295,8 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 
 			boolean isLastParameter = i == count - 1;
 			ArrayList<ICompletionProposal> allProposals = new ArrayList<>();
-			ICompletionProposal[] argumentProposals = guesser.parameterProposals(fParametersTypes[i],
-					paramName, position, fAssignableElements, isLastParameter);
+			ICompletionProposal[] argumentProposals = guesser.parameterProposals(fParametersTypes[i], paramName,
+					position, fAssignableElements, isLastParameter);
 			allProposals.addAll(Arrays.asList(argumentProposals));
 			fPositions[i] = position;
 			fChoices[i] = argumentProposals;

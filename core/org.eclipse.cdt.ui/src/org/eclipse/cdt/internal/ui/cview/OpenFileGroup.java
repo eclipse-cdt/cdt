@@ -56,11 +56,12 @@ public class OpenFileGroup extends CViewActionGroup {
 
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
-                IStructuredSelection celements = (IStructuredSelection) getContext().getSelection();
+		IStructuredSelection celements = (IStructuredSelection) getContext().getSelection();
 		IStructuredSelection selection = SelectionConverter.convertSelectionToResources(celements);
-		boolean anyResourceSelected = !selection.isEmpty()
-				&& SelectionConverter.allResourcesAreOfType(selection, IResource.PROJECT | IResource.FOLDER | IResource.FILE);
-		boolean onlyFilesSelected = !selection.isEmpty() && SelectionConverter.allResourcesAreOfType(selection, IResource.FILE);
+		boolean anyResourceSelected = !selection.isEmpty() && SelectionConverter.allResourcesAreOfType(selection,
+				IResource.PROJECT | IResource.FOLDER | IResource.FILE);
+		boolean onlyFilesSelected = !selection.isEmpty()
+				&& SelectionConverter.allResourcesAreOfType(selection, IResource.FILE);
 
 		if (onlyFilesSelected) {
 			openFileAction.selectionChanged(selection);
@@ -75,7 +76,7 @@ public class OpenFileGroup extends CViewActionGroup {
 
 	/**
 	 * Adds the OpenWith submenu to the context menu.
-	 * 
+	 *
 	 * @param menu
 	 *            the context menu
 	 * @param selection
@@ -91,14 +92,14 @@ public class OpenFileGroup extends CViewActionGroup {
 			return;
 		}
 
-		MenuManager submenu = new MenuManager(CViewMessages.OpenWithMenu_label); 
+		MenuManager submenu = new MenuManager(CViewMessages.OpenWithMenu_label);
 		submenu.add(new OpenWithMenu(getCView().getSite().getPage(), (IFile) element));
 		menu.add(submenu);
 	}
 
 	/**
 	 * Adds the Open in New Window action to the context menu.
-	 * 
+	 *
 	 * @param menu
 	 *            the context menu
 	 * @param selection
@@ -121,18 +122,19 @@ public class OpenFileGroup extends CViewActionGroup {
 		menu.add(new OpenInNewWindowAction(getCView().getSite().getWorkbenchWindow(), (IContainer) element));
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
+	 */
+	@Override
 	public void fillActionBars(IActionBars actionBars) {
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
-     */
-    @Override
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
+	 */
+	@Override
 	public void updateActionBars() {
-    }
+	}
 
 	/**
 	 * Runs the default action (open file).
@@ -155,14 +157,13 @@ public class OpenFileGroup extends CViewActionGroup {
 			} catch (Exception e) {
 			}
 		} else if (obj instanceof IAdaptable) {
-			IResource element = ((IAdaptable)obj).getAdapter(IResource.class);
+			IResource element = ((IAdaptable) obj).getAdapter(IResource.class);
 			if (element instanceof IFile) {
 				openFileAction.selectionChanged(selection);
 				openFileAction.run();
-			}
-			else if(element instanceof IProject){
+			} else if (element instanceof IProject) {
 				try {
-					((IProject)element).open(null);
+					((IProject) element).open(null);
 				} catch (CoreException e) {
 					CUIPlugin.log(e);
 				}

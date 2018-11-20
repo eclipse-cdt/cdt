@@ -65,504 +65,511 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
- * 
+ *
  */
-public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, IPropertyChangeListener{
+public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, IPropertyChangeListener {
 
-    /**
-     * These are the IDs for the actions in the context menu
-     */
-    protected static final String DETAIL_COPY_ACTION = ActionFactory.COPY.getId() + ".SourceDetailPane"; //$NON-NLS-1$
-    protected static final String DETAIL_SELECT_ALL_ACTION = IDebugView.SELECT_ALL_ACTION + ".SourceDetailPane"; //$NON-NLS-1$
-    
-    /**
-     * The ID, name and description of this pane are stored in constants so that the class
-     * does not have to be instantiated to access them.
-     */
-    public static final String ID = "ModuleDetailPane"; //$NON-NLS-1$
-    public static final String NAME = "Module Viewer";
-    public static final String DESCRIPTION = "A detail pane that is based on a source viewer.  Displays as text and has actions for assigning values, content assist and text modifications.";
-    
-    
-    /**
-     * Job to compute the details for a selection
-     */
-    class DetailJob extends Job {
-        
-        private Object fElement;
-        // whether a result was collected
-        private IProgressMonitor fMonitor;
-        
-        public DetailJob(Object element) {
-            super("compute module details"); //$NON-NLS-1$
-            setSystem(true);
-            fElement = element;
-        }
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-         */
-        @Override
+	/**
+	 * These are the IDs for the actions in the context menu
+	 */
+	protected static final String DETAIL_COPY_ACTION = ActionFactory.COPY.getId() + ".SourceDetailPane"; //$NON-NLS-1$
+	protected static final String DETAIL_SELECT_ALL_ACTION = IDebugView.SELECT_ALL_ACTION + ".SourceDetailPane"; //$NON-NLS-1$
+
+	/**
+	 * The ID, name and description of this pane are stored in constants so that the class
+	 * does not have to be instantiated to access them.
+	 */
+	public static final String ID = "ModuleDetailPane"; //$NON-NLS-1$
+	public static final String NAME = "Module Viewer";
+	public static final String DESCRIPTION = "A detail pane that is based on a source viewer.  Displays as text and has actions for assigning values, content assist and text modifications.";
+
+	/**
+	 * Job to compute the details for a selection
+	 */
+	class DetailJob extends Job {
+
+		private Object fElement;
+		// whether a result was collected
+		private IProgressMonitor fMonitor;
+
+		public DetailJob(Object element) {
+			super("compute module details"); //$NON-NLS-1$
+			setSystem(true);
+			fElement = element;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-            fMonitor = monitor;
-            
-            String detail = ""; //$NON-NLS-1$
-            if ( fElement instanceof ICModule ) {
-                detail = getModuleDetail( ((ICModule)fElement) );
-            }
-            if ( fElement instanceof ICElement ) {
-                detail = fElement.toString();
-            }
-            
-            detailComputed(detail);
-            return Status.OK_STATUS;
-        }
-        
-        private void detailComputed(final String result) {
-            if (!fMonitor.isCanceled()) {
-                WorkbenchJob setDetail = new WorkbenchJob("set details") { //$NON-NLS-1$
-                    @Override
+			fMonitor = monitor;
+
+			String detail = ""; //$NON-NLS-1$
+			if (fElement instanceof ICModule) {
+				detail = getModuleDetail(((ICModule) fElement));
+			}
+			if (fElement instanceof ICElement) {
+				detail = fElement.toString();
+			}
+
+			detailComputed(detail);
+			return Status.OK_STATUS;
+		}
+
+		private void detailComputed(final String result) {
+			if (!fMonitor.isCanceled()) {
+				WorkbenchJob setDetail = new WorkbenchJob("set details") { //$NON-NLS-1$
+					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-                        if (!fMonitor.isCanceled()) {
-                            getDetailDocument().set(result);
-                        }
-                        return Status.OK_STATUS;
-                    }
-                };
-                setDetail.setSystem(true);
-                setDetail.schedule();
-            }
-        }
+						if (!fMonitor.isCanceled()) {
+							getDetailDocument().set(result);
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				setDetail.setSystem(true);
+				setDetail.schedule();
+			}
+		}
 
-    }
-    
-    private String getModuleDetail( ICModule module ) {
-        StringBuilder sb = new StringBuilder();
-        
-        // Type
-        String type = null;
-        switch( module.getType() ) {
-            case ICModule.EXECUTABLE:
-                type = ModulesMessages.getString( "ModulesView.1" ); //$NON-NLS-1$
-                break;
-            case ICModule.SHARED_LIBRARY:
-                type = ModulesMessages.getString( "ModulesView.2" ); //$NON-NLS-1$
-                break;
-        }
-        if ( type != null ) {
-            sb.append( ModulesMessages.getString( "ModulesView.3" ) ); //$NON-NLS-1$
-            sb.append( type );
-            sb.append( '\n' );
-        }
-        
-        // Symbols flag
-        sb.append( ModulesMessages.getString( "ModulesView.4" ) ); //$NON-NLS-1$
-        sb.append( ( module.areSymbolsLoaded() ) ? ModulesMessages.getString( "ModulesView.5" ) : ModulesMessages.getString( "ModulesView.6" ) ); //$NON-NLS-1$ //$NON-NLS-2$
-        sb.append( '\n' );
+	}
 
-        // Symbols file
-        sb.append( ModulesMessages.getString( "ModulesView.7" ) ); //$NON-NLS-1$
-        sb.append( module.getSymbolsFileName().toOSString() );
-        sb.append( '\n' );
+	private String getModuleDetail(ICModule module) {
+		StringBuilder sb = new StringBuilder();
 
-        // CPU
-        String cpu = module.getCPU();
-        if ( cpu != null ) {
-            sb.append( ModulesMessages.getString( "ModulesView.8" ) ); //$NON-NLS-1$
-            sb.append( cpu );
-            sb.append( '\n' );
-        }
+		// Type
+		String type = null;
+		switch (module.getType()) {
+		case ICModule.EXECUTABLE:
+			type = ModulesMessages.getString("ModulesView.1"); //$NON-NLS-1$
+			break;
+		case ICModule.SHARED_LIBRARY:
+			type = ModulesMessages.getString("ModulesView.2"); //$NON-NLS-1$
+			break;
+		}
+		if (type != null) {
+			sb.append(ModulesMessages.getString("ModulesView.3")); //$NON-NLS-1$
+			sb.append(type);
+			sb.append('\n');
+		}
 
-        // Base address
-        IAddress baseAddress = module.getBaseAddress();
-        if ( !baseAddress.isZero() ) {
-            sb.append( ModulesMessages.getString( "ModulesView.9" ) ); //$NON-NLS-1$
-            sb.append( baseAddress.toHexAddressString() );
-            sb.append( '\n' );
-        }
-        
-        // Size
-        long size = module.getSize();
-        if ( size > 0 ) { 
-            sb.append( ModulesMessages.getString( "ModulesView.10" ) ); //$NON-NLS-1$
-            sb.append( size );
-            sb.append( '\n' );
-        }
+		// Symbols flag
+		sb.append(ModulesMessages.getString("ModulesView.4")); //$NON-NLS-1$
+		sb.append((module.areSymbolsLoaded()) ? ModulesMessages.getString("ModulesView.5") //$NON-NLS-1$
+				: ModulesMessages.getString("ModulesView.6")); //$NON-NLS-1$
+		sb.append('\n');
 
-        return sb.toString();
-    }
+		// Symbols file
+		sb.append(ModulesMessages.getString("ModulesView.7")); //$NON-NLS-1$
+		sb.append(module.getSymbolsFileName().toOSString());
+		sb.append('\n');
 
-    
-    /**
-     * The source viewer in which the computed string detail
-     * of selected modules will be displayed.
-     */
-    private SourceViewer fSourceViewer;
-    
-    /**
-     * Variables used to create the detailed information for a selection
-     */
-    private IDocument fDetailDocument;
-    private DetailJob fDetailJob = null;
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
-     */
-    @Override
+		// CPU
+		String cpu = module.getCPU();
+		if (cpu != null) {
+			sb.append(ModulesMessages.getString("ModulesView.8")); //$NON-NLS-1$
+			sb.append(cpu);
+			sb.append('\n');
+		}
+
+		// Base address
+		IAddress baseAddress = module.getBaseAddress();
+		if (!baseAddress.isZero()) {
+			sb.append(ModulesMessages.getString("ModulesView.9")); //$NON-NLS-1$
+			sb.append(baseAddress.toHexAddressString());
+			sb.append('\n');
+		}
+
+		// Size
+		long size = module.getSize();
+		if (size > 0) {
+			sb.append(ModulesMessages.getString("ModulesView.10")); //$NON-NLS-1$
+			sb.append(size);
+			sb.append('\n');
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * The source viewer in which the computed string detail
+	 * of selected modules will be displayed.
+	 */
+	private SourceViewer fSourceViewer;
+
+	/**
+	 * Variables used to create the detailed information for a selection
+	 */
+	private IDocument fDetailDocument;
+	private DetailJob fDetailJob = null;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
 	public Control createControl(Composite parent) {
-        
-        createSourceViewer(parent);
-        
-        if (isInView()){
-            createViewSpecificComponents();
-            createActions();
-            CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-            JFaceResources.getFontRegistry().addListener(this);
-        }
-        
-        return fSourceViewer.getControl();
-    }
 
-    /**
-     * Creates the source viewer in the given parent composite
-     * 
-     * @param parent Parent composite to create the source viewer in
-     */
-    private void createSourceViewer(Composite parent) {
-        
-        // Create & configure a SourceViewer
-        fSourceViewer = new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
-        fSourceViewer.setDocument(getDetailDocument());
-        fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalCDebugUIConstants.DETAIL_PANE_FONT));
-        fSourceViewer.setEditable(false);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), ICDebugHelpContextIds.MODULES_DETAIL_PANE);
-        Control control = fSourceViewer.getControl();
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        control.setLayoutData(gd);  
-    }
+		createSourceViewer(parent);
 
-    /**
-     * Creates listeners and other components that should only be added to the
-     * source viewer when this detail pane is inside a view.
-     */
-    private void createViewSpecificComponents(){
-        
-        // Add a document listener so actions get updated when the document changes
-        getDetailDocument().addDocumentListener(new IDocumentListener() {
-            @Override
-			public void documentAboutToBeChanged(DocumentEvent event) {}
-            @Override
+		if (isInView()) {
+			createViewSpecificComponents();
+			createActions();
+			CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+			JFaceResources.getFontRegistry().addListener(this);
+		}
+
+		return fSourceViewer.getControl();
+	}
+
+	/**
+	 * Creates the source viewer in the given parent composite
+	 *
+	 * @param parent Parent composite to create the source viewer in
+	 */
+	private void createSourceViewer(Composite parent) {
+
+		// Create & configure a SourceViewer
+		fSourceViewer = new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
+		fSourceViewer.setDocument(getDetailDocument());
+		fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalCDebugUIConstants.DETAIL_PANE_FONT));
+		fSourceViewer.setEditable(false);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(),
+				ICDebugHelpContextIds.MODULES_DETAIL_PANE);
+		Control control = fSourceViewer.getControl();
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		control.setLayoutData(gd);
+	}
+
+	/**
+	 * Creates listeners and other components that should only be added to the
+	 * source viewer when this detail pane is inside a view.
+	 */
+	private void createViewSpecificComponents() {
+
+		// Add a document listener so actions get updated when the document changes
+		getDetailDocument().addDocumentListener(new IDocumentListener() {
+			@Override
+			public void documentAboutToBeChanged(DocumentEvent event) {
+			}
+
+			@Override
 			public void documentChanged(DocumentEvent event) {
-                updateSelectionDependentActions();
-            }
-        });
-        
-        // Add the selection listener so selection dependent actions get updated.
-        fSourceViewer.getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
-            @Override
+				updateSelectionDependentActions();
+			}
+		});
+
+		// Add the selection listener so selection dependent actions get updated.
+		fSourceViewer.getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-                updateSelectionDependentActions();
-            }
-        });
-        
-        // Add a focus listener to update actions when details area gains focus
-        fSourceViewer.getControl().addFocusListener(new FocusAdapter() {
-            @Override
+				updateSelectionDependentActions();
+			}
+		});
+
+		// Add a focus listener to update actions when details area gains focus
+		fSourceViewer.getControl().addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusGained(FocusEvent e) {
-                
-                getViewSite().setSelectionProvider(fSourceViewer.getSelectionProvider());
-                
-                setGlobalAction(IDebugView.SELECT_ALL_ACTION, getAction(DETAIL_SELECT_ALL_ACTION));
-                setGlobalAction(IDebugView.COPY_ACTION, getAction(DETAIL_COPY_ACTION));
-                
-                getViewSite().getActionBars().updateActionBars();
-            }
-            
-            @Override
+
+				getViewSite().setSelectionProvider(fSourceViewer.getSelectionProvider());
+
+				setGlobalAction(IDebugView.SELECT_ALL_ACTION, getAction(DETAIL_SELECT_ALL_ACTION));
+				setGlobalAction(IDebugView.COPY_ACTION, getAction(DETAIL_COPY_ACTION));
+
+				getViewSite().getActionBars().updateActionBars();
+			}
+
+			@Override
 			public void focusLost(FocusEvent e) {
-                
-                getViewSite().setSelectionProvider(null);
-                
-                setGlobalAction(IDebugView.SELECT_ALL_ACTION, null);
-                setGlobalAction(IDebugView.CUT_ACTION, null);
-                setGlobalAction(IDebugView.COPY_ACTION, null);
-                setGlobalAction(IDebugView.PASTE_ACTION, null);
-                setGlobalAction(IDebugView.FIND_ACTION, null);
-                
-                getViewSite().getActionBars().updateActionBars();
-                
-            }
-        });
-        
-        // Add a context menu to the detail area
-        createDetailContextMenu(fSourceViewer.getTextWidget()); 
-    }
-    
-    /**
-     * Creates the actions to add to the context menu
-     */
-    private void createActions() {
-        
-        TextViewerAction textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
-        textAction.configureAction("Select &All", "", "");  //$NON-NLS-2$ //$NON-NLS-3$
-        textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, ICDebugHelpContextIds.MODULE_DETAIL_PANE_SELECT_ALL_ACTION);
-        setAction(DETAIL_SELECT_ALL_ACTION, textAction);
-        
-        textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.COPY);
-        textAction.configureAction("&Copy", "", "");  //$NON-NLS-2$ //$NON-NLS-3$
-        textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, ICDebugHelpContextIds.MODULE_DETAIL_PANE_COPY_ACTION);
-        setAction(DETAIL_COPY_ACTION, textAction);
-        
-        setSelectionDependantAction(DETAIL_COPY_ACTION);
-        
-        updateSelectionDependentActions();
-    }
-    
-    /**
-     * Create the context menu particular to the detail pane.  Note that anyone
-     * wishing to contribute an action to this menu must use
-     * <code>ICDebugUIConstants.MODULES_VIEW_DETAIL_ID</code> as the
-     * <code>targetID</code> in the extension XML.
-     */
-    protected void createDetailContextMenu(Control menuControl) {
-        MenuManager menuMgr= new MenuManager(); 
-        menuMgr.setRemoveAllWhenShown(true);
-        menuMgr.addMenuListener(new IMenuListener() {
-            @Override
+
+				getViewSite().setSelectionProvider(null);
+
+				setGlobalAction(IDebugView.SELECT_ALL_ACTION, null);
+				setGlobalAction(IDebugView.CUT_ACTION, null);
+				setGlobalAction(IDebugView.COPY_ACTION, null);
+				setGlobalAction(IDebugView.PASTE_ACTION, null);
+				setGlobalAction(IDebugView.FIND_ACTION, null);
+
+				getViewSite().getActionBars().updateActionBars();
+
+			}
+		});
+
+		// Add a context menu to the detail area
+		createDetailContextMenu(fSourceViewer.getTextWidget());
+	}
+
+	/**
+	 * Creates the actions to add to the context menu
+	 */
+	private void createActions() {
+
+		TextViewerAction textAction = new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
+		textAction.configureAction("Select &All", "", ""); //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction,
+				ICDebugHelpContextIds.MODULE_DETAIL_PANE_SELECT_ALL_ACTION);
+		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
+
+		textAction = new TextViewerAction(fSourceViewer, ITextOperationTarget.COPY);
+		textAction.configureAction("&Copy", "", ""); //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction,
+				ICDebugHelpContextIds.MODULE_DETAIL_PANE_COPY_ACTION);
+		setAction(DETAIL_COPY_ACTION, textAction);
+
+		setSelectionDependantAction(DETAIL_COPY_ACTION);
+
+		updateSelectionDependentActions();
+	}
+
+	/**
+	 * Create the context menu particular to the detail pane.  Note that anyone
+	 * wishing to contribute an action to this menu must use
+	 * <code>ICDebugUIConstants.MODULES_VIEW_DETAIL_ID</code> as the
+	 * <code>targetID</code> in the extension XML.
+	 */
+	protected void createDetailContextMenu(Control menuControl) {
+		MenuManager menuMgr = new MenuManager();
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mgr) {
-                fillDetailContextMenu(mgr);
-            }
-        });
-        Menu menu= menuMgr.createContextMenu(menuControl);
-        menuControl.setMenu(menu);
+				fillDetailContextMenu(mgr);
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(menuControl);
+		menuControl.setMenu(menu);
 
-        getViewSite().registerContextMenu(ICDebugUIConstants.MODULES_VIEW_DETAIL_ID, menuMgr, fSourceViewer.getSelectionProvider());
+		getViewSite().registerContextMenu(ICDebugUIConstants.MODULES_VIEW_DETAIL_ID, menuMgr,
+				fSourceViewer.getSelectionProvider());
 
-    }
-    
-    /**
-    * Adds items to the detail pane's context menu including any extension defined
-    * actions.
-    * 
-    * @param menu The menu to add the item to.
-    */
-    protected void fillDetailContextMenu(IMenuManager menu) {
-        
-        menu.add(new Separator(ICDebugUIConstants.MODULES_GROUP));
-        menu.add(new Separator());
-        menu.add(getAction(DETAIL_COPY_ACTION)); 
-        menu.add(getAction(DETAIL_SELECT_ALL_ACTION));
-        menu.add(new Separator());
-        menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-        
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
-     */
-    @Override
+	}
+
+	/**
+	* Adds items to the detail pane's context menu including any extension defined
+	* actions.
+	*
+	* @param menu The menu to add the item to.
+	*/
+	protected void fillDetailContextMenu(IMenuManager menu) {
+
+		menu.add(new Separator(ICDebugUIConstants.MODULES_GROUP));
+		menu.add(new Separator());
+		menu.add(getAction(DETAIL_COPY_ACTION));
+		menu.add(getAction(DETAIL_SELECT_ALL_ACTION));
+		menu.add(new Separator());
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	@Override
 	public void display(IStructuredSelection selection) {
-        
-        if (selection == null){
-            clearSourceViewer();
-            return;
-        }
-                
-        if (isInView()){
-            fSourceViewer.setEditable(true);
-        }
-                        
-        if (selection.isEmpty()){
-            clearSourceViewer();
-            return;
-        }
-        
-        Object firstElement = selection.getFirstElement();
-        if (firstElement != null && firstElement instanceof IDebugElement) {
-            String modelID = ((IDebugElement)firstElement).getModelIdentifier();
-        }
-        
-        synchronized (this) {
-            if (fDetailJob != null) {
-                fDetailJob.cancel();
-            }
-            fDetailJob = new DetailJob(selection.getFirstElement());
-            fDetailJob.schedule();
-        }
-        
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IDetailPane#setFocus()
-     */
-    @Override
-	public boolean setFocus(){
-        if (fSourceViewer != null){
-            fSourceViewer.getTextWidget().setFocus();
-            return true;
-        }
-        return false;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.variables.details.AbstractDetailPane#dispose()
-     */
-    @Override
-	public void dispose(){
-        super.dispose();
-        
-        if (fDetailJob != null) fDetailJob.cancel();
-        if (fSourceViewer != null && fSourceViewer.getControl() != null) fSourceViewer.getControl().dispose();
-        
-        if (isInView()){
-            CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
-            JFaceResources.getFontRegistry().removeListener(this);  
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IDetailPane#getDescription()
-     */
-    @Override
+
+		if (selection == null) {
+			clearSourceViewer();
+			return;
+		}
+
+		if (isInView()) {
+			fSourceViewer.setEditable(true);
+		}
+
+		if (selection.isEmpty()) {
+			clearSourceViewer();
+			return;
+		}
+
+		Object firstElement = selection.getFirstElement();
+		if (firstElement != null && firstElement instanceof IDebugElement) {
+			String modelID = ((IDebugElement) firstElement).getModelIdentifier();
+		}
+
+		synchronized (this) {
+			if (fDetailJob != null) {
+				fDetailJob.cancel();
+			}
+			fDetailJob = new DetailJob(selection.getFirstElement());
+			fDetailJob.schedule();
+		}
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDetailPane#setFocus()
+	 */
+	@Override
+	public boolean setFocus() {
+		if (fSourceViewer != null) {
+			fSourceViewer.getTextWidget().setFocus();
+			return true;
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.details.AbstractDetailPane#dispose()
+	 */
+	@Override
+	public void dispose() {
+		super.dispose();
+
+		if (fDetailJob != null)
+			fDetailJob.cancel();
+		if (fSourceViewer != null && fSourceViewer.getControl() != null)
+			fSourceViewer.getControl().dispose();
+
+		if (isInView()) {
+			CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+			JFaceResources.getFontRegistry().removeListener(this);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDetailPane#getDescription()
+	 */
+	@Override
 	public String getDescription() {
-        return DESCRIPTION;
-    }
+		return DESCRIPTION;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IDetailPane#getID()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDetailPane#getID()
+	 */
+	@Override
 	public String getID() {
-        return ID;
-    }
+		return ID;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IDetailPane#getName()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDetailPane#getName()
+	 */
+	@Override
 	public String getName() {
-        return NAME;
-    }
-    
-    @SuppressWarnings("unchecked")
+		return NAME;
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> required) {
-        if (ITextViewer.class.equals(required)) {
-            return (T) fSourceViewer;
-        }
-        return null;
-    }
-    
-    /**
-     * Lazily instantiate and return a Document for the detail pane text viewer.
-     */
-    protected IDocument getDetailDocument() {
-        if (fDetailDocument == null) {
-            fDetailDocument = new Document();
-        }
-        return fDetailDocument;
-    }
-    
-    /**
-     * Clears the source viewer, removes all text.
-     */
-    protected void clearSourceViewer(){
-        if (fDetailJob != null) {
-            fDetailJob.cancel();
-        }
-        fDetailDocument.set(""); //$NON-NLS-1$
-        fSourceViewer.setEditable(false);
-    }
+		if (ITextViewer.class.equals(required)) {
+			return (T) fSourceViewer;
+		}
+		return null;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
-    @Override
+	/**
+	 * Lazily instantiate and return a Document for the detail pane text viewer.
+	 */
+	protected IDocument getDetailDocument() {
+		if (fDetailDocument == null) {
+			fDetailDocument = new Document();
+		}
+		return fDetailDocument;
+	}
+
+	/**
+	 * Clears the source viewer, removes all text.
+	 */
+	protected void clearSourceViewer() {
+		if (fDetailJob != null) {
+			fDetailJob.cancel();
+		}
+		fDetailDocument.set(""); //$NON-NLS-1$
+		fSourceViewer.setEditable(false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-        String propertyName= event.getProperty();
-        if (propertyName.equals(IInternalCDebugUIConstants.DETAIL_PANE_FONT)) {
-            fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalCDebugUIConstants.DETAIL_PANE_FONT));
-        } 
-        
-    }
+		String propertyName = event.getProperty();
+		if (propertyName.equals(IInternalCDebugUIConstants.DETAIL_PANE_FONT)) {
+			fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalCDebugUIConstants.DETAIL_PANE_FONT));
+		}
 
-    /**
-     * Wrapper class that wraps around an IFindReplaceTarget.  Allows the detail pane to scroll
-     * to text selected by the find/replace action.  The source viewer treats the text as a single
-     * line, even when the text is wrapped onto several lines so the viewer will not scroll properly
-     * on it's own.  See bug 178106.
-     */
-    class FindReplaceTargetWrapper implements IFindReplaceTarget{
-        
-        private IFindReplaceTarget fTarget;
-        
-        /**
-         * Constructor
-         * 
-         * @param target find/replace target this class will wrap around.
-         */
-        public FindReplaceTargetWrapper(IFindReplaceTarget target){
-            fTarget = target;
-        }
+	}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.text.IFindReplaceTarget#canPerformFind()
-         */
-        @Override
+	/**
+	 * Wrapper class that wraps around an IFindReplaceTarget.  Allows the detail pane to scroll
+	 * to text selected by the find/replace action.  The source viewer treats the text as a single
+	 * line, even when the text is wrapped onto several lines so the viewer will not scroll properly
+	 * on it's own.  See bug 178106.
+	 */
+	class FindReplaceTargetWrapper implements IFindReplaceTarget {
+
+		private IFindReplaceTarget fTarget;
+
+		/**
+		 * Constructor
+		 *
+		 * @param target find/replace target this class will wrap around.
+		 */
+		public FindReplaceTargetWrapper(IFindReplaceTarget target) {
+			fTarget = target;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IFindReplaceTarget#canPerformFind()
+		 */
+		@Override
 		public boolean canPerformFind() {
-            return fTarget.canPerformFind();
-        }
+			return fTarget.canPerformFind();
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.text.IFindReplaceTarget#findAndSelect(int, java.lang.String, boolean, boolean, boolean)
-         */
-        @Override
-		public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
-            int position = fTarget.findAndSelect(widgetOffset, findString, searchForward, caseSensitive, wholeWord);
-            // Explicitly tell the widget to show the selection because the viewer thinks the text is all on one line, even if wrapping is turned on.
-            if (fSourceViewer != null){
-                StyledText text = fSourceViewer.getTextWidget();
-                if(text != null && !text.isDisposed()) {
-                    text.showSelection();
-                }
-            }
-            return position;
-        }
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IFindReplaceTarget#findAndSelect(int, java.lang.String, boolean, boolean, boolean)
+		 */
+		@Override
+		public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive,
+				boolean wholeWord) {
+			int position = fTarget.findAndSelect(widgetOffset, findString, searchForward, caseSensitive, wholeWord);
+			// Explicitly tell the widget to show the selection because the viewer thinks the text is all on one line, even if wrapping is turned on.
+			if (fSourceViewer != null) {
+				StyledText text = fSourceViewer.getTextWidget();
+				if (text != null && !text.isDisposed()) {
+					text.showSelection();
+				}
+			}
+			return position;
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.text.IFindReplaceTarget#getSelection()
-         */
-        @Override
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelection()
+		 */
+		@Override
 		public Point getSelection() {
-            return fTarget.getSelection();
-        }
+			return fTarget.getSelection();
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.text.IFindReplaceTarget#getSelectionText()
-         */
-        @Override
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelectionText()
+		 */
+		@Override
 		public String getSelectionText() {
-            return fTarget.getSelectionText();
-        }
+			return fTarget.getSelectionText();
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.text.IFindReplaceTarget#isEditable()
-         */
-        @Override
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IFindReplaceTarget#isEditable()
+		 */
+		@Override
 		public boolean isEditable() {
-            return fTarget.isEditable();
-        }
+			return fTarget.isEditable();
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.text.IFindReplaceTarget#replaceSelection(java.lang.String)
-         */
-        @Override
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IFindReplaceTarget#replaceSelection(java.lang.String)
+		 */
+		@Override
 		public void replaceSelection(String text) {
-            fTarget.replaceSelection(text);
-        }
-    }
-    
-}
+			fTarget.replaceSelection(text);
+		}
+	}
 
+}

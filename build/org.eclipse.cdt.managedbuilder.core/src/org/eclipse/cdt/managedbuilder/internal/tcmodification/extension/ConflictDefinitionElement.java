@@ -18,8 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 public class ConflictDefinitionElement extends MatchObjectList {
 	public static final String ELEMENT_NAME = "conflictDefinition"; //$NON-NLS-1$
 
-	public ConflictDefinitionElement(IConfigurationElement element)
-			throws IllegalArgumentException {
+	public ConflictDefinitionElement(IConfigurationElement element) throws IllegalArgumentException {
 		super(element);
 	}
 

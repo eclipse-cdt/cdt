@@ -33,7 +33,7 @@ public interface ITrialUndoActionProvider<RULE_DATA> {
 	 * Invokes the final action that corresponds to the given rule number.
 	 */
 	void finalAction(int ruleNumber);
-	
+
 	/**
 	 * Sets the given Rule as the active rule for this provider.
 	 */

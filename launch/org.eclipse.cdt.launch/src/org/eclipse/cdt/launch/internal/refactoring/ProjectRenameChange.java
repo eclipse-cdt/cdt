@@ -36,9 +36,9 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * A change to update a launch configuration with a new project name.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 class ProjectRenameChange extends AbstractLaunchConfigChange {
@@ -52,11 +52,11 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 	 * The project relative path of the .launch file if the launch config is a
 	 * non-local one and is stored within the project.
 	 */
-	private IPath  projectRelativePath; 
-	
+	private IPath projectRelativePath;
+
 	/**
 	 * Initializes me.
-	 * 
+	 *
 	 * @param launchConfig
 	 *            the launch configuration that I change
 	 * @param oldName
@@ -64,13 +64,12 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 	 * @param newName
 	 *            the new project name
 	 */
-	public ProjectRenameChange(ILaunchConfiguration launchConfig,
-			String oldName, String newName) {
+	public ProjectRenameChange(ILaunchConfiguration launchConfig, String oldName, String newName) {
 		super(launchConfig);
 
 		this.oldName = oldName;
 		this.newName = newName;
-		
+
 		// keep the project relative path if launch config is contained in the old project
 		if (!launchConfig.isLocal()) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -78,15 +77,14 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 			IPath oldConfig = launchConfig.getFile().getLocation();
 			if (oldConfig != null && oldProject.getLocation().isPrefixOf(oldConfig)) {
 				projectRelativePath = oldConfig.makeRelativeTo(oldProject.getLocation());
-			} 
-		} 		 
+			}
+		}
 	}
 
 	@Override
 	public String getName() {
 		if (changeName == null) {
-			changeName = NLS.bind(LaunchMessages.ProjectRenameChange_name, 
-					getLaunchConfiguration().getName());
+			changeName = NLS.bind(LaunchMessages.ProjectRenameChange_name, getLaunchConfiguration().getName());
 		}
 
 		return changeName;
@@ -100,14 +98,14 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 		IProject newProject = root.getProject(newName);
 
 		ILaunchConfiguration launchConfig = getLaunchConfiguration();
-		if (projectRelativePath !=  null) {
+		if (projectRelativePath != null) {
 			// If the launch config is non-local and lives in the project, we
 			// need to update its representation in the new project folder, not
 			// the old one
 			ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
 			launchConfig = mgr.getLaunchConfiguration(newProject.getFile(projectRelativePath));
 		}
-		
+
 		ILaunchConfigurationWorkingCopy copy = launchConfig.getWorkingCopy();
 		IResource[] mapped = launchConfig.getMappedResources();
 
@@ -123,19 +121,18 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 			}
 		}
 
-		copy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-				newName);
+		copy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, newName);
 
 		// Update the program name if it corresponds to the project name
-		IPath pathProgName = new Path(launchConfig.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "")); //$NON-NLS-1$
+		IPath pathProgName = new Path(
+				launchConfig.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "")); //$NON-NLS-1$
 		String progExtension = pathProgName.getFileExtension();
 		String progName = pathProgName.removeFileExtension().lastSegment();
 		if (oldName.equals(progName)) {
 			pathProgName = pathProgName.removeLastSegments(1).append(newName);
-			if (progExtension != null )
+			if (progExtension != null)
 				pathProgName = pathProgName.addFileExtension(progExtension);
-			copy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
-				pathProgName.toOSString());
+			copy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, pathProgName.toOSString());
 		}
 
 		try {
@@ -145,15 +142,12 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 			// This comment can/should be removed when 288368 is fixed.
 			copy.doSave();
 		} catch (CoreException e) {
-			LaunchUIPlugin.log(new MultiStatus(LaunchUIPlugin.PLUGIN_ID, 0,
-					new IStatus[] { e.getStatus() }, NLS.bind(
-							LaunchMessages.ProjectRenameChange_saveFailed, 
-							launchConfig.getName()), null));
+			LaunchUIPlugin.log(new MultiStatus(LaunchUIPlugin.PLUGIN_ID, 0, new IStatus[] { e.getStatus() },
+					NLS.bind(LaunchMessages.ProjectRenameChange_saveFailed, launchConfig.getName()), null));
 			return null; // not undoable, as we didn't effect our change
 		}
 
-		return new ProjectRenameChange(launchConfig, newName,
-				oldName);
+		return new ProjectRenameChange(launchConfig, newName, oldName);
 	}
 
 }

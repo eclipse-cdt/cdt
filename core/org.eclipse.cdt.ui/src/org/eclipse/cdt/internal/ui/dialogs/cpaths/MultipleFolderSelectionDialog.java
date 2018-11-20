@@ -68,7 +68,8 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	Set<Object> fExisting;
 	private Object fFocusElement;
 
-	public MultipleFolderSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider) {
+	public MultipleFolderSelectionDialog(Shell parent, ILabelProvider labelProvider,
+			ITreeContentProvider contentProvider) {
 		super(parent);
 		fLabelProvider = labelProvider;
 		fContentProvider = contentProvider;
@@ -93,7 +94,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 	/**
 	 * Sets the tree input.
-	 * 
+	 *
 	 * @param input
 	 *        the tree input.
 	 */
@@ -103,7 +104,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 	/**
 	 * Adds a filter to the tree viewer.
-	 * 
+	 *
 	 * @param filter
 	 *        a filter.
 	 */
@@ -183,7 +184,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 	/**
 	 * Creates the tree viewer.
-	 * 
+	 *
 	 * @param parent
 	 *        the parent composite
 	 * @return the tree viewer
@@ -213,7 +214,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	}
 
 	/**
-	 *  
+	 *
 	 */
 	protected void updateOKStatus() {
 		computeResult();
@@ -226,7 +227,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -245,7 +246,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		treeWidget.setFont(composite.getFont());
 
 		Button button = new Button(composite, SWT.PUSH);
-		button.setText(CPathEntryMessages.MultipleFolderSelectionDialog_button); 
+		button.setText(CPathEntryMessages.MultipleFolderSelectionDialog_button);
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -315,7 +316,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	@Override

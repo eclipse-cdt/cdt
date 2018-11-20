@@ -24,17 +24,17 @@ public interface IRealBuildObjectAssociation extends IBuildObject {
 	int OBJECT_CONFIGURATION = 1 << 5;
 
 	int getType();
-	
+
 	IRealBuildObjectAssociation getRealBuildObject();
 
 	IRealBuildObjectAssociation getExtensionObject();
 
 	boolean isRealBuildObject();
-	
+
 	boolean isExtensionBuildObject();
-	
+
 	IRealBuildObjectAssociation[] getIdenticBuildObjects();
-	
+
 	IRealBuildObjectAssociation getSuperClassObject();
 
 	String getUniqueRealName();

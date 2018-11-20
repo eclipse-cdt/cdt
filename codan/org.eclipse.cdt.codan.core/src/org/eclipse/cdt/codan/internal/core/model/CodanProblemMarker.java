@@ -89,7 +89,8 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 		marker.setAttribute(IMarker.CHAR_START, loc.getStartingChar());
 		String propArgs = serializeArgs(args);
 		marker.setAttribute(PROBLEM_ARGS, propArgs);
-		IProblemCategory[] cats = CodanProblemCategory.findProblemCategories(getProfile(file).getRoot(), problem.getId());
+		IProblemCategory[] cats = CodanProblemCategory.findProblemCategories(getProfile(file).getRoot(),
+				problem.getId());
 		String cat = cats.length > 0 ? cats[0].getId() : ""; //$NON-NLS-1$
 		marker.setAttribute(CATEGORY, cat);
 		return marker;

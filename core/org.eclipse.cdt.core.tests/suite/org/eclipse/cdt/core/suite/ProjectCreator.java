@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.Path;
  * core features. Projects are created from a template stored in a zip file
  * These templates are created using the CDT and have the proper natures
  * and build settings set up.
- * 
+ *
  * @author Doug Schaefer
  */
 public class ProjectCreator extends TestCase {
@@ -46,7 +46,7 @@ public class ProjectCreator extends TestCase {
 	private static final byte[] buffer = new byte[512];
 	private static final IProgressMonitor monitor = new NullProgressMonitor();
 
-	public static IProject createProject(IPath zipPath,	String projectName) throws Exception {
+	public static IProject createProject(IPath zipPath, String projectName) throws Exception {
 		try (ZipFile zipFile = new ZipFile(CTestPlugin.getDefault().getFileInPlugin(zipPath))) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IWorkspaceRoot root = workspace.getRoot();
@@ -87,22 +87,22 @@ public class ProjectCreator extends TestCase {
 	public static IProject createCManagedProject(String projectName) throws Exception {
 		return createProject(new Path("resources/zips/CManaged.zip"), projectName);
 	}
-	
+
 	public static IProject createCPPManagedProject(String projectName) throws Exception {
 		return createProject(new Path("resources/zips/CPPManaged.zip"), projectName);
 	}
-	
+
 	public static IProject createCStandardProject(String projectName) throws Exception {
 		return createProject(new Path("resources/zips/CStandard.zip"), projectName);
 	}
-	
+
 	public static IProject createCPPStandardProject(String projectName) throws Exception {
 		return createProject(new Path("resources/zips/CPPStandard.zip"), projectName);
 	}
-	
+
 	public void test() throws Exception {
 		IProject project = createCPPManagedProject("TestProject");
 		assertNotNull(project);
 	}
-	
+
 }

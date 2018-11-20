@@ -22,21 +22,17 @@ import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 
 public class FindRefsInWorkingSetAction extends FindInWorkingSetAction {
-	
+
 	public FindRefsInWorkingSetAction(CEditor editor, IWorkingSet[] workingSets) {
-		super(editor,
-				CSearchMessages.CSearch_FindReferencesInWorkingSetAction_label, 
-				CSearchMessages.CSearch_FindReferencesInWorkingSetAction_tooltip, 
-				workingSets);
+		super(editor, CSearchMessages.CSearch_FindReferencesInWorkingSetAction_label,
+				CSearchMessages.CSearch_FindReferencesInWorkingSetAction_tooltip, workingSets);
 	}
-	
-	public FindRefsInWorkingSetAction(IWorkbenchSite site, IWorkingSet[] workingSets){
-		super (site,
-				CSearchMessages.CSearch_FindReferencesInWorkingSetAction_label, 
-				CSearchMessages.CSearch_FindReferencesInWorkingSetAction_tooltip, 
-				workingSets);
+
+	public FindRefsInWorkingSetAction(IWorkbenchSite site, IWorkingSet[] workingSets) {
+		super(site, CSearchMessages.CSearch_FindReferencesInWorkingSetAction_label,
+				CSearchMessages.CSearch_FindReferencesInWorkingSetAction_tooltip, workingSets);
 	}
-	
+
 	@Override
 	protected int getLimitTo() {
 		return CSearchQuery.FIND_REFERENCES;

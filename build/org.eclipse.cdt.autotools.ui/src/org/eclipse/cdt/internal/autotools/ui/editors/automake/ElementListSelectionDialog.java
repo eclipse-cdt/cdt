@@ -27,70 +27,78 @@ import org.eclipse.swt.widgets.Shell;
  * A class to select one or more elements out of an indexed property
  */
 public class ElementListSelectionDialog extends AbstractElementListSelectionDialog {
-	
+
 	private List<Object> fElements;
-	
+
 	@Override
 	protected void computeResult() {
 		setResult(getWidgetSelection());
 	}
-	
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Control result= super.createDialogArea(parent);
-		
+		Control result = super.createDialogArea(parent);
+
 		setSelectionListElements(fElements, false);
-	  	//a little trick to make the window come up faster
-	  	String initialFilter= null;
-	  	if (getPrimaryInitialSelection() instanceof String)
-			initialFilter= (String)getPrimaryInitialSelection();
-	  	if (initialFilter != null)
-	  		setFilter(initialFilter, true);
-	  	else
-	  		refilter();
-	  				
+		//a little trick to make the window come up faster
+		String initialFilter = null;
+		if (getPrimaryInitialSelection() instanceof String)
+			initialFilter = (String) getPrimaryInitialSelection();
+		if (initialFilter != null)
+			setFilter(initialFilter, true);
+		else
+			refilter();
+
 		return result;
 	}
+
 	public Object getSelectedElement() {
 		return getPrimaryResult();
 	}
+
 	public Object[] getSelectedElements() {
 		return getResult();
 	}
+
 	@Override
 	protected void handleDoubleClick() {
 		if (verifyCurrentSelection()) {
 			buttonPressed(IDialogConstants.OK_ID);
 		}
 	}
+
 	/**
 	 * Constructs a list selection dialog.
 	 * @param renderer The label renderer used
 	 * @param ignoreCase Decides if the match string ignores lower/upper case
-	 * @param multipleSelection Allow multiple selection	 
+	 * @param multipleSelection Allow multiple selection
 	 */
-	public ElementListSelectionDialog(Shell parent, String title, Image image, ILabelProvider renderer, boolean ignoreCase, boolean multipleSelection) {
-		super (parent, title, image, renderer, ignoreCase, multipleSelection);
+	public ElementListSelectionDialog(Shell parent, String title, Image image, ILabelProvider renderer,
+			boolean ignoreCase, boolean multipleSelection) {
+		super(parent, title, image, renderer, ignoreCase, multipleSelection);
 	}
+
 	/**
 	 * Constructs a list selection dialog.
 	 * @param renderer The label renderer used
 	 * @param ignoreCase Decides if the match string ignores lower/upppr case
-	 * @param multipleSelection Allow multiple selection	 
+	 * @param multipleSelection Allow multiple selection
 	 */
-	public ElementListSelectionDialog(Shell parent, ILabelProvider renderer, boolean ignoreCase, boolean multipleSelection) {
+	public ElementListSelectionDialog(Shell parent, ILabelProvider renderer, boolean ignoreCase,
+			boolean multipleSelection) {
 		this(parent, "", null, renderer, ignoreCase, multipleSelection); //$NON-NLS-1$
 	}
+
 	/**
 	 * Open the dialog.
 	 * @param elements The elements to show in the list
 	 * @return Returns OK or CANCEL
-	 */	
+	 */
 	public int open(List<Object> elements) {
 		setElements(elements);
 		return open();
 	}
+
 	/**
 	 * Open the dialog.
 	 * @param elements The elements to show in the list
@@ -102,10 +110,11 @@ public class ElementListSelectionDialog extends AbstractElementListSelectionDial
 		setInitialSelection(initialSelection);
 		return open();
 	}
+
 	/**
 	 * Sets the elements presented by this dialog.
 	 */
 	public void setElements(List<Object> elements) {
-		fElements= elements;	
+		fElements = elements;
 	}
 }

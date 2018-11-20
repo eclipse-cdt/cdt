@@ -119,7 +119,7 @@ public class RemoteProcessClosure {
 
 	/**
 	 * Creates a process closure and connects the launched process with output and error streams.
-	 * 
+	 *
 	 * @param outputStream
 	 *            process output is written to this stream. Can be <code>null</code>, if not interested in reading the output
 	 * @param errorStream

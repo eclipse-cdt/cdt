@@ -24,12 +24,12 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
  * This interface represents a namespace definition in C++.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwner, IASTDeclarationListOwner,
-		IASTAttributeOwner {
+public interface ICPPASTNamespaceDefinition
+		extends IASTDeclaration, IASTNameOwner, IASTDeclarationListOwner, IASTAttributeOwner {
 	/**
 	 * {@code OWNED_DECLARATION} is the role served by all the nested declarations.
 	 */
@@ -44,14 +44,14 @@ public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwn
 
 	/**
 	 * Returns the name of the namespace.
-	 * 
+	 *
 	 * @return {@code IASTName}
 	 */
 	public IASTName getName();
 
 	/**
 	 * Sets the name.
-	 * 
+	 *
 	 * @param name the name to be set
 	 */
 	public void setName(IASTName name);
@@ -67,17 +67,17 @@ public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwn
 	 * @since 5.3
 	 */
 	public boolean isInline();
-	
+
 	/**
 	 * A namespace contains an ordered sequence of declarations.
-	 * 
+	 *
 	 * @return an array of declarations contained in the namespace
 	 */
 	public IASTDeclaration[] getDeclarations();
 
 	/**
 	 * Adds a declaration to the namespace.
-	 * 
+	 *
 	 * @param declaration {@code IASTDeclaration}
 	 */
 	@Override
@@ -85,11 +85,11 @@ public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwn
 
 	/**
 	 * Returns the scope object represented by this construct.
-	 * 
+	 *
 	 * @return {@code IScope}
 	 */
 	public IScope getScope();
-	
+
 	/**
 	 * @since 5.1
 	 */

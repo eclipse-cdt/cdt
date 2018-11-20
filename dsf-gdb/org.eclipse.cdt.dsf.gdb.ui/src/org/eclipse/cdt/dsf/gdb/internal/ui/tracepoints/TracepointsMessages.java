@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Dmitry Kozlov (Mentor Graphics) - trace control view enhancements (Bug 390827)
@@ -24,6 +24,7 @@ public final class TracepointsMessages extends NLS {
 	private TracepointsMessages() {
 		// Do not instantiate
 	}
+
 	public static String TraceControlView_buffer_label;
 	public static String TraceControlView_buffer_circular_button_label;
 	public static String TraceControlView_buffer_circular_on_tooltip;
@@ -81,18 +82,18 @@ public final class TracepointsMessages extends NLS {
 	public static String TraceControlView_today;
 	public static String TraceControlView_yesterday;
 	public static String TraceControlView_date_days;
-	public static String TraceControlView_date_hours; 
-	public static String TraceControlView_date_minutes; 
+	public static String TraceControlView_date_hours;
+	public static String TraceControlView_date_minutes;
 	public static String TraceControlView_date_seconds;
 	public static String TraceControlView_date_zero;
 	public static String TraceControlView_date_short_days;
-	public static String TraceControlView_date_short_hours; 
-	public static String TraceControlView_date_short_minutes; 
+	public static String TraceControlView_date_short_hours;
+	public static String TraceControlView_date_short_minutes;
 	public static String TraceControlView_date_short_seconds;
 	public static String TraceControlView_date_short_zero;
 	// Not used
 	public static String TraceControlView_tracing_stopped_at;
-	
+
 	static {
 		NLS.initializeMessages(TracepointsMessages.class.getName(), TracepointsMessages.class);
 	}

@@ -22,7 +22,7 @@ public class Else extends Conditional implements IAutomakeConditional, ICommand 
 
 	private boolean isAutomake;
 	private Rule[] rules;
-	
+
 	public Else(Directive parent) {
 		super(parent);
 	}
@@ -31,7 +31,7 @@ public class Else extends Conditional implements IAutomakeConditional, ICommand 
 	public boolean isAutomake() {
 		return isAutomake;
 	}
-	
+
 	@Override
 	public Rule[] getRules() {
 		if (rules != null)
@@ -46,12 +46,12 @@ public class Else extends Conditional implements IAutomakeConditional, ICommand 
 		else
 			this.rules = rules;
 	}
-	
+
 	@Override
 	public void setAutomake(boolean value) {
 		isAutomake = value;
 	}
-	
+
 	@Override
 	public boolean isElse() {
 		return true;
@@ -61,23 +61,23 @@ public class Else extends Conditional implements IAutomakeConditional, ICommand 
 	public String toString() {
 		return GNUMakefileConstants.CONDITIONAL_ELSE;
 	}
-	
+
 	// ICommand methods so Automake else can be a child of an IRule
 	@Override
 	public Process execute(String shell, String[] envp, File dir) {
 		return null;
 	}
-	
+
 	@Override
 	public boolean shouldBeSilent() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean shouldIgnoreError() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean shouldExecute() {
 		return false;

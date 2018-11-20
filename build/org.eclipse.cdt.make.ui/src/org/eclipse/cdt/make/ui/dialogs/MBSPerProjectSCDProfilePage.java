@@ -41,129 +41,129 @@ import org.eclipse.swt.widgets.Text;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MBSPerProjectSCDProfilePage extends AbstractDiscoveryPage {
-    private static final String providerId = "specsFile";  //$NON-NLS-1$
+	private static final String providerId = "specsFile"; //$NON-NLS-1$
 
-    private Button sipEnabledButton;
-    private Text sipRunCommandText;
-    private boolean isValid = true;
+	private Button sipEnabledButton;
+	private Text sipRunCommandText;
+	private boolean isValid = true;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.ui.dialogs.AbstractCOptionPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.dialogs.AbstractCOptionPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
 	public void createControl(Composite parent) {
-        Composite page = ControlFactory.createComposite(parent, 1);
+		Composite page = ControlFactory.createComposite(parent, 1);
 
-        // Add the profile UI contribution.
-        Group profileGroup = ControlFactory.createGroup(page,
-                MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.profile.group.label"), 3); //$NON-NLS-1$
+		// Add the profile UI contribution.
+		Group profileGroup = ControlFactory.createGroup(page,
+				MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.profile.group.label"), 3); //$NON-NLS-1$
 
-        GridData gd = (GridData) profileGroup.getLayoutData();
-        gd.grabExcessHorizontalSpace = true;
-        gd.horizontalAlignment = GridData.FILL;
-        ((GridLayout) profileGroup.getLayout()).makeColumnsEqualWidth = false;
+		GridData gd = (GridData) profileGroup.getLayoutData();
+		gd.grabExcessHorizontalSpace = true;
+		gd.horizontalAlignment = GridData.FILL;
+		((GridLayout) profileGroup.getLayout()).makeColumnsEqualWidth = false;
 
-        // si provider enabled checkbox
-        sipEnabledButton = ControlFactory.createCheckBox(profileGroup, SI_ENABLE);
-        ((GridData)sipEnabledButton.getLayoutData()).horizontalSpan = 3;
-        ((GridData)sipEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
-        sipEnabledButton.addSelectionListener(new SelectionAdapter() {
-            @Override
+		// si provider enabled checkbox
+		sipEnabledButton = ControlFactory.createCheckBox(profileGroup, SI_ENABLE);
+		((GridData) sipEnabledButton.getLayoutData()).horizontalSpan = 3;
+		((GridData) sipEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
+		sipEnabledButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-            }
-        });
+			}
+		});
 
-        // si command label
-        Label siCommandLabel = ControlFactory.createLabel(profileGroup, SI_COMMAND);
-        ((GridData) siCommandLabel.getLayoutData()).horizontalSpan = 3;
+		// si command label
+		Label siCommandLabel = ControlFactory.createLabel(profileGroup, SI_COMMAND);
+		((GridData) siCommandLabel.getLayoutData()).horizontalSpan = 3;
 
-        // text field
-        sipRunCommandText = ControlFactory.createTextField(profileGroup, SWT.SINGLE | SWT.BORDER);
-        //((GridData) sipRunCommandText.getLayoutData()).horizontalSpan = 2;
-        sipRunCommandText.addModifyListener(new ModifyListener() {
-            @Override
+		// text field
+		sipRunCommandText = ControlFactory.createTextField(profileGroup, SWT.SINGLE | SWT.BORDER);
+		//((GridData) sipRunCommandText.getLayoutData()).horizontalSpan = 2;
+		sipRunCommandText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
-                handleModifyRunCommandText();
-            }
-        });
+				handleModifyRunCommandText();
+			}
+		});
 
-        // si browse button
-        Button siBrowseButton = ControlFactory.createPushButton(profileGroup, SI_BROWSE);
-        ((GridData) siBrowseButton.getLayoutData()).minimumWidth = 120;
-        siBrowseButton.addSelectionListener(new SelectionAdapter() {
+		// si browse button
+		Button siBrowseButton = ControlFactory.createPushButton(profileGroup, SI_BROWSE);
+		((GridData) siBrowseButton.getLayoutData()).minimumWidth = 120;
+		siBrowseButton.addSelectionListener(new SelectionAdapter() {
 
-            @Override
+			@Override
 			public void widgetSelected(SelectionEvent event) {
-                handleSIPBrowseButtonSelected();
-            }
+				handleSIPBrowseButtonSelected();
+			}
 
-            private void handleSIPBrowseButtonSelected() {
-                FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-                dialog.setText(SI_DIALOG);
-                String fileName = sipRunCommandText.getText().trim();
-                int lastSeparatorIndex = fileName.lastIndexOf(File.separator);
-                if (lastSeparatorIndex != -1) {
-                    dialog.setFilterPath(fileName.substring(0, lastSeparatorIndex));
-                }
-                String res = dialog.open();
-                if (res == null) {
-                    return;
-                }
-                sipRunCommandText.setText(res);
-            }
-        });
-        setControl(page);
-        initializeValues();
-    }
+			private void handleSIPBrowseButtonSelected() {
+				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
+				dialog.setText(SI_DIALOG);
+				String fileName = sipRunCommandText.getText().trim();
+				int lastSeparatorIndex = fileName.lastIndexOf(File.separator);
+				if (lastSeparatorIndex != -1) {
+					dialog.setFilterPath(fileName.substring(0, lastSeparatorIndex));
+				}
+				String res = dialog.open();
+				if (res == null) {
+					return;
+				}
+				sipRunCommandText.setText(res);
+			}
+		});
+		setControl(page);
+		initializeValues();
+	}
 
-    private void handleModifyRunCommandText() {
-        String cmd = sipRunCommandText.getText().trim();
-        isValid = (cmd.length() > 0) ? true : false;
-        getContainer().updateContainer();
-    }
+	private void handleModifyRunCommandText() {
+		String cmd = sipRunCommandText.getText().trim();
+		isValid = (cmd.length() > 0) ? true : false;
+		getContainer().updateContainer();
+	}
 
-    private void initializeValues() {
-        sipEnabledButton.setSelection(getContainer().getBuildInfo().isProviderOutputParserEnabled(providerId));
-        sipRunCommandText.setText(getContainer().getBuildInfo().getProviderRunCommand(providerId));
-    }
+	private void initializeValues() {
+		sipEnabledButton.setSelection(getContainer().getBuildInfo().isProviderOutputParserEnabled(providerId));
+		sipRunCommandText.setText(getContainer().getBuildInfo().getProviderRunCommand(providerId));
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#isValid()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#isValid()
+	 */
+	@Override
 	public boolean isValid() {
-        return isValid;
-    }
+		return isValid;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
+	 */
+	@Override
 	public String getErrorMessage() {
-        return (isValid) ? null : SI_ERROR;
-    }
+		return (isValid) ? null : SI_ERROR;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#populateBuildInfo(org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#populateBuildInfo(org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2)
+	 */
+	@Override
 	protected void populateBuildInfo(IScannerConfigBuilderInfo2 buildInfo) {
-        if (buildInfo != null) {
-            buildInfo.setBuildOutputFileActionEnabled(true);
-            buildInfo.setProviderOutputParserEnabled(providerId, sipEnabledButton.getSelection());
-            buildInfo.setProviderRunCommand(providerId, sipRunCommandText.getText().trim());
-        }
-    }
+		if (buildInfo != null) {
+			buildInfo.setBuildOutputFileActionEnabled(true);
+			buildInfo.setProviderOutputParserEnabled(providerId, sipEnabledButton.getSelection());
+			buildInfo.setProviderRunCommand(providerId, sipRunCommandText.getText().trim());
+		}
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#restoreFromBuildinfo(org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#restoreFromBuildinfo(org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2)
+	 */
+	@Override
 	protected void restoreFromBuildinfo(IScannerConfigBuilderInfo2 buildInfo) {
-        if (buildInfo != null) {
-            sipEnabledButton.setSelection(buildInfo.isProviderOutputParserEnabled(providerId));
-            sipRunCommandText.setText(buildInfo.getProviderRunCommand(providerId));
-        }
-    }
+		if (buildInfo != null) {
+			sipEnabledButton.setSelection(buildInfo.isProviderOutputParserEnabled(providerId));
+			sipRunCommandText.setText(buildInfo.getProviderRunCommand(providerId));
+		}
+	}
 
 }

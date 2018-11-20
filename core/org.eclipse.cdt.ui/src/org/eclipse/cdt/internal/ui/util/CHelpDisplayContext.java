@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Intel Corporation - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  **********************************************************************/
@@ -39,42 +39,41 @@ import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 
 /**
- * 
+ *
  * @since 2.1
  */
 public class CHelpDisplayContext implements IContext {
-	
+
 	private IHelpResource[] fHelpResources;
 	private String fText;
-	
+
 	public static void displayHelp(String contextId, ITextEditor editor) throws CoreException {
 		String selected = getSelectedString(editor);
-		IContext context= HelpSystem.getContext(contextId);
+		IContext context = HelpSystem.getContext(contextId);
 		if (context != null) {
 			if (selected != null && selected.length() > 0) {
-				context= new CHelpDisplayContext(context, editor, selected);
+				context = new CHelpDisplayContext(context, editor, selected);
 			}
 			PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
 		}
 	}
-	
-	private static String getSelectedString(ITextEditor editor){
+
+	private static String getSelectedString(ITextEditor editor) {
 		String expression = null;
-		try{
-			ITextSelection selection = (ITextSelection)editor.getSite().getSelectionProvider().getSelection();
+		try {
+			ITextSelection selection = (ITextSelection) editor.getSite().getSelectionProvider().getSelection();
 			IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 			IRegion region = CWordFinder.findWord(document, selection.getOffset());
 			expression = document.get(region.getOffset(), region.getLength());
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 		}
 		return expression;
 	}
 
-	public CHelpDisplayContext(IContext context, final ITextEditor editor , String selected) throws CoreException {
+	public CHelpDisplayContext(IContext context, final ITextEditor editor, String selected) throws CoreException {
 
-		List<IHelpResource> helpResources= new ArrayList<IHelpResource>();
-		
+		List<IHelpResource> helpResources = new ArrayList<IHelpResource>();
+
 		ICHelpInvocationContext invocationContext = new ICHelpInvocationContext() {
 
 			@Override
@@ -88,33 +87,34 @@ public class CHelpDisplayContext implements IContext {
 
 			@Override
 			public ITranslationUnit getTranslationUnit() {
-				IEditorInput editorInput= editor.getEditorInput();
+				IEditorInput editorInput = editor.getEditorInput();
 				return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
-			}	
+			}
 		};
 
 		if (context != null) {
-			IHelpResource[] resources= context.getRelatedTopics();
-			if (resources != null){
+			IHelpResource[] resources = context.getRelatedTopics();
+			if (resources != null) {
 				helpResources.addAll(Arrays.asList(resources));
 			}
 		}
 
-		ICHelpResourceDescriptor providerResources[] = CHelpProviderManager.getDefault().getHelpResources(invocationContext,selected);
-		if(providerResources != null){
-			for(int i = 0; i < providerResources.length; i++){
+		ICHelpResourceDescriptor providerResources[] = CHelpProviderManager.getDefault()
+				.getHelpResources(invocationContext, selected);
+		if (providerResources != null) {
+			for (int i = 0; i < providerResources.length; i++) {
 				helpResources.addAll(Arrays.asList(providerResources[i].getHelpResources()));
 			}
 		}
 
-		fHelpResources= helpResources.toArray(new IHelpResource[helpResources.size()]);
+		fHelpResources = helpResources.toArray(new IHelpResource[helpResources.size()]);
 		if (fText == null || fText.length() == 0) {
 			if (context != null) {
-				fText= context.getText();
+				fText = context.getText();
 			}
 		}
 		if (fText != null && fText.length() == 0) {
-			fText= null; 
+			fText = null;
 		}
 	}
 
@@ -128,4 +128,3 @@ public class CHelpDisplayContext implements IContext {
 		return fText;
 	}
 }
-

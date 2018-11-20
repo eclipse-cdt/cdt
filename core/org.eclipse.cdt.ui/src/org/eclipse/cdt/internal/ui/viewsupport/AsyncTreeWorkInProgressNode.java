@@ -10,22 +10,24 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 public class AsyncTreeWorkInProgressNode {
 
-    private Object fParent;
+	private Object fParent;
 
-    public AsyncTreeWorkInProgressNode(Object parentElement) {
-        fParent= parentElement;
-    }
-    public Object getParent() {
-        return fParent;
-    }
-    @Override
+	public AsyncTreeWorkInProgressNode(Object parentElement) {
+		fParent = parentElement;
+	}
+
+	public Object getParent() {
+		return fParent;
+	}
+
+	@Override
 	public String toString() {
-        return "..."; //$NON-NLS-1$
-    }
+		return "..."; //$NON-NLS-1$
+	}
 }

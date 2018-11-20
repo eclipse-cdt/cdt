@@ -18,10 +18,10 @@ package org.eclipse.cdt.internal.core;
 import java.io.IOException;
 
 public class ByteUtils {
-	
+
 	/**
 	 * Concatenates two bytes to make a short
-	 * 
+	 *
 	 * @param bytes
 	 *            collection of bytes; must provide a minimum of two bytes starting at [offset]
 	 * @param offset
@@ -37,14 +37,13 @@ public class ByteUtils {
 	public static short makeShort(byte[] bytes, int offset, boolean isle) throws IOException {
 		if (bytes.length < offset + 2)
 			throw new IOException();
-		return isle ?
-			(short) ((bytes[offset + 1] << 8) | (bytes[offset + 0] & 0xff)) :
-			(short) ((bytes[offset + 0] << 8) | (bytes[offset + 1] & 0xff));
+		return isle ? (short) ((bytes[offset + 1] << 8) | (bytes[offset + 0] & 0xff))
+				: (short) ((bytes[offset + 0] << 8) | (bytes[offset + 1] & 0xff));
 	}
 
 	/**
 	 * Concatenates four bytes to make an int
-	 * 
+	 *
 	 * @param bytes
 	 *            collection of bytes; must provide a minimum of four bytes starting at [offset]
 	 * @param offset
@@ -60,14 +59,16 @@ public class ByteUtils {
 	public static long makeInt(byte[] bytes, int offset, boolean isle) throws IOException {
 		if (bytes.length < offset + 4)
 			throw new IOException();
-		return isle ?
-			(bytes[offset + 3] << 24) + ((bytes[offset + 2] & 0xff) << 16) + ((bytes[offset + 1] & 0xff) << 8) + (bytes[offset + 0] & 0xff) :
-			(bytes[offset + 0] << 24) + ((bytes[offset + 1] & 0xff) << 16) + ((bytes[offset + 2] & 0xff) << 8) + (bytes[offset + 3] & 0xff);
+		return isle
+				? (bytes[offset + 3] << 24) + ((bytes[offset + 2] & 0xff) << 16) + ((bytes[offset + 1] & 0xff) << 8)
+						+ (bytes[offset + 0] & 0xff)
+				: (bytes[offset + 0] << 24) + ((bytes[offset + 1] & 0xff) << 16) + ((bytes[offset + 2] & 0xff) << 8)
+						+ (bytes[offset + 3] & 0xff);
 	}
 
 	/**
 	 * Concatenates eight bytes to make a long
-	 * 
+	 *
 	 * @param bytes
 	 *            collection of bytes; must provide a minimum of eight bytes starting at [offset]
 	 * @param offset
@@ -86,12 +87,12 @@ public class ByteUtils {
 		if (isle)
 			for (int i = 7; i >= 0; i--) {
 				shift = i * 8;
-				result += ( ((long)bytes[offset + i]) << shift) & (0xffL << shift);
+				result += (((long) bytes[offset + i]) << shift) & (0xffL << shift);
 			}
 		else
 			for (int i = 0; i <= 7; i++) {
 				shift = (7 - i) * 8;
-				result += ( ((long)bytes[offset + i]) << shift) & (0xffL << shift);
+				result += (((long) bytes[offset + i]) << shift) & (0xffL << shift);
 			}
 		return result;
 	}

@@ -70,7 +70,7 @@ import org.junit.Assert;
  */
 public class ResourceHelper {
 	private final static IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
-	private static final int MAX_RETRY= 5;
+	private static final int MAX_RETRY = 5;
 
 	private final static Set<String> externalFilesCreated = new HashSet<String>();
 	private final static Set<IResource> resourcesCreated = new HashSet<IResource>();
@@ -84,7 +84,8 @@ public class ResourceHelper {
 	 * @throws CoreException - if the project can't be created.
 	 * @throws OperationCanceledException...
 	 */
-	public static IProject createCDTProject(String projectName, String pathInWorkspace) throws OperationCanceledException, CoreException {
+	public static IProject createCDTProject(String projectName, String pathInWorkspace)
+			throws OperationCanceledException, CoreException {
 		return createCDTProject(projectName, pathInWorkspace, null);
 	}
 
@@ -98,7 +99,8 @@ public class ResourceHelper {
 	 * @throws CoreException - if the project can't be created.
 	 * @throws OperationCanceledException...
 	 */
-	public static IProject createCDTProject(String projectName, String pathInWorkspace, String[] configurationIds) throws OperationCanceledException, CoreException {
+	public static IProject createCDTProject(String projectName, String pathInWorkspace, String[] configurationIds)
+			throws OperationCanceledException, CoreException {
 		CCorePlugin cdtCorePlugin = CCorePlugin.getDefault();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
@@ -108,7 +110,7 @@ public class ResourceHelper {
 		resourcesCreated.add(project);
 
 		IProjectDescription prjDescription = workspace.newProjectDescription(projectName);
-		if(pathInWorkspace != null) {
+		if (pathInWorkspace != null) {
 			IPath absoluteLocation = root.getLocation().append(pathInWorkspace);
 			prjDescription.setLocation(absoluteLocation);
 		}
@@ -120,7 +122,8 @@ public class ResourceHelper {
 			project.open(NULL_MONITOR);
 
 			ICProjectDescription icPrjDescription = prjDescManager.createProjectDescription(project, false);
-			ICConfigurationDescription baseConfiguration = cdtCorePlugin.getPreferenceConfiguration(TestCfgDataProvider.PROVIDER_ID);
+			ICConfigurationDescription baseConfiguration = cdtCorePlugin
+					.getPreferenceConfiguration(TestCfgDataProvider.PROVIDER_ID);
 
 			for (String cfgId : configurationIds) {
 				icPrjDescription.createConfiguration(cfgId, cfgId + " Name", baseConfiguration);
@@ -146,7 +149,8 @@ public class ResourceHelper {
 	 * @throws CoreException - if the project can't be created.
 	 * @throws OperationCanceledException...
 	 */
-	public static IProject createCDTProject(String projectName, URI locationURI) throws OperationCanceledException, CoreException {
+	public static IProject createCDTProject(String projectName, URI locationURI)
+			throws OperationCanceledException, CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 
@@ -188,7 +192,7 @@ public class ResourceHelper {
 	 */
 	public static IProject createCDTProjectWithConfig(String projectName) throws Exception {
 		IProject project = createCDTProject(projectName, null,
-				new String[] {"org.eclipse.cdt.core.tests.configuration"});
+				new String[] { "org.eclipse.cdt.core.tests.configuration" });
 		resourcesCreated.add(project);
 		return project;
 	}
@@ -201,8 +205,8 @@ public class ResourceHelper {
 	 * @throws CoreException  if project could not be created
 	 */
 	public static IProject createProject(String projectName) throws CoreException {
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IProject project= root.getProject(projectName);
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(projectName);
 		if (!project.exists()) {
 			project.create(NULL_MONITOR);
 		} else {
@@ -223,8 +227,8 @@ public class ResourceHelper {
 	 * @throws CoreException
 	 */
 	public static void deleteProject(String projectName) throws CoreException {
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IProject project= root.getProject(projectName);
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(projectName);
 		if (project.exists())
 			delete(project);
 	}
@@ -247,10 +251,10 @@ public class ResourceHelper {
 	 * @throws CoreException
 	 */
 	public static void delete(final IProject project, boolean deleteContent) throws CoreException {
-		for (int i= 0; i < MAX_RETRY; i++) {
+		for (int i = 0; i < MAX_RETRY; i++) {
 			try {
 				project.delete(deleteContent, true, NULL_MONITOR);
-				i= MAX_RETRY;
+				i = MAX_RETRY;
 			} catch (CoreException x) {
 				if (i == MAX_RETRY - 1) {
 					CTestPlugin.getDefault().getLog().log(x.getStatus());
@@ -273,7 +277,7 @@ public class ResourceHelper {
 	 */
 	public static IFile createFile(IFile file, String contents) throws CoreException {
 		if (contents == null) {
-			contents= "";
+			contents = "";
 		}
 
 		InputStream inputStream = new ByteArrayInputStream(contents.getBytes());
@@ -341,10 +345,10 @@ public class ResourceHelper {
 		for (String seg : p.segments()) {
 			folder = folder.getFolder(new Path(seg));
 			if (!folder.exists())
-				((IFolder)folder).create(true, true, NULL_MONITOR);
+				((IFolder) folder).create(true, true, NULL_MONITOR);
 		}
 		resourcesCreated.add(folder);
-		return (IFolder)folder;
+		return (IFolder) folder;
 	}
 
 	/**
@@ -426,7 +430,7 @@ public class ResourceHelper {
 	 * @throws CoreException if something goes wrong.
 	 */
 	public static IFile createEfsFile(IProject project, String fileLink, URI realFile) throws CoreException {
-		IFile file= project.getFile(fileLink);
+		IFile file = project.getFile(fileLink);
 		file.createLink(realFile, IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		resourcesCreated.add(file);
 		return file;
@@ -442,8 +446,9 @@ public class ResourceHelper {
 	 * @throws CoreException if something goes wrong.
 	 * @throws URISyntaxException if wrong URI syntax
 	 */
-	public static IFile createEfsFile(IProject project, String fileLink, String realFile) throws CoreException, URISyntaxException {
-		return createEfsFile(project,fileLink,new URI(realFile));
+	public static IFile createEfsFile(IProject project, String fileLink, String realFile)
+			throws CoreException, URISyntaxException {
+		return createEfsFile(project, fileLink, new URI(realFile));
 	}
 
 	/**
@@ -457,7 +462,8 @@ public class ResourceHelper {
 	 * @return file handle.
 	 * @throws CoreException if something goes wrong.
 	 */
-	public static IFolder createLinkedFolder(IProject project, String folderLink, IPath realFolder) throws CoreException {
+	public static IFolder createLinkedFolder(IProject project, String folderLink, IPath realFolder)
+			throws CoreException {
 		IFolder folder = project.getFolder(folderLink);
 		folder.createLink(realFolder, IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
 		Assert.assertTrue(folder.exists());
@@ -476,7 +482,8 @@ public class ResourceHelper {
 	 * @return file handle.
 	 * @throws CoreException if something goes wrong.
 	 */
-	public static IFolder createLinkedFolder(IProject project, String folderLink, String realFolder) throws CoreException {
+	public static IFolder createLinkedFolder(IProject project, String folderLink, String realFolder)
+			throws CoreException {
 		return createLinkedFolder(project, folderLink, new Path(realFolder));
 	}
 
@@ -490,10 +497,10 @@ public class ResourceHelper {
 	 * @throws CoreException if something goes wrong.
 	 */
 	public static IFolder createEfsFolder(IProject project, String folderLink, URI realFolder) throws CoreException {
-		IFolder folder= project.getFolder(folderLink);
+		IFolder folder = project.getFolder(folderLink);
 		if (folder.exists()) {
-			Assert.assertEquals("Folder with the same name but different location already exists",
-					realFolder, folder.getLocationURI());
+			Assert.assertEquals("Folder with the same name but different location already exists", realFolder,
+					folder.getLocationURI());
 			return folder;
 		}
 
@@ -512,8 +519,9 @@ public class ResourceHelper {
 	 * @throws CoreException if something goes wrong.
 	 * @throws URISyntaxException if wrong URI syntax
 	 */
-	public static IFolder createEfsFolder(IProject project, String folderLink, String realFolder) throws CoreException, URISyntaxException {
-		return createEfsFolder(project,folderLink,new URI(realFolder));
+	public static IFolder createEfsFolder(IProject project, String folderLink, String realFolder)
+			throws CoreException, URISyntaxException {
+		return createEfsFolder(project, folderLink, new URI(realFolder));
 	}
 
 	/**
@@ -525,7 +533,7 @@ public class ResourceHelper {
 	 * @return {@code true} if symbolic links are suppoted, {@code false} otherwise.
 	 */
 	public static boolean isSymbolicLinkSupported() {
-		return ! Platform.getOS().equals(Platform.OS_WIN32);
+		return !Platform.getOS().equals(Platform.OS_WIN32);
 	}
 
 	/**
@@ -583,7 +591,7 @@ public class ResourceHelper {
 			throw new UnsupportedOperationException("Windows links .lnk are not supported.");
 		}
 
-		String command[] = { "ln", "-s", realPath.toOSString(), linkPath.toOSString()};
+		String command[] = { "ln", "-s", realPath.toOSString(), linkPath.toOSString() };
 		Process process = Runtime.getRuntime().exec(command);
 
 		// Wait for up to 2.5s...
@@ -597,7 +605,10 @@ public class ResourceHelper {
 				Thread.interrupted();
 			}
 			// Wait for a 500ms before checking again.
-			try { Thread.sleep(500); } catch (InterruptedException e) {/*don't care*/}
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				/*don't care*/}
 		}
 		Assert.assertTrue("Symbolic link not created, command=[" + command + "]", linkPath.toFile().exists());
 	}
@@ -686,7 +697,7 @@ public class ResourceHelper {
 	 * This method removes *all* Workspace IResources and any external
 	 * files / folders created with the #createWorkspaceFile #createWorkspaceFolder
 	 * methods in this class
-	 * 
+	 *
 	 * @deprecated Use {@link #cleanUp(String)} instead so test name can be printed in diagnostics
 	 */
 	public static void cleanUp() throws CoreException, IOException {
@@ -704,7 +715,6 @@ public class ResourceHelper {
 		root.refreshLocal(IResource.DEPTH_INFINITE, NULL_MONITOR);
 
 		joinIndexerBeforeCleanup(testName);
-
 
 		// Delete all external files & folders created using ResourceHelper
 		for (String loc : externalFilesCreated) {
@@ -764,8 +774,8 @@ public class ResourceHelper {
 	private static final void deleteRecursive(File f) throws IllegalArgumentException {
 		// Ensure that the file being deleted is a child of the workspace
 		// root to prevent anything nasty happening
-		if (!f.getAbsolutePath().startsWith(
-				ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile().getAbsolutePath())) {
+		if (!f.getAbsolutePath()
+				.startsWith(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile().getAbsolutePath())) {
 			throw new IllegalArgumentException("File must exist within the workspace!");
 		}
 

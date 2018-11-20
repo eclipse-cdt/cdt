@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
 
-
 /**
  * Any wizard intending to use template (@see org.eclipse.cdt.core.templateenginee.Template) based pages
  * can extend this wizard and use it. Alternatively, a wizard intending to show a choice of templates
@@ -51,7 +50,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 
 	@Override
 	public final void addPage(IWizardPage page) {
-        page.setWizard(this);
+		page.setWizard(this);
 	}
 
 	@Override
@@ -90,10 +89,11 @@ public abstract class TemplateDrivenWizard extends Wizard {
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		if (pageIndex > pagesBeforeTemplatePages.size() + templatePagesOrderVector.size()) {//current is some page after template pages other than the first post-template page
 			pageIndex--;
-			return pagesAfterTemplatePages.get(pageIndex - pagesBeforeTemplatePages.size() - templatePagesOrderVector.size());
+			return pagesAfterTemplatePages
+					.get(pageIndex - pagesBeforeTemplatePages.size() - templatePagesOrderVector.size());
 		} else if (pageIndex > pagesBeforeTemplatePages.size()) {//current is some template page other than the first
 			pageIndex--;
-	        return templatePages.get(templatePagesOrderVector.get(pageIndex - pagesBeforeTemplatePages.size()));
+			return templatePages.get(templatePagesOrderVector.get(pageIndex - pagesBeforeTemplatePages.size()));
 		} else if (pageIndex > 0) {
 			pageIndex--;
 			return pagesBeforeTemplatePages.get(pageIndex);
@@ -107,7 +107,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 			pageIndex++;
 			return pagesBeforeTemplatePages.get(pageIndex);
 		} else if (pageIndex < pagesBeforeTemplatePages.size() + templatePagesOrderVector.size() - 1) {
-			if(pageIndex == pagesBeforeTemplatePages.size() - 1) {//current is final page before template pages
+			if (pageIndex == pagesBeforeTemplatePages.size() - 1) {//current is final page before template pages
 				Template template = getTemplate();
 				if (this.template != null && !this.template.equals(template)) {//template changed
 					this.template = template;
@@ -115,17 +115,20 @@ public abstract class TemplateDrivenWizard extends Wizard {
 					templatePages = template.getUIPages();
 					templatePagesOrderVector = template.getPagesOrderVector();
 				}
-			}//else current is some template page other than the final one
+			} //else current is some template page other than the final one
 			pageIndex++;
-			IWizardPage nextPage = templatePages.get(templatePagesOrderVector.get(pageIndex - pagesBeforeTemplatePages.size()));
-	        nextPage.setWizard(this);
-	        if (nextPage.getControl() == null) {
-	        	nextPage.createControl(pageContainer);
-	        }
-	        return nextPage;
-		} else if (pageIndex < pagesBeforeTemplatePages.size() + templatePagesOrderVector.size() + pagesAfterTemplatePages.size() - 1) {//current is final template page or a page after the final template page
+			IWizardPage nextPage = templatePages
+					.get(templatePagesOrderVector.get(pageIndex - pagesBeforeTemplatePages.size()));
+			nextPage.setWizard(this);
+			if (nextPage.getControl() == null) {
+				nextPage.createControl(pageContainer);
+			}
+			return nextPage;
+		} else if (pageIndex < pagesBeforeTemplatePages.size() + templatePagesOrderVector.size()
+				+ pagesAfterTemplatePages.size() - 1) {//current is final template page or a page after the final template page
 			pageIndex++;
-			return pagesAfterTemplatePages.get(pageIndex - pagesBeforeTemplatePages.size() - templatePagesOrderVector.size());
+			return pagesAfterTemplatePages
+					.get(pageIndex - pagesBeforeTemplatePages.size() - templatePagesOrderVector.size());
 		}
 		return null;
 	}
@@ -134,31 +137,31 @@ public abstract class TemplateDrivenWizard extends Wizard {
 	public final boolean canFinish() {
 		for (IWizardPage wizardPage : pagesBeforeTemplatePages) {
 			IWizardPage page = wizardPage;
-            if (!page.isPageComplete()) {
-                return false;
-            }
-        }
-        if (templatePages == null) {
-        	return false;
-        }
-        for (Object element : templatePages.values()) {
-        	IWizardPage page = (IWizardPage) element;
-        	if (!page.isPageComplete()) {
-                return false;
-            }
-        }
-        for (Object element : pagesAfterTemplatePages) {
+			if (!page.isPageComplete()) {
+				return false;
+			}
+		}
+		if (templatePages == null) {
+			return false;
+		}
+		for (Object element : templatePages.values()) {
 			IWizardPage page = (IWizardPage) element;
-            if (!page.isPageComplete()) {
-                return false;
-            }
-        }
-        return true;
+			if (!page.isPageComplete()) {
+				return false;
+			}
+		}
+		for (Object element : pagesAfterTemplatePages) {
+			IWizardPage page = (IWizardPage) element;
+			if (!page.isPageComplete()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
 	public boolean performFinish() {
-		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
 			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				finishPage(monitor);
@@ -169,20 +172,21 @@ public abstract class TemplateDrivenWizard extends Wizard {
 			getContainer().run(true, false, op);
 		} catch (InvocationTargetException e) {
 			return false;
-		} catch  (InterruptedException e) {
+		} catch (InterruptedException e) {
 			return false;
 		}
 		return true;
 	}
 
 	private boolean finishPage(IProgressMonitor monitor) {
-	    IStatus[] statuses = template.executeTemplateProcesses(monitor, false);
-	    if (statuses.length == 1 && statuses[0].getException() instanceof ProcessFailureException) {
-	    	TemplateEngineUIUtil.showError(statuses[0].getMessage(), statuses[0].getException());
-		    return false;
-	    }
+		IStatus[] statuses = template.executeTemplateProcesses(monitor, false);
+		if (statuses.length == 1 && statuses[0].getException() instanceof ProcessFailureException) {
+			TemplateEngineUIUtil.showError(statuses[0].getMessage(), statuses[0].getException());
+			return false;
+		}
 		String msg = Messages.getString("TemplateDrivenWizard.0"); //$NON-NLS-1$
-		TemplateEngineUIUtil.showStatusDialog(msg, new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, statuses, msg, null));
+		TemplateEngineUIUtil.showStatusDialog(msg,
+				new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, statuses, msg, null));
 		return true;
 	}
 

@@ -15,9 +15,7 @@ package org.eclipse.cdt.core.dom.upc.ast;
 
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 
-public interface IUPCASTEnumerationSpecifier extends IUPCASTDeclSpecifier,
-		ICASTEnumerationSpecifier {
-
+public interface IUPCASTEnumerationSpecifier extends IUPCASTDeclSpecifier, ICASTEnumerationSpecifier {
 
 	@Override
 	public IUPCASTEnumerationSpecifier copy();

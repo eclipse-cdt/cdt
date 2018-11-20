@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.core.runtime.CoreException;
@@ -31,19 +31,19 @@ public class TypeInfoSearchElement extends CSearchElement {
 
 	public TypeInfoSearchElement(IIndex index, IIndexName name, IIndexBinding binding) throws CoreException {
 		super(name.getFile().getLocation());
-		this.typeInfo= IndexTypeInfo.create(index, binding);
+		this.typeInfo = IndexTypeInfo.create(index, binding);
 	}
 
 	public TypeInfoSearchElement(ASTTypeInfo typeInfo) {
 		super(typeInfo.getIFL());
-		this.typeInfo= typeInfo;
+		this.typeInfo = typeInfo;
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() + typeInfo.hashCode()*31;
+		return super.hashCode() + typeInfo.hashCode() * 31;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -51,7 +51,7 @@ public class TypeInfoSearchElement extends CSearchElement {
 		}
 		if (!(obj instanceof TypeInfoSearchElement))
 			return false;
-		TypeInfoSearchElement other= (TypeInfoSearchElement)obj;
+		TypeInfoSearchElement other = (TypeInfoSearchElement) obj;
 		return super.equals(other) && typeInfo.equals(other.typeInfo);
 	}
 

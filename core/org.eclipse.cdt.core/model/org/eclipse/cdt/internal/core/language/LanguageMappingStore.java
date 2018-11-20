@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 	   IBM Corporation - Initial API and implementation
  *     James Blackburn (Broadcom Corp.)
@@ -170,7 +170,8 @@ public class LanguageMappingStore {
 		CCorePlugin.getDefault().setProjectDescription(project, descriptor);
 	}
 
-	private void addProjectContentTypeMappings(Map<String, Map<String, String>> contentTypeMappings, ICStorageElement rootElement) {
+	private void addProjectContentTypeMappings(Map<String, Map<String, String>> contentTypeMappings,
+			ICStorageElement rootElement) {
 		Iterator<Entry<String, Map<String, String>>> entries = contentTypeMappings.entrySet().iterator();
 		while (entries.hasNext()) {
 			Entry<String, Map<String, String>> entry = entries.next();
@@ -254,8 +255,8 @@ public class LanguageMappingStore {
 		}
 	}
 
-	private void addMappings(Map<String, String> mappings, Element rootElement, String category,
-			String keyName, String valueName) {
+	private void addMappings(Map<String, String> mappings, Element rootElement, String category, String keyName,
+			String valueName) {
 		Document document = rootElement.getOwnerDocument();
 		Iterator<Entry<String, String>> entries = mappings.entrySet().iterator();
 		while (entries.hasNext()) {
@@ -279,7 +280,7 @@ public class LanguageMappingStore {
 				for (Entry<String, String> configurationEntry : entry.getValue().entrySet()) {
 					String configuration = configurationEntry.getKey();
 					String language = configurationEntry.getValue();
-	
+
 					mapping.setAttribute(ATTRIBUTE_PATH, path);
 					mapping.setAttribute(ATTRIBUTE_CONFIGURATION, configuration);
 					mapping.setAttribute(ATTRIBUTE_LANGUAGE, language);

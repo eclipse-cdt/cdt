@@ -112,7 +112,7 @@ public class CPPTemplateTemplateParameterSpecialization extends CPPTemplateParam
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPUsingDeclaration[] getUsingDeclarations() {
 		return ICPPUsingDeclaration.EMPTY_USING_DECL_ARRAY;
@@ -167,12 +167,12 @@ public class CPPTemplateTemplateParameterSpecialization extends CPPTemplateParam
 
 	@Override
 	public Object clone() {
-        Object o = null;
-   		try {
-            o = super.clone();
-        } catch (CloneNotSupportedException e) {
-            //not going to happen
-        }
-        return o;
-    }
+		Object o = null;
+		try {
+			o = super.clone();
+		} catch (CloneNotSupportedException e) {
+			//not going to happen
+		}
+		return o;
+	}
 }

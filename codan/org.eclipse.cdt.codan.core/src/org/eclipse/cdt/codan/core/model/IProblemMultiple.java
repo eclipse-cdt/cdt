@@ -16,12 +16,12 @@ package org.eclipse.cdt.codan.core.model;
 /**
  * Additional interface to the problem kind to quiry either it supports multiple
  * instances or not
- * 
+ *
  * @since 2.0
  */
 public interface IProblemMultiple {
 	/**
-	 * 
+	 *
 	 * @return true if problem can be replicated by the user, i.e. multiple is
 	 *         true in the extension
 	 */

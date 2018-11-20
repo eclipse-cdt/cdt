@@ -32,23 +32,25 @@ import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
 import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
 
 public class SourceFolderSelectionDialog extends ElementTreeSelectionDialog {
-    
-    private static final Class<?>[] VALIDATOR_CLASSES = new Class<?>[] { ICContainer.class, ICProject.class };
-    private static final TypedElementSelectionValidator fValidator = new TypedElementSelectionValidator(VALIDATOR_CLASSES, false);
-    
-    private static final Class<?>[] FILTER_CLASSES = new Class<?>[] { ICModel.class, ICContainer.class, ICProject.class };
-    private static final ViewerFilter fFilter = new TypedViewerFilter(FILTER_CLASSES);
-    
-    private static final ViewerSorter fSorter = new CElementSorter();
-    
-    public SourceFolderSelectionDialog(Shell parent) {
-        super(parent, createLabelProvider(), createContentProvider());
-        setValidator(fValidator);
-        setComparator(fSorter);
-        addFilter(fFilter);
-        setTitle(NewWizardMessages.SourceFolderSelectionDialog_title); 
-        setMessage(NewWizardMessages.SourceFolderSelectionDialog_description); 
-    }
+
+	private static final Class<?>[] VALIDATOR_CLASSES = new Class<?>[] { ICContainer.class, ICProject.class };
+	private static final TypedElementSelectionValidator fValidator = new TypedElementSelectionValidator(
+			VALIDATOR_CLASSES, false);
+
+	private static final Class<?>[] FILTER_CLASSES = new Class<?>[] { ICModel.class, ICContainer.class,
+			ICProject.class };
+	private static final ViewerFilter fFilter = new TypedViewerFilter(FILTER_CLASSES);
+
+	private static final ViewerSorter fSorter = new CElementSorter();
+
+	public SourceFolderSelectionDialog(Shell parent) {
+		super(parent, createLabelProvider(), createContentProvider());
+		setValidator(fValidator);
+		setComparator(fSorter);
+		addFilter(fFilter);
+		setTitle(NewWizardMessages.SourceFolderSelectionDialog_title);
+		setMessage(NewWizardMessages.SourceFolderSelectionDialog_description);
+	}
 
 	private static ITreeContentProvider createContentProvider() {
 		return new CElementContentProvider();

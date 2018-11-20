@@ -16,8 +16,8 @@
 package org.eclipse.cdt.debug.application;
 
 /**
- * This class provides information required to start 
- * debugging an executable. 
+ * This class provides information required to start
+ * debugging an executable.
  */
 public class NewExecutableInfo {
 	private String fHostPath;
@@ -32,23 +32,23 @@ public class NewExecutableInfo {
 		fBuildLog = buildLog;
 		fArguments = args;
 	}
-	
+
 	/**
 	 * Returns the path of the executable on the host
 	 */
 	public String getHostPath() {
 		return fHostPath;
 	}
-	
+
 	/**
 	 * Sets the path of the executable on the host
 	 */
 	public void setHostPath(String path) {
 		fHostPath = path;
 	}
-	
+
 	/**
-	 * For remote sessions returns the path of the executable 
+	 * For remote sessions returns the path of the executable
 	 * on the target. Otherwise returns null.
 	 */
 	public String getTargetPath() {
@@ -61,32 +61,32 @@ public class NewExecutableInfo {
 	public void setTargetPath(String path) {
 		fTargetPath = path;
 	}
-	
+
 	/**
 	 * Get the build log path.
-	 * 
+	 *
 	 * @return the build log path or null
 	 */
 	public String getBuildLog() {
 		return fBuildLog;
 	}
-	
+
 	/**
 	 * Sets the build log path.
-	 * 
+	 *
 	 * @param path
 	 */
 	public void setBuildLog(String path) {
 		fBuildLog = path;
 	}
-	
+
 	/**
 	 * Returns the arguments to pass to the executable, or null
 	 */
 	public String getArguments() {
 		return fArguments;
-	}	
-	
+	}
+
 	/**
 	 * Sets the arguments to pass to the executable
 	 */

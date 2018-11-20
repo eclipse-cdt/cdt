@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
-
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
@@ -51,26 +50,24 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
-
 /**
  * C Project wizard that creates a new project resource in
  * a location of the user's choice.
  */
 public abstract class NewCProjectWizard extends BasicNewResourceWizard implements IExecutableExtension {
 
-	private static final String OP_ERROR= "CProjectWizard.op_error"; //$NON-NLS-1$
-	private static final String OP_DESC= "CProjectWizard.op_description"; //$NON-NLS-1$
+	private static final String OP_ERROR = "CProjectWizard.op_error"; //$NON-NLS-1$
+	private static final String OP_DESC = "CProjectWizard.op_description"; //$NON-NLS-1$
 
-	private static final String PREFIX= "CProjectWizard"; //$NON-NLS-1$
-	private static final String WZ_TITLE= "CProjectWizard.title"; //$NON-NLS-1$
-	private static final String WZ_DESC= "CProjectWizard.description"; //$NON-NLS-1$
+	private static final String PREFIX = "CProjectWizard"; //$NON-NLS-1$
+	private static final String WZ_TITLE = "CProjectWizard.title"; //$NON-NLS-1$
+	private static final String WZ_DESC = "CProjectWizard.description"; //$NON-NLS-1$
 
 	private static final String WINDOW_TITLE = "CProjectWizard.windowTitle"; //$NON-NLS-1$
 
-
 	private String wz_title;
 	private String wz_desc;
-//	private String op_error;
+	//	private String op_error;
 
 	protected IConfigurationElement fConfigElement;
 	protected NewCProjectWizardPage fMainPage;
@@ -78,7 +75,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 
 	public NewCProjectWizard() {
 		this(CUIPlugin.getResourceString(WZ_TITLE), CUIPlugin.getResourceString(WZ_DESC),
-			CUIPlugin.getResourceString(OP_ERROR));
+				CUIPlugin.getResourceString(OP_ERROR));
 	}
 
 	public NewCProjectWizard(String title, String description) {
@@ -91,7 +88,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 		setNeedsProgressMonitor(true);
 		wz_title = title;
 		wz_desc = description;
-//		op_error = error;
+		//		op_error = error;
 	}
 
 	/* (non-Javadoc)
@@ -99,7 +96,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	 */
 	@Override
 	public void addPages() {
-		fMainPage= new NewCProjectWizardPage(CUIPlugin.getResourceString(PREFIX));
+		fMainPage = new NewCProjectWizardPage(CUIPlugin.getResourceString(PREFIX));
 		fMainPage.setTitle(wz_title);
 		fMainPage.setDescription(wz_desc);
 		addPage(fMainPage);
@@ -169,7 +166,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 		IResource resource = getSelectedResource();
 		selectAndReveal(resource);
 		if (resource != null && resource.getType() == IResource.FILE) {
-			IFile file = (IFile)resource;
+			IFile file = (IFile) resource;
 			// Open editor on new file.
 			IWorkbenchWindow dw = getWorkbench().getActiveWorkbenchWindow();
 			if (dw != null) {
@@ -178,8 +175,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 					if (page != null)
 						IDE.openEditor(page, file, true);
 				} catch (PartInitException e) {
-					MessageDialog.openError(dw.getShell(),
-						CUIPlugin.getResourceString(OP_ERROR), e.getMessage());
+					MessageDialog.openError(dw.getShell(), CUIPlugin.getResourceString(OP_ERROR), e.getMessage());
 				}
 			}
 		}
@@ -194,7 +190,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	 */
 	@Override
 	public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) {
-		fConfigElement= cfig;
+		fConfigElement = cfig;
 	}
 
 	/*
@@ -223,27 +219,27 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 				getShell().getDisplay().syncExec(new Runnable() {
 					@Override
 					public void run() {
-						IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				final IProgressMonitor fMonitor;
-				if (monitor == null) {
-					fMonitor= new NullProgressMonitor();
-				} else {
-					fMonitor = monitor;
-				}
-				fMonitor.beginTask(CUIPlugin.getResourceString(OP_DESC), 3);
-						doRunPrologue(new SubProgressMonitor(fMonitor, 1));
-						try {
-							doRun(new SubProgressMonitor(fMonitor, 1));
-						}
-						catch (CoreException e) {
-							except[0] = e;
-						}
-						doRunEpilogue(new SubProgressMonitor(fMonitor, 1));
+						IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+							@Override
+							public void run(IProgressMonitor monitor)
+									throws InvocationTargetException, InterruptedException {
+								final IProgressMonitor fMonitor;
+								if (monitor == null) {
+									fMonitor = new NullProgressMonitor();
+								} else {
+									fMonitor = monitor;
+								}
+								fMonitor.beginTask(CUIPlugin.getResourceString(OP_DESC), 3);
+								doRunPrologue(new SubProgressMonitor(fMonitor, 1));
+								try {
+									doRun(new SubProgressMonitor(fMonitor, 1));
+								} catch (CoreException e) {
+									except[0] = e;
+								}
+								doRunEpilogue(new SubProgressMonitor(fMonitor, 1));
 								fMonitor.done();
-					}
-				});
+							}
+						});
 						try {
 							getContainer().run(false, true, op);
 						} catch (InvocationTargetException e) {
@@ -255,14 +251,14 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 				});
 				if (except[0] != null) {
 					if (except[0] instanceof InvocationTargetException) {
-						throw (InvocationTargetException)except[0];
+						throw (InvocationTargetException) except[0];
 					}
 					if (except[0] instanceof InterruptedException) {
-						throw (InterruptedException)except[0];
+						throw (InterruptedException) except[0];
 					}
 					throw new InvocationTargetException(except[0]);
 				}
-	}
+			}
 		});
 	}
 
@@ -270,15 +266,15 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	 * Utility method: call a runnable in a WorkbenchModifyDelegatingOperation
 	 */
 	protected boolean invokeRunnable(IRunnableWithProgress runnable) {
-		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(runnable);
+		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
 		try {
 			getContainer().run(true, true, op);
 		} catch (InvocationTargetException e) {
-			Shell shell= getShell();
-			String title= CUIPlugin.getResourceString(OP_ERROR + ".title"); //$NON-NLS-1$
-			String message= CUIPlugin.getResourceString(OP_ERROR + ".message"); //$NON-NLS-1$
+			Shell shell = getShell();
+			String title = CUIPlugin.getResourceString(OP_ERROR + ".title"); //$NON-NLS-1$
+			String message = CUIPlugin.getResourceString(OP_ERROR + ".message"); //$NON-NLS-1$
 
-			Throwable th= e.getTargetException();
+			Throwable th = e.getTargetException();
 			CUIPlugin.errorDialog(shell, title, message, th, false);
 			try {
 				getProjectHandle().delete(false, false, null);
@@ -286,7 +282,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 			} catch (UnsupportedOperationException ignore) {
 			}
 			return false;
-		} catch  (InterruptedException e) {
+		} catch (InterruptedException e) {
 			return false;
 		}
 		return true;
@@ -334,14 +330,15 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 		IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 		description.setLocation(newPath);
 
-		if(getBuildSystemId() != null)
-			newProject = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, getBuildSystemId(), monitor);
+		if (getBuildSystemId() != null)
+			newProject = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, getBuildSystemId(),
+					monitor);
 		else
-			newProject = CCorePlugin.getDefault().createCProject(description, newProjectHandle, monitor, getProjectID());
+			newProject = CCorePlugin.getDefault().createCProject(description, newProjectHandle, monitor,
+					getProjectID());
 
 		return newProject;
 	}
-
 
 	/**
 	 * Method getID.
@@ -349,7 +346,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	 */
 	public abstract String getProjectID();
 
-	public String getBuildSystemId(){
+	public String getBuildSystemId() {
 		return null;
 	}
 

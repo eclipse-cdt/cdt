@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,7 @@ package org.eclipse.cdt.testsrunner.model;
 
 /**
  * Provides an access to the tests model.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -23,19 +23,19 @@ public interface ITestModelAccessor {
 
 	/**
 	 * Checks whether the specified testing item (case or suite) is running now.
-	 * 
+	 *
 	 * @param item the interested item
 	 * @return whether the item is running now
 	 */
 	public boolean isCurrentlyRunning(ITestItem item);
-	
+
 	/**
 	 * Provides access to the root test suite.
 	 *
 	 * @return root test suite
 	 */
 	public ITestSuite getRootSuite();
-	
+
 	/**
 	 * Adds the given listener to this registered listeners collection.
 	 * Has no effect if an identical listener is already registered.
@@ -51,5 +51,5 @@ public interface ITestModelAccessor {
 	 * @param listener the listener to remove
 	 */
 	public void removeChangesListener(ITestingSessionListener listener);
-	
+
 }

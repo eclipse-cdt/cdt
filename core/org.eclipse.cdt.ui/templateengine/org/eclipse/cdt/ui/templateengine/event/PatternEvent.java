@@ -16,13 +16,13 @@ package org.eclipse.cdt.ui.templateengine.event;
 import java.util.EventObject;
 
 /**
- * 
+ *
  * PatternEvent class instances are created, when there is an unexpected input
  * in the InputUIElement. Which results in a mismatch to the pattern of input
  * data expected. This has to be updated in the UIPage. To do this,
  * PatternEvent is fired. For which, the UIPage will be the registered listener.
  * Here UIPage stands for WizardPage.
- * 
+ *
  * @since 4.0
  */
 
@@ -43,7 +43,7 @@ public class PatternEvent extends EventObject {
 	/**
 	 * The PatternEvent gets the Object source of this event, the same is passed
 	 * to the EventObject.
-	 * 
+	 *
 	 * @param source
 	 */
 	private PatternEvent(Object source) {
@@ -54,7 +54,7 @@ public class PatternEvent extends EventObject {
 	 * Overloaded constructor, the Object source of this event and the String
 	 * message is paramete. Object source is passed as parameter to EventObject,
 	 * the event description is initialized to eventMessage.
-	 * 
+	 *
 	 * @param source
 	 * @param eventMessage
 	 */
@@ -66,7 +66,7 @@ public class PatternEvent extends EventObject {
 
 	/**
 	 * return the String description of this Event instance.
-	 * 
+	 *
 	 * @return String
 	 */
 	@Override
@@ -76,7 +76,7 @@ public class PatternEvent extends EventObject {
 
 	/**
 	 * returns the valid flag.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean getValid() {
@@ -84,4 +84,3 @@ public class PatternEvent extends EventObject {
 	}
 
 }
-

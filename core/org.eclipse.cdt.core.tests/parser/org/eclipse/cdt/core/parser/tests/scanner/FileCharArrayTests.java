@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.FileCharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.LazyCharArray;
 
 public class FileCharArrayTests extends BaseTestCase {
-	
+
 	public static TestSuite suite() {
 		return suite(FileCharArrayTests.class);
 	}
@@ -43,32 +43,32 @@ public class FileCharArrayTests extends BaseTestCase {
 	}
 
 	public void testAlignedMinus() throws IOException {
-		testFile(true, LazyCharArray.CHUNK_SIZE*3-1);
+		testFile(true, LazyCharArray.CHUNK_SIZE * 3 - 1);
 	}
 
 	public void testAlignedEven() throws IOException {
-		testFile(true, LazyCharArray.CHUNK_SIZE*3);
+		testFile(true, LazyCharArray.CHUNK_SIZE * 3);
 	}
 
 	public void testAlignedPlus() throws IOException {
-		testFile(true, LazyCharArray.CHUNK_SIZE*3+1);
+		testFile(true, LazyCharArray.CHUNK_SIZE * 3 + 1);
 	}
 
 	public void testUnAlignedMinus() throws IOException {
-		testFile(false, LazyCharArray.CHUNK_SIZE*3-1);
+		testFile(false, LazyCharArray.CHUNK_SIZE * 3 - 1);
 	}
 
 	public void testUnAlignedEven() throws IOException {
-		testFile(false, LazyCharArray.CHUNK_SIZE*3);
+		testFile(false, LazyCharArray.CHUNK_SIZE * 3);
 	}
 
 	public void testUnAlignedPlus() throws IOException {
-		testFile(false, LazyCharArray.CHUNK_SIZE*3+1);
+		testFile(false, LazyCharArray.CHUNK_SIZE * 3 + 1);
 	}
 
 	private void testFile(boolean aligned, int charSize) throws IOException {
 		createFile(aligned, charSize);
-		
+
 		AbstractCharArray charArray;
 		final FileInputStream inputStream = new FileInputStream(fFile);
 		try {
@@ -76,33 +76,33 @@ public class FileCharArrayTests extends BaseTestCase {
 		} finally {
 			inputStream.close();
 		}
-		
+
 		checkContent(charArray, LazyCharArray.CHUNK_SIZE, charSize);
 		assertEquals(charSize, charArray.getLength());
-		
+
 		((LazyCharArray) charArray).testClearData();
-		
+
 		checkContent(charArray, LazyCharArray.CHUNK_SIZE, charSize);
-		assertEquals(charSize, charArray.getLength());	
+		assertEquals(charSize, charArray.getLength());
 
 	}
 
 	public void checkContent(AbstractCharArray charArray, int from, int to) {
 		for (int i = from; i < to; i++) {
 			assertEquals(i % 127, charArray.get(i));
-			if (i+3<=to) {
-				char[] dest= new char[3];
+			if (i + 3 <= to) {
+				char[] dest = new char[3];
 				charArray.arraycopy(i, dest, 0, 3);
 				for (int j = 0; j < dest.length; j++) {
-					assertEquals((i+j) % 127, dest[j]);
+					assertEquals((i + j) % 127, dest[j]);
 				}
 			}
 		}
 	}
 
 	private void createFile(boolean aligned, int charSize) throws IOException {
-		fFile= File.createTempFile("data", ".txt");
-		OutputStream out= new BufferedOutputStream(new FileOutputStream(fFile));
+		fFile = File.createTempFile("data", ".txt");
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(fFile));
 		try {
 			if (!aligned) {
 				out.write(0xc2);

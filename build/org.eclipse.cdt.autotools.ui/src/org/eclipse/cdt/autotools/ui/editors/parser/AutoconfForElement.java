@@ -14,7 +14,7 @@
 package org.eclipse.cdt.autotools.ui.editors.parser;
 
 public class AutoconfForElement extends AutoconfElement {
-	
+
 	public AutoconfForElement() {
 		super("for"); //$NON-NLS-1$
 	}

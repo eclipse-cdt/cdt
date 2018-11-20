@@ -23,9 +23,9 @@ import java.util.TreeMap;
 /**
  * this class is a registry which maps file name and file's encoding, the class
  * is used by standalone indexer
- * 
+ *
  * @author johnliu
- * 
+ *
  */
 public class FileEncodingRegistry implements Serializable {
 
@@ -37,14 +37,13 @@ public class FileEncodingRegistry implements Serializable {
 		fFilePathToEncodingMap = new TreeMap<String, String>();
 	}
 
-	
 	public void setDefaultEncoding(String newDefaultEncoding) {
 		defaultEncoding = newDefaultEncoding;
 
 	}
 
 	public void registerFileEncoding(String filename, String encoding) {
-		if(defaultEncoding.equals(encoding)){
+		if (defaultEncoding.equals(encoding)) {
 			return;
 		}
 		if (fFilePathToEncodingMap != null) {

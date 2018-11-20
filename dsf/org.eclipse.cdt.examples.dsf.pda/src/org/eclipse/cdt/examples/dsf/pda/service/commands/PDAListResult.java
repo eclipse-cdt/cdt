@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,30 +19,29 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 
-
 /**
  * @see PDADataCommand
  */
 @Immutable
 public class PDAListResult extends PDACommandResult {
-    
-    final public String[] fValues;
-    
-    PDAListResult(String response) {
-        super(response);
-        StringTokenizer st = new StringTokenizer(response, "|");
-        List<String> valuesList = new ArrayList<String>();
-        
-        while (st.hasMoreTokens()) {
-            String token = st.nextToken();
-            if (token.length() != 0) {
-                valuesList.add(token);
-            }
-        }
-        
-        fValues = new String[valuesList.size()];
-        for (int i = 0; i < valuesList.size(); i++) {
-            fValues[i] = valuesList.get(i);
-        }
-    }
+
+	final public String[] fValues;
+
+	PDAListResult(String response) {
+		super(response);
+		StringTokenizer st = new StringTokenizer(response, "|");
+		List<String> valuesList = new ArrayList<String>();
+
+		while (st.hasMoreTokens()) {
+			String token = st.nextToken();
+			if (token.length() != 0) {
+				valuesList.add(token);
+			}
+		}
+
+		fValues = new String[valuesList.size()];
+		for (int i = 0; i < valuesList.size(); i++) {
+			fValues[i] = valuesList.get(i);
+		}
+	}
 }

@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represent a preprocessor #if statement.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -24,14 +24,14 @@ public interface IASTPreprocessorIfStatement extends IASTPreprocessorStatement {
 
 	/**
 	 * Was this branch taken?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean taken();
-	
+
 	/**
 	 * The condition of the if.
-	 * 
+	 *
 	 * @return the Condition
 	 */
 	public char[] getCondition();

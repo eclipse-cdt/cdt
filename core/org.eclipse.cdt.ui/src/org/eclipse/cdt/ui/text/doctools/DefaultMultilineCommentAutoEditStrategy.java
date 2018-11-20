@@ -51,9 +51,9 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * This class provides default behaviors for multi-line comment auto-editing.
- * 
+ *
  * This class is intended to be sub-classed.
- * 
+ *
  * @since 5.0
  */
 public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrategy {
@@ -61,10 +61,10 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	protected static final String MULTILINE_MID = " * "; //$NON-NLS-1$
 	protected static final String MULTILINE_END = "*/"; //$NON-NLS-1$
 	private static String fgDefaultLineDelim = "\n"; //$NON-NLS-1$
-	
+
 	public DefaultMultilineCommentAutoEditStrategy() {
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.DocumentCommand)
 	 */
@@ -72,12 +72,12 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	public void customizeDocumentCommand(IDocument doc, DocumentCommand cmd) {
 		fgDefaultLineDelim = TextUtilities.getDefaultLineDelimiter(doc);
 		if (doc instanceof IDocumentExtension4) {
-			boolean forNewLine= cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text);
-			boolean forCommentEnd= "/".equals(cmd.text); //$NON-NLS-1$
-			
+			boolean forNewLine = cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text);
+			boolean forCommentEnd = "/".equals(cmd.text); //$NON-NLS-1$
+
 			if (forNewLine || forCommentEnd) {
-				IDocumentExtension4 ext4= (IDocumentExtension4) doc;
-				DocumentRewriteSession drs= ext4.startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED_SMALL);
+				IDocumentExtension4 ext4 = (IDocumentExtension4) doc;
+				DocumentRewriteSession drs = ext4.startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED_SMALL);
 				try {
 					if (forNewLine) {
 						customizeDocumentAfterNewLine(doc, cmd);
@@ -90,7 +90,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 			}
 		}
 	}
-	
+
 	/**
 	 * This implements a rule that when in a multi-line comment context typing a forward slash with
 	 * one white space after the "*" will move eliminate the whitespace.
@@ -106,12 +106,12 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 				// modify document command
 				command.length++;
 				command.offset--;
-			}					
+			}
 		} catch (BadLocationException excp) {
 			// stop work
 		}
 	}
-	
+
 	/**
 	 * Copies the indentation of the previous line and adds a star.
 	 * If the comment just started on this line adds also a blank.
@@ -120,39 +120,39 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * @param c the command to deal with
 	 */
 	public void customizeDocumentAfterNewLine(IDocument doc, final DocumentCommand c) {
-		int offset= c.offset;
+		int offset = c.offset;
 		if (offset == -1 || doc.getLength() == 0)
 			return;
-		
+
 		String lineDelim = TextUtilities.getDefaultLineDelimiter(doc);
-		final StringBuilder buf= new StringBuilder(c.text);
+		final StringBuilder buf = new StringBuilder(c.text);
 		try {
 			// find start of line
-			IRegion line= doc.getLineInformationOfOffset(c.offset);
-			int lineStart= line.getOffset();
-			int firstNonWS= findEndOfWhiteSpaceAt(doc, lineStart, c.offset);
+			IRegion line = doc.getLineInformationOfOffset(c.offset);
+			int lineStart = line.getOffset();
+			int firstNonWS = findEndOfWhiteSpaceAt(doc, lineStart, c.offset);
 
-			IRegion prefix= findPrefixRange(doc, line);
-			String indentation= doc.get(prefix.getOffset(), prefix.getLength());
-			int lengthToAdd= Math.min(offset - prefix.getOffset(), prefix.getLength());
+			IRegion prefix = findPrefixRange(doc, line);
+			String indentation = doc.get(prefix.getOffset(), prefix.getLength());
+			int lengthToAdd = Math.min(offset - prefix.getOffset(), prefix.getLength());
 			buf.append(indentation.substring(0, lengthToAdd));
-			
-			boolean commentAtStart= firstNonWS < c.offset && doc.getChar(firstNonWS) == '/'; 
+
+			boolean commentAtStart = firstNonWS < c.offset && doc.getChar(firstNonWS) == '/';
 			if (commentAtStart) {
 				// comment started on this line
 				buf.append(MULTILINE_MID);
 			}
 
-			c.shiftsCaret= false;
-			c.caretOffset= c.offset + buf.length();
+			c.shiftsCaret = false;
+			c.caretOffset = c.offset + buf.length();
 
 			if (commentAtStart && shouldCloseMultiline(doc, c.offset)) {
 				try {
-					doc.replace(c.offset, 0, indentation+" "+MULTILINE_END); // close the comment in order to parse //$NON-NLS-1$
+					doc.replace(c.offset, 0, indentation + " " + MULTILINE_END); // close the comment in order to parse //$NON-NLS-1$
 					buf.append(lineDelim);
 
 					// as we are auto-closing, the comment becomes eligible for auto-doc'ing
-					IASTDeclaration dec= null;
+					IASTDeclaration dec = null;
 					IIndex index = null;
 					ITranslationUnit unit = getTranslationUnitForActiveEditor();
 					if (unit != null) {
@@ -165,21 +165,22 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 					}
 					try {
 						IASTTranslationUnit ast = getAST(unit, index);
-						
+
 						if (ast != null) {
-							dec= findFollowingDeclaration(ast, offset);
+							dec = findFollowingDeclaration(ast, offset);
 							if (dec == null) {
-								IASTNodeSelector ans= ast.getNodeSelector(ast.getFilePath());
-								IASTNode node= ans.findEnclosingNode(offset, 0);
+								IASTNodeSelector ans = ast.getNodeSelector(ast.getFilePath());
+								IASTNode node = ans.findEnclosingNode(offset, 0);
 								if (node instanceof IASTDeclaration) {
-									dec= (IASTDeclaration) node;
+									dec = (IASTDeclaration) node;
 								}
 							}
 						}
-											
+
 						if (dec != null) {
-							ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING /* this! */, offset, false);
-							StringBuilder content= customizeAfterNewLineForDeclaration(doc, dec, partition);
+							ITypedRegion partition = TextUtilities.getPartition(doc,
+									ICPartitions.C_PARTITIONING /* this! */, offset, false);
+							StringBuilder content = customizeAfterNewLineForDeclaration(doc, dec, partition);
 							buf.append(indent(content, indentation + MULTILINE_MID, lineDelim));
 						}
 					} finally {
@@ -187,28 +188,29 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 							index.releaseReadLock();
 						}
 					}
-				} catch(BadLocationException ble) {
+				} catch (BadLocationException ble) {
 					CUIPlugin.log(ble);
-				} catch(CoreException e) {
+				} catch (CoreException e) {
 					CUIPlugin.log(e);
 				}
 			}
 
-			c.text= buf.toString();
+			c.text = buf.toString();
 
 		} catch (BadLocationException excp) {
 			// stop work
-		}	
+		}
 	}
 
-	protected StringBuilder customizeAfterNewLineForDeclaration(IDocument doc, IASTDeclaration dec, ITypedRegion region) {
+	protected StringBuilder customizeAfterNewLineForDeclaration(IDocument doc, IASTDeclaration dec,
+			ITypedRegion region) {
 		return new StringBuilder();
 	}
-	
+
 	/*
 	 * Utilities
 	 */
-	
+
 	/**
 	 * Locates the {@link IASTDeclaration} most immediately following the specified offset
 	 * @param unit the translation unit, or null (in which case the result will also be null)
@@ -217,51 +219,52 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * is no {@link IASTDeclaration}
 	 */
 	public static IASTDeclaration findFollowingDeclaration(IASTTranslationUnit unit, final int offset) {
-		final IASTDeclaration[] dec= new IASTDeclaration[1];
-		final ASTVisitor av= new ASTVisitor() {
+		final IASTDeclaration[] dec = new IASTDeclaration[1];
+		final ASTVisitor av = new ASTVisitor() {
 			{
-				shouldVisitTranslationUnit= true;
-				shouldVisitDeclarations= true;
+				shouldVisitTranslationUnit = true;
+				shouldVisitDeclarations = true;
 			}
-			
+
 			/**
-			 * Holds the 
+			 * Holds the
 			 */
 			IASTDeclaration stopWhenLeaving;
-			
+
 			@Override
 			public int visit(IASTDeclaration declaration) {
-				IASTNodeLocation loc= declaration.getFileLocation();
+				IASTNodeLocation loc = declaration.getFileLocation();
 				if (loc != null) {
-					int candidateOffset= loc.getNodeOffset();
-					int candidateEndOffset= candidateOffset+loc.getNodeLength();
+					int candidateOffset = loc.getNodeOffset();
+					int candidateEndOffset = candidateOffset + loc.getNodeLength();
 
 					if (offset <= candidateOffset) {
-						dec[0]= declaration;
+						dec[0] = declaration;
 						return PROCESS_ABORT;
 					}
 
-					boolean candidateEnclosesOffset= (offset >= candidateOffset) && (offset < candidateEndOffset);
+					boolean candidateEnclosesOffset = (offset >= candidateOffset) && (offset < candidateEndOffset);
 					if (candidateEnclosesOffset) {
-						stopWhenLeaving= declaration;
+						stopWhenLeaving = declaration;
 					}
 				}
 				return PROCESS_CONTINUE;
 			}
+
 			@Override
 			public int leave(IASTDeclaration declaration) {
-				if (declaration == stopWhenLeaving) 
+				if (declaration == stopWhenLeaving)
 					return PROCESS_ABORT;
 				return PROCESS_CONTINUE;
 			}
 		};
-		
+
 		if (unit != null) {
 			unit.accept(av);
 		}
 		return dec[0];
 	}
-	
+
 	/**
 	 * @return the AST unit for the active editor, not based on an index, or <code>null</code> if there
 	 * is no active editor, or the AST could not be obtained.
@@ -269,16 +272,16 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	public IASTTranslationUnit getAST() {
 		return getAST(getTranslationUnitForActiveEditor(), null);
 	}
-	
+
 	/**
-	 * @return the AST for the given translation unit, based on the given index, or <code>null</code> if 
+	 * @return the AST for the given translation unit, based on the given index, or <code>null</code> if
 	 * the translation unit is <code>null</code>, or the AST could not be obtained.
 	 * @since 5.10
 	 */
 	public IASTTranslationUnit getAST(ITranslationUnit unit, IIndex index) {
 		try {
 			if (unit != null) {
-				IASTTranslationUnit ast= unit.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+				IASTTranslationUnit ast = unit.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
 				return ast;
 			}
 		} catch (CModelException e) {
@@ -303,20 +306,20 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 */
 	public boolean shouldCloseMultiline(IDocument document, int offset) {
 		try {
-			IRegion line= document.getLineInformationOfOffset(offset);
-			ITypedRegion partition= TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, false);
-			int partitionEnd= partition.getOffset() + partition.getLength();
+			IRegion line = document.getLineInformationOfOffset(offset);
+			ITypedRegion partition = TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, false);
+			int partitionEnd = partition.getOffset() + partition.getLength();
 			if (line.getOffset() >= partitionEnd)
 				return false;
 
-			String comment= document.get(partition.getOffset(), partition.getLength());
-			if (comment.indexOf(MULTILINE_START, offset - partition.getOffset()) != -1) 
+			String comment = document.get(partition.getOffset(), partition.getLength());
+			if (comment.indexOf(MULTILINE_START, offset - partition.getOffset()) != -1)
 				return true; // enclosed another comment -> probably a new comment
 
 			if (document.getLength() == partitionEnd) {
 				return !comment.endsWith(MULTILINE_END);
 			}
-			
+
 			return false;
 
 		} catch (BadLocationException e) {
@@ -331,26 +334,26 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 */
 	@Deprecated
 	protected static ITranslationUnit getTranslationUnit() {
-		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null)
 			return null;
 
-		IWorkbenchPage page= window.getActivePage();
+		IWorkbenchPage page = window.getActivePage();
 		if (page == null)
 			return null;
 
-		IEditorPart editor= page.getActiveEditor();
+		IEditorPart editor = page.getActiveEditor();
 		if (editor == null)
 			return null;
 
-		IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();
-		ITranslationUnit unit= manager.getWorkingCopy(editor.getEditorInput());
+		IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
+		ITranslationUnit unit = manager.getWorkingCopy(editor.getEditorInput());
 		if (unit == null)
 			return null;
 
 		return unit;
 	}
-	
+
 	/**
 	 * Same as above, but nonstatic so derived classes can override it.
 	 * @since 5.10
@@ -358,41 +361,41 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	protected ITranslationUnit getTranslationUnitForActiveEditor() {
 		return getTranslationUnit();
 	}
-	
+
 	/**
 	 * Returns a new buffer with the specified indent string inserted at the beginning
 	 * of each line in the specified input buffer
 	 * @param buffer
 	 * @param indent
-	 * @param lineDelim 
+	 * @param lineDelim
 	 * @since 5.3
 	 */
 	protected static final StringBuilder indent(StringBuilder buffer, String indent, String lineDelim) {
-		StringBuilder result= new StringBuilder();
-		BufferedReader br= new BufferedReader(new StringReader(buffer.toString()));
+		StringBuilder result = new StringBuilder();
+		BufferedReader br = new BufferedReader(new StringReader(buffer.toString()));
 		try {
-			for (String line= br.readLine(); line != null; line= br.readLine()) {
+			for (String line = br.readLine(); line != null; line = br.readLine()) {
 				result.append(indent).append(line).append(lineDelim);
 			}
-		} catch(IOException ioe) {
+		} catch (IOException ioe) {
 			throw new AssertionError(); // we can't get IO errors from a string backed reader
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns a new buffer with the specified indent string inserted at the beginning
 	 * of each line in the specified input buffer
 	 * @param buffer
 	 * @param indent
-	 * 
+	 *
 	 * @deprecated Use {{@link #indent(StringBuilder, String, String)} instead.
 	 */
 	@Deprecated
 	protected static final StringBuilder indent(StringBuilder buffer, String indent) {
 		return indent(buffer, indent, fgDefaultLineDelim);
 	}
-	
+
 	/**
 	 * Returns the offset of the first non-whitespace character in the specified document, searching
 	 * right/downward from the specified start offset up to the specified end offset. If there is
@@ -404,7 +407,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 */
 	protected static int findEndOfWhiteSpaceAt(IDocument document, int offset, int end) throws BadLocationException {
 		while (offset < end) {
-			char c= document.getChar(offset);
+			char c = document.getChar(offset);
 			if (c != ' ' && c != '\t') {
 				return offset;
 			}
@@ -412,7 +415,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 		}
 		return end;
 	}
-	
+
 	/**
 	 * Returns the range of the comment prefix on the given line in
 	 * <code>document</code>. The prefix greedily matches the following regex
@@ -427,9 +430,9 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * @throws BadLocationException if accessing the document fails
 	 */
 	protected static IRegion findPrefixRange(IDocument document, IRegion line) throws BadLocationException {
-		int lineOffset= line.getOffset();
-		int lineEnd= lineOffset + line.getLength();
-		int indentEnd= findEndOfWhiteSpaceAt(document, lineOffset, lineEnd);
+		int lineOffset = line.getOffset();
+		int lineEnd = lineOffset + line.getLength();
+		int indentEnd = findEndOfWhiteSpaceAt(document, lineOffset, lineEnd);
 		if (indentEnd < lineEnd && document.getChar(indentEnd) == '*') {
 			indentEnd++;
 			while (indentEnd < lineEnd && !isWhitespace(document.getChar(indentEnd)))
@@ -439,7 +442,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 		}
 		return new Region(lineOffset, indentEnd - lineOffset);
 	}
-	
+
 	private static boolean isWhitespace(char ch) {
 		return ch == ' ' || ch == '\t';
 	}
@@ -449,8 +452,8 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * legal line delimiters.
 	 */
 	protected static boolean endsWithDelimiter(IDocument d, String txt) {
-		String[] delimiters= d.getLegalLineDelimiters();
-		for (int i= 0; i < delimiters.length; i++) {
+		String[] delimiters = d.getLegalLineDelimiters();
+		for (int i = 0; i < delimiters.length; i++) {
 			if (txt.endsWith(delimiters[i]))
 				return true;
 		}

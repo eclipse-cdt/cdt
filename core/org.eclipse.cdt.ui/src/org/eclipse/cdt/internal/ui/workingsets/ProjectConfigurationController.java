@@ -37,11 +37,11 @@ import org.eclipse.cdt.internal.ui.workingsets.IWorkingSetProjectConfiguration.I
 
 /**
  * Default implementation of the working set project configuration controller protocol.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
- * 
+ *
  */
 public class ProjectConfigurationController implements IWorkingSetProjectConfigurationController {
 
@@ -49,7 +49,7 @@ public class ProjectConfigurationController implements IWorkingSetProjectConfigu
 
 	/**
 	 * Initializes me with my project configuration.
-	 * 
+	 *
 	 * @param config
 	 *            my project configuration
 	 */
@@ -163,8 +163,7 @@ public class ProjectConfigurationController implements IWorkingSetProjectConfigu
 
 	}
 
-	private static class LabelProvider extends org.eclipse.jface.viewers.LabelProvider implements
-			IFontProvider {
+	private static class LabelProvider extends org.eclipse.jface.viewers.LabelProvider implements IFontProvider {
 
 		private IWorkingSetProjectConfiguration.ISnapshot projectConfig;
 		private WorkbenchLabelProvider wbLabels = new WorkbenchLabelProvider();
@@ -183,9 +182,9 @@ public class ProjectConfigurationController implements IWorkingSetProjectConfigu
 			if (element instanceof ICConfigurationDescription) {
 				ICConfigurationDescription config = (ICConfigurationDescription) element;
 
-				return isActiveInWorkspace(config) ? NLS.bind(
-						WorkingSetMessages.ProjConfigController_activeConfig, config.getName()) : config
-						.getName();
+				return isActiveInWorkspace(config)
+						? NLS.bind(WorkingSetMessages.ProjConfigController_activeConfig, config.getName())
+						: config.getName();
 			} else if (element instanceof IWorkingSetProjectConfiguration) {
 				return wbLabels.getText(((IWorkingSetProjectConfiguration) element).resolveProject());
 			}

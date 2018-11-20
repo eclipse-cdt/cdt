@@ -18,13 +18,12 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
-
 public interface IGDBExtendedFunctions extends IDsfService {
 	/**
 	 * Request a notification to the user
 	 */
 	void notify(ICommandControlDMContext ctx, String str, RequestMonitor rm);
-	
+
 	/**
 	 * Get the version of the debugger
 	 */

@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Marc-Andre Laperle
  *******************************************************************************/
@@ -48,7 +48,7 @@ import org.eclipse.cdt.internal.ui.refactoring.dialogs.ValidatingLabeledTextFiel
 
 /**
  * InputPage used by the ImplementMethod refactoring if its necessary to enter additional parameter names.
- * 
+ *
  * @author Mirko Stocker
  */
 public class ParameterNamesInputPage extends UserInputWizardPage {
@@ -67,21 +67,22 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		Composite superComposite = new Composite(parent, SWT.NONE);
-		
-	    superComposite.setLayout(new GridLayout());
-		
+
+		superComposite.setLayout(new GridLayout());
+
 		setTitle(Messages.ImplementMethodInputPage_PageTitle);
 		setMessage(Messages.ParameterNamesInputPage_CompleteMissingMails);
-	
+
 		ValidatingLabeledTextField validatingLabeledTextField = new ValidatingLabeledTextField(superComposite);
-		validatingLabeledTextField.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-		
+		validatingLabeledTextField
+				.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+
 		for (final ParameterInfo actParameterInfo : config.getParaHandler().getParameterInfos()) {
 			String type = actParameterInfo.getTypeName();
 			String content = actParameterInfo.getParameterName();
 			boolean readOnly = !actParameterInfo.hasNewName();
-			
-			validatingLabeledTextField.addElement(type, content, readOnly, new ValidatingLabeledTextField.Validator(){
+
+			validatingLabeledTextField.addElement(type, content, readOnly, new ValidatingLabeledTextField.Validator() {
 				@Override
 				public void hasErrors() {
 					setPageComplete(false);
@@ -97,13 +98,14 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 					actParameterInfo.setParameterName(newName);
 					updatePreview();
 					return true;
-				}});
+				}
+			});
 		}
 
 		createPreview(superComposite);
 		setControl(superComposite);
 	}
-	
+
 	private InsertEdit getInsertEdit(CompositeChange compositeChange) {
 		for (Change actChange : compositeChange.getChildren()) {
 			if (actChange instanceof CompositeChange) {
@@ -124,18 +126,19 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 			}
 		}
 		return null;
-	}	
-	
+	}
+
 	public String createFunctionDefinitionSignature(IProgressMonitor monitor) {
 		try {
 			ModificationCollector collector = new ModificationCollector();
-			ImplementMethodRefactoring implementMethodRefactoring = (ImplementMethodRefactoring) wizard.getRefactoring();
+			ImplementMethodRefactoring implementMethodRefactoring = (ImplementMethodRefactoring) wizard
+					.getRefactoring();
 			CCompositeChange finalChange = null;
 			// We can have multiple preview jobs. We don't
 			// want multiple jobs concurrently using the same ASTs
 			synchronized (implementMethodRefactoring) {
 				implementMethodRefactoring.createDefinition(collector, config, monitor);
-				finalChange = collector.createFinalChange();	
+				finalChange = collector.createFinalChange();
 			}
 			InsertEdit insertEdit = getInsertEdit(finalChange);
 			if (insertEdit == null) {
@@ -151,8 +154,9 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 
 	private void createPreview(Composite superComposite) {
 		translationUnitPreview = new TranslationUnitPreview(new HashMap<String, String>(), superComposite);
-		translationUnitPreview.getControl().setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-		
+		translationUnitPreview.getControl()
+				.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+
 		delayedPreviewUpdater = new Job(Messages.ImplementMethodRefactoringPage_GeneratingPreview) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -183,18 +187,19 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 				}
 			}
 		};
-		
+
 		delayedPreviewUpdater.schedule(PREVIEW_UPDATE_DELAY);
 	}
-	
+
 	@Override
 	public boolean canFlipToNextPage() {
 		return isPageComplete();
 	}
-	
+
 	@Override
 	public IWizardPage getNextPage() {
-		MethodToImplementConfig nextConfig = ((ImplementMethodRefactoring)wizard.getRefactoring()).getRefactoringData().getNextConfigNeedingParameterNames(config);
+		MethodToImplementConfig nextConfig = ((ImplementMethodRefactoring) wizard.getRefactoring()).getRefactoringData()
+				.getNextConfigNeedingParameterNames(config);
 		if (nextConfig != null) {
 			return wizard.getPageForConfig(nextConfig);
 		} else {
@@ -204,7 +209,7 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 	}
 
 	/**
-	 * @return true if the preview job could still be running, false otherwise 
+	 * @return true if the preview job could still be running, false otherwise
 	 */
 	protected boolean cancelPreviewJob() {
 		if (delayedPreviewUpdater == null) {
@@ -218,11 +223,11 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 		}
 		return !delayedPreviewUpdater.cancel();
 	}
-	
+
 	protected void joinPreviewJob() {
 		if (delayedPreviewUpdater == null)
 			return;
-		
+
 		try {
 			delayedPreviewUpdater.join();
 		} catch (InterruptedException e) {
@@ -236,7 +241,7 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 
 		delayedPreviewUpdater.schedule(PREVIEW_UPDATE_DELAY);
 	}
-	
+
 	@Override
 	public boolean isPageComplete() {
 		if (!config.isChecked()) {

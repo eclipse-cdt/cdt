@@ -15,28 +15,29 @@ package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
 /**
  * Key - Value String Pair
- * 
+ *
  * @author vhirsl
  */
 public class KVStringPair {
 	private String key;
 	private String value;
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public KVStringPair(String key, String value) {
 		this.key = key;
 		this.value = value;
 	}
-	
+
 	public String getKey() {
 		return key;
 	}
-	
+
 	public String getValue() {
 		return value;
 	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -48,6 +49,7 @@ public class KVStringPair {
 		}
 		return false;
 	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -55,6 +57,7 @@ public class KVStringPair {
 	public int hashCode() {
 		return 17 * key.hashCode() + value.hashCode();
 	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

@@ -73,7 +73,7 @@ public class ConfigGenerator {
 			r.write("osgi.bundles="); //$NON-NLS-1$
 
 			// Write all plug-in names
-			for (int i =0; i < pluginList.size(); i++) {
+			for (int i = 0; i < pluginList.size(); i++) {
 				String pluginName = pluginList.get(i);
 				if (PLUGINS_NOT_IN_SCRIPT_VERSION.contains(pluginName)) {
 					continue;

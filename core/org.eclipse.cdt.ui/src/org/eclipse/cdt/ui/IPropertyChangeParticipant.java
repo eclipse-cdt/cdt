@@ -22,7 +22,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 5.0
  */
 public interface IPropertyChangeParticipant {
@@ -32,7 +32,7 @@ public interface IPropertyChangeParticipant {
 	 * behaviour in a way it determines potential clients could act upon.
 	 */
 	public boolean affectsBehavior(PropertyChangeEvent event);
-	
+
 	/**
 	 * Performs any necessary to adapt the participant to the specified event.
 	 * @param event

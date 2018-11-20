@@ -63,7 +63,7 @@ public class CreateSourceReferenceOperation extends CreateElementInTUOperation {
 	 */
 	@Override
 	protected ICElement generateResultHandle() {
-		IParent parent = (IParent)getParentElement();
+		IParent parent = (IParent) getParentElement();
 		try {
 			ICElement[] celements = parent.getChildren();
 			for (int i = 0; i < celements.length; ++i) {

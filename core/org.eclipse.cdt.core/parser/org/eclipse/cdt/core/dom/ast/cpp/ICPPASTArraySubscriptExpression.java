@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 
 /**
  * @since 5.1
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -32,7 +32,7 @@ public interface ICPPASTArraySubscriptExpression
 	 */
 	@Override
 	public ICPPASTArraySubscriptExpression copy(CopyStyle style);
-	
+
 	/**
 	 * @since 5.5
 	 */

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-
 public class DefineVariable extends GNUVariableDef {
 
 	public DefineVariable(Directive parent, String name, StringBuffer value) {

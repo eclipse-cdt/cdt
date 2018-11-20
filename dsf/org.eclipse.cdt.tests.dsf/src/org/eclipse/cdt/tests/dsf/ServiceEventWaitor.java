@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Display;
  * interest using the proper constructor or the registerForEvent() method.
  * waitForEvent() can then be called to block until the event occurs or
  * the timeout elapses.
- * 
+ *
  * Note that if the event occurs after regsiterForEvent() is called but
  * before waitForEvent() is called, waitForEvent() will return immediatly
  * since it will know the event has already occured.
@@ -34,33 +34,32 @@ public class ServiceEventWaitor<V> {
 	 *  Indicates we will wait forever. Otherwise the time specified
 	 *  is in milliseconds.
 	 */
-	public final static int WAIT_FOREVER = 0 ;
+	public final static int WAIT_FOREVER = 0;
 
 	/* The type of event to wait for */
 	private Class<V> fEventTypeClass;
 	private final DsfSession fSession;
-    private V fEvent;
-    private final Display fDisplay;
-	
+	private V fEvent;
+	private final Display fDisplay;
 
 	/* Empty contructor.  registerForEvent() should be called when
 	 * this constructor is used.
 	 */
 	public ServiceEventWaitor(DsfSession session) {
-	    fDisplay = Display.getDefault();
+		fDisplay = Display.getDefault();
 		fSession = session;
 	}
-	
+
 	/* Contructor that takes the eventClass as parameter.  This is a shortcut
 	 * that avoids calling registerForEvent()
 	 */
-	public ServiceEventWaitor(DsfSession session, Class<V> eventClass)	{
+	public ServiceEventWaitor(DsfSession session, Class<V> eventClass) {
 		this(session);
 		registerForEvent(eventClass);
 	}
-	
+
 	/* Specify which event to wait for, and add ourselves as
-	 * a listener with the session 
+	 * a listener with the session
 	 */
 	public void registerForEvent(Class<V> eventClass) {
 		fEventTypeClass = eventClass;
@@ -69,11 +68,12 @@ public class ServiceEventWaitor<V> {
 	}
 
 	public DsfSession getSession() {
-	    return fSession;
+		return fSession;
 	}
-	
+
 	public void dispose() {
-        if (fEventTypeClass != null) fSession.removeServiceEventListener(this);
+		if (fEventTypeClass != null)
+			fSession.removeServiceEventListener(this);
 	}
 
 	/* Block until 'timeout' or the previously specified event has been
@@ -86,18 +86,19 @@ public class ServiceEventWaitor<V> {
 			throw new Exception("Event to wait for has not been specified!");
 		}
 		// The event might have already been received
-		if (fEvent != null) return fEvent;
-		
+		if (fEvent != null)
+			return fEvent;
+
 		long timeoutTime = System.currentTimeMillis() + timeout;
 		while (timeoutTime > System.currentTimeMillis()) {
-		    if (fEvent != null) {
-		        break;
-		    }
-		    if (!fDisplay.readAndDispatch()) {
-		        Thread.sleep(0);
-		    }
+			if (fEvent != null) {
+				break;
+			}
+			if (!fDisplay.readAndDispatch()) {
+				Thread.sleep(0);
+			}
 		}
-		
+
 		if (fEvent == null) {
 			throw new Exception("Timed out waiting for ServiceEvent: " + fEventTypeClass.getName());
 		}
@@ -108,10 +109,10 @@ public class ServiceEventWaitor<V> {
 	 * Listen to all possible events by having the base class be the parameter.
 	 * and then igure out if that event is the one we were waiting for.
 	 */
-	@DsfServiceEventHandler 
+	@DsfServiceEventHandler
 	public void eventDispatched(V event) {
 		if (fEventTypeClass.isAssignableFrom(event.getClass())) {
-			synchronized(this) {
+			synchronized (this) {
 				fEvent = event;
 				notifyAll();
 			}

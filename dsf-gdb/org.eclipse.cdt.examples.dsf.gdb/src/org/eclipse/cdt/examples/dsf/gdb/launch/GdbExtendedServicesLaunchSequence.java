@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -38,7 +38,8 @@ public class GdbExtendedServicesLaunchSequence extends ServicesLaunchSequence {
 		moreSteps[steps.length] = new Step() {
 			@Override
 			public void execute(RequestMonitor requestMonitor) {
-				fLaunch.getServiceFactory().createService(IGDBExtendedFunctions.class, fLaunch.getSession()).initialize(requestMonitor);
+				fLaunch.getServiceFactory().createService(IGDBExtendedFunctions.class, fLaunch.getSession())
+						.initialize(requestMonitor);
 			}
 		};
 		return moreSteps;

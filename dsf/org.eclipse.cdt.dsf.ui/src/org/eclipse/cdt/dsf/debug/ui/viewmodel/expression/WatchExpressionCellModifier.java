@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Winnie Lai (Texas Instruments) - Individual Element Number Format in editing (Bug 343021)
@@ -43,81 +43,80 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * 
+ *
  */
 @ThreadSafeAndProhibitedFromDsfExecutor("")
 public class WatchExpressionCellModifier implements ICellModifier {
 
-    /**
-     * Constructor for the modifier requires a valid DSF session in order to 
-     * initialize the service tracker.  
-     * @param session DSF session this modifier will use.
-     */
-    public WatchExpressionCellModifier() {
-    }
+	/**
+	 * Constructor for the modifier requires a valid DSF session in order to
+	 * initialize the service tracker.
+	 * @param session DSF session this modifier will use.
+	 */
+	public WatchExpressionCellModifier() {
+	}
 
-    @Override
+	@Override
 	public boolean canModify(Object element, String property) {
-        if (element instanceof NewExpressionVMC) {
-            return IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property) ||
-                IDebugVMConstants.COLUMN_ID__NAME.equals(property);
-        } else {
-            return IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property) && 
-                    getWatchExpression(element) != null; 
-        }
-    }
+		if (element instanceof NewExpressionVMC) {
+			return IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property)
+					|| IDebugVMConstants.COLUMN_ID__NAME.equals(property);
+		} else {
+			return IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property) && getWatchExpression(element) != null;
+		}
+	}
 
-    @Override
+	@Override
 	public Object getValue(Object element, String property) {
-        if (!IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property) && 
-            !IDebugVMConstants.COLUMN_ID__NAME.equals(property)) 
-        {
-            return ""; //$NON-NLS-1$
-        }
+		if (!IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property)
+				&& !IDebugVMConstants.COLUMN_ID__NAME.equals(property)) {
+			return ""; //$NON-NLS-1$
+		}
 
-        IWatchExpression expression = getWatchExpression(element);
-        
-        if (expression != null) {
-            return expression.getExpressionText();
-        }
-        return ""; //$NON-NLS-1$
-    }
+		IWatchExpression expression = getWatchExpression(element);
 
-    @Override
+		if (expression != null) {
+			return expression.getExpressionText();
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	@Override
 	public void modify(Object element, String property, Object value) {
-        if (!IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property) && 
-            !IDebugVMConstants.COLUMN_ID__NAME.equals(property)) 
-        {
-            return;
-        }
-        if (!(value instanceof String)) return;
-        
-        String origStrValue = (String) value;
-        String strValue = origStrValue.trim();
-        IWatchExpression expression = getWatchExpression(element);
-        IExpressionManager expressionManager = DebugPlugin.getDefault().getExpressionManager(); 
-        if (expression != null) {
-            if (strValue.length() != 0) {
-                expression.setExpressionText(origStrValue);
-            } else {
-                // (bug 233111) If user entered a blank string, remove the expression.
-                expressionManager.removeExpression(expression);
-            }
-        } else if (element instanceof NewExpressionVMC && strValue.length() != 0) {
-            IWatchExpression watchExpression = expressionManager.newWatchExpression(origStrValue); 
-            expressionManager.addExpression(watchExpression);            
-        }
-    }
+		if (!IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property)
+				&& !IDebugVMConstants.COLUMN_ID__NAME.equals(property)) {
+			return;
+		}
+		if (!(value instanceof String))
+			return;
 
-    /**
-     * Use query to get element format for a vm context from a given provider for given presentation context.
-     * One use of this method is in cell modifier's getValue() and modify().
-     * @param provider given provider
-     * @param presCtx given presentation context
-     * @param ctx vm context
-     * @return element format, null if not available
-     */
-	protected String queryElementFormat(final IElementFormatProvider provider, final IPresentationContext presCtx, final IVMContext ctx) {
+		String origStrValue = (String) value;
+		String strValue = origStrValue.trim();
+		IWatchExpression expression = getWatchExpression(element);
+		IExpressionManager expressionManager = DebugPlugin.getDefault().getExpressionManager();
+		if (expression != null) {
+			if (strValue.length() != 0) {
+				expression.setExpressionText(origStrValue);
+			} else {
+				// (bug 233111) If user entered a blank string, remove the expression.
+				expressionManager.removeExpression(expression);
+			}
+		} else if (element instanceof NewExpressionVMC && strValue.length() != 0) {
+			IWatchExpression watchExpression = expressionManager.newWatchExpression(origStrValue);
+			expressionManager.addExpression(watchExpression);
+		}
+	}
+
+	/**
+	 * Use query to get element format for a vm context from a given provider for given presentation context.
+	 * One use of this method is in cell modifier's getValue() and modify().
+	 * @param provider given provider
+	 * @param presCtx given presentation context
+	 * @param ctx vm context
+	 * @return element format, null if not available
+	 */
+	protected String queryElementFormat(final IElementFormatProvider provider, final IPresentationContext presCtx,
+			final IVMContext ctx) {
 		DsfSession session = null;
 		if (ctx instanceof IDMVMContext) {
 			IDMContext dmctx = ((IDMVMContext) ctx).getDMContext();
@@ -135,8 +134,8 @@ public class WatchExpressionCellModifier implements ICellModifier {
 				// is just the leaf; this is somewhat different than how
 				// FormatValueRetriever pass in a fully qualified tree path to
 				// the IElementFormatProvider. It is believed that IVMContext
-				// can be used to get its parents when needed. 
-				TreePath treePath = new TreePath(new Object[] {ctx});
+				// can be used to get its parents when needed.
+				TreePath treePath = new TreePath(new Object[] { ctx });
 				Object viewerInput = null;
 				IWorkbenchPart part = presCtx.getPart();
 				if (part instanceof IDebugView) {
@@ -147,12 +146,12 @@ public class WatchExpressionCellModifier implements ICellModifier {
 				}
 				provider.getActiveFormat(presCtx, ctx.getVMNode(), viewerInput, treePath,
 						new DataRequestMonitor<String>(ImmediateExecutor.getInstance(), rm) {
-					@Override
-					protected void handleSuccess() {
-						rm.setData(this.getData());
-						super.handleSuccess();
-					}
-				});
+							@Override
+							protected void handleSuccess() {
+								rm.setData(this.getData());
+								super.handleSuccess();
+							}
+						});
 			}
 		};
 		session.getExecutor().execute(query);
@@ -173,28 +172,28 @@ public class WatchExpressionCellModifier implements ICellModifier {
 	 * if the vm provider associated with the vm context supports individual element format.
 	 * If the vm provider does not support individual element format or queryElementFormat
 	 * returns null, this method returns the preferred format of the view.
-     * One use of this method is in cell modifier's getValue() and modify().
+	 * One use of this method is in cell modifier's getValue() and modify().
 	 * @param ctx the given vm context
 	 * @return the format
 	 */
 	protected String queryFormat(IVMContext ctx) {
 		String formatId = null;
-        IVMProvider vmprovider = ctx.getVMNode().getVMProvider();
-        IPresentationContext presCtx = vmprovider.getPresentationContext();
-        if (vmprovider instanceof IElementFormatProvider) {
-        	formatId = queryElementFormat((IElementFormatProvider) vmprovider, presCtx, ctx);
-        }
-        if (formatId == null) {
-            formatId = FormattedValueVMUtil.getPreferredFormat(presCtx);
-        }
+		IVMProvider vmprovider = ctx.getVMNode().getVMProvider();
+		IPresentationContext presCtx = vmprovider.getPresentationContext();
+		if (vmprovider instanceof IElementFormatProvider) {
+			formatId = queryElementFormat((IElementFormatProvider) vmprovider, presCtx, ctx);
+		}
+		if (formatId == null) {
+			formatId = FormattedValueVMUtil.getPreferredFormat(presCtx);
+		}
 		return formatId;
 	}
 
 	private IWatchExpression getWatchExpression(Object element) {
-        if (element instanceof IAdaptable) {
-            return ((IAdaptable)element).getAdapter(IWatchExpression.class);
-        }
-        return null;
-    }
+		if (element instanceof IAdaptable) {
+			return ((IAdaptable) element).getAdapter(IWatchExpression.class);
+		}
+		return null;
+	}
 
 }

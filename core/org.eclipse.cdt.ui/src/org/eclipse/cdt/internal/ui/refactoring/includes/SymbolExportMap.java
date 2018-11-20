@@ -55,7 +55,7 @@ public class SymbolExportMap {
 	/**
 	 * @param keysAndValues an array of keys and values: [key1, value1, key2, value2, ...].
 	 *     Keys and values may be optionally surrounded by double quotes or angle brackets.
-	 *     Angle brackets indicate a system include.  
+	 *     Angle brackets indicate a system include.
 	 */
 	public SymbolExportMap(String[] keysAndValues) {
 		if (keysAndValues.length % 2 != 0)
@@ -80,7 +80,7 @@ public class SymbolExportMap {
 	 */
 	protected void addMapping(String symbol, IncludeInfo header) {
 		if (symbol.equals(header))
-			return;  // Don't allow mapping to itself.
+			return; // Don't allow mapping to itself.
 		Set<IncludeInfo> list = map.get(symbol);
 		if (list == null) {
 			list = new LinkedHashSet<IncludeInfo>();
@@ -103,10 +103,10 @@ public class SymbolExportMap {
 
 	/**
 	 * Returns header files that should be used instead of the given one.
-	 * 
+	 *
 	 * @param from The header file to be replaced. A system header has to match exactly.
 	 *     A non-system header matches both, non-system and system headers.
-	 * @return The list of header files ordered by decreasing preference. 
+	 * @return The list of header files ordered by decreasing preference.
 	 */
 	public Set<IncludeInfo> getMapping(String from) {
 		Set<IncludeInfo> list = map.get(from);
@@ -181,7 +181,7 @@ public class SymbolExportMap {
 				if (i > 0)
 					buf.append(", "); //$NON-NLS-1$
 				buf.append(targets.get(i));
-			} 
+			}
 		}
 		return buf.toString();
 	}

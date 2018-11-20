@@ -60,7 +60,7 @@ public class ManageConfigDialog extends Dialog {
 	private String title;
 	private String mbs_id;
 	protected Table table;
-	
+
 	protected Button actBtn;
 	protected Button newBtn;
 	protected Button renBtn;
@@ -79,9 +79,10 @@ public class ManageConfigDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		if (title != null) shell.setText(title);
+		if (title != null)
+			shell.setText(title);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -91,7 +92,7 @@ public class ManageConfigDialog extends Dialog {
 		composite.setFont(parent.getFont());
 		composite.setLayout(new GridLayout(4, true));
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-	
+
 		// Create the current config table
 		table = new Table(composite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -99,36 +100,39 @@ public class ManageConfigDialog extends Dialog {
 		table.setLayoutData(gd);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		
+
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
-			}});
-		
+			}
+		});
+
 		TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setText(Messages.ManageConfigDialog_1); 
+		col.setText(Messages.ManageConfigDialog_1);
 		col.setWidth(100);
 		col = new TableColumn(table, SWT.NONE);
-		col.setText(Messages.ManageConfigDialog_2); 
+		col.setText(Messages.ManageConfigDialog_2);
 		col.setWidth(120);
 		col = new TableColumn(table, SWT.NONE);
-		col.setText(Messages.ManageConfigDialog_3); 
+		col.setText(Messages.ManageConfigDialog_3);
 		col.setWidth(80);
 
 		actBtn = new Button(composite, SWT.PUSH);
-		actBtn.setText(Messages.ManageConfigDialog_4); 
+		actBtn.setText(Messages.ManageConfigDialog_4);
 		actBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		actBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TableItem[] tis = table.getSelection();
-				if (tis == null || tis.length != 1) return;
-				ICConfigurationDescription cfgd = (ICConfigurationDescription)tis[0].getData();
-//				cfgd.setActive();
+				if (tis == null || tis.length != 1)
+					return;
+				ICConfigurationDescription cfgd = (ICConfigurationDescription) tis[0].getData();
+				//				cfgd.setActive();
 				des.setActiveConfiguration(cfgd);
 				updateData();
-			}} ); 
+			}
+		});
 
 		newBtn = new Button(composite, SWT.PUSH);
 		newBtn.setText(Messages.BuildPropertyCommon_label_new);
@@ -137,7 +141,8 @@ public class ManageConfigDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleNewPressed();
-			}} ); 
+			}
+		});
 
 		delBtn = new Button(composite, SWT.PUSH);
 		delBtn.setText(Messages.BuildPropertyCommon_label_remove);
@@ -146,7 +151,8 @@ public class ManageConfigDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemovePressed();
-			}} ); 
+			}
+		});
 
 		renBtn = new Button(composite, SWT.PUSH);
 		renBtn.setText(Messages.ManageConfig_label_rename);
@@ -155,14 +161,16 @@ public class ManageConfigDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRenamePressed();
-			}} ); 
+			}
+		});
 
 		des = CDTPropertyManager.getProjectDescription(composite, prj);
-//		comp = composite;
-		
+		//		comp = composite;
+
 		updateData();
-    	return composite;
+		return composite;
 	}
+
 	/*
 	 * Event handler for the add button
 	 */
@@ -172,25 +180,27 @@ public class ManageConfigDialog extends Dialog {
 			dialog = new NewConfigurationDialog(getShell());
 			dialog.setTitle(Messages.ManageConfig_label_new_config_dialog);
 		}
-		dialog.setProject(des); 
-		if (dialog.open() == OK) updateData();
+		dialog.setProject(des);
+		if (dialog.open() == OK)
+			updateData();
 	}
-	
+
 	/**
 	 * Tries to load MBS-specific creation dialog a
-	 * @return false if there's no such feature 
+	 * @return false if there's no such feature
 	 */
 	protected INewCfgDialog handleSpecificMBS(String id) {
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint(EXTENSION_POINT_ID);
-		if (extensionPoint == null) return null;
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
+		if (extensionPoint == null)
+			return null;
 		IExtension[] extensions = extensionPoint.getExtensions();
-		if (extensions == null) return null;
-		for (int i = 0; i < extensions.length; ++i)	{
+		if (extensions == null)
+			return null;
+		for (int i = 0; i < extensions.length; ++i) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int k = 0; k < elements.length; k++) {
 				if (elements[k].getName().equals(ELEMENT_NAME)) {
-					if (! id.equals(elements[k].getAttribute(ID_NAME)))
+					if (!id.equals(elements[k].getAttribute(ID_NAME)))
 						continue;
 					INewCfgDialog dialog = null;
 					try {
@@ -200,14 +210,14 @@ public class ManageConfigDialog extends Dialog {
 						return dialog;
 					} catch (CoreException e) {
 						System.out.println("Cannot create dialog: " + e.getLocalizedMessage()); //$NON-NLS-1$
-						return null; 
+						return null;
 					}
-				}					
+				}
 			}
 		}
 		return null;
 	}
-	
+
 	/*
 	 * (non-javadoc) Event handler for the rename button
 	 */
@@ -215,8 +225,7 @@ public class ManageConfigDialog extends Dialog {
 		int sel = table.getSelectionIndex();
 		if (sel != -1) {
 			ICConfigurationDescription cfgd = (ICConfigurationDescription) table.getItem(sel).getData();
-			RenameConfigurationDialog dialog = new RenameConfigurationDialog(
-					getShell(), cfgd, des.getConfigurations(),
+			RenameConfigurationDialog dialog = new RenameConfigurationDialog(getShell(), cfgd, des.getConfigurations(),
 					Messages.ManageConfig_label_rename_config_dialog);
 			if (dialog.open() == OK) {
 				cfgd.setName(dialog.getNewName());
@@ -231,24 +240,25 @@ public class ManageConfigDialog extends Dialog {
 	 */
 	protected void handleRemovePressed() {
 		TableItem[] tis = table.getSelection();
-		if (tis == null || tis.length < 1) return;
+		if (tis == null || tis.length < 1)
+			return;
 		String[] names = new String[tis.length];
-		for (int i=0; i<tis.length; i++) 
+		for (int i = 0; i < tis.length; i++)
 			names[i] = tis[i].getText(0);
 		// Get the confirmation from user before deleting the configuration
 		Shell shell = CUIPlugin.getActiveWorkbenchShell();
-		boolean shouldDelete = MessageDialog.openQuestion(shell,
-		        Messages.ManageConfig_deletedialog_title,
-		        NLS.bind(Messages.ManageConfig_deletedialog_message, names));
+		boolean shouldDelete = MessageDialog.openQuestion(shell, Messages.ManageConfig_deletedialog_title,
+				NLS.bind(Messages.ManageConfig_deletedialog_message, names));
 		if (shouldDelete) {
 			boolean wasActive = false;
-			for (int j=0; j<tis.length; j++) {
-				ICConfigurationDescription cfgd = (ICConfigurationDescription)tis[j].getData();
-				if (cfgd.isActive()) wasActive = true; 
+			for (int j = 0; j < tis.length; j++) {
+				ICConfigurationDescription cfgd = (ICConfigurationDescription) tis[j].getData();
+				if (cfgd.isActive())
+					wasActive = true;
 				des.removeConfiguration(cfgd);
-				
+
 			}
-			ICConfigurationDescription[] cfgds = des.getConfigurations(); 
+			ICConfigurationDescription[] cfgds = des.getConfigurations();
 			if (wasActive && cfgds.length > 0) {
 				cfgds[0].setActive();
 				des.setActiveConfiguration(cfgds[0]);
@@ -262,7 +272,7 @@ public class ManageConfigDialog extends Dialog {
 		delBtn.setEnabled(sel > 0 & sel < table.getItemCount());
 		renBtn.setEnabled(sel == 1);
 		if (sel == 1) {
-			ICConfigurationDescription c = (ICConfigurationDescription)table.getSelection()[0].getData();
+			ICConfigurationDescription c = (ICConfigurationDescription) table.getSelection()[0].getData();
 			actBtn.setEnabled(c != null && !c.isActive());
 		} else
 			actBtn.setEnabled(false);
@@ -276,7 +286,7 @@ public class ManageConfigDialog extends Dialog {
 		ICConfigurationDescription[] cfgds = des.getConfigurations();
 		mbs_id = cfgds[0].getBuildSystemId();
 		Arrays.sort(cfgds, CDTListComparator.getInstance());
-		for (int i=0; i<cfgds.length; i++ ) {
+		for (int i = 0; i < cfgds.length; i++) {
 			TableItem t = new TableItem(table, 0);
 			t.setText(0, cfgds[i].getName());
 			String description = cfgds[i].getDescription();
@@ -284,7 +294,7 @@ public class ManageConfigDialog extends Dialog {
 				description = ""; //$NON-NLS-1$
 			}
 			t.setText(1, description);
-			t.setText(2, cfgds[i].isActive() ? Messages.ManageConfigDialog_5 : ""); //$NON-NLS-1$ 
+			t.setText(2, cfgds[i].isActive() ? Messages.ManageConfigDialog_5 : ""); //$NON-NLS-1$
 			t.setData(cfgds[i]);
 		}
 		if (table.getItemCount() > 0) {
@@ -293,8 +303,8 @@ public class ManageConfigDialog extends Dialog {
 		table.setFocus();
 		updateButtons();
 	}
-	
-	ICProjectDescription getProjectDescription(){
+
+	ICProjectDescription getProjectDescription() {
 		return des;
 	}
 }

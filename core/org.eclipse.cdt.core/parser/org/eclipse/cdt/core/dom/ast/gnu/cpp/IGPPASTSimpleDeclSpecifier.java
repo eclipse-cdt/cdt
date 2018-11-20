@@ -34,7 +34,7 @@ public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier, ICPPAS
 	 */
 	@Deprecated
 	public IASTExpression getTypeofExpression();
-	
+
 	/**
 	 * @since 5.1
 	 */

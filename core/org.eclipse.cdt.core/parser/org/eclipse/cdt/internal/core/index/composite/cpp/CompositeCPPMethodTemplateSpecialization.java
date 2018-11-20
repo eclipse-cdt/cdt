@@ -20,13 +20,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPMethodTemplateSpecialization
-		extends CompositeCPPFunctionTemplateSpecialization
+public class CompositeCPPMethodTemplateSpecialization extends CompositeCPPFunctionTemplateSpecialization
 		implements ICPPMethod {
 	public CompositeCPPMethodTemplateSpecialization(ICompositesFactory cf, ICPPFunction ft) {
 		super(cf, ft);
 	}
-	
+
 	@Override
 	public boolean isDestructor() {
 		return ((ICPPMethod) rbinding).isDestructor();

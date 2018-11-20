@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represents a binary expression.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -39,14 +39,14 @@ public interface IASTBinaryExpression extends IASTExpression {
 
 	/**
 	 * Sets the operator.
-	 * 
+	 *
 	 * @param op value to set.
 	 */
 	public void setOperator(int op);
 
 	/**
 	 * Returns the operator.
-	 * 
+	 *
 	 * @return int value as operator
 	 */
 	public int getOperator();
@@ -219,23 +219,23 @@ public interface IASTBinaryExpression extends IASTExpression {
 	 * <code>op_min</code> represents <?
 	 */
 	public static final int op_min = 33;
-	
+
 	/**
 	 * For gcc compilers, only.
 	 * <code>op_ellipses</code> represents ... as used for case ranges.
 	 */
-	public static final int op_ellipses= 34;
-	
+	public static final int op_ellipses = 34;
+
 	/**
 	 * Get the first operand.
-	 * 
+	 *
 	 * @return <code>IASTExpression</code> representing operand 1.
 	 */
 	public IASTExpression getOperand1();
 
 	/**
 	 * Set the first operand.
-	 * 
+	 *
 	 * @param expression
 	 *            <code>IASTExpression</code> value.
 	 */
@@ -243,7 +243,7 @@ public interface IASTBinaryExpression extends IASTExpression {
 
 	/**
 	 * Get the second operand.
-	 * 
+	 *
 	 * @return <code>IASTExpression</code> representing operand 2.
 	 */
 	public IASTExpression getOperand2();
@@ -253,14 +253,14 @@ public interface IASTBinaryExpression extends IASTExpression {
 	 * a braced list initializer.
 	 * @since 5.2
 	 */
-    public IASTInitializerClause getInitOperand2();
+	public IASTInitializerClause getInitOperand2();
 
 	/**
 	 * @param expression
 	 *            <code>IASTExpression</code> value
 	 */
 	public void setOperand2(IASTExpression expression);
-	
+
 	/**
 	 * @since 5.1
 	 */

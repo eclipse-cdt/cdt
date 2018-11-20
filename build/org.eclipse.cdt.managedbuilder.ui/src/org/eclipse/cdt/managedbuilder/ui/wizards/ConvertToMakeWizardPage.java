@@ -16,7 +16,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,21 +53,21 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
-    private static final String WZ_TITLE = "WizardMakeProjectConversion.title"; //$NON-NLS-1$
-    private static final String WZ_DESC = "WizardMakeProjectConversion.description"; //$NON-NLS-1$
+	private static final String WZ_TITLE = "WizardMakeProjectConversion.title"; //$NON-NLS-1$
+	private static final String WZ_DESC = "WizardMakeProjectConversion.description"; //$NON-NLS-1$
 
-    /**
+	/**
 	 * @since 5.1
 	 */
-    protected CWizardHandler h_selected = null;
+	protected CWizardHandler h_selected = null;
 
-    // widgets
-    private Button specifyProjectTypeButton;
-    private Tree tree;
-    private Composite right;
-    private Button show_sup;
-    private Label right_label;
-    private Label left_label;
+	// widgets
+	private Button specifyProjectTypeButton;
+	private Tree tree;
+	private Composite right;
+	private Button show_sup;
+	private Label right_label;
+	private Label left_label;
 
 	/**
 	 * Constructor for ConvertToStdMakeProjectWizardPage.
@@ -81,8 +80,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		IStructuredSelection sel = ((BasicNewResourceWizard) getWizard())
-				.getSelection();
+		IStructuredSelection sel = ((BasicNewResourceWizard) getWizard()).getSelection();
 		if (sel != null) {
 			tableViewer.setCheckedElements(sel.toArray());
 			setPageComplete(validatePage());
@@ -104,20 +102,21 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		c.setLayout(new GridLayout(2, true));
 
 		specifyProjectTypeButton = new Button(c, SWT.CHECK);
-		specifyProjectTypeButton.setText(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.projectOptions.projectType")); //$NON-NLS-1$
+		specifyProjectTypeButton
+				.setText(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.projectOptions.projectType")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		specifyProjectTypeButton.setLayoutData(gd);
 		specifyProjectTypeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				enableProjectTypeControls(specifyProjectTypeButton
-						.getSelection());
+				enableProjectTypeControls(specifyProjectTypeButton.getSelection());
 			}
 		});
 
 		left_label = new Label(c, SWT.NONE);
-		left_label.setText(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.projectOptions.projectTypeTable")); //$NON-NLS-1$
+		left_label
+				.setText(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.projectOptions.projectTypeTable")); //$NON-NLS-1$
 		left_label.setFont(container.getFont());
 		left_label.setLayoutData(new GridData(GridData.BEGINNING));
 
@@ -133,9 +132,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 				TreeItem[] tis = tree.getSelection();
 				if (tis == null || tis.length == 0)
 					return;
-				switchTo((CWizardHandler) tis[0].getData(),
-						(EntryDescriptor) tis[0]
-								.getData(CDTMainWizardPage.DESC));
+				switchTo((CWizardHandler) tis[0].getData(), (EntryDescriptor) tis[0].getData(CDTMainWizardPage.DESC));
 			}
 		});
 		right = new Composite(c, SWT.NONE);
@@ -179,14 +176,14 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				if (h_selected != null)
 					h_selected.setSupportedOnly(show_sup.getSelection());
-				switchTo(CDTMainWizardPage.updateData(tree, right, show_sup,
-						filter, null), CDTMainWizardPage.getDescriptor(tree));
+				switchTo(CDTMainWizardPage.updateData(tree, right, show_sup, filter, null),
+						CDTMainWizardPage.getDescriptor(tree));
 			}
 		});
 
 		CDTPrefUtil.readPreferredTCs();
-		switchTo(CDTMainWizardPage.updateData(tree, right, show_sup, filter,
-				null), CDTMainWizardPage.getDescriptor(tree));
+		switchTo(CDTMainWizardPage.updateData(tree, right, show_sup, filter, null),
+				CDTMainWizardPage.getDescriptor(tree));
 
 		specifyProjectTypeButton.setSelection(true);
 		enableProjectTypeControls(true);
@@ -231,29 +228,29 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 	}
 
 	/**
-     * Method getWzTitleResource returns the correct Title Label for this class
-     * overriding the default in the superclass.
-     */
-    @Override
-	protected String getWzTitleResource(){
-        return MakeUIPlugin.getResourceString(WZ_TITLE);
-    }
+	 * Method getWzTitleResource returns the correct Title Label for this class
+	 * overriding the default in the superclass.
+	 */
+	@Override
+	protected String getWzTitleResource() {
+		return MakeUIPlugin.getResourceString(WZ_TITLE);
+	}
 
-    /**
-     * Method getWzDescriptionResource returns the correct description
-     * Label for this class overriding the default in the superclass.
-     */
-    @Override
-	protected String getWzDescriptionResource(){
-        return MakeUIPlugin.getResourceString(WZ_DESC);
-    }
+	/**
+	 * Method getWzDescriptionResource returns the correct description
+	 * Label for this class overriding the default in the superclass.
+	 */
+	@Override
+	protected String getWzDescriptionResource() {
+		return MakeUIPlugin.getResourceString(WZ_DESC);
+	}
 
-    /**
-     * Method isCandidate returns true for:
-     * - non-CDT projects
-     * - C projects, to be potentially converted to C++
-     */
-    @Override
+	/**
+	 * Method isCandidate returns true for:
+	 * - non-CDT projects
+	 * - C projects, to be potentially converted to C++
+	 */
+	@Override
 	public boolean isCandidate(IProject project) {
 		boolean isCDTProject = AbstractPage.isCDTPrj(project);
 		boolean cOnly = false;
@@ -264,11 +261,12 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 			return false;
 		}
 		return !isCDTProject || cOnly;
-    }
+	}
 
-    @Override
-	public void convertProject(IProject project, String bsId, IProgressMonitor monitor) throws CoreException{
-		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
+	@Override
+	public void convertProject(IProject project, String bsId, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), //$NON-NLS-1$
+				3);
 		try {
 			boolean wasCDTProject = AbstractPage.isCDTPrj(project);
 			super.convertProject(project, bsId, new SubProgressMonitor(monitor, 1));
@@ -278,11 +276,12 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		} finally {
 			monitor.done();
 		}
-    }
+	}
 
 	@Override
 	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
-		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
+		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), //$NON-NLS-1$
+				3);
 		try {
 			boolean wasCDTProject = AbstractPage.isCDTPrj(project);
 			super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
@@ -299,5 +298,5 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 	 */
 	public boolean isSetProjectType() {
 		return specifyProjectTypeButton != null && specifyProjectTypeButton.getSelection();
-    }
+	}
 }

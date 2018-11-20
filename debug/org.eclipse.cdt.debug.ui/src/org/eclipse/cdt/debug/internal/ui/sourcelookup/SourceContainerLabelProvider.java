@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
+package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
@@ -26,7 +26,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class SourceContainerLabelProvider extends LabelProvider {
 	private ILabelProvider fLabelProvider = null;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
@@ -44,13 +44,13 @@ public class SourceContainerLabelProvider extends LabelProvider {
 				// next consult contributed image
 				image = DebugUITools.getSourceContainerImage(type.getId());
 			}
-		}		
+		}
 		if (image != null) {
 			return image;
 		}
 		return super.getImage(element);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
@@ -60,7 +60,7 @@ public class SourceContainerLabelProvider extends LabelProvider {
 		String label = getWorkbenchLabelProvider().getText(element);
 		if (label == null || label.length() == 0) {
 			if (element instanceof ISourceContainer) {
-				return ((ISourceContainer) element).getName(); 
+				return ((ISourceContainer) element).getName();
 			} else if (element instanceof ISourceContainerType) {
 				return ((ISourceContainerType) element).getName();
 			}
@@ -69,14 +69,14 @@ public class SourceContainerLabelProvider extends LabelProvider {
 		}
 		return super.getText(element);
 	}
-	
+
 	private ILabelProvider getWorkbenchLabelProvider() {
 		if (fLabelProvider == null) {
 			fLabelProvider = new WorkbenchLabelProvider();
 		}
 		return fLabelProvider;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */

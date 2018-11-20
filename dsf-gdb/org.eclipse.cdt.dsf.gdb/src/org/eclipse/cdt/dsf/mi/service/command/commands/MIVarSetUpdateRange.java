@@ -18,15 +18,15 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
  * -var-set-update-range name from to
- * 
+ *
  * Set the range of children to be returned by future invocations of
  * -var-update.
- * 
+ *
  * <code>from</code> and <code>to</code> indicate the range of children to
  * report in subsequent -var-update call. If from or to is less than zero, the
  * range is reset and all children will be reported. Otherwise, children
  * starting at from (zero-based) and up to and excluding to will be reported.
- * 
+ *
  * @since 4.0
  */
 public class MIVarSetUpdateRange extends MICommand<MIInfo> {
@@ -38,6 +38,6 @@ public class MIVarSetUpdateRange extends MICommand<MIInfo> {
 	 * @param to One behind the last child to be updated.
 	 */
 	public MIVarSetUpdateRange(ICommandControlDMContext ctx, String name, int from, int to) {
-		super(ctx, "-var-set-update-range", new String[]{name, String.valueOf(from), String.valueOf(to)}); //$NON-NLS-1$
+		super(ctx, "-var-set-update-range", new String[] { name, String.valueOf(from), String.valueOf(to) }); //$NON-NLS-1$
 	}
 }

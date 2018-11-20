@@ -41,7 +41,9 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 	public static Collection<String> getVersions() {
 		return calculateVersions();
 	}
-	@Parameter public String parameter;
+
+	@Parameter
+	public String parameter;
 	// other fields
 	private String gdbVersionPostfix; // this is how we want to invoke it
 	protected Boolean remote; // this is if we want remote tests (gdbserver) -- it is null until we have made the determination
@@ -100,9 +102,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 		String gdbVersion = getGdbVersion();
 		// cannot be that version
 		boolean match = LaunchUtils.compareVersions(checkVersion, gdbVersion) == 0;
-		Assume.assumeTrue(
-				"Skipped because gdb " + gdbVersion + " does not support this feature",
-				!match);
+		Assume.assumeTrue("Skipped because gdb " + gdbVersion + " does not support this feature", !match);
 	}
 
 	public void assumeGdbVersionLowerThen(String checkVersion) {
@@ -134,10 +134,10 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 		if (gdbVersion == GDB_NOT_FOUND) {
 			return false;
 		}
-		
+
 		if (checkVersion == null || checkVersion.isEmpty() || checkVersion.equals("default"))
 			return false;
-		
+
 		if (checkVersion.equals(gdbVersion))
 			return true;
 
@@ -147,7 +147,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 
 	/**
 	 * Assumption to make sure test only runs on remote test session.
-	 * 
+	 *
 	 * This method is better than {@link #isRemoteSession()} as it can be called
 	 * at any time and does not require launch attributes to be set-up
 	 */
@@ -159,7 +159,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 
 	/**
 	 * Assumption to make sure test only runs on non-remote test session.
-	 * 
+	 *
 	 * This method is better than {@link #isRemoteSession()} as it can be called
 	 * at any time and does not require launch attributes to be set-up
 	 */
@@ -203,7 +203,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 					IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
 		}
 	}
-	
+
 	@Override
 	protected void validateGdbVersion(GdbLaunch launch) throws CoreException {
 		{
@@ -212,15 +212,15 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 				// If the user has requested the default GDB, we accept whatever version runs.
 				return;
 			}
-			
+
 			String actual = launch.getGDBVersion();
-			
+
 			String[] expectedParts = expected.split("\\."); //$NON-NLS-1$
 			String[] actualParts = actual.split("\\."); //$NON-NLS-1$
-			
+
 			String comparableActualString = actual;
-			if (expectedParts.length == 2 // If the expected version does not care about the maintenance number 
-					&& actualParts.length > 2) {  // and the actual version has a maintenance number (and possibly more)
+			if (expectedParts.length == 2 // If the expected version does not care about the maintenance number
+					&& actualParts.length > 2) { // and the actual version has a maintenance number (and possibly more)
 				// We should ignore the maintenance number.
 				// For example, if we expect 7.12, then the actual
 				// version we should accept can be 7.12 or 7.12.1 or 7.12.2, 7.12.50.20170214, etc.
@@ -228,9 +228,9 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 				int secondDot = actual.indexOf('.', firstDot + 1);
 				comparableActualString = actual.substring(0, secondDot);
 			}
-			
-			assertTrue("Unexpected GDB version.  Expected " + expected + " actual " + actual, 
-					   LaunchUtils.compareVersions(expected, comparableActualString) == 0);
+
+			assertTrue("Unexpected GDB version.  Expected " + expected + " actual " + actual,
+					LaunchUtils.compareVersions(expected, comparableActualString) == 0);
 		}
 	}
 }

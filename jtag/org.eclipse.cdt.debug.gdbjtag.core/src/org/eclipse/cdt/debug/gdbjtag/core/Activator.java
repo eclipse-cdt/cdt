@@ -73,12 +73,13 @@ public class Activator extends Plugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
+
 	/**
 	 * @since 7.0
 	 */

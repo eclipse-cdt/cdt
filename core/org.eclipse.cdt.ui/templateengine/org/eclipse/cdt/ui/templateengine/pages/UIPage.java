@@ -29,7 +29,7 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 
 /**
- * 
+ *
  * The UIPage extends DialogPage, it implements the createControl() abstract
  * method. The UIPage is the base class for UIWizardPage. The UIPage contains a
  * UIComposite, which extends a SWT composite. The SWT widgets are added to
@@ -69,7 +69,7 @@ public abstract class UIPage extends DialogPage {
 	private ImageDescriptor imageDescriptor;
 
 	/**
-	 * 
+	 *
 	 * @param name
 	 *            Name of this UIPage.
 	 * @param element
@@ -82,7 +82,8 @@ public abstract class UIPage extends DialogPage {
 		try {
 			String imageLoc = element.getAttributes().get(UIElement.IMAGELOCATION);
 			if (imageLoc != null) {
-				URL url = FileLocator.toFileURL(FileLocator.find(CCorePlugin.getDefault().getBundle(), new Path(imageLoc), null));
+				URL url = FileLocator
+						.toFileURL(FileLocator.find(CCorePlugin.getDefault().getBundle(), new Path(imageLoc), null));
 				imageDescriptor = ImageDescriptor.createFromURL(url);
 			}
 		} catch (Exception e) {
@@ -104,7 +105,7 @@ public abstract class UIPage extends DialogPage {
 	/**
 	 * The data contained in the Input elements (SWT widgets), on this page is
 	 * extracted and put into an HashMap. The same is returned.
-	 * 
+	 *
 	 * @return HashMap. The data contained in the widgets on this page.
 	 */
 	public Map<String, String> getPageData() {
@@ -114,7 +115,7 @@ public abstract class UIPage extends DialogPage {
 	/**
 	 * This is an overridden definition for the same method in DialogPage. The
 	 * top level control is returned.
-	 * 
+	 *
 	 * @return Control.
 	 */
 	@Override
@@ -123,9 +124,9 @@ public abstract class UIPage extends DialogPage {
 	}
 
 	/**
-	 * 
+	 *
 	 * This returns UICompostie as UIComposite instance. Unlike the getControl.
-	 * 
+	 *
 	 * @return UIComposite, used in this page.
 	 */
 	public UIComposite getComposite() {

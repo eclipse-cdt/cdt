@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Dominic Scharfe (COSEDA Technologies GmbH) - initial implementation 
+ *     Dominic Scharfe (COSEDA Technologies GmbH) - initial implementation
  *
  *******************************************************************************/
 package org.eclipse.cdt.codan.checkers.ui;

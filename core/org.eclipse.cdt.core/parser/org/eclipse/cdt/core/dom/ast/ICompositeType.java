@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Interface for all composite types: classes, structs and unions.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -28,9 +28,9 @@ public interface ICompositeType extends IBinding, IType {
 	 * or {@link org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#k_class}.
 	 */
 	public int getKey();
-	
+
 	/**
-	 * Returns whether the type is anonymous or not. A type for which objects or 
+	 * Returns whether the type is anonymous or not. A type for which objects or
 	 * pointers are declared is not considered an anonymous type.
 	 * <pre>
 	 * struct Outer {
@@ -41,21 +41,21 @@ public interface ICompositeType extends IBinding, IType {
 	 * @since 5.1
 	 */
 	boolean isAnonymous();
-	
+
 	/**
 	 * Returns the fields for this type.
-	 * 
+	 *
 	 * @return List of IField
 	 */
 	public IField[] getFields();
-	
+
 	/**
 	 * Returns the field that matches name, or <code>null</code> if there is no such field.
-	 * 
+	 *
 	 * @param name
 	 */
 	public IField findField(String name);
-	
+
 	/**
 	 * Returns the IScope object that is associated with this composite type.
 	 */

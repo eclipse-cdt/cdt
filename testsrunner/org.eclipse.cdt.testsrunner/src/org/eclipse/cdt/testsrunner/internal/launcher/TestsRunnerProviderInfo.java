@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * provider plug-in).
  */
 public class TestsRunnerProviderInfo implements ITestsRunnerProviderInfo {
-	
+
 	private static final String TESTS_RUNNER_FEATURES_ELEMENT = "features"; //$NON-NLS-1$
 	private static final String TESTS_RUNNER_FEATURE_MULTIPLE_TEST_FILTER_ATTRIBUTE = "multipleTestFilter"; //$NON-NLS-1$
 	private static final String TESTS_RUNNER_FEATURE_TESTING_TIME_MEASUREMENT_ATTRIBUTE = "testingTimeMeasurement"; //$NON-NLS-1$
@@ -42,7 +42,7 @@ public class TestsRunnerProviderInfo implements ITestsRunnerProviderInfo {
 
 	/**
 	 * The constructor.
-	 * 
+	 *
 	 * @param element configuration element of the Tests Runner provider plug-ins extension point
 	 */
 	public TestsRunnerProviderInfo(IConfigurationElement element) {
@@ -67,29 +67,29 @@ public class TestsRunnerProviderInfo implements ITestsRunnerProviderInfo {
 
 	/**
 	 * Instantiates Tests Runner provider plug-in and return its main interface.
-	 * 
+	 *
 	 * @note Instantiated Tests Runner provider plug-in objects are not cached
 	 * and are instantiated as much times as
 	 * <code>instantiateTestsRunnerProvider()</code> is called.
-	 * 
+	 *
 	 * @return Tests Runner provider plug-in main interface
 	 */
 	public ITestsRunnerProvider instantiateTestsRunnerProvider() {
 		try {
 			Object object = element.createExecutableExtension(TESTS_RUNNER_CLASS_ATTRIBUTE);
 			if (object instanceof ITestsRunnerProvider) {
-				return (ITestsRunnerProvider)object;
+				return (ITestsRunnerProvider) object;
 			}
 		} catch (CoreException e) {
 			TestsRunnerPlugin.log(e);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Provides an access to the 'features' node of Tests Runner provider
 	 * plug-in configuration element.
-	 * 
+	 *
 	 * @return 'features' configuration element
 	 */
 	private IConfigurationElement getFeatures() {
@@ -99,10 +99,10 @@ public class TestsRunnerProviderInfo implements ITestsRunnerProviderInfo {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Provides an access to the value of the feature with specified name.
-	 * 
+	 *
 	 * @param featureName
 	 * @return feature value or null if there is no features described or there
 	 * is no feature with such name
@@ -114,12 +114,12 @@ public class TestsRunnerProviderInfo implements ITestsRunnerProviderInfo {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Provides an access to the boolean value of the feature with the specified
 	 * name. If the feature with such name cannot be accessed or it contains
 	 * invalid boolean value, the default value will be returned.
-	 * 
+	 *
 	 * @param featureName
 	 * @param defaultValue
 	 * @return feature value or null if there is no features described or there
@@ -132,28 +132,28 @@ public class TestsRunnerProviderInfo implements ITestsRunnerProviderInfo {
 		}
 		return defaultValue;
 	}
-	
+
 	@Override
 	public boolean isAllowedMultipleTestFilter() {
 		return getBooleanFeatureValue(TESTS_RUNNER_FEATURE_MULTIPLE_TEST_FILTER_ATTRIBUTE, false);
 	}
-	
+
 	/**
 	 * Returns whether test execution time measurement should be performed by
 	 * the Tests Runner Plug-in.
-	 * 
+	 *
 	 * @note It should be used only if testing framework does not provide
 	 * execution time measurement, cause measurement by Tests Runner Plug-in is
 	 * not very precise (it also takes into account output processing & internal
 	 * model building time).
-	 * 
+	 *
 	 * @return whether testing time measurement should be done by Tests Runner
 	 * Plug-in
 	 */
 	public boolean isAllowedTestingTimeMeasurement() {
 		return getBooleanFeatureValue(TESTS_RUNNER_FEATURE_TESTING_TIME_MEASUREMENT_ATTRIBUTE, false);
 	}
-	
+
 	@Override
 	public boolean isOutputStreamRequired() {
 		return !isErrorStreamRequired();

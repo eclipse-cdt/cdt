@@ -23,102 +23,100 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 
 public class CheckBuildPropertyExpression implements IBooleanExpression {
-	public static final String NAME = "checkBuildProperty"; 	//$NON-NLS-1$
+	public static final String NAME = "checkBuildProperty"; //$NON-NLS-1$
 
-	public static final String PROPERTY = "property"; 	//$NON-NLS-1$
-	public static final String VALUE = "value"; 	//$NON-NLS-1$
+	public static final String PROPERTY = "property"; //$NON-NLS-1$
+	public static final String VALUE = "value"; //$NON-NLS-1$
 
 	private String fPropertyId;
 	private String fValueId;
 
-	public CheckBuildPropertyExpression(IManagedConfigElement element){
+	public CheckBuildPropertyExpression(IManagedConfigElement element) {
 		fPropertyId = element.getAttribute(PROPERTY);
-		if(fPropertyId == null)
+		if (fPropertyId == null)
 			fPropertyId = ""; //$NON-NLS-1$
 
 		fValueId = element.getAttribute(VALUE);
-//		if(fValueId == null)
-//			fValueId = ""; //$NON-NLS-1$
+		//		if(fValueId == null)
+		//			fValueId = ""; //$NON-NLS-1$
 
-//		fIsRegex = getBooleanValue(element.getAttribute(IS_REGEX));
+		//		fIsRegex = getBooleanValue(element.getAttribute(IS_REGEX));
 	}
 
-
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
-			IOption option) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOption option) {
 		return evaluate(rcInfo);
 	}
 
 	@Override
-	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
-			IOptionCategory category) {
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder, IOptionCategory category) {
 		return evaluate(rcInfo);
 	}
 
 	private boolean evaluate(IResourceInfo rcInfo) {
 		IConfiguration cfg = rcInfo.getParent();
 		IBuildProperty prop = getBuildProperty(cfg, fPropertyId);
-		if(prop != null){
+		if (prop != null) {
 			return fValueId != null ? fValueId.equals(prop.getValue().getId()) : true;
 		}
 		return false;
 	}
-/*
-	public static IBuildProperty getBuildProperty(IHoldsOptions ho, String id){
-		if(ho instanceof ITool)
-			return getBuildProperty((ITool)ho, id);
-		if(ho instanceof IToolChain)
-			return getBuildProperty((IToolChain)ho, id);
-		return null;
-	}
 
-	public static IBuildProperty getBuildProperty(ITool tool, String id){
-		IBuildProperty prop = tool.getBuildProperties().getProperty(id);
-		if(prop == null){
-			IBuildObject parent = tool.getParent();
-			if(parent instanceof IToolChain){
-				prop = getBuildProperty((IToolChain)parent, id);
-			} else if (parent instanceof IFileInfo) {
-				prop = getBuildProperty((IFileInfo)parent, id);
+	/*
+		public static IBuildProperty getBuildProperty(IHoldsOptions ho, String id){
+			if(ho instanceof ITool)
+				return getBuildProperty((ITool)ho, id);
+			if(ho instanceof IToolChain)
+				return getBuildProperty((IToolChain)ho, id);
+			return null;
+		}
+
+		public static IBuildProperty getBuildProperty(ITool tool, String id){
+			IBuildProperty prop = tool.getBuildProperties().getProperty(id);
+			if(prop == null){
+				IBuildObject parent = tool.getParent();
+				if(parent instanceof IToolChain){
+					prop = getBuildProperty((IToolChain)parent, id);
+				} else if (parent instanceof IFileInfo) {
+					prop = getBuildProperty((IFileInfo)parent, id);
+				}
 			}
+			return prop;
 		}
-		return prop;
-	}
 
-	public static IBuildProperty getBuildProperty(IFileInfo info, String id){
-		return getBuildProperty(info.getParent(), id);
-	}
-
-	public static IBuildProperty getBuildProperty(IFolderInfo info, String id){
-		return getBuildProperty(info.getParent(), id);
-	}
-
-	public static IBuildProperty getBuildProperty(IToolChain toolChain, String id){
-		IBuildProperty prop = null;
-		if(toolChain.getParentFolderInfo() == toolChain.getParent().getRootFolderInfo())
-			prop = toolChain.getBuildProperties().getProperty(id);
-
-		if(prop == null){
-			prop = getBuildProperty(toolChain.getParentFolderInfo(), id);
+		public static IBuildProperty getBuildProperty(IFileInfo info, String id){
+			return getBuildProperty(info.getParent(), id);
 		}
-		return prop;
-	}
-*/
-	public static IBuildProperty getBuildProperty(IConfiguration cfg, String id){
+
+		public static IBuildProperty getBuildProperty(IFolderInfo info, String id){
+			return getBuildProperty(info.getParent(), id);
+		}
+
+		public static IBuildProperty getBuildProperty(IToolChain toolChain, String id){
+			IBuildProperty prop = null;
+			if(toolChain.getParentFolderInfo() == toolChain.getParent().getRootFolderInfo())
+				prop = toolChain.getBuildProperties().getProperty(id);
+
+			if(prop == null){
+				prop = getBuildProperty(toolChain.getParentFolderInfo(), id);
+			}
+			return prop;
+		}
+	*/
+	public static IBuildProperty getBuildProperty(IConfiguration cfg, String id) {
 		IBuildProperty prop = cfg.getBuildProperties().getProperty(id);
 
-//		if(prop == null)
-//			prop = cfg.getManagedProject().getBuildProperties().getProperty(id);
+		//		if(prop == null)
+		//			prop = cfg.getManagedProject().getBuildProperties().getProperty(id);
 
 		return prop;
 	}
 
-	public String getPropertyId(){
+	public String getPropertyId() {
 		return fPropertyId;
 	}
 
-	public String getValueId(){
+	public String getValueId() {
 		return fValueId;
 	}
 }

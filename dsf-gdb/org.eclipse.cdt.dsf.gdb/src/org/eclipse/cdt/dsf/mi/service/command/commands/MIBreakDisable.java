@@ -19,27 +19,26 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *   -break-disable ( BREAKPOINT )+
  *
  * Disable the named BREAKPOINT(s).  The field `enabled' in the break
  * list is now set to `n' for the named BREAKPOINT(s).
- * 
+ *
  * Result:
  *  ^done
  */
- 
-public class MIBreakDisable extends MICommand<MIInfo>
-{
-    /** @since 5.0 */
-    public MIBreakDisable (IBreakpointsTargetDMContext ctx, String[] array) {
-        super(ctx, "-break-disable"); //$NON-NLS-1$
-        if (array != null && array.length > 0) {
-            String[] brkids = new String[array.length];
-            for (int i = 0; i < array.length; i++) {
-                brkids[i] = array[i];
-            }
-            setParameters(brkids);
-        } 
-    }
+
+public class MIBreakDisable extends MICommand<MIInfo> {
+	/** @since 5.0 */
+	public MIBreakDisable(IBreakpointsTargetDMContext ctx, String[] array) {
+		super(ctx, "-break-disable"); //$NON-NLS-1$
+		if (array != null && array.length > 0) {
+			String[] brkids = new String[array.length];
+			for (int i = 0; i < array.length; i++) {
+				brkids[i] = array[i];
+			}
+			setParameters(brkids);
+		}
+	}
 }

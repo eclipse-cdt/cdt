@@ -36,9 +36,9 @@ public class PDOMPrettyPrinter implements IPDOMVisitor {
 
 	@Override
 	public void leave(IPDOMNode node) throws CoreException {
-//		if (node instanceof PDOMCPPClassTemplate) {
-//			((PDOMCPPClassTemplate) node).specializationsAccept(this);
-//		}
+		//		if (node instanceof PDOMCPPClassTemplate) {
+		//			((PDOMCPPClassTemplate) node).specializationsAccept(this);
+		//		}
 		if (indent.length() >= step.length())
 			indent.setLength(indent.length() - step.length());
 	}
@@ -46,12 +46,12 @@ public class PDOMPrettyPrinter implements IPDOMVisitor {
 	@Override
 	public boolean visit(IPDOMNode node) throws CoreException {
 		indent.append(step);
-		StringBuilder sb= new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		sb.append(indent);
 		sb.append(node);
 		if (node instanceof PDOMBinding) {
 			sb.append("  ");
-			PDOMBinding binding= (PDOMBinding) node;
+			PDOMBinding binding = (PDOMBinding) node;
 			sb.append(' ').append(binding.getRecord());
 		}
 		System.out.println(sb);
@@ -65,8 +65,8 @@ public class PDOMPrettyPrinter implements IPDOMVisitor {
 	 * @param linkageID
 	 */
 	public static void dumpLinkage(IIndex index, final int linkageID) {
-		final IPDOMVisitor v= new PDOMPrettyPrinter();
-		IIndexFragment[] frg= ((CIndex) index).getFragments();
+		final IPDOMVisitor v = new PDOMPrettyPrinter();
+		IIndexFragment[] frg = ((CIndex) index).getFragments();
 		for (IIndexFragment element : frg) {
 			final PDOM pdom = (PDOM) element;
 			dumpLinkage(pdom, linkageID, v);
@@ -74,7 +74,7 @@ public class PDOMPrettyPrinter implements IPDOMVisitor {
 	}
 
 	public static void dumpLinkage(PDOM pdom, final int linkageID) {
-		final IPDOMVisitor v= new PDOMPrettyPrinter();
+		final IPDOMVisitor v = new PDOMPrettyPrinter();
 		dumpLinkage(pdom, linkageID, v);
 	}
 

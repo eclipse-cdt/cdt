@@ -32,7 +32,7 @@ public class Activator extends Plugin {
 	 */
 	public Activator() {
 		super();
-		if(fInstance == null) {
+		if (fInstance == null) {
 			fInstance = this;
 		}
 	}
@@ -47,8 +47,7 @@ public class Activator extends Plugin {
 
 	public static void log(String message, Throwable e) {
 		Throwable nestedException;
-		if (e instanceof CModelException
-				&& (nestedException = ((CModelException)e).getException()) != null) {
+		if (e instanceof CModelException && (nestedException = ((CModelException) e).getException()) != null) {
 			e = nestedException;
 		}
 		log(createStatus(message, e));

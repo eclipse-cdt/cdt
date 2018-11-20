@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - modified for use in Container build
  *******************************************************************************/
@@ -64,11 +64,10 @@ import org.eclipse.linuxtools.docker.ui.Activator;
 /**
  * The Container GCC toolchain. It represents a GCC that will run in a Docker
  * Container. It can be overridden to change environment variable settings.
- * 
+ *
  * @since 1.2
  */
-public class ContainerGCCToolChain extends PlatformObject
-		implements IToolChain, IToolChain2 {
+public class ContainerGCCToolChain extends PlatformObject implements IToolChain, IToolChain2 {
 
 	public static final String TYPE_ID = "org.eclipse.cdt.docker.launcher.gcc"; //$NON-NLS-1$
 
@@ -82,9 +81,7 @@ public class ContainerGCCToolChain extends PlatformObject
 	private String cppCommand;
 	private String[] commands;
 
-
-	public ContainerGCCToolChain(String id, IToolChainProvider provider,
-			Map<String, String> properties,
+	public ContainerGCCToolChain(String id, IToolChainProvider provider, Map<String, String> properties,
 			IEnvironmentVariable[] envVars) {
 		this.provider = provider;
 		this.path = new File("/usr/bin/gcc").toPath(); //$NON-NLS-1$
@@ -171,7 +168,7 @@ public class ContainerGCCToolChain extends PlatformObject
 	public void setProperty(String key, String value) {
 		properties.put(key, value);
 	}
-	
+
 	@Override
 	public String getBinaryParserId() {
 		return CCorePlugin.PLUGIN_ID + ".ELF"; //$NON-NLS-1$
@@ -185,9 +182,9 @@ public class ContainerGCCToolChain extends PlatformObject
 	}
 
 	@Override
-	synchronized public IExtendedScannerInfo getScannerInfo(
-			IBuildConfiguration buildConfig, List<String> commandStrings,
-			IExtendedScannerInfo baseScannerInfo, IResource resource, URI buildDirectoryURI) {
+	synchronized public IExtendedScannerInfo getScannerInfo(IBuildConfiguration buildConfig,
+			List<String> commandStrings, IExtendedScannerInfo baseScannerInfo, IResource resource,
+			URI buildDirectoryURI) {
 		try {
 			Path buildDirectory = Paths.get(buildDirectoryURI);
 
@@ -225,8 +222,7 @@ public class ContainerGCCToolChain extends PlatformObject
 			}
 
 			addDiscoveryOptions(commandLine);
-			commandLine.addAll(
-					commandStrings.subList(offset + 1, commandStrings.size()));
+			commandLine.addAll(commandStrings.subList(offset + 1, commandStrings.size()));
 
 			// Strip surrounding quotes from the args on Windows
 			if (Platform.OS_WIN32.equals(Platform.getOS())) {
@@ -305,8 +301,7 @@ public class ContainerGCCToolChain extends PlatformObject
 	}
 
 	@Override
-	synchronized public IExtendedScannerInfo getDefaultScannerInfo(
-			IBuildConfiguration buildConfig,
+	synchronized public IExtendedScannerInfo getDefaultScannerInfo(IBuildConfiguration buildConfig,
 			IExtendedScannerInfo baseScannerInfo, ILanguage language, URI buildDirectoryURI) {
 		try {
 			String[] commands = getCompileCommands(language);
@@ -332,7 +327,7 @@ public class ContainerGCCToolChain extends PlatformObject
 						commandLine.add("-I" + includePath); //$NON-NLS-1$
 					}
 				}
-				
+
 				if (baseScannerInfo.getDefinedSymbols() != null) {
 					for (Map.Entry<String, String> macro : baseScannerInfo.getDefinedSymbols().entrySet()) {
 						if (macro.getValue() != null && !macro.getValue().isEmpty()) {
@@ -377,26 +372,22 @@ public class ContainerGCCToolChain extends PlatformObject
 
 		// Startup the command
 		ContainerCommandLauncher commandLauncher = new ContainerCommandLauncher();
-		ICBuildConfiguration cconfig = buildConfig
-				.getAdapter(ICBuildConfiguration.class);
+		ICBuildConfiguration cconfig = buildConfig.getAdapter(ICBuildConfiguration.class);
 		commandLauncher.setBuildConfiguration(cconfig);
 		commandLauncher.setProject(buildConfig.getProject());
 		// CCorePlugin.getDefault().getBuildEnvironmentManager().setEnvironment(processBuilder.environment(),
 		// buildConfig, true);
-		org.eclipse.core.runtime.IPath commandPath = new org.eclipse.core.runtime.Path(
-				commandLine.get(0));
-		String[] args = commandLine.subList(1, commandLine.size())
-				.toArray(new String[0]);
-		org.eclipse.core.runtime.IPath workingDirectory = new org.eclipse.core.runtime.Path(
-				buildDirectory.toString());
+		org.eclipse.core.runtime.IPath commandPath = new org.eclipse.core.runtime.Path(commandLine.get(0));
+		String[] args = commandLine.subList(1, commandLine.size()).toArray(new String[0]);
+		org.eclipse.core.runtime.IPath workingDirectory = new org.eclipse.core.runtime.Path(buildDirectory.toString());
 
 		Process process;
 		try (ByteArrayOutputStream stdout = new ByteArrayOutputStream();
 				ByteArrayOutputStream stderr = new ByteArrayOutputStream()) {
-			process = commandLauncher.execute(commandPath, args, new String[0],
-					workingDirectory, new NullProgressMonitor());
-			if (process != null && commandLauncher.waitAndRead(stdout, stderr,
-					new NullProgressMonitor()) != ICommandLauncher.OK) {
+			process = commandLauncher.execute(commandPath, args, new String[0], workingDirectory,
+					new NullProgressMonitor());
+			if (process != null
+					&& commandLauncher.waitAndRead(stdout, stderr, new NullProgressMonitor()) != ICommandLauncher.OK) {
 				String errMsg = commandLauncher.getErrorMessage();
 				DockerLaunchUIPlugin.logErrorMessage(errMsg);
 				return null;
@@ -410,14 +401,11 @@ public class ContainerGCCToolChain extends PlatformObject
 
 			// concatenate stdout after stderr as stderr has the include paths
 			// and stdout has the defines
-			String[] outlines = stdout.toString(StandardCharsets.UTF_8.name())
-					.split("\\r?\\n"); //$NON-NLS-1$
-			String[] errlines = stderr.toString(StandardCharsets.UTF_8.name())
-					.split("\\r?\\n"); //$NON-NLS-1$
+			String[] outlines = stdout.toString(StandardCharsets.UTF_8.name()).split("\\r?\\n"); //$NON-NLS-1$
+			String[] errlines = stderr.toString(StandardCharsets.UTF_8.name()).split("\\r?\\n"); //$NON-NLS-1$
 			String[] lines = new String[errlines.length + outlines.length];
 			System.arraycopy(errlines, 0, lines, 0, errlines.length);
-			System.arraycopy(outlines, 0, lines, errlines.length,
-					outlines.length);
+			System.arraycopy(outlines, 0, lines, errlines.length, outlines.length);
 
 			for (String line : lines) {
 				line = line.trim();
@@ -426,11 +414,9 @@ public class ContainerGCCToolChain extends PlatformObject
 						inIncludePaths = false;
 					} else {
 						String include = line.trim();
-						org.eclipse.core.runtime.IPath path = new org.eclipse.core.runtime.Path(
-								include);
+						org.eclipse.core.runtime.IPath path = new org.eclipse.core.runtime.Path(include);
 						if (!path.isAbsolute()) {
-							org.eclipse.core.runtime.IPath newPath = workingDirectory
-									.append(path);
+							org.eclipse.core.runtime.IPath newPath = workingDirectory.append(path);
 							include = newPath.makeAbsolute().toPortableString();
 						}
 						includePath.add(include);
@@ -447,8 +433,7 @@ public class ContainerGCCToolChain extends PlatformObject
 
 			// Process include paths for scanner info and point to any copied
 			// header directories
-			includePath = CommandLauncherManager.getInstance()
-					.processIncludePaths(cconfig, includePath);
+			includePath = CommandLauncherManager.getInstance().processIncludePaths(cconfig, includePath);
 
 			ExtendedScannerInfo info = new ExtendedScannerInfo(symbols,
 					includePath.toArray(new String[includePath.size()]));
@@ -621,10 +606,9 @@ public class ContainerGCCToolChain extends PlatformObject
 	}
 
 	@Override
-	public Process startBuildProcess(ICBuildConfiguration config,
-			List<String> command, String buildDirectory,
-			IEnvironmentVariable[] envVars, IConsole console,
-			IProgressMonitor monitor) throws CoreException, IOException {
+	public Process startBuildProcess(ICBuildConfiguration config, List<String> command, String buildDirectory,
+			IEnvironmentVariable[] envVars, IConsole console, IProgressMonitor monitor)
+			throws CoreException, IOException {
 
 		IPath cmdPath = new org.eclipse.core.runtime.Path("/usr/bin/env"); //$NON-NLS-1$
 
@@ -644,29 +628,24 @@ public class ContainerGCCToolChain extends PlatformObject
 		buf.deleteCharAt(buf.length() - 1); // remove last blank;
 		argList.add(buf.toString());
 
-		ICommandLauncher launcher = CommandLauncherManager.getInstance()
-				.getCommandLauncher(config);
+		ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(config);
 
 		// Bug 536884 - following is a kludge to allow us to check if the
 		// Container headers have been deleted by the user in which case
 		// we need to re-perform scanner info collection and copy headers
 		// to the host.
 		// TODO: make this cleaner
-		CommandLauncherManager.getInstance().processIncludePaths(config,
-				Collections.emptyList());
+		CommandLauncherManager.getInstance().processIncludePaths(config, Collections.emptyList());
 
 		launcher.setProject(config.getBuildConfiguration().getProject());
 		if (launcher instanceof ICBuildCommandLauncher) {
 			((ICBuildCommandLauncher) launcher).setBuildConfiguration(config);
-			console.getOutputStream().write(
-					((ICBuildCommandLauncher) launcher).getConsoleHeader());
+			console.getOutputStream().write(((ICBuildCommandLauncher) launcher).getConsoleHeader());
 		}
 
-		org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
-				buildDirectory);
+		org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(buildDirectory);
 
-		Process p = launcher.execute(cmdPath, argList.toArray(new String[0]),
-				new String[0], workingDir, monitor);
+		Process p = launcher.execute(cmdPath, argList.toArray(new String[0]), new String[0], workingDir, monitor);
 
 		return p;
 	}

@@ -70,28 +70,28 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 */
 	@Override
 	public void init(ICommonContentExtensionSite commonContentExtensionSite) {
-		IMemento memento= commonContentExtensionSite.getMemento();
+		IMemento memento = commonContentExtensionSite.getMemento();
 		restoreState(memento);
 
-		fPropertyChangeListener= new IPropertyChangeListener() {
+		fPropertyChangeListener = new IPropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
-				boolean refreshViewer= false;
-				String property= event.getProperty();
-				Object newValue= event.getNewValue();
-				
+				boolean refreshViewer = false;
+				String property = event.getProperty();
+				Object newValue = event.getNewValue();
+
 				if (property.equals(PreferenceConstants.PREF_SHOW_CU_CHILDREN)) {
-					boolean showCUChildren= newValue instanceof Boolean ? ((Boolean)newValue).booleanValue() : false;
+					boolean showCUChildren = newValue instanceof Boolean ? ((Boolean) newValue).booleanValue() : false;
 					setProvideMembers(showCUChildren);
-					refreshViewer= true;
+					refreshViewer = true;
 				} else if (property.equals(PreferenceConstants.CVIEW_GROUP_INCLUDES)) {
-					boolean groupIncludes= newValue instanceof Boolean ? ((Boolean)newValue).booleanValue() : false;
+					boolean groupIncludes = newValue instanceof Boolean ? ((Boolean) newValue).booleanValue() : false;
 					setIncludesGrouping(groupIncludes);
-					refreshViewer= true;
+					refreshViewer = true;
 				} else if (property.equals(PreferenceConstants.CVIEW_GROUP_MACROS)) {
-					boolean groupMacros = newValue instanceof Boolean ? ((Boolean)newValue).booleanValue() : false;
+					boolean groupMacros = newValue instanceof Boolean ? ((Boolean) newValue).booleanValue() : false;
 					setMacroGrouping(groupMacros);
-					refreshViewer= true;
+					refreshViewer = true;
 				}
 
 				if (refreshViewer && getViewer() != null) {
@@ -100,7 +100,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			}
 		};
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyChangeListener);
-		
+
 		// Note that this listener listens to CCorePlugin preferences
 		fPreferenceChangeListener = new IPreferenceChangeListener() {
 			@Override
@@ -118,7 +118,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).addPreferenceChangeListener(fPreferenceChangeListener);
 
 		// TLETODO [CN] use extension state model for view options persistence
-//		fStateModel.addPropertyChangeListener(listener);
+		//		fStateModel.addPropertyChangeListener(listener);
 	}
 
 	/*
@@ -127,10 +127,10 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	@Override
 	public void dispose() {
 		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).removePreferenceChangeListener(fPreferenceChangeListener);
-		
+
 		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyChangeListener);
 		// TLETODO [CN] use extension state model for view options persistence
-//		fStateModel.removePropertyChangeListener(fPropertyChangeListener);
+		//		fStateModel.removePropertyChangeListener(fPropertyChangeListener);
 		super.dispose();
 	}
 
@@ -139,20 +139,20 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 */
 	@Override
 	public void restoreState(IMemento memento) {
-		IPreferenceStore store= PreferenceConstants.getPreferenceStore();
-		boolean showCUChildren= store.getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
-		boolean groupIncludes= store.getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES);
-		boolean groupMacros= store.getBoolean(PreferenceConstants.CVIEW_GROUP_MACROS);
+		IPreferenceStore store = PreferenceConstants.getPreferenceStore();
+		boolean showCUChildren = store.getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
+		boolean groupIncludes = store.getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES);
+		boolean groupMacros = store.getBoolean(PreferenceConstants.CVIEW_GROUP_MACROS);
 		if (memento != null) {
 			// options controlled by preference only
-//			String mementoValue= memento.getString(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
-//			if (mementoValue != null) {
-//				showCUChildren= Boolean.valueOf(mementoValue).booleanValue();
-//			}
-//			mementoValue= memento.getString(PreferenceConstants.CVIEW_GROUP_INCLUDES);
-//			if (mementoValue != null) {
-//				groupIncludes= Boolean.valueOf(mementoValue).booleanValue();
-//			}
+			//			String mementoValue= memento.getString(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
+			//			if (mementoValue != null) {
+			//				showCUChildren= Boolean.valueOf(mementoValue).booleanValue();
+			//			}
+			//			mementoValue= memento.getString(PreferenceConstants.CVIEW_GROUP_INCLUDES);
+			//			if (mementoValue != null) {
+			//				groupIncludes= Boolean.valueOf(mementoValue).booleanValue();
+			//			}
 		}
 		setProvideMembers(showCUChildren);
 		setIncludesGrouping(groupIncludes);
@@ -177,7 +177,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		fRealInput= newInput;
+		fRealInput = newInput;
 		super.inputChanged(viewer, oldInput, findInputElement(newInput));
 	}
 
@@ -193,11 +193,11 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 */
 	@Override
 	public Object getParent(Object element) {
-		Object parent= super.getParent(element);
+		Object parent = super.getParent(element);
 		if (parent instanceof ICModel) {
 			return getViewerInput() != null ? fRealInput : parent;
 		} else if (parent instanceof ICProject)
-			return ((ICProject)parent).getProject();
+			return ((ICProject) parent).getProject();
 		return parent;
 	}
 
@@ -223,9 +223,9 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	@Override
 	public Object[] getElements(Object parent) {
 		if (parent instanceof IWorkspaceRoot) {
-			return ((IWorkspaceRoot)parent).getProjects();
+			return ((IWorkspaceRoot) parent).getProjects();
 		} else if (parent instanceof IProject) {
-			return super.getChildren(CoreModel.getDefault().create((IProject)parent));
+			return super.getChildren(CoreModel.getDefault().create((IProject) parent));
 		}
 		return super.getElements(parent);
 	}
@@ -237,12 +237,12 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	public Object[] getChildren(Object element) {
 		Object children[];
 		if (element instanceof IWorkspaceRoot) {
-			return ((IWorkspaceRoot)element).getProjects();
+			return ((IWorkspaceRoot) element).getProjects();
 		} else if (element instanceof IProject) {
 			CModel cModel = CModelManager.getDefault().getCModel();
-			ICProject prj = cModel.findCProject((IProject)element);
-			if(prj == null) {
-				prj = CoreModel.getDefault().create((IProject)element);
+			ICProject prj = cModel.findCProject((IProject) element);
+			if (prj == null) {
+				prj = CoreModel.getDefault().create((IProject) element);
 			}
 			return super.getChildren(prj);
 		} else {
@@ -257,12 +257,12 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof IProject) {
-			IProject project= (IProject) element;
+			IProject project = (IProject) element;
 			return project.isAccessible();
 		}
 		return super.hasChildren(element);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedChildren(java.lang.Object, java.util.Set)
 	 */
@@ -285,25 +285,25 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	}
 
 	private void customizeCElements(Object[] cChildren, Set<Object> proposedChildren) {
-		List<Object> elementList= Arrays.asList(cChildren);
+		List<Object> elementList = Arrays.asList(cChildren);
 		for (Object element : proposedChildren) {
-			IResource resource= null;
+			IResource resource = null;
 			if (element instanceof IResource) {
-				resource= (IResource)element;
+				resource = (IResource) element;
 			} else if (element instanceof IAdaptable) {
-				resource= ((IAdaptable)element).getAdapter(IResource.class);
+				resource = ((IAdaptable) element).getAdapter(IResource.class);
 			}
 			if (resource != null) {
-				int i= elementList.indexOf(resource);
+				int i = elementList.indexOf(resource);
 				if (i >= 0) {
-					cChildren[i]= null;
+					cChildren[i] = null;
 				}
 			}
 		}
 		for (Object element : cChildren) {
 			if (element instanceof ICElement) {
-				ICElement cElement= (ICElement)element;
-				IResource resource= cElement.getResource();
+				ICElement cElement = (ICElement) element;
+				IResource resource = cElement.getResource();
 				if (resource != null) {
 					proposedChildren.remove(resource);
 				}
@@ -330,11 +330,11 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		Object parent = addModification.getParent();
 		if (parent instanceof ICProject) {
 			if (fRealInput instanceof IWorkspaceRoot) {
-				addModification.setParent(((ICProject)parent).getProject());
+				addModification.setParent(((ICProject) parent).getProject());
 			}
 		} else if (parent instanceof IProject || parent instanceof IFolder) {
 			// ignore adds to C projects (we are issuing a refresh)
-			IProject project= ((IResource) parent).getProject();
+			IProject project = ((IResource) parent).getProject();
 			if (CoreModel.hasCNature(project)) {
 				addModification.getChildren().clear();
 				return addModification;
@@ -342,9 +342,9 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		} else if (parent instanceof IWorkspaceRoot) {
 			// ignore adds of C projects (we are issuing a refresh)
 			for (Iterator<?> iterator = addModification.getChildren().iterator(); iterator.hasNext();) {
-				Object child= iterator.next();
+				Object child = iterator.next();
 				if (child instanceof IProject) {
-					if (CoreModel.hasCNature((IProject)child)) {
+					if (CoreModel.hasCNature((IProject) child)) {
 						iterator.remove();
 					}
 				}
@@ -387,23 +387,22 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 
 	/**
 	 * Converts the shape modification to use ICElements.
-	 * 
+	 *
 	 * @param modification
 	 *            the shape modification to convert
 	 * @return <code>true</code> if the shape modification set was modified
 	 */
-	private boolean convertToCElements(
-			PipelinedShapeModification modification) {
-		Object parent= modification.getParent();
+	private boolean convertToCElements(PipelinedShapeModification modification) {
+		Object parent = modification.getParent();
 		// don't convert projects
 		if (parent instanceof IContainer) {
-			IContainer container= (IContainer)parent;
-			IProject project= container.getProject();
+			IContainer container = (IContainer) parent;
+			IProject project = container.getProject();
 			if (project != null && CoreModel.hasCNature(project)) {
-				ICElement element= CoreModel.getDefault().create(container);
+				ICElement element = CoreModel.getDefault().create(container);
 				if (element != null) {
 					// don't convert the root
-					if( !(element instanceof ICModel) && !(element instanceof ICProject) ) {
+					if (!(element instanceof ICModel) && !(element instanceof ICProject)) {
 						modification.setParent(element);
 					}
 					@SuppressWarnings("unchecked")
@@ -417,22 +416,22 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 
 	/**
 	 * Converts the given set to ICElements.
-	 * 
+	 *
 	 * @param currentChildren
 	 *            The set of current children that would be contributed or
 	 *            refreshed in the viewer.
 	 * @return <code>true</code> if the input set was modified
 	 */
 	private boolean convertToCElements(Set<Object> currentChildren) {
-		LinkedHashSet<ICElement> convertedChildren= new LinkedHashSet<ICElement>();
+		LinkedHashSet<ICElement> convertedChildren = new LinkedHashSet<ICElement>();
 		ICElement newChild;
-		for (Iterator<Object> iter= currentChildren.iterator(); iter.hasNext();) {
-			Object child= iter.next();
+		for (Iterator<Object> iter = currentChildren.iterator(); iter.hasNext();) {
+			Object child = iter.next();
 			// do not convert IProject
 			if (child instanceof IFile || child instanceof IFolder) {
-				IResource resource= (IResource)child;
+				IResource resource = (IResource) child;
 				if (resource.isAccessible() && CoreModel.hasCNature(resource.getProject())) {
-					if ((newChild= CoreModel.getDefault().create(resource)) != null) {
+					if ((newChild = CoreModel.getDefault().create(resource)) != null) {
 						iter.remove();
 						convertedChildren.add(newChild);
 					}
@@ -450,17 +449,18 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	protected void postContainerRefresh(final IParent container, final ICProject cproject) {
 		postRefreshable(new RefreshContainer(container, cproject.getProject()));
 	}
+
 	@Override
 	protected void postRefresh(final Object element) {
 		if (element instanceof ICModel) {
 			// don't refresh workspace root
-//			super.postRefresh(fRealInput);
+			//			super.postRefresh(fRealInput);
 		} else if (element instanceof ICProject) {
-			super.postRefresh(((ICProject)element).getProject());
+			super.postRefresh(((ICProject) element).getProject());
 		} else if (element instanceof ICElement) {
 			super.postRefresh(element);
 		} else if (element instanceof IResource) {
-			IProject project= ((IResource)element).getProject();
+			IProject project = ((IResource) element).getProject();
 			if (CoreModel.hasCNature(project)) {
 				super.postRefresh(element);
 			}
@@ -473,16 +473,16 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			if (element instanceof ICElement) {
 				super.postAdd(fRealInput, element);
 			} else if (element instanceof IProject) {
-				if (CoreModel.hasCNature((IProject)element)) {
+				if (CoreModel.hasCNature((IProject) element)) {
 					super.postAdd(fRealInput, element);
 				}
 			}
 		} else if (parent instanceof ICProject) {
-			super.postAdd(((ICProject)parent).getProject(), element);
+			super.postAdd(((ICProject) parent).getProject(), element);
 		} else if (parent instanceof ICElement) {
 			super.postAdd(parent, element);
 		} else if (element instanceof IResource) {
-			IProject project= ((IResource)element).getProject();
+			IProject project = ((IResource) element).getProject();
 			if (CoreModel.hasCNature(project)) {
 				super.postAdd(parent, element);
 			}
@@ -499,7 +499,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		if (element instanceof ICModel) {
 			super.postProjectStateChanged(fRealInput);
 		} else if (element instanceof ICProject) {
-			super.postProjectStateChanged(((ICProject)element).getProject());
+			super.postProjectStateChanged(((ICProject) element).getProject());
 		} else {
 			super.postProjectStateChanged(element);
 		}

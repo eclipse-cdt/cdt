@@ -14,7 +14,7 @@
 package org.eclipse.cdt.autotools.ui.editors.parser;
 
 public class AutoconfWhileElement extends AutoconfElement {
-	
+
 	public AutoconfWhileElement() {
 		super("while"); //$NON-NLS-1$
 	}

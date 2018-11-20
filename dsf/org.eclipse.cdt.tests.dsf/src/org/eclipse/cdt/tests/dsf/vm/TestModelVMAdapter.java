@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,12 +22,12 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  */
 public class TestModelVMAdapter extends AbstractVMAdapter {
 
-    @Override
-    protected IVMProvider createViewModelProvider(IPresentationContext context) {
-        return new TestModelVMProvider(this, context);
-    }
-    
-    public TestModelVMProvider getTestModelProvider(IPresentationContext context) {
-        return (TestModelVMProvider)getVMProvider(context);
-    }
+	@Override
+	protected IVMProvider createViewModelProvider(IPresentationContext context) {
+		return new TestModelVMProvider(this, context);
+	}
+
+	public TestModelVMProvider getTestModelProvider(IPresentationContext context) {
+		return (TestModelVMProvider) getVMProvider(context);
+	}
 }

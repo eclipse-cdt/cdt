@@ -20,87 +20,89 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public abstract class AbstractMethodStub implements IMethodStub {
-    protected String fName;
-    protected String fDescription;
-    protected ASTAccessVisibility fAccess;
-    protected boolean fIsVirtual;
-    protected boolean fIsInline;
-    
-    public AbstractMethodStub(String name, ASTAccessVisibility access, boolean isVirtual, boolean isInline) {
-        fName = name;
-        fAccess = access;
-        fIsVirtual = isVirtual;
-        fIsInline = isInline;
-    }
-    
-    @Override
+	protected String fName;
+	protected String fDescription;
+	protected ASTAccessVisibility fAccess;
+	protected boolean fIsVirtual;
+	protected boolean fIsInline;
+
+	public AbstractMethodStub(String name, ASTAccessVisibility access, boolean isVirtual, boolean isInline) {
+		fName = name;
+		fAccess = access;
+		fIsVirtual = isVirtual;
+		fIsInline = isInline;
+	}
+
+	@Override
 	public String getName() {
-        return fName;
-    }
+		return fName;
+	}
 
-    @Override
+	@Override
 	public String getDescription() {
-        return fDescription;
-    }
+		return fDescription;
+	}
 
-    @Override
+	@Override
 	public ASTAccessVisibility getAccess() {
-        return fAccess;
-    }
+		return fAccess;
+	}
 
-    @Override
+	@Override
 	public void setAccess(ASTAccessVisibility access) {
-        fAccess = access;
-    }
+		fAccess = access;
+	}
 
-    @Override
+	@Override
 	public boolean isVirtual() {
-        return fIsVirtual;
-    }
-    
-    @Override
+		return fIsVirtual;
+	}
+
+	@Override
 	public void setVirtual(boolean isVirtual) {
-        fIsVirtual = isVirtual;
-    }
+		fIsVirtual = isVirtual;
+	}
 
-    @Override
+	@Override
 	public boolean isInline() {
-        return fIsInline;
-    }
+		return fIsInline;
+	}
 
-    @Override
+	@Override
 	public void setInline(boolean isInline) {
-        fIsInline = isInline;
-    }
-    
-    @Override
+		fIsInline = isInline;
+	}
+
+	@Override
 	public boolean canModifyAccess() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean canModifyVirtual() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean canModifyInline() {
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean isConstructor() {
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public boolean isDestructor() {
-        return false;
-    }
-	
-    @Override
-	public abstract String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException;
-    
-    @Override
-	public abstract String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException;
+		return false;
+	}
+
+	@Override
+	public abstract String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses,
+			String lineDelimiter) throws CoreException;
+
+	@Override
+	public abstract String createMethodImplementation(ITranslationUnit tu, String className,
+			IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException;
 }

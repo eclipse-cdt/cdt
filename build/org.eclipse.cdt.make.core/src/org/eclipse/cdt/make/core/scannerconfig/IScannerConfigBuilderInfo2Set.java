@@ -18,24 +18,23 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IScannerConfigBuilderInfo2Set {
 	/**
-	 * 
+	 *
 	 * @return InfoContext - to IScannerConfigBuilderInfo2 map
 	 */
 	Map<InfoContext, IScannerConfigBuilderInfo2> getInfoMap();
-	
+
 	IScannerConfigBuilderInfo2 getInfo(InfoContext context);
-	
+
 	IScannerConfigBuilderInfo2 removeInfo(InfoContext context) throws CoreException;
-	
+
 	InfoContext[] getContexts();
-	
+
 	IScannerConfigBuilderInfo2 createInfo(InfoContext context, IScannerConfigBuilderInfo2 base);
 
 	IScannerConfigBuilderInfo2 createInfo(InfoContext context, IScannerConfigBuilderInfo2 base, String profileId);
@@ -45,6 +44,6 @@ public interface IScannerConfigBuilderInfo2Set {
 	IScannerConfigBuilderInfo2 createInfo(InfoContext context, String profileId);
 
 	void save() throws CoreException;
-	
+
 	IProject getProject();
 }

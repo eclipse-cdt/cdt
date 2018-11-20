@@ -38,7 +38,7 @@ public class CModel extends Openable implements ICModel {
 	}
 
 	public CModel(IWorkspaceRoot root) {
-		super (null, root, ICElement.C_MODEL);
+		super(null, root, ICElement.C_MODEL);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class CModel extends Openable implements ICModel {
 	@Override
 	public ICProject[] getCProjects() throws CModelException {
 		List<?> list = getChildrenOfType(C_PROJECT);
-		ICProject[] array= new ICProject[list.size()];
+		ICProject[] array = new ICProject[list.size()];
 		list.toArray(array);
 		return array;
 	}
@@ -101,20 +101,19 @@ public class CModel extends Openable implements ICModel {
 	}
 
 	@Override
-	public void copy(ICElement[] elements, ICElement[] containers, ICElement[] siblings,
-			String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
+	public void copy(ICElement[] elements, ICElement[] containers, ICElement[] siblings, String[] renamings,
+			boolean replace, IProgressMonitor monitor) throws CModelException {
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
-			runOperation(new CopyResourceElementsOperation(elements, containers, replace), elements,
-					siblings, renamings, monitor);
-		} else {
-			runOperation(new CopyElementsOperation(elements, containers, replace), elements, siblings,
+			runOperation(new CopyResourceElementsOperation(elements, containers, replace), elements, siblings,
 					renamings, monitor);
+		} else {
+			runOperation(new CopyElementsOperation(elements, containers, replace), elements, siblings, renamings,
+					monitor);
 		}
 	}
 
 	@Override
-	public void delete(ICElement[] elements, boolean force, IProgressMonitor monitor)
-			throws CModelException {
+	public void delete(ICElement[] elements, boolean force, IProgressMonitor monitor) throws CModelException {
 		CModelOperation op;
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
 			op = new DeleteResourceElementsOperation(elements, force);
@@ -125,20 +124,20 @@ public class CModel extends Openable implements ICModel {
 	}
 
 	@Override
-	public void move(ICElement[] elements, ICElement[] containers, ICElement[] siblings,
-			String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
+	public void move(ICElement[] elements, ICElement[] containers, ICElement[] siblings, String[] renamings,
+			boolean replace, IProgressMonitor monitor) throws CModelException {
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
-			runOperation(new MoveResourceElementsOperation(elements, containers, replace), elements,
-					siblings, renamings, monitor);
-		} else {
-			runOperation(new MoveElementsOperation(elements, containers, replace), elements, siblings,
+			runOperation(new MoveResourceElementsOperation(elements, containers, replace), elements, siblings,
 					renamings, monitor);
+		} else {
+			runOperation(new MoveElementsOperation(elements, containers, replace), elements, siblings, renamings,
+					monitor);
 		}
 	}
 
 	@Override
-	public void rename(ICElement[] elements, ICElement[] destinations, String[] renamings,
-			boolean force, IProgressMonitor monitor) throws CModelException {
+	public void rename(ICElement[] elements, ICElement[] destinations, String[] renamings, boolean force,
+			IProgressMonitor monitor) throws CModelException {
 		CModelOperation op;
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
 			op = new RenameResourceElementsOperation(elements, destinations, renamings, force);
@@ -151,8 +150,8 @@ public class CModel extends Openable implements ICModel {
 	/**
 	 * Configures and runs the {@link MultiOperation}.
 	 */
-	protected void runOperation(MultiOperation op, ICElement[] elements, ICElement[] siblings,
-			String[] renamings, IProgressMonitor monitor) throws CModelException {
+	protected void runOperation(MultiOperation op, ICElement[] elements, ICElement[] siblings, String[] renamings,
+			IProgressMonitor monitor) throws CModelException {
 		op.setRenamings(renamings);
 		if (siblings != null) {
 			for (int i = 0; i < elements.length; i++) {
@@ -163,7 +162,7 @@ public class CModel extends Openable implements ICModel {
 	}
 
 	@Override
-	protected CElementInfo createElementInfo () {
+	protected CElementInfo createElementInfo() {
 		return new CModelInfo(this);
 	}
 
@@ -179,14 +178,12 @@ public class CModel extends Openable implements ICModel {
 	 */
 	public ICProject[] getOldCProjectsList() throws CModelException {
 		CModelManager manager = CModelManager.getDefault();
-		return manager.cProjectsCache == null ?
-				getCProjects() :
-				manager.cProjectsCache;
+		return manager.cProjectsCache == null ? getCProjects() : manager.cProjectsCache;
 	}
 
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement,
-			CElementInfo> newElements, IResource underlyingResource) throws CModelException {
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements,
+			IResource underlyingResource) throws CModelException {
 		boolean validInfo = false;
 		try {
 			IResource res = getResource();
@@ -206,7 +203,7 @@ public class CModel extends Openable implements ICModel {
 		return ((CModelInfo) getElementInfo()).getNonCResources();
 	}
 
-	protected  boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
+	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
 		// Determine my children.
 		IWorkspaceRoot root = (IWorkspaceRoot) getResource();
 		IProject[] projects = root.getProjects();

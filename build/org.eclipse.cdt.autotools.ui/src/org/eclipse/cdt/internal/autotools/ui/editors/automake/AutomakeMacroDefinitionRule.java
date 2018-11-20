@@ -31,7 +31,7 @@ class AutomakeMacroDefinitionRule implements IPredicateRule {
 	private IToken token;
 	private StringBuilder buffer = new StringBuilder();
 	protected IToken defaultToken;
-	
+
 	public AutomakeMacroDefinitionRule(IToken token, IToken defaultToken) {
 		this.token = token;
 		this.defaultToken = defaultToken;
@@ -53,45 +53,45 @@ class AutomakeMacroDefinitionRule implements IPredicateRule {
 
 		for (c = scanner.read(); c != ICharacterScanner.EOF; c = scanner.read()) {
 			switch (state) {
-				case INIT_STATE :
-					if (c != '\n' && Character.isWhitespace((char) c)) {
-						break;
-					}
-					if (isValidCharacter(c)) {
-						state = VAR_STATE;
-					} else {
-						state = ERROR_STATE;
-					}
+			case INIT_STATE:
+				if (c != '\n' && Character.isWhitespace((char) c)) {
 					break;
-				case VAR_STATE :
-					if (isValidCharacter(c)) {
-						break;
-					}
-				case END_VAR_STATE :
-					if (Character.isWhitespace((char) c)) {
-						state = END_VAR_STATE;
-					} else if (c == ':' || c == '+') {
-						state = EQUAL_STATE;
-					} else if (c == '=') {
-						state = FINISH_STATE;
-					} else {
-//						if (state == END_VAR_STATE) {
-//							scanner.unread(); // Return back to the space
-//						}
-						state = ERROR_STATE;
-					}
+				}
+				if (isValidCharacter(c)) {
+					state = VAR_STATE;
+				} else {
+					state = ERROR_STATE;
+				}
+				break;
+			case VAR_STATE:
+				if (isValidCharacter(c)) {
 					break;
-				case EQUAL_STATE :
-					if (c == '=') {
-						state = FINISH_STATE;
-					} else {
-						state = ERROR_STATE;
-					}
-					break;
-				case FINISH_STATE :
-					break;
-				default :
-					break;
+				}
+			case END_VAR_STATE:
+				if (Character.isWhitespace((char) c)) {
+					state = END_VAR_STATE;
+				} else if (c == ':' || c == '+') {
+					state = EQUAL_STATE;
+				} else if (c == '=') {
+					state = FINISH_STATE;
+				} else {
+					//						if (state == END_VAR_STATE) {
+					//							scanner.unread(); // Return back to the space
+					//						}
+					state = ERROR_STATE;
+				}
+				break;
+			case EQUAL_STATE:
+				if (c == '=') {
+					state = FINISH_STATE;
+				} else {
+					state = ERROR_STATE;
+				}
+				break;
+			case FINISH_STATE:
+				break;
+			default:
+				break;
 			}
 			if (state >= FINISH_STATE) {
 				break;
@@ -104,21 +104,21 @@ class AutomakeMacroDefinitionRule implements IPredicateRule {
 			return token;
 		}
 
-        boolean debug = true;
-        if (debug) {
-//        	System.out.println("This should be a 'c':  " + peek(scanner));
-//                System.out.println("This is what's in the **REST OF** the buffer:");
-//                int count = 0;
-//                for (int c = scanner.read(); c != ICharacterScanner.EOF; c = scanner.read()) {
-//                        System.out.println((char) c);
-//                        count++;
-//                }
-//                // Unread what we just displayed
-//                for (int i = 0; i < count; i++) {
-//                        scanner.unread();
-//                }
-        }
-		
+		boolean debug = true;
+		if (debug) {
+			//        	System.out.println("This should be a 'c':  " + peek(scanner));
+			//                System.out.println("This is what's in the **REST OF** the buffer:");
+			//                int count = 0;
+			//                for (int c = scanner.read(); c != ICharacterScanner.EOF; c = scanner.read()) {
+			//                        System.out.println((char) c);
+			//                        count++;
+			//                }
+			//                // Unread what we just displayed
+			//                for (int i = 0; i < count; i++) {
+			//                        scanner.unread();
+			//                }
+		}
+
 		if (defaultToken.isUndefined()) {
 			// If c is EOF, we've read it and broken out of the for loop above,
 			// but we need to unread it since it got read but not put into the
@@ -126,27 +126,27 @@ class AutomakeMacroDefinitionRule implements IPredicateRule {
 			if (state == ERROR_STATE || c == ICharacterScanner.EOF)
 				scanner.unread();
 			unreadBuffer(scanner);
-            debug = true;
-            if (debug) {
-//            	System.out.println("This should be an 'i':  " + peek(scanner));
-//                    System.out.println("We've supposedly just unread the entire buffer.  Here it is:");
-//                    int count = 0;
-//                    for (int c = scanner.read(); c != ICharacterScanner.EOF; c = scanner.read()) {
-//                            System.out.println((char) c);
-//                            count++;
-//                    }
-//                    // Unread what we just displayed
-//                    for (int i = 0; i < count + 1; i++) {
-//                            scanner.unread();
-//                    }
-//                    System.out.println("... just to be safe, here's the first character:  " + peek(scanner));
-            }
+			debug = true;
+			if (debug) {
+				//            	System.out.println("This should be an 'i':  " + peek(scanner));
+				//                    System.out.println("We've supposedly just unread the entire buffer.  Here it is:");
+				//                    int count = 0;
+				//                    for (int c = scanner.read(); c != ICharacterScanner.EOF; c = scanner.read()) {
+				//                            System.out.println((char) c);
+				//                            count++;
+				//                    }
+				//                    // Unread what we just displayed
+				//                    for (int i = 0; i < count + 1; i++) {
+				//                            scanner.unread();
+				//                    }
+				//                    System.out.println("... just to be safe, here's the first character:  " + peek(scanner));
+			}
 
 		}
-		
+
 		return Token.UNDEFINED;
 	}
-	
+
 	public char peek(ICharacterScanner scanner) {
 		char c = (char) scanner.read();
 		scanner.unread();
@@ -182,7 +182,7 @@ class AutomakeMacroDefinitionRule implements IPredicateRule {
 	}
 
 	private void scanToBeginOfLine(ICharacterScanner scanner) {
-		while(scanner.getColumn() != 0) {
+		while (scanner.getColumn() != 0) {
 			scanner.unread();
 		}
 	}
@@ -203,10 +203,11 @@ class AutomakeMacroDefinitionRule implements IPredicateRule {
 
 		return true;
 	}
+
 	protected boolean isValidCharacter(int c) {
 		char c0 = (char) c;
-		return Character.isLetterOrDigit(c0) || (c0 == '_') || (c0 == '-') || 
-		(c0 == '@') || (c0 == '+') || (c0 == '$') || (c0 == '(') || (c0 == ')');
+		return Character.isLetterOrDigit(c0) || (c0 == '_') || (c0 == '-') || (c0 == '@') || (c0 == '+') || (c0 == '$')
+				|| (c0 == '(') || (c0 == ')');
 	}
 
 }

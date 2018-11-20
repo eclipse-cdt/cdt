@@ -48,7 +48,7 @@ public abstract class CompositeScope implements IIndexScope {
 		this.cf = cf;
 		this.rbinding = rbinding;
 	}
-	
+
 	@Override
 	public IIndexScope getParent() {
 		IIndexScope rscope = rbinding.getScope();
@@ -62,7 +62,7 @@ public abstract class CompositeScope implements IIndexScope {
 	public IIndexName getScopeName() {
 		if (rbinding instanceof IIndexScope)
 			return ((IIndexScope) rbinding).getScopeName();
-		if (rbinding instanceof ICPPClassType) 
+		if (rbinding instanceof ICPPClassType)
 			return (IIndexName) ((ICPPClassType) rbinding).getCompositeScope().getScopeName();
 		return null;
 	}
@@ -70,25 +70,24 @@ public abstract class CompositeScope implements IIndexScope {
 	protected final void fail() {
 		throw new CompositingNotImplementedError();
 	}
-	
+
 	public IBinding getRawScopeBinding() {
 		return rbinding;
 	}
-	
+
 	/**
 	 * For bindings that are not known statically to be index bindings, we must decide how to
 	 * process them by run-time type. This method processes a single binding accordingly.
 	 * @param binding a binding from the fragment layer
-	 * @return a suitable binding at the composite layer 
+	 * @return a suitable binding at the composite layer
 	 */
 	protected final IBinding processUncertainBinding(IBinding binding) {
 		if (binding instanceof IIndexFragmentBinding) {
-			return cf.getCompositeBinding((IIndexFragmentBinding) binding);				
+			return cf.getCompositeBinding((IIndexFragmentBinding) binding);
 		} else if (binding instanceof ProblemBinding) {
 			return binding;
 		} else if (binding instanceof CPPCompositeBinding /* AST composite */) {
-			return new CPPCompositeBinding(
-					processUncertainBindings(((CPPCompositeBinding) binding).getBindings()));
+			return new CPPCompositeBinding(processUncertainBindings(((CPPCompositeBinding) binding).getBindings()));
 		} else if (binding instanceof CPPUsingDeclaration) {
 			return binding;
 		} else if (binding == null) {
@@ -99,20 +98,20 @@ public abstract class CompositeScope implements IIndexScope {
 		CCorePlugin.log("CompositeFactory unsure how to process: " + binding.getClass().getName()); //$NON-NLS-1$
 		return binding;
 	}
-	
+
 	/**
 	 * A convenience method for processing an array of bindings with
 	 * {@link CompositeScope#processUncertainBinding(IBinding)}.
-     * Returns an empty array if the input parameter is null.
-     *
+	 * Returns an empty array if the input parameter is null.
+	 *
 	 * @param frgBindings
-	 * @return a non-null IBinding[] 
+	 * @return a non-null IBinding[]
 	 */
 	protected final IBinding[] processUncertainBindings(IBinding[] frgBindings) {
 		if (frgBindings != null) {
-			IBinding[] result= new IBinding[frgBindings.length];
-			for(int i= 0; i < result.length; i++) {
-				result[i]= processUncertainBinding(frgBindings[i]);
+			IBinding[] result = new IBinding[frgBindings.length];
+			for (int i = 0; i < result.length; i++) {
+				result[i] = processUncertainBinding(frgBindings[i]);
 			}
 			return result;
 		}
@@ -128,7 +127,7 @@ public abstract class CompositeScope implements IIndexScope {
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(new ScopeLookupData(name, resolve, prefix));
 	}
-	
+
 	/**
 	 * The c++ name resolution stores scopes in hash-maps, we need to make sure equality is detected
 	 * in order to prevent infinite loops.
@@ -140,7 +139,7 @@ public abstract class CompositeScope implements IIndexScope {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * The c++ name resolution stores scopes in hash-maps, we need to make sure equality is detected
 	 * in order to prevent infinite loops.

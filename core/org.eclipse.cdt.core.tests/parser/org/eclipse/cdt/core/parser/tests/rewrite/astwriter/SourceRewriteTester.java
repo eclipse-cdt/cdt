@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.astwriter;
@@ -36,8 +36,10 @@ public class SourceRewriteTester extends TestSuite {
 	private static final String testRegexp = "//!(.*)\\s*(\\w*)*$"; //$NON-NLS-1$
 	private static final String codeTypeRegexp = "//%(C|CPP)( GNU)?$"; //$NON-NLS-1$
 	private static final String resultRegexp = "//=.*$"; //$NON-NLS-1$
-	
-	enum MatcherState { skip, inTest, inSource, inExpectedResult }
+
+	enum MatcherState {
+		skip, inTest, inSource, inExpectedResult
+	}
 
 	protected static BufferedReader createReader(String file) throws IOException {
 		Bundle bundle = CTestPlugin.getDefault().getBundle();
@@ -46,7 +48,7 @@ public class SourceRewriteTester extends TestSuite {
 		return new BufferedReader(new FileReader(file));
 	}
 
-	public static Test suite(String name, String file)throws Exception {
+	public static Test suite(String name, String file) throws Exception {
 		BufferedReader in = createReader(file);
 		ArrayList<RewriteBaseTest> testCases = createTests(in);
 		in.close();
@@ -64,7 +66,7 @@ public class SourceRewriteTester extends TestSuite {
 	protected static boolean lineMatchesBeginOfTest(String line) {
 		return createMatcherFromString(testRegexp, line).find();
 	}
-	
+
 	protected static boolean lineMatchesCodeType(String line) {
 		return createMatcherFromString(codeTypeRegexp, line).find();
 	}
@@ -72,7 +74,7 @@ public class SourceRewriteTester extends TestSuite {
 	protected static Matcher createMatcherFromString(String pattern, String line) {
 		return Pattern.compile(pattern).matcher(line);
 	}
-	
+
 	protected static String getNameOfTest(String line) {
 		Matcher matcherBeginOfTest = createMatcherFromString(testRegexp, line);
 		if (matcherBeginOfTest.find()) {
@@ -90,7 +92,7 @@ public class SourceRewriteTester extends TestSuite {
 		ASTWriterTestSourceFile file = null;
 		MatcherState matcherState = MatcherState.skip;
 		ArrayList<RewriteBaseTest> testCases = new ArrayList<RewriteBaseTest>();
-		
+
 		String line;
 		while ((line = inputReader.readLine()) != null) {
 			if (lineMatchesBeginOfTest(line)) {
@@ -109,7 +111,7 @@ public class SourceRewriteTester extends TestSuite {
 				}
 				continue;
 			}
-			
+
 			switch (matcherState) {
 			case inSource:
 				if (file != null) {
@@ -153,9 +155,8 @@ public class SourceRewriteTester extends TestSuite {
 		}
 		return ParserLanguage.C;
 	}
-	
-	private static RewriteBaseTest createTestClass(String testName, ASTWriterTestSourceFile file)
-			throws Exception {
+
+	private static RewriteBaseTest createTestClass(String testName, ASTWriterTestSourceFile file) throws Exception {
 		ASTWriterTest test = new ASTWriterTest(testName, file);
 		TextSelection sel = file.getSelection();
 		if (sel != null) {

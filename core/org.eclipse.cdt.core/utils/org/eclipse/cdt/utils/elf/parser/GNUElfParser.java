@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.IPath;
  * GNUElfParser
  */
 public class GNUElfParser extends ElfParser {
-	private IGnuToolFactory toolFactory; 
-	
+	private IGnuToolFactory toolFactory;
+
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser#getFormat()
 	 */
@@ -40,7 +40,7 @@ public class GNUElfParser extends ElfParser {
 	protected IBinaryObject createBinaryCore(IPath path) throws IOException {
 		return new GNUElfBinaryObject(this, path, IBinaryFile.CORE);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryExecutable(org.eclipse.core.runtime.IPath)
 	 */
@@ -65,7 +65,6 @@ public class GNUElfParser extends ElfParser {
 		return new GNUElfBinaryShared(this, path);
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryArchive(org.eclipse.core.runtime.IPath)
 	 */
@@ -73,11 +72,11 @@ public class GNUElfParser extends ElfParser {
 	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
 		return new GNUElfBinaryArchive(this, path);
 	}
-	
+
 	protected IGnuToolFactory createGNUToolFactory() {
 		return new DefaultGnuToolFactory(this);
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {

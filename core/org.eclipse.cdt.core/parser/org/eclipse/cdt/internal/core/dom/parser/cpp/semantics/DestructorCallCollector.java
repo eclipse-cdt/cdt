@@ -81,8 +81,8 @@ public class DestructorCallCollector {
 	public static IASTImplicitDestructorName[] getLocalVariablesDestructorCalls(IASTStatement statement) {
 		if (!(statement instanceof IASTImplicitDestructorNameOwner))
 			return IASTImplicitDestructorName.EMPTY_NAME_ARRAY;
-		LocalVariablesDestructorCollector collector =
-				new LocalVariablesDestructorCollector((IASTImplicitDestructorNameOwner) statement);
+		LocalVariablesDestructorCollector collector = new LocalVariablesDestructorCollector(
+				(IASTImplicitDestructorNameOwner) statement);
 		statement.accept(collector);
 		return collector.getDestructorCalls();
 	}
@@ -109,13 +109,13 @@ public class DestructorCallCollector {
 		}
 
 		protected void addDestructorCall(IASTName name, ICPPMethod destructor) {
-			CPPASTImplicitDestructorName destructorName =
-					new CPPASTImplicitDestructorName(destructor.getNameCharArray(), owner, name);
+			CPPASTImplicitDestructorName destructorName = new CPPASTImplicitDestructorName(
+					destructor.getNameCharArray(), owner, name);
 			destructorName.setBinding(destructor);
 			ASTNode parentNode = (ASTNode) owner;
 			int offset = parentNode.getOffset() + parentNode.getLength();
 			if (!(owner instanceof ICPPASTExpression))
-				offset--;  // Before the closing brace.
+				offset--; // Before the closing brace.
 			destructorName.setOffsetAndLength(offset, 0);
 			destructorNames = ArrayUtil.prepend(destructorNames, destructorName);
 		}

@@ -29,11 +29,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
 
 public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpression {
-    private int fOperator;
-    private IASTTypeId fTypeId;
+	private int fOperator;
+	private IASTTypeId fTypeId;
 	private ICPPEvaluation fEvaluation;
 
-    public CPPASTTypeIdExpression() {
+	public CPPASTTypeIdExpression() {
 	}
 
 	public CPPASTTypeIdExpression(int op, IASTTypeId typeId) {
@@ -48,81 +48,88 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 
 	@Override
 	public CPPASTTypeIdExpression copy(CopyStyle style) {
-		CPPASTTypeIdExpression copy =
-				new CPPASTTypeIdExpression(fOperator, fTypeId == null ? null : fTypeId.copy(style));
+		CPPASTTypeIdExpression copy = new CPPASTTypeIdExpression(fOperator,
+				fTypeId == null ? null : fTypeId.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public int getOperator() {
-        return fOperator;
-    }
+		return fOperator;
+	}
 
-    @Override
+	@Override
 	public void setOperator(int value) {
-        assertNotFrozen();
-        fOperator = value;
-    }
+		assertNotFrozen();
+		fOperator = value;
+	}
 
-    @Override
+	@Override
 	public void setTypeId(IASTTypeId typeId) {
-        assertNotFrozen();
-        this.fTypeId = typeId;
-        if (typeId != null) {
-        	typeId.setParent(this);
-        	typeId.setPropertyInParent(TYPE_ID);
-        }
-    }
+		assertNotFrozen();
+		this.fTypeId = typeId;
+		if (typeId != null) {
+			typeId.setParent(this);
+			typeId.setPropertyInParent(TYPE_ID);
+		}
+	}
 
-    @Override
+	@Override
 	public IASTTypeId getTypeId() {
-        return fTypeId;
-    }
+		return fTypeId;
+	}
 
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		return IASTImplicitDestructorName.EMPTY_NAME_ARRAY; // Type-id expression does not call destructors.
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (fTypeId != null && !fTypeId.accept(action)) return false;
+		if (fTypeId != null && !fTypeId.accept(action))
+			return false;
 
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
-			IType type= CPPVisitor.createType(fTypeId);
+			IType type = CPPVisitor.createType(fTypeId);
 			if (type == null || type instanceof IProblemType) {
-				fEvaluation= EvalFixed.INCOMPLETE;
+				fEvaluation = EvalFixed.INCOMPLETE;
 			} else {
-				fEvaluation= new EvalUnaryTypeID(fOperator, type, this);
+				fEvaluation = new EvalUnaryTypeID(fOperator, type, this);
 			}
 		}
 		return fEvaluation;
 	}
 
-    @Override
+	@Override
 	public IType getExpressionType() {
-    	return CPPEvaluation.getType(this);
-    }
+		return CPPEvaluation.getType(this);
+	}
 
 	@Override
 	public ValueCategory getValueCategory() {

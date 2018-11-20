@@ -16,12 +16,12 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 /**
  * Represents a reference to a function which cannot be resolved
  * because  an argument depends on a template parameter.
- * 
+ *
  * @since 5.6
  */
 public interface ICPPDeferredFunction extends ICPPFunction {
 	/**
-	 * Returns the candidate functions the reference might resolve to 
+	 * Returns the candidate functions the reference might resolve to
 	 * after template instantiation.
 	 */
 	public ICPPFunction[] getCandidates();

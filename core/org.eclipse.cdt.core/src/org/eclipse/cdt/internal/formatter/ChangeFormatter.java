@@ -53,7 +53,7 @@ public class ChangeFormatter {
 			TextEdit edit = rootEdit.copy();
 			// Apply refactoring changes to a temporary document.
 			edit.apply(document, TextEdit.UPDATE_REGIONS);
-	
+
 			// Expand regions affected by the changes to cover complete lines. We calculate two
 			// sets of regions, reflecting the state of the document before and after
 			// the refactoring changes.
@@ -73,14 +73,14 @@ public class ChangeFormatter {
 				// the beginning of line both, before and after the change.
 				IRegion lineInfo = document.getLineInformationOfOffset(end);
 				int newEnd = lineInfo.getOffset();
-				newEnd = (originalEnd == 0 || code.charAt(originalEnd - 1) == '\n') && end == newEnd ?
-						end : endOffset(lineInfo);
+				newEnd = (originalEnd == 0 || code.charAt(originalEnd - 1) == '\n') && end == newEnd ? end
+						: endOffset(lineInfo);
 				if (newOffset <= prevEnd && numRegions > 0) {
 					numRegions--;
 					newOffset = regions[numRegions].getOffset();
 				}
 				prevEnd = newEnd;
-				if (newEnd != newOffset) {  // Don't produce empty regions.
+				if (newEnd != newOffset) { // Don't produce empty regions.
 					regions[numRegions] = new Region(newOffset, newEnd - newOffset);
 					numRegions++;
 				}
@@ -90,26 +90,26 @@ public class ChangeFormatter {
 				return rootEdit;
 			if (numRegions < regions.length)
 				regions = Arrays.copyOf(regions, numRegions);
-	
+
 			// Calculate formatting changes for the regions after the refactoring changes.
 			ICProject project = tu.getCProject();
-	        Map<String, Object> options = new HashMap<>(project.getOptions(true));
-	        options.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
+			Map<String, Object> options = new HashMap<>(project.getOptions(true));
+			options.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
 			// Allow all comments to be indented.
 			options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_NEVER_INDENT_LINE_COMMENTS_ON_FIRST_COLUMN,
 					DefaultCodeFormatterConstants.FALSE);
 			CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
 			code = document.get();
-			TextEdit[] formatEdits = formatter.format(CodeFormatter.K_TRANSLATION_UNIT, code,
-					regions, TextUtilities.getDefaultLineDelimiter(document));
-	
+			TextEdit[] formatEdits = formatter.format(CodeFormatter.K_TRANSLATION_UNIT, code, regions,
+					TextUtilities.getDefaultLineDelimiter(document));
+
 			TextEdit combinedFormatEdit = new MultiTextEdit();
 			for (TextEdit formatEdit : formatEdits) {
 				if (formatEdit != null)
 					combinedFormatEdit = TextEditUtil.merge(combinedFormatEdit, formatEdit);
 			}
 			formatEdits = TextEditUtil.flatten(combinedFormatEdit).removeChildren();
-	
+
 			MultiTextEdit result = new MultiTextEdit();
 			int delta = 0;
 			TextEdit edit1 = null;
@@ -164,7 +164,7 @@ public class ChangeFormatter {
 						delta += d;
 						result.addChild(edit1);
 						edit1 = null;
-	
+
 						edit2 = clippedEdit(edit2, new Region(end, Integer.MAX_VALUE - end));
 					}
 				}
@@ -179,8 +179,8 @@ public class ChangeFormatter {
 	}
 
 	private static TextEdit clippedEdit(TextEdit edit, IRegion region) {
-		if ((edit.getOffset() < region.getOffset() && edit.getExclusiveEnd() <= region.getOffset()) ||
-				edit.getOffset() >= endOffset(region)) {
+		if ((edit.getOffset() < region.getOffset() && edit.getExclusiveEnd() <= region.getOffset())
+				|| edit.getOffset() >= endOffset(region)) {
 			return null;
 		}
 		int offset = Math.max(edit.getOffset(), region.getOffset());
@@ -191,7 +191,8 @@ public class ChangeFormatter {
 		}
 		if (edit instanceof DeleteEdit) {
 			return new DeleteEdit(offset, length);
-		} if (edit instanceof ReplaceEdit) {
+		}
+		if (edit instanceof ReplaceEdit) {
 			String replacement = ((ReplaceEdit) edit).getText();
 			int start = Math.max(offset - edit.getOffset(), 0);
 			int end = Math.min(endOffset(region) - offset, replacement.length());
@@ -218,7 +219,7 @@ public class ChangeFormatter {
 		} else {
 			text = ""; //$NON-NLS-1$
 		}
-	
+
 		IDocument document = new Document(text);
 		source.apply(document, TextEdit.NONE);
 		text = document.get();

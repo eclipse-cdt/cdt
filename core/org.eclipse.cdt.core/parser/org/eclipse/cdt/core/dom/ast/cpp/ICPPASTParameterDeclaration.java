@@ -21,7 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTParameterDeclaration extends ICPPASTTemplateParameter, IASTParameterDeclaration, IASTAttributeOwner {
+public interface ICPPASTParameterDeclaration
+		extends ICPPASTTemplateParameter, IASTParameterDeclaration, IASTAttributeOwner {
 	/**
 	 * @since 5.2
 	 */
@@ -32,7 +33,7 @@ public interface ICPPASTParameterDeclaration extends ICPPASTTemplateParameter, I
 	 */
 	@Override
 	public ICPPASTParameterDeclaration copy();
-	
+
 	/**
 	 * @since 5.3
 	 */

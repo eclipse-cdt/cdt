@@ -43,7 +43,7 @@ public class LocalProjectScope implements IScopeContext {
 	public LocalProjectScope(IProject context) {
 		if (context == null)
 			throw new IllegalArgumentException();
-		fContext= context.getName();
+		fContext = context.getName();
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class LocalProjectScope implements IScopeContext {
 	public LocalProjectScope(String projectName) {
 		if (projectName == null)
 			throw new IllegalArgumentException();
-		fContext= projectName;
+		fContext = projectName;
 	}
 
 	@Override
@@ -91,16 +91,15 @@ public class LocalProjectScope implements IScopeContext {
 		return fContext.hashCode();
 	}
 
-
 	private static Preferences getPPP(String name) {
 		return new LocalProjectScope(name).getNode(CCorePlugin.PLUGIN_ID);
 	}
 
 	public static void deletePreferences(IPath prjToDelete, IPath movedTo) {
 		try {
-			Preferences prefs= getPPP(prjToDelete.lastSegment());
+			Preferences prefs = getPPP(prjToDelete.lastSegment());
 			if (movedTo != null) {
-				Preferences target= getPPP(movedTo.lastSegment());
+				Preferences target = getPPP(movedTo.lastSegment());
 				copyPrefs(prefs, target);
 			}
 			deletePrefs(prefs);
@@ -110,7 +109,7 @@ public class LocalProjectScope implements IScopeContext {
 
 	private static void deletePrefs(Preferences prefs) throws BackingStoreException {
 		prefs.clear();
-		String[] children= prefs.childrenNames();
+		String[] children = prefs.childrenNames();
 		for (String child : children) {
 			prefs.node(child).removeNode();
 		}
@@ -119,14 +118,14 @@ public class LocalProjectScope implements IScopeContext {
 	}
 
 	private static void copyPrefs(Preferences prefs, Preferences target) throws BackingStoreException {
-		String[] keys= prefs.keys();
+		String[] keys = prefs.keys();
 		for (String key : keys) {
-			String val= prefs.get(key, null);
+			String val = prefs.get(key, null);
 			if (val != null) {
 				target.put(key, val);
 			}
 		}
-		String[] children= prefs.childrenNames();
+		String[] children = prefs.childrenNames();
 		for (String child : children) {
 			copyPrefs(prefs.node(child), target.node(child));
 		}

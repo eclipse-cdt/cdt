@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
@@ -40,25 +40,19 @@ public class GDBMemory_7_0 extends GDBMemory {
 
 	@Override
 	public void initialize(final RequestMonitor requestMonitor) {
-		super.initialize(
-				new ImmediateRequestMonitor(requestMonitor) { 
-					@Override
-					public void handleSuccess() {
-						doInitialize(requestMonitor);
-					}});
+		super.initialize(new ImmediateRequestMonitor(requestMonitor) {
+			@Override
+			public void handleSuccess() {
+				doInitialize(requestMonitor);
+			}
+		});
 	}
 
 	private void doInitialize(final RequestMonitor requestMonitor) {
 		register(
-			new String[] { 
-				MIMemory.class.getName(), 
-				IMemory.class.getName(),
-				IGDBMemory.class.getName(),
-				IGDBMemory2.class.getName(),
-				GDBMemory.class.getName(),
-				GDBMemory_7_0.class.getName()
-			}, 
-			new Hashtable<String, String>());
+				new String[] { MIMemory.class.getName(), IMemory.class.getName(), IGDBMemory.class.getName(),
+						IGDBMemory2.class.getName(), GDBMemory.class.getName(), GDBMemory_7_0.class.getName() },
+				new Hashtable<String, String>());
 
 		requestMonitor.done();
 	}
@@ -70,9 +64,8 @@ public class GDBMemory_7_0 extends GDBMemory {
 	}
 
 	@Override
-	protected void readMemoryBlock(IDMContext dmc, IAddress address, long offset,
-			int word_size, int word_count, DataRequestMonitor<MemoryByte[]> drm)
-	{
+	protected void readMemoryBlock(IDMContext dmc, IAddress address, long offset, int word_size, int word_count,
+			DataRequestMonitor<MemoryByte[]> drm) {
 		IDMContext threadOrMemoryDmc = dmc;
 
 		// A memory context is a container.  We have two limitations with GDB here:
@@ -83,7 +76,7 @@ public class GDBMemory_7_0 extends GDBMemory {
 		// we can have some threads running with others stopped, so we need to choose a thread that is
 		// actually stopped.
 		IMIContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
-		if(containerCtx != null) {
+		if (containerCtx != null) {
 			IGDBProcesses procService = getServicesTracker().getService(IGDBProcesses.class);
 			IRunControl runControl = getServicesTracker().getService(IRunControl.class);
 
@@ -99,7 +92,8 @@ public class GDBMemory_7_0 extends GDBMemory {
 							// Not so fast, Charlie. The context we were given may have
 							// a memory space qualifier. We need to preserve it.
 							if (dmc instanceof IMemorySpaceDMContext) {
-								threadOrMemoryDmc = new MemorySpaceDMContext(getSession().getId(), ((IMemorySpaceDMContext)dmc).getMemorySpaceId(), threadOrMemoryDmc);
+								threadOrMemoryDmc = new MemorySpaceDMContext(getSession().getId(),
+										((IMemorySpaceDMContext) dmc).getMemorySpaceId(), threadOrMemoryDmc);
 							}
 							break;
 						}
@@ -112,9 +106,8 @@ public class GDBMemory_7_0 extends GDBMemory {
 	}
 
 	@Override
-	protected void writeMemoryBlock(IDMContext dmc, IAddress address, long offset,
-			int word_size, int word_count, byte[] buffer, RequestMonitor rm)
-	{
+	protected void writeMemoryBlock(IDMContext dmc, IAddress address, long offset, int word_size, int word_count,
+			byte[] buffer, RequestMonitor rm) {
 		IDMContext threadOrMemoryDmc = dmc;
 
 		// A memory context is a container.  We have two limitations with GDB here:
@@ -125,7 +118,7 @@ public class GDBMemory_7_0 extends GDBMemory {
 		// we can have some threads running with others stopped, so we need to choose a thread that is
 		// actually stopped.
 		IMIContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
-		if(containerCtx != null) {
+		if (containerCtx != null) {
 			IGDBProcesses procService = getServicesTracker().getService(IGDBProcesses.class);
 			IRunControl runControl = getServicesTracker().getService(IRunControl.class);
 
@@ -141,7 +134,8 @@ public class GDBMemory_7_0 extends GDBMemory {
 							// Not so fast, Charlie. The context we were given may have
 							// a memory space qualifier. We need to preserve it.
 							if (dmc instanceof IMemorySpaceDMContext) {
-								threadOrMemoryDmc = new MemorySpaceDMContext(getSession().getId(), ((IMemorySpaceDMContext)dmc).getMemorySpaceId(), threadOrMemoryDmc);
+								threadOrMemoryDmc = new MemorySpaceDMContext(getSession().getId(),
+										((IMemorySpaceDMContext) dmc).getMemorySpaceId(), threadOrMemoryDmc);
 							}
 							break;
 						}

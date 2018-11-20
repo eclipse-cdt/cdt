@@ -90,8 +90,7 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 
 		Element element = (Element) node;
 		String qmakePath = element.getAttribute(ATTR_QMAKE);
-		if (qmakePath == null
-		 || qmakePath.isEmpty())
+		if (qmakePath == null || qmakePath.isEmpty())
 			return null;
 
 		QtIncludePaths qtIncludePaths = new QtIncludePaths(qmakePath);
@@ -109,13 +108,11 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 	 * expected location.
 	 */
 	public boolean isValid() {
-		if (qmakePath == null
-		 || qmakePath.isEmpty())
+		if (qmakePath == null || qmakePath.isEmpty())
 			return false;
 
 		File qmake = new File(qmakePath);
-		return qmake.exists()
-			&& qmake.canExecute();
+		return qmake.exists() && qmake.canExecute();
 	}
 
 	@Override
@@ -142,17 +139,16 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 	 * will be serialized into the workspace metadata area.
 	 */
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription configDesc, IResource rc, String languageId) {
+	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription configDesc, IResource rc,
+			String languageId) {
 		List<ICLanguageSettingEntry> entries = null;
 
 		File qmake = new File(qmakePath);
-		if (!qmake.exists()
-		 || qmakeModTime != qmake.lastModified())
+		if (!qmake.exists() || qmakeModTime != qmake.lastModified())
 			entries = reload();
 		else {
 			File qtInstallHeadersDir = new File(qtInstallHeadersPath);
-			if (!qtInstallHeadersDir.exists()
-			 || qtInstallHeadersModTime != qtInstallHeadersDir.lastModified())
+			if (!qtInstallHeadersDir.exists() || qtInstallHeadersModTime != qtInstallHeadersDir.lastModified())
 				entries = reload();
 		}
 
@@ -196,13 +192,12 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 	 */
 	private static long getLongAttribute(Element element, String attr) {
 		String value = element.getAttribute(attr);
-		if (value == null
-		 || value.isEmpty())
+		if (value == null || value.isEmpty())
 			return 0;
 
 		try {
 			return Long.parseLong(value);
-		} catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			Activator.log("attribute name:" + attr + " value:" + value, e);
 			return 0;
 		}
@@ -219,8 +214,7 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 		qtInstallHeadersModTime = 0;
 
 		File qmake = new File(qmakePath);
-		if (!qmake.exists()
-		 || !qmake.canExecute())
+		if (!qmake.exists() || !qmake.canExecute())
 			return Collections.emptyList();
 
 		qmakeModTime = qmake.lastModified();
@@ -229,16 +223,16 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 		BufferedReader reader = null;
 		Process process = null;
 		try {
-			process = ProcessFactory.getFactory().exec(new String[]{ qmakePath, "-query", "QT_INSTALL_HEADERS" });
+			process = ProcessFactory.getFactory().exec(new String[] { qmakePath, "-query", "QT_INSTALL_HEADERS" });
 			reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			qtInstallHeadersPath = reader.readLine();
-		} catch(IOException e) {
+		} catch (IOException e) {
 			Activator.log(e);
 		} finally {
 			try {
 				if (reader != null)
 					reader.close();
-			} catch(IOException e) {
+			} catch (IOException e) {
 				/* ignore */
 			} finally {
 				if (process != null)
@@ -252,9 +246,7 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 		File qtInstallHeadersDir = new File(qtInstallHeadersPath);
 
 		qtInstallHeadersModTime = qtInstallHeadersDir.lastModified();
-		if (!qtInstallHeadersDir.exists()
-		 || !qtInstallHeadersDir.canRead()
-		 || !qtInstallHeadersDir.isDirectory())
+		if (!qtInstallHeadersDir.exists() || !qtInstallHeadersDir.canRead() || !qtInstallHeadersDir.isDirectory())
 			return Collections.emptyList();
 
 		// Create an include path entry for all sub-folders in the QT_INSTALL_HEADERS location, including
@@ -268,7 +260,7 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>(files.length + 1);
 		safeAdd(entries, qtInstallHeadersDir);
-		for(File file : files)
+		for (File file : files)
 			safeAdd(entries, file);
 
 		return entries;
@@ -276,8 +268,9 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 
 	private static void safeAdd(List<ICLanguageSettingEntry> entries, File file) {
 		try {
-			entries.add(new CIncludePathEntry(file.getCanonicalPath(), ICSettingEntry.READONLY | ICSettingEntry.RESOLVED));
-		} catch(IOException e) {
+			entries.add(
+					new CIncludePathEntry(file.getCanonicalPath(), ICSettingEntry.READONLY | ICSettingEntry.RESOLVED));
+		} catch (IOException e) {
 			Activator.log(e);
 		}
 	}

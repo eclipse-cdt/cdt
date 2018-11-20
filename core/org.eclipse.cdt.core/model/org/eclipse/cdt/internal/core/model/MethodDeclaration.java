@@ -15,28 +15,27 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
-public class MethodDeclaration extends FunctionDeclaration implements IMethodDeclaration{
+public class MethodDeclaration extends FunctionDeclaration implements IMethodDeclaration {
 
 	boolean isConst = false;
 	boolean isConstructor = false;
 	boolean isDestructor = false;
 
-	public MethodDeclaration(ICElement parent, String name){
+	public MethodDeclaration(ICElement parent, String name) {
 		super(parent, name, ICElement.C_METHOD_DECLARATION);
 	}
 
-	public MethodDeclaration(ICElement parent, String name, int type){
+	public MethodDeclaration(ICElement parent, String name, int type) {
 		super(parent, name, type);
 	}
 
 	@Override
-	public boolean isConstructor(){
+	public boolean isConstructor() {
 		return isConstructor;
 	}
 
@@ -54,71 +53,71 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 	}
 
 	@Override
-	public boolean isOperator(){
+	public boolean isOperator() {
 		return getElementName().startsWith("operator"); //$NON-NLS-1$
 	}
 
 	@Override
-	public boolean isPureVirtual() throws CModelException{
+	public boolean isPureVirtual() throws CModelException {
 		return getMethodInfo().isPureVirtual();
 	}
 
-	public void setPureVirtual(boolean isPureVirtual) throws CModelException{
+	public void setPureVirtual(boolean isPureVirtual) throws CModelException {
 		getMethodInfo().setPureVirtual(isPureVirtual);
 	}
 
 	@Override
-	public boolean isInline() throws CModelException{
+	public boolean isInline() throws CModelException {
 		return getMethodInfo().isInline();
 	}
 
-	public void setInline(boolean isInline) throws CModelException{
+	public void setInline(boolean isInline) throws CModelException {
 		getMethodInfo().setInline(isInline);
 	}
 
 	@Override
-	public boolean isVirtual() throws CModelException{
+	public boolean isVirtual() throws CModelException {
 		return getMethodInfo().isVirtual();
 	}
 
-	public void setVirtual(boolean isVirtual) throws CModelException{
+	public void setVirtual(boolean isVirtual) throws CModelException {
 		getMethodInfo().setVirtual(isVirtual);
 	}
 
 	@Override
-	public boolean isFriend() throws CModelException{
+	public boolean isFriend() throws CModelException {
 		return getMethodInfo().isFriend();
 	}
 
-	public void setFriend(boolean isFriend) throws CModelException{
+	public void setFriend(boolean isFriend) throws CModelException {
 		getMethodInfo().setFriend(isFriend);
 	}
 
 	@Override
-	public boolean isConst(){
+	public boolean isConst() {
 		return isConst;
 	}
 
 	@Override
-	public void setConst(boolean isConst) throws CModelException{
+	public void setConst(boolean isConst) throws CModelException {
 		this.isConst = isConst;
 	}
 
 	@Override
-	public ASTAccessVisibility getVisibility() throws CModelException{
+	public ASTAccessVisibility getVisibility() throws CModelException {
 		return getMethodInfo().getVisibility();
 	}
 
-	public void setVisibility(ASTAccessVisibility visibility) throws CModelException{
+	public void setVisibility(ASTAccessVisibility visibility) throws CModelException {
 		getMethodInfo().setVisibility(visibility);
 	}
 
 	@Override
-	protected CElementInfo createElementInfo () {
+	protected CElementInfo createElementInfo() {
 		return new MethodInfo(this);
 	}
 
-	protected MethodInfo getMethodInfo() throws CModelException{
+	protected MethodInfo getMethodInfo() throws CModelException {
 		return (MethodInfo) getElementInfo();
 	}
 
@@ -132,12 +131,10 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 
 	public static boolean equals(IMethodDeclaration lhs, IMethodDeclaration rhs) {
 		try {
-			return lhs.isConst() == rhs.isConst() &&
-					FunctionDeclaration.equals(lhs, rhs);
+			return lhs.isConst() == rhs.isConst() && FunctionDeclaration.equals(lhs, rhs);
 		} catch (CModelException e) {
 			return false;
 		}
 	}
-
 
 }

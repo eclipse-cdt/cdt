@@ -337,7 +337,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	/**
 	 * Add a path mapping source locator to the global director.
-	 * 
+	 *
 	 * @param missingPath
 	 *            the compilation source path that was not found on the local
 	 *            machine

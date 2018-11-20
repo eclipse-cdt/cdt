@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * This interface represents a postfix array subscript expression. x[10]
  * y.z()[t * t]
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -28,14 +28,14 @@ public interface IASTArraySubscriptExpression extends IASTExpression {
 
 	/**
 	 * Get the expression that represents the array
-	 * 
+	 *
 	 * @return <code>IASTExpression</code> that represents the array.
 	 */
 	public IASTExpression getArrayExpression();
 
 	/**
 	 * Set the expression that represents the array.
-	 * 
+	 *
 	 * @param expression
 	 *            <code>IASTExpression</code> to be set.
 	 */
@@ -72,7 +72,7 @@ public interface IASTArraySubscriptExpression extends IASTExpression {
 	 */
 	@Override
 	IASTArraySubscriptExpression copy();
-	
+
 	/**
 	 * @since 5.3
 	 */

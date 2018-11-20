@@ -23,13 +23,13 @@ class CompositeCPPConstructor extends CompositeCPPMethod implements ICPPConstruc
 	public CompositeCPPConstructor(ICompositesFactory cf, ICPPFunction rbinding) {
 		super(cf, rbinding);
 	}
-	
+
 	@Override
 	@Deprecated
 	public ICPPExecution getConstructorChainExecution(IASTNode point) {
 		return getConstructorChainExecution();
 	}
-	
+
 	@Override
 	public ICPPExecution getConstructorChainExecution() {
 		return ((ICPPConstructor) rbinding).getConstructorChainExecution();

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems, Inc. - extended implementation
@@ -28,63 +28,63 @@ import org.eclipse.ui.texteditor.IUpdate;
  */
 public class TextViewerAction extends Action implements IUpdate {
 
-    private int fOperationCode= -1;
-    private ITextOperationTarget fOperationTarget;
+	private int fOperationCode = -1;
+	private ITextOperationTarget fOperationTarget;
 
-    /**
-     * Constructs a new action in the given text viewer with
-     * the specified operation code.
-     * 
-     * @param viewer
-     * @param operationCode
-     */
-    public TextViewerAction(ITextViewer viewer, int operationCode) {
-        fOperationCode= operationCode;
-        fOperationTarget= viewer.getTextOperationTarget();
-        update();
-    }
+	/**
+	 * Constructs a new action in the given text viewer with
+	 * the specified operation code.
+	 *
+	 * @param viewer
+	 * @param operationCode
+	 */
+	public TextViewerAction(ITextViewer viewer, int operationCode) {
+		fOperationCode = operationCode;
+		fOperationTarget = viewer.getTextOperationTarget();
+		update();
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.texteditor.IUpdate#update()
-     * 
-     * Updates the enabled state of the action.
-     * Fires a property change if the enabled state changes.
-     * 
-     * @see org.eclipse.jface.action.Action#firePropertyChange(String, Object, Object)
-     */
-    @Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	 *
+	 * Updates the enabled state of the action.
+	 * Fires a property change if the enabled state changes.
+	 *
+	 * @see org.eclipse.jface.action.Action#firePropertyChange(String, Object, Object)
+	 */
+	@Override
 	public void update() {
 
-        boolean wasEnabled= isEnabled();
-        boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
-        setEnabled(isEnabled);
+		boolean wasEnabled = isEnabled();
+		boolean isEnabled = (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
+		setEnabled(isEnabled);
 
-        if (wasEnabled != isEnabled) {
-            firePropertyChange(ENABLED, wasEnabled ? Boolean.TRUE : Boolean.FALSE, isEnabled ? Boolean.TRUE : Boolean.FALSE);
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IAction#run() 
-     */
-    @Override
-    public void run() {
-        if (fOperationCode != -1 && fOperationTarget != null) {
-            fOperationTarget.doOperation(fOperationCode);
-        }
-    }
-    
-    /**
-     * Configures this action with a label, tool tip, and description.
-     * 
-     * @param text action label
-     * @param toolTipText action tool tip
-     * @param description action description
-     */
-    public void configureAction(String text, String toolTipText, String description) {
-        setText(text);
-        setToolTipText(toolTipText);
-        setDescription(description);
-    }
+		if (wasEnabled != isEnabled) {
+			firePropertyChange(ENABLED, wasEnabled ? Boolean.TRUE : Boolean.FALSE,
+					isEnabled ? Boolean.TRUE : Boolean.FALSE);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
+	 */
+	@Override
+	public void run() {
+		if (fOperationCode != -1 && fOperationTarget != null) {
+			fOperationTarget.doOperation(fOperationCode);
+		}
+	}
+
+	/**
+	 * Configures this action with a label, tool tip, and description.
+	 *
+	 * @param text action label
+	 * @param toolTipText action tool tip
+	 * @param description action description
+	 */
+	public void configureAction(String text, String toolTipText, String description) {
+		setText(text);
+		setToolTipText(toolTipText);
+		setDescription(description);
+	}
 }
-

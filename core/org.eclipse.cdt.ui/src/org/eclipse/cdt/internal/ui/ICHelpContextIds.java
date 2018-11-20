@@ -41,16 +41,16 @@ public interface ICHelpContextIds {
 	// Actions
 	public static final String ADD_INCLUDE_ON_SELECTION_ACTION = PREFIX + "add_includes_on_selection_action_context"; //$NON-NLS-1$;
 	public static final String ORGANIZE_INCLUDES_ACTION = PREFIX + "organize_includes_action"; //$NON-NLS-1$;
-	public static final String FILTER_PUBLIC_ACTION= PREFIX + "filter_public_action"; //$NON-NLS-1$
-	public static final String FILTER_FIELDS_ACTION= PREFIX + "filter_fields_action"; //$NON-NLS-1$
-	public static final String FILTER_STATIC_ACTION= PREFIX + "filter_static_action"; //$NON-NLS-1$
-	public static final String FILTER_LOCALTYPES_ACTION= PREFIX + "filter_localtypes_action"; //$NON-NLS-1$
+	public static final String FILTER_PUBLIC_ACTION = PREFIX + "filter_public_action"; //$NON-NLS-1$
+	public static final String FILTER_FIELDS_ACTION = PREFIX + "filter_fields_action"; //$NON-NLS-1$
+	public static final String FILTER_STATIC_ACTION = PREFIX + "filter_static_action"; //$NON-NLS-1$
+	public static final String FILTER_LOCALTYPES_ACTION = PREFIX + "filter_localtypes_action"; //$NON-NLS-1$
 
-	public static final String GOTO_NEXT_ERROR_ACTION= PREFIX + "goto_next_error_action"; 	 //$NON-NLS-1$	
-	public static final String GOTO_PREVIOUS_ERROR_ACTION=	PREFIX + "goto_previous_error_action"; 	 //$NON-NLS-1$	
-	public static final String TOGGLE_MARK_OCCURRENCES_ACTION= PREFIX + "toggle_mark_occurrences_action_context"; //$NON-NLS-1$
-	public static final String FORMAT_ALL= PREFIX + "format_all_action"; 	 //$NON-NLS-1$
-	public static final String GOTO_MATCHING_BRACKET_ACTION= PREFIX + "goto_matching_bracket_action"; 	 //$NON-NLS-1$
+	public static final String GOTO_NEXT_ERROR_ACTION = PREFIX + "goto_next_error_action"; //$NON-NLS-1$
+	public static final String GOTO_PREVIOUS_ERROR_ACTION = PREFIX + "goto_previous_error_action"; //$NON-NLS-1$
+	public static final String TOGGLE_MARK_OCCURRENCES_ACTION = PREFIX + "toggle_mark_occurrences_action_context"; //$NON-NLS-1$
+	public static final String FORMAT_ALL = PREFIX + "format_all_action"; //$NON-NLS-1$
+	public static final String GOTO_MATCHING_BRACKET_ACTION = PREFIX + "goto_matching_bracket_action"; //$NON-NLS-1$
 
 	// Preference/property pages
 	public static final String C_PREF_PAGE = PREFIX + "c_pref"; //$NON-NLS-1$
@@ -84,17 +84,18 @@ public interface ICHelpContextIds {
 	public static final String PROJECT_PATHS_OUTPUT = PREFIX + "std_prop_output"; //$NON-NLS-1$
 	public static final String PROJECT_PATHS_PROJECTS = PREFIX + "std_prop_projects"; //$NON-NLS-1$
 	public static final String PROJECT_PATHS_LIBRARIES = PREFIX + "std_prop_libraries"; //$NON-NLS-1$
-	public static final String PROJECT_PATHS_CONTAINERS	 = PREFIX + "std_prop_containers"; //$NON-NLS-1$
-	public static final String PROJECT_REFERENCES = PREFIX + "std_prop_references";  //$NON-NLS-1$
-	public static final String PROJECT_INCLUDE_PATHS_SYMBOLS = PREFIX + "std_prop_include";  //$NON-NLS-1$
+	public static final String PROJECT_PATHS_CONTAINERS = PREFIX + "std_prop_containers"; //$NON-NLS-1$
+	public static final String PROJECT_REFERENCES = PREFIX + "std_prop_references"; //$NON-NLS-1$
+	public static final String PROJECT_INCLUDE_PATHS_SYMBOLS = PREFIX + "std_prop_include"; //$NON-NLS-1$
 
 	public static final String APPEARANCE_PREFERENCE_PAGE = PREFIX + "appearance_preference_page_context"; //$NON-NLS-1$
-	public static final String SPELLING_CONFIGURATION_BLOCK= PREFIX + "spelling_configuration_block_context"; //$NON-NLS-1$
+	public static final String SPELLING_CONFIGURATION_BLOCK = PREFIX + "spelling_configuration_block_context"; //$NON-NLS-1$
 	public static final String CODE_STYLE_PREFERENCE_PAGE = PREFIX + "code_style_preference_context"; //$NON-NLS-1$
 	public static final String CODE_TEMPLATES_PREFERENCE_PAGE = PREFIX + "code_templates_preference_context"; //$NON-NLS-1$
 	public static final String ORGANIZE_INCLUDES_PREFERENCE_PAGE = PREFIX + "organize_includes_preference_context"; //$NON-NLS-1$
 	public static final String HEADER_SUBSTITUTION_PREFERENCE_PAGE = PREFIX + "header_substitution_preference_context"; //$NON-NLS-1$
-	public static final String HEADER_SUBSTITUTION_MAP_EDIT_DIALOG = PREFIX + "header_substitution_map_edit_dialog_context"; //$NON-NLS-1$
+	public static final String HEADER_SUBSTITUTION_MAP_EDIT_DIALOG = PREFIX
+			+ "header_substitution_map_edit_dialog_context"; //$NON-NLS-1$
 	public static final String HEADER_SUBSTITUTION_EDIT_DIALOG = PREFIX + "header_substitution_edit_dialog_context"; //$NON-NLS-1$
 	public static final String INCLUDE_PRAGMAS_PREFERENCE_PAGE = PREFIX + "include_pragmas_preference_context"; //$NON-NLS-1$
 	public static final String INCLUDE_STYLE_PREFERENCE_PAGE = PREFIX + "include_style_preference_context"; //$NON-NLS-1$
@@ -115,63 +116,61 @@ public interface ICHelpContextIds {
 	public static final String COPY_ACTION = PREFIX + "copy_action_context"; //$NON-NLS-1$
 
 	// Custom Filters
-	public static final String CUSTOM_FILTERS_DIALOG= PREFIX + "open_custom_filters_dialog_context"; //$NON-NLS-1$
-
+	public static final String CUSTOM_FILTERS_DIALOG = PREFIX + "open_custom_filters_dialog_context"; //$NON-NLS-1$
 
 	public static final String PASTE_ACTION = PREFIX + "paste_action_context"; //$NON_NLS-1$ //$NON-NLS-1$
 
 	public static final String MOVE_ACTION = PREFIX + "move_action_context"; //$NON-NLS-1$
 	public static final String RENAME_ACTION = PREFIX + "rename_action_context"; //$NON-NLS-1$
 
-	
-	public static final String REFACTORING_PREFERENCE_PAGE= PREFIX + "refactoring_preference_page_context"; //$NON-NLS-1$
-	public static final String REFACTORING_ERROR_WIZARD_PAGE=	PREFIX + "refactoring_error_wizard_page_context";  //$NON-NLS-1$
-	public static final String REFACTORING_PREVIEW_WIZARD_PAGE= PREFIX + "refactoring_preview_wizard_page_context"; //$NON-NLS-1$	
-	public static final String RENAME_PARAMS_WIZARD_PAGE= 	PREFIX + "rename_params_wizard_page"; //$NON-NLS-1$
-	public static final String RENAME_METHOD_WIZARD_PAGE= 	PREFIX + "rename_method_wizard_page_context"; //$NON-NLS-1$
-	public static final String RENAME_TYPE_WIZARD_PAGE= 	PREFIX + "rename_type_wizard_page_context"; //$NON-NLS-1$
-	public static final String RENAME_FIELD_WIZARD_PAGE=	PREFIX + "rename_field_wizard_page_context"; //$NON-NLS-1$
-	public static final String RENAME_RESOURCE_WIZARD_PAGE=	PREFIX + "rename_resource_wizard_page_context"; //$NON-NLS-1$
-	public static final String EXTRACT_FUNCTION_WIZARD_PAGE= PREFIX + "extract_function_wizard_page_context"; //$NON-NLS-1$
+	public static final String REFACTORING_PREFERENCE_PAGE = PREFIX + "refactoring_preference_page_context"; //$NON-NLS-1$
+	public static final String REFACTORING_ERROR_WIZARD_PAGE = PREFIX + "refactoring_error_wizard_page_context"; //$NON-NLS-1$
+	public static final String REFACTORING_PREVIEW_WIZARD_PAGE = PREFIX + "refactoring_preview_wizard_page_context"; //$NON-NLS-1$
+	public static final String RENAME_PARAMS_WIZARD_PAGE = PREFIX + "rename_params_wizard_page"; //$NON-NLS-1$
+	public static final String RENAME_METHOD_WIZARD_PAGE = PREFIX + "rename_method_wizard_page_context"; //$NON-NLS-1$
+	public static final String RENAME_TYPE_WIZARD_PAGE = PREFIX + "rename_type_wizard_page_context"; //$NON-NLS-1$
+	public static final String RENAME_FIELD_WIZARD_PAGE = PREFIX + "rename_field_wizard_page_context"; //$NON-NLS-1$
+	public static final String RENAME_RESOURCE_WIZARD_PAGE = PREFIX + "rename_resource_wizard_page_context"; //$NON-NLS-1$
+	public static final String EXTRACT_FUNCTION_WIZARD_PAGE = PREFIX + "extract_function_wizard_page_context"; //$NON-NLS-1$
 
 	// Dialogs
 	public static final String EDIT_TEMPLATE_DIALOG = PREFIX + "edit_template_dialog_context"; //$NON-NLS-1$
 	public static final String OPEN_ELEMENT_DIALOG = PREFIX + "open_element_dialog_context"; //$NON-NLS-1$
 
 	// view parts
-	public static final String TYPE_HIERARCHY_VIEW= PREFIX + "type_hierarchy_view_context"; //$NON-NLS-1$
-	public static final String CALL_HIERARCHY_VIEW= PREFIX + "call_hierarchy_view_context"; //$NON-NLS-1$
-	public static final String INCLUDE_BROWSER_VIEW= PREFIX + "include_browser_view_context"; //$NON-NLS-1$
+	public static final String TYPE_HIERARCHY_VIEW = PREFIX + "type_hierarchy_view_context"; //$NON-NLS-1$
+	public static final String CALL_HIERARCHY_VIEW = PREFIX + "call_hierarchy_view_context"; //$NON-NLS-1$
+	public static final String INCLUDE_BROWSER_VIEW = PREFIX + "include_browser_view_context"; //$NON-NLS-1$
 
 	public static final String OPEN_ACTION = PREFIX + "open_action"; //$NON-NLS-1$
 	public static final String OPEN_PROJECT_ACTION = PREFIX + "open_project_action"; //$NON-NLS-1$
 
 	public static final String OPEN_TYPE_ACTION = PREFIX + "open_type_action"; //$NON-NLS-1$
 	public static final String OPEN_TYPE_IN_HIERARCHY_ACTION = PREFIX + "open_type_in_hierarchy_action"; //$NON-NLS-1$
-	public static final String OPEN_TYPE_HIERARCHY_ACTION = PREFIX + "open_type_hierarchy_action"; //$NON-NLS-1$	
+	public static final String OPEN_TYPE_HIERARCHY_ACTION = PREFIX + "open_type_hierarchy_action"; //$NON-NLS-1$
 	public static final String SELECT_ALL_ACTION = PREFIX + "select_all_action"; //$NON-NLS-1$
 	public static final String LINK_EDITOR_ACTION = PREFIX + "link_editor_action"; //$NON-NLS-1$
 	public static final String TYPEHIERARCHY_HISTORY_ACTION = PREFIX + "typehierarchy_history_action"; //$NON-NLS-1$
 	public static final String HISTORY_ACTION = PREFIX + "history_action"; //$NON-NLS-1$
 	public static final String HISTORY_LIST_ACTION = PREFIX + "history_list_action"; //$NON-NLS-1$
-	public static final String TOGGLE_ORIENTATION_ACTION = PREFIX + "toggle_orientations_action"; //$NON-NLS-1$		
+	public static final String TOGGLE_ORIENTATION_ACTION = PREFIX + "toggle_orientations_action"; //$NON-NLS-1$
 	public static final String FOCUS_ON_TYPE_ACTION = PREFIX + "focus_on_type_action"; //$NON-NLS-1$
 	public static final String FOCUS_ON_SELECTION_ACTION = PREFIX + "focus_on_selection_action"; //$NON-NLS-1$
 
-	public static final String HISTORY_LIST_DIALOG = PREFIX + "history_list_dialog_context"; //$NON-NLS-1$	
+	public static final String HISTORY_LIST_DIALOG = PREFIX + "history_list_dialog_context"; //$NON-NLS-1$
 
 	public static final String SHOW_INHERITED_ACTION = PREFIX + "show_inherited_action"; //$NON-NLS-1$
 	public static final String SHOW_SUPERTYPES = PREFIX + "show_supertypes_action"; //$NON-NLS-1$
 	public static final String SHOW_SUBTYPES = PREFIX + "show_subtypes_action"; //$NON-NLS-1$
 	public static final String SHOW_HIERARCHY = PREFIX + "show_hierarchy_action"; //$NON-NLS-1$
 
-	public static final String SORT_BY_DEFINING_TYPE_ACTION = PREFIX + "sort_by_defining_type_action"; //$NON-NLS-1$	
-	public static final String SHOW_QUALIFIED_NAMES_ACTION = PREFIX + "show_qualified_names_action"; //$NON-NLS-1$	
+	public static final String SORT_BY_DEFINING_TYPE_ACTION = PREFIX + "sort_by_defining_type_action"; //$NON-NLS-1$
+	public static final String SHOW_QUALIFIED_NAMES_ACTION = PREFIX + "show_qualified_names_action"; //$NON-NLS-1$
 	public static final String ENABLE_METHODFILTER_ACTION = PREFIX + "enable_methodfilter_action"; //$NON-NLS-1$
-	
+
 	public static final String LEXICAL_SORTING_BROWSING_ACTION = PREFIX + "lexical_sorting_browsing_action"; //$NON-NLS-1$
-	
-	public static final String PROJECT_INDEXER_PROPERTIES = PREFIX +  "std_prop_indexer"; //$NON-NLS-1$
+
+	public static final String PROJECT_INDEXER_PROPERTIES = PREFIX + "std_prop_indexer"; //$NON-NLS-1$
 	public static final String CEDITOR_VIEW = PREFIX + "editor_view"; //$NON-NLS-1$
 	public static final String COUTLINE_VIEW = PREFIX + "outline_view"; //$NON-NLS-1$
 	public static final String CPROJECT_VIEW = PREFIX + "projects_view"; //$NON-NLS-1$

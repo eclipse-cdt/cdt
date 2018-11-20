@@ -29,9 +29,7 @@ public class HideEmptyOptionCategoryApplicabilityCalculator implements IOptionCa
 	public boolean isOptionCategoryVisible(IBuildObject configuration, IHoldsOptions optHolder,
 			IOptionCategory category) {
 		// Check that the category contains at least one option
-		return Arrays.asList(optHolder.getOptions())
-			.stream()
-			.map((opt) -> opt.getCategory())
-			.anyMatch((cat) -> cat != null && cat.equals(category));
+		return Arrays.asList(optHolder.getOptions()).stream().map((opt) -> opt.getCategory())
+				.anyMatch((cat) -> cat != null && cat.equals(category));
 	}
 }

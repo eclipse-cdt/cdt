@@ -145,7 +145,8 @@ public interface IDisassemblyBackend {
 	 * @param showDisassembly
 	 * @param linesHint
 	 */
-	void retrieveDisassembly(BigInteger startAddress, BigInteger endAddress, String file, int lineNumber, int lines, boolean mixed, boolean showSymbols, boolean showDisassembly, int linesHint);
+	void retrieveDisassembly(BigInteger startAddress, BigInteger endAddress, String file, int lineNumber, int lines,
+			boolean mixed, boolean showSymbols, boolean showDisassembly, int linesHint);
 
 	Object insertSource(Position pos, BigInteger address, final String file, int lineNumber);
 
@@ -163,7 +164,8 @@ public interface IDisassemblyBackend {
 	 * @param showSymbols
 	 * @param showDisassembly
 	 */
-	void retrieveDisassembly(String file, int lines, BigInteger endAddress, boolean mixed, boolean showSymbols, boolean showDisassembly);
+	void retrieveDisassembly(String file, int lines, BigInteger endAddress, boolean mixed, boolean showSymbols,
+			boolean showDisassembly);
 
 	/**
 	 * Evaluate an expression for text hover
@@ -197,22 +199,22 @@ public interface IDisassemblyBackend {
 	 * Called when the Disassembly view has no further use for this backend.
 	 */
 	void dispose();
-	
+
 	/**
-	 * Update the extended PC annotation.  
+	 * Update the extended PC annotation.
 	 */
 	void updateExtendedPCAnnotation(IAnnotationModel model);
-	
+
 	/**
 	 * This is a test for the current context.
-	 * 
-	 * @return true if backend can perform disassemble, otherwise false 
+	 *
+	 * @return true if backend can perform disassemble, otherwise false
 	 */
 	boolean canDisassemble();
-	
+
 	/**
 	 * Returns the last known address, this API will be call if the selected debug context is not a stackframe.
-	 * 
+	 *
 	 * @return the last know address, -1 if unknown
 	 */
 	BigInteger getLastKnownAddress();

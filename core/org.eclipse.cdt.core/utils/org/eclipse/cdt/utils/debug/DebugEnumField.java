@@ -14,10 +14,9 @@
 
 package org.eclipse.cdt.utils.debug;
 
-
 /**
  * DebugEnumField
- *  
+ *
  */
 public class DebugEnumField {
 
@@ -25,7 +24,7 @@ public class DebugEnumField {
 	int value;
 
 	/**
-	 *  
+	 *
 	 */
 	public DebugEnumField(String name, int value) {
 		this.name = name;

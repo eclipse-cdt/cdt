@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -16,25 +16,24 @@ package org.eclipse.cdt.debug.ui.memory.traditional;
 
 import java.math.BigInteger;
 
-public interface IMemorySelection 
-{
-    public boolean hasSelection();
-    
-    public boolean isSelected(BigInteger address);
-   
-    public BigInteger getStart();
+public interface IMemorySelection {
+	public boolean hasSelection();
 
-    public BigInteger getEnd();
-    
-    public BigInteger getStartLow();
-    
-    public void setStart(BigInteger high, BigInteger low);
-    
-    public void setEnd(BigInteger high, BigInteger low);
-    
-    public BigInteger getHigh();
-    
-    public BigInteger getLow();
-    
-    public void clear();
+	public boolean isSelected(BigInteger address);
+
+	public BigInteger getStart();
+
+	public BigInteger getEnd();
+
+	public BigInteger getStartLow();
+
+	public void setStart(BigInteger high, BigInteger low);
+
+	public void setEnd(BigInteger high, BigInteger low);
+
+	public BigInteger getHigh();
+
+	public BigInteger getLow();
+
+	public void clear();
 }

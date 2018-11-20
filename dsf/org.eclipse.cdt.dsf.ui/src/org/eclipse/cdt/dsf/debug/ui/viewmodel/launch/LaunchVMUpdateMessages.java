@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,14 +19,14 @@ import org.eclipse.osgi.util.NLS;
  * @since 1.1
  */
 public class LaunchVMUpdateMessages extends NLS {
-    public static String ThreadsAutomaticUpdatePolicy_name;
-    public static String ThreadsManualUpdatePolicy_name;
-	
-    static {
-        // load message values from bundle file
-        NLS.initializeMessages(LaunchVMUpdateMessages.class.getName(), LaunchVMUpdateMessages.class);
-    }
+	public static String ThreadsAutomaticUpdatePolicy_name;
+	public static String ThreadsManualUpdatePolicy_name;
 
-    private LaunchVMUpdateMessages() {
-    }
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(LaunchVMUpdateMessages.class.getName(), LaunchVMUpdateMessages.class);
+	}
+
+	private LaunchVMUpdateMessages() {
+	}
 }

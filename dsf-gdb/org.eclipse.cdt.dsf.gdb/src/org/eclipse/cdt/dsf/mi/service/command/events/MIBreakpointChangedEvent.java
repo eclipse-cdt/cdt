@@ -18,26 +18,25 @@ package org.eclipse.cdt.dsf.mi.service.command.events;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 
-
 /**
  *
  */
 @Immutable
 public class MIBreakpointChangedEvent extends MIEvent<IBreakpointsTargetDMContext> {
 
-    final private int no;
+	final private int no;
 
-    public MIBreakpointChangedEvent(IBreakpointsTargetDMContext ctx, int number) {
-        this(ctx, 0, number);
-    }
+	public MIBreakpointChangedEvent(IBreakpointsTargetDMContext ctx, int number) {
+		this(ctx, 0, number);
+	}
 
-    public MIBreakpointChangedEvent(IBreakpointsTargetDMContext ctx, int id, int number) {
-        super(ctx, id, null);
-        no = number;
-    }
+	public MIBreakpointChangedEvent(IBreakpointsTargetDMContext ctx, int id, int number) {
+		super(ctx, id, null);
+		no = number;
+	}
 
-    public int getNumber() {
-        return no;
-    }
+	public int getNumber() {
+		return no;
+	}
 
 }

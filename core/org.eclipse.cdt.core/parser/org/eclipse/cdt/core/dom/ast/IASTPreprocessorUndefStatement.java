@@ -16,17 +16,17 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represents a preprocessor #undef statement.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTPreprocessorUndefStatement extends	IASTPreprocessorStatement {
+public interface IASTPreprocessorUndefStatement extends IASTPreprocessorStatement {
 
 	/**
 	 * Returns the reference to the macro, or <code>null</code>.
 	 */
-    public IASTName getMacroName();
-    
+	public IASTName getMacroName();
+
 	/**
 	 * Returns whether this macro definition occurs in active code.
 	 * @since 5.1

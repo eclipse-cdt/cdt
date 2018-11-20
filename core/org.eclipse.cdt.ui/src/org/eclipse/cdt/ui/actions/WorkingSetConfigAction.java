@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationDialog;
 /**
  */
 public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, IPropertyChangeListener {
-	
+
 	private static final IWorkingSetManager wsm = CUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
 	private boolean enabled = true;
 	private IWorkbenchWindow window;
@@ -63,7 +63,7 @@ public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, I
 		wsm.addPropertyChangeListener(this);
 		checkWS();
 	}
-	
+
 	private void checkWS() {
 		enabled = false;
 		IWorkingSet[] w = wsm.getWorkingSets();

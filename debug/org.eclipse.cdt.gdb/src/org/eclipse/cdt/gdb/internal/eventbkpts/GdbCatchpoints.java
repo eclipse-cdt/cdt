@@ -37,7 +37,7 @@ public class GdbCatchpoints {
 	 * Get the gdb catchpoint event keyword associated with the given
 	 * {@link IEventBreakpointConstants} event type ID. Answer will be, e.g.,
 	 * "catch", "throw", "fork", etc.
-	 * 
+	 *
 	 * @param event
 	 *            an EVENT_TYPE_XXXX constant from IEventBreakpointConstants
 	 * @return the gdb keyword for [event]; null if [event] is unrecognized
@@ -51,7 +51,7 @@ public class GdbCatchpoints {
 	/**
 	 * An inversion of the lookup done by
 	 * {@link #eventToGdbCatchpointKeyword(String)}
-	 * 
+	 *
 	 * @param keyword
 	 *            a gdb catchpoint keyword, e.g., "catch", "throw", "fork"
 	 * @return the EVENT_TYPE_XXXX constant from IEventBreakpointConstants
@@ -64,7 +64,7 @@ public class GdbCatchpoints {
 				return eventId;
 			}
 		}
-	
+
 		// Don't assert. Caller may be using us to determine if a token is a
 		// catchpoint keyword. He may have parsed the keyword out from gdb/mi
 		// output.

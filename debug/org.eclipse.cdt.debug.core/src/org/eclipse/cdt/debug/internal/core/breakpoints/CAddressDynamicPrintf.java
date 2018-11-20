@@ -33,8 +33,8 @@ public class CAddressDynamicPrintf extends AbstractDynamicPrintf implements ICAd
 	public CAddressDynamicPrintf() {
 	}
 
-	public CAddressDynamicPrintf( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, attributes, add );
+	public CAddressDynamicPrintf(IResource resource, Map<String, Object> attributes, boolean add) throws CoreException {
+		super(resource, attributes, add);
 	}
 
 	/**
@@ -46,11 +46,12 @@ public class CAddressDynamicPrintf extends AbstractDynamicPrintf implements ICAd
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
 	@Override
 	protected String getMarkerMessage() throws CoreException {
-		return MessageFormat.format( BreakpointMessages.getString( "CAddressDynamicPrintf.0" ), (Object[])new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
+		return MessageFormat.format(BreakpointMessages.getString("CAddressDynamicPrintf.0"), //$NON-NLS-1$
+				(Object[]) new String[] { CDebugUtils.getBreakpointText(this, false) });
 	}
 }

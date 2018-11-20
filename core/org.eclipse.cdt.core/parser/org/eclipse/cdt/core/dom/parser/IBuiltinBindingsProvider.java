@@ -18,21 +18,21 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
  * Provides built-in symbols to the parser.
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will work or
  * that it will remain the same. Please do not use this API without consulting
  * with the CDT team.
  * </p>
- * 
+ *
  * @since 4.0
  */
 public interface IBuiltinBindingsProvider {
 
 	/**
 	 * Get additional built-in bindings for the given scope.
-	 * 
+	 *
 	 * @param scope the scope the bindings are added to
 	 * @return an array of {@link IBinding}s, may not return <code>null</code>
 	 */
@@ -40,7 +40,7 @@ public interface IBuiltinBindingsProvider {
 
 	/**
 	 * Returns whether the given name names a known builtin.
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public boolean isKnownBuiltin(char[] builtinName);

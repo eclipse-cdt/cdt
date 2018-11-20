@@ -26,12 +26,13 @@ import org.eclipse.debug.core.IRequest;
 public class CRequest implements IRequest {
 	private IStatus fStatus;
 	private boolean fCanceled;
+
 	/*
 	 * @see org.eclipse.debug.core.IRequest#cancel()
 	 */
 	@Override
 	public void cancel() {
-		fCanceled= true;
+		fCanceled = true;
 	}
 
 	/*
@@ -62,7 +63,7 @@ public class CRequest implements IRequest {
 	 */
 	@Override
 	public void setStatus(IStatus status) {
-		fStatus= status;
+		fStatus = status;
 	}
 
 	/**
@@ -72,8 +73,8 @@ public class CRequest implements IRequest {
 	 * ERROR or CANCEL), it is considered a failure. Note that as per IRequest
 	 * documentation, a null status object is equivalent to IStatu#OK.
 	 */
-    public boolean isSuccess() {
-    	IStatus status = getStatus();
-        return !isCanceled() && (status == null || status.getSeverity() <= IStatus.INFO); 
-    }
+	public boolean isSuccess() {
+		IStatus status = getStatus();
+		return !isCanceled() && (status == null || status.getSeverity() <= IStatus.INFO);
+	}
 }

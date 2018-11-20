@@ -18,26 +18,25 @@ package org.eclipse.cdt.dsf.mi.service.command.events;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.debug.service.ISignals.ISignalsDMContext;
 
-
 /**
  *
  */
 @Immutable
 public class MISignalChangedEvent extends MIEvent<ISignalsDMContext> {
 
-    final private String name;
+	final private String name;
 
-    public MISignalChangedEvent(ISignalsDMContext ctx, String n) {
-    	this(ctx, 0, n);
-    }
+	public MISignalChangedEvent(ISignalsDMContext ctx, String n) {
+		this(ctx, 0, n);
+	}
 
-    public MISignalChangedEvent(ISignalsDMContext ctx, int id, String n) {
-    	super(ctx, id, null);
-    	name = n;
-    }
+	public MISignalChangedEvent(ISignalsDMContext ctx, int id, String n) {
+		super(ctx, id, null);
+		name = n;
+	}
 
-    public String getName() {
-    	return name;
-    }
+	public String getName() {
+		return name;
+	}
 
 }

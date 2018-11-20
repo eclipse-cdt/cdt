@@ -20,12 +20,12 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTElaboratedTypeSpecifier;
 
 @SuppressWarnings("restriction")
-public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier implements IUPCASTElaboratedTypeSpecifier {
+public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier
+		implements IUPCASTElaboratedTypeSpecifier {
 
 	private int referenceType;
 	private int sharedQualifier;
 	private IASTExpression blockSizeExpression;
-
 
 	public UPCASTElaboratedTypeSpecifier() {
 	}
@@ -47,7 +47,8 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 	@Override
 	public UPCASTElaboratedTypeSpecifier copy(CopyStyle style) {
 		IASTName name = getName();
-		UPCASTElaboratedTypeSpecifier copy = new UPCASTElaboratedTypeSpecifier(getKind(), name == null ? null : name.copy(style));
+		UPCASTElaboratedTypeSpecifier copy = new UPCASTElaboratedTypeSpecifier(getKind(),
+				name == null ? null : name.copy(style));
 		copy.referenceType = referenceType;
 		copy.sharedQualifier = sharedQualifier;
 		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy(style));
@@ -72,7 +73,7 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 	@Override
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
-		if(expr != null) {
+		if (expr != null) {
 			expr.setParent(this);
 			expr.setPropertyInParent(BLOCK_SIZE_EXPRESSION);
 		}
@@ -88,29 +89,36 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 		this.sharedQualifier = shared;
 	}
 
-
 	@Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+	public boolean accept(ASTVisitor action) {
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        if( getName() != null ) if( !getName().accept( action ) ) return false;
-        if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;
+		if (getName() != null)
+			if (!getName().accept(action))
+				return false;
+		if (blockSizeExpression != null)
+			if (!blockSizeExpression.accept(action))
+				return false;
 
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
-
-
+		return true;
+	}
 
 }

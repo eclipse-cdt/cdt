@@ -47,7 +47,7 @@ public class EnumerationTests extends PDOMTestBase {
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("enumerationTests");
-			pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
+			pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		}
 		pdom.acquireReadLock();
 	}
@@ -56,13 +56,13 @@ public class EnumerationTests extends PDOMTestBase {
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 	}
-	
+
 	public void testC() throws Exception {
 		// Check bindings
 		Pattern pattern = Pattern.compile("TestCEnum");
 		IBinding[] bindings = pdom.findBindings(pattern, false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
-		IEnumeration enumeration = (IEnumeration)bindings[0];
+		IEnumeration enumeration = (IEnumeration) bindings[0];
 		assertEquals("TestCEnum", enumeration.getName());
 		IEnumerator[] enumerators = enumeration.getEnumerators();
 		assertEquals(3, enumerators.length);
@@ -76,19 +76,19 @@ public class EnumerationTests extends PDOMTestBase {
 		assertEquals("ca", enumerators[0].getName());
 		assertEquals("cb", enumerators[1].getName());
 		assertEquals("cc", enumerators[2].getName());
-		
-		// Declaration of TestEnum 
+
+		// Declaration of TestEnum
 		IName[] enumDecls = pdom.findNames(enumeration, IIndex.FIND_DECLARATIONS_DEFINITIONS);
 		assertEquals(1, enumDecls.length);
 		IASTFileLocation loc = enumDecls[0].getFileLocation();
 		assertEquals(5, loc.getNodeOffset());
-		
+
 		// Reference to TestEnum
 		IName[] enumRefs = pdom.findNames(enumeration, IIndex.FIND_REFERENCES);
 		assertEquals(1, enumRefs.length);
 		loc = enumRefs[0].getFileLocation();
 		assertEquals(offset("enumTest.c", "TestCEnum test"), loc.getNodeOffset());
-		
+
 		// Reference to a
 		IName[] aRefs = pdom.findNames(enumerators[0], IIndex.FIND_REFERENCES);
 		assertEquals(1, aRefs.length);
@@ -101,7 +101,7 @@ public class EnumerationTests extends PDOMTestBase {
 		Pattern pattern = Pattern.compile("TestCPPEnum");
 		IBinding[] bindings = pdom.findBindings(pattern, false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
-		IEnumeration enumeration = (IEnumeration)bindings[0];
+		IEnumeration enumeration = (IEnumeration) bindings[0];
 		assertEquals("TestCPPEnum", enumeration.getName());
 		IEnumerator[] enumerators = enumeration.getEnumerators();
 		assertEquals(3, enumerators.length);
@@ -115,19 +115,19 @@ public class EnumerationTests extends PDOMTestBase {
 		assertEquals("cppa", enumerators[0].getName());
 		assertEquals("cppb", enumerators[1].getName());
 		assertEquals("cppc", enumerators[2].getName());
-		
-		// Declaration of TestEnum 
+
+		// Declaration of TestEnum
 		IName[] enumDecls = pdom.findNames(enumeration, IIndex.FIND_DECLARATIONS_DEFINITIONS);
 		assertEquals(1, enumDecls.length);
 		IASTFileLocation loc = enumDecls[0].getFileLocation();
 		assertEquals(5, loc.getNodeOffset());
-		
+
 		// Reference to TestEnum
 		IName[] enumRefs = pdom.findNames(enumeration, IIndex.FIND_REFERENCES);
 		assertEquals(1, enumRefs.length);
 		loc = enumRefs[0].getFileLocation();
 		assertEquals(offset("enumTest.cpp", "TestCPPEnum test"), loc.getNodeOffset());
-		
+
 		// Reference to a
 		IName[] aRefs = pdom.findNames(enumerators[0], IIndex.FIND_REFERENCES);
 		assertEquals(1, aRefs.length);

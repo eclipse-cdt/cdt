@@ -28,18 +28,17 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * A process for the inferior to know it belongs to a DSF-GDB session.
  * This class also adds the exit code of the inferior to the console.
- * 
+ *
  * Note that this class is also used in Run mode.
- * 
+ *
  * @since 4.0
  */
 public class InferiorRuntimeProcess extends RuntimeProcess {
-	
-	public InferiorRuntimeProcess(ILaunch launch, Process process, String name,
-			Map<String, String> attributes) {
+
+	public InferiorRuntimeProcess(ILaunch launch, Process process, String name, Map<String, String> attributes) {
 		super(launch, process, name, attributes);
 	}
-	
+
 	@Override
 	protected void terminated() {
 		// We must set the console label before calling super.terminated()
@@ -47,18 +46,18 @@ public class InferiorRuntimeProcess extends RuntimeProcess {
 		// the console, and we find ourselves in a race condition
 		// where we may miss setting the label here (bug 463977)
 		setConsoleTerminatedLabel();
-		
+
 		super.terminated();
 	}
-	
+
 	private void setConsoleTerminatedLabel() {
 		if (getAttribute(IGdbDebugConstants.INFERIOR_EXITED_ATTR) != null) {
 			// Add the exit code to the title of the console if the inferior properly exited.
 			int exitValue = 0;
 			try {
 				// We have to explicitly get the exit code from the lower level process
-				// instead of calling getExitValue() because we have not yet indicated 
-				// that this wrapper process has terminated by calling super.terminated() 
+				// instead of calling getExitValue() because we have not yet indicated
+				// that this wrapper process has terminated by calling super.terminated()
 				// Bug 463977
 				exitValue = getSystemProcess().exitValue();
 			} catch (IllegalThreadStateException e) {

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -24,81 +24,82 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
- * 
+ *
  */
 @SuppressWarnings("restriction")
-public class FileBrowserVMProvider extends AbstractVMProvider 
-{
-    /**
-     * The object to be set to the viewer that shows contents supplied by this provider.
-     * @see org.eclipse.jface.viewers.TreeViewer#setInput(Object)  
-     */
-    private final IAdaptable fViewerInputObject = 
-        new IAdaptable() {
-            /**
-             * The input object provides the viewer access to the viewer model adapter.
-             */
-            @Override
-	    @SuppressWarnings("unchecked")
-            public Object getAdapter(Class adapter) {
-                if ( adapter.isInstance(getVMAdapter()) ) {
-                    return getVMAdapter();
-                }
-                return null;
-            }
-            
-            @Override
-            public String toString() {
-                return "File Browser Viewer Input"; //$NON-NLS-1$
-            }
-        };
+public class FileBrowserVMProvider extends AbstractVMProvider {
+	/**
+	 * The object to be set to the viewer that shows contents supplied by this provider.
+	 * @see org.eclipse.jface.viewers.TreeViewer#setInput(Object)
+	 */
+	private final IAdaptable fViewerInputObject = new IAdaptable() {
+		/**
+		 * The input object provides the viewer access to the viewer model adapter.
+		 */
+		@Override
+		@SuppressWarnings("unchecked")
+		public Object getAdapter(Class adapter) {
+			if (adapter.isInstance(getVMAdapter())) {
+				return getVMAdapter();
+			}
+			return null;
+		}
 
-    /**
-     * Constructor creates and configures the layout nodes to display file 
-     * system contents.  
-     * @param adapter The viewer model adapter that this provider is registered with.
-     * @param presentationContext The presentation context that this provider is 
-     * generating contents for.
-     */
-    public FileBrowserVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext) {
-        super(adapter, presentationContext);
+		@Override
+		public String toString() {
+			return "File Browser Viewer Input"; //$NON-NLS-1$
+		}
+	};
 
-        IRootVMNode root = new RootVMNode(this); 
-        IVMNode fileSystemRoots = new FilesystemRootsVMNode(this);
-        addChildNodes(root, new IVMNode[] { fileSystemRoots });
-        IVMNode files = new FileVMNode(this);
-        addChildNodes(fileSystemRoots, new IVMNode[] { files });
-        addChildNodes(files, new IVMNode[] { files });
-        setRootNode(root);
-    }
-    
-    /**
-     * Returns the input object to be set to the viewer that shows contents
-     * supplied by this provider.  
-     */
-    public Object getViewerInputObject() {
-        return fViewerInputObject;
-    }    
+	/**
+	 * Constructor creates and configures the layout nodes to display file
+	 * system contents.
+	 * @param adapter The viewer model adapter that this provider is registered with.
+	 * @param presentationContext The presentation context that this provider is
+	 * generating contents for.
+	 */
+	public FileBrowserVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext) {
+		super(adapter, presentationContext);
 
-    /**
-     * Event handler for file selection text changes in the dialog.
-     * @param text New text entered in file selection text box.
-     */
-    void selectionTextChanged(final String text) {
-        if (isDisposed()) return;
-        
-        // We're in the UI thread.  Re-dispach to VM Adapter executor thread 
-        // and then call root layout node.
-        try {
-            getExecutor().execute(new Runnable() {
-                @Override
-		public void run() {
-                    if (isDisposed()) return;
-                    handleEvent(text);
-                }});
-        } catch (RejectedExecutionException e) {
-            // Ignore.  This exception could be thrown if the provider is being 
-            // shut down.  
-        }
-    }
+		IRootVMNode root = new RootVMNode(this);
+		IVMNode fileSystemRoots = new FilesystemRootsVMNode(this);
+		addChildNodes(root, new IVMNode[] { fileSystemRoots });
+		IVMNode files = new FileVMNode(this);
+		addChildNodes(fileSystemRoots, new IVMNode[] { files });
+		addChildNodes(files, new IVMNode[] { files });
+		setRootNode(root);
+	}
+
+	/**
+	 * Returns the input object to be set to the viewer that shows contents
+	 * supplied by this provider.
+	 */
+	public Object getViewerInputObject() {
+		return fViewerInputObject;
+	}
+
+	/**
+	 * Event handler for file selection text changes in the dialog.
+	 * @param text New text entered in file selection text box.
+	 */
+	void selectionTextChanged(final String text) {
+		if (isDisposed())
+			return;
+
+		// We're in the UI thread.  Re-dispach to VM Adapter executor thread
+		// and then call root layout node.
+		try {
+			getExecutor().execute(new Runnable() {
+				@Override
+				public void run() {
+					if (isDisposed())
+						return;
+					handleEvent(text);
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Ignore.  This exception could be thrown if the provider is being
+			// shut down.
+		}
+	}
 }

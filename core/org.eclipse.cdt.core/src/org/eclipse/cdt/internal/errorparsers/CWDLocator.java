@@ -33,7 +33,7 @@ public class CWDLocator extends AbstractErrorParser {
 	public boolean processLine(String line, ErrorParserManager manager) {
 		int lineNumber = manager.getLineCounter();
 		// enable on first line (can be previously disabled if processed parallel build)
-		if (lineNumber==1)
+		if (lineNumber == 1)
 			enabled = true;
 
 		if (enabled)
@@ -42,60 +42,58 @@ public class CWDLocator extends AbstractErrorParser {
 	}
 
 	private static final ErrorPattern[] patterns = {
-		// parallel build makes interleaved output and so this parser useless
-		// turn it off in that case
-		new ErrorPattern("^\\w*make.*\\s((-j)|(--jobs=))(\\s*\\d*)", 0, 0) { //$NON-NLS-1$
-			@Override
-			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
-				String jobs = matcher.group(4).trim();
-				if (!jobs.equals("1")) { //$NON-NLS-1$
-					enabled = false;
+			// parallel build makes interleaved output and so this parser useless
+			// turn it off in that case
+			new ErrorPattern("^\\w*make.*\\s((-j)|(--jobs=))(\\s*\\d*)", 0, 0) { //$NON-NLS-1$
+				@Override
+				protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
+					String jobs = matcher.group(4).trim();
+					if (!jobs.equals("1")) { //$NON-NLS-1$
+						enabled = false;
+						int parseLevel = eoParser.getDirectoryLevel();
+						for (int level = 0; level < parseLevel; level++) {
+							eoParser.popDirectoryURI();
+						}
+					}
+					return false;
+				}
+			}, new ErrorPattern("make\\[(.*)\\]: Entering directory [`'](.*)'", 0, 0) { //$NON-NLS-1$
+				@Override
+				protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
+					int level;
+					try {
+						level = Integer.valueOf(matcher.group(1)).intValue();
+					} catch (NumberFormatException e) {
+						level = 0;
+					}
+					String dir = matcher.group(2);
+					/*
+					 * Sometimes make screws up the output, so "leave" events can't be seen. Double-check
+					 * level here.
+					 */
 					int parseLevel = eoParser.getDirectoryLevel();
-					for (int level=0; level < parseLevel; level++) {
+					for (; level < parseLevel; level++) {
 						eoParser.popDirectoryURI();
 					}
+					eoParser.pushDirectory(new Path(dir));
+					return true;
 				}
-				return false;
-			}
-		},
-		new ErrorPattern("make\\[(.*)\\]: Entering directory [`'](.*)'", 0, 0) { //$NON-NLS-1$
-			@Override
-			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
-				int level;
-				try {
-					level = Integer.valueOf(matcher.group(1)).intValue();
-				} catch (NumberFormatException e) {
-					level = 0;
+			},
+			// This is emitted by GNU make using options -w or --print-directory.
+			new ErrorPattern("make: Entering directory [`'](.*)'", 0, 0) { //$NON-NLS-1$
+				@Override
+				protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
+					String dir = matcher.group(1);
+					eoParser.pushDirectory(new Path(dir));
+					return true;
 				}
-				String dir = matcher.group(2);
-				/*
-				 * Sometimes make screws up the output, so "leave" events can't be seen. Double-check
-				 * level here.
-				 */
-				int parseLevel = eoParser.getDirectoryLevel();
-				for (; level < parseLevel; level++) {
+			}, new ErrorPattern("make(\\[.*\\])?: Leaving directory", 0, 0) { //$NON-NLS-1$
+				@Override
+				protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 					eoParser.popDirectoryURI();
+					return true;
 				}
-				eoParser.pushDirectory(new Path(dir));
-				return true;
-			}
-		},
-		// This is emitted by GNU make using options -w or --print-directory.
-		new ErrorPattern("make: Entering directory [`'](.*)'", 0, 0) { //$NON-NLS-1$
-			@Override
-			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
-				String dir = matcher.group(1);
-				eoParser.pushDirectory(new Path(dir));
-				return true;
-			}
-		},
-		new ErrorPattern("make(\\[.*\\])?: Leaving directory", 0, 0) { //$NON-NLS-1$
-			@Override
-			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
-				eoParser.popDirectoryURI();
-				return true;
-			}
-		},
+			},
 
 	};
 

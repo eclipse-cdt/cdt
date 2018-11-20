@@ -17,29 +17,29 @@ package org.eclipse.cdt.managedbuilder.buildmodel;
  *
  * This interface is used to combine a set of build resources
  * that are inputs or outputs for the given action
- * into one group 
- * 
+ * into one group
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBuildIOType {
 	/**
 	 * Specifies whether this argument is Step input or output
-	 * 
+	 *
 	 * @return boolean
 	 */
 	boolean isInput();
-	
+
 	/**
 	 * Specifies a set of resources associated with this argument
-	 * 
+	 *
 	 * @return IBuildResource[]
 	 */
 	IBuildResource[] getResources();
-	
+
 	/**
 	 * Specifies the build step this argument belongs to
-	 * 
+	 *
 	 * @return IBuildStep
 	 */
 	IBuildStep getStep();

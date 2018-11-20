@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IAR Systems - initial API and implementation
  *     Red Hat Inc. - modified for use in Meson build
@@ -57,43 +57,45 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * Property page for Meson projects.  For unconfigured projects, we use the meson command and parse
  * the output of the --help option.  Otherwise, we use the meson configure command to find current
  * options and what may be changed via a meson configure call.
- * 
+ *
  * We assume that the build directory is in project/build/configname, which is where
- * the CMake project wizard puts it. We also assume that "cmake-gui" is in the user's 
+ * the CMake project wizard puts it. We also assume that "cmake-gui" is in the user's
  * PATH.
  */
 public class MesonPropertyPage extends PropertyPage {
-	
+
 	private IProject project;
 	private List<IMesonPropertyPageControl> componentList = new ArrayList<>();
 	private boolean configured;
 	private CBuildConfiguration buildConfig;
 	private Text envText;
 	private Text projText;
-	
+
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout(1, true));
-		
+
 		project = (IProject) getElement();
 		String configName;
 		try {
-			buildConfig = ((CBuildConfiguration)project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
-			configName = ((CBuildConfiguration)project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class)).getName();
+			buildConfig = ((CBuildConfiguration) project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
+			configName = ((CBuildConfiguration) project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class))
+					.getName();
 			IPath sourceDir = project.getLocation();
 			String buildDir = project.getLocation().append("build").append(configName).toOSString(); //$NON-NLS-1$
 			IPath buildPath = new Path(buildDir).append("build.ninja"); //$NON-NLS-1$
 			configured = buildPath.toFile().exists();
 			if (configured) {
 
-				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
+				ICommandLauncher launcher = CommandLauncherManager.getInstance()
+						.getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
 				launcher.setProject(project);
 				if (launcher instanceof ICBuildCommandLauncher) {
-					((ICBuildCommandLauncher)launcher).setBuildConfiguration(buildConfig);
+					((ICBuildCommandLauncher) launcher).setBuildConfiguration(buildConfig);
 				}
-				Process p = launcher.execute(new Path("meson"), new String[] { "configure", buildDir}, //$NON-NLS-1$ //$NON-NLS-2$
+				Process p = launcher.execute(new Path("meson"), new String[] { "configure", buildDir }, //$NON-NLS-1$ //$NON-NLS-2$
 						new String[0], sourceDir, new NullProgressMonitor());
 				if (p != null) {
 					ByteArrayOutputStream stdout = new ByteArrayOutputStream();
@@ -112,12 +114,13 @@ public class MesonPropertyPage extends PropertyPage {
 					}
 				}
 			} else {
-				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
+				ICommandLauncher launcher = CommandLauncherManager.getInstance()
+						.getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
 				launcher.setProject(project);
 				if (launcher instanceof ICBuildCommandLauncher) {
-					((ICBuildCommandLauncher)launcher).setBuildConfiguration(buildConfig);
+					((ICBuildCommandLauncher) launcher).setBuildConfiguration(buildConfig);
 				}
-				Process p = launcher.execute(new Path("meson"), new String[] { "-h"}, //$NON-NLS-1$ //$NON-NLS-2$
+				Process p = launcher.execute(new Path("meson"), new String[] { "-h" }, //$NON-NLS-1$ //$NON-NLS-2$
 						new String[0], sourceDir, new NullProgressMonitor());
 				if (p == null) {
 					return null;
@@ -149,7 +152,7 @@ public class MesonPropertyPage extends PropertyPage {
 							}
 						}
 					}
-					
+
 					Group group = new Group(composite, SWT.BORDER);
 					GridLayout layout = new GridLayout(2, true);
 					layout.marginLeft = 10;
@@ -165,7 +168,6 @@ public class MesonPropertyPage extends PropertyPage {
 					data.horizontalSpan = 1;
 					envLabel.setLayoutData(data);
 
-					
 					String mesonEnv = buildConfig.getProperty(IMesonConstants.MESON_ENV);
 
 					envText = new Text(group, SWT.BORDER);
@@ -177,7 +179,7 @@ public class MesonPropertyPage extends PropertyPage {
 					data.grabExcessHorizontalSpace = true;
 					data.horizontalSpan = 1;
 					envText.setLayoutData(data);
-					
+
 					group = new Group(composite, SWT.BORDER);
 					layout = new GridLayout(2, true);
 					layout.marginLeft = 10;
@@ -194,26 +196,26 @@ public class MesonPropertyPage extends PropertyPage {
 					projLabel.setLayoutData(data);
 
 					String mesonProjOptions = buildConfig.getProperty(IMesonConstants.MESON_PROJECT_OPTIONS);
-					
+
 					projText = new Text(group, SWT.BORDER);
 					if (mesonProjOptions != null) {
 						projText.setText(mesonProjOptions);
-						}
+					}
 					projText.setToolTipText(Messages.MesonPropertyPage_project_tooltip);
 					data = new GridData(GridData.FILL, GridData.FILL, true, false);
 					data.grabExcessHorizontalSpace = true;
 					data.horizontalSpan = 1;
 					projText.setLayoutData(data);
-					
+
 					// default buildtype based on active build configuration
 					// user can always override and we will use override from then on
 					String defaultBuildType = "release"; //$NON-NLS-1$
 					if (configName.contains("debug")) { //$NON-NLS-1$
 						defaultBuildType = "debug"; //$NON-NLS-1$
 					}
-				    if (argMap.get("buildtype") == null) { //$NON-NLS-1$
-				    	argMap.put("buildtype", defaultBuildType); //$NON-NLS-1$
-				    }
+					if (argMap.get("buildtype") == null) { //$NON-NLS-1$
+						argMap.put("buildtype", defaultBuildType); //$NON-NLS-1$
+					}
 					componentList = parseHelpOutput(stdout, composite, argMap, defaultBuildType);
 				}
 			}
@@ -224,7 +226,7 @@ public class MesonPropertyPage extends PropertyPage {
 
 		return composite;
 	}
-	
+
 	public void update() {
 		setErrorMessage(null);
 		for (IMesonPropertyPageControl control : componentList) {
@@ -234,11 +236,11 @@ public class MesonPropertyPage extends PropertyPage {
 			}
 		}
 	}
-	
-	public enum ParseState { 
-		INIT, GROUP, OPTION, OPTION_WITH_VALUES, ARGS 
+
+	public enum ParseState {
+		INIT, GROUP, OPTION, OPTION_WITH_VALUES, ARGS
 	};
-	
+
 	@Override
 	public boolean performOk() {
 		List<String> args = new ArrayList<>();
@@ -253,16 +255,19 @@ public class MesonPropertyPage extends PropertyPage {
 				return true;
 			}
 			try {
-				String configName = ((CBuildConfiguration)project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class)).getName();
+				String configName = ((CBuildConfiguration) project.getActiveBuildConfig()
+						.getAdapter(ICBuildConfiguration.class)).getName();
 				IPath sourceDir = project.getLocation();
 				String buildDir = project.getLocation().append("build").append(configName).toOSString(); //$NON-NLS-1$
-				ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
+				ICommandLauncher launcher = CommandLauncherManager.getInstance()
+						.getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
 				launcher.setProject(project);
 				if (launcher instanceof ICBuildCommandLauncher) {
-					((ICBuildCommandLauncher)launcher).setBuildConfiguration(buildConfig);
+					((ICBuildCommandLauncher) launcher).setBuildConfiguration(buildConfig);
 				}
 				args.add(buildDir);
-				Process p = launcher.execute(new Path("meson"), args.toArray(new String[0]), new String[0], sourceDir, new NullProgressMonitor()); //$NON-NLS-1$ //$NON-NLS-2$
+				Process p = launcher.execute(new Path("meson"), args.toArray(new String[0]), new String[0], sourceDir, //$NON-NLS-1$
+						new NullProgressMonitor()); //$NON-NLS-2$
 				int rc = -1;
 				IConsole console = CCorePlugin.getDefault().getConsole();
 				console.start(project);
@@ -317,15 +322,17 @@ public class MesonPropertyPage extends PropertyPage {
 		}
 		return true;
 	}
+
 	/**
 	 * Parse output of meson help call to determine options to show to user
 	 * @param stdout - ByteArrayOutputStream containing output of command
 	 * @param composite - Composite to add Controls to
 	 * @return - list of Controls
 	 */
-	List<IMesonPropertyPageControl> parseHelpOutput(ByteArrayOutputStream stdout, Composite composite, Map<String, String> argMap, String defaultBuildType) {
+	List<IMesonPropertyPageControl> parseHelpOutput(ByteArrayOutputStream stdout, Composite composite,
+			Map<String, String> argMap, String defaultBuildType) {
 		List<IMesonPropertyPageControl> controls = new ArrayList<>();
-		
+
 		Group group = new Group(composite, SWT.BORDER);
 		GridLayout layout = new GridLayout(2, true);
 		layout.marginLeft = 10;
@@ -350,7 +357,8 @@ public class MesonPropertyPage extends PropertyPage {
 						if (m.matches()) {
 							description = m.group(1).trim();
 						}
-						IMesonPropertyPageControl control = new MesonPropertyText(group, optionMatcher.group(2), defaultValue, description);
+						IMesonPropertyPageControl control = new MesonPropertyText(group, optionMatcher.group(2),
+								defaultValue, description);
 						controls.add(control);
 					} else if (optionMatcher.group(5) != null) {
 						String defaultValue = argMap.get(optionMatcher.group(2));
@@ -362,7 +370,8 @@ public class MesonPropertyPage extends PropertyPage {
 							if (defaultValue == null) {
 								defaultValue = m.group(3).trim();
 							}
-							IMesonPropertyPageControl control = new MesonPropertyCombo(group, optionMatcher.group(2), values, defaultValue, m.group(1).trim());
+							IMesonPropertyPageControl control = new MesonPropertyCombo(group, optionMatcher.group(2),
+									values, defaultValue, m.group(1).trim());
 							controls.add(control);
 						}
 					} else {
@@ -370,18 +379,19 @@ public class MesonPropertyPage extends PropertyPage {
 						if (argMap.containsKey(optionMatcher.group(2))) {
 							defaultValue = Boolean.parseBoolean(argMap.get(optionMatcher.group(2)));
 						}
-						IMesonPropertyPageControl control = new MesonPropertySpecialCheckbox(group, optionMatcher.group(2), defaultValue, optionMatcher.group(6));
+						IMesonPropertyPageControl control = new MesonPropertySpecialCheckbox(group,
+								optionMatcher.group(2), defaultValue, optionMatcher.group(6));
 						controls.add(control);
 					}
 				}
-				
+
 			}
 		} catch (UnsupportedEncodingException e) {
 			return controls;
 		}
 		return controls;
 	}
-	
+
 	/**
 	 * Parse output of meson configure call to determine options to show to user
 	 * @param stdout - ByteArrayOutputStream containing output of command
@@ -390,14 +400,15 @@ public class MesonPropertyPage extends PropertyPage {
 	 */
 	List<IMesonPropertyPageControl> parseConfigureOutput(ByteArrayOutputStream stdout, Composite composite) {
 		List<IMesonPropertyPageControl> controls = new ArrayList<>();
-		
+
 		try {
 			String[] lines = stdout.toString(StandardCharsets.UTF_8.name()).split("\\r?\\n"); //$NON-NLS-1$
 			ParseState state = ParseState.INIT;
 			Pattern optionPattern = Pattern.compile(Messages.MesonPropertyPage_option_pattern);
 			Pattern optionWithValuesPattern = Pattern.compile(Messages.MesonPropertyPage_option_with_values_pattern);
 			Pattern optionLine = Pattern.compile("(\\w+)\\s+([\\w,\\-,/]+)\\s+(.*)$"); //$NON-NLS-1$
-			Pattern optionWithValuesLine = Pattern.compile("(\\w+)\\s+([\\w,\\-,/]+)\\s+\\[([\\w,\\-,/]+)((,\\s+[\\w,\\-]+)*)\\]\\s+(.*)$");
+			Pattern optionWithValuesLine = Pattern
+					.compile("(\\w+)\\s+([\\w,\\-,/]+)\\s+\\[([\\w,\\-,/]+)((,\\s+[\\w,\\-]+)*)\\]\\s+(.*)$");
 			Pattern compilerOrLinkerArgs = Pattern.compile(Messages.MesonPropertyPage_compiler_or_link_args);
 			Pattern argLine = Pattern.compile("(\\w+)\\s+\\[([^\\]]*)\\]"); //$NON-NLS-1$
 			Pattern groupPattern = Pattern.compile("(([^:]*)):"); //$NON-NLS-1$
@@ -467,7 +478,8 @@ public class MesonPropertyPage extends PropertyPage {
 							argValue = argValue.replaceAll("',", ""); //$NON-NLS-1$ //$NON-NLS-2$
 							argValue = argValue.replaceAll("'", ""); //$NON-NLS-1$ //$NON-NLS-2$
 							String argDescription = Messages.MesonPropertyPage_arg_description;
-							IMesonPropertyPageControl argControl = new MesonPropertyText(parent, argName, argValue, argDescription);
+							IMesonPropertyPageControl argControl = new MesonPropertyText(parent, argName, argValue,
+									argDescription);
 							controls.add(argControl);
 						}
 						state = ParseState.INIT;
@@ -495,14 +507,17 @@ public class MesonPropertyPage extends PropertyPage {
 								// do nothing
 							}
 							if (isInteger) {
-								IMesonPropertyPageControl control = new MesonPropertyInteger(parent, this, name, value, description);
+								IMesonPropertyPageControl control = new MesonPropertyInteger(parent, this, name, value,
+										description);
 								controls.add(control);
-							} else if (Messages.MesonPropertyPage_true.equals(value) ||
-									Messages.MesonPropertyPage_false.equals(value)) {
-								IMesonPropertyPageControl control = new MesonPropertyCheckbox(parent, name, Boolean.getBoolean(value), description);
+							} else if (Messages.MesonPropertyPage_true.equals(value)
+									|| Messages.MesonPropertyPage_false.equals(value)) {
+								IMesonPropertyPageControl control = new MesonPropertyCheckbox(parent, name,
+										Boolean.getBoolean(value), description);
 								controls.add(control);
 							} else {
-								IMesonPropertyPageControl control = new MesonPropertyText(parent, name, value, description);
+								IMesonPropertyPageControl control = new MesonPropertyText(parent, name, value,
+										description);
 								controls.add(control);
 							}
 						} else {
@@ -532,12 +547,13 @@ public class MesonPropertyPage extends PropertyPage {
 							String possibleValue = m4.group(3);
 							String extraValues = m4.group(4);
 							String description = m4.group(6);
-							String[] values = new String[] {possibleValue};
+							String[] values = new String[] { possibleValue };
 							if (!extraValues.isEmpty()) {
 								values = extraValues.split(",\\s+");
 								values[0] = possibleValue;
 							}
-							IMesonPropertyPageControl control = new MesonPropertyCombo(parent, name, values, value, description);
+							IMesonPropertyPageControl control = new MesonPropertyCombo(parent, name, values, value,
+									description);
 							controls.add(control);
 						} else {
 							if (line.contains(":")) { //$NON-NLS-1$
@@ -558,5 +574,5 @@ public class MesonPropertyPage extends PropertyPage {
 		}
 		return controls;
 	}
-	
+
 }

@@ -17,9 +17,9 @@ package org.eclipse.cdt.core.settings.model;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * This interface represents an generic element in a storage tree.  These trees are rooted at 
+ * This interface represents an generic element in a storage tree.  These trees are rooted at
  * {@link ICSettingsStorage} elements.
- * 
+ *
  * This abstract storage mechanism is used, e.g. with the {@link ICProjectDescription} and
  * {@link ICConfigurationDescription} for storing custom data in the settings file (.cproject)
  * or in a database.
@@ -120,8 +120,8 @@ public interface ICStorageElement {
 	void removeChild(ICStorageElement el);
 
 	/**
-	 * Returns the String value of this element or null if there is no String value set. 
-	 * 
+	 * Returns the String value of this element or null if there is no String value set.
+	 *
 	 * NB a pure whitespace value is considered to be null
 	 * @return String or null
 	 */
@@ -154,7 +154,7 @@ public interface ICStorageElement {
 	 * @since 5.1
 	 */
 	ICStorageElement createCopy() throws UnsupportedOperationException, CoreException;
-	
+
 	/**
 	 * Tests whether this storage element is exactly equal to other
 	 * To be equal all name, children attributes and value must be

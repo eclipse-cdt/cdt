@@ -28,32 +28,31 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-
 public class AutomakeEditor extends MakefileEditor {
-	
+
 	protected AutomakefileContentOutlinePage ampage;
 	private AutomakefileSourceConfiguration sourceViewerConfiguration;
 	private static AutomakeEditor fgInstance;
 	private IEditorInput input;
-	
+
 	static {
 		fgInstance = new AutomakeEditor();
 	}
-	
-    public AutomakeEditor() {
-    	super();
-    }
 
-    /**
-     * Returns the default editor instance.
-     *
-     * @return the default editor instance
-     */
-    public static AutomakeEditor getDefault() {
-    	return fgInstance;
-    }
+	public AutomakeEditor() {
+		super();
+	}
 
-    @Override
+	/**
+	 * Returns the default editor instance.
+	 *
+	 * @return the default editor instance
+	 */
+	public static AutomakeEditor getDefault() {
+		return fgInstance;
+	}
+
+	@Override
 	protected void doSetInput(IEditorInput newInput) throws CoreException {
 		super.doSetInput(newInput);
 		this.input = newInput;
@@ -79,11 +78,11 @@ public class AutomakeEditor extends MakefileEditor {
 		configureInsertMode(SMART_INSERT, false);
 		setInsertMode(INSERT);
 	}
-	
+
 	public AutomakeDocumentProvider getAutomakefileDocumentProvider() {
 		return AutomakeEditorFactory.getDefault().getAutomakefileDocumentProvider();
 	}
-	
+
 	public AutomakefileContentOutlinePage getAutomakeOutlinePage() {
 		if (ampage == null) {
 			ampage = new AutomakefileContentOutlinePage(this);
@@ -92,7 +91,7 @@ public class AutomakeEditor extends MakefileEditor {
 		}
 		return ampage;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> key) {
@@ -101,17 +100,17 @@ public class AutomakeEditor extends MakefileEditor {
 		}
 		return super.getAdapter(key);
 	}
-	
+
 	public AutomakefileSourceConfiguration getAutomakeSourceViewerConfiguration() {
 		return sourceViewerConfiguration;
 	}
-	
+
 	public IMakefile getMakefile() {
 		return getAutomakefileDocumentProvider().getWorkingCopy(this.getEditorInput());
 	}
-	
+
 	public ISourceViewer getAutomakeSourceViewer() {
 		return getSourceViewer();
 	}
-	
+
 }

@@ -28,4 +28,3 @@ public class RemoveFunctionBodiesWizard extends RefactoringWizard {
 	protected void addUserInputPages() {
 	}
 }
-

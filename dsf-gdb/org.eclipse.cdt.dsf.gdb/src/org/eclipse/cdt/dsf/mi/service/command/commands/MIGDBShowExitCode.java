@@ -20,27 +20,27 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- * 
+ *
  *-data-evaluate-expression $_exitcode
  * ^done,value="10"
  *
  *   Show the current value of a $_exitcode
- *   
+ *
  *  With GDB 7.3, the exit code is provided by the MI =thread-group-exited event,
  *  which allows to handle multi-process situations.
- * 
+ *
  */
 public class MIGDBShowExitCode extends MIDataEvaluateExpression<MIGDBShowExitCodeInfo> {
 
-    /**
-     * @since 1.1
-     */
-    public MIGDBShowExitCode(ICommandControlDMContext ctx) {
-        super(ctx, "$_exitcode"); //$NON-NLS-1$
-    }
-    
-    @Override
-    public MIGDBShowExitCodeInfo getResult(MIOutput output) {
-        return new MIGDBShowExitCodeInfo(output);
-    }
+	/**
+	 * @since 1.1
+	 */
+	public MIGDBShowExitCode(ICommandControlDMContext ctx) {
+		super(ctx, "$_exitcode"); //$NON-NLS-1$
+	}
+
+	@Override
+	public MIGDBShowExitCodeInfo getResult(MIOutput output) {
+		return new MIGDBShowExitCodeInfo(output);
+	}
 }

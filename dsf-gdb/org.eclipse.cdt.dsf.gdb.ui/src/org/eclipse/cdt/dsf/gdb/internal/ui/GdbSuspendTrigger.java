@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -33,53 +33,55 @@ import org.eclipse.debug.core.ILaunch;
  * @since 2.1
  */
 public class GdbSuspendTrigger extends DsfSuspendTrigger {
-    
-    public GdbSuspendTrigger(DsfSession session, ILaunch launch) {
-        super(session, launch);
-    }
-    
-    @Override
-    protected void getLaunchTopContainers(final DataRequestMonitor<IContainerDMContext[]> rm) {
-        try {
-            getSession().getExecutor().execute(new DsfRunnable() {
-                @Override
-				public void run() {
-                    IProcesses processService = getServicesTracker().getService(IProcesses.class);
-                    ICommandControlService controlService = getServicesTracker().getService(ICommandControlService.class);
-                    if (processService == null || controlService == null) {
-                        rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Not available", null)); //$NON-NLS-1$
-                        rm.done();
-                        return;
-                    }
 
-                    processService.getProcessesBeingDebugged(
-                        controlService.getContext(),
-                        new ImmediateDataRequestMonitor<IDMContext[]>(rm) {
-                            @Override
-                            public void handleSuccess() {
-                                IContainerDMContext[] containers = new IContainerDMContext[getData().length];
-                                for (int i = 0; i < containers.length; i++) {
-                                    if (getData()[i] instanceof IContainerDMContext) {
-                                        containers[i] = (IContainerDMContext)getData()[i];
-                                    } else {
-                                        // By convention the processes should be containers, but the API
-                                        // does not enforce this.
-                                        assert false;
-                                        rm.setData(new IContainerDMContext[0]);
-                                        rm.done();
-                                        return;
-                                    }
-                                    
-                                }
-                                rm.setData(containers);
-                                rm.done();
-                            }
-                        });
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Not available", e)); //$NON-NLS-1$
-            rm.done();
-        }
-    }
+	public GdbSuspendTrigger(DsfSession session, ILaunch launch) {
+		super(session, launch);
+	}
+
+	@Override
+	protected void getLaunchTopContainers(final DataRequestMonitor<IContainerDMContext[]> rm) {
+		try {
+			getSession().getExecutor().execute(new DsfRunnable() {
+				@Override
+				public void run() {
+					IProcesses processService = getServicesTracker().getService(IProcesses.class);
+					ICommandControlService controlService = getServicesTracker()
+							.getService(ICommandControlService.class);
+					if (processService == null || controlService == null) {
+						rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+								"Not available", null)); //$NON-NLS-1$
+						rm.done();
+						return;
+					}
+
+					processService.getProcessesBeingDebugged(controlService.getContext(),
+							new ImmediateDataRequestMonitor<IDMContext[]>(rm) {
+								@Override
+								public void handleSuccess() {
+									IContainerDMContext[] containers = new IContainerDMContext[getData().length];
+									for (int i = 0; i < containers.length; i++) {
+										if (getData()[i] instanceof IContainerDMContext) {
+											containers[i] = (IContainerDMContext) getData()[i];
+										} else {
+											// By convention the processes should be containers, but the API
+											// does not enforce this.
+											assert false;
+											rm.setData(new IContainerDMContext[0]);
+											rm.done();
+											return;
+										}
+
+									}
+									rm.setData(containers);
+									rm.done();
+								}
+							});
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+					"Not available", e)); //$NON-NLS-1$
+			rm.done();
+		}
+	}
 }

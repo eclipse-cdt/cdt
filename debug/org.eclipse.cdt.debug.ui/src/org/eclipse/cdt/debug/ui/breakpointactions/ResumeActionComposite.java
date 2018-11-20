@@ -26,7 +26,7 @@ public class ResumeActionComposite extends Composite {
 
 	/**
 	 * Create the composite
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 */
@@ -41,8 +41,7 @@ public class ResumeActionComposite extends Composite {
 
 		pauseTime = new Text(this, SWT.BORDER);
 		pauseTime.setText(Integer.toString(page.getResumeAction().getPauseTime()));
-		
-		
+
 		final GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gridData.widthHint = 35;
 		pauseTime.setLayoutData(gridData);

@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * org.eclipse.cdt.debug.internal.ui.views.modules.CElementLabelProvider: 
+ * org.eclipse.cdt.debug.internal.ui.views.modules.CElementLabelProvider:
  * //TODO Add description.
  */
 public class ModuleLabelProvider extends ElementLabelProvider {
@@ -37,16 +37,18 @@ public class ModuleLabelProvider extends ElementLabelProvider {
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
 	@Override
-	protected String getLabel( TreePath elementPath, IPresentationContext presentationContext, String columnId ) throws CoreException {
+	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId)
+			throws CoreException {
 		Object element = elementPath.getLastSegment();
-		if ( element instanceof ICModule && presentationContext instanceof DebugModelPresentationContext ) {
-			IDebugModelPresentation presentation = ((DebugModelPresentationContext)presentationContext).getModelPresentation();
-			return presentation.getText( element );
+		if (element instanceof ICModule && presentationContext instanceof DebugModelPresentationContext) {
+			IDebugModelPresentation presentation = ((DebugModelPresentationContext) presentationContext)
+					.getModelPresentation();
+			return presentation.getText(element);
 		}
-		if ( element instanceof IAdaptable ) {
-			IWorkbenchAdapter adapter = (((IAdaptable)element).getAdapter( IWorkbenchAdapter.class ));
-			if ( adapter != null )
-				return adapter.getLabel( element );
+		if (element instanceof IAdaptable) {
+			IWorkbenchAdapter adapter = (((IAdaptable) element).getAdapter(IWorkbenchAdapter.class));
+			if (adapter != null)
+				return adapter.getLabel(element);
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -55,28 +57,29 @@ public class ModuleLabelProvider extends ElementLabelProvider {
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getImageDescriptor(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
 	@Override
-	protected ImageDescriptor getImageDescriptor( TreePath elementPath, IPresentationContext presentationContext, String columnId ) throws CoreException {
+	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext,
+			String columnId) throws CoreException {
 		Object element = elementPath.getLastSegment();
-		if ( element instanceof ICModule ) {
-			ICModule module = (ICModule)element;
-			switch( module.getType() ) {
-				case ICModule.EXECUTABLE:
-					if ( module.areSymbolsLoaded() ) {
-						return CDebugImages.DESC_OBJS_EXECUTABLE_WITH_SYMBOLS;
-					}
-					return CDebugImages.DESC_OBJS_EXECUTABLE;
-				case ICModule.SHARED_LIBRARY:
-					if ( module.areSymbolsLoaded() ) {
-						return CDebugImages.DESC_OBJS_SHARED_LIBRARY_WITH_SYMBOLS;
-					}
-					return CDebugImages.DESC_OBJS_SHARED_LIBRARY;
+		if (element instanceof ICModule) {
+			ICModule module = (ICModule) element;
+			switch (module.getType()) {
+			case ICModule.EXECUTABLE:
+				if (module.areSymbolsLoaded()) {
+					return CDebugImages.DESC_OBJS_EXECUTABLE_WITH_SYMBOLS;
+				}
+				return CDebugImages.DESC_OBJS_EXECUTABLE;
+			case ICModule.SHARED_LIBRARY:
+				if (module.areSymbolsLoaded()) {
+					return CDebugImages.DESC_OBJS_SHARED_LIBRARY_WITH_SYMBOLS;
+				}
+				return CDebugImages.DESC_OBJS_SHARED_LIBRARY;
 			}
 		}
-		if ( element instanceof ICElement ) {
-			IWorkbenchAdapter adapter = (((IAdaptable)element).getAdapter( IWorkbenchAdapter.class ));
-			if ( adapter != null )
-				return adapter.getImageDescriptor( element );
+		if (element instanceof ICElement) {
+			IWorkbenchAdapter adapter = (((IAdaptable) element).getAdapter(IWorkbenchAdapter.class));
+			if (adapter != null)
+				return adapter.getImageDescriptor(element);
 		}
-		return super.getImageDescriptor( elementPath, presentationContext, columnId );
+		return super.getImageDescriptor(elementPath, presentationContext, columnId);
 	}
 }

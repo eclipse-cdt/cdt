@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,16 +17,16 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.update.BreakpointHitUpdatePolicy;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.IElementUpdateTester;
 
 /**
- * Manual update policy which selectively clears the cache when the expressions 
- * in the expression manager are modified. 
+ * Manual update policy which selectively clears the cache when the expressions
+ * in the expression manager are modified.
  */
 public class ExpressionsBreakpointHitUpdatePolicy extends BreakpointHitUpdatePolicy {
 
-    @Override
-    public IElementUpdateTester getElementUpdateTester(Object event) {
-        if (event instanceof ExpressionsChangedEvent) {
-            return new ExpressionsChangedUpdateTester((ExpressionsChangedEvent)event);
-        }
-        return super.getElementUpdateTester(event);
-    }
+	@Override
+	public IElementUpdateTester getElementUpdateTester(Object event) {
+		if (event instanceof ExpressionsChangedEvent) {
+			return new ExpressionsChangedUpdateTester((ExpressionsChangedEvent) event);
+		}
+		return super.getElementUpdateTester(event);
+	}
 }

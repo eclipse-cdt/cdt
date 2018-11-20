@@ -31,9 +31,9 @@ public class SelectionHistory {
 
 	public SelectionHistory(CEditor editor) {
 		Assert.isNotNull(editor);
-		fEditor= editor;
-		fHistory= new Stack<ISourceRange>();
-		fSelectionListener= new ISelectionChangedListener() {
+		fEditor = editor;
+		fHistory = new Stack<ISourceRange>();
+		fSelectionListener = new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (fSelectionChangeListenerCounter == 0)
@@ -54,7 +54,7 @@ public class SelectionHistory {
 	public ISourceRange getLast() {
 		if (isEmpty())
 			return null;
-		ISourceRange result= fHistory.pop();
+		ISourceRange result = fHistory.pop();
 		return result;
 	}
 

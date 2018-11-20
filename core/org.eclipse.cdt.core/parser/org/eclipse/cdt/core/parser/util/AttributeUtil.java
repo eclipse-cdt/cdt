@@ -25,17 +25,18 @@ import org.eclipse.cdt.core.parser.StandardAttributes;
  * @since 5.4
  */
 public class AttributeUtil {
-	private static final String[] ATTRIBUTE_NORETURN = new String[] { "__noreturn__", StandardAttributes.NORETURN };  //$NON-NLS-1$
+	private static final String[] ATTRIBUTE_NORETURN = new String[] { "__noreturn__", StandardAttributes.NORETURN }; //$NON-NLS-1$
 
 	// Not instantiatable.
-	private AttributeUtil() {}
+	private AttributeUtil() {
+	}
 
 	/**
 	 * Returns {@code true} if a declarator has an attribute with one of the given names.
-	 * The {@code names} array is assumed to be small. 
+	 * The {@code names} array is assumed to be small.
 	 */
 	public static boolean hasAttribute(IASTAttributeOwner node, String[] names) {
-	    IASTAttribute[] attributes = node.getAttributes();
+		IASTAttribute[] attributes = node.getAttributes();
 		for (IASTAttribute attribute : attributes) {
 			char[] name = attribute.getName();
 			for (int i = 0; i < names.length; i++) {

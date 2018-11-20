@@ -16,5 +16,5 @@ package org.eclipse.cdt.managedbuilder.core;
 import org.eclipse.core.runtime.IPath;
 
 public interface IManagedOutputNameProvider {
-	public IPath[] getOutputNames( ITool tool, IPath[] primaryInputNames );
+	public IPath[] getOutputNames(ITool tool, IPath[] primaryInputNames);
 }

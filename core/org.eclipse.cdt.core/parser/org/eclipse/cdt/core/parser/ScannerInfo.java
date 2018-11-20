@@ -22,13 +22,13 @@ import java.util.Map;
  * Implementation of the {@link IScannerInfo} interface. Allows to configure the preprocessor.
  */
 public class ScannerInfo implements IScannerInfo {
-	private final Map<String, String> definedSymbols; 
-	private final String[] includePaths; 
-	
+	private final Map<String, String> definedSymbols;
+	private final String[] includePaths;
+
 	public ScannerInfo() {
 		this(null, null);
 	}
-	
+
 	public ScannerInfo(Map<String, String> macroDefinitions) {
 		this(macroDefinitions, null);
 	}
@@ -37,14 +37,14 @@ public class ScannerInfo implements IScannerInfo {
 		definedSymbols = macroDefinitions != null ? macroDefinitions : Collections.<String, String>emptyMap();
 		includePaths = includeSearchPath != null ? includeSearchPath : new String[] {};
 	}
-		
-    @Override
-	public Map<String, String> getDefinedSymbols() {
-        return definedSymbols;
-    }
 
-    @Override
+	@Override
+	public Map<String, String> getDefinedSymbols() {
+		return definedSymbols;
+	}
+
+	@Override
 	public String[] getIncludePaths() {
-        return includePaths;
-    }
+		return includePaths;
+	}
 }

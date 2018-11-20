@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
@@ -57,30 +57,31 @@ import org.eclipse.osgi.util.NLS;
 public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 	static final String CHECKSUMS_NAME = "checksums.dat"; //$NON-NLS-1$
 	static final String INDEX_NAME = "cdt-index.pdom"; //$NON-NLS-1$
-	private static final Pattern PROJECT_VAR_PATTERN= Pattern.compile("\\$\\{(project_[a-zA-Z0-9]*)\\}"); //$NON-NLS-1$
+	private static final Pattern PROJECT_VAR_PATTERN = Pattern.compile("\\$\\{(project_[a-zA-Z0-9]*)\\}"); //$NON-NLS-1$
 	private static final String PROJECT_VAR_REPLACEMENT_BEGIN = "\\${$1:"; //$NON-NLS-1$
 	private static final String PROJECT_VAR_REPLACEMENT_END = "}"; //$NON-NLS-1$
 	private static final String DOLLAR_OR_BACKSLASH_REPLACEMENT = "\\\\$0"; //$NON-NLS-1$
-	private static final Pattern DOLLAR_OR_BACKSLASH_PATTERN= Pattern.compile("[\\$\\\\]"); //$NON-NLS-1$
+	private static final Pattern DOLLAR_OR_BACKSLASH_PATTERN = Pattern.compile("[\\$\\\\]"); //$NON-NLS-1$
 
 	private static final class FileAndChecksum {
 		public ITranslationUnit fFile;
 		public IIndexFragmentFile fIFile;
 		public byte[] fChecksum;
+
 		public FileAndChecksum(ITranslationUnit tu, IIndexFragmentFile ifile, byte[] checksum) {
-			fFile= tu;
-			fIFile= ifile;
-			fChecksum= checksum;
+			fFile = tu;
+			fIFile = ifile;
+			fChecksum = checksum;
 		}
 	}
-	
+
 	private ICProject fProject;
 	private boolean fSuccess;
 	private boolean fShowActivity;
 
 	public TeamPDOMImportOperation(ICProject project) {
-		fProject= project;
-		fShowActivity= PDOMIndexerTask.checkDebugOption(IPDOMIndexerTask.TRACE_ACTIVITY, "true"); //$NON-NLS-1$
+		fProject = project;
+		fShowActivity = PDOMIndexerTask.checkDebugOption(IPDOMIndexerTask.TRACE_ACTIVITY, "true"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -88,20 +89,20 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		if (fShowActivity) {
 			System.out.println("Indexer: PDOMImporter start"); //$NON-NLS-1$
 		}
-		fSuccess= false;
-		Exception ex= null;
+		fSuccess = false;
+		Exception ex = null;
 		try {
-			File importFile= getImportLocation();
+			File importFile = getImportLocation();
 			if (importFile.exists()) {
 				doImportIndex(importFile, pm);
-				fSuccess= true;
+				fSuccess = true;
 			}
 		} catch (InterruptedException e) {
 			throw new OperationCanceledException();
 		} catch (IOException | CoreException e) {
-			ex= e;
-		} 
-		
+			ex = e;
+		}
+
 		if (ex != null) {
 			CCorePlugin.log(ex);
 		}
@@ -113,35 +114,36 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 	public boolean wasSuccessful() {
 		return fSuccess;
 	}
-		
+
 	private File getImportLocation() throws CoreException {
-		IProject project= fProject.getProject();
-		String locationString= IndexerPreferences.getIndexImportLocation(project);
+		IProject project = fProject.getProject();
+		String locationString = IndexerPreferences.getIndexImportLocation(project);
 		return expandLocation(project, locationString);
 	}
 
 	static File expandLocation(IProject project, String loc) throws CoreException {
-		String replacement= PROJECT_VAR_REPLACEMENT_BEGIN
-		 	+ DOLLAR_OR_BACKSLASH_PATTERN.matcher(project.getName()).replaceAll(DOLLAR_OR_BACKSLASH_REPLACEMENT) 
-		 	+ PROJECT_VAR_REPLACEMENT_END; 
-		
-		loc= PROJECT_VAR_PATTERN.matcher(loc).replaceAll(replacement);
-		IStringVariableManager varManager= VariablesPlugin.getDefault().getStringVariableManager();
-		IPath location= new Path(varManager.performStringSubstitution(loc));
+		String replacement = PROJECT_VAR_REPLACEMENT_BEGIN
+				+ DOLLAR_OR_BACKSLASH_PATTERN.matcher(project.getName()).replaceAll(DOLLAR_OR_BACKSLASH_REPLACEMENT)
+				+ PROJECT_VAR_REPLACEMENT_END;
+
+		loc = PROJECT_VAR_PATTERN.matcher(loc).replaceAll(replacement);
+		IStringVariableManager varManager = VariablesPlugin.getDefault().getStringVariableManager();
+		IPath location = new Path(varManager.performStringSubstitution(loc));
 		if (!location.isAbsolute()) {
-			
-			if(project.getLocation() != null)
-				location= project.getLocation().append(location);
+
+			if (project.getLocation() != null)
+				location = project.getLocation().append(location);
 		}
 		return location.toFile();
 	}
 
-	private void doImportIndex(File importFile, IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
-		ZipFile zip= new ZipFile(importFile);
-		Map<?, ?> checksums= null;
+	private void doImportIndex(File importFile, IProgressMonitor monitor)
+			throws CoreException, InterruptedException, IOException {
+		ZipFile zip = new ZipFile(importFile);
+		Map<?, ?> checksums = null;
 		try {
 			importIndex(zip, monitor);
-			checksums= getChecksums(zip);
+			checksums = getChecksums(zip);
 		} finally {
 			try {
 				zip.close();
@@ -149,29 +151,29 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 				CCorePlugin.log(e);
 			}
 		}
-		
+
 		checkIndex(checksums, monitor);
 	}
 
 	private void importIndex(ZipFile zip, IProgressMonitor monitor) throws CoreException, IOException {
-		ZipEntry indexEntry= zip.getEntry(INDEX_NAME);
+		ZipEntry indexEntry = zip.getEntry(INDEX_NAME);
 		if (indexEntry == null) {
-			throw new CoreException(CCorePlugin.createStatus(
-					NLS.bind(Messages.PDOMImportTask_errorInvalidArchive, zip.getName())));
+			throw new CoreException(
+					CCorePlugin.createStatus(NLS.bind(Messages.PDOMImportTask_errorInvalidArchive, zip.getName())));
 		}
-		InputStream stream= zip.getInputStream(indexEntry);
+		InputStream stream = zip.getInputStream(indexEntry);
 		CCoreInternals.getPDOMManager().importProjectPDOM(fProject, stream, monitor);
 	}
 
 	private Map<?, ?> getChecksums(ZipFile zip) {
-		ZipEntry indexEntry= zip.getEntry(CHECKSUMS_NAME);
+		ZipEntry indexEntry = zip.getEntry(CHECKSUMS_NAME);
 		if (indexEntry != null) {
 			try {
-				ObjectInputStream input= new ObjectInputStream(zip.getInputStream(indexEntry));
+				ObjectInputStream input = new ObjectInputStream(zip.getInputStream(indexEntry));
 				try {
-					Object obj= input.readObject();
+					Object obj = input.readObject();
 					if (obj instanceof Map<?, ?>) {
-						return (Map<?,?>) obj;
+						return (Map<?, ?>) obj;
 					}
 				} finally {
 					input.close();
@@ -184,57 +186,58 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 	}
 
 	private void checkIndex(Map<?, ?> checksums, IProgressMonitor monitor) throws CoreException, InterruptedException {
-		IPDOM obj= CCoreInternals.getPDOMManager().getPDOM(fProject);
+		IPDOM obj = CCoreInternals.getPDOMManager().getPDOM(fProject);
 		if (!(obj instanceof WritablePDOM)) {
 			return;
 		}
-		
-		WritablePDOM pdom= (WritablePDOM) obj;
+
+		WritablePDOM pdom = (WritablePDOM) obj;
 		pdom.acquireReadLock();
 		try {
-			List<FileAndChecksum> filesToCheck= new ArrayList<>();		
+			List<FileAndChecksum> filesToCheck = new ArrayList<>();
 			if (!pdom.isSupportedVersion()) {
-				throw new CoreException(CCorePlugin.createStatus(					
-						NLS.bind(Messages.PDOMImportTask_errorInvalidPDOMVersion, INDEX_NAME, fProject.getElementName())));
+				throw new CoreException(CCorePlugin.createStatus(NLS
+						.bind(Messages.PDOMImportTask_errorInvalidPDOMVersion, INDEX_NAME, fProject.getElementName())));
 			}
 
 			final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IIndexFragmentFile[] filesToDelete= pdom.getAllFiles();
+			IIndexFragmentFile[] filesToDelete = pdom.getAllFiles();
 			for (int i = 0; i < filesToDelete.length; i++) {
 				checkMonitor(monitor);
 				IIndexFragmentFile ifile = filesToDelete[i];
 
-				byte[] checksum= null;
-				ITranslationUnit tu= null;
+				byte[] checksum = null;
+				ITranslationUnit tu = null;
 
 				IIndexFileLocation ifl = ifile.getLocation();
-				String fullPathStr= ifl.getFullPath();
+				String fullPathStr = ifl.getFullPath();
 				if (fullPathStr != null) {
-					Path fullPath= new Path(fullPathStr);
-					IFile file= root.getFile(fullPath);
-					boolean exists= file.exists();
+					Path fullPath = new Path(fullPathStr);
+					IFile file = root.getFile(fullPath);
+					boolean exists = file.exists();
 					if (!exists) {
 						try {
 							file.refreshLocal(0, new NullProgressMonitor());
-							exists= file.exists();
+							exists = file.exists();
 						} catch (CoreException e) {
 							CCorePlugin.log(e);
 						}
 					}
 					if (exists) {
-						tu= (ITranslationUnit) CoreModel.getDefault().create(file);						
+						tu = (ITranslationUnit) CoreModel.getDefault().create(file);
 						if (tu != null) {
-							checksum= Checksums.getChecksum(checksums, file);
+							checksum = Checksums.getChecksum(checksums, file);
 						}
 					}
 				}
 				if (checksum != null) {
 					filesToCheck.add(new FileAndChecksum(tu, ifile, checksum));
-					filesToDelete[i]= null;
+					filesToDelete[i] = null;
 				}
-			}		
-			
-			List<FileAndChecksum> updateTimestamps= getUnchangedWithDifferentTimestamp(checksums, filesToCheck, monitor);
+			}
+
+			List<FileAndChecksum> updateTimestamps = getUnchangedWithDifferentTimestamp(checksums, filesToCheck,
+					monitor);
 			updateIndex(pdom, 1, filesToDelete, updateTimestamps, monitor);
 		} finally {
 			pdom.releaseReadLock();
@@ -248,7 +251,8 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 	}
 
 	private void updateIndex(WritablePDOM pdom, final int giveupReadlocks, IIndexFragmentFile[] filesToDelete,
-			List<FileAndChecksum> updateTimestamps, IProgressMonitor monitor) throws InterruptedException, CoreException {
+			List<FileAndChecksum> updateTimestamps, IProgressMonitor monitor)
+			throws InterruptedException, CoreException {
 		pdom.acquireWriteLock(giveupReadlocks, null);
 		try {
 			for (IIndexFragmentFile ifile : filesToDelete) {
@@ -259,10 +263,10 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 			}
 			for (FileAndChecksum fc : updateTimestamps) {
 				checkMonitor(monitor);
-				
-				IIndexFragmentFile file= fc.fIFile;
+
+				IIndexFragmentFile file = fc.fIFile;
 				if (file != null) {
-					IResource r= fc.fFile.getResource();
+					IResource r = fc.fFile.getResource();
 					if (r != null) {
 						file.setTimestamp(r.getLocalTimeStamp());
 					}
@@ -272,30 +276,31 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 			pdom.releaseWriteLock(giveupReadlocks, true);
 		}
 	}
-	
-	private List<FileAndChecksum> getUnchangedWithDifferentTimestamp(Map<?, ?> checksums, List<FileAndChecksum> filesToCheck, IProgressMonitor monitor) {
-        MessageDigest md;
+
+	private List<FileAndChecksum> getUnchangedWithDifferentTimestamp(Map<?, ?> checksums,
+			List<FileAndChecksum> filesToCheck, IProgressMonitor monitor) {
+		MessageDigest md;
 		try {
 			md = Checksums.getAlgorithm(checksums);
 		} catch (NoSuchAlgorithmException e) {
 			CCorePlugin.log(e);
 			return Collections.emptyList();
-		} 
+		}
 
-		List<FileAndChecksum> result= new ArrayList<>();
+		List<FileAndChecksum> result = new ArrayList<>();
 		for (FileAndChecksum cs : filesToCheck) {
 			checkMonitor(monitor);
-			
-			ITranslationUnit tu= cs.fFile;
+
+			ITranslationUnit tu = cs.fFile;
 			if (tu != null) {
-				IPath location= tu.getLocation();
+				IPath location = tu.getLocation();
 				if (location != null) {
 					try {
 						final File file = location.toFile();
 						if (file.isFile()) {
-							IResource res= cs.fFile.getResource();
+							IResource res = cs.fFile.getResource();
 							if (res == null || res.getLocalTimeStamp() != cs.fIFile.getTimestamp()) {
-								byte[] checksum= Checksums.computeChecksum(md, file);
+								byte[] checksum = Checksums.computeChecksum(md, file);
 								if (Arrays.equals(checksum, cs.fChecksum)) {
 									result.add(cs);
 								}

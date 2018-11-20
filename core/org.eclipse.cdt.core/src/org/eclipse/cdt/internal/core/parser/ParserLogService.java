@@ -43,13 +43,13 @@ public class ParserLogService extends AbstractParserLogService implements ICance
 			throw new NullPointerException();
 		topic = constant;
 		if (CCorePlugin.getDefault() == null) {
-			fIsTracingExceptions= false;
-			fIsTracing= false;
+			fIsTracingExceptions = false;
+			fIsTracing = false;
 		} else {
-			fIsTracingExceptions= Util.PARSER_EXCEPTIONS;
-			fIsTracing= Util.isActive(topic);
+			fIsTracingExceptions = Util.PARSER_EXCEPTIONS;
+			fIsTracing = Util.isActive(topic);
 		}
-		fCanceler= canceler;
+		fCanceler = canceler;
 	}
 
 	@Override

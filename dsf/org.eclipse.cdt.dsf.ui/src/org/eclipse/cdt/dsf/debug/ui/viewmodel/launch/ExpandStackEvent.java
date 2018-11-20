@@ -18,13 +18,13 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 
 /**
  * Event to increase the stack frame limit for an execution context.
- * 
+ *
  * @since 1.1
  */
 public class ExpandStackEvent extends AbstractDMEvent<IExecutionDMContext> {
-    
-    public ExpandStackEvent(IExecutionDMContext execCtx) {
-        super(execCtx);
-    }
+
+	public ExpandStackEvent(IExecutionDMContext execCtx) {
+		super(execCtx);
+	}
 
 }

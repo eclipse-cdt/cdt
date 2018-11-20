@@ -30,17 +30,14 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
-
 public class AutoconfOutlineErrorHandler {
-	
-	public static final String PARSE_ERROR_MARKER_ID = AutotoolsUIPlugin.PLUGIN_ID
-	+ ".outlineparsefileerror"; //$NON-NLS-1$
-	
+
+	public static final String PARSE_ERROR_MARKER_ID = AutotoolsUIPlugin.PLUGIN_ID + ".outlineparsefileerror"; //$NON-NLS-1$
+
 	private IFile file;
 	private IDocument document;
-	
-	public AutoconfOutlineErrorHandler(IStorageEditorInput input, IDocument document)
-	{
+
+	public AutoconfOutlineErrorHandler(IStorageEditorInput input, IDocument document) {
 		this.document = document;
 		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
 		try {
@@ -60,17 +57,17 @@ public class AutoconfOutlineErrorHandler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public IDocument getDocument() {
 		return document;
 	}
-	
+
 	public void handleError(ParseException e) {
 		if (!file.exists())
 			return;
-		
+
 		int lineNumber = e.getLineNumber();
-		
+
 		Map<String, Object> map = new HashMap<>();
 		MarkerUtilities.setLineNumber(map, lineNumber);
 		MarkerUtilities.setMessage(map, e.getMessage());
@@ -85,10 +82,10 @@ public class AutoconfOutlineErrorHandler {
 		if (charEnd != null) {
 			map.put(IMarker.CHAR_END, charEnd);
 		}
-		
+
 		// FIXME:  add severity level
 		map.put(IMarker.SEVERITY, Integer.valueOf(e.getSeverity()));
-		
+
 		try {
 			MarkerUtilities.createMarker(file, map, PARSE_ERROR_MARKER_ID);
 		} catch (CoreException ee) {
@@ -96,12 +93,12 @@ public class AutoconfOutlineErrorHandler {
 		}
 		return;
 	}
-	
+
 	public void removeAllExistingMarkers() {
 		if (!file.exists())
 			return;
-		
-		try	{
+
+		try {
 			file.deleteMarkers(PARSE_ERROR_MARKER_ID, true, IResource.DEPTH_ZERO);
 		} catch (CoreException e1) {
 			e1.printStackTrace();
@@ -111,8 +108,8 @@ public class AutoconfOutlineErrorHandler {
 	public void removeExistingMarkers(int offset, int length) {
 		if (!file.exists())
 			return;
-		
-		try	{
+
+		try {
 			IMarker[] markers = file.findMarkers(PARSE_ERROR_MARKER_ID, true, IResource.DEPTH_ZERO);
 			// Delete all markers that start in the given document range.
 			for (int i = 0; i < markers.length; ++i) {
@@ -126,9 +123,9 @@ public class AutoconfOutlineErrorHandler {
 			e1.printStackTrace();
 		}
 	}
-	
-	private Integer getCharOffset(int lineNumber, int columnNumber)	{
-		try	{
+
+	private Integer getCharOffset(int lineNumber, int columnNumber) {
+		try {
 			return Integer.valueOf(document.getLineOffset(lineNumber) + columnNumber);
 		} catch (BadLocationException e) {
 			e.printStackTrace();

@@ -42,7 +42,7 @@ import org.eclipse.launchbar.core.target.ILaunchTarget;
 /**
  * A launchbar listener that attempts to set the active core build configuration
  * on the project adapted from the launch descriptor.
- * 
+ *
  * @since 8.3
  */
 public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
@@ -70,7 +70,7 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 			if (!projectName.isEmpty()) {
 				project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 			}
-			
+
 			if (project == null) {
 				// Try the mapped resources
 				IResource[] mappedResources = configuration.getMappedResources();
@@ -134,7 +134,7 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 							desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
 							finalProject.setDescription(desc, monitor);
 							// notify the active build config that it is active
-							((ICBuildConfiguration2)buildConfig).setActive();
+							((ICBuildConfiguration2) buildConfig).setActive();
 						}
 					}
 

@@ -36,44 +36,44 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * {@code IInclude}, etc..
  * and appear in the order in which they are declared in the source.
  * If a {@code .c} file cannot be parsed, its structure remains unknown.
- * Use {@code ICElement.isStructureKnown} to determine whether this is 
+ * Use {@code ICElement.isStructureKnown} to determine whether this is
  * the case.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISourceReference, ISourceManipulation {
 	/**
-	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Style constant for {@link #getAST(IIndex, int)}.
 	 * Meaning: Skip function and method bodies.
 	 * @since 4.0
 	 */
-	public static final int AST_SKIP_FUNCTION_BODIES= 0x1;
+	public static final int AST_SKIP_FUNCTION_BODIES = 0x1;
 
 	/**
-	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Style constant for {@link #getAST(IIndex, int)}.
 	 * Meaning: Skip over headers that are found in the index, parse all others.
 	 * Macro definitions and bindings are taken from index for skipped files.
 	 */
 	public static final int AST_SKIP_INDEXED_HEADERS = 0x2;
 
 	/**
-	 * Style constant for {@link #getAST(IIndex, int)}. 
-	 * Meaning: Skip headers even if they are not found in the index. 
+	 * Style constant for {@link #getAST(IIndex, int)}.
+	 * Meaning: Skip headers even if they are not found in the index.
 	 * Makes practically only sense in combination with {@link #AST_SKIP_INDEXED_HEADERS}.
 	 */
 	public static final int AST_SKIP_NONINDEXED_HEADERS = 0x4;
 
 	/**
-	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Style constant for {@link #getAST(IIndex, int)}.
 	 * A combination of {@link #AST_SKIP_INDEXED_HEADERS} and {@link #AST_SKIP_NONINDEXED_HEADERS}.
-	 * Meaning: Don't parse header files at all, be they indexed or not. 
+	 * Meaning: Don't parse header files at all, be they indexed or not.
 	 * Macro definitions and bindings are taken from the index if available.
 	 */
 	public static final int AST_SKIP_ALL_HEADERS = AST_SKIP_INDEXED_HEADERS | AST_SKIP_NONINDEXED_HEADERS;
 
 	/**
-	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Style constant for {@link #getAST(IIndex, int)}.
 	 * Meaning: Don't parse the file if there is no build information for it.
 	 */
 	public static final int AST_SKIP_IF_NO_BUILD_INFO = 0x8;
@@ -85,26 +85,26 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 */
 	@Deprecated
 	public static final int AST_CREATE_COMMENT_NODES = 0x10;
-	
+
 	/**
-	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Style constant for {@link #getAST(IIndex, int)}.
 	 * Meaning: Configure the parser with language and build-information taken from a source file
 	 * that directly or indirectly includes this file. If no suitable file is found in the index,
 	 * the flag is ignored.
 	 * @since 4.0
 	 */
-	public static final int AST_CONFIGURE_USING_SOURCE_CONTEXT= 0x20;
+	public static final int AST_CONFIGURE_USING_SOURCE_CONTEXT = 0x20;
 
 	/**
-	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Style constant for {@link #getAST(IIndex, int)}.
 	 * Instructs the parser not to create ast nodes for expressions within aggregate initializers
 	 * when they do not contain names.
 	 * @since 5.1
 	 */
-	public final static int AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS= 0x40;
+	public final static int AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS = 0x40;
 
 	/**
-	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Style constant for {@link #getAST(IIndex, int)}.
 	 * Instructs the parser to make an attempt to create ast nodes for inactive code branches.
 	 * The parser makes its best effort to create ast for the inactive code branches but may decide
 	 * to skip parts of the inactive code (e.g. function bodies, entire code branches, etc.).
@@ -112,10 +112,10 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * The inactive nodes can be accessed via
 	 * {@link IASTDeclarationListOwner#getDeclarations(boolean)} or by using a visitor with
 	 * {@link ASTVisitor#includeInactiveNodes} set to {@code true}.
-	 * 
+	 *
 	 * @since 5.1
 	 */
-	public final static int AST_PARSE_INACTIVE_CODE= 0x80;
+	public final static int AST_PARSE_INACTIVE_CODE = 0x80;
 
 	/**
 	 * Creates and returns an include declaration in this translation unit
@@ -145,7 +145,8 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * <li> The name is not a valid import name (INVALID_NAME)
 	 * </ul>
 	 */
-	IInclude createInclude(String name, boolean isStd, ICElement sibling, IProgressMonitor monitor) throws CModelException;
+	IInclude createInclude(String name, boolean isStd, ICElement sibling, IProgressMonitor monitor)
+			throws CModelException;
 
 	/**
 	 * Creates and returns a using declaration/directive in this translation unit.
@@ -162,7 +163,8 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * <li> The name is not a valid package name (INVALID_NAME)
 	 * </ul>
 	 */
-	IUsing createUsing(String name, boolean isDirective, ICElement sibling, IProgressMonitor monitor) throws CModelException;   
+	IUsing createUsing(String name, boolean isDirective, ICElement sibling, IProgressMonitor monitor)
+			throws CModelException;
 
 	/**
 	 * Creates and returns a namespace in this translation unit
@@ -179,14 +181,14 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * <li> The name is not a valid package name (INVALID_NAME)
 	 * </ul>
 	 */
-	INamespace createNamespace(String namespace, ICElement sibling, IProgressMonitor monitor) throws CModelException;   
+	INamespace createNamespace(String namespace, ICElement sibling, IProgressMonitor monitor) throws CModelException;
 
 	/**
 	 * Returns the shared working copy for this element, using the default {@code IBuffer}
 	 * factory, or {@code null}, if no working copy has been created for this element.
 	 * <p>
 	 * Users of this method must not destroy the resulting working copy.
-	 * 
+	 *
 	 * @param bufferFactory
 	 *            the given {@code IBuffer} factory
 	 * @return the found shared working copy for this element, or {@code null} if none
@@ -202,7 +204,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	char[] getContents();
 
 	/**
-	 * Returns the smallest element within this translation unit that 
+	 * Returns the smallest element within this translation unit that
 	 * includes the given source position (that is, a method, field, etc.), or
 	 * {@code null} if there is no element other than the translation
 	 * unit itself at the given position, or if the given position is not
@@ -217,7 +219,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	ICElement getElementAtLine(int line) throws CModelException;
 
 	/**
-	 * Returns the smallest element within this translation unit that 
+	 * Returns the smallest element within this translation unit that
 	 * includes the given source position (that is, a method, field, etc.), or
 	 * {@code null} if there is no element other than the translation
 	 * unit itself at the given position, or if the given position is not
@@ -232,7 +234,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	ICElement getElementAtOffset(int offset) throws CModelException;
 
 	/**
-	 * Returns the elements within this translation unit that 
+	 * Returns the elements within this translation unit that
 	 * includes the given source position (that is, a method, field, etc.), or
 	 * an empty array if there are no elements other than the translation
 	 * unit itself at the given position, or if the given position is not
@@ -252,7 +254,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	/**
 	 * Returns the include declaration in this translation unit with the given name.
 	 *
-	 * @param the name of the include to find (For example: {@code "stdio.h"} 
+	 * @param the name of the include to find (For example: {@code "stdio.h"}
 	 * 		or {@code "sys/types.h"})
 	 * @return a handle onto the corresponding include declaration. The include declaration may or
 	 * 		may not exist.
@@ -267,7 +269,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 *		exception occurs while accessing its corresponding resource
 	 */
 	IInclude[] getIncludes() throws CModelException;
-	
+
 	/**
 	 * Returns a shared working copy on this element using the given factory to create the buffer,
 	 * or this element if this element is already a working copy. This API can only answer
@@ -290,7 +292,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * <p>
 	 * When the shared working copy instance is created, an ADDED ICElementDelta is reported on
 	 * this working copy.
-	 * 
+	 *
 	 * @param monitor
 	 *            a progress monitor used to report progress while opening this compilation unit or
 	 *            {@code null} if no progress should be reported
@@ -404,18 +406,18 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * Return the language for this translation unit.
 	 */
 	ILanguage getLanguage() throws CoreException;
-	
+
 	/**
 	 * Used by contributed languages' model builders to indicate whether or
 	 * not the parse of a translation unit was successful.
-	 * 
+	 *
 	 * @param wasSuccessful
-	 * 
+	 *
 	 * TODO (DS) I'm not sure it's a good idea to put a setter in this
 	 * interface. We should revisit this.
 	 */
 	public void setIsStructureKnown(boolean wasSuccessful);
-	
+
 	/**
 	 * Returns the absolute path of the location of the translation unit. May be {@code null},
 	 * in case the location does not exist.
@@ -460,9 +462,9 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * this translation unit does not support ASTs. If the index was supplied, the caller has to
 	 * hold a read lock on it. The returned AST is valid only while the index read lock is being
 	 * held and should not be accessed after releasing the lock.
-	 * 
+	 *
 	 * @param index	index to back up the parsing of the AST, may be {@code null}
-	 * @param style {@code 0} or a combination of {@link #AST_SKIP_ALL_HEADERS}, 
+	 * @param style {@code 0} or a combination of {@link #AST_SKIP_ALL_HEADERS},
 	 * {@link #AST_SKIP_IF_NO_BUILD_INFO}, {@link #AST_SKIP_INDEXED_HEADERS}
 	 * and {@link #AST_CONFIGURE_USING_SOURCE_CONTEXT}.
 	 * @return the AST requested or {@code null}
@@ -470,41 +472,52 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @since 4.0
 	 */
 	public IASTTranslationUnit getAST(IIndex index, int style) throws CoreException;
-	
+
 	/**
 	 * Returns the completion node using the given index and parsing style at the given offset.
 	 */
-	public IASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException;	
-	
+	public IASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException;
+
 	/**
-	 * @deprecated use {@link #getSharedWorkingCopy(IProgressMonitor, IProblemRequestor)}, 
+	 * @deprecated use {@link #getSharedWorkingCopy(IProgressMonitor, IProblemRequestor)},
 	 * or CDTUITools.getWorkingCopyManager() instead.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	@Deprecated IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException;
+	@Deprecated
+	IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException;
+
 	/**
-	 * @deprecated use {@link #getSharedWorkingCopy(IProgressMonitor, IProblemRequestor)}, 
+	 * @deprecated use {@link #getSharedWorkingCopy(IProgressMonitor, IProblemRequestor)},
 	 * or CDTUITools.getWorkingCopyManager() instead.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	@Deprecated IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory, IProblemRequestor requestor) throws CModelException;
+	@Deprecated
+	IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory, IProblemRequestor requestor)
+			throws CModelException;
+
 	/**
-	 * @deprecated use {@link #findSharedWorkingCopy()}, 
+	 * @deprecated use {@link #findSharedWorkingCopy()},
 	 * or CDTUITools.getWorkingCopyManager() instead.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	@Deprecated IWorkingCopy findSharedWorkingCopy(IBufferFactory bufferFactory);
+	@Deprecated
+	IWorkingCopy findSharedWorkingCopy(IBufferFactory bufferFactory);
+
 	/**
-	 * @deprecated use {@link #getWorkingCopy(IProgressMonitor)}, 
+	 * @deprecated use {@link #getWorkingCopy(IProgressMonitor)},
 	 * or CDTUITools.getWorkingCopyManager() instead.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	@Deprecated IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException;
+	@Deprecated
+	IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException;
+
 	/**
 	 * @deprecated don't use this method.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	@Deprecated	Map<?, ?> parse();
+	@Deprecated
+	Map<?, ?> parse();
+
 	/**
 	 * @deprecated, use {@link FileContent#create(ITranslationUnit)}, instead.
 	 * @noreference This method is not intended to be referenced by clients.

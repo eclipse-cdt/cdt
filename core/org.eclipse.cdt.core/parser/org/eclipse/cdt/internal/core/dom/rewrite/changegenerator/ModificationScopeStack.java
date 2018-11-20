@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
@@ -38,7 +38,7 @@ public class ModificationScopeStack {
 		nullModList.add(null);
 		scopeStack.addFirst(nullModList);
 	}
-	
+
 	public void pushScope(IASTNode node) {
 		List<ASTModification> newMods = new ArrayList<>();
 		for (ASTModification peekMod : scopeStack.peek()) {
@@ -47,7 +47,7 @@ public class ModificationScopeStack {
 				newMods.addAll(nestedMods.getModificationsForNode(node));
 			}
 		}
-		
+
 		if (!newMods.isEmpty()) {
 			scopeStack.addFirst(newMods);
 		}
@@ -75,7 +75,7 @@ public class ModificationScopeStack {
 			}
 		}
 	}
-	
+
 	public Collection<IASTNode> getModifiedNodes() {
 		List<ASTModification> aktModList = scopeStack.peek();
 		if (aktModList == null) {
@@ -124,7 +124,8 @@ public class ModificationScopeStack {
 				}
 			}
 			if (!nodeIsChildOfModifications(actualNode, scopeStack.getFirst())) {
-				if (scopeStack.getFirst().get(0).getTargetNode().getTranslationUnit() == actualNode.getTranslationUnit()) {
+				if (scopeStack.getFirst().get(0).getTargetNode().getTranslationUnit() == actualNode
+						.getTranslationUnit()) {
 					scopeStack.removeFirst();
 				} else {
 					return;

@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2009, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software (IFS)- initial API and implementation
  *     Sergey Prigogin (Google)
  ******************************************************************************/
@@ -38,16 +38,16 @@ public class ExtractFunctionRefactoringDescriptor extends CRefactoringDescriptor
 
 	public ExtractFunctionRefactoringDescriptor(String project, String description, String comment,
 			Map<String, String> arguments) {
-		super(ExtractFunctionRefactoring.ID, project, description, comment,
-				RefactoringDescriptor.MULTI_CHANGE, arguments);
+		super(ExtractFunctionRefactoring.ID, project, description, comment, RefactoringDescriptor.MULTI_CHANGE,
+				arguments);
 	}
 
 	@Override
 	public CRefactoring createRefactoring(RefactoringStatus status) throws CoreException {
 		ISelection selection = getSelection();
 		ICProject project = getCProject();
-		ExtractFunctionRefactoring refactoring =
-				new ExtractFunctionRefactoring(getTranslationUnit(), selection, project);
+		ExtractFunctionRefactoring refactoring = new ExtractFunctionRefactoring(getTranslationUnit(), selection,
+				project);
 		ExtractFunctionInformation info = refactoring.getRefactoringInfo();
 		info.setMethodName(arguments.get(NAME));
 		info.setVisibility(VisibilityEnum.getEnumForStringRepresentation(arguments.get(VISIBILITY)));

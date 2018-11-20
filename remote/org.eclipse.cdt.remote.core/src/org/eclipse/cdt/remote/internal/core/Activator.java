@@ -27,7 +27,7 @@ public class Activator implements BundleActivator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
@@ -37,7 +37,7 @@ public class Activator implements BundleActivator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
@@ -47,7 +47,7 @@ public class Activator implements BundleActivator {
 
 	/**
 	 * Return the OSGi service with the given service interface.
-	 * 
+	 *
 	 * @param service service interface
 	 * @return the specified service or null if it's not registered
 	 */

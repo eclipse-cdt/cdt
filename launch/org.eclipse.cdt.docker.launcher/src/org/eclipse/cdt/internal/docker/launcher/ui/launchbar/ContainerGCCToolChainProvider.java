@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - initial contribution
  *******************************************************************************/
@@ -40,14 +40,13 @@ import org.eclipse.linuxtools.docker.core.IDockerConnectionManagerListener;
 import org.eclipse.linuxtools.docker.core.IDockerImage;
 
 /**
- * 
+ *
  * @author jjohnstn
  *
  * @since 1.2
- * 
+ *
  */
-public class ContainerGCCToolChainProvider
-		implements IToolChainProvider, IDockerConnectionManagerListener {
+public class ContainerGCCToolChainProvider implements IToolChainProvider, IDockerConnectionManagerListener {
 
 	public static final String PROVIDER_ID = "org.eclipse.cdt.docker.launcher.gcc.provider"; //$NON-NLS-1$
 	public static final String CONTAINER_LINUX_CONFIG_ID = "linux-container-id"; //$NON-NLS-1$
@@ -60,11 +59,9 @@ public class ContainerGCCToolChainProvider
 	}
 
 	@Override
-	public synchronized void init(IToolChainManager manager)
-			throws CoreException {
+	public synchronized void init(IToolChainManager manager) throws CoreException {
 		this.toolChainManager = manager;
-		IDockerConnection[] connections = DockerConnectionManager.getInstance()
-				.getConnections();
+		IDockerConnection[] connections = DockerConnectionManager.getInstance().getConnections();
 		Map<String, IDockerConnection> connectionMap = new HashMap<>();
 		for (IDockerConnection connection : connections) {
 			connectionMap.put(connection.getUri(), connection);
@@ -74,17 +71,12 @@ public class ContainerGCCToolChainProvider
 
 					Map<String, String> properties = new HashMap<>();
 
-					properties.put(ILaunchTarget.ATTR_OS,
-							ContainerTargetTypeProvider.CONTAINER_LINUX);
-					properties.put(ILaunchTarget.ATTR_ARCH,
-							Platform.getOSArch());
-					properties.put(IContainerLaunchTarget.ATTR_CONNECTION_URI,
-							connection.getUri());
-					properties.put(IContainerLaunchTarget.ATTR_IMAGE_ID,
-							image.repoTags().get(0));
+					properties.put(ILaunchTarget.ATTR_OS, ContainerTargetTypeProvider.CONTAINER_LINUX);
+					properties.put(ILaunchTarget.ATTR_ARCH, Platform.getOSArch());
+					properties.put(IContainerLaunchTarget.ATTR_CONNECTION_URI, connection.getUri());
+					properties.put(IContainerLaunchTarget.ATTR_IMAGE_ID, image.repoTags().get(0));
 					// following can be used for naming build configurations
-					properties.put(CONTAINER_LINUX_CONFIG_ID,
-							image.repoTags().get(0).replace(':', '_'));
+					properties.put(CONTAINER_LINUX_CONFIG_ID, image.repoTags().get(0).replace(':', '_'));
 					// .replace('/', '_'));
 
 					ContainerGCCToolChain toolChain = new ContainerGCCToolChain(
@@ -98,8 +90,7 @@ public class ContainerGCCToolChainProvider
 
 		// add a Docker Connection listener to handle enablement/disablement of
 		// Connections
-		DockerConnectionManager.getInstance()
-				.addConnectionManagerListener(this);
+		DockerConnectionManager.getInstance().addConnectionManagerListener(this);
 
 		// re-check configs in case an enabled Connection has made old configs
 		// valid again do this in a separate job to prevent a possible
@@ -111,8 +102,7 @@ public class ContainerGCCToolChainProvider
 				// call the recheckConfigs method in case any disabled targets
 				// are now
 				// ok
-				ICBuildConfigurationManager mgr = CCorePlugin
-						.getService(ICBuildConfigurationManager.class);
+				ICBuildConfigurationManager mgr = CCorePlugin.getService(ICBuildConfigurationManager.class);
 				ICBuildConfigurationManager2 cbuildmanager = (ICBuildConfigurationManager2) mgr;
 				cbuildmanager.recheckConfigs();
 				return Status.OK_STATUS;
@@ -123,8 +113,7 @@ public class ContainerGCCToolChainProvider
 	}
 
 	@Override
-	public synchronized void changeEvent(IDockerConnection connection,
-			int type) {
+	public synchronized void changeEvent(IDockerConnection connection, int type) {
 
 		final ContainerGCCToolChainProvider provider = this;
 
@@ -132,43 +121,34 @@ public class ContainerGCCToolChainProvider
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 
-				ICBuildConfigurationManager mgr = CCorePlugin
-						.getService(ICBuildConfigurationManager.class);
+				ICBuildConfigurationManager mgr = CCorePlugin.getService(ICBuildConfigurationManager.class);
 				ICBuildConfigurationManager2 manager = (ICBuildConfigurationManager2) mgr;
 
 				if (type == IDockerConnectionManagerListener.ADD_EVENT
 						|| type == IDockerConnectionManagerListener.ENABLE_EVENT) {
 					List<IDockerImage> images = connection.getImages();
 					for (IDockerImage image : images) {
-						if (!image.isDangling()
-								&& !image.isIntermediateImage()) {
+						if (!image.isDangling() && !image.isIntermediateImage()) {
 
 							Map<String, String> properties = new HashMap<>();
 
-							properties.put(ILaunchTarget.ATTR_OS,
-									ContainerTargetTypeProvider.CONTAINER_LINUX);
-							properties.put(ILaunchTarget.ATTR_ARCH,
-									Platform.getOSArch());
-							properties.put(
-									IContainerLaunchTarget.ATTR_CONNECTION_URI,
-									connection.getUri());
-							properties.put(IContainerLaunchTarget.ATTR_IMAGE_ID,
-									image.repoTags().get(0));
+							properties.put(ILaunchTarget.ATTR_OS, ContainerTargetTypeProvider.CONTAINER_LINUX);
+							properties.put(ILaunchTarget.ATTR_ARCH, Platform.getOSArch());
+							properties.put(IContainerLaunchTarget.ATTR_CONNECTION_URI, connection.getUri());
+							properties.put(IContainerLaunchTarget.ATTR_IMAGE_ID, image.repoTags().get(0));
 							// following can be used for naming build
 							// configurations
-							properties.put(CONTAINER_LINUX_CONFIG_ID,
-									image.repoTags().get(0).replace(':', '_'));
+							properties.put(CONTAINER_LINUX_CONFIG_ID, image.repoTags().get(0).replace(':', '_'));
 							// .replace('/', '_'));
-
 
 							Collection<IToolChain> toolChains;
 							try {
-								toolChains = toolChainManager
-										.getToolChainsMatching(properties);
+								toolChains = toolChainManager.getToolChainsMatching(properties);
 								if (toolChains.isEmpty()) {
 									ContainerGCCToolChain toolChain = new ContainerGCCToolChain(
 											"gcc-img-" + image.id().substring(0, //$NON-NLS-1$
-													19), provider, properties, null);
+													19),
+											provider, properties, null);
 									toolChainManager.addToolChain(toolChain);
 								}
 							} catch (CoreException e) {
@@ -183,11 +163,9 @@ public class ContainerGCCToolChainProvider
 						|| type == IDockerConnectionManagerListener.DISABLE_EVENT) {
 					try {
 						String connectionURI = connection.getUri();
-						Collection<IToolChain> toolChains = toolChainManager
-								.getAllToolChains();
+						Collection<IToolChain> toolChains = toolChainManager.getAllToolChains();
 						for (IToolChain toolChain : toolChains) {
-							String uri = toolChain.getProperty(
-									IContainerLaunchTarget.ATTR_CONNECTION_URI);
+							String uri = toolChain.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
 							if (connectionURI.equals(uri)) {
 								toolChainManager.removeToolChain(toolChain);
 							}

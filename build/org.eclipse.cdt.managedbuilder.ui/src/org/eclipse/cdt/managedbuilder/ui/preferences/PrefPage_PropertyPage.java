@@ -21,7 +21,7 @@ import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 
 /**
  * @since 5.1
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -29,7 +29,7 @@ public class PrefPage_PropertyPage extends AbstractPrefPage {
 
 	@Override
 	protected String getHeader() {
-		return Messages.PrefPage_PropertyPage_0; 
+		return Messages.PrefPage_PropertyPage_0;
 	}
 
 	/*
@@ -42,9 +42,15 @@ public class PrefPage_PropertyPage extends AbstractPrefPage {
 		forEach(ICPropertyTab.OK, null);
 		return true;
 	}
+
 	@Override
-	public ICResourceDescription getResDesc() { return null; } 
+	public ICResourceDescription getResDesc() {
+		return null;
+	}
+
 	@Override
-	protected boolean isSingle() { return true; }
+	protected boolean isSingle() {
+		return true;
+	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,26 +21,25 @@ import java.io.OutputStream;
  * Wraps the underline process and prevent accessing to its output or error stream.
  * This wrapping is necessary to prevent handling the test module output by Console
  * because we want to handle it here.
- * 
+ *
  */
 class ProcessWrapper extends Process {
-	
+
 	/** The real underlying process. */
 	private Process wrappedProcess;
-	
+
 	/** The flag shows whether input stream should be replaced with empty dummy. */
 	private boolean hideInputStream;
 
 	/** The flag shows whether error stream should be replaced with empty dummy. */
 	private boolean hideErrorStream;
-	
 
 	/** Buffer for empty dummy stream. */
 	private byte buffer[] = new byte[0];
 
 	/** Empty dummy stream. */
 	private InputStream emptyInputStream = new ByteArrayInputStream(buffer);
-	
+
 	/**
 	 * The synchronization event: before it happens <code>waitFor()</code> will
 	 * not be called on underlying process object. See also the comments in
@@ -54,10 +53,9 @@ class ProcessWrapper extends Process {
 	 */
 	private boolean streamsClosingIsAllowed = false;
 
-	
 	/**
 	 * The constructor
-	 * 
+	 *
 	 * @param wrappedProcess underlying process
 	 * @param hideInputStream process input stream should be hidden
 	 * @param hideErrorStream process error stream should be hidden
@@ -67,7 +65,7 @@ class ProcessWrapper extends Process {
 		this.hideInputStream = hideInputStream;
 		this.hideErrorStream = hideErrorStream;
 	}
-	
+
 	@Override
 	public void destroy() {
 		wrappedProcess.destroy();
@@ -104,7 +102,7 @@ class ProcessWrapper extends Process {
 		}
 		return wrappedProcess.waitFor();
 	}
-	
+
 	/**
 	 * Sets up the flag the allows IO streams closing.
 	 */

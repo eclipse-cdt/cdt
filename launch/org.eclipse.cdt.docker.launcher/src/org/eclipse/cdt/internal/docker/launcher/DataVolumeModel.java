@@ -24,8 +24,7 @@ import org.eclipse.core.runtime.Platform;
  * Data binding model for container data volumes
  *
  */
-public class DataVolumeModel extends BaseDatabindingModel
-		implements Comparable<DataVolumeModel> {
+public class DataVolumeModel extends BaseDatabindingModel implements Comparable<DataVolumeModel> {
 
 	private static final String SEPARATOR = ":"; //$NON-NLS-1$
 
@@ -59,7 +58,6 @@ public class DataVolumeModel extends BaseDatabindingModel
 
 	private boolean selected;
 
-	
 	/**
 	 * Default constructor
 	 */
@@ -68,7 +66,7 @@ public class DataVolumeModel extends BaseDatabindingModel
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param containerPath
 	 *            the container path
 	 */
@@ -77,8 +75,7 @@ public class DataVolumeModel extends BaseDatabindingModel
 		this.mountType = MountType.NONE;
 	}
 
-	public DataVolumeModel(final String containerPath, final String hostPath,
-			final boolean readOnly) {
+	public DataVolumeModel(final String containerPath, final String hostPath, final boolean readOnly) {
 		this.containerPath = containerPath;
 		this.mountType = MountType.HOST_FILE_SYSTEM;
 		this.hostPathMount = hostPath;
@@ -108,12 +105,11 @@ public class DataVolumeModel extends BaseDatabindingModel
 
 	/**
 	 * Create a DataVolumeModel from a toString() output.
-	 * 
+	 *
 	 * @param fromString
 	 * @return DataVolumeModel
 	 */
-	public static DataVolumeModel parseString(
-			final String fromString) {
+	public static DataVolumeModel parseString(final String fromString) {
 		final DataVolumeModel model = new DataVolumeModel();
 		final String[] items = fromString.split(SEPARATOR); // $NON-NLS-1$
 		model.containerPath = items[0];
@@ -128,8 +124,7 @@ public class DataVolumeModel extends BaseDatabindingModel
 			// a windows drive using the : separator, we have to form the
 			// host path by merging the path back together. If the user
 			// has specified an alternate format, we don't do this.
-			if (Platform.OS_WIN32.equals(Platform.getOS())
-					&& items.length > 5) {
+			if (Platform.OS_WIN32.equals(Platform.getOS()) && items.length > 5) {
 				model.setHostPathMount(items[2] + SEPARATOR + items[3]);
 				model.setReadOnly(Boolean.valueOf(items[4]));
 				model.setSelected(Boolean.valueOf(items[5]));
@@ -148,12 +143,12 @@ public class DataVolumeModel extends BaseDatabindingModel
 
 	/**
 	 * creates a {@link DataVolumeModel} from the 'volumeFrom' container info
-	 * 
+	 *
 	 * @param volumeFrom
 	 *            the value to parse.
-	 * 
+	 *
 	 *            Format: <code>&lt;containerName&gt;</code>
-	 * 
+	 *
 	 * @See <a href="https://docs.docker.com/engine/userguide/dockervolumes/">
 	 *      https://docs.docker.com/engine/userguide/dockervolumes/</a>
 	 */
@@ -167,18 +162,18 @@ public class DataVolumeModel extends BaseDatabindingModel
 
 	/**
 	 * creates a {@link DataVolumeModel} from the 'volumeFrom' container info
-	 * 
+	 *
 	 * @param volumeFrom
 	 *            the value to parse. Format:
 	 *            <code>&lt;host_path&gt;:&lt;container_path&gt;:&lt;label_suffix_flag&gt;</code>
-	 * 
+	 *
 	 * @See <a href="https://docs.docker.com/engine/userguide/dockervolumes/">
 	 *      https://docs.docker.com/engine/userguide/dockervolumes/</a>
 	 */
 	public static DataVolumeModel parseHostBinding(String volumeFrom) {
 		final DataVolumeModel model = new DataVolumeModel();
 		final String[] items = volumeFrom.split(SEPARATOR); // $NON-NLS-1$
-		// converts the host path to a valid Win32 path if Platform OS is Win32 
+		// converts the host path to a valid Win32 path if Platform OS is Win32
 		model.setHostPathMount(convertToWin32Path(Platform.getOS(), items[0]));
 		model.containerPath = items[1];
 		model.mountType = MountType.HOST_FILE_SYSTEM;
@@ -194,7 +189,7 @@ public class DataVolumeModel extends BaseDatabindingModel
 	/**
 	 * Converts the given path to a portable form, replacing all "\" and ": "
 	 * with "/" if the given <code>os</code> is {@link Platform#OS_WIN32}.
-	 * 
+	 *
 	 * @param os
 	 *            the current OS
 	 * @param path
@@ -202,8 +197,7 @@ public class DataVolumeModel extends BaseDatabindingModel
 	 * @return the converted path or the given path
 	 * @see {@link Platform#getOS()}
 	 */
-	public static String convertToWin32Path(final String os,
-			final String path) {
+	public static String convertToWin32Path(final String os, final String path) {
 		if (os != null && os.equals(Platform.OS_WIN32)) {
 			// replace all "/" with "\" and then drive info (eg "/c/" to "C:/")
 			final Matcher m = Pattern.compile("^/([a-zA-Z])/").matcher(path); //$NON-NLS-1$
@@ -224,8 +218,7 @@ public class DataVolumeModel extends BaseDatabindingModel
 	}
 
 	public void setContainerPath(final String containerPath) {
-		firePropertyChange(CONTAINER_PATH, this.containerPath,
-				this.containerPath = containerPath);
+		firePropertyChange(CONTAINER_PATH, this.containerPath, this.containerPath = containerPath);
 	}
 
 	public String getMount() {
@@ -247,8 +240,7 @@ public class DataVolumeModel extends BaseDatabindingModel
 		if (mountType == null) {
 			return;
 		}
-		firePropertyChange(MOUNT_TYPE, this.mountType,
-				this.mountType = mountType);
+		firePropertyChange(MOUNT_TYPE, this.mountType, this.mountType = mountType);
 		if (this.mountType == MountType.NONE) {
 			setMount("");
 		}
@@ -260,8 +252,7 @@ public class DataVolumeModel extends BaseDatabindingModel
 	}
 
 	public void setHostPathMount(final String hostPathMount) {
-		firePropertyChange(HOST_PATH_MOUNT, this.hostPathMount,
-				this.hostPathMount = hostPathMount);
+		firePropertyChange(HOST_PATH_MOUNT, this.hostPathMount, this.hostPathMount = hostPathMount);
 		if (this.mountType == MountType.HOST_FILE_SYSTEM) {
 			setMount(this.hostPathMount);
 		}
@@ -272,8 +263,7 @@ public class DataVolumeModel extends BaseDatabindingModel
 	}
 
 	public void setReadOnly(final boolean readOnly) {
-		firePropertyChange(READ_ONLY_VOLUME, this.readOnly,
-				this.readOnly = readOnly);
+		firePropertyChange(READ_ONLY_VOLUME, this.readOnly, this.readOnly = readOnly);
 	}
 
 	public String getContainerMount() {
@@ -281,8 +271,7 @@ public class DataVolumeModel extends BaseDatabindingModel
 	}
 
 	public void setContainerMount(final String containerMount) {
-		firePropertyChange(CONTAINER_MOUNT, this.containerMount,
-				this.containerMount = containerMount);
+		firePropertyChange(CONTAINER_MOUNT, this.containerMount, this.containerMount = containerMount);
 		if (this.mountType == MountType.CONTAINER) {
 			setMount(this.containerMount);
 		}
@@ -305,8 +294,7 @@ public class DataVolumeModel extends BaseDatabindingModel
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer();
-		buffer.append(
-				this.containerPath + SEPARATOR + getMountType() + SEPARATOR);
+		buffer.append(this.containerPath + SEPARATOR + getMountType() + SEPARATOR);
 		switch (getMountType()) {
 		case CONTAINER:
 			buffer.append(getContainerMount());

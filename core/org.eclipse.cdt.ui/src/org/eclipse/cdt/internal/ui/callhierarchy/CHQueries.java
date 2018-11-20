@@ -45,22 +45,23 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
  * @since 4.0
  */
 public class CHQueries {
-	private static final CHNode[] EMPTY_NODES= {};
+	private static final CHNode[] EMPTY_NODES = {};
 
-    private CHQueries() {}
+	private CHQueries() {
+	}
 
 	/**
 	 * Searches for functions and methods that call a given element.
 	 */
 	public static CHNode[] findCalledBy(CHContentProvider cp, CHNode node, IIndex index, IProgressMonitor pm)
 			throws CoreException {
-		CalledByResult result= new CalledByResult();
-		ICElement callee= node.getRepresentedDeclaration();
+		CalledByResult result = new CalledByResult();
+		ICElement callee = node.getRepresentedDeclaration();
 		if (!(callee instanceof ISourceReference)) {
 			return EMPTY_NODES;
 		}
-		boolean done= false;
-		int linkageID= node.getLinkageID();
+		boolean done = false;
+		int linkageID = node.getLinkageID();
 		if (linkageID == -1) {
 			final ITranslationUnit tu = ((ISourceReference) callee).getTranslationUnit();
 			if (tu == null)
@@ -71,7 +72,7 @@ public class CHQueries {
 				// Bug 260262: in a header file we need to consider C and C++.
 				findCalledBy(callee, ILinkage.C_LINKAGE_ID, index, result);
 				findCalledBy(callee, ILinkage.CPP_LINKAGE_ID, index, result);
-				done= true;
+				done = true;
 			}
 		}
 		if (!done) {
@@ -97,11 +98,11 @@ public class CHQueries {
 	private static void findCalledBy(ICElement callee, int linkageID, IIndex index, CalledByResult result)
 			throws CoreException {
 		final ICProject project = callee.getCProject();
-		IIndexBinding calleeBinding= IndexUI.elementToBinding(index, callee, linkageID);
+		IIndexBinding calleeBinding = IndexUI.elementToBinding(index, callee, linkageID);
 		if (calleeBinding != null) {
 			findCalledBy1(index, calleeBinding, true, project, result);
 			if (calleeBinding instanceof ICPPMethod) {
-				IBinding[] overriddenBindings= ClassTypeHelper.findOverridden((ICPPMethod) calleeBinding);
+				IBinding[] overriddenBindings = ClassTypeHelper.findOverridden((ICPPMethod) calleeBinding);
 				for (IBinding overriddenBinding : overriddenBindings) {
 					findCalledBy1(index, overriddenBinding, false, project, result);
 				}
@@ -109,8 +110,8 @@ public class CHQueries {
 		}
 	}
 
-	private static void findCalledBy1(IIndex index, IBinding callee, boolean includeOrdinaryCalls,
-			ICProject project, CalledByResult result) throws CoreException {
+	private static void findCalledBy1(IIndex index, IBinding callee, boolean includeOrdinaryCalls, ICProject project,
+			CalledByResult result) throws CoreException {
 		findCalledBy2(index, callee, includeOrdinaryCalls, project, result);
 		List<? extends IBinding> specializations = IndexUI.findSpecializations(index, callee);
 		for (IBinding spec : specializations) {
@@ -118,14 +119,14 @@ public class CHQueries {
 		}
 	}
 
-	private static void findCalledBy2(IIndex index, IBinding callee, boolean includeOrdinaryCalls,
-			ICProject project, CalledByResult result) throws CoreException {
-		IIndexName[] names= index.findNames(callee, IIndex.FIND_REFERENCES | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+	private static void findCalledBy2(IIndex index, IBinding callee, boolean includeOrdinaryCalls, ICProject project,
+			CalledByResult result) throws CoreException {
+		IIndexName[] names = index.findNames(callee, IIndex.FIND_REFERENCES | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		for (IIndexName rname : names) {
 			if (includeOrdinaryCalls || rname.couldBePolymorphicMethodCall()) {
-				IIndexName caller= rname.getEnclosingDefinition();
+				IIndexName caller = rname.getEnclosingDefinition();
 				if (caller != null) {
-					ICElement elem= IndexUI.getCElementForName(project, index, caller);
+					ICElement elem = IndexUI.getCElementForName(project, index, caller);
 					if (elem != null) {
 						result.add(elem, rname);
 					}
@@ -139,26 +140,26 @@ public class CHQueries {
 	 */
 	public static CHNode[] findCalls(CHContentProvider cp, CHNode node, IIndex index, IProgressMonitor pm)
 			throws CoreException {
-		ICElement caller= node.getRepresentedDeclaration();
-		CallsToResult result= new CallsToResult();
-		IIndexName callerName= IndexUI.elementToName(index, caller);
+		ICElement caller = node.getRepresentedDeclaration();
+		CallsToResult result = new CallsToResult();
+		IIndexName callerName = IndexUI.elementToName(index, caller);
 		if (callerName != null) {
-			IIndexName[] refs= callerName.getEnclosedNames();
+			IIndexName[] refs = callerName.getEnclosedNames();
 			for (IIndexName name : refs) {
-				IBinding binding= index.findBinding(name);
+				IBinding binding = index.findBinding(name);
 				if (CallHierarchyUI.isRelevantForCallHierarchy(binding)) {
 					while (true) {
-						ICElement[] defs= null;
+						ICElement[] defs = null;
 						if (binding instanceof ICPPMethod && name.couldBePolymorphicMethodCall()) {
 							defs = findOverriders(index, (ICPPMethod) binding);
 						}
 						if (defs == null) {
-							defs= IndexUI.findRepresentative(index, binding);
+							defs = IndexUI.findRepresentative(index, binding);
 						}
 						if (defs != null && defs.length > 0) {
 							result.add(defs, name);
 						} else if (binding instanceof ICPPSpecialization) {
-							binding= ((ICPPSpecialization) binding).getSpecializedBinding();
+							binding = ((ICPPSpecialization) binding).getSpecializedBinding();
 							if (binding != null)
 								continue;
 						}
@@ -177,10 +178,10 @@ public class CHQueries {
 	 * Searches for overriders of method and converts them to ICElement, returns null,
 	 * if there are none.
 	 */
-	static ICElement[] findOverriders(IIndex index, ICPPMethod binding)	throws CoreException {
-		IBinding[] virtualOverriders= ClassTypeHelper.findOverriders(index, binding);
+	static ICElement[] findOverriders(IIndex index, ICPPMethod binding) throws CoreException {
+		IBinding[] virtualOverriders = ClassTypeHelper.findOverriders(index, binding);
 		if (virtualOverriders.length > 0) {
-			ArrayList<ICElementHandle> list= new ArrayList<ICElementHandle>();
+			ArrayList<ICElementHandle> list = new ArrayList<ICElementHandle>();
 			list.addAll(Arrays.asList(IndexUI.findRepresentative(index, binding)));
 			for (IBinding overrider : virtualOverriders) {
 				list.addAll(Arrays.asList(IndexUI.findRepresentative(index, overrider)));

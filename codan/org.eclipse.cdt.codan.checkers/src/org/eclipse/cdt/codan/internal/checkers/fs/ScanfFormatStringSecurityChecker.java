@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Meisam Fathi and others 
+ * Copyright (c) 2010, 2012 Meisam Fathi and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -64,15 +64,15 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * return 0; <br>
  * } <br>
  * </code>
- * 
+ *
  * @version 0.3 July 29, 2010
  * @author Meisam Fathi
- * 
+ *
  */
 public class ScanfFormatStringSecurityChecker extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.ScanfFormatStringSecurityProblem"; //$NON-NLS-1$
-	private final static VulnerableFunction[] VULNERABLE_FUNCTIONS = {//
-	// list of all format string vulnerable functions
+	private final static VulnerableFunction[] VULNERABLE_FUNCTIONS = { //
+			// list of all format string vulnerable functions
 			new VulnerableFunction("scanf", 0), //$NON-NLS-1$
 			new VulnerableFunction("fscanf", 1), //$NON-NLS-1$
 			new VulnerableFunction("fwscanf", 1), //$NON-NLS-1$

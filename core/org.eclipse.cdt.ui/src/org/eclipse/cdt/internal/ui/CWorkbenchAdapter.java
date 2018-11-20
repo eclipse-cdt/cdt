@@ -64,9 +64,8 @@ public class CWorkbenchAdapter implements IWorkbenchAdapter {
 	@Override
 	public ImageDescriptor getImageDescriptor(Object element) {
 		if (element instanceof ICElement) {
-			return fImageProvider.getCImageDescriptor(
-				(ICElement) element,
-				CElementImageProvider.OVERLAY_ICONS | CElementImageProvider.SMALL_ICONS);
+			return fImageProvider.getCImageDescriptor((ICElement) element,
+					CElementImageProvider.OVERLAY_ICONS | CElementImageProvider.SMALL_ICONS);
 		}
 		return null;
 	}

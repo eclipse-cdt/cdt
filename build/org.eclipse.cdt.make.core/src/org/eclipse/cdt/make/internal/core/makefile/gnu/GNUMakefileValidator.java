@@ -55,11 +55,10 @@ public class GNUMakefileValidator implements IMakefileValidator {
 
 				@Override
 				public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
-					ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar, null);
+					ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity,
+							errorVar, null);
 					addMarker(problemMarkerInfo);
 				}
-
-
 
 				/* (non-Javadoc)
 				 * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.cdt.core.ProblemMarkerInfo)
@@ -71,22 +70,21 @@ public class GNUMakefileValidator implements IMakefileValidator {
 						name = problemMarkerInfo.file.getName();
 					}
 					StringBuilder sb = new StringBuilder(name);
-					sb.append(':').append(problemMarkerInfo.lineNumber).append(':').append(getSeverity(problemMarkerInfo.severity));
+					sb.append(':').append(problemMarkerInfo.lineNumber).append(':')
+							.append(getSeverity(problemMarkerInfo.severity));
 					if (problemMarkerInfo.description != null) {
 						sb.append(':').append(problemMarkerInfo.description);
 					}
-					if (problemMarkerInfo.variableName != null ) {
+					if (problemMarkerInfo.variableName != null) {
 						sb.append(':').append(problemMarkerInfo.variableName);
 					}
-					if (problemMarkerInfo.externalPath != null ) {
+					if (problemMarkerInfo.externalPath != null) {
 						sb.append(':').append(problemMarkerInfo.externalPath);
 					}
 					sb.append('\n');
 					System.out.println(sb.toString());
 
 				}
-
-
 
 				public String getSeverity(int severity) {
 					if (severity == IMarkerGenerator.SEVERITY_ERROR_BUILD) {
@@ -141,7 +139,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 		for (int i = 0; i < directives.length; i++) {
 			directive = directives[i];
 			if (directive instanceof IConditional) {
-				IConditional condition = (IConditional)directive;
+				IConditional condition = (IConditional) directive;
 				validateCondition(condition);
 				if (!condition.isElse()) {
 					conditionCount++;
@@ -156,7 +154,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 					}
 				}
 			} else if (directive instanceof ITerminal) {
-				ITerminal terminal = (ITerminal)directive;
+				ITerminal terminal = (ITerminal) directive;
 				if (terminal.isEndif()) {
 					if (conditionCount == 0) {
 						// ERROR missing condition.
@@ -181,7 +179,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 					}
 				}
 			} else if (directive instanceof IVariableDefinition) {
-				IVariableDefinition definition = (IVariableDefinition)directive;
+				IVariableDefinition definition = (IVariableDefinition) directive;
 				if (definition.isMultiLine()) {
 					defineCount++;
 				}
@@ -193,7 +191,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 				String varName = directive.toString().trim();
 				marker.addMarker(res, startLine, msg, severity, varName);
 			} else if (directive instanceof ISpecialRule) {
-				validateSpecialRule((ISpecialRule)directive);
+				validateSpecialRule((ISpecialRule) directive);
 			}
 		}
 		if (conditionCount > 0) {
@@ -218,7 +216,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 			int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 			for (int i = directives.length - 1; i >= 0; i--) {
 				if (directives[i] instanceof IVariableDefinition) {
-					IVariableDefinition definition = (IVariableDefinition)directives[i];
+					IVariableDefinition definition = (IVariableDefinition) directives[i];
 					if (definition.isMultiLine()) {
 						startLine = definition.getStartLine();
 						varName = definition.toString().trim();

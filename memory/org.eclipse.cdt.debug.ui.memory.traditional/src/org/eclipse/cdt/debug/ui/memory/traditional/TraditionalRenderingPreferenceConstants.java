@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -29,31 +29,30 @@ public class TraditionalRenderingPreferenceConstants {
 	public static final String MEM_COLOR_EDIT_BOLD = "memoryColorEdit.bold";
 	public static final String MEM_COLOR_EDIT_BOX = "memoryColorEdit.box";
 
-	
 	public static final String MEM_USE_GLOBAL_BACKGROUND = "memUseGlobalBackground";
-	
+
 	public static final String MEM_COLOR_BACKGROUND = "memoryColorBackground";
-	
+
 	public static final String MEM_COLOR_TEXT = "memoryColorText";
 
 	public static final String MEM_USE_GLOBAL_SELECTION = "memUseGlobalSelection";
-	
+
 	public static final String MEM_COLOR_SELECTION = "memoryColorSelection";
-	
+
 	public static final String MEM_USE_GLOBAL_TEXT = "memUseGlobalText";
-	
+
 	public static final String MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS = "memoryColorScaleTextAlternate";
-	
+
 	public static final String MEM_EDIT_BUFFER_SAVE = "memoryEditBufferSave";
-	
+
 	public static final String MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY = "saveOnEnterCancelOnFocusLost";
-	
+
 	public static final String MEM_EDIT_BUFFER_SAVE_ON_ENTER_OR_FOCUS_LOST = "saveOnEnterOrFocusLost";
-	
+
 	public static final String MEM_HISTORY_TRAILS_COUNT = "memoryHistoryTrailsCount";
 
 	public static final String MEM_DEFAULT_COPY_ACTION = "memoryDefaultCopyAction";
-	
+
 	// support for memory space - specific coloring
 	/**
 	 * @since 1.4

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -45,18 +45,19 @@ import org.junit.Assert;
  * @since 4.0
  */
 public class ResourceTestHelper {
-	public static final int FAIL_IF_EXISTS= 0;
-	
-	public static final int OVERWRITE_IF_EXISTS= 1;
-	
-	public static final int SKIP_IF_EXISTS= 2;
+	public static final int FAIL_IF_EXISTS = 0;
 
-	private static final int DELETE_MAX_RETRY= 5;
+	public static final int OVERWRITE_IF_EXISTS = 1;
 
-	private static final long DELETE_RETRY_DELAY= 1000;
+	public static final int SKIP_IF_EXISTS = 2;
 
-	public static void replicate(String src, String destPrefix, String destSuffix, int n, int ifExists) throws CoreException {
-		for (int i= 0; i < n; i++) {
+	private static final int DELETE_MAX_RETRY = 5;
+
+	private static final long DELETE_RETRY_DELAY = 1000;
+
+	public static void replicate(String src, String destPrefix, String destSuffix, int n, int ifExists)
+			throws CoreException {
+		for (int i = 0; i < n; i++) {
 			copy(src, destPrefix + i + destSuffix, ifExists);
 		}
 	}
@@ -71,22 +72,22 @@ public class ResourceTestHelper {
 	}
 
 	private static boolean handleExisting(String dest, int ifExists) throws CoreException {
-		IFile destFile= getFile(dest);
+		IFile destFile = getFile(dest);
 		switch (ifExists) {
-			case FAIL_IF_EXISTS:
-				if (destFile.exists())
-					throw new IllegalArgumentException("Destination file exists: " + dest);
-				return true;
-			case OVERWRITE_IF_EXISTS:
-				if (destFile.exists())
-					delete(destFile);
-				return true;
-			case SKIP_IF_EXISTS:
-				if (destFile.exists())
-					return false;
-				return true;
-			default:
-				throw new IllegalArgumentException();
+		case FAIL_IF_EXISTS:
+			if (destFile.exists())
+				throw new IllegalArgumentException("Destination file exists: " + dest);
+			return true;
+		case OVERWRITE_IF_EXISTS:
+			if (destFile.exists())
+				delete(destFile);
+			return true;
+		case SKIP_IF_EXISTS:
+			if (destFile.exists())
+				return false;
+			return true;
+		default:
+			throw new IllegalArgumentException();
 		}
 	}
 
@@ -99,13 +100,13 @@ public class ResourceTestHelper {
 	}
 
 	private static void delete(IFile file) throws CoreException {
-		CoreException x= null;
-		for (int i= 0; i < DELETE_MAX_RETRY; i++) {
+		CoreException x = null;
+		for (int i = 0; i < DELETE_MAX_RETRY; i++) {
 			try {
 				file.delete(true, null);
 				return;
 			} catch (CoreException x0) {
-				x= x0;
+				x = x0;
 				try {
 					Thread.sleep(DELETE_RETRY_DELAY);
 				} catch (InterruptedException x1) {
@@ -117,20 +118,20 @@ public class ResourceTestHelper {
 	}
 
 	public static void delete(String prefix, String suffix, int n) throws CoreException {
-		for (int i= 0; i < n; i++)
+		for (int i = 0; i < n; i++)
 			delete(prefix + i + suffix);
 	}
 
 	public static IFile findFile(String pathStr) {
-		IFile file= getFile(pathStr);
+		IFile file = getFile(pathStr);
 		Assert.assertTrue(file != null && file.exists());
 		return file;
 	}
 
 	public static IFile[] findFiles(String prefix, String suffix, int i, int n) {
-		List<IFile> files= new ArrayList<IFile>(n);
-		for (int j= i; j < i + n; j++) {
-			String path= prefix + j + suffix;
+		List<IFile> files = new ArrayList<IFile>(n);
+		for (int j = i; j < i + n; j++) {
+			String path = prefix + j + suffix;
 			files.add(findFile(path));
 		}
 		return files.toArray(new IFile[files.size()]);
@@ -141,8 +142,9 @@ public class ResourceTestHelper {
 	}
 
 	public static void write(String dest, final String content) throws IOException, CoreException {
-		InputStream stream= new InputStream() {
-			private Reader fReader= new StringReader(content);
+		InputStream stream = new InputStream() {
+			private Reader fReader = new StringReader(content);
+
 			@Override
 			public int read() throws IOException {
 				return fReader.read();
@@ -150,15 +152,15 @@ public class ResourceTestHelper {
 		};
 		getFile(dest).create(stream, true, null);
 	}
-	
+
 	public static void replicate(String src, String destPrefix, String destSuffix, int n, String srcName,
 			String destNamePrefix, int ifExists) throws IOException, CoreException {
-		StringBuffer s= read(src);
-		List<Integer> positions= identifierPositions(s, srcName);
-		for (int j= 0; j < n; j++) {
-			String dest= destPrefix + j + destSuffix;
+		StringBuffer s = read(src);
+		List<Integer> positions = identifierPositions(s, srcName);
+		for (int j = 0; j < n; j++) {
+			String dest = destPrefix + j + destSuffix;
 			if (handleExisting(dest, ifExists)) {
-				StringBuffer c= new StringBuffer(s.toString());
+				StringBuffer c = new StringBuffer(s.toString());
 				replacePositions(c, srcName.length(), destNamePrefix + j, positions);
 				write(dest, c.toString());
 			}
@@ -168,27 +170,27 @@ public class ResourceTestHelper {
 	public static void copy(String src, String dest, String srcName, String destName, int ifExists)
 			throws IOException, CoreException {
 		if (handleExisting(dest, ifExists)) {
-			StringBuffer buf= read(src);
-			List<Integer> positions= identifierPositions(buf, srcName);
+			StringBuffer buf = read(src);
+			List<Integer> positions = identifierPositions(buf, srcName);
 			replacePositions(buf, srcName.length(), destName, positions);
 			write(dest, buf.toString());
 		}
 	}
 
 	private static void replacePositions(StringBuffer c, int origLength, String string, List<Integer> positions) {
-		int offset= 0;
-		for (Iterator<Integer> iter= positions.iterator(); iter.hasNext();) {
-			int position= iter.next().intValue();
+		int offset = 0;
+		for (Iterator<Integer> iter = positions.iterator(); iter.hasNext();) {
+			int position = iter.next().intValue();
 			c.replace(offset + position, offset + position + origLength, string);
 			offset += string.length() - origLength;
 		}
 	}
 
 	private static List<Integer> identifierPositions(StringBuffer buffer, String identifier) {
-		List<Integer> positions= new ArrayList<Integer>();
-		int i= -1;
+		List<Integer> positions = new ArrayList<Integer>();
+		int i = -1;
 		while (true) {
-			i= buffer.indexOf(identifier, i + 1);
+			i = buffer.indexOf(identifier, i + 1);
 			if (i == -1)
 				break;
 			if (i > 0 && Character.isJavaIdentifierPart(buffer.charAt(i - 1)))
@@ -219,21 +221,21 @@ public class ResourceTestHelper {
 	public static boolean enableAutoBuilding() {
 		return setAutoBuilding(true);
 	}
-	
+
 	public static boolean setAutoBuilding(boolean value) {
-		Preferences preferences= ResourcesPlugin.getPlugin().getPluginPreferences();
-		boolean oldValue= preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
+		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
+		boolean oldValue = preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
 		if (value != oldValue)
 			preferences.setValue(ResourcesPlugin.PREF_AUTO_BUILDING, value);
 		return oldValue;
 	}
 
 	public static IProject createExistingProject(String projectName) throws CoreException {
-		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IProject project= workspace.getRoot().getProject(projectName);
-		IProjectDescription description= workspace.newProjectDescription(projectName);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IProject project = workspace.getRoot().getProject(projectName);
+		IProjectDescription description = workspace.newProjectDescription(projectName);
 		description.setLocation(null);
-	
+
 		project.create(description, null);
 		project.open(null);
 		return project;
@@ -241,13 +243,14 @@ public class ResourceTestHelper {
 
 	public static IProject createProjectFromZip(Plugin installationPlugin, String projectZip, String projectName)
 			throws IOException, ZipException, CoreException {
-		String workspacePath= ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + "/";
-		FileTool.unzip(new ZipFile(FileTool.getFileInPlugin(installationPlugin, new Path(projectZip))), new File(workspacePath));
+		String workspacePath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + "/";
+		FileTool.unzip(new ZipFile(FileTool.getFileInPlugin(installationPlugin, new Path(projectZip))),
+				new File(workspacePath));
 		return createExistingProject(projectName);
 	}
 
 	public static IProject getProject(String projectName) {
-		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		return workspace.getRoot().getProject(projectName);
 	}
 

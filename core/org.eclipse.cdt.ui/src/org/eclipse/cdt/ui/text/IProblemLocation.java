@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ package org.eclipse.cdt.ui.text;
 
 /**
  * Problem information for quick fix and quick assist processors.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -40,7 +40,7 @@ public interface IProblemLocation {
 	 * @return The marker type of the problem.
 	 */
 	String getMarkerType();
-	
+
 	/**
 	 * Returns the id of problem. Note that problem ids are defined per problem marker type.
 	 *

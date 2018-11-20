@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -20,13 +20,12 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-public interface IMemoryImporter 
-{
+public interface IMemoryImporter {
 	public static final String TRANSFER_FILE = "File"; //$NON-NLS-1$
 	public static final String TRANSFER_START = "Start"; //$NON-NLS-1$
 	public static final String TRANSFER_CUSTOM_START_ADDRESS = "CustomStartAddress"; //$NON-NLS-1$
 	public static final String TRANSFER_SCROLL_TO_START = "ScrollToStart"; //$NON-NLS-1$
-	
+
 	/**
 	 * @param parent
 	 * @param memBlock
@@ -34,11 +33,12 @@ public interface IMemoryImporter
 	 * @param parentDialog
 	 * @return
 	 */
-	public Control createControl(Composite parent, IMemoryBlock memBlock, IDialogSettings properties, ImportMemoryDialog parentDialog);
-	
+	public Control createControl(Composite parent, IMemoryBlock memBlock, IDialogSettings properties,
+			ImportMemoryDialog parentDialog);
+
 	public void importMemory();
-	
+
 	public String getId();
-	
+
 	public String getName();
 }

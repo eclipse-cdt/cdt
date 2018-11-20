@@ -7,9 +7,9 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
- *     Ericsson - initial API and implementation          
+ *     Ericsson - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
@@ -23,11 +23,11 @@ public class ProcessInfo implements IProcessExtendedInfo, Comparable<ProcessInfo
 	private final String[] cores;
 	private final String ownerId;
 	private final String description;
-	
+
 	public ProcessInfo(int pid, String name) {
 		this(pid, name, null, null);
 	}
-	
+
 	/** @since 2.2 */
 	public ProcessInfo(int pid, String name, String[] cores, String owner) {
 		this(pid, name, cores, owner, null);
@@ -44,41 +44,42 @@ public class ProcessInfo implements IProcessExtendedInfo, Comparable<ProcessInfo
 		this.description = description;
 	}
 
-	
-    @Override
+	@Override
 	public String getName() {
 		return name;
 	}
 
-    @Override
+	@Override
 	public int getPid() {
 		return pid;
 	}
 
-    @Override
+	@Override
 	public String[] getCores() {
 		return cores;
 	}
 
-    @Override
+	@Override
 	public String getOwner() {
 		return ownerId;
 	}
 
-    @Override
-    public String getDescription() {
-    	return description;
-    }
+	@Override
+	public String getDescription() {
+		return description;
+	}
 
 	/**
 	 * Sort by name, then by pid.
 	 * No need to sort any further since pids are unique.
 	 */
-    @Override
+	@Override
 	public int compareTo(ProcessInfo other) {
-	    int nameCompare = getName().compareTo(other.getName());
-	    if (nameCompare != 0) return nameCompare;
-	    else return (getPid() < other.getPid()) ? -1 : 1;
+		int nameCompare = getName().compareTo(other.getName());
+		if (nameCompare != 0)
+			return nameCompare;
+		else
+			return (getPid() < other.getPid()) ? -1 : 1;
 	}
 
 }

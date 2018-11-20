@@ -17,16 +17,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A reader that's able to decipher debug symbol formats.
- * 
+ *
  * This initial version only returns a list of source files.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISymbolReader {
 
 	String[] getSourceFiles();
-	
+
 	/**
 	 * Gets the source files from this symbol reader.
 	 *

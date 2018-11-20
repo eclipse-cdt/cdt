@@ -21,10 +21,9 @@ import org.eclipse.core.runtime.CoreException;
 public class QtPDOMProperty extends QtPDOMBinding {
 
 	private static int offsetInitializer = QtPDOMBinding.Field.Last.offset;
+
 	protected static enum Field {
-		Type(Database.PTR_SIZE),
-		Attributes(Database.PTR_SIZE),
-		Last(0);
+		Type(Database.PTR_SIZE), Attributes(Database.PTR_SIZE), Last(0);
 
 		public final int offset;
 
@@ -107,30 +106,30 @@ public class QtPDOMProperty extends QtPDOMBinding {
 		return pdomArray.get();
 	}
 
-    public static class Attribute {
-    	public final IQProperty.Attribute attr;
-    	public final String value;
-    	public final long cppRecord;
+	public static class Attribute {
+		public final IQProperty.Attribute attr;
+		public final String value;
+		public final long cppRecord;
 
-    	public Attribute(IQProperty.Attribute attr, String value) {
-    		this.attr = attr;
-    		this.value = value;
-    		this.cppRecord = 0;
-    	}
+		public Attribute(IQProperty.Attribute attr, String value) {
+			this.attr = attr;
+			this.value = value;
+			this.cppRecord = 0;
+		}
 
-    	public Attribute(IQProperty.Attribute attr, String value, PDOMBinding cppBinding) {
-    		this.attr = attr;
-    		this.value = value;
-    		this.cppRecord = cppBinding == null ? 0 : cppBinding.getRecord();
-    	}
+		public Attribute(IQProperty.Attribute attr, String value, PDOMBinding cppBinding) {
+			this.attr = attr;
+			this.value = value;
+			this.cppRecord = cppBinding == null ? 0 : cppBinding.getRecord();
+		}
 
-    	private Attribute(IQProperty.Attribute attr, String value, long cppRecord) {
-    		this.attr = attr;
-    		this.value = value;
-    		this.cppRecord = cppRecord;
-    	}
+		private Attribute(IQProperty.Attribute attr, String value, long cppRecord) {
+			this.attr = attr;
+			this.value = value;
+			this.cppRecord = cppRecord;
+		}
 
-    	private static final IQtPDOMCodec<Attribute> Codec = new IQtPDOMCodec<Attribute>() {
+		private static final IQtPDOMCodec<Attribute> Codec = new IQtPDOMCodec<Attribute>() {
 			@Override
 			public int getElementSize() {
 				return 1 + Database.PTR_SIZE + Database.PTR_SIZE;
@@ -172,6 +171,6 @@ public class QtPDOMProperty extends QtPDOMBinding {
 
 				linkage.getDB().putRecPtr(record + 1 + Database.PTR_SIZE, element.cppRecord);
 			}
-    	};
-    }
+		};
+	}
 }

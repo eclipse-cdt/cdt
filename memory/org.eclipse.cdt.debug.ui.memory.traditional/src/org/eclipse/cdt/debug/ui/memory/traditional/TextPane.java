@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -22,334 +22,264 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
-public class TextPane extends AbstractPane
-{
-    public TextPane(Rendering parent)
-    {
-        super(parent);
-    }
+public class TextPane extends AbstractPane {
+	public TextPane(Rendering parent) {
+		super(parent);
+	}
 
-    @Override
-	protected int getCellCharacterCount()
-    {
-        return fRendering.getBytesPerColumn()
-            / fRendering.getBytesPerCharacter();
-    }
+	@Override
+	protected int getCellCharacterCount() {
+		return fRendering.getBytesPerColumn() / fRendering.getBytesPerCharacter();
+	}
 
-    @Override
-	protected String getCellText(MemoryByte bytes[])
-    {
-        return fRendering.formatText(bytes, fRendering
-            .isTargetLittleEndian(), fRendering.getTextMode());
-    }
+	@Override
+	protected String getCellText(MemoryByte bytes[]) {
+		return fRendering.formatText(bytes, fRendering.isTargetLittleEndian(), fRendering.getTextMode());
+	}
 
-    @Override
-	protected void editCell(BigInteger address, int subCellPosition,
-        char character)
-    {
-        try
-        {
-            MemoryByte bytes[] = fRendering.getBytes(fCaretAddress, fRendering
-                .getBytesPerColumn());
+	@Override
+	protected void editCell(BigInteger address, int subCellPosition, char character) {
+		try {
+			MemoryByte bytes[] = fRendering.getBytes(fCaretAddress, fRendering.getBytesPerColumn());
 
-            String cellText = getCellText(bytes);
-            if(cellText == null)
-                return;
+			String cellText = getCellText(bytes);
+			if (cellText == null)
+				return;
 
-            StringBuilder cellTextBuffer = new StringBuilder(cellText);
-            cellTextBuffer.setCharAt(subCellPosition, character);
+			StringBuilder cellTextBuffer = new StringBuilder(cellText);
+			cellTextBuffer.setCharAt(subCellPosition, character);
 
-            byte byteData[] = cellTextBuffer.toString().getBytes(fRendering.getCharacterSet(fRendering.getTextMode()));
-            if(byteData.length != bytes.length)
-                return;
+			byte byteData[] = cellTextBuffer.toString().getBytes(fRendering.getCharacterSet(fRendering.getTextMode()));
+			if (byteData.length != bytes.length)
+				return;
 
-            TraditionalMemoryByte bytesToSet[] = new TraditionalMemoryByte[bytes.length];
+			TraditionalMemoryByte bytesToSet[] = new TraditionalMemoryByte[bytes.length];
 
-            for(int i = 0; i < byteData.length; i++)
-            {
-                bytesToSet[i] = new TraditionalMemoryByte(byteData[i]);
+			for (int i = 0; i < byteData.length; i++) {
+				bytesToSet[i] = new TraditionalMemoryByte(byteData[i]);
 
-                if(bytes[i].getValue() != byteData[i])
-                {
-                    bytesToSet[i].setEdited(true);
-                }
-                else
-                {
-                    bytesToSet[i].setChanged(bytes[i].isChanged());
-                }
-            }
+				if (bytes[i].getValue() != byteData[i]) {
+					bytesToSet[i].setEdited(true);
+				} else {
+					bytesToSet[i].setChanged(bytes[i].isChanged());
+				}
+			}
 
-            fRendering.getViewportCache().setEditedValue(address, bytesToSet);
+			fRendering.getViewportCache().setEditedValue(address, bytesToSet);
 
-            advanceCursor();
+			advanceCursor();
 
-            redraw();
-        }
-        catch(Exception e)
-        {
-            // this is ok
-        }
-    }
+			redraw();
+		} catch (Exception e) {
+			// this is ok
+		}
+	}
 
-    @Override
-	protected int getCellWidth()
-    {
-        GC gc = new GC(this);
-        gc.setFont(fRendering.getFont());
-        int width = gc.getAdvanceWidth('F');
-        gc.dispose();
+	@Override
+	protected int getCellWidth() {
+		GC gc = new GC(this);
+		gc.setFont(fRendering.getFont());
+		int width = gc.getAdvanceWidth('F');
+		gc.dispose();
 
-        return fRendering.getBytesPerColumn()
-            / fRendering.getBytesPerCharacter() * width;
-    }
+		return fRendering.getBytesPerColumn() / fRendering.getBytesPerCharacter() * width;
+	}
 
-    @Override
-	public Point computeSize(int wHint, int hHint)
-    {
-        return new Point(fRendering.getColumnCount() * getCellWidth()
-            + fRendering.getRenderSpacing(), 100);
+	@Override
+	public Point computeSize(int wHint, int hHint) {
+		return new Point(fRendering.getColumnCount() * getCellWidth() + fRendering.getRenderSpacing(), 100);
 
-    }
+	}
 
-    @Override
-	protected Point getCellLocation(BigInteger cellAddress)
-    {
-        try
-        {
-            BigInteger address = fRendering.getViewportStartAddress();
+	@Override
+	protected Point getCellLocation(BigInteger cellAddress) {
+		try {
+			BigInteger address = fRendering.getViewportStartAddress();
 
-            int cellOffset = cellAddress.subtract(address).intValue();
-            cellOffset *= fRendering.getAddressableSize();
+			int cellOffset = cellAddress.subtract(address).intValue();
+			cellOffset *= fRendering.getAddressableSize();
 
-            int row = cellOffset
-                / (fRendering.getColumnCount() * fRendering.getBytesPerColumn() / fRendering
-                    .getBytesPerCharacter());
-            cellOffset -= row * fRendering.getColumnCount()
-                * fRendering.getBytesPerColumn()
-                / fRendering.getBytesPerCharacter();
+			int row = cellOffset / (fRendering.getColumnCount() * fRendering.getBytesPerColumn()
+					/ fRendering.getBytesPerCharacter());
+			cellOffset -= row * fRendering.getColumnCount() * fRendering.getBytesPerColumn()
+					/ fRendering.getBytesPerCharacter();
 
-            int col = cellOffset / fRendering.getBytesPerColumn()
-                / fRendering.getBytesPerCharacter();
+			int col = cellOffset / fRendering.getBytesPerColumn() / fRendering.getBytesPerCharacter();
 
-            int x = col * getCellWidth() + fRendering.getCellPadding();
-            int y = row * getCellHeight() + fRendering.getCellPadding();
+			int x = col * getCellWidth() + fRendering.getCellPadding();
+			int y = row * getCellHeight() + fRendering.getCellPadding();
 
-            return new Point(x, y);
-        }
-        catch(Exception e)
-        {
-            fRendering
-                .logError(
-                    TraditionalRenderingMessages
-                        .getString("TraditionalRendering.FAILURE_DETERMINE_CELL_LOCATION"), e); //$NON-NLS-1$
-            return null;
-        }
-    }
+			return new Point(x, y);
+		} catch (Exception e) {
+			fRendering.logError(
+					TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_DETERMINE_CELL_LOCATION"), e); //$NON-NLS-1$
+			return null;
+		}
+	}
 
-    private BigInteger getCellAddressAt(int x, int y) throws DebugException
-    {
-        BigInteger address = fRendering.getViewportStartAddress();
+	private BigInteger getCellAddressAt(int x, int y) throws DebugException {
+		BigInteger address = fRendering.getViewportStartAddress();
 
-        int col = x / getCellWidth();
-        int row = y / getCellHeight();
+		int col = x / getCellWidth();
+		int row = y / getCellHeight();
 
-        if(col >= fRendering.getColumnCount())
-            return null;
+		if (col >= fRendering.getColumnCount())
+			return null;
 
-        address = address.add(BigInteger.valueOf(row
-            * fRendering.getColumnCount() * fRendering.getAddressesPerColumn()
-            / fRendering.getBytesPerCharacter()));
+		address = address.add(BigInteger.valueOf(row * fRendering.getColumnCount() * fRendering.getAddressesPerColumn()
+				/ fRendering.getBytesPerCharacter()));
 
-        address = address.add(BigInteger.valueOf(col
-            * fRendering.getAddressesPerColumn()));
+		address = address.add(BigInteger.valueOf(col * fRendering.getAddressesPerColumn()));
 
-        return address;
-    }
+		return address;
+	}
 
-    @Override
-	protected void positionCaret(int x, int y)
-    {
-        try
-        {
-            BigInteger cellAddress = getCellAddressAt(x, y);
+	@Override
+	protected void positionCaret(int x, int y) {
+		try {
+			BigInteger cellAddress = getCellAddressAt(x, y);
 
-            if(cellAddress != null)
-            {
-                Point cellPosition = getCellLocation(cellAddress);
+			if (cellAddress != null) {
+				Point cellPosition = getCellLocation(cellAddress);
 
-                int offset = x - cellPosition.x;
-                int x2 = offset / getCellCharacterWidth();
+				int offset = x - cellPosition.x;
+				int x2 = offset / getCellCharacterWidth();
 
-                if(x2 == this.getCellCharacterCount())
-                {
-                    cellAddress = cellAddress.add(BigInteger.valueOf(fRendering
-                        .getAddressesPerColumn()));
-                    x2 = 0;
-                    cellPosition = getCellLocation(cellAddress);
-                }
+				if (x2 == this.getCellCharacterCount()) {
+					cellAddress = cellAddress.add(BigInteger.valueOf(fRendering.getAddressesPerColumn()));
+					x2 = 0;
+					cellPosition = getCellLocation(cellAddress);
+				}
 
-                fCaret.setLocation(cellPosition.x + x2
-                    * getCellCharacterWidth(), cellPosition.y);
+				fCaret.setLocation(cellPosition.x + x2 * getCellCharacterWidth(), cellPosition.y);
 
-                this.fCaretAddress = cellAddress;
-                this.fSubCellCaretPosition = x2;
-                setCaretAddress(fCaretAddress);
-            }
-        }
-        catch(Exception e)
-        {
-            fRendering
-                .logError(
-                    TraditionalRenderingMessages
-                        .getString("TraditionalRendering.FAILURE_POSITION_CURSOR"), e); //$NON-NLS-1$
-        }
-    }
+				this.fCaretAddress = cellAddress;
+				this.fSubCellCaretPosition = x2;
+				setCaretAddress(fCaretAddress);
+			}
+		} catch (Exception e) {
+			fRendering.logError(TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_POSITION_CURSOR"), //$NON-NLS-1$
+					e);
+		}
+	}
 
-    @Override
-	protected BigInteger getViewportAddress(int col, int row)
-        throws DebugException
-    {
-        BigInteger address = fRendering.getViewportStartAddress();
-        address = address.add(BigInteger.valueOf((row
-            * fRendering.getColumnCount() + col)
-            * fRendering.getAddressesPerColumn()
-            / fRendering.getBytesPerCharacter()));
+	@Override
+	protected BigInteger getViewportAddress(int col, int row) throws DebugException {
+		BigInteger address = fRendering.getViewportStartAddress();
+		address = address.add(BigInteger.valueOf((row * fRendering.getColumnCount() + col)
+				* fRendering.getAddressesPerColumn() / fRendering.getBytesPerCharacter()));
 
-        return address;
-    }
+		return address;
+	}
 
-    @Override
-	protected void paint(PaintEvent pe)
-    {
-        super.paint(pe);
+	@Override
+	protected void paint(PaintEvent pe) {
+		super.paint(pe);
 
-        GC gc = pe.gc;
-        gc.setFont(fRendering.getFont());
+		GC gc = pe.gc;
+		gc.setFont(fRendering.getFont());
 
-        int cellHeight = getCellHeight();
-        int cellWidth = getCellWidth();
+		int cellHeight = getCellHeight();
+		int cellWidth = getCellWidth();
 
-        final int columns = fRendering.getColumnCount();
+		final int columns = fRendering.getColumnCount();
 
-        final boolean isLittleEndian = fRendering.isTargetLittleEndian();
-        
-        gc.setForeground(fRendering.getTraditionalRendering().getColorBackground());
-        gc.fillRectangle(columns * cellWidth, 0, this.getBounds().width, this
-            .getBounds().height);
+		final boolean isLittleEndian = fRendering.isTargetLittleEndian();
 
-        try
-        {
-            BigInteger start = fRendering.getViewportStartAddress();
+		gc.setForeground(fRendering.getTraditionalRendering().getColorBackground());
+		gc.fillRectangle(columns * cellWidth, 0, this.getBounds().width, this.getBounds().height);
 
-            for(int i = 0; i < fRendering.getRowCount(); i++)
-            {
-                for(int col = 0; col < columns; col++)
-                {
-                    gc.setFont(fRendering.getFont());
+		try {
+			BigInteger start = fRendering.getViewportStartAddress();
 
-                    if (isOdd(col))
-                        gc.setForeground(fRendering.getTraditionalRendering().getColorText());
-                    else
-                        gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
+			for (int i = 0; i < fRendering.getRowCount(); i++) {
+				for (int col = 0; col < columns; col++) {
+					gc.setFont(fRendering.getFont());
 
-                    BigInteger cellAddress = start.add(BigInteger.valueOf((i
-                        * columns + col)
-                        * fRendering.getAddressesPerColumn()));
+					if (isOdd(col))
+						gc.setForeground(fRendering.getTraditionalRendering().getColorText());
+					else
+						gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
 
-                    TraditionalMemoryByte bytes[] = fRendering.getBytes(cellAddress,
-                        fRendering.getBytesPerColumn());
+					BigInteger cellAddress = start
+							.add(BigInteger.valueOf((i * columns + col) * fRendering.getAddressesPerColumn()));
 
-                    boolean drawBox = false;
+					TraditionalMemoryByte bytes[] = fRendering.getBytes(cellAddress, fRendering.getBytesPerColumn());
 
-                    if(fRendering.getSelection().isSelected(cellAddress))
-                    {
-                        gc.setBackground(fRendering.getTraditionalRendering().getColorSelection());
-                        gc.fillRectangle(cellWidth * col, cellHeight * i,
-                            cellWidth, cellHeight);
+					boolean drawBox = false;
 
-                        gc.setForeground(fRendering.getTraditionalRendering().getColorBackground());
-                    }
-                    else
-                    {
-                        gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
-                        gc.fillRectangle(cellWidth * col, cellHeight * i,
-                            cellWidth, cellHeight);
+					if (fRendering.getSelection().isSelected(cellAddress)) {
+						gc.setBackground(fRendering.getTraditionalRendering().getColorSelection());
+						gc.fillRectangle(cellWidth * col, cellHeight * i, cellWidth, cellHeight);
 
-                        applyCustomColor(gc, bytes, col);
-                        drawBox = shouldDrawBox(bytes, col);
-                    }
+						gc.setForeground(fRendering.getTraditionalRendering().getColorBackground());
+					} else {
+						gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
+						gc.fillRectangle(cellWidth * col, cellHeight * i, cellWidth, cellHeight);
 
-                    gc.drawText(fRendering.formatText(bytes,
-                        isLittleEndian, fRendering.getTextMode()), cellWidth * col, cellHeight * i
-                        + fRendering.getCellPadding());
+						applyCustomColor(gc, bytes, col);
+						drawBox = shouldDrawBox(bytes, col);
+					}
 
-                    if(drawBox)
-                    {
-                        gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
-                        gc.drawRectangle(cellWidth * col - (col == 0 ? 0 : 1),	cellHeight * i, cellWidth - (col == 0 ? 1 : 0), cellHeight-1);
-                    }
+					gc.drawText(fRendering.formatText(bytes, isLittleEndian, fRendering.getTextMode()), cellWidth * col,
+							cellHeight * i + fRendering.getCellPadding());
 
-                    if(fRendering.isDebug())
-                        gc.drawRectangle(cellWidth * col, cellHeight * i
-                            + fRendering.getCellPadding(), cellWidth,
-                            cellHeight);
-                }
-            }
-        }
-        catch(Exception e)
-        {
-            fRendering.logError(TraditionalRenderingMessages
-                .getString("TraditionalRendering.FAILURE_PAINT"), e); //$NON-NLS-1$
-        }
+					if (drawBox) {
+						gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
+						gc.drawRectangle(cellWidth * col - (col == 0 ? 0 : 1), cellHeight * i,
+								cellWidth - (col == 0 ? 1 : 0), cellHeight - 1);
+					}
 
-    }
+					if (fRendering.isDebug())
+						gc.drawRectangle(cellWidth * col, cellHeight * i + fRendering.getCellPadding(), cellWidth,
+								cellHeight);
+				}
+			}
+		} catch (Exception e) {
+			fRendering.logError(TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_PAINT"), e); //$NON-NLS-1$
+		}
 
-    // Allow subclasses to override this method to do their own coloring
-    protected void applyCustomColor(GC gc, TraditionalMemoryByte bytes[], int col)
-    {
-        // TODO consider adding finer granularity?
-        boolean anyByteEditing = false;
-        for (int n = 0; n < bytes.length && !anyByteEditing; n++)
-            if (bytes[n] instanceof TraditionalMemoryByte)
-                if (bytes[n].isEdited())
-                    anyByteEditing = true;
+	}
 
-        TraditionalRendering ren = fRendering.getTraditionalRendering();
+	// Allow subclasses to override this method to do their own coloring
+	protected void applyCustomColor(GC gc, TraditionalMemoryByte bytes[], int col) {
+		// TODO consider adding finer granularity?
+		boolean anyByteEditing = false;
+		for (int n = 0; n < bytes.length && !anyByteEditing; n++)
+			if (bytes[n] instanceof TraditionalMemoryByte)
+				if (bytes[n].isEdited())
+					anyByteEditing = true;
 
-        if (isOdd(col))
-            gc.setForeground(ren.getColorText());
-        else
-            gc.setForeground(ren.getColorTextAlternate());
-        gc.setBackground(ren.getColorBackground());
+		TraditionalRendering ren = fRendering.getTraditionalRendering();
 
-        if (anyByteEditing)
-        {
-            gc.setForeground(ren.getColorEdit());
-            gc.setFont(ren.getFontEdit(gc.getFont()));
-        }
-        else
-        {
-            boolean isColored = false;
-            for (int i = 0; i < fRendering.getHistoryDepth() && !isColored; i++)
-            {
-                // TODO consider adding finer granularity?
-                for (int n = 0; n < bytes.length; n++)
-                {
-                    if (bytes[n].isChanged(i))
-                    {
-                        if (i == 0)
-                            gc.setForeground(ren.getColorsChanged()[i]);
-                        else
-                            gc.setBackground(ren.getColorsChanged()[i]);
+		if (isOdd(col))
+			gc.setForeground(ren.getColorText());
+		else
+			gc.setForeground(ren.getColorTextAlternate());
+		gc.setBackground(ren.getColorBackground());
 
-                        gc.setFont(ren.getFontChanged(gc.getFont()));
+		if (anyByteEditing) {
+			gc.setForeground(ren.getColorEdit());
+			gc.setFont(ren.getFontEdit(gc.getFont()));
+		} else {
+			boolean isColored = false;
+			for (int i = 0; i < fRendering.getHistoryDepth() && !isColored; i++) {
+				// TODO consider adding finer granularity?
+				for (int n = 0; n < bytes.length; n++) {
+					if (bytes[n].isChanged(i)) {
+						if (i == 0)
+							gc.setForeground(ren.getColorsChanged()[i]);
+						else
+							gc.setBackground(ren.getColorsChanged()[i]);
 
-                        isColored = true;
-                        break;
-                    }
-                }
-            }
-        }
-    }
+						gc.setFont(ren.getFontChanged(gc.getFont()));
+
+						isColored = true;
+						break;
+					}
+				}
+			}
+		}
+	}
 
 }

@@ -28,10 +28,10 @@ public class MacroExpansionStep implements IMacroExpansionStep {
 	private final IASTFileLocation fMacroLocation;
 
 	public MacroExpansionStep(String before, IMacroBinding def, IASTFileLocation macroLoc, ReplaceEdit[] replacements) {
-		fBefore= before;
-		fReplacements= replacements;
-		fMacroDefinition= def;
-		fMacroLocation= macroLoc;
+		fBefore = before;
+		fReplacements = replacements;
+		fMacroDefinition = def;
+		fMacroLocation = macroLoc;
 	}
 
 	@Override
@@ -41,13 +41,13 @@ public class MacroExpansionStep implements IMacroExpansionStep {
 
 	@Override
 	public String getCodeAfterStep() {
-		StringBuilder result= new StringBuilder();
-		int offset= 0;
+		StringBuilder result = new StringBuilder();
+		int offset = 0;
 		for (int i = 0; i < fReplacements.length; i++) {
-			ReplaceEdit r= fReplacements[i];
+			ReplaceEdit r = fReplacements[i];
 			result.append(fBefore, offset, r.getOffset());
 			result.append(r.getText());
-			offset= r.getExclusiveEnd();
+			offset = r.getExclusiveEnd();
 		}
 		result.append(fBefore, offset, fBefore.length());
 		return result.toString();
@@ -57,10 +57,12 @@ public class MacroExpansionStep implements IMacroExpansionStep {
 	public IMacroBinding getExpandedMacro() {
 		return fMacroDefinition;
 	}
+
 	@Override
 	public ReplaceEdit[] getReplacements() {
 		return fReplacements;
 	}
+
 	@Override
 	public IASTFileLocation getLocationOfExpandedMacroDefinition() {
 		return fMacroLocation;

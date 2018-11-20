@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -42,139 +42,140 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-public class VariableVMProvider extends AbstractElementVMProvider 
-    implements IColumnPresentationFactory 
-{
-    private IPropertyChangeListener fPreferencesListener = new IPropertyChangeListener() {
-        @Override
+public class VariableVMProvider extends AbstractElementVMProvider implements IColumnPresentationFactory {
+	private IPropertyChangeListener fPreferencesListener = new IPropertyChangeListener() {
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
-            String property = event.getProperty();
+			String property = event.getProperty();
 			if (property.equals(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE)) {
-                IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
-                setDelayEventHandleForViewUpdate(store.getBoolean(property));
-            }
-        }
-    };
+				IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
+				setDelayEventHandleForViewUpdate(store.getBoolean(property));
+			}
+		}
+	};
 
-    private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
-        @Override
+	private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
+		@Override
 		public void propertyChange(final PropertyChangeEvent event) {
-            getExecutor().execute(new DsfRunnable() {
-                @Override
+			getExecutor().execute(new DsfRunnable() {
+				@Override
 				public void run() {
-                    handleEvent(event);                    
-                };
-            });
-        }        
-    };
-    
+					handleEvent(event);
+				};
+			});
+		}
+	};
+
 	public VariableVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
-        super(adapter, context, session);
+		super(adapter, context, session);
 
-        context.addPropertyChangeListener(fPresentationContextListener);
+		context.addPropertyChangeListener(fPresentationContextListener);
 
-        IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
-        store.addPropertyChangeListener(fPreferencesListener);
-        setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
+		IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
+		store.addPropertyChangeListener(fPreferencesListener);
+		setDelayEventHandleForViewUpdate(
+				store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
 
-        configureLayout();
+		configureLayout();
 	}
-	
-    @Override
-    public void dispose() {
-        DsfDebugUITools.getPreferenceStore().removePropertyChangeListener(fPreferencesListener);
-        getPresentationContext().removePropertyChangeListener(fPresentationContextListener);
-        super.dispose();
-    }
-    
-    /**
-     * Configures the nodes of this provider.  This method may be over-ridden by
-     * sub classes to create an alternate configuration in this provider.
-     * 
-     * @since 2.1
-     */
-    protected void configureLayout() {
 
-        // Create the variable data access routines.
-        SyncVariableDataAccess varAccess = new SyncVariableDataAccess(getSession()) ;
+	@Override
+	public void dispose() {
+		DsfDebugUITools.getPreferenceStore().removePropertyChangeListener(fPreferencesListener);
+		getPresentationContext().removePropertyChangeListener(fPresentationContextListener);
+		super.dispose();
+	}
 
-        // Create the top level node to deal with the root selection.
-        IRootVMNode rootNode = new RootDMVMNode(this);
-        setRootNode(rootNode);
-        
-        // Create the next level which represents members of structs/unions/enums and elements of arrays.
-        VariableVMNode subExpressioNode = new VariableVMNode(this, getSession(), varAccess);
-        addChildNodes(rootNode, new IVMNode[] { subExpressioNode });
-        
-        // Wire up the casting support if the IExpressions2 service is available.
-        hookUpCastingSupport(varAccess, subExpressioNode);
+	/**
+	 * Configures the nodes of this provider.  This method may be over-ridden by
+	 * sub classes to create an alternate configuration in this provider.
+	 *
+	 * @since 2.1
+	 */
+	protected void configureLayout() {
 
-        // Configure the sub-expression node to be a child of itself.  This way the content
-        // provider will recursively drill-down the variable hierarchy.
-        addChildNodes(subExpressioNode, new IVMNode[] { subExpressioNode });
-    }
+		// Create the variable data access routines.
+		SyncVariableDataAccess varAccess = new SyncVariableDataAccess(getSession());
+
+		// Create the top level node to deal with the root selection.
+		IRootVMNode rootNode = new RootDMVMNode(this);
+		setRootNode(rootNode);
+
+		// Create the next level which represents members of structs/unions/enums and elements of arrays.
+		VariableVMNode subExpressioNode = new VariableVMNode(this, getSession(), varAccess);
+		addChildNodes(rootNode, new IVMNode[] { subExpressioNode });
+
+		// Wire up the casting support if the IExpressions2 service is available.
+		hookUpCastingSupport(varAccess, subExpressioNode);
+
+		// Configure the sub-expression node to be a child of itself.  This way the content
+		// provider will recursively drill-down the variable hierarchy.
+		addChildNodes(subExpressioNode, new IVMNode[] { subExpressioNode });
+	}
 
 	private void hookUpCastingSupport(final SyncVariableDataAccess syncvarDataAccess,
 			final VariableVMNode variableNode) {
-		 try {
-            getSession().getExecutor().execute(new DsfRunnable() {
-                @Override
+		try {
+			getSession().getExecutor().execute(new DsfRunnable() {
+				@Override
 				public void run() {
-                    DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
-                    IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
-                    if (expressions2 != null) {
-                    	variableNode.setCastToTypeSupport(new DsfCastToTypeSupport(
-                    			getSession(), VariableVMProvider.this, syncvarDataAccess));
-                    }
-                    tracker.dispose();
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            // Session disposed, ignore.
-        }
+					DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+							getSession().getId());
+					IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
+					if (expressions2 != null) {
+						variableNode.setCastToTypeSupport(
+								new DsfCastToTypeSupport(getSession(), VariableVMProvider.this, syncvarDataAccess));
+					}
+					tracker.dispose();
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Session disposed, ignore.
+		}
 	}
-    
 
-    @Override
-    public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
-        return new VariableColumnPresentation();
-    }
-    
-    @Override
-    public String getColumnPresentationId(IPresentationContext context, Object element) {
-        return VariableColumnPresentation.ID;
-    }
-    
-    @Override
-    protected IVMUpdatePolicy[] createUpdateModes() {
-        return new IVMUpdatePolicy[] { new AutomaticUpdatePolicy(), new DebugManualUpdatePolicy(), new BreakpointHitUpdatePolicy() };
-    }
+	@Override
+	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
+		return new VariableColumnPresentation();
+	}
 
-    @Override
-    protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
-        // To optimize the performance of the view when stepping rapidly, skip all 
-        // other events when a suspended event is received, including older suspended
-        // events.
-        return newEvent instanceof ISuspendedDMEvent;
-    }
-    
-    @Override
-    public void refresh() {
-        super.refresh();
-        try {
-            getSession().getExecutor().execute(new DsfRunnable() {
-                @Override
+	@Override
+	public String getColumnPresentationId(IPresentationContext context, Object element) {
+		return VariableColumnPresentation.ID;
+	}
+
+	@Override
+	protected IVMUpdatePolicy[] createUpdateModes() {
+		return new IVMUpdatePolicy[] { new AutomaticUpdatePolicy(), new DebugManualUpdatePolicy(),
+				new BreakpointHitUpdatePolicy() };
+	}
+
+	@Override
+	protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
+		// To optimize the performance of the view when stepping rapidly, skip all
+		// other events when a suspended event is received, including older suspended
+		// events.
+		return newEvent instanceof ISuspendedDMEvent;
+	}
+
+	@Override
+	public void refresh() {
+		super.refresh();
+		try {
+			getSession().getExecutor().execute(new DsfRunnable() {
+				@Override
 				public void run() {
-                    DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
-                    IExpressions expressionsService = tracker.getService(IExpressions.class);
-                    if (expressionsService instanceof ICachingService) {
-                        ((ICachingService)expressionsService).flushCache(null);
-                    }
-                    tracker.dispose();
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            // Session disposed, ignore.
-        }
-    }
+					DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
+							getSession().getId());
+					IExpressions expressionsService = tracker.getService(IExpressions.class);
+					if (expressionsService instanceof ICachingService) {
+						((ICachingService) expressionsService).flushCache(null);
+					}
+					tracker.dispose();
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			// Session disposed, ignore.
+		}
+	}
 }

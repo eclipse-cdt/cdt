@@ -1,23 +1,23 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2018 Wind River Systems, Inc.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- ******************************************************************************/ 
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.osgi.util.NLS;
 
 class RenameMessages extends NLS {
-    public static String ASTManager_error_macro_name_conflict;
+	public static String ASTManager_error_macro_name_conflict;
 	public static String ASTManager_subtask_analyzing;
 	public static String ASTManager_task_analyze;
 	public static String ASTManager_task_generateAst;

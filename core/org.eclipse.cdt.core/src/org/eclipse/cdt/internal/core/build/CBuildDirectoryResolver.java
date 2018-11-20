@@ -31,27 +31,27 @@ public class CBuildDirectoryResolver implements IDynamicVariableResolver {
 		if (argument == null || argument.isEmpty()) {
 			return null;
 		}
-		
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(argument);
 		if (project == null || !project.exists()) {
 			return null;
 		}
 
 		IBuildConfiguration config = project.getActiveBuildConfig();
-		
+
 		ICBuildConfigurationManager manager = CCorePlugin.getService(ICBuildConfigurationManager.class);
 		ICBuildConfiguration coreConfig = manager.getBuildConfiguration(config);
 		if (coreConfig == null) {
 			return null;
 		}
-		
+
 		if (coreConfig instanceof ICBuildConfiguration2) {
 			URI uri = ((ICBuildConfiguration2) coreConfig).getBuildDirectoryURI();
 			if (uri != null) {
 				return new File(uri).getAbsolutePath();
 			}
 		}
-		
+
 		return null;
 	}
 

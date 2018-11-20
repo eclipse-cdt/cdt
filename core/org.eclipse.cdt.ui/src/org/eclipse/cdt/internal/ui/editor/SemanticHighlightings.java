@@ -113,135 +113,136 @@ public class SemanticHighlightings {
 	/**
 	 * A named preference part that controls the highlighting of static fields.
 	 */
-	public static final String STATIC_FIELD= "staticField"; //$NON-NLS-1$
+	public static final String STATIC_FIELD = "staticField"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of fields.
 	 */
-	public static final String FIELD= "field"; //$NON-NLS-1$
+	public static final String FIELD = "field"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of method declarations.
 	 */
-	public static final String METHOD_DECLARATION= "methodDeclaration"; //$NON-NLS-1$
+	public static final String METHOD_DECLARATION = "methodDeclaration"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of static method invocations.
 	 */
-	public static final String STATIC_METHOD_INVOCATION= "staticMethod"; //$NON-NLS-1$
+	public static final String STATIC_METHOD_INVOCATION = "staticMethod"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of function declarations.
 	 */
-	public static final String FUNCTION_DECLARATION= "functionDeclaration"; //$NON-NLS-1$
+	public static final String FUNCTION_DECLARATION = "functionDeclaration"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of functions.
 	 */
-	public static final String FUNCTION= "function"; //$NON-NLS-1$
+	public static final String FUNCTION = "function"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of local variables.
 	 */
-	public static final String LOCAL_VARIABLE_DECLARATION= "localVariableDeclaration"; //$NON-NLS-1$
+	public static final String LOCAL_VARIABLE_DECLARATION = "localVariableDeclaration"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of local variable references.
 	 */
-	public static final String LOCAL_VARIABLE= "localVariable"; //$NON-NLS-1$
+	public static final String LOCAL_VARIABLE = "localVariable"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of global variables.
 	 */
-	public static final String GLOBAL_VARIABLE= "globalVariable"; //$NON-NLS-1$
+	public static final String GLOBAL_VARIABLE = "globalVariable"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of parameter variables.
 	 */
-	public static final String PARAMETER_VARIABLE= "parameterVariable"; //$NON-NLS-1$
+	public static final String PARAMETER_VARIABLE = "parameterVariable"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of template parameters.
 	 */
-	public static final String TEMPLATE_PARAMETER= "templateParameter"; //$NON-NLS-1$
+	public static final String TEMPLATE_PARAMETER = "templateParameter"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of methods.
 	 */
-	public static final String METHOD= "method"; //$NON-NLS-1$
+	public static final String METHOD = "method"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of classes.
 	 */
-	public static final String CLASS= "class"; //$NON-NLS-1$
+	public static final String CLASS = "class"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of enums.
 	 */
-	public static final String ENUM= "enum"; //$NON-NLS-1$
+	public static final String ENUM = "enum"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of enum classes.
 	 */
-	public static final String ENUM_CLASS= "enumClass"; //$NON-NLS-1$
+	public static final String ENUM_CLASS = "enumClass"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of macro references.
 	 */
-	public static final String MACRO_REFERENCE= "macroSubstitution"; //$NON-NLS-1$
+	public static final String MACRO_REFERENCE = "macroSubstitution"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of macro definitions.
 	 */
-	public static final String MACRO_DEFINITION= "macroDefinition"; //$NON-NLS-1$
+	public static final String MACRO_DEFINITION = "macroDefinition"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of typedefs.
 	 */
-	public static final String TYPEDEF= "typedef"; //$NON-NLS-1$
+	public static final String TYPEDEF = "typedef"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of namespaces.
 	 */
-	public static final String NAMESPACE= "namespace"; //$NON-NLS-1$
+	public static final String NAMESPACE = "namespace"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of labels.
 	 */
-	public static final String LABEL= "label"; //$NON-NLS-1$
+	public static final String LABEL = "label"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of enumerators.
 	 */
-	public static final String ENUMERATOR= "enumerator"; //$NON-NLS-1$
+	public static final String ENUMERATOR = "enumerator"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of problems.
 	 */
-	public static final String PROBLEM= "problem"; //$NON-NLS-1$
+	public static final String PROBLEM = "problem"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of external SDK.
 	 */
-	public static final String EXTERNAL_SDK= "externalSDK"; //$NON-NLS-1$
+	public static final String EXTERNAL_SDK = "externalSDK"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of operators that have been overloaded.
 	 */
-	public static final String OVERLOADED_OPERATOR= "overloadedOperator"; //$NON-NLS-1$
-	
+	public static final String OVERLOADED_OPERATOR = "overloadedOperator"; //$NON-NLS-1$
+
 	/**
 	 * A named preference part that controls the highlighting of variables passed by non-const reference.
 	 */
-	public static final String VARIABLE_PASSED_BY_NONCONST_REF= "variablePassedByNonconstRef";  //$NON-NLS-1$
+	public static final String VARIABLE_PASSED_BY_NONCONST_REF = "variablePassedByNonconstRef"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting UDL suffixes.
 	 */
-	public static final String UDL_SUFFIX = "udlSuffix";  //$NON-NLS-1$
+	public static final String UDL_SUFFIX = "udlSuffix"; //$NON-NLS-1$
 
 	/** Init debugging mode */
-	private static final boolean DEBUG= Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.ui/debug/SemanticHighlighting"));  //$NON-NLS-1$
+	private static final boolean DEBUG = Boolean
+			.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.ui/debug/SemanticHighlighting")); //$NON-NLS-1$
 
 	/**
 	 * Semantic highlightings
@@ -284,9 +285,9 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName) node;
+				IASTName name = (IASTName) node;
 				if (name instanceof ICPPASTQualifiedName && name.isReference()) {
 					return false;
 				}
@@ -294,9 +295,9 @@ public class SemanticHighlightings {
 					// Variable template instance - do not color the entire template-id.
 					return false;
 				}
-				IBinding binding= token.getBinding();
+				IBinding binding = token.getBinding();
 				if (binding instanceof IField && !(binding instanceof IProblemBinding)) {
-					return ((IField)binding).isStatic();
+					return ((IField) binding).isStatic();
 				}
 			}
 			return false;
@@ -339,9 +340,9 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName) node;
+				IASTName name = (IASTName) node;
 				if (name instanceof ICPPASTQualifiedName && name.isReference()) {
 					return false;
 				}
@@ -349,7 +350,7 @@ public class SemanticHighlightings {
 					// Variable template instance - do not color the entire template-id.
 					return false;
 				}
-				IBinding binding= token.getBinding();
+				IBinding binding = token.getBinding();
 				if (binding instanceof IField) {
 					if (binding instanceof ICPPUnknownBinding) {
 						if (heuristicallyResolve((ICPPUnknownBinding) binding) instanceof IEnumerator) {
@@ -399,26 +400,26 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTImplicitName)
 				return false;
 
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName) node;
+				IASTName name = (IASTName) node;
 				if (!name.isReference()) {
-					IBinding binding= token.getBinding();
+					IBinding binding = token.getBinding();
 					if (binding instanceof ICPPMethod) {
 						return true;
 					} else if (binding instanceof IProblemBinding) {
 						// try to be derive from AST
-						node= name.getParent();
+						node = name.getParent();
 						while (node instanceof IASTName) {
-							node= node.getParent();
+							node = node.getParent();
 						}
 						if (node instanceof ICPPASTFunctionDeclarator) {
 							if (name instanceof ICPPASTQualifiedName) {
-								ICPPASTQualifiedName qName= (ICPPASTQualifiedName) name;
-								ICPPASTNameSpecifier[] qualifier= qName.getQualifier();
+								ICPPASTQualifiedName qName = (ICPPASTQualifiedName) name;
+								ICPPASTNameSpecifier[] qualifier = qName.getQualifier();
 								if (qualifier.length > 0) {
 									if (qualifier[qualifier.length - 1].resolveBinding() instanceof ICPPClassType) {
 										return true;
@@ -426,7 +427,7 @@ public class SemanticHighlightings {
 								}
 							} else {
 								while (node != token.getRoot() && !(node.getParent() instanceof IASTDeclSpecifier)) {
-									node= node.getParent();
+									node = node.getParent();
 								}
 								if (node instanceof ICPPASTCompositeTypeSpecifier) {
 									return true;
@@ -476,16 +477,16 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName) node;
+				IASTName name = (IASTName) node;
 				if (name instanceof ICPPASTQualifiedName) {
 					return false;
 				}
 				if (!name.isReference()) {
 					return false;
 				}
-				IBinding binding= token.getBinding();
+				IBinding binding = token.getBinding();
 				if (binding instanceof ICPPMethod && !(binding instanceof IProblemBinding)) {
 					return ((ICPPMethod) binding).isStatic();
 				}
@@ -530,16 +531,16 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTImplicitName)
 				return false;
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName) node;
-				boolean qualified = name instanceof ICPPASTQualifiedName; 
+				IASTName name = (IASTName) node;
+				boolean qualified = name instanceof ICPPASTQualifiedName;
 				if (qualified && name.isReference()) {
 					return false;
 				}
-				IBinding binding= token.getBinding();
+				IBinding binding = token.getBinding();
 				if (binding instanceof ICPPMethod) {
 					return true;
 				} else if (binding instanceof ICPPDeferredFunction) {
@@ -557,7 +558,7 @@ public class SemanticHighlightings {
 			}
 			return false;
 		}
-		
+
 		private boolean isInheritingConstructorDeclaration(IBinding binding) {
 			if (!(binding instanceof ICPPUsingDeclaration)) {
 				return false;
@@ -630,18 +631,18 @@ public class SemanticHighlightings {
 				return true;
 			}
 			// The template-name in a template-id is never a declaration, it's a reference
-			// to the template. However, if the template-id itself is a declaration, we want 
+			// to the template. However, if the template-id itself is a declaration, we want
 			// to color the template-name part of it as a declaration.
-			if (name.getParent() instanceof ICPPASTTemplateId &&
-				name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
+			if (name.getParent() instanceof ICPPASTTemplateId
+					&& name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
 				return ((IASTName) name.getParent()).isDeclaration();
 			}
 			return false;
 		}
-		
+
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTImplicitName)
 				return false;
 
@@ -650,9 +651,9 @@ public class SemanticHighlightings {
 				if (node instanceof ICPPASTTemplateId) {
 					return false;
 				}
-				IASTName name= (IASTName) node;
+				IASTName name = (IASTName) node;
 				if (isDeclaration(name)) {
-					IBinding binding= token.getBinding();
+					IBinding binding = token.getBinding();
 					if (binding instanceof IFunction && !(binding instanceof ICPPMethod)) {
 						return true;
 					} else if (binding instanceof IProblemBinding) {
@@ -660,13 +661,13 @@ public class SemanticHighlightings {
 						if (name instanceof ICPPASTQualifiedName) {
 							return false;
 						}
-						node= name.getParent();
+						node = name.getParent();
 						while (node instanceof IASTName) {
-							node= node.getParent();
+							node = node.getParent();
 						}
 						if (node instanceof IASTFunctionDeclarator) {
 							while (node != token.getRoot() && !(node.getParent() instanceof IASTDeclSpecifier)) {
-								node= node.getParent();
+								node = node.getParent();
 							}
 							if (node instanceof ICPPASTCompositeTypeSpecifier) {
 								return false;
@@ -716,11 +717,11 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTImplicitName)
 				return false;
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName) node;
+				IASTName name = (IASTName) node;
 				if (name instanceof ICPPASTQualifiedName && name.isReference()) {
 					return false;
 				}
@@ -728,7 +729,7 @@ public class SemanticHighlightings {
 				if (name instanceof ICPPASTTemplateId) {
 					return false;
 				}
-				IBinding binding= token.getBinding();
+				IBinding binding = token.getBinding();
 				if (binding instanceof IFunction && !(binding instanceof ICPPMethod)) {
 					return true;
 				}
@@ -773,14 +774,12 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName) node;
+				IASTName name = (IASTName) node;
 				if (name.isDeclaration()) {
-					IBinding binding= token.getBinding();
-					if (binding instanceof IVariable
-							&& !(binding instanceof IField)
-							&& !(binding instanceof IParameter)
+					IBinding binding = token.getBinding();
+					if (binding instanceof IVariable && !(binding instanceof IField) && !(binding instanceof IParameter)
 							&& !(binding instanceof IProblemBinding)) {
 						if (LocalVariableHighlighting.isLocalVariable((IVariable) binding)) {
 							return true;
@@ -828,14 +827,12 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName) node;
+				IASTName name = (IASTName) node;
 				if (name.isReference()) {
-					IBinding binding= token.getBinding();
-					if (binding instanceof IVariable
-							&& !(binding instanceof IField)
-							&& !(binding instanceof IParameter)
+					IBinding binding = token.getBinding();
+					if (binding instanceof IVariable && !(binding instanceof IField) && !(binding instanceof IParameter)
 							&& !(binding instanceof IProblemBinding)) {
 						if (isLocalVariable((IVariable) binding)) {
 							return true;
@@ -846,31 +843,30 @@ public class SemanticHighlightings {
 			return false;
 		}
 
-	    public static boolean isLocalVariable(IVariable variable) {
-	    	// A variable marked 'extern' declares a global
-	    	// variable even if the declaration is local.
-	    	if (variable.isExtern()) {
-	    		return false;
-	    	}
-	    	try {
-		    	IScope scope= variable.getScope();
-		        while (scope != null) {
-		            if (scope instanceof ICPPFunctionScope ||
-		                    scope instanceof ICPPBlockScope ||
-		                    scope instanceof ICFunctionScope) {
-		                return true;
-		            }
-		            try {
-		                scope= scope.getParent();
-		            } catch (DOMException e) {
-		                scope= null;
-		            }
-		        }
-	    	} catch (DOMException exc) {
-	    		CUIPlugin.log(exc);
-	    	}
-	    	return false;
-	    }
+		public static boolean isLocalVariable(IVariable variable) {
+			// A variable marked 'extern' declares a global
+			// variable even if the declaration is local.
+			if (variable.isExtern()) {
+				return false;
+			}
+			try {
+				IScope scope = variable.getScope();
+				while (scope != null) {
+					if (scope instanceof ICPPFunctionScope || scope instanceof ICPPBlockScope
+							|| scope instanceof ICFunctionScope) {
+						return true;
+					}
+					try {
+						scope = scope.getParent();
+					} catch (DOMException e) {
+						scope = null;
+					}
+				}
+			} catch (DOMException exc) {
+				CUIPlugin.log(exc);
+			}
+			return false;
+		}
 	}
 
 	/**
@@ -909,9 +905,9 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName) node;
+				IASTName name = (IASTName) node;
 				if (name instanceof ICPPASTQualifiedName) {
 					return false;
 				}
@@ -919,10 +915,8 @@ public class SemanticHighlightings {
 					// Variable template instance - do not color the entire template-id.
 					return false;
 				}
-				IBinding binding= token.getBinding();
-				if (binding instanceof IVariable
-						&& !(binding instanceof IField)
-						&& !(binding instanceof IParameter)
+				IBinding binding = token.getBinding();
+				if (binding instanceof IVariable && !(binding instanceof IField) && !(binding instanceof IParameter)
 						&& !(binding instanceof ICPPTemplateNonTypeParameter)
 						&& !(binding instanceof IProblemBinding)) {
 					if (!LocalVariableHighlighting.isLocalVariable((IVariable) binding)) {
@@ -970,7 +964,7 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IBinding binding= token.getBinding();
+			IBinding binding = token.getBinding();
 			if (binding instanceof IParameter) {
 				return true;
 			}
@@ -1014,9 +1008,9 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTName) {
-				IBinding binding= token.getBinding();
+				IBinding binding = token.getBinding();
 				if (binding instanceof ICPPTemplateParameter) {
 					return true;
 				}
@@ -1061,17 +1055,17 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof ICPPASTQualifiedName || node instanceof ICPPASTTemplateId) {
 				return false;
 			}
 			if (node instanceof IASTImplicitName && node.getParent() instanceof ICPPASTUsingDeclaration) {
-				// For names in an inheriting constructor declaration, we want to use the method 
-				// highlighting (since it's a constructor), not the class highlighting. 
+				// For names in an inheriting constructor declaration, we want to use the method
+				// highlighting (since it's a constructor), not the class highlighting.
 				return false;
 			}
 			if (node instanceof IASTName) {
-				IBinding binding= token.getBinding();
+				IBinding binding = token.getBinding();
 				if (binding instanceof ICompositeType && !(binding instanceof ICPPTemplateParameter)) {
 					if (binding instanceof ICPPUnknownBinding) {
 						if (heuristicallyResolve((ICPPUnknownBinding) binding) instanceof IEnumeration) {
@@ -1121,14 +1115,14 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTName) {
 				if (node instanceof ICPPASTQualifiedName) {
 					return false;
 				}
-				IBinding binding= token.getBinding();
+				IBinding binding = token.getBinding();
 				if (binding instanceof ICPPUnknownBinding) {
-					binding= heuristicallyResolve((ICPPUnknownBinding) binding);
+					binding = heuristicallyResolve((ICPPUnknownBinding) binding);
 				}
 				if (binding instanceof IEnumeration) {
 					if (binding instanceof ICPPEnumeration) {
@@ -1177,14 +1171,14 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTName) {
 				if (node instanceof ICPPASTQualifiedName) {
 					return false;
 				}
-				IBinding binding= token.getBinding();
+				IBinding binding = token.getBinding();
 				if (binding instanceof ICPPUnknownBinding) {
-					binding= heuristicallyResolve((ICPPUnknownBinding) binding);
+					binding = heuristicallyResolve((ICPPUnknownBinding) binding);
 				}
 				if (binding instanceof ICPPEnumeration) {
 					return ((ICPPEnumeration) binding).isScoped();
@@ -1230,9 +1224,9 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IBinding binding= token.getBinding();
+			IBinding binding = token.getBinding();
 			if (binding instanceof IMacroBinding) {
-				IASTName name= (IASTName)token.getNode();
+				IASTName name = (IASTName) token.getNode();
 				if (name.isReference()) {
 					return true;
 				}
@@ -1277,9 +1271,9 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IBinding binding= token.getBinding();
+			IBinding binding = token.getBinding();
 			if (binding instanceof IMacroBinding) {
-				IASTName name= (IASTName)token.getNode();
+				IASTName name = (IASTName) token.getNode();
 				if (!name.isReference()) {
 					return true;
 				}
@@ -1324,13 +1318,13 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName) node;
+				IASTName name = (IASTName) node;
 				if (name instanceof ICPPASTQualifiedName) {
 					return false;
 				}
-				IBinding binding= token.getBinding();
+				IBinding binding = token.getBinding();
 				// Names that resolve to alias template instances are template-ids
 				// with the template-name naming the alias template. We don't want
 				// to color the entire template-id, but rather want to color its
@@ -1387,7 +1381,7 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IBinding binding= token.getBinding();
+			IBinding binding = token.getBinding();
 			if (binding instanceof ICPPNamespace) {
 				return true;
 			}
@@ -1431,7 +1425,7 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IBinding binding= token.getBinding();
+			IBinding binding = token.getBinding();
 			if (binding instanceof ILabel) {
 				return true;
 			}
@@ -1475,15 +1469,15 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName) node;
+				IASTName name = (IASTName) node;
 				if (name instanceof ICPPASTQualifiedName) {
 					return false;
 				}
-				IBinding binding= token.getBinding();
+				IBinding binding = token.getBinding();
 				if (binding instanceof ICPPUnknownBinding) {
-					binding= heuristicallyResolve((ICPPUnknownBinding) binding);
+					binding = heuristicallyResolve((ICPPUnknownBinding) binding);
 				}
 				if (binding instanceof IEnumerator) {
 					return true;
@@ -1534,7 +1528,7 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node == null) {
 				return false;
 			}
@@ -1550,11 +1544,11 @@ public class SemanticHighlightings {
 				// which resolve, to get a non-Problem highlighting.
 				return false;
 			}
-			IBinding binding= token.getBinding();
+			IBinding binding = token.getBinding();
 			if (binding instanceof IProblemBinding) {
 				IProblemBinding problemBinding = (IProblemBinding) binding;
 				if (SemanticQueries.isUnknownBuiltin(problemBinding, node)) {
-					return false;  // Ignore an unknown built-in.
+					return false; // Ignore an unknown built-in.
 				}
 				return true;
 			}
@@ -1603,9 +1597,9 @@ public class SemanticHighlightings {
 
 		@Override
 		public boolean consumes(ISemanticToken token) {
-			IASTNode node= token.getNode();
+			IASTNode node = token.getNode();
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName) node;
+				IASTName name = (IASTName) node;
 				if (name instanceof ICPPASTQualifiedName) {
 					return false;
 				}
@@ -1613,8 +1607,8 @@ public class SemanticHighlightings {
 					return false;
 				}
 				if (name.isReference()) {
-					IBinding binding= token.getBinding();
-					IIndex index= token.getRoot().getIndex();
+					IBinding binding = token.getBinding();
+					IIndex index = token.getRoot().getIndex();
 					return isExternalSDKReference(binding, index);
 				}
 			}
@@ -1628,13 +1622,13 @@ public class SemanticHighlightings {
 						if (((IIndexBinding) binding).isFileLocal()) {
 							return false;
 						}
-					}
-					else if (!(binding instanceof ICExternalBinding)) {
+					} else if (!(binding instanceof ICExternalBinding)) {
 						return false;
 					}
-					IIndexName[] decls= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+					IIndexName[] decls = index.findNames(binding,
+							IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 					for (IIndexName decl : decls) {
-						IIndexFile indexFile= decl.getFile();
+						IIndexFile indexFile = decl.getFile();
 						if (indexFile != null && indexFile.getLocation().getFullPath() != null) {
 							return false;
 						}
@@ -1706,8 +1700,7 @@ public class SemanticHighlightings {
 					if (binding instanceof ICPPUnknownBinding)
 						return false;
 					char[] chars = name.toCharArray();
-					if (chars[0] == '~' || OverloadableOperator.isNew(chars)
-							|| OverloadableOperator.isDelete(chars)) {
+					if (chars[0] == '~' || OverloadableOperator.isNew(chars) || OverloadableOperator.isDelete(chars)) {
 						return false;
 					}
 					return true;
@@ -1716,24 +1709,23 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for variables passed by non-const reference.
-	 * 
+	 *
 	 * The purpose of having a highlighting for this is that there's an important
-	 * semantic difference between passing a variable by non-const reference 
+	 * semantic difference between passing a variable by non-const reference
 	 * (where the called function can modify the original variable) and passing
 	 * a variable by const reference or value (where it cannot), but syntactically
 	 * these two forms of passing look the same at the call site.
 	 */
-	private static final class VariablePassedByNonconstRefHighlighting 
-			extends SemanticHighlightingWithOwnPreference {
+	private static final class VariablePassedByNonconstRefHighlighting extends SemanticHighlightingWithOwnPreference {
 
 		@Override
 		public String getPreferenceKey() {
 			return VARIABLE_PASSED_BY_NONCONST_REF;
 		}
-		
+
 		@Override
 		public boolean requiresExpressions() {
 			return true;
@@ -1743,7 +1735,7 @@ public class SemanticHighlightings {
 		public RGB getDefaultDefaultTextColor() {
 			return new RGB(200, 100, 150); // dark pink
 		}
-		
+
 		@Override
 		public boolean isBoldByDefault() {
 			return true;
@@ -1762,30 +1754,30 @@ public class SemanticHighlightings {
 		@Override
 		public boolean consumes(ISemanticToken token) {
 			IASTNode node = token.getNode();
-			
+
 			// This highlighting only applies to function arguments.
 			// We also filter out C expressions at this stage, since references only exist in C++
 			// (and then we can cast to C++ AST node types without further checks below).
-			boolean isFunctionArgument = (node instanceof ICPPASTExpression) &&
-					                     (node.getParent() instanceof IASTFunctionCallExpression) &&
-					                     (node.getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT);
+			boolean isFunctionArgument = (node instanceof ICPPASTExpression)
+					&& (node.getParent() instanceof IASTFunctionCallExpression)
+					&& (node.getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT);
 			if (!isFunctionArgument) {
 				return false;
 			}
-			
+
 			// If the argument expression is not an lvalue, we don't care if the function
-			// modifies it. 
+			// modifies it.
 			IASTExpression expression = (IASTExpression) node;
 			if (expression.getValueCategory() != ValueCategory.LVALUE) {
 				return false;
 			}
-			
+
 			// Resolve the type of the function being called.
 			// Note that, in the case of a call to a template function or a set of overloaded functions,
-			// the function name expression will be an id-expression, and 
-			// CPPASTIdExpression.getEvaluation() will perform template instantiation and overload 
+			// the function name expression will be an id-expression, and
+			// CPPASTIdExpression.getEvaluation() will perform template instantiation and overload
 			// resolution, and we'll get the instantiated function type.
-			// Note that we don't use CPPASTIdExpression.getExpressionType() because it typically turns 
+			// Note that we don't use CPPASTIdExpression.getExpressionType() because it typically turns
 			// a potentially-useful FunctionSetType into the useless CPPDeferredFunction.FUNCTION_TYPE.
 			IASTFunctionCallExpression functionCall = ((IASTFunctionCallExpression) node.getParent());
 			ICPPASTExpression functionName = (ICPPASTExpression) functionCall.getFunctionNameExpression();
@@ -1807,7 +1799,7 @@ public class SemanticHighlightings {
 			if (!(functionType instanceof ICPPFunctionType)) {
 				return false;
 			}
-			
+
 			// Find the parameter type matching the argument.
 			IType[] parameterTypes = ((ICPPFunctionType) functionType).getParameterTypes();
 			int argIndex = -1;
@@ -1822,7 +1814,7 @@ public class SemanticHighlightings {
 				return false;
 			}
 			IType parameterType = parameterTypes[argIndex];
-			
+
 			// Consume the node if the parameter type is a non-const reference.
 			// In the case of an reference to an array type, it is the element type
 			// which must be non-const.
@@ -1834,7 +1826,7 @@ public class SemanticHighlightings {
 				}
 				boolean isConstRef = false;
 				if (referredType instanceof IQualifierType) {
-		            isConstRef = ((IQualifierType) referredType).isConst();
+					isConstRef = ((IQualifierType) referredType).isConst();
 				} else if (referredType instanceof IPointerType) {
 					isConstRef = ((IPointerType) referredType).isConst();
 				}
@@ -1843,10 +1835,10 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for context-sensitive keywords.
-	 * 
+	 *
 	 * This does not get its own color and style; rather, it uses
 	 * the color and style of the 'Keyword' syntactic highlighting.
 	 */
@@ -1855,7 +1847,7 @@ public class SemanticHighlightings {
 		public String getPreferenceKey() {
 			return ICColorConstants.C_KEYWORD;
 		}
-		
+
 		@Override
 		public boolean isEnabledByDefault() {
 			return true;
@@ -1920,7 +1912,7 @@ public class SemanticHighlightings {
 		}
 		return binding;
 	}
-	
+
 	// Note on the get___PreferenceKey() functions below:
 	//  - For semantic highlightings deriving from SemanticHighlightingWithOwnPreference,
 	//    these functions return keys for accessing the highlighting's own preferences.
@@ -1935,7 +1927,7 @@ public class SemanticHighlightings {
 	//    From a user's perspective, semantic highlightings not deriving from
 	//    SemanticHighlightingWithOwnPreference are still always enabled because there is no
 	//    way to disable them in the UI.
-	
+
 	/**
 	 * A named preference that controls the given semantic highlighting's color.
 	 *
@@ -1944,7 +1936,8 @@ public class SemanticHighlightings {
 	 */
 	public static String getColorPreferenceKey(SemanticHighlighting semanticHighlighting) {
 		if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
-			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
+			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey()
+					+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;
 		} else {
 			return semanticHighlighting.getPreferenceKey();
 		}
@@ -1958,7 +1951,8 @@ public class SemanticHighlightings {
 	 */
 	public static String getBoldPreferenceKey(SemanticHighlighting semanticHighlighting) {
 		if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
-			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX;
+			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey()
+					+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX;
 		} else {
 			return semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_BOLD_SUFFIX;
 		}
@@ -1972,7 +1966,8 @@ public class SemanticHighlightings {
 	 */
 	public static String getItalicPreferenceKey(SemanticHighlighting semanticHighlighting) {
 		if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
-			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX;
+			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey()
+					+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX;
 		} else {
 			return semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_ITALIC_SUFFIX;
 		}
@@ -1985,8 +1980,9 @@ public class SemanticHighlightings {
 	 * @return the strikethrough preference key
 	 */
 	public static String getStrikethroughPreferenceKey(SemanticHighlighting semanticHighlighting) {
-		if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {			
-			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX;
+		if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
+			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey()
+					+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX;
 		} else {
 			return semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX;
 		}
@@ -2000,7 +1996,8 @@ public class SemanticHighlightings {
 	 */
 	public static String getUnderlinePreferenceKey(SemanticHighlighting semanticHighlighting) {
 		if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
-			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX;
+			return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey()
+					+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX;
 		} else {
 			return semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_UNDERLINE_SUFFIX;
 		}
@@ -2013,7 +2010,8 @@ public class SemanticHighlightings {
 	 * @return the enabled preference key
 	 */
 	public static String getEnabledPreferenceKey(SemanticHighlighting semanticHighlighting) {
-		return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX;
+		return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey()
+				+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX;
 	}
 
 	private static class Key implements Comparable<Key> {
@@ -2096,11 +2094,10 @@ public class SemanticHighlightings {
 		loadBuiltInSemanticHighlightings(highlightings);
 
 		// load the extensions
-		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				CUIPlugin.getPluginId(), ExtensionPoint);
+		IConfigurationElement[] elements = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(CUIPlugin.getPluginId(), ExtensionPoint);
 		for (IConfigurationElement element : elements) {
-			ContributedSemanticHighlighting contributedHighlighting = new ContributedSemanticHighlighting(
-					element);
+			ContributedSemanticHighlighting contributedHighlighting = new ContributedSemanticHighlighting(element);
 
 			Key key = new Key(contributedHighlighting.getPriority(), contributedHighlighting.getId());
 			highlightings.put(key, contributedHighlighting);
@@ -2130,16 +2127,22 @@ public class SemanticHighlightings {
 	public static void initDefaults(IPreferenceStore store) {
 		store.setDefault(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED, true);
 
-		SemanticHighlighting[] semanticHighlightings= getSemanticHighlightings();
+		SemanticHighlighting[] semanticHighlightings = getSemanticHighlightings();
 		for (SemanticHighlighting semanticHighlighting : semanticHighlightings) {
-			store.setDefault(SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting), DEBUG || semanticHighlighting.isEnabledByDefault());
+			store.setDefault(SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting),
+					DEBUG || semanticHighlighting.isEnabledByDefault());
 			if (semanticHighlighting instanceof SemanticHighlightingWithOwnPreference) {
 				SemanticHighlightingWithOwnPreference highlighting = (SemanticHighlightingWithOwnPreference) semanticHighlighting;
-				PreferenceConverter.setDefault(store, SemanticHighlightings.getColorPreferenceKey(highlighting), highlighting.getDefaultTextColor());
-				store.setDefault(SemanticHighlightings.getBoldPreferenceKey(highlighting), highlighting.isBoldByDefault());
-				store.setDefault(SemanticHighlightings.getItalicPreferenceKey(highlighting), highlighting.isItalicByDefault());
-				store.setDefault(SemanticHighlightings.getStrikethroughPreferenceKey(highlighting), highlighting.isStrikethroughByDefault());
-				store.setDefault(SemanticHighlightings.getUnderlinePreferenceKey(highlighting), DEBUG || highlighting.isUnderlineByDefault());
+				PreferenceConverter.setDefault(store, SemanticHighlightings.getColorPreferenceKey(highlighting),
+						highlighting.getDefaultTextColor());
+				store.setDefault(SemanticHighlightings.getBoldPreferenceKey(highlighting),
+						highlighting.isBoldByDefault());
+				store.setDefault(SemanticHighlightings.getItalicPreferenceKey(highlighting),
+						highlighting.isItalicByDefault());
+				store.setDefault(SemanticHighlightings.getStrikethroughPreferenceKey(highlighting),
+						highlighting.isStrikethroughByDefault());
+				store.setDefault(SemanticHighlightings.getUnderlinePreferenceKey(highlighting),
+						DEBUG || highlighting.isUnderlineByDefault());
 			}
 		}
 	}
@@ -2157,11 +2160,11 @@ public class SemanticHighlightings {
 		if (event.getProperty().equals(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED)) {
 			return true;
 		}
-		String relevantKey= null;
-		SemanticHighlighting[] highlightings= getSemanticHighlightings();
+		String relevantKey = null;
+		SemanticHighlighting[] highlightings = getSemanticHighlightings();
 		for (SemanticHighlighting highlighting : highlightings) {
 			if (event.getProperty().equals(getEnabledPreferenceKey(highlighting))) {
-				relevantKey= event.getProperty();
+				relevantKey = event.getProperty();
 				break;
 			}
 		}
@@ -2169,7 +2172,7 @@ public class SemanticHighlightings {
 			return false;
 
 		for (SemanticHighlighting highlighting : highlightings) {
-			String key= getEnabledPreferenceKey(highlighting);
+			String key = getEnabledPreferenceKey(highlighting);
 			if (key.equals(relevantKey))
 				continue;
 			if (store.getBoolean(key))
@@ -2191,9 +2194,9 @@ public class SemanticHighlightings {
 		if (!store.getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED)) {
 			return false;
 		}
-		SemanticHighlighting[] highlightings= getSemanticHighlightings();
+		SemanticHighlighting[] highlightings = getSemanticHighlightings();
 		for (SemanticHighlighting highlighting : highlightings) {
-			String enabledKey= getEnabledPreferenceKey(highlighting);
+			String enabledKey = getEnabledPreferenceKey(highlighting);
 			if (store.getBoolean(enabledKey)) {
 				return true;
 			}
@@ -2204,7 +2207,7 @@ public class SemanticHighlightings {
 
 	/**
 	 * Returns whether the given highlighting is the highlighting for external SDK functions.
-	 * For the previewer widget in the preferences, this is swapped out with a different implementation. 
+	 * For the previewer widget in the preferences, this is swapped out with a different implementation.
 	 */
 	public static boolean isExternalSDKHighlighting(SemanticHighlighting highlighting) {
 		return highlighting instanceof ExternalSDKHighlighting;

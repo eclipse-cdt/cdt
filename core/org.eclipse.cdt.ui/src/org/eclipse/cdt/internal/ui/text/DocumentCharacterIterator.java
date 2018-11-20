@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
-
 /**
  * An <code>IDocument</code> based implementation of
  * <code>CharacterIterator</code> and <code>CharSequence</code>. Note that
@@ -34,7 +33,7 @@ import org.eclipse.jface.text.IDocument;
  */
 public class DocumentCharacterIterator implements CharacterIterator, CharSequence {
 
-	private int fIndex= -1;
+	private int fIndex = -1;
 	private final IDocument fDocument;
 	private final int fFirst;
 	private final int fLast;
@@ -80,10 +79,10 @@ public class DocumentCharacterIterator implements CharacterIterator, CharSequenc
 			throw new IllegalArgumentException();
 		if (last > document.getLength())
 			throw new IllegalArgumentException();
-		fDocument= document;
-		fFirst= first;
-		fLast= last;
-		fIndex= first;
+		fDocument = document;
+		fFirst = first;
+		fLast = last;
+		fIndex = first;
 		invariant();
 	}
 
@@ -144,7 +143,7 @@ public class DocumentCharacterIterator implements CharacterIterator, CharSequenc
 	@Override
 	public char setIndex(int position) {
 		if (position >= getBeginIndex() && position <= getEndIndex())
-			fIndex= position;
+			fIndex = position;
 		else
 			throw new IllegalArgumentException();
 
@@ -232,7 +231,7 @@ public class DocumentCharacterIterator implements CharacterIterator, CharSequenc
 			throw new IndexOutOfBoundsException();
 		return new DocumentCharacterIterator(fDocument, getBeginIndex() + start, getBeginIndex() + end);
 	}
-	
+
 	/*
 	 * @see java.lang.CharSequence#toString()
 	 */
@@ -240,7 +239,7 @@ public class DocumentCharacterIterator implements CharacterIterator, CharSequenc
 	public String toString() {
 		int length = length();
 		char[] chs = new char[length];
-		for (int i=0; i<length; ++i) {
+		for (int i = 0; i < length; ++i) {
 			chs[i] = charAt(i);
 		}
 		return new String(chs);

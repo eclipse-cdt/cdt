@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -19,11 +19,11 @@ public class IndexerStatistics {
 	public int fParsingTime;
 	public int fAddToIndexTime;
 	public int fErrorCount;
-	public int fReferenceCount= 0;
-	public int fDeclarationCount= 0;
-	public int fProblemBindingCount= 0;
-	public int fUnresolvedIncludesCount= 0;
-	public int fPreprocessorProblemCount= 0;
-	public int fSyntaxProblemsCount= 0;
-	public int fTooManyTokensCount= 0;
+	public int fReferenceCount = 0;
+	public int fDeclarationCount = 0;
+	public int fProblemBindingCount = 0;
+	public int fUnresolvedIncludesCount = 0;
+	public int fPreprocessorProblemCount = 0;
+	public int fSyntaxProblemsCount = 0;
+	public int fTooManyTokensCount = 0;
 }

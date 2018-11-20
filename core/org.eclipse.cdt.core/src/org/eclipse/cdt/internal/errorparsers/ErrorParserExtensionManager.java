@@ -102,21 +102,21 @@ public class ErrorParserExtensionManager {
 		// inside the same category sort by parser name
 		@Override
 		public int compare(IErrorParserNamed errorParser1, IErrorParserNamed errorParser2) {
-			final String TEST_PLUGIN_ID="org.eclipse.cdt.core.tests"; //$NON-NLS-1$
-			final String DEPRECATED=CCorePlugin.getResourceString("CCorePlugin.Deprecated"); //$NON-NLS-1$
+			final String TEST_PLUGIN_ID = "org.eclipse.cdt.core.tests"; //$NON-NLS-1$
+			final String DEPRECATED = CCorePlugin.getResourceString("CCorePlugin.Deprecated"); //$NON-NLS-1$
 
 			boolean isTestPlugin1 = errorParser1.getId().startsWith(TEST_PLUGIN_ID);
 			boolean isTestPlugin2 = errorParser2.getId().startsWith(TEST_PLUGIN_ID);
-			if (isTestPlugin1==true && isTestPlugin2==false)
+			if (isTestPlugin1 == true && isTestPlugin2 == false)
 				return 1;
-			if (isTestPlugin1==false && isTestPlugin2==true)
+			if (isTestPlugin1 == false && isTestPlugin2 == true)
 				return -1;
 
 			boolean isDeprecated1 = errorParser1.getName().contains(DEPRECATED);
 			boolean isDeprecated2 = errorParser2.getName().contains(DEPRECATED);
-			if (isDeprecated1==true && isDeprecated2==false)
+			if (isDeprecated1 == true && isDeprecated2 == false)
 				return 1;
-			if (isDeprecated1==false && isDeprecated2==true)
+			if (isDeprecated1 == false && isDeprecated2 == true)
 				return -1;
 
 			return errorParser1.getName().compareTo(errorParser2.getName());
@@ -140,14 +140,14 @@ public class ErrorParserExtensionManager {
 		try {
 			doc = XmlUtil.loadXml(getStoreURI(STORAGE_ERRORPARSER_EXTENSIONS));
 		} catch (Exception e) {
-			CCorePlugin.log("Can't load preferences from "+STORAGE_ERRORPARSER_EXTENSIONS, e); //$NON-NLS-1$
+			CCorePlugin.log("Can't load preferences from " + STORAGE_ERRORPARSER_EXTENSIONS, e); //$NON-NLS-1$
 		}
 
-		if (doc!=null) {
+		if (doc != null) {
 			Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new ErrorParserComparator());
 			loadErrorParserExtensions(doc, sortedErrorParsers);
 
-			if (sortedErrorParsers.size()>0) {
+			if (sortedErrorParsers.size() > 0) {
 				fUserDefinedErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
 				for (IErrorParserNamed errorParser : sortedErrorParsers) {
 					fUserDefinedErrorParsers.put(errorParser.getId(), errorParser);
@@ -166,26 +166,29 @@ public class ErrorParserExtensionManager {
 	private static void loadErrorParserExtensions(Document doc, Set<IErrorParserNamed> errorParsers) {
 		errorParsers.clear();
 		NodeList extensionNodes = doc.getElementsByTagName(ELEM_EXTENSION);
-		for (int iext=0;iext<extensionNodes.getLength();iext++) {
+		for (int iext = 0; iext < extensionNodes.getLength(); iext++) {
 			Node extensionNode = extensionNodes.item(iext);
-			if(extensionNode.getNodeType() != Node.ELEMENT_NODE)
+			if (extensionNode.getNodeType() != Node.ELEMENT_NODE)
 				continue;
 
 			NodeList errorparserNodes = extensionNode.getChildNodes();
-			for (int ierp=0;ierp<errorparserNodes.getLength();ierp++) {
+			for (int ierp = 0; ierp < errorparserNodes.getLength(); ierp++) {
 				Node errorparserNode = errorparserNodes.item(ierp);
-				if(errorparserNode.getNodeType() != Node.ELEMENT_NODE || ! ELEM_ERRORPARSER.equals(errorparserNode.getNodeName()))
+				if (errorparserNode.getNodeType() != Node.ELEMENT_NODE
+						|| !ELEM_ERRORPARSER.equals(errorparserNode.getNodeName()))
 					continue;
 
 				String className = XmlUtil.determineAttributeValue(errorparserNode, ATTR_CLASS);
 				try {
-					IErrorParserNamed errorParser = createErrorParserCarcass(className, Platform.getExtensionRegistry());
-					if (errorParser!=null) {
+					IErrorParserNamed errorParser = createErrorParserCarcass(className,
+							Platform.getExtensionRegistry());
+					if (errorParser != null) {
 						configureErrorParser(errorParser, errorparserNode);
 						errorParsers.add(errorParser);
 					}
 				} catch (Exception e) {
-					CCorePlugin.log("Can't create class ["+className+"] while trying to load error parser extension", e); //$NON-NLS-1$ //$NON-NLS-2$
+					CCorePlugin.log(
+							"Can't create class [" + className + "] while trying to load error parser extension", e); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -231,7 +234,8 @@ public class ErrorParserExtensionManager {
 	 */
 	private static void loadErrorParserExtensions(IExtensionRegistry registry, Set<IErrorParserNamed> errorParsers) {
 		errorParsers.clear();
-		IExtensionPoint extension = registry.getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.ERROR_PARSER_SIMPLE_ID);
+		IExtensionPoint extension = registry.getExtensionPoint(CCorePlugin.PLUGIN_ID,
+				CCorePlugin.ERROR_PARSER_SIMPLE_ID);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
 			for (IExtension ext : extensions) {
@@ -242,7 +246,7 @@ public class ErrorParserExtensionManager {
 					for (IConfigurationElement cfgEl : ext.getConfigurationElements()) {
 						if (cfgEl.getName().equals(ELEM_ERRORPARSER)) {
 							IErrorParserNamed errorParser = createErrorParserCarcass(oldStyleId, oldStyleName, cfgEl);
-							if (errorParser!=null) {
+							if (errorParser != null) {
 								configureErrorParser(errorParser, cfgEl);
 								errorParsers.add(errorParser);
 							}
@@ -263,16 +267,16 @@ public class ErrorParserExtensionManager {
 		fAvailableErrorParsers.clear();
 		// put default parsers on top of the list
 		List<String> ids = new ArrayList<String>();
-		if (fDefaultErrorParserIds!=null) {
+		if (fDefaultErrorParserIds != null) {
 			for (String id : fDefaultErrorParserIds) {
 				IErrorParserNamed errorParser = null;
-				if (fUserDefinedErrorParsers!=null) {
+				if (fUserDefinedErrorParsers != null) {
 					errorParser = fUserDefinedErrorParsers.get(id);
 				}
-				if (errorParser==null) {
+				if (errorParser == null) {
 					errorParser = fExtensionErrorParsers.get(id);
 				}
-				if (errorParser!=null) {
+				if (errorParser != null) {
 					fAvailableErrorParsers.put(id, errorParser);
 					ids.add(id);
 				}
@@ -281,7 +285,7 @@ public class ErrorParserExtensionManager {
 		// then the rest in the order defined by comparator
 		Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new ErrorParserComparator());
 
-		if (fUserDefinedErrorParsers!=null) {
+		if (fUserDefinedErrorParsers != null) {
 			for (String id : fUserDefinedErrorParsers.keySet()) {
 				if (!ids.contains(id)) {
 					IErrorParserNamed errorParser = fUserDefinedErrorParsers.get(id);
@@ -311,8 +315,8 @@ public class ErrorParserExtensionManager {
 			Document doc = XmlUtil.newDocument();
 			Element elementPlugin = XmlUtil.appendElement(doc, ELEM_PLUGIN);
 
-			if (fUserDefinedErrorParsers!=null) {
-				for (Entry<String, IErrorParserNamed> entry: fUserDefinedErrorParsers.entrySet()) {
+			if (fUserDefinedErrorParsers != null) {
+				for (Entry<String, IErrorParserNamed> entry : fUserDefinedErrorParsers.entrySet()) {
 					IErrorParserNamed errorParser = entry.getValue();
 					addErrorParserExtension(elementPlugin, errorParser);
 				}
@@ -321,11 +325,12 @@ public class ErrorParserExtensionManager {
 			URI uri = getStoreURI(STORAGE_ERRORPARSER_EXTENSIONS);
 			String eol = Util.getLineSeparator(uri);
 			if (eol == null)
-				eol =  Util.getDefaultLineSeparator();
+				eol = Util.getDefaultLineSeparator();
 			XmlUtil.serializeXml(doc, uri, eol);
 
 		} catch (Exception e) {
-			throw new CoreException(CCorePlugin.createStatus("Failed serializing to file " + STORAGE_ERRORPARSER_EXTENSIONS, e)); //$NON-NLS-1$
+			throw new CoreException(
+					CCorePlugin.createStatus("Failed serializing to file " + STORAGE_ERRORPARSER_EXTENSIONS, e)); //$NON-NLS-1$
 		}
 	}
 
@@ -381,18 +386,12 @@ public class ErrorParserExtensionManager {
 			errorParser = ((ErrorParserNamedWrapper) errorParser).getErrorParser();
 
 		// <extension/>
-		Element elementExtension = XmlUtil.appendElement(elementPlugin, ELEM_EXTENSION, new String[] {
-				ATTR_ID, simpleId,
-				ATTR_NAME, name,
-				ATTR_POINT, EXTENSION_POINT_ERROR_PARSER,
-			});
+		Element elementExtension = XmlUtil.appendElement(elementPlugin, ELEM_EXTENSION,
+				new String[] { ATTR_ID, simpleId, ATTR_NAME, name, ATTR_POINT, EXTENSION_POINT_ERROR_PARSER, });
 
 		// <errorparser/>
-		Element elementErrorParser = XmlUtil.appendElement(elementExtension, ELEM_ERRORPARSER, new String[] {
-				ATTR_ID, id,
-				ATTR_NAME, name,
-				ATTR_CLASS, errorParser.getClass().getCanonicalName(),
-			});
+		Element elementErrorParser = XmlUtil.appendElement(elementExtension, ELEM_ERRORPARSER,
+				new String[] { ATTR_ID, id, ATTR_NAME, name, ATTR_CLASS, errorParser.getClass().getCanonicalName(), });
 
 		if (errorParserNamed instanceof RegexErrorParser) {
 			RegexErrorParser regexErrorParser = (RegexErrorParser) errorParserNamed;
@@ -401,14 +400,11 @@ public class ErrorParserExtensionManager {
 			for (RegexErrorPattern pattern : patterns) {
 				// <pattern/>
 				@SuppressWarnings("unused")
-				Element elementPattern = XmlUtil.appendElement(elementErrorParser, ELEM_PATTERN, new String[] {
-						ATTR_SEVERITY, severityToString(pattern.getSeverity()),
-						ATTR_REGEX, pattern.getPattern(),
-						ATTR_FILE, pattern.getFileExpression(),
-						ATTR_LINE, pattern.getLineExpression(),
-						ATTR_DESCRIPTION, pattern.getDescriptionExpression(),
-						ATTR_EAT_LINE, String.valueOf(pattern.isEatProcessedLine()),
-					});
+				Element elementPattern = XmlUtil.appendElement(elementErrorParser, ELEM_PATTERN,
+						new String[] { ATTR_SEVERITY, severityToString(pattern.getSeverity()), ATTR_REGEX,
+								pattern.getPattern(), ATTR_FILE, pattern.getFileExpression(), ATTR_LINE,
+								pattern.getLineExpression(), ATTR_DESCRIPTION, pattern.getDescriptionExpression(),
+								ATTR_EAT_LINE, String.valueOf(pattern.isEatProcessedLine()), });
 			}
 
 		}
@@ -423,8 +419,8 @@ public class ErrorParserExtensionManager {
 	private static String getSimpleId(String uniqueId) {
 		String simpleId = uniqueId;
 		int dot = uniqueId.lastIndexOf('.');
-		if (dot>=0) {
-			simpleId = uniqueId.substring(dot+1);
+		if (dot >= 0) {
+			simpleId = uniqueId.substring(dot + 1);
 		}
 		return simpleId;
 	}
@@ -437,7 +433,7 @@ public class ErrorParserExtensionManager {
 	public static void serializeDefaultErrorParserIds() throws BackingStoreException {
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 		String ids = NONE;
-		if (fDefaultErrorParserIds!=null) {
+		if (fDefaultErrorParserIds != null) {
 			ids = ErrorParserManager.toDelimitedString(fDefaultErrorParserIds.toArray(new String[0]));
 		}
 
@@ -464,11 +460,12 @@ public class ErrorParserExtensionManager {
 	 * @return new non-configured error parser
 	 */
 	private static IErrorParserNamed createErrorParserCarcass(String className, IExtensionRegistry registry) {
-		if (className==null || className.length()==0 || className.equals(RegexErrorParser.class.getName()))
+		if (className == null || className.length() == 0 || className.equals(RegexErrorParser.class.getName()))
 			return new RegexErrorParser();
 
 		try {
-			IExtensionPoint extension = registry.getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.ERROR_PARSER_SIMPLE_ID);
+			IExtensionPoint extension = registry.getExtensionPoint(CCorePlugin.PLUGIN_ID,
+					CCorePlugin.ERROR_PARSER_SIMPLE_ID);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (IExtension ext : extensions) {
@@ -476,7 +473,8 @@ public class ErrorParserExtensionManager {
 					String oldStyleId = extensionID;
 					String oldStyleName = ext.getLabel();
 					for (IConfigurationElement cfgEl : ext.getConfigurationElements()) {
-						if (cfgEl.getName().equals(ELEM_ERRORPARSER) && className.equals(cfgEl.getAttribute(ATTR_CLASS))) {
+						if (cfgEl.getName().equals(ELEM_ERRORPARSER)
+								&& className.equals(cfgEl.getAttribute(ATTR_CLASS))) {
 							return createErrorParserCarcass(oldStyleId, oldStyleName, cfgEl);
 						}
 					}
@@ -498,19 +496,20 @@ public class ErrorParserExtensionManager {
 	 * @return new non-configured error parser
 	 * @throws CoreException in case of failure
 	 */
-	private static IErrorParserNamed createErrorParserCarcass(String initialId, String initialName, IConfigurationElement ce) throws CoreException {
+	private static IErrorParserNamed createErrorParserCarcass(String initialId, String initialName,
+			IConfigurationElement ce) throws CoreException {
 		IErrorParserNamed errorParser = null;
-		if (ce.getAttribute(ATTR_CLASS)!=null) {
-			IErrorParser ep = (IErrorParser)ce.createExecutableExtension(ATTR_CLASS);
+		if (ce.getAttribute(ATTR_CLASS) != null) {
+			IErrorParser ep = (IErrorParser) ce.createExecutableExtension(ATTR_CLASS);
 			if (ep instanceof IErrorParserNamed) {
 				errorParser = (IErrorParserNamed) ep;
 				errorParser.setId(initialId);
 				errorParser.setName(initialName);
-			} else if (ep!=null) {
+			} else if (ep != null) {
 				errorParser = new ErrorParserNamedWrapper(initialId, initialName, ep);
 			}
 		}
-		if (errorParser==null) {
+		if (errorParser == null) {
 			errorParser = new RegexErrorParser(initialId, initialName);
 		}
 		return errorParser;
@@ -531,9 +530,9 @@ public class ErrorParserExtensionManager {
 			RegexErrorParser regexErrorParser = (RegexErrorParser) errorParser;
 
 			NodeList patternNodes = errorparserNode.getChildNodes();
-			for (int ipat=0;ipat<patternNodes.getLength();ipat++) {
+			for (int ipat = 0; ipat < patternNodes.getLength(); ipat++) {
 				Node patternNode = patternNodes.item(ipat);
-				if(patternNode.getNodeType() != Node.ELEMENT_NODE || ! ELEM_PATTERN.equals(patternNode.getNodeName()))
+				if (patternNode.getNodeType() != Node.ELEMENT_NODE || !ELEM_PATTERN.equals(patternNode.getNodeName()))
 					continue;
 
 				String attrSeverity = XmlUtil.determineAttributeValue(patternNode, ATTR_SEVERITY);
@@ -545,9 +544,9 @@ public class ErrorParserExtensionManager {
 
 				int severity = stringToSeverity(attrSeverity);
 
-				boolean eatLine = ! Boolean.FALSE.toString().equals(attrEatLine); // if null default to true
-				regexErrorParser.addPattern(new RegexErrorPattern(regex, fileExpr, lineExpr, DescExpr, null,
-						severity, eatLine));
+				boolean eatLine = !Boolean.FALSE.toString().equals(attrEatLine); // if null default to true
+				regexErrorParser.addPattern(
+						new RegexErrorPattern(regex, fileExpr, lineExpr, DescExpr, null, severity, eatLine));
 			}
 		}
 	}
@@ -559,12 +558,13 @@ public class ErrorParserExtensionManager {
 	 * @param cfgEl - extension configuration element
 	 * @throws CoreException
 	 */
-	private static void configureErrorParser(IErrorParserNamed errorParser, IConfigurationElement cfgEl) throws CoreException {
+	private static void configureErrorParser(IErrorParserNamed errorParser, IConfigurationElement cfgEl)
+			throws CoreException {
 		String id = cfgEl.getAttribute(ATTR_ID);
-		if (id!=null && id.length()>0)
+		if (id != null && id.length() > 0)
 			errorParser.setId(id);
 		String name = cfgEl.getAttribute(ATTR_NAME);
-		if (name!=null && name.length()>0)
+		if (name != null && name.length() > 0)
 			errorParser.setName(name);
 
 		if (errorParser instanceof RegexErrorParser) {
@@ -573,14 +573,11 @@ public class ErrorParserExtensionManager {
 			for (IConfigurationElement cepat : cfgEl.getChildren()) {
 				if (cepat.getName().equals(ELEM_PATTERN)) {
 
-					boolean eat = ! Boolean.FALSE.toString().equals(cepat.getAttribute(ATTR_EAT_LINE));
+					boolean eat = !Boolean.FALSE.toString().equals(cepat.getAttribute(ATTR_EAT_LINE));
 					regexErrorParser.addPattern(new RegexErrorPattern(cepat.getAttribute(ATTR_REGEX),
-							cepat.getAttribute(ATTR_FILE),
-							cepat.getAttribute(ATTR_LINE),
-							cepat.getAttribute(ATTR_DESCRIPTION),
-							cepat.getAttribute(ATTR_VARIABLE),
-							stringToSeverity(cepat.getAttribute(ATTR_SEVERITY)),
-							eat));
+							cepat.getAttribute(ATTR_FILE), cepat.getAttribute(ATTR_LINE),
+							cepat.getAttribute(ATTR_DESCRIPTION), cepat.getAttribute(ATTR_VARIABLE),
+							stringToSeverity(cepat.getAttribute(ATTR_SEVERITY)), eat));
 				}
 			}
 		}
@@ -616,7 +613,7 @@ public class ErrorParserExtensionManager {
 			fErrorParserContexts.put(errorParserId, contexts);
 		}
 	}
-	
+
 	/**
 	 * Return error parser as stored in internal list.
 	 *
@@ -653,12 +650,12 @@ public class ErrorParserExtensionManager {
 	 * @param errorParsers - array of user defined error parsers
 	 */
 	public static void setUserDefinedErrorParsersInternal(IErrorParserNamed[] errorParsers) {
-		if (errorParsers==null) {
+		if (errorParsers == null) {
 			fUserDefinedErrorParsers = null;
 		} else {
 			Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new ErrorParserComparator());
 			sortedErrorParsers.addAll(Arrays.asList(errorParsers));
-			fUserDefinedErrorParsers= new LinkedHashMap<String, IErrorParserNamed>();
+			fUserDefinedErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
 			// set customized list
 			for (IErrorParserNamed errorParser : sortedErrorParsers) {
 				fUserDefinedErrorParsers.put(errorParser.getId(), errorParser);
@@ -686,7 +683,7 @@ public class ErrorParserExtensionManager {
 	 * @return default error parsers IDs to be used if error parser list is empty.
 	 */
 	public static String[] getUserDefinedErrorParserIds() {
-		if (fUserDefinedErrorParsers!=null)
+		if (fUserDefinedErrorParsers != null)
 			return fUserDefinedErrorParsers.keySet().toArray(new String[0]);
 		return null;
 	}
@@ -711,7 +708,7 @@ public class ErrorParserExtensionManager {
 	 * @param ids - default error parsers IDs
 	 */
 	public static void setDefaultErrorParserIdsInternal(String[] ids) {
-		if (ids==null) {
+		if (ids == null) {
 			fDefaultErrorParserIds = null;
 		} else {
 			fDefaultErrorParserIds = new ArrayList<String>(Arrays.asList(ids));
@@ -767,7 +764,7 @@ public class ErrorParserExtensionManager {
 
 	/**
 	 * Returns all the contexts of the error parser with the given ID. Contexts are {@code String}
-	 * values belonging to an error parser, defined as part the "errorparser" extension point 
+	 * values belonging to an error parser, defined as part the "errorparser" extension point
 	 * element.
 	 * <p>
 	 * If an error parser does not have an explicit context, it is assumed that the error parser

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -24,6 +24,7 @@ public class FunctionTemplateHandle extends FunctionTemplateDeclarationHandle im
 	public FunctionTemplateHandle(ICElement parent, ICPPFunctionTemplate func) throws DOMException {
 		super(parent, ICElement.C_TEMPLATE_FUNCTION, func);
 	}
+
 	public FunctionTemplateHandle(ICElement parent, ICPPTemplateInstance func) throws DOMException {
 		super(parent, ICElement.C_TEMPLATE_FUNCTION, func);
 	}

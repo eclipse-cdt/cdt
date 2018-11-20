@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -30,30 +30,31 @@ import org.eclipse.debug.core.ILaunch;
  * @since 2.1
  */
 public class PDASuspendTrigger extends DsfSuspendTrigger {
-    
-    public PDASuspendTrigger(DsfSession session, ILaunch launch) {
-        super(session, launch);
-    }
-    
-    @Override
-    protected void getLaunchTopContainers(final DataRequestMonitor<IContainerDMContext[]> rm) {
-        try {
-            getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
-                    PDACommandControl control = 
-                        getServicesTracker().getService(PDACommandControl.class);
-                    if (control != null) {
-                        rm.setData(new IContainerDMContext[] { control.getContext() });
-                    } else {
-                        rm.setStatus(new Status(IStatus.ERROR, PDAUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Not available", null));
-                    } 
-                    rm.done();
-                    
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            rm.setStatus(new Status(IStatus.ERROR, PDAUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Not available", e));
-            rm.done();
-        }
-    }
+
+	public PDASuspendTrigger(DsfSession session, ILaunch launch) {
+		super(session, launch);
+	}
+
+	@Override
+	protected void getLaunchTopContainers(final DataRequestMonitor<IContainerDMContext[]> rm) {
+		try {
+			getSession().getExecutor().execute(new DsfRunnable() {
+				public void run() {
+					PDACommandControl control = getServicesTracker().getService(PDACommandControl.class);
+					if (control != null) {
+						rm.setData(new IContainerDMContext[] { control.getContext() });
+					} else {
+						rm.setStatus(new Status(IStatus.ERROR, PDAUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+								"Not available", null));
+					}
+					rm.done();
+
+				}
+			});
+		} catch (RejectedExecutionException e) {
+			rm.setStatus(new Status(IStatus.ERROR, PDAUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
+					"Not available", e));
+			rm.done();
+		}
+	}
 }

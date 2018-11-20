@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  ******************************************************************************/
@@ -31,7 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 class NonExtractableStatementFinder extends ASTVisitor {
 	private boolean containsContinueStmt;
 	private boolean containsBreakStmt;
-	
+
 	{
 		shouldVisitStatements = true;
 	}
@@ -44,11 +44,9 @@ class NonExtractableStatementFinder extends ASTVisitor {
 		} else if (statement instanceof IASTBreakStatement) {
 			containsBreakStmt = true;
 			return ASTVisitor.PROCESS_SKIP;
-		} else if (statement instanceof IASTForStatement ||
-				statement instanceof ICPPASTRangeBasedForStatement ||
-				statement instanceof IASTWhileStatement ||
-				statement instanceof IASTDoStatement ||
-				statement instanceof IASTSwitchStatement) {
+		} else if (statement instanceof IASTForStatement || statement instanceof ICPPASTRangeBasedForStatement
+				|| statement instanceof IASTWhileStatement || statement instanceof IASTDoStatement
+				|| statement instanceof IASTSwitchStatement) {
 			// Extracting a whole loop or switch statement is allowed.
 			return ASTVisitor.PROCESS_SKIP;
 		}
@@ -58,7 +56,7 @@ class NonExtractableStatementFinder extends ASTVisitor {
 	public boolean containsContinue() {
 		return containsContinueStmt;
 	}
-	
+
 	public boolean containsBreak() {
 		return containsBreakStmt;
 	}

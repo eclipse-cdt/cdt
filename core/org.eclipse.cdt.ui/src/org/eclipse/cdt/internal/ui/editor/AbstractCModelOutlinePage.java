@@ -111,7 +111,8 @@ public abstract class AbstractCModelOutlinePage extends Page
 		public COutlineLabelProvider(long textFlags, int imageFlags) {
 			super(textFlags, imageFlags);
 			PreferenceConstants.getPreferenceStore().addPropertyChangeListener(this);
-			fSimpleName= PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
+			fSimpleName = PreferenceConstants.getPreferenceStore()
+					.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
 		}
 
 		@Override
@@ -119,7 +120,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 			PreferenceConstants.getPreferenceStore().removePropertyChangeListener(this);
 			super.dispose();
 		}
-		
+
 		@Override
 		protected long evaluateTextFlags(Object element) {
 			if (fSimpleName) {
@@ -127,15 +128,16 @@ public abstract class AbstractCModelOutlinePage extends Page
 			}
 			return super.evaluateTextFlags(element);
 		}
-		
+
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (PreferenceConstants.OUTLINE_GROUP_MEMBERS.equals(event.getProperty())) {
 				final Object newValue = event.getNewValue();
 				if (newValue instanceof Boolean) {
-					fSimpleName= ((Boolean) newValue).booleanValue();
+					fSimpleName = ((Boolean) newValue).booleanValue();
 				} else {
-					fSimpleName= PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
+					fSimpleName = PreferenceConstants.getPreferenceStore()
+							.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
 				}
 			}
 		}
@@ -155,7 +157,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 		@Override
 		protected void internalExpandToLevel(Widget node, int level) {
 			if (node instanceof Item) {
-				Item i= (Item) node;
+				Item i = (Item) node;
 				final Object data = i.getData();
 				// Don't expand include grouping by default.
 				if (data instanceof IncludesGrouping) {
@@ -167,15 +169,15 @@ public abstract class AbstractCModelOutlinePage extends Page
 			}
 			super.internalExpandToLevel(node, level);
 		}
-		
+
 		private boolean shouldExpandElement(ICElement cElement) {
-			final ICElement parent= cElement.getParent();
+			final ICElement parent = cElement.getParent();
 			if (parent == null) {
 				return false;
 			}
 			// Expand classes and namespaces.
-			final int elementType= cElement.getElementType();
-			final int parentType= parent.getElementType();
+			final int elementType = cElement.getElementType();
+			final int parentType = parent.getElementType();
 			switch (elementType) {
 			case ICElement.C_CLASS:
 			case ICElement.C_TEMPLATE_CLASS:
@@ -196,7 +198,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 			setToolTipText(ActionMessages.IncludesGroupingAction_tooltip);
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_GROUP_INCLUDE);
 
-			boolean enabled= isIncludesGroupingEnabled();
+			boolean enabled = isIncludesGroupingEnabled();
 			setChecked(enabled);
 			fOutLinePage = outlinePage;
 		}
@@ -213,7 +215,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 
 	/**
 	 * This action toggles macro grouping.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	protected static class MacroGroupingAction extends Action {
@@ -225,9 +227,8 @@ public abstract class AbstractCModelOutlinePage extends Page
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_MACROS);
 			this.setImageDescriptor(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO));
 			this.setDisabledImageDescriptor(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO));
-			
 
-			boolean enabled= isMacroGroupingEnabled();
+			boolean enabled = isMacroGroupingEnabled();
 			setChecked(enabled);
 		}
 
@@ -240,11 +241,11 @@ public abstract class AbstractCModelOutlinePage extends Page
 			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS);
 		}
 	}
-	
+
 	/**
 	 * This action toggles whether this C Outline page links
 	 * its selection to the active editor.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public class ToggleLinkingAction extends AbstractToggleLinkingAction {
@@ -263,16 +264,15 @@ public abstract class AbstractCModelOutlinePage extends Page
 				synchronizeSelectionWithEditor();
 		}
 	}
-	
-	private static final long TEXT_FLAGS =
-			AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS | CElementLabels.F_APP_TYPE_SIGNATURE |
-			CElementLabels.M_APP_RETURNTYPE;
+
+	private static final long TEXT_FLAGS = AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS
+			| CElementLabels.F_APP_TYPE_SIGNATURE | CElementLabels.M_APP_RETURNTYPE;
 	private static final int IMAGE_FLAGS = AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS;
 	protected ITextEditor fEditor;
 	protected ITranslationUnit fInput;
 	private ProblemTreeViewer fTreeViewer;
-	private ListenerList<ISelectionChangedListener> fSelectionChangedListeners =
-			new ListenerList<>(ListenerList.IDENTITY);
+	private ListenerList<ISelectionChangedListener> fSelectionChangedListeners = new ListenerList<>(
+			ListenerList.IDENTITY);
 	protected TogglePresentationAction fTogglePresentation;
 	protected String fContextMenuId;
 	private Menu fMenu;
@@ -300,14 +300,14 @@ public abstract class AbstractCModelOutlinePage extends Page
 	 */
 	public AbstractCModelOutlinePage(String contextMenuId, ITextEditor editor) {
 		super();
-		fEditor= editor;
-		fInput= null;
-		fContextMenuId= contextMenuId;
+		fEditor = editor;
+		fInput = null;
+		fContextMenuId = contextMenuId;
 
-		fTogglePresentation= new TogglePresentationAction();
+		fTogglePresentation = new TogglePresentationAction();
 		fTogglePresentation.setEditor(editor);
-		
-		fOpenIncludeAction= new OpenIncludeAction(this);
+
+		fOpenIncludeAction = new OpenIncludeAction(this);
 	}
 
 	@Override
@@ -353,16 +353,16 @@ public abstract class AbstractCModelOutlinePage extends Page
 		return new IShowInTarget() {
 			@Override
 			public boolean show(ShowInContext context) {
-				ISelection sel= context.getSelection();
+				ISelection sel = context.getSelection();
 				if (sel instanceof ITextSelection) {
-					ITextSelection tsel= (ITextSelection) sel;
-					int offset= tsel.getOffset();
-					ICElement element= null;
+					ITextSelection tsel = (ITextSelection) sel;
+					int offset = tsel.getOffset();
+					ICElement element = null;
 					if (fEditor instanceof CEditor) {
-						element= ((CEditor) fEditor).getElementAt(offset, false);
+						element = ((CEditor) fEditor).getElementAt(offset, false);
 					} else if (fInput != null) {
 						try {
-							element= fInput.getElementAtOffset(offset);
+							element = fInput.getElementAtOffset(offset);
 						} catch (CModelException e) {
 							CUIPlugin.log(e);
 						}
@@ -394,22 +394,22 @@ public abstract class AbstractCModelOutlinePage extends Page
 	public void synchronizeSelectionWithEditor() {
 		if (fInput == null || fEditor == null || fTreeViewer == null)
 			return;
-	
+
 		ITextSelection editorSelection = (ITextSelection) fEditor.getSelectionProvider().getSelection();
 		if (editorSelection == null)
 			return;
-		
+
 		int offset = editorSelection.getOffset();
-		
-		ICElement editorElement= null;
+
+		ICElement editorElement = null;
 		try {
-			 if (fInput.isStructureKnown() && fInput.isConsistent()) {
-				 editorElement = fInput.getElementAtOffset(offset);
-			 }
+			if (fInput.isStructureKnown() && fInput.isConsistent()) {
+				editorElement = fInput.getElementAtOffset(offset);
+			}
 		} catch (CModelException e) {
 			return;
 		}
-	
+
 		if (editorElement != null) {
 			IStructuredSelection selection = new StructuredSelection(editorElement);
 			fTreeViewer.setSelection(selection, true);
@@ -421,32 +421,32 @@ public abstract class AbstractCModelOutlinePage extends Page
 	 */
 	protected void contextMenuAboutToShow(IMenuManager menu) {
 		CUIPlugin.createStandardGroups(menu);
-		
-		ISelection selection= getSelection();
-		if (fOpenViewActionGroup != null && OpenViewActionGroup.canActionBeAdded(selection)){
+
+		ISelection selection = getSelection();
+		if (fOpenViewActionGroup != null && OpenViewActionGroup.canActionBeAdded(selection)) {
 			fOpenViewActionGroup.fillContextMenu(menu);
 		}
-	
+
 		if (OpenIncludeAction.canActionBeAdded(selection)) {
 			menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenIncludeAction);
 		}
-	
-		if (fSelectionSearchGroup != null && SelectionSearchGroup.canActionBeAdded(selection)){
+
+		if (fSelectionSearchGroup != null && SelectionSearchGroup.canActionBeAdded(selection)) {
 			fSelectionSearchGroup.fillContextMenu(menu);
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		}
-		
+
 		if (fSourceActionGroup != null) {
 			fSourceActionGroup.fillContextMenu(menu);
 		}
-	
+
 		if (fRefactoringActionGroup != null) {
 			fRefactoringActionGroup.fillContextMenu(menu);
 		}
 	}
 
 	protected CContentOutlinerProvider createContentProvider(TreeViewer viewer) {
-		IWorkbenchPart part= getSite().getPage().getActivePart();
+		IWorkbenchPart part = getSite().getPage().getActivePart();
 		if (part == null) {
 			return new CContentOutlinerProvider(viewer);
 		}
@@ -466,13 +466,13 @@ public abstract class AbstractCModelOutlinePage extends Page
 	private CUILabelProvider createLabelProvider() {
 		return new COutlineLabelProvider(TEXT_FLAGS, IMAGE_FLAGS);
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		fTreeViewer = createTreeViewer(parent);
 		initDragAndDrop();
-	
-		MenuManager manager= new MenuManager(fContextMenuId);
+
+		MenuManager manager = new MenuManager(fContextMenuId);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
 			@Override
@@ -480,10 +480,10 @@ public abstract class AbstractCModelOutlinePage extends Page
 				contextMenuAboutToShow(manager);
 			}
 		});
-		Control control= fTreeViewer.getControl();
-		fMenu= manager.createContextMenu(control);
+		Control control = fTreeViewer.getControl();
+		fMenu = manager.createContextMenu(control);
 		control.setMenu(fMenu);
-	
+
 		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
@@ -493,29 +493,29 @@ public abstract class AbstractCModelOutlinePage extends Page
 			}
 		});
 		// register global actions
-		IPageSite site= getSite();
+		IPageSite site = getSite();
 		site.registerContextMenu(fContextMenuId, manager, fTreeViewer);
 		site.setSelectionProvider(fTreeViewer);
-		
-		IActionBars bars= site.getActionBars();		
+
+		IActionBars bars = site.getActionBars();
 		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY,
 				fTogglePresentation);
-	
+
 		fSelectionSearchGroup = createSearchActionGroup();
 		fOpenViewActionGroup = createOpenViewActionGroup();
 		fSourceActionGroup = createSourceActionGroup();
-		fRefactoringActionGroup= createRefactoringActionGroup();
+		fRefactoringActionGroup = createRefactoringActionGroup();
 		// Custom filter group
-		fCustomFiltersActionGroup= createCustomFiltersActionGroup();
-	
+		fCustomFiltersActionGroup = createCustomFiltersActionGroup();
+
 		// Do this before setting input but after the initializations of the fields filtering
 		registerActionBars(bars);
 		bars.updateActionBars();
-		
+
 		fTreeViewer.setInput(fInput);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, ICHelpContextIds.COUTLINE_VIEW);
-		
-		IHandlerService handlerService= site.getService(IHandlerService.class);
+
+		IHandlerService handlerService = site.getService(IHandlerService.class);
 		handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, new ActionHandler(fCollapseAllAction));
 	}
 
@@ -523,68 +523,68 @@ public abstract class AbstractCModelOutlinePage extends Page
 	public void dispose() {
 		if (fTreeViewer != null) {
 			fTreeViewer.removeSelectionChangedListener(this);
-			fTreeViewer= null;
+			fTreeViewer = null;
 		}
-		
+
 		if (fTogglePresentation != null) {
 			fTogglePresentation.setEditor(null);
-			fTogglePresentation= null;
+			fTogglePresentation = null;
 		}
-		
+
 		if (fMemberFilterActionGroup != null) {
 			fMemberFilterActionGroup.dispose();
-			fMemberFilterActionGroup= null;
+			fMemberFilterActionGroup = null;
 		}
-		
+
 		if (fOpenViewActionGroup != null) {
-		    fOpenViewActionGroup.dispose();
-		    fOpenViewActionGroup= null;
+			fOpenViewActionGroup.dispose();
+			fOpenViewActionGroup = null;
 		}
-	
+
 		if (fRefactoringActionGroup != null) {
 			fRefactoringActionGroup.dispose();
-			fRefactoringActionGroup= null;
+			fRefactoringActionGroup = null;
 		}
-	
+
 		if (fSelectionSearchGroup != null) {
 			fSelectionSearchGroup.dispose();
-			fSelectionSearchGroup= null;
+			fSelectionSearchGroup = null;
 		}
-	
+
 		if (fCustomFiltersActionGroup != null) {
 			fCustomFiltersActionGroup.dispose();
-			fCustomFiltersActionGroup= null;
+			fCustomFiltersActionGroup = null;
 		}
-	
+
 		if (fSelectionChangedListeners != null) {
 			fSelectionChangedListeners.clear();
 			// don't set the listeners to null, the outline page may be reused.
 		}
-	
+
 		if (fMenu != null && !fMenu.isDisposed()) {
 			fMenu.dispose();
-			fMenu= null;
+			fMenu = null;
 		}
-	
-		fInput= null;
-		
+
+		fInput = null;
+
 		super.dispose();
 	}
 
 	/**
 	 * Register actions to the action bars.
-	 * 
+	 *
 	 * @param actionBars
 	 */
 	protected void registerActionBars(IActionBars actionBars) {
-		IToolBarManager toolBarManager= actionBars.getToolBarManager();
-		
+		IToolBarManager toolBarManager = actionBars.getToolBarManager();
+
 		fCollapseAllAction = new CollapseAllAction(fTreeViewer);
 		toolBarManager.add(fCollapseAllAction);
-		LexicalSortingAction action= new LexicalSortingAction(getTreeViewer());
+		LexicalSortingAction action = new LexicalSortingAction(getTreeViewer());
 		toolBarManager.add(action);
-	
-		fMemberFilterActionGroup= createMemberFilterActionGroup();
+
+		fMemberFilterActionGroup = createMemberFilterActionGroup();
 		if (fMemberFilterActionGroup != null) {
 			fMemberFilterActionGroup.fillActionBars(actionBars);
 		}
@@ -600,12 +600,12 @@ public abstract class AbstractCModelOutlinePage extends Page
 		if (fSelectionSearchGroup != null) {
 			fSelectionSearchGroup.fillActionBars(actionBars);
 		}
-		IMenuManager menu= actionBars.getMenuManager();
+		IMenuManager menu = actionBars.getMenuManager();
 		menu.add(new Separator("EndFilterGroup")); //$NON-NLS-1$
-		
-		fToggleLinkingAction= new ToggleLinkingAction();
+
+		fToggleLinkingAction = new ToggleLinkingAction();
 		menu.add(fToggleLinkingAction);
-		
+
 		menu.add(new Separator("group.layout")); //$NON-NLS-1$
 		menu.add(new IncludeGroupingAction(this));
 		menu.add(new MacroGroupingAction(this));
@@ -636,7 +636,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 		// default: no refactoring actions
 		return null;
 	}
-	
+
 	/**
 	 * @return an ActionGroup contributing source actions or
 	 *         {@code null} if source actions are not supported
@@ -677,7 +677,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 	protected void fireSelectionChanged(ISelection selection) {
 		// Create an event.
 		SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
-	
+
 		// Fire the event.
 		Object[] listeners = fSelectionChangedListeners.getListeners();
 		for (int i = 0; i < listeners.length; ++i) {
@@ -687,7 +687,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 			fRefactoringActionGroup.setContext(new ActionContext(selection));
 			fRefactoringActionGroup.updateActionBars();
 		}
-		
+
 		if (fSourceActionGroup != null) {
 			fSourceActionGroup.setContext(new ActionContext(selection));
 			fSourceActionGroup.updateActionBars();
@@ -737,12 +737,12 @@ public abstract class AbstractCModelOutlinePage extends Page
 
 	@Override
 	public void setSelection(ISelection selection) {
-		if (fTreeViewer != null) 
+		if (fTreeViewer != null)
 			fTreeViewer.setSelection(selection);
 	}
 
 	/**
-	 * Set the current input to the content provider.  
+	 * Set the current input to the content provider.
 	 * @param unit
 	 */
 	public void setInput(ITranslationUnit unit) {
@@ -753,21 +753,17 @@ public abstract class AbstractCModelOutlinePage extends Page
 	}
 
 	private void initDragAndDrop() {
-		int ops= DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
-		Transfer[] transfers= new Transfer[] {
-			LocalSelectionTransfer.getTransfer()
-		};
-		
+		int ops = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
+		Transfer[] transfers = new Transfer[] { LocalSelectionTransfer.getTransfer() };
+
 		// Drop adapter.
-		TransferDropTargetListener[] dropListeners= new TransferDropTargetListener[] {
-			new SelectionTransferDropAdapter(fTreeViewer)
-		};
+		TransferDropTargetListener[] dropListeners = new TransferDropTargetListener[] {
+				new SelectionTransferDropAdapter(fTreeViewer) };
 		fTreeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, new DelegatingDropAdapter(dropListeners));
-		
+
 		// Drag adapter.
-		TransferDragSourceListener[] dragListeners= new TransferDragSourceListener[] {
-			new SelectionTransferDragAdapter(fTreeViewer)
-		};
+		TransferDragSourceListener[] dragListeners = new TransferDragSourceListener[] {
+				new SelectionTransferDragAdapter(fTreeViewer) };
 		fTreeViewer.addDragSupport(ops, transfers, new CDTViewerDragAdapter(fTreeViewer, dragListeners));
 	}
 }

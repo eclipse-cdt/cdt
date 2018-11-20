@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -26,51 +26,52 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * Toggle tracepoints target factory for the CEditor.
  * We use a separate factory so that we can control it through an action set.
- * 
+ *
  * @since 6.1
  */
 public class ToggleCTracepointsTargetFactory implements IToggleBreakpointsTargetFactory {
-    
-    public static String TOGGLE_C_TRACEPOINT_TARGET_ID = CDebugUIPlugin.getUniqueIdentifier() + ".toggleCTracepointTarget"; //$NON-NLS-1$
-    
-    private static Set<String> TOGGLE_TARGET_IDS = new HashSet<String>(1);
-    static {
-        TOGGLE_TARGET_IDS.add(TOGGLE_C_TRACEPOINT_TARGET_ID);
-    }
-    
-    private ToggleTracepointAdapter fCToggleTracepointTarget = new ToggleTracepointAdapter();
-    
-    @Override
+
+	public static String TOGGLE_C_TRACEPOINT_TARGET_ID = CDebugUIPlugin.getUniqueIdentifier()
+			+ ".toggleCTracepointTarget"; //$NON-NLS-1$
+
+	private static Set<String> TOGGLE_TARGET_IDS = new HashSet<String>(1);
+	static {
+		TOGGLE_TARGET_IDS.add(TOGGLE_C_TRACEPOINT_TARGET_ID);
+	}
+
+	private ToggleTracepointAdapter fCToggleTracepointTarget = new ToggleTracepointAdapter();
+
+	@Override
 	public IToggleBreakpointsTarget createToggleTarget(String targetID) {
-        if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
-            return fCToggleTracepointTarget;
-        }
-        return null;
-    }
-    
-    @Override
+		if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
+			return fCToggleTracepointTarget;
+		}
+		return null;
+	}
+
+	@Override
 	public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
-        return null;
-    }
-    
-    @Override
+		return null;
+	}
+
+	@Override
 	public String getToggleTargetDescription(String targetID) {
-        if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
-            return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CTracepointDescription"); //$NON-NLS-1$
-        }
-        return null;
-    }
-    
-    @Override
+		if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
+			return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CTracepointDescription"); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	@Override
 	public String getToggleTargetName(String targetID) {
-        if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
-            return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CTracepointName"); //$NON-NLS-1$
-        }
-        return null;
-    }
-    
-    @Override
-    public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
-        return TOGGLE_TARGET_IDS;
-    }
+		if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
+			return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CTracepointName"); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	@Override
+	public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
+		return TOGGLE_TARGET_IDS;
+	}
 }

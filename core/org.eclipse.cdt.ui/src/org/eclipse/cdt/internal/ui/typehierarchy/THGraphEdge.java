@@ -10,22 +10,22 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 class THGraphEdge {
 	private THGraphNode fFrom;
 	private THGraphNode fTo;
-	
+
 	THGraphEdge(THGraphNode from, THGraphNode to) {
-		fFrom= from;
-		fTo= to;
+		fFrom = from;
+		fTo = to;
 	}
-	
+
 	THGraphNode getStartNode() {
 		return fFrom;
 	}
-	
+
 	THGraphNode getEndNode() {
 		return fTo;
 	}

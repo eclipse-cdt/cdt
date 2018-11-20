@@ -61,24 +61,22 @@ import org.eclipse.cdt.core.dom.ast.IType;
 public class QtFunctionCallUtil {
 
 	private static final Pattern SignalRegex = Pattern.compile("^\\s*" + QtKeywords.SIGNAL + ".*");
-	private static final Pattern MethodRegex = Pattern.compile("^\\s*(?:" + QtKeywords.SIGNAL + '|' + QtKeywords.SLOT + ").*");
+	private static final Pattern MethodRegex = Pattern
+			.compile("^\\s*(?:" + QtKeywords.SIGNAL + '|' + QtKeywords.SLOT + ").*");
 
 	/**
 	 * Return true if the specified name is a QObject::connect or QObject::disconnect function
 	 * and false otherwise.
 	 */
 	public static boolean isQObjectFunctionCall(IASTCompletionContext astContext, boolean isPrefix, IASTName name) {
-		if (name == null
-		 || name.getSimpleID() == null
-		 || name.getSimpleID().length <= 0)
+		if (name == null || name.getSimpleID() == null || name.getSimpleID().length <= 0)
 			return false;
 
 		// Bug332201: Qt content assist should always be applied to the most specific part of
 		//            the target name.
 		IBinding[] funcBindings = astContext.findBindings(name.getLastName(), isPrefix);
 		for (IBinding funcBinding : funcBindings)
-			if (QtKeywords.is_QObject_connect(funcBinding)
-			 || QtKeywords.is_QObject_disconnect(funcBinding))
+			if (QtKeywords.is_QObject_connect(funcBinding) || QtKeywords.is_QObject_disconnect(funcBinding))
 				return true;
 
 		return false;
@@ -102,13 +100,15 @@ public class QtFunctionCallUtil {
 		return null;
 	}
 
-	private static IType getSignalTargetType(int sigExpIndex, IASTFunctionCallExpression call, IASTInitializerClause[] args) {
+	private static IType getSignalTargetType(int sigExpIndex, IASTFunctionCallExpression call,
+			IASTInitializerClause[] args) {
 		// When the SIGNAL expansion is first, the type is based on the receiver of
 		// the function call.  Otherwise the type is the previous argument.
 		return ASTUtil.getBaseType(sigExpIndex == 0 ? call : args[sigExpIndex - 1]);
 	}
 
-	private static IType getMethodTargetType(int methodExpIndex, int sigExpIndex, IASTFunctionCallExpression call, IASTInitializerClause[] args) {
+	private static IType getMethodTargetType(int methodExpIndex, int sigExpIndex, IASTFunctionCallExpression call,
+			IASTInitializerClause[] args) {
 		// If the method is right after the signal, then the type is based on the receiver
 		// of the function call.  Otherwise the method type is based on the parameter right
 		// before the expansion.
@@ -118,7 +118,7 @@ public class QtFunctionCallUtil {
 	}
 
 	private static int getExpansionArgIndex(IASTInitializerClause[] args, int begin, Pattern macroNameRegex) {
-		for(int i = begin; i < args.length; ++i) {
+		for (int i = begin; i < args.length; ++i) {
 			IASTInitializerClause arg = args[i];
 			String raw = arg.getRawSignature();
 			Matcher m = macroNameRegex.matcher(raw);

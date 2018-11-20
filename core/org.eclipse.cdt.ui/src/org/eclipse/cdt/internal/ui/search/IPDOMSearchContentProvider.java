@@ -37,18 +37,17 @@ public interface IPDOMSearchContentProvider {
 
 	/** This node encapsulates results in the search tree for results not resolvable to files. */
 	static Object URI_CONTAINER = new Object();
-	
+
 	/** This node appears in the tree when the indexer was running during the search
-	 * to warn the user that the results are suspicious.  
+	 * to warn the user that the results are suspicious.
 	 * <p>
 	 * TODO: it would be better if IIndexManager told us which projects specifically
 	 * were being indexed at the time, so we could annotate per-project whose results are suspicious
-	 * (which may be none at all for a given search).  
+	 * (which may be none at all for a given search).
 	 * See the handling of {@link CSearchResult#wasIndexerBusy()}.
 	 */
-	static IStatus INCOMPLETE_RESULTS_NODE = 
-		new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
-				CSearchMessages.CSearchMessages_IndexRunningIncompleteWarning);
+	static IStatus INCOMPLETE_RESULTS_NODE = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+			CSearchMessages.CSearchMessages_IndexRunningIncompleteWarning);
 
 	public void elementsChanged(Object[] elements);
 

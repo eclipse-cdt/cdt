@@ -118,7 +118,7 @@ public class ProcessClosure {
 	/**
 	 * Creates a process closure and connects the launched process with a
 	 * console document.
-	 * 
+	 *
 	 * @param outputStream
 	 *            prcess stdout is written to this stream. Cannot be <code>null</code>.
 	 * @param errorStream
@@ -212,6 +212,7 @@ public class ProcessClosure {
 		}
 		return false;
 	}
+
 	/**
 	 * Forces the termination the launched process
 	 */

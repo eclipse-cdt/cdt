@@ -37,15 +37,15 @@ import org.eclipse.jface.wizard.IWizard;
 public class AutotoolsBuildWizard extends AbstractCWizard {
 	public static final String OTHERS_LABEL = AutotoolsWizardMessages.getResourceString("AutotoolsBuildWizard.1"); //$NON-NLS-1$
 	public static final String AUTOTOOLS_PROJECTTYPE_ID = "org.eclipse.linuxtools.cdt.autotools.core.projectType"; //$NON-NLS-1$
-	
+
 	/**
 	 * @since 5.1
 	 */
 	public static final String EMPTY_PROJECT = AutotoolsWizardMessages.getResourceString("AutotoolsBuildWizard.2"); //$NON-NLS-1$
 	public static final String AUTOTOOLS_TOOLCHAIN_ID = "org.eclipse.linuxtools.cdt.autotools.core.toolChain"; //$NON-NLS-1$
-	
+
 	/**
-	 * Creates and returns an array of items to be displayed 
+	 * Creates and returns an array of items to be displayed
 	 */
 	@Override
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {
@@ -63,7 +63,7 @@ public class AutotoolsBuildWizard extends AbstractCWizard {
 			IProjectType pt = e.getValue();
 			AutotoolsBuildWizardHandler h = new AutotoolsBuildWizardHandler(pt, parent, wizard);
 			IToolChain[] tcs = ManagedBuildManager.getExtensionToolChains(pt);
-			for(int i = 0; i < tcs.length; i++){
+			for (int i = 0; i < tcs.length; i++) {
 				IToolChain t = tcs[i];
 
 				IToolChain parent = t;
@@ -74,7 +74,7 @@ public class AutotoolsBuildWizard extends AbstractCWizard {
 				if (!parent.getId().equals(AUTOTOOLS_TOOLCHAIN_ID))
 					continue;
 
-				if(t.isSystemObject()) 
+				if (t.isSystemObject())
 					continue;
 				if (!isValid(t, supportedOnly, wizard))
 					continue;

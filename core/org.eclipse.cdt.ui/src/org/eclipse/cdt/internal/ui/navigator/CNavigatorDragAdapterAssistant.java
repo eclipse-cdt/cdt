@@ -30,18 +30,16 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
- * A Common Navigator drag assistant supporting <code>LocalSelectionTransfer</code> of 
- * <code>ICElement</code>s being also <code>ISourceReference</code>s and 
+ * A Common Navigator drag assistant supporting <code>LocalSelectionTransfer</code> of
+ * <code>ICElement</code>s being also <code>ISourceReference</code>s and
  * <code>FileTransfer</code> for external translation units.
- * 
+ *
  * @see org.eclipse.cdt.internal.ui.cview.SelectionTransferDragAdapter
  */
 public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 
-	private static final Transfer[] TRANSFERS = new Transfer[] {
-		LocalSelectionTransfer.getTransfer(),
-		FileTransfer.getInstance()
-	};
+	private static final Transfer[] TRANSFERS = new Transfer[] { LocalSelectionTransfer.getTransfer(),
+			FileTransfer.getInstance() };
 
 	/*
 	 * @see org.eclipse.ui.navigator.CommonDragAdapterAssistant#getSupportedTransferTypes()
@@ -58,9 +56,9 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 	public boolean setDragData(DragSourceEvent event, IStructuredSelection selection) {
 		if (selection != null) {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(event.dataType)) {
-				boolean applicable= false;
-				for (Iterator<?> iter= (selection).iterator(); iter.hasNext();) {
-					Object element= iter.next();
+				boolean applicable = false;
+				for (Iterator<?> iter = (selection).iterator(); iter.hasNext();) {
+					Object element = iter.next();
 					if (element instanceof ICElement) {
 						if (element instanceof ITranslationUnit) {
 							continue;
@@ -68,7 +66,7 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 						if (!(element instanceof ISourceReference)) {
 							return false;
 						}
-						applicable= true;
+						applicable = true;
 					}
 				}
 				if (applicable) {
@@ -76,12 +74,12 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 					return true;
 				}
 			} else if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
-				List<String> files= new ArrayList<String>();
-				for (Iterator<?> iter= (selection).iterator(); iter.hasNext();) {
-					Object element= iter.next();
+				List<String> files = new ArrayList<String>();
+				for (Iterator<?> iter = (selection).iterator(); iter.hasNext();) {
+					Object element = iter.next();
 					if (element instanceof ITranslationUnit) {
-						ITranslationUnit tu= (ITranslationUnit) element;
-						IPath location= tu.getLocation();
+						ITranslationUnit tu = (ITranslationUnit) element;
+						IPath location = tu.getLocation();
 						if (location != null) {
 							files.add(location.toOSString());
 						}

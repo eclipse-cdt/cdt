@@ -51,12 +51,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  * Reports a problem if object of a class cannot be created because
  * class is abstract (it self or its bases have one or more pure virtual
  * functions).
- * 
+ *
  * @author Anton Gorenkov
  */
 public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.AbstractClassCreation"; //$NON-NLS-1$
-	private final HashMap<ICPPClassType, ICPPMethod[]> pureVirtualMethodsCache = new HashMap<ICPPClassType, ICPPMethod[]>(); 
+	private final HashMap<ICPPClassType, ICPPMethod[]> pureVirtualMethodsCache = new HashMap<ICPPClassType, ICPPMethod[]>();
 
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
@@ -76,7 +76,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 	}
 
 	class OnEachClass extends ASTVisitor {
-		
+
 		OnEachClass() {
 			shouldVisitDeclarations = true;
 			shouldVisitExpressions = true;
@@ -111,7 +111,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 			}
 			return PROCESS_CONTINUE;
 		}
-		
+
 		/**
 		 *  Checks whether declarator contains a pinter or reference
 		 */
@@ -129,7 +129,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 				}
 			}
 		}
-		
+
 		@Override
 		public int visit(IASTExpression expression) {
 			if (expression instanceof ICPPASTNewExpression) {
@@ -141,7 +141,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 					if (declSpecifier instanceof ICPPASTNamedTypeSpecifier) {
 						IASTName constructorName = ((ICPPASTNamedTypeSpecifier) declSpecifier).getName();
 						checkClassConstructor(constructorName);
-					}				
+					}
 				}
 			} else if (expression instanceof ICPPASTFunctionCallExpression) {
 				// Direct constructor call.
@@ -154,10 +154,10 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 			}
 			return PROCESS_CONTINUE;
 		}
-		
-		/** 
-		 *  Resolves constructor by AST Name, then get its owner class 
-		 *  and check whether it is abstract. If it is - report problems 
+
+		/**
+		 *  Resolves constructor by AST Name, then get its owner class
+		 *  and check whether it is abstract. If it is - report problems
 		 */
 		private void checkClassConstructor(IASTName constructorName) {
 			IBinding binding = constructorName.resolveBinding();
@@ -168,9 +168,9 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 				reportProblemsIfAbstract((IType) binding, constructorName);
 			}
 		}
-		
+
 		/**
-		 *  Tries to resolve qualified name. If it is not available returns simple name. 
+		 *  Tries to resolve qualified name. If it is not available returns simple name.
 		 */
 		private String resolveName(ICPPBinding binding) {
 			try {
@@ -185,7 +185,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 
 		/**
 		 *  Checks whether specified type (class or typedef to the class) is an abstract class.
-		 *  If it is, reports violations on each pure virtual method 
+		 *  If it is, reports violations on each pure virtual method
 		 */
 		private void reportProblemsIfAbstract(IType typeToCheck, IASTNode problemNode) {
 			IType unwindedType = CxxAstUtils.unwindTypedef(typeToCheck);
@@ -203,7 +203,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 				}
 				pureVirtualMethodsCache.put(classType, pureVirtualMethods);
 			}
-			
+
 			for (ICPPMethod method : pureVirtualMethods) {
 				reportProblem(ER_ID, problemNode, resolveName(classType), resolveName(method));
 			}

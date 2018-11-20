@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -20,7 +20,7 @@ import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * Utilities to work with command line, parse arguments, etc.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 5.1
@@ -47,7 +47,7 @@ public class CommandLineUtil {
 
 	/**
 	 * Parsing arguments in a shell style. i.e.
-	 * 
+	 *
 	 * <pre>
 	 * ["a b c" d] -> [[a b c],[d]]
 	 * [a   d] -> [[a],[d]]
@@ -55,7 +55,7 @@ public class CommandLineUtil {
 	 * [\\ \" \a] -> [[\],["],[a]]
 	 * ["str\\str\a"] -> [[str\str\a]]
 	 * </pre>
-	 * 
+	 *
 	 * @param line
 	 * @return array of arguments, or empty array if line is null or empty
 	 */
@@ -163,7 +163,7 @@ public class CommandLineUtil {
 
 	/**
 	 * Parsing arguments in a cmd style. i.e.
-	 * 
+	 *
 	 * <pre>
 	 * ["a b c" d] -> [[a b c],[d]]
 	 * [a   d] -> [[a],[d]]
@@ -171,7 +171,7 @@ public class CommandLineUtil {
 	 * [\\ \" \a] -> [[\\],["],[\a]]
 	 * ["str\\str\a"] -> [[str\\str\a]]
 	 * </pre>
-	 * 
+	 *
 	 * @param line
 	 * @return array of arguments, or empty array if line is null or empty
 	 */
@@ -270,16 +270,16 @@ public class CommandLineUtil {
 
 	/**
 	 * Converts argument array to a string suitable for passing to Bash like:
-	 * 
+	 *
 	 * This process reverses {@link #argumentsToArray(String)}, but does not
 	 * restore the exact same results.
-	 * 
+	 *
 	 * @param args
 	 *            the arguments to convert and escape
 	 * @param encodeNewline
 	 *            <code>true</code> if newline (<code>\r</code> or
 	 *            <code>\n</code>) should be encoded
-	 * 
+	 *
 	 * @return args suitable for passing to some process that decodes the string
 	 *         into an argument array
 	 * @since 6.2
@@ -298,13 +298,13 @@ public class CommandLineUtil {
 
 	/**
 	 * Converts argument array to a string suitable for passing to Bash like:
-	 * 
+	 *
 	 * <pre>
 	 * /bin/bash -c &lt;args&gt;
 	 * </pre>
-	 * 
+	 *
 	 * In this case the arguments array passed to exec or equivalent will be:
-	 * 
+	 *
 	 * <pre>
 	 * argv[0] = "/bin/bash"
 	 * argv[1] = "-c"
@@ -328,7 +328,7 @@ public class CommandLineUtil {
 	 * (to prevent bash from carrying out substitutions or running arbitrary
 	 * code with backticks or <code>$()</code>)</li>
 	 * <ul>
-	 * 
+	 *
 	 * @param args
 	 *            the arguments to convert and escape
 	 * @param encodeNewline
@@ -367,7 +367,7 @@ public class CommandLineUtil {
 	/**
 	 * Converts argument array to a string suitable for passing to Windows
 	 * CreateProcess
-	 * 
+	 *
 	 * @param args
 	 *            the arguments to convert and escape
 	 * @param encodeNewline

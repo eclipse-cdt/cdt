@@ -44,7 +44,7 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static AutotoolsPlugin plugin;
 	private ResourceBundle resourceBundle;
-	
+
 	public static final String PLUGIN_ID = "org.eclipse.cdt.autotools.core"; //$NON-NLS-1$
 	public static final String AUTOTOOLS_PROJECT_TYPE_ID = "org.eclipse.linuxtools.cdt.autotools.core.projectType"; //$NON-NLS-1$
 
@@ -65,7 +65,7 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 	public static String getPluginId() {
 		return PLUGIN_ID;
 	}
-	
+
 	public static String getUniqueIdentifier() {
 		if (getDefault() == null) {
 			// If the default instance is not yet initialized,
@@ -94,7 +94,7 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Return the OSGi service with the given service interface.
-	 * 
+	 *
 	 * @param service service interface
 	 * @return the specified service or null if it's not registered
 	 * @since 1.5
@@ -108,7 +108,7 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @return the resource bundle message
 	 */
@@ -124,13 +124,13 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
-	 * 
+	 *
 	 * @param key the message key
 	 * @param args an array of substituition strings
 	 * @return the resource bundle message
 	 */
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getResourceString(key), (Object[])args);
+		return MessageFormat.format(getResourceString(key), (Object[]) args);
 	}
 
 	/**
@@ -187,15 +187,14 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Return set of Autotool configuration options for a given build configuration id.
-	 * 
+	 *
 	 * @param project existing autotools project
 	 * @param cfgId configuration id
 	 * @return a copy of Autotools configurations for the given configuration id
 	 * @throws CoreException if project is not valid Autotools project or cfgId does not exist
 	 * @since 1.2
 	 */
-	public Map<String, IAutotoolsOption> getAutotoolCfgOptions(IProject project,
-			String cfgId) throws CoreException {
+	public Map<String, IAutotoolsOption> getAutotoolCfgOptions(IProject project, String cfgId) throws CoreException {
 		return AutotoolsConfigurationManager.getInstance().getAutotoolsCfgOptions(project, cfgId);
 	}
 
@@ -206,11 +205,11 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 	 * @param cfgId configuation id
 	 * @param options set of updated Autotool configuration options
 	 * @throws CoreException if project is not valid Autotools project or cfgId does not exist
-	 * 
+	 *
 	 * @since 1.2
 	 */
-	public void updateAutotoolCfgOptions(IProject project, String cfgId,
-			Map<String,IAutotoolsOption> options) throws CoreException {
+	public void updateAutotoolCfgOptions(IProject project, String cfgId, Map<String, IAutotoolsOption> options)
+			throws CoreException {
 		AutotoolsConfigurationManager.getInstance().updateAutotoolCfgOptions(project, cfgId, options);
 
 	}

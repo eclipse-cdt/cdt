@@ -76,7 +76,7 @@ public class ProcessList implements IProcessList {
 		}
 		return procInfos;
 	}
- 
+
 	public IProcessInfo[] parseListTasks(InputStreamReader reader) {
 		BufferedReader br = new BufferedReader(reader);
 		ArrayList processList = new ArrayList();

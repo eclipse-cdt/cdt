@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
  *   simple-type-specifier braced-init-list
  *   typename-specifier (expression-list?)
  *   typename-specifier braced-init-list
- *   
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -52,7 +52,7 @@ public interface ICPPASTSimpleTypeConstructorExpression extends ICPPASTExpressio
 	 * @since 5.2
 	 */
 	public IASTInitializer getInitializer();
-	
+
 	/**
 	 * @since 5.1
 	 */
@@ -81,62 +81,74 @@ public interface ICPPASTSimpleTypeConstructorExpression extends ICPPASTExpressio
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated	public static final int t_unspecified = 0;
+	@Deprecated
+	public static final int t_unspecified = 0;
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated public static final int t_void = 1;
+	@Deprecated
+	public static final int t_void = 1;
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated public static final int t_char = 2;
+	@Deprecated
+	public static final int t_char = 2;
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated public static final int t_int = 3;
+	@Deprecated
+	public static final int t_int = 3;
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated public static final int t_float = 4;
+	@Deprecated
+	public static final int t_float = 4;
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated public static final int t_double = 5;
+	@Deprecated
+	public static final int t_double = 5;
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated public static final int t_bool = 6;
+	@Deprecated
+	public static final int t_bool = 6;
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated public static final int t_wchar_t = 7;
+	@Deprecated
+	public static final int t_wchar_t = 7;
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated public static final int t_short = 8;
+	@Deprecated
+	public static final int t_short = 8;
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated public static final int t_long = 9;
+	@Deprecated
+	public static final int t_long = 9;
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated public static final int t_signed = 10;
+	@Deprecated
+	public static final int t_signed = 10;
 	/**
 	 * @deprecated Not used.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated public static final int t_unsigned = 11;
+	@Deprecated
+	public static final int t_unsigned = 11;
 
 	/**
 	 * @deprecated Replaced by {@link #getDeclSpecifier()}.

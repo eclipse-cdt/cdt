@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
@@ -44,7 +44,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 	private GetterSetterLabelProvider labelProvider;
 
 	public GenerateGettersAndSettersInputPage(GetterSetterContext context) {
-		super(Messages.GenerateGettersAndSettersInputPage_Name); 
+		super(Messages.GenerateGettersAndSettersInputPage_Name);
 		this.context = context;
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
 		// We are listening for changes in the Name Style preferences
@@ -55,13 +55,13 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 	public void createControl(Composite parent) {
 		setTitle(Messages.GenerateGettersAndSettersInputPage_Name);
 		setMessage(Messages.GenerateGettersAndSettersInputPage_Header);
-		
+
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(2, false));
 		createTree(comp);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		variableSelectionView.getTree().setLayoutData(gd);
-		
+
 		Composite buttonContainer = createButtonComposite(comp);
 		gd = new GridData();
 		gd.verticalAlignment = SWT.TOP;
@@ -81,7 +81,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 			}
 		});
 
-		Link link= new Link(comp, SWT.WRAP);
+		Link link = new Link(comp, SWT.WRAP);
 		link.setText(Messages.GenerateGettersAndSettersInputPage_LinkDescription);
 		link.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -104,7 +104,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		FillLayout layout = new FillLayout(SWT.VERTICAL);
 		layout.spacing = 4;
 		btComp.setLayout(layout);
-		
+
 		Button selectAll = new Button(btComp, SWT.PUSH);
 		selectAll.setText(Messages.GenerateGettersAndSettersInputPage_SelectAll);
 		selectAll.addSelectionListener(new SelectionAdapter() {
@@ -117,10 +117,10 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 				updateSelectedFunctions();
 			}
 		});
-		
+
 		Button deselectAll = new Button(btComp, SWT.PUSH);
 		deselectAll.setText(Messages.GenerateGettersAndSettersInputPage_DeselectAll);
-		deselectAll.addSelectionListener(new SelectionAdapter(){
+		deselectAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Object treeItem : context.getElements(null)) {
@@ -129,28 +129,28 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 				updateSelectedFunctions();
 			}
 		});
-		
+
 		Button selectGetter = new Button(btComp, SWT.PUSH);
 		selectGetter.setText(Messages.GenerateGettersAndSettersInputPage_SelectGetters);
-		selectGetter.addSelectionListener(new SelectionAdapter(){
+		selectGetter.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectAccessors(AccessorKind.GETTER);
 			}
 		});
-		
+
 		Button selectSetter = new Button(btComp, SWT.PUSH);
 		selectSetter.setText(Messages.GenerateGettersAndSettersInputPage_SelectSetters);
-		selectSetter.addSelectionListener(new SelectionAdapter(){
+		selectSetter.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectAccessors(AccessorKind.SETTER);
 			}
 		});
-		
+
 		return btComp;
 	}
-	
+
 	private void selectAccessors(AccessorKind kind) {
 		for (Object treeItem : context.getElements(null)) {
 			if (treeItem instanceof FieldDescriptor) {
@@ -213,7 +213,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		if (variableSelectionView.getTree().isDisposed()) {
 			return;
 		}
-		
+
 		if (GetterSetterNameGenerator.getGenerateGetterSettersPreferenceKeys().contains(event.getKey())) {
 			context.recreateFieldDescriptors();
 			variableSelectionView.refresh();

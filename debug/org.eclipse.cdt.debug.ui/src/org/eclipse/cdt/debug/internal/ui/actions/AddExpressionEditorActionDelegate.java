@@ -11,7 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions; 
+package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IAdaptable;
@@ -33,7 +33,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionDelegate;
- 
 
 /**
  * The "Add Expression" action contribution to editors.
@@ -41,73 +40,73 @@ import org.eclipse.ui.actions.ActionDelegate;
 public class AddExpressionEditorActionDelegate extends ActionDelegate implements IEditorActionDelegate {
 
 	private IEditorPart fEditorPart;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
 	@Override
-	public void setActiveEditor( IAction action, IEditorPart targetEditor ) {
-		setEditorPart( targetEditor );
+	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+		setEditorPart(targetEditor);
 	}
 
 	private IEditorPart getEditorPart() {
 		return fEditorPart;
 	}
 
-	private void setEditorPart( IEditorPart editorPart ) {
+	private void setEditorPart(IEditorPart editorPart) {
 		fEditorPart = editorPart;
 	}
 
 	@Override
-	public void run( IAction action ) {
+	public void run(IAction action) {
 		String text = getSelectedText();
-		ExpressionDialog dlg = new ExpressionDialog( getShell(), text );
-		if ( dlg.open() != Window.OK )
+		ExpressionDialog dlg = new ExpressionDialog(getShell(), text);
+		if (dlg.open() != Window.OK)
 			return;
-		createExpression( dlg.getExpression() );
+		createExpression(dlg.getExpression());
 		activateExpressionView();
 	}
 
 	private String getSelectedText() {
 		ISelection selection = getTargetSelection();
-		if ( selection != null && selection instanceof ITextSelection ) {
-			return ((ITextSelection)selection).getText().replaceAll("(\\r\\n|\\n|\\t| )+", " ").trim(); //$NON-NLS-1$ //$NON-NLS-2$;
+		if (selection != null && selection instanceof ITextSelection) {
+			return ((ITextSelection) selection).getText().replaceAll("(\\r\\n|\\n|\\t| )+", " ").trim(); //$NON-NLS-1$ //$NON-NLS-2$;
 		}
 		return ""; //$NON-NLS-1$
 	}
 
 	protected ISelection getTargetSelection() {
 		IWorkbenchPart part = getEditorPart();
-		if ( part != null ) {
+		if (part != null) {
 			ISelectionProvider provider = part.getSite().getSelectionProvider();
-			if ( provider != null ) {
+			if (provider != null) {
 				return provider.getSelection();
 			}
 		}
 		return null;
 	}
 
-	private void createExpression( String text ) {
-		IWatchExpression watchExpression= DebugPlugin.getDefault().getExpressionManager().newWatchExpression( text );
-		DebugPlugin.getDefault().getExpressionManager().addExpression( watchExpression );
+	private void createExpression(String text) {
+		IWatchExpression watchExpression = DebugPlugin.getDefault().getExpressionManager().newWatchExpression(text);
+		DebugPlugin.getDefault().getExpressionManager().addExpression(watchExpression);
 		IAdaptable context = DebugUITools.getDebugContext();
-		if ( context instanceof IDebugElement )
-			watchExpression.setExpressionContext( (IDebugElement)context );
+		if (context instanceof IDebugElement)
+			watchExpression.setExpressionContext((IDebugElement) context);
 	}
 
 	protected Shell getShell() {
-		return ( getEditorPart() != null ) ? getEditorPart().getSite().getShell() : CDebugUIPlugin.getActiveWorkbenchShell();
+		return (getEditorPart() != null) ? getEditorPart().getSite().getShell()
+				: CDebugUIPlugin.getActiveWorkbenchShell();
 	}
 
 	private void activateExpressionView() {
 		IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
-		if ( window != null ) {
+		if (window != null) {
 			IWorkbenchPage page = window.getActivePage();
-			if ( page != null ) {
+			if (page != null) {
 				try {
-					page.showView( IDebugUIConstants.ID_EXPRESSION_VIEW );
-				}
-				catch( PartInitException e ) {
+					page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+				} catch (PartInitException e) {
 				}
 			}
 		}

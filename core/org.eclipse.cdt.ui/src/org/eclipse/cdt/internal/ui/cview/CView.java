@@ -16,7 +16,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
-
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
@@ -122,11 +121,12 @@ import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 
 /**
- * 
+ *
  * CView
- * 
+ *
  */
-public class CView extends ViewPart implements ISetSelectionTarget, IPropertyChangeListener, IShowInTarget, IShowInTargetList {
+public class CView extends ViewPart
+		implements ISetSelectionTarget, IPropertyChangeListener, IShowInTarget, IShowInTargetList {
 
 	ProblemTreeViewer viewer;
 	IMemento memento;
@@ -194,9 +194,11 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 			}
 			if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property) && oldValue == filterWorkingSet) {
 				setWorkingSet(null);
-			} else if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property) && newValue == filterWorkingSet) {
+			} else if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property)
+					&& newValue == filterWorkingSet) {
 				updateTitle();
-			} else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property) && newValue == filterWorkingSet) {
+			} else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property)
+					&& newValue == filterWorkingSet) {
 				getViewer().refresh();
 			}
 		}
@@ -218,7 +220,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	/**
 	 * Reveal and select the passed element selection in self's visual
 	 * component
-	 * 
+	 *
 	 * @see ISetSelectionTarget#selectReveal(ISelection)
 	 */
 	@Override
@@ -268,7 +270,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	/**
 	 * Handles a key release in the viewer. Does nothing by default.
-	 * 
+	 *
 	 */
 	protected void handleKeyReleased(KeyEvent event) {
 		if (getActionGroup() != null) {
@@ -303,7 +305,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	/**
 	 * Returns the action group.
-	 * 
+	 *
 	 * @return the action group
 	 */
 	protected CViewActionGroup getActionGroup() {
@@ -312,7 +314,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	/**
 	 * Sets the action group.
-	 * 
+	 *
 	 * @param actionGroup
 	 *            the action group
 	 */
@@ -363,7 +365,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	/**
 	 * Adds the filters to the viewer.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer
 	 */
@@ -390,34 +392,22 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	}
 
 	private void initDrag() {
-		int ops= DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
-		Transfer[] transfers= new Transfer[] {
-				LocalSelectionTransfer.getTransfer(),
-				ResourceTransfer.getInstance(),
-				FileTransfer.getInstance(),
-		};
-		TransferDragSourceListener[] dragListeners= new TransferDragSourceListener[] {
-				new SelectionTransferDragAdapter(viewer),
-				new ResourceTransferDragAdapter(viewer),
-				new FileTransferDragAdapter(viewer)
-		};
+		int ops = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
+		Transfer[] transfers = new Transfer[] { LocalSelectionTransfer.getTransfer(), ResourceTransfer.getInstance(),
+				FileTransfer.getInstance(), };
+		TransferDragSourceListener[] dragListeners = new TransferDragSourceListener[] {
+				new SelectionTransferDragAdapter(viewer), new ResourceTransferDragAdapter(viewer),
+				new FileTransferDragAdapter(viewer) };
 		viewer.addDragSupport(ops, transfers, new CDTViewerDragAdapter(viewer, dragListeners));
 	}
 
 	private void initDrop() {
-		int ops= DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK | DND.DROP_DEFAULT;
-		Transfer[] transfers= new Transfer[] {
-			LocalSelectionTransfer.getTransfer(),
-			ResourceTransfer.getInstance(),
-			FileTransfer.getInstance(),
-			PluginTransfer.getInstance()
-		};
-		TransferDropTargetListener[] dropListeners= new TransferDropTargetListener[] {
-			new SelectionTransferDropAdapter(viewer),
-			new ResourceTransferDropAdapter(viewer),
-			new FileTransferDropAdapter(viewer),			
-			new PluginTransferDropAdapter(viewer),
-		};
+		int ops = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK | DND.DROP_DEFAULT;
+		Transfer[] transfers = new Transfer[] { LocalSelectionTransfer.getTransfer(), ResourceTransfer.getInstance(),
+				FileTransfer.getInstance(), PluginTransfer.getInstance() };
+		TransferDropTargetListener[] dropListeners = new TransferDropTargetListener[] {
+				new SelectionTransferDropAdapter(viewer), new ResourceTransferDropAdapter(viewer),
+				new FileTransferDropAdapter(viewer), new PluginTransferDropAdapter(viewer), };
 		viewer.addDropSupport(ops, transfers, new DelegatingDropAdapter(dropListeners));
 	}
 
@@ -574,26 +564,28 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 			initFilterFromPreferences();
 		}
 
-
 		if (memento != null) {
 			restoreState(memento);
 		}
 		memento = null;
 
-    	IContextService ctxService = getSite().getService(IContextService.class);
-    	if (ctxService != null) {
-    		fContextActivation= ctxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
-    	}
-    }
-	
+		IContextService ctxService = getSite().getService(IContextService.class);
+		if (ctxService != null) {
+			fContextActivation = ctxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
+		}
+	}
+
 	protected ProblemTreeViewer createViewer(Composite parent) {
 		return new RemoteTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	}
 
 	protected IContentProvider createContentProvider() {
-		boolean showCUChildren = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
-		boolean groupIncludes = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES);
-		boolean groupMacros = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.CVIEW_GROUP_MACROS);
+		boolean showCUChildren = PreferenceConstants.getPreferenceStore()
+				.getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
+		boolean groupIncludes = PreferenceConstants.getPreferenceStore()
+				.getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES);
+		boolean groupMacros = PreferenceConstants.getPreferenceStore()
+				.getBoolean(PreferenceConstants.CVIEW_GROUP_MACROS);
 		CViewContentProvider provider = new CViewContentProvider(viewer, getSite(), showCUChildren, true);
 		provider.setIncludesGrouping(groupIncludes);
 		provider.setMacroGrouping(groupMacros);
@@ -601,7 +593,8 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	}
 
 	protected CUILabelProvider createLabelProvider() {
-		return new CViewLabelProvider(AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS, AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS | CElementImageProvider.SMALL_ICONS);
+		return new CViewLabelProvider(AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS,
+				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS | CElementImageProvider.SMALL_ICONS);
 	}
 
 	/*
@@ -611,9 +604,9 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	public void dispose() {
 		if (fContextActivation != null) {
 			IContextService ctxService = getSite().getService(IContextService.class);
-	    	if (ctxService != null) {
-	    		ctxService.deactivateContext(fContextActivation);
-	    	}
+			if (ctxService != null) {
+				ctxService.deactivateContext(fContextActivation);
+			}
 		}
 
 		getSite().getPage().removePartListener(partListener);
@@ -667,7 +660,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	/**
 	 * Returns the working set filter for this view.
-	 * 
+	 *
 	 * @return the working set
 	 */
 	public IWorkingSet getWorkingSet() {
@@ -704,7 +697,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	/**
 	 * Called when the context menu is about to open. Delegates to the action
 	 * group using the viewer's selection as the action context.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
@@ -733,7 +726,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	/**
 	 * Returns the message to show in the status line.
-	 * 
+	 *
 	 * @param selection
 	 *            the current selection
 	 * @return the status line message
@@ -752,12 +745,12 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 					if (celement instanceof IBinaryContainer) {
 						ICProject cproj = celement.getCProject();
 						if (cproj != null) {
-							return cproj.getPath() + CViewMessages.CView_binaries; 
+							return cproj.getPath() + CViewMessages.CView_binaries;
 						}
 					} else if (celement instanceof IArchiveContainer) {
 						ICProject cproj = celement.getCProject();
 						if (cproj != null) {
-							return cproj.getPath() + CViewMessages.CView_archives; 
+							return cproj.getPath() + CViewMessages.CView_archives;
 						}
 					} else if (celement instanceof IBinaryModule) {
 						IBinary bin = ((IBinaryModule) celement).getBinary();
@@ -768,22 +761,21 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 				}
 				return celement.getElementName();
 			} else if (o instanceof IWorkbenchAdapter) {
-				IWorkbenchAdapter wAdapter = (IWorkbenchAdapter)o;
+				IWorkbenchAdapter wAdapter = (IWorkbenchAdapter) o;
 				return wAdapter.getLabel(o);
 			} else {
 				return "ItemSelected"; //$NON-NLS-1$
 			}
 		}
 		if (selection.size() > 1) {
-			return NLS.bind(CViewMessages.CView_statusLine, 
-					new String[] { Integer.toString(selection.size())});
+			return NLS.bind(CViewMessages.CView_statusLine, new String[] { Integer.toString(selection.size()) });
 		}
 		return "";//$NON-NLS-1$
 	}
 
 	/**
 	 * Updates the action bar actions.
-	 * 
+	 *
 	 * @param selection
 	 *            the current selection
 	 */
@@ -811,7 +803,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	/**
 	 * Updates the message shown in the status line.
-	 * 
+	 *
 	 * @param selection
 	 *            the current selection
 	 */
@@ -844,13 +836,15 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (viewer == null) return;
+		if (viewer == null)
+			return;
 
 		boolean refreshViewer = false;
 		String property = event.getProperty();
 
 		if (property.equals(PreferenceConstants.PREF_SHOW_CU_CHILDREN)) {
-			boolean showCUChildren = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
+			boolean showCUChildren = PreferenceConstants.getPreferenceStore()
+					.getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
 			IContentProvider provider = viewer.getContentProvider();
 			if (provider instanceof CElementContentProvider) {
 				((CElementContentProvider) provider).setProvideMembers(showCUChildren);
@@ -860,17 +854,19 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 			CViewActionGroup group = getActionGroup();
 			if (group instanceof MainActionGroup) {
 				boolean enable = isLinkingEnabled();
-				((MainActionGroup)group).toggleLinkingAction.setChecked(enable);
+				((MainActionGroup) group).toggleLinkingAction.setChecked(enable);
 			}
 		} else if (property.equals(PreferenceConstants.CVIEW_GROUP_INCLUDES)) {
-			boolean groupIncludes = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES);
+			boolean groupIncludes = PreferenceConstants.getPreferenceStore()
+					.getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES);
 			IContentProvider provider = viewer.getContentProvider();
 			if (provider instanceof CElementContentProvider) {
 				((CElementContentProvider) provider).setIncludesGrouping(groupIncludes);
 			}
 			refreshViewer = true;
 		} else if (property.equals(PreferenceConstants.CVIEW_GROUP_MACROS)) {
-			boolean groupMacros = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.CVIEW_GROUP_MACROS);
+			boolean groupMacros = PreferenceConstants.getPreferenceStore()
+					.getBoolean(PreferenceConstants.CVIEW_GROUP_MACROS);
 			IContentProvider provider = viewer.getContentProvider();
 			if (provider instanceof CElementContentProvider) {
 				((CElementContentProvider) provider).setMacroGrouping(groupMacros);
@@ -886,7 +882,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	/**
 	 * Returns whether the navigator selection automatically tracks the active
 	 * editor.
-	 * 
+	 *
 	 * @return <code>true</code> if linking is enabled, <code>false</code>
 	 *         if not
 	 */
@@ -935,7 +931,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IViewPartInputProvider#getViewPartInput()
 	 */
 	public Object getViewPartInput() {
@@ -946,9 +942,9 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	}
 
 	void restoreState(IMemento memento) {
-		
+
 		CoreModel factory = CoreModel.getDefault();
-		
+
 		getActionGroup().restoreFilterAndSorterState(memento);
 
 		IMemento childMem = memento.getChild(TAG_EXPANDED);
@@ -1025,8 +1021,8 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 			for (Object expandedElement : expandedElements) {
 				Object o = expandedElement;
 				// Do not save expanded binary files are libraries.
-				if (o instanceof IParent
-						&& !(o instanceof IArchiveContainer || o instanceof IBinaryContainer || o instanceof IBinary || o instanceof IArchive)) {
+				if (o instanceof IParent && !(o instanceof IArchiveContainer || o instanceof IBinaryContainer
+						|| o instanceof IBinary || o instanceof IArchive)) {
 					IMemento elementMem = expandedMem.createChild(TAG_ELEMENT);
 					ICElement e = (ICElement) o;
 					IResource res = e.getResource();
@@ -1074,12 +1070,12 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
 	 */
 	@Override
 	public boolean show(ShowInContext context) {
-		ISelection selection= context.getSelection();
+		ISelection selection = context.getSelection();
 		if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection) {
 			selectReveal(selection);
 			return true;
@@ -1094,7 +1090,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		}
 		return false;
 	}
- 
+
 	/**
 	 * Returns the <code>IShowInSource</code> for this view.
 	 */
@@ -1107,8 +1103,8 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		};
 	}
 
-    @Override
+	@Override
 	public String[] getShowInTargetIds() {
-        return new String[]{IPageLayout.ID_RES_NAV};
-    }
+		return new String[] { IPageLayout.ID_RES_NAV };
+	}
 }

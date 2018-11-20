@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -15,15 +15,25 @@ import junit.framework.TestSuite;
 
 public class MemberFunctionTests extends TestBase {
 	public static class NonIndexing extends MemberFunctionTests {
-		public NonIndexing() {setStrategy(new NonIndexingTestStrategy());}
-		public static TestSuite suite() {return suite(NonIndexing.class);}
+		public NonIndexing() {
+			setStrategy(new NonIndexingTestStrategy());
+		}
+
+		public static TestSuite suite() {
+			return suite(NonIndexing.class);
+		}
 	}
-	
+
 	public static class SingleProject extends MemberFunctionTests {
-		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true, false));}
-		public static TestSuite suite() {return suite(SingleProject.class);}
+		public SingleProject() {
+			setStrategy(new SinglePDOMTestStrategy(true, false));
+		}
+
+		public static TestSuite suite() {
+			return suite(SingleProject.class);
+		}
 	}
-	
+
 	//	struct S {
 	//		int x, y;
 	//		constexpr int member() {
@@ -34,12 +44,12 @@ public class MemberFunctionTests extends TestBase {
 	//		S s{3,7};
 	//		return s.member();
 	//	}
-	
+
 	//	constexpr auto x = f();
 	public void testMemberFunctionCall() throws Exception {
 		assertEvaluationEquals(4);
 	}
-	
+
 	//	struct S {
 	//		int x, y;
 	//		constexpr int member() {
@@ -51,12 +61,12 @@ public class MemberFunctionTests extends TestBase {
 	//		S s{3,7};
 	//		return s.member();
 	//	}
-	
+
 	//	constexpr auto x = f();
 	public void testMemberFunctionWithImplicitThis() throws Exception {
-		assertEvaluationEquals(8);	
+		assertEvaluationEquals(8);
 	}
-	
+
 	//	class Point {
 	//		int x, y;
 	//	public:
@@ -69,12 +79,12 @@ public class MemberFunctionTests extends TestBase {
 	//	  Point p{4,5};
 	//	  return p.getY();
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testExternallyDefinedMemberFunction() throws Exception {
 		assertEvaluationEquals(5);
 	}
-	
+
 	//	class S {
 	//		int x;
 	//	public:
@@ -88,12 +98,12 @@ public class MemberFunctionTests extends TestBase {
 	//	  s.inc();
 	//	  return s.get();
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testPlusEqualsWithinMemberFunction() throws Exception {
 		assertEvaluationEquals(50);
 	}
-	
+
 	//	class Point {
 	//		int x, y;
 	//	public:
@@ -104,12 +114,12 @@ public class MemberFunctionTests extends TestBase {
 	//		Point p{10,40};
 	//		return p.getY();
 	//	}
-	
+
 	//	constexpr int x = f();
 	public void testMemberAccessThroughThisPointer() throws Exception {
 		assertEvaluationEquals(40);
 	}
-	
+
 	//	struct S {
 	//		int x, y;
 	//		constexpr int member() {
@@ -125,12 +135,12 @@ public class MemberFunctionTests extends TestBase {
 	//		S s{3,7};
 	//		return s.member();
 	//	}
-	
+
 	//	constexpr auto x = f();
 	public void testNestedMemberFunctionCallsWithImplicitThis() throws Exception {
-		assertEvaluationEquals(8);	
+		assertEvaluationEquals(8);
 	}
-	
+
 	//	struct S {
 	//		constexpr S(int x, int y):x{x}, y{y*2} {}
 	//		constexpr int getY() const {
@@ -140,15 +150,15 @@ public class MemberFunctionTests extends TestBase {
 	//		int x;
 	//		int y;
 	//	};
-	//	
+	//
 	//	constexpr S s{3, 5};
 	//	constexpr int f() { return s.getY(); }
-	
+
 	//	constexpr int x = f();
 	public void testGlobalMemberFunctionCallFromConstexprFunction() throws Exception {
 		assertEvaluationEquals(10);
 	}
-	
+
 	//	struct S {
 	//		constexpr S(int x, int y):x{x}, y{y*2} {}
 	//		constexpr int getY() const {
@@ -157,14 +167,14 @@ public class MemberFunctionTests extends TestBase {
 	//	private:
 	//		int x;
 	//		int y;
-	//	};	
+	//	};
 	//	constexpr S s{3, 5};
-	
+
 	//	constexpr int x = s.getY();
 	public void testGlobalMemberFunctionCallFromGlobalConstexpr() throws Exception {
 		assertEvaluationEquals(10);
 	}
-	
+
 	//	struct S {
 	//		constexpr S(int x, int y):x{x}, y{y} {}
 	//		constexpr int add(S const& other) const {
@@ -182,6 +192,6 @@ public class MemberFunctionTests extends TestBase {
 
 	//	constexpr int x = f();
 	public void testManualAddMemberFunction() throws Exception {
-	  assertEvaluationEquals(15);
+		assertEvaluationEquals(15);
 	}
 }

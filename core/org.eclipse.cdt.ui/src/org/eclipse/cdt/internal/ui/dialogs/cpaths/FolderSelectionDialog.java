@@ -37,7 +37,6 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
 
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
-
 /**
  * @deprecated as of CDT 4.0. This class was used for property pages
  * for 3.X style projects.
@@ -58,12 +57,12 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite result= (Composite)super.createDialogArea(parent);
-		
+		Composite result = (Composite) super.createDialogArea(parent);
+
 		getTreeViewer().addSelectionChangedListener(this);
-		
+
 		Button button = new Button(result, SWT.PUSH);
-		button.setText(CPathEntryMessages.FolderSelectionDialog_button); 
+		button.setText(CPathEntryMessages.FolderSelectionDialog_button);
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -73,35 +72,35 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 		button.setFont(parent.getFont());
 		button.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(button);
-		fNewFolderButton= button;
-		
-		applyDialogFont(result);		
+		fNewFolderButton = button;
+
+		applyDialogFont(result);
 		return result;
 	}
 
 	private void updateNewFolderButtonState() {
-		IStructuredSelection selection= (IStructuredSelection) getTreeViewer().getSelection();
-		fSelectedContainer= null;
+		IStructuredSelection selection = (IStructuredSelection) getTreeViewer().getSelection();
+		fSelectedContainer = null;
 		if (selection.size() == 1) {
-			Object first= selection.getFirstElement();
+			Object first = selection.getFirstElement();
 			if (first instanceof IContainer) {
-				fSelectedContainer= (IContainer) first;
+				fSelectedContainer = (IContainer) first;
 			}
 		}
 		fNewFolderButton.setEnabled(fSelectedContainer != null);
-	}	
-	
+	}
+
 	protected void newFolderButtonPressed() {
-		NewFolderDialog dialog= new NewFolderDialog(getShell(), fSelectedContainer);
+		NewFolderDialog dialog = new NewFolderDialog(getShell(), fSelectedContainer);
 		if (dialog.open() == Window.OK) {
-			TreeViewer treeViewer= getTreeViewer();
+			TreeViewer treeViewer = getTreeViewer();
 			treeViewer.refresh(fSelectedContainer);
-			Object createdFolder= dialog.getResult()[0];
+			Object createdFolder = dialog.getResult()[0];
 			treeViewer.reveal(createdFolder);
 			treeViewer.setSelection(new StructuredSelection(createdFolder));
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */

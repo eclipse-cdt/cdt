@@ -50,8 +50,7 @@ import org.eclipse.core.runtime.IPath;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class DefaultGCCDependencyCalculator3Commands implements
-	IManagedDependencyCommands {
+public class DefaultGCCDependencyCalculator3Commands implements IManagedDependencyCommands {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -72,17 +71,18 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	boolean genericCommands = true;
 
 	/**
-     * Constructor
+	 * Constructor
 	 *
-     * @param source  The source file for which dependencies should be calculated
-     *    The IPath can be either relative to the project directory, or absolute in the file system.
-     * @param buildContext  The IConfiguration or IResourceConfiguration that
-     *   contains the context in which the source file will be built
-     * @param tool  The tool associated with the source file
-     * @param topBuildDirectory  The top build directory of the configuration.  This is
-     *   the working directory for the tool.  This IPath is relative to the project directory.
+	 * @param source  The source file for which dependencies should be calculated
+	 *    The IPath can be either relative to the project directory, or absolute in the file system.
+	 * @param buildContext  The IConfiguration or IResourceConfiguration that
+	 *   contains the context in which the source file will be built
+	 * @param tool  The tool associated with the source file
+	 * @param topBuildDirectory  The top build directory of the configuration.  This is
+	 *   the working directory for the tool.  This IPath is relative to the project directory.
 	 */
-	public DefaultGCCDependencyCalculator3Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
+	public DefaultGCCDependencyCalculator3Commands(IPath source, IResource resource, IBuildObject buildContext,
+			ITool tool, IPath topBuildDirectory) {
 		this.source = source;
 		this.resource = resource;
 		this.buildContext = buildContext;
@@ -91,13 +91,13 @@ public class DefaultGCCDependencyCalculator3Commands implements
 
 		//  Compute the project
 		if (buildContext instanceof IConfiguration) {
-			config = (IConfiguration)buildContext;
+			config = (IConfiguration) buildContext;
 			resInfo = config.getRootFolderInfo();
-			project = (IProject)config.getOwner();
+			project = (IProject) config.getOwner();
 		} else if (buildContext instanceof IResourceInfo) {
-			resInfo = (IResourceInfo)buildContext;
+			resInfo = (IResourceInfo) buildContext;
 			config = resInfo.getParent();
-			project = (IProject)config.getOwner();
+			project = (IProject) config.getOwner();
 		}
 
 		sourceLocation = (source.isAbsolute() ? source : project.getLocation().append(source));
@@ -114,21 +114,18 @@ public class DefaultGCCDependencyCalculator3Commands implements
 		*/
 		boolean resourceNameRequiresExplicitRule = true;
 
-		if(resource != null)
-		{
-			resourceNameRequiresExplicitRule = (resource.isLinked() && GnuMakefileGenerator
-						.containsSpecialCharacters(sourceLocation.toString()))
-				|| (!resource.isLinked() && GnuMakefileGenerator
-						.containsSpecialCharacters(resource.getProjectRelativePath().toString()));
+		if (resource != null) {
+			resourceNameRequiresExplicitRule = (resource.isLinked()
+					&& GnuMakefileGenerator.containsSpecialCharacters(sourceLocation.toString()))
+					|| (!resource.isLinked() && GnuMakefileGenerator
+							.containsSpecialCharacters(resource.getProjectRelativePath().toString()));
 		}
 
-		needExplicitRuleForFile = resourceNameRequiresExplicitRule ||
-				BuildMacroProvider.getReferencedExplitFileMacros(tool).length > 0
-				|| BuildMacroProvider.getReferencedExplitFileMacros(
-						tool.getToolCommand(),
+		needExplicitRuleForFile = resourceNameRequiresExplicitRule
+				|| BuildMacroProvider.getReferencedExplitFileMacros(tool).length > 0
+				|| BuildMacroProvider.getReferencedExplitFileMacros(tool.getToolCommand(),
 						IBuildMacroProvider.CONTEXT_FILE,
-						new FileContextData(sourceLocation, outputLocation,
-								null, tool)).length > 0;
+						new FileContextData(sourceLocation, outputLocation, null, tool)).length > 0;
 
 		if (buildContext instanceof IResourceConfiguration || needExplicitRuleForFile)
 			genericCommands = false;
@@ -158,8 +155,8 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	 *
 	 * @see #DefaultGCCDependencyCalculator3Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	 */
-	public DefaultGCCDependencyCalculator3Commands(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
-	{
+	public DefaultGCCDependencyCalculator3Commands(IPath source, IBuildObject buildContext, ITool tool,
+			IPath topBuildDirectory) {
 		this(source, (IResource) null, buildContext, tool, topBuildDirectory);
 	}
 
@@ -224,83 +221,67 @@ public class DefaultGCCDependencyCalculator3Commands implements
 		// Calculate the dependency rule
 		// <path>/$(@:%.<out_ext>=%.d)
 		String depRule = "'$(@:%." + //$NON-NLS-1$
-			outputExtension +
-			"=%." + //$NON-NLS-1$
-			IManagedBuilderMakefileGenerator.DEP_EXT +
-			")'"; //$NON-NLS-1$
+				outputExtension + "=%." + //$NON-NLS-1$
+				IManagedBuilderMakefileGenerator.DEP_EXT + ")'"; //$NON-NLS-1$
 
 		// Add the Echo command that will actually create the right format for the dep
-		commands[0] =
-				IManagedBuilderMakefileGenerator.TAB +
-				IManagedBuilderMakefileGenerator.ECHO +
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				"-n" + //$NON-NLS-1$
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				depRule +
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				"$(dir $@)" + //$NON-NLS-1$
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				">" + //$NON-NLS-1$
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				depRule;
+		commands[0] = IManagedBuilderMakefileGenerator.TAB + IManagedBuilderMakefileGenerator.ECHO
+				+ IManagedBuilderMakefileGenerator.WHITESPACE + "-n" + //$NON-NLS-1$
+				IManagedBuilderMakefileGenerator.WHITESPACE + depRule + IManagedBuilderMakefileGenerator.WHITESPACE
+				+ "$(dir $@)" + //$NON-NLS-1$
+				IManagedBuilderMakefileGenerator.WHITESPACE + ">" + //$NON-NLS-1$
+				IManagedBuilderMakefileGenerator.WHITESPACE + depRule;
 
 		// Add the line that will do the work to calculate dependencies
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 		IManagedCommandLineInfo cmdLInfo = null;
 		String buildCmd = null;
-		String[] inputs= new String[1]; inputs[0] = IManagedBuilderMakefileGenerator.IN_MACRO;
-		String outputFile = "";   //$NON-NLS-1$
-		String outflag = "";  //$NON-NLS-1$
-		String outputPrefix = "";   //$NON-NLS-1$
+		String[] inputs = new String[1];
+		inputs[0] = IManagedBuilderMakefileGenerator.IN_MACRO;
+		String outputFile = ""; //$NON-NLS-1$
+		String outflag = ""; //$NON-NLS-1$
+		String outputPrefix = ""; //$NON-NLS-1$
 		String cmd = tool.getToolCommand();
 		//try to resolve the build macros in the tool command
 		try {
 			String resolvedCommand = null;
 
 			if (!needExplicitRuleForFile) {
-				resolvedCommand = provider.resolveValueToMakefileFormat(
-								cmd,
-								EMPTY_STRING,
-								IManagedBuilderMakefileGenerator.WHITESPACE,
-								IBuildMacroProvider.CONTEXT_FILE,
-								new FileContextData(sourceLocation,
-										outputLocation, null, tool));
+				resolvedCommand = provider.resolveValueToMakefileFormat(cmd, EMPTY_STRING,
+						IManagedBuilderMakefileGenerator.WHITESPACE, IBuildMacroProvider.CONTEXT_FILE,
+						new FileContextData(sourceLocation, outputLocation, null, tool));
 			} else {
 				// if we need an explicit rule then don't use any builder
 				// variables, resolve everything
 				// to explicit strings
-				resolvedCommand = provider.resolveValue(
-								cmd,
-								EMPTY_STRING,
-								IManagedBuilderMakefileGenerator.WHITESPACE,
-								IBuildMacroProvider.CONTEXT_FILE,
-								new FileContextData(sourceLocation,
-										outputLocation, null, tool));
+				resolvedCommand = provider.resolveValue(cmd, EMPTY_STRING, IManagedBuilderMakefileGenerator.WHITESPACE,
+						IBuildMacroProvider.CONTEXT_FILE,
+						new FileContextData(sourceLocation, outputLocation, null, tool));
 			}
 
-			if((resolvedCommand = resolvedCommand.trim()).length() > 0)
+			if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
 				cmd = resolvedCommand;
 
-		} catch (BuildMacroException e){
+		} catch (BuildMacroException e) {
 		}
 
 		String[] toolFlags = null;
 		try {
 			toolFlags = tool.getToolCommandFlags(sourceLocation, outputLocation);
-		} catch( BuildException ex ) {
+		} catch (BuildException ex) {
 			toolFlags = new String[0];
 		}
 		String[] flags = new String[toolFlags.length + 4];
-		flags[0] = "-MM";  //$NON-NLS-1$
-		flags[1] = "-MG";  //$NON-NLS-1$
-		flags[2] = "-P";   //$NON-NLS-1$
-		flags[3] = "-w";   //$NON-NLS-1$
-		for (int i=0; i<toolFlags.length; i++) {
-			flags[4+i] = toolFlags[i];
+		flags[0] = "-MM"; //$NON-NLS-1$
+		flags[1] = "-MG"; //$NON-NLS-1$
+		flags[2] = "-P"; //$NON-NLS-1$
+		flags[3] = "-w"; //$NON-NLS-1$
+		for (int i = 0; i < toolFlags.length; i++) {
+			flags[4 + i] = toolFlags[i];
 		}
 		IManagedCommandLineGenerator cmdLGen = tool.getCommandLineGenerator();
-		cmdLInfo = cmdLGen.generateCommandLineInfo( tool, cmd, flags, outflag, outputPrefix,
-				outputFile, inputs, tool.getCommandLinePattern() );
+		cmdLInfo = cmdLGen.generateCommandLineInfo(tool, cmd, flags, outflag, outputPrefix, outputFile, inputs,
+				tool.getCommandLinePattern());
 
 		// The command to build
 		buildCmd = cmdLInfo.getCommandLine();
@@ -310,36 +291,25 @@ public class DefaultGCCDependencyCalculator3Commands implements
 			String resolvedCommand = null;
 
 			if (!needExplicitRuleForFile) {
-				resolvedCommand = provider.resolveValueToMakefileFormat(
-								buildCmd,
-								EMPTY_STRING,
-								IManagedBuilderMakefileGenerator.WHITESPACE,
-								IBuildMacroProvider.CONTEXT_FILE,
-								new FileContextData(sourceLocation,
-										outputLocation, null, tool));
+				resolvedCommand = provider.resolveValueToMakefileFormat(buildCmd, EMPTY_STRING,
+						IManagedBuilderMakefileGenerator.WHITESPACE, IBuildMacroProvider.CONTEXT_FILE,
+						new FileContextData(sourceLocation, outputLocation, null, tool));
 			} else {
 				// if we need an explicit rule then don't use any builder
 				// variables, resolve everything to explicit strings
-				resolvedCommand = provider.resolveValue(
-								buildCmd,
-								EMPTY_STRING,
-								IManagedBuilderMakefileGenerator.WHITESPACE,
-								IBuildMacroProvider.CONTEXT_FILE,
-								new FileContextData(sourceLocation,
-										outputLocation, null, tool));
+				resolvedCommand = provider.resolveValue(buildCmd, EMPTY_STRING,
+						IManagedBuilderMakefileGenerator.WHITESPACE, IBuildMacroProvider.CONTEXT_FILE,
+						new FileContextData(sourceLocation, outputLocation, null, tool));
 			}
 
-			if((resolvedCommand = resolvedCommand.trim()).length() > 0)
+			if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
 				buildCmd = resolvedCommand;
 
-		} catch (BuildMacroException e){
+		} catch (BuildMacroException e) {
 		}
 
-		commands[1] =
-				IManagedBuilderMakefileGenerator.TAB +
-				buildCmd +
-				IManagedBuilderMakefileGenerator.WHITESPACE +
-				">>" +  //$NON-NLS-1$
+		commands[1] = IManagedBuilderMakefileGenerator.TAB + buildCmd + IManagedBuilderMakefileGenerator.WHITESPACE
+				+ ">>" + //$NON-NLS-1$
 				IManagedBuilderMakefileGenerator.WHITESPACE + depRule;
 
 		return commands;

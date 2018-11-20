@@ -28,59 +28,57 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 @Immutable
 public class MIFunctionFinishedEvent extends MIStoppedEvent {
 
-    final private String gdbResult;
-    final private String returnValue;
-    final private String returnType;
+	final private String gdbResult;
+	final private String returnValue;
+	final private String returnType;
 
-    protected MIFunctionFinishedEvent(
-        IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, String gdbResult, 
-        String returnValue, String returnType) 
-    {
-        super(ctx, token, results, frame);
-        this.gdbResult = gdbResult;
-        this.returnValue = returnValue;
-        this.returnType = returnType;
-    }
+	protected MIFunctionFinishedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame,
+			String gdbResult, String returnValue, String returnType) {
+		super(ctx, token, results, frame);
+		this.gdbResult = gdbResult;
+		this.returnValue = returnValue;
+		this.returnType = returnType;
+	}
 
-    public String getGDBResultVar() {
-    	return gdbResult;
-    }
+	public String getGDBResultVar() {
+		return gdbResult;
+	}
 
-    public String getReturnValue() {
-    	return returnValue;
-    }
+	public String getReturnValue() {
+		return returnValue;
+	}
 
-    public String getReturnType() {
-    	return returnType;
-    }
+	public String getReturnType() {
+		return returnType;
+	}
 
-    /**
-     * @since 1.1
-     */
-    public static MIFunctionFinishedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
-    {
-       String gdbResult = ""; //$NON-NLS-1$
-       String returnValue = ""; //$NON-NLS-1$
-       String returnType = ""; //$NON-NLS-1$
+	/**
+	 * @since 1.1
+	 */
+	public static MIFunctionFinishedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
+		String gdbResult = ""; //$NON-NLS-1$
+		String returnValue = ""; //$NON-NLS-1$
+		String returnType = ""; //$NON-NLS-1$
 
-       for (int i = 0; i < results.length; i++) {
-           String var = results[i].getVariable();
-           MIValue value = results[i].getMIValue();
-           String str = ""; //$NON-NLS-1$
-           if (value instanceof MIConst) {
-               str = ((MIConst)value).getString();
-           }
+		for (int i = 0; i < results.length; i++) {
+			String var = results[i].getVariable();
+			MIValue value = results[i].getMIValue();
+			String str = ""; //$NON-NLS-1$
+			if (value instanceof MIConst) {
+				str = ((MIConst) value).getString();
+			}
 
-           if (var.equals("gdb-result-var")) { //$NON-NLS-1$
-               gdbResult = str;
-           } else if (var.equals("return-value")) { //$NON-NLS-1$
-               returnValue = str;
-           } else if (var.equals("return-type")) { //$NON-NLS-1$
-               returnType = str;
-           } 
-       }
+			if (var.equals("gdb-result-var")) { //$NON-NLS-1$
+				gdbResult = str;
+			} else if (var.equals("return-value")) { //$NON-NLS-1$
+				returnValue = str;
+			} else if (var.equals("return-type")) { //$NON-NLS-1$
+				returnType = str;
+			}
+		}
 
-       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
-       return new MIFunctionFinishedEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), gdbResult, returnValue, returnType);
-    }
+		MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
+		return new MIFunctionFinishedEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(),
+				gdbResult, returnValue, returnType);
+	}
 }

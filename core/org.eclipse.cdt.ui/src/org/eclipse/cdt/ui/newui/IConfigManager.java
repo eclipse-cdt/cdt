@@ -16,27 +16,27 @@ package org.eclipse.cdt.ui.newui;
 import org.eclipse.core.resources.IProject;
 
 /*
- * Implementors are intended to 
+ * Implementors are intended to
  * override "Manage Configurations" dialog
- * 
+ *
  * @see ConfigManager extension point.
  */
 public interface IConfigManager {
 	/**
 	 * Checks whether objects are applicable to the manager
-	 * 
-	 * @param obs - selected projects 
-	 * @return true if Configuration Management 
+	 *
+	 * @param obs - selected projects
+	 * @return true if Configuration Management
 	 *         is possible for these objects
 	 */
 	public boolean canManage(IProject[] obs);
-	
+
 	/**
 	 * Displays "Manage Configurations" dialog
-	 * 
+	 *
 	 * @param obs - selected projects
 	 * @param doOk - whether data saving is required
-	 * @return true if user pressed OK in dialog 
+	 * @return true if user pressed OK in dialog
 	 */
 	public boolean manage(IProject[] obs, boolean doOk);
 }

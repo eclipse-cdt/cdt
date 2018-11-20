@@ -23,17 +23,17 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * 
+ *
  * @since 1.0
  */
 public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProperties {
 
-	private static final String ID_DISASSEMBLY_VIEW= "org.eclipse.cdt.dsf.debug.ui.disassembly.view"; //$NON-NLS-1$
+	private static final String ID_DISASSEMBLY_VIEW = "org.eclipse.cdt.dsf.debug.ui.disassembly.view"; //$NON-NLS-1$
 
 	private final Preferences fPreferences;
 
 	public DsfSteppingModeTarget() {
-		fPreferences= new Preferences();
+		fPreferences = new Preferences();
 		fPreferences.setDefault(PREF_INSTRUCTION_STEPPING_MODE, false);
 	}
 
@@ -45,7 +45,7 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 		fPreferences.setValue(PREF_INSTRUCTION_STEPPING_MODE, enabled);
 		if (enabled) {
 			try {
-				final IWorkbenchWindow activeWorkbenchWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				final IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 				if (activeWorkbenchWindow != null && activeWorkbenchWindow.getActivePage() != null) {
 					activeWorkbenchWindow.getActivePage().showView(ID_DISASSEMBLY_VIEW);
 				}

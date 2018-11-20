@@ -19,11 +19,11 @@ package org.eclipse.cdt.internal.core.settings.model;
 class CExternalSettingChangeEvent {
 	private final CExternalSettingsContainerChangeInfo[] fChangeInfos;
 
-	CExternalSettingChangeEvent(CExternalSettingsContainerChangeInfo[] infos){
+	CExternalSettingChangeEvent(CExternalSettingsContainerChangeInfo[] infos) {
 		fChangeInfos = infos;
 	}
 
-	public CExternalSettingsContainerChangeInfo[] getChangeInfos(){
+	public CExternalSettingsContainerChangeInfo[] getChangeInfos() {
 		return fChangeInfos;
 	}
 }

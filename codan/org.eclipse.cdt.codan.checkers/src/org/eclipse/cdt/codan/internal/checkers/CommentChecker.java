@@ -35,8 +35,8 @@ public class CommentChecker extends AbstractIndexAstChecker {
 		if (comments == null)
 			return;
 		conly = ast.getLinkage().getLinkageID() == ILinkage.C_LINKAGE_ID;
-		if (!conly && shouldProduceProblem(getProblemById(COMMENT_NO_START, getFile()), 
-				getFile().getFullPath())==false)
+		if (!conly
+				&& shouldProduceProblem(getProblemById(COMMENT_NO_START, getFile()), getFile().getFullPath()) == false)
 			return; // c++ file and COMMENT_NO_START is disabled - optimize and bail
 		for (IASTComment comment : comments) {
 			processComment(comment);

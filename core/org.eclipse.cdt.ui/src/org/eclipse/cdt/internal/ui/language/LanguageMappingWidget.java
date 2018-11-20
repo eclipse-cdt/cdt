@@ -37,22 +37,22 @@ public abstract class LanguageMappingWidget {
 	protected static final int MINIMUM_COLUMN_WIDTH = 150;
 	protected Composite fContents;
 	protected boolean fIsReadOnly;
-	
+
 	protected Table fTable;
 	protected HashMap<String, String> fContentTypeNamesToIDsMap;
 	protected Set<IContentType> fAffectedContentTypes;
 	protected Font fOverriddenFont;
 	protected LanguageMappingWidget fChild;
 	protected IAdaptable fElement;
-	
+
 	protected Set<String> fOverriddenContentTypes;
-	
+
 	private boolean fIsChanged;
-	
+
 	public LanguageMappingWidget() {
 		fOverriddenFont = JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
 		fOverriddenContentTypes = Collections.emptySet();
-		
+
 		// keep a mapping of all registered content types and their names
 		fContentTypeNamesToIDsMap = new HashMap<String, String>();
 		String[] contentTypesIDs = LanguageManager.getInstance().getRegisteredContentTypeIds();
@@ -75,15 +75,15 @@ public abstract class LanguageMappingWidget {
 	public IAdaptable getElement() {
 		return fElement;
 	}
-	
+
 	public void setElement(IAdaptable element) {
 		fElement = element;
 	}
-	
+
 	public void setOverriddenContentTypes(Set<String> contentTypes) {
 		fOverriddenContentTypes = contentTypes;
 	}
-	
+
 	public IContentType[] getAffectedContentTypes() {
 		return fAffectedContentTypes.toArray(new IContentType[fAffectedContentTypes.size()]);
 	}
@@ -91,11 +91,11 @@ public abstract class LanguageMappingWidget {
 	public void setReadOnly(boolean isReadOnly) {
 		fIsReadOnly = isReadOnly;
 	}
-	
+
 	public void setChild(LanguageMappingWidget child) {
 		fChild = child;
 	}
-	
+
 	public boolean isChanged() {
 		return fIsChanged;
 	}
@@ -103,7 +103,7 @@ public abstract class LanguageMappingWidget {
 	public void setChanged(boolean changed) {
 		fIsChanged = changed;
 	}
-	
+
 	protected void createHeader(Composite parent, String description) {
 		Link link = new Link(fContents, SWT.NONE);
 		link.setText(description);
@@ -120,7 +120,8 @@ public abstract class LanguageMappingWidget {
 		gridData.horizontalSpan = 2;
 		link.setLayoutData(gridData);
 	}
-	
+
 	public abstract Composite createContents(Composite parent, String description);
+
 	public abstract void refreshMappings();
 }

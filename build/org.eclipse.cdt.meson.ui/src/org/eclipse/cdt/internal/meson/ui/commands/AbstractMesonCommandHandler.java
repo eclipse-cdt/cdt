@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 public abstract class AbstractMesonCommandHandler extends AbstractHandler {
-	
+
 	private IContainer fContainer;
 
 	protected abstract void run(Shell activeShell);
@@ -41,7 +41,7 @@ public abstract class AbstractMesonCommandHandler extends AbstractHandler {
 	protected Object execute1(ExecutionEvent event) {
 		ISelection k = HandlerUtil.getCurrentSelection(event);
 		if (!k.isEmpty() && k instanceof IStructuredSelection) {
-			Object obj = ((IStructuredSelection)k).getFirstElement();
+			Object obj = ((IStructuredSelection) k).getFirstElement();
 			IContainer container = getContainer(obj);
 			if (container != null) {
 				setSelectedContainer(container);
@@ -56,40 +56,40 @@ public abstract class AbstractMesonCommandHandler extends AbstractHandler {
 		IContainer fContainer = null;
 
 		if (obj instanceof Collection) {
-			Collection<Object> c = (Collection<Object>)obj;
+			Collection<Object> c = (Collection<Object>) obj;
 			Object[] objArray = c.toArray();
 			if (objArray.length > 0) {
 				obj = objArray[0];
 			}
 		}
 		if (obj instanceof ICElement) {
-			if ( obj instanceof ICContainer || obj instanceof ICProject) {
+			if (obj instanceof ICContainer || obj instanceof ICProject) {
 				fContainer = (IContainer) ((ICElement) obj).getUnderlyingResource();
 			} else {
-				obj = ((ICElement)obj).getResource();
-				if ( obj != null) {
-					fContainer = ((IResource)obj).getParent();
+				obj = ((ICElement) obj).getResource();
+				if (obj != null) {
+					fContainer = ((IResource) obj).getParent();
 				}
 			}
 		} else if (obj instanceof IResource) {
 			if (obj instanceof IContainer) {
 				fContainer = (IContainer) obj;
 			} else {
-				fContainer = ((IResource)obj).getParent();
+				fContainer = ((IResource) obj).getParent();
 			}
 		} else {
 			fContainer = null;
 		}
 		return fContainer;
 	}
-	
+
 	protected void showError(String title, String content) {
 		MessageDialog.openError(new Shell(), title, content);
 	}
 
 	/**
 	 * Separate targets to array from a string.
-	 * 
+	 *
 	 * @param rawArgList
 	 * @return targets in string[] array. if targets are not formatted properly,
 	 *         returns null
@@ -232,7 +232,7 @@ public abstract class AbstractMesonCommandHandler extends AbstractHandler {
 		}
 		return cwd;
 	}
-	
+
 	protected IContainer getSelectedContainer() {
 		return fContainer;
 	}

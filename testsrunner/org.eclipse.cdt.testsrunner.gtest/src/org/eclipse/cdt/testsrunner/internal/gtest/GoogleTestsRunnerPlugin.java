@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 
-
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -29,7 +28,6 @@ public class GoogleTestsRunnerPlugin extends Plugin {
 	/** Plug-in instance. */
 	private static GoogleTestsRunnerPlugin plugin;
 
-
 	public GoogleTestsRunnerPlugin() {
 		super();
 		plugin = this;
@@ -37,7 +35,7 @@ public class GoogleTestsRunnerPlugin extends Plugin {
 
 	/**
 	 * Returns the Boost Tests Runner provider plug-in instance.
-	 * 
+	 *
 	 * @return the plug-in instance
 	 */
 	public static GoogleTestsRunnerPlugin getDefault() {
@@ -51,7 +49,7 @@ public class GoogleTestsRunnerPlugin extends Plugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
@@ -60,7 +58,7 @@ public class GoogleTestsRunnerPlugin extends Plugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e the exception to be logged
 	 */
 	public static void log(Throwable e) {

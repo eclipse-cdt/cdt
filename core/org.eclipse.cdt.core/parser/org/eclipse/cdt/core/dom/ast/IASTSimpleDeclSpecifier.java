@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 
 /**
  * This represents a declaration specifier for a built-in type.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -29,7 +29,7 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 * @since 5.2
 	 */
 	public static final ASTNodeProperty DECLTYPE_EXPRESSION = new ASTNodeProperty(
-		"IASTSimpleDeclSpecifier.EXPRESSION [IASTExpression]"); //$NON-NLS-1$
+			"IASTSimpleDeclSpecifier.EXPRESSION [IASTExpression]"); //$NON-NLS-1$
 
 	/**
 	 * Used for omitted declaration specifiers. E.g. for declaration of constructors,
@@ -184,7 +184,7 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 * @since 5.2
 	 */
 	public boolean isComplex();
-	
+
 	/**
 	 * <code>_Imaginary t</code>;
 	 * @since 5.2
@@ -192,7 +192,7 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	public boolean isImaginary();
 
 	/**
-	 * Returns the expression for simple declaration specifiers of type 
+	 * Returns the expression for simple declaration specifiers of type
 	 * {@link IASTSimpleDeclSpecifier#t_decltype} or {@link IASTSimpleDeclSpecifier#t_typeof}.
 	 * Other simple declaration specifiers will return <code>null</code>.
 	 * @since 5.2
@@ -204,7 +204,7 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 * @see #getType()
 	 */
 	public void setType(int type);
-	
+
 	/**
 	 * Not allowed on frozen ast.
 	 * Sets this declaration specifier to the type based on {@link IBasicType.Kind}.
@@ -242,7 +242,7 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 * @since 5.2
 	 */
 	public void setLongLong(boolean value);
-	
+
 	/**
 	 * Not allowed on frozen ast.
 	 * @see #isComplex()

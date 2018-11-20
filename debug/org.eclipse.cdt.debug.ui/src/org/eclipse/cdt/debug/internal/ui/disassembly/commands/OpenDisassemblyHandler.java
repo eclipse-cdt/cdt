@@ -25,29 +25,28 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * org.eclipse.cdt.debug.internal.ui.disassembly.commands.OpenDisassemblyHandler: 
+ * org.eclipse.cdt.debug.internal.ui.disassembly.commands.OpenDisassemblyHandler:
  * //TODO Add description.
  */
 public class OpenDisassemblyHandler extends AbstractHandler {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-     */
-    @Override
-	public Object execute( ExecutionEvent event ) throws ExecutionException {
-        ISelection s = HandlerUtil.getCurrentSelection( event );
-        if ( s instanceof IStructuredSelection ) {
-            Object element = ((IStructuredSelection)s).getFirstElement();
-            IWorkbenchSite site = HandlerUtil.getActiveSite( event );
-            if ( element != null && site != null ) {
-                try {
-                    CDebugUIPlugin.getDefault().getDisassemblyEditorManager().openEditor( site.getPage(), element );
-                }
-                catch( DebugException e ) {
-                    throw new ExecutionException( "Error openning disassembly.", e );
-                }
-            }
-        }
-        return null;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 */
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		ISelection s = HandlerUtil.getCurrentSelection(event);
+		if (s instanceof IStructuredSelection) {
+			Object element = ((IStructuredSelection) s).getFirstElement();
+			IWorkbenchSite site = HandlerUtil.getActiveSite(event);
+			if (element != null && site != null) {
+				try {
+					CDebugUIPlugin.getDefault().getDisassemblyEditorManager().openEditor(site.getPage(), element);
+				} catch (DebugException e) {
+					throw new ExecutionException("Error openning disassembly.", e);
+				}
+			}
+		}
+		return null;
+	}
 }

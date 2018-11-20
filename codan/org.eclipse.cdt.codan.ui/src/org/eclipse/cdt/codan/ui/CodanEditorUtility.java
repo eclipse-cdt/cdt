@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,15 +36,16 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Utility tools to open editor and highlight the line
  */
 public class CodanEditorUtility {
-	
-	private static final String C_EDITOR_ID= "org.eclipse.cdt.ui.editor.CEditor";  //$NON-NLS-1$
-	
+
+	private static final String C_EDITOR_ID = "org.eclipse.cdt.ui.editor.CEditor"; //$NON-NLS-1$
+
 	/**
 	 * @param fileUrl - file "url", like file:/tmp/a.c#22
 	 * @throws PartInitException
 	 * @throws BadLocationException
 	 */
-	public static void openFileURL(String fileUrl, IResource markerResource) throws PartInitException, BadLocationException {
+	public static void openFileURL(String fileUrl, IResource markerResource)
+			throws PartInitException, BadLocationException {
 		String file = getFileFromURL(fileUrl);
 		IEditorPart part = openInEditor(file, markerResource);
 		int line = getLineFromURL(fileUrl);
@@ -53,7 +54,7 @@ public class CodanEditorUtility {
 
 	/**
 	 * Line is the part the follows # in this URL
-	 * 
+	 *
 	 * @return -1 if not line found in URL, and line number if there is
 	 */
 	public static int getLineFromURL(String fileUrl) {
@@ -135,7 +136,7 @@ public class CodanEditorUtility {
 		String loc2 = marker.getAttribute(IMarker.LOCATION, ""); //$NON-NLS-1$
 		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0);
 		if (loc2.length() > 0) {
-			loc = loc2.replaceAll("[^:]*: ", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
+			loc = loc2.replaceAll("[^:]*: ", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return loc + ":" + line; //$NON-NLS-1$
 	}

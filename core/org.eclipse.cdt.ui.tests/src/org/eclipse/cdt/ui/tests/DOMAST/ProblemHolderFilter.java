@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
+ * IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
@@ -30,13 +30,12 @@ public class ProblemHolderFilter extends ViewerFilter {
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof DOMASTNodeLeaf) {
-			int flag = ((DOMASTNodeLeaf)element).getFiltersFlag() & DOMASTNodeLeaf.FLAG_PROBLEM;
+			int flag = ((DOMASTNodeLeaf) element).getFiltersFlag() & DOMASTNodeLeaf.FLAG_PROBLEM;
 			if (flag > 0) {
-				IASTNode node = ((DOMASTNodeLeaf)element).getNode();
-				if (node instanceof IASTProblem ||
-						node instanceof IASTProblemHolder)
+				IASTNode node = ((DOMASTNodeLeaf) element).getNode();
+				if (node instanceof IASTProblem || node instanceof IASTProblemHolder)
 					return false;
-				
+
 				return true;
 			}
 		}

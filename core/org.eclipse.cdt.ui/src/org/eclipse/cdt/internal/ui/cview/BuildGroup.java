@@ -60,88 +60,88 @@ public class BuildGroup extends CViewActionGroup {
 	 * before build.
 	 */
 	public static class CDTBuildAction extends BuildAction {
-	    public CDTBuildAction(IShellProvider shell, int kind) {
-	        super(shell, kind);
-	    }
-	    
-	    @Override
-	    protected boolean updateSelection(IStructuredSelection s) {
-	    	// Call the super since it needs to clear out some settings
-	    	super.updateSelection(s);
-	    	// Always build CDT projects
-	    	return true;
-	    }
-	    
-	    @Override
-	    public void run() {
-	    	// Ensure we correctly save files in all referenced projects before build
-	    	Set<IProject> prjs = new HashSet<IProject>();
-	    	for (IResource resource : getSelectedResources()) {
-	    		IProject project = resource.getProject();
-	    		if (project != null) {
-	    			prjs.add(project);
-	    			try {
-	    				prjs.addAll(Arrays.asList(project.getReferencedProjects()));
-	    			} catch (CoreException e) {
-	    				// Project not accessible or not open
-	    			}
-	    		}
-	    	}
-	    	saveEditors(prjs);
+		public CDTBuildAction(IShellProvider shell, int kind) {
+			super(shell, kind);
+		}
+
+		@Override
+		protected boolean updateSelection(IStructuredSelection s) {
+			// Call the super since it needs to clear out some settings
+			super.updateSelection(s);
+			// Always build CDT projects
+			return true;
+		}
+
+		@Override
+		public void run() {
+			// Ensure we correctly save files in all referenced projects before build
+			Set<IProject> prjs = new HashSet<IProject>();
+			for (IResource resource : getSelectedResources()) {
+				IProject project = resource.getProject();
+				if (project != null) {
+					prjs.add(project);
+					try {
+						prjs.addAll(Arrays.asList(project.getReferencedProjects()));
+					} catch (CoreException e) {
+						// Project not accessible or not open
+					}
+				}
+			}
+			saveEditors(prjs);
 
 			// Clear the build console, and open a stream
 			CUIPlugin.getDefault().startGlobalConsole();
 
-	    	// Now delegate to the parent
-	    	super.run();
-	    }
+			// Now delegate to the parent
+			super.run();
+		}
 
-	    /**
-	     * Taken from inaccessible o.e.ui.ide.BuildUtilities.java
-	     *
-	     * Causes all editors to save any modified resources in the provided collection
-	     * of projects depending on the user's preference.
-	     * @param projects The projects in which to save editors, or <code>null</code>
-	     * to save editors in all projects.
-	     */
-	    private static void saveEditors(Collection<IProject> projects) {
-	    	if (!BuildAction.isSaveAllSet()) {
-	    		return;
-	    	}
-	    	IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-	    	for (IWorkbenchWindow window : windows) {
-	    		IWorkbenchPage[] pages = window.getPages();
-	    		for (IWorkbenchPage page : pages) {
-	    			if (projects == null) {
-	    				page.saveAllEditors(false);
-	    			} else {
-	    				IEditorPart[] editors = page.getDirtyEditors();
-	    				for (IEditorPart editor : editors) {
-	    					IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
-	    					if (inputFile != null) {
-	    						if (projects.contains(inputFile.getProject())) {
-	    							page.saveEditor(editor, false);
-	    						}
-	    					}
-	    				}
-	    			}
-	    		}
-	    	}
-	    }
+		/**
+		 * Taken from inaccessible o.e.ui.ide.BuildUtilities.java
+		 *
+		 * Causes all editors to save any modified resources in the provided collection
+		 * of projects depending on the user's preference.
+		 * @param projects The projects in which to save editors, or <code>null</code>
+		 * to save editors in all projects.
+		 */
+		private static void saveEditors(Collection<IProject> projects) {
+			if (!BuildAction.isSaveAllSet()) {
+				return;
+			}
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			for (IWorkbenchWindow window : windows) {
+				IWorkbenchPage[] pages = window.getPages();
+				for (IWorkbenchPage page : pages) {
+					if (projects == null) {
+						page.saveAllEditors(false);
+					} else {
+						IEditorPart[] editors = page.getDirtyEditors();
+						for (IEditorPart editor : editors) {
+							IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
+							if (inputFile != null) {
+								if (projects.contains(inputFile.getProject())) {
+									page.saveEditor(editor, false);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private static class RebuildAction extends CDTBuildAction {
-	    public RebuildAction(IShellProvider shell) {
-	        super(shell, IncrementalProjectBuilder.FULL_BUILD);
-	    }
-	    @Override
-		protected void invokeOperation(IResource resource, IProgressMonitor monitor)
-	            throws CoreException {
-	    	// these are both async.  NOT what I want.
-	    	((IProject) resource).build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
-	    	((IProject) resource).build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+		public RebuildAction(IShellProvider shell) {
+			super(shell, IncrementalProjectBuilder.FULL_BUILD);
+		}
 
-	    }
+		@Override
+		protected void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreException {
+			// these are both async.  NOT what I want.
+			((IProject) resource).build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+			((IProject) resource).build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+
+		}
 	}
 
 	private BuildAction buildAction;
@@ -170,7 +170,7 @@ public class BuildGroup extends CViewActionGroup {
 	 * <p>
 	 * No disabled action should be on the context menu.
 	 * </p>
-	 * 
+	 *
 	 * @param menu
 	 *            context menu to add actions to
 	 */
@@ -193,7 +193,7 @@ public class BuildGroup extends CViewActionGroup {
 			if (next instanceof IProject) {
 				project = (IProject) next;
 			} else if (next instanceof IAdaptable) {
-				IResource res = ((IAdaptable)next).getAdapter(IResource.class);
+				IResource res = ((IAdaptable) next).getAdapter(IResource.class);
 				if (res instanceof IProject) {
 					project = (IProject) res;
 				}
@@ -217,8 +217,8 @@ public class BuildGroup extends CViewActionGroup {
 		if (!selection.isEmpty() && isProjectSelection && hasBuilder) {
 			buildAction.selectionChanged(selection);
 			menu.add(buildAction);
-//			rebuildAction.selectionChanged(selection);
-//			menu.add(rebuildAction);
+			//			rebuildAction.selectionChanged(selection);
+			//			menu.add(rebuildAction);
 			cleanAction.selectionChanged(selection);
 			menu.add(cleanAction);
 		}
@@ -234,14 +234,15 @@ public class BuildGroup extends CViewActionGroup {
 
 	/**
 	 * Returns whether there are builders configured on the given project.
-	 * 
+	 *
 	 * @return <code>true</code> if it has builders, <code>false</code> if
 	 *         not, or if this could not be determined
 	 */
 	boolean hasBuilder(IProject project) {
 		try {
 			ICommand[] commands = project.getDescription().getBuildSpec();
-			if (commands.length > 0) return true;
+			if (commands.length > 0)
+				return true;
 		} catch (CoreException e) {
 			// Cannot determine if project has builders. Project is closed
 			// or does not exist. Fall through to return false.
@@ -254,13 +255,13 @@ public class BuildGroup extends CViewActionGroup {
 		final IWorkbenchPartSite site = getCView().getSite();
 
 		buildAction = new CDTBuildAction(site, IncrementalProjectBuilder.INCREMENTAL_BUILD);
-		buildAction.setText(CViewMessages.BuildAction_label); 
+		buildAction.setText(CViewMessages.BuildAction_label);
 
 		cleanAction = new CDTBuildAction(site, IncrementalProjectBuilder.CLEAN_BUILD);
-		cleanAction.setText(CViewMessages.CleanAction_label); 
-		
+		cleanAction.setText(CViewMessages.CleanAction_label);
+
 		rebuildAction = new RebuildAction(site);
-		rebuildAction.setText(CViewMessages.RebuildAction_label); 
+		rebuildAction.setText(CViewMessages.RebuildAction_label);
 	}
 
 	@Override

@@ -78,7 +78,7 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 	public LanguageSettingsBaseProvider(String id, String name, List<String> languages,
 			List<ICLanguageSettingEntry> entries) {
 		super(id, name);
-		this.languageScope = languages!=null ? new ArrayList<String>(languages) : null;
+		this.languageScope = languages != null ? new ArrayList<String>(languages) : null;
 		this.entries = getPooledList(entries);
 	}
 
@@ -97,7 +97,7 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 	public LanguageSettingsBaseProvider(String id, String name, List<String> languages,
 			List<ICLanguageSettingEntry> entries, Map<String, String> properties) {
 		super(id, name);
-		this.languageScope = languages!=null ? new ArrayList<String>(languages) : null;
+		this.languageScope = languages != null ? new ArrayList<String>(languages) : null;
 		this.entries = getPooledList(entries);
 		if (properties != null)
 			this.properties = new HashMap<String, String>(properties);
@@ -122,14 +122,15 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 	 *
 	 * @throws UnsupportedOperationException if an attempt to reconfigure provider is made.
 	 */
-	public void configureProvider(String id, String name, List<String> languages,
-			List<ICLanguageSettingEntry> entries, Map<String, String> properties) {
-		if (this.entries!=null || !this.properties.isEmpty())
-			throw new UnsupportedOperationException(SettingsModelMessages.getString("LanguageSettingsBaseProvider.CanBeConfiguredOnlyOnce")); //$NON-NLS-1$
+	public void configureProvider(String id, String name, List<String> languages, List<ICLanguageSettingEntry> entries,
+			Map<String, String> properties) {
+		if (this.entries != null || !this.properties.isEmpty())
+			throw new UnsupportedOperationException(
+					SettingsModelMessages.getString("LanguageSettingsBaseProvider.CanBeConfiguredOnlyOnce")); //$NON-NLS-1$
 
 		setId(id);
 		setName(name);
-		this.languageScope = languages!=null ? new ArrayList<String>(languages) : null;
+		this.languageScope = languages != null ? new ArrayList<String>(languages) : null;
 		this.entries = getPooledList(entries);
 		if (properties != null)
 			this.properties = new HashMap<String, String>(properties);
@@ -186,8 +187,8 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 	 *    lists.
 	 */
 	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription,
-			IResource rc, String languageId) {
+	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc,
+			String languageId) {
 		if (languageScope == null) {
 			return entries;
 		}
@@ -204,7 +205,7 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 	 *    If {@code null}, the provider provides for any language.
 	 */
 	public List<String> getLanguageScope() {
-		if (languageScope==null)
+		if (languageScope == null)
 			return null;
 		return Collections.unmodifiableList(languageScope);
 	}

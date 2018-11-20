@@ -46,13 +46,12 @@ public class CSearchTextSelectionQuery extends CSearchQuery {
 	private ITranslationUnit tu;
 	private ITextSelection selection;
 	private String label;
-	
-	public CSearchTextSelectionQuery(ICElement[] scope, ITranslationUnit tu, ITextSelection selection,
-			int flags) {
+
+	public CSearchTextSelectionQuery(ICElement[] scope, ITranslationUnit tu, ITextSelection selection, int flags) {
 		super(scope, flags | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		this.tu = tu;
 		this.selection = selection;
-		this.label= selection.getText();
+		this.label = selection.getText();
 	}
 
 	@Override
@@ -61,15 +60,16 @@ public class CSearchTextSelectionQuery extends CSearchQuery {
 			@Override
 			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
 				if (ast != null) {
-					IASTName searchName= ast.getNodeSelector(null).findEnclosingName(selection.getOffset(), selection.getLength());
+					IASTName searchName = ast.getNodeSelector(null).findEnclosingName(selection.getOffset(),
+							selection.getLength());
 					if (searchName != null) {
 						try {
 							CPPSemantics.pushLookupPoint(searchName);
-							label= searchName.toString();
-							IBinding binding= searchName.resolveBinding();
+							label = searchName.toString();
+							IBinding binding = searchName.resolveBinding();
 							if (!(binding instanceof IProblemBinding)) {
 								if (binding != null) {
-									IScope scope= null;
+									IScope scope = null;
 									try {
 										scope = binding.getScope();
 									} catch (DOMException e) {
@@ -80,9 +80,9 @@ public class CSearchTextSelectionQuery extends CSearchQuery {
 									}
 								}
 								binding = index.findBinding(searchName);
-								binding= CPPTemplates.findDeclarationForSpecialization(binding);
+								binding = CPPTemplates.findDeclarationForSpecialization(binding);
 								if (binding != null) {
-									label= labelForBinding(index, binding, label);
+									label = labelForBinding(index, binding, label);
 									createMatches(index, binding);
 									return Status.OK_STATUS;
 								}

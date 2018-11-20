@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - initial implementation
  *******************************************************************************/
@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class MesonPropertyText implements IMesonPropertyPageControl {
-	
+
 	private String name;
 	private String initialValue;
 	protected Text text;
-	
+
 	public MesonPropertyText(Composite composite, String name, String initialValue, String tooltip) {
 		this.name = name;
 		if (initialValue == null) {
@@ -51,12 +51,12 @@ public class MesonPropertyText implements IMesonPropertyPageControl {
 	public String getFieldName() {
 		return name;
 	}
-	
+
 	@Override
 	public boolean isValueChanged() {
 		return !text.getText().equals(initialValue);
 	}
-	
+
 	@Override
 	public boolean isValid() {
 		return true;

@@ -49,14 +49,14 @@ public class GetterSetterNameGenerator {
 	// Do not instantiate.
 	private GetterSetterNameGenerator() {
 	}
-	
+
 	public static Set<String> getGenerateGetterSettersPreferenceKeys() {
 		return generateGetterSettersPreferenceKeys;
 	}
 
 	/**
 	 * Generates getter name for a given field name.
-	 * 
+	 *
 	 * @param fieldName the name of the field
 	 * @param namesToAvoid the set of names to avoid
 	 * @return the generated getter name, or <code>null</code> if a valid name could not be
@@ -67,7 +67,7 @@ public class GetterSetterNameGenerator {
 		return StubUtility.suggestGetterName(StubUtility.trimFieldName(fieldName.toString()),
 				isBooleanDeclaratorName(fieldName), namesToAvoid, tu);
 	}
-	
+
 	private static boolean isBooleanDeclaratorName(IASTName name) {
 		if (IASTDeclarator.DECLARATOR_NAME.equals(name.getPropertyInParent())) {
 			IASTDeclarator declarator = (IASTDeclarator) name.getParent();
@@ -82,7 +82,7 @@ public class GetterSetterNameGenerator {
 
 	/**
 	 * Generates setter name for a given field name.
-	 * 
+	 *
 	 * @param fieldName the name of the field
 	 * @param namesToAvoid the set of names to avoid
 	 * @return the generated setter name, or <code>null</code> if a valid name could not be

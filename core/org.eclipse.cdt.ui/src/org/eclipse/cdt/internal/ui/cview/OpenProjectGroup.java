@@ -69,7 +69,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 	 * <p>
 	 * No disabled action should be on the context menu.
 	 * </p>
-	 * 
+	 *
 	 * @param menu
 	 *            context menu to add actions to
 	 */
@@ -90,7 +90,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 			} else if (next instanceof IAdaptable) {
 				IResource res = ((IAdaptable) next).getAdapter(IResource.class);
 				if (res instanceof IProject) {
-					project = (IProject)res;
+					project = (IProject) res;
 				}
 			}
 
@@ -136,7 +136,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 
 	@Override
 	protected void makeActions() {
-		final IWorkbenchPartSite site= getCView().getSite();
+		final IWorkbenchPartSite site = getCView().getSite();
 		IWorkspace workspace = CUIPlugin.getWorkspace();
 
 		openProjectAction = new OpenResourceAction(site);
@@ -146,7 +146,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 		refreshAction = new RefreshAction(site);
 		refreshAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.gif"));//$NON-NLS-1$
 		refreshAction.setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.gif"));//$NON-NLS-1$
-//		refreshAction.setHoverImageDescriptor(getImageDescriptor("clcl16/refresh_nav.gif"));//$NON-NLS-1$		
+		//		refreshAction.setHoverImageDescriptor(getImageDescriptor("clcl16/refresh_nav.gif"));//$NON-NLS-1$
 	}
 
 	@Override

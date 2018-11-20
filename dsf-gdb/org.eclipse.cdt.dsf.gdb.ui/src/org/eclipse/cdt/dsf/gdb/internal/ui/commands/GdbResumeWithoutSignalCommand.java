@@ -36,108 +36,109 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
  * Command performing a resume without signal.
- * 
+ *
  * @since 2.1
  */
 public class GdbResumeWithoutSignalCommand extends AbstractDebugCommand implements IResumeWithoutSignalHandler {
-    private final DsfExecutor fExecutor;
-    private final DsfServicesTracker fTracker;
-    
-    public GdbResumeWithoutSignalCommand(DsfSession session) {
-        fExecutor = session.getExecutor();
-        fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
-    }    
+	private final DsfExecutor fExecutor;
+	private final DsfServicesTracker fTracker;
 
-    public void dispose() {
-        fTracker.dispose();
-    }
+	public GdbResumeWithoutSignalCommand(DsfSession session) {
+		fExecutor = session.getExecutor();
+		fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
+	}
 
-    @Override
+	public void dispose() {
+		fTracker.dispose();
+	}
+
+	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
-    	if (targets.length != 1) {
-    		return;
-    	}
+		if (targets.length != 1) {
+			return;
+		}
 
-        final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext)targets[0]).getDMContext(), IExecutionDMContext.class);
-        if (dmc == null) {
-        	return;
-        }
+		final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(),
+				IExecutionDMContext.class);
+		if (dmc == null) {
+			return;
+		}
 
-        Query<Object> query = new Query<Object>() {
-            @Override
-            public void execute(DataRequestMonitor<Object> rm) {
-       			IRunControl runControl = fTracker.getService(IRunControl.class);
+		Query<Object> query = new Query<Object>() {
+			@Override
+			public void execute(DataRequestMonitor<Object> rm) {
+				IRunControl runControl = fTracker.getService(IRunControl.class);
 
-       			if (runControl != null) {
-       				// This call must be replaced by a new 'resumeWithoutSignal' or even better
-       				// resumeWithSignal(0) which does not exist in the runControl service yet.
-       				// But this method is currently disabled anyway, until proper support is available.
-       				rm.done();
-       			} else {
-       				rm.done();
-       			}
-       		}
-       	};
-    	try {
-    		fExecutor.execute(query);
-    		query.get();
+				if (runControl != null) {
+					// This call must be replaced by a new 'resumeWithoutSignal' or even better
+					// resumeWithSignal(0) which does not exist in the runControl service yet.
+					// But this method is currently disabled anyway, until proper support is available.
+					rm.done();
+				} else {
+					rm.done();
+				}
+			}
+		};
+		try {
+			fExecutor.execute(query);
+			query.get();
 		} catch (InterruptedException e) {
 		} catch (ExecutionException e) {
-        } catch (RejectedExecutionException e) {
-        	// Can be thrown if the session is shutdown
-        }
-    }
+		} catch (RejectedExecutionException e) {
+			// Can be thrown if the session is shutdown
+		}
+	}
 
-    @Override
+	@Override
 	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
-        throws CoreException 
-    {
-    	if (targets.length != 1) {
-    		return false;
-    	}
+			throws CoreException {
+		if (targets.length != 1) {
+			return false;
+		}
 
-    	final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext)targets[0]).getDMContext(), IExecutionDMContext.class);
-    	if (dmc == null) {
-    		return false;
-    	}
+		final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(),
+				IExecutionDMContext.class);
+		if (dmc == null) {
+			return false;
+		}
 
-// Currently, we don't properly support the handling of signal in DSF-GDB, so we cannot
-// really enable this command
-    	
-//        Query<Boolean> query = new Query<Boolean>() {
-//            @Override
-//            public void execute(DataRequestMonitor<Boolean> rm) {
-//       			IRunControl runControl = fTracker.getService(IRunControl.class);
-//
-//       			if (runControl != null) {
-//       				runControl.canResume(dmc, rm);
-//       			} else {
-//       				rm.setData(false);
-//       				rm.done();
-//       			}
-//       		}
-//       	};
-//    	try {
-//    		fExecutor.execute(query);
-//			return query.get();
-//		} catch (InterruptedException e) {
-//		} catch (ExecutionException e) {
-//        } catch (RejectedExecutionException e) {
-//        	// Can be thrown if the session is shutdown
-//        }
+		// Currently, we don't properly support the handling of signal in DSF-GDB, so we cannot
+		// really enable this command
+
+		//        Query<Boolean> query = new Query<Boolean>() {
+		//            @Override
+		//            public void execute(DataRequestMonitor<Boolean> rm) {
+		//       			IRunControl runControl = fTracker.getService(IRunControl.class);
+		//
+		//       			if (runControl != null) {
+		//       				runControl.canResume(dmc, rm);
+		//       			} else {
+		//       				rm.setData(false);
+		//       				rm.done();
+		//       			}
+		//       		}
+		//       	};
+		//    	try {
+		//    		fExecutor.execute(query);
+		//			return query.get();
+		//		} catch (InterruptedException e) {
+		//		} catch (ExecutionException e) {
+		//        } catch (RejectedExecutionException e) {
+		//        	// Can be thrown if the session is shutdown
+		//        }
 
 		return false;
-    }
-    
-    @Override
-	protected Object getTarget(Object element) {
-    	if (element instanceof IDMVMContext) {
-    		return element;
-    	}
-        return null;
-    }
+	}
 
-    @Override
+	@Override
+	protected Object getTarget(Object element) {
+		if (element instanceof IDMVMContext) {
+			return element;
+		}
+		return null;
+	}
+
+	@Override
 	protected boolean isRemainEnabled(IDebugCommandRequest request) {
 		return false;
 	}

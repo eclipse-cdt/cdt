@@ -14,6 +14,7 @@
 package org.eclipse.cdt.managedbuilder.core;
 
 public interface IManagedCommandLineGenerator {
-	public IManagedCommandLineInfo generateCommandLineInfo( ITool tool, String commandName, String[] flags, 
-			String outputFlag, String outputPrefix, String outputName, String[] inputResources, String commandLinePattern );
+	public IManagedCommandLineInfo generateCommandLineInfo(ITool tool, String commandName, String[] flags,
+			String outputFlag, String outputPrefix, String outputName, String[] inputResources,
+			String commandLinePattern);
 }

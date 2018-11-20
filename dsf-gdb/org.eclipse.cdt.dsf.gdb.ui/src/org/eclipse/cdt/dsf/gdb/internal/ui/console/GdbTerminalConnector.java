@@ -33,9 +33,9 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
  * This class will read from the GDB process output and error streams and will write it to any registered
  * ITerminalControl. It must continue reading from the streams, even if there are no ITerminalControl to write
  * to. This is important to prevent GDB's output buffer from getting full and then completely stopping.
- * 
- * In addition this class manages a history buffer which will be used to populate a new console with history 
- * information already collected for the same session. Used for example when closing an re-opening a console. 
+ *
+ * In addition this class manages a history buffer which will be used to populate a new console with history
+ * information already collected for the same session. Used for example when closing an re-opening a console.
  */
 public class GdbTerminalConnector implements IGdbTerminalControlConnector {
 	/**
@@ -58,25 +58,24 @@ public class GdbTerminalConnector implements IGdbTerminalControlConnector {
 	public GdbTerminalConnector(Process process) {
 		fProcess = process;
 
-		// Using a history buffer size aligned with the preferences for console buffering 
+		// Using a history buffer size aligned with the preferences for console buffering
 		// but not exceeding the internal maximum
-		//   We cap the history buffer to an internal maximum in order to prevent excessive use 
+		//   We cap the history buffer to an internal maximum in order to prevent excessive use
 		// of memory, the preference value applies to the console (not the history buffer) and can be specified
 		// to billions of lines.
-		//   Handling billion of lines for the history buffer would require a completely different approach 
+		//   Handling billion of lines for the history buffer would require a completely different approach
 		// to this implementation, possibly making use of the hard disk instead of in memory.
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
 		int prefBufferLines = store.getInt(IGdbDebugPreferenceConstants.PREF_CONSOLE_BUFFERLINES);
-		int history_buffer_size = prefBufferLines < HIST_BUFFER_MAX_SIZE ? prefBufferLines
-				: HIST_BUFFER_MAX_SIZE;
+		int history_buffer_size = prefBufferLines < HIST_BUFFER_MAX_SIZE ? prefBufferLines : HIST_BUFFER_MAX_SIZE;
 
 		fHistoryBuffer = new ConsoleHistoryLinesBuffer(history_buffer_size);
-		
+
 		// Start the jobs that read the GDB process output streams
 		String jobSuffix = ""; //$NON-NLS-1$
 		fOutputStreamJob = new OutputReadJob(process.getInputStream(), jobSuffix);
 		fOutputStreamJob.schedule();
-		
+
 		jobSuffix = "-Error"; //$NON-NLS-1$
 		fErrorStreamJob = new OutputReadJob(process.getErrorStream(), jobSuffix);
 		fErrorStreamJob.schedule();
@@ -87,7 +86,7 @@ public class GdbTerminalConnector implements IGdbTerminalControlConnector {
 	 * the maximum is being exceeded.</br>
 	 * It also keeps track of partial text at the end of the receiving input i.e. not yet forming a complete
 	 * line, once it forms a complete line it gets integrated in the queue
-	 * 
+	 *
 	 * In addition the API used in this implementation are synchronized to allow consistent information among
 	 * the Jobs using it
 	 */
@@ -111,13 +110,14 @@ public class GdbTerminalConnector implements IGdbTerminalControlConnector {
 		 */
 		private class HistorySnapShot {
 			private final String[] fHistoryLinesSnapShot;
-			private final String	fHistoryRemainderSnapShot;
+			private final String fHistoryRemainderSnapShot;
+
 			private HistorySnapShot(String[] historyLines, String historyRemainder) {
 				fHistoryLinesSnapShot = historyLines;
 				fHistoryRemainderSnapShot = historyRemainder;
 			}
 		}
-		
+
 		@Override
 		public synchronized int size() {
 			return super.size();
@@ -150,7 +150,7 @@ public class GdbTerminalConnector implements IGdbTerminalControlConnector {
 		/**
 		 * Writes complete lines to the history buffer, and accumulates incomplete lines "remainder" until
 		 * they form a full line.
-		 * 
+		 *
 		 * Adding complete lines to the buffer is needed to respect a specified maximum number of buffered
 		 * lines
 		 */
@@ -191,7 +191,7 @@ public class GdbTerminalConnector implements IGdbTerminalControlConnector {
 		}
 
 		@Override
-		public synchronized String[] toArray()  {
+		public synchronized String[] toArray() {
 			return super.toArray(new String[size()]);
 		}
 	}

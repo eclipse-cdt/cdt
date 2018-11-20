@@ -204,22 +204,12 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IStatusChangeListener#statusChanged
-	 */
 	@Override
 	public void statusChanged(IStatus status) {
 		setValid(!status.matches(IStatus.ERROR));
 		StatusUtil.applyToStatusLine(this, status);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
-	 */
 	@Override
 	public boolean performCancel() {
 		if (fCPathsBlock != null) {

@@ -528,11 +528,6 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		return ret[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		if (fBuildConfigCombo != null) {
@@ -611,11 +606,6 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
-	 */
 	@Override
 	protected void updateLaunchConfigurationDialog() {
 		updateComboTooltip();

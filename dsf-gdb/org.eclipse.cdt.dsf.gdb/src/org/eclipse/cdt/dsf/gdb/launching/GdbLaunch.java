@@ -287,11 +287,6 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		return fInitialized && super.canTerminate();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.core.Launch#terminate()
-	 */
 	@Override
 	public void terminate() throws DebugException {
 		// Execute asynchronously to avoid potential deadlocks

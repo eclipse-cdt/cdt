@@ -115,10 +115,6 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 		return needReload[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage#createStorage(org.eclipse.core.resources.IContainer, java.lang.String, boolean, boolean, boolean)
-	 */
 	@Override
 	protected final InternalXmlStorageElement createStorage(IContainer container, String fileName, boolean reCreate,
 			boolean createEmptyIfNotFound, boolean readOnly) throws CoreException {

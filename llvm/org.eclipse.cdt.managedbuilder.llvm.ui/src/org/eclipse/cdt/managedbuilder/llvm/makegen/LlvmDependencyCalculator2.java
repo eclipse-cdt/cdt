@@ -23,11 +23,6 @@ import org.eclipse.core.runtime.IPath;
 
 public class LlvmDependencyCalculator2 extends DefaultGCCDependencyCalculator2 {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2#getDependencySourceInfo(org.eclipse.core.runtime.IPath,
-	 * org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.ITool, org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IResource resource, IBuildObject buildContext,
 			ITool tool, IPath topBuildDirectory) {

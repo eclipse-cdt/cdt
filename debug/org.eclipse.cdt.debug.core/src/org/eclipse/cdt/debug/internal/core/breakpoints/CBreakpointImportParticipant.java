@@ -27,13 +27,6 @@ import org.eclipse.debug.core.model.IBreakpointImportParticipant;
  * Initial implementation covering matching breakpoints at import for all platform C/C++ breakpoints
  */
 public class CBreakpointImportParticipant implements IBreakpointImportParticipant {
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.debug.core.model.IBreakpointImportParticipant#matches(java
-	 * .util.Map, org.eclipse.debug.core.model.IBreakpoint)
-	 */
 	@Override
 	public boolean matches(Map<String, Object> attributes, IBreakpoint breakpoint) throws CoreException {
 		if (attributes == null || breakpoint == null) {
@@ -61,10 +54,6 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IBreakpointImportParticipant#verify(org.eclipse.debug.core.model.IBreakpoint)
-	 */
 	@Override
 	public void verify(IBreakpoint breakpoint) throws CoreException {
 	}

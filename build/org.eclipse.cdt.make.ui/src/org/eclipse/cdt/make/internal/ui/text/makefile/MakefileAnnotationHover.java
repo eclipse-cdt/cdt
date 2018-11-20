@@ -39,12 +39,6 @@ public class MakefileAnnotationHover implements IAnnotationHover {
 		fEditor = editor;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer,
-	 *      int)
-	 */
 	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		IDocument document = sourceViewer.getDocument();

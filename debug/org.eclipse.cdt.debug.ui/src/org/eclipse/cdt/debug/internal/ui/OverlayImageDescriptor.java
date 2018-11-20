@@ -100,23 +100,12 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 		return code;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int,
-	 *      int)
-	 */
 	@Override
 	protected void drawCompositeImage(int width, int height) {
 		drawImage(getBase().getImageData(), 0, 0);
 		drawOverlays(getOverlays());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
-	 */
 	@Override
 	protected Point getSize() {
 		return this.fSize;

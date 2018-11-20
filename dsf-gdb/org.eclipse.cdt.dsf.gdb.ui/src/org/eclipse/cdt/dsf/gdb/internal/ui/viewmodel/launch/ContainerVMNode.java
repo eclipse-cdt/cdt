@@ -480,10 +480,6 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 		requestMonitor.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
-	 */
 	private final String MEMENTO_NAME = "CONTAINER_MEMENTO_NAME"; //$NON-NLS-1$
 
 	@Override
@@ -541,10 +537,6 @@ public class ContainerVMNode extends AbstractContainerVMNode implements IElement
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
-	 */
 	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
 		for (final IElementMementoRequest request : requests) {

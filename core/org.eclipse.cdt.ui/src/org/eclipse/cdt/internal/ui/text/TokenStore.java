@@ -143,10 +143,6 @@ public class TokenStore implements ITokenStore {
 		return new TextAttribute(color, null, style);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.text.ITokenStore#getToken(java.lang.String)
-	 */
 	@Override
 	public IToken getToken(String key) {
 		return getTokenInner(key);
@@ -180,19 +176,11 @@ public class TokenStore implements ITokenStore {
 		return -1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.IPropertyChangeParticipant#affectsBehavior(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public boolean affectsBehavior(PropertyChangeEvent event) {
 		return indexOf(event.getProperty()) >= 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.IPropertyChangeParticipant#adaptToPreferenceChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		String property = event.getProperty();

@@ -48,13 +48,6 @@ public class PlainNode extends AbstractSingleIncomingNode implements IPlainNode 
 		this.next = exit;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock#addOutgoing
-	 * (org.eclipse.cdt.codan.core.model.cfg.IBasicBlock)
-	 */
 	@Override
 	public void addOutgoing(IBasicBlock node) {
 		setOutgoing(node);

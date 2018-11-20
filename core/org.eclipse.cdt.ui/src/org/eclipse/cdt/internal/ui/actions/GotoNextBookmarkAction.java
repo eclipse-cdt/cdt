@@ -60,10 +60,6 @@ public class GotoNextBookmarkAction extends TextEditorAction {
 		super(bundle, prefix, editor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		ITextEditor editor = getTextEditor();

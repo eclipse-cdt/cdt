@@ -31,11 +31,6 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.test.CodanTestCase#setUp()
-	 */
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();

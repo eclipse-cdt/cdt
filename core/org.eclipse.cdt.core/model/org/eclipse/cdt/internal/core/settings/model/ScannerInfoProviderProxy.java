@@ -54,12 +54,6 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#subscribe(org.eclipse.core.resources.IResource,
-	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
-	 */
 	@Override
 	public synchronized void subscribe(IResource resource, IScannerInfoChangeListener listener) {
 		if (resource == null || listener == null) {
@@ -90,12 +84,6 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy
 		return listeners;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.core.resources.IResource,
-	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
-	 */
 	@Override
 	public synchronized void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
 		if (resource == null || listener == null) {

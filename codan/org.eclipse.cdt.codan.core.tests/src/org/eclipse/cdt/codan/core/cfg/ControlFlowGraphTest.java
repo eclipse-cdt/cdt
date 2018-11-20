@@ -355,11 +355,6 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		assertEquals("exit(0);", data(exit));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.test.CodanFastCxxAstTestCase#getChecker()
-	 */
 	@Override
 	public IChecker getChecker() {
 		return null;

@@ -27,11 +27,6 @@ public class XlCSpecsRunSIProvider extends GCCSpecsRunSIProvider {
 
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider#initialize()
-	 */
 	@Override
 	protected boolean initialize() {
 

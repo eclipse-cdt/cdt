@@ -200,13 +200,6 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 		fRemoteTimeoutValueText.setEnabled(fRemoteTimeoutEnabledCheckbox.getSelection());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#createTabs(org.eclipse
-	 * .swt.widgets.TabFolder)
-	 */
 	@Override
 	public void createTabs(TabFolder tabFolder) {
 		super.createTabs(tabFolder);

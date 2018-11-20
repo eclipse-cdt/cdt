@@ -123,11 +123,6 @@ public class CodanProblemCategory extends CodanProblemElement implements IProble
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public Object clone() {
 		CodanProblemCategory catClone = (CodanProblemCategory) super.clone();
@@ -147,13 +142,6 @@ public class CodanProblemCategory extends CodanProblemElement implements IProble
 		return catClone;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.internal.core.model.CodanProblemElement#setProfile
-	 * (org.eclipse.cdt.codan.core.model.IProblemProfile)
-	 */
 	@Override
 	public void setProfile(IProblemProfile profile) {
 		checkSet();

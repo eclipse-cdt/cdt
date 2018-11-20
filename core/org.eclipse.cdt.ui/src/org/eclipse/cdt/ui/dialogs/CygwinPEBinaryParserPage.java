@@ -60,11 +60,6 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 	protected Text fCygPathCommandText;
 	protected Text fNMCommandText;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
@@ -134,11 +129,6 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
-	 */
 	@Override
 	public void performDefaults() {
 		String addr2line = null;
@@ -166,11 +156,6 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite composite) {
 		Group comp = new Group(composite, SWT.SHADOW_ETCHED_IN);

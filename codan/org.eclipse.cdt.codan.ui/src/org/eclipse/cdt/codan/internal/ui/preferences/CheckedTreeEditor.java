@@ -72,9 +72,6 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 		createControl(parent);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	protected void adjustForNumColumns(int numColumns) {
 		Control control = getLabelControl();
@@ -86,9 +83,6 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 		doFillLabelIntoGrid(parent, numColumns);
@@ -116,9 +110,6 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 		list.setLayoutData(gd);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	protected void doLoad() {
 		if (getTreeControl() != null) {
@@ -182,9 +173,6 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	protected void doLoadDefault() {
 		if (getTreeControl() != null) {
@@ -193,9 +181,6 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	protected void doStore() {
 		String s = modelToString(getViewer().getInput());
@@ -233,9 +218,6 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 		return treeViewer;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	public int getNumberOfControls() {
 		return 2;
@@ -254,9 +236,6 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 		return treeViewer.getControl().getShell();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	public void setFocus() {
 		if (getTreeControl() != null) {
@@ -302,17 +281,11 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 		return listParent;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	public boolean isValid() {
 		return isValid;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
-	 */
 	@Override
 	protected void refreshValidState() {
 		isValid = checkState();

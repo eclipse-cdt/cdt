@@ -120,11 +120,6 @@ public class IncludesSymbolsPropertyPage extends PropertyPage
 		return label;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fStore != null) {
@@ -223,22 +218,12 @@ public class IncludesSymbolsPropertyPage extends PropertyPage
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IStatusChangeListener#statusChanged
-	 */
 	@Override
 	public void statusChanged(IStatus status) {
 		setValid(!status.matches(IStatus.ERROR));
 		StatusUtil.applyToStatusLine(this, status);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
-	 */
 	@Override
 	public boolean performCancel() {
 		if (fIncludesSymbolsBlock != null) {
@@ -247,11 +232,6 @@ public class IncludesSymbolsPropertyPage extends PropertyPage
 		return super.performCancel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.resources.IPathEntryStoreListener#pathEntryStoreChanged(org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent)
-	 */
 	@Override
 	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
 		if (event.hasContentChanged()) {

@@ -87,11 +87,6 @@ public class CPathContainerWizard extends Wizard {
 		return fContainerEntries;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IWizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		if (fContainerPage != null) {
@@ -110,11 +105,6 @@ public class CPathContainerWizard extends Wizard {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IWizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		if (fPageDesc != null) {
@@ -166,11 +156,6 @@ public class CPathContainerWizard extends Wizard {
 		return containerPage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IWizard#getNextPage(IWizardPage)
-	 */
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page == fSelectionWizardPage) {
@@ -209,11 +194,6 @@ public class CPathContainerWizard extends Wizard {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IWizard#canFinish()
-	 */
 	@Override
 	public boolean canFinish() {
 		if (fSelectionWizardPage != null) {

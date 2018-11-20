@@ -85,51 +85,26 @@ public class Symbol implements ISymbol {
 		return type;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getAdress()
-	 */
 	@Override
 	public IAddress getAddress() {
 		return addr;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getEndLine()
-	 */
 	@Override
 	public int getEndLine() {
 		return endLine;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getStartLine()
-	 */
 	@Override
 	public int getStartLine() {
 		return startLine;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getLineNumber(long)
-	 */
 	@Override
 	public int getLineNumber(long offset) {
 		return -1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getSize()
-	 */
 	@Override
 	public long getSize() {
 		return size;

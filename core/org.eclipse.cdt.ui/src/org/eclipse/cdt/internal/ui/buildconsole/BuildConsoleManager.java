@@ -319,11 +319,6 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
@@ -453,11 +448,6 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		return getProjectConsolePartioner(project).getConsole();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.IBuildConsoleManager#getLastBuiltProject()
-	 */
 	@Override
 	public IProject getLastBuiltProject() {
 		return fLastProject;

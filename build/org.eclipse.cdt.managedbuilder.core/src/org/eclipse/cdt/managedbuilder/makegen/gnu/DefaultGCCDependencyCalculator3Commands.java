@@ -160,29 +160,17 @@ public class DefaultGCCDependencyCalculator3Commands implements IManagedDependen
 		this(source, (IResource) null, buildContext, tool, topBuildDirectory);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#areCommandsGeneric()
-	 */
 	@Override
 	public boolean areCommandsGeneric() {
 		return genericCommands;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getDependencyCommandOptions()
-	 */
 	@Override
 	public String[] getDependencyCommandOptions() {
 		// Nothing
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getDependencyFiles()
-	 */
 	@Override
 	public IPath[] getDependencyFiles() {
 		//  The source file is project relative and the dependency file is top build directory relative
@@ -200,10 +188,6 @@ public class DefaultGCCDependencyCalculator3Commands implements IManagedDependen
 		return paths;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getPostToolDependencyCommands()
-	 */
 	@Override
 	public String[] getPostToolDependencyCommands() {
 		/*
@@ -315,47 +299,27 @@ public class DefaultGCCDependencyCalculator3Commands implements IManagedDependen
 		return commands;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getPreToolDependencyCommands()
-	 */
 	@Override
 	public String[] getPreToolDependencyCommands() {
 		// Nothing
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getBuildContext()
-	 */
 	@Override
 	public IBuildObject getBuildContext() {
 		return buildContext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getSource()
-	 */
 	@Override
 	public IPath getSource() {
 		return source;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getTool()
-	 */
 	@Override
 	public ITool getTool() {
 		return tool;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getTopBuildDirectory()
-	 */
 	@Override
 	public IPath getTopBuildDirectory() {
 		return topBuildDirectory;

@@ -109,11 +109,6 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 		return TraditionalRenderingPreferenceConstants.MEM_MEMORY_SPACE_ID_PREFIX + id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.debug.ui.internal.IMemorySpacesPreferencesUtil#getMemorySpacesLabels()
-	 */
 	@Override
 	public Map<String, String> getMemorySpaceLabels() {
 		String prefix = TraditionalRenderingPreferenceConstants.MEM_MEMORY_SPACE_ID_PREFIX;
@@ -131,11 +126,6 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 		return keysToLabels;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.debug.ui.internal.IMemorySpacesPreferencesUtil#getMemorySpaceDefaultColors()
-	 */
 	@Override
 	public Map<String, String> getMemorySpaceDefaultColors() {
 		String prefix = TraditionalRenderingPreferenceConstants.MEM_MEMORY_SPACE_ID_PREFIX;

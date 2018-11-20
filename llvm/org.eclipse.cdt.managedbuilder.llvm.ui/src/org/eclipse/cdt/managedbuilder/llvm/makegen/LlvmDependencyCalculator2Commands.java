@@ -45,10 +45,6 @@ public class LlvmDependencyCalculator2Commands extends DefaultGCCDependencyCalcu
 		super(source, buildContext, tool, topBuildDirectory);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getDependencyCommandOptions()
-	 */
 	@Override
 	public String[] getDependencyCommandOptions() {
 		String[] options = new String[2];

@@ -1136,21 +1136,11 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathBasePage#getSelection()
-	 */
 	@Override
 	public List<?> getSelection() {
 		return fIncludeSymPathsList.getSelectedElements();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathBasePage#setSelection(java.util.List)
-	 */
 	@Override
 	public void setSelection(List<?> selElements) {
 		fIncludeSymPathsList.selectElements(new StructuredSelection(selElements));

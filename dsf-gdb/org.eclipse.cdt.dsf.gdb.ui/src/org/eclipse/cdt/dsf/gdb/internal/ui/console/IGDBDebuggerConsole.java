@@ -25,11 +25,6 @@ import org.eclipse.debug.ui.DebugUITools;
  * GDB specifics to IDebuggerConsole e.g. default implementations
  */
 public interface IGDBDebuggerConsole extends IDebuggerConsole {
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole#consoleSelected()
-	 */
 	@Override
 	public default void consoleSelected() {
 		DsfSession session = ((GdbLaunch) getLaunch()).getSession();

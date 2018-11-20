@@ -83,12 +83,6 @@ public class FPRenderingPreferencePage extends FieldEditorPreferencePage impleme
 				getFieldEditorParent(), 1, 10, 1, 1));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 	}

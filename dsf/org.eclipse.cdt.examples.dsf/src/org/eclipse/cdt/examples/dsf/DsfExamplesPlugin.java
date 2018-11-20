@@ -43,10 +43,6 @@ public class DsfExamplesPlugin extends AbstractUIPlugin {
 		fgPlugin = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		fgBundleContext = context;
@@ -57,10 +53,6 @@ public class DsfExamplesPlugin extends AbstractUIPlugin {
 		getImageRegistry().put(IMG_REMOVE, imageDescriptorFromPlugin(PLUGIN_ID, IMG_REMOVE));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);

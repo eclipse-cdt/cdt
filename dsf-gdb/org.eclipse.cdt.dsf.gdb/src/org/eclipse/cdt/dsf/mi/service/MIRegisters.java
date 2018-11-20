@@ -665,10 +665,6 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.IRegisters#getRegisters(org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterGroupDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-	 */
 	@Override
 	public void getRegisters(final IDMContext dmc, final DataRequestMonitor<IRegisterDMContext[]> rm) {
 		final MIRegisterGroupDMC groupDmc = DMContexts.getAncestorOfType(dmc, MIRegisterGroupDMC.class);
@@ -755,20 +751,12 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 				});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.IRegisters#getBitFields(org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-	 */
 	@Override
 	public void getBitFields(IDMContext regDmc, DataRequestMonitor<IBitFieldDMContext[]> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "BitField not supported", null)); //$NON-NLS-1$
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.IRegisters#writeRegister(org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext, java.lang.String, java.lang.String, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-	 */
 	@Override
 	public void writeRegister(IRegisterDMContext regCtx, final String regValue, final String formatId,
 			final RequestMonitor rm) {
@@ -803,10 +791,6 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 				});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.IRegisters#writeBitField(org.eclipse.cdt.dsf.debug.service.IRegisters.IBitFieldDMContext, java.lang.String, java.lang.String, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-	 */
 	@Override
 	public void writeBitField(IBitFieldDMContext bitFieldCtx, String bitFieldValue, String formatId,
 			RequestMonitor rm) {
@@ -815,10 +799,6 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.IRegisters#writeBitField(org.eclipse.cdt.dsf.debug.service.IRegisters.IBitFieldDMContext, org.eclipse.cdt.dsf.debug.service.IRegisters.IMnemonic, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-	 */
 	@Override
 	public void writeBitField(IBitFieldDMContext bitFieldCtx, IMnemonic mnemonic, RequestMonitor rm) {
 		rm.setStatus(
@@ -826,10 +806,6 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.IFormattedValues#getAvailableFormats(org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-	 */
 	@Override
 	public void getAvailableFormats(IFormattedDataDMContext dmc, DataRequestMonitor<String[]> rm) {
 
@@ -837,10 +813,6 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.IFormattedValues#getFormattedValueContext(org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext, java.lang.String)
-	 */
 	@Override
 	public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext dmc, String formatId) {
 		if (dmc instanceof MIRegisterDMC) {
@@ -850,10 +822,6 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.IRegisters#findRegisterGroup(org.eclipse.cdt.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-	 */
 	@Override
 	public void findRegisterGroup(IDMContext ctx, String name, DataRequestMonitor<IRegisterGroupDMContext> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
@@ -861,10 +829,6 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.IRegisters#findRegister(org.eclipse.cdt.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-	 */
 	@Override
 	public void findRegister(IDMContext ctx, String name, DataRequestMonitor<IRegisterDMContext> rm) {
 		getRegisters(ctx, new ImmediateDataRequestMonitor<IRegisterDMContext[]>() {
@@ -891,10 +855,6 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.IRegisters#findBitField(org.eclipse.cdt.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-	 */
 	@Override
 	public void findBitField(IDMContext ctx, String name, DataRequestMonitor<IBitFieldDMContext> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,

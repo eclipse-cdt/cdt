@@ -58,10 +58,6 @@ public class LogAction extends AbstractBreakpointAction {
 		this.evaluateExpression = evaluateExpression;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.breakpointactions.IBreakpointAction#execute(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		IStatus result = Status.OK_STATUS;

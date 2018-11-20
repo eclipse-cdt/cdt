@@ -1114,11 +1114,6 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 		fRendering.setDisplayLittleEndian(littleEndian);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
-	 */
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class) {
@@ -1185,12 +1180,6 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 		fRendering.gotoAddress(fRendering.fBaseAddress);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.debug.internal.core.model.provisional.
-	 * IMemoryRenderingViewportProvider#getViewportAddress()
-	 */
 	@Override
 	public BigInteger getViewportAddress() {
 		return fRendering.getViewportStartAddress();

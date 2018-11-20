@@ -95,12 +95,6 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IRunnableInEditorChecker#processModel(Object,
-	 * ICheckerInvocationContext)
-	 */
 	@Override
 	public synchronized void processModel(Object model, ICheckerInvocationContext context) {
 		if (model instanceof IASTTranslationUnit) {

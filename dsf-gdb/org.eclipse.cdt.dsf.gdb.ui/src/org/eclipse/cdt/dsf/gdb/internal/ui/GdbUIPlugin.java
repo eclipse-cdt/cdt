@@ -63,10 +63,6 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 	public GdbUIPlugin() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		fgBundleContext = context;
@@ -83,10 +79,6 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 		fGdbSelectionSyncManager.startup();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		fTracingConsoleManager.shutdown();

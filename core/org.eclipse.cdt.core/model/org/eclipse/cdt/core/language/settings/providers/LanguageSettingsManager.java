@@ -229,7 +229,7 @@ public class LanguageSettingsManager {
 			languageSettings = ((ICFolderDescription) rcDescription).getLanguageSettings();
 		}
 
-		List<String> languageIds = new ArrayList<String>();
+		List<String> languageIds = new ArrayList<>();
 		if (languageSettings != null) {
 			for (ICLanguageSetting languageSetting : languageSettings) {
 				if (languageSetting != null) {
@@ -255,7 +255,7 @@ public class LanguageSettingsManager {
 	 *    Never returns {@code null} but empty list if no languages can be found.
 	 */
 	public static List<String> getLanguages(IResource resource, ICConfigurationDescription cfgDescription) {
-		List<String> languageIds = new ArrayList<String>();
+		List<String> languageIds = new ArrayList<>();
 		IPath prjRelPath = resource.getProjectRelativePath();
 		if (resource instanceof IFile) {
 			String langId = null;
@@ -397,7 +397,7 @@ public class LanguageSettingsManager {
 	 * @since 5.5
 	 */
 	public static List<ILanguageSettingsProvider> createLanguageSettingsProviders(String[] ids) {
-		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		List<ILanguageSettingsProvider> providers = new ArrayList<>();
 		for (String id : ids) {
 			ILanguageSettingsProvider provider = null;
 			if (!isPreferShared(id)) {

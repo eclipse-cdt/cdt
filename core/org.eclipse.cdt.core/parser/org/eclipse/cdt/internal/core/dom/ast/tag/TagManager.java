@@ -47,7 +47,7 @@ public class TagManager {
 	}
 
 	private static Map<String, TaggerDescriptor> loadExtensions() {
-		Map<String, TaggerDescriptor> taggers = new HashMap<String, TaggerDescriptor>();
+		Map<String, TaggerDescriptor> taggers = new HashMap<>();
 
 		// Load the extensions
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
@@ -75,7 +75,7 @@ public class TagManager {
 
 	/** Provides an opportunity for all enabled taggers to process the given values. */
 	public Iterable<ITag> process(ITagWriter tagWriter, IBinding binding, IASTName ast) {
-		List<ITag> tags = new LinkedList<ITag>();
+		List<ITag> tags = new LinkedList<>();
 		for (TaggerDescriptor desc : taggers.values()) {
 			IBindingTagger tagger = desc.getBindingTaggerFor(binding, ast);
 			if (tagger != null) {

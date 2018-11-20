@@ -213,7 +213,7 @@ public abstract class AbstractBuilderTest extends TestCase {
 			boolean externalBuilder) throws CoreException {
 		IProject project = getWorkspace().getRoot().getProject(projectName);
 		IFolder buildDir = project.getFolder(cfgName);
-		Collection<IResource> resources = new LinkedHashSet<IResource>();
+		Collection<IResource> resources = new LinkedHashSet<>();
 		resources.add(buildDir);
 		if (externalBuilder) {
 			resources.add(buildDir.getFile("makefile"));
@@ -250,7 +250,7 @@ public abstract class AbstractBuilderTest extends TestCase {
 
 	protected void setWorkspace(String name) {
 		workspace = name;
-		projects = new ArrayList<IProject>();
+		projects = new ArrayList<>();
 	}
 
 	protected IProject loadProject(String name) throws CoreException {
@@ -263,7 +263,7 @@ public abstract class AbstractBuilderTest extends TestCase {
 	}
 
 	private List<IMarker> getAllMarkers() throws CoreException {
-		List<IMarker> markers = new ArrayList<IMarker>();
+		List<IMarker> markers = new ArrayList<>();
 		for (IProject project : projects)
 			markers.addAll(Arrays
 					.asList(project.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE)));

@@ -79,7 +79,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	Filter filter = new Filter();
 	public boolean isLinking = false;
 	private volatile boolean fUpdateRequested = false;
-	private Map<String, Long> fTimestampPerProject = new HashMap<String, Long>();
+	private Map<String, Long> fTimestampPerProject = new HashMap<>();
 	private IndexContentProvider contentProvider;
 
 	public void toggleExternalDefs() {
@@ -153,7 +153,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		private ArrayList<IPDOMNode> fNodes;
 
 		public Children() {
-			fNodes = new ArrayList<IPDOMNode>();
+			fNodes = new ArrayList<>();
 		}
 
 		@Override

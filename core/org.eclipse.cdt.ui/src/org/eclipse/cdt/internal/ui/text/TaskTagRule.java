@@ -55,7 +55,7 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 		/**
 		 * Uppercase words
 		 */
-		private Map<CharacterBuffer, IToken> fUppercaseWords = new HashMap<CharacterBuffer, IToken>();
+		private Map<CharacterBuffer, IToken> fUppercaseWords = new HashMap<>();
 		/**
 		 * <code>true</code> if task tag detection is case-sensitive.
 		 */

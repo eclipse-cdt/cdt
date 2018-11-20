@@ -72,7 +72,7 @@ public class CommandLineUtil {
 		}
 
 		char[] array = line.trim().toCharArray();
-		ArrayList<String> aList = new ArrayList<String>();
+		ArrayList<String> aList = new ArrayList<>();
 		StringBuilder buffer = new StringBuilder();
 		int state = INITIAL;
 		for (int i = 0; i < array.length; i++) {
@@ -187,7 +187,7 @@ public class CommandLineUtil {
 		}
 
 		char[] array = line.trim().toCharArray();
-		ArrayList<String> aList = new ArrayList<String>();
+		ArrayList<String> aList = new ArrayList<>();
 		StringBuilder buffer = new StringBuilder();
 		int state = INITIAL;
 		for (int i = 0; i < array.length; i++) {

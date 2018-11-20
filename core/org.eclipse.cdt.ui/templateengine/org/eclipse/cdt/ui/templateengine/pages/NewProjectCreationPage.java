@@ -37,7 +37,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 
 	public NewProjectCreationPage(String name) {
 		super(name);
-		data = new HashMap<String, String>();
+		data = new HashMap<>();
 		this.setDescription(Messages.getString("NewProjectCreationPage.3")); //$NON-NLS-1$
 	}
 

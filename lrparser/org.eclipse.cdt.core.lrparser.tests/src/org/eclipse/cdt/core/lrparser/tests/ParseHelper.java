@@ -52,8 +52,8 @@ public class ParseHelper {
 			shouldVisitNames = true;
 		}
 
-		public List<IASTName> nameList = new ArrayList<IASTName>();
-		public List<String> problemBindings = new ArrayList<String>();
+		public List<IASTName> nameList = new ArrayList<>();
+		public List<String> problemBindings = new ArrayList<>();
 		public int numNullBindings = 0;
 
 		@Override

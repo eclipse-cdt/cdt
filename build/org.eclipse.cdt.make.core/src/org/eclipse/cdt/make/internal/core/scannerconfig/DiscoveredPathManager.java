@@ -52,7 +52,7 @@ import org.eclipse.core.runtime.Status;
 
 public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceChangeListener {
 
-	private Map<IProject, DiscoveredInfoHolder> fDiscoveredInfoHolderMap = new HashMap<IProject, DiscoveredInfoHolder>();
+	private Map<IProject, DiscoveredInfoHolder> fDiscoveredInfoHolderMap = new HashMap<>();
 	private List<IDiscoveredInfoListener> listeners = Collections
 			.synchronizedList(new ArrayList<IDiscoveredInfoListener>());
 
@@ -60,7 +60,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 	private static final int INFO_REMOVED = 2;
 
 	private static class DiscoveredInfoHolder {
-		Map<InfoContext, IDiscoveredPathInfo> fInfoMap = new HashMap<InfoContext, IDiscoveredPathInfo>();
+		Map<InfoContext, IDiscoveredPathInfo> fInfoMap = new HashMap<>();
 		//		PathSettingsContainer fContainer = PathSettingsContainer.createRootContainer();
 
 		public IDiscoveredPathInfo getInfo(InfoContext context) {
@@ -339,7 +339,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 						PerFileDiscoveredPathContainer container = new PerFileDiscoveredPathContainer(project);
 						CoreModel.setPathEntryContainer(new ICProject[] { cProject }, container, null);
 						if (changedResources != null) {
-							List<PathEntryContainerChanged> changeDelta = new ArrayList<PathEntryContainerChanged>(
+							List<PathEntryContainerChanged> changeDelta = new ArrayList<>(
 									changedResources.size());
 							for (IResource resource : changedResources) {
 								IPath path = resource.getFullPath();

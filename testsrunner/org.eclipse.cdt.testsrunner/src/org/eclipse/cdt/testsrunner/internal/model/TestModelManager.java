@@ -47,7 +47,7 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 	public static final String ROOT_TEST_SUITE_NAME = "<root>"; //$NON-NLS-1$
 
 	/** Stack of the currently entered (and not existed) test suites. */
-	private Stack<TestSuite> testSuitesStack = new Stack<TestSuite>();
+	private Stack<TestSuite> testSuitesStack = new Stack<>();
 
 	/**
 	 * Currently running test case. There are no nested test cases, so the
@@ -64,10 +64,10 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 	 * testing is finished cause they are considered as renamed or removed).
 	 * @note Test suite insert position is important for insertion algorithm.
 	 */
-	private Map<TestItem, Integer> testSuitesIndex = new HashMap<TestItem, Integer>();
+	private Map<TestItem, Integer> testSuitesIndex = new HashMap<>();
 
 	/** Listeners collection. */
-	private List<ITestingSessionListener> listeners = new ArrayList<ITestingSessionListener>();
+	private List<ITestingSessionListener> listeners = new ArrayList<>();
 
 	/** Flag stores whether test execution time should be measured for the session. */
 	private boolean timeMeasurement = false;

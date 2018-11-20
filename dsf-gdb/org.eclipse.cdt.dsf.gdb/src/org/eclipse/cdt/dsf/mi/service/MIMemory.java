@@ -157,7 +157,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 
 		register(new String[] { MIMemory.class.getName(), IMemory.class.getName() }, new Hashtable<String, String>());
 
-		fMemoryCaches = new HashMap<IMemoryDMContext, MIMemoryCache>();
+		fMemoryCaches = new HashMap<>();
 
 		getSession().addServiceEventListener(this, null);
 
@@ -722,7 +722,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		private List<MemoryBlock> getListOfMissingBlocks(IAddress reqBlockStart, int wordCount, int wordSize) {
 			int octetCount = wordCount * wordSize;
 
-			LinkedList<MemoryBlock> list = new LinkedList<MemoryBlock>();
+			LinkedList<MemoryBlock> list = new LinkedList<>();
 			ListIterator<MemoryBlock> it = fMemoryBlockList.listIterator();
 
 			// Look for holes in the list of memory blocks

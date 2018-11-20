@@ -63,8 +63,8 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 	*/
 	@Override
 	public void updateMemorySpaces(String[] ids) {
-		List<String> inputIdList = new ArrayList<String>(Arrays.asList(ids));
-		List<String> knownIdList = new ArrayList<String>(Arrays.asList(getMemorySpaceIds()));
+		List<String> inputIdList = new ArrayList<>(Arrays.asList(ids));
+		List<String> knownIdList = new ArrayList<>(Arrays.asList(getMemorySpaceIds()));
 		int nextIdIndex = knownIdList.size();
 		boolean newIds;
 
@@ -140,7 +140,7 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 	public Map<String, String> getMemorySpaceDefaultColors() {
 		String prefix = TraditionalRenderingPreferenceConstants.MEM_MEMORY_SPACE_ID_PREFIX;
 		String[] ids = getMemorySpaceIds();
-		Map<String, String> mapKeyToColor = new HashMap<String, String>();
+		Map<String, String> mapKeyToColor = new HashMap<>();
 		String key, color;
 		for (int i = 0; i < ids.length; i++) {
 			key = prefix + ids[i];

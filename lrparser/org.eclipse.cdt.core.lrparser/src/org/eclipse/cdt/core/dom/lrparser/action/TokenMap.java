@@ -44,7 +44,7 @@ public class TokenMap implements ITokenMap {
 
 		kindMap = new int[fromSymbols.length];
 
-		HashMap<String, Integer> toMap = new HashMap<String, Integer>();
+		HashMap<String, Integer> toMap = new HashMap<>();
 		for (int i = 0, n = toSymbols.length; i < n; i++) {
 			toMap.put(toSymbols[i], i);
 		}

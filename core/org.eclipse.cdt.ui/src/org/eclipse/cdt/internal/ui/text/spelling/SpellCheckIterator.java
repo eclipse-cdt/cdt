@@ -48,7 +48,7 @@ public class SpellCheckIterator implements ISpellCheckIterator {
 	protected int fPrevious = 0;
 
 	/** The sentence breaks */
-	private final LinkedList<Integer> fSentenceBreaks = new LinkedList<Integer>();
+	private final LinkedList<Integer> fSentenceBreaks = new LinkedList<>();
 
 	/** Does the current word start a sentence? */
 	private boolean fStartsSentence = false;

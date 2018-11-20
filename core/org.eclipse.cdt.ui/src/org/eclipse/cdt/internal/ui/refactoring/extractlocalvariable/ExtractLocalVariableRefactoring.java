@@ -141,7 +141,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	}
 
 	private ArrayList<String> findAllDeclaredNames() {
-		ArrayList<String> names = new ArrayList<String>();
+		ArrayList<String> names = new ArrayList<>();
 		IASTFunctionDefinition funcDef = ASTQueries.findAncestorWithType(target, IASTFunctionDefinition.class);
 		ICPPASTCompositeTypeSpecifier comTypeSpec = getCompositeTypeSpecifier(funcDef);
 		if (comTypeSpec != null) {
@@ -326,8 +326,8 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	 *         proposal should be used as "best guess" (if it exists).
 	 */
 	public String[] guessTempNames() {
-		final List<String> guessedTempNames = new ArrayList<String>();
-		final List<String> usedNames = new ArrayList<String>();
+		final List<String> guessedTempNames = new ArrayList<>();
+		final List<String> usedNames = new ArrayList<>();
 		IASTFunctionDefinition funcDef = ASTQueries.findAncestorWithType(target, IASTFunctionDefinition.class);
 		final IScope scope;
 		if (funcDef != null && funcDef.getBody() instanceof IASTCompoundStatement) {
@@ -475,7 +475,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	}
 
 	private String makeTempName(List<String> usedNames, IScope scope) {
-		List<String> noNames = new ArrayList<String>();
+		List<String> noNames = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			for (String used : usedNames) {
 				String name = used + i; // such as "i2"
@@ -496,7 +496,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	}
 
 	private Map<String, String> getArgumentMap() {
-		Map<String, String> arguments = new HashMap<String, String>();
+		Map<String, String> arguments = new HashMap<>();
 		arguments.put(CRefactoringDescriptor.FILE_NAME, tu.getLocationURI().toString());
 		arguments.put(CRefactoringDescriptor.SELECTION, selectedRegion.getOffset() + "," + selectedRegion.getLength()); //$NON-NLS-1$
 		arguments.put(ExtractLocalVariableRefactoringDescriptor.NAME, info.getName());

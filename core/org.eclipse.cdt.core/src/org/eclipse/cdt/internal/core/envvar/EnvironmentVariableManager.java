@@ -247,7 +247,7 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 
 		if (!includeParentLevels) {
 			ICoreEnvironmentVariableSupplier suppliers[] = infos[0].getSuppliers();
-			set = new HashSet<String>();
+			set = new HashSet<>();
 			for (int i = 0; i < suppliers.length; i++) {
 				IEnvironmentVariable vars[] = suppliers[i].getVariables(infos[0].getContext());
 				if (vars != null) {
@@ -278,7 +278,7 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 
 				IEnvironmentVariable vars[] = null;
 				if (set != null) {
-					List<IEnvironmentVariable> varList = new ArrayList<IEnvironmentVariable>();
+					List<IEnvironmentVariable> varList = new ArrayList<>();
 					Iterator<String> iter = set.iterator();
 
 					while (iter.hasNext()) {
@@ -343,7 +343,7 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 		if (contextInfo == null)
 			return null;
 
-		List<IEnvironmentContextInfo> list = new ArrayList<IEnvironmentContextInfo>();
+		List<IEnvironmentContextInfo> list = new ArrayList<>();
 
 		list.add(contextInfo);
 

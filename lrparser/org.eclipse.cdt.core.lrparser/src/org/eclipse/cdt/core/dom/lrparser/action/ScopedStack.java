@@ -67,8 +67,8 @@ public class ScopedStack<T> {
 	 * Creates a new ScopedStack with the first scope already open.
 	 */
 	public ScopedStack() {
-		topScope = new LinkedList<T>();
-		scopeStack = new LinkedList<LinkedList<T>>();
+		topScope = new LinkedList<>();
+		scopeStack = new LinkedList<>();
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class ScopedStack<T> {
 	 */
 	public void openScope() {
 		scopeStack.add(topScope);
-		topScope = new LinkedList<T>();
+		topScope = new LinkedList<>();
 	}
 
 	/**

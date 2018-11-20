@@ -227,7 +227,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter {
 	 * @since 1.1
 	 */
 	protected final void handleEvent(final Object event) {
-		final List<IVMEventListener> eventListeners = new ArrayList<IVMEventListener>();
+		final List<IVMEventListener> eventListeners = new ArrayList<>();
 
 		aboutToHandleEvent(event);
 

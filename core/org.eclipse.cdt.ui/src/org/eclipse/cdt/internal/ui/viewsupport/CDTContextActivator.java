@@ -50,9 +50,9 @@ import org.eclipse.ui.views.contentoutline.ContentOutline;
 public class CDTContextActivator implements IWindowListener, IPartListener2 {
 	private static CDTContextActivator sInstance = new CDTContextActivator();
 
-	private Map<ContentOutline, IContextActivation> fActivationPerOutline = new HashMap<ContentOutline, IContextActivation>();
-	private Map<CommonNavigator, SelectionListener> fActivationPerNavigator = new HashMap<CommonNavigator, SelectionListener>();
-	private Collection<IWorkbenchWindow> fWindows = new HashSet<IWorkbenchWindow>();
+	private Map<ContentOutline, IContextActivation> fActivationPerOutline = new HashMap<>();
+	private Map<CommonNavigator, SelectionListener> fActivationPerNavigator = new HashMap<>();
+	private Collection<IWorkbenchWindow> fWindows = new HashSet<>();
 
 	private CDTContextActivator() {
 	}

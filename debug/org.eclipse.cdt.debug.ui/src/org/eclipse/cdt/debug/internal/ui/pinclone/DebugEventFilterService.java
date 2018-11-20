@@ -52,7 +52,7 @@ public class DebugEventFilterService {
 		public void debugContextChanged(DebugContextEvent event) {
 			ISelection eventContext = event.getContext();
 			if (eventContext instanceof IStructuredSelection) {
-				List<Object> filteredContextList = new ArrayList<Object>();
+				List<Object> filteredContextList = new ArrayList<>();
 				List<?> eventContextList = ((IStructuredSelection) eventContext).toList();
 				for (Object o : eventContextList) {
 					if (fProvider.isPinnedTo(o)) {
@@ -74,7 +74,7 @@ public class DebugEventFilterService {
 	}
 
 	private static DebugEventFilterService INSTANCE;
-	private Map<IWorkbenchPart, DebugEventFilter> fFilterMap = new HashMap<IWorkbenchPart, DebugEventFilter>();
+	private Map<IWorkbenchPart, DebugEventFilter> fFilterMap = new HashMap<>();
 
 	private DebugEventFilterService() {
 	}

@@ -119,7 +119,7 @@ public class CharTable extends HashTable {
 	}
 
 	public List<char[]> toList() {
-		List<char[]> list = new ArrayList<char[]>(size());
+		List<char[]> list = new ArrayList<>(size());
 		int size = size();
 		for (int i = 0; i < size; i++) {
 			list.add(keyAt(i));

@@ -60,7 +60,7 @@ public class FormattedValueVMUtil {
 	/**
 	 * Common map of user-readable labels for format IDs.
 	 */
-	private static Map<String, String> fFormatLabels = new HashMap<String, String>(8);
+	private static Map<String, String> fFormatLabels = new HashMap<>(8);
 
 	static {
 		setFormatLabel(IFormattedValues.NATURAL_FORMAT,
@@ -142,7 +142,7 @@ public class FormattedValueVMUtil {
 		synchronized (fFormatProperties) {
 			Map<String, String> prefixMap = fFormatProperties.get(prefix);
 			if (prefixMap == null) {
-				prefixMap = new TreeMap<String, String>();
+				prefixMap = new TreeMap<>();
 				fFormatProperties.put(prefix, prefixMap);
 			}
 			return prefixMap;

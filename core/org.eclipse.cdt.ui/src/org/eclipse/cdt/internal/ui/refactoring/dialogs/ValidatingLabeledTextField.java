@@ -43,9 +43,9 @@ public class ValidatingLabeledTextField extends Composite {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	private final Map<Text, Boolean> validationStatus = new HashMap<Text, Boolean>();
+	private final Map<Text, Boolean> validationStatus = new HashMap<>();
 
-	private final ArrayList<Listener> inputTextListeners = new ArrayList<Listener>();
+	private final ArrayList<Listener> inputTextListeners = new ArrayList<>();
 
 	private final Color errorColor = new Color(getShell().getDisplay(), new RGB(255, 208, 196));
 

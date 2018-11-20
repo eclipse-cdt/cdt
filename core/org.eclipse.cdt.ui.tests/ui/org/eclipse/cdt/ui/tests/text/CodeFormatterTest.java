@@ -51,7 +51,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fDefaultOptions = DefaultCodeFormatterOptions.getDefaultSettings().getMap();
-		fOptions = new HashMap<String, Object>(fDefaultOptions);
+		fOptions = new HashMap<>(fDefaultOptions);
 	}
 
 	@Override

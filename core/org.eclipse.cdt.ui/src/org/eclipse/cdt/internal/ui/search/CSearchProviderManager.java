@@ -43,7 +43,7 @@ public class CSearchProviderManager {
 
 	public List<IExternalSearchProvider> getExternalSearchProviders() {
 		if (externalSearchProviders == null) {
-			externalSearchProviders = new ArrayList<IExternalSearchProvider>();
+			externalSearchProviders = new ArrayList<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint indexProviderPoint = registry.getExtensionPoint(SEARCH_PROVIDERS);
 			for (IExtension extension : indexProviderPoint.getExtensions()) {

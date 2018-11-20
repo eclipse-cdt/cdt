@@ -253,7 +253,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 		// Process the block list specific to this memory context
 		// FIXME: (Bug228573) We only process the first entry...
 		if (root.getAttribute(ATTR_EXPRESSION_LIST_CONTEXT).equals(fContextString)) {
-			List<IMemoryBlock> blocks = new ArrayList<IMemoryBlock>();
+			List<IMemoryBlock> blocks = new ArrayList<>();
 			NodeList expressionList = root.getChildNodes();
 			int length = expressionList.getLength();
 			for (int i = 0; i < length; ++i) {

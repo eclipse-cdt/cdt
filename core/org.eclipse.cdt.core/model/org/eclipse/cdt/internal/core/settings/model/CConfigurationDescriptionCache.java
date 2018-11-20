@@ -102,7 +102,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	private CProjectDescription fParent;
 	private PathSettingsContainer fPathSettingContainer = PathSettingsContainer.createRootContainer();
 	private ResourceDescriptionHolder fRcHolder = new ResourceDescriptionHolder(fPathSettingContainer, true);
-	private List<ICSettingObject> fChildList = new ArrayList<ICSettingObject>();
+	private List<ICSettingObject> fChildList = new ArrayList<>();
 	private CConfigurationSpecSettings fSpecSettings;
 	private CConfigurationData fData;
 	private CConfigurationDescriptionCache fBaseCache;

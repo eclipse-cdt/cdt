@@ -80,7 +80,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		List<CPElement> elements = getCPaths();
 
 		IPathEntry[] entries = getCProject().getRawPathEntries();
-		List<IPathEntry> cpath = new ArrayList<IPathEntry>(elements.size() + entries.length);
+		List<IPathEntry> cpath = new ArrayList<>(elements.size() + entries.length);
 
 		int[] applyTypes = getAppliedFilteredTypes();
 		// create and set the paths
@@ -138,7 +138,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		if (cpathEntries != null) {
 			newCPath = getFilteredElements(cpathEntries, getFilteredTypes());
 		} else {
-			newCPath = new ArrayList<CPElement>();
+			newCPath = new ArrayList<>();
 		}
 		initialize(element, newCPath);
 	}
@@ -150,7 +150,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	abstract protected void initialize(ICElement element, List<CPElement> cPaths);
 
 	protected ArrayList<CPElement> getFilteredElements(IPathEntry[] cPathEntries, int[] types) {
-		ArrayList<CPElement> newCPath = new ArrayList<CPElement>();
+		ArrayList<CPElement> newCPath = new ArrayList<>();
 		for (IPathEntry curr : cPathEntries) {
 			if (contains(types, curr.getEntryKind())) {
 				newCPath.add(CPElement.createFromExisting(curr, getCElement()));
@@ -305,7 +305,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 
 		IPathEntry[] entries = getCProject().getRawPathEntries();
 
-		List<IPathEntry> cpath = new ArrayList<IPathEntry>(cPathEntries.size() + entries.length);
+		List<IPathEntry> cpath = new ArrayList<>(cPathEntries.size() + entries.length);
 
 		int[] applyTypes = getAppliedFilteredTypes();
 		// create and set the paths

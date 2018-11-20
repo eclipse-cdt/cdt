@@ -500,7 +500,7 @@ public class MultiVersionSupportTests extends TestCase {
 			}
 		});
 
-		ArrayList<IProject> projectList = new ArrayList<IProject>(projectZips.length);
+		ArrayList<IProject> projectList = new ArrayList<>(projectZips.length);
 		assertEquals(projectZips.length, 1);
 
 		try {

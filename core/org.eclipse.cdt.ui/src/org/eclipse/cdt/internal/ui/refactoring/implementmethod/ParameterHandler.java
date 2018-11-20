@@ -50,7 +50,7 @@ public class ParameterHandler {
 			return;
 		}
 		needsAditionalArgumentNames = false;
-		parameterInfos = new ArrayList<ParameterInfo>();
+		parameterInfos = new ArrayList<>();
 		for (IASTParameterDeclaration actParam : getParametersFromMethodNode()) {
 			String actName = actParam.getDeclarator().getName().toString();
 			boolean isChangable = false;

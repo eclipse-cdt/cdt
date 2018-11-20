@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.settings.model.ICMacroFileEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class EntryStore {
-	private KindBasedStore<ArrayList<ICLanguageSettingEntry>> fStore = new KindBasedStore<ArrayList<ICLanguageSettingEntry>>();
+	private KindBasedStore<ArrayList<ICLanguageSettingEntry>> fStore = new KindBasedStore<>();
 	private boolean fPreserveReadOnly;
 
 	public EntryStore() {
@@ -51,7 +51,7 @@ public class EntryStore {
 	}
 
 	public ICLanguageSettingEntry[] getEntries() {
-		List<ICLanguageSettingEntry> result = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> result = new ArrayList<>();
 		List<ICLanguageSettingEntry> list;
 		for (int k : KindBasedStore.getLanguageEntryKinds()) {
 			list = fStore.get(k);
@@ -69,7 +69,7 @@ public class EntryStore {
 	public ICLanguageSettingEntry[] getEntries(int kind) {
 		List<ICLanguageSettingEntry> list = getEntriesList(kind);
 		if (list == null)
-			list = new ArrayList<ICLanguageSettingEntry>(0);
+			list = new ArrayList<>(0);
 		switch (kind) {
 		case ICSettingEntry.INCLUDE_PATH:
 			return list.toArray(new ICIncludePathEntry[list.size()]);
@@ -91,8 +91,8 @@ public class EntryStore {
 	public List<ICLanguageSettingEntry> getEntriesList(int kind) {
 		List<ICLanguageSettingEntry> list = getEntriesList(kind, false);
 		if (list != null)
-			return new ArrayList<ICLanguageSettingEntry>(list);
-		return new ArrayList<ICLanguageSettingEntry>(0);
+			return new ArrayList<>(list);
+		return new ArrayList<>(0);
 	}
 
 	private void setEntriesList(int kind, ArrayList<ICLanguageSettingEntry> list) {
@@ -102,7 +102,7 @@ public class EntryStore {
 	private ArrayList<ICLanguageSettingEntry> getEntriesList(int kind, boolean create) {
 		ArrayList<ICLanguageSettingEntry> list = fStore.get(kind);
 		if (list == null && create) {
-			fStore.put(kind, list = new ArrayList<ICLanguageSettingEntry>());
+			fStore.put(kind, list = new ArrayList<>());
 		}
 		return list;
 	}
@@ -130,7 +130,7 @@ public class EntryStore {
 	}
 
 	public void storeEntries(int kind, List<ICLanguageSettingEntry> list) {
-		ArrayList<ICLanguageSettingEntry> newList = new ArrayList<ICLanguageSettingEntry>(list);
+		ArrayList<ICLanguageSettingEntry> newList = new ArrayList<>(list);
 		//		newList.addAll(Arrays.asList(entries));
 		if (fPreserveReadOnly) {
 			List<ICLanguageSettingEntry> oldList = getEntriesList(kind, false);
@@ -147,7 +147,7 @@ public class EntryStore {
 	}
 
 	private Set<ICLanguageSettingEntry> getReadOnlySet(List<ICLanguageSettingEntry> entries) {
-		Set<ICLanguageSettingEntry> set = new HashSet<ICLanguageSettingEntry>();
+		Set<ICLanguageSettingEntry> set = new HashSet<>();
 		for (ICLanguageSettingEntry entry : entries) {
 			if (entry.isReadOnly())
 				set.add(entry);

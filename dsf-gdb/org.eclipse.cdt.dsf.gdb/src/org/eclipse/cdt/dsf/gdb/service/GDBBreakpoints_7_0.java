@@ -288,7 +288,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints {
 												// Also, tracepoints are created with no passcount.
 												// We have to set the passcount manually now.
 												// Same for commands.
-												Map<String, Object> delta = new HashMap<String, Object>();
+												Map<String, Object> delta = new HashMap<>();
 												delta.put(MIBreakpoints.IS_ENABLED,
 														getProperty(attributes, MIBreakpoints.IS_ENABLED, true));
 												delta.put(MIBreakpoints.PASS_COUNT,
@@ -393,7 +393,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints {
 			return;
 		}
 
-		ArrayList<String> actionStrings = new ArrayList<String>();
+		ArrayList<String> actionStrings = new ArrayList<>();
 		for (ITracepointAction action : actions) {
 			if (action != null) {
 				actionStrings.add(action.getSummary());

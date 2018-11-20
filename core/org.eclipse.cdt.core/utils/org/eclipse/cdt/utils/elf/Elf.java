@@ -646,7 +646,7 @@ public class Elf {
 			return new Dynamic[0];
 		}
 		section.makeSureNotCompressed();
-		ArrayList<Dynamic> dynList = new ArrayList<Dynamic>();
+		ArrayList<Dynamic> dynList = new ArrayList<>();
 		efile.seek(section.sh_offset);
 		int off = 0;
 		// We must assume the section is a table ignoring the sh_entsize as it
@@ -1007,7 +1007,7 @@ public class Elf {
 	public Section[] getSections(int type) throws IOException {
 		if (sections == null)
 			getSections();
-		ArrayList<Section> slist = new ArrayList<Section>();
+		ArrayList<Section> slist = new ArrayList<>();
 		for (int i = 0; i < sections.length; i++) {
 			if (sections[i].sh_type == type)
 				slist.add(sections[i]);
@@ -1084,7 +1084,7 @@ public class Elf {
 			numSyms = (int) section.sh_size / (int) section.sh_entsize;
 		}
 		section.makeSureNotCompressed();
-		ArrayList<Symbol> symList = new ArrayList<Symbol>(numSyms);
+		ArrayList<Symbol> symList = new ArrayList<>(numSyms);
 		long offset = section.sh_offset;
 		for (int c = 0; c < numSyms; offset += section.sh_entsize, c++) {
 			efile.seek(offset);

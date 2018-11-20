@@ -55,13 +55,13 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 	final static String[] DWARF_ALT_SectionsToParse = { DWARF_DEBUG_STR, DWARF_DEBUG_MACRO };
 
-	private final Collection<String> m_fileCollection = new HashSet<String>();
-	private final Map<Long, String> m_stmtFileMap = new HashMap<Long, String>();
-	private final Map<String, ArrayList<String>> m_compileOptionsMap = new HashMap<String, ArrayList<String>>();
+	private final Collection<String> m_fileCollection = new HashSet<>();
+	private final Map<Long, String> m_stmtFileMap = new HashMap<>();
+	private final Map<String, ArrayList<String>> m_compileOptionsMap = new HashMap<>();
 	private String[] m_fileNames = null;
 	private boolean m_parsed = false;
 	private boolean m_macros_parsed = false;
-	private final ArrayList<Integer> m_parsedLineTableOffsets = new ArrayList<Integer>();
+	private final ArrayList<Integer> m_parsedLineTableOffsets = new ArrayList<>();
 	private long m_parsedLineTableSize = 0;
 
 	public DwarfReader(String file) throws IOException {
@@ -334,7 +334,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 				// Read in directories.
 				//
-				ArrayList<String> dirList = new ArrayList<String>();
+				ArrayList<String> dirList = new ArrayList<>();
 
 				// Put the compilation directory of the CU as the first dir
 				dirList.add(cuCompDir);
@@ -481,7 +481,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 				// Read in directories.
 				//
-				ArrayList<String> dirList = new ArrayList<String>();
+				ArrayList<String> dirList = new ArrayList<>();
 
 				String str, fileName;
 
@@ -745,14 +745,14 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		ByteBuffer str = dwarfSections.get(DWARF_DEBUG_STR);
 		ByteBuffer altdata = dwarfAltSections.get(DWARF_DEBUG_MACRO);
 		ByteBuffer altstr = dwarfAltSections.get(DWARF_DEBUG_STR);
-		Set<String> fixupList = new HashSet<String>();
-		Set<String> fixupAltList = new HashSet<String>();
+		Set<String> fixupList = new HashSet<>();
+		Set<String> fixupAltList = new HashSet<>();
 		boolean DEBUG = false;
 		if (data == null)
 			return;
 
-		HashMap<Long, ArrayList<String>> t_macros = new HashMap<Long, ArrayList<String>>();
-		HashMap<Long, ArrayList<String>> t_alt_macros = new HashMap<Long, ArrayList<String>>();
+		HashMap<Long, ArrayList<String>> t_macros = new HashMap<>();
+		HashMap<Long, ArrayList<String>> t_alt_macros = new HashMap<>();
 
 		// Parse the macro section, looking for command-line macros meant for compiling files (i.e.
 		// not internal macro definitions in headers or C/C++ files.  Keep track of any forward
@@ -836,7 +836,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				// have non-standard entry types defined which we need to know when
 				// we come across macro entries later
 				if ((flags & 0x4) != 0) {
-					opcodeInfos = new HashMap<Integer, OpcodeInfo>();
+					opcodeInfos = new HashMap<>();
 					int num_opcodes = data.get();
 					for (int i = 0; i < num_opcodes; ++i) {
 						OpcodeInfo info = new OpcodeInfo(offset_size_8);
@@ -852,7 +852,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 					}
 				}
 
-				ArrayList<String> macros = new ArrayList<String>();
+				ArrayList<String> macros = new ArrayList<>();
 
 				boolean done = false;
 
@@ -871,7 +871,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 							m_compileOptionsMap.put(fileName, macros);
 							if (DEBUG)
 								System.out.println("following macros found for file " + macros.toString()); //$NON-NLS-1$
-							macros = new ArrayList<String>();
+							macros = new ArrayList<>();
 						}
 						if (fileName != null)
 							if (DEBUG)

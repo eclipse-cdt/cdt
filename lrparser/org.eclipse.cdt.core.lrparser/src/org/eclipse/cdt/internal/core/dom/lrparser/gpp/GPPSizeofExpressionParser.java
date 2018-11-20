@@ -231,7 +231,7 @@ public class GPPSizeofExpressionParser extends PrsStream implements RuleAction, 
 	}
 
 	private void initActions(Map<String, String> properties) {
-		ScopedStack<Object> astStack = new ScopedStack<Object>();
+		ScopedStack<Object> astStack = new ScopedStack<>();
 
 		action = new GPPBuildASTParserAction(this, astStack, CPPNodeFactory.getDefault(),
 				GPPSecondaryParserFactory.getDefault());

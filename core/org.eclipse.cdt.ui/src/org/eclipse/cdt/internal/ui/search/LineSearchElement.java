@@ -172,8 +172,8 @@ public class LineSearchElement extends CSearchElement {
 		// Sort matches according to their offsets
 		Arrays.sort(matches, MATCHES_COMPARATOR);
 		// Group all matches by lines and create LineSearchElements
-		List<LineSearchElement> result = new ArrayList<LineSearchElement>();
-		List<Match> matchCollector = new ArrayList<Match>();
+		List<LineSearchElement> result = new ArrayList<>();
+		List<Match> matchCollector = new ArrayList<>();
 		int minOffset = 0;
 		int lineNumber = 0;
 		int lineOffset = 0;
@@ -223,8 +223,8 @@ public class LineSearchElement extends CSearchElement {
 
 	private static LineSearchElement[] collectLineElements(AbstractCharArray buf, Match[] matches,
 			IIndexFileLocation fileLocation) {
-		List<LineSearchElement> result = new ArrayList<LineSearchElement>();
-		List<Match> matchCollector = new ArrayList<Match>();
+		List<LineSearchElement> result = new ArrayList<>();
+		List<Match> matchCollector = new ArrayList<>();
 
 		boolean skipLF = false;
 		int lineNumber = 1;

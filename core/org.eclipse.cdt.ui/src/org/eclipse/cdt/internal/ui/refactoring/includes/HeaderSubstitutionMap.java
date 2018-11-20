@@ -165,7 +165,7 @@ public class HeaderSubstitutionMap {
 			return Collections.emptyList();
 		}
 
-		List<HeaderSubstitutionMap> maps = new ArrayList<HeaderSubstitutionMap>();
+		List<HeaderSubstitutionMap> maps = new ArrayList<>();
 		for (IMemento element : memento.getChildren(TAG_HEADER_SUBSTITUTION_MAP)) {
 			maps.add(fromMemento(element));
 		}

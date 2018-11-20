@@ -1581,7 +1581,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public void putCachedVariableResult(Long key, IValue result) {
 		synchronized (fVariableResultCache) {
-			fVariableResultCache.put(key, new WeakReference<IValue>(result));
+			fVariableResultCache.put(key, new WeakReference<>(result));
 		}
 	}
 

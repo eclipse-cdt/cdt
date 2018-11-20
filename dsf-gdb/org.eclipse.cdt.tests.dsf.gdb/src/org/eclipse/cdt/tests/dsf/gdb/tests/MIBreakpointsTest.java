@@ -484,7 +484,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	private IBreakpointDMContext insertAndRunToLineBreakpoint(int lineNumber) throws Throwable {
 		clearEventCounters();
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, lineNumber);
@@ -800,7 +800,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertBreakpoint_InvalidContext() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -820,7 +820,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	public void insertBreakpoint_InvalidFileName() throws Throwable {
 		assumeGdbVersionLowerThen(ITestConstants.SUFFIX_GDB_6_8);
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME + "_bad");
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -840,7 +840,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	public void insertBreakpoint_InvalidLineNumber() throws Throwable {
 		assumeGdbVersionLowerThen(ITestConstants.SUFFIX_GDB_7_4);
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, 0);
@@ -860,7 +860,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	public void insertBreakpoint_InvalidFunctionName() throws Throwable {
 		assumeGdbVersionLowerThen(ITestConstants.SUFFIX_GDB_6_8);
 		// Create a function breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(FUNCTION_TAG, "invalid-function-name");
@@ -879,7 +879,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertBreakpoint_InvalidAddress() throws Throwable {
 		// Create an address breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(ADDRESS_TAG, "0x0z");
 
@@ -899,7 +899,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertBreakpoint_Address() throws Throwable {
 		// Create an address breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		final BigInteger ADDRESS = new BigInteger("00affe00", 16);
 		breakpoint.put(ADDRESS_TAG, "0x" + ADDRESS.toString(16));
@@ -933,7 +933,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertBreakpoint_LineNumber() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -968,7 +968,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertBreakpoint_Disabled() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -1004,7 +1004,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertBreakpoint_FunctionName() throws Throwable {
 		// Create a function breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(FUNCTION_TAG, FUNCTION);
@@ -1039,7 +1039,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertBreakpoint_Condition() throws Throwable {
 		// Create a conditional line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -1075,7 +1075,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertBreakpoint_IgnoreCnt() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -1111,7 +1111,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertBreakpoint_MultipleBreakpoints() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -1131,7 +1131,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		validateBreakpoint(breakpoint1, SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, true, false);
 
 		// Create a function breakpoint
-		breakpoint = new HashMap<String, Object>();
+		breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(FUNCTION_TAG, FUNCTION);
@@ -1177,7 +1177,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertBreakpoint_Duplicate() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -1247,7 +1247,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 			return;
 		}
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
@@ -1298,7 +1298,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 			return;
 		}
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, "Bad file name");
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
@@ -1343,7 +1343,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertWatchpoint_Write() throws Throwable {
 		// Create a write watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_1);
 		watchpoint.put(WRITE_TAG, true);
@@ -1378,7 +1378,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertWatchpoint_Read() throws Throwable {
 		// Create a read watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_1);
 		watchpoint.put(READ_TAG, true);
@@ -1413,7 +1413,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void insertWatchpoint_Access() throws Throwable {
 		// Create an access watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_1);
 		watchpoint.put(READ_TAG, true);
@@ -1458,7 +1458,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 			return;
 		}
 		// Create a write watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_3);
 		watchpoint.put(WRITE_TAG, true);
@@ -1506,7 +1506,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void removeBreakpoint_SimpleCase() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -1553,7 +1553,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		assertTrue("BreakpointEvent problem: expected " + 0 + " BREAKPOINT event(s), received " + fBreakpointEventCount,
 				fBreakpointEventCount == 0);
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -1631,7 +1631,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	public void removeBreakpoint_MixedCase() throws Throwable {
 		// Create a line breakpoint
 		for (int i = 0; i < 4; i++) {
-			Map<String, Object> breakpoint = new HashMap<String, Object>();
+			Map<String, Object> breakpoint = new HashMap<>();
 			breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 			breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 			breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1 + i);
@@ -1695,7 +1695,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 			return;
 		}
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
@@ -1740,7 +1740,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		IBreakpointDMContext invalid_ref = new MIBreakpointDMContext((MIBreakpoints) fBreakpointService,
 				new IDMContext[] { fBreakpointsDmc }, "0.0");
 		// Update the invalid breakpoint
-		Map<String, Object> properties = new HashMap<String, Object>();
+		Map<String, Object> properties = new HashMap<>();
 		properties.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		properties.put(FILE_NAME_TAG, SOURCE_NAME);
 		properties.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -1760,7 +1760,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void updateBreakpoint_AddCondition() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -1775,7 +1775,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Modify the condition
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(CONDITION_TAG, CONDITION_1);
 		updateBreakpoint(ref, delta);
 
@@ -1800,7 +1800,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void updateBreakpoint_RemoveCondition() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -1816,7 +1816,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Remove the condition
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(CONDITION_TAG, null);
 		updateBreakpoint(ref, delta);
 
@@ -1841,7 +1841,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void updateBreakpoint_ModifyCondition() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -1857,7 +1857,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Update the condition
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(CONDITION_TAG, CONDITION_2);
 		updateBreakpoint(ref, delta);
 
@@ -1891,7 +1891,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 			return;
 		}
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
@@ -1907,7 +1907,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Prepare to update the condition
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(CONDITION_TAG, CONDITION_5);
 		// Run the program
 		SyncUtil.resume();
@@ -1944,7 +1944,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		insertAndRunToLineBreakpoint(LINE_NUMBER_1);
 		// Create a write watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_1);
 		watchpoint.put(WRITE_TAG, true);
@@ -1959,7 +1959,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Add the condition
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(CONDITION_TAG, CONDITION_1);
 		updateBreakpoint(ref, delta);
 
@@ -1986,7 +1986,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		insertAndRunToLineBreakpoint(LINE_NUMBER_1);
 		// Create a write watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_1);
 		watchpoint.put(WRITE_TAG, true);
@@ -2002,7 +2002,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Remove the condition
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(CONDITION_TAG, null);
 		updateBreakpoint(ref, delta);
 
@@ -2029,7 +2029,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		insertAndRunToLineBreakpoint(LINE_NUMBER_1);
 		// Create a write watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_1);
 		watchpoint.put(WRITE_TAG, true);
@@ -2045,7 +2045,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Update the condition
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(CONDITION_TAG, CONDITION_2);
 		updateBreakpoint(ref, delta);
 
@@ -2070,7 +2070,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void updateBreakpoint_AddCount() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -2085,7 +2085,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Add a count
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(IGNORE_COUNT_TAG, IGNORE_COUNT_2);
 		updateBreakpoint(ref, delta);
 
@@ -2110,7 +2110,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void updateBreakpoint_RemoveCount() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -2126,7 +2126,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Remove the count
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(IGNORE_COUNT_TAG, null);
 		updateBreakpoint(ref, delta);
 
@@ -2150,7 +2150,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void updateBreakpoint_ModifyCount() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -2166,7 +2166,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Update the count
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(IGNORE_COUNT_TAG, IGNORE_COUNT_2);
 		updateBreakpoint(ref, delta);
 
@@ -2200,7 +2200,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 			return;
 		}
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
@@ -2216,7 +2216,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Prepare to update the count
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(IGNORE_COUNT_TAG, 0);
 		// Run the program
 		SyncUtil.resume();
@@ -2250,7 +2250,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void updateBreakpoint_Disable() throws Throwable {
 		// Create a first line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -2258,7 +2258,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		IBreakpointDMContext ref1 = insertBreakpoint(fBreakpointsDmc, breakpoint);
 
 		// Create a second line breakpoint
-		breakpoint = new HashMap<String, Object>();
+		breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_2);
@@ -2278,7 +2278,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		assertTrue("BreakpointService problem: breakpoint state error",
 				breakpoint1.isEnabled() && breakpoint2.isEnabled());
 		// Disable the first breakpoint
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(IS_ENABLED_TAG, false);
 		updateBreakpoint(ref1, delta);
 
@@ -2323,7 +2323,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 			return;
 		}
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
@@ -2342,7 +2342,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 2);
 		clearEventCounters();
 		// Prepare to disable the  breakpoint
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(IS_ENABLED_TAG, false);
 		// Run the program
 		SyncUtil.resume();
@@ -2371,7 +2371,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void updateBreakpoint_Enable() throws Throwable {
 		// Create a first line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -2379,7 +2379,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		IBreakpointDMContext ref1 = insertBreakpoint(fBreakpointsDmc, breakpoint);
 
 		// Create a second line breakpoint
-		breakpoint = new HashMap<String, Object>();
+		breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_2);
@@ -2399,7 +2399,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		assertTrue("BreakpointService problem: breakpoint state error",
 				breakpoint1.isEnabled() && breakpoint2.isEnabled());
 		// Disable the first breakpoint
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(IS_ENABLED_TAG, false);
 		updateBreakpoint(ref1, delta);
 
@@ -2426,7 +2426,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		assertTrue("BreakpointService problem: breakpoint mismatch", fBreakpointRef.equals(breakpoint2.getNumber()));
 		clearEventCounters();
 		// Enable the first breakpoint
-		delta = new HashMap<String, Object>();
+		delta = new HashMap<>();
 		delta.put(IS_ENABLED_TAG, true);
 		updateBreakpoint(ref1, delta);
 
@@ -2471,7 +2471,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 			return;
 		}
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
@@ -2487,7 +2487,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Prepare to enable the  breakpoint
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(IS_ENABLED_TAG, true);
 		// Run the program
 		SyncUtil.resume();
@@ -2621,7 +2621,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void breakpointHit_LineNumber() throws Throwable {
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -2656,7 +2656,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void breakpointHit_Function() throws Throwable {
 		// Create a function breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(FUNCTION_TAG, FUNCTION);
@@ -2693,7 +2693,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void breakpointHit_Condition() throws Throwable {
 		// Create a conditional line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -2735,7 +2735,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void breakpointHit_UpdatedCondition() throws Throwable {
 		// Create a conditional line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -2750,7 +2750,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Add the condition
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(CONDITION_TAG, CONDITION_1);
 		updateBreakpoint(ref, delta);
 
@@ -2788,7 +2788,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void breakpointHit_Count() throws Throwable {
 		// Create a conditional line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -2830,7 +2830,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void breakpointHit_UpdatedCount() throws Throwable {
 		// Create a conditional line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -2845,7 +2845,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Add a count
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(IGNORE_COUNT_TAG, IGNORE_COUNT_2);
 		updateBreakpoint(ref, delta);
 
@@ -2882,7 +2882,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void breakpointHit_WriteWatchpoint() throws Throwable {
 		// Create a write watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_1);
 		watchpoint.put(WRITE_TAG, true);
@@ -2922,7 +2922,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void breakpointHit_ReadWatchpoint() throws Throwable {
 		// Create a write watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_1);
 		watchpoint.put(READ_TAG, true);
@@ -2962,7 +2962,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	@Test
 	public void breakpointHit_AccessWatchpoint() throws Throwable {
 		// Create an access watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_1);
 		watchpoint.put(READ_TAG, true);
@@ -3005,7 +3005,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		insertAndRunToLineBreakpoint(LINE_NUMBER_4);
 		// Create a write watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_2);
 		watchpoint.put(WRITE_TAG, true);
@@ -3020,7 +3020,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Add a count
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(IGNORE_COUNT_TAG, IGNORE_COUNT_2);
 		updateBreakpoint(ref, delta);
 
@@ -3063,7 +3063,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		insertAndRunToLineBreakpoint(LINE_NUMBER_4);
 		// Create a write watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_2);
 		watchpoint.put(WRITE_TAG, true);
@@ -3078,7 +3078,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 		// Add a condition
-		Map<String, Object> delta = new HashMap<String, Object>();
+		Map<String, Object> delta = new HashMap<>();
 		delta.put(CONDITION_TAG, CONDITION_3);
 		updateBreakpoint(ref, delta);
 
@@ -3118,7 +3118,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		// Run to the point where the variable is initialized
 		insertAndRunToLineBreakpoint(LINE_NUMBER_4);
 		// Create a write watchpoint
-		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		Map<String, Object> watchpoint = new HashMap<>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_2);
 		watchpoint.put(READ_TAG, true);
@@ -3166,7 +3166,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	public void insertBreakpoint_InvalidLineNumberPending() throws Throwable {
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_4);
 		// Create a line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, 0);
@@ -3191,7 +3191,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	public void insertBreakpoint_InvalidFileNamePending() throws Throwable {
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_6_8);
 		// Create an invalid line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME + "_bad");
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
@@ -3238,7 +3238,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	public void insertBreakpoint_InvalidFunctionNamePending() throws Throwable {
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_6_8);
 		// Create an invalid function breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(FUNCTION_TAG, "invalid-function-name");
@@ -3293,7 +3293,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		}
 
 		// Create an invalid line breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, "Bad file name");
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);

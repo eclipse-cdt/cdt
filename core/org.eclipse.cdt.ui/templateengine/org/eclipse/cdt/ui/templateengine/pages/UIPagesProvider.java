@@ -38,7 +38,7 @@ public class UIPagesProvider {
 	private List<String> orderVector;
 
 	public UIPagesProvider() {
-		orderVector = new ArrayList<String>();
+		orderVector = new ArrayList<>();
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class UIPagesProvider {
 	 * re-initialize the Vector.
 	 */
 	public void clearOrderVector() {
-		orderVector = new ArrayList<String>();
+		orderVector = new ArrayList<>();
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class UIPagesProvider {
 		}
 
 		// HashMap of UIPages
-		HashMap<String, UIWizardPage> pageMap = new HashMap<String, UIWizardPage>();
+		HashMap<String, UIWizardPage> pageMap = new HashMap<>();
 
 		// If uiElement contains other group elements as children.
 		if (hasChildUIGroupElement(uiElement)) {

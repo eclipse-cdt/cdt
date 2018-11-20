@@ -96,7 +96,7 @@ public class DeleteResConfigsAction implements IWorkbenchWindowPulldownDelegate2
 								ICResourceDescription rd = cfgd.getResourceDescription(path, true);
 								if (rd != null) {
 									if (objects == null)
-										objects = new ArrayList<IResource>();
+										objects = new ArrayList<>();
 									objects.add(res);
 									break; // stop configurations scanning
 								}
@@ -172,7 +172,7 @@ public class DeleteResConfigsAction implements IWorkbenchWindowPulldownDelegate2
 				if (outData != null)
 					return outData.toArray();
 
-				outData = new ArrayList<ResCfgData>();
+				outData = new ArrayList<>();
 				List<?> ls = (List<?>) inputElement;
 				Iterator<?> it = ls.iterator();
 				IProject proj = null;

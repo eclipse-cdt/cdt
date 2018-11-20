@@ -93,9 +93,9 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 	protected void updateControls() {
 		super.updateControls();
 		stylesByKind = getStylesByKind(styles);
-		List<IncludeGroupStyle> orderedStyles = new ArrayList<IncludeGroupStyle>(styles);
+		List<IncludeGroupStyle> orderedStyles = new ArrayList<>(styles);
 		Collections.sort(orderedStyles); // Sort according to values returned by getOrder() method.
-		List<IncludeGroupStyle> groupedStyles = new ArrayList<IncludeGroupStyle>();
+		List<IncludeGroupStyle> groupedStyles = new ArrayList<>();
 		int order = 0;
 		for (IncludeGroupStyle style : orderedStyles) {
 			style.setOrder(order++);
@@ -146,7 +146,7 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 	}
 
 	private static Map<IncludeKind, IncludeGroupStyle> getStylesByKind(List<IncludeGroupStyle> styles) {
-		Map<IncludeKind, IncludeGroupStyle> stylesByKind = new HashMap<IncludeKind, IncludeGroupStyle>();
+		Map<IncludeKind, IncludeGroupStyle> stylesByKind = new HashMap<>();
 		for (IncludeGroupStyle style : styles) {
 			if (style.getIncludeKind() != IncludeKind.MATCHING_PATTERN)
 				stylesByKind.put(style.getIncludeKind(), style);
@@ -236,7 +236,7 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 		}
 
 		private List<IncludeGroupStyle> reverse(List<IncludeGroupStyle> p) {
-			List<IncludeGroupStyle> reverse = new ArrayList<IncludeGroupStyle>(p.size());
+			List<IncludeGroupStyle> reverse = new ArrayList<>(p.size());
 			for (int i = p.size(); --i >= 0;) {
 				reverse.add(p.get(i));
 			}
@@ -267,8 +267,8 @@ public class IncludeOrderBlock extends OptionsConfigurationBlock {
 
 		private List<IncludeGroupStyle> moveUp(List<IncludeGroupStyle> elements, boolean[] selected) {
 			int nElements = elements.size();
-			List<IncludeGroupStyle> res = new ArrayList<IncludeGroupStyle>(nElements);
-			List<IncludeGroupStyle> floating = new ArrayList<IncludeGroupStyle>();
+			List<IncludeGroupStyle> res = new ArrayList<>(nElements);
+			List<IncludeGroupStyle> floating = new ArrayList<>();
 			for (int i = 0; i < nElements; i++) {
 				IncludeGroupStyle curr = elements.get(i);
 				if (selected[i]) {

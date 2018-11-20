@@ -1537,7 +1537,7 @@ public class CPPSemantics {
 			if (listOfNominated == null) {
 				listOfNominated = new ArrayList<>(1);
 				if (data.usingDirectives.isEmpty()) {
-					data.usingDirectives = new HashMap<ICPPNamespaceScope, List<ICPPNamespaceScope>>();
+					data.usingDirectives = new HashMap<>();
 				}
 				data.usingDirectives.put((ICPPNamespaceScope) appearsIn, listOfNominated);
 			}

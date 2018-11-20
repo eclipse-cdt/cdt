@@ -46,7 +46,7 @@ public abstract class TabFolderOptionBlock {
 	private boolean bIsValid = true;
 
 	private Label messageLabel;
-	private ArrayList<ICOptionPage> pages = new ArrayList<ICOptionPage>();
+	private ArrayList<ICOptionPage> pages = new ArrayList<>();
 	protected ICOptionContainer fParent;
 	private ICOptionPage fCurrentPage;
 

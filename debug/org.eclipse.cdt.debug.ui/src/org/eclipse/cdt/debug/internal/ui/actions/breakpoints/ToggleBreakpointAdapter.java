@@ -49,7 +49,7 @@ public class ToggleBreakpointAdapter extends AbstractToggleBreakpointAdapter {
 			IResource resource, int lineNumber) throws CoreException {
 		if (interactive) {
 			ICLineBreakpoint lineBp = CDIDebugModel.createBlankLineBreakpoint();
-			Map<String, Object> attributes = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<>();
 			CDIDebugModel.setLineBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), lineNumber, true,
 					0, ""); //$NON-NLS-1$
 			openBreakpointPropertiesDialog(lineBp, part, resource, attributes);
@@ -70,7 +70,7 @@ public class ToggleBreakpointAdapter extends AbstractToggleBreakpointAdapter {
 			IResource resource, String functionName, int charStart, int charEnd, int lineNumber) throws CoreException {
 		if (interactive) {
 			ICFunctionBreakpoint bp = CDIDebugModel.createBlankFunctionBreakpoint();
-			Map<String, Object> attributes = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<>();
 			CDIDebugModel.setFunctionBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), functionName,
 					charStart, charEnd, lineNumber, true, 0, ""); //$NON-NLS-1$
 			openBreakpointPropertiesDialog(bp, part, resource, attributes);
@@ -91,7 +91,7 @@ public class ToggleBreakpointAdapter extends AbstractToggleBreakpointAdapter {
 			int charStart, int charEnd, int lineNumber, String expression, String memorySpace, String range)
 			throws CoreException {
 		ICWatchpoint bp = CDIDebugModel.createBlankWatchpoint();
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		CDIDebugModel.setWatchPointAttributes(attributes, sourceHandle, resource, true, false, expression, memorySpace,
 				new BigInteger(range), true, 0, ""); //$NON-NLS-1$
 		openBreakpointPropertiesDialog(bp, part, resource, attributes);
@@ -101,7 +101,7 @@ public class ToggleBreakpointAdapter extends AbstractToggleBreakpointAdapter {
 	protected void createEventBreakpoint(boolean interactive, IWorkbenchPart part, IResource resource, String type,
 			String arg) throws CoreException {
 		ICEventBreakpoint bp = CDIDebugModel.createBlankEventBreakpoint();
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		CDIDebugModel.setEventBreakpointAttributes(attributes, type, arg);
 		openBreakpointPropertiesDialog(bp, part, resource, attributes);
 	}

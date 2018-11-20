@@ -64,7 +64,7 @@ public class Process {
 	private void buildArgs(TemplateCore templateCore, Element element) {
 		List<Element> children = TemplateEngine.getChildrenOfElement(element);
 		ProcessParameter[] params = processRunner.getProcessParameters();
-		List<ProcessArgument> list = new ArrayList<ProcessArgument>(params.length);
+		List<ProcessArgument> list = new ArrayList<>(params.length);
 		int childIndex = 0;
 		for (int i = 0; i < params.length; i++) {
 			ProcessParameter param = params[i];
@@ -192,7 +192,7 @@ public class Process {
 				Set<String> subSet = arg.getMacros();
 				if (subSet != null) {
 					if (set == null) {
-						set = new HashSet<String>();
+						set = new HashSet<>();
 					}
 					set.addAll(subSet);
 				}

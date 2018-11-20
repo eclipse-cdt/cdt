@@ -47,7 +47,7 @@ public class DeleteIProblemMarkerAction extends ActionDelegate implements IObjec
 			}
 			try {
 				List<?> list = selection.toList();
-				List<IMarker> listMarkers = new ArrayList<IMarker>();
+				List<IMarker> listMarkers = new ArrayList<>();
 				Iterator<?> iterator = list.iterator();
 				while (iterator.hasNext()) {
 					IMarker marker = (IMarker) iterator.next();

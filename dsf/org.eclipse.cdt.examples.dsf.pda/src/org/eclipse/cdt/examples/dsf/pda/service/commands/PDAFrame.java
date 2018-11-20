@@ -41,7 +41,7 @@ public class PDAFrame {
 		fLine = Integer.parseInt(st.nextToken());
 		fFunction = st.nextToken();
 
-		List<String> variablesList = new ArrayList<String>();
+		List<String> variablesList = new ArrayList<>();
 		while (st.hasMoreTokens()) {
 			variablesList.add(st.nextToken());
 		}

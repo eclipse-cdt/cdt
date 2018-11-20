@@ -143,7 +143,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 	}
 
 	private String getCommentMapResult(Map<IASTNode, List<IASTComment>> map) {
-		TreeSet<IASTNode> keyTree = new TreeSet<IASTNode>(new NodeOffsetComparator());
+		TreeSet<IASTNode> keyTree = new TreeSet<>(new NodeOffsetComparator());
 		keyTree.addAll(map.keySet());
 		StringBuilder output = new StringBuilder();
 		for (IASTNode actNode : keyTree) {

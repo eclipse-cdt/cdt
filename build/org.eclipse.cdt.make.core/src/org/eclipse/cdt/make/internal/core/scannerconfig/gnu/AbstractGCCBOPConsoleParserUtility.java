@@ -42,8 +42,8 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
 	 */
 	public AbstractGCCBOPConsoleParserUtility(IProject project, IPath workingDirectory,
 			IMarkerGenerator markerGenerator) {
-		fDirectoryStack = new Vector<IPath>();
-		fErrors = new ArrayList<Problem>();
+		fDirectoryStack = new Vector<>();
+		fErrors = new ArrayList<>();
 		this.project = project;
 		fBaseDirectory = new Path(EFSExtensionManager.getDefault().getPathFromURI(project.getLocationURI()));
 		if (workingDirectory != null) {

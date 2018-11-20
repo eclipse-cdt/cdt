@@ -131,7 +131,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	}
 
 	private IFile[] getAllFilesToModify() {
-		List<IFile> files = new ArrayList<IFile>(2);
+		List<IFile> files = new ArrayList<>(2);
 		IFile file = (IFile) tu.getResource();
 		if (file != null) {
 			files.add(file);
@@ -164,7 +164,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	private IASTCompositeTypeSpecifier findCurrentCompositeTypeSpecifier(IASTTranslationUnit ast)
 			throws OperationCanceledException, CoreException {
 		final int start = selectedRegion.getOffset();
-		Container<IASTCompositeTypeSpecifier> container = new Container<IASTCompositeTypeSpecifier>();
+		Container<IASTCompositeTypeSpecifier> container = new Container<>();
 		ast.accept(new CompositeTypeSpecFinder(start, container));
 		return container.getObject();
 	}
@@ -222,8 +222,8 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	@Override
 	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
 			throws CoreException, OperationCanceledException {
-		List<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
-		List<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
+		List<IASTNode> getterAndSetters = new ArrayList<>();
+		List<IASTFunctionDefinition> definitions = new ArrayList<>();
 		ICPPASTCompositeTypeSpecifier classDefinition = ASTQueries.findAncestorWithType(context.existingFields.get(0),
 				ICPPASTCompositeTypeSpecifier.class);
 		for (AccessorDescriptor accessor : context.selectedAccessors) {

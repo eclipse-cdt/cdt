@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.IPath;
 
 public class ProjectBuildState implements IProjectBuildState {
 	private Properties fCfgIdToFileNameProps;
-	private Map<String, ConfigurationBuildState> fCfgIdToStateMap = new HashMap<String, ConfigurationBuildState>();
+	private Map<String, ConfigurationBuildState> fCfgIdToStateMap = new HashMap<>();
 	private IProject fProject;
 	private boolean fIsMapInfoDirty;
 
@@ -84,7 +84,7 @@ public class ProjectBuildState implements IProjectBuildState {
 	@Override
 	public IConfigurationBuildState[] getConfigurationBuildStates() {
 		Properties props = getIdToNameProperties();
-		List<IConfigurationBuildState> list = new ArrayList<IConfigurationBuildState>(props.size());
+		List<IConfigurationBuildState> list = new ArrayList<>(props.size());
 		Set<Object> keySet = props.keySet();
 		for (Object key : keySet) {
 			String id = (String) key;

@@ -42,8 +42,8 @@ public class CHEProviderSettings {
 	static IStyledLabelProvider[] chLabelProviders = null;
 
 	private static void loadExtensions() {
-		List<ICHEContentProvider> chCProviders = new ArrayList<ICHEContentProvider>();
-		List<IStyledLabelProvider> chLProviders = new ArrayList<IStyledLabelProvider>();
+		List<ICHEContentProvider> chCProviders = new ArrayList<>();
+		List<IStyledLabelProvider> chLProviders = new ArrayList<>();
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
 		if (extensionPoint != null) {

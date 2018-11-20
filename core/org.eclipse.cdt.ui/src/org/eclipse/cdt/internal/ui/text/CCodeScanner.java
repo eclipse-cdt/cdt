@@ -55,7 +55,7 @@ public final class CCodeScanner extends AbstractCScanner {
 	 */
 	protected List<IRule> createRules() {
 
-		List<IRule> rules = new ArrayList<IRule>();
+		List<IRule> rules = new ArrayList<>();
 		IToken token;
 
 		token = getToken(ICColorConstants.C_DEFAULT);

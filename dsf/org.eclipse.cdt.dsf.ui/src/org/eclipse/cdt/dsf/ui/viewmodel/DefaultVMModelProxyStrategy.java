@@ -776,7 +776,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 			final CountingRequestMonitor crm = new CountingRequestMonitor(getVMProvider().getExecutor(), rm) {
 				@Override
 				protected void handleSuccess() {
-					Map<IVMNode, Integer> data = new HashMap<IVMNode, Integer>();
+					Map<IVMNode, Integer> data = new HashMap<>();
 					int offset = 0;
 					for (int i = 0; i < childNodes.length; i++) {
 						data.put(childNodes[i], offset);
@@ -805,7 +805,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 			}
 			crm.setDoneCount(countRM);
 		} else {
-			Map<IVMNode, Integer> data = new HashMap<IVMNode, Integer>();
+			Map<IVMNode, Integer> data = new HashMap<>();
 			for (int i = 0; i < childNodes.length; i++) {
 				data.put(childNodes[i], -1);
 			}
@@ -821,7 +821,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 	 * IModelDelta.NO_CHANGE are omitted.
 	 */
 	protected Map<IVMNode, Integer> getChildNodesWithDeltaFlags(IVMNode node, ModelDelta parentDelta, Object e) {
-		Map<IVMNode, Integer> nodes = new HashMap<IVMNode, Integer>();
+		Map<IVMNode, Integer> nodes = new HashMap<>();
 		for (final IVMNode childNode : getVMProvider().getChildVMNodes(node)) {
 			if (!childNode.equals(node) || allowRecursiveVMNodes()) {
 				int delta = getDeltaFlags(childNode, parentDelta, e);

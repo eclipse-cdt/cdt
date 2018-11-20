@@ -196,7 +196,7 @@ public class FileTemplateContextType extends TemplateContextType {
 
 	@Override
 	protected void validateVariables(TemplateVariable[] variables) throws TemplateException {
-		ArrayList<String> required = new ArrayList<String>(5);
+		ArrayList<String> required = new ArrayList<>(5);
 		for (int i = 0; i < variables.length; i++) {
 			String type = variables[i].getType();
 			if (getResolver(type) == null) {

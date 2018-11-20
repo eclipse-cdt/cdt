@@ -96,7 +96,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		HashMap<IResource, List<RefreshExclusion>> resourceMap = fConfigurationToResourcesToExclusionsMap
 				.get(configName);
 		if (resourceMap == null) {
-			resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
+			resourceMap = new HashMap<>();
 			resourceMap.put(fProject, new ArrayList<RefreshExclusion>());
 			fConfigurationToResourcesToExclusionsMap.put(configName, resourceMap);
 		}
@@ -111,7 +111,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 	private HashMap<String, HashMap<IResource, List<RefreshExclusion>>> copyHashMap(
 			HashMap<String, HashMap<IResource, List<RefreshExclusion>>> source) {
 
-		HashMap<String, HashMap<IResource, List<RefreshExclusion>>> target = new HashMap<String, HashMap<IResource, List<RefreshExclusion>>>();
+		HashMap<String, HashMap<IResource, List<RefreshExclusion>>> target = new HashMap<>();
 
 		if (source.isEmpty())
 			return target;
@@ -122,13 +122,13 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 			String configName = config_iterator.next();
 
 			HashMap<IResource, List<RefreshExclusion>> source_resourceMap = source.get(configName);
-			HashMap<IResource, List<RefreshExclusion>> target_resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
+			HashMap<IResource, List<RefreshExclusion>> target_resourceMap = new HashMap<>();
 
 			Iterator<IResource> resource_iterator = source_resourceMap.keySet().iterator();
 			while (resource_iterator.hasNext()) {
 				IResource source_resource = resource_iterator.next();
 				List<RefreshExclusion> source_exclusions = source_resourceMap.get(source_resource);
-				List<RefreshExclusion> target_exclusions = new LinkedList<RefreshExclusion>();
+				List<RefreshExclusion> target_exclusions = new LinkedList<>();
 				for (RefreshExclusion exclusion : source_exclusions) {
 					// ADD each exclusion to the target exclusion list.
 					RefreshExclusion target_exclusion = (RefreshExclusion) exclusion.clone();
@@ -157,7 +157,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		HashMap<IResource, List<RefreshExclusion>> resourceMap = getResourcesToExclusionsMap(configName);
 		List<RefreshExclusion> exclusions = resourceMap.get(resource);
 		if (exclusions == null) {
-			exclusions = new LinkedList<RefreshExclusion>();
+			exclusions = new LinkedList<>();
 			resourceMap.put(resource, exclusions);
 
 		}
@@ -181,7 +181,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		_Exception_Node exceptions_node = null;
 
 		// if this is a refresh exclusion, exclusion_instances is a list of exclusion instances associated with this exclusion
-		List<_Exclusion_Instance> exclusion_instances = new ArrayList<_Exclusion_Instance>();
+		List<_Exclusion_Instance> exclusion_instances = new ArrayList<>();
 
 		_Entry(IResource _ent) {
 			resourceToRefresh = _ent;
@@ -214,7 +214,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 
 		public Object[] getChildren() {
 			if (isExclusion()) {
-				List<Object> children = new ArrayList<Object>(exclusion_instances);
+				List<Object> children = new ArrayList<>(exclusion_instances);
 				if (exceptions_node != null)
 					children.add(exceptions_node);
 				return children.toArray();
@@ -278,7 +278,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		_Entry parent; //can be IResource or RefreshExclusion - must not be null
 
 		//list of refresh exclusions under this Exceptions node
-		List<_Entry> exceptions = new ArrayList<_Entry>();
+		List<_Entry> exceptions = new ArrayList<>();
 
 		_Exception_Node(_Entry ent) {
 			parent = ent;
@@ -307,7 +307,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 			} else {
 				List<RefreshExclusion> exclusions = getExclusions(getConfigName(), parent.resourceToRefresh);
 				if (exclusions == null) {
-					exclusions = new LinkedList<RefreshExclusion>();
+					exclusions = new LinkedList<>();
 					getResourcesToExclusionsMap(getConfigName()).put(parent.resourceToRefresh, exclusions);
 
 				}
@@ -377,7 +377,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		Group g1 = setupGroup(usercomp, Messages.RefreshPolicyTab_resourcesGroupLabel, 2,
 				GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 
-		fSrc = new ArrayList<_Entry>();
+		fSrc = new ArrayList<>();
 		generateTreeContent();
 
 		fTree = new TreeViewer(g1);
@@ -561,7 +561,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		 */
 		@Override
 		public Object[] getChildren(Object element) {
-			ArrayList<Object> filteredChildren = new ArrayList<Object>(Arrays.asList(super.getChildren(element)));
+			ArrayList<Object> filteredChildren = new ArrayList<>(Arrays.asList(super.getChildren(element)));
 			Iterator<IResource> iterator = getResourcesToExclusionsMap(getConfigName()).keySet().iterator();
 
 			while (iterator.hasNext()) {

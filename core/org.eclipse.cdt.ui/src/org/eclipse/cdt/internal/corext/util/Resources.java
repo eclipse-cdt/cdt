@@ -101,7 +101,7 @@ public class Resources {
 	 * @see org.eclipse.core.resources.IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
 	 */
 	public static IStatus makeCommittable(IResource[] resources, Object context) {
-		List<IResource> readOnlyFiles = new ArrayList<IResource>();
+		List<IResource> readOnlyFiles = new ArrayList<>();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			if (resource.getType() == IResource.FILE) {
@@ -133,7 +133,7 @@ public class Resources {
 	}
 
 	private static Map<IFile, Long> createModificationStampMap(List<IResource> files) {
-		Map<IFile, Long> map = new HashMap<IFile, Long>();
+		Map<IFile, Long> map = new HashMap<>();
 		for (Iterator<IResource> iter = files.iterator(); iter.hasNext();) {
 			IFile file = (IFile) iter.next();
 			map.put(file, Long.valueOf(file.getModificationStamp()));
@@ -177,7 +177,7 @@ public class Resources {
 	}
 
 	public static String[] getLocationOSStrings(IResource[] resources) {
-		List<String> result = new ArrayList<String>(resources.length);
+		List<String> result = new ArrayList<>(resources.length);
 		for (int i = 0; i < resources.length; i++) {
 			IPath location = resources[i].getLocation();
 			if (location != null)

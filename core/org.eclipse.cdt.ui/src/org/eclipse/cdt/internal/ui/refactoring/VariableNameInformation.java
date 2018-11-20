@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class VariableNameInformation {
 	private String name = ""; //$NON-NLS-1$
-	private final ArrayList<String> usedNames = new ArrayList<String>();
+	private final ArrayList<String> usedNames = new ArrayList<>();
 
 	public String getName() {
 		return name;

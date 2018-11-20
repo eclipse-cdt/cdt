@@ -103,8 +103,8 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 		gridData.minimumWidth = 275;
 		exceptionsList.setLayoutData(gridData);
 
-		final HashMap<String, ExclusionInstance> exclusionInstanceStrings = new LinkedHashMap<String, ExclusionInstance>();
-		final HashMap<String, Object> exclusionInstanceResources = new LinkedHashMap<String, Object>();
+		final HashMap<String, ExclusionInstance> exclusionInstanceStrings = new LinkedHashMap<>();
+		final HashMap<String, Object> exclusionInstanceResources = new LinkedHashMap<>();
 
 		java.util.List<ExclusionInstance> exclusionInstances = exclusion.getExclusionInstances();
 
@@ -156,7 +156,7 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 									IContainer container = (IContainer) parentElement;
 									if (container.isAccessible()) {
 										try {
-											java.util.List<IResource> children = new ArrayList<IResource>();
+											java.util.List<IResource> children = new ArrayList<>();
 											IResource[] members = container.members();
 											for (int i = 0; i < members.length; i++) {
 												if (members[i].getType() == IResource.FOLDER) {
@@ -208,7 +208,7 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 					Object[] selection = dialog.getResult();
 					exceptionsList.removeAll();
 					exclusionInstanceResources.clear();
-					final HashMap<String, ExclusionInstance> oldExclusionInstanceStrings = new LinkedHashMap<String, ExclusionInstance>(
+					final HashMap<String, ExclusionInstance> oldExclusionInstanceStrings = new LinkedHashMap<>(
 							exclusionInstanceStrings);
 					exclusionInstanceStrings.clear();
 

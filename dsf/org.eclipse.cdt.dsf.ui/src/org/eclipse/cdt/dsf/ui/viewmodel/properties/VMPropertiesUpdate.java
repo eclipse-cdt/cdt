@@ -91,7 +91,7 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
 		if (!fCreatedOwnMap) {
 			fCreatedOwnMap = true;
 			Map<String, Object> curValues = fValues;
-			fValues = new HashMap<String, Object>(fProperties.size() * 4 / 3, 0.75f);
+			fValues = new HashMap<>(fProperties.size() * 4 / 3, 0.75f);
 			if (curValues != null) {
 				fValues.putAll(curValues);
 			}

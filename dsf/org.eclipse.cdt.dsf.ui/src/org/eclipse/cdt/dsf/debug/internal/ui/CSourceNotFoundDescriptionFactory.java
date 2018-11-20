@@ -92,7 +92,7 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 	private static ICSourceNotFoundDescription getFrameDescription(IStack.IFrameDMData frame) {
 		String formatString = ""; //$NON-NLS-1$
 		String[] propertyNames = null;
-		HashMap<String, Object> properties = new HashMap<String, Object>();
+		HashMap<String, Object> properties = new HashMap<>();
 		fillFrameDataProperties(properties, frame);
 
 		Integer line = (Integer) properties.get(ILaunchVMConstants.PROP_FRAME_LINE);

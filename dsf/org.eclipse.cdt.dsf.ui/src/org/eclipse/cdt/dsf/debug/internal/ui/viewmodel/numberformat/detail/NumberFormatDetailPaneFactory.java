@@ -41,7 +41,7 @@ public class NumberFormatDetailPaneFactory implements IDetailPaneFactory {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Set getDetailPaneTypes(IStructuredSelection selection) {
-		Set<String> possibleIDs = new HashSet<String>(1);
+		Set<String> possibleIDs = new HashSet<>(1);
 		possibleIDs.add(NumberFormatDetailPane.ID);
 		return possibleIDs;
 	}

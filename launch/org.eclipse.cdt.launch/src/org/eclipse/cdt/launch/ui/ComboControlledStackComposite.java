@@ -41,7 +41,7 @@ public class ComboControlledStackComposite extends Composite {
 
 	public ComboControlledStackComposite(Composite parent, int style) {
 		super(parent, style);
-		tabMap = new LinkedHashMap<String, Composite>();
+		tabMap = new LinkedHashMap<>();
 		setLayout(new GridLayout(2, false));
 		createContents(this);
 	}

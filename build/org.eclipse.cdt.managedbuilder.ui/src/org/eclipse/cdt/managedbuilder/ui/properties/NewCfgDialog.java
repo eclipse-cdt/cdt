@@ -437,7 +437,7 @@ public class NewCfgDialog implements INewCfgDialog {
 		des = prj;
 		ICConfigurationDescription[] descs = des.getConfigurations();
 		cfgds = new IConfiguration[descs.length];
-		ArrayList<IConfiguration> lst = new ArrayList<IConfiguration>();
+		ArrayList<IConfiguration> lst = new ArrayList<>();
 		for (int i = 0; i < descs.length; ++i) {
 			cfgds[i] = ManagedBuildManager.getConfigurationForDescription(descs[i]);
 			IConfiguration cfg = cfgds[i];
@@ -620,7 +620,7 @@ public class NewCfgDialog implements INewCfgDialog {
 	}
 
 	private String[] getImportItems() {
-		imported = new HashMap<String, IConfiguration>();
+		imported = new HashMap<>();
 		if (des != null) {
 			IProject[] ps = des.getProject().getWorkspace().getRoot().getProjects();
 			for (IProject p : ps) {
@@ -637,14 +637,14 @@ public class NewCfgDialog implements INewCfgDialog {
 				}
 			}
 		}
-		ArrayList<String> lst = new ArrayList<String>(imported.keySet());
+		ArrayList<String> lst = new ArrayList<>(imported.keySet());
 		Collections.sort(lst);
 		lst.add(0, NOT);
 		return lst.toArray(new String[lst.size()]);
 	}
 
 	private String[] getImportDefItems() {
-		importedDef = new HashMap<String, IConfiguration>();
+		importedDef = new HashMap<>();
 		IBuildPropertyManager bpm = ManagedBuildManager.getBuildPropertyManager();
 		IBuildPropertyType bpt = bpm.getPropertyType(ART);
 		for (IBuildPropertyValue v : bpt.getSupportedValues()) {
@@ -664,7 +664,7 @@ public class NewCfgDialog implements INewCfgDialog {
 				}
 			}
 		}
-		ArrayList<String> lst = new ArrayList<String>(importedDef.keySet());
+		ArrayList<String> lst = new ArrayList<>(importedDef.keySet());
 		Collections.sort(lst);
 		lst.add(0, NOT);
 		return lst.toArray(new String[lst.size()]);

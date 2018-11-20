@@ -228,7 +228,7 @@ public class C99ExpressionParser extends PrsStream implements RuleAction, IToken
 	}
 
 	private void initActions(Map<String, String> properties) {
-		ScopedStack<Object> astStack = new ScopedStack<Object>();
+		ScopedStack<Object> astStack = new ScopedStack<>();
 
 		action = new C99BuildASTParserAction(this, astStack, CNodeFactory.getDefault(),
 				C99SecondaryParserFactory.getDefault());

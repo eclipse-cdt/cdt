@@ -39,7 +39,7 @@ public class SourceContainerViewer extends TreeViewer {
 	/**
 	 * The source container entries displayed in this viewer
 	 */
-	protected List<ISourceContainer> fEntries = new ArrayList<ISourceContainer>();
+	protected List<ISourceContainer> fEntries = new ArrayList<>();
 
 	class ContentProvider implements ITreeContentProvider {
 		/**

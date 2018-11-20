@@ -43,7 +43,7 @@ public class TokenStore implements ITokenStore {
 	private IColorManager fColorManager;
 	private IPreferenceStore fPreferenceStore;
 
-	private Map<String, IToken> fTokenMap = new HashMap<String, IToken>();
+	private Map<String, IToken> fTokenMap = new HashMap<>();
 	private String[] fPropertyNamesColor;
 
 	private boolean fNeedsLazyColorLoading;

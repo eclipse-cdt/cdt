@@ -72,7 +72,7 @@ public class IncludeStyleBlock extends TabConfigurationBlock {
 	}
 
 	private static Map<IncludeKind, Key> createKeyMap() {
-		Map<IncludeKind, Key> map = new HashMap<IncludeKind, Key>();
+		Map<IncludeKind, Key> map = new HashMap<>();
 		map.put(IncludeKind.RELATED, KEY_STYLE_RELATED);
 		map.put(IncludeKind.PARTNER, KEY_STYLE_PARTNER);
 		map.put(IncludeKind.IN_SAME_FOLDER, KEY_STYLE_SAME_FOLDER);

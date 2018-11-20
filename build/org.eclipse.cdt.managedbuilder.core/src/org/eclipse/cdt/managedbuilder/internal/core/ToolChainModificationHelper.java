@@ -124,7 +124,7 @@ public class ToolChainModificationHelper {
 
 		curMap.clearEmptyLists();
 
-		List<ITool> resultingList = new ArrayList<ITool>();
+		List<ITool> resultingList = new ArrayList<>();
 		curMap.putValuesToCollection(resultingList);
 
 		return getModificationInfo(rcInfo, fromTools, resultingList.toArray(new ITool[resultingList.size()]));
@@ -134,11 +134,11 @@ public class ToolChainModificationHelper {
 			ITool[] toTools) {
 
 		ToolListMap curMap = createRealToToolMap(fromTools, false);
-		List<ToolInfo> resultingList = new ArrayList<ToolInfo>();
-		List<ToolInfo> addedList = new ArrayList<ToolInfo>(7);
-		List<ToolInfo> remainedList = new ArrayList<ToolInfo>(7);
-		List<ToolInfo> removedList = new ArrayList<ToolInfo>(7);
-		List<ITool> removedToolsList = new ArrayList<ITool>(7);
+		List<ToolInfo> resultingList = new ArrayList<>();
+		List<ToolInfo> addedList = new ArrayList<>(7);
+		List<ToolInfo> remainedList = new ArrayList<>(7);
+		List<ToolInfo> removedList = new ArrayList<>(7);
+		List<ITool> removedToolsList = new ArrayList<>(7);
 
 		for (int i = 0; i < toTools.length; i++) {
 			ITool tool = toTools[i];
@@ -244,9 +244,9 @@ public class ToolChainModificationHelper {
 	private static Map<ITool, ConverterInfo> calculateConverterTools(IResourceInfo rcInfo, ToolInfo[] removed,
 			ToolInfo[] added, List<ToolInfo> remainingRemoved, List<ToolInfo> remainingAdded) {
 		if (remainingAdded == null)
-			remainingAdded = new ArrayList<ToolInfo>(added.length);
+			remainingAdded = new ArrayList<>(added.length);
 		if (remainingRemoved == null)
-			remainingRemoved = new ArrayList<ToolInfo>(removed.length);
+			remainingRemoved = new ArrayList<>(removed.length);
 
 		remainingAdded.clear();
 		remainingRemoved.clear();
@@ -254,7 +254,7 @@ public class ToolChainModificationHelper {
 		remainingAdded.addAll(Arrays.asList(added));
 		remainingRemoved.addAll(Arrays.asList(removed));
 
-		Map<ITool, ConverterInfo> resultMap = new HashMap<ITool, ConverterInfo>();
+		Map<ITool, ConverterInfo> resultMap = new HashMap<>();
 
 		for (Iterator<ToolInfo> rIter = remainingRemoved.iterator(); rIter.hasNext();) {
 			ToolInfo rti = rIter.next();

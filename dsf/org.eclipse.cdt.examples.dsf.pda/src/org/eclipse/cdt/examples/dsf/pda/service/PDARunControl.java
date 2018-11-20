@@ -227,7 +227,7 @@ public class PDARunControl extends AbstractDsfService implements IRunControl, IE
 		}
 	}
 
-	private Map<Integer, ThreadInfo> fThreads = new LinkedHashMap<Integer, ThreadInfo>();
+	private Map<Integer, ThreadInfo> fThreads = new LinkedHashMap<>();
 
 	public PDARunControl(DsfSession session) {
 		super(session);

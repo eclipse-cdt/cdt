@@ -33,7 +33,7 @@ public class ImplementMethodData implements ITreeContentProvider {
 	private List<MethodToImplementConfig> methodDeclarations;
 
 	public void setMethodDeclarations(List<IASTSimpleDeclaration> methodDeclarations) {
-		this.methodDeclarations = new ArrayList<MethodToImplementConfig>();
+		this.methodDeclarations = new ArrayList<>();
 
 		for (IASTSimpleDeclaration declaration : methodDeclarations) {
 			this.methodDeclarations.add(new MethodToImplementConfig(declaration, new ParameterHandler(declaration)));
@@ -79,7 +79,7 @@ public class ImplementMethodData implements ITreeContentProvider {
 	}
 
 	public List<MethodToImplementConfig> getMethodsToImplement() {
-		List<MethodToImplementConfig> ret = new ArrayList<MethodToImplementConfig>();
+		List<MethodToImplementConfig> ret = new ArrayList<>();
 		for (MethodToImplementConfig config : methodDeclarations) {
 			if (config.isChecked()) {
 				ret.add(config);

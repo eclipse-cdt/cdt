@@ -72,7 +72,7 @@ public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector
 
 	@Override
 	protected List<String> parseOptions(String line) {
-		List<String> options = new ArrayList<String>();
+		List<String> options = new ArrayList<>();
 		Matcher optionMatcher = OPTIONS_PATTERN.matcher(line);
 		while (optionMatcher.find()) {
 			String option = optionMatcher.group(OPTION_GROUP);

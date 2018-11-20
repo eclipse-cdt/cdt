@@ -708,7 +708,7 @@ class ASTInclusionNode implements IASTInclusionNode {
 	@Override
 	public IASTInclusionNode[] getNestedInclusions() {
 		if (fInclusions == null) {
-			ArrayList<IASTInclusionNode> result = new ArrayList<IASTInclusionNode>();
+			ArrayList<IASTInclusionNode> result = new ArrayList<>();
 			fLocationCtx.getInclusions(result);
 			fInclusions = result.toArray(new IASTInclusionNode[result.size()]);
 		}

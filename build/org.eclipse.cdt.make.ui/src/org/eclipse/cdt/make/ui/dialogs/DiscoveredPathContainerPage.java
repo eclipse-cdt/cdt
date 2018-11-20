@@ -146,7 +146,7 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 
 		DiscoveredContainerAdapter adapter = new DiscoveredContainerAdapter();
 
-		fDiscoveredContainerList = new TreeListDialogField<DiscoveredElement>(adapter, buttonLabels,
+		fDiscoveredContainerList = new TreeListDialogField<>(adapter, buttonLabels,
 				new DiscoveredElementLabelProvider());
 		fDiscoveredContainerList.setDialogFieldListener(adapter);
 		fDiscoveredContainerList.setLabelText(MakeUIPlugin.getResourceString(CONTAINER_LIST_LABEL));
@@ -154,7 +154,7 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 		fDiscoveredContainerList.setTreeExpansionLevel(2);
 		fDiscoveredContainerList.setViewerSorter(new DiscoveredElementSorter());
 		dirty = false;
-		deletedEntries = new ArrayList<DiscoveredElement>();
+		deletedEntries = new ArrayList<>();
 	}
 
 	/* (non-Javadoc)
@@ -220,8 +220,8 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 		if (info instanceof IPerProjectDiscoveredPathInfo) {
 			IPerProjectDiscoveredPathInfo projectPathInfo = (IPerProjectDiscoveredPathInfo) info;
 
-			LinkedHashMap<String, Boolean> includes = new LinkedHashMap<String, Boolean>();
-			LinkedHashMap<String, SymbolEntry> symbols = new LinkedHashMap<String, SymbolEntry>();
+			LinkedHashMap<String, Boolean> includes = new LinkedHashMap<>();
+			LinkedHashMap<String, SymbolEntry> symbols = new LinkedHashMap<>();
 
 			DiscoveredElement container = (DiscoveredElement) fDiscoveredContainerList.getElement(0);
 			if (container != null && container.getEntryKind() == DiscoveredElement.CONTAINER) {
@@ -264,7 +264,7 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 
 		try {
 			// update scanner configuration
-			List<IResource> resourceDelta = new ArrayList<IResource>(1);
+			List<IResource> resourceDelta = new ArrayList<>(1);
 			resourceDelta.add(fCProject.getProject());
 			MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(info, resourceDelta);
 			return true;
@@ -294,7 +294,7 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 		}
 		if (fPathEntry != null) {
 			DiscoveredElement element = populateDiscoveredElements(fPathEntry);
-			ArrayList<DiscoveredElement> elements = new ArrayList<DiscoveredElement>();
+			ArrayList<DiscoveredElement> elements = new ArrayList<>();
 			elements.add(element);
 			fDiscoveredContainerList.addElements(elements);
 		}
@@ -606,7 +606,7 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 	private boolean moveDown() {
 		boolean rc = false;
 		List<Object> selElements = fDiscoveredContainerList.getSelectedElements();
-		List<Object> revSelElements = new ArrayList<Object>(selElements);
+		List<Object> revSelElements = new ArrayList<>(selElements);
 		Collections.reverse(revSelElements);
 		for (Iterator<Object> i = revSelElements.iterator(); i.hasNext();) {
 			DiscoveredElement elem = (DiscoveredElement) i.next();
@@ -649,7 +649,7 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 
 	private boolean deleteEntry() {
 		boolean rc = false;
-		List<DiscoveredElement> newSelection = new ArrayList<DiscoveredElement>();
+		List<DiscoveredElement> newSelection = new ArrayList<>();
 		List<Object> selElements = fDiscoveredContainerList.getSelectedElements();
 		boolean skipIncludes = false, skipSymbols = false;
 		for (int i = 0; i < selElements.size(); ++i) {

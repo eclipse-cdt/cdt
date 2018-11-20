@@ -63,7 +63,7 @@ public class DefaultSourceLocator extends CSourceLookupDirector {
 		// If so, DefaultSpourceContainer should be used.
 		IProject project = csl.getProject();
 		List<IProject> list = CDebugUtils.getReferencedProjects(project);
-		HashSet<String> names = new HashSet<String>(list.size() + 1);
+		HashSet<String> names = new HashSet<>(list.size() + 1);
 		names.add(project.getName());
 		for (IProject proj : list) {
 			names.add(proj.getName());
@@ -79,7 +79,7 @@ public class DefaultSourceLocator extends CSourceLookupDirector {
 		}
 
 		// Generate an array of new source containers including DefaultSourceContainer
-		ArrayList<ICSourceLocation> locs = new ArrayList<ICSourceLocation>(locations.length);
+		ArrayList<ICSourceLocation> locs = new ArrayList<>(locations.length);
 		for (int i = 0; i < locations.length; ++i) {
 			if (!includesDefault || !(locations[i] instanceof IProjectSourceLocation
 					&& names.contains(((IProjectSourceLocation) locations[i]).getProject().getName()))) {
@@ -89,7 +89,7 @@ public class DefaultSourceLocator extends CSourceLookupDirector {
 
 		ISourceContainer[] containers = SourceUtils
 				.convertSourceLocations(locs.toArray(new ICSourceLocation[locs.size()]));
-		ArrayList<ISourceContainer> cons = new ArrayList<ISourceContainer>(Arrays.asList(containers));
+		ArrayList<ISourceContainer> cons = new ArrayList<>(Arrays.asList(containers));
 		if (includesDefault) {
 			DefaultSourceContainer defaultContainer = new DefaultSourceContainer();
 			defaultContainer.init(this);

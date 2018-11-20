@@ -268,7 +268,7 @@ public class AR {
 		if (memberHeaders != null)
 			return;
 
-		Vector<MemberHeader> v = new Vector<MemberHeader>();
+		Vector<MemberHeader> v = new Vector<>();
 		try {
 			//
 			// Check for EOF condition
@@ -301,7 +301,7 @@ public class AR {
 	}
 
 	public String[] extractFiles(String outdir, String[] names) throws IOException {
-		Vector<String> names_used = new Vector<String>();
+		Vector<String> names_used = new Vector<>();
 		String object_name;
 		int count;
 

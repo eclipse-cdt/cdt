@@ -41,7 +41,7 @@ public class THLabelProvider extends AppearanceAwareLabelProvider {
 
 	private CUILabelProvider fCLabelProvider = new CUILabelProvider(LABEL_OPTIONS_SIMPLE, 0);
 	private THHierarchyModel fModel;
-	private HashMap<String, Image> fCachedImages = new HashMap<String, Image>();
+	private HashMap<String, Image> fCachedImages = new HashMap<>();
 	private Color fColorInactive;
 	private boolean fMarkImplementers = true;
 	private boolean fHideNonImplementers = false;

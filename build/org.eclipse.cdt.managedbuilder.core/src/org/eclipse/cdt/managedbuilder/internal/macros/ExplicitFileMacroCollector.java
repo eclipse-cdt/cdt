@@ -30,7 +30,7 @@ import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 public class ExplicitFileMacroCollector extends SupplierBasedCdtVariableSubstitutor {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	private List<ICdtVariable> fMacrosList = new ArrayList<ICdtVariable>();
+	private List<ICdtVariable> fMacrosList = new ArrayList<>();
 
 	/*	public ExplicitFileMacroCollector(int contextType, Object contextData){
 			super(contextType, contextData, EMPTY_STRING, EMPTY_STRING);

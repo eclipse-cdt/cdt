@@ -192,7 +192,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 	}
 
 	private static CEditorTextHoverDescriptor[] createDescriptors(IConfigurationElement[] elements) {
-		List<CEditorTextHoverDescriptor> result = new ArrayList<CEditorTextHoverDescriptor>(elements.length);
+		List<CEditorTextHoverDescriptor> result = new ArrayList<>(elements.length);
 		for (IConfigurationElement element : elements) {
 			if (HOVER_TAG.equals(element.getName())) {
 				CEditorTextHoverDescriptor desc = new CEditorTextHoverDescriptor(element);
@@ -208,7 +208,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 				.getString(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS);
 
 		StringTokenizer tokenizer = new StringTokenizer(compiledTextHoverModifiers, VALUE_SEPARATOR);
-		HashMap<String, String> idToModifier = new HashMap<String, String>(tokenizer.countTokens() / 2);
+		HashMap<String, String> idToModifier = new HashMap<>(tokenizer.countTokens() / 2);
 
 		while (tokenizer.hasMoreTokens()) {
 			String id = tokenizer.nextToken();
@@ -220,7 +220,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 				.getString(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS);
 
 		tokenizer = new StringTokenizer(compiledTextHoverModifierMasks, VALUE_SEPARATOR);
-		HashMap<String, String> idToModifierMask = new HashMap<String, String>(tokenizer.countTokens() / 2);
+		HashMap<String, String> idToModifierMask = new HashMap<>(tokenizer.countTokens() / 2);
 
 		while (tokenizer.hasMoreTokens()) {
 			String id = tokenizer.nextToken();

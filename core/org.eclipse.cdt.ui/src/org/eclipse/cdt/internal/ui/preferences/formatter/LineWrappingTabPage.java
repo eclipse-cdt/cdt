@@ -75,7 +75,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 			this.prologue = prologue;
 			this.previewText = previewText != null ? createPreviewHeader(name) + previewText : null;
 			this.description = description;
-			children = new ArrayList<Category>();
+			children = new ArrayList<>();
 		}
 
 		public Category(String key, String previewText, String name, String description) {
@@ -103,7 +103,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		private int fIndex = 0;
 
 		public CategoryListener(List<Category> categoriesTree) {
-			fCategoriesList = new ArrayList<Category>();
+			fCategoriesList = new ArrayList<>();
 			flatten(fCategoriesList, categoriesTree);
 		}
 
@@ -190,12 +190,12 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	}
 
 	private class SelectionState {
-		private List<Category> fElements = new ArrayList<Category>();
+		private List<Category> fElements = new ArrayList<>();
 
 		public void refreshState(IStructuredSelection selection) {
-			Map<Object, Integer> wrappingStyleMap = new HashMap<Object, Integer>();
-			Map<Object, Integer> indentStyleMap = new HashMap<Object, Integer>();
-			Map<Object, Integer> forceWrappingMap = new HashMap<Object, Integer>();
+			Map<Object, Integer> wrappingStyleMap = new HashMap<>();
+			Map<Object, Integer> indentStyleMap = new HashMap<>();
+			Map<Object, Integer> forceWrappingMap = new HashMap<>();
 			fElements.clear();
 			evaluateElements(selection.iterator());
 			evaluateMaps(wrappingStyleMap, indentStyleMap, forceWrappingMap);
@@ -611,7 +611,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 
 		final String previewLineWidth = fDialogSettings.get(PREF_PREVIEW_LINE_WIDTH);
 
-		fPreviewPreferences = new HashMap<String, String>();
+		fPreviewPreferences = new HashMap<>();
 		fPreviewPreferences.put(LINE_SPLIT,
 				previewLineWidth != null ? previewLineWidth : String.valueOf(DEFAULT_PREVIEW_WINDOW_LINE_WIDTH));
 
@@ -665,7 +665,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		//		final Category statements= new Category(FormatterMessages.LineWrappingTabPage_statements);
 		//		statements.children.add(fCompactIfCategory);
 
-		final List<Category> root = new ArrayList<Category>();
+		final List<Category> root = new ArrayList<>();
 		root.add(classDeclarations);
 		//		root.add(constructorDeclarations);
 		root.add(methodDeclarations);

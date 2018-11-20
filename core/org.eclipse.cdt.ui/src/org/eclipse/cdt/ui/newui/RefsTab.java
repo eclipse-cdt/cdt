@@ -158,7 +158,7 @@ public class RefsTab extends AbstractCPropertyTab {
 			Map<String, String> oldMapping = getResDesc().getConfiguration().getReferenceInfo();
 			TreeItem ti = tree.getSelection()[0];
 			String projectName = ti.getText();
-			List<String> projNames = new ArrayList<String>(oldMapping.keySet());
+			List<String> projNames = new ArrayList<>(oldMapping.keySet());
 			int index = projNames.indexOf(projectName);
 			if (n == MOVEUP_BUTTON) {
 				if (index > 0) {
@@ -171,7 +171,7 @@ public class RefsTab extends AbstractCPropertyTab {
 					projNames.set(index + 1, projectName);
 				}
 			}
-			Map<String, String> newMapping = new LinkedHashMap<String, String>(oldMapping.size());
+			Map<String, String> newMapping = new LinkedHashMap<>(oldMapping.size());
 			for (String name : projNames)
 				newMapping.put(name, oldMapping.get(name));
 			getResDesc().getConfiguration().setReferenceInfo(newMapping);
@@ -200,7 +200,7 @@ public class RefsTab extends AbstractCPropertyTab {
 	 * Persist the checked configurations
 	 */
 	private void saveChecked() {
-		Map<String, String> refs = new LinkedHashMap<String, String>();
+		Map<String, String> refs = new LinkedHashMap<>();
 		for (TreeItem project : tree.getItems()) {
 			if (project.getChecked()) {
 				if (project.getData() instanceof String) {
@@ -237,7 +237,7 @@ public class RefsTab extends AbstractCPropertyTab {
 	private void initData() {
 		// Persist the current select / expand state to restore...
 		String currentSelection = tree.getSelectionCount() == 1 ? tree.getSelection()[0].getText() : null;
-		Set<String> currentExpanded = new HashSet<String>();
+		Set<String> currentExpanded = new HashSet<>();
 		for (TreeItem ti : tree.getItems())
 			if (ti.getExpanded())
 				currentExpanded.add(ti.getText());
@@ -251,7 +251,7 @@ public class RefsTab extends AbstractCPropertyTab {
 		Map<String, String> refs = getResDesc().getConfiguration().getReferenceInfo();
 
 		// Preserve project order. All linked to projects occur before others
-		Set<String> projects = new LinkedHashSet<String>(refs.keySet());
+		Set<String> projects = new LinkedHashSet<>(refs.keySet());
 		for (IProject prj : p.getWorkspace().getRoot().getProjects())
 			projects.add(prj.getName());
 

@@ -153,14 +153,14 @@ public final class SteppingController {
 	private IRunControl fRunControl;
 	private int fQueueDepth = STEP_QUEUE_DEPTH;
 
-	private final Map<IExecutionDMContext, List<StepRequest>> fStepQueues = new HashMap<IExecutionDMContext, List<StepRequest>>();
-	private final Map<IExecutionDMContext, Boolean> fTimedOutFlags = new HashMap<IExecutionDMContext, Boolean>();
-	private final Map<IExecutionDMContext, ScheduledFuture<?>> fTimedOutFutures = new HashMap<IExecutionDMContext, ScheduledFuture<?>>();
+	private final Map<IExecutionDMContext, List<StepRequest>> fStepQueues = new HashMap<>();
+	private final Map<IExecutionDMContext, Boolean> fTimedOutFlags = new HashMap<>();
+	private final Map<IExecutionDMContext, ScheduledFuture<?>> fTimedOutFutures = new HashMap<>();
 
 	/**
 	 * Records the time of the last step for an execution context.
 	 */
-	private final Map<IExecutionDMContext, Long> fLastStepTimes = new HashMap<IExecutionDMContext, Long>();
+	private final Map<IExecutionDMContext, Long> fLastStepTimes = new HashMap<>();
 
 	/**
 	 * Minimum step interval in milliseconds.
@@ -175,7 +175,7 @@ public final class SteppingController {
 	/**
 	 * Map of execution contexts for which a step is in progress.
 	 */
-	private final Map<IExecutionDMContext, List<ISteppingControlParticipant>> fStepInProgress = new HashMap<IExecutionDMContext, List<ISteppingControlParticipant>>();
+	private final Map<IExecutionDMContext, List<ISteppingControlParticipant>> fStepInProgress = new HashMap<>();
 
 	/**
 	 * List of registered stepping control participants.
@@ -486,7 +486,7 @@ public final class SteppingController {
 	private void doEnqueueStep(final IExecutionDMContext execCtx, final StepType stepType) {
 		List<StepRequest> stepQueue = fStepQueues.get(execCtx);
 		if (stepQueue == null) {
-			stepQueue = new LinkedList<StepRequest>();
+			stepQueue = new LinkedList<>();
 			fStepQueues.put(execCtx, stepQueue);
 		}
 		if (stepQueue.size() < fQueueDepth) {
@@ -571,7 +571,7 @@ public final class SteppingController {
 	 */
 	private void disableStepping(IExecutionDMContext execCtx) {
 		if (!fParticipants.isEmpty()) {
-			fStepInProgress.put(execCtx, new ArrayList<ISteppingControlParticipant>(fParticipants));
+			fStepInProgress.put(execCtx, new ArrayList<>(fParticipants));
 		}
 	}
 

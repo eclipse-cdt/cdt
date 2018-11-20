@@ -52,9 +52,9 @@ public class DsfTestBreakpointAttributeTranslator2 implements IBreakpointAttribu
 		if (num == null) {
 			num = 1;
 		}
-		List<Map<String, Object>> subBpsAttrs = new ArrayList<Map<String, Object>>(num);
+		List<Map<String, Object>> subBpsAttrs = new ArrayList<>(num);
 		for (int i = 0; i < num; i++) {
-			Map<String, Object> subBpAttr = new HashMap<String, Object>(bpAttrs);
+			Map<String, Object> subBpAttr = new HashMap<>(bpAttrs);
 			subBpAttr.put(DsfTestBreakpoints.ATTR_SUB_ID, i);
 			subBpsAttrs.add(subBpAttr);
 		}
@@ -75,7 +75,7 @@ public class DsfTestBreakpointAttributeTranslator2 implements IBreakpointAttribu
 
 	@Override
 	public Map<String, Object> convertAttributes(Map<String, Object> platformBPAttr) {
-		Map<String, Object> debugAttrs = new HashMap<String, Object>(platformBPAttr.size());
+		Map<String, Object> debugAttrs = new HashMap<>(platformBPAttr.size());
 		for (Map.Entry<String, Object> entry : platformBPAttr.entrySet()) {
 			if (DsfTestBreakpoint.ATTR_TRANSLATED.equals(entry.getKey())) {
 				debugAttrs.put(DsfTestBreakpoints.ATTR_TRANSLATED, entry.getValue());

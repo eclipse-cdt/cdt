@@ -85,7 +85,7 @@ public class ProblemHover extends AbstractAnnotationHover {
 			if (!SpellingAnnotation.TYPE.equals(cAnnotation.getType()))
 				return NO_PROPOSALS;
 
-			List<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
+			List<ICCompletionProposal> proposals = new ArrayList<>();
 			CCorrectionProcessor.collectCorrections(context, new IProblemLocation[] { location }, proposals);
 			Collections.sort(proposals, new CCompletionProposalComparator());
 
@@ -121,7 +121,7 @@ public class ProblemHover extends AbstractAnnotationHover {
 			CorrectionContext context = new CorrectionContext(tu, sourceViewer, position.getOffset(),
 					position.getLength());
 
-			List<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
+			List<ICCompletionProposal> proposals = new ArrayList<>();
 			CCorrectionProcessor.collectProposals(context, model, new Annotation[] { markerAnnotation }, true, false,
 					proposals);
 

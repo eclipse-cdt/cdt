@@ -66,8 +66,8 @@ public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUp
 			fActiveNumberFormatPropertiesWithPrefixes = ACTIVE_NUMBER_FORMAT_PROPERTIES;
 			fElementFormatPropertiesWithPrefixes = ELEMENT_FORMAT_PROPERTIES;
 		} else {
-			fActiveNumberFormatPropertiesWithPrefixes = new TreeSet<String>(ACTIVE_NUMBER_FORMAT_PROPERTIES);
-			fElementFormatPropertiesWithPrefixes = new TreeSet<String>(ELEMENT_FORMAT_PROPERTIES);
+			fActiveNumberFormatPropertiesWithPrefixes = new TreeSet<>(ACTIVE_NUMBER_FORMAT_PROPERTIES);
+			fElementFormatPropertiesWithPrefixes = new TreeSet<>(ELEMENT_FORMAT_PROPERTIES);
 			for (String prefix : prefixes) {
 				fActiveNumberFormatPropertiesWithPrefixes
 						.add((prefix + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT).intern());
@@ -82,14 +82,14 @@ public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUp
 
 	}
 
-	private static final Set<String> ACTIVE_NUMBER_FORMAT_PROPERTIES = new TreeSet<String>();
+	private static final Set<String> ACTIVE_NUMBER_FORMAT_PROPERTIES = new TreeSet<>();
 	static {
 		ACTIVE_NUMBER_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT);
 		ACTIVE_NUMBER_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE);
 		ACTIVE_NUMBER_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE);
 	}
 
-	private static final Set<String> ELEMENT_FORMAT_PROPERTIES = new TreeSet<String>();
+	private static final Set<String> ELEMENT_FORMAT_PROPERTIES = new TreeSet<>();
 	static {
 		ELEMENT_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT);
 		ELEMENT_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE);

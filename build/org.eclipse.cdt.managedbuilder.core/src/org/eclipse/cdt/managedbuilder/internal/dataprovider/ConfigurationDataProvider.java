@@ -450,7 +450,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	private static void adjustFolderInfo(IFolderInfo info, ILanguageDescriptor dess[],
 			HashMap<Object, ILanguageDescriptor[]> map) {
 		IToolChain tch = info.getToolChain();
-		Map<String, ILanguageDescriptor> langMap = new HashMap<String, ILanguageDescriptor>();
+		Map<String, ILanguageDescriptor> langMap = new HashMap<>();
 		for (int i = 0; i < dess.length; i++) {
 			langMap.put(dess[i].getId(), dess[i]);
 		}
@@ -495,12 +495,12 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		String srcIds[] = type.getSourceContentTypeIds();
 		String hIds[] = type.getHeaderContentTypeIds();
 
-		Set<String> landTypes = new HashSet<String>(Arrays.asList(cTypeIds));
+		Set<String> landTypes = new HashSet<>(Arrays.asList(cTypeIds));
 		landTypes.removeAll(Arrays.asList(srcIds));
 		landTypes.removeAll(Arrays.asList(hIds));
 
 		if (landTypes.size() != 0) {
-			List<String> srcList = new ArrayList<String>();
+			List<String> srcList = new ArrayList<>();
 			srcList.addAll(landTypes);
 			type = (InputType) tool.getEditableInputType(type);
 			type.setSourceContentTypeIds(srcList.toArray(new String[srcList.size()]));
@@ -517,7 +517,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	private static void addTools(IToolChain tc, Map<String, ILanguageDescriptor> langMap,
 			Map<Object, ILanguageDescriptor[]> cTypeToLangMap) {
 		ITool extTool = ManagedBuildManager.getExtensionTool(PREF_TOOL_ID);
-		List<ILanguageDescriptor> list = new ArrayList<ILanguageDescriptor>(langMap.values());
+		List<ILanguageDescriptor> list = new ArrayList<>(langMap.values());
 		ILanguageDescriptor des;
 		while (list.size() != 0) {
 			des = list.remove(list.size() - 1);

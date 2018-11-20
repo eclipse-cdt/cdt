@@ -182,7 +182,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		symbolLoadingCPPFilt = getCPPFilt();
 		symbolLoadingCygPath = getCygPath();
 
-		ArrayList<Symbol> list = new ArrayList<Symbol>();
+		ArrayList<Symbol> list = new ArrayList<>();
 		super.loadSymbols(pe, list);
 
 		// Add any global symbols

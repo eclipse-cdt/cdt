@@ -146,7 +146,7 @@ public class FormatAllAction extends SelectionDispatchAction {
 	}
 
 	private ITranslationUnit[] getTranslationUnits(IStructuredSelection selection) {
-		HashSet<ICElement> result = new HashSet<ICElement>();
+		HashSet<ICElement> result = new HashSet<>();
 		Object[] selected = selection.toArray();
 		for (int i = 0; i < selected.length; i++) {
 			try {
@@ -296,7 +296,7 @@ public class FormatAllAction extends SelectionDispatchAction {
 	}
 
 	private static Map<String, Object> getFomatterSettings(ICProject project) {
-		return new HashMap<String, Object>(project.getOptions(true));
+		return new HashMap<>(project.getOptions(true));
 	}
 
 	private void doFormat(IDocument document, Map<String, Object> options) {

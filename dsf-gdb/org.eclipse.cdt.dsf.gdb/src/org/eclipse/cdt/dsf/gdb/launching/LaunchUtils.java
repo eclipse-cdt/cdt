@@ -529,7 +529,7 @@ public class LaunchUtils {
 		}
 
 		// Environment variables and inherited vars
-		HashMap<String, String> envMap = new HashMap<String, String>();
+		HashMap<String, String> envMap = new HashMap<>();
 		IEnvironmentVariable[] vars = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cfg, true);
 		for (IEnvironmentVariable var : vars) {
 			envMap.put(var.getName(), var.getValue());
@@ -551,7 +551,7 @@ public class LaunchUtils {
 		}
 
 		// Turn it into an envp format
-		List<String> strings = new ArrayList<String>(envMap.size());
+		List<String> strings = new ArrayList<>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
 			StringBuilder buffer = new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());

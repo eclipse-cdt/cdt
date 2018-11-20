@@ -38,7 +38,7 @@ public class TestMICommandConstructCommand {
 	@Test
 	public void multipleParametersShouldHaveCorrectSeparators() {
 		// Setup
-		MICommand<MIInfo> target = new MICommand<MIInfo>(new TestContext(), "-test-operation");
+		MICommand<MIInfo> target = new MICommand<>(new TestContext(), "-test-operation");
 		target.setOptions(new String[] { "-a a_test\\with slashes", "-b \"hello\"", "-c c_test" });
 		target.setParameters(new String[] { "-param1 param", "param2", "-param3" });
 

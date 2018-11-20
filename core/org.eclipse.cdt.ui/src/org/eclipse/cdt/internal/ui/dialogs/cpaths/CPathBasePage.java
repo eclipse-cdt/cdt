@@ -38,7 +38,7 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 
 	protected void fixNestingConflicts(List<CPElement> newEntries, List<CPElement> existingList,
 			Set<CPElement> modifiedSourceEntries) {
-		ArrayList<CPElement> existing = new ArrayList<CPElement>(existingList);
+		ArrayList<CPElement> existing = new ArrayList<>(existingList);
 		for (int i = 0; i < newEntries.size(); i++) {
 			CPElement curr = newEntries.get(i);
 			addExclusionPatterns(curr, existing, modifiedSourceEntries);
@@ -76,7 +76,7 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 	public abstract boolean isEntryKind(int kind);
 
 	protected List<CPElement> filterList(List<CPElement> cpelements) {
-		ArrayList<CPElement> filtered = new ArrayList<CPElement>();
+		ArrayList<CPElement> filtered = new ArrayList<>();
 
 		for (int i = 0; i < cpelements.size(); i++) {
 			CPElement cpe = cpelements.get(i);

@@ -45,10 +45,10 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
 	protected static final Object[] NO_CHILDREN = new Object[0];
 
 	private Object fInput;
-	private HashMap<Object, Object[]> fChildNodes = new HashMap<Object, Object[]>();
-	private HashSet<Object> fHighPriorityTasks = new HashSet<Object>();
-	private HashSet<Object> fLowPriorityTasks = new HashSet<Object>();
-	private HashMap<Object, Object[]> fViewUpdates = new HashMap<Object, Object[]>();
+	private HashMap<Object, Object[]> fChildNodes = new HashMap<>();
+	private HashSet<Object> fHighPriorityTasks = new HashSet<>();
+	private HashSet<Object> fLowPriorityTasks = new HashSet<>();
+	private HashMap<Object, Object[]> fViewUpdates = new HashMap<>();
 	private int fViewUpdateDelta;
 	private Job fJob;
 	private Display fDisplay;
@@ -137,7 +137,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
 	 */
 	public void recompute() {
 		if (getInput() != null) {
-			fAutoexpand = new HashSet<Object>();
+			fAutoexpand = new HashSet<>();
 			fAutoexpand.addAll(Arrays.asList(fTreeViewer.getVisibleExpandedElements()));
 			fAutoSelect = null;
 			fAutoSelect = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
@@ -260,7 +260,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
 							return;
 						}
 						updates = fViewUpdates;
-						fViewUpdates = new HashMap<Object, Object[]>();
+						fViewUpdates = new HashMap<>();
 					}
 					fChildNodes.putAll(updates);
 					if (fTreeViewer instanceof ExtendedTreeViewer) {

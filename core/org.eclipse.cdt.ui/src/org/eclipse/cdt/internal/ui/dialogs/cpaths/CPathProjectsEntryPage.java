@@ -60,7 +60,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 		String[] buttonLabels = new String[] { CPathEntryMessages.ProjectsEntryPage_projects_checkall_button,
 				CPathEntryMessages.ProjectsEntryWorkbookPage_projects_uncheckall_button };
 
-		fProjectsList = new CheckedListDialogField<CPElement>(null, buttonLabels, new CPElementLabelProvider());
+		fProjectsList = new CheckedListDialogField<>(null, buttonLabels, new CPElementLabelProvider());
 		fProjectsList.setDialogFieldListener(listener);
 		fProjectsList.setLabelText(CPathEntryMessages.ProjectsEntryPage_projects_label);
 		fProjectsList.setCheckAllButtonIndex(0);
@@ -136,13 +136,13 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	void updateProjectsList(ICProject currCProject) {
 		ICModel cmodel = currCProject.getCModel();
 
-		List<CPElement> projects = new ArrayList<CPElement>();
-		final List<CPElement> checkedProjects = new ArrayList<CPElement>();
+		List<CPElement> projects = new ArrayList<>();
+		final List<CPElement> checkedProjects = new ArrayList<>();
 		try {
 			ICProject[] cprojects = cmodel.getCProjects();
 
 			// a vector remembering all projects that dont have to be added anymore
-			List<IResource> existingProjects = new ArrayList<IResource>(cprojects.length);
+			List<IResource> existingProjects = new ArrayList<>(cprojects.length);
 			existingProjects.add(currCProject.getProject());
 
 			// add the projects-cpentries that are already on the C Path

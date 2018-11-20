@@ -85,7 +85,7 @@ public class QtXmlLogHandler extends DefaultHandler {
 	/** Maps the string message level representation to the Tests Runner internal enum code. */
 	private static final Map<String, ITestMessage.Level> STRING_TO_MESSAGE_LEVEL;
 	static {
-		Map<String, ITestMessage.Level> aMap = new HashMap<String, ITestMessage.Level>();
+		Map<String, ITestMessage.Level> aMap = new HashMap<>();
 		aMap.put(XML_VALUE_MESSAGE_WARN, ITestMessage.Level.Warning);
 		aMap.put(XML_VALUE_MESSAGE_SYSTEM, ITestMessage.Level.Message);
 		aMap.put(XML_VALUE_MESSAGE_QDEBUG, ITestMessage.Level.Message);
@@ -101,7 +101,7 @@ public class QtXmlLogHandler extends DefaultHandler {
 	/** Maps the string incident status representation to the test case status. */
 	private static final Map<String, ITestCase.Status> STRING_TO_TEST_STATUS;
 	static {
-		Map<String, ITestCase.Status> aMap = new HashMap<String, ITestCase.Status>();
+		Map<String, ITestCase.Status> aMap = new HashMap<>();
 		aMap.put(XML_VALUE_INCIDENT_PASS, ITestCase.Status.Passed);
 		aMap.put(XML_VALUE_INCIDENT_XFAIL, ITestCase.Status.Failed);
 		aMap.put(XML_VALUE_INCIDENT_FAIL, ITestCase.Status.Failed);
@@ -114,7 +114,7 @@ public class QtXmlLogHandler extends DefaultHandler {
 	/** Maps the string incident status representation to the test message level to log about it. */
 	private static final Map<String, ITestMessage.Level> STRING_INCIDENT_TO_MESSAGE_LEVEL;
 	static {
-		Map<String, ITestMessage.Level> aMap = new HashMap<String, ITestMessage.Level>();
+		Map<String, ITestMessage.Level> aMap = new HashMap<>();
 		aMap.put(XML_VALUE_INCIDENT_PASS, ITestMessage.Level.Info);
 		aMap.put(XML_VALUE_INCIDENT_XFAIL, ITestMessage.Level.Error);
 		aMap.put(XML_VALUE_INCIDENT_FAIL, ITestMessage.Level.FatalError);
@@ -127,7 +127,7 @@ public class QtXmlLogHandler extends DefaultHandler {
 	/** Maps the metrics unit ids to the user readable names. */
 	private static final Map<String, String> XML_METRICS_TO_UNIT_NAME;
 	static {
-		Map<String, String> aMap = new HashMap<String, String>();
+		Map<String, String> aMap = new HashMap<>();
 		aMap.put("events", QtTestsRunnerMessages.QtXmlLogHandler_metrics_unit_events); //$NON-NLS-1$
 		aMap.put("callgrind", QtTestsRunnerMessages.QtXmlLogHandler_metrics_unit_instructions); //$NON-NLS-1$
 		aMap.put("walltime", QtTestsRunnerMessages.QtXmlLogHandler_metrics_unit_msec); //$NON-NLS-1$

@@ -391,8 +391,8 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		} else if (newVars == null || newVars.length == 0) {
 			removedVars = oldVars.clone();
 		} else {
-			HashSet<VarKey> newSet = new HashSet<VarKey>(newVars.length);
-			HashSet<VarKey> oldSet = new HashSet<VarKey>(oldVars.length);
+			HashSet<VarKey> newSet = new HashSet<>(newVars.length);
+			HashSet<VarKey> oldSet = new HashSet<>(oldVars.length);
 
 			for (ICdtVariable newVar : newVars) {
 				newSet.add(new VarKey(newVar, true));
@@ -417,7 +417,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 
 			newSetCopy.removeAll(newSet);
 
-			HashSet<VarKey> modifiedSet = new HashSet<VarKey>(newSetCopy.size());
+			HashSet<VarKey> modifiedSet = new HashSet<>(newSetCopy.size());
 			for (Object element : newSetCopy) {
 				VarKey key = (VarKey) element;
 				modifiedSet.add(new VarKey(key.getVariable(), false));

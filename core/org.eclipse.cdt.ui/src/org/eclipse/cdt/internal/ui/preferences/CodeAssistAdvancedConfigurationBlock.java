@@ -172,7 +172,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 
 		public PreferenceModel(CompletionProposalComputerRegistry registry) {
 			List<CompletionProposalCategory> categories = registry.getProposalCategories();
-			fElements = new ArrayList<ModelElement>();
+			fElements = new ArrayList<>();
 			for (CompletionProposalCategory category : categories) {
 				if (category.hasComputers()) {
 					fElements.add(new ModelElement(category, this));
@@ -340,7 +340,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 
 	/** element type: {@link ModelElement}. */
 	private final PreferenceModel fModel;
-	private final Map<ImageDescriptor, Image> fImages = new HashMap<ImageDescriptor, Image>();
+	private final Map<ImageDescriptor, Image> fImages = new HashMap<>();
 
 	private CheckboxTableViewer fDefaultViewer;
 	private CheckboxTableViewer fSeparateViewer;
@@ -654,8 +654,8 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 
 	private void updateCheckedState() {
 		final int size = fModel.elements.size();
-		List<ModelElement> defaultChecked = new ArrayList<ModelElement>(size);
-		List<ModelElement> separateChecked = new ArrayList<ModelElement>(size);
+		List<ModelElement> defaultChecked = new ArrayList<>(size);
+		List<ModelElement> separateChecked = new ArrayList<>(size);
 
 		for (Object element2 : fModel.elements) {
 			ModelElement element = (ModelElement) element2;

@@ -52,14 +52,14 @@ public class LanguageSettingsProviderAssociationManager {
 	private static final String ATTR_UI_EDIT_ENTRIES = "ui-edit-entries"; //$NON-NLS-1$
 
 	private static boolean isLoaded = false;
-	private static List<URL> loadedIcons = new ArrayList<URL>();
-	private static Map<String, URL> fImagesUrlById = new HashMap<String, URL>();
-	private static Map<String, URL> fImagesUrlByClass = new HashMap<String, URL>();
-	private static List<String> fRegirestedIds = new ArrayList<String>();
-	private static List<String> fRegisteredClasses = new ArrayList<String>();
+	private static List<URL> loadedIcons = new ArrayList<>();
+	private static Map<String, URL> fImagesUrlById = new HashMap<>();
+	private static Map<String, URL> fImagesUrlByClass = new HashMap<>();
+	private static List<String> fRegirestedIds = new ArrayList<>();
+	private static List<String> fRegisteredClasses = new ArrayList<>();
 
-	private static Map<String, Map<String, String>> fAssociationsById = new HashMap<String, Map<String, String>>();
-	private static Map<String, Map<String, String>> fAssociationsByClass = new HashMap<String, Map<String, String>>();
+	private static Map<String, Map<String, String>> fAssociationsById = new HashMap<>();
+	private static Map<String, Map<String, String>> fAssociationsByClass = new HashMap<>();
 
 	/**
 	 * Load extensions into memory maps.
@@ -85,7 +85,7 @@ public class LanguageSettingsProviderAssociationManager {
 						fImagesUrlById.put(id, url);
 						fRegirestedIds.add(id);
 
-						Map<String, String> properties = new HashMap<String, String>();
+						Map<String, String> properties = new HashMap<>();
 						putNotEmpty(properties, ATTR_PAGE, cfgEl.getAttribute(ATTR_PAGE));
 						putNotEmpty(properties, ATTR_UI_CLEAR_ENTRIES, cfgEl.getAttribute(ATTR_UI_CLEAR_ENTRIES));
 						putNotEmpty(properties, ATTR_UI_EDIT_ENTRIES, cfgEl.getAttribute(ATTR_UI_EDIT_ENTRIES));
@@ -99,7 +99,7 @@ public class LanguageSettingsProviderAssociationManager {
 							fRegisteredClasses.add(className);
 						}
 
-						Map<String, String> properties = new HashMap<String, String>();
+						Map<String, String> properties = new HashMap<>();
 						putNotEmpty(properties, ATTR_PAGE, cfgEl.getAttribute(ATTR_PAGE));
 						putNotEmpty(properties, ATTR_UI_CLEAR_ENTRIES, cfgEl.getAttribute(ATTR_UI_CLEAR_ENTRIES));
 						putNotEmpty(properties, ATTR_UI_EDIT_ENTRIES, cfgEl.getAttribute(ATTR_UI_EDIT_ENTRIES));

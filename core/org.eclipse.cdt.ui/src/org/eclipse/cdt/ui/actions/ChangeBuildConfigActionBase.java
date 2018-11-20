@@ -53,7 +53,7 @@ public class ChangeBuildConfigActionBase {
 	/**
 	 * List of selected managed-built projects
 	 */
-	protected HashSet<IProject> fProjects = new HashSet<IProject>();
+	protected HashSet<IProject> fProjects = new HashSet<>();
 
 	/**
 	 * Fills the menu with build configurations which are common for all selected projects
@@ -68,7 +68,7 @@ public class ChangeBuildConfigActionBase {
 		for (MenuItem item2 : items)
 			item2.dispose();
 
-		SortedSet<String> configNames = new TreeSet<String>();
+		SortedSet<String> configNames = new TreeSet<>();
 		String sCurrentConfig = null;
 		boolean bCurrentConfig = true;
 		for (IProject prj : fProjects) {

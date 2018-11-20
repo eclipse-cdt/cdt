@@ -139,8 +139,8 @@ public class Executable extends PlatformObject {
 		this.name = new File(path.toOSString()).getName();
 		this.resource = resource;
 		this.remappers = sourceFileRemappings;
-		remappedPaths = new HashMap<ITranslationUnit, String>();
-		sourceFiles = new ArrayList<ITranslationUnit>();
+		remappedPaths = new HashMap<>();
+		sourceFiles = new ArrayList<>();
 		refreshSourceFiles = true;
 		remapSourceFiles = true;
 	}

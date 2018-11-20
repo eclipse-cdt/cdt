@@ -57,7 +57,7 @@ abstract class AbstractWorkingSetsContribution extends CompoundContributionItem 
 	@Override
 	protected IContributionItem[] getContributionItems() {
 		// at most 5 recent working sets
-		List<IContributionItem> result = new java.util.ArrayList<IContributionItem>(5);
+		List<IContributionItem> result = new java.util.ArrayList<>(5);
 
 		int i = 0;
 		for (IWorkingSet recent : getWorkingsetManager().getRecentWorkingSets()) {

@@ -108,7 +108,7 @@ public class ExpressionExtractor extends FunctionExtractor {
 	}
 
 	private List<ITypedef> getTypedefs(IASTNode extractedNode) {
-		final ArrayList<ITypedef> typeDefs = new ArrayList<ITypedef>();
+		final ArrayList<ITypedef> typeDefs = new ArrayList<>();
 		extractedNode.accept(new ASTVisitor() {
 			{
 				shouldVisitExpressions = true;

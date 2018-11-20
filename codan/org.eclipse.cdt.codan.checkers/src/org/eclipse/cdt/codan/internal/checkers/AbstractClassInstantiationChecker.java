@@ -56,7 +56,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  */
 public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.AbstractClassCreation"; //$NON-NLS-1$
-	private final HashMap<ICPPClassType, ICPPMethod[]> pureVirtualMethodsCache = new HashMap<ICPPClassType, ICPPMethod[]>();
+	private final HashMap<ICPPClassType, ICPPMethod[]> pureVirtualMethodsCache = new HashMap<>();
 
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {

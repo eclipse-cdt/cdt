@@ -105,7 +105,7 @@ public class HeaderSubstitutionBlock extends OptionsConfigurationBlock {
 				PreferencesMessages.HeaderSubstitutionBlock_remove_button,
 				PreferencesMessages.HeaderSubstitutionBlock_up_button,
 				PreferencesMessages.HeaderSubstitutionBlock_down_button, };
-		fHeaderMapsList = new ListDialogField<HeaderSubstitutionMap>(adapter, buttons, new HeaderMapLabelProvider());
+		fHeaderMapsList = new ListDialogField<>(adapter, buttons, new HeaderMapLabelProvider());
 		fHeaderMapsList.setLabelText(PreferencesMessages.HeaderSubstitutionBlock_header_substitution_maps);
 		fHeaderMapsList.setDialogFieldListener(adapter);
 		fHeaderMapsList.setRemoveButtonIndex(IDX_REMOVE);

@@ -70,14 +70,14 @@ public class ScalabilityPreferencePage extends PreferencePage implements IWorkbe
 
 	private ScalabilityIntegerFieldEditor fMaximumTokens;
 
-	private final Map<Object, String> fCheckBoxes = new HashMap<Object, String>();
+	private final Map<Object, String> fCheckBoxes = new HashMap<>();
 
 	/**
 	 * List of master/slave listeners when there's a dependency.
 	 *
 	 * @see #createDependency(Button, String, Control)
 	 */
-	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<Object>();
+	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<>();
 
 	public ScalabilityPreferencePage() {
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());

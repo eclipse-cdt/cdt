@@ -435,7 +435,7 @@ public abstract class StandaloneIndexer {
 	 * @return
 	 */
 	private List<String> getFilesAdded(List<String> tus) {
-		List<String> added = new ArrayList<String>();
+		List<String> added = new ArrayList<>();
 
 		FilenameFilter filter = getExclusionFilter();
 		if (filter == null) {

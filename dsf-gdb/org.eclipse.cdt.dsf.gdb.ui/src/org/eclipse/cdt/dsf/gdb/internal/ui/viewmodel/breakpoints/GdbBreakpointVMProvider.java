@@ -122,7 +122,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 				ISelection debugContext = getDebugContext();
 				if (debugContext instanceof IStructuredSelection) {
 					// Use a set to avoid duplicates
-					final Set<IBreakpoint> bps = new HashSet<IBreakpoint>();
+					final Set<IBreakpoint> bps = new HashSet<>();
 
 					int count = 0;
 					final ImmediateCountingRequestMonitor crm = new ImmediateCountingRequestMonitor(rm) {
@@ -167,7 +167,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 			} else {
 				// Original behavior of bp filtering.  Return all bp of type ICBreakpoint
 				IBreakpoint[] allBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
-				List<IBreakpoint> filteredBPs = new ArrayList<IBreakpoint>(allBreakpoints.length);
+				List<IBreakpoint> filteredBPs = new ArrayList<>(allBreakpoints.length);
 				for (IBreakpoint bp : allBreakpoints) {
 					if (bp instanceof ICBreakpoint && bp.getModelIdentifier().equals(CDebugCorePlugin.PLUGIN_ID)) {
 						filteredBPs.add(bp);
@@ -293,7 +293,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 									}
 
 									if (getData().length > 0) {
-										final Set<IBreakpoint> bps = new HashSet<IBreakpoint>(getData().length);
+										final Set<IBreakpoint> bps = new HashSet<>(getData().length);
 										final CountingRequestMonitor crm = new CountingRequestMonitor(
 												ImmediateExecutor.getInstance(), rm) {
 

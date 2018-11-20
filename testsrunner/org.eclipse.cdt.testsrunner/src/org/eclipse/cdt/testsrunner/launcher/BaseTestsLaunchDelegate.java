@@ -53,7 +53,7 @@ import org.eclipse.ui.PartInitException;
 public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegate {
 
 	/** Stores the changes made to the launch configuration. */
-	private Map<String, String> changesToLaunchConfiguration = new HashMap<String, String>();
+	private Map<String, String> changesToLaunchConfiguration = new HashMap<>();
 
 	@Override
 	public ILaunch getLaunch(ILaunchConfiguration config, String mode) throws CoreException {

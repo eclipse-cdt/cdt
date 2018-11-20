@@ -66,7 +66,7 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			// Initialize the list with the base class' steps
 			// We need to create a list that we can modify, which is why we create our own ArrayList.
-			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
+			List<String> orderList = new ArrayList<>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Now insert our steps right after the initialization of the base class.
 			orderList.add(orderList.indexOf("stepInitializeBaseSequence") + 1, "stepInitializeSequence_7_2"); //$NON-NLS-1$ //$NON-NLS-2$

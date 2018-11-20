@@ -163,7 +163,7 @@ class FilesystemRootsVMNode extends AbstractVMNode implements IElementLabelProvi
 
 					if (eventFile.exists()) {
 						// Create a list containing all files in path of the file from the event
-						List<File> filePath = new LinkedList<File>();
+						List<File> filePath = new LinkedList<>();
 						for (File file = eventFile; file != null; file = file.getParentFile()) {
 							filePath.add(0, file);
 						}

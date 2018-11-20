@@ -62,7 +62,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	private IPhoneticDistanceAlgorithm fDistanceAlgorithm = new DefaultPhoneticDistanceAlgorithm();
 
 	/** The mapping from phonetic hashes to word lists */
-	private final Map<String, Serializable> fHashBuckets = new HashMap<String, Serializable>(HASH_CAPACITY);
+	private final Map<String, Serializable> fHashBuckets = new HashMap<>(HASH_CAPACITY);
 
 	/** The phonetic hash provider */
 	private IPhoneticHashProvider fHashProvider = new DefaultPhoneticHashProvider();
@@ -110,7 +110,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 		String hash = null;
 
 		final StringBuilder buffer = new StringBuilder(BUFFER_CAPACITY);
-		final HashSet<RankedWordProposal> result = new HashSet<RankedWordProposal>(BUCKET_CAPACITY * hashs.size());
+		final HashSet<RankedWordProposal> result = new HashSet<>(BUCKET_CAPACITY * hashs.size());
 
 		for (int index = 0; index < hashs.size(); index++) {
 
@@ -190,7 +190,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 
 		@SuppressWarnings("unchecked")
 		final ArrayList<String> candidateList = (ArrayList<String>) candidates;
-		final ArrayList<RankedWordProposal> matches = new ArrayList<RankedWordProposal>(candidateList.size());
+		final ArrayList<RankedWordProposal> matches = new ArrayList<>(candidateList.size());
 
 		for (int index = 0; index < candidateList.size(); index++) {
 			String candidate = candidateList.get(index);
@@ -265,7 +265,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 		final String hash = fHashProvider.getHash(word);
 		final char[] mutators = fHashProvider.getMutators();
 
-		final ArrayList<String> neighborhood = new ArrayList<String>((word.length() + 1) * (mutators.length + 2));
+		final ArrayList<String> neighborhood = new ArrayList<>((word.length() + 1) * (mutators.length + 2));
 		neighborhood.add(hash);
 
 		final Set<RankedWordProposal> candidates = getCandidates(word, sentence, neighborhood);
@@ -383,7 +383,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 			final ArrayList<Object> bucket2 = (ArrayList) bucket;
 			bucket2.add(word);
 		} else {
-			ArrayList<Object> list = new ArrayList<Object>(BUCKET_CAPACITY);
+			ArrayList<Object> list = new ArrayList<>(BUCKET_CAPACITY);
 			list.add(bucket);
 			list.add(word);
 			fHashBuckets.put(hash, list);

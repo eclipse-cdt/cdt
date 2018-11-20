@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ImageDescriptorRegistry {
 
-	private HashMap<ImageDescriptor, Image> fRegistry = new HashMap<ImageDescriptor, Image>(10);
+	private HashMap<ImageDescriptor, Image> fRegistry = new HashMap<>(10);
 	private Display fDisplay;
 
 	/**

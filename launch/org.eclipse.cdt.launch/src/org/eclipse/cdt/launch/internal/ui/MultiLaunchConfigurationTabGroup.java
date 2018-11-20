@@ -264,7 +264,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 	static class GroupLaunchTab extends AbstractLaunchConfigurationTab {
 		protected CheckboxTreeViewer treeViewer;
-		protected List<LaunchElement> input = new ArrayList<LaunchElement>();
+		protected List<LaunchElement> input = new ArrayList<>();
 		private String mode;
 
 		public GroupLaunchTab(String mode) {
@@ -394,7 +394,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				 */
 				private int[] getMultiSelectionIndices() {
 					StructuredSelection sel = (StructuredSelection) treeViewer.getSelection();
-					List<Integer> indices = new ArrayList<Integer>();
+					List<Integer> indices = new ArrayList<>();
 
 					for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 						MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) iter

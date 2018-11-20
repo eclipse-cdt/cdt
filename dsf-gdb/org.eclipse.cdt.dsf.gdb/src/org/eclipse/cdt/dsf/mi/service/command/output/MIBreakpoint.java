@@ -657,7 +657,7 @@ public class MIBreakpoint {
 	}
 
 	private void parseGroups(MIList list) {
-		List<String> groups = new ArrayList<String>();
+		List<String> groups = new ArrayList<>();
 
 		MIValue[] values = list.getMIValues();
 		for (int i = 0; i < values.length; i++) {

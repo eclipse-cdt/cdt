@@ -33,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
 public class StorageLabelProvider extends LabelProvider {
 
 	private IEditorRegistry fEditorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
-	private Map<String, Image> fJarImageMap = new HashMap<String, Image>(10);
+	private Map<String, Image> fJarImageMap = new HashMap<>(10);
 	private Image fDefaultImage;
 
 	/* (non-Javadoc)

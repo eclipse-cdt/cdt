@@ -172,7 +172,7 @@ public class ExportMemoryDialog extends SelectionDialog {
 		data.left = new FormAttachment(textLabel);
 		fFormatCombo.setLayoutData(data);
 
-		Vector<IMemoryExporter> exporters = new Vector<IMemoryExporter>();
+		Vector<IMemoryExporter> exporters = new Vector<>();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = registry

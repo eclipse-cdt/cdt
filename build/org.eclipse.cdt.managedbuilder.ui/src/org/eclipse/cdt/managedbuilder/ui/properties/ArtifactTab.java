@@ -60,9 +60,9 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		NAME, EXT, PREF
 	}
 
-	private Set<String> set2 = new TreeSet<String>();
-	private Set<String> set3 = new TreeSet<String>();
-	private Set<String> set4 = new TreeSet<String>();
+	private Set<String> set2 = new TreeSet<>();
+	private Set<String> set3 = new TreeSet<>();
+	private Set<String> set4 = new TreeSet<>();
 
 	@Override
 	public void createControls(Composite parent) {

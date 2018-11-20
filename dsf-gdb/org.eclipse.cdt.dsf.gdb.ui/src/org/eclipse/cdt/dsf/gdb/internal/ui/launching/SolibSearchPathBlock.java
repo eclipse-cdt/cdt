@@ -316,7 +316,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 				@SuppressWarnings("unchecked")
 				List<String> values = configuration.getAttribute(
 						IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
-				ArrayList<Path> paths = new ArrayList<Path>(values.size());
+				ArrayList<Path> paths = new ArrayList<>(values.size());
 				Iterator<String> it = values.iterator();
 				while (it.hasNext()) {
 					paths.add(new Path(it.next()));
@@ -337,7 +337,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		List<String> autoSolibs = configuration
 				.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB_LIST, Collections.EMPTY_LIST);
 
-		List<File> list = new ArrayList<File>(autoSolibs.size());
+		List<File> list = new ArrayList<>(autoSolibs.size());
 		Iterator<String> it = autoSolibs.iterator();
 		while (it.hasNext()) {
 			list.add(new File(it.next()));
@@ -363,14 +363,14 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			@SuppressWarnings("unchecked")
 			List<IPath> elements = fDirList.getElements();
 
-			ArrayList<String> values = new ArrayList<String>(elements.size());
+			ArrayList<String> values = new ArrayList<>(elements.size());
 			Iterator<IPath> it = elements.iterator();
 			while (it.hasNext()) {
 				values.add((it.next()).toOSString());
 			}
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, values);
 		}
-		ArrayList<String> autoLibs = new ArrayList<String>(fAutoSolibs.length);
+		ArrayList<String> autoLibs = new ArrayList<>(fAutoSolibs.length);
 		for (int i = 0; i < fAutoSolibs.length; ++i)
 			autoLibs.add(fAutoSolibs[i].getPath());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB_LIST, autoLibs);
@@ -467,7 +467,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		@SuppressWarnings("unchecked")
 		List<IPath> dirList = fDirList.getSelectedElements();
 
-		final HashSet<IPath> libs = new HashSet<IPath>(10);
+		final HashSet<IPath> libs = new HashSet<>(10);
 		if (generateLibraryList(dirList.toArray(new IPath[dirList.size()]), libs)) {
 			ITreeContentProvider cp = new ITreeContentProvider() {
 				@Override

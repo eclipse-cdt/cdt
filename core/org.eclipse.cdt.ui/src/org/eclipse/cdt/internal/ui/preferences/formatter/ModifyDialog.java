@@ -113,9 +113,9 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 
 		fProfile = profile;
 		setTitle(Messages.format(FormatterMessages.ModifyDialog_dialog_title, profile.getName()));
-		fWorkingValues = new HashMap<String, String>(fProfile.getSettings());
+		fWorkingValues = new HashMap<>(fProfile.getSettings());
 		setStatusLineAboveButtons(false);
-		fTabPages = new ArrayList<IModifyDialogTabPage>();
+		fTabPages = new ArrayList<>();
 		fDialogSettings = CUIPlugin.getDefault().getDialogSettings();
 	}
 
@@ -270,13 +270,13 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		if (!fProfile.getName().equals(fProfileNameField.getText())) {
 			fProfile = fProfile.rename(fProfileNameField.getText(), fProfileManager);
 		}
-		fProfile.setSettings(new HashMap<String, String>(fWorkingValues));
+		fProfile.setSettings(new HashMap<>(fWorkingValues));
 		fProfileManager.setSelected(fProfile);
 		doValidate();
 	}
 
 	private void saveButtonPressed() {
-		Profile selected = new CustomProfile(fProfileNameField.getText(), new HashMap<String, String>(fWorkingValues),
+		Profile selected = new CustomProfile(fProfileNameField.getText(), new HashMap<>(fWorkingValues),
 				fProfile.getVersion(), fProfileManager.getProfileVersioner().getProfileKind());
 
 		final FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
@@ -303,7 +303,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		final IContentType type = Platform.getContentTypeManager().getContentType("org.eclipse.core.runtime.xml"); //$NON-NLS-1$
 		if (type != null)
 			encoding = type.getDefaultCharset();
-		final Collection<Profile> profiles = new ArrayList<Profile>();
+		final Collection<Profile> profiles = new ArrayList<>();
 		profiles.add(selected);
 		try {
 			fProfileStore.writeProfilesToFile(profiles, file, encoding);

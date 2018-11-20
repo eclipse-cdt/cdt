@@ -108,8 +108,8 @@ public abstract class APathEntry extends PathEntry {
 					return false;
 				}
 
-				Set<String> excludeSet = new HashSet<String>();
-				Set<String> otherSet = new HashSet<String>();
+				Set<String> excludeSet = new HashSet<>();
+				Set<String> otherSet = new HashSet<>();
 				for (int i = 0; i < excludeLength; i++) {
 					if (exclusionPatterns[i] != otherExcludes[i]) {
 						// compare toStrings instead of IPaths

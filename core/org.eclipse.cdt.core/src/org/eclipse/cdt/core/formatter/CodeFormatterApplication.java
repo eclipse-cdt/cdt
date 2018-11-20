@@ -149,7 +149,7 @@ public class CodeFormatterApplication implements IApplication {
 
 	private File[] processCommandLine(String[] argsArray) {
 
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 		for (int i = 0, max = argsArray.length; i < max; i++) {
 			args.add(argsArray[i]);
 		}
@@ -161,7 +161,7 @@ public class CodeFormatterApplication implements IApplication {
 
 		int mode = DEFAULT_MODE;
 
-		ArrayList<File> filesToFormat = new ArrayList<File>();
+		ArrayList<File> filesToFormat = new ArrayList<>();
 
 		loop: while (index < argCount) {
 			String currentArg = argsArray[index++];

@@ -54,9 +54,9 @@ public class VisualizerModel {
 	/** Constructor */
 	public VisualizerModel(String sessionId) {
 		m_sessionId = sessionId;
-		m_cpus = new ArrayList<VisualizerCPU>();
-		m_cpuMap = new Hashtable<Integer, VisualizerCPU>();
-		m_threads = new ArrayList<VisualizerThread>();
+		m_cpus = new ArrayList<>();
+		m_cpuMap = new Hashtable<>();
+		m_threads = new ArrayList<>();
 	}
 
 	/** Dispose method */
@@ -189,7 +189,7 @@ public class VisualizerModel {
 		for (VisualizerThread thread : m_threads) {
 			if (thread.getPID() == processId) {
 				if (result == null)
-					result = new ArrayList<VisualizerThread>();
+					result = new ArrayList<>();
 				result.add(thread);
 			}
 		}

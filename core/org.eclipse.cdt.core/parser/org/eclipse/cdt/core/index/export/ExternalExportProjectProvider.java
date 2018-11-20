@@ -90,13 +90,13 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 		}
 
 		// -include
-		List<String> includeFiles = new ArrayList<String>();
+		List<String> includeFiles = new ArrayList<>();
 		if (isPresent(OPT_INCLUDE)) {
 			includeFiles.addAll(getParameters(OPT_INCLUDE));
 		}
 
 		// -exclude
-		List<String> excludeFiles = new ArrayList<String>();
+		List<String> excludeFiles = new ArrayList<>();
 		if (isPresent(OPT_EXCLUDE)) {
 			excludeFiles.addAll(getParameters(OPT_EXCLUDE));
 		}
@@ -157,7 +157,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 				content.createLink(new Path(location.getAbsolutePath()), IResource.NONE, null);
 
 				// Setup path entries
-				List<IPathEntry> entries = new ArrayList<IPathEntry>(
+				List<IPathEntry> entries = new ArrayList<>(
 						Arrays.asList(CoreModel.getRawPathEntries(cproject)));
 
 				// pre-include files
@@ -192,7 +192,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	 * @return a list of additional entries to add to the project
 	 */
 	protected List<IPathEntry> getAdditionalRawEntries() {
-		List<IPathEntry> entries = new ArrayList<IPathEntry>();
+		List<IPathEntry> entries = new ArrayList<>();
 		entries.add(CoreModel.newIncludeEntry(content.getProjectRelativePath(), null, content.getLocation(), true));
 		return entries;
 	}
@@ -218,7 +218,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	 */
 	@Override
 	public Map<String, String> getExportProperties() {
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		Date now = Calendar.getInstance().getTime();
 		properties.put(ORG_ECLIPSE_CDT_CORE_INDEX_EXPORT_DATESTAMP,
 				DateFormat.getDateInstance().format(now) + " " + DateFormat.getTimeInstance().format(now)); //$NON-NLS-1$

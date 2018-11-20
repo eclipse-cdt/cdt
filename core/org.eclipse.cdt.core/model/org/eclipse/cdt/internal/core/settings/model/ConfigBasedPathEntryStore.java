@@ -124,7 +124,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		ICConfigurationDescription cfg = getIndexCfg(fProject);
 		List<IPathEntry>[] es = getEntries(fProject, cfg);
 		if (es != null) {
-			List<IPathEntry> list = new ArrayList<IPathEntry>(es[0].size() + 1);
+			List<IPathEntry> list = new ArrayList<>(es[0].size() + 1);
 			list.addAll(es[0]);
 			list.add(CoreModel.newContainerEntry(ConfigBasedPathEntryContainer.CONTAINER_PATH));
 			return list.toArray(new IPathEntry[list.size()]);
@@ -139,7 +139,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		if (es != null) {
 			List<IPathEntry> sysList = es[1];
 			List<IPathEntry> usrList = es[0];
-			List<IPathEntry> newUsrList = new ArrayList<IPathEntry>(entries.length);
+			List<IPathEntry> newUsrList = new ArrayList<>(entries.length);
 			for (IPathEntry entry : entries) {
 				if (entry.getEntryKind() != IPathEntry.CDT_CONTAINER)
 					newUsrList.add(entry);
@@ -253,10 +253,10 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	private static List<IPathEntry>[] createEntriesList(ICConfigurationDescription cfgDes, PathEntryCollector cr) {
 		@SuppressWarnings("unchecked")
 		ArrayList<IPathEntry>[] es = new ArrayList[2];
-		es[0] = new ArrayList<IPathEntry>();
+		es[0] = new ArrayList<>();
 		cr.getEntries(es[0], PathEntryTranslator.INCLUDE_USER, cfgDes);
 		es[0].trimToSize();
-		es[1] = new ArrayList<IPathEntry>();
+		es[1] = new ArrayList<>();
 		cr.getEntries(es[1], PathEntryTranslator.INCLUDE_BUILT_INS, cfgDes);
 		es[1].trimToSize();
 
@@ -288,7 +288,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, false);
 		if (des != null)
 			return getContainerEntries(des);
-		return new ArrayList<IPathEntry>(0);
+		return new ArrayList<>(0);
 	}
 
 	private static List<IPathEntry> getContainerEntries(ICProjectDescription des) {
@@ -296,7 +296,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		List<IPathEntry> es[] = getEntries(des.getProject(), cfg);
 		if (es != null)
 			return es[1];
-		return new ArrayList<IPathEntry>(0);
+		return new ArrayList<>(0);
 	}
 
 	public static ConfigBasedPathEntryContainer createContainer(IProject project) {

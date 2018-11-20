@@ -35,7 +35,7 @@ class PDOMCache {
 	private static Object singletonMutex = new Object();
 
 	private PDOMCache() {
-		this.path2pdom = new HashMap<File, PDOM>();
+		this.path2pdom = new HashMap<>();
 	}
 
 	/**

@@ -98,7 +98,7 @@ public class Dwarf {
 			code = c;
 			tag = t;
 			hasChildren = h;
-			attributes = new ArrayList<Attribute>();
+			attributes = new ArrayList<>();
 		}
 	}
 
@@ -173,9 +173,9 @@ public class Dwarf {
 		int identifierCase;
 	}
 
-	Map<String, ByteBuffer> dwarfSections = new HashMap<String, ByteBuffer>();
-	Map<String, ByteBuffer> dwarfAltSections = new HashMap<String, ByteBuffer>();
-	Map<Integer, Map<Long, AbbreviationEntry>> abbreviationMaps = new HashMap<Integer, Map<Long, AbbreviationEntry>>();
+	Map<String, ByteBuffer> dwarfSections = new HashMap<>();
+	Map<String, ByteBuffer> dwarfAltSections = new HashMap<>();
+	Map<Integer, Map<Long, AbbreviationEntry>> abbreviationMaps = new HashMap<>();
 
 	boolean isLE;
 
@@ -511,7 +511,7 @@ public class Dwarf {
 		Integer key = Integer.valueOf(header.abbreviationOffset);
 		Map<Long, AbbreviationEntry> abbrevs = abbreviationMaps.get(key);
 		if (abbrevs == null) {
-			abbrevs = new HashMap<Long, AbbreviationEntry>();
+			abbrevs = new HashMap<>();
 			abbreviationMaps.put(key, abbrevs);
 			ByteBuffer data = dwarfSections.get(DWARF_DEBUG_ABBREV);
 			if (data != null) {
@@ -555,7 +555,7 @@ public class Dwarf {
 			AbbreviationEntry entry = abbrevs.get(Long.valueOf(code));
 			if (entry != null) {
 				int len = entry.attributes.size();
-				List<AttributeValue> list = new ArrayList<AttributeValue>(len);
+				List<AttributeValue> list = new ArrayList<>(len);
 				try {
 					for (int i = 0; i < len; i++) {
 						Attribute attr = entry.attributes.get(i);

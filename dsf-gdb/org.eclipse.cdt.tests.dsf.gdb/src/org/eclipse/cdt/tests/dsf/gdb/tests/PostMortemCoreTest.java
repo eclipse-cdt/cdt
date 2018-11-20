@@ -320,7 +320,7 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		doLaunch();
 
 		// Create a map of expressions and their expected values.
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		tests.put("0 + 0 - 0", new String[] { "0x0", "0", "0", "0", "0", "0" });
 		tests.put("3 + 4", new String[] { "0x7", "07", "111", "7", "7", "7" });
@@ -343,7 +343,7 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		doLaunch();
 
 		// Create a map of expressions and their expected values.
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		tests.put("3.14159 + 1.1111", new String[] { "0x4", "04", "100", "4", "4.2526", "4.2526" });
 		tests.put("100.0 / 3.0", new String[] { "0x21", "041", "100001", "33", "33.3333", "33.3333" });
@@ -367,7 +367,7 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		doLaunch();
 
 		// Create a map of expressions to expected values.
-		Map<String, String[]> tests1 = new HashMap<String, String[]>();
+		Map<String, String[]> tests1 = new HashMap<>();
 
 		tests1.put("lIntVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
 		tests1.put("lDoubleVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999",

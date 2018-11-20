@@ -451,7 +451,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		Set<String> contextProfiles = null;
 		if (page.isForPrefs()) {
 			// for preference page get all profiles
-			contextProfiles = new TreeSet<String>(profilesList);
+			contextProfiles = new TreeSet<>(profilesList);
 		} else {
 			// property page
 			if (!needPerRcProfile) {
@@ -467,7 +467,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
 				if (isMakefileProjectToolChain(toolchain)) {
 					// for generic Makefile project let user choose any profile
-					contextProfiles = new TreeSet<String>(profilesList);
+					contextProfiles = new TreeSet<>(profilesList);
 				} else {
 					contextProfiles = CfgScannerConfigUtil.getAllScannerDiscoveryProfileIds(toolchain);
 				}
@@ -486,7 +486,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			}
 		}
 
-		visibleProfilesList = new ArrayList<String>(contextProfiles);
+		visibleProfilesList = new ArrayList<>(contextProfiles);
 
 		realPages = new AbstractDiscoveryPage[visibleProfilesList.size()];
 		String[] labels = new String[visibleProfilesList.size()];
@@ -596,7 +596,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	private void initializeProfilePageMap() {
 		GCCPerProjectSCDProfilePage.isSIConsoleEnabled = DefaultRunSIProvider.isConsoleEnabled();
 
-		pagesList = new ArrayList<DiscoveryProfilePageConfiguration>(5);
+		pagesList = new ArrayList<>(5);
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(NAMESPACE, POINT);
 		if (point == null)
 			return;
@@ -707,11 +707,11 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
 	private List<CfgInfoContext> checkChanges() {
 		if (cbi == null || baseInfoMap == null)
-			return new ArrayList<CfgInfoContext>(0);
+			return new ArrayList<>(0);
 
 		Map<CfgInfoContext, IScannerConfigBuilderInfo2> cfgInfoMap = cbi.getInfoMap();
-		HashMap<InfoContext, Object> baseCopy = new HashMap<InfoContext, Object>(baseInfoMap);
-		List<CfgInfoContext> list = new ArrayList<CfgInfoContext>();
+		HashMap<InfoContext, Object> baseCopy = new HashMap<>(baseInfoMap);
+		List<CfgInfoContext> list = new ArrayList<>();
 		for (Map.Entry<CfgInfoContext, IScannerConfigBuilderInfo2> entry : cfgInfoMap.entrySet()) {
 			CfgInfoContext cic = entry.getKey();
 			InfoContext c = cic.toInfoContext();

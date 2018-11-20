@@ -71,8 +71,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	public static final Image IMG_MK = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_MACRO);
 	private static final String ALL = Messages.AbstractExportTab_0;
 	private static final String LIST = Messages.AbstractExportTab_1;
-	private static Map<String, String> names_l = new HashMap<String, String>();
-	private static Map<String, String> names_t = new HashMap<String, String>();
+	private static Map<String, String> names_l = new HashMap<>();
+	private static Map<String, String> names_t = new HashMap<>();
 	private static String[] names_ls;
 	private static String[] names_ts;
 	private List<String> namesList;
@@ -193,8 +193,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		if (x == -1)
 			x = 0;
 
-		namesList = new ArrayList<String>();
-		ArrayList<ExtData> lst = new ArrayList<ExtData>();
+		namesList = new ArrayList<>();
+		ArrayList<ExtData> lst = new ArrayList<>();
 		ICExternalSetting[] vals = cfg.getExternalSettings();
 		if (vals == null || vals.length == 0) {
 			tv.setInput(null);
@@ -309,7 +309,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 				if (old.entry.isReadOnly() || old.entry.isBuiltIn())
 					continue;
 				ICSettingEntry[] ls = old.setting.getEntries(getKind());
-				ArrayList<ICSettingEntry> lst = new ArrayList<ICSettingEntry>();
+				ArrayList<ICSettingEntry> lst = new ArrayList<>();
 				outer: for (ICSettingEntry se : ls) {
 					for (int y = t; y < its.length; y++) {
 						if (its[y] == null)

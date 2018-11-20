@@ -92,10 +92,10 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 		if (p instanceof SimpleMapPersistable) {
 			persistable = (SimpleMapPersistable<String>) p;
 		} else {
-			persistable = new SimpleMapPersistable<String>(String.class);
+			persistable = new SimpleMapPersistable<>(String.class);
 			context.setProperty(myPersistId, persistable);
 		}
-		ArrayList<IDMVMContext> changed = new ArrayList<IDMVMContext>(elementPath.length);
+		ArrayList<IDMVMContext> changed = new ArrayList<>(elementPath.length);
 		for (int i = 0; i < elementPath.length; i++) {
 			Object x = elementPath[i].getLastSegment();
 			if (x instanceof VariableVMNode.VariableExpressionVMC) {

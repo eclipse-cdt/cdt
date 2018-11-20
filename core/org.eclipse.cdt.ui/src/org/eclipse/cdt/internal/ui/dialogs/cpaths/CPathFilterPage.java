@@ -123,7 +123,7 @@ public class CPathFilterPage extends WizardPage {
 	}
 
 	private void createExlusions(boolean showExported) {
-		fExclusions = new ArrayList<Object>();
+		fExclusions = new ArrayList<>();
 		if (filter != null) {
 			viewer.removeFilter(filter);
 		}

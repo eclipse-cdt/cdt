@@ -55,8 +55,8 @@ public class SessionOSData {
 	private ICommandControlDMContext fContext;
 
 	private IResourceClass[] fResourceClasses = new IResourceClass[0];
-	private Map<String, OSData> fExistingData = new HashMap<String, OSData>();
-	private Map<String, Date> fTimestamp = new HashMap<String, Date>();
+	private Map<String, OSData> fExistingData = new HashMap<>();
+	private Map<String, Date> fTimestamp = new HashMap<>();
 
 	private Listener fUIListener;
 	private Control fUIControl;

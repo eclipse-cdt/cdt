@@ -350,7 +350,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 				PreferencesMessages.CodeTemplateBlock_templates_import_button,
 				PreferencesMessages.CodeTemplateBlock_templates_export_button,
 				PreferencesMessages.CodeTemplateBlock_templates_exportall_button };
-		fCodeTemplateTree = new TreeListDialogField<Object>(adapter, buttonLabels, new CodeTemplateLabelProvider());
+		fCodeTemplateTree = new TreeListDialogField<>(adapter, buttonLabels, new CodeTemplateLabelProvider());
 		fCodeTemplateTree.setDialogFieldListener(adapter);
 		fCodeTemplateTree.setLabelText(PreferencesMessages.CodeTemplateBlock_templates_label);
 		fCodeTemplateTree.setViewerComparator(adapter);
@@ -467,7 +467,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	}
 
 	protected TemplatePersistenceData[] getCodeTemplatesOfCategory(boolean isComment) {
-		ArrayList<TemplatePersistenceData> res = new ArrayList<TemplatePersistenceData>();
+		ArrayList<TemplatePersistenceData> res = new ArrayList<>();
 		TemplatePersistenceData[] templates = fTemplateStore.getTemplateData();
 		for (TemplatePersistenceData curr : templates) {
 			boolean isUserAdded = curr.getId() == null;
@@ -486,7 +486,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	}
 
 	protected TemplatePersistenceData[] getTemplatesOfContextType(String contextTypeId) {
-		ArrayList<TemplatePersistenceData> res = new ArrayList<TemplatePersistenceData>();
+		ArrayList<TemplatePersistenceData> res = new ArrayList<>();
 		TemplatePersistenceData[] templates = fTemplateStore.getTemplateData();
 		for (TemplatePersistenceData curr : templates) {
 			if (contextTypeId.equals(curr.getTemplate().getContextTypeId())) {
@@ -514,7 +514,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 
 	protected TemplateContextType[] getFileTemplateContextTypes() {
 		Iterator<?> iter = getFileTemplateContextRegistry().contextTypes();
-		ArrayList<TemplateContextType> result = new ArrayList<TemplateContextType>();
+		ArrayList<TemplateContextType> result = new ArrayList<>();
 		while (iter.hasNext()) {
 			TemplateContextType contextType = (TemplateContextType) iter.next();
 			if (getTemplatesOfContextType(contextType).length > 0) {
@@ -719,7 +719,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	}
 
 	private void export(List<Object> selected) {
-		Set<Object> datas = new HashSet<Object>();
+		Set<Object> datas = new HashSet<>();
 		for (int i = 0; i < selected.size(); i++) {
 			Object curr = selected.get(i);
 			if (curr instanceof TemplatePersistenceData) {

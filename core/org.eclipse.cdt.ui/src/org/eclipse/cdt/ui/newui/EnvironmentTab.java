@@ -74,7 +74,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 
 	private Table table;
 	private TableViewer tv;
-	private ArrayList<TabData> data = new ArrayList<TabData>();
+	private ArrayList<TabData> data = new ArrayList<>();
 	private Button b1, b2;
 	private StringListModeControl stringListModeControl;
 

@@ -920,7 +920,7 @@ public class CompletionTests extends CompletionTestBase {
 	}
 
 	private static void createIncludeFiles(File dir, String[] files) throws IOException {
-		Set<String> includeDirs = new HashSet<String>();
+		Set<String> includeDirs = new HashSet<>();
 		for (String file2 : files) {
 			File file = new File(dir, file2);
 			final File parentFile = file.getParentFile();

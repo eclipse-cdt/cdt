@@ -229,8 +229,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		// Load the children
 		IManagedConfigElement[] configElements = element.getChildren();
-		List<IPath> srcPathList = new ArrayList<IPath>();
-		excludeList = new ArrayList<IPath>();
+		List<IPath> srcPathList = new ArrayList<>();
+		excludeList = new ArrayList<>();
 		for (int l = 0; l < configElements.length; ++l) {
 			IManagedConfigElement configElement = configElements[l];
 			if (configElement.getName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
@@ -315,7 +315,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			return curEntries;
 
 		int pathSize = pathList.size();
-		Map<IPath, ICSourceEntry> map = new LinkedHashMap<IPath, ICSourceEntry>();
+		Map<IPath, ICSourceEntry> map = new LinkedHashMap<>();
 
 		for (int i = 0; i < pathSize; i++) {
 			IPath path = pathList.get(i);
@@ -416,8 +416,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			managedProject.addConfiguration(this);
 
 		ICStorageElement configElements[] = element.getChildren();
-		List<IPath> srcPathList = new ArrayList<IPath>();
-		excludeList = new ArrayList<IPath>();
+		List<IPath> srcPathList = new ArrayList<>();
+		excludeList = new ArrayList<>();
 		for (int i = 0; i < configElements.length; ++i) {
 			ICStorageElement configElement = configElements[i];
 			if (configElement.getName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
@@ -690,7 +690,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		boolean copyIds = cloneConfig.getId().equals(id);
 		String subId;
 		//  Resource Configurations
-		Map<IPath, Map<String, String>> toolIdMap = new HashMap<IPath, Map<String, String>>();
+		Map<IPath, Map<String, String>> toolIdMap = new HashMap<>();
 		IResourceInfo infos[] = cloneConfig.rcInfos.getResourceInfos();
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i] instanceof FolderInfo) {
@@ -1356,7 +1356,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		String parserIDs = getErrorParserIdsAttribute();
 		if (parserIDs != null) {
 			if (set == null)
-				set = new LinkedHashSet<String>();
+				set = new LinkedHashSet<>();
 			if (parserIDs.length() != 0) {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
 				while (tok.hasMoreElements()) {
@@ -1399,7 +1399,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if (defaultLanguageSettingsProviderIds == null) {
 			defaultLanguageSettingsProvidersAttribute = getDefaultLanguageSettingsProvidersAttribute();
 			if (defaultLanguageSettingsProvidersAttribute != null) {
-				List<String> ids = new ArrayList<String>();
+				List<String> ids = new ArrayList<>();
 				String[] defaultIds = defaultLanguageSettingsProvidersAttribute
 						.split(LANGUAGE_SETTINGS_PROVIDER_DELIMITER);
 				for (String id : defaultIds) {
@@ -1466,7 +1466,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				ICSettingEntry[] libs = CDataUtil.resolveEntries(unresolved, des);
 				if (libs.length > 0) {
 					for (ICExternalSetting setting : des.getExternalSettings()) {
-						Set<ICSettingEntry> entries = new LinkedHashSet<ICSettingEntry>(
+						Set<ICSettingEntry> entries = new LinkedHashSet<>(
 								Arrays.asList(setting.getEntries()));
 						for (ICSettingEntry lib : libs) {
 							if (entries.contains(lib)) {
@@ -2374,7 +2374,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if (set != null && set.isEmpty()) {
 			Set<String> oldSet = contributeErrorParsers(null, false);
 			if (oldSet == null)
-				oldSet = new LinkedHashSet<String>();
+				oldSet = new LinkedHashSet<>();
 
 			oldSet.removeAll(set);
 			setErrorParserAttribute(oldSet.toArray(new String[oldSet.size()]));
@@ -2589,7 +2589,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	@Override
 	public String[] getUserObjects(String extension) {
-		Vector<String> objs = new Vector<String>();
+		Vector<String> objs = new Vector<>();
 		ITool tool = calculateTargetTool();
 		if (tool == null)
 			tool = getToolFromOutputExtension(extension);
@@ -2630,7 +2630,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	@Override
 	public String[] getLibs(String extension) {
-		Vector<String> libs = new Vector<String>();
+		Vector<String> libs = new Vector<>();
 		ITool tool = calculateTargetTool();
 		if (tool == null)
 			tool = getToolFromOutputExtension(extension);
@@ -2721,7 +2721,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			ICOutputEntry entries[] = getConfigurationData().getBuildData().getOutputDirectories();
 			IPath path = getOwner().getFullPath();
 
-			List<ICSettingEntry> list = new ArrayList<ICSettingEntry>(entries.length + 1);
+			List<ICSettingEntry> list = new ArrayList<>(entries.length + 1);
 
 			// Add project level include path
 			list.add(CDataUtil.createCIncludePathEntry(path.toString(), ICSettingEntry.VALUE_WORKSPACE_PATH));
@@ -2816,7 +2816,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	@Override
 	public String[] getRequiredTypeIds() {
 		SupportedProperties props = findSupportedProperties();
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (props != null) {
 			list.addAll(Arrays.asList(props.getRequiredTypeIds()));
 		}
@@ -2829,7 +2829,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	@Override
 	public String[] getSupportedTypeIds() {
 		SupportedProperties props = findSupportedProperties();
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (props != null) {
 			list.addAll(Arrays.asList(props.getSupportedTypeIds()));
 		}
@@ -2842,7 +2842,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	@Override
 	public String[] getSupportedValueIds(String typeId) {
 		SupportedProperties props = findSupportedProperties();
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (props != null) {
 			list.addAll(Arrays.asList(props.getSupportedValueIds(typeId)));
 		}

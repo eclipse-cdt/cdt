@@ -120,7 +120,7 @@ public class CCodeFormatter extends CodeFormatter {
 	public void setOptions(Map<String, ?> options) {
 		if (options != null) {
 			this.options = options;
-			Map<String, String> formatterPrefs = new HashMap<String, String>(options.size());
+			Map<String, String> formatterPrefs = new HashMap<>(options.size());
 			for (String key : options.keySet()) {
 				Object value = options.get(key);
 				if (value instanceof String) {

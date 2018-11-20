@@ -63,7 +63,7 @@ public class TemplateDescriptor {
 			throw new TemplateInitializationException(msg, se);
 		}
 		this.rootElement = document.getDocumentElement();
-		this.persistVector = new ArrayList<String>();
+		this.persistVector = new ArrayList<>();
 		this.pluginId = pluginId;
 	}
 
@@ -74,7 +74,7 @@ public class TemplateDescriptor {
 	 * @return default values with keys
 	 */
 	public Map<String, String> getTemplateDefaults(Element element) {
-		Map<String, String> templateDefaults = new HashMap<String, String>();
+		Map<String, String> templateDefaults = new HashMap<>();
 		Element propertyGroupElement;
 		List<Element> children = TemplateEngine.getChildrenOfElement(element);
 		for (int i = 0, l = children.size(); i < l; i++) {
@@ -119,7 +119,7 @@ public class TemplateDescriptor {
 	 */
 	public List<Element> getPropertyGroupList() {
 		List<Element> resultList = null;
-		List<Element> list = new ArrayList<Element>();
+		List<Element> list = new ArrayList<>();
 		resultList = list;
 		if (rootElement != null) {
 			List<Element> tempList = TemplateEngine.getChildrenOfElement(rootElement);

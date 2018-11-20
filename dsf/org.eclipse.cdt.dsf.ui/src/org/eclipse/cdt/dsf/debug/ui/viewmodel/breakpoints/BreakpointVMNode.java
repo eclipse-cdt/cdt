@@ -55,7 +55,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode
 
 	@Override
 	public void update(ILabelUpdate[] updates) {
-		Map<IElementLabelProvider, List<ILabelUpdate>> delegatesMap = new HashMap<IElementLabelProvider, List<ILabelUpdate>>(
+		Map<IElementLabelProvider, List<ILabelUpdate>> delegatesMap = new HashMap<>(
 				1, 1);
 
 		for (final ILabelUpdate update : updates) {
@@ -68,7 +68,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode
 
 			List<ILabelUpdate> delegatesList = delegatesMap.get(provider);
 			if (delegatesList == null) {
-				delegatesList = new ArrayList<ILabelUpdate>(updates.length);
+				delegatesList = new ArrayList<>(updates.length);
 				delegatesMap.put(provider, delegatesList);
 			}
 			delegatesList.add(new ICheckUpdate() {
@@ -164,7 +164,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode
 
 	@Override
 	public void encodeElements(IElementMementoRequest[] updates) {
-		Map<IElementMementoProvider, List<IElementMementoRequest>> delegatesMap = new HashMap<IElementMementoProvider, List<IElementMementoRequest>>(
+		Map<IElementMementoProvider, List<IElementMementoRequest>> delegatesMap = new HashMap<>(
 				1, 1);
 
 		for (final IElementMementoRequest update : updates) {
@@ -177,7 +177,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode
 
 			List<IElementMementoRequest> delegatesList = delegatesMap.get(provider);
 			if (delegatesList == null) {
-				delegatesList = new ArrayList<IElementMementoRequest>(updates.length);
+				delegatesList = new ArrayList<>(updates.length);
 				delegatesMap.put(provider, delegatesList);
 			}
 			delegatesList.add(new IElementMementoRequest() {
@@ -241,7 +241,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode
 
 	@Override
 	public void compareElements(IElementCompareRequest[] updates) {
-		Map<IElementMementoProvider, List<IElementCompareRequest>> delegatesMap = new HashMap<IElementMementoProvider, List<IElementCompareRequest>>(
+		Map<IElementMementoProvider, List<IElementCompareRequest>> delegatesMap = new HashMap<>(
 				1, 1);
 
 		for (final IElementCompareRequest update : updates) {
@@ -254,7 +254,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode
 
 			List<IElementCompareRequest> delegatesList = delegatesMap.get(provider);
 			if (delegatesList == null) {
-				delegatesList = new ArrayList<IElementCompareRequest>(updates.length);
+				delegatesList = new ArrayList<>(updates.length);
 				delegatesMap.put(provider, delegatesList);
 			}
 			delegatesList.add(new IElementCompareRequest() {

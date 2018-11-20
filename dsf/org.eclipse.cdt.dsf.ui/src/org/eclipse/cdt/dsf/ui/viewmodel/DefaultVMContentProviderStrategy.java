@@ -83,7 +83,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
 			updateNodeChildren(firstNode, updates);
 		} else {
 			// Sort the updates by the node.
-			Map<IVMNode, List<IHasChildrenUpdate>> nodeUpdatesMap = new HashMap<IVMNode, List<IHasChildrenUpdate>>();
+			Map<IVMNode, List<IHasChildrenUpdate>> nodeUpdatesMap = new HashMap<>();
 			for (IHasChildrenUpdate update : updates) {
 				// Get the VM Context for last element in path.
 				IVMNode node = getNodeForElement(update.getElement());

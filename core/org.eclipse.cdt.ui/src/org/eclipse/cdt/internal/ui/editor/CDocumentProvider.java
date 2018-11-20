@@ -664,7 +664,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		private ListenerList<IAnnotationModelListener> fListenerList;
 
 		public GlobalAnnotationModelListener() {
-			fListenerList = new ListenerList<IAnnotationModelListener>(ListenerList.IDENTITY);
+			fListenerList = new ListenerList<>(ListenerList.IDENTITY);
 		}
 
 		@Override
@@ -942,7 +942,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		TextEdit rootEdit = null;
 
 		ICProject cProject = tu.getCProject();
-		Map<String, Object> options = new HashMap<String, Object>(cProject.getOptions(true));
+		Map<String, Object> options = new HashMap<>(cProject.getOptions(true));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
 		CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
 		String code = document.get();

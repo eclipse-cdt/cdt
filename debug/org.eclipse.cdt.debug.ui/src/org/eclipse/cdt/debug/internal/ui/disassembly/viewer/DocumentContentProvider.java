@@ -49,8 +49,8 @@ public class DocumentContentProvider implements IModelChangedListener {
 
 	private IModelProxy fRootProxy;
 	private IModelProxy fBaseProxy;
-	private List<IModelProxy> fLineProxies = new ArrayList<IModelProxy>(50);
-	private Map<Object, Integer> fLineElements = new HashMap<Object, Integer>(20);
+	private List<IModelProxy> fLineProxies = new ArrayList<>(50);
+	private Map<Object, Integer> fLineElements = new HashMap<>(20);
 
 	private DocumentUpdate fUpdateInProgress;
 

@@ -123,7 +123,7 @@ public class CPathContainerWizard extends Wizard {
 		} else if (fEntryToEdit == null) { // new entry: show selection page as
 			// first page
 			IContainerDescriptor[] containers = CPathContainerDescriptor.getDescriptors();
-			List<IContainerDescriptor> allContainers = new ArrayList<IContainerDescriptor>(Arrays.asList(containers));
+			List<IContainerDescriptor> allContainers = new ArrayList<>(Arrays.asList(containers));
 			if (fFilterType != null) {
 				allContainers.add(0, new ProjectContainerDescriptor(fFilterType));
 			}

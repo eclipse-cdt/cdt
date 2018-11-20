@@ -176,7 +176,7 @@ public class CfgHolder {
 	 */
 
 	public static CfgHolder[] reorder(CfgHolder[] its) {
-		ArrayList<CfgHolder> ls = new ArrayList<CfgHolder>(its.length);
+		ArrayList<CfgHolder> ls = new ArrayList<>(its.length);
 		boolean found = true;
 		while (found) {
 			found = false;
@@ -210,7 +210,7 @@ public class CfgHolder {
 	 * Note that null configurations are ignored !
 	 */
 	public static IConfiguration[] items2cfgs(CfgHolder[] its) {
-		ArrayList<IConfiguration> lst = new ArrayList<IConfiguration>(its.length);
+		ArrayList<IConfiguration> lst = new ArrayList<>(its.length);
 		for (CfgHolder h : its)
 			if (h.cfg != null)
 				lst.add(h.cfg);

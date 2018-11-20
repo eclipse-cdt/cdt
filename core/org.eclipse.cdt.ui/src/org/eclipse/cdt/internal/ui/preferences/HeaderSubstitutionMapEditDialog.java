@@ -237,7 +237,7 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 			List<HeaderSubstitutionMap> existingEntries) {
 		super(parent);
 
-		fExistingNames = new HashSet<String>();
+		fExistingNames = new HashSet<>();
 		for (HeaderSubstitutionMap exising : existingEntries) {
 			if (!exising.equals(map)) {
 				fExistingNames.add(exising.getName());
@@ -319,7 +319,7 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 	}
 
 	private List<HeaderSubstitutionRule> getSubstitutionRules(IncludeMap map) {
-		ArrayList<HeaderSubstitutionRule> result = new ArrayList<HeaderSubstitutionRule>();
+		ArrayList<HeaderSubstitutionRule> result = new ArrayList<>();
 		for (Entry<IncludeInfo, List<IncludeInfo>> entry : map.getMap().entrySet()) {
 			String source = stripQuotes(entry.getKey().toString());
 			for (IncludeInfo target : entry.getValue()) {
@@ -542,7 +542,7 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 				for (HeaderSubstitutionRule rule : fOptionalSubstitutionsField.getElements()) {
 					if (rule.getSource().equals(newRule.getSource())) {
 						if (rulesToDelete == null)
-							rulesToDelete = new ArrayList<HeaderSubstitutionRule>();
+							rulesToDelete = new ArrayList<>();
 						rulesToDelete.add(rule);
 					}
 				}

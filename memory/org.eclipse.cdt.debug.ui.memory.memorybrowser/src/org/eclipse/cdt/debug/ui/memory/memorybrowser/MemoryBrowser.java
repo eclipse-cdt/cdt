@@ -148,9 +148,9 @@ public class MemoryBrowser extends ViewPart
 	 * elements of a "process" (process, threads, frames) have the same
 	 * retrieval object.
 	 */
-	private Map<IMemoryBlockRetrieval, CTabFolder> fContextFolders = new HashMap<IMemoryBlockRetrieval, CTabFolder>();
+	private Map<IMemoryBlockRetrieval, CTabFolder> fContextFolders = new HashMap<>();
 
-	private List<IMemoryRenderingContainer> fCurrentContainers = new ArrayList<IMemoryRenderingContainer>();
+	private List<IMemoryRenderingContainer> fCurrentContainers = new ArrayList<>();
 
 	private final static String KEY_CONTEXT = "CONTEXT"; //$NON-NLS-1$
 	private final static String KEY_CONTAINER = "CONTAINER"; //$NON-NLS-1$
@@ -962,7 +962,7 @@ public class MemoryBrowser extends ViewPart
 	}
 
 	private final class MemoryBrowserRenderingContainer implements IMemoryRenderingContainer {
-		private final List<IMemoryRendering> renderings = new ArrayList<IMemoryRendering>();
+		private final List<IMemoryRendering> renderings = new ArrayList<>();
 
 		private MemoryBrowserRenderingContainer() {
 		}
@@ -1358,7 +1358,7 @@ public class MemoryBrowser extends ViewPart
 
 	class SelectionProviderAdapter implements ISelectionProvider {
 
-		List<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();
+		List<ISelectionChangedListener> listeners = new ArrayList<>();
 
 		ISelection theSelection = StructuredSelection.EMPTY;
 

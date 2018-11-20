@@ -45,7 +45,7 @@ public class CPluginImages {
 	public static final IPath ICONS_PATH = new Path("$nl$/icons"); //$NON-NLS-1$
 
 	/** Converter from CPluginImages key to CDTSharedImages key */
-	private static Map<String, String> fPathMap = new HashMap<String, String>();
+	private static Map<String, String> fPathMap = new HashMap<>();
 
 	private static final String NAME_PREFIX = CUIPlugin.PLUGIN_ID + '.';
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();

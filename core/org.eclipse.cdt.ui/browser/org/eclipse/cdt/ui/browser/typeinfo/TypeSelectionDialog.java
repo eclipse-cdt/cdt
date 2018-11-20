@@ -63,7 +63,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		private StringMatcher fNameMatcher;
 		private StringMatcher[] fSegmentMatchers;
 		private boolean fMatchGlobalNamespace;
-		private Collection<Integer> fVisibleTypes = new HashSet<Integer>();
+		private Collection<Integer> fVisibleTypes = new HashSet<>();
 		private boolean fShowLowLevelTypes;
 
 		@Override
@@ -218,7 +218,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 	// the filter matcher contains state information, must not be static
 	private final TypeFilterMatcher fFilterMatcher = new TypeFilterMatcher();
-	private Set<Integer> fKnownTypes = new HashSet<Integer>(ALL_TYPES.length);
+	private Set<Integer> fKnownTypes = new HashSet<>(ALL_TYPES.length);
 	private Text fTextWidget;
 	private boolean fSelectFilterText = false;
 	private FilteredList fNewFilteredList;

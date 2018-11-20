@@ -95,7 +95,7 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 
 	@Override
 	protected void readSettings(ICLanguageSetting setting, Element language) throws SettingsImportExportException {
-		List<ICLanguageSettingEntry> macros = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> macros = new ArrayList<>();
 
 		List<Element> macrosNodes = XMLUtils.extractChildElements(language, MACRO_ELEMENT);
 

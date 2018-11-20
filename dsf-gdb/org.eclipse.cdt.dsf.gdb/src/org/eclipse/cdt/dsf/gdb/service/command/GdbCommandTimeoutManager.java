@@ -222,7 +222,7 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 	private boolean fTimeoutEnabled = false;
 	private int fTimeout = 0;
 	private TimerThread fTimerThread;
-	private BlockingQueue<QueueEntry> fCommandQueue = new LinkedBlockingQueue<QueueEntry>();
+	private BlockingQueue<QueueEntry> fCommandQueue = new LinkedBlockingQueue<>();
 	private CustomTimeoutsMap fCustomTimeouts = new CustomTimeoutsMap();
 
 	private ListenerList fListeners;

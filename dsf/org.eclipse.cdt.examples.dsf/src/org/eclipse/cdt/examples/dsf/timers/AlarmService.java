@@ -118,7 +118,7 @@ public class AlarmService extends AbstractDsfService {
 	}
 
 	private int fTriggerNumberCounter = 1;
-	private Map<TriggerDMContext, Integer> fTriggers = new LinkedHashMap<TriggerDMContext, Integer>();
+	private Map<TriggerDMContext, Integer> fTriggers = new LinkedHashMap<>();
 
 	AlarmService(DsfSession session) {
 		super(session);

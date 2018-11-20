@@ -71,8 +71,8 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 			IProgressMonitor monitor) {
 		Collection<ICompletionProposal> proposals = computeCompletionProposals(context, monitor);
 		// Remove duplicates
-		proposals = (new LinkedHashSet<ICompletionProposal>(proposals));
-		List<IContextInformation> result = new ArrayList<IContextInformation>();
+		proposals = (new LinkedHashSet<>(proposals));
+		List<IContextInformation> result = new ArrayList<>();
 		for (ICompletionProposal proposal : proposals) {
 			IContextInformation contextInformation = proposal.getContextInformation();
 			if (contextInformation != null) {

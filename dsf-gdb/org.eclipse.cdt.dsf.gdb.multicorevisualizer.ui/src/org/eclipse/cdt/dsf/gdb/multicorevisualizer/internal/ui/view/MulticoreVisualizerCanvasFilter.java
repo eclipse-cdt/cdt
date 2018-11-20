@@ -112,8 +112,8 @@ public class MulticoreVisualizerCanvasFilter {
 			clearFilter();
 		}
 
-		m_filterList = new ArrayList<IVisualizerModelObject>();
-		m_dynamicFilterList = new ArrayList<IVisualizerModelObject>();
+		m_filterList = new ArrayList<>();
+		m_dynamicFilterList = new ArrayList<>();
 
 		m_filterActive = true;
 

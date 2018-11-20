@@ -68,11 +68,11 @@ public class CallHierarchyUI {
 	/**
 	 * List of the Call Hierarchy views in LRU order, where the most recently used view is at index 0.
 	 */
-	private static List<CHViewPart> fLRUCallHierarchyViews = new ArrayList<CHViewPart>();
+	private static List<CHViewPart> fLRUCallHierarchyViews = new ArrayList<>();
 	private static int fViewCount;
 
 	private static final int MAX_HISTORY_SIZE = 10;
-	private static List<ICElement> fHistoryEntries = new ArrayList<ICElement>(MAX_HISTORY_SIZE);
+	private static List<ICElement> fHistoryEntries = new ArrayList<>(MAX_HISTORY_SIZE);
 
 	public static void setIsJUnitTest(boolean val) {
 		sIsJUnitTest = val;

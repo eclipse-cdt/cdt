@@ -45,7 +45,7 @@ public class TemplateEngineUI {
 	public Template[] getTemplates(String projectType, String toolChain, String usageFilter) {
 		TemplateInfo[] templateInfoArray = TemplateEngine.getDefault().getTemplateInfos(projectType, toolChain,
 				usageFilter);
-		List<Template> templatesList = new ArrayList<Template>();
+		List<Template> templatesList = new ArrayList<>();
 		for (int i = 0; i < templateInfoArray.length; i++) {
 			TemplateInfo info = templateInfoArray[i];
 			try {
@@ -70,7 +70,7 @@ public class TemplateEngineUI {
 	 */
 	public Template[] getTemplates() {
 		TemplateInfo[] templateInfoArray = TemplateEngine.getDefault().getTemplateInfos();
-		List<Template> templatesList = new ArrayList<Template>();
+		List<Template> templatesList = new ArrayList<>();
 		for (int i = 0; i < templateInfoArray.length; i++) {
 			try {
 				templatesList.add(new Template(templateInfoArray[i]));

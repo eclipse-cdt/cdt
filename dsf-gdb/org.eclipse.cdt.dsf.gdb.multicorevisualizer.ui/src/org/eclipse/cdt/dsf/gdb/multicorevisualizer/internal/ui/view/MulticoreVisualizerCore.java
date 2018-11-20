@@ -52,7 +52,7 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject {
 		if (m_cpu != null)
 			m_cpu.addCore(this);
 		m_id = id;
-		m_threads = new ArrayList<MulticoreVisualizerThread>();
+		m_threads = new ArrayList<>();
 
 		// default load meter
 		m_loadMeter = new MulticoreVisualizerLoadMeter(null, null);

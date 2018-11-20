@@ -186,7 +186,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected void loadSymbols(SOM som) throws IOException {
-		ArrayList<Symbol> list = new ArrayList<Symbol>();
+		ArrayList<Symbol> list = new ArrayList<>();
 
 		SOM.Symbol[] peSyms = som.getSymbols();
 		byte[] table = som.getStringTable();

@@ -220,7 +220,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	 * @return Updated selection.
 	 */
 	protected ISelection updateSelection(ISelection sel) {
-		final ArrayList<ICElement> newSelection = new ArrayList<ICElement>();
+		final ArrayList<ICElement> newSelection = new ArrayList<>();
 		if (sel instanceof IStructuredSelection) {
 			final Iterator<?> iter = ((IStructuredSelection) sel).iterator();
 			while (iter.hasNext()) {

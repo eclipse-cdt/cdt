@@ -413,7 +413,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	 */
 	private List<IRegistersChangedDMEvent> writeRegisterWaitNotication(final IRegisterDMContext registerDmc,
 			final String regValue, final String formatId) throws Throwable {
-		ServiceEventWaitor<IRegistersChangedDMEvent> eventWaitor = new ServiceEventWaitor<IRegistersChangedDMEvent>(
+		ServiceEventWaitor<IRegistersChangedDMEvent> eventWaitor = new ServiceEventWaitor<>(
 				fSession, IRegistersChangedDMEvent.class);
 
 		writeRegister(registerDmc, regValue, formatId);

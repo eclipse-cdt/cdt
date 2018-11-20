@@ -93,9 +93,9 @@ public class SharedDefaults extends HashMap<String, String> {
 	 */
 
 	public SharedDefaults() {
-		sharedDefaultsMap = new HashMap<String, String>();
-		persistDataMap = new HashMap<String, String>();
-		tableDataMap = new HashMap<String, String>();
+		sharedDefaultsMap = new HashMap<>();
+		persistDataMap = new HashMap<>();
+		tableDataMap = new HashMap<>();
 
 		// The conditional controls here is provided to have consistent
 		// data storage in the file during System crash or

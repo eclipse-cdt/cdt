@@ -34,7 +34,7 @@ public class TemplateCNewWizard extends CNewWizard {
 	@Override
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {
 		Template[] templates = TemplateEngineUI.getDefault().getTemplates();
-		ArrayList<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
+		ArrayList<EntryDescriptor> items = new ArrayList<>();
 
 		for (int k = 0; k < templates.length; k++) {
 			TemplateInfo templateInfo = templates[k].getTemplateInfo();

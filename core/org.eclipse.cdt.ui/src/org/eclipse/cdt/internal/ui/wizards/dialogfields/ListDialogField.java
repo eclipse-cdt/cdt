@@ -130,7 +130,7 @@ public class ListDialogField<T> extends DialogField {
 		fListViewerAdapter = new ListViewerAdapter();
 		fParentElement = this;
 
-		fElements = new ArrayList<T>(10);
+		fElements = new ArrayList<>(10);
 
 		fButtonLabels = buttonLabels;
 		if (fButtonLabels != null) {
@@ -541,7 +541,7 @@ public class ListDialogField<T> extends DialogField {
 	 * Sets the elements shown in the list.
 	 */
 	public void setElements(List<? extends T> elements) {
-		fElements = new ArrayList<T>(elements);
+		fElements = new ArrayList<>(elements);
 		if (fTable != null) {
 			fTable.refresh();
 		}
@@ -553,7 +553,7 @@ public class ListDialogField<T> extends DialogField {
 	 * The list returned is a copy, so it can be modified by the user.
 	 */
 	public List<T> getElements() {
-		return new ArrayList<T>(fElements);
+		return new ArrayList<>(fElements);
 	}
 
 	/**
@@ -613,7 +613,7 @@ public class ListDialogField<T> extends DialogField {
 
 		if (nElements > 0) {
 			// filter duplicated
-			ArrayList<T> elementsToAdd = new ArrayList<T>(nElements);
+			ArrayList<T> elementsToAdd = new ArrayList<>(nElements);
 
 			for (int i = 0; i < nElements; i++) {
 				T elem = elements.get(i);
@@ -743,7 +743,7 @@ public class ListDialogField<T> extends DialogField {
 
 	private List<T> moveUp(List<? extends T> elements, List<? extends T> move) {
 		int nElements = elements.size();
-		List<T> res = new ArrayList<T>(nElements);
+		List<T> res = new ArrayList<>(nElements);
 		T floating = null;
 		for (int i = 0; i < nElements; i++) {
 			T curr = elements.get(i);
@@ -777,7 +777,7 @@ public class ListDialogField<T> extends DialogField {
 	}
 
 	private List<T> reverse(List<? extends T> p) {
-		List<T> reverse = new ArrayList<T>(p.size());
+		List<T> reverse = new ArrayList<>(p.size());
 		for (int i = p.size() - 1; i >= 0; i--) {
 			reverse.add(p.get(i));
 		}
@@ -825,7 +825,7 @@ public class ListDialogField<T> extends DialogField {
 	 * Returns the selected elements.
 	 */
 	public List<T> getSelectedElements() {
-		List<T> result = new ArrayList<T>();
+		List<T> result = new ArrayList<>();
 		if (fTable != null) {
 			ISelection selection = fTable.getSelection();
 			if (selection instanceof IStructuredSelection) {

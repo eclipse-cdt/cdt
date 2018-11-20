@@ -96,7 +96,7 @@ public class ErrorParserManagerTest extends TestCase {
 		desc.setAutoBuilding(false);
 		workspace.setDescription(desc);
 
-		errorList = new ArrayList<ProblemMarkerInfo>();
+		errorList = new ArrayList<>();
 		cProject = createProject("errorparsersanity");
 		markerGenerator = new IMarkerGenerator() {
 			@Override

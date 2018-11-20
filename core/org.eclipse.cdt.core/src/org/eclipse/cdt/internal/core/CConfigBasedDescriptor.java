@@ -91,7 +91,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 
 	/** Map: storageModule ID -> ICStorageElement <br/>
 	 *  CDescriptor's map of so far uncommited storage elements. */
-	private final Map<String, SynchronizedStorageElement> fStorageDataElMap = new HashMap<String, SynchronizedStorageElement>();
+	private final Map<String, SynchronizedStorageElement> fStorageDataElMap = new HashMap<>();
 	private volatile boolean fIsDirty;
 	/** Current CDescriptor Event which tracks changes between operationStart & operationStop */
 	private CDescriptorEvent fOpEvent;
@@ -379,7 +379,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 	public ICExtensionReference[] get(String extensionPoint) {
 		try {
 			fLock.acquire();
-			LinkedHashSet<ICExtensionReference> extRefs = new LinkedHashSet<ICExtensionReference>();
+			LinkedHashSet<ICExtensionReference> extRefs = new LinkedHashSet<>();
 
 			// Add the ICConfigExtensionReferences for the current configuration description
 			for (ICConfigExtensionReference cfgRes : fCfgDes.get(extensionPoint))

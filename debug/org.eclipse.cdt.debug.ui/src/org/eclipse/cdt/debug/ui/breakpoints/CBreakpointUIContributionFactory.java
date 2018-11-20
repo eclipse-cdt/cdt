@@ -41,7 +41,7 @@ public class CBreakpointUIContributionFactory {
 	protected ArrayList<ICBreakpointsUIContribution> contributions;
 
 	private CBreakpointUIContributionFactory() {
-		contributions = new ArrayList<ICBreakpointsUIContribution>();
+		contributions = new ArrayList<>();
 		loadSubtypeContributions();
 	}
 
@@ -129,7 +129,7 @@ public class CBreakpointUIContributionFactory {
 		if (debugModelIds != null) {
 			debugModelIdsList = Arrays.asList(debugModelIds);
 		}
-		ArrayList<ICBreakpointsUIContribution> list = new ArrayList<ICBreakpointsUIContribution>();
+		ArrayList<ICBreakpointsUIContribution> list = new ArrayList<>();
 		for (ICBreakpointsUIContribution con : contributions) {
 			try {
 				if (con.getDebugModelId() == null

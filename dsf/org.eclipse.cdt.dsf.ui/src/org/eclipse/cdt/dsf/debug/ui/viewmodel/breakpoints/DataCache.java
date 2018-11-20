@@ -52,7 +52,7 @@ abstract class DataCache<V> {
 	private V fData;
 	private IStatus fStatus;
 
-	private List<DataRequestMonitor<V>> fWaitingList = new LinkedList<DataRequestMonitor<V>>();
+	private List<DataRequestMonitor<V>> fWaitingList = new LinkedList<>();
 
 	public DataCache(Executor executor) {
 		fExecutor = executor;
@@ -133,7 +133,7 @@ abstract class DataCache<V> {
 		fData = data;
 		fStatus = status;
 		List<DataRequestMonitor<V>> waitingList = fWaitingList;
-		fWaitingList = new LinkedList<DataRequestMonitor<V>>();
+		fWaitingList = new LinkedList<>();
 
 		for (DataRequestMonitor<V> rm : waitingList) {
 			rm.setData(data);

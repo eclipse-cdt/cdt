@@ -93,7 +93,7 @@ public class ProcessHelper {
 	 * @since 5.5
 	 */
 	public static Set<String> getReplaceKeys(String str, String startPattern, String endPattern) {
-		Set<String> replaceStrings = new HashSet<String>();
+		Set<String> replaceStrings = new HashSet<>();
 		int start = 0;
 		int end = 0;
 		while ((start = str.indexOf(startPattern, start)) >= 0) {

@@ -206,7 +206,7 @@ public abstract class CRefactoring extends Refactoring {
 	}
 
 	protected List<IASTName> findAllMarkedNames(IASTTranslationUnit ast) {
-		final List<IASTName> names = new ArrayList<IASTName>();
+		final List<IASTName> names = new ArrayList<>();
 
 		ast.accept(new ASTVisitor() {
 			{

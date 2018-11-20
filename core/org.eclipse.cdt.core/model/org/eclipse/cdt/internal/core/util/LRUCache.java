@@ -143,7 +143,7 @@ public class LRUCache<K, T> implements Cloneable {
 	public LRUCache(int size) {
 		fTimestampCounter = fCurrentSpace = 0;
 		fEntryQueue = fEntryQueueTail = null;
-		fEntryTable = new Hashtable<K, LRUCacheEntry<K, T>>(size);
+		fEntryTable = new Hashtable<>(size);
 		fSpaceLimit = size;
 	}
 
@@ -172,7 +172,7 @@ public class LRUCache<K, T> implements Cloneable {
 	public void flush() {
 		fCurrentSpace = 0;
 		LRUCacheEntry<K, T> entry = fEntryQueueTail; // Remember last entry
-		fEntryTable = new Hashtable<K, LRUCacheEntry<K, T>>(); // Clear it out
+		fEntryTable = new Hashtable<>(); // Clear it out
 		fEntryQueue = fEntryQueueTail = null;
 		while (entry != null) { // send deletion notifications in LRU order
 			privateNotifyDeletionFromCache(entry);
@@ -272,14 +272,14 @@ public class LRUCache<K, T> implements Cloneable {
 	 * Returns a new LRUCache instance
 	 */
 	protected LRUCache<K, T> newInstance(int size) {
-		return new LRUCache<K, T>(size);
+		return new LRUCache<>(size);
 	}
 
 	/**
 	 * Adds an entry for the given key/value/space.
 	 */
 	protected void privateAdd(K key, T value, int space) {
-		LRUCacheEntry<K, T> entry = new LRUCacheEntry<K, T>(key, value, space);
+		LRUCacheEntry<K, T> entry = new LRUCacheEntry<>(key, value, space);
 		this.privateAddEntry(entry, false);
 	}
 

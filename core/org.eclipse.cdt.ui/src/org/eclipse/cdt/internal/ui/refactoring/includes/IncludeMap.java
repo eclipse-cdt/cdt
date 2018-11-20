@@ -173,7 +173,7 @@ public class IncludeMap {
 
 	public static IncludeMap fromMemento(boolean unconditionalSubstitution, IMemento memento) {
 		IncludeMap includeMap = new IncludeMap(unconditionalSubstitution);
-		Set<String> keys = unconditionalSubstitution ? new HashSet<String>() : Collections.<String>emptySet();
+		Set<String> keys = unconditionalSubstitution ? new HashSet<>() : Collections.<String>emptySet();
 		for (IMemento mapping : memento.getChildren(TAG_MAPPING)) {
 			String key = mapping.getString(TAG_KEY);
 			// There can be no more than one unconditional substitution for any header file.

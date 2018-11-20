@@ -62,7 +62,7 @@ public class MIMixedInstruction implements IMixedInstruction {
 	 *          ]
 	 */
 	private void parse(MITuple tuple) {
-		List<MIInstruction> instructions = new ArrayList<MIInstruction>();
+		List<MIInstruction> instructions = new ArrayList<>();
 		MIResult[] results = tuple.getMIResults();
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();

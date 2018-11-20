@@ -63,7 +63,7 @@ class CStructureCreatorVisitor extends ASTVisitor {
 	private static final String TRANSLATION_UNIT_NAME = CUIMessages.CStructureCreatorVisitor_translationUnitName;
 	private static final String ANONYMOUS_NAME = CoreModelMessages.getString("CElementLabels.anonymous"); //$NON-NLS-1$
 
-	private Stack<DocumentRangeNode> fStack = new Stack<DocumentRangeNode>();
+	private Stack<DocumentRangeNode> fStack = new Stack<>();
 	private IDocument fDocument;
 	private String fTranslationUnitFileName;
 

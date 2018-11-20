@@ -91,7 +91,7 @@ public class TreeListDialogField<T> extends DialogField {
 		fTreeViewerAdapter = new TreeViewerAdapter();
 		fParentElement = this;
 
-		fElements = new ArrayList<T>(10);
+		fElements = new ArrayList<>(10);
 
 		fButtonLabels = buttonLabels;
 		if (fButtonLabels != null) {
@@ -517,7 +517,7 @@ public class TreeListDialogField<T> extends DialogField {
 	 * Sets the elements shown in the list.
 	 */
 	public void setElements(List<T> elements) {
-		fElements = new ArrayList<T>(elements);
+		fElements = new ArrayList<>(elements);
 		refresh();
 		if (fTree != null) {
 			fTree.expandToLevel(fTreeExpandLevel);
@@ -530,7 +530,7 @@ public class TreeListDialogField<T> extends DialogField {
 	 * can be modified by the user.
 	 */
 	public List<T> getElements() {
-		return new ArrayList<T>(fElements);
+		return new ArrayList<>(fElements);
 	}
 
 	/**
@@ -596,7 +596,7 @@ public class TreeListDialogField<T> extends DialogField {
 
 		if (nElements > 0) {
 			// filter duplicated
-			ArrayList<T> elementsToAdd = new ArrayList<T>(nElements);
+			ArrayList<T> elementsToAdd = new ArrayList<>(nElements);
 
 			for (int i = 0; i < nElements; i++) {
 				T elem = elements.get(i);
@@ -739,7 +739,7 @@ public class TreeListDialogField<T> extends DialogField {
 
 	private List<T> moveUp(List<T> elements, List<?> move) {
 		int nElements = elements.size();
-		List<T> res = new ArrayList<T>(nElements);
+		List<T> res = new ArrayList<>(nElements);
 		T floating = null;
 		for (int i = 0; i < nElements; i++) {
 			T curr = elements.get(i);
@@ -773,7 +773,7 @@ public class TreeListDialogField<T> extends DialogField {
 	}
 
 	private List<T> reverse(List<T> p) {
-		List<T> reverse = new ArrayList<T>(p.size());
+		List<T> reverse = new ArrayList<>(p.size());
 		for (int i = p.size() - 1; i >= 0; i--) {
 			reverse.add(p.get(i));
 		}
@@ -823,7 +823,7 @@ public class TreeListDialogField<T> extends DialogField {
 	 * Returns the selected elements.
 	 */
 	public List<Object> getSelectedElements() {
-		ArrayList<Object> result = new ArrayList<Object>();
+		ArrayList<Object> result = new ArrayList<>();
 		if (fTree != null) {
 			ISelection selection = fTree.getSelection();
 			if (selection instanceof IStructuredSelection) {

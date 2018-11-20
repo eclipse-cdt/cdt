@@ -38,7 +38,7 @@ public class ResourceExclusion extends RefreshExclusion {
 	@Override
 	public synchronized boolean testExclusion(IResource resource) {
 		// Populate the resources to be excluded by this exclusion.
-		List<IResource> excludedResources = new LinkedList<IResource>();
+		List<IResource> excludedResources = new LinkedList<>();
 		List<ExclusionInstance> exclusionInstances = getExclusionInstances();
 
 		for (ExclusionInstance instance : exclusionInstances) {

@@ -52,7 +52,7 @@ public class SpellingEngineDispatcher implements ISpellingEngine {
 			.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
 	/** Available spelling engines by content type */
-	private Map<IContentType, SpellingEngine> fEngines = new HashMap<IContentType, SpellingEngine>();
+	private Map<IContentType, SpellingEngine> fEngines = new HashMap<>();
 	private ISpellingEngine defaultEngine;
 
 	/**

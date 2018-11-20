@@ -64,11 +64,11 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 
 	protected IScannerInfoCollector fCollector = null;
 
-	protected List<String> symbols = new ArrayList<String>();
+	protected List<String> symbols = new ArrayList<>();
 
-	protected List<String> includes = new ArrayList<String>();
-	protected List<String> c_includes = new ArrayList<String>();
-	protected List<String> cpp_includes = new ArrayList<String>();
+	protected List<String> includes = new ArrayList<>();
+	protected List<String> c_includes = new ArrayList<>();
+	protected List<String> cpp_includes = new ArrayList<>();
 
 	boolean c_lang; // if language is C only search for the C include paths from the XL Compiler, otherwise get the C++ ones.
 
@@ -173,7 +173,7 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 */
 	@Override
 	public void shutdown() {
-		Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
+		Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<>();
 
 		// insert compiler constants, work around buggy xlC option for dumping symbols (it misses a few)
 		for (String constant : compilerConstants) {

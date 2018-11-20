@@ -36,7 +36,7 @@ public class MulticoreVisualizerCanvasFilterManager implements SessionEndedListe
 
 	/** Constructor */
 	public MulticoreVisualizerCanvasFilterManager(MulticoreVisualizerCanvas canvas) {
-		m_filterSessionMap = new Hashtable<String, MulticoreVisualizerCanvasFilter>();
+		m_filterSessionMap = new Hashtable<>();
 		m_canvas = canvas;
 		// add listener to be notified when a debug session ends
 		DsfSession.addSessionEndedListener(this);

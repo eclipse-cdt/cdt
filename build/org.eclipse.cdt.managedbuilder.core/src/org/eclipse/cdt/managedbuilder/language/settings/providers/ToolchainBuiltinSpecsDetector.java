@@ -45,7 +45,7 @@ import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableManager
  */
 public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {
 	private static final String EMPTY_QUOTED_STRING = "\"\""; //$NON-NLS-1$
-	private Map<String, ITool> toolMap = new HashMap<String, ITool>();
+	private Map<String, ITool> toolMap = new HashMap<>();
 
 	/**
 	 * Concrete compiler specs detectors need to supply tool-chain ID.

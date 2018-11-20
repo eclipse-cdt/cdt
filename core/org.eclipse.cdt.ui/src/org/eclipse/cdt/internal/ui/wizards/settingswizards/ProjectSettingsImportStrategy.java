@@ -91,7 +91,7 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 			page.setMessage(Messages.ProjectSettingsWizardPage_Import_parseError, IMessageProvider.ERROR);
 		}
 
-		List<ISettingsProcessor> importersToDisplay = new ArrayList<ISettingsProcessor>();
+		List<ISettingsProcessor> importersToDisplay = new ArrayList<>();
 		for (ImporterSectionPair pair : pairs) {
 			importersToDisplay.add(pair.importer);
 		}
@@ -168,7 +168,7 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 		String filePath = page.getDestinationFilePath();
 
 		// get all the importers
-		Map<String, ISettingsProcessor> importers = new HashMap<String, ISettingsProcessor>();
+		Map<String, ISettingsProcessor> importers = new HashMap<>();
 		for (ISettingsProcessor processor : page.getSettingsProcessors()) {
 			importers.put(processor.getSectionName(), processor);
 		}
@@ -182,7 +182,7 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 		Element root = document.getDocumentElement();
 		List<Element> sections = XMLUtils.extractChildElements(root, ProjectSettingsExportStrategy.SECTION_ELEMENT);
 
-		List<ImporterSectionPair> pairs = new ArrayList<ImporterSectionPair>();
+		List<ImporterSectionPair> pairs = new ArrayList<>();
 
 		// associate an importer with each section
 		for (Element section : sections) {

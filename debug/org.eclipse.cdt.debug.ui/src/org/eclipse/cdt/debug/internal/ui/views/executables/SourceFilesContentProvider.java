@@ -81,7 +81,7 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 	 *
 	 * <p> This collection must be accessed only from the UI thread
 	 */
-	private Map<IPath, QuickParseJob> pathToJobMap = new HashMap<IPath, SourceFilesContentProvider.QuickParseJob>();
+	private Map<IPath, QuickParseJob> pathToJobMap = new HashMap<>();
 
 	/** those executables for which we asked the question and got a result.
 	 * NOTE: this contains a duplicate of into in Executable, because we can't
@@ -108,7 +108,7 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 	/**
 	 * The cached file info. Key is the path of the executable. This collection must be accessed only on the UI thread.
 	 */
-	private Map<IPath, TUData> fetchedExecutables = new HashMap<IPath, TUData>();
+	private Map<IPath, TUData> fetchedExecutables = new HashMap<>();
 
 	private final SourceFilesViewer viewer;
 

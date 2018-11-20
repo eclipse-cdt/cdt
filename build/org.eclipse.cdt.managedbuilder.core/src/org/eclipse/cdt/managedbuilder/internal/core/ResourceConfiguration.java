@@ -253,7 +253,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 										: ManagedBuildManager.calculateChildId(otherExtTool.getId(), null);
 								Map<String, String> idMap = superClassIdMap.get(otherRcInfo.getPath());
 								if (idMap == null) {
-									idMap = new HashMap<String, String>();
+									idMap = new HashMap<>();
 									superClassIdMap.put(otherRcInfo.getPath(), idMap);
 								}
 								idMap.put(otherExtTool.getId(), superId);
@@ -468,7 +468,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	 */
 	private List<ITool> getToolList() {
 		if (toolList == null) {
-			toolList = new ArrayList<ITool>();
+			toolList = new ArrayList<>();
 		}
 		return toolList;
 	}
@@ -480,7 +480,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	 */
 	private Map<String, ITool> getToolMap() {
 		if (toolMap == null) {
-			toolMap = new HashMap<String, ITool>();
+			toolMap = new HashMap<>();
 		}
 		return toolMap;
 	}
@@ -908,7 +908,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	@Override
 	public CLanguageData[] getCLanguageDatas() {
 		ITool tools[] = getTools/*ToInvoke*/();
-		List<CLanguageData> list = new ArrayList<CLanguageData>();
+		List<CLanguageData> list = new ArrayList<>();
 		for (ITool tool : tools) {
 			CLanguageData datas[] = tool.getCLanguageDatas();
 			for (int j = 0; j < datas.length; j++) {

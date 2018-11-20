@@ -99,9 +99,9 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 	private static final String INDENT = "   ";
 
 	private static final class MyVisitor extends ASTVisitor {
-		List<IASTProblem> fProblems = new ArrayList<IASTProblem>();
-		List<IProblemBinding> fProblemBindings = new ArrayList<IProblemBinding>();
-		List<Exception> fExceptions = new ArrayList<Exception>();
+		List<IASTProblem> fProblems = new ArrayList<>();
+		List<IProblemBinding> fProblemBindings = new ArrayList<>();
+		List<Exception> fExceptions = new ArrayList<>();
 
 		MyVisitor() {
 			shouldVisitProblems = true;
@@ -154,7 +154,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			return;
 		}
 
-		List<IWorkingCopy> workingCopies = new ArrayList<IWorkingCopy>();
+		List<IWorkingCopy> workingCopies = new ArrayList<>();
 		final IWorkbenchPage activePage = fSite.getWorkbenchWindow().getActivePage();
 		for (IEditorReference eref : activePage.getEditorReferences()) {
 			IEditorPart editor = eref.getEditor(false);
@@ -312,7 +312,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		output(out, "Preincluded files (option -include):", scfg.getIncludeFiles());
 		output(out, "Preincluded macro files (option -imacros):", scfg.getMacroFiles());
 
-		HashSet<String> reported = new HashSet<String>();
+		HashSet<String> reported = new HashSet<>();
 		output(out, "Macro definitions (option -D):", scfg.getDefinedSymbols(), reported);
 		output(out, "Macro definitions (from language + headers in index):", ast.getBuiltinMacroDefinitions(),
 				reported);
@@ -374,7 +374,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			IASTPreprocessorIncludeStatement[] includeDirectives, int linkageID) throws CoreException {
 		fWroteUnresolvedTitle = false;
 		ASTFilePathResolver resolver = new ProjectIndexerInputAdapter(prj);
-		HashSet<IIndexFile> handled = new HashSet<IIndexFile>();
+		HashSet<IIndexFile> handled = new HashSet<>();
 		for (IASTPreprocessorIncludeStatement include : includeDirectives) {
 			if (include.isResolved()) {
 				IIndexFileLocation ifl = resolver.resolveASTPath(include.getPath());
@@ -429,7 +429,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		if (!definedSymbols.isEmpty()) {
 			out.println(label);
 
-			SortedMap<String, String> sorted = new TreeMap<String, String>(COMP_INSENSITIVE);
+			SortedMap<String, String> sorted = new TreeMap<>(COMP_INSENSITIVE);
 			sorted.putAll(definedSymbols);
 			for (Entry<String, String> entry : sorted.entrySet()) {
 				final String macro = entry.getKey() + '=' + entry.getValue();
@@ -445,7 +445,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			HashSet<String> reported) {
 		if (defs.length > 0) {
 			out.println(label);
-			SortedSet<String> macros = new TreeSet<String>(COMP_INSENSITIVE);
+			SortedSet<String> macros = new TreeSet<>(COMP_INSENSITIVE);
 			for (IASTPreprocessorMacroDefinition def : defs) {
 				macros.add(def.toString());
 			}
@@ -518,7 +518,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 	}
 
 	private ArrayList<ITranslationUnit> getSelectedTranslationUnits() {
-		ArrayList<ITranslationUnit> tuSelection = new ArrayList<ITranslationUnit>();
+		ArrayList<ITranslationUnit> tuSelection = new ArrayList<>();
 		if (fSelection instanceof IStructuredSelection) {
 			IStructuredSelection cElements = SelectionConverter.convertSelectionToCElements(fSelection);
 			Iterator<?> i = cElements.iterator();

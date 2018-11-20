@@ -87,7 +87,7 @@ public class StringSubstitutionEngine {
 	public String performStringSubstitution(String expression, boolean reportUndefinedVariables,
 			boolean resolveVariables, IStringVariableManager manager) throws CoreException {
 		substitute(expression, reportUndefinedVariables, resolveVariables, manager);
-		List<HashSet<String>> resolvedVariableSets = new ArrayList<HashSet<String>>();
+		List<HashSet<String>> resolvedVariableSets = new ArrayList<>();
 		while (fSubs) {
 			HashSet<String> resolved = substitute(fResult.toString(), reportUndefinedVariables, true, manager);
 
@@ -95,7 +95,7 @@ public class StringSubstitutionEngine {
 				HashSet<String> prevSet = resolvedVariableSets.get(i);
 
 				if (prevSet.equals(resolved)) {
-					HashSet<String> conflictingSet = new HashSet<String>();
+					HashSet<String> conflictingSet = new HashSet<>();
 					for (HashSet<String> set : resolvedVariableSets) {
 						conflictingSet.addAll(set);
 					}
@@ -146,10 +146,10 @@ public class StringSubstitutionEngine {
 	private HashSet<String> substitute(String expression, boolean reportUndefinedVariables, boolean resolveVariables,
 			IStringVariableManager manager) throws CoreException {
 		fResult = new StringBuilder(expression.length());
-		fStack = new Stack<VariableReference>();
+		fStack = new Stack<>();
 		fSubs = false;
 
-		HashSet<String> resolvedVariables = new HashSet<String>();
+		HashSet<String> resolvedVariables = new HashSet<>();
 
 		int pos = 0;
 		int state = SCAN_FOR_START;

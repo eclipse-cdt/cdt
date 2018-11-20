@@ -459,7 +459,7 @@ public class AdditionalInput implements IAdditionalInput {
 				libNames = options[i].getLibraries();
 			} else if (type == IOption.LIBRARY_PATHS) {
 				if (null == libPaths)
-					libPaths = new ArrayList<String>();
+					libPaths = new ArrayList<>();
 				libPaths.addAll(Arrays.asList(restoreLibraryPaths(options[i])));
 			}
 		}

@@ -196,7 +196,7 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 
 		targets = ArrayUtil.trim(ArrayUtil.addAll(targets, implicitTargets));
 
-		final ArrayList<IFunctionDeclaration> functionElements = new ArrayList<IFunctionDeclaration>();
+		final ArrayList<IFunctionDeclaration> functionElements = new ArrayList<>();
 		filterToFunctions(fTranslationUnit.getCProject(), fIndex, targets, functionElements);
 
 		// save the resolved function declarations
@@ -256,7 +256,7 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 
 	private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, NameKind kind, IBinding binding)
 			throws CoreException {
-		List<IASTName> declNames = new ArrayList<IASTName>();
+		List<IASTName> declNames = new ArrayList<>();
 		declNames.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
 		for (Iterator<IASTName> i = declNames.iterator(); i.hasNext();) {
 			IASTName name = i.next();
@@ -296,7 +296,7 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 				astNames[i] = null;
 			} else if (ASTQueries.findAncestorWithType(name, ICPPASTUsingDeclaration.class) != null) {
 				if (usingDeclarations == null)
-					usingDeclarations = new ArrayList<IASTName>(1);
+					usingDeclarations = new ArrayList<>(1);
 				usingDeclarations.add(name);
 				astNames[i] = null;
 			}

@@ -46,7 +46,7 @@ public class GraphicCanvas extends BufferedCanvas {
 	/** Constructor. */
 	public GraphicCanvas(Composite parent) {
 		super(parent);
-		m_objects = new ArrayList<IGraphicObject>();
+		m_objects = new ArrayList<>();
 		Listener mouseListener = new Listener() {
 			@Override
 			public void handleEvent(Event event) {

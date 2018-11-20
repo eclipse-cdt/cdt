@@ -94,7 +94,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	private static final String tooltip = Messages.CWizardHandler_1 + Messages.CWizardHandler_2
 			+ Messages.CWizardHandler_3 + Messages.CWizardHandler_4 + Messages.CWizardHandler_5;
 
-	protected SortedMap<String, IToolChain> full_tcs = new TreeMap<String, IToolChain>();
+	protected SortedMap<String, IToolChain> full_tcs = new TreeMap<>();
 	private String propertyId = null;
 	private IProjectType pt = null;
 	protected IWizardItemsListListener listener;
@@ -110,7 +110,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	/**
 	 * Current list of preferred toolchains
 	 */
-	private List<String> preferredTCs = new ArrayList<String>();
+	private List<String> preferredTCs = new ArrayList<>();
 
 	protected static final class EntryInfo {
 		private SortedMap<String, IToolChain> tcs;
@@ -172,7 +172,7 @@ public class MBSWizardHandler extends CWizardHandler {
 						ICDTCommonProjectWizard wz = (ICDTCommonProjectWizard) wizard;
 						String[] langIDs = wz.getLanguageIDs();
 						if (langIDs.length > 0) {
-							List<Template> lstTemplates = new ArrayList<Template>();
+							List<Template> lstTemplates = new ArrayList<>();
 							for (String id : langIDs) {
 								lstTemplates.addAll(Arrays
 										.asList(TemplateEngineUI.getDefault().getTemplates(projectTypeId, null, id)));
@@ -263,7 +263,7 @@ public class MBSWizardHandler extends CWizardHandler {
 			Set<String> full = tcs.keySet();
 			if (entryDescriptor == null)
 				return full;
-			Set<String> out = new LinkedHashSet<String>(full.size());
+			Set<String> out = new LinkedHashSet<>(full.size());
 			for (String s : full)
 				if (isToolChainAcceptable(s))
 					out.add(s);
@@ -280,7 +280,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		 */
 		public SortedMap<String, IToolChain> getToolChains() {
 			Set<String> toolChainNames = this.tc_filter();
-			SortedMap<String, IToolChain> toolChainMap = new TreeMap<String, IToolChain>();
+			SortedMap<String, IToolChain> toolChainMap = new TreeMap<>();
 
 			for (String toolChainName : toolChainNames) {
 				IToolChain tc = tcs.get(toolChainName);
@@ -386,7 +386,7 @@ public class MBSWizardHandler extends CWizardHandler {
 
 	public Map<String, String> getMainPageData() {
 		WizardNewProjectCreationPage page = (WizardNewProjectCreationPage) getNewProjectCreationPage();
-		Map<String, String> data = new HashMap<String, String>();
+		Map<String, String> data = new HashMap<>();
 		String projName = page.getProjectName();
 		projName = projName != null ? projName.trim() : EMPTY_STR;
 		data.put("projectName", projName); //$NON-NLS-1$
@@ -506,7 +506,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		else if (natures.length == 1)
 			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, natures[0]);
 		else {
-			TreeSet<String> x = new TreeSet<String>();
+			TreeSet<String> x = new TreeSet<>();
 			for (String nature : natures)
 				x.add(nature);
 			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, x);
@@ -519,8 +519,8 @@ public class MBSWizardHandler extends CWizardHandler {
 					getProjectType().getId());
 
 		IToolChain[] tcs = getSelectedToolChains();
-		ArrayList<IToolChain> x = new ArrayList<IToolChain>();
-		TreeSet<String> y = new TreeSet<String>();
+		ArrayList<IToolChain> x = new ArrayList<>();
+		TreeSet<String> y = new TreeSet<>();
 		if (tcs != null) {
 			int n = tcs.length;
 			for (int i = 0; i < n; i++) {
@@ -655,7 +655,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		if (template == null)
 			return;
 
-		List<IConfiguration> configs = new ArrayList<IConfiguration>();
+		List<IConfiguration> configs = new ArrayList<>();
 		for (CfgHolder cfg : cfgs) {
 			configs.add(cfg.getConfiguration());
 		}

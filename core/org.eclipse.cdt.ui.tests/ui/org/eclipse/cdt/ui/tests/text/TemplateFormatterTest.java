@@ -73,7 +73,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	}
 
 	private void setOption(String key, String value) {
-		HashMap<String, String> options = new HashMap<String, String>(1);
+		HashMap<String, String> options = new HashMap<>(1);
 		options.put(key, value);
 		CCorePlugin.setOptions(options);
 	}

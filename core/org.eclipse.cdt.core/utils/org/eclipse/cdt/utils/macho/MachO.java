@@ -48,7 +48,7 @@ public class MachO {
 	private Symbol[] local_symbols; /* local symbols from DySymtabCommand */
 	private boolean dynsym = false; /* set if DynSymtabCommand is present */
 	Line[] lines; /* line table */
-	private ArrayList<Section> sections = new ArrayList<Section>(); /* sections from SegmentCommand */
+	private ArrayList<Section> sections = new ArrayList<>(); /* sections from SegmentCommand */
 	SymtabCommand symtab; /* SymtabCommand that contains the symbol table */
 
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -1144,7 +1144,7 @@ public class MachO {
 			case LoadCommand.LC_SYMTAB:
 				symtab = (SymtabCommand) loadcommand;
 				efile.seek(symtab.symoff);
-				ArrayList<Symbol> symList = new ArrayList<Symbol>(symtab.nsyms);
+				ArrayList<Symbol> symList = new ArrayList<>(symtab.nsyms);
 				for (int s = 0; s < symtab.nsyms; s++) {
 					Symbol symbol = new Symbol();
 					symbol.n_strx = efile.readIntE();
@@ -1166,7 +1166,7 @@ public class MachO {
 			}
 		}
 		if (dysymtab != null) {
-			ArrayList<Symbol> symList = new ArrayList<Symbol>(dysymtab.nlocalsym);
+			ArrayList<Symbol> symList = new ArrayList<>(dysymtab.nlocalsym);
 			for (int s = dysymtab.ilocalsym; s < dysymtab.nlocalsym; s++) {
 				symList.add(symbols[s]);
 			}
@@ -1190,7 +1190,7 @@ public class MachO {
 		}
 
 		/* now create line table, sorted on address */
-		Map<Line, Line> lineList = new HashMap<Line, Line>(nlines);
+		Map<Line, Line> lineList = new HashMap<>(nlines);
 		for (Symbol sym : symbols) {
 			if (sym.n_type == Symbol.N_SLINE || sym.n_type == Symbol.N_FUN) {
 				Line lentry = new Line();
@@ -1236,9 +1236,9 @@ public class MachO {
 
 	private ArrayList<Section> getSections(SegmentCommand seg) throws IOException {
 		if (seg.nsects == 0) {
-			return new ArrayList<Section>();
+			return new ArrayList<>();
 		}
-		ArrayList<Section> sections = new ArrayList<Section>();
+		ArrayList<Section> sections = new ArrayList<>();
 		for (int i = 0; i < seg.nsects; i++) {
 			Section section = new Section();
 			byte[] sectname = new byte[16];
@@ -1597,7 +1597,7 @@ public class MachO {
 	}
 
 	public DyLib[] getDyLibs(int type) {
-		ArrayList<DyLib> v = new ArrayList<DyLib>();
+		ArrayList<DyLib> v = new ArrayList<>();
 		for (LoadCommand loadcommand : loadcommands) {
 			if (loadcommand.cmd == type) {
 				DyLibCommand dl = (DyLibCommand) loadcommand;

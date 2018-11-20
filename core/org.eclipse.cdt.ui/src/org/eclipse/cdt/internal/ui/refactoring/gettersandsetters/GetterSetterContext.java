@@ -29,10 +29,10 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 public class GetterSetterContext implements ITreeContentProvider {
-	final List<IASTDeclarator> existingFields = new ArrayList<IASTDeclarator>();
-	final List<IASTFunctionDefinition> existingFunctionDefinitions = new ArrayList<IASTFunctionDefinition>();
-	final List<IASTSimpleDeclaration> existingFunctionDeclarations = new ArrayList<IASTSimpleDeclaration>();
-	final SortedSet<AccessorDescriptor> selectedAccessors = new TreeSet<AccessorDescriptor>();
+	final List<IASTDeclarator> existingFields = new ArrayList<>();
+	final List<IASTFunctionDefinition> existingFunctionDefinitions = new ArrayList<>();
+	final List<IASTSimpleDeclaration> existingFunctionDeclarations = new ArrayList<>();
+	final SortedSet<AccessorDescriptor> selectedAccessors = new TreeSet<>();
 	IASTName selectedName;
 	private List<FieldDescriptor> fieldDescriptors;
 	private boolean definitionSeparate;
@@ -75,7 +75,7 @@ public class GetterSetterContext implements ITreeContentProvider {
 	public void recreateFieldDescriptors() {
 		// Delete field descriptors so that they are recreated by the next getFieldDescriptors call.
 		fieldDescriptors = null;
-		SortedSet<AccessorDescriptor> oldSelected = new TreeSet<AccessorDescriptor>(selectedAccessors);
+		SortedSet<AccessorDescriptor> oldSelected = new TreeSet<>(selectedAccessors);
 		selectedAccessors.clear();
 		for (FieldDescriptor descriptor : getFieldDescriptors()) {
 			for (AccessorDescriptor accessor : descriptor.getChildNodes()) {
@@ -110,7 +110,7 @@ public class GetterSetterContext implements ITreeContentProvider {
 
 	private List<FieldDescriptor> getFieldDescriptors() {
 		if (fieldDescriptors == null) {
-			fieldDescriptors = new ArrayList<FieldDescriptor>();
+			fieldDescriptors = new ArrayList<>();
 			for (IASTDeclarator field : existingFields) {
 				FieldDescriptor descriptor = new FieldDescriptor(field, this);
 				if (descriptor.missingGetterOrSetter()) {

@@ -611,11 +611,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 	/**
 	 *  A map of thread id to thread group id.  We use this to find out to which threadGroup a thread belongs.
 	 */
-	private Map<String, String> fThreadToGroupMap = new HashMap<String, String>();
+	private Map<String, String> fThreadToGroupMap = new HashMap<>();
 	/**
 	 *  A map of thread group id to process id.  We use this to find out to which pid a group refers.
 	 */
-	private Map<String, String> fGroupToPidMap = new HashMap<String, String>();
+	private Map<String, String> fGroupToPidMap = new HashMap<>();
 
 	private IGDBControl fCommandControl;
 	private IGDBBackend fBackend;
@@ -969,7 +969,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 		}
 
 		String groupId = containerDmc.getGroupId();
-		List<IMIExecutionDMContext> execDmcList = new ArrayList<IMIExecutionDMContext>();
+		List<IMIExecutionDMContext> execDmcList = new ArrayList<>();
 		Iterator<Map.Entry<String, String>> iterator = getThreadToGroupMap().entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> entry = iterator.next();
@@ -1553,7 +1553,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 		// -list-thread-groups
 		// ^done,groups=[{id="i1",type="process"}]
 		// Just ignore that entry
-		List<IMIContainerDMContext> containerDmcs = new ArrayList<IMIContainerDMContext>(groups.length);
+		List<IMIContainerDMContext> containerDmcs = new ArrayList<>(groups.length);
 		for (IThreadGroupInfo group : groups) {
 			if (group.getPid() == null || group.getPid().isEmpty() || group.getPid().equals("0")) { //$NON-NLS-1$
 				continue;
@@ -1855,7 +1855,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 				// First set attribute to specify we want to create an inferior process.
 				// Bug 210366
 				ILaunch launch = (ILaunch) getSession().getModelAdapter(ILaunch.class);
-				Map<String, String> attributes = new HashMap<String, String>();
+				Map<String, String> attributes = new HashMap<>();
 				attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
 						IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
 				IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label != null ? label : "", //$NON-NLS-1$

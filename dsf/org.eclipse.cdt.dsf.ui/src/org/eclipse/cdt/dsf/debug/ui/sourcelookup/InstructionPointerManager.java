@@ -209,7 +209,7 @@ class InstructionPointerManager {
 	 */
 	public InstructionPointerManager(IInstructionPointerPresentation presentation) {
 		fPresentation = presentation;
-		fAnnotationWrappers = new LinkedList<AnnotationWrapper>();
+		fAnnotationWrappers = new LinkedList<>();
 	}
 
 	/**

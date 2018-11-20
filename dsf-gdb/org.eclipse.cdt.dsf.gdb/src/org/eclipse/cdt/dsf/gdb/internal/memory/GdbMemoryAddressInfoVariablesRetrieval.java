@@ -136,7 +136,7 @@ public class GdbMemoryAddressInfoVariablesRetrieval implements IGdbMemoryAddress
 				// Create a List in which we store the DM data objects for the local variables. This is
 				// necessary because there is no MultiDataRequestMonitor. :)
 
-				final List<IVariableDMData> localsDMData = new ArrayList<IVariableDMData>();
+				final List<IVariableDMData> localsDMData = new ArrayList<>();
 
 				// Create the MultiRequestMonitor to handle completion of the set of getModelData() calls.
 
@@ -262,7 +262,7 @@ public class GdbMemoryAddressInfoVariablesRetrieval implements IGdbMemoryAddress
 			String ctxDefaultMemSpaceId) {
 
 		int length = contentsBins.length;
-		final List<IMemoryBlockAddressInfoItem> infoItems = new ArrayList<IMemoryBlockAddressInfoItem>();
+		final List<IMemoryBlockAddressInfoItem> infoItems = new ArrayList<>();
 
 		// Resolve the memory space id of the memory block
 		String memBlockMemSpaceId = EMPTY_STRING;

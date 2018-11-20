@@ -44,7 +44,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
 		super(clientUpdate, requestMonitor);
 		fOffset = offset;
 		fLength = length;
-		fElements = length > 0 ? new ArrayList<Object>(length) : new ArrayList<Object>();
+		fElements = length > 0 ? new ArrayList<>(length) : new ArrayList<>();
 	}
 
 	public VMChildrenUpdate(IModelDelta delta, IPresentationContext presentationContext, int offset, int length,
@@ -52,7 +52,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
 		super(delta, presentationContext, rm);
 		fOffset = offset;
 		fLength = length;
-		fElements = length > 0 ? new ArrayList<Object>(length) : new ArrayList<Object>();
+		fElements = length > 0 ? new ArrayList<>(length) : new ArrayList<>();
 	}
 
 	public VMChildrenUpdate(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext,
@@ -60,7 +60,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
 		super(elementPath, viewerInput, presentationContext, rm);
 		fOffset = offset;
 		fLength = length;
-		fElements = length > 0 ? new ArrayList<Object>(length) : new ArrayList<Object>();
+		fElements = length > 0 ? new ArrayList<>(length) : new ArrayList<>();
 	}
 
 	@Override

@@ -161,7 +161,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 			return null;
 		File[] folders = getFolders();
 		if (folders != null) {
-			LinkedList<Object> list = new LinkedList<Object>();
+			LinkedList<Object> list = new LinkedList<>();
 			for (int i = 0; i < folders.length; ++i) {
 				Object result = findFileByAbsolutePath(folders[i], name);
 				if (result instanceof List) {
@@ -202,7 +202,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 
 		// Try for a file in another workspace project
 		IFile[] wsFiles = ResourceLookup.findFilesForLocation(filePath);
-		LinkedList<IFile> list = new LinkedList<IFile>();
+		LinkedList<IFile> list = new LinkedList<>();
 		for (int j = 0; j < wsFiles.length; ++j)
 			if (wsFiles[j].exists()) {
 				if (!searchForDuplicateFiles())
@@ -223,7 +223,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	private Object findFileByRelativePath(String fileName) {
 		File[] folders = getFolders();
 		if (folders != null) {
-			LinkedList<Object> list = new LinkedList<Object>();
+			LinkedList<Object> list = new LinkedList<>();
 			for (int i = 0; i < folders.length; ++i) {
 				Object result = findFileByRelativePath(folders[i], fileName);
 				if (result instanceof List) {
@@ -253,7 +253,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 		if (file.exists() && file.isFile()) {
 			path = new Path(file.getAbsolutePath());
 			IFile[] wsFiles = ResourceLookup.findFilesForLocation(path);
-			LinkedList<IFile> list = new LinkedList<IFile>();
+			LinkedList<IFile> list = new LinkedList<>();
 			for (int j = 0; j < wsFiles.length; ++j)
 				if (wsFiles[j].exists()) {
 					if (!searchForDuplicateFiles())
@@ -430,7 +430,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 
 	private void initializeFolders() {
 		if (getDirectory() != null) {
-			ArrayList<File> list = new ArrayList<File>();
+			ArrayList<File> list = new ArrayList<>();
 			File root = getDirectory().toFile();
 			list.add(root);
 			if (searchSubfolders())
@@ -440,7 +440,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	}
 
 	private List<File> getFileFolders(File file) {
-		ArrayList<File> list = new ArrayList<File>();
+		ArrayList<File> list = new ArrayList<>();
 		File[] folders = file.listFiles(new FileFilter() {
 			@Override
 			public boolean accept(File pathname) {

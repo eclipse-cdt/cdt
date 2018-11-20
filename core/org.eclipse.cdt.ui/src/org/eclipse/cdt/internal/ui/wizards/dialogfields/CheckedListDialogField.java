@@ -42,7 +42,7 @@ public class CheckedListDialogField<T> extends ListDialogField<T> {
 
 	public CheckedListDialogField(IListAdapter<T> adapter, String[] customButtonLabels, IBaseLabelProvider lprovider) {
 		super(adapter, customButtonLabels, lprovider);
-		fCheckElements = new ArrayList<T>();
+		fCheckElements = new ArrayList<>();
 
 		fCheckAllButtonIndex = -1;
 		fUncheckAllButtonIndex = -1;
@@ -113,7 +113,7 @@ public class CheckedListDialogField<T> extends ListDialogField<T> {
 	 * Gets the checked elements.
 	 */
 	public List<T> getCheckedElements() {
-		return new ArrayList<T>(fCheckElements);
+		return new ArrayList<>(fCheckElements);
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class CheckedListDialogField<T> extends ListDialogField<T> {
 	 * Sets the checked elements.
 	 */
 	public void setCheckedElements(Collection<T> list) {
-		fCheckElements = new ArrayList<T>(list);
+		fCheckElements = new ArrayList<>(list);
 		if (fTable != null) {
 			((CheckboxTableViewer) fTable).setCheckedElements(list.toArray());
 		}

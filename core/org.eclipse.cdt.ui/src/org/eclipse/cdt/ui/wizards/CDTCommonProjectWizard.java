@@ -400,7 +400,7 @@ public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 		String[] contentTypeIds = getContentTypeIDs();
 		if (contentTypeIds.length > 0) {
 			IContentTypeManager manager = Platform.getContentTypeManager();
-			List<String> languageIDs = new ArrayList<String>();
+			List<String> languageIDs = new ArrayList<>();
 			for (int i = 0; i < contentTypeIds.length; ++i) {
 				IContentType contentType = manager.getContentType(contentTypeIds[i]);
 				if (null != contentType) {
@@ -425,7 +425,7 @@ public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 		String[] contentTypeIds = getContentTypeIDs();
 		if (contentTypeIds.length > 0) {
 			IContentTypeManager manager = Platform.getContentTypeManager();
-			List<String> extensions = new ArrayList<String>();
+			List<String> extensions = new ArrayList<>();
 			for (int i = 0; i < contentTypeIds.length; ++i) {
 				IContentType contentType = manager.getContentType(contentTypeIds[i]);
 				if (null != contentType) {

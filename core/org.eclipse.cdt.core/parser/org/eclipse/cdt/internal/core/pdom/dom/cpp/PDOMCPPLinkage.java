@@ -196,7 +196,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	private final static int RECORD_SIZE = FIRST_NAMESPACE_CHILD_OFFSET + Database.PTR_SIZE;
 
 	// Only used when writing to database, which is single-threaded
-	private final LinkedList<Runnable> postProcesses = new LinkedList<Runnable>();
+	private final LinkedList<Runnable> postProcesses = new LinkedList<>();
 
 	public PDOMCPPLinkage(PDOM pdom, long record) {
 		super(pdom, record);
@@ -1533,7 +1533,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (rec == 0) {
 			return ICPPUsingDirective.EMPTY_ARRAY;
 		}
-		LinkedList<ICPPUsingDirective> uds = new LinkedList<ICPPUsingDirective>();
+		LinkedList<ICPPUsingDirective> uds = new LinkedList<>();
 		do {
 			PDOMCPPUsingDirective ud = new PDOMCPPUsingDirective(this, rec);
 			uds.addFirst(ud);

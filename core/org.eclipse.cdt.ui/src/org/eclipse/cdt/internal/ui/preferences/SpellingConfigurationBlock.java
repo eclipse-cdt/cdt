@@ -312,7 +312,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 
-		List<Control> allControls = new ArrayList<Control>();
+		List<Control> allControls = new ArrayList<>();
 		final PixelConverter converter = new PixelConverter(parent);
 
 		final String[] trueFalse = new String[] { IPreferenceStore.TRUE, IPreferenceStore.FALSE };
@@ -657,7 +657,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 			fEnabledControls = null;
 		}
 		if (!enabled && fEnabledControls == null) {
-			List<Control> enabledControls = new ArrayList<Control>();
+			List<Control> enabledControls = new ArrayList<>();
 			for (int i = fAllControls.length - 1; i >= 0; i--) {
 				Control control = fAllControls[i];
 				if (control.isEnabled()) {

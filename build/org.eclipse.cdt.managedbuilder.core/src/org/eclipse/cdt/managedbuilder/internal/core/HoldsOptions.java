@@ -281,7 +281,7 @@ public abstract class HoldsOptions extends BuildObject
 		Map<String, IOption> map = null;
 
 		if (this.superClass == null) {
-			map = new LinkedHashMap<String, IOption>(); // LinkedHashMap ensures we maintain option ordering
+			map = new LinkedHashMap<>(); // LinkedHashMap ensures we maintain option ordering
 
 			for (Option ourOpt : getOptionCollection()) {
 				if (ourOpt.isValid()) {
@@ -411,14 +411,14 @@ public abstract class HoldsOptions extends BuildObject
 	 */
 	private Vector<String> getCategoryIds() {
 		if (categoryIds == null) {
-			categoryIds = new Vector<String>();
+			categoryIds = new Vector<>();
 		}
 		return categoryIds;
 	}
 
 	public void addChildCategory(IOptionCategory category) {
 		if (childOptionCategories == null)
-			childOptionCategories = new ArrayList<IOptionCategory>();
+			childOptionCategories = new ArrayList<>();
 		childOptionCategories.add(category);
 	}
 
@@ -431,7 +431,7 @@ public abstract class HoldsOptions extends BuildObject
 	 */
 	private Map<String, IOptionCategory> getCategoryMap() {
 		if (categoryMap == null) {
-			categoryMap = new HashMap<String, IOptionCategory>();
+			categoryMap = new HashMap<>();
 		}
 		return categoryMap;
 	}
@@ -452,7 +452,7 @@ public abstract class HoldsOptions extends BuildObject
 	 */
 	private Map<String, Option> getOptionMap() {
 		if (optionMap == null) {
-			optionMap = new LinkedHashMap<String, Option>();
+			optionMap = new LinkedHashMap<>();
 		}
 		return optionMap;
 	}
@@ -718,7 +718,7 @@ public abstract class HoldsOptions extends BuildObject
 
 	@Override
 	public String[] getRequiredTypeIds() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (IOption op : getOptions())
 			list.addAll(Arrays.asList(((Option) op).getRequiredTypeIds()));
 		return list.toArray(new String[list.size()]);
@@ -726,7 +726,7 @@ public abstract class HoldsOptions extends BuildObject
 
 	@Override
 	public String[] getSupportedTypeIds() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (IOption op : getOptions())
 			list.addAll(Arrays.asList(((Option) op).getSupportedTypeIds()));
 		return list.toArray(new String[list.size()]);
@@ -734,7 +734,7 @@ public abstract class HoldsOptions extends BuildObject
 
 	@Override
 	public String[] getSupportedValueIds(String typeId) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (IOption op : getOptions())
 			list.addAll(Arrays.asList(((Option) op).getSupportedValueIds(typeId)));
 		return list.toArray(new String[list.size()]);

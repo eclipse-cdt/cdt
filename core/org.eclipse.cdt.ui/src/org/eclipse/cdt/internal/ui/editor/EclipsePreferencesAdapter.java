@@ -57,7 +57,7 @@ class EclipsePreferencesAdapter implements IPreferenceStore {
 	}
 
 	/** Listeners on on this adapter */
-	private ListenerList<IPropertyChangeListener> fListeners = new ListenerList<IPropertyChangeListener>(
+	private ListenerList<IPropertyChangeListener> fListeners = new ListenerList<>(
 			ListenerList.IDENTITY);
 
 	/** Listener on the node */

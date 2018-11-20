@@ -199,7 +199,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 		fFileNameDialogField.setDialogFieldListener(fFieldsAdapter);
 		fFileNameDialogField.setLabelText(NewClassWizardMessages.SourceFileSelectionDialog_fileName_label);
 
-		setResult(new ArrayList<Object>(0));
+		setResult(new ArrayList<>(0));
 		setStatusLineAboveButtons(true);
 
 		int shellStyle = getShellStyle();

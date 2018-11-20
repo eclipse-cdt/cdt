@@ -70,9 +70,9 @@ public final class WordCompletionProposalComputer implements ICompletionProposal
 					final ISpellChecker checker = engine.getSpellChecker();
 
 					if (checker != null) {
-						final List<RankedWordProposal> proposals = new ArrayList<RankedWordProposal>(
+						final List<RankedWordProposal> proposals = new ArrayList<>(
 								checker.getProposals(candidate, Character.isUpperCase(candidate.charAt(0))));
-						final List<ICompletionProposal> result = new ArrayList<ICompletionProposal>(proposals.size());
+						final List<ICompletionProposal> result = new ArrayList<>(proposals.size());
 
 						for (Object element : proposals) {
 							RankedWordProposal word = (RankedWordProposal) element;

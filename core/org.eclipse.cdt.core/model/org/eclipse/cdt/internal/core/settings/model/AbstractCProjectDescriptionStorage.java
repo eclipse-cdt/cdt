@@ -78,7 +78,7 @@ public abstract class AbstractCProjectDescriptionStorage {
 	/** Before the description is fully applied / loaded, consumers of CProjectDescriptionEvent and CProjectDescription.applyDatas()
 	 *  assume that getProjectDescription(...) will return the writable project description in the process of being created / modified...
 	 *  Cached temporarily in a thread local variable for this very purpose. */
-	final private ThreadLocal<ICProjectDescription> currentThreadProjectDescription = new ThreadLocal<ICProjectDescription>();
+	final private ThreadLocal<ICProjectDescription> currentThreadProjectDescription = new ThreadLocal<>();
 
 	/**
 	 * @param type CProjectDescriptionStorageTypeProxy

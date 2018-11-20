@@ -35,7 +35,7 @@ public class CodeViewReader implements ISymbolReader {
 		cvData = dataOffset;
 		isLe = littleEndian;
 
-		fileList = new ArrayList<String>();
+		fileList = new ArrayList<>();
 	}
 
 	@Override

@@ -37,7 +37,7 @@ public class MIGDBSetArgs extends MIGDBSet {
 	/** @since 4.0 */
 	public MIGDBSetArgs(IMIContainerDMContext dmc, String[] arguments) {
 		super(dmc, null);
-		fParameters = new ArrayList<Adjustable>();
+		fParameters = new ArrayList<>();
 		fParameters.add(new MIStandardParameterAdjustable("args")); //$NON-NLS-1$
 		/*
 		 * GDB-MI terminates the -gdb-set on the newline, so we have to encode

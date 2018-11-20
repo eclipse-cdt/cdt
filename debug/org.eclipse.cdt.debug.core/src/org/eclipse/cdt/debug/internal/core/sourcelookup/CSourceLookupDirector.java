@@ -91,7 +91,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	private void readSupportedContainerTypes() {
 		synchronized (fSupportedTypesLock) {
 			if (fSupportedTypes == null) {
-				fSupportedTypes = new HashSet<String>();
+				fSupportedTypes = new HashSet<>();
 				String name = CDebugCorePlugin.PLUGIN_ID + ".supportedSourceContainerTypes"; //$NON-NLS-1$;
 				IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(name);
 				if (extensionPoint != null) {

@@ -39,7 +39,7 @@ public class PDARegister {
 		fName = regSt.nextToken();
 		fWritable = Boolean.parseBoolean(regSt.nextToken());
 
-		List<PDABitField> bitFieldsList = new ArrayList<PDABitField>();
+		List<PDABitField> bitFieldsList = new ArrayList<>();
 		while (st.hasMoreTokens()) {
 			bitFieldsList.add(new PDABitField(st.nextToken()));
 		}

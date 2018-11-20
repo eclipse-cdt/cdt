@@ -55,7 +55,7 @@ public class LanguageMappingResolver {
 	public static LanguageMapping[] computeLanguage(IProject project, String filePath,
 			ICConfigurationDescription configuration, String contentTypeId, boolean fetchAll) throws CoreException {
 		LanguageManager manager = LanguageManager.getInstance();
-		List<LanguageMapping> inheritedLanguages = new LinkedList<LanguageMapping>();
+		List<LanguageMapping> inheritedLanguages = new LinkedList<>();
 
 		if (project != null) {
 			ProjectLanguageConfiguration mappings = manager.getLanguageConfiguration(project);

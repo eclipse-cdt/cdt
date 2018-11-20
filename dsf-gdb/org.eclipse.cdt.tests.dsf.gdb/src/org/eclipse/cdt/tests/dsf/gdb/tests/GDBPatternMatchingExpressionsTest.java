@@ -1500,7 +1500,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	@Test
 	public void testGroupGetSubExpressions() throws Throwable {
 		final String exprString = "$eax;*";
-		List<String> list = new LinkedList<String>();
+		List<String> list = new LinkedList<>();
 		list.add("$eax");
 		list.addAll(Arrays.asList(fAllVariables));
 		final String[] children = list.toArray(new String[list.size()]);

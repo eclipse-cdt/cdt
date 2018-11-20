@@ -177,7 +177,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected void loadSymbols(XCoff32 xcoff) throws IOException {
-		ArrayList<XCoffSymbol> list = new ArrayList<XCoffSymbol>();
+		ArrayList<XCoffSymbol> list = new ArrayList<>();
 
 		XCoff32.Symbol[] peSyms = xcoff.getSymbols();
 		byte[] table = xcoff.getStringTable();

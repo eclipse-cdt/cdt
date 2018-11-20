@@ -99,8 +99,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 
 	private static Map<String, IErrorParserNamed> fExtensionErrorParsers = null;
 
-	private final Map<String, IErrorParserNamed> fAvailableErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
-	private final Map<String, ICOptionPage> fOptionsPageMap = new HashMap<String, ICOptionPage>();
+	private final Map<String, IErrorParserNamed> fAvailableErrorParsers = new LinkedHashMap<>();
+	private final Map<String, ICOptionPage> fOptionsPageMap = new HashMap<>();
 	private ICOptionPage fCurrentOptionsPage = null;
 
 	private Composite fCompositeForOptionsPage;
@@ -235,7 +235,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 
 	private void initMapParsers() {
 		if (fExtensionErrorParsers == null) {
-			fExtensionErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
+			fExtensionErrorParsers = new LinkedHashMap<>();
 			String[] idsExt = ErrorParserManager.getErrorParserExtensionIds();
 			for (String idExt : idsExt) {
 				IErrorParserNamed errorParserExt = ErrorParserManager.getErrorParserExtensionCopy(idExt);
@@ -259,7 +259,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			} else {
 				ids = srcCfgDesc.getBuildSetting().getErrorParserIDs();
 			}
-			Set<String> setIds = new LinkedHashSet<String>(Arrays.asList(ids));
+			Set<String> setIds = new LinkedHashSet<>(Arrays.asList(ids));
 			setIds.addAll(fAvailableErrorParsers.keySet());
 			fTableViewer.setInput(setIds.toArray(new String[0]));
 		} else {
@@ -551,7 +551,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			if (fCfgDesc == null) {
 				// Build Settings page
 				try {
-					List<IErrorParserNamed> errorParsersList = new ArrayList<IErrorParserNamed>(fTable.getItemCount());
+					List<IErrorParserNamed> errorParsersList = new ArrayList<>(fTable.getItemCount());
 					for (TableItem item : fTable.getItems()) {
 						if (item.getData() instanceof String) {
 							String id = (String) item.getData();

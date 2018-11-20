@@ -501,7 +501,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 
 	/** @since 4.4 */
 	protected String[] parseCores(MIList list) {
-		List<String> cores = new ArrayList<String>();
+		List<String> cores = new ArrayList<>();
 
 		MIValue[] values = list.getMIValues();
 		for (int i = 0; i < values.length; i++) {

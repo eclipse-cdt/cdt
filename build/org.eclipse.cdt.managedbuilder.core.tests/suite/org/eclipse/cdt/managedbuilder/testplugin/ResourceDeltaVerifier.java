@@ -112,7 +112,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	/**
 	 * Table of IPath -> ExpectedChange
 	 */
-	private Hashtable<IPath, ExpectedChange> fExpectedChanges = new Hashtable<IPath, ExpectedChange>();
+	private Hashtable<IPath, ExpectedChange> fExpectedChanges = new Hashtable<>();
 	boolean fIsDeltaValid = true;
 	private StringBuilder fMessage = new StringBuilder();
 	/**
@@ -133,7 +133,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	private static final int VERIFICATION_COMPLETE = 2;
 
 	private int fState = RECEIVING_INPUTS;
-	private Set<IResource> fIgnoreResources = new HashSet<IResource>();
+	private Set<IResource> fIgnoreResources = new HashSet<>();
 
 	/**
 	 * @see #addExpectedChange
@@ -263,7 +263,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		IResourceDelta[] removedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED,
 				IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 
-		Hashtable<IResource, IResourceDelta> h = new Hashtable<IResource, IResourceDelta>(affectedChildren.length + 1);
+		Hashtable<IResource, IResourceDelta> h = new Hashtable<>(affectedChildren.length + 1);
 
 		for (int i = 0; i < addedChildren.length; ++i) {
 			IResourceDelta childDelta1 = addedChildren[i];
@@ -467,7 +467,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	 * are met after iterating over a resource delta.
 	 */
 	private void finishVerification() {
-		Hashtable<IPath, IPath> resourcePaths = new Hashtable<IPath, IPath>();
+		Hashtable<IPath, IPath> resourcePaths = new Hashtable<>();
 
 		Enumeration<IPath> keys = fExpectedChanges.keys();
 		while (keys.hasMoreElements()) {

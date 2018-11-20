@@ -35,7 +35,7 @@ public class WorkspaceLanguageConfiguration {
 	 * language mappings defined.
 	 */
 	public WorkspaceLanguageConfiguration() {
-		fMappings = new TreeMap<String, String>();
+		fMappings = new TreeMap<>();
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class WorkspaceLanguageConfiguration {
 	 * @param mappings
 	 */
 	public void setWorkspaceMappings(Map<String, String> mappings) {
-		fMappings = new TreeMap<String, String>(mappings);
+		fMappings = new TreeMap<>(mappings);
 	}
 
 	/**

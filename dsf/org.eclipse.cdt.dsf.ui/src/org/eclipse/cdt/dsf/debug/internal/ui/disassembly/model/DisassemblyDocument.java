@@ -61,16 +61,16 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * Use the add/remove methods. Note that we're not the only ones that
 	 * manipulate the list. This list should be accessed only from the GUI thread
 	 */
-	private final List<AddressRangePosition> fInvalidAddressRanges = new ArrayList<AddressRangePosition>();
+	private final List<AddressRangePosition> fInvalidAddressRanges = new ArrayList<>();
 
 	/**
 	 * For ease of troubleshooting, don't add or remove from this list directly.
 	 * Use the add/remove methods. Note that we're not the only ones that
 	 * manipulate the list. This list should be accessed only from the GUI thread
 	 */
-	private final List<SourcePosition> fInvalidSource = new ArrayList<SourcePosition>();
+	private final List<SourcePosition> fInvalidSource = new ArrayList<>();
 
-	private final Map<IStorage, SourceFileInfo> fFileInfoMap = new HashMap<IStorage, SourceFileInfo>();
+	private final Map<IStorage, SourceFileInfo> fFileInfoMap = new HashMap<>();
 
 	private int fMaxFunctionLength = 0;
 	private BigInteger fMaxOpcodeLength = null;
@@ -1326,7 +1326,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 			String replacement = invalidate ? "...\n" : null; //$NON-NLS-1$
 			int replaceLen = replacement != null ? replacement.length() : 0;
 			AddressRangePosition lastPos = null;
-			ArrayList<AddressRangePosition> toRemove = new ArrayList<AddressRangePosition>();
+			ArrayList<AddressRangePosition> toRemove = new ArrayList<>();
 			Iterator<Position> it = getModelPositionIterator(startAddress);
 			while (it.hasNext()) {
 				AddressRangePosition pos = (AddressRangePosition) it.next();
@@ -1471,7 +1471,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		}
 		BigInteger startAddress = BigInteger.ZERO;
 		BigInteger addressLength = BigInteger.ZERO;
-		ArrayList<AddressRangePosition> toRemove = new ArrayList<AddressRangePosition>();
+		ArrayList<AddressRangePosition> toRemove = new ArrayList<>();
 		try {
 			Iterator<Position> it = getPositionIterator(DisassemblyDocument.CATEGORY_MODEL, startAddress);
 			while (it.hasNext()) {

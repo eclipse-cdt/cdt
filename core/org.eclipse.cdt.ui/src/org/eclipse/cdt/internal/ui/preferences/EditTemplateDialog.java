@@ -161,8 +161,8 @@ public class EditTemplateDialog extends StatusDialog {
 
 	private StatusInfo fValidationStatus;
 	private boolean fSuppressError = true; // https://bugs.eclipse.org/bugs/show_bug.cgi?id=4354
-	private final Map<String, TextViewerAction> fGlobalActions = new HashMap<String, TextViewerAction>(10);
-	private final List<String> fSelectionActions = new ArrayList<String>(3);
+	private final Map<String, TextViewerAction> fGlobalActions = new HashMap<>(10);
+	private final List<String> fSelectionActions = new ArrayList<>(3);
 	private String[][] fContextTypes;
 
 	private ContextTypeRegistry fContextTypeRegistry;
@@ -193,7 +193,7 @@ public class EditTemplateDialog extends StatusDialog {
 
 		//		String delim= new Document().getLegalLineDelimiters()[0];
 
-		List<String[]> contexts = new ArrayList<String[]>();
+		List<String[]> contexts = new ArrayList<>();
 		for (Iterator<?> it = registry.contextTypes(); it.hasNext();) {
 			TemplateContextType type = (TemplateContextType) it.next();
 			// TODO cppdoc? doxygen?
@@ -485,7 +485,7 @@ public class EditTemplateDialog extends StatusDialog {
 	}
 
 	private void initializeActions() {
-		final ArrayList<IHandlerActivation> handlerActivations = new ArrayList<IHandlerActivation>(3);
+		final ArrayList<IHandlerActivation> handlerActivations = new ArrayList<>(3);
 		final IHandlerService handlerService = PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		getShell().addDisposeListener(new DisposeListener() {
 			@Override

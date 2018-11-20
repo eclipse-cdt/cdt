@@ -741,7 +741,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 		@Override
 		public Map<String, Integer> getEnumerations() {
-			return new HashMap<String, Integer>();
+			return new HashMap<>();
 		}
 
 		@Override
@@ -859,20 +859,20 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		 *  storing the return value, e.g., $1 -> "foo() returned"
 		 *  This map allows to quickly find the alias to be used for return value variables.
 		 */
-		private Map<String, String> fExpressionAliasesMap = new HashMap<String, String>();
+		private Map<String, String> fExpressionAliasesMap = new HashMap<>();
 		/**
 		 * Map of thread to aliases expression list.  This map allows to know which aliases are related
 		 * to a thread of execution.  This is important to allow us to delete aliases when a
 		 * thread exits.  Note that we need a list because we keep all previous aliases until
 		 * the thread exits.
 		 */
-		private Map<IMIExecutionDMContext, List<String>> fThreadToAliasedExpressionsMap = new HashMap<IMIExecutionDMContext, List<String>>();
+		private Map<IMIExecutionDMContext, List<String>> fThreadToAliasedExpressionsMap = new HashMap<>();
 		/**
 		 * Map of thread to the name of the method the thread last stopped in.
 		 * This allows us to create the alias based on the method the thread was in
 		 * before it returned out of the method.
 		 */
-		private Map<IMIExecutionDMContext, String> fThreadToTopMethodName = new HashMap<IMIExecutionDMContext, String>();
+		private Map<IMIExecutionDMContext, String> fThreadToTopMethodName = new HashMap<>();
 
 		/**
 		 * Create an alias for expr with respect to threadDmc.
@@ -889,7 +889,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
 			List<String> aliasedExprList = fThreadToAliasedExpressionsMap.get(threadDmc);
 			if (aliasedExprList == null) {
-				aliasedExprList = new ArrayList<String>();
+				aliasedExprList = new ArrayList<>();
 				fThreadToAliasedExpressionsMap.put(threadDmc, aliasedExprList);
 			}
 			aliasedExprList.add(expr);

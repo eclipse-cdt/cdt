@@ -34,7 +34,7 @@ public class FileEncodingRegistry implements Serializable {
 
 	public FileEncodingRegistry(String defaultEncoding) {
 		this.defaultEncoding = defaultEncoding;
-		fFilePathToEncodingMap = new TreeMap<String, String>();
+		fFilePathToEncodingMap = new TreeMap<>();
 	}
 
 	public void setDefaultEncoding(String newDefaultEncoding) {

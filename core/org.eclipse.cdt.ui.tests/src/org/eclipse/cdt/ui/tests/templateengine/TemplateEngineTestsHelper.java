@@ -64,7 +64,7 @@ public class TemplateEngineTestsHelper {
 
 	public static TemplateCore[] getTestTemplates() {
 		TemplateCore[] templates = TemplateEngine.getDefault().getTemplates();
-		List<TemplateCore> testTemplates = new ArrayList<TemplateCore>();
+		List<TemplateCore> testTemplates = new ArrayList<>();
 		for (int i = 0; i < templates.length; i++) {
 			if (templates[i].getTemplateType().equals("TestTemplate")) {
 				testTemplates.add(templates[i]);

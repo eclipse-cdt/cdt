@@ -60,7 +60,7 @@ public class MITraceListVariablesInfo extends MIInfo {
 	}
 
 	private void parse() {
-		List<MITraceVariableInfo> aList = new ArrayList<MITraceVariableInfo>(1);
+		List<MITraceVariableInfo> aList = new ArrayList<>(1);
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();

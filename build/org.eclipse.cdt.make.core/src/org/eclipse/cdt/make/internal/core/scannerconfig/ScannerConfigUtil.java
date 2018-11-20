@@ -66,7 +66,7 @@ public final class ScannerConfigUtil {
 	 */
 	public static List<String> scSymbolsSymbolEntryMap2List(Map<String, SymbolEntry> sumSymbols, boolean active) {
 		Set<Entry<String, SymbolEntry>> symbols = sumSymbols.entrySet();
-		List<String> rv = new ArrayList<String>(symbols.size());
+		List<String> rv = new ArrayList<>(symbols.size());
 		for (Entry<String, SymbolEntry> symbol : symbols) {
 			SymbolEntry sEntry = symbol.getValue();
 			if (active) {
@@ -85,7 +85,7 @@ public final class ScannerConfigUtil {
 	 * @return - active symbols as a plain Map
 	 */
 	public static Map<String, String> scSymbolEntryMap2Map(Map<String, SymbolEntry> sumSymbols) {
-		Map<String, String> rv = new HashMap<String, String>();
+		Map<String, String> rv = new HashMap<>();
 		Set<String> keys = sumSymbols.keySet();
 		for (String key : keys) {
 			SymbolEntry entries = sumSymbols.get(key);
@@ -216,13 +216,13 @@ public final class ScannerConfigUtil {
 		if (index1 == index2 || !(index1 >= 0 && index1 < size && index2 >= 0 && index2 < size)) {
 			return sumPaths;
 		}
-		ArrayList<String> pathKeyList = new ArrayList<String>(sumPaths.keySet());
+		ArrayList<String> pathKeyList = new ArrayList<>(sumPaths.keySet());
 		String temp1 = pathKeyList.get(index1);
 		String temp2 = pathKeyList.get(index2);
 		pathKeyList.set(index1, temp2);
 		pathKeyList.set(index2, temp1);
 
-		LinkedHashMap<String, SymbolEntry> newSumPaths = new LinkedHashMap<String, SymbolEntry>(sumPaths.size());
+		LinkedHashMap<String, SymbolEntry> newSumPaths = new LinkedHashMap<>(sumPaths.size());
 		for (String key : pathKeyList) {
 			newSumPaths.put(key, sumPaths.get(key));
 		}
@@ -233,7 +233,7 @@ public final class ScannerConfigUtil {
 	 * Tokenizes string with quotes
 	 */
 	public static String[] tokenizeStringWithQuotes(String line, String quoteStyle) {
-		ArrayList<String> allTokens = new ArrayList<String>();
+		ArrayList<String> allTokens = new ArrayList<>();
 		String[] tokens = line.split(quoteStyle);
 		for (int i = 0; i < tokens.length; ++i) {
 			if (i % 2 == 0) { // even tokens need further tokenization

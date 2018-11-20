@@ -57,7 +57,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 		if (!(docExtension instanceof IDocument))
 			return;
 
-		List<Edit> edits = new LinkedList<Edit>();
+		List<Edit> edits = new LinkedList<>();
 
 		ITypedRegion firstPartition = docExtension.getPartition(ICPartitions.C_PARTITIONING, selection.getOffset(),
 				false);

@@ -230,7 +230,7 @@ public class GCCSizeofExpressionParser extends PrsStream implements RuleAction, 
 	}
 
 	private void initActions(Map<String, String> properties) {
-		ScopedStack<Object> astStack = new ScopedStack<Object>();
+		ScopedStack<Object> astStack = new ScopedStack<>();
 
 		action = new GCCBuildASTParserAction(this, astStack, CNodeFactory.getDefault(),
 				GCCSecondaryParserFactory.getDefault());

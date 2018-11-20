@@ -52,7 +52,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 	private static String[] EMPTY = new String[0];
 	private Preferences fPrefs;
-	protected HashMap<String, String> mapParsers = new HashMap<String, String>();
+	protected HashMap<String, String> mapParsers = new HashMap<>();
 	private CheckedListDialogField<String> fErrorParserList;
 	protected boolean listDirty = false;
 
@@ -139,7 +139,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		String[] empty = new String[0];
 		if (parserIDs != null && parserIDs.length() > 0) {
 			StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-			List<String> list = new ArrayList<String>(tok.countTokens());
+			List<String> list = new ArrayList<>(tok.countTokens());
 			while (tok.hasMoreElements()) {
 				list.add(tok.nextToken());
 			}
@@ -271,7 +271,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 				null, CUIMessages.AbstractErrorParserBlock_label_selectAll,
 				CUIMessages.AbstractErrorParserBlock_label_unselectAll };
 
-		fErrorParserList = new CheckedListDialogField<String>(null, buttonLabels, getLabelProvider());
+		fErrorParserList = new CheckedListDialogField<>(null, buttonLabels, getLabelProvider());
 		fErrorParserList.setDialogFieldListener(getFieldListenerAdapter());
 		fErrorParserList.setLabelText(CUIMessages.AbstractErrorParserBlock_label_errorParsers);
 		fErrorParserList.setUpButtonIndex(0);
@@ -295,7 +295,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 			monitor.beginTask(CUIMessages.AbstractErrorParserBlock_task_setErrorParser, 1);
 			List<String> elements = fErrorParserList.getElements();
 			int count = elements.size();
-			List<Object> list = new ArrayList<Object>(count);
+			List<Object> list = new ArrayList<>(count);
 			for (int i = 0; i < count; i++) {
 				Object obj = elements.get(i);
 				if (fErrorParserList.isChecked(obj)) {

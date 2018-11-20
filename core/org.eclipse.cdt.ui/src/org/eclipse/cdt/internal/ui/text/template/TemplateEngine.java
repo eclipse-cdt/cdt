@@ -59,9 +59,9 @@ public class TemplateEngine {
 	/** The context type. */
 	private final TemplateContextType fContextType;
 	/** The result proposals. */
-	private final ArrayList<ICompletionProposal> fProposals = new ArrayList<ICompletionProposal>();
+	private final ArrayList<ICompletionProposal> fProposals = new ArrayList<>();
 	/** Positions created on the key documents to remove in reset. */
-	private final Map<IDocument, Position> fPositions = new HashMap<IDocument, Position>();
+	private final Map<IDocument, Position> fPositions = new HashMap<>();
 	/** Pattern to match the start of a line content */
 	private final Pattern fStartOfLineContentPattern = Pattern.compile("[^ \t]"); //$NON-NLS-1$
 

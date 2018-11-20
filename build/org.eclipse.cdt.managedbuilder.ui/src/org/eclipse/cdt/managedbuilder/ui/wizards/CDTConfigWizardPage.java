@@ -93,7 +93,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		if (getDefault || table == null || !isVisited())
 			its = getDefaultCfgs(handler);
 		else {
-			ArrayList<CfgHolder> out = new ArrayList<CfgHolder>(table.getItemCount());
+			ArrayList<CfgHolder> out = new ArrayList<>(table.getItemCount());
 			for (TableItem ti : table.getItems()) {
 				if (ti.getChecked())
 					out.add((CfgHolder) ti.getData());
@@ -217,7 +217,7 @@ public class CDTConfigWizardPage extends WizardPage {
 	static public CfgHolder[] getDefaultCfgs(MBSWizardHandler handler) {
 		String id = handler.getPropertyId();
 		IProjectType pt = handler.getProjectType();
-		ArrayList<CfgHolder> out = new ArrayList<CfgHolder>();
+		ArrayList<CfgHolder> out = new ArrayList<>();
 		for (IToolChain tc : handler.getSelectedToolChains()) {
 			CfgHolder[] cfgs = null;
 			if (id != null)

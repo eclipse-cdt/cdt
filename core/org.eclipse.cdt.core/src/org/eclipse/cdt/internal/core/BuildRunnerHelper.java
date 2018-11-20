@@ -148,7 +148,7 @@ public class BuildRunnerHelper implements Closeable {
 		// stdout/stderr get to the console through ErrorParserManager
 		errorParserManager.setOutputStream(consoleOut);
 
-		List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
+		List<IConsoleParser> parsers = new ArrayList<>();
 		// Using ErrorParserManager as console parser helps to avoid intermixing buffered streams
 		// as ConsoleOutputSniffer waits for EOL to send a line to console parsers
 		// separately for each stream.
@@ -217,7 +217,7 @@ public class BuildRunnerHelper implements Closeable {
 					IMarker[] markers = workspace.getRoot().findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true,
 							IResource.DEPTH_INFINITE);
 					String projectName = project.getName();
-					List<IMarker> markersList = new ArrayList<IMarker>();
+					List<IMarker> markersList = new ArrayList<>();
 					for (IMarker marker : markers) {
 						if (projectName.equals(marker.getAttribute(IMarker.SOURCE_ID))) {
 							markersList.add(marker);
@@ -560,7 +560,7 @@ public class BuildRunnerHelper implements Closeable {
 	 */
 	public static String[] envMapToEnvp(Map<String, String> envMap) {
 		// Convert into envp strings
-		List<String> strings = new ArrayList<String>(envMap.size());
+		List<String> strings = new ArrayList<>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
 			strings.add(entry.getKey() + '=' + entry.getValue());
 		}
@@ -579,7 +579,7 @@ public class BuildRunnerHelper implements Closeable {
 		IEnvironmentVariableManager mngr = CCorePlugin.getDefault().getBuildEnvironmentManager();
 		IEnvironmentVariable[] vars = mngr.getVariables(cfgDescription, true);
 		// Convert into envp strings
-		List<String> strings = new ArrayList<String>(vars.length);
+		List<String> strings = new ArrayList<>(vars.length);
 		for (IEnvironmentVariable var : vars) {
 			strings.add(var.getName() + '=' + var.getValue());
 		}

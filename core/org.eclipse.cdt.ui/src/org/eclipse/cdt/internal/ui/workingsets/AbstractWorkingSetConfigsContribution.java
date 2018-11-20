@@ -74,7 +74,7 @@ abstract class AbstractWorkingSetConfigsContribution extends CompoundContributio
 		}
 
 		// sort the configurations by name
-		List<IWorkingSetConfiguration> configs = new java.util.ArrayList<IWorkingSetConfiguration>(
+		List<IWorkingSetConfiguration> configs = new java.util.ArrayList<>(
 				getWorkingSet().getConfigurations());
 		Collections.sort(configs, configOrdering);
 

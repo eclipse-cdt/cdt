@@ -170,7 +170,7 @@ public class SyncUtil {
 
 	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, boolean reverse,
 			int massagedTimeout) throws Throwable {
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		if (!reverse) {
@@ -280,7 +280,7 @@ public class SyncUtil {
 
 	private static MIStoppedEvent resumeUntilStopped(final IExecutionDMContext dmc, int massagedTimeout)
 			throws Throwable {
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		fRunControl.getExecutor().submit(new Runnable() {
@@ -308,7 +308,7 @@ public class SyncUtil {
 	}
 
 	public static MIRunningEvent resume(final IExecutionDMContext dmc, int massagedTimeout) throws Throwable {
-		final ServiceEventWaitor<MIRunningEvent> eventWaitor = new ServiceEventWaitor<MIRunningEvent>(fSession,
+		final ServiceEventWaitor<MIRunningEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIRunningEvent.class);
 
 		fRunControl.getExecutor().submit(new Runnable() {
@@ -378,7 +378,7 @@ public class SyncUtil {
 	// if there is a sleep in the code between the resume and the time
 	// it stops; this will give us plenty of time to call this method.
 	public static MIStoppedEvent waitForStop(int timeout) throws Throwable {
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		// Wait for the execution to suspend
@@ -592,7 +592,7 @@ public class SyncUtil {
 		 * we allows 10 seconds, which is probably ample in most cases. Tests
 		 * can provide larger values as needed in specific SyncUtil calls.
 		 */
-		private static Map<ETimeout, Integer> sTimeouts = new HashMap<ETimeout, Integer>();
+		private static Map<ETimeout, Integer> sTimeouts = new HashMap<>();
 		static {
 			sTimeouts.put(ETimeout.addBreakpoint, 1000);
 			sTimeouts.put(ETimeout.deleteBreakpoint, 1000);
@@ -778,7 +778,7 @@ public class SyncUtil {
 		}
 
 		// Now wait for the stopped event of the restart
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		// Perform the restart
@@ -815,7 +815,7 @@ public class SyncUtil {
 					protected void handleCompleted() {
 						if (isSuccess()) {
 							IVariableDMContext[] varDmcs = getData();
-							final List<IVariableDMData> localsDMData = new ArrayList<IVariableDMData>();
+							final List<IVariableDMData> localsDMData = new ArrayList<>();
 							final CountingRequestMonitor crm = new CountingRequestMonitor(
 									ImmediateExecutor.getInstance(), rm) {
 								@Override
@@ -876,7 +876,7 @@ public class SyncUtil {
 
 			// Remove registers with empty names since the service also
 			// remove them. I don't know why GDB returns such empty names.
-			List<String> registerNames = new LinkedList<String>();
+			List<String> registerNames = new LinkedList<>();
 			for (String name : names) {
 				if (!name.isEmpty()) {
 					registerNames.add(name);

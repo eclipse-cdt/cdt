@@ -283,7 +283,7 @@ public class CacheTests {
 		assertFalse(fTestCache.isValid());
 
 		// Request data from cache
-		List<Query<Integer>> qList = new ArrayList<Query<Integer>>();
+		List<Query<Integer>> qList = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			Query<Integer> q = new TestQuery();
 			fExecutor.execute(q);
@@ -759,7 +759,7 @@ public class CacheTests {
 	@Test
 	public void cancelWhilePendingWithManyClientsTest() throws InterruptedException, ExecutionException {
 		// Request data from cache
-		List<Query<Integer>> qList = new ArrayList<Query<Integer>>();
+		List<Query<Integer>> qList = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			Query<Integer> q = new TestQuery();
 			fExecutor.submit(q).get();

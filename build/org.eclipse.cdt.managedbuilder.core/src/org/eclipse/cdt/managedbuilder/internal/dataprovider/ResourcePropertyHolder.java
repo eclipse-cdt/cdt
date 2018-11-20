@@ -22,7 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 
 class ResourcePropertyHolder extends ResourceChangeHandlerBase {
-	private Map<String, Map<String, Boolean>> fRcMap = new HashMap<String, Map<String, Boolean>>();
+	private Map<String, Map<String, Boolean>> fRcMap = new HashMap<>();
 	private boolean fProjectOnly;
 
 	public ResourcePropertyHolder(boolean projectOnly) {
@@ -88,7 +88,7 @@ class ResourcePropertyHolder extends ResourceChangeHandlerBase {
 		String key = keyForResource(rc);
 		Map<String, Boolean> map = fRcMap.get(key);
 		if (map == null && create) {
-			map = new HashMap<String, Boolean>();
+			map = new HashMap<>();
 			fRcMap.put(key, map);
 		}
 

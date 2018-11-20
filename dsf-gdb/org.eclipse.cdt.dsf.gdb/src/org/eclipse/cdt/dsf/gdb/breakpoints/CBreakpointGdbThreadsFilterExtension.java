@@ -104,7 +104,7 @@ public class CBreakpointGdbThreadsFilterExtension implements IDsfBreakpointExten
 	public void setThreadFilters(IExecutionDMContext[] threads) throws CoreException {
 		if (threads != null && threads.length > 0) {
 			IContainerDMContext target = DMContexts.getAncestorOfType(threads[0], IContainerDMContext.class);
-			fFilteredThreadsByTarget.put(target, new HashSet<IExecutionDMContext>(Arrays.asList(threads)));
+			fFilteredThreadsByTarget.put(target, new HashSet<>(Arrays.asList(threads)));
 		}
 	}
 

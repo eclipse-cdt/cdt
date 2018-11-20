@@ -43,7 +43,7 @@ public class DiscoveredElement {
 	private String fEntry;
 	private int fEntryKind;
 	private boolean fRemoved;
-	private ArrayList<DiscoveredElement> fChildren = new ArrayList<DiscoveredElement>();
+	private ArrayList<DiscoveredElement> fChildren = new ArrayList<>();
 	private DiscoveredElement fParent;
 
 	public DiscoveredElement(IProject project, String entry, int kind, boolean removed, boolean system) {
@@ -196,7 +196,7 @@ public class DiscoveredElement {
 	}
 
 	public void setChildren(DiscoveredElement[] children) {
-		fChildren = new ArrayList<DiscoveredElement>(Arrays.asList(children));
+		fChildren = new ArrayList<>(Arrays.asList(children));
 	}
 
 	public boolean delete() {

@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.PlatformObject;
 @SuppressWarnings("restriction")
 public class C99Enumeration extends PlatformObject implements IC99Binding, IEnumeration, ITypeable {
 
-	private List<IEnumerator> enumerators = new ArrayList<IEnumerator>();
+	private List<IEnumerator> enumerators = new ArrayList<>();
 	private String name;
 
 	private IScope scope;
@@ -86,7 +86,7 @@ public class C99Enumeration extends PlatformObject implements IC99Binding, IEnum
 	public C99Enumeration clone() {
 		try {
 			C99Enumeration clone = (C99Enumeration) super.clone();
-			clone.enumerators = new ArrayList<IEnumerator>();
+			clone.enumerators = new ArrayList<>();
 			for (IEnumerator e : enumerators) {
 				// TODO this is wrong,
 				// IEnumerator is not Cloneable so we are not returning a deep copy here

@@ -96,16 +96,16 @@ public class C99ResolveParserAction {
 	private C99SymbolTable symbolTable = C99SymbolTable.EMPTY_TABLE;
 
 	// A stack that keeps track of scopes in the symbol table, used to "close" scopes and to undo the opening of scopes
-	private final LinkedList<C99SymbolTable> symbolTableScopeStack = new LinkedList<C99SymbolTable>();
+	private final LinkedList<C99SymbolTable> symbolTableScopeStack = new LinkedList<>();
 
 	// A stack that keeps track of scopes that are set on bindings
-	private final LinkedList<IC99Scope> bindingScopeStack = new LinkedList<IC99Scope>();
+	private final LinkedList<IC99Scope> bindingScopeStack = new LinkedList<>();
 
 	// keeps track of nested declarations
-	private final LinkedList<DeclaratorFrame> declarationStack = new LinkedList<DeclaratorFrame>();
+	private final LinkedList<DeclaratorFrame> declarationStack = new LinkedList<>();
 
 	// keeps track of expression types
-	private final ScopedStack<IType> exprTypeStack = new ScopedStack<IType>();
+	private final ScopedStack<IType> exprTypeStack = new ScopedStack<>();
 
 	private TypeQualifiers typeQualifiers; // TODO: can this go in the declaration stack?
 
@@ -114,7 +114,7 @@ public class C99ResolveParserAction {
 	}
 
 	// "For every action there is an equal and opposite reaction." - Newton's third law
-	private final LinkedList<IUndoAction> undoStack = new LinkedList<IUndoAction>();
+	private final LinkedList<IUndoAction> undoStack = new LinkedList<>();
 
 	private interface IUndoAction {
 		void undo();

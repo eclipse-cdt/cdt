@@ -546,7 +546,7 @@ public class FileListControl {
 	IUndoContext undoContext;
 	IOperationHistory operationHistory = OperationHistoryFactory.getOperationHistory();
 
-	private java.util.List<IFileListChangeListener> listeners = new ArrayList<IFileListChangeListener>();
+	private java.util.List<IFileListChangeListener> listeners = new ArrayList<>();
 	private String[] oldValue;
 
 	//images

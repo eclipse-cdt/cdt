@@ -223,7 +223,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 			// the overrideable process factory to allow others to override.
 			// First set attribute to specify we want to create the gdb process.
 			// Bug 210366
-			Map<String, String> attributes = new HashMap<String, String>();
+			Map<String, String> attributes = new HashMap<>();
 			attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
 					IGdbDebugConstants.GDB_PROCESS_CREATION_VALUE);
 			DebugPlugin.newProcess(this, gdbProc, label, attributes);
@@ -633,7 +633,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	public String[] getLaunchEnvironment() throws CoreException {
 		IProject project = getProject();
 
-		HashMap<String, String> envMap = new HashMap<String, String>();
+		HashMap<String, String> envMap = new HashMap<>();
 		ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project, false);
 		if (projDesc != null) {
 			String buildConfigID = getLaunchConfiguration()
@@ -675,7 +675,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		}
 
 		// Turn it into an envp format
-		List<String> strings = new ArrayList<String>(envMap.size());
+		List<String> strings = new ArrayList<>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
 			StringBuilder buffer = new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());

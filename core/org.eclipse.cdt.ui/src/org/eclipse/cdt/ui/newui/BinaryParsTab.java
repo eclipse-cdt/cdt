@@ -238,7 +238,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			ids = CoreModelUtil.getBinaryParserIds(cfgs);
 		}
 		Object[] data = new Object[configMap.size()];
-		HashMap<String, BinaryParserConfiguration> clone = new HashMap<String, BinaryParserConfiguration>(configMap);
+		HashMap<String, BinaryParserConfiguration> clone = new HashMap<>(configMap);
 		// add checked elements
 		int i;
 		for (i = 0; i < ids.length; i++) {
@@ -268,7 +268,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 				CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
-			configMap = new HashMap<String, BinaryParserConfiguration>(exts.length);
+			configMap = new HashMap<>(exts.length);
 			for (IExtension ext : exts) {
 				if (isExtensionVisible(ext)) {
 					configMap.put(ext.getUniqueIdentifier(), new BinaryParserConfiguration(ext));
@@ -278,7 +278,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	}
 
 	private void initializeParserPageMap() {
-		fParserPageMap = new HashMap<String, BinaryParserPageConfiguration>(5);
+		fParserPageMap = new HashMap<>(5);
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
 				"BinaryParserPage"); //$NON-NLS-1$

@@ -125,8 +125,8 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		super(info);
 		this.fTool = _tool;
 		buildPropPage = page;
-		stringOptionsMap = new HashMap<String, String>();
-		userObjsMap = new HashMap<IOption, String>();
+		stringOptionsMap = new HashMap<>();
+		userObjsMap = new HashMap<>();
 	}
 
 	/* (non-Javadoc)
@@ -188,7 +188,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	 */
 	private Vector<String> getDefaultOptionNames() {
 		if (defaultOptionNames == null) {
-			defaultOptionNames = new Vector<String>();
+			defaultOptionNames = new Vector<>();
 			defaultOptionNames.add("Other flags"); //$NON-NLS-1$
 			defaultOptionNames.add("Linker flags"); //$NON-NLS-1$
 			defaultOptionNames.add("Archiver flags"); //$NON-NLS-1$
@@ -215,8 +215,8 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	 * @return Vector containing all options
 	 */
 	private Vector<String> getOptionVector(String rawOptionString) {
-		Vector<String> tokens = new Vector<String>(Arrays.asList(rawOptionString.split("\\s"))); //$NON-NLS-1$
-		Vector<String> output = new Vector<String>(tokens.size());
+		Vector<String> tokens = new Vector<>(Arrays.asList(rawOptionString.split("\\s"))); //$NON-NLS-1$
+		Vector<String> output = new Vector<>(tokens.size());
 
 		Iterator<String> iter = tokens.iterator();
 		while (iter.hasNext()) {
@@ -269,7 +269,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		String alloptions = getToolSettingsPrefStore().getString(ToolSettingsPrefStore.ALL_OPTIONS_ID);
 		// list that holds the options for the option type other than
 		// boolean,string and enumerated
-		List<String> optionsList = new ArrayList<String>();
+		List<String> optionsList = new ArrayList<>();
 		// additional options buffer
 		StringBuilder addnOptions = new StringBuilder();
 		// split all build options string
@@ -393,7 +393,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		for (int s = 0; s < objSet.size(); s++) {
 			for (IOption op : objSet) {
 				String val = userObjsMap.get(op);
-				ArrayList<String> list = new ArrayList<String>();
+				ArrayList<String> list = new ArrayList<>();
 				for (String v : parseString(val)) {
 					if (alloptions.indexOf(v) != -1)
 						list.add(v);
@@ -414,7 +414,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 			try {
 				switch (opt.getValueType()) {
 				case IOption.BOOLEAN:
-					ArrayList<String> optsList = new ArrayList<String>(optionsArr);
+					ArrayList<String> optsList = new ArrayList<>(optionsArr);
 					if (opt.getCommand() != null && opt.getCommand().length() > 0
 							&& !optsList.contains(opt.getCommand()))
 						setOption(opt, false);
@@ -436,7 +436,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 				case IOption.INCLUDE_PATH:
 				case IOption.PREPROCESSOR_SYMBOLS:
 				case IOption.LIBRARIES:
-					ArrayList<String> newList = new ArrayList<String>();
+					ArrayList<String> newList = new ArrayList<>();
 					for (String s : optionsList) {
 						if (opt.getCommand() != null && s.startsWith(opt.getCommand())) {
 							newList.add(s.substring(opt.getCommand().length()));

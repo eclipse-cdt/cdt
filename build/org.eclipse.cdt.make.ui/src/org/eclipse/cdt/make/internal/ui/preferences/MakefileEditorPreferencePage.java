@@ -60,7 +60,7 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 	private String[][] fSyntaxColorListModel;
 
 	private TableViewer fHighlightingColorListViewer;
-	private final List<HighlightingColorListItem> fHighlightingColorList = new ArrayList<HighlightingColorListItem>(7);
+	private final List<HighlightingColorListItem> fHighlightingColorList = new ArrayList<>(7);
 
 	Button fAppearanceColorDefault;
 	ColorSelector fSyntaxForegroundColorEditor;
@@ -208,7 +208,7 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 						ColorManager.MAKE_MATCHING_BRACKETS_COLOR, null },
 				{ MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.makefile_editor_default"), //$NON-NLS-1$
 						ColorManager.MAKE_DEFAULT_COLOR, null }, };
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED));

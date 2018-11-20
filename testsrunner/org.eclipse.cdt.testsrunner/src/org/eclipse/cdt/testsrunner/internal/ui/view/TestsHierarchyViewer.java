@@ -75,7 +75,7 @@ public class TestsHierarchyViewer {
 		 */
 		private class TestCasesCollector implements IModelVisitor {
 
-			public List<ITestCase> testCases = new ArrayList<ITestCase>();
+			public List<ITestCase> testCases = new ArrayList<>();
 
 			@Override
 			public void visit(ITestCase testCase) {
@@ -144,7 +144,7 @@ public class TestsHierarchyViewer {
 	private class TestLabelProvider extends LabelProvider implements IStyledLabelProvider {
 
 		/** Images for the test cases with the different statuses. */
-		private Map<ITestItem.Status, Image> testCaseImages = new HashMap<ITestItem.Status, Image>();
+		private Map<ITestItem.Status, Image> testCaseImages = new HashMap<>();
 		{
 			testCaseImages.put(ITestItem.Status.NotRun, TestsRunnerPlugin.createAutoImage("obj16/test_notrun.gif")); //$NON-NLS-1$
 			testCaseImages.put(ITestItem.Status.Skipped, TestsRunnerPlugin.createAutoImage("obj16/test_skipped.gif")); //$NON-NLS-1$
@@ -157,7 +157,7 @@ public class TestsHierarchyViewer {
 		private Image testCaseRunImage = TestsRunnerPlugin.createAutoImage("obj16/test_run.gif"); //$NON-NLS-1$
 
 		/** Images for the test suites with the different statuses. */
-		private Map<ITestItem.Status, Image> testSuiteImages = new HashMap<ITestItem.Status, Image>();
+		private Map<ITestItem.Status, Image> testSuiteImages = new HashMap<>();
 		{
 			// NOTE: There is no skipped-icon for test suite, but it seems it is not a problem
 			testSuiteImages.put(ITestItem.Status.NotRun, TestsRunnerPlugin.createAutoImage("obj16/tsuite_notrun.gif")); //$NON-NLS-1$

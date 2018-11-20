@@ -89,7 +89,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 		public RefreshOperation(List<IResource> resources) {
 			super();
 
-			roots = new HashSet<IResource>(resources.size());
+			roots = new HashSet<>(resources.size());
 
 			for (IResource resource : resources) {
 				IResource parent = resource.getParent();
@@ -127,7 +127,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structured = (IStructuredSelection) selection;
 
-			result = new ArrayList<IResource>(structured.size());
+			result = new ArrayList<>(structured.size());
 
 			for (Iterator<?> iterator = structured.iterator(); iterator.hasNext();) {
 				Object object = iterator.next();
@@ -150,7 +150,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 	private static String[] getResourceLocations(List<IResource> resources) {
 		if (!resources.isEmpty()) {
 			int count = resources.size();
-			List<String> locations = new ArrayList<String>(count);
+			List<String> locations = new ArrayList<>(count);
 
 			for (IResource resource : resources) {
 				IPath location = resource.getLocation();

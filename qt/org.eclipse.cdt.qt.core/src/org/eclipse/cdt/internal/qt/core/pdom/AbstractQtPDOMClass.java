@@ -105,7 +105,7 @@ public abstract class AbstractQtPDOMClass extends QtPDOMBinding {
 	}
 
 	public <T extends QtPDOMBinding> List<T> getChildren(Class<T> cls) throws CoreException {
-		QtPDOMVisitor.All<T> collector = new QtPDOMVisitor.All<T>(cls);
+		QtPDOMVisitor.All<T> collector = new QtPDOMVisitor.All<>(cls);
 		try {
 			children.accept(collector);
 		} catch (CoreException e) {

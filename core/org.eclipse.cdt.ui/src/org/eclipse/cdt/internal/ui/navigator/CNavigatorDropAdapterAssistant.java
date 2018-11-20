@@ -429,7 +429,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			return null;
 		}
 		List<?> elements = ((IStructuredSelection) selection).toList();
-		List<Object> resources = new ArrayList<Object>(elements.size());
+		List<Object> resources = new ArrayList<>(elements.size());
 		for (Object element : elements) {
 			if (element instanceof ITranslationUnit) {
 				continue;
@@ -500,7 +500,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	 * @return the resource selection from the LocalSelectionTransfer
 	 */
 	private IResource[] getSelectedResources(IStructuredSelection selection) {
-		ArrayList<Object> selectedResources = new ArrayList<Object>();
+		ArrayList<Object> selectedResources = new ArrayList<>();
 
 		for (Iterator<?> i = selection.iterator(); i.hasNext();) {
 			Object o = i.next();

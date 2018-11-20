@@ -52,7 +52,7 @@ class FieldDescriptor {
 			name = null;
 		this.setter = new AccessorDescriptor(AccessorKind.SETTER, name, this);
 
-		List<AccessorDescriptor> children = new ArrayList<AccessorDescriptor>(2);
+		List<AccessorDescriptor> children = new ArrayList<>(2);
 		if (getter.canBeGenerated()) {
 			children.add(getter);
 		}
@@ -63,7 +63,7 @@ class FieldDescriptor {
 	}
 
 	private Set<String> getNamesToAvoid() {
-		Set<String> namesToAvoid = new HashSet<String>();
+		Set<String> namesToAvoid = new HashSet<>();
 		// Add field names.
 		for (IASTDeclarator fieldDeclarator : context.existingFields) {
 			namesToAvoid.add(String.valueOf(GetterSetterContext.getDeclaratorName(fieldDeclarator).getSimpleID()));

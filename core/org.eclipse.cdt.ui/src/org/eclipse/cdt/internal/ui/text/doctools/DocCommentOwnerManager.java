@@ -69,12 +69,12 @@ public class DocCommentOwnerManager {
 
 	private Map<String, IDocCommentOwner> fOwners;
 	private IDocCommentOwner fWorkspaceOwner;
-	private Map<IProject, ProjectMap> prj2map = new HashMap<IProject, ProjectMap>();
+	private Map<IProject, ProjectMap> prj2map = new HashMap<>();
 	private static List<IDocCommentOwnershipListener> fListeners;
 
 	private DocCommentOwnerManager() {
 		fOwners = getCommentOwnerExtensions();
-		fListeners = new ArrayList<IDocCommentOwnershipListener>();
+		fListeners = new ArrayList<>();
 
 		Preferences defaultPrefs = DefaultScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
 		Preferences prefs = InstanceScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
@@ -227,7 +227,7 @@ public class DocCommentOwnerManager {
 	 * via the DocCommentOwner extension point
 	 */
 	private static Map<String, IDocCommentOwner> getCommentOwnerExtensions() {
-		Map<String, IDocCommentOwner> result = new HashMap<String, IDocCommentOwner>();
+		Map<String, IDocCommentOwner> result = new HashMap<>();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint indexProviders = registry.getExtensionPoint(CUIPlugin.ID_COMMENT_OWNER);

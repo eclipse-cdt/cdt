@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class MIListFeaturesInfo extends MIInfo {
 
-	private List<String> fFeatures = new ArrayList<String>();
+	private List<String> fFeatures = new ArrayList<>();
 
 	public MIListFeaturesInfo(MIOutput out) {
 		super(out);

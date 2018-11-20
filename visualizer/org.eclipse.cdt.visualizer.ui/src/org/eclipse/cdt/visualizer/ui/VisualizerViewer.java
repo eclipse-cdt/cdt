@@ -267,7 +267,7 @@ public class VisualizerViewer extends PageBook
 		// TODO: add error checking, logging for errors in extension declarations
 		// TODO: do we need to worry about this being called more than once?
 
-		m_visualizers = new Hashtable<String, IVisualizer>();
+		m_visualizers = new Hashtable<>();
 
 		List<Extension> visualizers = Extension.getExtensions(CDTVisualizerUIPlugin.FEATURE_ID,
 				VISUALIZER_EXTENSION_POINT_NAME);

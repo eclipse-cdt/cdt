@@ -70,7 +70,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	private ListenerList<IBuildConsoleListener> listeners = new ListenerList<>();
 	/** UI console object in which per-project consoles are shown */
 	private BuildConsole fConsole;
-	private Map<IProject, BuildConsolePartitioner> fConsoleMap = new HashMap<IProject, BuildConsolePartitioner>();
+	private Map<IProject, BuildConsolePartitioner> fConsoleMap = new HashMap<>();
 	private Color infoColor;
 	private Color outputColor;
 	private Color errorColor;

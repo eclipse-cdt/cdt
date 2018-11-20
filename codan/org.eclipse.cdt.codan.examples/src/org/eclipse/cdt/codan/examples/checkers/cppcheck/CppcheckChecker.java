@@ -35,7 +35,7 @@ public class CppcheckChecker extends AbstractExternalToolBasedChecker {
 	private static final String ERROR_PROBLEM_ID;
 
 	// key: severity (error, warning, etc.) - value : problem ID associated to severity
-	private static final Map<Severity, String> PROBLEM_IDS = new HashMap<Severity, String>();
+	private static final Map<Severity, String> PROBLEM_IDS = new HashMap<>();
 
 	static {
 		ERROR_PROBLEM_ID = addProblemId(Severity.ERROR);

@@ -97,7 +97,7 @@ public class CommandTimeoutTest extends BaseParametrizedTestCase {
 		doLaunch();
 
 		final DsfSession session = getGDBLaunch().getSession();
-		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
+		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<>(
 				session, ICommandControlShutdownDMEvent.class);
 
 		// Send the command that will timeout

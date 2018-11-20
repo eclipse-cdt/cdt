@@ -55,7 +55,7 @@ public class CPreprocessorScanner extends AbstractCScanner {
 	protected List<IRule> createRules() {
 		IToken defaultToken = getToken(ICColorConstants.PP_DEFAULT);
 
-		List<IRule> rules = new ArrayList<IRule>();
+		List<IRule> rules = new ArrayList<>();
 		IToken token;
 
 		// Add generic white space rule.

@@ -46,7 +46,7 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
 			}
 		}
 
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
 		String[] keywords = PDAScanner.fgKeywords;
 		if (prefix.length() > 0) {
 			String word = prefix.toString();

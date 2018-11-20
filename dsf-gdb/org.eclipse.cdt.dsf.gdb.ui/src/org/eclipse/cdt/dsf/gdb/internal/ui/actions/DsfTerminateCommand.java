@@ -235,7 +235,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
 	}
 
 	private IProcessDMContext[] getProcessDMContexts(Object[] elements) {
-		final Set<IProcessDMContext> procDmcs = new HashSet<IProcessDMContext>();
+		final Set<IProcessDMContext> procDmcs = new HashSet<>();
 		for (Object obj : elements) {
 			if (obj instanceof IDMVMContext) {
 				IProcessDMContext procDmc = DMContexts.getAncestorOfType(((IDMVMContext) obj).getDMContext(),

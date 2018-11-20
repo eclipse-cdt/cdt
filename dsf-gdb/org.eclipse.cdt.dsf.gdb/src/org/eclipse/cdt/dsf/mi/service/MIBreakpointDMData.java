@@ -71,7 +71,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	public MIBreakpointDMData(MIBreakpointDMData other) {
 
 		fBreakpoint = new MIBreakpoint(other.fBreakpoint);
-		fProperties = new HashMap<String, Object>(other.fProperties);
+		fProperties = new HashMap<>(other.fProperties);
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	 * @since 5.3
 	 */
 	public MIBreakpointDMData copy() {
-		return new MIBreakpointDMData(new MIBreakpoint(fBreakpoint), new HashMap<String, Object>(fProperties));
+		return new MIBreakpointDMData(new MIBreakpoint(fBreakpoint), new HashMap<>(fProperties));
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		if (properties != null) {
 			fProperties = properties;
 		} else {
-			fProperties = new HashMap<String, Object>();
+			fProperties = new HashMap<>();
 
 			if (dsfMIBreakpoint.isTracepoint()) {
 				// Generic breakpoint attributes

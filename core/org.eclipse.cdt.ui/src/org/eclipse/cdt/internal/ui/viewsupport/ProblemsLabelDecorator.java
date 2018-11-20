@@ -120,7 +120,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	private IProblemChangedListener fProblemChangedListener;
 
 	private ListenerList<ILabelProviderListener> fListeners;
-	private Map<MarkersCacheKey, IMarker[]> fMarkersCache = new HashMap<MarkersCacheKey, IMarker[]>();
+	private Map<MarkersCacheKey, IMarker[]> fMarkersCache = new HashMap<>();
 
 	/**
 	 * Creates a new <code>ProblemsLabelDecorator</code>.

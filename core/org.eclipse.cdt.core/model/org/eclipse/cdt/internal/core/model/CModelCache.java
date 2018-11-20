@@ -52,10 +52,10 @@ public class CModelCache {
 	protected Map<ICElement, Object> childrenCache;
 
 	public CModelCache() {
-		this.projectAndRootCache = new HashMap<ICElement, Object>(PROJ_CACHE_SIZE);
-		this.folderCache = new HashMap<ICElement, Object>(FOLDER_CACHE_SIZE);
-		this.fileCache = new ElementCache<Object>(FILE_CACHE_SIZE);
-		this.childrenCache = new HashMap<ICElement, Object>(CHILDREN_CACHE_SIZE); // average 20 children per openable
+		this.projectAndRootCache = new HashMap<>(PROJ_CACHE_SIZE);
+		this.folderCache = new HashMap<>(FOLDER_CACHE_SIZE);
+		this.fileCache = new ElementCache<>(FILE_CACHE_SIZE);
+		this.childrenCache = new HashMap<>(CHILDREN_CACHE_SIZE); // average 20 children per openable
 	}
 
 	public double openableFillingRatio() {

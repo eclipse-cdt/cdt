@@ -308,7 +308,7 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 	}
 
 	private String[] orderTypesAscending(Set<String> items) {
-		List<String> collection = new ArrayList<String>(items);
+		List<String> collection = new ArrayList<>(items);
 		Collections.sort(collection);
 		return collection.toArray(new String[collection.size()]);
 	}
@@ -544,7 +544,7 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 
 	@Override
 	public Action[] getDynamicActions() {
-		List<Action> actionList = new ArrayList<Action>(fAddressInfoTypeStatusMap.size());
+		List<Action> actionList = new ArrayList<>(fAddressInfoTypeStatusMap.size());
 		if (getPaneVisible(Rendering.PANE_BINARY)) {
 			for (final String infoType : fAddressInfoTypeStatusMap.keySet()) {
 				Action action = fAddressInfoTypeStatusMap.getAction(infoType);

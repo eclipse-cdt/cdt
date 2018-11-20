@@ -209,7 +209,7 @@ public class NewContainerTargetWizardPage extends WizardPage
 				return;
 			}
 			connection.removeImageListener(wizardPage);
-			ArrayList<String> imageNames = new ArrayList<String>();
+			ArrayList<String> imageNames = new ArrayList<>();
 			for (IDockerImage image : images) {
 				java.util.List<String> tags = image.repoTags();
 				if (tags != null) {
@@ -277,7 +277,7 @@ public class NewContainerTargetWizardPage extends WizardPage
 				@Override
 				public void run() {
 					connection.removeImageListener(wizardPage);
-					ArrayList<String> imageNames = new ArrayList<String>();
+					ArrayList<String> imageNames = new ArrayList<>();
 					for (IDockerImage image : finalList) {
 						java.util.List<String> tags = image.repoTags();
 						if (tags != null) {

@@ -182,7 +182,7 @@ public class GeneratePDOMApplication implements IApplication {
 	 */
 	private static synchronized IExportProjectProvider getExportProjectProvider(String fqn) {
 		if (projectInitializers == null) {
-			projectInitializers = new HashMap<String, IExportProjectProvider>();
+			projectInitializers = new HashMap<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint indexExtensions = registry.getExtensionPoint(CCorePlugin.INDEX_UNIQ_ID);
 			IExtension[] extensions = indexExtensions.getExtensions();

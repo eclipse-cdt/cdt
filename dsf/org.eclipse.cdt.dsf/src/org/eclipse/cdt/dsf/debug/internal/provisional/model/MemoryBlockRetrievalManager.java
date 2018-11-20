@@ -45,7 +45,7 @@ public class MemoryBlockRetrievalManager implements IMemoryBlockRetrievalManager
 	private final String fModelId;
 	private final DsfSession fSession;
 	private final ILaunchConfiguration fLaunchConfig;
-	private final Map<IMemoryDMContext, IMemoryBlockRetrieval> fMapMemDMCToBlockRetrieval = new HashMap<IMemoryDMContext, IMemoryBlockRetrieval>();
+	private final Map<IMemoryDMContext, IMemoryBlockRetrieval> fMapMemDMCToBlockRetrieval = new HashMap<>();
 
 	/**
 	 * Constructor

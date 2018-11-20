@@ -118,7 +118,7 @@ class UpdateManagedProject12 {
 		boolean debug = false;
 		int type = -1;
 
-		Vector<String> idTokens = new Vector<String>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
+		Vector<String> idTokens = new Vector<>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
 		try {
 			String platform = idTokens.get(0);
 			if (platform.equalsIgnoreCase(ID_CYGWIN)) {
@@ -240,11 +240,11 @@ class UpdateManagedProject12 {
 
 		String optId = null;
 		String[] idTokens = oldId.split(REGEXP_SEPARATOR);
-		Vector<String> oldIdVector = new Vector<String>(Arrays.asList(idTokens));
+		Vector<String> oldIdVector = new Vector<>(Arrays.asList(idTokens));
 		if (isBuiltInOption(oldIdVector)) {
 
 			// New ID will be in form gnu.[c|c++|both].[compiler|link|lib].option.{1.2_component}
-			Vector<String> newIdVector = new Vector<String>(idTokens.length + 2);
+			Vector<String> newIdVector = new Vector<>(idTokens.length + 2);
 
 			// We can ignore the first element of the old IDs since it is just [cygwin|linux|solaris]
 			for (int index = 1; index < idTokens.length; ++index) {
@@ -412,7 +412,7 @@ class UpdateManagedProject12 {
 				case IOption.PREPROCESSOR_SYMBOLS:
 				case IOption.LIBRARIES:
 				case IOption.OBJECTS:
-					Vector<String> values = new Vector<String>();
+					Vector<String> values = new Vector<>();
 					NodeList nodes = optRef.getElementsByTagName(IOption.LIST_VALUE);
 					for (int i = 0; i < nodes.getLength(); ++i) {
 						Node node = nodes.item(i);
@@ -450,7 +450,7 @@ class UpdateManagedProject12 {
 		// Is this a built-in target or one we cannot convert
 		boolean builtIn = false;
 
-		Vector<String> idTokens = new Vector<String>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
+		Vector<String> idTokens = new Vector<>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
 		try {
 			String platform = idTokens.get(0);
 			if (platform.equalsIgnoreCase(ID_CYGWIN)) {
@@ -558,7 +558,7 @@ class UpdateManagedProject12 {
 			int toolType = -1;
 
 			// Figure out what kind of tool the ref pointed to
-			Vector<String> idTokens = new Vector<String>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
+			Vector<String> idTokens = new Vector<>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
 
 			for (String token : idTokens) {
 				if (token.equals(TOOL_LANG_C)) {
@@ -789,7 +789,7 @@ class UpdateManagedProject12 {
 	 */
 	protected static Map<String, IConfiguration> getConfigIdMap() {
 		if (configIdMap == null) {
-			configIdMap = new HashMap<String, IConfiguration>();
+			configIdMap = new HashMap<>();
 		}
 		return configIdMap;
 	}

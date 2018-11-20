@@ -110,7 +110,7 @@ public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 
 		assert !((groupId != null) && listAll); // see comment above
 
-		final ArrayList<String> arguments = new ArrayList<String>();
+		final ArrayList<String> arguments = new ArrayList<>();
 		if (listAll) {
 			arguments.add("--available"); //$NON-NLS-1$
 		}

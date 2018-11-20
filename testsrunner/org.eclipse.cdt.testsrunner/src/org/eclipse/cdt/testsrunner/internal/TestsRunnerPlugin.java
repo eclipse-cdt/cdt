@@ -210,7 +210,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 	 * @param mode launch mode
 	 */
 	private void setDefaultLaunchDelegate(ILaunchConfigurationType cfgType, String delegateId, String mode) {
-		HashSet<String> modes = new HashSet<String>();
+		HashSet<String> modes = new HashSet<>();
 		modes.add(mode);
 		try {
 			if (cfgType.getPreferredDelegate(modes) == null) {

@@ -141,7 +141,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		try {
 			// Addition of pointer operators has to be in reverse order, so it's deferred until
 			// the end.
-			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap = new HashMap<IASTDeclarator, LinkedList<IASTPointerOperator>>();
+			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap = new HashMap<>();
 
 			// If the type is an array of something, create a declaration of a pointer to something
 			// instead (to allow assignment, etc).

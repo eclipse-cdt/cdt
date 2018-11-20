@@ -191,7 +191,7 @@ public class CreateProfileDialog extends StatusDialog {
 
 		CUIPlugin.getDefault().getDialogSettings().put(PREF_OPEN_EDIT_DIALOG, fOpenEditDialog);
 
-		final Map<String, String> baseSettings = new HashMap<String, String>(
+		final Map<String, String> baseSettings = new HashMap<>(
 				(fSortedProfiles.get(fProfileCombo.getSelectionIndex())).getSettings());
 		final String profileName = fNameText.getText();
 

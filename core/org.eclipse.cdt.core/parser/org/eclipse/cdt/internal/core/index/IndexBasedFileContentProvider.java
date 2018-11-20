@@ -63,7 +63,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	private final AbstractIndexerTask fRelatedIndexerTask;
 	private long fFileSizeLimit = 0;
 	private IIndexFile[] fContextToHeaderGap;
-	private final Map<IIndexFileLocation, IFileNomination> fPragmaOnce = new HashMap<IIndexFileLocation, IFileNomination>();
+	private final Map<IIndexFileLocation, IFileNomination> fPragmaOnce = new HashMap<>();
 	private Set<String> fHeadersToIndexAllVersions = Collections.emptySet();
 
 	private boolean fIndexAllHeaderVersions;
@@ -133,11 +133,11 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			IIndexFile file = selectIndexFile(macroDictionary, ifl);
 			if (file != null) {
 				try {
-					List<IIndexFile> files = new ArrayList<IIndexFile>();
-					List<IIndexMacro> macros = new ArrayList<IIndexMacro>();
-					List<ICPPUsingDirective> directives = new ArrayList<ICPPUsingDirective>();
-					Map<IIndexFileLocation, IFileNomination> newPragmaOnce = new HashMap<IIndexFileLocation, IFileNomination>();
-					LinkedHashSet<IIndexFile> preLoaded = new LinkedHashSet<IIndexFile>();
+					List<IIndexFile> files = new ArrayList<>();
+					List<IIndexMacro> macros = new ArrayList<>();
+					List<ICPPUsingDirective> directives = new ArrayList<>();
+					Map<IIndexFileLocation, IFileNomination> newPragmaOnce = new HashMap<>();
+					LinkedHashSet<IIndexFile> preLoaded = new LinkedHashSet<>();
 					collectFileContent(file, null, newPragmaOnce, preLoaded, files, macros, directives, null);
 					// Report pragma once inclusions, only if no exception was thrown.
 					fPragmaOnce.putAll(newPragmaOnce);
@@ -164,7 +164,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	}
 
 	public List<String> toPathList(Collection<IIndexFileLocation> newPragmaOnce) {
-		List<String> newPragmaOncePaths = new ArrayList<String>(newPragmaOnce.size());
+		List<String> newPragmaOncePaths = new ArrayList<>(newPragmaOnce.size());
 		for (IIndexFileLocation l : newPragmaOnce) {
 			newPragmaOncePaths.add(fPathResolver.getASTPath(l));
 		}
@@ -207,7 +207,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			if (fPragmaOnce.containsKey(ifl))
 				return false;
 		} else {
-			preventRecursion = new HashSet<IIndexFile>();
+			preventRecursion = new HashSet<>();
 		}
 		if (!preventRecursion.add(file))
 			return false;
@@ -267,11 +267,11 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			if (contextFile == null || targetFile == null || contextFile == targetFile)
 				return null;
 
-			Map<IIndexFileLocation, IFileNomination> newPragmaOnce = new HashMap<IIndexFileLocation, IFileNomination>();
-			List<IIndexFile> filesIncluded = new ArrayList<IIndexFile>();
-			ArrayList<IIndexMacro> macros = new ArrayList<IIndexMacro>();
-			ArrayList<ICPPUsingDirective> directives = new ArrayList<ICPPUsingDirective>();
-			LinkedHashSet<IIndexFile> preLoaded = new LinkedHashSet<IIndexFile>();
+			Map<IIndexFileLocation, IFileNomination> newPragmaOnce = new HashMap<>();
+			List<IIndexFile> filesIncluded = new ArrayList<>();
+			ArrayList<IIndexMacro> macros = new ArrayList<>();
+			ArrayList<ICPPUsingDirective> directives = new ArrayList<>();
+			LinkedHashSet<IIndexFile> preLoaded = new LinkedHashSet<>();
 			if (!collectFileContent(contextFile, targetFile, newPragmaOnce, preLoaded, filesIncluded, macros,
 					directives, new HashSet<IIndexFile>())) {
 				return null;
@@ -287,7 +287,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	}
 
 	private List<FileVersion> toList(LinkedHashSet<IIndexFile> preLoaded) throws CoreException {
-		List<FileVersion> result = new ArrayList<InternalFileContent.FileVersion>(preLoaded.size());
+		List<FileVersion> result = new ArrayList<>(preLoaded.size());
 		for (IIndexFile file : preLoaded) {
 			String path = fPathResolver.getASTPath(file.getLocation());
 			result.add(new FileVersion(path, file.getSignificantMacros()));

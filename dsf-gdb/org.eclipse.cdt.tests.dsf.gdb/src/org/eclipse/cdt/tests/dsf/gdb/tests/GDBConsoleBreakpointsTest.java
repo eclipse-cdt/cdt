@@ -113,7 +113,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	private IBreakpoints fBreakpointService;
 	private MIBreakpointsSynchronizer fBreakpointsSynchronizer;
 
-	private List<IBreakpointsChangedEvent> fBreakpointEvents = new ArrayList<IBreakpointsChangedEvent>();
+	private List<IBreakpointsChangedEvent> fBreakpointEvents = new ArrayList<>();
 
 	@Override
 	@Before
@@ -819,7 +819,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	}
 
 	private Map<String, Object> getLocationBreakpointAttributes(Class<? extends ICBreakpoint> type, boolean valid) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		if (ICFunctionBreakpoint.class.equals(type)) {
 			map.put(ATTR_FILE_NAME, (valid) ? SOURCE_NAME_VALID : SOURCE_NAME_INVALID);
 			map.put(ATTR_FUNCTION, (valid) ? FUNCTION_VALID : FUNCTION_INVALID);
@@ -837,7 +837,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	public Map<String, Object> getWatchpointAttributes(Class<? extends ICWatchpoint> type, boolean read, boolean write)
 			throws Throwable {
 		Assert.assertTrue(read || write);
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put(ATTR_EXPRESSION, EXPRESSION_VALID);
 		map.put(ATTR_READ, Boolean.valueOf(read));
 		map.put(ATTR_WRITE, Boolean.valueOf(write));

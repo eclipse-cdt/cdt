@@ -47,7 +47,7 @@ import org.eclipse.jface.viewers.Viewer;
 public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSearchContentProvider {
 	private TreeViewer viewer;
 	private CSearchResult result;
-	private final Map<Object, Set<Object>> tree = new HashMap<Object, Set<Object>>();
+	private final Map<Object, Set<Object>> tree = new HashMap<>();
 	private final CSearchViewPage fPage;
 
 	CSearchTreeContentProvider(CSearchViewPage page) {
@@ -119,7 +119,7 @@ public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSe
 	private boolean insertChild(Object parent, Object child) {
 		Set<Object> children = tree.get(parent);
 		if (children == null) {
-			children = new HashSet<Object>();
+			children = new HashSet<>();
 			tree.put(parent, children);
 		}
 		return children.add(child);

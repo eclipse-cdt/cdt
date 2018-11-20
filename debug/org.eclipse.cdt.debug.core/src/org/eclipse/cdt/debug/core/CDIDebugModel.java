@@ -195,7 +195,7 @@ public class CDIDebugModel {
 	 */
 	public static ICLineBreakpoint createLineBreakpoint(String sourceHandle, IResource resource, int type,
 			int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setLineBreakpointAttributes(attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition);
 		return new CLineBreakpoint(resource, attributes, register);
 	}
@@ -219,7 +219,7 @@ public class CDIDebugModel {
 	 */
 	public static ICLineBreakpoint createLineTracepoint(String sourceHandle, IResource resource, int type,
 			int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setLineBreakpointAttributes(attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition);
 		return new CLineTracepoint(resource, attributes, register);
 	}
@@ -244,7 +244,7 @@ public class CDIDebugModel {
 	public static ICLineBreakpoint createLineDynamicPrintf(String sourceHandle, IResource resource, int type,
 			int lineNumber, boolean enabled, int ignoreCount, String condition, String printfStr, boolean register)
 			throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setLineBreakpointAttributes(attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition);
 		attributes.put(ICDynamicPrintf.PRINTF_STRING, printfStr);
 		return new CLineDynamicPrintf(resource, attributes, register);
@@ -436,7 +436,7 @@ public class CDIDebugModel {
 	public static ICAddressBreakpoint createAddressBreakpoint(String module, String sourceHandle, IResource resource,
 			int type, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition,
 			boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setAddressBreakpointAttributes(attributes, module, sourceHandle, type, lineNumber, address, enabled,
 				ignoreCount, condition);
 		return new CAddressBreakpoint(resource, attributes, register);
@@ -462,7 +462,7 @@ public class CDIDebugModel {
 	public static ICAddressBreakpoint createAddressTracepoint(String module, String sourceHandle, IResource resource,
 			int type, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition,
 			boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setAddressBreakpointAttributes(attributes, module, sourceHandle, type, lineNumber, address, enabled,
 				ignoreCount, condition);
 		return new CAddressTracepoint(resource, attributes, register);
@@ -488,7 +488,7 @@ public class CDIDebugModel {
 	public static ICAddressBreakpoint createAddressDynamicPrintf(String module, String sourceHandle, IResource resource,
 			int type, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition,
 			String printfStr, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setAddressBreakpointAttributes(attributes, module, sourceHandle, type, lineNumber, address, enabled,
 				ignoreCount, condition);
 		attributes.put(ICDynamicPrintf.PRINTF_STRING, printfStr);
@@ -598,7 +598,7 @@ public class CDIDebugModel {
 	public static ICWatchpoint createWatchpoint(String sourceHandle, IResource resource, boolean writeAccess,
 			boolean readAccess, String expression, boolean enabled, int ignoreCount, String condition, boolean register)
 			throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setWatchPointAttributes(attributes, sourceHandle, resource, writeAccess, readAccess, expression, "", //$NON-NLS-1$
 				BigInteger.ZERO, enabled, ignoreCount, condition);
 		return new CWatchpoint(resource, attributes, register);
@@ -644,7 +644,7 @@ public class CDIDebugModel {
 	public static ICWatchpoint createWatchpoint(String sourceHandle, IResource resource, int type, boolean writeAccess,
 			boolean readAccess, String expression, boolean enabled, int ignoreCount, String condition, boolean register)
 			throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setWatchPointAttributes(attributes, sourceHandle, resource, type, writeAccess, readAccess, expression, "", //$NON-NLS-1$
 				BigInteger.ZERO, enabled, ignoreCount, condition);
 		return new CWatchpoint(resource, attributes, register);
@@ -703,7 +703,7 @@ public class CDIDebugModel {
 			int lineNumber, boolean writeAccess, boolean readAccess, String expression, String memorySpace,
 			BigInteger range, boolean enabled, int ignoreCount, String condition, boolean register)
 			throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setWatchPointAttributes(attributes, sourceHandle, resource, writeAccess, readAccess, expression, memorySpace,
 				range, enabled, ignoreCount, condition);
 		attributes.put(IMarker.CHAR_START, Integer.valueOf(charStart));
@@ -753,7 +753,7 @@ public class CDIDebugModel {
 	public static ICWatchpoint createWatchpoint(String sourceHandle, IResource resource, boolean writeAccess,
 			boolean readAccess, String expression, String memorySpace, BigInteger range, boolean enabled,
 			int ignoreCount, String condition, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setWatchPointAttributes(attributes, sourceHandle, resource, writeAccess, readAccess, expression, memorySpace,
 				range, enabled, ignoreCount, condition);
 		return new CWatchpoint(resource, attributes, register);
@@ -943,7 +943,7 @@ public class CDIDebugModel {
 	public static ICFunctionBreakpoint createFunctionBreakpoint(String sourceHandle, IResource resource, int type,
 			String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount,
 			String condition, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setFunctionBreakpointAttributes(attributes, sourceHandle, type, function, charStart, charEnd, lineNumber,
 				enabled, ignoreCount, condition);
 		return new CFunctionBreakpoint(resource, attributes, register);
@@ -1010,7 +1010,7 @@ public class CDIDebugModel {
 	public static ICFunctionBreakpoint createFunctionTracepoint(String sourceHandle, IResource resource, int type,
 			String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount,
 			String condition, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setFunctionBreakpointAttributes(attributes, sourceHandle, type, function, charStart, charEnd, lineNumber,
 				enabled, ignoreCount, condition);
 		return new CFunctionTracepoint(resource, attributes, register);
@@ -1036,7 +1036,7 @@ public class CDIDebugModel {
 	public static ICFunctionBreakpoint createFunctionDynamicPrintf(String sourceHandle, IResource resource, int type,
 			String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount,
 			String condition, String printfStr, boolean register) throws CoreException {
-		HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+		HashMap<String, Object> attributes = new HashMap<>(10);
 		setFunctionBreakpointAttributes(attributes, sourceHandle, type, function, charStart, charEnd, lineNumber,
 				enabled, ignoreCount, condition);
 		attributes.put(ICDynamicPrintf.PRINTF_STRING, printfStr);
@@ -1292,7 +1292,7 @@ public class CDIDebugModel {
 	public static ICEventBreakpoint createEventBreakpoint(String type, String arg, boolean register)
 			throws CoreException {
 		final IResource resource = ResourcesPlugin.getWorkspace().getRoot();
-		final Map<String, Object> attributes = new HashMap<String, Object>();
+		final Map<String, Object> attributes = new HashMap<>();
 		setEventBreakpointAttributes(attributes, type, arg);
 		return new CEventBreakpoint(resource, attributes, register);
 

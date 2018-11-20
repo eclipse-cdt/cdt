@@ -42,7 +42,7 @@ public class TestsRunnerProvidersManager {
 	public TestsRunnerProviderInfo[] getTestsRunnersProviderInfo() {
 		if (testsRunnerProviders == null) {
 			// Initialize tests runners info
-			List<TestsRunnerProviderInfo> testsRunnerProvidersList = new ArrayList<TestsRunnerProviderInfo>();
+			List<TestsRunnerProviderInfo> testsRunnerProvidersList = new ArrayList<>();
 			for (IConfigurationElement element : Platform.getExtensionRegistry()
 					.getConfigurationElementsFor(TESTS_RUNNER_EXTENSION_POINT_ID)) {
 				testsRunnerProvidersList.add(new TestsRunnerProviderInfo(element));

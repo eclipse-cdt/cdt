@@ -74,7 +74,7 @@ public class BuildGroup extends CViewActionGroup {
 		@Override
 		public void run() {
 			// Ensure we correctly save files in all referenced projects before build
-			Set<IProject> prjs = new HashSet<IProject>();
+			Set<IProject> prjs = new HashSet<>();
 			for (IResource resource : getSelectedResources()) {
 				IProject project = resource.getProject();
 				if (project != null) {

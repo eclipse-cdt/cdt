@@ -395,9 +395,9 @@ public class CEditor extends TextEditor
 			ICElement inputCElement = getInputCElement();
 			ICProject cProject = inputCElement != null ? inputCElement.getCProject() : null;
 			if (cProject == null) {
-				preferences = new HashMap<String, Object>(CCorePlugin.getOptions());
+				preferences = new HashMap<>(CCorePlugin.getOptions());
 			} else {
-				preferences = new HashMap<String, Object>(cProject.getOptions(true));
+				preferences = new HashMap<>(cProject.getOptions(true));
 			}
 
 			if (inputCElement instanceof ITranslationUnit) {
@@ -1344,7 +1344,7 @@ public class CEditor extends TextEditor
 	 * AST reconciling listeners.
 	 * @since 4.0
 	 */
-	private final ListenerList<ICReconcilingListener> fReconcilingListeners = new ListenerList<ICReconcilingListener>(
+	private final ListenerList<ICReconcilingListener> fReconcilingListeners = new ListenerList<>(
 			ListenerList.IDENTITY);
 
 	/**
@@ -1405,7 +1405,7 @@ public class CEditor extends TextEditor
 		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);
-		fPostSaveListeners = new ListenerList<IPostSaveListener>();
+		fPostSaveListeners = new ListenerList<>();
 	}
 
 	@Override

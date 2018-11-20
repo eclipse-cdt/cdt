@@ -243,7 +243,7 @@ public class ScannerConfigProfile {
 
 	private ScannerInfoCollector scannerInfoCollector;
 	private BuildOutputProvider buildOutputProvider;
-	private Map<String, ScannerInfoProvider> scannerInfoProviders = new LinkedHashMap<String, ScannerInfoProvider>();
+	private Map<String, ScannerInfoProvider> scannerInfoProviders = new LinkedHashMap<>();
 
 	private Boolean supportsContext;
 
@@ -296,7 +296,7 @@ public class ScannerConfigProfile {
 	 * @return Returns the list of providerIds
 	 */
 	public List<String> getSIProviderIds() {
-		return new ArrayList<String>(scannerInfoProviders.keySet());
+		return new ArrayList<>(scannerInfoProviders.keySet());
 	}
 
 	/**

@@ -491,8 +491,8 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 
 		public DefaultFocusManager() {
 			fDialogSettings = CUIPlugin.getDefault().getDialogSettings();
-			fItemMap = new HashMap<Control, Integer>();
-			fItemList = new ArrayList<Control>();
+			fItemMap = new HashMap<>();
+			fItemList = new ArrayList<>();
 			fIndex = 0;
 		}
 

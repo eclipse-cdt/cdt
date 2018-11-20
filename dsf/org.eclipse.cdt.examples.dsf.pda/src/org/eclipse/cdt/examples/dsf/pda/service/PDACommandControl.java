@@ -73,13 +73,13 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 
 	// Queue of commands waiting to be sent to the debugger.  As long as commands
 	// are in this queue, they can still be removed by clients.
-	private final List<CommandHandle> fCommandQueue = new LinkedList<CommandHandle>();
+	private final List<CommandHandle> fCommandQueue = new LinkedList<>();
 
 	// Queue of commands that are being sent to the debugger.  This queue is read
 	// by the send job, so as soon as commands are inserted into this queue, they can
 	// be considered as sent.
 	@ThreadSafe
-	private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<CommandHandle>();
+	private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<>();
 
 	// Flag indicating that the PDA debugger started
 	private boolean fStarted = false;
@@ -92,8 +92,8 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 	private PDAVirtualMachineDMContext fDMContext;
 
 	// Synchronous listeners for commands and events.
-	private final List<ICommandListener> fCommandListeners = new ArrayList<ICommandListener>();
-	private final List<IEventListener> fEventListeners = new ArrayList<IEventListener>();
+	private final List<ICommandListener> fCommandListeners = new ArrayList<>();
+	private final List<IEventListener> fEventListeners = new ArrayList<>();
 
 	// Sockets for communicating with PDA debugger
 	@ThreadSafe

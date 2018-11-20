@@ -65,7 +65,7 @@ public class RefreshPolicyExceptionDialog extends Dialog {
 		setShellStyle(getShellStyle());
 		fContrManager = RefreshExclusionContributionManager.getInstance();
 		fAddException = addException;
-		fExclusionContributors = new LinkedList<RefreshExclusionContributor>(fContrManager.getContributors());
+		fExclusionContributors = new LinkedList<>(fContrManager.getContributors());
 	}
 
 	public RefreshPolicyExceptionDialog(Shell parent, IResource resource, java.util.List<RefreshExclusion> exclusions,

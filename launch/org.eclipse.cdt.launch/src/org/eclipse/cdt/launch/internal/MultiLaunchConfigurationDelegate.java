@@ -131,7 +131,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		 * A map of all our sub-launches and the current processes that belong
 		 * to each one.
 		 */
-		private Map<ILaunch, IProcess[]> subLaunches = new HashMap<ILaunch, IProcess[]>();
+		private Map<ILaunch, IProcess[]> subLaunches = new HashMap<>();
 
 		public MultiLaunch(ILaunchConfiguration launchConfiguration, String mode) {
 			super(launchConfiguration, mode, null);

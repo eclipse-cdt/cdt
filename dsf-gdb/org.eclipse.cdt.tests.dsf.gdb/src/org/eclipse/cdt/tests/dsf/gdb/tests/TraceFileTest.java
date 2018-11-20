@@ -418,7 +418,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	}
 
 	private MIBreakpointDMContext setBreakpointAtEndLine() throws Throwable {
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.FUNCTION, END_FUNCTION);
@@ -445,7 +445,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		evalAction.setName(String.format("Evaluate %s", TEVAL_STRING));
 		tam.addAction(evalAction);
 
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, getLineForTag("IF_X_NE_A"));

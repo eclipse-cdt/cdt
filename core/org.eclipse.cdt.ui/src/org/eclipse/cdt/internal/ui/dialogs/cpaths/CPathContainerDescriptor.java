@@ -364,7 +364,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 	}
 
 	public static IContainerDescriptor[] getDescriptors() {
-		ArrayList<IContainerDescriptor> containers = new ArrayList<IContainerDescriptor>();
+		ArrayList<IContainerDescriptor> containers = new ArrayList<>();
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
 				ATT_EXTENSION);

@@ -225,7 +225,7 @@ public class RefreshScopeTests extends TestCase {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
 		manager.clearAllData();
 
-		HashMap<IResource, List<RefreshExclusion>> config1_resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
+		HashMap<IResource, List<RefreshExclusion>> config1_resourceMap = new HashMap<>();
 		config1_resourceMap.put(fFolder1, new LinkedList<RefreshExclusion>());
 		config1_resourceMap.put(fFolder2, new LinkedList<RefreshExclusion>());
 		manager.setResourcesToExclusionsMap(fProject, config1, config1_resourceMap);

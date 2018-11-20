@@ -197,7 +197,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 
 		@Override
 		public Map<String, Integer> getEnumerations() {
-			return new HashMap<String, Integer>();
+			return new HashMap<>();
 		}
 
 		@Override
@@ -618,7 +618,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 
 		// Remove any extra whitespace from each resulting expression,
 		// and ignore any empty expressions.
-		List<String> expressions = new ArrayList<String>(splitExpressions.length);
+		List<String> expressions = new ArrayList<>(splitExpressions.length);
 		for (String expr : splitExpressions) {
 			expr = expr.trim();
 			if (!expr.isEmpty()) {
@@ -643,10 +643,10 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 			final DataRequestMonitor<IExpressionDMContext[]> rm) {
 		// First separate the group into different expressions.
 		// We need to create a new list, as we will modify it during our processing.
-		final List<String> exprList = new ArrayList<String>(splitExpressionsInGroup(exprGroupDmc));
+		final List<String> exprList = new ArrayList<>(splitExpressionsInGroup(exprGroupDmc));
 
 		// List to store the final result, which is all the sub-expressions of this group
-		final ArrayList<IExpressionDMContext> subExprList = new ArrayList<IExpressionDMContext>();
+		final ArrayList<IExpressionDMContext> subExprList = new ArrayList<>();
 
 		final int startIndex1 = (startIndex < 0) ? 0 : startIndex;
 		final int length1 = (length < 0) ? Integer.MAX_VALUE : length;
@@ -662,7 +662,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 				// Not only does selecting the element jump back and forth between the duplicates,
 				// but children of duplicated elements are not always right.  Because of this, we
 				// remove all duplicates here.
-				LinkedHashSet<IExpressionDMContext> uniqueSubExprSet = new LinkedHashSet<IExpressionDMContext>(
+				LinkedHashSet<IExpressionDMContext> uniqueSubExprSet = new LinkedHashSet<>(
 						subExprList);
 				subExprList.clear();
 				subExprList.addAll(uniqueSubExprSet);
@@ -777,7 +777,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 					@Override
 					protected void handleSuccess() {
 						final List<IExpressionDMContext> exprList = getData() != null ? getData()
-								: new ArrayList<IExpressions.IExpressionDMContext>();
+								: new ArrayList<>();
 						matchLocals(exprDmc, new ImmediateDataRequestMonitor<List<IExpressionDMContext>>(rm) {
 							@Override
 							protected void handleSuccess() {
@@ -815,7 +815,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 					@Override
 					protected void handleSuccess() {
 						assert getData() instanceof MIRegisterDMC[];
-						ArrayList<IExpressionDMContext> matches = new ArrayList<IExpressionDMContext>();
+						ArrayList<IExpressionDMContext> matches = new ArrayList<>();
 
 						String fullExpr = globDmc.getExpression().trim();
 						if (fullExpr.startsWith(GLOB_EXPRESSION_PREFIX)) {
@@ -865,7 +865,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 				final CountingRequestMonitor varNameCRM = new CountingRequestMonitor(getExecutor(), rm) {
 					@Override
 					public void handleSuccess() {
-						ArrayList<IExpressionDMContext> matches = new ArrayList<IExpressionDMContext>(
+						ArrayList<IExpressionDMContext> matches = new ArrayList<>(
 								localsDMData.length);
 
 						String fullExpr = globDmc.getExpression().trim();
@@ -954,7 +954,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 				final CountingRequestMonitor varNameCRM = new CountingRequestMonitor(getExecutor(), rm) {
 					@Override
 					public void handleSuccess() {
-						final ArrayList<IExpressionDMContext> matches = new ArrayList<IExpressionDMContext>();
+						final ArrayList<IExpressionDMContext> matches = new ArrayList<>();
 						final CountingRequestMonitor elementMatchesCRM = new CountingRequestMonitor(getExecutor(), rm) {
 							@Override
 							public void handleSuccess() {
@@ -1025,7 +1025,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 			protected void handleCompleted() {
 				boolean isArray = isSuccess() && getData().getBasicType().equals(IExpressionDMData.BasicType.array);
 
-				final ArrayList<IExpressionDMContext> elements = new ArrayList<IExpressionDMContext>();
+				final ArrayList<IExpressionDMContext> elements = new ArrayList<>();
 
 				if (isArray) {
 					// we must now create the elements based on the indices
@@ -1053,7 +1053,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 	 *         could be a valid expression (i.e., the index 3-2=1 in this case)
 	 */
 	protected List<IExpressionDMContext> createArrayIndicesExpression(IExpressionDMContext arrayDmc, String indexSpec) {
-		ArrayList<IExpressionDMContext> expressionDMCs = new ArrayList<IExpressionDMContext>();
+		ArrayList<IExpressionDMContext> expressionDMCs = new ArrayList<>();
 		String arrayName = arrayDmc.getExpression();
 		IDMContext parentDmc = arrayDmc.getParents()[0];
 

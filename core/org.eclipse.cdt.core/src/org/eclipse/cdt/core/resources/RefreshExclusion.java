@@ -56,7 +56,7 @@ public abstract class RefreshExclusion implements Cloneable {
 			RefreshExclusion parentExclusion, IResource parentResource, RefreshScopeManager manager)
 			throws CoreException {
 
-		List<RefreshExclusion> exclusions = new LinkedList<RefreshExclusion>();
+		List<RefreshExclusion> exclusions = new LinkedList<>();
 
 		// the parent element might contain any number of exclusions... iterate through the list
 		ICStorageElement[] children = parentElement.getChildren();
@@ -138,9 +138,9 @@ public abstract class RefreshExclusion implements Cloneable {
 	}
 
 	protected String fContributorId = ""; //$NON-NLS-1$
-	protected List<ExclusionInstance> fExclusionInstanceList = new LinkedList<ExclusionInstance>();
+	protected List<ExclusionInstance> fExclusionInstanceList = new LinkedList<>();
 	protected ExclusionType fExclusionType = ExclusionType.RESOURCE;
-	protected List<RefreshExclusion> fNestedExclusions = new LinkedList<RefreshExclusion>();
+	protected List<RefreshExclusion> fNestedExclusions = new LinkedList<>();
 
 	protected RefreshExclusion fParentExclusion;
 

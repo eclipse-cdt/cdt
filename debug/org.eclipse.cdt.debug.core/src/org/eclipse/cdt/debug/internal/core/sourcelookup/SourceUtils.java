@@ -130,7 +130,7 @@ public class SourceUtils {
 	}
 
 	public static ICSourceLocation[] initializeSourceLocations(Element root) {
-		List<ICSourceLocation> sourceLocations = new LinkedList<ICSourceLocation>();
+		List<ICSourceLocation> sourceLocations = new LinkedList<>();
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();
 		for (int i = 0; i < length; ++i) {
@@ -181,7 +181,7 @@ public class SourceUtils {
 	}
 
 	static public ISourceContainer[] convertSourceLocations(ICSourceLocation[] locations) {
-		ArrayList<ISourceContainer> containers = new ArrayList<ISourceContainer>(locations.length);
+		ArrayList<ISourceContainer> containers = new ArrayList<>(locations.length);
 		int mappingCount = 0;
 		for (ICSourceLocation location : locations) {
 			if (location instanceof IProjectSourceLocation) {
@@ -220,7 +220,7 @@ public class SourceUtils {
 	}
 
 	public static IProject[] getAllReferencedProjects(IProject project) throws CoreException {
-		Set<IProject> all = new HashSet<IProject>();
+		Set<IProject> all = new HashSet<>();
 		getAllReferencedProjects(all, project);
 		return all.toArray(new IProject[all.size()]);
 	}

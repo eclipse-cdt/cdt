@@ -22,7 +22,7 @@ import java.util.Map;
  * TODO: extend to more than the tick counters.
  */
 public class ProcStatCounters {
-	private Map<String, OneCoreTickCounters> fTickCounters = new HashMap<String, OneCoreTickCounters>();
+	private Map<String, OneCoreTickCounters> fTickCounters = new HashMap<>();
 
 	/**
 	 * An object of this class holds one set of core/CPU tick counter values, for a single CPU core
@@ -70,7 +70,7 @@ public class ProcStatCounters {
 	 *
 	 */
 	public ProcStatCounters() {
-		fTickCounters = new HashMap<String, OneCoreTickCounters>();
+		fTickCounters = new HashMap<>();
 	}
 
 	/**

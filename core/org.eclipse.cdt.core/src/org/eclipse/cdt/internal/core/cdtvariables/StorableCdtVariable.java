@@ -67,7 +67,7 @@ public class StorableCdtVariable extends CdtVariable {
 			fStringValue = element.getAttribute(VALUE);
 		else {
 			ICStorageElement nodeList[] = element.getChildren();
-			List<String> values = new ArrayList<String>();
+			List<String> values = new ArrayList<>();
 			for (int i = 0; i < nodeList.length; ++i) {
 				ICStorageElement node = nodeList[i];
 				if (node.getName().equals(VALUE_ELEMENT_NAME)) {

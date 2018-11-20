@@ -97,7 +97,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		List<ILaunchConfiguration> candidateConfigs = Collections.emptyList();
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
-			candidateConfigs = new ArrayList<ILaunchConfiguration>(configs.length);
+			candidateConfigs = new ArrayList<>(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				ILaunchConfiguration config = configs[i];
 				IPath programPath = CDebugUtils.getProgramPath(config);
@@ -297,7 +297,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			if (elements.length == 1 && elements[0] instanceof IBinary) {
 				bin = (IBinary) elements[0];
 			} else {
-				final List<IBinary> results = new ArrayList<IBinary>();
+				final List<IBinary> results = new ArrayList<>();
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 				IRunnableWithProgress runnable = new IRunnableWithProgress() {
 					@Override
@@ -412,7 +412,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 * @return a list of projects - may be empty
 	 */
 	public static List<IProject> getProjectsFromSelection(ISelection selection) {
-		List<IProject> projects = new ArrayList<IProject>();
+		List<IProject> projects = new ArrayList<>();
 
 		if (selection != null && !selection.isEmpty()) {
 			if (selection instanceof ITextSelection) {

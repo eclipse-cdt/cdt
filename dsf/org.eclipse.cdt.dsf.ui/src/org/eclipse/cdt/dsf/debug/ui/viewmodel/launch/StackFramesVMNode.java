@@ -118,7 +118,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	/**
 	 * Temporary stack frame limit to allow incremental stack updates.
 	 */
-	private Map<IExecutionDMContext, Integer> fTemporaryLimits = new HashMap<IExecutionDMContext, Integer>();
+	private Map<IExecutionDMContext, Integer> fTemporaryLimits = new HashMap<>();
 
 	/**
 	 * The label provider delegate.  This VM node will delegate label updates to this provider

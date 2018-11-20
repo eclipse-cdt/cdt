@@ -44,7 +44,7 @@ public class FlowContext extends LocalVariableIndex {
 
 	public FlowContext(IASTFunctionDefinition functionDefinition) {
 		super(functionDefinition);
-		fExceptionStack = new ArrayList<ICPPASTCatchHandler[]>(3);
+		fExceptionStack = new ArrayList<>(3);
 	}
 
 	public void setConsiderAccessMode(boolean b) {

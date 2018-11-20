@@ -476,7 +476,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		assert getFirstName() == null;
 		assert getFirstMacroReference() == null;
 		final PDOMLinkage linkage = getLinkage();
-		HashMap<IASTName, PDOMName> nameCache = new HashMap<IASTName, PDOMName>();
+		HashMap<IASTName, PDOMName> nameCache = new HashMap<>();
 		PDOMName lastName = null;
 		PDOMMacroReferenceName lastMacroName = null;
 		for (IASTName[] name : names) {
@@ -592,7 +592,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstMacro(null);
 
 		// Delete all the names in this file
-		ArrayList<PDOMName> names = new ArrayList<PDOMName>();
+		ArrayList<PDOMName> names = new ArrayList<>();
 		PDOMName name = getFirstName();
 		while (name != null) {
 			names.add(name);
@@ -606,7 +606,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstName(null);
 
 		// Delete all macro references
-		ArrayList<PDOMMacroReferenceName> mrefs = new ArrayList<PDOMMacroReferenceName>();
+		ArrayList<PDOMMacroReferenceName> mrefs = new ArrayList<>();
 		PDOMMacroReferenceName mref = getFirstMacroReference();
 		while (mref != null) {
 			mrefs.add(mref);
@@ -684,7 +684,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public IIndexInclude[] getIncludes() throws CoreException {
-		List<PDOMInclude> result = new ArrayList<PDOMInclude>();
+		List<PDOMInclude> result = new ArrayList<>();
 		PDOMInclude include = getFirstInclude();
 		while (include != null) {
 			result.add(include);
@@ -706,7 +706,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public IIndexMacro[] getMacros() throws CoreException {
-		List<PDOMMacro> result = new ArrayList<PDOMMacro>();
+		List<PDOMMacro> result = new ArrayList<>();
 		PDOMMacro macro = getFirstMacro();
 		while (macro != null) {
 			result.add(macro);
@@ -722,7 +722,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public IIndexName[] findNames(int offset, int length) throws CoreException {
-		ArrayList<IIndexName> result = new ArrayList<IIndexName>();
+		ArrayList<IIndexName> result = new ArrayList<>();
 		for (PDOMName name = getFirstName(); name != null; name = name.getNextInFile()) {
 			int nameOffset = name.getNodeOffset();
 			if (nameOffset >= offset) {

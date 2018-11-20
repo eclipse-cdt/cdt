@@ -182,7 +182,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	protected final ICPPSecondaryParserFactory parserFactory;
 
 	/** Stack that provides easy access to the current class name, used to disambiguate declarators. */
-	protected final LinkedList<IASTName> classNames = new LinkedList<IASTName>();
+	protected final LinkedList<IASTName> classNames = new LinkedList<>();
 
 	/**
 	 * @param parser
@@ -834,7 +834,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if (hasNested)
 			names = (LinkedList<IASTName>) astStack.pop();
 		else
-			names = new LinkedList<IASTName>();
+			names = new LinkedList<>();
 
 		IASTName name = (IASTName) astStack.pop();
 		names.add(name);
@@ -1285,7 +1285,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 *     ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ';'
 	 */
 	public void consumeDeclarationSimple(boolean hasDeclaratorList) {
-		List<Object> declarators = hasDeclaratorList ? astStack.closeScope() : new ArrayList<Object>();
+		List<Object> declarators = hasDeclaratorList ? astStack.closeScope() : new ArrayList<>();
 		ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) astStack.pop(); // may be null
 
 		List<IToken> ruleTokens = stream.getRuleTokens();
@@ -1302,7 +1302,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 			IASTName name = createName(stream.getLeftIToken());
 			declSpec = nodeFactory.newTypedefNameSpecifier(name);
 			ParserUtil.setOffsetAndLength(declSpec, offset(name), length(name));
-			declarators = new ArrayList<Object>(); // throw away the bogus declarator
+			declarators = new ArrayList<>(); // throw away the bogus declarator
 		}
 
 		// can happen if implicit int is used

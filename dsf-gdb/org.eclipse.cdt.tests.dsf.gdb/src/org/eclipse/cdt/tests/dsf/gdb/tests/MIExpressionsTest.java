@@ -166,7 +166,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testLocals");
 
 		// Create a map of expressions and their expected values.
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		tests.put("0 + 0 - 0", new String[] { "0x0", "0", "0", "0", "0", "0" });
 		tests.put("3 + 4", new String[] { "0x7", "07", "111", "7", "7", "7" });
@@ -189,7 +189,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testLocals");
 
 		// Create a map of expressions and their expected values.
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		tests.put("3.14159 + 1.1111", new String[] { "0x4", "04", "100", "4", "4.2526", "4.2526" });
 		tests.put("100.0 / 3.0", new String[] { "0x21", "041", "100001", "33", "33.3333", "33.3333" });
@@ -215,7 +215,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(16, StepType.STEP_OVER);
 
 		// Create a map of expressions to expected values.
-		Map<String, String[]> tests1 = new HashMap<String, String[]>();
+		Map<String, String[]> tests1 = new HashMap<>();
 
 		tests1.put("lIntVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
 		tests1.put("lDoubleVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999",
@@ -251,7 +251,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
 
 		// Create a map of expressions to expected values.
-		Map<String, String[]> tests2 = new HashMap<String, String[]>();
+		Map<String, String[]> tests2 = new HashMap<>();
 
 		tests2.put("lIntVar", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789", "6789" });
 		tests2.put("lDoubleArray[1]", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789.6788999999999",
@@ -284,7 +284,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		tests.put("a", new String[] { "0x8", "010", "1000", "8", "8", "8" });
 		tests.put("b", new String[] { "0x1", "01", "1", "1", "1", "1" });
@@ -294,7 +294,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// Now enter a subblock with the same variable names
 		SyncUtil.step(2, StepType.STEP_OVER);
 
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 
 		tests.put("a", new String[] { "0xc", "014", "1100", "12", "12", "12" });
 		tests.put("b", new String[] { "0x1", "01", "1", "1", "1", "1" });
@@ -304,7 +304,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// Now step to change the b variable
 		SyncUtil.step(1, StepType.STEP_OVER);
 
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 
 		tests.put("a", new String[] { "0xc", "014", "1100", "12", "12", "12" });
 		tests.put("b", new String[] { "0xc", "014", "1100", "12", "12", "12" });
@@ -315,7 +315,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// same b
 		SyncUtil.step(1, StepType.STEP_OVER);
 
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 
 		tests.put("a", new String[] { "0x8", "010", "1000", "8", "8", "8" });
 		tests.put("b", new String[] { "0xc", "014", "1100", "12", "12", "12" });
@@ -1394,7 +1394,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("locals2");
 
 		// Create a map of expressions to expected values.
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		// Global variables
 		tests.put("gIntVar", new String[] { "0x21F", "01037", "1000011111", "543", "543", "543" });
@@ -1440,21 +1440,21 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 		tests.put("a", new String[] { "0x1", "01", "1", "1", "1", "1" });
 		executeExpressionSubTests(tests, frameDmc);
 
 		SyncUtil.runToLocation("testName2");
 		stoppedEvent = SyncUtil.step(1, StepType.STEP_INTO);
 		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 		tests.put("a", new String[] { "0x2", "02", "10", "2", "2", "2" });
 		executeExpressionSubTests(tests, frameDmc);
 
 		SyncUtil.runToLocation("testName1");
 		stoppedEvent = SyncUtil.step(1, StepType.STEP_INTO);
 		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 		tests.put("a", new String[] { "0x3", "03", "11", "3", "3", "3" });
 		executeExpressionSubTests(tests, frameDmc);
 	}
@@ -1469,21 +1469,21 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 		tests.put("a", new String[] { "0x1", "01", "1", "1", "1", "1" });
 		executeExpressionSubTests(tests, frameDmc);
 
 		SyncUtil.step(StepType.STEP_RETURN);
 		stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
 		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 		tests.put("a", new String[] { "0x2", "02", "10", "2", "2", "2" });
 		executeExpressionSubTests(tests, frameDmc);
 
 		SyncUtil.step(StepType.STEP_RETURN);
 		stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
 		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 		tests.put("a", new String[] { "0x3", "03", "11", "3", "3", "3" });
 		executeExpressionSubTests(tests, frameDmc);
 	}
@@ -1500,7 +1500,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER);
 
 		// Create a map of expressions to expected values.
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		// First make sure we have a different value on the other stack frame and that we select
 		// a frame that is not the top frame
@@ -1508,7 +1508,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		executeExpressionSubTests(tests, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 1));
 
 		// Now check that we get the same values as the top stack when selecting the thread only
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 		tests.put("lIntVar", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789", "6789" });
 		executeExpressionSubTests(tests, stoppedEvent.getDMContext());
 	}

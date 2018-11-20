@@ -125,8 +125,8 @@ public class BuildSystemTestHelper {
 	}
 
 	static public void checkDiff(Object[] expected, Object[] actual) {
-		LinkedHashSet<? extends Object> set1 = new LinkedHashSet<Object>(Arrays.asList(expected));
-		LinkedHashSet<? extends Object> set2 = new LinkedHashSet<Object>(Arrays.asList(actual));
+		LinkedHashSet<? extends Object> set1 = new LinkedHashSet<>(Arrays.asList(expected));
+		LinkedHashSet<? extends Object> set2 = new LinkedHashSet<>(Arrays.asList(actual));
 		LinkedHashSet<? extends Object> set1Copy = new LinkedHashSet<Object>(set1);
 		set1.removeAll(set2);
 		set2.removeAll(set1Copy);

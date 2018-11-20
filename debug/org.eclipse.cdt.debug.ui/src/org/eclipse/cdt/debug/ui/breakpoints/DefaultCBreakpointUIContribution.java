@@ -40,8 +40,8 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 	private String markerType;
 	private String modelId;
 	private String attType;
-	private Map<String, String> valueLabels = new LinkedHashMap<String, String>();
-	private Map<String, String> conditions = new HashMap<String, String>();
+	private Map<String, String> valueLabels = new LinkedHashMap<>();
+	private Map<String, String> conditions = new HashMap<>();
 
 	DefaultCBreakpointUIContribution(IConfigurationElement config) {
 		fConfig = config;

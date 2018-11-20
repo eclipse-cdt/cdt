@@ -39,7 +39,7 @@ public class HeadlessBuilderExternalSettingsProvider extends CExternalSettingPro
 	private static final String ID = "org.eclipse.cdt.managedbuilder.core.headlessSettings"; //$NON-NLS-1$
 
 	/** List of external settings which should be appended to build */
-	static List<ICSettingEntry> additionalSettings = new ArrayList<ICSettingEntry>();
+	static List<ICSettingEntry> additionalSettings = new ArrayList<>();
 
 	public HeadlessBuilderExternalSettingsProvider() {
 	}
@@ -91,7 +91,7 @@ public class HeadlessBuilderExternalSettingsProvider extends CExternalSettingPro
 			if (desc == null)
 				continue;
 			for (ICConfigurationDescription cfg : desc.getConfigurations()) {
-				ArrayList<String> extSettingIds = new ArrayList<String>(
+				ArrayList<String> extSettingIds = new ArrayList<>(
 						Arrays.asList(cfg.getExternalSettingsProviderIds()));
 				for (Iterator<String> it = extSettingIds.iterator(); it.hasNext();)
 					if (ID.equals(it.next()))

@@ -29,7 +29,7 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
  */
 public class ImplementMethodWizard extends RefactoringWizard {
 	private final ImplementMethodRefactoring refactoring;
-	private Map<MethodToImplementConfig, ParameterNamesInputPage> pagesMap = new HashMap<MethodToImplementConfig, ParameterNamesInputPage>();
+	private Map<MethodToImplementConfig, ParameterNamesInputPage> pagesMap = new HashMap<>();
 
 	public ImplementMethodWizard(ImplementMethodRefactoring refactoring) {
 		super(refactoring, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);

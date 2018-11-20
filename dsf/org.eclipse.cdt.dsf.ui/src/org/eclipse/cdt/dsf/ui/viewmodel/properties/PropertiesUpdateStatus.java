@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.IStatus;
  */
 public class PropertiesUpdateStatus extends DsfMultiStatus {
 
-	final private Map<String, IStatus> fPropertiesStatus = new HashMap<String, IStatus>(1);
+	final private Map<String, IStatus> fPropertiesStatus = new HashMap<>(1);
 	private boolean fFirstStatusSet;
 
 	public PropertiesUpdateStatus() {
@@ -132,7 +132,7 @@ public class PropertiesUpdateStatus extends DsfMultiStatus {
 
 		// Children of merged status should contain all statuses that are found in the fPropertiesStatus map, but
 		// without duplicates.
-		Set<IStatus> children = new HashSet<IStatus>(
+		Set<IStatus> children = new HashSet<>(
 				(baseStatus.getChildren().length + newStatus.getChildren().length) * 4 / 3);
 		children.addAll(mergedStatus.fPropertiesStatus.values());
 		for (IStatus child : children) {

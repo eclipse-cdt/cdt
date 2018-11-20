@@ -130,7 +130,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getExternalFunctions() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadSymbols();
 		loadSections();
@@ -153,7 +153,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getExternalObjects() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadSymbols();
 		loadSections();
@@ -176,7 +176,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getUndefined() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadSymbols();
 
@@ -190,7 +190,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getLocalFunctions() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadSymbols();
 		loadSections();
@@ -213,7 +213,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getLocalObjects() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadSymbols();
 		loadSections();
@@ -236,7 +236,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getCommonObjects() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadSymbols();
 		loadSections();
@@ -255,7 +255,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Dynamic[] getNeeded() throws IOException {
-		Vector<Dynamic> v = new Vector<Dynamic>();
+		Vector<Dynamic> v = new Vector<>();
 
 		loadDynamics();
 

@@ -91,8 +91,8 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 
 	private IASTName fDefinitionName;
 	private IASTNode fDefinitionNode;
-	private ArrayList<Definition> fStack = new ArrayList<Definition>();
-	private ArrayList<IASTProblem> fProblems = new ArrayList<IASTProblem>();
+	private ArrayList<Definition> fStack = new ArrayList<>();
+	private ArrayList<IASTProblem> fProblems = new ArrayList<>();
 
 	public IndexerASTVisitor(boolean visitImplicitNames) {
 		shouldVisitNames = true;

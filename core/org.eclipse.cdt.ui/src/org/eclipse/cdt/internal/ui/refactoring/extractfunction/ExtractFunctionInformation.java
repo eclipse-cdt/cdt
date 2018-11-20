@@ -91,7 +91,7 @@ public class ExtractFunctionInformation {
 	}
 
 	public void setParameters(List<NameInformation> parameters) {
-		this.parameters = new ArrayList<NameInformation>(parameters);
+		this.parameters = new ArrayList<>(parameters);
 	}
 
 	public VisibilityEnum getVisibility() {

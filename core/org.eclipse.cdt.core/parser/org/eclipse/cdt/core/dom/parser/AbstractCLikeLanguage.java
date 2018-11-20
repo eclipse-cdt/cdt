@@ -70,7 +70,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 			shouldVisitNames = true;
 		}
 
-		private List<IASTName> nameList = new ArrayList<IASTName>();
+		private List<IASTName> nameList = new ArrayList<>();
 
 		@Override
 		public int visit(IASTName name) {

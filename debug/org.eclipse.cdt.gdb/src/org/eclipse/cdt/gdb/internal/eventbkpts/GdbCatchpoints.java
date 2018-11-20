@@ -21,7 +21,7 @@ import org.eclipse.cdt.gdb.eventbkpts.IEventBreakpointConstants;
 public class GdbCatchpoints {
 
 	/** Map which services {@link #eventToGdbCatchpointKeyword(String)}  */
-	private static final Map<String, String> sIdToKeyword = new HashMap<String, String>();
+	private static final Map<String, String> sIdToKeyword = new HashMap<>();
 	static {
 		// these Ids are also referenced in mi.ui plugin as contribution
 		// to event breakpoints selector

@@ -81,7 +81,7 @@ public class GenericTagCommentScanner extends BufferedRuleBasedScanner implement
 	 * @return the rules to use in this scanner
 	 */
 	protected IRule[] createRules() {
-		List<IRule> result = new ArrayList<IRule>();
+		List<IRule> result = new ArrayList<>();
 
 		class TagDetector implements IWordDetector {
 			@Override

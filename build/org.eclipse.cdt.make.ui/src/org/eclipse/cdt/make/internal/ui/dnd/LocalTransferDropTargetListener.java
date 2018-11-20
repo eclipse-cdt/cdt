@@ -206,7 +206,7 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 	private static IMakeTarget[] prepareMakeTargetsFromSelection(IStructuredSelection selection,
 			IContainer dropContainer) {
 		List<?> elements = selection.toList();
-		List<IMakeTarget> makeTargetsList = new ArrayList<IMakeTarget>(elements.size());
+		List<IMakeTarget> makeTargetsList = new ArrayList<>(elements.size());
 		for (Object element : elements) {
 			if (element instanceof IMakeTarget) {
 				makeTargetsList.add((IMakeTarget) element);

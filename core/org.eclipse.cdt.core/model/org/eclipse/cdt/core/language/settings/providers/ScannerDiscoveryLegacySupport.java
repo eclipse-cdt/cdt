@@ -282,7 +282,7 @@ public class ScannerDiscoveryLegacySupport {
 	@SuppressWarnings("nls")
 	public static String getDeprecatedLegacyProfiles(String id) {
 		if (legacyProfiles == null) {
-			legacyProfiles = new HashMap<String, String>();
+			legacyProfiles = new HashMap<>();
 
 			// InputTypes
 			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input",

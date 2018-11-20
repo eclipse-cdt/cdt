@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 public abstract class TestModelManagerBaseReorderingTestCase extends TestCase {
 
 	protected TestModelManager modelManager;
-	protected List<String> expectedSuitesOrder = new ArrayList<String>();
+	protected List<String> expectedSuitesOrder = new ArrayList<>();
 
 	protected abstract ITestSuite createTestsHierarchy();
 

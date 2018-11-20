@@ -34,7 +34,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
  */
 public class ControlFlowGraph implements IControlFlowGraph {
 	private List<IExitNode> exitNodes;
-	private List<IBasicBlock> deadNodes = new ArrayList<IBasicBlock>();
+	private List<IBasicBlock> deadNodes = new ArrayList<>();
 	private IStartNode start;
 
 	public ControlFlowGraph(IStartNode start, Collection<IExitNode> exitNodes) {
@@ -55,11 +55,11 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	public void setExitNodes(Collection<IExitNode> exitNodes) {
 		if (this.exitNodes != null)
 			throw new IllegalArgumentException("Cannot modify already exiting connector"); //$NON-NLS-1$
-		this.exitNodes = Collections.unmodifiableList(new ArrayList<IExitNode>(exitNodes));
+		this.exitNodes = Collections.unmodifiableList(new ArrayList<>(exitNodes));
 	}
 
 	public void setUnconnectedNodes(Collection<IBasicBlock> nodes) {
-		this.deadNodes = Collections.unmodifiableList(new ArrayList<IBasicBlock>(nodes));
+		this.deadNodes = Collections.unmodifiableList(new ArrayList<>(nodes));
 	}
 
 	/*
@@ -126,7 +126,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	 */
 	@Override
 	public Collection<IBasicBlock> getNodes() {
-		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
+		Collection<IBasicBlock> result = new LinkedHashSet<>();
 		getNodes(getStartNode(), result);
 		getDeadNodes(result);
 		return result;
@@ -150,13 +150,13 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	}
 
 	public Collection<IBasicBlock> getDeadNodes() {
-		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
+		Collection<IBasicBlock> result = new LinkedHashSet<>();
 		getDeadNodes(result);
 		return result;
 	}
 
 	private void getDeadNodes(Collection<IBasicBlock> result) {
-		Collection<IBasicBlock> liveNodes = new LinkedHashSet<IBasicBlock>();
+		Collection<IBasicBlock> liveNodes = new LinkedHashSet<>();
 		getNodes(getStartNode(), liveNodes);
 
 		for (Iterator<IBasicBlock> iterator = deadNodes.iterator(); iterator.hasNext();) {

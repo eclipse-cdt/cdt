@@ -93,7 +93,7 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	 * @return an array of unique bindings
 	 */
 	protected IIndexFragmentBinding[] mergeBindingArrays(IIndexFragmentBinding[][] fragmentBindings) {
-		TreeSet<IIndexFragmentBinding> ts = new TreeSet<IIndexFragmentBinding>(fragmentComparator);
+		TreeSet<IIndexFragmentBinding> ts = new TreeSet<>(fragmentComparator);
 		for (IIndexFragmentBinding[] array : fragmentBindings) {
 			if (array != null) {
 				for (IIndexFragmentBinding element : array) {

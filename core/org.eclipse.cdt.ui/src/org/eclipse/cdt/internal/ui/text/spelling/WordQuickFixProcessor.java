@@ -77,7 +77,7 @@ public class WordQuickFixProcessor implements IQuickFixProcessor {
 							result = new ICCompletionProposal[] { new ChangeCaseProposal(arguments,
 									location.getOffset(), location.getLength(), context, engine.getLocale()) };
 						} else {
-							proposals = new ArrayList<RankedWordProposal>(checker.getProposals(arguments[0], sentence));
+							proposals = new ArrayList<>(checker.getProposals(arguments[0], sentence));
 							size = proposals.size();
 
 							if (threshold > 0 && size > threshold) {

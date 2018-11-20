@@ -41,7 +41,7 @@ public class FormatterProfileManager extends ProfileManager {
 
 	private final static KeySet[] KEY_SETS = new KeySet[] {
 			new KeySet(CCorePlugin.PLUGIN_ID,
-					new ArrayList<String>(DefaultCodeFormatterConstants.getDefaultSettings().keySet())),
+					new ArrayList<>(DefaultCodeFormatterConstants.getDefaultSettings().keySet())),
 			new KeySet(CUIPlugin.PLUGIN_ID, EMPTY_LIST) };
 
 	private final static String PROFILE_KEY = PreferenceConstants.FORMATTER_PROFILE;
@@ -75,7 +75,7 @@ public class FormatterProfileManager extends ProfileManager {
 			List<Profile> defaultProfiles = new FormatterProfileStore(profileVersioner)
 					.readProfiles(DefaultScope.INSTANCE);
 			if (defaultProfiles != null) {
-				Map<String, Profile> profMap = new LinkedHashMap<String, Profile>();
+				Map<String, Profile> profMap = new LinkedHashMap<>();
 				// Add the already loaded / created profiles to a map
 				for (Profile p : profiles)
 					profMap.put(p.getID(), p);
@@ -84,7 +84,7 @@ public class FormatterProfileManager extends ProfileManager {
 				for (Profile p : defaultProfiles)
 					profMap.put(p.getID(), new BuiltInProfile(p.getName(), p.getName(), p.getSettings(), 2,
 							profileVersioner.getCurrentVersion(), profileVersioner.getProfileKind()));
-				profiles = new ArrayList<Profile>(profMap.values());
+				profiles = new ArrayList<>(profMap.values());
 			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);

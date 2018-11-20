@@ -133,7 +133,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 	 * @return the resource selection from the LocalSelectionTransfer
 	 */
 	private IResource[] getSelectedResources() {
-		ArrayList<IResource> selectedResources = new ArrayList<IResource>();
+		ArrayList<IResource> selectedResources = new ArrayList<>();
 
 		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 		if (selection instanceof IStructuredSelection) {

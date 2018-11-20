@@ -108,7 +108,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 
 	private static final String DUMMY_STACKFRAME_LABEL = "..."; //$NON-NLS-1$
 
-	protected HashMap<String, Object> fAttributes = new HashMap<String, Object>(3);
+	protected HashMap<String, Object> fAttributes = new HashMap<>(3);
 
 	protected CDebugImageDescriptorRegistry fDebugImageRegistry = CDebugUIPlugin.getImageDescriptorRegistry();
 

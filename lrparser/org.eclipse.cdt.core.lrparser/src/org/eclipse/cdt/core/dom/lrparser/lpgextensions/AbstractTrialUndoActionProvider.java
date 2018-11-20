@@ -29,7 +29,7 @@ public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends Pr
 	/**
 	 * An action that does nothing.
 	 */
-	public static final Action<Object, Object> EMPTY_ACTION = new Action<Object, Object>();
+	public static final Action<Object, Object> EMPTY_ACTION = new Action<>();
 
 	/**
 	 * The parser table interpreter.
@@ -141,7 +141,7 @@ public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends Pr
 	}
 
 	public static <ACT, RULE_DATA> Action<ACT, RULE_DATA> emptyAction() {
-		return new Action<ACT, RULE_DATA>();
+		return new Action<>();
 	}
 
 	@SuppressWarnings("unused")

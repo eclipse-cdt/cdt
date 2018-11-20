@@ -31,7 +31,7 @@ public class SelectionHistory {
 	public SelectionHistory(CEditor editor) {
 		Assert.isNotNull(editor);
 		fEditor = editor;
-		fHistory = new Stack<ISourceRange>();
+		fHistory = new Stack<>();
 		fSelectionListener = new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {

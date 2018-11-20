@@ -54,7 +54,7 @@ public class LabelColumnInfo {
 	public LabelColumnInfo(LabelAttribute[] attributes) {
 		fLabelAttributes = attributes;
 
-		List<String> names = new LinkedList<String>();
+		List<String> names = new LinkedList<>();
 		for (LabelAttribute attr : attributes) {
 			for (String name : attr.getPropertyNames()) {
 				names.add(name);
@@ -87,7 +87,7 @@ public class LabelColumnInfo {
 	protected void setLabelAttributes(LabelAttribute[] attributes) {
 		fLabelAttributes = attributes;
 
-		List<String> names = new LinkedList<String>();
+		List<String> names = new LinkedList<>();
 		for (LabelAttribute attr : attributes) {
 			for (String name : attr.getPropertyNames()) {
 				names.add(name);

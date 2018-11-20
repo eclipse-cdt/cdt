@@ -40,7 +40,7 @@ public class ASTModificationHelper {
 
 	public <T extends IASTNode> T[] createModifiedChildArray(IASTNode parent, T[] unmodifiedChildren, Class<T> clazz,
 			NodeCommentMap commentMap) {
-		ArrayList<T> modifiedChildren = new ArrayList<T>(Arrays.asList(unmodifiedChildren));
+		ArrayList<T> modifiedChildren = new ArrayList<>(Arrays.asList(unmodifiedChildren));
 
 		for (ASTModification parentModification : modificationsForNode(parent)) {
 			switch (parentModification.getKind()) {

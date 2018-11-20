@@ -42,7 +42,7 @@ public class ObjectSet implements IObjectSet {
 	@Override
 	public Collection<IRealBuildObjectAssociation> getRealBuildObjects(Collection<IRealBuildObjectAssociation> set) {
 		if (set == null)
-			set = new HashSet<IRealBuildObjectAssociation>();
+			set = new HashSet<>();
 
 		set.addAll(fObjectSet);
 

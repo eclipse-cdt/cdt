@@ -129,7 +129,7 @@ public class ResourceTestHelper {
 	}
 
 	public static IFile[] findFiles(String prefix, String suffix, int i, int n) {
-		List<IFile> files = new ArrayList<IFile>(n);
+		List<IFile> files = new ArrayList<>(n);
 		for (int j = i; j < i + n; j++) {
 			String path = prefix + j + suffix;
 			files.add(findFile(path));
@@ -187,7 +187,7 @@ public class ResourceTestHelper {
 	}
 
 	private static List<Integer> identifierPositions(StringBuffer buffer, String identifier) {
-		List<Integer> positions = new ArrayList<Integer>();
+		List<Integer> positions = new ArrayList<>();
 		int i = -1;
 		while (true) {
 			i = buffer.indexOf(identifier, i + 1);

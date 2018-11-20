@@ -143,7 +143,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	}
 
 	static private class NamespaceMemberCollector extends ASTVisitor {
-		public ObjectSet<IBinding> members = new ObjectSet<IBinding>(8);
+		public ObjectSet<IBinding> members = new ObjectSet<>(8);
 
 		public NamespaceMemberCollector() {
 			shouldVisitNamespaces = true;

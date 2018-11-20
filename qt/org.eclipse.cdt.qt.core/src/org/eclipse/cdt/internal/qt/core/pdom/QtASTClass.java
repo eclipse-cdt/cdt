@@ -153,9 +153,9 @@ public class QtASTClass {
 		//    tags (including resolving precedence).
 		//    This allows single-method tags to overlap regions because regions may be shortened
 		//    by a later step.
-		ArrayList<Tag> tags = new ArrayList<Tag>();
-		ArrayList<Revision> revisions = new ArrayList<Revision>();
-		ArrayList<Region> regions = new ArrayList<Region>();
+		ArrayList<Tag> tags = new ArrayList<>();
+		ArrayList<Revision> revisions = new ArrayList<>();
+		ArrayList<Region> regions = new ArrayList<>();
 		Region currRegion = null;
 		for (IASTNodeLocation location : spec.getNodeLocations()) {
 

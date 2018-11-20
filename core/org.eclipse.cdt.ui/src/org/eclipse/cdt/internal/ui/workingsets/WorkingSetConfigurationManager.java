@@ -153,7 +153,7 @@ public class WorkingSetConfigurationManager {
 	 * </p>
 	 */
 	private void load() {
-		workingSets = new java.util.HashMap<String, IWorkingSetProxy>();
+		workingSets = new java.util.HashMap<>();
 
 		for (IMemento next : store.getChildren(KEY_WORKING_SET)) {
 			WorkingSetProxy ws = new WorkingSetProxy();
@@ -291,7 +291,7 @@ public class WorkingSetConfigurationManager {
 			result = XMLMemento.createWriteRoot(TYPE_WORKING_SET_CONFIGS);
 
 			// collect the unordered entries by working set
-			Map<String, IMemento> configMap = new HashMap<String, IMemento>();
+			Map<String, IMemento> configMap = new HashMap<>();
 			for (String next : configSetStrings) {
 				String[] bits = next.split(" "); //$NON-NLS-1$
 

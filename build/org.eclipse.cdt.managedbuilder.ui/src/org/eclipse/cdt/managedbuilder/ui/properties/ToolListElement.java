@@ -126,7 +126,7 @@ public class ToolListElement {
 
 	public void addChildElement(ToolListElement element) {
 		if (childElements == null)
-			childElements = new ArrayList<ToolListElement>();
+			childElements = new ArrayList<>();
 		childElements.add(element);
 	}
 }

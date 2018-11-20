@@ -49,12 +49,12 @@ public class SelectionUtils {
 
 		@Override
 		public Iterator<Object> iterator() {
-			return new ArrayList<Object>().iterator();
+			return new ArrayList<>().iterator();
 		}
 
 		@Override
 		public List<Object> toList() {
-			return new ArrayList<Object>();
+			return new ArrayList<>();
 		}
 
 		@Override
@@ -138,9 +138,9 @@ public class SelectionUtils {
 			result = new ArrayList<Object>(structuredSelection.toList());
 		} else if (selection instanceof Collection) {
 			Collection<?> collection = (Collection<?>) selection;
-			result = new ArrayList<Object>(collection);
+			result = new ArrayList<>(collection);
 		} else {
-			List<Object> list = new ArrayList<Object>();
+			List<Object> list = new ArrayList<>();
 			list.add(selection);
 			result = list;
 		}
@@ -233,7 +233,7 @@ public class SelectionUtils {
 	/** Creates list from array/set of elements */
 	public static List<Object> toList(Collection<?> collection) {
 		int size = (collection == null) ? 0 : collection.size();
-		List<Object> result = new ArrayList<Object>(size);
+		List<Object> result = new ArrayList<>(size);
 		if (collection != null)
 			result.addAll(collection);
 		return result;

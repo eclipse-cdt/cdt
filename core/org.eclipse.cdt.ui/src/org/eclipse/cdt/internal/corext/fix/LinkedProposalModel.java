@@ -31,7 +31,7 @@ public class LinkedProposalModel {
 		}
 
 		if (fPositionGroups == null) {
-			fPositionGroups = new HashMap<String, LinkedProposalPositionGroup>();
+			fPositionGroups = new HashMap<>();
 		}
 		fPositionGroups.put(positionGroup.getGroupId(), positionGroup);
 	}

@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
 public class GetterSetterNameGenerator {
-	private static Set<String> generateGetterSettersPreferenceKeys = new HashSet<String>();
+	private static Set<String> generateGetterSettersPreferenceKeys = new HashSet<>();
 	static {
 		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_GETTER_CAPITALIZATION);
 		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_GETTER_WORD_DELIMITER);

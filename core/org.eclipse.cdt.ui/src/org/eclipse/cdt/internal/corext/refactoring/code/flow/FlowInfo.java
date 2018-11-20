@@ -232,7 +232,7 @@ public abstract class FlowInfo {
 	public Set<IVariable> get(FlowContext context, int mode) {
 		if (fAccessModes == null)
 			return Collections.emptySet();
-		Set<IVariable> result = new HashSet<IVariable>(fAccessModes.length);
+		Set<IVariable> result = new HashSet<>(fAccessModes.length);
 		for (int i = 0; i < fAccessModes.length; i++) {
 			int accessMode = fAccessModes[i];
 			if ((accessMode & mode) != 0)

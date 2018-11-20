@@ -287,7 +287,7 @@ public class DsfSession {
 	private int fServiceInstanceCounter;
 
 	/** Map of registered event listeners. */
-	private Map<ListenerEntry, Method[]> fListeners = new HashMap<ListenerEntry, Method[]>();
+	private Map<ListenerEntry, Method[]> fListeners = new HashMap<>();
 
 	/**
 	 * Map of registered adapters, for implementing the <code>IDMContext.getAdapter()</code>
@@ -485,7 +485,7 @@ public class DsfSession {
 		Dictionary<String, ?> serviceProperties = (Dictionary<String, ?>) _serviceProperties;
 
 		// Build a list of listeners;
-		SortedMap<ListenerEntry, List<Method>> listeners = new TreeMap<ListenerEntry, List<Method>>(
+		SortedMap<ListenerEntry, List<Method>> listeners = new TreeMap<>(
 				new Comparator<ListenerEntry>() {
 					@Override
 					public int compare(ListenerEntry o1, ListenerEntry o2) {
@@ -517,7 +517,7 @@ public class DsfSession {
 				continue;
 			}
 			Method[] allMethods = entry.getValue();
-			List<Method> matchingMethods = new ArrayList<Method>();
+			List<Method> matchingMethods = new ArrayList<>();
 			for (Method method : allMethods) {
 				assert method.getParameterTypes().length > 0 : eventClass.getName() + "." + method.getName() //$NON-NLS-1$
 						+ " signature contains zero parameters"; //$NON-NLS-1$
@@ -570,7 +570,7 @@ public class DsfSession {
 	 * @return the collection of handler methods
 	 */
 	private Method[] getEventHandlerMethods(Object listener) {
-		List<Method> retVal = new ArrayList<Method>();
+		List<Method> retVal = new ArrayList<>();
 		try {
 			Method[] methods = listener.getClass().getMethods();
 			for (Method method : methods) {

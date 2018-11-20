@@ -85,7 +85,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	}
 
 	public void setExisting(Object[] existing) {
-		fExisting = new HashSet<Object>();
+		fExisting = new HashSet<>();
 		for (int i = 0; i < existing.length; i++) {
 			fExisting.add(existing[i]);
 		}
@@ -109,7 +109,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	 */
 	public void addFilter(ViewerFilter filter) {
 		if (fFilters == null)
-			fFilters = new ArrayList<ViewerFilter>(4);
+			fFilters = new ArrayList<>(4);
 
 		fFilters.add(filter);
 	}
@@ -134,7 +134,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 				checked = null;
 			}
 		} else {
-			ArrayList<Object> res = new ArrayList<Object>();
+			ArrayList<Object> res = new ArrayList<>();
 			for (int i = 0; i < checked.length; i++) {
 				Object elem = checked[i];
 				if (!fExisting.contains(elem)) {

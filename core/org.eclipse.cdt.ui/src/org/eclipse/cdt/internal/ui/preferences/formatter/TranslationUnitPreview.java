@@ -61,7 +61,7 @@ public class TranslationUnitPreview extends CPreview {
 				final IContentFormatterExtension extension = (IContentFormatterExtension) formatter;
 				Map<String, String> prefs = fWorkingValues;
 				if (fFormatterId != null) {
-					prefs = new HashMap<String, String>(fWorkingValues);
+					prefs = new HashMap<>(fWorkingValues);
 					prefs.put(CCorePreferenceConstants.CODE_FORMATTER, fFormatterId);
 				}
 				context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, prefs);

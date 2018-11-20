@@ -34,7 +34,7 @@ public class PDAStackCommandResult extends PDACommandResult {
 	PDAStackCommandResult(String response) {
 		super(response);
 		StringTokenizer st = new StringTokenizer(response, "#");
-		List<PDAFrame> framesList = new ArrayList<PDAFrame>();
+		List<PDAFrame> framesList = new ArrayList<>();
 
 		while (st.hasMoreTokens()) {
 			framesList.add(new PDAFrame(st.nextToken()));

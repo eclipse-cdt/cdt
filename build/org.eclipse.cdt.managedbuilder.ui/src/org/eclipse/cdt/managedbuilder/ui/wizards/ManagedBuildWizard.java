@@ -54,7 +54,7 @@ public class ManagedBuildWizard extends AbstractCWizard {
 		IBuildPropertyValue[] vs = bpt.getSupportedValues();
 		Arrays.sort(vs, BuildListComparator.getInstance());
 
-		ArrayList<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
+		ArrayList<EntryDescriptor> items = new ArrayList<>();
 		// new style project types
 		for (int i = 0; i < vs.length; i++) {
 			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(MBSWizardHandler.ARTIFACT, vs[i].getId(),

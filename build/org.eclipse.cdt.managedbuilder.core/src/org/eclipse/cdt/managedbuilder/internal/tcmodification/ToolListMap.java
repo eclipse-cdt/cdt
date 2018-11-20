@@ -30,7 +30,7 @@ public class ToolListMap implements Cloneable {
 	private CollectionEntrySet fCollectionEntrySet;
 
 	public ToolListMap() {
-		fMap = new HashMap<ITool, List<ITool>>();
+		fMap = new HashMap<>();
 	}
 
 	//	public class ValueIter {
@@ -173,7 +173,7 @@ public class ToolListMap implements Cloneable {
 	//	}
 
 	protected List<ITool> newList(int size) {
-		return new ArrayList<ITool>(size);
+		return new ArrayList<>(size);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -122,7 +122,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 		try {
 			IMarker[] markers = file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
 			if (markers != null) {
-				List<IMarker> exactMarkers = new ArrayList<IMarker>();
+				List<IMarker> exactMarkers = new ArrayList<>();
 				for (int i = 0; i < markers.length; i++) {
 					IMarker marker = markers[i];
 					int location = ((Integer) marker.getAttribute(IMarker.LINE_NUMBER)).intValue();

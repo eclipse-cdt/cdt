@@ -120,7 +120,7 @@ public class BuildSystem40Tests extends TestCase {
 		assertTrue(Arrays.equals(modifiedValue, value));
 
 		{
-			List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> list = new ArrayList<>();
 			list.addAll(Arrays.asList(entries));
 			list.add(new CIncludePathEntry(platformDependentPath("dbg 3", "E:\\tmp\\w"), 0));
 			entries = list.toArray(new ICLanguageSettingEntry[0]);
@@ -131,7 +131,7 @@ public class BuildSystem40Tests extends TestCase {
 		}
 
 		{
-			ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>();
+			ArrayList<OptionStringValue> list = new ArrayList<>();
 			list.addAll(Arrays.asList(value));
 			list.add(new OptionStringValue("\"E:\\tmp\\w\""));
 			value = list.toArray(new OptionStringValue[0]);
@@ -185,7 +185,7 @@ public class BuildSystem40Tests extends TestCase {
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
 
 		{
-			ArrayList<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
+			ArrayList<ICLanguageSettingEntry> list = new ArrayList<>(Arrays.asList(entries));
 			list.remove(6); //new CIncludePathEntry("/d1_abs/path", 0),
 			expectedEntries = list.toArray(new ICLanguageSettingEntry[0]);
 			ls.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, list);
@@ -219,7 +219,7 @@ public class BuildSystem40Tests extends TestCase {
 		option = tool.getOptionsOfType(IOption.INCLUDE_PATH)[0];
 
 		{
-			ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>(
+			ArrayList<OptionStringValue> list = new ArrayList<>(
 					Arrays.asList(option.getBasicStringListValueElements()));
 			assertTrue(list.remove(new OptionStringValue("${IncludeDefaults}")));
 			list.add(0, new OptionStringValue("${IncludeDefaults}"));
@@ -253,7 +253,7 @@ public class BuildSystem40Tests extends TestCase {
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
 
 		{
-			ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>(
+			ArrayList<OptionStringValue> list = new ArrayList<>(
 					Arrays.asList(option.getBasicStringListValueElements()));
 			assertTrue(list.remove(new OptionStringValue("${IncludeDefaults}")));
 			list.add(list.size(), new OptionStringValue("${IncludeDefaults}"));
@@ -335,7 +335,7 @@ public class BuildSystem40Tests extends TestCase {
 		BuildSystemTestHelper.checkDiff(expectedValue, value);
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
 
-		ArrayList<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
+		ArrayList<ICLanguageSettingEntry> list = new ArrayList<>();
 		list.addAll(Arrays.asList(entries));
 		list.add(new CIncludePathEntry("/test/another/abs", 0));
 		expectedEntries = list.toArray(new ICLanguageSettingEntry[0]);
@@ -376,7 +376,7 @@ public class BuildSystem40Tests extends TestCase {
 		BuildSystemTestHelper.checkDiff(expectedValue, value);
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
 
-		list = new ArrayList<ICLanguageSettingEntry>();
+		list = new ArrayList<>();
 		list.addAll(Arrays.asList(entries));
 		list.add(new CIncludePathEntry("/another/abs", 0));
 
@@ -479,7 +479,7 @@ public class BuildSystem40Tests extends TestCase {
 				}
 			});
 
-			projectList = new ArrayList<IProject>(projectZips.length);
+			projectList = new ArrayList<>(projectZips.length);
 			for (int i = 0; i < projectZips.length; i++) {
 				try {
 					String projectName = projectZips[i].getName();
@@ -505,7 +505,7 @@ public class BuildSystem40Tests extends TestCase {
 			try {
 				IProject project = ManagedBuildTestHelper.createProject(projName, null, location, projectTypeId);
 				if (project != null)
-					projectList = new ArrayList<IProject>(1);
+					projectList = new ArrayList<>(1);
 				projectList.add(project);
 			} catch (Exception e) {
 			}

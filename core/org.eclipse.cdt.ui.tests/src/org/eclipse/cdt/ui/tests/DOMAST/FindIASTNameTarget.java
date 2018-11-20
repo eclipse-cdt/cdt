@@ -48,7 +48,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		{
 			shouldVisitNames = true;
 		}
-		public List<IASTName> nameList = new ArrayList<IASTName>();
+		public List<IASTName> nameList = new ArrayList<>();
 
 		String findString = null;
 		boolean caseSensitive = true;

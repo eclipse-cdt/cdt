@@ -78,7 +78,7 @@ public class CHelpProvider implements ICHelpProvider {
 	public ICHelpResourceDescriptor[] getHelpResources(ICHelpInvocationContext context, ICHelpBook[] helpBooks,
 			String name) {
 
-		ArrayList<ICHelpResourceDescriptor> lst = new ArrayList<ICHelpResourceDescriptor>();
+		ArrayList<ICHelpResourceDescriptor> lst = new ArrayList<>();
 		for (ICHelpBook h : helpBooks) {
 			if (h instanceof CHelpBook) {
 				ICHelpResourceDescriptor hrd = ((CHelpBook) h).getHelpResources(context, name);
@@ -94,7 +94,7 @@ public class CHelpProvider implements ICHelpProvider {
 	@Override
 	public IFunctionSummary[] getMatchingFunctions(ICHelpInvocationContext context, ICHelpBook[] helpBooks,
 			String prefix) {
-		ArrayList<IFunctionSummary> lst = new ArrayList<IFunctionSummary>();
+		ArrayList<IFunctionSummary> lst = new ArrayList<>();
 		for (int i = 0; i < helpBooks.length; i++) {
 			if (helpBooks[i] instanceof CHelpBook) {
 				List<IFunctionSummary> fs = ((CHelpBook) helpBooks[i]).getMatchingFunctions(context, prefix);
@@ -132,7 +132,7 @@ public class CHelpProvider implements ICHelpProvider {
 			if (extensionPoint != null) {
 				IExtension[] extensions = extensionPoint.getExtensions();
 				if (extensions != null) {
-					ArrayList<ICHelpBook> chbl = new ArrayList<ICHelpBook>();
+					ArrayList<ICHelpBook> chbl = new ArrayList<>();
 					for (IExtension ex : extensions) {
 						String pluginId = ex.getNamespaceIdentifier();
 						for (IConfigurationElement el : ex.getConfigurationElements()) {

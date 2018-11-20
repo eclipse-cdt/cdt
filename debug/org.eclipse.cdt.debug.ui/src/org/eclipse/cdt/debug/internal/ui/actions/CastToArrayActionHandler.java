@@ -282,7 +282,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 	}
 
 	private ICastToArray[] getCastToArray(Object evaluationContext) {
-		List<ICastToArray> castableItems = new ArrayList<ICastToArray>();
+		List<ICastToArray> castableItems = new ArrayList<>();
 		if (evaluationContext instanceof IEvaluationContext) {
 			Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
 			if (s instanceof IStructuredSelection) {

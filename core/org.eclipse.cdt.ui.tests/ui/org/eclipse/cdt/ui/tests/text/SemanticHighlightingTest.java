@@ -205,7 +205,7 @@ public class SemanticHighlightingTest extends TestCase {
 
 		List<String>[] expected = new List[lines];
 		for (int i = 0; i < lines; ++i) {
-			expected[i] = new ArrayList<String>();
+			expected[i] = new ArrayList<>();
 		}
 		for (IASTComment comment : fAST.getComments()) {
 			String contents = new String(comment.getComment());
@@ -219,7 +219,7 @@ public class SemanticHighlightingTest extends TestCase {
 
 		List<String>[] actual = new List[lines];
 		for (int i = 0; i < lines; ++i) {
-			actual[i] = new ArrayList<String>();
+			actual[i] = new ArrayList<>();
 		}
 		for (Position p : getSemanticHighlightingPositions()) {
 			assertTrue(p instanceof HighlightedPosition);

@@ -418,7 +418,7 @@ public class ManagedProject extends BuildObject
 	 */
 	private Collection<Configuration> getConfigurationCollection() {
 		synchronized (configMap) {
-			return new ArrayList<Configuration>(configMap.values());
+			return new ArrayList<>(configMap.values());
 		}
 	}
 
@@ -658,7 +658,7 @@ public class ManagedProject extends BuildObject
 
 	@Override
 	public String[] getRequiredTypeIds() {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		IConfiguration cfgs[] = getConfigurations();
 		for (IConfiguration cfg : cfgs) {
 			result.addAll(Arrays.asList(((Configuration) cfg).getRequiredTypeIds()));
@@ -668,7 +668,7 @@ public class ManagedProject extends BuildObject
 
 	@Override
 	public String[] getSupportedTypeIds() {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		IConfiguration cfgs[] = getConfigurations();
 		for (IConfiguration cfg : cfgs) {
 			result.addAll(Arrays.asList(((Configuration) cfg).getSupportedTypeIds()));
@@ -678,7 +678,7 @@ public class ManagedProject extends BuildObject
 
 	@Override
 	public String[] getSupportedValueIds(String typeId) {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		IConfiguration cfgs[] = getConfigurations();
 		for (IConfiguration cfg : cfgs) {
 			result.addAll(Arrays.asList(((Configuration) cfg).getSupportedValueIds(typeId)));

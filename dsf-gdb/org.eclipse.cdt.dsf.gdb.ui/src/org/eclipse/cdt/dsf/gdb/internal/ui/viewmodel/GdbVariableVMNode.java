@@ -294,7 +294,7 @@ public class GdbVariableVMNode extends VariableVMNode {
 	/**
 	 * Maps expressions to their current limit on the maximum number of children.
 	 */
-	private Map<IExpressionDMContext, Integer> childCountLimits = new HashMap<IExpressionDMContext, Integer>();
+	private Map<IExpressionDMContext, Integer> childCountLimits = new HashMap<>();
 
 	/**
 	 * Utility method to create an IStatus object for an internal error
@@ -418,7 +418,7 @@ public class GdbVariableVMNode extends VariableVMNode {
 
 	@Override
 	public void update(IPropertiesUpdate[] updates) {
-		List<IPropertiesUpdate> realExpressions = new ArrayList<IPropertiesUpdate>();
+		List<IPropertiesUpdate> realExpressions = new ArrayList<>();
 
 		for (IPropertiesUpdate update : updates) {
 			if (update.getElement() instanceof IncompleteChildrenVMC) {

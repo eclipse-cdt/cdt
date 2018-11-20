@@ -48,7 +48,7 @@ public class StorableEnvironment {
 	 */
 	Map<String, IEnvironmentVariable> getMap() {
 		if (fVariables == null)
-			fVariables = new HashMap<String, IEnvironmentVariable>();
+			fVariables = new HashMap<>();
 		return fVariables;
 	}
 
@@ -294,7 +294,7 @@ public class StorableEnvironment {
 	 * @return cloned map of all variables set on this storable environment runtime variables + backing store vars
 	 */
 	Map<String, IEnvironmentVariable> getAllVariablesMap() {
-		Map<String, IEnvironmentVariable> vars = new HashMap<String, IEnvironmentVariable>();
+		Map<String, IEnvironmentVariable> vars = new HashMap<>();
 		vars.putAll(getMap());
 		return vars;
 	}

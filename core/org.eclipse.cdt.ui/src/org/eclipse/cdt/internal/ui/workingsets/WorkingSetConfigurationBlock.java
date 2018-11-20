@@ -346,7 +346,7 @@ public class WorkingSetConfigurationBlock {
 				return workingSets;
 			}
 
-			Collection<IWorkingSetProxy> result = new java.util.ArrayList<IWorkingSetProxy>();
+			Collection<IWorkingSetProxy> result = new java.util.ArrayList<>();
 
 			for (IWorkingSetProxy next : workingSets) {
 				if (workingSetFilter.select(next)) {

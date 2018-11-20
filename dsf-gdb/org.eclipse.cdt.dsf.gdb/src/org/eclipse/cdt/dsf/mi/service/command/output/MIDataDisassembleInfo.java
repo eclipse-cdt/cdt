@@ -79,8 +79,8 @@ public class MIDataDisassembleInfo extends MIInfo {
 	 *  parse its value.
 	 */
 	private void parse() {
-		List<MIInstruction> asmList = new ArrayList<MIInstruction>();
-		List<MIMixedInstruction> srcList = new ArrayList<MIMixedInstruction>();
+		List<MIInstruction> asmList = new ArrayList<>();
+		List<MIMixedInstruction> srcList = new ArrayList<>();
 
 		if (isDone()) {
 			MIOutput out = getMIOutput();

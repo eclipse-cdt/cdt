@@ -51,10 +51,10 @@ public class MultipleInputDialog extends Dialog {
 
 	protected Composite panel;
 
-	protected List<FieldSummary> fieldList = new ArrayList<FieldSummary>();
-	protected List<Text> controlList = new ArrayList<Text>();
-	protected List<Validator> validators = new ArrayList<Validator>();
-	protected Map<Object, String> valueMap = new HashMap<Object, String>();
+	protected List<FieldSummary> fieldList = new ArrayList<>();
+	protected List<Text> controlList = new ArrayList<>();
+	protected List<Validator> validators = new ArrayList<>();
+	protected Map<Object, String> valueMap = new HashMap<>();
 
 	private String title;
 

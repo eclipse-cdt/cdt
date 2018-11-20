@@ -281,7 +281,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 			}
 
 			boolean noCollisions = true;
-			LinkedHashSet<Entry> entries = new LinkedHashSet<Entry>();
+			LinkedHashSet<Entry> entries = new LinkedHashSet<>();
 			for (IASTEnumerator enumerator : enms) {
 				IASTNodeLocation loc = enumerator.getName().getFileLocation();
 				if (loc != null) {

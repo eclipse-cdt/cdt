@@ -45,12 +45,12 @@ public class CSearchListContentProvider implements IStructuredContentProvider, I
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		Set<String> uncoveredProjects = new HashSet<String>();
+		Set<String> uncoveredProjects = new HashSet<>();
 
 		CSearchResult result = (CSearchResult) inputElement;
 
 		Object[] results = result.getElements();
-		List<Object> resultList = new ArrayList<Object>();
+		List<Object> resultList = new ArrayList<>();
 
 		// see which projects returned results
 		for (int i = 0; i < results.length; i++) {

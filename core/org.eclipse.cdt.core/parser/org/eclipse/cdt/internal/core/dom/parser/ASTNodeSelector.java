@@ -84,7 +84,7 @@ public class ASTNodeSelector implements IASTNodeSelector {
 				}
 			}
 		}
-		final ASTNodeSpecification<T> nodeSpec = new ASTNodeSpecification<T>(relation, requiredClass, offsetInFile,
+		final ASTNodeSpecification<T> nodeSpec = new ASTNodeSpecification<>(relation, requiredClass, offsetInFile,
 				lengthInFile);
 		nodeSpec.setRangeInSequence(sequenceNumber, sequenceLength, false);
 		nodeSpec.setSearchInExpansion(searchInExpansion);

@@ -63,7 +63,7 @@ public class QtPDOMLinkage extends PDOMLinkage {
 	// The version that has been read from/written to the persisted file.
 	private int version;
 
-	private final Map<IQtASTName, PDOMBinding> cache = new WeakHashMap<IQtASTName, PDOMBinding>();
+	private final Map<IQtASTName, PDOMBinding> cache = new WeakHashMap<>();
 
 	public QtPDOMLinkage(PDOM pdom, long record) throws CoreException {
 		super(pdom, record);
@@ -257,7 +257,7 @@ public class QtPDOMLinkage extends PDOMLinkage {
 		if (names.isEmpty())
 			return Collections.emptyList();
 
-		ArrayList<QtPDOMQmlRegistration> registrations = new ArrayList<QtPDOMQmlRegistration>();
+		ArrayList<QtPDOMQmlRegistration> registrations = new ArrayList<>();
 		for (PDOMName name : names) {
 			PDOMBinding binding = name.getBinding();
 			if (binding instanceof QtPDOMQmlRegistration)

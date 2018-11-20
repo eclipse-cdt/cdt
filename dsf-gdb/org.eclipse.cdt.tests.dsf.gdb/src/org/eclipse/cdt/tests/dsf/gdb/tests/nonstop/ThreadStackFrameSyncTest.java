@@ -68,7 +68,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	private IGDBControl fCommandControl;
 	private IGDBFocusSynchronizer fGdbSync;
 	private DsfSession fSession;
-	private List<IDMEvent<? extends IDMContext>> fEventsReceived = new ArrayList<IDMEvent<? extends IDMContext>>();
+	private List<IDMEvent<? extends IDMContext>> fEventsReceived = new ArrayList<>();
 
 	// Breakpoint tags in MultiThread.cc
 	public static final String[] LINE_TAGS = new String[] { "LINE_MAIN_BEFORE_THREAD_START", // Just before StartThread
@@ -157,7 +157,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	*/
 	@Test
 	public void testChangingCurrentThreadCLINotification() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(
 				fMultiRunControl.getSession(), MIStoppedEvent.class);
 
 		// add a breakpoint in main
@@ -193,7 +193,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testChangingCurrentFrameCLINotification() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(
 				fMultiRunControl.getSession(), MIStoppedEvent.class);
 
 		// add a breakpoint in main
@@ -229,7 +229,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testGdbSyncServiceCanSwitchGDBThread() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(
 				fMultiRunControl.getSession(), MIStoppedEvent.class);
 
 		// add a breakpoint in main
@@ -270,7 +270,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testGdbSyncServiceCanSwitchGDBStackFrame() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(
 				fMultiRunControl.getSession(), MIStoppedEvent.class);
 
 		// add a breakpoint in main

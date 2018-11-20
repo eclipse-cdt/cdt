@@ -25,7 +25,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IDecisionNode;
  * @see IDecisionNode
  */
 public class DecisionNode extends AbstractSingleIncomingNode implements IDecisionNode {
-	private List<IBasicBlock> next = new ArrayList<IBasicBlock>(2);
+	private List<IBasicBlock> next = new ArrayList<>(2);
 	private IConnectorNode conn;
 
 	protected DecisionNode() {

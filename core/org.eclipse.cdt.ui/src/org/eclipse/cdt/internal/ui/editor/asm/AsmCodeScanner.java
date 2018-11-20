@@ -51,7 +51,7 @@ public final class AsmCodeScanner extends AbstractCScanner {
 
 	protected List<IRule> createRules() {
 		IToken token;
-		List<IRule> rules = new ArrayList<IRule>();
+		List<IRule> rules = new ArrayList<>();
 
 		// Add rule(s) for single line comments
 		token = getToken(ICColorConstants.C_SINGLE_LINE_COMMENT);

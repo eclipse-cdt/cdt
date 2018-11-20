@@ -54,7 +54,7 @@ public class CLIUtil {
 	 * Returns a map of String option to List of String parameters.
 	 */
 	public static Map<String, List<String>> parseToMap(String[] args) {
-		Map<String, List<String>> result = new HashMap<String, List<String>>();
+		Map<String, List<String>> result = new HashMap<>();
 		String current = null;
 		for (String arg : args) {
 			if (arg.startsWith("-")) { //$NON-NLS-1$

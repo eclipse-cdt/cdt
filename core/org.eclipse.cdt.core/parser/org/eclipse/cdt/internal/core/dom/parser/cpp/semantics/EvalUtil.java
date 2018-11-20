@@ -130,7 +130,7 @@ public class EvalUtil {
 				fixed = fixed.computeForFunctionCall(record, context);
 			}
 		}
-		return new Pair<ICPPEvaluation, ICPPEvaluation>(updateable, fixed);
+		return new Pair<>(updateable, fixed);
 	}
 
 	public static class Pair<T1, T2> {

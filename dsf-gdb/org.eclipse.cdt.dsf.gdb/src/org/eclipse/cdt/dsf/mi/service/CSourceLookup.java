@@ -52,7 +52,7 @@ import org.osgi.framework.BundleContext;
  * ISourceLookup service implementation based on the CDT CSourceLookupDirector.
  */
 public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
-	private Map<ISourceLookupDMContext, CSourceLookupDirector> fDirectors = new HashMap<ISourceLookupDMContext, CSourceLookupDirector>();
+	private Map<ISourceLookupDMContext, CSourceLookupDirector> fDirectors = new HashMap<>();
 
 	ICommandControl fConnection;
 	private CommandFactory fCommandFactory;
@@ -79,7 +79,7 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
 	}
 
 	private List<String> getSourceLookupPath(ISourceContainer[] containers) {
-		ArrayList<String> list = new ArrayList<String>(containers.length);
+		ArrayList<String> list = new ArrayList<>(containers.length);
 
 		for (ISourceContainer container : containers) {
 			if (container instanceof CProjectSourceContainer) {

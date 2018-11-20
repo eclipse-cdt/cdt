@@ -44,7 +44,7 @@ public class SnippetPreview extends CPreview {
 
 	public SnippetPreview(Map<String, String> workingValues, Composite parent) {
 		super(workingValues, parent);
-		fSnippets = new ArrayList<PreviewSnippet>();
+		fSnippets = new ArrayList<>();
 	}
 
 	@Override

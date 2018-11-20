@@ -277,7 +277,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 
 	private List<CPElementGroup> createGroups(ICElement element, List<?> cPaths) {
 		// create resource groups
-		List<CPElementGroup> resourceGroups = new ArrayList<CPElementGroup>(5);
+		List<CPElementGroup> resourceGroups = new ArrayList<>(5);
 		fTopGroup = new CPElementGroup(element.getResource());
 		resourceGroups.add(fTopGroup);
 		// add containers first so that they appear at top of list
@@ -1116,7 +1116,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 
 	@Override
 	public List<CPElement> getCPaths() {
-		List<CPElement> cPaths = new ArrayList<CPElement>();
+		List<CPElement> cPaths = new ArrayList<>();
 		List<CPElementGroup> groups = fIncludeSymPathsList.getElements();
 		for (int i = 0; i < groups.size(); i++) {
 			CPElementGroup group = groups.get(i);

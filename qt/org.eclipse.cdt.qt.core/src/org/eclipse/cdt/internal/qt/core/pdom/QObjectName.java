@@ -27,8 +27,8 @@ import org.eclipse.core.runtime.CoreException;
 public class QObjectName extends AbstractQClassName {
 
 	private final char[] fullyQualifiedName;
-	private final List<QtPropertyName> properties = new ArrayList<QtPropertyName>();
-	private final Map<String, String> classInfos = new LinkedHashMap<String, String>();
+	private final List<QtPropertyName> properties = new ArrayList<>();
+	private final Map<String, String> classInfos = new LinkedHashMap<>();
 
 	public QObjectName(ICPPASTCompositeTypeSpecifier spec) {
 		super(spec);

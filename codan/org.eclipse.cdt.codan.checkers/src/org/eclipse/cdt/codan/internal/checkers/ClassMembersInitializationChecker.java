@@ -79,7 +79,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 
 	class OnEachClass extends ASTVisitor {
 		// NOTE: Classes can be nested and even can be declared in constructors of the other classes
-		private final Stack<Set<IField>> constructorsStack = new Stack<Set<IField>>();
+		private final Stack<Set<IField>> constructorsStack = new Stack<>();
 		private boolean skipConstructorsWithFCalls = skipConstructorsWithFCalls();
 
 		OnEachClass() {

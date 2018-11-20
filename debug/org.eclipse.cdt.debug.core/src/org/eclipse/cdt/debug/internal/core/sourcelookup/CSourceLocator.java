@@ -84,7 +84,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	/**
 	 * The array of projects referenced by main project.
 	 */
-	private List<IProject> fReferencedProjects = new ArrayList<IProject>(10);
+	private List<IProject> fReferencedProjects = new ArrayList<>(10);
 
 	/**
 	 * The flag specifies whether to search for all source elements, or just the first match.
@@ -123,7 +123,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	protected Object getInput(IStackFrame f) {
 		if (f instanceof ICStackFrame) {
 			ICStackFrame frame = (ICStackFrame) f;
-			LinkedList<Object> list = new LinkedList<Object>();
+			LinkedList<Object> list = new LinkedList<>();
 			Object result = null;
 			String fileName = frame.getFile();
 			if (fileName != null && fileName.length() > 0) {
@@ -207,7 +207,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * @exception CoreException
 	 */
 	public static ICSourceLocation[] getDefaultSourceLocations(IProject project) {
-		ArrayList<IProjectSourceLocation> list = new ArrayList<IProjectSourceLocation>();
+		ArrayList<IProjectSourceLocation> list = new ArrayList<>();
 		if (project != null && project.exists()) {
 			list.add(SourceLookupFactory.createProjectSourceLocation(project));
 			addReferencedSourceLocations(list, project);
@@ -321,7 +321,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			if (!root.getNodeName().equalsIgnoreCase(SOURCE_LOCATOR_NAME)) {
 				abort(InternalSourceLookupMessages.CSourceLocator_1, null);
 			}
-			List<ICSourceLocation> sourceLocations = new ArrayList<ICSourceLocation>();
+			List<ICSourceLocation> sourceLocations = new ArrayList<>();
 			// Add locations based on referenced projects
 			IProject project = getProject();
 			if (project != null && project.exists() && project.isOpen())
@@ -346,7 +346,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	private void removeDisabledLocations(Element root, List<ICSourceLocation> sourceLocations) {
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();
-		HashSet<String> disabledProjects = new HashSet<String>(length);
+		HashSet<String> disabledProjects = new HashSet<>(length);
 		for (int i = 0; i < length; ++i) {
 			Node node = list.item(i);
 			short type = node.getNodeType();
@@ -483,7 +483,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		if (event.getSource() instanceof IWorkspace && event.getDelta() != null) {
 			IResourceDelta[] deltas = event.getDelta().getAffectedChildren();
 			if (deltas != null) {
-				ArrayList<IResource> list = new ArrayList<IResource>(deltas.length);
+				ArrayList<IResource> list = new ArrayList<>(deltas.length);
 				for (int i = 0; i < deltas.length; ++i)
 					if (deltas[i].getResource() instanceof IProject)
 						list.add(deltas[i].getResource());
@@ -496,7 +496,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		IProject project = getProject();
 		if (project != null && project.exists() && project.isOpen()) {
 			List<IProject> list = CDebugUtils.getReferencedProjects(project);
-			HashSet<String> names = new HashSet<String>(list.size() + 1);
+			HashSet<String> names = new HashSet<>(list.size() + 1);
 			names.add(project.getName());
 			for (IProject proj : list) {
 				names.add(proj.getName());
@@ -560,7 +560,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	}
 
 	protected ICSourceLocation[] getDefaultSourceLocations() {
-		ArrayList<IProjectSourceLocation> list = new ArrayList<IProjectSourceLocation>(fReferencedProjects.size());
+		ArrayList<IProjectSourceLocation> list = new ArrayList<>(fReferencedProjects.size());
 		if (getProject() != null && getProject().exists() && getProject().isOpen())
 			list.add(SourceLookupFactory.createProjectSourceLocation(getProject()));
 		for (IProject project : fReferencedProjects) {
@@ -583,7 +583,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	private void removeGenericSourceLocations() {
 		fReferencedProjects.clear();
 		ICSourceLocation[] locations = getSourceLocations();
-		ArrayList<ICSourceLocation> newLocations = new ArrayList<ICSourceLocation>(locations.length);
+		ArrayList<ICSourceLocation> newLocations = new ArrayList<>(locations.length);
 		for (int i = 0; i < locations.length; ++i) {
 			if (!(locations[i] instanceof IProjectSourceLocation)
 					|| !((IProjectSourceLocation) locations[i]).isGeneric())
@@ -595,7 +595,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	private void updateGenericSourceLocations(List<IResource> affectedProjects) {
 		List<IProject> newRefs = CDebugUtils.getReferencedProjects(getProject());
 		ICSourceLocation[] locations = getSourceLocations();
-		ArrayList<ICSourceLocation> newLocations = new ArrayList<ICSourceLocation>(locations.length);
+		ArrayList<ICSourceLocation> newLocations = new ArrayList<>(locations.length);
 		for (int i = 0; i < locations.length; ++i) {
 			if (!(locations[i] instanceof IProjectSourceLocation)
 					|| !((IProjectSourceLocation) locations[i]).isGeneric()) {

@@ -75,7 +75,7 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 	private IExpressions fExprService;
 	private IRunControl fRunControl;
 
-	private List<IDMEvent<? extends IDMContext>> fEventsReceived = new ArrayList<IDMEvent<? extends IDMContext>>();
+	private List<IDMEvent<? extends IDMContext>> fEventsReceived = new ArrayList<>();
 
 	@Override
 	protected void setLaunchAttributes() {

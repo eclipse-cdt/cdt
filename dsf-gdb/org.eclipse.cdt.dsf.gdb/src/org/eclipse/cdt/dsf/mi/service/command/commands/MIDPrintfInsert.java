@@ -131,7 +131,7 @@ public class MIDPrintfInsert extends MICommand<MIBreakInsertInfo> {
 	}
 
 	private Adjustable[] createParameters(String location, String printfStr) {
-		List<Adjustable> paramsList = new ArrayList<Adjustable>();
+		List<Adjustable> paramsList = new ArrayList<>();
 
 		paramsList.add(new MIStandardParameterAdjustable(location));
 

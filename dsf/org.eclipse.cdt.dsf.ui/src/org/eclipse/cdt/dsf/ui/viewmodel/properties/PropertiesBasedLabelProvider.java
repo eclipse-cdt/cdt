@@ -197,7 +197,7 @@ public class PropertiesBasedLabelProvider implements IElementLabelProvider {
 	 * @return Array of property names.
 	 */
 	private Set<String> calcPropertyNamesForColumns(String[] columnIds) {
-		Set<String> propertyNames = new HashSet<String>();
+		Set<String> propertyNames = new HashSet<>();
 		if (columnIds == null) {
 			LabelColumnInfo columnInfo = getColumnInfo(ID_COLUMN_NO_COLUMNS);
 			if (columnInfo != null) {

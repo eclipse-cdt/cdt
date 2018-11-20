@@ -80,7 +80,7 @@ public class ContributedEnvironment implements IContributedEnvironment {
 		EnvVarCollector cr = EnvironmentVariableManager.getVariables(getContextInfo(des), true);
 		if (cr != null) {
 			EnvVarDescriptor collected[] = cr.toArray(true);
-			List<IEnvironmentVariable> vars = new ArrayList<IEnvironmentVariable>(collected.length);
+			List<IEnvironmentVariable> vars = new ArrayList<>(collected.length);
 			IEnvironmentVariable var;
 			IEnvironmentContextInfo info = new DefaultEnvironmentContextInfo(des);//getContextInfo(des);
 			for (int i = 0; i < collected.length; i++) {

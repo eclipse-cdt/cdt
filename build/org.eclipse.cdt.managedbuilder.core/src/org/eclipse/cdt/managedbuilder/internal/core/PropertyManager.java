@@ -379,7 +379,7 @@ public class PropertyManager {
 		map = propsToMap(props);
 
 		if (map == null)
-			map = new LinkedHashMap<String, Object>();
+			map = new LinkedHashMap<>();
 
 		return map;
 	}

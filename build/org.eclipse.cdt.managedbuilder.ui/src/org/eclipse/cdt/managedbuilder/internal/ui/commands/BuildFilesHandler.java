@@ -128,7 +128,7 @@ public class BuildFilesHandler extends AbstractResourceActionHandler {
 	 * across all selected resources.
 	 */
 	private Collection<IProject> getProjectsToBuild(List<IFile> selectedFiles) {
-		Set<IProject> projectsToBuild = new HashSet<IProject>();
+		Set<IProject> projectsToBuild = new HashSet<>();
 		for (IFile file : selectedFiles) {
 			IProject project = file.getProject();
 			if (!projectsToBuild.contains(project)) {

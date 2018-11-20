@@ -397,14 +397,14 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 	}
 
 	private IASTNode searchNamespaceInImplementation(final List<ICPPASTNamespaceDefinition> namespaces) {
-		final Container<IASTNode> result = new Container<IASTNode>();
+		final Container<IASTNode> result = new Container<>();
 		ASTVisitor visitor = new NamespaceFinderVisitor(namespaces, result);
 		this.implAst.accept(visitor);
 		return result.getObject();
 	}
 
 	private List<ICPPASTNamespaceDefinition> getNamespacesToAdd(final List<ICPPASTNamespaceDefinition> namespaces) {
-		final List<ICPPASTNamespaceDefinition> result = new ArrayList<ICPPASTNamespaceDefinition>();
+		final List<ICPPASTNamespaceDefinition> result = new ArrayList<>();
 		this.implAst.accept(new NamespaceFinderVisitor(namespaces, new Container<IASTNode>()) {
 			{
 				shouldVisitTranslationUnit = true;

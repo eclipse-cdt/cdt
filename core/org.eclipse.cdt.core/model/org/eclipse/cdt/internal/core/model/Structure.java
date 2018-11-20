@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class Structure extends StructureDeclaration implements IStructure {
-	Map<String, ASTAccessVisibility> superClassesNames = new TreeMap<String, ASTAccessVisibility>();
+	Map<String, ASTAccessVisibility> superClassesNames = new TreeMap<>();
 
 	public Structure(ICElement parent, int kind, String name) {
 		super(parent, name, kind);
@@ -34,7 +34,7 @@ public class Structure extends StructureDeclaration implements IStructure {
 
 	@Override
 	public IField[] getFields() throws CModelException {
-		List<ICElement> fields = new ArrayList<ICElement>();
+		List<ICElement> fields = new ArrayList<>();
 		fields.addAll(getChildrenOfType(ICElement.C_FIELD));
 		return fields.toArray(new IField[fields.size()]);
 	}
@@ -55,7 +55,7 @@ public class Structure extends StructureDeclaration implements IStructure {
 
 	@Override
 	public IMethodDeclaration[] getMethods() throws CModelException {
-		List<ICElement> methods = new ArrayList<ICElement>();
+		List<ICElement> methods = new ArrayList<>();
 		methods.addAll(getChildrenOfType(ICElement.C_METHOD_DECLARATION));
 		methods.addAll(getChildrenOfType(ICElement.C_METHOD));
 		return methods.toArray(new IMethodDeclaration[methods.size()]);

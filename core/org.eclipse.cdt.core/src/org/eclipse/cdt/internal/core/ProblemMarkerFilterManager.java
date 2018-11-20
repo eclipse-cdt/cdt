@@ -47,13 +47,13 @@ public class ProblemMarkerFilterManager {
 	/**
 	 * List of all executable extension registered in Extension Registry
 	 */
-	private final List<ProblemMarkerFilterDesc> filters = new ArrayList<ProblemMarkerFilterDesc>();
+	private final List<ProblemMarkerFilterDesc> filters = new ArrayList<>();
 
 	/**
 	 * Cache of active filters for known projects.
 	 * This cache allow to skip evaluation of enablementExpression for every marker.
 	 */
-	private final Map<IProject, List<ProblemMarkerFilterDesc>> filtersCache = new WeakHashMap<IProject, List<ProblemMarkerFilterDesc>>();
+	private final Map<IProject, List<ProblemMarkerFilterDesc>> filtersCache = new WeakHashMap<>();
 
 	/**
 	 * Last Problem Marker that was accepted.
@@ -131,7 +131,7 @@ public class ProblemMarkerFilterManager {
 		synchronized (filtersCache) {
 			List<ProblemMarkerFilterDesc> result = filtersCache.get(project);
 			if (result == null) {
-				result = new ArrayList<ProblemMarkerFilterDesc>();
+				result = new ArrayList<>();
 				for (ProblemMarkerFilterDesc filterDesc : filters) {
 					if (filterDesc.matches(project)) {
 						result.add(filterDesc);

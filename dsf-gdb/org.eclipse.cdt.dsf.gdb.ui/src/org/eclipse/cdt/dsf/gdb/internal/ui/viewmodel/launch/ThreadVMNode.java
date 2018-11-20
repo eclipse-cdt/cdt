@@ -280,7 +280,7 @@ public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelP
 								return;
 							}
 
-							List<IExecutionDMContext> execDmcsNotRunning = new ArrayList<IExecutionDMContext>();
+							List<IExecutionDMContext> execDmcsNotRunning = new ArrayList<>();
 							for (IExecutionDMContext execDmc : execDmcs) {
 								// Keep suspended or stepping threads
 								if (runControl.isSuspended(execDmc) || runControl.isStepping(execDmc)) {

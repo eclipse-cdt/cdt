@@ -242,12 +242,12 @@ public class FormattedValueRetriever {
 			}
 			if (active != null) {
 				if (cachedMap == null) {
-					cachedMap = new HashMap<IPropertiesUpdate, String>(updates.length * 4 / 3);
+					cachedMap = new HashMap<>(updates.length * 4 / 3);
 				}
 				cachedMap.put(update, active);
 			} else {
 				if (outstanding == null) {
-					outstanding = new HashSet<IPropertiesUpdate>(updates.length * 4 / 3);
+					outstanding = new HashSet<>(updates.length * 4 / 3);
 				}
 				outstanding.add(update);
 			}
@@ -258,7 +258,7 @@ public class FormattedValueRetriever {
 			return;
 		}
 		if (cachedMap == null) {
-			cachedMap = new HashMap<IPropertiesUpdate, String>(updates.length * 4 / 3);
+			cachedMap = new HashMap<>(updates.length * 4 / 3);
 		}
 		final Map<IPropertiesUpdate, String> elementFormatMap = Collections.synchronizedMap(cachedMap);
 		rm.setData(elementFormatMap);
@@ -303,7 +303,7 @@ public class FormattedValueRetriever {
 				// of whether we need to call the service for data.
 				if (availableFormats != null || !isAvailableFormatsPropertyNeeded(update)) {
 					if (cachedAvailableFormatsMap == null) {
-						cachedAvailableFormatsMap = new HashMap<IPropertiesUpdate, String[]>(updates.length * 4 / 3);
+						cachedAvailableFormatsMap = new HashMap<>(updates.length * 4 / 3);
 					}
 					cachedAvailableFormatsMap.put(update, availableFormats);
 					continue;
@@ -322,7 +322,7 @@ public class FormattedValueRetriever {
 	private List<IPropertiesUpdate> calcOutstandingAvailableFormatsUpdates(IPropertiesUpdate[] updates,
 			Map<IPropertiesUpdate, String[]> cachedAvailableFormatsMap) {
 		if (cachedAvailableFormatsMap != null) {
-			List<IPropertiesUpdate> outstandingUpdates = new ArrayList<IPropertiesUpdate>(
+			List<IPropertiesUpdate> outstandingUpdates = new ArrayList<>(
 					updates.length - cachedAvailableFormatsMap.size());
 			for (IPropertiesUpdate update : updates) {
 				if (!cachedAvailableFormatsMap.containsKey(update)) {
@@ -423,10 +423,10 @@ public class FormattedValueRetriever {
 	private void doUpdateWithAvailableFormats(IPropertiesUpdate updates[],
 			final Map<IPropertiesUpdate, String[]> availableFormatsMap,
 			final Map<IPropertiesUpdate, String> elementFormatMap, final RequestMonitor rm) {
-		final List<IPropertiesUpdate> outstandingUpdates = new ArrayList<IPropertiesUpdate>(updates.length);
-		final Map<IPropertiesUpdate, List<String>> requestedFormatsMap = new HashMap<IPropertiesUpdate, List<String>>(
+		final List<IPropertiesUpdate> outstandingUpdates = new ArrayList<>(updates.length);
+		final Map<IPropertiesUpdate, List<String>> requestedFormatsMap = new HashMap<>(
 				updates.length * 4 / 3);
-		final Map<IPropertiesUpdate, String> activeFormatsMap = new HashMap<IPropertiesUpdate, String>(
+		final Map<IPropertiesUpdate, String> activeFormatsMap = new HashMap<>(
 				updates.length * 4 / 3);
 
 		for (final IPropertiesUpdate update : updates) {
@@ -608,7 +608,7 @@ public class FormattedValueRetriever {
 	 */
 	private List<String> calcRequestedFormats(IPropertiesUpdate update, String activeFormat,
 			String[] availableFormats) {
-		List<String> requestedFormats = new ArrayList<String>(10);
+		List<String> requestedFormats = new ArrayList<>(10);
 
 		boolean activeFormatValueHandled = false; // have we come across a specific format request that is the active format?
 

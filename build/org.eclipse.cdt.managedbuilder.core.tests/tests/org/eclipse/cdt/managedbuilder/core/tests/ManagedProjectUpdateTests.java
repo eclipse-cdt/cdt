@@ -84,7 +84,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 			}
 		});
 
-		ArrayList<IProject> projectList = new ArrayList<IProject>(projectZips.length);
+		ArrayList<IProject> projectList = new ArrayList<>(projectZips.length);
 		for (int i = 0; i < projectZips.length; i++) {
 			try {
 				String projectName = projectZips[i].getName();

@@ -73,7 +73,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	protected final class SectionManager {
 		/** The preference setting for keeping no section open. */
 		private static final String __NONE = "__none"; //$NON-NLS-1$
-		private final Set<ExpandableComposite> fSections = new HashSet<ExpandableComposite>();
+		private final Set<ExpandableComposite> fSections = new HashSet<>();
 		private boolean fIsBeingManaged = false;
 		private final ExpansionAdapter fListener = new ExpansionAdapter() {
 			@Override
@@ -210,7 +210,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	protected static final int INDENT = 20;
 	private final OverlayPreferenceStore fStore;
 
-	private final Map<Object, String> fCheckBoxes = new HashMap<Object, String>();
+	private final Map<Object, String> fCheckBoxes = new HashMap<>();
 	private final SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -223,7 +223,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		}
 	};
 
-	private final Map<Object, String> fTextFields = new HashMap<Object, String>();
+	private final Map<Object, String> fTextFields = new HashMap<>();
 	private final ModifyListener fTextFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
@@ -232,7 +232,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		}
 	};
 
-	private final ArrayList<Text> fNumberFields = new ArrayList<Text>();
+	private final ArrayList<Text> fNumberFields = new ArrayList<>();
 	private final ModifyListener fNumberFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
@@ -246,7 +246,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	 * @see #createDependency(Button, Control)
 	 * @since 3.0
 	 */
-	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<Object>();
+	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<>();
 
 	private StatusInfo fStatus;
 	private final PreferencePage fMainPage;

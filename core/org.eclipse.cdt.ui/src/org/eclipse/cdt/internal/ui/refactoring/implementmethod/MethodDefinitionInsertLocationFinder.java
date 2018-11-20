@@ -50,7 +50,7 @@ public class MethodDefinitionInsertLocationFinder {
 	// might want to find multiple insert locations in the same translation unit. This prevents
 	// many redundant calls to DefinitionFinder.getDefinition and speeds up the process quite
 	// a bit. Unfortunately, this has the minor side-effect or having to instantiate this class.
-	Map<IASTSimpleDeclaration, IASTName> cachedDeclarationToDefinition = new HashMap<IASTSimpleDeclaration, IASTName>();
+	Map<IASTSimpleDeclaration, IASTName> cachedDeclarationToDefinition = new HashMap<>();
 
 	public InsertLocation find(ITranslationUnit declarationTu, IASTFileLocation methodDeclarationLocation,
 			IASTNode parent, CRefactoringContext refactoringContext, IProgressMonitor pm) throws CoreException {
@@ -155,7 +155,7 @@ public class MethodDefinitionInsertLocationFinder {
 	 */
 	private static Collection<IASTSimpleDeclaration> getAllPreviousSimpleDeclarationsFromClassInReverseOrder(
 			IASTDeclaration[] declarations, IASTFileLocation methodPosition, IProgressMonitor pm) {
-		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<IASTSimpleDeclaration>();
+		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<>();
 		if (declarations.length >= 0) {
 			for (IASTDeclaration decl : declarations) {
 				if (pm != null && pm.isCanceled()) {
@@ -175,7 +175,7 @@ public class MethodDefinitionInsertLocationFinder {
 
 	private static Collection<IASTSimpleDeclaration> getAllFollowingSimpleDeclarationsFromClass(
 			IASTDeclaration[] declarations, IASTFileLocation methodPosition, IProgressMonitor pm) {
-		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<IASTSimpleDeclaration>();
+		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<>();
 
 		if (declarations.length >= 0) {
 			for (IASTDeclaration decl : declarations) {

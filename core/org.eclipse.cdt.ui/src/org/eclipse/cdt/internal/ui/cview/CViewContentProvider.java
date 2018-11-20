@@ -170,7 +170,7 @@ public class CViewContentProvider extends CElementContentProvider {
 
 	protected IBinary[] getExecutables(IBinaryContainer container) throws CModelException {
 		ICElement[] celements = container.getChildren();
-		ArrayList<IBinary> list = new ArrayList<IBinary>(celements.length);
+		ArrayList<IBinary> list = new ArrayList<>(celements.length);
 		for (int i = 0; i < celements.length; i++) {
 			if (celements[i] instanceof IBinary) {
 				IBinary bin = (IBinary) celements[i];

@@ -134,7 +134,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 					}
 					Map<String, String> contentTypeMappings = fConfigurationContentTypeMappings.get(configuration);
 					if (contentTypeMappings == null) {
-						contentTypeMappings = new TreeMap<String, String>();
+						contentTypeMappings = new TreeMap<>();
 						fConfigurationContentTypeMappings.put(configuration, contentTypeMappings);
 					}
 					contentTypeMappings.put(contentType, language);
@@ -189,7 +189,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 	}
 
 	private Set<String> createContentTypeFilter(Map<String, Map<String, String>> mappings) {
-		Set<String> filter = new HashSet<String>();
+		Set<String> filter = new HashSet<>();
 		Iterator<Entry<String, Map<String, String>>> configurationContentTypeMappings = mappings.entrySet().iterator();
 		while (configurationContentTypeMappings.hasNext()) {
 			Entry<String, Map<String, String>> entry = configurationContentTypeMappings.next();
@@ -253,7 +253,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		}
 
 		if (fChild != null) {
-			Set<String> overrides = new HashSet<String>(
+			Set<String> overrides = new HashSet<>(
 					createWorkspaceContentTypeFilter(fConfigurationContentTypeMappings));
 			fChild.setOverriddenContentTypes(overrides);
 			fChild.refreshMappings();

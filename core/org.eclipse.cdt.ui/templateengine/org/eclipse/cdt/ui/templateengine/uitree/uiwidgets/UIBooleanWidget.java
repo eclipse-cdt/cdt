@@ -65,7 +65,7 @@ public class UIBooleanWidget extends InputUIElement {
 	 */
 	@Override
 	public Map<String, String> getValues() {
-		Map<String, String> values = new HashMap<String, String>();
+		Map<String, String> values = new HashMap<>();
 		values.put(uiAttributes.get(UIElement.ID), Boolean.toString(booleanValue));
 		return values;
 	}

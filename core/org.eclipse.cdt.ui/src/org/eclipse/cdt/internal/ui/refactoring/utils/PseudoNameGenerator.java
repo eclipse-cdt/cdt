@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class PseudoNameGenerator {
 
-	private final Set<String> names = new HashSet<String>();
+	private final Set<String> names = new HashSet<>();
 
 	public void addExistingName(String name) {
 		names.add(name);

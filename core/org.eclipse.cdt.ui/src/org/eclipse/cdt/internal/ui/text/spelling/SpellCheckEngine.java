@@ -92,7 +92,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 			return fgLocalesWithInstalledDictionaries = Collections.emptySet();
 		}
 
-		fgLocalesWithInstalledDictionaries = new HashSet<Locale>();
+		fgLocalesWithInstalledDictionaries = new HashSet<>();
 		int fileNameCount = fileNames.length;
 		for (int i = 0; i < fileNameCount; i++) {
 			String fileName = fileNames[i];
@@ -215,13 +215,13 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 	}
 
 	/** The registered locale insensitive dictionaries */
-	private Set<ISpellDictionary> fGlobalDictionaries = new HashSet<ISpellDictionary>();
+	private Set<ISpellDictionary> fGlobalDictionaries = new HashSet<>();
 
 	/** The spell checker for fLocale */
 	private ISpellChecker fChecker = null;
 
 	/** The registered locale sensitive dictionaries */
-	private Map<Locale, ISpellDictionary> fLocaleDictionaries = new HashMap<Locale, ISpellDictionary>();
+	private Map<Locale, ISpellDictionary> fLocaleDictionaries = new HashMap<>();
 
 	/** The user dictionary */
 	private ISpellDictionary fUserDictionary = null;

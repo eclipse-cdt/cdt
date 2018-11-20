@@ -127,7 +127,7 @@ public class DsfExecutable {
 			// constructor of this object.
 			StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 			Class<?> thisClass = getClass();
-			Set<String> classNamesSet = new HashSet<String>();
+			Set<String> classNamesSet = new HashSet<>();
 			while (thisClass != null) {
 				classNamesSet.add(thisClass.getName());
 				thisClass = thisClass.getSuperclass();

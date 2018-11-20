@@ -99,7 +99,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	 * - Modified on breakpointChanged()
 	 * - Diminished on breakpointRemoved()
 	 */
-	private Map<IBreakpointsTargetDMContext, Map<IBreakpoint, List<Map<String, Object>>>> fPlatformBPs = new HashMap<IBreakpointsTargetDMContext, Map<IBreakpoint, List<Map<String, Object>>>>();
+	private Map<IBreakpointsTargetDMContext, Map<IBreakpoint, List<Map<String, Object>>>> fPlatformBPs = new HashMap<>();
 
 	/**
 	 * Holds the mapping from platform breakpoint to the corresponding target
@@ -111,19 +111,19 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	 * - A platform breakpoint is added/removed
 	 * - A thread filter is applied/removed
 	 */
-	private Map<IBreakpointsTargetDMContext, Map<IBreakpoint, List<IBreakpointDMContext>>> fBreakpointDMContexts = new HashMap<IBreakpointsTargetDMContext, Map<IBreakpoint, List<IBreakpointDMContext>>>();
+	private Map<IBreakpointsTargetDMContext, Map<IBreakpoint, List<IBreakpointDMContext>>> fBreakpointDMContexts = new HashMap<>();
 
 	/**
 	 * Due to the very asynchronous nature of DSF, a new breakpoint request can
 	 * pop up at any time before an ongoing one is completed. The following set
 	 * is used to store requests until the ongoing operation completes.
 	 */
-	private Set<IBreakpoint> fPendingRequests = new HashSet<IBreakpoint>();
+	private Set<IBreakpoint> fPendingRequests = new HashSet<>();
 
 	/**
 	 * @see fPendingRequests
 	 */
-	private Set<IBreakpoint> fPendingBreakpoints = new HashSet<IBreakpoint>();
+	private Set<IBreakpoint> fPendingBreakpoints = new HashSet<>();
 
 	///////////////////////////////////////////////////////////////////////////
 	// AbstractDsfService
@@ -203,7 +203,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 
 		// We have to make a copy of the fPlatformBPs keys because uninstallBreakpoints()
 		// modifies the map as it walks through it.
-		List<IBreakpointsTargetDMContext> platformBPKeysCopy = new ArrayList<IBreakpointsTargetDMContext>(
+		List<IBreakpointsTargetDMContext> platformBPKeysCopy = new ArrayList<>(
 				fPlatformBPs.size());
 		platformBPKeysCopy.addAll(0, fPlatformBPs.keySet());
 		for (IBreakpointsTargetDMContext dmc : platformBPKeysCopy) {
@@ -274,7 +274,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 				// Read initial breakpoints from platform.  Copy the breakpoint attributes into a local map.
 				// Note that we cannot write data into fPlatformBPs table here directly because we are not
 				// executing on the dispatch thread.
-				final Map<IBreakpoint, List<Map<String, Object>>> initialPlatformBPs = new HashMap<IBreakpoint, List<Map<String, Object>>>();
+				final Map<IBreakpoint, List<Map<String, Object>>> initialPlatformBPs = new HashMap<>();
 				try {
 					// Get the stored breakpoint list from the platform BreakpointManager
 					IBreakpoint[] bps = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
@@ -441,7 +441,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 						protected void handleCompleted() {
 							List<IBreakpointDMContext> list = breakpointIDs.get(breakpoint);
 							if (list == null) {
-								list = new LinkedList<IBreakpointDMContext>();
+								list = new LinkedList<>();
 								breakpointIDs.put(breakpoint, list);
 							}
 
@@ -567,19 +567,19 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 		}
 
 		// Get the list of corresponding back-end breakpoints
-		final List<IBreakpointDMContext> oldBpContexts = new ArrayList<IBreakpointDMContext>(
+		final List<IBreakpointDMContext> oldBpContexts = new ArrayList<>(
 				breakpointIDs.get(breakpoint));
 
 		// Calculate the list of attributes maps that have not changed.
 		// Immediately add these to the list of new breakpoint contexts,
 		// and remove them from further breakpoint attribute comparisons.
 		final List<Map<String, Object>> commonAttrsList = getCommonAttributeMaps(newAttrsList0, oldAttrsList0);
-		final List<IBreakpointDMContext> newBpContexts = new ArrayList<IBreakpointDMContext>(commonAttrsList.size());
+		final List<IBreakpointDMContext> newBpContexts = new ArrayList<>(commonAttrsList.size());
 
-		final List<Map<String, Object>> newAttrsList = new ArrayList<Map<String, Object>>(newAttrsList0);
+		final List<Map<String, Object>> newAttrsList = new ArrayList<>(newAttrsList0);
 		newAttrsList.removeAll(commonAttrsList);
 
-		List<Map<String, Object>> oldAttrsList = new ArrayList<Map<String, Object>>(oldAttrsList0);
+		List<Map<String, Object>> oldAttrsList = new ArrayList<>(oldAttrsList0);
 		for (int i = 0; i < oldAttrsList.size(); i++) {
 			if (commonAttrsList.contains(oldAttrsList.get(i))) {
 				if (oldBpContexts.size() > i) {
@@ -685,8 +685,8 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 
 	private List<Map<String, Object>> getCommonAttributeMaps(List<Map<String, Object>> array1,
 			List<Map<String, Object>> array2) {
-		List<Map<String, Object>> intersection = new LinkedList<Map<String, Object>>();
-		List<Map<String, Object>> list2 = new ArrayList<Map<String, Object>>(array2);
+		List<Map<String, Object>> intersection = new LinkedList<>();
+		List<Map<String, Object>> list2 = new ArrayList<>(array2);
 		for (Map<String, Object> array1Map : array1) {
 			if (list2.remove(array1Map)) {
 				intersection.add(array1Map);
@@ -704,7 +704,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	 */
 	private List<Map<String, Object>> getAttributesDeltas(List<Map<String, Object>> oldAttributesList,
 			List<Map<String, Object>> newAttributesList) {
-		List<Map<String, Object>> deltas = new ArrayList<Map<String, Object>>(oldAttributesList.size());
+		List<Map<String, Object>> deltas = new ArrayList<>(oldAttributesList.size());
 
 		// Go through the bp attributes common to the old and the new lists and calculate
 		// their deltas.
@@ -712,16 +712,16 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 			Map<String, Object> oldAttributes = oldAttributesList.get(i);
 			Map<String, Object> newAttributes = newAttributesList.get(i);
 
-			Map<String, Object> delta = new HashMap<String, Object>();
+			Map<String, Object> delta = new HashMap<>();
 
 			Set<String> oldKeySet = oldAttributes.keySet();
 			Set<String> newKeySet = newAttributes.keySet();
 
-			Set<String> commonKeys = new HashSet<String>(newKeySet);
+			Set<String> commonKeys = new HashSet<>(newKeySet);
 			commonKeys.retainAll(oldKeySet);
-			Set<String> addedKeys = new HashSet<String>(newKeySet);
+			Set<String> addedKeys = new HashSet<>(newKeySet);
 			addedKeys.removeAll(oldKeySet);
-			Set<String> removedKeys = new HashSet<String>(oldKeySet);
+			Set<String> removedKeys = new HashSet<>(oldKeySet);
 			removedKeys.removeAll(newKeySet);
 
 			// Add the modified attributes

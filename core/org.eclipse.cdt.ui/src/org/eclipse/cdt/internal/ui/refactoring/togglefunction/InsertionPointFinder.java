@@ -83,7 +83,7 @@ public class InsertionPointFinder {
 	 * @param ast the translation unit where to find the definitions
 	 */
 	private static void findAllDefinitionsoutSideClass(IASTTranslationUnit ast) {
-		final ArrayList<ICPPASTFunctionDefinition> definitions = new ArrayList<ICPPASTFunctionDefinition>();
+		final ArrayList<ICPPASTFunctionDefinition> definitions = new ArrayList<>();
 		if (ast == null) {
 			alldefinitionsoutside = definitions;
 			return;
@@ -110,7 +110,7 @@ public class InsertionPointFinder {
 
 	private static ArrayList<ICPPASTFunctionDeclarator> getDeclarationsInClass(ICPPASTCompositeTypeSpecifier klass,
 			final IASTFunctionDeclarator selected) {
-		final ArrayList<ICPPASTFunctionDeclarator> declarations = new ArrayList<ICPPASTFunctionDeclarator>();
+		final ArrayList<ICPPASTFunctionDeclarator> declarations = new ArrayList<>();
 
 		klass.accept(new ASTVisitor() {
 			{
@@ -137,7 +137,7 @@ public class InsertionPointFinder {
 	}
 
 	private static ICPPASTCompositeTypeSpecifier getklass(IASTTranslationUnit unit) {
-		final Container<ICPPASTCompositeTypeSpecifier> result = new Container<ICPPASTCompositeTypeSpecifier>();
+		final Container<ICPPASTCompositeTypeSpecifier> result = new Container<>();
 
 		unit.accept(new ASTVisitor() {
 			{

@@ -50,8 +50,8 @@ import junit.framework.TestCase;
 public class TemplateEngineTestsHelper {
 
 	public static final String LOGGER_FILE_NAME = "TemplateEngineTests"; //$NON-NLS-1$
-	private static List<IProjectType> projectTypes = new ArrayList<IProjectType>();
-	private static List<String> projectTypeNames = new ArrayList<String>();
+	private static List<IProjectType> projectTypes = new ArrayList<>();
+	private static List<String> projectTypeNames = new ArrayList<>();
 
 	/**
 	 * get the url of a xml template, by passing the xml file name.

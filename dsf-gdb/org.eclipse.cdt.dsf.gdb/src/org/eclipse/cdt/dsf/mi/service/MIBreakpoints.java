@@ -595,7 +595,7 @@ public class MIBreakpoints extends AbstractDsfService
 	public void getExecutionContextBreakpoints(IExecutionDMContext ctx, DataRequestMonitor<IBreakpointDMContext[]> rm) {
 		IBreakpointDMContext[] bps = fBreakpointHitMap.get(ctx);
 		if (bps == null && ctx instanceof IContainerDMContext) {
-			List<IBreakpointDMContext> bpsList = new ArrayList<IBreakpointDMContext>(1);
+			List<IBreakpointDMContext> bpsList = new ArrayList<>(1);
 			for (Map.Entry<IExecutionDMContext, IBreakpointDMContext[]> entry : fBreakpointHitMap.entrySet()) {
 
 				if (DMContexts.isAncestorOf(entry.getKey(), ctx)) {
@@ -748,7 +748,7 @@ public class MIBreakpoints extends AbstractDsfService
 
 										// By default the breakpoint is enabled at creation
 										// If it wasn't supposed to be, then disable it right away
-										Map<String, Object> delta = new HashMap<String, Object>();
+										Map<String, Object> delta = new HashMap<>();
 										delta.put(IS_ENABLED, getProperty(attributes, IS_ENABLED, true));
 										modifyBreakpoint(dmc, delta, rm, false);
 									}
@@ -844,7 +844,7 @@ public class MIBreakpoints extends AbstractDsfService
 
 				// Condition, ignore count and state can not be specified at watchpoint creation time.
 				// Therefore, we have to update the watchpoint if any of these is present
-				Map<String, Object> delta = new HashMap<String, Object>();
+				Map<String, Object> delta = new HashMap<>();
 				delta.put(CONDITION, getProperty(attributes, CONDITION, NULL_STRING));
 				delta.put(IGNORE_COUNT, getProperty(attributes, IGNORE_COUNT, 0));
 				delta.put(IS_ENABLED, getProperty(attributes, IS_ENABLED, true));
@@ -941,7 +941,7 @@ public class MIBreakpoints extends AbstractDsfService
 
 								// Condition, ignore count and state cannot be specified at creation time.
 								// Therefore, we have to update the catchpoint if any of these is present
-								Map<String, Object> delta = new HashMap<String, Object>();
+								Map<String, Object> delta = new HashMap<>();
 								delta.put(CONDITION, getProperty(attributes, CONDITION, NULL_STRING));
 								delta.put(IGNORE_COUNT, getProperty(attributes, IGNORE_COUNT, 0));
 								delta.put(IS_ENABLED, getProperty(attributes, IS_ENABLED, true));
@@ -1109,7 +1109,7 @@ public class MIBreakpoints extends AbstractDsfService
 	protected void modifyBreakpoint(final IBreakpointDMContext dmc, Map<String, Object> attributes,
 			final RequestMonitor rm, final boolean generateUpdateEvent) {
 		// Use a working copy of the attributes since we are going to tamper happily with them
-		Map<String, Object> properties = new HashMap<String, Object>(attributes);
+		Map<String, Object> properties = new HashMap<>(attributes);
 
 		// Retrieve the breakpoint parameters
 		// At this point, we know their are OK so there is no need to re-validate

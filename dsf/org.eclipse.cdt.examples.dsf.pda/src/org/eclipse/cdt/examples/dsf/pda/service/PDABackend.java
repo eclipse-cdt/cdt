@@ -224,7 +224,7 @@ public class PDABackend extends AbstractDsfService {
 
 	private Process launchPDABackendDebugger() throws CoreException {
 
-		List<String> commandList = new ArrayList<String>();
+		List<String> commandList = new ArrayList<>();
 
 		// Get Java VM path
 		String javaVMHome = System.getProperty("java.home");

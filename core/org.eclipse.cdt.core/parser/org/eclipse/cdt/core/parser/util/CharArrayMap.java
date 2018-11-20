@@ -141,7 +141,7 @@ public final class CharArrayMap<V> {
 	 * Constructs an empty CharArrayMap with default initial capacity.
 	 */
 	public CharArrayMap() {
-		map = new HashMap<Key, V>();
+		map = new HashMap<>();
 	}
 
 	/**
@@ -152,7 +152,7 @@ public final class CharArrayMap<V> {
 	 */
 	public static <V> CharArrayMap<V> createOrderedMap() {
 		// TreeMap does not have a constructor that takes an initial capacity
-		return new CharArrayMap<V>(new TreeMap<Key, V>());
+		return new CharArrayMap<>(new TreeMap<Key, V>());
 	}
 
 	private CharArrayMap(Map<Key, V> map) {
@@ -165,7 +165,7 @@ public final class CharArrayMap<V> {
 	 * @throws IllegalArgumentException if the initial capacity is negative
 	 */
 	public CharArrayMap(int initialCapacity) {
-		map = new HashMap<Key, V>(initialCapacity);
+		map = new HashMap<>(initialCapacity);
 	}
 
 	/**
@@ -267,7 +267,7 @@ public final class CharArrayMap<V> {
 	 */
 	public Collection<char[]> keys() {
 		Set<Key> keys = map.keySet();
-		ArrayList<char[]> r = new ArrayList<char[]>(keys.size());
+		ArrayList<char[]> r = new ArrayList<>(keys.size());
 		for (Key key : keys) {
 			r.add(CharArrayUtils.extract(key.buffer, key.start, key.length));
 		}

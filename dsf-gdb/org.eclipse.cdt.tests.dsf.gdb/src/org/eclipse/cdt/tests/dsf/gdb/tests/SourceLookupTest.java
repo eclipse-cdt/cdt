@@ -353,7 +353,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	protected void addSourceContainer(AbstractSourceLookupDirector director, ISourceContainer container)
 			throws CoreException {
 
-		ArrayList<ISourceContainer> containerList = new ArrayList<ISourceContainer>(
+		ArrayList<ISourceContainer> containerList = new ArrayList<>(
 				Arrays.asList(director.getSourceContainers()));
 		container.init(director);
 		containerList.add(container);
@@ -375,7 +375,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		} else {
 			mapContainer.addMapEntry(fMapEntrySourceContainerN);
 		}
-		ArrayList<ISourceContainer> containerList = new ArrayList<ISourceContainer>(
+		ArrayList<ISourceContainer> containerList = new ArrayList<>(
 				Arrays.asList(commonSourceLookupDirector.getSourceContainers()));
 		containerList.add(mapContainer);
 		commonSourceLookupDirector

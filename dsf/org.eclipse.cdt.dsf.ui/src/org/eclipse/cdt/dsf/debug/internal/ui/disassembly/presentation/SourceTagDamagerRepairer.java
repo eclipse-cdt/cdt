@@ -45,11 +45,11 @@ import org.eclipse.swt.graphics.RGB;
 public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements ISourceTagListener {
 
 	private ISourceTagProvider fSourceTagProvider;
-	private Map<String, ITokenScanner> fScannerMap = new HashMap<String, ITokenScanner>();
-	private List<ISourceTag> fSourceTags = new ArrayList<ISourceTag>();
+	private Map<String, ITokenScanner> fScannerMap = new HashMap<>();
+	private List<ISourceTag> fSourceTags = new ArrayList<>();
 	private IColorManager fColorManager;
 	private IPreferenceStore fPreferenceStore;
-	private Map<String, TextAttribute> fAttributeMap = new HashMap<String, TextAttribute>();
+	private Map<String, TextAttribute> fAttributeMap = new HashMap<>();
 
 	private final static String[] KEYS = { SemanticHighlightings.CLASS, SemanticHighlightings.METHOD_DECLARATION,
 			SemanticHighlightings.FUNCTION_DECLARATION, SemanticHighlightings.FIELD,

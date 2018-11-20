@@ -420,7 +420,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 * @return <code>true</code> if the input set was modified
 	 */
 	private boolean convertToCElements(Set<Object> currentChildren) {
-		LinkedHashSet<ICElement> convertedChildren = new LinkedHashSet<ICElement>();
+		LinkedHashSet<ICElement> convertedChildren = new LinkedHashSet<>();
 		ICElement newChild;
 		for (Iterator<Object> iter = currentChildren.iterator(); iter.hasNext();) {
 			Object child = iter.next();

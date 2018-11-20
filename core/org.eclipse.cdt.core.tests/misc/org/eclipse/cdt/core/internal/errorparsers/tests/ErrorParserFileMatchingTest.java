@@ -99,7 +99,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			Assert.assertNotNull(fProject);
 			mockErrorParserId = addErrorParserExtension("MockErrorParser", MockErrorParser.class);
 		}
-		errorList = new ArrayList<ProblemMarkerInfo>();
+		errorList = new ArrayList<>();
 	}
 
 	@Override

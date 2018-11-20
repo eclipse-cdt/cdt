@@ -97,7 +97,7 @@ public class EditorReopener implements IDocCommentOwnershipListener {
 	 * This could be smarter in determining smaller sets of editors to re-open
 	 */
 	private IEditorPart[] getEditorsToRepon(IWorkbenchWindow window, IResource resource) {
-		List<IEditorPart> needReopening = new ArrayList<IEditorPart>();
+		List<IEditorPart> needReopening = new ArrayList<>();
 		if (window.getActivePage() != null) {
 			IEditorReference[] es = window.getActivePage().getEditorReferences();
 			for (int i = 0; i < es.length; i++) {

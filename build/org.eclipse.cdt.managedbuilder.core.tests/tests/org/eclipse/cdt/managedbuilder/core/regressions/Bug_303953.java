@@ -38,7 +38,7 @@ public class Bug_303953 extends AbstractBuilderTest {
 		setWorkspace("regressions");
 		final IProject app = loadProject("helloworldC");
 
-		List<IResource> buildOutputResources = new ArrayList<IResource>();
+		List<IResource> buildOutputResources = new ArrayList<>();
 		buildOutputResources.addAll(getProjectBuildExeResources("helloworldC", "Debug", "src/helloworldC"));
 
 		// Ensure Debug is the active configuration

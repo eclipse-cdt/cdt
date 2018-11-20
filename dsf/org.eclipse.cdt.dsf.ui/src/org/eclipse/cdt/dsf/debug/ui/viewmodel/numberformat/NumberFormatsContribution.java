@@ -42,7 +42,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class NumberFormatsContribution extends CompoundContributionItem implements IWorkbenchContribution {
 
-	protected static final List<String> FORMATS = new LinkedList<String>();
+	protected static final List<String> FORMATS = new LinkedList<>();
 	static {
 		FORMATS.add(IFormattedValues.NATURAL_FORMAT);
 		FORMATS.add(IFormattedValues.HEX_FORMAT);
@@ -101,7 +101,7 @@ public class NumberFormatsContribution extends CompoundContributionItem implemen
 			activeId = IFormattedValues.NATURAL_FORMAT;
 		}
 
-		List<Action> actions = new ArrayList<Action>(FORMATS.size());
+		List<Action> actions = new ArrayList<>(FORMATS.size());
 		for (String formatId : FORMATS) {
 			Action action = new SelectNumberFormatAction(context, formatId);
 			if (formatId.equals(activeId)) {

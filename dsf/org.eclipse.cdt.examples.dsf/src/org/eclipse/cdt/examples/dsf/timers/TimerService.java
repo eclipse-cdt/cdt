@@ -91,9 +91,9 @@ public class TimerService extends AbstractDsfService {
 	private int fTimerNumberCounter = 1;
 
 	// Use a linked hash in order to be able to return an ordered list of timers.
-	private Map<TimerDMContext, Integer> fTimers = new LinkedHashMap<TimerDMContext, Integer>();
+	private Map<TimerDMContext, Integer> fTimers = new LinkedHashMap<>();
 
-	private Map<TimerDMContext, Future<?>> fTimerFutures = new HashMap<TimerDMContext, Future<?>>();
+	private Map<TimerDMContext, Future<?>> fTimerFutures = new HashMap<>();
 
 	TimerService(DsfSession session) {
 		super(session);

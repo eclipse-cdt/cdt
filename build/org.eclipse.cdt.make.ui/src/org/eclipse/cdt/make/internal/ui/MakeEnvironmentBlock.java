@@ -311,7 +311,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 				// Convert the table's items into a Map so that this can be saved in the
 				// configuration's attributes.
 				TableItem[] items = environmentTable.getTable().getItems();
-				Map<String, String> map = new HashMap<String, String>(items.length);
+				Map<String, String> map = new HashMap<>(items.length);
 				for (int i = 0; i < items.length; i++) {
 					EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
 					map.put(var.getName(), var.getValue());
@@ -607,7 +607,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	private Map<String, EnvironmentVariable> getNativeEnvironment() {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		Map<String, String> stringVars = (Hashtable) EnvironmentReader.getEnvVars();
-		HashMap<String, EnvironmentVariable> vars = new HashMap<String, EnvironmentVariable>();
+		HashMap<String, EnvironmentVariable> vars = new HashMap<>();
 		for (Iterator<String> i = stringVars.keySet().iterator(); i.hasNext();) {
 			String key = i.next();
 			String value = stringVars.get(key);
@@ -713,7 +713,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 						}
 
 					};
-					TreeMap<String, EnvironmentVariable> envVars = new TreeMap<String, EnvironmentVariable>(comparator);
+					TreeMap<String, EnvironmentVariable> envVars = new TreeMap<>(comparator);
 					envVars.putAll((Map<String, EnvironmentVariable>) inputElement);
 					elements = new EnvironmentVariable[envVars.size()];
 					int index = 0;

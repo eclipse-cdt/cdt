@@ -42,7 +42,7 @@ public class CHelpBook implements ICHelpBook {
 	private TreeMap<String, CHelpEntry> entries;
 
 	public CHelpBook(Element e) {
-		entries = new TreeMap<String, CHelpEntry>();
+		entries = new TreeMap<>();
 
 		if (e.hasAttribute(ATTR_TITLE))
 			title = e.getAttribute(ATTR_TITLE).trim();
@@ -126,7 +126,7 @@ public class CHelpBook implements ICHelpBook {
 		}
 
 		if (col.size() > 0) {
-			ArrayList<IFunctionSummary> out = new ArrayList<IFunctionSummary>(col.size());
+			ArrayList<IFunctionSummary> out = new ArrayList<>(col.size());
 			for (CHelpEntry he : col)
 				for (IFunctionSummary fs : he.getFunctionSummary())
 					out.add(fs);

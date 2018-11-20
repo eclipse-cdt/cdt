@@ -93,11 +93,11 @@ public class ProfileStore {
 				if (fKind == null) //Can only be an CodeFormatterProfile created pre 20061106
 					fKind = ProfileVersioner.CODE_FORMATTER_PROFILE_KIND;
 
-				fSettings = new HashMap<String, String>(200);
+				fSettings = new HashMap<>(200);
 
 			} else if (qName.equals(XML_NODE_ROOT)) {
 
-				fProfiles = new ArrayList<Profile>();
+				fProfiles = new ArrayList<>();
 				try {
 					fVersion = Integer.parseInt(attributes.getValue(XML_ATTRIBUTE_VERSION));
 				} catch (NumberFormatException ex) {

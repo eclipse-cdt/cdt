@@ -50,7 +50,7 @@ public class RefreshExclusionContributionManager {
 	private LinkedHashMap<String, RefreshExclusionContributor> fIDtoContributorsMap;
 
 	private RefreshExclusionContributionManager() {
-		fIDtoContributorsMap = new LinkedHashMap<String, RefreshExclusionContributor>();
+		fIDtoContributorsMap = new LinkedHashMap<>();
 		loadExtensions();
 	}
 
@@ -63,7 +63,7 @@ public class RefreshExclusionContributionManager {
 	}
 
 	public List<RefreshExclusionContributor> getContributors(boolean returnTestContributors) {
-		List<RefreshExclusionContributor> retVal = new LinkedList<RefreshExclusionContributor>();
+		List<RefreshExclusionContributor> retVal = new LinkedList<>();
 
 		if (!returnTestContributors) {
 			for (RefreshExclusionContributor contributor : fIDtoContributorsMap.values()) {
@@ -76,7 +76,7 @@ public class RefreshExclusionContributionManager {
 		}
 
 		else {
-			return new LinkedList<RefreshExclusionContributor>(fIDtoContributorsMap.values());
+			return new LinkedList<>(fIDtoContributorsMap.values());
 		}
 	}
 

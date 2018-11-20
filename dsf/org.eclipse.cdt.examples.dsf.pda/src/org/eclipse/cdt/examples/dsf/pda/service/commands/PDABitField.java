@@ -39,7 +39,7 @@ public class PDABitField {
 		fOffset = Integer.parseInt(st.nextToken());
 		fCount = Integer.parseInt(st.nextToken());
 
-		fMnemonics = new LinkedHashMap<String, String>(0);
+		fMnemonics = new LinkedHashMap<>(0);
 		while (st.hasMoreTokens()) {
 			fMnemonics.put(st.nextToken(), st.nextToken());
 		}

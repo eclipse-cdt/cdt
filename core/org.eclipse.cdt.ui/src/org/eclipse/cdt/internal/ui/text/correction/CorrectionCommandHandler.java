@@ -102,7 +102,7 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	private ICompletionProposal findCorrection(String id, boolean isAssist, ITextSelection selection,
 			ITranslationUnit tu, IAnnotationModel model) {
 		CorrectionContext context = new CorrectionContext(tu, selection.getOffset(), selection.getLength());
-		Collection<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>(10);
+		Collection<ICCompletionProposal> proposals = new ArrayList<>(10);
 		if (isAssist) {
 			if (id.equals(LinkedNamesAssistProposal.ASSIST_ID)) {
 				return getLocalRenameProposal(context); // shortcut for local rename
@@ -129,7 +129,7 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	}
 
 	private Annotation[] getAnnotations(int offset, boolean goToClosest) throws BadLocationException {
-		ArrayList<Annotation> resultingAnnotations = new ArrayList<Annotation>();
+		ArrayList<Annotation> resultingAnnotations = new ArrayList<>();
 		CCorrectionAssistant.collectQuickFixableAnnotations(fEditor, offset, goToClosest, resultingAnnotations);
 		return resultingAnnotations.toArray(new Annotation[resultingAnnotations.size()]);
 	}

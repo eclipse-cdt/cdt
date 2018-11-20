@@ -341,7 +341,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 		fPrefixesMap = null;
 
 		String[] types = configuration.getConfiguredContentTypes(sourceViewer);
-		Map<String, String[]> prefixesMap = new HashMap<String, String[]>(types.length);
+		Map<String, String[]> prefixesMap = new HashMap<>(types.length);
 		for (String type : types) {
 			String[] prefixes = configuration.getDefaultPrefixes(sourceViewer, type);
 			if (prefixes != null && prefixes.length > 0) {

@@ -671,7 +671,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	private DisplayJob fRunningDisplayJob;
 	private DisplayJob fPendingDisplayJob;
 	private ClearingJob fRunningClearingJob;
-	private Set<IRunControl.IExecutionDMContext> fPendingExecDmcsToClear = new HashSet<IRunControl.IExecutionDMContext>();
+	private Set<IRunControl.IExecutionDMContext> fPendingExecDmcsToClear = new HashSet<>();
 	private SteppingController fController;
 
 	/**
@@ -932,7 +932,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 			// There are annotations to be cleared, run the job first
 			fRunningClearingJob = new ClearingJob(fPendingExecDmcsToClear);
 			fRunningClearingJob.schedule();
-			fPendingExecDmcsToClear = new HashSet<IRunControl.IExecutionDMContext>();
+			fPendingExecDmcsToClear = new HashSet<>();
 		} else if (fPendingDisplayJob != null) {
 			fRunningDisplayJob = fPendingDisplayJob;
 			fRunningDisplayJob.schedule();
@@ -966,7 +966,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 		if (fRunningClearingJob == null && fRunningDisplayJob == null) {
 			fRunningClearingJob = new ClearingJob(fPendingExecDmcsToClear);
 			fRunningClearingJob.schedule();
-			fPendingExecDmcsToClear = new HashSet<IRunControl.IExecutionDMContext>();
+			fPendingExecDmcsToClear = new HashSet<>();
 		}
 	}
 

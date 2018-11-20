@@ -125,7 +125,7 @@ public class VMTest1 extends VMTestBase implements IViewerUpdatesListenerConstan
 		Query<Map<String, Object>> suspendedQuery = new Query<Map<String, Object>>() {
 			@Override
 			protected void execute(DataRequestMonitor<Map<String, Object>> rm) {
-				Set<String> properties = new HashSet<String>();
+				Set<String> properties = new HashSet<>();
 				properties.add(ILaunchVMConstants.PROP_IS_SUSPENDED);
 
 				containerPropProvider.update(new VMPropertiesUpdate[] { new VMPropertiesUpdate(properties,

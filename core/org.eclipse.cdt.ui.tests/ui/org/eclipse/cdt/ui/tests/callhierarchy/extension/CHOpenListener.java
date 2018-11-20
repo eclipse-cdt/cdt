@@ -74,7 +74,7 @@ public class CHOpenListener implements IOpenListener {
 								}
 								IEditorPart editor = page.openEditor(input, editorId);
 								IMarker fMarker = file.createMarker(IMarker.TEXT);
-								HashMap<String, Object> map = new HashMap<String, Object>();
+								HashMap<String, Object> map = new HashMap<>();
 								map.put(IMarker.LINE_NUMBER, 3);
 								fMarker.setAttributes(map);
 								IDE.gotoMarker(editor, fMarker);

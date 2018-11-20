@@ -76,7 +76,7 @@ public class MIDataListRegisterValuesInfo extends MIInfo {
 	public <V extends ICommandResult> V getSubsetResult(ICommand<V> cmd) {
 		if (cmd instanceof MIDataListRegisterValues) {
 			MIDataListRegisterValues command = (MIDataListRegisterValues) cmd;
-			List<MIRegisterValue> aList = new ArrayList<MIRegisterValue>();
+			List<MIRegisterValue> aList = new ArrayList<>();
 			int[] wantedRegNos = command.getRegList();
 
 			/*

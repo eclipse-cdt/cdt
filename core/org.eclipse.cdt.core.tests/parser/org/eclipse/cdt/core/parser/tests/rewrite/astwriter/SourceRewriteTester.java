@@ -91,7 +91,7 @@ public class SourceRewriteTester extends TestSuite {
 	private static ArrayList<RewriteBaseTest> createTests(BufferedReader inputReader) throws Exception {
 		ASTWriterTestSourceFile file = null;
 		MatcherState matcherState = MatcherState.skip;
-		ArrayList<RewriteBaseTest> testCases = new ArrayList<RewriteBaseTest>();
+		ArrayList<RewriteBaseTest> testCases = new ArrayList<>();
 
 		String line;
 		while ((line = inputReader.readLine()) != null) {

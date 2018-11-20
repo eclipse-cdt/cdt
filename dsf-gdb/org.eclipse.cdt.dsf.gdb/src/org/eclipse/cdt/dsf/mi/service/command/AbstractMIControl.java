@@ -104,7 +104,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	// Since GDB.7.1
 	private boolean fUseThreadGroupOption;
 
-	private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<CommandHandle>();
+	private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<>();
 	private final Map<Integer, CommandHandle> fRxCommands = Collections
 			.synchronizedMap(new HashMap<Integer, CommandHandle>());
 
@@ -119,14 +119,14 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	 *   what the control object is doing.
 	 */
 
-	private final List<ICommandListener> fCommandProcessors = new ArrayList<ICommandListener>();
-	private final List<IEventListener> fEventProcessors = new ArrayList<IEventListener>();
+	private final List<ICommandListener> fCommandProcessors = new ArrayList<>();
+	private final List<IEventListener> fEventProcessors = new ArrayList<>();
 
 	/**
 	 *   Current command which have not been handed off to the backend yet.
 	 */
 
-	private final List<CommandHandle> fCommandQueue = new ArrayList<CommandHandle>();
+	private final List<CommandHandle> fCommandQueue = new ArrayList<>();
 
 	/**
 	 * Flag indicating that the command control has stopped processing commands.
@@ -294,7 +294,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 		/*
 		 *  Now handle any requests which have not been transmitted, but weconsider them handed off.
 		 */
-		List<CommandHandle> txCommands = new ArrayList<CommandHandle>();
+		List<CommandHandle> txCommands = new ArrayList<>();
 		fTxCommands.drainTo(txCommands);
 		for (CommandHandle commandHandle : txCommands) {
 			if (commandHandle.getRequestMonitor() == null)
@@ -748,7 +748,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 		 * List of out of band records since the last result record. Out of band
 		 * records are required for processing the results of CLI commands.
 		 */
-		private final List<MIOOBRecord> fAccumulatedOOBRecords = new LinkedList<MIOOBRecord>();
+		private final List<MIOOBRecord> fAccumulatedOOBRecords = new LinkedList<>();
 
 		/**
 		 * List of stream records since the last result record, not including
@@ -756,7 +756,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 		 * a subset of {@link #fAccumulatedOOBRecords}, as a stream record is a
 		 * particular type of OOB record.
 		 */
-		private final List<MIStreamRecord> fAccumulatedStreamRecords = new LinkedList<MIStreamRecord>();
+		private final List<MIStreamRecord> fAccumulatedStreamRecords = new LinkedList<>();
 
 		public RxThread(InputStream inputStream) {
 			super("MI RX Thread"); //$NON-NLS-1$

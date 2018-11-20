@@ -28,7 +28,7 @@ import org.eclipse.cdt.codan.core.model.IProblemProfile;
 public class CodanProblemCategory extends CodanProblemElement implements IProblemCategory, Cloneable {
 	private String id;
 	private String name;
-	private ArrayList<IProblemElement> list = new ArrayList<IProblemElement>();
+	private ArrayList<IProblemElement> list = new ArrayList<>();
 
 	public CodanProblemCategory(String id, String name) {
 		this.id = id;
@@ -89,7 +89,7 @@ public class CodanProblemCategory extends CodanProblemElement implements IProble
 	 * @return list of categories
 	 */
 	public static IProblemCategory[] findProblemCategories(IProblemCategory c, String id) {
-		ArrayList<IProblemCategory> list = new ArrayList<IProblemCategory>();
+		ArrayList<IProblemCategory> list = new ArrayList<>();
 		Object[] children = c.getChildren();
 		for (Object object : children) {
 			if (object instanceof IProblemCategory) {
@@ -131,7 +131,7 @@ public class CodanProblemCategory extends CodanProblemElement implements IProble
 	@Override
 	public Object clone() {
 		CodanProblemCategory catClone = (CodanProblemCategory) super.clone();
-		catClone.list = new ArrayList<IProblemElement>();
+		catClone.list = new ArrayList<>();
 		for (Iterator<IProblemElement> iterator = this.list.iterator(); iterator.hasNext();) {
 			IProblemElement child = iterator.next();
 			IProblemElement childClone = (IProblemElement) child.clone();

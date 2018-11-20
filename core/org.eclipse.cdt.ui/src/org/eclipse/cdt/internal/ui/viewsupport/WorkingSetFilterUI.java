@@ -169,7 +169,7 @@ public abstract class WorkingSetFilterUI {
 
 	public List<String> getRecent() {
 		IWorkingSet[] workingSets = fWSManager.getRecentWorkingSets();
-		ArrayList<String> result = new ArrayList<String>(workingSets.length);
+		ArrayList<String> result = new ArrayList<>(workingSets.length);
 		for (int i = 0; i < workingSets.length; i++) {
 			result.add(workingSets[i].getName());
 		}

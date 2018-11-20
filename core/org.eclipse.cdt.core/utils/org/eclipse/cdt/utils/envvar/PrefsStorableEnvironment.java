@@ -71,7 +71,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 
 	/** Cache of Environment as loaded from the {@link ISerializeInfo}
 	 *  contains no non-persisted changes */
-	private Map<String, IEnvironmentVariable> fCachedSerialEnv = new HashMap<String, IEnvironmentVariable>();
+	private Map<String, IEnvironmentVariable> fCachedSerialEnv = new HashMap<>();
 
 	// State to track whether API users have changed these boolean values
 	private boolean fAppendChanged = false;
@@ -94,7 +94,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 		Reference<PrefsStorableEnvironment> parentRef;
 
 		public PrefListener(PrefsStorableEnvironment parent, ISerializeInfo info) {
-			this.parentRef = new WeakReference<PrefsStorableEnvironment>(parent);
+			this.parentRef = new WeakReference<>(parent);
 			register(info);
 		}
 
@@ -203,7 +203,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	 */
 	private Set<String> getDeletedSet() {
 		if (fDeletedVariables == null)
-			fDeletedVariables = new HashSet<String>();
+			fDeletedVariables = new HashSet<>();
 		return fDeletedVariables;
 	}
 
@@ -414,7 +414,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 		if (!isDirty())
 			return;
 
-		HashMap<String, IEnvironmentVariable> oldEnv = new HashMap<String, IEnvironmentVariable>(fCachedSerialEnv);
+		HashMap<String, IEnvironmentVariable> oldEnv = new HashMap<>(fCachedSerialEnv);
 
 		Preferences element = fSerialEnv.getNode().node(fSerialEnv.getPrefName());
 		element.putBoolean(ATTRIBUTE_APPEND, fAppend);
@@ -490,7 +490,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 	Map<String, IEnvironmentVariable> getAllVariablesMap() {
 		checkBackingSerializeInfo();
 		// Get all the environment from the backing store first
-		Map<String, IEnvironmentVariable> vars = new HashMap<String, IEnvironmentVariable>();
+		Map<String, IEnvironmentVariable> vars = new HashMap<>();
 		if (fCachedSerialEnv != null)
 			vars.putAll(fCachedSerialEnv);
 		if (fDeletedVariables != null)

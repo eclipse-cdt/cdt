@@ -78,7 +78,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	 * Simple sanity tests for the getElement() call
 	 */
 	public void testGetElement() throws Exception {
-		Deque<String> missing = new ArrayDeque<String>();
+		Deque<String> missing = new ArrayDeque<>();
 		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject, "exetest.c");
 
 		for (int x = 0; x < expectedStringList.length; x++) {

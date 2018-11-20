@@ -140,7 +140,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 				PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_edit_button,
 				PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_remove_button, null,
 				PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_setdefault_button, };
-		fTodoTasksList = new ListDialogField<TodoTask>(adapter, buttons, new TodoTaskLabelProvider());
+		fTodoTasksList = new ListDialogField<>(adapter, buttons, new TodoTaskLabelProvider());
 		fTodoTasksList.setDialogFieldListener(adapter);
 		fTodoTasksList.setRemoveButtonIndex(IDX_REMOVE);
 
@@ -302,7 +302,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		String currPrios = getValue(PREF_TODO_TASK_PRIORITIES);
 		String[] tags = getTokens(currTags, ","); //$NON-NLS-1$
 		String[] prios = getTokens(currPrios, ","); //$NON-NLS-1$
-		ArrayList<TodoTask> elements = new ArrayList<TodoTask>(tags.length);
+		ArrayList<TodoTask> elements = new ArrayList<>(tags.length);
 		for (int i = 0; i < tags.length; i++) {
 			TodoTask task = new TodoTask();
 			task.name = tags[i].trim();

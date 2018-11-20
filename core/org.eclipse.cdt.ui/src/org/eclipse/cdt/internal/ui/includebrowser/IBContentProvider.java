@@ -107,7 +107,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 					directiveFile = node.getRepresentedFile();
 				}
 				if (includes.length > 0) {
-					Set<IBNode> result = new LinkedHashSet<IBNode>(includes.length);
+					Set<IBNode> result = new LinkedHashSet<>(includes.length);
 					for (IIndexInclude include : includes) {
 						try {
 							if (fComputeIncludedBy) {
@@ -156,8 +156,8 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 					return index.findIncludedBy(files[0]);
 				}
 				if (files.length > 0) {
-					ArrayList<IIndexInclude> list = new ArrayList<IIndexInclude>();
-					HashSet<IIndexFileLocation> handled = new HashSet<IIndexFileLocation>();
+					ArrayList<IIndexInclude> list = new ArrayList<>();
+					HashSet<IIndexFileLocation> handled = new HashSet<>();
 					for (IIndexFile file : files) {
 						final IIndexInclude[] includes = index.findIncludedBy(file);
 						for (IIndexInclude indexInclude : includes) {
@@ -183,8 +183,8 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 					return index.findIncludes(files[0]);
 				}
 				if (files.length > 0) {
-					ArrayList<IIndexInclude> list = new ArrayList<IIndexInclude>();
-					HashSet<IIndexFileLocation> handled = new HashSet<IIndexFileLocation>();
+					ArrayList<IIndexInclude> list = new ArrayList<>();
+					HashSet<IIndexFileLocation> handled = new HashSet<>();
 					for (IIndexFile file : files) {
 						final IIndexInclude[] includes = index.findIncludes(file);
 						for (IIndexInclude indexInclude : includes) {

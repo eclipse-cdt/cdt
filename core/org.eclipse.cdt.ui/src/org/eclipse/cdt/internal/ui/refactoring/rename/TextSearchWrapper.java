@@ -67,7 +67,7 @@ public class TextSearchWrapper {
 	private static class SearchScope extends TextSearchScope {
 		public static SearchScope newSearchScope(IFile[] files, IWorkingSet ws) {
 			IAdaptable[] adaptables = ws.getElements();
-			ArrayList<IResource> resources = new ArrayList<IResource>();
+			ArrayList<IResource> resources = new ArrayList<>();
 			for (int i = 0; i < adaptables.length; i++) {
 				IAdaptable adaptable = adaptables[i];
 				IResource resource = adaptable.getAdapter(IResource.class);
@@ -80,7 +80,7 @@ public class TextSearchWrapper {
 
 		public static SearchScope newSearchScope(IFile[] files, IResource[] roots) {
 			if (files != null) {
-				ArrayList<IResource> resources = new ArrayList<IResource>(files.length + roots.length);
+				ArrayList<IResource> resources = new ArrayList<>(files.length + roots.length);
 				for (IFile file : files) {
 					if (!isInForest(file, roots)) {
 						resources.add(file);
@@ -106,7 +106,7 @@ public class TextSearchWrapper {
 		}
 
 		private IResource[] fRootResources;
-		private ArrayList<Matcher> fFileMatcher = new ArrayList<Matcher>();
+		private ArrayList<Matcher> fFileMatcher = new ArrayList<>();
 
 		private SearchScope(IResource[] roots) {
 			fRootResources = roots;
@@ -199,8 +199,8 @@ public class TextSearchWrapper {
 	}
 
 	private TextSearchScope defineRelatedProjectsAsSearchScope(IFile[] files, IProject project, String[] patterns) {
-		HashSet<IProject> projects = new HashSet<IProject>();
-		LinkedList<IProject> workThrough = new LinkedList<IProject>();
+		HashSet<IProject> projects = new HashSet<>();
+		LinkedList<IProject> workThrough = new LinkedList<>();
 		workThrough.add(project);
 		while (!workThrough.isEmpty()) {
 			IProject proj = workThrough.removeLast();
@@ -300,7 +300,7 @@ public class TextSearchWrapper {
 			IFile tfile = match.getFile();
 			if (file == null || !file.equals(tfile)) {
 				file = tfile;
-				locations = new ArrayList<int[]>();
+				locations = new ArrayList<>();
 				computeLocations(file, locations);
 			}
 			match.setLocation(findLocation(match, locations));

@@ -47,7 +47,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 
 	public WorkspaceLanguageMappingWidget() {
 		super();
-		fContentTypeMappings = new TreeMap<String, String>();
+		fContentTypeMappings = new TreeMap<>();
 	}
 
 	@Override
@@ -174,7 +174,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 		}
 
 		if (fChild != null) {
-			Set<String> overrides = new HashSet<String>(fContentTypeMappings.keySet());
+			Set<String> overrides = new HashSet<>(fContentTypeMappings.keySet());
 			overrides.addAll(fOverriddenContentTypes);
 			fChild.setOverriddenContentTypes(overrides);
 			fChild.refreshMappings();
@@ -182,7 +182,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 	}
 
 	public void setMappings(Map<String, String> mappings) {
-		fContentTypeMappings = new TreeMap<String, String>(mappings);
+		fContentTypeMappings = new TreeMap<>(mappings);
 	}
 
 	public Map<String, String> getContentTypeMappings() {

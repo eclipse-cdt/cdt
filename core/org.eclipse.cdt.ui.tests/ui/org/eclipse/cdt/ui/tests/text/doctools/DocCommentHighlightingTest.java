@@ -136,7 +136,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	}
 
 	protected List<Position> findRangesColored(RGB rgb) {
-		List<Position> result = new ArrayList<Position>();
+		List<Position> result = new ArrayList<>();
 		IEditorPart p = get();
 		ISourceViewer vw = ((CEditor) p).getViewer();
 		Accessor a = new Accessor(vw, TextViewer.class);
@@ -166,7 +166,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	}
 
 	private List<Position> mkPositions(int[][] raw) {
-		List<Position> result = new ArrayList<Position>();
+		List<Position> result = new ArrayList<>();
 		for (int i = 0; i < raw.length; i++) {
 			Assert.assertEquals(2, raw[i].length);
 			result.add(new Position(raw[i][0], raw[i][1]));

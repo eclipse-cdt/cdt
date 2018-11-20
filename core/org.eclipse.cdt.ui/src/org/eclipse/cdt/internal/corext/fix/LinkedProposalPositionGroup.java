@@ -113,8 +113,8 @@ public class LinkedProposalPositionGroup {
 
 	public LinkedProposalPositionGroup(String groupID) {
 		fGroupId = groupID;
-		fPositions = new ArrayList<PositionInformation>();
-		fProposals = new ArrayList<Proposal>();
+		fPositions = new ArrayList<>();
+		fProposals = new ArrayList<>();
 	}
 
 	public void addPosition(PositionInformation position) {

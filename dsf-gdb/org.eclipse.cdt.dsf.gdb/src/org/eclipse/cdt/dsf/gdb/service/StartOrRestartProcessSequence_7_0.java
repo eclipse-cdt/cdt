@@ -132,7 +132,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		assert containerDmc != null;
 		if (attributes == null) {
 			// If no attributes are specified, simply use an empty map.
-			attributes = new HashMap<String, Object>();
+			attributes = new HashMap<>();
 		}
 
 		fContainerDmc = containerDmc;

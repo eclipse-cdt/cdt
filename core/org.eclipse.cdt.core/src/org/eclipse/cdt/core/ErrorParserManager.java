@@ -170,8 +170,8 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 			String[] parsersIDs) {
 		fProject = project;
 		fMarkerGenerator = markerGenerator;
-		fDirectoryStack = new Vector<URI>();
-		fErrors = new ArrayList<ProblemMarkerInfo>();
+		fDirectoryStack = new Vector<>();
+		fErrors = new ArrayList<>();
 		enableErrorParsers(parsersIDs);
 
 		if (baseDirectoryURI != null) {
@@ -187,7 +187,7 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 		if (parserIDs == null) {
 			parserIDs = ErrorParserExtensionManager.getDefaultErrorParserIds();
 		}
-		fErrorParsers = new LinkedHashMap<String, IErrorParser[]>(parserIDs.length);
+		fErrorParsers = new LinkedHashMap<>(parserIDs.length);
 		for (String parsersID : parserIDs) {
 			IErrorParser errorParser = getErrorParserCopy(parsersID);
 			if (errorParser != null) {

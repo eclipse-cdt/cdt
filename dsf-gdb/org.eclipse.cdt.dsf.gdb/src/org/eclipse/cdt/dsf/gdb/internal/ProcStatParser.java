@@ -67,7 +67,7 @@ public class ProcStatParser {
 				// catch "cpu" lines from /proc/stat
 				Matcher matcherCpu = patternCpu.matcher(line);
 				if (matcherCpu.find()) {
-					Vector<Integer> ticks = new Vector<Integer>();
+					Vector<Integer> ticks = new Vector<>();
 					coreId = matcherCpu.group(1);
 					// extract the counters for current cpu line
 					for (String tick : matcherCpu.group(2).trim().split("\\s+")) { //$NON-NLS-1$

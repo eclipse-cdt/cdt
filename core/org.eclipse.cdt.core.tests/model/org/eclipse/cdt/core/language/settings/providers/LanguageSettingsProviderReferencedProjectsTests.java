@@ -122,7 +122,7 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 			Map<String, String> refs = cfgDescription.getReferenceInfo();
 			assertEquals(1, refs.size());
-			Set<String> referencedProjectsNames = new LinkedHashSet<String>(refs.keySet());
+			Set<String> referencedProjectsNames = new LinkedHashSet<>(refs.keySet());
 			assertEquals(projectReferenced.getName(), referencedProjectsNames.toArray()[0]);
 		}
 
@@ -184,7 +184,7 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 			assertEquals(ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID, userProviderNonRef.getId());
 			assertTrue(userProviderNonRef instanceof LanguageSettingsGenericProvider);
 			// add sample entries
-			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<>();
 			entries.add(nonRefEntry);
 			((LanguageSettingsGenericProvider) userProviderNonRef).setSettingEntries(null, null, null, entries);
 		}
@@ -207,7 +207,7 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 			assertEquals(ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID, userProviderRef.getId());
 			assertTrue(userProviderRef instanceof LanguageSettingsGenericProvider);
 			// add sample entries
-			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<>();
 			CIncludePathEntry refEntryNotExported = CDataUtil.createCIncludePathEntry("referenced-not-exported", 0);
 			entries.add(refEntry);
 			entries.add(refEntryNotExported);
@@ -276,7 +276,7 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 			assertEquals(ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID, userProviderRef.getId());
 			assertTrue(userProviderRef instanceof LanguageSettingsGenericProvider);
 			// add sample entries
-			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<>();
 			entries.add(entryExportedA);
 			entries.add(entryNotExportedA);
 			((LanguageSettingsGenericProvider) userProviderRef).setSettingEntries(null, null, null, entries);
@@ -296,7 +296,7 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 			assertEquals(ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID, userProviderRef.getId());
 			assertTrue(userProviderRef instanceof LanguageSettingsGenericProvider);
 			// add sample entries
-			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			ArrayList<ICLanguageSettingEntry> entries = new ArrayList<>();
 			entries.add(entryExportedB);
 			entries.add(entryNotExportedB);
 			((LanguageSettingsGenericProvider) userProviderRef).setSettingEntries(null, null, null, entries);

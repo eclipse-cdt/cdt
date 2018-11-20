@@ -76,7 +76,7 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
 	@Override
 	public ICCompletionProposal[] getAssists(final IInvocationContext context,
 			final IProblemLocation[] problemLocations) throws CoreException {
-		final ArrayList<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
+		final ArrayList<ICCompletionProposal> proposals = new ArrayList<>();
 
 		ASTProvider.getASTProvider().runOnAST(context.getTranslationUnit(), ASTProvider.WAIT_ACTIVE_ONLY,
 				new NullProgressMonitor(), new ASTRunnable() {

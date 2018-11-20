@@ -186,7 +186,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER));
@@ -469,7 +469,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 
 		StringTokenizer tokenizer = new StringTokenizer(compiledTextHoverModifiers,
 				CEditorTextHoverDescriptor.VALUE_SEPARATOR);
-		HashMap<String, String> idToModifier = new HashMap<String, String>(tokenizer.countTokens() / 2);
+		HashMap<String, String> idToModifier = new HashMap<>(tokenizer.countTokens() / 2);
 
 		while (tokenizer.hasMoreTokens()) {
 			String id = tokenizer.nextToken();
@@ -481,7 +481,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 				.getString(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS);
 
 		tokenizer = new StringTokenizer(compiledTextHoverModifierMasks, CEditorTextHoverDescriptor.VALUE_SEPARATOR);
-		HashMap<String, String> idToModifierMask = new HashMap<String, String>(tokenizer.countTokens() / 2);
+		HashMap<String, String> idToModifierMask = new HashMap<>(tokenizer.countTokens() / 2);
 
 		while (tokenizer.hasMoreTokens()) {
 			String id = tokenizer.nextToken();
@@ -569,7 +569,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 			fStatus = new StatusInfo();
 
 		int i = 0;
-		HashMap<Integer, String> stateMasks = new HashMap<Integer, String>(fHoverConfigs.length);
+		HashMap<Integer, String> stateMasks = new HashMap<>(fHoverConfigs.length);
 		while (fStatus.isOK() && i < fHoverConfigs.length) {
 			if (fHoverConfigs[i].fIsEnabled) {
 				String label = getContributedHovers()[i].getLabel();

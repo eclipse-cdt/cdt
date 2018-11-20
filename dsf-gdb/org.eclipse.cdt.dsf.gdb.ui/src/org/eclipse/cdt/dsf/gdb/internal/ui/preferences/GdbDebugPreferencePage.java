@@ -228,7 +228,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		AdvancedTimeoutSettingsDialog(Shell parentShell, Set<Map.Entry<String, Integer>> entries) {
 			super(parentShell);
 			setShellStyle(getShellStyle() | SWT.RESIZE);
-			fEntries = new LinkedList<CommandTimeoutEntry>();
+			fEntries = new LinkedList<>();
 			for (Map.Entry<String, Integer> entry : entries) {
 				fEntries.add(new CommandTimeoutEntry(entry.getKey(), entry.getValue()));
 			}

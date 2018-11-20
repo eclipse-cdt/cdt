@@ -24,7 +24,7 @@ public class QtPropertyName extends AbstractQObjectMemberName implements IQtASTN
 
 	private String type;
 	// TODO The PDOM attrs should only be created in #createPDOMBinding
-	private List<QtPDOMProperty.Attribute> attributes = new ArrayList<QtPDOMProperty.Attribute>();
+	private List<QtPDOMProperty.Attribute> attributes = new ArrayList<>();
 
 	public QtPropertyName(QObjectName qobjName, IASTName ast, String name, QtASTImageLocation location) {
 		super(qobjName, ast, name, location);

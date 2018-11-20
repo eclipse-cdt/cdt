@@ -42,8 +42,8 @@ public abstract class ContentTypeMappingDialog extends Dialog {
 
 	public ContentTypeMappingDialog(Shell parentShell) {
 		super(parentShell);
-		fContentTypeNamesToIDsMap = new HashMap<String, String>();
-		fLanguageNamesToIDsMap = new HashMap<String, String>();
+		fContentTypeNamesToIDsMap = new HashMap<>();
+		fLanguageNamesToIDsMap = new HashMap<>();
 	}
 
 	public String getSelectedContentTypeName() {

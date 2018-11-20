@@ -35,7 +35,7 @@ public class MIBreakInsertInfo extends MIInfo {
 	public MIBreakInsertInfo(MIOutput record) {
 		super(record);
 		breakpoints = null;
-		List<MIBreakpoint> aList = new ArrayList<MIBreakpoint>(1);
+		List<MIBreakpoint> aList = new ArrayList<>(1);
 		if (isDone()) {
 			MIResultRecord rr = record.getMIResultRecord();
 			if (rr != null) {

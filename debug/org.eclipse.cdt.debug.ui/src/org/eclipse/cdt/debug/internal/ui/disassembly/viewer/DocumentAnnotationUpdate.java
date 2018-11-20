@@ -35,7 +35,7 @@ public class DocumentAnnotationUpdate extends DocumentUpdate implements IDocumen
 		super(presentationContext, root, base, element);
 		fAnnotationProvider = annotationProvider;
 		fIndex = index;
-		fAnnotations = new ArrayList<Annotation>();
+		fAnnotations = new ArrayList<>();
 	}
 
 	/* (non-Javadoc)

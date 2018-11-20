@@ -36,7 +36,7 @@ public class ChangeTreeSet {
 		}
 	}
 
-	private final TreeSet<CTextFileChange> changes = new TreeSet<CTextFileChange>(new ChangePositionComparator());
+	private final TreeSet<CTextFileChange> changes = new TreeSet<>(new ChangePositionComparator());
 
 	public void add(CTextFileChange change) {
 		changes.add(change);

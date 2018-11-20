@@ -243,7 +243,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 				Integer childrenCount = fChildrenCount;
 				childrenCount = childrenCount != null ? childrenCount : 0;
 				int capacity = Math.max((childrenCount.intValue() * 4) / 3, 32);
-				fChildren = new HashMap<Integer, Object>(capacity);
+				fChildren = new HashMap<>(capacity);
 			}
 		}
 
@@ -396,7 +396,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 
 	private IVMUpdatePolicy[] fAvailableUpdatePolicies;
 
-	public Map<Object, RootElementMarkerKey> fRootMarkers = new HashMap<Object, RootElementMarkerKey>();
+	public Map<Object, RootElementMarkerKey> fRootMarkers = new HashMap<>();
 
 	/**
 	 * Hash map holding cache data.  To store the cache information, the cache uses a
@@ -490,7 +490,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 
 	@Override
 	public void updateNode(final IVMNode node, IHasChildrenUpdate[] updates) {
-		LinkedList<IHasChildrenUpdate> missUpdates = new LinkedList<IHasChildrenUpdate>();
+		LinkedList<IHasChildrenUpdate> missUpdates = new LinkedList<>();
 		for (final IHasChildrenUpdate update : updates) {
 			// Find or create the cache entry for the element of this update.
 			ElementDataKey key = makeEntryKey(node, update);
@@ -670,7 +670,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 			// Update for a partial list of children was requested.
 			// Iterate through the known children and make a list of missing
 			// indexes.
-			List<Integer> childrenMissingFromCache = new LinkedList<Integer>();
+			List<Integer> childrenMissingFromCache = new LinkedList<>();
 			for (int i = update.getOffset(); i < update.getOffset() + update.getLength(); i++) {
 				childrenMissingFromCache.add(i);
 			}
@@ -701,7 +701,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 
 				// Some children were not found in the cache, create separate
 				// proxy updates for the continuous ranges of missing children.
-				List<IChildrenUpdate> partialUpdates = new ArrayList<IChildrenUpdate>(2);
+				List<IChildrenUpdate> partialUpdates = new ArrayList<>(2);
 				final CountingRequestMonitor multiRm = new ViewerCountingRequestMonitor(getExecutor(), update);
 				while (!childrenMissingFromCache.isEmpty()) {
 					final int offset = childrenMissingFromCache.get(0);
@@ -1100,7 +1100,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 			if (rootElementChildren != null) {
 				entry.fHasChildren = rootElementChildren.length > 0;
 				entry.fChildrenCount = rootElementChildren.length;
-				entry.fChildren = new HashMap<Integer, Object>(entry.fChildrenCount * 4 / 3);
+				entry.fChildren = new HashMap<>(entry.fChildrenCount * 4 / 3);
 				for (int i = 0; i < rootElementChildren.length; i++) {
 					entry.fChildren.put(i, rootElementChildren[i]);
 				}
@@ -1112,7 +1112,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 					.getInitialRootElementProperties(rootElement);
 
 			if (rootElementProperties != null) {
-				entry.fProperties = new HashMap<String, Object>((rootElementProperties.size() + 1) * 4 / 3);
+				entry.fProperties = new HashMap<>((rootElementProperties.size() + 1) * 4 / 3);
 				entry.fProperties.putAll(rootElementProperties);
 				entry.fProperties.put(PROP_CACHE_ENTRY_DIRTY, true);
 				entry.fDirty = true;
@@ -1164,7 +1164,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 			}
 		} else {
 			// Sort the updates by the node.
-			Map<IVMNode, List<IPropertiesUpdate>> nodeUpdatesMap = new HashMap<IVMNode, List<IPropertiesUpdate>>();
+			Map<IVMNode, List<IPropertiesUpdate>> nodeUpdatesMap = new HashMap<>();
 			for (IPropertiesUpdate update : updates) {
 				// Get the VM Context for last element in path.
 				IVMNode node = getNodeForElement(update.getElement());
@@ -1206,7 +1206,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 	}
 
 	protected void updateNode(final IVMNode node, IPropertiesUpdate[] updates) {
-		LinkedList<IPropertiesUpdate> missUpdates = new LinkedList<IPropertiesUpdate>();
+		LinkedList<IPropertiesUpdate> missUpdates = new LinkedList<>();
 		for (final IPropertiesUpdate update : updates) {
 			// Find or create the cache entry for the element of this update.
 			ElementDataKey key = makeEntryKey(node, update);
@@ -1232,7 +1232,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 				// Cache miss!  Check if already cached properties can be re-used.
 				Set<String> missingProperties = null;
 				if (entry.fProperties != null) {
-					missingProperties = new HashSet<String>(update.getProperties().size() * 4 / 3);
+					missingProperties = new HashSet<>(update.getProperties().size() * 4 / 3);
 					missingProperties.addAll(update.getProperties());
 					missingProperties.removeAll(entry.fProperties.keySet());
 
@@ -1285,7 +1285,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 									// We are caching the result of this update.  Copy the properties from the update
 									// to the cached properties map.
 									if (entry.fProperties == null) {
-										entry.fProperties = new HashMap<String, Object>((getData().size() + 3) * 4 / 3);
+										entry.fProperties = new HashMap<>((getData().size() + 3) * 4 / 3);
 										if (update.getProperties().contains(PROP_CACHE_ENTRY_DIRTY)) {
 											entry.fProperties.put(PROP_CACHE_ENTRY_DIRTY, entry.fDirty);
 										}
@@ -1319,14 +1319,14 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 									// Create a temporary cached properties map and add existing cache and node update
 									// properties to it.
 									if (entry.fProperties != null) {
-										cachedProperties = new HashMap<String, Object>(
+										cachedProperties = new HashMap<>(
 												(entry.fProperties.size() + getData().size() + 3) * 4 / 3);
 										cachedProperties.putAll(entry.fProperties);
 										cachedStatus = PropertiesUpdateStatus.mergePropertiesStatus(
 												(PropertiesUpdateStatus) cachedProperties.get(PROP_UPDATE_STATUS),
 												missUpdateStatus, _missingProperties);
 									} else {
-										cachedProperties = new HashMap<String, Object>((getData().size() + 3) * 4 / 3);
+										cachedProperties = new HashMap<>((getData().size() + 3) * 4 / 3);
 										cachedStatus = missUpdateStatus;
 									}
 									cachedProperties.putAll(getData());

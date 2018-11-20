@@ -295,7 +295,7 @@ public class CHelpProviderTester {
 	}
 
 	public IFunctionSummary[] generateMatchingFunctions(ICHelpBook[] helpBooks, String prefix, String providerID) {
-		ArrayList<IFunctionSummary> lst = new ArrayList<IFunctionSummary>();
+		ArrayList<IFunctionSummary> lst = new ArrayList<>();
 		for (ICHelpBook helpBook : helpBooks) {
 			if (helpBook instanceof CHelpBook) {
 				lst.addAll(((CHelpBook) helpBook).getMatchingFunctions(prefix));

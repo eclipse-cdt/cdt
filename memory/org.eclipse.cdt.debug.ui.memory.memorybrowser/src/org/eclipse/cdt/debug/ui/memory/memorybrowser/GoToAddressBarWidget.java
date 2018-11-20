@@ -131,7 +131,7 @@ public class GoToAddressBarWidget {
 					/*
 					 * Parse through the list creating an ordered array for display.
 					 */
-					ArrayList<String> list = new ArrayList<String>();
+					ArrayList<String> list = new ArrayList<>();
 					while (st.hasMoreElements()) {
 						String expression = (String) st.nextElement();
 						list.add(expression);
@@ -243,7 +243,7 @@ public class GoToAddressBarWidget {
 		/*
 		 * Parse through the list creating an ordered array for display.
 		 */
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		while (st.hasMoreElements()) {
 			list.add(st.nextToken());
 		}

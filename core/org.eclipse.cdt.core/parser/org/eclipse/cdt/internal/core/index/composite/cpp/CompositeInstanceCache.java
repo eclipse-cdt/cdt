@@ -47,7 +47,7 @@ public class CompositeInstanceCache {
 	private ICPPDeferredClassInstance fDeferredInstance;
 
 	public CompositeInstanceCache() {
-		fMap = new HashMap<String, ICPPTemplateInstance>();
+		fMap = new HashMap<>();
 	}
 
 	synchronized public final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {

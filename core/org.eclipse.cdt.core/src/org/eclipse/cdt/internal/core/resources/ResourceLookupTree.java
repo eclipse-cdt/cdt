@@ -131,7 +131,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	public ResourceLookupTree() {
 		fRootNode = new Node(null, CharArrayUtils.EMPTY, false, false) {
 		};
-		fFileExtensions = new HashMap<String, Extensions>();
+		fFileExtensions = new HashMap<>();
 		fUnrefJob = new Job("Timer") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -331,7 +331,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	public void simulateNodeMapCollection() {
 		synchronized (fLock) {
 			fNodeMap = null;
-			fNodeMapRef = new SoftReference<Map<Integer, Object>>(null);
+			fNodeMapRef = new SoftReference<>(null);
 		}
 	}
 
@@ -348,8 +348,8 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 
 			if (fNodeMap == null) {
 				fFileExtensions.clear();
-				fNodeMap = new HashMap<Integer, Object>();
-				fNodeMapRef = new SoftReference<Map<Integer, Object>>(fNodeMap);
+				fNodeMap = new HashMap<>();
+				fNodeMapRef = new SoftReference<>(fNodeMap);
 			}
 		}
 		fUnrefJob.cancel();
@@ -380,14 +380,14 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	private void initFileExtensions() {
 
 		if (fDefaultExtensions == null) {
-			HashSet<String> cdtContentTypes = new HashSet<String>();
+			HashSet<String> cdtContentTypes = new HashSet<>();
 			String[] registeredContentTypes = CoreModel.getRegistedContentTypeIds();
 			cdtContentTypes.addAll(Arrays.asList(registeredContentTypes));
 
 			final IContentTypeManager ctm = Platform.getContentTypeManager();
 			final IContentType[] ctts = ctm.getAllContentTypes();
 
-			Set<String> cdtExtensions = new HashSet<String>();
+			Set<String> cdtExtensions = new HashSet<>();
 			for (IContentType ctt : ctts) {
 				IContentType basedOn = ctt;
 				while (basedOn != null) {
@@ -400,7 +400,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			}
 			fDefaultExtensions = new Extensions(cdtExtensions, false);
 
-			Set<String> nonCDTExtensions = new HashSet<String>();
+			Set<String> nonCDTExtensions = new HashSet<>();
 			outer: for (IContentType ctt : ctts) {
 				IContentType basedOn = ctt;
 				while (basedOn != null) {
@@ -736,7 +736,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		while (suffix.startsWith("../")) { //$NON-NLS-1$
 			suffix = suffix.substring(3);
 		}
-		Set<String> prjset = new HashSet<String>();
+		Set<String> prjset = new HashSet<>();
 		for (IProject prj : projects) {
 			prjset.add(prj.getName());
 		}
@@ -865,7 +865,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 
 	@SuppressWarnings("nls")
 	public void dump() {
-		List<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<>();
 		synchronized (fLock) {
 			for (Object object : fNodeMap.values()) {
 				Node[] nodes = convert(object);

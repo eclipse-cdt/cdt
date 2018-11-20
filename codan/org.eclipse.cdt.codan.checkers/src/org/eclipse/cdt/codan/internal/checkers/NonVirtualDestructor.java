@@ -43,7 +43,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	public static final String PROBLEM_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
 
 	// Prevent stack overflow in case: class A: public A {};
-	private static HashSet<ICPPClassType> checkedClassTypes = new HashSet<ICPPClassType>();
+	private static HashSet<ICPPClassType> checkedClassTypes = new HashSet<>();
 
 	@Override
 	public void processAst(IASTTranslationUnit ast) {

@@ -33,8 +33,8 @@ public class CHelpEntry {
 
 	public CHelpEntry(Element e) {
 		keyword = e.getAttribute(ATTR_KEYWD).trim();
-		ArrayList<CFunctionSummary> obs1 = new ArrayList<CFunctionSummary>();
-		ArrayList<CHelpTopic> obs2 = new ArrayList<CHelpTopic>();
+		ArrayList<CFunctionSummary> obs1 = new ArrayList<>();
+		ArrayList<CHelpTopic> obs2 = new ArrayList<>();
 		NodeList list = e.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			Node node = list.item(i);

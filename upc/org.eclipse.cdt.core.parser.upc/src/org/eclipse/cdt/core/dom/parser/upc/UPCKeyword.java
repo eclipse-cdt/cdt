@@ -46,7 +46,7 @@ public enum UPCKeyword {
 
 	private final int tokenKind;
 
-	private static final CharArrayMap<Integer> tokenMap = new CharArrayMap<Integer>();
+	private static final CharArrayMap<Integer> tokenMap = new CharArrayMap<>();
 	private static final String[] upcKeywords;
 	private static final String[] allKeywords;
 

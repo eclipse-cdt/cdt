@@ -120,7 +120,7 @@ public class RangeCacheTests {
 	ICache<List<Integer>> fRangeCache;
 
 	private List<Integer> makeList(long offset, int count) {
-		List<Integer> list = new ArrayList<Integer>(count);
+		List<Integer> list = new ArrayList<>(count);
 		for (int i = 0; i < count; i++) {
 			list.add((int) (i + offset));
 		}
@@ -148,7 +148,7 @@ public class RangeCacheTests {
 	public void startExecutor() throws ExecutionException, InterruptedException {
 		fExecutor = new TestDsfExecutor();
 		fTestCache = new TestRangeCache();
-		fRetrieveInfos = new TreeSet<RetrieveInfo>();
+		fRetrieveInfos = new TreeSet<>();
 		fRangeCache = null;
 	}
 

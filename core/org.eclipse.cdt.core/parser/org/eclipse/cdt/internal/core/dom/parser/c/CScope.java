@@ -205,7 +205,7 @@ public class CScope implements ICScope, IASTInternalScope {
 		@SuppressWarnings("unchecked")
 		CharArrayObjectMap<Object> map = (CharArrayObjectMap<Object>) mapsToNameOrBinding[type];
 		if (map == CharArrayObjectMap.EMPTY_MAP)
-			mapsToNameOrBinding[type] = map = new CharArrayObjectMap<Object>(1);
+			mapsToNameOrBinding[type] = map = new CharArrayObjectMap<>(1);
 
 		Object o = map.get(nchars);
 		if (o instanceof IASTName) {
@@ -643,7 +643,7 @@ public class CScope implements ICScope, IASTInternalScope {
 		@SuppressWarnings("unchecked")
 		CharArrayObjectMap<Object> map = (CharArrayObjectMap<Object>) mapsToNameOrBinding[type];
 		if (map == CharArrayObjectMap.EMPTY_MAP)
-			mapsToNameOrBinding[type] = map = new CharArrayObjectMap<Object>(2);
+			mapsToNameOrBinding[type] = map = new CharArrayObjectMap<>(2);
 
 		map.put(binding.getNameCharArray(), binding);
 	}

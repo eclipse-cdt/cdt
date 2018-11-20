@@ -114,7 +114,7 @@ public class LanguageSettingsSerializableStorage extends LanguageSettingsStorage
 	 * @param providerNode - parent XML element "provider" where entries are defined.
 	 */
 	public void loadEntries(Element providerNode) {
-		List<ICLanguageSettingEntry> settings = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> settings = new ArrayList<>();
 		NodeList nodes = providerNode.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node elementNode = nodes.item(i);
@@ -176,7 +176,7 @@ public class LanguageSettingsSerializableStorage extends LanguageSettingsStorage
 			langId = null;
 		}
 
-		List<ICLanguageSettingEntry> settings = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> settings = new ArrayList<>();
 		NodeList nodes = parentNode.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node elementNode = nodes.item(i);
@@ -204,7 +204,7 @@ public class LanguageSettingsSerializableStorage extends LanguageSettingsStorage
 	private void loadResourceElement(Node parentNode, String cfgId, String langId) {
 		String rcProjectPath = XmlUtil.determineAttributeValue(parentNode, ATTR_PROJECT_PATH);
 
-		List<ICLanguageSettingEntry> settings = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> settings = new ArrayList<>();
 		NodeList nodes = parentNode.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node elementNode = nodes.item(i);

@@ -63,7 +63,7 @@ public class EnvVarCollector {
 
 				if (fMap == null) {
 					noCheck = true;
-					fMap = new HashMap<String, EnvVarDescriptor>();
+					fMap = new HashMap<>();
 				}
 
 				EnvVarDescriptor des = null;
@@ -89,7 +89,7 @@ public class EnvVarCollector {
 		if (fMap == null)
 			return new EnvVarDescriptor[0];
 		Collection<EnvVarDescriptor> values = fMap.values();
-		List<EnvVarDescriptor> list = new ArrayList<EnvVarDescriptor>();
+		List<EnvVarDescriptor> list = new ArrayList<>();
 		Iterator<EnvVarDescriptor> iter = values.iterator();
 		while (iter.hasNext()) {
 			EnvVarDescriptor des = iter.next();

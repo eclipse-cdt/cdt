@@ -61,7 +61,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 		String workingDir = getWorkingDirectory().toString();
 		List<Map<String, List<String>>> directoryCommandList = directoryCommandListMap.get(workingDir);
 		if (directoryCommandList == null) {
-			directoryCommandList = new CopyOnWriteArrayList<Map<String, List<String>>>();
+			directoryCommandList = new CopyOnWriteArrayList<>();
 			directoryCommandListMap.put(workingDir, directoryCommandList);
 			++workingDirsN;
 		}
@@ -77,10 +77,10 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 				return;
 			}
 		}
-		command21FileListMap = new HashMap<String, List<String>>(1);
+		command21FileListMap = new HashMap<>(1);
 		directoryCommandList.add(command21FileListMap);
 		++commandsN;
-		List<String> fileList = new CopyOnWriteArrayList<String>();
+		List<String> fileList = new CopyOnWriteArrayList<>();
 		command21FileListMap.put(genericCommand, fileList);
 		fileList.add(longFileName);
 		++filesN;
@@ -123,8 +123,8 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 	 * @return CCommandDSC compile command description
 	 */
 	public CCommandDSC getNewCCommandDSC(String[] tokens, final int idxOfCompilerCommand, boolean cppFileType) {
-		CopyOnWriteArrayList<KVStringPair> dirafter = new CopyOnWriteArrayList<KVStringPair>();
-		CopyOnWriteArrayList<String> includes = new CopyOnWriteArrayList<String>();
+		CopyOnWriteArrayList<KVStringPair> dirafter = new CopyOnWriteArrayList<>();
+		CopyOnWriteArrayList<String> includes = new CopyOnWriteArrayList<>();
 		CCommandDSC command = new CCommandDSC(cppFileType, getProject());
 		command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), tokens[idxOfCompilerCommand]));
 		for (int i = idxOfCompilerCommand + 1; i < tokens.length; ++i) {
@@ -161,7 +161,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 							KVStringPair pair = new KVStringPair(SCDOptionsEnum.IQUOTE.toString(), option);
 							command.addSCOption(pair);
 						}
-						includes = new CopyOnWriteArrayList<String>();
+						includes = new CopyOnWriteArrayList<>();
 						// -I- has no parameter
 					} else {
 						// ex. -I /dir
@@ -279,7 +279,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 	 * @return List of CCommandDSC
 	 */
 	public List<CCommandDSC> getCCommandDSCList() {
-		return new CopyOnWriteArrayList<CCommandDSC>(commandsList2);
+		return new CopyOnWriteArrayList<>(commandsList2);
 	}
 
 }

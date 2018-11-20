@@ -122,7 +122,7 @@ public class OptionEnablementExpression extends AndExpression {
 	}
 
 	public String[] convertToList(String value, String delimiter) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		int delLength = delimiter.length();
 		int valLength = value.length();
 

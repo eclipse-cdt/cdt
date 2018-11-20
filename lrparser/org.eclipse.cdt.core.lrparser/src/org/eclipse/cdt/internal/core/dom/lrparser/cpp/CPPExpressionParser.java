@@ -227,7 +227,7 @@ public class CPPExpressionParser extends PrsStream implements RuleAction, IToken
 	}
 
 	private void initActions(Map<String, String> properties) {
-		ScopedStack<Object> astStack = new ScopedStack<Object>();
+		ScopedStack<Object> astStack = new ScopedStack<>();
 
 		action = new CPPBuildASTParserAction(this, astStack, CPPNodeFactory.getDefault(),
 				CPPSecondaryParserFactory.getDefault());

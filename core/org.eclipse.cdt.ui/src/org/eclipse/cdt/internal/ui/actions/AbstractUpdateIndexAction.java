@@ -76,7 +76,7 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 	}
 
 	protected ICElement[] getSelectedCElements() {
-		ArrayList<ICElement> tuSelection = new ArrayList<ICElement>();
+		ArrayList<ICElement> tuSelection = new ArrayList<>();
 		if (fSelection instanceof IStructuredSelection) {
 			IStructuredSelection resources = SelectionConverter.convertSelectionToResources(fSelection);
 			for (Iterator<?> i = resources.iterator(); i.hasNext();) {

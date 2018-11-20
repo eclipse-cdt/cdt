@@ -289,7 +289,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 		// handle getting the required cpu info
 		fFetchCPUInfoCache = new CommandCache(getSession(), new CPUInfoManager());
 		fFetchCPUInfoCache.setContextAvailable(fCommandControl.getContext(), true);
-		fLoadInfoRequestCache = new HashMap<IDMContext, DataRequestMonitor<ILoadInfo>>();
+		fLoadInfoRequestCache = new HashMap<>();
 
 		getSession().addServiceEventListener(this, null);
 
@@ -400,7 +400,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	 * Parse the CoreInfo and create the CPU Contexts for the hardwareTarget context.
 	 */
 	ICPUDMContext[] parseCoresInfoForCPUs(IHardwareTargetDMContext dmc, ICoreInfo[] coresInfo) {
-		Set<String> cpuIds = new HashSet<String>();
+		Set<String> cpuIds = new HashSet<>();
 		ICPUDMContext[] CPUs;
 
 		for (ICoreInfo core : coresInfo) {
@@ -420,7 +420,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	 */
 	ICoreDMContext[] parseCoresInfoForCores(ICPUDMContext cpuDmc, ICoreInfo[] coresInfo) {
 
-		Vector<ICoreDMContext> coreDmcs = new Vector<ICoreDMContext>();
+		Vector<ICoreDMContext> coreDmcs = new Vector<>();
 		for (ICoreInfo core : coresInfo) {
 			if (core.getPhysicalId().equals(cpuDmc.getId())) {
 				// This core belongs to the right CPU
@@ -476,7 +476,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	 * information we need.
 	 */
 	private class CPUInfoManager implements ICommandControl {
-		private final List<ICommandListener> fCommandProcessors = new ArrayList<ICommandListener>();
+		private final List<ICommandListener> fCommandProcessors = new ArrayList<>();
 
 		@Override
 		public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command,
@@ -533,7 +533,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 												@Override
 												protected void handleSuccess() {
 													// First extract the string id for every core GDB reports
-													Set<String> coreIds = new HashSet<String>();
+													Set<String> coreIds = new HashSet<>();
 													IThreadGroupInfo[] groups = getData().getGroupList();
 													for (IThreadGroupInfo group : groups) {
 														coreIds.addAll(Arrays.asList(group.getCores()));

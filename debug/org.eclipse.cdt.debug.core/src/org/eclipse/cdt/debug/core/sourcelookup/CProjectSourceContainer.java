@@ -118,7 +118,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 		if (fProject == null)
 			return EMPTY;
 
-		ArrayList<Object> sources = new ArrayList<Object>();
+		ArrayList<Object> sources = new ArrayList<>();
 
 		// An IllegalArgumentException is thrown from the "getFile" method
 		// if the path created by appending the file name to the container
@@ -216,7 +216,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 			if (isSearchReferencedProjects()) {
 				IProject[] projects = SourceUtils.getAllReferencedProjects(fProject);
 				ISourceContainer[] folders = createFolderSourceContainers(fProject);
-				List<ISourceContainer> containers = new ArrayList<ISourceContainer>(folders.length + projects.length);
+				List<ISourceContainer> containers = new ArrayList<>(folders.length + projects.length);
 				for (ISourceContainer folder : folders) {
 					containers.add(folder);
 				}
@@ -236,7 +236,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 
 	private ISourceContainer[] createFolderSourceContainers(IProject project) throws CoreException {
 		IResource[] resources = project.members();
-		List<FolderSourceContainer> list = new ArrayList<FolderSourceContainer>(resources.length);
+		List<FolderSourceContainer> list = new ArrayList<>(resources.length);
 		for (IResource resource : resources) {
 			if (resource.getType() == IResource.FOLDER) {
 				list.add(new FolderSourceContainer((IFolder) resource, true));

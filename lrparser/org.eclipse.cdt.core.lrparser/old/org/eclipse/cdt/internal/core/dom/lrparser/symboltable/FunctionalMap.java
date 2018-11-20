@@ -75,7 +75,7 @@ public class FunctionalMap<K extends Comparable<K>, V> {
 
 	// factory method makes it cleaner to instantiate objects
 	public static <K extends Comparable<K>, V> FunctionalMap<K, V> emptyMap() {
-		return new FunctionalMap<K, V>();
+		return new FunctionalMap<>();
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class FunctionalMap<K extends Comparable<K>, V> {
 		if (key == null)
 			throw new NullPointerException();
 
-		FunctionalMap<K, V> newMap = new FunctionalMap<K, V>();
+		FunctionalMap<K, V> newMap = new FunctionalMap<>();
 		newMap.root = insert(this.root, key, val);
 		newMap.root.color = BLACK; // force the root to be black
 
@@ -97,7 +97,7 @@ public class FunctionalMap<K extends Comparable<K>, V> {
 
 	private Node<K, V> insert(Node<K, V> n, K key, V val) {
 		if (n == null)
-			return new Node<K, V>(key, val, RED, null, null); // new nodes are always red
+			return new Node<>(key, val, RED, null, null); // new nodes are always red
 
 		int c = key.compareTo(n.key);
 		if (c < 0)
@@ -105,12 +105,12 @@ public class FunctionalMap<K extends Comparable<K>, V> {
 		else if (c > 0)
 			return balance(n.key, n.val, n.color, n.left, insert(n.right, key, val));
 		else // equal, create a new node that overwrites the old value
-			return new Node<K, V>(key, val, n.color, n.left, n.right);
+			return new Node<>(key, val, n.color, n.left, n.right);
 	}
 
 	private Node<K, V> balance(K key, V val, boolean color, Node<K, V> left, Node<K, V> right) {
 		if (color == RED)
-			return new Node<K, V>(key, val, color, left, right);
+			return new Node<>(key, val, color, left, right);
 
 		final Node<K, V> newLeft, newRight;
 
@@ -118,30 +118,30 @@ public class FunctionalMap<K extends Comparable<K>, V> {
 
 		if (left != null && left.color == RED) {
 			if (left.left != null && left.left.color == RED) {
-				newLeft = new Node<K, V>(left.left.key, left.left.val, BLACK, left.left.left, left.left.right);
-				newRight = new Node<K, V>(key, val, BLACK, left.right, right);
-				return new Node<K, V>(left.key, left.val, RED, newLeft, newRight);
+				newLeft = new Node<>(left.left.key, left.left.val, BLACK, left.left.left, left.left.right);
+				newRight = new Node<>(key, val, BLACK, left.right, right);
+				return new Node<>(left.key, left.val, RED, newLeft, newRight);
 			}
 			if (left.right != null && left.right.color == RED) {
-				newLeft = new Node<K, V>(left.key, left.val, BLACK, left.left, left.right.left);
-				newRight = new Node<K, V>(key, val, BLACK, left.right.right, right);
-				return new Node<K, V>(left.right.key, left.right.val, RED, newLeft, newRight);
+				newLeft = new Node<>(left.key, left.val, BLACK, left.left, left.right.left);
+				newRight = new Node<>(key, val, BLACK, left.right.right, right);
+				return new Node<>(left.right.key, left.right.val, RED, newLeft, newRight);
 			}
 		}
 		if (right != null && right.color == RED) {
 			if (right.left != null && right.left.color == RED) {
-				newLeft = new Node<K, V>(key, val, BLACK, left, right.left.left);
-				newRight = new Node<K, V>(right.key, right.val, BLACK, right.left.right, right.right);
-				return new Node<K, V>(right.left.key, right.left.val, RED, newLeft, newRight);
+				newLeft = new Node<>(key, val, BLACK, left, right.left.left);
+				newRight = new Node<>(right.key, right.val, BLACK, right.left.right, right.right);
+				return new Node<>(right.left.key, right.left.val, RED, newLeft, newRight);
 			}
 			if (right.right != null && right.right.color == RED) {
-				newLeft = new Node<K, V>(key, val, BLACK, left, right.left);
-				newRight = new Node<K, V>(right.right.key, right.right.val, BLACK, right.right.left, right.right.right);
-				return new Node<K, V>(right.key, right.val, RED, newLeft, newRight);
+				newLeft = new Node<>(key, val, BLACK, left, right.left);
+				newRight = new Node<>(right.right.key, right.right.val, BLACK, right.right.left, right.right.right);
+				return new Node<>(right.key, right.val, RED, newLeft, newRight);
 			}
 		}
 
-		return new Node<K, V>(key, val, BLACK, left, right);
+		return new Node<>(key, val, BLACK, left, right);
 	}
 
 	/**

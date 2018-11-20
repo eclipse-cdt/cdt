@@ -326,7 +326,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 			LanguageManager manager = LanguageManager.getInstance();
 			ProjectLanguageConfiguration config = manager.getLanguageConfiguration(project);
 
-			Map<String, String> mappings = new TreeMap<String, String>();
+			Map<String, String> mappings = new TreeMap<>();
 			TableItem[] items = fTable.getItems();
 			for (int i = 0; i < items.length; i++) {
 				TableItem item = items[i];

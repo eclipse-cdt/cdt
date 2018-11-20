@@ -67,7 +67,7 @@ public class StorableCdtVariablesTest extends TestCase {
 		}
 		{
 			ICdtVariable[] vars = supplier.getMacros(desc);
-			List<String> macroStrings = new ArrayList<String>();
+			List<String> macroStrings = new ArrayList<>();
 			for (ICdtVariable var : vars) {
 				macroStrings.add(var.getName() + '=' + var.getStringValue());
 			}
@@ -85,7 +85,7 @@ public class StorableCdtVariablesTest extends TestCase {
 		}
 		{
 			ICdtVariable[] vars = supplier.getMacros(desc);
-			List<String> macroStrings = new ArrayList<String>();
+			List<String> macroStrings = new ArrayList<>();
 			for (ICdtVariable var : vars) {
 				macroStrings.add(var.getName() + '=' + var.getStringValue());
 			}

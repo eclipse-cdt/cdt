@@ -162,7 +162,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 		if (map == null)
 			return null;
 
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		Set<Entry<String, String>> entrySet = map.entrySet();
 		for (Entry<String, String> entry : entrySet) {

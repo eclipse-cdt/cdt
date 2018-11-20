@@ -156,7 +156,7 @@ public class PDOMTagIndex {
 		}
 
 		final Long bindingRecord = Long.valueOf(binding_record);
-		return new BTreeIterable<ITag>(btree, new BTreeIterable.Descriptor<ITag>() {
+		return new BTreeIterable<>(btree, new BTreeIterable.Descriptor<ITag>() {
 			@Override
 			public ITag create(long record) {
 				return new PDOMTag(db, record);
@@ -179,7 +179,7 @@ public class PDOMTagIndex {
 		// record. In each case we decide whether to delete or update the tag. Tags of the same size can be
 		// updated in place, otherwise the tag needs to be deleted and recreated.
 
-		final Map<String, ITag> newTags = new HashMap<String, ITag>();
+		final Map<String, ITag> newTags = new HashMap<>();
 		for (ITag tag : tags) {
 			ITag dupTag = newTags.put(tag.getTaggerId(), tag);
 			if (dupTag != null)

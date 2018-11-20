@@ -101,7 +101,7 @@ public class MIInfoOsInfo extends MIInfo {
 	}
 
 	private void parseResourceClasses() {
-		List<IResourceClass> classes = new ArrayList<IResourceClass>();
+		List<IResourceClass> classes = new ArrayList<>();
 
 		MITuple table = (MITuple) get(getMIOutput(), "OSDataTable"); //$NON-NLS-1$
 

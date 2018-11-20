@@ -73,8 +73,8 @@ public class CLanguageSetting extends CDataProxy implements ICLanguageSetting {
 		CLanguageData data = getCLanguageData(false);
 		ICLanguageSettingEntry entries[] = data.getEntries(kind);
 		if (entries != null)
-			return new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
-		return new ArrayList<ICLanguageSettingEntry>();
+			return new ArrayList<>(Arrays.asList(entries));
+		return new ArrayList<>();
 	}
 
 	@Override

@@ -96,7 +96,7 @@ public class CHelpSettings {
 		if (providerDescriptors.length == 0)
 			return new CHelpBookDescriptor[0];
 
-		List<CHelpBookDescriptor> bookList = new ArrayList<CHelpBookDescriptor>();
+		List<CHelpBookDescriptor> bookList = new ArrayList<>();
 		for (int i = 0; i < providerDescriptors.length; i++) {
 			CHelpBookDescriptor bookDescriptors[] = providerDescriptors[i].getCHelpBookDescriptors();
 			if (bookDescriptors.length != 0)
@@ -133,7 +133,7 @@ public class CHelpSettings {
 
 	public IFunctionSummary[] getMatchingFunctions(ICHelpInvocationContext context, String frag) {
 		CHelpProviderDescriptor providerDescriptors[] = getCHelpProviderDescriptors();
-		List<IFunctionSummary> sumaryList = new ArrayList<IFunctionSummary>();
+		List<IFunctionSummary> sumaryList = new ArrayList<>();
 		for (int i = 0; i < providerDescriptors.length; i++) {
 			ICHelpBook books[] = providerDescriptors[i].getEnabledMatchedCHelpBooks(context);
 			if (books != null && books.length != 0) {
@@ -153,7 +153,7 @@ public class CHelpSettings {
 
 	public ICHelpResourceDescriptor[] getHelpResources(ICHelpInvocationContext context, String name) {
 		CHelpProviderDescriptor providerDescriptors[] = getCHelpProviderDescriptors();
-		List<ICHelpResourceDescriptor> resourcesList = new ArrayList<ICHelpResourceDescriptor>();
+		List<ICHelpResourceDescriptor> resourcesList = new ArrayList<>();
 		for (int i = 0; i < providerDescriptors.length; i++) {
 			ICHelpBook books[] = providerDescriptors[i].getEnabledMatchedCHelpBooks(context);
 			if (books != null && books.length != 0) {

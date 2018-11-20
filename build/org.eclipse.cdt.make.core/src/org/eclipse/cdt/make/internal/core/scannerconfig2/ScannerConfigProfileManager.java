@@ -52,7 +52,7 @@ public final class ScannerConfigProfileManager {
 	 * Singleton pattern
 	 */
 	private ScannerConfigProfileManager() {
-		projectToProfileInstanceMap = new HashMap<IProject, Map<InfoContext, Object>>();
+		projectToProfileInstanceMap = new HashMap<>();
 	}
 
 	private static final ScannerConfigProfileManager instance = new ScannerConfigProfileManager();
@@ -92,7 +92,7 @@ public final class ScannerConfigProfileManager {
 		synchronized (fLock) {
 			Map<InfoContext, Object> map = projectToProfileInstanceMap.get(project);
 			if (map == null && create) {
-				map = new HashMap<InfoContext, Object>();
+				map = new HashMap<>();
 				projectToProfileInstanceMap.put(project, map);
 			}
 			return Collections.synchronizedMap(map);
@@ -129,7 +129,7 @@ public final class ScannerConfigProfileManager {
 
 			if (profileInstance == null || !profileInstance.getProfile().getId().equals(profileId)) {
 				profileInstance = new SCProfileInstance(project, context, getSCProfileConfiguration(profileId));
-				map.put(context, new SoftReference<SCProfileInstance>(profileInstance));
+				map.put(context, new SoftReference<>(profileInstance));
 			}
 			return profileInstance;
 		}
@@ -158,7 +158,7 @@ public final class ScannerConfigProfileManager {
 	public List<String> getProfileIds() {
 		synchronized (fLock) {
 			if (profileIds == null) {
-				profileIds = new ArrayList<String>();
+				profileIds = new ArrayList<>();
 				IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(MakeCorePlugin.PLUGIN_ID,
 						ScannerConfigProfileManager.SI_PROFILE_SIMPLE_ID);
 				if (extension != null) {
@@ -182,7 +182,7 @@ public final class ScannerConfigProfileManager {
 
 		synchronized (fLock) {
 			if (contextAwareProfileIds == null) {
-				contextAwareProfileIds = new ArrayList<String>();
+				contextAwareProfileIds = new ArrayList<>();
 				List<String> all = getProfileIds();
 
 				for (int i = 0; i < all.size(); i++) {

@@ -47,7 +47,7 @@ import org.osgi.framework.Version;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class UpdateManagedProjectManager {
-	static private ThreadLocal<Map<String, UpdateManagedProjectManager>> fThreadInfo = new ThreadLocal<Map<String, UpdateManagedProjectManager>>();
+	static private ThreadLocal<Map<String, UpdateManagedProjectManager>> fThreadInfo = new ThreadLocal<>();
 	static private IOverwriteQuery fBackupFileOverwriteQuery = null;
 	static private IOverwriteQuery fOpenQuestionQuery = null;
 	static private IOverwriteQuery fUpdateProjectQuery = null;
@@ -109,7 +109,7 @@ public class UpdateManagedProjectManager {
 	static private Map<String, UpdateManagedProjectManager> getManagerMap(boolean create) {
 		Map<String, UpdateManagedProjectManager> map = fThreadInfo.get();
 		if (map == null && create) {
-			map = new HashMap<String, UpdateManagedProjectManager>();
+			map = new HashMap<>();
 			fThreadInfo.set(map);
 		}
 		return map;

@@ -89,7 +89,7 @@ public class MakeScannerInfo implements IScannerInfo {
 	@Override
 	public synchronized Map<String, String> getDefinedSymbols() {
 		// Return the defined symbols for the default configuration
-		HashMap<String, String> symbols = new HashMap<String, String>();
+		HashMap<String, String> symbols = new HashMap<>();
 		String[] symbolList = getPreprocessorSymbols();
 		for (int i = 0; i < symbolList.length; ++i) {
 			String symbol = symbolList[i];
@@ -112,7 +112,7 @@ public class MakeScannerInfo implements IScannerInfo {
 
 	protected List<String> getPathList() {
 		if (pathList == null) {
-			pathList = new ArrayList<String>();
+			pathList = new ArrayList<>();
 		}
 		return pathList;
 	}
@@ -123,7 +123,7 @@ public class MakeScannerInfo implements IScannerInfo {
 
 	protected List<String> getSymbolList() {
 		if (symbolList == null) {
-			symbolList = new ArrayList<String>();
+			symbolList = new ArrayList<>();
 		}
 		return symbolList;
 	}

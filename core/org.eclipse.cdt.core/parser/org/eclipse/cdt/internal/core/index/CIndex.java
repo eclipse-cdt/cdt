@@ -322,7 +322,7 @@ public class CIndex implements IIndex {
 		Collection<IIndexFile> in = Collections.singletonList(file);
 		Set<FileContentKey> handled = new HashSet<>();
 		while (true) {
-			Collection<IIndexFile> nextLevel = depth != 0 ? new ArrayDeque<IIndexFile>() : null;
+			Collection<IIndexFile> nextLevel = depth != 0 ? new ArrayDeque<>() : null;
 			for (IIndexFile indexFile : in) {
 				IIndexFragmentFile file1 = (IIndexFragmentFile) indexFile;
 				for (IIndexFragment fragment : fFragments) {
@@ -362,7 +362,7 @@ public class CIndex implements IIndex {
 		Collection<IIndexFile> in = Collections.singletonList(file);
 		Set<Object> handled = new HashSet<>();
 		while (true) {
-			Collection<IIndexFile> nextLevel = depth != 0 ? new ArrayDeque<IIndexFile>() : null;
+			Collection<IIndexFile> nextLevel = depth != 0 ? new ArrayDeque<>() : null;
 			for (IIndexFile indexFile : in) {
 				IIndexFragmentFile file1 = (IIndexFragmentFile) indexFile;
 				IIndexInclude[] includes = file1.getIncludes();

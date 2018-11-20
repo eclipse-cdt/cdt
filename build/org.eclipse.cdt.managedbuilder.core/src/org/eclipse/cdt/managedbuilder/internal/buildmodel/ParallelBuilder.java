@@ -66,9 +66,9 @@ public class ParallelBuilder {
 	protected OutputStream err;
 	protected boolean resumeOnErrors;
 	protected boolean buildIncrementally;
-	protected HashSet<BuildQueueElement> unsorted = new HashSet<BuildQueueElement>();
-	protected HashMap<IBuildStep, BuildQueueElement> queueHash = new HashMap<IBuildStep, BuildQueueElement>();
-	protected LinkedList<BuildQueueElement> queue = new LinkedList<BuildQueueElement>();
+	protected HashSet<BuildQueueElement> unsorted = new HashSet<>();
+	protected HashMap<IBuildStep, BuildQueueElement> queueHash = new HashMap<>();
+	protected LinkedList<BuildQueueElement> queue = new LinkedList<>();
 	private IResourceRebuildStateContainer fRebuildStateContainer;
 	private IBuildDescription fDes;
 
@@ -472,7 +472,7 @@ public class ParallelBuilder {
 	 */
 	protected int dispatch(BuildProcessManager mgr) {
 		int maxProcesses = mgr.getMaxProcesses();
-		Vector<ActiveBuildStep> active = new Vector<ActiveBuildStep>(Math.min(maxProcesses, 10), 10);
+		Vector<ActiveBuildStep> active = new Vector<>(Math.min(maxProcesses, 10), 10);
 
 		int activeCount = 0;
 		int maxLevel = 0;

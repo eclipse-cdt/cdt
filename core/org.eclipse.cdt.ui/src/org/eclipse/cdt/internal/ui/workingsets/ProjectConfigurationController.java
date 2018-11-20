@@ -126,7 +126,7 @@ public class ProjectConfigurationController implements IWorkingSetProjectConfigu
 
 		ContentProvider(IWorkingSetProjectConfiguration project) {
 			this.project = project;
-			this.configs = new java.util.HashSet<ICConfigurationDescription>(project.resolveConfigurations());
+			this.configs = new java.util.HashSet<>(project.resolveConfigurations());
 		}
 
 		@Override

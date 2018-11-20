@@ -90,7 +90,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 	// reset it by using a new debug session.
 	// This map is only needed for remote sessions, since we don't need to specify
 	// the binary location for a local attach session.
-	private Map<String, String> fProcessNameToBinaryMap = new HashMap<String, String>();
+	private Map<String, String> fProcessNameToBinaryMap = new HashMap<>();
 
 	public GdbConnectCommand(DsfSession session, ILaunch launch) {
 		fLaunch = launch;
@@ -408,7 +408,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 								@Override
 								protected void handleSuccess() {
 
-									final List<IProcessExtendedInfo> procInfoList = new ArrayList<IProcessExtendedInfo>();
+									final List<IProcessExtendedInfo> procInfoList = new ArrayList<>();
 
 									final CountingRequestMonitor countingRm = new CountingRequestMonitor(fExecutor,
 											rm) {
@@ -555,7 +555,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 
 			// Create a list of all our processes so we can attach to one at a time.
 			// We need to create a new list so that we can remove elements from it.
-			final List<IProcessExtendedInfo> procList = new ArrayList<IProcessExtendedInfo>(Arrays.asList(processes));
+			final List<IProcessExtendedInfo> procList = new ArrayList<>(Arrays.asList(processes));
 			// Create a one element array to remember what process we are trying to attach to, so that we can
 			// use it in case of error.
 			final IProcessExtendedInfo[] previousProcAttempt = new IProcessExtendedInfo[1];

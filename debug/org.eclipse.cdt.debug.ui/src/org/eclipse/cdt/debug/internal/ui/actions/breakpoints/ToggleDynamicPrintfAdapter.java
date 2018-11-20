@@ -48,7 +48,7 @@ public class ToggleDynamicPrintfAdapter extends AbstractToggleBreakpointAdapter 
 			IResource resource, int lineNumber) throws CoreException {
 		if (interactive) {
 			ICDynamicPrintf dprintf = (ICDynamicPrintf) CDIDebugModel.createBlankLineDynamicPrintf();
-			Map<String, Object> attributes = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<>();
 			CDIDebugModel.setLineBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), lineNumber, true,
 					0, ""); //$NON-NLS-1$
 
@@ -79,7 +79,7 @@ public class ToggleDynamicPrintfAdapter extends AbstractToggleBreakpointAdapter 
 			IResource resource, String functionName, int charStart, int charEnd, int lineNumber) throws CoreException {
 		if (interactive) {
 			ICDynamicPrintf dprintf = (ICDynamicPrintf) CDIDebugModel.createBlankFunctionDynamicPrintf();
-			Map<String, Object> attributes = new HashMap<String, Object>();
+			Map<String, Object> attributes = new HashMap<>();
 			CDIDebugModel.setFunctionBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), functionName,
 					charStart, charEnd, lineNumber, true, 0, ""); //$NON-NLS-1$
 

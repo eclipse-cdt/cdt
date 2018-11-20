@@ -206,8 +206,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @throws DOMException
 	 */
 	private void buildModel(IASTTranslationUnit ast) throws CModelException, DOMException {
-		fVisibilityStack = new Stack<ASTAccessVisibility>();
-		fEqualElements = new HashMap<ISourceReference, int[]>();
+		fVisibilityStack = new Stack<>();
+		fEqualElements = new HashMap<>();
 
 		// includes
 		final IASTPreprocessorIncludeStatement[] includeDirectives = ast.getIncludeDirectives();

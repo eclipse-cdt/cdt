@@ -46,7 +46,7 @@ public class CContainerInfo extends OpenableInfo {
 		if (nonCResources != null)
 			return nonCResources;
 
-		ArrayList<IResource> notChildren = new ArrayList<IResource>();
+		ArrayList<IResource> notChildren = new ArrayList<>();
 		ICElement celement = getElement();
 		ICProject cproject = celement.getCProject();
 		// move back to the sourceroot.

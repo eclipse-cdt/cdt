@@ -61,7 +61,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	private static final Map<String, AsmDirective> fgDirectives;
 
 	static {
-		fgDirectives = new HashMap<String, AsmDirective>();
+		fgDirectives = new HashMap<>();
 		fgDirectives.put("globl", AsmDirective.GLOBAL); //$NON-NLS-1$
 		fgDirectives.put("global", AsmDirective.GLOBAL); //$NON-NLS-1$
 		fgDirectives.put("ascii", AsmDirective.DATA); //$NON-NLS-1$
@@ -124,8 +124,8 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	 * @throws CModelException
 	 */
 	private void buildModel(final char[] source) throws CModelException {
-		fGlobals = new HashMap<String, Counter>();
-		fLabels = new HashMap<String, Counter>();
+		fGlobals = new HashMap<>();
+		fLabels = new HashMap<>();
 		fLastLabel = null;
 		fLastGlobalLabel = null;
 		fLastLabelEndOffset = 0;

@@ -47,7 +47,7 @@ public class AdaptingSelectionProvider implements ISelectionProvider, ISelection
 		if (selection != null) {
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
-				ArrayList<Object> adapted = new ArrayList<Object>();
+				ArrayList<Object> adapted = new ArrayList<>();
 				for (Iterator<?> iter = ss.iterator(); iter.hasNext();) {
 					Object elem = adaptElem(iter.next());
 					if (elem != null) {

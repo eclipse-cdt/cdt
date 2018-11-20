@@ -151,8 +151,8 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 
 	private static final String PREF_ASK_REINDEX = "askReindex"; //$NON-NLS-1$
 
-	private Map<URL, Image> loadedIcons = new HashMap<URL, Image>();
-	private static Map<Class<? extends AbstractPage>, Class<? extends ICPropertyTab>> recentTabs = new HashMap<Class<? extends AbstractPage>, Class<? extends ICPropertyTab>>();
+	private Map<URL, Image> loadedIcons = new HashMap<>();
+	private static Map<Class<? extends AbstractPage>, Class<? extends ICPropertyTab>> recentTabs = new HashMap<>();
 
 	private final Image IMG_WARN = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_REFACTORING_WARNING);
 	/*
@@ -177,7 +177,7 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 
 	// tabs
 	protected TabFolder folder;
-	protected ArrayList<InternalTab> itabs = new ArrayList<InternalTab>();
+	protected ArrayList<InternalTab> itabs = new ArrayList<>();
 	protected ICPropertyTab currentTab;
 
 	private static boolean isNewOpening = true;
@@ -1124,7 +1124,7 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 		if (extensions == null)
 			return;
 
-		List<IConfigurationElement> elements = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> elements = new ArrayList<>();
 		for (IExtension ext : extensions)
 			elements.addAll(Arrays.asList(ext.getConfigurationElements()));
 		Collections.sort(elements, CDTUIListComparator.getInstance());

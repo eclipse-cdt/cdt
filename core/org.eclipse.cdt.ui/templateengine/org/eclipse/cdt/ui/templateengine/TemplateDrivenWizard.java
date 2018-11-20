@@ -38,8 +38,8 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
  *
  */
 public abstract class TemplateDrivenWizard extends Wizard {
-	protected List<IWizardPage> pagesBeforeTemplatePages = new ArrayList<IWizardPage>();
-	protected List<IWizardPage> pagesAfterTemplatePages = new ArrayList<IWizardPage>();
+	protected List<IWizardPage> pagesBeforeTemplatePages = new ArrayList<>();
+	protected List<IWizardPage> pagesAfterTemplatePages = new ArrayList<>();
 
 	protected Template template;
 	protected int pageIndex;

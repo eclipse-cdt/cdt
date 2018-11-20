@@ -113,7 +113,7 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
 		public final Map<String, Object> fAttributes;
 
 		public BreakpointDMData(Map<String, Object> attributes) {
-			fAttributes = Collections.unmodifiableMap(new HashMap<String, Object>(attributes));
+			fAttributes = Collections.unmodifiableMap(new HashMap<>(attributes));
 		}
 
 		@Override
@@ -205,7 +205,7 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
 	}
 
 	// Breakpoints currently installed
-	private Map<BreakpointDMContext, BreakpointDMData> fBreakpoints = new HashMap<BreakpointDMContext, BreakpointDMData>();
+	private Map<BreakpointDMContext, BreakpointDMData> fBreakpoints = new HashMap<>();
 
 	/**
 	 * The service constructor
@@ -355,7 +355,7 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
 		}
 
 		if (bpCtx instanceof BreakpointDMContext) {
-			Map<String, Object> newAttrs = new HashMap<String, Object>(fBreakpoints.get(bpCtx).getAttributes());
+			Map<String, Object> newAttrs = new HashMap<>(fBreakpoints.get(bpCtx).getAttributes());
 			newAttrs.putAll(attributes);
 			fBreakpoints.put((BreakpointDMContext) bpCtx, new BreakpointDMData(newAttrs));
 			getSession().dispatchEvent(new BreakpointsRemovedEvent((BreakpointDMContext) bpCtx), getProperties());

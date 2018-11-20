@@ -659,7 +659,7 @@ public class MultiConfiguration extends MultiItemsHolder implements IMultiConfig
 	 */
 	@Override
 	public IResourceInfo[] getResourceInfos() {
-		ArrayList<IResourceInfo> ri = new ArrayList<IResourceInfo>();
+		ArrayList<IResourceInfo> ri = new ArrayList<>();
 		for (int i = 0; i < fCfgs.length; i++) {
 			IResourceInfo[] ris = fCfgs[i].getResourceInfos();
 			ri.addAll(Arrays.asList(ris));

@@ -114,7 +114,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		{
 			// test provider defined as an extension
 			List<ILanguageSettingsProvider> providers = LanguageSettingsManager.getWorkspaceProviders();
-			List<String> ids = new ArrayList<String>();
+			List<String> ids = new ArrayList<>();
 			for (ILanguageSettingsProvider provider : providers) {
 				ids.add(provider.getId());
 			}
@@ -153,7 +153,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		assertNull(provider.getSettingEntries(null, FILE_0, LANG_ID));
 
 		// benchmarks matching extension point definition
-		List<ICLanguageSettingEntry> entriesExt = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entriesExt = new ArrayList<>();
 		entriesExt.add(new CIncludePathEntry("/usr/include/", ICSettingEntry.BUILTIN | ICSettingEntry.LOCAL
 				| ICSettingEntry.RESOLVED | ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.UNDEFINED));
 		entriesExt.add(new CMacroEntry("TEST_DEFINE", "100", 0));
@@ -193,7 +193,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		assertNull(provider.getLanguageScope());
 
 		// benchmarks matching extension point definition
-		List<ICLanguageSettingEntry> entriesExt = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entriesExt = new ArrayList<>();
 		entriesExt.add(new CIncludePathEntry("/usr/include/", ICSettingEntry.BUILTIN));
 
 		// retrieve entries from extension point
@@ -229,9 +229,9 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	 */
 	public void testBaseProvider() throws Exception {
 		// define benchmarks
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
-		List<String> languages = new ArrayList<String>(2);
+		List<String> languages = new ArrayList<>(2);
 		languages.add("bogus.language.id");
 		languages.add(LANG_ID);
 
@@ -264,16 +264,16 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	 */
 	public void testBaseProviderConfigure() throws Exception {
 		// sample entries
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("/usr/include/", 0));
-		List<String> languages = new ArrayList<String>();
+		List<String> languages = new ArrayList<>();
 		languages.add(LANG_ID);
 		// create LanguageSettingsBaseProvider
 		LanguageSettingsBaseProvider provider1 = new LanguageSettingsBaseProvider();
 		LanguageSettingsBaseProvider provider2 = new LanguageSettingsBaseProvider();
 		{
 			// configure provider1
-			Map<String, String> properties = new HashMap<String, String>();
+			Map<String, String> properties = new HashMap<>();
 			properties.put("key1", "value1");
 			properties.put("key2", null);
 			properties.put("key3", "");
@@ -293,7 +293,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		}
 		{
 			// configure provider2
-			Map<String, String> properties = new HashMap<String, String>();
+			Map<String, String> properties = new HashMap<>();
 			properties.put("key1", "value1");
 			provider2.configureProvider(PROVIDER_0, PROVIDER_NAME_0, languages, entries, properties);
 			assertEquals(PROVIDER_0, provider2.getId());
@@ -314,7 +314,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	public void testBaseProviderCantReconfigure() throws Exception {
 		// create LanguageSettingsBaseProvider
 		LanguageSettingsBaseProvider provider = new LanguageSettingsBaseProvider();
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("/usr/include/", 0));
 		// configure it
 		provider.configureProvider("test.id", "test.name", null, entries, null);
@@ -347,7 +347,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		assertEquals(null, provider.getLanguageScope());
 		assertEquals("", provider.getProperty(EXTENSION_SERIALIZABLE_PROVIDER_MISSING_PARAMETER));
 
-		List<ICLanguageSettingEntry> expected = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> expected = new ArrayList<>();
 		expected.add(EXTENSION_EDITABLE_PROVIDER_ENTRY);
 		assertEquals(expected, provider.getSettingEntries(null, null, null));
 	}

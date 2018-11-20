@@ -45,7 +45,7 @@ import org.eclipse.core.runtime.Platform;
 public class CElementIncludeResolver {
 	public static List<IPath> resolveInclude(IInclude include) throws CoreException {
 		IResource res = include.getUnderlyingResource();
-		ArrayList<IPath> filesFound = new ArrayList<IPath>(4);
+		ArrayList<IPath> filesFound = new ArrayList<>(4);
 		String fullFileName = include.getFullFileName();
 		if (fullFileName != null) {
 			IPath fullPath = new Path(fullFileName);
@@ -114,7 +114,7 @@ public class CElementIncludeResolver {
 				return;
 			}
 		}
-		HashSet<IPath> foundSet = new HashSet<IPath>();
+		HashSet<IPath> foundSet = new HashSet<>();
 		for (String includePath : includePaths) {
 			IPath path = PathUtil.getCanonicalPathWindows(new Path(includePath).append(includeFile));
 			File file = path.toFile();

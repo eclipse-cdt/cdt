@@ -109,12 +109,12 @@ public class TestModelUpdatesListener extends ViewerUpdatesListener {
 
 	@Override
 	protected Set<TreePath> makeTreePathSet() {
-		return new TreeSet<TreePath>(fTestElementVMCComparator);
+		return new TreeSet<>(fTestElementVMCComparator);
 	}
 
 	@Override
 	protected <V> Map<TreePath, V> makeTreePathMap() {
-		return new TreeMap<TreePath, V>(fTestElementVMCComparator);
+		return new TreeMap<>(fTestElementVMCComparator);
 	}
 
 	public TestModelUpdatesListener() {

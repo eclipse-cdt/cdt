@@ -44,7 +44,7 @@ public final class BuildJob extends Job {
 	 */
 	public BuildJob(Collection<IProject> projects) {
 		super(Messages.WorkingSetConfigAction_21);
-		this.projects = new java.util.ArrayList<IProject>(projects);
+		this.projects = new java.util.ArrayList<>(projects);
 	}
 
 	/**

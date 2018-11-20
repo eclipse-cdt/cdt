@@ -117,7 +117,7 @@ public class ProjectCreatedActions {
 		ManagedProject newManagedProject = new ManagedProject(project, configs[0].getProjectType());
 		info.setManagedProject(newManagedProject);
 
-		original2newConfigs = new HashMap<IConfiguration, IConfiguration>();
+		original2newConfigs = new HashMap<>();
 		ICConfigurationDescription active = null;
 		for (IConfiguration cfg : configs) {
 			if (cfg != null) {
@@ -180,7 +180,7 @@ public class ProjectCreatedActions {
 	}
 
 	public Set<IConfiguration> getNewConfigurations(Collection<IConfiguration> originalConfigs) {
-		Set<IConfiguration> result = new HashSet<IConfiguration>();
+		Set<IConfiguration> result = new HashSet<>();
 		for (IConfiguration cfg : originalConfigs) {
 			result.add(getNewConfiguration(cfg));
 		}

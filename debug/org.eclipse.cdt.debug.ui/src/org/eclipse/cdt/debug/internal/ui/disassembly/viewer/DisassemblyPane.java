@@ -90,7 +90,7 @@ public class DisassemblyPane implements IPropertyChangeListener {
 	private IMenuListener fMenuListener;
 	private MouseListener fMouseListener;
 
-	private Map<String, IAction> fActions = new HashMap<String, IAction>(10);
+	private Map<String, IAction> fActions = new HashMap<>(10);
 
 	public DisassemblyPane(String contextMenuId, String rulerMenuId) {
 		fAnnotationPreferences = new MarkerAnnotationPreferences();

@@ -170,7 +170,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected void loadSymbols(ElfHelper helper) throws IOException {
-		ArrayList<Symbol> list = new ArrayList<Symbol>();
+		ArrayList<Symbol> list = new ArrayList<>();
 
 		//		addSymbols(helper.getExternalFunctions(), ISymbol.FUNCTION, list);
 		addSymbols(helper.getLocalFunctions(), ISymbol.FUNCTION, list);

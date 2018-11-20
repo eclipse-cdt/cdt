@@ -103,15 +103,15 @@ public class BuildDescription implements IBuildDescription {
 	private IResourceDelta fDelta;
 	private IConfigurationBuildState fBuildState;
 
-	private Map<ITool, BuildStep> fToolToMultiStepMap = new HashMap<ITool, BuildStep>();
+	private Map<ITool, BuildStep> fToolToMultiStepMap = new HashMap<>();
 	private BuildStep fOrderedMultiActions[];
 
 	/** Map from Location URI to BuildResource */
-	private Map<URI, BuildResource> fLocationToRcMap = new HashMap<URI, BuildResource>();
+	private Map<URI, BuildResource> fLocationToRcMap = new HashMap<>();
 
-	private Map<String, Set<BuildIOType>> fVarToAddlInSetMap = new HashMap<String, Set<BuildIOType>>();
+	private Map<String, Set<BuildIOType>> fVarToAddlInSetMap = new HashMap<>();
 
-	private List<BuildStep> fStepList = new ArrayList<BuildStep>();
+	private List<BuildStep> fStepList = new ArrayList<>();
 
 	private BuildStep fTargetStep;
 
@@ -125,8 +125,8 @@ public class BuildDescription implements IBuildDescription {
 	private BuildStep fInputStep;
 	private BuildStep fOutputStep;
 
-	private Map<String, ToolOrderEstimation> fToolOrderMap = new HashMap<String, ToolOrderEstimation>();
-	private Set<ITool> fToolInProcesSet = new HashSet<ITool>();
+	private Map<String, ToolOrderEstimation> fToolOrderMap = new HashMap<>();
+	private Set<ITool> fToolInProcesSet = new HashSet<>();
 	private ITool fOrderedTools[];
 
 	private ICSourceEntry[] fSourceEntries;
@@ -143,7 +143,7 @@ public class BuildDescription implements IBuildDescription {
 
 	private class ToolInfoHolder {
 		Map<String, List<ToolAndType>> fExtToToolAndTypeListMap;
-		Map<String, BuildGroup> fInTypeToGroupMap = new HashMap<String, BuildGroup>();
+		Map<String, BuildGroup> fInTypeToGroupMap = new HashMap<>();
 	}
 
 	class ToolAndType {
@@ -489,7 +489,7 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	private Map<String, List<ToolAndType>> initToolAndTypeMap(IFolderInfo foInfo) {
-		Map<String, List<ToolAndType>> extToToolAndTypeListMap = new HashMap<String, List<ToolAndType>>();
+		Map<String, List<ToolAndType>> extToToolAndTypeListMap = new HashMap<>();
 		for (ITool tool : foInfo.getFilteredTools()) {
 			IInputType types[] = tool.getInputTypes();
 			if (types.length != 0) {
@@ -498,7 +498,7 @@ public class BuildDescription implements IBuildDescription {
 						if (tool.buildsFileType(ext)) {
 							List<ToolAndType> list = extToToolAndTypeListMap.get(ext);
 							if (list == null) {
-								list = new ArrayList<ToolAndType>();
+								list = new ArrayList<>();
 								extToToolAndTypeListMap.put(ext, list);
 							}
 							list.add(new ToolAndType(tool, type, ext));
@@ -510,7 +510,7 @@ public class BuildDescription implements IBuildDescription {
 					if (tool.buildsFileType(ext)) {
 						List<ToolAndType> list = extToToolAndTypeListMap.get(ext);
 						if (list == null) {
-							list = new ArrayList<ToolAndType>();
+							list = new ArrayList<>();
 							extToToolAndTypeListMap.put(ext, list);
 						}
 						list.add(new ToolAndType(tool, null, ext));
@@ -936,7 +936,7 @@ public class BuildDescription implements IBuildDescription {
 		} while (foundUnused);
 
 		Set<Entry<URI, BuildResource>> set = fLocationToRcMap.entrySet();
-		List<BuildResource> list = new ArrayList<BuildResource>();
+		List<BuildResource> list = new ArrayList<>();
 		for (Entry<URI, BuildResource> entry : set) {
 			BuildResource rc = entry.getValue();
 			boolean doRemove = false;
@@ -1019,7 +1019,7 @@ public class BuildDescription implements IBuildDescription {
 
 	private BuildResource[] addOutputs(IPath paths[], BuildIOType buildArg, IPath outDirPath) {
 		if (paths != null) {
-			List<BuildResource> list = new ArrayList<BuildResource>();
+			List<BuildResource> list = new ArrayList<>();
 			for (IPath path : paths) {
 				IPath outFullPath = path;
 				IPath outWorkspacePath = path;
@@ -1474,7 +1474,7 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	public IBuildResource[] getResources(boolean generated) {
-		List<IBuildResource> list = new ArrayList<IBuildResource>();
+		List<IBuildResource> list = new ArrayList<>();
 		for (IBuildResource rc : getResources()) {
 			if (generated == (rc.getProducerStep() != fInputStep))
 				list.add(rc);
@@ -1500,7 +1500,7 @@ public class BuildDescription implements IBuildDescription {
 	protected Map<String, String> calculateEnvironment() {
 		IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(fCfg,
 				true, true);
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
 		for (IBuildEnvironmentVariable var : variables) {
 			map.put(var.getName(), var.getValue());
@@ -1533,7 +1533,7 @@ public class BuildDescription implements IBuildDescription {
 				//  Option?
 				if (option != null) {
 					try {
-						List<String> inputs = new ArrayList<String>();
+						List<String> inputs = new ArrayList<>();
 						int optType = option.getValueType();
 						if (optType == IOption.STRING) {
 							inputs.add(option.getStringValue());
@@ -1618,7 +1618,7 @@ public class BuildDescription implements IBuildDescription {
 
 												Set<BuildIOType> set = fVarToAddlInSetMap.get(var);
 												if (set == null) {
-													set = new HashSet<BuildIOType>();
+													set = new HashSet<>();
 													fVarToAddlInSetMap.put(var, set);
 												}
 
@@ -1648,7 +1648,7 @@ public class BuildDescription implements IBuildDescription {
 
 	private void calculateDeps(BuildStep step) {
 		BuildResource rcs[] = (BuildResource[]) step.getInputResources();
-		Set<IPath> depSet = new HashSet<IPath>();
+		Set<IPath> depSet = new HashSet<>();
 
 		for (BuildResource rc : rcs) {
 			IManagedDependencyCalculator depCalc = getDependencyCalculator(step, rc);
@@ -1775,7 +1775,7 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	public String[] getLibs(BuildStep step) {
-		Vector<String> libs = new Vector<String>();
+		Vector<String> libs = new Vector<>();
 		ITool tool = step.getLibTool();
 
 		if (tool != null) {
@@ -1821,7 +1821,7 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	public String[] getUserObjs(BuildStep step) {
-		Vector<String> objs = new Vector<String>();
+		Vector<String> objs = new Vector<>();
 		ITool tool = fCfg.calculateTargetTool();
 		if (tool == null)
 			tool = step.getTool();
@@ -2038,7 +2038,7 @@ public class BuildDescription implements IBuildDescription {
 
 		String exts[] = tool.getAllInputExtensions();
 
-		Set<ITool> set = new HashSet<ITool>();
+		Set<ITool> set = new HashSet<>();
 		for (ITool t : fCfg.getFilteredTools()) {
 			if (t == tool)
 				continue;
@@ -2080,7 +2080,7 @@ public class BuildDescription implements IBuildDescription {
 
 		String exts[] = tool.getAllOutputExtensions();
 
-		Set<ITool> set = new HashSet<ITool>();
+		Set<ITool> set = new HashSet<>();
 		for (ITool t : fCfg.getFilteredTools()) {
 			if (t == tool)
 				continue;

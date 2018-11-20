@@ -119,7 +119,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 		for (IASTPreprocessorMacroExpansion expansion : expansions) {
 			IASTName ref = expansion.getMacroReference();
 			if (ref != null) {
-				ArrayList<IASTName> refs = new ArrayList<IASTName>();
+				ArrayList<IASTName> refs = new ArrayList<>();
 				refs.add(ref);
 				refs.addAll(Arrays.asList(expansion.getNestedMacroReferences()));
 				IASTFileLocation refLoc = expansion.getFileLocation();
@@ -166,7 +166,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 	}
 
 	private Map<IMacroBinding, IASTFileLocation> getMacroLocations(final ILocationResolver resolver) {
-		final Map<IMacroBinding, IASTFileLocation> result = new HashMap<IMacroBinding, IASTFileLocation>();
+		final Map<IMacroBinding, IASTFileLocation> result = new HashMap<>();
 		addLocations(resolver.getBuiltinMacroDefinitions(), result);
 		addLocations(resolver.getMacroDefinitions(), result);
 		return result;
@@ -203,7 +203,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 	 * Combines the replace edits of the leading delegates.
 	 */
 	private List<ReplaceEdit> combineReplaceEdits(int count) {
-		ArrayList<ReplaceEdit> edits = new ArrayList<ReplaceEdit>();
+		ArrayList<ReplaceEdit> edits = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			IMacroExpansionStep step = fDelegates[i].getFullExpansion();
 			shiftAndAddEdits(fBoundaries[2 * i], step.getReplacements(), edits);
@@ -264,7 +264,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 		before.append(dresult.getCodeBeforeStep());
 		before.append(fSource, end, fSource.length - end);
 
-		List<ReplaceEdit> replacements = new ArrayList<ReplaceEdit>();
+		List<ReplaceEdit> replacements = new ArrayList<>();
 		shiftAndAddEdits(shift, dresult.getReplacements(), replacements);
 		fCachedStep = new MacroExpansionStep(before.toString(), dresult.getExpandedMacro(),
 				dresult.getLocationOfExpandedMacroDefinition(),

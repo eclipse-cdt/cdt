@@ -54,7 +54,7 @@ public class RemoveBlockCommentAction extends BlockCommentAction {
 		if (!(docExtension instanceof IDocument))
 			return;
 
-		List<Edit> edits = new LinkedList<Edit>();
+		List<Edit> edits = new LinkedList<>();
 
 		int partitionStart = -1;
 		int partitionEnd = selection.getOffset();

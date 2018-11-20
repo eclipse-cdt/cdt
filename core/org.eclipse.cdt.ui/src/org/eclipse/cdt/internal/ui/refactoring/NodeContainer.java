@@ -63,7 +63,7 @@ public class NodeContainer {
 
 	public NodeContainer() {
 		super();
-		nodes = new ArrayList<IASTNode>();
+		nodes = new ArrayList<>();
 	}
 
 	public final int size() {
@@ -82,7 +82,7 @@ public class NodeContainer {
 		if (names != null) {
 			return;
 		}
-		names = new ArrayList<NameInformation>();
+		names = new ArrayList<>();
 		final int startOffset = getStartOffset();
 		final int endOffset = getEndOffset();
 
@@ -163,8 +163,8 @@ public class NodeContainer {
 
 			Set<IVariable> externalReads = getVariablesReadOutside();
 
-			Set<IASTName> declarations = new HashSet<IASTName>();
-			interfaceNames = new ArrayList<NameInformation>();
+			Set<IASTName> declarations = new HashSet<>();
+			interfaceNames = new ArrayList<>();
 
 			for (NameInformation nameInfo : names) {
 				IASTName declarationName = nameInfo.getDeclarationName();
@@ -251,7 +251,7 @@ public class NodeContainer {
 		for (NameInformation nameInfo : getInterfaceNames()) {
 			if (nameInfo.mustBeReturnValue() == isReturnValue) {
 				if (selectedNames == null) {
-					selectedNames = new ArrayList<NameInformation>();
+					selectedNames = new ArrayList<>();
 				}
 				selectedNames.add(nameInfo);
 			}

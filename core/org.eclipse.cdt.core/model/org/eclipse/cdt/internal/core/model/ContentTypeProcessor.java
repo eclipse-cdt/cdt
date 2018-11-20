@@ -324,7 +324,7 @@ public class ContentTypeProcessor extends CModelOperation {
 				}
 			}
 			// Assume a workspace resolver
-			List<ICProject> list = new ArrayList<ICProject>(cprojects.length);
+			List<ICProject> list = new ArrayList<>(cprojects.length);
 			for (int i = 0; i < cprojects.length; ++i) {
 				list.add(cprojects[i]);
 			}

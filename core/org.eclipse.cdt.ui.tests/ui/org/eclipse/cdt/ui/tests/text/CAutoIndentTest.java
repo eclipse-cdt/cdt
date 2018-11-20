@@ -347,7 +347,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 
 	public void testBracketIndentForConstructorDefinition_Bug183814() throws BadLocationException {
 		DefaultCodeFormatterOptions whitesmiths = DefaultCodeFormatterOptions.getWhitesmithsSettings();
-		CCorePlugin.setOptions(new HashMap<String, String>(whitesmiths.getMap()));
+		CCorePlugin.setOptions(new HashMap<>(whitesmiths.getMap()));
 		AutoEditTester tester = createAutoEditTester();
 
 		tester.type("Foo::Foo()\n{");
@@ -356,7 +356,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 
 	public void testSmartPasteWhitesmiths_Bug180531() throws Exception {
 		DefaultCodeFormatterOptions whitesmiths = DefaultCodeFormatterOptions.getWhitesmithsSettings();
-		CCorePlugin.setOptions(new HashMap<String, String>(whitesmiths.getMap()));
+		CCorePlugin.setOptions(new HashMap<>(whitesmiths.getMap()));
 		AutoEditTester tester = createAutoEditTester();
 
 		tester.type("A::~A()\n{");
@@ -380,7 +380,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 
 		DefaultCodeFormatterOptions defaultOptions = DefaultCodeFormatterOptions.getDefaultSettings();
 		defaultOptions.indent_body_declarations_compare_to_namespace_header = true;
-		CCorePlugin.setOptions(new HashMap<String, String>(defaultOptions.getMap()));
+		CCorePlugin.setOptions(new HashMap<>(defaultOptions.getMap()));
 		tester = createAutoEditTester();
 
 		tester.type("namespace ns {\n");
@@ -431,13 +431,13 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	}
 
 	public void testTabsAsSpaces_SmartIndentDisabled_Bug242707() throws Exception {
-		HashMap<String, String> options = new HashMap<String, String>();
+		HashMap<String, String> options = new HashMap<>();
 		options.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "3");
 		options.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "3");
 		DefaultCodeFormatterOptions defaultOptions = DefaultCodeFormatterOptions.getDefaultSettings();
 		defaultOptions.set(options);
-		CCorePlugin.setOptions(new HashMap<String, String>(defaultOptions.getMap()));
+		CCorePlugin.setOptions(new HashMap<>(defaultOptions.getMap()));
 
 		IPreferenceStore store = PreferenceConstants.getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_SMART_TAB, false);
@@ -542,7 +542,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 
 	public void testSkipToStatementStartWhitesmiths_Bug311018() throws Exception {
 		DefaultCodeFormatterOptions whitesmiths = DefaultCodeFormatterOptions.getWhitesmithsSettings();
-		CCorePlugin.setOptions(new HashMap<String, String>(whitesmiths.getMap()));
+		CCorePlugin.setOptions(new HashMap<>(whitesmiths.getMap()));
 		AutoEditTester tester = createAutoEditTester();
 		tester.type("if (i > 0)\n"); //$NON-NLS-1$
 		tester.type("{\n"); //$NON-NLS-1$

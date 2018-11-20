@@ -539,7 +539,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 				return;
 			}
 			connection.removeImageListener(containerTab);
-			ArrayList<String> imageNames = new ArrayList<String>();
+			ArrayList<String> imageNames = new ArrayList<>();
 			for (IDockerImage image : images) {
 				java.util.List<String> tags = image.repoTags();
 				if (tags != null) {
@@ -740,7 +740,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 				@Override
 				public void run() {
 					connection.removeImageListener(containerTab);
-					ArrayList<String> imageNames = new ArrayList<String>();
+					ArrayList<String> imageNames = new ArrayList<>();
 					for (IDockerImage image : finalList) {
 						java.util.List<String> tags = image.repoTags();
 						if (tags != null) {

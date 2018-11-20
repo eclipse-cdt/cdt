@@ -63,7 +63,7 @@ public class StructureTemplateHandle extends StructureHandle implements IStructu
 		fTemplate = new Template(classBinding.getName());
 		ICPPTemplateParameterMap map = classBinding.getTemplateParameterMap();
 		ICPPTemplateParameter[] tpars = ct.getTemplateParameters();
-		List<String> args = new ArrayList<String>(tpars.length);
+		List<String> args = new ArrayList<>(tpars.length);
 		for (ICPPTemplateParameter par : tpars) {
 			if (par.isParameterPack()) {
 				ICPPTemplateArgument[] pack = map.getPackExpansion(par);

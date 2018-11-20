@@ -41,13 +41,13 @@ public class C99TypedefTrackerParserAction {
 	private TypedefSymbolTable symbolTable = TypedefSymbolTable.EMPTY_TABLE;
 
 	// A stack that keeps track of scopes in the symbol table, used to "close" scopes and to undo the opening of scopes
-	private final LinkedList<TypedefSymbolTable> symbolTableScopeStack = new LinkedList<TypedefSymbolTable>();
+	private final LinkedList<TypedefSymbolTable> symbolTableScopeStack = new LinkedList<>();
 
 	// keeps track of nested declarations
-	private final LinkedList<DeclaratorFrame> declarationStack = new LinkedList<DeclaratorFrame>();
+	private final LinkedList<DeclaratorFrame> declarationStack = new LinkedList<>();
 
 	// "For every action there is an equal and opposite reaction." - Newton's third law
-	private final LinkedList<IUndoAction> undoStack = new LinkedList<IUndoAction>();
+	private final LinkedList<IUndoAction> undoStack = new LinkedList<>();
 
 	/**
 	 * A command object that provides undo functionality.

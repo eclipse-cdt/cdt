@@ -162,9 +162,9 @@ public class MockTestModelUpdater implements ITestModelUpdater {
 		}
 	}
 
-	private LinkedList<MethodInfo> methodCalls = new LinkedList<MethodInfo>();
+	private LinkedList<MethodInfo> methodCalls = new LinkedList<>();
 	private boolean replayMode = false;
-	private Set<String> skippedMethods = new HashSet<String>();
+	private Set<String> skippedMethods = new HashSet<>();
 
 	// NOTE: Test suites nesting is not supported yet cause there is no need in it
 	private FakeTestSuite currentTestSuite = new FakeTestSuite();

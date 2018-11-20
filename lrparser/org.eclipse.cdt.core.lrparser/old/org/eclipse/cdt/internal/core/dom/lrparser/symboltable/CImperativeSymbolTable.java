@@ -37,7 +37,7 @@ public class CImperativeSymbolTable {
 
 	private Bucket[] table = new Bucket[TABLE_SIZE];
 
-	private LinkedList<SymbolScope> scopeStack = new LinkedList<SymbolScope>();
+	private LinkedList<SymbolScope> scopeStack = new LinkedList<>();
 
 	/**
 	 * Represents a scope in the C language.
@@ -49,7 +49,7 @@ public class CImperativeSymbolTable {
 		 * When the scope is closed these buckets are popped, returning the
 		 * symbol table to the state it was in before the scope was opened.
 		 */
-		List<Integer> modifiedBuckets = new ArrayList<Integer>();
+		List<Integer> modifiedBuckets = new ArrayList<>();
 	}
 
 	/**

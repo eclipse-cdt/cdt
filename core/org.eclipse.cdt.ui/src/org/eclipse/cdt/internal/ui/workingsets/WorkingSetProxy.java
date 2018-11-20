@@ -73,7 +73,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 
 	@Override
 	public Collection<IProject> resolveProjects() {
-		Set<IProject> result = new java.util.HashSet<IProject>();
+		Set<IProject> result = new java.util.HashSet<>();
 
 		IWorkingSet resolvedWS = resolve();
 		if (resolvedWS != null) {
@@ -96,7 +96,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 
 	private Map<String, IWorkingSetConfiguration> getConfigurationsMap() {
 		if (configurations == null) {
-			configurations = new java.util.HashMap<String, IWorkingSetConfiguration>();
+			configurations = new java.util.HashMap<>();
 		}
 
 		return configurations;

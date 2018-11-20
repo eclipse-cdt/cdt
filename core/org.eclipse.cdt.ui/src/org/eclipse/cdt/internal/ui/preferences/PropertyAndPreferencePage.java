@@ -199,13 +199,13 @@ public abstract class PropertyAndPreferencePage extends PreferencePage
 	 * @param link the link
 	 */
 	final void doLinkActivated(Link link) {
-		Map<String, Boolean> data = new HashMap<String, Boolean>();
+		Map<String, Boolean> data = new HashMap<>();
 		data.put(DATA_NO_LINK, Boolean.TRUE);
 
 		if (isProjectPreferencePage()) {
 			openWorkspacePreferences(data);
 		} else {
-			HashSet<ICProject> projectsWithSpecifics = new HashSet<ICProject>();
+			HashSet<ICProject> projectsWithSpecifics = new HashSet<>();
 			try {
 				ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
 				for (ICProject curr : projects) {

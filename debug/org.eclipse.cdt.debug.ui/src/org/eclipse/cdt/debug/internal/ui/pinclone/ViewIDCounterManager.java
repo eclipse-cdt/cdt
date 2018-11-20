@@ -90,7 +90,7 @@ public final class ViewIDCounterManager {
 								String secondaryId = viewRef.getSecondaryId();
 								Set<Integer> secondaryIdSet = viewIdToNextCounterMap.get(id);
 								if (secondaryIdSet == null) {
-									secondaryIdSet = new HashSet<Integer>();
+									secondaryIdSet = new HashSet<>();
 									viewIdToNextCounterMap.put(id, secondaryIdSet);
 								}
 								secondaryId = PinCloneUtils.decodeClonedPartSecondaryId(secondaryId);
@@ -221,7 +221,7 @@ public final class ViewIDCounterManager {
 	public Integer getNextCounter(String viewId) {
 		Set<Integer> secondaryIdSet = viewIdToNextCounterMap.get(viewId);
 		if (secondaryIdSet == null) {
-			secondaryIdSet = new HashSet<Integer>();
+			secondaryIdSet = new HashSet<>();
 			viewIdToNextCounterMap.put(viewId, secondaryIdSet);
 		}
 

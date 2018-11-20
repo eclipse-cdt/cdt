@@ -53,7 +53,7 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	public DebugContextPinProvider(IWorkbenchPart part, ISelection activeContext) {
 		super(part);
 		fWorkbenchPart = part;
-		fPinProvider = new HashMap<IPinElementHandle, IPinProvider>();
+		fPinProvider = new HashMap<>();
 
 		fActiveContext = activeContext;
 		fPinHandles = pin(part, activeContext, new IPinModelListener() {
@@ -120,7 +120,7 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	 * @param listener pin model listener
 	 * @return a set of pinned handle
 	 */
-	Set<IPinElementHandle> handles = new HashSet<IPinElementHandle>();
+	Set<IPinElementHandle> handles = new HashSet<>();
 
 	private Set<IPinElementHandle> pin(IWorkbenchPart part, ISelection selection, IPinModelListener listener) {
 

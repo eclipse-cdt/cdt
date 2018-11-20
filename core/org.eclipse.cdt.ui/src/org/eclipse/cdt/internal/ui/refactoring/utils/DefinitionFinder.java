@@ -91,8 +91,8 @@ public class DefinitionFinder {
 		IIndexBinding indexBinding = index.adaptBinding(binding);
 		if (binding == null)
 			return null;
-		Set<String> searchedFiles = new HashSet<String>();
-		List<IASTName> definitions = new ArrayList<IASTName>();
+		Set<String> searchedFiles = new HashSet<>();
+		List<IASTName> definitions = new ArrayList<>();
 		IIndexName[] definitionsFromIndex = index.findNames(indexBinding,
 				IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		int remainingCount = definitionsFromIndex.length;
@@ -156,7 +156,7 @@ public class DefinitionFinder {
 		IIndexBinding indexBinding = index.adaptBinding(binding);
 		if (binding == null)
 			return false;
-		Set<String> dirtyFiles = new HashSet<String>();
+		Set<String> dirtyFiles = new HashSet<>();
 		IEditorPart[] dirtyEditors = EditorUtility.getDirtyEditors(true);
 		for (IEditorPart editor : dirtyEditors) {
 			IEditorInput editorInput = editor.getEditorInput();
@@ -166,7 +166,7 @@ public class DefinitionFinder {
 			}
 		}
 
-		Set<String> searchedFiles = new HashSet<String>();
+		Set<String> searchedFiles = new HashSet<>();
 		IIndexName[] definitionsFromIndex = index.findNames(indexBinding,
 				IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		int remainingCount = definitionsFromIndex.length;

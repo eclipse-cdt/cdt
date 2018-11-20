@@ -50,14 +50,14 @@ public class ListComparator {
 		if (a1 == null || a1.length == 0)
 			return null;
 		if (a2 == null || a2.length == 0) {
-			List<Object> list = new ArrayList<Object>(a1.length);
+			List<Object> list = new ArrayList<>(a1.length);
 			for (int i = 0; i < a1.length; i++) {
 				list.add(a1[i]);
 			}
 			return list;
 		}
 
-		List<Object> list = new ArrayList<Object>(a1.length);
+		List<Object> list = new ArrayList<>(a1.length);
 		Object o1;
 		for (int i = 0; i < a1.length; i++) {
 			o1 = a1[i];

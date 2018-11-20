@@ -129,7 +129,7 @@ public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonito
 	 */
 	public List<V> getRequestMonitors() {
 		synchronized (fRequestMonitorList) { // needed while copying, even when list is a synchronized collection
-			return new LinkedList<V>(fRequestMonitorList);
+			return new LinkedList<>(fRequestMonitorList);
 		}
 	}
 

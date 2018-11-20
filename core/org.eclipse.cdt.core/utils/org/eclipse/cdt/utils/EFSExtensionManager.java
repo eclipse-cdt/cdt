@@ -57,7 +57,7 @@ public class EFSExtensionManager {
 	private static String EXTENSION_ID = "EFSExtensionProvider"; //$NON-NLS-1$
 
 	private EFSExtensionManager() {
-		fSchemeToExtensionProviderMap = new HashMap<String, EFSExtensionProvider>();
+		fSchemeToExtensionProviderMap = new HashMap<>();
 		loadExtensions();
 	}
 

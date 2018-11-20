@@ -245,9 +245,9 @@ public class CElementDeltaBuilder {
 	}
 
 	private void initialize() {
-		this.infos = new HashMap<ICElement, CElementInfo>(20);
-		this.oldPositions = new HashMap<ICElement, ListItem>(20);
-		this.newPositions = new HashMap<ICElement, ListItem>(20);
+		this.infos = new HashMap<>(20);
+		this.oldPositions = new HashMap<>(20);
+		this.newPositions = new HashMap<>(20);
 		this.putOldPosition(this.cElement, new ListItem(null, null));
 		this.putNewPosition(this.cElement, new ListItem(null, null));
 		this.delta = new CElementDelta(cElement);
@@ -258,8 +258,8 @@ public class CElementDeltaBuilder {
 			this.delta.fineGrained();
 		}
 
-		this.added = new ArrayList<ICElement>(5);
-		this.removed = new ArrayList<ICElement>(5);
+		this.added = new ArrayList<>(5);
+		this.removed = new ArrayList<>(5);
 	}
 
 	/**

@@ -86,7 +86,7 @@ public class DsfSourceLookupParticipant extends AbstractSourceLookupParticipant 
 			if (results != null) {
 				return results.toArray();
 			} else {
-				results = new ArrayList<Object>();
+				results = new ArrayList<>();
 			}
 			ISourceContainer[] containers = getSourceContainers();
 			// if there is no containers, we can default to absolute path, since we should be able resolve file by absolute path

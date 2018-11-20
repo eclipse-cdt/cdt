@@ -68,7 +68,7 @@ public class MulticoreVisualizerSelectionFinder extends DebugViewTreeWalker {
 	public ISelection findSelection(ISelection selection) {
 		m_selection = SelectionUtils.getSelectedObjects(selection);
 
-		m_result = new HashSet<Object>();
+		m_result = new HashSet<>();
 		walk();
 		ISelection found = SelectionUtils.toSelection(m_result);
 		return found;

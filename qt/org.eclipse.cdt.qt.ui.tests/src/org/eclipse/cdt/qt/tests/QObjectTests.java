@@ -368,7 +368,7 @@ public class QObjectTests extends BaseQtTestCase {
 			throws Exception {
 
 		// this map is used to make sure that all expected attributes are found
-		Map<String, ExpectedQProperty> qprops = new HashMap<String, QObjectTests.ExpectedQProperty>();
+		Map<String, ExpectedQProperty> qprops = new HashMap<>();
 		for (ExpectedQProperty qprop : expectedProperties)
 			if (qprops.containsKey(qprop.name))
 				fail("duplicate properties in expected list " + qprop.name);
@@ -382,7 +382,7 @@ public class QObjectTests extends BaseQtTestCase {
 			assertEquals("unexpected type for " + expected.name, expected.name, qprop.getName());
 
 			// make sure that all attributes that were found were expected
-			Set<Attribute> allAttrs = new HashSet<Attribute>(Arrays.asList(Attribute.values()));
+			Set<Attribute> allAttrs = new HashSet<>(Arrays.asList(Attribute.values()));
 
 			for (int i = 0; i < expected.attributes.length; ++i) {
 				Attribute attr = (Attribute) expected.attributes[i];

@@ -439,7 +439,7 @@ public class StubUtility {
 		IDocument doc = new Document(buffer.getString());
 		int nLines = doc.getNumberOfLines();
 		MultiTextEdit edit = new MultiTextEdit();
-		HashSet<Integer> removedLines = new HashSet<Integer>();
+		HashSet<Integer> removedLines = new HashSet<>();
 		for (int i = 0; i < variables.length; i++) {
 			TemplateVariable position = findVariable(buffer, variables[i]);
 			if (position == null) {
@@ -762,7 +762,7 @@ public class StubUtility {
 			}
 			templateDatas = projectStore.getTemplateData();
 		}
-		List<Template> result = new ArrayList<Template>();
+		List<Template> result = new ArrayList<>();
 		for (int j = 0; j < contentTypes.length; j++) {
 			for (int i = 0; i < templateDatas.length; i++) {
 				Template template = templateDatas[i].getTemplate();

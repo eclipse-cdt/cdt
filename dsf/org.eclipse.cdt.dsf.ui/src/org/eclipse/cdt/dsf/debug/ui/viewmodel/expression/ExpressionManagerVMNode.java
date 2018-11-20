@@ -334,7 +334,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 	}
 
 	private TreePath getTreePathFromDelta(IModelDelta delta) {
-		List<Object> elementList = new LinkedList<Object>();
+		List<Object> elementList = new LinkedList<>();
 		IModelDelta listDelta = delta;
 		elementList.add(0, listDelta.getElement());
 		while (listDelta.getParentDelta() != null) {

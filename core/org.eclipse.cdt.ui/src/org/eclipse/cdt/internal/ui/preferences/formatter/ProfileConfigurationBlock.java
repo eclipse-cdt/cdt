@@ -297,7 +297,7 @@ public abstract class ProfileConfigurationBlock {
 		}
 
 		if (profiles == null)
-			profiles = new ArrayList<Profile>();
+			profiles = new ArrayList<>();
 
 		fProfileManager = createProfileManager(profiles, fCurrContext, access, fProfileVersioner);
 

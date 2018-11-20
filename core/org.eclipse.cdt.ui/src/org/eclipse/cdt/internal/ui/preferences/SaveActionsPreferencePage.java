@@ -48,7 +48,7 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 
 	@Override
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, FORMAT_SOURCE_CODE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,

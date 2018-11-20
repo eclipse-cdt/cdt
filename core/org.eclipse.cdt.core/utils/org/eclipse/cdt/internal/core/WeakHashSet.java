@@ -59,7 +59,7 @@ public class WeakHashSet<T> {
 	HashableWeakReference<T>[] values;
 	public int elementSize; // number of elements in the table
 	int threshold;
-	ReferenceQueue<T> referenceQueue = new ReferenceQueue<T>();
+	ReferenceQueue<T> referenceQueue = new ReferenceQueue<>();
 
 	public WeakHashSet() {
 		this(5);
@@ -93,7 +93,7 @@ public class WeakHashSet<T> {
 				index = 0;
 			}
 		}
-		this.values[index] = new HashableWeakReference<T>(obj, this.referenceQueue);
+		this.values[index] = new HashableWeakReference<>(obj, this.referenceQueue);
 
 		// assumes the threshold is never equal to the size of the table
 		if (++this.elementSize > this.threshold)
@@ -178,7 +178,7 @@ public class WeakHashSet<T> {
 	}
 
 	private void rehash() {
-		WeakHashSet<T> newHashSet = new WeakHashSet<T>(this.elementSize * 2); // double the number of expected elements
+		WeakHashSet<T> newHashSet = new WeakHashSet<>(this.elementSize * 2); // double the number of expected elements
 		newHashSet.referenceQueue = this.referenceQueue;
 		HashableWeakReference<T> currentValue;
 		for (int i = 0, length = this.values.length; i < length; i++)

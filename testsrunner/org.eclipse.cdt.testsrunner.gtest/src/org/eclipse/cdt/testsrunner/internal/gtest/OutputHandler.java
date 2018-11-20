@@ -507,7 +507,7 @@ public class OutputHandler {
 	private State stateEmptyTestModuleFinal = new State(".*\\[\\s*PASSED\\s*\\]\\s+0\\s+tests.*"); //$NON-NLS-1$
 
 	// Transitions table
-	private Map<State, State[]> transitions = new HashMap<State, State[]>();
+	private Map<State, State[]> transitions = new HashMap<>();
 	{
 		// NOTE: Next states order is important!
 		transitions.put(from(stateInitial), to(stateInitialized, stateEmptyTestModuleFinal));

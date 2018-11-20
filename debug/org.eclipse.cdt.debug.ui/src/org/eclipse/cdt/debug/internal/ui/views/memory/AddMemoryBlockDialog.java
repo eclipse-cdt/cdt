@@ -68,8 +68,8 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	 */
 	private static String fPreviousMemorySpaceSelection;
 
-	private static List<String> sAddressHistory = new ArrayList<String>();
-	private static List<String> sExpressionHistory = new ArrayList<String>();
+	private static List<String> sAddressHistory = new ArrayList<>();
+	private static List<String> sExpressionHistory = new ArrayList<>();
 
 	private static boolean sDefaultToExpression = true;
 

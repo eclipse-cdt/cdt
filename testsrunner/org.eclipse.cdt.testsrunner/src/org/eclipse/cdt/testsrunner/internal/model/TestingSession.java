@@ -72,7 +72,7 @@ public class TestingSession implements ITestingSession {
 	 * statistics without model scanning.
 	 *
 	 */
-	private Map<ITestItem.Status, Integer> statusCounters = new EnumMap<ITestItem.Status, Integer>(
+	private Map<ITestItem.Status, Integer> statusCounters = new EnumMap<>(
 			ITestItem.Status.class);
 
 	/**

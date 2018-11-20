@@ -330,7 +330,7 @@ public final class IndentManipulation {
 			throw new IllegalArgumentException();
 		}
 
-		ArrayList<ReplaceEdit> result = new ArrayList<ReplaceEdit>();
+		ArrayList<ReplaceEdit> result = new ArrayList<>();
 		try {
 			ILineTracker tracker = new DefaultLineTracker();
 			tracker.set(source);

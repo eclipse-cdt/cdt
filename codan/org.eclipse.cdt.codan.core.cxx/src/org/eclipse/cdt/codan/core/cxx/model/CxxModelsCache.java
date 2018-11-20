@@ -51,7 +51,7 @@ public class CxxModelsCache implements ICodanDisposable {
 	CxxModelsCache(ITranslationUnit tu) {
 		this.tu = tu;
 		this.file = tu != null ? (IFile) tu.getResource() : null;
-		cfgmap = new WeakHashMap<IASTFunctionDefinition, IControlFlowGraph>(0);
+		cfgmap = new WeakHashMap<>(0);
 	}
 
 	CxxModelsCache(IASTTranslationUnit ast) {

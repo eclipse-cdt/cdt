@@ -738,7 +738,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		}
 
 		IMacroEntry[] macros = CoreModel.getMacroEntries(resPath);
-		Map<String, String> symbolMap = new HashMap<String, String>();
+		Map<String, String> symbolMap = new HashMap<>();
 		for (int i = 0; i < macros.length; ++i) {
 			symbolMap.put(macros[i].getMacroName(), macros[i].getMacroValue());
 		}

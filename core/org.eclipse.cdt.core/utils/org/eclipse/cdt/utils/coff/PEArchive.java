@@ -240,7 +240,7 @@ public class PEArchive {
 		if (headers != null)
 			return;
 
-		Vector<ARHeader> v = new Vector<ARHeader>();
+		Vector<ARHeader> v = new Vector<>();
 		try {
 			//
 			// Check for EOF condition
@@ -298,7 +298,7 @@ public class PEArchive {
 	}
 
 	public String[] extractFiles(String outdir, String[] names) throws IOException {
-		Vector<String> names_used = new Vector<String>();
+		Vector<String> names_used = new Vector<>();
 		String object_name;
 		int count;
 

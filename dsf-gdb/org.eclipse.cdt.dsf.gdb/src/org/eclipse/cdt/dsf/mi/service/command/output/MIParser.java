@@ -266,7 +266,7 @@ public class MIParser {
 	 * Extract the MI Result comma seperated responses.
 	 */
 	private MIResult[] processMIResults(FSB buffer) {
-		List<MIResult> aList = new ArrayList<MIResult>();
+		List<MIResult> aList = new ArrayList<>();
 		MIResult result = processMIResult(buffer);
 		if (result != null) {
 			aList.add(result);
@@ -340,8 +340,8 @@ public class MIParser {
 	 */
 	private MIValue processMITuple(FSB buffer) {
 		MITuple tuple = new MITuple();
-		List<MIValue> valueList = new ArrayList<MIValue>();
-		List<MIResult> resultList = new ArrayList<MIResult>();
+		List<MIValue> valueList = new ArrayList<>();
+		List<MIResult> resultList = new ArrayList<>();
 		// Catch closing '}'
 		while (buffer.length() > 0 && buffer.charAt(0) != '}') {
 			// Try for the DsfMIValue first
@@ -374,8 +374,8 @@ public class MIParser {
 	 */
 	private MIValue processMIList(FSB buffer) {
 		MIList list = new MIList();
-		List<MIValue> valueList = new ArrayList<MIValue>();
-		List<MIResult> resultList = new ArrayList<MIResult>();
+		List<MIValue> valueList = new ArrayList<>();
+		List<MIResult> resultList = new ArrayList<>();
 		// catch closing ']'
 		while (buffer.length() > 0 && buffer.charAt(0) != ']') {
 			// Try for the DsfMIValue first

@@ -140,7 +140,7 @@ public class CompletionTestBase extends BaseTestCase {
 	}
 
 	protected List<IBinding> proposeBindings(IASTCompletionNode completionNode, boolean isPrefix) {
-		List<IBinding> proposals = new ArrayList<IBinding>();
+		List<IBinding> proposals = new ArrayList<>();
 		boolean handleMacros = false;
 		IASTName[] names = completionNode.getNames();
 

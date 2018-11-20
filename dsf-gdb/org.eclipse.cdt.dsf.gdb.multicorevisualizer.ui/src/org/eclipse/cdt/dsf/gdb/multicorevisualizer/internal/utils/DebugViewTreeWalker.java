@@ -112,7 +112,7 @@ public class DebugViewTreeWalker {
 	 * Note: each returned path is the root of a distinct debug session
 	 */
 	public TreePath[] getRootPaths() {
-		List<TreePath> paths = new ArrayList<TreePath>();
+		List<TreePath> paths = new ArrayList<>();
 
 		if (m_viewer != null) {
 			Tree tree = (Tree) m_viewer.getControl();

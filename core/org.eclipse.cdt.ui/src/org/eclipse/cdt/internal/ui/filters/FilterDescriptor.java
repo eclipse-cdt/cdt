@@ -86,7 +86,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 	 */
 	public static FilterDescriptor[] getFilterDescriptors(String targetId) {
 		FilterDescriptor[] filterDescs = FilterDescriptor.getFilterDescriptors();
-		List<FilterDescriptor> result = new ArrayList<FilterDescriptor>(filterDescs.length);
+		List<FilterDescriptor> result = new ArrayList<>(filterDescs.length);
 		for (int i = 0; i < filterDescs.length; i++) {
 			String tid = filterDescs[i].getTargetId();
 			if (tid == null || tid.equals(targetId))
@@ -247,8 +247,8 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 	 * Creates the filter descriptors.
 	 */
 	private static FilterDescriptor[] createFilterDescriptors(IConfigurationElement[] elements) {
-		List<FilterDescriptor> result = new ArrayList<FilterDescriptor>(5);
-		Set<String> descIds = new HashSet<String>(5);
+		List<FilterDescriptor> result = new ArrayList<>(5);
+		Set<String> descIds = new HashSet<>(5);
 		for (int i = 0; i < elements.length; i++) {
 			final IConfigurationElement element = elements[i];
 			if (FILTER_TAG.equals(element.getName())) {

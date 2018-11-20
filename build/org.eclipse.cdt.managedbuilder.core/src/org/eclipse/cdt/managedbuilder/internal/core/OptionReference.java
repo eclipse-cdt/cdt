@@ -145,7 +145,7 @@ public class OptionReference implements IOption {
 		case UNDEF_LIBRARY_PATHS:
 		case UNDEF_LIBRARY_FILES:
 		case UNDEF_MACRO_FILES:
-			List<String> valueList = new ArrayList<String>();
+			List<String> valueList = new ArrayList<>();
 			NodeList nodes = element.getElementsByTagName(LIST_VALUE);
 			for (int i = 0; i < nodes.getLength(); ++i) {
 				Node node = nodes.item(i);
@@ -221,7 +221,7 @@ public class OptionReference implements IOption {
 			case UNDEF_LIBRARY_PATHS:
 			case UNDEF_LIBRARY_FILES:
 			case UNDEF_MACRO_FILES:
-				List<String> valueList = new ArrayList<String>();
+				List<String> valueList = new ArrayList<>();
 				IManagedConfigElement[] valueElements = element.getChildren(LIST_VALUE);
 				for (IManagedConfigElement valueElement : valueElements) {
 					Boolean isBuiltIn = Boolean.valueOf(valueElement.getAttribute(LIST_ITEM_BUILTIN));
@@ -539,14 +539,14 @@ public class OptionReference implements IOption {
 
 	private List<String> getBuiltInList() {
 		if (builtIns == null) {
-			builtIns = new ArrayList<String>();
+			builtIns = new ArrayList<>();
 		}
 		return builtIns;
 	}
 
 	@Override
 	public String[] getBuiltIns() {
-		List<String> answer = new ArrayList<String>();
+		List<String> answer = new ArrayList<>();
 		if (builtIns != null) {
 			answer.addAll(builtIns);
 		}
@@ -716,7 +716,7 @@ public class OptionReference implements IOption {
 				|| getValueType() == UNDEF_INCLUDE_FILES || getValueType() == UNDEF_LIBRARY_PATHS
 				|| getValueType() == UNDEF_LIBRARY_FILES || getValueType() == UNDEF_MACRO_FILES) {
 			// Just replace what the option reference is holding onto
-			this.value = new ArrayList<String>(Arrays.asList(value));
+			this.value = new ArrayList<>(Arrays.asList(value));
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}

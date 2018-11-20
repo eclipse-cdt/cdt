@@ -369,7 +369,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 	 */
 	private void updateForActivation() {
 		// update all working-set configs that intersect this config
-		Collection<IWorkingSetProxy.ISnapshot> unaffectedWorkingSets = new java.util.HashSet<IWorkingSetProxy.ISnapshot>(
+		Collection<IWorkingSetProxy.ISnapshot> unaffectedWorkingSets = new java.util.HashSet<>(
 				workspace.getWorkingSets());
 
 		for (IProject project : currentConfig.getWorkingSet().resolveProjects()) {

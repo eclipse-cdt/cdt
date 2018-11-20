@@ -74,7 +74,7 @@ public class TracepointActionManager {
 
 	public ArrayList<ITracepointAction> getActions() {
 		if (tracepointActions == null) {
-			tracepointActions = new ArrayList<ITracepointAction>();
+			tracepointActions = new ArrayList<>();
 			loadActionData();
 		}
 		return tracepointActions;

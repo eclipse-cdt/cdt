@@ -48,8 +48,8 @@ public class NewBaseClassSelectionDialog extends ElementSelectionDialog {
 		setDialogSettings(DIALOG_SETTINGS);
 		setVisibleTypes(VISIBLE_TYPES);
 		setStatusLineAboveButtons(true);
-		fTypeList = new ArrayList<ITypeInfo>();
-		fTypeListeners = new ArrayList<ITypeSelectionListener>();
+		fTypeList = new ArrayList<>();
+		fTypeListeners = new ArrayList<>();
 	}
 
 	public void addListener(ITypeSelectionListener listener) {
@@ -63,7 +63,7 @@ public class NewBaseClassSelectionDialog extends ElementSelectionDialog {
 
 	private void notifyTypeAddedListeners(ITypeInfo type) {
 		// first copy listeners in case one calls removeListener
-		List<ITypeSelectionListener> list = new ArrayList<ITypeSelectionListener>(fTypeListeners);
+		List<ITypeSelectionListener> list = new ArrayList<>(fTypeListeners);
 		for (Iterator<ITypeSelectionListener> i = list.iterator(); i.hasNext();) {
 			ITypeSelectionListener listener = i.next();
 			listener.typeAdded(type);

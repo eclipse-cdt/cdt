@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IPath;
 public class WinDiscoveredPathInfo implements IDiscoveredPathInfo {
 
 	private final IPath[] paths;
-	private final Map<String, String> symbols = new HashMap<String, String>();
+	private final Map<String, String> symbols = new HashMap<>();
 
 	public WinDiscoveredPathInfo() {
 		// Include paths

@@ -230,7 +230,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 				CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
-			ArrayList<IExtension> extensionsInUse = new ArrayList<IExtension>();
+			ArrayList<IExtension> extensionsInUse = new ArrayList<>();
 			for (int i = 0; i < exts.length; i++) {
 				if (isExtensionVisible(exts[i])) {
 					extensionsInUse.add(exts[i]);

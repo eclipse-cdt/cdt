@@ -55,7 +55,7 @@ public class CLanguageKeywords implements ICLanguageKeywords {
 	@Override
 	public String[] getKeywords() {
 		if (keywords == null) {
-			Set<String> keywordSet = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.KEYWORDS, language));
+			Set<String> keywordSet = new HashSet<>(KeywordSets.getKeywords(KeywordSetKey.KEYWORDS, language));
 			CharArrayIntMap additionalKeywords = config.getAdditionalKeywords();
 			if (additionalKeywords != null) {
 				for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext();) {
@@ -80,7 +80,7 @@ public class CLanguageKeywords implements ICLanguageKeywords {
 	@Override
 	public String[] getPreprocessorKeywords() {
 		if (preprocessorKeywords == null) {
-			Set<String> keywords = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, language));
+			Set<String> keywords = new HashSet<>(KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, language));
 			CharArrayIntMap additionalKeywords = config.getAdditionalPreprocessorKeywords();
 			if (additionalKeywords != null) {
 				for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext();) {

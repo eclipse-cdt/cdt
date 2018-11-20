@@ -31,7 +31,7 @@ import junit.framework.TestSuite;
 public class BackwardCompatiblityTests extends TestCase {
 	private static final String TEST_3X_STD_MAKE_PROJECTS = "test3xStdMakeProjects";
 
-	private List<IProject> projList = new LinkedList<IProject>();
+	private List<IProject> projList = new LinkedList<>();
 
 	public static Test suite() {
 		return new TestSuite(BackwardCompatiblityTests.class);

@@ -114,7 +114,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	private IWorkbenchSite fSite;
 	private String fGroupName = IContextMenuConstants.GROUP_REORGANIZE;
 	private List<ISelectionChangedListener> fRegisteredSelectionListeners;
-	private List<RefactoringAction> fRefactorActions = new ArrayList<RefactoringAction>();
+	private List<RefactoringAction> fRefactorActions = new ArrayList<>();
 
 	private AddIncludeAction fAddInclude;
 	//	private OverrideMethodsAction fOverrideMethods;
@@ -366,7 +366,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 
 	private void registerSelectionListener(ISelectionProvider provider, ISelectionChangedListener listener) {
 		if (fRegisteredSelectionListeners == null)
-			fRegisteredSelectionListeners = new ArrayList<ISelectionChangedListener>(10);
+			fRegisteredSelectionListeners = new ArrayList<>(10);
 		provider.addSelectionChangedListener(listener);
 		fRegisteredSelectionListeners.add(listener);
 	}

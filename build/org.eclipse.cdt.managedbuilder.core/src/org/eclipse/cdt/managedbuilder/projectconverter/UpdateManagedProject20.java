@@ -433,7 +433,7 @@ class UpdateManagedProject20 {
 				case IOption.PREPROCESSOR_SYMBOLS:
 				case IOption.LIBRARIES:
 				case IOption.OBJECTS: {
-					Vector<String> values = new Vector<String>();
+					Vector<String> values = new Vector<>();
 					NodeList nodes = optRef.getElementsByTagName(IOption.LIST_VALUE);
 					for (int j = 0; j < nodes.getLength(); ++j) {
 						Node node = nodes.item(j);

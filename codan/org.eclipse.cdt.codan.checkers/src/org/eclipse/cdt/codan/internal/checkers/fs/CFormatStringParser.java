@@ -86,7 +86,7 @@ public class CFormatStringParser {
 		this.argumentPattern = Pattern.compile(STRING_FORMAT_PATTERN);
 		this.argumentMatcher = this.argumentPattern.matcher(argument);
 		this.vulnerablePattern = Pattern.compile(VULNERABLE_PATTERN);
-		this.vulnerableArguments = new ConcurrentLinkedQueue<VulnerableFormatStringArgument>();
+		this.vulnerableArguments = new ConcurrentLinkedQueue<>();
 		extractVulnerableArguments();
 	}
 

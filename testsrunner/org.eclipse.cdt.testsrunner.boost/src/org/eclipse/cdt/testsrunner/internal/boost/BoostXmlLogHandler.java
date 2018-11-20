@@ -59,7 +59,7 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	/** Maps the string message level representation to the Tests Runner internal enum code. */
 	private static final Map<String, ITestMessage.Level> STRING_TO_MESSAGE_LEVEL;
 	static {
-		Map<String, ITestMessage.Level> aMap = new HashMap<String, ITestMessage.Level>();
+		Map<String, ITestMessage.Level> aMap = new HashMap<>();
 		aMap.put(XML_NODE_INFO, ITestMessage.Level.Info);
 		aMap.put(XML_NODE_MESSAGE, ITestMessage.Level.Message);
 		aMap.put(XML_NODE_WARNING, ITestMessage.Level.Warning);
@@ -79,7 +79,7 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	private ITestModelUpdater modelUpdater;
 
 	/** Stores the text between XML tags. */
-	private Stack<StringBuilder> elementDataStack = new Stack<StringBuilder>();
+	private Stack<StringBuilder> elementDataStack = new Stack<>();
 
 	/** File name for current test message location. */
 	private String fileName;

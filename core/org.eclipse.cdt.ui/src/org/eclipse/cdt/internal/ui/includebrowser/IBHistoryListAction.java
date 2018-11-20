@@ -72,7 +72,7 @@ public class IBHistoryListAction extends Action {
 			ILabelProvider labelProvider = new CUILabelProvider(CElementLabels.APPEND_ROOT_PATH,
 					CElementImageProvider.OVERLAY_ICONS);
 
-			fHistoryList = new ListDialogField<ITranslationUnit>(adapter, buttonLabels, labelProvider);
+			fHistoryList = new ListDialogField<>(adapter, buttonLabels, labelProvider);
 			fHistoryList.setLabelText(IBMessages.IBHistoryListAction_HistoryList_label);
 			fHistoryList.setElements(Arrays.asList(elements));
 

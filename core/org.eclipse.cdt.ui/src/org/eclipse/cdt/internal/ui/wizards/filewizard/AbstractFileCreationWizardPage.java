@@ -232,7 +232,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 			templateName = template.getName();
 		}
 		if (templateName != null) {
-			data = new HashMap<String, String>();
+			data = new HashMap<>();
 			data.put(CodeTemplatePreferencePage.DATA_SELECT_TEMPLATE, templateName);
 		}
 		PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(), prefPageId,

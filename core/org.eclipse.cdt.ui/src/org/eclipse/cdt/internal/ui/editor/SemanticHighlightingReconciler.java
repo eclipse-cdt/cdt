@@ -345,9 +345,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	private HighlightingStyle[] fHighlightings;
 
 	/** Background job's added highlighted positions */
-	protected List<HighlightedPosition> fAddedPositions = new ArrayList<HighlightedPosition>();
+	protected List<HighlightedPosition> fAddedPositions = new ArrayList<>();
 	/** Background job's removed highlighted positions */
-	protected List<HighlightedPosition> fRemovedPositions = new ArrayList<HighlightedPosition>();
+	protected List<HighlightedPosition> fRemovedPositions = new ArrayList<>();
 	/** Number of removed positions */
 	protected int fNOfRemovedPositions;
 
@@ -452,7 +452,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			CPPSemantics.popLookupPoint();
 		}
 		List<HighlightedPosition> oldPositions = fRemovedPositions;
-		List<HighlightedPosition> newPositions = new ArrayList<HighlightedPosition>(fNOfRemovedPositions);
+		List<HighlightedPosition> newPositions = new ArrayList<>(fNOfRemovedPositions);
 		for (int i = 0, n = oldPositions.size(); i < n; i++) {
 			HighlightedPosition current = oldPositions.get(i);
 			if (current != null)

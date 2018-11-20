@@ -36,7 +36,7 @@ public class ArgsSeparator {
 		}
 		ParserState state = ParserState.NORMAL;
 		StringBuilder current = new StringBuilder();
-		List<String> args = new ArrayList<String>();
+		List<String> args = new ArrayList<>();
 		boolean lastTokenInQuotes = false;
 		char previous = 0;
 		for (char c : s.toCharArray()) {

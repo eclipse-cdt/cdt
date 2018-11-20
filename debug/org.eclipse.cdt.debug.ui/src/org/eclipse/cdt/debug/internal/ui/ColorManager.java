@@ -39,7 +39,7 @@ public class ColorManager {
 		return gfColorManager;
 	}
 
-	protected Map<RGB, Color> fColorTable = new HashMap<RGB, Color>(10);
+	protected Map<RGB, Color> fColorTable = new HashMap<>(10);
 
 	public Color getColor(RGB rgb) {
 		Color color = fColorTable.get(rgb);

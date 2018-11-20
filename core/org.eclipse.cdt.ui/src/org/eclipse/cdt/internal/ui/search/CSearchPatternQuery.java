@@ -77,7 +77,7 @@ public class CSearchPatternQuery extends CSearchQuery {
 		this.patternStr = patternStr.trim();
 
 		// Parse the pattern string
-		List<Pattern> patternList = new ArrayList<Pattern>();
+		List<Pattern> patternList = new ArrayList<>();
 		StringBuilder buff = new StringBuilder();
 		int n = patternStr.length();
 		for (int i = 0; i < n; ++i) {
@@ -143,7 +143,7 @@ public class CSearchPatternQuery extends CSearchQuery {
 		try {
 			IndexFilter filter = IndexFilter.ALL;
 			IIndexBinding[] bindings = index.findBindings(pattern, false, filter, monitor);
-			ArrayList<IIndexBinding> matchedBindings = new ArrayList<IIndexBinding>();
+			ArrayList<IIndexBinding> matchedBindings = new ArrayList<>();
 			for (int i = 0; i < bindings.length; ++i) {
 				IIndexBinding pdomBinding = bindings[i];
 

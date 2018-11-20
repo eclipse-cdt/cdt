@@ -88,7 +88,7 @@ public class ExPatternDialog extends StatusDialog {
 
 		ExclusionPatternAdapter adapter = new ExclusionPatternAdapter();
 
-		fExclusionPatternList = new ListDialogField<String>(adapter, buttonLabels, new ExPatternLabelProvider());
+		fExclusionPatternList = new ListDialogField<>(adapter, buttonLabels, new ExPatternLabelProvider());
 		fExclusionPatternList.setDialogFieldListener(adapter);
 		fExclusionPatternList.setLabelText(label);
 		fExclusionPatternList.setRemoveButtonIndex(IDX_REMOVE);
@@ -100,7 +100,7 @@ public class ExPatternDialog extends StatusDialog {
 			fCurrSourceFolder = (IContainer) res;
 		}
 
-		ArrayList<String> elements = new ArrayList<String>(pattern.length);
+		ArrayList<String> elements = new ArrayList<>(pattern.length);
 		for (IPath p : pattern)
 			elements.add(p.toString());
 		fExclusionPatternList.setElements(elements);

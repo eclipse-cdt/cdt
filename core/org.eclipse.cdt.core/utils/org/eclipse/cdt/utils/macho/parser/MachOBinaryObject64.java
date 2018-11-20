@@ -262,7 +262,7 @@ public class MachOBinaryObject64 extends BinaryObjectAdapter {
 	protected ISymbol[] loadSymbols(MachOHelper64 helper) throws IOException {
 		CPPFilt cppfilt = null;
 		try {
-			ArrayList<Symbol> list = new ArrayList<Symbol>();
+			ArrayList<Symbol> list = new ArrayList<>();
 			// Hack should be remove when Elf is clean
 			helper.getMachO().setCppFilter(false);
 			cppfilt = getCPPFilt();

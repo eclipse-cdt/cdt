@@ -122,7 +122,7 @@ public class DbgUtil {
 			IBuildIOType types[] = rc.getDependentIOTypes();
 
 			if (types.length > 0) {
-				Set<IBuildStep> set = new HashSet<IBuildStep>();
+				Set<IBuildStep> set = new HashSet<>();
 
 				for (int i = 0; i < types.length; i++) {
 					if (set.add(types[i].getStep())) {

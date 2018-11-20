@@ -44,7 +44,7 @@ public class GDBJtagDSFFinalLaunchSequence_7_2 extends GDBJtagDSFFinalLaunchSequ
 		if (GROUP_JTAG.equals(group)) {
 			// Initialize the list with the base class' steps
 			// We need to create a list that we can modify, which is why we create our own ArrayList.
-			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_JTAG)));
+			List<String> orderList = new ArrayList<>(Arrays.asList(super.getExecutionOrder(GROUP_JTAG)));
 
 			// Now insert our steps right after the initialization of the base class.
 			orderList.add(orderList.indexOf("stepInitializeJTAGFinalLaunchSequence") + 1, //$NON-NLS-1$

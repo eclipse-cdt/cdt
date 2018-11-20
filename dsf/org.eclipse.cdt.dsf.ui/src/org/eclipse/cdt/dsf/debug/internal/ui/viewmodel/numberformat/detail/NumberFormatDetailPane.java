@@ -111,12 +111,12 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	 * Map of actions. Keys are strings, values
 	 * are <code>IAction</code>.
 	 */
-	private Map<String, IAction> fActionMap = new HashMap<String, IAction>();
+	private Map<String, IAction> fActionMap = new HashMap<>();
 
 	/**
 	 * Collection to track actions that should be updated when selection occurs.
 	 */
-	private List<String> fSelectionActions = new ArrayList<String>();
+	private List<String> fSelectionActions = new ArrayList<>();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
@@ -310,7 +310,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 					display = PlatformUI.getWorkbench().getDisplay();
 				}
 				final Executor executor = SimpleDisplayExecutor.getSimpleDisplayExecutor(display);
-				Set<String> properties = new HashSet<String>(1);
+				Set<String> properties = new HashSet<>(1);
 				properties.add(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
 				propertiesProvider
 						.update(new IPropertiesUpdate[] { new VMPropertiesUpdate(properties, path, fViewerInput,
@@ -322,7 +322,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 										if (fMonitor.isCanceled())
 											return;
 
-										Set<String> properties = new HashSet<String>(1);
+										Set<String> properties = new HashSet<>(1);
 										properties.add(IElementPropertiesProvider.PROP_NAME);
 										final String[] formats = (String[]) getData()
 												.get(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);

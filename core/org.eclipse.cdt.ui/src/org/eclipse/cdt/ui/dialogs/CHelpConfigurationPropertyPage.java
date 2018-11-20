@@ -89,7 +89,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements IWor
 					/* 0 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_CheckAll,
 					/* 1 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_UncheckAll };
 
-			fCHelpBookList = new CheckedListDialogField<CHelpBookDescriptor>(null, buttonLabels,
+			fCHelpBookList = new CheckedListDialogField<>(null, buttonLabels,
 					new CHelpBookListLabelProvider());
 			fCHelpBookList.setLabelText(CUIMessages.CHelpConfigurationPropertyPage_HelpBooks);
 			fCHelpBookList.setCheckAllButtonIndex(0);
@@ -136,7 +136,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements IWor
 
 		private List<CHelpBookDescriptor> getEnabledEntries(List<CHelpBookDescriptor> list) {
 			int size = list.size();
-			List<CHelpBookDescriptor> desList = new ArrayList<CHelpBookDescriptor>();
+			List<CHelpBookDescriptor> desList = new ArrayList<>();
 
 			for (int i = 0; i < size; i++) {
 				CHelpBookDescriptor el = list.get(i);

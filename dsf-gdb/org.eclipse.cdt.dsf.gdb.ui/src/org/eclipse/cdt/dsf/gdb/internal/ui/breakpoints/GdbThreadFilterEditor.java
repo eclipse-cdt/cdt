@@ -141,7 +141,7 @@ public class GdbThreadFilterEditor {
 			}
 
 			if (parent instanceof ILaunchManager) {
-				List<Object> children = new ArrayList<Object>();
+				List<Object> children = new ArrayList<>();
 				ILaunch[] launches = ((ILaunchManager) parent).getLaunches();
 				IContainerDMContext[] targetArray;
 				for (int i = 0; i < launches.length; i++) {
@@ -276,7 +276,7 @@ public class GdbThreadFilterEditor {
 		if (!(input instanceof ILaunchManager)) {
 			return new IContainerDMContext[0];
 		}
-		List<Object> targets = new ArrayList<Object>();
+		List<Object> targets = new ArrayList<>();
 		ILaunch[] launches = ((ILaunchManager) input).getLaunches();
 		IContainerDMContext[] targetArray;
 		for (int i = 0; i < launches.length; i++) {
@@ -343,7 +343,7 @@ public class GdbThreadFilterEditor {
 
 	private IExecutionDMContext[] getTargetThreadFilters(IContainerDMContext target) {
 		Object[] threads = ((ITreeContentProvider) getThreadViewer().getContentProvider()).getChildren(target);
-		ArrayList<Object> list = new ArrayList<Object>(threads.length);
+		ArrayList<Object> list = new ArrayList<>(threads.length);
 		for (int i = 0; i < threads.length; ++i) {
 			if (getThreadViewer().getChecked(threads[i]))
 				list.add(threads[i]);

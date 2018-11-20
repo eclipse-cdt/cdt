@@ -66,7 +66,7 @@ public class SafeStringInterner {
 			return map;
 		}
 
-		HashMap<String, T> tempMap = new HashMap<String, T>(map);
+		HashMap<String, T> tempMap = new HashMap<>(map);
 		map.clear();
 		for (String string : tempMap.keySet()) {
 			T value = tempMap.get(string);
@@ -94,7 +94,7 @@ public class SafeStringInterner {
 			return map;
 		}
 
-		LinkedHashMap<String, T> tempMap = new LinkedHashMap<String, T>(map);
+		LinkedHashMap<String, T> tempMap = new LinkedHashMap<>(map);
 		map.clear();
 		for (String string : tempMap.keySet()) {
 			T value = tempMap.get(string);
@@ -122,7 +122,7 @@ public class SafeStringInterner {
 			return map;
 		}
 
-		HashMap<String, T> tempMap = new HashMap<String, T>(map);
+		HashMap<String, T> tempMap = new HashMap<>(map);
 		map.clear();
 		for (String string : tempMap.keySet()) {
 			T value = tempMap.get(string);

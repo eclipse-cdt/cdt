@@ -34,10 +34,10 @@ import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
  * @author Guido Zgraggen IFS
  */
 public class NodeCommentMap {
-	protected final Map<IASTNode, List<IASTComment>> leadingMap = new HashMap<IASTNode, List<IASTComment>>();
-	protected final Map<IASTNode, List<IASTComment>> trailingMap = new HashMap<IASTNode, List<IASTComment>>();
-	protected final Map<IASTNode, List<IASTComment>> freestandingMap = new HashMap<IASTNode, List<IASTComment>>();
-	protected final List<IASTTranslationUnit> coveredUnits = new ArrayList<IASTTranslationUnit>();
+	protected final Map<IASTNode, List<IASTComment>> leadingMap = new HashMap<>();
+	protected final Map<IASTNode, List<IASTComment>> trailingMap = new HashMap<>();
+	protected final Map<IASTNode, List<IASTComment>> freestandingMap = new HashMap<>();
+	protected final List<IASTTranslationUnit> coveredUnits = new ArrayList<>();
 
 	/**
 	 * Add a comment to the map with the trailing comments.
@@ -47,7 +47,7 @@ public class NodeCommentMap {
 	public void addTrailingCommentToNode(IASTNode node, IASTComment comment) {
 		List<IASTComment> comments = trailingMap.get(node);
 		if (comments == null) {
-			comments = new ArrayList<IASTComment>();
+			comments = new ArrayList<>();
 		}
 		comments.add(comment);
 		trailingMap.put(node, comments);
@@ -62,7 +62,7 @@ public class NodeCommentMap {
 	 */
 	public List<IASTComment> getTrailingCommentsForNode(IASTNode node) {
 		List<IASTComment> list = trailingMap.get(node);
-		return list != null ? list : new ArrayList<IASTComment>();
+		return list != null ? list : new ArrayList<>();
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class NodeCommentMap {
 	public void addLeadingCommentToNode(IASTNode node, IASTComment comment) {
 		List<IASTComment> comments = leadingMap.get(node);
 		if (comments == null) {
-			comments = new ArrayList<IASTComment>();
+			comments = new ArrayList<>();
 		}
 		comments.add(comment);
 		leadingMap.put(node, comments);
@@ -88,7 +88,7 @@ public class NodeCommentMap {
 	 */
 	public List<IASTComment> getLeadingCommentsForNode(IASTNode node) {
 		List<IASTComment> list = leadingMap.get(node);
-		return list != null ? list : new ArrayList<IASTComment>();
+		return list != null ? list : new ArrayList<>();
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class NodeCommentMap {
 	public void addFreestandingCommentToNode(IASTNode node, IASTComment comment) {
 		List<IASTComment> comments = freestandingMap.get(node);
 		if (comments == null) {
-			comments = new ArrayList<IASTComment>();
+			comments = new ArrayList<>();
 		}
 		comments.add(comment);
 		freestandingMap.put(node, comments);
@@ -114,7 +114,7 @@ public class NodeCommentMap {
 	 */
 	public List<IASTComment> getFreestandingCommentsForNode(IASTNode node) {
 		List<IASTComment> list = freestandingMap.get(node);
-		return list != null ? list : new ArrayList<IASTComment>();
+		return list != null ? list : new ArrayList<>();
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class NodeCommentMap {
 	 * @return List
 	 */
 	public List<IASTComment> getAllCommentsForNode(IASTNode node) {
-		List<IASTComment> comment = new ArrayList<IASTComment>();
+		List<IASTComment> comment = new ArrayList<>();
 		comment.addAll(getFreestandingCommentsForNode(node));
 		comment.addAll(getLeadingCommentsForNode(node));
 		comment.addAll(getTrailingCommentsForNode(node));

@@ -176,7 +176,7 @@ public class CSearchPage extends DialogPage implements ISearchPage {
 		}
 
 		// get the list of elements for the scope
-		Set<ICElement> elements = new HashSet<ICElement>();
+		Set<ICElement> elements = new HashSet<>();
 		String scopeDescription = ""; //$NON-NLS-1$
 		switch (getContainer().getSelectedScope()) {
 		case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:

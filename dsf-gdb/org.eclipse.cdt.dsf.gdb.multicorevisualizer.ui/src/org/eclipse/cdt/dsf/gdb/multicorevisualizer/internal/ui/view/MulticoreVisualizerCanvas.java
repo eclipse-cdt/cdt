@@ -166,16 +166,16 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 		setFont(m_textFont);
 
 		// initialize cached state storage
-		m_cpus = new ArrayList<MulticoreVisualizerCPU>();
-		m_cpuMap = new Hashtable<VisualizerCPU, MulticoreVisualizerCPU>();
+		m_cpus = new ArrayList<>();
+		m_cpuMap = new Hashtable<>();
 
-		m_cores = new ArrayList<MulticoreVisualizerCore>();
-		m_coreMap = new Hashtable<VisualizerCore, MulticoreVisualizerCore>();
+		m_cores = new ArrayList<>();
+		m_coreMap = new Hashtable<>();
 
-		m_threads = new ArrayList<MulticoreVisualizerThread>();
-		m_threadMap = new Hashtable<VisualizerThread, MulticoreVisualizerThread>();
+		m_threads = new ArrayList<>();
+		m_threadMap = new Hashtable<>();
 
-		m_selectedPIDs = new HashSet<Integer>();
+		m_selectedPIDs = new HashSet<>();
 
 		// mouse-drag monitor
 		m_mouseMonitor = new MouseMonitor(this) {
@@ -827,7 +827,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 	 * Otherwise, selects item(s) and deselects other items.
 	 */
 	public void selectPoint(int x, int y, boolean addToSelection, boolean toggleSelection) {
-		List<MulticoreVisualizerGraphicObject> selectedObjects = new ArrayList<MulticoreVisualizerGraphicObject>();
+		List<MulticoreVisualizerGraphicObject> selectedObjects = new ArrayList<>();
 		List<MulticoreVisualizerGraphicObject> selectableObjects = getSelectableObjects();
 
 		// the list of selectable objects is ordered to have contained objects
@@ -938,7 +938,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 	/** Saves current canvas selection as list of model objects. */
 	protected void updateSelection(boolean raiseEvent) {
 		// get model objects (if any) corresponding to canvas selection
-		HashSet<Object> selectedObjects = new HashSet<Object>();
+		HashSet<Object> selectedObjects = new HashSet<>();
 
 		// threads
 		if (m_threads != null) {
@@ -1001,7 +1001,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 	 * For instance, threads are before cores and cores before CPUs.
 	 */
 	protected List<MulticoreVisualizerGraphicObject> getSelectableObjects() {
-		List<MulticoreVisualizerGraphicObject> selectableObjects = new ArrayList<MulticoreVisualizerGraphicObject>();
+		List<MulticoreVisualizerGraphicObject> selectableObjects = new ArrayList<>();
 		selectableObjects.addAll(m_threads);
 		selectableObjects.addAll(m_cores);
 		selectableObjects.addAll(m_cpus);

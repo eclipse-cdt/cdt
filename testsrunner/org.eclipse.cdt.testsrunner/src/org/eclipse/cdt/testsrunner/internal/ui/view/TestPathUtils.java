@@ -43,7 +43,7 @@ public class TestPathUtils {
 	 */
 	public static String getTestItemPath(ITestItem testItem) {
 		StringBuilder itemPath = new StringBuilder();
-		List<ITestItem> parentItems = new ArrayList<ITestItem>();
+		List<ITestItem> parentItems = new ArrayList<>();
 		while (testItem != null) {
 			parentItems.add(testItem);
 			testItem = testItem.getParent();
@@ -85,7 +85,7 @@ public class TestPathUtils {
 	 */
 	public static String[] packTestPaths(ITestItem[] testItems) {
 		String[] result = new String[testItems.length];
-		List<String> testPath = new ArrayList<String>();
+		List<String> testPath = new ArrayList<>();
 
 		for (int itemIdx = 0; itemIdx < testItems.length; itemIdx++) {
 			// Collect test path parts (in reverse order)

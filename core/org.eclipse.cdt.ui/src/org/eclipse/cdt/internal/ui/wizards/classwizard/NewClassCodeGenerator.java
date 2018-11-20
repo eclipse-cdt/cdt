@@ -329,7 +329,7 @@ public class NewClassCodeGenerator {
 	 */
 	private String formatSource(String content, ITranslationUnit tu) throws CModelException {
 		String lineDelimiter = StubUtility.getLineDelimiterUsed(tu);
-		Map<String, Object> options = new HashMap<String, Object>(tu.getCProject().getOptions(true));
+		Map<String, Object> options = new HashMap<>(tu.getCProject().getOptions(true));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
 		TextEdit edit = CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, content, 0, lineDelimiter, options);
 		if (edit != null) {
@@ -622,7 +622,7 @@ public class NewClassCodeGenerator {
 	}
 
 	private List<IMethodStub> getStubs(ASTAccessVisibility access, boolean skipInline) {
-		List<IMethodStub> list = new ArrayList<IMethodStub>();
+		List<IMethodStub> list = new ArrayList<>();
 		if (fMethodStubs != null) {
 			for (int i = 0; i < fMethodStubs.length; ++i) {
 				IMethodStub stub = fMethodStubs[i];
@@ -689,7 +689,7 @@ public class NewClassCodeGenerator {
 		}
 
 		InclusionContext inclusionContext = new InclusionContext(headerTU);
-		List<StyledInclude> includes = new ArrayList<StyledInclude>();
+		List<StyledInclude> includes = new ArrayList<>();
 		for (IPath baseClassLocation : baseClassPaths) {
 			IncludeInfo includeInfo = inclusionContext.getIncludeForHeaderFile(baseClassLocation);
 			if (includeInfo != null) {
@@ -739,8 +739,8 @@ public class NewClassCodeGenerator {
 		//TODO prefs option whether to add to project or parent source folder?
 		IPath addToResourcePath = cProject.getPath();
 		try {
-			List<IPathEntry> pathEntryList = new ArrayList<IPathEntry>();
-			List<IPathEntry> checkEntryList = new ArrayList<IPathEntry>();
+			List<IPathEntry> pathEntryList = new ArrayList<>();
+			List<IPathEntry> checkEntryList = new ArrayList<>();
 
 			IPathEntry[] checkEntries = cProject.getResolvedPathEntries();
 			IPathEntry[] pathEntries = cProject.getRawPathEntries();
@@ -787,7 +787,7 @@ public class NewClassCodeGenerator {
 	private List<IPath> getMissingIncludePaths(IPath projectLocation, List<IPath> includePaths,
 			List<IPath> baseClassPaths) {
 		// check for missing include paths
-		List<IPath> newIncludePaths = new ArrayList<IPath>();
+		List<IPath> newIncludePaths = new ArrayList<>();
 		for (IPath baseClassLocation : baseClassPaths) {
 			// skip any paths inside the same project
 			//TODO possibly a preferences option?
@@ -849,7 +849,7 @@ public class NewClassCodeGenerator {
 			if (info != null) {
 				String[] includePaths = info.getIncludePaths();
 				if (includePaths != null) {
-					List<IPath> list = new ArrayList<IPath>();
+					List<IPath> list = new ArrayList<>();
 					for (int i = 0; i < includePaths.length; ++i) {
 						//TODO do we need to canonicalize these paths first?
 						IPath path = new Path(includePaths[i]);
@@ -865,7 +865,7 @@ public class NewClassCodeGenerator {
 	}
 
 	private List<IPath> getBaseClassPaths(boolean verifyLocation) throws CodeGeneratorException {
-		List<IPath> list = new ArrayList<IPath>();
+		List<IPath> list = new ArrayList<>();
 		for (int i = 0; i < fBaseClasses.length; ++i) {
 			IBaseClassInfo baseClass = fBaseClasses[i];
 			ITypeReference ref = baseClass.getType().getResolvedReference();

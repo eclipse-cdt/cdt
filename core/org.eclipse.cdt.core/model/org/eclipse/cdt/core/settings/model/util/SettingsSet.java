@@ -41,7 +41,7 @@ public class SettingsSet {
 		private Object fContext;
 
 		private SettingLevel() {
-			fEntries = new LinkedHashMap<EntryNameKey, EntryInfo>();
+			fEntries = new LinkedHashMap<>();
 		}
 
 		public boolean isReadOnly() {
@@ -88,7 +88,7 @@ public class SettingsSet {
 		public Set<String> getOverrideSet() {
 			if (fOverrideSet != null)
 				return (HashSet<String>) fOverrideSet.clone();
-			return new HashSet<String>();
+			return new HashSet<>();
 		}
 
 		public void addEntries(ICLanguageSettingEntry entries[]) {
@@ -116,7 +116,7 @@ public class SettingsSet {
 
 		public void addOverrideName(String name) {
 			if (fOverrideSet == null)
-				fOverrideSet = new HashSet<String>();
+				fOverrideSet = new HashSet<>();
 
 			fOverrideSet.add(name);
 		}
@@ -127,7 +127,7 @@ public class SettingsSet {
 			if (fOverrideSet != null) {
 				fOverrideSet.addAll(set);
 			} else if (set.size() != 0) {
-				fOverrideSet = new HashSet<String>(set);
+				fOverrideSet = new HashSet<>(set);
 			}
 		}
 
@@ -148,7 +148,7 @@ public class SettingsSet {
 
 		public Map<EntryNameKey, EntryInfo> clearAndGetMap() {
 			Map<EntryNameKey, EntryInfo> map = fEntries;
-			fEntries = new LinkedHashMap<EntryNameKey, EntryInfo>();
+			fEntries = new LinkedHashMap<>();
 			fOverrideSet = null;
 			return map;
 		}
@@ -168,7 +168,7 @@ public class SettingsSet {
 		}
 
 		public List<ICLanguageSettingEntry> getEntriesList(boolean includeOverridden) {
-			List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> list = new ArrayList<>();
 			EntryInfo infos[] = getInfos();
 			for (EntryInfo info : infos) {
 				if (includeOverridden || !info.isOverridden())
@@ -234,7 +234,7 @@ public class SettingsSet {
 	}
 
 	public void adjustOverrideState() {
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		SettingLevel level;
 		for (int i = 0; i < fLevels.length; i++) {
 			level = fLevels[i];
@@ -260,7 +260,7 @@ public class SettingsSet {
 
 	public ICLanguageSettingEntry[] getEntries(int types) {
 		adjustOverrideState();
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		for (SettingLevel sl : fLevels) {
 			if (isCompatible(sl, types))
 				getEntries(sl, entries);
@@ -366,7 +366,7 @@ public class SettingsSet {
 	}
 
 	public HashMap<EntryNameKey, Object[]> getEntryLevelMap(int types) {
-		HashMap<EntryNameKey, Object[]> map = new HashMap<EntryNameKey, Object[]>();
+		HashMap<EntryNameKey, Object[]> map = new HashMap<>();
 		for (int i = 0; i < fLevels.length; i++) {
 			if (isCompatible(fLevels[i], types))
 				addLevelInfoToMap(fLevels[i], i, map);

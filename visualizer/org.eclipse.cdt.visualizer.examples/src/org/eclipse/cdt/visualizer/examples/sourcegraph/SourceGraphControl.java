@@ -89,7 +89,7 @@ public class SourceGraphControl extends BufferedCanvas {
 	/** Constructor. */
 	public SourceGraphControl(Composite parent) {
 		super(parent);
-		m_characters = new ArrayList<CharStat>();
+		m_characters = new ArrayList<>();
 		m_banner = new GraphicObject();
 	}
 
@@ -117,7 +117,7 @@ public class SourceGraphControl extends BufferedCanvas {
 
 		// TODO: reuse the array/hashtable and stat objects
 
-		Hashtable<String, CharStat> characters = new Hashtable<String, CharStat>();
+		Hashtable<String, CharStat> characters = new Hashtable<>();
 
 		int len = m_sourceText.length();
 		int fragment_length = 2;

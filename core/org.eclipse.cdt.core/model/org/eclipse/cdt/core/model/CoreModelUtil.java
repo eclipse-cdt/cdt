@@ -695,7 +695,7 @@ public class CoreModelUtil {
 
 	public static ICConfigurationDescription[] getReferencedConfigurationDescriptions(ICConfigurationDescription cfgDes,
 			boolean writable) {
-		List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
+		List<ICConfigurationDescription> result = new ArrayList<>();
 
 		if (cfgDes != null) {
 			Map<String, String> map = cfgDes.getReferenceInfo();
@@ -749,7 +749,7 @@ public class CoreModelUtil {
 	 */
 	public static ICConfigurationDescription[] getReferencingConfigurationDescriptions(
 			ICConfigurationDescription cfgDes, boolean writable) {
-		List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
+		List<ICConfigurationDescription> result = new ArrayList<>();
 
 		if (cfgDes != null) {
 			CoreModel core = CoreModel.getDefault();
@@ -784,7 +784,7 @@ public class CoreModelUtil {
 	public static String[] getBinaryParserIds(ICConfigurationDescription[] cfgs) {
 		if (cfgs == null || cfgs.length == 0)
 			return null;
-		ArrayList<String> pids = new ArrayList<String>();
+		ArrayList<String> pids = new ArrayList<>();
 		for (ICConfigurationDescription cfg : cfgs) {
 			ICTargetPlatformSetting tps = cfg.getTargetPlatformSetting();
 			String[] ids = tps.getBinaryParserIds();

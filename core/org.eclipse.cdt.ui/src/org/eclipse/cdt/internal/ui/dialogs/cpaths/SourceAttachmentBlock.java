@@ -448,7 +448,7 @@ public class SourceAttachmentBlock {
 			IProgressMonitor monitor) throws CModelException {
 		IPathEntry[] oldClasspath = cproject.getRawPathEntries();
 		int nEntries = oldClasspath.length;
-		ArrayList<IPathEntry> newEntries = new ArrayList<IPathEntry>(nEntries + 1);
+		ArrayList<IPathEntry> newEntries = new ArrayList<>(nEntries + 1);
 		int entryKind = newEntry.getEntryKind();
 		IPath jarPath = newEntry.getPath();
 		boolean found = false;

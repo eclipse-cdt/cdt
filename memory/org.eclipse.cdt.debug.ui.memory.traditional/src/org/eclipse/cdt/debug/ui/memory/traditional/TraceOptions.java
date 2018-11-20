@@ -48,7 +48,7 @@ class TraceOptions implements DebugOptionsListener {
 	 */
 	public TraceOptions(BundleContext context, String pluginID) {
 		this.pluginID = pluginID;
-		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, pluginID);
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 	}

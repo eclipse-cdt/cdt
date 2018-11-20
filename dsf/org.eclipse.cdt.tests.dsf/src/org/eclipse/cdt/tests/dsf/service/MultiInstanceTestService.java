@@ -47,7 +47,7 @@ public class MultiInstanceTestService extends AbstractDsfService {
 	}
 
 	private void doInitialize(RequestMonitor requestMonitor) {
-		Hashtable<String, String> properties = new Hashtable<String, String>();
+		Hashtable<String, String> properties = new Hashtable<>();
 		properties.put(PROP_INSTANCE_ID, fInstanceId);
 		register(new String[] { MultiInstanceTestService.class.getName() }, properties);
 		requestMonitor.done();

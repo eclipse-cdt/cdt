@@ -225,7 +225,7 @@ public class C99Parser extends PrsStream
 	}
 
 	private void initActions(Map<String, String> properties) {
-		ScopedStack<Object> astStack = new ScopedStack<Object>();
+		ScopedStack<Object> astStack = new ScopedStack<>();
 
 		action = new C99BuildASTParserAction(this, astStack, CNodeFactory.getDefault(),
 				C99SecondaryParserFactory.getDefault());

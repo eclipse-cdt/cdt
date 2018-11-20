@@ -51,7 +51,7 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
  */
 public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 	// Stores all created field editors
-	private List<FieldEditor> editors = new ArrayList<FieldEditor>();
+	private List<FieldEditor> editors = new ArrayList<>();
 	// Stores owning element of properties
 	private IAdaptable element;
 	// Additional buttons for property pages

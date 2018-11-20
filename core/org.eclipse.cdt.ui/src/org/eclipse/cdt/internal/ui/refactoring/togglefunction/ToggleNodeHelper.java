@@ -84,7 +84,7 @@ public class ToggleNodeHelper extends NodeHelper {
 	}
 
 	private static List<ICPPASTConstructorChainInitializer> getInitializerList(IASTFunctionDefinition definition) {
-		ArrayList<ICPPASTConstructorChainInitializer> initalizers = new ArrayList<ICPPASTConstructorChainInitializer>();
+		ArrayList<ICPPASTConstructorChainInitializer> initalizers = new ArrayList<>();
 
 		for (IASTNode node : definition.getChildren()) {
 			if (node instanceof ICPPASTConstructorChainInitializer) {
@@ -286,7 +286,7 @@ public class ToggleNodeHelper extends NodeHelper {
 	}
 
 	private static ArrayList<ICPPASTTemplateDeclaration> getAllTemplateDeclarations(IASTNode node) {
-		ArrayList<ICPPASTTemplateDeclaration> templdecs = new ArrayList<ICPPASTTemplateDeclaration>();
+		ArrayList<ICPPASTTemplateDeclaration> templdecs = new ArrayList<>();
 		while (node.getParent() != null) {
 			node = node.getParent();
 			if (node instanceof ICPPASTTemplateDeclaration) {
@@ -363,7 +363,7 @@ public class ToggleNodeHelper extends NodeHelper {
 	private static Stack<IASTNode> getQualifiedNames(IASTFunctionDeclarator declarator, IASTNode limiter,
 			IASTNode node) {
 		IASTName lastName = declarator.getName();
-		Stack<IASTNode> nodes = new Stack<IASTNode>();
+		Stack<IASTNode> nodes = new Stack<>();
 		while (node.getParent() != null && node.getParent() != limiter) {
 			node = node.getParent();
 			if (node instanceof IASTCompositeTypeSpecifier) {

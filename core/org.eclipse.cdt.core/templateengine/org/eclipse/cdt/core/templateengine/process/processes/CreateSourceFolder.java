@@ -104,7 +104,7 @@ public class CreateSourceFolder extends ProcessRunner {
 		for (int i = 0; i < configs.length; i++) {
 			ICConfigurationDescription config = configs[i];
 			ICSourceEntry[] entries = config.getSourceEntries();
-			Set<ICSourceEntry> set = new HashSet<ICSourceEntry>();
+			Set<ICSourceEntry> set = new HashSet<>();
 			for (int j = 0; j < entries.length; j++) {
 				if (new Path(entries[j].getValue()).segmentCount() == 1)
 					continue;
@@ -127,7 +127,7 @@ public class CreateSourceFolder extends ProcessRunner {
 	private void createFolder(String targetPath, IProgressMonitor monitor, IPath projPath, ICProject cProject)
 			throws CModelException {
 		IPathEntry[] entries = cProject.getRawPathEntries();
-		List<IPathEntry> newEntries = new ArrayList<IPathEntry>(entries.length + 1);
+		List<IPathEntry> newEntries = new ArrayList<>(entries.length + 1);
 
 		int projectEntryIndex = -1;
 		IPath path = projPath.append(targetPath);

@@ -193,9 +193,9 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 		private Map<IWorkingSetProjectConfigurationController, ILabelProvider> labelProviders;
 
 		ControllerContext(Viewer viewer) {
-			elementToControllerMap = new java.util.IdentityHashMap<Object, IWorkingSetProjectConfigurationController>();
-			contentProviders = new java.util.HashMap<IWorkingSetProjectConfigurationController, ITreeContentProvider>();
-			labelProviders = new java.util.HashMap<IWorkingSetProjectConfigurationController, ILabelProvider>();
+			elementToControllerMap = new java.util.IdentityHashMap<>();
+			contentProviders = new java.util.HashMap<>();
+			labelProviders = new java.util.HashMap<>();
 
 			for (IWorkingSetProjectConfiguration next : getWorkingSetConfiguration().getProjectConfigurations()) {
 

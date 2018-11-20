@@ -503,7 +503,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	private Color colorText;
 	private Color colorTextAlternate;
 
-	private Map<Integer, Font> fonts = new HashMap<Integer, Font>(3);
+	private Map<Integer, Font> fonts = new HashMap<>(3);
 
 	public void allocateColors() {
 

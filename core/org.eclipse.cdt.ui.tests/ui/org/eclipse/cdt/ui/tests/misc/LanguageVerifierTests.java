@@ -39,7 +39,7 @@ public class LanguageVerifierTests extends TestCase {
 		config.addWorkspaceMapping("foo", "bar");
 		config.addWorkspaceMapping("foo2", "bar2");
 
-		Map<String, ILanguage> availableLanguages = new HashMap<String, ILanguage>();
+		Map<String, ILanguage> availableLanguages = new HashMap<>();
 
 		availableLanguages.put("foo", null);
 		availableLanguages.put("foo3", null);

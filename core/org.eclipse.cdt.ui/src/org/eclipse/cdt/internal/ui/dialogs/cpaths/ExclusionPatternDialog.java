@@ -96,7 +96,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 
 		ExclusionPatternAdapter adapter = new ExclusionPatternAdapter();
 
-		fExclusionPatternList = new ListDialogField<String>(adapter, buttonLabels, new ExclusionPatternLabelProvider());
+		fExclusionPatternList = new ListDialogField<>(adapter, buttonLabels, new ExclusionPatternLabelProvider());
 		fExclusionPatternList.setDialogFieldListener(adapter);
 		fExclusionPatternList.setLabelText(label);
 		fExclusionPatternList.setRemoveButtonIndex(IDX_REMOVE);
@@ -111,7 +111,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 
 		IPath[] pattern = (IPath[]) entryToEdit.getAttribute(CPElement.EXCLUSION);
 
-		ArrayList<String> elements = new ArrayList<String>(pattern.length);
+		ArrayList<String> elements = new ArrayList<>(pattern.length);
 		for (IPath element : pattern) {
 			elements.add(element.toString());
 		}

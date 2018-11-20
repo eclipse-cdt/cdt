@@ -234,7 +234,7 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	private Control[] findControls(Control w, Class<?> clazz) {
-		ArrayList<Control> result = new ArrayList<Control>();
+		ArrayList<Control> result = new ArrayList<>();
 		findControls(w, clazz, result);
 		return result.toArray(new Control[result.size()]);
 	}

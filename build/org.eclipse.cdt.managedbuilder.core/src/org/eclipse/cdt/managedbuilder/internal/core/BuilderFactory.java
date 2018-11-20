@@ -160,7 +160,7 @@ public class BuilderFactory {
 	}
 
 	public static Map<String, String> createBuildArgs(IConfiguration cfgs[]) {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		cfgsToMap(cfgs, map);
 		map.put(CONTENTS, CONTENTS_CONFIGURATION_IDS);
 		return map;
@@ -195,7 +195,7 @@ public class BuilderFactory {
 	}
 
 	private static IConfiguration[] idsToConfigurations(String ids[], IConfiguration allCfgs[]) {
-		List<IConfiguration> list = new ArrayList<IConfiguration>(ids.length);
+		List<IConfiguration> list = new ArrayList<>(ids.length);
 		for (int i = 0; i < ids.length; i++) {
 			String id = ids[i];
 			for (int j = 0; j < allCfgs.length; j++) {
@@ -379,7 +379,7 @@ public class BuilderFactory {
 				} else if (CONTENTS_BUILDER.equals(type)) {
 					IConfiguration cfgs[] = configsFromMap(args, info);
 					if (cfgs.length != 0) {
-						List<IBuilder> list = new ArrayList<IBuilder>(cfgs.length);
+						List<IBuilder> list = new ArrayList<>(cfgs.length);
 						for (int i = 0; i < cfgs.length; i++) {
 							IBuilder builder = createBuilder(cfgs[i], args, false);
 							if (builder != null)
@@ -391,7 +391,7 @@ public class BuilderFactory {
 				} else if (CONTENTS_CONFIGURATION_IDS.equals(type)) {
 					IConfiguration cfgs[] = configsFromMap(args, info);
 					if (cfgs.length != 0) {
-						List<IBuilder> list = new ArrayList<IBuilder>(cfgs.length);
+						List<IBuilder> list = new ArrayList<>(cfgs.length);
 						for (int i = 0; i < cfgs.length; i++) {
 							list.add(cfgs[i].getEditableBuilder());
 						}

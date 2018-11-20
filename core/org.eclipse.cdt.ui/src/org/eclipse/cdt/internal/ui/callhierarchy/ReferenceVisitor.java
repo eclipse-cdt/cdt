@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
  * @since 4.0
  */
 class ReferenceVisitor extends ASTVisitor {
-	private ArrayList<IASTName> fReferences = new ArrayList<IASTName>();
+	private ArrayList<IASTName> fReferences = new ArrayList<>();
 	private int fOffset;
 	private int fEndOffset;
 	private String fFileName;

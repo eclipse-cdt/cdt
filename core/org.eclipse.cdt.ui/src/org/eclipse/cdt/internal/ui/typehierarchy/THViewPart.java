@@ -141,7 +141,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	private boolean fShowsMessage = true;
 	private int fCurrentViewOrientation = -1;
 	private boolean fInComputeOrientation = false;
-	private ArrayList<ICElement> fHistoryEntries = new ArrayList<ICElement>(MAX_HISTORY_SIZE);
+	private ArrayList<ICElement> fHistoryEntries = new ArrayList<>(MAX_HISTORY_SIZE);
 	private int fIgnoreSelectionChanges = 0;
 
 	// widgets

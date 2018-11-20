@@ -331,7 +331,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
 		ICProject cProject = CoreModel.getDefault().create(project);
 		if (cProject != null) {
 			IPathEntry[] entries = cProject.getRawPathEntries();
-			List<IPathEntry> newEntries = new ArrayList<IPathEntry>(Arrays.asList(entries));
+			List<IPathEntry> newEntries = new ArrayList<>(Arrays.asList(entries));
 			if (!newEntries.contains(container)) {
 				newEntries.add(container);
 				cProject.setRawPathEntries(newEntries.toArray(new IPathEntry[newEntries.size()]), monitor);
@@ -345,7 +345,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
 		String profileId = getBuildInfo().getSelectedProfileId();
 		ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(profileId)
 				.getProfileScope();
-		List<IResource> changedResources = new ArrayList<IResource>();
+		List<IResource> changedResources = new ArrayList<>();
 		//        changedResources.add(project.getFullPath());
 		changedResources.add(project);
 		MakeCorePlugin.getDefault().getDiscoveryManager().changeDiscoveredContainer(project, profileScope,

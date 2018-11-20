@@ -71,7 +71,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 			CContentAssistInvocationContext cContext = (CContentAssistInvocationContext) context;
 			if (inIncludeDirective(cContext)) {
 				// add include file proposals
-				proposals = new ArrayList<ICompletionProposal>();
+				proposals = new ArrayList<>();
 				try {
 					addInclusionProposals(cContext, proposals);
 				} catch (Exception exc) {
@@ -157,7 +157,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		PotentialInclude[] potentialIncludes = collectIncludeFiles(tu, prefixPath, angleBrackets);
 		if (potentialIncludes.length > 0) {
 			IInclude[] includes = tu.getIncludes();
-			Set<String> alreadyIncluded = new HashSet<String>();
+			Set<String> alreadyIncluded = new HashSet<>();
 			for (IInclude includeDirective : includes) {
 				alreadyIncluded.add(includeDirective.getElementName());
 			}

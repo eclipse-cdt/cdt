@@ -64,7 +64,7 @@ public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.
 			boolean testMarkerTypes) {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(CUIPlugin.PLUGIN_ID, contributionId);
-		ArrayList<ContributedProcessorDescriptor> res = new ArrayList<ContributedProcessorDescriptor>(elements.length);
+		ArrayList<ContributedProcessorDescriptor> res = new ArrayList<>(elements.length);
 
 		for (int i = 0; i < elements.length; i++) {
 			ContributedProcessorDescriptor desc = new ContributedProcessorDescriptor(elements[i], testMarkerTypes);
@@ -208,7 +208,7 @@ public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.
 
 		ICCompletionProposal[] res = null;
 		if (model != null && annotations != null) {
-			ArrayList<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>(10);
+			ArrayList<ICCompletionProposal> proposals = new ArrayList<>(10);
 			IStatus status = collectProposals(context, model, annotations, true, !fAssistant.isUpdatedOffset(),
 					proposals);
 			res = proposals.toArray(new ICCompletionProposal[proposals.size()]);
@@ -230,7 +230,7 @@ public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.
 
 	public static IStatus collectProposals(CorrectionContext context, IAnnotationModel model, Annotation[] annotations,
 			boolean addQuickFixes, boolean addQuickAssists, Collection<ICCompletionProposal> proposals) {
-		ArrayList<ProblemLocation> problems = new ArrayList<ProblemLocation>();
+		ArrayList<ProblemLocation> problems = new ArrayList<>();
 
 		// collect problem locations and corrections from marker annotations
 		for (int i = 0; i < annotations.length; i++) {
@@ -461,13 +461,13 @@ public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.
 			if (processor.canHandleMarkerType(curr.getMarkerType())) {
 				if (!allHandled) { // first handled problem
 					if (res == null) {
-						res = new ArrayList<IProblemLocation>(locations.length - i);
+						res = new ArrayList<>(locations.length - i);
 					}
 					res.add(curr);
 				}
 			} else if (allHandled) {
 				if (i > 0) { // first non handled problem
-					res = new ArrayList<IProblemLocation>(locations.length - i);
+					res = new ArrayList<>(locations.length - i);
 					for (int k = 0; k < i; k++) {
 						res.add(locations[k]);
 					}

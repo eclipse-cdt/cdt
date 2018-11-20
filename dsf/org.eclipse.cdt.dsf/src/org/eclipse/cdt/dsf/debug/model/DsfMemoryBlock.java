@@ -76,7 +76,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
 	private String fUpdatePolicy = UPDATE_POLICY_AUTOMATIC;
 
-	private ArrayList<Object> fConnections = new ArrayList<Object>();
+	private ArrayList<Object> fConnections = new ArrayList<>();
 
 	@SuppressWarnings("unused")
 	private boolean isEnabled;

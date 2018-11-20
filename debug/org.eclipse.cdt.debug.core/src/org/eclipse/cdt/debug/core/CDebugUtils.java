@@ -279,7 +279,7 @@ public class CDebugUtils {
 	}
 
 	public static List<IProject> getReferencedProjects(IProject project) {
-		ArrayList<IProject> list = new ArrayList<IProject>(10);
+		ArrayList<IProject> list = new ArrayList<>(10);
 		if (project != null && project.exists() && project.isOpen()) {
 			IProject[] refs = new IProject[0];
 			try {

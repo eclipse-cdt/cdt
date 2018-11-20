@@ -60,7 +60,7 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		setDescription(PreferencesMessages.CPluginPreferencePage_description);
 
-		fCheckBoxes = new ArrayList<Button>();
+		fCheckBoxes = new ArrayList<>();
 	}
 
 	@Override

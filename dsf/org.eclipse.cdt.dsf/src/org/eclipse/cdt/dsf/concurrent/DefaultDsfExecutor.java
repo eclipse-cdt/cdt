@@ -147,7 +147,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor implements D
 	 * an executable object was created.
 	 * <br>Note: Only used when tracing.
 	 */
-	static Map<Thread, DefaultDsfExecutor> fThreadToExecutorMap = new HashMap<Thread, DefaultDsfExecutor>();
+	static Map<Thread, DefaultDsfExecutor> fThreadToExecutorMap = new HashMap<>();
 
 	/**
 	 * Currently executing runnable/callable.
@@ -434,7 +434,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor implements D
 	public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
 		if (DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
 			if (!(callable instanceof TracingWrapper)) {
-				callable = new TracingWrapperCallable<V>(callable);
+				callable = new TracingWrapperCallable<>(callable);
 			}
 		}
 		return super.schedule(callable, delay, unit);
@@ -485,7 +485,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor implements D
 	@Override
 	public <T> Future<T> submit(Callable<T> callable) {
 		if (DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
-			callable = new TracingWrapperCallable<T>(callable);
+			callable = new TracingWrapperCallable<>(callable);
 		}
 		return super.submit(callable);
 	}

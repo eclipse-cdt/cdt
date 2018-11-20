@@ -68,7 +68,7 @@ public class CViewMoveAction extends MoveResourceAction {
 		List<?> destinations = getDestinations();
 		if (destinations != null && destinations.isEmpty() == false) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			List<IResource> resources = new ArrayList<IResource>();
+			List<IResource> resources = new ArrayList<>();
 			Iterator<?> iterator = destinations.iterator();
 
 			while (iterator.hasNext()) {

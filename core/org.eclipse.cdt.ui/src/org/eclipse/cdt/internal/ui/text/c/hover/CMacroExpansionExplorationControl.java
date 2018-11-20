@@ -326,7 +326,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		fHandlerService = workbench.getService(IHandlerService.class);
 		fContextService = workbench.getService(IContextService.class);
 		fContextActivation = fContextService.activateContext(CONTEXT_ID_MACRO_EXPANSION_HOVER);
-		fHandlerActivations = new ArrayList<IHandlerActivation>();
+		fHandlerActivations = new ArrayList<>();
 		fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_BACK, backwardHandler));
 		fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_FORWARD, forwardHandler));
 		fHandlerActivations

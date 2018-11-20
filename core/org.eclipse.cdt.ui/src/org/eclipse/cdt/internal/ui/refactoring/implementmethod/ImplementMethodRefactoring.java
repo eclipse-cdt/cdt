@@ -84,7 +84,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		super(element, selection, project);
 		data = new ImplementMethodData();
 		methodDefinitionInsertLocationFinder = new MethodDefinitionInsertLocationFinder();
-		insertLocations = new HashMap<IASTSimpleDeclaration, InsertLocation>();
+		insertLocations = new HashMap<>();
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 			throws OperationCanceledException, CoreException {
 		final SubMonitor sm = SubMonitor.convert(pm, 2);
 		IASTTranslationUnit ast = getAST(tu, sm.newChild(1));
-		final List<IASTSimpleDeclaration> list = new ArrayList<IASTSimpleDeclaration>();
+		final List<IASTSimpleDeclaration> list = new ArrayList<>();
 		ast.accept(new ASTVisitor() {
 			{
 				shouldVisitDeclarations = true;
@@ -318,7 +318,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 	}
 
 	private IFile[] getAllFilesToModify() {
-		List<IFile> files = new ArrayList<IFile>(2);
+		List<IFile> files = new ArrayList<>(2);
 		IFile file = (IFile) tu.getResource();
 		if (file != null) {
 			files.add(file);

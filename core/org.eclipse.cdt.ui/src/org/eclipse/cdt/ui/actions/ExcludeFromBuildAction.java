@@ -91,10 +91,10 @@ public class ExcludeFromBuildAction implements IWorkbenchWindowPulldownDelegate2
 								continue;
 
 							if (objects == null)
-								objects = new ArrayList<IResource>();
+								objects = new ArrayList<>();
 							objects.add(res);
 							if (cfgNames == null) {
-								cfgNames = new ArrayList<String>(cfgds.length);
+								cfgNames = new ArrayList<>(cfgds.length);
 								for (int j = 0; j < cfgds.length; j++) {
 									if (!canExclude(res, cfgds[j])) {
 										cfgNames = null;
@@ -179,7 +179,7 @@ public class ExcludeFromBuildAction implements IWorkbenchWindowPulldownDelegate2
 					status[i] = true;
 			}
 		}
-		ArrayList<String> lst = new ArrayList<String>();
+		ArrayList<String> lst = new ArrayList<>();
 		for (int i = 0; i < status.length; i++)
 			if (status[i])
 				lst.add(cfgNames.get(i));

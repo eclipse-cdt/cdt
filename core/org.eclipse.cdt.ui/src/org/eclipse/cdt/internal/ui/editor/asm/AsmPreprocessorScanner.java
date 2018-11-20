@@ -60,7 +60,7 @@ public class AsmPreprocessorScanner extends AbstractCScanner {
 	 * Creates rules used in this RulesBasedScanner
 	 */
 	protected List<IRule> createRules() {
-		List<IRule> rules = new ArrayList<IRule>();
+		List<IRule> rules = new ArrayList<>();
 		IToken defaultToken = getToken(ICColorConstants.PP_DEFAULT);
 		IToken token;
 

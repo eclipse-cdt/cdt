@@ -64,10 +64,10 @@ public class LanguageManager {
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
 	private static LanguageManager instance;
-	private Map<String, ILanguage> fLanguageCache = new HashMap<String, ILanguage>();
-	private Map<String, IPDOMLinkageFactory> fPDOMLinkageFactoryCache = new HashMap<String, IPDOMLinkageFactory>();
-	private Map<String, ILanguage> fContentTypeToLanguageCache = new HashMap<String, ILanguage>();
-	private Map<IProject, ProjectLanguageConfiguration> fLanguageConfigurationCache = new HashMap<IProject, ProjectLanguageConfiguration>();
+	private Map<String, ILanguage> fLanguageCache = new HashMap<>();
+	private Map<String, IPDOMLinkageFactory> fPDOMLinkageFactoryCache = new HashMap<>();
+	private Map<String, ILanguage> fContentTypeToLanguageCache = new HashMap<>();
+	private Map<IProject, ProjectLanguageConfiguration> fLanguageConfigurationCache = new HashMap<>();
 	private boolean fIsFullyCached;
 	private HashMap<String, ILanguageDescriptor> fIdToLanguageDescriptorCache;//= new HashMap();
 	private HashMap<String, List<ILanguageDescriptor>> fContentTypeToDescriptorListCache;
@@ -99,7 +99,7 @@ public class LanguageManager {
 	}
 
 	private HashMap<String, ILanguageDescriptor> createDescriptorCache() {
-		HashMap<String, ILanguageDescriptor> map = new HashMap<String, ILanguageDescriptor>();
+		HashMap<String, ILanguageDescriptor> map = new HashMap<>();
 		IConfigurationElement[] configs = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
 		for (int j = 0; j < configs.length; ++j) {
@@ -120,7 +120,7 @@ public class LanguageManager {
 	}
 
 	public Map<String, ILanguageDescriptor[]> getContentTypeIdToLanguageDescriptionsMap() {
-		HashMap<String, ILanguageDescriptor[]> map = new HashMap<String, ILanguageDescriptor[]>();
+		HashMap<String, ILanguageDescriptor[]> map = new HashMap<>();
 		Map<String, List<ILanguageDescriptor>> cache = getContentTypeToDescriptorCache();
 
 		for (Entry<String, List<ILanguageDescriptor>> entry : cache.entrySet()) {
@@ -135,7 +135,7 @@ public class LanguageManager {
 	}
 
 	private HashMap<String, List<ILanguageDescriptor>> createContentTypeToDescriptorCache() {
-		HashMap<String, List<ILanguageDescriptor>> map = new HashMap<String, List<ILanguageDescriptor>>();
+		HashMap<String, List<ILanguageDescriptor>> map = new HashMap<>();
 		Map<String, ILanguageDescriptor> dc = getDescriptorCache();
 
 		List<ILanguageDescriptor> list;
@@ -146,7 +146,7 @@ public class LanguageManager {
 				id = type.getId();
 				list = map.get(id);
 				if (list == null) {
-					list = new ArrayList<ILanguageDescriptor>();
+					list = new ArrayList<>();
 					map.put(id, list);
 				}
 				list.add(des);
@@ -230,7 +230,7 @@ public class LanguageManager {
 	 */
 	@Deprecated
 	public ArrayList<String> getAllContentTypes() {
-		ArrayList<String> allTypes = new ArrayList<String>();
+		ArrayList<String> allTypes = new ArrayList<>();
 		allTypes.add(CCorePlugin.CONTENT_TYPE_ASMSOURCE);
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CHEADER);
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CSOURCE);
@@ -264,7 +264,7 @@ public class LanguageManager {
 	}
 
 	private Set<String> collectContentTypeIds() {
-		HashSet<String> allTypes = new HashSet<String>();
+		HashSet<String> allTypes = new HashSet<>();
 		allTypes.add(CCorePlugin.CONTENT_TYPE_ASMSOURCE);
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CHEADER);
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CSOURCE);

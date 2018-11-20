@@ -136,7 +136,7 @@ public class SelectionList extends Composite {
 		if (fList == null || fList.isDisposed() || fList.getSelectionCount() == 0)
 			return Collections.emptyList();
 		int[] listSelection = fList.getSelectionIndices();
-		List<Object> selected = new ArrayList<Object>(listSelection.length);
+		List<Object> selected = new ArrayList<>(listSelection.length);
 		for (int i = 0; i < listSelection.length; i++) {
 			selected.add(fElements[fFilteredElements[listSelection[i]]]);
 		}

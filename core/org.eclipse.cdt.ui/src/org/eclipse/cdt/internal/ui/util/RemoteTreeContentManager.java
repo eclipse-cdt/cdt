@@ -52,9 +52,9 @@ public class RemoteTreeContentManager {
 	 * Queue of parents to fetch children for, and
 	 * associated element collectors and deferred adapters.
 	 */
-	private List<Object> fElementQueue = new ArrayList<Object>();
-	private List<IElementCollector> fCollectors = new ArrayList<IElementCollector>();
-	private List<IDeferredWorkbenchAdapter> fAdapaters = new ArrayList<IDeferredWorkbenchAdapter>();
+	private List<Object> fElementQueue = new ArrayList<>();
+	private List<IElementCollector> fCollectors = new ArrayList<>();
+	private List<IDeferredWorkbenchAdapter> fAdapaters = new ArrayList<>();
 
 	/**
 	 * Fetching children is done in a single background job.

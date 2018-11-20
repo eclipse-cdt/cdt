@@ -97,7 +97,7 @@ public class CWizardRegistry {
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getProjectWizardElements() {
-		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> elemList = new ArrayList<>();
 		IConfigurationElement[] elements = getAllWizardElements();
 		for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
@@ -164,7 +164,7 @@ public class CWizardRegistry {
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getTypeWizardElements() {
-		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> elemList = new ArrayList<>();
 		IConfigurationElement[] elements = getAllWizardElements();
 		for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
@@ -224,7 +224,7 @@ public class CWizardRegistry {
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getFileWizardElements() {
-		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> elemList = new ArrayList<>();
 		IConfigurationElement[] elements = getAllWizardElements();
 		for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
@@ -284,7 +284,7 @@ public class CWizardRegistry {
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getFolderWizardElements() {
-		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> elemList = new ArrayList<>();
 		IConfigurationElement[] elements = getAllWizardElements();
 		for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
@@ -318,7 +318,7 @@ public class CWizardRegistry {
 	}
 
 	private static String[] getWizardIDs(IConfigurationElement[] elements) {
-		List<String> idList = new ArrayList<String>();
+		List<String> idList = new ArrayList<>();
 
 		// add C wizards first
 		for (int i = 0; i < elements.length; ++i) {
@@ -345,8 +345,8 @@ public class CWizardRegistry {
 	}
 
 	private static IAction[] createActions(IConfigurationElement[] elements) {
-		List<String> idList = new ArrayList<String>();
-		List<IAction> actionList = new ArrayList<IAction>();
+		List<String> idList = new ArrayList<>();
+		List<IAction> actionList = new ArrayList<>();
 
 		// add C wizards first
 		for (int i = 0; i < elements.length; ++i) {
@@ -411,7 +411,7 @@ public class CWizardRegistry {
 	 * @return an array of IConfigurationElement
 	 */
 	public static IConfigurationElement[] getAllWizardElements() {
-		List<IConfigurationElement> elemList = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> elemList = new ArrayList<>();
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
 				PL_NEW);
 		if (extensionPoint != null) {

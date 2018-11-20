@@ -48,7 +48,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 public class CFileTypesPropertyPage extends PropertyPage {
 
 	class FixCFileTypesPreferenceBlock extends CFileTypesPreferenceBlock {
-		ArrayList<ContentTypeChangeEvent> list = new ArrayList<ContentTypeChangeEvent>();
+		ArrayList<ContentTypeChangeEvent> list = new ArrayList<>();
 
 		public FixCFileTypesPreferenceBlock() {
 			super();
@@ -232,7 +232,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	void computeEvents(IProject project) {
 		IScopeContext projectScope = new ProjectScope(project);
 		IContentType[] ctypes = getRegistedContentTypes();
-		ArrayList<IContentType> list = new ArrayList<IContentType>(ctypes.length);
+		ArrayList<IContentType> list = new ArrayList<>(ctypes.length);
 		for (IContentType ctype : ctypes) {
 			try {
 				IContentTypeSettings projectSettings = ctype.getSettings(projectScope);

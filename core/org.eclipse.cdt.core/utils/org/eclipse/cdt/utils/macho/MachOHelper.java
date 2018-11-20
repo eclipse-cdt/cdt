@@ -118,7 +118,7 @@ public class MachOHelper {
 	}
 
 	public MachO.Symbol[] getExternalFunctions() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadBinary();
 
@@ -136,7 +136,7 @@ public class MachOHelper {
 	}
 
 	public MachO.Symbol[] getExternalObjects() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadBinary();
 
@@ -154,7 +154,7 @@ public class MachOHelper {
 	}
 
 	public MachO.Symbol[] getUndefined() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadBinary();
 
@@ -171,7 +171,7 @@ public class MachOHelper {
 	 * TODO: I'm not sure if this are correct. Need to check
 	 */
 	public MachO.Symbol[] getLocalFunctions() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadBinary();
 
@@ -192,7 +192,7 @@ public class MachOHelper {
 	 * TODO: I'm not sure if this are correct. Need to check
 	 */
 	public MachO.Symbol[] getLocalObjects() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadBinary();
 
@@ -210,7 +210,7 @@ public class MachOHelper {
 	}
 
 	public MachO.Symbol[] getCommonObjects() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadBinary();
 
@@ -226,7 +226,7 @@ public class MachOHelper {
 	}
 
 	public String[] getNeeded() throws IOException {
-		Vector<String> v = new Vector<String>();
+		Vector<String> v = new Vector<>();
 
 		loadBinary();
 

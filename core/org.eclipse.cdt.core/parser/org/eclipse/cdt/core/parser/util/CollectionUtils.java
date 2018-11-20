@@ -152,7 +152,7 @@ public final class CollectionUtils {
 	public static <T, U> List<U> listMapGet(Map<T, List<U>> m, T t) {
 		List<U> result = m.get(t);
 		if (result == null) {
-			result = new ArrayList<U>();
+			result = new ArrayList<>();
 			m.put(t, result);
 		}
 		return result;
@@ -175,7 +175,7 @@ public final class CollectionUtils {
 					++n;
 				}
 			} else if (result == null) {
-				result = new ArrayList<T>(collection.size() - 1);
+				result = new ArrayList<>(collection.size() - 1);
 				for (T u : collection) {
 					if (--n < 0)
 						break;

@@ -99,7 +99,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 				}
 			});
 
-			projectList = new ArrayList<IProject>(projectZips.length);
+			projectList = new ArrayList<>(projectZips.length);
 			for (int i = 0; i < projectZips.length; i++) {
 				try {
 					String projectName = projectZips[i].getName();
@@ -125,7 +125,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 			try {
 				IProject project = ManagedBuildTestHelper.createProject(projName, null, location, projectTypeId);
 				if (project != null)
-					projectList = new ArrayList<IProject>(1);
+					projectList = new ArrayList<>(1);
 				projectList.add(project);
 			} catch (Exception e) {
 			}

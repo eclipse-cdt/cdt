@@ -66,7 +66,7 @@ public class MIBackendCLIProcess extends AbstractCLIProcess {
 	}
 
 	public class BackedExitedEventListener {
-		private final List<RequestMonitor> fWaitForRMs = new ArrayList<RequestMonitor>();
+		private final List<RequestMonitor> fWaitForRMs = new ArrayList<>();
 
 		@DsfServiceEventHandler
 		public void eventDispatched(BackendStateChangedEvent event) {

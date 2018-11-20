@@ -131,7 +131,7 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase {
 							String cachedIds[] = ConfigurationDataProvider.getNaturesIdsUsedOnCache(cfgs[i]);
 							if (checkNaturesNeedUpdate(cachedIds, natureIds)) {
 								if (fProjSet == null)
-									fProjSet = new HashSet<IProject>();
+									fProjSet = new HashSet<>();
 
 								fProjSet.add(project);
 								break;
@@ -155,9 +155,9 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase {
 		if (oldIds == null)
 			return true;
 
-		Set<String> oldSet = new HashSet<String>(Arrays.asList(oldIds));
-		Set<String> oldSetCopy = new HashSet<String>(oldSet);
-		Set<String> newSet = new HashSet<String>(Arrays.asList(newIds));
+		Set<String> oldSet = new HashSet<>(Arrays.asList(oldIds));
+		Set<String> oldSetCopy = new HashSet<>(oldSet);
+		Set<String> newSet = new HashSet<>(Arrays.asList(newIds));
 		oldSet.removeAll(newSet);
 		newSet.removeAll(oldSetCopy);
 		if (oldSet.contains(CProjectNature.C_NATURE_ID) || oldSet.contains(CCProjectNature.CC_NATURE_ID)

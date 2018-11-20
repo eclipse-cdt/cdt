@@ -71,7 +71,7 @@ public class UISelectWidget extends InputUIElement {
 	 */
 	@Override
 	public Map<String, String> getValues() {
-		Map<String, String> values = new HashMap<String, String>();
+		Map<String, String> values = new HashMap<>();
 		if (currentValue != null) {
 			values.put(uiAttributes.get(UIElement.ID), currentValue);
 		}

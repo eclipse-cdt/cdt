@@ -39,12 +39,12 @@ public class DeclaratorFrame {
 	private boolean isFunctionDeclarator = false;
 
 	// temporary storage for pointer modifiers
-	private LinkedList<LinkedList<C99PointerType>> pointerModifiers = new LinkedList<LinkedList<C99PointerType>>();
+	private LinkedList<LinkedList<C99PointerType>> pointerModifiers = new LinkedList<>();
 
 	// stores pointer and array modifiers that are applied to the declarator
-	private LinkedList<ITypeContainer> typeModifiers = new LinkedList<ITypeContainer>();
+	private LinkedList<ITypeContainer> typeModifiers = new LinkedList<>();
 
-	private LinkedList<IBinding> nestedDeclarations = new LinkedList<IBinding>();
+	private LinkedList<IBinding> nestedDeclarations = new LinkedList<>();
 
 	public DeclaratorFrame() {
 	}

@@ -36,7 +36,7 @@ import org.junit.runners.model.RunnerBuilder;
  */
 @SuppressWarnings("restriction")
 public class OnceOnlySuite extends Suite {
-	private static Set<Class<?>> alreadySeen = new HashSet<Class<?>>();
+	private static Set<Class<?>> alreadySeen = new HashSet<>();
 
 	public OnceOnlySuite(Class<?> testClass, final RunnerBuilder builder) throws InitializationError {
 		super(testClass, new RunnerBuilder() {

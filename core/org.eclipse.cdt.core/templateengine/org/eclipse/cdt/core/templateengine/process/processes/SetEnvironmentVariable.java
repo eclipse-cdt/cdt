@@ -63,7 +63,7 @@ public class SetEnvironmentVariable extends ProcessRunner {
 			throws ProcessFailureException {
 
 		IProject project = null;
-		Map<String, String> envVars = new LinkedHashMap<String, String>();
+		Map<String, String> envVars = new LinkedHashMap<>();
 
 		for (ProcessArgument arg : args) {
 			String argName = arg.getName();

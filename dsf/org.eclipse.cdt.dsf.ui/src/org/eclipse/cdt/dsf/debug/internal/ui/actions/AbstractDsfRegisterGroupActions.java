@@ -769,7 +769,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 
 	private IRegisterGroupDMContext[] resolveSelectedGroups(IStructuredSelection selection) {
 		IRegisterGroupDMContext[] selectedGroups = null;
-		List<IRegisterGroupDMContext> groupList = new ArrayList<IRegisterGroupDMContext>();
+		List<IRegisterGroupDMContext> groupList = new ArrayList<>();
 		if (selection != null && !selection.isEmpty()) {
 			for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 				Object element = iterator.next();
@@ -791,7 +791,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 
 	@ConfinedToDsfExecutor("selectionContext.fsession.getExecutor()")
 	private IRegisterDMContext[] resolveSelectedRegisters(IStructuredSelection selection) {
-		List<IRegisterDMContext> selectedRegistersList = new ArrayList<IRegisterDMContext>();
+		List<IRegisterDMContext> selectedRegistersList = new ArrayList<>();
 		for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 			Object element = iterator.next();
 			IDMVMContext regContext = null;
@@ -869,11 +869,11 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 			IRegisterDMData[] registerData, IRegisterDMData[] checkedRegistersData) {
 		assert (registers.length == registerData.length);
 
-		List<RegisterDescriptor> checkedDescriptorsList = new ArrayList<RegisterDescriptor>();
+		List<RegisterDescriptor> checkedDescriptorsList = new ArrayList<>();
 
 		final RegisterDescriptor[] regDescriptors = new RegisterDescriptor[registers.length];
 
-		Map<String, RegisterDescriptor> mapNameToRegDescriptor = new HashMap<String, RegisterDescriptor>();
+		Map<String, RegisterDescriptor> mapNameToRegDescriptor = new HashMap<>();
 
 		for (int i = 0; i < registers.length; i++) {
 			regDescriptors[i] = new RegisterDescriptor(groupName, registers[i], registerData[i].getName());

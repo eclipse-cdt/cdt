@@ -36,7 +36,7 @@ public class ColoredViewersManager implements IPropertyChangeListener {
 	private Set<ColoringLabelProvider> fManagedLabelProviders;
 
 	public ColoredViewersManager() {
-		fManagedLabelProviders = new HashSet<ColoringLabelProvider>();
+		fManagedLabelProviders = new HashSet<>();
 	}
 
 	public void installColoredLabels(ColoringLabelProvider labelProvider) {

@@ -56,7 +56,7 @@ import java.util.Set;
  */
 public class CLIInfoBreakInfo extends MIInfo {
 
-	private Map<String, String[]> fBreakpointToGroupMap = new HashMap<String, String[]>();
+	private Map<String, String[]> fBreakpointToGroupMap = new HashMap<>();
 
 	public CLIInfoBreakInfo(MIOutput out) {
 		super(out);
@@ -86,7 +86,7 @@ public class CLIInfoBreakInfo extends MIInfo {
 						String bpIdStr = line.split("[\\s\\.]", 2)[0]; //$NON-NLS-1$
 
 						String[] groups = fBreakpointToGroupMap.get(bpIdStr);
-						Set<String> groupIdList = new HashSet<String>();
+						Set<String> groupIdList = new HashSet<>();
 						if (groups != null) {
 							// Since we already know about this breakpoint id we must retain the list
 							// we have been building

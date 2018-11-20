@@ -87,7 +87,7 @@ public class UpdatePoliciesContribution extends CompoundContributionItem impleme
 		IVMUpdatePolicy[] policies = cachingProvider.getAvailableUpdatePolicies();
 		IVMUpdatePolicy activePolicy = cachingProvider.getActiveUpdatePolicy();
 
-		List<Action> actions = new ArrayList<Action>(policies.length);
+		List<Action> actions = new ArrayList<>(policies.length);
 		for (IVMUpdatePolicy policy : policies) {
 			Action action = new SelectUpdatePolicyAction(cachingProvider, policy);
 			if (policy.getID().equals(activePolicy.getID())) {

@@ -276,7 +276,7 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 		if (extensions == null)
 			return null;
 
-		List<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
+		List<EntryDescriptor> items = new ArrayList<>();
 		for (int i = 0; i < extensions.length; ++i) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (IConfigurationElement element : elements) {
@@ -310,7 +310,7 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 		// items filtering
 		if (ls != null) { // NULL means call from prefs
 			List<EntryDescriptor> filteredItems = ls.filterItems(items);
-			List<EntryDescriptor> newItems = new ArrayList<EntryDescriptor>(filteredItems);
+			List<EntryDescriptor> newItems = new ArrayList<>(filteredItems);
 
 			// Add parent folders
 			for (EntryDescriptor ed : filteredItems) {
@@ -397,8 +397,8 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 		//  Sorting is disabled because of users requests
 		//	Collections.sort(items, CDTListComparator.getInstance());
 
-		ArrayList<TreeItem> placedTreeItemsList = new ArrayList<TreeItem>(items.size());
-		ArrayList<EntryDescriptor> placedEntryDescriptorsList = new ArrayList<EntryDescriptor>(items.size());
+		ArrayList<TreeItem> placedTreeItemsList = new ArrayList<>(items.size());
+		ArrayList<EntryDescriptor> placedEntryDescriptorsList = new ArrayList<>(items.size());
 		for (EntryDescriptor wd : items) {
 			if (wd.getParentId() == null) {
 				wd.setPath(wd.getId());

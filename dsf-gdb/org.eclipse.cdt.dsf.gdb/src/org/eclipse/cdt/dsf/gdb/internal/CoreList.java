@@ -79,7 +79,7 @@ public class CoreList {
 	private void getCoreListFromFile() {
 		File cpuInfo = new File(fCoreFileName);
 
-		Vector<ICoreInfo> coreInfo = new Vector<ICoreInfo>();
+		Vector<ICoreInfo> coreInfo = new Vector<>();
 		BufferedReader reader = null;
 		try {
 			String processorId = null;
@@ -134,7 +134,7 @@ public class CoreList {
 	}
 
 	private void getCoreListFromResourceInfo() {
-		Vector<ICoreInfo> coreInfo = new Vector<ICoreInfo>();
+		Vector<ICoreInfo> coreInfo = new Vector<>();
 
 		int processorIdIndex = -1;
 		int physicalIdIndex = -1;

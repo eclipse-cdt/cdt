@@ -331,7 +331,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	public void testSettingEnvironment() throws Throwable {
 		setLaunchAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 
-		Map<String, String> map = new HashMap<String, String>(1);
+		Map<String, String> map = new HashMap<>(1);
 		map.put("LAUNCHTEST", "IS SET");
 		setLaunchAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
 		doLaunch();
@@ -392,7 +392,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	public void testClearingAndSettingEnvironment() throws Throwable {
 		setLaunchAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
 
-		Map<String, String> map = new HashMap<String, String>(1);
+		Map<String, String> map = new HashMap<>(1);
 		map.put("LAUNCHTEST", "IS SET");
 		setLaunchAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
 		doLaunch();
@@ -596,7 +596,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_3);
 		doLaunch();
 
-		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
+		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ICommandControlShutdownDMEvent.class);
 
 		// The target is currently stopped.  We resume to get it running
@@ -714,7 +714,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		// Now step backwards to make sure reverse was enabled
 
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		final int REVERSE_NUM_STEPS = 2;
@@ -780,7 +780,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 				frame.getFunction().equals("stopAtOther"));
 
 		// Now step backwards all the way to the start to make sure reverse was enabled from the very start
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		final int REVERSE_NUM_STEPS = 3;
@@ -854,7 +854,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 				frame.getFunction().equals("main") && frame.getLine() == LAST_LINE_IN_MAIN);
 
 		// Now step backwards all the way to the start to make sure reverse was enabled from the very start
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		final int REVERSE_NUM_STEPS = 3;

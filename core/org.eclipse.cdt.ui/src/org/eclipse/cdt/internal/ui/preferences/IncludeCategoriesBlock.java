@@ -47,7 +47,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 	private final List<IncludeGroupStyle> styles;
-	private final Map<IncludeKind, Category> categories = new HashMap<IncludeKind, Category>();
+	private final Map<IncludeKind, Category> categories = new HashMap<>();
 	private TreeListDialogField<Category> categoryTree;
 	private PixelConverter pixelConverter;
 	private StackLayout editorAreaStack;
@@ -100,7 +100,7 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 		composite.setLayout(layout);
 
 		IncludeStyleAdapter adapter = new IncludeStyleAdapter();
-		categoryTree = new TreeListDialogField<Category>(adapter, null, new IncludeStyleLabelProvider());
+		categoryTree = new TreeListDialogField<>(adapter, null, new IncludeStyleLabelProvider());
 		categoryTree.setDialogFieldListener(adapter);
 		categoryTree.setLabelText(PreferencesMessages.IncludeCategoriesBlock_header_categories);
 		categoryTree.setViewerComparator(adapter);
@@ -134,7 +134,7 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 		editorArea.setFont(parent.getFont());
 		editorAreaStack = new StackLayout();
 		editorArea.setLayout(editorAreaStack);
-		Map<IncludeKind, IncludeGroupStyle> stylesByKind = new HashMap<IncludeKind, IncludeGroupStyle>();
+		Map<IncludeKind, IncludeGroupStyle> stylesByKind = new HashMap<>();
 		for (IncludeGroupStyle style : styles) {
 			if (style.getIncludeKind() != IncludeKind.MATCHING_PATTERN)
 				stylesByKind.put(style.getIncludeKind(), style);
@@ -188,7 +188,7 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 		Category(IncludeKind includeKind, Category parent) {
 			this.includeKind = includeKind;
 			this.parent = parent;
-			children = new ArrayList<Category>();
+			children = new ArrayList<>();
 			index = parent != null ? parent.addChild(this) : 0;
 		}
 

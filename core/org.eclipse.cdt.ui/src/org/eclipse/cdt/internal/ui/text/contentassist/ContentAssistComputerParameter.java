@@ -33,7 +33,7 @@ public final class ContentAssistComputerParameter implements IParameterValues {
 	public Map<String, String> getParameterValues() {
 		Collection<CompletionProposalCategory> descriptors = CompletionProposalComputerRegistry.getDefault()
 				.getProposalCategories();
-		Map<String, String> map = new HashMap<String, String>(descriptors.size());
+		Map<String, String> map = new HashMap<>(descriptors.size());
 		for (CompletionProposalCategory category : descriptors) {
 			map.put(category.getDisplayName(), category.getId());
 		}

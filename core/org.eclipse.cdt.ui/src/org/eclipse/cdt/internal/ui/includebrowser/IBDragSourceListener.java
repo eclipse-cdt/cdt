@@ -30,7 +30,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 public class IBDragSourceListener implements DragSourceListener {
 
 	private TreeViewer fTreeViewer;
-	private ArrayList<IBNode> fSelectedNodes = new ArrayList<IBNode>();
+	private ArrayList<IBNode> fSelectedNodes = new ArrayList<>();
 	private IBDropTargetListener fDropTargetListener;
 
 	public IBDragSourceListener(TreeViewer viewer) {
@@ -69,7 +69,7 @@ public class IBDragSourceListener implements DragSourceListener {
 	}
 
 	private String[] getFiles() {
-		ArrayList<String> files = new ArrayList<String>(fSelectedNodes.size());
+		ArrayList<String> files = new ArrayList<>(fSelectedNodes.size());
 		for (Iterator<IBNode> iter = fSelectedNodes.iterator(); iter.hasNext();) {
 			IBNode node = iter.next();
 			IIndexFileLocation ifl = (IIndexFileLocation) node.getAdapter(IIndexFileLocation.class);
@@ -84,7 +84,7 @@ public class IBDragSourceListener implements DragSourceListener {
 	}
 
 	private IFile[] getResources() {
-		ArrayList<IFile> files = new ArrayList<IFile>(fSelectedNodes.size());
+		ArrayList<IFile> files = new ArrayList<>(fSelectedNodes.size());
 		for (Iterator<IBNode> iter = fSelectedNodes.iterator(); iter.hasNext();) {
 			IBNode node = iter.next();
 			IFile file = (IFile) node.getAdapter(IFile.class);

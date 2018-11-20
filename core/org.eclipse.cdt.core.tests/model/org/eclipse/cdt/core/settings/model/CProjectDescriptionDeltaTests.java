@@ -94,7 +94,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 	}
 
 	private static List<ICDescriptionDelta> findDeltas(ICDescriptionDelta delta, int type) {
-		List<ICDescriptionDelta> list = new ArrayList<ICDescriptionDelta>();
+		List<ICDescriptionDelta> list = new ArrayList<>();
 		if ((delta.getChangeFlags() & type) != 0) {
 			list.add(delta);
 		}
@@ -598,7 +598,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		assertNotNull(cfgDescription);
 
 		// Modification SOURCE_ADDED
-		List<ICSourceEntry> sourceEntries = new ArrayList<ICSourceEntry>(
+		List<ICSourceEntry> sourceEntries = new ArrayList<>(
 				Arrays.asList(cfgDescription.getSourceEntries()));
 		ICSourceEntry testSourceEntry = new CSourceEntry(project.getFullPath().append("test_src"), null,
 				ICSettingEntry.RESOLVED);
@@ -648,7 +648,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 			ICConfigurationDescription cfgDescription = prjDescription.getConfigurations()[0];
 			assertNotNull(cfgDescription);
 
-			List<ICSourceEntry> sourceEntries = new ArrayList<ICSourceEntry>(
+			List<ICSourceEntry> sourceEntries = new ArrayList<>(
 					Arrays.asList(cfgDescription.getSourceEntries()));
 			sourceEntries.add(testSourceEntry);
 			cfgDescription.setSourceEntries(sourceEntries.toArray(new ICSourceEntry[0]));
@@ -819,7 +819,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		// Modification CFG_REF_ADDED
 		String testKey = "key";
 		String testValue = "value";
-		Map<String, String> refs = new HashMap<String, String>();
+		Map<String, String> refs = new HashMap<>();
 		refs.put(testKey, testValue);
 		cfgDescription.setReferenceInfo(refs);
 
@@ -867,7 +867,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 			ICConfigurationDescription cfgDescription = prjDescription.getConfigurations()[0];
 			assertNotNull(cfgDescription);
 
-			Map<String, String> refs = new HashMap<String, String>();
+			Map<String, String> refs = new HashMap<>();
 			refs.put(testKey, testValue);
 			cfgDescription.setReferenceInfo(refs);
 			mngr.setProjectDescription(project, prjDescription);
@@ -1027,7 +1027,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 
 		// Modification LANGUAGE_SETTINGS_PROVIDERS
 		ILanguageSettingsProvider provider = new LanguageSettingsSerializableProvider("test.id", "test.name");
-		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		List<ILanguageSettingsProvider> providers = new ArrayList<>();
 		providers.add(provider);
 		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 

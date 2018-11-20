@@ -61,7 +61,7 @@ public class IncludeGroupStyle implements Comparable<IncludeGroupStyle> {
 		public final String name;
 		public final String description;
 		public final IncludeKind parent;
-		public final List<IncludeKind> children = new ArrayList<IncludeKind>();
+		public final List<IncludeKind> children = new ArrayList<>();
 
 		private IncludeKind(String name, String description, IncludeKind parent) {
 			this.name = name;

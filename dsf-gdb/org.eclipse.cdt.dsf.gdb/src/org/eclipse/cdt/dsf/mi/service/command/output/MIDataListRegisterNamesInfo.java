@@ -29,7 +29,7 @@ public class MIDataListRegisterNamesInfo extends MIInfo {
 	public MIDataListRegisterNamesInfo(MIOutput rr) {
 		super(rr);
 		names = null;
-		List<String> aList = new ArrayList<String>();
+		List<String> aList = new ArrayList<>();
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord outr = out.getMIResultRecord();

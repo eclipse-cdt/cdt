@@ -55,7 +55,7 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.C99Variable;
 class DeclSpec {
 
 	// maps token kinds to the number of occurrences of that kind
-	private Map<Integer, Integer> tokenKindMap = new HashMap<Integer, Integer>();
+	private Map<Integer, Integer> tokenKindMap = new HashMap<>();
 
 	private IType type = null;
 

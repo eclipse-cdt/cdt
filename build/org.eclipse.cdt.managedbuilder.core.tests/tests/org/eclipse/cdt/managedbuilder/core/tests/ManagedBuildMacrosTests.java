@@ -258,7 +258,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 					PATH_ENV_VAR };
 			String[] resArr1 = { "new a", /*"test=CFGTEST",*/ "x", "y", "z", "PRJ=NewMacrosForProjectContext",
 					"LIST=x|y|z" };
-			List<String> res1 = new ArrayList<String>(Arrays.asList(resArr1));
+			List<String> res1 = new ArrayList<>(Arrays.asList(resArr1));
 			try {
 				// Add split ${PATH} to res1
 				String strList = mp.resolveValue(PATH_ENV_VAR, UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION,
@@ -272,7 +272,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 			opt = cfgs[0].setOption(t, opt, set1);
 			assertNotNull(opt);
 
-			ArrayList<String> res2 = new ArrayList<String>(res1.size());
+			ArrayList<String> res2 = new ArrayList<>(res1.size());
 			for (int i = 0; i < set1.length; i++) {
 				try {
 					String[] aus = mp.resolveStringListValue(set1[i], UNKNOWN, LISTSEP,
@@ -698,7 +698,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 
 	// returns a list of macro's NAMES (not values).
 	private String[] printMacros(IBuildMacro[] vars, String head) {
-		ArrayList<String> ar = new ArrayList<String>(0);
+		ArrayList<String> ar = new ArrayList<>(0);
 		if (vars != null) {
 			if (vars.length > 0) {
 				for (int i = 0; i < vars.length; i++) {

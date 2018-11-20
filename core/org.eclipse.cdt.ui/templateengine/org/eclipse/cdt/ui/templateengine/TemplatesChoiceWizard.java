@@ -88,7 +88,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo
 				.getExtraPagesProvider();
 		if (extraPagesProvider != null) {
-			List<IWizardDataPage> pageList = new ArrayList<IWizardDataPage>(Arrays.asList(pages));
+			List<IWizardDataPage> pageList = new ArrayList<>(Arrays.asList(pages));
 			IWizardDataPage[] extraPages = extraPagesProvider.createAdditionalPages(this, workbench, selection);
 			pageList.addAll(Arrays.asList(extraPages));
 			pages = pageList.toArray(new IWizardDataPage[pageList.size()]);
@@ -102,7 +102,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo
 				.getExtraPagesProvider();
 		if (extraPagesProvider != null) {
-			List<IWizardDataPage> pageList = new ArrayList<IWizardDataPage>();
+			List<IWizardDataPage> pageList = new ArrayList<>();
 			IWizardDataPage[] extraPages = extraPagesProvider.getCreatedPages(this);
 			pageList.addAll(Arrays.asList(extraPages));
 			return pageList.toArray(new IWizardDataPage[pageList.size()]);
@@ -149,7 +149,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 	 * @return Map,
 	 */
 	public Map<String, String> getAllDataInNonTemplatePages() {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
 		IWizardDataPage[] pages = getPagesBeforeTemplatePages();
 		for (IWizardDataPage page : pages) {

@@ -104,7 +104,7 @@ public class CLIInfoThreadsInfo extends MIInfo {
 	}
 
 	protected void parse() {
-		info = new ArrayList<ThreadInfo>();
+		info = new ArrayList<>();
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIOOBRecord[] oobs = out.getMIOOBRecords();

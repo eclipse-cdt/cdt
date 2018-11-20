@@ -303,7 +303,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 
 		setAllVisible(true, null);
 
-		src = new ArrayList<_Entry>();
+		src = new ArrayList<>();
 		_Entry selectedSourcePath = null;
 		for (ICExclusionPatternPathEntry e : getEntries(cfgd)) {
 			_Entry entry = new _Entry(e);
@@ -355,7 +355,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 	}
 
 	private String[] getProjectDialog(Shell shell) {
-		Set<IPath> set = new HashSet<IPath>(src.size());
+		Set<IPath> set = new HashSet<>(src.size());
 		for (_Entry e : src)
 			set.add(e.getPath());
 
@@ -531,7 +531,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			if (page.getElement() instanceof IFolder) {
 				IFolder folder = (IFolder) page.getElement();
 
-				List<Holder> list = new ArrayList<Holder>();
+				List<Holder> list = new ArrayList<>();
 				list.add(new Holder(folder));
 				for (IContainer parentFolder = folder
 						.getParent(); parentFolder instanceof IFolder; parentFolder = parentFolder.getParent()) {

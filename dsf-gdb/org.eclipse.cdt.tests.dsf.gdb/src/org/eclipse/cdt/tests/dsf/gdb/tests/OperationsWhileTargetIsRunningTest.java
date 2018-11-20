@@ -177,7 +177,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		// then we terminate, and confirm that we shutdown right away
 		SyncUtil.resume();
 
-		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
+		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ICommandControlShutdownDMEvent.class);
 
 		// Don't use a query here.  The terminate, because it kills GDB, may not return right away
@@ -215,7 +215,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		// then we terminate the process, and confirm that there are no more processes
 		SyncUtil.resume();
 
-		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<IExitedDMEvent>(
+		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), IExitedDMEvent.class);
 
 		Query<Object> query = new Query<Object>() {
@@ -260,7 +260,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		// then we detach the process, and confirm that we are shutdown
 		SyncUtil.resume();
 
-		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
+		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ICommandControlShutdownDMEvent.class);
 
 		// Don't use a query here.  Because GDB will be killed, the call to detach may not return right away
@@ -297,7 +297,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		// then we detach the process, and confirm that we are not longer running
 		SyncUtil.resume();
 
-		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<IExitedDMEvent>(
+		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), IExitedDMEvent.class);
 
 		Query<Object> query = new Query<Object>() {

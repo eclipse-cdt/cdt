@@ -33,7 +33,7 @@ public class PDARegistersCommandResult extends PDACommandResult {
 	PDARegistersCommandResult(String response) {
 		super(response);
 		StringTokenizer st = new StringTokenizer(response, "#");
-		List<PDARegister> regList = new ArrayList<PDARegister>();
+		List<PDARegister> regList = new ArrayList<>();
 
 		while (st.hasMoreTokens()) {
 			regList.add(new PDARegister(st.nextToken()));

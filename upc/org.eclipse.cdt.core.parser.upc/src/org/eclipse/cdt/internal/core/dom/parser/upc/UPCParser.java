@@ -228,7 +228,7 @@ public class UPCParser extends PrsStream
 	}
 
 	private void initActions(Map<String, String> properties) {
-		ScopedStack<Object> astStack = new ScopedStack<Object>();
+		ScopedStack<Object> astStack = new ScopedStack<>();
 
 		action = new UPCParserAction(this, astStack, new UPCASTNodeFactory(), UPCSecondaryParserFactory.getDefault());
 		action.setParserProperties(properties);

@@ -84,7 +84,7 @@ class TestElementFormatVMProvider extends TestModelCachingVMProvider implements 
 			persistable = new TestPersistable();
 			context.setProperty(myPersistId, persistable);
 		}
-		HashSet<Object> changed = new HashSet<Object>(elementPath.length);
+		HashSet<Object> changed = new HashSet<>(elementPath.length);
 		for (int i = 0; i < elementPath.length; i++) {
 			Object x = elementPath[i].getLastSegment();
 			if (x instanceof TestElementVMContext) {

@@ -108,8 +108,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	 * not raw providers.
 	 */
 	private List<ILanguageSettingsProvider> presentedProviders = null;
-	private final Map<String, ICOptionPage> optionsPageMap = new HashMap<String, ICOptionPage>();
-	private Map<String/*cfgId*/, List<ILanguageSettingsProvider>> initialProvidersByCfg = new HashMap<String, List<ILanguageSettingsProvider>>();
+	private final Map<String, ICOptionPage> optionsPageMap = new HashMap<>();
+	private Map<String/*cfgId*/, List<ILanguageSettingsProvider>> initialProvidersByCfg = new HashMap<>();
 
 	/**
 	 * Label provider for language settings providers displayed by this tab.
@@ -908,18 +908,18 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		// The providers list is formed to consist of configuration providers (checked elements on top of the table)
 		// and after that other providers which could be possible added (unchecked) sorted by name.
 
-		List<String> idsList = new ArrayList<String>();
+		List<String> idsList = new ArrayList<>();
 
 		List<ILanguageSettingsProvider> providers;
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			providers = new ArrayList<ILanguageSettingsProvider>(
+			providers = new ArrayList<>(
 					((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
 			for (ILanguageSettingsProvider provider : providers) {
 				idsList.add(provider.getId());
 			}
 		} else {
-			providers = new ArrayList<ILanguageSettingsProvider>();
+			providers = new ArrayList<>();
 		}
 
 		List<ILanguageSettingsProvider> allAvailableProvidersSet = LanguageSettingsManager.getWorkspaceProviders();
@@ -1137,7 +1137,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 							ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null));
 					ICConfigurationDescription cfgDescription = getConfigurationDescription();
 					if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-						List<ILanguageSettingsProvider> cfgProviders = new ArrayList<ILanguageSettingsProvider>(
+						List<ILanguageSettingsProvider> cfgProviders = new ArrayList<>(
 								((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
 						String[] defaultIds = ((ILanguageSettingsProvidersKeeper) cfgDescription)
 								.getDefaultLanguageSettingsProvidersIds();
@@ -1150,7 +1150,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					}
 
 				} else if (page.isForPrefs()) {
-					presentedProviders = new ArrayList<ILanguageSettingsProvider>();
+					presentedProviders = new ArrayList<>();
 					for (String id : LanguageSettingsManager.getExtensionProviderIds()) {
 						ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(id);
 						ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);

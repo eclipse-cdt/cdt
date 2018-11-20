@@ -149,7 +149,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 			if (isSearchReferencedProjects()) {
 				IProject[] projects = SourceUtils.getAllReferencedProjects(fProject);
 				ISourceContainer[] folders = createCompilationDirectoryContainers(fProject);
-				List<ISourceContainer> containers = new ArrayList<ISourceContainer>(folders.length + projects.length);
+				List<ISourceContainer> containers = new ArrayList<>(folders.length + projects.length);
 				for (ISourceContainer folder : folders) {
 					containers.add(folder);
 				}
@@ -171,7 +171,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	private ISourceContainer[] createCompilationDirectoryContainers(IProject project) throws CoreException {
 		ICProject cProject = CModelManager.getDefault().create(project);
 		ISourceRoot[] roots = cProject.getAllSourceRoots();
-		List<ISourceContainer> list = new ArrayList<ISourceContainer>(roots.length);
+		List<ISourceContainer> list = new ArrayList<>(roots.length);
 		for (ISourceRoot root : roots) {
 			IContainer folder = root.getResource();
 			ISourceContainer container = new CompilationDirectorySourceContainer(folder.getLocation(), false);

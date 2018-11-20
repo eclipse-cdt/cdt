@@ -113,7 +113,7 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 			return;
 
 		final IIndex index = ast.getIndex();
-		final Map<Annotation, Position> annotationMap = new HashMap<Annotation, Position>(50);
+		final Map<Annotation, Position> annotationMap = new HashMap<>(50);
 
 		class MethodFinder extends ASTVisitor {
 			{

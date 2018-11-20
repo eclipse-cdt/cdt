@@ -70,7 +70,7 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
 	private Map<Object, DocumentInfo> fDocumentInfos;
 
 	public DisassemblyDocumentProvider() {
-		fDocumentInfos = new HashMap<Object, DocumentInfo>();
+		fDocumentInfos = new HashMap<>();
 	}
 
 	/* (non-Javadoc)

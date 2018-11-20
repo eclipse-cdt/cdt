@@ -118,7 +118,7 @@ public class CRefactory {
 
 	public String[] getCCppPatterns() {
 		IContentType[] cts = Platform.getContentTypeManager().getAllContentTypes();
-		HashSet<String> all = new HashSet<String>();
+		HashSet<String> all = new HashSet<>();
 		for (IContentType candidate : cts) {
 			IContentType type = candidate;
 			boolean useIt = false;

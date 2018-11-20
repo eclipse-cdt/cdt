@@ -1085,8 +1085,8 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	private void setupEventTypeFieldEditor(ICBreakpointsUIContribution[] cons, ICBreakpoint breakpoint,
 			String conMainElement, Composite parent) {
 		String id = null;
-		ArrayList<String> eventTypeValueList = new ArrayList<String>();
-		ArrayList<String> eventTypeLabelList = new ArrayList<String>();
+		ArrayList<String> eventTypeValueList = new ArrayList<>();
+		ArrayList<String> eventTypeLabelList = new ArrayList<>();
 
 		// The filter of the debugModelIds should already be done.
 		for (ICBreakpointsUIContribution con : cons) {
@@ -1114,7 +1114,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	void addEditorToComposite(FieldEditor fieldEditor) {
 		if (fEventArgsFEs == null) {
-			fEventArgsFEs = new ArrayList<FieldEditor>();
+			fEventArgsFEs = new ArrayList<>();
 		}
 		fEventArgsFEs.add(fieldEditor);
 	}

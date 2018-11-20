@@ -176,7 +176,7 @@ public class BreakpointActionManager {
 
 	public ArrayList<IBreakpointAction> getBreakpointActions() {
 		if (breakpointActions == null) {
-			breakpointActions = new ArrayList<IBreakpointAction>();
+			breakpointActions = new ArrayList<>();
 			CDebugCorePlugin.getDefault().getBreakpointActionManager().loadActionData();
 		}
 		return breakpointActions;

@@ -124,7 +124,7 @@ public final class SourceHeaderPartnerFinder {
 		}
 
 		public PartnerFileVisitor() {
-			fMap = new HashMap<IPath, Counter>();
+			fMap = new HashMap<>();
 		}
 
 		@Override

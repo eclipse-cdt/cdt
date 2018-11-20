@@ -30,7 +30,7 @@ public class PDAListResult extends PDACommandResult {
 	PDAListResult(String response) {
 		super(response);
 		StringTokenizer st = new StringTokenizer(response, "|");
-		List<String> valuesList = new ArrayList<String>();
+		List<String> valuesList = new ArrayList<>();
 
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken();

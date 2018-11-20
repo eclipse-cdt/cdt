@@ -83,7 +83,7 @@ public class CHelpProviderDescriptor {
 
 	private static Map<String, ICHelpProvider> getProvidersMap() {
 		if (fProvidersMap == null) {
-			fProvidersMap = new HashMap<String, ICHelpProvider>();
+			fProvidersMap = new HashMap<>();
 		}
 		return fProvidersMap;
 	}
@@ -137,7 +137,7 @@ public class CHelpProviderDescriptor {
 			if (provider != null && fProject != null) {
 				ICHelpBook books[] = provider.getCHelpBooks();
 				if (books != null) {
-					List<CHelpBookDescriptor> descriptorList = new ArrayList<CHelpBookDescriptor>();
+					List<CHelpBookDescriptor> descriptorList = new ArrayList<>();
 					for (int i = 0; i < books.length; i++) {
 						CHelpBookDescriptor des = new CHelpBookDescriptor(books[i], projectElement);
 						if (des.matches(fProject))
@@ -160,7 +160,7 @@ public class CHelpProviderDescriptor {
 		CHelpBookDescriptor bookDescriptors[] = getCHelpBookDescriptors();
 		if (bookDescriptors.length == 0)
 			return null;
-		List<ICHelpBook> bookList = new ArrayList<ICHelpBook>();
+		List<ICHelpBook> bookList = new ArrayList<>();
 		for (int i = 0; i < bookDescriptors.length; i++) {
 			if (bookDescriptors[i].isEnabled() && bookDescriptors[i].matches(context))
 				bookList.add(bookDescriptors[i].getCHelpBook());

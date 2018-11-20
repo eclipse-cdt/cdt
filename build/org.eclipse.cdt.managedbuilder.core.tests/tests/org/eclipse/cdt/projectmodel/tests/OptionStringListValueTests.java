@@ -81,7 +81,7 @@ public class OptionStringListValueTests extends TestCase {
 		IFolderInfo fInfo = cfg.getRootFolderInfo();
 
 		ICLanguageSetting ls = fDes.getLanguageSettingForFile("a.c");
-		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> list = new ArrayList<>();
 		list.add(new CIncludePathEntry("a", 0));
 		list.add(new CIncludePathEntry("b", 0));
 		list.addAll(ls.getSettingEntriesList(ICSettingEntry.INCLUDE_PATH));
@@ -129,7 +129,7 @@ public class OptionStringListValueTests extends TestCase {
 		ICFolderDescription fDes = cfgDes.getRootFolderDescription();
 
 		ICLanguageSetting ls = fDes.getLanguageSettingForFile("a.c");
-		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> list = new ArrayList<>();
 		list.add(new CLibraryFileEntry("usr_a", 0, new Path("ap"), new Path("arp"), new Path("apx")));
 		list.add(new CLibraryFileEntry("usr_b", 0, new Path("bp"), null, null));
 		list.add(new CLibraryFileEntry("usr_c", 0, new Path("cp"), new Path("crp"), null));
@@ -178,9 +178,9 @@ public class OptionStringListValueTests extends TestCase {
 	}
 
 	private void checkEntriesMatch(List<ICLanguageSettingEntry> list1, List<ICLanguageSettingEntry> list2) {
-		Set<ICLanguageSettingEntry> set1 = new LinkedHashSet<ICLanguageSettingEntry>(list1);
+		Set<ICLanguageSettingEntry> set1 = new LinkedHashSet<>(list1);
 		set1.removeAll(list2);
-		Set<ICLanguageSettingEntry> set2 = new LinkedHashSet<ICLanguageSettingEntry>(list2);
+		Set<ICLanguageSettingEntry> set2 = new LinkedHashSet<>(list2);
 		set2.removeAll(list1);
 		if (set1.size() != 0 || set2.size() != 0) {
 			fail("entries diff");
@@ -229,7 +229,7 @@ public class OptionStringListValueTests extends TestCase {
 
 		checkOptionValues(option);
 
-		List<Object> list = new ArrayList<Object>();
+		List<Object> list = new ArrayList<>();
 		list.add("usr_1");
 		list.add("usr_2");
 		list.addAll(Arrays.asList(option.getBasicStringListValue()));
@@ -239,7 +239,7 @@ public class OptionStringListValueTests extends TestCase {
 		assertTrue(Arrays.equals(updated, option.getBasicStringListValue()));
 		checkOptionValues(option);
 
-		list = new ArrayList<Object>();
+		list = new ArrayList<>();
 		list.add(new OptionStringValue("usr_3", false, "ap", "arp", "apx"));
 		list.add(new OptionStringValue("usr_4", false, null, null, null));
 		list.add(new OptionStringValue("usr_5", false, "cp", null, null));

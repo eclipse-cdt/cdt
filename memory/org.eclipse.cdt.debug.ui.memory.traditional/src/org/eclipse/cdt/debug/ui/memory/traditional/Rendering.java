@@ -688,13 +688,13 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			}
 		}
 
-		private HashMap<BigInteger, TraditionalMemoryByte[]> fEditBuffer = new HashMap<BigInteger, TraditionalMemoryByte[]>();
+		private HashMap<BigInteger, TraditionalMemoryByte[]> fEditBuffer = new HashMap<>();
 
 		private boolean fDisposed = false;
 
 		private Object fLastQueued = null;
 
-		private Vector<Object> fQueue = new Vector<Object>();
+		private Vector<Object> fQueue = new Vector<>();
 
 		protected MemoryUnit fCache = null;
 

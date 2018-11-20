@@ -186,7 +186,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	 */
 	private ISuspendedDMEvent triggerStepIntoSelection(final IExecutionDMContext exeContext, final String sourceName,
 			final int targetLine, final IFunctionDeclaration function, final boolean skipBreakPoints) throws Throwable {
-		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(fSession,
+		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				ISuspendedDMEvent.class);
 
 		Query<Object> query = new Query<Object>() {
@@ -207,7 +207,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	 */
 	private ISuspendedDMEvent triggerRunToLine(final IExecutionDMContext exeContext, final String sourceName,
 			final int targetLine, final boolean skipBreakPoints) throws Throwable {
-		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(fSession,
+		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				ISuspendedDMEvent.class);
 
 		Query<Object> query = new Query<Object>() {

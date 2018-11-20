@@ -118,7 +118,7 @@ public class GdbMemoryAddressInfoRegistersRetrieval implements IGdbMemoryAddress
 		//			memSpaceId = ((IMemorySpaceAwareMemoryBlock) memBlock).getMemorySpaceID();
 		//		}
 
-		List<IMemoryBlockAddressInfoItem> items = new ArrayList<IMemoryBlockAddressInfoItem>();
+		List<IMemoryBlockAddressInfoItem> items = new ArrayList<>();
 		// Remove all items with value zero
 		for (IMemoryBlockAddressInfoItem item : regDataContainers) {
 			if (item.getAddress().intValue() != 0) {

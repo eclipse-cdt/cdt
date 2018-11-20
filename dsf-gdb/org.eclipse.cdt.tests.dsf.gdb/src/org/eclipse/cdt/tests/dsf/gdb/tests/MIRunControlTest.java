@@ -241,7 +241,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 				ctxts.length);
 
 		// The ordering of the contexts is not deterministic
-		LinkedList<Integer> ids = new LinkedList<Integer>(Arrays.asList(new Integer[] { 1 }));
+		LinkedList<Integer> ids = new LinkedList<>(Arrays.asList(new Integer[] { 1 }));
 		if (sProgramIsCygwin) {
 			ids.add(2);
 		}
@@ -277,7 +277,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		};
 
 		// Prepare a waiter to make sure we have received the thread started event
-		final ServiceEventWaitor<IStartedDMEvent> startedEventWaitor = new ServiceEventWaitor<IStartedDMEvent>(
+		final ServiceEventWaitor<IStartedDMEvent> startedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), IStartedDMEvent.class);
 
 		SyncUtil.runToLocation(SOURCE_NAME + ':' + getLineForTag("LINE_MAIN_AFTER_THREAD_START"));
@@ -316,7 +316,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		Assert.assertEquals("Unexpected number of threads", sProgramIsCygwin ? 3 : 2, data.length);
 
 		// The ordering of the contexts is not deterministic
-		LinkedList<Integer> ids = new LinkedList<Integer>(Arrays.asList(new Integer[] { 1, 2 }));
+		LinkedList<Integer> ids = new LinkedList<>(Arrays.asList(new Integer[] { 1, 2 }));
 		if (sProgramIsCygwin) {
 			ids.add(3);
 		}
@@ -580,7 +580,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 				//TestsPlugin.debug("handleCompleted over");
 			}
 		};
-		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<IResumedDMEvent>(
+		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), IResumedDMEvent.class);
 
 		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
@@ -629,7 +629,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 			}
 		};
 
-		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<IResumedDMEvent>(
+		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), IResumedDMEvent.class);
 
 		fRunCtrl.getExecutor().submit(new Runnable() {
@@ -682,7 +682,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	public void runToLine() throws Throwable {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 		fRunCtrl.getExecutor().submit(new Runnable() {
@@ -726,7 +726,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	public void interruptRunningTarget() throws Throwable {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 		// Resume the target

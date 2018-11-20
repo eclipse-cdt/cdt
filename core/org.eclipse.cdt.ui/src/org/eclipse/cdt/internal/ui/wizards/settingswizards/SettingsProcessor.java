@@ -95,7 +95,7 @@ public abstract class SettingsProcessor implements ISettingsProcessor {
 	public void readSectionXML(ICFolderDescription projectRoot, Element section) throws SettingsImportExportException {
 		ICLanguageSetting[] languageSettings = projectRoot.getLanguageSettings();
 
-		Map<String, ICLanguageSetting> languageMap = new HashMap<String, ICLanguageSetting>();
+		Map<String, ICLanguageSetting> languageMap = new HashMap<>();
 		for (ICLanguageSetting language : languageSettings) {
 			languageMap.put(language.getName(), language);
 		}

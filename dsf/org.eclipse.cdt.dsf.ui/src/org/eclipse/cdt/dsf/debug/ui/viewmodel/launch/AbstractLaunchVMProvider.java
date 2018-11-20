@@ -68,7 +68,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 	 */
 	private static final int FRAME_UPDATE_DELAY = 200;
 
-	private final Map<IExecutionDMContext, ScheduledFuture<?>> fRefreshStackFramesFutures = new HashMap<IExecutionDMContext, ScheduledFuture<?>>();
+	private final Map<IExecutionDMContext, ScheduledFuture<?>> fRefreshStackFramesFutures = new HashMap<>();
 
 	private IPropertyChangeListener fPreferencesListener;
 

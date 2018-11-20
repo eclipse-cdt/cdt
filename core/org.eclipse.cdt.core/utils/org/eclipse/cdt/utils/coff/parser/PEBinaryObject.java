@@ -167,7 +167,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected void loadSymbols(PE pe) throws IOException {
-		ArrayList<Symbol> list = new ArrayList<Symbol>();
+		ArrayList<Symbol> list = new ArrayList<>();
 		loadSymbols(pe, list);
 		symbols = list.toArray(NO_SYMBOLS);
 		Arrays.sort(symbols);

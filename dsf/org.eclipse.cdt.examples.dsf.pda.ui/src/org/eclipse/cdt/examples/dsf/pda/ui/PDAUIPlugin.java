@@ -64,7 +64,7 @@ public class PDAUIPlugin extends AbstractUIPlugin implements ILaunchesListener2 
 	/**
 	 * Managed colors
 	 */
-	private Map<RGB, Color> fColors = new HashMap<RGB, Color>();
+	private Map<RGB, Color> fColors = new HashMap<>();
 
 	/**
 	 * Active adapter sets.  They are accessed using the DSF session ID
@@ -85,7 +85,7 @@ public class PDAUIPlugin extends AbstractUIPlugin implements ILaunchesListener2 
 	 * instance.
 	 * </p>
 	 */
-	private Map<ILaunch, Object> fDisposedSessionAdapterSets = new WeakHashMap<ILaunch, Object>();
+	private Map<ILaunch, Object> fDisposedSessionAdapterSets = new WeakHashMap<>();
 
 	private void disposeAdapterSet(PDALaunch launch) {
 		String sessionId = launch.getSession().getId();

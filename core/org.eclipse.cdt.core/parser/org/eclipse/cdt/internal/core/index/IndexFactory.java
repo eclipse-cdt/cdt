@@ -77,7 +77,7 @@ public class IndexFactory {
 		Collection<ICProject> indexProjects = getProjects(projects, addDependencies, addDependent,
 				new HashSet<IProject>());
 
-		HashMap<String, IIndexFragment> fragments = new LinkedHashMap<String, IIndexFragment>();
+		HashMap<String, IIndexFragment> fragments = new LinkedHashMap<>();
 		for (ICProject cproject : indexProjects) {
 			IIndexFragment pdom = fPDOMManager.getPDOM(cproject);
 			if (pdom != null) {
@@ -106,7 +106,7 @@ public class IndexFactory {
 
 	private Collection<ICProject> getProjects(ICProject[] projects, boolean addDependencies, boolean addDependent,
 			Set<IProject> handled) {
-		List<ICProject> result = new ArrayList<ICProject>();
+		List<ICProject> result = new ArrayList<>();
 
 		for (ICProject cproject : projects) {
 			checkAddProject(cproject, handled, result);

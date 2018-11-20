@@ -131,7 +131,7 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
 	private IMemento fMemento;
 	private boolean fShowsMessage;
 	private IBNode fLastNavigationNode;
-	private ArrayList<ITranslationUnit> fHistoryEntries = new ArrayList<ITranslationUnit>(MAX_HISTORY_SIZE);
+	private ArrayList<ITranslationUnit> fHistoryEntries = new ArrayList<>(MAX_HISTORY_SIZE);
 
 	// widgets
 	private PageBook fPagebook;

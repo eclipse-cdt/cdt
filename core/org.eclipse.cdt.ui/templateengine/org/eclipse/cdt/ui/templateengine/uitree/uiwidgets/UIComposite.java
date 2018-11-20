@@ -52,7 +52,7 @@ public class UIComposite extends Composite {
 	public UIComposite(Composite parent, UIElement uiElement, Map<String, String> valueStore) {
 		super(parent, SWT.NONE);
 
-		vector = new Vector<PatternEventListener>();
+		vector = new Vector<>();
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginWidth = 10;
 		layout.marginHeight = 5;

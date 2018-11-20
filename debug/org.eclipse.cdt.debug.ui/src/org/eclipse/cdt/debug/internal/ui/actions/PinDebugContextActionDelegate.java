@@ -209,7 +209,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		String description = ""; //$NON-NLS-1$
 
 		if (provider != null) {
-			Set<String> labels = new HashSet<String>();
+			Set<String> labels = new HashSet<>();
 			for (IPinElementHandle handle : provider.getPinHandles()) {
 				String tmp = getLabel(handle);
 				if (tmp != null && tmp.trim().length() != 0)

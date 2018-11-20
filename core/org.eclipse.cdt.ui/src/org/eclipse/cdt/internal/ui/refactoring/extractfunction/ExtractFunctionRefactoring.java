@@ -753,9 +753,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTFunctionCallExpression callExpression = new CPPASTFunctionCallExpression();
 		IASTIdExpression idExpression = new CPPASTIdExpression();
 		idExpression.setName(astMethodName);
-		List<IASTInitializerClause> args = new ArrayList<IASTInitializerClause>();
+		List<IASTInitializerClause> args = new ArrayList<>();
 
-		Set<IASTName> declarations = new HashSet<IASTName>();
+		Set<IASTName> declarations = new HashSet<>();
 		IASTName retName = null;
 		boolean theRetName = false;
 
@@ -929,8 +929,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	public List<IASTInitializerClause> getCallParameters() {
-		List<IASTInitializerClause> args = new ArrayList<IASTInitializerClause>();
-		Set<IASTName> declarations = new HashSet<IASTName>();
+		List<IASTInitializerClause> args = new ArrayList<>();
+		Set<IASTName> declarations = new HashSet<>();
 		for (NameInformation nameInfo : info.getParameters()) {
 			addParameterIfPossible(args, declarations, nameInfo);
 		}
@@ -960,7 +960,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private Map<String, String> getArgumentMap() {
-		Map<String, String> arguments = new HashMap<String, String>();
+		Map<String, String> arguments = new HashMap<>();
 		arguments.put(CRefactoringDescriptor.FILE_NAME, tu.getLocationURI().toString());
 		arguments.put(CRefactoringDescriptor.SELECTION, selectedRegion.getOffset() + "," + selectedRegion.getLength()); //$NON-NLS-1$
 		arguments.put(ExtractFunctionRefactoringDescriptor.NAME, info.getMethodName());
@@ -990,8 +990,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	public RefactoringStatus checkParameterNames() {
 		RefactoringStatus result = new RefactoringStatus();
 		List<NameInformation> parameters = info.getParameters();
-		Set<String> usedNames = new HashSet<String>();
-		Set<IASTName> declarations = new HashSet<IASTName>();
+		Set<String> usedNames = new HashSet<>();
+		Set<IASTName> declarations = new HashSet<>();
 		for (NameInformation nameInfo : container.getNames()) {
 			IASTName declaration = nameInfo.getDeclarationName();
 			if (declarations.add(declaration) && !parameters.contains(nameInfo)) {

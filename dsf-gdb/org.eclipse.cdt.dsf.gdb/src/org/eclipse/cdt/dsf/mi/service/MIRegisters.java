@@ -251,7 +251,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 	private CommandFactory fCommandFactory;
 
 	//One Group per container process
-	private final Map<IContainerDMContext, MIRegisterGroupDMC> fContainerToGroupMap = new HashMap<IContainerDMContext, MIRegisterGroupDMC>();
+	private final Map<IContainerDMContext, MIRegisterGroupDMC> fContainerToGroupMap = new HashMap<>();
 
 	private CommandCache fRegisterNameCache; // Cache for holding the Register Names in the single Group
 	private CommandCache fRegisterValueCache; // Cache for holding the Register Values
@@ -559,7 +559,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 
 	// Wraps a list of registers in DMContexts.
 	private MIRegisterDMC[] makeRegisterDMCs(MIRegisterGroupDMC groupDmc, IFrameDMContext frameDmc, String[] regNames) {
-		List<MIRegisterDMC> regDmcList = new ArrayList<MIRegisters.MIRegisterDMC>(regNames.length);
+		List<MIRegisterDMC> regDmcList = new ArrayList<>(regNames.length);
 		int regNo = 0;
 		for (String regName : regNames) {
 			if (regName != null && !regName.isEmpty()) {

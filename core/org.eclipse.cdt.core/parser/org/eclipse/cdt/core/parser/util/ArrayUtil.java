@@ -707,7 +707,7 @@ public abstract class ArrayUtil {
 	public static <T> T[] removeDuplicates(T[] array) {
 		int k = 0;
 		if (array.length >= 16) {
-			HashSet<T> set = new HashSet<T>(array.length);
+			HashSet<T> set = new HashSet<>(array.length);
 			for (int i = 0; i < array.length; i++) {
 				T obj = array[i];
 				if (obj != null && set.add(obj)) {

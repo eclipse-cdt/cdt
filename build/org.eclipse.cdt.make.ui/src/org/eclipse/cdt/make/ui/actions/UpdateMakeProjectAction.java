@@ -72,7 +72,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 	public void run(IAction action) {
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
-			ArrayList<IProject> projects = new ArrayList<IProject>(elems.length);
+			ArrayList<IProject> projects = new ArrayList<>(elems.length);
 
 			for (int i = 0; i < elems.length; i++) {
 				Object elem = elems[i];
@@ -102,7 +102,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 
 	public static IProject[] getOldProjects() {
 		IProject[] project = MakeUIPlugin.getWorkspace().getRoot().getProjects();
-		Vector<IProject> result = new Vector<IProject>();
+		Vector<IProject> result = new Vector<>();
 		try {
 			for (int i = 0; i < project.length; i++) {
 				if (isOldProject(project[i])) {

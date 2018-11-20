@@ -145,7 +145,7 @@ public class CHNode implements IAdaptable {
 			fReferences = Collections.singletonList(info);
 			return;
 		case 1:
-			fReferences = new ArrayList<CHReferenceInfo>(fReferences);
+			fReferences = new ArrayList<>(fReferences);
 			break;
 		}
 		fReferences.add(info);

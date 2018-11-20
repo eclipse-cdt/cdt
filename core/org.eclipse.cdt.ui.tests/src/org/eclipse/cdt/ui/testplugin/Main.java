@@ -404,7 +404,7 @@ public class Main {
 	 * @exception Exception thrown if a problem occurs during launching
 	 */
 	public static void main(String argString) throws Exception {
-		Vector<Object> list = new Vector<Object>(5);
+		Vector<Object> list = new Vector<>(5);
 		for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();) //$NON-NLS-1$
 			list.addElement(tokens.nextElement());
 		main(list.toArray(new String[list.size()]));

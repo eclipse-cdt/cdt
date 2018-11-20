@@ -370,8 +370,8 @@ public abstract class ProfileManager extends Observable {
 		fProfileKey = profileKey;
 		fProfileVersionKey = profileVersionKey;
 
-		fProfiles = new HashMap<String, Profile>();
-		fProfilesByName = new ArrayList<Profile>();
+		fProfiles = new HashMap<>();
+		fProfilesByName = new ArrayList<>();
 
 		for (Object element : profiles) {
 			final Profile profile = (Profile) element;
@@ -396,7 +396,7 @@ public abstract class ProfileManager extends Observable {
 			Map<String, String> map = readFromPreferenceStore(context, profile);
 			if (map != null) {
 
-				List<String> allKeys = new ArrayList<String>();
+				List<String> allKeys = new ArrayList<>();
 				for (KeySet keySet : fKeySets) {
 					allKeys.addAll(keySet.getKeys());
 				}
@@ -488,12 +488,12 @@ public abstract class ProfileManager extends Observable {
 	 * @param context The project context
 	 */
 	public Map<String, String> readFromPreferenceStore(IScopeContext context, Profile workspaceProfile) {
-		final Map<String, String> profileOptions = new HashMap<String, String>();
+		final Map<String, String> profileOptions = new HashMap<>();
 		IEclipsePreferences uiPrefs = context.getNode(CUIPlugin.PLUGIN_ID);
 
 		int version = uiPrefs.getInt(fProfileVersionKey, fProfileVersioner.getFirstVersion());
 		if (version != fProfileVersioner.getCurrentVersion()) {
-			Map<String, String> allOptions = new HashMap<String, String>();
+			Map<String, String> allOptions = new HashMap<>();
 			for (KeySet keySet : fKeySets) {
 				addAll(context.getNode(keySet.getNodeName()), allOptions);
 			}

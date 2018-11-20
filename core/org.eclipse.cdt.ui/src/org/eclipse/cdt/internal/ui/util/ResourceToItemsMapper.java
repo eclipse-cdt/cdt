@@ -45,8 +45,8 @@ public class ResourceToItemsMapper {
 	private ContentViewer fContentViewer;
 
 	public ResourceToItemsMapper(ContentViewer viewer) {
-		fResourceToItem = new HashMap<IResource, Object>();
-		fReuseLists = new Stack<List<Item>>();
+		fResourceToItem = new HashMap<>();
+		fReuseLists = new Stack<>();
 
 		fContentViewer = viewer;
 	}
@@ -158,7 +158,7 @@ public class ResourceToItemsMapper {
 		if (!fReuseLists.isEmpty()) {
 			return fReuseLists.pop();
 		}
-		return new ArrayList<Item>(2);
+		return new ArrayList<>(2);
 	}
 
 	private void releaseList(List<Item> list) {

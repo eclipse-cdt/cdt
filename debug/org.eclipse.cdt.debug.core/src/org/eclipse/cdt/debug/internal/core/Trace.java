@@ -127,7 +127,7 @@ public class Trace {
 				if (bundle != null) {
 					BundleContext context = bundle.getBundleContext();
 					if (context != null) {
-						ServiceTracker<DebugOptions, DebugOptions> tracker = new ServiceTracker<DebugOptions, DebugOptions>(
+						ServiceTracker<DebugOptions, DebugOptions> tracker = new ServiceTracker<>(
 								context, DebugOptions.class.getName(), null);
 						try {
 							tracker.open();

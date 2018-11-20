@@ -147,7 +147,7 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 		}
 	}
 
-	private Map<String, String> data = new HashMap<String, String>(2);
+	private Map<String, String> data = new HashMap<>(2);
 
 	@Override
 	public Map<String, String> getPageData() {

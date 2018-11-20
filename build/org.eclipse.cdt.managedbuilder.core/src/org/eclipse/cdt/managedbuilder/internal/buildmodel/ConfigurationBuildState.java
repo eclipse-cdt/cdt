@@ -92,7 +92,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 
 		if (fPathToStateProps == null) {
 			fPathToStateProps = new Properties();
-			fStateToPathListMap = new HashMap<Integer, Set<String>>();
+			fStateToPathListMap = new HashMap<>();
 		}
 		String strState = stateToString(Integer.valueOf(state));
 		Integer iState = stateToInt(strState);
@@ -110,7 +110,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 			fPathToStateProps.setProperty(str, strState);
 			Set<String> set = fStateToPathListMap.get(iState);
 			if (set == null) {
-				set = new HashSet<String>();
+				set = new HashSet<>();
 				fStateToPathListMap.put(iState, set);
 			}
 			set.add(str);
@@ -130,13 +130,13 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 	}
 
 	private void load(Properties props) {
-		HashMap<Integer, Set<String>> map = new HashMap<Integer, Set<String>>();
+		HashMap<Integer, Set<String>> map = new HashMap<>();
 		for (@SuppressWarnings("rawtypes")
 		Entry entry : props.entrySet()) {
 			Integer i = stateToInt((String) entry.getValue());
 			Set<String> list = map.get(i);
 			if (list == null) {
-				list = new HashSet<String>();
+				list = new HashSet<>();
 				map.put(i, list);
 			}
 			list.add((String) entry.getKey());

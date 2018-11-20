@@ -123,7 +123,7 @@ public class MIRunControlEventProcessor_7_0 implements IEventProcessor {
 	@Override
 	public void eventReceived(Object output) {
 		for (MIOOBRecord oobr : ((MIOutput) output).getMIOOBRecords()) {
-			List<MIEvent<?>> events = new LinkedList<MIEvent<?>>();
+			List<MIEvent<?>> events = new LinkedList<>();
 			if (oobr instanceof MIExecAsyncOutput) {
 				MIExecAsyncOutput exec = (MIExecAsyncOutput) oobr;
 				// Change of state.

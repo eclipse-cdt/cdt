@@ -117,7 +117,7 @@ public class FileTransferDropTargetListener extends AbstractContainerAreaDropAda
 	 */
 	private static IMakeTarget[] prepareMakeTargetsFromFiles(String[] filenames, IContainer dropContainer,
 			Shell shell) {
-		List<IMakeTarget> makeTargetsList = new ArrayList<IMakeTarget>(filenames.length);
+		List<IMakeTarget> makeTargetsList = new ArrayList<>(filenames.length);
 
 		int errorCount = 0;
 		int nonFileCount = 0;

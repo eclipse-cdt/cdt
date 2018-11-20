@@ -116,7 +116,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 	private static final String CLEAR_STR = Messages.LanguageSettingsProviderTab_Clear;
 
-	private Map<String, List<ILanguageSettingsProvider>> initialProvidersMap = new HashMap<String, List<ILanguageSettingsProvider>>();
+	private Map<String, List<ILanguageSettingsProvider>> initialProvidersMap = new HashMap<>();
 
 	/**
 	 * Label provider for language settings providers displayed by this tab.
@@ -205,7 +205,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				}
 
 				// convert to modifiable list
-				entriesList = new ArrayList<ICLanguageSettingEntry>(entriesList);
+				entriesList = new ArrayList<>(entriesList);
 
 				if (builtInCheckBox.getSelection() == false) {
 					for (Iterator<ICLanguageSettingEntry> iter = entriesList.iterator(); iter.hasNext();) {
@@ -771,7 +771,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		if (entries == null) {
 			entries = getSettingEntriesUpResourceTree(provider);
 		}
-		entries = new ArrayList<ICLanguageSettingEntry>(entries);
+		entries = new ArrayList<>(entries);
 		return entries;
 	}
 
@@ -802,7 +802,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		List<ILanguageSettingsProvider> initialProviders = initialProvidersMap.get(cfgDescription.getId());
 		if (initialProviders.contains(provider)) {
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(
+			List<ILanguageSettingsProvider> providers = new ArrayList<>(
 					((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
 			int pos = providers.indexOf(provider);
 			if (pos >= 0) {
@@ -883,7 +883,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	private void clearProvider(ILanguageSettingsProvider provider) {
 		if (provider != null) {
 			String providerId = provider.getId();
-			List<ICLanguageSettingEntry> empty = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> empty = new ArrayList<>();
 			saveEntries(provider, empty);
 			updateTreeForEntries(providerId, null);
 		}
@@ -1002,7 +1002,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 * Get list of providers to display in the settings entry tree.
 	 */
 	private List<ILanguageSettingsProvider> getProviders(String languageSettingId) {
-		List<ILanguageSettingsProvider> itemsList = new LinkedList<ILanguageSettingsProvider>();
+		List<ILanguageSettingsProvider> itemsList = new LinkedList<>();
 		IResource rc = getResource();
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		if (rc != null && cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
@@ -1083,7 +1083,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 		// Use a TreeMap to sort the languages by name.
 		// For each name we keep a list of ids in case of name overlap.
-		Map<String, List<String>> map = new TreeMap<String, List<String>>();
+		Map<String, List<String>> map = new TreeMap<>();
 		for (String langId : languageIds) {
 			ILanguage language = LanguageManager.getInstance().getLanguage(langId);
 
@@ -1093,7 +1093,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				continue;
 			List<String> langIds = map.get(langName);
 			if (langIds == null) {
-				langIds = new ArrayList<String>();
+				langIds = new ArrayList<>();
 				map.put(langName, langIds);
 			}
 			langIds.add(langId);
@@ -1190,7 +1190,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			IResource rc = getResource();
 			List<ILanguageSettingsProvider> oldProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
 					.getLanguageSettingProviders();
-			List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>(
+			List<ILanguageSettingsProvider> newProviders = new ArrayList<>(
 					oldProviders.size());
 
 			// clear entries for a given resource for all languages where applicable

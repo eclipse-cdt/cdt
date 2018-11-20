@@ -223,7 +223,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 */
 	public Element serializeAttributes(Element parentElement) {
 		// Keeps pairs: key, value. See JavaDoc XmlUtil.appendElement(Node, String, String[]).
-		List<String> attributes = new ArrayList<String>();
+		List<String> attributes = new ArrayList<>();
 
 		attributes.add(ATTR_ID);
 		attributes.add(getId());
@@ -346,7 +346,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 */
 	private void loadLanguageScopeElement(Node parentNode) {
 		if (languageScope == null) {
-			languageScope = new ArrayList<String>();
+			languageScope = new ArrayList<>();
 		}
 		String id = XmlUtil.determineAttributeValue(parentNode, ATTR_ID);
 		languageScope.add(id);
@@ -435,8 +435,8 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	private LanguageSettingsSerializableProvider cloneShallowInternal() throws CloneNotSupportedException {
 		LanguageSettingsSerializableProvider clone = (LanguageSettingsSerializableProvider) super.clone();
 		if (languageScope != null)
-			clone.languageScope = new ArrayList<String>(languageScope);
-		clone.properties = new HashMap<String, String>(properties);
+			clone.languageScope = new ArrayList<>(languageScope);
+		clone.properties = new HashMap<>(properties);
 
 		clone.fStorage = new LanguageSettingsSerializableStorage();
 		return clone;

@@ -55,7 +55,7 @@ public abstract class MultiOperation extends CModelOperation {
 	 * values are the corresponding insertion point.
 	 * @see #processElements()
 	 */
-	protected Map<ICElement, ICElement> fInsertBeforeElements = new HashMap<ICElement, ICElement>(1);
+	protected Map<ICElement, ICElement> fInsertBeforeElements = new HashMap<>(1);
 
 	/**
 	 * This table presents the data in <code>fRenamingList</code> in a more
@@ -68,7 +68,7 @@ public abstract class MultiOperation extends CModelOperation {
 	 */
 	protected MultiOperation(ICElement[] elementsToProcess, ICElement[] parentElements, boolean force) {
 		super(elementsToProcess, parentElements, force);
-		fParentElements = new HashMap<ICElement, ICElement>(elementsToProcess.length);
+		fParentElements = new HashMap<>(elementsToProcess.length);
 		if (elementsToProcess.length == parentElements.length) {
 			for (int i = 0; i < elementsToProcess.length; i++) {
 				fParentElements.put(elementsToProcess[i], parentElements[i]);
@@ -142,7 +142,7 @@ public abstract class MultiOperation extends CModelOperation {
 	 */
 	private void initializeRenamings() {
 		if (fRenamingsList != null && fRenamingsList.length == fElementsToProcess.length) {
-			fRenamings = new HashMap<ICElement, String>(fRenamingsList.length);
+			fRenamings = new HashMap<>(fRenamingsList.length);
 			for (int i = 0; i < fRenamingsList.length; i++) {
 				if (fRenamingsList[i] != null) {
 					fRenamings.put(fElementsToProcess[i], fRenamingsList[i]);

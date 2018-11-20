@@ -111,7 +111,7 @@ public class CygpathTranslator {
 			useCygwinFromPath = Cygwin.isAvailable(envPath);
 		}
 
-		List<String> translatedIncludePaths = new ArrayList<String>();
+		List<String> translatedIncludePaths = new ArrayList<>();
 		for (Iterator<String> i = sumIncludes.iterator(); i.hasNext();) {
 			String includePath = i.next();
 			IPath realPath = new Path(includePath);

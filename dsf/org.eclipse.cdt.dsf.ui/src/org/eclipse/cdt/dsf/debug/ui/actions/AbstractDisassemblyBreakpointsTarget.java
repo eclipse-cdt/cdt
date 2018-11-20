@@ -286,7 +286,7 @@ public abstract class AbstractDisassemblyBreakpointsTarget
 	}
 
 	private IBreakpoint[] getBreakpointsAtLine(IDisassemblyPart part, int line) {
-		List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>();
+		List<IBreakpoint> breakpoints = new ArrayList<>();
 		IAnnotationModel annotationModel = part.getTextViewer().getAnnotationModel();
 		IDocument document = part.getTextViewer().getDocument();
 		if (annotationModel != null) {

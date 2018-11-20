@@ -102,7 +102,7 @@ public class CProjectConverterDesciptor {
 			if (supportedIds != null) {
 				IProjectDescription eDes = project.getDescription();
 				String natures[] = eDes.getNatureIds();
-				Set<String> natureSet = new HashSet<String>(Arrays.asList(natures));
+				Set<String> natureSet = new HashSet<>(Arrays.asList(natures));
 				natureSet.removeAll(Arrays.asList(supportedIds));
 				if (natureSet.size() == natures.length)
 					return false;

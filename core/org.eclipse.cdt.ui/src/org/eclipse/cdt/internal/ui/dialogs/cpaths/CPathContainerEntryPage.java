@@ -69,7 +69,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 		ContainersAdapter adapter = new ContainersAdapter();
 
-		fContainersList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
+		fContainersList = new TreeListDialogField<>(adapter, buttonLabels, new CPElementLabelProvider());
 		fContainersList.setDialogFieldListener(adapter);
 		fContainersList.setLabelText(CPathEntryMessages.ContainerEntryPage_libraries_label);
 
@@ -89,7 +89,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 	private void updateLibrariesList() {
 		List<CPElement> cpelements = fCPathList.getElements();
-		List<CPElement> libelements = new ArrayList<CPElement>(cpelements.size());
+		List<CPElement> libelements = new ArrayList<>(cpelements.size());
 
 		int nElements = cpelements.size();
 		for (int i = 0; i < nElements; i++) {
@@ -220,7 +220,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 			int nElementsChosen = containers.length;
 			// remove duplicates
 			List<CPElement> cplist = fContainersList.getElements();
-			List<CPElement> elementsToAdd = new ArrayList<CPElement>(nElementsChosen);
+			List<CPElement> elementsToAdd = new ArrayList<>(nElementsChosen);
 
 			for (int i = 0; i < nElementsChosen; i++) {
 				CPElement curr = containers[i];

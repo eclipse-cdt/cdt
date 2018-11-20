@@ -74,8 +74,8 @@ public class QuickFixCreateParameter extends AbstractAstRewriteQuickFix {
 			if (declarations.length == 0) {
 				return;
 			}
-			HashMap<ITranslationUnit, IASTTranslationUnit> cachedASTs = new HashMap<ITranslationUnit, IASTTranslationUnit>();
-			HashMap<ITranslationUnit, ASTRewrite> cachedRewrites = new HashMap<ITranslationUnit, ASTRewrite>();
+			HashMap<ITranslationUnit, IASTTranslationUnit> cachedASTs = new HashMap<>();
+			HashMap<ITranslationUnit, ASTRewrite> cachedRewrites = new HashMap<>();
 			for (IIndexName iname : declarations) {
 				ITranslationUnit declTU = CxxAstUtils.getTranslationUnitFromIndexName(iname);
 				if (declTU == null) {

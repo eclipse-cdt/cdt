@@ -49,8 +49,8 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 
 	public DiscoveredPathInfo(IProject project) {
 		this.project = project;
-		discoveredPaths = new LinkedHashMap<String, Boolean>();
-		discoveredSymbols = new LinkedHashMap<String, SymbolEntry>();
+		discoveredPaths = new LinkedHashMap<>();
+		discoveredSymbols = new LinkedHashMap<>();
 	}
 
 	@Override
@@ -77,12 +77,12 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 
 	@Override
 	public LinkedHashMap<String, Boolean> getIncludeMap() {
-		return new LinkedHashMap<String, Boolean>(discoveredPaths);
+		return new LinkedHashMap<>(discoveredPaths);
 	}
 
 	@Override
 	public synchronized void setIncludeMap(LinkedHashMap<String, Boolean> paths) {
-		discoveredPaths = SafeStringInterner.safeIntern(new LinkedHashMap<String, Boolean>(paths));
+		discoveredPaths = SafeStringInterner.safeIntern(new LinkedHashMap<>(paths));
 		activePaths = null;
 	}
 
@@ -104,12 +104,12 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 
 	@Override
 	public LinkedHashMap<String, SymbolEntry> getSymbolMap() {
-		return new LinkedHashMap<String, SymbolEntry>(discoveredSymbols);
+		return new LinkedHashMap<>(discoveredSymbols);
 	}
 
 	@Override
 	public synchronized void setSymbolMap(LinkedHashMap<String, SymbolEntry> symbols) {
-		discoveredSymbols = SafeStringInterner.safeIntern(new LinkedHashMap<String, SymbolEntry>(symbols));
+		discoveredSymbols = SafeStringInterner.safeIntern(new LinkedHashMap<>(symbols));
 		activeSymbols = null;
 	}
 
@@ -125,14 +125,14 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 
 	private List<Path> getActivePathList() {
 		if (activePaths == null) {
-			activePaths = new ArrayList<Path>();
+			activePaths = new ArrayList<>();
 		}
 		return activePaths;
 	}
 
 	private Map<String, String> getActiveSymbolsMap() {
 		if (activeSymbols == null) {
-			activeSymbols = new HashMap<String, String>();
+			activeSymbols = new HashMap<>();
 		}
 		return activeSymbols;
 	}

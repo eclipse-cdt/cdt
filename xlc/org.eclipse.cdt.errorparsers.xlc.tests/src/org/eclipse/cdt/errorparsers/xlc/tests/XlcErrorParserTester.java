@@ -59,7 +59,7 @@ public class XlcErrorParserTester {
 		private String message;
 	}
 
-	private List<MarkerData> markerDataList = new ArrayList<MarkerData>();
+	private List<MarkerData> markerDataList = new ArrayList<>();
 
 	/*
 	 * Dummy class implementing IMarkerGenerator lets get through testing

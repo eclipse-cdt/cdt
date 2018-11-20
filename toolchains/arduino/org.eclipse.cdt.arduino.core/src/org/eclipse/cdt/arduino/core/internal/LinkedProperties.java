@@ -20,7 +20,7 @@ public class LinkedProperties extends Properties {
 
 	private static final long serialVersionUID = 1L;
 
-	private final HashSet<Object> keys = new LinkedHashSet<Object>();
+	private final HashSet<Object> keys = new LinkedHashSet<>();
 
 	public Iterable<Object> orderedKeys() {
 		return Collections.list(keys());

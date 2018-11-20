@@ -192,8 +192,8 @@ public class HideMethodRefactoring extends CRefactoring {
 			IIndexBinding methodBinding = index.adaptBinding(methodName.resolveBinding());
 			if (methodBinding == null)
 				return null;
-			List<IASTName> references = new ArrayList<IASTName>();
-			Set<String> searchedFiles = new HashSet<String>();
+			List<IASTName> references = new ArrayList<>();
+			Set<String> searchedFiles = new HashSet<>();
 			IEditorPart[] dirtyEditors = EditorUtility.getDirtyEditors(true);
 			SubMonitor loopProgress = sm.newChild(3).setWorkRemaining(dirtyEditors.length);
 			for (IEditorPart editor : dirtyEditors) {
@@ -257,7 +257,7 @@ public class HideMethodRefactoring extends CRefactoring {
 	}
 
 	private List<IASTName> findAllMarkedNames() throws OperationCanceledException, CoreException {
-		final ArrayList<IASTName> namesVector = new ArrayList<IASTName>();
+		final ArrayList<IASTName> namesVector = new ArrayList<>();
 
 		IASTTranslationUnit ast = getAST(tu, null);
 		ast.accept(new ASTVisitor() {
@@ -288,7 +288,7 @@ public class HideMethodRefactoring extends CRefactoring {
 	}
 
 	private Map<String, String> getArgumentMap() {
-		Map<String, String> arguments = new HashMap<String, String>();
+		Map<String, String> arguments = new HashMap<>();
 		arguments.put(CRefactoringDescriptor.FILE_NAME, tu.getLocationURI().toString());
 		arguments.put(CRefactoringDescriptor.SELECTION, selectedRegion.getOffset() + "," + selectedRegion.getLength()); //$NON-NLS-1$
 		return arguments;

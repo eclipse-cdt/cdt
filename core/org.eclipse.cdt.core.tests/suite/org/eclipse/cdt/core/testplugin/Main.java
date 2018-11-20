@@ -414,7 +414,7 @@ public class Main {
 	 * @exception Exception thrown if a problem occurs during launching
 	 */
 	public static void main(String argString) throws Exception {
-		List<String> list = new ArrayList<String>(5);
+		List<String> list = new ArrayList<>(5);
 		for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();)
 			list.add((String) tokens.nextElement());
 		main(list.toArray(new String[list.size()]));

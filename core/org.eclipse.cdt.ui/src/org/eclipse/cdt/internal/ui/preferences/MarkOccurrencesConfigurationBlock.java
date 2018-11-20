@@ -46,7 +46,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock {
 	private final OverlayPreferenceStore fStore;
 
-	private final Map<Object, String> fCheckBoxes = new HashMap<Object, String>();
+	private final Map<Object, String> fCheckBoxes = new HashMap<>();
 	private final SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -64,7 +64,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 	 *
 	 * @see #createDependency(Button, String, Control)
 	 */
-	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<Object>();
+	private final ArrayList<Object> fMasterSlaveListeners = new ArrayList<>();
 
 	private StatusInfo fStatus;
 
@@ -77,7 +77,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				PreferenceConstants.EDITOR_MARK_OCCURRENCES));

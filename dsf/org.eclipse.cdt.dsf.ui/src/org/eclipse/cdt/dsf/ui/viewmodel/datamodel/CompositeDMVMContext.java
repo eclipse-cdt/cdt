@@ -54,7 +54,7 @@ public class CompositeDMVMContext extends CompositeDMContext {
 	 */
 	public CompositeDMVMContext(Object viewerInputObject, TreePath treePath) {
 		super(EMPTY_CONTEXTS_ARRAY);
-		List<IDMContext> parentsList = new ArrayList<IDMContext>(treePath.getSegmentCount() + 1);
+		List<IDMContext> parentsList = new ArrayList<>(treePath.getSegmentCount() + 1);
 		for (int i = treePath.getSegmentCount() - 1; i >= 0; i--) {
 			if (treePath.getSegment(i) instanceof IDMVMContext) {
 				parentsList.add(((IDMVMContext) treePath.getSegment(i)).getDMContext());

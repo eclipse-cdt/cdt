@@ -95,14 +95,14 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 	private boolean fIsModified;
 	private HashMap<QualifiedName, Object> fSessionPropertiesMap;
 	private HashMap<String, CConfigExtensionReference[]> fExtMap;
-	private HashMap<CConfigExtensionReference, CExtensionInfo> fExtInfoMap = new HashMap<CConfigExtensionReference, CExtensionInfo>();
+	private HashMap<CConfigExtensionReference, CExtensionInfo> fExtInfoMap = new HashMap<>();
 	private String fOwnerId;
 	private COwner fOwner;
 	//	private CConfigBasedDescriptor fDescriptor;
 	//	private Map fExternalSettingsProviderMap;
 
 	private List<ILanguageSettingsProvider> fLanguageSettingsProviders = null;
-	private LinkedHashMap<String /*provider*/, LanguageSettingsStorage> lspPersistedState = new LinkedHashMap<String, LanguageSettingsStorage>();
+	private LinkedHashMap<String /*provider*/, LanguageSettingsStorage> lspPersistedState = new LinkedHashMap<>();
 	private String[] defaultLanguageSettingsProvidersIds = null;
 
 	private class DeltaSet {
@@ -466,7 +466,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 			return CfgExportSettingContainerFactory.getReferenceMap(fCfg);
 		if (fRefMapCache == null)
 			fRefMapCache = CfgExportSettingContainerFactory.getReferenceMap(fCfg);
-		return new LinkedHashMap<String, String>(fRefMapCache);
+		return new LinkedHashMap<>(fRefMapCache);
 		//		if(fRefInfoMap == null || fRefInfoMap.size() == 0)
 		//			return new HashMap(0);
 		//
@@ -582,7 +582,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 
 	private Map<QualifiedName, Object> getSessionPropertiesMap(boolean create) {
 		if (fSessionPropertiesMap == null && create)
-			fSessionPropertiesMap = new HashMap<QualifiedName, Object>();
+			fSessionPropertiesMap = new HashMap<>();
 		return fSessionPropertiesMap;
 	}
 
@@ -605,7 +605,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 	//extension reference info
 	private HashMap<String, CConfigExtensionReference[]> getExtMap() {
 		if (fExtMap == null)
-			fExtMap = new HashMap<String, CConfigExtensionReference[]>();
+			fExtMap = new HashMap<>();
 		return fExtMap;
 	}
 
@@ -958,26 +958,26 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 		if (refs == null || refs.length == 0) {
 			if (extIds == null || extIds.length == 0)
 				return null;
-			return new DeltaSet(null, new HashSet<String>(Arrays.asList(extIds)));
+			return new DeltaSet(null, new HashSet<>(Arrays.asList(extIds)));
 		} else if (extIds == null || extIds.length == 0) {
 			Map<String, ICConfigExtensionReference> map = createRefMap(refs);
-			return new DeltaSet(new HashSet<ICConfigExtensionReference>(map.values()), null);
+			return new DeltaSet(new HashSet<>(map.values()), null);
 		}
 
-		Set<String> idSet = new HashSet<String>(Arrays.asList(extIds));
-		Set<String> idSetCopy = new HashSet<String>(idSet);
+		Set<String> idSet = new HashSet<>(Arrays.asList(extIds));
+		Set<String> idSetCopy = new HashSet<>(idSet);
 		Map<String, ICConfigExtensionReference> refsMap = createRefMap(refs);
 
 		idSet.removeAll(refsMap.keySet());
 		refsMap.keySet().removeAll(idSetCopy);
 
-		Set<ICConfigExtensionReference> extSet = new HashSet<ICConfigExtensionReference>(refsMap.values());
+		Set<ICConfigExtensionReference> extSet = new HashSet<>(refsMap.values());
 
 		return new DeltaSet(extSet, idSet);
 	}
 
 	private Map<String, ICConfigExtensionReference> createRefMap(ICConfigExtensionReference refs[]) {
-		Map<String, ICConfigExtensionReference> refsMap = new HashMap<String, ICConfigExtensionReference>(refs.length);
+		Map<String, ICConfigExtensionReference> refsMap = new HashMap<>(refs.length);
 		for (ICConfigExtensionReference ref : refs) {
 			refsMap.put(ref.getID(), ref);
 		}
@@ -1030,8 +1030,8 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 	 */
 	@Override
 	public void setLanguageSettingProviders(List<? extends ILanguageSettingsProvider> providers) {
-		fLanguageSettingsProviders = new ArrayList<ILanguageSettingsProvider>(0);
-		Set<String> ids = new HashSet<String>();
+		fLanguageSettingsProviders = new ArrayList<>(0);
+		Set<String> ids = new HashSet<>();
 		for (ILanguageSettingsProvider provider : providers) {
 			String id = provider.getId();
 			if (provider == LanguageSettingsProvidersSerializer.getRawWorkspaceProvider(id)) {
@@ -1052,7 +1052,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 	@Override
 	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
 		List<ILanguageSettingsProvider> providers = isLanguageSettingProvidersLoaded() ? fLanguageSettingsProviders
-				: new ArrayList<ILanguageSettingsProvider>(0);
+				: new ArrayList<>(0);
 		return Collections.unmodifiableList(providers);
 	}
 
@@ -1082,7 +1082,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 	 */
 	public LanguageSettingsDelta dropDelta() {
 		LanguageSettingsDelta languageSettingsDelta = null;
-		LinkedHashMap<String, LanguageSettingsStorage> newState = new LinkedHashMap<String, LanguageSettingsStorage>();
+		LinkedHashMap<String, LanguageSettingsStorage> newState = new LinkedHashMap<>();
 		for (ILanguageSettingsProvider provider : fLanguageSettingsProviders) {
 			if (LanguageSettingsManager.isWorkspaceProvider(provider)) {
 				provider = LanguageSettingsManager.getRawProvider(provider);

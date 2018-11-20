@@ -115,7 +115,7 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 				@SuppressWarnings({ "cast", "unchecked" })
 				@Override
 				protected void handleSuccess() {
-					Map<IAdaptable, List<IBreakpoint>> bpsLists = new HashMap<IAdaptable, List<IBreakpoint>>();
+					Map<IAdaptable, List<IBreakpoint>> bpsLists = new HashMap<>();
 					for (IBreakpoint bp : getData()) {
 						IAdaptable[] bpCategories = fOrganizerVMNode.getOrganizer().getCategories(bp);
 						if (bpCategories == null || bpCategories.length == 0) {
@@ -125,7 +125,7 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 						for (IAdaptable category : bpCategories) {
 							List<IBreakpoint> categoryBPs = bpsLists.get(category);
 							if (categoryBPs == null) {
-								categoryBPs = new ArrayList<IBreakpoint>();
+								categoryBPs = new ArrayList<>();
 								bpsLists.put(category, categoryBPs);
 							}
 							categoryBPs.add(bp);
@@ -144,7 +144,7 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 						}
 					}
 
-					List<BreakpointOrganizerVMContext> vmcs = new ArrayList<BreakpointOrganizerVMContext>(
+					List<BreakpointOrganizerVMContext> vmcs = new ArrayList<>(
 							bpsLists.size());
 					for (Map.Entry<IAdaptable, List<IBreakpoint>> entry : bpsLists.entrySet()) {
 						List<IBreakpoint> bpsList = entry.getValue();
@@ -165,7 +165,7 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 		}
 	};
 
-	private final Map<TreePath, ContainerBreakpointsCache> fContainerBreakpointsCacheMap = new HashMap<TreePath, ContainerBreakpointsCache>();
+	private final Map<TreePath, ContainerBreakpointsCache> fContainerBreakpointsCacheMap = new HashMap<>();
 
 	private DataCache<IBreakpoint[]> fFilteredBreakpointsCache = new DataCache<IBreakpoint[]>(getExecutor()) {
 		@Override

@@ -186,7 +186,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	 * We use this set for such things as not removing breakpoints
 	 * because we know the process will be restarted.
 	 */
-	private Set<IContainerDMContext> fProcRestarting = new HashSet<IContainerDMContext>();
+	private Set<IContainerDMContext> fProcRestarting = new HashSet<>();
 
 	/**
 	 * Indicates that we are currently visualizing trace data.
@@ -810,7 +810,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	 * @since 4.6
 	 */
 	protected void canDetachFromProcesses(IDMContext[] dmcs, boolean all, DataRequestMonitor<Boolean> rm) {
-		Set<IMIContainerDMContext> contDmcs = new HashSet<IMIContainerDMContext>();
+		Set<IMIContainerDMContext> contDmcs = new HashSet<>();
 		for (IDMContext c : dmcs) {
 			IMIContainerDMContext contDmc = DMContexts.getAncestorOfType(c, IMIContainerDMContext.class);
 			if (contDmc != null) {
@@ -832,7 +832,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	 */
 	@Override
 	public void detachDebuggerFromProcesses(IDMContext[] dmcs, final RequestMonitor rm) {
-		Set<IMIContainerDMContext> contDmcs = new HashSet<IMIContainerDMContext>();
+		Set<IMIContainerDMContext> contDmcs = new HashSet<>();
 		for (IDMContext c : dmcs) {
 			IMIContainerDMContext contDmc = DMContexts.getAncestorOfType(c, IMIContainerDMContext.class);
 			if (contDmc != null) {

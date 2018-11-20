@@ -64,10 +64,10 @@ public class RewriteTester extends TestSuite {
 
 	private static ArrayList<RewriteBaseTest> createTests(BufferedReader inputReader) throws Exception {
 		String line;
-		List<TestSourceFile> files = new ArrayList<TestSourceFile>();
+		List<TestSourceFile> files = new ArrayList<>();
 		TestSourceFile actFile = null;
 		MatcherState matcherState = MatcherState.skip;
-		ArrayList<RewriteBaseTest> testCases = new ArrayList<RewriteBaseTest>();
+		ArrayList<RewriteBaseTest> testCases = new ArrayList<>();
 		String testName = null;
 		String className = null;
 		boolean bevorFirstTest = true;
@@ -77,7 +77,7 @@ public class RewriteTester extends TestSuite {
 				if (!bevorFirstTest) {
 					RewriteBaseTest test = createTestClass(className, testName, files);
 					testCases.add(test);
-					files = new ArrayList<TestSourceFile>();
+					files = new ArrayList<>();
 					className = null;
 					testName = null;
 				}

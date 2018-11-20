@@ -42,7 +42,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 	class ExpansionJob extends UIJob {
 
 		private Object element;
-		private List<Object> parents = new ArrayList<Object>(); // top down
+		private List<Object> parents = new ArrayList<>(); // top down
 
 		/**
 		 * Constucts a job to expand the given element.
@@ -111,7 +111,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 
 		private IStructuredSelection selection;
 		private Object first;
-		private List<Object> parents = new ArrayList<Object>(); // top down
+		private List<Object> parents = new ArrayList<>(); // top down
 
 		/**
 		 * Constucts a job to select the given element.

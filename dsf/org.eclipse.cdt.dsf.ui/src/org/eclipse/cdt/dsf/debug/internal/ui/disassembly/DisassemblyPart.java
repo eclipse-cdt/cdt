@@ -290,19 +290,19 @@ public abstract class DisassemblyPart extends WorkbenchPart
 	private DisassemblyIPAnnotation fPCAnnotation;
 	private DisassemblyIPAnnotation fSecondaryPCAnnotation;
 	private boolean fPCAnnotationUpdatePending;
-	private ArrayList<BigInteger> fPendingPCUpdates = new ArrayList<BigInteger>(5);
+	private ArrayList<BigInteger> fPendingPCUpdates = new ArrayList<>(5);
 	private Position fScrollPos;
 	private int fScrollLine;
 	private Position fFocusPos;
 	private BigInteger fFrameAddress = PC_UNKNOWN;
-	protected Map<String, Action> fGlobalActions = new HashMap<String, Action>();
-	private List<Action> fSelectionActions = new ArrayList<Action>();
-	private List<AbstractDisassemblyAction> fStateDependentActions = new ArrayList<AbstractDisassemblyAction>();
+	protected Map<String, Action> fGlobalActions = new HashMap<>();
+	private List<Action> fSelectionActions = new ArrayList<>();
+	private List<AbstractDisassemblyAction> fStateDependentActions = new ArrayList<>();
 	private boolean fShowSource;
 	private boolean fShowSymbols;
-	private Map<String, Object> fFile2Storage = new HashMap<String, Object>();
+	private Map<String, Object> fFile2Storage = new HashMap<>();
 	private boolean fShowDisassembly = true;
-	private LinkedList<AddressRangePosition> fPCHistory = new LinkedList<AddressRangePosition>();
+	private LinkedList<AddressRangePosition> fPCHistory = new LinkedList<>();
 	private int fPCHistorySizeMax = 4;
 	private boolean fGotoFramePending;
 
@@ -316,7 +316,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 
 	private String fPCAnnotationColorKey;
 
-	private ArrayList<Runnable> fRunnableQueue = new ArrayList<Runnable>();
+	private ArrayList<Runnable> fRunnableQueue = new ArrayList<>();
 
 	protected IPartListener2 fPartListener = new IPartListener2() {
 		@Override
@@ -1397,7 +1397,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 	 */
 	private void registerWithHandlerService(IAction action) {
 		if (fHandlerActivations == null) {
-			fHandlerActivations = new ArrayList<IHandlerActivation>(5);
+			fHandlerActivations = new ArrayList<>(5);
 		}
 		IHandlerService handlerService = getSite().getService(IHandlerService.class);
 		fHandlerActivations
@@ -1839,7 +1839,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		fAddressSize = addressSize;
 		if (addressSize < oldAddressSize) {
 			fDocument.deleteDisassemblyRange(fEndAddress, oldEndAddress, true, true);
-			List<AddressRangePosition> toRemove = new ArrayList<AddressRangePosition>();
+			List<AddressRangePosition> toRemove = new ArrayList<>();
 			for (AddressRangePosition position : fDocument.getInvalidAddressRanges()) {
 				if (position.fAddressOffset.compareTo(fEndAddress) >= 0) {
 					try {
@@ -2248,7 +2248,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 				int offset = lineRegion.getOffset();
 				int length = lineRegion.getLength();
 				Iterator<Annotation> it = bpModel.getAnnotationIterator(offset, length, true, true);
-				List<IBreakpoint> bpList = new ArrayList<IBreakpoint>(5);
+				List<IBreakpoint> bpList = new ArrayList<>(5);
 				final IBreakpointManager bpMgr = DebugPlugin.getDefault().getBreakpointManager();
 				while (it.hasNext()) {
 					final SimpleMarkerAnnotation annotation = (SimpleMarkerAnnotation) it.next();
@@ -2673,7 +2673,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 			fUpdatePending = true;
 			lockScroller();
 			try {
-				ArrayList<Runnable> copy = new ArrayList<Runnable>(fRunnableQueue);
+				ArrayList<Runnable> copy = new ArrayList<>(fRunnableQueue);
 				fRunnableQueue.clear();
 				for (Iterator<Runnable> iter = copy.iterator(); iter.hasNext();) {
 					if (updateCount != fUpdateCount) {
@@ -2923,7 +2923,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		} catch (BadLocationException e) {
 			return;
 		}
-		ArrayList<StyleRange> styleRanges = new ArrayList<StyleRange>();
+		ArrayList<StyleRange> styleRanges = new ArrayList<>();
 		while (it.hasNext()) {
 			AddressRangePosition pos = (AddressRangePosition) it.next();
 			if (pos.offset >= endOffset) {

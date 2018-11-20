@@ -39,7 +39,7 @@ public class EnvironmentReader {
 			} else {
 				envVarsNormalized = envVars;
 			}
-			rawVars = new ArrayList<String>();
+			rawVars = new ArrayList<>();
 			Map<String, String> envMap = System.getenv();
 			for (String var : envMap.keySet()) {
 				String value = envMap.get(var);

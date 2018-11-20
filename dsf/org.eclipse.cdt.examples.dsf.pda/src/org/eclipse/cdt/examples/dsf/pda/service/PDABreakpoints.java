@@ -120,7 +120,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints {
 	private PDACommandControl fCommandControl;
 
 	// Breakpoints currently installed
-	private Set<IBreakpointDMContext> fBreakpoints = new HashSet<IBreakpointDMContext>();
+	private Set<IBreakpointDMContext> fBreakpoints = new HashSet<>();
 
 	/**
 	 * The service constructor

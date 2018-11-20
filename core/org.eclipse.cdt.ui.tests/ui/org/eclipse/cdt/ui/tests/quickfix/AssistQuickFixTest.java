@@ -149,7 +149,7 @@ public class AssistQuickFixTest extends BaseUITestCase {
 
 	private static final List<ICCompletionProposal> collectCorrections(CorrectionContext context,
 			Class<?>[] filteredTypes) throws CoreException {
-		List<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
+		List<ICCompletionProposal> proposals = new ArrayList<>();
 		IStatus status = CCorrectionProcessor.collectCorrections(context, new IProblemLocation[0], proposals);
 		assertStatusOk(status);
 
@@ -183,7 +183,7 @@ public class AssistQuickFixTest extends BaseUITestCase {
 
 	private static final ArrayList<ICCompletionProposal> collectAssists(CorrectionContext context,
 			Class<?>[] filteredTypes) throws CoreException {
-		ArrayList<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
+		ArrayList<ICCompletionProposal> proposals = new ArrayList<>();
 		IStatus status = CCorrectionProcessor.collectAssists(context, new IProblemLocation[0], proposals);
 		assertStatusOk(status);
 

@@ -136,7 +136,7 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 	}
 
 	private void initializeView() {
-		List<ICProject> list = new ArrayList<ICProject>();
+		List<ICProject> list = new ArrayList<>();
 		List<IPathEntry> current;
 		try {
 			current = Arrays.asList(fCProject.getRawPathEntries());

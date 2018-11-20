@@ -54,7 +54,7 @@ public class NumberFormatsPropertyTester extends PropertyTester {
 	private static final String AVAILABLE = "isNumberFormatAvailable"; //$NON-NLS-1$
 	private static final String ACTIVE = "isNumberFormatActive"; //$NON-NLS-1$
 
-	private static final List<String> AVAILABLE_FORMATS = new ArrayList<String>();
+	private static final List<String> AVAILABLE_FORMATS = new ArrayList<>();
 	static {
 		AVAILABLE_FORMATS.add(IFormattedValues.NATURAL_FORMAT);
 		AVAILABLE_FORMATS.add(IFormattedValues.HEX_FORMAT);

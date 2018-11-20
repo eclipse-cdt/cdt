@@ -110,7 +110,7 @@ public class ConditionalProcessGroup {
 	private void collectMacros(String value) {
 		if (value != null) {
 			if (macros == null) {
-				macros = new HashSet<String>();
+				macros = new HashSet<>();
 			}
 			macros.addAll(ProcessHelper.getReplaceKeys(value));
 		}
@@ -134,7 +134,7 @@ public class ConditionalProcessGroup {
 	 */
 	private void createProcessObjects(TemplateCore templateCore, List<Element> processElements) {
 		this.template = templateCore;
-		this.processes = new ArrayList<Process>(processElements.size());
+		this.processes = new ArrayList<>(processElements.size());
 		for (int j = 0, l = processElements.size(); j < l; j++) {
 			Element processElem = processElements.get(j);
 			if (processElem.getNodeName().equals(TemplateDescriptor.PROCESS)) {
@@ -215,12 +215,12 @@ public class ConditionalProcessGroup {
 			throw new ProcessFailureException(getUnexpandableMacroMessage());
 		}
 		if (!isConditionValueTrue()) {
-			List<IStatus> statuses = new ArrayList<IStatus>(1);
+			List<IStatus> statuses = new ArrayList<>(1);
 			statuses.add(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.INFO,
 					Messages.getString("ConditionalProcessGroup.notExecuting") + id, null)); //$NON-NLS-1$
 			return statuses;
 		}
-		List<IStatus> statuses = new ArrayList<IStatus>(processes.size());
+		List<IStatus> statuses = new ArrayList<>(processes.size());
 		for (Process process : processes) {
 			try {
 				statuses.add(process.process(monitor));
@@ -261,14 +261,14 @@ public class ConditionalProcessGroup {
 	public Set<String> getAllMacros() {
 		Set<String> set = null;
 		if (macros != null) {
-			set = new HashSet<String>();
+			set = new HashSet<>();
 			set.addAll(macros);
 		}
 		for (Process process : processes) {
 			Set<String> subSet = process.getMacros();
 			if (subSet != null) {
 				if (set == null) {
-					set = new HashSet<String>();
+					set = new HashSet<>();
 				}
 				set.addAll(subSet);
 			}

@@ -158,7 +158,7 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
 	 * @param requestMonitor Call-back invoked when this update completes.
 	 */
 	public VMViewerUpdate(IModelDelta delta, IPresentationContext presentationContext, RequestMonitor requestMonitor) {
-		List<Object> elementList = new LinkedList<Object>();
+		List<Object> elementList = new LinkedList<>();
 		IModelDelta listDelta = delta;
 		elementList.add(0, listDelta.getElement());
 		while (listDelta.getParentDelta() != null) {

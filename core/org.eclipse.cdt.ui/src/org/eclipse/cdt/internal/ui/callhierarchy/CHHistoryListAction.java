@@ -71,7 +71,7 @@ public class CHHistoryListAction extends Action {
 			ILabelProvider labelProvider = new CUILabelProvider(CHHistoryAction.LABEL_OPTIONS,
 					CElementImageProvider.OVERLAY_ICONS);
 
-			fHistoryList = new ListDialogField<ICElement>(adapter, buttonLabels, labelProvider);
+			fHistoryList = new ListDialogField<>(adapter, buttonLabels, labelProvider);
 			fHistoryList.setLabelText(CHMessages.CHHistoryListAction_HistoryList_label);
 			fHistoryList.setElements(Arrays.asList(historyEntries));
 

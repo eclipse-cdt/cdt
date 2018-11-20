@@ -59,11 +59,11 @@ public class DMContexts {
 		}
 
 		// Use a LinkedHashSet to avoid duplicates and preserver insertion-order
-		Set<IDMContext> nodes = new LinkedHashSet<IDMContext>();
+		Set<IDMContext> nodes = new LinkedHashSet<>();
 		nodes.addAll(Arrays.asList(ctx.getParents()));
 		while (nodes.isEmpty() == false) {
 			Set<IDMContext> parents = nodes;
-			nodes = new LinkedHashSet<IDMContext>();
+			nodes = new LinkedHashSet<>();
 			for (IDMContext parent : parents) {
 				if (ancestorType.isAssignableFrom(parent.getClass())) {
 					return (V) parent;
@@ -149,12 +149,12 @@ public class DMContexts {
 			return null;
 
 		// Use a LinkedHashSet to avoid duplicates and preserver insertion-order
-		Set<V> requestedAncestors = new LinkedHashSet<V>();
-		Set<IDMContext> nodes = new LinkedHashSet<IDMContext>();
+		Set<V> requestedAncestors = new LinkedHashSet<>();
+		Set<IDMContext> nodes = new LinkedHashSet<>();
 		nodes.add(ctx);
 		while (nodes.isEmpty() == false) {
 			Set<IDMContext> parents = nodes;
-			nodes = new LinkedHashSet<IDMContext>();
+			nodes = new LinkedHashSet<>();
 			for (IDMContext parent : parents) {
 				if (ancestorType.isAssignableFrom(parent.getClass())) {
 					requestedAncestors.add((V) parent);
@@ -209,7 +209,7 @@ public class DMContexts {
 		 * This method is implemented recursively, which is not necessarily
 		 * the most efficient way to do this.
 		 */
-		List<IDMContext> list = new ArrayList<IDMContext>();
+		List<IDMContext> list = new ArrayList<>();
 		list.add(dmc);
 
 		for (IDMContext parentDmc : dmc.getParents()) {

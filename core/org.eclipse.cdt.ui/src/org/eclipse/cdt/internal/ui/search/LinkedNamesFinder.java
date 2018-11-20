@@ -77,7 +77,7 @@ public class LinkedNamesFinder {
 
 		public BindingFinder(IASTTranslationUnit root, IASTNode point) {
 			this.root = root;
-			locations = new ArrayList<IRegion>();
+			locations = new ArrayList<>();
 		}
 
 		public void find(IBinding target) {
@@ -191,7 +191,7 @@ public class LinkedNamesFinder {
 		private void findMacro(IMacroBinding target) {
 			findBinding(target);
 			char[] nameChars = target.getNameCharArray();
-			List<IASTName> ifdefNameStack = new ArrayList<IASTName>();
+			List<IASTName> ifdefNameStack = new ArrayList<>();
 			IASTPreprocessorStatement[] statements = root.getAllPreprocessorStatements();
 			for (IASTPreprocessorStatement statement : statements) {
 				if (!statement.isPartOfTranslationUnitFile()) {
@@ -308,8 +308,8 @@ public class LinkedNamesFinder {
 		}
 
 		private final ICPPClassType baseClass;
-		private Set<ICPPClassType> subclasses = new HashSet<ICPPClassType>();
-		private Set<IBinding> seenClasses = new HashSet<IBinding>();
+		private Set<ICPPClassType> subclasses = new HashSet<>();
+		private Set<IBinding> seenClasses = new HashSet<>();
 
 		SubclassFinder(ICPPClassType baseClass) {
 			this.baseClass = baseClass;

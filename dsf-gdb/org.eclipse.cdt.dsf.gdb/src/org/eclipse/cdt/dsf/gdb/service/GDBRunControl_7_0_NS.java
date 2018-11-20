@@ -383,7 +383,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 	private boolean fTerminated = false;
 
 	// ThreadStates indexed by the execution context
-	protected Map<IMIExecutionDMContext, MIThreadRunState> fThreadRunStates = new HashMap<IMIExecutionDMContext, MIThreadRunState>();
+	protected Map<IMIExecutionDMContext, MIThreadRunState> fThreadRunStates = new HashMap<>();
 
 	private RunToLineActiveOperation fRunToLineActiveOperation = null;
 
@@ -402,15 +402,15 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 	/**
 	 * Set of threads for which the next MIRunning event should be silenced.
 	 */
-	private Set<IMIExecutionDMContext> fDisableNextRunningEventDmcSet = new HashSet<IMIExecutionDMContext>();
+	private Set<IMIExecutionDMContext> fDisableNextRunningEventDmcSet = new HashSet<>();
 	/**
 	 * Set of threads for which the next MISignal (MIStopped) event should be silenced.
 	 */
-	private Set<IMIExecutionDMContext> fDisableNextSignalEventDmcSet = new HashSet<IMIExecutionDMContext>();
+	private Set<IMIExecutionDMContext> fDisableNextSignalEventDmcSet = new HashSet<>();
 	/**
 	 * Map that stores the silenced MIStopped event for the specified thread, in case we need to use it for a failure.
 	 */
-	private Map<IMIExecutionDMContext, MIStoppedEvent> fSilencedSignalEventMap = new HashMap<IMIExecutionDMContext, MIStoppedEvent>();
+	private Map<IMIExecutionDMContext, MIStoppedEvent> fSilencedSignalEventMap = new HashMap<>();
 
 	/**
 	 * This variable allows us to know if run control operation
@@ -1266,7 +1266,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 	};
 
 	// The set of threads that we will actually be suspended to make the containers suspended.
-	private Set<IMIExecutionDMContext> fExecutionDmcToSuspendSet = new HashSet<IMIExecutionDMContext>();
+	private Set<IMIExecutionDMContext> fExecutionDmcToSuspendSet = new HashSet<>();
 
 	// Do we currently have an executeWithTargetAvailable() operation ongoing?
 	private boolean fOngoingOperation;
@@ -1288,7 +1288,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 	// and we can complete the operation.
 	private int fNumStepsStillExecuting;
 	// Queue of executeWithTargetAvailable() operations that need to be processed.
-	private LinkedList<TargetAvailableOperationInfo> fOperationsPending = new LinkedList<TargetAvailableOperationInfo>();
+	private LinkedList<TargetAvailableOperationInfo> fOperationsPending = new LinkedList<>();
 
 	/**
 	 * Returns whether there is currently an ExecuteWithTargetAvailable() operation ongoing.
@@ -2211,7 +2211,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 						resumeAtLocation(context, location, rm);
 					} else {
 						// Create the breakpoint attributes
-						Map<String, Object> attr = new HashMap<String, Object>();
+						Map<String, Object> attr = new HashMap<>();
 						attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
 						attr.put(MIBreakpoints.FILE_NAME, debuggerPath);
 						attr.put(MIBreakpoints.LINE_NUMBER, lineNumber);
@@ -2255,7 +2255,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 				resumeAtLocation(context, location, rm);
 			else {
 				// Create the breakpoint attributes
-				Map<String, Object> attr = new HashMap<String, Object>();
+				Map<String, Object> attr = new HashMap<>();
 				attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
 				attr.put(MIBreakpoints.ADDRESS, "0x" + address.toString(16)); //$NON-NLS-1$
 				attr.put(MIBreakpointDMData.IS_TEMPORARY, true);
@@ -2592,10 +2592,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 	 */
 	private List<IExecutionDMContext> extractContextsForOperation(IExecutionDMContext[] contexts) {
 		// Remove duplicate contexts by using a set
-		Set<IExecutionDMContext> specifiedExedDmcSet = new HashSet<IExecutionDMContext>(Arrays.asList(contexts));
+		Set<IExecutionDMContext> specifiedExedDmcSet = new HashSet<>(Arrays.asList(contexts));
 
 		// A list that ignores threads for which the process is also present
-		List<IExecutionDMContext> execDmcForOperationList = new ArrayList<IExecutionDMContext>(
+		List<IExecutionDMContext> execDmcForOperationList = new ArrayList<>(
 				specifiedExedDmcSet.size());
 
 		// Check for the case of a process selected along with some of its threads

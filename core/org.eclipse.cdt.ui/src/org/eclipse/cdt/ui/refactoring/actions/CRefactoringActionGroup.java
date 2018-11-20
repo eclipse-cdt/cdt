@@ -120,7 +120,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 	private RefactoringAction fToggleFunctionAction;
 	private RefactoringAction fHideMethodAction;
 	private IWorkbenchSite fSite;
-	private List<RefactoringAction> fAllActions = new ArrayList<RefactoringAction>();
+	private List<RefactoringAction> fAllActions = new ArrayList<>();
 
 	public CRefactoringActionGroup(IWorkbenchPart part) {
 		this(part, null);

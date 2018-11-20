@@ -78,7 +78,7 @@ public class ManageConfigSelector {
 	 * @return array with only new-style projects included
 	 */
 	public static IProject[] getProjects(Object[] obs) {
-		ArrayList<IProject> lst = new ArrayList<IProject>();
+		ArrayList<IProject> lst = new ArrayList<>();
 		if (obs != null) {
 			for (Object ob : obs) {
 				IProject prj = null;
@@ -121,7 +121,7 @@ public class ManageConfigSelector {
 		if (extensions == null)
 			return;
 
-		ArrayList<IConfigManager> list = new ArrayList<IConfigManager>();
+		ArrayList<IConfigManager> list = new ArrayList<>();
 		for (int i = 0; i < extensions.length; ++i) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int k = 0; k < elements.length; k++) {

@@ -56,7 +56,7 @@ public final class ContributedProcessorDescriptor {
 	}
 
 	private Set<String> getHandledMarkerTypes(IConfigurationElement element) {
-		HashSet<String> map = new HashSet<String>(7);
+		HashSet<String> map = new HashSet<>(7);
 		IConfigurationElement[] children = element.getChildren(HANDLED_MARKER_TYPES);
 		for (IConfigurationElement element2 : children) {
 			IConfigurationElement[] types = element2.getChildren(MARKER_TYPE);

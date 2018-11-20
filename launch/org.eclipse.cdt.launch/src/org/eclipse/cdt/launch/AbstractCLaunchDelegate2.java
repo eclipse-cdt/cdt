@@ -148,9 +148,9 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 			String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
 			if (orderedNames != null) {
 				//Projects may not be in the build order but should still be built if selected
-				ArrayList<IProject> unorderedProjects = new ArrayList<IProject>(projectSet.size());
+				ArrayList<IProject> unorderedProjects = new ArrayList<>(projectSet.size());
 				unorderedProjects.addAll(projectSet);
-				orderedProjList = new ArrayList<IProject>(projectSet.size());
+				orderedProjList = new ArrayList<>(projectSet.size());
 
 				for (String projectName : orderedNames) {
 					for (IProject proj : unorderedProjects) {
@@ -366,7 +366,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 						for (ICommand command : commands) {
 							Map<String, String> args = command.getArguments();
 							if (args == null) {
-								args = new HashMap<String, String>(cfgIdArgs);
+								args = new HashMap<>(cfgIdArgs);
 							} else {
 								args.putAll(cfgIdArgs);
 							}

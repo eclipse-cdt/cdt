@@ -94,7 +94,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 				CPathEntryMessages.LibrariesEntryPage_libraries_remove_button, null,
 				CPathEntryMessages.LibrariesEntryPage_libraries_export_button };
 
-		fLibrariesList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
+		fLibrariesList = new TreeListDialogField<>(adapter, buttonLabels, new CPElementLabelProvider());
 		fLibrariesList.setDialogFieldListener(adapter);
 		fLibrariesList.setLabelText(CPathEntryMessages.LibrariesEntryPage_libraries_label);
 
@@ -262,7 +262,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 			int nElementsChosen = libentries.length;
 			// remove duplicates
 			List<CPElement> cplist = fLibrariesList.getElements();
-			List<CPElement> elementsToAdd = new ArrayList<CPElement>(nElementsChosen);
+			List<CPElement> elementsToAdd = new ArrayList<>(nElementsChosen);
 
 			for (int i = 0; i < nElementsChosen; i++) {
 				CPElement curr = libentries[i];
@@ -426,7 +426,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	}
 
 	private IFile[] getUsedLibFiles(CPElement existing) {
-		List<IResource> res = new ArrayList<IResource>();
+		List<IResource> res = new ArrayList<>();
 		List<CPElement> cplist = fLibrariesList.getElements();
 		for (int i = 0; i < cplist.size(); i++) {
 			CPElement elem = cplist.get(i);

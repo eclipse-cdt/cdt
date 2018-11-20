@@ -64,13 +64,13 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	private static final String CATEGORY_ELEMENT = "category"; //$NON-NLS-1$
 	private static final Object DEFAULT = "DEFAULT"; //$NON-NLS-1$
 	public static final String CLONE_SUFFIX = ".COPY"; //$NON-NLS-1$
-	private Collection<IChecker> checkers = new ArrayList<IChecker>();
+	private Collection<IChecker> checkers = new ArrayList<>();
 	private static CheckersRegistry instance;
 	private static boolean initialized = false;
-	private final Map<Object, IProblemProfile> profiles = new HashMap<Object, IProblemProfile>();
-	private final Map<IChecker, Collection<IProblem>> problemList = new HashMap<IChecker, Collection<IProblem>>();
-	private final Map<String, IChecker> problemCheckerMapping = new HashMap<String, IChecker>();
-	private final List<ICheckerEnablementVerifier> checkerEnablementVerifiers = new ArrayList<ICheckerEnablementVerifier>();
+	private final Map<Object, IProblemProfile> profiles = new HashMap<>();
+	private final Map<IChecker, Collection<IProblem>> problemList = new HashMap<>();
+	private final Map<String, IChecker> problemCheckerMapping = new HashMap<>();
+	private final List<ICheckerEnablementVerifier> checkerEnablementVerifiers = new ArrayList<>();
 
 	private CheckersRegistry() {
 		instance = this;
@@ -301,7 +301,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	public void addRefProblem(IChecker c, IProblem p) {
 		Collection<IProblem> plist = problemList.get(c);
 		if (plist == null) {
-			plist = new ArrayList<IProblem>();
+			plist = new ArrayList<>();
 			problemList.put(c, plist);
 		}
 		plist.add(p);

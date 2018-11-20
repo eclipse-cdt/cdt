@@ -82,7 +82,7 @@ public class PathComparator implements Comparator<IPath> {
 		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = next != null ? map.subMap(start, next)
 				: map.tailMap(start);
 		if (copy)
-			result = new TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>(result);
+			result = new TreeMap<>(result);
 		return result;
 	}
 
@@ -92,14 +92,14 @@ public class PathComparator implements Comparator<IPath> {
 		IPath next = getNext(path);
 		SortedSet<IPath> result = next != null ? set.subSet(start, next) : set.tailSet(start);
 		if (copy)
-			result = new TreeSet<IPath>(result);
+			result = new TreeSet<>(result);
 		return result;
 	}
 
 	public static SortedSet<IPath> getDirectChildPathSet(SortedSet<IPath> set, IPath path) {
 		//all children
 		SortedSet<IPath> children = getChildPathSet(set, path, false, false);
-		SortedSet<IPath> result = new TreeSet<IPath>(INSTANCE);
+		SortedSet<IPath> result = new TreeSet<>(INSTANCE);
 		for (IPath childPath : children) {
 			result.add(childPath);
 			children = children.tailSet(getNext(childPath));
@@ -113,7 +113,7 @@ public class PathComparator implements Comparator<IPath> {
 		//all children
 		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> children = getChildPathMap(map, path, false,
 				false);
-		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = new TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>(
+		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = new TreeMap<>(
 				INSTANCE);
 		for (Iterator<Map.Entry<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>> iter = children.entrySet()
 				.iterator(); iter.hasNext(); iter = children.entrySet().iterator()) {

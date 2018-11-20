@@ -185,7 +185,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	@Override
 	public void finish() {
 		String workingSetName = fWorkingSetName.getText();
-		ArrayList<Object> elements = new ArrayList<Object>(10);
+		ArrayList<Object> elements = new ArrayList<>(10);
 		findCheckedElements(elements, fTree.getInput());
 		if (fWorkingSet == null) {
 			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
@@ -194,7 +194,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		} else {
 			// Add inaccessible resources
 			IAdaptable[] oldItems = fWorkingSet.getElements();
-			HashSet<IProject> closedWithChildren = new HashSet<IProject>(elements.size());
+			HashSet<IProject> closedWithChildren = new HashSet<>(elements.size());
 			for (IAdaptable oldItem : oldItems) {
 				IResource oldResource = null;
 				if (oldItem instanceof IResource) {
@@ -341,7 +341,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 					}
 				}
 				fTree.setCheckedElements(elements);
-				HashSet<Object> parents = new HashSet<Object>();
+				HashSet<Object> parents = new HashSet<>();
 				for (Object element : elements) {
 					if (isExpandable(element))
 						setSubtreeChecked(element, true, true);

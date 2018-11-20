@@ -110,15 +110,15 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 		fStore = store;
 		fStore.addKeys(createOverlayStoreKeys());
 		fProviderDescriptors = createListModel();
-		fProviderPreferences = new HashMap<String, ICFoldingPreferenceBlock>();
-		fProviderControls = new HashMap<String, Control>();
+		fProviderPreferences = new HashMap<>();
+		fProviderControls = new HashMap<>();
 	}
 
 	private Map<String, CFoldingStructureProviderDescriptor> createListModel() {
 		CFoldingStructureProviderRegistry reg = CUIPlugin.getDefault().getFoldingStructureProviderRegistry();
 		reg.reloadExtensions();
 		CFoldingStructureProviderDescriptor[] descs = reg.getFoldingProviderDescriptors();
-		Map<String, CFoldingStructureProviderDescriptor> map = new HashMap<String, CFoldingStructureProviderDescriptor>();
+		Map<String, CFoldingStructureProviderDescriptor> map = new HashMap<>();
 		for (int i = 0; i < descs.length; i++) {
 			map.put(descs[i].getId(), descs[i]);
 		}
@@ -127,7 +127,7 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				PreferenceConstants.EDITOR_FOLDING_ENABLED));

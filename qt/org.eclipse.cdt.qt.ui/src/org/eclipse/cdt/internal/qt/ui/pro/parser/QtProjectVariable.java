@@ -154,7 +154,7 @@ public class QtProjectVariable {
 	 * @return a List containing all of the value(s) assigned to this variable
 	 */
 	public List<String> getValues() {
-		List<String> values = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
 		values.add(matchResults.get(0).group(GROUP_VAR_CONTENTS));
 		for (int i = 1; i < matchResults.size(); i++) {
 			values.add(matchResults.get(i).group(GROUP_LINE_CONTENTS));

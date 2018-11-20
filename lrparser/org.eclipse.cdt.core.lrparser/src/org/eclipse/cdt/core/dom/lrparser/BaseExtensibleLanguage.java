@@ -179,7 +179,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		final IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 		preprocessor.setComputeImageLocations((options & ILanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
 
-		final Map<String, String> parserProperties = new HashMap<String, String>();
+		final Map<String, String> parserProperties = new HashMap<>();
 		parserProperties.put(LRParserProperties.TRANSLATION_UNIT_PATH, reader.getFileLocation());
 		if ((options & OPTION_SKIP_FUNCTION_BODIES) != 0)
 			parserProperties.put(LRParserProperties.SKIP_FUNCTION_BODIES, "true");
@@ -369,7 +369,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 		preprocessor.setContentAssistMode(offset);
 
-		Map<String, String> parserProperties = new HashMap<String, String>();
+		Map<String, String> parserProperties = new HashMap<>();
 		parserProperties.put(LRParserProperties.TRANSLATION_UNIT_PATH, reader.getFileLocation());
 		parserProperties.put(LRParserProperties.SKIP_FUNCTION_BODIES, "true");
 		parserProperties.put(LRParserProperties.SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS, "true");

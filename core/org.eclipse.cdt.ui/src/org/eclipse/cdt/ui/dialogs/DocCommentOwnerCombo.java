@@ -53,7 +53,7 @@ public class DocCommentOwnerCombo extends Composite {
 	 * test plug-in.
 	 */
 	private static IDocCommentOwner[] getNontestOwners() {
-		List<IDocCommentOwner> result = new ArrayList<IDocCommentOwner>();
+		List<IDocCommentOwner> result = new ArrayList<>();
 		for (IDocCommentOwner owner : DocCommentOwnerManager.getInstance().getRegisteredOwners()) {
 			if (owner.getID().indexOf(".test.") == -1) //$NON-NLS-1$
 				result.add(owner);

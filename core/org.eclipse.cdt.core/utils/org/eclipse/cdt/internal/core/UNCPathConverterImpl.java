@@ -47,7 +47,7 @@ public class UNCPathConverterImpl extends UNCPathConverter {
 
 	private void loadUNCPathConverters() {
 		if (fUNCPathConverters == null) {
-			ArrayList<UNCPathConverter> list = new ArrayList<UNCPathConverter>();
+			ArrayList<UNCPathConverter> list = new ArrayList<>();
 
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint extensionPoint = registry.getExtensionPoint(EXTENSION_POINT);

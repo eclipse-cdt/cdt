@@ -333,10 +333,10 @@ public class ToolChain extends HoldsOptions
 			errorParserIds = toolChain.errorParserIds;
 		}
 		if (toolChain.osList != null) {
-			osList = new ArrayList<String>(toolChain.osList);
+			osList = new ArrayList<>(toolChain.osList);
 		}
 		if (toolChain.archList != null) {
-			archList = new ArrayList<String>(toolChain.archList);
+			archList = new ArrayList<>(toolChain.archList);
 		}
 		if (toolChain.targetToolIds != null) {
 			targetToolIds = toolChain.targetToolIds;
@@ -486,7 +486,7 @@ public class ToolChain extends HoldsOptions
 										: ManagedBuildManager.calculateChildId(otherExtTool.getId(), null);
 								Map<String, String> idMap = superIdMap.get(otherRcInfo.getPath());
 								if (idMap == null) {
-									idMap = new HashMap<String, String>();
+									idMap = new HashMap<>();
 									superIdMap.put(otherRcInfo.getPath(), idMap);
 								}
 								idMap.put(otherExtTool.getId(), superId);
@@ -590,7 +590,7 @@ public class ToolChain extends HoldsOptions
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
 		if (os != null) {
-			osList = new ArrayList<String>();
+			osList = new ArrayList<>();
 			String[] osTokens = os.split(","); //$NON-NLS-1$
 			for (int i = 0; i < osTokens.length; ++i) {
 				osList.add(SafeStringInterner.safeIntern(osTokens[i].trim()));
@@ -600,7 +600,7 @@ public class ToolChain extends HoldsOptions
 		// Get the comma-separated list of valid Architectures
 		String arch = element.getAttribute(ARCH_LIST);
 		if (arch != null) {
-			archList = new ArrayList<String>();
+			archList = new ArrayList<>();
 			String[] archTokens = arch.split(","); //$NON-NLS-1$
 			for (int j = 0; j < archTokens.length; ++j) {
 				archList.add(SafeStringInterner.safeIntern(archTokens[j].trim()));
@@ -709,7 +709,7 @@ public class ToolChain extends HoldsOptions
 		if (element.getAttribute(OS_LIST) != null) {
 			String os = element.getAttribute(OS_LIST);
 			if (os != null) {
-				osList = new ArrayList<String>();
+				osList = new ArrayList<>();
 				String[] osTokens = os.split(","); //$NON-NLS-1$
 				for (int i = 0; i < osTokens.length; ++i) {
 					osList.add(SafeStringInterner.safeIntern(osTokens[i].trim()));
@@ -721,7 +721,7 @@ public class ToolChain extends HoldsOptions
 		if (element.getAttribute(ARCH_LIST) != null) {
 			String arch = element.getAttribute(ARCH_LIST);
 			if (arch != null) {
-				archList = new ArrayList<String>();
+				archList = new ArrayList<>();
 				String[] archTokens = arch.split(","); //$NON-NLS-1$
 				for (int j = 0; j < archTokens.length; ++j) {
 					archList.add(SafeStringInterner.safeIntern(archTokens[j].trim()));
@@ -1039,7 +1039,7 @@ public class ToolChain extends HoldsOptions
 		if (set.size() == 0)
 			return used ? tools : new Tool[0];
 
-		List<Tool> list = new ArrayList<Tool>(tools.length);
+		List<Tool> list = new ArrayList<>(tools.length);
 		for (Tool t : tools) {
 			if (set.contains(t.getId()) != used)
 				list.add(t);
@@ -1060,7 +1060,7 @@ public class ToolChain extends HoldsOptions
 
 	@Override
 	public ITool[] getToolsBySuperClassId(String id) {
-		List<ITool> retTools = new ArrayList<ITool>();
+		List<ITool> retTools = new ArrayList<>();
 		if (id != null) {
 			//  Look for a tool with this ID, or the tool(s) with a superclass with this id
 			ITool[] tools = getTools();
@@ -1085,7 +1085,7 @@ public class ToolChain extends HoldsOptions
 	 */
 	public List<Tool> getToolList() {
 		if (toolList == null) {
-			toolList = new ArrayList<Tool>();
+			toolList = new ArrayList<>();
 		}
 		return toolList;
 	}
@@ -1095,7 +1095,7 @@ public class ToolChain extends HoldsOptions
 	 */
 	private Map<String, Tool> getToolMap() {
 		if (toolMap == null) {
-			toolMap = new HashMap<String, Tool>();
+			toolMap = new HashMap<>();
 		}
 		return toolMap;
 	}
@@ -1276,7 +1276,7 @@ public class ToolChain extends HoldsOptions
 				targetTools = new String[0];
 			} else {
 				StringTokenizer tok = new StringTokenizer(IDs, ";"); //$NON-NLS-1$
-				List<String> list = new ArrayList<String>(tok.countTokens());
+				List<String> list = new ArrayList<>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
@@ -1330,7 +1330,7 @@ public class ToolChain extends HoldsOptions
 				errorParsers = new String[0];
 			} else {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-				List<String> list = new ArrayList<String>(tok.countTokens());
+				List<String> list = new ArrayList<>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
@@ -1347,7 +1347,7 @@ public class ToolChain extends HoldsOptions
 		String parserIDs = getErrorParserIdsAttribute();
 		if (parserIDs != null) {
 			if (set == null)
-				set = new HashSet<String>();
+				set = new HashSet<>();
 			if (parserIDs.length() != 0) {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
 				while (tok.hasMoreElements()) {
@@ -1436,7 +1436,7 @@ public class ToolChain extends HoldsOptions
 	@Override
 	public void setOSList(String[] OSs) {
 		if (osList == null) {
-			osList = new ArrayList<String>();
+			osList = new ArrayList<>();
 		} else {
 			osList.clear();
 		}
@@ -1449,7 +1449,7 @@ public class ToolChain extends HoldsOptions
 	@Override
 	public void setArchList(String[] archs) {
 		if (archList == null) {
-			archList = new ArrayList<String>();
+			archList = new ArrayList<>();
 		} else {
 			archList.clear();
 		}
@@ -2284,7 +2284,7 @@ public class ToolChain extends HoldsOptions
 			return null;
 		if (!isExtensionToolChain)
 			return null;
-		return new MatchKey<ToolChain>(this);
+		return new MatchKey<>(this);
 	}
 
 	@Override
@@ -2339,7 +2339,7 @@ public class ToolChain extends HoldsOptions
 
 	public String[] getRequiredTypeIds(boolean checkTools) {
 		SupportedProperties props = findSupportedProperties();
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		if (props != null) {
 			result.addAll(Arrays.asList(props.getRequiredTypeIds()));
 		} else {
@@ -2368,7 +2368,7 @@ public class ToolChain extends HoldsOptions
 
 	public String[] getSupportedTypeIds(boolean checkTools) {
 		SupportedProperties props = findSupportedProperties();
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		if (props != null) {
 			result.addAll(Arrays.asList(props.getSupportedTypeIds()));
 		} else {
@@ -2397,7 +2397,7 @@ public class ToolChain extends HoldsOptions
 
 	public String[] getSupportedValueIds(String typeId, boolean checkTools) {
 		SupportedProperties props = findSupportedProperties();
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		if (props != null) {
 			result.addAll(Arrays.asList(props.getSupportedValueIds(typeId)));
 		} else {
@@ -2488,7 +2488,7 @@ public class ToolChain extends HoldsOptions
 		if (set != null && !set.isEmpty()) {
 			Set<String> oldSet = contributeErrorParsers(info, null, false);
 			if (oldSet == null)
-				oldSet = new HashSet<String>();
+				oldSet = new HashSet<>();
 
 			oldSet.removeAll(set);
 			setErrorParserList(oldSet.toArray(new String[oldSet.size()]));
@@ -2629,9 +2629,9 @@ public class ToolChain extends HoldsOptions
 		if (unusedChildrenSet == null) {
 			String childIds[] = CDataUtil.stringToArray(unusedChildren, ";"); //$NON-NLS-1$
 			if (childIds == null)
-				unusedChildrenSet = new HashSet<String>();
+				unusedChildrenSet = new HashSet<>();
 			else {
-				unusedChildrenSet = new HashSet<String>();
+				unusedChildrenSet = new HashSet<>();
 				unusedChildrenSet.addAll(Arrays.asList(childIds));
 			}
 		}

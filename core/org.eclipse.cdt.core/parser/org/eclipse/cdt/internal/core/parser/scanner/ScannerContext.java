@@ -126,7 +126,7 @@ final class ScannerContext {
 	 */
 	public final Conditional newBranch(BranchKind branchKind, boolean withinExpansion) {
 		if (fConditionals == null) {
-			fConditionals = new ArrayList<Conditional>();
+			fConditionals = new ArrayList<>();
 		}
 
 		Conditional result;
@@ -325,7 +325,7 @@ final class ScannerContext {
 
 	public void trackSignificantMacros() {
 		fInternalModifications = new CharArraySet(5);
-		fSignificantMacros = new CharArrayObjectMap<char[]>(5);
+		fSignificantMacros = new CharArrayObjectMap<>(5);
 	}
 
 	public void setPragmaOnce(boolean val) {

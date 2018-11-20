@@ -256,7 +256,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0 {
 						// the same thing as ignore-count, which is not supported by
 						// tracepoints).  We have to set the passcount manually now.
 						// Same for commands.
-						Map<String, Object> delta = new HashMap<String, Object>();
+						Map<String, Object> delta = new HashMap<>();
 						delta.put(MIBreakpoints.PASS_COUNT, getProperty(attributes, MIBreakpoints.PASS_COUNT, 0));
 						delta.put(MIBreakpoints.COMMANDS, getProperty(attributes, MIBreakpoints.COMMANDS, "")); //$NON-NLS-1$
 						modifyBreakpoint(dmc, delta, drm, false);

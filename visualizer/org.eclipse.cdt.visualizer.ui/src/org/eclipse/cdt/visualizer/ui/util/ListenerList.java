@@ -78,7 +78,7 @@ abstract public class ListenerList {
 	/** Adds a listener */
 	public synchronized void addListener(Object listener) {
 		if (m_listeners == null) {
-			m_listeners = new ArrayList<Object>();
+			m_listeners = new ArrayList<>();
 		}
 		if (!m_listeners.contains(listener)) {
 			m_listeners.add(listener);
@@ -105,7 +105,7 @@ abstract public class ListenerList {
 		synchronized (this) {
 			// keep the lock on the listener list as brief as possible
 			if (m_listeners != null) {
-				listeners = new ArrayList<Object>(m_listeners);
+				listeners = new ArrayList<>(m_listeners);
 			}
 		}
 		int count = (listeners == null) ? 0 : listeners.size();

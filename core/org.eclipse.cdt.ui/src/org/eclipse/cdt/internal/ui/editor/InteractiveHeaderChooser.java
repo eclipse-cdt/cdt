@@ -39,7 +39,7 @@ public class InteractiveHeaderChooser implements IHeaderChooser {
 	public InteractiveHeaderChooser(String title, Shell shell) {
 		this.title = title;
 		this.shell = shell;
-		userChoiceCache = new HashMap<Collection<IPath>, IPath>();
+		userChoiceCache = new HashMap<>();
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class InteractiveHeaderChooser implements IHeaderChooser {
 		if (headers.size() == 1)
 			return headers.iterator().next();
 
-		Set<IPath> cacheKey = new HashSet<IPath>(headers);
+		Set<IPath> cacheKey = new HashSet<>(headers);
 		// Check the decision cache. If the cache doesn't help, ask the user.
 		// Query the cache.
 		if (userChoiceCache.containsKey(cacheKey)) {

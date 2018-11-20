@@ -84,8 +84,8 @@ public class BufferedCommandControl implements ICommandControl {
 		}
 	};
 
-	private final List<ICommandListener> fCommandProcessors = new ArrayList<ICommandListener>();
-	private final List<IEventListener> fEventProcessors = new ArrayList<IEventListener>();
+	private final List<ICommandListener> fCommandProcessors = new ArrayList<>();
+	private final List<IEventListener> fEventProcessors = new ArrayList<>();
 
 	public BufferedCommandControl(ICommandControl controlDelegate, DsfExecutor executor, int depth) {
 		fControlDelegate = controlDelegate;

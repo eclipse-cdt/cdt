@@ -181,8 +181,8 @@ public class CFileTypesPreferenceBlock {
 	}
 
 	public CFileTypesPreferenceBlock(IProject input) {
-		fAddAssoc = new ArrayList<CFileTypeAssociation>();
-		fRemoveAssoc = new ArrayList<CFileTypeAssociation>();
+		fAddAssoc = new ArrayList<>();
+		fRemoveAssoc = new ArrayList<>();
 		fInput = input;
 		setDirty(false);
 	}
@@ -327,7 +327,7 @@ public class CFileTypesPreferenceBlock {
 	}
 
 	private CFileTypeAssociation[] getCFileTypeAssociations() {
-		ArrayList<CFileTypeAssociation> list = new ArrayList<CFileTypeAssociation>();
+		ArrayList<CFileTypeAssociation> list = new ArrayList<>();
 		if (fInput == null) {
 			fillWithUserDefinedCFileTypeAssociations(list);
 			fillWithPredefinedCFileTypeAssociations(list);

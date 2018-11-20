@@ -74,7 +74,7 @@ public class Template extends TemplateCore {
 	 */
 	public Map<String, UIWizardPage> getUIPages() {
 		if (pageMap == null) {
-			pageMap = new HashMap<String, UIWizardPage>();
+			pageMap = new HashMap<>();
 			List<Element> rootPropertyGrouplist = templateDescriptor.getPropertyGroupList();
 
 			uiPagesProvider.clearOrderVector();
@@ -94,7 +94,7 @@ public class Template extends TemplateCore {
 	}
 
 	public IWizardPage[] getTemplateWizardPages(IWizardPage predatingPage, IWizardPage followingPage, IWizard wizard) {
-		List<IWizardDataPage> pages = new ArrayList<IWizardDataPage>();
+		List<IWizardDataPage> pages = new ArrayList<>();
 		//		if (predatingPage != null) {
 		//			pages.add(predatingPage);
 		//		}

@@ -135,7 +135,7 @@ abstract public class RangeCache<V> {
 	 * non-overlapping ranges of elements.
 	 */
 
-	private SortedSet<Request> fRequests = new TreeSet<Request>();
+	private SortedSet<Request> fRequests = new TreeSet<>();
 
 	public RangeCache(ImmediateInDsfExecutor executor) {
 		fExecutor = executor;
@@ -237,7 +237,7 @@ abstract public class RangeCache<V> {
 	}
 
 	private List<Request> getRequests(long fOffset, int fCount) {
-		List<Request> requests = new ArrayList<Request>(1);
+		List<Request> requests = new ArrayList<>(1);
 
 		// Create a new request for the data to retrieve.
 		Request current = new Request(fOffset, fCount);
@@ -282,7 +282,7 @@ abstract public class RangeCache<V> {
 	 */
 	private Request adjustRequestTail(Request current, List<Request> transactionRequests, long offset, int count) {
 		// Create a duplicate of the tailSet, in order to avoid a concurrent modification exception.
-		List<Request> tailSet = new ArrayList<Request>(fRequests.tailSet(current));
+		List<Request> tailSet = new ArrayList<>(fRequests.tailSet(current));
 
 		// Iterate through the matching requests and add them to the requests list.
 		for (Request tailRequest : tailSet) {
@@ -318,7 +318,7 @@ abstract public class RangeCache<V> {
 	}
 
 	private List<V> makeElementsListFromRequests(List<Request> requests, long offset, int count) {
-		List<V> retVal = new ArrayList<V>(count);
+		List<V> retVal = new ArrayList<>(count);
 		long index = offset;
 		long end = offset + count;
 		int requestIdx = 0;

@@ -418,7 +418,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	private static class PreviewerExternalSDKHighlighting extends SemanticHighlightingWithOwnPreference {
 		static private final Set<String> fHarcodedSDKFunctions;
 		static {
-			fHarcodedSDKFunctions = new HashSet<String>();
+			fHarcodedSDKFunctions = new HashSet<>();
 			fHarcodedSDKFunctions.add("fprintf"); //$NON-NLS-1$
 			// add others as necessary
 		}

@@ -82,7 +82,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 		@Override
 		public void setLanguageSettingProviders(List<? extends ILanguageSettingsProvider> providers) {
-			this.providers = new ArrayList<ILanguageSettingsProvider>(providers);
+			this.providers = new ArrayList<>(providers);
 		}
 
 		@Override
@@ -227,7 +227,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		// create new provider list
 		LanguageSettingsSerializableProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_0,
 				PROVIDER_NAME_0);
-		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(originalProviders);
+		List<ILanguageSettingsProvider> providers = new ArrayList<>(originalProviders);
 		providers.add(mockProvider);
 		assertTrue(originalSize != providers.size());
 
@@ -254,7 +254,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 			// try to write to it providers
 			try {
-				List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+				List<ILanguageSettingsProvider> providers = new ArrayList<>();
 				((ILanguageSettingsProvidersKeeper) cfgDescriptionReadOnly).setLanguageSettingProviders(providers);
 				fail("WriteAccessException was expected but it was not throw.");
 			} catch (WriteAccessException e) {
@@ -271,7 +271,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			}
 		}
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 
 		{
@@ -290,7 +290,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 					PROVIDER_NAME_1);
 			LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider, true);
 			mockProvider.setSettingEntries(cfgDescriptionWritable, null, null, entries);
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			List<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(mockProvider);
 			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable)
@@ -368,7 +368,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	 * Persist and reload a customized provider defined in the workspace.
 	 */
 	public void testWorkspacePersistence_ModifiedExtensionProvider() throws Exception {
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 
 		{
@@ -417,7 +417,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	 * Check persistence of unmodified extension provider in the workspace.
 	 */
 	public void testWorkspacePersistence_UnmodifiedExtensionProvider() throws Exception {
-		List<ICLanguageSettingEntry> extensionEntries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> extensionEntries = new ArrayList<>();
 		extensionEntries.add(EXTENSION_SERIALIZABLE_PROVIDER_ENTRY);
 		{
 			// test initial state of the extension provider
@@ -451,7 +451,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 			// replace entries
 			assertTrue(rawProvider instanceof LanguageSettingsSerializableProvider);
-			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> entries = new ArrayList<>();
 			entries.add(new CIncludePathEntry("path0", 0));
 			((LanguageSettingsSerializableProvider) rawProvider).setSettingEntries(null, null, null, entries);
 
@@ -479,7 +479,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		}
 		{
 			// save workspace provider (as opposed to raw provider)
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			List<ILanguageSettingsProvider> providers = new ArrayList<>();
 			ILanguageSettingsProvider provider = LanguageSettingsManager
 					.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
 			providers.add(provider);
@@ -513,7 +513,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			// replace extension provider
 			ILanguageSettingsProvider provider = new MockLanguageSettingsSerializableProvider(
 					EXTENSION_BASE_PROVIDER_ID, PROVIDER_NAME_0);
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			List<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(provider);
 			// note that this will also serialize workspace providers
 			LanguageSettingsManager.setWorkspaceProviders(providers);
@@ -572,7 +572,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	public void testProjectPersistence_SerializableProviderDOM() throws Exception {
 		Element rootElement = null;
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 
 		{
@@ -590,7 +590,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			serializableProvider.setSettingEntries(null, null, null, entries);
 			LanguageSettingsManager.setStoringEntriesInProjectArea(serializableProvider, true);
 
-			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(serializableProvider);
 			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
@@ -634,7 +634,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	public void testProjectPersistence_UserProviderDOM() throws Exception {
 		Element rootElement = null;
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 
 		{
@@ -653,7 +653,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			serializableProvider.setSettingEntries(null, null, null, entries);
 			LanguageSettingsManager.setStoringEntriesInProjectArea(serializableProvider, true);
 
-			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(serializableProvider);
 			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
@@ -698,9 +698,9 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	public void testProjectPersistence_TwoConfigurationsDOM() throws Exception {
 		Element rootElement = null;
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
-		List<ICLanguageSettingEntry> entries2 = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries2 = new ArrayList<>();
 		entries2.add(new CIncludePathEntry("path2", 0));
 
 		{
@@ -722,7 +722,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 							PROVIDER_0, PROVIDER_NAME_0);
 					LanguageSettingsManager.setStoringEntriesInProjectArea(provider1, true);
 					provider1.setSettingEntries(null, null, null, entries);
-					ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+					ArrayList<ILanguageSettingsProvider> providers = new ArrayList<>();
 					providers.add(provider1);
 					((ILanguageSettingsProvidersKeeper) cfgDescription1).setLanguageSettingProviders(providers);
 				}
@@ -737,7 +737,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 							PROVIDER_0, PROVIDER_NAME_0);
 					LanguageSettingsManager.setStoringEntriesInProjectArea(provider2, true);
 					provider2.setSettingEntries(null, null, null, entries2);
-					ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+					ArrayList<ILanguageSettingsProvider> providers = new ArrayList<>();
 					providers.add(provider2);
 					((ILanguageSettingsProvidersKeeper) cfgDescription2).setLanguageSettingProviders(providers);
 				}
@@ -840,7 +840,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	public void testProjectPersistence_SubclassedSerializableProviderDOM() throws Exception {
 		Element rootElement = null;
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 
 		{
@@ -858,7 +858,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			serializableProvider.setSettingEntries(null, null, null, entries);
 			LanguageSettingsManager.setStoringEntriesInProjectArea(serializableProvider, true);
 
-			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(serializableProvider);
 			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
@@ -915,7 +915,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
 			// populate with provider defined as extension
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			List<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(providerExt);
 			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
@@ -973,7 +973,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			MockLanguageSettingsSerializableProvider providerOverride = new MockLanguageSettingsSerializableProvider(
 					idExt, PROVIDER_NAME_0);
 			LanguageSettingsManager.setStoringEntriesInProjectArea(providerOverride, true);
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			List<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(providerOverride);
 			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
@@ -1016,10 +1016,10 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	public void testProjectPersistence_MixedProvidersDOM() throws Exception {
 		Element rootElement = null;
 
-		List<ICLanguageSettingEntry> entries_31 = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries_31 = new ArrayList<>();
 		entries_31.add(new CIncludePathEntry("path0", 0));
 
-		List<ICLanguageSettingEntry> entries_32 = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries_32 = new ArrayList<>();
 		entries_32.add(new CIncludePathEntry("path2", 0));
 
 		ILanguageSettingsProvider providerExt;
@@ -1048,7 +1048,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 				LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider2, true);
 				mockProvider2.setSettingEntries(null, null, null, entries_32);
 
-				ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+				ArrayList<ILanguageSettingsProvider> providers = new ArrayList<>();
 				providers.add(providerExt);
 				providers.add(mockProvider1);
 				providers.add(mockProvider2);
@@ -1112,7 +1112,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		IFile xmlStorageFilePrj = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
 		String xmlPrjOutOfTheWay;
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 
 		{
@@ -1131,7 +1131,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 					PROVIDER_NAME_0);
 			LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider, true);
 			mockProvider.setSettingEntries(cfgDescriptionWritable, null, null, entries);
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			List<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(mockProvider);
 			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable)
@@ -1270,7 +1270,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		Element prjStorageElement = null;
 		Element wspStorageElement = null;
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 
 		{
@@ -1289,7 +1289,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			// do not store entries inside project
 			LanguageSettingsManager.setStoringEntriesInProjectArea(serializableProvider, false);
 
-			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(serializableProvider);
 			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
@@ -1350,7 +1350,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		String xmlStorageFileWspLocation;
 		String xmlWspOutOfTheWay;
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 
 		{
@@ -1369,7 +1369,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 					PROVIDER_NAME_0);
 			LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider, false);
 			mockProvider.setSettingEntries(cfgDescriptionWritable, null, null, entries);
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			List<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(mockProvider);
 			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable)
@@ -1543,7 +1543,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			assertNotNull(cfgDescription);
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
-			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(providerExt);
 			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
@@ -1600,7 +1600,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			assertNotNull(cfgDescription);
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
-			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<>();
 			providers.add(providerExt);
 			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
@@ -1654,8 +1654,8 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	 * Test serialization of global providers exactly equal extension in workspace area.
 	 */
 	public void testWorkspacePersistence_ProviderExtensionCopy() throws Exception {
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
+		List<ILanguageSettingsProvider> providers = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 		{
 			// get extension provider

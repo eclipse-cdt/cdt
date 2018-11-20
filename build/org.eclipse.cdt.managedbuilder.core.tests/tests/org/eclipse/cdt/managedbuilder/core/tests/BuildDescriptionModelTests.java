@@ -75,7 +75,7 @@ public class BuildDescriptionModelTests extends TestCase {
 	private Runnable fCleaner = fCompositeCleaner;
 
 	private class CompositeCleaner implements Runnable {
-		private List<Runnable> fRunnables = new ArrayList<Runnable>();
+		private List<Runnable> fRunnables = new ArrayList<>();
 
 		public void addRunnable(Runnable r) {
 			fRunnables.add(r);
@@ -93,7 +93,7 @@ public class BuildDescriptionModelTests extends TestCase {
 	}
 
 	private class ProjectCleaner implements Runnable {
-		List<String> fProjList = new ArrayList<String>();
+		List<String> fProjList = new ArrayList<>();
 
 		public ProjectCleaner(IProject project) {
 			addProject(project);
@@ -576,8 +576,8 @@ public class BuildDescriptionModelTests extends TestCase {
 		}
 	*/
 	private void doTestStep(IBuildStep step, IBuildStep oStep, boolean up) {
-		Map<IBuildIOType, IBuildIOType> inMap = new HashMap<IBuildIOType, IBuildIOType>();
-		Map<IBuildIOType, IBuildIOType> outMap = new HashMap<IBuildIOType, IBuildIOType>();
+		Map<IBuildIOType, IBuildIOType> inMap = new HashMap<>();
+		Map<IBuildIOType, IBuildIOType> outMap = new HashMap<>();
 
 		stepsMatch(step, oStep, inMap, outMap, true);
 
@@ -589,7 +589,7 @@ public class BuildDescriptionModelTests extends TestCase {
 	}
 
 	private void doTestType(IBuildIOType type, IBuildIOType oType) {
-		Map<IBuildResource, IBuildResource> map = new HashMap<IBuildResource, IBuildResource>();
+		Map<IBuildResource, IBuildResource> map = new HashMap<>();
 
 		typesMatch(type, oType, map, true);
 
@@ -599,7 +599,7 @@ public class BuildDescriptionModelTests extends TestCase {
 	}
 
 	private void doTestResource(IBuildResource rc, IBuildResource oRc, boolean up) {
-		Map<IBuildIOType, IBuildIOType> outMap = new HashMap<IBuildIOType, IBuildIOType>();
+		Map<IBuildIOType, IBuildIOType> outMap = new HashMap<>();
 
 		doTestResourceMatch(rc, oRc, outMap);
 
@@ -607,7 +607,7 @@ public class BuildDescriptionModelTests extends TestCase {
 			typesMatch(rc.getProducerIOType(), oRc.getProducerIOType(), null, true);
 			doTestStep(rc.getProducerIOType().getStep(), oRc.getProducerIOType().getStep(), up);
 		} else {
-			Set<IBuildStep> stepSet = new HashSet<IBuildStep>();
+			Set<IBuildStep> stepSet = new HashSet<>();
 
 			for (Entry<IBuildIOType, IBuildIOType> entry : outMap.entrySet()) {
 				IBuildIOType type = entry.getKey();
@@ -785,8 +785,8 @@ public class BuildDescriptionModelTests extends TestCase {
 			return false;
 
 		if (resourcesMatch(rcs, oRcs, rcMap)) {
-			Map<IBuildIOType, IBuildIOType> inMap = new HashMap<IBuildIOType, IBuildIOType>();
-			Map<IBuildIOType, IBuildIOType> outMap = new HashMap<IBuildIOType, IBuildIOType>();
+			Map<IBuildIOType, IBuildIOType> inMap = new HashMap<>();
+			Map<IBuildIOType, IBuildIOType> outMap = new HashMap<>();
 			if (!checkStep)
 				return true;
 			return stepsMatch(type.getStep(), oType.getStep(), inMap, outMap, false, failOnError);

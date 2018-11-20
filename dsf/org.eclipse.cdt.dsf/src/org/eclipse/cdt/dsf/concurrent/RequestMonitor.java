@@ -257,7 +257,7 @@ public class RequestMonitor extends DsfExecutable {
 	 */
 	public synchronized void addCancelListener(ICanceledListener listener) {
 		if (fCancelListeners == null) {
-			fCancelListeners = new ArrayList<ICanceledListener>(1);
+			fCancelListeners = new ArrayList<>(1);
 		}
 		fCancelListeners.add(listener);
 	}

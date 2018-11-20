@@ -147,7 +147,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 			}
 		}
 
-		HashMap<String, String> envMap = new HashMap<String, String>();
+		HashMap<String, String> envMap = new HashMap<>();
 
 		// If the launch configuration is the only environment the inferior should see, just use that
 		boolean append = config.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
@@ -224,7 +224,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 		}
 
 		// Turn it into an envp format
-		List<String> strings = new ArrayList<String>(envMap.size());
+		List<String> strings = new ArrayList<>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
 			StringBuilder buffer = new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());

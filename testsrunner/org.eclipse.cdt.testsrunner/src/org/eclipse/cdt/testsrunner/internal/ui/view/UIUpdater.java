@@ -102,19 +102,19 @@ public class UIUpdater {
 		 * Set of tree objects on which <code>refresh()</code> should be called
 		 * during the next UI update.
 		 */
-		private Set<Object> treeItemsToRefresh = new HashSet<Object>();
+		private Set<Object> treeItemsToRefresh = new HashSet<>();
 
 		/**
 		 * Set of tree objects on which <code>update()</code> should be called
 		 * during the next UI update.
 		 */
-		private Set<Object> treeItemsToUpdate = new HashSet<Object>();
+		private Set<Object> treeItemsToUpdate = new HashSet<>();
 
 		/** Tree object that should be revealed during the next UI update. */
 		private Object treeItemToReveal;
 
 		/** Map of tree objects that should be expanded or collapsed to their new states. */
-		private Map<Object, Boolean> treeItemsToExpand = new LinkedHashMap<Object, Boolean>();
+		private Map<Object, Boolean> treeItemsToExpand = new LinkedHashMap<>();
 
 		UIChangesCache() {
 			resetChanges();

@@ -106,7 +106,7 @@ public class ServiceEventWaitor<V> {
 	 */
 	public synchronized List<V> waitForEvents(int period) {
 		long startMs = System.currentTimeMillis();
-		List<V> events = new ArrayList<V>();
+		List<V> events = new ArrayList<>();
 
 		//Timeout exception will exit the loop and return the resulting list of events
 		while (true) {

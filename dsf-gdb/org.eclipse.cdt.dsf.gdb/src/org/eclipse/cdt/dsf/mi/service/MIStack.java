@@ -195,7 +195,7 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 		private boolean limited = true;
 		// The actual depth we received
 		private int stackDepth = -1;
-		private final List<FrameData> frames = new ArrayList<FrameData>();
+		private final List<FrameData> frames = new ArrayList<>();
 
 		/**
 		 * Return currently cached stack depth if cache value if valid, otherwise return -1.
@@ -349,7 +349,7 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 	 * A return value is stored when the user performs a step-return,
 	 * and it cleared as soon as that thread executes again.
 	 */
-	private Map<IMIExecutionDMContext, VariableData> fThreadToReturnVariable = new HashMap<IMIExecutionDMContext, VariableData>();
+	private Map<IMIExecutionDMContext, VariableData> fThreadToReturnVariable = new HashMap<>();
 
 	public MIStack(DsfSession session) {
 		super(session);
@@ -949,7 +949,7 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 		// We don't currently support variables with the same name in the same frame,
 		// so we only keep the first one.
 		// Bug 327621 and 328573
-		Map<String, MIVariableDMC> variableNames = new LinkedHashMap<String, MIVariableDMC>();
+		Map<String, MIVariableDMC> variableNames = new LinkedHashMap<>();
 
 		for (int i = 0; i < miArgs.length; i++) {
 			String name = miArgs[i].getName();
@@ -984,7 +984,7 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 	@Override
 	public void getLocals(final IFrameDMContext frameDmc, final DataRequestMonitor<IVariableDMContext[]> rm) {
 
-		final List<IVariableDMContext> localsList = new ArrayList<IVariableDMContext>();
+		final List<IVariableDMContext> localsList = new ArrayList<>();
 
 		final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
 			@Override

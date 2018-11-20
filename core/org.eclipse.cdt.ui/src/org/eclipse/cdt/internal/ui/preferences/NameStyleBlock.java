@@ -229,7 +229,7 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 		composite.setLayout(layout);
 
 		NameStyleAdapter adapter = new NameStyleAdapter();
-		categoryTree = new TreeListDialogField<Category>(adapter, null, new NameStyleLabelProvider());
+		categoryTree = new TreeListDialogField<>(adapter, null, new NameStyleLabelProvider());
 		categoryTree.setDialogFieldListener(adapter);
 		categoryTree.setLabelText(PreferencesMessages.NameStyleBlock_categories_label);
 		categoryTree.setViewerComparator(adapter);

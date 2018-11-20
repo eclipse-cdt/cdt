@@ -229,10 +229,10 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 		if (fileName == null) {
 			return Collections.emptyList();
 		}
-		List<Position> positions = new ArrayList<Position>();
+		List<Position> positions = new ArrayList<>();
 		int inactiveCodeStart = -1;
 		boolean inInactiveCode = false;
-		Stack<Boolean> inactiveCodeStack = new Stack<Boolean>();
+		Stack<Boolean> inactiveCodeStack = new Stack<>();
 
 		IASTPreprocessorStatement[] preprocStmts = translationUnit.getAllPreprocessorStatements();
 

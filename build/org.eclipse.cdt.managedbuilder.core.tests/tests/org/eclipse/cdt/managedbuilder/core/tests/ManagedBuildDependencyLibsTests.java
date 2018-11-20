@@ -190,7 +190,7 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 	}
 
 	private long getArtifactTimeStamp(IProject project) {
-		List<IFile> files = new ArrayList<IFile>();
+		List<IFile> files = new ArrayList<>();
 		findFiles(project, getArtefactFullName(project), files);
 		if (files.size() == 0) // File not exists
 			return 0;

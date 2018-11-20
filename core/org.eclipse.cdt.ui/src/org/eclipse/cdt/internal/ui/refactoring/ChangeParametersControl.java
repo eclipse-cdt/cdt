@@ -104,7 +104,7 @@ public class ChangeParametersControl extends Composite {
 		}
 
 		private NameInformation[] removeMarkedAsDeleted(List<NameInformation> params) {
-			List<NameInformation> result = new ArrayList<NameInformation>(params.size());
+			List<NameInformation> result = new ArrayList<>(params.size());
 			for (Iterator<NameInformation> iter = params.iterator(); iter.hasNext();) {
 				NameInformation info = iter.next();
 				if (!info.isDeleted())
@@ -309,7 +309,7 @@ public class ChangeParametersControl extends Composite {
 		fTypeContext = typeContext;
 		fParamNameProposals = paramNameProposals;
 
-		ArrayList<String> properties = new ArrayList<String>();
+		ArrayList<String> properties = new ArrayList<>();
 		indexType = properties.size();
 		properties.add("type"); //$NON-NLS-1$
 
@@ -584,7 +584,7 @@ public class ChangeParametersControl extends Composite {
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Set<String> excludedParamNames = new HashSet<String>(fParameters.size());
+				Set<String> excludedParamNames = new HashSet<>(fParameters.size());
 				for (int i = 0; i < fParameters.size(); i++) {
 					NameInformation info = fParameters.get(i);
 					excludedParamNames.add(info.getNewName());
@@ -675,7 +675,7 @@ public class ChangeParametersControl extends Composite {
 	private void addCellEditors() {
 		fTableViewer.setColumnProperties(columnProperties);
 
-		ArrayList<CellEditor> editors = new ArrayList<CellEditor>();
+		ArrayList<CellEditor> editors = new ArrayList<>();
 		TableTextCellEditor cellEditorType = new TableTextCellEditor(fTableViewer, indexType);
 		editors.add(cellEditorType);
 		if (indexDirection >= 0) {
@@ -747,8 +747,8 @@ public class ChangeParametersControl extends Composite {
 	}
 
 	private static void moveUp(List<NameInformation> elements, List<NameInformation> move) {
-		List<NameInformation> res = new ArrayList<NameInformation>(elements.size());
-		List<NameInformation> deleted = new ArrayList<NameInformation>();
+		List<NameInformation> res = new ArrayList<>(elements.size());
+		List<NameInformation> deleted = new ArrayList<>();
 		NameInformation floating = null;
 		for (Iterator<NameInformation> iter = elements.iterator(); iter.hasNext();) {
 			NameInformation curr = iter.next();

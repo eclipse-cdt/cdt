@@ -35,8 +35,8 @@ import org.osgi.framework.Bundle;
  * @since 2.1
  */
 public abstract class AbstractImageRegistry extends ImageRegistry {
-	private HashMap<String, String> fPlugins = new HashMap<String, String>();
-	private HashMap<String, String[]> fLocations = new HashMap<String, String[]>();
+	private HashMap<String, String> fPlugins = new HashMap<>();
+	private HashMap<String, String[]> fLocations = new HashMap<>();
 	private URL fBaseUrl;
 
 	protected AbstractImageRegistry(Plugin plugin) {

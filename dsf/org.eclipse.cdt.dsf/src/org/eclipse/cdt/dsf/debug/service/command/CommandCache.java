@@ -84,7 +84,7 @@ public class CommandCache implements ICommandListener {
 		public CommandInfo(CommandStyle cmdstyle, ICommand<ICommandResult> cmd, DataRequestMonitor<ICommandResult> rm) {
 			fCmdStyle = cmdstyle;
 			fCommand = cmd;
-			fCurrentRequestMonitors = new LinkedList<DataRequestMonitor<ICommandResult>>();
+			fCurrentRequestMonitors = new LinkedList<>();
 			fCurrentRequestMonitors.add(rm);
 			fCoalescedCmd = null;
 		}
@@ -186,15 +186,15 @@ public class CommandCache implements ICommandListener {
 	 *      created. When the coalesced commands completes the results will be decomposed
 	 *      when back into individual results from this command.
 	 */
-	private Set<IDMContext> fAvailableContexts = new HashSet<IDMContext>();
+	private Set<IDMContext> fAvailableContexts = new HashSet<>();
 
-	private Map<IDMContext, HashMap<CommandInfo, CommandResultInfo>> fCachedContexts = new HashMap<IDMContext, HashMap<CommandInfo, CommandResultInfo>>();
+	private Map<IDMContext, HashMap<CommandInfo, CommandResultInfo>> fCachedContexts = new HashMap<>();
 
-	private ArrayList<CommandInfo> fPendingQCommandsSent = new ArrayList<CommandInfo>();
+	private ArrayList<CommandInfo> fPendingQCommandsSent = new ArrayList<>();
 
-	private ArrayList<CommandInfo> fPendingQCommandsNotYetSent = new ArrayList<CommandInfo>();
+	private ArrayList<CommandInfo> fPendingQCommandsNotYetSent = new ArrayList<>();
 
-	private ArrayList<CommandInfo> fPendingQWaitingForCoalescedCompletion = new ArrayList<CommandInfo>();
+	private ArrayList<CommandInfo> fPendingQWaitingForCoalescedCompletion = new ArrayList<>();
 
 	private static boolean DEBUG = false;
 	private static final String CACHE_TRACE_IDENTIFIER = " [CHE]"; //$NON-NLS-1$
@@ -261,7 +261,7 @@ public class CommandCache implements ICommandListener {
 	 */
 	private CommandInfo getCoalescedCommand(CommandInfo cmd) {
 
-		for (CommandInfo currentUnsentEntry : new ArrayList<CommandInfo>(fPendingQCommandsNotYetSent)) {
+		for (CommandInfo currentUnsentEntry : new ArrayList<>(fPendingQCommandsNotYetSent)) {
 			/*
 			 *  Get the current unsent entry to determine if we can coalesced with it.
 			 */
@@ -287,7 +287,7 @@ public class CommandCache implements ICommandListener {
 					 *  them to point to the new super command.
 					 */
 
-					for (CommandInfo waitingEntry : new ArrayList<CommandInfo>(
+					for (CommandInfo waitingEntry : new ArrayList<>(
 							fPendingQWaitingForCoalescedCompletion)) {
 
 						if (waitingEntry.getCoalescedCmd() == currentUnsentEntry) {
@@ -469,7 +469,7 @@ public class CommandCache implements ICommandListener {
 							 *  we create a new result from the coalesced command for it.
 							 */
 
-							for (CommandInfo waitingEntry : new ArrayList<CommandInfo>(
+							for (CommandInfo waitingEntry : new ArrayList<>(
 									fPendingQWaitingForCoalescedCompletion)) {
 
 								if (waitingEntry.getCoalescedCmd() == finalCachedCmd) {
@@ -487,7 +487,7 @@ public class CommandCache implements ICommandListener {
 									if (fCachedContexts.get(context) != null) {
 										fCachedContexts.get(context).put(waitingEntry, subResultInfo);
 									} else {
-										HashMap<CommandInfo, CommandResultInfo> map = new HashMap<CommandInfo, CommandResultInfo>();
+										HashMap<CommandInfo, CommandResultInfo> map = new HashMap<>();
 										map.put(waitingEntry, subResultInfo);
 										fCachedContexts.put(context, map);
 									}
@@ -529,7 +529,7 @@ public class CommandCache implements ICommandListener {
 								if (fCachedContexts.get(context) != null) {
 									fCachedContexts.get(context).put(finalCachedCmd, resultInfo);
 								} else {
-									HashMap<CommandInfo, CommandResultInfo> map = new HashMap<CommandInfo, CommandResultInfo>();
+									HashMap<CommandInfo, CommandResultInfo> map = new HashMap<>();
 									map.put(finalCachedCmd, resultInfo);
 									fCachedContexts.put(context, map);
 								}
@@ -649,7 +649,7 @@ public class CommandCache implements ICommandListener {
 		// instead of only using 'cachedCmd'.  This is because although cachedCmd can be considered
 		// equal to unqueuedCommand, it is not identical and we need the full content of unqueuedCommand.
 		// For instance, cachedCmd does not have the list of requestMonitors that unqueuedCommand has.
-		for (CommandInfo unqueuedCommand : new ArrayList<CommandInfo>(fPendingQCommandsNotYetSent)) {
+		for (CommandInfo unqueuedCommand : new ArrayList<>(fPendingQCommandsNotYetSent)) {
 			if (unqueuedCommand.equals(cachedCmd)) {
 				fPendingQCommandsNotYetSent.remove(unqueuedCommand);
 				fPendingQCommandsSent.add(unqueuedCommand);

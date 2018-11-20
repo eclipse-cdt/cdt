@@ -83,7 +83,7 @@ public class SelectionConverter {
 	 * @return The converted selection
 	 */
 	public static IStructuredSelection convertSelectionToCElements(ISelection s, boolean keepNonCElements) {
-		List<Object> converted = new ArrayList<Object>();
+		List<Object> converted = new ArrayList<>();
 		if (s instanceof IStructuredSelection) {
 			Object[] elements = ((IStructuredSelection) s).toArray();
 			for (int i = 0; i < elements.length; i++) {
@@ -104,7 +104,7 @@ public class SelectionConverter {
 	}
 
 	public static IStructuredSelection convertSelectionToResources(ISelection s) {
-		List<Object> converted = new ArrayList<Object>();
+		List<Object> converted = new ArrayList<>();
 		if (s instanceof StructuredSelection) {
 			Object[] elements = ((StructuredSelection) s).toArray();
 			for (int i = 0; i < elements.length; i++) {
@@ -156,7 +156,7 @@ public class SelectionConverter {
 	 */
 	public static IStructuredSelection allResources(IStructuredSelection selection, int resourceMask) {
 		Iterator<?> adaptables = selection.iterator();
-		List<IResource> result = new ArrayList<IResource>();
+		List<IResource> result = new ArrayList<>();
 		while (adaptables.hasNext()) {
 			Object next = adaptables.next();
 			if (next instanceof IAdaptable) {

@@ -81,7 +81,7 @@ public class SimpleMakefileGenerator extends ProcessRunner {
 					getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFile.2") + MAKEFILE)); //$NON-NLS-1$
 		}
 
-		Map<String, String> macros = new HashMap<String, String>(template.getValueStore());
+		Map<String, String> macros = new HashMap<>(template.getValueStore());
 		macros.put("exe", Platform.getOS().equals(Platform.OS_WIN32) ? ".exe" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		fileContents = replaceMacros(fileContents, macros);

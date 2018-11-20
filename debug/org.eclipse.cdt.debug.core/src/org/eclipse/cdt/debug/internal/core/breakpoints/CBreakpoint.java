@@ -59,7 +59,7 @@ public abstract class CBreakpoint extends Breakpoint
 	 * This map is sorted to allow consistent iteration order so that extension
 	 * message does not unexpectedly change order
 	 */
-	private SortedMap<String, ICBreakpointExtension[]> fExtensions = new TreeMap<String, ICBreakpointExtension[]>();
+	private SortedMap<String, ICBreakpointExtension[]> fExtensions = new TreeMap<>();
 
 	/**
 	 * The number of debug targets the breakpoint is installed in. We don't use
@@ -303,7 +303,7 @@ public abstract class CBreakpoint extends Breakpoint
 					IMarker marker = ensureMarker();
 
 					// Read the extension registry and create applicable extensions.
-					List<ICBreakpointExtension> extensions = new ArrayList<ICBreakpointExtension>(4);
+					List<ICBreakpointExtension> extensions = new ArrayList<>(4);
 					IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(
 							CDebugCorePlugin.getUniqueIdentifier(),
 							CDebugCorePlugin.BREAKPOINT_EXTENSION_EXTENSION_POINT_ID);

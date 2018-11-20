@@ -163,7 +163,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 */
 	protected void addMacro(String signature, String value) {
 		if (fAddMacroList == null) {
-			fAddMacroList = new ArrayList<IMacro>();
+			fAddMacroList = new ArrayList<>();
 		}
 		fAddMacroList.add(new MacroDefinition(signature.toCharArray(), value.toCharArray()));
 		fAddMacros = null;

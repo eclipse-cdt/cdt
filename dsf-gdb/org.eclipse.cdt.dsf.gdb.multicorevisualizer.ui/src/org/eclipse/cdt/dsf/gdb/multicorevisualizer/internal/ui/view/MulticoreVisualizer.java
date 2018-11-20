@@ -286,7 +286,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	@Override
 	public void initializeVisualizer() {
 		fEventListener = new MulticoreVisualizerEventListener(this);
-		m_cpuCoreContextsCache = new ArrayList<IDMContext>();
+		m_cpuCoreContextsCache = new ArrayList<>();
 		m_visualizerInstanceId = getViewer().getView().getViewSite().getSecondaryId();
 
 		// The first visualizer view will have a null secondary id - override that
@@ -514,7 +514,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		// enable the load meter sub-menu
 		m_enableLoadMetersAction.setEnabled(true);
 
-		m_setLoadMeterPeriodActions = new ArrayList<SetLoadMeterPeriodAction>();
+		m_setLoadMeterPeriodActions = new ArrayList<>();
 		m_setLoadMeterPeriodActions.add(new SetLoadMeterPeriodAction(
 				MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.SetLoadMeterPeriod.fast.text"), //$NON-NLS-1$
 				LOAD_METER_TIMER_FAST));
@@ -965,7 +965,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 			VisualizerModel model = m_canvas.getModel();
 			if (model != null) {
 
-				Set<Object> selected = new HashSet<Object>();
+				Set<Object> selected = new HashSet<>();
 
 				for (Object item : items) {
 

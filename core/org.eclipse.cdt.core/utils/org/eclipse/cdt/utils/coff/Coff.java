@@ -696,7 +696,7 @@ public class Coff {
 	}
 
 	public static String[] getStringTable(byte[] bytes) {
-		List<String> aList = new ArrayList<String>();
+		List<String> aList = new ArrayList<>();
 		int offset = 0;
 		for (int i = 0; i < bytes.length; i++) {
 			if (bytes[i] == 0) {

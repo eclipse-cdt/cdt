@@ -49,7 +49,7 @@ public class DisassemblyToggleDynamicPrintfTarget extends AbstractDisassemblyBre
 	protected void createLineBreakpointInteractive(IWorkbenchPart part, String sourceHandle, IResource resource,
 			int lineNumber) throws CoreException {
 		ICDynamicPrintf dprintf = (ICDynamicPrintf) CDIDebugModel.createBlankLineDynamicPrintf();
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		CDIDebugModel.setLineBreakpointAttributes(attributes, sourceHandle, getBreakpointType(), lineNumber, true, 0,
 				""); //$NON-NLS-1$
 
@@ -89,7 +89,7 @@ public class DisassemblyToggleDynamicPrintfTarget extends AbstractDisassemblyBre
 	protected void createAddressBreakpointInteractive(IWorkbenchPart part, IResource resource, IAddress address)
 			throws CoreException {
 		ICDynamicPrintf dprintf = (ICDynamicPrintf) CDIDebugModel.createBlankAddressDynamicPrintf();
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		CDIDebugModel.setAddressBreakpointAttributes(attributes, null, null, getBreakpointType(), -1, address, true, 0,
 				""); //$NON-NLS-1$
 

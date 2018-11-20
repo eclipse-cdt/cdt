@@ -181,7 +181,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 
 		private boolean updateMacroSettings(ICLanguageSetting langSetting) {
 			ICLanguageSettingEntry[] entries = langSetting.getSettingEntries(ICSettingEntry.MACRO);
-			List<ICLanguageSettingEntry> newEntries = new LinkedList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> newEntries = new LinkedList<>();
 			for (ICLanguageSettingEntry entry : entries) {
 				newEntries.add(entry);
 			}
@@ -219,7 +219,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 
 		private boolean updateIncludeSettings(ICLanguageSetting langSetting) {
 			ICLanguageSettingEntry[] entries = langSetting.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
-			List<ICLanguageSettingEntry> newEntries = new LinkedList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> newEntries = new LinkedList<>();
 			for (ICLanguageSettingEntry entry : entries) {
 				newEntries.add(entry);
 			}
@@ -281,7 +281,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 			synchronized (fLock) {
 				IPerFileDiscoveredPathInfo2 info1 = getPerFileInfo1();
 				if (info1 != null) {
-					Map<IResource, PathInfo> map = new HashMap<IResource, PathInfo>();
+					Map<IResource, PathInfo> map = new HashMap<>();
 					map.putAll(info1.getPathInfoMap());
 					map.putAll(fInfo2.getPathInfoMap());
 					return map;
@@ -301,7 +301,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 			synchronized (fLock) {
 				IPerFileDiscoveredPathInfo2 info1 = getPerFileInfo1();
 				if (info1 != null) {
-					List<IPath> list = new LinkedList<IPath>();
+					List<IPath> list = new LinkedList<>();
 					for (IPath path1 : info1.getIncludeFiles(path)) {
 						list.add(path1);
 					}
@@ -322,7 +322,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		public IPath[] getIncludePaths(IPath path) {
 			synchronized (fLock) {
 
-				Set<IPath> pathSet = new HashSet<IPath>();
+				Set<IPath> pathSet = new HashSet<>();
 
 				// add project level settings if other info is per project
 				if (fInfo1 instanceof DiscoveredPathInfo) {
@@ -353,7 +353,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		@Override
 		public IPath[] getMacroFiles(IPath path) {
 			synchronized (fLock) {
-				Set<IPath> pathSet = new HashSet<IPath>();
+				Set<IPath> pathSet = new HashSet<>();
 
 				IPerFileDiscoveredPathInfo2 info1 = getPerFileInfo1();
 				if (info1 != null) {
@@ -376,7 +376,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		public IPath[] getQuoteIncludePaths(IPath path) {
 			synchronized (fLock) {
 
-				Set<IPath> pathSet = new HashSet<IPath>();
+				Set<IPath> pathSet = new HashSet<>();
 
 				IPerFileDiscoveredPathInfo2 info1 = getPerFileInfo1();
 				if (info1 != null) {
@@ -399,7 +399,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		public Map<String, String> getSymbols(IPath path) {
 			synchronized (fLock) {
 
-				Map<String, String> symbols = new HashMap<String, String>();
+				Map<String, String> symbols = new HashMap<>();
 
 				// add project level settings
 				Map<String, String> projectSymbols = fInfo1.getSymbols();
@@ -478,7 +478,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		public IPath[] getIncludeFiles(IPath path) {
 			synchronized (fLock) {
 
-				Set<IPath> pathSet = new LinkedHashSet<IPath>();
+				Set<IPath> pathSet = new LinkedHashSet<>();
 				// get the command
 				CCommandDSC cmd = getCommand(path);
 				if (cmd != null) {
@@ -516,7 +516,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 			if (includepaths == null || includepaths.length == 0) {
 				return quotepaths;
 			}
-			ArrayList<IPath> result = new ArrayList<IPath>(includepaths.length + quotepaths.length);
+			ArrayList<IPath> result = new ArrayList<>(includepaths.length + quotepaths.length);
 			result.addAll(Arrays.asList(includepaths));
 			result.addAll(Arrays.asList(quotepaths));
 			return result.toArray(new IPath[result.size()]);
@@ -528,7 +528,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		@Override
 		public IPath[] getIncludePaths(IPath path) {
 			synchronized (fLock) {
-				Set<IPath> pathSet = new LinkedHashSet<IPath>();
+				Set<IPath> pathSet = new LinkedHashSet<>();
 				// get the command
 				CCommandDSC cmd = getCommand(path);
 				if (cmd != null) {
@@ -554,7 +554,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		@Override
 		public IPath[] getMacroFiles(IPath path) {
 			synchronized (fLock) {
-				Set<IPath> pathSet = new LinkedHashSet<IPath>();
+				Set<IPath> pathSet = new LinkedHashSet<>();
 				// get the command
 				CCommandDSC cmd = getCommand(path);
 				if (cmd != null) {
@@ -596,7 +596,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		@Override
 		public IPath[] getQuoteIncludePaths(IPath path) {
 			synchronized (fLock) {
-				Set<IPath> pathSet = new LinkedHashSet<IPath>();
+				Set<IPath> pathSet = new LinkedHashSet<>();
 				// get the command
 				CCommandDSC cmd = getCommand(path);
 				if (cmd != null) {
@@ -646,7 +646,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		@Override
 		public Map<String, String> getSymbols(IPath path) {
 			synchronized (fLock) {
-				Map<String, String> definedSymbols = new HashMap<String, String>();
+				Map<String, String> definedSymbols = new HashMap<>();
 
 				// put project data in first so file level data can override it
 				// use project scope scanner info
@@ -728,9 +728,9 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		public final Map<IFile, Integer> fileToCommandIdMap; // maps each file to the corresponding command id
 
 		public ScannerInfoData() {
-			commandIdCommandMap = new LinkedHashMap<Integer, CCommandDSC>(); // [commandId, command]
-			fileToCommandIdMap = new HashMap<IFile, Integer>(); // [file, commandId]
-			commandIdToFilesMap = new HashMap<Integer, Set<IFile>>(); // [commandId, set of files]
+			commandIdCommandMap = new LinkedHashMap<>(); // [commandId, command]
+			fileToCommandIdMap = new HashMap<>(); // [file, commandId]
+			commandIdToFilesMap = new HashMap<>(); // [commandId, set of files]
 		}
 
 		/* (non-Javadoc)
@@ -747,10 +747,10 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 
 						IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 
-						Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
+						Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<>();
 
-						List<String> includes = new LinkedList<String>();
-						List<String> symbols = new LinkedList<String>();
+						List<String> includes = new LinkedList<>();
+						List<String> symbols = new LinkedList<>();
 
 						// iterate over children
 						for (Node projectChild = projectElement
@@ -852,7 +852,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 					}
 
 					// serialize file level info
-					List<Integer> commandIds = new ArrayList<Integer>(commandIdCommandMap.keySet());
+					List<Integer> commandIds = new ArrayList<>(commandIdCommandMap.keySet());
 					Collections.sort(commandIds);
 					for (Iterator<Integer> i = commandIds.iterator(); i.hasNext();) {
 						Integer commandId = i.next();
@@ -915,7 +915,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		IPath[] incFiles = stringListToPathArray(cmd.getIncludeFile());
 		IPath[] macroFiles = stringListToPathArray(cmd.getImacrosFile());
 		List symbols = cmd.getSymbols();
-		Map<String, String> definedSymbols = new HashMap<String, String>(symbols.size());
+		Map<String, String> definedSymbols = new HashMap<>(symbols.size());
 		for (Iterator i = symbols.iterator(); i.hasNext();) {
 			String symbol = (String) i.next();
 			String key = ScannerConfigUtil.getSymbolKey(symbol);
@@ -932,7 +932,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 	 * @return
 	 */
 	protected static IPath[] stringListToPathArray(List<String> discovered) {
-		List<Path> allIncludes = new ArrayList<Path>(discovered.size());
+		List<Path> allIncludes = new ArrayList<>(discovered.size());
 		for (Iterator<String> j = discovered.iterator(); j.hasNext();) {
 			String include = j.next();
 			if (!allIncludes.contains(include)) {
@@ -948,7 +948,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 	/** monitor for data access */
 	protected final Object fLock = new Object();
 
-	private Map<IProject, Map<?, ?>> fProjectSettingsMap = new HashMap<IProject, Map<?, ?>>();
+	private Map<IProject, Map<?, ?>> fProjectSettingsMap = new HashMap<>();
 
 	protected final SortedSet<Integer> freeCommandIdPool; // sorted set of free command ids
 	protected IProject project;
@@ -965,10 +965,10 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		sid = new ScannerInfoData();
 
 		//        siChangedForFileList = new ArrayList();
-		siChangedForFileMap = new HashMap<IResource, Integer>();
-		siChangedForCommandIdList = new ArrayList<Integer>();
+		siChangedForFileMap = new HashMap<>();
+		siChangedForCommandIdList = new ArrayList<>();
 
-		freeCommandIdPool = new TreeSet<Integer>();
+		freeCommandIdPool = new TreeSet<>();
 	}
 
 	/**
@@ -977,7 +977,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 	 */
 	protected void addCompilerCommand(IFile file, CCommandDSC cmd) {
 		synchronized (fLock) {
-			List<CCommandDSC> existingCommands = new ArrayList<CCommandDSC>(sid.commandIdCommandMap.values());
+			List<CCommandDSC> existingCommands = new ArrayList<>(sid.commandIdCommandMap.values());
 			int index = existingCommands.indexOf(cmd);
 			if (index != -1) {
 				cmd = existingCommands.get(index);
@@ -1045,7 +1045,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 					// update sid.commandIdToFilesMap
 					Set<IFile> fileSet = sid.commandIdToFilesMap.get(commandId);
 					if (fileSet == null) {
-						fileSet = new HashSet<IFile>();
+						fileSet = new HashSet<>();
 						sid.commandIdToFilesMap.put(commandId, fileSet);
 						CCommandDSC cmd = sid.commandIdCommandMap.get(commandId);
 						if (cmd != null) {
@@ -1083,7 +1083,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 
 	protected Map<IResource, PathInfo> calculatePathInfoMap() {
 		synchronized (fLock) {
-			Map<IResource, PathInfo> map = new HashMap<IResource, PathInfo>(sid.fileToCommandIdMap.size() + 1);
+			Map<IResource, PathInfo> map = new HashMap<>(sid.fileToCommandIdMap.size() + 1);
 			Map.Entry entry;
 			IFile file;
 			CCommandDSC cmd;
@@ -1317,7 +1317,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 				includes = (List<String>) projectScannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS);
 			}
 
-			List<IPath> pathList = new LinkedList<IPath>();
+			List<IPath> pathList = new LinkedList<>();
 
 			if (includes != null) {
 				for (String include : includes) {
@@ -1346,7 +1346,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 	 */
 	protected IPath[] getAllIncludePaths1(int type) {
 		synchronized (fLock) {
-			List<String> allIncludes = new ArrayList<String>();
+			List<String> allIncludes = new ArrayList<>();
 			for (Iterator<Integer> i = sid.commandIdCommandMap.keySet().iterator(); i.hasNext();) {
 				Integer cmdId = i.next();
 				CCommandDSC cmd = sid.commandIdCommandMap.get(cmdId);
@@ -1397,7 +1397,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 
 			Map projectScannerInfo = fProjectSettingsMap.get(project);
 
-			Map<String, String> symbols = new HashMap<String, String>();
+			Map<String, String> symbols = new HashMap<>();
 
 			if (projectScannerInfo != null) {
 				List<String> projectSymbols = (List<String>) projectScannerInfo
@@ -1427,7 +1427,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 	 */
 	protected Map<String, String> getAllSymbols1() {
 		synchronized (fLock) {
-			Map<String, String> symbols = new HashMap<String, String>();
+			Map<String, String> symbols = new HashMap<>();
 			for (Iterator<Integer> i = sid.commandIdCommandMap.keySet().iterator(); i.hasNext();) {
 				Integer cmdId = i.next();
 				CCommandDSC cmd = sid.commandIdCommandMap.get(cmdId);
@@ -1451,7 +1451,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 	@Override
 	public List<CCommandDSC> getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
 
-		List<CCommandDSC> rv = new ArrayList<CCommandDSC>();
+		List<CCommandDSC> rv = new ArrayList<>();
 		// check the resource
 		String errorMessage = null;
 		if (resource == null) {
@@ -1554,7 +1554,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 	@Override
 	public List<String> getIncludePaths() {
 		synchronized (fLock) {
-			List<String> pathStrings = new LinkedList<String>();
+			List<String> pathStrings = new LinkedList<>();
 
 			List<IPath> paths = Arrays.asList(getAllIncludePaths(INCLUDE_PATH));
 			paths.addAll(Arrays.asList(getAllIncludePaths(QUOTE_INCLUDE_PATH)));
@@ -1637,7 +1637,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 		monitor.beginTask(Messages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
 		monitor.subTask(Messages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
-		ArrayList<IResource> changedResources = new ArrayList<IResource>();
+		ArrayList<IResource> changedResources = new ArrayList<>();
 		synchronized (fLock) {
 			if (scannerInfoChanged()) {
 				applyFileDeltas();

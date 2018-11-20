@@ -76,7 +76,7 @@ class FindIASTNameDialog extends Dialog {
 		@Override
 		public void shellActivated(ShellEvent e) {
 			String oldText = fFindField.getText(); // XXX workaround for 10766
-			List<String> oldList = new ArrayList<String>();
+			List<String> oldList = new ArrayList<>();
 			oldList.addAll(fFindHistory);
 
 			readConfiguration();
@@ -248,7 +248,7 @@ class FindIASTNameDialog extends Dialog {
 		updateTarget(target, false);
 
 		fDialogPositionInit = null;
-		fFindHistory = new ArrayList<String>(HISTORY_SIZE - 1);
+		fFindHistory = new ArrayList<>(HISTORY_SIZE - 1);
 
 		fWrapInit = false;
 		fCaseInit = false;

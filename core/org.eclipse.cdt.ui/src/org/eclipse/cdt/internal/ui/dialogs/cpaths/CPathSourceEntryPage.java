@@ -93,7 +93,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 				CPathEntryMessages.SourcePathEntryPath_folders_edit_button,
 				CPathEntryMessages.SourcePathEntryPage_folders_remove_button };
 
-		fFoldersList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
+		fFoldersList = new TreeListDialogField<>(adapter, buttonLabels, new CPElementLabelProvider());
 		fFoldersList.setDialogFieldListener(adapter);
 		fFoldersList.setLabelText(CPathEntryMessages.SourcePathEntryPage_folders_label);
 
@@ -229,7 +229,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 	protected void sourcePageCustomButtonPressed(DialogField field, int index) {
 		if (field == fFoldersList) {
 			if (index == IDX_ADD) {
-				List<CPElement> elementsToAdd = new ArrayList<CPElement>(10);
+				List<CPElement> elementsToAdd = new ArrayList<>(10);
 				IProject project = fCurrCProject.getProject();
 				if (project.exists()) {
 					CPElement[] srcentries = openSourceContainerDialog(null);
@@ -245,7 +245,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 					}
 				}
 				if (!elementsToAdd.isEmpty()) {
-					HashSet<CPElement> modifiedElements = new HashSet<CPElement>();
+					HashSet<CPElement> modifiedElements = new HashSet<>();
 					askForAddingExclusionPatternsDialog(elementsToAdd, modifiedElements);
 
 					fFoldersList.addElements(elementsToAdd);
@@ -449,7 +449,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		List<IContainer> existingContainers = getExistingContainers(null);
 
 		IProject[] allProjects = fWorkspaceRoot.getProjects();
-		ArrayList<IProject> rejectedElements = new ArrayList<IProject>(allProjects.length);
+		ArrayList<IProject> rejectedElements = new ArrayList<>(allProjects.length);
 		IProject currProject = fCurrCProject.getProject();
 		for (int i = 0; i < allProjects.length; i++) {
 			if (!allProjects[i].equals(currProject)) {
@@ -492,7 +492,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 	}
 
 	private List<IContainer> getExistingContainers(CPElement existing) {
-		List<IContainer> res = new ArrayList<IContainer>();
+		List<IContainer> res = new ArrayList<>();
 		List<CPElement> cplist = fFoldersList.getElements();
 		for (int i = 0; i < cplist.size(); i++) {
 			CPElement elem = cplist.get(i);

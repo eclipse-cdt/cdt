@@ -25,7 +25,7 @@ public class ProcStatCoreLoads {
 	private Map<String, Float> m_coreLoads;
 
 	public ProcStatCoreLoads() {
-		m_coreLoads = new HashMap<String, Float>();
+		m_coreLoads = new HashMap<>();
 	}
 
 	public void put(String coreId, Float load) {

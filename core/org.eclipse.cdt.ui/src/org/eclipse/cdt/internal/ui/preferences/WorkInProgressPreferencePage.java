@@ -46,9 +46,9 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	 */
 	public WorkInProgressPreferencePage() {
 		setPreferenceStore(getPreferenceStore());
-		fRadioButtons = new ArrayList<Button>();
-		fCheckBoxes = new ArrayList<Button>();
-		fTextControls = new ArrayList<Text>();
+		fRadioButtons = new ArrayList<>();
+		fCheckBoxes = new ArrayList<>();
+		fTextControls = new ArrayList<>();
 	}
 
 	Button addCheckBox(Composite parent, String label, String key) {

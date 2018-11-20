@@ -61,7 +61,7 @@ public class DoxygenHelper extends AbstractPreferenceInitializer {
 		if (fTags == null) {
 			InputStream is = null;
 			try {
-				List<GenericDocTag> temp = new ArrayList<GenericDocTag>();
+				List<GenericDocTag> temp = new ArrayList<>();
 				is = FileLocator.openStream(CUIPlugin.getDefault().getBundle(), TAGS_CSV, false);
 				BufferedReader br = new BufferedReader(new InputStreamReader(is));
 				StringBuilder content = new StringBuilder(2000);

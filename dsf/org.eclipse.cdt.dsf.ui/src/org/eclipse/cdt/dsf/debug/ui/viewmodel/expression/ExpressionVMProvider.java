@@ -386,7 +386,7 @@ public class ExpressionVMProvider extends AbstractElementVMProvider implements I
 	}
 
 	private void expressionsListChanged(ExpressionsChangedEvent.Type type, IExpression[] expressions, int index) {
-		Set<Object> rootElements = new HashSet<Object>();
+		Set<Object> rootElements = new HashSet<>();
 		for (IVMModelProxy proxy : getActiveModelProxies()) {
 			rootElements.add(proxy.getRootElement());
 		}

@@ -211,7 +211,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 	 */
 	@Override
 	public ICFileDescription[] getFileDescriptions() {
-		ArrayList<ICFileDescription> lst = new ArrayList<ICFileDescription>();
+		ArrayList<ICFileDescription> lst = new ArrayList<>();
 		for (int i = 0; i < fCfgs.length; i++)
 			lst.addAll(Arrays.asList(fCfgs[i].getFileDescriptions()));
 		return lst.toArray(new ICFileDescription[lst.size()]);
@@ -222,7 +222,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 	 */
 	@Override
 	public ICFolderDescription[] getFolderDescriptions() {
-		ArrayList<ICFolderDescription> lst = new ArrayList<ICFolderDescription>();
+		ArrayList<ICFolderDescription> lst = new ArrayList<>();
 		for (int i = 0; i < fCfgs.length; i++)
 			lst.addAll(Arrays.asList(fCfgs[i].getFolderDescriptions()));
 		return lst.toArray(new ICFolderDescription[lst.size()]);
@@ -275,7 +275,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 	 */
 	@Override
 	public ICResourceDescription getResourceDescription(IPath path, boolean isForFolder) {
-		ArrayList<ICResourceDescription> lst = new ArrayList<ICResourceDescription>();
+		ArrayList<ICResourceDescription> lst = new ArrayList<>();
 		for (int i = 0; i < fCfgs.length; i++) {
 			ICResourceDescription rd = fCfgs[i].getResourceDescription(path, false);
 			if (!path.equals(rd.getPath())) {
@@ -305,7 +305,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 	 */
 	@Override
 	public ICResourceDescription[] getResourceDescriptions() {
-		ArrayList<ICResourceDescription> lst = new ArrayList<ICResourceDescription>();
+		ArrayList<ICResourceDescription> lst = new ArrayList<>();
 		for (int i = 0; i < fCfgs.length; i++)
 			lst.addAll(Arrays.asList(fCfgs[i].getResourceDescriptions()));
 		return lst.toArray(new ICResourceDescription[lst.size()]);

@@ -338,7 +338,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 	}
 
 	public static ICElement[] getCElements(List<?> elements) {
-		List<ICElement> resources = new ArrayList<ICElement>(elements.size());
+		List<ICElement> resources = new ArrayList<>(elements.size());
 		for (Iterator<?> iter = elements.iterator(); iter.hasNext();) {
 			Object element = iter.next();
 			if (element instanceof ITranslationUnit) {

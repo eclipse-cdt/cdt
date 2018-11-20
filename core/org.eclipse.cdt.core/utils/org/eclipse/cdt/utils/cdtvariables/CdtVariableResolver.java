@@ -194,7 +194,7 @@ public class CdtVariableResolver {
 					throw e;
 			}
 		else {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			for (String value : values) {
 				String resolved[];
 				try {

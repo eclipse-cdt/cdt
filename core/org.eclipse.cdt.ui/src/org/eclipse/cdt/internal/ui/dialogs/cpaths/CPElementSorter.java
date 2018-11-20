@@ -72,9 +72,9 @@ public class CPElementSorter extends ViewerSorter {
 	@Override
 	public void sort(Viewer viewer, Object[] elements) {
 		// include paths and symbol definitions must not be sorted
-		List<Object> sort = new ArrayList<Object>(elements.length);
-		List<CPElement> includes = new ArrayList<CPElement>(elements.length);
-		List<CPElement> syms = new ArrayList<CPElement>(elements.length);
+		List<Object> sort = new ArrayList<>(elements.length);
+		List<CPElement> includes = new ArrayList<>(elements.length);
+		List<CPElement> syms = new ArrayList<>(elements.length);
 		for (Object element : elements) {
 			if (element instanceof CPElement) {
 				CPElement cpelement = (CPElement) element;

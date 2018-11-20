@@ -36,13 +36,13 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 	private TestsRunnerProvidersManager testsRunnersManager;
 
 	/** Testing sessions history list (the first is the newest). */
-	private LinkedList<TestingSession> sessions = new LinkedList<TestingSession>();
+	private LinkedList<TestingSession> sessions = new LinkedList<>();
 
 	/** Currently active testing session. */
 	private TestingSession activeSession;
 
 	/** Listeners collection. */
-	private List<ITestingSessionsManagerListener> listeners = new ArrayList<ITestingSessionsManagerListener>();
+	private List<ITestingSessionsManagerListener> listeners = new ArrayList<>();
 
 	/** The size limit of the testing sessions history. */
 	private int historySizeLimit = 10;

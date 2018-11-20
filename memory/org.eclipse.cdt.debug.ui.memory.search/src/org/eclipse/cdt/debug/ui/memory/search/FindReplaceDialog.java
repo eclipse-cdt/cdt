@@ -177,7 +177,7 @@ public class FindReplaceDialog extends SelectionDialog {
 	}
 
 	protected byte[] parseByteSequence(String s) {
-		Vector<Byte> sequence = new Vector<Byte>();
+		Vector<Byte> sequence = new Vector<>();
 		StringTokenizer st = new StringTokenizer(s, " "); //$NON-NLS-1$
 		while (st.hasMoreElements()) {
 			String element = ((String) st.nextElement()).trim();
@@ -436,7 +436,7 @@ public class FindReplaceDialog extends SelectionDialog {
 	}
 
 	private String[] removeNullElements(String strings[]) {
-		Vector<String> nonNullStrings = new Vector<String>();
+		Vector<String> nonNullStrings = new Vector<>();
 		for (String string : strings)
 			if (string != null)
 				nonNullStrings.addElement(string);

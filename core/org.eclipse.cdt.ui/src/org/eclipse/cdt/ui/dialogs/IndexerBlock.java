@@ -508,7 +508,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 	 * Adds all the contributed Indexer Pages to a map
 	 */
 	private void initializeIndexerConfigMap() {
-		fIndexerConfigMap = new HashMap<String, IndexerConfig>(5);
+		fIndexerConfigMap = new HashMap<>(5);
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.getPluginId(),
 				"IndexerPage"); //$NON-NLS-1$
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();

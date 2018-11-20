@@ -44,7 +44,7 @@ public class CFunctionSummary implements IFunctionSummary {
 		String args = null;
 		String type = null;
 		NodeList list = e.getChildNodes();
-		ArrayList<IRequiredInclude> incList = new ArrayList<IRequiredInclude>();
+		ArrayList<IRequiredInclude> incList = new ArrayList<>();
 		for (int j = 0; j < list.getLength(); j++) {
 			Node node = list.item(j);
 			if (node.getNodeType() != Node.ELEMENT_NODE)

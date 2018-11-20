@@ -59,7 +59,7 @@ public class WeakHashSetTest extends TestCase {
 	 */
 	public void testHashSetBasic() {
 		// create sample objects
-		WeakHashSet<MockClass> weakSet = new WeakHashSet<MockClass>();
+		WeakHashSet<MockClass> weakSet = new WeakHashSet<>();
 		MockClass a1 = new MockClass("a");
 		MockClass a2 = new MockClass("a");
 
@@ -103,7 +103,7 @@ public class WeakHashSetTest extends TestCase {
 	 * Note that regular {@link WeakHashSet} would fail the test.
 	 */
 	public void testHashSetSyncronization() throws Exception {
-		final WeakHashSet<Integer> weakSet = new WeakHashSetSynchronized<Integer>(1);
+		final WeakHashSet<Integer> weakSet = new WeakHashSetSynchronized<>(1);
 
 		Thread[] threads = new Thread[5000];
 		for (int i = 0; i < threads.length; i++) {

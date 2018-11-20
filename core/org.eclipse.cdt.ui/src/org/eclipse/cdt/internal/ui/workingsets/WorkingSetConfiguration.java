@@ -113,7 +113,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 	private Map<String, IWorkingSetProjectConfiguration> getProjects() {
 		if (projects == null) {
-			projects = new java.util.HashMap<String, IWorkingSetProjectConfiguration>();
+			projects = new java.util.HashMap<>();
 
 			for (IProject next : workingSet.resolveProjects()) {
 				IWorkingSetProjectConfiguration child = createProjectConfiguration(next);
@@ -130,7 +130,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 	protected void basicAddProjectConfiguration(IWorkingSetProjectConfiguration projectConfig) {
 		if (projects == null) {
-			projects = new java.util.HashMap<String, IWorkingSetProjectConfiguration>();
+			projects = new java.util.HashMap<>();
 		}
 
 		projects.put(projectConfig.getProjectName(), projectConfig);
@@ -181,7 +181,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 	public IStatus build(IProgressMonitor monitor) {
 		MultiStatus result = new MultiStatus(CUIPlugin.PLUGIN_ID, 0, WorkingSetMessages.WSConfig_build_problems, null);
 
-		List<IWorkingSetProjectConfiguration> toBuild = new java.util.ArrayList<IWorkingSetProjectConfiguration>(
+		List<IWorkingSetProjectConfiguration> toBuild = new java.util.ArrayList<>(
 				getProjectConfigurations().size());
 		for (IWorkingSetProjectConfiguration next : getProjectConfigurations()) {
 			IProject project = next.resolveProject();
@@ -229,7 +229,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 	public void loadState(IMemento memento) {
 		setName(memento.getString(ATTR_NAME));
 
-		Map<String, IMemento> projectMementos = new java.util.HashMap<String, IMemento>();
+		Map<String, IMemento> projectMementos = new java.util.HashMap<>();
 		for (IMemento next : memento.getChildren(KEY_PROJECT)) {
 			projectMementos.put(next.getString(ATTR_NAME), next);
 		}

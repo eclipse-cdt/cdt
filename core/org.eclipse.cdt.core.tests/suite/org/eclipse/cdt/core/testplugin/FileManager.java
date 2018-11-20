@@ -36,7 +36,7 @@ public class FileManager {
 	HashSet<IFile> fileHandles;
 
 	public FileManager() {
-		fileHandles = new HashSet<IFile>();
+		fileHandles = new HashSet<>();
 	}
 
 	public void addFile(IFile file) {

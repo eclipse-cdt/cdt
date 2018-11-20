@@ -91,7 +91,7 @@ public class RegexErrorParserTests extends TestCase {
 	protected void setUp() throws Exception {
 		fProject = ResourceHelper.createCDTProject(TEST_PROJECT_NAME);
 		assertNotNull(fProject);
-		errorList = new ArrayList<ProblemMarkerInfo>();
+		errorList = new ArrayList<>();
 	}
 
 	@Override

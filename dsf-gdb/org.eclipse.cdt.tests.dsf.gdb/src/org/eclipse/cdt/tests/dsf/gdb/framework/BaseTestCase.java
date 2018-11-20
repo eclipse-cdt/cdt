@@ -127,7 +127,7 @@ public class BaseTestCase {
 	// This allows a SuiteGdb to set an attribute
 	// The suite is responsible for clearing those attributes
 	// once it is finished
-	private static Map<String, Object> globalLaunchAttributes = new HashMap<String, Object>();
+	private static Map<String, Object> globalLaunchAttributes = new HashMap<>();
 
 	private static Process gdbserverProc;
 
@@ -362,7 +362,7 @@ public class BaseTestCase {
 
 	protected void setLaunchAttributes() {
 		// Clear all launch attributes before starting a new test
-		launchAttributes = new HashMap<String, Object>();
+		launchAttributes = new HashMap<>();
 
 		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + DEFAULT_EXEC_NAME);
 

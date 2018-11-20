@@ -51,7 +51,7 @@ public class SharedImagesFactory {
 
 	private Bundle bundle;
 	private ImageRegistry imageRegistry;
-	private Map<String, URL> urlMap = new HashMap<String, URL>();
+	private Map<String, URL> urlMap = new HashMap<>();
 
 	/**
 	 * Constructor.

@@ -211,7 +211,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	}
 
 	CHNode[] createNodes(CHNode node, CalledByResult result) throws CoreException {
-		ArrayList<CHNode> nodes = new ArrayList<CHNode>();
+		ArrayList<CHNode> nodes = new ArrayList<>();
 		ICElement[] elements = result.getElements();
 		for (ICElement element : elements) {
 			if (element != null) {
@@ -248,7 +248,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 
 	CHNode[] createNodes(CHNode node, CallsToResult callsTo) throws CoreException {
 		ITranslationUnit tu = CModelUtil.getTranslationUnit(node.getRepresentedDeclaration());
-		ArrayList<CHNode> result = new ArrayList<CHNode>();
+		ArrayList<CHNode> result = new ArrayList<>();
 		CElementSet[] elementSets = callsTo.getElementSets();
 		for (CElementSet elementSet : elementSets) {
 			CElementSet set = elementSet;

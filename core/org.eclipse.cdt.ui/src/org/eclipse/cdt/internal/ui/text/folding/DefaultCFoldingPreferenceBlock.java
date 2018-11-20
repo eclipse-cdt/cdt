@@ -44,7 +44,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	private IPreferenceStore fStore;
 	protected OverlayPreferenceStore fOverlayStore;
 	private OverlayKey[] fKeys;
-	protected Map<Button, String> fCheckBoxes = new HashMap<Button, String>();
+	protected Map<Button, String> fCheckBoxes = new HashMap<>();
 
 	private SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
@@ -71,7 +71,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	}
 
 	private OverlayKey[] createKeys() {
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				PreferenceConstants.EDITOR_FOLDING_MACROS));

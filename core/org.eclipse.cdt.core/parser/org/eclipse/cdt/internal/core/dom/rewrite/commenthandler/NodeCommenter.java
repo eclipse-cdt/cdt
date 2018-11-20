@@ -73,7 +73,7 @@ public class NodeCommenter {
 		this.visitor = visitor;
 		this.commentHandler = commHandler;
 		this.commentMap = commentMap;
-		this.children = new ArrayList<IASTNode>();
+		this.children = new ArrayList<>();
 	}
 
 	protected void writeNodeList(IASTNode[] nodes) {

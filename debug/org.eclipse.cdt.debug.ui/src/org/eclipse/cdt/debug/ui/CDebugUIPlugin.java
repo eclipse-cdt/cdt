@@ -183,7 +183,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	}
 
 	protected void initializeDebuggerPageMap() {
-		fDebuggerPageMap = new HashMap<String, IConfigurationElement>(10);
+		fDebuggerPageMap = new HashMap<>(10);
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID,
 				CDEBUGGER_PAGE_EXTENSION_POINT_ID);
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();

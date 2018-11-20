@@ -637,7 +637,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		}
 
 		CMacroEntry entry = new CMacroEntry("a", "b", 0);
-		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> list = new ArrayList<>();
 		list.add(entry);
 		list.addAll(Arrays.asList(entries));
 

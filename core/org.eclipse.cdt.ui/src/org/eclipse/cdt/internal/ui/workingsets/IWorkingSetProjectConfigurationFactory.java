@@ -118,8 +118,8 @@ public interface IWorkingSetProjectConfigurationFactory {
 		public static Registry INSTANCE = new Registry();
 
 		private final IWorkingSetProjectConfigurationFactory defaultFactory = new Default();
-		private final Map<String, IWorkingSetProjectConfigurationFactory> factoriesByID = new java.util.HashMap<String, IWorkingSetProjectConfigurationFactory>();
-		private final Map<String, IWorkingSetProjectConfigurationFactory> factoriesByNature = new java.util.HashMap<String, IWorkingSetProjectConfigurationFactory>();
+		private final Map<String, IWorkingSetProjectConfigurationFactory> factoriesByID = new java.util.HashMap<>();
+		private final Map<String, IWorkingSetProjectConfigurationFactory> factoriesByNature = new java.util.HashMap<>();
 
 		private Map<String, Set<String>> projectNaturePartOrdering;
 
@@ -205,13 +205,13 @@ public interface IWorkingSetProjectConfigurationFactory {
 		}
 
 		private Map<String, Set<String>> computeProjectNaturePartOrdering() {
-			Map<String, Set<String>> result = new java.util.HashMap<String, Set<String>>();
+			Map<String, Set<String>> result = new java.util.HashMap<>();
 
 			// first pass to populate the map with immediate requireds
 			IWorkspace ws = ResourcesPlugin.getWorkspace();
 			for (IProjectNatureDescriptor next : ws.getNatureDescriptors()) {
 				result.put(next.getNatureId(),
-						new java.util.HashSet<String>(Arrays.asList(next.getRequiredNatureIds())));
+						new java.util.HashSet<>(Arrays.asList(next.getRequiredNatureIds())));
 			}
 
 			// now, iterate to add transitive requireds
@@ -221,7 +221,7 @@ public interface IWorkingSetProjectConfigurationFactory {
 
 				for (Map.Entry<String, Set<String>> next : result.entrySet()) {
 					Set<String> requireds = next.getValue();
-					Set<String> newRequireds = new java.util.HashSet<String>(requireds);
+					Set<String> newRequireds = new java.util.HashSet<>(requireds);
 
 					boolean changed = false;
 

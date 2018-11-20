@@ -104,7 +104,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 	}
 
 	private FindAction[] getWorkingSetActions() {
-		ArrayList<FindAction> actions = new ArrayList<FindAction>(CSearchUtil.LRU_WORKINGSET_LIST_SIZE);
+		ArrayList<FindAction> actions = new ArrayList<>(CSearchUtil.LRU_WORKINGSET_LIST_SIZE);
 
 		Iterator<IWorkingSet[]> iter = CSearchUtil.getLRUWorkingSets().iterator();
 		while (iter.hasNext()) {

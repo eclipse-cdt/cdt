@@ -258,7 +258,7 @@ class FileVMNode implements IElementLabelProvider, IVMNode {
 					// it in the tree.
 					if (eventFile.exists() && parentFile != null) {
 						// Create a list containing all files in path
-						List<File> filePath = new LinkedList<File>();
+						List<File> filePath = new LinkedList<>();
 						for (File file = eventFile; file != null
 								&& !file.equals(parentFile); file = file.getParentFile()) {
 							filePath.add(0, file);
@@ -304,7 +304,7 @@ class FileVMNode implements IElementLabelProvider, IVMNode {
 	 * nodes which are not us.
 	 */
 	protected Map<IVMNode, Integer> getChildNodesWithDeltas(Object e) {
-		Map<IVMNode, Integer> nodes = new HashMap<IVMNode, Integer>();
+		Map<IVMNode, Integer> nodes = new HashMap<>();
 		for (final IVMNode childNode : getChildNodes()) {
 			int delta = childNode.getDeltaFlags(e);
 			if (delta != IModelDelta.NO_CHANGE) {

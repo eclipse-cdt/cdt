@@ -210,7 +210,7 @@ public class ImportMemoryDialog extends SelectionDialog {
 		data.left = new FormAttachment(textLabel);
 		fFormatCombo.setLayoutData(data);
 
-		Vector<Object> importers = new Vector<Object>();
+		Vector<Object> importers = new Vector<>();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = registry

@@ -45,13 +45,13 @@ import org.eclipse.core.runtime.Plugin;
  */
 @SuppressWarnings("nls")
 public class CodanTestCase extends BaseTestCase {
-	ArrayList<File> tempFiles = new ArrayList<File>();
+	ArrayList<File> tempFiles = new ArrayList<>();
 	protected File tmpDir;
 	protected ICProject cproject;
 	protected File currentFile;
 	protected ICElement currentCElem;
 	protected IFile currentIFile;
-	protected ArrayList<Integer> errLines = new ArrayList<Integer>();
+	protected ArrayList<Integer> errLines = new ArrayList<>();
 
 	/**
 	 *

@@ -359,7 +359,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 			private boolean insideInactiveCode(IASTTranslationUnit ast, int offset) {
 				int inactiveCodeStart = -1;
 				boolean inInactiveCode = false;
-				Stack<Boolean> inactiveCodeStack = new Stack<Boolean>();
+				Stack<Boolean> inactiveCodeStack = new Stack<>();
 
 				IASTPreprocessorStatement[] preprocStmts = ast.getAllPreprocessorStatements();
 

@@ -60,7 +60,7 @@ public class GenericUIElementGroup extends UIElement {
 	public GenericUIElementGroup(UIGroupTypeEnum type, UIAttributes attributes) {
 		super(attributes);
 		this.type = type;
-		this.childList = new ArrayList<UIElement>();
+		this.childList = new ArrayList<>();
 	}
 
 	/*
@@ -80,7 +80,7 @@ public class GenericUIElementGroup extends UIElement {
 	 */
 	@Override
 	public Map<String, String> getValues() {
-		HashMap<String, String> valueMap = new HashMap<String, String>();
+		HashMap<String, String> valueMap = new HashMap<>();
 		int childCount = getChildCount();
 
 		for (int i = 0; i < childCount; i++) {

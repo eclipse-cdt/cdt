@@ -596,7 +596,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 					if (entries.length == 0) {
 						outputEntries = new ICOutputEntry[0];
 					} else {
-						List<ICSettingEntry> list = new ArrayList<ICSettingEntry>(entries.length);
+						List<ICSettingEntry> list = new ArrayList<>(entries.length);
 						for (int k = 0; k < entries.length; k++) {
 							if (entries[k].getKind() == ICLanguageSettingEntry.OUTPUT_PATH)
 								list.add(entries[k]);
@@ -815,7 +815,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 					if (entries.length == 0) {
 						outputEntries = new ICOutputEntry[0];
 					} else {
-						List<ICSettingEntry> list = new ArrayList<ICSettingEntry>(entries.length);
+						List<ICSettingEntry> list = new ArrayList<>(entries.length);
 						for (int k = 0; k < entries.length; k++) {
 							if (entries[k].getKind() == ICLanguageSettingEntry.OUTPUT_PATH)
 								list.add(entries[k]);
@@ -1276,7 +1276,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 				errorParsers = new String[0];
 			} else {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-				List<String> list = new ArrayList<String>(tok.countTokens());
+				List<String> list = new ArrayList<>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
@@ -2356,14 +2356,14 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	private Map<String, String> getCustomBuildPropertiesMap() {
 		if (customBuildProperties == null) {
-			customBuildProperties = new HashMap<String, String>();
+			customBuildProperties = new HashMap<>();
 		}
 		return customBuildProperties;
 	}
 
 	@Override
 	public void setEnvironment(Map<String, String> env) throws CoreException {
-		customizedEnvironment = new HashMap<String, String>(env);
+		customizedEnvironment = new HashMap<>(env);
 	}
 
 	@Override
@@ -2473,7 +2473,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			return null;
 		if (!isExtensionBuilder)
 			return null;
-		return new MatchKey<Builder>(this);
+		return new MatchKey<>(this);
 	}
 
 	@Override
@@ -2667,7 +2667,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	public Set<String> contributeErrorParsers(Set<String> set) {
 		if (getErrorParserIds() != null) {
 			if (set == null)
-				set = new HashSet<String>();
+				set = new HashSet<>();
 
 			String ids[] = getErrorParserList();
 			if (ids.length != 0)
@@ -2683,7 +2683,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	void removeErrorParsers(Set<String> set) {
 		Set<String> oldSet = contributeErrorParsers(null);
 		if (oldSet == null)
-			oldSet = new HashSet<String>();
+			oldSet = new HashSet<>();
 		oldSet.removeAll(set);
 		setErrorParserList(oldSet.toArray(new String[oldSet.size()]));
 	}

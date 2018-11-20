@@ -402,7 +402,7 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 
 		IWorkspace workspace = CUIPlugin.getWorkspace();
 		IProject[] projects = workspace.getRoot().getProjects();
-		Vector<IProject> candidates = new Vector<IProject>(projects.length);
+		Vector<IProject> candidates = new Vector<>(projects.length);
 		IProject next = null;
 
 		// ensure we only present open, valid candidates to the user

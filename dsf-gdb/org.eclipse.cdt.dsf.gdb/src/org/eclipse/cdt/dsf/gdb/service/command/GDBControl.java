@@ -207,7 +207,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	 * is available in 6.8, it does not report anything we care about, so
 	 * return empty list.
 	 */
-	private final List<String> fFeatures = new ArrayList<String>();
+	private final List<String> fFeatures = new ArrayList<>();
 
 	private Sequence fInitializationSequence;
 

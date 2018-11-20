@@ -59,7 +59,7 @@ public class CPElement {
 	private final IPath fPath;
 	private final ICProject fCProject;
 	private final IResource fResource;
-	private final ArrayList<Object> fChildren = new ArrayList<Object>(1);
+	private final ArrayList<Object> fChildren = new ArrayList<>(1);
 
 	private boolean fIsExported;
 
@@ -490,7 +490,7 @@ public class CPElement {
 		//				return new Object[] { findAttributeElement(SOURCEATTACHMENT) };
 
 		case IPathEntry.CDT_CONTAINER: {
-			List<Object> list = new ArrayList<Object>();
+			List<Object> list = new ArrayList<>();
 			for (int i = 0; i < fChildren.size(); i++) {
 				Object curr = fChildren.get(i);
 				if (curr instanceof CPElementGroup) {

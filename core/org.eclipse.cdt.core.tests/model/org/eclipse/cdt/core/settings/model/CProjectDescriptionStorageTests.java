@@ -465,7 +465,7 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 	 */
 	private static class OurResourceChangeListener implements IResourceChangeListener {
 		boolean changeDetected;
-		private Set<IPath> filesToWatch = new HashSet<IPath>();
+		private Set<IPath> filesToWatch = new HashSet<>();
 
 		@Override
 		public synchronized void resourceChanged(IResourceChangeEvent event) {

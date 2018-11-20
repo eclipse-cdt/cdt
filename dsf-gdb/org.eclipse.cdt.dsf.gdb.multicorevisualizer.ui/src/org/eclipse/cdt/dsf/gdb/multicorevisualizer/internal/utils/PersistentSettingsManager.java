@@ -431,7 +431,7 @@ public class PersistentSettingsManager {
 			T defaultValue) {
 		PersistentParameter<T> setting;
 		// build the final store key with category, parameter label and specific instance, if applicable
-		setting = new PersistentParameter<T>(clazz, perInstance, getStorageKey(perInstance) + "." + label); //$NON-NLS-1$
+		setting = new PersistentParameter<>(clazz, perInstance, getStorageKey(perInstance) + "." + label); //$NON-NLS-1$
 		// check that we're dealing with one of a few supported types
 		if (setting.isTypeSupported(clazz)) {
 			setting.setDefault(defaultValue);
@@ -453,7 +453,7 @@ public class PersistentSettingsManager {
 			List<T> defaultValue) {
 		PersistentListParameter<T> setting;
 		// build the final store key with category, parameter label and specific instance, if applicable
-		setting = new PersistentListParameter<T>(clazz, perInstance, getStorageKey(perInstance) + "." + label); //$NON-NLS-1$
+		setting = new PersistentListParameter<>(clazz, perInstance, getStorageKey(perInstance) + "." + label); //$NON-NLS-1$
 		// check that we're dealing with one of a few supported types
 		if (setting.isTypeSupported(clazz)) {
 			setting.setDefault(defaultValue);
@@ -475,7 +475,7 @@ public class PersistentSettingsManager {
 			Map<String, T> defaultValue) {
 		PersistentMapParameter<T> setting;
 		// build the final store key with category, parameter label and specific instance, if applicable
-		setting = new PersistentMapParameter<T>(clazz, perInstance, getStorageKey(perInstance) + "." + label); //$NON-NLS-1$
+		setting = new PersistentMapParameter<>(clazz, perInstance, getStorageKey(perInstance) + "." + label); //$NON-NLS-1$
 		// check that we're dealing with one of a few supported types
 		if (setting.isTypeSupported(clazz)) {
 			setting.setDefault(defaultValue);

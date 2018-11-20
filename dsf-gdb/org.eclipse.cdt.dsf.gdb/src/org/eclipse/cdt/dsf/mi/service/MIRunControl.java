@@ -1075,7 +1075,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	// and we can complete the operation.
 	private int fNumStepsStillExecuting;
 	// Queue of executeWithTargetAvailable() operations that need to be processed.
-	private LinkedList<TargetAvailableOperationInfo> fOperationsPending = new LinkedList<TargetAvailableOperationInfo>();
+	private LinkedList<TargetAvailableOperationInfo> fOperationsPending = new LinkedList<>();
 
 	/**
 	 * Returns whether the target is available to perform operations
@@ -1587,7 +1587,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 						resumeAtLocation(context, location, rm);
 					} else {
 						// Create the breakpoint attributes
-						Map<String, Object> attr = new HashMap<String, Object>();
+						Map<String, Object> attr = new HashMap<>();
 						attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
 						attr.put(MIBreakpoints.FILE_NAME, debuggerPath);
 						attr.put(MIBreakpoints.LINE_NUMBER, lineNumber);
@@ -1633,7 +1633,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 				resumeAtLocation(context, location, rm);
 			else {
 				// Create the breakpoint attributes
-				Map<String, Object> attr = new HashMap<String, Object>();
+				Map<String, Object> attr = new HashMap<>();
 				attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
 				attr.put(MIBreakpoints.ADDRESS, "0x" + address.toString(16)); //$NON-NLS-1$
 				attr.put(MIBreakpointDMData.IS_TEMPORARY, true);

@@ -224,7 +224,7 @@ abstract public class ReflectionSequence extends Sequence {
 
 	private List<Step> getGroupSteps(String groupId, Map<String, Method> executeMethods,
 			Map<String, Method> rollBackMethods) {
-		List<Step> steps = new ArrayList<Step>(executeMethods.size());
+		List<Step> steps = new ArrayList<>(executeMethods.size());
 
 		String[] order = getExecutionOrder(groupId);
 		if (order == null) {
@@ -244,7 +244,7 @@ abstract public class ReflectionSequence extends Sequence {
 	}
 
 	private Map<String, Method> getAnnotatedMethods(Class<? extends Annotation> annotationType) {
-		Map<String, Method> retVal = new HashMap<String, Method>();
+		Map<String, Method> retVal = new HashMap<>();
 		try {
 			Method[] methods = getClass().getMethods();
 			for (Method method : methods) {

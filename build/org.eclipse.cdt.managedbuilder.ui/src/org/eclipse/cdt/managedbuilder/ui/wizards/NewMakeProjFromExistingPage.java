@@ -61,7 +61,7 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 	Button langcpp;
 	IWorkspaceRoot root;
 	List tcList;
-	Map<String, IToolChain> tcMap = new HashMap<String, IToolChain>();
+	Map<String, IToolChain> tcMap = new HashMap<>();
 
 	/**
 	 * True if the user entered a non-empty string in the project name field. In that state, we avoid
@@ -292,7 +292,7 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 	 */
 	private void updateTcWidget(boolean supportedOnly) {
 		updateTcMap(supportedOnly);
-		ArrayList<String> names = new ArrayList<String>(tcMap.keySet());
+		ArrayList<String> names = new ArrayList<>(tcMap.keySet());
 		Collections.sort(names);
 
 		tcList.removeAll();

@@ -169,7 +169,7 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 			String[] previousClasses = (String[]) fRegistration.getReference().getProperty(Constants.OBJECTCLASS);
 
 			// Use a HashSet to avoid duplicates
-			Set<String> newClasses = new HashSet<String>();
+			Set<String> newClasses = new HashSet<>();
 			newClasses.addAll(Arrays.asList(previousClasses));
 			newClasses.addAll(Arrays.asList(classes));
 			classes = newClasses.toArray(new String[0]);

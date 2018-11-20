@@ -117,7 +117,7 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 			ICProject cProject = CoreModel.getDefault().create(project);
 			if (cProject != null) {
 				IPathEntry[] entries = cProject.getRawPathEntries();
-				List<IPathEntry> newEntries = new ArrayList<IPathEntry>(Arrays.asList(entries));
+				List<IPathEntry> newEntries = new ArrayList<>(Arrays.asList(entries));
 				if (!newEntries.contains(container)) {
 					newEntries.add(container);
 					cProject.setRawPathEntries(newEntries.toArray(new IPathEntry[newEntries.size()]), null);

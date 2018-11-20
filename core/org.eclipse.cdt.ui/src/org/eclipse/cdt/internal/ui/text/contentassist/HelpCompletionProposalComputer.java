@@ -110,7 +110,7 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 		//       not generate prefix matches to begin with if it's set.
 		boolean requireExactMatch = cContext.isContextInformationStyle();
 
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
 
 		for (IFunctionSummary summary : summaries) {
 			if (requireExactMatch && !summary.getName().equals(prefix)) {

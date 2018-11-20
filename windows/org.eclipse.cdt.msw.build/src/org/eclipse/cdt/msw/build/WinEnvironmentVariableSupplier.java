@@ -133,7 +133,7 @@ public class WinEnvironmentVariableSupplier
 
 	public static IPath[] getIncludePath() {
 		// Include paths
-		List<IPath> includePaths = new ArrayList<IPath>();
+		List<IPath> includePaths = new ArrayList<>();
 		if (sdkDir != null) {
 			includePaths.add(new Path(sdkDir.concat("Include")));
 			includePaths.add(new Path(sdkDir.concat("Include\\gl")));
@@ -152,7 +152,7 @@ public class WinEnvironmentVariableSupplier
 	private static synchronized void initvars() {
 		if (envvars != null)
 			return;
-		envvars = new HashMap<String, IBuildEnvironmentVariable>();
+		envvars = new HashMap<>();
 
 		// The SDK Location
 		sdkDir = getSDKDir();

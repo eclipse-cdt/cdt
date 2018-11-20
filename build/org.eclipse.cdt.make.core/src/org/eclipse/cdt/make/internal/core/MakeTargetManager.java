@@ -51,9 +51,9 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	private static String TARGETS_EXT = "targets"; //$NON-NLS-1$
 
 	private final ListenerList listeners = new ListenerList();
-	private final Map<IProject, ProjectTargets> projectMap = new HashMap<IProject, ProjectTargets>();
+	private final Map<IProject, ProjectTargets> projectMap = new HashMap<>();
 	private HashMap<String, String> builderMap;
-	protected Vector<IProject> fProjects = new Vector<IProject>();
+	protected Vector<IProject> fProjects = new Vector<>();
 
 	public MakeTargetManager() {
 	}
@@ -181,7 +181,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	public String[] getTargetBuilders(IProject project) {
 		if (fProjects.contains(project) || hasTargetBuilder(project)) {
 			try {
-				Vector<String> ids = new Vector<String>();
+				Vector<String> ids = new Vector<>();
 				IProjectDescription description = project.getDescription();
 				ICommand commands[] = description.getBuildSpec();
 				for (ICommand command : commands) {
@@ -334,7 +334,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	protected void initializeBuilders() {
-		builderMap = new HashMap<String, String>();
+		builderMap = new HashMap<>();
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(MakeCorePlugin.PLUGIN_ID,
 				MakeTargetManager.TARGET_BUILD_EXT);
 		IExtension[] extensions = point.getExtensions();

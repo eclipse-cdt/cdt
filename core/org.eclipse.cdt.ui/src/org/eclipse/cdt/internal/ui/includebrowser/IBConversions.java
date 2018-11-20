@@ -60,7 +60,7 @@ public class IBConversions {
 	public static ISelection nodeSelectionToRepresentedTUSelection(ISelection sel) {
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
-			ArrayList<ITranslationUnit> tus = new ArrayList<ITranslationUnit>();
+			ArrayList<ITranslationUnit> tus = new ArrayList<>();
 			for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (obj instanceof IBNode) {

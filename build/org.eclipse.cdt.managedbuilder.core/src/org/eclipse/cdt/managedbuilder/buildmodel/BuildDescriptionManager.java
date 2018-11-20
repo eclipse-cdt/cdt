@@ -65,7 +65,7 @@ public class BuildDescriptionManager {
 	 */
 	public static final int DEPFILES = 1 << 3;
 
-	private Set<IBuildStep> fVisitedSteps = new HashSet<IBuildStep>();
+	private Set<IBuildStep> fVisitedSteps = new HashSet<>();
 	private boolean fUp;
 	private IBuildDescription fInfo;
 
@@ -168,7 +168,7 @@ public class BuildDescriptionManager {
 	}
 
 	public static IBuildStep[] getSteps(IBuildStep step, boolean input) {
-		Set<IBuildStep> set = new HashSet<IBuildStep>();
+		Set<IBuildStep> set = new HashSet<>();
 
 		IBuildIOType args[] = input ? step.getInputIOTypes() : step.getOutputIOTypes();
 
@@ -194,7 +194,7 @@ public class BuildDescriptionManager {
 	}
 
 	public static IBuildResource[] filterGeneratedBuildResources(IBuildResource rc[], int rcState) {
-		List<IBuildResource> list = new ArrayList<IBuildResource>();
+		List<IBuildResource> list = new ArrayList<>();
 
 		addBuildResources(rc, list, rcState);
 		return list.toArray(new IBuildResource[list.size()]);
@@ -256,7 +256,7 @@ public class BuildDescriptionManager {
 	 */
 	public static void cleanGeneratedRebuildResources(IBuildDescription des) throws CoreException {
 		IBuildResource bRcs[] = filterGeneratedBuildResources(des.getResources(), REMOVED | REBUILD);
-		List<Object[]> failList = new ArrayList<Object[]>();
+		List<Object[]> failList = new ArrayList<>();
 
 		for (int i = 0; i < bRcs.length; i++) {
 			if (!bRcs[i].isProjectResource())

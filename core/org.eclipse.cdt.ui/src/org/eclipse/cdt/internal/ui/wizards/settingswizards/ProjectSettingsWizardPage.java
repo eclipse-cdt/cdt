@@ -133,7 +133,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 
 	@Override
 	public List<ISettingsProcessor> getSelectedSettingsProcessors() {
-		List<ISettingsProcessor> selected = new ArrayList<ISettingsProcessor>();
+		List<ISettingsProcessor> selected = new ArrayList<>();
 		for (Object element : settingsViewer.getCheckedElements()) {
 			selected.add((ISettingsProcessor) element);
 		}
@@ -300,7 +300,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 	}
 
 	private static List<ICProject> getAllOpenCProjects() {
-		List<ICProject> projects = new ArrayList<ICProject>();
+		List<ICProject> projects = new ArrayList<>();
 		try {
 			for (ICProject project : CoreModel.getDefault().getCModel().getCProjects()) {
 				if (project.getProject().isOpen()) {

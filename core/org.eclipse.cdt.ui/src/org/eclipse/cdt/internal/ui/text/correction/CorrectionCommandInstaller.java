@@ -56,7 +56,7 @@ public class CorrectionCommandInstaller {
 		if (fCorrectionHandlerActivations != null) {
 			CUIPlugin.logError("Correction handler activations not released"); //$NON-NLS-1$
 		}
-		fCorrectionHandlerActivations = new ArrayList<IHandlerActivation>();
+		fCorrectionHandlerActivations = new ArrayList<>();
 
 		@SuppressWarnings("unchecked")
 		Collection<String> definedCommandIds = commandService.getDefinedCommandIds();

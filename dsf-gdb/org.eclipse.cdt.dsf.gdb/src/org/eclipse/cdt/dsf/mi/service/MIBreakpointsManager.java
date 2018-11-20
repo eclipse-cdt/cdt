@@ -1958,7 +1958,7 @@ public class MIBreakpointsManager extends AbstractDsfService
 	 */
 	protected Map<String, Object> convertToPlatformAttributes(Map<String, Object> cdtAttributes) {
 
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 
 		// IBreakpoint attributes
 		if (cdtAttributes.containsKey(ATTR_DEBUGGER_PATH)) {
@@ -2311,8 +2311,8 @@ public class MIBreakpointsManager extends AbstractDsfService
 	}
 
 	private String[] compareAttributes(Map<String, Object> oldAttr, Map<String, Object> newAttr, String[] exclude) {
-		List<String> list = new ArrayList<String>();
-		Set<String> names = new HashSet<String>(oldAttr.keySet());
+		List<String> list = new ArrayList<>();
+		Set<String> names = new HashSet<>(oldAttr.keySet());
 		names.addAll(newAttr.keySet());
 		for (String n : names) {
 			if (exclude != null && Arrays.asList(exclude).contains(n)) {

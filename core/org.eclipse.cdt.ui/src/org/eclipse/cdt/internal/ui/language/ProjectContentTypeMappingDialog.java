@@ -138,7 +138,7 @@ public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
 	private void configureContentTypes(Combo combo, ICConfigurationDescription configuration) {
 		combo.removeAll();
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		List<String> names = new LinkedList<String>();
+		List<String> names = new LinkedList<>();
 
 		for (int i = 0; i < fContentTypesIDs.length; i++) {
 			String contentTypeId = fContentTypesIDs[i];

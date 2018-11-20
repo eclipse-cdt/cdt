@@ -57,8 +57,8 @@ import org.eclipse.ui.IWorkingSet;
  *
  */
 public class WorkspaceSnapshot {
-	private Map<String, IWorkingSetProxy.ISnapshot> workingSets = new java.util.HashMap<String, IWorkingSetProxy.ISnapshot>();
-	private Map<IProject, ProjectState> projectStates = new java.util.HashMap<IProject, ProjectState>();
+	private Map<String, IWorkingSetProxy.ISnapshot> workingSets = new java.util.HashMap<>();
+	private Map<IProject, ProjectState> projectStates = new java.util.HashMap<>();
 
 	/**
 	 * Initializes me. I capture the current C/C++ active configuration state of the projects in the
@@ -297,7 +297,7 @@ public class WorkspaceSnapshot {
 	 * @return the projects needing to be re-built
 	 */
 	public Collection<IProject> getProjectsToBuild() {
-		Collection<IProject> result = new java.util.ArrayList<IProject>();
+		Collection<IProject> result = new java.util.ArrayList<>();
 
 		for (ProjectState next : projectStates.values()) {
 			if (next.needsBuild()) {

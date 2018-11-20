@@ -108,9 +108,9 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testProvider_SettersGetters() throws Exception {
 		// benchmark data
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
-		List<String> languages = new ArrayList<String>();
+		List<String> languages = new ArrayList<>();
 		languages.add(LANG_ID);
 
 		// create a provider
@@ -170,11 +170,11 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 			LanguageSettingsManager.setStoringEntriesInProjectArea(provider, true);
 			provider.setProperty(ATTR_PARAMETER, VALUE_PARAMETER);
 
-			List<String> languageScope = new ArrayList<String>();
+			List<String> languageScope = new ArrayList<>();
 			languageScope.add(LANG_ID);
 			provider.setLanguageScope(languageScope);
 
-			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> entries = new ArrayList<>();
 			entries.add(new CIncludePathEntry("path0", 1));
 			provider.setSettingEntries(null, null, null, entries);
 
@@ -219,11 +219,11 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 			LanguageSettingsManager.setStoringEntriesInProjectArea(provider, true);
 			provider.setProperty(ATTR_PARAMETER, VALUE_PARAMETER);
 
-			List<String> languageScope = new ArrayList<String>();
+			List<String> languageScope = new ArrayList<>();
 			languageScope.add(LANG_ID);
 			provider.setLanguageScope(languageScope);
 
-			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> entries = new ArrayList<>();
 			entries.add(new CIncludePathEntry("path0", 1));
 			provider.setSettingEntries(null, null, null, entries);
 
@@ -268,11 +268,11 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 			LanguageSettingsManager.setStoringEntriesInProjectArea(provider, true);
 			provider.setProperty(ATTR_PARAMETER, VALUE_PARAMETER);
 
-			List<String> languageScope = new ArrayList<String>();
+			List<String> languageScope = new ArrayList<>();
 			languageScope.add(LANG_ID);
 			provider.setLanguageScope(languageScope);
 
-			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> entries = new ArrayList<>();
 			entries.add(new CIncludePathEntry("path0", 1));
 			provider.setSettingEntries(null, null, null, entries);
 
@@ -396,7 +396,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 * Test serialization of language scope.
 	 */
 	public void testLanguagesDOM() throws Exception {
-		List<String> expectedLanguageIds = new ArrayList<String>();
+		List<String> expectedLanguageIds = new ArrayList<>();
 		expectedLanguageIds.add(LANG_ID);
 		expectedLanguageIds.add(LANG_ID_1);
 
@@ -433,11 +433,11 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testLanguageScopeDOM() throws Exception {
 		// benchmark entries
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 
 		// define the scope
-		List<String> expectedLanguageIds = new ArrayList<String>();
+		List<String> expectedLanguageIds = new ArrayList<>();
 		expectedLanguageIds.add(LANG_ID);
 		expectedLanguageIds.add(LANG_ID_1);
 
@@ -521,7 +521,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	public void testNullConfigurationDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 		{
 			// create a provider and serialize its settings
@@ -552,7 +552,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	public void testNullLanguageDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 		{
 			// create a provider and serialize its settings
@@ -582,9 +582,9 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testNullLanguageScopeDOM() throws Exception {
 		// define benchmark entries
-		List<ICLanguageSettingEntry> entriesNullLanguage = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entriesNullLanguage = new ArrayList<>();
 		entriesNullLanguage.add(new CIncludePathEntry("path_null", 0));
-		List<ICLanguageSettingEntry> entriesLanguage = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entriesLanguage = new ArrayList<>();
 		entriesLanguage.add(new CIncludePathEntry("path", 0));
 
 		Element elementProvider;
@@ -660,7 +660,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	public void testNullResourceDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 		{
 			// create a provider and serialize its settings
@@ -691,7 +691,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	public void testNullConfigurationLanguageDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 		{
 			// create a provider and serialize its settings
@@ -723,7 +723,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	public void testNullConfigurationResourceDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 		{
 			// create a provider and serialize its settings
@@ -755,7 +755,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	public void testNullLanguageResourceDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 		{
 			// create a provider and serialize its settings
@@ -787,7 +787,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	public void testNullConfigurationLanguageResourceFlagDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		int flag = 0;
 		entries.add(new CIncludePathEntry("path0", flag));
 		{
@@ -821,7 +821,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testCIncludePathEntryDOM() throws Exception {
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 1));
 		{
 			// create a provider and serialize its settings
@@ -856,7 +856,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testCIncludeFileEntryDOM() throws Exception {
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludeFileEntry("a-path", 1));
 		{
 			// create a provider and serialize its settings
@@ -890,7 +890,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testCMacroEntryDOM() throws Exception {
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CMacroEntry("MACRO0", "value0", 1));
 		{
 			// create a provider and serialize its settings
@@ -924,7 +924,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testCMacroFileEntryDOM() throws Exception {
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CMacroFileEntry("a-path", 1));
 		{
 			// create a provider and serialize its settings
@@ -958,7 +958,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testCLibraryPathEntryDOM() throws Exception {
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CLibraryPathEntry("a-path", 1));
 		{
 			// create a provider and serialize its settings
@@ -992,7 +992,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testCLibraryFileEntryDOM() throws Exception {
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CLibraryFileEntry("a-path", 1));
 		{
 			// create a provider and serialize its settings
@@ -1026,7 +1026,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testMixedSettingEntriesDOM() throws Exception {
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 1));
 		entries.add(new CIncludePathEntry("path1", 1));
 		entries.add(new CMacroEntry("MACRO0", "value0", 1));
@@ -1058,7 +1058,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testEntryFlagsDOM() throws Exception {
 		Element elementProvider;
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0",
 				ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.LOCAL
 						| ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED | ICSettingEntry.UNDEFINED
@@ -1097,9 +1097,9 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	public void testLanguageAndNullDOM() throws Exception {
 		Element elementProvider = null;
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
-		List<ICLanguageSettingEntry> entries2 = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries2 = new ArrayList<>();
 		entries2.add(new CIncludePathEntry("path2", 0));
 
 		{
@@ -1135,9 +1135,9 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	public void testTwoLanguagesDOM() throws Exception {
 		Element elementProvider = null;
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
-		List<ICLanguageSettingEntry> entries2 = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries2 = new ArrayList<>();
 		entries2.add(new CIncludePathEntry("path2", 0));
 
 		{
@@ -1183,9 +1183,9 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 
 		Element elementProvider = null;
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
-		List<ICLanguageSettingEntry> entries2 = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries2 = new ArrayList<>();
 		entries2.add(new CIncludePathEntry("path2", 0));
 
 		{
@@ -1235,7 +1235,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 				PROVIDER_NAME_1);
 
 		// store the entries in parent folder
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
 		provider.setSettingEntries(null, parentFolder, LANG_ID, entries);
 		provider.setSettingEntries(null, emptySettingsPath, LANG_ID, new ArrayList<ICLanguageSettingEntry>());
@@ -1276,16 +1276,16 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testEquals() throws Exception {
 		// create sample entries
-		List<ICLanguageSettingEntry> sampleEntries_1 = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> sampleEntries_1 = new ArrayList<>();
 		sampleEntries_1.add(new CMacroEntry("MACRO0", "value0", 1));
 		sampleEntries_1.add(new CIncludePathEntry("path0", 1));
 		sampleEntries_1.add(new CIncludePathEntry("path1", 1));
 
-		List<ICLanguageSettingEntry> sampleEntries_2 = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> sampleEntries_2 = new ArrayList<>();
 		sampleEntries_2.add(new CIncludePathEntry("path0", 1));
 
 		// create sample languages
-		List<String> sampleLanguages = new ArrayList<String>();
+		List<String> sampleLanguages = new ArrayList<>();
 		sampleLanguages.add(LANG_ID);
 
 		// create a model provider
@@ -1317,7 +1317,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 			assertTrue(provider1.hashCode() == provider2.hashCode());
 			assertTrue(provider1.equals(provider2));
 			// replace languages
-			List<String> sampleLanguages2 = new ArrayList<String>();
+			List<String> sampleLanguages2 = new ArrayList<>();
 			sampleLanguages2.add(LANG_ID_1);
 			provider2.setLanguageScope(sampleLanguages2);
 			assertFalse(provider1.hashCode() == provider2.hashCode());
@@ -1359,7 +1359,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 			assertTrue(provider1.hashCode() == provider2.hashCode());
 			assertTrue(provider1.equals(provider2));
 			// replace entries
-			List<ICLanguageSettingEntry> changedEntries = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> changedEntries = new ArrayList<>();
 			changedEntries.add(new CMacroEntry("MACROX", "valueX", 1));
 			provider2.setSettingEntries(MOCK_CFG, MOCK_RC, LANG_ID, changedEntries);
 			assertFalse(provider1.hashCode() == provider2.hashCode());
@@ -1374,7 +1374,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 			assertTrue(provider1.hashCode() == provider2.hashCode());
 			assertTrue(provider1.equals(provider2));
 			// replace default entries
-			List<ICLanguageSettingEntry> changedEntries = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> changedEntries = new ArrayList<>();
 			changedEntries.add(new CIncludePathEntry("pathX", 1));
 			provider2.setSettingEntries(null, null, LANG_ID, changedEntries);
 			assertFalse(provider1.hashCode() == provider2.hashCode());
@@ -1450,15 +1450,15 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testClone() throws Exception {
 		// define sample data
-		List<ICLanguageSettingEntry> sampleEntries_1 = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> sampleEntries_1 = new ArrayList<>();
 		sampleEntries_1.add(new CIncludePathEntry("path0", 1));
 		sampleEntries_1.add(new CIncludePathEntry("path1", 1));
 		sampleEntries_1.add(new CMacroEntry("MACRO0", "value0", 1));
 
-		List<ICLanguageSettingEntry> sampleEntries_2 = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> sampleEntries_2 = new ArrayList<>();
 		sampleEntries_2.add(new CIncludePathEntry("path0", 1));
 
-		List<String> sampleLanguages = new ArrayList<String>();
+		List<String> sampleLanguages = new ArrayList<>();
 		sampleLanguages.add(LANG_ID);
 
 		// create a model provider
@@ -1520,7 +1520,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 	 */
 	public void testCloneShallow() throws Exception {
 		// define sample data
-		List<String> sampleLanguages = new ArrayList<String>();
+		List<String> sampleLanguages = new ArrayList<>();
 		sampleLanguages.add(LANG_ID);
 
 		// create a model provider
@@ -1541,7 +1541,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 		assertEquals(false, LanguageSettingsManager.isStoringEntriesInProjectArea(provider1));
 		LanguageSettingsManager.setStoringEntriesInProjectArea(provider1, true);
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path", 1));
 		provider1.setSettingEntries(null, null, null, entries);
 
@@ -1578,7 +1578,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 		CLibraryFileEntry libraryFileEntry2 = new CLibraryFileEntry("file2", 0);
 
 		// place entries in unsorted list
-		List<ICLanguageSettingEntry> unsortedEntries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> unsortedEntries = new ArrayList<>();
 		unsortedEntries.add(macroEntry1);
 		unsortedEntries.add(macroFileEntry1);
 		unsortedEntries.add(macroEntry2);
@@ -1635,7 +1635,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 		CLibraryFileEntry libraryFileEntry2 = new CLibraryFileEntry("file_A", 0);
 
 		// place entries in unsorted list
-		List<ICLanguageSettingEntry> unsortedEntries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> unsortedEntries = new ArrayList<>();
 		// macros will be sorted by name
 		unsortedEntries.add(macroEntry2);
 		unsortedEntries.add(macroEntry1);
@@ -1687,7 +1687,7 @@ public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
 		CMacroEntry macroEntry3 = new CMacroEntry("MACRO_3", null, 0);
 
 		// place entries in unsorted list
-		List<ICLanguageSettingEntry> unsortedEntries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> unsortedEntries = new ArrayList<>();
 		// macros will be sorted by name and keep order for the same name
 		unsortedEntries.add(macroEntry2A);
 		unsortedEntries.add(macroEntry3);

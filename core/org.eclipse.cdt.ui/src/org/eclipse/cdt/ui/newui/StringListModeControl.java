@@ -37,7 +37,7 @@ public class StringListModeControl {
 	private static final String STRING_LIST_MODE_PREFERENCE_PAGE = "org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig"; //$NON-NLS-1$
 	private ICPropertyProvider page;
 	private Link linkStringListMode;
-	private List<Listener> listeners = new ArrayList<Listener>();
+	private List<Listener> listeners = new ArrayList<>();
 
 	/**
 	 * Constructor.

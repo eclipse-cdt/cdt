@@ -803,8 +803,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @return an array of all dirty editor parts.
 	 */
 	public static IEditorPart[] getDirtyEditors() {
-		Set<IEditorInput> inputs = new HashSet<IEditorInput>();
-		List<IEditorPart> result = new ArrayList<IEditorPart>(0);
+		Set<IEditorInput> inputs = new HashSet<>();
+		List<IEditorPart> result = new ArrayList<>(0);
 		IWorkbench workbench = getDefault().getWorkbench();
 		for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
 			for (IWorkbenchPage page : window.getPages()) {
@@ -827,7 +827,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * Returns an array of all instantiated editors.
 	 */
 	public static IEditorPart[] getInstanciatedEditors() {
-		List<IEditorPart> result = new ArrayList<IEditorPart>(0);
+		List<IEditorPart> result = new ArrayList<>(0);
 		IWorkbench workbench = getDefault().getWorkbench();
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {

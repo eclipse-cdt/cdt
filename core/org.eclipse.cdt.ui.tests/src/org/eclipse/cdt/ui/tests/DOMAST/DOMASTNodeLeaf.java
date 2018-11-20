@@ -90,7 +90,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	// used for applying filters to the tree, since it is lazily populated
 	// all parents of the desired tree object to display need to have a flag as well
 	private int filterFlag = 0;
-	private static Set<String> ignoreInterfaces = new HashSet<String>();
+	private static Set<String> ignoreInterfaces = new HashSet<>();
 	public static final int FLAG_PROBLEM = 1 << 0;
 	public static final int FLAG_PREPROCESSOR = 1 << 1;
 	public static final int FLAG_INCLUDE_STATEMENTS = 1 << 2;
@@ -131,7 +131,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		if (node == null)
 			return BLANK_STRING;
 		StringBuilder buffer = new StringBuilder();
-		List<Class<?>> search = new LinkedList<Class<?>>();
+		List<Class<?>> search = new LinkedList<>();
 		boolean done = false;
 		boolean needComma = false;
 

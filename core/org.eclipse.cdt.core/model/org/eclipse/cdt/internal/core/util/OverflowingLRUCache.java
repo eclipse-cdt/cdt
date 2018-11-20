@@ -129,18 +129,18 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 	 */
 	public Enumeration<T> elements() {
 		if (fEntryQueue == null)
-			return new LRUCacheEnumerator<T>(null);
-		LRUCacheEnumerator.LRUEnumeratorElement<T> head = new LRUCacheEnumerator.LRUEnumeratorElement<T>(
+			return new LRUCacheEnumerator<>(null);
+		LRUCacheEnumerator.LRUEnumeratorElement<T> head = new LRUCacheEnumerator.LRUEnumeratorElement<>(
 				fEntryQueue._fValue);
 		LRUCacheEntry<K, T> currentEntry = fEntryQueue._fNext;
 		LRUCacheEnumerator.LRUEnumeratorElement<T> currentElement = head;
 		while (currentEntry != null) {
-			currentElement.fNext = new LRUCacheEnumerator.LRUEnumeratorElement<T>(currentEntry._fValue);
+			currentElement.fNext = new LRUCacheEnumerator.LRUEnumeratorElement<>(currentEntry._fValue);
 			currentElement = currentElement.fNext;
 
 			currentEntry = currentEntry._fNext;
 		}
-		return new LRUCacheEnumerator<T>(head);
+		return new LRUCacheEnumerator<>(head);
 	}
 
 	public double fillingRatio() {
@@ -268,7 +268,7 @@ public abstract class OverflowingLRUCache<K, T> extends LRUCache<K, T> {
 				return "Class: " + fClass + " has " + fCount + " entries."; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-1$
 			}
 		}
-		java.util.HashMap<Class<?>, Temp> h = new java.util.HashMap<Class<?>, Temp>();
+		java.util.HashMap<Class<?>, Temp> h = new java.util.HashMap<>();
 		while (keys.hasMoreElements()) {
 			entry = fEntryTable.get(keys.nextElement());
 			Class<?> key = entry._fValue.getClass();

@@ -35,7 +35,7 @@ public class IBLabelProvider extends LabelProvider implements IColorProvider {
 	private CElementLabelProvider fCLabelProvider = new CElementLabelProvider();
 	private Color fColorInactive;
 	private IBContentProvider fContentProvider;
-	private HashMap<String, Image> fCachedImages = new HashMap<String, Image>();
+	private HashMap<String, Image> fCachedImages = new HashMap<>();
 	private boolean fShowFolders;
 
 	public IBLabelProvider(Display display, IBContentProvider cp) {

@@ -48,7 +48,7 @@ public class BuildProcessManager {
 		err = _err;
 		show = _show;
 		maxProcesses = _procNumber;
-		processes = new Vector<ProcessLauncher>(Math.min(10, maxProcesses), 10);
+		processes = new Vector<>(Math.min(10, maxProcesses), 10);
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class BuildProcessManager {
 		if (map == null)
 			return null;
 
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		Set<Entry<String, String>> entrySet = map.entrySet();
 		for (Entry<String, String> entry : entrySet) {

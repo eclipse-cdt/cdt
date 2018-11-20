@@ -33,7 +33,7 @@ public class ToggleCDynamicPrintfTargetFactory implements IToggleBreakpointsTarg
 	public static String TOGGLE_C_DYNAMICPRINTF_TARGET_ID = CDebugUIPlugin.getUniqueIdentifier()
 			+ ".toggleCDynamicPrintfTarget"; //$NON-NLS-1$
 
-	private static Set<String> TOGGLE_TARGET_IDS = new HashSet<String>(1);
+	private static Set<String> TOGGLE_TARGET_IDS = new HashSet<>(1);
 	static {
 		TOGGLE_TARGET_IDS.add(TOGGLE_C_DYNAMICPRINTF_TARGET_ID);
 	}

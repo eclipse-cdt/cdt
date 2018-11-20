@@ -61,7 +61,7 @@ public class Stabs {
 	int bracket;
 	String currentFile;
 
-	Map<TypeNumber, DebugType> mapTypes = new HashMap<TypeNumber, DebugType>();
+	Map<TypeNumber, DebugType> mapTypes = new HashMap<>();
 	DebugType voidType = new DebugBaseType("void", 0, false); //$NON-NLS-1$
 
 	public Stabs(String file) throws IOException {
@@ -972,7 +972,7 @@ public class Stabs {
 	 * @return
 	 */
 	DebugType parseStabEnumType(String name, Reader reader) throws IOException {
-		List<DebugEnumField> list = new ArrayList<DebugEnumField>();
+		List<DebugEnumField> list = new ArrayList<>();
 		String fieldName = null;
 		StringBuilder sb = new StringBuilder();
 		int c;

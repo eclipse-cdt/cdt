@@ -63,8 +63,8 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 		CEditorTextHoverDescriptor[] hoverDescs = CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
 
 		// Initialize lists - indicates that the initialization happened
-		fTextHoverSpecifications = new ArrayList<CEditorTextHoverDescriptor>(hoverDescs.length - 1);
-		fInstantiatedTextHovers = new ArrayList<ITextHover>(hoverDescs.length - 1);
+		fTextHoverSpecifications = new ArrayList<>(hoverDescs.length - 1);
+		fInstantiatedTextHovers = new ArrayList<>(hoverDescs.length - 1);
 
 		// Populate list
 		for (int i = 0; i < hoverDescs.length; i++) {

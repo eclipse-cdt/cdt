@@ -72,7 +72,7 @@ public class ToolChainModificationTests extends TestCase {
 		assertTrue(cfgM.isBuilderCompatible());
 
 		IToolChain[] ctcs = cfgM.getCompatibleToolChains();
-		HashSet<IHoldsOptions> set = new HashSet<IHoldsOptions>();
+		HashSet<IHoldsOptions> set = new HashSet<>();
 		FolderInfo foInfo = (FolderInfo) cfg.getRootFolderInfo();
 		ToolChain tc = (ToolChain) foInfo.getToolChain();
 		IToolChain[] allSys = ManagedBuildManager.getRealToolChains();
@@ -83,12 +83,12 @@ public class ToolChainModificationTests extends TestCase {
 		set.remove(incompatibleTc);
 		compare(Arrays.asList(ctcs), set);
 
-		HashSet<IToolChain> incomp = new HashSet<IToolChain>(Arrays.asList(allSys));
+		HashSet<IToolChain> incomp = new HashSet<>(Arrays.asList(allSys));
 		incomp.removeAll(Arrays.asList(ctcs));
 		assertTrue(incomp.contains(incompatibleTc));
 
 		IBuilder[] cbs = cfgM.getCompatibleBuilders();
-		Set<IHoldsOptions> bSet = new HashSet<IHoldsOptions>();
+		Set<IHoldsOptions> bSet = new HashSet<>();
 		IBuilder[] allSysB = ManagedBuildManager.getRealBuilders();
 		filterPropsSupported(cfg, allSysB, bSet);
 		IBuilder incompatibleB = ManagedBuildManager.getExtensionBuilder("tcm.tc4.b1");
@@ -97,7 +97,7 @@ public class ToolChainModificationTests extends TestCase {
 		bSet.remove(incompatibleB);
 		compare(Arrays.asList(cbs), bSet);
 
-		HashSet<IBuilder> incompB = new HashSet<IBuilder>(Arrays.asList(allSysB));
+		HashSet<IBuilder> incompB = new HashSet<>(Arrays.asList(allSysB));
 		incompB.removeAll(Arrays.asList(cbs));
 		assertTrue(incompB.contains(incompatibleB));
 
@@ -115,7 +115,7 @@ public class ToolChainModificationTests extends TestCase {
 	}
 
 	private HashSet<IHoldsOptions> filterSupportedToolChains(IFolderInfo foInfo, IToolChain tc) {
-		HashSet<IHoldsOptions> set = new HashSet<IHoldsOptions>();
+		HashSet<IHoldsOptions> set = new HashSet<>();
 		IToolChain[] allSys = ManagedBuildManager.getRealToolChains();
 		filterPropsSupported((FolderInfo) foInfo, (ToolChain) tc, allSys, set);
 		set.remove(ManagedBuildManager.getRealToolChain(tc));
@@ -239,7 +239,7 @@ public class ToolChainModificationTests extends TestCase {
 		HashSet<? extends IHoldsOptions> s1 = new HashSet<IHoldsOptions>(c1);
 		HashSet<? extends IHoldsOptions> s1c = new HashSet<IHoldsOptions>(s1);
 
-		HashSet<IHoldsOptions> s2 = new HashSet<IHoldsOptions>(c2);
+		HashSet<IHoldsOptions> s2 = new HashSet<>(c2);
 
 		s1.removeAll(s2);
 		s2.removeAll(s1c);
@@ -267,7 +267,7 @@ public class ToolChainModificationTests extends TestCase {
 	private Collection<IHoldsOptions> filterPropsSupported(FolderInfo foInfo, ToolChain tc, IToolChain[] tcs,
 			Collection<IHoldsOptions> c) {
 		if (c == null)
-			c = new ArrayList<IHoldsOptions>();
+			c = new ArrayList<>();
 		for (int i = 0; i < tcs.length; i++) {
 			if (foInfo.isToolChainCompatible(tc, tcs[i]))
 				c.add(tcs[i]);
@@ -279,7 +279,7 @@ public class ToolChainModificationTests extends TestCase {
 	private Collection<IHoldsOptions> filterPropsSupported(IConfiguration cfg, IBuilder[] bs,
 			Collection<IHoldsOptions> c) {
 		if (c == null)
-			c = new ArrayList<IHoldsOptions>();
+			c = new ArrayList<>();
 		for (int i = 0; i < bs.length; i++) {
 			if (cfg.isBuilderCompatible(bs[i]))
 				c.add(bs[i]);
@@ -340,7 +340,7 @@ public class ToolChainModificationTests extends TestCase {
 
 		IModificationOperation[] ops = tm.getSupportedOperations();
 		ITool tool31 = ManagedBuildManager.getExtensionTool("tcm.tc3.t1");
-		Set<ITool> replacement = new HashSet<ITool>();
+		Set<ITool> replacement = new HashSet<>();
 		boolean removable = getReplacementToolInfo(ops, replacement);
 
 		assertFalse(removable);
@@ -350,7 +350,7 @@ public class ToolChainModificationTests extends TestCase {
 		assertTrue(tm.isProjectTool());
 
 		ops = tm.getSupportedOperations();
-		replacement = new HashSet<ITool>();
+		replacement = new HashSet<>();
 		removable = getReplacementToolInfo(ops, replacement);
 
 		assertFalse(removable);

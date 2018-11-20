@@ -73,7 +73,7 @@ public class GenericTagCompletionProposalComputer implements ICompletionProposal
 				firstNonWS--;
 			String prefix = doc.get(firstNonWS, ivcOffset - firstNonWS);
 			if (prefix.length() > 0 && isTagMarker(prefix.charAt(0))) {
-				List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+				List<ICompletionProposal> proposals = new ArrayList<>();
 				char tagMarker = prefix.charAt(0);
 				for (GenericDocTag tag2 : tags) {
 					String tag = tag2.getTagName();

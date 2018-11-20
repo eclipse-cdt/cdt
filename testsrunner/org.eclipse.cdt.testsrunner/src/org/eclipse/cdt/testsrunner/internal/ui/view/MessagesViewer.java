@@ -199,7 +199,7 @@ public class MessagesViewer {
 		 * @return set to store the test messages
 		 */
 		private TreeSet<ITestMessage> createMessagesSet() {
-			return new TreeSet<ITestMessage>(new Comparator<ITestMessage>() {
+			return new TreeSet<>(new Comparator<ITestMessage>() {
 
 				@Override
 				public int compare(ITestMessage message1, ITestMessage message2) {
@@ -248,7 +248,7 @@ public class MessagesViewer {
 		 * @return list to store the test messages
 		 */
 		private ArrayList<ITestMessage> createMessagesList() {
-			return new ArrayList<ITestMessage>();
+			return new ArrayList<>();
 		}
 
 		/**
@@ -358,7 +358,7 @@ public class MessagesViewer {
 	private boolean showFileNameOnly = false;
 
 	/** The set of message level to show the messages with. */
-	private Set<ITestMessage.Level> acceptedMessageLevels = new HashSet<ITestMessage.Level>();
+	private Set<ITestMessage.Level> acceptedMessageLevels = new HashSet<>();
 
 	/** Specifies whether test messages ordering is on or off. */
 	private boolean orderingMode = false;

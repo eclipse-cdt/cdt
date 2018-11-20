@@ -423,7 +423,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 		List<ITextPresentationListener> textPresentationListeners = fTextPresentationListeners;
 
 		if (textPresentationListeners == null)
-			fTextPresentationListeners = textPresentationListeners = new ArrayList<ITextPresentationListener>();
+			fTextPresentationListeners = textPresentationListeners = new ArrayList<>();
 
 		textPresentationListeners.remove(listener);
 		textPresentationListeners.add(0, listener);

@@ -189,7 +189,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 
 		String input = dialog.enteredExpression() ? dialog.getExpression() : dialog.getAddress();
 
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		if (input.length() == 0)
 			list.add(""); //$NON-NLS-1$

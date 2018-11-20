@@ -78,7 +78,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 public class ExecutablesManager extends PlatformObject
 		implements ICProjectDescriptionListener, IElementChangedListener, IResourceChangeListener {
 
-	private Map<IProject, IProjectExecutablesProvider> executablesProviderMap = new HashMap<IProject, IProjectExecutablesProvider>();
+	private Map<IProject, IProjectExecutablesProvider> executablesProviderMap = new HashMap<>();
 	private List<IExecutablesChangeListener> changeListeners = Collections
 			.synchronizedList(new ArrayList<IExecutablesChangeListener>());
 	private List<IProjectExecutablesProvider> executableProviders;
@@ -92,7 +92,7 @@ public class ExecutablesManager extends PlatformObject
 	 * notification. We use this to ensure we flush source file mappings only
 	 * when the launch config change involves a change to the source locators.
 	 */
-	private Map<String, String> locatorMementos = new HashMap<String, String>();
+	private Map<String, String> locatorMementos = new HashMap<>();
 
 	/**
 	 * A cache of the executables in the workspace, categorized by project.
@@ -106,7 +106,7 @@ public class ExecutablesManager extends PlatformObject
 	 * <p>
 	 * The same Executable may appear more than once.
 	 */
-	private Map<IProject, List<Executable>> executablesMap = new HashMap<IProject, List<Executable>>();
+	private Map<IProject, List<Executable>> executablesMap = new HashMap<>();
 
 	/**
 	 * Provide a flat list of the executables in {@link #executablesMap}, with
@@ -116,7 +116,7 @@ public class ExecutablesManager extends PlatformObject
 	 * @return
 	 */
 	private List<Executable> flattenExecutablesMap() {
-		List<Executable> result = new ArrayList<Executable>(executablesMap.size() * 5); // most projects will have less than five executables
+		List<Executable> result = new ArrayList<>(executablesMap.size() * 5); // most projects will have less than five executables
 		synchronized (executablesMap) {
 			for (List<Executable> exes : executablesMap.values()) {
 				for (Executable exe : exes) {
@@ -159,7 +159,7 @@ public class ExecutablesManager extends PlatformObject
 			// Get the CDT projects in the workspace that we have no cached
 			// results for (are not in 'executablesMap'). Also, we may have been
 			// asked to refresh the cache for some projects we've search before
-			List<IProject> projects = new ArrayList<IProject>();
+			List<IProject> projects = new ArrayList<>();
 			synchronized (executablesMap) {
 				if (projectsToRefresh == null) {
 					executablesMap.clear();
@@ -209,7 +209,7 @@ public class ExecutablesManager extends PlatformObject
 			// executables list. If so, notify listeners.
 			List<Executable> after = flattenExecutablesMap();
 			List<Executable> removed = before;
-			List<Executable> added = new ArrayList<Executable>(after.size());
+			List<Executable> added = new ArrayList<>(after.size());
 			for (Executable a : after) {
 				if (!removed.remove(a)) {
 					added.add(a);
@@ -486,7 +486,7 @@ public class ExecutablesManager extends PlatformObject
 	 * @return collection of executables which may be empty
 	 */
 	public Collection<Executable> getExecutablesForProject(IProject project) {
-		List<Executable> executables = new ArrayList<Executable>();
+		List<Executable> executables = new ArrayList<>();
 
 		synchronized (executablesMap) {
 			List<Executable> exes = executablesMap.get(project);
@@ -931,9 +931,9 @@ public class ExecutablesManager extends PlatformObject
 			Trace.getTrace().trace(null, "event = \n" + event); // must be done separately because of traceEntry() limitation //$NON-NLS-1$
 
 		// Examine the event and figure out what needs to be done
-		Set<IProject> refreshProjects = new HashSet<IProject>(5);
-		Set<Executable> executablesChanged = new HashSet<Executable>(5);
-		Set<Executable> executablesRemoved = new HashSet<Executable>(5);
+		Set<IProject> refreshProjects = new HashSet<>(5);
+		Set<Executable> executablesChanged = new HashSet<>(5);
+		Set<Executable> executablesRemoved = new HashSet<>(5);
 		processDeltas(event.getDelta().getAddedChildren(), null, refreshProjects, executablesRemoved,
 				executablesChanged);
 		processDeltas(event.getDelta().getChangedChildren(), null, refreshProjects, executablesRemoved,

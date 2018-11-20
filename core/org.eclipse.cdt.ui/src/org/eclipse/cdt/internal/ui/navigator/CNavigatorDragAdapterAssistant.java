@@ -73,7 +73,7 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 					return true;
 				}
 			} else if (FileTransfer.getInstance().isSupportedType(event.dataType)) {
-				List<String> files = new ArrayList<String>();
+				List<String> files = new ArrayList<>();
 				for (Iterator<?> iter = (selection).iterator(); iter.hasNext();) {
 					Object element = iter.next();
 					if (element instanceof ITranslationUnit) {

@@ -74,7 +74,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		};
 		BuildPathAdapter adapter = new BuildPathAdapter();
 
-		fCPathList = new ListDialogField<CPElement>(null, buttonLabels, null);
+		fCPathList = new ListDialogField<>(null, buttonLabels, null);
 		fCPathList.setDialogFieldListener(adapter);
 	}
 

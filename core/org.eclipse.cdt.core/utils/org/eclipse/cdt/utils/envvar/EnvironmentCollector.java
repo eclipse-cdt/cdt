@@ -19,7 +19,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 
 public class EnvironmentCollector {
-	private Map<String, IEnvironmentVariable> fEnfironmentMap = new HashMap<String, IEnvironmentVariable>();
+	private Map<String, IEnvironmentVariable> fEnfironmentMap = new HashMap<>();
 
 	public IEnvironmentVariable addVariable(IEnvironmentVariable var) {
 		if (var == null)

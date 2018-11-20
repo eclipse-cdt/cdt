@@ -48,7 +48,7 @@ public class LLDBProcesses extends GDBProcesses_7_4 {
 
 	// A map of pid to names. It is filled when we get all the
 	// processes that are running
-	private Map<Integer, String> fProcessNames = new HashMap<Integer, String>();
+	private Map<Integer, String> fProcessNames = new HashMap<>();
 
 	/**
 	 * Constructs the {@link LLDBProcesses} service.

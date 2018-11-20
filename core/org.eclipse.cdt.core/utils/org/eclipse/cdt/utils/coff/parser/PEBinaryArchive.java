@@ -33,7 +33,7 @@ public class PEBinaryArchive extends BinaryFile implements IBinaryArchive {
 	public PEBinaryArchive(PEParser parser, IPath path) throws IOException {
 		super(parser, path, IBinaryFile.ARCHIVE);
 		new AR(path.toOSString()).dispose(); // check file type
-		children = new ArrayList<IBinaryObject>(5);
+		children = new ArrayList<>(5);
 	}
 
 	/**

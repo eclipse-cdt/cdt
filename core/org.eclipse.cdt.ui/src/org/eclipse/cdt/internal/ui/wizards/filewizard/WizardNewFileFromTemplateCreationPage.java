@@ -125,7 +125,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 			templateName = template.getName();
 		}
 		if (templateName != null) {
-			data = new HashMap<String, String>();
+			data = new HashMap<>();
 			data.put(CodeTemplatePreferencePage.DATA_SELECT_TEMPLATE, templateName);
 		}
 		PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(), prefPageId,
@@ -253,7 +253,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 			}
 		}
 		IContentType[] contentTypes = matcher.findContentTypesFor(fileName);
-		List<String> result = new ArrayList<String>(contentTypes.length * 2);
+		List<String> result = new ArrayList<>(contentTypes.length * 2);
 		for (int i = 0; i < contentTypes.length; i++) {
 			IContentType contentType = contentTypes[i];
 			String id = contentType.getId();

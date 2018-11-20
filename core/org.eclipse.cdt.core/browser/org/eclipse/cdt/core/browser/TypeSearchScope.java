@@ -34,10 +34,10 @@ import org.eclipse.core.runtime.Path;
  */
 public class TypeSearchScope implements ITypeSearchScope {
 
-	private Set<IPath> fPathSet = new HashSet<IPath>();
-	private Set<IPath> fContainerSet = new HashSet<IPath>();
-	private Set<ICProject> fProjectSet = new HashSet<ICProject>();
-	private Set<ICProject> fEnclosingProjectSet = new HashSet<ICProject>();
+	private Set<IPath> fPathSet = new HashSet<>();
+	private Set<IPath> fContainerSet = new HashSet<>();
+	private Set<ICProject> fProjectSet = new HashSet<>();
+	private Set<ICProject> fEnclosingProjectSet = new HashSet<>();
 	private boolean fWorkspaceScope = false;
 
 	// cached arrays

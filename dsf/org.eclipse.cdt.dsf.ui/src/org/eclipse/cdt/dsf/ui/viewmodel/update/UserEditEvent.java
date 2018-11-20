@@ -28,7 +28,7 @@ public class UserEditEvent {
 	private final Set<Object> fElements;
 
 	public UserEditEvent(Object element) {
-		fElements = new HashSet<Object>();
+		fElements = new HashSet<>();
 		fElements.add(element);
 	}
 

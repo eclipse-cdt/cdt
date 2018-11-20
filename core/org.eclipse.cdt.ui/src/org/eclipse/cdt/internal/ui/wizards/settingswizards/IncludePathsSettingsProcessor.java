@@ -85,7 +85,7 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 
 	@Override
 	protected void readSettings(ICLanguageSetting setting, Element language) throws SettingsImportExportException {
-		List<ICLanguageSettingEntry> includes = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> includes = new ArrayList<>();
 
 		List<Element> includeNodes = XMLUtils.extractChildElements(language, INCLUDE_PATH_ELEMENT);
 		for (Element includeElement : includeNodes) {

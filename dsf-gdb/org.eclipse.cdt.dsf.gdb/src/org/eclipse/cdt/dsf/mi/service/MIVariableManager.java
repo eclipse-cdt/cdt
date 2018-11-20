@@ -2179,7 +2179,7 @@ public class MIVariableManager implements ICommandControl {
 		public MIRootVariableObject(VariableObjectId id) {
 			super(id, null);
 			currentState = STATE_NOT_CREATED;
-			modifiableDescendants = new HashMap<String, MIVariableObject>();
+			modifiableDescendants = new HashMap<>();
 		}
 
 		public ICommandControlDMContext getControlDMContext() {
@@ -2634,13 +2634,13 @@ public class MIVariableManager implements ICommandControl {
 	private IExpressions fExpressionService;
 
 	// Typically, there will only be one listener, since only the ExpressionService will use this class
-	private final List<ICommandListener> fCommandProcessors = new ArrayList<ICommandListener>();
+	private final List<ICommandListener> fCommandProcessors = new ArrayList<>();
 
 	/** Our least recently used cache */
 	private final LRUVariableCache lruVariableList;
 
 	/** The list of root variable objects that have been updated */
-	private final LinkedList<MIRootVariableObject> updatedRootList = new LinkedList<MIRootVariableObject>();
+	private final LinkedList<MIRootVariableObject> updatedRootList = new LinkedList<>();
 
 	/**
 	 * MIVariableManager constructor

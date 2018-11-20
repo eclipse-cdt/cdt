@@ -43,7 +43,7 @@ public class ProposalFilterPreferencesUtil {
 	 * to fill into the Combo)
 	 */
 	public static String[] getProposalFilterNames() {
-		ArrayList<String> names = new ArrayList<String>();
+		ArrayList<String> names = new ArrayList<>();
 		try {
 			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
 					"ProposalFilter"); //$NON-NLS-1$

@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Display;
  * A registry that maps <code>ImageDescriptors</code> to <code>Image</code>.
  */
 public class CDebugImageDescriptorRegistry {
-	private HashMap<ImageDescriptor, Image> fRegistry = new HashMap<ImageDescriptor, Image>(10);
+	private HashMap<ImageDescriptor, Image> fRegistry = new HashMap<>(10);
 	private Display fDisplay;
 
 	/**

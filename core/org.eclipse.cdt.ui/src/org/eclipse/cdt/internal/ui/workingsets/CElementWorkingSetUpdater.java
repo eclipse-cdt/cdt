@@ -88,7 +88,7 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 		public WorkingSetDelta(IWorkingSet workingSet) {
 			fWorkingSet = workingSet;
 			synchronized (fWorkingSet) {
-				fElements = new ArrayList<Object>(Arrays.asList(fWorkingSet.getElements()));
+				fElements = new ArrayList<>(Arrays.asList(fWorkingSet.getElements()));
 			}
 		}
 
@@ -119,7 +119,7 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 	}
 
 	public CElementWorkingSetUpdater() {
-		fWorkingSets = new ArrayList<IWorkingSet>();
+		fWorkingSets = new ArrayList<>();
 		CoreModel.getDefault().addElementChangedListener(this);
 	}
 
@@ -278,7 +278,7 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 	}
 
 	private static void checkElementExistence(IWorkingSet workingSet) {
-		List<IAdaptable> elements = new ArrayList<IAdaptable>(Arrays.asList(workingSet.getElements()));
+		List<IAdaptable> elements = new ArrayList<>(Arrays.asList(workingSet.getElements()));
 		boolean changed = false;
 		for (Iterator<IAdaptable> iter = elements.iterator(); iter.hasNext();) {
 			IAdaptable element = iter.next();

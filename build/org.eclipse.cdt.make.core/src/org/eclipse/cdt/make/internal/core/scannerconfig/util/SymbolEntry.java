@@ -37,7 +37,7 @@ public class SymbolEntry {
 	public SymbolEntry(String name, String value, boolean active) {
 		this.name = SafeStringInterner.safeIntern(name);
 		if (values == null) {
-			values = new LinkedHashMap<String, Boolean>(1);
+			values = new LinkedHashMap<>(1);
 		}
 		values.put(SafeStringInterner.safeIntern(value), Boolean.valueOf(active));
 	}
@@ -88,7 +88,7 @@ public class SymbolEntry {
 	 * @return List
 	 */
 	private List<String> get(boolean format, boolean subset, boolean active) {
-		List<String> rv = new ArrayList<String>(values.size());
+		List<String> rv = new ArrayList<>(values.size());
 		for (String val : values.keySet()) {
 			if (subset && (values.get(val)).booleanValue() != active)
 				continue;
@@ -106,7 +106,7 @@ public class SymbolEntry {
 	 * @return List
 	 */
 	public List<String> getValuesOnly(boolean active) {
-		List<String> rv = new ArrayList<String>(values.size());
+		List<String> rv = new ArrayList<>(values.size());
 		for (Object element : values.keySet()) {
 			String val = (String) element;
 			if ((values.get(val)).booleanValue() == active) {

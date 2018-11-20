@@ -61,10 +61,10 @@ public class BasicTests extends CommandControlTestsBase {
 
 		class CommandListener implements ICommandListener {
 
-			List<CommandInfo> fDoneCommands = new LinkedList<CommandInfo>();
-			List<CommandInfo> fQueuedCommands = new LinkedList<CommandInfo>();
-			List<CommandInfo> fRemovedCommands = new LinkedList<CommandInfo>();
-			List<CommandInfo> fSentCommands = new LinkedList<CommandInfo>();
+			List<CommandInfo> fDoneCommands = new LinkedList<>();
+			List<CommandInfo> fQueuedCommands = new LinkedList<>();
+			List<CommandInfo> fRemovedCommands = new LinkedList<>();
+			List<CommandInfo> fSentCommands = new LinkedList<>();
 
 			@Override
 			public void commandDone(ICommandToken token, ICommandResult result) {

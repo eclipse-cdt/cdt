@@ -222,7 +222,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 			numWarnings = 0;
 			numInfos = 0;
 			uniqFiles = new ArrayList(0);
-			descriptions = new ArrayList<String>(0);
+			descriptions = new ArrayList<>(0);
 			fFileNameComparator = new FileNameComparator();
 		}
 	}

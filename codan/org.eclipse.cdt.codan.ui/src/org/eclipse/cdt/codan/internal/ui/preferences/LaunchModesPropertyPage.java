@@ -46,7 +46,7 @@ public class LaunchModesPropertyPage extends FieldEditorPreferencePage {
 			runInEditor = false;
 		}
 		setPreferenceStore(prefStore);
-		editors = new ArrayList<FieldEditor>();
+		editors = new ArrayList<>();
 	}
 
 	@Override

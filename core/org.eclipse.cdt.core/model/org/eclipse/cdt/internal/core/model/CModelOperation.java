@@ -110,7 +110,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/*
 	 * A per thread stack of java model operations (PerThreadObject of ArrayList).
 	 */
-	protected final static ThreadLocal<ArrayList<CModelOperation>> operationStacks = new ThreadLocal<ArrayList<CModelOperation>>();
+	protected final static ThreadLocal<ArrayList<CModelOperation>> operationStacks = new ThreadLocal<>();
 
 	protected CModelOperation() {
 	}
@@ -170,7 +170,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	protected void addDelta(ICElementDelta delta) {
 		if (fDeltas == null)
-			fDeltas = new LinkedList<ICElementDelta>();
+			fDeltas = new LinkedList<>();
 		fDeltas.add(delta);
 	}
 
@@ -558,7 +558,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	protected ArrayList<CModelOperation> getCurrentOperationStack() {
 		ArrayList<CModelOperation> stack = operationStacks.get();
 		if (stack == null) {
-			stack = new ArrayList<CModelOperation>();
+			stack = new ArrayList<>();
 			operationStacks.set(stack);
 		}
 		return stack;

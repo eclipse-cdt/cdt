@@ -360,7 +360,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	/**
 	 * Highlighting color list
 	 */
-	private final java.util.List<HighlightingColorListItem> fListModel = new ArrayList<HighlightingColorListItem>();
+	private final java.util.List<HighlightingColorListItem> fListModel = new ArrayList<>();
 	/**
 	 * Highlighting color list viewer
 	 */
@@ -414,7 +414,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	}
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
-		List<OverlayPreferenceStore.OverlayKey> overlayKeys = new ArrayList<OverlayPreferenceStore.OverlayKey>();
+		List<OverlayPreferenceStore.OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED));

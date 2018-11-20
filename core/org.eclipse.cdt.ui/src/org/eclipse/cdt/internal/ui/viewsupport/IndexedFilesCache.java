@@ -63,7 +63,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 		return INSTANCE;
 	}
 
-	private final HashMap<String, Set<Integer>> fIndexedFiles = new HashMap<String, Set<Integer>>();
+	private final HashMap<String, Set<Integer>> fIndexedFiles = new HashMap<>();
 	private boolean fIsDirty = false;
 	private boolean fActive = false;
 
@@ -125,7 +125,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 
 	final protected void initialize(ICProject prj) throws CoreException, InterruptedException {
 		IIndex index = CCorePlugin.getIndexManager().getIndex(prj);
-		List<IIndexFileLocation> list = new ArrayList<IIndexFileLocation>();
+		List<IIndexFileLocation> list = new ArrayList<>();
 		index.acquireReadLock();
 		try {
 			IIndexFile[] files = index.getAllFiles();
@@ -139,7 +139,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 				synchronized (fIndexedFiles) {
 					Set<Integer> cache = fIndexedFiles.get(prjName);
 					if (cache == null) {
-						cache = new HashSet<Integer>();
+						cache = new HashSet<>();
 						fIndexedFiles.put(prjName, cache);
 					} else {
 						if (!cache.isEmpty()) {
@@ -185,7 +185,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 				if (!(filesCleared.isEmpty() && filesWritten.isEmpty())) {
 					Set<Integer> cache = fIndexedFiles.get(prjName);
 					if (cache == null) {
-						cache = new HashSet<Integer>();
+						cache = new HashSet<>();
 						fIndexedFiles.put(prjName, cache);
 					}
 					for (IIndexFileLocation ifl : filesCleared) {

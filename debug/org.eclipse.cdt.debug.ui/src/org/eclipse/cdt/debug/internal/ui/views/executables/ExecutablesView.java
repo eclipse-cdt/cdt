@@ -209,7 +209,7 @@ public class ExecutablesView extends ViewPart {
 					new ColumnLabelProvider(), Messages.ExecutablesView_SelectColumns);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, CONFIGURE_COLUMNS_DIALOG);
 			String[] visibleColumns = getVisibleColumns();
-			List<String> initialSelection = new ArrayList<String>(visibleColumns.length);
+			List<String> initialSelection = new ArrayList<>(visibleColumns.length);
 			for (int i = 0; i < visibleColumns.length; i++) {
 				initialSelection.add(visibleColumns[i]);
 			}
@@ -390,7 +390,7 @@ public class ExecutablesView extends ViewPart {
 	}
 
 	private String[] getVisibleColumns() {
-		ArrayList<String> visibleNames = new ArrayList<String>();
+		ArrayList<String> visibleNames = new ArrayList<>();
 
 		for (int i = 0; i < columnNames.length; i++) {
 			if (allColumns[i].getWidth() > 0)
@@ -440,7 +440,7 @@ public class ExecutablesView extends ViewPart {
 				ISelection selection = getExecutablesViewer().getSelection();
 				if (selection instanceof IStructuredSelection) {
 					Object[] selectedObjects = ((IStructuredSelection) selection).toArray();
-					ArrayList<Executable> selectedExes = new ArrayList<Executable>();
+					ArrayList<Executable> selectedExes = new ArrayList<>();
 					for (Object object : selectedObjects) {
 						if (object instanceof Executable)
 							selectedExes.add((Executable) object);

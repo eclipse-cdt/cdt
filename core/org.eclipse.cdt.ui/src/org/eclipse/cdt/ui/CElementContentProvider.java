@@ -76,7 +76,7 @@ public class CElementContentProvider extends BaseCElementContentProvider
 	protected Object fInput;
 
 	/** Remember what refreshes we already have pending so we don't post them again. */
-	protected HashSet<IRefreshable> pendingRefreshes = new HashSet<IRefreshable>();
+	protected HashSet<IRefreshable> pendingRefreshes = new HashSet<>();
 
 	/**
 	 * Creates a new content provider for C elements.

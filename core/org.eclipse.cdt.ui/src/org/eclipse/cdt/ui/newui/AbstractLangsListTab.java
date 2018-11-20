@@ -406,7 +406,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	}
 
 	protected LinkedList<ICLanguageSettingEntry> getIncs() {
-		LinkedList<ICLanguageSettingEntry> l = new LinkedList<ICLanguageSettingEntry>();
+		LinkedList<ICLanguageSettingEntry> l = new LinkedList<>();
 		List<ICLanguageSettingEntry> lst = getSettingEntriesList(getKind());
 		if (lst != null) {
 			for (ICLanguageSettingEntry ent : lst) {
@@ -473,7 +473,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	}
 
 	private void updateExport() {
-		exported = new ArrayList<ICSettingEntry>();
+		exported = new ArrayList<>();
 		ICExternalSetting[] extSettings = getResDesc().getConfiguration().getExternalSettings();
 		if (!(extSettings == null || extSettings.length == 0)) {
 			for (ICExternalSetting extSetting : extSettings) {
@@ -531,7 +531,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		ICLanguageSetting[] langSettings = (ICLanguageSetting[]) ms.getItems();
 		ICLanguageSettingEntry[][] es = ms.getSettingEntriesM(getKind());
 		for (int i = 0; i < langSettings.length; i++) {
-			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(es[i]));
+			List<ICLanguageSettingEntry> entries = new ArrayList<>(Arrays.asList(es[i]));
 			if (del != null) {
 				for (ICLanguageSettingEntry entry : entries) {
 					if (entry.getName().equals(del.getName())) {
@@ -842,7 +842,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		ICLanguageSetting[] fs = conv2LS(CDTPrefUtil.getListForDisplay(lsArray2D, comp));
 		lsets = new ICLanguageSetting[fs.length];
 		for (int i = 0; i < fs.length; i++) {
-			ArrayList<ICLanguageSetting> list = new ArrayList<ICLanguageSetting>(lsArray2D.length);
+			ArrayList<ICLanguageSetting> list = new ArrayList<>(lsArray2D.length);
 			for (ICLanguageSetting[] lsArray : lsArray2D) {
 				int x = Arrays.binarySearch(lsArray, fs[i], comp);
 				if (x >= 0)

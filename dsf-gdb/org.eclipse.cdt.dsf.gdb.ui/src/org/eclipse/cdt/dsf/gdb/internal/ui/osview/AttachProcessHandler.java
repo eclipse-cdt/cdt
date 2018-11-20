@@ -147,7 +147,7 @@ public class AttachProcessHandler extends AbstractHandler implements IHandler {
 
 			// Use a set of process. It is possible to have multiple entries
 			// with the same pid, e.g. threads with same process id
-			Set<String> process_ids = new LinkedHashSet<String>();
+			Set<String> process_ids = new LinkedHashSet<>();
 			for (Object sel : ((IStructuredSelection) selection).toList()) {
 				IResourcesInformation ri = (IResourcesInformation) sel;
 				if (pidColumn >= 0) {
@@ -163,7 +163,7 @@ public class AttachProcessHandler extends AbstractHandler implements IHandler {
 			}
 
 			final ICommandControlDMContext context = ((OSResourcesView) part).getSessionContext();
-			final List<Sequence.Step> attach_steps = new ArrayList<Sequence.Step>(process_ids.size());
+			final List<Sequence.Step> attach_steps = new ArrayList<>(process_ids.size());
 			for (final String p : process_ids) {
 				attach_steps.add(new Sequence.Step() {
 					@Override

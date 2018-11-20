@@ -2086,7 +2086,7 @@ public class SemanticHighlightings {
 
 	private static SemanticHighlighting[] loadSemanticHighlightings() {
 
-		Map<Key, SemanticHighlighting> highlightings = new TreeMap<SemanticHighlightings.Key, SemanticHighlighting>();
+		Map<Key, SemanticHighlighting> highlightings = new TreeMap<>();
 
 		// load the built-in highlightings
 		loadBuiltInSemanticHighlightings(highlightings);

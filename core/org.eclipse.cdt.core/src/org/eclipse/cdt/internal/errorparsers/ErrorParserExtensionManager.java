@@ -88,9 +88,9 @@ public class ErrorParserExtensionManager {
 	private static final String ATTR_VALUE_INFO = "Info"; //$NON-NLS-1$
 	private static final String ATTR_VALUE_IGNORE = "Ignore"; //$NON-NLS-1$
 
-	private static final LinkedHashMap<String, IErrorParserNamed> fExtensionErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
-	private static final LinkedHashMap<String, IErrorParserNamed> fAvailableErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
-	private static final Map<String, Set<String>> fErrorParserContexts = new HashMap<String, Set<String>>();
+	private static final LinkedHashMap<String, IErrorParserNamed> fExtensionErrorParsers = new LinkedHashMap<>();
+	private static final LinkedHashMap<String, IErrorParserNamed> fAvailableErrorParsers = new LinkedHashMap<>();
+	private static final Map<String, Set<String>> fErrorParserContexts = new HashMap<>();
 	private static LinkedHashMap<String, IErrorParserNamed> fUserDefinedErrorParsers = null;
 	private static List<String> fDefaultErrorParserIds = null;
 
@@ -144,11 +144,11 @@ public class ErrorParserExtensionManager {
 		}
 
 		if (doc != null) {
-			Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new ErrorParserComparator());
+			Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<>(new ErrorParserComparator());
 			loadErrorParserExtensions(doc, sortedErrorParsers);
 
 			if (sortedErrorParsers.size() > 0) {
-				fUserDefinedErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
+				fUserDefinedErrorParsers = new LinkedHashMap<>();
 				for (IErrorParserNamed errorParser : sortedErrorParsers) {
 					fUserDefinedErrorParsers.put(errorParser.getId(), errorParser);
 				}
@@ -216,7 +216,7 @@ public class ErrorParserExtensionManager {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	synchronized public static void loadErrorParserExtensions() {
-		Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new ErrorParserComparator());
+		Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<>(new ErrorParserComparator());
 		loadErrorParserExtensions(Platform.getExtensionRegistry(), sortedErrorParsers);
 
 		fExtensionErrorParsers.clear();
@@ -266,7 +266,7 @@ public class ErrorParserExtensionManager {
 	private static void recalculateAvailableErrorParsers() {
 		fAvailableErrorParsers.clear();
 		// put default parsers on top of the list
-		List<String> ids = new ArrayList<String>();
+		List<String> ids = new ArrayList<>();
 		if (fDefaultErrorParserIds != null) {
 			for (String id : fDefaultErrorParserIds) {
 				IErrorParserNamed errorParser = null;
@@ -283,7 +283,7 @@ public class ErrorParserExtensionManager {
 			}
 		}
 		// then the rest in the order defined by comparator
-		Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new ErrorParserComparator());
+		Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<>(new ErrorParserComparator());
 
 		if (fUserDefinedErrorParsers != null) {
 			for (String id : fUserDefinedErrorParsers.keySet()) {
@@ -600,7 +600,7 @@ public class ErrorParserExtensionManager {
 		}
 		boolean newContextCreated = false;
 		if (contexts == null) {
-			contexts = new HashSet<String>();
+			contexts = new HashSet<>();
 			newContextCreated = true;
 		}
 		for (IConfigurationElement contextElement : contextElements) {
@@ -653,9 +653,9 @@ public class ErrorParserExtensionManager {
 		if (errorParsers == null) {
 			fUserDefinedErrorParsers = null;
 		} else {
-			Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new ErrorParserComparator());
+			Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<>(new ErrorParserComparator());
 			sortedErrorParsers.addAll(Arrays.asList(errorParsers));
-			fUserDefinedErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
+			fUserDefinedErrorParsers = new LinkedHashMap<>();
 			// set customized list
 			for (IErrorParserNamed errorParser : sortedErrorParsers) {
 				fUserDefinedErrorParsers.put(errorParser.getId(), errorParser);
@@ -711,7 +711,7 @@ public class ErrorParserExtensionManager {
 		if (ids == null) {
 			fDefaultErrorParserIds = null;
 		} else {
-			fDefaultErrorParserIds = new ArrayList<String>(Arrays.asList(ids));
+			fDefaultErrorParserIds = new ArrayList<>(Arrays.asList(ids));
 		}
 		recalculateAvailableErrorParsers();
 	}
@@ -753,7 +753,7 @@ public class ErrorParserExtensionManager {
 	 *         defined ones from workspace, that can be used in the given context.
 	 */
 	public static String[] getErrorParserAvailableIdsInContext(String context) {
-		List<String> ids = new ArrayList<String>();
+		List<String> ids = new ArrayList<>();
 		for (String id : fAvailableErrorParsers.keySet()) {
 			if (getErrorParserContexts(id).contains(context)) {
 				ids.add(id);

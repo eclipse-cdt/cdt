@@ -110,7 +110,7 @@ public class TypeUtil {
 	 *		exception occurs while accessing its corresponding resource
 	 */
 	public static ICElement[] getTypes(ITranslationUnit tu) throws CModelException {
-		List<ICElement> typeList = new ArrayList<ICElement>();
+		List<ICElement> typeList = new ArrayList<>();
 		ICElement[] children = tu.getChildren();
 		for (int i = 0; i < children.length; ++i) {
 			if (isDeclaringType(children[i]))
@@ -131,8 +131,8 @@ public class TypeUtil {
 	 */
 	public static ICElement[] getAllTypes(ITranslationUnit tu) throws CModelException {
 		ICElement[] types = getTypes(tu);
-		ArrayList<ICElement> allTypes = new ArrayList<ICElement>(types.length);
-		ArrayList<ICElement> typesToTraverse = new ArrayList<ICElement>(types.length);
+		ArrayList<ICElement> allTypes = new ArrayList<>(types.length);
+		ArrayList<ICElement> typesToTraverse = new ArrayList<>(types.length);
 		for (ICElement type : types) {
 			typesToTraverse.add(type);
 		}
@@ -158,7 +158,7 @@ public class TypeUtil {
 	 * @return the immediate member types declared by this type
 	 */
 	public static ICElement[] getTypes(ICElement elem) throws CModelException {
-		List<ICElement> typeList = new ArrayList<ICElement>();
+		List<ICElement> typeList = new ArrayList<>();
 		if (isDeclaringType(elem) && elem instanceof IParent) {
 			ICElement[] children = ((IParent) elem).getChildren();
 			for (int i = 0; i < children.length; ++i) {

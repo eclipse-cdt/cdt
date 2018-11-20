@@ -45,7 +45,7 @@ public class CHLabelProvider extends AppearanceAwareLabelProvider {
 	private CUILabelProvider fCLabelProvider = new CUILabelProvider(LABEL_OPTIONS_SIMPLE,
 			CElementImageProvider.OVERLAY_ICONS);
 	private CHContentProvider fContentProvider;
-	private HashMap<String, Image> fCachedImages = new HashMap<String, Image>();
+	private HashMap<String, Image> fCachedImages = new HashMap<>();
 	private Color fColorInactive;
 	private IStyledLabelProvider[] fProviders;
 	private CHViewPart fView;

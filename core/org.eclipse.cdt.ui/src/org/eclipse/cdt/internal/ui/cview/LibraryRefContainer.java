@@ -61,7 +61,7 @@ public class LibraryRefContainer extends CElementGrouping {
 	public Object[] getChildren(Object o) {
 		try {
 			ILibraryReference[] references = fCProject.getLibraryReferences();
-			ArrayList<ILibraryReference> list = new ArrayList<ILibraryReference>(references.length);
+			ArrayList<ILibraryReference> list = new ArrayList<>(references.length);
 			for (ILibraryReference reference : references) {
 				IPath path = reference.getPath();
 				IFile file = reference.getCModel().getWorkspace().getRoot().getFileForLocation(path);

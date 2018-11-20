@@ -47,7 +47,7 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 		setDescription(CPathEntryMessages.CPathContainerDefaultPage_description);
 		setImageDescriptor(CPluginImages.DESC_WIZBAN_ADD_LIBRARY);
 
-		fUsedPaths = new ArrayList<IPath>();
+		fUsedPaths = new ArrayList<>();
 
 		fEntryField = new StringDialogField();
 		fEntryField.setLabelText(CPathEntryMessages.CPathContainerDefaultPage_path_label);

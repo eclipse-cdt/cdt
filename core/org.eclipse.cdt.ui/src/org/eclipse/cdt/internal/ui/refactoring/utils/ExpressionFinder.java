@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Path;
 public class ExpressionFinder {
 
 	public static IASTName findExpressionInTranslationUnit(IASTTranslationUnit transUnit, final IIndexName indexName) {
-		final Container<IASTName> expName = new Container<IASTName>();
+		final Container<IASTName> expName = new Container<>();
 		transUnit.accept(new ASTVisitor() {
 			{
 				shouldVisitNames = true;

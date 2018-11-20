@@ -70,7 +70,7 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 	 */
 	private static Map<IProject, List<IScannerInfoChangeListener>> getListeners() {
 		if (listeners == null) {
-			listeners = new HashMap<IProject, List<IScannerInfoChangeListener>>();
+			listeners = new HashMap<>();
 		}
 		return listeners;
 	}
@@ -131,7 +131,7 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 
 			// get the macros
 			IMacroEntry[] macros = CoreModel.getMacroEntries(resPath);
-			Map<String, String> symbolMap = new HashMap<String, String>();
+			Map<String, String> symbolMap = new HashMap<>();
 			for (int i = 0; i < macros.length; ++i) {
 				symbolMap.put(macros[i].getMacroName(), macros[i].getMacroValue());
 			}
@@ -166,7 +166,7 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 		List<IScannerInfoChangeListener> list = map.get(project);
 		if (list == null) {
 			// Create a new list
-			list = new ArrayList<IScannerInfoChangeListener>();
+			list = new ArrayList<>();
 			map.put(project, list);
 		}
 		if (!list.contains(listener)) {

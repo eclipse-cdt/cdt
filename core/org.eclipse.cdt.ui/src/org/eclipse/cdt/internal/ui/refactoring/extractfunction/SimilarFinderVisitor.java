@@ -29,7 +29,7 @@ abstract class SimilarFinderVisitor extends ASTVisitor {
 	protected final ExtractFunctionRefactoring refactoring;
 	protected final NodeContainer extractedNodes;
 	protected NodeContainer similarContainer;
-	protected final List<IASTStatement> stmtToReplace = new ArrayList<IASTStatement>();
+	protected final List<IASTStatement> stmtToReplace = new ArrayList<>();
 	private final List<IASTNode> trail;
 	private final List<IASTNode> statements;
 	private int statementCount;

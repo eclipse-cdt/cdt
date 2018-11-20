@@ -139,7 +139,7 @@ public abstract class AbstractResourceActionHandler extends AbstractHandler {
 	}
 
 	private static Collection<IResource> getSelectedResources(IStructuredSelection selection) {
-		Set<IResource> result = new LinkedHashSet<IResource>();
+		Set<IResource> result = new LinkedHashSet<>();
 		for (Object obj : selection.toList()) {
 			IResource resource = AdapterUtil.adapt(obj, IResource.class);
 			if (resource != null) {

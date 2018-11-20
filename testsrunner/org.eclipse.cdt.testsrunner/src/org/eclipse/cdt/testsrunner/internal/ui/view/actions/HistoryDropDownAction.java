@@ -122,7 +122,7 @@ public class HistoryDropDownAction extends Action {
 			String[] buttonLabels = new String[] { ActionsMessages.HistoryAction_dialog_button_remove,
 					ActionsMessages.HistoryAction_dialog_button_remove_all };
 			LabelProvider labelProvider = new TestRunLabelProvider();
-			historyList = new ListDialogField<ITestingSession>(adapter, buttonLabels, labelProvider);
+			historyList = new ListDialogField<>(adapter, buttonLabels, labelProvider);
 			historyList.setLabelText(ActionsMessages.HistoryAction_dialog_list_title);
 
 			historyList.setElements(testingSessionsManager.getSessions());
@@ -318,7 +318,7 @@ public class HistoryDropDownAction extends Action {
 
 		@Override
 		public void run() {
-			List<ITestingSession> remainingSessions = new ArrayList<ITestingSession>();
+			List<ITestingSession> remainingSessions = new ArrayList<>();
 			for (ITestingSession testingSession : testingSessionsManager.getSessions()) {
 				if (!testingSession.isFinished()) {
 					remainingSessions.add(testingSession);

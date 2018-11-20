@@ -47,7 +47,7 @@ public abstract class UserAndDiscoveredEntryLanguageData extends EntryStorageBas
 					kind = kinds[i];
 					set = fDisabledNameSetStore.get(kind);
 					if (set != null) {
-						set = new HashSet<String>(set);
+						set = new HashSet<>(set);
 						fDisabledNameSetStore.put(kind, set);
 					}
 				}
@@ -108,7 +108,7 @@ public abstract class UserAndDiscoveredEntryLanguageData extends EntryStorageBas
 	}
 
 	protected void removeInexistent(ICLanguageSettingEntry[] entries, Set<String> set) {
-		Set<String> copy = new HashSet<String>(set);
+		Set<String> copy = new HashSet<>(set);
 		for (int i = 0; i < entries.length; i++) {
 			copy.remove(entries[i].getName());
 		}
@@ -123,7 +123,7 @@ public abstract class UserAndDiscoveredEntryLanguageData extends EntryStorageBas
 	}
 
 	protected void setDisabledDiscoveredNames(int kind, Set<String> disabledNameSet) {
-		setDisabledSet(kind, disabledNameSet != null ? new HashSet<String>(disabledNameSet) : null);
+		setDisabledSet(kind, disabledNameSet != null ? new HashSet<>(disabledNameSet) : null);
 	}
 
 	protected Set<String> getDisabledSet(int kind) {
@@ -140,7 +140,7 @@ public abstract class UserAndDiscoveredEntryLanguageData extends EntryStorageBas
 			}
 		} else {
 			if (fDisabledNameSetStore == null)
-				fDisabledNameSetStore = new KindBasedStore<Set<String>>();
+				fDisabledNameSetStore = new KindBasedStore<>();
 			fDisabledNameSetStore.put(kind, set);
 		}
 	}

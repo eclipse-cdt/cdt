@@ -246,7 +246,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
 		synchronized (this) {
 			if (fWaitingList instanceof RequestMonitor) {
 				if (((RequestMonitor) fWaitingList).isCanceled()) {
-					canceledRms = new ArrayList<RequestMonitor>(1);
+					canceledRms = new ArrayList<>(1);
 					canceledRms.add((RequestMonitor) fWaitingList);
 					canceled = true;
 				} else {
@@ -259,7 +259,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
 					if (waitingList[i] != null) {
 						if (waitingList[i].isCanceled()) {
 							if (canceledRms == null) {
-								canceledRms = new ArrayList<RequestMonitor>(1);
+								canceledRms = new ArrayList<>(1);
 							}
 							canceledRms.add(waitingList[i]);
 						} else {

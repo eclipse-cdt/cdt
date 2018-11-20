@@ -96,7 +96,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 			Assert.assertNotNull(fProject);
 			mockErrorParserId = addErrorParserExtension("MockErrorParser", MockErrorParser.class);
 		}
-		errorList = new ArrayList<ProblemMarkerInfo>();
+		errorList = new ArrayList<>();
 	}
 
 	@Override

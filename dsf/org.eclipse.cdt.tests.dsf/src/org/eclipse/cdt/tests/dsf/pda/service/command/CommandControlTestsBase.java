@@ -49,7 +49,7 @@ public class CommandControlTestsBase {
 	protected DsfSession fSession;
 	protected PDABackend fPDABackend;
 	protected PDACommandControl fCommandControl;
-	private BlockingQueue<Object> fEventsQueue = new LinkedBlockingQueue<Object>();
+	private BlockingQueue<Object> fEventsQueue = new LinkedBlockingQueue<>();
 
 	private BufferedReader fOutputReader;
 

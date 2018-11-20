@@ -107,7 +107,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (infoButton != null && event.getSelection() instanceof ITreeSelection) {
 					ITreeSelection s = (ITreeSelection) event.getSelection();
-					ArrayList<IProblem> list = new ArrayList<IProblem>();
+					ArrayList<IProblem> list = new ArrayList<>();
 					for (Iterator<?> iterator = s.iterator(); iterator.hasNext();) {
 						Object o = iterator.next();
 						if (o instanceof IProblem) {
@@ -251,7 +251,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	}
 
 	private static void asynchronouslyUpdateMarkers(final IResource resource) {
-		final Set<IFile> filesToUpdate = new HashSet<IFile>();
+		final Set<IFile> filesToUpdate = new HashSet<>();
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow active = workbench.getActiveWorkbenchWindow();
 		final IWorkbenchPage page = active.getActivePage();
@@ -307,7 +307,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 
 	private static void removeMarkersForDisabledProblems(IResource resource, IProgressMonitor monitor) {
 		CheckersRegistry chegistry = CheckersRegistry.getInstance();
-		Set<String> markerTypes = new HashSet<String>();
+		Set<String> markerTypes = new HashSet<>();
 		for (IChecker checker : chegistry) {
 			Collection<IProblem> problems = chegistry.getRefProblems(checker);
 			for (IProblem problem : problems) {

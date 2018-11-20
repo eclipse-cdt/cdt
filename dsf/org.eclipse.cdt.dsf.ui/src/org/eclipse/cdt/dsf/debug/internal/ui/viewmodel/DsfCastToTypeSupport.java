@@ -56,7 +56,7 @@ public class DsfCastToTypeSupport {
 	private final SyncVariableDataAccess fSyncVariableDataAccess;
 
 	/** expression memento to casting context (TODO: persist these; bug 228301)*/
-	private Map<String, CastInfo> fCastedExpressionStorage = new HashMap<String, CastInfo>();
+	private Map<String, CastInfo> fCastedExpressionStorage = new HashMap<>();
 
 	public class CastImplementation extends PlatformObject implements ICastToArray {
 		private final IExpressionDMContext exprDMC;

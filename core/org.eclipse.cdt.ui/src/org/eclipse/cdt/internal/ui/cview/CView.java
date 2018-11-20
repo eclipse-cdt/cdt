@@ -947,7 +947,7 @@ public class CView extends ViewPart
 
 		IMemento childMem = memento.getChild(TAG_EXPANDED);
 		if (childMem != null) {
-			ArrayList<ICElement> elements = new ArrayList<ICElement>();
+			ArrayList<ICElement> elements = new ArrayList<>();
 			IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
 			for (IMemento element2 : elementMem) {
 				String p = element2.getString(TAG_PATH);
@@ -963,7 +963,7 @@ public class CView extends ViewPart
 		}
 		childMem = memento.getChild(TAG_SELECTION);
 		if (childMem != null) {
-			ArrayList<ICElement> list = new ArrayList<ICElement>();
+			ArrayList<ICElement> list = new ArrayList<>();
 			IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
 			for (IMemento element2 : elementMem) {
 				String p = element2.getString(TAG_PATH);

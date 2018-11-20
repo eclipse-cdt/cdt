@@ -67,7 +67,7 @@ public class OpenActionUtil {
 	 */
 	public static List<ISourceReference> filterResolveResults(ICElement[] codeResolveResults) {
 		int nResults = codeResolveResults.length;
-		List<ISourceReference> refs = new ArrayList<ISourceReference>(nResults);
+		List<ISourceReference> refs = new ArrayList<>(nResults);
 		for (int i = 0; i < nResults; i++) {
 			if (codeResolveResults[i] instanceof ISourceReference)
 				refs.add((ISourceReference) codeResolveResults[i]);

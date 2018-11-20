@@ -86,7 +86,7 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
 
 		// Extract all selected execution contexts, using a set to avoid duplicates.  Duplicates will
 		// happen if multiple stack frames of the same thread are selected.
-		Set<IExecutionDMContext> execDmcSet = new HashSet<IExecutionDMContext>(request.getElements().length);
+		Set<IExecutionDMContext> execDmcSet = new HashSet<>(request.getElements().length);
 		for (Object element : request.getElements()) {
 			if (element instanceof IDMVMContext) {
 				IDMVMContext vmc = (IDMVMContext) element;

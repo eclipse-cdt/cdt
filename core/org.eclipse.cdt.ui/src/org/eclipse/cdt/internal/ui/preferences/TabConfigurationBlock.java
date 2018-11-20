@@ -65,7 +65,7 @@ public class TabConfigurationBlock extends OptionsConfigurationBlock {
 	}
 
 	private static Key[] getAllKeys(OptionsConfigurationBlock[] tabs) {
-		ArrayList<Key> keys = new ArrayList<Key>();
+		ArrayList<Key> keys = new ArrayList<>();
 		for (OptionsConfigurationBlock tab : tabs) {
 			ArrayUtil.addAll(keys, tab.fAllKeys);
 		}

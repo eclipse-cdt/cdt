@@ -223,7 +223,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 
 	private Set<String> fLegalLineDelimiters;
 
-	private List<IBufferChangedListener> fBufferListeners = new ArrayList<IBufferChangedListener>(3);
+	private List<IBufferChangedListener> fBufferListeners = new ArrayList<>(3);
 	private IStatus fStatus;
 
 	public DocumentAdapter(IWorkingCopy owner, IFile file) {
@@ -495,7 +495,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	private void validateLineDelimiters(String contents) {
 		if (fLegalLineDelimiters == null) {
 			// collect all line delimiters in the document
-			HashSet<String> existingDelimiters = new HashSet<String>();
+			HashSet<String> existingDelimiters = new HashSet<>();
 
 			for (int i = fDocument.getNumberOfLines() - 1; i >= 0; i--) {
 				try {
@@ -555,7 +555,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 
 	private void fireBufferChanged(BufferChangedEvent event) {
 		if (fBufferListeners != null && fBufferListeners.size() > 0) {
-			Iterator<IBufferChangedListener> e = new ArrayList<IBufferChangedListener>(fBufferListeners).iterator();
+			Iterator<IBufferChangedListener> e = new ArrayList<>(fBufferListeners).iterator();
 			while (e.hasNext())
 				e.next().bufferChanged(event);
 		}

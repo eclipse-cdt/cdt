@@ -91,7 +91,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	/** utility method; cuts down on clutter */
 	private void queueCommands(List<String> commands, RequestMonitor rm) {
 		if (!commands.isEmpty()) {
-			fCommandControl.queueCommand(new CLICommand<MIInfo>(fCommandControl.getContext(), composeCommand(commands)),
+			fCommandControl.queueCommand(new CLICommand<>(fCommandControl.getContext(), composeCommand(commands)),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 		} else {
 			rm.done();
@@ -124,7 +124,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 			return launch.getLaunchConfiguration().getAttributes();
 		} catch (CoreException e) {
 		}
-		return new HashMap<String, Object>();
+		return new HashMap<>();
 	}
 
 	/** @since 8.2 */
@@ -145,7 +145,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			// Initialize the list with the base class' steps
 			// We need to create a list that we can modify, which is why we create our own ArrayList.
-			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
+			List<String> orderList = new ArrayList<>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// First, remove all steps of the base class that we don't want to use.
 			orderList.removeAll(Arrays.asList(new String[] { "stepNewProcess", //$NON-NLS-1$
@@ -299,7 +299,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 				if (symbolsOffset.length() > 0) {
 					symbolsOffset = "0x" + symbolsOffset;
 				}
-				List<String> commands = new ArrayList<String>();
+				List<String> commands = new ArrayList<>();
 				fGdbJtagDevice.doLoadSymbol(symbolsFileName, symbolsOffset, commands);
 				queueCommands(commands, rm);
 
@@ -322,7 +322,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		try {
 			if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_USE_REMOTE_TARGET,
 					IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET)) {
-				List<String> commands = new ArrayList<String>();
+				List<String> commands = new ArrayList<>();
 				if (fGdbJtagDevice instanceof IGDBJtagConnection) {
 					URI uri = new URI(CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_CONNECTION,
 							IGDBJtagConstants.DEFAULT_CONNECTION));
@@ -355,7 +355,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	public void stepResetBoard(final RequestMonitor rm) {
 		if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_RESET,
 				IGDBJtagConstants.DEFAULT_DO_RESET)) {
-			List<String> commands = new ArrayList<String>();
+			List<String> commands = new ArrayList<>();
 			fGdbJtagDevice.doReset(commands);
 			if (commands.isEmpty()) {
 				setError(String.format(Messages.getString("GDBJtagDebugger.reset_not_defined"), getGDBJtagDeviceName()), //$NON-NLS-1$
@@ -378,7 +378,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_RESET,
 				IGDBJtagConstants.DEFAULT_DO_RESET)) {
 			int defaultDelay = fGdbJtagDevice.getDefaultDelay();
-			List<String> commands = new ArrayList<String>();
+			List<String> commands = new ArrayList<>();
 			int delay = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DELAY, defaultDelay);
 			fGdbJtagDevice.doDelay(delay, commands);
 			if (commands.isEmpty() && (delay != 0)) {
@@ -400,7 +400,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	public void stepHaltBoard(final RequestMonitor rm) {
 		if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_HALT,
 				IGDBJtagConstants.DEFAULT_DO_HALT)) {
-			List<String> commands = new ArrayList<String>();
+			List<String> commands = new ArrayList<>();
 			fGdbJtagDevice.doHalt(commands);
 			if (commands.isEmpty()) {
 				setError(String.format(Messages.getString("GDBJtagDebugger.halt_not_defined"), getGDBJtagDeviceName()), //$NON-NLS-1$
@@ -429,7 +429,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 				CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
 				crm.setDoneCount(commands.length);
 				for (int i = 0; i < commands.length; ++i) {
-					fCommandControl.queueCommand(new CLICommand<MIInfo>(fCommandControl.getContext(), commands[i]),
+					fCommandControl.queueCommand(new CLICommand<>(fCommandControl.getContext(), commands[i]),
 							new DataRequestMonitor<MIInfo>(getExecutor(), crm));
 				}
 			} else {
@@ -489,7 +489,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 							: "0x" + CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IMAGE_OFFSET,
 									IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);
 				}
-				List<String> commands = new ArrayList<String>();
+				List<String> commands = new ArrayList<>();
 				fGdbJtagDevice.doLoadImage(imageFileName, imageOffset, commands);
 				queueCommands(commands, rm);
 			} else {
@@ -584,7 +584,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 			String pcRegister = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_PC_REGISTER,
 					CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IMAGE_OFFSET,
 							IGDBJtagConstants.DEFAULT_PC_REGISTER));
-			List<String> commands = new ArrayList<String>();
+			List<String> commands = new ArrayList<>();
 			fGdbJtagDevice.doSetPC(pcRegister, commands);
 			queueCommands(commands, rm);
 		} else {
@@ -602,7 +602,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 				IGDBJtagConstants.DEFAULT_SET_STOP_AT)) {
 			String stopAt = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_STOP_AT,
 					IGDBJtagConstants.DEFAULT_STOP_AT);
-			List<String> commands = new ArrayList<String>();
+			List<String> commands = new ArrayList<>();
 			fGdbJtagDevice.doStopAt(stopAt, commands);
 			queueCommands(commands, rm);
 		} else {
@@ -618,7 +618,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	public void stepResumeScript(final RequestMonitor rm) {
 		if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_SET_RESUME,
 				IGDBJtagConstants.DEFAULT_SET_RESUME)) {
-			List<String> commands = new ArrayList<String>();
+			List<String> commands = new ArrayList<>();
 			fGdbJtagDevice.doContinue(commands);
 			queueCommands(commands, rm);
 		} else {
@@ -642,7 +642,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 				CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
 				crm.setDoneCount(commands.length);
 				for (int i = 0; i < commands.length; ++i) {
-					fCommandControl.queueCommand(new CLICommand<MIInfo>(fCommandControl.getContext(), commands[i]),
+					fCommandControl.queueCommand(new CLICommand<>(fCommandControl.getContext(), commands[i]),
 							new DataRequestMonitor<MIInfo>(getExecutor(), crm));
 				}
 			} else {

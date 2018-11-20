@@ -116,7 +116,7 @@ public class CFileTypeDialog extends Dialog {
 	private void populateTypesCombo() {
 		IContentTypeManager manager = Platform.getContentTypeManager();
 		String[] ids = CoreModel.getRegistedContentTypeIds();
-		ArrayList<IContentType> list = new ArrayList<IContentType>(ids.length);
+		ArrayList<IContentType> list = new ArrayList<>(ids.length);
 		for (String id : ids) {
 			IContentType ctype = manager.getContentType(id);
 			if (ctype != null) {

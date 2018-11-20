@@ -51,7 +51,7 @@ public class CElementInfo {
 	protected CElementInfo(CElement element) {
 		this.element = element;
 		// Array list starts with size = 0
-		fChildren = new Vector<ICElement>(0);
+		fChildren = new Vector<>(0);
 	}
 
 	protected CElement getElement() {

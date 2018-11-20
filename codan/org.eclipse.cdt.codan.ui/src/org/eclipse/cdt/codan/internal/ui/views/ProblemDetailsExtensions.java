@@ -32,7 +32,7 @@ public class ProblemDetailsExtensions {
 	public static final String ALL = "*";//$NON-NLS-1$
 	private static final String EXTENSION_POINT_NAME = "codanProblemDetails"; //$NON-NLS-1$
 	private static boolean extensionsLoaded;
-	private static HashMap<String, Collection<?>> map = new HashMap<String, Collection<?>>();
+	private static HashMap<String, Collection<?>> map = new HashMap<>();
 
 	private static synchronized void readExtensions() {
 		if (extensionsLoaded)
@@ -109,7 +109,7 @@ public class ProblemDetailsExtensions {
 
 	public static Collection<AbstractCodanProblemDetailsProvider> getProviders(String id) {
 		readExtensions();
-		Collection<AbstractCodanProblemDetailsProvider> providers = new ArrayList<AbstractCodanProblemDetailsProvider>();
+		Collection<AbstractCodanProblemDetailsProvider> providers = new ArrayList<>();
 		Collection<?> collection1 = getCollection(id);
 		Collection<?> collection2 = getCollection(ALL);
 		providers.addAll(resolveProviders(collection1));

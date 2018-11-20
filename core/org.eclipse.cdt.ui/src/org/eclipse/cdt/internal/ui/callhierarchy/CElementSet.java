@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 public class CElementSet {
-	private Set<ICElement> fSet = new LinkedHashSet<ICElement>();
+	private Set<ICElement> fSet = new LinkedHashSet<>();
 	private int fHashCode;
 
 	CElementSet(ICElement[] elements) {
@@ -76,7 +76,7 @@ public class CElementSet {
 	}
 
 	public ICElement[] getElements(WorkingSetFilterUI filter) {
-		ArrayList<ICElement> result = new ArrayList<ICElement>(fSet.size());
+		ArrayList<ICElement> result = new ArrayList<>(fSet.size());
 		for (Iterator<ICElement> iter = fSet.iterator(); iter.hasNext();) {
 			ICElement element = iter.next();
 			if (filter == null || filter.isPartOfWorkingSet(element)) {

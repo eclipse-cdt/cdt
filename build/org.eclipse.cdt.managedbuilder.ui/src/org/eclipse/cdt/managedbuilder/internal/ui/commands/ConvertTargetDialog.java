@@ -192,7 +192,7 @@ public class ConvertTargetDialog extends Dialog {
 
 	private Map<String, IConfigurationElement> getConversionElements() {
 		if (conversionElements == null) {
-			conversionElements = new HashMap<String, IConfigurationElement>();
+			conversionElements = new HashMap<>();
 		}
 		return conversionElements;
 	}

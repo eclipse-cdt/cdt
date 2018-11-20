@@ -61,7 +61,7 @@ class ProjectMap {
 			fMap = load(project);
 		} catch (CoreException ce) {
 			CUIPlugin.log(ce);
-			fMap = new HashMap<IPath, String>();
+			fMap = new HashMap<>();
 		}
 		fProject = project;
 	}
@@ -116,7 +116,7 @@ class ProjectMap {
 	}
 
 	private static Map<IPath, String> load(IProject project) throws CoreException {
-		Map<IPath, String> result = new HashMap<IPath, String>();
+		Map<IPath, String> result = new HashMap<>();
 		ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(project, false);
 		if (pd != null) {
 			ICStorageElement element = pd.getStorage(ATTRVAL_STORAGEID, false);

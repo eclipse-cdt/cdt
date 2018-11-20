@@ -50,7 +50,7 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 	private IPath fCWD;
 	private boolean fBuildIncrementaly;
 	private boolean fResumeOnErrs;
-	private Map<IBuildStep, StepBuilder> fStepToStepBuilderMap = new HashMap<IBuildStep, StepBuilder>();
+	private Map<IBuildStep, StepBuilder> fStepToStepBuilderMap = new HashMap<>();
 	private int fNumCommands = -1;
 	private GenDirInfo fDir;
 	private IResourceRebuildStateContainer fRebuildStateContainer;

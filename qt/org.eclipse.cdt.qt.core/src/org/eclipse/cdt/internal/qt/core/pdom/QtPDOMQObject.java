@@ -60,7 +60,7 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 
 	public void delete() throws CoreException {
 		long fieldRec = Field.ClassInfos.getRecord(record);
-		new QtPDOMArray<ClassInfo>(getQtLinkage(), ClassInfo.Codec, fieldRec).delete();
+		new QtPDOMArray<>(getQtLinkage(), ClassInfo.Codec, fieldRec).delete();
 		getDB().putRecPtr(Field.ClassInfos.getRecord(record), 0);
 	}
 
@@ -76,7 +76,7 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 
 		// Store the array into the Database.
 		long arrayRec = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
-		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<QtPDOMQObject.ClassInfo>(getQtLinkage(), ClassInfo.Codec,
+		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<>(getQtLinkage(), ClassInfo.Codec,
 				arrayRec);
 		arrayRec = pdomArray.set(array);
 
@@ -85,11 +85,11 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 	}
 
 	public Map<String, String> getClassInfos() throws CoreException {
-		Map<String, String> classInfos = new LinkedHashMap<String, String>();
+		Map<String, String> classInfos = new LinkedHashMap<>();
 
 		// Read the array from the Database and insert the elements into the Map that is to be returned.
 		long arrayRec = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
-		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<QtPDOMQObject.ClassInfo>(getQtLinkage(), ClassInfo.Codec,
+		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<>(getQtLinkage(), ClassInfo.Codec,
 				arrayRec);
 
 		ClassInfo[] array = pdomArray.get();
@@ -124,7 +124,7 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 		if (cppClassType == null)
 			return Collections.emptyList();
 
-		List<QtPDOMQObject> bases = new ArrayList<QtPDOMQObject>();
+		List<QtPDOMQObject> bases = new ArrayList<>();
 		for (ICPPBase base : cppClassType.getBases()) {
 			if (base.getVisibility() != ICPPBase.v_public)
 				continue;

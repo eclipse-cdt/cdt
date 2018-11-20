@@ -95,7 +95,7 @@ public class ProblemMarkerInfo {
 		this.variableName = variableName;
 		this.externalPath = null;
 		this.type = null;
-		this.attributes = new HashMap<String, String>();
+		this.attributes = new HashMap<>();
 		this.startChar = startChar;
 		this.endChar = endChar;
 	}

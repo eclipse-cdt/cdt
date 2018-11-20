@@ -43,7 +43,7 @@ public class StabsReader implements ISymbolReader {
 		stabstrData = stabstr;
 		isLe = littleEndian;
 		is64 = is64bit;
-		fileList = new ArrayList<String>();
+		fileList = new ArrayList<>();
 	}
 
 	@Override

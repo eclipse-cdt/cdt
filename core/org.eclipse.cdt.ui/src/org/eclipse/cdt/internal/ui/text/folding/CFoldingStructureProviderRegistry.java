@@ -105,7 +105,7 @@ public class CFoldingStructureProviderRegistry {
 	 */
 	public void reloadExtensions() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		Map<String, CFoldingStructureProviderDescriptor> map = new HashMap<String, CFoldingStructureProviderDescriptor>();
+		Map<String, CFoldingStructureProviderDescriptor> map = new HashMap<>();
 
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(CUIPlugin.getPluginId(),
 				EXTENSION_POINT);

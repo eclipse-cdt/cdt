@@ -105,7 +105,7 @@ public class Checksums {
 	 */
 	public static Map<String, Object> createChecksumMap(IFile[] tus, MessageDigest md, IProgressMonitor pm)
 			throws OperationCanceledException {
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 		putAlgorithm(result, md);
 		pm.beginTask(Messages.Checksums_taskComputeChecksums, tus.length);
 		for (IFile file : tus) {

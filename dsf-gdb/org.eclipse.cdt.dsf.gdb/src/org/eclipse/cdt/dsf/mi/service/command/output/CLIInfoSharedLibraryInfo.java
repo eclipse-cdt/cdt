@@ -71,7 +71,7 @@ public class CLIInfoSharedLibraryInfo extends MIInfo {
 	}
 
 	void parse() {
-		List<DsfMISharedInfo> aList = new ArrayList<DsfMISharedInfo>();
+		List<DsfMISharedInfo> aList = new ArrayList<>();
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIOOBRecord[] oobs = out.getMIOOBRecords();

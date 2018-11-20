@@ -53,7 +53,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
  */
 public class CDTPropertyManager {
 
-	private static ArrayList<Object> pages = new ArrayList<Object>();
+	private static ArrayList<Object> pages = new ArrayList<>();
 	private static ICProjectDescription prjd = null;
 	private static boolean saveDone = false;
 	private static IProject project = null;

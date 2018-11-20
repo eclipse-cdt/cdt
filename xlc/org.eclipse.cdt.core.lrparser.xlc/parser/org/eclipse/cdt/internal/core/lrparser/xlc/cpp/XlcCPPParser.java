@@ -230,7 +230,7 @@ public class XlcCPPParser extends PrsStream
 	}
 
 	private void initActions(Map<String, String> properties) {
-		ScopedStack<Object> astStack = new ScopedStack<Object>();
+		ScopedStack<Object> astStack = new ScopedStack<>();
 
 		action = new XlcCPPBuildASTParserAction(this, astStack, XlcCPPNodeFactory.getDefault(),
 				GPPSecondaryParserFactory.getDefault());

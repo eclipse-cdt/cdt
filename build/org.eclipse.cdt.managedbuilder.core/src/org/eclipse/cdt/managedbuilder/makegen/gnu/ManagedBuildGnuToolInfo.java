@@ -69,14 +69,14 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	private boolean outputsCalculated = false;
 	private boolean outputVariablesCalculated = false;
 	private boolean dependenciesCalculated = false;
-	private Vector<String> commandInputs = new Vector<String>();
-	private Vector<String> enumeratedInputs = new Vector<String>();
-	private Vector<String> commandOutputs = new Vector<String>();
-	private Vector<String> enumeratedPrimaryOutputs = new Vector<String>();
-	private Vector<String> enumeratedSecondaryOutputs = new Vector<String>();
-	private Vector<String> outputVariables = new Vector<String>();
-	private Vector<String> commandDependencies = new Vector<String>();
-	private Vector<String> additionalTargets = new Vector<String>();
+	private Vector<String> commandInputs = new Vector<>();
+	private Vector<String> enumeratedInputs = new Vector<>();
+	private Vector<String> commandOutputs = new Vector<>();
+	private Vector<String> enumeratedPrimaryOutputs = new Vector<>();
+	private Vector<String> enumeratedSecondaryOutputs = new Vector<>();
+	private Vector<String> outputVariables = new Vector<>();
+	private Vector<String> commandDependencies = new Vector<>();
+	private Vector<String> additionalTargets = new Vector<>();
 	//private Vector enumeratedDependencies = new Vector();
 	// Map of macro names (String) to values (List)
 
@@ -185,16 +185,16 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		 *  3.  Use the file extensions and the resources in the project
 		 */
 		boolean done = true;
-		Vector<String> myCommandInputs = new Vector<String>(); // Inputs for the tool command line
-		Vector<String> myCommandDependencies = new Vector<String>(); // Dependencies for the make rule
-		Vector<String> myEnumeratedInputs = new Vector<String>(); // Complete list of individual inputs
+		Vector<String> myCommandInputs = new Vector<>(); // Inputs for the tool command line
+		Vector<String> myCommandDependencies = new Vector<>(); // Dependencies for the make rule
+		Vector<String> myEnumeratedInputs = new Vector<>(); // Complete list of individual inputs
 
 		IInputType[] inTypes = tool.getInputTypes();
 		if (inTypes != null && inTypes.length > 0) {
 			for (IInputType type : inTypes) {
-				Vector<String> itCommandInputs = new Vector<String>(); // Inputs for the tool command line for this input-type
-				Vector<String> itCommandDependencies = new Vector<String>(); // Dependencies for the make rule for this input-type
-				Vector<String> itEnumeratedInputs = new Vector<String>(); // Complete list of individual inputs for this input-type
+				Vector<String> itCommandInputs = new Vector<>(); // Inputs for the tool command line for this input-type
+				Vector<String> itCommandDependencies = new Vector<>(); // Dependencies for the make rule for this input-type
+				Vector<String> itEnumeratedInputs = new Vector<>(); // Complete list of individual inputs for this input-type
 				String variable = type.getBuildVariable();
 				boolean primaryInput = type.getPrimaryInput();
 				boolean useFileExts = false;
@@ -204,7 +204,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				//  Option?
 				if (option != null) {
 					try {
-						List<String> inputs = new ArrayList<String>();
+						List<String> inputs = new ArrayList<>();
 						int optType = option.getValueType();
 						if (optType == IOption.STRING) {
 							inputs.add(option.getStringValue());
@@ -295,7 +295,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						// Note:  This is only correct for tools with multipleOfType == true, but for other tools
 						//        it gives us an input resource for generating default names
 						// Determine the set of source input macros to use
-						HashSet<String> handledInputExtensions = new HashSet<String>();
+						HashSet<String> handledInputExtensions = new HashSet<>();
 						String[] exts = type.getSourceExtensions(tool);
 						if (projResources != null) {
 							for (IResource rc : projResources) {
@@ -469,19 +469,19 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 			HashSet<String> handledInputExtensions, boolean lastChance) {
 
 		boolean done = true;
-		Vector<String> myCommandOutputs = new Vector<String>();
-		Vector<String> myEnumeratedPrimaryOutputs = new Vector<String>();
-		Vector<String> myEnumeratedSecondaryOutputs = new Vector<String>();
-		HashMap<String, List<IPath>> myOutputMacros = new HashMap<String, List<IPath>>();
+		Vector<String> myCommandOutputs = new Vector<>();
+		Vector<String> myEnumeratedPrimaryOutputs = new Vector<>();
+		Vector<String> myEnumeratedSecondaryOutputs = new Vector<>();
+		HashMap<String, List<IPath>> myOutputMacros = new HashMap<>();
 		//  The next two fields are used together
-		Vector<String> myBuildVars = new Vector<String>();
-		Vector<Vector<String>> myBuildVarsValues = new Vector<Vector<String>>();
+		Vector<String> myBuildVars = new Vector<>();
+		Vector<Vector<String>> myBuildVarsValues = new Vector<>();
 
 		// Get the outputs for this tool invocation
 		IOutputType[] outTypes = tool.getOutputTypes();
 		if (outTypes != null && outTypes.length > 0) {
 			for (int i = 0; i < outTypes.length; i++) {
-				Vector<String> typeEnumeratedOutputs = new Vector<String>();
+				Vector<String> typeEnumeratedOutputs = new Vector<>();
 				IOutputType type = outTypes[i];
 				String outputPrefix = type.getOutputPrefix();
 
@@ -525,7 +525,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				//  2.  If an option is specified, use the value of the option
 				if (option != null) {
 					try {
-						List<String> outputs = new ArrayList<String>();
+						List<String> outputs = new ArrayList<>();
 						int optType = option.getValueType();
 						if (optType == IOption.STRING) {
 							outputs.add(outputPrefix + option.getStringValue());
@@ -562,7 +562,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						// NO - myCommandOutputs.addAll(outputs);
 						typeEnumeratedOutputs.addAll(outputs);
 						if (variable.length() > 0) {
-							List<IPath> outputPaths = new ArrayList<IPath>();
+							List<IPath> outputPaths = new ArrayList<>();
 							for (int j = 0; j < outputs.size(); j++) {
 								outputPaths.add(Path.fromOSString(outputs.get(j)));
 							}
@@ -619,7 +619,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							currList.addAll(Arrays.asList(outNames));
 							myOutputMacros.put(variable, currList);
 						} else {
-							myOutputMacros.put(variable, new ArrayList<IPath>(Arrays.asList(outNames)));
+							myOutputMacros.put(variable, new ArrayList<>(Arrays.asList(outNames)));
 						}
 					}
 				} else
@@ -646,7 +646,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						}
 						typeEnumeratedOutputs.addAll(namesList);
 						if (variable.length() > 0) {
-							List<IPath> outputPaths = new ArrayList<IPath>();
+							List<IPath> outputPaths = new ArrayList<>();
 							for (int j = 0; j < namesList.size(); j++) {
 								outputPaths.add(Path.fromOSString(namesList.get(j)));
 							}
@@ -665,7 +665,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 					//      using the built-in string substitution functions of <code>make</code>.
 					if (multOfType) {
 						// This case is not handled - a nameProvider or outputNames must be specified
-						List<String> errList = new ArrayList<String>();
+						List<String> errList = new ArrayList<>();
 						errList.add(ManagedMakeMessages.getResourceString("MakefileGenerator.error.no.nameprovider")); //$NON-NLS-1$
 						myCommandOutputs.addAll(errList);
 					} else {
@@ -703,7 +703,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							}
 							typeEnumeratedOutputs.add(namePattern.replaceAll("%", fileName)); //$NON-NLS-1$
 							if (variable.length() > 0) {
-								List<IPath> outputs = new ArrayList<IPath>();
+								List<IPath> outputs = new ArrayList<>();
 								outputs.add(Path.fromOSString(fileName));
 								if (myOutputMacros.containsKey(variable)) {
 									List<IPath> currList = myOutputMacros.get(variable);
@@ -802,7 +802,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 					String depsMacroEntry = calculateSourceMacro(makeGen, extensionName, depExt,
 							IManagedBuilderMakefileGenerator.WILDCARD);
 
-					List<IPath> depsList = new ArrayList<IPath>();
+					List<IPath> depsList = new ArrayList<>();
 					depsList.add(Path.fromOSString(depsMacroEntry));
 					String depsMacro = makeGen.getDepMacroName(extensionName).toString();
 					if (myOutputMacros.containsKey(depsMacro)) {
@@ -880,10 +880,10 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 			HashSet<String> handledInputExtensions, ToolInfoHolder h, boolean lastChance) {
 		// Get the dependencies for this tool invocation
 		boolean done = true;
-		Vector<String> myCommandDependencies = new Vector<String>();
-		Vector<String> myAdditionalTargets = new Vector<String>();
+		Vector<String> myCommandDependencies = new Vector<>();
+		Vector<String> myAdditionalTargets = new Vector<>();
 		//Vector myEnumeratedDependencies = new Vector();
-		HashMap<String, List<IPath>> myOutputMacros = new HashMap<String, List<IPath>>();
+		HashMap<String, List<IPath>> myOutputMacros = new HashMap<>();
 
 		IInputType[] inTypes = tool.getInputTypes();
 		if (inTypes != null && inTypes.length > 0) {

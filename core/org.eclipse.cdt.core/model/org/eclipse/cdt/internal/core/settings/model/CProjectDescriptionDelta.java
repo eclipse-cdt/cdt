@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 
 public class CProjectDescriptionDelta implements ICDescriptionDelta {
-	private List<CProjectDescriptionDelta> fChildList = new ArrayList<CProjectDescriptionDelta>();
+	private List<CProjectDescriptionDelta> fChildList = new ArrayList<>();
 	private CProjectDescriptionDelta fParent;
 	private ICSettingObject fSetting;
 	private ICSettingObject fOldSetting;

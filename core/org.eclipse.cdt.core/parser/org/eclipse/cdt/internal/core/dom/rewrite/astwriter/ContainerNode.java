@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @author Emanuel Graf IFS
  */
 public class ContainerNode extends ASTNode {
-	private final ArrayList<IASTNode> nodes = new ArrayList<IASTNode>();
+	private final ArrayList<IASTNode> nodes = new ArrayList<>();
 
 	public ContainerNode(IASTNode... nodes) {
 		Collections.addAll(this.nodes, nodes);

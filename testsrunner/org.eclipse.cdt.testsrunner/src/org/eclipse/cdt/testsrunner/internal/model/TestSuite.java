@@ -29,7 +29,7 @@ public class TestSuite extends TestItem implements ITestSuite {
 	 *
 	 * @note Children order is important.
 	 */
-	private List<TestItem> children = new ArrayList<TestItem>();
+	private List<TestItem> children = new ArrayList<>();
 
 	public TestSuite(String name, TestSuite parent) {
 		super(name, parent);

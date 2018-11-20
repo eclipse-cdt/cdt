@@ -147,7 +147,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 		}
 	}
 
-	private ArrayList<ProblemInstance> codanproblems = new ArrayList<CodanFastCxxAstTestCase.ProblemInstance>();
+	private ArrayList<ProblemInstance> codanproblems = new ArrayList<>();
 
 	void runCodan(String code) {
 		tu = parse(code);

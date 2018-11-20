@@ -97,7 +97,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 	private RegexErrorParser fErrorParser;
 	private boolean fEditable;
 
-	private List<Listener> fListeners = new ArrayList<Listener>();
+	private List<Listener> fListeners = new ArrayList<>();
 
 	/**
 	 * Provides generic implementation for overridden methods.

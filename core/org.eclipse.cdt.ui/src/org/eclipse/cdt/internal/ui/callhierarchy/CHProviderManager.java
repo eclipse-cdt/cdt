@@ -43,7 +43,7 @@ public class CHProviderManager {
 
 	public List<ICallHierarchyProvider> getCallHierarchyProviders() {
 		if (callHierarchyProviders == null) {
-			callHierarchyProviders = new ArrayList<ICallHierarchyProvider>();
+			callHierarchyProviders = new ArrayList<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint indexProviderPoint = registry.getExtensionPoint(CALL_HIERARCHY_PROVIDERS);
 			for (IExtension extension : indexProviderPoint.getExtensions()) {

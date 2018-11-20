@@ -48,7 +48,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  */
 public class SourcePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private SourceContainerViewer fPathViewer;
-	private List<SourceContainerAction> fActions = new ArrayList<SourceContainerAction>(6);
+	private List<SourceContainerAction> fActions = new ArrayList<>(6);
 	private IWorkbench fWorkbench;
 	private AddContainerAction fAddAction;
 	private EditContainerAction fEditAction;

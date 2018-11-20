@@ -35,7 +35,7 @@ public class NewExecutableInfo {
 	final private SessionType fSessionType;
 	private String fHostPath = ""; //$NON-NLS-1$
 
-	private Map<String, Object> fAttributes = new HashMap<String, Object>();
+	private Map<String, Object> fAttributes = new HashMap<>();
 
 	public NewExecutableInfo(SessionType sessionType) {
 		super();

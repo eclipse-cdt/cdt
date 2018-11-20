@@ -195,7 +195,7 @@ public class TeamProjectIndexExportWizardPage extends WizardPage implements List
 	}
 
 	private void initProjects() {
-		ArrayList<ICProject> input = new ArrayList<ICProject>();
+		ArrayList<ICProject> input = new ArrayList<>();
 		ICProject[] projects;
 		try {
 			projects = CoreModel.getDefault().getCModel().getCProjects();
@@ -211,7 +211,7 @@ public class TeamProjectIndexExportWizardPage extends WizardPage implements List
 	}
 
 	private void setupBasedOnInitialSelections() {
-		HashSet<String> names = new HashSet<String>();
+		HashSet<String> names = new HashSet<>();
 		Iterator<?> it = fInitialSelection.iterator();
 		while (it.hasNext()) {
 			IProject project = (IProject) it.next();

@@ -81,7 +81,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 */
 	@Override
 	public Map<String, String> getValues() {
-		Map<String, String> retMap = new HashMap<String, String>();
+		Map<String, String> retMap = new HashMap<>();
 		retMap.put(uiAttributes.get(UIElement.ID), textValue);
 
 		return retMap;

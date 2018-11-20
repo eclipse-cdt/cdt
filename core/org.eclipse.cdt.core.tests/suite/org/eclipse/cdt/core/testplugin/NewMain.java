@@ -53,7 +53,7 @@ public class NewMain extends Main {
 	 * a scrapbook (i.e., swip-and-doit facility).
 	 */
 	public static void main(String argString) throws Exception {
-		List<String> list = new ArrayList<String>(5);
+		List<String> list = new ArrayList<>(5);
 		for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();)
 			list.add((String) tokens.nextElement());
 		main(list.toArray(new String[list.size()]));

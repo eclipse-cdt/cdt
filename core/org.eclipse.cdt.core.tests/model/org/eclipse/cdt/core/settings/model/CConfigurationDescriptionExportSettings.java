@@ -79,11 +79,11 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 		assertEquals(extSettings.length, 1);
 
 		checkEquivContents(extSettings[0].getEntries(), entries);
-		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
+		List<ICLanguageSettingEntry> list = new ArrayList<>(Arrays.asList(entries));
 		list.remove(3);
 		list.remove(2);
 		checkEquivContents(extSettings[0].getEntries(ICSettingEntry.MACRO), list.toArray());
-		list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
+		list = new ArrayList<>(Arrays.asList(entries));
 		list.remove(0);
 		list.remove(0);
 		checkEquivContents(extSettings[0].getEntries(ICSettingEntry.INCLUDE_PATH), list.toArray());
@@ -93,11 +93,11 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 		assertEquals(extSettings.length, 1);
 
 		checkEquivContents(extSettings[0].getEntries(), entries);
-		list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
+		list = new ArrayList<>(Arrays.asList(entries));
 		list.remove(3);
 		list.remove(2);
 		checkEquivContents(extSettings[0].getEntries(ICSettingEntry.MACRO), list.toArray());
-		list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
+		list = new ArrayList<>(Arrays.asList(entries));
 		list.remove(0);
 		list.remove(0);
 		checkEquivContents(extSettings[0].getEntries(ICSettingEntry.INCLUDE_PATH), list.toArray());
@@ -110,7 +110,7 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 		assertFalse(Arrays.asList(macros).contains(entries[1]));
 		assertFalse(Arrays.asList(includes).contains(entries[2]));
 		assertFalse(Arrays.asList(includes).contains(entries[3]));
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		map.put(projectName5, "");
 		dess[0].setReferenceInfo(map);
 		ICLanguageSettingEntry updatedMacros[] = ls.getSettingEntries(ICSettingEntry.MACRO);

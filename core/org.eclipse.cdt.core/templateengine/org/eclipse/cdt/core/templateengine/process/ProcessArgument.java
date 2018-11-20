@@ -81,7 +81,7 @@ public class ProcessArgument {
 				complexValue[i] = new ProcessArgument(template, children.get(i));
 				Set<String> subMacros = complexValue[i].getMacros();
 				if (macros == null) {
-					macros = new HashSet<String>();
+					macros = new HashSet<>();
 				}
 				if (subMacros != null) {
 					macros.addAll(subMacros);
@@ -100,7 +100,7 @@ public class ProcessArgument {
 					Set<String> subMacros = complexValueArray[i][j].getMacros();
 					if (subMacros != null) {
 						if (macros == null) {
-							macros = new HashSet<String>();
+							macros = new HashSet<>();
 						}
 						macros.addAll(subMacros);
 					}
@@ -117,7 +117,7 @@ public class ProcessArgument {
 		this.template = template;
 		name = param.getName();
 		type = param.getType();
-		macros = new HashSet<String>();
+		macros = new HashSet<>();
 		macros.add(name);
 		simpleValue = ProcessHelper.getReplaceMarker(name);
 		this.externalParam = param;
@@ -132,7 +132,7 @@ public class ProcessArgument {
 			return;
 		}
 		if (macros == null) {
-			macros = new HashSet<String>();
+			macros = new HashSet<>();
 		}
 		macros.addAll(ProcessHelper.getReplaceKeys(value));
 	}

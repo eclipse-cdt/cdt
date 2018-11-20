@@ -91,7 +91,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 
 	// A map of pid to names.  It is filled when we get all the
 	// processes that are running
-	private Map<Integer, String> fProcessNames = new HashMap<Integer, String>();
+	private Map<Integer, String> fProcessNames = new HashMap<>();
 
 	// Id of our process.  Currently, we only know it for an attach session.
 	private String fProcId;
@@ -573,7 +573,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 						// the overrideable process factory to allow others to override.
 						// First set attribute to specify we want to create an inferior process.
 						// Bug 210366
-						Map<String, String> attributes = new HashMap<String, String>();
+						Map<String, String> attributes = new HashMap<>();
 						attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
 								IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
 						IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label, attributes);

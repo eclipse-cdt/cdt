@@ -53,9 +53,9 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 	public ScannerInfoConsoleParserUtility(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator) {
 		super(project, workingDirectory, markerGenerator);
 
-		fFilesInProject = new HashMap<String, IFile>();
-		fCollectedFiles = new ArrayList<IResource>();
-		fNameConflicts = new ArrayList<String>();
+		fFilesInProject = new HashMap<>();
+		fCollectedFiles = new ArrayList<>();
+		fNameConflicts = new ArrayList<>();
 
 		collectFiles(getProject(), fCollectedFiles);
 
@@ -188,7 +188,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 	}
 
 	public List<String> translateRelativePaths(IFile file, String fileName, List<String> includes) {
-		List<String> translatedIncludes = new ArrayList<String>(includes.size());
+		List<String> translatedIncludes = new ArrayList<>(includes.size());
 		for (String include : includes) {
 			IPath includePath = new Path(include);
 			if (includePath.isUNC()) {

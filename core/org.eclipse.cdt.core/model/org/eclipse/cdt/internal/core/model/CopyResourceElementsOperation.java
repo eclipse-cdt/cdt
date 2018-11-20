@@ -60,7 +60,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	 * copied/moved/renamed. Keyed by elements' project(s), and
 	 * values are the corresponding deltas.
 	 */
-	protected Map<ICProject, CElementDelta> fDeltasPerProject = new HashMap<ICProject, CElementDelta>(1);
+	protected Map<ICProject, CElementDelta> fDeltasPerProject = new HashMap<>(1);
 
 	public CopyResourceElementsOperation(ICElement[] src, ICElement[] dst, boolean force) {
 		super(src, dst, force);
@@ -208,7 +208,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	 */
 	@Override
 	protected void processElements() throws CModelException {
-		fCreatedElements = new ArrayList<ICElement>(fElementsToProcess.length);
+		fCreatedElements = new ArrayList<>(fElementsToProcess.length);
 		try {
 			super.processElements();
 		} catch (CModelException cme) {

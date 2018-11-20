@@ -52,7 +52,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 	private String fEventType;
 	private String fEventArgument;
 	private Composite fEventArgumentControl;
-	private HashMap<String, String> fIdLabelMap = new LinkedHashMap<String, String>();
+	private HashMap<String, String> fIdLabelMap = new LinkedHashMap<>();
 	private FieldEditorPreferencePage page;
 	private CBreakpointUIContributionFactory factory;
 	private String debugModelId;
@@ -77,7 +77,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 		protected void createFieldEditors() {
 			Composite parent = getFieldEditorParent();
 			try {
-				Map<String, Object> map = new HashMap<String, Object>();
+				Map<String, Object> map = new HashMap<>();
 				map.put(ICEventBreakpoint.EVENT_TYPE_ID, eventType);
 				ICBreakpointsUIContribution cons[] = CBreakpointUIContributionFactory.getInstance()
 						.getBreakpointUIContributions(modelId, ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER, map);

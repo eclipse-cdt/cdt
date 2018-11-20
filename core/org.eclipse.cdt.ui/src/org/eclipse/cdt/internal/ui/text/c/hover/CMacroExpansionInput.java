@@ -81,7 +81,7 @@ public class CMacroExpansionInput {
 		private final Position fTextRegion;
 		private final boolean fAllowSelection;
 		private IASTNode fEnclosingNode;
-		private List<IASTNode> fExpansionNodes = new ArrayList<IASTNode>();
+		private List<IASTNode> fExpansionNodes = new ArrayList<>();
 		private MacroExpansionExplorer fExplorer;
 		private IRegion fExpansionRegion;
 
@@ -177,7 +177,7 @@ public class CMacroExpansionInput {
 			if (node == other) {
 				return other;
 			}
-			List<IASTNode> ancestors = new ArrayList<IASTNode>();
+			List<IASTNode> ancestors = new ArrayList<>();
 			while (node != null) {
 				node = node.getParent();
 				ancestors.add(node);

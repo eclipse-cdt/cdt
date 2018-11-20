@@ -102,7 +102,7 @@ public class CPartitionScanner extends RuleBasedPartitionScanner implements ICPa
 		IToken single_comment = new Token(C_SINGLE_LINE_COMMENT);
 		IToken string = new Token(C_STRING);
 		IToken character = new Token(C_CHARACTER);
-		List<IPredicateRule> rules = new ArrayList<IPredicateRule>();
+		List<IPredicateRule> rules = new ArrayList<>();
 
 		// Minimize the number of rules, since we have duplicate rules
 		// in the CCodeScanner...

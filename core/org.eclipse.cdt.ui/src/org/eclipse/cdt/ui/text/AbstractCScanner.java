@@ -46,7 +46,7 @@ public abstract class AbstractCScanner extends BufferedRuleBasedScanner implemen
 	 */
 	public AbstractCScanner(ITokenStore tokenStore) {
 		fTokenStore = tokenStore;
-		fParticipants = new ArrayList<IPropertyChangeParticipant>();
+		fParticipants = new ArrayList<>();
 	}
 
 	/**

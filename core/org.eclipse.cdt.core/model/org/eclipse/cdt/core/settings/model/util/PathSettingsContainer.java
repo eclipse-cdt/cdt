@@ -145,7 +145,7 @@ public final class PathSettingsContainer {
 
 	private List<IPathSettingsContainerListener> getListenersList(boolean create) {
 		if (fListeners == null && create)
-			fListeners = new ArrayList<IPathSettingsContainerListener>();
+			fListeners = new ArrayList<>();
 		return fListeners;
 	}
 
@@ -182,7 +182,7 @@ public final class PathSettingsContainer {
 	}
 
 	public PathSettingsContainer[] getChildren(final boolean includeThis) {
-		final List<PathSettingsContainer> list = new ArrayList<PathSettingsContainer>();
+		final List<PathSettingsContainer> list = new ArrayList<>();
 		accept(new IPathSettingsContainerVisitor() {
 
 			@Override
@@ -247,7 +247,7 @@ public final class PathSettingsContainer {
 		PatternNameMap pMap = getPatternChildrenMap(false);
 		if (pMap != null) {
 			if (list == null)
-				list = new ArrayList<PathSettingsContainer>();
+				list = new ArrayList<>();
 			for (PathSettingsContainer cr : pMap.values()) {
 				if (cr.fValue == INEXISTENT_VALUE) {
 					cr.doGetDirectChildren(list);
@@ -260,7 +260,7 @@ public final class PathSettingsContainer {
 	}
 
 	public Object[] getValues(final boolean includeThis) {
-		final List<Object> list = new ArrayList<Object>();
+		final List<Object> list = new ArrayList<>();
 		accept(new IPathSettingsContainerVisitor() {
 
 			@Override

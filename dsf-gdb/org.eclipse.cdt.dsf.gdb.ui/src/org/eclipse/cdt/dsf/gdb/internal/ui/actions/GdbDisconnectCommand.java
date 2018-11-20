@@ -184,7 +184,7 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
 
 	private void getContainerDMContexts(Object[] elements, final DataRequestMonitor<IContainerDMContext[]> rm) {
 		GdbLaunch launch = null;
-		final Set<IContainerDMContext> contDmcs = new HashSet<IContainerDMContext>();
+		final Set<IContainerDMContext> contDmcs = new HashSet<>();
 		for (Object obj : elements) {
 			if (obj instanceof GdbLaunch) {
 				launch = (GdbLaunch) obj;

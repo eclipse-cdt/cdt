@@ -57,12 +57,12 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 
 	// This map is the current properties/values being maintained/manipulated
-	private HashMap<String, Object> fProperties = new HashMap<String, Object>();
+	private HashMap<String, Object> fProperties = new HashMap<>();
 
 	// Original set of values. So we can see what has really changed on the save and
 	// perform appropriate change operations. We only really want to operate on changed
 	// values, to avoid generating churn.
-	private HashMap<String, Object> fOriginalValues = new HashMap<String, Object>();
+	private HashMap<String, Object> fOriginalValues = new HashMap<>();
 	private boolean fIsDirty = false;
 	private boolean fIsCanceled = false;
 	private ListenerList<IPropertyChangeListener> fListeners;
@@ -167,7 +167,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 	}
 
 	private void saveToExistingMarker(final ICBreakpoint breakpoint, final IMarker marker) throws IOException {
-		final List<String> changedProperties = new ArrayList<String>(5);
+		final List<String> changedProperties = new ArrayList<>(5);
 		Set<String> valueNames = fProperties.keySet();
 		for (String name : valueNames) {
 			if (fProperties.containsKey(name)) {

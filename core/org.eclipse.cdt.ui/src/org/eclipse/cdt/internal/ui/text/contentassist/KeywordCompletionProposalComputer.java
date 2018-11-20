@@ -59,7 +59,7 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 		// keywords are matched case-sensitive
 		final int relevance = RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.KEYWORD_TYPE_RELEVANCE;
 
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
 
 		ICLanguageKeywords languageKeywords = null;
 		ITranslationUnit tu = context.getTranslationUnit();

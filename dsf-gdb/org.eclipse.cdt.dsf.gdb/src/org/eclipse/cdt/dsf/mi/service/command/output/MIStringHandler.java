@@ -35,7 +35,7 @@ public class MIStringHandler {
 	 * corresponding Unicode code point (i.e. character code).
 	 */
 	// Use a LinkedHashMap to preserve order, so as to get 'e' and not 'E'
-	private static Map<Character, Integer> fSpecialCharactersToCodePointMap = new LinkedHashMap<Character, Integer>();
+	private static Map<Character, Integer> fSpecialCharactersToCodePointMap = new LinkedHashMap<>();
 	static {
 		fSpecialCharactersToCodePointMap.put('a', 0x07); // Alert (bell) character
 		fSpecialCharactersToCodePointMap.put('b', 0x08); // Backspace character

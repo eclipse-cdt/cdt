@@ -27,9 +27,9 @@ public class MemorySearchResult implements ISearchResult {
 	private ISearchQuery fQuery;
 	private String fLabel;
 
-	private Vector<ISearchResultListener> listeners = new Vector<ISearchResultListener>();
+	private Vector<ISearchResultListener> listeners = new Vector<>();
 
-	private Vector<MemoryMatch> fMatches = new Vector<MemoryMatch>();
+	private Vector<MemoryMatch> fMatches = new Vector<>();
 
 	public MemorySearchResult(ISearchQuery query, String label) {
 		fQuery = query;

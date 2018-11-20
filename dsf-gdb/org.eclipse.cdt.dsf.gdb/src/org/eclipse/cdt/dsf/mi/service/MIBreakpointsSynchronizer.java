@@ -186,10 +186,10 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 
 	public MIBreakpointsSynchronizer(DsfSession session) {
 		super(session);
-		fTrackedTargets = new HashSet<IBreakpointsTargetDMContext>();
-		fCreatedTargetBreakpoints = new HashMap<IBreakpointsTargetDMContext, Map<String, MIBreakpoint>>();
-		fDeletedTargetBreakpoints = new HashMap<IBreakpointsTargetDMContext, Set<String>>();
-		fPendingModifications = new HashMap<IBreakpointsTargetDMContext, Map<String, MIBreakpoint>>();
+		fTrackedTargets = new HashSet<>();
+		fCreatedTargetBreakpoints = new HashMap<>();
+		fDeletedTargetBreakpoints = new HashMap<>();
+		fPendingModifications = new HashMap<>();
 	}
 
 	@Override
@@ -451,7 +451,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 		// when addBreakpoint() is called.
 		Map<String, MIBreakpoint> targetMap = fCreatedTargetBreakpoints.get(bpTargetDMC);
 		if (targetMap == null) {
-			targetMap = new HashMap<String, MIBreakpoint>();
+			targetMap = new HashMap<>();
 			fCreatedTargetBreakpoints.put(bpTargetDMC, targetMap);
 		}
 		targetMap.put(miBpt.getNumber(), miBpt);
@@ -594,7 +594,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 					if (plBpt instanceof ICBreakpoint) {
 						Set<String> set = fDeletedTargetBreakpoints.get(bpTargetDMC);
 						if (set == null) {
-							set = new HashSet<String>();
+							set = new HashSet<>();
 							fDeletedTargetBreakpoints.put(bpTargetDMC, set);
 						}
 						set.add(id);
@@ -619,7 +619,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 								}
 
 								IExecutionDMContext[] execDMCs = bpExtension.getThreadFilters(contDMC);
-								List<IExecutionDMContext> list = new ArrayList<IExecutionDMContext>(execDMCs.length);
+								List<IExecutionDMContext> list = new ArrayList<>(execDMCs.length);
 								for (IExecutionDMContext c : execDMCs) {
 									if (c instanceof IMIExecutionDMContext
 											&& !((IMIExecutionDMContext) c).getThreadId().equals(threadId)) {
@@ -724,7 +724,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 					// modification data, it will be picked up later.
 					Map<String, MIBreakpoint> map = fPendingModifications.get(bpTargetDMC);
 					if (map == null) {
-						map = new HashMap<String, MIBreakpoint>();
+						map = new HashMap<>();
 						fPendingModifications.put(bpTargetDMC, map);
 					}
 					map.put(miBpt.getNumber(), miBpt);
@@ -1437,7 +1437,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 	 * @param commands list of gdb tracepoint commands separated by TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
 	 */
 	private ITracepointAction[] getActionsFromCommands(String[] commands) {
-		List<ITracepointAction> list = new ArrayList<ITracepointAction>();
+		List<ITracepointAction> list = new ArrayList<>();
 		TracepointActionManager tam = TracepointActionManager.getInstance();
 		WhileSteppingAction whileStepping = null;
 		List<ITracepointAction> subActions = null;
@@ -1465,7 +1465,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 				} else if (command.startsWith(TC_WHILE_STEPPING)) {
 					whileStepping = createWhileSteppingAction(command.substring(TC_WHILE_STEPPING.length()));
 					if (whileStepping != null) {
-						subActions = new ArrayList<ITracepointAction>();
+						subActions = new ArrayList<>();
 					}
 				} else if (command.equals(TC_END)) {
 					if (whileStepping == null || subActions == null) {

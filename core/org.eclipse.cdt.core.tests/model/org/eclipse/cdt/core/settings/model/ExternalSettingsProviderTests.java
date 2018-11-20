@@ -356,7 +356,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 		des = model.getProjectDescription(project, false);
 		cfgDes = des.getConfigurations()[0];
 		ICFolderDescription root = cfgDes.getRootFolderDescription();
-		HashMap<String, ICLanguageSetting> languageSettingsById = new HashMap<String, ICLanguageSetting>();
+		HashMap<String, ICLanguageSetting> languageSettingsById = new HashMap<>();
 		for (ICLanguageSetting s : root.getLanguageSettings()) {
 			languageSettingsById.put(s.getLanguageId(), s);
 		}
@@ -388,7 +388,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 		des = model.getProjectDescription(project, false);
 		cfgDes = des.getConfigurations()[0];
 		root = cfgDes.getRootFolderDescription();
-		languageSettingsById = new HashMap<String, ICLanguageSetting>();
+		languageSettingsById = new HashMap<>();
 		for (ICLanguageSetting s : root.getLanguageSettings()) {
 			languageSettingsById.put(s.getLanguageId(), s);
 		}

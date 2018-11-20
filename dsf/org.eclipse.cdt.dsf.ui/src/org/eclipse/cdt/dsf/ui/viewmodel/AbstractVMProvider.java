@@ -118,7 +118,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 	 * at the same time, each of these sub-trees will have it's own model
 	 * proxy.
 	 */
-	private List<IVMModelProxy> fActiveModelProxies = new LinkedList<IVMModelProxy>();
+	private List<IVMModelProxy> fActiveModelProxies = new LinkedList<>();
 
 	/**
 	 * Convenience constant.
@@ -128,7 +128,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 	/**
 	 * The mapping of parent to child nodes.
 	 */
-	private Map<IVMNode, IVMNode[]> fChildNodesMap = new HashMap<IVMNode, IVMNode[]>();
+	private Map<IVMNode, IVMNode[]> fChildNodesMap = new HashMap<>();
 
 	/**
 	 * Cached array of all the configured view model nodes.  It is generated
@@ -170,10 +170,10 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 		RequestMonitor fCurrentRm;
 
 		/** The queue */
-		List<EventInfo> fEventQueue = new LinkedList<EventInfo>();
+		List<EventInfo> fEventQueue = new LinkedList<>();
 	}
 
-	private Map<IVMModelProxy, ModelProxyEventQueue> fProxyEventQueues = new HashMap<IVMModelProxy, ModelProxyEventQueue>();
+	private Map<IVMModelProxy, ModelProxyEventQueue> fProxyEventQueues = new HashMap<>();
 
 	/**
 	 * Constructs the view model provider for given DSF session.  The
@@ -265,7 +265,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 		}
 
 		CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
-		final List<IVMModelProxy> activeModelProxies = new ArrayList<IVMModelProxy>(getActiveModelProxies());
+		final List<IVMModelProxy> activeModelProxies = new ArrayList<>(getActiveModelProxies());
 		crm.setDoneCount(activeModelProxies.size());
 
 		for (final IVMModelProxy proxyStrategy : activeModelProxies) {
@@ -444,7 +444,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 		if (fNodesListCache != null) {
 			return fNodesListCache;
 		}
-		List<IVMNode> list = new ArrayList<IVMNode>();
+		List<IVMNode> list = new ArrayList<>();
 		for (IVMNode node : fChildNodesMap.keySet()) {
 			if (node != null) {
 				list.add(node);

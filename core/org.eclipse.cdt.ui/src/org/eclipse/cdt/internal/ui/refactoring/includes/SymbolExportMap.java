@@ -47,7 +47,7 @@ public class SymbolExportMap {
 	private final Map<String, Set<IncludeInfo>> map;
 
 	public SymbolExportMap() {
-		this.map = new HashMap<String, Set<IncludeInfo>>();
+		this.map = new HashMap<>();
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class SymbolExportMap {
 	public SymbolExportMap(String[] keysAndValues) {
 		if (keysAndValues.length % 2 != 0)
 			throw new IllegalArgumentException("More keys than values"); //$NON-NLS-1$
-		this.map = new HashMap<String, Set<IncludeInfo>>(keysAndValues.length / 2);
+		this.map = new HashMap<>(keysAndValues.length / 2);
 		for (int i = 0; i < keysAndValues.length;) {
 			String key = keysAndValues[i++];
 			addMapping(key, keysAndValues[i++]);
@@ -66,7 +66,7 @@ public class SymbolExportMap {
 	}
 
 	public SymbolExportMap(SymbolExportMap other) {
-		this.map = new HashMap<String, Set<IncludeInfo>>(other.map.size());
+		this.map = new HashMap<>(other.map.size());
 		addAllMappings(other);
 	}
 
@@ -81,7 +81,7 @@ public class SymbolExportMap {
 			return; // Don't allow mapping to itself.
 		Set<IncludeInfo> list = map.get(symbol);
 		if (list == null) {
-			list = new LinkedHashSet<IncludeInfo>();
+			list = new LinkedHashSet<>();
 			map.put(symbol, list);
 		}
 		list.add(header);
@@ -128,10 +128,10 @@ public class SymbolExportMap {
 	 * Writes the map to a memento.
 	 */
 	public void saveToMemento(IMemento memento) {
-		List<String> keys = new ArrayList<String>(map.keySet());
+		List<String> keys = new ArrayList<>(map.keySet());
 		Collections.sort(keys, COLLATOR);
 		for (String key : keys) {
-			List<IncludeInfo> values = new ArrayList<IncludeInfo>(map.get(key));
+			List<IncludeInfo> values = new ArrayList<>(map.get(key));
 			Collections.sort(values);
 			for (IncludeInfo value : values) {
 				IMemento mapping = memento.createChild(TAG_MAPPING);
@@ -156,7 +156,7 @@ public class SymbolExportMap {
 			Set<IncludeInfo> otherTargets = entry.getValue();
 			Set<IncludeInfo> targets = map.get(source);
 			if (targets == null) {
-				targets = new LinkedHashSet<IncludeInfo>(otherTargets);
+				targets = new LinkedHashSet<>(otherTargets);
 				map.put(source, targets);
 			} else {
 				targets.addAll(otherTargets);
@@ -168,13 +168,13 @@ public class SymbolExportMap {
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
-		ArrayList<String> symbols = new ArrayList<String>(map.keySet());
+		ArrayList<String> symbols = new ArrayList<>(map.keySet());
 		Collections.sort(symbols);
 		for (String symbol : symbols) {
 			buf.append('\n');
 			buf.append(symbol);
 			buf.append(" exported by "); //$NON-NLS-1$
-			List<IncludeInfo> targets = new ArrayList<IncludeInfo>(map.get(symbol));
+			List<IncludeInfo> targets = new ArrayList<>(map.get(symbol));
 			for (int i = 0; i < targets.size(); i++) {
 				if (i > 0)
 					buf.append(", "); //$NON-NLS-1$
@@ -211,7 +211,7 @@ public class SymbolExportMap {
 			return Collections.emptyList();
 		}
 
-		List<SymbolExportMap> maps = new ArrayList<SymbolExportMap>();
+		List<SymbolExportMap> maps = new ArrayList<>();
 		for (IMemento element : memento.getChildren(TAG_SYMBOL_EXPORT_MAP)) {
 			maps.add(fromMemento(element));
 		}

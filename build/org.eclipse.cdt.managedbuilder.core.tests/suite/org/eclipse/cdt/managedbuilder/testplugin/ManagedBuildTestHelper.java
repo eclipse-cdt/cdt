@@ -516,9 +516,9 @@ public class ManagedBuildTestHelper {
 		ArrayList<String> testArray = mergeContinuationLines(getContents(testFile));
 		ArrayList<String> benchmarkArray = mergeContinuationLines(getContents(benchmarkFile));
 
-		Set<String> testNotMatchingLines = new TreeSet<String>();
-		Set<String> benchNotMatchingLines = new TreeSet<String>();
-		Set<String> extraLines = new TreeSet<String>();
+		Set<String> testNotMatchingLines = new TreeSet<>();
+		Set<String> benchNotMatchingLines = new TreeSet<>();
+		Set<String> extraLines = new TreeSet<>();
 		for (int i = 0; i < benchmarkArray.size() || i < testArray.size(); i++) {
 			if (!(i < benchmarkArray.size())) {
 				System.err.println(testFile.lastSegment() + ": extra line =[" + testArray.get(i)
@@ -540,9 +540,9 @@ public class ManagedBuildTestHelper {
 				if (testLine.startsWith("	-$(RM) ")) {
 					// accommodate to arbitrary order of 'rm' parameters
 					final String DELIMITERS = "[ $]";
-					String[] testMacros = new TreeSet<String>(Arrays.asList(testLine.split(DELIMITERS)))
+					String[] testMacros = new TreeSet<>(Arrays.asList(testLine.split(DELIMITERS)))
 							.toArray(new String[0]);
-					String[] benchMacros = new TreeSet<String>(Arrays.asList(benchmarkLine.split(DELIMITERS)))
+					String[] benchMacros = new TreeSet<>(Arrays.asList(benchmarkLine.split(DELIMITERS)))
 							.toArray(new String[0]);
 					if (testMacros.length != benchMacros.length) {
 						return false;
@@ -697,7 +697,7 @@ public class ManagedBuildTestHelper {
 	}
 
 	private static ArrayList<String> getContents(IPath fullPath) {
-		ArrayList<String> lines = new ArrayList<String>();
+		ArrayList<String> lines = new ArrayList<>();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(fullPath.toFile()));
 			String line;
@@ -1082,7 +1082,7 @@ public class ManagedBuildTestHelper {
 	}
 
 	public static ITool[] getRcbsTools(IResourceConfiguration rcConfig) {
-		List<ITool> list = new ArrayList<ITool>();
+		List<ITool> list = new ArrayList<>();
 		ITool tools[] = rcConfig.getTools();
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];

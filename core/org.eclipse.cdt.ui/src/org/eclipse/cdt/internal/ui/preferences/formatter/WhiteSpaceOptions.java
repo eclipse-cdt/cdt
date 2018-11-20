@@ -49,7 +49,7 @@ public final class WhiteSpaceOptions {
 			fParent = parent;
 			fWorkingValues = workingValues;
 			fName = message;
-			fChildren = new ArrayList<Node>();
+			fChildren = new ArrayList<>();
 			if (fParent != null)
 				fParent.add(this);
 		}
@@ -99,7 +99,7 @@ public final class WhiteSpaceOptions {
 
 		@Override
 		public List<PreviewSnippet> getSnippets() {
-			final ArrayList<PreviewSnippet> snippets = new ArrayList<PreviewSnippet>(fChildren.size());
+			final ArrayList<PreviewSnippet> snippets = new ArrayList<>(fChildren.size());
 			for (Object element : fChildren) {
 				final List<PreviewSnippet> childSnippets = ((Node) element).getSnippets();
 				for (PreviewSnippet snippet : childSnippets) {
@@ -129,7 +129,7 @@ public final class WhiteSpaceOptions {
 				PreviewSnippet snippet) {
 			super(parent, workingValues, messageKey);
 			fKey = key;
-			fSnippets = new ArrayList<PreviewSnippet>(1);
+			fSnippets = new ArrayList<>(1);
 			fSnippets.add(snippet);
 		}
 
@@ -232,7 +232,7 @@ public final class WhiteSpaceOptions {
 	 * @return returns roots (type <code>Node</code>)
 	 */
 	public List<InnerNode> createTreeBySyntaxElem(Map<String, String> workingValues) {
-		final ArrayList<InnerNode> roots = new ArrayList<InnerNode>();
+		final ArrayList<InnerNode> roots = new ArrayList<>();
 
 		InnerNode element;
 
@@ -334,7 +334,7 @@ public final class WhiteSpaceOptions {
 	 */
 	public List<InnerNode> createAltTree(Map<String, String> workingValues) {
 
-		final ArrayList<InnerNode> roots = new ArrayList<InnerNode>();
+		final ArrayList<InnerNode> roots = new ArrayList<>();
 
 		InnerNode parent;
 
@@ -482,7 +482,7 @@ public final class WhiteSpaceOptions {
 		createTemplateArgumentTree(workingValues, templates);
 		createTemplateParameterTree(workingValues, templates);
 
-		final ArrayList<InnerNode> roots = new ArrayList<InnerNode>();
+		final ArrayList<InnerNode> roots = new ArrayList<>();
 		roots.add(declarations);
 		roots.add(statements);
 		roots.add(expressions);

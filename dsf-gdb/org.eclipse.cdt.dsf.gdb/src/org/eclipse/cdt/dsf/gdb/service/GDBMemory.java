@@ -60,12 +60,12 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 	/**
 	 * Cache of the address sizes for each memory context.
 	 */
-	private Map<IMemoryDMContext, Integer> fAddressSizes = new HashMap<IMemoryDMContext, Integer>();
+	private Map<IMemoryDMContext, Integer> fAddressSizes = new HashMap<>();
 
 	/**
 	 * Cache of the addressable sizes for each memory context.
 	 */
-	private Map<IMemoryDMContext, Integer> fAddressableSizes = new HashMap<IMemoryDMContext, Integer>();
+	private Map<IMemoryDMContext, Integer> fAddressableSizes = new HashMap<>();
 
 	/**
 	 * Cache of the endianness for each memory context.
@@ -136,7 +136,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 			private Step[] steps = null;
 
 			private void determineSteps() {
-				ArrayList<Step> stepsList = new ArrayList<Step>();
+				ArrayList<Step> stepsList = new ArrayList<>();
 
 				if (fAddressSizes.get(memContext) == null) {
 					stepsList.add(new Step() {

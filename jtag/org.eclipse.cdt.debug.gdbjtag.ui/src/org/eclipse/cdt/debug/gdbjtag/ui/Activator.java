@@ -111,7 +111,7 @@ public class Activator extends AbstractUIPlugin {
 		// Set the default launch delegates as early as possible, and do it only once (Bug 312997)
 		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
 
-		HashSet<String> debugSet = new HashSet<String>();
+		HashSet<String> debugSet = new HashSet<>();
 		debugSet.add(ILaunchManager.DEBUG_MODE);
 
 		ILaunchConfigurationType remoteCfg = launchMgr.getLaunchConfigurationType(HARDWARE_LAUNCH_TYPE);

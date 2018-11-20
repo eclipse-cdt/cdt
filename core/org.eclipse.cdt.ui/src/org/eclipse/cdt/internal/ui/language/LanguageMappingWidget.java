@@ -53,7 +53,7 @@ public abstract class LanguageMappingWidget {
 		fOverriddenContentTypes = Collections.emptySet();
 
 		// keep a mapping of all registered content types and their names
-		fContentTypeNamesToIDsMap = new HashMap<String, String>();
+		fContentTypeNamesToIDsMap = new HashMap<>();
 		String[] contentTypesIDs = LanguageManager.getInstance().getRegisteredContentTypeIds();
 
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
@@ -68,7 +68,7 @@ public abstract class LanguageMappingWidget {
 			fContentTypeNamesToIDsMap.put(name, contentTypesIDs[i]);
 		}
 
-		fAffectedContentTypes = new HashSet<IContentType>();
+		fAffectedContentTypes = new HashSet<>();
 	}
 
 	public IAdaptable getElement() {

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "537ce97b_9a9dce97",
+        "filename": "llvm/org.eclipse.cdt.llvm.dsf.lldb.core/src/org/eclipse/cdt/llvm/dsf/lldb/core/ILLDBLaunchConfigurationConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-11-21T03:34:56Z",
+      "side": 0,
+      "message": "It looks like this was meant to be an interface... Can we instead change it to an interface and add an API filter if necessary?",
+      "revId": "3abb8f7953dc66aa2cba3c85328ef6e5be7d6899",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

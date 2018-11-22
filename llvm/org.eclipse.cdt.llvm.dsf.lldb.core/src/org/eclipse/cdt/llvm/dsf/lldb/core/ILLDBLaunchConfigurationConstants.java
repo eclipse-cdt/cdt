@@ -20,7 +20,7 @@ import org.eclipse.cdt.llvm.dsf.lldb.core.internal.LLDBCorePlugin;
  *
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public class ILLDBLaunchConfigurationConstants {
+public interface ILLDBLaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration attribute key. The value is the name of

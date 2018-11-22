@@ -16,7 +16,7 @@
                id="org.eclipse.cdt.make.ui.NavigatorBuildLastTargetAction"
                enablesFor="1"
                definitionId="org.eclipse.cdt.make.ui.targetBuildLastCommand">
-         </action>   
+         </action>
          <action
                label="%ActionMakeBuildTarget.label"
                class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
@@ -60,7 +60,7 @@
                id="org.eclipse.cdt.make.ui.NavigatorBuildLastTargetAction2"
                enablesFor="1"
                definitionId="org.eclipse.cdt.make.ui.targetBuildLastCommand">
-         </action>   
+         </action>
          <action
                label="%ActionMakeBuildTarget.label"
                class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
@@ -111,22 +111,22 @@
             sequence="F3"
             contextId="org.eclipse.cdt.make.ui.makefileEditorScope"
             commandId="org.eclipse.cdt.make.ui.edit.text.makefile.opendecl"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>   
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             sequence="M1+/"
             contextId="org.eclipse.cdt.make.ui.makefileEditorScope"
             commandId="org.eclipse.cdt.make.ui.edit.text.makefile.toggle.comment"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>  
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             sequence="M2+F9"
             contextId="org.eclipse.ui.contexts.window"
             commandId="org.eclipse.cdt.make.ui.targetBuildCommand"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>             
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             sequence="F9"
             contextId="org.eclipse.ui.contexts.window"
             commandId="org.eclipse.cdt.make.ui.targetBuildLastCommand"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>             
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
       point="org.eclipse.ui.commands">
@@ -143,7 +143,7 @@
             description="%LastTargetBuild.description"
             id="org.eclipse.cdt.make.ui.targetBuildLastCommand"
             name="%LastTargetBuild.name">
-      </command>  
+      </command>
       <command
             name="%CommandTargetCreate.name"
             description="%CommandTargetCreate.description"
@@ -166,7 +166,7 @@
             categoryId="org.eclipse.cdt.make.ui.category.source"
             description="%ActionDefinition.opendecl.description"
             id="org.eclipse.cdt.make.ui.edit.text.makefile.opendecl">
-      </command> 
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -219,7 +219,7 @@
                name="projectNature"
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
-      </page> 
+      </page>
       <page
             objectClass="org.eclipse.cdt.core.model.ICContainer"
             name="%IncludeSymbolProperties.name"
@@ -261,7 +261,7 @@
                name="projectNature"
                value="org.eclipse.cdt.make.core.makeNature"/>
       </page>
-        
+
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -315,7 +315,7 @@
                <groupMarker
                   name="gm1">
                </groupMarker>
-            </menu>   
+            </menu>
             <action
                label="%LastTargetBuild.name"
                class="org.eclipse.cdt.make.ui.actions.BuildLastTargetAction"
@@ -341,7 +341,7 @@
                   </objectClass>
                </or>
             </enablement>
-         </action>  
+         </action>
             <action
                label="%ActionMakeBuildTarget.label"
                class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
@@ -391,7 +391,7 @@
          </action>
       </actionSet>
    </extension>
-   
+
    <!-- Makefile Editor extensions.  -->
    <extension point="org.eclipse.ui.editors">
       <editor
@@ -409,7 +409,7 @@
             class="org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentSetupParticipant">
       </participant>
    </extension>
-    
+
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
@@ -457,7 +457,7 @@
    <extension
          point="org.eclipse.cdt.ui.cPropertyTab">
 
-<!-- exported from CORE -->           
+<!-- exported from CORE -->
      <tab
            class="org.eclipse.cdt.ui.newui.IncludeTab"
            name="%Includes"
@@ -496,7 +496,7 @@
 
      <extension
          point="org.eclipse.ui.propertyPages">
-    
+
       <page
             class="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
             id="org.eclipse.cdt.make.ui.propertypages.project.ref12"
@@ -510,7 +510,7 @@
             <or>
 		     <instanceof value="org.eclipse.core.resources.IProject"/>
 		     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
-		     
+
 		     <instanceof value="org.eclipse.core.resources.IFolder"/>
 		     <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
 
@@ -521,9 +521,9 @@
              <and>
 	         	<instanceof value="org.eclipse.cdt.core.model.ITranslationUnit"/>
     	        <test property="org.eclipse.cdt.ui.isSource"/>
-	         </and>	
+	         </and>
 
-		    </or>          
+		    </or>
          </enabledWhen>
       </page>
       </extension>

@@ -36,14 +36,14 @@ char * path_val(char * const envp[])
 	int i;
 	if (envp == NULL || envp[0] == NULL)
 		return getenv("PATH" );
-	
+
 	for(i = 0; envp[i] != NULL; i++){
 		char* p = envp[i];
 		if(!strncmp(PATH_DEF, p, path_def_len)){
 			return p + path_def_len;
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
       fullpath = pfind(argv[i], NULL);
       if (fullpath == NULL)
         printf("Unable to find %s in $PATH.\n", argv[i]);
-      else 
+      else
         printf("Found %s @ %s.\n", argv[i], fullpath);
    }
 }

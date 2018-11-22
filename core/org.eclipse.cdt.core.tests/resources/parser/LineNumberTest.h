@@ -1,5 +1,5 @@
 // inclusion begins and ends on line 2
-#include <stdio.h>				
+#include <stdio.h>
 
 // simple macro begins and ends on line 5; ANOTHER on line 6
 #define SIMPLE_MACRO simple
@@ -15,24 +15,24 @@ namespace MyPackage{
 		void setX(int X);
 	public:
 		// simple declaration begins on line 18 and ends on line 20
-		Hello( void ) : x 
+		Hello( void ) : x
 			( 5 ) {
 		}
 	};
 }
-  
+
 // simple declaration begins on line 25 and ends on line 27
 int *
 	y =
-	0; 
+	0;
 
 // complex macro begins on line 30 and ends on line 31
 #define COMPLEX_MACRO 33 \
 	+ 44
 
 // template declaration begins on line 34 and ends on line 35
-template <class A > 
-	A createA( void ); 
+template <class A >
+	A createA( void );
 
 // enumeration begins on line 38 and ends on line 43
 enum {

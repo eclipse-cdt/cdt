@@ -2,29 +2,29 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-# Add inputs and outputs from these tool invocations to the build variables 
+# Add inputs and outputs from these tool invocations to the build variables
 TAR_SRCS += \
-../test.tar 
+../test.tar
 
 STRIPPEDOBJS += \
 ./f1.o \
-./f2.o 
+./f2.o
 
 OBJS += \
 ./f1.oprestripped \
-./f2.oprestripped 
+./f2.oprestripped
 
 TEST30_1_GNU_SO_CJPEG_OUTPUT_OUTPUTS += \
-./CDT.jpeg 
+./CDT.jpeg
 
 C_DEPS += \
 ./f1.d \
-./f2.d 
+./f2.d
 
 TEST30_1_GNU_SO_TAR_OUTPUTC_OUTPUTS += \
 ./f1.c \
 ./f2.c \
-./CDT.bmp 
+./CDT.bmp
 
 
 # Each subdirectory must supply rules for building sources it contributes

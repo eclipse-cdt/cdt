@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -45,43 +45,43 @@ import org.eclipse.swt.widgets.Table;
 /**
  * Data viewer based on a table, which reads data using asynchronous methods.
  * <p>
- * This viewer implements the {@link ILazyContentProvider} interface 
- * which is used by the JFace TableViewer class to populate a Table.  This 
- * interface contains separate asynchronous methods for requesting the count 
+ * This viewer implements the {@link ILazyContentProvider} interface
+ * which is used by the JFace TableViewer class to populate a Table.  This
+ * interface contains separate asynchronous methods for requesting the count
  * and values for individual indexes, which neatly correspond to the methods
- * in {@link IDataGenerator}.  As an added optimization, this viewer 
- * implementation checks for the range of visible items in the view upon each 
+ * in {@link IDataGenerator}.  As an added optimization, this viewer
+ * implementation checks for the range of visible items in the view upon each
  * request, and it cancels old requests which scroll out of view but have not
- * been completed yet.  However, it is up to the data generator implementation 
+ * been completed yet.  However, it is up to the data generator implementation
  * to check the canceled state of the requests and ignore them.
  * </p>
  */
 @ConfinedToDsfExecutor("fDisplayExecutor")
-public class AsyncDataViewer 
+public class AsyncDataViewer
     implements ILazyContentProvider, IDataGenerator.Listener
 {
     // Executor to use instead of Display.asyncExec().
     @ThreadSafe
     final private DsfExecutor fDisplayExecutor;
-    
+
     // The viewer and generator that this content provider using.
     final private TableViewer fViewer;
     final private IDataGenerator fDataGenerator;
 
     // Fields used in request cancellation logic.
-    private List<ValueDataRequestMonitor> fItemDataRequestMonitors = 
+    private List<ValueDataRequestMonitor> fItemDataRequestMonitors =
         new LinkedList<ValueDataRequestMonitor>();
     private Set<Integer> fIndexesToCancel = new HashSet<Integer>();
     private int fCancelCallsPending = 0;
-    
+
     public AsyncDataViewer(TableViewer viewer, IDataGenerator generator) {
         fViewer = viewer;
         fDisplayExecutor = DisplayDsfExecutor.getDisplayDsfExecutor(
             fViewer.getTable().getDisplay());
         fDataGenerator = generator;
         fDataGenerator.addListener(this);
-    }    
-    
+    }
+
     @Override
 	public void dispose() {
         fDataGenerator.removeListener(this);
@@ -102,19 +102,19 @@ public class AsyncDataViewer
         // Request the item for the given index.
         queryValue(index);
 
-        // Invoke a cancel task with a delay.  The delay allows multiple cancel 
+        // Invoke a cancel task with a delay.  The delay allows multiple cancel
         // calls to be combined together improving performance of the viewer.
         fCancelCallsPending++;
         fDisplayExecutor.schedule(
             new Runnable() { @Override
 			public void run() {
                 cancelStaleRequests(topIdx, botIdx);
-            }}, 
+            }},
             1, TimeUnit.MILLISECONDS);
     }
-        
+
     /**
-     * Calculates the number of visible items based on the top item index and 
+     * Calculates the number of visible items based on the top item index and
      * table bounds.
      * @param top Index of top item.
      * @return calculated number of items in viewer
@@ -123,24 +123,24 @@ public class AsyncDataViewer
         Table table = fViewer.getTable();
         int itemCount = table.getItemCount();
         return Math.min(
-            (table.getBounds().height / table.getItemHeight()) + 2, 
+            (table.getBounds().height / table.getItemHeight()) + 2,
             itemCount - top);
-    }   
-    
+    }
+
     @Override
 	@ThreadSafe
     public void countChanged() {
         queryItemCount();
     }
-    
+
     @Override
 	@ThreadSafe
     public void valuesChanged(final Set<Integer> indexes) {
-        // Mark the changed items in table viewer as dirty, this will 
-        // trigger update requests for these indexes if they are 
+        // Mark the changed items in table viewer as dirty, this will
+        // trigger update requests for these indexes if they are
         // visible in the viewer.
         final TableViewer tableViewer = fViewer;
-        fDisplayExecutor.execute( new Runnable() { 
+        fDisplayExecutor.execute( new Runnable() {
             @Override
 			public void run() {
                 if (!fViewer.getTable().isDisposed()) {
@@ -150,18 +150,18 @@ public class AsyncDataViewer
                 }
             }});
     }
-    
+
     /**
-     * Retrieve the up to date count.  When a new count is set to viewer, the 
+     * Retrieve the up to date count.  When a new count is set to viewer, the
      * viewer will refresh all items as well.
      */
     private void queryItemCount() {
-        // Request count from data provider.  When the count is returned, we 
+        // Request count from data provider.  When the count is returned, we
         // have to re-dispatch into the display thread to avoid calling
         // the table widget on the DSF dispatch thread.
         fIndexesToCancel.clear();
-        fDataGenerator.getCount( 
-            // Use the display executor to construct the request monitor, this 
+        fDataGenerator.getCount(
+            // Use the display executor to construct the request monitor, this
             // will cause the handleCompleted() method to be automatically
             // called on the display thread.
             new DataRequestMonitor<Integer>(fDisplayExecutor, null) {
@@ -172,40 +172,40 @@ public class AsyncDataViewer
                         fViewer.getTable().clearAll();
                     }
                 }
-            }); 
+            });
     }
 
 
     /**
      * Retrieves value of an element at given index.  When complete the value
-     * is written to the viewer. 
+     * is written to the viewer.
      * @param index Index of value to retrieve.
      */
     private void queryValue(final int index) {
         ValueDataRequestMonitor rm = new ValueDataRequestMonitor(index);
         fItemDataRequestMonitors.add(rm);
-        fDataGenerator.getValue(index, rm); 
+        fDataGenerator.getValue(index, rm);
     }
 
-    /** 
+    /**
      * Dedicated class for data item requests.  This class holds the index
      * argument so it can be examined when canceling stale requests.
      */
     private class ValueDataRequestMonitor extends DataRequestMonitor<Integer> {
-        
+
         /** Index is used when canceling stale requests. */
         int fIndex;
-        
+
         ValueDataRequestMonitor(int index) {
             super(fDisplayExecutor, null);
-            fIndex = index; 
+            fIndex = index;
         }
 
         @Override
         protected void handleCompleted() {
             fItemDataRequestMonitors.remove(this);
 
-            // Check if the request completed successfully, otherwise ignore 
+            // Check if the request completed successfully, otherwise ignore
             // it.
             if (isSuccess()) {
                 if (!fViewer.getTable().isDisposed()) {
@@ -214,7 +214,7 @@ public class AsyncDataViewer
             }
         }
     }
-    
+
     private void cancelStaleRequests(int topIdx, int botIdx) {
         // Decrement the count of outstanding cancel calls.
         fCancelCallsPending--;
@@ -222,32 +222,32 @@ public class AsyncDataViewer
         // Must check again, in case disposed while re-dispatching.
         if (fDataGenerator == null || fViewer.getTable().isDisposed()) return;
 
-        // Go through the outstanding requests and cancel any that 
+        // Go through the outstanding requests and cancel any that
         // are not visible anymore.
-        for (Iterator<ValueDataRequestMonitor> itr = 
-                fItemDataRequestMonitors.iterator(); 
-            itr.hasNext();) 
+        for (Iterator<ValueDataRequestMonitor> itr =
+                fItemDataRequestMonitors.iterator();
+            itr.hasNext();)
         {
             ValueDataRequestMonitor item = itr.next();
             if (item.fIndex < topIdx || item.fIndex > botIdx) {
-                // Set the item to canceled status, so that the data provider 
+                // Set the item to canceled status, so that the data provider
                 // will ignore it.
                 item.cancel();
-                
-                // Add the item index to list of indexes that were canceled, 
-                // which will be sent to the table widget. 
+
+                // Add the item index to list of indexes that were canceled,
+                // which will be sent to the table widget.
                 fIndexesToCancel.add(item.fIndex);
-                
+
                 // Remove the item from the outstanding cancel requests.
-                itr.remove(); 
+                itr.remove();
             }
         }
         if (!fIndexesToCancel.isEmpty() && fCancelCallsPending == 0) {
             Set<Integer> canceledIdxs = fIndexesToCancel;
             fIndexesToCancel = new HashSet<Integer>();
-            
-            // Clear the indexes of the canceled request, so that the 
-            // viewer knows to request them again when needed.  
+
+            // Clear the indexes of the canceled request, so that the
+            // viewer knows to request them again when needed.
             // Note: clearing using TableViewer.clear(int) seems very
             // inefficient, it's better to use Table.clear(int[]).
             int[] canceledIdxsArray = new int[canceledIdxs.size()];
@@ -258,8 +258,8 @@ public class AsyncDataViewer
             fViewer.getTable().clear(canceledIdxsArray);
         }
     }
-    
-    
+
+
     public static void main(String[] args) {
         // Create the shell to hold the viewer.
         Display display = new Display();
@@ -270,15 +270,15 @@ public class AsyncDataViewer
         Font font = new Font(display, "Courier", 10, SWT.NORMAL);
 
         // Create the table viewer.
-        TableViewer tableViewer = 
+        TableViewer tableViewer =
             new TableViewer(shell, SWT.BORDER | SWT.VIRTUAL);
         tableViewer.getControl().setLayoutData(data);
 
         // Create the data generator.
         final IDataGenerator generator = new DataGeneratorWithExecutor();
-        
+
         // Create the content provider which will populate the viewer.
-        AsyncDataViewer contentProvider = 
+        AsyncDataViewer contentProvider =
             new AsyncDataViewer(tableViewer, generator);
         tableViewer.setContentProvider(contentProvider);
         tableViewer.setInput(new Object());
@@ -290,7 +290,7 @@ public class AsyncDataViewer
             if (!display.readAndDispatch())
                 display.sleep();
         }
-        
+
         // The IDataGenerator.shutdown() method is asynchronous, this requires
         // using a query again in order to wait for its completion.
         Query<Object> shutdownQuery = new Query<Object>() {
@@ -302,10 +302,10 @@ public class AsyncDataViewer
         ImmediateExecutor.getInstance().execute(shutdownQuery);
         try {
             shutdownQuery.get();
-        } catch (Exception e) {} 
-        
+        } catch (Exception e) {}
+
         // Shut down the display.
-        font.dispose();    
+        font.dispose();
         display.dispose();
     }
 }

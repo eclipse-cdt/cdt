@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
- *     Wind River Systems, Inc.  
+ *     Wind River Systems, Inc.
  *
  *  starter.cpp
  *
@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <psapi.h>
 
-//#define DEBUG_MONITOR 
+//#define DEBUG_MONITOR
 #define MAX_CMD_LINE_LENGTH (2049)
 #define PIPE_NAME_LENGTH 100
 
@@ -33,7 +33,7 @@ int copyTo(wchar_t * target, const wchar_t * source, int cpyLength,
 		int availSpace);
 void DisplayErrorMessage();
 
-//BOOL KillProcessEx(DWORD dwProcessId);  // Handle of the process 
+//BOOL KillProcessEx(DWORD dwProcessId);  // Handle of the process
 
 ///////////////////////////////////////////////////////////////////////////////
 BOOL WINAPI HandlerRoutine( DWORD dwCtrlType) //  control signal type
@@ -69,7 +69,7 @@ bool isCygwin(HANDLE process) {
 	// Have we checked before?
 	if (cygwinBin != NULL || !_isCygwin)
 		return _isCygwin;
-	
+
 	// See if this process loaded cygwin, need a different SIGINT for them
 	HMODULE mods[1024];
 	DWORD needed;
@@ -92,7 +92,7 @@ bool isCygwin(HANDLE process) {
 			}
 		}
 	}
-	
+
 	_isCygwin = false;
 	return _isCygwin;
 }
@@ -100,7 +100,7 @@ bool isCygwin(HANDLE process) {
 bool runCygwinCommand(wchar_t * command) {
 	wchar_t cygcmd[1024];
 	swprintf(cygcmd, L"%s\\%s", cygwinBin, command);
-	
+
 	STARTUPINFO si;
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
@@ -201,7 +201,7 @@ int main() {
 	h[2] = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[5]); // simulated SIGTERM
 	h[3] = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[6]); // simulated SIGKILL
 	h[4] = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[7]); // CTRL-C, in all cases
-	
+
 	SetConsoleCtrlHandler(HandlerRoutine, TRUE);
 
 	int parentPid = wcstol(argv[1], NULL, 10);
@@ -262,8 +262,8 @@ int main() {
 	if (lpvEnv == NULL)
 	OutputDebugStringW(_T("Cannot Read Environment\n"));
 	else {
-		// Variable strings are separated by NULL byte, and the block is 
-		// terminated by a NULL byte. 
+		// Variable strings are separated by NULL byte, and the block is
+		// terminated by a NULL byte.
 
 		OutputDebugStringW(_T("Starter: Environment\n"));
 		for (wchar_t * lpszVariable = (wchar_t *) lpvEnv; *lpszVariable; lpszVariable+=wcslen(lpszVariable) + 1) {
@@ -281,7 +281,7 @@ int main() {
 	// Create job object
 	HANDLE hJob = CreateJobObject(NULL, NULL);
 	if (hJob != NULL) {
-	    // Configure job to 
+	    // Configure job to
 	    // - terminate all associated processes when the last handle to it is closed
 	    // - allow child processes to break away from the job.
 	    JOBOBJECT_EXTENDED_LIMIT_INFORMATION  jobInfo;
@@ -314,7 +314,7 @@ int main() {
 	CloseHandle(stdHandles[0]);
 	CloseHandle(stdHandles[1]);
 	CloseHandle(stdHandles[2]);
-	
+
 	if (f) {
 #ifdef DEBUG_MONITOR
 		swprintf(buffer, _T("Process %i started\n"), pi.dwProcessId);
@@ -393,12 +393,12 @@ int main() {
 						// fall back to console event
 						GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
 					}
-				} else {				
+				} else {
 					GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
 				}
-				
+
 				SetEvent(waitEvent);
-				
+
 				if(NULL != hJob) {
 					if(!TerminateJobObject(hJob, (DWORD)-1)) {
 #ifdef DEBUG_MONITOR
@@ -448,7 +448,7 @@ int main() {
 
 /////////////////////////////////////////////////////////////////////////////////////
 // Use this utility program to process correctly quotation marks in the command line
-// Arguments:  
+// Arguments:
 //			target - string to copy to
 //			source - string to copy from
 //			cpyLength - copy length

@@ -9,17 +9,17 @@
 </head>
 <!--
 Copyright (c) 2006, 2007 PalmSource, Inc. and others
-This program and the accompanying materials 
-are made available under the terms of the Eclipse Public License 2.0 
-which accompanies this distribution, and is available at 
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
 https://www.eclipse.org/legal/epl-2.0/
 
-SPDX-License-Identifier: EPL-2.0 
+SPDX-License-Identifier: EPL-2.0
 
-Contributors: 
-Ewa Matejska (PalmSource) - initial API and implementation 
+Contributors:
+Ewa Matejska (PalmSource) - initial API and implementation
 Martin Oberhuber (Wind River) - fix 158529: Migrate docs to HTML / TOC format
-Dave Dykstal (IBM) - fix 174770: SAX Parse exceptions in Eclipse 3.3 
+Dave Dykstal (IBM) - fix 174770: SAX Parse exceptions in Eclipse 3.3
 Wainer S. Moschetta (IBM) - bug 452356: replace RSE with org.eclipse.remote
 -->
 
@@ -27,11 +27,11 @@ Wainer S. Moschetta (IBM) - bug 452356: replace RSE with org.eclipse.remote
 <h1 class="topictitle1">Launching Remote C/C++ Applications</h1>
 <div class="p">
 <p>The remote CDT launch Plugin builds on top of CDT and integrates with Eclipse remote framework (org.eclipse.remote)
-to introduce a "Remote C/C++ Application" launch configuration. This launch configuration relies 
+to introduce a "Remote C/C++ Application" launch configuration. This launch configuration relies
 on the shell and file services of the remote framework's connections.</p>
 
 <p>The "Remote C/C++ Application" launch configuration enables the user to select from a list of connections which have the shell service available. For a debug launch, the binary is downloaded
-to the remote using the file service of the remote framework's connection, gdbserver is automatically started 
+to the remote using the file service of the remote framework's connection, gdbserver is automatically started
 on the remote using the shell service and a gdb debug connection is establised.  For a run launch,
 the binary is downloaded to the remote using the file service and then it is invoked using the shell
 service.</p>
@@ -43,7 +43,7 @@ should take place. Right now the remote path is entered manually in a text field
 <h2>System Prerequisites</h2>
 <div class="p"><b>Local Host</b>
 <ul>
-  <li>It is necessary to create an connection which has the file and shell services 
+  <li>It is necessary to create an connection which has the file and shell services
      available.</li>
 </ul></div>
 
@@ -55,14 +55,14 @@ should take place. Right now the remote path is entered manually in a text field
 
 <h2>Using</h2>
 <div class="p">
-<p>A "Remote C++ Application" launch configuration will be available.  
-After building a binary which will run on your remote, try using this 
+<p>A "Remote C++ Application" launch configuration will be available.
+After building a binary which will run on your remote, try using this
 configuration to run or debug it.</p>
 </div>
 
 <h2>Current Limitations</h2>
 <div class="p">
-<p>There is no way to tell when the command on the remote has finished 
+<p>There is no way to tell when the command on the remote has finished
 running.  As a result, the "Remote Shell" process will be left active
 after the debug session dies and needs to be terminated manually. The
 run process also needs to be terminated manually for the same reason.</p>

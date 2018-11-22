@@ -1,5 +1,5 @@
 namespace pr147903 {
-	
+
 	class testRef
 	{
 	};

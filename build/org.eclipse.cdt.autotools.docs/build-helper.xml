@@ -5,9 +5,9 @@
     are made available under the terms of the Eclipse Public License 2.0
     which accompanies this distribution, and is available at
     https://www.eclipse.org/legal/epl-2.0/
-    
+
     SPDX-License-Identifier: EPL-2.0
-   
+
     Contributors:
         Red Hat - initial API and implementation
  -->
@@ -27,8 +27,8 @@
 			<stylesheet url="book.css" />
 			<pageAppendum>
 = Updating This Document =
-				
-This document is maintained in a collaborative wiki.  If you wish to update or modify this document please visit 
+
+This document is maintained in a collaborative wiki.  If you wish to update or modify this document please visit
 http://wiki.eclipse.org/CDT/Autotools/User_Guide
             </pageAppendum>
 		</mediawiki-to-eclipse-help>
@@ -39,19 +39,19 @@ http://wiki.eclipse.org/CDT/Autotools/User_Guide
 	<target name="test" description="verify that all of the HTML files are well-formed XML">
 		<echo level="info">
 Validating help content XML and HTML files: The Eclipse help system expects well-formed XML
-			
+
 If validation fails it is because either:
-			
+
 * the userguide source code is poorly formed, or
 * the WikiText MediaWiki parser has a bug
-			
+
 Problems with userguide source are usually caused by improper use of HTML markup in the MediaWiki source,
 or inadvertently starting a line with a space character (in MediaWiki this starts a preformatted block)
 		</echo>
 
-		<!-- 
+		<!--
 		Don't bother with DTD validation: we only care if the files are well-formed.
-		We therefore provide an empty DTD 
+		We therefore provide an empty DTD
 		-->
 		<echo file="tmp/__empty.dtd" message="" />
 		<xmlvalidate lenient="true">

@@ -1,3 +1,3 @@
 #include "CompletionTestStart.h"
 
-class ClassA : public        
+class ClassA : public

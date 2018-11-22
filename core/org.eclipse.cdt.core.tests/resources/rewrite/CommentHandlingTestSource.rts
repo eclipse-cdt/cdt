@@ -1058,7 +1058,7 @@ public:
 
 private:
     int i;
-};    
+};
 /*SCHLUSS*/
 
 //=

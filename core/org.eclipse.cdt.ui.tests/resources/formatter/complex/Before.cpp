@@ -1,14 +1,14 @@
-		
-		
+
+
 		/* This is sample code to test the formatter */
-           		
-		
+
+
          		// comment
 	  class Complex {
    		// comment
 
    		// comment
-		  
+
 		  // comment
 		private  :
      		// comment

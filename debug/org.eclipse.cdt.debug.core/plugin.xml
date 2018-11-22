@@ -60,7 +60,7 @@
       <attribute
             name="org.eclipse.cdt.debug.core.breakpointType">
       </attribute>
-      
+
    </extension>
    <extension
          id="commonCLineBreakpointMarker"
@@ -413,7 +413,7 @@
                type="org.eclipse.cdt.core.ISourceFinder">
          </adapter>
       </factory>
-   </extension>  
+   </extension>
    <extension
          point="org.eclipse.debug.core.breakpointImportParticipants">
       <importParticipant

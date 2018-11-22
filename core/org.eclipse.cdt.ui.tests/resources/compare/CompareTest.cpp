@@ -40,13 +40,13 @@ namespace MyPackage
 					private:
 					// private field
 					B b;
-			        
+
 					public:
 					// constructor chain
 					X(int x) : Y(x) {
 							cout << "In consturctor\n";
 					}
-			        // method declaration 
+			        // method declaration
 					int doNothing();
 			};
 		}
@@ -54,20 +54,20 @@ namespace MyPackage
 
 	// check enums
 	// enum without name
-	enum { 
-		first = 1, 
-		second, 
-		third 
+	enum {
+		first = 1,
+		second,
+		third
 	}
 	;
 	// enum with name
-	enum MyEnum { 
-		f, 
-		s, 
+	enum MyEnum {
+		f,
+		s,
 		t };
 
 	// check variables
-	// variable 
+	// variable
 	int v;
 	// unsigned long variable
 	unsigned long vuLong;
@@ -75,7 +75,7 @@ namespace MyPackage
 	unsigned short vuShort;
 
 	// check variable declarations
-	// variable declaration 
+	// variable declaration
 	extern int evar;
 	// function pointer
 	static void * (*orig_malloc_hook)(const char *file, int line, size_t size);
@@ -84,22 +84,22 @@ namespace MyPackage
 	// simple function declaration
 	void foo();
 	// function declaration with parameters
-	char* foo(int& x, 
+	char* foo(int& x,
 		char**y);
 	// simple function definition
 	void boo(){
 		int g = 0;
 	};
 	// check Structs
-	// struct 
+	// struct
 	struct MyStruct{
 		int sint;
 	};
 	// typedef and elaborated types
 	typedef struct MyStruct myStruct;
-	// typedef 
-	typedef struct{ 
-		int ss; 
+	// typedef
+	typedef struct{
+		int ss;
 	} myTypedef;
 	// unions
 	union U{
@@ -109,10 +109,10 @@ namespace MyPackage
 
 	// check templates
 	// template function declaration
-	template<class A, typename B=C> 
+	template<class A, typename B=C>
 	A aTemplatedFunction( B bInstance );
 	// template function definition
-	template<class A, typename B=C> 
+	template<class A, typename B=C>
 	A aTemplatedFunction( B bInstance ) {
 		A a;
 		return a;
@@ -121,14 +121,14 @@ namespace MyPackage
 	class enclosing {
 		// public visibility
 		public:
-		template<class A, typename B=C> 
+		template<class A, typename B=C>
 		A aTemplatedMethod( B bInstance );
 	};
 	// template class
-	template<class T, typename Tibor = junk> 
+	template<class T, typename Tibor = junk>
 	class myarray { /* */ };
 	// template struct
-	template<class T, typename Tibor = junk> 
+	template<class T, typename Tibor = junk>
 	struct mystruct { /* */ };
 	// template variable
 	template <bool __threads, int __inst>
@@ -137,8 +137,8 @@ namespace MyPackage
 	// check arrays
 	// arrays
 	int myArray [5][];
-	int main(int argc, char * argv[]) 
-	{ 
+	int main(int argc, char * argv[])
+	{
 	}
 
 // https://bugs.eclipse.org/bugs/show_bug.cgi?id=180815

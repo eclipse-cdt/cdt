@@ -168,9 +168,9 @@
         <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.dsf.runTests"/>
         <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
       </tab>
-      
+
    </extension>
-   
+
    <extension
          point="org.eclipse.debug.core.processFactories">
       <processFactory
@@ -178,5 +178,5 @@
             id="org.eclipse.cdt.testsrunner.TestingProcessFactory">
       </processFactory>
    </extension>
-   
+
 </plugin>

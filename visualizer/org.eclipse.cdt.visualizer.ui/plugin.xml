@@ -19,13 +19,13 @@
             name="%view.visualizer.name">
       </view>
    </extension>
-   
+
    <!-- Debug Perspective -->
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.eclipse.debug.ui.DebugPerspective">
-            
+
          <!-- add Visualizer View in same "slot" as outline view -->
          <view
                relative="org.eclipse.ui.views.ContentOutline"

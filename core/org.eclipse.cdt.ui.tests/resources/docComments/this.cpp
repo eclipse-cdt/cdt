@@ -6,7 +6,7 @@
 /*B comment2__ */
 /*C comment3_ *//*D comment4___ */
 /*E comment5____ *//*F comment6_ */
-/*G comment7 
+/*G comment7
 *//*F comment8_ *//*! __comment9 */
 /**
 comment10

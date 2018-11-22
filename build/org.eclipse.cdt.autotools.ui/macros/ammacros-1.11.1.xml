@@ -80,7 +80,7 @@
          first argument to &lt;CODE&gt;AC_INIT&lt;/CODE&gt; should be the
          name of your package (e.g., @samp{GNU Automake}), not the
          tarball name (e.g., &lt;samp&gt;automake&lt;/samp&gt;) that you
-         used to pass to &lt;CODE&gt;AM_INIT_AUTOMAKE&lt;/CODE&gt;. 
+         used to pass to &lt;CODE&gt;AM_INIT_AUTOMAKE&lt;/CODE&gt;.
          Autoconf tries to derive a tarball name from the package name,
          which should work for most but not all package names.  (If it
          doesn't work for yours, you can use the four-argument form of
@@ -125,7 +125,7 @@
       <prototype>
       </prototype>
         <synopsis>
-            Use this macro when you have assembly code in your project. 
+            Use this macro when you have assembly code in your project.
          This will choose the assembler for you (by default the C
          compiler) and set &lt;CODE&gt;CCAS&lt;/CODE&gt;, and will also
          set &lt;CODE&gt;CCASFLAGS&lt;/CODE&gt; if required.

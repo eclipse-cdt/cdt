@@ -21,7 +21,7 @@
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_discovery_preferences.htm"
    	label="Discovery Options"/>
-</context>					
+</context>
 <context id ="std_prop_discovery">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_prop_build_discovery.htm"

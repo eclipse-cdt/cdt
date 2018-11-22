@@ -12,7 +12,7 @@ HEADERS = $(wildcard *.h)
 SOURCELOOKUP_BINS = $(BINDIR)/SourceLookupAC.exe $(BINDIR)/SourceLookupAN.exe $(BINDIR)/SourceLookupRC.exe $(BINDIR)/SourceLookupRN.exe
 # These tests are for running against older GDBs which require compatibilty flags
 # for GCC debug info, see OLDDWARFFLAGS below
-SOURCELOOKUP_BINS += $(BINDIR)/SourceLookupDwarf2AC.exe $(BINDIR)/SourceLookupDwarf2AN.exe $(BINDIR)/SourceLookupDwarf2RC.exe $(BINDIR)/SourceLookupDwarf2RN.exe 
+SOURCELOOKUP_BINS += $(BINDIR)/SourceLookupDwarf2AC.exe $(BINDIR)/SourceLookupDwarf2AN.exe $(BINDIR)/SourceLookupDwarf2RC.exe $(BINDIR)/SourceLookupDwarf2RN.exe
 
 # Use .exe extension so that files are named the same way in Linux and Windows.
 BINS = $(patsubst %.c,$(BINDIR)/%.exe,$(SRC_C)) $(patsubst %.cc,$(BINDIR)/%.exe,$(SRC_CXX))

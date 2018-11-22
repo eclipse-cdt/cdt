@@ -101,7 +101,7 @@ int b, a;
 //%C
 int* (*var[3]);
 
-//!ICPPASTDeclarator with nested declarator and redundant parentheses 
+//!ICPPASTDeclarator with nested declarator and redundant parentheses
 //%C
 char (*((*fptr))(int, char));
 
@@ -184,7 +184,7 @@ constexpr long double operator ""_deg(long double deg)
 //%CPP
 struct Foo
 {
-    template<typename... ARGS> 
+    template<typename... ARGS>
     void bar(ARGS... args)
     {
     }
@@ -194,7 +194,7 @@ struct Foo
 //%CPP
 struct Foo
 {
-    template<typename... ARGS> 
+    template<typename... ARGS>
     void bar(ARGS&&... args)
     {
     }
@@ -202,14 +202,14 @@ struct Foo
 
 //!Template function with varargs parameter without pointer ops
 //%CPP
-template<typename... ARGS> 
+template<typename... ARGS>
 void foo(ARGS... args)
 {
 }
 
 //!Template function with varargs parameter with pointer ops
 //%CPP
-template<typename... ARGS> 
+template<typename... ARGS>
 void foo(ARGS&&... args)
 {
 }

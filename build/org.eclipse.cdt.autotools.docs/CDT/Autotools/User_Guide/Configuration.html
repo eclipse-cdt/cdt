@@ -35,7 +35,7 @@
 		<p>
 			<img border="0" src="images/AutotoolsConfigureSettings.png"/>
 		</p>
-		<p>If the top-level tree item: "Configure" is selected, you will notice how the actual configure script name is editable.  It is not recommended you change the name of the configure script as this is standard for Autotool projects.  However, you can use this text input to add environment variables to set prior to invoking the configure script.  For example, you might set the command to: 
+		<p>If the top-level tree item: "Configure" is selected, you will notice how the actual configure script name is editable.  It is not recommended you change the name of the configure script as this is standard for Autotool projects.  However, you can use this text input to add environment variables to set prior to invoking the configure script.  For example, you might set the command to:
 			<b>CFLAGS="-g -debug" configure</b> to have the CFLAGS environment variable overridden while configuring.  The same applies to the autogen.sh script settings.  On the advanced options page, there are a few prepared compilation options such as: compiling for debugging, compiling for the gcov tool, and compiling for the gprof tool.  One can also specify these options directly in the additional command-line options field as demonstrated in the screen-shot above.
 		</p>
 		<p>For configure, there are a number of standard parameters that apply to generated configure scripts.  Each parameter has its command line name presented so you can look it up in Autotools documentation.  In addition, tool-tip hover help is provided.</p>
@@ -45,7 +45,7 @@
 			the Autotools are not.  This may be
 			done to lower the download size and additionally to avoid having to constantly regenerate the output files as the Autotools are
 			updated.  In such cases, an autogen.sh script may be provided which is simply a script that runs the various Autotools
-			required.  This script may or may not run the configure script at the end.  Alternatively, there is also the 
+			required.  This script may or may not run the configure script at the end.  Alternatively, there is also the
 			<i>autoreconf</i>
 			tool which can be invoked to recursively run through the source tree and run all Autotools where the input files are newer than
 			the output files (this includes the case where no output file is present).  Any options required when invoking the Autotools

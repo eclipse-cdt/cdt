@@ -23,21 +23,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
@@ -74,8 +74,8 @@
             <annotation>
                <documentation>
                   This field can be used to set the default connection string for GDB.  It is
-                  not used when the &quot;class&quot; parameter specifies a jtagdevice subclass that 
-                  overrides the default implementation of the getDefaultDeviceConnection() 
+                  not used when the &quot;class&quot; parameter specifies a jtagdevice subclass that
+                  overrides the default implementation of the getDefaultDeviceConnection()
                   method.
                </documentation>
             </annotation>

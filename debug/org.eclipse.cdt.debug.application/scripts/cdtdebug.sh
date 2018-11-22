@@ -30,7 +30,7 @@ Indexing assist options:
   -b BUILD_LOG              build log to use for compiler includes/flags
 
 Target options:
-  -a [pid]                  attach using the optional pid or prompt for a pid 
+  -a [pid]                  attach using the optional pid or prompt for a pid
   -c COREFILE               debug core-file (should also specify executable)
   -e EXECUTABLE [ARGS...]   debug given executable (passing ARGS to main)
   -r ADDRESS:PORT           debug toward the specified remote server. Can be

@@ -1177,7 +1177,7 @@
                   valueType="string">
             </option>
          </tool>
-      </toolChain>         
+      </toolChain>
       <toolChain
             archList="all"
             id="cdt.managedbuild.toolchain.llvm.clang.linux.base"
@@ -1209,7 +1209,7 @@
                name="%PlatformName.Dbg"
                osList="macosx">
          </targetPlatform>
-      </toolChain>              
+      </toolChain>
       <toolChain
             archList="all"
             configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
@@ -1334,7 +1334,7 @@
                name="%PlatformName.Dbg"
                osList="macosx">
          </targetPlatform>
-      </toolChain>      
+      </toolChain>
       <toolChain
             archList="all"
             configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"

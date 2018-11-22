@@ -14,7 +14,7 @@
 	<version>8.3.0-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.testing.repo</artifactId>
 	<packaging>eclipse-repository</packaging>
-  	
+
 	<build>
 		<finalName>${project.artifactId}</finalName>
 	</build>

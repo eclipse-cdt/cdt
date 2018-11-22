@@ -97,7 +97,7 @@ main(int argc,
 		puts("tryagain");
 
 	} while (0);
-	if (MyI==0) 
+	if (MyI==0)
 	{
 		return 1;
 	}

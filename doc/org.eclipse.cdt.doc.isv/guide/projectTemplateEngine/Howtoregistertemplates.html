@@ -21,12 +21,12 @@
    </tr></tbody></table>
    <hr noshade size="1">
    <p class="breadcrumbNav"><span class="separator">&raquo;</span>
-   <A href="index.html">How&nbsp;to&nbsp;extend&nbsp;the&nbsp;user&nbsp;interface&nbsp;using&nbsp;templates</A>&nbsp;<span class="separator">&raquo;</span> 
+   <A href="index.html">How&nbsp;to&nbsp;extend&nbsp;the&nbsp;user&nbsp;interface&nbsp;using&nbsp;templates</A>&nbsp;<span class="separator">&raquo;</span>
 How&nbsp;to&nbsp;register&nbsp;a&nbsp;template&nbsp;with&nbsp;Eclipse</p>
 
    <hr noshade size="1">
    <div class="AuthoredContent">
-    
+
 
 </div><div class="Head1">
 
@@ -38,7 +38,7 @@ to make the template available for use. It is a good practice to group all the
 files and resources related to the project template together in one folder. For
 example, if you are writing a project template for a Hello World Application,
 group all the resources required for this application in a folder
-"HelloWorld". 
+"HelloWorld".
 </p>
 <p>
 To register a project template with CDT follow the steps given below:
@@ -47,21 +47,21 @@ To register a project template with CDT follow the steps given below:
 <li>
 <p>
 Create an empty plug-in project from the Eclipse workbench without
-the source folders. 
+the source folders.
 </p>
 <li>
 <p>
 Create a new folder to contain the template project's content e.g. "MyExampleProject/templates/MyExampleTemplate".
 Copy the project template.xml along with all the resources required to create the project. For example, all the
-header files, source files, resource files etc. 
+header files, source files, resource files etc.
 </p>
 <li>
 <p>
 Open the plug-in manifest editor and select the
 <code class="ProgramOutput">Dependencies</code> page. For more information on plug-in manifest
-editor, refer to <em>PDE 
+editor, refer to <em>PDE
   Guide &gt; Getting Started  &gt; Basic  Plug-in Tutorial
-&gt;  Plug-in manifest editor</em>. 
+&gt;  Plug-in manifest editor</em>.
 </p>
 <li>
 <p>
@@ -73,7 +73,7 @@ plug-ins from the list.
 <li>
 <p>
 Select the <code>Extensions</code> page in the plug-in manifest
-editor. 
+editor.
 </p>
 <li>
 <p>
@@ -88,7 +88,7 @@ extension-points.
 <li>
 <p>
 Right-click on the newly added extension, and select
-<code class="ProgramOutput">New</code> &gt;  
+<code class="ProgramOutput">New</code> &gt;
 <code class="ProgramOutput">template</code> from the context menu.
 The first one has already been added for you, <code class="ProgramOutput">"(template)"</code>.
 </p>
@@ -111,19 +111,19 @@ in step 1. This attribute is mandatory.
 </p>
 <li>
 <p>
-Specify a <code class="ProgramOutput">filterPattern</code> to indicate the build 
-Configurations for which the template is created. It is a regular expression used 
-to filter the build Configurations. If the template is designed for a particular 
-Configuration, it is recommended to specify the filter pattern. For example, If 
+Specify a <code class="ProgramOutput">filterPattern</code> to indicate the build
+Configurations for which the template is created. It is a regular expression used
+to filter the build Configurations. If the template is designed for a particular
+Configuration, it is recommended to specify the filter pattern. For example, If
 the template is designed for GCC Configurations, the filter pattern can be ".*gcc".
- If the template is designed for multiple build Configurations, you can specify 
+ If the template is designed for multiple build Configurations, you can specify
  the filter patterns delimited by "|" .
 </p>
 <p>
 The New Project wizard filters the available build Configurations based on the filter
 pattern for the selected template. The filter patterns are matched against the
 available Configurations' ID to get a list of matching SDKs. This is an optional
-attribute. 
+attribute.
 </p>
 <p>
 For more information on regular expression patterns, refer to Java
@@ -135,7 +135,7 @@ API document for
 Specify the project type you wish the template to be associated with. The project type id can be
 found by looking at the project types contributed to the  buildDefinitions extension point.
 For more information about project types, see <a href="../cdt_build_system/whats_new/4.0/whats_new_CBS_40.html#_TocSectionUIModel_2">
-New project information in the What's New in CDT Build section</a>, especially the section "What are the general project type entries?". 
+New project information in the What's New in CDT Build section</a>, especially the section "What are the general project type entries?".
 This attribute is mandatory.
 </p>
 <li>
@@ -143,7 +143,7 @@ This attribute is mandatory.
 Specify the <code class="ProgramOutput">pagesAfterTemplateSelectionProvider</code>,
 which is a fully qualified name of the class that implements
 <code class="filename">org.eclipse.cdt.ui.templateengine.IPagesAfterTemplateSelectionProvider</code>
-interface. This is an optional attribute. 
+interface. This is an optional attribute.
 </p>
 </li>
 </ol>
@@ -185,4 +185,4 @@ you added is listed.
    </div>
    </body>
    </html>
-   
+

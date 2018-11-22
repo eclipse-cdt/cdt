@@ -24,7 +24,7 @@ $DropRules
 	    ::= 'sizeof' '(' type_id ')'
 	      | '__alignof__' '(' type_id ')'
 	      | 'typeof' '(' type_id ')'
-    
+
 $End
 
 $Define
@@ -35,11 +35,11 @@ $Start
     no_sizeof_type_name_start
 $End
 
-$Rules 
+$Rules
 
 	no_sizeof_type_name_start
 	    ::= expression
 	      | ERROR_TOKEN
 	          /. $Build  consumeEmpty();  $EndBuild ./
-          
+
 $End

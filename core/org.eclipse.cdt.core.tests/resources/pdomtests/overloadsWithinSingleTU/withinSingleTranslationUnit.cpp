@@ -46,7 +46,7 @@ void references(Foo f, X::Foo h) {
     bar(3); bar(3); bar(3);
     bar(2,2); bar(2,2);
     bar(f, 1);
-    
+
     Foo y = new Foo();
     X::Foo z = new X::Foo();
 }

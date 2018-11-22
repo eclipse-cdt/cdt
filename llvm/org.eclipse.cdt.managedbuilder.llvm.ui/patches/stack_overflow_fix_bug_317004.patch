@@ -39,13 +39,13 @@ diff -u -r1.146 CVisitor.java
 -			if (bs.length > 0) {
 -				for (IBinding b : bs) {
 -					if (b instanceof IType) {
--						if (b instanceof ICInternalBinding == false || 
+-						if (b instanceof ICInternalBinding == false ||
 -								CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
 -							return (IType) b;
 -						}
 +			for (IBinding b : bs) {
 +				if (b instanceof IType) {
-+					if (b instanceof ICInternalBinding == false || 
++					if (b instanceof ICInternalBinding == false ||
 +							CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
 +						return (IType) b;
  					}
@@ -53,11 +53,11 @@ diff -u -r1.146 CVisitor.java
  			}
  		} catch (DOMException e) {
  		}
- 
+
 -		return new CBasicType(Kind.eInt, IBasicType.IS_UNSIGNED | IBasicType.IS_LONG, expr);
 +		return new CBasicType(Kind.eInt, 0, expr);
  	}
-     
+
  	static IType getSize_T(IASTExpression expr) {
  		IScope scope = getContainingScope(expr);
  		try {
@@ -66,7 +66,7 @@ diff -u -r1.146 CVisitor.java
 -				return (IType) bs[0];
 +			for (IBinding b : bs) {
 +				if (b instanceof IType) {
-+					if (b instanceof ICInternalBinding == false || 
++					if (b instanceof ICInternalBinding == false ||
 +							CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
 +						return (IType) b;
 +					}

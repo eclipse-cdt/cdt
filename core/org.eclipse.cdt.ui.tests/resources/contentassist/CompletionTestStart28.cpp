@@ -2,5 +2,5 @@
 
 void anotherClass::anotherMethod()
 {
-  aClass myClass = new a    
+  aClass myClass = new a
 }

@@ -11,13 +11,13 @@
 <div role="main">
 <h1>CDT projects</h1>
 
-<p>Before you can work in the CDT, you must create a project to store your 
-source code, makefiles, binaries, and related files. C/C++ projects are displayed 
+<p>Before you can work in the CDT, you must create a project to store your
+source code, makefiles, binaries, and related files. C/C++ projects are displayed
 in the C/C++ Projects view.</p>
 
-<p><strong>Tip:</strong> Nested projects are not supported. Each project must be organized as a 
-discrete entity. Project dependencies are supported by allowing a project 
-to reference other projects that reside in your workspace. For more information, 
+<p><strong>Tip:</strong> Nested projects are not supported. Each project must be organized as a
+discrete entity. Project dependencies are supported by allowing a project
+to reference other projects that reside in your workspace. For more information,
 see <a href="../reference/cdt_u_prop_general_pns_ref.htm">Selecting referenced projects</a>.</p>
 
 <p>For more information about projects and where they are stored, see:</p>
@@ -34,7 +34,7 @@ see <a href="../reference/cdt_u_prop_general_pns_ref.htm">Selecting referenced p
 <p>To build your project, you can either create your own makefile,
 or let CDT generate the makefiles for you automatically.</p>
 
-<p>You can toggle these modes (generate makefiles or not) 
+<p>You can toggle these modes (generate makefiles or not)
 at any time for existing project. Use <a href="../reference/cdt_o_proj_prop_pages.htm">properties.</a> </p>
 
 <p>When you create a new project, you are required to specify the project type. This project type will determine the toolchain and data, and tabs that the CDT uses. In the New CDT Project Wizard, you can choose from the following project types:</p>
@@ -54,27 +54,27 @@ latest version.</p><p>The makefile for this project type is automatically create
 		<li><strong>Static Library</strong> - A collection of object files that you can link into another application (libxx.a). The CDT combines object files (i.e. *.o)
 into an archive (*.a) that is directly linked into an
 executable.</p><p>The makefile for this project type is automatically created by the CDT.
-		<li><strong>Makefile Project</strong> - Creates an empty project without the meta-data files. This selection is useful for importing and modifying existing makefile-based projects; a new makefile is not created for this project type. 
-	</ul> 
+		<li><strong>Makefile Project</strong> - Creates an empty project without the meta-data files. This selection is useful for importing and modifying existing makefile-based projects; a new makefile is not created for this project type.
+	</ul>
 
 <h2>Project conversion</h2>
 
-<p>You can convert projects from C to C++ (or from C++ to C).  If, for 
-example, your requirements change and you must convert an existing C project to C++, 
-you can do this without recreating the project.  The CDT converts your project files and 
+<p>You can convert projects from C to C++ (or from C++ to C).  If, for
+example, your requirements change and you must convert an existing C project to C++,
+you can do this without recreating the project.  The CDT converts your project files and
 resolves any source control issues.</p>
 
 <h2>A few notes about projects</h2>
 
 <ul>
-  <li>When you create a file within a project, a record (local history) of 
-  every change is created. For more information about local history, see 
-  <strong>Workbench User Guide &gt; Reference &gt; User interface 
+  <li>When you create a file within a project, a record (local history) of
+  every change is created. For more information about local history, see
+  <strong>Workbench User Guide &gt; Reference &gt; User interface
   information &gt; Development environment &gt; Local history</strong>.</li>
-  <li>Spaces in projects and filenames can cause problems with some 
+  <li>Spaces in projects and filenames can cause problems with some
 tools, such as the make utility or the compiler.</li>
-  <li>Be careful when you use only case to distinguish files and projects. UNIX-based 
-  operating system file names are case sensitive, but Windows filenames are not. Therefore, Hello.c and 
+  <li>Be careful when you use only case to distinguish files and projects. UNIX-based
+  operating system file names are case sensitive, but Windows filenames are not. Therefore, Hello.c and
 hello.c are separate files in UNIX but overwrite each other in Windows.</li>
 </ul>
 

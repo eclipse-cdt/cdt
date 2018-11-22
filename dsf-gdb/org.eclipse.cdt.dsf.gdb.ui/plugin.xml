@@ -19,7 +19,7 @@
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
         <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
       </tab>
-      <tab 
+      <tab
             id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.environmentTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.environment.name"
@@ -117,7 +117,7 @@
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"/>
         <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
       </tab>
-      
+
       <!-- PostMortem launch tabs-->
       <tab
             id="org.eclipse.cdt.dsf.gdb.launch.coreLaunch.mainTab"
@@ -152,11 +152,11 @@
       </tab>
    </extension>
    <extension point="org.eclipse.core.runtime.adapters">
-      <!-- Extenders providing their own subclass of GdbAdapterFactory must also extend GdbLaunch 
+      <!-- Extenders providing their own subclass of GdbAdapterFactory must also extend GdbLaunch
            and declare that the extended versions adapt to all of these types. See class comment in
            GdbAdapterFactory for more details. -->
-      <factory 
-        	class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbAdapterFactory" 
+      <factory
+        	class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbAdapterFactory"
 	        adaptableType="org.eclipse.cdt.dsf.gdb.launching.GdbLaunch">
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
@@ -166,9 +166,9 @@
          <adapter type="org.eclipse.cdt.debug.core.model.IConnectHandler"/>
          <adapter type="org.eclipse.debug.core.commands.IDisconnectHandler"/>
          <adapter type="org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler"/>
-	  </factory>         
-   </extension>	
-   
+	  </factory>
+   </extension>
+
    <extension point="org.eclipse.debug.ui.memoryRenderings">
       <renderingBindings
             defaultIds="org.eclipse.debug.ui.rendering.raw_memory"
@@ -262,12 +262,12 @@
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
-      <page   
+      <page
             category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
             class="org.eclipse.cdt.dsf.gdb.internal.ui.preferences.GdbDebugPreferencePage"
             id="org.eclipse.cdt.dsf.gdb.ui.preferences"
             name="%gdbPreferencePage.name">
-      </page> 
+      </page>
    </extension>
 
    <extension
@@ -368,7 +368,7 @@
 			        <count value="+">
 			        </count>
 			    </with>
-			</activeWhen> 
+			</activeWhen>
       </handler>
       <handler
       		class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.DsfLoadSymbolsCommandHandler"
@@ -382,7 +382,7 @@
 			        <count value="+">
 			        </count>
 			    </with>
-			</activeWhen> 
+			</activeWhen>
       </handler>
             <handler
             class="org.eclipse.cdt.dsf.gdb.internal.ui.commands.AddLocalsExpressionCommandHandler"
@@ -462,8 +462,8 @@
                   tooltip="%command.connect.tooltip">
             </command>
          </menuContribution>
-         
-          <menuContribution allPopups="true" locationURI="popup:org.eclipse.cdt.dsf.gdb.ui.osresources.view?after=additions">                
+
+          <menuContribution allPopups="true" locationURI="popup:org.eclipse.cdt.dsf.gdb.ui.osresources.view?after=additions">
             <command
                   commandId="org.eclipse.cdt.dsf.gdb.ui.command.osview.connect"
                   icon="platform:/plugin/org.eclipse.cdt.debug.ui/icons/obj16/connect.gif"
@@ -517,8 +517,8 @@
              class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.TracepointActionsPreferencePage"
              id="org.eclipse.cdt.dsf.gdb.ui.preferences.TracepointActionsPreferencePage"
              name="%tracepointActionsPrefPage.name">
-      </page> 
-      <page   
+      </page>
+      <page
             category="org.eclipse.cdt.dsf.gdb.ui.preferences"
             class="org.eclipse.cdt.dsf.gdb.internal.ui.preferences.ReverseDebugPreferencePage"
             id="org.eclipse.cdt.dsf.gdb.ui.preferences.reversedebugpreferences"
@@ -563,20 +563,20 @@
                menubarPath="debug">
          </action>
       </viewerContribution>
-   </extension>   
+   </extension>
    <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
       <toggleTargetFactory
             id="org.eclipse.cdt.dsf.gdb.ui.ToggleTracepointsTargetFactory"
             class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.ToggleTracepointsTargetFactory">
          <enablement>
-            <and>   
+            <and>
                <reference
                      definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
-               </reference>      
+               </reference>
                <test
                      property="org.eclipse.cdt.dsf.debug.ui.isDisassemblyViewSupportsCBreakpoint">
                </test>
-            </and>  
+            </and>
          </enablement>
       </toggleTargetFactory>
       <toggleTargetFactory

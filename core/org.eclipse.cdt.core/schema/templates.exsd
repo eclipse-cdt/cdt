@@ -26,7 +26,7 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
@@ -81,12 +81,12 @@
             <annotation>
                <documentation>
                   This attribute is a project type id referring to the cdt project type that the template will be associated with. Project types are contributed to the org.eclipse.cdt.managedbuilder.core.buildDefinitions extension-point.
-This attribute is mandatory. CDT pre-defines the following values of the build artifact type property: 
+This attribute is mandatory. CDT pre-defines the following values of the build artifact type property:
 &lt;ul&gt;
 &lt;li&gt;&quot;org.eclipse.cdt.build.core.buildArtefactType.exe&quot; - to represent executable
-&lt;li&gt;&quot;org.eclipse.cdt.build.core.buildArtefactType.staticLib&quot; - to represent static library 
-&lt;li&gt;&quot;org.eclipse.cdt.build.core.buildArtefactType.sharedLib&quot; - to represent shared library 
-&lt;li&gt;ISVs can define their own custom build artifact values by contributing to the org.eclipse.cdt.managedbuilder.core.buildProperties extension point. 
+&lt;li&gt;&quot;org.eclipse.cdt.build.core.buildArtefactType.staticLib&quot; - to represent static library
+&lt;li&gt;&quot;org.eclipse.cdt.build.core.buildArtefactType.sharedLib&quot; - to represent shared library
+&lt;li&gt;ISVs can define their own custom build artifact values by contributing to the org.eclipse.cdt.managedbuilder.core.buildProperties extension point.
 &lt;/ul&gt;
 It&apos;s no longer manditory since templates are no longer organized by project type. Template catogories replace that functionality.
                </documentation>
@@ -147,14 +147,14 @@ It&apos;s no longer manditory since templates are no longer organized by project
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -173,7 +173,7 @@ It&apos;s no longer manditory since templates are no longer organized by project
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
@@ -203,7 +203,7 @@ It&apos;s no longer manditory since templates are no longer organized by project
          filterPattern=&quot;.*&quot;&gt;
       &lt;/template&gt;
    &lt;/extension&gt;
-&lt;/pre&gt;            
+&lt;/pre&gt;
 For more details on how to define your own templates, please check examples provided under &lt;samp&gt;org.eclipse.cdt.ui.templateengine&lt;/samp&gt;
       </documentation>
    </annotation>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
-    
+
    <!--
    <extension point="org.eclipse.cdt.core.language">
       <language
@@ -14,7 +14,7 @@
             id="gcc"
             name="LR GCC">
       </language>
-      
+
       <language
             class="org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage"
             id="isocpp"
@@ -27,5 +27,5 @@
       </language>
    </extension>
    -->
-   
+
 </plugin>

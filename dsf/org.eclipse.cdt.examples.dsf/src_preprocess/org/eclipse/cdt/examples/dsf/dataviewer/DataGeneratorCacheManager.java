@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * A wrapper class for the {@link IDataGenerator} interface, which returns 
+ * A wrapper class for the {@link IDataGenerator} interface, which returns
  * ACPM cache objects to use for data retrieval instead of calling
  * {@link IDataGenerator} asynchronous methods directly.
  */
@@ -38,23 +38,23 @@ public class DataGeneratorCacheManager implements IDataGenerator.Listener {
 
     /** Cache class for retrieving the data generator's count. */
     private class CountCache extends RequestCache<Integer> {
-        
+
         public CountCache() {
             super(fExecutor);
         }
-        
+
         @Override
         protected void retrieve(DataRequestMonitor<Integer> rm) {
             fDataGenerator.getCount(rm);
         }
-        
+
         /**
-         * Reset the cache when the count is changed.  
+         * Reset the cache when the count is changed.
          */
         public void countChanged() {
             // Make sure that if clients are currently waiting for a count,
-            // they are notified of the update (their request monitors will be 
-            // completed with an error).  They shoudl then re-request data 
+            // they are notified of the update (their request monitors will be
+            // completed with an error).  They shoudl then re-request data
             // from provider again.
             setAndReset(null, new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, "Count changed"));
         }
@@ -63,17 +63,17 @@ public class DataGeneratorCacheManager implements IDataGenerator.Listener {
     /** Cache class for retrieving the data generator's values. */
     private class ValueCache extends RequestCache<Integer> {
         private int fIndex;
-        
+
         public ValueCache(int index) {
             super(fExecutor);
             fIndex = index;
         }
-        
+
         @Override
         protected void retrieve(org.eclipse.cdt.dsf.concurrent.DataRequestMonitor<Integer> rm) {
             fDataGenerator.getValue(fIndex, rm);
         };
-        
+
         /**
          * @see CountCache#countChanged()
          */
@@ -83,26 +83,26 @@ public class DataGeneratorCacheManager implements IDataGenerator.Listener {
     }
 
     /**
-     * Executor used to synchronize data access in this cache manager.  
-     * It has to be the same executor that is used by the data generators in 
-     * order to guarantee data consistency. 
+     * Executor used to synchronize data access in this cache manager.
+     * It has to be the same executor that is used by the data generators in
+     * order to guarantee data consistency.
      */
     private ImmediateInDsfExecutor fExecutor;
-    
+
     /**
      * Data generator that this cache manager is a wrapper for.
      */
     private IDataGenerator fDataGenerator;
-    
+
     /** Cache for data generator's count */
     private CountCache fCountCache;
-    
+
     /**
-     * Map of caches for retrieving values.  Each value index has a separate 
+     * Map of caches for retrieving values.  Each value index has a separate
      * cache value object.
      */
     private Map<Integer, ValueCache> fValueCaches = new HashMap<Integer, ValueCache>();
-    
+
     public DataGeneratorCacheManager(ImmediateInDsfExecutor executor, IDataGenerator dataGenerator) {
         fExecutor = executor;
         fDataGenerator = dataGenerator;
@@ -112,14 +112,14 @@ public class DataGeneratorCacheManager implements IDataGenerator.Listener {
     public void dispose() {
         fDataGenerator.removeListener(this);
     }
-    
+
     /**
      * Returns the data generator that this cache manager wraps.
      */
     public IDataGenerator getDataGenerator() {
         return fDataGenerator;
     }
-    
+
     /**
      * Returns the cache for data generator count.
      */
@@ -132,7 +132,7 @@ public class DataGeneratorCacheManager implements IDataGenerator.Listener {
 
     /**
      * Returns the cache for a value at given index.
-     * 
+     *
      * @param index Index of value to return.
      * @return Cache object for given value.
      */
@@ -142,10 +142,10 @@ public class DataGeneratorCacheManager implements IDataGenerator.Listener {
             value = new ValueCache(index);
             fValueCaches.put(index, value);
         }
-        
-        return value; 
+
+        return value;
     }
-    
+
     @Override
 	public void countChanged() {
         // Reset the count cache and all the value caches.
@@ -156,7 +156,7 @@ public class DataGeneratorCacheManager implements IDataGenerator.Listener {
             value.valueChanged();
         }
     }
-    
+
     @Override
 	public void valuesChanged(Set<Integer> indexes) {
         // Reset selected value caches.

@@ -13,7 +13,7 @@
  *
  *  raise.c
  *
- *  This is a part of JNI implementation of spawner 
+ *  This is a part of JNI implementation of spawner
  *  Includes implementation of JNI methods (see Spawner.java)
  *******************************************************************************/
 #include "stdafx.h"
@@ -42,31 +42,31 @@ extern "C"
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_read0
   (JNIEnv * env, jobject proc, jint fd, jbyteArray buf, jint len)
 {
-	jbyte tmpBuf[BUFF_SIZE];	
+	jbyte tmpBuf[BUFF_SIZE];
 	int nBuffOffset = 0;
 #ifdef DEBUG_MONITOR
 	_TCHAR buffer[1000];
 #endif
 	OVERLAPPED overlapped;
-	overlapped.Offset     = 0; 
-	overlapped.OffsetHigh = 0; 
-	overlapped.hEvent     = CreateEvent(NULL,    // no security attribute 
-									TRUE,    // manual-reset event 
-									TRUE,    // initial state = signaled 
-									NULL);   // unnamed event object  
- 
+	overlapped.Offset     = 0;
+	overlapped.OffsetHigh = 0;
+	overlapped.hEvent     = CreateEvent(NULL,    // no security attribute
+									TRUE,    // manual-reset event
+									TRUE,    // initial state = signaled
+									NULL);   // unnamed event object
+
 	if(NULL == overlapped.hEvent) {
 		char * lpMsgBuf;
-		FormatMessage( 
-			FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-			FORMAT_MESSAGE_FROM_SYSTEM | 
+		FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER |
+			FORMAT_MESSAGE_FROM_SYSTEM |
 			FORMAT_MESSAGE_IGNORE_INSERTS,
 			NULL,
 			GetLastError(),
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 			(wchar_t *) &lpMsgBuf,
 			0,
-			NULL 
+			NULL
 		);
 
 		ThrowByName(env, "java/io/IOException", lpMsgBuf);
@@ -89,14 +89,14 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 			{
 			int err = GetLastError();
 
-            if(err == ERROR_IO_PENDING)  
-				{ 
-				// asynchronous i/o is still in progress 
-				// check on the results of the asynchronous read 
-				if(GetOverlappedResult((HANDLE)fd, &overlapped, 
+            if(err == ERROR_IO_PENDING)
+				{
+				// asynchronous i/o is still in progress
+				// check on the results of the asynchronous read
+				if(GetOverlappedResult((HANDLE)fd, &overlapped,
 						&nNumberOfBytesRead, TRUE))
 					err = 0;
-				// if there was a problem ... 
+				// if there was a problem ...
 				else
 					err = GetLastError();
 				}
@@ -111,16 +111,16 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 #endif
 				if(err != ERROR_MORE_DATA) // Otherwise error means just that there are more data
 					{                      // than buffer can accept
-					FormatMessage( 
-						FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-						FORMAT_MESSAGE_FROM_SYSTEM | 
+					FormatMessage(
+						FORMAT_MESSAGE_ALLOCATE_BUFFER |
+						FORMAT_MESSAGE_FROM_SYSTEM |
 						FORMAT_MESSAGE_IGNORE_INSERTS,
 						NULL,
 						err,
 						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 						(wchar_t *) &lpMsgBuf,
 						0,
-						NULL 
+						NULL
 					);
 
 					ThrowByName(env, "java/io/IOException", lpMsgBuf);
@@ -184,7 +184,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_clo
 		_stprintf(buffer, _T("Close %i\n"), fd);
 		OutputDebugStringW(buffer);
 #endif
-		rc = (CloseHandle((HANDLE)fd) ? 0 : -1);	
+		rc = (CloseHandle((HANDLE)fd) ? 0 : -1);
 #ifdef DEBUG_MONITOR
 		_stprintf(buffer, _T("Closed %i\n"), fd);
 		OutputDebugStringW(buffer);
@@ -214,7 +214,7 @@ extern "C"
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_write0
   (JNIEnv * env, jobject proc, jint fd, jbyteArray buf, jint len)
 {
-	jbyte tmpBuf[BUFF_SIZE];	
+	jbyte tmpBuf[BUFF_SIZE];
 	int nBuffOffset = 0;
 
 
@@ -223,19 +223,19 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_wr
 		DWORD nNumberOfBytesToWrite = min(len - nBuffOffset, BUFF_SIZE);
 		DWORD nNumberOfBytesWritten;
 		env->GetByteArrayRegion(buf, nBuffOffset, nNumberOfBytesToWrite, tmpBuf);
-		if(0 == WriteFile((HANDLE)fd, tmpBuf, nNumberOfBytesToWrite, &nNumberOfBytesWritten, NULL)) 
+		if(0 == WriteFile((HANDLE)fd, tmpBuf, nNumberOfBytesToWrite, &nNumberOfBytesWritten, NULL))
 			{
 			char * lpMsgBuf;
-			FormatMessage( 
-				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-				FORMAT_MESSAGE_FROM_SYSTEM | 
+			FormatMessage(
+				FORMAT_MESSAGE_ALLOCATE_BUFFER |
+				FORMAT_MESSAGE_FROM_SYSTEM |
 				FORMAT_MESSAGE_IGNORE_INSERTS,
 				NULL,
 				GetLastError(),
 				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 				(wchar_t *) &lpMsgBuf,
 				0,
-				NULL 
+				NULL
 			);
 
 			ThrowByName(env, "java/io/IOException", lpMsgBuf);
@@ -263,7 +263,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_cl
 		OutputDebugStringW(buffer);
 #endif
 		FlushFileBuffers((HANDLE)fd);
-		rc = (CloseHandle((HANDLE)fd) ? 0 : -1);	
+		rc = (CloseHandle((HANDLE)fd) ? 0 : -1);
 #ifdef DEBUG_MONITOR
 		_stprintf(buffer, _T("Closed %i\n"), fd);
 		OutputDebugStringW(buffer);

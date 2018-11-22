@@ -26,7 +26,7 @@ namespace Z{
 			char *type;
 			friend ostream& operator << (ostream& os, Mail *m);
 			};
-			
+
 			class postcard : public Mail
 			{
 			public:
@@ -34,16 +34,16 @@ namespace Z{
 			void print(){cout << type << ": $" << setiosflags(ios::fixed)
 			 <<setprecision(2) << postage <<endl;}
 			 };
-			
+
 			class first_class : public Mail
 			{
 			public:
 			first_class() : Mail(){postage = 0.32; type = "First Class";}
 			void print(){cout << type << ": $" <<setiosflags(ios::fixed)
 			             << setprecision(2) << postage <<endl;}
-			 
+
 			};
-			
+
 			class Unknown : public postcard, first_class // ??? Multiple Inheritance
 			{
 			public:
@@ -55,7 +55,7 @@ namespace Z{
 			void print(){cout << postcard::type << ": $" <<setiosflags(ios::fixed)
 			             <<setprecision(2)<<postcard::postage <<endl;}
 			 };
-			
+
 			class container
 			{
 			private:
@@ -73,7 +73,7 @@ namespace Z{
 			Mail* operator[](int index);
 			Mail* operator = (Mail* mail);
 			};
-			
+
 			main()
 			{
 			container PO_Box;
@@ -90,23 +90,23 @@ namespace Z{
 			 cout << PO_Box[x];
 			 }
 			}
-			
+
 			ostream& operator << (ostream &os, Mail *m)
 			{
 			os <<setiosflags(ios::fixed) << setprecision(2)<< m->type
 			<< ": $" << m->postage <<endl;
-			
+
 			return os;
 			}
 			Mail* container::operator[](int index) {return array[index];}
 			Mail* container::operator = (Mail* mail)
-			{ 
-			int size = sizeof(Mail*) * (++sz); 
-			int temp = sz -1; 
-			array = (Mail**)realloc(array, size); 
-			array[temp] = mail; 
-			return 0; 
+			{
+			int size = sizeof(Mail*) * (++sz);
+			int temp = sz -1;
+			array = (Mail**)realloc(array, size);
+			array[temp] = mail;
+			return 0;
 			}
 		}
-	}	
-}	
+	}
+}

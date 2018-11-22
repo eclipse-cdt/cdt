@@ -36,7 +36,7 @@ exec0(const char *path, char *const argv[], char *const envp[],
 	/*
 	 * We use pfind() to check that the program exists and is an executable.
 	 * If not pass the error up.  Also execve() wants a full path.
-	 */ 
+	 */
 	full_path = pfind(path, envp);
 	if (full_path == NULL) {
 		fprintf(stderr, "Unable to find full path for \"%s\"\n", (path) ? path : "");
@@ -45,7 +45,7 @@ exec0(const char *path, char *const argv[], char *const envp[],
 
 	/*
 	 *  Make sure we can create our pipes before forking.
-	 */ 
+	 */
 	if (channels != NULL) {
 		if (pipe(pipe0) < 0 || pipe(pipe1) < 0 || pipe(pipe2) < 0) {
 			fprintf(stderr, "%s(%d): returning due to error.\n",
@@ -113,13 +113,13 @@ exec0(const char *path, char *const argv[], char *const envp[],
 			/* close the read end of pipe1 */
 			if (close(pipe0[0]) == -1)
 				perror("close(pipe0[0])");
- 
+
 			/* close the write end of pipe2 */
-			if (close(pipe1[1]) == -1) 
+			if (close(pipe1[1]) == -1)
 				perror("close(pipe1[1])");
 
 			/* close the write end of pipe2 */
-			if (close(pipe2[1]) == -1) 
+			if (close(pipe2[1]) == -1)
 				perror("close(pipe2[1])");
 
 			channels[0] = pipe0[1]; /* Output Stream. */
@@ -143,7 +143,7 @@ int wait0(pid_t pid)
 
 	if (pid < 0)
 		return -1;
-	
+
 	for (;;) {
 		if (waitpid(pid, &status, 0) < 0) {
 			if (errno == EINTR) {

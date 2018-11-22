@@ -13,7 +13,7 @@
  *
  *  StdAfx.c
  *
- *  This is a part of JNI implementation of spawner 
+ *  This is a part of JNI implementation of spawner
  *******************************************************************************/
 // stdafx.cpp : source file that includes just the standard includes
 //	spawner.pch will be the pre-compiled header

@@ -13,21 +13,21 @@
 
 <p>Using the CVS Repository Exploring perspective, you can check
 out modules or directories into existing projects, or create new
-projects. A common scenario that you may encounter when starting to use the CDT, is determining how 
-to bring existing C/C++ source files into Eclipse. There are a number of ways to 
+projects. A common scenario that you may encounter when starting to use the CDT, is determining how
+to bring existing C/C++ source files into Eclipse. There are a number of ways to
 do this. The scenarios described below are recommended approaches.</p>
 
 <h2>Creating a project from source files in CVS</h2>
 
-<p>If your existing source tree is managed in CVS, you can use the CVS 
-Repository perspective to &quot;Checkout As...&quot; any folder in the repository. 
-The first time you &quot;Checkout As...&quot;, the New Project wizard launches and you need to 
+<p>If your existing source tree is managed in CVS, you can use the CVS
+Repository perspective to &quot;Checkout As...&quot; any folder in the repository.
+The first time you &quot;Checkout As...&quot;, the New Project wizard launches and you need to
 create a C or C++ project for the folder. For more information, see
 <a href="../tasks/cdt_t_proj_new.htm">Creating a project</a>,
 <a href="../tasks/cdt_t_proj_new_with_template.htm">Creating a project via a project template</a> and
 <a href="../tasks/cdt_o_proj_files.htm">Working with C/C++ project files</a>.</p>
 
-<p>After you perform a checkout operation, a CVS checkout of the project occurs into the project's location. It is recommended that you eventually add and commit the CDT project files back into CVS.  
+<p>After you perform a checkout operation, a CVS checkout of the project occurs into the project's location. It is recommended that you eventually add and commit the CDT project files back into CVS.
 These files include .project, .cdtproject, and .cdtbuild (for Managed Build projects) and are located at the root folder of each CDT project.</p>
 
 <p>
@@ -50,7 +50,7 @@ you're importing:
 <h3>Importing a C/C++ project from CVS</h3>
 
 <p>
-To check out an existing C/C++ project from the CVS repository into your workspace, right-click the project in the CVS Repositories view, and select <strong>Check Out</strong> from the menu. A project with the same name as the CVS module is checked out in to your workspace. 
+To check out an existing C/C++ project from the CVS repository into your workspace, right-click the project in the CVS Repositories view, and select <strong>Check Out</strong> from the menu. A project with the same name as the CVS module is checked out in to your workspace.
 </p>
 
 
@@ -65,7 +65,7 @@ To check out existing C/C++ code that is not part of a project:
     Right-click the module or directory in the CVS
     Repositories view and choose <strong>Check Out As...</strong>
     from the menu.
-    
+
     <p>
     The Check Out As wizard displays.
     </p>
@@ -102,7 +102,7 @@ To check out existing C/C++ code that is not part of a project:
 
     <p>
     Choose the workspace location for this project, then the CVS
-    tag to check out.  
+    tag to check out.
     <li>Click <strong>Finish</strong> to exit the <strong>Check Out As</strong> dialog.
     </p>
 
@@ -146,7 +146,7 @@ If your resource code is not managed in CVS but is available from the file syste
 	<li>Identify a "root folder" of your source code tree.</li>
 	<li>Create a new C/C++ project using the New Project Wizard, and specify the "root folder" as a non-default location of the new project.</li>
 </ol>
-<p>Typically, existing projects will have their own makefiles, so you should create a new Make C/C++ project.  For more information see 
+<p>Typically, existing projects will have their own makefiles, so you should create a new Make C/C++ project.  For more information see
 <a href="../tasks/cdt_t_proj_new.htm">Creating a project</a> and
 <a href="../tasks/cdt_o_proj_files.htm">Working with C/C++ project files</a>.</p>
 
@@ -158,38 +158,38 @@ If your resource code is not managed in CVS but is available from the file syste
 	<li>external header files and library files do not need to be in or beneath the root folder.</li>
 </ul></p>
 
-<p>The resources for the project are maintained in the remote location specified, 
-not in the workspace folder for Eclipse. However, your existing folder structure 
-is displayed in the C/C++ Projects view. Meta data for the project, such as the 
-index for the project and the link to the existing source, is stored in the metadata 
-directory in the workspace folder. For more information on the workspace folder, 
+<p>The resources for the project are maintained in the remote location specified,
+not in the workspace folder for Eclipse. However, your existing folder structure
+is displayed in the C/C++ Projects view. Meta data for the project, such as the
+index for the project and the link to the existing source, is stored in the metadata
+directory in the workspace folder. For more information on the workspace folder,
 see <strong>Workbench User Guide &gt; Tasks &gt; Upgrading Eclipse</strong>.</p>
 
-After you create a CDT project, you cannot easily move it or redefine its root folders.  
-If you need to, you can delete the CDT project (without deleting its contents) and then 
+After you create a CDT project, you cannot easily move it or redefine its root folders.
+If you need to, you can delete the CDT project (without deleting its contents) and then
 recreate it specifying a different non-default location.
 
 <h2>Import your C/C++ source file system</h2>
 
-<p>Another approach would be to create a C/C++ Project and then import your 
+<p>Another approach would be to create a C/C++ Project and then import your
 existing file system.
 
-For more information about importing, see <strong>Workbench User Guide &gt; Tasks &gt; Importing &gt; 
+For more information about importing, see <strong>Workbench User Guide &gt; Tasks &gt; Importing &gt;
 Importing resources from the file system</strong>.</p>
 
-<p>This approach copies the files from your file system to an Eclipse Workbench 
-project or folder. Your original source files remain unchanged and it is the 
-copies of the files that will be edited, built and debugged using the CDT.&nbsp; 
-When you have successfully imported your existing file system, the folder 
+<p>This approach copies the files from your file system to an Eclipse Workbench
+project or folder. Your original source files remain unchanged and it is the
+copies of the files that will be edited, built and debugged using the CDT.&nbsp;
+When you have successfully imported your existing file system, the folder
 structure is displayed in the C/C++ Projects view.  Again, you should identify an
 appropriate "root folder" to import from.</p>
 
 <h3>Tip:</h3>
 <p>
 <ul>
-  <li>Importing your existing file system can consume significant disk space 
+  <li>Importing your existing file system can consume significant disk space
   depending on the size of your files.</li>
-  <li>Your files may become detached from an existing source control system that 
+  <li>Your files may become detached from an existing source control system that
   previously referenced the original file location such as a ClearCase view.</li>
 </ul></p>
 

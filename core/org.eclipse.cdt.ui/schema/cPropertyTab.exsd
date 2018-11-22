@@ -10,15 +10,15 @@
 There&apos;re 2 ways to display property/preference data:
 either on pages with tabs, or on simple pages.
 In first case, each cPropertyTab extending class
-represents single tab in tabfolder. 
-In second case, cPropertyTab extending class 
+represents single tab in tabfolder.
+In second case, cPropertyTab extending class
 represents whole page contents (except header
 elements which are common for all pages).
 Note that cPropertyTab extending class (&quot;tabs&quot; below) do not
-distinguish these 2 cases, moreover, they may be shown both 
-in multi-tab and single-tab mode. It&apos;s up to page to select 
+distinguish these 2 cases, moreover, they may be shown both
+in multi-tab and single-tab mode. It&apos;s up to page to select
 displaying mode.
-In multi-tab page, tabs are displayed in order defined by 
+In multi-tab page, tabs are displayed in order defined by
 their weights.
       </documentation>
    </annotation>
@@ -35,21 +35,21 @@ their weights.
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -84,7 +84,7 @@ Ignored for single-tab pages
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  Name of tab in tabfolder. 
+                  Name of tab in tabfolder.
 Ignored for single-tab pages.
                </documentation>
                <appInfo>
@@ -96,7 +96,7 @@ Ignored for single-tab pages.
             <annotation>
                <documentation>
                   Class name for container page.
-Usually pages are to be derived from 
+Usually pages are to be derived from
 org.eclipse.cdt.ui.newui.AbstractPage,
 but it is not obligatory.
                </documentation>
@@ -163,7 +163,7 @@ org.eclipse.cdt.managedbuilder.ui.newproperties.ICPropertyTab
            class=&quot;org.eclipse.cdt.managedbuilder.ui.newui.DiscoveryTab&quot;
            icon=&quot;icons/elcl16/discovery.gif&quot;
            name=&quot;Discovery options&quot;
-           weight=&quot;100&quot; 
+           weight=&quot;100&quot;
            parent=&quot;org.eclipse.cdt.ui.newui.Page_PathAndSymb&quot;/&gt;
   &lt;/extension&gt;
       </documentation>
@@ -174,32 +174,32 @@ org.eclipse.cdt.managedbuilder.ui.newproperties.ICPropertyTab
       </appInfo>
       <documentation>
          Implementors in org.eclipse.cdt.ui.newui:
-BinaryParsTab      
-CLocationOutputTab 
-CLocationSourceTab 
-CLocationTab       
-EnvironmentTab     
-ErrorParsTab       
-ExpIncludeTab      
-ExpLibraryPathTab  
-ExpLibraryTab      
-ExpSymbolTab       
-ICPropertyTab      
-IncludeTab         
-LanguagesTab       
-LibraryPathTab     
-LibraryTab         
-RefsTab            
-SDKsTab            
-SymbolTab          
+BinaryParsTab
+CLocationOutputTab
+CLocationSourceTab
+CLocationTab
+EnvironmentTab
+ErrorParsTab
+ExpIncludeTab
+ExpLibraryPathTab
+ExpLibraryTab
+ExpSymbolTab
+ICPropertyTab
+IncludeTab
+LanguagesTab
+LibraryPathTab
+LibraryTab
+RefsTab
+SDKsTab
+SymbolTab
 Implementors in org.eclipse.cdt.managedbuilder.ui.newui:
-ArtifactTab            
-BuilderSettingsTab     
-BuildStepsTab          
+ArtifactTab
+BuilderSettingsTab
+BuildStepsTab
 CBuildLocationOutputTab
-CPropertyVarsTab       
-DiscoveryTab           
-ToolChainEditTab       
+CPropertyVarsTab
+DiscoveryTab
+ToolChainEditTab
 ToolSettingsTab
       </documentation>
    </annotation>

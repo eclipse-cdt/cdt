@@ -54,10 +54,10 @@ spawner: $(OBJS_SPAWNER)
 
 winreg: $(OBJS_WINREG)
 	link /dll /nologo /out:$(DLL_WINREG) $(OBJS_WINREG) Advapi32.lib
-	
+
 starter: $(OBJS_STARTER)
 	link /nologo /out:$(EXE_STARTER) $(OBJS_STARTER) Psapi.Lib Shell32.lib
-	
+
 listtasks: $(OBJS_LISTTASKS)
 	link /nologo /out:$(EXE_LISTTASKS) $(OBJS_LISTTASKS) Psapi.Lib
 
@@ -71,6 +71,6 @@ rebuild: clean all
 install: all
 	copy *.dll $(INSTALL_DIR)
 	copy *.exe $(INSTALL_DIR)
-	
+
 uninstall:
 	del $(INSTALL_DIR)\*.dll $(INSTALL_DIR)\*.exe

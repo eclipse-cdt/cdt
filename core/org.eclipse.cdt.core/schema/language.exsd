@@ -20,21 +20,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -82,7 +82,7 @@
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
@@ -93,7 +93,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
@@ -147,7 +147,7 @@
       </appInfo>
       <documentation>
          CDT comes with following built-in languages:
-&lt;code&gt;org.eclipse.cdt.core.language.gcc&lt;/code&gt; (GNU C) and 
+&lt;code&gt;org.eclipse.cdt.core.language.gcc&lt;/code&gt; (GNU C) and
 &lt;code&gt;org.eclipse.cdt.core.language.g++&lt;/code&gt; (GNU C++).
 &lt;p&gt;The respective language implementations are
 &lt;code&gt;org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage&lt;/code&gt; and
@@ -160,7 +160,7 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005, 2007 QNX Software Systems and others. 
+         Copyright (c) 2005, 2007 QNX Software Systems and others.
 This program and the accompanying materials are made
 available under the terms of the Eclipse Public License 2.0 which
 accompanies this distribution, and is available at

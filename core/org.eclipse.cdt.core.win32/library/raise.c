@@ -13,7 +13,7 @@
  *
  *  raise.c
  *
- *  This is a part of JNI implementation of spawner 
+ *  This is a part of JNI implementation of spawner
  *******************************************************************************/
 #include "stdafx.h"
 #include "Spawner.h"
@@ -29,7 +29,7 @@ static HWND consoleHWND;
 
 /////////////////////////////////////////////////////////////////////////////////////
 // Check if window is a console of process with pid
-// Arguments:  
+// Arguments:
 //			hwnd - window handler
 //			arg  - process PID
 // Return : TRUE if yes
@@ -58,14 +58,14 @@ find_child_console (HWND hwnd, LPARAM arg)
 }
 
 // Need to declare this Win32 prototype ourselves. _WIN32_WINNT is getting
-// defined to a Windows NT value, thus we don't get this. Can't assume 
+// defined to a Windows NT value, thus we don't get this. Can't assume
 // we're running on XP, anyway (or can we by now?)
 #if (_WIN32_WINNT < 0x0501) || defined(_MSC_VER)
 typedef BOOL (WINAPI *DebugBreakProcessFunc)(HANDLE);
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////
-// Called to interrupt a process that we didn't launch (and thus does not share our 
+// Called to interrupt a process that we didn't launch (and thus does not share our
 // console). Windows XP introduced the function 'DebugBreakProcess', which allows
 // a process to interrupt another process even if if the two do not share a console.
 // If we're running on 2000 or earlier, we have to resort to simulating a CTRL-C
@@ -73,31 +73,31 @@ typedef BOOL (WINAPI *DebugBreakProcessFunc)(HANDLE);
 // has its own console. That means, e.g., the process should have been started at
 // the cmdline with 'start myprogram.exe' instead of 'myprogram.exe'.
 //
-// Arguments:  
+// Arguments:
 //			pid - process' pid
 // Return : 0 if OK or error code
 /////////////////////////////////////////////////////////////////////////////////////
-int interruptProcess(int pid) 
+int interruptProcess(int pid)
 {
 	// See if DebugBreakProcess is available (XP and beyond)
 	HMODULE hmod = LoadLibrary(L"Kernel32.dll");
-	if (hmod != NULL) 
+	if (hmod != NULL)
 	{
 		BOOL success = FALSE;
 		FARPROC procaddr = GetProcAddress(hmod, "DebugBreakProcess");
 		if (procaddr != NULL)
 		{
 			HANDLE proc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)pid);
-			if (proc != NULL) 
+			if (proc != NULL)
 			{
 				DebugBreakProcessFunc pDebugBreakProcess = (DebugBreakProcessFunc)procaddr;
-				success = (*pDebugBreakProcess)(proc); 
+				success = (*pDebugBreakProcess)(proc);
 				CloseHandle(proc);
 			}
 		}
 		FreeLibrary(hmod);
 		hmod = NULL;
-		
+
 		if (success)
 			return 0;	// 0 == OK; if not, try old-school way
 	}
@@ -117,7 +117,7 @@ int interruptProcess(int pid)
 
 	if(NULL != consoleHWND) // Yes, we found out it
 	{
-	  // We are going to switch focus to console, 
+	  // We are going to switch focus to console,
 	  // send Ctrl-C and then restore focus
 	  BYTE control_scan_code = (BYTE) MapVirtualKey (VK_CONTROL, 0);
 	  /* Fake Ctrl-C for SIGINT, and Ctrl-Break for SIGQUIT.  */
@@ -126,7 +126,7 @@ int interruptProcess(int pid)
 	  BYTE c_scan_code = (BYTE) MapVirtualKey (vk_c_code, 0);
 	  BYTE break_scan_code = (BYTE) MapVirtualKey (vk_break_code, 0);
 	  HWND foreground_window;
-		
+
 
 	  foreground_window = GetForegroundWindow ();
 	  if (foreground_window)
@@ -181,7 +181,7 @@ int interruptProcess(int pid)
 		OutputDebugStringW(buffer);
 #endif
         }
-    } 
+    }
 #ifdef DEBUG_MONITOR
 	else {
 		_stprintf(buffer, _T("Cannot find console for process %i\n"), pid);

@@ -4,7 +4,7 @@
 		 help="help.html">
 
 	<process type="org.eclipse.cdt.managedbuilder.core.NewManagedProject">
-		<simple name="name" value="$(projectName)" /> 
+		<simple name="name" value="$(projectName)" />
 		<simple name="location" value="$(location)" />
 		<simple name="artifactExtension" value="exe" />
 		<simple name="isCProject" value="true" />

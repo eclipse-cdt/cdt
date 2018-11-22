@@ -27,13 +27,13 @@ namespace NS {
 			Two,
 			Three
 		};
-		
+
 		void f(){
 			using namespace NS2;
 			a aStruct;
 		}
-		
-		
+
+
 
 		AA anotherStruct;
 	};
@@ -83,19 +83,19 @@ int DeclsAndDefns::staticField = 5;
 
 
 namespace bug68235{
-	struct xTag {	
+	struct xTag {
 		int x;
 	};
 	typedef xTag xType;
-	
+
 	typedef struct yTag {
 		int x;
-	} yType;			
-			
+	} yType;
+
 	class C1{
 	public:
-		xType x;		
-		yType y;		
+		xType x;
+		yType y;
 		C1();
 		~C1();
 	};

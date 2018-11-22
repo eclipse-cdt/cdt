@@ -1,12 +1,12 @@
 H6.CaptionFigColumn#header {
-	font-size:16px; 
+	font-size:16px;
 	display:inline
 }
 
 P.Note#copyright {
-	font-size: smaller; 
+	font-size: smaller;
 	font-style: normal;
-	color: #336699; 
+	color: #336699;
 	display:inline;
 	margin-top: 3.000000pt;
 	margin-bottom: 11.000000pt;
@@ -15,7 +15,7 @@ P.Note#copyright {
 }
 
 P.Code#dtd {
-	color: #800000; 
+	color: #800000;
 	margin-top: 0.000000pt;
 	margin-bottom: 0.000000pt;
 	margin-right: 0.000000pt;
@@ -23,7 +23,7 @@ P.Code#dtd {
 }
 
 P.Code#dtdAttlist {
-	color: #800000; 
+	color: #800000;
 	margin-top: 0.000000pt;
 	margin-bottom: 0.000000pt;
 	margin-right: 0.000000pt;
@@ -31,7 +31,7 @@ P.Code#dtdAttlist {
 }
 
 P.Code#tag {
-	color: #000080; 
+	color: #000080;
 	display:inline;
 	margin-top: 0.000000pt;
 	margin-bottom: 0.000000pt;
@@ -40,12 +40,12 @@ P.Code#tag {
 }
 
 P.Code#cstring {
-	color: #008000; 
+	color: #008000;
 	display:inline;
 	margin-top: 0.000000pt;
 	margin-bottom: 0.000000pt;
 	margin-right: 0.000000pt;
-	margin-left: 0.000000pt;	
+	margin-left: 0.000000pt;
 }
 
 .ConfigMarkup#elementDesc {

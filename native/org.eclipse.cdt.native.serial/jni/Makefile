@@ -10,7 +10,7 @@
 #
 # Contributors:
 #     QNX Software Systems - initial API and implementation
-#     Alex Blewitt - MacOSX with a 64-bit vm 
+#     Alex Blewitt - MacOSX with a 64-bit vm
 #*******************************************************************************/
 
 ifeq ($(JAVA_HOME),)

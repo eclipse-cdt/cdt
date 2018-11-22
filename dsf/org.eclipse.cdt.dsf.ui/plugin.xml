@@ -2,7 +2,7 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension point="org.eclipse.debug.core.watchExpressionDelegates">
-      <watchExpressionDelegate 
+      <watchExpressionDelegate
          	debugModel="org.eclipse.cdt.dsf.debug.ui"
      		delegateClass="org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.WatchExpressionDelegate"/>
   </extension>
@@ -37,7 +37,7 @@
                toolbarPath="additions">
          </action>
       </viewContribution>
-      
+
       <!-- Expressions View menu contributions -->
       <viewContribution
             id="org.eclipse.cdt.dsf.debug.ui.viewmodel.expressions.update.Refresh"
@@ -85,7 +85,7 @@
       </viewContribution>
    </extension>
 
-   <extension 
+   <extension
          point="org.eclipse.ui.menus">
 	   <!-- Debug view menu commands -->
        <menuContribution
@@ -95,19 +95,19 @@
        </menuContribution>
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.DebugView?after=updatePolicy">
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.debugView_updatePolicies" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.debugView_updatePolicies"
             	 label="%menu.threadsUpdatePolicy">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
-               </visibleWhen>    
+               </visibleWhen>
                <dynamic
 	               id="org.eclipse.cdt.dsf.debug.ui.UpdatePolicies"
 	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
             </menu>
-       </menuContribution>      
-      
+       </menuContribution>
+
 	   <!-- Registers view menu commands -->
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.RegisterView?after=additions">
@@ -117,8 +117,8 @@
        </menuContribution>
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.RegisterView?after=updatePolicy">
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.registersView_updatePolicies" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.registersView_updatePolicies"
             	 label="%menu.updatePolicy">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
@@ -127,10 +127,10 @@
 	               id="org.eclipse.cdt.dsf.debug.ui.registersUpdatePolicies"
 	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
-            </menu>         
+            </menu>
             <!-- bug 251769 Hide update scopes in 1.1
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.registersView_updateScopes" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.registersView_updateScopes"
             	 label="%menu.updateScope">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
@@ -139,13 +139,13 @@
 	               id="org.eclipse.cdt.dsf.debug.ui.registersUpdateScopes"
 	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesContribution">
 	           </dynamic>
-            </menu> 
+            </menu>
             -->
        </menuContribution>
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.RegisterView?after=formatting">
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.registersView_numberFormats" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.registersView_numberFormats"
             	 label="%menu.numberFormat">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreNumberFormatsSupported"/>
@@ -154,12 +154,12 @@
 	               id="org.eclipse.cdt.dsf.debug.ui.registersNumberFormats"
 	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.NumberFormatsContribution">
 	           </dynamic>
-            </menu>         
+            </menu>
        </menuContribution>
        <menuContribution
             locationURI="popup:org.eclipse.debug.ui.RegisterView?after=variableGroup">
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.registersView_elementNumberFormats" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.registersView_elementNumberFormats"
             	 label="%menu.numberFormat">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreElementNumberFormatsSupported"/>
@@ -175,7 +175,7 @@
 	               id="org.eclipse.cdt.dsf.debug.ui.restoreNumberFormatPreference"
 	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.RestoreNumberFormatPreferenceContribution">
 	           </dynamic>
-            </menu>         
+            </menu>
        </menuContribution>
 
 	   <!-- Variables view menu commands  -->
@@ -187,8 +187,8 @@
        </menuContribution>
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.VariableView?after=updatePolicy">
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_updatePolicies" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_updatePolicies"
             	 label="%menu.updatePolicy">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
@@ -197,10 +197,10 @@
 	               id="org.eclipse.cdt.dsf.debug.ui.variablesUpdatePolicies"
 	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
-            </menu>         
+            </menu>
             <!-- bug 251769 Hide update scopes in 1.1
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_updateScopes" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_updateScopes"
             	 label="%menu.updateScope">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
@@ -209,13 +209,13 @@
 	               id="org.eclipse.cdt.dsf.debug.ui.variablesUpdateScopes"
 	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesContribution">
 	           </dynamic>
-            </menu>         
+            </menu>
             -->
        </menuContribution>
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.VariableView?after=formatting">
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_numberFormats" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_numberFormats"
             	 label="%menu.numberFormat">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreNumberFormatsSupported"/>
@@ -224,12 +224,12 @@
 	               id="org.eclipse.cdt.dsf.debug.ui.variablesNumberFormats"
 	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.NumberFormatsContribution">
 	           </dynamic>
-            </menu>         
+            </menu>
        </menuContribution>
        <menuContribution
             locationURI="popup:org.eclipse.debug.ui.VariableView?after=variableGroup">
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_elementNumberFormats" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_elementNumberFormats"
             	 label="%menu.numberFormat">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreElementNumberFormatsSupported"/>
@@ -245,7 +245,7 @@
 	               id="org.eclipse.cdt.dsf.debug.ui.restoreNumberFormatPreference"
 	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.RestoreNumberFormatPreferenceContribution">
 	           </dynamic>
-            </menu>         
+            </menu>
        </menuContribution>
 
 	   <!-- Expressions view menu commands  -->
@@ -257,33 +257,33 @@
        </menuContribution>
        <menuContribution
             locationURI="popup:org.eclipse.debug.ui.ExpressionView?after=expressionGroup">
-          <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.ExpressionsView_addgroup" 
+          <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.ExpressionsView_addgroup"
             	 label="%menu.addGroup.label">
                <visibleWhen checkEnabled="true">
                </visibleWhen>
-         </menu> 
+         </menu>
        </menuContribution>
        <menuContribution
             locationURI="popup:org.eclipse.cdt.dsf.debug.ui.ExpressionsView_addgroup">
 		     <command
                  id="org.eclipse.cdt.dsf.ui.menu.addRegistersExpression"
-                 commandId="org.eclipse.cdt.dsf.ui.addRegistersExpression" 
+                 commandId="org.eclipse.cdt.dsf.ui.addRegistersExpression"
             	 label="%command.addRegisters.label">
                <visibleWhen checkEnabled="true"/>
-            </command>       
+            </command>
 
 		     <command
                  id="org.eclipse.cdt.dsf.ui.menu.addLocalsExpression"
-                 commandId="org.eclipse.cdt.dsf.ui.addLocalsExpression" 
+                 commandId="org.eclipse.cdt.dsf.ui.addLocalsExpression"
             	 label="%command.addLocals.label">
-            	 <visibleWhen checkEnabled="true"/>  
+            	 <visibleWhen checkEnabled="true"/>
             </command>
        </menuContribution>
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.ExpressionView?after=updatePolicy">
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_updatePolicies" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_updatePolicies"
             	 label="%menu.updatePolicy">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
@@ -292,10 +292,10 @@
 	               id="org.eclipse.cdt.dsf.debug.ui.expressionUpdatePolicies"
 	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
-            </menu>         
+            </menu>
             <!-- bug 251769 Hide update scopes in 1.1
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_updateScopes" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_updateScopes"
             	 label="%menu.updateScope">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
@@ -304,13 +304,13 @@
 	               id="org.eclipse.cdt.dsf.debug.ui.expressionUpdateScopes"
 	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesContribution">
 	           </dynamic>
-            </menu>         
+            </menu>
             -->
        </menuContribution>
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.ExpressionView?after=formatting">
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_numberFormats" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_numberFormats"
             	 label="%menu.numberFormat">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreNumberFormatsSupported"/>
@@ -319,12 +319,12 @@
 	               id="org.eclipse.cdt.dsf.debug.ui.expressionNumberFormats"
 	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.NumberFormatsContribution">
 	           </dynamic>
-            </menu>         
+            </menu>
        </menuContribution>
        <menuContribution
             locationURI="popup:org.eclipse.debug.ui.ExpressionView?after=expressionGroup">
-            <menu 
-                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_elementNumberFormats" 
+            <menu
+                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_elementNumberFormats"
             	 label="%menu.numberFormat">
                <visibleWhen checkEnabled="false">
                   <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreElementNumberFormatsSupported"/>
@@ -340,9 +340,9 @@
 	               id="org.eclipse.cdt.dsf.debug.ui.restoreNumberFormatPreference"
 	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.RestoreNumberFormatPreferenceContribution">
 	           </dynamic>
-            </menu>         
+            </menu>
        </menuContribution>
-   </extension>  
+   </extension>
 
    <extension point="org.eclipse.ui.handlers">
       <handler
@@ -438,7 +438,7 @@
             <with variable="activeContexts">
                <iterate operator="or">
                   <equals value="org.eclipse.cdt.dsf.debug.ui.updateModes"/>
-               </iterate>               
+               </iterate>
             </with>
          </and>
       </definition>
@@ -451,10 +451,10 @@
             </with>
             <or>
 			   <with variable="activePart">
-	              <test property="org.eclipse.cdt.dsf.debug.ui.areUpdatePoliciesSupported"/>					    
+	              <test property="org.eclipse.cdt.dsf.debug.ui.areUpdatePoliciesSupported"/>
          	   </with>
 		 	   <with variable="selection">
-	              <test property="org.eclipse.cdt.dsf.debug.ui.areUpdatePoliciesSupported"/>					    
+	              <test property="org.eclipse.cdt.dsf.debug.ui.areUpdatePoliciesSupported"/>
 			   </with>
 			</or>
 	     </and>
@@ -468,10 +468,10 @@
             </with>
             <or>
 			   <with variable="activePart">
-	              <test property="org.eclipse.cdt.dsf.debug.ui.areUpdateScopesSupported"/>					    
+	              <test property="org.eclipse.cdt.dsf.debug.ui.areUpdateScopesSupported"/>
          	   </with>
 		 	   <with variable="selection">
-	              <test property="org.eclipse.cdt.dsf.debug.ui.areUpdateScopesSupported"/>					    
+	              <test property="org.eclipse.cdt.dsf.debug.ui.areUpdateScopesSupported"/>
 			   </with>
 			</or>
 	     </and>
@@ -486,10 +486,10 @@
             </with>
             <or>
 			   <with variable="activePart">
-	              <test property="org.eclipse.cdt.dsf.debug.ui.areNumberFormatsSupported"/>					    
+	              <test property="org.eclipse.cdt.dsf.debug.ui.areNumberFormatsSupported"/>
          	   </with>
 		 	   <with variable="selection">
-	              <test property="org.eclipse.cdt.dsf.debug.ui.areNumberFormatsSupported"/>					    
+	              <test property="org.eclipse.cdt.dsf.debug.ui.areNumberFormatsSupported"/>
 			   </with>
 			</or>
 	     </and>
@@ -512,7 +512,7 @@
             </with>
 	     </and>
       </definition>
-   </extension>  
+   </extension>
 
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -560,7 +560,7 @@
             type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart">
       </propertyTester>
    </extension>
-	<extension 
+	<extension
 	    point="org.eclipse.debug.ui.detailPaneFactories">
         <detailFactories
              class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.numberformat.detail.NumberFormatDetailPaneFactory"
@@ -571,7 +571,7 @@
 					    <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext"/>
 	        		</iterate>
 	      		</with>
-	      	</enablement>      
+	      	</enablement>
         </detailFactories>
         <detailFactories
               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.modules.detail.ModuleDetailPaneFactory"
@@ -582,7 +582,7 @@
 					    <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.modules.ModulesVMNode$ModuleVMContext"/>
 	        		</iterate>
 	      		</with>
-	      	</enablement>      
+	      	</enablement>
         </detailFactories>
     </extension>
 
@@ -628,7 +628,7 @@
             commandId="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoAddress"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.contexts">
       <context
@@ -696,8 +696,8 @@
          </action>
       </viewerContribution>
    </extension>
-   
-    
+
+
    <!-- memory update policy
     <extension
          point="org.eclipse.ui.viewActions">
@@ -779,8 +779,8 @@
             description="%command.refreshAll.description"
             id="org.eclipse.cdt.dsf.debug.ui.refreshAll"
             name="%command.refreshAll.name"/>
-   </extension>      
-      
+   </extension>
+
    <!-- Debug perspective extension -->
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -797,7 +797,7 @@
          </viewShortcut>
       </perspectiveExtension>
    </extension>
-   
+
    <!-- Color preferences -->
    <extension
          point="org.eclipse.ui.themes">
@@ -842,10 +842,10 @@
          </description>
       </colorDefinition>
    </extension>
-   
+
    <extension point="org.eclipse.core.runtime.adapters">
-      <factory 
-	       	class="org.eclipse.cdt.dsf.debug.internal.ui.SuspendResumeAdapterFactory" 
+      <factory
+	       	class="org.eclipse.cdt.dsf.debug.internal.ui.SuspendResumeAdapterFactory"
 	        adaptableType="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">
          <adapter type="org.eclipse.debug.core.model.ISuspendResume"/>
 	  </factory>
@@ -855,8 +855,8 @@
          <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>
-      </factory>	  
-   </extension>	
+      </factory>
+   </extension>
 
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -904,7 +904,7 @@
    </extension>
 
    <!-- Adpater factory for common DSF debug text hover support.
-        This can be overridden by inidividual session adapters. 
+        This can be overridden by inidividual session adapters.
    -->
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -914,7 +914,7 @@
          <adapter type="org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover"/>
       </factory>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -989,7 +989,7 @@
             id="org.eclipse.cdt.dsf.debug.ui.hyperlinkdetector.stepIntoSelection"
             modifierKeys="M1+M3"
             name="%stepIntoSelectionHyperlinkDetector.label"
-            targetId="org.eclipse.cdt.ui.cCode">            
+            targetId="org.eclipse.cdt.ui.cCode">
       </hyperlinkDetector>
    </extension>
    <extension

@@ -2,24 +2,24 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-# Add inputs and outputs from these tool invocations to the build variables 
+# Add inputs and outputs from these tool invocations to the build variables
 C_SRCS += \
 C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f1.c \
 C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f1_30.c \
 C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f2.c \
-C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f2_30.c 
+C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f2_30.c
 
 OBJS += \
 ./f1.o \
 ./f1_30.o \
 ./f2.o \
-./f2_30.o 
+./f2_30.o
 
 C_DEPS += \
 ./f1.d \
 ./f1_30.d \
 ./f2.d \
-./f2_30.d 
+./f2_30.d
 
 
 # Each subdirectory must supply rules for building sources it contributes

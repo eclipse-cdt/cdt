@@ -24,7 +24,7 @@ struct Map
 template<class T> class nonVector {
 	private:
 	T* head;
-	
+
 	public:
 	nonVector() { head =new T(); }
 	int length() { return 1; }
@@ -37,7 +37,7 @@ union ArrayOverlay {
 	public:
 	X x[size];
 	Y y[size];
-	
+
 	static int<X,Y> numArrays;
 };
 

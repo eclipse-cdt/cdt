@@ -1,8 +1,8 @@
 <?eclipse version="3.0"?>
 <plugin>
- 
+
     <extension point="org.eclipse.debug.ui.memoryRenderings">
-        <renderingType 
+        <renderingType
             name="%renderingType.name"
             id="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRendering"
             class="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRenderingTypeDelegate">
@@ -12,8 +12,8 @@
             defaultIds="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRendering">
             <enablement>
                 <instanceof value="org.eclipse.debug.core.model.IMemoryBlockExtension"/>
-            </enablement>    
-        </renderingBindings>          
+            </enablement>
+        </renderingBindings>
     </extension>
 
     <extension point="org.eclipse.ui.preferencePages">
@@ -23,7 +23,7 @@
             id="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRenderingPreferencePage"
             name="%page.name"/>
     </extension>
-    
+
     <extension point="org.eclipse.core.runtime.preferences">
         <initializer class="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRenderingPreferenceInitializer"/>
     </extension>
@@ -42,7 +42,7 @@
                 tooltip="%FPRenderingPreferenceActionName"/>
         </viewContribution>
     </extension>
-    
+
     <extension point="org.eclipse.core.runtime.preferences">
         <!-- preferences initialization for Floating Point Renderer persistant storage -->
         <initializer class="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPPreferenceConstants$Initializer"/>

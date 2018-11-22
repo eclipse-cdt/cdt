@@ -2,18 +2,18 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-# Add inputs and outputs from these tool invocations to the build variables 
+# Add inputs and outputs from these tool invocations to the build variables
 X_SRCS += \
-../main.x 
+../main.x
 
 OBJS += \
-./main.o 
+./main.o
 
 C_DEPS += \
-./main.d 
+./main.d
 
 CS += \
-./main.c 
+./main.c
 
 
 # Each subdirectory must supply rules for building sources it contributes

@@ -18,7 +18,7 @@
         <associatedDelegate delegate="org.eclipse.cdt.llvm.dsf.lldb.launch.localCLaunch"/>
         <placement after="org.eclipse.cdt.llvm.dsf.lldb.launch.mainTab"/>
       </tab>
-      <tab 
+      <tab
             id="org.eclipse.cdt.llvm.dsf.lldb.launch.localApplicationLaunch.environmentTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.environment.name"

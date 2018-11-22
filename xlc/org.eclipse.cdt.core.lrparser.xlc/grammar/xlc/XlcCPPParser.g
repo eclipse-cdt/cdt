@@ -22,7 +22,7 @@ $End
 
 $Import
 	XlcGrammarExtensions.g
-$End 
+$End
 
 $Globals
 /.
@@ -37,7 +37,7 @@ $Define
 	$build_action_class /. XlcCPPBuildASTParserAction ./
 	$parser_factory_create_expression /. GPPSecondaryParserFactory.getDefault() ./
 	$node_factory_create_expression /. XlcCPPNodeFactory.getDefault() ./
-	
+
 $End
 
 
@@ -45,7 +45,7 @@ $End
 $Terminals
 
 	restrict
-	
+
 $End
 
 
@@ -54,28 +54,28 @@ $Start
 $End
 
 
-$Rules 
+$Rules
 
-	
+
 cv_qualifier
     ::= 'restrict'
 
 block_declaration
     ::= vector_declaration
       | static_assert_declaration
-    
+
 
 identifier_token
-    ::= 'vector' 
+    ::= 'vector'
       | 'pixel'
-    
-    
+
+
 specifier_qualifier
     ::= 'typedef'
           /. $Build  consumeToken(); $EndBuild ./
-          
-          
-array_modifier 
+
+
+array_modifier
     ::= '[' <openscope-ast> array_modifier_type_qualifiers ']'
           /. $Build  consumeDirectDeclaratorModifiedArrayModifier(false, false, true, false);  $EndBuild ./
       | '[' <openscope-ast> array_modifier_type_qualifiers assignment_expression ']'
@@ -90,21 +90,21 @@ array_modifier
           /. $Build  consumeDirectDeclaratorModifiedArrayModifier(false, true, false, false);  $EndBuild ./
       | '[' <openscope-ast> array_modifier_type_qualifiers '*' ']'
           /. $Build  consumeDirectDeclaratorModifiedArrayModifier(false, true, true, false);  $EndBuild ./
-          
-          
+
+
 array_modifier_type_qualifiers
-    ::= type_qualifier_list 
-    
+    ::= type_qualifier_list
+
 type_qualifier_list
-    ::= cv_qualifier         
+    ::= cv_qualifier
       | type_qualifier_list cv_qualifier
 
 member_declaration
     ::= static_assert_declaration
-    
-static_assert_declaration 
+
+static_assert_declaration
     ::= '__static_assert'  '(' expression ',' literal ')' ';'
         /. $Build  consumeCPPASTStaticAssertDeclaration();  $EndBuild ./
 
-          
+
 $End

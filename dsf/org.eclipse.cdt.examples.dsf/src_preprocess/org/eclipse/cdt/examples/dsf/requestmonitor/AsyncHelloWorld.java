@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -24,11 +24,11 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 
 /**
  * "Hello world" example which uses an asynchronous method to print out
- * the result.  
+ * the result.
  * <p>
  * The main method uses an immediate executor, which executes runnables
- * as soon as they are submitted, in creating its request monitor. 
- * 
+ * as soon as they are submitted, in creating its request monitor.
+ *
  */
 public class AsyncHelloWorld {
 
@@ -42,10 +42,10 @@ public class AsyncHelloWorld {
         System.out.println("Hello world");
         //#ifdef exercises
         // TODO Exercise 1: - Call the second async. "Hello world 2" method.
-        // Hint: Calling an asynchronous method requires passing to it a 
-        // request monitor.  A new request monitor can be constructed with 
-        // a parent RequestMonitor as an argument argument.  The parent gets 
-        // completed automatically when the lower level request monitor is 
+        // Hint: Calling an asynchronous method requires passing to it a
+        // request monitor.  A new request monitor can be constructed with
+        // a parent RequestMonitor as an argument argument.  The parent gets
+        // completed automatically when the lower level request monitor is
         // completed.
         rm.done();
         //#else
@@ -53,9 +53,9 @@ public class AsyncHelloWorld {
 //#        asyncHelloWorld2(rm2);
         //#endif
     }
-    
+
     //#ifdef exercises
-    // TODO: Exercise 1 - Add a second async. "Hello world 2" method.   
+    // TODO: Exercise 1 - Add a second async. "Hello world 2" method.
     //#else
 //#    static void asyncHelloWorld2(RequestMonitor rm) {
 //#        System.out.println("Hello world 2");

@@ -12,7 +12,7 @@ int
 main(int argc,char **argv) {}
 // handling of string concat
 char* s1= "this "   "is "  "one ""string.";
-char* s2= "this " "is " 
+char* s2= "this " "is "
 "one " "string.";
 // macro definition with line comment
 #define ID(x) x  // identity

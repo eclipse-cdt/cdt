@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -52,13 +52,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 
 /**
- * Data viewer based on a table, which reads data from multiple data  
- * providers using ACPM methods and performs a computation on the 
- * retrieved data.  
+ * Data viewer based on a table, which reads data from multiple data
+ * providers using ACPM methods and performs a computation on the
+ * retrieved data.
  * <p>
- * This example builds on the {@link AsyncSumDataViewer} example.  It 
- * demonstrates using ACPM to solve the data consistency problem when  
- * retrieving data from multiple sources asynchronously.  
+ * This example builds on the {@link AsyncSumDataViewer} example.  It
+ * demonstrates using ACPM to solve the data consistency problem when
+ * retrieving data from multiple sources asynchronously.
  * </p>
  */
 @ConfinedToDsfExecutor("fDisplayExecutor")
@@ -66,47 +66,47 @@ public class ACPMSumDataViewer implements ILazyContentProvider
 {
     /** View update frequency interval. */
     final private static int UPDATE_INTERVAL = 10000;
-    
+
     /** Executor to use instead of Display.asyncExec(). **/
     @ThreadSafe
     final private DsfExecutor fDisplayExecutor;
-    
+
     /** Executor to use when retrieving data from data providers */
     @ThreadSafe
     final private ImmediateInDsfExecutor fDataExecutor;
-    
+
     // The viewer and generator that this content provider using.
     final private TableViewer fViewer;
     final private DataGeneratorCacheManager[] fDataGeneratorCMs;
     final private DataGeneratorCacheManager fSumGeneratorCM;
 
     // Fields used in request cancellation logic.
-    private List<ValueRequestMonitor> fItemDataRequestMonitors = 
+    private List<ValueRequestMonitor> fItemDataRequestMonitors =
         new LinkedList<ValueRequestMonitor>();
     private Set<Integer> fIndexesToCancel = new HashSet<Integer>();
     private int fCancelCallsPending = 0;
     private Future<?> fRefreshFuture;
-    
+
     public ACPMSumDataViewer(TableViewer viewer,
-        ImmediateInDsfExecutor dataExecutor, IDataGenerator[] generators, 
-        IDataGenerator sumGenerator) 
+        ImmediateInDsfExecutor dataExecutor, IDataGenerator[] generators,
+        IDataGenerator sumGenerator)
     {
         fViewer = viewer;
         fDisplayExecutor = DisplayDsfExecutor.getDisplayDsfExecutor(
             fViewer.getTable().getDisplay());
         fDataExecutor = dataExecutor;
-        
-        // Create wrappers for data generators.  Don't need to register as 
+
+        // Create wrappers for data generators.  Don't need to register as
         // listeners to generator events because the cache managers ensure data
         // are already registered for them.
         fDataGeneratorCMs = new DataGeneratorCacheManager[generators.length];
         for (int i = 0; i < generators.length; i++) {
-            fDataGeneratorCMs[i] = 
+            fDataGeneratorCMs[i] =
                 new DataGeneratorCacheManager(fDataExecutor, generators[i]);
         }
-        fSumGeneratorCM = 
-            new DataGeneratorCacheManager(fDataExecutor, sumGenerator); 
-        
+        fSumGeneratorCM =
+            new DataGeneratorCacheManager(fDataExecutor, sumGenerator);
+
         // Schedule a task to refresh the viewer periodically.
         fRefreshFuture = fDisplayExecutor.scheduleAtFixedRate(
             new Runnable() {
@@ -114,25 +114,25 @@ public class ACPMSumDataViewer implements ILazyContentProvider
 				public void run() {
                     queryItemCount();
                 }
-            }, 
+            },
             UPDATE_INTERVAL, UPDATE_INTERVAL, TimeUnit.MILLISECONDS);
-    }    
-    
+    }
+
     @Override
 	public void dispose() {
         // Cancel the periodic task of refreshing the view.
         fRefreshFuture.cancel(false);
-        
-        // Need to dispose cache managers that were created in this class.  This 
-        // needs to be done on the cache manager's thread. 
+
+        // Need to dispose cache managers that were created in this class.  This
+        // needs to be done on the cache manager's thread.
         Query<Object> disposeCacheManagersQuery = new Query<Object>() {
             @Override
             protected void execute(DataRequestMonitor<Object> rm) {
                 fSumGeneratorCM.dispose();
-                for (DataGeneratorCacheManager dataGeneratorCM : 
-                     fDataGeneratorCMs) 
+                for (DataGeneratorCacheManager dataGeneratorCM :
+                     fDataGeneratorCMs)
                 {
-                    dataGeneratorCM.dispose();                
+                    dataGeneratorCM.dispose();
                 }
                 rm.setData(new Object());
                 rm.done();
@@ -141,10 +141,10 @@ public class ACPMSumDataViewer implements ILazyContentProvider
         fDataExecutor.execute(disposeCacheManagersQuery);
         try {
             disposeCacheManagersQuery.get();
-        } 
-        catch (InterruptedException e) {} 
+        }
+        catch (InterruptedException e) {}
         catch (ExecutionException e) {}
-        
+
         // Cancel any outstanding data requests.
         for (ValueRequestMonitor rm : fItemDataRequestMonitors) {
             rm.cancel();
@@ -167,7 +167,7 @@ public class ACPMSumDataViewer implements ILazyContentProvider
         // Request the item for the given index.
         queryValue(index);
 
-        // Invoke a cancel task with a delay.  The delay allows multiple cancel 
+        // Invoke a cancel task with a delay.  The delay allows multiple cancel
         // calls to be combined together improving performance of the viewer.
         fCancelCallsPending++;
         fDisplayExecutor.execute(
@@ -176,9 +176,9 @@ public class ACPMSumDataViewer implements ILazyContentProvider
                 cancelStaleRequests(topIdx, botIdx);
             }});
     }
-        
+
     /**
-     * Calculates the number of visible items based on the top item index and 
+     * Calculates the number of visible items based on the top item index and
      * table bounds.
      * @param top Index of top item.
      * @return calculated number of items in viewer
@@ -187,19 +187,19 @@ public class ACPMSumDataViewer implements ILazyContentProvider
         Table table = fViewer.getTable();
         int itemCount = table.getItemCount();
         return Math.min(
-            (table.getBounds().height / table.getItemHeight()) + 2, 
+            (table.getBounds().height / table.getItemHeight()) + 2,
             itemCount - top);
-    }   
-    
+    }
+
     /**
      * Retrieve the current count.  When a new count is set to viewer, the viewer
      * will refresh all items as well.
      */
     private void queryItemCount() {
-        // Create the request monitor to collect the count.  This request 
+        // Create the request monitor to collect the count.  This request
         // monitor will be completed by the following transaction.
-        final DataRequestMonitor<Integer> rm = 
-            new DataRequestMonitor<Integer>(fDisplayExecutor, null) 
+        final DataRequestMonitor<Integer> rm =
+            new DataRequestMonitor<Integer>(fDisplayExecutor, null)
         {
             @Override
             protected void handleSuccess() {
@@ -209,16 +209,16 @@ public class ACPMSumDataViewer implements ILazyContentProvider
             protected void handleRejectedExecutionException() {}     // Shutting down, ignore.
         };
 
-        // Use a transaction, even with a single cache.  This will ensure that 
-        // if the cache is reset during processing by an event.  The request 
-        // for data will be re-issued. 
+        // Use a transaction, even with a single cache.  This will ensure that
+        // if the cache is reset during processing by an event.  The request
+        // for data will be re-issued.
         fDataExecutor.execute(new Runnable() {
             @Override
 			public void run() {
                 new Transaction<Integer>() {
                     @Override
-                    protected Integer process() 
-                        throws Transaction.InvalidCacheException, CoreException 
+                    protected Integer process()
+                        throws Transaction.InvalidCacheException, CoreException
                     {
                         return processCount(this);
                     }
@@ -226,24 +226,24 @@ public class ACPMSumDataViewer implements ILazyContentProvider
             }
         });
     }
-    
-    /** 
+
+    /**
      * Perform the count retrieval from the sum data generator.
      * @param transaction The ACPM transaction to use for calculation.
      * @return Calculated count.
      * @throws Transaction.InvalidCacheException {@link Transaction#process}
      * @throws CoreException See {@link Transaction#process}
      */
-    private Integer processCount(Transaction<Integer> transaction) 
-        throws Transaction.InvalidCacheException, CoreException 
+    private Integer processCount(Transaction<Integer> transaction)
+        throws Transaction.InvalidCacheException, CoreException
     {
         ICache<Integer> countCache = fSumGeneratorCM.getCount();
         transaction.validate(countCache);
         return countCache.getData();
     }
 
-    /** 
-     * Set the givne count to the viewer.  This will cause the viewer will 
+    /**
+     * Set the givne count to the viewer.  This will cause the viewer will
      * refresh all items' data as well.
      * <p>Note: This method must be called in the display thread. </p>
      * @param count New count to set to viewer.
@@ -259,8 +259,8 @@ public class ACPMSumDataViewer implements ILazyContentProvider
      * Retrieve the current value for given index.
      */
     private void queryValue(final int index) {
-        // Create the request monitor to collect the value.  This request 
-        // monitor will be completed by the following transaction.  
+        // Create the request monitor to collect the value.  This request
+        // monitor will be completed by the following transaction.
         final ValueRequestMonitor rm = new ValueRequestMonitor(index) {
             @Override
             protected void handleCompleted() {
@@ -271,24 +271,24 @@ public class ACPMSumDataViewer implements ILazyContentProvider
             }
             @Override
             protected void handleRejectedExecutionException() {
-                // Shutting down, ignore.  
-            } 
+                // Shutting down, ignore.
+            }
         };
 
-        // Save the value request monitor, to cancel it if the view is 
-        // scrolled. 
+        // Save the value request monitor, to cancel it if the view is
+        // scrolled.
         fItemDataRequestMonitors.add(rm);
 
-        // Use a transaction, even with a single cache.  This will ensure that 
-        // if the cache is reset during processing by an event.  The request 
-        // for data will be re-issued. 
+        // Use a transaction, even with a single cache.  This will ensure that
+        // if the cache is reset during processing by an event.  The request
+        // for data will be re-issued.
         fDataExecutor.execute(new Runnable() {
             @Override
 			public void run() {
                 new Transaction<String>() {
                     @Override
-                    protected String process() 
-                        throws Transaction.InvalidCacheException, CoreException 
+                    protected String process()
+                        throws Transaction.InvalidCacheException, CoreException
                     {
                         return processValue(this, index);
                     }
@@ -296,9 +296,9 @@ public class ACPMSumDataViewer implements ILazyContentProvider
             }
         });
     }
-    
+
     /**
-     * Write the view value to the viewer.  
+     * Write the view value to the viewer.
      * <p>Note: This method must be called in the display thread. </p>
      * @param index Index of value to set.
      * @param value New value.
@@ -308,32 +308,32 @@ public class ACPMSumDataViewer implements ILazyContentProvider
             fViewer.replace(value, index);
         }
     }
-    
+
     /**
-     * Perform the calculation compose the string with data provider values 
-     * and the sum.  This implementation also validates the result. 
+     * Perform the calculation compose the string with data provider values
+     * and the sum.  This implementation also validates the result.
      * @param transaction The ACPM transaction to use for calculation.
      * @param index Index of value to calculate.
      * @return Calculated value.
      * @throws Transaction.InvalidCacheException {@link Transaction#process}
      * @throws CoreException See {@link Transaction#process}
      */
-    private String processValue(Transaction<String> transaction, int index) 
-        throws Transaction.InvalidCacheException, CoreException 
+    private String processValue(Transaction<String> transaction, int index)
+        throws Transaction.InvalidCacheException, CoreException
     {
-        List<ICache<Integer>> valueCaches = 
+        List<ICache<Integer>> valueCaches =
             new ArrayList<ICache<Integer>>(fDataGeneratorCMs.length);
         for (DataGeneratorCacheManager dataGeneratorCM : fDataGeneratorCMs) {
             valueCaches.add(dataGeneratorCM.getValue(index));
         }
-        // Validate all value caches at once.  This executes needed requests 
+        // Validate all value caches at once.  This executes needed requests
         // in parallel.
         transaction.validate(valueCaches);
-        
+
         // TODO: evaluate sum generator cache in parallel with value caches.
         ICache<Integer> sumCache = fSumGeneratorCM.getValue(index);
         transaction.validate(sumCache);
-        
+
         // Compose the string with values, sum, and validation result.
         StringBuilder result = new StringBuilder();
         int calcSum = 0;
@@ -347,23 +347,23 @@ public class ACPMSumDataViewer implements ILazyContentProvider
         if (calcSum != sumCache.getData()) {
             result.append(" !INCORRECT! ");
         }
-        
-        return result.toString(); 
+
+        return result.toString();
     }
-    
-    /** 
+
+    /**
      * Dedicated class for data item requests.  This class holds the index
      * argument so it can be examined when canceling stale requests.
      */
     private class ValueRequestMonitor extends DataRequestMonitor<String> {
         /** Index is used when canceling stale requests. */
         int fIndex;
-        
+
         ValueRequestMonitor(int index) {
             super(fDisplayExecutor, null);
-            fIndex = index; 
+            fIndex = index;
         }
-        
+
         @Override
         protected void handleRejectedExecutionException() {
             // Shutting down, ignore.
@@ -373,8 +373,8 @@ public class ACPMSumDataViewer implements ILazyContentProvider
     /**
      * Cancels any outstanding value requests for items which are no longer
      * visible in the viewer.
-     *  
-     * @param topIdx Index of top visible item in viewer.  
+     *
+     * @param topIdx Index of top visible item in viewer.
      * @param botIdx Index of bottom visible item in viewer.
      */
     private void cancelStaleRequests(int topIdx, int botIdx) {
@@ -386,31 +386,31 @@ public class ACPMSumDataViewer implements ILazyContentProvider
             return;
         }
 
-        // Go through the outstanding requests and cancel any that 
+        // Go through the outstanding requests and cancel any that
         // are not visible anymore.
-        for (Iterator<ValueRequestMonitor> itr = 
-            fItemDataRequestMonitors.iterator(); itr.hasNext();) 
+        for (Iterator<ValueRequestMonitor> itr =
+            fItemDataRequestMonitors.iterator(); itr.hasNext();)
         {
             ValueRequestMonitor item = itr.next();
             if (item.fIndex < topIdx || item.fIndex > botIdx) {
-                // Set the item to canceled status, so that the data provider 
+                // Set the item to canceled status, so that the data provider
                 // will ignore it.
                 item.cancel();
-                
-                // Add the item index to list of indexes that were canceled, 
-                // which will be sent to the table widget. 
+
+                // Add the item index to list of indexes that were canceled,
+                // which will be sent to the table widget.
                 fIndexesToCancel.add(item.fIndex);
-                
+
                 // Remove the item from the outstanding cancel requests.
-                itr.remove(); 
+                itr.remove();
             }
         }
         if (!fIndexesToCancel.isEmpty() && fCancelCallsPending == 0) {
             Set<Integer> canceledIdxs = fIndexesToCancel;
             fIndexesToCancel = new HashSet<Integer>();
-            
-            // Clear the indexes of the canceled request, so that the 
-            // viewer knows to request them again when needed.  
+
+            // Clear the indexes of the canceled request, so that the
+            // viewer knows to request them again when needed.
             // Note: clearing using TableViewer.clear(int) seems very
             // inefficient, it's better to use Table.clear(int[]).
             int[] canceledIdxsArray = new int[canceledIdxs.size()];
@@ -421,11 +421,11 @@ public class ACPMSumDataViewer implements ILazyContentProvider
             fViewer.getTable().clear(canceledIdxsArray);
         }
     }
-    
+
     /**
      * The entry point for the example.
      * @param args Program arguments.
-     */    
+     */
     public static void main(String[] args) {
         // Create the shell to hold the viewer.
         Display display = new Display();
@@ -436,23 +436,23 @@ public class ACPMSumDataViewer implements ILazyContentProvider
         Font font = new Font(display, "Courier", 10, SWT.NORMAL);
 
         // Create the table viewer.
-        TableViewer tableViewer = 
+        TableViewer tableViewer =
             new TableViewer(shell, SWT.BORDER | SWT.VIRTUAL);
         tableViewer.getControl().setLayoutData(data);
 
         DsfExecutor executor = new DefaultDsfExecutor("Example executor");
-        
+
         // Create the data generator.
         final IDataGenerator[] generators = new IDataGenerator[5];
         for (int i = 0; i < generators.length; i++) {
             generators[i] = new DataGeneratorWithExecutor(executor);
         }
-        final IDataGenerator sumGenerator = 
+        final IDataGenerator sumGenerator =
             new ACPMSumDataGenerator(executor, generators);
-        
+
         // Create the content provider which will populate the viewer.
         ACPMSumDataViewer contentProvider = new ACPMSumDataViewer(
-            tableViewer, new ImmediateInDsfExecutor(executor), 
+            tableViewer, new ImmediateInDsfExecutor(executor),
             generators, sumGenerator);
         tableViewer.setContentProvider(contentProvider);
         tableViewer.setInput(new Object());
@@ -464,7 +464,7 @@ public class ACPMSumDataViewer implements ILazyContentProvider
             if (!display.readAndDispatch())
                 display.sleep();
         }
-        
+
         // The IDataGenerator.shutdown() method is asynchronous, this requires
         // using a query again in order to wait for its completion.
         Query<Object> shutdownQuery = new Query<Object>() {
@@ -483,10 +483,10 @@ public class ACPMSumDataViewer implements ILazyContentProvider
         executor.execute(shutdownQuery);
         try {
             shutdownQuery.get();
-        } catch (Exception e) {} 
-        
+        } catch (Exception e) {}
+
         // Shut down the display.
-        font.dispose();    
+        font.dispose();
         display.dispose();
     }
 }

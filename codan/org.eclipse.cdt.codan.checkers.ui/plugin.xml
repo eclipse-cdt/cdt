@@ -29,7 +29,7 @@
        </resolution>
        <resolution
        		class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCreateNewClass"
-       		problemId="org.eclipse.cdt.codan.internal.checkers.TypeResolutionProblem" 
+       		problemId="org.eclipse.cdt.codan.internal.checkers.TypeResolutionProblem"
        />
        <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCreateLocalVariable"
@@ -70,11 +70,11 @@
 	   <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixBreak"
              problemId="org.eclipse.cdt.codan.internal.checkers.CaseBreakProblem">
-       </resolution>       
+       </resolution>
 	   <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixComment"
              problemId="org.eclipse.cdt.codan.internal.checkers.CaseBreakProblem">
-       </resolution>       
+       </resolution>
        <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixFallthroughAttribute"
              problemId="org.eclipse.cdt.codan.internal.checkers.CaseBreakProblem">

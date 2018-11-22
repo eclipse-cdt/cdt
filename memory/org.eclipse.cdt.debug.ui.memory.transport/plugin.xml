@@ -1,47 +1,47 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension-point id="memoryTransport" name="%extension-point.name.0" schema="schema/MemoryTransport.exsd"/>
-	
+
 	<extension
 	      id="org.eclipse.cdt.debug.ui.memory.transport.dd"
 	      name="%extension.name.0"
 	      point="org.eclipse.cdt.debug.ui.memory.transport.memoryTransport">
-	      
-	    <importer 
+
+	    <importer
 	        name="%importer.name.1"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.PlainTextImporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.PlainTextImporter">
 	    </importer>
-	    <exporter 
+	    <exporter
 	        name="%exporter.name.1"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.PlainTextExporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.PlainTextExporter">
 	    </exporter>
-	    
-	    <importer 
+
+	    <importer
 	        name="%importer.name.2"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryImporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryImporter">
 	    </importer>
-	    <exporter 
+	    <exporter
 	        name="%exporter.name.2"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryExporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryExporter">
 	    </exporter>
-	    
-	     <importer 
+
+	     <importer
 	        name="%importer.name.0"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.SRecordImporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.SRecordImporter">
 	    </importer>
-	    <exporter 
+	    <exporter
 	        name="%exporter.name.0"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.SRecordExporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.SRecordExporter">
 	    </exporter>
-	    
+
 	</extension>
-	
+
 	<extension point="org.eclipse.ui.viewActions">
 		<viewContribution
 	    	targetID="org.eclipse.debug.ui.MemoryView"
@@ -96,5 +96,5 @@
 	               tooltip="%ImportMemoryAction.label"/>
 	    </viewContribution>
 	</extension>
-	
+
 </plugin>

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
- *     Wind River Systems, Inc.  
+ *     Wind River Systems, Inc.
  *     Mikhail Zabaluev (Nokia) - bug 82744
  *******************************************************************************/
 #include <unistd.h>
@@ -28,7 +28,7 @@
 
 
 /*
- * Header for class org_eclipse_cdt_utils_spawner_Spawner 
+ * Header for class org_eclipse_cdt_utils_spawner_Spawner
  */
 
 
@@ -141,7 +141,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2
         free_c_array(envp);
     return pid;
 }
- 
+
 
 JNIEXPORT jint JNICALL
 Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv * env, jobject jobj,

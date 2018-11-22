@@ -18,12 +18,12 @@
          <contentType id="org.eclipse.cdt.core.parser.upc.upcSource"/>
       </language>
    </extension>
-   
+
    <extension point="org.eclipse.ui.editors.templates">
    		<include
       		file="templates/default-templates.xml"
       		translations="$nl$/templates/default-templates.properties">
       	</include>
    </extension>
-  
+
 </plugin>

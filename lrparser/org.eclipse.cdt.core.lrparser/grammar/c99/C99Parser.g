@@ -15,7 +15,7 @@
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.c99
 %options template=LRParserTemplate.g
 
--- This file is needed because LPG won't allow redefinition of the 
+-- This file is needed because LPG won't allow redefinition of the
 -- start symbol, so C99Grammar.g cannot define the start symbol.
 
 $Import

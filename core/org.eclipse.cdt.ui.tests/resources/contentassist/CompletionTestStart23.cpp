@@ -3,5 +3,5 @@
 void anotherClass::anotherMethod()
 {
  try {
- } catch (        
+ } catch (
 }

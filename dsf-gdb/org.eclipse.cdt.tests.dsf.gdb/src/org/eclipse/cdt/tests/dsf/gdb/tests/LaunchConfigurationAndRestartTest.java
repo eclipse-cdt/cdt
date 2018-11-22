@@ -606,7 +606,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		shutdownEventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
 
 		IProcess[] launchProcesses = getGDBLaunch().getProcesses();
-		
+
 		for (IProcess proc : launchProcesses) {
 			if (proc instanceof InferiorRuntimeProcess) {
 				assertThat(proc.getAttribute(IGdbDebugConstants.INFERIOR_EXITED_ATTR), is(notNullValue()));

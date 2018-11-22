@@ -6,17 +6,17 @@
            id="autotoolsProperties"
            name="Autotools Build Properties"
            point="org.eclipse.cdt.managedbuilder.core.buildProperties">
-           <propertyValue 
-              	property="org.eclipse.cdt.build.core.buildType" 
-              	id="org.eclipse.linuxtools.cdt.autotools.core.buildType.default" 
+           <propertyValue
+              	property="org.eclipse.cdt.build.core.buildType"
+              	id="org.eclipse.linuxtools.cdt.autotools.core.buildType.default"
               	name="%BuildProperty.value.name.default"/>
-           <propertyValue 
-              	property="org.eclipse.cdt.build.core.buildType" 
-              	id="org.eclipse.linuxtools.cdt.autotools.core.buildType.debug" 
+           <propertyValue
+              	property="org.eclipse.cdt.build.core.buildType"
+              	id="org.eclipse.linuxtools.cdt.autotools.core.buildType.debug"
               	name="%BuildProperty.value.name.debug"/>
-           <propertyValue 
-            	property="org.eclipse.cdt.build.core.buildArtefactType" 
-            	id="org.eclipse.linuxtools.cdt.autotools.core.buildArtefactType.autotools" 
+           <propertyValue
+            	property="org.eclipse.cdt.build.core.buildArtefactType"
+            	id="org.eclipse.linuxtools.cdt.autotools.core.buildArtefactType.autotools"
             	name="%BuildProperty.type.name.autotools"/>
      </extension>
    <extension
@@ -338,11 +338,11 @@
                tip="%Option.configure.user.tip"
                valueType="string">
                <enablement
-              		type="CONTAINER_ATTRIBUTE" 
-              		attribute="defaultValue" 
+              		type="CONTAINER_ATTRIBUTE"
+              		attribute="defaultValue"
               		value="CFLAGS=-g -O0"
               		extensionAdjustment="false">
-			  		<checkBuildProperty 
+			  		<checkBuildProperty
 			  			property="org.eclipse.cdt.build.core.buildType"
 			  			value="org.eclipse.linuxtools.cdt.autotools.core.buildType.debug"/>
                </enablement>

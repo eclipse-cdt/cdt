@@ -24,21 +24,21 @@ To disinguish numerous dialogs for separate MBSs, mbs_id element should be the s
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -52,7 +52,7 @@ To disinguish numerous dialogs for separate MBSs, mbs_id element should be the s
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  New configuration dialog class.&lt;br&gt; 
+                  New configuration dialog class.&lt;br&gt;
 Should implement &lt;code&gt;org.eclipse.cdt.ui.newui.INewCfgDialog&lt;/code&gt;
                </documentation>
                <appInfo>

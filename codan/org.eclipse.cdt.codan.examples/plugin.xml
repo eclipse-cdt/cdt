@@ -78,7 +78,7 @@
                name="%problem.name.Cppcheck.Syntax">
          </problem>
       </checker>
-      
+
           <checker
              class="org.eclipse.cdt.codan.examples.checkers.CToolChecker"
              id="org.eclipse.cdt.codan.examples.checkers.CToolChecker"

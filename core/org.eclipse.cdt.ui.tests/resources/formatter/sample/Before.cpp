@@ -52,7 +52,7 @@ const SimpleStruct array[] =
 
 //          single line outside scope
 
-void SimpleStruct_construct( 
+void SimpleStruct_construct(
 struct SimpleStruct * const s )
   {
  // single line

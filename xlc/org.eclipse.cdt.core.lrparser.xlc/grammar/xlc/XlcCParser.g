@@ -39,7 +39,7 @@ $Define
 	$build_action_class /. XlcCBuildASTParserAction ./
 	$parser_factory_create_expression /. GCCSecondaryParserFactory.getDefault() ./
 	$node_factory_create_expression /. XlcCNodeFactory.getDefault() ./
-	
+
 $End
 
 
@@ -48,16 +48,16 @@ $Start
 $End
 
 
-$Rules 
+$Rules
 
 declaration
     ::= vector_declaration
-    
+
 identifier_token
     ::= 'pixel'
       | 'vector'
       | 'bool'
-      
+
 declarator_id_name
     ::= 'pixel'
            /. $Build  consumeIdentifierName();  $EndBuild ./
@@ -65,5 +65,5 @@ declarator_id_name
            /. $Build  consumeIdentifierName();  $EndBuild ./
       | 'bool'
            /. $Build  consumeIdentifierName();  $EndBuild ./
-    
+
 $End

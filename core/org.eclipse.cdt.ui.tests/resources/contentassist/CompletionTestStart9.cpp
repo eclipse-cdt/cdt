@@ -3,5 +3,5 @@
 void anotherClass::anotherMethod()
 {
     aClass c;
-    c. 
+    c.
 }

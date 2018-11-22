@@ -3,5 +3,5 @@
 void aClass::aMethod()
 {
 	int xLocal = 0;
-	xAClassMethod( x 
+	xAClassMethod( x
 }

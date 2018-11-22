@@ -48,7 +48,7 @@
 <!-- CProjectDescriptionStorage provides addition types of project description storage      -->
 <!-- =================================================================================== -->
    <extension-point id="CProjectDescriptionStorage" name="%CProjectDescriptionStorage.name" schema="schema/CProjectDescriptionStorage.exsd"/>
-   
+
 <!-- =================================================================================== -->
 <!-- Define the list of the Binary Parser provided by the CDT                            -->
 <!-- =================================================================================== -->
@@ -513,22 +513,22 @@
          file-extensions="c"
          priority="high"/>
 	  <!-- declares a content type for C header files -->
-      <content-type id="cHeader" name="%cHeaderName" 
+      <content-type id="cHeader" name="%cHeaderName"
           base-type="org.eclipse.cdt.core.cSource"
-		  file-extensions="h"          
+		  file-extensions="h"
           priority="high"/>
 	  <!-- declares a content type for C++ source files -->
-      <content-type id="cxxSource" name="%cxxSourceName" 
+      <content-type id="cxxSource" name="%cxxSourceName"
           base-type="org.eclipse.cdt.core.cSource"
 		  file-extensions="C,cpp,cxx,cc,c++"
           priority="high"/>
 	  <!-- declares a content type for C++ header files -->
-      <content-type id="cxxHeader" name="%cxxHeaderName" 
+      <content-type id="cxxHeader" name="%cxxHeaderName"
           base-type="org.eclipse.cdt.core.cxxSource"
-		  file-extensions="h,hpp,hh,hxx,inc"          
+		  file-extensions="h,hpp,hh,hxx,inc"
           priority="high"/>
 	  <!-- declares a content type for ASM Source files -->
-      <content-type id="asmSource" name="%asmSourceName" 
+      <content-type id="asmSource" name="%asmSourceName"
           base-type="org.eclipse.core.runtime.text"
           file-extensions="S,s,asm,ASM"
           priority="high"/>
@@ -537,52 +537,52 @@
    </extension>
 
    <!-- The reserved filenames by the C++ standard -->
-   <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="algorithm,array,atomic,bitset,cassert,ccomplex,cctype,cerrno,cfenv,cfloat,chrono,cinttypes"/>
-   </extension> 
-   <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+   </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="ciso646,climits,clocale,cmath,codecvt,complex,csetjmp,csignal,cstdarg,cstdbool,cstddef"/>
-   </extension> 
-   <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+   </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="cstdint,cstdio,cstdlib,cstring,ctime,cwchar,cwctype,deque,exception,forward_list,fstream"/>
-   </extension> 
-   <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+   </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="functional,future,hash_map,hash_set,initializer_list,iomanip,ios,iosfwd,iostream,istream"/>
-   </extension> 
-   <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+   </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="iterator,limits,list,locale,map,memory,mutex,new,numeric,ostream,queue,random,ratio,regex"/>
-   </extension> 
-   <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+   </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="set,sstream,stack,stdexcept,streambuf,string,strstream,system_error,thread,tuple"/>
-   </extension> 
-   <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+   </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="typeindex,typeinfo,type_traits,unordered_map,unordered_set,utility,valarray,vector"/>
-   </extension> 
-   <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+   </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="condition_variable,ctgmath,cuchar,scoped_allocator,cstdalign,shared_mutex"/>
-   </extension> 
-   <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+   </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="any,execution,filesystem,memory_resource,optional,string_view,variant"/>
-   </extension> 
- 
+   </extension>
+
 <!-- =================================================================================== -->
 <!-- Initialize the preference for the Core Plugin                                       -->
 <!-- =================================================================================== -->
@@ -691,7 +691,7 @@
 <!-- =================================================================================== -->
 <!-- Template engine extension points	 -->
 <!-- =================================================================================== -->
-   <extension-point id="templates" name="%templatesExtensionPoint.name" 
+   <extension-point id="templates" name="%templatesExtensionPoint.name"
                     schema="schema/templates.exsd"/>
    <extension-point id="templateProcessTypes" name="%templateProcessTypes.name" schema="schema/templateProcessTypes.exsd"/>
    <extension-point id="templateAssociations" name="%templateAssociations.name" schema="schema/templateAssociations.exsd"/>

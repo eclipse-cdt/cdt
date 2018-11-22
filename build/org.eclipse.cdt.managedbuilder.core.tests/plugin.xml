@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-    
+
 <!-- Managed Make Builder Tool Specifications - CDT 2.0 format -->
 
    <extension
          id="buildTest"
          name="Tools for Build Test"
          point="org.eclipse.cdt.managedbuilder.core.ManagedBuildInfo">
-         
+
 	  <!-- Test tools and project types that primarily test support for the old extension point,
 	       and reading and writing elements and attributes   -->
       <tool
@@ -403,7 +403,7 @@
             fileVersion="2.1.0">
       </managedBuildRevision>
 
-	  <!-- Test tools and project types that correspond to the Gnu tool-chain  
+	  <!-- Test tools and project types that correspond to the Gnu tool-chain
 	       NOTE:  The warnings are the result intentional testing of deprecated attributes -->
       <tool
             natureFilter="cnature"
@@ -735,7 +735,7 @@
                name="Gnu.Assembler.version"
                id="testgnu.both.asm.option.version"/>
       </tool>
-      
+
       <tool
 		  name="compiler.gnu.c"
 		  id="cdt.managedbuild.tool.testgnu.c.compiler"
@@ -1204,10 +1204,10 @@
 			  valueType="boolean">
 		  </option>
 	  </tool>
-      
-      <projectType      
-            isAbstract="false"     
-            isTest="true" 
+
+      <projectType
+            isAbstract="false"
+            isTest="true"
             name="testgnu21.exe"
             id="cdt.managedbuild.target.testgnu21.exe">
          <configuration
@@ -1235,18 +1235,18 @@
 		              command="make"
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-		     	  </builder>               
+		     	  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testgnu.c.compiler.exe.debug"
                       superClass="cdt.managedbuild.tool.testgnu.c.compiler"
-                      isSystem="true">                          
+                      isSystem="true">
 			  	      <option
 					      id="testgnu.c.compiler.exe.debug.option.optimization.level"
 						  defaultValue="testgnu.c.optimization.level.none"
 						  superClass="testgnu.c.compiler.option.optimization.level">
 					  </option>
-					  <option   
-					      id="testgnu.c.compiler.exe.debug.option.debugging.level"					     
+					  <option
+					      id="testgnu.c.compiler.exe.debug.option.debugging.level"
 						  defaultValue="testgnu.c.debugging.level.max"
 					      superClass="testgnu.c.compiler.option.debugging.level">
 					  </option>
@@ -1254,7 +1254,7 @@
 				  <tool
                       id="cdt.managedbuild.tool.testgnu.cpp.compiler.exe.debug"
                       superClass="cdt.managedbuild.tool.testgnu.cpp.compiler"
-                      isSystem="true">                         
+                      isSystem="true">
                       <option
 				          id="testgnu.cpp.compiler.exe.debug.option.optimization.level"
                           defaultValue="testgnu.cpp.compiler.optimization.level.none"
@@ -1270,24 +1270,24 @@
                       id="cdt.managedbuild.tool.testgnu.c.linker.exe.debug"
                       superClass="cdt.managedbuild.tool.testgnu.c.linker"
                       isSystem="true">
-                  </tool> 
+                  </tool>
                   <tool
                       id="cdt.managedbuild.tool.testgnu.cpp.linker.exe.debug"
                       superClass="cdt.managedbuild.tool.testgnu.cpp.linker"
                       isSystem="true">
-                  </tool> 
+                  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.testgnu.assembler.exe.debug"
 					  superClass="cdt.managedbuild.tool.testgnu.assembler"
 					  isSystem="true">
-				  </tool>   
+				  </tool>
 			  </toolChain>
          </configuration>
          <configuration
                name="Rel"
                id="cdt.managedbuild.config.testgnu.exe.release"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.exe.release"
 		          name="Rel ToolChain"
@@ -1297,20 +1297,20 @@
 		          isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.exe.release"
-		              name="Rel Platform"		             
+		              name="Rel Platform"
 		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
 		              osList="solaris,linux,hpux,aix,qnx"
-		              archList="all">		              
+		              archList="all">
 		          </targetPlatform>
 				  <builder
 				      id="cdt.managedbuild.target.testgnu.builder.exe.release"
-		              name="Rel Builder"		              
+		              name="Rel Builder"
 		              command="make"
 		              arguments="-k">
-				  </builder> 
+				  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testgnu.c.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">
 					  <option
 						  id="testgnu.c.compiler.exe.release.option.optimization.level"
 						  defaultValue="testgnu.c.optimization.level.most"
@@ -1324,7 +1324,7 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.testgnu.cpp.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">                     
+                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">
 					  <option
 						  id="testgnu.cpp.compiler.exe.release.option.optimization.level"
 						  defaultValue="testgnu.cpp.compiler.optimization.level.most"
@@ -1339,41 +1339,41 @@
                   <tool
                       id="cdt.managedbuild.tool.testgnu.c.linker.exe.release"
                       superClass="cdt.managedbuild.tool.testgnu.c.linker">
-                  </tool> 
+                  </tool>
                   <tool
                       id="cdt.managedbuild.tool.testgnu.cpp.linker.exe.release"
                       superClass="cdt.managedbuild.tool.testgnu.cpp.linker">
-                  </tool>  
+                  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.testgnu.assembler.exe.release"
 					  superClass="cdt.managedbuild.tool.testgnu.assembler">
-				  </tool>   
+				  </tool>
                </toolChain>
          </configuration>
-      </projectType>     
-      
-      <projectType      
-            isAbstract="false"     
+      </projectType>
+
+      <projectType
+            isAbstract="false"
             isTest="true"
             name="testgnu21.so"
             id="cdt.managedbuild.target.testgnu21.so">
          <configuration
                name="Debug"
                cleanCommand="rm -rf"
-               artifactExtension="so"               
-               errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"                          
+               artifactExtension="so"
+               errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"
                id="cdt.managedbuild.config.testgnu.so.debug">
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.so.debug"
 		          name="so Debug ToolChain"
-		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"		          
-		          osList="solaris,linux,hpux,aix,qnx"                
+		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+		          osList="solaris,linux,hpux,aix,qnx"
 		          archList="all"
 		          isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.so.debug"
 		              name="so Debug Platform"
-		              binaryParser="org.eclipse.cdt.core.ELF"		            
+		              binaryParser="org.eclipse.cdt.core.ELF"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 		          </targetPlatform>
@@ -1382,7 +1382,7 @@
 		              name="so Debug Builder"
 		              command="make"
 		              arguments="-k">
-				  </builder>               		         
+				  </builder>
 				  <tool
 				      id="cdt.managedbuild.tool.testgnu.c.compiler.so.debug"
 					  superClass="cdt.managedbuild.tool.testgnu.c.compiler">
@@ -1436,7 +1436,7 @@
 				  <tool
 					  id="cdt.managedbuild.tool.testgnu.assembler.so.debug"
 					  superClass="cdt.managedbuild.tool.testgnu.assembler">
-				  </tool>   
+				  </tool>
 			   </toolChain>
          </configuration>
          <configuration
@@ -1448,14 +1448,14 @@
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.so.release"
 		          name="so Release ToolChain"
-		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"		          
-		          osList="solaris,linux,hpux,aix,qnx"                
+		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+		          osList="solaris,linux,hpux,aix,qnx"
 		          archList="all"
 		          isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.so.release"
 		              name="so Release Platform"
-		              binaryParser="org.eclipse.cdt.core.ELF"		            
+		              binaryParser="org.eclipse.cdt.core.ELF"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 		          </targetPlatform>
@@ -1464,8 +1464,8 @@
 		              name="so Release Builder"
 		              command="make"
 		              arguments="-k">
-				  </builder>               
-				  <tool				     
+				  </builder>
+				  <tool
 				      id="cdt.managedbuild.tool.testgnu.c.compiler.so.release"
 					  superClass="cdt.managedbuild.tool.testgnu.c.compiler">
 				      <option
@@ -1492,7 +1492,7 @@
 						  defaultValue="testgnu.cpp.compiler.debugging.level.none"
 						  superClass="testgnu.cpp.compiler.option.debugging.level">
 				      </option>
-				  </tool>				
+				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.testgnu.c.linker.so.release"
 					  outputs="so"
@@ -1518,16 +1518,16 @@
 				  <tool
 					  id="cdt.managedbuild.tool.testgnu.assembler.so.release"
 					  superClass="cdt.managedbuild.tool.testgnu.assembler">
-				  </tool>   
-			   </toolChain>  
-         </configuration>         
+				  </tool>
+			   </toolChain>
+         </configuration>
       </projectType>
-          
-      <projectType 
+
+      <projectType
             isTest="true"
             name="testgnu21.lib"
             isAbstract="false"
-            id="cdt.managedbuild.target.testgnu21.lib">                        
+            id="cdt.managedbuild.target.testgnu21.lib">
          <configuration
 			   name="Dbg"
 			   artifactExtension="a"
@@ -1537,14 +1537,14 @@
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.lib.debug"
 		          name="Dbg TC"
-		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"		          
-		          osList="solaris,linux,hpux,aix,qnx"                
+		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+		          osList="solaris,linux,hpux,aix,qnx"
 		          archList="all"
 		          isSystem="true">
 				  <targetPlatform
 					  id="cdt.managedbuild.target.testgnu.platform.lib.debug"
 				 	  name="Dbg P"
-					  binaryParser="org.eclipse.cdt.core.ELF"		            
+					  binaryParser="org.eclipse.cdt.core.ELF"
 					  osList="solaris,linux,hpux,aix,qnx"
 					  archList="all">
 				  </targetPlatform>
@@ -1553,7 +1553,7 @@
 					  name="Dbg B"
 					  command="make"
 					  arguments="-k">
-			      </builder>               		         
+			      </builder>
 				  <tool
 					  id="cdt.managedbuild.tool.testgnu.c.compiler.lib.debug"
 					  superClass="cdt.managedbuild.tool.testgnu.c.compiler">
@@ -1563,7 +1563,7 @@
 						  superClass="testgnu.c.compiler.option.optimization.level">
 				      </option>
 				      <option
-						  id="testgnu.c.compiler.lib.debug.option.debugging.level"						
+						  id="testgnu.c.compiler.lib.debug.option.debugging.level"
 						  defaultValue="testgnu.c.debugging.level.max"
 						  superClass="testgnu.c.compiler.option.debugging.level">
 				      </option>
@@ -1587,12 +1587,12 @@
 				      outputs="a"
                       outputPrefix="lib"
 			          superClass="cdt.managedbuild.tool.testgnu.archiver">
-				  </tool>                 
+				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.testgnu.assembler.lib.debug"
 					  superClass="cdt.managedbuild.tool.testgnu.assembler">
-				  </tool>   
-               </toolChain>                 
+				  </tool>
+               </toolChain>
          </configuration>
          <configuration
                name="Rel"
@@ -1603,14 +1603,14 @@
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.lib.release"
 		          name="Rel TC"
-		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"		          
-		          osList="solaris,linux,hpux,aix,qnx"                
+		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+		          osList="solaris,linux,hpux,aix,qnx"
 		          archList="all"
 		          isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.lib.release"
 		              name="Rel P"
-		              binaryParser="org.eclipse.cdt.core.ELF"		            
+		              binaryParser="org.eclipse.cdt.core.ELF"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 		          </targetPlatform>
@@ -1619,7 +1619,7 @@
 		              name="Rel B"
 		              command="make"
 		              arguments="-k">
-				  </builder>               		            
+				  </builder>
 		          <tool
 					  id="cdt.managedbuild.tool.testgnu.c.compiler.lib.release"
 					  superClass="cdt.managedbuild.tool.testgnu.c.compiler">
@@ -1657,16 +1657,16 @@
 				  <tool
 					  id="cdt.managedbuild.tool.testgnu.assembler.lib.release"
 					  superClass="cdt.managedbuild.tool.testgnu.assembler">
-				  </tool>   
-               </toolChain>				  
-         </configuration>                  
+				  </tool>
+               </toolChain>
+         </configuration>
       </projectType>
-          
-      <projectType 
+
+      <projectType
             isTest="true"
             name="Test Java Attributes"
             isAbstract="false"
-            id="cdt.managedbuild.test.java.attrs">                        
+            id="cdt.managedbuild.test.java.attrs">
          <configuration
 			   name="The One and Only"
 			   artifactName="Testme"
@@ -1697,8 +1697,8 @@
 		              command="makeMe"
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.core.tests.BuildFileGenerator">
-		     	  </builder>               
-               </toolChain>                 
+		     	  </builder>
+               </toolChain>
          </configuration>
       </projectType>
    </extension>
@@ -1720,11 +1720,11 @@
             command="gcc"
             id="cdt.managedbuild.tool.testgnu30.c.linker"
             isSystem="true">
-         <envVarBuildPath 
+         <envVarBuildPath
          	pathType="buildpathLibrary"
          	variableList="LIBRARY_PATH">
          </envVarBuildPath>
-         
+
          <optionCategory
                owner="cdt.managedbuild.tool.testgnu30.c.linker"
                name="MBS30OptCat.General"
@@ -1885,7 +1885,7 @@
             command="g++"
             id="cdt.managedbuild.tool.testgnu30.cpp.linker"
             isSystem="true">
-         <envVarBuildPath 
+         <envVarBuildPath
          	pathType="buildpathLibrary"
          	variableList="LIBRARY_PATH">
          </envVarBuildPath>
@@ -2070,7 +2070,7 @@
             id="cdt.managedbuild.tool.testgnu30.archiver.output">
          </outputType>
       </tool>
-      
+
       <tool
 		  name="MBS30.compiler.gnu.c"
 		  id="cdt.managedbuild.tool.testgnu30.c.compiler"
@@ -2079,7 +2079,7 @@
 		  natureFilter="cnature"
 		  outputFlag="-o"
 		  isSystem="true">
-         <envVarBuildPath 
+         <envVarBuildPath
          	pathType="buildpathInclude"
          	variableList="CPATH,C_INCLUDE_PATH">
          </envVarBuildPath>
@@ -2342,7 +2342,7 @@
 		  natureFilter="ccnature"
 		  outputFlag="-o"
 		  isSystem="true">
-         <envVarBuildPath 
+         <envVarBuildPath
          	pathType="buildpathInclude"
          	variableList="CPATH,CPLUS_INCLUDE_PATH">
          </envVarBuildPath>
@@ -2572,9 +2572,9 @@
               id="cdt.managedbuild.tool.testgnu30.cpp.compiler.output">
           </outputType>
 	  </tool>
-        
-      <projectType      
-            isAbstract="false"     
+
+      <projectType
+            isAbstract="false"
             isTest="true"
             name="MBS30TargetName.gnu.exe"
             id="cdt.managedbuild.target.gnu30.exe">
@@ -2604,24 +2604,24 @@
 		              command="make"
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-		     	  </builder>               
+		     	  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testgnu30.c.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.testgnu30.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.testgnu30.c.compiler">
 			  	      <option
 					      id="gnu.c.compiler.exe.debug.option30.optimization.level"
 						  defaultValue="gnu.c.optimization.level.none"
 						  superClass="gnu.c.compiler.option30.optimization.level">
 					  </option>
-					  <option   
-					      id="gnu.c.compiler.exe.debug.option30.debugging.level"					     
+					  <option
+					      id="gnu.c.compiler.exe.debug.option30.debugging.level"
 						  defaultValue="gnu.c.debugging.level.max"
 					      superClass="gnu.c.compiler.option30.debugging.level">
 					  </option>
 				  </tool>
 				  <tool
                       id="cdt.managedbuild.tool.testgnu30.cpp.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.testgnu30.cpp.compiler">                         
+                      superClass="cdt.managedbuild.tool.testgnu30.cpp.compiler">
                       <option
 				          id="gnu.cpp.compiler.exe.debug.option30.optimization.level"
                           defaultValue="gnu.cpp.compiler.optimization.level.none"
@@ -2636,18 +2636,18 @@
                   <tool
                       id="cdt.managedbuild.tool.testgnu30.c.linker.exe.debug"
                       superClass="cdt.managedbuild.tool.testgnu30.c.linker">
-                  </tool> 
+                  </tool>
                   <tool
                       id="cdt.managedbuild.tool.testgnu30.cpp.linker.exe.debug"
                       superClass="cdt.managedbuild.tool.testgnu30.cpp.linker">
-                  </tool> 
+                  </tool>
 			  </toolChain>
          </configuration>
          <configuration
                name="MBS30ConfigName.Rel"
                id="cdt.managedbuild.config.testgnu30.exe.release"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain
                      archList="all"
                      osList="solaris,linux,hpux,aix,qnx"
@@ -2658,21 +2658,21 @@
                      isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu30.platform.exe.release"
-		              name="MBS30PlatformName.Rel"		             
+		              name="MBS30PlatformName.Rel"
 		              binaryParser="org.eclipse.cdt.core.ELF"
 		              osList="solaris,linux,hpux,aix,qnx"
-		              archList="all">		              
+		              archList="all">
 		          </targetPlatform>
 				  <builder
 				      id="cdt.managedbuild.target.testgnu30.builder.exe.release"
-		              name="MBS30BuilderName.Rel"		              
+		              name="MBS30BuilderName.Rel"
 		              command="make"
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-				  </builder> 
+				  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testgnu30.c.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.testgnu30.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.testgnu30.c.compiler">
 					  <option
 						  id="gnu.c.compiler.exe.release.option30.optimization.level"
 						  defaultValue="gnu.c.optimization.level.most"
@@ -2686,7 +2686,7 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.testgnu30.cpp.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.testgnu30.cpp.compiler">                     
+                      superClass="cdt.managedbuild.tool.testgnu30.cpp.compiler">
 					  <option
 						  id="gnu.cpp.compiler.exe.release.option30.optimization.level"
 						  defaultValue="gnu.cpp.compiler.optimization.level.most"
@@ -2701,25 +2701,25 @@
                   <tool
                       id="cdt.managedbuild.tool.testgnu30.c.linker.exe.release"
                       superClass="cdt.managedbuild.tool.testgnu30.c.linker">
-                  </tool> 
+                  </tool>
                   <tool
                       id="cdt.managedbuild.tool.testgnu30.cpp.linker.exe.release"
                       superClass="cdt.managedbuild.tool.testgnu30.cpp.linker">
-                  </tool>  
+                  </tool>
                </toolChain>
          </configuration>
-      </projectType>     
-      
-      <projectType      
-            isAbstract="false"     
+      </projectType>
+
+      <projectType
+            isAbstract="false"
             isTest="true"
             name="MBS30TargetName.gnu.so"
             id="cdt.managedbuild.target.gnu30.so">
          <configuration
                name="MBS30ConfigName.Dbg"
                cleanCommand="rm -rf"
-               artifactExtension="so"               
-               errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"                          
+               artifactExtension="so"
+               errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"
                id="cdt.managedbuild.config.testgnu30.so.debug">
                <toolChain
                      archList="all"
@@ -2732,7 +2732,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu30.platform.so.debug"
 		              name="MBS30PlatformName.Dbg"
-		              binaryParser="org.eclipse.cdt.core.ELF"		            
+		              binaryParser="org.eclipse.cdt.core.ELF"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 		          </targetPlatform>
@@ -2741,8 +2741,8 @@
 		              name="MBS30BuilderName.Dbg"
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
-				  </builder>               		         
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+				  </builder>
 				  <tool
 				      id="cdt.managedbuild.tool.testgnu30.c.compiler.so.debug"
 					  superClass="cdt.managedbuild.tool.testgnu30.c.compiler">
@@ -2822,7 +2822,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu30.platform.so.release"
 		              name="MBS30PlatformName.Rel"
-		              binaryParser="org.eclipse.cdt.core.ELF"		            
+		              binaryParser="org.eclipse.cdt.core.ELF"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 		          </targetPlatform>
@@ -2831,9 +2831,9 @@
 		              name="MBS30BuilderName.Rel"
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
-				  </builder>               
-				  <tool				     
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+				  </builder>
+				  <tool
 				      id="cdt.managedbuild.tool.testgnu30.c.compiler.so.release"
 					  superClass="cdt.managedbuild.tool.testgnu30.c.compiler">
 				      <option
@@ -2860,7 +2860,7 @@
 						  defaultValue="gnu.cpp.compiler.debugging.level.none"
 						  superClass="gnu.cpp.compiler.option30.debugging.level">
 				      </option>
-				  </tool>				
+				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.testgnu30.c.linker.so.release"
 					  superClass="cdt.managedbuild.tool.testgnu30.c.linker">
@@ -2893,15 +2893,15 @@
 			              id="cdt.managedbuild.tool.testgnu30.cpp.linker.so.release.output">
 			          </outputType>
 				  </tool>
-			   </toolChain>  
-         </configuration>         
+			   </toolChain>
+         </configuration>
       </projectType>
-          
-      <projectType 
+
+      <projectType
             isTest="true"
             name="MBS30TargetName.gnu.lib"
             isAbstract="false"
-            id="cdt.managedbuild.target.gnu30.lib">                        
+            id="cdt.managedbuild.target.gnu30.lib">
          <configuration
 			   name="MBS30ConfigName.Dbg"
 			   artifactExtension="a"
@@ -2919,7 +2919,7 @@
 				  <targetPlatform
 					  id="cdt.managedbuild.target.testgnu30.platform.lib.debug"
 				 	  name="MBS30PlatformName.Dbg"
-					  binaryParser="org.eclipse.cdt.core.ELF"		            
+					  binaryParser="org.eclipse.cdt.core.ELF"
 					  osList="solaris,linux,hpux,aix,qnx"
 					  archList="all">
 				  </targetPlatform>
@@ -2928,8 +2928,8 @@
 					  name="MBS30BuilderName.Dbg"
 					  command="make"
 					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
-			      </builder>               		         
+					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+			      </builder>
 				  <tool
 					  id="cdt.managedbuild.tool.testgnu30.c.compiler.lib.debug"
 					  superClass="cdt.managedbuild.tool.testgnu30.c.compiler">
@@ -2939,7 +2939,7 @@
 						  superClass="gnu.c.compiler.option30.optimization.level">
 				      </option>
 				      <option
-						  id="gnu.c.compiler.lib.debug.option30.debugging.level"						
+						  id="gnu.c.compiler.lib.debug.option30.debugging.level"
 						  defaultValue="gnu.c.debugging.level.max"
 						  superClass="gnu.c.compiler.option30.debugging.level">
 				      </option>
@@ -2961,8 +2961,8 @@
 			      <tool
 		    		  id="cdt.managedbuild.tool.testgnu30.archiver.lib.debug"
 			          superClass="cdt.managedbuild.tool.testgnu30.archiver">
-				  </tool>                 
-               </toolChain>                 
+				  </tool>
+               </toolChain>
          </configuration>
          <configuration
                name="MBS30ConfigName.Rel"
@@ -2981,7 +2981,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu30.platform.lib.release"
 		              name="MBS30PlatformName.Rel"
-		              binaryParser="org.eclipse.cdt.core.ELF"		            
+		              binaryParser="org.eclipse.cdt.core.ELF"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 		          </targetPlatform>
@@ -2990,8 +2990,8 @@
 		              name="MBS30BuilderName.Rel"
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
-				  </builder>               		            
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+				  </builder>
 		          <tool
 					  id="cdt.managedbuild.tool.testgnu30.c.compiler.lib.release"
 					  superClass="cdt.managedbuild.tool.testgnu30.c.compiler">
@@ -3024,10 +3024,10 @@
 					  id="cdt.managedbuild.tool.testgnu30.archiver.lib.release"
 				      superClass="cdt.managedbuild.tool.testgnu30.archiver">
 				  </tool>
-               </toolChain>				  
-         </configuration>                  
+               </toolChain>
+         </configuration>
       </projectType>
-      
+
 	  <!-- Test tools and project types for initial and final copy steps -->
       <tool
       		name="Copy tool"
@@ -3044,7 +3044,7 @@
 			outputs="c"
 			buildVariable="CS">
          </outputType>
-      </tool>   
+      </tool>
       <tool
       		name="Deploy tool"
       		command="cp"
@@ -3061,10 +3061,10 @@
 			outputs="exe"
 			buildVariable="FINAL">
          </outputType>
-      </tool>   
-      
-      <projectType      
-            isAbstract="false"     
+      </tool>
+
+      <projectType
+            isAbstract="false"
             isTest="true"
             name="Testprepost30.gnu.exe"
             id="cdt.managedbuild.Testprepost30.gnu.exe">
@@ -3094,24 +3094,24 @@
 		              command="make"
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-		     	  </builder>               
+		     	  </builder>
                   <tool
                       id="cdt.managedbuild.tool.Testprepost30.gnu.c.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.testgnu30.c.compiler">                         
+                      superClass="cdt.managedbuild.tool.testgnu30.c.compiler">
 			  	      <option
 					      id="gnu.c.compiler.Testprepost30.exe.debug.option.optimization.level"
 						  defaultValue="gnu.c.optimization.level.none"
 						  superClass="gnu.c.compiler.option30.optimization.level">
 					  </option>
-					  <option   
-					      id="gnu.c.compiler.Testprepost30.exe.debug.option.debugging.level"					     
+					  <option
+					      id="gnu.c.compiler.Testprepost30.exe.debug.option.debugging.level"
 						  defaultValue="gnu.c.debugging.level.max"
 					      superClass="gnu.c.compiler.option30.debugging.level">
 					  </option>
 				  </tool>
 				  <tool
                       id="cdt.managedbuild.tool.Testprepost30.gnu.cpp.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.testgnu30.cpp.compiler">                         
+                      superClass="cdt.managedbuild.tool.testgnu30.cpp.compiler">
                       <option
 				          id="gnu.cpp.compiler.Testprepost30.exe.debug.option.optimization.level"
                           defaultValue="gnu.cpp.compiler.optimization.level.none"
@@ -3131,28 +3131,28 @@
 			            superClass="cdt.managedbuild.tool.testgnu30.c.linker.output"
 						outputs="foo">
 			         </outputType>
-                  </tool> 
+                  </tool>
                   <tool
                       id="cdt.managedbuild.tool.Testprepost30.gnu.cpp.linker.exe.debug"
                       superClass="cdt.managedbuild.tool.testgnu30.cpp.linker">
-                  </tool> 
+                  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool30.copy.x.c.1"
 					  superClass="cdt.managedbuild.tool30.copy.x.c">
-				  </tool>   
+				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool30.deploy.x.c.1"
 					  superClass="cdt.managedbuild.tool30.deploy.x.c">
-				  </tool>   
+				  </tool>
 			  </toolChain>
          </configuration>
-      </projectType>     
-      
+      </projectType>
+
 	  <!-- Test tools and project types for a more complicated tool-chain, using
 	       tar -xf, gcc, strip, linker, cjpeg, copy -->
-      
-      <projectType      
-            isAbstract="false"     
+
+      <projectType
+            isAbstract="false"
             isTest="true"
             name="test30_1"
             id="test30_1.gnu.so">
@@ -3180,7 +3180,7 @@
 		              id="test30_1.gnu.so.builder"
 		              name="Builder for test30_1"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-		     	  </builder>               
+		     	  </builder>
                   <tool
                       id="test30_1.gnu.so.c.compiler"
                       superClass="cdt.managedbuild.tool.testgnu30.c.compiler">
@@ -3203,7 +3203,7 @@
 			            id="test30_1.gnu.so.c.linker.input"
 			            superClass="cdt.managedbuild.tool.testgnu30.c.linker.input">
 			         </inputType>
-                  </tool> 
+                  </tool>
 			      <tool
 			      		name="Un-tar"
 			      		command="tar"
@@ -3237,7 +3237,7 @@
 			            id="test30_1.gnu.so.tar.outputbmp"
 						outputNames="CDT.bmp">
 			         </outputType>
-			      </tool>   
+			      </tool>
 			      <tool
 			      		name="Strip object file"
 			      		command="strip"
@@ -3267,7 +3267,7 @@
 			            namePattern="%.o"
 			            outputs="o">
 			         </outputType>
-			      </tool>   
+			      </tool>
 			      <tool
 			      		name="Convert to jpeg"
 			      		command="cjpeg"
@@ -3293,7 +3293,7 @@
 			            primaryInputType="test30_1.gnu.so.cjpeg.input"
 			            outputs="jpeg">
 			         </outputType>
-			      </tool>   
+			      </tool>
 				  <tool
 					 id="test30_1.gnu.so.deploy"
 					 superClass="cdt.managedbuild.tool30.deploy.x.c">
@@ -3305,18 +3305,18 @@
 						 id="test30_1.gnu.so.deploy.output"
 						 outputs="so.4.5.6">
 			         </outputType>
-				  </tool>   
+				  </tool>
 			  </toolChain>
          </configuration>
-      </projectType>      
-                 
+      </projectType>
+
       <toolChain
             archList="all"
             id="test30_sto.dummy.toolchain.parent"
             isAbstract="true"
             name="test30_sto ToolChain.Parent"
             osList="all"
-            isSystem="true">   
+            isSystem="true">
          <optionCategory
                id="test30_sto.dummy.category.5"
                name="Category.Top.5.NoIcon"/>
@@ -3462,7 +3462,7 @@
                      icon="icons/one.gif"
                      id="test30_sto.dummy.tool.4"
                      isAbstract="false"
-                     name="Tool4.Icon1"/>                     
+                     name="Tool4.Icon1"/>
                <optionCategory
                      icon="icons/one.gif"
                      id="test30_sto.dummy.category.7"
@@ -3489,13 +3489,13 @@
             </toolChain>
          </configuration>
       </projectType>
-      
+
 	  <!-- Test tools and project types for testing multiple input types,
 	       multiple output types, and input & output options
 	       tar -cf, tar -tf, & cat -->
-      
-      <projectType      
-            isAbstract="false"     
+
+      <projectType
+            isAbstract="false"
             isTest="true"
             name="test30_2"
             id="test30_2.tar">
@@ -3514,7 +3514,7 @@
 		              id="test30_2.tar.builder"
 		              name="Builder for test30_2"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-		     	  </builder>               
+		     	  </builder>
 			      <tool
 			      		name="tar-create"
 			      		command="tar"
@@ -3559,7 +3559,7 @@
 			            primaryOutput="true"
 						option="test30_2.tar-create.filename">
 			         </outputType>
-			      </tool>   
+			      </tool>
 			      <tool
 			      		name="tar-list"
 			      		command="tar"
@@ -3596,7 +3596,7 @@
 			            buildVariable="LOGFILE"
 			            option="test30_2.tar-list.filename">
 			         </outputType>
-			      </tool>   
+			      </tool>
 			      <tool
 			      		name="cat"
 			      		command="cat"
@@ -3615,9 +3615,9 @@
 			      </tool>
 			  </toolChain>
          </configuration>
-      </projectType>                 
+      </projectType>
 
-<!-- 
+<!--
 	Project type for testing Environment variables and Macros features
 	Note: toolchains are cut and cannot be used for real compilation.
 -->
@@ -3657,9 +3657,9 @@
 		              arguments="-k"
 		              variableFormat="@="
 		              isVariableCaseSensitive="false"
-		              reservedMacroNames="PATH"		              
+		              reservedMacroNames="PATH"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-		     	  </builder>               
+		     	  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testenv.c.compiler.exe.debug"
                       superClass="cdt.managedbuild.tool.testgnu.c.compiler">
@@ -3690,7 +3690,7 @@
 				  </tool>
 				  <tool
                       id="cdt.managedbuild.tool.testenv.cpp.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">                         
+                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">
                   </tool>
 			  </toolChain>
          </configuration>
@@ -3698,7 +3698,7 @@
                name="Two"
                id="cdt.managedbuild.config.testenv.exe.release"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain
                      archList="all"
                      configurationMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
@@ -3710,14 +3710,14 @@
                      isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testenv.platform.exe.release"
-		              name="Rel Platform"		             
+		              name="Rel Platform"
 		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
 		              osList="solaris,linux,hpux,aix,qnx"
-		              archList="all">		              
+		              archList="all">
 		          </targetPlatform>
 				  <builder
 				      id="cdt.managedbuild.target.testenv.builder.exe.release"
-		              name="Rel Builder"		              
+		              name="Rel Builder"
 		              command="make"
 		              isVariableCaseSensitive="true"
 		              macroInputFileNameValue="$(notdir $&lt;)"
@@ -3731,10 +3731,10 @@
 			          macroOutputFileRelPathValue="$@"
 			          macroOutputDirRelPathValue="$(dir $@)"
 		              arguments="-k">
-				  </builder> 
+				  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testenv.c.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">
 	                  <envVarBuildPath
         	                  pathType="buildpathInclude"
                 	          variableList="CFGI,CFG1,PRJI">
@@ -3763,16 +3763,16 @@
 		          </targetPlatform>
 				  <builder
 				      id="cdt.managedbuild.target.testenv.builder.exe.xz"
-		              name="XZ Builder"		              
+		              name="XZ Builder"
 		              command="make"
 		              isVariableCaseSensitive="false"
 		              variableFormat="@="
 		              reservedMacroNameSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
 		              arguments="-k">
-				  </builder> 
+				  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testenv.c.compiler.exe.xz"
-                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">
                   </tool>
                </toolChain>
          </configuration>
@@ -3790,14 +3790,14 @@
 		          </targetPlatform>
 				  <builder
 				      id="cdt.managedbuild.target.testenv.builder.exe.min"
-		              name="Min Builder"		              
+		              name="Min Builder"
 		              command="make"
 		              isVariableCaseSensitive="true"
 		              variableFormat="@=">
-				  </builder> 
+				  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testenv.c.compiler.exe.min"
-                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">
                   </tool>
                </toolChain>
          </configuration>
@@ -3830,9 +3830,9 @@
 		              arguments="-k"
 		              variableFormat="@="
 		              isVariableCaseSensitive="false"
-		              reservedMacroNames="PATH"		              
+		              reservedMacroNames="PATH"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.core.tests.TestMacro">
-		     	  </builder>               
+		     	  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testenv.c.compiler.exe.five"
                       superClass="cdt.managedbuild.tool.testgnu.c.compiler">
@@ -3855,13 +3855,13 @@
 				  </tool>
 				  <tool
                       id="cdt.managedbuild.tool.testenv.cpp.compiler.exe.five"
-                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">                         
+                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">
                   </tool>
 			  </toolChain>
          </configuration>
-         
-      </projectType>     
-     
+
+      </projectType>
+
   	  <!-- Test tool-chain defined at top level -->
 
       <toolChain
@@ -3951,7 +3951,7 @@
       	isAbstract="false"
       	isTest="true"
         name="TopTC exe"
-        id="TopTC.target.exe">   
+        id="TopTC.target.exe">
             <configuration
             	id="TopTC.config.exe.debug"
             	name="Debug"
@@ -3992,7 +3992,7 @@
 		    </configuration>
 	  </projectType>
 
-<!-- 
+<!--
 	Project type for testing  Configuration Name Provider & Multiple Tool Chain versions features
 	Note: toolchains are cut and cannot be used for real compilation.
 -->
@@ -4011,7 +4011,7 @@
                <toolChain
                      id="cdt.managedbuild.toolchain.testMultipleVersions.exe.debug_1.1.0"
                      name="Debug IA32 ToolChain"
-                     archList="x86"                                         
+                     archList="x86"
                      osList="linux"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      isSystem="true">
@@ -4029,16 +4029,16 @@
 		              arguments="-k"
 		              variableFormat="@="
 		              isVariableCaseSensitive="false"
-		              reservedMacroNames="PATH"		              
+		              reservedMacroNames="PATH"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-		     	  </builder>               
+		     	  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testMultipleVersions.c.compiler.exe.debug_1.1.0"
                       superClass="cdt.managedbuild.tool.testgnu.c.compiler">
 				  </tool>
 				  <tool
                       id="cdt.managedbuild.tool.testMultipleVersions.cpp.compiler.exe.debug_1.1.0"
-                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">                         
+                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">
                   </tool>
 			  </toolChain>
          </configuration>
@@ -4047,9 +4047,9 @@
                description="release configuration for IA32 windows"
                id="cdt.managedbuild.config.testMultipleVersions.exe.release"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain
-                     archList="x86"                                         
+                     archList="x86"
                      osList="linux"
                      id="cdt.managedbuild.toolchain.testMultipleVersions.exe.release"
                      name="Release IA32 ToolChain"
@@ -4057,20 +4057,20 @@
                      isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testMultipleVersions.platform.exe.release"
-		              name="Release IA32 Platform"		             
+		              name="Release IA32 Platform"
 		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
 		              osList="solaris,linux,hpux,aix,qnx"
-		              archList="all">		              
+		              archList="all">
 		          </targetPlatform>
 				  <builder
 				      id="cdt.managedbuild.target.testMultipleVersions.builder.exe.release"
-		              name="Release IA32 Builder"		              
+		              name="Release IA32 Builder"
 		              command="make"
 		              arguments="-k">
-				  </builder> 
+				  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testMultipleVersions.c.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">
                   </tool>
                </toolChain>
          </configuration>
@@ -4080,7 +4080,7 @@
                id="cdt.managedbuild.config.testMultipleVersions.exe.debug64"
                cleanCommand="rm -rf">
                <toolChain
-                     archList="ia64"                                         
+                     archList="ia64"
                      osList="linux"
                      configurationMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
                      id="cdt.managedbuild.toolchain.testMultipleVersions.exe.debug64_2.2.0"
@@ -4093,13 +4093,13 @@
 		          </targetPlatform>
 				  <builder
 				      id="cdt.managedbuild.target.testMultipleVersions.builder.exe.debug64_3.2.1"
-		              name="Debug IA64 Builder"		              
+		              name="Debug IA64 Builder"
 		              command="make"
 		              arguments="-k">
-				  </builder> 
+				  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testMultipleVersions.c.compiler.exe.debug64_5.0.9"
-                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">
                   </tool>
                </toolChain>
          </configuration>
@@ -4108,8 +4108,8 @@
                description="release configuration for IA64 windows"
                id="cdt.managedbuild.config.testMultipleVersions.exe.release64">
                <toolChain
-                    archList="ia64"                                         
-                    osList="linux"               
+                    archList="ia64"
+                    osList="linux"
                      id="cdt.managedbuild.toolchain.testMultipleVersions.exe.release64_2.2.0"
                      versionsSupported="1.2.0,2.0.0,2.1.3"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
@@ -4121,29 +4121,29 @@
 		          </targetPlatform>
 				  <builder
 				      id="cdt.managedbuild.target.testMultipleVersions.builder.exe.release64_3.2.1"
-		              name="Release IA64 Builder"		              
+		              name="Release IA64 Builder"
    		              versionsSupported="2.0.0,2.1.1,3.0.3"
 		              command="make"
 		              isVariableCaseSensitive="true"
 		              variableFormat="@=">
-				  </builder> 
+				  </builder>
                   <tool
                       id="cdt.managedbuild.tool.testMultipleVersions.c.compiler.exe.release64_5.0.9"
-                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">
                   </tool>
                </toolChain>
          </configuration>
-        
+
       </projectType>
-      
-<!-- 
+
+<!--
 	Project type for testing  Project Converter convenience routines
 	Note: toolchains are cut and cannot be used for real compilation.
 -->
      <projectType
          id="testProjectConverterConvenienceRoutines.exe"
          isAbstract="false"
-         isTest="true"         
+         isTest="true"
          name="testProjectConverterConvenienceRoutines.exe">
          <configuration
                name="Debug"
@@ -4154,8 +4154,8 @@
                <toolChain isSystem="true"
                      id="toolchain.testProjectConverterConvenienceRoutines.exe.debug_1.1.0"
                      name="Debug IA32 ToolChain"
-                     archList="x86"                                         
-                     osList="linux">                     
+                     archList="x86"
+                     osList="linux">
 		          <targetPlatform
 		              id="target.testProjectConverterConvenienceRoutines.platform.exe.debug"
 		              name="Debug IA32 Platform"
@@ -4170,16 +4170,16 @@
 		              arguments="-k"
 		              variableFormat="@="
 		              isVariableCaseSensitive="false"
-		              reservedMacroNames="PATH"		              
+		              reservedMacroNames="PATH"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-		     	  </builder>               
+		     	  </builder>
                   <tool
                       id="tool.testProjectConverterConvenienceRoutines.c.compiler.exe.debug_1.1.0"
                       superClass="cdt.managedbuild.tool.testgnu.c.compiler">
 				  </tool>
 				  <tool
                       id="tool.testProjectConverterConvenienceRoutines.cpp.compiler.exe.debug_1.1.0"
-                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">                         
+                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">
                   </tool>
 			  </toolChain>
          </configuration>
@@ -4259,7 +4259,7 @@
 
    </extension>
 
- <!-- Test Converters for testing the converter convenience routines -->      
+ <!-- Test Converters for testing the converter convenience routines -->
    <extension
          point="org.eclipse.cdt.managedbuilder.core.projectConverter">
       <converter
@@ -4267,12 +4267,12 @@
             name="Test Project Converter"
             class="org.eclipse.cdt.managedbuilder.core.tests.ProjectConverter"
             fromId="toolchain.testProjectConverterConvenienceRoutines.exe.debug_1.1.0"
-            toId="toolchain.testProjectConverterConvenienceRoutines.exe.debug_1.2.0"            
+            toId="toolchain.testProjectConverterConvenienceRoutines.exe.debug_1.2.0"
             mbsVersion="3.0.0">
       </converter>
-   </extension> 
-   
-   <!-- Test Converters for testing the conversion while importing a CDT2.1 project -->      
+   </extension>
+
+   <!-- Test Converters for testing the conversion while importing a CDT2.1 project -->
 
     <extension point="org.eclipse.cdt.managedbuilder.core.projectConverter">
     <converter
@@ -4280,7 +4280,7 @@
             name="Test Tool Chain Converter"
             class="org.eclipse.cdt.managedbuilder.core.tests.ProjectConverter21"
             fromId="test.toolChain_1.0.0"
-            toId="test.toolChain_2.0.0"            
+            toId="test.toolChain_2.0.0"
             mbsVersion="3.0.0">
      </converter>
      <converter
@@ -4288,7 +4288,7 @@
             name="Test Tool1 Converter"
             class="org.eclipse.cdt.managedbuilder.core.tests.ProjectConverter21"
             fromId="test.tool1_1.0.0"
-            toId="test.tool1_2.0.0"            
+            toId="test.tool1_2.0.0"
             mbsVersion="3.0.0">
      </converter>
      <converter
@@ -4296,21 +4296,21 @@
             name="Test Tool2 Converter"
             class="org.eclipse.cdt.managedbuilder.core.tests.ProjectConverter21"
             fromId="test.tool2_1.0.0"
-            toId="test.tool2_2.0.0"            
+            toId="test.tool2_2.0.0"
             mbsVersion="3.0.0">
      </converter>
    </extension>
-         
- <!-- Test Converters for testing the conversion while importing a CDT2.0 & CDT2.1 projects -->      
+
+ <!-- Test Converters for testing the conversion while importing a CDT2.0 & CDT2.1 projects -->
 
  <extension
          point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
       <managedBuildRevision
             fileVersion="3.0.0">
       </managedBuildRevision>
- 
- 	<projectType      
-            isAbstract="false"     
+
+ 	<projectType
+            isAbstract="false"
             isTest="true"
             name="Test - Version 1.0"
             id="test_1.0.0">
@@ -4318,43 +4318,43 @@
                name="Test Configuration"
                id="test.config_1.0.0"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain isSystem="true"
 		          id="test.toolChain_1.0.0"
 		          name="Test ToolChain Ver 1.0"
-		          convertToId="test.toolChain_2.0.0"		          
+		          convertToId="test.toolChain_2.0.0"
 		          archList="all">
 		          <targetPlatform
 		              id="test.target_1.0.0"
-		              name="Test Target"		             
+		              name="Test Target"
 		              binaryParser="org.eclipse.cdt.core.ELF"
-		              archList="all">		              
+		              archList="all">
 		          </targetPlatform>
 				  <builder
 				      id="test.builder_1.0.0"
-		              name="Test Builder Version 1.0"		              
+		              name="Test Builder Version 1.0"
 		              command="make"
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-				  </builder> 
+				  </builder>
                   <tool
                       id="test.tool1_1.0.0"
                       name="Test Tool 1 - - Version 1.0"
                       convertToId="test.tool1_2.0.0"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
                   </tool>
                   <tool
                       id="test.tool2_1.0.0"
                       name="Test Tool 2 - Version 1.0"
                       convertToId="test.tool2_2.0.0"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">                     
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
                   </tool>
                </toolChain>
          </configuration>
-      </projectType>          
+      </projectType>
 
-	 <projectType      
-            isAbstract="false"     
+	 <projectType
+            isAbstract="false"
             isTest="true"
             name="Test - Version 2.0"
             id="test_2.0.0">
@@ -4362,38 +4362,38 @@
                name="Test Configuration 2.0"
                id="test.config_2.0.0"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain isSystem="true"
 		          id="test.toolChain_2.0.0"
 		          name="Test ToolChain Ver 2.0"
 		          archList="all">
 		          <targetPlatform
 		              id="test.target_2.0.0"
-		              name="Test Target ver 2.0"		             
+		              name="Test Target ver 2.0"
 		              binaryParser="org.eclipse.cdt.core.ELF"
-		              archList="all">		              
+		              archList="all">
 		          </targetPlatform>
 				  <builder
 				      id="test.builder_2.0.0"
-		              name="Test Builder Version 2.0"		              
+		              name="Test Builder Version 2.0"
 		              command="make"
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-				  </builder> 
+				  </builder>
                   <tool
                       id="test.tool1_2.0.0"
                       name="Test Tool 1 - - Version 2.0"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
                   </tool>
                   <tool
                       id="test.tool2_2.0.0"
                       name="Test Tool 2 - Version 2.0"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">                     
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
                   </tool>
                </toolChain>
          </configuration>
       </projectType>
-      
+
       <projectType
             isAbstract="false"
             name="Test"
@@ -4401,8 +4401,8 @@
             superClass="cdt.managedbuild.target.gnu.exe"
             id="test.target">
             <configuration id="test.config" name="Test Configuration">
-            	<toolChain isSystem="true" 
-            		id="test.toolchain" 
+            	<toolChain isSystem="true"
+            		id="test.toolchain"
             		name="Test Toolchain"
             		convertToId="test.toolchain_1.2.0">
 					<builder
@@ -4412,18 +4412,18 @@
 			              command="make"
 			              arguments="-k">
 			     	</builder>
-            		<tool 
+            		<tool
             			id="test.c.compiler"
             			superClass="cdt.managedbuild.tool.gnu.c.compiler">
             		</tool>
-            		<tool 
+            		<tool
             			id="test.cpp.compiler"
             			superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
             		</tool>
             	</toolChain>
 			</configuration>
       </projectType>
-      
+
       <projectType
             isAbstract="false"
             isTest="true"
@@ -4431,9 +4431,9 @@
             superClass="cdt.managedbuild.target.gnu.exe"
             id="test.target_1.2.0">
             <configuration id="test.config_1.2.0" name="Test Configuration">
-            	<toolChain isSystem="true" 
-            		id="test.toolchain_1.2.0" 
-            		name="Test Toolchain 1.2.0">     
+            	<toolChain isSystem="true"
+            		id="test.toolchain_1.2.0"
+            		name="Test Toolchain 1.2.0">
 					<builder
 						  superClass="cdt.managedbuild.target.gnu.builder"
 					      id="test.builder_1.2.0"
@@ -4441,11 +4441,11 @@
 			              command="make"
 			              arguments="-k">
 			     	</builder>
-            		<tool 
+            		<tool
             			id="test.c.compiler_1.2.0"
             			superClass="cdt.managedbuild.tool.gnu.c.compiler">
             		</tool>
-            		<tool 
+            		<tool
             			id="test.cpp.compiler_1.2.0"
             			superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
             		</tool>
@@ -4455,8 +4455,8 @@
 
 <!-- tool chain definitions for test project type for verifying the project conversion -->
 
- 	<projectType      
-            isAbstract="false"     
+ 	<projectType
+            isAbstract="false"
             isTest="true"
             name="TestProject Conversion - Version 1.0"
             convertToId="testProject_2.0.0"
@@ -4465,40 +4465,40 @@
                name="Test Configuration"
                id="testProject.config_1.0.0"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain isSystem="true"
 		          id="testProject.toolChain_1.0.0"
 		          name="Test ToolChain Ver 1.0"
 		          archList="all">
 		          <targetPlatform
 		              id="testProject.target_1.0.0"
-		              name="Test Target"		             
+		              name="Test Target"
 		              binaryParser="org.eclipse.cdt.core.ELF"
-		              archList="all">		              
+		              archList="all">
 		          </targetPlatform>
 				  <builder
 				      id="testProject.builder_1.0.0"
-		              name="Test Builder Version 1.0"		              
+		              name="Test Builder Version 1.0"
 		              command="make"
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-				  </builder> 
+				  </builder>
                   <tool
                       id="testProject.tool1_1.0.0"
                       name="Test Tool 1 - - Version 1.0"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
                   </tool>
                   <tool
                       id="testProject.tool2_1.0.0"
                       name="Test Tool 2 - Version 1.0"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">                     
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
                   </tool>
                </toolChain>
          </configuration>
-      </projectType>          
-      
-      <projectType      
-            isAbstract="false"     
+      </projectType>
+
+      <projectType
+            isAbstract="false"
             isTest="true"
             name="TestProject Conversion - Version 2.0"
             id="testProject_2.0.0">
@@ -4506,40 +4506,40 @@
                name="Test Configuration"
                id="testProject.config_2.0.0"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain isSystem="true"
 		          id="testProject.toolChain_2.0.0"
 		          name="Test ToolChain Ver 2.0"
 		          archList="all">
 		          <targetPlatform
 		              id="testProject.target_2.0.0"
-		              name="Test Target"		             
+		              name="Test Target"
 		              binaryParser="org.eclipse.cdt.core.ELF"
-		              archList="all">		              
+		              archList="all">
 		          </targetPlatform>
 				  <builder
 				      id="testProject.builder_2.0.0"
-		              name="Test Builder Version 2.0"		              
+		              name="Test Builder Version 2.0"
 		              command="make"
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-				  </builder> 
+				  </builder>
                   <tool
                       id="testProject.tool1_2.0.0"
                       name="Test Tool 1 - - Version 2.0"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
                   </tool>
                   <tool
                       id="testProject.tool2_2.0.0"
                       name="Test Tool 2 - Version 2.0"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">                     
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
                   </tool>
                </toolChain>
          </configuration>
-      </projectType>          
-      
+      </projectType>
+
    </extension>
-   
+
    <extension
          point="org.eclipse.cdt.managedbuilder.core.projectConverter">
       <converter
@@ -4547,7 +4547,7 @@
             name="Test Project Converter"
             class="org.eclipse.cdt.managedbuilder.core.tests.ProjectConverter20"
             fromId="test.toolchain"
-            toId="test.toolchain_1.2.0"            
+            toId="test.toolchain_1.2.0"
             mbsVersion="3.0.0">
       </converter>
       <!-- converter for the projectType testProject_1.0.0 -->
@@ -4556,11 +4556,11 @@
             name="Test Project Converter"
             class="org.eclipse.cdt.managedbuilder.core.tests.TestProjectConverter"
             fromId="testProject_1.0.0"
-            toId="testProject_2.0.0"            
+            toId="testProject_2.0.0"
             mbsVersion="3.0.0">
       </converter>
-      
-   </extension>  
+
+   </extension>
 
    <extension
          id="cdt.test.fortran.toolchain"
@@ -4588,14 +4588,14 @@
 			outputs="obj"
             buildVariable="OBJS"
             id="cdt.test.fortran.compilestep.output">
-        </outputType>		
+        </outputType>
         <outputType
 			outputs="mod"
             buildVariable="MODS"
             multipleOfType="true"
             nameProvider="org.eclipse.cdt.managedbuilder.core.tests.DefaultFortranDependencyCalculator"
             id="cdt.test.fortran.compilestep.output.modules">
-        </outputType>		
+        </outputType>
 		<!-- pp General -->
         <optionCategory
 			owner="cdt.test.fortran.compilestep"
@@ -4653,9 +4653,9 @@
 			id="cdt.test.fortran.compilestep.coptions">
 		</option>
 	</tool>
-    
+
     <!-- Linker tool -->
-    
+
     <tool
         natureFilter="both"
         name="Linker"
@@ -4685,7 +4685,7 @@
             buildVariable="EXECUTABLES"
             primaryOutput="true"
             id="cdt.test.fortran.linkstep.output">
-        </outputType>        
+        </outputType>
 		<!-- pp Libraries  -->
 		<optionCategory
             owner="cdt.test.fortran.linkstep"
@@ -4720,10 +4720,10 @@
             id="cdt.test.fortran.linkstep.loptions">
 		</option>
     </tool>
-                         
+
     <!-- Executable project type -->
-      
-    <projectType      
+
+    <projectType
         isTest="true"
         isAbstract="false"
         name="Fortran Executable"
@@ -4743,18 +4743,18 @@
 		            name="Platform.Executable.Release"
 		            binaryParser="org.eclipse.cdt.core.PE"
 		            osList="win32"
-		            archList="x86">		              
+		            archList="x86">
 		        </targetPlatform>
 				<builder
 				    id="cdt.test.fortran.builder.executable.release"
-		            name="Builder.Executable.Release"		              
+		            name="Builder.Executable.Release"
 		            command="make"
                     arguments="-k"
-                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
-				</builder> 				  				  
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+				</builder>
 				<tool
 				    id="cdt.test.fortran.compilestep.executable.release"
-					superClass="cdt.test.fortran.compilestep">					
+					superClass="cdt.test.fortran.compilestep">
 				    <option
 				        id="cdt.test.fortran.compilestep.general.optimization.executable.release"
 						defaultValue="general.opt.speed"
@@ -4766,7 +4766,7 @@
 						superClass="cdt.test.fortran.compilestep.general.debug">
 				    </option>
 				</tool>
-				<tool               
+				<tool
 					id="cdt.test.fortran.linkstep.executable.release"
 					superClass="cdt.test.fortran.linkstep">
 				</tool>
@@ -4784,18 +4784,18 @@
                 archList="x86">
                 <targetPlatform
 		            id="cdt.test.fortran.platform.executable.debug"
-		            name="Platform.Executable.Debug"		            
+		            name="Platform.Executable.Debug"
 		            binaryParser="org.eclipse.cdt.core.PE"
 		            osList="win32"
-		            archList="x86">		              
+		            archList="x86">
 		        </targetPlatform>
 				<builder
 				    id="cdt.test.fortran.builder.executable.debug"
-		            name="Builder.Executable.Debug"		              
+		            name="Builder.Executable.Debug"
 		            command="make"
                     arguments="-k"
-                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
-				</builder> 				  				  
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+				</builder>
 				<tool
 				    id="cdt.test.fortran.compilestep.executable.debug"
 					superClass="cdt.test.fortran.compilestep">
@@ -4810,14 +4810,14 @@
 						superClass="cdt.test.fortran.compilestep.general.debug">
 					</option>
 				</tool>
-				<tool               
+				<tool
 					id="cdt.test.fortran.linkstep.executable.debug"
 					superClass="cdt.test.fortran.linkstep">
 				</tool>
-		    </toolChain>		  
+		    </toolChain>
         </configuration>
     </projectType>
-    
+
     <!-- Executable project type end -->
 
     <!-- Project type for testing assignToOption -->
@@ -4849,11 +4849,11 @@
                      superClass="cdt.test.assignToOption.exeLinker"/>
 				<builder
 				    id="cdt.test.assignToOption.builder"
-		            name="AssignToOption Builder"		              
+		            name="AssignToOption Builder"
 		            command="make"
                     arguments="-k"
-                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
-				</builder> 				  				  
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+				</builder>
             </toolChain>
          </configuration>
     </projectType>
@@ -4989,15 +4989,15 @@
                 </tool>
 				<builder
 				    id="cdt.test.customOptionCommand.builder"
-		            name="Builder"		              
+		            name="Builder"
 		            command="make"
                     arguments="-k"
-                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
-				</builder> 				  				  
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+				</builder>
             </toolChain>
          </configuration>
     </projectType>
-    
+
     <!-- Project type for testing option command ${VALUE} -->
 
     <projectType
@@ -5062,17 +5062,17 @@
                 </tool>
 				<builder
 				    id="cdt.test.dollarValue.builder"
-		            name="Builder"		              
+		            name="Builder"
 		            command="make"
                     arguments="-k"
-                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
-				</builder> 				  				  
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+				</builder>
             </toolChain>
          </configuration>
     </projectType>
-    
+
     <!-- enablement testing -->
-    
+
       <projectType
                   id="cdt.managedbuild.target.enablement.exe"
                   isAbstract="false"
@@ -5108,9 +5108,9 @@
 		              arguments="-k"
 		              variableFormat="@="
 		              isVariableCaseSensitive="false"
-		              reservedMacroNames="PATH"		              
+		              reservedMacroNames="PATH"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-		     	  </builder>               
+		     	  </builder>
                   <tool
                       id="enablement.this.child_1.2.3"
                       superClass="enablement.this">
@@ -5160,7 +5160,7 @@
 				  </tool>
 				  <tool
                       id="enablement.other.child"
-                      superClass="enablement.other">                         
+                      superClass="enablement.other">
                   </tool>
                   <tool
                       id="enablement.this.child.2_1.2.3"
@@ -5168,7 +5168,7 @@
 			  </toolChain>
          </configuration>
       </projectType>
-      
+
       <tool
 		  name="compiler.gnu.c"
 		  id="enablement.this"
@@ -5538,7 +5538,7 @@
 			  <enablement type="ALL">
 			  	<checkOption optionId="this.enum" value="testgnu.enablement.c.optimization.level.optimize"/>
 			  </enablement>
-		  </option> 		  
+		  </option>
 		  <option
 			  defaultValue="false"
 			  name="25"
@@ -5553,7 +5553,7 @@
 			  <enablement type="ALL">
 			  	<checkOption value="true"/>
 			  </enablement>
-		  </option> 		  
+		  </option>
 		  <option
 			  defaultValue="false"
 			  name="26"
@@ -5568,7 +5568,7 @@
 			  <enablement type="ALL">
 			  	<checkOption optionId="this.string" value="start ${ParentVersion} stop"/>
 			  </enablement>
-		  </option> 		  
+		  </option>
 		  <option
 			  defaultValue="false"
 			  name="27"
@@ -5583,7 +5583,7 @@
 			  <enablement type="ALL">
 			  	<checkOption optionId="this.string" otherOptionId="other.string" otherHolderId="enablement.other"/>
 			  </enablement>
-		  </option> 		  
+		  </option>
 		  <option
 			  defaultValue="false"
 			  name="28"
@@ -5598,7 +5598,7 @@
 			  <enablement type="ALL">
 			  	<checkOption optionId="this.boolean" otherOptionId="other.boolean" otherHolderId="enablement.other"/>
 			  </enablement>
-		  </option> 
+		  </option>
 		  <option
 			  defaultValue="false"
 			  name="29"
@@ -5675,7 +5675,7 @@
 			  		<checkString string="1" value="1"/>
 			  	</not>
 			  </enablement>
-		  </option>		  
+		  </option>
 		  <option
 			  defaultValue="false"
 			  name="34"
@@ -5693,7 +5693,7 @@
 			  		<checkString string="1" value="1"/>
 			  	</or>
 			  </enablement>
-		  </option>		
+		  </option>
 		  <option
 			  defaultValue="false"
 			  name="35"
@@ -5711,7 +5711,7 @@
 			  		<checkString string="1" value="1"/>
 			  	</and>
 			  </enablement>
-		  </option>		
+		  </option>
 		  <option
 			  defaultValue="false"
 			  name="36"
@@ -5726,7 +5726,7 @@
 			  <enablement>
 			  		<checkHolder holderId="enablement.this.child_1.2.3"/>
 			  </enablement>
-		  </option>		  
+		  </option>
 
 		  <option
 			  defaultValue="false"
@@ -5998,7 +5998,7 @@
 			  valueType="boolean">
 		  </option>
 	  </tool>
-	  
+
 	  <tool
 		  name="compiler.gnu.c"
 		  id="enablement.other"
@@ -6016,14 +6016,14 @@
 			  name="Misc"
 			  id="cat.ather">
 		  </optionCategory>
-		  
+
 		 <option
 			  defaultValue="false"
 			  name="Posix.Ansi"
 			  category="cat.ather"
 			  command="-ansi"
 			  id="other.boolean"
-			  valueType="boolean"/> 
+			  valueType="boolean"/>
 		<option
 			  defaultValue="otherVal ${ParentVersion}"
 			  name="OtherFlags"
@@ -6163,10 +6163,10 @@
 		        </toolChain>
 	        </configuration>
         </projectType>
-    
+
     <!-- projects for testing  the default dependency calculators -->
-      <projectType      
-            isAbstract="false"     
+      <projectType
+            isAbstract="false"
             isTest="true"
             name="DependencyCalculator2 Tester"
             id="depcalc2.managedbuild.target.gnu.exe">
@@ -6199,8 +6199,8 @@
 			</toolChain>
 		 </configuration>
        </projectType>
-      <projectType      
-            isAbstract="false"     
+      <projectType
+            isAbstract="false"
             isTest="true"
             name="DependencyCalculator3 Tester"
             id="depcalc3.managedbuild.target.gnu.exe">
@@ -6233,8 +6233,8 @@
 			</toolChain>
 		 </configuration>
        </projectType>
-      <projectType      
-            isAbstract="false"     
+      <projectType
+            isAbstract="false"
             isTest="true"
             name="DependencyCalculatorPreBuild Tester"
             id="depcalcPreBuild.managedbuild.target.gnu.exe">
@@ -6268,11 +6268,11 @@
 		 </configuration>
        </projectType>
 
-        
+
         <!-- specific proj types for testing build description model -->
-        
-              <projectType      
-            isAbstract="false"     
+
+              <projectType
+            isAbstract="false"
             isTest="true"
             name="MBS30TargetName.gnu.exe"
             id="cdt.managedbuild.target.bdm.exe">
@@ -6301,24 +6301,24 @@
 		              command="make"
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
-		     	  </builder>               
+		     	  </builder>
                   <tool
                       id="cdt.managedbuild.tool.bdm.c.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.testgnu30.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.testgnu30.c.compiler">
 			  	      <option
 					      id="gnu.c.compiler.exe.debug.optionBdm.optimization.level"
 						  defaultValue="gnu.c.optimization.level.none"
 						  superClass="gnu.c.compiler.option30.optimization.level">
 					  </option>
-					  <option   
-					      id="gnu.c.compiler.exe.debug.optionBdm.debugging.level"					     
+					  <option
+					      id="gnu.c.compiler.exe.debug.optionBdm.debugging.level"
 						  defaultValue="gnu.c.debugging.level.max"
 					      superClass="gnu.c.compiler.option30.debugging.level">
 					  </option>
 				  </tool>
 				  <tool
                       id="cdt.managedbuild.tool.bdm.cpp.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.testgnu30.cpp.compiler">                         
+                      superClass="cdt.managedbuild.tool.testgnu30.cpp.compiler">
                       <option
 				          id="gnu.cpp.compiler.exe.debug.optionBdm.optimization.level"
                           defaultValue="gnu.cpp.compiler.optimization.level.none"
@@ -6333,12 +6333,12 @@
                   <tool
                       id="cdt.managedbuild.tool.bdm.c.linker.exe.debug"
                       superClass="cdt.managedbuild.tool.testgnu30.c.linker">
-                  </tool> 
+                  </tool>
                   <tool
       			       id="cdt.managedbuild.tool.bdm.cpp.linker.exe.debug"
                       superClass="cdt.managedbuild.tool.testgnu30.cpp.linker">
-                  </tool> 
-                  
+                  </tool>
+
          <tool
             natureFilter="ccnature"
             name="BDM test s1 to o1 tool"
@@ -6405,7 +6405,7 @@
                  name="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.toolChain"
                  superClass="cdt.managedbuild.toolchain.testgnu30.exe.release"
                  unusedChildren="cdt.managedbuild.tool.testgnu30.c.compiler.exe.release;cdt.managedbuild.tool.testgnu30.cpp.compiler.exe.release;cdt.managedbuild.tool.testgnu30.c.linker.exe.release;cdt.managedbuild.tool.testgnu30.cpp.linker.exe.release">
-              <tool 
+              <tool
                     id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.compiler"
                     isAbstract="false"
                     name="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.compiler"
@@ -6454,10 +6454,10 @@
            </toolChain>
         </configuration>
      </projectType>
-     
+
 
    </extension>
-   
+
    <!-- The following buildDefinitions support the test in org.eclipse.cdt.managedbuilder.core.tests.PathConverterTest -->
    <extension
          point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
@@ -6624,7 +6624,7 @@
             </toolChain>
          </configuration>
       </projectType>
-      
+
       <tool
                      id="lv.tests.tool.base"
                      isAbstract="false"
@@ -6669,7 +6669,7 @@
                   sources="c,cpp">
             </inputType>
        </tool>
-      
+
       <projectType
             id="lv.tests.ptype"
             isAbstract="false"
@@ -6737,7 +6737,7 @@
       </projectType>
 
    </extension>
-   
+
    <extension
          point="org.eclipse.cdt.core.templates">
       <template
@@ -6817,7 +6817,7 @@
             label="MBS Tests">
       </category>
    </extension>
-   
+
    <!-- 4.0 tests -->
    <extension
          id="test.four.dot.zero.cdt.managed.build.info"
@@ -6840,11 +6840,11 @@
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
             </supportedProperties>
-         <envVarBuildPath 
+         <envVarBuildPath
          	pathType="buildpathLibrary"
          	variableList="LIBRARY_PATH">
          </envVarBuildPath>
-         
+
          <optionCategory
                owner="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker"
                name="Test 4.0 OptionCategory.General"
@@ -6948,12 +6948,12 @@
                command="-shared"
                id="test.gnu.c.link.option.shared"
                valueType="boolean">
-              <enablement 
-              	type="CONTAINER_ATTRIBUTE" 
-              	attribute="defaultValue" 
+              <enablement
+              	type="CONTAINER_ATTRIBUTE"
+              	attribute="defaultValue"
               	value="true"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildArtefactType"
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
 			  </enablement>
@@ -7000,9 +7000,9 @@
             buildVariable="EXECUTABLES"
             nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
             id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker.output">
-             <enablement 
+             <enablement
               	type="ALL">
-			  	<checkOption 
+			  	<checkOption
 			  		optionId="test.gnu.c.link.option.shared"
 			  		value="false"/>
 			  </enablement>
@@ -7013,9 +7013,9 @@
             nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
 			buildVariable="LIBRARIES"
 			id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker.output.so">
-             <enablement 
+             <enablement
               	type="ALL">
-			  	<checkOption 
+			  	<checkOption
 			  		optionId="test.gnu.c.link.option.shared"
 			  		value="true"/>
 			  </enablement>
@@ -7035,7 +7035,7 @@
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
             </supportedProperties>
-         <envVarBuildPath 
+         <envVarBuildPath
          	pathType="buildpathLibrary"
          	variableList="LIBRARY_PATH">
          </envVarBuildPath>
@@ -7134,12 +7134,12 @@
                command="-shared"
                valueType="boolean"
                id="test.gnu.cpp.link.option.shared">
-               <enablement 
-              	type="CONTAINER_ATTRIBUTE" 
-              	attribute="defaultValue" 
+               <enablement
+              	type="CONTAINER_ATTRIBUTE"
+              	attribute="defaultValue"
               	value="true"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildArtefactType"
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
 			  </enablement>
@@ -7186,9 +7186,9 @@
             buildVariable="EXECUTABLES"
             nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
             id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.output">
-              <enablement 
+              <enablement
               	type="ALL">
-			  	<checkOption 
+			  	<checkOption
 			  		optionId="test.gnu.cpp.link.option.shared"
 			  		value="false"/>
 			  </enablement>
@@ -7199,9 +7199,9 @@
             nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
 	          buildVariable="LIBRARIES"
               id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.output.so">
-              <enablement 
+              <enablement
               	type="ALL">
-			  	<checkOption 
+			  	<checkOption
 			  		optionId="test.gnu.cpp.link.option.shared"
 			  		value="true"/>
 			  </enablement>
@@ -7323,7 +7323,7 @@
     	        <value id="org.eclipse.cdt.build.core.buildType.release"/>
             </property>
             </supportedProperties>
-         <envVarBuildPath 
+         <envVarBuildPath
          	pathType="buildpathInclude"
          	variableList="CPATH,C_INCLUDE_PATH">
          </envVarBuildPath>
@@ -7412,25 +7412,25 @@
 				  command="-O3"
 				  id="test.gnu.c.optimization.level.most">
 		  </enumeratedOptionValue>
-		      <enablement 
-              	type="CONTAINER_ATTRIBUTE" 
-              	attribute="defaultValue" 
+		      <enablement
+              	type="CONTAINER_ATTRIBUTE"
+              	attribute="defaultValue"
               	value="test.gnu.c.optimization.level.most"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildType"
 			  		value="org.eclipse.cdt.build.core.buildType.release"/>
 			  </enablement>
-              <enablement 
-              	type="CONTAINER_ATTRIBUTE" 
-              	attribute="defaultValue" 
+              <enablement
+              	type="CONTAINER_ATTRIBUTE"
+              	attribute="defaultValue"
               	value="test.gnu.c.optimization.level.none"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildType"
 			  		value="org.eclipse.cdt.build.core.buildType.debug"/>
 			  </enablement>
-		  
+
 		  </option>
 		  <option
 			  name="Test 4.0 Option.Posix.Optimize.Flags"
@@ -7470,25 +7470,25 @@
 				  command="-g3"
 				  id="test.gnu.c.debugging.level.max">
 		  </enumeratedOptionValue>
-		      <enablement 
-              	type="CONTAINER_ATTRIBUTE" 
-              	attribute="value" 
+		      <enablement
+              	type="CONTAINER_ATTRIBUTE"
+              	attribute="value"
               	value="test.gnu.c.debugging.level.none"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildType"
 			  		value="org.eclipse.cdt.build.core.buildType.release"/>
 			  </enablement>
-              <enablement 
-              	type="CONTAINER_ATTRIBUTE" 
-              	attribute="value" 
+              <enablement
+              	type="CONTAINER_ATTRIBUTE"
+              	attribute="value"
               	value="test.gnu.c.debugging.level.max"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildType"
 			  		value="org.eclipse.cdt.build.core.buildType.debug"/>
 			  </enablement>
-		  
+
 		  </option>
 		  <option
 			  name="Test 4.0 Option.Posix.Debug.Other"
@@ -7623,7 +7623,7 @@
     	        <value id="org.eclipse.cdt.build.core.buildType.release"/>
             </property>
             </supportedProperties>
-         <envVarBuildPath 
+         <envVarBuildPath
          	pathType="buildpathInclude"
          	variableList="CPATH,CPLUS_INCLUDE_PATH">
          </envVarBuildPath>
@@ -7706,24 +7706,24 @@
 				  command="-O3"
 				  id="test.gnu.cpp.compiler.optimization.level.most">
 		  </enumeratedOptionValue>
-		      <enablement 
-              	type="CONTAINER_ATTRIBUTE" 
-              	attribute="value" 
+		      <enablement
+              	type="CONTAINER_ATTRIBUTE"
+              	attribute="value"
               	value="test.gnu.cpp.compiler.optimization.level.most"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildType"
 			  		value="org.eclipse.cdt.build.core.buildType.release"/>
 			  </enablement>
-              <enablement 
-              	type="CONTAINER_ATTRIBUTE" 
-              	attribute="value" 
+              <enablement
+              	type="CONTAINER_ATTRIBUTE"
+              	attribute="value"
               	value="test.gnu.cpp.compiler.optimization.level.none"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildType"
 			  		value="org.eclipse.cdt.build.core.buildType.debug"/>
-			  </enablement>		  
+			  </enablement>
 		  </option>
 		  <option
 			  name="Test 4.0 Option.Posix.Optimize.Flags"
@@ -7763,25 +7763,25 @@
 				  command="-g3"
 				  id="test.gnu.cpp.compiler.debugging.level.max">
 		  </enumeratedOptionValue>
-		  	 <enablement 
-              	type="CONTAINER_ATTRIBUTE" 
-              	attribute="value" 
+		  	 <enablement
+              	type="CONTAINER_ATTRIBUTE"
+              	attribute="value"
               	value="test.gnu.cpp.compiler.debugging.level.none"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildType"
 			  		value="org.eclipse.cdt.build.core.buildType.release"/>
 			  </enablement>
-              <enablement 
-              	type="CONTAINER_ATTRIBUTE" 
-              	attribute="value" 
+              <enablement
+              	type="CONTAINER_ATTRIBUTE"
+              	attribute="value"
               	value="test.gnu.cpp.compiler.debugging.level.max"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildType"
 			  		value="org.eclipse.cdt.build.core.buildType.debug"/>
-			  </enablement>		  
-		  
+			  </enablement>
+
 		  </option>
 		  <option
 			  name="Test 4.0 Option.Posix.Debug.Other"
@@ -7893,13 +7893,13 @@
               id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.output">
           </outputType>
 	  </tool>
-      
+
       <tool
           id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker.cygwin"
           name="Test 4.0 ToolName.linker.cygwin.gnu.c"
            isSystem="true"
           superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker">
-          <envVarBuildPath 
+          <envVarBuildPath
               pathType="buildpathLibrary"
               variableList="LIBRARY_PATH">
           </envVarBuildPath>
@@ -7921,7 +7921,7 @@
           name="Test 4.0 ToolName.linker.cygwin.gnu.cpp"
           isSystem="true"
           superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker">
-          <envVarBuildPath 
+          <envVarBuildPath
               pathType="buildpathLibrary"
               variableList="LIBRARY_PATH">
           </envVarBuildPath>
@@ -7937,7 +7937,7 @@
 			  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output.so"
 			  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.output.so">
 	      </outputType>
-		  
+
       </tool>
       <tool
           id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.cygwin"
@@ -7945,28 +7945,28 @@
           isSystem="true"
           superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler"
           optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.OneDirectionalPathConverter">
-          <envVarBuildPath 
+          <envVarBuildPath
               pathType="buildpathInclude"
               variableList="CPATH,C_INCLUDE_PATH">
           </envVarBuildPath>
           <inputType
           	  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.input.cygwin"
               superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.input"/>
-      </tool>      
+      </tool>
       <tool
           id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin"
           name="Test 4.0 ToolName.compiler.cygwin.gnu.cpp"
           isSystem="true"
           superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler"
           optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.BidirectionalPathConverter">
-          <envVarBuildPath 
+          <envVarBuildPath
               pathType="buildpathInclude"
               variableList="CPATH,CPLUS_INCLUDE_PATH">
           </envVarBuildPath>
           <inputType
           	  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin"
               superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
-      </tool>      
+      </tool>
 
 	  <builder
 	  	  isAbstract="true"
@@ -7995,8 +7995,8 @@
           parallelBuildCmd="-j*"
           errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser"
           name="%GNUMakeBuilder.name">
-   	  </builder>   
-   	  
+   	  </builder>
+
       <toolChain
           archList="all"
           isSystem="true"
@@ -8014,79 +8014,79 @@
 				  <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder"
 				      id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.base">
-		     	  </builder>    
+		     	  </builder>
 			      <tool
 		    		  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.archiver.base"
 			          superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.archiver">
-			  <enablement 
+			  <enablement
               	type="ALL">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildArtefactType"
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
 			  </enablement>
-				  </tool>                 
+				  </tool>
 				  <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.base"
-                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler">                         
+                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler">
                   </tool>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.base"
-                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler">                          
+                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler">
 				  </tool>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker.base"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker">
-             <enablement 
+             <enablement
               	type="ALL">
               	<not>
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildArtefactType"
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
 			  	</not>
 			  </enablement>
-                  </tool> 
+                  </tool>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.base"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker">
-             <enablement 
+             <enablement
               	type="ALL">
               	<not>
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildArtefactType"
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
 			  	</not>
 			  </enablement>
-                  </tool> 
+                  </tool>
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.base"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler">
-				  </tool>   
+				  </tool>
 			  </toolChain>
- 
+
          <configuration
                id="test.four.dot.zero.cdt.managedbuild.config.gnu.base"
                cleanCommand="rm -rf"
 			   >
-		    <enablement type="CONTAINER_ATTRIBUTE" 
+		    <enablement type="CONTAINER_ATTRIBUTE"
               	attribute="artifactExtension"
               	value="so"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildArtefactType"
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
 			  </enablement>
-		    <enablement type="CONTAINER_ATTRIBUTE" 
-              	attribute="artifactExtension" 
+		    <enablement type="CONTAINER_ATTRIBUTE"
+              	attribute="artifactExtension"
               	value="a"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildArtefactType"
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
 			  </enablement>
 		</configuration>
-      
-      <projectType      
-            isAbstract="false"     
+
+      <projectType
+            isAbstract="false"
             isTest="true"
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
             id="test.four.dot.zero.cdt.managedbuild.target.gnu.exe">
@@ -8106,10 +8106,10 @@
 				  <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.base"
 				      id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.exe.debug">
-		     	  </builder>               
+		     	  </builder>
 				  <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug"
-                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.base">                         
+                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.base">
                     <option
 				          id="test.gnu.cpp.compiler.exe.debug.option.optimization.level"
                           superClass="test.gnu.cpp.compiler.option.optimization.level">
@@ -8117,32 +8117,32 @@
                       <option
 						  id="test.gnu.cpp.compiler.exe.debug.option.debugging.level"
                           superClass="test.gnu.cpp.compiler.option.debugging.level">
-                      </option>           
+                      </option>
                   </tool>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.exe.debug"
-                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.base">                          
+                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.base">
 			  	      <option
 					      id="test.gnu.c.compiler.exe.debug.option.optimization.level"
 						  superClass="test.gnu.c.compiler.option.optimization.level">
 					  </option>
-					  <option   
-					      id="test.gnu.c.compiler.exe.debug.option.debugging.level"					     
+					  <option
+					      id="test.gnu.c.compiler.exe.debug.option.debugging.level"
 					      superClass="test.gnu.c.compiler.option.debugging.level">
 					  </option>
 				  </tool>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker.exe.debug"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker.base">
-                  </tool> 
+                  </tool>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.exe.debug"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.base">
-                  </tool> 
+                  </tool>
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.exe.debug"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.base">
-				  </tool>   
+				  </tool>
 			  </toolChain>
          </configuration>
          <configuration
@@ -8150,21 +8150,21 @@
                id="test.four.dot.zero.cdt.managedbuild.config.gnu.exe.release"
                buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
                parent="test.four.dot.zero.cdt.managedbuild.config.gnu.base"
-               cleanCommand="rm -rf">               
+               cleanCommand="rm -rf">
                <toolChain
                		superClass="test.four.dot.zero.cdt.managedbuild.toolchain.gnu.base"
                      id="test.four.dot.zero.cdt.managedbuild.toolchain.gnu.exe.release">
 		          <targetPlatform
 		              id="test.four.dot.zero.cdt.managedbuild.target.gnu.platform.exe.release"
-		              superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.platform.base">		              
+		              superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.platform.base">
 		          </targetPlatform>
 				  <builder
 				  	  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.base"
 				      id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.exe.release">
-				  </builder> 
+				  </builder>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.exe.release"
-                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.base">                     
+                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.base">
 					  <option
 						  id="test.gnu.cpp.compiler.exe.release.option.optimization.level"
 						  superClass="test.gnu.cpp.compiler.option.optimization.level">
@@ -8176,7 +8176,7 @@
                   </tool>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.exe.release"
-                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.base">                          
+                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.base">
 					  <option
 						  id="test.gnu.c.compiler.exe.release.option.optimization.level"
 						  superClass="test.gnu.c.compiler.option.optimization.level">
@@ -8189,21 +8189,21 @@
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker.exe.release"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker.base">
-                  </tool> 
+                  </tool>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.exe.release"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.base">
-                  </tool>  
+                  </tool>
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.exe.release"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.base">
-				  </tool>   
+				  </tool>
                </toolChain>
          </configuration>
-      </projectType>     
-      
-      <projectType      
-            isAbstract="false"     
+      </projectType>
+
+      <projectType
+            isAbstract="false"
             isTest="true"
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             id="test.four.dot.zero.cdt.managedbuild.target.gnu.so">
@@ -8211,7 +8211,7 @@
                name="Test 4.0 ConfigName.Dbg"
                cleanCommand="rm -rf"
                buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
-               parent="test.four.dot.zero.cdt.managedbuild.config.gnu.base"                                         
+               parent="test.four.dot.zero.cdt.managedbuild.config.gnu.base"
                id="test.four.dot.zero.cdt.managedbuild.config.gnu.so.debug">
                <toolChain
                		 superClass="test.four.dot.zero.cdt.managedbuild.toolchain.gnu.base"
@@ -8222,8 +8222,8 @@
 		          </targetPlatform>
 				  <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.base"
-				      id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.so.debug">		              
-				  </builder>               		         
+				      id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.so.debug">
+				  </builder>
 				  <tool
 				      id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.so.debug"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.base">
@@ -8275,14 +8275,14 @@
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.so.debug"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.base">
-				  </tool>   
+				  </tool>
 			   </toolChain>
          </configuration>
          <configuration
                name="Test 4.0 ConfigName.Rel"
                cleanCommand="rm -rf"
                buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
-               parent="test.four.dot.zero.cdt.managedbuild.config.gnu.base"               
+               parent="test.four.dot.zero.cdt.managedbuild.config.gnu.base"
                id="test.four.dot.zero.cdt.managedbuild.config.gnu.so.release">
                <toolChain
 					 superClass="test.four.dot.zero.cdt.managedbuild.toolchain.gnu.base"
@@ -8293,8 +8293,8 @@
 		          </targetPlatform>
 				  <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.base"
-				      id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.so.release">		              
-				  </builder>               
+				      id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.so.release">
+				  </builder>
 				  <tool
 				      id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.so.release"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.base">
@@ -8306,8 +8306,8 @@
 				          id="test.gnu.cpp.compiler.so.release.option.debugging.level"
 						  superClass="test.gnu.cpp.compiler.option.debugging.level">
 				      </option>
-				  </tool>				
-				  <tool				     
+				  </tool>
+				  <tool
 				      id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.so.release"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.base">
 				      <option
@@ -8346,16 +8346,16 @@
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.so.release"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.base">
-				  </tool>   
-			   </toolChain>  
-         </configuration>         
+				  </tool>
+			   </toolChain>
+         </configuration>
       </projectType>
-          
-      <projectType 
+
+      <projectType
             isTest="true"
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             isAbstract="false"
-            id="test.four.dot.zero.cdt.managedbuild.target.gnu.lib">                        
+            id="test.four.dot.zero.cdt.managedbuild.target.gnu.lib">
          <configuration
 			   name="Test 4.0 ConfigName.Dbg"
                buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
@@ -8371,8 +8371,8 @@
 				  </targetPlatform>
 			  	  <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.base"
-					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.lib.debug">		              
-			      </builder>               		         
+					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.lib.debug">
+			      </builder>
                   <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.lib.debug"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.base">
@@ -8393,19 +8393,19 @@
 						  superClass="test.gnu.c.compiler.option.optimization.level">
 				      </option>
 				      <option
-						  id="test.gnu.c.compiler.lib.debug.option.debugging.level"						
+						  id="test.gnu.c.compiler.lib.debug.option.debugging.level"
 						  superClass="test.gnu.c.compiler.option.debugging.level">
 				      </option>
 				  </tool>
 			      <tool
 		    		  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.archiver.lib.debug"
 			          superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.archiver.base">
-				  </tool>                 
+				  </tool>
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.lib.debug"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.base">
-				  </tool>   
-               </toolChain>                 
+				  </tool>
+               </toolChain>
          </configuration>
          <configuration
                name="Test 4.0 ConfigName.Rel"
@@ -8422,8 +8422,8 @@
 		          </targetPlatform>
 				  <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.base"
-				      id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.lib.release">		              
-				  </builder>               		            
+				      id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.lib.release">
+				  </builder>
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.lib.release"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.base">
@@ -8455,11 +8455,11 @@
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.lib.release"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.base">
-				  </tool>   
-               </toolChain>				  
-         </configuration>                  
+				  </tool>
+               </toolChain>
+         </configuration>
       </projectType>
-      
+
                   <toolChain
                      archList="all"
                      osList="win32"
@@ -8470,29 +8470,29 @@
                   <targetPlatform
 					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.platform.cygwin.base"
 				 	  name="Test 4.0 PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.Cygwin_PE"            					  
-					  osList="win32"					  
+                      binaryParser="org.eclipse.cdt.core.Cygwin_PE"
+					  osList="win32"
 					  archList="all">
 				  </targetPlatform>
 				    <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder"
 				      id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.base">
-		     	  </builder>    
-				  
+		     	  </builder>
+
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.base"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler">
-				  </tool> 		               		         
+				  </tool>
 			      <tool
 		    		  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.archiver.cygwin.base"
 			          superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.archiver">
-			  <enablement 
+			  <enablement
               	type="ALL">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildArtefactType"
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
 			  </enablement>
-				  </tool>                 
+				  </tool>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
@@ -8504,10 +8504,10 @@
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker.cygwin.base"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker.cygwin">
-               <enablement 
+               <enablement
               	type="ALL">
               	<not>
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildArtefactType"
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
 			  	</not>
@@ -8516,46 +8516,46 @@
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
-               <enablement 
+               <enablement
               	type="ALL">
               	<not>
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildArtefactType"
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
 			  	</not>
 			  </enablement>
-                  </tool>                  
+                  </tool>
 
-               </toolChain>     
-               
+               </toolChain>
+
                      <configuration
                id="test.four.dot.zero.cdt.managedbuild.config.gnu.cygwin.base"
                cleanCommand="rm -rf"
                artifactExtension="exe"
 			   >
-		    <enablement type="CONTAINER_ATTRIBUTE" 
-              	attribute="artifactExtension" 
+		    <enablement type="CONTAINER_ATTRIBUTE"
+              	attribute="artifactExtension"
               	value="dll"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildArtefactType"
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
 			  </enablement>
-		    <enablement type="CONTAINER_ATTRIBUTE" 
-              	attribute="artifactExtension" 
+		    <enablement type="CONTAINER_ATTRIBUTE"
+              	attribute="artifactExtension"
               	value="a"
               	extensionAdjustment="false">
-			  	<checkBuildProperty 
+			  	<checkBuildProperty
 			  		property="org.eclipse.cdt.build.core.buildArtefactType"
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
 			  </enablement>
 		</configuration>
 
-      <projectType 
+      <projectType
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
             id="test.four.dot.zero.cdt.managedbuild.target.gnu.cygwin.exe"
             isTest="true"
-            isAbstract="false">                                  
+            isAbstract="false">
          <configuration
                name="Test 4.0 ConfigName.Dbg"
                cleanCommand="rm -rf"
@@ -8571,7 +8571,7 @@
 				  </targetPlatform>
 			  	  <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.base"
-					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.exe.debug">		              
+					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.exe.debug">
 			      </builder>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.exe.debug"
@@ -8604,12 +8604,12 @@
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.debug"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base">
-                  </tool>                  
+                  </tool>
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.exe.debug"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.base">
-				  </tool>   
-               </toolChain>                                   
+				  </tool>
+               </toolChain>
          </configuration>
          <configuration
                name="Test 4.0 ConfigName.Rel"
@@ -8626,8 +8626,8 @@
 				  </targetPlatform>
 			  	  <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.base"
-					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.exe.release">		              
-			      </builder>               		                       
+					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.exe.release">
+			      </builder>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.exe.release"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base">
@@ -8639,7 +8639,7 @@
                           id="test.gnu.cpp.compiler.cygwin.exe.release.option.debugging.level"
                           superClass="test.gnu.cpp.compiler.option.debugging.level">
                       </option>
-                  </tool>                      
+                  </tool>
                   <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.cygwin.exe.release"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.cygwin.base">
@@ -8663,16 +8663,16 @@
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.exe.release"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.base">
-				  </tool>   
-               </toolChain>                                                     
+				  </tool>
+               </toolChain>
          </configuration>
-      </projectType>              
-         
-      <projectType                  
+      </projectType>
+
+      <projectType
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             id="test.four.dot.zero.cdt.managedbuild.target.gnu.cygwin.so"
             isAbstract="false"
-            isTest="true">            
+            isTest="true">
          <configuration
                name="Test 4.0 ConfigName.Dbg"
                cleanCommand="rm -rf"
@@ -8688,8 +8688,8 @@
 				  </targetPlatform>
 			  	  <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.base"
-					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.so.debug">		              
-			      </builder>               		         
+					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.so.debug">
+			      </builder>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.so.debug"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base">
@@ -8737,19 +8737,19 @@
 			              superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output.so"
 			              id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.debug.output">
 			          </outputType>
-                  </tool>                  
+                  </tool>
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.so.debug"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.base">
-				  </tool>   
-               </toolChain>                                                     
+				  </tool>
+               </toolChain>
          </configuration>
          <configuration
                name="Test 4.0 ConfigName.Rel"
                cleanCommand="rm -rf"
                parent="test.four.dot.zero.cdt.managedbuild.config.gnu.cygwin.base"
                buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
-               id="test.four.dot.zero.cdt.managedbuild.config.gnu.cygwin.so.release">               
+               id="test.four.dot.zero.cdt.managedbuild.config.gnu.cygwin.so.release">
                <toolChain
                      superClass="test.four.dot.zero.cdt.managedbuild.toolchain.gnu.cygwin.base"
                      id="test.four.dot.zero.cdt.managedbuild.toolchain.gnu.cygwin.so.release">
@@ -8759,8 +8759,8 @@
 				  </targetPlatform>
 			  	  <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.base"
-					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.so.release">		              
-			      </builder>               		                                       
+					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.so.release">
+			      </builder>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.so.release"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base">
@@ -8776,7 +8776,7 @@
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.cygwin.so.release"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.cygwin.base">
-                      <option 
+                      <option
                           id="test.gnu.c.compiler.cygwin.so.release.option.optimization.level"
                           superClass="test.gnu.c.compiler.option.optimization.level">
                       </option>
@@ -8812,16 +8812,16 @@
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.so.release"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.base">
-				  </tool>   
-               </toolChain>                                                                                
+				  </tool>
+               </toolChain>
          </configuration>
       </projectType>
-                       
-      <projectType 
+
+      <projectType
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             id="test.four.dot.zero.cdt.managedbuild.target.gnu.cygwin.lib"
             isTest="true"
-            isAbstract="false">            
+            isAbstract="false">
          <configuration
                name="Test 4.0 ConfigName.Dbg"
                parent="test.four.dot.zero.cdt.managedbuild.config.gnu.cygwin.base"
@@ -8837,8 +8837,8 @@
 				  </targetPlatform>
 			  	  <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.base"
-					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.lib.debug">		              
-			      </builder>               		                                                              
+					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.lib.debug">
+			      </builder>
 			      <tool
 			          id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.lib.debug"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base">
@@ -8850,7 +8850,7 @@
 					        id="test.gnu.cpp.compiler.cygwin.lib.debug.option.debugging.level"
 							superClass="test.gnu.cpp.compiler.option.debugging.level">
 					  </option>
-				  </tool>  
+				  </tool>
                   <tool
                       id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.debug"
                       superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.cygwin.base">
@@ -8870,8 +8870,8 @@
 				  <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.lib.debug"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.base">
-				  </tool>   
-               </toolChain>                                                                                				               				  
+				  </tool>
+               </toolChain>
          </configuration>
          <configuration
                name="Test 4.0 ConfigName.Rel"
@@ -8888,13 +8888,13 @@
 				  </targetPlatform>
 			  	  <builder
 					  superClass="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.base"
-					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.lib.release">		              
-			      </builder>               		                                                                                              
+					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder.cygwin.lib.release">
+			      </builder>
                   <tool
                      id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.lib.release"
                      superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base">
-                     <option       
-                         id="test.gnu.cpp.compiler.cygwin.lib.release.option.optimization.level"         
+                     <option
+                         id="test.gnu.cpp.compiler.cygwin.lib.release.option.optimization.level"
                          superClass="test.gnu.cpp.compiler.option.optimization.level">
                      </option>
                      <option
@@ -8910,8 +8910,8 @@
                          superClass="test.gnu.c.compiler.option.optimization.level">
                      </option>
                      <option
-                         id="test.gnu.c.compiler.cygwin.lib.release.option.debugging.level"                        
-                         superClass="test.gnu.c.compiler.option.debugging.level">                         
+                         id="test.gnu.c.compiler.cygwin.lib.release.option.debugging.level"
+                         superClass="test.gnu.c.compiler.option.debugging.level">
                      </option>
                   </tool>
                  <tool
@@ -8921,11 +8921,11 @@
 				 <tool
 					  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.lib.release"
 					  superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler.cygwin.base">
-				 </tool>   
-              </toolChain>                                                                                				                    
-         </configuration>         
-      </projectType>                              
-     
+				 </tool>
+              </toolChain>
+         </configuration>
+      </projectType>
+
      <!-- tcModificationInfo tests -->
            	<toolChain id="tcm.tc1" name="tcm.tc1" isSystem="true">
            		<builder id="tcm.b1" name="tcm.b1">
@@ -8964,7 +8964,7 @@
            			<inputType id="tcm.it.4" sources="tcmbar"/>
            		</tool>
            	</toolChain>
-           	
+
            	<toolChain id="tcm.tc3" name="tcm.tc3" isSystem="true">
            		<builder id="tcm.tc3.b1" name="tcm.tc3.b1">
            		</builder>
@@ -8974,7 +8974,7 @@
 	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
-            </supportedProperties>           		
+            </supportedProperties>
            			<option id="tcm.tc3.o1"/>
            			<inputType id="tcm.it.5" sources="tcmfoo"/>
            		</tool>
@@ -8993,7 +8993,7 @@
 	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
-            </supportedProperties>           		
+            </supportedProperties>
            			<option id="tcm.tc4.o1"/>
            			<inputType id="tcm.it.7" sources="tcmfoo"/>
            		</tool>
@@ -9012,7 +9012,7 @@
 	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
-            </supportedProperties>           		
+            </supportedProperties>
            			<option id="tcm.tc5.o1"/>
            			<inputType id="tcm.it.9" sources="tcmfoo"/>
            		</tool>
@@ -9023,7 +9023,7 @@
            	</toolChain>
 
      <projectType
-           id="tcm.pt" name="tcm.pt" 
+           id="tcm.pt" name="tcm.pt"
            isTest="true"
            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe">
            <configuration id="tcm.pt.cfg" name="test">
@@ -9037,9 +9037,9 @@
            	</toolChain>
            </configuration>
      </projectType>
-     
+
      <projectType
-           id="tcm.pt2" name="tcm.pt2" 
+           id="tcm.pt2" name="tcm.pt2"
            isTest="true"
            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe">
            <configuration id="tcm.pt2.cfg" name="test">
@@ -9064,7 +9064,7 @@
 	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
-            </supportedProperties>           		
+            </supportedProperties>
            			<option id="tcm2.tc.o1"/>
            			<inputType id="tcm.it.11" sources="tcmfoo"/>
            		</tool>
@@ -9083,7 +9083,7 @@
 	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
-            </supportedProperties>           		
+            </supportedProperties>
            			<option id="tcm2.tc2.o1"/>
            			<inputType id="tcm.it.13" sources="tcmfoo"/>
            		</tool>
@@ -9106,7 +9106,7 @@
 	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
-            </supportedProperties>           		
+            </supportedProperties>
            			<option id="tcm.base.tc.o1"/>
            			<inputType id="tcm.it.15" sources="tcmfoo"/>
            		</tool>
@@ -9114,8 +9114,8 @@
            			<option id="tcm.base.tc.o2"/>
            			<inputType id="tcm.it.16" sources="tcmbar"/>
            		</tool>
-           	</toolChain>     
-           	
+           	</toolChain>
+
            	<toolChain id="tcm.derive.tc1" superClass="tcm.base.tc" name="tcm.derive.tc1" isSystem="true">
            		<builder id="tcm.derive.tc1.b1" superClass="tcm.base.tc.b1" name="tcm.derive.tc1.b1">
            		</builder>
@@ -9125,7 +9125,7 @@
 	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
-            </supportedProperties>           		
+            </supportedProperties>
            			<option id="tcm.derive.tc1.o1"/>
            			<inputType id="tcm.it.17" sources="tcmfoo"/>
            		</tool>
@@ -9133,7 +9133,7 @@
            			<option id="tcm.derive.tc1.o2"/>
            			<inputType id="tcm.it.18" sources="tcmbar"/>
            		</tool>
-           	</toolChain>     
+           	</toolChain>
 
            	<toolChain id="tcm.derive.tc2" superClass="tcm.base.tc" name="tcm.derive.tc2" isSystem="true">
            		<builder id="tcm.derive.tc2.b1" superClass="tcm.base.tc.b1" name="tcm.derive.tc2.b1">
@@ -9144,7 +9144,7 @@
 	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
-            </supportedProperties>           		
+            </supportedProperties>
            			<option id="tcm.derive.tc2.o1"/>
            			<inputType id="tcm.it.19" sources="tcmfoo"/>
            		</tool>
@@ -9152,10 +9152,10 @@
            			<option id="tcm.derive.tc2.o2"/>
            			<inputType id="tcm.it.20" sources="tcmbar"/>
            		</tool>
-           	</toolChain>   
-           	
+           	</toolChain>
+
            <projectType
-           id="tcm.pt.derive1" name="tcm.pt.derive1" 
+           id="tcm.pt.derive1" name="tcm.pt.derive1"
            isTest="true"
            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe">
            <configuration id="tcm.pt.derive1.cfg" name="test">
@@ -9169,7 +9169,7 @@
            	</toolChain>
            </configuration>
      </projectType>
-           	
+
 <!-- 2.2 -->
 
            	<toolChain id="tcm.base2.tc" name="tcm.base2.tc" isSystem="true">
@@ -9181,7 +9181,7 @@
 	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
-            </supportedProperties>           		
+            </supportedProperties>
            			<option id="tcm.base2.tc.o1"/>
            			<inputType id="tcm.it.21" sources="tcmfoo"/>
            		</tool>
@@ -9189,8 +9189,8 @@
            			<option id="tcm.base2.tc.o2"/>
            			<inputType id="tcm.it.22" sources="tcmbar"/>
            		</tool>
-           	</toolChain>     
-           	
+           	</toolChain>
+
            	<toolChain id="tcm.derive2.tc1" superClass="tcm.base2.tc" name="tcm.derive2.tc1" isSystem="true">
            		<builder id="tcm.derive2.tc1.b1" superClass="tcm.base2.tc.b1" name="tcm.derive2.tc1.b1">
            		</builder>
@@ -9200,7 +9200,7 @@
 	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
-            </supportedProperties>           		
+            </supportedProperties>
            			<option id="tcm.derive2.tc1.o1"/>
            			<inputType id="tcm.it.23" sources="tcmfoo"/>
            		</tool>
@@ -9208,7 +9208,7 @@
            			<option id="tcm.derive2.tc1.o2"/>
            			<inputType id="tcm.it.24" sources="tcmbar"/>
            		</tool>
-           	</toolChain>     
+           	</toolChain>
 
            	<toolChain id="tcm.derive2.tc2" superClass="tcm.base2.tc" name="tcm.derive2.tc2" isSystem="true">
            		<builder id="tcm.derive2.tc2.b1" superClass="tcm.base2.tc.b1" name="tcm.derive2.tc2.b1">
@@ -9219,7 +9219,7 @@
 	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
     	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
             </property>
-            </supportedProperties>           		
+            </supportedProperties>
            			<option id="tcm.derive2.tc2.o1"/>
            			<inputType id="tcm.it.25" sources="tcmfoo"/>
            		</tool>
@@ -9227,8 +9227,8 @@
            			<option id="tcm.derive2.tc2.o2"/>
            			<inputType id="tcm.it.26" sources="tcmbar"/>
            		</tool>
-           	</toolChain>       
-           	    
+           	</toolChain>
+
    </extension>
    <extension
          id="test.tcModificationInfo.extension.id1"
@@ -9290,7 +9290,7 @@
              <matchObject
                    objectIds="tcm.base.tc"
                    objectType="toolChain"
-                   searchScope="ALL_EXTENSION_SUPERCLASSES"/>                   
+                   searchScope="ALL_EXTENSION_SUPERCLASSES"/>
              <matchObject
                    objectIds="tcm.base2.tc;tcm2.tc"
                    objectType="toolChain"

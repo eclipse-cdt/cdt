@@ -8,8 +8,8 @@ int main() {
     FILE* fd = fopen(path, mode);
     fprintf(fd, "Running SpecialTestApp\n");
     fclose(fd);
-    
-    
+
+
     return 0;
 }
 

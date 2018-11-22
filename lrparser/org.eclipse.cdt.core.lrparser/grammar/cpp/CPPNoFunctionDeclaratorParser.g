@@ -21,7 +21,7 @@ $DropRules
 
 	direct_declarator
         ::= function_direct_declarator
-        
+
     init_declarator_complete
     	::= init_declarator
 
@@ -35,15 +35,15 @@ $Start
     no_function_declarator_start
 $End
 
-$Rules 
+$Rules
 
 	no_function_declarator_start
 	    ::= init_declarator_complete
 	      | ERROR_TOKEN
 	          /. $Build  consumeEmpty();  $EndBuild ./
-	
+
 	-- redeclare this rule with no semantic action, prevents recursion
 	init_declarator_complete
     	::= init_declarator
-              
+
 $End

@@ -13,37 +13,37 @@
 
 
 $Terminals
-	
+
 	-- Keywords
 
-	asm  auto  bool  break  case  catch  char  class  
-	const  const_cast  continue  default  delete  do    
-	double  dynamic_cast  else  enum  explicit  export  
-	extern  false  float  for  friend  goto  if  inline  
+	asm  auto  bool  break  case  catch  char  class
+	const  const_cast  continue  default  delete  do
+	double  dynamic_cast  else  enum  explicit  export
+	extern  false  float  for  friend  goto  if  inline
 	int  long  mutable  namespace  new  operator  private
 	protected  public  register  reinterpret_cast  return
 	short  signed  sizeof  static  static_cast  struct
 	switch  template  this  throw   try  true  typedef
 	typeid  typename  union  unsigned  using  virtual
 	void  volatile  wchar_t  while
-	
+
 	-- Literals
-	
+
 	integer  floating  charconst  stringlit
-	
+
 	-- Identifiers
-	
-	identifier 
+
+	identifier
 
 	-- Special tokens used in content assist
-	
+
 	Completion
 	EndOfCompletion
-	
+
 	-- Unrecognized token, not actually used anywhere in the grammar, always leads to syntax error
-	
+
 	Invalid
-	
+
     -- Punctuation (with aliases to make grammar more readable)
 
 	LeftBracket      ::= '['
@@ -92,16 +92,16 @@ $Terminals
 	Comma            ::= ','
 
     RightBracket     -- these four have special rules for content assist
-    RightParen     
-    RightBrace    
+    RightParen
+    RightBrace
     SemiColon
     LeftBrace
-    
+
 $End
 
 
 $Globals
-/.	
+/.
     import org.eclipse.cdt.core.dom.ast.cpp.*;
 	import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 	import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
@@ -124,14 +124,14 @@ $Rules
 ------------------------------------------------------------------------------------------
 
 
-<openscope-ast> 
+<openscope-ast>
     ::= $empty
-          /. $Build  openASTScope();  $EndBuild ./ 
+          /. $Build  openASTScope();  $EndBuild ./
 
 <empty>
-    ::= $empty 
-          /. $Build  consumeEmpty();  $EndBuild ./ 
-           
+    ::= $empty
+          /. $Build  consumeEmpty();  $EndBuild ./
+
 ------------------------------------------------------------------------------------------
 -- Content assist
 ------------------------------------------------------------------------------------------
@@ -143,13 +143,13 @@ $Rules
 
 ']' ::=? 'RightBracket'
        | 'EndOfCompletion'
-      
+
 ')' ::=? 'RightParen'
        | 'EndOfCompletion'
-      
+
 '}' ::=? 'RightBrace'
        | 'EndOfCompletion'
-      
+
 ';' ::=? 'SemiColon'
        | 'EndOfCompletion'
 
@@ -168,7 +168,7 @@ $Rules
 translation_unit
     ::= declaration_seq_opt
           /. $Build  consumeTranslationUnit(); $EndBuild ./
-      
+
 
 ------------------------------------------------------------------------------------------
 -- Expressions
@@ -177,7 +177,7 @@ translation_unit
 identifier_token
     ::= 'identifier'
       | 'Completion'
-      
+
 
 literal
     ::= 'integer'
@@ -187,27 +187,27 @@ literal
       | 'charconst'
            /. $Build  consumeExpressionLiteral(ICPPASTLiteralExpression.lk_char_constant); $EndBuild ./
       | 'stringlit'
-           /. $Build  consumeExpressionLiteral(ICPPASTLiteralExpression.lk_string_literal); $EndBuild ./  
+           /. $Build  consumeExpressionLiteral(ICPPASTLiteralExpression.lk_string_literal); $EndBuild ./
       | 'true'
            /. $Build  consumeExpressionLiteral(ICPPASTLiteralExpression.lk_true); $EndBuild ./
       | 'false'
            /. $Build  consumeExpressionLiteral(ICPPASTLiteralExpression.lk_false); $EndBuild ./
       | 'this'
            /. $Build  consumeExpressionLiteral(ICPPASTLiteralExpression.lk_this); $EndBuild ./
-           
-           
+
+
 primary_expression
     ::= literal
       | '(' expression ')'
            /. $Build  consumeExpressionBracketed();  $EndBuild ./
       | id_expression
-      
-      
-id_expression 
+
+
+id_expression
     ::= qualified_or_unqualified_name
            /. $Build  consumeExpressionName();  $EndBuild ./
-      
-      
+
+
 -- Pushes an IASTName on the stack, if you want an id expression then wrap the name
 qualified_or_unqualified_name
     ::= unqualified_id_name
@@ -224,14 +224,14 @@ unqualified_id_name
       | '~' template_id_name
           /. $Build  consumeDestructorNameTemplateId();  $EndBuild ./
      -- | '~' class_name
-    
+
 
 
 -- wrap an identifier in a name node
 identifier_name
     ::= identifier_token
            /. $Build  consumeIdentifierName();  $EndBuild ./
-           
+
 
 template_opt
     ::= 'template'
@@ -254,7 +254,7 @@ qualified_id_name
           /. $Build  consumeQualifiedId(true);  $EndBuild ./
       | '::' unqualified_id_name
           /. $Build  consumeGlobalQualifiedId();  $EndBuild ./
-      
+
       --| '::' identifier_name
       --    /. $Build  consumeGlobalQualifiedId();  $EndBuild ./
       --| '::' operator_function_id_name
@@ -267,8 +267,8 @@ qualified_id_name
 --unqualified_id_with_template_name
 --    ::= template_opt unqualified_id_name
 --          /. $Build  consumeNameWithTemplateKeyword();  $EndBuild ./
-    
-    
+
+
 -- puts a list of names in reverse order on the stack
 -- always ends with ::
 -- this is the part of a qualified id that comes before the last ::
@@ -276,29 +276,29 @@ qualified_id_name
 nested_name_specifier
     ::= class_or_namespace_name '::' nested_name_specifier_with_template
           /. $Build  consumeNestedNameSpecifier(true);  $EndBuild ./
-      | class_or_namespace_name '::' 
+      | class_or_namespace_name '::'
           /. $Build  consumeNestedNameSpecifier(false);  $EndBuild ./
-      
+
 
 nested_name_specifier_with_template
     ::= class_or_namespace_name_with_template '::' nested_name_specifier_with_template
           /. $Build  consumeNestedNameSpecifier(true);  $EndBuild ./
-      | class_or_namespace_name_with_template '::' 
+      | class_or_namespace_name_with_template '::'
           /. $Build  consumeNestedNameSpecifier(false);  $EndBuild ./
 
-      
+
 class_or_namespace_name_with_template
     ::= template_opt class_or_namespace_name
           /. $Build  consumeNameWithTemplateKeyword();  $EndBuild ./
-      
-      
-      
+
+
+
 nested_name_specifier_opt
     ::= nested_name_specifier
       | $empty
            /. $Build  consumeNestedNameSpecifierEmpty();  $EndBuild ./
 
-      
+
 class_or_namespace_name -- just identifiers
     ::= class_name
       --| namespace_name -- namespace_name name can only be an identifier token, which is already accepted by class_name
@@ -308,7 +308,7 @@ postfix_expression
     ::= primary_expression
       | postfix_expression '[' expression ']'
           /. $Build  consumeExpressionArraySubscript();  $EndBuild ./
-      | postfix_expression '(' expression_list_opt ')'    
+      | postfix_expression '(' expression_list_opt ')'
           /. $Build  consumeExpressionFunctionCall();  $EndBuild ./
       | simple_type_specifier '(' expression_list_opt ')' -- explicit type conversion operator
           /. $Build  consumeExpressionSimpleTypeConstructor(); $EndBuild ./
@@ -345,8 +345,8 @@ postfix_expression
       | 'typeid' '(' type_id ')'
           /. $Build  consumeExpressionTypeId(ICPPASTTypeIdExpression.op_typeid); $EndBuild ./
 
-      
-      
+
+
 -- just names
 -- Don't even know if I really need this rule, the DOM parser just parses qualified_or_unqualified_name
 -- instead of pseudo_destructor_name. But the difference is I have different
@@ -365,13 +365,13 @@ destructor_type_name
           /. $Build  consumeDestructorName();  $EndBuild ./
       | '~' template_id_name
           /. $Build  consumeDestructorNameTemplateId();  $EndBuild ./
-          
-          
+
+
 --destructor_type_name
 --    ::= '~' type_name
 --          /. $Build  consumeDestructorName();  $EndBuild ./
-     
-          
+
+
 
 unary_expression
     ::= postfix_expression
@@ -425,11 +425,11 @@ new_declarator -- pointer operators are part of the type id, held in an empty de
 
 
 new_pointer_operators  -- presumably this will not need an action as ptr_operator will have one
-    ::= ptr_operator 
+    ::= ptr_operator
       | ptr_operator new_pointer_operators
-      
 
-new_array_expressions 
+
+new_array_expressions
     ::= '[' expression ']'
       | new_array_expressions '[' constant_expression ']'
 
@@ -442,8 +442,8 @@ new_array_expressions_opt
 new_initializer
     ::= '(' expression_list_opt ')'  -- even if the parens are there we get null in the AST
           /. $Build  consumeNewInitializer();  $EndBuild ./
-    
-    
+
+
 new_initializer_opt
     ::= new_initializer
       | $empty
@@ -469,7 +469,7 @@ pm_expression
           /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_pmdot);  $EndBuild ./
       | pm_expression '->*' cast_expression
           /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_pmarrow);  $EndBuild ./
-          
+
 
 multiplicative_expression
     ::= pm_expression
@@ -487,16 +487,16 @@ additive_expression
           /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_plus);  $EndBuild ./
       | additive_expression '-' multiplicative_expression
           /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_minus);  $EndBuild ./
-      
-      
+
+
 shift_expression
     ::= additive_expression
       | shift_expression '<<' additive_expression
           /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_shiftLeft);  $EndBuild ./
       | shift_expression '>>' additive_expression
           /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_shiftRight);  $EndBuild ./
-      
-      
+
+
 relational_expression
     ::= shift_expression
       | relational_expression '<' shift_expression
@@ -545,7 +545,7 @@ logical_or_expression
     ::= logical_and_expression
       | logical_or_expression '||' logical_and_expression
           /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_logicalOr);  $EndBuild ./
-      
+
 
 conditional_expression
     ::= logical_or_expression
@@ -557,7 +557,7 @@ conditional_expression
 
 relational_expression_inTemplate
     ::= shift_expression
-      | relational_expression_inTemplate '<' shift_expression 
+      | relational_expression_inTemplate '<' shift_expression
           /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_lessThan);  $EndBuild ./
       | '(' relational_expression_inTemplate '>' shift_expression ')'
           /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_greaterThan);  $EndBuild ./
@@ -600,7 +600,7 @@ logical_or_expression_inTemplate
     ::= logical_and_expression_inTemplate
       | logical_or_expression_inTemplate '||' logical_and_expression_inTemplate
           /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_logicalOr);  $EndBuild ./
-      
+
 
 conditional_expression_inTemplate
     ::= logical_or_expression_inTemplate
@@ -675,7 +675,7 @@ expression
     ::= expression_list
      -- | ERROR_TOKEN
      --     /. $Build  consumeExpressionProblem(); $EndBuild ./
-      
+
 -- expression_list and expression_list_opt always result in a single element on the stack
 -- the element might be an expression, an expression list or null
 
@@ -688,19 +688,19 @@ expression_list_actual
     ::= assignment_expression
       | expression_list_actual ',' assignment_expression
 
-      
+
 expression_list_opt
    ::= expression_list
      | $empty
           /. $Build  consumeEmpty();  $EndBuild ./
-          
-          
+
+
 expression_opt
     ::= expression
       | $empty
           /. $Build  consumeEmpty();  $EndBuild ./
-      
-      
+
+
 constant_expression
     ::= conditional_expression
 
@@ -709,7 +709,7 @@ constant_expression_opt
     ::= constant_expression
       | $empty
           /. $Build  consumeEmpty();  $EndBuild ./
-      
+
 
 ------------------------------------------------------------------------------------------
 -- Statements
@@ -735,22 +735,22 @@ labeled_statement
           /. $Build  consumeStatementCase();  $EndBuild ./
       | 'default' ':' statement
           /. $Build  consumeStatementDefault();  $EndBuild ./
-      
-      
+
+
 expression_statement
     ::= expression ';'
            /. $Build  consumeStatementExpression();  $EndBuild ./
       | ';'
            /. $Build  consumeStatementNull();  $EndBuild ./
-    
-    
+
+
 compound_statement
     ::= '{' <openscope-ast> statement_seq '}'
           /. $Build  consumeStatementCompoundStatement(true);  $EndBuild ./
       | '{' '}'
           /. $Build  consumeStatementCompoundStatement(false);  $EndBuild ./
-    
-    
+
+
 statement_seq
     ::= statement
       | statement_seq statement
@@ -763,7 +763,7 @@ selection_statement
           /. $Build  consumeStatementIf(true);  $EndBuild ./
       | 'switch' '(' condition ')' statement
           /. $Build  consumeStatementSwitch();  $EndBuild ./
-      
+
 
 
 condition
@@ -852,20 +852,20 @@ declaration_seq
 declaration_seq_opt
     ::= declaration_seq
       | $empty
-      
-    
-    
+
+
+
 simple_declaration
     ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ';'
           /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
 
 
-simple_declaration_with_declspec 
+simple_declaration_with_declspec
     ::= declaration_specifiers <openscope-ast> init_declarator_list_opt ';'
           /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
 
 
--- declaration specifier nodes not created here, they are created by sub-rules 
+-- declaration specifier nodes not created here, they are created by sub-rules
 -- these rules add IToken modifiers to the declspec nodes
 declaration_specifiers
     ::= <openscope-ast> simple_declaration_specifiers
@@ -882,10 +882,10 @@ declaration_specifiers
 
 declaration_specifiers_opt
     ::= declaration_specifiers
-      | $empty 
+      | $empty
           /. $Build  consumeEmpty();  $EndBuild ./
 
-          
+
 
 -- what about type qualifiers... cv_qualifier
 no_type_declaration_specifier
@@ -896,13 +896,13 @@ no_type_declaration_specifier
           /. $Build  consumeToken(); $EndBuild ./
       | 'typedef'
           /. $Build  consumeToken(); $EndBuild ./
-      
-      
+
+
 no_type_declaration_specifiers
     ::= no_type_declaration_specifier
       | no_type_declaration_specifiers no_type_declaration_specifier
-  
-      
+
+
 -- now also includes qualified names
 -- if there is no long long then this may be simplified
 simple_declaration_specifiers
@@ -911,14 +911,14 @@ simple_declaration_specifiers
       | simple_declaration_specifiers simple_type_specifier
       | simple_declaration_specifiers no_type_declaration_specifier
       | no_type_declaration_specifiers
-      
-      
+
+
 -- struct, union or class!
 class_declaration_specifiers
     ::= class_specifier
       | no_type_declaration_specifiers class_specifier
       | class_declaration_specifiers no_type_declaration_specifier
-      
+
 
 -- elaborated means something different, but how different?
 elaborated_declaration_specifiers
@@ -939,9 +939,9 @@ type_name_declaration_specifiers
     ::= type_name_specifier
       | no_type_declaration_specifiers  type_name_specifier
       | type_name_declaration_specifiers no_type_declaration_specifier
-    
-    
-  -- TODO comment this out    
+
+
+  -- TODO comment this out
 --decl_specifier
 --    ::= storage_class_specifier -- just keywords
 --      | type_specifier  -- this is where the fun is
@@ -991,8 +991,8 @@ function_specifier
 --      | dcolon_opt nested_name_specifier 'template' template_id_name
 --          /. $Build  consumeQualifiedId(false);  $EndBuild ./
 --      | simple_type_primitive_specifier
-      
-   
+
+
 
 simple_type_specifier
     ::= simple_type_specifier_token
@@ -1015,7 +1015,7 @@ simple_type_specifier_token
 -- last two rules moved here from simple_type_specifier
 type_name  -- all identifiers of some kind
     ::= class_name
-     -- | enum_name 
+     -- | enum_name
      -- | typedef_name
 
 
@@ -1039,13 +1039,13 @@ elaborated_type_specifier
           /. $Build  consumeTypeSpecifierElaborated(false);  $EndBuild ./
       | class_keyword elaborated_specifier_hook dcolon_opt nested_name_specifier_opt template_opt template_id_name
           /. $Build  consumeTypeSpecifierElaborated(true);   $EndBuild ./
-      | 'enum' elaborated_specifier_hook dcolon_opt nested_name_specifier_opt identifier_name      
+      | 'enum' elaborated_specifier_hook dcolon_opt nested_name_specifier_opt identifier_name
           /. $Build  consumeTypeSpecifierElaborated(false);  $EndBuild ./
 
 
 elaborated_specifier_hook
     ::= $empty
-    
+
 
 -- there is currently no way to disambiguate identifier tokens
 --enum_name
@@ -1054,8 +1054,8 @@ elaborated_specifier_hook
 
 comma_opt
     ::= ',' | $empty
-    
-    
+
+
 enum_specifier
     ::= 'enum' enum_specifier_hook '{' <openscope-ast> enumerator_list_opt comma_opt '}'
           /. $Build  consumeTypeSpecifierEnumeration(false); $EndBuild ./
@@ -1064,7 +1064,7 @@ enum_specifier
 
 enum_specifier_hook
     ::= $empty
-    
+
 enumerator_list
     ::= enumerator_definition
       | enumerator_list ',' enumerator_definition
@@ -1084,8 +1084,8 @@ enumerator_definition
 
 namespace_name
     ::= identifier_name
-    
-    
+
+
 -- In the spec grammar this is broken down into original_namespace_definition and extension_namespace_definition.
 -- But since we are not tracking identifiers it becomes the same thing, so its simplified here.
 namespace_definition
@@ -1096,19 +1096,19 @@ namespace_definition
 
 namespace_definition_hook
     ::= $empty
-    
-              
+
+
 namespace_alias_definition
     ::= 'namespace' identifier_token '=' dcolon_opt nested_name_specifier_opt namespace_name ';'
            /. $Build  consumeNamespaceAliasDefinition(); $EndBuild ./
-           
+
 
 -- make more lenient!
 -- using_declaration
 --     ::= 'using' typename_opt dcolon_opt nested_name_specifier unqualified_id_name ';'
 --       | 'using' '::' unqualified_id_name ';'
-      
-      
+
+
 -- TODO why not just check if the second token is 'typename'?
 using_declaration
     ::= 'using' typename_opt dcolon_opt nested_name_specifier_opt unqualified_id_name ';'
@@ -1147,15 +1147,15 @@ init_declarator_list
 init_declarator_list_opt
     ::= init_declarator_list
       | $empty
-      
-      
+
+
 init_declarator_complete
     ::= init_declarator
-          /. $Build  consumeInitDeclaratorComplete();  $EndBuild ./ 
-      
-      
+          /. $Build  consumeInitDeclaratorComplete();  $EndBuild ./
+
+
 init_declarator
-    ::= complete_declarator 
+    ::= complete_declarator
       | complete_declarator initializer
           /. $Build  consumeDeclaratorWithInitializer(true);  $EndBuild ./
 
@@ -1163,7 +1163,7 @@ complete_declarator
     ::= declarator
 
 declarator
-    ::= direct_declarator 
+    ::= direct_declarator
       | <openscope-ast> ptr_operator_seq direct_declarator
           /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
 
@@ -1171,7 +1171,7 @@ function_declarator
     ::= function_direct_declarator
       | <openscope-ast> ptr_operator_seq direct_declarator
           /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
-      
+
 
 direct_declarator
     ::= basic_direct_declarator
@@ -1202,8 +1202,8 @@ array_modifier
     ::= '[' constant_expression ']'
            /. $Build  consumeDirectDeclaratorArrayModifier(true);  $EndBuild ./
       | '[' ']'
-           /. $Build  consumeDirectDeclaratorArrayModifier(false);  $EndBuild ./      
-      
+           /. $Build  consumeDirectDeclaratorArrayModifier(false);  $EndBuild ./
+
 
 ptr_operator
     ::= pointer_hook '*' pointer_hook <openscope-ast> cv_qualifier_seq_opt
@@ -1215,7 +1215,7 @@ ptr_operator
 
 pointer_hook
     ::= $empty
-    
+
 ptr_operator_seq
     ::= ptr_operator
       | ptr_operator_seq ptr_operator
@@ -1246,12 +1246,12 @@ declarator_id_name
    ::= qualified_or_unqualified_name
      | dcolon_opt nested_name_specifier_opt type_name
           /. $Build  consumeQualifiedId(false);  $EndBuild ./
-      
+
 --declarator_id_name
 --   ::= unqualified_id_name
 --     | <empty> nested_name_specifier template_opt unqualified_id_name
 --         /. $Build  consumeQualifiedId(true);  $EndBuild ./
-  
+
 
 type_id
     ::= type_specifier_seq
@@ -1266,31 +1266,31 @@ type_id
 
 
 -- more lenient than spec, but easier to deal with
--- TODO are conflicts resolved by using the more strict rule? 
+-- TODO are conflicts resolved by using the more strict rule?
 type_specifier_seq
     ::= declaration_specifiers
 
 
 abstract_declarator
-    ::= direct_abstract_declarator 
-      | <openscope-ast> ptr_operator_seq 
+    ::= direct_abstract_declarator
+      | <openscope-ast> ptr_operator_seq
           /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
       | <openscope-ast> ptr_operator_seq direct_abstract_declarator
           /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
-      
-      
+
+
 direct_abstract_declarator
     ::= basic_direct_abstract_declarator
       | array_direct_abstract_declarator
       | function_direct_abstract_declarator
-      
+
 
 basic_direct_abstract_declarator
     ::= '(' abstract_declarator ')'
           /. $Build  consumeDirectDeclaratorBracketed();  $EndBuild ./
       | '(' ')'
           /. $Build  consumeAbstractDeclaratorEmpty();  $EndBuild ./
-          
+
 
 array_direct_abstract_declarator
     ::= array_modifier
@@ -1298,15 +1298,15 @@ array_direct_abstract_declarator
       | array_direct_abstract_declarator array_modifier
           /. $Build  consumeDirectDeclaratorArrayDeclarator(true);  $EndBuild ./
       | basic_direct_abstract_declarator array_modifier
-          /. $Build  consumeDirectDeclaratorArrayDeclarator(true);  $EndBuild ./    
-       
+          /. $Build  consumeDirectDeclaratorArrayDeclarator(true);  $EndBuild ./
 
-function_direct_abstract_declarator                 
+
+function_direct_abstract_declarator
      ::= basic_direct_abstract_declarator '(' <openscope-ast> parameter_declaration_clause ')' <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
            /. $Build  consumeDirectDeclaratorFunctionDeclarator(true);  $EndBuild ./
        | '(' <openscope-ast> parameter_declaration_clause ')' <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
            /. $Build  consumeDirectDeclaratorFunctionDeclarator(false);  $EndBuild ./
-      
+
 
 -- actions just place a marker indicating if '...' was parsed
 parameter_declaration_clause
@@ -1332,8 +1332,8 @@ abstract_declarator_opt
     ::= abstract_declarator
       | $empty
           /. $Build  consumeEmpty();  $EndBuild ./
-          
-          
+
+
 parameter_declaration
     ::= declaration_specifiers parameter_init_declarator
           /. $Build  consumeParameterDeclaration();  $EndBuild ./
@@ -1350,8 +1350,8 @@ parameter_init_declarator
 	      /. $Build  consumeDeclaratorWithInitializer(true);  $EndBuild ./
 	  | '=' parameter_initializer
 	      /. $Build  consumeDeclaratorWithInitializer(false);  $EndBuild ./
-	  
-	  
+
+
 parameter_initializer
     ::= assignment_expression
           /. $Build  consumeInitializer();  $EndBuild ./
@@ -1363,7 +1363,7 @@ function_definition
       | declaration_specifiers_opt function_declarator 'try' <openscope-ast> ctor_initializer_list_opt function_body <openscope-ast> handler_seq
            /. $Build  consumeFunctionDefinition(true);  $EndBuild ./
 
-    
+
 function_body
     ::= compound_statement
 
@@ -1380,7 +1380,7 @@ initializer_clause
       | initializer_list
 --CDT_70_FIX_FROM_50-#4
           /. $Build  consumeInitializer();  $EndBuild ./
-         
+
 initializer_list
     ::= start_initializer_list '{' <openscope-ast> initializer_seq ',' '}' end_initializer_list
          /. $Build  consumeInitializerList();  $EndBuild ./
@@ -1393,7 +1393,7 @@ initializer_list
 start_initializer_list
     ::= $empty
           /. $Build  initializerListStart(); $EndBuild ./
-          
+
 end_initializer_list
     ::= $empty
           /. $Build  initializerListEnd(); $EndBuild ./
@@ -1403,7 +1403,7 @@ initializer_seq
       | initializer_seq ',' initializer_clause
 
 
-      
+
 ------------------------------------------------------------------------------------------
 -- Classes
 ------------------------------------------------------------------------------------------
@@ -1417,8 +1417,8 @@ class_name
 class_specifier
     ::= class_head '{'   <openscope-ast> member_declaration_list_opt '}'
           /.  $Build  consumeClassSpecifier();  $EndBuild ./
-       
-       
+
+
 class_head
     ::= class_keyword composite_specifier_hook identifier_name_opt class_name_suffix_hook <openscope-ast> base_clause_opt
           /. $Build  consumeClassHead(false);  $EndBuild ./
@@ -1431,16 +1431,16 @@ class_head
 
 composite_specifier_hook
     ::= $empty
-    
+
 class_name_suffix_hook
     ::= $empty
 
 identifier_name_opt
     ::= identifier_name
       | $empty
-          /. $Build  consumeEmpty();  $EndBuild./      
-      
-      
+          /. $Build  consumeEmpty();  $EndBuild./
+
+
 class_keyword
     ::= 'class'
       | 'struct'
@@ -1458,15 +1458,15 @@ member_declaration
           /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
       | declaration_specifiers_opt ';'
           /. $Build  consumeDeclarationSimple(false);  $EndBuild ./
-      | function_definition ';' 
-      | function_definition      
+      | function_definition ';'
+      | function_definition
       | dcolon_opt nested_name_specifier template_opt unqualified_id_name ';'
-          /. $Build  consumeMemberDeclarationQualifiedId();  $EndBuild ./ 
-      | using_declaration  
+          /. $Build  consumeMemberDeclarationQualifiedId();  $EndBuild ./
+      | using_declaration
       | template_declaration
       | explicit_specialization  -- not spec
       | namespace_definition     -- not spec
-      | visibility_label 
+      | visibility_label
       | ERROR_TOKEN
           /. $Build  consumeDeclarationProblem();  $EndBuild ./
 
@@ -1492,7 +1492,7 @@ member_declarator_complete
 member_declarator
     ::= declarator
     -- parse pure specifier as a constant_initializer, reduces conflicts
-    -- | declarator pure_specifier  
+    -- | declarator pure_specifier
       | declarator constant_initializer
           /. $Build  consumeMemberDeclaratorWithInitializer();  $EndBuild ./
       | bit_field_declarator ':' constant_expression
@@ -1517,8 +1517,8 @@ base_clause
 
 base_clause_opt
     ::= base_clause
-      | $empty 
-    
+      | $empty
+
 
 base_specifier_list
     ::= base_specifier
@@ -1536,7 +1536,7 @@ base_specifier
       | access_specifier_keyword dcolon_opt nested_name_specifier_opt class_name
           /. $Build  consumeBaseSpecifier(true, false);  $EndBuild ./
 
-      
+
 access_specifier_keyword
     ::= 'private'
           /. $Build  consumeToken();  $EndBuild ./
@@ -1556,7 +1556,7 @@ conversion_function_id_name
     ::= conversion_function_id
       | conversion_function_id '<' <openscope-ast> template_argument_list_opt '>'
           /. $Build  consumeTemplateId();  $EndBuild ./
-          
+
 conversion_function_id
     ::= 'operator' conversion_type_id
           /. $Build  consumeConversionName(); $EndBuild ./
@@ -1572,14 +1572,14 @@ conversion_type_id
 conversion_declarator
     ::= <openscope-ast> ptr_operator_seq
           /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
-      
- 
- 
+
+
+
 --conversion_declarator_opt
 --    ::= conversion_declarator
 --      | $empty
-      
-    
+
+
 ctor_initializer_list
     ::= ':' mem_initializer_list
 
@@ -1587,7 +1587,7 @@ ctor_initializer_list
 ctor_initializer_list_opt
     ::= ctor_initializer_list
       | $empty
-      
+
 
 mem_initializer_list
     ::= mem_initializer
@@ -1642,7 +1642,7 @@ template_parameter_list
       | template_parameter_list ',' template_parameter
 
 
--- TODO There is an ambiguity in the spec grammar here, 
+-- TODO There is an ambiguity in the spec grammar here,
 -- "class X" should be parsed as a type_parameter
 -- and not as a parameter_declaration. Here precedence is used to disambiguate
 -- but it would be better to refactor the grammar to remove the conflict.
@@ -1650,11 +1650,11 @@ template_parameter_list
 template_parameter
     ::= type_parameter
       | parameter_declaration
-          /. $Build  consumeTemplateParamterDeclaration();  $EndBuild ./ 
+          /. $Build  consumeTemplateParamterDeclaration();  $EndBuild ./
 
 
 type_parameter
-    ::= 'class' identifier_name_opt 
+    ::= 'class' identifier_name_opt
           /. $Build  consumeSimpleTypeTemplateParameter(false);  $EndBuild ./
       | 'class' identifier_name_opt '=' type_id
           /. $Build  consumeSimpleTypeTemplateParameter(true);  $EndBuild ./
@@ -1672,7 +1672,7 @@ template_id_name
     ::= identifier_name '<' <openscope-ast> template_argument_list_opt '>'
           /. $Build  consumeTemplateId();  $EndBuild ./
 --        | ERROR_TOKEN
---          /. $Build consumeTemplateIDError(); $EndBuild ./  
+--          /. $Build consumeTemplateIDError(); $EndBuild ./
 
 
 template_argument_list
@@ -1683,7 +1683,7 @@ template_argument_list
 template_argument_list_opt
     ::= template_argument_list
       | $empty
-      
+
 --type_id in template
 
 class_name_inTemplate
@@ -1691,26 +1691,26 @@ class_name_inTemplate
 
 class_or_namespace_name_inTemplate -- just identifiers
     ::= class_name_inTemplate
-      --| namespace_name -- namespace_name name can only be an identifier token, which is already accepted by 
+      --| namespace_name -- namespace_name name can only be an identifier token, which is already accepted by
 
 nested_name_specifier_inTemplate
     ::= class_or_namespace_name_inTemplate '::' nested_name_specifier_with_template_inTemplate
           /. $Build  consumeNestedNameSpecifier(true);  $EndBuild ./
-      | class_or_namespace_name_inTemplate '::' 
+      | class_or_namespace_name_inTemplate '::'
           /. $Build  consumeNestedNameSpecifier(false);  $EndBuild ./
-      
+
 
 nested_name_specifier_with_template_inTemplate
     ::= class_or_namespace_name_with_template_inTemplate '::' nested_name_specifier_with_template_inTemplate
           /. $Build  consumeNestedNameSpecifier(true);  $EndBuild ./
-      | class_or_namespace_name_with_template_inTemplate '::' 
+      | class_or_namespace_name_with_template_inTemplate '::'
           /. $Build  consumeNestedNameSpecifier(false);  $EndBuild ./
 
-      
+
 class_or_namespace_name_with_template_inTemplate
     ::= template_opt class_or_namespace_name_inTemplate
           /. $Build  consumeNameWithTemplateKeyword();  $EndBuild ./
-    
+
 nested_name_specifier_opt_inTemplate
     ::= nested_name_specifier_inTemplate
       | $empty
@@ -1739,7 +1739,7 @@ type_name_declaration_specifiers_inTemplate
       | type_name_declaration_specifiers_inTemplate no_type_declaration_specifier
 
 
-          
+
 declaration_specifiers_inTemplate
     ::= <openscope-ast> simple_declaration_specifiers
           /. $Build  consumeDeclarationSpecifiersSimple();  $EndBuild ./
@@ -1750,8 +1750,8 @@ declaration_specifiers_inTemplate
       | <openscope-ast> enum_declaration_specifiers
           /. $Build  consumeDeclarationSpecifiersComposite();  $EndBuild ./
       | <openscope-ast> type_name_declaration_specifiers_inTemplate
-          /. $Build  consumeDeclarationSpecifiersTypeName();  $EndBuild ./          
-          
+          /. $Build  consumeDeclarationSpecifiersTypeName();  $EndBuild ./
+
 
 type_specifier_seq_inTemplate
       ::= declaration_specifiers_inTemplate
@@ -1762,13 +1762,13 @@ type_id_inTemplate
           /. $Build  consumeTypeId(false);  $EndBuild ./
       | type_specifier_seq_inTemplate abstract_declarator
           /. $Build  consumeTypeId(true);  $EndBuild ./
-          
+
 --end type_id in template
 
 
 template_argument
     ::= assignment_expression_inTemplate
-          /. $Build  consumeTemplateArgumentExpression();  $EndBuild ./  
+          /. $Build  consumeTemplateArgumentExpression();  $EndBuild ./
     | type_id_inTemplate
           /. $Build  consumeTemplateArgumentTypeId();  $EndBuild ./
 

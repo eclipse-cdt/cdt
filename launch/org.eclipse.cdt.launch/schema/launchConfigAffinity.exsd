@@ -27,21 +27,21 @@ One feature that uses this extension point (as a consumer) is CDT&apos;s support
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -80,7 +80,7 @@ One feature that uses this extension point (as a consumer) is CDT&apos;s support
          &lt;extension
       point=&quot;org.eclipse.cdt.launch.launchConfigAffinity&quot;&gt;
    &lt;launchConfigTypeId id=&quot;com.acme.launchTypeAttach&quot;/&gt;
-   &lt;launchConfigTypeId id=&quot;com.acme.launchTypeCreateProcess&quot;/&gt;   
+   &lt;launchConfigTypeId id=&quot;com.acme.launchTypeCreateProcess&quot;/&gt;
 &lt;/extension&gt;
       </documentation>
    </annotation>

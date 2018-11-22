@@ -44,19 +44,19 @@
 	</property-group>
 
 	<process type="org.eclipse.cdt.managedbuilder.core.NewManagedProject">
-		<simple name="name" value="$(projectName)" /> 
-		<simple name="artifactExtension" value="exe" /> 
-		<simple name="isCProject" value="true" /> 
+		<simple name="name" value="$(projectName)" />
+		<simple name="artifactExtension" value="exe" />
+		<simple name="isCProject" value="true" />
 	</process>
 
 	<process type="org.eclipse.cdt.core.CreateSourceFolder">
 		<simple name="projectName" value="$(projectName)"/>
 		<simple name="path" value="$(sourceDir)"/>
 	</process>
-	
+
 	<process type = "org.eclipse.cdt.core.AddFile">
 		<simple name = "projectName" value="$(projectName)"/>
-		<complex name="file">			
+		<complex name="file">
 				<simple name="source" value="src/Basename.upc"/>
 				<simple name ="target" value ="$(sourceDir)/$(projectName).upc"/>
 				<simple name ="replaceable" value="true"/>

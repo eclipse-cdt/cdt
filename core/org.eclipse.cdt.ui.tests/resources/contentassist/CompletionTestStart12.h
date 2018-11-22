@@ -2,5 +2,5 @@
 
 class aThirdClass {
    int x;
-        
+
 };

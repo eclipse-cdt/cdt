@@ -47,7 +47,7 @@ $Headers
 /.
 
 	private ITokenMap tokenMap = null;
-	
+
 	public void setTokens(List<IToken> tokens) {
 		resetTokenStream();
 		addToken(new Token(null, 0, 0, 0)); // dummy token
@@ -57,12 +57,12 @@ $Headers
 		}
 		addToken(new Token(null, 0, 0, $sym_type.TK_EOF_TOKEN));
 	}
-	
+
 	public $action_type(ITokenStream stream, Map<String,String> properties) {  // constructor for creating secondary parser
 		initActions(properties);
 		tokenMap = new TokenMap($sym_type.orderedTerminalSymbols, stream.getOrderedTerminalSymbols());
-	}	
-	
+	}
+
 ./
 $End
 

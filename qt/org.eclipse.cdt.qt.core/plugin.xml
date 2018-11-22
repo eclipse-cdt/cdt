@@ -95,7 +95,7 @@
         point="org.eclipse.core.resources.markers"
         id="qtproblem"
         name="Qt C/C++ Problem">
-        <super type="org.eclipse.cdt.codan.core.codanProblem"/> 
+        <super type="org.eclipse.cdt.codan.core.codanProblem"/>
         <persistent value="true"/>
     </extension>
     <extension

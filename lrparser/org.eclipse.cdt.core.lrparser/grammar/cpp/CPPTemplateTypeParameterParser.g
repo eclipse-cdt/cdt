@@ -36,7 +36,7 @@ $Import
 $End
 
 $Globals
-/. 
+/.
 	import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 ./
 $End
@@ -55,5 +55,5 @@ $Rules
 	    ::= type_parameter
 	      | ERROR_TOKEN
 	          /. $Build  consumeEmpty();  $EndBuild ./
-          
+
 $End

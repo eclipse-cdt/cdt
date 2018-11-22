@@ -30,7 +30,7 @@
         <associatedDelegate delegate="org.eclipse.cdt.examples.dsf.gdb.launchDelegate"/>
         <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
       </tab>
-      <tab 
+      <tab
             id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.environmentTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="Environment"
@@ -72,10 +72,10 @@
         <!-- Place after main tab to check its id -->
         <placement after="org.eclipse.cdt.cdi.launch.mainTab"/>
       </tab>
-   </extension>   
+   </extension>
    <extension point="org.eclipse.core.runtime.adapters">
-      <factory 
-        	class="org.eclipse.cdt.examples.dsf.gdb.GdbExtendedAdapterFactory" 
+      <factory
+        	class="org.eclipse.cdt.examples.dsf.gdb.GdbExtendedAdapterFactory"
 	        adaptableType="org.eclipse.cdt.examples.dsf.gdb.launch.GdbExtendedLaunch">
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
@@ -85,7 +85,7 @@
          <adapter type="org.eclipse.cdt.debug.core.model.IConnectHandler"/>
          <adapter type="org.eclipse.debug.core.commands.IDisconnectHandler"/>
          <adapter type="org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler"/>
-	  </factory>         
+	  </factory>
    </extension>
 
    <!-- Example showing how to add a custom command with toolbar/menu contributions with DSF.
@@ -199,8 +199,8 @@
                </with>
             </visibleWhen>
          </command>
-      </menuContribution>     
-      
+      </menuContribution>
+
       <!-- Contribute Show GDB Version to the popup menu of the GdbBasicCliConsole View -->
       <menuContribution
           locationURI="popup:GdbBasicCliConsole.#ContextMenu?after=additions">
@@ -239,7 +239,7 @@
          </enabledWhen>
       </handler>
    </extension>
-      
+
    <!-- Add a console page participant to the debugger console pages -->
    <extension
          point="org.eclipse.ui.console.consolePageParticipants">

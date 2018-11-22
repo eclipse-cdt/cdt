@@ -22,7 +22,7 @@
          <documentation>
             Definition of a profile:
 - A scanner info collector
-- A make build output parser 
+- A make build output parser
 - A number of external scanner info providers
          </documentation>
       </annotation>
@@ -35,7 +35,7 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
@@ -74,7 +74,7 @@
          <attribute name="scope" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
             <simpleType>

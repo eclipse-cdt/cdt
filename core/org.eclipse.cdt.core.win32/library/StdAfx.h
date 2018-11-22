@@ -13,7 +13,7 @@
  *
  *  StdAfx.h
  *
- *  This is a part of JNI implementation of spawner 
+ *  This is a part of JNI implementation of spawner
  *******************************************************************************/
 
 // stdafx.h : include file for standard system include files,

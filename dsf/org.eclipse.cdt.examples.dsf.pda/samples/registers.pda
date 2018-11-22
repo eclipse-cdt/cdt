@@ -5,10 +5,10 @@ def bitfield $status.BITS_00_07 0 8
 def bitfield $status.BITS_08_15 8 8
 def bitfield $status.BITS_16_23 16 8
 def bitfield $status.BITS_24_31 24 8
-def mnemonic $status.BITS_24_31 three 3 
-def mnemonic $status.BITS_24_31 twelve 12 
-def mnemonic $status.BITS_24_31 fourty_eight 48 
-def mnemonic $status.BITS_24_31 one_nighty_two 192 
+def mnemonic $status.BITS_24_31 three 3
+def mnemonic $status.BITS_24_31 twelve 12
+def mnemonic $status.BITS_24_31 fourty_eight 48
+def mnemonic $status.BITS_24_31 one_nighty_two 192
 def register $stackdepth General true
 def register $stack[0] General true
 def register $stack[1] General true

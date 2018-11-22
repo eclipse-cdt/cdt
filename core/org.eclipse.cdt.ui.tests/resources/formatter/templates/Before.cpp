@@ -41,7 +41,7 @@ public:
 class TemplateContainer {
 	// these are in an enclosing class
 	template<class Bar> void fum(int i);
-	template<int> 
+	template<int>
 	void scrum(void) {}
 	;
 };

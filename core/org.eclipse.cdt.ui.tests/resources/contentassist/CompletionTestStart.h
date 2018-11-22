@@ -10,13 +10,13 @@ bool xFunction();
 
 enum anEnumeration {
 	aFirstEnum,
-	aSecondEnum, 
+	aSecondEnum,
 	aThirdEnum
 };
 
 enum xEnumeration {
 	xFirstEnum,
-	xSecondEnum, 
+	xSecondEnum,
 	xThirdEnum
 };
 

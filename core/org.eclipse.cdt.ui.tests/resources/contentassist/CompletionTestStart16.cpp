@@ -1,3 +1,3 @@
 #include "CompletionTestStart.h"
 
-void foo ( a 
+void foo ( a

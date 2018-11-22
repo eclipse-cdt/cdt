@@ -4,6 +4,6 @@ Release CDT-3.0
 	  To access use Window --> Preferences --> General --> Editors --> Text Editors
 
 	* New Environment variable support for builder.
-		
+
 	* Can now filter folders which do not have make target in Make Target view.
 

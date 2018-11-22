@@ -36,5 +36,5 @@ $Rules
 	    ::= expression
 	      | ERROR_TOKEN
 	          /. $Build  consumeEmpty();  $EndBuild ./
-          
+
 $End

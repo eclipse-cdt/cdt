@@ -2,7 +2,7 @@
 
 #define INT      int
 #define FUNCTION_MACRO(arg) globalFunc(arg)
-#define EMPTY_MACRO(arg) 
+#define EMPTY_MACRO(arg)
 
 enum Enumeration {
 	ONE, TWO, THREE
@@ -109,7 +109,7 @@ INT ClassContainer::staticPrivMethod() {
 	un + un;
 label:
 	FUNCTION_MACRO(0);
-	if (un.unionField < st->structField) 
+	if (un.unionField < st->structField)
 		goto label;
 	return globalConstant;
 }

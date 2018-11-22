@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.codan.core" id="checkerEnablement" name="Verification of checker enablement"/>
       </appinfo>
       <documentation>
-         Verifies that a checker should be executed on a given resource in a given launch mode. 
+         Verifies that a checker should be executed on a given resource in a given launch mode.
       </documentation>
    </annotation>
 

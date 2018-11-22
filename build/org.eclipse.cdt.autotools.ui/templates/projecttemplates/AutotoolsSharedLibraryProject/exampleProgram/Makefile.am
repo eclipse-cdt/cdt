@@ -17,7 +17,7 @@ noinst_PROGRAMS=exampleProgram
 
 ACLOCAL_AMFLAGS=-I ../m4
 
-# Sources for the a.out 
+# Sources for the a.out
 exampleProgram_SOURCES= exampleProgram.c
 
 # Libraries for a.out

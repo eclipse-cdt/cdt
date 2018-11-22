@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-# Add inputs and outputs from these tool invocations to the build variables 
+# Add inputs and outputs from these tool invocations to the build variables
 F90_SRCS += \
 ../Sources/a.f90 \
 ../Sources/ab.f90 \
@@ -42,7 +42,7 @@ F90_SRCS += \
 ../Sources/w.f90 \
 ../Sources/x.f90 \
 ../Sources/y.f90 \
-../Sources/z.f90 
+../Sources/z.f90
 
 OBJS += \
 ./Sources/a.obj \
@@ -83,7 +83,7 @@ OBJS += \
 ./Sources/w.obj \
 ./Sources/x.obj \
 ./Sources/y.obj \
-./Sources/z.obj 
+./Sources/z.obj
 
 
 # Each subdirectory must supply rules for building sources it contributes

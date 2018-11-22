@@ -1,9 +1,9 @@
-		
-		
+
+
 		/* This is sample code to test the indenter */
-           		
-		
-         		
+
+
+
 	  class Complex {
 		private:
 			   float re;
@@ -11,7 +11,7 @@
 				public:
 			Complex(float re, float im) :
 	re(re), im(im) {}
-			float GetRe() 
+			float GetRe()
     			    {
 				return re;
 		}

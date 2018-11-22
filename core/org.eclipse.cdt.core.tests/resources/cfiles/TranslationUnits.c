@@ -4,17 +4,17 @@
  */
 /********
  * This is a sample C file that will be used in testing the TranslationUnit
- * class.  It has a specific structure that will be looked for within the 
+ * class.  It has a specific structure that will be looked for within the
  * test case.
  * This file is only ment to contain various C elements, and may not compile
  * into a running application (but should be valid C)
  */
- 
+
 #include <stdio.h>
 #include <unistd.h>
 
 /* A function prototype */
-int func2p(void); 
+int func2p(void);
 
 /* A global variable */
 int globalvar;
@@ -29,7 +29,7 @@ typedef struct mystruct {
 	int a;
 	char b;
 	long c;
-} mystruct_t; 
+} mystruct_t;
 
 /* A union */
 union myunion {
@@ -43,7 +43,7 @@ typedef struct mystruct mytype;
 
 
 /* A couple functions */
- 
+
 void * func1(void)
 {
 	return(NULL);
@@ -54,7 +54,7 @@ int func2(void)
 {
 	return(0);
 }
- 
+
 int main(int argc, char ** argv)
 {
 	int var1;

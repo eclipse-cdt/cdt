@@ -123,7 +123,7 @@ project/${cpp?groups[1]}.cpp.o: ../../${file} project/${cpp?groups[1]}.cpp.d
 
 project/${cpp?groups[1]}.cpp.d: ;
 
--include project/${cpp?groups[1]}.cpp.d 
+-include project/${cpp?groups[1]}.cpp.d
 
 </#if>
 </#list>
@@ -147,7 +147,7 @@ core/${c?groups[1]}.c.o: ${file} core/${c?groups[1]}.c.d
 	@$(call mymkdir,$(dir $@))
 	${recipe_c_o_pattern_plat}
 	${recipe_ar_pattern}
-	
+
 core/${c?groups[1]}.c.d: ;
 
 -include core/${c?groups[1]}.c.d
@@ -182,7 +182,7 @@ variant/${c?groups[1]}.c.o: ${file} variant/${c?groups[1]}.c.d
 	@$(call mymkdir,$(dir $@))
 	${recipe_c_o_pattern_plat}
 	${recipe_ar_pattern}
-	
+
 variant/${c?groups[1]}.c.d: ;
 
 -include variant/${c?groups[1]}.c.d

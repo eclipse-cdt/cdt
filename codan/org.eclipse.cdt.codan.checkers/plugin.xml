@@ -31,7 +31,7 @@
                messagePattern="%problem.messagePattern.StatementHasNoEffect"
                name="%problem.name.StatementHasNoEffect"/>
       </checker>
-      
+
       <checker
             class="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructor"
             id="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructor"
@@ -72,7 +72,7 @@
                name="%problem.name.SuggestedParenthesis">
          </problem>
       </checker>
-      
+
       <checker
             class="org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"
             id="org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"

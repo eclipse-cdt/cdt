@@ -178,7 +178,7 @@
 											</fileset>
 										</copy>
 
-										<!-- Cleanup the "rcp-repository" update site, and copy over the 
+										<!-- Cleanup the "rcp-repository" update site, and copy over the
 											new one -->
 										<delete includeemptydirs="false" failonerror="false">
 											<fileset dir="${rcpSiteDestination}">

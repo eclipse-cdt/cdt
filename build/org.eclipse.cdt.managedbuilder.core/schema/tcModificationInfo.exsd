@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.managedbuilder.core" id="tcModificationInfo" name="ToolChain Modification Info"/>
       </appInfo>
       <documentation>
-         
+
       </documentation>
    </annotation>
 
@@ -18,21 +18,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -107,7 +107,7 @@ Can contain one of the following values:
          <attribute name="objectIdsType" use="default" value="EXACT_MATCH">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
             <simpleType>
@@ -154,7 +154,7 @@ Can contain one of the following values:
          <attribute name="type" use="default" value="EXACT_MATCH">
             <annotation>
                <documentation>
-                  specifies the value type. 
+                  specifies the value type.
 &lt;br&gt;May contain the following values:
 &lt;br&gt; EXACT_MATCH - value is exact string representation
 &lt;br&gt; REGEXP - value is a regular expressions
@@ -193,7 +193,7 @@ Can contain one of the following values:
          <attribute name="objectIdsType">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
             <simpleType>
@@ -213,7 +213,7 @@ Can contain one of the following values:
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         
+
       </documentation>
    </annotation>
 
@@ -222,7 +222,7 @@ Can contain one of the following values:
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         
+
       </documentation>
    </annotation>
 
@@ -231,7 +231,7 @@ Can contain one of the following values:
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         
+
       </documentation>
    </annotation>
 
@@ -249,7 +249,7 @@ Can contain one of the following values:
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+
       </documentation>
    </annotation>
 

@@ -2,5 +2,5 @@
 
 void anotherClass::anotherMethod()
 {
-    
+
 }

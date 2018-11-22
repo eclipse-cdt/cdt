@@ -2,7 +2,7 @@
 <?NLS TYPE="org.eclipse.help.contexts"?>
 <contexts>
 
-<!-- 
+<!--
 	PLUGINS LINKED TO THESE HELP CONTEXT IDs
 	plugin="org.eclipse.cdt.ui"
 -->
@@ -350,146 +350,146 @@
 
 <context id="cdt_u_prop_build">
    <description></description>
-   <topic href="reference/cdt_u_prop_build.htm" label="C/C++ Build"/> 
-</context>                         
+   <topic href="reference/cdt_u_prop_build.htm" label="C/C++ Build"/>
+</context>
 <context id="cdt_u_prop_build_variables">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_variables.htm" label="Build Variables"/> 
-   <topic href="tasks/cdt_t_add_build_var.htm" label="Adding and Editing Build Variables"/> 
+   <topic href="reference/cdt_u_prop_build_variables.htm" label="Build Variables"/>
+   <topic href="tasks/cdt_t_add_build_var.htm" label="Adding and Editing Build Variables"/>
 </context>
 <context id="cdt_u_prop_build_discovery">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_discovery.htm" label="Discovery Options"/> 
-</context>               
+   <topic href="reference/cdt_u_prop_build_discovery.htm" label="Discovery Options"/>
+</context>
 <context id="cdt_u_prop_build_environment">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_environment.htm"    	
-   label="Environment tab"/> 
-</context>             
+   <topic href="reference/cdt_u_prop_build_environment.htm"
+   label="Environment tab"/>
+</context>
 <context id="cdt_u_prop_build_setting_tool">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_settings_tool.htm"    	
-   label="Tool Settings"/> 
-</context>            
+   <topic href="reference/cdt_u_prop_build_settings_tool.htm"
+   label="Tool Settings"/>
+</context>
 <context id="cdt_u_prop_build_setting_steps">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_settings_steps.htm"    	
-   label="Build Steps"/> 
-</context>           
+   <topic href="reference/cdt_u_prop_build_settings_steps.htm"
+   label="Build Steps"/>
+</context>
 <context id="cdt_u_prop_build_setting_artifact">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_settings_artifact.htm"    	
+   <topic href="reference/cdt_u_prop_build_settings_artifact.htm"
    label="Build Artifact"/>
-</context>        
+</context>
 <context id="cdt_u_prop_build_setting_binparser">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_settings_binparser.htm"    	
-   label="Binary Parsers"/> 
-</context>       
+   <topic href="reference/cdt_u_prop_build_settings_binparser.htm"
+   label="Binary Parsers"/>
+</context>
 <context id="cdt_u_prop_build_setting_errparser">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"    	
-   label="Error Parsers"/> 
-</context>       
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"
+   label="Error Parsers"/>
+</context>
 <context id="cdt_u_prop_build_toolchain">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_toolchain.htm"    	
-   label="Tool Chain Editor"/> 
-</context>               
+   <topic href="reference/cdt_u_prop_build_toolchain.htm"
+   label="Tool Chain Editor"/>
+</context>
 <context id="cdt_u_prop_pns_inc">
    <description></description>
-   <topic href="reference/cdt_u_prop_general_pns_inc.htm"    	
-   label="Include paths"/> 
-</context>                       
+   <topic href="reference/cdt_u_prop_general_pns_inc.htm"
+   label="Include paths"/>
+</context>
 <context id="cdt_u_prop_pns_sym">
    <description></description>
-   <topic href="reference/cdt_u_prop_general_pns_sym.htm"    	
-   label="Symbols"/> </context>                       
+   <topic href="reference/cdt_u_prop_general_pns_sym.htm"
+   label="Symbols"/> </context>
 <context id="cdt_u_prop_pns_libpath">
    <description></description>
-   <topic href="reference/cdt_u_prop_general_pns_libpath.htm"    	
-   label="Library paths"/> 
-</context>                   
+   <topic href="reference/cdt_u_prop_general_pns_libpath.htm"
+   label="Library paths"/>
+</context>
 <context id="cdt_u_prop_pns_lib">
    <description></description>
-   <topic href="reference/cdt_u_prop_general_pns_lib.htm"    	
-   label="Libraries"/> 
-</context>                       
+   <topic href="reference/cdt_u_prop_general_pns_lib.htm"
+   label="Libraries"/>
+</context>
 <context id="cdt_u_prop_pns_ref">
    <description></description>
-   <topic href="reference/cdt_u_prop_general_pns_ref.htm"    	
-   label="References"/> 
-</context>                       
+   <topic href="reference/cdt_u_prop_general_pns_ref.htm"
+   label="References"/>
+</context>
 <context id="cdt_u_prop_pns_src">
    <description></description>
-   <topic href="reference/cdt_u_prop_general_pns_src.htm"    	
-   label="Source Location"/> 
-</context>                       
+   <topic href="reference/cdt_u_prop_general_pns_src.htm"
+   label="Source Location"/>
+</context>
 <context id="cdt_u_prop_pns_out">
    <description></description>
-   <topic href="reference/cdt_u_prop_general_pns_out.htm"    	
-   label="Output Locations"/> 
-</context>                       
+   <topic href="reference/cdt_u_prop_general_pns_out.htm"
+   label="Output Locations"/>
+</context>
 <context id="cdt_u_prop_resource">
    <description></description>
-   <topic href="reference/cdt_u_prop_resource.htm"    	
-   label="Resource"/> 
-</context>                      
+   <topic href="reference/cdt_u_prop_resource.htm"
+   label="Resource"/>
+</context>
 <context id="cdt_u_prop_builders">
    <description></description>
-   <topic href="reference/cdt_u_prop_builders.htm"    	
-   label="Builders"/> 
-</context>                      
+   <topic href="reference/cdt_u_prop_builders.htm"
+   label="Builders"/>
+</context>
 <context id="cdt_u_prop_general">
    <description></description>
-   <topic href="reference/cdt_u_prop_general.htm"    	
-   label="Common"/> 
-</context>                       
+   <topic href="reference/cdt_u_prop_general.htm"
+   label="Common"/>
+</context>
 <context id="cdt_u_prop_general_doc">
    <description></description>
-   <topic href="reference/cdt_u_prop_general_doc.htm"    	
-   label="Documentation"/> 
-</context>                   
+   <topic href="reference/cdt_u_prop_general_doc.htm"
+   label="Documentation"/>
+</context>
 <context id="cdt_u_prop_general_typ">
    <description></description>
-   <topic href="reference/cdt_u_prop_general_typ.htm"    	
-   label="File Types"/> 
-</context>                   
+   <topic href="reference/cdt_u_prop_general_typ.htm"
+   label="File Types"/>
+</context>
 <context id="cdt_u_prop_general_idx">
    <description></description>
-   <topic href="reference/cdt_u_prop_general_idx.htm"    	
-   label="Indexer"/> 
-</context>                   
+   <topic href="reference/cdt_u_prop_general_idx.htm"
+   label="Indexer"/>
+</context>
 <context id="cdt_u_prop_general_lng">
    <description></description>
-   <topic href="reference/cdt_u_prop_general_lng.htm"    	
-   label="Language Mappings"/> 
-</context>                   
+   <topic href="reference/cdt_u_prop_general_lng.htm"
+   label="Language Mappings"/>
+</context>
 
 <context id="cdt_u_pref_multi_cfg">
    <description></description>
-   <topic href="reference/cdt_u_pref_multi_cfg.htm"    	
-   label="Multi Configuration Edit tab"/> 
-</context>                   
+   <topic href="reference/cdt_u_pref_multi_cfg.htm"
+   label="Multi Configuration Edit tab"/>
+</context>
 <context id="cdt_u_pref_prop_pages">
    <description></description>
-   <topic href="reference/cdt_u_pref_prop_pages.htm"    	
-   label="Property Pages Settins tab"/> 
+   <topic href="reference/cdt_u_pref_prop_pages.htm"
+   label="Property Pages Settins tab"/>
 </context>
 <context id="tasktags_preference_page_context" title="Task Tags (C/C++)">
    <description>Create todo task tags.</description>
    <topic href="reference/cdt_u_pref_task_tags.htm" label="Task Tags preference"/>
-</context>                   
+</context>
 <context id="cdt_u_pref_wizard_defaults">
    <description></description>
-   <topic href="reference/cdt_u_pref_wizard_defaults.htm"    	
-   label="CDT New Project Wizard Defaults tab"/> 
-</context>                   
+   <topic href="reference/cdt_u_pref_wizard_defaults.htm"
+   label="CDT New Project Wizard Defaults tab"/>
+</context>
 <context id="cdt_u_pref_wizard_toolchains">
    <description></description>
-   <topic href="reference/cdt_u_pref_wizard_toolchains.htm"    	
-   label="Preferred Toolchains tab"/> 
-</context>                   
+   <topic href="reference/cdt_u_pref_wizard_toolchains.htm"
+   label="Preferred Toolchains tab"/>
+</context>
 
 <context id="type_hierarchy_view_context" title="About Type Hierarchy view">
     <description>This view displays a type&apos;s hierarchy.</description>

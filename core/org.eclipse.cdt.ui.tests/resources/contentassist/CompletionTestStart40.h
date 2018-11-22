@@ -1,13 +1,13 @@
 #define DEBUG 1
 enum {
 	aFirstEnum,
-	aSecondEnum, 
+	aSecondEnum,
 	aThirdEnum
 };
 
 enum {
 	xFirstEnum,
-	xSecondEnum, 
+	xSecondEnum,
 	xThirdEnum
 };
 
@@ -25,7 +25,7 @@ struct {
 
 union {
 	int aUnionMember1, aUnionMember2;
-}; 
+};
 
 class {
 public:

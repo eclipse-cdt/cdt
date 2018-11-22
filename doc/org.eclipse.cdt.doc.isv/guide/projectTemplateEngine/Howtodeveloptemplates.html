@@ -29,7 +29,7 @@ How&nbsp;to&nbsp;develop&nbsp;templates</p>
 
    <hr noshade size="1">
    <div class="AuthoredContent">
-    
+
 
 </div><div class="Head1">
 
@@ -37,11 +37,11 @@ How&nbsp;to&nbsp;develop&nbsp;templates</p>
 </div><div class="Bodytext">
 <p>
 Templates form an important part of the drive to support automatic GUI generation
- of various user interface types as supported in Eclipse frame work. 
+ of various user interface types as supported in Eclipse frame work.
 These templates are often referred as project
 templates, as they are used to support the creation of ready-made projects. For
 example, you can define a template to create a simple GUI based
-<code class="filename">EXE</code> application for a set of Build Configurations. 
+<code class="filename">EXE</code> application for a set of Build Configurations.
 </p>
 <p>
 The project templates are simple XML files, which follow a structure or
@@ -49,33 +49,33 @@ schema defined in the <code class="filename">TemplateDescriptorSchema.xsd</code>
 templates define the inputs and processes required to create a project for a
 particular platform. Inputs define the type of inputs required such as, files,
 settings etc. The processes define what to do with those inputs to create a
-particular type of project. 
+particular type of project.
 </p>
 <p>
 The New Project wizard lists all the templates available based on the
 matching criteria defined by the templates. Once the user selects a template from the list, the
 Template Engine plug-in processes the selected template. The plug-in generates the subsequent wizard
-pages based on whether the template needs user input or not. 
+pages based on whether the template needs user input or not.
 </p>
 <p>
 This document details the schema for writing project templates. The
 schema file <code class="filename">TemplateDescriptorSchema.xsd</code>, which defines the
 structure for the project templates, is part of
-<code class="filename">org.eclipse.cdt.core</code> plug-in. 
+<code class="filename">org.eclipse.cdt.core</code> plug-in.
 </p>
 <p>
-The structure or schema for a project template is as follows: 
+The structure or schema for a project template is as follows:
 </p>
 <p class="CodeBlock"><code>&lt;template <br>type="TemplateType" <br>version="Version" <br>supplier="Supplier" <br>revision="Revision" <br>author="Author"&nbsp;&nbsp;&nbsp;<br>id="TemplateId" <br>label="Template label visible to the user" <br>description="A brief description of the template" <br>preview-icon="icon.gif"&gt;<br><br>&lt;property-group <br>id="properyGroupId" <br>label="Property group label" <br>description="A simple description of the property group" <br>type=" Type of UIElement group" <br>branding-icon="icon.gif"&gt;<br>...<br>&lt;/property-group&gt;<br><br>&lt;process&gt;<br>...<br>&lt;/process&gt;<br><br>&lt;/template&gt;</code></p>
 <p>
 The root element for a project template is <code>template</code>, which
-provides the following properties or attributes to describe the template: 
+provides the following properties or attributes to describe the template:
 </p>
 <ul>
 <li>
 <p>
 <code>type</code>: Use this attribute to specify the template type.
-For a project template the <code>type</code> should be <code>ProjTempl</code>. 
+For a project template the <code>type</code> should be <code>ProjTempl</code>.
 </p>
 <li>
 <p>
@@ -84,22 +84,22 @@ For a project template the <code>type</code> should be <code>ProjTempl</code>.
 <li>
 <p>
 <code>supplier</code>: Use this attribute to specify the name of the
-supplier who provided the template. 
+supplier who provided the template.
 </p>
 <li>
 <p>
 <code>revision</code>: Use this attribute to specify the minor
-version number of the template. 
+version number of the template.
 </p>
 <li>
 <p>
 <code>author</code>: Use this attribute to specify the template
-author's name. 
+author's name.
 </p>
 <li>
 <p>
 <code>id</code>: Use this attribute to specify a unique name for the
-template. 
+template.
 </p>
 <li>
 <p>
@@ -107,24 +107,24 @@ template.
 template, which briefly describes the purpose of the template. For example, if
 you are defining a template for a Helloworld <code class="filename">EXE</code>
 application, the label can be "HelloWorld <code class="filename">EXE</code>
-Application". 
+Application".
 </p>
 <li>
 <p>
 <code>description</code>: Use this attribute to provide a description
 for the template, which is displayed to users when they choose the template
-from the list of available templates. 
+from the list of available templates.
 </p>
 <p>
 <code>preview-icon</code>: Use this attribute to specify a
 <code class="filename">GIF</code> or <code class="filename">JPG</code> file name to be used as a icon for the
 template. There are no constraints on the image, as this attribute is meant for
-future use. 
+future use.
 </p>
 </li>
 </ul>
 <p>
-The <code>template</code> element includes the following child elements: 
+The <code>template</code> element includes the following child elements:
 </p>
 <ul>
 <li>
@@ -143,42 +143,42 @@ containing plug-in of the context id is <code>org.eclipse.cdt.ui</code>.
 creating the project in the Eclipse workspace, based on the user input values.
 For example, if the user specifies "include" as the folder name for all the
 header files, the process of creating a folder by that name and copying all the
-header files to it is defined here. 
+header files to it is defined here.
 </p>
 </li>
 </ul>
 <h4 class="subheading">
-property-group 
+property-group
 </h4>
 <p>
 As mentioned earlier, a <code>property-group</code> includes the
 <code>property</code> elements that specify all the input fields required for a
 wizard page. A <code>property-group</code> can include any number of
 <code>property</code> elements. The following attributes can be used to
-describe a property group: 
+describe a property group:
 </p>
 <ul>
 <li>
 <p>
 <code>id</code>: Use this attribute to specify a unique ID for the
-property group. 
+property group.
 </p>
 <li>
 <p>
 <code>label</code>: Use this attribute to specify a name for the
 property group, which is displayed as a title of the wizard page generated by
-the Template Engine. 
+the Template Engine.
 </p>
 <li>
 <p>
 <code>description</code>: Use this attribute to provide a short
 description of the property group, which is displayed below the wizard page
-title. 
+title.
 </p>
 <li>
 <p>
 <code>type</code>: This attribute is for future expansion. Currently, the only
-valid value is: 
+valid value is:
 </p>
 <ul>
 <li>
@@ -191,22 +191,22 @@ listed in a simple page.
 <li>
 <p>
 <code>PAGES-TAB</code>: If you want all the properties to be
-displayed as tabs in a page. 
+displayed as tabs in a page.
 </p>
 <li>
 <p>
 <code>PAGES-TREE</code>: If you want all the properties to be
-displayed in a simple tree structure. 
+displayed in a simple tree structure.
 </p>
 <li>
 <p>
 <code>PAGES-TREE-TREE</code>: If you want all the properties to
-be displayed in a multi-level tree structure. 
+be displayed in a multi-level tree structure.
 </p>
 <li>
 <p>
 <code>PAGES-TAB-TREE</code>: If you want all the properties to be
-displayed as tabs or as a tree structure. 
+displayed as tabs or as a tree structure.
 </p>
 </li>
 -->
@@ -215,73 +215,73 @@ displayed as tabs or as a tree structure.
 <li>
 <p>
 <code>branding-icon</code>: Use this attribute to specify a
-<code class="filename">GIF</code> file name to be used as an icon for the property group. 
+<code class="filename">GIF</code> file name to be used as an icon for the property group.
 </p>
 </li>
 </ul>
 <h4 class="subheading">
-property 
+property
 </h4>
 <p>
 The syntax for the <code>property</code> elements included by the
-property-group element is as follows: 
+property-group element is as follows:
 </p>
 <p class="CodeBlock"><code>&lt;property <br>id="propertyId"<br>label="User visible label of the property"<br>description="A brief description of the property"<br>type="type of the property"<br>pattern="Regular expression of the expected property"<br>default="Default value of the property"<br>size="size"<br>mandatory="true|false"<br>hidden="true|false"<br>persist="true|false"&gt;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;item <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value="value of the item"<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label="User visible label of the item"<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/item&gt;<br>&lt;/property&gt;</code></p>
 <p>
-Here is a list of attributes of the <code>property</code> element: 
+Here is a list of attributes of the <code>property</code> element:
 </p>
 <ul>
 <li>
 <p>
 <code>id</code>: Use this attribute to specify a unique ID for the
-property. 
+property.
 </p>
 <li>
 <p>
 <code>label</code>: Use this attribute to specify a name for the
 property, which is displayed as a label in the wizard page next to the input
-field. 
+field.
 </p>
 <li>
 <p>
 <code>description</code>: Use this attribute to provide a short
 description of the property, which is displayed whenever the mouse hovers over
-the label. 
+the label.
 </p>
 <li>
 <p>
 <code>type</code>: Use this attribute to specify the property type.
-The possible values for this attribute are: 
+The possible values for this attribute are:
 </p>
 <ul>
 <li>
 <p>
-<code>input</code>: If you want a text input box. 
+<code>input</code>: If you want a text input box.
 </p>
 <li>
 <p>
-<code>multiline</code>: If you want a multiline input box. 
+<code>multiline</code>: If you want a multiline input box.
 </p>
 <li>
 <p>
-<code>select</code>: If you want a drop-down combo box. 
+<code>select</code>: If you want a drop-down combo box.
 </p>
 <li>
 <p>
-<code>boolean</code>: If you want an option button. 
+<code>boolean</code>: If you want an option button.
 </p>
 <li>
 <p>
-<code>stringlist</code>: If you want a list box. 
+<code>stringlist</code>: If you want a list box.
 </p>
 <li>
 <p>
 <code>speciallist</code>: If you want a list box with buttons to
-add and delete items to it. 
+add and delete items to it.
 </p>
 <li>
 <p>
-<code>browse</code>: If you want a browse button which opens a file (not directory) selection dialog 
+<code>browse</code>: If you want a browse button which opens a file (not directory) selection dialog
 </p>
 </li>
 <li>
@@ -300,31 +300,31 @@ information on regular expression patterns, refer to Java API document for
 <li>
 <p>
 <code>default</code>: Use this attribute to specify a default value
-for the property. 
+for the property.
 </p>
 <li>
 <p>
 <code>size</code>: Use this attribute to specify the size of the
 property. Note that this attribute is relevant only if the property type is
-<code>input</code> or <code>multiline</code>. 
+<code>input</code> or <code>multiline</code>.
 </p>
 <li>
 <p>
 <code>mandatory</code>: Use this attribute to specify whether the
 property is mandatory or not. The value for this attribute can either be
-<code>true</code> or <code>false</code>. 
+<code>true</code> or <code>false</code>.
 </p>
 <li>
 <p>
 <code>hidden</code>: Use this attribute to specify whether the
 property is visible to the user or not. The value for this attribute can either
-be <code>true</code> or <code>false</code>. 
+be <code>true</code> or <code>false</code>.
 </p>
 <li>
 <p>
 <code>persist</code>: Use this attribute to specify whether the
 property should persist its value or not. The value for this attribute can
-either be <code>true</code> or <code>false</code>. 
+either be <code>true</code> or <code>false</code>.
 </p>
 </li>
 </ul>
@@ -332,30 +332,30 @@ either be <code>true</code> or <code>false</code>.
 If the property <code>type</code> is <code>select</code> or
 <code>stringlist</code>, you can include the <code>item</code> element to
 specify the items to be listed. There is no limitation on the number of items
-that can be listed. Here is the syntax for the <code>item</code> element: 
+that can be listed. Here is the syntax for the <code>item</code> element:
 </p>
 <p class="CodeBlock"><code>&lt;item <br>value="value of the item"<br>label="User visible label of the item"<br>&lt;/item&gt;</code></p>
 <p>
-Here is a list of attributes of the <code>item</code> element: 
+Here is a list of attributes of the <code>item</code> element:
 </p>
 <ul>
 <li>
 <p>
 <code>label</code>: Used to specify a label that is displayed to the
-user. 
+user.
 </p>
 <li>
 <p>
-<code>value</code>: Used to specify a unique value for the list item. This will be the value used in macro expansions. 
+<code>value</code>: Used to specify a unique value for the list item. This will be the value used in macro expansions.
 </p>
 </ul>
 <h4 class="subheading">
-process 
+process
 </h4>
 <p>
 The <code>process</code> element within the root element of a project
 template defines the processes to be followed to create a project, based on the
-inputs taken. Here is the syntax for this element: 
+inputs taken. Here is the syntax for this element:
 </p>
 <p class="CodeBlock"><code>&lt;process type="org.eclipse.cdt.{core|managedbuilder.core}.&lt;process type&gt;"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name" value=""/&gt; <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;complex name="name"&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex&gt; <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple-array name="values"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/simple-array&gt;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;complex-array name="name"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex-array&gt; <br><br>&lt;/process&gt;</code></p>
 <p>
@@ -363,7 +363,7 @@ A <code>process</code> element defines a single process. A process is
 like a procedure with a set of parameters. In similar terms, the
 <code>process</code> element defines the procedure. You need to specify all the
 parameters expected by a process. In the project template, you need to specify
-arguments for the process matching their types and in the order specified. 
+arguments for the process matching their types and in the order specified.
 </p>
 <p>
 You can specify the process type using the <code>type</code> attribute.
@@ -371,7 +371,7 @@ For example, to add files to a project you can use
 <code>org.eclipse.cdt.core.AddFiles</code> as the process type.
 </p>
 <p>
-A <code>process</code> element may include the following child elements: 
+A <code>process</code> element may include the following child elements:
 </p>
 <ul>
 <li>
@@ -379,10 +379,10 @@ A <code>process</code> element may include the following child elements:
 <code>simple</code>: A simple string parameter. In a project
 template, you need to specify a name for the parameter using the
 <code>name</code> attribute along with the corresponding <code>value</code>
-attribute. 
+attribute.
 </p>
 <p>
-Here is an example showing the usage of this element: 
+Here is an example showing the usage of this element:
 </p>
 <p class="CodeBlock"><code>&lt;simple name="name" value="value" /&gt;</code></p>
 <li>
@@ -392,10 +392,10 @@ project template, you need to specify a name for the parameter using the
 <code>name</code> attribute along with the corresponding <code>element</code>
 children. You can have any number of <code>element</code> children per
 <code>simple-array</code> element with the corresponding <code>value</code>
-attribute. 
+attribute.
 </p>
 <p>
-Here is an example showing the usage of this element: 
+Here is an example showing the usage of this element:
 </p>
 <p class="CodeBlock"><code>&lt;simple-array name="values"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element value="value1" /&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element value="value2" /&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/simple-array&gt;</code></p>
 <li>
@@ -404,10 +404,10 @@ Here is an example showing the usage of this element:
 together any number of <code>simple</code>, <code>simple-array</code> and
 <code>complex</code> parameters. In the project template, you need to specify a
 name for the parameter using the <code>name</code> attribute along with the
-corresponding children elements. 
+corresponding children elements.
 </p>
 <p>
-Here is an example showing the usage of this element: 
+Here is an example showing the usage of this element:
 </p>
 <p class="CodeBlock"><code>&lt;complex name="name"&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name" value="value" /&gt;<br>&nbsp;&nbsp;&nbsp;&lt;simple-array name="values"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element value="value1" /&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &lt;element value="value2" /&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/simple-array&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/element&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex&gt;</code></p>
 <li>
@@ -417,10 +417,10 @@ of this parameter is of the type <code>complex</code>. In the project template,
 you need to specify a name for the parameter using the <code>name</code>
 attribute along with the corresponding <code>element</code> children. You can
 have any number of element children per complex-array element with the
-corresponding complex type arguments. 
+corresponding complex type arguments.
 </p>
 <p>
-Here is an example showing the usage of this element: 
+Here is an example showing the usage of this element:
 </p>
 <p class="CodeBlock"><code>&lt;complex-array name="values"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name1" value="value1" /&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name2" value="value2" /&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name3" value="value3" /&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/element&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name4" value="value4" /&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name5" value="value5" /&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name6" value="value6" /&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/element&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex-array&gt;</code></p>
 </li>
@@ -694,24 +694,24 @@ type.
 </p>
 <li>
 <p>
-<em>configIdPattern</em>: Use this parameter to specify a regular expression of 
+<em>configIdPattern</em>: Use this parameter to specify a regular expression of
 <code>java.util.regex.Pattern</code> syntax for matching against project configuration ids.
-The resources that match any of the regular expressions given in the <em>filePatterns</em> argument 
+The resources that match any of the regular expressions given in the <em>filePatterns</em> argument
 will be excluded from all matching project configurations. It is of <code>simple</code> type.
 </p>
 <li>
 <p>
-<em>filePatterns</em>: Use this parameter to specify a <code>simple-array</code> of 
+<em>filePatterns</em>: Use this parameter to specify a <code>simple-array</code> of
 <code>java.util.regex.Pattern</code> for matching against project resources to be excluded. The paths that
-will be matched against are workspace relative (include the project folder) and use forward slash as the file separator. 
-That this argument is an array is purely to allow logically separate patterns to be given separately rather than as one big string. 
+will be matched against are workspace relative (include the project folder) and use forward slash as the file separator.
+That this argument is an array is purely to allow logically separate patterns to be given separately rather than as one big string.
 If any of the regular expressions matches then the resource in question will be excluded for the matching configuration(s).
-The resources that match any of the regular expressions given in the <em>filePatterns</em> argument 
+The resources that match any of the regular expressions given in the <em>filePatterns</em> argument
 will be excluded for all matching project configurations. It is of <code>simple-array</code> type.
 <li>
 <p>
-<em>invertedConfigMatching</em>: If this is set to "true" then the set of configurations for which resources 
-matching any of the specified file patterns will be inverted. This enables you to specify which configurations the 
+<em>invertedConfigMatching</em>: If this is set to "true" then the set of configurations for which resources
+matching any of the specified file patterns will be inverted. This enables you to specify which configurations the
 files should not be excluded for without having to know what other configurations may exist. It is of <code>simple</code> type.
 </p>
 </li>
@@ -790,9 +790,9 @@ these parameters. For information about the parameters, refer to the
 </p>
 <li>
 <p>
-<em>org.eclipse.cdt.managedbuilder.core.</em><strong>AppendToMBSStringListOptionValues</strong>: It defines all the 
-parameters required to append a string list of option values to an existing string list of option value. 
-It also provides the fully qualified name of the class, which processes these parameters. For information 
+<em>org.eclipse.cdt.managedbuilder.core.</em><strong>AppendToMBSStringListOptionValues</strong>: It defines all the
+parameters required to append a string list of option values to an existing string list of option value.
+It also provides the fully qualified name of the class, which processes these parameters. For information
 about the parameters, refer to the <code>SetMBSStringListOptionValues</code> process type described above.
 </p>
 <li>
@@ -827,7 +827,7 @@ type.
 </ul>
 <li>
 <p>
-<em>org.eclipse.cdt.managedbuilder.core.</em><strong>GenerateMakefileWithBuildDescription</strong>: 
+<em>org.eclipse.cdt.managedbuilder.core.</em><strong>GenerateMakefileWithBuildDescription</strong>:
 </p>
 <ul>
 <li>
@@ -877,4 +877,4 @@ make it available for use. For more information on this, refer to
    </div>
    </body>
    </html>
-   
+

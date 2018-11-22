@@ -26,21 +26,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -53,7 +53,7 @@
    <element name="checker">
       <annotation>
          <documentation>
-            Checker Element. 
+            Checker Element.
 Sets id, name and class that implements checker
          </documentation>
       </annotation>
@@ -154,10 +154,10 @@ Should be as short as possible, but recogniziable.
             <annotation>
                <documentation>
                   Default error message pattern. Use java pattern notation (such as {0} to replace with first problem argument, and so on. To place single quote &apos; in a message - use quot symbol twice &apos;&apos;).
-For example message pattern 
+For example message pattern
 Invalid argument &apos;&apos;{0}&apos;&apos;
 
-would be printed as 
+would be printed as
 
 Invalid argument &apos;xxx&apos;
 
@@ -249,7 +249,7 @@ where xxx what checker would post as an argument for the problem.
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         The following is an example of a single checker definition: 
+         The following is an example of a single checker definition:
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension

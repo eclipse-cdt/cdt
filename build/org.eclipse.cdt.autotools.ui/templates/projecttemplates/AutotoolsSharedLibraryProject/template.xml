@@ -32,7 +32,7 @@
 	</property-group>
 
 	<process type="org.eclipse.cdt.autotools.core.NewAutotoolsProject">
-		<simple name="name" value="$(projectName)" /> 
+		<simple name="name" value="$(projectName)" />
 		<simple name="artifactExtension" value="exe" />
 		<simple name="isCProject" value="true" />
 	</process>
@@ -140,7 +140,7 @@
 			</element>
 		</complex-array>
 	</process>
-	
+
 
 </template>
 

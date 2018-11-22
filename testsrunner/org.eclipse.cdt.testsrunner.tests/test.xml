@@ -4,7 +4,7 @@
   <!-- The property ${eclipse-home} should be passed into this script -->
   <!-- Set a meaningful default value for when it is not. -->
   <property name="eclipse-home" value="${basedir}"/>
-  
+
   <!-- This is the default name of the org.eclipse.test plugin. -->
   <!-- We need to be able to override this for the case where the -->
   <!-- org.eclipse.test plugin was build as part of a feature and -->
@@ -27,13 +27,13 @@
 
   <!-- This target defines the tests that need to be run. -->
   <target name="suite">
-    <property name="cdt-folder" 
+    <property name="cdt-folder"
               value="${eclipse-home}/cdt_folder"/>
     <delete dir="${cdt-folder}" quiet="true"/>
     <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${cdt-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
-      <property name="classname" 
+      <property name="classname"
                 value="org.eclipse.cdt.testsrunner.test.TestsRunnerSuite"/>
     </ant>
   </target>

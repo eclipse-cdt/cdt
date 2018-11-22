@@ -7,7 +7,7 @@
    <extension-point id="projectConverter" name="%extension-point.name.1" schema="schema/Converter.exsd"/>
    <extension-point id="buildProperties" name="%extension-point.name.2" schema="schema/buildProperties.exsd"/>
    <extension-point id="tcModificationInfo" name="%extension-point.name.3" schema="schema/tcModificationInfo.exsd"/>
-   
+
 
 <!-- =================================================================================== -->
 <!-- Extension Point: IScannerInfoProvider for the managed Builder                       -->
@@ -224,26 +224,26 @@
             priority="high"/>
   </extension>
 
-  <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+  <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
        file-extensions="obj,o"/>
-   </extension> 
+   </extension>
 
-   <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.managedbuilder.core.executableFile"
        file-extensions="exe,elf,out"/>
-   </extension> 
+   </extension>
 
-   <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.managedbuilder.core.staticLibrary"
        file-extensions="lib,a"/>
-   </extension> 
+   </extension>
 
-   <extension point="org.eclipse.core.contenttype.contentTypes"> 
-      <file-association 
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
        content-type="org.eclipse.cdt.managedbuilder.core.sharedLibrary"
        file-extensions="dll,so,dylib"/>
    </extension>
@@ -266,8 +266,8 @@
          	natures="org.eclipse.cdt.managedbuilder.core.managedBuildNature"
          	class="org.eclipse.cdt.managedbuilder.internal.dataprovider.ProjectConverter"
          />
-   </extension> 
-   
+   </extension>
+
       <extension
          id="baseProperties"
          name="%extension.name.5"
@@ -275,30 +275,30 @@
       <propertyType id="org.eclipse.cdt.build.core.buildType" name="%BuildProperty.type.name.buildType"/>
       <propertyType id="org.eclipse.cdt.build.core.buildArtefactType" name="%BuildProperty.type.name.buildArtefactType"/>
 
-      <propertyValue 
-            property="org.eclipse.cdt.build.core.buildType" 
-            id="org.eclipse.cdt.build.core.buildType.debug" 
+      <propertyValue
+            property="org.eclipse.cdt.build.core.buildType"
+            id="org.eclipse.cdt.build.core.buildType.debug"
             name="%BuildProperty.value.name.debug"/>
-      <propertyValue 
-            property="org.eclipse.cdt.build.core.buildType" 
-            id="org.eclipse.cdt.build.core.buildType.release" 
+      <propertyValue
+            property="org.eclipse.cdt.build.core.buildType"
+            id="org.eclipse.cdt.build.core.buildType.release"
             name="%BuildProperty.value.name.release"/>
 
-      <propertyValue 
-            property="org.eclipse.cdt.build.core.buildArtefactType" 
-            id="org.eclipse.cdt.build.core.buildArtefactType.exe" 
+      <propertyValue
+            property="org.eclipse.cdt.build.core.buildArtefactType"
+            id="org.eclipse.cdt.build.core.buildArtefactType.exe"
             name="%BuildProperty.type.name.executable"/>
-      <propertyValue 
-            property="org.eclipse.cdt.build.core.buildArtefactType" 
-            id="org.eclipse.cdt.build.core.buildArtefactType.staticLib" 
+      <propertyValue
+            property="org.eclipse.cdt.build.core.buildArtefactType"
+            id="org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             name="%BuildProperty.type.name.staticLibrary"/>
-     <propertyValue 
-            property="org.eclipse.cdt.build.core.buildArtefactType" 
-            id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" 
+     <propertyValue
+            property="org.eclipse.cdt.build.core.buildArtefactType"
+            id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             name="%BuildProperty.type.name.sharedLibrary"/>
 
       </extension>
-      
+
          <extension
          id="emptyConfigs"
          name="%extension.name.6"
@@ -307,7 +307,7 @@
             fileVersion="4.0.0">
       </managedBuildRevision>
       <configuration
-            id="org.eclipse.cdt.build.core.emptycfg" 
+            id="org.eclipse.cdt.build.core.emptycfg"
             languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;${Toolchain};org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"
             name="%cfg1_empty">
       </configuration>
@@ -339,7 +339,7 @@
 			valueType="libFiles"
       		browseType="file"
       	/>
-      	
+
       	<!--option
       		id="org.eclipse.cdt.build.core.settings.holder.libpaths"
       		name="libraries"
@@ -374,10 +374,10 @@
           errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser"
           name="%GNUMakeBuilder.name"
           isSystem="true">
-   	  </builder>   
-	  	
-	  </toolChain>      
-	 </configuration>     
+   	  </builder>
+
+	  </toolChain>
+	 </configuration>
 
       <tool
       	id="org.eclipse.cdt.build.core.settings.holder"
@@ -442,19 +442,19 @@
       		valueType="includePath"
       	/-->
       </tool>
-      
+
       <builder
       	id="org.eclipse.cdt.build.core.internal.builder"
       	name="%InternalBuilder.name">
       </builder>
-      
+
       <tool
         id="org.eclipse.cdt.build.core.default.tool"
         isAbstract="true"
         isSystem="true"/>
-        
+
       </extension>
-      
+
    <extension
          id="ScannerConfigNature"
          name="%epScannerConfigNature.name"
@@ -491,7 +491,7 @@
             id="org.eclipse.cdt.build.MakeTargetBuilder">
       </builder>
    </extension>
-      
+
    <extension
          point="org.eclipse.cdt.core.templateProcessTypes">
       <processType

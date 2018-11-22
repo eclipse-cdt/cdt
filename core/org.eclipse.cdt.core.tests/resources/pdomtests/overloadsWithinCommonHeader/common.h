@@ -13,7 +13,7 @@ void quux(int i, char c);
 void quux(ManyOverloaded* ptr);
 void quux(ManyOverloaded nptr);
 
-namespace corge {	
+namespace corge {
 	void grault();
 	void grault(int i);
 	void grault(int i, char c);

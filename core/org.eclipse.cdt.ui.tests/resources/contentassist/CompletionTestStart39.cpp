@@ -7,4 +7,4 @@ static int x;
 int y;
 };
 
-void Foo::      
+void Foo::

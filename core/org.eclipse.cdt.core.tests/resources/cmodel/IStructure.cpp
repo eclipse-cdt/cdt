@@ -6,7 +6,7 @@ struct testStruct1 {
 	int m_field4;
 	unsigned m_field5;
 	void* m_field6;
-	
+
 	void method1();
 	struct testStruct1 method2( char* in_field2, int in_field4 ) {}
 	// this is very C++:
@@ -61,7 +61,7 @@ union testUnion1 {
 	unsigned char m_field3;
 	int m_field4;
 	unsigned m_field5;
-	void* m_field6;	
+	void* m_field6;
 };
 
 class testClass1 {

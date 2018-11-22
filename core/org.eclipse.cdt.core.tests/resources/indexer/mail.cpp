@@ -28,7 +28,7 @@ public:
 first_class() : Mail(){postage = 0.32; type = "First Class";}
 void print(){cout << type << ": $" <<setiosflags(ios::fixed)
              << setprecision(2) << postage <<endl;}
- 
+
 };
 
 class Unknown : public postcard, first_class // ??? Multiple Inheritance
@@ -87,12 +87,12 @@ return os;
 }
 Mail* container::operator[](int index) {return array[index];}
 Mail* container::operator = (Mail* mail)
-{ 
-int size = sizeof(Mail*) * (++sz); 
-int temp = sz -1; 
-array = (Mail**)realloc(array, size); 
-array[temp] = mail; 
-return 0; 
+{
+int size = sizeof(Mail*) * (++sz);
+int temp = sz -1;
+array = (Mail**)realloc(array, size);
+array[temp] = mail;
+return 0;
 }
 
 

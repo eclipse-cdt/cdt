@@ -34,7 +34,7 @@ private:
 
 class bar2 {
 public:
-	bar2() { 
+	bar2() {
     	f = 318;
     	g[0] = 228;
     	g[1] = 138;
@@ -49,7 +49,7 @@ public:
     foo() {
     	c = 8;
     	a[0] = 1000;
-    	a[1] = 23;	
+    	a[1] = 23;
     }
 	int a[2];
 	bar b;
@@ -64,7 +64,7 @@ public:
 };
 struct childStruct {
 public:
-	Z z;	
+	Z z;
 };
 
 // For bug 320277
@@ -76,16 +76,16 @@ public:
 class BaseTest: public Base {
 public:
   BaseTest() {}
-  void test() { 
+  void test() {
     nested = 8;
-    return; 
+    return;
   }
   Base Base; // make sure we don't get confused by the same name
 };
 // End bug 320277
 
 void locals2() {
-	// Check that we get the content of local variables with 
+	// Check that we get the content of local variables with
 	// the same name as the calling method
 	int lIntVar = 6789;
 	double lDoubleArray[2] = {123.456, 6789.6789};
@@ -107,7 +107,7 @@ void testLocals() {
     double lDoubleArray[2] = {456.789, 12345.12345};
     char lCharArray[2] = {'i', 'm'};
     bool lBoolArray[2] = {true, false};
-    
+
     int *lIntPtr = &lIntVar;
     double *lDoublePtr = &lDoubleVar;
     char *lCharPtr = &lCharVar;
@@ -127,7 +127,7 @@ int testChildren() {
     foo f;
 
 	f.d = 1;
-	
+
 	return 0;
 }
 
@@ -136,7 +136,7 @@ int testWrite() {
 
 	int a[2] = {3, 456};
 	intPtr ptr = 0;
-	
+
 	return 0;
 }
 
@@ -192,7 +192,7 @@ int testSubblock() {
 int testAddress() {
 	int a = 8;
 	int* a_ptr = &a;
-	
+
 	return a;
 }
 
@@ -202,27 +202,27 @@ int testUpdateChildren(int val) {
 	childStruct a;
 	a.z.x = val + 10;
 	a.z.y = val + 11;
-	
-	a.z.x = val + 20;	
+
+	a.z.x = val + 20;
 	a.z.y = val + 21;
-	
+
 	return a.z.x;
 }
 int testUpdateChildren2(int val) {
 	childStruct a;
 	a.z.x = val + 10;
 	a.z.y = val + 11;
-	
-	a.z.x = val + 20;	
+
+	a.z.x = val + 20;
 	a.z.y = val + 21;
-	
+
 	return a.z.x;
 }
 
 int testDeleteChildren() {
 	foo f;
 	int a[1111];
-	a[0] = 0; // this line is here to ensure a step-over after running to this function leaves our locals visible	
+	a[0] = 0; // this line is here to ensure a step-over after running to this function leaves our locals visible
 	return 1;
 }
 
@@ -246,17 +246,17 @@ int testUpdateIssue2() {
 	struct {
 		double d;
 	} z;
-	
+
 	z.d = 1.0;
 	z.d = 1.22;
-	z.d = 1.22; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible	
+	z.d = 1.22; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible
 }
 
 int testConcurrentReadAndUpdateChild() {
 	struct {
 		int d;
 	}z;
-	
+
 	z.d = 1;
 	z.d = 2;
 }
@@ -289,9 +289,9 @@ int testUpdateOfPointer() {
 		int value;
 		int* ptr;
 	} z;
-	
+
 	int otherValue = 3;
-	
+
 	z.ptr = &z.value;
 	z.value = 1;
 
@@ -337,7 +337,7 @@ int testCanWrite() {
 		int in;
 	} c;
 	int d[2];
-	
+
 	return 1;
 }
 
@@ -371,7 +371,7 @@ private:
 
 class Derived: public VirtualBase {
 public:
-    int c;    
+    int c;
     VirtualBase* ptr;
 private:
     bool d;
@@ -389,11 +389,11 @@ int testRTTI() {
     Derived derived;
     Derived child1;
     OtherDerived child2;
-    
+
     derived.ptr = &child1;  // here derived.b is of type bar
-    
-    derived.ptr = &child2;  // here derived.b is of type foo   
-    
+
+    derived.ptr = &child2;  // here derived.b is of type foo
+
     return 1;   // here derived.b is of type Derived
 }
 // End of bug 376901 RTTI tests
@@ -403,7 +403,7 @@ void noReturnValue() {
     a++;
     return;
 }
-    
+
 int testSimpleReturn(int a) {
 	int b = 0;
 	b = a;
@@ -413,14 +413,14 @@ int testSimpleReturn(int a) {
 foo testComplexReturn() {
 	foo f;
 	int a = 8;
-	
+
 	return f;
 }
 
 void testReturn() {
 	int a = 10;
 	bool b = false;
-	
+
 	testSimpleReturn(6);
 	testComplexReturn();
 	noReturnValue();
@@ -463,11 +463,11 @@ int main() {
     testCasting();
     testReturn();
     testExistingChild();
-    
+
     // For bug 320277
     BaseTest b; b.test();
-    
- 
+
+
     return 0;
 }
 

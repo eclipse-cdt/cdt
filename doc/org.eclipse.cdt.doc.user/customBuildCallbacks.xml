@@ -10,7 +10,7 @@
 	<target name="noDefault">
 		<echo message="This file must be called with explicit targets" />
 	</target>
-	
+
 	<!-- ===================================================================== -->
 	<!-- Steps to do before the target build.jars                              -->
 	<!-- Available parameters :                                                -->
@@ -25,7 +25,7 @@
 	<!--   build.result.folder - folder to contain the build results           -->
 	<!-- ===================================================================== -->
 	<target name="post.build.jars">
-		<antcall target="build.index"/>		
+		<antcall target="build.index"/>
 	</target>
 
 	<target name="build.index" description="Builds search index for the plug-in: org.eclipse.rse.doc.user." if="eclipse.running">
@@ -78,7 +78,7 @@
 
 	<target name="post.compile.@dot">
 	</target>
-	
+
 	<!-- ===================================================================== -->
 	<!-- Steps to do after the compilation target <name>                       -->
 	<!-- Substitute "name" with the name of the compilation target, eg @dot    -->
@@ -92,7 +92,7 @@
 
 	<target name="post.@dot">
 	</target>
-	
+
 	<!-- ===================================================================== -->
 	<!-- Steps to do before the target gather.bin.parts                         -->
 	<!-- Available parameters :                                                -->
@@ -101,7 +101,7 @@
 	<!-- ===================================================================== -->
 	<target name="pre.gather.bin.parts">
 	</target>
-		
+
 	<!-- ===================================================================== -->
 	<!-- Steps to do after the target gather.bin.parts                         -->
 	<!-- Available parameters :                                                -->
@@ -132,7 +132,7 @@
 	<!-- Available parameters :                                                -->
 	<!--   destination.temp.folder - destination folder                        -->
 	<!-- ===================================================================== -->
-	<target name="pre.gather.logs">        
+	<target name="pre.gather.logs">
 	</target>
 
 	<!-- ===================================================================== -->
@@ -140,7 +140,7 @@
 	<!-- Available parameters :                                                -->
 	<!--   destination.temp.folder - destination folder                        -->
 	<!-- ===================================================================== -->
-	<target name="post.gather.logs">       
+	<target name="post.gather.logs">
 	</target>
 
 	<!-- ===================================================================== -->
@@ -148,7 +148,7 @@
 	<!-- Available parameters :                                                -->
 	<!--   destination.temp.folder - destination folder                        -->
 	<!-- ===================================================================== -->
-	<target name="pre.clean">              
+	<target name="pre.clean">
 	</target>
 
 	<!-- ===================================================================== -->
@@ -158,6 +158,6 @@
 	<!--   build.result.folder - results of the compilation                    -->
 	<!--   temp.folder - temporary folder                                      -->
 	<!-- ===================================================================== -->
-	<target name="post.clean">             
+	<target name="post.clean">
 	</target>
 </project>

@@ -47,16 +47,16 @@ int main(int argc, char* argv[])
 
 /*********************
 EnumProc.cpp
-*********************/ 
+*********************/
 
 // The EnumProcs function takes a pointer to a callback function
 // that will be called once per process in the system providing
 // process EXE filename and process ID.
 // Callback function definition:
 // BOOL CALLBACK Proc( DWORD dw, LPCSTR lpstr, LPARAM lParam ) ;
-// 
+//
 // lpProc -- Address of callback routine.
-// 
+//
 // lParam -- A user-defined LPARAM value to be passed to
 //           the callback routine.
 BOOL WINAPI EnumProcs( PROCENUMPROC lpProc, LPARAM lParam )
@@ -340,9 +340,9 @@ BOOL WINAPI Enum16( DWORD dwThreadId, WORD hMod16, WORD hTask16,
   }
 
   return !bRet;
-} 
+}
 
-BOOL CALLBACK OutProcInfo( DWORD pid, WORD, LPSTR procName, LPARAM ) 
+BOOL CALLBACK OutProcInfo( DWORD pid, WORD, LPSTR procName, LPARAM )
 {
 	cout << setw(10) <<  pid << '\t' << procName << '\n';
 	return TRUE;

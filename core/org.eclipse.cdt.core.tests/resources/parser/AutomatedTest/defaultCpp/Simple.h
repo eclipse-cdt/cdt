@@ -8,11 +8,11 @@ class SimpleClass
 public:
 	SimpleClass( void );
 	SimpleClass( const SimpleClass & arg );
-	
+
 	virtual ~SimpleClass( void );
-	
+
 	SimpleClass & operator=( const SimpleClass & arg );
-	
+
 private:
 	struct InnerStruct
 	{

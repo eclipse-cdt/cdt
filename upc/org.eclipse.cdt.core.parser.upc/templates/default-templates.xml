@@ -19,16 +19,16 @@
 -->
 
 <!-- NOTE TO TRANSLATOR:
-* This file should remain English as it produces compilable code. 
+* This file should remain English as it produces compilable code.
 -->
 
 <templates>
 
-<template 
-	name="upc_forall" 
-	description="%forallLoop" 
-	context="org.eclipse.cdt.ui.text.templates.c" 
-	id="org.eclipse.cdt.ui.text.templates.c.upc_forall" 
+<template
+	name="upc_forall"
+	description="%forallLoop"
+	context="org.eclipse.cdt.ui.text.templates.c"
+	id="org.eclipse.cdt.ui.text.templates.c.upc_forall"
 	enabled="true">upc_forall (${var} = 0; ${var} &lt; THREADS; ${var}++; ${var}) {
 	${line_selection}${cursor}
 }</template>
@@ -36,10 +36,9 @@
 <template
 	name="upc_max_blocksize"
 	description="%upcMaxBlocksize"
-	context="org.eclipse.cdt.ui.text.templates.c" 
-	id="org.eclipse.cdt.ui.text.templates.c.upc_max_blocksize" 
+	context="org.eclipse.cdt.ui.text.templates.c"
+	id="org.eclipse.cdt.ui.text.templates.c.upc_max_blocksize"
 	enabled="true">UPC_MAX_BLOCKSIZE</template>
 
 </templates>
 
-	

@@ -20,7 +20,7 @@ otherLabel1:
 	movb	$0x81, %ah  # end-of-line comment
 	jmp	globalLabel2
 
-; data	
+; data
 storage:
 	.long 0
 /* end */
@@ -29,7 +29,7 @@ storage:
 
 	/*
 	 * block comment
-	 */	
+	 */
 globalLabel2:
 	movl    %esp, %eax
 	movl    %eax, storage
@@ -44,7 +44,7 @@ otherLabel2:
 globalLabel3:
 	movl    %esp, %eax
 	movl    %eax, storage
-	
+
 otherLabel3:
 	movb	$0x81, %ah
 	jmp	globalLabel3

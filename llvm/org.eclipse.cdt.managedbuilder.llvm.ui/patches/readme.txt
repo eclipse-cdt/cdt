@@ -1,5 +1,5 @@
 MinGW export fix patch is needed to get mingw path from MingwEnvironmentVariableSupplier in LlvmEnvironmentSupplier class.
- 
+
 Bug 321040 patch adds getLibraryPaths method to IOption and Option CDT classes and is used in LlvmPathUtil class.
 
 Bug 318581 patch adds support for older CDT versions <~7.1.0

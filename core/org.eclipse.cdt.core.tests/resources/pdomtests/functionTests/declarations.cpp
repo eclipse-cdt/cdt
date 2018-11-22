@@ -21,4 +21,4 @@ void spin() {
 
 int (*int2intPtr)(int);
 
-	
+

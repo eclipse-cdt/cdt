@@ -1,11 +1,11 @@
 push 5
 :thread_create
 exec stack
-dec 
+dec
 dup
 branch_not_zero thread_create
 push finished
-output 
+output
 halt
 :stack
 push 100
@@ -17,5 +17,5 @@ branch_not_zero descend
 return
 :descend
 dec
-call inner 
+call inner
 return

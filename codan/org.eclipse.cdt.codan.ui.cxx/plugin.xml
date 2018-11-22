@@ -25,7 +25,7 @@
                   forcePluginActivation="true"
                   property="org.eclipse.core.resources.projectNature"
                   value="org.eclipse.cdt.core.cnature"/>
-		       </adapt> 
+		       </adapt>
 		       </iterate>
              </visibleWhen>
             </command>
@@ -43,5 +43,5 @@
          </toolbar>
       </menuContribution> -->
    </extension>
-  
+
 </plugin>

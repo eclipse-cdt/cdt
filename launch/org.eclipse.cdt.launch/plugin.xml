@@ -29,9 +29,9 @@
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>
    </extension>
-   
+
    <extension
-         point="org.eclipse.debug.ui.launchConfigurationTabs">      
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
       <!-- Run launch tabs-->
       <tab
             id="org.eclipse.cdt.cdi.launch.runApplicationLaunch.mainTab"
@@ -72,19 +72,19 @@
             plugin="org.eclipse.cdt.launch"
             class="org.eclipse.cdt.launch.internal.ui.ProcessPrompter"
             id="org.eclipse.cdt.launch.statusHandler.processPrompter">
-      </statusHandler>  
+      </statusHandler>
       <statusHandler
             class="org.eclipse.cdt.launch.internal.ui.BuildErrPrompter"
             code="1002"
             id="org.eclipse.cdt.launch.statusHandler.buildErrPrompter"
             plugin="org.eclipse.cdt.launch">
-      </statusHandler>  
+      </statusHandler>
       <statusHandler
             class="org.eclipse.cdt.launch.internal.ui.BuildErrPrompter"
             code="1003"
             id="org.eclipse.cdt.launch.statusHandler.buildErrPrompter"
             plugin="org.eclipse.cdt.launch">
-      </statusHandler>  
+      </statusHandler>
 	</extension>
 
     <extension
@@ -96,7 +96,7 @@
             public="true">
       </launchConfigurationType>
    </extension>
-   
+
       <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <!-- Deprecated, See Bug 517722 -->
@@ -106,7 +106,7 @@
             type="org.eclipse.cdt.launch.launchGroup">
       </launchConfigurationTabGroup>
    </extension>
-   
+
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <!-- Deprecated, See Bug 517722 -->

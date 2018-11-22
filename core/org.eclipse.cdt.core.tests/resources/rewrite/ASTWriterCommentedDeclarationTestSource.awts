@@ -197,7 +197,7 @@ struct A
 {
     void f();
     enum E{ e};
-    union 
+    union
     {
         int u;
     };

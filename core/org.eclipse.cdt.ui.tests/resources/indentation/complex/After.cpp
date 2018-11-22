@@ -11,7 +11,7 @@ private:
 public:
 	Complex(float re, float im) :
 		re(re), im(im) {}
-	float GetRe() 
+	float GetRe()
 	{
 		return re;
 	}

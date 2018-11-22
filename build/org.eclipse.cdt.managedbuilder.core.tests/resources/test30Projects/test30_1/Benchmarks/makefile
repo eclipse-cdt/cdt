@@ -19,7 +19,7 @@ endif
 
 -include ../makefile.defs
 
-# Add inputs and outputs from these tool invocations to the build variables 
+# Add inputs and outputs from these tool invocations to the build variables
 TEST30_1_GNU_SO_DEPLOY_OUTPUT_OUTPUTS += \
 default.so.4.5.6 \
 

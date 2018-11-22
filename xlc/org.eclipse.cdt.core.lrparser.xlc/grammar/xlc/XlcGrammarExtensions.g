@@ -21,12 +21,12 @@ $Terminals
 	vector
 	pixel
 	bool
-	
+
 	_Decimal32
 	_Decimal64
 	_Decimal128
 	__static_assert
-	
+
 $End
 
 
@@ -52,17 +52,17 @@ type_id
 vector_declaration
     ::= vector_type <openscope-ast> init_declarator_list ';'
 	      /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
-	      
-	      
+
+
 vector_type
     ::= <openscope-ast> no_type_declaration_specifiers_opt 'vector' vector_type_specifier all_specifier_qualifier_list_opt
           /. $Build  consumeVectorTypeSpecifier();  $EndBuild ./
-      
-      
+
+
 vector_type_specifier
     ::= vector_type_specifier_token
           /. $Build  consumeToken();  $EndBuild ./
-      
+
 vector_type_specifier_token
     ::= 'pixel'
       | 'float'
@@ -79,11 +79,11 @@ vector_type_specifier_token
 all_specifier_qualifiers
     ::= vector_type_specifier
       | no_type_declaration_specifiers
-      
+
 all_specifier_qualifier_list
     ::= all_specifier_qualifiers
       | all_specifier_qualifier_list all_specifier_qualifiers
-      
+
 all_specifier_qualifier_list_opt
     ::= all_specifier_qualifier_list
       | $empty

@@ -91,7 +91,7 @@
 
          &lt;DT&gt;&lt;CODE&gt;AC_PACKAGE_BUGREPORT&lt;/CODE&gt;,
          &lt;CODE&gt;PACKAGE_BUGREPORT&lt;/CODE&gt; &lt;DD&gt;    Exactly
-         &lt;VAR&gt;bug-report&lt;/VAR&gt;, if one was provided. 
+         &lt;VAR&gt;bug-report&lt;/VAR&gt;, if one was provided.
          Typically an email address, or URL to a bug management web page.&lt;/P&gt;&lt;P&gt;
 
          &lt;DT&gt;&lt;CODE&gt;AC_PACKAGE_URL&lt;/CODE&gt;,
@@ -287,7 +287,7 @@
       <prototype>
       </prototype>
         <synopsis>
-           Generate &lt;TT&gt;config.status&lt;/TT&gt; and launch it. 
+           Generate &lt;TT&gt;config.status&lt;/TT&gt; and launch it.
          Call this macro once, at the end of
          &lt;TT&gt;configure.ac&lt;/TT&gt;.&lt;/P&gt;&lt;P&gt;
 
@@ -363,7 +363,7 @@
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt;
-         AC_CONFIG_FILES([Makefile:boiler/top.mk:boiler/bot.mk]          
+         AC_CONFIG_FILES([Makefile:boiler/top.mk:boiler/bot.mk]
                [lib/Makefile:boiler/lib.mk])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -419,7 +419,7 @@
          like this:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; AC_CONFIG_COMMANDS_PRE(        
+         class=example&gt;&lt;pre&gt; AC_CONFIG_COMMANDS_PRE(
          [m4_ifndef([AH_HEADER], [AC_CONFIG_HEADERS([config.h])])])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -439,8 +439,8 @@
          For example:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; AH_TEMPLATE([CRAY_STACKSEG_END],   
-                  [Define to one of _getb67, GETB67, getb67             
+         class=example&gt;&lt;pre&gt; AH_TEMPLATE([CRAY_STACKSEG_END],
+                  [Define to one of _getb67, GETB67, getb67
          for Cray-2 and Cray-YMP systems.  This              function is
          required for alloca.c support              on those systems.])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
@@ -451,7 +451,7 @@
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; /* Define to one of _getb67,
          GETB67, getb67 for Cray-2 and    Cray-YMP systems.  This
-         function is required for alloca.c    support on those systems. 
+         function is required for alloca.c    support on those systems.
          */ #undef CRAY_STACKSEG_END
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
         </synopsis>
@@ -565,7 +565,7 @@
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt;
-         AC_CONFIG_LINKS([host.h:config/$machine.h                
+         AC_CONFIG_LINKS([host.h:config/$machine.h
          object.h:config/$obj_format.h])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -620,7 +620,7 @@
          reported; if the subdirectory is optional, write:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; if test -d "$srcdir/foo"; then  
+         class=example&gt;&lt;pre&gt; if test -d "$srcdir/foo"; then
          AC_CONFIG_SUBDIRS([foo]) fi
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -630,7 +630,7 @@
          might use a non-Autoconf script
          &lt;CODE&gt;Configure&lt;/CODE&gt;, which can't be called
          through a wrapper &lt;CODE&gt;configure&lt;/CODE&gt; since it
-         would be the same file on case-insensitive file systems. 
+         would be the same file on case-insensitive file systems.
          Likewise, if a &lt;VAR&gt;dir&lt;/VAR&gt; contains
          &lt;TT&gt;configure.in&lt;/TT&gt; but no
          &lt;CODE&gt;configure&lt;/CODE&gt;, the Cygnus
@@ -705,7 +705,7 @@
          #ifdef STDC_HEADERS # include &lt;stdlib.h&gt; # include
          &lt;stddef.h&gt; #else # ifdef HAVE_STDLIB_H #  include
          &lt;stdlib.h&gt; # endif #endif #ifdef HAVE_STRING_H # if
-         !defined STDC_HEADERS &amp;&amp; defined HAVE_MEMORY_H # 
+         !defined STDC_HEADERS &amp;&amp; defined HAVE_MEMORY_H #
          include &lt;memory.h&gt; # endif # include &lt;string.h&gt;
          #endif #ifdef HAVE_STRINGS_H # include &lt;strings.h&gt; #endif
          #ifdef HAVE_INTTYPES_H # include &lt;inttypes.h&gt; #endif
@@ -799,7 +799,7 @@
          &lt;samp&gt;&lt;VAR&gt;dir&lt;/VAR&gt;/install-sh
          -c&lt;/samp&gt;, checking the directories specified to
          &lt;CODE&gt;AC_CONFIG_AUX_DIR&lt;/CODE&gt; (or its default
-         directories) to determine &lt;VAR&gt;dir&lt;/VAR&gt; (Output). 
+         directories) to determine &lt;VAR&gt;dir&lt;/VAR&gt; (Output).
          Also set the variables &lt;CODE&gt;INSTALL_PROGRAM&lt;/CODE&gt;
          and &lt;CODE&gt;INSTALL_SCRIPT&lt;/CODE&gt; to
          &lt;samp&gt;$INSTALL@&lt;/samp&gt; and
@@ -811,7 +811,7 @@
 
          This macro screens out various instances of
          &lt;CODE&gt;install&lt;/CODE&gt; known not to work.  It prefers
-         to find a C program rather than a shell script, for speed. 
+         to find a C program rather than a shell script, for speed.
          Instead of &lt;TT&gt;install-sh&lt;/TT&gt;, it can also use
          &lt;TT&gt;install.sh&lt;/TT&gt;, but that name is obsolete
          because some &lt;CODE&gt;make&lt;/CODE&gt; programs have a rule
@@ -916,11 +916,11 @@
 
          Define &lt;CODE&gt;YYTEXT_POINTER&lt;/CODE&gt; if
          &lt;CODE&gt;yytext&lt;/CODE&gt; defaults to &lt;samp&gt;char
-         *&lt;/samp&gt; instead of to &lt;samp&gt;char []&lt;/samp&gt;. 
+         *&lt;/samp&gt; instead of to &lt;samp&gt;char []&lt;/samp&gt;.
          Also set output variable
          &lt;CODE&gt;LEX_OUTPUT_ROOT&lt;/CODE&gt; to the base of the file
          name that the lexer generates; usually
-         &lt;TT&gt;lex.yy&lt;/TT&gt;, but sometimes something else. 
+         &lt;TT&gt;lex.yy&lt;/TT&gt;, but sometimes something else.
          These results vary according to whether
          &lt;CODE&gt;lex&lt;/CODE&gt; or &lt;CODE&gt;flex&lt;/CODE&gt; is
          being used.&lt;/P&gt;&lt;P&gt;
@@ -940,7 +940,7 @@
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; AC_PROG_LEX if test "x$LEX" !=
-         xflex; then   LEX="$SHELL $missing_dir/missing flex"  
+         xflex; then   LEX="$SHELL $missing_dir/missing flex"
          AC_SUBST([LEX_OUTPUT_ROOT], [lex.yy])   AC_SUBST([LEXLIB], [''])
          fi &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -1058,7 +1058,7 @@
          set &lt;VAR&gt;variable&lt;/VAR&gt; using the absolute file name
          of the &lt;VAR&gt;prog-to-check-for&lt;/VAR&gt; found that is
          not &lt;VAR&gt;reject&lt;/VAR&gt;.  If
-         &lt;VAR&gt;variable&lt;/VAR&gt; was already set, do nothing. 
+         &lt;VAR&gt;variable&lt;/VAR&gt; was already set, do nothing.
          Calls &lt;CODE&gt;AC_SUBST&lt;/CODE&gt; for
          &lt;VAR&gt;variable&lt;/VAR&gt;.  The result of this test can be
          overridden by setting the &lt;VAR&gt;variable&lt;/VAR&gt;
@@ -1077,7 +1077,7 @@
            Check for each program in the blank-separated list
          &lt;VAR&gt;progs-to-check-for&lt;/VAR&gt; existing in the
          &lt;VAR&gt;path&lt;/VAR&gt;.  If one is found, set
-         &lt;VAR&gt;variable&lt;/VAR&gt; to the name of that program. 
+         &lt;VAR&gt;variable&lt;/VAR&gt; to the name of that program.
          Otherwise, continue checking the next program in the list.  If
          none of the programs in the list are found, set
          &lt;VAR&gt;variable&lt;/VAR&gt; to
@@ -1254,7 +1254,7 @@
          invocation of &lt;VAR&gt;feature-test&lt;/VAR&gt; sets the shell
          variable
          &lt;CODE&gt;ac_cv_path_&lt;VAR&gt;variable&lt;/VAR&gt;&lt;/CODE&gt;,
-         then &lt;VAR&gt;action-if-not-found&lt;/VAR&gt; is executed. 
+         then &lt;VAR&gt;action-if-not-found&lt;/VAR&gt; is executed.
          &lt;VAR&gt;feature-test&lt;/VAR&gt; will be run even when
          &lt;CODE&gt;ac_cv_path_&lt;VAR&gt;variable&lt;/VAR&gt;&lt;/CODE&gt;
          is set, to provide the ability to choose a better candidate
@@ -1269,7 +1269,7 @@
          should have no side effects.  In particular,
          &lt;VAR&gt;variable&lt;/VAR&gt; is not set to the final value of
          &lt;CODE&gt;ac_cv_path_&lt;VAR&gt;variable&lt;/VAR&gt;&lt;/CODE&gt;,
-         nor is &lt;CODE&gt;AC_SUBST&lt;/CODE&gt; automatically run. 
+         nor is &lt;CODE&gt;AC_SUBST&lt;/CODE&gt; automatically run.
          Also, on failure, any action can be performed, whereas
          &lt;CODE&gt;AC_CHECK_PROGS&lt;/CODE&gt; only performs
          &lt;CODE&gt;&lt;VAR&gt;variable&lt;/VAR&gt;=&lt;VAR&gt;value-if-not-found&lt;/VAR&gt;&lt;/CODE&gt;.&lt;/P&gt;&lt;P&gt;
@@ -1283,7 +1283,7 @@
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; AC_CACHE_CHECK([for m4 that
-         supports indir], [ac_cv_path_M4],  
+         supports indir], [ac_cv_path_M4],
          [AC_PATH_PROGS_FEATURE_CHECK([M4], [m4 gm4],     [[m4out=`echo
          'changequote([,])indir([divnum])' | $ac_path_M4`       test
          "x$m4out" = x0 \       &amp;&amp; ac_cv_path_M4=$ac_path_M4
@@ -1467,7 +1467,7 @@
       <prototype>
       </prototype>
         <synopsis>
-              alloca.h Check how to get &lt;CODE&gt;alloca&lt;/CODE&gt;. 
+              alloca.h Check how to get &lt;CODE&gt;alloca&lt;/CODE&gt;.
          Tries to get a builtin version by checking for
          &lt;TT&gt;alloca.h&lt;/TT&gt; or the predefined C preprocessor
          macros &lt;CODE&gt;__GNUC__&lt;/CODE&gt; and
@@ -1481,7 +1481,7 @@
          output variable &lt;CODE&gt;ALLOCA&lt;/CODE&gt; to
          &lt;samp&gt;$LIBOBJDIR@&lt;/samp&gt;alloca.o and defines
          &lt;CODE&gt;C_ALLOCA&lt;/CODE&gt; (so programs can periodically
-         call &lt;samp&gt;alloca (0)&lt;/samp&gt; to garbage collect). 
+         call &lt;samp&gt;alloca (0)&lt;/samp&gt; to garbage collect).
          This variable is separate from &lt;CODE&gt;LIBOBJS&lt;/CODE&gt;
          so multiple programs can share the value of
          &lt;CODE&gt;ALLOCA&lt;/CODE&gt; without needing to create an
@@ -1540,7 +1540,7 @@
          &lt;CODE&gt;CLOSEDIR_VOID&lt;/CODE&gt;.  Otherwise, callers
          ought to check its return value for an error indicator.&lt;/P&gt;&lt;P&gt;
 
-         Currently this test is implemented by running a test program. 
+         Currently this test is implemented by running a test program.
          When cross compiling the pessimistic assumption that
          &lt;CODE&gt;closedir&lt;/CODE&gt; does not return a meaningful
          value is made.&lt;/P&gt;&lt;P&gt;
@@ -1597,7 +1597,7 @@
         <synopsis>
             Behave like &lt;CODE&gt;AC_REPLACE_FNMATCH&lt;/CODE&gt;
          (&lt;EM&gt;replace&lt;/EM&gt;) but also test whether
-         &lt;CODE&gt;fnmatch&lt;/CODE&gt; supports GNU extensions. 
+         &lt;CODE&gt;fnmatch&lt;/CODE&gt; supports GNU extensions.
          Detect common implementation bugs, for example, the bugs in the
          GNU C Library 2.1.&lt;/P&gt;&lt;P&gt;
 
@@ -1651,7 +1651,7 @@
               If the &lt;CODE&gt;fseeko&lt;/CODE&gt; function is
          available, define &lt;CODE&gt;HAVE_FSEEKO&lt;/CODE&gt;. Define
          &lt;CODE&gt;_LARGEFILE_SOURCE&lt;/CODE&gt; if necessary to make
-         the prototype visible on some systems (e.g., glibc 2.2). 
+         the prototype visible on some systems (e.g., glibc 2.2).
          Otherwise linkage problems may occur when compiling with
          &lt;CODE&gt;AC_SYS_LARGEFILE&lt;/CODE&gt; on largefile-sensitive
          systems where &lt;CODE&gt;off_t&lt;/CODE&gt; does not default to
@@ -1713,7 +1713,7 @@
          still defined, but do not depend upon it.&lt;/P&gt;&lt;P&gt;
 
          &lt;LI&gt; Programs may need to be installed set-group-ID (or
-         set-user-ID) for &lt;CODE&gt;getloadavg&lt;/CODE&gt; to work. 
+         set-user-ID) for &lt;CODE&gt;getloadavg&lt;/CODE&gt; to work.
          In this case, define
          &lt;CODE&gt;GETLOADAVG_PRIVILEGED&lt;/CODE&gt;, set the output
          variable &lt;CODE&gt;NEED_SETGID&lt;/CODE&gt; to
@@ -1734,7 +1734,7 @@
              Check for &lt;CODE&gt;getmntent&lt;/CODE&gt; in the standard
          C library, and then in the &lt;TT&gt;sun&lt;/TT&gt;,
          &lt;TT&gt;seq&lt;/TT&gt;, and &lt;TT&gt;gen&lt;/TT&gt;
-         libraries, for UNICOS, IRIX 4, PTX, and UnixWare, respectively. 
+         libraries, for UNICOS, IRIX 4, PTX, and UnixWare, respectively.
          Then, if &lt;CODE&gt;getmntent&lt;/CODE&gt; is available, define
          &lt;CODE&gt;HAVE_GETMNTENT&lt;/CODE&gt; and set
          &lt;CODE&gt;ac_cv_func_getmntent&lt;/CODE&gt; to
@@ -1900,7 +1900,7 @@
       </prototype>
         <synopsis>
              If the &lt;CODE&gt;mmap&lt;/CODE&gt; function exists and
-         works correctly, define &lt;CODE&gt;HAVE_MMAP&lt;/CODE&gt;. 
+         works correctly, define &lt;CODE&gt;HAVE_MMAP&lt;/CODE&gt;.
          This checks only private fixed mapping of already-mapped memory.&lt;/P&gt;&lt;P&gt;
 
          The result of this macro is cached in the
@@ -1951,7 +1951,7 @@
          defines those types in
          &lt;CODE&gt;SELECT_TYPE_ARG1&lt;/CODE&gt;,
          &lt;CODE&gt;SELECT_TYPE_ARG234&lt;/CODE&gt;, and
-         &lt;CODE&gt;SELECT_TYPE_ARG5&lt;/CODE&gt; respectively. 
+         &lt;CODE&gt;SELECT_TYPE_ARG5&lt;/CODE&gt; respectively.
          &lt;CODE&gt;SELECT_TYPE_ARG1&lt;/CODE&gt; defaults to
          &lt;samp&gt;int&lt;/samp&gt;,
          &lt;CODE&gt;SELECT_TYPE_ARG234&lt;/CODE&gt; defaults to
@@ -1969,7 +1969,7 @@
       </prototype>
         <synopsis>
              If &lt;CODE&gt;setpgrp&lt;/CODE&gt; takes no argument (the
-         Posix version), define &lt;CODE&gt;SETPGRP_VOID&lt;/CODE&gt;. 
+         Posix version), define &lt;CODE&gt;SETPGRP_VOID&lt;/CODE&gt;.
          Otherwise, it is the BSD version, which takes two process IDs as
          arguments.  This macro does not check whether
          &lt;CODE&gt;setpgrp&lt;/CODE&gt; exists at all; if you need to
@@ -2016,7 +2016,7 @@
       </prototype>
         <synopsis>
              If the &lt;CODE&gt;strcoll&lt;/CODE&gt; function exists and
-         works correctly, define &lt;CODE&gt;HAVE_STRCOLL&lt;/CODE&gt;. 
+         works correctly, define &lt;CODE&gt;HAVE_STRCOLL&lt;/CODE&gt;.
          This does a bit more than
          &lt;samp&gt;AC_CHECK_FUNCS(strcoll)&lt;/samp&gt;, because some
          systems have incorrect definitions of
@@ -2032,7 +2032,7 @@
         <synopsis>
                If &lt;CODE&gt;strerror_r&lt;/CODE&gt; is available,
          define &lt;CODE&gt;HAVE_STRERROR_R&lt;/CODE&gt;, and if it is
-         declared, define &lt;CODE&gt;HAVE_DECL_STRERROR_R&lt;/CODE&gt;. 
+         declared, define &lt;CODE&gt;HAVE_DECL_STRERROR_R&lt;/CODE&gt;.
          If it returns a &lt;CODE&gt;char *&lt;/CODE&gt; message, define
          &lt;CODE&gt;STRERROR_R_CHAR_P&lt;/CODE&gt;; otherwise it returns
          an &lt;CODE&gt;int&lt;/CODE&gt; error number.  The Thread-Safe
@@ -2181,7 +2181,7 @@
          run shell commands &lt;VAR&gt;action-if-found&lt;/VAR&gt;,
          otherwise &lt;VAR&gt;action-if-not-found&lt;/VAR&gt;.  If you
          just want to define a symbol if the function is available,
-         consider using &lt;CODE&gt;AC_CHECK_FUNCS&lt;/CODE&gt; instead. 
+         consider using &lt;CODE&gt;AC_CHECK_FUNCS&lt;/CODE&gt; instead.
          This macro checks for functions with C linkage even when
          &lt;CODE&gt;AC_LANG(C++)&lt;/CODE&gt; has been called, since C
          is more standardized than C++.  (Language Choice, for more
@@ -2244,7 +2244,7 @@
          &lt;samp&gt;&lt;VAR&gt;function&lt;/VAR&gt;.$ac_objext&lt;/samp&gt;
          to the output variable &lt;CODE&gt;LIBOBJS&lt;/CODE&gt; if it is
          not already in, and calls &lt;CODE&gt;AC_LIBSOURCE&lt;/CODE&gt;
-         for &lt;samp&gt;&lt;VAR&gt;function&lt;/VAR&gt;.c&lt;/samp&gt;. 
+         for &lt;samp&gt;&lt;VAR&gt;function&lt;/VAR&gt;.c&lt;/samp&gt;.
          You should not directly change &lt;CODE&gt;LIBOBJS&lt;/CODE&gt;,
          since this is not traceable.
         </synopsis>
@@ -2257,7 +2257,7 @@
           Specify that &lt;VAR&gt;file&lt;/VAR&gt; might be needed to
          compile the project.  If you need to know what files might be
          needed by a &lt;TT&gt;configure.ac&lt;/TT&gt;, you should trace
-         &lt;CODE&gt;AC_LIBSOURCE&lt;/CODE&gt;. 
+         &lt;CODE&gt;AC_LIBSOURCE&lt;/CODE&gt;.
          &lt;VAR&gt;file&lt;/VAR&gt; must be a literal.&lt;/P&gt;&lt;P&gt;
 
          This macro is called automatically from
@@ -2295,7 +2295,7 @@
       </prototype>
         <synopsis>
           Like &lt;CODE&gt;AC_LIBSOURCE&lt;/CODE&gt;, but accepts one or
-         more &lt;VAR&gt;files&lt;/VAR&gt; in a comma-separated M4 list. 
+         more &lt;VAR&gt;files&lt;/VAR&gt; in a comma-separated M4 list.
          Thus, the above example might be rewritten:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
@@ -2547,7 +2547,7 @@
           */ #ifdef STDC_HEADERS # include &lt;string.h&gt; #else #
          ifndef HAVE_STRCHR #  define strchr index #  define strrchr
          rindex # endif char *strchr (), *strrchr (); # ifndef
-         HAVE_MEMCPY #  define memcpy(d, s, n) bcopy ((s), (d), (n)) # 
+         HAVE_MEMCPY #  define memcpy(d, s, n) bcopy ((s), (d), (n)) #
          define memmove(d, s, n) bcopy ((s), (d), (n)) # endif #endif
          @end group &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -2613,7 +2613,7 @@
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; @group #ifdef TIME_WITH_SYS_TIME #
          include &lt;sys/time.h&gt; # include &lt;time.h&gt; #else #
-         ifdef HAVE_SYS_TIME_H #  include &lt;sys/time.h&gt; # else # 
+         ifdef HAVE_SYS_TIME_H #  include &lt;sys/time.h&gt; # else #
          include &lt;time.h&gt; # endif #endif @end group
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -2856,7 +2856,7 @@
          (in all capitals) to &lt;samp&gt;1&lt;/samp&gt; if
          &lt;VAR&gt;symbol&lt;/VAR&gt; is declared in the default include
          files, otherwise to &lt;samp&gt;0&lt;/samp&gt;.  This is a
-         once-only variant of &lt;CODE&gt;AC_CHECK_DECLS&lt;/CODE&gt;. 
+         once-only variant of &lt;CODE&gt;AC_CHECK_DECLS&lt;/CODE&gt;.
          It generates the checking code at most once, so that
          &lt;CODE&gt;configure&lt;/CODE&gt; is smaller and faster; but
          the checks cannot be conditionalized and are always done once,
@@ -2868,7 +2868,7 @@
       </prototype>
         <synopsis>
            Perform all the actions of
-         &lt;CODE&gt;AC_HEADER_DIRENT&lt;/CODE&gt; (Particular Headers). 
+         &lt;CODE&gt;AC_HEADER_DIRENT&lt;/CODE&gt; (Particular Headers).
          Then, if &lt;CODE&gt;struct dirent&lt;/CODE&gt; contains a
          &lt;CODE&gt;d_ino&lt;/CODE&gt; member, define
          &lt;CODE&gt;HAVE_STRUCT_DIRENT_D_INO&lt;/CODE&gt;.&lt;/P&gt;&lt;P&gt;
@@ -2889,7 +2889,7 @@
       </prototype>
         <synopsis>
            Perform all the actions of
-         &lt;CODE&gt;AC_HEADER_DIRENT&lt;/CODE&gt; (Particular Headers). 
+         &lt;CODE&gt;AC_HEADER_DIRENT&lt;/CODE&gt; (Particular Headers).
          Then, if &lt;CODE&gt;struct dirent&lt;/CODE&gt; contains a
          &lt;CODE&gt;d_type&lt;/CODE&gt; member, define
          &lt;CODE&gt;HAVE_STRUCT_DIRENT_D_TYPE&lt;/CODE&gt;.
@@ -2923,7 +2923,7 @@
          &lt;CODE&gt;struct tm&lt;/CODE&gt;.&lt;/P&gt;&lt;P&gt;
 
          This macro is obsolescent, as &lt;TT&gt;time.h&lt;/TT&gt;
-         defines &lt;CODE&gt;struct tm&lt;/CODE&gt; in current systems. 
+         defines &lt;CODE&gt;struct tm&lt;/CODE&gt; in current systems.
          New programs need not use this macro.
         </synopsis>
   </macro>
@@ -2981,7 +2981,7 @@
         <synopsis>
            Check for the existence of each
          &lt;samp&gt;&lt;VAR&gt;aggregate&lt;/VAR&gt;.&lt;VAR&gt;member&lt;/VAR&gt;&lt;/samp&gt;
-         of &lt;VAR&gt;members&lt;/VAR&gt; using the previous macro. 
+         of &lt;VAR&gt;members&lt;/VAR&gt; using the previous macro.
          When &lt;VAR&gt;member&lt;/VAR&gt; belongs to
          &lt;VAR&gt;aggregate&lt;/VAR&gt;, define
          &lt;CODE&gt;HAVE_&lt;VAR&gt;aggregate&lt;/VAR&gt;_&lt;VAR&gt;member&lt;/VAR&gt;&lt;/CODE&gt;
@@ -3031,8 +3031,8 @@
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; #if HAVE_STDINT_H # include
-         &lt;stdint.h&gt; #endif #if defined INT8_MAX || defined int8_t 
-         &lt;EM&gt;code using int8_t&lt;/EM&gt; #else 
+         &lt;stdint.h&gt; #endif #if defined INT8_MAX || defined int8_t
+         &lt;EM&gt;code using int8_t&lt;/EM&gt; #else
          &lt;EM&gt;complicated alternative using &gt;8-bit 'signed
          char'&lt;/EM&gt; #endif
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
@@ -3304,7 +3304,7 @@
         <synopsis>
            Check whether &lt;VAR&gt;type&lt;/VAR&gt; is defined.  It may
          be a compiler builtin type or defined by the
-         &lt;VAR&gt;includes&lt;/VAR&gt;. 
+         &lt;VAR&gt;includes&lt;/VAR&gt;.
          &lt;VAR&gt;includes&lt;/VAR&gt; is a series of include
          directives, defaulting to
          &lt;CODE&gt;AC_INCLUDES_DEFAULT&lt;/CODE&gt; (Default Includes),
@@ -3404,7 +3404,7 @@
            -or-expr} Define
          &lt;CODE&gt;ALIGNOF_&lt;VAR&gt;type&lt;/VAR&gt;&lt;/CODE&gt;
          (Standard Symbols) to be the alignment in bytes of
-         &lt;VAR&gt;type&lt;/VAR&gt;. 
+         &lt;VAR&gt;type&lt;/VAR&gt;.
          &lt;samp&gt;&lt;VAR&gt;type&lt;/VAR&gt; y;&lt;/samp&gt; must be
          valid as a structure member declaration.  If
          &lt;samp&gt;type&lt;/samp&gt; is unknown, the result is 0.  If
@@ -3466,7 +3466,7 @@
          If the current language is C, the macro
          &lt;CODE&gt;AC_OPENMP&lt;/CODE&gt; sets the variable
          &lt;CODE&gt;OPENMP_CFLAGS&lt;/CODE&gt; to the C compiler flags
-         needed for supporting OpenMP@. 
+         needed for supporting OpenMP@.
          &lt;CODE&gt;OPENMP_CFLAGS&lt;/CODE&gt; is set to empty if the
          compiler already supports OpenMP, if it has no way to activate
          OpenMP support, or if the user rejects OpenMP support by
@@ -3477,7 +3477,7 @@
          compiling programs, when preprocessing program source, and when
          linking programs.  Therefore you need to add
          &lt;CODE&gt;$(OPENMP_CFLAGS)&lt;/CODE&gt; to the
-         &lt;CODE&gt;CFLAGS&lt;/CODE&gt; of C programs that use OpenMP@. 
+         &lt;CODE&gt;CFLAGS&lt;/CODE&gt; of C programs that use OpenMP@.
          If you preprocess OpenMP-specific C code, you also need to add
          &lt;CODE&gt;$(OPENMP_CFLAGS)&lt;/CODE&gt; to
          &lt;CODE&gt;CPPFLAGS&lt;/CODE&gt;.  The presence of OpenMP
@@ -3505,7 +3505,7 @@
          For portability, it is best to avoid spaces between
          &lt;samp&gt;#&lt;/samp&gt; and &lt;samp&gt;pragma
          omp&lt;/samp&gt;.  That is, write &lt;samp&gt;#pragma
-         omp&lt;/samp&gt;, not &lt;samp&gt;# pragma omp&lt;/samp&gt;. 
+         omp&lt;/samp&gt;, not &lt;samp&gt;# pragma omp&lt;/samp&gt;.
          The Sun WorkShop 6.2 C compiler chokes on the latter.
         </synopsis>
   </macro>
@@ -3546,7 +3546,7 @@
          &lt;CODE&gt;AC_C_PROTOTYPES&lt;/CODE&gt; below.&lt;/P&gt;&lt;P&gt;
 
          If using the GNU C compiler, set shell variable
-         &lt;CODE&gt;GCC&lt;/CODE&gt; to &lt;samp&gt;yes&lt;/samp&gt;. 
+         &lt;CODE&gt;GCC&lt;/CODE&gt; to &lt;samp&gt;yes&lt;/samp&gt;.
          If output variable &lt;CODE&gt;CFLAGS&lt;/CODE&gt; was not
          already set, set it to &lt;samp&gt;-g -O2&lt;/samp&gt; for the
          GNU C compiler (&lt;samp&gt;-O2&lt;/samp&gt; on systems where
@@ -3709,7 +3709,7 @@
 
          This macro runs a test-case if endianness cannot be determined
          from the system header files.  When cross-compiling, the
-         test-case is not run but grep'ed for some magic values. 
+         test-case is not run but grep'ed for some magic values.
          &lt;VAR&gt;action-if-unknown&lt;/VAR&gt; is executed if the
          latter case fails to determine the byte sex of the host system.&lt;/P&gt;&lt;P&gt;
 
@@ -3724,7 +3724,7 @@
 
          The default for &lt;VAR&gt;action-if-true&lt;/VAR&gt; is to
          define &lt;samp&gt;WORDS_BIGENDIAN&lt;/samp&gt;.  The default
-         for &lt;VAR&gt;action-if-false&lt;/VAR&gt; is to do nothing. 
+         for &lt;VAR&gt;action-if-false&lt;/VAR&gt; is to do nothing.
          The default for &lt;VAR&gt;action-if-unknown&lt;/VAR&gt; is to
          abort configure and tell the installer how to bypass this test.
          And finally, the default for
@@ -3903,7 +3903,7 @@
          otherwise define it to 1. That way, a declaration like this:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; struct s        size_t n_vals;    
+         class=example&gt;&lt;pre&gt; struct s        size_t n_vals;
          double val[FLEXIBLE_ARRAY_MEMBER];   @;
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -4004,7 +4004,7 @@
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
          If using the GNU C++ compiler, set shell variable
-         &lt;CODE&gt;GXX&lt;/CODE&gt; to &lt;samp&gt;yes&lt;/samp&gt;. 
+         &lt;CODE&gt;GXX&lt;/CODE&gt; to &lt;samp&gt;yes&lt;/samp&gt;.
          If output variable &lt;CODE&gt;CXXFLAGS&lt;/CODE&gt; was not
          already set, set it to &lt;samp&gt;-g -O2&lt;/samp&gt; for the
          GNU C++ compiler (&lt;samp&gt;-O2&lt;/samp&gt; on systems where
@@ -4072,7 +4072,7 @@
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
          If using the GNU Objective C compiler, set shell variable
-         &lt;CODE&gt;GOBJC&lt;/CODE&gt; to &lt;samp&gt;yes&lt;/samp&gt;. 
+         &lt;CODE&gt;GOBJC&lt;/CODE&gt; to &lt;samp&gt;yes&lt;/samp&gt;.
          If output variable &lt;CODE&gt;OBJCFLAGS&lt;/CODE&gt; was not
          already set, set it to &lt;samp&gt;-g -O2&lt;/samp&gt; for the
          GNU Objective C compiler (&lt;samp&gt;-O2&lt;/samp&gt; on
@@ -4261,7 +4261,7 @@
 
          By default, newer dialects are preferred over older dialects,
          but if &lt;CODE&gt;dialect&lt;/CODE&gt; is specified then older
-         dialects are preferred starting with the specified dialect. 
+         dialects are preferred starting with the specified dialect.
          &lt;CODE&gt;dialect&lt;/CODE&gt; can currently be one of Fortran
          77, Fortran 90, or Fortran 95.  However, this is only a hint of
          which compiler &lt;EM&gt;name&lt;/EM&gt; to prefer (e.g.,
@@ -4370,7 +4370,7 @@
          &lt;CODE&gt;main&lt;/CODE&gt; and skip the Fortran library
          initializations.  In this case, however, one may still need to
          provide a dummy &lt;CODE&gt;MAIN__&lt;/CODE&gt; routine in order
-         to prevent linking errors on some systems. 
+         to prevent linking errors on some systems.
          &lt;CODE&gt;AC_F77_DUMMY_MAIN&lt;/CODE&gt; or
          &lt;CODE&gt;AC_FC_DUMMY_MAIN&lt;/CODE&gt; detects whether any
          such routine is &lt;EM&gt;required&lt;/EM&gt; for linking, and
@@ -4384,7 +4384,7 @@
          &lt;CODE&gt;F77_DUMMY_MAIN&lt;/CODE&gt; or
          &lt;CODE&gt;FC_DUMMY_MAIN&lt;/CODE&gt; to the name of this
          routine (e.g., &lt;CODE&gt;MAIN__&lt;/CODE&gt;)
-         &lt;EM&gt;if&lt;/EM&gt; it is required. 
+         &lt;EM&gt;if&lt;/EM&gt; it is required.
          &lt;VAR&gt;action-if-not-found&lt;/VAR&gt; defaults to exiting
          with an error.&lt;/P&gt;&lt;P&gt;
 
@@ -4394,7 +4394,7 @@
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; #ifdef F77_DUMMY_MAIN #  ifdef
-         __cplusplus      extern "C" #  endif    int F77_DUMMY_MAIN () 
+         __cplusplus      extern "C" #  endif    int F77_DUMMY_MAIN ()
          return 1; @ #endif
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -4424,7 +4424,7 @@
          &lt;CODE&gt;AC_FC_MAIN&lt;/CODE&gt; macros detect whether it is
          &lt;EM&gt;possible&lt;/EM&gt; to utilize such an alternate main
          function, and defines &lt;CODE&gt;F77_MAIN&lt;/CODE&gt; and
-         &lt;CODE&gt;FC_MAIN&lt;/CODE&gt; to the name of the function. 
+         &lt;CODE&gt;FC_MAIN&lt;/CODE&gt; to the name of the function.
          (If no alternate main function name is found,
          &lt;CODE&gt;F77_MAIN&lt;/CODE&gt; and
          &lt;CODE&gt;FC_MAIN&lt;/CODE&gt; are simply defined to
@@ -4470,8 +4470,8 @@
          you have the following Fortran 77 subroutine:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt;       subroutine foobar (x, y)     
-          double precision x, y       y = 3.14159 * x       return      
+         class=example&gt;&lt;pre&gt;       subroutine foobar (x, y)
+          double precision x, y       y = 3.14159 * x       return
          end &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
          You would then declare its prototype in C or C++ as:&lt;/P&gt;&lt;P&gt;
@@ -4503,7 +4503,7 @@
          something like:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt;      double x = 2.7183, y;    
+         class=example&gt;&lt;pre&gt;      double x = 2.7183, y;
          FOOBAR_F77 (&amp;x, &amp;y); @
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -4512,7 +4512,7 @@
          &lt;CODE&gt;F77_FUNC_&lt;/CODE&gt; or
          &lt;CODE&gt;FC_FUNC_&lt;/CODE&gt; instead of
          &lt;CODE&gt;F77_FUNC&lt;/CODE&gt; or
-         &lt;CODE&gt;FC_FUNC&lt;/CODE&gt; (with the same arguments). 
+         &lt;CODE&gt;FC_FUNC&lt;/CODE&gt; (with the same arguments).
          This is because some Fortran compilers mangle names differently
          if they contain an underscore.
         </synopsis>
@@ -4532,7 +4532,7 @@
          version &lt;VAR&gt;name&lt;/VAR&gt; according to the rules of
          the Fortran linker (see also
          &lt;CODE&gt;AC_F77_WRAPPERS&lt;/CODE&gt; or
-         &lt;CODE&gt;AC_FC_WRAPPERS&lt;/CODE&gt;). 
+         &lt;CODE&gt;AC_FC_WRAPPERS&lt;/CODE&gt;).
          &lt;VAR&gt;shellvar&lt;/VAR&gt; is optional; if it is not
          supplied, the shell variable is simply
          &lt;VAR&gt;name&lt;/VAR&gt;.  The purpose of this macro is to
@@ -4565,7 +4565,7 @@
          &lt;VAR&gt;ext&lt;/VAR&gt; does &lt;EM&gt;not&lt;/EM&gt; contain
          the dot).  If any special compiler flags are needed for this, it
          stores them in the output variable
-         &lt;CODE&gt;FCFLAGS_&lt;/CODE&gt;&lt;VAR&gt;ext&lt;/VAR&gt;. 
+         &lt;CODE&gt;FCFLAGS_&lt;/CODE&gt;&lt;VAR&gt;ext&lt;/VAR&gt;.
          This extension and these flags are then used for all subsequent
          &lt;CODE&gt;FC&lt;/CODE&gt; tests (until
          &lt;CODE&gt;AC_FC_SRCEXT&lt;/CODE&gt; is called again).&lt;/P&gt;&lt;P&gt;
@@ -4597,7 +4597,7 @@
 
          If &lt;CODE&gt;AC_FC_SRCEXT&lt;/CODE&gt; succeeds in compiling
          files with the &lt;VAR&gt;ext&lt;/VAR&gt; extension, it calls
-         &lt;VAR&gt;action-if-success&lt;/VAR&gt; (defaults to nothing). 
+         &lt;VAR&gt;action-if-success&lt;/VAR&gt; (defaults to nothing).
          If it fails, and cannot find a way to make the
          &lt;CODE&gt;FC&lt;/CODE&gt; compiler accept such files, it calls
          &lt;VAR&gt;action-if-failure&lt;/VAR&gt; (defaults to exiting
@@ -4633,7 +4633,7 @@
 
          If &lt;CODE&gt;AC_FC_FREEFORM&lt;/CODE&gt; succeeds in compiling
          free-form source, it calls
-         &lt;VAR&gt;action-if-success&lt;/VAR&gt; (defaults to nothing). 
+         &lt;VAR&gt;action-if-success&lt;/VAR&gt; (defaults to nothing).
          If it fails, it calls &lt;VAR&gt;action-if-failure&lt;/VAR&gt;
          (defaults to exiting with an error message).
         </synopsis>
@@ -4664,7 +4664,7 @@
 
          If &lt;CODE&gt;AC_FC_FIXEDFORM&lt;/CODE&gt; succeeds in
          compiling fixed-form source, it calls
-         &lt;VAR&gt;action-if-success&lt;/VAR&gt; (defaults to nothing). 
+         &lt;VAR&gt;action-if-success&lt;/VAR&gt; (defaults to nothing).
          If it fails, it calls &lt;VAR&gt;action-if-failure&lt;/VAR&gt;
          (defaults to exiting with an error message).
         </synopsis>
@@ -4690,7 +4690,7 @@
 
          If &lt;CODE&gt;AC_FC_LINE_LENGTH&lt;/CODE&gt; succeeds in
          compiling fixed-form source, it calls
-         &lt;VAR&gt;action-if-success&lt;/VAR&gt; (defaults to nothing). 
+         &lt;VAR&gt;action-if-success&lt;/VAR&gt; (defaults to nothing).
          If it fails, it calls &lt;VAR&gt;action-if-failure&lt;/VAR&gt;
          (defaults to exiting with an error message).
         </synopsis>
@@ -4769,7 +4769,7 @@
               file support  Arrange for 64-bit file offsets, known as
          http://@/www.unix-systems@/.org/@/version2/@/whatsnew/@/lfs20mar.html,
          large-file support.  On some hosts, one must use special
-         compiler options to build programs that can access large files. 
+         compiler options to build programs that can access large files.
          Append any such options to the output variable
          &lt;CODE&gt;CC&lt;/CODE&gt;.  Define
          &lt;CODE&gt;_FILE_OFFSET_BITS&lt;/CODE&gt; and
@@ -4846,7 +4846,7 @@
            Set the output variable
          &lt;CODE&gt;ERLANG_ERTS_VER&lt;/CODE&gt; to the version of the
          Erlang runtime system (as returned by Erlang's
-         &lt;CODE&gt;erlang:system_info(version)&lt;/CODE&gt; function). 
+         &lt;CODE&gt;erlang:system_info(version)&lt;/CODE&gt; function).
          The result of this test is cached if caching is enabled when
          running &lt;CODE&gt;configure&lt;/CODE&gt;.  The
          &lt;CODE&gt;ERLANG_ERTS_VER&lt;/CODE&gt; variable is not
@@ -4863,7 +4863,7 @@
            Set the output variable
          &lt;CODE&gt;ERLANG_ROOT_DIR&lt;/CODE&gt; to the path to the base
          directory in which Erlang/OTP is installed (as returned by
-         Erlang's &lt;CODE&gt;code:root_dir/0&lt;/CODE&gt; function). 
+         Erlang's &lt;CODE&gt;code:root_dir/0&lt;/CODE&gt; function).
          The result of this test is cached if caching is enabled when
          running &lt;CODE&gt;configure&lt;/CODE&gt;.
         </synopsis>
@@ -4876,7 +4876,7 @@
          &lt;CODE&gt;ERLANG_LIB_DIR&lt;/CODE&gt; to the path of the
          library directory of Erlang/OTP (as returned by Erlang's
          &lt;CODE&gt;code:lib_dir/0&lt;/CODE&gt; function), which
-         subdirectories each contain an installed Erlang/OTP library. 
+         subdirectories each contain an installed Erlang/OTP library.
          The result of this test is cached if caching is enabled when
          running &lt;CODE&gt;configure&lt;/CODE&gt;.
         </synopsis>
@@ -4916,9 +4916,9 @@
          installed:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; AC_ERLANG_CHECK_LIB([stdlib],  
+         class=example&gt;&lt;pre&gt; AC_ERLANG_CHECK_LIB([stdlib],
          [echo "stdlib version \"$ERLANG_LIB_VER_stdlib\""    echo "is
-         installed in \"$ERLANG_LIB_DIR_stdlib\""],  
+         installed in \"$ERLANG_LIB_DIR_stdlib\""],
          [AC_MSG_ERROR([stdlib was not found!])])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -5029,7 +5029,7 @@
          &lt;CODE&gt;AC_FC_SRCEXT&lt;/CODE&gt;) for test programs.  Use
          compilation flags: &lt;CODE&gt;FCFLAGS&lt;/CODE&gt;.&lt;/P&gt;&lt;P&gt;
 
-         &lt;DT&gt;'&lt;SAMP&gt;Erlang&lt;/SAMP&gt;' &lt;DD&gt;   
+         &lt;DT&gt;'&lt;SAMP&gt;Erlang&lt;/SAMP&gt;' &lt;DD&gt;
          Compile and execute tests using &lt;CODE&gt;ERLC&lt;/CODE&gt;
          and &lt;CODE&gt;ERL&lt;/CODE&gt; and use extension
          &lt;TT&gt;.erl&lt;/TT&gt; for test Erlang modules.  Use
@@ -5101,7 +5101,7 @@
          inappropriate language.&lt;/P&gt;&lt;P&gt;
 
          This macro runs only at &lt;CODE&gt;autoconf&lt;/CODE&gt; time,
-         and incurs no cost at &lt;CODE&gt;configure&lt;/CODE&gt; time. 
+         and incurs no cost at &lt;CODE&gt;configure&lt;/CODE&gt; time.
          Sadly enough and because Autoconf is a two layer language
          Because M4 is not aware of Sh code, especially conditionals,
          some optimizations that look nice statically may produce
@@ -5410,7 +5410,7 @@
         <synopsis>
            Define &lt;VAR&gt;variable&lt;/VAR&gt; to
          &lt;VAR&gt;value&lt;/VAR&gt; (verbatim), by defining a C
-         preprocessor macro for &lt;VAR&gt;variable&lt;/VAR&gt;. 
+         preprocessor macro for &lt;VAR&gt;variable&lt;/VAR&gt;.
          &lt;VAR&gt;variable&lt;/VAR&gt; should be a C identifier,
          optionally suffixed by a parenthesized argument list to define a
          C preprocessor macro with arguments.  The macro argument list,
@@ -5489,7 +5489,7 @@
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt;
-         AC_DEFINE_UNQUOTED([config_machfile], ["$machfile"],  
+         AC_DEFINE_UNQUOTED([config_machfile], ["$machfile"],
          [Configuration machine file.]) AC_DEFINE_UNQUOTED([GETGROUPS_T],
          [$ac_cv_type_getgroups],   [getgroups return type.])
          AC_DEFINE_UNQUOTED([$ac_tr_hdr], [1],   [Translated header
@@ -5559,13 +5559,13 @@
          to &lt;TT&gt;/dev/null&lt;/TT&gt; for cases that do not have a
          file to insert. This substitution occurs only when the
          &lt;samp&gt;@@&lt;VAR&gt;variable&lt;/VAR&gt;@@&lt;/samp&gt; is
-         on a line by itself, optionally surrounded by spaces and tabs. 
+         on a line by itself, optionally surrounded by spaces and tabs.
          The substitution replaces the whole line, including the spaces,
          tabs, and the terminating newline.&lt;/P&gt;&lt;P&gt;
 
          This macro is useful for inserting makefile fragments containing
          special dependencies or other &lt;CODE&gt;make&lt;/CODE&gt;
-         directives for particular host or target types into makefiles. 
+         directives for particular host or target types into makefiles.
          For example, &lt;TT&gt;configure.ac&lt;/TT&gt; could contain:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
@@ -5643,7 +5643,7 @@
          class=example&gt;&lt;pre&gt; $ &lt;KBD&gt;CC=/usr/bin/cc
          ./configure var=raboof --silent&lt;/KBD&gt; $
          &lt;KBD&gt;./config.status --recheck&lt;/KBD&gt; running
-         CONFIG_SHELL=/bin/sh /bin/sh ./configure var=raboof \  
+         CONFIG_SHELL=/bin/sh /bin/sh ./configure var=raboof \
          CC=/usr/bin/cc  --no-create --no-recursion
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; &lt;/UL&gt;
         </synopsis>
@@ -5740,7 +5740,7 @@
         <parameter content="result-description"/>
       </prototype>
         <synopsis>
-          Notify the user of the results of a check. 
+          Notify the user of the results of a check.
          &lt;VAR&gt;result-description&lt;/VAR&gt; is almost always the
          value of the cache variable for the check, typically
          &lt;samp&gt;yes&lt;/samp&gt;, &lt;samp&gt;no&lt;/samp&gt;, or a
@@ -5838,7 +5838,7 @@
       <prototype>
       </prototype>
         <synopsis>
-          This is not technically a macro, but a feature of Autom4te. 
+          This is not technically a macro, but a feature of Autom4te.
          The sequence &lt;CODE&gt;__oline__&lt;/CODE&gt; can be used
          similarly to the other m4sugar location macros, but rather than
          expanding to the location of the input file, it is translated to
@@ -5861,7 +5861,7 @@
         <parameter content="[replacement]"/>
       </prototype>
         <synopsis>
-          This macro corresponds to &lt;CODE&gt;patsubst&lt;/CODE&gt;. 
+          This macro corresponds to &lt;CODE&gt;patsubst&lt;/CODE&gt;.
          The name &lt;CODE&gt;m4_patsubst&lt;/CODE&gt; is kept for future
          versions of M4sugar, once GNU M4 2.0 is released and supports
          extended regular expression syntax.
@@ -5900,7 +5900,7 @@
         <synopsis>
              These macros aren't directly builtins, but are closely
          related to &lt;CODE&gt;m4_pushdef&lt;/CODE&gt; and
-         &lt;CODE&gt;m4_defn&lt;/CODE&gt;. 
+         &lt;CODE&gt;m4_defn&lt;/CODE&gt;.
          &lt;CODE&gt;m4_copy&lt;/CODE&gt; and
          &lt;CODE&gt;m4_rename&lt;/CODE&gt; ensure that
          &lt;VAR&gt;dest&lt;/VAR&gt; is undefined, while
@@ -5908,7 +5908,7 @@
          &lt;CODE&gt;m4_rename_force&lt;/CODE&gt; overwrite any existing
          definition.  All four macros then proceed to copy the entire
          pushdef stack of definitions of &lt;VAR&gt;source&lt;/VAR&gt;
-         over to &lt;VAR&gt;dest&lt;/VAR&gt;. 
+         over to &lt;VAR&gt;dest&lt;/VAR&gt;.
          &lt;CODE&gt;m4_copy&lt;/CODE&gt; and
          &lt;CODE&gt;m4_copy_force&lt;/CODE&gt; preserve the source
          (including in the special case where
@@ -5974,7 +5974,7 @@
          except that this version requires at least one argument, output
          always goes to standard error rather than the current debug
          file, no sorting is done on multiple arguments, and an error is
-         issued if any &lt;VAR&gt;name&lt;/VAR&gt; is undefined. 
+         issued if any &lt;VAR&gt;name&lt;/VAR&gt; is undefined.
          &lt;CODE&gt;m4_dumpdefs&lt;/CODE&gt; is a convenience macro that
          calls &lt;CODE&gt;m4_dumpdef&lt;/CODE&gt; for all of the
          &lt;CODE&gt;m4_pushdef&lt;/CODE&gt; stack of definitions,
@@ -6025,7 +6025,7 @@
            &lt;VAR&gt;string-3&lt;/VAR&gt;,
          &lt;VAR&gt;string-4&lt;/VAR&gt;, &lt;VAR&gt;equal-2&lt;/VAR&gt;,
          &lt;small&gt;...&lt;/small&gt;, not-equal)  This macro
-         corresponds to &lt;CODE&gt;ifelse&lt;/CODE&gt;. 
+         corresponds to &lt;CODE&gt;ifelse&lt;/CODE&gt;.
          &lt;VAR&gt;string-1&lt;/VAR&gt; and
          &lt;VAR&gt;string-2&lt;/VAR&gt; are compared literally, so
          usually one of the two arguments is passed unquoted.  , for more
@@ -6118,7 +6118,7 @@
         <parameter content="text"/>
       </prototype>
         <synopsis>
-           These macros correspond to &lt;CODE&gt;m4wrap&lt;/CODE&gt;. 
+           These macros correspond to &lt;CODE&gt;m4wrap&lt;/CODE&gt;.
          Posix requires arguments of multiple wrap calls to be
          reprocessed at EOF in the same order as the original calls
          (first-in, first-out).  GNU M4 versions through 1.4.10, however,
@@ -6193,7 +6193,7 @@
          currently include:&lt;/P&gt;&lt;P&gt;
 
          &lt;DL&gt;  &lt;DT&gt;'&lt;SAMP&gt;all&lt;/SAMP&gt;' &lt;DD&gt;
-         messages that don't fall into one of the following categories. 
+         messages that don't fall into one of the following categories.
          Use of an empty &lt;VAR&gt;category&lt;/VAR&gt; is equivalent.&lt;/P&gt;&lt;P&gt;
 
          &lt;DT&gt;'&lt;SAMP&gt;cross&lt;/SAMP&gt;' &lt;DD&gt; related to
@@ -6247,7 +6247,7 @@
       </prototype>
         <synopsis>
           Remember the former diversion on the diversion stack, and
-         output subsequent text into &lt;VAR&gt;diversion&lt;/VAR&gt;. 
+         output subsequent text into &lt;VAR&gt;diversion&lt;/VAR&gt;.
          M4sugar maintains a diversion stack, and issues an error if
          there is not a matching pop for every push.
         </synopsis>
@@ -6277,7 +6277,7 @@
          &lt;samp&gt;MY_B&lt;/samp&gt; occurs first, if it occurs at all.
           But this imposes an ordering restriction on the user; it would
          be nicer if macros &lt;samp&gt;MY_A&lt;/samp&gt; and
-         &lt;samp&gt;MY_B&lt;/samp&gt; can be invoked in either order. 
+         &lt;samp&gt;MY_B&lt;/samp&gt; can be invoked in either order.
          The trick is to let &lt;samp&gt;MY_B&lt;/samp&gt; leave a
          breadcrumb in an early diversion, which
          &lt;samp&gt;MY_A&lt;/samp&gt; can then use to determine whether
@@ -6372,11 +6372,11 @@
          class=example&gt;&lt;pre&gt;
          m4_if([&lt;VAR&gt;string&lt;/VAR&gt;],
          [&lt;VAR&gt;value-1&lt;/VAR&gt;],
-         [&lt;VAR&gt;if-value-1&lt;/VAR&gt;],      
+         [&lt;VAR&gt;if-value-1&lt;/VAR&gt;],
          [&lt;VAR&gt;string&lt;/VAR&gt;],
          [&lt;VAR&gt;value-2&lt;/VAR&gt;],
          [&lt;VAR&gt;if-value-2&lt;/VAR&gt;],
-         &lt;small&gt;...&lt;/small&gt;,      
+         &lt;small&gt;...&lt;/small&gt;,
          [&lt;VAR&gt;default&lt;/VAR&gt;])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
         </synopsis>
@@ -6413,15 +6413,15 @@
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; m4_if(m4_index([$1], [\]), [-1],
-         [$2],       m4_eval(m4_index([$1], [\\]) &gt;= 0), [1], [$2],   
-            m4_eval(m4_index([$1], [\$]) &gt;= 0), [1], [$2],      
-         m4_eval(m4_index([$1], [\`]) &gt;= 0), [1], [$3],      
+         [$2],       m4_eval(m4_index([$1], [\\]) &gt;= 0), [1], [$2],
+            m4_eval(m4_index([$1], [\$]) &gt;= 0), [1], [$2],
+         m4_eval(m4_index([$1], [\`]) &gt;= 0), [1], [$3],
          m4_eval(m4_index([$1], [\"]) &gt;= 0), [1], [$3],       [$2])
-         m4_cond([m4_index([$1], [\])], [-1], [$2],        
-         [m4_eval(m4_index([$1], [\\]) &gt;= 0)], [1], [$2],        
-         [m4_eval(m4_index([$1], [\$]) &gt;= 0)], [1], [$2],        
-         [m4_eval(m4_index([$1], [\`]) &gt;= 0)], [1], [$3],        
-         [m4_eval(m4_index([$1], [\"]) &gt;= 0)], [1], [$3],        
+         m4_cond([m4_index([$1], [\])], [-1], [$2],
+         [m4_eval(m4_index([$1], [\\]) &gt;= 0)], [1], [$2],
+         [m4_eval(m4_index([$1], [\$]) &gt;= 0)], [1], [$2],
+         [m4_eval(m4_index([$1], [\`]) &gt;= 0)], [1], [$3],
+         [m4_eval(m4_index([$1], [\"]) &gt;= 0)], [1], [$3],
          [$2]) &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
         </synopsis>
   </macro>
@@ -6443,7 +6443,7 @@
         <parameter content="[expr-2]"/>
       </prototype>
         <synopsis>
-             If &lt;VAR&gt;expr-1&lt;/VAR&gt; contains text, use it. 
+             If &lt;VAR&gt;expr-1&lt;/VAR&gt; contains text, use it.
          Otherwise, select &lt;VAR&gt;expr-2&lt;/VAR&gt;.
          &lt;CODE&gt;m4_default&lt;/CODE&gt; expands the result, while
          &lt;CODE&gt;m4_default_quoted&lt;/CODE&gt; does not.  Useful for
@@ -6533,7 +6533,7 @@
       </prototype>
         <synopsis>
           If &lt;VAR&gt;macro&lt;/VAR&gt; is undefined, or is defined as
-         the empty string, expand to &lt;VAR&gt;if-false&lt;/VAR&gt;. 
+         the empty string, expand to &lt;VAR&gt;if-false&lt;/VAR&gt;.
          Otherwise, expands to &lt;VAR&gt;if-true&lt;/VAR&gt;.  Similar
          to: &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt;
@@ -6647,7 +6647,7 @@
         <synopsis>
           Loop over the numeric values between
          &lt;VAR&gt;first&lt;/VAR&gt; and &lt;VAR&gt;last&lt;/VAR&gt;
-         including bounds by increments of &lt;VAR&gt;step&lt;/VAR&gt;. 
+         including bounds by increments of &lt;VAR&gt;step&lt;/VAR&gt;.
          For each iteration, expand &lt;VAR&gt;expression&lt;/VAR&gt;
          with the numeric value assigned to &lt;VAR&gt;var&lt;/VAR&gt;.
          If &lt;VAR&gt;step&lt;/VAR&gt; is omitted, it defaults to
@@ -6745,10 +6745,10 @@
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; m4_map([m4_count], [])  m4_map([
-         m4_count], [[],                      [[1]],                     
-         [[1], [2]]])  1 2 m4_mapall([ m4_count], [[],                   
+         m4_count], [[],                      [[1]],
+         [[1], [2]]])  1 2 m4_mapall([ m4_count], [[],
               [[1]],                         [[1], [2]]])  0 1 2
-         m4_map_sep([m4_eval], [,], [[[1+2]],                            
+         m4_map_sep([m4_eval], [,], [[[1+2]],
          [[10], [16]]]) 3,a m4_map_sep([m4_echo], [,], [[[a]], [[b]]])
          a,b m4_count(m4_map_sep([m4_echo], [,], [[[a]], [[b]]])) 2
          m4_map_sep([m4_echo], [[,]], [[[a]], [[b]]]) a,b
@@ -6908,7 +6908,7 @@
          &lt;VAR&gt;action&lt;/VAR&gt; should not push or pop definitions
          of &lt;VAR&gt;macro&lt;/VAR&gt;, nor is there any guarantee that
          the current definition of &lt;VAR&gt;macro&lt;/VAR&gt; matches
-         the argument that was passed to &lt;VAR&gt;action&lt;/VAR&gt;. 
+         the argument that was passed to &lt;VAR&gt;action&lt;/VAR&gt;.
          The macro &lt;CODE&gt;m4_curry&lt;/CODE&gt; can be used if
          &lt;VAR&gt;action&lt;/VAR&gt; needs more than one argument,
          although in that case it is more efficient to use
@@ -6939,7 +6939,7 @@
          &lt;CODE&gt;&lt;VAR&gt;pre&lt;/VAR&gt;[definition]&lt;VAR&gt;post&lt;/VAR&gt;&lt;/CODE&gt;
          for each &lt;CODE&gt;m4_pushdef&lt;/CODE&gt; definition of
          &lt;VAR&gt;macro&lt;/VAR&gt;, additionally expanding
-         &lt;VAR&gt;sep&lt;/VAR&gt; between definitions. 
+         &lt;VAR&gt;sep&lt;/VAR&gt; between definitions.
          &lt;CODE&gt;m4_stack_foreach_sep&lt;/CODE&gt; visits the oldest
          definition first, while
          &lt;CODE&gt;m4_stack_foreach_sep_lifo&lt;/CODE&gt; visits the
@@ -6961,7 +6961,7 @@
           Apply the elements of the quoted, comma-separated
          &lt;VAR&gt;list&lt;/VAR&gt; as the arguments to
          &lt;VAR&gt;macro&lt;/VAR&gt;.  If &lt;VAR&gt;list&lt;/VAR&gt; is
-         empty, invoke &lt;VAR&gt;macro&lt;/VAR&gt; without arguments. 
+         empty, invoke &lt;VAR&gt;macro&lt;/VAR&gt; without arguments.
          Note the difference between &lt;CODE&gt;m4_indir&lt;/CODE&gt;,
          which expects its first argument to be a macro name but can use
          names that are otherwise invalid, and
@@ -7018,7 +7018,7 @@
           This macro loops over its arguments and expands each
          &lt;VAR&gt;arg&lt;/VAR&gt; in sequence.  Its main use is for
          readability; it allows the use of indentation and fewer
-         &lt;CODE&gt;dnl&lt;/CODE&gt; to result in the same expansion. 
+         &lt;CODE&gt;dnl&lt;/CODE&gt; to result in the same expansion.
          This macro guarantees that no expansion will be concatenated
          with subsequent text; to achieve full concatenation, use
          &lt;CODE&gt;m4_unquote(m4_join([],
@@ -7051,7 +7051,7 @@
         <parameter content="..."/>
       </prototype>
         <synopsis>
-          Return the arguments as a series of double-quoted arguments. 
+          Return the arguments as a series of double-quoted arguments.
          Whereas &lt;CODE&gt;m4_dquote&lt;/CODE&gt; returns a single
          argument, &lt;CODE&gt;m4_dquote_elt&lt;/CODE&gt; returns as many
          arguments as it was passed.
@@ -7100,7 +7100,7 @@
          ACT,IVE,ACT,IVE m4_expand([active, active]) ACT, IVE, ACT, IVE
          m4_quote(active2, active2) ACT, IVE,ACT, IVE m4_expand([active2,
          active2]) ACT, IVE, ACT, IVE m4_expand([# m4_echo]) # m4_echo
-         m4_quote(# m4_echo) ) # m4_echo) 
+         m4_quote(# m4_echo) ) # m4_echo)
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
          Note that &lt;CODE&gt;m4_expand&lt;/CODE&gt; cannot handle an
@@ -7185,7 +7185,7 @@
          readability.&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; m4_define([active], [ACT,IVE]) 
+         class=example&gt;&lt;pre&gt; m4_define([active], [ACT,IVE])
          m4_reverse(active, [active]) active, IVE, ACT
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
         </synopsis>
@@ -7202,7 +7202,7 @@
          quoting, and
          &lt;CODE&gt;m4_unquote([&lt;VAR&gt;arg&lt;/VAR&gt;])&lt;/CODE&gt;
          is more efficient than the equivalent
-         &lt;CODE&gt;m4_do([&lt;VAR&gt;arg&lt;/VAR&gt;])&lt;/CODE&gt;. 
+         &lt;CODE&gt;m4_do([&lt;VAR&gt;arg&lt;/VAR&gt;])&lt;/CODE&gt;.
          For multiple arguments, this results in an unquoted list of
          expansions.  This is commonly used with
          &lt;CODE&gt;m4_split&lt;/CODE&gt;, in order to convert a single
@@ -7351,7 +7351,7 @@
         <parameter content="string"/>
       </prototype>
         <synopsis>
-          Flatten &lt;VAR&gt;string&lt;/VAR&gt; into a single line. 
+          Flatten &lt;VAR&gt;string&lt;/VAR&gt; into a single line.
          Delete all backslash-newline pairs, and replace all remaining
          newlines with a space.  The result is still a quoted string.
         </synopsis>
@@ -7502,14 +7502,14 @@
 
          For some examples:
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; m4_text_wrap([Short string */], [  
+         class=example&gt;&lt;pre&gt; m4_text_wrap([Short string */], [
          ], [/* ], [20]) /* Short string */ m4_text_wrap([Much longer
          string */], [   ], [/* ], [20]) /* Much longer    string */
-         m4_text_wrap([Short doc.], [          ], [  --short ], [30])  
-         --short Short doc. m4_text_wrap([Short doc.], [          ], [ 
+         m4_text_wrap([Short doc.], [          ], [  --short ], [30])
+         --short Short doc. m4_text_wrap([Short doc.], [          ], [
          --too-wide ], [30])   --too-wide           Short doc.
-         m4_text_wrap([Super long documentation.], [     ],             
-         [  --too-wide ], 30)   --too-wide      Super long     
+         m4_text_wrap([Super long documentation.], [     ],
+         [  --too-wide ], 30)   --too-wide      Super long
          documentation. &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
         </synopsis>
   </macro>
@@ -7552,12 +7552,12 @@
          the value from &lt;VAR&gt;list-1&lt;/VAR&gt; is smaller,
          &lt;samp&gt;1&lt;/samp&gt; where the value from
          &lt;VAR&gt;list-2&lt;/VAR&gt; is smaller, or
-         &lt;samp&gt;0&lt;/samp&gt; if both lists have the same values. 
+         &lt;samp&gt;0&lt;/samp&gt; if both lists have the same values.
          If one list is shorter than the other, the remaining elements of
          the longer list are compared against zero.
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; m4_list_cmp([1, 0],       [1]) 0
-         m4_list_cmp([1, [1 * 0]], [1, 0]) 0 m4_list_cmp([1, 2],      
+         m4_list_cmp([1, [1 * 0]], [1, 0]) 0 m4_list_cmp([1, 2],
          [1, 0]) 1 m4_list_cmp([1, [1+1], 3],[1, 2]) 1 m4_list_cmp([1, 2,
          -3],   [1, 2]) -1 m4_list_cmp([1, 0],       [1, 2]) -1
          m4_list_cmp([1],          [1, 2]) -1
@@ -7604,7 +7604,7 @@
       </prototype>
         <synopsis>
           This macro was introduced in Autoconf 2.53, but had a number of
-         usability limitations that were not lifted until Autoconf 2.62. 
+         usability limitations that were not lifted until Autoconf 2.62.
          Compare the version strings &lt;VAR&gt;version-1&lt;/VAR&gt; and
          &lt;VAR&gt;version-2&lt;/VAR&gt;, and expand to
          &lt;samp&gt;-1&lt;/samp&gt; if &lt;VAR&gt;version-1&lt;/VAR&gt;
@@ -7670,7 +7670,7 @@
           Adds the string &lt;VAR&gt;value&lt;/VAR&gt; as a member of set
          &lt;VAR&gt;set&lt;/VAR&gt;.  Expand
          &lt;VAR&gt;if-uniq&lt;/VAR&gt; if the element was added, or
-         &lt;VAR&gt;if-dup&lt;/VAR&gt; if it was previously in the set. 
+         &lt;VAR&gt;if-dup&lt;/VAR&gt; if it was previously in the set.
          Operates in amortized constant time, so that set creation scales
          linearly.
         </synopsis>
@@ -7741,10 +7741,10 @@
          &lt;CODE&gt;m4_joinall([&lt;VAR&gt;sep&lt;/VAR&gt;]m4_set_listc([&lt;VAR&gt;set&lt;/VAR&gt;]))&lt;/CODE&gt;.&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; m4_set_add_all([a], [1], [2], [3]) 
+         class=example&gt;&lt;pre&gt; m4_set_add_all([a], [1], [2], [3])
          m4_set_contents([a], [-]) 1-2-3 m4_joinall([-]m4_set_listc([a]))
-         1-2-3 m4_set_dump([a], [-]) 3-2-1 m4_set_contents([a]) 
-         m4_set_add([a], [])  m4_set_contents([a], [-]) 
+         1-2-3 m4_set_dump([a], [-]) 3-2-1 m4_set_contents([a])
+         m4_set_add([a], [])  m4_set_contents([a], [-])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
         </synopsis>
   </macro>
@@ -7774,7 +7774,7 @@
         <synopsis>
             Compute the relation between &lt;VAR&gt;seta&lt;/VAR&gt; and
          &lt;VAR&gt;setb&lt;/VAR&gt;, and output the result as a list of
-         quoted arguments without duplicates and with a leading comma. 
+         quoted arguments without duplicates and with a leading comma.
          Set difference selects the elements in
          &lt;VAR&gt;seta&lt;/VAR&gt; but not &lt;VAR&gt;setb&lt;/VAR&gt;,
          intersection selects only elements in both sets, and union
@@ -7784,7 +7784,7 @@
          element.&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; m4_set_add_all([a], [1], [2], [3]) 
+         class=example&gt;&lt;pre&gt; m4_set_add_all([a], [1], [2], [3])
          m4_set_add_all([b], [3], [], [4])  m4_set_difference([a], [b])
          ,1,2 m4_set_difference([b], [a]) ,,4 m4_set_intersection([a],
          [b]) ,3 m4_set_union([a], [b]) ,1,2,3,,4
@@ -7815,7 +7815,7 @@
         <synopsis>
           For each element in the set &lt;VAR&gt;set&lt;/VAR&gt;, expand
          &lt;VAR&gt;action&lt;/VAR&gt; with the macro
-         &lt;VAR&gt;variable&lt;/VAR&gt; defined as the set element. 
+         &lt;VAR&gt;variable&lt;/VAR&gt; defined as the set element.
          Behavior is unspecified if &lt;VAR&gt;action&lt;/VAR&gt;
          recursively lists the contents of &lt;VAR&gt;set&lt;/VAR&gt;
          (although listing other sets is acceptable), or if it modifies
@@ -7858,10 +7858,10 @@
          removed elements is reclaimed during these macros.&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; m4_set_add_all([a], [1], [2], [3]) 
-         m4_set_list([a]) 1,2,3 m4_set_list([b])  m4_set_listc([b]) 
+         class=example&gt;&lt;pre&gt; m4_set_add_all([a], [1], [2], [3])
+         m4_set_list([a]) 1,2,3 m4_set_list([b])  m4_set_listc([b])
          m4_count(m4_set_list([b])) 1 m4_set_empty([b], [0],
-         [m4_count(m4_set_list([b]))]) 0 m4_set_add([b], []) 
+         [m4_count(m4_set_list([b]))]) 0 m4_set_add([b], [])
          m4_set_list([b])  m4_set_listc([b]) , m4_count(m4_set_list([b]))
          1 m4_set_empty([b], [0], [m4_count(m4_set_list([b]))]) 1
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
@@ -7884,7 +7884,7 @@
          &lt;CODE&gt;m4_map_args([&lt;VAR&gt;action&lt;/VAR&gt;]m4_set_listc([&lt;VAR&gt;set&lt;/VAR&gt;]))&lt;/CODE&gt;
          or &lt;CODE&gt;m4_set_foreach([&lt;VAR&gt;set&lt;/VAR&gt;],
          [var],
-         [&lt;VAR&gt;action&lt;/VAR&gt;(m4_defn([var]))])&lt;/CODE&gt;. 
+         [&lt;VAR&gt;action&lt;/VAR&gt;(m4_defn([var]))])&lt;/CODE&gt;.
          It is possible to use &lt;CODE&gt;m4_curry&lt;/CODE&gt; if more
          than one argument is needed for &lt;VAR&gt;action&lt;/VAR&gt;,
          although it is more efficient to use
@@ -7997,14 +7997,14 @@
         <synopsis>
           Expand into shell code that will output
          &lt;VAR&gt;text&lt;/VAR&gt; surrounded by a box with
-         &lt;VAR&gt;char&lt;/VAR&gt; in the top and bottom border. 
+         &lt;VAR&gt;char&lt;/VAR&gt; in the top and bottom border.
          &lt;VAR&gt;text&lt;/VAR&gt; should not contain a newline, but
-         may contain shell expansions valid for unquoted here-documents. 
+         may contain shell expansions valid for unquoted here-documents.
          &lt;VAR&gt;char&lt;/VAR&gt; defaults to
          &lt;samp&gt;-&lt;/samp&gt;, but can be any character except
          &lt;samp&gt;/&lt;/samp&gt;, &lt;samp&gt;'&lt;/samp&gt;,
          &lt;samp&gt;"&lt;/samp&gt;, &lt;samp&gt;\&lt;/samp&gt;,
-         &lt;samp&gt;&amp;&lt;/samp&gt;, or &lt;samp&gt;`&lt;/samp&gt;. 
+         &lt;samp&gt;&amp;&lt;/samp&gt;, or &lt;samp&gt;`&lt;/samp&gt;.
          This is useful for outputting a comment box into log files to
          separate distinct phases of script operation.
         </synopsis>
@@ -8107,7 +8107,7 @@
          &lt;samp&gt;$foo-`echo "hi"`@&lt;/samp&gt;) that would be broken
          with improper escapes.&lt;/P&gt;&lt;P&gt;
 
-         This macro is often used with &lt;CODE&gt;AS_ECHO&lt;/CODE&gt;. 
+         This macro is often used with &lt;CODE&gt;AS_ECHO&lt;/CODE&gt;.
          For an example, observe the output generated by the shell code
          generated from this snippet:&lt;/P&gt;&lt;P&gt;
 
@@ -8183,7 +8183,7 @@
          &lt;CODE&gt;AS_MKDIR_P&lt;/CODE&gt; succeeds if
          &lt;VAR&gt;file-name&lt;/VAR&gt; is a symbolic link to an
          existing directory, even though Posix is unclear whether
-         &lt;samp&gt;mkdir -p&lt;/samp&gt; should succeed in that case. 
+         &lt;samp&gt;mkdir -p&lt;/samp&gt; should succeed in that case.
          If creation of &lt;VAR&gt;file-name&lt;/VAR&gt; fails, exit the
          script.&lt;/P&gt;&lt;P&gt;
 
@@ -8197,7 +8197,7 @@
       </prototype>
         <synopsis>
           Emit shell code to set the value of &lt;samp&gt;$?&lt;/samp&gt;
-         to &lt;VAR&gt;status&lt;/VAR&gt;, as efficiently as possible. 
+         to &lt;VAR&gt;status&lt;/VAR&gt;, as efficiently as possible.
          However, this is not guaranteed to abort a shell running with
          &lt;CODE&gt;set -e&lt;/CODE&gt; (set, , Limitations of Shell
          Builtins).  This should also be used at the end of a complex
@@ -8436,7 +8436,7 @@
          idiom is to first copy the contents into a temporary literal
          shell variable.&lt;/P&gt;&lt;P&gt;
 
-         @smallexample for header in stdint_h inttypes_h ; do  
+         @smallexample for header in stdint_h inttypes_h ; do
          AS_VAR_COPY([var], [ac_cv_header_$header])   echo "$header
          detected: $var" done @end smallexample
         </synopsis>
@@ -8453,7 +8453,7 @@
          polymorphic shell variable &lt;VAR&gt;var&lt;/VAR&gt; match the
          string &lt;VAR&gt;word&lt;/VAR&gt;, execute
          &lt;VAR&gt;if-equal&lt;/VAR&gt;; otherwise execute
-         &lt;VAR&gt;if-not-equal&lt;/VAR&gt;. 
+         &lt;VAR&gt;if-not-equal&lt;/VAR&gt;.
          &lt;VAR&gt;word&lt;/VAR&gt; must be a single shell word
          (typically a quoted string).  Avoids shell bugs if an interrupt
          signal arrives while a command substitution in
@@ -8481,7 +8481,7 @@
          &lt;CODE&gt;AS_VAR_PUSHDEF&lt;/CODE&gt;, then use that macro as
          the argument to subsequent &lt;CODE&gt;AS_VAR&lt;/CODE&gt;
          macros as a polymorphic variable name, and finally free the
-         temporary macro with &lt;CODE&gt;AS_VAR_POPDEF&lt;/CODE&gt;. 
+         temporary macro with &lt;CODE&gt;AS_VAR_POPDEF&lt;/CODE&gt;.
          These macros are often followed with
          &lt;CODE&gt;dnl&lt;/CODE&gt;, to avoid excess newlines in the
          output.&lt;/P&gt;&lt;P&gt;
@@ -8583,7 +8583,7 @@
          the output was generated from, and code to sanitize the
          environment for the rest of the script.  Among other
          initializations, this sets SHELL to the shell chosen to run the
-         script (CONFIG_SHELL), and LC_ALL to ensure the C locale. 
+         script (CONFIG_SHELL), and LC_ALL to ensure the C locale.
          Finally, it changes the current diversion to
          &lt;CODE&gt;BODY&lt;/CODE&gt;.  &lt;CODE&gt;AS_INIT&lt;/CODE&gt;
          is called automatically by &lt;CODE&gt;AC_INIT&lt;/CODE&gt; and
@@ -8626,7 +8626,7 @@
          other hand, if the parent script has
          &lt;CODE&gt;AS_MESSAGE_FD&lt;/CODE&gt; redirected somewhere
          besides &lt;samp&gt;1&lt;/samp&gt;, then the child script
-         already has code that copies stdout to that descriptor. 
+         already has code that copies stdout to that descriptor.
          Currently, the suggested idiom for writing a M4sh shell script
          from within another script is:&lt;/P&gt;&lt;P&gt;
 
@@ -8686,7 +8686,7 @@
          &lt;CODE&gt;tmp&lt;/CODE&gt;.  On error, the script is aborted.&lt;/P&gt;&lt;P&gt;
 
          Typically, this macro is coupled with some exit traps to delete
-         the created directory and its contents on exit or interrupt. 
+         the created directory and its contents on exit or interrupt.
          However, there is a slight window between when the directory is
          created and when the name is actually known to the shell, so an
          interrupt at the right moment might leave the temporary
@@ -8723,7 +8723,7 @@
           The file descriptor for &lt;samp&gt;checking
          for...&lt;/samp&gt;  messages and results. By default,
          &lt;CODE&gt;AS_INIT&lt;/CODE&gt; sets this to
-         &lt;samp&gt;1&lt;/samp&gt; for standalone M4sh clients. 
+         &lt;samp&gt;1&lt;/samp&gt; for standalone M4sh clients.
          However, &lt;CODE&gt;AC_INIT&lt;/CODE&gt; shuffles things around
          to another file descriptor, in order to allow the
          &lt;samp&gt;-q&lt;/samp&gt; option of
@@ -8749,7 +8749,7 @@
          &lt;CODE&gt;config.status&lt;/CODE&gt; use
          &lt;TT&gt;config.log&lt;/TT&gt; for log messages. Macros that
          run tools, like &lt;CODE&gt;AC_COMPILE_IFELSE&lt;/CODE&gt;
-         (Running the Compiler), redirect all output to this descriptor. 
+         (Running the Compiler), redirect all output to this descriptor.
          You may want to do so if you develop such a low-level macro.
         </synopsis>
   </macro>
@@ -8821,7 +8821,7 @@
         <parameter content="message"/>
       </prototype>
         <synopsis>
-          Report &lt;VAR&gt;message&lt;/VAR&gt; as a syntax warning. 
+          Report &lt;VAR&gt;message&lt;/VAR&gt; as a syntax warning.
          This macro is obsolescent; you are encouraged to use:
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; m4_warn([syntax],
@@ -8915,7 +8915,7 @@
 
          If she then uses &lt;CODE&gt;autoupdate&lt;/CODE&gt;, the call
          to &lt;VAR&gt;old-macro&lt;/VAR&gt; is replaced by the modern
-         &lt;VAR&gt;implementation&lt;/VAR&gt;. 
+         &lt;VAR&gt;implementation&lt;/VAR&gt;.
          &lt;VAR&gt;message&lt;/VAR&gt; should include information on
          what to do after running &lt;CODE&gt;autoupdate&lt;/CODE&gt;;
          &lt;CODE&gt;autoupdate&lt;/CODE&gt; prints it as a warning, and
@@ -9007,7 +9007,7 @@
          &lt;CODE&gt;AC_ARG_WITH&lt;/CODE&gt;.&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; Optional Features and Packages:  
+         class=example&gt;&lt;pre&gt; Optional Features and Packages:
          &lt;small&gt;...&lt;/small&gt;   --enable-bar            include
          bar   --with-foo              use foo
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
@@ -9069,16 +9069,16 @@
          system.&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; AC_ARG_WITH([readline],  
+         class=example&gt;&lt;pre&gt; AC_ARG_WITH([readline],
          [AS_HELP_STRING([--with-readline],     [support fancy command
-         line editing @@&lt;:@@default=check@@:&gt;@@])],   [],  
+         line editing @@&lt;:@@default=check@@:&gt;@@])],   [],
          [with_readline=check])&lt;/P&gt;&lt;P&gt;
 
-         LIBREADLINE= AS_IF([test "x$with_readline" != xno],  
+         LIBREADLINE= AS_IF([test "x$with_readline" != xno],
          [AC_CHECK_LIB([readline], [main],     [AC_SUBST([LIBREADLINE],
          ["-lreadline -lncurses"])      AC_DEFINE([HAVE_LIBREADLINE],
-         [1],                [Define if you have libreadline])     ],    
-         [if test "x$with_readline" != xcheck; then       
+         [1],                [Define if you have libreadline])     ],
+         [if test "x$with_readline" != xcheck; then
          AC_MSG_FAILURE(          [--with-readline was given, but test
          for readline failed])      fi     ], -lncurses)])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
@@ -9090,14 +9090,14 @@
          disabled by default.&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; AC_ARG_WITH([readline],  
+         class=example&gt;&lt;pre&gt; AC_ARG_WITH([readline],
          [AS_HELP_STRING([--with-readline],     [enable experimental
          support for readline])],   [],   [with_readline=no])&lt;/P&gt;&lt;P&gt;
 
-         LIBREADLINE= AS_IF([test "x$with_readline" != xno],  
+         LIBREADLINE= AS_IF([test "x$with_readline" != xno],
          [AC_CHECK_LIB([readline], [main],     [AC_SUBST([LIBREADLINE],
          ["-lreadline -lncurses"])      AC_DEFINE([HAVE_LIBREADLINE],
-         [1],                [Define if you have libreadline])     ],    
+         [1],                [Define if you have libreadline])     ],
          [AC_MSG_FAILURE(        [--with-readline was given, but test for
          readline failed])],     [-lncurses])])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
@@ -9109,14 +9109,14 @@
          default.&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; AC_ARG_WITH([readline],  
+         class=example&gt;&lt;pre&gt; AC_ARG_WITH([readline],
          [AS_HELP_STRING([--without-readline],     [disable support for
          readline])],   [],   [with_readline=yes])&lt;/P&gt;&lt;P&gt;
 
-         LIBREADLINE= AS_IF([test "x$with_readline" != xno],  
+         LIBREADLINE= AS_IF([test "x$with_readline" != xno],
          [AC_CHECK_LIB([readline], [main],     [AC_SUBST([LIBREADLINE],
          ["-lreadline -lncurses"])      AC_DEFINE([HAVE_LIBREADLINE],
-         [1],                [Define if you have libreadline])     ],    
+         [1],                [Define if you have libreadline])     ],
          [AC_MSG_FAILURE(        [readline test failed
          (--without-readline to disable)])],     [-lncurses])])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
@@ -9183,8 +9183,8 @@
          Options).  The following example makes this clearer.&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; AC_ARG_WITH([foo],  
-         [AS_HELP_STRING([--with-foo],      [use foo (default is no)])], 
+         class=example&gt;&lt;pre&gt; AC_ARG_WITH([foo],
+         [AS_HELP_STRING([--with-foo],      [use foo (default is no)])],
           [use_foo=$withval],   [use_foo=no])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -9212,10 +9212,10 @@
          unbalanced quotes, although quadrigraphs can be used.&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; AC_DEFUN([MY_ARG_WITH],  
-         [AC_ARG_WITH(m4_translit([[$1]], [_], [-]),     
-         [AS_HELP_STRING([--with-m4_translit([$1], [_], [-])],           
-                   [use $1 (default is $2)])],      [use_[]$1=$withval], 
+         class=example&gt;&lt;pre&gt; AC_DEFUN([MY_ARG_WITH],
+         [AC_ARG_WITH(m4_translit([[$1]], [_], [-]),
+         [AS_HELP_STRING([--with-m4_translit([$1], [_], [-])],
+                   [use $1 (default is $2)])],      [use_[]$1=$withval],
              [use_[]$1=$2])]) MY_ARG_WITH([a_b], [no])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;  Here, the last
          few lines of &lt;samp&gt;configure --help&lt;/samp&gt; will
@@ -9450,7 +9450,7 @@
          which header file is found:&lt;/P&gt;&lt;P&gt;
 
          @multitable {&lt;TT&gt;sys/ndir.h&lt;/TT&gt;} {Old Symbol}
-         {&lt;CODE&gt;HAVE_SYS_NDIR_H&lt;/CODE&gt;} &lt;LI&gt; Header    
+         {&lt;CODE&gt;HAVE_SYS_NDIR_H&lt;/CODE&gt;} &lt;LI&gt; Header
                 @tab Old Symbol     @tab New Symbol &lt;LI&gt;
          &lt;TT&gt;dirent.h&lt;/TT&gt;   @tab
          &lt;CODE&gt;DIRENT&lt;/CODE&gt;  @tab
@@ -9805,7 +9805,7 @@
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt;
-         AC_CONFIG_LINKS([host.h:config/$machine.h                
+         AC_CONFIG_LINKS([host.h:config/$machine.h
          object.h:config/$obj_format.h])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
         </synopsis>
@@ -9935,7 +9935,7 @@
         <synopsis>
           Make M4 print a message to the standard error output warning
          that &lt;VAR&gt;this-macro-name&lt;/VAR&gt; is obsolete, and
-         giving the file and line number where it was called. 
+         giving the file and line number where it was called.
          &lt;VAR&gt;this-macro-name&lt;/VAR&gt; should be the name of the
          macro that is calling &lt;CODE&gt;AC_OBSOLETE&lt;/CODE&gt;.  If
          &lt;VAR&gt;suggestion&lt;/VAR&gt; is given, it is printed at the
@@ -9980,7 +9980,7 @@
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; fubar=27 AC_OUTPUT_COMMANDS([echo
-         this is extra $fubar, and so on.],                   
+         this is extra $fubar, and so on.],
          [fubar=$fubar]) AC_OUTPUT_COMMANDS([echo this is another, extra,
          bit],                    [echo init bit])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
@@ -10204,11 +10204,11 @@
          &lt;CODE&gt;st_rdev&lt;/CODE&gt; member, define
          &lt;CODE&gt;HAVE_STRUCT_STAT_ST_RDEV&lt;/CODE&gt;.  The former
          name for this macro, &lt;CODE&gt;HAVE_ST_RDEV&lt;/CODE&gt;, is
-         to be avoided as it will cease to be supported in the future. 
+         to be avoided as it will cease to be supported in the future.
          Actually, even the new macro is obsolete and should be replaced
          by: &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; AC_CHECK_MEMBERS([struct
-         stat.st_rdev]) &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; 
+         stat.st_rdev]) &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
          .
         </synopsis>
   </macro>
@@ -10314,10 +10314,10 @@
           Same as:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; AC_COMPILE_IFELSE(  
-         [AC_LANG_PROGRAM([[&lt;VAR&gt;includes&lt;/VAR&gt;]],     
-         [[&lt;VAR&gt;function-body&lt;/VAR&gt;]])],  
-         [&lt;VAR&gt;action-if-true&lt;/VAR&gt;],  
+         class=example&gt;&lt;pre&gt; AC_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([[&lt;VAR&gt;includes&lt;/VAR&gt;]],
+         [[&lt;VAR&gt;function-body&lt;/VAR&gt;]])],
+         [&lt;VAR&gt;action-if-true&lt;/VAR&gt;],
          [&lt;VAR&gt;action-if-false&lt;/VAR&gt;])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -10345,9 +10345,9 @@
           Same as:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; AC_PREPROC_IFELSE(  
-         [AC_LANG_SOURCE([[&lt;VAR&gt;input&lt;/VAR&gt;]])],  
-         [&lt;VAR&gt;action-if-true&lt;/VAR&gt;],  
+         class=example&gt;&lt;pre&gt; AC_PREPROC_IFELSE(
+         [AC_LANG_SOURCE([[&lt;VAR&gt;input&lt;/VAR&gt;]])],
+         [&lt;VAR&gt;action-if-true&lt;/VAR&gt;],
          [&lt;VAR&gt;action-if-false&lt;/VAR&gt;])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -10367,10 +10367,10 @@
           Same as:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; AC_LINK_IFELSE(  
-         [AC_LANG_PROGRAM([[&lt;VAR&gt;includes&lt;/VAR&gt;]],     
-         [[&lt;VAR&gt;function-body&lt;/VAR&gt;]])],  
-         [&lt;VAR&gt;action-if-true&lt;/VAR&gt;],  
+         class=example&gt;&lt;pre&gt; AC_LINK_IFELSE(
+         [AC_LANG_PROGRAM([[&lt;VAR&gt;includes&lt;/VAR&gt;]],
+         [[&lt;VAR&gt;function-body&lt;/VAR&gt;]])],
+         [&lt;VAR&gt;action-if-true&lt;/VAR&gt;],
          [&lt;VAR&gt;action-if-false&lt;/VAR&gt;])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -10410,7 +10410,7 @@
           This macro is equivalent to
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
          class=example&gt;&lt;pre&gt; AC_LINK_IFELSE([AC_LANG_CALL([],
-         [&lt;VAR&gt;function&lt;/VAR&gt;])],  
+         [&lt;VAR&gt;function&lt;/VAR&gt;])],
          [&lt;VAR&gt;action-if-found&lt;/VAR&gt;],
          [&lt;VAR&gt;action-if-not-found&lt;/VAR&gt;])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;  .
@@ -10427,10 +10427,10 @@
           Same as:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; AC_RUN_IFELSE(  
-         [AC_LANG_SOURCE([[&lt;VAR&gt;program&lt;/VAR&gt;]])],  
-         [&lt;VAR&gt;action-if-true&lt;/VAR&gt;],  
-         [&lt;VAR&gt;action-if-false&lt;/VAR&gt;],  
+         class=example&gt;&lt;pre&gt; AC_RUN_IFELSE(
+         [AC_LANG_SOURCE([[&lt;VAR&gt;program&lt;/VAR&gt;]])],
+         [&lt;VAR&gt;action-if-true&lt;/VAR&gt;],
+         [&lt;VAR&gt;action-if-false&lt;/VAR&gt;],
          [&lt;VAR&gt;action-if-cross-compiling&lt;/VAR&gt;])
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/P&gt;&lt;P&gt;
 
@@ -10456,7 +10456,7 @@
          and omit a return statement:&lt;/P&gt;&lt;P&gt;
 
          &lt;TABLE&gt;&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td
-         class=example&gt;&lt;pre&gt; @group RETSIGTYPE hup_handler () 
+         class=example&gt;&lt;pre&gt; @group RETSIGTYPE hup_handler ()
          &lt;small&gt;...&lt;/small&gt; @ @end group
          &lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
         </synopsis>
@@ -10502,7 +10502,7 @@
         <synopsis>
           If the cache file is inconsistent with the current host, target
          and build system types, it used to execute
-         &lt;VAR&gt;cmd&lt;/VAR&gt; or print a default error message. 
+         &lt;VAR&gt;cmd&lt;/VAR&gt; or print a default error message.
          This is now handled by default.
         </synopsis>
   </macro>
@@ -10535,7 +10535,7 @@
       <prototype>
       </prototype>
         <synopsis>
-          This macro was renamed &lt;CODE&gt;AC_FUNC_WAIT3&lt;/CODE&gt;. 
+          This macro was renamed &lt;CODE&gt;AC_FUNC_WAIT3&lt;/CODE&gt;.
          However, these days portable programs should use
          &lt;CODE&gt;waitpid&lt;/CODE&gt;, not
          &lt;CODE&gt;wait3&lt;/CODE&gt;, as
@@ -10744,13 +10744,13 @@
         <synopsis>
           Log the file name and answer to
          &lt;samp&gt;--version&lt;/samp&gt; of each program in
-         space-separated list &lt;VAR&gt;executables&lt;/VAR&gt;. 
+         space-separated list &lt;VAR&gt;executables&lt;/VAR&gt;.
          Several invocations register new executables, in other words,
          don't fear registering one program several times.&lt;/P&gt;&lt;P&gt;
 
          Autotest test suites rely on PATH to find the tested program.
          This avoids the need to generate absolute names of the various
-         tools, and makes it possible to test installed programs. 
+         tools, and makes it possible to test installed programs.
          Therefore, knowing which programs are being exercised is crucial
          to understanding problems in the test suite itself, or its
          occasional misuses.  It is a good idea to also subscribe foreign
@@ -10781,7 +10781,7 @@
           This macro starts a group of related tests, all to be executed
          in the same subshell.  It accepts a single argument, which holds
          a few words (no more than about 30 or 40 characters) quickly
-         describing the purpose of the test group being started. 
+         describing the purpose of the test group being started.
          &lt;VAR&gt;test-group-name&lt;/VAR&gt; must not expand to
          unbalanced quotes, although quadrigraphs can be used.
         </synopsis>
@@ -10792,7 +10792,7 @@
       </prototype>
         <synopsis>
           Associate the space-separated list of
-         &lt;VAR&gt;keywords&lt;/VAR&gt; to the enclosing test group. 
+         &lt;VAR&gt;keywords&lt;/VAR&gt; to the enclosing test group.
          This makes it possible to run ``slices'' of the test suite. For
          instance, if some of your test groups exercise some
          &lt;samp&gt;foo&lt;/samp&gt; feature, then using
@@ -10823,7 +10823,7 @@
       </prototype>
         <synopsis>
           Make the test group fail and skip the rest of its execution, if
-         &lt;VAR&gt;shell-condition&lt;/VAR&gt; is true. 
+         &lt;VAR&gt;shell-condition&lt;/VAR&gt; is true.
          &lt;VAR&gt;shell-condition&lt;/VAR&gt; is a shell expression
          such as a &lt;CODE&gt;test&lt;/CODE&gt; command.  Tests before
          &lt;CODE&gt;AT_FAIL_IF&lt;/CODE&gt; will be executed and may
@@ -10850,13 +10850,13 @@
           Determine whether the test should be skipped because it
          requires features that are unsupported on the machine under
          test. &lt;VAR&gt;shell-condition&lt;/VAR&gt; is a shell
-         expression such as a &lt;CODE&gt;test&lt;/CODE&gt; command. 
+         expression such as a &lt;CODE&gt;test&lt;/CODE&gt; command.
          Tests before &lt;CODE&gt;AT_SKIP_IF&lt;/CODE&gt; will be
          executed and may still cause the test group to fail.  You can
          instantiate this macro many times from within the same test
          group.&lt;/P&gt;&lt;P&gt;
 
-         You should use this macro only for very simple skip conditions. 
+         You should use this macro only for very simple skip conditions.
          If the &lt;VAR&gt;shell-condition&lt;/VAR&gt; could emit any
          kind of output you should instead use
          &lt;CODE&gt;AT_CHECK&lt;/CODE&gt; like
@@ -10978,7 +10978,7 @@
          captured in the test group log (if the testsuite is run with
          option &lt;samp&gt;-v&lt;/samp&gt;, the test group log is
          displayed as the test is run; if the test group later fails, the
-         test group log is also copied into the overall testsuite log). 
+         test group log is also copied into the overall testsuite log).
          This action is valid for both &lt;VAR&gt;stdout&lt;/VAR&gt; and
          &lt;VAR&gt;stderr&lt;/VAR&gt;.&lt;/P&gt;&lt;P&gt;
 
@@ -11068,7 +11068,7 @@
          &lt;CODE&gt;ERLC&lt;/CODE&gt;, and (optionally)
          &lt;CODE&gt;ERLCFLAGS&lt;/CODE&gt; must be defined as the path
          of the Erlang interpreter, the path of the Erlang compiler, and
-         the command-line flags to pass to the compiler, respectively. 
+         the command-line flags to pass to the compiler, respectively.
          Those variables should be configured in
          &lt;TT&gt;configure.ac&lt;/TT&gt; using the
          &lt;CODE&gt;AC_ERLANG_PATH_ERL&lt;/CODE&gt; and
@@ -11081,7 +11081,7 @@
          If the EUnit library cannot be found, i.e. if module
          &lt;CODE&gt;eunit&lt;/CODE&gt; cannot be loaded, the test group
          is skipped.  Otherwise, if &lt;VAR&gt;test-spec&lt;/VAR&gt; is
-         an invalid EUnit test specification, the test group fails. 
+         an invalid EUnit test specification, the test group fails.
          Otherwise, if the EUnit test passes, shell commands
          &lt;VAR&gt;run-if-pass&lt;/VAR&gt; are executed or, if the EUnit
          test fails, shell commands &lt;VAR&gt;run-if-fail&lt;/VAR&gt;

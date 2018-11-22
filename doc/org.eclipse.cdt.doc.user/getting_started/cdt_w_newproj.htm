@@ -11,16 +11,16 @@ function newWin(url) {
 }
 </script>
 </head>
-<body> 
+<body>
 
-<div role="main"><h1>Creating a Makefile project</h1>  
+<div role="main"><h1>Creating a Makefile project</h1>
 
 <p>
 This tutorial describes the process of creating a new C++ project that includes a makefile, and debugging the program.</p>
 <p>You need to create a project to contain your source code and related files. A  project has an associated builder
-that can incrementally compile source files as  they are changed.</p> 
+that can incrementally compile source files as  they are changed.</p>
 
-<p>To create a project:</p> 
+<p>To create a project:</p>
 
 <ol>
 	<li>Select <strong>File &gt; New &gt; Project</strong>.
@@ -29,7 +29,7 @@ that can incrementally compile source files as  they are changed.</p>
 	<br><p>The <strong>C++ Project</strong> wizard opens. <a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic19.png')">Click here to see an illustration.</a></p><br>
 <p>By default, the CDT filters the <strong>Toolchain</strong> and <strong>Project types</strong> that currently display in those lists are based on the language support for the C++ Project wizard you selected for this tutorial.</p><br>
 <li>In the <strong>Project name</strong> field, type HelloWorld.
-<li>Leave the <strong>Use Default Location</strong> option selected.  
+<li>Leave the <strong>Use Default Location</strong> option selected.
 	<p><br>Next, you want to select the type of project to create. In the New CDT Project Wizard, you can choose from the following project types:</p>
 	<ul>
 	<li><strong>Executable</strong> - Provides an executable application. This project type folder contains three templates.</p>
@@ -37,7 +37,7 @@ that can incrementally compile source files as  they are changed.</p>
 	<li><strong>Hello World C++ Example</strong> provides a simple C++ Hello World application with main().
 	<li><strong>Hello World ANSI C Example</strong> provides a simple C Hello World application with main().
 	<li><strong>Empty Project</strong> provides a single source project folder that contains no files.
-	<p>After you select this template, the result is a project with only the meta-data files required for the project type. 
+	<p>After you select this template, the result is a project with only the meta-data files required for the project type.
 	You are expected to  provide source files for the project's target.</p>
 	</ul>
 	<p>The makefile for the <strong>Executable</strong> project type is automatically created by the CDT.</p>
@@ -50,15 +50,15 @@ latest version. The makefile for this project type is automatically created by t
 		<li><strong>Static Library</strong> - A collection of object files that you can link into another application (libxx.a). The CDT combines object files (i.e. *.o)
 into an archive (*.a) that is directly linked into an
 executable. The makefile for this project type is automatically created by the CDT.
-		<li><strong>Makefile Project</strong> - Creates an empty project without the meta-data files. This selection is useful for importing and modifying existing makefile-based projects; a new makefile is not created for this project type. 
-	</ul> 
-	
+		<li><strong>Makefile Project</strong> - Creates an empty project without the meta-data files. This selection is useful for importing and modifying existing makefile-based projects; a new makefile is not created for this project type.
+	</ul>
+
 <p>By default, the CDT filters the <strong>Toolchain</strong> and <strong>Project types</strong> that currently display in those lists  based on the language support for the C++ Project wizard you selected for this tutorial.
 <p>&nbsp;</p>
-<li>From the <strong>Project types</strong> list, expand <strong>Makefile project</strong> and select <strong>Empty Project</strong>. 
+<li>From the <strong>Project types</strong> list, expand <strong>Makefile project</strong> and select <strong>Empty Project</strong>.
 This project lets you enter the source file and the makefile yourself.
 
-<li>Select a required toolchain from the <strong>Toolchain</strong> list. 
+<li>Select a required toolchain from the <strong>Toolchain</strong> list.
 <p>A toolchain is a set of tools (such as a compiler, linker, and assembler) intended to build your project.
 Additional tools, such as a debugger, can be associated with a toolchain.<br>
 There can be several toolchains available, depending on the compilers installed on your system.
@@ -67,7 +67,7 @@ There can be several toolchains available, depending on the compilers installed 
 </li>
 <li>Click <strong>Next</strong>.
 <li>(Optional) On the <strong>Select Configurations</strong> page, Click <strong>Advanced Settings</strong>.
-<ul> 
+<ul>
 <li>Expand <strong>C/C++Build > Settings</strong>. Click the <strong>Binary Parsers</strong> tab.
 <p><br><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_binparser01.png')">Click here to see an illustration.</a></p><br>
 </p>
@@ -87,17 +87,17 @@ view. You can also view the contents of the .o file in the C/C++ editor.
 <li>Click <strong>Finish</strong>.</li>
 <li>If a message box prompts you to change perspectives, click <strong>Yes</strong>.
 </li>
-</ol>  
+</ol>
 
-<p>Your new project displays in the Project Explorer view. 
+<p>Your new project displays in the Project Explorer view.
 Your project is empty because you have not yet created
-files for your project. 
+files for your project.
 You may see an error since there is nothing to build yet for your project.
 You can now start writing the code for your HelloWorld
-program.</p>  
+program.</p>
 
 <p><strong>Tip:</strong> You can view and modify the properties of your
-HelloWorld project at any time by right-clicking on the project in the <strong>Project Explorer</strong> 
+HelloWorld project at any time by right-clicking on the project in the <strong>Project Explorer</strong>
 view and clicking Properties.</p>  <p><a style="text-decoration: none" href="cdt_w_newcpp.htm"><img
 src="../images/ngnext.gif" height="16" width="16" alt="Next Icon"></a> <a href="cdt_w_newcpp.htm"><strong>
 Next: Creating your C++ file</strong></a></p>  <p>For more information
@@ -112,7 +112,7 @@ CDT projects</a><br> <a href="../concepts/cdt_c_proj_file_views.htm">Project fil
 </a></p> <p><img src="../images/ngtasks.gif" alt="Related tasks" height="21" width="143"
 > <br> <a href="../tasks/cdt_o_proj_files.htm">Working with C/C++ project files</a></p> <p><img
 src="../images/ngref.gif" alt="Related reference" height="21" width="143" > <br> <a
-href="../reference/cdt_o_proj_prop_pages.htm">C/C++ Projects view</a></p>  
+href="../reference/cdt_o_proj_prop_pages.htm">C/C++ Projects view</a></p>
 
 <p><img src="../images/ng00_04a.gif" ALT="QNX Copyright Statement" ></p>
 

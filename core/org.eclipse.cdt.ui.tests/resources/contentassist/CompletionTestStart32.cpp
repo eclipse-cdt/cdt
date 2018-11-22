@@ -1,3 +1,3 @@
 #include "CompletionTestStart.h"
 
-using namespace   
+using namespace

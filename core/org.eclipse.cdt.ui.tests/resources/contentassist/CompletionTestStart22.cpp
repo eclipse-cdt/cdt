@@ -3,6 +3,6 @@
 void anotherClass::anotherMethod()
 {
  try {
- } catch ( a 
- 
+ } catch ( a
+
 }

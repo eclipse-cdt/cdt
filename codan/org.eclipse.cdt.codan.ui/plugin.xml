@@ -30,7 +30,7 @@
          <enabledWhen>
 		     <adapt type="org.eclipse.core.resources.IProject">
 		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
-		     </adapt>         
+		     </adapt>
          </enabledWhen>
       </page>
       <page
@@ -41,7 +41,7 @@
         <enabledWhen>
 		     <adapt type="org.eclipse.core.resources.IProject">
 		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
-		     </adapt> 
+		     </adapt>
          </enabledWhen>
       </page>
    </extension>
@@ -250,11 +250,11 @@
                class="org.eclipse.cdt.codan.internal.ui.actions.OpenProblemPreferences"
                id="org.eclipse.cdt.codan.ui.OpenProblemProperties"
                label="%action.customize"
-               menubarPath="additions"/>  
-                             
+               menubarPath="additions"/>
+
            <filter name="type"
                value="org.eclipse.cdt.codan.core.codanProblem"/>
-         <!-- user: menubarPath="org.eclipse.cdt.codan.ui.configureMenu/configureProblemSep" --> 
+         <!-- user: menubarPath="org.eclipse.cdt.codan.ui.configureMenu/configureProblemSep" -->
          <!-- <menu
                id="org.eclipse.cdt.codan.ui.configureMenu"
                label="Configure Problem"
@@ -262,7 +262,7 @@
             <separator
                   name="configureProblemSep">
             </separator>
-                 
+
          </menu>
         -->
 

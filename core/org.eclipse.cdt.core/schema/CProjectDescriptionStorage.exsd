@@ -22,21 +22,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -75,7 +75,7 @@
          <attribute name="version" type="string" use="required">
             <annotation>
                <documentation>
-                  Version number of this storage type if min_version and max_version are specified, this version must be in the range (min_version, max_version] i.e. min_version &lt; version &lt;= max_version 
+                  Version number of this storage type if min_version and max_version are specified, this version must be in the range (min_version, max_version] i.e. min_version &lt; version &lt;= max_version
 This String value must be compatible with org.eclipse.osgi.framework.version
                </documentation>
             </annotation>

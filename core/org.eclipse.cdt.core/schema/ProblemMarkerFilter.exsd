@@ -7,9 +7,9 @@
          <meta.schema plugin="org.eclipse.cdt.core" id="ProblemMarkerFilter" name="Problem Marker Filter"/>
       </appInfo>
       <documentation>
-         This extension point allows to filter out unneeded problem markers. 
+         This extension point allows to filter out unneeded problem markers.
          For example during building of Qt base project with QML files tool Qt Linguist
-         could report syntax errors in some qml file. These errors are presented as 
+         could report syntax errors in some qml file. These errors are presented as
          &quot;C/C++ Problems&quot; in qml files because they match format CDT expects for errors.
          If there is already installed plug-in that handles QML files it is a wise to ignore such
          errors because they are already reported as &quot;QML Problems&quot; with more meaningful descriptions.
@@ -92,7 +92,7 @@
     point=&quot;org.eclipse.cdt.core.ProblemMarkerFilter&quot;
     id=&quot;example&quot;
     name=&quot;Example QMake Env Provider Extension&quot;&gt;
-    &lt;problemMarkerFilter 
+    &lt;problemMarkerFilter
         class=&quot;com.example.internal.ProblemMarkerFilter&quot;&gt;
         &lt;enablement&gt;
             &lt;with variable=&quot;projectNatures&quot;&gt;
@@ -127,7 +127,7 @@
           are made available under the terms of the Eclipse Public License 2.0
           which accompanies this distribution, and is available at
           https://www.eclipse.org/legal/epl-2.0/
-          
+
           SPDX-License-Identifier: EPL-2.0
       </documentation>
    </annotation>

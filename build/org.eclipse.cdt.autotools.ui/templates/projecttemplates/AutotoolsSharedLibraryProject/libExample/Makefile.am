@@ -11,7 +11,7 @@ lib_LTLIBRARIES = $(libName).la
 $(libName)_la_SOURCES = $(libName).c
 
 # Linker options libTestProgram
-$(libName)_la_LDFLAGS = 
+$(libName)_la_LDFLAGS =
 
 # Compiler options. Here we are adding the include directory
 # to be searched for headers included in the source code.

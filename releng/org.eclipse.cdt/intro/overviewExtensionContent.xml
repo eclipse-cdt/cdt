@@ -9,8 +9,8 @@
 -->
         <link label="C/C++ Online Docs" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.cdt.doc.user/concepts/cdt_o_concepts.htm" id="cdt">
       		<text>Open the online documentation for the CDT</text>
-    	  </link>   
-   </extensionContent>     
+    	  </link>
+   </extensionContent>
 <!--
   <page alt-style="css/swt.properties" style="css/overview.css" id="cdtoverview" style-id="page">
     <title style-id="intro-header">Welcome to CDT 2.0</title>
@@ -18,14 +18,14 @@
       <group id="page-links">
           <link label="C/C++ development" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.cdt.doc.user/concepts/cdt_o_concepts.htm" id="cdt">
       		<text>Get familiar with developing C++ programs using Eclipse</text>
-    	  </link>     
+    	  </link>
       </group>
     </group>
     <group id="action-links">
       <link url="http://org.eclipse.ui.intro/close" label="Workbench" id="workbench">
         <text>Go to the workbench</text>
       </link>
-    </group> 
+    </group>
   </page>
 -->
 </introContent>

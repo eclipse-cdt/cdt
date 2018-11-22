@@ -9,7 +9,7 @@
 	<property name="cdt-lr-parser-xlc-loc" value="${eclipse-home}/cdt_lr_parser_xlc_folder"/>
 	<property name="cdt-vmargs" value=" -ea -Xms40m -Xmx1024m"/>
 	<property name="cdt-common-vmargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
-	
+
 	<target name="init">
 		<echo message="library file: ${library-file}"/>
 	</target>
@@ -63,7 +63,7 @@
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
-	
+
 	<target name="cdt-lr-parser" depends="init">
 		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
 			<property name="data-dir" value="${cdt-lr-parser-loc}"/>
@@ -73,7 +73,7 @@
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
-	
+
 	<target name="cdt-upc-parser" depends="init">
 		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
 			<property name="data-dir" value="${cdt-upc-parser-loc}"/>
@@ -83,7 +83,7 @@
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
-	
+
 	<target name="cdt-lr-parser-xlc" depends="init">
 		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
 			<property name="data-dir" value="${cdt-lr-parser-xlc-loc}"/>

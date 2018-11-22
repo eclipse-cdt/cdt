@@ -311,8 +311,8 @@
           isAbstract="false"
           name="%tool.linker.so.name">
     </tool>
-      
-      
+
+
       <tool
             command="${XL_compilerRoot}/xlupc"
             id="org.eclipse.cdt.managedbuilder.xlupc.ui.compiler.abstract"
@@ -404,7 +404,7 @@
                name="%Option.threads"
                valueType="string">
          </option>
-        
+
       </tool>
       <tool
             id="org.eclipse.cdt.managedbuilder.xlupc.ui.compiler"

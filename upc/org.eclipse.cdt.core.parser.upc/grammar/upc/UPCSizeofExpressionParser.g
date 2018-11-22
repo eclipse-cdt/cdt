@@ -28,5 +28,5 @@ unary_expression
     ::= 'upc_localsizeof' '(' type_id ')'
       | 'upc_blocksizeof' '(' type_id ')'
       | 'upc_elemsizeof'  '(' type_id ')'
-          
+
 $End

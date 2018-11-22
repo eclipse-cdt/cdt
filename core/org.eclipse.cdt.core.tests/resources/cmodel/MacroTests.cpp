@@ -4,7 +4,7 @@
 
 X Y
 {
-    
+
 };
 
 
@@ -20,5 +20,5 @@ int DEFA    ::   DB(Y) = 1;
 
 #define PINT const int *
 
-PINT myPINT; 
+PINT myPINT;
 PINT foobar( void );

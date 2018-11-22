@@ -1,5 +1,5 @@
   PROGRAM MAIN
-    USE AVE_CALCULATOR    
+    USE AVE_CALCULATOR
     INTEGER :: AVE
     INTEGER, DIMENSION(3) :: ENTERED = 0
     PRINT *, 'Type three integers: '

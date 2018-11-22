@@ -7,7 +7,7 @@
 #  https://www.eclipse.org/legal/epl-2.0/
 #
 #  SPDX-License-Identifier: EPL-2.0
-# 
+#
 #  Contributors:
 #     William R. Swanson (Tilera Corporation)
 # =============================================================================
@@ -17,4 +17,3 @@ This plugin defines the non-UI components of the CDT Visualizer feature.
 For an overview of the Visualizer feature, see the following file:
 
   /org.eclipse.cdt.visualizer-feature/ABOUT.txt.
-  

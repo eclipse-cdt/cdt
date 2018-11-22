@@ -1544,7 +1544,7 @@ void Demo::methode2()
 //Davor
 
 void Demo::methode3()
-{    
+{
 } //Danach
 
 //Am Schluss
@@ -1580,7 +1580,7 @@ void Demo::methode2()
 
 /*Davor*/
 void Demo::methode3()
-{    
+{
 } /*Danach*/
 
 

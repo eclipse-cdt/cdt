@@ -24,21 +24,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -64,9 +64,9 @@ This example ant file shows how to invoke the tool headlessly, the same approach
   &lt;property name=&quot;target&quot; value=&quot;C:\ExportedPDOMs\acmeSDK_2_5.pdom&quot;/&gt; &lt;!-- Where the output pdom is to go --&gt;
   &lt;property name=&quot;source&quot; value=&quot;E:\AcmeSDK\v2.5\inc&quot;/&gt; &lt;!-- e.g. the directory to source content from --&gt;
   &lt;property name=&quot;id&quot; value=&quot;com.acme.mysdk.v2.5&quot;/&gt; &lt;!-- the id to store in the generate pdom --&gt;
-  
+
   &lt;property name=&quot;eclipse.home&quot; value=&quot;C:\eclipse&quot;/&gt; &lt;!-- e.g. The eclipse installation to use. This installation must contain CDT 4.0+ plugins --&gt;
-  
+
   &lt;java classname=&quot;org.eclipse.equinox.launcher.Main&quot;&gt;
    &lt;classpath&gt;
     &lt;fileset dir=&quot;${eclipse.home}/plugins&quot;&gt;
@@ -113,7 +113,7 @@ In the Argument tabs provide (for example)
             &lt;h2&gt;ReadOnlyPDOMProvider&lt;/h2&gt;
 &lt;p&gt;
 This subelement of CIndex allows ISVs to contribute read-only prebuilt PDOM files to the CDT Index. The only information needed is the fully qualified class name of an implementatin of org.eclipse.cdt.core.index.IOfflinePDOMProvider. This implementation will be consulted during the eclipse session for the appropriate read-only content to make add to the logical index. The logical index is accessible via the org.eclipse.core.index.IIndex API.
- 
+
         An example of contributing a prebuilt read-only pdom:
 &lt;pre&gt;
 &lt;CIndex&gt;

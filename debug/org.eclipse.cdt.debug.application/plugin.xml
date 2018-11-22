@@ -230,7 +230,7 @@
             name="%DebugCore.name">
       </command>
     </extension>
-   
+
    	<extension
 		point="org.eclipse.ui.intro">
       <introProductBinding
@@ -260,9 +260,9 @@
              <property
                    name="aboutText"
                    value="%aboutText">
-             </property> 
-             
+             </property>
+
        </product>
     </extension>
-   
+
 </plugin>

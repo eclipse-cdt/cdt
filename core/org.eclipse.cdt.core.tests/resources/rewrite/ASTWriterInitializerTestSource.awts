@@ -16,7 +16,7 @@ struct A
 
 //!DesignatedInitializer
 //%C
-typedef struct 
+typedef struct
 {
     int x;
     int y;

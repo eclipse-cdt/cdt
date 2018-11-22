@@ -121,7 +121,9 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 					if (packSize == CPPTemplates.PACK_SIZE_FAIL || packSize == CPPTemplates.PACK_SIZE_NOT_FOUND) {
 						newEval = EvalFixed.INCOMPLETE;
 					} else if (packSize == CPPTemplates.PACK_SIZE_DEFER) {
-						newEval = origEval;
+						// We're not expanding the pack, but arguments for template parameters of
+						// enclosing templates may still need to be substituted into the expansion pattern.
+						newEval = origEval.instantiate(context, maxDepth);
 					} else {
 						int shift = packSize - 1;
 						ICPPEvaluation[] newResult = new ICPPEvaluation[subexpressions.length + resultShift + shift];

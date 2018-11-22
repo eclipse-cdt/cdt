@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.llvm.dsf.lldb.core" version="2">
+    <resource path="src/org/eclipse/cdt/llvm/dsf/lldb/core/ILLDBLaunchConfigurationConstants.java" type="org.eclipse.cdt.llvm.dsf.lldb.core.ILLDBLaunchConfigurationConstants">
+        <filter comment="This class was always supposed to be an interface." id="337809484">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.llvm.dsf.lldb.core.ILLDBLaunchConfigurationConstants"/>
+                <message_argument value="4"/>
+                <message_argument value="8"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

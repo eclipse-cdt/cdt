@@ -1,50 +1,56 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="cdt-baseline" sequenceNumber="13">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt-baseline" sequenceNumber="13">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.cdt.gnu.build.source.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.debug.gdbjtag.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.gnu.dsf.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.gdb.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.debug.standalone.source.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.visualizer.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.core.lrparser.sdk.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.docker.launcher.source.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.gnu.debug.source.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.platform.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.debug.ui.memory.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.bupc.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.debug.ui.memory.source.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.core.parser.upc.feature.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.gnu.debug.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.core.lrparser.feature.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.gnu.multicorevisualizer.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.examples.dsf.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.msw.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.build.crossgcc.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.platform.source.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.autotools.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.launch.remote.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.qt.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.xlc.sdk.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.xlc.feature.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.sdk.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.debug.standalone.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.managedbuilder.llvm.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.gnu.build.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.docker.launcher.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.testsrunner.feature.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.gdb.source.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.native.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.arduino.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.native.source.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.core.parser.upc.sdk.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.gnu.dsf.source.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.autotools.source.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.core" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.ui" version="0.0.0"/>
+<unit id="org.eclipse.cdt.gnu.build.source.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.debug.gdbjtag.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.gnu.dsf.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.gdb.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.debug.standalone.source.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.visualizer.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.core.lrparser.sdk.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.docker.launcher.source.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.gnu.debug.source.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.platform.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.debug.ui.memory.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.bupc.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.debug.ui.memory.source.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.core.parser.upc.feature.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.gnu.debug.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.core.lrparser.feature.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.gnu.multicorevisualizer.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.examples.dsf.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.msw.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.build.crossgcc.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.platform.source.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.autotools.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.launch.remote.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.qt.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.xlc.sdk.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.xlc.feature.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.sdk.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.debug.standalone.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.managedbuilder.llvm.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.gnu.build.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.docker.launcher.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.testsrunner.feature.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.gdb.source.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.native.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.arduino.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.native.source.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.core.parser.upc.sdk.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.gnu.dsf.source.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.cdt.autotools.source.feature.group" version="9.5.0.201806170908"/>
+<unit id="org.eclipse.tools.templates.core" version="1.1.0.201805282250"/>
+<unit id="org.eclipse.tools.templates.ui" version="1.1.1.201805282250"/>
 <repository location="http://download.eclipse.org/tools/cdt/releases/9.5/cdt-9.5.0/"/>
+	<unit id="org.eclipse.cdt.cmake.feature.group" version="9.5.0.201806170908"/>
+	<unit id="org.eclipse.cdt.core.autotools.feature.group" version="9.5.0.201806170908"/>
+	<unit id="org.eclipse.cdt.launch.serial.feature.feature.group" version="9.5.0.201806170908"/>
+	<unit id="org.eclipse.cdt.llvm.dsf.lldb.feature.group" version="9.5.0.201806170908"/>
+	<unit id="org.eclipse.cdt.meson.feature.group" version="9.5.0.201806170908"/>
+	<unit id="org.eclipse.cdt.remote.core" version="1.0.1.201806170908"/>
+	<unit id="org.eclipse.cdt.util" version="5.0.100.201806170908"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>

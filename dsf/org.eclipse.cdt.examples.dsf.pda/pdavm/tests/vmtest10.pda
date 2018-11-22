@@ -23,13 +23,13 @@ push 1
 pop $$reg1.field2
 push $$reg1
 output
-push zero 
+push zero
 pop $$reg1.field2
 push $$reg1.field2
 output
 push $$reg1
 output
-push 2 
+push 2
 pop $$reg1.field2
 push $$reg1.field2
 output

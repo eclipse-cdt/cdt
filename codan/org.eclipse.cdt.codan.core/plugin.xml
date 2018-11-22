@@ -33,9 +33,9 @@
          name="%extension.name.Marker"
          point="org.eclipse.core.resources.markers">
 
-      <super type="org.eclipse.core.resources.problemmarker"/> 
-      <super type="org.eclipse.core.resources.textmarker"/> 
-      
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+
               <attribute
           name="category">
     </attribute>
@@ -54,14 +54,14 @@
          name="%marker.semanticError"
          point="org.eclipse.core.resources.markers">
 
-      <super type="org.eclipse.cdt.codan.core.codanProblem"/> 
+      <super type="org.eclipse.cdt.codan.core.codanProblem"/>
 
       <persistent
             value="false">
       </persistent>
-   
+
    </extension>
-   
+
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
@@ -91,7 +91,7 @@
       name="%category.name.Security"
       />
    </extension>
-   
+
       <extension
             id="application"
             point="org.eclipse.core.runtime.applications">
@@ -104,7 +104,7 @@
            </run>
         </application>
      </extension>
- 
-   
+
+
 
 </plugin>

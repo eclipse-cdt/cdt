@@ -30,23 +30,23 @@
 			</tr>
 		</table><hr class="navigation-separator"/>
 		<h1 id="Building">Building</h1>
-		<p>As mentioned, an Autotools project is an extended CDT Makefile project.  Building the project is done the same as for any Makefile project.  You can kick off a build manually by clicking on the Project -&gt; Build Project menu item or if you choose, you can set up builds to occur automatically when resources are changed by checking off the Project -&gt; Build Automatically menu item.  The former build option is disabled when automatic builds are selected.  By default, a 
+		<p>As mentioned, an Autotools project is an extended CDT Makefile project.  Building the project is done the same as for any Makefile project.  You can kick off a build manually by clicking on the Project -&gt; Build Project menu item or if you choose, you can set up builds to occur automatically when resources are changed by checking off the Project -&gt; Build Automatically menu item.  The former build option is disabled when automatic builds are selected.  By default, a
 			<b>make all</b> is performed following the Autotools configure step.
 		</p>
 		<p>The build is performed on the active build configuration.  A build configuration is a CDT construct which is a group of settings for a particular build.  This is not to be confused with an Autotools configuration which is just the settings passed to the configure script.  The CDT build configuration is saved across Eclipse sessions and includes environment variable settings, build macros, build location, tool settings, etc... used to perform a build.  A project may have multiple build configurations.  For example, a build with debugging info and a regular optimized build.  As such, one configuration is designated the active configuration and as previously stated, is the one used for the build.</p>
-		<p>The Autotools configure script parameters and the autogen.sh script parameters are treated as part of the CDT build configuration.  While CDT settings are stored in the .cproject file within the project, the Autotools parameters are stored in a special file: .autotools.  There is a one-to-one mapping of Autotools configuration parameters to a build configuration.  By default, each Autotools project starts with a base build configuration named 
+		<p>The Autotools configure script parameters and the autogen.sh script parameters are treated as part of the CDT build configuration.  While CDT settings are stored in the .cproject file within the project, the Autotools parameters are stored in a special file: .autotools.  There is a one-to-one mapping of Autotools configuration parameters to a build configuration.  By default, each Autotools project starts with a base build configuration named
 			<b>Build (GNU)</b> which configures and builds in the top-level project directory.  This is common for Autotools projects to have the user configure and build directly in the top-level source directory.  The location of the build can be changed in the C/C++ Build properties:
 		</p>
 		<p>
 			<img border="0" src="images/AutotoolsCBuildProperties.png"/>
 		</p>
 		<p>Notice how the default is ${workspace_loc:/xxxx} where xxxx is the project name.  This represents the project's location which may or may not be physically under the workspace root directory.  To change the build location, it is recommended that you add a directory following the project location: e.g. ${workspace_loc:/xxxx}/yyyy.  </p>
-		<p>It should be noted that the configure script automatically checks to see if a configuration has been performed in the source directory.  It does so by looking for the 
-			<b>config.status</b> file existing in the same directory as the configure script.  If configuring in a different directory and the configure script finds 
-			<b>config.status</b> in the source directories, it will stop and report a failure.  Such is the case if you originally configure and build the default configuration and either change the build location or add a new configuration later and try to build it.  The second configuration fails and recommends running 
-			<b>make distclean</b> first.  A 
-			<b>make distclean</b> performs a clean and in addition removes configuration files such as 
-			<b>config.status</b>.  The Autotools plug-in recognizes when this situation is about to occur during the configure step and will automatically issue a 
+		<p>It should be noted that the configure script automatically checks to see if a configuration has been performed in the source directory.  It does so by looking for the
+			<b>config.status</b> file existing in the same directory as the configure script.  If configuring in a different directory and the configure script finds
+			<b>config.status</b> in the source directories, it will stop and report a failure.  Such is the case if you originally configure and build the default configuration and either change the build location or add a new configuration later and try to build it.  The second configuration fails and recommends running
+			<b>make distclean</b> first.  A
+			<b>make distclean</b> performs a clean and in addition removes configuration files such as
+			<b>config.status</b>.  The Autotools plug-in recognizes when this situation is about to occur during the configure step and will automatically issue a
 			<b>make distclean</b> on your behalf to avoid the failure.  The cleaning operation is recorded in the Configure console.  Since it also removes build artefacts for the default configuration, these may have to be regenerated by a future configure/build with the default configuration marked active.  If you know you will be creating multiple configurations for the project, you can either specify the default build location to something other than the top-level project directory or else you can avoid using the default configuration and only build configurations you have added yourself.
 		</p>
 		<p>CDT build configurations are managed via the Managed Configurations dialog.  The dialog is accessed via a button that can be found on any property page that alters data that is part of the build configuration.  This includes the Project -&gt; Properties -&gt; Autotools -&gt; Configure Settings page.  Pressing the button results in the Manage Configurations dialog:</p>

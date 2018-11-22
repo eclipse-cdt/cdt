@@ -11,7 +11,7 @@ void foo2()
 }
 
 int main()
-{	
+{
 	namespace1::Class1 element;
 	printf("%d\n", element.class1x);
 	foo2();

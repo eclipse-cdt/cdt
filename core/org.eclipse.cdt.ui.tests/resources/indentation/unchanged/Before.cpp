@@ -6,7 +6,7 @@
 CPPUNIT_NS_BEGIN
 
 
-std::string 
+std::string
 StringTools::toString( int value )
 {
 	OStringStream stream;
@@ -15,7 +15,7 @@ StringTools::toString( int value )
 }
 
 
-std::string 
+std::string
 StringTools::toString( double value )
 {
 	OStringStream stream;
@@ -25,7 +25,7 @@ StringTools::toString( double value )
 
 
 StringTools::Strings
-StringTools::split( const std::string &text, 
+StringTools::split( const std::string &text,
 		char separator )
 {
 	Strings splittedText;
@@ -33,8 +33,8 @@ StringTools::split( const std::string &text,
 	std::string::const_iterator itStart = text.begin();
 	while ( !text.empty() )
 	{
-		std::string::const_iterator itSeparator = std::find( itStart, 
-				text.end(), 
+		std::string::const_iterator itSeparator = std::find( itStart,
+				text.end(),
 				separator );
 		splittedText.push_back( text.substr( itStart - text.begin(),
 				itSeparator - itStart ) );
@@ -47,7 +47,7 @@ StringTools::split( const std::string &text,
 }
 
 
-std::string 
+std::string
 StringTools::wrap( const std::string &text,
 		int wrapColumn )
 {

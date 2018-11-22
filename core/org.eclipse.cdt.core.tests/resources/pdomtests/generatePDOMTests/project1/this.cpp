@@ -4,4 +4,3 @@ void bar() {
   A a;
   a.foo(*new A::B());
 }
-  

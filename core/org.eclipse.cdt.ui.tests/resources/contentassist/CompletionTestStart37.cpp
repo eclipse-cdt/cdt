@@ -2,4 +2,4 @@
 
 typedef int myType;
 
- m  
+ m

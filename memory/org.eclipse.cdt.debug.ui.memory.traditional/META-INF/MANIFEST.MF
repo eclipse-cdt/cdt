@@ -16,6 +16,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPlugin
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.eclipse.cdt.debug.ui.memory.traditional, 
+Export-Package: org.eclipse.cdt.debug.ui.memory.traditional,
  org.eclipse.cdt.debug.ui.internal
 Automatic-Module-Name: org.eclipse.cdt.debug.ui.memory.traditional

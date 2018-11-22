@@ -32,11 +32,11 @@ $Start
     no_cast_start
 $End
 
-$Rules 
+$Rules
 
 	no_cast_start
 	    ::= expression
 	      | ERROR_TOKEN
 	          /. $Build  consumeEmpty();  $EndBuild ./
-          
+
 $End

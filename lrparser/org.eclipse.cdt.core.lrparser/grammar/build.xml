@@ -4,7 +4,7 @@
  are made available under the terms of the Eclipse Public License 2.0
  which accompanies this distribution, and is available at
  https://www.eclipse.org/legal/epl-2.0/
- 
+
  SPDX-License-Identifier: EPL-2.0
 
  Contributors:
@@ -13,16 +13,16 @@
 
 <project name="CDT Extensible LR Parser Framework" basedir=".">
     <description>Generates LPG parsers from grammar files</description>
-	
+
 	<import file="generate.xml"/>
 
 	<property name="c99_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/c99"/>
 	<property name="gcc_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/gcc"/>
 	<property name="cpp_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/cpp"/>
 	<property name="gpp_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/gpp"/>
-		
+
 	<target name="all" depends="c99, gcc, cpp, gpp"/>
-	
+
 	<target name="clean_l_files">
 		<delete>
 			<fileset dir="${c99_location}" includes="**/*.l"/>
@@ -31,8 +31,8 @@
 			<fileset dir="${gpp_location}" includes="**/*.l"/>
 		</delete>
 	</target>
-	
-	
+
+
 	<target name="c99">
 		<description>Generate the C99 parser</description>
 		<!-- Generate main parser -->
@@ -52,7 +52,7 @@
             <param name="grammar_name" value="C99SizeofExpressionParser"/>
 		</antcall>
 	</target>
-	
+
 	<target name="generate_c99">
 		<antcall target="generate">
 			<param name="grammar_dir" value="c99"/>
@@ -61,7 +61,7 @@
 		</antcall>
 	</target>
 
-	
+
 	<target name="gcc">
 		<description>Generate the GCC parser</description>
 		<!-- Generate main parser -->
@@ -72,8 +72,8 @@
             <param name="grammar_name" value="GCCSizeofExpressionParser"/>
 		</antcall>
 	</target>
-	
-	
+
+
 	<target name="generate_gcc">
 		<antcall target="generate">
 			<param name="grammar_dir" value="gcc"/>
@@ -81,7 +81,7 @@
 			<param name="grammar_name" value="${grammar_name}"/>
 		</antcall>
 	</target>
-	
+
 
 	<target name="cpp">
 		<description>Generate the C++ parser</description>
@@ -109,7 +109,7 @@
             <param name="grammar_name" value="CPPTemplateTypeParameterParser"/>
 		</antcall>
 	</target>
-	
+
 	<target name="generate_cpp">
 		<antcall target="generate">
 			<param name="grammar_dir" value="cpp"/>
@@ -117,8 +117,8 @@
 			<param name="grammar_name" value="${grammar_name}"/>
 		</antcall>
 	</target>
-	
-	
+
+
 	<target name="gpp">
 		<description>Generate the GCC parser</description>
 		<!-- Generate main parser -->
@@ -129,8 +129,8 @@
             <param name="grammar_name" value="GPPSizeofExpressionParser"/>
 		</antcall>
 	</target>
-	
-	
+
+
 	<target name="generate_gpp">
 		<antcall target="generate">
 			<param name="grammar_dir" value="gpp"/>
@@ -138,9 +138,9 @@
 			<param name="grammar_name" value="${grammar_name}"/>
 		</antcall>
 	</target>
-	
 
-	
-	
-	
-</project>  
+
+
+
+
+</project>

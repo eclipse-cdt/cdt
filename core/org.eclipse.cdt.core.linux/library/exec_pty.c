@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
- *     Wind River Systems, Inc.  
+ *     Wind River Systems, Inc.
  *     Mikhail Zabaluev (Nokia) - bug 82744
  *     Mikhail Sennikovsky - bug 145737
  *******************************************************************************/
@@ -39,7 +39,7 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 	/*
 	 * We use pfind() to check that the program exists and is an executable.
 	 * If not pass the error up.  Also execve() wants a full path.
-	 */ 
+	 */
 	full_path = pfind(path, envp);
 	if (full_path == NULL) {
 		fprintf(stderr, "Unable to find full path for \"%s\"\n", (path) ? path : "");
@@ -48,9 +48,9 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 
 	/*
 	 *  Make sure we can create our pipes before forking.
-	 */ 
+	 */
 	if (channels != NULL && console) {
-		if (pipe(pipe2) < 0) { 
+		if (pipe(pipe2) < 0) {
 			fprintf(stderr, "%s(%d): returning due to error: %s\n", __FUNCTION__, __LINE__, strerror(errno));
 			free(full_path);
 			return -1;
@@ -153,20 +153,20 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 int main(int argc, char **argv, char **envp) {
 	const char *path = "./bufferring_test";
 	int channels[3] = { -1, -1, -1};
-	int status;	
+	int status;
 	FILE *app_stdin;
 	FILE *app_stdout;
 	FILE *app_stderr;
 	char pts_name[32];
-	int fdm;	
+	int fdm;
 	char buffer[32];
 
 	fdm = ptym_open(pts_name);
 	status =  exec_pty(path, argv, envp, ".", channels, pts_name, fdm);
 	if (status >= 0) {
-		app_stdin = fdopen(channels[0], "w");	
-		app_stdout = fdopen(channels[1], "r");	
-		app_stderr = fdopen(channels[2], "r");	
+		app_stdin = fdopen(channels[0], "w");
+		app_stdout = fdopen(channels[1], "r");
+		app_stderr = fdopen(channels[2], "r");
 		if (app_stdout == NULL || app_stderr == NULL || app_stdin == NULL) {
 			fprintf(stderr, "PROBLEMS\n");
 		} else {
@@ -184,6 +184,6 @@ int main(int argc, char **argv, char **envp) {
 	close(channels[0]);
 	close(channels[1]);
 	close(channels[2]);
-	return 0;	
+	return 0;
 }
 #endif

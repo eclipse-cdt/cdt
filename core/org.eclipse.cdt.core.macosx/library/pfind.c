@@ -105,7 +105,7 @@ int main(int argc, char **argv)
       fullpath = pfind(argv[i], NULL);
       if (fullpath == NULL)
         printf("Unable to find %s in $PATH.\n", argv[i]);
-      else 
+      else
         printf("Found %s @ %s.\n", argv[i], fullpath);
    }
 }

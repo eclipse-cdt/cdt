@@ -44,7 +44,7 @@ There are 2 main ways to discover those:
 CDT will try to detect built-in compiler symbols and include paths running the compiler with special options and parse the output of this special run.
 Most compilers provide such an option to print built-in include paths and symbols. Built-in settings are implied and do not get passed to compiler during regular compilation.
 </li>
-<li><strong>Build Output Parser (BOP)</strong>. 
+<li><strong>Build Output Parser (BOP)</strong>.
 Another method that CDT employs is to analyze build output of the regular build with Build Output Parser.
 Often, include paths are supplied to the compiler with <span class="typewriter">-I</span> options, and macros with <span class="typewriter">-D</span> options
 and BOP will try to find those in the output.

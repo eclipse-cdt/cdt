@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-   
+
 <!-- Configure the help contribution for this plugin -->
 <!-- This part should be in a documentation plugin -->
 <!-- ============================================================================= -->
@@ -49,13 +49,13 @@
             file="contexts_CDT_DEBUGGER.xml"
             plugin="org.eclipse.cdt.debug.ui">
       </contexts>
-	  <contexts 
-	  		file="contexts_CDT_DEBUGGER.xml" 
-	  		plugin="org.eclipse.debug.ui"> 
+	  <contexts
+	  		file="contexts_CDT_DEBUGGER.xml"
+	  		plugin="org.eclipse.debug.ui">
       </contexts>
       <contexts
-      		file="contexts_CDT_DEBUGGER.xml" 
-      		plugin="org.eclipse.ui.console"> 
+      		file="contexts_CDT_DEBUGGER.xml"
+      		plugin="org.eclipse.ui.console">
       </contexts>
       <contexts
             file="contexts_CDT_DEBUGGER_MI.xml"
@@ -86,12 +86,12 @@
             plugin="org.eclipse.cdt.dsf.gdb.ui">
       </contexts>
    </extension>
-   
+
 <!-- ============================================================================= -->
 <!-- KEYWORD INDEX EXTENSION                                                       -->
 <!-- ============================================================================= -->
 	<!--
-	<extension 
+	<extension
 		point="org.eclipse.help.index" >
 		<index file="index.xml" />
 	</extension>

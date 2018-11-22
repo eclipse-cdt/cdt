@@ -18,18 +18,18 @@ Clears any breakpoint set on given line
 
 
 <h3>data</h3>
-Retrieves data stack information 
+Retrieves data stack information
 <pre>
    C: data {thread_id}
    R: {value 1}|{value 2}|{value 3}|...|
-    
+
 Errors:
    error: invalid thread
 </pre>
 
 
 <h3>drop</h3>
-Returns from the current frame without executing the rest of instructions.  
+Returns from the current frame without executing the rest of instructions.
 
 <pre>
 If VM running:
@@ -37,7 +37,7 @@ If VM running:
    R: ok
    E: resumed {thread_id} drop
    E: suspended {thread_id} drop
-   
+
 If VM suspended:
    C: drop {thread_id}
    R: ok
@@ -58,11 +58,11 @@ Sets what events cause the execution to stop.
    E: resumed {thread_id} client
    E: evalresult result
    E: suspended {thread_id} eval
-   
+
 Errors:
    error: invalid thread
    error: cannot evaluate while vm is suspended
-   error: thread running        
+   error: thread running
 </pre>
 
 
@@ -87,12 +87,12 @@ Instructs the debugger to exit.
 
 
 <h3>popdata</h3>
-Pops the top value from the data stack  
+Pops the top value from the data stack
 
 <pre>
    C: popdata {thread_id}
    R: ok
-   
+
 Errors:
    error: invalid thread
 </pre>
@@ -104,21 +104,21 @@ Pushes the given value on top of the data stack.
 <pre>
    C: pushdata {thread_id} {value}
    R: ok
-   
+
 Errors:
    error: invalid thread
 </pre>
 
 
 <h3>resume</h3>
-Resumes the execution of a single thread.  Can be issued only if the virtual 
+Resumes the execution of a single thread.  Can be issued only if the virtual
 machine is running.
 
 <pre>
    C: resume {thread_id}
    R: ok
    E: resumed {thread_id} client
-   
+
 Errors:
    error: invalid thread
    error: cannot resume thread when vm is suspended
@@ -136,7 +136,7 @@ Suspend a single thread:
    C: resume {thread_id}
    E: resumed {thread_id} client
    E: suspended {thread_id} breakpoint line_number
-   
+
 Suspend the VM:
    C: set {line_number} 1
    R: ok
@@ -152,38 +152,38 @@ Sets a data value in the data stack at the given location
 <pre>
    C: setdata {thread_id} {index} {value}
    R: ok
-   
+
 Errors:
    error: invalid thread
 </pre>
 
 
 <h3>setvar</h3>
-Sets a variable value 
+Sets a variable value
 
 <pre>
    C: setvar {thread_id} {frame_number} {variable} {value}
    R: ok
-   
+
 Errors:
    error: invalid thread
 </pre>
 
 
 <h3>stack</h3>
-Retrieves command stack information 
+Retrieves command stack information
 
 <pre>
    C: stack {thread_id}
    R: {file}|{line}|{function}|{var_1}|{var_2}|...#{file}|{line}|{function}|{var_1}|{var_2}|...#...
-   
+
 Errors:
    error: invalid thread
 </pre>
 
 
 <h3>step</h3>
-Executes next instruction 
+Executes next instruction
 
 <pre>
 If VM running:
@@ -191,20 +191,20 @@ If VM running:
    R: ok
    E: resumed {thread_id} client
    E: suspended {thread_id} step
-   
+
 If VM suspended:
    C: step {thread_id}
    R: ok
    E: vmresumed client
    E: vmsuspended {thread_id} step
-   
+
 Errors:
    error: invalid thread
 </pre>
 
 
 <h3>stepreturn</h3>
-Executes instructions until the current subroutine is finished 
+Executes instructions until the current subroutine is finished
 
 <pre>
 If VM running:
@@ -212,27 +212,27 @@ If VM running:
    R: ok
    E: resumed {thread_id} client
    E: suspended {thread_id} step
-   
+
 If VM suspended:
    C: stepreturn {thread_id}
    R: ok
    E: vmresumed client
    E: vmsuspended {thread_id} step
-   
+
 Errors:
    error: invalid thread
 </pre>
 
 
 <h3>suspend</h3>
-Suspends execution of a single thread.  Can be issued only if the virtual 
+Suspends execution of a single thread.  Can be issued only if the virtual
 machine is running.
 
 <pre>
    C: suspend {thread_id}
    R: ok
    E: suspended {thread_id} client
-   
+
 Errors:
    error: invalid thread
       error: vm already suspended
@@ -240,7 +240,7 @@ Errors:
 </pre>
 
 <h3>threads</h3>
-Retrieves the list of active threads 
+Retrieves the list of active threads
 
 <pre>
    C: threads
@@ -248,12 +248,12 @@ Retrieves the list of active threads
 </pre>
 
 <h3>var</h3>
-Retrieves variable value 
+Retrieves variable value
 
 <pre>
    C: var  {thread_id} {frame_number} {variable_name}
    R: {variable_value}
-   
+
 Errors:
    error: invalid thread
    error: variable undefined
@@ -281,25 +281,25 @@ The <code>watch_operation<code> value can be:
 
 
 <h3>vmresume</h3>
-Resumes the execution of the whole virtual machine  
- 
+Resumes the execution of the whole virtual machine
+
 <pre>
    C: vmresume
    R: ok
    E: vmresumed client
-   
+
 Errors:
    error: vm already running
 </pre>
 
 <h3>vmsuspend</h3>
-Suspends the execution of the whole virtual machine 
+Suspends the execution of the whole virtual machine
 
 <pre>
    C: vmsuspend
    R: ok
    E: vmsuspended client
-   
+
 Errors:
    error: thread already suspended
 </pre>

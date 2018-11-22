@@ -6,14 +6,14 @@
 	id="org.eclipse.cdt.core.templates.HelloWorldUPCProject"
     location="templates/template.xml"
     projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
-    </template>      
+    </template>
 </extension>
 
 <extension
       id="org.eclipse.cdt.managedbuilder.bupc.ui.upcBuildDefinitions"
       name="%extension.name"
       point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
-      
+
   <tool
 	command="upcc"
 	id = "org.eclipse.cdt.managedbuild.tool.bupc.compiler"
@@ -49,12 +49,12 @@
    		resourceFilter="project"
    		valueType="boolean"
    		defaultValue="false">
-   		<enablement 
-            type="CONTAINER_ATTRIBUTE" 
-            attribute="defaultValue" 
+   		<enablement
+            type="CONTAINER_ATTRIBUTE"
+            attribute="defaultValue"
             value="true"
             extensionAdjustment="false">
-			<checkBuildProperty 
+			<checkBuildProperty
 				property="org.eclipse.cdt.build.core.buildType"
 				value="org.eclipse.cdt.build.core.buildType.debug"/>
 		</enablement>
@@ -77,13 +77,13 @@
    		resourceFilter="project"
    		valueType="boolean"
    		defaultValue="false"/>
-   		
+
    	<optionCategory
 		owner="org.eclipse.cdt.managedbuild.tool.bupc.compiler"
 		name="%optionCategory.compiler.upc"
 		id="bupc.ui.optionCategory.compiler.upc">
 	</optionCategory>
-	
+
     <option
 	  	name="%option.compiler.network"
 	  	category="bupc.ui.optionCategory.compiler.upc"
@@ -95,7 +95,7 @@
 				  isDefault="true"
 				  command=""
 				  id="bupc.ui.compiler.network.default">
-		  </enumeratedOptionValue>  	
+		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
 		  		  name="%enumeratedOptionValue.mpi"
 				  isDefault="false"
@@ -206,7 +206,7 @@
 			  id="bupc.ui.compiler.general.incpath"
 			  valueType="includePath"
 			  browseType="directory">
-		  </option>		
+		  </option>
 	<optionCategory
 		owner="org.eclipse.cdt.managedbuild.tool.bupc.compiler"
 		id = "bupc.ui.optionCategory.compiler.advOptions"
@@ -247,14 +247,14 @@
 		id="bupc.ui.compiler.miscOptions.extraVerbose"
 		valueType="boolean"/>
 	<inputType
-		id="cdt.managedbuild.tool.bupc.compiler.input"						      					
+		id="cdt.managedbuild.tool.bupc.compiler.input"
 		multipleOfType ="false"
 	    dependencyContentType="org.eclipse.cdt.core.cHeader"
-		dependencyExtensions="h"      					
+		dependencyExtensions="h"
 		name = "%inputType.upc"
 		primaryInput = "true"
-		languageId="org.eclipse.cdt.core.parser.upc.upc"      					
-		superClass="org.eclipse.cdt.build.core.settings.holder.inType"						
+		languageId="org.eclipse.cdt.core.parser.upc.upc"
+		superClass="org.eclipse.cdt.build.core.settings.holder.inType"
 		sources = "upc,c">
 	</inputType>
 	<outputType
@@ -264,9 +264,9 @@
        buildVariable="OBJS"
        primaryInputType="cdt.managedbuild.tool.bupc.compiler.input"
        primaryOutput="true"/>
-								
+
   </tool>
-  
+
     <tool
 	command="upcc"
 	id = "org.eclipse.cdt.managedbuild.tool.bupc.linker"
@@ -292,24 +292,24 @@
    		resourceFilter="project"
    		valueType="boolean"
    		defaultValue="false">
-   		<enablement 
-            type="CONTAINER_ATTRIBUTE" 
-            attribute="defaultValue" 
+   		<enablement
+            type="CONTAINER_ATTRIBUTE"
+            attribute="defaultValue"
             value="true"
             extensionAdjustment="false">
-			<checkBuildProperty 
+			<checkBuildProperty
 				property="org.eclipse.cdt.build.core.buildType"
 				value="org.eclipse.cdt.build.core.buildType.debug"/>
 		</enablement>
    	</option>
-	<option 
+	<option
 		category = "bupc.ui.optionCategory.linker.gen"
 		id = "bupc.ui.linker.general.strip"
 		command = "-s"
 		isAbstract = "false"
 		name = "%option.linker.strip"
 		resourceFilter = "project"
-		valueType = "boolean" 
+		valueType = "boolean"
 		defaultValue="false"/>
 
    	<optionCategory
@@ -317,7 +317,7 @@
 		name="%optionCategory.linker.upc"
 		id="bupc.ui.optionCategory.linker.upc">
 	</optionCategory>
-	
+
     <option
 	  	name="%option.linker.network"
 	  	category="bupc.ui.optionCategory.linker.upc"
@@ -329,7 +329,7 @@
 				  isDefault="true"
 				  command=""
 				  id="bupc.ui.linker.upc.network.default">
-		  </enumeratedOptionValue>  	
+		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
 		  		  name="%enumeratedOptionValue.mpi"
 				  isDefault="false"
@@ -430,7 +430,7 @@
            browseType="directory"
            valueType="libPaths">
      </option>
-   		    					
+
 	<optionCategory
 		id = "bupc.ui.optionCategory.linker.advOptions"
 		name = "%optionCategory.linker.advanced"/>
@@ -450,19 +450,19 @@
 		name="%option.linker.other"
 		resourceFilter="project"
 		valueType="string"/>
-				
+
 	<inputType
-		id="cdt.managedbuild.tool.bupc.linker.input"						      					
+		id="cdt.managedbuild.tool.bupc.linker.input"
 		multipleOfType ="true"
-		dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"    					
+		dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
 		primaryInput = "true"
-		languageId="org.eclipse.cdt.core.parser.upc.upc"	
-		sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"				
+		languageId="org.eclipse.cdt.core.parser.upc.upc"
+		sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
 		sources = "o"
         buildVariable="OBJS">
-		
+
 	</inputType>
-	
+
 	<outputType
        id="cdt.managedbuild.tool.bupc.linker.output"
        name="%outputType.exe"
@@ -470,9 +470,9 @@
        buildVariable="EXECUTABLES"
        primaryInputType="cdt.managedbuild.tool.bupc.linker.input"
        primaryOutput="true"/>
-								
+
   </tool>
-      
+
   <toolChain
           archList="all"
           osList="linux,hpux,aix,qnx,solaris"
@@ -486,14 +486,14 @@
 		              osList="linux,hpux,aix,qnx,solaris"
 		              archList="all">
 	              </targetPlatform>
-		     	  
+
 		     	  <builder
 					id="org.eclipse.cdt.managedbuilder.bupc.builder.base"
 					isAbstract="false"
 					isVariableCaseSensitive="false"
 					superClass="org.eclipse.cdt.build.core.internal.builder">
 				</builder>
-		     	    
+
                   <tool
                       id="org.eclipse.cdt.managedbuild.tool.bupc.compiler.base"
                       superClass="org.eclipse.cdt.managedbuild.tool.bupc.compiler"/>
@@ -501,7 +501,7 @@
                       id="org.eclipse.cdt.managedbuild.tool.bupc.linker.base"
                       superClass="org.eclipse.cdt.managedbuild.tool.bupc.linker"/>
 	</toolChain>
-      
+
     <toolChain
           archList="all"
           osList="macosx"
@@ -515,14 +515,14 @@
 		              archList="all"
 		              binaryParser="org.eclipse.cdt.core.MachO64">
 	              </targetPlatform>
-		     	  
+
 		     	  <builder
 					id="org.eclipse.cdt.managedbuilder.bupc.builder.macosx.base"
 					isAbstract="false"
 					isVariableCaseSensitive="false"
 					superClass="org.eclipse.cdt.build.core.internal.builder">
 				</builder>
-		     	    
+
                   <tool
                       id="org.eclipse.cdt.managedbuild.tool.bupc.compiler.macosx.base"
                       superClass="org.eclipse.cdt.managedbuild.tool.bupc.compiler"/>
@@ -530,7 +530,7 @@
                       id="org.eclipse.cdt.managedbuild.tool.bupc.linker.macosx.base"
                       superClass="org.eclipse.cdt.managedbuild.tool.bupc.linker"/>
 	</toolChain>
-	
+
       <projectType
       	id = "cdt.managedbuild.target.bupc.exe"
       	buildArtefactType = "org.eclipse.cdt.build.core.buildArtefactType.exe"
@@ -544,7 +544,7 @@
       		name = "%configuration.debug.name">
       		<toolChain
       			superClass="cdt.managedbuild.toolchain.bupc.exe.base"
-      			id = "cdt.managedbuild.toolchain.bupc.exe.debug">	
+      			id = "cdt.managedbuild.toolchain.bupc.exe.debug">
       			<targetPlatform
       				superClass="cdt.managedbuild.target.bupc.platform.base"
 		        	id="cdt.managedbuild.target.bupc.platform.exe.debug">
@@ -556,13 +556,13 @@
 				<tool
                 	id="org.eclipse.cdt.managedbuild.tool.bupc.compiler.exe.debug"
                     superClass="org.eclipse.cdt.managedbuild.tool.bupc.compiler.base">
-                    
-                    <!--                      
+
+                    <!--
                     <option
 				    	id="gnu.cpp.compiler.exe.debug.option.optimization.level"
                         superClass="gnu.cpp.compiler.option.optimization.level">
                     </option>
-                    -->  
+                    -->
                     <option
 						id="bupc.ui.compiler.exe.debug.option.debug"
                         superClass="bupc.ui.compiler.general.debug">
@@ -571,14 +571,14 @@
 	              <tool
 	                  id="org.eclipse.cdt.managedbuild.tool.bupc.linker.exe.debug"
 	                  superClass="org.eclipse.cdt.managedbuild.tool.bupc.linker.base">
-	                  <!--                     
+	                  <!--
 			  	      <option
 					      id="gnu.c.compiler.exe.debug.option.optimization.level"
 						  superClass="gnu.c.compiler.option.optimization.level">
 					  </option>
 					  -->
-					  <option   
-					      id="bupc.ui.linker.exe.debug.option.debug"					     
+					  <option
+					      id="bupc.ui.linker.exe.debug.option.debug"
 					      superClass="bupc.ui.linker.general.debug">
 					  </option>
 				  </tool>
@@ -592,7 +592,7 @@
       		name = "%configuration.release.name">
       		<toolChain
       			superClass="cdt.managedbuild.toolchain.bupc.exe.base"
-      			id = "cdt.managedbuild.toolchain.bupc.exe.release">	
+      			id = "cdt.managedbuild.toolchain.bupc.exe.release">
       			<targetPlatform
       				superClass="cdt.managedbuild.target.bupc.platform.base"
 		        	id="cdt.managedbuild.target.bupc.platform.exe.release">
@@ -604,13 +604,13 @@
 				<tool
                 	id="org.eclipse.cdt.managedbuild.tool.bupc.compiler.exe.release"
                     superClass="org.eclipse.cdt.managedbuild.tool.bupc.compiler.base">
-                    
-                    <!--                      
+
+                    <!--
                     <option
 				    	id="gnu.cpp.compiler.exe.debug.option.optimization.level"
                         superClass="gnu.cpp.compiler.option.optimization.level">
                     </option>
-                    -->  
+                    -->
                     <option
 						id="bupc.ui.compiler.exe.release.option.debug"
                         superClass="bupc.ui.compiler.general.debug">
@@ -619,23 +619,23 @@
 	              <tool
 	                  id="org.eclipse.cdt.managedbuild.tool.bupc.linker.exe.release"
 	                  superClass="org.eclipse.cdt.managedbuild.tool.bupc.linker.base">
-	                  <!--                     
+	                  <!--
 			  	      <option
 					      id="gnu.c.compiler.exe.debug.option.optimization.level"
 						  superClass="gnu.c.compiler.option.optimization.level">
 					  </option>
 					  -->
-					  <option   
-					      id="bupc.ui.linker.exe.release.option.debug"					     
+					  <option
+					      id="bupc.ui.linker.exe.release.option.debug"
 					      superClass="bupc.ui.linker.general.debug">
 					  </option>
 				  </tool>
       	</toolChain>
       </configuration>
      </projectType>
-     
+
      <!-- =================== -->
- 
+
      <projectType
       	id = "cdt.managedbuild.target.bupc.macosx.exe"
       	buildArtefactType = "org.eclipse.cdt.build.core.buildArtefactType.exe"
@@ -649,7 +649,7 @@
       		name = "%configuration.debug.name">
       		<toolChain
       			superClass="cdt.managedbuild.toolchain.bupc.macosx.exe.base"
-      			id = "cdt.managedbuild.toolchain.bupc.exe.macosx.debug">	
+      			id = "cdt.managedbuild.toolchain.bupc.exe.macosx.debug">
       			<targetPlatform
       				superClass="cdt.managedbuild.target.bupc.platform.macosx.base"
 		        	id="cdt.managedbuild.target.bupc.platform.exe.macosx.debug">
@@ -661,12 +661,12 @@
 				<tool
                 	id="org.eclipse.cdt.managedbuild.tool.bupc.compiler.exe.macosx.debug"
                     superClass="org.eclipse.cdt.managedbuild.tool.bupc.compiler.macosx.base">
-                    <!--                      
+                    <!--
                     <option
 				    	id="gnu.cpp.compiler.exe.debug.option.optimization.level"
                         superClass="gnu.cpp.compiler.option.optimization.level">
                     </option>
-                    -->  
+                    -->
                     <option
 						id="bupc.ui.compiler.exe.macosx.debug.option.debug"
                         superClass="bupc.ui.compiler.general.debug">
@@ -675,14 +675,14 @@
 	              <tool
 	                  id="org.eclipse.cdt.managedbuild.tool.bupc.linker.exe.macosx.debug"
 	                  superClass="org.eclipse.cdt.managedbuild.tool.bupc.linker.macosx.base">
-	                  <!--                     
+	                  <!--
 			  	      <option
 					      id="gnu.c.compiler.exe.debug.option.optimization.level"
 						  superClass="gnu.c.compiler.option.optimization.level">
 					  </option>
 					  -->
-					  <option   
-					      id="bupc.ui.linker.exe.macosx.debug.option.debug"					     
+					  <option
+					      id="bupc.ui.linker.exe.macosx.debug.option.debug"
 					      superClass="bupc.ui.linker.general.debug">
 					  </option>
 				  </tool>
@@ -696,7 +696,7 @@
       		name = "%configuration.release.name">
       		<toolChain
       			superClass="cdt.managedbuild.toolchain.bupc.macosx.exe.base"
-      			id = "cdt.managedbuild.toolchain.bupc.exe.macosx.release">	
+      			id = "cdt.managedbuild.toolchain.bupc.exe.macosx.release">
       			<targetPlatform
       				superClass="cdt.managedbuild.target.bupc.platform.macosx.base"
 		        	id="cdt.managedbuild.target.bupc.platform.exe.macosx.release">
@@ -708,13 +708,13 @@
 				<tool
                 	id="org.eclipse.cdt.managedbuild.tool.bupc.compiler.exe.macosx.release"
                     superClass="org.eclipse.cdt.managedbuild.tool.bupc.compiler.macosx.base">
-                    
-                    <!--                      
+
+                    <!--
                     <option
 				    	id="gnu.cpp.compiler.exe.debug.option.optimization.level"
                         superClass="gnu.cpp.compiler.option.optimization.level">
                     </option>
-                    -->  
+                    -->
                     <option
 						id="bupc.ui.compiler.exe.macosx.release.option.debug"
                         superClass="bupc.ui.compiler.general.debug">
@@ -723,20 +723,20 @@
 	              <tool
 	                  id="org.eclipse.cdt.managedbuild.tool.bupc.linker.exe.macosx.release"
 	                  superClass="org.eclipse.cdt.managedbuild.tool.bupc.linker.macosx.base">
-	                  <!--                     
+	                  <!--
 			  	      <option
 					      id="gnu.c.compiler.exe.debug.option.optimization.level"
 						  superClass="gnu.c.compiler.option.optimization.level">
 					  </option>
 					  -->
-					  <option   
-					      id="bupc.ui.linker.exe.macosx.release.option.debug"	     
+					  <option
+					      id="bupc.ui.linker.exe.macosx.release.option.debug"
 					      superClass="bupc.ui.linker.general.debug">
 					  </option>
 				  </tool>
       	</toolChain>
       </configuration>
      </projectType>
-     
+
 </extension>
 </plugin>

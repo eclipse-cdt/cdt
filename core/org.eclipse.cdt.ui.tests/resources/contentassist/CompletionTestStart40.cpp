@@ -2,6 +2,6 @@
 
 int var;
 
- x 
- 
+ x
+
 // end

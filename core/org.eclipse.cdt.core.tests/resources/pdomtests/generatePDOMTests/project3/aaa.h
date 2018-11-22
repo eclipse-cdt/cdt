@@ -9,4 +9,3 @@ struct S {
    int d;
 };
 
-   

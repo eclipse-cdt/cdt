@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <delayimp.h>
 #include <assert.h>
- 
+
 #pragma comment(lib, "delayimp")
 
 BOOL APIENTRY DllMain( HMODULE hModule,

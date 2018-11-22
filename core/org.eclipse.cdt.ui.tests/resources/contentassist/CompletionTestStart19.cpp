@@ -1,5 +1,5 @@
 #include "CompletionTestStart.h"
 
 class ClassA {
-  void foo (        
+  void foo (
 };

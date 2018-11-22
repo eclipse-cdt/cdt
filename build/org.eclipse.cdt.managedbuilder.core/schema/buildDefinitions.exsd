@@ -31,21 +31,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -158,11 +158,11 @@ property type-value pairs are specified in the type_id=value_id format.
          <attribute name="buildArtefactType" type="string">
             <annotation>
                <documentation>
-                  the attribute specified the Build Artefact Type. can contain the value id of the &quot;org.eclipse.cdt.build.core.buildArtefactType&quot; build property. Default values contributed with the build system are 
+                  the attribute specified the Build Artefact Type. can contain the value id of the &quot;org.eclipse.cdt.build.core.buildArtefactType&quot; build property. Default values contributed with the build system are
 &quot;org.eclipse.cdt.build.core.buildArtefactType.exe&quot; - represents executable,
 &quot;org.eclipse.cdt.build.core.buildArtefactType.staticLib&quot; - represents static library,
 &quot;org.eclipse.cdt.build.core.buildArtefactType.sharedLib&quot; - represents dynamic library
-Custom values can be contributed via the &quot;org.eclipse.cdt.managedbuilder.core.buildProperties&quot; extension point. See the description of that extension point for more detail. 
+Custom values can be contributed via the &quot;org.eclipse.cdt.managedbuilder.core.buildProperties&quot; extension point. See the description of that extension point for more detail.
 
 Specifying this attribute is fully equivalent to specifying the &quot;org.eclipse.cdt.build.core.buildArtefactType&quot; via tne buildProperties attribute. The buildArtefactType attribute, the &quot;buildArtefactType&quot; attribute value takes precedence over the artefact type specified via the &quot;buildProperties&quot; attribute
                </documentation>
@@ -331,11 +331,11 @@ property type-value pairs are specified in the type_id=value_id format.
          <attribute name="buildArtefactType" type="string">
             <annotation>
                <documentation>
-                  the attribute specified the Build Artefact Type. can contain the value id of the &quot;org.eclipse.cdt.build.core.buildArtefactType&quot; build property. Default values contributed with the build system are 
+                  the attribute specified the Build Artefact Type. can contain the value id of the &quot;org.eclipse.cdt.build.core.buildArtefactType&quot; build property. Default values contributed with the build system are
 &quot;org.eclipse.cdt.build.core.buildArtefactType.exe&quot; - represents executable,
 &quot;org.eclipse.cdt.build.core.buildArtefactType.staticLib&quot; - represents static library,
 &quot;org.eclipse.cdt.build.core.buildArtefactType.sharedLib&quot; - represents dynamic library
-Custom values can be contributed via the &quot;org.eclipse.cdt.managedbuilder.core.buildProperties&quot; extension point. See the description of that extension point for more detail. 
+Custom values can be contributed via the &quot;org.eclipse.cdt.managedbuilder.core.buildProperties&quot; extension point. See the description of that extension point for more detail.
 
 Specifying this attribute is fully equivalent to specifying the &quot;org.eclipse.cdt.build.core.buildArtefactType&quot; via tne buildProperties attribute. The buildArtefactType attribute, the &quot;buildArtefactType&quot; attribute value takes precedence over the artefact type specified via the &quot;buildProperties&quot; attribute
                </documentation>
@@ -1645,14 +1645,14 @@ If no order is defined a default order is assumed, see &quot;org.eclipse.cdt.man
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
@@ -1775,7 +1775,7 @@ If the attribute is not specified or contains the empty string, this would mean 
          <attribute name="reservedMacroNames" type="string">
             <annotation>
                <documentation>
-                  Comma-separated list of reserved macro names. The macro name could contain either the exact name or the java regular expression. The latter could be used to supply the pattern of variable names that are generated by MBS in case the &quot;buildVariable&quot; attribute of the &quot;InputType&quot; element is not specified, etc. 
+                  Comma-separated list of reserved macro names. The macro name could contain either the exact name or the java regular expression. The latter could be used to supply the pattern of variable names that are generated by MBS in case the &quot;buildVariable&quot; attribute of the &quot;InputType&quot; element is not specified, etc.
 If this attribute is specified and the reservedMacroNameSupplier is not specified, the following macro names will be treated as reserved:
 1. a macro name that is equal to one of the names specified in the reservedMacroNames value
 2. a macro name that matches one of the regexp patterns specified in the reservedMacroNames value

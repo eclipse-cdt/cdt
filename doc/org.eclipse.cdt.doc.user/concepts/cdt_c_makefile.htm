@@ -17,7 +17,7 @@
 <h2>Sample Makefile</h2>
 <pre>
 # A sample Makefile
-# This Makefile demonstrates and explains 
+# This Makefile demonstrates and explains
 # Make Macros, Macro Expansions,
 # Rules, Targets, Dependencies, Commands, Goals
 # Artificial Targets, Pattern Rule, Dependency Rule.
@@ -48,14 +48,14 @@ REBUILDABLES = $(OBJS) $(LINK_TARGET)
 # no Dependencies (right of the colon),
 # and two Commands (indented by tabs on the lines that follow).
 # The space before the colon is not required but added here for clarity.
-clean : 
+clean :
  rm -f $(REBUILDABLES)
  echo Clean done
 
 # There are two standard Targets your Makefile should probably have:
 # "all" and "clean", because they are often command-line Goals.
 # Also, these are both typically Artificial Targets, because they don't typically
-# correspond to real files named "all" or "clean".  
+# correspond to real files named "all" or "clean".
 
 # The rule for "all" is used to incrementally build your system.
 # It does this by expressing a dependency on the results of that system,
@@ -114,34 +114,34 @@ You can also change the build command to something that is on your path. If you 
 
 <p><strong>Q2. My Console view says <span class="typewriter"><Q>No rule to make target 'X'</Q></span>.</strong></p>
 <pre>
-make -k clean all 
+make -k clean all
 make: *** No rule to make target 'clean'.
 make: *** No rule to make target 'all'.
 </pre>
 
-<p>By default, the make program looks for a file most commonly called "Makefile" or "makefile".  
-If it cannot find such a file in the working directory, or if that file is empty or the file does not 
-contain rules for the command line goals ("clean" and "all" in this case), it will normally fail 
+<p>By default, the make program looks for a file most commonly called "Makefile" or "makefile".
+If it cannot find such a file in the working directory, or if that file is empty or the file does not
+contain rules for the command line goals ("clean" and "all" in this case), it will normally fail
 with an error message similar to those shown.  </p>
 
-<p>If you already have a valid Makefile, you may need to change the working directory of your build.  The default working directory for the build command is the project's root directory.  You can change this by specifying an alternate Build Directory in the Make Project properties.  
+<p>If you already have a valid Makefile, you may need to change the working directory of your build.  The default working directory for the build command is the project's root directory.  You can change this by specifying an alternate Build Directory in the Make Project properties.
 Or, if your Makefile is named something else (eg. <span class="typewriter">buildFile.mk</span>), you can specify the name by setting the default Build command to <span class="typewriter">make -f  buildFile.mk</span>.</p>
 
 <p>If you do not have a valid Makefile, create a new file named Makefile in the root directory.  You can then add the contents of the sample Makefile (above), and modify it as appropriate.</p>
 
 <p><strong>Q3. My Console view says <span class="typewriter">"missing separator"</span>.</strong></p>
 <pre>
-make -k clean all 
+make -k clean all
 makefile:12: *** missing separator.  Stop.
 </pre>
-<p>The standard syntax of Makefiles dictates that every line in a build rule must be preceded by a Tab character.  
-This Tab character is often accidentally replaced with spaces, and because both result in white-space indentation, 
-this problem is easily overlooked.  In the sample provided, the error message can be pinpointed to line 12 of the 
+<p>The standard syntax of Makefiles dictates that every line in a build rule must be preceded by a Tab character.
+This Tab character is often accidentally replaced with spaces, and because both result in white-space indentation,
+this problem is easily overlooked.  In the sample provided, the error message can be pinpointed to line 12 of the
 file "makefile"; to fix the problem, insert a tab at the beginning of that line.</p>
 
 <p><strong>Q4. My Console view says <span class="typewriter"><Q>Target 'all' not remade because of errors</Q></span>.</strong></p>
 <pre>
-make -k clean all 
+make -k clean all
 make: *** [clean] Error 255
 rm -f Test1.o Test2.o Main.o test_me.exe
 g++ -g -o Test1.o -c Test1.cpp
@@ -164,7 +164,7 @@ This is helpful for build large projects.</p>
 
 <p><strong>Q6. My Console view looks like:</strong></p>
 <pre>
-mingw32-make clean all 
+mingw32-make clean all
 process_begin: CreateProcess((null), rm -f Test1.o Test2.o Main.o test_me.exe, ...) failed.
 make (e=2): The system cannot find the file specified.
 
@@ -174,7 +174,7 @@ rm -f Test1.o Test2.o Main.o test_me.exe
 
 <p>This means that mingw32-make was unable to find the utility "rm".  Unfortunately, MinGW does not come with "rm".  To correct this, replace the clean rule in your Makefile with:</p>
 <p><pre>
-clean : 
+clean :
 	-del $(REBUILDABLES)
 	echo Clean done
 </pre></p>

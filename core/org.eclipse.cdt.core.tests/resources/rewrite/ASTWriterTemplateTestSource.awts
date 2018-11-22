@@ -4,7 +4,7 @@ T* p1 = p->template alloc<100>();
 
 //![temp.names] examples abschnitt 4/2, didn't work cause of Bug# 164482
 //%CPP
-template<class T> 
+template<class T>
 void f(T* p)
 {
     T::template adjust<100>();
@@ -20,7 +20,7 @@ Alias<int> sInt;
 
 //!Variadic Function Template
 //%CPP
-template<typename T, typename... Args> 
+template<typename T, typename... Args>
 void f(T t, Args... args)
 {
     f(args...);
@@ -68,56 +68,56 @@ int f()
 
 //!Type Template Parameter with class
 //%CPP
-template<class > 
+template<class >
 void f()
 {
 }
 
 //!Type Template Parameter with typename
 //%CPP
-template<typename > 
+template<typename >
 void f()
 {
 }
 
 //!Variadic Type Template Parameter with class
 //%CPP
-template<class... > 
+template<class... >
 void f()
 {
 }
 
 //!Variadic Type Template Parameter with typename
 //%CPP
-template<typename... > 
+template<typename... >
 void f()
 {
 }
 
 //!Template-template Template Parameter with class
 //%CPP
-template<template <typename > class > 
+template<template <typename > class >
 void f()
 {
 }
 
 //!Template-template Template Parameter with typename
 //%CPP
-template<template <typename > typename > 
+template<template <typename > typename >
 void f()
 {
 }
 
 //!Variadic Template-template Template Parameter with class
 //%CPP
-template<template <typename > class... > 
+template<template <typename > class... >
 void f()
 {
 }
 
 //!Variadic Template-template Template Parameter with typename
 //%CPP
-template<template <typename > typename... > 
+template<template <typename > typename... >
 void f()
 {
 }

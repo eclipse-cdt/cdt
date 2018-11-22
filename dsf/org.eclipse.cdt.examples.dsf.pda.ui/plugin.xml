@@ -74,7 +74,7 @@
 	   </extension>
 
 	<extension
-         point="org.eclipse.ui.popupMenus">           
+         point="org.eclipse.ui.popupMenus">
       <viewerContribution
             targetID="org.eclipse.cdt.examples.dsf.pda.editor.rulerMenu"
             id="org.eclipse.cdt.examples.dsf.pda.editor.rulerActions">
@@ -95,7 +95,7 @@
                id="org.eclipse.cdt.examples.dsf.pda.editor.context.runToLineAction"/>
       </viewerContribution>
    </extension>
-   
+
    <extension
          point="org.eclipse.core.runtime.adapters">
       <factory

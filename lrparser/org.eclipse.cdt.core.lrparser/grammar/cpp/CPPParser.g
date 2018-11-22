@@ -16,7 +16,7 @@
 %options template=LRParserTemplate.g
 
 
--- This file is needed because LPG won't allow redefinition of the 
+-- This file is needed because LPG won't allow redefinition of the
 -- start symbol, so CPPGrammar.g cannot define a start symbol.
 
 $Import

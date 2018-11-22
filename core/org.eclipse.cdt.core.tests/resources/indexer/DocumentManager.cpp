@@ -21,5 +21,5 @@ void CDocumentManager::getControl(ULONG threadID, IUnknown ** theControl)
 		theControl = &_controlMap[threadID];
 	}
 
-	
+
 }

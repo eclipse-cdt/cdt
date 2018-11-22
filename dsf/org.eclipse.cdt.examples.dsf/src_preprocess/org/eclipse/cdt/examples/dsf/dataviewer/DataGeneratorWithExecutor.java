@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -53,7 +53,7 @@ import org.eclipse.cdt.examples.dsf.DsfExamplesPlugin;
  * </p>
  */
 //#ifdef exercises
-//TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+//TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 //indicating allowed thread access to this class/method/member
 //#else
 //#@ThreadSafe
@@ -70,10 +70,10 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     //#endif
     abstract class Request {
         final RequestMonitor fRequestMonitor;
-        
+
         Request(RequestMonitor rm) {
             fRequestMonitor = rm;
-            
+
             rm.addCancelListener(new RequestMonitor.ICanceledListener() {
                 @Override
 				public void requestCanceled(RequestMonitor rm) {
@@ -87,49 +87,49 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
             });
         }
     }
-    
+
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @Immutable
     //#endif
     class CountRequest extends Request {
-        CountRequest(DataRequestMonitor<Integer> rm) { 
-            super(rm); 
+        CountRequest(DataRequestMonitor<Integer> rm) {
+            super(rm);
         }
-    } 
+    }
 
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @Immutable
     //#endif
     class ItemRequest extends Request {
         final int fIndex;
-        ItemRequest(int index, DataRequestMonitor<Integer> rm) { 
+        ItemRequest(int index, DataRequestMonitor<Integer> rm) {
             super(rm);
-            fIndex = index; 
+            fIndex = index;
         }
-    } 
+    }
 
     // The executor used to access all internal data of the generator.
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     // Hint: If a member does not have an annotation, the programmer can assume
     // that the concurrency rule that applies to the class also applies to this
     // member.
     //#endif
     private DsfExecutor fExecutor;
-    
-    // Main request queue of the data generator.  The getValue(), getCount(), 
+
+    // Main request queue of the data generator.  The getValue(), getCount(),
     // and shutdown() methods write into the queue, while the serviceQueue()
     // method reads from it.
     // The executor used to access all internal data of the generator.
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
@@ -139,7 +139,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     // List of listeners is not synchronized, it also has to be accessed
     // using the executor.
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
@@ -148,38 +148,38 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 
     // Current number of elements in this generator.
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
     private int fCount = MIN_COUNT;
-    
+
     // Counter used to determine when to reset the element count.
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
     private int fCountResetTrigger = 0;
-    
+
     // Elements which were modified since the last reset.
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
-    private Map<Integer, Integer> fChangedValues = 
+    private Map<Integer, Integer> fChangedValues =
         new HashMap<Integer, Integer>();
-    
+
     public DataGeneratorWithExecutor() {
         // Create the executor
         this(new DefaultDsfExecutor("Supplier Executor"));
     }
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#endif
     public DataGeneratorWithExecutor(DsfExecutor executor) {
@@ -194,13 +194,13 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
                     randomChanges();
                 }
             },
-            rand.nextInt(RANDOM_CHANGE_INTERVAL), 
-            RANDOM_CHANGE_INTERVAL, //Add a 10% variance to the interval. 
+            rand.nextInt(RANDOM_CHANGE_INTERVAL),
+            RANDOM_CHANGE_INTERVAL, //Add a 10% variance to the interval.
             TimeUnit.MILLISECONDS);
     }
-     
+
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#endif
     @Override
@@ -212,26 +212,26 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
                     // Empty the queue of requests and fail them.
                     for (Request request : fQueue) {
                         request.fRequestMonitor.setStatus(new Status(
-                            IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
+                            IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID,
                             "Supplier shut down"));
                         request.fRequestMonitor.done();
                     }
                     fQueue.clear();
-                    
+
                     // Kill executor.
                     fExecutor.shutdown();
                     rm.done();
                 }
             });
         } catch (RejectedExecutionException e) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
+            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID,
                 "Supplier shut down"));
             rm.done();
         }
     }
 
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#endif
     @Override
@@ -246,18 +246,18 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
             });
         } catch (RejectedExecutionException e) {
             rm.setStatus(new Status(
-                IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
+                IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID,
                 "Supplier shut down"));
             rm.done();
         }
     }
-    
+
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#endif
     @Override
-	public void getValue(final int index, final DataRequestMonitor<Integer> rm) { 
+	public void getValue(final int index, final DataRequestMonitor<Integer> rm) {
         try {
             fExecutor.execute( new DsfRunnable() {
                 @Override
@@ -267,14 +267,14 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
                 }
             });
         } catch (RejectedExecutionException e) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
+            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID,
                 "Supplier shut down"));
             rm.done();
         }
-    } 
+    }
 
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#endif
     @Override
@@ -290,7 +290,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     }
 
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#endif
     @Override
@@ -307,7 +307,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 
     // Main processing function of this generator.
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
@@ -319,8 +319,8 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 				public void run() {
                     doServiceQueue();
                 }
-            }, 
-            PROCESSING_DELAY, TimeUnit.MILLISECONDS);        
+            },
+            PROCESSING_DELAY, TimeUnit.MILLISECONDS);
     }
 
     //#ifdef exercises
@@ -332,9 +332,9 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     private void doServiceQueue() {
         //#ifdef exercises
         // TODO Exercise 3 - Add logic to discard cancelled requests from queue.
-        // Hint: Since serviceQueue() is called using the executor, and the 
-        // fQueue list can only be modified when running in the executor 
-        // thread.  This method can safely iterate and modify fQueue without 
+        // Hint: Since serviceQueue() is called using the executor, and the
+        // fQueue list can only be modified when running in the executor
+        // thread.  This method can safely iterate and modify fQueue without
         // risk of race conditions or concurrent modification exceptions.
         //#else
 //#        for (Iterator<Request> requestItr = fQueue.iterator(); requestItr.hasNext();) {
@@ -347,9 +347,9 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 //#            }
 //#        }
         //#endif
-        
+
         while (fQueue.size() != 0) {
-            // If there are requests to service, remove one from the queue and 
+            // If there are requests to service, remove one from the queue and
             // schedule a runnable to process the request after a processing
             // delay.
             Request request = fQueue.remove(0);
@@ -357,55 +357,55 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
                 processCountRequest((CountRequest)request);
             } else if (request instanceof ItemRequest) {
                 processItemRequest((ItemRequest)request);
-            } 
+            }
         }
     }
-    
+
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
     private void processCountRequest(CountRequest request) {
         @SuppressWarnings("unchecked") // Suppress warning about lost type info.
-        DataRequestMonitor<Integer> rm = 
+        DataRequestMonitor<Integer> rm =
         (DataRequestMonitor<Integer>)request.fRequestMonitor;
-        
+
         rm.setData(fCount);
         rm.done();
     }
 
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
     private void processItemRequest(ItemRequest request) {
         @SuppressWarnings("unchecked") // Suppress warning about lost type info.
-        DataRequestMonitor<Integer> rm = 
-        (DataRequestMonitor<Integer>)request.fRequestMonitor; 
+        DataRequestMonitor<Integer> rm =
+        (DataRequestMonitor<Integer>)request.fRequestMonitor;
 
         if (fChangedValues.containsKey(request.fIndex)) {
             rm.setData(fChangedValues.get(request.fIndex));
         } else {
-            rm.setData(request.fIndex); 
+            rm.setData(request.fIndex);
         }
         rm.done();
-    } 
- 
+    }
+
     /**
      * This method simulates changes in the supplier's data set.
      */
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
     private void randomChanges() {
-        // Once every number of changes, reset the count, the rest of the 
+        // Once every number of changes, reset the count, the rest of the
         // times just change certain values.
         if (++fCountResetTrigger % RANDOM_COUNT_CHANGE_INTERVALS == 0){
             randomCountReset();
@@ -413,12 +413,12 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
             randomDataChange();
         }
     }
-     
+
     /**
      * Calculates new size for provider's data set.
      */
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
@@ -430,18 +430,18 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 
         // Reset the changed values.
         fChangedValues.clear();
-        
-        // Notify listeners  
+
+        // Notify listeners
         for (Listener listener : fListeners) {
             listener.countChanged();
         }
     }
-     
+
     /**
      * Invalidates a random range of indexes.
      */
     //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
     // indicating allowed thread access to this class/method/member
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
@@ -454,15 +454,15 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
             int randomIndex = random.nextInt(fCount);
             int randomValue = random.nextInt(fCount);
             changed.put(randomIndex, randomValue);
-        }                
+        }
 
         // Add the indexes to an overall set of changed indexes.
         fChangedValues.putAll(changed);
-        
-        // Notify listeners  
+
+        // Notify listeners
         for (Object listener : fListeners) {
             ((Listener)listener).valuesChanged(changed.keySet());
         }
-    }    
+    }
 }
 

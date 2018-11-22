@@ -8,4 +8,4 @@ static int x;
 int y;
 };
 
-Foo::      
+Foo::

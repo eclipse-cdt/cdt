@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -27,19 +27,19 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 
 /**
- * A data generator which performs a sum computation on data retrieved from a 
- * number of other data generators.  The data retrieval from other generators 
- * is performed in parallel and the result is calculated once all data is 
- * received.  
+ * A data generator which performs a sum computation on data retrieved from a
+ * number of other data generators.  The data retrieval from other generators
+ * is performed in parallel and the result is calculated once all data is
+ * received.
  * <p>
- * This calculating generator does not listen to events from the data 
+ * This calculating generator does not listen to events from the data
  * providers so it relies on the client to re-retrieve data as needed.
- * </p>  
+ * </p>
  */
 public class AsyncSumDataGenerator implements IDataGenerator {
 
     /**
-     * DSF executor used to serialize data access within this data generator. 
+     * DSF executor used to serialize data access within this data generator.
      */
     final private DsfExecutor fExecutor;
 
@@ -48,13 +48,13 @@ public class AsyncSumDataGenerator implements IDataGenerator {
      */
     final private IDataGenerator[] fDataGenerators;
 
-    public AsyncSumDataGenerator(DsfExecutor executor, 
-        IDataGenerator[] generators) 
+    public AsyncSumDataGenerator(DsfExecutor executor,
+        IDataGenerator[] generators)
     {
         fExecutor = executor;
         fDataGenerators = generators;
-    }    
-    
+    }
+
     @Override
 	public void getCount(final DataRequestMonitor<Integer> rm) {
         // Artificially delay the retrieval of the sum data to simulate
@@ -64,10 +64,10 @@ public class AsyncSumDataGenerator implements IDataGenerator {
 				public void run() {
                     doGetCount(rm);
                 }
-            }, 
-            PROCESSING_DELAY, TimeUnit.MILLISECONDS); 
+            },
+            PROCESSING_DELAY, TimeUnit.MILLISECONDS);
     }
-    
+
     /**
      * Performs the actual count retrieval and calculation.
      * @param rm Request monitor to complete with data.
@@ -75,10 +75,10 @@ public class AsyncSumDataGenerator implements IDataGenerator {
     private void doGetCount(final DataRequestMonitor<Integer> rm) {
         // Array to store counts retrieved asynchronously
         final int[] counts = new int[fDataGenerators.length];
-        
+
         // Counting request monitor is called once all data is retrieved.
         final CountingRequestMonitor crm =
-            new CountingRequestMonitor(fExecutor, rm) 
+            new CountingRequestMonitor(fExecutor, rm)
         {
             @Override
             protected void handleSuccess() {
@@ -89,26 +89,26 @@ public class AsyncSumDataGenerator implements IDataGenerator {
                 rm.done();
             };
         };
-        
+
         // Each call to data generator fills in one value in array.
         for (int i = 0; i < fDataGenerators.length; i++) {
             final int finalI = i;
-            fDataGenerators[i].getCount( 
+            fDataGenerators[i].getCount(
                 new DataRequestMonitor<Integer>(
-                    ImmediateExecutor.getInstance(), crm) 
+                    ImmediateExecutor.getInstance(), crm)
                 {
                     @Override
                     protected void handleSuccess() {
                         counts[finalI] = getData();
                         crm.done();
                     }
-                }); 
-        }        
+                });
+        }
         crm.setDoneCount(fDataGenerators.length);
     }
 
     @Override
-	public void getValue(final int index, final DataRequestMonitor<Integer> rm) 
+	public void getValue(final int index, final DataRequestMonitor<Integer> rm)
     {
         // Artificially delay the retrieval of the sum data to simulate
         // real processing time.
@@ -117,10 +117,10 @@ public class AsyncSumDataGenerator implements IDataGenerator {
 				public void run() {
                     doGetValue(index, rm);
                 }
-            }, 
-            PROCESSING_DELAY, TimeUnit.MILLISECONDS); 
+            },
+            PROCESSING_DELAY, TimeUnit.MILLISECONDS);
     }
-    
+
     /**
      * Performs the actual value retrieval and calculation.
      * @param rm Request monitor to complete with data.
@@ -128,10 +128,10 @@ public class AsyncSumDataGenerator implements IDataGenerator {
     private void doGetValue(int index, final DataRequestMonitor<Integer> rm) {
         // Array to store counts retrieved asynchronously
         final int[] values = new int[fDataGenerators.length];
-        
+
         // Counting request monitor is called once all data is retrieved.
-        final CountingRequestMonitor crm = 
-            new CountingRequestMonitor(fExecutor, rm) 
+        final CountingRequestMonitor crm =
+            new CountingRequestMonitor(fExecutor, rm)
         {
             @Override
             protected void handleSuccess() {
@@ -144,22 +144,22 @@ public class AsyncSumDataGenerator implements IDataGenerator {
                 rm.done();
             };
         };
-        
+
         // Each call to data generator fills in one value in array.
         for (int i = 0; i < fDataGenerators.length; i++) {
             final int finalI = i;
             fDataGenerators[i].getValue(
-                index, 
+                index,
                 new DataRequestMonitor<Integer>(
-                    ImmediateExecutor.getInstance(), crm) 
+                    ImmediateExecutor.getInstance(), crm)
                 {
                     @Override
                     protected void handleSuccess() {
-                        values[finalI] = getData();  
+                        values[finalI] = getData();
                         crm.done();
                     }
-                }); 
-        }        
+                });
+        }
         crm.setDoneCount(fDataGenerators.length);
     }
 

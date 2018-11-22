@@ -24,7 +24,7 @@
 	    <pde.convertSchemaToHTML manifest="../../build/org.eclipse.cdt.managedbuilder.ui/plugin.xml" destination="${dest}" />
 	    <record name="${basedir}/cdtconvert.txt" action="stop"/>
 	</target>
-	
+
 	<target name="examplesDocCopy" >
 		 <copy todir="samples">
 	    	<fileset dir="..">
@@ -32,32 +32,32 @@
 		    </fileset>
 		  </copy>
 	</target>
-	
+
 	<target name="getJavadocPath">
 		<available file="${java.home}/../bin/javadoc.exe" property="javadoc" value="${java.home}/../bin/javadoc.exe"/>
 		<available file="${java.home}/../bin/javadoc" property="javadoc" value="${java.home}/../bin/javadoc" />
 	</target>
-	
+
 	<target name="generateJavadoc" depends="getJavadocPath" if="javadoc">
-	
+
 		<condition property="optionsFile" value="cdtOptions">
 		      <os family="unix" />
 	    </condition>
 	    <condition property="optionsFile" value="cdtOptions.txt">
 		      <os family="windows" />
 	    </condition>
-	
+
 		<replace file="${basedir}/${optionsFile}" token="@rt@" value="${bootclasspath}" />
-	
+
 		<!--scrub isv plugin directories of any preexisting api doc content-->
 		<delete dir="reference/api"/>
 		<mkdir dir="reference/api"/>
-	
+
 		<exec dir="." executable="${javadoc}" output="doc.bin.log">
 			<arg line="@${basedir}/${optionsFile} -J-Xmx500M" />
 		</exec>
 	</target>
-	
+
 	<target name="createDocZip">
 		<zip zipfile="${basedir}/doc.zip"
 			basedir="${basedir}"

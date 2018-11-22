@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?> 
+<?xml version="1.0" encoding="UTF-8" ?>
 <cheatsheet title="Simple C++ Application">
 
-	<intro 
+	<intro
 		href="/org.eclipse.ui.cheatsheets.doc/tasks/tcheatst.htm">
 		<description>
 Welcome to the Hello, World Java tutorial.
@@ -38,15 +38,15 @@ If you already have a java project in your workspace that you would like to use,
 </item>
 
 	<item
-		href="/org.eclipse.jdt.doc.user/gettingStarted/qs-9.htm" 
+		href="/org.eclipse.jdt.doc.user/gettingStarted/qs-9.htm"
 		title="Create your HelloWorld class">
 		<action
 			pluginId="org.eclipse.jdt.ui"
 			class="org.eclipse.jdt.internal.ui.wizards.OpenClassWizardAction"/>
 		<description>
 You should now have a Java Project in your workspace.
-The next step in building your hello world application is to create your HelloWorld class.  You may do this by either pressing the "click to perform" button below to launch the New Java Class wizard, or you may use the Eclipse tools to do it, by using the File-&gt;New-&gt;Class action.  
-When you use the wizard, make sure that you specify that you would like to have a "main" method added. Name your class "HelloWorld".  If you use the button below it will be pre-filled for you. 
+The next step in building your hello world application is to create your HelloWorld class.  You may do this by either pressing the "click to perform" button below to launch the New Java Class wizard, or you may use the Eclipse tools to do it, by using the File-&gt;New-&gt;Class action.
+When you use the wizard, make sure that you specify that you would like to have a "main" method added. Name your class "HelloWorld".  If you use the button below it will be pre-filled for you.
 If you do not use the "click to perform" button below, press the "click when done" button to advance to the next step in building your hello world app.
 		</description>
 </item>
@@ -65,7 +65,7 @@ In the "public static void main" method, add the following statement:  System.ou
 		title="Test your application">
 		<description>
 The final moment has arrived!  You are ready to test your HelloWorld class.
-Select your class in the package explorer (the java tree view on the left of the workbench window in the Java Perspective.).  When your HelloWorld class is selected, press the down arrow beside the running man icon in the toolbar and select Run As-&gt;application.  Hello world! should be printed in your "Console" view.  
+Select your class in the package explorer (the java tree view on the left of the workbench window in the Java Perspective.).  When your HelloWorld class is selected, press the down arrow beside the running man icon in the toolbar and select Run As-&gt;application.  Hello world! should be printed in your "Console" view.
 Congratulations!  You have built your hello world application and it worked!
 		</description>
 </item>

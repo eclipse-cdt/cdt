@@ -1,4 +1,4 @@
 #include "CompletionTestStart.h"
 
-class ClassA : public a 
- 
+class ClassA : public a
+

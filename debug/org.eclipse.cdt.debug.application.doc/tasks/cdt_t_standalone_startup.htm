@@ -43,8 +43,8 @@ you to enter the required information.</p>
 the executable will be used in conjunction with the core file specified by the -c option.  If the -c option is
 not used, then any additional arguments on the command line will be passed to the <strong>main</strong> method
 of the C/C++ application when it is debugged.  If you do not specify any of the -a, -c, or -e options (e.g. starting up the Stand-alone Debugger
-with no arguments), the last valid executable used invoking the debugger (if this isn't the first invocation) 
-will be offered to you via a dialog, which includes the original program arguments and build log.  
+with no arguments), the last valid executable used invoking the debugger (if this isn't the first invocation)
+will be offered to you via a dialog, which includes the original program arguments and build log.
 You then have the choice of simply hitting the OK button to debug the last executable again or to change the arguments
 as desired.  If the executable location you specify is invalid or no executable is specified and no previous executable exists,
 a dialog will be brought up to allow you to enter the required information.  The dialog will be appropriate to whether
@@ -54,14 +54,14 @@ you have selected to debug a core file (-c specified) or not.</p>
 <p>This option specified a hostname or IP address and and IP port to connect to to perform remote debugging.
 The gdbserver must be running on the target and waiting for a connection on the specified port.
 This option can be used at the same time as the -a option.  In such a case
-a Remote-Attach session will be started allowing the user to attach to  
+a Remote-Attach session will be started allowing the user to attach to
 different processes on the remote target.  The user will need to press
 the 'connect' button or use the context-menu of the Debug view to choose one or more processes
 to attach to. In this case the -e flag is optional, and when not specified,
 a dialog will be used instead to prompt for the binary's location.
 This option, when used without -a, will trigger a manual Remote debugging session towards
 a single, pre-selected binary and therefore requires the use of the -e option
-to specify the location of the binary on the local machine that matches the one on the 
+to specify the location of the binary on the local machine that matches the one on the
 remote target.</p>
 
 
@@ -74,7 +74,7 @@ C/C++ project within the Workspace.  An Eclipse project is a virtual container o
 nature.  Folders and files may be virtual and may actually link to objects outside of the workspace.  In this particular
 case, the debug info of the executable specified is used to determine the location of the source files.  Each source
 file is imported in the project, virtually, via a link.  This is done so that the C/C++ indexer, which usually works on
-a project being developed within Eclipse, has access to all code when it is parsing.  Usually, the name of the default C/C++ project 
+a project being developed within Eclipse, has access to all code when it is parsing.  Usually, the name of the default C/C++ project
 will be <strong>Executables</strong>, the default project for importing executables into the CDT via the <strong>Executables</strong> view.
 <p>The nature of a project determines what menus, actions, and views are valid for that project.
 Menus, actions, and views that are not valid are not made visible.
@@ -83,10 +83,10 @@ This helps to remove the clutter of all contributed plug-ins to what is pertinen
 working on a C/C++ project).  Many of the plug-ins being used in the Stand-alone debugger only
 work on C/C++ projects anyway.</p>
 <p>Another Eclipse concept is the Perspective.  An Eclipse perspective defines the set of views and how they are placed in the
-main Eclipse Window.  A perspective will have a default layout associated with it which can be modified and saved by the end-user for 
-future reference (e.g. adding or removing 
+main Eclipse Window.  A perspective will have a default layout associated with it which can be modified and saved by the end-user for
+future reference (e.g. adding or removing
 views).  For the purposes of debugging,
-the Debug Perspective is the appropriate perspective to use and therefore the Stand-alone Debugger opens the Debug Perspective automatically for 
+the Debug Perspective is the appropriate perspective to use and therefore the Stand-alone Debugger opens the Debug Perspective automatically for
 you.  The perspective has all the various views needed to debug your program.</p>
 <p>To debug an executable, one needs to launch it via the debugger and to provide options both for the executable and the
 debugger (in this case, GDB).  All the information required to launch and debug is stored

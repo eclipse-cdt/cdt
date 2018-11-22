@@ -2,5 +2,5 @@
 
 int anotherClass::anotherMethod(){
 	xOtherClass c;
-	c.xOtherMethod (         
+	c.xOtherMethod (
 }

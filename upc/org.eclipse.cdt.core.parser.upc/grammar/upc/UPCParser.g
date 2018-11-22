@@ -22,5 +22,5 @@ $End
 
 $Import
 	UPCGrammarExtensions.g
-$End 
+$End
 

@@ -29,7 +29,7 @@
 			hidden="false"
 			persist="true"/>
 	</property-group>
-	
+
 	<process type="org.eclipse.cdt.core.AddFiles">
 		<simple name="projectName" value="$(projectName)"/>
 		<complex-array name="files">

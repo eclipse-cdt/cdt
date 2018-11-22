@@ -1,8 +1,8 @@
 namespace namespace1 {
-   
+
     namespace namespace2 {
     	void foo();
-    	
+
     	namespace namespace3 {
     	}
     }

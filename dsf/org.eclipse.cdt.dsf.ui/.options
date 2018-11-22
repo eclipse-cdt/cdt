@@ -3,7 +3,7 @@ org.eclipse.cdt.dsf.ui/debug = false
 org.eclipse.cdt.dsf.ui/debug/vm/contentProvider = false
 org.eclipse.cdt.dsf.ui/debug/vm/delta = false
 org.eclipse.cdt.dsf.ui/debug/vm/cache = false
-org.eclipse.cdt.dsf.ui/debug/vm/presentationId = 
+org.eclipse.cdt.dsf.ui/debug/vm/presentationId =
 org.eclipse.cdt.dsf.ui/debug/vm/atomicUpdate = false
 
 org.eclipse.cdt.dsf.ui/debug/stepping = false

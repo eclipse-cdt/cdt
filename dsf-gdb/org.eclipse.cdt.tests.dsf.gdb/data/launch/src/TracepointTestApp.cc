@@ -10,9 +10,9 @@
  * To experiment at setting the instructions to the correct length, a command like this
  * can be used:
      g++ -g3 -c -O0 -pthread -o TracepointTestApp.o TracepointTestApp.cc && gdb -batch -ex 'file TracepointTestApp.o' -ex 'disassemble /rs foo'
- * On the lines following the N_BYTE comment, the instruction should be N bytes long. 
+ * On the lines following the N_BYTE comment, the instruction should be N bytes long.
  * for example, this is the output I had when writing (with the comment line munged as to not affect resolveLineTagLocations):
- 
+
 17			if (x != a) {  // *3*_BYTE
    0x0000000000000022 <+23>:	8b 45 fc	mov    -0x4(%rbp),%eax
    0x0000000000000025 <+26>:	3b 45 ec	cmp    -0x14(%rbp),%eax
@@ -30,13 +30,13 @@ int foo(int a)
 	int x = a;
 
 	while(x < 5) {
-		
+
 		if (x != a) {  // 3_BYTE  // IF_X_NE_A
-			
+
 			++x;       // 4_BYTE
-			
+
 			bar();     // 5_BYTE
-			
+
 			goto end;   // 2_BYTE
 		}
 		x++;           // INCR_X

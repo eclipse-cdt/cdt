@@ -1,5 +1,5 @@
 namespace ns4 {
-	
+
 	class Class1 {
 		friend void function2(Class1);
 	};

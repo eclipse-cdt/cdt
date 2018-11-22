@@ -19,8 +19,8 @@ How to build the Win32 x86_64 core fragment:
 - Make sure your JAVA_HOME environment variable is set and points to a 64 bit JDK (C:\Program Files\Java\jdkX.X.X not C:\Program Files (x86)\Java\jdkX.X.X )
 
 2. Build and install
-- In a command prompt, execute setenv64.bat. 
+- In a command prompt, execute setenv64.bat.
 The command prompt should turn to a different color and print a message about targeting x64.
-- Execute build64.bat 
+- Execute build64.bat
 This will build the dlls and executables, copy them to org.eclipse.cdt.core.win32.x86_64\os\win32\x86_64 then clean the build directories.
 Optionally, you can use nmake /f Makefile_x86_64.mk TARGET directly. Refer to Makefile_x86_64.mk for valid targets.

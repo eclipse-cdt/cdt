@@ -2,12 +2,12 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-# Add inputs and outputs from these tool invocations to the build variables 
+# Add inputs and outputs from these tool invocations to the build variables
 C_SRCS += \
-../rcbsBasicTest.c 
+../rcbsBasicTest.c
 
 OBJS += \
-./rcbsBasicTest.o 
+./rcbsBasicTest.o
 
 
 # Each subdirectory must supply rules for building sources it contributes

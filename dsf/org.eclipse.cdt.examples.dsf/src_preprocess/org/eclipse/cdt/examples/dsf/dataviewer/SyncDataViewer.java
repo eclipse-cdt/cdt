@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -38,67 +38,67 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Data viewer based on a table, which reads data using synchronous methods.
  * <p>
- * This viewer implements the {@link IStructuredContentProvider} interface 
- * which is used by the JFace TableViewer class to populate a Table.  This 
- * interface contains one principal methods for reading data {@link #getElements(Object)}, 
- * which synchronously returns an array of elements.  In order to implement 
- * this method using the asynchronous data generator, this provider uses the 
- * {@link Query} object. 
+ * This viewer implements the {@link IStructuredContentProvider} interface
+ * which is used by the JFace TableViewer class to populate a Table.  This
+ * interface contains one principal methods for reading data {@link #getElements(Object)},
+ * which synchronously returns an array of elements.  In order to implement
+ * this method using the asynchronous data generator, this provider uses the
+ * {@link Query} object.
  * </p>
  */
-public class SyncDataViewer 
-    implements IStructuredContentProvider, IDataGenerator.Listener 
+public class SyncDataViewer
+    implements IStructuredContentProvider, IDataGenerator.Listener
 {
     // The viewer and generator that this content provider using.
     final private TableViewer fViewer;
     final private IDataGenerator fDataGenerator;
-    
+
     public SyncDataViewer(TableViewer viewer, IDataGenerator generator) {
         fViewer = viewer;
         fDataGenerator = generator;
         fDataGenerator.addListener(this);
     }
-    
+
     @Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         // Not used
     }
 
-    
+
     @Override
 	public Object[] getElements(Object inputElement) {
-        
-        // Create the query object for reading data count. 
+
+        // Create the query object for reading data count.
         Query<Integer> countQuery = new Query<Integer>() {
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
                 fDataGenerator.getCount(rm);
             }
         };
-        
+
         // Submit the query to be executed.  A query implements a runnable
         // interface and it has to be executed in order to do its work.
         ImmediateExecutor.getInstance().execute(countQuery);
         int count = 0;
-        
+
         // Block until the query completes, which will happen when the request
         // monitor of the execute() method is marked done.
         try {
             count = countQuery.get();
-        } catch (Exception e) { 
+        } catch (Exception e) {
             // InterruptedException and ExecutionException can be thrown here.
-            // ExecutionException containing a CoreException will be thrown 
+            // ExecutionException containing a CoreException will be thrown
             // if an error status is set to the Query's request monitor.
-            return new Object[0]; 
-        } 
+            return new Object[0];
+        }
 
-        final int finalCount = count; 
+        final int finalCount = count;
         Query<List<Integer>> valueQuery = new Query<List<Integer>>() {
             @Override
             protected void execute(final DataRequestMonitor<List<Integer>> rm) {
                 final Integer[] retVal = new Integer[finalCount];
                 final CountingRequestMonitor crm = new CountingRequestMonitor(
-                    ImmediateExecutor.getInstance(), rm) 
+                    ImmediateExecutor.getInstance(), rm)
                 {
                     @Override
                     protected void handleSuccess() {
@@ -109,9 +109,9 @@ public class SyncDataViewer
                 for (int i = 0; i < finalCount; i++) {
                     final int finalI = i;
                     fDataGenerator.getValue(
-                        i, 
+                        i,
                         new DataRequestMonitor<Integer>(
-                            ImmediateExecutor.getInstance(), crm) 
+                            ImmediateExecutor.getInstance(), crm)
                         {
                             @Override
                             protected void handleSuccess() {
@@ -126,7 +126,7 @@ public class SyncDataViewer
         ImmediateExecutor.getInstance().execute(valueQuery);
         try {
             return valueQuery.get().toArray(new Integer[0]);
-        } catch (Exception e) { 
+        } catch (Exception e) {
         }
         return new Object[0];
     }
@@ -141,23 +141,23 @@ public class SyncDataViewer
         // For any event from the generator, refresh the whole viewer.
         refreshViewer();
     }
-    
+
     @Override
 	public void valuesChanged(Set<Integer> indexes) {
         // For any event from the generator, refresh the whole viewer.
         refreshViewer();
     }
-    
+
     private void refreshViewer() {
         //#ifdef exercises
         // TODO Exercise 5 - Add a call to getElements() to force a deadlock.
         //#else
 //#        getElements(null);
         //#endif
-        
-        // This method may be called on any thread, switch to the display 
+
+        // This method may be called on any thread, switch to the display
         // thread before calling the viewer.
-        Display display = fViewer.getControl().getDisplay(); 
+        Display display = fViewer.getControl().getDisplay();
         display.asyncExec( new Runnable() {
             @Override
 			public void run() {
@@ -167,7 +167,7 @@ public class SyncDataViewer
             }
         });
     }
-    
+
     /**
      * The entry point for the example.
      * @param args Program arguments.
@@ -190,11 +190,11 @@ public class SyncDataViewer
         // TODO Exercise 5 - Use the DataGeneratorWithExecutor() instead.
         final IDataGenerator generator = new DataGeneratorWithThread();
         //#else
-//#        final IDataGenerator generator = new DataGeneratorWithExecutor();     
+//#        final IDataGenerator generator = new DataGeneratorWithExecutor();
         //#endif
-        
+
         // Create the content provider which will populate the viewer.
-        SyncDataViewer contentProvider = 
+        SyncDataViewer contentProvider =
             new SyncDataViewer(tableViewer, generator);
         tableViewer.setContentProvider(contentProvider);
         tableViewer.setInput(new Object());
@@ -206,7 +206,7 @@ public class SyncDataViewer
             if (!display.readAndDispatch())
                 display.sleep();
         }
-        
+
         // The IDataGenerator.shutdown() method is asynchronous, this requires
         // using a query again in order to wait for its completion.
         Query<Object> shutdownQuery = new Query<Object>() {
@@ -219,10 +219,10 @@ public class SyncDataViewer
         try {
             shutdownQuery.get();
         } catch (Exception e) {}
-        
+
         // Shut down the display.
-        font.dispose();    
+        font.dispose();
         display.dispose();
     }
-    
+
 }

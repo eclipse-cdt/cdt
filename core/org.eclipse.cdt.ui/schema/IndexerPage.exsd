@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.ui" id="IndexerPage" name="Indexer Page"/>
       </appInfo>
       <documentation>
-         
+
       </documentation>
    </annotation>
    <element name="extension">
@@ -22,21 +22,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>

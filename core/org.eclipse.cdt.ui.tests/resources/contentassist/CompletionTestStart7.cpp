@@ -6,5 +6,5 @@ aClass* foo(){
 
 void anotherClass::anotherMethod()
 {
-    foo()->a 
+    foo()->a
 }

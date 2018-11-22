@@ -41,7 +41,7 @@ Makefile text
 *.sln text eol=crlf
 *.vcxproj text eol=crlf
 
-# C output files 
+# C output files
 # (These should not normally be checked in, exceptions for pre-compiled libraries and tests)
 *.o binary
 *.d text

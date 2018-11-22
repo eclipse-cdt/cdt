@@ -3,7 +3,7 @@
 void main() {
     A a, &aa=a, *ap= new A();
     a.foo();
-    a-> 
+    a->
 }
 
 // end

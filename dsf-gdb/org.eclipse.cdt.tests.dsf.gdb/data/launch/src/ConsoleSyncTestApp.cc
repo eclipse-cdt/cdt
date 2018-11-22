@@ -10,6 +10,6 @@ int main() {
     printf("Running ConsoleSyncTestApp\n");
 
     testMemoryChanges();
-    
+
     return 0;
 }

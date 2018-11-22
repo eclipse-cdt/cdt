@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: EPL-2.0
 #
 # Contributors:
-# Doug Schaefer   (Wind River)     - initial API and implementation 
+# Doug Schaefer   (Wind River)     - initial API and implementation
 # Anna Dushistova (Mentor Graphics)- [329531][crossgcc] crossgcc fails to build a project
 -->
 <plugin>
@@ -135,7 +135,7 @@
 	        id="cdt.managedbuild.target.gnu.cross.exe"
 	        isAbstract="false"
 	        isTest="false"
-	        >                                  
+	        >
 	     <configuration
 	           name="Debug"
 	           cleanCommand="rm -rf"
@@ -145,7 +145,7 @@
 	           <toolChain
 	           		 superClass="cdt.managedbuild.toolchain.gnu.cross.base"
 	                 id="cdt.managedbuild.toolchain.gnu.cross.exe.debug">
-	           </toolChain>                                   
+	           </toolChain>
 	     </configuration>
 	     <configuration
 	           name="Release"
@@ -156,16 +156,16 @@
 	           <toolChain
 	                 superClass="cdt.managedbuild.toolchain.gnu.cross.base"
 	                 id="cdt.managedbuild.toolchain.gnu.cross.exe.release">
-	           </toolChain>                                                     
+	           </toolChain>
 	     </configuration>
-	  </projectType>              
-	     
+	  </projectType>
+
 	  <projectType
 	        buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
 	        id="cdt.managedbuild.target.gnu.cross.so"
 	        isAbstract="false"
 	        isTest="false"
-	        >            
+	        >
 	     <configuration
 	           name="Debug"
 	           cleanCommand="rm -rf"
@@ -175,27 +175,27 @@
 	           <toolChain
 	                 superClass="cdt.managedbuild.toolchain.gnu.cross.base"
 	                 id="cdt.managedbuild.toolchain.gnu.cross.so.debug">
-	           </toolChain>                                                     
+	           </toolChain>
 	     </configuration>
 	     <configuration
 	           name="Release"
 	           cleanCommand="rm -rf"
 	           parent="cdt.managedbuild.config.gnu.base"
 	           buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
-	           id="cdt.managedbuild.config.gnu.cross.so.release">               
+	           id="cdt.managedbuild.config.gnu.cross.so.release">
 	           <toolChain
 	                 superClass="cdt.managedbuild.toolchain.gnu.cross.base"
 	                 id="cdt.managedbuild.toolchain.gnu.cross.so.release">
-	           </toolChain>                                                                                
+	           </toolChain>
 	     </configuration>
 	  </projectType>
-	                   
+
 	  <projectType
 	        buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib"
 	        id="cdt.managedbuild.target.gnu.cross.lib"
 	        isAbstract="false"
 	        isTest="false"
-	        >            
+	        >
 	     <configuration
 	           name="Debug"
 	           parent="cdt.managedbuild.config.gnu.base"
@@ -205,7 +205,7 @@
 	           <toolChain
 	                 superClass="cdt.managedbuild.toolchain.gnu.cross.base"
 	                 id="cdt.managedbuild.toolchain.gnu.cross.lib.debug">
-	           </toolChain>                                                                                				               				  
+	           </toolChain>
 	     </configuration>
 	     <configuration
 	           name="Release"
@@ -216,8 +216,8 @@
 	           <toolChain
 	                 superClass="cdt.managedbuild.toolchain.gnu.cross.base"
 	                 id="cdt.managedbuild.toolchain.gnu.cross.lib.release">
-			</toolChain>                                                                                				                    
-         </configuration>         
+			</toolChain>
+         </configuration>
       </projectType>
    </extension>
    <extension

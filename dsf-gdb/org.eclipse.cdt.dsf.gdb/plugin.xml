@@ -44,7 +44,7 @@
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>
    </extension>
-   
+
    <extension
          point="org.eclipse.cdt.debug.core.BreakpointExtension">
       <breakpointExtension
@@ -57,7 +57,7 @@
 
    <!-- Binding debug model ids to context. Use the same bindings as CDT -->
    <extension point="org.eclipse.debug.ui.debugModelContextBindings">
-      <modelContextBinding 
+      <modelContextBinding
          contextId="org.eclipse.cdt.debug.ui.debugging"
          debugModelId="org.eclipse.cdt.dsf.gdb"/>
    </extension>

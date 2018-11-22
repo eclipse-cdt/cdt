@@ -133,23 +133,23 @@
 
 	<!-- Adapters for contextual launch -->
 	<extension point="org.eclipse.core.runtime.adapters">
-         <factory 
-            class="org.eclipse.cdt.debug.internal.ui.launch.InvalidLaunchableAdapterFactory" 
+         <factory
+            class="org.eclipse.cdt.debug.internal.ui.launch.InvalidLaunchableAdapterFactory"
             adaptableType="org.eclipse.cdt.core.model.IBinary">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
          </factory>
-         <factory 
+         <factory
             class="org.eclipse.cdt.debug.internal.ui.launch.InvalidLaunchableAdapterFactory"
             adaptableType="org.eclipse.core.resources.IResource">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
-         </factory>         
-         <factory 
+         </factory>
+         <factory
             class="org.eclipse.cdt.debug.internal.ui.launch.InvalidLaunchableAdapterFactory"
             adaptableType="org.eclipse.cdt.core.model.ICProject">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
-         </factory>         
+         </factory>
     </extension>
-	
+
 
    <extension
          point="org.eclipse.debug.ui.debugModelPresentations">
@@ -222,7 +222,7 @@
                relative="org.eclipse.ui.console.ConsoleView"
                relationship="stack"
                id="org.eclipse.ui.views.ProblemView">
-         </view>      
+         </view>
          <viewShortcut
                id="org.eclipse.ui.views.ProblemView">
          </viewShortcut>
@@ -290,7 +290,7 @@
                state="false"
                style="toggle"
                toolbarPath="org.eclipse.debug.ui.main.toolbar/renderGroup">
-		 </action>                              
+		 </action>
       </actionSet>
    </extension>
    <extension
@@ -326,8 +326,8 @@
          </command>
       </menuContribution>
    </extension>
-   
-   <extension 
+
+   <extension
          point="org.eclipse.ui.menus">
        <menuContribution
             locationURI="popup:org.eclipse.debug.ui.VariableView?after=variableGroup">
@@ -337,7 +337,7 @@
             </command>
        </menuContribution>
       </extension>
-      
+
    <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution
@@ -435,7 +435,7 @@
                helpContextId="move_to_line_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.MoveToLineActionDelegate"
                menubarPath="additions"
-               enablesFor="1" 
+               enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.MoveToLineActionDelegate">
          </action>
          <action
@@ -520,7 +520,7 @@
                icon="icons/elcl16/move_to_line_co.gif"
                helpContextId="move_to_line_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.MoveToLineActionDelegate"
-               menubarPath="additions" 
+               menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.MoveToLineActionDelegate">
          </action>
@@ -533,7 +533,7 @@
                id="org.eclipse.cdt.debug.ui.actions.popup.RunToLine">
          </action>
       </viewerContribution>
- 
+
       <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICSignal"
             id="org.eclipse.cdt.debug.ui.SignalActions">
@@ -846,7 +846,7 @@
                style="push"
                toolbarPath="pinGroup">
          </action>
-      </viewContribution>   
+      </viewContribution>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -888,7 +888,7 @@
          <adapter type="org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover"/>
       </factory>
    </extension>
-   
+
    <extension
          point="org.eclipse.debug.core.statusHandlers">
       <statusHandler
@@ -910,7 +910,7 @@
             id="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler">
       </statusHandler>
    </extension>
- 
+
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
@@ -919,25 +919,25 @@
             name="%CommonBreakpointPage.label">
          <enabledWhen>
             <or>
-               <and>   
+               <and>
                   <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
                   </adapt>
-                  <not>   
+                  <not>
                      <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint">
                      </adapt>
                   </not>
-                  <not>   
+                  <not>
                      <adapt type="org.eclipse.cdt.debug.core.model.ICDynamicPrintf">
                      </adapt>
-                  </not>                 
+                  </not>
                </and>
                <and>
                   <instanceof value="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext"/>
                   <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICBreakpoint" />
-                  <not>   
+                  <not>
                      <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
                   </not>
-                  <not>   
+                  <not>
                      <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICDynamicPrintf"/>
                   </not>
                </and>
@@ -949,17 +949,17 @@
             id="org.eclipse.cdt.debug.ui.breakpointactions.actions"
             name="%BreakpointActionsPage.label">
          <enabledWhen>
-            <and>   
+            <and>
                <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
                </adapt>
-               <not>   
+               <not>
                   <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint">
                   </adapt>
                </not>
-               <not>   
+               <not>
                   <adapt type="org.eclipse.cdt.debug.core.model.ICDynamicPrintf">
                   </adapt>
-               </not>                 
+               </not>
             </and>
          </enabledWhen>
       </page>
@@ -1311,7 +1311,7 @@
            id="org.eclipse.cdt.debug.ui.breakpointactions.ReverseDebugActionPage">
      </actionPage>
   </extension>
-  
+
     <extension
         point="org.eclipse.cdt.debug.core.BreakpointActionType">
      <actionType
@@ -1344,7 +1344,7 @@
 	    	    	    </or>
 	        		</iterate>
 	      		</with>
-	      	</enablement>      
+	      	</enablement>
 		</detailFactories>
  	</extension>
  <extension
@@ -1368,19 +1368,19 @@
              </with>
           </visibleWhen>
        </command>
-    </menuContribution>    
+    </menuContribution>
     <menuContribution
           locationURI="popup:#CEditorRulerContext?after=debug">
-    <menu 
-         id="breakpointTypes" 
+    <menu
+         id="breakpointTypes"
     	 label="%BreakpointTypes.label">
        <dynamic
            id="org.eclipse.debug.ui.actions.BreakpointTypesContribution"
            class="org.eclipse.debug.ui.actions.BreakpointTypesContribution">
        </dynamic>
-    </menu>         
-    </menuContribution>    
-          
+    </menu>
+    </menuContribution>
+
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -1396,7 +1396,7 @@
       </factory>
    </extension>
  <extension point="org.eclipse.cdt.debug.ui.breakpointContribution">
-     <breakpointLabels markerType="org.eclipse.cdt.debug.core.commonCLineBreakpointMarker"> 
+     <breakpointLabels markerType="org.eclipse.cdt.debug.core.commonCLineBreakpointMarker">
      <attribute name="org.eclipse.cdt.debug.core.breakpointType" label="%breapointType.label" type="integer"
      fieldEditor="org.eclipse.cdt.debug.internal.ui.breakpoints.BreakpointComboFieldEditor"
      >
@@ -1404,7 +1404,7 @@
         <value value="2" label="%breapointType.hardware.label"></value>
         <value value="1" label="%breapointType.temporay.label"></value>
         <value value="3" label="%breapointType.hardwaretemporaty.label"></value>
-     </attribute> 
+     </attribute>
      </breakpointLabels>
  </extension>
      <extension
@@ -1456,7 +1456,7 @@
                <or>
                <test property="org.eclipse.cdt.debug.ui.isCEditorSupportsCBreakpoint"/>
                <test property="org.eclipse.cdt.debug.ui.isAsmEditorSupportsCBreakpoint"/>
-               <test property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint" />                                            
+               <test property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint" />
                <with variable="selection">
                   <count value="1"/>
                    <test property="org.eclipse.cdt.debug.ui.isCDeclarationSupportsCBreakpoint"/>
@@ -1473,7 +1473,7 @@
               <or>
                <test property="org.eclipse.cdt.debug.ui.isCEditorSupportsCBreakpoint"/>
                <test property="org.eclipse.cdt.debug.ui.isAsmEditorSupportsCBreakpoint"/>
-               <test property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint" />                                            
+               <test property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint" />
                <with variable="selection">
                   <count value="1"/>
                    <test property="org.eclipse.cdt.debug.ui.isCDeclarationSupportsCBreakpoint"/>
@@ -1736,7 +1736,7 @@
                </with>
              </and>
            </enabledWhen>
-      </handler>   
+      </handler>
  </extension>
  <extension
          point="org.eclipse.core.expressions.definitions">
@@ -1854,8 +1854,8 @@
  </extension>
  <extension
        point="org.eclipse.ui.menus">
-       
- <!-- Register Grouping contributions to the registers view popup -->      
+
+ <!-- Register Grouping contributions to the registers view popup -->
       <menuContribution
             locationURI="popup:org.eclipse.debug.ui.RegisterView?after=additions">
          <command
@@ -1896,8 +1896,8 @@
            </visibleWhen>
          </command>
       </menuContribution>
-       
- <!-- Reverse debugging contributions to Debug view -->      
+
+ <!-- Reverse debugging contributions to Debug view -->
     <menuContribution
             locationURI="toolbar:org.eclipse.debug.ui.DebugView?after=additions">
          <command
@@ -1974,8 +1974,8 @@
             </visibleWhen>
          </command>
       </menuContribution>
-      
-  <!-- Reverse debugging contributions to Run menu -->           
+
+  <!-- Reverse debugging contributions to Run menu -->
       <menuContribution
             locationURI="menu:org.eclipse.ui.run?before=stepGroup">
          <menu
@@ -1987,7 +1987,7 @@
                <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive"/>
             </visibleWhen>
          </menu>
-      </menuContribution>      
+      </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.run?after=stepGroup">
          <command
@@ -2036,8 +2036,8 @@
             </visibleWhen>
          </command>
       </menuContribution>
-      
-  <!-- Reverse debugging contributions to Debug view popup -->           
+
+  <!-- Reverse debugging contributions to Debug view popup -->
       <menuContribution
             locationURI="popup:org.eclipse.debug.ui.DebugView?before=stepGroup">
          <menu
@@ -2129,7 +2129,7 @@
             </visibleWhen>
          </command>
       </menuContribution>
-      
+
  <!-- Tracepoint contributions to Debug view popup -->
       <menuContribution
           locationURI="popup:org.eclipse.debug.ui.DebugView?before=renderGroup">
@@ -2153,7 +2153,7 @@
        </command>
     </menuContribution>
 
- <!-- Reverse debugging contributions to Main Debug Menu -->      
+ <!-- Reverse debugging contributions to Main Debug Menu -->
     <menuContribution
             locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?after=additions">
          <command
@@ -2215,7 +2215,7 @@
             </visibleWhen>
          </command>
       </menuContribution>
-      
+
  <!-- List of menu items for the reverse toggle menu -->
  <!-- Note that we re-use this list in the different locations where -->
  <!-- the reverse toggle is present.  We achieve this by using the same -->
@@ -2254,7 +2254,7 @@
             </command>
         </menuContribution>
 
- <!-- Group context contributions to Debug view toolbar -->      
+ <!-- Group context contributions to Debug view toolbar -->
       <menuContribution
             locationURI="popup:org.eclipse.debug.ui.DebugView?after=emptyStepGroup">
          <command
@@ -2324,7 +2324,7 @@
                tooltip="%DebugNewExecutable.tooltip">
          </command>
       </menuContribution>
-      
+
       <!-- Connect contributions to debug view menu -->
       <menuContribution
           locationURI="popup:org.eclipse.debug.ui.DebugView?before=emptyLaunchGroup">
@@ -2335,8 +2335,8 @@
                style="push"
                tooltip="%Connect.tooltip">
          </command>
-         
-       <!-- Step Into Selection debugging contributions -->  
+
+       <!-- Step Into Selection debugging contributions -->
        </menuContribution>
               <menuContribution
              locationURI="menu:org.eclipse.ui.run?endof=emptyStepGroup">
@@ -2383,7 +2383,7 @@
           </command>
        </menuContribution>
  </extension>
- 
+
  <!-- Cast to Type / Display as Array -->
  <extension
        point="org.eclipse.ui.commands">
@@ -2393,33 +2393,33 @@
           id="org.eclipse.cdt.debug.ui.category.casting"
           name="%CastingCategory.name">
     </category>
-       
+
    <command id="org.eclipse.cdt.debug.ui.command.restoreDefaultType"
           categoryId="org.eclipse.cdt.debug.ui.category.casting"
           description="%BreakpointPropertiesCommand.description"
           helpContextId="restore_default_type_action_context"
           name="%RestoreDefaultTypeAction.label">
     </command>
-     
-     <command id="org.eclipse.cdt.debug.ui.command.castToType" 
+
+     <command id="org.eclipse.cdt.debug.ui.command.castToType"
      		name="%CastToTypeAction.label"
      		categoryId="org.eclipse.cdt.debug.ui.category.casting"
            helpContextId="cast_to_type_action_context"
            >
      </command>
-     
-      <command id="org.eclipse.cdt.debug.ui.command.castToArray" 
+
+      <command id="org.eclipse.cdt.debug.ui.command.castToArray"
       		name="%CastToTypeAction.label"
       		categoryId="org.eclipse.cdt.debug.ui.category.casting"
             helpContextId="cast_to_array_action_context"
             >
       </command>
 	</extension>
-  
+
 	<extension point="org.eclipse.ui.menus">
-		
+
 		<!-- items for variables view... -->
-	   	<menuContribution 
+	   	<menuContribution
 	          locationURI="popup:org.eclipse.debug.ui.VariableView?after=variableGroup">
 	       <command commandId="org.eclipse.cdt.debug.ui.command.castToType"
 	           label="%CastToTypeAction.label"
@@ -2447,11 +2447,11 @@
 	             tooltip="%RestoreDefaultTypeAction.tooltip">
 	          <visibleWhen checkEnabled="true">
 	          </visibleWhen>
-	       </command>	       
+	       </command>
      	</menuContribution>
-     	
+
 		<!-- items for expressions view... -->
-	   	<menuContribution 
+	   	<menuContribution
 	          locationURI="popup:org.eclipse.debug.ui.ExpressionView?after=additions">
 	       <command commandId="org.eclipse.cdt.debug.ui.command.castToType"
 	           label="%CastToTypeAction.label"
@@ -2479,10 +2479,10 @@
 	             tooltip="%RestoreDefaultTypeAction.tooltip">
 	          <visibleWhen checkEnabled="true">
 	          </visibleWhen>
-	       </command>	       
+	       </command>
      	</menuContribution>
 		<!-- items for Module view... -->
-	   	<menuContribution 
+	   	<menuContribution
 	          locationURI="popup:org.eclipse.debug.ui.ModuleView?after=modulesGroup">
 	       <command commandId="org.eclipse.cdt.debug.ui.command.loadSymbols"
 	           id="org.eclipse.cdt.debug.menu.command.loadSymbols"
@@ -2492,9 +2492,9 @@
                icon="icons/elcl16/load_symbols_co.gif">
 	           <visibleWhen checkEnabled="true">
 	          </visibleWhen>
-	       </command>       
+	       </command>
      	</menuContribution>
-         <menuContribution 
+         <menuContribution
 	          locationURI="popup:org.eclipse.debug.ui.ModuleView?after=modulesGroup">
 	       <command commandId="org.eclipse.cdt.debug.ui.command.loadAllSymbols"
 	           id="org.eclipse.cdt.debug.menu.command.loadAllSymbols"
@@ -2505,9 +2505,9 @@
                disabledIcon="icons/dlcl16/load_all_symbols_co.gif">
 	           <visibleWhen checkEnabled="true">
 	          </visibleWhen>
-	       </command>       
-     	</menuContribution> 
-     	 <menuContribution 
+	       </command>
+     	</menuContribution>
+     	 <menuContribution
 	          locationURI="toolbar:org.eclipse.debug.ui.ModuleView?after=modulesGroup">
 	       <command commandId="org.eclipse.cdt.debug.ui.command.loadAllSymbols"
 	           id="org.eclipse.cdt.debug.toolbar.command.loadAllSymbols"
@@ -2518,10 +2518,10 @@
                disabledIcon="icons/dlcl16/load_all_symbols_co.gif">
 	           <visibleWhen checkEnabled="false">
 	          </visibleWhen>
-	       </command>       
-     	</menuContribution>           	
-	</extension>  
-	
+	       </command>
+     	</menuContribution>
+	</extension>
+
  	<extension
          point="org.eclipse.ui.handlers">
       <handler
@@ -2537,7 +2537,7 @@
             commandId="org.eclipse.cdt.debug.ui.command.castToArray">
       </handler>
 	</extension>
-		
+
  	<extension
          point="org.eclipse.ui.handlers">
     <handler commandId="org.eclipse.ui.edit.copy"
@@ -2592,5 +2592,5 @@
            name="%GenericTarget.name">
      </wizard2>
   </extension>
-    
+
 </plugin>

@@ -32,7 +32,7 @@ static std::map<int, int> fd2rc;
  * Method:    openMaster
  * Signature: (Z)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_openMaster(JNIEnv *env, jobject jobj, jboolean console) 
+JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_openMaster(JNIEnv *env, jobject jobj, jboolean console)
 {
 	jfieldID fid; /* Store the field ID */
 	jstring jstr = NULL;
@@ -66,7 +66,7 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_openMaster(JNIEnv *
 
     /* Remember the winpty handle for the generated masterFD */
     fd2pty.insert(std::pair<int, winpty_t*>(master, winpty));
-	
+
 	/* Get a reference to the obj's class */
 	cls = env->GetObjectClass(jobj);
 
@@ -205,7 +205,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYOutputStream_write0(JNI
 	    if (winpty != NULL) {
 		    /* Get the pipe handle */
 		    HANDLE handle = winpty_get_data_pipe(winpty);
-		
+
             memset(&over, 0, sizeof(over));
 		    over.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 

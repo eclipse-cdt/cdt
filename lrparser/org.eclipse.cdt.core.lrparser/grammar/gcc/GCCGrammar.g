@@ -27,7 +27,7 @@ $End
 $Terminals
 
     asm
-    
+
 $End
 
 
@@ -42,7 +42,7 @@ $Define
 
     $build_action_class  /. GCCBuildASTParserAction ./
 	$parser_factory_create_expression /. GCCSecondaryParserFactory.getDefault() ./
-	
+
 $End
 
 
@@ -51,8 +51,8 @@ $Rules
 
 declaration
     ::= extended_asm_declaration
- 
- 
+
+
 no_type_declaration_specifier
     ::= attribute_or_decl_specifier
 
@@ -65,18 +65,18 @@ complete_struct_declarator
     ::= attribute_or_decl_specifier_seq struct_declarator
       | struct_declarator attribute_or_decl_specifier_seq
       | attribute_or_decl_specifier_seq struct_declarator attribute_or_decl_specifier_seq
-    
+
 enum_specifier_hook
     ::= attribute_or_decl_specifier_seq
 
 struct_or_union_specifier_hook
     ::= attribute_or_decl_specifier_seq
-    
+
 struct_or_union_specifier_suffix_hook
     ::= attribute_or_decl_specifier_seq
 
 pointer_hook
-    ::= attribute_or_decl_specifier_seq 
+    ::= attribute_or_decl_specifier_seq
 
 elaborated_specifier_hook
     ::= attribute_or_decl_specifier_seq
@@ -92,9 +92,9 @@ designator_base
       | array_range_designator
 
 field_name_designator
-    ::= identifier_token ':'		
+    ::= identifier_token ':'
           /. $Build  consumeDesignatorFieldGCC();  $EndBuild ./
-          
+
 array_range_designator
     ::=  '[' constant_expression '...' constant_expression ']'
           /. $Build  consumeDesignatorArrayRange();  $EndBuild ./
@@ -102,7 +102,7 @@ array_range_designator
 designated_initializer
     ::= <openscope-ast> field_name_designator initializer
           /. $Build  consumeInitializerDesignated();  $EndBuild ./
-          
+
 
 
 -- Nested functions
@@ -110,5 +110,5 @@ designated_initializer
 block_item
     ::= normal_function_definition
           /. $Build  consumeStatementDeclaration();  $EndBuild ./
-          
+
 $End

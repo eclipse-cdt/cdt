@@ -10,7 +10,7 @@
 #
 # Contributors:
 #     QNX Software Systems - initial API and implementation
-#     Alex Blewitt - MacOSX with a 64-bit vm 
+#     Alex Blewitt - MacOSX with a 64-bit vm
 # Martin Oberhuber (Wind River) - Bug 476709 - Fix change_window_size()
 #*******************************************************************************/
 

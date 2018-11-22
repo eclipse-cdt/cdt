@@ -12,9 +12,9 @@
 <div role="main">
 <h1>C/C++ search</h1>
 
-<p>You can conduct a fully or partially qualified name search. Further 
-qualifying a search increases the accuracy and relevance of search results. The 
-sections below provide guidance on how to control the scope of your search 
+<p>You can conduct a fully or partially qualified name search. Further
+qualifying a search increases the accuracy and relevance of search results. The
+sections below provide guidance on how to control the scope of your search
 through the use of search delimiters, correct syntax, and wildcards.</p>
 
 <p>You can search for:<br>
@@ -36,9 +36,9 @@ For information on working sets, see <strong>Workbench User Guide &gt; Concepts 
 
 
   <h2>What you can search for</h2>
-  <p>The table below lists the element types that you can search for and special 
-  considerations to note when searching for a given element type. You can search 
-  for some or all of the element types matching a search string that you 
+  <p>The table below lists the element types that you can search for and special
+  considerations to note when searching for a given element type. You can search
+  for some or all of the element types matching a search string that you
   specify. If you choose to search for matching elements, all types, macros, and typdefs are included in the search.</p>
 <table border="2" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#AAA" width="60%">
   <tr>
@@ -47,40 +47,40 @@ For information on working sets, see <strong>Workbench User Guide &gt; Concepts 
   </tr>
   <tr>
     <td style="width:25%" headers="element" valign="top">&nbsp;Class/Struct</td>
-    <td style="width:75%" headers="note">Searches for classes and structs.<p>You can further qualify 
-    the search by specifying &quot;class&quot; or &quot;struct&quot; in front of the name 
-    that you are 
-    searching for. Specifying &quot;class&quot; or &quot;struct&quot; also allows you to 
+    <td style="width:75%" headers="note">Searches for classes and structs.<p>You can further qualify
+    the search by specifying &quot;class&quot; or &quot;struct&quot; in front of the name
+    that you are
+    searching for. Specifying &quot;class&quot; or &quot;struct&quot; also allows you to
     search for anonymous classes and structures.</td>
   </tr>
   <tr>
     <td style="width:25%" headers="element" valign="top">&nbsp;Function</td>
-    <td style="width:75%" headers="note">Searches for global functions or functions in a namespace 
-    (functions that are not members of a class, struct, or union).<p>You can 
-    specify parameters to further qualify your search. When specifying a 
-    parameter list, everything between the parentheses should be valid C/C++ 
+    <td style="width:75%" headers="note">Searches for global functions or functions in a namespace
+    (functions that are not members of a class, struct, or union).<p>You can
+    specify parameters to further qualify your search. When specifying a
+    parameter list, everything between the parentheses should be valid C/C++
     syntax.</p>
     <p>Do not specify the return type of the function.</td>
   </tr>
   <tr>
     <td style="width:25%" headers="element" valign="top">&nbsp;Variable</td>
-    <td style="width:75%" headers="note">Searches for variables that are not members of a class, 
+    <td style="width:75%" headers="note">Searches for variables that are not members of a class,
     struct, or union.</td>
   </tr>
   <tr>
     <td style="width:25%" headers="element" valign="top">&nbsp;Union</td>
-    <td style="width:75%" headers="note">Searches for unions.<p>Anonymous unions can be searched for by 
+    <td style="width:75%" headers="note">Searches for unions.<p>Anonymous unions can be searched for by
     specifying &quot;union&quot; as the search pattern.</td>
   </tr>
   <tr>
     <td style="width:25%" headers="element" valign="top">&nbsp;Method</td>
-    <td style="width:75%" headers="note">Searches for methods that are members of a class, struct, or 
-    union.<p>Searching for methods also finds constructors and destructors. See 
+    <td style="width:75%" headers="note">Searches for methods that are members of a class, struct, or
+    union.<p>Searching for methods also finds constructors and destructors. See
     above note for functions.</td>
   </tr>
   <tr>
     <td style="width:25%" headers="element" valign="top">&nbsp;Field </td>
-    <td style="width:75%" headers="note">Searches for fields that are members of a class, struct, or 
+    <td style="width:75%" headers="note">Searches for fields that are members of a class, struct, or
     union.
   </tr>
   <tr>
@@ -107,7 +107,7 @@ For information on working sets, see <strong>Workbench User Guide &gt; Concepts 
   <li>Definitions (for functions, methods, variables and fields)</li>
 </ul>
 
-<p>You can control the scope of the search by specifying which of the following 
+<p>You can control the scope of the search by specifying which of the following
 is to be searched:</p>
 <ul>
   <li>Workspace</li>
@@ -125,7 +125,7 @@ is to be searched:</p>
   <tr>
     <td style="width:30%" headers="char" valign="top">&nbsp;<samp>*</samp></td>
     <td style="width:70%" headers="search">Any string<p><strong>Tip:<br>
-    </strong> Use the character sequence <samp>\*</samp> to search for 
+    </strong> Use the character sequence <samp>\*</samp> to search for
     operators that begin with *. See syntax examples in the table below.</td>
   </tr>
   <tr>
@@ -138,14 +138,14 @@ is to be searched:</p>
   </tr>
 </table>
 <!-- no support for function parameters
-<p><strong>Tip: </strong>Do not use wild cards between the brackets of a function or 
-method pattern.  For example, the search 
-string <samp>f( * )</samp> is an invalid search that results in a search for any function <samp>f</samp> 
-    because 
+<p><strong>Tip: </strong>Do not use wild cards between the brackets of a function or
+method pattern.  For example, the search
+string <samp>f( * )</samp> is an invalid search that results in a search for any function <samp>f</samp>
+    because
 the asterisk is interpreted as a pointer rather than a wild card.</p>
 -->
 <h2>Syntax examples</h2>
-<p>The table below provides syntax examples and an explanation for each example 
+<p>The table below provides syntax examples and an explanation for each example
 to help you conduct an effective search.</p>
 <table border="2" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#AAA" width="60%">
   <tr>
@@ -158,7 +158,7 @@ to help you conduct an effective search.</p>
   </tr>
   <tr>
     <td style="width:30%" headers="syntax">&nbsp; <samp>::*::*::A?</samp></td>
-    <td style="width:70%" headers="search2">Any two-letter name that begins with A and is two levels 
+    <td style="width:70%" headers="search2">Any two-letter name that begins with A and is two levels
     deep</td>
   </tr>
   <tr>
@@ -172,18 +172,18 @@ to help you conduct an effective search.</p>
   </tr>
   <tr>
     <td style="width:30%" headers="syntax">&nbsp;&nbsp;<samp>*( A * )</samp> </td>
-    <td style="width:70%" headers="search2">Any function taking 1 parameter that is a pointer to type 
+    <td style="width:70%" headers="search2">Any function taking 1 parameter that is a pointer to type
     A</td>
   </tr>
   <tr>
     <td style="width:30%" headers="syntax">&nbsp;&nbsp;<samp>f( int * )</samp></td>
-    <td style="width:60%" headers="search2">Will search for function f taking 1 parameter that is an 
+    <td style="width:60%" headers="search2">Will search for function f taking 1 parameter that is an
     int *</td>
   </tr>
   <tr>
-    <td style="width:30%" headers="syntax">&nbsp;&nbsp;<samp>f( const char [ 
+    <td style="width:30%" headers="syntax">&nbsp;&nbsp;<samp>f( const char [
     ], A &amp; )</samp></td>
-    <td style="width:60%" headers="search2">Will search for a function f, taking 2 parameters; one is a 
+    <td style="width:60%" headers="search2">Will search for a function f, taking 2 parameters; one is a
     const char array, the other is a reference to type A</td>
   </tr>
 -->
@@ -213,7 +213,7 @@ to help you conduct an effective search.</p>
   </tr>
   </table>
 <h2>Search results</h2>
-<p>Search results are displayed in the Search view. You can sort your search by Name, Parent Name and Path. You can also repeat 
+<p>Search results are displayed in the Search view. You can sort your search by Name, Parent Name and Path. You can also repeat
 your last search.</p>
 
 <h2>Search Concepts</h2>

@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          When the user requests code completion for an identifier prefix then proposals are gathered from a variety of sources. It is quite common that several proposals for the same completion are gathered. After gathering it is therefore necessary to filter proposals and present them in an optimal ordering to the user.
-The notion of what is &quot;optimal&quot; may vary from one application to another. This extension point allows the contribution of completion filters which best suit the needs of the user in any given situation. 
+The notion of what is &quot;optimal&quot; may vary from one application to another. This extension point allows the contribution of completion filters which best suit the needs of the user in any given situation.
 The decision about which filter will actually be used remains with the user who can select his preference from a list of all contributed filters (menu Window - Preferences - C/C++ - Editor - Content Assist).
       </documentation>
    </annotation>
@@ -24,21 +24,21 @@ The decision about which filter will actually be used remains with the user who 
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>

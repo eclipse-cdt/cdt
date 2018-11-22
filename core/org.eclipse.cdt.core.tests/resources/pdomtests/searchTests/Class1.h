@@ -9,13 +9,13 @@ namespace namespace1 {
     public:
     	Class1();
     	~Class1();
-    	
+
     	int class1x;
     	int class1y;
         class Class2 { //namespace1::Class1::Class2
         };
     };
-    
+
     namespace namespace2 {
     	class Class1 {
     	};

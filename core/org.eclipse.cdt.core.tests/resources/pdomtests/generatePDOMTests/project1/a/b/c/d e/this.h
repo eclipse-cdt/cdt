@@ -4,4 +4,3 @@ class A {
   int c;
   A* foo(B b) {};
 };
-  

@@ -73,7 +73,7 @@ struct A
 {
     void f();
     enum E{ e};
-    union 
+    union
     {
         int u;
     };
@@ -119,7 +119,7 @@ template<typename... T> struct Tpl
 {
 };
 
-template<typename... T> 
+template<typename... T>
 void foo(Tpl<T...>)
 {
 }
@@ -181,7 +181,7 @@ void f([[attr1]] int p1, int [[attr2]] p2, [[attr3]] int p3)
 
 //!Attributed anonymous namespace
 //%CPP
-namespace [[foo]] 
+namespace [[foo]]
 {
 
 

@@ -7,7 +7,7 @@
             id="c"
             name="%language.name.c">
       </language>
-      
+
       <language
             class="org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage"
             id="cpp"

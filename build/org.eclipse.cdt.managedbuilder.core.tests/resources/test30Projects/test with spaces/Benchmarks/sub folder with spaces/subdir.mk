@@ -2,15 +2,15 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-# Add inputs and outputs from these tool invocations to the build variables 
+# Add inputs and outputs from these tool invocations to the build variables
 C_SRCS += \
-../sub\ folder\ with\ spaces/foo\ with\ spaces.c 
+../sub\ folder\ with\ spaces/foo\ with\ spaces.c
 
 OBJS += \
-./sub\ folder\ with\ spaces/foo\ with\ spaces.o 
+./sub\ folder\ with\ spaces/foo\ with\ spaces.o
 
 C_DEPS += \
-./sub\ folder\ with\ spaces/foo\ with\ spaces.d 
+./sub\ folder\ with\ spaces/foo\ with\ spaces.d
 
 
 # Each subdirectory must supply rules for building sources it contributes

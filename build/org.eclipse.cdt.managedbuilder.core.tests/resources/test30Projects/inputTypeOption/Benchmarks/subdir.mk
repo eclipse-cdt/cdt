@@ -2,21 +2,21 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-# Add inputs and outputs from these tool invocations to the build variables 
+# Add inputs and outputs from these tool invocations to the build variables
 C_SRCS += \
 ../picksUpGlobalAbsoluteInputOptionPath.c \
 ../resourceSettingAbsoluteCompiler.c \
-../resourceSettingRelativeCompiler.c 
+../resourceSettingRelativeCompiler.c
 
 OBJS += \
 ./picksUpGlobalAbsoluteInputOptionPath.o \
 ./resourceSettingAbsoluteCompiler.o \
-./resourceSettingRelativeCompiler.o 
+./resourceSettingRelativeCompiler.o
 
 C_DEPS += \
 ./picksUpGlobalAbsoluteInputOptionPath.d \
 ./resourceSettingAbsoluteCompiler.d \
-./resourceSettingRelativeCompiler.d 
+./resourceSettingRelativeCompiler.d
 
 
 # Each subdirectory must supply rules for building sources it contributes

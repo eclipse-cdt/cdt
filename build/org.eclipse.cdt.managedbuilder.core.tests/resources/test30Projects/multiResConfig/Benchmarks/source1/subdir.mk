@@ -2,15 +2,15 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-# Add inputs and outputs from these tool invocations to the build variables 
+# Add inputs and outputs from these tool invocations to the build variables
 CPP_SRCS += \
-../source1/Class1.cpp 
+../source1/Class1.cpp
 
 OBJS += \
-./source1/Class1.o 
+./source1/Class1.o
 
 CPP_DEPS += \
-./source1/Class1.d 
+./source1/Class1.d
 
 
 # Each subdirectory must supply rules for building sources it contributes

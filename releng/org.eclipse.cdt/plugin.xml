@@ -5,23 +5,23 @@
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
             configId="org.eclipse.platform.introConfig"
-            content="$nl$/intro/overviewExtensionContent.xml"/>  
-         
+            content="$nl$/intro/overviewExtensionContent.xml"/>
+
       <configExtension
             configId="org.eclipse.platform.introConfig"
-            content="$nl$/intro/tutorialsExtensionContent.xml"/>  
-      
+            content="$nl$/intro/tutorialsExtensionContent.xml"/>
+
       <configExtension
             configId="org.eclipse.platform.introConfig"
             content="$nl$/intro/samplesExtensionContent.xml"/>
-            
+
      <configExtension
             configId="org.eclipse.platform.introConfig"
             content="$nl$/intro/whatsNewExtensionContent.xml"/>
 
    </extension>
- 
-  
+
+
     <extension
          point="org.eclipse.ui.activities">
       <activity
@@ -36,10 +36,10 @@
             pattern="org\.eclipse\.cdt\.dsf\.ui/org\.eclipse\.cdt\.dsf\.debug\.ui\.[A-Za-z]+\.viewmodel\.update\.actions\.refresh">
       </activityPatternBinding>
    </extension>
-    
+
      <extension
          point="org.eclipse.ui.activities">
-  
+
       <activity
             name="%activity.name.dsf"
             description="%activity.description.dsf"
@@ -48,10 +48,10 @@
 
       <activityPatternBinding
             activityId="org.eclipse.cdt.debug.ui.cdtActivity"
-           	isEqualityPattern="true" 
+           	isEqualityPattern="true"
             pattern="org.eclipse.cdt.dsf.ui/org.eclipse.cdt.dsf.debug.ui.preferences">
       </activityPatternBinding>
- 
+
       <activity
             name="%activity.name.dsfgdb"
             description="%activity.description.dsfgdb"
@@ -60,16 +60,16 @@
 
       <activityPatternBinding
             activityId="org.eclipse.cdt.debug.dsfgdbActivity"
-           	isEqualityPattern="true" 
+           	isEqualityPattern="true"
             pattern="org.eclipse.cdt.dsf.gdb.ui/org.eclipse.cdt.dsf.gdb.ui.preferences">
       </activityPatternBinding>
-      
+
       <activityPatternBinding
             activityId="org.eclipse.cdt.debug.dsfgdbActivity"
-           	isEqualityPattern="true" 
+           	isEqualityPattern="true"
             pattern="org.eclipse.cdt.dsf.gdb.ui/org.eclipse.cdt.dsf.gdb.ui.preferences.TracepointActionsPreferencePage">
       </activityPatternBinding>
- 
+
        <activity
             name="%activity.name.cdtdebug"
             description="%activity.description.cdtdebug"
@@ -78,32 +78,32 @@
 
       <activityPatternBinding
             activityId="org.eclipse.cdt.debug.ui.cdtActivity"
-           	isEqualityPattern="true" 
+           	isEqualityPattern="true"
             pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.CDebugPreferencePage">
       </activityPatternBinding>
-   
+
       <activityPatternBinding
             activityId="org.eclipse.cdt.debug.ui.cdtActivity"
-           	isEqualityPattern="true" 
+           	isEqualityPattern="true"
             pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.breakpointactions.ActionsPreferencePage">
       </activityPatternBinding>
-   
+
       <activityPatternBinding
             activityId="org.eclipse.cdt.debug.ui.cdtActivity"
-           	isEqualityPattern="true" 
+           	isEqualityPattern="true"
             pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.SourcePreferencePage">
       </activityPatternBinding>
-      
-		<defaultEnablement id="org.eclipse.cdt.debug.ui.cdtActivity" /> 
-		
+
+		<defaultEnablement id="org.eclipse.cdt.debug.ui.cdtActivity" />
+
         <activity
             name="%activity.name.cdigdb"
             description="%activity.description.cdigdb"
             id="org.eclipse.cdt.debug.cdigdbActivity">
        </activity>
-    
+
    </extension>
-   
+
    <!--extension point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <cheatsheet
             name="%cheatsheet.helloworld.name"
@@ -111,7 +111,7 @@
             id="org.eclipse.cdt.helloworld">
          <description>%cheatsheet.helloworld.desc</description>
       </cheatsheet>
-    
+
    </extension-->
-   
+
 </plugin>

@@ -7,7 +7,7 @@
 #  https://www.eclipse.org/legal/epl-2.0/
 #
 #  SPDX-License-Identifier: EPL-2.0
-# 
+#
 #  Contributors:
 #     William R. Swanson (Tilera Corporation)
 ###############################################################################
@@ -55,21 +55,21 @@ Overview
       | |                  |   |  ------------------
       | --------------------   |
       |                        |
-      ==========================  
+      ==========================
 
   - VisualizerView -- a top-level Eclipse workbench view that
       contains and presents a VisualizerViewer
-      
+
       The VisualizerView also provides support for a toolbar and
       context menu, which can be populated by IVisualizers when
       they are selected.
 
   - VisualierViewer -- a container control that manages one or more
      IVisualizers and their corresponding graphic controls.
-     
+
      The VisualizerViewer automatically switches between its available
      IVisualizers based on the current workbench selection.
-     
+
      The viewer also mediates between its parent View and child IVisualizers
      on things like:
        - content selection (workbench selection <==> IVisulizer selection)
@@ -112,7 +112,7 @@ for plugin contributions of IVisualizer implementations:
 
    <extension
          point="org.eclipse.cdt.visualizer.ui.visualizer">
-         
+
       <!-- "Grid View" visualizer -->
       <visualizer
             id="com.tilera.ide.views.grid.visualizer"
@@ -146,7 +146,7 @@ Package/Class hierarchy:
         - ExtensionElement -- utility class for dealing with extension definitions
 
     - plugin: org.eclipse.cdt.visualizer.ui
-    
+
       - org.eclipse.cdt.visualizer.ui.plugin
 
         - CDTVisualizerUIPlugin -- plugin activator class (mainly used for logging and UIResourceManager)
@@ -157,7 +157,7 @@ Package/Class hierarchy:
 	      - handles:
 	        - display of single IVisualizerViewer
 	        - boilerplate code for workbench views
-	        
+
         - IVisualizerViewer -- visualizer "viewer" container interface
         - VisualizerViewer  -- base class for IVisualizerViewer implementations
 	      - handles:
@@ -174,7 +174,7 @@ Package/Class hierarchy:
 	        - creating and painting a graphic component
 	        - management of selection for that component
 	        - populating toolbar and context menu content on demand
-		      
+
         - VisualizerAction  -- base class for toolbar/menu actions (convenience wrapper for Action class)
 
       - org.eclipse.cdt.visualizer.ui.events
@@ -197,7 +197,7 @@ Package/Class hierarchy:
 
       - org.eclipse.cdt.visualizer.ui.util
 
-		- GUIUtils -- assorted UI utility methods      
+		- GUIUtils -- assorted UI utility methods
         - UIResourceManager -- resource manager, includes strings, images, fonts, colors
         - Colors -- SWT color resource manager, used with UIResourceManager
         - SelectionUtils -- ISelection manipulation utilities
@@ -237,7 +237,7 @@ defined in the org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui plugin.)
             name="%view.visualizer.name">
       </view>
    </extension>
-  
+
 
 - declare your visualizer class via the extension point
   (described below under Extension Points)
@@ -348,7 +348,7 @@ defined in the org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui plugin.)
 Current State, Future Plans
 ---------------------------
 
-- In the initial implementation, the IVisualizer implementation 
+- In the initial implementation, the IVisualizer implementation
   is required to use the selection to locate the object (i.e. the current launch)
   that it is to represent visually, and to construct and maintain
   a graphic representation of it.

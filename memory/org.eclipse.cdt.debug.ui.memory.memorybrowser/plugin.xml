@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: EPL-2.0
 #
 # Contributors:
-# Ted R Williams (Wind River) - initial implementation 
+# Ted R Williams (Wind River) - initial implementation
 # Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
 # Randy Rohrbach (Wind River) - Multiple expression support (326307)
 -->

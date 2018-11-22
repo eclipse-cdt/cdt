@@ -39,11 +39,11 @@
 <template name="typecomment" id="org.eclipse.cdt.ui.text.codetemplates.typecomment" description="%CodeTemplates.typecomment" context="org.eclipse.cdt.ui.text.codetemplates.typecomment_context" enabled="true">/*
  *
  */</template>
- 
+
 <template name="fieldcomment" id="org.eclipse.cdt.ui.text.codetemplates.fieldcomment" description="%CodeTemplates.fieldcomment" context="org.eclipse.cdt.ui.text.codetemplates.fieldcomment_context" enabled="true">/*
  *
  */</template>
- 
+
 <template name="methodcomment" id="org.eclipse.cdt.ui.text.codetemplates.methodcomment" description="%CodeTemplates.methodcomment" context="org.eclipse.cdt.ui.text.codetemplates.methodcomment_context" enabled="true">/*
  *
  */</template>

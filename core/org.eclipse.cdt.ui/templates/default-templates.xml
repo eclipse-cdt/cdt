@@ -19,7 +19,7 @@
 -->
 
 <!-- NOTE TO TRANSLATOR:
-* This file should remain English as it produces compilable code. 
+* This file should remain English as it produces compilable code.
 -->
 
 <templates>
@@ -47,7 +47,7 @@
 <template name="ifelse" description="%ifElseStmt" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.ifelse" enabled="true">if (${condition}) {
 	${cursor}
 } else {
-	
+
 }</template>
 <template name="elseif" description="%elseIfBlock" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.elseif" enabled="true">else if (${condition}) {
 	${cursor}

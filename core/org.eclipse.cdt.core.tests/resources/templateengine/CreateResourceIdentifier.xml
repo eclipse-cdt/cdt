@@ -7,12 +7,12 @@
         <simple name="valueName"  value="$(valueName1)"/>
         <simple name="appName"  value="$(appName1)"/>
 	</process>
-	
+
 	<process type="org.eclipse.cdt.core.CreateResourceIdentifier">
         <simple name="valueName"  value="$(valueName2)"/>
         <simple name="appName"  value="$(appName2)"/>
 	</process>
-	
+
 	<process type="org.eclipse.cdt.core.AddFile">
 		<simple name="projectName" value="$(projectName)"/>
         <complex name="file">

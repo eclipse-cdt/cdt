@@ -2,5 +2,5 @@
 
 void anotherClass::anotherMethod()
 {
- aNamespace::a 
+ aNamespace::a
 }

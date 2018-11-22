@@ -9,7 +9,7 @@
    <extension-point id="foldingStructureProviders" name="%foldingStructureProvidersExtensionPoint" schema="schema/foldingStructureProviders.exsd"/>
    <extension-point id="cPropertyTab" name="%cPropertyTabName" schema="schema/cPropertyTab.exsd"/>
    <extension-point id="CDTWizard" name="%CDTWizard" schema="schema/CDTWizard.exsd"/>
-   
+
 <!-- =========================================================================== -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
@@ -153,7 +153,7 @@
             targetId="org.eclipse.cdt.ui.CView"
             name="%ForwardDeclarationFilter.label"
             enabled="true"
-            description="%ForwardDeclarationFilter.description" 
+            description="%ForwardDeclarationFilter.description"
             class="org.eclipse.cdt.internal.ui.filters.ForwardDeclarationFilter"
             id="org.eclipse.cdt.internal.ui.CView.ForwardDeclarationFilter">
       </filter>
@@ -186,7 +186,7 @@
             targetId="org.eclipse.cdt.ui.COutlinePage"
             name="%ForwardDeclarationFilter.label"
             enabled="false"
-            description="%ForwardDeclarationFilter.description" 
+            description="%ForwardDeclarationFilter.description"
             class="org.eclipse.cdt.internal.ui.filters.ForwardDeclarationFilter"
             id="org.eclipse.cdt.ui.COutlinePage.ForwardDeclarationFilter">
       </filter>
@@ -255,7 +255,7 @@
             id="org.eclipse.cdt.ui.AnnotationHover">
       </hover>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
@@ -893,13 +893,13 @@
             id="org.eclipse.cdt.ui.overloadedOperatorHighlighting"
             isEditable="false"
             label="%Dummy.label"
-            value="200, 100, 0">            
+            value="200, 100, 0">
       </colorDefinition>
       <colorDefinition
             id="org.eclipse.cdt.ui.variablePassedByNonConstReferenceHighlighting"
             isEditable="false"
             label="%Dummy.label"
-            value="200, 100, 150">            
+            value="200, 100, 150">
       </colorDefinition>
       <theme
          id="org.eclipse.ui.ide.systemDefault">
@@ -1352,13 +1352,13 @@
             id="org.eclipse.cdt.ui.codeformatter"/>
       <keyword
             label="%preferenceKeywords.todo"
-            id="org.eclipse.cdt.ui.todo"/>            
+            id="org.eclipse.cdt.ui.todo"/>
       <keyword
             label="%preferenceKeywords.ceditor"
-            id="org.eclipse.cdt.ui.ceditor"/>      
+            id="org.eclipse.cdt.ui.ceditor"/>
       <keyword
             label="%preferenceKeywords.contentassist"
-            id="org.eclipse.cdt.ui.contentassist"/>   
+            id="org.eclipse.cdt.ui.contentassist"/>
       <keyword
             label="%preferenceKeywords.hover"
             id="org.eclipse.cdt.ui.hover"/>
@@ -1370,7 +1370,7 @@
             id="org.eclipse.cdt.ui.scalability"/>
       <keyword
             label="%preferenceKeywords.syntaxcoloring"
-            id="org.eclipse.cdt.ui.syntaxcoloring"/>   
+            id="org.eclipse.cdt.ui.syntaxcoloring"/>
       <keyword
             label="%preferenceKeywords.templates"
             id="org.eclipse.cdt.ui.templates"/>
@@ -1386,7 +1386,7 @@
       <keyword
             label="%preferenceKeywords.indexer"
             id="org.eclipse.cdt.ui.indexer"/>
-   </extension>  
+   </extension>
 
    <extension
          point="org.eclipse.ui.menus">
@@ -1510,14 +1510,14 @@
          </menu>
       </objectContribution>
       <!-- project explorer shows IProjects, we need to handle this -->
-      <objectContribution 
+      <objectContribution
           id="org.eclipse.cdt.ui.cproject.in.explorer.contrib"
           objectClass="org.eclipse.core.resources.IProject">
          <visibility>
               <objectState
                  name="projectNature"
                  value="org.eclipse.cdt.core.cnature"/>
-         </visibility>          
+         </visibility>
          <action
              class="org.eclipse.cdt.internal.ui.actions.UpdateUnresolvedIncludesAction"
              definitionId="org.eclipse.cdt.ui.menu.updateUnresolvedIncludes"
@@ -1600,7 +1600,7 @@
                label="%QuickFix.label"
                menubarPath="additions"
                tooltip="%QuickFix.tooltip">
-         </action>            
+         </action>
       </viewerContribution>
       <viewerContribution
             targetID="#ASMEditorRulerContext"
@@ -1635,7 +1635,7 @@
                name="type"
                value="org.eclipse.cdt.core.problem"/>
       </objectContribution>
-      
+
      <objectContribution
            adaptable="true"
            id="org.eclipse.cdt.ui.buildConfigContribution"
@@ -1673,7 +1673,7 @@
         </menu>
      </objectContribution>
    </extension>
-   
+
    <extension
          point="org.eclipse.compare.structureCreators">
       <structureCreator
@@ -1804,7 +1804,7 @@
             <separator name="typeGroup3"/>
             <separator
                   name="historyGroup">
-            </separator>            
+            </separator>
          </menu>
          <!-- reorg group  -->
          <action
@@ -1919,7 +1919,7 @@
                menubarPath="org.eclipse.jdt.ui.source.menu/generateGroup"
                id="org.eclipse.cdt.ui.actions.GettersAndSetters"
                retarget="true">
-         </action> 
+         </action>
          <action
                definitionId="org.eclipse.cdt.ui.refactor.implement.method"
                label="%Refactoring.implementMethod.label"
@@ -2264,26 +2264,26 @@
             description="%asmEditor.description"
             id="org.eclipse.cdt.ui.asmEditorScope">
        </context>
-      <context 
-            name="%cViewScope.name" 
-            description="%cViewScope.description" 
-            id="org.eclipse.cdt.ui.cViewScope" 
+      <context
+            name="%cViewScope.name"
+            description="%cViewScope.description"
+            id="org.eclipse.cdt.ui.cViewScope"
             parentId="org.eclipse.ui.contexts.window"
       />
       <context
-            name="%macroExpansionHoverScope.name" 
-            description="%macroExpansionHoverScope.description" 
-            id="org.eclipse.cdt.ui.macroExpansionHoverScope" 
+            name="%macroExpansionHoverScope.name"
+            description="%macroExpansionHoverScope.description"
+            id="org.eclipse.cdt.ui.macroExpansionHoverScope"
             parentId="org.eclipse.ui.contexts.dialogAndWindow"
       />
    </extension>
 
    <extension point="org.eclipse.ui.bindings">
- 
+
       <!--  win32:  M1=CTRL,    M2=SHIFT, M3=ALT, M4=-
             carbon: M1=COMMAND, M2=SHIFT, M3=ALT, M4=CTRL -->
-            
-<!-- edit -->            
+
+<!-- edit -->
       <key
             sequence="M2+M3+ARROW_UP"
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -2305,56 +2305,56 @@
             commandId="org.eclipse.cdt.ui.edit.text.c.select.last"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            platform="carbon"      
+            platform="carbon"
             sequence="M2+M3+ARROW_UP"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId=""
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            platform="carbon"      
+            platform="carbon"
             sequence="M2+M3+ARROW_RIGHT"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId=""
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            platform="carbon"      
+            platform="carbon"
             sequence="M2+M3+ARROW_LEFT"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId=""
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            platform="carbon"      
+            platform="carbon"
             sequence="M2+M3+ARROW_DOWN"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId=""
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            platform="carbon"      
+            platform="carbon"
             sequence="CTRL+SHIFT+PAGE_UP"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.select.enclosing"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            platform="carbon"      
+            platform="carbon"
             sequence="CTRL+SHIFT+END"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.select.next"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            platform="carbon"      
+            platform="carbon"
             sequence="CTRL+SHIFT+HOME"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.select.previous"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            platform="carbon"      
+            platform="carbon"
             sequence="CTRL+SHIFT+PAGE_DOWN"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.select.last"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 
 
-            
+
       <key
             sequence="M2+M3+S"
             commandId="org.eclipse.cdt.ui.edit.text.c.source.quickMenu"
@@ -2376,12 +2376,12 @@
             sequence="M1+M2+F"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
-            commandId="org.eclipse.cdt.ui.edit.text.c.format"/>      
+            commandId="org.eclipse.cdt.ui.edit.text.c.format"/>
    	 <key
             sequence="M2+TAB"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
-            commandId="org.eclipse.ui.edit.text.shiftLeft"/>      
+            commandId="org.eclipse.ui.edit.text.shiftLeft"/>
      <key
             sequence="M1+M2+C"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -2406,7 +2406,7 @@
             sequence="M1+M2+\"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.remove.block.comment"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>   
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             sequence="M1+I"
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -2421,7 +2421,7 @@
             sequence="M2+M3+Z"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.surround.with.quickMenu"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>        
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             platform="carbon"
             sequence="M2+M3+Z"
@@ -2432,7 +2432,7 @@
             sequence="COMMAND+ALT+Z"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.surround.with.quickMenu"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
             sequence="M1+M3+H"
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -2776,14 +2776,14 @@
 <!-- MICROSOFT VISUAL STUDIO KEY SHORTCUTS                                               -->
 <!-- =================================================================================== -->
 		<!-- C/C++ Source Keys -->
-	   
+
 	    <!-- MSVS Edit.GoToDefinition -->
 		<key
 			sequence="F12"
 			commandId="org.eclipse.cdt.ui.edit.opendecl"
 			contextId="org.eclipse.cdt.ui.cEditorScope"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
+
 		<!-- Edit Keys -->
 
 		<key
@@ -2791,7 +2791,7 @@
 			commandId="org.eclipse.ui.edit.findNext"
 			contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
+
 		<key
 			sequence="M2+F3"
 			commandId="org.eclipse.ui.edit.findPrevious"
@@ -2809,29 +2809,29 @@
 			commandId="org.eclipse.search.ui.openSearchDialog"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
 
-	   	<!-- File Keys -->	   
+	   	<!-- File Keys -->
 	   	<!-- Help Keys -->
 		<!-- MakeFile Source Keys -->
-	   
+
 		<!-- Navigate Keys -->
 		<key
-            sequence="M1+F2" 
+            sequence="M1+F2"
             commandId="org.eclipse.ui.edit.addBookmark"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
 
 		<key
-            sequence="M2+F2" 
+            sequence="M2+F2"
             commandId="org.eclipse.cdt.ui.edit.text.c.goto.next.bookmark"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             schemeId="org.eclipse.cdt.ui.visualstudio"/>
 
 		<key
-            sequence="M1+G" 
+            sequence="M1+G"
             commandId="org.eclipse.ui.edit.text.goto.line"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
+
 		<!-- Project Keys -->
-	   
+
 		<!-- MSVS RebuildSolution -->
 <!-- THERE IS CURRENTLY NO REBUILD
 		<key
@@ -2839,39 +2839,39 @@
 			commandId="org.eclipse.ui.project.rebuildProject"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
 -->
-		<!-- MSVS NewProject -->   
+		<!-- MSVS NewProject -->
 		<key
 			sequence="M1+M2+N"
 			commandId="org.eclipse.ui.newWizard"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
-		<!-- Run/Debug Keys -->	   
+
+		<!-- Run/Debug Keys -->
 		<!-- MSVS Start -->
 		<key
 			sequence="M1+F5"
 			commandId="org.eclipse.debug.ui.commands.RunLast"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
+
 		<!-- MSVS StartWithoutDebugging -->
 		<key
 			sequence="F5"
 			commandId="org.eclipse.debug.ui.commands.DebugLast"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
+
 		<!-- MSVS StepInto -->
 		<key
 			sequence="F11"
 			commandId="org.eclipse.debug.ui.commands.StepInto"
 			contextId="org.eclipse.debug.ui.debugging"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
+
 		<!-- MSVS StepOver -->
 		<key
 			sequence="F10"
 			commandId="org.eclipse.debug.ui.commands.StepOver"
 			contextId="org.eclipse.debug.ui.debugging"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
+
 		<!-- MSVS StepReturn -->
 		<key
 			sequence="M2+F11"
@@ -2889,13 +2889,13 @@
 			sequence="F9"
 			commandId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
+
 		<!-- MSVS RunToCursor -->
 		<key
 			sequence="M1+F10"
 			commandId="org.eclipse.debug.ui.commands.RunToLine"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
+
 		<!-- MSVS Breakpoints -->
 		<key
         commandId="org.eclipse.ui.views.showView"
@@ -2909,24 +2909,24 @@
 
 		<!-- Search Keys -->
 		<!-- Text Editing Keys -->
-	   
-		<key	
+
+		<key
 			sequence="M1+ARROW_LEFT"
 			commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
 			contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
+
 		<key
 			sequence="M1+ARROW_RIGHT"
 			commandId="org.eclipse.ui.edit.text.goto.wordNext"
 			contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-	   
+
 		<!-- View Keys -->
 		<!-- Views Keys -->
 		<!-- Window Keys -->
-			
-		<!-- MSVC Window NextDocumentWindow --> 
+
+		<!-- MSVC Window NextDocumentWindow -->
 		<key
 			sequence="M1+TAB"
             commandId="org.eclipse.ui.window.nextEditor"
@@ -2937,7 +2937,7 @@
 			sequence="M1+M2+TAB"
             commandId="org.eclipse.ui.window.previousEditor"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
-            
+
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -3171,7 +3171,7 @@
             name="%refactoringExtractLocalVariable.label"/>
 	  <command
 	        categoryId="org.eclipse.cdt.ui.category.refactoring"
-	        id="org.eclipse.cdt.ui.refactor.hide.method"   
+	        id="org.eclipse.cdt.ui.refactor.hide.method"
 	        name="%refactoringHideMethod.label"/>
       <command
             name="%ActionDefinition.renameElement.name"
@@ -3262,33 +3262,33 @@
 
    <extension
          point="org.eclipse.ui.actionSetPartAssociations">
-      <actionSetPartAssociation 
+      <actionSetPartAssociation
             targetID="org.eclipse.cdt.ui.SearchActionSet">
          <part id="org.eclipse.cdt.ui.CView"/>
          <part id="org.eclipse.cdt.ui.editor.CEditor"/>
          <part id="org.eclipse.search.SearchResultView"/>
       </actionSetPartAssociation>
-      <actionSetPartAssociation 
+      <actionSetPartAssociation
             targetID="org.eclipse.cdt.ui.CodingActionSet">
          <part id="org.eclipse.cdt.ui.editor.CEditor"/>
          <part id="org.eclipse.cdt.ui.CView"/>
       </actionSetPartAssociation>
-      <actionSetPartAssociation 
+      <actionSetPartAssociation
       		targetID="org.eclipse.cdt.ui.OpenActionSet">
          <part id="org.eclipse.cdt.ui.editor.CEditor"/>
       </actionSetPartAssociation>
-      <actionSetPartAssociation 
+      <actionSetPartAssociation
             targetID="org.eclipse.cdt.ui.NavigationActionSet">
          <part id="org.eclipse.cdt.ui.editor.CEditor"/>
       </actionSetPartAssociation>
       <actionSetPartAssociation
             targetID="org.eclipse.ui.edit.text.actionSet.annotationNavigation">
          <part id="org.eclipse.cdt.ui.editor.CEditor"/>
-      </actionSetPartAssociation>      
+      </actionSetPartAssociation>
       <actionSetPartAssociation
             targetID="org.eclipse.cdt.ui.text.c.actionSet.presentation">
          <part id="org.eclipse.cdt.ui.editor.CEditor"/>
-      </actionSetPartAssociation>               
+      </actionSetPartAssociation>
    </extension>
    <extension
          point="org.eclipse.cdt.ui.BinaryParserPage">
@@ -3434,7 +3434,7 @@
             id="org.eclipse.cdt.ui.pdomSearchViewPage"
             searchResultClass="org.eclipse.cdt.internal.ui.search.CSearchResult"/>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
@@ -3445,19 +3445,19 @@
          <filter
                name="projectNature"
                value="org.eclipse.cdt.core.cnature">
-         </filter>            
+         </filter>
          <enabledWhen>
             <or>
 		     <adapt type="org.eclipse.core.resources.IProject"/>
-		     
+
 		     <instanceof value="org.eclipse.core.resources.IFolder"/>
 		     <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
 
 	         <instanceof value="org.eclipse.core.resources.IFile"/>
          	 <instanceof value="org.eclipse.cdt.core.model.ITranslationUnit"/>
-		    </or>          
+		    </or>
          </enabledWhen>
-      </page>    
+      </page>
 
       <page
             name="%CDTIndexerProperty.name"
@@ -3468,7 +3468,7 @@
 		     <adapt type="org.eclipse.core.resources.IProject">
 		          <test property="org.eclipse.core.resources.projectNature"
 		                value="org.eclipse.cdt.core.cnature"/>
-		     </adapt>         
+		     </adapt>
          </enabledWhen>
       </page>
       <page
@@ -3480,7 +3480,7 @@
 		     <adapt type="org.eclipse.core.resources.IProject">
 		          <test property="org.eclipse.core.resources.projectNature"
 		                value="org.eclipse.cdt.core.cnature"/>
-		     </adapt>         
+		     </adapt>
          </enabledWhen>
        </page>
       <page
@@ -3492,7 +3492,7 @@
 		     <adapt type="org.eclipse.core.resources.IProject">
 		          <test property="org.eclipse.core.resources.projectNature"
 		                value="org.eclipse.cdt.core.cnature"/>
-		     </adapt>         
+		     </adapt>
          </enabledWhen>
       </page>
       <page
@@ -3504,7 +3504,7 @@
 		     <adapt type="org.eclipse.core.resources.IProject">
 		          <test property="org.eclipse.core.resources.projectNature"
 		                value="org.eclipse.cdt.core.cnature"/>
-		     </adapt>         
+		     </adapt>
          </enabledWhen>
       </page>
       <page
@@ -3532,7 +3532,7 @@
 		     <adapt type="org.eclipse.core.resources.IProject">
 		          <test property="org.eclipse.core.resources.projectNature"
 		                value="org.eclipse.cdt.core.cnature"/>
-		     </adapt>         
+		     </adapt>
          </enabledWhen>
       </page>
       <page
@@ -3626,7 +3626,7 @@
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.ui.CUIPreferenceInitializer"/>
    </extension>
-   
+
 <!-- Default folding -->
 	<extension
 		point= "org.eclipse.cdt.ui.foldingStructureProviders">
@@ -3741,7 +3741,7 @@
           <partition type="__c_preprocessor"/>
        </completionProposalComputer>
     </extension>
-     
+
     <extension
           id="KeywordCompletionProposalComputer"
           point="org.eclipse.cdt.ui.completionProposalComputer">
@@ -3756,7 +3756,7 @@
     <extension
         point="org.eclipse.cdt.ui.completionProposalComputer"
         id="TemplateCompletionProposalComputer">
-        <completionProposalComputer 
+        <completionProposalComputer
             class="org.eclipse.cdt.internal.ui.text.contentassist.TemplateCompletionProposalComputer"
             categoryId="org.eclipse.cdt.ui.templateProposalCategory">
             <partition type="__dftl_partition_content_type"/>
@@ -3789,7 +3789,7 @@
             <partition type="__c_preprocessor"/>
         </completionProposalComputer>
     </extension>
-    
+
     <!-- the parameterized content assist action and keybindings for our contributed computers -->
    <extension
     point="org.eclipse.ui.commands">
@@ -3870,7 +3870,7 @@
              overrides="org.eclipse.ui.navigator.resources.OpenActions">
 		 <enablement>
 			<or>
-				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 		        <and>
 		            <instanceof value="org.eclipse.core.resources.IProject"/>
 		            <test property="org.eclipse.core.resources.projectNature"
@@ -3885,7 +3885,7 @@
              id="org.eclipse.cdt.ui.navigator.actions.build">
 		 <enablement>
 			<or>
-				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 		        <and>
 		            <instanceof value="org.eclipse.core.resources.IProject"/>
 		            <test property="org.eclipse.core.resources.projectNature"
@@ -3934,7 +3934,7 @@
              overrides="org.eclipse.ui.navigator.resources.actions.RefactorActions">
           <enablement>
 			<or>
-				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 				<and>
 				   <instanceof value="org.eclipse.core.resources.IResource" />
 	               <test property="org.eclipse.core.resources.projectNature"
@@ -3955,7 +3955,7 @@
                           value="org.eclipse.cdt.ui.CPerspective">
                     </equals>
 	         	</with>
-	         	<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+	         	<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 		        <and>
 		            <instanceof value="org.eclipse.core.resources.IProject"/>
 		            <test property="org.eclipse.core.resources.projectNature"
@@ -3971,7 +3971,7 @@
 	         wizardId="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
 		 <enablement>
 			<or>
-				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 		        <and>
 		            <instanceof value="org.eclipse.core.resources.IProject"/>
 		            <test property="org.eclipse.core.resources.projectNature"
@@ -3987,7 +3987,7 @@
             wizardId="org.eclipse.cdt.ui.wizards.NewHeaderFileCreationWizard">
 		 <enablement>
 			<or>
-				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 		        <and>
 		            <instanceof value="org.eclipse.core.resources.IProject"/>
 		            <test property="org.eclipse.core.resources.projectNature"
@@ -4003,7 +4003,7 @@
             wizardId="org.eclipse.cdt.ui.wizards.NewSourceFolderCreationWizard">
 		 <enablement>
 			<or>
-				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 		        <and>
 		            <instanceof value="org.eclipse.core.resources.IContainer"/>
 		            <test property="org.eclipse.core.resources.projectNature"
@@ -4019,7 +4019,7 @@
             wizardId="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
 		 <enablement>
 			<or>
-				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 		        <and>
 		            <instanceof value="org.eclipse.core.resources.IProject"/>
 		            <test property="org.eclipse.core.resources.projectNature"
@@ -4034,7 +4034,7 @@
 	         wizardId="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
 		 <enablement>
 			<or>
-				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 		        <and>
 		            <instanceof value="org.eclipse.core.resources.IContainer"/>
 		            <test property="org.eclipse.core.resources.projectNature"
@@ -4128,7 +4128,7 @@
          </selectionEnablement>
       </linkHelper>
   </extension>
-  
+
   <extension
        point="org.eclipse.ui.navigator.viewer">
     <viewerContentBinding viewerId="org.eclipse.ui.navigator.ProjectExplorer">
@@ -4176,7 +4176,7 @@
             properties="hasCProjects"
             type="org.eclipse.ui.IWorkingSet"/>
   </extension>
-   
+
   <extension
         point="org.eclipse.ui.exportWizards">
      <category
@@ -4256,7 +4256,7 @@
             id="org.eclipse.cdt.ui.provider1">
       </provider>
    </extension>
-   
+
    <extension
          point="org.eclipse.cdt.ui.DocCommentOwner">
       <owner
@@ -4447,7 +4447,7 @@
          <enabledWhen>
 		     <adapt type="org.eclipse.ui.IWorkingSet">
 		          <test property="org.eclipse.cdt.ui.hasCProjects"/>
-		     </adapt>         
+		     </adapt>
          </enabledWhen>
       </page>
    </extension>
@@ -4532,7 +4532,7 @@
       <handler
             class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:undo"
             commandId="org.eclipse.ui.edit.undo">
-         <activeWhen>      
+         <activeWhen>
          	<with variable="activeFocusControlId">
          	         <equals value="org.eclipse.cdt.ui.FileListControl"/>
          	</with>
@@ -4541,7 +4541,7 @@
       <handler
             class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:redo"
             commandId="org.eclipse.ui.edit.redo">
-         <activeWhen>      
+         <activeWhen>
          	<with variable="activeFocusControlId">
          	         <equals value="org.eclipse.cdt.ui.FileListControl"/>
          	</with>
@@ -4550,7 +4550,7 @@
       <handler
             class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:delete"
             commandId="org.eclipse.ui.edit.delete">
-         <activeWhen>      
+         <activeWhen>
          	<with variable="activeFocusControlId">
          	         <equals value="org.eclipse.cdt.ui.FileListControl"/>
          	</with>
@@ -4875,7 +4875,7 @@
             <key name="content_assist_parameters_background"/>
             <key name="content_assist_parameters_foreground"/>
             <key name="sourceHoverBackgroundColor"/>
-            <key name="sourceHoverBackgroundColor.SystemDefault"/>	
+            <key name="sourceHoverBackgroundColor.SystemDefault"/>
             <key name="org.eclipse.cdt.ui.editors.textfont"/>
             <key name="org.eclipse.cdt.ui.editor.showSegments"/>
             <key name="CEditor.ShowTemporaryProblem"/>
@@ -4946,7 +4946,7 @@
           </entry>
        </mapping>
        <description>
-          %transfer.EditorBehavior.description 
+          %transfer.EditorBehavior.description
        </description>
     </transfer>
     <transfer
@@ -4974,7 +4974,7 @@
           </entry>
        </mapping>
        <description>
-          %transfer.CodeStyle.description 
+          %transfer.CodeStyle.description
        </description>
     </transfer>
 

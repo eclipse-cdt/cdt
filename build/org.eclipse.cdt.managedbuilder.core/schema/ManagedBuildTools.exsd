@@ -22,21 +22,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -740,7 +740,7 @@ Version identifier for the managed build extension point. It is a string represe
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         
+
       </documentation>
    </annotation>
 

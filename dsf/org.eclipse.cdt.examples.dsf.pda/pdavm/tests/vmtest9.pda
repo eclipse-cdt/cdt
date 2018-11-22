@@ -1,11 +1,11 @@
 push 5
 :thread_create
 exec foo
-dec 
+dec
 dup
 branch_not_zero thread_create
 push finished
-output 
+output
 halt
 :foo
 push thread_created

@@ -1315,7 +1315,9 @@ public class CPPTemplates {
 							IProblemBinding.SEMANTIC_INVALID_TYPE, 
 							types[i] instanceof IBinding ? ((IBinding) types[i]).getNameCharArray() : null);
 				} else if (packSize == PACK_SIZE_DEFER) {
-					newType= origType;
+					// We're not expanding the pack, but arguments for template parameters of
+					// enclosing templates may still need to be substituted into the expansion pattern.
+					newType = instantiateType(origType, context);
 				} else {
 					IType[] newResult= new IType[result.length + packSize - 1];
 					System.arraycopy(result, 0, newResult, 0, j);
@@ -1376,7 +1378,14 @@ public class CPPTemplates {
 					throw new DOMException(new ProblemBinding(CPPSemantics.getCurrentLookupPoint(),
 							IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, null));
 				} else if (packSize == PACK_SIZE_DEFER) {
-					newArg= origArg;
+					// We're not expanding the pack, but arguments for template parameters of
+					// enclosing templates may still need to be substituted into the expansion pattern.
+					newArg = instantiateArgument(origArg, context);
+					if (!isValidArgument(newArg)) {
+						if (strict)
+							return null;
+						newArg = origArg;
+					}
 				} else {
 					int shift = packSize - 1;
 					ICPPTemplateArgument[] newResult= new ICPPTemplateArgument[args.length + resultShift + shift];

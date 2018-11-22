@@ -10665,6 +10665,33 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testLongDependentFunctionCallChain_530692() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<int Idx>
+	//	struct get_from_variadic_pack {
+	//		template<typename First, typename ... Accessors>
+	//		static constexpr int apply(First first, Accessors... args) {
+	//			return get_from_variadic_pack<Idx - 1>::apply(args...);
+	//		}
+	//	};
+	//
+	//	template<>
+	//	struct get_from_variadic_pack<0> {
+	//		template<typename First, typename ... Accessors>
+	//		static constexpr int apply(First first, Accessors ... args) {
+	//			return first;
+	//		}
+	//	};
+	//
+	//	template<int N>
+	//	struct static_int{
+	//		static constexpr int value = N;
+	//	};
+	//
+	//	constexpr int tmp = get_from_variadic_pack<1>::apply(1,2);
+	//	constexpr int result = static_int<tmp>::value;
+	public void testInstantiationOfPackInNestedTemplate_540758() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	// A metafunction that loops infinitely on odd inputs.
 	//	template <int N>

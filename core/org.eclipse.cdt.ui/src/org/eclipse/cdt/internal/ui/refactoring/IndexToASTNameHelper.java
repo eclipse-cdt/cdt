@@ -42,7 +42,7 @@ public class IndexToASTNameHelper {
 		} else if (!(name instanceof IIndexName)) {
 			return null;
 		}
-		
+
 		if (tu == null) {
 			return null;
 		}

@@ -5,3 +5,4 @@
 .DS_Store
 .nfs*
 .polyglot.build.properties
+check_code_cleanliness_workspace/

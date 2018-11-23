@@ -80,7 +80,7 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
 								request.setEnabled(false);
 							} else {
 								request.setEnabled(getData());
-								
+
 							}
 							request.done();
 						}

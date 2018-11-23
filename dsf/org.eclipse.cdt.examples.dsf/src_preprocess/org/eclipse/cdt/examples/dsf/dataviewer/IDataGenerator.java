@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -26,14 +26,14 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 //#endif
 
 /**
- * Data generator is simple source of data used to populate the example table 
- * view.  It contains two asynchronous methods for retrieving the data 
- * parameters: the count and the value for a given index.  It also allows the 
- * view to receive events indicating when the data supplied by the generator 
- * is changed. 
+ * Data generator is simple source of data used to populate the example table
+ * view.  It contains two asynchronous methods for retrieving the data
+ * parameters: the count and the value for a given index.  It also allows the
+ * view to receive events indicating when the data supplied by the generator
+ * is changed.
  */
 //#ifdef exercises
-// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 // indicating allowed thread access to this class/method/member
 //#else
 //#@ThreadSafe
@@ -42,7 +42,7 @@ public interface IDataGenerator {
 
     // Constants which control the data generator behavior.
     // Changing the count range can stress the scalability of the system, while
-    // changing of the process delay and random change interval can stress 
+    // changing of the process delay and random change interval can stress
     // its performance.
     final static int MIN_COUNT = 50;
     final static int MAX_COUNT = 100;
@@ -51,7 +51,7 @@ public interface IDataGenerator {
     final static int RANDOM_COUNT_CHANGE_INTERVALS = 5;
     final static int RANDOM_CHANGE_SET_PERCENTAGE = 10;
 
-    
+
     // Listener interface that the view needs to implement to react
     // to the changes in data.
     public interface Listener {
@@ -61,10 +61,10 @@ public interface IDataGenerator {
 
     // Data access methods.
     void getCount(DataRequestMonitor<Integer> rm);
-    void getValue(int index, DataRequestMonitor<Integer> rm); 
-    
-    // Method used to shutdown the data generator including any threads that 
-    // it may use.  
+    void getValue(int index, DataRequestMonitor<Integer> rm);
+
+    // Method used to shutdown the data generator including any threads that
+    // it may use.
     void shutdown(RequestMonitor rm);
 
     // Methods for registering change listeners.

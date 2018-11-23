@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,14 +23,14 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 
 /**
- * Example of using a DataRequestMonitor to retrieve a result from an 
+ * Example of using a DataRequestMonitor to retrieve a result from an
  * asynchronous method.
  */
 public class Async2Plus2 {
-    
+
     public static void main(String[] args) {
         Executor executor = ImmediateExecutor.getInstance();
-        DataRequestMonitor<Integer> rm = 
+        DataRequestMonitor<Integer> rm =
             new DataRequestMonitor<Integer>(executor, null) {
                 @Override
                 protected void handleCompleted() {

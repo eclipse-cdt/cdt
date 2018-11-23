@@ -14,6 +14,7 @@
 //#ifdef exercises
 package org.eclipse.cdt.examples.dsf.dataviewer;
 //#else
+
 //#package org.eclipse.cdt.examples.dsf.dataviewer.answers;
 //#endif
 
@@ -40,34 +41,36 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 //#endif
 public interface IDataGenerator {
 
-    // Constants which control the data generator behavior.
-    // Changing the count range can stress the scalability of the system, while
-    // changing of the process delay and random change interval can stress
-    // its performance.
-    final static int MIN_COUNT = 50;
-    final static int MAX_COUNT = 100;
-    final static int PROCESSING_DELAY = 500;
-    final static int RANDOM_CHANGE_INTERVAL = 4000;
-    final static int RANDOM_COUNT_CHANGE_INTERVALS = 5;
-    final static int RANDOM_CHANGE_SET_PERCENTAGE = 10;
+	// Constants which control the data generator behavior.
+	// Changing the count range can stress the scalability of the system, while
+	// changing of the process delay and random change interval can stress
+	// its performance.
+	final static int MIN_COUNT = 50;
+	final static int MAX_COUNT = 100;
+	final static int PROCESSING_DELAY = 500;
+	final static int RANDOM_CHANGE_INTERVAL = 4000;
+	final static int RANDOM_COUNT_CHANGE_INTERVALS = 5;
+	final static int RANDOM_CHANGE_SET_PERCENTAGE = 10;
 
+	// Listener interface that the view needs to implement to react
+	// to the changes in data.
+	public interface Listener {
+		void countChanged();
 
-    // Listener interface that the view needs to implement to react
-    // to the changes in data.
-    public interface Listener {
-        void countChanged();
-        void valuesChanged(Set<Integer> indexes);
-    }
+		void valuesChanged(Set<Integer> indexes);
+	}
 
-    // Data access methods.
-    void getCount(DataRequestMonitor<Integer> rm);
-    void getValue(int index, DataRequestMonitor<Integer> rm);
+	// Data access methods.
+	void getCount(DataRequestMonitor<Integer> rm);
 
-    // Method used to shutdown the data generator including any threads that
-    // it may use.
-    void shutdown(RequestMonitor rm);
+	void getValue(int index, DataRequestMonitor<Integer> rm);
 
-    // Methods for registering change listeners.
-    void addListener(Listener listener);
-    void removeListener(Listener listener);
+	// Method used to shutdown the data generator including any threads that
+	// it may use.
+	void shutdown(RequestMonitor rm);
+
+	// Methods for registering change listeners.
+	void addListener(Listener listener);
+
+	void removeListener(Listener listener);
 }

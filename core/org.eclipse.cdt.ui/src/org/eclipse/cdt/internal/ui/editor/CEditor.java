@@ -1344,8 +1344,7 @@ public class CEditor extends TextEditor
 	 * AST reconciling listeners.
 	 * @since 4.0
 	 */
-	private final ListenerList<ICReconcilingListener> fReconcilingListeners = new ListenerList<>(
-			ListenerList.IDENTITY);
+	private final ListenerList<ICReconcilingListener> fReconcilingListeners = new ListenerList<>(ListenerList.IDENTITY);
 
 	/**
 	 * Semantic highlighting manager

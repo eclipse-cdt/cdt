@@ -61,8 +61,7 @@ public final class QMakeInfo implements IQMakeInfo {
 		this.qtVersion = QMakeVersion.create(queryMap.get(QMakeParser.KEY_QT_VERSION));
 		List<String> tmpQtImportPaths = new ArrayList<>(
 				QMakeParser.singleValue(queryMap, QMakeParser.KEY_QT_INSTALL_IMPORTS));
-		List<String> tmpQtQmlPaths = new ArrayList<>(
-				QMakeParser.singleValue(queryMap, QMakeParser.KEY_QT_INSTALL_QML));
+		List<String> tmpQtQmlPaths = new ArrayList<>(QMakeParser.singleValue(queryMap, QMakeParser.KEY_QT_INSTALL_QML));
 		this.qtDocPath = QMakeParser.singleValue(queryMap, QMakeParser.KEY_QT_INSTALL_DOCS);
 
 		this.involvedQMakeFiles = QMakeParser.qmake3DecodeValueList(proMap,

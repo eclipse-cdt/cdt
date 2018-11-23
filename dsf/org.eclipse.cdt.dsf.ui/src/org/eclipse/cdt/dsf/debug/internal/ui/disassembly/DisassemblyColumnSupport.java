@@ -202,8 +202,7 @@ class DisassemblyColumnSupport implements IColumnSupport {
 	 */
 	@Override
 	public void dispose() {
-		for (Iterator<IContributedRulerColumn> iter = new ArrayList<>(fColumns).iterator(); iter
-				.hasNext();)
+		for (Iterator<IContributedRulerColumn> iter = new ArrayList<>(fColumns).iterator(); iter.hasNext();)
 			removeColumn(getRuler(), iter.next());
 		fColumns.clear();
 	}

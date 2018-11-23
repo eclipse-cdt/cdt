@@ -1466,8 +1466,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				ICSettingEntry[] libs = CDataUtil.resolveEntries(unresolved, des);
 				if (libs.length > 0) {
 					for (ICExternalSetting setting : des.getExternalSettings()) {
-						Set<ICSettingEntry> entries = new LinkedHashSet<>(
-								Arrays.asList(setting.getEntries()));
+						Set<ICSettingEntry> entries = new LinkedHashSet<>(Arrays.asList(setting.getEntries()));
 						for (ICSettingEntry lib : libs) {
 							if (entries.contains(lib)) {
 								entries.remove(lib);

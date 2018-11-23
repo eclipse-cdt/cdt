@@ -598,8 +598,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		assertNotNull(cfgDescription);
 
 		// Modification SOURCE_ADDED
-		List<ICSourceEntry> sourceEntries = new ArrayList<>(
-				Arrays.asList(cfgDescription.getSourceEntries()));
+		List<ICSourceEntry> sourceEntries = new ArrayList<>(Arrays.asList(cfgDescription.getSourceEntries()));
 		ICSourceEntry testSourceEntry = new CSourceEntry(project.getFullPath().append("test_src"), null,
 				ICSettingEntry.RESOLVED);
 		sourceEntries.add(testSourceEntry);
@@ -648,8 +647,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 			ICConfigurationDescription cfgDescription = prjDescription.getConfigurations()[0];
 			assertNotNull(cfgDescription);
 
-			List<ICSourceEntry> sourceEntries = new ArrayList<>(
-					Arrays.asList(cfgDescription.getSourceEntries()));
+			List<ICSourceEntry> sourceEntries = new ArrayList<>(Arrays.asList(cfgDescription.getSourceEntries()));
 			sourceEntries.add(testSourceEntry);
 			cfgDescription.setSourceEntries(sourceEntries.toArray(new ICSourceEntry[0]));
 

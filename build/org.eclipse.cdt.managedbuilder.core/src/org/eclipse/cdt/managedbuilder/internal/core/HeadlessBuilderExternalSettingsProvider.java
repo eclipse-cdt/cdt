@@ -91,8 +91,7 @@ public class HeadlessBuilderExternalSettingsProvider extends CExternalSettingPro
 			if (desc == null)
 				continue;
 			for (ICConfigurationDescription cfg : desc.getConfigurations()) {
-				ArrayList<String> extSettingIds = new ArrayList<>(
-						Arrays.asList(cfg.getExternalSettingsProviderIds()));
+				ArrayList<String> extSettingIds = new ArrayList<>(Arrays.asList(cfg.getExternalSettingsProviderIds()));
 				for (Iterator<String> it = extSettingIds.iterator(); it.hasNext();)
 					if (ID.equals(it.next()))
 						it.remove();

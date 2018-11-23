@@ -153,8 +153,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 				content.createLink(new Path(location.getAbsolutePath()), IResource.NONE, null);
 
 				// Setup path entries
-				List<IPathEntry> entries = new ArrayList<>(
-						Arrays.asList(CoreModel.getRawPathEntries(cproject)));
+				List<IPathEntry> entries = new ArrayList<>(Arrays.asList(CoreModel.getRawPathEntries(cproject)));
 
 				// pre-include files
 				for (String path : includeFiles) {

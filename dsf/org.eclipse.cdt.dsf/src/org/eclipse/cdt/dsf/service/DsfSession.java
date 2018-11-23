@@ -485,29 +485,28 @@ public class DsfSession {
 		Dictionary<String, ?> serviceProperties = (Dictionary<String, ?>) _serviceProperties;
 
 		// Build a list of listeners;
-		SortedMap<ListenerEntry, List<Method>> listeners = new TreeMap<>(
-				new Comparator<ListenerEntry>() {
-					@Override
-					public int compare(ListenerEntry o1, ListenerEntry o2) {
-						if (o1.fListener == o2.fListener) {
-							return 0;
-						}
-						if (o1.fListener instanceof IDsfService && !(o2.fListener instanceof IDsfService)) {
-							return -1;
-						} else if (o2.fListener instanceof IDsfService && !(o1.fListener instanceof IDsfService)) {
-							return 1;
-						} else if ((o1.fListener instanceof IDsfService) && (o2.fListener instanceof IDsfService)) {
-							return ((IDsfService) o1.fListener).getStartupNumber()
-									- ((IDsfService) o2.fListener).getStartupNumber();
-						}
-						return 1;
-					}
+		SortedMap<ListenerEntry, List<Method>> listeners = new TreeMap<>(new Comparator<ListenerEntry>() {
+			@Override
+			public int compare(ListenerEntry o1, ListenerEntry o2) {
+				if (o1.fListener == o2.fListener) {
+					return 0;
+				}
+				if (o1.fListener instanceof IDsfService && !(o2.fListener instanceof IDsfService)) {
+					return -1;
+				} else if (o2.fListener instanceof IDsfService && !(o1.fListener instanceof IDsfService)) {
+					return 1;
+				} else if ((o1.fListener instanceof IDsfService) && (o2.fListener instanceof IDsfService)) {
+					return ((IDsfService) o1.fListener).getStartupNumber()
+							- ((IDsfService) o2.fListener).getStartupNumber();
+				}
+				return 1;
+			}
 
-					@Override
-					public boolean equals(Object obj) {
-						return obj == this;
-					}
-				});
+			@Override
+			public boolean equals(Object obj) {
+				return obj == this;
+			}
+		});
 
 		// Build a list of listeners and methods that are registered for this event class.
 		Class<?> eventClass = event.getClass();

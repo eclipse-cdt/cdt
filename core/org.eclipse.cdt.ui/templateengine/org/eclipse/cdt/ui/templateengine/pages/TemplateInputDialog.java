@@ -100,14 +100,12 @@ public class TemplateInputDialog extends Dialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		this.shell = shell;
 		display = shell.getDisplay();
 	}
-
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
@@ -215,7 +213,6 @@ public class TemplateInputDialog extends Dialog {
 
 		aText.addModifyListener(mListener);
 	}
-
 
 	@Override
 	protected void okPressed() {

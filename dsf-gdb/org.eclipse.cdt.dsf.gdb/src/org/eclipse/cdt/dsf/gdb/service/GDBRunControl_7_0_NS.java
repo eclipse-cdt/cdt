@@ -2595,8 +2595,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 		Set<IExecutionDMContext> specifiedExedDmcSet = new HashSet<>(Arrays.asList(contexts));
 
 		// A list that ignores threads for which the process is also present
-		List<IExecutionDMContext> execDmcForOperationList = new ArrayList<>(
-				specifiedExedDmcSet.size());
+		List<IExecutionDMContext> execDmcForOperationList = new ArrayList<>(specifiedExedDmcSet.size());
 
 		// Check for the case of a process selected along with some of its threads
 		for (IExecutionDMContext execDmc : specifiedExedDmcSet) {

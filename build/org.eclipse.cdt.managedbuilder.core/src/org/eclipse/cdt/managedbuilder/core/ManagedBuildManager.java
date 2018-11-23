@@ -2163,8 +2163,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 					// Call the start up config extensions. These may rely on the standard elements
 					// having already been loaded so we wait to call them from here.
 					if (startUpConfigElements != null) {
-						buildDefStartupList = new ArrayList<>(
-								startUpConfigElements.size());
+						buildDefStartupList = new ArrayList<>(startUpConfigElements.size());
 
 						for (IManagedConfigElement startUpConfigElement : startUpConfigElements) {
 							IManagedBuildDefinitionsStartup customConfigLoader;

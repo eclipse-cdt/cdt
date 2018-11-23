@@ -660,7 +660,6 @@ public class MemoryBrowser extends ViewPart
 
 			label += ' ' + renderingType;
 
-
 			// Allow the memory block to customize the label. The platform's
 			// Memory view support this (it was done in the call to
 			// rendering.getLabel() above)
@@ -1412,8 +1411,7 @@ public class MemoryBrowser extends ViewPart
 		if (retrieval instanceof IMemoryBlockRetrievalExtension) {
 			retrievalExtension = (IMemoryBlockRetrievalExtension) retrieval;
 		} else if (retrieval instanceof IAdaptable) {
-			retrievalExtension = ((IAdaptable) retrieval)
-					.getAdapter(IMemoryBlockRetrievalExtension.class);
+			retrievalExtension = ((IAdaptable) retrieval).getAdapter(IMemoryBlockRetrievalExtension.class);
 		}
 		if (retrievalExtension != null) {
 			if (retrievalExtension instanceof IMemorySpaceAwareMemoryBlockRetrieval) {

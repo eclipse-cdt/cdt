@@ -424,10 +424,8 @@ public class FormattedValueRetriever {
 			final Map<IPropertiesUpdate, String[]> availableFormatsMap,
 			final Map<IPropertiesUpdate, String> elementFormatMap, final RequestMonitor rm) {
 		final List<IPropertiesUpdate> outstandingUpdates = new ArrayList<>(updates.length);
-		final Map<IPropertiesUpdate, List<String>> requestedFormatsMap = new HashMap<>(
-				updates.length * 4 / 3);
-		final Map<IPropertiesUpdate, String> activeFormatsMap = new HashMap<>(
-				updates.length * 4 / 3);
+		final Map<IPropertiesUpdate, List<String>> requestedFormatsMap = new HashMap<>(updates.length * 4 / 3);
+		final Map<IPropertiesUpdate, String> activeFormatsMap = new HashMap<>(updates.length * 4 / 3);
 
 		for (final IPropertiesUpdate update : updates) {
 			String preferredFormat = FormattedValueVMUtil.getPreferredFormat(update.getPresentationContext());

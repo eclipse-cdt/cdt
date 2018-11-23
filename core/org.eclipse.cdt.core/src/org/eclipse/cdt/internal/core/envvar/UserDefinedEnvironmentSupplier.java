@@ -256,8 +256,7 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader
 
 	private IEnvironmentVariable[] combineVariables(IEnvironmentVariable[] oldVariables,
 			IEnvironmentVariable[] newVariables) {
-		Map<String, IEnvironmentVariable> vars = new HashMap<>(
-				oldVariables.length + newVariables.length);
+		Map<String, IEnvironmentVariable> vars = new HashMap<>(oldVariables.length + newVariables.length);
 		for (IEnvironmentVariable variable : oldVariables)
 			vars.put(variable.getName(), variable);
 		for (IEnvironmentVariable variable : newVariables) {

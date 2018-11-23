@@ -113,8 +113,7 @@ public class PathComparator implements Comparator<IPath> {
 		//all children
 		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> children = getChildPathMap(map, path, false,
 				false);
-		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = new TreeMap<>(
-				INSTANCE);
+		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = new TreeMap<>(INSTANCE);
 		for (Iterator<Map.Entry<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>> iter = children.entrySet()
 				.iterator(); iter.hasNext(); iter = children.entrySet().iterator()) {
 			Map.Entry<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> entry = iter.next();

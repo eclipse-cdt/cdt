@@ -131,8 +131,7 @@ public class FoldingTest extends FoldingTestBase {
 	}
 
 	private void assertNoKeyCollisions() {
-		ProjectionAnnotationModel model = fEditor
-				.getAdapter(ProjectionAnnotationModel.class);
+		ProjectionAnnotationModel model = fEditor.getAdapter(ProjectionAnnotationModel.class);
 		assertNotNull(model);
 		int annotations = 0;
 		Set<Object> keys = new HashSet<>();

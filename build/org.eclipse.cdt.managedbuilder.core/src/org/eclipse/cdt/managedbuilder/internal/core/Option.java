@@ -296,8 +296,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			case UNDEF_MACRO_FILES:
 				if (option.value != null) {
 					@SuppressWarnings("unchecked")
-					ArrayList<OptionStringValue> list = new ArrayList<>(
-							(ArrayList<OptionStringValue>) option.value);
+					ArrayList<OptionStringValue> list = new ArrayList<>((ArrayList<OptionStringValue>) option.value);
 					value = list;
 				}
 				if (option.defaultValue != null) {

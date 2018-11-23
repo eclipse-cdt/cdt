@@ -287,8 +287,7 @@ public class CommandCache implements ICommandListener {
 					 *  them to point to the new super command.
 					 */
 
-					for (CommandInfo waitingEntry : new ArrayList<>(
-							fPendingQWaitingForCoalescedCompletion)) {
+					for (CommandInfo waitingEntry : new ArrayList<>(fPendingQWaitingForCoalescedCompletion)) {
 
 						if (waitingEntry.getCoalescedCmd() == currentUnsentEntry) {
 							/*
@@ -469,8 +468,7 @@ public class CommandCache implements ICommandListener {
 							 *  we create a new result from the coalesced command for it.
 							 */
 
-							for (CommandInfo waitingEntry : new ArrayList<>(
-									fPendingQWaitingForCoalescedCompletion)) {
+							for (CommandInfo waitingEntry : new ArrayList<>(fPendingQWaitingForCoalescedCompletion)) {
 
 								if (waitingEntry.getCoalescedCmd() == finalCachedCmd) {
 

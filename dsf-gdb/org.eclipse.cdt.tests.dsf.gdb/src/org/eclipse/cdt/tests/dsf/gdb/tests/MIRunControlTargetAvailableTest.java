@@ -372,8 +372,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			// Wait up to 3 second for the target to suspend. Should happen within two seconds.
 			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
 
-			suspendedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
-					ISuspendedDMEvent.class);
+			suspendedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 			SyncUtil.resume();
 
@@ -575,8 +574,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
 
 			// Now resume the target and check that we stop at all the breakpoints.
-			suspendedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
-					ISuspendedDMEvent.class);
+			suspendedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 			SyncUtil.resume();
 		}
@@ -707,8 +705,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
 
 			// Now resume the target and check that we stop at all the breakpoints.
-			suspendedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
-					ISuspendedDMEvent.class);
+			suspendedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 			SyncUtil.resume();
 		}
@@ -835,8 +832,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(3000));
 
 			// Now resume the target and check that we stop at all the breakpoints.
-			suspendedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
-					ISuspendedDMEvent.class);
+			suspendedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 			SyncUtil.resume();
 		}

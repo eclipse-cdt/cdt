@@ -313,8 +313,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	private void addSourceMappingToDirector(String missingPath, IPath newSourcePath,
 			AbstractSourceLookupDirector director) throws CoreException {
-		ArrayList<ISourceContainer> containerList = new ArrayList<>(
-				Arrays.asList(director.getSourceContainers()));
+		ArrayList<ISourceContainer> containerList = new ArrayList<>(Arrays.asList(director.getSourceContainers()));
 		MappingSourceContainer foundMappings = null;
 		for (ISourceContainer container : containerList) {
 			if (container instanceof MappingSourceContainer) {

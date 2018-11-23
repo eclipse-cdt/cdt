@@ -76,8 +76,7 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 
 		// Store the array into the Database.
 		long arrayRec = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
-		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<>(getQtLinkage(), ClassInfo.Codec,
-				arrayRec);
+		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<>(getQtLinkage(), ClassInfo.Codec, arrayRec);
 		arrayRec = pdomArray.set(array);
 
 		// Update the record that is stored in the receiver's field.
@@ -89,8 +88,7 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 
 		// Read the array from the Database and insert the elements into the Map that is to be returned.
 		long arrayRec = getDB().getRecPtr(Field.ClassInfos.getRecord(record));
-		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<>(getQtLinkage(), ClassInfo.Codec,
-				arrayRec);
+		QtPDOMArray<ClassInfo> pdomArray = new QtPDOMArray<>(getQtLinkage(), ClassInfo.Codec, arrayRec);
 
 		ClassInfo[] array = pdomArray.get();
 		if (array == null)

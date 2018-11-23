@@ -55,8 +55,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode
 
 	@Override
 	public void update(ILabelUpdate[] updates) {
-		Map<IElementLabelProvider, List<ILabelUpdate>> delegatesMap = new HashMap<>(
-				1, 1);
+		Map<IElementLabelProvider, List<ILabelUpdate>> delegatesMap = new HashMap<>(1, 1);
 
 		for (final ILabelUpdate update : updates) {
 			final IBreakpoint bp = ((BreakpointVMContext) update.getElement()).getBreakpoint();
@@ -164,8 +163,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode
 
 	@Override
 	public void encodeElements(IElementMementoRequest[] updates) {
-		Map<IElementMementoProvider, List<IElementMementoRequest>> delegatesMap = new HashMap<>(
-				1, 1);
+		Map<IElementMementoProvider, List<IElementMementoRequest>> delegatesMap = new HashMap<>(1, 1);
 
 		for (final IElementMementoRequest update : updates) {
 			final IBreakpoint bp = ((BreakpointVMContext) update.getElement()).getBreakpoint();
@@ -241,8 +239,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode
 
 	@Override
 	public void compareElements(IElementCompareRequest[] updates) {
-		Map<IElementMementoProvider, List<IElementCompareRequest>> delegatesMap = new HashMap<>(
-				1, 1);
+		Map<IElementMementoProvider, List<IElementCompareRequest>> delegatesMap = new HashMap<>(1, 1);
 
 		for (final IElementCompareRequest update : updates) {
 			final IBreakpoint bp = ((BreakpointVMContext) update.getElement()).getBreakpoint();

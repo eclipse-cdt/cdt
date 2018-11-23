@@ -714,8 +714,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		// Now step backwards to make sure reverse was enabled
 
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
-				MIStoppedEvent.class);
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
 		final int REVERSE_NUM_STEPS = 2;
 		final IExecutionDMContext execDmc = stoppedEvent.getDMContext();
@@ -780,8 +779,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 				frame.getFunction().equals("stopAtOther"));
 
 		// Now step backwards all the way to the start to make sure reverse was enabled from the very start
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
-				MIStoppedEvent.class);
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
 		final int REVERSE_NUM_STEPS = 3;
 		Query<MIInfo> query2 = new Query<MIInfo>() {
@@ -854,8 +852,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 				frame.getFunction().equals("main") && frame.getLine() == LAST_LINE_IN_MAIN);
 
 		// Now step backwards all the way to the start to make sure reverse was enabled from the very start
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
-				MIStoppedEvent.class);
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
 		final int REVERSE_NUM_STEPS = 3;
 		Query<MIInfo> query2 = new Query<MIInfo>() {

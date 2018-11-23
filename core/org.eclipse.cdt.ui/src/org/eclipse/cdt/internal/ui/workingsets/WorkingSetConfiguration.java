@@ -181,8 +181,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 	public IStatus build(IProgressMonitor monitor) {
 		MultiStatus result = new MultiStatus(CUIPlugin.PLUGIN_ID, 0, WorkingSetMessages.WSConfig_build_problems, null);
 
-		List<IWorkingSetProjectConfiguration> toBuild = new java.util.ArrayList<>(
-				getProjectConfigurations().size());
+		List<IWorkingSetProjectConfiguration> toBuild = new java.util.ArrayList<>(getProjectConfigurations().size());
 		for (IWorkingSetProjectConfiguration next : getProjectConfigurations()) {
 			IProject project = next.resolveProject();
 

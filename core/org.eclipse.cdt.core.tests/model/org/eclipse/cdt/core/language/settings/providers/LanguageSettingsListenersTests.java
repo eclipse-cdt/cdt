@@ -534,16 +534,14 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			// add global provider which is not engaged
 			ILanguageSettingsProvider provider = new MockListenerRegisterer(PROVIDER_CUSTOM_GLOBAL,
 					PROVIDER_CUSTOM_GLOBAL_NAME);
-			List<ILanguageSettingsProvider> providers = new ArrayList<>(
-					workspaceProvidersOriginal);
+			List<ILanguageSettingsProvider> providers = new ArrayList<>(workspaceProvidersOriginal);
 			providers.add(provider);
 			LanguageSettingsManager.setWorkspaceProviders(providers);
 			assertEquals(0, MockListenerRegisterer.getCount(PROVIDER_CUSTOM_GLOBAL));
 		}
 		{
 			// remove global provider and restore original list
-			List<ILanguageSettingsProvider> providers = new ArrayList<>(
-					workspaceProvidersOriginal);
+			List<ILanguageSettingsProvider> providers = new ArrayList<>(workspaceProvidersOriginal);
 			LanguageSettingsManager.setWorkspaceProviders(providers);
 			assertEquals(0, MockListenerRegisterer.getCount(PROVIDER_CUSTOM_GLOBAL));
 		}
@@ -601,8 +599,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 		}
 		{
 			// remove global provider
-			List<ILanguageSettingsProvider> providers = new ArrayList<>(
-					workspaceProvidersOriginal);
+			List<ILanguageSettingsProvider> providers = new ArrayList<>(workspaceProvidersOriginal);
 			LanguageSettingsManager.setWorkspaceProviders(providers);
 			assertEquals(0, MockListenerRegisterer.getCount(PROVIDER_CUSTOM_GLOBAL));
 		}

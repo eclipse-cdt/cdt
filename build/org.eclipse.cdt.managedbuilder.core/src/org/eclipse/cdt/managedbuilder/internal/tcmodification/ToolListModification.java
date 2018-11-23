@@ -247,8 +247,7 @@ public abstract class ToolListModification implements IToolListModification {
 						fOperations = new ModificationOperation[0];
 					}
 				} else {
-					List<ModificationOperation> opList = new ArrayList<>(
-							fCompatibleTools.size() + 1);
+					List<ModificationOperation> opList = new ArrayList<>(fCompatibleTools.size() + 1);
 					Set<Tool> keySet = fCompatibleTools.keySet();
 					for (Tool tool : keySet) {
 						if (tool == fRealTool)

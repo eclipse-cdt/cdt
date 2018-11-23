@@ -45,8 +45,7 @@ public final class PathInfo {
 		fQuoteIncludePaths = quoteIncludePaths != null && quoteIncludePaths.length != 0
 				? (IPath[]) quoteIncludePaths.clone()
 				: EMPTY_PATH_ARRAY;
-		fSymbols = symbols != null && symbols.size() != 0 ? getInternedHashMap(symbols)
-				: new HashMap<>(0);
+		fSymbols = symbols != null && symbols.size() != 0 ? getInternedHashMap(symbols) : new HashMap<>(0);
 		fIncludeFiles = includeFiles != null && includeFiles.length != 0 ? (IPath[]) includeFiles.clone()
 				: EMPTY_PATH_ARRAY;
 		fMacroFiles = macroFiles != null && macroFiles.length != 0 ? (IPath[]) macroFiles.clone() : EMPTY_PATH_ARRAY;

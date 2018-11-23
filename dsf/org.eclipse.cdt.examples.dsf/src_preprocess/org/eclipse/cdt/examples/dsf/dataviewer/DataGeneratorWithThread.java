@@ -14,6 +14,7 @@
 //#ifdef exercises
 package org.eclipse.cdt.examples.dsf.dataviewer;
 //#else
+
 //#package org.eclipse.cdt.examples.dsf.dataviewer.answers;
 //#endif
 
@@ -44,221 +45,208 @@ import org.eclipse.cdt.examples.dsf.DsfExamplesPlugin;
  * synchronization.
  * </p>
  */
-public class DataGeneratorWithThread extends Thread
-    implements IDataGenerator
-{
+public class DataGeneratorWithThread extends Thread implements IDataGenerator {
 
-    // Request objects are used to serialize the interface calls into objects
-    // which can then be pushed into a queue.
-    abstract class Request {
-        final RequestMonitor fRequestMonitor;
+	// Request objects are used to serialize the interface calls into objects
+	// which can then be pushed into a queue.
+	abstract class Request {
+		final RequestMonitor fRequestMonitor;
 
-        Request(RequestMonitor rm) {
-            fRequestMonitor = rm;
-        }
-    }
+		Request(RequestMonitor rm) {
+			fRequestMonitor = rm;
+		}
+	}
 
-    class CountRequest extends Request {
-        CountRequest(DataRequestMonitor<Integer> rm) {
-            super(rm);
-        }
-    }
+	class CountRequest extends Request {
+		CountRequest(DataRequestMonitor<Integer> rm) {
+			super(rm);
+		}
+	}
 
-    class ItemRequest extends Request {
-        final int fIndex;
-        ItemRequest(int index, DataRequestMonitor<Integer> rm) {
-            super(rm);
-            fIndex = index;
-        }
-    }
+	class ItemRequest extends Request {
+		final int fIndex;
 
-    class ShutdownRequest extends Request {
-        ShutdownRequest(RequestMonitor rm) {
-            super(rm);
-        }
-    }
+		ItemRequest(int index, DataRequestMonitor<Integer> rm) {
+			super(rm);
+			fIndex = index;
+		}
+	}
 
-    // Main request queue of the data generator.  The getValue(), getCount(),
-    // and shutdown() methods write into the queue, while the run() method
-    // reads from it.
-    private final BlockingQueue<Request> fQueue =
-        new LinkedBlockingQueue<Request>();
+	class ShutdownRequest extends Request {
+		ShutdownRequest(RequestMonitor rm) {
+			super(rm);
+		}
+	}
 
-    // ListenerList class provides thread safety.
-    private ListenerList<Listener> fListeners = new ListenerList<>();
+	// Main request queue of the data generator.  The getValue(), getCount(),
+	// and shutdown() methods write into the queue, while the run() method
+	// reads from it.
+	private final BlockingQueue<Request> fQueue = new LinkedBlockingQueue<Request>();
 
-    // Current number of elements in this generator.
-    private int fCount = MIN_COUNT;
+	// ListenerList class provides thread safety.
+	private ListenerList<Listener> fListeners = new ListenerList<>();
 
-    // Counter used to determine when to reset the element count.
-    private int fCountResetTrigger = 0;
+	// Current number of elements in this generator.
+	private int fCount = MIN_COUNT;
 
-    // Elements which were modified since the last reset.
-    private Map<Integer, Integer> fChangedValues =
-        Collections.synchronizedMap(new HashMap<Integer, Integer>());
+	// Counter used to determine when to reset the element count.
+	private int fCountResetTrigger = 0;
 
-    // Used to determine when to make changes in data.
-    private long fLastChangeTime = System.currentTimeMillis();
+	// Elements which were modified since the last reset.
+	private Map<Integer, Integer> fChangedValues = Collections.synchronizedMap(new HashMap<Integer, Integer>());
 
-    // Flag indicating when the generator has been shut down.
-    private AtomicBoolean fShutdown = new AtomicBoolean(false);
+	// Used to determine when to make changes in data.
+	private long fLastChangeTime = System.currentTimeMillis();
 
-    public DataGeneratorWithThread() {
-        // Immediately kick off the request processing thread.
-        start();
-    }
+	// Flag indicating when the generator has been shut down.
+	private AtomicBoolean fShutdown = new AtomicBoolean(false);
 
-    @Override
+	public DataGeneratorWithThread() {
+		// Immediately kick off the request processing thread.
+		start();
+	}
+
+	@Override
 	public void shutdown(RequestMonitor rm) {
-        // Mark the generator as shut down.  After the fShutdown flag is set,
-        // all new requests should be shut down.
-        if (!fShutdown.getAndSet(true)) {
-            fQueue.add(new ShutdownRequest(rm));
-        } else {
-            //
-            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID,
-                "Supplier shut down"));
-            rm.done();
-        }
-    }
+		// Mark the generator as shut down.  After the fShutdown flag is set,
+		// all new requests should be shut down.
+		if (!fShutdown.getAndSet(true)) {
+			fQueue.add(new ShutdownRequest(rm));
+		} else {
+			//
+			rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, "Supplier shut down"));
+			rm.done();
+		}
+	}
 
-    @Override
+	@Override
 	public void getCount(DataRequestMonitor<Integer> rm) {
-        if (!fShutdown.get()) {
-            fQueue.add(new CountRequest(rm));
-        } else {
-            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID,
-                "Supplier shut down"));
-            rm.done();
-        }
-    }
+		if (!fShutdown.get()) {
+			fQueue.add(new CountRequest(rm));
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, "Supplier shut down"));
+			rm.done();
+		}
+	}
 
-    @Override
+	@Override
 	public void getValue(int index, DataRequestMonitor<Integer> rm) {
-        if (!fShutdown.get()) {
-            fQueue.add(new ItemRequest(index, rm));
-        } else {
-            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID,
-                "Supplier shut down"));
-            rm.done();
-        }
-    }
+		if (!fShutdown.get()) {
+			fQueue.add(new ItemRequest(index, rm));
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, "Supplier shut down"));
+			rm.done();
+		}
+	}
 
-    @Override
+	@Override
 	public void addListener(Listener listener) {
-        fListeners.add(listener);
-    }
+		fListeners.add(listener);
+	}
 
-    @Override
+	@Override
 	public void removeListener(Listener listener) {
-        fListeners.remove(listener);
-    }
+		fListeners.remove(listener);
+	}
 
-    @Override
-    public void run() {
-        try {
-            while(true) {
-                // Get the next request from the queue.  The time-out
-                // ensures that that the random changes get processed.
-                final Request request = fQueue.poll(100, TimeUnit.MILLISECONDS);
+	@Override
+	public void run() {
+		try {
+			while (true) {
+				// Get the next request from the queue.  The time-out
+				// ensures that that the random changes get processed.
+				final Request request = fQueue.poll(100, TimeUnit.MILLISECONDS);
 
-                // If a request was dequeued, process it.
-                if (request != null) {
-                    // Simulate a processing delay.
+				// If a request was dequeued, process it.
+				if (request != null) {
+					// Simulate a processing delay.
 
-                    if (request instanceof CountRequest) {
-                        processCountRequest((CountRequest)request);
-                    } else if (request instanceof ItemRequest) {
-                        processItemRequest((ItemRequest)request);
-                    } else if (request instanceof ShutdownRequest) {
-                        // If shutting down, just break out of the while(true)
-                        // loop and thread will exit.
-                        request.fRequestMonitor.done();
-                        break;
-                    }
-                } else {
-                    Thread.sleep(PROCESSING_DELAY);
-                }
+					if (request instanceof CountRequest) {
+						processCountRequest((CountRequest) request);
+					} else if (request instanceof ItemRequest) {
+						processItemRequest((ItemRequest) request);
+					} else if (request instanceof ShutdownRequest) {
+						// If shutting down, just break out of the while(true)
+						// loop and thread will exit.
+						request.fRequestMonitor.done();
+						break;
+					}
+				} else {
+					Thread.sleep(PROCESSING_DELAY);
+				}
 
-                // Simulate data changes.
-                randomChanges();
-            }
-        }
-        catch (InterruptedException x) {}
-    }
+				// Simulate data changes.
+				randomChanges();
+			}
+		} catch (InterruptedException x) {
+		}
+	}
 
-    private void processCountRequest(CountRequest request) {
-        @SuppressWarnings("unchecked") // Suppress warning about lost type info.
-        DataRequestMonitor<Integer> rm =
-        (DataRequestMonitor<Integer>)request.fRequestMonitor;
+	private void processCountRequest(CountRequest request) {
+		@SuppressWarnings("unchecked") // Suppress warning about lost type info.
+		DataRequestMonitor<Integer> rm = (DataRequestMonitor<Integer>) request.fRequestMonitor;
 
-        rm.setData(fCount);
-        rm.done();
-    }
+		rm.setData(fCount);
+		rm.done();
+	}
 
-    private void processItemRequest(ItemRequest request) {
-        @SuppressWarnings("unchecked") // Suppress warning about lost type info.
-        DataRequestMonitor<Integer> rm =
-        (DataRequestMonitor<Integer>)request.fRequestMonitor;
+	private void processItemRequest(ItemRequest request) {
+		@SuppressWarnings("unchecked") // Suppress warning about lost type info.
+		DataRequestMonitor<Integer> rm = (DataRequestMonitor<Integer>) request.fRequestMonitor;
 
-        if (fChangedValues.containsKey(request.fIndex)) {
-            rm.setData(fChangedValues.get(request.fIndex));
-        } else {
-            rm.setData(request.fIndex);
-        }
-        rm.done();
-    }
+		if (fChangedValues.containsKey(request.fIndex)) {
+			rm.setData(fChangedValues.get(request.fIndex));
+		} else {
+			rm.setData(request.fIndex);
+		}
+		rm.done();
+	}
 
+	private void randomChanges() {
+		// Check if enough time is elapsed.
+		if (System.currentTimeMillis() > fLastChangeTime + RANDOM_CHANGE_INTERVAL) {
+			fLastChangeTime = System.currentTimeMillis();
 
-    private void randomChanges() {
-        // Check if enough time is elapsed.
-        if (System.currentTimeMillis() >
-            fLastChangeTime + RANDOM_CHANGE_INTERVAL)
-        {
-            fLastChangeTime = System.currentTimeMillis();
+			// Once every number of changes, reset the count, the rest of the
+			// times just change certain values.
+			if (++fCountResetTrigger % RANDOM_COUNT_CHANGE_INTERVALS == 0) {
+				randomCountReset();
+			} else {
+				randomDataChange();
+			}
+		}
+	}
 
-            // Once every number of changes, reset the count, the rest of the
-            // times just change certain values.
-            if (++fCountResetTrigger % RANDOM_COUNT_CHANGE_INTERVALS == 0) {
-                randomCountReset();
-            } else {
-                randomDataChange();
-            }
-        }
-    }
+	private void randomCountReset() {
+		// Calculate the new count.
+		Random random = new java.util.Random();
+		fCount = MIN_COUNT + random.nextInt(MAX_COUNT - MIN_COUNT);
 
-    private void randomCountReset() {
-        // Calculate the new count.
-        Random random = new java.util.Random();
-        fCount = MIN_COUNT + random.nextInt(MAX_COUNT - MIN_COUNT);
+		// Reset the changed values.
+		fChangedValues.clear();
 
-        // Reset the changed values.
-        fChangedValues.clear();
+		// Notify listeners
+		for (Object listener : fListeners.getListeners()) {
+			((Listener) listener).countChanged();
+		}
+	}
 
-        // Notify listeners
-        for (Object listener : fListeners.getListeners()) {
-            ((Listener)listener).countChanged();
-        }
-    }
+	private void randomDataChange() {
+		// Calculate the indexes to change.
+		Random random = new java.util.Random();
+		Map<Integer, Integer> changed = new HashMap<Integer, Integer>();
+		for (int i = 0; i < fCount * RANDOM_CHANGE_SET_PERCENTAGE / 100; i++) {
+			int randomIndex = random.nextInt(fCount);
+			int randomValue = random.nextInt(fCount);
+			changed.put(randomIndex, randomValue);
+		}
 
-    private void randomDataChange() {
-        // Calculate the indexes to change.
-        Random random = new java.util.Random();
-        Map<Integer, Integer> changed = new HashMap<Integer, Integer>();
-        for (int i = 0; i < fCount * RANDOM_CHANGE_SET_PERCENTAGE / 100; i++) {
-            int randomIndex = random.nextInt(fCount);
-            int randomValue = random.nextInt(fCount);
-            changed.put(randomIndex, randomValue);
-        }
+		// Add the indexes to an overall set of changed indexes.
+		fChangedValues.putAll(changed);
 
-        // Add the indexes to an overall set of changed indexes.
-        fChangedValues.putAll(changed);
-
-        // Notify listeners
-        for (Object listener : fListeners.getListeners()) {
-            ((Listener)listener).valuesChanged(changed.keySet());
-        }
-    }
+		// Notify listeners
+		for (Object listener : fListeners.getListeners()) {
+			((Listener) listener).valuesChanged(changed.keySet());
+		}
+	}
 }
-
-

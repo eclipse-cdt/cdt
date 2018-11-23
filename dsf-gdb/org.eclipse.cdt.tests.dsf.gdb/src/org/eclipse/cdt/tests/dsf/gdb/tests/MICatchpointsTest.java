@@ -1302,8 +1302,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 		assertEquals("Unexpected number of breakpoint-added events", 1, getBreakpointEventCount(BP_ADDED));
 
 		// Ensure the breakpoint service sees what we expect
-		List<IBreakpointDMContext> bkptsAfter = new LinkedList<>(
-				Arrays.asList(getBreakpoints(fBreakpointsDmc)));
+		List<IBreakpointDMContext> bkptsAfter = new LinkedList<>(Arrays.asList(getBreakpoints(fBreakpointsDmc)));
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", bkptsBefore.length + 1,
 				bkptsAfter.size());
 
@@ -1361,8 +1360,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 		// Ensure the breakpoint service sees what we expect. Ask the breakpoint
 		// service for the list of breakpoint against and make sure it differs
 		// only by the newly added one
-		List<IBreakpointDMContext> bkptsAfter = new LinkedList<>(
-				Arrays.asList(getBreakpoints(fBreakpointsDmc)));
+		List<IBreakpointDMContext> bkptsAfter = new LinkedList<>(Arrays.asList(getBreakpoints(fBreakpointsDmc)));
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", bkptsBefore.length + 1,
 				bkptsAfter.size());
 		ListIterator<IBreakpointDMContext> iter = bkptsAfter.listIterator();

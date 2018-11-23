@@ -353,8 +353,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	protected void addSourceContainer(AbstractSourceLookupDirector director, ISourceContainer container)
 			throws CoreException {
 
-		ArrayList<ISourceContainer> containerList = new ArrayList<>(
-				Arrays.asList(director.getSourceContainers()));
+		ArrayList<ISourceContainer> containerList = new ArrayList<>(Arrays.asList(director.getSourceContainers()));
 		container.init(director);
 		containerList.add(container);
 		director.setSourceContainers(containerList.toArray(new ISourceContainer[containerList.size()]));

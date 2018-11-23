@@ -319,8 +319,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 
 		// We have to make a copy of the fPlatformBPs keys because uninstallBreakpoints()
 		// modifies the map as it walks through it.
-		List<IBreakpointsTargetDMContext> platformBPKeysCopy = new ArrayList<>(
-				fPlatformBPs.size());
+		List<IBreakpointsTargetDMContext> platformBPKeysCopy = new ArrayList<>(fPlatformBPs.size());
 		platformBPKeysCopy.addAll(0, fPlatformBPs.keySet());
 		for (IBreakpointsTargetDMContext dmc : platformBPKeysCopy) {
 			stopTrackingBreakpoints(dmc, countingRm);
@@ -527,8 +526,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 			targetBPsAttempted.add(new TargetBP(attrsList.get(i)));
 		}
 
-		final ArrayList<ITargetBreakpointInfo> targetBPsInstalled = new ArrayList<>(
-				attrsList.size());
+		final ArrayList<ITargetBreakpointInfo> targetBPsInstalled = new ArrayList<>(attrsList.size());
 
 		// Update the breakpoint status when all back-end breakpoints have been installed
 		final CountingRequestMonitor installRM = new CountingRequestMonitor(getExecutor(), rm) {

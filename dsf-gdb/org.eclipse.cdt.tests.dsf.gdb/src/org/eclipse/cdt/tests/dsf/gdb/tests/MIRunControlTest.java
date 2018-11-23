@@ -580,8 +580,8 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 				//TestsPlugin.debug("handleCompleted over");
 			}
 		};
-		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<>(
-				getGDBLaunch().getSession(), IResumedDMEvent.class);
+		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
+				IResumedDMEvent.class);
 
 		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 
@@ -629,8 +629,8 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 			}
 		};
 
-		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<>(
-				getGDBLaunch().getSession(), IResumedDMEvent.class);
+		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
+				IResumedDMEvent.class);
 
 		fRunCtrl.getExecutor().submit(new Runnable() {
 			@Override

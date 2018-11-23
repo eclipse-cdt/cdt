@@ -254,8 +254,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 							} else {
 								// If resolved, add each resolved entry as a separate UserEntryInfo
 								boolean isMultiple = rVes.length > 1;
-								List<UserEntryInfo> sequense = isMultiple ? new ArrayList<>(rVes.length)
-										: null;
+								List<UserEntryInfo> sequense = isMultiple ? new ArrayList<>(rVes.length) : null;
 								for (OptionStringValue rVe : rVes) {
 									ICLanguageSettingEntry entry = createUserEntry(option, rVe, flags, subst);
 									entryList.add(new UserEntryInfo(entry, ve, rVe, sequense));

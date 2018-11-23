@@ -1208,8 +1208,7 @@ public class LanguageSettingsProvidersSerializer {
 					String[] ids = ((ILanguageSettingsProvidersKeeper) cfgDescription)
 							.getDefaultLanguageSettingsProvidersIds();
 					if (ids != null) {
-						List<ILanguageSettingsProvider> providers = new ArrayList<>(
-								ids.length);
+						List<ILanguageSettingsProvider> providers = new ArrayList<>(ids.length);
 						for (String id : ids) {
 							if (LanguageSettingsExtensionManager.isPreferShared(id)) {
 								providers.add(LanguageSettingsManager.getWorkspaceProvider(id));

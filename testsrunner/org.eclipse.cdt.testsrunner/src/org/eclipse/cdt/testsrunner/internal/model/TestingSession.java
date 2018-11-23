@@ -72,8 +72,7 @@ public class TestingSession implements ITestingSession {
 	 * statistics without model scanning.
 	 *
 	 */
-	private Map<ITestItem.Status, Integer> statusCounters = new EnumMap<>(
-			ITestItem.Status.class);
+	private Map<ITestItem.Status, Integer> statusCounters = new EnumMap<>(ITestItem.Status.class);
 
 	/**
 	 * The flag stores whether the testing session contains errors at the

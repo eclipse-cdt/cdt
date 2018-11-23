@@ -210,8 +210,7 @@ public interface IWorkingSetProjectConfigurationFactory {
 			// first pass to populate the map with immediate requireds
 			IWorkspace ws = ResourcesPlugin.getWorkspace();
 			for (IProjectNatureDescriptor next : ws.getNatureDescriptors()) {
-				result.put(next.getNatureId(),
-						new java.util.HashSet<>(Arrays.asList(next.getRequiredNatureIds())));
+				result.put(next.getNatureId(), new java.util.HashSet<>(Arrays.asList(next.getRequiredNatureIds())));
 			}
 
 			// now, iterate to add transitive requireds

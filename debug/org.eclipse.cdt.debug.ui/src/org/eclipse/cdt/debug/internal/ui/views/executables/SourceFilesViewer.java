@@ -77,8 +77,7 @@ public class SourceFilesViewer extends BaseViewer {
 	/** Tradeoff expensiveness of checking filesystem against likelihood
 	 * that files will be added/removed/changed in the given time period */
 	static final long FILE_CHECK_DELTA = 30 * 1000;
-	private static LRUCache<Object, TranslationUnitInfo> translationUnitInfoCache = new LRUCache<>(
-			1024);
+	private static LRUCache<Object, TranslationUnitInfo> translationUnitInfoCache = new LRUCache<>(1024);
 
 	public SourceFilesViewer(ExecutablesView view, Composite parent, int style) {
 		super(view, parent, style);

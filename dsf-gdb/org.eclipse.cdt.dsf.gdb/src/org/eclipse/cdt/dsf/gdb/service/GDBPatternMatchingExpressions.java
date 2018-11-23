@@ -662,8 +662,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 				// Not only does selecting the element jump back and forth between the duplicates,
 				// but children of duplicated elements are not always right.  Because of this, we
 				// remove all duplicates here.
-				LinkedHashSet<IExpressionDMContext> uniqueSubExprSet = new LinkedHashSet<>(
-						subExprList);
+				LinkedHashSet<IExpressionDMContext> uniqueSubExprSet = new LinkedHashSet<>(subExprList);
 				subExprList.clear();
 				subExprList.addAll(uniqueSubExprSet);
 
@@ -776,8 +775,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 				matchArrays(exprDmc, new ImmediateDataRequestMonitor<List<IExpressionDMContext>>(rm) {
 					@Override
 					protected void handleSuccess() {
-						final List<IExpressionDMContext> exprList = getData() != null ? getData()
-								: new ArrayList<>();
+						final List<IExpressionDMContext> exprList = getData() != null ? getData() : new ArrayList<>();
 						matchLocals(exprDmc, new ImmediateDataRequestMonitor<List<IExpressionDMContext>>(rm) {
 							@Override
 							protected void handleSuccess() {
@@ -865,8 +863,7 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 				final CountingRequestMonitor varNameCRM = new CountingRequestMonitor(getExecutor(), rm) {
 					@Override
 					public void handleSuccess() {
-						ArrayList<IExpressionDMContext> matches = new ArrayList<>(
-								localsDMData.length);
+						ArrayList<IExpressionDMContext> matches = new ArrayList<>(localsDMData.length);
 
 						String fullExpr = globDmc.getExpression().trim();
 						if (fullExpr.startsWith(GLOB_EXPRESSION_PREFIX)) {

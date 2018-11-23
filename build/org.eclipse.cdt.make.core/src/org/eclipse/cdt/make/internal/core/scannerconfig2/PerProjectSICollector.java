@@ -338,8 +338,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 			LinkedHashMap<String, SymbolEntry> persistedSymbols = discPathInfo.getSymbolMap();
 
 			// Step 3. Merge scanner config from steps 1 and 2
-			LinkedHashMap<String, SymbolEntry> candidateSymbols = new LinkedHashMap<>(
-					persistedSymbols);
+			LinkedHashMap<String, SymbolEntry> candidateSymbols = new LinkedHashMap<>(persistedSymbols);
 			addedSymbols |= ScannerConfigUtil.scAddSymbolEntryMap2SymbolEntryMap(candidateSymbols,
 					sumDiscoveredSymbols);
 

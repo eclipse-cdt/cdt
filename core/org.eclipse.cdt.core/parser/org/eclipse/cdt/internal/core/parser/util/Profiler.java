@@ -152,8 +152,7 @@ public class Profiler {
 			}
 
 			if (!profiler.counters.isEmpty()) {
-				List<Map.Entry<String, int[]>> keyList = new ArrayList<>(
-						profiler.counters.entrySet());
+				List<Map.Entry<String, int[]>> keyList = new ArrayList<>(profiler.counters.entrySet());
 				Comparator<Map.Entry<String, int[]>> c2 = new Comparator<Map.Entry<String, int[]>>() {
 					@Override
 					public int compare(Entry<String, int[]> o1, Entry<String, int[]> o2) {

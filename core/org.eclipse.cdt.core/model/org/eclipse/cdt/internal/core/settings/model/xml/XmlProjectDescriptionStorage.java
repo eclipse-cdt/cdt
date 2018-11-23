@@ -190,8 +190,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 
 	/** A soft reference to the read-only project description
 	 *  Volatile provides a memory barrier in Java 5+ */
-	private volatile Reference<ICProjectDescription> fProjectDescription = new SoftReference<>(
-			null);
+	private volatile Reference<ICProjectDescription> fProjectDescription = new SoftReference<>(null);
 	/** The last modification stamp of the .cproject project description file */
 	private volatile long projectModificaitonStamp = IResource.NULL_STAMP;
 

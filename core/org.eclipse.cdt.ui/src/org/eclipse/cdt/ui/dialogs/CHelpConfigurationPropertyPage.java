@@ -89,8 +89,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements IWor
 					/* 0 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_CheckAll,
 					/* 1 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_UncheckAll };
 
-			fCHelpBookList = new CheckedListDialogField<>(null, buttonLabels,
-					new CHelpBookListLabelProvider());
+			fCHelpBookList = new CheckedListDialogField<>(null, buttonLabels, new CHelpBookListLabelProvider());
 			fCHelpBookList.setLabelText(CUIMessages.CHelpConfigurationPropertyPage_HelpBooks);
 			fCHelpBookList.setCheckAllButtonIndex(0);
 			fCHelpBookList.setUncheckAllButtonIndex(1);

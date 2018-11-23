@@ -203,8 +203,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 
 		// We have to make a copy of the fPlatformBPs keys because uninstallBreakpoints()
 		// modifies the map as it walks through it.
-		List<IBreakpointsTargetDMContext> platformBPKeysCopy = new ArrayList<>(
-				fPlatformBPs.size());
+		List<IBreakpointsTargetDMContext> platformBPKeysCopy = new ArrayList<>(fPlatformBPs.size());
 		platformBPKeysCopy.addAll(0, fPlatformBPs.keySet());
 		for (IBreakpointsTargetDMContext dmc : platformBPKeysCopy) {
 			stopTrackingBreakpoints(dmc, countingRm);
@@ -567,8 +566,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 		}
 
 		// Get the list of corresponding back-end breakpoints
-		final List<IBreakpointDMContext> oldBpContexts = new ArrayList<>(
-				breakpointIDs.get(breakpoint));
+		final List<IBreakpointDMContext> oldBpContexts = new ArrayList<>(breakpointIDs.get(breakpoint));
 
 		// Calculate the list of attributes maps that have not changed.
 		// Immediately add these to the list of new breakpoint contexts,

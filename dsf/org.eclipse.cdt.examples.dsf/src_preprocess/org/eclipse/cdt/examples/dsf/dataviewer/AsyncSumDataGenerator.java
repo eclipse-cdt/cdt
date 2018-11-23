@@ -14,6 +14,7 @@
 //#ifdef exercises
 package org.eclipse.cdt.examples.dsf.dataviewer;
 //#else
+
 //#package org.eclipse.cdt.examples.dsf.dataviewer.answers;
 //#endif
 
@@ -38,144 +39,128 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
  */
 public class AsyncSumDataGenerator implements IDataGenerator {
 
-    /**
-     * DSF executor used to serialize data access within this data generator.
-     */
-    final private DsfExecutor fExecutor;
+	/**
+	 * DSF executor used to serialize data access within this data generator.
+	 */
+	final private DsfExecutor fExecutor;
 
-    /**
-     * Data generators to retrieve original data to perform calculations on.
-     */
-    final private IDataGenerator[] fDataGenerators;
+	/**
+	 * Data generators to retrieve original data to perform calculations on.
+	 */
+	final private IDataGenerator[] fDataGenerators;
 
-    public AsyncSumDataGenerator(DsfExecutor executor,
-        IDataGenerator[] generators)
-    {
-        fExecutor = executor;
-        fDataGenerators = generators;
-    }
+	public AsyncSumDataGenerator(DsfExecutor executor, IDataGenerator[] generators) {
+		fExecutor = executor;
+		fDataGenerators = generators;
+	}
 
-    @Override
+	@Override
 	public void getCount(final DataRequestMonitor<Integer> rm) {
-        // Artificially delay the retrieval of the sum data to simulate
-        // real processing time.
-        fExecutor.schedule( new Runnable() {
-                @Override
-				public void run() {
-                    doGetCount(rm);
-                }
-            },
-            PROCESSING_DELAY, TimeUnit.MILLISECONDS);
-    }
+		// Artificially delay the retrieval of the sum data to simulate
+		// real processing time.
+		fExecutor.schedule(new Runnable() {
+			@Override
+			public void run() {
+				doGetCount(rm);
+			}
+		}, PROCESSING_DELAY, TimeUnit.MILLISECONDS);
+	}
 
-    /**
-     * Performs the actual count retrieval and calculation.
-     * @param rm Request monitor to complete with data.
-     */
-    private void doGetCount(final DataRequestMonitor<Integer> rm) {
-        // Array to store counts retrieved asynchronously
-        final int[] counts = new int[fDataGenerators.length];
+	/**
+	 * Performs the actual count retrieval and calculation.
+	 * @param rm Request monitor to complete with data.
+	 */
+	private void doGetCount(final DataRequestMonitor<Integer> rm) {
+		// Array to store counts retrieved asynchronously
+		final int[] counts = new int[fDataGenerators.length];
 
-        // Counting request monitor is called once all data is retrieved.
-        final CountingRequestMonitor crm =
-            new CountingRequestMonitor(fExecutor, rm)
-        {
-            @Override
-            protected void handleSuccess() {
-                // Pick the highest count value.
-                Arrays.sort(counts, 0, counts.length - 1);
-                int maxCount = counts[counts.length - 1];
-                rm.setData(maxCount);
-                rm.done();
-            };
-        };
+		// Counting request monitor is called once all data is retrieved.
+		final CountingRequestMonitor crm = new CountingRequestMonitor(fExecutor, rm) {
+			@Override
+			protected void handleSuccess() {
+				// Pick the highest count value.
+				Arrays.sort(counts, 0, counts.length - 1);
+				int maxCount = counts[counts.length - 1];
+				rm.setData(maxCount);
+				rm.done();
+			};
+		};
 
-        // Each call to data generator fills in one value in array.
-        for (int i = 0; i < fDataGenerators.length; i++) {
-            final int finalI = i;
-            fDataGenerators[i].getCount(
-                new DataRequestMonitor<Integer>(
-                    ImmediateExecutor.getInstance(), crm)
-                {
-                    @Override
-                    protected void handleSuccess() {
-                        counts[finalI] = getData();
-                        crm.done();
-                    }
-                });
-        }
-        crm.setDoneCount(fDataGenerators.length);
-    }
+		// Each call to data generator fills in one value in array.
+		for (int i = 0; i < fDataGenerators.length; i++) {
+			final int finalI = i;
+			fDataGenerators[i].getCount(new DataRequestMonitor<Integer>(ImmediateExecutor.getInstance(), crm) {
+				@Override
+				protected void handleSuccess() {
+					counts[finalI] = getData();
+					crm.done();
+				}
+			});
+		}
+		crm.setDoneCount(fDataGenerators.length);
+	}
 
-    @Override
-	public void getValue(final int index, final DataRequestMonitor<Integer> rm)
-    {
-        // Artificially delay the retrieval of the sum data to simulate
-        // real processing time.
-        fExecutor.schedule( new Runnable() {
-                @Override
-				public void run() {
-                    doGetValue(index, rm);
-                }
-            },
-            PROCESSING_DELAY, TimeUnit.MILLISECONDS);
-    }
+	@Override
+	public void getValue(final int index, final DataRequestMonitor<Integer> rm) {
+		// Artificially delay the retrieval of the sum data to simulate
+		// real processing time.
+		fExecutor.schedule(new Runnable() {
+			@Override
+			public void run() {
+				doGetValue(index, rm);
+			}
+		}, PROCESSING_DELAY, TimeUnit.MILLISECONDS);
+	}
 
-    /**
-     * Performs the actual value retrieval and calculation.
-     * @param rm Request monitor to complete with data.
-     */
-    private void doGetValue(int index, final DataRequestMonitor<Integer> rm) {
-        // Array to store counts retrieved asynchronously
-        final int[] values = new int[fDataGenerators.length];
+	/**
+	 * Performs the actual value retrieval and calculation.
+	 * @param rm Request monitor to complete with data.
+	 */
+	private void doGetValue(int index, final DataRequestMonitor<Integer> rm) {
+		// Array to store counts retrieved asynchronously
+		final int[] values = new int[fDataGenerators.length];
 
-        // Counting request monitor is called once all data is retrieved.
-        final CountingRequestMonitor crm =
-            new CountingRequestMonitor(fExecutor, rm)
-        {
-            @Override
-            protected void handleSuccess() {
-                // Sum up values in array.
-                int sum = 0;
-                for (int value : values) {
-                    sum += value;
-                }
-                rm.setData(sum);
-                rm.done();
-            };
-        };
+		// Counting request monitor is called once all data is retrieved.
+		final CountingRequestMonitor crm = new CountingRequestMonitor(fExecutor, rm) {
+			@Override
+			protected void handleSuccess() {
+				// Sum up values in array.
+				int sum = 0;
+				for (int value : values) {
+					sum += value;
+				}
+				rm.setData(sum);
+				rm.done();
+			};
+		};
 
-        // Each call to data generator fills in one value in array.
-        for (int i = 0; i < fDataGenerators.length; i++) {
-            final int finalI = i;
-            fDataGenerators[i].getValue(
-                index,
-                new DataRequestMonitor<Integer>(
-                    ImmediateExecutor.getInstance(), crm)
-                {
-                    @Override
-                    protected void handleSuccess() {
-                        values[finalI] = getData();
-                        crm.done();
-                    }
-                });
-        }
-        crm.setDoneCount(fDataGenerators.length);
-    }
+		// Each call to data generator fills in one value in array.
+		for (int i = 0; i < fDataGenerators.length; i++) {
+			final int finalI = i;
+			fDataGenerators[i].getValue(index, new DataRequestMonitor<Integer>(ImmediateExecutor.getInstance(), crm) {
+				@Override
+				protected void handleSuccess() {
+					values[finalI] = getData();
+					crm.done();
+				}
+			});
+		}
+		crm.setDoneCount(fDataGenerators.length);
+	}
 
-    @Override
+	@Override
 	public void shutdown(RequestMonitor rm) {
-        rm.done();
-    }
+		rm.done();
+	}
 
-    @Override
+	@Override
 	public void addListener(final Listener listener) {
-        // no events generated
-    }
+		// no events generated
+	}
 
-    @Override
+	@Override
 	public void removeListener(Listener listener) {
-        // no events generated
-    }
+		// no events generated
+	}
 
 }

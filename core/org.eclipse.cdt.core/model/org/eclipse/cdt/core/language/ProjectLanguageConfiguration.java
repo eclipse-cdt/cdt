@@ -244,8 +244,7 @@ public class ProjectLanguageConfiguration {
 	 * @param file
 	 */
 	public void setFileMappings(IFile file, Map<String, String> mappings) {
-		fFileConfigurationMappings.put(file.getProjectRelativePath().toPortableString(),
-				new TreeMap<>(mappings));
+		fFileConfigurationMappings.put(file.getProjectRelativePath().toPortableString(), new TreeMap<>(mappings));
 	}
 
 	private Map<String, Map<String, String>> copyLanguageMappings(Map<String, Map<String, String>> mappings,

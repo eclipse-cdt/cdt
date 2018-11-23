@@ -339,8 +339,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 						PerFileDiscoveredPathContainer container = new PerFileDiscoveredPathContainer(project);
 						CoreModel.setPathEntryContainer(new ICProject[] { cProject }, container, null);
 						if (changedResources != null) {
-							List<PathEntryContainerChanged> changeDelta = new ArrayList<>(
-									changedResources.size());
+							List<PathEntryContainerChanged> changeDelta = new ArrayList<>(changedResources.size());
 							for (IResource resource : changedResources) {
 								IPath path = resource.getFullPath();
 								changeDelta.add(

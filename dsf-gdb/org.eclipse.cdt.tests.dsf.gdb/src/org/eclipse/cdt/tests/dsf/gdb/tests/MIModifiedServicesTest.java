@@ -224,8 +224,8 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 
 	private void resumeContainerContextExe() throws InterruptedException, ExecutionException, TimeoutException {
 
-		final ServiceEventWaitor<IResumedDMEvent> resumedWaitor = new ServiceEventWaitor<>(
-				getGDBLaunch().getSession(), IResumedDMEvent.class);
+		final ServiceEventWaitor<IResumedDMEvent> resumedWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
+				IResumedDMEvent.class);
 
 		Query<Void> query = new Query<Void>() {
 			@Override

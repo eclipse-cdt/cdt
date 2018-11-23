@@ -170,8 +170,7 @@ public class SyncUtil {
 
 	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, boolean reverse,
 			int massagedTimeout) throws Throwable {
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
-				MIStoppedEvent.class);
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
 		if (!reverse) {
 			fRunControl.getExecutor().submit(new Runnable() {
@@ -280,8 +279,7 @@ public class SyncUtil {
 
 	private static MIStoppedEvent resumeUntilStopped(final IExecutionDMContext dmc, int massagedTimeout)
 			throws Throwable {
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
-				MIStoppedEvent.class);
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
 		fRunControl.getExecutor().submit(new Runnable() {
 			@Override
@@ -308,8 +306,7 @@ public class SyncUtil {
 	}
 
 	public static MIRunningEvent resume(final IExecutionDMContext dmc, int massagedTimeout) throws Throwable {
-		final ServiceEventWaitor<MIRunningEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
-				MIRunningEvent.class);
+		final ServiceEventWaitor<MIRunningEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIRunningEvent.class);
 
 		fRunControl.getExecutor().submit(new Runnable() {
 			@Override
@@ -378,8 +375,7 @@ public class SyncUtil {
 	// if there is a sleep in the code between the resume and the time
 	// it stops; this will give us plenty of time to call this method.
 	public static MIStoppedEvent waitForStop(int timeout) throws Throwable {
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
-				MIStoppedEvent.class);
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
 		// Wait for the execution to suspend
 		return eventWaitor.waitForEvent(TestsPlugin.massageTimeout(timeout));
@@ -778,8 +774,7 @@ public class SyncUtil {
 		}
 
 		// Now wait for the stopped event of the restart
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
-				MIStoppedEvent.class);
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
 		// Perform the restart
 		Query<IContainerDMContext> query2 = new Query<IContainerDMContext>() {

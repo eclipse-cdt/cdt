@@ -462,8 +462,7 @@ abstract public class FormattedValueTests extends TestCase
 			ArrayList<ElementFormatSetting> elementFormats1 = new ArrayList<>(map1.values());
 			HashMap<String, ElementFormatSetting> expMap1 = new HashMap<>();
 			makeElementFormatSetting(fViewer, TreePath.EMPTY, format1, depth, 0, expMap1);
-			ArrayList<ElementFormatSetting> expectElementFormats1 = new ArrayList<>(
-					expMap1.values());
+			ArrayList<ElementFormatSetting> expectElementFormats1 = new ArrayList<>(expMap1.values());
 			vmListenerLevel = depth;
 			setFormatAndValidate(preferenceFormat, elementFormats1, expectElementFormats1, true, false, false);
 
@@ -474,8 +473,7 @@ abstract public class FormattedValueTests extends TestCase
 			ArrayList<ElementFormatSetting> elementFormats2 = new ArrayList<>(map2.values());
 			HashMap<String, ElementFormatSetting> expMap2 = new HashMap<>();
 			makeElementFormatSetting(fViewer, TreePath.EMPTY, format2, depth, 0, expMap2);
-			ArrayList<ElementFormatSetting> expectElementFormats2 = new ArrayList<>(
-					expMap2.values());
+			ArrayList<ElementFormatSetting> expectElementFormats2 = new ArrayList<>(expMap2.values());
 			setFormatAndValidate(preferenceFormat, elementFormats2, expectElementFormats2, true, true, false);
 
 			// Generate an event which will cause all cache entries to be marked dirty.
@@ -491,8 +489,7 @@ abstract public class FormattedValueTests extends TestCase
 			ArrayList<ElementFormatSetting> elementFormats3 = new ArrayList<>(map3.values());
 			HashMap<String, ElementFormatSetting> expMap3 = new HashMap<>();
 			makeElementFormatSetting(fViewer, TreePath.EMPTY, format3, depth, 0, expMap3);
-			ArrayList<ElementFormatSetting> expectElementFormats3 = new ArrayList<>(
-					expMap3.values());
+			ArrayList<ElementFormatSetting> expectElementFormats3 = new ArrayList<>(expMap3.values());
 			setFormatAndValidate(preferenceFormat, elementFormats3, expectElementFormats3, true, true, true);
 		}
 	}

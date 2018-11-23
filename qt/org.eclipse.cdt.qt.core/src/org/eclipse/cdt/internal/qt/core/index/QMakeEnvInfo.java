@@ -42,10 +42,8 @@ public final class QMakeEnvInfo {
 			Collection<IFile> sensitiveFiles) {
 		this.proFile = proFile;
 		this.qmakeFilePath = qmakeFilePath;
-		this.environment = environment != null ? new HashMap<>(environment)
-				: Collections.<String, String>emptyMap();
-		this.sensitiveFiles = sensitiveFiles != null ? new HashSet<>(sensitiveFiles)
-				: Collections.<IFile>emptySet();
+		this.environment = environment != null ? new HashMap<>(environment) : Collections.<String, String>emptyMap();
+		this.sensitiveFiles = sensitiveFiles != null ? new HashSet<>(sensitiveFiles) : Collections.<IFile>emptySet();
 	}
 
 	/**

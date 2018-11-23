@@ -144,8 +144,7 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 						}
 					}
 
-					List<BreakpointOrganizerVMContext> vmcs = new ArrayList<>(
-							bpsLists.size());
+					List<BreakpointOrganizerVMContext> vmcs = new ArrayList<>(bpsLists.size());
 					for (Map.Entry<IAdaptable, List<IBreakpoint>> entry : bpsLists.entrySet()) {
 						List<IBreakpoint> bpsList = entry.getValue();
 						IBreakpoint[] bpsArray = bpsList.toArray(new IBreakpoint[bpsList.size()]);

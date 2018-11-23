@@ -14,6 +14,7 @@
 //#ifdef exercises
 package org.eclipse.cdt.examples.dsf.requestmonitor;
 //#else
+
 //#package org.eclipse.cdt.examples.dsf.requestmonitor.answers;
 //#endif
 
@@ -32,34 +33,34 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
  */
 public class AsyncHelloWorld {
 
-    public static void main(String[] args) {
-        Executor executor = ImmediateExecutor.getInstance();
-        RequestMonitor rm = new RequestMonitor(executor, null);
-        asyncHelloWorld(rm);
-    }
+	public static void main(String[] args) {
+		Executor executor = ImmediateExecutor.getInstance();
+		RequestMonitor rm = new RequestMonitor(executor, null);
+		asyncHelloWorld(rm);
+	}
 
-    static void asyncHelloWorld(RequestMonitor rm) {
-        System.out.println("Hello world");
-        //#ifdef exercises
-        // TODO Exercise 1: - Call the second async. "Hello world 2" method.
-        // Hint: Calling an asynchronous method requires passing to it a
-        // request monitor.  A new request monitor can be constructed with
-        // a parent RequestMonitor as an argument argument.  The parent gets
-        // completed automatically when the lower level request monitor is
-        // completed.
-        rm.done();
-        //#else
-//#        RequestMonitor rm2 = new RequestMonitor(ImmediateExecutor.getInstance(), rm);
-//#        asyncHelloWorld2(rm2);
-        //#endif
-    }
+	static void asyncHelloWorld(RequestMonitor rm) {
+		System.out.println("Hello world");
+		//#ifdef exercises
+		// TODO Exercise 1: - Call the second async. "Hello world 2" method.
+		// Hint: Calling an asynchronous method requires passing to it a
+		// request monitor.  A new request monitor can be constructed with
+		// a parent RequestMonitor as an argument argument.  The parent gets
+		// completed automatically when the lower level request monitor is
+		// completed.
+		rm.done();
+		//#else
+		//#        RequestMonitor rm2 = new RequestMonitor(ImmediateExecutor.getInstance(), rm);
+		//#        asyncHelloWorld2(rm2);
+		//#endif
+	}
 
-    //#ifdef exercises
-    // TODO: Exercise 1 - Add a second async. "Hello world 2" method.
-    //#else
-//#    static void asyncHelloWorld2(RequestMonitor rm) {
-//#        System.out.println("Hello world 2");
-//#        rm.done();
-//#    }
-    //#endif
+	//#ifdef exercises
+	// TODO: Exercise 1 - Add a second async. "Hello world 2" method.
+	//#else
+	//#    static void asyncHelloWorld2(RequestMonitor rm) {
+	//#        System.out.println("Hello world 2");
+	//#        rm.done();
+	//#    }
+	//#endif
 }

@@ -14,6 +14,7 @@
 //#ifdef exercises
 package org.eclipse.cdt.examples.dsf.dataviewer;
 //#else
+
 //#package org.eclipse.cdt.examples.dsf.dataviewer.answers;
 //#endif
 
@@ -46,205 +47,190 @@ import org.eclipse.core.runtime.CoreException;
  * invalidate their caches.
  * </p>
  */
-public class ACPMSumDataGenerator
-    implements IDataGenerator, IDataGenerator.Listener
-{
+public class ACPMSumDataGenerator implements IDataGenerator, IDataGenerator.Listener {
 
-    /**
-     * DSF executor used to serialize data access within this data generator.
-     */
-    final private DsfExecutor fExecutor;
+	/**
+	 * DSF executor used to serialize data access within this data generator.
+	 */
+	final private DsfExecutor fExecutor;
 
-    /**
-     * Data generators to retrieve original data to perform calculations on.
-     * The generators are accessed through the cache manager wrappers.
-     */
-    final private DataGeneratorCacheManager[] fDataGeneratorCMs;
+	/**
+	 * Data generators to retrieve original data to perform calculations on.
+	 * The generators are accessed through the cache manager wrappers.
+	 */
+	final private DataGeneratorCacheManager[] fDataGeneratorCMs;
 
-    /**
-     * List of listeners for this data generator.
-     */
-    final private List<Listener> fListeners = new LinkedList<Listener>();
+	/**
+	 * List of listeners for this data generator.
+	 */
+	final private List<Listener> fListeners = new LinkedList<Listener>();
 
-    public ACPMSumDataGenerator(DsfExecutor executor,
-        IDataGenerator[] generators)
-    {
-        fExecutor = executor;
+	public ACPMSumDataGenerator(DsfExecutor executor, IDataGenerator[] generators) {
+		fExecutor = executor;
 
-        // Create wrappers for data generators and add ourselves as listener
-        // to their events.
-        fDataGeneratorCMs = new DataGeneratorCacheManager[generators.length];
-        ImmediateInDsfExecutor immediateExecutor =
-            new ImmediateInDsfExecutor(fExecutor);
-        for (int i = 0; i < generators.length; i++) {
-            fDataGeneratorCMs[i] = new DataGeneratorCacheManager(
-                immediateExecutor, generators[i]);
-            generators[i].addListener(this);
-        }
-    }
+		// Create wrappers for data generators and add ourselves as listener
+		// to their events.
+		fDataGeneratorCMs = new DataGeneratorCacheManager[generators.length];
+		ImmediateInDsfExecutor immediateExecutor = new ImmediateInDsfExecutor(fExecutor);
+		for (int i = 0; i < generators.length; i++) {
+			fDataGeneratorCMs[i] = new DataGeneratorCacheManager(immediateExecutor, generators[i]);
+			generators[i].addListener(this);
+		}
+	}
 
-    @Override
+	@Override
 	public void getCount(final DataRequestMonitor<Integer> rm) {
-        // Artificially delay the retrieval of the sum data to simulate
-        // real processing time.
-        fExecutor.schedule( new Runnable() {
-                @Override
-				public void run() {
-                    // Create the transaction here to put all the ugly
-                    // code in one place.
-                    new Transaction<Integer>() {
-                        @Override
-                        protected Integer process()
-                            throws Transaction.InvalidCacheException,
-                                   CoreException
-                       {
-                            return processCount(this);
-                        }
-                    }.request(rm);
-                }
-            },
-            PROCESSING_DELAY, TimeUnit.MILLISECONDS);
-    }
+		// Artificially delay the retrieval of the sum data to simulate
+		// real processing time.
+		fExecutor.schedule(new Runnable() {
+			@Override
+			public void run() {
+				// Create the transaction here to put all the ugly
+				// code in one place.
+				new Transaction<Integer>() {
+					@Override
+					protected Integer process() throws Transaction.InvalidCacheException, CoreException {
+						return processCount(this);
+					}
+				}.request(rm);
+			}
+		}, PROCESSING_DELAY, TimeUnit.MILLISECONDS);
+	}
 
-    /**
-     * Perform the calculation to get the max count for the given transaction.
-     * @param transaction The ACPM transaction to use for calculation.
-     * @return Calculated count.
-     * @throws Transaction.InvalidCacheException {@link Transaction#process}
-     * @throws CoreException See {@link Transaction#process}
-     */
-    private Integer processCount(Transaction<Integer> transaction)
-        throws Transaction.InvalidCacheException, CoreException
-    {
-        // Assemble all needed count caches into a collection.
-        List<ICache<Integer>> countCaches =
-            new ArrayList<ICache<Integer>>(fDataGeneratorCMs.length);
-        for (DataGeneratorCacheManager dataGeneratorCM : fDataGeneratorCMs) {
-            countCaches.add(dataGeneratorCM.getCount());
-        }
-        // Validate all count caches at once.  This executes needed requests
-        // in parallel.
-        transaction.validate(countCaches);
+	/**
+	 * Perform the calculation to get the max count for the given transaction.
+	 * @param transaction The ACPM transaction to use for calculation.
+	 * @return Calculated count.
+	 * @throws Transaction.InvalidCacheException {@link Transaction#process}
+	 * @throws CoreException See {@link Transaction#process}
+	 */
+	private Integer processCount(Transaction<Integer> transaction)
+			throws Transaction.InvalidCacheException, CoreException {
+		// Assemble all needed count caches into a collection.
+		List<ICache<Integer>> countCaches = new ArrayList<ICache<Integer>>(fDataGeneratorCMs.length);
+		for (DataGeneratorCacheManager dataGeneratorCM : fDataGeneratorCMs) {
+			countCaches.add(dataGeneratorCM.getCount());
+		}
+		// Validate all count caches at once.  This executes needed requests
+		// in parallel.
+		transaction.validate(countCaches);
 
-        // Calculate the max value and return.
-        int maxCount = 0;
-        for (ICache<Integer> countCache : countCaches) {
-            maxCount = Math.max(maxCount, countCache.getData());
-        }
-        return maxCount;
-    }
+		// Calculate the max value and return.
+		int maxCount = 0;
+		for (ICache<Integer> countCache : countCaches) {
+			maxCount = Math.max(maxCount, countCache.getData());
+		}
+		return maxCount;
+	}
 
-    @Override
-	public void getValue(final int index, final DataRequestMonitor<Integer> rm)
-    {
-        // Add a processing delay.
-        fExecutor.schedule( new Runnable() {
-                @Override
-				public void run() {
-                    new Transaction<Integer>() {
-                        @Override
-                        protected Integer process()
-                            throws Transaction.InvalidCacheException,
-                                   CoreException
-                        {
-                            return processValue(this, index);
-                        }
-                    }.request(rm);
-                }
-            },
-            PROCESSING_DELAY, TimeUnit.MILLISECONDS);
-    }
+	@Override
+	public void getValue(final int index, final DataRequestMonitor<Integer> rm) {
+		// Add a processing delay.
+		fExecutor.schedule(new Runnable() {
+			@Override
+			public void run() {
+				new Transaction<Integer>() {
+					@Override
+					protected Integer process() throws Transaction.InvalidCacheException, CoreException {
+						return processValue(this, index);
+					}
+				}.request(rm);
+			}
+		}, PROCESSING_DELAY, TimeUnit.MILLISECONDS);
+	}
 
-    /**
-     * Perform the calculation to get the sum of values at given index.
-     * @param transaction The ACPM transaction to use for calculation.
-     * @param index Index of value to calculate.
-     * @return Calculated value.
-     * @throws Transaction.InvalidCacheException {@link Transaction#process}
-     * @throws CoreException See {@link Transaction#process}
-     */
-    private Integer processValue(Transaction<Integer> transaction, int index)
-        throws Transaction.InvalidCacheException, CoreException
-    {
-        List<ICache<Integer>> valueCaches =
-            new ArrayList<ICache<Integer>>(fDataGeneratorCMs.length);
-        for (DataGeneratorCacheManager dataGeneratorCM : fDataGeneratorCMs) {
-            valueCaches.add(dataGeneratorCM.getValue(index));
-        }
-        // Validate all value caches at once.  This executes needed requests
-        // in parallel.
-        transaction.validate(valueCaches);
+	/**
+	 * Perform the calculation to get the sum of values at given index.
+	 * @param transaction The ACPM transaction to use for calculation.
+	 * @param index Index of value to calculate.
+	 * @return Calculated value.
+	 * @throws Transaction.InvalidCacheException {@link Transaction#process}
+	 * @throws CoreException See {@link Transaction#process}
+	 */
+	private Integer processValue(Transaction<Integer> transaction, int index)
+			throws Transaction.InvalidCacheException, CoreException {
+		List<ICache<Integer>> valueCaches = new ArrayList<ICache<Integer>>(fDataGeneratorCMs.length);
+		for (DataGeneratorCacheManager dataGeneratorCM : fDataGeneratorCMs) {
+			valueCaches.add(dataGeneratorCM.getValue(index));
+		}
+		// Validate all value caches at once.  This executes needed requests
+		// in parallel.
+		transaction.validate(valueCaches);
 
-        int sum = 0;
-        for (ICache<Integer> valueCache : valueCaches) {
-            sum += valueCache.getData();
-        }
-        return sum;
-    }
+		int sum = 0;
+		for (ICache<Integer> valueCache : valueCaches) {
+			sum += valueCache.getData();
+		}
+		return sum;
+	}
 
-    @Override
+	@Override
 	public void shutdown(final RequestMonitor rm) {
-        for (DataGeneratorCacheManager dataGeneratorCM : fDataGeneratorCMs) {
-            dataGeneratorCM.getDataGenerator().removeListener(this);
-            dataGeneratorCM.dispose();
-            rm.done();
-        }
-        rm.done();
-    }
+		for (DataGeneratorCacheManager dataGeneratorCM : fDataGeneratorCMs) {
+			dataGeneratorCM.getDataGenerator().removeListener(this);
+			dataGeneratorCM.dispose();
+			rm.done();
+		}
+		rm.done();
+	}
 
-    @Override
+	@Override
 	public void addListener(final Listener listener) {
-        // Must access fListeners on executor thread.
-        try {
-            fExecutor.execute( new DsfRunnable() {
-                @Override
+		// Must access fListeners on executor thread.
+		try {
+			fExecutor.execute(new DsfRunnable() {
+				@Override
 				public void run() {
-                    fListeners.add(listener);
-                }
-            });
-        } catch (RejectedExecutionException e) {}
-    }
+					fListeners.add(listener);
+				}
+			});
+		} catch (RejectedExecutionException e) {
+		}
+	}
 
-    @Override
+	@Override
 	public void removeListener(final Listener listener) {
-        // Must access fListeners on executor thread.
-        try {
-            fExecutor.execute( new DsfRunnable() {
-                @Override
+		// Must access fListeners on executor thread.
+		try {
+			fExecutor.execute(new DsfRunnable() {
+				@Override
 				public void run() {
-                    fListeners.remove(listener);
-                }
-            });
-        } catch (RejectedExecutionException e) {}
-    }
+					fListeners.remove(listener);
+				}
+			});
+		} catch (RejectedExecutionException e) {
+		}
+	}
 
-    @Override
+	@Override
 	public void countChanged() {
-        // Must access fListeners on executor thread.
-        try {
-            fExecutor.execute( new DsfRunnable() {
-                @Override
+		// Must access fListeners on executor thread.
+		try {
+			fExecutor.execute(new DsfRunnable() {
+				@Override
 				public void run() {
-                    for (Listener listener : fListeners) {
-                        listener.countChanged();
-                    }
-                }
-            });
-        } catch (RejectedExecutionException e) {}
-    }
+					for (Listener listener : fListeners) {
+						listener.countChanged();
+					}
+				}
+			});
+		} catch (RejectedExecutionException e) {
+		}
+	}
 
-    @Override
+	@Override
 	public void valuesChanged(final Set<Integer> changed) {
-        // Must access fListeners on executor thread.
-        try {
-            fExecutor.execute( new DsfRunnable() {
-                @Override
+		// Must access fListeners on executor thread.
+		try {
+			fExecutor.execute(new DsfRunnable() {
+				@Override
 				public void run() {
-                    for (Object listener : fListeners) {
-                        ((Listener)listener).valuesChanged(changed);
-                    }
-                }
-            });
-        } catch (RejectedExecutionException e) {}
-    }
+					for (Object listener : fListeners) {
+						((Listener) listener).valuesChanged(changed);
+					}
+				}
+			});
+		} catch (RejectedExecutionException e) {
+		}
+	}
 }

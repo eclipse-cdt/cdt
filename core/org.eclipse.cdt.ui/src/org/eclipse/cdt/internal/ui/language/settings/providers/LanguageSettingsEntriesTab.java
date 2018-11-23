@@ -1190,8 +1190,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			IResource rc = getResource();
 			List<ILanguageSettingsProvider> oldProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
 					.getLanguageSettingProviders();
-			List<ILanguageSettingsProvider> newProviders = new ArrayList<>(
-					oldProviders.size());
+			List<ILanguageSettingsProvider> newProviders = new ArrayList<>(oldProviders.size());
 
 			// clear entries for a given resource for all languages where applicable
 			providers: for (ILanguageSettingsProvider provider : oldProviders) {

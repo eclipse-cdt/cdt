@@ -253,8 +253,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		}
 
 		if (fChild != null) {
-			Set<String> overrides = new HashSet<>(
-					createWorkspaceContentTypeFilter(fConfigurationContentTypeMappings));
+			Set<String> overrides = new HashSet<>(createWorkspaceContentTypeFilter(fConfigurationContentTypeMappings));
 			fChild.setOverriddenContentTypes(overrides);
 			fChild.refreshMappings();
 		}

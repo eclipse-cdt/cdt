@@ -476,8 +476,7 @@ public class GoToAddressBarWidget {
 		String id = UNKNOWN_CONTEXT_ID;
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
-			IRecurringDebugContext recurringDebugContext = adaptable
-					.getAdapter(IRecurringDebugContext.class);
+			IRecurringDebugContext recurringDebugContext = adaptable.getAdapter(IRecurringDebugContext.class);
 			if (recurringDebugContext != null) {
 				try {
 					id = recurringDebugContext.getContextID();

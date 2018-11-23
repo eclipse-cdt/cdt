@@ -215,8 +215,8 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		// then we terminate the process, and confirm that there are no more processes
 		SyncUtil.resume();
 
-		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<>(
-				getGDBLaunch().getSession(), IExitedDMEvent.class);
+		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
+				IExitedDMEvent.class);
 
 		Query<Object> query = new Query<Object>() {
 			@Override
@@ -297,8 +297,8 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		// then we detach the process, and confirm that we are not longer running
 		SyncUtil.resume();
 
-		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<>(
-				getGDBLaunch().getSession(), IExitedDMEvent.class);
+		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
+				IExitedDMEvent.class);
 
 		Query<Object> query = new Query<Object>() {
 			@Override

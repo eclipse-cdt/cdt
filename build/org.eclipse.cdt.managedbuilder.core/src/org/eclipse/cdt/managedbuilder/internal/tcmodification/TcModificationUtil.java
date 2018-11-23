@@ -213,8 +213,7 @@ public class TcModificationUtil {
 		int[] types = new int[] { IRealBuildObjectAssociation.OBJECT_TOOLCHAIN,
 				IRealBuildObjectAssociation.OBJECT_BUILDER, IRealBuildObjectAssociation.OBJECT_TOOL, };
 
-		TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = new TreeMap<>(
-				PathComparator.INSTANCE);
+		TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = new TreeMap<>(PathComparator.INSTANCE);
 		@SuppressWarnings("unchecked")
 		TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> clone = (TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>) initialMap
 				.clone();
@@ -572,8 +571,7 @@ public class TcModificationUtil {
 	public static TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> createPathMap(
 			PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> storage) {
 		int[] types = ObjectTypeBasedStorage.getSupportedObjectTypes();
-		TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = new TreeMap<>(
-				PathComparator.INSTANCE);
+		TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = new TreeMap<>(PathComparator.INSTANCE);
 		for (int i = 0; i < types.length; i++) {
 			int type = types[i];
 			Map<IRealBuildObjectAssociation, Set<IPath>> map = storage.getMap(type, false);

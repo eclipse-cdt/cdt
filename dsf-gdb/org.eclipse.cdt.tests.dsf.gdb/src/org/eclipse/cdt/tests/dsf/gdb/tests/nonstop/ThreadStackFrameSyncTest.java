@@ -157,8 +157,8 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	*/
 	@Test
 	public void testChangingCurrentThreadCLINotification() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(
-				fMultiRunControl.getSession(), MIStoppedEvent.class);
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
+				MIStoppedEvent.class);
 
 		// add a breakpoint in main
 		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
@@ -193,8 +193,8 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testChangingCurrentFrameCLINotification() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(
-				fMultiRunControl.getSession(), MIStoppedEvent.class);
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
+				MIStoppedEvent.class);
 
 		// add a breakpoint in main
 		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
@@ -229,8 +229,8 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testGdbSyncServiceCanSwitchGDBThread() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(
-				fMultiRunControl.getSession(), MIStoppedEvent.class);
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
+				MIStoppedEvent.class);
 
 		// add a breakpoint in main
 		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
@@ -270,8 +270,8 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testGdbSyncServiceCanSwitchGDBStackFrame() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(
-				fMultiRunControl.getSession(), MIStoppedEvent.class);
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
+				MIStoppedEvent.class);
 
 		// add a breakpoint in main
 		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);

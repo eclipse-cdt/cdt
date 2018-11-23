@@ -253,8 +253,7 @@ abstract public class FoldingTestBase extends BaseUITestCase {
 
 	protected PositionAndCollapsed[] getFoldingPositions() {
 		List<PositionAndCollapsed> positionAndCollapseds = new ArrayList<>();
-		ProjectionAnnotationModel model = fEditor
-				.getAdapter(ProjectionAnnotationModel.class);
+		ProjectionAnnotationModel model = fEditor.getAdapter(ProjectionAnnotationModel.class);
 		assertNotNull(model);
 		for (Iterator<Annotation> iter = model.getAnnotationIterator(); iter.hasNext();) {
 			Annotation ann = iter.next();

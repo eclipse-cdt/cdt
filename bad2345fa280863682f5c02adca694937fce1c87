@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "018f8396_e62e33a6",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2018-11-23T03:38:22Z",
+      "side": 1,
+      "message": "I think the lldb feature is too immature to be API tracked yet. I wasn\u0027t sure if it was already which explains my other comment about adding a filter in the other review. On the other hand, if you prefer just to track everything, it won\u0027t change much for lldb because there is little that is non-internal.",
+      "revId": "bad2345fa280863682f5c02adca694937fce1c87",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

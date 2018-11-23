@@ -76,7 +76,9 @@ package-list text
 *.xpm binary
 
 # Java/Eclipse
+# remove trailing whitespace
 *.java text
+# remove trailing whitespace
 *.properties text
 .api_filters text
 .classpath text
@@ -86,6 +88,7 @@ package-list text
 *.ini text
 *.launch text
 *.mappings text
+# remove trailing whitespace
 *.MF text
 .options text
 *.options text

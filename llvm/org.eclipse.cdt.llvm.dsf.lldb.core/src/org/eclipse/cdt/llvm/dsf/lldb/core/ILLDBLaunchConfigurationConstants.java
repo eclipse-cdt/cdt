@@ -22,14 +22,14 @@ import org.eclipse.cdt.llvm.dsf.lldb.core.internal.LLDBCorePlugin;
  */
 public interface ILLDBLaunchConfigurationConstants {
 
-	/**
-	 * Launch configuration attribute key. The value is the name of
-	 * the Debuger associated with a C/C++ launch configuration.
-	 */
-	public static final String ATTR_DEBUG_NAME = LLDBCorePlugin.PLUGIN_ID + ".DEBUG_NAME"; //$NON-NLS-1$
+/**
+	* Launch configuration attribute key. The value is the name of
+	* the Debuger associated with a C/C++ launch configuration.
+	*/
+public static final String ATTR_DEBUG_NAME = LLDBCorePlugin.PLUGIN_ID + ".DEBUG_NAME"; //$NON-NLS-1$
 
-	/**
-	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
-	 */
-	public static final String DEBUGGER_DEBUG_NAME_DEFAULT = ILLDBConstants.LLDB_MI_EXECUTABLE_NAME;
+/**
+	* Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
+	*/
+public static final String DEBUGGER_DEBUG_NAME_DEFAULT = ILLDBConstants.LLDB_MI_EXECUTABLE_NAME;
 }

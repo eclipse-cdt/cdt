@@ -157,9 +157,9 @@ public class PreProcessor extends Task {
 		}
 		String contents = null;
 		if (fileName.endsWith(".java")) {
-			contents = preProcessFile(srcFile, "//#");
+			contents = preProcessFile(srcFile);
 		} else if (fileName.equals("plugin.xml")) {
-			contents = preProcessFile(srcFile, null);
+			contents = preProcessFile(srcFile);
 		}
 		if (contents == null) {
 			// no change, just copy file
@@ -186,10 +186,10 @@ public class PreProcessor extends Task {
 	 * Preprocesses a file
 	 *
 	 * @param srcFile the file to process
-	 * @param strip chars to stip off lines in a true condition, or <code>null</code>
+	 * @param replaceFirstRegex chars to stip off lines in a true condition, or <code>null</code>
 	 * @return
 	 */
-	public String preProcessFile(File srcFile, String strip) {
+	public String preProcessFile(File srcFile) {
 		try (BufferedReader reader = new BufferedReader(new FileReader(srcFile))) {
 			StringBuilder buffer = new StringBuilder();
 			String line = reader.readLine();
@@ -262,10 +262,8 @@ public class PreProcessor extends Task {
 				}
 				if (!commandLine) {
 					if (state == STATE_OUTSIDE_CONDITION || state == STATE_TRUE_CONDITION) {
-						if (state == STATE_TRUE_CONDITION && strip != null) {
-							if (line.startsWith(strip)) {
-								line = line.substring(strip.length());
-							}
+						if (state == STATE_TRUE_CONDITION) {
+							line = line.replaceFirst("^(\t*)//#", "$1");
 						}
 						buffer.append(line);
 						buffer.append("\n");
@@ -288,8 +286,7 @@ public class PreProcessor extends Task {
 		PreProcessor processor = new PreProcessor();
 		processor.setSymbols("ex2");
 		String string = processor.preProcessFile(new File(
-				"c:\\eclipse3.1\\dev\\example.debug.core\\src\\example\\debug\\core\\launcher\\PDALaunchDelegate.java"),
-				"//#");
+				"c:\\eclipse3.1\\dev\\example.debug.core\\src\\example\\debug\\core\\launcher\\PDALaunchDelegate.java"));
 		//String string = processor.preProcessFile(new File("c:\\eclipse3.1\\dev\\example.debug.core\\plugin.xml"), null);
 		System.out.println(string);
 	}

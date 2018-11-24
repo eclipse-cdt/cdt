@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -162,7 +161,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			}
 		} else {
 			boolean handleMacros = false;
-			CompletionNameEntry[] entries = ((ASTCompletionNode) completionNode).getEntries();
+			CompletionNameEntry[] entries = completionNode.getEntries();
 
 			for (CompletionNameEntry entry : entries) {
 				IASTName name = entry.fName;

@@ -28,16 +28,16 @@ rm -rf check_code_cleanliness_workspace
 # The .gitattributes is used as a filter to identify files to check. Patters with
 # this "# check trailing whitespace" on the line before are checked
 ##
-awk '/# remove trailing whitespace/{getline; print $1}' .gitattributes | \
-    while read i ; do \
+awk '/# remove trailing whitespace/{getline; print $1}' .gitattributes |
+    while read i ; do
         echo "Removing trailing whitespace on $i files"
-        find .  ! -path "./.git/*" -type f -name "$i" -exec sed -i 's/[ \t]*$//' {} +; \
+        git ls-files -- "$i" | xargs sed -i 's/[ \t]*$//'
     done
 
 ##
 # Add all file types to .gitattributes
 ##
-find . ! -path "./.git/*" -type f -printf "%f\n"  | sed -E -e 's/.+\./\\\*\\./'  | sort -u | while read i ; do
+git ls-files | sed -E '-es@^.*/([^/]+)$@\1@' '-es@.+\.@\\\*\\.@'  | sort -u | while read i ; do
     if ! grep "^$i " .gitattributes > /dev/null
     then
         echo "MISSING $i in .gitattributes, adding as text, check if that is correct"
@@ -48,7 +48,7 @@ done
 ##
 # Copy JDT/PDE preferences
 ##
-find . ! -path "./.git/*" -name .project ! -path './core/org.eclipse.cdt.core/.project' | while read i ; do
+git ls-files  -- \*\*/.project ':!core/org.eclipse.cdt.core/.project' | while read i ; do
     d=`dirname $i`;
     if test ! -e $d/feature.xml; then
         mkdir -p $d/.settings

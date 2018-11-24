@@ -537,6 +537,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 			return fName;
 		}
 
+		/**
+		 * @since 5.6
+		 */
 		@Override
 		public String getDescription() {
 			return fDescription;

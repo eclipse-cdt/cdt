@@ -294,9 +294,8 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 
 		// try finding the best parent possible
 		IASTNode parent = node.getParent();
-		DOMASTNodeParent tree = null;
-		while (parent != null && tree == null) {
-			tree = findTreeParentForNode(parent);
+		while (parent != null) {
+			DOMASTNodeParent tree = findTreeParentForNode(parent);
 			if (tree != null)
 				return tree;
 

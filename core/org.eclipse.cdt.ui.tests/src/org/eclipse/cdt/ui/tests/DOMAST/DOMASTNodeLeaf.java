@@ -474,18 +474,17 @@ public class DOMASTNodeLeaf implements IAdaptable {
 						text = new TextPropertyDescriptor(NODE_PREFIX + methods[j].getName(),
 								methods[j].getName() + EMPTY_PARAMETER);
 
-					if (text != null) {
-						if (obj instanceof IBinding)
-							text.setCategory(IBINDING_TAG
-									+ ((IASTName) node).resolveBinding().getClass().getName()
-											.substring(((IASTName) node).resolveBinding().getClass().getName()
-													.lastIndexOf(PERIOD) + 1)
-									+ COLON_SEPARATOR + getValueString(((IASTName) node).resolveBinding()));
-						else
-							text.setCategory(objClass.getName().substring(objClass.getName().lastIndexOf(PERIOD) + 1)
-									+ COLON_SEPARATOR + getValueString(node));
-						desc = ArrayUtil.append(IPropertyDescriptor.class, desc, text);
-					}
+					if (obj instanceof IBinding)
+						text.setCategory(
+								IBINDING_TAG
+										+ ((IASTName) node).resolveBinding().getClass().getName()
+												.substring(((IASTName) node).resolveBinding().getClass().getName()
+														.lastIndexOf(PERIOD) + 1)
+										+ COLON_SEPARATOR + getValueString(((IASTName) node).resolveBinding()));
+					else
+						text.setCategory(objClass.getName().substring(objClass.getName().lastIndexOf(PERIOD) + 1)
+								+ COLON_SEPARATOR + getValueString(node));
+					desc = ArrayUtil.append(IPropertyDescriptor.class, desc, text);
 				}
 			}
 

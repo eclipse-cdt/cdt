@@ -142,14 +142,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 			}
 
 			// convert the array list into an array of IASTNames
-			IASTName[] namedArray = new IASTName[nameList.size()];
-
-			for (int i = 0; i < nameList.size(); i++) {
-				if (nameList.get(i) instanceof IASTName)
-					namedArray[i] = nameList.get(i);
-			}
-
-			return namedArray;
+			return nameList.toArray(new IASTName[nameList.size()]);
 		}
 	}
 

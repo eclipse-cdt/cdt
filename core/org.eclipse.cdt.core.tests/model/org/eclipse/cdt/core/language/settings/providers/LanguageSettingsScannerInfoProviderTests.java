@@ -59,7 +59,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	private static final boolean READ_ONLY = false;
 	private static final boolean WRITEABLE = true;
 
-	private class MockProvider extends LanguageSettingsBaseProvider implements ILanguageSettingsProvider {
+	private class MockProvider extends LanguageSettingsBaseProvider {
 		private final List<ICLanguageSettingEntry> entries;
 
 		public MockProvider(String id, String name, List<ICLanguageSettingEntry> entries) {
@@ -784,7 +784,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	 * Test from parent folder's entries.
 	 */
 	public void testParentFolder() throws Exception {
-		class MockProviderForResource extends LanguageSettingsBaseProvider implements ILanguageSettingsProvider {
+		class MockProviderForResource extends LanguageSettingsBaseProvider {
 			private IResource rc;
 			private final List<ICLanguageSettingEntry> entries;
 
@@ -911,7 +911,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	 * Test composition of 2 languages.
 	 */
 	public void testResourceLanguages() throws Exception {
-		class MockProviderLang extends LanguageSettingsBaseProvider implements ILanguageSettingsProvider {
+		class MockProviderLang extends LanguageSettingsBaseProvider {
 			private final String langId;
 			private final List<ICLanguageSettingEntry> entries;
 

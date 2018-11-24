@@ -52,7 +52,7 @@ public class TestExtraPagesProvider implements IPagesAfterTemplateSelectionProvi
 	/**
 	 * An example implementation of {@link IWizardDataPage} for test purposes.
 	 */
-	static class MyPage extends AbstractWizardDataPage implements IWizardDataPage {
+	static class MyPage extends AbstractWizardDataPage {
 		String labelText, dataKey, dataValue;
 
 		public MyPage(String labelText, String dataKey, String dataValue) {

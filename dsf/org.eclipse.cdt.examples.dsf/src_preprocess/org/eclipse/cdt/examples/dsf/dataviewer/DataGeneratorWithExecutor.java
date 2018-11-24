@@ -331,15 +331,15 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 		// thread.  This method can safely iterate and modify fQueue without
 		// risk of race conditions or concurrent modification exceptions.
 		//#else
-		//#        for (Iterator<Request> requestItr = fQueue.iterator(); requestItr.hasNext();) {
-		//#            Request request = requestItr.next();
-		//#            if (request.fRequestMonitor.isCanceled()) {
-		//#                request.fRequestMonitor.setStatus(
-		//#                    new Status(IStatus.CANCEL, DsfExamplesPlugin.PLUGIN_ID, "Request canceled"));
-		//#                request.fRequestMonitor.done();
-		//#                requestItr.remove();
-		//#            }
-		//#        }
+		//#for (Iterator<Request> requestItr = fQueue.iterator(); requestItr.hasNext();) {
+		//#	Request request = requestItr.next();
+		//#	if (request.fRequestMonitor.isCanceled()) {
+		//#		request.fRequestMonitor.setStatus(
+		//#			new Status(IStatus.CANCEL, DsfExamplesPlugin.PLUGIN_ID, "Request canceled"));
+		//#		request.fRequestMonitor.done();
+		//#	requestItr.remove();
+		//#	}
+		//#}
 		//#endif
 
 		while (fQueue.size() != 0) {

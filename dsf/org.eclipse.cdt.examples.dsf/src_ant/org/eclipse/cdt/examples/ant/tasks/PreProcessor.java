@@ -66,7 +66,6 @@ public class PreProcessor extends Task {
 	private Matcher ELSE_IF_MATCHER = Pattern.compile("#elseif\\s+\\w+").matcher("");
 	private Matcher ELSE_MATCHER = Pattern.compile("#else$|#else\\W+").matcher("");
 	private Matcher END_MATCHER = Pattern.compile("#endif").matcher("");
-	private static final String REPLACE_FIRST_REGEX = "^\t*//#";
 
 	/**
 	 * Constructs a new preprocessor task
@@ -158,9 +157,9 @@ public class PreProcessor extends Task {
 		}
 		String contents = null;
 		if (fileName.endsWith(".java")) {
-			contents = preProcessFile(srcFile, REPLACE_FIRST_REGEX);
+			contents = preProcessFile(srcFile);
 		} else if (fileName.equals("plugin.xml")) {
-			contents = preProcessFile(srcFile, null);
+			contents = preProcessFile(srcFile);
 		}
 		if (contents == null) {
 			// no change, just copy file
@@ -190,7 +189,7 @@ public class PreProcessor extends Task {
 	 * @param replaceFirstRegex chars to stip off lines in a true condition, or <code>null</code>
 	 * @return
 	 */
-	public String preProcessFile(File srcFile, String replaceFirstRegex) {
+	public String preProcessFile(File srcFile) {
 		try (BufferedReader reader = new BufferedReader(new FileReader(srcFile))) {
 			StringBuilder buffer = new StringBuilder();
 			String line = reader.readLine();
@@ -263,8 +262,8 @@ public class PreProcessor extends Task {
 				}
 				if (!commandLine) {
 					if (state == STATE_OUTSIDE_CONDITION || state == STATE_TRUE_CONDITION) {
-						if (state == STATE_TRUE_CONDITION && replaceFirstRegex != null) {
-							line = line.replaceFirst(replaceFirstRegex, "");
+						if (state == STATE_TRUE_CONDITION) {
+							line = line.replaceFirst("^(\t*)//#", "$1");
 						}
 						buffer.append(line);
 						buffer.append("\n");
@@ -287,8 +286,7 @@ public class PreProcessor extends Task {
 		PreProcessor processor = new PreProcessor();
 		processor.setSymbols("ex2");
 		String string = processor.preProcessFile(new File(
-				"c:\\eclipse3.1\\dev\\example.debug.core\\src\\example\\debug\\core\\launcher\\PDALaunchDelegate.java"),
-				REPLACE_FIRST_REGEX);
+				"c:\\eclipse3.1\\dev\\example.debug.core\\src\\example\\debug\\core\\launcher\\PDALaunchDelegate.java"));
 		//String string = processor.preProcessFile(new File("c:\\eclipse3.1\\dev\\example.debug.core\\plugin.xml"), null);
 		System.out.println(string);
 	}

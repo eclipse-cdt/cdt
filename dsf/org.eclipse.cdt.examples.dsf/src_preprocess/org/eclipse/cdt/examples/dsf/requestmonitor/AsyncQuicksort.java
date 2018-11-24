@@ -64,20 +64,20 @@ public class AsyncQuicksort {
 			asyncQuicksort(array, newPivot + 1, right, countingRm);
 			countingRm.setDoneCount(2);
 			//#else
-			//#            asyncPartition(
-			//#                array, left, right, pivot,
-			//#                new DataRequestMonitor<Integer>(fgExecutor, rm) {
-			//#                    @Override
-			//#                    protected void handleCompleted() {
-			//#                        int newPivot = getData();
-			//#                        printArray(array, left, right, newPivot);
+			//#asyncPartition(
+			//#	array, left, right, pivot,
+			//#	new DataRequestMonitor<Integer>(fgExecutor, rm) {
+			//#		@Override
+			//#		protected void handleCompleted() {
+			//#			int newPivot = getData();
+			//#			printArray(array, left, right, newPivot);
 			//#
-			//#                        CountingRequestMonitor countingRm = new CountingRequestMonitor(fgExecutor, rm);
-			//#                        asyncQuicksort(array, left, newPivot - 1, countingRm);
-			//#                        asyncQuicksort(array, newPivot + 1, right, countingRm);
-			//#                        countingRm.setDoneCount(2);
-			//#                    }
-			//#            });
+			//#			CountingRequestMonitor countingRm = new CountingRequestMonitor(fgExecutor, rm);
+			//#			asyncQuicksort(array, left, newPivot - 1, countingRm);
+			//#			asyncQuicksort(array, newPivot + 1, right, countingRm);
+			//#			countingRm.setDoneCount(2);
+			//#		}
+			//#});
 			//#endif
 		} else {
 			rm.done();
@@ -113,10 +113,10 @@ public class AsyncQuicksort {
 		// a request monitor.
 		return store;
 		//#else
-		//#        // Java 5 automatically converts the int type of the store variable
-		//#        // to an Integer object.
-		//#        rm.setData(store);
-		//#        rm.done();
+		//#// Java 5 automatically converts the int type of the store variable
+		//#// to an Integer object.
+		//#rm.setData(store);
+		//#rm.done();
 		//#endif
 	}
 

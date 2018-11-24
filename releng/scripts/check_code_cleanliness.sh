@@ -74,7 +74,11 @@ git ls-files  -- \*\*/.project ':!core/org.eclipse.cdt.core/.project' | while re
             sed -i \
                 '-es@compilers.p.not-externalized-att=1@compilers.p.not-externalized-att=2@' \
                 $d/.settings/org.eclipse.pde.prefs
-
+        fi
+        if echo $i | grep 'org.eclipse.cdt.examples.dsf' > /dev/null; then
+            sed -i \
+                '-es@org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=warning@org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=ignore@' \
+                $d/.settings/org.eclipse.jdt.core.prefs
         fi
     fi
 done

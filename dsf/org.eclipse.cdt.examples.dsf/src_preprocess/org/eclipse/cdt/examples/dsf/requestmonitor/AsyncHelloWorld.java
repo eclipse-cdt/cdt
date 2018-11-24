@@ -50,17 +50,17 @@ public class AsyncHelloWorld {
 		// completed.
 		rm.done();
 		//#else
-		//#        RequestMonitor rm2 = new RequestMonitor(ImmediateExecutor.getInstance(), rm);
-		//#        asyncHelloWorld2(rm2);
+		//#RequestMonitor rm2 = new RequestMonitor(ImmediateExecutor.getInstance(), rm);
+		//#asyncHelloWorld2(rm2);
 		//#endif
 	}
 
 	//#ifdef exercises
 	// TODO: Exercise 1 - Add a second async. "Hello world 2" method.
 	//#else
-	//#    static void asyncHelloWorld2(RequestMonitor rm) {
-	//#        System.out.println("Hello world 2");
-	//#        rm.done();
-	//#    }
+	//#static void asyncHelloWorld2(RequestMonitor rm) {
+	//#	System.out.println("Hello world 2");
+	//#	rm.done();
+	//#}
 	//#endif
 }

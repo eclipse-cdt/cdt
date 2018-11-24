@@ -144,7 +144,7 @@ public class SyncDataViewer implements IStructuredContentProvider, IDataGenerato
 		//#ifdef exercises
 		// TODO Exercise 5 - Add a call to getElements() to force a deadlock.
 		//#else
-		//#        getElements(null);
+		//#getElements(null);
 		//#endif
 
 		// This method may be called on any thread, switch to the display
@@ -182,7 +182,7 @@ public class SyncDataViewer implements IStructuredContentProvider, IDataGenerato
 		// TODO Exercise 5 - Use the DataGeneratorWithExecutor() instead.
 		final IDataGenerator generator = new DataGeneratorWithThread();
 		//#else
-		//#        final IDataGenerator generator = new DataGeneratorWithExecutor();
+		//#final IDataGenerator generator = new DataGeneratorWithExecutor();
 		//#endif
 
 		// Create the content provider which will populate the viewer.

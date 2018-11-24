@@ -50,8 +50,8 @@ public class AsyncHelloWorld {
 		// completed.
 		rm.done();
 		//#else
-		//#        RequestMonitor rm2 = new RequestMonitor(ImmediateExecutor.getInstance(), rm);
-		//#        asyncHelloWorld2(rm2);
+		//#RequestMonitor rm2 = new RequestMonitor(ImmediateExecutor.getInstance(), rm);
+		//#asyncHelloWorld2(rm2);
 		//#endif
 	}
 

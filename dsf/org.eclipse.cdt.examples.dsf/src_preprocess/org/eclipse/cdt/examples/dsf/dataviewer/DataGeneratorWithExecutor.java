@@ -67,7 +67,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotationindicating allowed concurrency access
 	// Hint: Request and its subclasses have all their fields declared as final.
 	//#else
-	//#    @Immutable
+	//#@Immutable
 	//#endif
 	abstract class Request {
 		final RequestMonitor fRequestMonitor;
@@ -93,7 +93,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @Immutable
+	//#@Immutable
 	//#endif
 	class CountRequest extends Request {
 		CountRequest(DataRequestMonitor<Integer> rm) {
@@ -105,7 +105,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @Immutable
+	//#@Immutable
 	//#endif
 	class ItemRequest extends Request {
 		final int fIndex;
@@ -134,7 +134,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @ConfinedToDsfExecutor("fExecutor")
+	//#@ConfinedToDsfExecutor("fExecutor")
 	//#endif
 	private List<Request> fQueue = new LinkedList<Request>();
 
@@ -144,7 +144,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @ConfinedToDsfExecutor("fExecutor")
+	//#@ConfinedToDsfExecutor("fExecutor")
 	//#endif
 	private List<Listener> fListeners = new LinkedList<Listener>();
 
@@ -153,7 +153,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @ConfinedToDsfExecutor("fExecutor")
+	//#@ConfinedToDsfExecutor("fExecutor")
 	//#endif
 	private int fCount = MIN_COUNT;
 
@@ -162,7 +162,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @ConfinedToDsfExecutor("fExecutor")
+	//#@ConfinedToDsfExecutor("fExecutor")
 	//#endif
 	private int fCountResetTrigger = 0;
 
@@ -171,7 +171,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @ConfinedToDsfExecutor("fExecutor")
+	//#@ConfinedToDsfExecutor("fExecutor")
 	//#endif
 	private Map<Integer, Integer> fChangedValues = new HashMap<Integer, Integer>();
 
@@ -306,7 +306,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @ConfinedToDsfExecutor("fExecutor")
+	//#@ConfinedToDsfExecutor("fExecutor")
 	//#endif
 	private void serviceQueue() {
 		fExecutor.schedule(new DsfRunnable() {
@@ -321,7 +321,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @ConfinedToDsfExecutor("fExecutor")
+	//#@ConfinedToDsfExecutor("fExecutor")
 	//#endif
 	private void doServiceQueue() {
 		//#ifdef exercises
@@ -359,7 +359,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @ConfinedToDsfExecutor("fExecutor")
+	//#@ConfinedToDsfExecutor("fExecutor")
 	//#endif
 	private void processCountRequest(CountRequest request) {
 		@SuppressWarnings("unchecked") // Suppress warning about lost type info.
@@ -373,7 +373,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @ConfinedToDsfExecutor("fExecutor")
+	//#@ConfinedToDsfExecutor("fExecutor")
 	//#endif
 	private void processItemRequest(ItemRequest request) {
 		@SuppressWarnings("unchecked") // Suppress warning about lost type info.
@@ -394,7 +394,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @ConfinedToDsfExecutor("fExecutor")
+	//#@ConfinedToDsfExecutor("fExecutor")
 	//#endif
 	private void randomChanges() {
 		// Once every number of changes, reset the count, the rest of the
@@ -413,7 +413,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @ConfinedToDsfExecutor("fExecutor")
+	//#@ConfinedToDsfExecutor("fExecutor")
 	//#endif
 	private void randomCountReset() {
 		// Calculate the new count.
@@ -436,7 +436,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 	// TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
 	// indicating allowed thread access to this class/method/member
 	//#else
-	//#    @ConfinedToDsfExecutor("fExecutor")
+	//#@ConfinedToDsfExecutor("fExecutor")
 	//#endif
 	private void randomDataChange() {
 		// Calculate the indexes to change.

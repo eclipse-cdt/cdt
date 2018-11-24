@@ -90,7 +90,7 @@ public class AsyncQuicksort {
 	// return value to the caller.
 	static int partition(int[] array, int left, int right, int pivot)
 	//#else
-	//#    static void asyncPartition(int[] array, int left, int right, int pivot, DataRequestMonitor<Integer> rm)
+	//#static void asyncPartition(int[] array, int left, int right, int pivot, DataRequestMonitor<Integer> rm)
 	//#endif
 	{
 		int pivotValue = array[pivot];

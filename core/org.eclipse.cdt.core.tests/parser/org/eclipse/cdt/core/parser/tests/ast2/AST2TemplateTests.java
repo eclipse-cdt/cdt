@@ -11095,4 +11095,65 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testParameterPackInAliasTemplateArgs_540741() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template <class T>
+	//	void foo(T = {});
+	//
+	//	template <class U>
+	//	void foo(U*);  // more specialized
+	//
+	//	int main() {
+	//	    int* p;
+	//	    foo(p);
+	//	}
+	public void testDisambiguateFunctionWithDefaultArgument_541474() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <class T>
+	//	void foo(T = {});
+	//
+	//	template <class U>
+	//	void foo(U*);  // more specialized
+	//
+	//	// Which one is this an explicit spec. of?
+	//	template <>
+	//	void foo(int*);
+	public void testDisambiguateFunctionWithDefaultArgumentExplicitInstantiation_541474() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct A {
+	//	    template <typename T>
+	//	    A(T = {});
+	//
+	//	    template <typename U>
+	//	    A(U*);  // more specialized
+	//	};
+	//
+	//	void bar(A);
+	//
+	//	void foo() {
+	//	    int* p;
+	//      // Which constructor is used for the conversion?
+	//	    bar(p);
+	//	}
+	public void testDisambiguateFunctionWithDefaultArgumentConversion_541474() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <class T>
+	//	void foo(T = {});
+	//
+	//	template <class U>
+	//	void foo(U*);  // more specialized
+	//
+	//	int main() {
+	//	    using FPtr = void(*)(int*);
+	//	    // Which one are we taking the address of?
+	//	    FPtr x = &foo;
+	//	}
+	public void testDisambiguateFunctionWithDefaultArgumentDeclaration_541474() throws Exception {
+		parseAndCheckBindings();
+	}
 }

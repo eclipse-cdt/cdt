@@ -269,7 +269,7 @@ public class Conversions {
 					// Make sure top-level cv-qualifiers are compared
 					udcCost.setReferenceBinding(ReferenceBinding.LVALUE_REF);
 					FunctionCost udcFuncCost = new FunctionCost(op, udcCost);
-					int cmp = udcFuncCost.compareTo(null, bestUdcCost);
+					int cmp = udcFuncCost.compareTo(null, bestUdcCost, 1);
 					if (cmp <= 0) {
 						Cost cost = isReferenceCompatible(cv1T1, getNestedType(t, TDEF | REF), false); // converted to target
 						if (cost != null) {
@@ -794,7 +794,7 @@ public class Conversions {
 					c1 = new FunctionCost(ctor, checkImplicitConversionSequence(ptype, source, valueCat,
 							UDCMode.FORBIDDEN, Context.ORDINARY));
 				}
-				int cmp = c1.compareTo(null, cost1);
+				int cmp = c1.compareTo(null, cost1, 1);
 				if (cmp <= 0) {
 					cost1 = c1;
 					cost2 = new Cost(t, t, Rank.IDENTITY);
@@ -826,7 +826,7 @@ public class Conversions {
 							// Make sure top-level cv-qualifiers are compared
 							udcCost.setReferenceBinding(ReferenceBinding.LVALUE_REF);
 							FunctionCost c1 = new FunctionCost(op, udcCost);
-							int cmp = c1.compareTo(null, cost1);
+							int cmp = c1.compareTo(null, cost1, 1);
 							if (cmp <= 0) {
 								cost1 = c1;
 								cost2 = new Cost(t, t, Rank.IDENTITY);
@@ -890,7 +890,7 @@ public class Conversions {
 							udcCost.setReferenceBinding(ReferenceBinding.LVALUE_REF);
 						}
 						FunctionCost c1 = new FunctionCost(op, udcCost);
-						int cmp = c1.compareTo(null, cost1);
+						int cmp = c1.compareTo(null, cost1, 1);
 						if (cmp <= 0) {
 							cost1 = c1;
 							cost2 = c2;

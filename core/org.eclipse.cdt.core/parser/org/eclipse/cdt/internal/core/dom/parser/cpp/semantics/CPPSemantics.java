@@ -2733,7 +2733,7 @@ public class CPPSemantics {
 				potentialCosts.add(fnCost);
 				continue;
 			}
-			int cmp = fnCost.compareTo(tu, bestFnCost);
+			int cmp = fnCost.compareTo(tu, bestFnCost, data.getFunctionArgumentCount());
 			if (cmp < 0) {
 				bestFnCost = fnCost;
 				ambiguousFunctions = null;
@@ -2745,7 +2745,7 @@ public class CPPSemantics {
 		if (potentialCosts != null) {
 			for (FunctionCost fnCost : potentialCosts) {
 				if (!fnCost.mustBeWorse(bestFnCost) && fnCost.performUDC()) {
-					int cmp = fnCost.compareTo(tu, bestFnCost);
+					int cmp = fnCost.compareTo(tu, bestFnCost, data.getFunctionArgumentCount());
 					if (cmp < 0) {
 						bestFnCost = fnCost;
 						ambiguousFunctions = null;

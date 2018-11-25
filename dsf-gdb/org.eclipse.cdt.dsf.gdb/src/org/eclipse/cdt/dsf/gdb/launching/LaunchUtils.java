@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -284,7 +285,31 @@ public class LaunchUtils {
 	 */
 	@Deprecated
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {
-		String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$
+		String gdbPath = getGDBPath(configuration).toOSString();
+		String[] launchEnvironment = getLaunchEnvironment(configuration);
+
+		return getGDBVersion(gdbPath, launchEnvironment);
+	}
+
+	/**
+	 * This method actually launches 'gdb --version' to determine the version of
+	 * the GDB that is being used.
+	 *
+	 * A timeout is scheduled which will kill the process if it takes too long.
+	 *
+	 * @param gdbPath the path to the GDB executable to be called
+	 * @param launchEnvironment the environment variables set for the
+	 *  GDB process. Every element of the array must be of format "key=value".
+	 * @return the detected version of GDB at {@code gdbPath}
+	 * @throws CoreException is e.g. thrown if the execution of GDB fails
+	 * @throws NullPointerException if {@code gdbPath} or {@code launchEnvironment} is {@code null}
+	 * @since 5.6
+	 */
+	public static String getGDBVersion(String gdbPath, String[] launchEnvironment) throws CoreException {
+		Objects.requireNonNull(gdbPath, "gdbPath"); //$NON-NLS-1$
+		Objects.requireNonNull(launchEnvironment, "launchEnvironment"); //$NON-NLS-1$
+
+		String cmd = gdbPath + " --version"; //$NON-NLS-1$
 
 		// Parse cmd to properly handle spaces and such things (bug 458499)
 		String[] args = CommandLineUtil.argumentsToArray(cmd);
@@ -292,7 +317,7 @@ public class LaunchUtils {
 		Process process = null;
 		Job timeoutJob = null;
 		try {
-			process = ProcessFactory.getFactory().exec(args, getLaunchEnvironment(configuration));
+			process = ProcessFactory.getFactory().exec(args, launchEnvironment);
 
 			// Start a timeout job to make sure we don't get stuck waiting for
 			// an answer from a gdb that is hanging

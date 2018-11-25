@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -72,8 +71,6 @@ import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.utils.CommandLineUtil;
-import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -81,13 +78,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -514,75 +509,13 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 			return fGdbVersion;
 		}
 
-		String cmd = getGDBPath().toOSString() + " --version"; //$NON-NLS-1$
+		String gdbPath = getGDBPath().toOSString();
+		String[] launchEnvironment = getLaunchEnvironment();
 
-		// Parse cmd to properly handle spaces and such things (bug 458499)
-		String[] args = CommandLineUtil.argumentsToArray(cmd);
+		String gdbVersion = LaunchUtils.getGDBVersion(gdbPath, launchEnvironment);
+		fGdbVersion = gdbVersion;
+		return fGdbVersion;
 
-		Process process = null;
-		Job timeoutJob = null;
-		try {
-			process = ProcessFactory.getFactory().exec(args, getLaunchEnvironment());
-
-			// Start a timeout job to make sure we don't get stuck waiting for
-			// an answer from a gdb that is hanging
-			// Bug 376203
-			final Process finalProc = process;
-			timeoutJob = new Job("GDB version timeout job") { //$NON-NLS-1$
-				{
-					setSystem(true);
-				}
-
-				@Override
-				protected IStatus run(IProgressMonitor arg) {
-					// Took too long. Kill the gdb process and
-					// let things clean up.
-					finalProc.destroy();
-					return Status.OK_STATUS;
-				}
-			};
-			timeoutJob.schedule(10000);
-
-			String streamOutput = readStream(process.getInputStream());
-
-			String gdbVersion = LaunchUtils.getGDBVersionFromText(streamOutput);
-			if (gdbVersion == null || gdbVersion.isEmpty()) {
-				Exception detailedException = null;
-				if (!streamOutput.isEmpty()) {
-					// We got some output but couldn't parse it. Make that
-					// output visible to the user in the error dialog.
-					detailedException = new Exception("Unexpected output format: \n\n" + streamOutput); //$NON-NLS-1$
-				} else {
-					// We got no output. Check if we got something on the error
-					// stream.
-					streamOutput = readStream(process.getErrorStream());
-					if (!streamOutput.isEmpty()) {
-						detailedException = new Exception(streamOutput);
-					}
-				}
-
-				throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
-						"Could not determine GDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$
-						detailedException));
-			}
-			fGdbVersion = gdbVersion;
-			return fGdbVersion;
-		} catch (IOException e) {
-			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
-					"Error with command: " + StringUtil.join(args, " "), e));//$NON-NLS-1$ //$NON-NLS-2$
-		} finally {
-			// If we get here we are obviously not stuck reading the stream so
-			// we can cancel the timeout job.
-			// Note that it may already have executed, but that is not a
-			// problem.
-			if (timeoutJob != null) {
-				timeoutJob.cancel();
-			}
-
-			if (process != null) {
-				process.destroy();
-			}
-		}
 	}
 
 	/**

@@ -140,7 +140,7 @@ class FunctionCost {
 	/**
 	 * Compares this function call cost to another one.
 	 */
-	public int compareTo(IASTTranslationUnit tu, FunctionCost other) throws DOMException {
+	public int compareTo(IASTTranslationUnit tu, FunctionCost other, int nArguments) throws DOMException {
 		if (other == null)
 			return -1;
 
@@ -180,7 +180,7 @@ class FunctionCost {
 				haveBetter = true;
 			} else if (isTemplate && otherIsTemplate) {
 				TypeSelection ts = SemanticUtil.isConversionOperator(f1) ? RETURN_TYPE : PARAMETERS;
-				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts);
+				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts, nArguments);
 				if (order < 0) {
 					haveBetter = true;
 				} else if (order > 0) {

@@ -2493,9 +2493,19 @@ public class CPPTemplates {
 		return null;
 	}
 
-	// 14.5.6.2 Partial ordering of function templates
-	static int orderFunctionTemplates(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode)
-			throws DOMException {
+	/**
+	 * 14.5.6.2 Partial ordering of function templates
+	 *
+	 * @param f1
+	 * @param f2
+	 * @param mode
+	 * @param nExplicitArgs determines the number of parameters taken into consideration for ordering:
+	 *        for ordering in the context of a call, nExplicitArguments should be the number of arguments in the call
+	 *        for ordering in other contexts, nExplicitArguments should be Integer.MAX_VALUE to indicate
+	 *         that all parameters should be considered
+	 */
+	static int orderFunctionTemplates(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode,
+			int nExplicitArgs) throws DOMException {
 		if (f1 == f2)
 			return 0;
 		if (f1 == null)
@@ -2503,8 +2513,8 @@ public class CPPTemplates {
 		if (f2 == null)
 			return 1;
 
-		int s1 = compareSpecialization(f1, f2, mode);
-		int s2 = compareSpecialization(f2, f1, mode);
+		int s1 = compareSpecialization(f1, f2, mode, nExplicitArgs);
+		int s2 = compareSpecialization(f2, f1, mode, nExplicitArgs);
 
 		if (s1 == s2)
 			return 0;
@@ -2512,6 +2522,11 @@ public class CPPTemplates {
 			return -1;
 		assert s2 < 0 || s1 > 0;
 		return 1;
+	}
+
+	static int orderFunctionTemplates(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode)
+			throws DOMException {
+		return orderFunctionTemplates(f1, f2, mode, Integer.MAX_VALUE);
 	}
 
 	private static ICPPFunction transferFunctionTemplate(ICPPFunctionTemplate f) throws DOMException {
@@ -2550,13 +2565,14 @@ public class CPPTemplates {
 		return arg;
 	}
 
-	private static ICPPFunctionType getFunctionTypeIgnoringParametersWithDefaults(ICPPFunction function) {
+	private static ICPPFunctionType getFunctionTypeIgnoringParametersWithDefaults(ICPPFunction function,
+			int nExplicitArgs) {
 		ICPPParameter[] parameters = function.getParameters();
 		IType[] parameterTypes = new IType[parameters.length];
 		int i;
 		for (i = 0; i < parameters.length; ++i) {
 			ICPPParameter parameter = parameters[i];
-			if (!parameter.hasDefaultValue()) {
+			if (i < nExplicitArgs || !parameter.hasDefaultValue()) {
 				parameterTypes[i] = parameter.getType();
 			} else {
 				break;
@@ -2570,8 +2586,8 @@ public class CPPTemplates {
 				originalType.takesVarArgs());
 	}
 
-	private static int compareSpecialization(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode)
-			throws DOMException {
+	private static int compareSpecialization(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode,
+			int nExplicitArgs) throws DOMException {
 		ICPPFunction transF1 = transferFunctionTemplate(f1);
 		if (transF1 == null)
 			return -1;
@@ -2579,7 +2595,7 @@ public class CPPTemplates {
 		final ICPPFunctionType ft2 = f2.getType();
 		// Ignore parameters with default arguments in the transformed function template
 		// as per [temp.func.order] p5.
-		final ICPPFunctionType transFt1 = getFunctionTypeIgnoringParametersWithDefaults(transF1);
+		final ICPPFunctionType transFt1 = getFunctionTypeIgnoringParametersWithDefaults(transF1, nExplicitArgs);
 		IType[] pars;
 		IType[] args;
 		switch (mode) {

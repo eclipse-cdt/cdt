@@ -15,7 +15,10 @@
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,11 +35,11 @@ import org.eclipse.core.resources.IResource;
 /**
  * Abstract class for providers parsing compiler option from build command when present in build output.
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class interface is not stable yet as
- * it is not currently (CDT 8.1, Juno) clear how it may need to be used in future.
- * There is no guarantee that this API will work or that it will remain the same.
- * Please do not use this API without consulting with the CDT team.
+ * <strong>EXPERIMENTAL</strong>. This class interface is not stable yet as it is not currently (CDT 8.1,
+ * Juno) clear how it may need to be used in future. There is no guarantee that this API will work or that it
+ * will remain the same. Please do not use this API without consulting with the CDT team.
  * </p>
+ *
  * @noextend This class is not intended to be subclassed by clients.
  *
  * @since 8.1
@@ -53,8 +56,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	private static final String LEADING_PATH_PATTERN = "\\S+[/\\\\]"; //$NON-NLS-1$
 
 	/**
-	 * "foo"
-	 * Using look-ahead and look-behind to resolve ambiguity with "\" {@link #QUOTE_BSLASH_QUOTE}
+	 * "foo" Using look-ahead and look-behind to resolve ambiguity with "\" {@link #QUOTE_BSLASH_QUOTE}
 	 */
 	private static final String QUOTE = "(\"(?!\\\\).*?(?<!\\\\)\")"; //$NON-NLS-1$
 	/** \"foo\" */
@@ -65,7 +67,8 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	private static final String QUOTE_BSLASH_QUOTE = "(\"\\\\\".*?\\\\\"\")"; //$NON-NLS-1$
 
 	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"'\\\\]*(\\s*(" + QUOTE + "|" //$NON-NLS-1$//$NON-NLS-2$
-			+ QUOTE_BSLASH_QUOTE + "|" + BSLASH_QUOTE + "|" + SINGLE_QUOTE + "|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$<
+			+ QUOTE_BSLASH_QUOTE + "|" + BSLASH_QUOTE + "|" + SINGLE_QUOTE + "|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+																										// <
 	private static final int OPTION_GROUP = 0;
 
 	public enum ResourceScope {
@@ -77,8 +80,13 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	 */
 	@SuppressWarnings("nls")
 	private static final String[] COMPILER_COMMAND_PATTERN_TEMPLATES = {
-			"${COMPILER_PATTERN}.*\\s" + "()([^'\"\\s]*\\.${EXTENSIONS_PATTERN})(\\s.*)?[\r\n]*", // compiling unquoted file
-			"${COMPILER_PATTERN}.*\\s" + "(['\"])(.*\\.${EXTENSIONS_PATTERN})\\${COMPILER_GROUPS+1}(\\s.*)?[\r\n]*" // compiling quoted file
+			"${COMPILER_PATTERN}.*\\s" + "()([^'\"\\s]*\\.${EXTENSIONS_PATTERN})(\\s.*)?[\r\n]*", // compiling
+																									// unquoted
+																									// file
+			"${COMPILER_PATTERN}.*\\s"
+					+ "(['\"])(.*\\.${EXTENSIONS_PATTERN})\\${COMPILER_GROUPS+1}(\\s.*)?[\r\n]*" // compiling
+																									// quoted
+																									// file
 	};
 	private static final int FILE_GROUP = 2;
 
@@ -89,10 +97,8 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	private String partialLine;
 
 	/**
-	 * The compiler command pattern without specifying compiler options.
-	 * The options are intended to be handled with option parsers,
-	 * see {@link #getOptionParsers()}.
-	 * This is regular expression pattern.
+	 * The compiler command pattern without specifying compiler options. The options are intended to be
+	 * handled with option parsers, see {@link #getOptionParsers()}. This is regular expression pattern.
 	 *
 	 * @return the compiler command pattern.
 	 */
@@ -102,8 +108,9 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 
 	/**
 	 * Set compiler command pattern for the provider. See {@link #getCompilerPattern()}.
-	 * @param commandPattern - value of the command pattern to set.
-	 *    This is regular expression pattern.
+	 *
+	 * @param commandPattern
+	 *                           - value of the command pattern to set. This is regular expression pattern.
 	 */
 	public void setCompilerPattern(String commandPattern) {
 		setProperty(ATTR_PARAMETER, commandPattern);
@@ -120,10 +127,13 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 
 	/**
 	 * @return resource scope of the entries, i.e. level in resource hierarchy where language settings entries
-	 *    will be applied by the provider. Resource scope can be one of the following:
-	 *    <br>- {@code AbstractBuildCommandParser.ResourceScope.FILE} - apply entries to the file being parsed.
-	 *    <br>- {@code AbstractBuildCommandParser.ResourceScope.FOLDER} - apply entries to the enclosing folder.
-	 *    <br>- {@code AbstractBuildCommandParser.ResourceScope.PROJECT} - apply entries to the project level.
+	 *         will be applied by the provider. Resource scope can be one of the following: <br>
+	 *         - {@code AbstractBuildCommandParser.ResourceScope.FILE} - apply entries to the file being
+	 *         parsed. <br>
+	 *         - {@code AbstractBuildCommandParser.ResourceScope.FOLDER} - apply entries to the enclosing
+	 *         folder. <br>
+	 *         - {@code AbstractBuildCommandParser.ResourceScope.PROJECT} - apply entries to the project
+	 *         level.
 	 */
 	public ResourceScope getResourceScope() {
 		if (resourceScope == null) {
@@ -145,10 +155,14 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	 * Set resource scope of the entries, i.e. level in resource hierarchy where language settings entries
 	 * will be applied by the provider.
 	 *
-	 * @param rcScope - resource scope can be one of the following:
-	 *    <br>- {@code AbstractBuildCommandParser.ResourceScope.FILE} - apply entries to the file being parsed.
-	 *    <br>- {@code AbstractBuildCommandParser.ResourceScope.FOLDER} - apply entries to the enclosing folder.
-	 *    <br>- {@code AbstractBuildCommandParser.ResourceScope.PROJECT} - apply entries to the project level.
+	 * @param rcScope
+	 *                    - resource scope can be one of the following: <br>
+	 *                    - {@code AbstractBuildCommandParser.ResourceScope.FILE} - apply entries to the file
+	 *                    being parsed. <br>
+	 *                    - {@code AbstractBuildCommandParser.ResourceScope.FOLDER} - apply entries to the
+	 *                    enclosing folder. <br>
+	 *                    - {@code AbstractBuildCommandParser.ResourceScope.PROJECT} - apply entries to the
+	 *                    project level.
 	 */
 	public void setResourceScope(ResourceScope rcScope) {
 		resourceScope = rcScope;
@@ -192,7 +206,8 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	}
 
 	/**
-	 * Adjust count for file group taking into consideration extra groups added by {@link #getCompilerPatternExtended()}.
+	 * Adjust count for file group taking into consideration extra groups added by
+	 * {@link #getCompilerPatternExtended()}.
 	 */
 	private int adjustFileGroup() {
 		return countGroups(getCompilerPatternExtended()) + FILE_GROUP;
@@ -201,12 +216,47 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	/**
 	 * Make search pattern for compiler command based on template.
 	 */
+	@SuppressWarnings("nls")
 	private String makePattern(String template) {
-		@SuppressWarnings("nls")
-		String pattern = template.replace("${COMPILER_PATTERN}", getCompilerPatternExtended())
-				.replace("${EXTENSIONS_PATTERN}", getPatternFileExtensions())
-				.replace("${COMPILER_GROUPS+1}", Integer.toString(countGroups(getCompilerPatternExtended()) + 1));
+		String compilerPatternExtended = getCompilerPatternExtended();
+
+		Map<String, String> map = new HashMap<>();
+		map.put("${COMPILER_PATTERN}", compilerPatternExtended);
+		map.put("${EXTENSIONS_PATTERN}", getPatternFileExtensions());
+		map.put("${COMPILER_GROUPS+1}", Integer.toString(countGroups(compilerPatternExtended) + 1));
+
+		String pattern = replaceFromMap(template, map);
 		return pattern;
+	}
+
+	/**
+	 * Replaces all occurrences of keys of the given map in the given string with the associated value in that
+	 * map.
+	 *
+	 * This method is semantically the same as calling {@link String#replace(CharSequence, CharSequence)} for
+	 * each of the entries in the map, but may be significantly faster for many replacements performed on a
+	 * short string, since {@link String#replace(CharSequence, CharSequence)} uses regular expressions
+	 * internally and results in many String object allocations when applied iteratively.
+	 *
+	 * The order in which replacements are applied depends on the order of the map's entry set.
+	 *
+	 * Found on https://www.cqse.eu/en/blog/string-replace-performance/
+	 */
+	private String replaceFromMap(String string, Map<String, String> replacements) {
+		StringBuilder sb = new StringBuilder(string);
+		for (Entry<String, String> entry : replacements.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+
+			int start = sb.indexOf(key, 0);
+			while (start > -1) {
+				int end = start + key.length();
+				int nextSearchStart = start + value.length();
+				sb.replace(start, end, value);
+				start = sb.indexOf(key, nextSearchStart);
+			}
+		}
+		return sb.toString();
 	}
 
 	@Override
@@ -275,8 +325,8 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	}
 
 	/**
-	 * Handle line continuations ('\' at the end of a line, indicating that the next line is a
-	 * continuation of this one).
+	 * Handle line continuations ('\' at the end of a line, indicating that the next line is a continuation of
+	 * this one).
 	 */
 	private String handleLineContinuation(String line) {
 		if (line == null)
@@ -303,15 +353,18 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	}
 
 	/**
-	 * Trivial Error Parser which allows highlighting of output lines matching the patterns
-	 * of this parser. Intended for better troubleshooting experience.
-	 * Implementers are supposed to add the error parser via extension point {@code org.eclipse.cdt.core.ErrorParser}.
+	 * Trivial Error Parser which allows highlighting of output lines matching the patterns of this parser.
+	 * Intended for better troubleshooting experience. Implementers are supposed to add the error parser via
+	 * extension point {@code org.eclipse.cdt.core.ErrorParser}.
 	 */
 	protected static abstract class AbstractBuildCommandPatternHighlighter extends RegexErrorParser
 			implements IErrorParser2 {
 		/**
 		 * Constructor.
-		 * @param parserId - build command parser ID specified in the extension {@code org.eclipse.cdt.core.LanguageSettingsProvider}.
+		 *
+		 * @param parserId
+		 *                     - build command parser ID specified in the extension
+		 *                     {@code org.eclipse.cdt.core.LanguageSettingsProvider}.
 		 */
 		public AbstractBuildCommandPatternHighlighter(String parserId) {
 			init(parserId);
@@ -319,7 +372,9 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 
 		/**
 		 * Initialize the error parser.
-		 * @param parserId - language settings provider (the build command parser) ID.
+		 *
+		 * @param parserId
+		 *                     - language settings provider (the build command parser) ID.
 		 */
 		protected void init(String parserId) {
 			AbstractBuildCommandParser buildCommandParser = (AbstractBuildCommandParser) LanguageSettingsManager

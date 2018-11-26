@@ -15,7 +15,10 @@
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,6 +90,10 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 
 	// Used to handle line continuations in the build output.
 	private String partialLine;
+
+	private Pattern[] compilerPatterns;
+
+	private Map<String, String> replaceMap;
 
 	/**
 	 * The compiler command pattern without specifying compiler options.
@@ -201,12 +208,36 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	/**
 	 * Make search pattern for compiler command based on template.
 	 */
+	@SuppressWarnings("nls")
 	private String makePattern(String template) {
-		@SuppressWarnings("nls")
-		String pattern = template.replace("${COMPILER_PATTERN}", getCompilerPatternExtended())
-				.replace("${EXTENSIONS_PATTERN}", getPatternFileExtensions())
-				.replace("${COMPILER_GROUPS+1}", Integer.toString(countGroups(getCompilerPatternExtended()) + 1));
+		String compilerPatternExtended = getCompilerPatternExtended();
+
+		if (replaceMap == null) {
+			replaceMap = new HashMap<>();
+			replaceMap.put("${COMPILER_PATTERN}", compilerPatternExtended);
+			replaceMap.put("${EXTENSIONS_PATTERN}", getPatternFileExtensions());
+			replaceMap.put("${COMPILER_GROUPS+1}",
+					Integer.toString(countGroups(compilerPatternExtended) + 1));
+		}
+
+		String pattern = replace(template, replaceMap);
 		return pattern;
+	}
+
+	private String replace(String source, Map<String, String> replaceMap) {
+		StringBuilder sbuilder = new StringBuilder(source);
+		for (Entry<String, String> entry : replaceMap.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+			int start = sbuilder.indexOf(key, 0);
+			while (start > -1) {
+				int end = start + key.length();
+				int next = start + value.length();
+				sbuilder.replace(start, end, value);
+				start = sbuilder.indexOf(key, next);
+			}
+		}
+		return sbuilder.toString();
 	}
 
 	@Override
@@ -215,9 +246,17 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 			return null;
 		}
 
-		for (String template : COMPILER_COMMAND_PATTERN_TEMPLATES) {
-			String pattern = makePattern(template);
-			Matcher fileMatcher = Pattern.compile(pattern).matcher(line);
+		if (compilerPatterns == null) {
+			compilerPatterns = new Pattern[COMPILER_COMMAND_PATTERN_TEMPLATES.length];
+			for (int i = 0; i < COMPILER_COMMAND_PATTERN_TEMPLATES.length; i++) {
+				String patternTemplate = COMPILER_COMMAND_PATTERN_TEMPLATES[i];
+				String patternString = makePattern(patternTemplate);
+				compilerPatterns[i] = Pattern.compile(patternString);
+			}
+		}
+
+		for (Pattern pattern : compilerPatterns) {
+			Matcher fileMatcher = pattern.matcher(line);
 			if (fileMatcher.matches()) {
 				int fileGroup = adjustFileGroup();
 				String sourceFileName = fileMatcher.group(fileGroup);

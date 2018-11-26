@@ -525,9 +525,6 @@ public class AST2TestBase extends SemanticTestBase {
 
 	final protected void assertNoProblemBindings(NameCollector col) {
 		for (IASTName n : col.nameList) {
-			if (n.getRawSignature().contains("waldo")) {
-				n.resolveBinding();
-			}
 			assertFalse("ProblemBinding for " + n.getRawSignature(), n.resolveBinding() instanceof IProblemBinding);
 		}
 	}

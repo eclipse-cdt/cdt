@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fb601dd7_2e0189c5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2510,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-11-26T05:15:17Z",
+      "side": 1,
+      "message": "The default value for `nExplicitArgs` should actually be `Integer.MAX_VALUE`, not zero.\n\nThe reason for this is that the other call sites of orderFunctionTemplates() are for contexts where there is no function call (taking the address of a function, and resolving a function declaration). In these contexts, all parameters are relevant for the ordering, even if they have defaults.\n\nHere are a couple of test cases for you:\n\n#1: resolveTargetedFunction() call site:\n\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\ntemplate \u003cclass T\u003e\nvoid foo(T \u003d {});\n\ntemplate \u003cclass U\u003e\nvoid foo(U*);  // more specialized\n\nint main() {\n    using FPtr \u003d void(*)(int*);\n    // Which one are we taking the address of?\n    FPtr x \u003d \u0026foo;\n}\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n\n#2: resolveFunctionDeclaration() call site:\n\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\ntemplate \u003cclass T\u003e\nvoid foo(T \u003d {});\n\ntemplate \u003cclass U\u003e\nvoid foo(U*);  // more specialized\n\n// Which one is this an explicit spec. of?\ntemplate \u003c\u003e\nvoid foo(int*);\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d",
+      "revId": "92e2d551694f8c66162991728d31adb4310f2411",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2619998d_542bf540",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/FunctionCost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-11-26T05:15:17Z",
+      "side": 1,
+      "message": "0 is not the right default here, either, but neither is Integer.MAX_VALUE. The other callers of compareTo() are ordering candidates for the purposes of conversion, which involves calling a constructor or a conversion function, in each case with 1 argument. So, the value should be 1.\n\nRather than having a default, though, I\u0027d rather have compareTo() take an `int nArguments` parameter rather than `LookupData`, and explicitly pass in 1 from those other call sites.\n\nHere\u0027s a test case exercising this:\n\nstruct A {\n    template \u003ctypename T\u003e\n    A(T \u003d {});\n    \n    template \u003ctypename U\u003e\n    A(U*);  // more specialized\n};\n\nvoid bar(A);\n\nvoid foo() {\n    int* p;\n    // Which constructor is used for the conversion?\n    bar(p);\n}",
+      "revId": "92e2d551694f8c66162991728d31adb4310f2411",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

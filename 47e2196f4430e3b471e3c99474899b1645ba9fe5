@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "19fe67cb_5830163a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-11-26T23:26:14Z",
+      "side": 1,
+      "message": "Presumably this map can be cached?",
+      "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b73f606_00752023",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-11-26T23:26:14Z",
+      "side": 1,
+      "message": "This needs a CQ - we can\u0027t copy thirdparty code.",
+      "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36c38002_5ae99bcd",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-11-26T23:26:14Z",
+      "side": 1,
+      "message": "This is what I remembered was the slowest line. If we can cache Patter.compile(pattern) then we are in the best shape?",
+      "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

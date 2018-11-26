@@ -50,6 +50,24 @@
       "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "043b57c7_4e9bf593",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-11-26T23:29:07Z",
+      "side": 1,
+      "message": "See https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d516587#c1\n\nEven if you get makePattern down to 0 time, the overall time reduction will be 50%. My original prototype (patch set 1) was a 75% reduction.",
+      "parentUuid": "36c38002_5ae99bcd",
+      "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

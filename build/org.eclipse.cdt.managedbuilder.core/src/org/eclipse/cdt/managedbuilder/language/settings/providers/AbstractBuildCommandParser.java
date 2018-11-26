@@ -15,7 +15,10 @@
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -201,12 +204,47 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	/**
 	 * Make search pattern for compiler command based on template.
 	 */
+	@SuppressWarnings("nls")
 	private String makePattern(String template) {
-		@SuppressWarnings("nls")
-		String pattern = template.replace("${COMPILER_PATTERN}", getCompilerPatternExtended())
-				.replace("${EXTENSIONS_PATTERN}", getPatternFileExtensions())
-				.replace("${COMPILER_GROUPS+1}", Integer.toString(countGroups(getCompilerPatternExtended()) + 1));
+		String compilerPatternExtended = getCompilerPatternExtended();
+
+		Map<String, String> map = new HashMap<>();
+		map.put("${COMPILER_PATTERN}", compilerPatternExtended);
+		map.put("${EXTENSIONS_PATTERN}", getPatternFileExtensions());
+		map.put("${COMPILER_GROUPS+1}", Integer.toString(countGroups(compilerPatternExtended) + 1));
+
+		String pattern = replaceFromMap(template, map);
 		return pattern;
+	}
+
+	/**
+	 * Replaces all occurrences of keys of the given map in the given string with the associated value in that
+	 * map.
+	 *
+	 * This method is semantically the same as calling {@link String#replace(CharSequence, CharSequence)} for
+	 * each of the entries in the map, but may be significantly faster for many replacements performed on a
+	 * short string, since {@link String#replace(CharSequence, CharSequence)} uses regular expressions
+	 * internally and results in many String object allocations when applied iteratively.
+	 *
+	 * The order in which replacements are applied depends on the order of the map's entry set.
+	 *
+	 * Found on https://www.cqse.eu/en/blog/string-replace-performance/
+	 */
+	private String replaceFromMap(String string, Map<String, String> replacements) {
+		StringBuilder sb = new StringBuilder(string);
+		for (Entry<String, String> entry : replacements.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+
+			int start = sb.indexOf(key, 0);
+			while (start > -1) {
+				int end = start + key.length();
+				int nextSearchStart = start + value.length();
+				sb.replace(start, end, value);
+				start = sb.indexOf(key, nextSearchStart);
+			}
+		}
+		return sb.toString();
 	}
 
 	@Override

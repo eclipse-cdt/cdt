@@ -318,7 +318,7 @@ public class CPPTemplates {
 			}
 			IType aliasedType = aliasTemplate.getType();
 			IBinding owner = aliasTemplate.getOwner();
-			return createAliasTemplaceInstance(aliasTemplate, args, parameterMap, aliasedType, owner);
+			return createAliasTemplateInstance(aliasTemplate, args, parameterMap, aliasedType, owner);
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
@@ -867,7 +867,7 @@ public class CPPTemplates {
 		}
 	}
 
-	private static IBinding createAliasTemplaceInstance(ICPPAliasTemplate aliasTemplate, ICPPTemplateArgument[] args,
+	private static IBinding createAliasTemplateInstance(ICPPAliasTemplate aliasTemplate, ICPPTemplateArgument[] args,
 			ICPPTemplateParameterMap parameterMap, IType aliasedType, IBinding owner) {
 		InstantiationContext context = createInstantiationContext(parameterMap, owner);
 		IType instantiatedType = instantiateType(aliasedType, context);
@@ -1350,6 +1350,8 @@ public class CPPTemplates {
 							if (instantiated != null) {
 								instantiated = new CPPParameterPackType(instantiated);
 							}
+							// TODO: instantiateArguments() calls context.setPackExpanded(false) here
+							//       Do we need to do the same here?
 						}
 						result[j++] = instantiated;
 

@@ -131,13 +131,19 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 						int shift = packSize - 1;
 						ICPPEvaluation[] newResult = new ICPPEvaluation[expressions.length + resultShift + shift];
 						System.arraycopy(result, 0, newResult, 0, i + resultShift);
+						context.setExpandPack(true);
 						int oldPackOffset = context.getPackOffset();
 						for (int j = 0; j < packSize; ++j) {
 							context.setPackOffset(j);
 							newEval = pattern.instantiate(context, maxDepth);
+							if (context.isPackExpanded()) {
+								newEval = new EvalPackExpansion(newEval, newEval.getTemplateDefinition());
+								context.setPackExpanded(false);
+							}
 							newResult[i + resultShift + j] = newEval;
 						}
 						context.setPackOffset(oldPackOffset);
+						context.setExpandPack(false);
 						result = newResult;
 						resultShift += shift;
 						continue;

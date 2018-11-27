@@ -16,6 +16,24 @@
       "revId": "19b4777e5b84a07bb19ff5e8e580a7ee69bba578",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a8f0c9c_2e633bac",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-11-27T13:51:17Z",
+      "side": 1,
+      "message": "The new profile attached to the project should never reformat the comments. If you can reproduce please let me know.",
+      "parentUuid": "e8c053e2_47da0919",
+      "revId": "19b4777e5b84a07bb19ff5e8e580a7ee69bba578",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

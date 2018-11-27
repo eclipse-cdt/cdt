@@ -11095,4 +11095,21 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testParameterPackInAliasTemplateArgs_540741() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	void foo(int);
+	//
+	//	template <typename... T>
+	//	using Res = decltype(foo(T()...));
+	//
+	//	template <typename... T>
+	//	struct Bind {
+	//	    using Type = Res<T...>;
+	//	};
+	//
+	//	using Waldo = Bind<int>::Type;
+	public void testPackExpansionExprInAliasTemplate_541549() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IType waldo = helper.assertNonProblem("Waldo");
+		assertSameType(waldo, CommonCPPTypes.void_);
+	}
 }

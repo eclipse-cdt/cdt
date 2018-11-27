@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "5f0dcb00_d343d949",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-11-27T13:51:17Z",
+      "side": 1,
+      "message": "That is fundamentally the question of this patch. The idea was to take what I did in patchset 1, improve as necessary and verify what can/can\u0027t be cached. See my first comment:\n\n \u003e This is my experiment. I have not thought properly about life-cycle\n \u003e of the Pattern cache.\n\nIf the lifecycle works, then great, nothing else matters much. i.e. it does not matter much how fast you create the thing that is going to be cached if you only have to do it once instead of once per line x 300,000 lines.",
+      "parentUuid": "b0d988d3_a65b4b04",
+      "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b73f606_00752023",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
         "patchSetId": 8

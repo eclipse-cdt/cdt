@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b0d988d3_a65b4b04",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-11-27T13:03:59Z",
+      "side": 1,
+      "message": "it depends : can the getCompilerPatternExtended() or getPatternFileExtensions() return something different ?",
+      "parentUuid": "19fe67cb_5830163a",
+      "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b73f606_00752023",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2018-11-26T23:26:14Z",
       "side": 1,
       "message": "This needs a CQ - we can\u0027t copy thirdparty code.",
+      "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a002c13e_89f9d96c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-11-27T13:03:59Z",
+      "side": 1,
+      "message": "I\u0027ll modify the method enough so that we don\u0027t need a CQ : after all a while loop in a for loop is not a proprietary code.",
+      "parentUuid": "5b73f606_00752023",
       "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -64,6 +100,24 @@
       "writtenOn": "2018-11-26T23:29:07Z",
       "side": 1,
       "message": "See https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d516587#c1\n\nEven if you get makePattern down to 0 time, the overall time reduction will be 50%. My original prototype (patch set 1) was a 75% reduction.",
+      "parentUuid": "36c38002_5ae99bcd",
+      "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4673ae23_ebb0851c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-11-27T13:03:59Z",
+      "side": 1,
+      "message": "yes by rebasing on the latest from master I forgot to keep your change.",
       "parentUuid": "36c38002_5ae99bcd",
       "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",

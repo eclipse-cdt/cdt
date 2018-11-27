@@ -24,12 +24,14 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -77,7 +79,15 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	@Override
 	public IType getType() {
 		if (type == null) {
-			type = CPPVisitor.createType((IASTDeclarator) declarations[0].getParent());
+			IASTNode declParent = declarations[0].getParent();
+			if (declParent instanceof IASTDeclarator) {
+				type = CPPVisitor.createType((IASTDeclarator) declParent);
+			} else if (declParent instanceof ICPPASTAliasDeclaration) {
+				type = CPPVisitor.createType(((ICPPASTAliasDeclaration) declParent).getMappingTypeId());
+			} else {
+				assert false;
+				type = new ProblemType(ProblemType.TYPE_UNRESOLVED_NAME);
+			}
 		}
 		return type;
 	}

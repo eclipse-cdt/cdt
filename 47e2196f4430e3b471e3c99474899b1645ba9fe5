@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "56933d9f_09dab4f5",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-11-28T11:51:20Z",
+      "side": 1,
+      "message": "That is a good test, but there are no automatic tests (AFAIK) that test the performance of the parser. If you can create one that would be great, but it might also be overkill if you can simply reproduce it manually with a few simple steps.",
+      "parentUuid": "f04774e2_d025d6d7",
+      "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b73f606_00752023",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
         "patchSetId": 8

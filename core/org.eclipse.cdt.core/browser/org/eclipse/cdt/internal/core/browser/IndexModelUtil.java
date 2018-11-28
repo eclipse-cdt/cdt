@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -75,7 +76,7 @@ public class IndexModelUtil {
 					return true;
 				break;
 			case ICElement.C_TYPEDEF:
-				if (binding instanceof ITypedef)
+				if (binding instanceof ITypedef || binding instanceof ICPPAliasTemplate)
 					return true;
 				break;
 			case ICElement.C_FUNCTION:
@@ -124,7 +125,7 @@ public class IndexModelUtil {
 		if (binding instanceof IEnumeration) {
 			elementType = ICElement.C_ENUMERATION;
 		}
-		if (binding instanceof ITypedef) {
+		if (binding instanceof ITypedef || binding instanceof ICPPAliasTemplate) {
 			elementType = ICElement.C_TYPEDEF;
 		}
 		if (binding instanceof IFunction) {

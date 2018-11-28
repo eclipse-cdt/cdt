@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "f04774e2_d025d6d7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-11-28T00:22:36Z",
+      "side": 1,
+      "message": "To test it so far I\u0027ve been using the RegexErrorParserTests.testRegexErrorParserParseOutput test method. \nThis makes two calls to the makePattern() method. The first time, it initializes the pattern and the map and the second time uses both of them already cached/created. For both calls, the getCompilerPatternExtended() and getPatternFileExtensions() return the same String values. So in this test case everything will work as intended. \nI don\u0027t know whether there might be cases where these two could return something different.",
+      "parentUuid": "5f0dcb00_d343d949",
+      "revId": "47e2196f4430e3b471e3c99474899b1645ba9fe5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b73f606_00752023",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
         "patchSetId": 8

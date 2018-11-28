@@ -34,6 +34,24 @@
       "revId": "19b4777e5b84a07bb19ff5e8e580a7ee69bba578",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9409be77_97435067",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuildCommandParser.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 71355
+      },
+      "writtenOn": "2018-11-28T00:22:36Z",
+      "side": 1,
+      "message": "yes it\u0027s still reformatting everytime I ctrl+s ... I checked the java editor preferences where the save action can be configured and nothing is checked. it\u0027s quite annoying as I can\u0027t save anything but through the compare versions editor without also changing all the formatting..",
+      "parentUuid": "1a8f0c9c_2e633bac",
+      "revId": "19b4777e5b84a07bb19ff5e8e580a7ee69bba578",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

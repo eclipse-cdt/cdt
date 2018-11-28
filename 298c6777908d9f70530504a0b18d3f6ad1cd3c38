@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d51bb687_ec876b8e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2488,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-11-28T00:56:42Z",
+      "side": 1,
+      "message": "Please add a comment saying that:\n\n* nExplicitArguments determines the number of parameters taken into conideration for ordering\n* for ordering in the context of a call, nExplicitArguments should be the number of arguments in the call\n* for ordering in other contexts, nExplicitArguments should be Integer.MAX_VALUE to indicate that all parameters should be considered",
+      "revId": "298c6777908d9f70530504a0b18d3f6ad1cd3c38",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

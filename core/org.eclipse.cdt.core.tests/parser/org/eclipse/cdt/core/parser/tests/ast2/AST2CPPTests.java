@@ -11627,6 +11627,11 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertSameType(waldo2.getType(), CommonCPPTypes.constInt);
 	}
 
+	//	constexpr int* waldo;
+	public void testConstexprPointerVariable_541670() throws Exception {
+		getAssertionHelper().assertVariableType("waldo", CommonCPPTypes.constPointerToInt);
+	}
+
 	//	constexpr int waldo1();
 	//	constexpr int (*waldo2())(int);
 	//	struct S { constexpr int waldo3(); };

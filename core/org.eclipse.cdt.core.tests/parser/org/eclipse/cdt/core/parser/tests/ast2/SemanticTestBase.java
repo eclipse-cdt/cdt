@@ -83,6 +83,7 @@ public class SemanticTestBase extends BaseTestCase {
 		public static IType constChar = constOf(char_);
 		public static IType constInt = constOf(int_);
 		public static IType pointerToInt = pointerTo(int_);
+		public static IType constPointerToInt = constPointerTo(int_);
 		public static IType pointerToConstChar = pointerTo(constChar);
 		public static IType pointerToConstInt = pointerTo(constInt);
 		public static IType referenceToInt = referenceTo(int_);
@@ -90,11 +91,18 @@ public class SemanticTestBase extends BaseTestCase {
 		public static IType rvalueReferenceToInt = rvalueReferenceTo(int_);
 		public static IType rvalueReferenceToConstInt = rvalueReferenceTo(constInt);
 
+		// Not quite the same as constOf(pointerTo(type)) because of the
+		// idiosyncratic way we represent cosnt pointers using a flag
+		// on the CPPPointerType rather than using CPPQualifierType.
+		private static IType constPointerTo(IType type) {
+			return new CPPPointerType(type, true, false, false);
+		}
+
 		private static IType pointerTo(IType type) {
 			return new CPPPointerType(type);
 		}
 
-		private static IType constOf(IType type) {
+		public static IType constOf(IType type) {
 			return new CPPQualifierType(type, true, false);
 		}
 

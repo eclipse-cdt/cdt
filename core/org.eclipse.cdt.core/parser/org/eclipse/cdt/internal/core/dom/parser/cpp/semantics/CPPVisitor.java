@@ -2140,8 +2140,10 @@ public class CPPVisitor extends ASTQueries {
 			}
 
 			IType type = createType(declSpec);
-			type = makeConstIfConstexpr(type, declSpec, declarator);
 			type = createType(type, declarator, flags);
+
+			// constexpr implies toplevel-const
+			type = makeConstIfConstexpr(type, declSpec, declarator);
 
 			// C++ specification 8.3.4.3 and 8.5.1.4
 			IASTNode initClause = declarator.getInitializer();

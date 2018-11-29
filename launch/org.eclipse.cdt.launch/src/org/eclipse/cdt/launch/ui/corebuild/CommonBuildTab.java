@@ -30,7 +30,6 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.ui.ILaunchBarLaunchConfigDialog;
-import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -182,7 +181,7 @@ public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 
 	private boolean toolchainChanged() {
 		int i = tcCombo.getSelectionIndex();
-		if (i < 0) {
+		if (i < 0 || toolchains.length == 0) {
 			buildConfig = null;
 			return false;
 		} else if (i == 0) {
@@ -199,7 +198,7 @@ public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 		try {
 			buildConfig = bcManager.getBuildConfiguration(project, newToolchain, mode, new NullProgressMonitor());
 		} catch (CoreException e) {
-			Activator.log(e.getStatus());
+			LaunchUIPlugin.log(e.getStatus());
 		}
 
 		return true;

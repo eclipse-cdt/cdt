@@ -157,6 +157,9 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 		super.initializeFrom(configuration);
 
 		ICBuildConfiguration buildConfig = getBuildConfiguration();
+		if (buildConfig == null) {
+			return;
+		}
 		String container = buildConfig.getProperty(StandardBuildConfiguration.BUILD_CONTAINER);
 		if (container != null && !container.trim().isEmpty()) {
 			IPath containerLoc = new Path(container);

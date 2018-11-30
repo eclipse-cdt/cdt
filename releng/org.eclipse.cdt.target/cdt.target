@@ -93,7 +93,6 @@
 <launcherArgs>
 <vmArgs>-Xms40m&#13;
 -Xmx512M&#13;
--XX:MaxPermSize=256m&#13;
 -ea</vmArgs>
 <programArgs>-consolelog</programArgs>
 </launcherArgs>

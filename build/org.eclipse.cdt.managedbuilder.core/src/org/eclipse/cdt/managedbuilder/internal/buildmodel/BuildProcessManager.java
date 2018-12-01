@@ -140,13 +140,4 @@ public class BuildProcessManager {
 
 		return list.toArray(new String[list.size()]);
 	}
-
-	/**
-	 * @return Number of processors detected
-	 * @deprecated since CDT 9.0 - just use Runtime.getRuntime().availableProcessors()
-	 */
-	@Deprecated
-	static public int checkCPUNumber() {
-		return Runtime.getRuntime().availableProcessors();
-	}
 }

@@ -108,12 +108,12 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 	 * This code is similar to CPPTemplates.instantiateArguments(), but applies to evaluations
 	 * rather than template arguments.
 	 */
-	protected static ICPPEvaluation[] instantiateCommaSeparatedSubexpressions(ICPPEvaluation[] subexpressions,
-			InstantiationContext context, int maxDepth) {
-		ICPPEvaluation[] result = subexpressions;
+	protected static ICPPEvaluation[] instantiateExpressions(ICPPEvaluation[] expressions, InstantiationContext context,
+			int maxDepth) {
+		ICPPEvaluation[] result = expressions;
 		int resultShift = 0;
-		for (int i = 0; i < subexpressions.length; i++) {
-			ICPPEvaluation origEval = subexpressions[i];
+		for (int i = 0; i < expressions.length; i++) {
+			ICPPEvaluation origEval = expressions[i];
 			ICPPEvaluation newEval;
 			if (origEval instanceof EvalPackExpansion) {
 				ICPPEvaluation pattern = ((EvalPackExpansion) origEval).getExpansionPattern();
@@ -129,7 +129,7 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 						newEval = origEval.instantiate(context, maxDepth);
 					} else {
 						int shift = packSize - 1;
-						ICPPEvaluation[] newResult = new ICPPEvaluation[subexpressions.length + resultShift + shift];
+						ICPPEvaluation[] newResult = new ICPPEvaluation[expressions.length + resultShift + shift];
 						System.arraycopy(result, 0, newResult, 0, i + resultShift);
 						int oldPackOffset = context.getPackOffset();
 						for (int j = 0; j < packSize; ++j) {
@@ -147,12 +147,12 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 				newEval = origEval.instantiate(context, maxDepth);
 			}
 
-			if (result != subexpressions) {
+			if (result != expressions) {
 				result[i + resultShift] = newEval;
 			} else if (newEval != origEval) {
 				assert resultShift == 0;
-				result = new ICPPEvaluation[subexpressions.length];
-				System.arraycopy(subexpressions, 0, result, 0, i);
+				result = new ICPPEvaluation[expressions.length];
+				System.arraycopy(expressions, 0, result, 0, i);
 				result[i] = newEval;
 			}
 		}

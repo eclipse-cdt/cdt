@@ -229,7 +229,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
-		ICPPEvaluation[] args = instantiateCommaSeparatedSubexpressions(fArguments, context, maxDepth);
+		ICPPEvaluation[] args = instantiateExpressions(fArguments, context, maxDepth);
 		if (args == fArguments)
 			return this;
 

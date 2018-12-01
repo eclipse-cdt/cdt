@@ -138,7 +138,7 @@ public class EvalInitList extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
-		ICPPEvaluation[] clauses = instantiateCommaSeparatedSubexpressions(fClauses, context, maxDepth);
+		ICPPEvaluation[] clauses = instantiateExpressions(fClauses, context, maxDepth);
 		if (clauses == fClauses)
 			return this;
 		return new EvalInitList(clauses, getTemplateDefinition());

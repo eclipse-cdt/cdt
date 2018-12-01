@@ -379,7 +379,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
-		ICPPEvaluation[] args = instantiateCommaSeparatedSubexpressions(fArguments, context, maxDepth);
+		ICPPEvaluation[] args = instantiateExpressions(fArguments, context, maxDepth);
 		IType type = CPPTemplates.instantiateType(fInputType, context);
 		if (args == fArguments && type == fInputType)
 			return this;

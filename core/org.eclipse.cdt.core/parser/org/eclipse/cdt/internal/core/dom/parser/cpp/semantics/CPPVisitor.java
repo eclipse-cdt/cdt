@@ -169,7 +169,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -2904,12 +2903,6 @@ public class CPPVisitor extends ASTQueries {
 			}
 		}
 		return false;
-	}
-
-	@Deprecated
-	public static boolean isLValueReference(IType t) {
-		t = SemanticUtil.getNestedType(t, TDEF);
-		return t instanceof ICPPReferenceType && !((ICPPReferenceType) t).isRValueReference();
 	}
 
 	/**

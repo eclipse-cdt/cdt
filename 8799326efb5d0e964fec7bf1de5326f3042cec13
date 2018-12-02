@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e4aef63_b60e7b13",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4828,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2018-12-02T21:34:36Z",
+      "side": 1,
+      "message": "Is this the correct way to check which overload is taken?",
+      "revId": "8799326efb5d0e964fec7bf1de5326f3042cec13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "95235bae_18f8de8e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2510,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2018-12-02T21:34:36Z",
+      "side": 1,
+      "message": "Should I do a more strict check?",
+      "revId": "8799326efb5d0e964fec7bf1de5326f3042cec13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "77a1cb00_f2833a53",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2594,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2018-12-02T21:34:36Z",
+      "side": 1,
+      "message": "Is it correct?",
+      "revId": "8799326efb5d0e964fec7bf1de5326f3042cec13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

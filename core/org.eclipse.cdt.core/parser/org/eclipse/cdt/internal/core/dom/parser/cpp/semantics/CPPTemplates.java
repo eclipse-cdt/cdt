@@ -27,6 +27,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -2505,6 +2506,23 @@ public class CPPTemplates {
 	}
 
 	/**
+	 * N4659: [temp.deduct.partial] p11
+	 */
+	static int disambiguateTrailingParameterPack(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, int nExplicitArgs) {
+		ICPPTemplateParameter[] f1params = f1.getTemplateParameters();
+		ICPPTemplateParameter[] f2params = f2.getTemplateParameters();
+		boolean f1hasTrailingPack = f1params[f1params.length - 1].isParameterPack();
+		boolean f2hasTrailingPack = f2params[f2params.length - 1].isParameterPack();
+		if (f1hasTrailingPack && f1params.length > nExplicitArgs && !f2hasTrailingPack) {
+			return -1;
+		} else if (f2hasTrailingPack && f2params.length > nExplicitArgs && !f1hasTrailingPack) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+	/**
 	 * 14.5.6.2 Partial ordering of function templates
 	 *
 	 * @param f1
@@ -2527,8 +2545,9 @@ public class CPPTemplates {
 		int s1 = compareSpecialization(f1, f2, mode, nExplicitArgs);
 		int s2 = compareSpecialization(f2, f1, mode, nExplicitArgs);
 
-		if (s1 == s2)
-			return 0;
+		if (s1 == s2) {
+			return disambiguateTrailingParameterPack(f1, f2, nExplicitArgs);
+		}
 		if (s1 < 0 || s2 > 0)
 			return -1;
 		assert s2 < 0 || s1 > 0;
@@ -2576,25 +2595,24 @@ public class CPPTemplates {
 		return arg;
 	}
 
-	private static ICPPFunctionType getFunctionTypeIgnoringParametersWithDefaults(ICPPFunction function,
+	/**
+	 * [temp.func.order] p5: Considers only parameters for which there are explicit call arguments.
+	 *
+	 * Since at this point non-viable functions are already excluded, it is safe to just ignore extra parameters
+	 * without checking if they can be ignored, i.e. without checking if they are function parameter packs,
+	 * parameters with default arguments, or ellipsis parameter.
+	 */
+	private static ICPPFunctionType getFunctionTypeIgnoringParametersWithoutExplicitArguments(ICPPFunction function,
 			int nExplicitArgs) {
-		ICPPParameter[] parameters = function.getParameters();
-		IType[] parameterTypes = new IType[parameters.length];
-		int i;
-		for (i = 0; i < parameters.length; ++i) {
-			ICPPParameter parameter = parameters[i];
-			if (i < nExplicitArgs || !parameter.hasDefaultValue()) {
-				parameterTypes[i] = parameter.getType();
-			} else {
-				break;
-			}
-		}
 		ICPPFunctionType originalType = function.getType();
-		if (i == parameters.length) // No parameters with default arguments.
+		if (nExplicitArgs < function.getParameters().length) {
+			IType[] parameterTypesWithExplicitArguments = Arrays.copyOf(originalType.getParameterTypes(),
+					nExplicitArgs);
+			return new CPPFunctionType(originalType.getReturnType(), parameterTypesWithExplicitArguments,
+					originalType.isConst(), originalType.isVolatile(), originalType.hasRefQualifier(),
+					originalType.isRValueReference(), originalType.takesVarArgs());
+		} else
 			return originalType;
-		return new CPPFunctionType(originalType.getReturnType(), ArrayUtil.trim(parameterTypes), originalType.isConst(),
-				originalType.isVolatile(), originalType.hasRefQualifier(), originalType.isRValueReference(),
-				originalType.takesVarArgs());
 	}
 
 	private static int compareSpecialization(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode,
@@ -2604,9 +2622,8 @@ public class CPPTemplates {
 			return -1;
 
 		final ICPPFunctionType ft2 = f2.getType();
-		// Ignore parameters with default arguments in the transformed function template
-		// as per [temp.func.order] p5.
-		final ICPPFunctionType transFt1 = getFunctionTypeIgnoringParametersWithDefaults(transF1, nExplicitArgs);
+		final ICPPFunctionType transFt1 = getFunctionTypeIgnoringParametersWithoutExplicitArguments(transF1,
+				nExplicitArgs);
 		IType[] pars;
 		IType[] args;
 		switch (mode) {

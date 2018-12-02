@@ -78,7 +78,7 @@ TARGETS = \
 <#if recipe_objcopy_hex_pattern??>
 	${project_name}.hex \
 </#if>
-<#if recipe_objcopy_epp_pattern??>
+<#if recipe_objcopy_eep_pattern??>
 	${project_name}.eep \
 </#if>
 <#if recipe_objcopy_bin_pattern??>
@@ -92,7 +92,7 @@ ${project_name}.hex: ${project_name}.elf
 	${recipe_objcopy_hex_pattern}
 
 </#if>
-<#if recipe_objcopy_epp_pattern??>
+<#if recipe_objcopy_eep_pattern??>
 ${project_name}.eep: ${project_name}.elf
 	${recipe_objcopy_eep_pattern}
 

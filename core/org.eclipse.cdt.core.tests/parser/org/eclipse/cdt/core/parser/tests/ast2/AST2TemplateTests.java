@@ -4816,8 +4816,16 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	//	int main() {
 	//	    foo(0);
 	//	}
-	public void testFunctionTemplateOrdering_388805() throws Exception {
-		parseAndCheckBindings();
+	public void testFunctionTemplateOrdering_DR1395_388805() throws Exception {
+		String code = getAboveComment();
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, CPP);
+
+		ICPPFunctionTemplate f1 = bh.assertNonProblem("foo(A)", 3);
+		ICPPFunctionTemplate f2 = bh.assertNonProblem("foo(A, B...)", 3);
+
+		ICPPTemplateInstance t;
+		t = bh.assertNonProblem("foo(0)", 3);
+		assertSame(f1, t.getTemplateDefinition());
 	}
 
 	//	template <typename T>
@@ -11198,6 +11206,20 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	//	    FPtr x = &foo;
 	//	}
 	public void testDisambiguateFunctionWithDefaultArgumentDeclaration_541474() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template<typename T>
+	//	void info(T a) {
+	//	}
+	//	template<typename... Args>
+	//	void info(int a, Args... args) {
+	//		// this is more specialized
+	//	}
+	//	int main( ) {
+	//		info(1);
+	//	}
+	public void testDisambiguateFunctionUnusedPack_541474() throws Exception {
 		parseAndCheckBindings();
 	}
 }

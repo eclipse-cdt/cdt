@@ -58,7 +58,7 @@ public class ArduinoPlatform {
 	private Path installPath;
 	private ArduinoPackage pkg;
 	private HierarchicalProperties boardsProperties;
-	private LinkedProperties platformProperties;
+	private HierarchicalProperties platformProperties;
 	private HierarchicalProperties programmerProperties;
 	private Map<String, String> menus = new HashMap<>();
 	private Map<String, ArduinoLibrary> libraries;
@@ -109,7 +109,7 @@ public class ArduinoPlatform {
 		return size;
 	}
 
-	public void setPlatformProperties(LinkedProperties platformProperties) {
+	public void setPlatformProperties(HierarchicalProperties platformProperties) {
 		this.platformProperties = platformProperties;
 	}
 
@@ -187,9 +187,9 @@ public class ArduinoPlatform {
 		return null;
 	}
 
-	public LinkedProperties getPlatformProperties() throws CoreException {
+	public HierarchicalProperties getPlatformProperties() throws CoreException {
 		if (platformProperties == null) {
-			platformProperties = new LinkedProperties();
+			LinkedProperties rawPlatformProps = new LinkedProperties();
 			try (BufferedReader reader = new BufferedReader(
 					new FileReader(getInstallPath().resolve("platform.txt").toFile()))) { //$NON-NLS-1$
 				// There are regex's here and need to preserve the \'s
@@ -199,11 +199,12 @@ public class ArduinoPlatform {
 					buffer.append('\n');
 				}
 				try (Reader reader1 = new StringReader(buffer.toString())) {
-					platformProperties.load(reader1);
+					rawPlatformProps.load(reader1);
 				}
 			} catch (IOException e) {
 				throw Activator.coreException(e);
 			}
+			platformProperties = new HierarchicalProperties(rawPlatformProps);
 		}
 		return platformProperties;
 	}

@@ -22,11 +22,24 @@ public class HierarchicalProperties {
 
 	private String value;
 	private Map<String, HierarchicalProperties> children;
+	private String platName;
 
 	public HierarchicalProperties() {
+		switch (Platform.getOS()) {
+		case Platform.OS_WIN32:
+			platName = "windows"; //$NON-NLS-1$
+			break;
+		case Platform.OS_MACOSX:
+			platName = "macosx"; //$NON-NLS-1$
+			break;
+		case Platform.OS_LINUX:
+			platName = "linux"; //$NON-NLS-1$
+			break;
+		}
 	}
 
 	public HierarchicalProperties(LinkedProperties properties) {
+		this();
 		for (Object keyObj : properties.orderedKeys()) {
 			String key = (String) keyObj;
 			String value = (String) properties.get(key);
@@ -81,25 +94,15 @@ public class HierarchicalProperties {
 	}
 
 	public String getValue() {
-		if (value == null) {
-			// Try a platform child
-			String platName = null;
-			switch (Platform.getOS()) {
-			case Platform.OS_WIN32:
-				platName = "windows"; //$NON-NLS-1$
-				break;
-			case Platform.OS_MACOSX:
-				platName = "macosx"; //$NON-NLS-1$
-				break;
-			case Platform.OS_LINUX:
-				platName = "linux"; //$NON-NLS-1$
-				break;
-			}
-			if (platName != null) {
-				HierarchicalProperties platChild = getChild(platName);
-				if (platChild != null) {
-					return platChild.getValue();
-				}
+		// Try a platform child
+		if (platName != null && hasChild(platName)) {
+			HierarchicalProperties child = getChild(platName);
+
+			// return the child's value if
+			// - it has a property
+			// - it has no more children. In that case the value could even be null (specifically overridden)
+			if ((null != child.getValue()) || (!child.hasChildren())) {
+				return child.getValue();
 			}
 		}
 		return value;
@@ -111,6 +114,14 @@ public class HierarchicalProperties {
 
 	public Map<String, HierarchicalProperties> getChildren() {
 		return children;
+	}
+
+	private boolean hasChildren() {
+		return (children != null && children.size() > 0);
+	}
+
+	private boolean hasChild(String key) {
+		return (children != null && children.containsKey(key));
 	}
 
 	public HierarchicalProperties getChild(String key) {
@@ -180,5 +191,4 @@ public class HierarchicalProperties {
 			}
 		}
 	}
-
 }

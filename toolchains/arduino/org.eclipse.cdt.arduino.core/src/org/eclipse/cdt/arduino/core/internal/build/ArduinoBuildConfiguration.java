@@ -187,13 +187,13 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 					ArduinoPlatform superPlatform = manager.getInstalledPlatform(segments[0],
 							platform.getArchitecture());
 					if (superPlatform != null) {
-						boardProperties.putAll(superPlatform.getPlatformProperties());
+						boardProperties.putAll(superPlatform.getPlatformProperties().flatten());
 					}
 				}
 			}
 
 			// Platform
-			boardProperties.putAll(platform.getPlatformProperties());
+			boardProperties.putAll(platform.getPlatformProperties().flatten());
 
 			// Tools
 			for (ToolDependency toolDep : platform.getToolsDependencies()) {
@@ -520,8 +520,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 		properties.put("config.path", "{tools." + toolName + ".config.path}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		// properties for the tool flattened
-		HierarchicalProperties toolsProps = new HierarchicalProperties(platform.getPlatformProperties())
-				.getChild("tools"); //$NON-NLS-1$
+		HierarchicalProperties toolsProps = platform.getPlatformProperties().getChild("tools"); //$NON-NLS-1$
 		if (toolsProps != null) {
 			HierarchicalProperties toolProps = toolsProps.getChild(toolName);
 			if (toolProps != null) {

@@ -272,7 +272,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			ICPPClassType classType = (ICPPClassType) simplifiedType;
 			ICPPEvaluation[] arguments = fArguments;
 			ICPPConstructor[] constructors = classType.getConstructors();
-			if (arguments.length == 1 && arguments[0] instanceof EvalInitList) {
+			if (arguments.length == 1 && arguments[0] instanceof EvalInitList && !fUsesBracedInitList) {
 				// List-initialization of a class (dcl.init.list-3).
 				if (TypeTraits.isAggregateClass(classType)) {
 					// Pretend that aggregate initialization is calling the default constructor.
@@ -299,6 +299,13 @@ public class EvalTypeId extends CPPDependentEvaluation {
 				if (binding instanceof ICPPFunction) {
 					return (ICPPFunction) binding;
 				}
+				// TODO this check has to be before the ProblemBinding
+				if (fUsesBracedInitList && allConstructorsAreCompilerGenerated(constructors)) {
+					return AGGREGATE_INITIALIZATION;
+				}
+				if (binding instanceof IProblemBinding && !(binding instanceof ICPPFunction))
+					return new CPPFunction.CPPFunctionProblem(data.getLookupName(), // TODO lookup name is empty
+							((IProblemBinding) binding).getID());
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
 			}

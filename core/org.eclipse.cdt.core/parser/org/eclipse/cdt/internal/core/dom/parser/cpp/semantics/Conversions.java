@@ -30,6 +30,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.isVoidType;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -360,6 +361,28 @@ public class Conversions {
 	}
 
 	/**
+	 * Flattens the elements of a type for eliding braces in aggregate initialization.
+	 */
+	static ArrayList<IType> flattenType(IType type) {
+		ArrayList<IType> flattenedTypes = new ArrayList<>();
+		if (type instanceof ICPPClassType && TypeTraits.isAggregateClass((ICPPClassType) type)) {
+			ICPPField[] fields = getFieldsForAggregateInitialization((ICPPClassType) type);
+			for (ICPPField field : fields) {
+				flattenedTypes.addAll(flattenType(field.getType()));
+			}
+		} else if (type instanceof IArrayType) {
+			IArrayType arrayType = (IArrayType) type;
+			ArrayList<IType> flattenedElementType = flattenType(arrayType.getType());
+			for (int j = 0; j < arrayType.getSize().numberValue().longValue(); j++) {
+				flattenedTypes.addAll(flattenedElementType);
+			}
+		} else {
+			flattenedTypes.add(type);
+		}
+		return flattenedTypes;
+	}
+
+	/**
 	 * Checks whether 'targetClass' can be initialized from 'list' according to the rules for
 	 * aggregate initialization ([dcl.init.aggr]).
 	 */
@@ -367,24 +390,59 @@ public class Conversions {
 		ICPPField[] fields = getFieldsForAggregateInitialization(targetClass);
 		ICPPEvaluation[] initializers = list.getClauses();
 
+		IType[] types = new IType[fields.length];
+		IValue[] initialValues = new IValue[fields.length];
+		for (int i = 0; i < fields.length; i++) {
+			types[i] = fields[i].getType();
+			initialValues[i] = fields[i].getInitialValue();
+		}
+
 		// p7: An initializer-list is ill-formed if the number of initializer-clauses exceeds
 		//     the number of members to initialize.
 		if (initializers.length > fields.length) {
-			return false;
+			// maybe we elided braces
+
+			// If one of the initializers is itself an Initializer list it is not elision
+			// TODO I think the statement above is wrong and the lower check therefore is fales
+			for (int i = 0; i < initializers.length; i++) {
+				if (initializers[i] instanceof EvalInitList)
+					return false;
+			}
+
+			ArrayList<IType> flattenedTypes = flattenType(targetClass);
+			ArrayList<IValue> flattenedInitialValues = new ArrayList<>(); // TODO we need to get the initial values
+			types = flattenedTypes.toArray(new IType[flattenedTypes.size()]);
+			initialValues = flattenedInitialValues.toArray(new IValue[flattenedInitialValues.size()]);
+			if (initializers.length > types.length)
+				return false;
 		}
 
 		// p3: The elements of the initializer list are taken as initializers for the elements
 		//     of the aggregate, in order.
 		int i = 0;
-		for (; i < initializers.length; ++i) {
+		int j = 0;
+		for (; i < initializers.length; ++i, ++j) {
 			ICPPEvaluation initializer = initializers[i];
-			ICPPField field = fields[i];
+			IType type = types[j];
 
 			// Each element is copy-initialized from the corresponding initializer-clause.
-			Cost cost = checkImplicitConversionSequence(field.getType(), initializer.getType(),
-					initializer.getValueCategory(), UDCMode.ALLOWED, Context.ORDINARY);
+			Cost cost = checkImplicitConversionSequence(type, initializer.getType(), initializer.getValueCategory(),
+					UDCMode.ALLOWED, Context.ORDINARY);
 			if (!cost.converts()) {
-				return false;
+				// TODO we need to check brace elision here
+				ArrayList<IType> flattendedTypes = flattenType(type);
+				for (int k = 0; k < flattendedTypes.size() && i < initializers.length; k++, i++) {
+					type = flattendedTypes.get(k);
+					initializer = initializers[i]; // on first entering it assigns the same value again
+					cost = checkImplicitConversionSequence(type, initializer.getType(), initializer.getValueCategory(),
+							UDCMode.ALLOWED, Context.ORDINARY);
+					if (!cost.converts()) {
+						return false;
+					}
+					if (!(initializer instanceof EvalInitList) && cost.isNarrowingConversion()) {
+						return false;
+					}
+				}
 			}
 
 			// If the initializer-clause is an expression and a narrowing conversion is
@@ -399,15 +457,15 @@ public class Conversions {
 		//     initialized from its default member initializer or, if there is no
 		//     default member initializer, from an empty initializer list.
 		for (; i < fields.length; ++i) {
-			ICPPField field = fields[i];
-			IValue initialValue = field.getInitialValue();
+			IType type = types[i];
+			IValue initialValue = initialValues[i];
 			if (initialValue != null) {
 				continue; // has a default member initializer
 			}
 
 			// p11: If an incomplete or empty initializer-list leaves a member of
 			//      reference type uninitialized, the program is ill-formed.
-			IType fieldType = SemanticUtil.getNestedType(field.getType(), TDEF);
+			IType fieldType = SemanticUtil.getNestedType(type, TDEF);
 			if (fieldType instanceof ICPPReferenceType) {
 				return false;
 			}
@@ -419,9 +477,6 @@ public class Conversions {
 				return false;
 			}
 		}
-
-		// TODO: Implement brace elision rules.
-
 		return true;
 	}
 
@@ -438,22 +493,10 @@ public class Conversions {
 	static Cost listInitializationSequenceHelper(EvalInitList arg, IType target, UDCMode udc, boolean isDirect)
 			throws DOMException {
 		IType listType = getInitListType(target);
-		if (listType == null && target instanceof IArrayType) {
-			Number arraySize = ((IArrayType) target).getSize().numberValue();
-			if (arraySize != null) {
-				IType elementType = ((IArrayType) target).getType();
-				// TODO(nathanridge): If there are fewer initializer clauses than the array size,
-				// then the element type is required to be default-constructible.
-				if (arg.getClauses().length <= arraySize.longValue()) {
-					listType = elementType;
-				}
-			}
-		}
-
 		if (listType != null) {
-			ICPPEvaluation[] clauses = arg.getClauses();
+			// TODO think about merging this again with the similar check below
 			Cost worstCost = new Cost(arg.getType(), target, Rank.IDENTITY);
-			for (ICPPEvaluation clause : clauses) {
+			for (ICPPEvaluation clause : arg.getClauses()) {
 				Cost cost = checkImplicitConversionSequence(listType, clause.getType(), clause.getValueCategory(),
 						UDCMode.ALLOWED, Context.ORDINARY);
 				if (!cost.converts())
@@ -467,6 +510,50 @@ public class Conversions {
 				}
 			}
 			return worstCost;
+		} else if (target instanceof IArrayType) {
+			Number arraySize = ((IArrayType) target).getSize().numberValue();
+			if (arraySize != null) {
+				IType elementType = ((IArrayType) target).getType();
+				// TODO(nathanridge): If there are fewer initializer clauses than the array size,
+				// then the element type is required to be default-constructible.
+				listType = elementType;
+
+				ICPPEvaluation[] clauses = arg.getClauses();
+				Cost worstCost = new Cost(arg.getType(), target, Rank.IDENTITY);
+
+				int consumedArrayElements = 0;
+				for (int j = 0; j < clauses.length; j++) {
+					if (consumedArrayElements >= arraySize.longValue())
+						return Cost.NO_CONVERSION;
+					consumedArrayElements++;
+					ICPPEvaluation clause = clauses[j];
+					// In case we are not an init-list we need to ensure
+					// that we consume as many clauses as possible by the subaggregate
+					ArrayList<IType> types = new ArrayList<>();
+					if (clause.isInitializerList()) {
+						types.add(listType);
+					} else {
+						types = flattenType(listType);
+					}
+					j--;
+					for (int i = 0; i < types.size() && j + 1 < clauses.length; i++) {
+						j++;
+						clause = clauses[j];
+						Cost cost = checkImplicitConversionSequence(types.get(i), clause.getType(),
+								clause.getValueCategory(), UDCMode.ALLOWED, Context.ORDINARY);
+						if (!cost.converts())
+							return cost;
+						if (cost.isNarrowingConversion()) {
+							cost.setRank(Rank.NO_MATCH);
+							return cost;
+						}
+						if (cost.compareTo(worstCost) > 0) {
+							worstCost = cost;
+						}
+					}
+				}
+				return worstCost;
+			}
 		}
 
 		IType noCVTarget = getNestedType(target, CVTYPE | TDEF);

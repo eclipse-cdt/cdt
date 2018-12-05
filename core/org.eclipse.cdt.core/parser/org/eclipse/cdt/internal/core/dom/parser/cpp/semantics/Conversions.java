@@ -728,6 +728,17 @@ public class Conversions {
 				}
 			}
 		}
+
+		if (!isDirect) {
+			ICPPConstructor[] filteredConstructorsTmp = new ICPPConstructor[filteredConstructors.length];
+			int j = 0;
+			for (ICPPConstructor ctor : filteredConstructors) {
+				if (ctor != null && !ctor.isExplicit())
+					filteredConstructorsTmp[j++] = ctor;
+			}
+			filteredConstructors = filteredConstructorsTmp;
+		}
+
 		final IBinding result = CPPSemantics.resolveFunction(data, filteredConstructors, true, false);
 		final Cost c;
 		if (result instanceof ICPPMethod) {

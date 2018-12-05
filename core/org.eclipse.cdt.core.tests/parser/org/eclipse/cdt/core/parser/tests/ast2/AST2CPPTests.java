@@ -12843,11 +12843,150 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//
 	//	int main() {
 	//	  type(1, 2);
+	//	  type{1, 2};
 	//	  type(other_type());
 	//	}
 	public void testCtorWithWrongArguments_543913() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		bh.assertImplicitName("type(1, 2)", 4, IProblemBinding.class);
+		bh.assertImplicitName("type{1, 2}", 4, IProblemBinding.class);
 		bh.assertImplicitName("type(other_type())", 4, IProblemBinding.class);
+	}
+
+	//	struct array{
+	//		int data[1];
+	//	};
+	//
+	//	void foo(array) {}
+	//
+	//	int main() {
+	//		array{{1}};
+	//		array{1};
+	//      array a = {1};
+	//	    foo({1});
+	//	    foo({{1}});
+	//	}
+	public void testBraceElisionForAggregateInit0_SimpleValid_543038() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct array{
+	//		int data[1];
+	//	};
+	//
+	//	void foo(array) {}
+	//
+	//	int main() {
+	//		array{{1,2}};
+	//		array{1,2};
+	//      array a0 = {1,2};
+	//	    foo({1,2});
+	//	    foo({{1,2}});
+	//	}
+	public void testBraceElisionForAggregateInit1_SimpleTooManyInitializers_543038() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		//		bh.assertProblem("array{{1,2}}", 5); // TODO not implemented
+		//		bh.assertProblem("array{1,2}", 5); // TODO not implemented
+		bh.assertImplicitName("a0", 2, IProblemBinding.class);
+		bh.assertProblem("foo({1,2})", 3);
+		bh.assertProblem("foo({{1,2}})", 3);
+	}
+
+	//	struct level0{
+	//		int a;
+	//		int b;
+	//	};
+	//
+	//	struct level1{
+	//		public:
+	//			level1(level0 a): a(a){}
+	//	    private:
+	//			level0 a;
+	//	};
+	//
+	//	struct level2{
+	//		level1 data;
+	//	};
+	//
+	//	void foo(level2) {}
+	//
+	//	int main() {
+	//		level1{{1,2}}; // ok
+	//		foo({level1{{1,2}}}); // ok
+	//		level1{1,2}; // ERROR: calling level1 constructor, not aggregate init of level0
+	//		foo({{{1,2,3}}}); // ERROR: not aggregate init
+	//	}
+	public void testBraceElisionForAggregateInit2_WithNonAggregate_543038() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+
+		bh.assertNonProblem("foo({level1{{1,2}}})", 3);
+
+		ICPPConstructor ctor = bh.assertNonProblem("level1(level0 a)", "level1");
+		ICPPASTSimpleTypeConstructorExpression typeConstructorExpr = bh.assertNode("level1{{1,2}};", "level1{{1,2}}");
+		IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) typeConstructorExpr).getImplicitNames();
+		assertEquals(ctor, implicitNames[0].resolveBinding());
+
+		bh.assertImplicitName("level1{1,2};", 6, IProblemBinding.class);
+		bh.assertProblem("foo({{{1,2,3}}}", 3);
+	}
+
+	//	struct array2D{
+	//		int data[2][3];
+	//	};
+	//
+	//	void foo(array2D) {}
+	//
+	//	int main() {
+	//	    foo({{{1,2,3},{1,2,3}}}); // no elision
+	//	    foo({{1,2,3,1,2,3}}); // eliding one level
+	//	    foo({{1,2}}); // eliding one level, but with only 2 elements which seems to initialize the outer level
+	//	    foo({1,2,3,1,2,3}); // eliding all levels
+	//	    foo({{1,2,3},{1,2,3}}); // ERROR eliding outer-most is not allowed
+	//	}
+	public void testBraceElisionForAggregateInit3_543038() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertNonProblem("foo({{{1,2,3},{1,2,3}}});", 3);
+		bh.assertNonProblem("foo({{1,2,3,1,2,3}});", 3);
+		bh.assertNonProblem("foo({{1,2}});", 3);
+		bh.assertNonProblem("foo({1,2,3,1,2,3});", 3);
+		bh.assertProblem("foo({{1,2,3},{1,2,3}});", 3);
+	}
+
+	//	struct type{
+	//		type(int){};
+	//	};
+	//
+	//	struct array{
+	//		type data[2];
+	//	};
+	//
+	//	void foo(array){}
+	//
+	//	int main() {
+	//		foo({type{1},type{2}});
+	//		foo({type{1}}); // ERROR: type is not default constructible
+	//	}
+	public void testBraceElisionForAggregateInit4_nonDefaultConstructible_543038() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertNonProblem("foo({type{1},type{2}});", 3);
+		bh.assertProblem("foo({type{1}});", 3);
+	}
+
+	//	struct array2D{
+	//		int data[2][3];
+	//	};
+	//
+	//	void foo(array2D) {}
+	//
+	//	int main() {
+	//	      foo({{{1,2,3},1,2,3}}); // ok: data[0] is initialized without elision, data[1] with elision
+	//	      foo({{1,2,3,{1,2,3}}}); // ok: data[1] is initialized without elision, data[0] with elision
+	//	      foo({{1,2,{1,2,3}}}); // ERROR: trying to initialize data[0][2] with {1,2,3}
+	//	}
+	public void testBraceElisionForAggregateInit5_partlyEliding_543038() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertNonProblem("foo({{{1,2,3},1,2,3}});", 3);
+		bh.assertNonProblem("foo({{1,2,3,{1,2,3}}});", 3);
+		bh.assertProblem("foo({{1,2,{1,2,3}}});", 3);
 	}
 }

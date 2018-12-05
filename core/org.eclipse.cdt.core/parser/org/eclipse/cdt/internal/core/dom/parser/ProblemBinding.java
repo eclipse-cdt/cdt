@@ -31,10 +31,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexFileSet;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
@@ -150,12 +148,12 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 
 	@Override
 	public String getName() {
-		return node instanceof IASTName ? new String(((IASTName) node).getSimpleID()) : CPPSemantics.EMPTY_NAME;
+		return node instanceof IASTName ? new String(((IASTName) node).getSimpleID()) : new String(arg);
 	}
 
 	@Override
 	public char[] getNameCharArray() {
-		return node instanceof IASTName ? ((IASTName) node).getSimpleID() : CharArrayUtils.EMPTY;
+		return node instanceof IASTName ? ((IASTName) node).getSimpleID() : arg;
 	}
 
 	@Override

@@ -3738,6 +3738,10 @@ public class CPPSemantics {
 						if (f instanceof ICPPConstructor)
 							return f;
 						// If a conversion is used, the constructor is elided.
+					} else if (evalOwner instanceof ICPPASTInitializerList) {
+						// just for getting the ProblemBinding
+						return findImplicitlyCalledConstructor(type, ((ICPPASTInitializerList) evalOwner).getClauses(),
+								typeId);
 					}
 				}
 			} else if (initializer instanceof ICPPASTInitializerList) {
@@ -3749,11 +3753,16 @@ public class CPPSemantics {
 						ICPPFunction f = c.getUserDefinedConversion();
 						if (f instanceof ICPPConstructor)
 							return f;
+					} else {
+						// just for getting the ProblemBinding
+						return findImplicitlyCalledConstructor(type,
+								((ICPPASTInitializerList) initializer).getClauses(), typeId);
 					}
 				}
 			} else if (initializer instanceof ICPPASTConstructorInitializer) {
 				// Direct initialization.
-				return findImplicitlyCalledConstructor(type, (ICPPASTConstructorInitializer) initializer, typeId);
+				return findImplicitlyCalledConstructor(type,
+						((ICPPASTConstructorInitializer) initializer).getArguments(), typeId);
 			} else if (initializer == null) {
 				// Default initialization.
 				ICPPConstructor[] ctors = type.getConstructors();
@@ -3770,9 +3779,8 @@ public class CPPSemantics {
 		return null;
 	}
 
-	private static IBinding findImplicitlyCalledConstructor(ICPPClassType classType,
-			ICPPASTConstructorInitializer initializer, IASTNode typeId) {
-		final IASTInitializerClause[] arguments = initializer.getArguments();
+	private static IBinding findImplicitlyCalledConstructor(ICPPClassType classType, IASTInitializerClause[] arguments,
+			IASTNode typeId) {
 		CPPASTName astName = new CPPASTName();
 		astName.setName(classType.getNameCharArray());
 		astName.setOffsetAndLength((ASTNode) typeId);

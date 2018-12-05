@@ -148,6 +148,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
@@ -12776,5 +12777,28 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	};
 	public void testElabSpecInTrailingReturn_535777() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//	struct type{
+	//		type(int,int){};
+	//	};
+	//
+	//	int main() {
+	//		type a0(1,2);
+	//		type a1{1,2};
+	//		type a2 = {1,2};
+	//		type a3(1,2,3);
+	//		type a4{1,2,3};
+	//		type a5 = {1,2,3};
+	//	}
+	public void testInitListConstructor_XXX() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertImplicitName("a0", 2, CPPConstructor.class);
+		bh.assertImplicitName("a1", 2, CPPConstructor.class);
+		bh.assertImplicitName("a2", 2, CPPConstructor.class);
+
+		bh.assertImplicitName("a3", 2, IProblemBinding.class);
+		bh.assertImplicitName("a4", 2, IProblemBinding.class);
+		bh.assertImplicitName("a5", 2, IProblemBinding.class);
 	}
 }

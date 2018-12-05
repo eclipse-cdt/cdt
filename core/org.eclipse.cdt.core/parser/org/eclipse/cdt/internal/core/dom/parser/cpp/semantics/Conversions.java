@@ -360,72 +360,6 @@ public class Conversions {
 	}
 
 	/**
-	 * Checks whether 'targetClass' can be initialized from 'list' according to the rules for
-	 * aggregate initialization ([dcl.init.aggr]).
-	 */
-	static boolean checkAggregateInitialization(EvalInitList list, ICPPClassType targetClass) throws DOMException {
-		ICPPField[] fields = getFieldsForAggregateInitialization(targetClass);
-		ICPPEvaluation[] initializers = list.getClauses();
-
-		// p7: An initializer-list is ill-formed if the number of initializer-clauses exceeds
-		//     the number of members to initialize.
-		if (initializers.length > fields.length) {
-			return false;
-		}
-
-		// p3: The elements of the initializer list are taken as initializers for the elements
-		//     of the aggregate, in order.
-		int i = 0;
-		for (; i < initializers.length; ++i) {
-			ICPPEvaluation initializer = initializers[i];
-			ICPPField field = fields[i];
-
-			// Each element is copy-initialized from the corresponding initializer-clause.
-			Cost cost = checkImplicitConversionSequence(field.getType(), initializer.getType(),
-					initializer.getValueCategory(), UDCMode.ALLOWED, Context.ORDINARY);
-			if (!cost.converts()) {
-				return false;
-			}
-
-			// If the initializer-clause is an expression and a narrowing conversion is
-			// required to convert the expression, the program is ill-formed.
-			if (!(initializer instanceof EvalInitList) && cost.isNarrowingConversion()) {
-				return false;
-			}
-		}
-
-		// p8: If there are fewer initializer-clauses than there are elements in the
-		//     aggregate, then each element not explicitly initialized shall be
-		//     initialized from its default member initializer or, if there is no
-		//     default member initializer, from an empty initializer list.
-		for (; i < fields.length; ++i) {
-			ICPPField field = fields[i];
-			IValue initialValue = field.getInitialValue();
-			if (initialValue != null) {
-				continue; // has a default member initializer
-			}
-
-			// p11: If an incomplete or empty initializer-list leaves a member of
-			//      reference type uninitialized, the program is ill-formed.
-			IType fieldType = SemanticUtil.getNestedType(field.getType(), TDEF);
-			if (fieldType instanceof ICPPReferenceType) {
-				return false;
-			}
-
-			// Empty initializer list
-			EvalInitList emptyInit = new EvalInitList(ICPPEvaluation.EMPTY_ARRAY, CPPSemantics.getCurrentLookupPoint());
-			Cost cost = listInitializationSequence(emptyInit, fieldType, UDCMode.ALLOWED, false);
-			if (!cost.converts()) {
-				return false;
-			}
-		}
-
-		// TODO: Implement brace elision rules.
-
-		return true;
-	}
-
-	/**
 	 * 13.3.3.1.5 List-initialization sequence [over.ics.list]
 	 */
 	static Cost listInitializationSequence(EvalInitList arg, IType target, UDCMode udc, boolean isDirect)
@@ -438,22 +372,9 @@ public class Conversions {
 	static Cost listInitializationSequenceHelper(EvalInitList arg, IType target, UDCMode udc, boolean isDirect)
 			throws DOMException {
 		IType listType = getInitListType(target);
-		if (listType == null && target instanceof IArrayType) {
-			Number arraySize = ((IArrayType) target).getSize().numberValue();
-			if (arraySize != null) {
-				IType elementType = ((IArrayType) target).getType();
-				// TODO(nathanridge): If there are fewer initializer clauses than the array size,
-				// then the element type is required to be default-constructible.
-				if (arg.getClauses().length <= arraySize.longValue()) {
-					listType = elementType;
-				}
-			}
-		}
-
 		if (listType != null) {
-			ICPPEvaluation[] clauses = arg.getClauses();
 			Cost worstCost = new Cost(arg.getType(), target, Rank.IDENTITY);
-			for (ICPPEvaluation clause : clauses) {
+			for (ICPPEvaluation clause : arg.getClauses()) {
 				Cost cost = checkImplicitConversionSequence(listType, clause.getType(), clause.getValueCategory(),
 						UDCMode.ALLOWED, Context.ORDINARY);
 				if (!cost.converts())
@@ -467,6 +388,8 @@ public class Conversions {
 				}
 			}
 			return worstCost;
+		} else if (target instanceof IArrayType) {
+			return new AggregateInitialization().check(target, arg);
 		}
 
 		IType noCVTarget = getNestedType(target, CVTYPE | TDEF);
@@ -475,10 +398,12 @@ public class Conversions {
 				return Cost.NO_CONVERSION;
 
 			ICPPClassType classTarget = (ICPPClassType) noCVTarget;
-			if (TypeTraits.isAggregateClass(classTarget) && checkAggregateInitialization(arg, classTarget)) {
-				Cost cost = new Cost(arg.getType(), target, Rank.IDENTITY);
-				cost.setUserDefinedConversion(null);
-				return cost;
+			if (TypeTraits.isAggregateClass(classTarget)) {
+				Cost cost = new AggregateInitialization().check(classTarget, arg);
+				if (cost.converts()) {
+					cost.setUserDefinedConversion(null);
+					return cost;
+				}
 			}
 			return listInitializationOfClass(arg, classTarget, isDirect, udc == UDCMode.DEFER);
 		}

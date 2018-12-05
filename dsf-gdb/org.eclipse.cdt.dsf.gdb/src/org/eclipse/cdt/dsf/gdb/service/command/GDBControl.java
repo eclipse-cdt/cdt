@@ -20,6 +20,7 @@
  *                                             if it is still running (bug 373845)
  *     Marc Khouzam (Ericsson) - Terminate the session if we lose the connection to the remote target (bug 422586)
  *     Marc Khouzam (Ericsson) - Allow to override the creation of the ControlDMC (Bug 389945)
+ *     STMicroelectronics - Allow to override the IGDBBackend instance to use (Bug 542436)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -241,6 +242,15 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		return GdbPlugin.getBundleContext();
 	}
 
+	/**
+	 * Return the GDB back end this GDB control shall manage.
+	 * @return The IGDBBackend instance
+	 * @since 5.6
+	 */
+	protected IGDBBackend getGDBBackend() {
+		return getServicesTracker().getService(IGDBBackend.class);
+	}
+
 	@Override
 	public void initialize(final RequestMonitor requestMonitor) {
 		super.initialize(new ImmediateRequestMonitor(requestMonitor) {
@@ -253,7 +263,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
 	private void doInitialize(final RequestMonitor requestMonitor) {
 
-		fMIBackend = getServicesTracker().getService(IGDBBackend.class);
+		fMIBackend = getGDBBackend();
 
 		// getId, called to create this context, uses the MIBackend service,
 		// which is why we must wait until we have MIBackend, before we can create the below context.

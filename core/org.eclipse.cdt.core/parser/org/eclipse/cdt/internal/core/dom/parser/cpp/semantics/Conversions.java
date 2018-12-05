@@ -728,11 +728,16 @@ public class Conversions {
 				}
 			}
 		}
+
 		final IBinding result = CPPSemantics.resolveFunction(data, filteredConstructors, true, false);
 		final Cost c;
 		if (result instanceof ICPPMethod) {
-			c = new Cost(arg.getType(), t, Rank.IDENTITY);
-			c.setUserDefinedConversion((ICPPMethod) result);
+			if (!isDirect && ((ICPPMethod) result).isExplicit()) {
+				c = Cost.NO_CONVERSION;
+			} else {
+				c = new Cost(arg.getType(), t, Rank.IDENTITY);
+				c.setUserDefinedConversion((ICPPMethod) result);
+			}
 		} else if (result instanceof IProblemBinding
 				&& ((IProblemBinding) result).getID() == IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP) {
 			c = new Cost(arg.getType(), t, Rank.USER_DEFINED_CONVERSION);

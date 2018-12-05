@@ -148,6 +148,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
@@ -4225,13 +4226,15 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	}
 
 	// class X {
-	//    X(const X &);
+	// public:
+	//   X(const X &);
 	// };
 	// class Y {
-	//    operator X ();
+	// public:
+	//    operator X();
 	// };
 	// Y y;
-	// X x = new X(y);
+	// X* x = new X(y);
 	public void testBug90654a() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector(true);
@@ -12776,5 +12779,59 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	};
 	public void testElabSpecInTrailingReturn_535777() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//	struct type {
+	//		type(int,int){};
+	//	};
+	//
+	//	int main() {
+	//		type a0(1,2);
+	//		type a1{1,2};
+	//		type a2 = {1,2};
+	//		type a3(1,2,3);
+	//		type a4{1,2,3};
+	//		type a5 = {1,2,3};
+	//	}
+	public void testInitListConstructor_542448() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertImplicitName("a0", 2, CPPConstructor.class);
+		bh.assertImplicitName("a1", 2, CPPConstructor.class);
+		bh.assertImplicitName("a2", 2, CPPConstructor.class);
+
+		bh.assertImplicitName("a3", 2, IProblemBinding.class);
+		bh.assertImplicitName("a4", 2, IProblemBinding.class);
+		bh.assertImplicitName("a5", 2, IProblemBinding.class);
+	}
+
+	//	struct type {
+	//		explicit type(int,int){};
+	//	};
+	//
+	//	int main() {
+	//		type a0(1,2); // ok
+	//		type a1{1,2}; // ok
+	//		type a2 = {1,2}; // error: using explict ctor
+	//	}
+	public void testInitListConstructorWithExplicit_542448() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertImplicitName("a0", 2, CPPConstructor.class);
+		bh.assertImplicitName("a1", 2, CPPConstructor.class);
+		bh.assertImplicitName("a2", 2, IProblemBinding.class);
+	}
+
+	// struct type {
+	//     explicit type(int,int);
+	//     type(float,float);
+	// };
+	// int main() {
+	//     type a0 = {1,2};
+	// }
+	public void testInitListConstructorWithExplicit2_542448() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		// ill-formed, because overload resolution
+		// prefers the (int,int) constructor
+		// which is explicit
+		bh.assertImplicitName("a0", 2, IProblemBinding.class);
 	}
 }

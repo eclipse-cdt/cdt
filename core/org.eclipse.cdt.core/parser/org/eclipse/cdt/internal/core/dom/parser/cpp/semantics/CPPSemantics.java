@@ -3738,6 +3738,9 @@ public class CPPSemantics {
 						if (f instanceof ICPPConstructor)
 							return f;
 						// If a conversion is used, the constructor is elided.
+					} else {
+						return new ProblemBinding(null, typeId, ISemanticProblem.BINDING_NOT_FOUND,
+								type.getConstructors());
 					}
 				}
 			} else if (initializer instanceof ICPPASTInitializerList) {
@@ -3749,6 +3752,9 @@ public class CPPSemantics {
 						ICPPFunction f = c.getUserDefinedConversion();
 						if (f instanceof ICPPConstructor)
 							return f;
+					} else {
+						return new ProblemBinding(null, typeId, ISemanticProblem.BINDING_NOT_FOUND,
+								type.getConstructors());
 					}
 				}
 			} else if (initializer instanceof ICPPASTConstructorInitializer) {

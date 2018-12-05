@@ -150,12 +150,18 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 
 	@Override
 	public String getName() {
-		return node instanceof IASTName ? new String(((IASTName) node).getSimpleID()) : CPPSemantics.EMPTY_NAME;
+		if (node instanceof IASTName)
+			return new String(((IASTName) node).getSimpleID());
+		else
+			return arg != null ? new String(arg) : CPPSemantics.EMPTY_NAME;
 	}
 
 	@Override
 	public char[] getNameCharArray() {
-		return node instanceof IASTName ? ((IASTName) node).getSimpleID() : CharArrayUtils.EMPTY;
+		if (node instanceof IASTName)
+			return ((IASTName) node).getSimpleID();
+		else
+			return arg != null ? arg : CharArrayUtils.EMPTY;
 	}
 
 	@Override

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "4ef7bf3b_7d21c6dd",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4828,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-07T05:20:33Z",
+      "side": 1,
+      "message": "Yup!",
+      "parentUuid": "0e4aef63_b60e7b13",
+      "revId": "8799326efb5d0e964fec7bf1de5326f3042cec13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "95235bae_18f8de8e",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "c828200d_52f22d47",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2510,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-07T05:20:33Z",
+      "side": 1,
+      "message": "Yes :) Here is a testcase:\n\ntemplate \u003ctypename A, typename B \u003d int\u003e\nvoid foo(A, B \u003d 0);\ntemplate \u003ctypename A, typename... B\u003e\nvoid foo(A, B...);\nint main() {\n    foo(0);\n}\n\nGCC and clang accept this and prefer the first overload, but with this check we\u0027ll get into the third branch and it will be ambiguous.",
+      "parentUuid": "95235bae_18f8de8e",
+      "revId": "8799326efb5d0e964fec7bf1de5326f3042cec13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "77a1cb00_f2833a53",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2018-12-02T21:34:36Z",
       "side": 1,
       "message": "Is it correct?",
+      "revId": "8799326efb5d0e964fec7bf1de5326f3042cec13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab8bfbc6_3bb0c4c6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2594,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-07T05:20:33Z",
+      "side": 1,
+      "message": "Yup, that sounds good. This is a nice cleanup of this function, thanks!\n\nSmall typo: save -\u003e safe",
+      "parentUuid": "77a1cb00_f2833a53",
       "revId": "8799326efb5d0e964fec7bf1de5326f3042cec13",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

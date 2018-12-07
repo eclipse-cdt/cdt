@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b73a7dce_e161e976",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 11254,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2018-12-07T22:25:37Z",
+      "side": 1,
+      "message": "Not sure if we want this test which defines that gcc is wrong. From the standard it seems pretty clear that if both have a trailing parameter pack, none is better than the other (under the conditions of this paragraph).",
+      "revId": "f512f878531e69fb5f7a0cd1a847df4cb78154cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

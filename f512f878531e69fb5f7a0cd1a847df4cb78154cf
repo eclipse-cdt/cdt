@@ -16,6 +16,24 @@
       "revId": "f512f878531e69fb5f7a0cd1a847df4cb78154cf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "080cea3a_6036b4ae",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 11254,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-08T00:59:05Z",
+      "side": 1,
+      "message": "Keeping the test is fine. Maybe move the comment about gcc and clang into the test function body so it\u0027s harder to miss?",
+      "parentUuid": "b73a7dce_e161e976",
+      "revId": "f512f878531e69fb5f7a0cd1a847df4cb78154cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

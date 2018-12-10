@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5f1aa1ad_259dbc42",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3743,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-10T07:07:19Z",
+      "side": 1,
+      "message": "This is not ideal, for two reasons:\n\n- It\u0027s duplicating work. The work of calling listInitializationSequence() that the recursive call will do, was already done by checkImplicitConversionSequence().\n\n- It\u0027s subtly wrong. We\u0027ll call listInitializationSequence() with isDirect\u003dtrue, which will consider explicit constructors, which shouldn\u0027t be considered with an equals-initializer. checkImplicitConversionSequence(), on the other hand, correctly calls listInitializationSequence() with isDirect\u003dfalse in this case.\n\nInstead, we can just construct a ProblemBinding directly, something like \"new ProblemBinding(null, typeId, ISemanticProblem.BINDING_AMBIGUOUS_LOOKUP, getConstructors())\".",
+      "revId": "b7d137797c5554987d860ab2ea41f4abd470e4da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "50a4d3b4_5630750f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3758,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-10T07:07:19Z",
+      "side": 1,
+      "message": "Likewise.",
+      "revId": "b7d137797c5554987d860ab2ea41f4abd470e4da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

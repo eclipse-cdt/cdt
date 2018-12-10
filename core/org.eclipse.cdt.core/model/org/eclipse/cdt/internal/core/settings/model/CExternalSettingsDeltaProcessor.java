@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2018 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Christian Walther (Indel AG) - [335344] changing language IDs
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -147,15 +148,7 @@ public class CExternalSettingsDeltaProcessor {
 		ICLanguageSetting setting = des.getLanguageSetting();
 		if (setting == null)
 			return false;
-
-		boolean changed = false;
-		for (ExtSettingsDelta delta : deltas) {
-			if (isSettingCompatible(setting, delta.fSetting)) {
-				if (applyDelta(setting, delta, kindMask))
-					changed = true;
-			}
-		}
-		return changed;
+		return applyDelta(setting, deltas, kindMask);
 	}
 
 	static boolean applyDelta(ICFolderDescription des, ExtSettingsDelta deltas[], int kindMask) {
@@ -173,16 +166,24 @@ public class CExternalSettingsDeltaProcessor {
 
 	static boolean applyDelta(ICLanguageSetting setting, ExtSettingsDelta[] deltas, int kindMask) {
 		boolean changed = false;
+		// apply removals before additions in case several deltas apply to the same setting
 		for (ExtSettingsDelta delta : deltas) {
 			if (isSettingCompatible(setting, delta.fSetting)) {
-				if (applyDelta(setting, delta, kindMask))
+				if (applyDelta(setting, delta, kindMask, false, true))
+					changed = true;
+			}
+		}
+		for (ExtSettingsDelta delta : deltas) {
+			if (isSettingCompatible(setting, delta.fSetting)) {
+				if (applyDelta(setting, delta, kindMask, true, false))
 					changed = true;
 			}
 		}
 		return changed;
 	}
 
-	static boolean applyDelta(ICLanguageSetting setting, ExtSettingsDelta delta, int kindMask) {
+	static boolean applyDelta(ICLanguageSetting setting, ExtSettingsDelta delta, int kindMask, boolean additions,
+			boolean removals) {
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		ICLanguageSettingEntry entries[];
 		ICSettingEntry diff[][];
@@ -196,7 +197,8 @@ public class CExternalSettingsDeltaProcessor {
 				continue;
 
 			entries = setting.getSettingEntries(kind);
-			List<ICLanguageSettingEntry> list = calculateUpdatedEntries(entries, diff[0], diff[1]);
+			List<ICLanguageSettingEntry> list = calculateUpdatedEntries(entries, additions ? diff[0] : null,
+					removals ? diff[1] : null);
 
 			if (list != null) {
 				setting.setSettingEntries(kind, list);

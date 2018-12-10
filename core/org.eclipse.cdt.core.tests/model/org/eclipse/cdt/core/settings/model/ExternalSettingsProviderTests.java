@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Intel Corporation and others.
+ * Copyright (c) 2007, 2018 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,8 @@ package org.eclipse.cdt.core.settings.model;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -405,6 +407,82 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
 		assertEquals(1, entries.length);
 		assertTrue(Arrays.equals(expectedEntriesSet, entries));
+	}
+
+	/**
+	 * Test if moving an entry to an external setting with different language IDs works
+	 */
+	public void testChangeLanguageSetMove() throws CoreException {
+		TestExtSettingsProvider.setVariantNum(5);
+
+		CoreModel model = CoreModel.getDefault();
+		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
+		IProject project = p5.getProject();
+
+		// add external settings provider
+		ICProjectDescription des = model.getProjectDescription(project);
+		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
+		String[] extPIds = new String[] { TestExtSettingsProvider.TEST_EXTERNAL_PROVIDER_ID };
+		cfgDes.setExternalSettingsProviderIds(extPIds);
+		model.setProjectDescription(project, des);
+
+		// read out the settings it caused
+		des = model.getProjectDescription(project, false);
+		cfgDes = des.getConfigurations()[0];
+		ICFolderDescription root = cfgDes.getRootFolderDescription();
+		HashMap<String, ICLanguageSetting> languageSettingsById = new HashMap<>();
+		for (ICLanguageSetting s : root.getLanguageSettings()) {
+			languageSettingsById.put(s.getLanguageId(), s);
+		}
+
+		ICLanguageSetting ls;
+		ICLanguageSettingEntry[] entries;
+		Set<ICLanguageSettingEntry> expectedEntries1 = new HashSet<>(
+				Arrays.asList(new CMacroEntry("MACRO_1", "Value1", 0)));
+		Set<ICLanguageSettingEntry> expectedEntries12 = new HashSet<>(
+				Arrays.asList(new CMacroEntry("MACRO_1", "Value1", 0), new CMacroEntry("MACRO_2", "Value2", 0)));
+		Set<ICLanguageSettingEntry> expectedEntries123 = new HashSet<>(
+				Arrays.asList(new CMacroEntry("MACRO_1", "Value1", 0), new CMacroEntry("MACRO_2", "Value2", 0),
+						new CMacroEntry("MACRO_3", "Value3", 0)));
+
+		// MACRO_2 should be present for assembly but not for C
+		ls = languageSettingsById.get("org.eclipse.cdt.core.assembly");
+		assertNotNull(ls);
+		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
+		assertEquals(3, entries.length);
+		assertEquals(expectedEntries123, new HashSet<>(Arrays.asList(entries)));
+
+		ls = languageSettingsById.get("org.eclipse.cdt.core.gcc");
+		assertNotNull(ls);
+		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
+		assertEquals(1, entries.length);
+		assertEquals(expectedEntries1, new HashSet<>(Arrays.asList(entries)));
+
+		// update settings provider
+		TestExtSettingsProvider.setVariantNum(6);
+		mngr.updateExternalSettingsProviders(extPIds, null);
+
+		// read out the settings it caused
+		des = model.getProjectDescription(project, false);
+		cfgDes = des.getConfigurations()[0];
+		root = cfgDes.getRootFolderDescription();
+		languageSettingsById = new HashMap<>();
+		for (ICLanguageSetting s : root.getLanguageSettings()) {
+			languageSettingsById.put(s.getLanguageId(), s);
+		}
+
+		// MACRO_2 should be present for both now
+		ls = languageSettingsById.get("org.eclipse.cdt.core.gcc");
+		assertNotNull(ls);
+		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
+		assertEquals(2, entries.length);
+		assertEquals(expectedEntries12, new HashSet<>(Arrays.asList(entries)));
+
+		ls = languageSettingsById.get("org.eclipse.cdt.core.assembly");
+		assertNotNull(ls);
+		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
+		assertEquals(3, entries.length);
+		assertEquals(expectedEntries123, new HashSet<>(Arrays.asList(entries)));
 	}
 
 	/**

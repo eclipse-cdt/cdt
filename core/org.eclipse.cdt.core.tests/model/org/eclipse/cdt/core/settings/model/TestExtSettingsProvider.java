@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Intel Corporation and others.
+ * Copyright (c) 2007, 2018 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,8 +59,20 @@ public class TestExtSettingsProvider extends CExternalSettingProvider {
 			new CExternalSetting(new String[] { "org.eclipse.cdt.core.assembly" }, null, null,
 					new ICSettingEntry[] { new CMacroEntry("THE_MACRO", "TheValue", 0) }) };
 
+	private static CExternalSetting[] SETTINGS_6 = new CExternalSetting[] {
+			new CExternalSetting(null, null, null, new ICSettingEntry[] { new CMacroEntry("MACRO_1", "Value1", 0) }),
+			new CExternalSetting(new String[] { "org.eclipse.cdt.core.assembly" }, null, null, new ICSettingEntry[] {
+					new CMacroEntry("MACRO_2", "Value2", 0), new CMacroEntry("MACRO_3", "Value3", 0) }) };
+
+	private static CExternalSetting[] SETTINGS_7 = new CExternalSetting[] {
+			new CExternalSetting(null, null, null,
+					new ICSettingEntry[] { new CMacroEntry("MACRO_1", "Value1", 0),
+							new CMacroEntry("MACRO_2", "Value2", 0) }),
+			new CExternalSetting(new String[] { "org.eclipse.cdt.core.assembly" }, null, null,
+					new ICSettingEntry[] { new CMacroEntry("MACRO_3", "Value3", 0) }) };
+
 	public static final CExternalSetting[][] SETTINGS_VARIANTS = new CExternalSetting[][] { SETTINGS_1, SETTINGS_2,
-			SETTINGS_3, SETTINGS_4, SETTINGS_5 };
+			SETTINGS_3, SETTINGS_4, SETTINGS_5, SETTINGS_6, SETTINGS_7 };
 
 	private static int variantNum;
 

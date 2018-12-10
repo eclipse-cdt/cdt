@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "e0154095_ff9be7cf",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3743,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-10T07:18:38Z",
+      "side": 1,
+      "message": "\u003e Here\u0027s a test case for this, but getting it right seems to require\n \u003e additional work beyond my suggestion\n\nSpecifically, listInitializationOfClass() is missing a check of isDirect during the second phase.",
+      "parentUuid": "a01bee93_e01a1c0e",
+      "revId": "b7d137797c5554987d860ab2ea41f4abd470e4da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "50a4d3b4_5630750f",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 1

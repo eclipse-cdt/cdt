@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f3184c59_182a903a",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/CExternalSettingsDeltaProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-12-10T12:14:34Z",
+      "side": 1,
+      "message": "There is no problem with you adding Contributors, but it is no longer policy to add them so you can feel free to omit them in future.",
+      "revId": "f2f92ab4045802da83d2efeae9548a4fd544becb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

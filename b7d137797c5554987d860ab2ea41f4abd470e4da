@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a01bee93_e01a1c0e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3743,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-10T07:12:35Z",
+      "side": 1,
+      "message": "\u003e - It\u0027s subtly wrong. We\u0027ll call listInitializationSequence() with\n \u003e isDirect\u003dtrue, which will consider explicit constructors, which\n \u003e shouldn\u0027t be considered with an equals-initializer.\n \u003e checkImplicitConversionSequence(), on the other hand, correctly\n \u003e calls listInitializationSequence() with isDirect\u003dfalse in this\n \u003e case.\n\nHere\u0027s a test case for this, but getting it right seems to require additional work beyond my suggestion:\n\nstruct type{\n    explicit type(int,int, int);\n};\n\nint main() {\n    type a2 \u003d {1,2,3};  // ill-formed, should give an error\n}\n\n \u003e Instead, we can just construct a ProblemBinding directly, something\n \u003e like \"new ProblemBinding(null, typeId, ISemanticProblem.BINDING_AMBIGUOUS_LOOKUP,\n \u003e getConstructors())\".\n\n(\"type.getConstructors()\" for the last argument)",
+      "parentUuid": "5f1aa1ad_259dbc42",
+      "revId": "b7d137797c5554987d860ab2ea41f4abd470e4da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "50a4d3b4_5630750f",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 1

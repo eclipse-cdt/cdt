@@ -34,6 +34,24 @@
       "revId": "0050520bee429f87317f0bcd496ab928639f5126",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "febde552_06fa855f",
+        "filename": "releng/org.eclipse.cdt.platform-feature/feature.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2018-12-11T12:05:20Z",
+      "side": 1,
+      "message": "Probably something we should look at rationalising maybe? Though I guess it helps people get the smallest possible install.",
+      "parentUuid": "38ec5609_3bad6d1f",
+      "revId": "0050520bee429f87317f0bcd496ab928639f5126",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

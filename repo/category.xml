@@ -9,7 +9,13 @@
    <bundle id="org.eclipse.tools.templates.freemarker" version="0.0.0">
       <category name="main"/>
    </bundle>
+   <bundle id="org.eclipse.tools.templates.freemarker.java11" version="0.0.0">
+      <category name="main"/>
+   </bundle>
    <bundle id="org.eclipse.tools.templates.freemarker.source" version="0.0.0">
+      <category name="main"/>
+   </bundle>
+   <bundle id="org.eclipse.tools.templates.freemarker.java11.source" version="0.0.0">
       <category name="main"/>
    </bundle>
    <bundle id="org.eclipse.tools.templates.ui" version="0.0.0">

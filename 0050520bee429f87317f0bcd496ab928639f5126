@@ -16,6 +16,24 @@
       "revId": "0050520bee429f87317f0bcd496ab928639f5126",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "38ec5609_3bad6d1f",
+        "filename": "releng/org.eclipse.cdt.platform-feature/feature.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-12-11T11:43:23Z",
+      "side": 1,
+      "message": "Yes, of course. I didn\u0027t realize you could install meson feature without getting \"main\" CDT feature.",
+      "parentUuid": "73348bd1_db4d96bc",
+      "revId": "0050520bee429f87317f0bcd496ab928639f5126",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

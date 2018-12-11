@@ -16,11 +16,13 @@ import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.ui.IRemoteUIConnectionWizard;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -29,6 +31,18 @@ public class NewArduinoTargetWizard extends Wizard implements IRemoteUIConnectio
 	private NewArduinoTargetWizardPage page;
 	private IRemoteConnectionWorkingCopy workingCopy;
 	private boolean isNewWizard;
+	private Shell shell;
+	private IRemoteConnectionType connectionType;
+
+	public NewArduinoTargetWizard(Shell shell, IRemoteConnectionType connectionType) {
+		this.shell = shell;
+		this.connectionType = connectionType;
+	}
+
+	public NewArduinoTargetWizard() {
+		this.connectionType = Activator.getService(IRemoteServicesManager.class)
+				.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
+	}
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
@@ -38,6 +52,10 @@ public class NewArduinoTargetWizard extends Wizard implements IRemoteUIConnectio
 	@Override
 	public void addPages() {
 		page = new NewArduinoTargetWizardPage();
+		// Editing an existing Connection
+		if (workingCopy != null) {
+			page.setWorkingCopy(workingCopy);
+		}
 		addPage(page);
 	}
 
@@ -63,16 +81,19 @@ public class NewArduinoTargetWizard extends Wizard implements IRemoteUIConnectio
 
 	@Override
 	public IRemoteConnectionWorkingCopy open() {
-		return getConnection();
+		WizardDialog dialog = new WizardDialog(shell, this);
+		dialog.setBlockOnOpen(true);
+		if (dialog.open() == WizardDialog.OK) {
+			return getConnection();
+		}
+		return null;
 	}
 
 	@Override
 	public IRemoteConnectionWorkingCopy getConnection() {
 		if (workingCopy == null) {
-			IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
-			IRemoteConnectionType connectionType = remoteManager.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
 			try {
-				workingCopy = connectionType.newConnection(page.name);
+				workingCopy = connectionType.newConnection(page.getConnectionName());
 			} catch (RemoteConnectionException e) {
 				Activator.getDefault().getLog().log(e.getStatus());
 				return null;

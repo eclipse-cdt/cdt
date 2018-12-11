@@ -38,6 +38,11 @@ public class SystemBuildConsole implements IConsole {
 			public synchronized void write(int c) throws java.io.IOException {
 				System.out.write(c);
 			}
+
+			@Override
+			public synchronized void write(String msg) throws java.io.IOException {
+				System.out.print(msg);
+			}
 		};
 		err = new ConsoleOutputStream() {
 			@Override
@@ -48,6 +53,11 @@ public class SystemBuildConsole implements IConsole {
 			@Override
 			public synchronized void write(int c) throws java.io.IOException {
 				System.err.write(c);
+			}
+
+			@Override
+			public synchronized void write(String msg) throws java.io.IOException {
+				System.err.print(msg);
 			}
 		};
 	}

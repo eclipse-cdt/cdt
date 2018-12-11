@@ -167,7 +167,7 @@ public class BoardPropertyControl extends Composite {
 			HierarchicalProperties programmers = board.getPlatform().getProgrammers();
 			if (programmers != null && programmers.getChildren() != null) {
 				programmerLabel = new Label(this, SWT.NONE);
-				programmerLabel.setText("Programmer:");
+				programmerLabel.setText("Programmer:"); //$NON-NLS-1$
 
 				programmerCombo = new Combo(this, SWT.READ_ONLY);
 				programmerCombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
@@ -240,6 +240,46 @@ public class BoardPropertyControl extends Composite {
 			@SuppressWarnings("unchecked")
 			String programmer = ((List<String>) programmerCombo.getData()).get(programmerCombo.getSelectionIndex());
 			ArduinoRemoteConnection.setProgrammer(workingCopy, programmer);
+		}
+	}
+
+	public void updateFromOriginal(ArduinoRemoteConnection arduinoService) throws CoreException {
+		// Set and select the portname
+		portCombo.setText(arduinoService.getPortName());
+		portName = arduinoService.getPortName();
+
+		// Set and select the board
+		boardCombo.setText(arduinoService.getBoard().getName());
+		boardChanged();
+
+		// Lock changing of board
+		boardCombo.setEnabled(false);
+
+		// Set the programmer
+		if (!arduinoService.getProgrammer().isEmpty() && programmerCombo != null && !programmerCombo.isDisposed()) {
+			programmerCombo.setText(board.getPlatform().getProgrammers().getChild(arduinoService.getProgrammer())
+					.getChild("name").getValue()); //$NON-NLS-1$
+		}
+
+		// Set all properties based on the displayed Controls.
+		String key = null;
+		// Loop over all controls. Labels and corresponding combos are saved in order
+		for (Control control : menuControls) {
+			if (control instanceof Label) {
+				// the label is the key
+				key = (String) control.getData();
+			} else if (control instanceof Combo) {
+				if (key != null && !arduinoService.getMenuValue(key).isEmpty()) {
+					String selectableValue = board.getMenus().getChild(key).getChild(arduinoService.getMenuValue(key))
+							.getValue();
+					((Combo) control).setText(selectableValue);
+				}
+				// reset key
+				key = null;
+			} else {
+				// unexpected order - reset key
+				key = null;
+			}
 		}
 	}
 

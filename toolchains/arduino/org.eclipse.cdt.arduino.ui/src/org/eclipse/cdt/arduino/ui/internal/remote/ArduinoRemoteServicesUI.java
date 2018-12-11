@@ -63,7 +63,7 @@ public class ArduinoRemoteServicesUI extends AbstractRemoteUIConnectionService {
 
 	@Override
 	public IRemoteUIConnectionWizard getConnectionWizard(Shell shell) {
-		return new NewArduinoTargetWizard();
+		return new NewArduinoTargetWizard(shell, connectionType);
 	}
 
 	@Override

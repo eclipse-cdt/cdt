@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal.remote;
 
+import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
+import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.swt.SWT;
@@ -26,8 +29,9 @@ import org.eclipse.swt.widgets.Text;
 
 public class NewArduinoTargetWizardPage extends WizardPage {
 
-	String name;
+	private String connectionName;
 	private Text nameText;
+	private IRemoteConnectionWorkingCopy workingCopy;
 
 	BoardPropertyControl boardControl;
 
@@ -55,7 +59,7 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 		nameText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				name = nameText.getText();
+				connectionName = nameText.getText();
 				updateStatus();
 			}
 
@@ -73,12 +77,18 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 			}
 		});
 
+		try {
+			updateFromWorkingCopy();
+		} catch (CoreException e) {
+			Activator.log(e);
+		}
+
 		setControl(comp);
-		setPageComplete(false);
+		updateStatus();
 	}
 
 	private void updateStatus() {
-		setPageComplete(name != null && !name.isEmpty() && boardControl.getPortName() != null
+		setPageComplete(connectionName != null && !connectionName.isEmpty() && boardControl.getPortName() != null
 				&& boardControl.getSelectedBoard() != null);
 	}
 
@@ -86,4 +96,29 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 		boardControl.apply(workingCopy);
 	}
 
+	public String getConnectionName() {
+		return connectionName;
+	}
+
+	public void setWorkingCopy(IRemoteConnectionWorkingCopy workingCopy) {
+		this.workingCopy = workingCopy;
+	}
+
+	private void updateFromWorkingCopy() throws CoreException {
+		if (null == workingCopy || null == workingCopy.getOriginal())
+			return;
+
+		ArduinoRemoteConnection arduinoService = workingCopy.getService(ArduinoRemoteConnection.class);
+
+		if (null == arduinoService)
+			return;
+
+		// Set the originalName and lock control for it
+		nameText.setText(workingCopy.getOriginal().getName());
+		nameText.setEnabled(false);
+		connectionName = workingCopy.getOriginal().getName();
+
+		// Set all other fields with existing data
+		boardControl.updateFromOriginal(arduinoService);
+	}
 }

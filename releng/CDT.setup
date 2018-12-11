@@ -206,7 +206,7 @@
           <repository
               url="http://download.eclipse.org/tm/terminal/updates/4.4milestones/"/>
           <repository
-              url="http://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.template-1.1.1-simrel-2018-12/"/>
+              url="http://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.template-1.1.1-simrel-2018-12a/"/>
           <repository
               url="http://download.eclipse.org/tm4e/snapshots/"/>
           <repository

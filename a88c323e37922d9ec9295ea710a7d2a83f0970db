@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6a7ffa0a_7c700d93",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3780,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-13T07:59:49Z",
+      "side": 1,
+      "message": "Seems like this signature change is unnecessary now?",
+      "revId": "a88c323e37922d9ec9295ea710a7d2a83f0970db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ed3e616_2e4a447c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 732,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-13T07:59:49Z",
+      "side": 1,
+      "message": "I realize we are straying from the original purpose of the bug, but... I don\u0027t think that filtering the candidates before performing overload resolution (resolveFunction()) is the right place to check.\n\n[over.match.list] says that in the second phase, \"overload resolution is performed again, where the candidate functions are all the constructors of the class\", and later, \"if an explicit constructor is chosen, the initialization is ill-formed\".\n\nSo it seems we should be performing overload resolution with all constructors (including explicit ones), but if the chosen overload is explicit, then refusing the conversion. Note that the first phase already does it this way.\n\nTest case:\n\nstruct type {\n    explicit type(int,int);\n    type(float,float);\n};\nint main() {\n    // ill-formed, because overload resolution\n    // prefers the (int,int) constructor\n    // which is explicit\n    type a2 \u003d {1,2};\n}",
+      "revId": "a88c323e37922d9ec9295ea710a7d2a83f0970db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

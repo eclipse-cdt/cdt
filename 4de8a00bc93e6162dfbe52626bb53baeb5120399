@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cfa96ff7_2f758292",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 12835,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2018-12-14T07:33:16Z",
+      "side": 1,
+      "message": "The remaining problem is that the error which is reported is not very accurate for the case of explicit constructors:\n\nInvalid arguments \u0027 Candidates are: \n type(const type \u0026) type(int, int) type(float, float) \u0027\n\nTo solve this we probably have to propagate the ProblemBinding  via the Cost from Conversion to CPPSemantics. But I guess this is for later...",
+      "revId": "4de8a00bc93e6162dfbe52626bb53baeb5120399",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -34,6 +34,24 @@
       "revId": "4de8a00bc93e6162dfbe52626bb53baeb5120399",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "65d5ba74_6f82c37e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 12835,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2018-12-14T21:04:40Z",
+      "side": 1,
+      "message": "I also looked at how to do this properly:\n- add a field to Cost for ProblemBindings (currently I hacked it by reusing the fSelectedFunction (changing its type to IBinding)\n- add a new ID for this case in ISemanticProblem\n\nWould this be ok? I\u0027d do it in a separate issue.",
+      "parentUuid": "1a4cfaee_316144e0",
+      "revId": "4de8a00bc93e6162dfbe52626bb53baeb5120399",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

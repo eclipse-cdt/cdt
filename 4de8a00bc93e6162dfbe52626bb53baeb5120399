@@ -16,6 +16,24 @@
       "revId": "4de8a00bc93e6162dfbe52626bb53baeb5120399",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a4cfaee_316144e0",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 12835,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2018-12-14T20:56:47Z",
+      "side": 1,
+      "message": "As a first step I could add the explicit specifier in the function signature in ProblemBindingChecker. Should I do it in this patch?",
+      "parentUuid": "cfa96ff7_2f758292",
+      "revId": "4de8a00bc93e6162dfbe52626bb53baeb5120399",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

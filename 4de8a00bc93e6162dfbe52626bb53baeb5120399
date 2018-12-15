@@ -52,6 +52,76 @@
       "revId": "4de8a00bc93e6162dfbe52626bb53baeb5120399",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b88c8f5_f5a28209",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 12835,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-15T07:12:31Z",
+      "side": 1,
+      "message": "I\u0027m going to merge this, and we can do any improvements to the error message in a follow-up patch.",
+      "parentUuid": "1a4cfaee_316144e0",
+      "revId": "4de8a00bc93e6162dfbe52626bb53baeb5120399",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "83e09857_3625ae94",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 12835,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-15T07:12:31Z",
+      "side": 1,
+      "message": "Yep, sounds like a reasonable plan.",
+      "parentUuid": "65d5ba74_6f82c37e",
+      "revId": "4de8a00bc93e6162dfbe52626bb53baeb5120399",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "116f32e5_cfc0c7dc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 3742,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-15T07:12:31Z",
+      "side": 1,
+      "message": "Another way to improve the error messages, I think, is to use ISemanticProblem.BINDING_AMBIGUOUS_LOOKUP if type.getConstructors() contains 2 or more entries.",
+      "revId": "4de8a00bc93e6162dfbe52626bb53baeb5120399",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7566a411_01208520",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 3756,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2018-12-15T07:12:31Z",
+      "side": 1,
+      "message": "(Similarly here.)",
+      "revId": "4de8a00bc93e6162dfbe52626bb53baeb5120399",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

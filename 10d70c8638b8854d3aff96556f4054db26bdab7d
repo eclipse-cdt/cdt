@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d007d272_c84bde6a",
+        "filename": "core/org.eclipse.cdt.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2018-12-19T23:29:45Z",
+      "side": 1,
+      "message": "Might be easier to bump by more than 1 to allow for the 9.6.x releases without needing to re-bump the version on every release.",
+      "range": {
+        "startLine": 5,
+        "startChar": 20,
+        "endLine": 5,
+        "endChar": 21
+      },
+      "revId": "10d70c8638b8854d3aff96556f4054db26bdab7d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

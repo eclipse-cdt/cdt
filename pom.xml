@@ -29,7 +29,7 @@
 		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.7/</help-docs-eclipserun-repo>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
 		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
-		<comparator.repo>http://download.eclipse.org/tools/cdt/releases/9.5/cdt-9.5.4/</comparator.repo>
+		<comparator.repo>http://download.eclipse.org/tools/cdt/releases/9.6/cdt-9.6.0/</comparator.repo>
 		<compare-version-with-baselines.skip>false</compare-version-with-baselines.skip>
 		<!--
 			Valid options: error, warning, and ignore
@@ -350,24 +350,6 @@
 								<phase>none</phase>
 							</execution>
 						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-p2-plugin</artifactId>
-						<version>${tycho-version}</version>
-						<configuration>
-							<baselineMode>warn</baselineMode>
-							<baselineReplace>all</baselineReplace>
-							<baselineRepositories>
-								<repository>
-									<url>${comparator.repo}</url>
-								</repository>
-							</baselineRepositories>
-							<ignoredPatterns>
-								<pattern>META-INF/ECLIPSE_.RSA</pattern>
-								<pattern>META-INF/ECLIPSE_.SF</pattern>
-							</ignoredPatterns>
-						</configuration>
 					</plugin>
 				</plugins>
 			</build>
@@ -779,6 +761,24 @@
 						</dependencies>
 						<product>org.eclipse.platform.ide</product>
 						<argLine>${tycho.testArgLine} ${base.test.vmargs}</argLine>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-p2-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<baselineMode>warn</baselineMode>
+						<baselineReplace>all</baselineReplace>
+						<baselineRepositories>
+							<repository>
+								<url>${comparator.repo}</url>
+							</repository>
+						</baselineRepositories>
+						<ignoredPatterns>
+							<pattern>META-INF/ECLIPSE_.RSA</pattern>
+							<pattern>META-INF/ECLIPSE_.SF</pattern>
+						</ignoredPatterns>
 					</configuration>
 				</plugin>
 				<plugin>

@@ -448,7 +448,7 @@
 						<artifactId>target-platform-configuration</artifactId>
 						<version>${tycho-version}</version>
 						<configuration>
-							<includePackedArtifacts>true</includePackedArtifacts>
+							<includePackedArtifacts>false</includePackedArtifacts>
 						</configuration>
 					</plugin>
 					<plugin>
@@ -598,56 +598,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.eclipse.tycho.extras</groupId>
-				<artifactId>tycho-source-feature-plugin</artifactId>
-				<version>${tycho-extras-version}</version>
-				<configuration>
-					<includeBinaryFeature>false</includeBinaryFeature>
-				</configuration>
-				<executions>
-					<execution>
-						<id>source-feature</id>
-						<phase>package</phase>
-						<goals>
-							<goal>source-feature</goal>
-						</goals>
-						<configuration>
-							<excludes>
-								<plugin id="org.eclipse.cdt.autotools.docs"/>
-								<plugin id="org.eclipse.cdt.meson.docs"/>
-								<plugin id="org.eclipse.cdt.core.linux.ppc64le"/>
-								<plugin id="org.eclipse.cdt.core.linux.ppc64"/>
-								<plugin id="org.eclipse.cdt.core.linux.x86_64"/>
-								<plugin id="org.eclipse.cdt.core.linux.x86"/>
-								<plugin id="org.eclipse.cdt.core.win32.x86_64"/>
-								<plugin id="org.eclipse.cdt.core.win32.x86"/>
-								<plugin id="org.eclipse.cdt.debug.application.doc"/>
-								<plugin id="org.eclipse.cdt.doc.user"/>
-								<plugin id="org.eclipse.cdt.debug.gdbjtag"/>
-								<plugin id="org.eclipse.cdt"/>
-								<plugin id="net.sourceforge.lpg.lpgjavaruntime"/>
-								<plugin id="org.eclipse.ant.optional.junit"/>
-								<plugin id="org.eclipse.cdt.testing"/>
-							</excludes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-p2-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<executions>
-					<execution>
-						<id>attached-p2-metadata</id>
-						<phase>package</phase>
-						<goals>
-							<goal>p2-metadata</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.2</version>
@@ -741,6 +691,60 @@
 						</dependency>
 					</dependencies>
 				</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<configuration>
+					<includeBinaryFeature>false</includeBinaryFeature>
+				</configuration>
+				<executions>
+					<execution>
+						<id>source-feature</id>
+						<phase>package</phase>
+						<goals>
+							<goal>source-feature</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<plugin id="org.eclipse.cdt.autotools.docs"/>
+								<plugin id="org.eclipse.cdt.meson.docs"/>
+								<plugin id="org.eclipse.cdt.core.linux.ppc64le"/>
+								<plugin id="org.eclipse.cdt.core.linux.ppc64"/>
+								<plugin id="org.eclipse.cdt.core.linux.x86_64"/>
+								<plugin id="org.eclipse.cdt.core.linux.x86"/>
+								<plugin id="org.eclipse.cdt.core.win32.x86_64"/>
+								<plugin id="org.eclipse.cdt.core.win32.x86"/>
+								<plugin id="org.eclipse.cdt.debug.application.doc"/>
+								<plugin id="org.eclipse.cdt.doc.user"/>
+								<plugin id="org.eclipse.cdt.debug.gdbjtag"/>
+								<plugin id="org.eclipse.cdt"/>
+								<plugin id="net.sourceforge.lpg.lpgjavaruntime"/>
+								<plugin id="org.eclipse.ant.optional.junit"/>
+								<plugin id="org.eclipse.cdt.testing"/>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-p2-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<baselineMode>warn</baselineMode>
+						<baselineReplace>all</baselineReplace>
+						<baselineRepositories>
+							<repository>
+								<url>${comparator.repo}</url>
+							</repository>
+						</baselineRepositories>
+						<ignoredPatterns>
+							<pattern>META-INF/ECLIPSE_.RSA</pattern>
+							<pattern>META-INF/ECLIPSE_.SF</pattern>
+						</ignoredPatterns>
+					</configuration>
+				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-surefire-plugin</artifactId>
@@ -761,24 +765,6 @@
 						</dependencies>
 						<product>org.eclipse.platform.ide</product>
 						<argLine>${tycho.testArgLine} ${base.test.vmargs}</argLine>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-p2-plugin</artifactId>
-					<version>${tycho-version}</version>
-					<configuration>
-						<baselineMode>warn</baselineMode>
-						<baselineReplace>all</baselineReplace>
-						<baselineRepositories>
-							<repository>
-								<url>${comparator.repo}</url>
-							</repository>
-						</baselineRepositories>
-						<ignoredPatterns>
-							<pattern>META-INF/ECLIPSE_.RSA</pattern>
-							<pattern>META-INF/ECLIPSE_.SF</pattern>
-						</ignoredPatterns>
 					</configuration>
 				</plugin>
 				<plugin>

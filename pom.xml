@@ -767,19 +767,28 @@
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-p2-plugin</artifactId>
 					<version>${tycho-version}</version>
-					<configuration>
-						<baselineMode>warn</baselineMode>
-						<baselineReplace>all</baselineReplace>
-						<baselineRepositories>
-							<repository>
-								<url>${comparator.repo}</url>
-							</repository>
-						</baselineRepositories>
-						<ignoredPatterns>
-							<pattern>META-INF/ECLIPSE_.RSA</pattern>
-							<pattern>META-INF/ECLIPSE_.SF</pattern>
-						</ignoredPatterns>
-					</configuration>
+					<executions>
+						<execution>
+							<id>baselinereplace-p2-metadata</id>
+							<goals>
+								<goal>p2-metadata</goal>
+							</goals>
+							<phase>verify</phase>
+							<configuration>
+								<baselineMode>warn</baselineMode>
+								<baselineReplace>all</baselineReplace>
+								<baselineRepositories>
+									<repository>
+										<url>${comparator.repo}</url>
+									</repository>
+								</baselineRepositories>
+								<ignoredPatterns>
+									<pattern>META-INF/ECLIPSE_.RSA</pattern>
+									<pattern>META-INF/ECLIPSE_.SF</pattern>
+								</ignoredPatterns>
+							</configuration>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

@@ -448,7 +448,7 @@
 						<artifactId>target-platform-configuration</artifactId>
 						<version>${tycho-version}</version>
 						<configuration>
-							<includePackedArtifacts>true</includePackedArtifacts>
+							<includePackedArtifacts>false</includePackedArtifacts>
 						</configuration>
 					</plugin>
 					<plugin>

@@ -154,7 +154,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	}
 
 	@Override
-	public void setInitialSelections(Object[] selectedElements) {
+	public void setInitialSelections(Object... selectedElements) {
 		super.setInitialSelections(selectedElements);
 		fInitialSelectionSet = true;
 	}

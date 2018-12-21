@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 QNX Software Systems and others.
+ * Copyright (c) 2017, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
 package org.eclipse.launchbar.ui.internal.dialogs;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -151,15 +150,12 @@ public class NewLaunchConfigTypePage2 extends WizardPage {
 		editPage.setLaunchGroup(group);
 
 		ILaunchConfigurationType[] types = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
-		Arrays.sort(types, new Comparator<ILaunchConfigurationType>() {
-			@Override
-			public int compare(ILaunchConfigurationType type0, ILaunchConfigurationType type1) {
-				int comp = type0.getPluginIdentifier().compareTo(type1.getPluginIdentifier());
-				if (comp != 0) {
-					return comp;
-				} else {
-					return type0.getName().compareTo(type1.getName());
-				}
+		Arrays.sort(types, (type0, type1) -> {
+			int comp = type0.getPluginIdentifier().compareTo(type1.getPluginIdentifier());
+			if (comp != 0) {
+				return comp;
+			} else {
+				return type0.getName().compareTo(type1.getName());
 			}
 		});
 

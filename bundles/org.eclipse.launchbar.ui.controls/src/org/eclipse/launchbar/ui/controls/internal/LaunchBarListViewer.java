@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -39,7 +37,6 @@ import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -50,9 +47,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Widget;
 
@@ -85,57 +80,54 @@ public class LaunchBarListViewer extends StructuredViewer {
 		}
 	}
 
-	private TraverseListener listItemTraverseListener = new TraverseListener() {
-		@Override
-		public void keyTraversed(TraverseEvent e) {
-			final ListItem currItem = selIndex >= 0 ? listItems[selIndex] : null;
-			if (currItem == null && e.keyCode != SWT.ARROW_DOWN) {
-				return;
-			}
-			if (e.detail == SWT.TRAVERSE_ARROW_NEXT || e.detail == SWT.TRAVERSE_TAB_NEXT) {
-				if (e.keyCode == SWT.ARROW_DOWN) {
-					int maxIdx = listItems.length - 1;
-					if (selIndex < maxIdx) {
-						// move to next item
-						listItems[selIndex + 1].setSelected(true);
-						if (scrollBucket < maxScrollBucket) {
-							scrollBucket++;
-						} else {
-							// need to scroll the list up 1 item
-							int sY = listScrolled.getOrigin().y;
-							listScrolled.setOrigin(0, sY + itemH);
-						}
-					} else if (selIndex == maxIdx && maxIdx > maxScrollBucket) {
-						// level the scroll for any offset at the bottom of the list
-						listScrolled.setOrigin(0, itemH * (maxIdx - maxScrollBucket + 1));
+	private TraverseListener listItemTraverseListener = e -> {
+		final ListItem currItem = selIndex >= 0 ? listItems[selIndex] : null;
+		if (currItem == null && e.keyCode != SWT.ARROW_DOWN) {
+			return;
+		}
+		if (e.detail == SWT.TRAVERSE_ARROW_NEXT || e.detail == SWT.TRAVERSE_TAB_NEXT) {
+			if (e.keyCode == SWT.ARROW_DOWN) {
+				int maxIdx = listItems.length - 1;
+				if (selIndex < maxIdx) {
+					// move to next item
+					listItems[selIndex + 1].setSelected(true);
+					if (scrollBucket < maxScrollBucket) {
+						scrollBucket++;
+					} else {
+						// need to scroll the list up 1 item
+						int sY1 = listScrolled.getOrigin().y;
+						listScrolled.setOrigin(0, sY1 + itemH);
 					}
+				} else if (selIndex == maxIdx && maxIdx > maxScrollBucket) {
+					// level the scroll for any offset at the bottom of the list
+					listScrolled.setOrigin(0, itemH * (maxIdx - maxScrollBucket + 1));
 				}
-			} else if (e.detail == SWT.TRAVERSE_ARROW_PREVIOUS || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-				if (e.keyCode == SWT.ARROW_UP) {
-					if (selIndex > 0) {
-						// move to previous item
-						if (scrollBucket > 0) {
-							scrollBucket--;
-						} else {
-							// need to scroll the list down 1 item
-							int sY = listScrolled.getOrigin().y;
-							listScrolled.setOrigin(0, sY - itemH);
-						}
-						listItems[selIndex - 1].setSelected(true);
-					} else if (selIndex == 0) {
-						// level any offset @ beginning
-						listScrolled.setOrigin(0, 0);
-					}
-				} else if (currItem.editButton != null) {
-					// remove focus from edit button
-					currItem.editButton.setSelected(false);
-					currItem.editButton.redraw();
-				}
-			} else if (e.detail == SWT.TRAVERSE_RETURN) {
-				setDefaultSelection(new StructuredSelection(currItem.element));
-			} else if (e.detail == SWT.TRAVERSE_ESCAPE) {
-				setDefaultSelection(new StructuredSelection());
 			}
+		} else if (e.detail == SWT.TRAVERSE_ARROW_PREVIOUS || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+			if (e.keyCode == SWT.ARROW_UP) {
+				if (selIndex > 0) {
+					// move to previous item
+					if (scrollBucket > 0) {
+						scrollBucket--;
+					} else {
+						// need to scroll the list down 1 item
+						int sY2 = listScrolled.getOrigin().y;
+						listScrolled.setOrigin(0, sY2 - itemH);
+					}
+					listItems[selIndex - 1].setSelected(true);
+				} else if (selIndex == 0) {
+					// level any offset @ beginning
+					listScrolled.setOrigin(0, 0);
+				}
+			} else if (currItem.editButton != null) {
+				// remove focus from edit button
+				currItem.editButton.setSelected(false);
+				currItem.editButton.redraw();
+			}
+		} else if (e.detail == SWT.TRAVERSE_RETURN) {
+			setDefaultSelection(new StructuredSelection(currItem.element));
+		} else if (e.detail == SWT.TRAVERSE_ESCAPE) {
+			setDefaultSelection(new StructuredSelection());
 		}
 	};
 
@@ -308,12 +300,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 			icon.setImage(image);
 			if (disposeImage) {
 				final Image disposableImage = image;
-				icon.addDisposeListener(new DisposeListener() {
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						disposableImage.dispose();
-					}
-				});
+				icon.addDisposeListener(e -> disposableImage.dispose());
 			}
 			icon.setBackground(parent.getBackground());
 			return icon;
@@ -361,12 +348,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 			sash.moveBelow(null);
 
 		sash.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION));
-		sash.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				separatorIndex = (e.y + itemH / 2) / itemH;
-			}
-		});
+		sash.addListener(SWT.Selection, e -> separatorIndex = (e.y + itemH / 2) / itemH);
 		sash.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent e) {

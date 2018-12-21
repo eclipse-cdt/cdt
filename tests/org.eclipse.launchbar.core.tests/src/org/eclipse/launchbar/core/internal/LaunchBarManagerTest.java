@@ -37,8 +37,6 @@ import org.eclipse.launchbar.core.ILaunchDescriptorType;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 public class LaunchBarManagerTest {
 	@Test
@@ -172,12 +170,9 @@ public class LaunchBarManagerTest {
 		doReturn(launchConfig).when(configProvider).getLaunchConfiguration(eq(descriptor), any(ILaunchTarget.class));
 		doReturn(launchConfigType).when(configProvider).getLaunchConfigurationType(any(ILaunchDescriptor.class),
 				any(ILaunchTarget.class));
-		doAnswer(new Answer<Boolean>() {
-			@Override
-			public Boolean answer(InvocationOnMock invocation) throws Throwable {
-				ILaunchTarget target = (ILaunchTarget) invocation.getArguments()[1];
-				return target.getTypeId().equals(ILaunchTargetManager.localLaunchTargetTypeId);
-			}
+		doAnswer(invocation -> {
+			ILaunchTarget target = (ILaunchTarget) invocation.getArguments()[1];
+			return target.getTypeId().equals(ILaunchTargetManager.localLaunchTargetTypeId);
 		}).when(configProvider).supports(eq(descriptor), any(ILaunchTarget.class));
 
 		doReturn(elements.toArray(new IConfigurationElement[0])).when(extension).getConfigurationElements();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -191,23 +191,20 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 	}
 
 	protected void saveEditors(final Collection<IProject> projects) {
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-				for (IWorkbenchWindow window : windows) {
-					IWorkbenchPage[] pages = window.getPages();
-					for (IWorkbenchPage page : pages) {
-						if (projects.isEmpty()) {
-							page.saveAllEditors(false);
-						} else {
-							IEditorPart[] editors = page.getDirtyEditors();
-							for (IEditorPart editor : editors) {
-								IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
-								if (inputFile != null) {
-									if (projects.contains(inputFile.getProject())) {
-										page.saveEditor(editor, false);
-									}
+		Display.getDefault().syncExec(() -> {
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			for (IWorkbenchWindow window : windows) {
+				IWorkbenchPage[] pages = window.getPages();
+				for (IWorkbenchPage page : pages) {
+					if (projects.isEmpty()) {
+						page.saveAllEditors(false);
+					} else {
+						IEditorPart[] editors = page.getDirtyEditors();
+						for (IEditorPart editor : editors) {
+							IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
+							if (inputFile != null) {
+								if (projects.contains(inputFile.getProject())) {
+									page.saveEditor(editor, false);
 								}
 							}
 						}

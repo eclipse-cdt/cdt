@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -31,21 +29,18 @@ public class CButton extends Canvas {
 
 	public CButton(Composite parent, int style) {
 		super(parent, style);
-		addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				if (inButton) {
-					if (hotImage != null) {
-						e.gc.drawImage(hotImage, 0, 0);
-					} else if (coldImage != null) {
-						e.gc.drawImage(coldImage, 0, 0);
-					}
-				} else {
-					if (coldImage != null) {
-						e.gc.drawImage(coldImage, 0, 0);
-					} else if (hotImage != null) {
-						e.gc.drawImage(hotImage, 0, 0);
-					}
+		addPaintListener(e -> {
+			if (inButton) {
+				if (hotImage != null) {
+					e.gc.drawImage(hotImage, 0, 0);
+				} else if (coldImage != null) {
+					e.gc.drawImage(coldImage, 0, 0);
+				}
+			} else {
+				if (coldImage != null) {
+					e.gc.drawImage(coldImage, 0, 0);
+				} else if (hotImage != null) {
+					e.gc.drawImage(hotImage, 0, 0);
 				}
 			}
 		});

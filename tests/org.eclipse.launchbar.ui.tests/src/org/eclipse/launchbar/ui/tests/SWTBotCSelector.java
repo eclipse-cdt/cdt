@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 QNX Software Systems and others.
+ * Copyright (c) 2017, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,12 +44,7 @@ public class SWTBotCSelector extends AbstractSWTBotControl<CSelector> {
 
 	@Override
 	public SWTBotCSelector click() {
-		Point size = syncExec(new Result<Point>() {
-			@Override
-			public Point run() {
-				return widget.getSize();
-			}
-		});
+		Point size = syncExec((Result<Point>) () -> widget.getSize());
 		click(size.x / 2, size.y / 2);
 		return this;
 	}

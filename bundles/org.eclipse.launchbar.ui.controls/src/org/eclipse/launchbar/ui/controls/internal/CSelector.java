@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,18 +19,12 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -141,17 +135,14 @@ public abstract class CSelector extends Composite {
 
 		GridLayout mainButtonLayout = new GridLayout();
 		setLayout(mainButtonLayout);
-		addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				GC gc = e.gc;
-				gc.setBackground(getBackground());
-				gc.setForeground(getOutlineColor());
-				Point size = getSize();
-				final int arc = 3;
-				gc.fillRoundRectangle(0, 0, size.x - 1, size.y - 1, arc, arc);
-				gc.drawRoundRectangle(0, 0, size.x - 1, size.y - 1, arc, arc);
-			}
+		addPaintListener(e -> {
+			GC gc = e.gc;
+			gc.setBackground(getBackground());
+			gc.setForeground(getOutlineColor());
+			Point size = getSize();
+			final int arc = 3;
+			gc.fillRoundRectangle(0, 0, size.x - 1, size.y - 1, arc, arc);
+			gc.drawRoundRectangle(0, 0, size.x - 1, size.y - 1, arc, arc);
 		});
 		addMouseListener(mouseListener);
 	}
@@ -181,13 +172,10 @@ public abstract class CSelector extends Composite {
 					return Status.CANCEL_STATUS;
 				if (isDisposed())
 					return Status.CANCEL_STATUS;
-				getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (monitor.isCanceled())
-							return;
-						setSelection(element);
-					}
+				getDisplay().asyncExec(() -> {
+					if (monitor.isCanceled())
+						return;
+					setSelection(element);
 				});
 				return Status.OK_STATUS;
 			}
@@ -245,21 +233,18 @@ public abstract class CSelector extends Composite {
 		arrow.setBackground(getBackground());
 		arrow.setForeground(getForeground());
 		arrowTransition = new Transition(arrow, arrowMax, 80);
-		arrow.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				final int hPadding = 2;
-				GC gc = e.gc;
-				LineAttributes attributes = new LineAttributes(2);
-				attributes.cap = SWT.CAP_ROUND;
-				gc.setLineAttributes(attributes);
-				gc.setAlpha(mouseOver ? 255 : 100);
-				Rectangle bounds = arrow.getBounds();
-				int arrowWidth = bounds.width - hPadding * 2;
-				int current = arrowTransition.getCurrent();
-				gc.drawPolyline(new int[] { hPadding, bounds.height / 2 - current, hPadding + (arrowWidth / 2),
-						bounds.height / 2 + current, hPadding + arrowWidth, bounds.height / 2 - current });
-			}
+		arrow.addPaintListener(e -> {
+			final int hPadding = 2;
+			GC gc = e.gc;
+			LineAttributes attributes = new LineAttributes(2);
+			attributes.cap = SWT.CAP_ROUND;
+			gc.setLineAttributes(attributes);
+			gc.setAlpha(mouseOver ? 255 : 100);
+			Rectangle bounds = arrow.getBounds();
+			int arrowWidth = bounds.width - hPadding * 2;
+			int current = arrowTransition.getCurrent();
+			gc.drawPolyline(new int[] { hPadding, bounds.height / 2 - current, hPadding + (arrowWidth / 2),
+					bounds.height / 2 + current, hPadding + arrowWidth, bounds.height / 2 - current });
 		});
 		arrow.addMouseListener(mouseListener);
 		if (editable) {
@@ -272,12 +257,9 @@ public abstract class CSelector extends Composite {
 				public void widgetSelected(SelectionEvent e) {
 					// Need to run this after the current event storm
 					// Or we get a disposed error.
-					getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (CSelector.this.selection != null)
-								handleEdit(selection);
-						}
+					getDisplay().asyncExec(() -> {
+						if (CSelector.this.selection != null)
+							handleEdit(selection);
 					});
 				}
 			});
@@ -311,18 +293,15 @@ public abstract class CSelector extends Composite {
 		initializeListViewer(listViewer);
 		listViewer.setFilterVisible(elements.length > 7);
 		listViewer.setInput(input);
-		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (!listViewer.isFinalSelection())
-					return;
-				StructuredSelection ss = (StructuredSelection) event.getSelection();
-				if (!ss.isEmpty()) {
-					setSelection(ss.getFirstElement());
-					fireSelectionChanged();
-				}
-				closePopup();
+		listViewer.addSelectionChangedListener(event -> {
+			if (!listViewer.isFinalSelection())
+				return;
+			StructuredSelection ss = (StructuredSelection) event.getSelection();
+			if (!ss.isEmpty()) {
+				setSelection(ss.getFirstElement());
+				fireSelectionChanged();
 			}
+			closePopup();
 		});
 		if (hasActionArea())
 			createActionArea(popup);
@@ -335,14 +314,11 @@ public abstract class CSelector extends Composite {
 		getDisplay().addFilter(SWT.FocusIn, focusOutListener);
 		getDisplay().addFilter(SWT.FocusOut, focusOutListener);
 		getDisplay().addFilter(SWT.MouseUp, focusOutListener);
-		popup.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				getDisplay().removeFilter(SWT.FocusIn, focusOutListener);
-				getDisplay().removeFilter(SWT.FocusOut, focusOutListener);
-				getDisplay().removeFilter(SWT.MouseUp, focusOutListener);
-				saveShellSize();
-			}
+		popup.addDisposeListener(e -> {
+			getDisplay().removeFilter(SWT.FocusIn, focusOutListener);
+			getDisplay().removeFilter(SWT.FocusOut, focusOutListener);
+			getDisplay().removeFilter(SWT.MouseUp, focusOutListener);
+			saveShellSize();
 		});
 	}
 
@@ -384,16 +360,13 @@ public abstract class CSelector extends Composite {
 	}
 
 	private void closePopup() {
-		getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (popup == null || popup.isDisposed()) {
-					return;
-				}
-				arrowTransition.to(arrowMax);
-				popup.setVisible(false);
-				popup.dispose();
+		getDisplay().asyncExec(() -> {
+			if (popup == null || popup.isDisposed()) {
+				return;
 			}
+			arrowTransition.to(arrowMax);
+			popup.setVisible(false);
+			popup.dispose();
 		});
 	}
 
@@ -415,12 +388,7 @@ public abstract class CSelector extends Composite {
 		icon.setImage(image);
 		if (disposeImage) {
 			final Image disposableImage = image;
-			icon.addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					disposableImage.dispose();
-				}
-			});
+			icon.addDisposeListener(e -> disposableImage.dispose());
 		}
 		return icon;
 	}
@@ -490,16 +458,13 @@ public abstract class CSelector extends Composite {
 	}
 
 	public void refresh() {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (isDisposed())
-					return;
-				update(selection); // update current selection - name or icon
-									// may have changed
-				if (popup != null && !popup.isDisposed()) {
-					listViewer.refresh(true); // update all labels in the popup
-				}
+		PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+			if (isDisposed())
+				return;
+			update(selection); // update current selection - name or icon
+								// may have changed
+			if (popup != null && !popup.isDisposed()) {
+				listViewer.refresh(true); // update all labels in the popup
 			}
 		});
 	}

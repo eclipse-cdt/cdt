@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,11 +26,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Widget;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventHandler;
 
 public class LaunchBarInjector {
 
@@ -47,39 +43,33 @@ public class LaunchBarInjector {
 		injectIntoAll(enabled);
 
 		// Watch for new trimmed windows and inject there too.
-		eventBroker.subscribe(UIEvents.TrimmedWindow.TOPIC_TRIMBARS, new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				if (!UIEvents.isADD(event))
-					return;
-				Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-				if (newValue instanceof MTrimBar) {
-					MTrimBar trimBar = (MTrimBar) newValue;
-					if (trimBar.getSide() == SideValue.TOP) {
-						IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-						boolean enabled = store.getBoolean(Activator.PREF_ENABLE_LAUNCHBAR);
-						injectLaunchBar(trimBar, enabled);
-					}
+		eventBroker.subscribe(UIEvents.TrimmedWindow.TOPIC_TRIMBARS, event -> {
+			if (!UIEvents.isADD(event))
+				return;
+			Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+			if (newValue instanceof MTrimBar) {
+				MTrimBar trimBar = (MTrimBar) newValue;
+				if (trimBar.getSide() == SideValue.TOP) {
+					IPreferenceStore store1 = Activator.getDefault().getPreferenceStore();
+					boolean enabled1 = store1.getBoolean(Activator.PREF_ENABLE_LAUNCHBAR);
+					injectLaunchBar(trimBar, enabled1);
 				}
 			}
 		});
 
 		// Watch for preference changes
-		Activator.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(Activator.PREF_ENABLE_LAUNCHBAR)) {
-					boolean enabled = Boolean.parseBoolean(event.getNewValue().toString());
-					injectIntoAll(enabled);
-				}
-				if (event.getProperty().equals(Activator.PREF_ALWAYS_TARGETSELECTOR)
-						|| event.getProperty().equals(Activator.PREF_ENABLE_BUILDBUTTON)) {
-					IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-					boolean enabled = store.getBoolean(Activator.PREF_ENABLE_LAUNCHBAR);
-					if (enabled){
-						injectIntoAll(false);
-						injectIntoAll(true);
-					}
+		Activator.getDefault().getPreferenceStore().addPropertyChangeListener(event -> {
+			if (event.getProperty().equals(Activator.PREF_ENABLE_LAUNCHBAR)) {
+				boolean enabled1 = Boolean.parseBoolean(event.getNewValue().toString());
+				injectIntoAll(enabled1);
+			}
+			if (event.getProperty().equals(Activator.PREF_ALWAYS_TARGETSELECTOR)
+					|| event.getProperty().equals(Activator.PREF_ENABLE_BUILDBUTTON)) {
+				IPreferenceStore store1 = Activator.getDefault().getPreferenceStore();
+				boolean enabled2 = store1.getBoolean(Activator.PREF_ENABLE_LAUNCHBAR);
+				if (enabled2){
+					injectIntoAll(false);
+					injectIntoAll(true);
 				}
 			}
 		});

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.launchbar.core.ILaunchBarManager;
@@ -50,30 +49,27 @@ public class ProjectLaunchObjectProvider implements ILaunchObjectProvider, IReso
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		try {
-			event.getDelta().accept(new IResourceDeltaVisitor() {
-				@Override
-				public boolean visit(IResourceDelta delta) throws CoreException {
-					IResource res = delta.getResource();
-					if (res instanceof IProject) {
-						IProject project = (IProject) res;
-						int kind = delta.getKind();
-						if ((kind & IResourceDelta.ADDED) != 0) {
-							manager.launchObjectAdded(project);
-						} else if ((kind & IResourceDelta.REMOVED) != 0) {
-							manager.launchObjectRemoved(project);
-						} else if ((kind & IResourceDelta.CHANGED) != 0) {
-							int flags = delta.getFlags();
-							// Right now, only care about nature changes
-							if ((flags & IResourceDelta.DESCRIPTION) != 0) {
-								manager.launchObjectChanged(project);
-							}
+			event.getDelta().accept(delta -> {
+				IResource res = delta.getResource();
+				if (res instanceof IProject) {
+					IProject project = (IProject) res;
+					int kind = delta.getKind();
+					if ((kind & IResourceDelta.ADDED) != 0) {
+						manager.launchObjectAdded(project);
+					} else if ((kind & IResourceDelta.REMOVED) != 0) {
+						manager.launchObjectRemoved(project);
+					} else if ((kind & IResourceDelta.CHANGED) != 0) {
+						int flags = delta.getFlags();
+						// Right now, only care about nature changes
+						if ((flags & IResourceDelta.DESCRIPTION) != 0) {
+							manager.launchObjectChanged(project);
 						}
-						return false;
-					} else if (res instanceof IFile || res instanceof IFolder) {
-						return false;
 					}
-					return true;
+					return false;
+				} else if (res instanceof IFile || res instanceof IFolder) {
+					return false;
 				}
+				return true;
 			});
 		} catch (CoreException e) {
 			Activator.log(e.getStatus());

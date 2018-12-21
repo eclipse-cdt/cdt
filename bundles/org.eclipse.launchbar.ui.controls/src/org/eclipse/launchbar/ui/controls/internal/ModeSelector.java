@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.launchbar.ui.controls.internal;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,32 +106,29 @@ public class ModeSelector extends CSelector {
 				return super.getText(element);
 			}
 		});
-		setSorter(new Comparator<Object>() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				if (o1 instanceof ILaunchMode && o2 instanceof ILaunchMode) {
-					String mode1 = ((ILaunchMode) o1).getIdentifier();
-					String mode2 = ((ILaunchMode) o2).getIdentifier();
-					// run comes first, then debug, then the rest
-					if (mode1.equals("run")) { //$NON-NLS-1$
-						if (mode2.equals("run")) //$NON-NLS-1$
-							return 0;
-						else
-							return -1;
-					}
+		setSorter((o1, o2) -> {
+			if (o1 instanceof ILaunchMode && o2 instanceof ILaunchMode) {
+				String mode1 = ((ILaunchMode) o1).getIdentifier();
+				String mode2 = ((ILaunchMode) o2).getIdentifier();
+				// run comes first, then debug, then the rest
+				if (mode1.equals("run")) { //$NON-NLS-1$
 					if (mode2.equals("run")) //$NON-NLS-1$
-						return 1;
-					if (mode1.equals("debug")) { //$NON-NLS-1$
-						if (mode2.equals("debug")) //$NON-NLS-1$
-							return 0;
-						else
-							return -1;
-					}
-					if (mode2.equals("debug")) //$NON-NLS-1$
-						return 1;
+						return 0;
+					else
+						return -1;
 				}
-				return 0;
+				if (mode2.equals("run")) //$NON-NLS-1$
+					return 1;
+				if (mode1.equals("debug")) { //$NON-NLS-1$
+					if (mode2.equals("debug")) //$NON-NLS-1$
+						return 0;
+					else
+						return -1;
+				}
+				if (mode2.equals("debug")) //$NON-NLS-1$
+					return 1;
 			}
+			return 0;
 		});
 	}
 

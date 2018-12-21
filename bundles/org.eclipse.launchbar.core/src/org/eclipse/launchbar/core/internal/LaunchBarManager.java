@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.launchbar.core.internal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -231,9 +230,19 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		}
 		// Sort things
 		orderedDescriptorTypes = new ArrayList<>(descriptorTypes.values());
-		Collections.sort(orderedDescriptorTypes, new Comparator<LaunchDescriptorTypeInfo>() {
-			@Override
-			public int compare(LaunchDescriptorTypeInfo o1, LaunchDescriptorTypeInfo o2) {
+		Collections.sort(orderedDescriptorTypes, (o1, o2) -> {
+			int p1 = o1.getPriority();
+			int p2 = o2.getPriority();
+			if (p1 < p2) {
+				return 1;
+			} else if (p1 > p2) {
+				return -1;
+			} else {
+				return 0;
+			}
+		});
+		for (List<LaunchConfigProviderInfo> providers : configProviders.values()) {
+			Collections.sort(providers, (o1, o2) -> {
 				int p1 = o1.getPriority();
 				int p2 = o2.getPriority();
 				if (p1 < p2) {
@@ -242,22 +251,6 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 					return -1;
 				} else {
 					return 0;
-				}
-			}
-		});
-		for (List<LaunchConfigProviderInfo> providers : configProviders.values()) {
-			Collections.sort(providers, new Comparator<LaunchConfigProviderInfo>() {
-				@Override
-				public int compare(LaunchConfigProviderInfo o1, LaunchConfigProviderInfo o2) {
-					int p1 = o1.getPriority();
-					int p2 = o2.getPriority();
-					if (p1 < p2) {
-						return 1;
-					} else if (p1 > p2) {
-						return -1;
-					} else {
-						return 0;
-					}
 				}
 			});
 		}

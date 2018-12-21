@@ -26,8 +26,6 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -121,12 +119,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		nameText = new Text(nameComp, SWT.BORDER);
 		nameText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		nameText.setText(workingCopy.getName());
-		nameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateMessage();
-			}
-		});
+		nameText.addModifyListener(e -> updateMessage());
 
 		tabFolder = new CTabFolder(composite, SWT.BORDER);
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

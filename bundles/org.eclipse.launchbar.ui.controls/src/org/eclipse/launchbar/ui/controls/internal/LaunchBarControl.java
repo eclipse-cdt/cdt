@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,6 @@ import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.ui.ILaunchBarUIConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -68,12 +66,7 @@ public class LaunchBarControl implements ILaunchBarListener {
 		layout.marginHeight = 2;
 		layout.marginWidth = 2;
 		container.setLayout(layout);
-		container.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				LaunchBarControl.this.dispose();
-			}
-		});
+		container.addDisposeListener(e -> LaunchBarControl.this.dispose());
 
 		ToolBar toolBar = new ToolBar(container, SWT.FLAT);
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
@@ -171,12 +164,7 @@ public class LaunchBarControl implements ILaunchBarListener {
 				}
 			};
 		});
-		button.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				image.dispose();
-			}
-		});
+		button.addDisposeListener(e -> image.dispose());
 		return button;
 	}
 

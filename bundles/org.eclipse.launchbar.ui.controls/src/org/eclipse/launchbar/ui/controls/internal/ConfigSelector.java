@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     Doug Schaefer
  *******************************************************************************/
 package org.eclipse.launchbar.ui.controls.internal;
-
-import java.util.Comparator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -120,12 +118,7 @@ public class ConfigSelector extends CSelector {
 		// no sorter for top, data is sorted by provider in historical order
 		setHistorySortComparator(null);
 		// alphabetic sorter
-		setSorter(new Comparator<ILaunchDescriptor>() {
-			@Override
-			public int compare(ILaunchDescriptor o1, ILaunchDescriptor o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
+		setSorter((ILaunchDescriptor o1, ILaunchDescriptor o2) -> o1.getName().compareTo(o2.getName()));
 
 	}
 

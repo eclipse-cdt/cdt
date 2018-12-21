@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,18 +24,12 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -145,12 +139,7 @@ public class FilterControl extends Composite {
 	public Control attachListViewer(LaunchBarListViewer listViewer) {
 		this.listViewer = listViewer;
 		// listViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
-		listViewer.getControl().addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				refreshJob.cancel();
-			}
-		});
+		listViewer.getControl().addDisposeListener(e -> refreshJob.cancel());
 		listViewer.addFilter(patternFilter);
 		return listViewer.getControl();
 	}
@@ -272,28 +261,20 @@ public class FilterControl extends Composite {
 			}
 		});
 		// enter key set focus to tree
-		filterText.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_RETURN) {
-					e.doit = false;
-					listViewer.setFocus();
-					updateListSelection(true);
-				} else if (e.detail == SWT.TRAVERSE_ARROW_NEXT) {
-					listViewer.setFocus();
-					updateListSelection(false);
-				} else if (e.detail == SWT.TRAVERSE_ESCAPE) {
-					listViewer.setDefaultSelection(new StructuredSelection());
-					e.doit = false;
-				}
+		filterText.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_RETURN) {
+				e.doit = false;
+				listViewer.setFocus();
+				updateListSelection(true);
+			} else if (e.detail == SWT.TRAVERSE_ARROW_NEXT) {
+				listViewer.setFocus();
+				updateListSelection(false);
+			} else if (e.detail == SWT.TRAVERSE_ESCAPE) {
+				listViewer.setDefaultSelection(new StructuredSelection());
+				e.doit = false;
 			}
 		});
-		filterText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				textChanged();
-			}
-		});
+		filterText.addModifyListener(e -> textChanged());
 		// if we're using a field with built in cancel we need to listen for
 		// default selection changes (which tell us the cancel button has been
 		// pressed)
@@ -438,13 +419,10 @@ public class FilterControl extends Composite {
 				setFilterText(initialText);
 				textChanged();
 			} else {
-				getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (!filterText.isDisposed() && filterText.isFocusControl()) {
-							setFilterText(initialText);
-							textChanged();
-						}
+				getDisplay().asyncExec(() -> {
+					if (!filterText.isDisposed() && filterText.isFocusControl()) {
+						setFilterText(initialText);
+						textChanged();
 					}
 				});
 			}

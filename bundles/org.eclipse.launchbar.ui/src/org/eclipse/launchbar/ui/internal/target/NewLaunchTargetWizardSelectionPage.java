@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.launchbar.ui.internal.target;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -68,13 +67,10 @@ class NewLaunchTargetWizardSelectionPage extends WizardPage {
 			}
 		}
 
-		elements.sort(new Comparator<IConfigurationElement>() {
-			@Override
-			public int compare(IConfigurationElement o1, IConfigurationElement o2) {
-				String name1 = o1.getAttribute("name"); //$NON-NLS-1$
-				String name2 = o2.getAttribute("name"); //$NON-NLS-1$
-				return name1.compareTo(name2);
-			}
+		elements.sort((o1, o2) -> {
+			String name1 = o1.getAttribute("name"); //$NON-NLS-1$
+			String name2 = o2.getAttribute("name"); //$NON-NLS-1$
+			return name1.compareTo(name2);
 		});
 
 		for (IConfigurationElement element : elements) {

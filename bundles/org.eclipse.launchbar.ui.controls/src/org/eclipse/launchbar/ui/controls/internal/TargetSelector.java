@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     Doug Schaefer
  *******************************************************************************/
 package org.eclipse.launchbar.ui.controls.internal;
-
-import java.util.Comparator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -135,14 +133,11 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 			}
 		});
 
-		setSorter(new Comparator<Object>() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				// Sort by name
-				String s1 = String.valueOf(o1);
-				String s2 = String.valueOf(o2);
-				return s1.compareTo(s2);
-			}
+		setSorter((o1, o2) -> {
+			// Sort by name
+			String s1 = String.valueOf(o1);
+			String s2 = String.valueOf(o2);
+			return s1.compareTo(s2);
 		});
 	}
 

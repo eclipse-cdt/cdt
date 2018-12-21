@@ -491,16 +491,22 @@
             class="org.eclipse.cdt.debug.internal.core.launch.CoreBuildLaunchDescriptorType"
             id="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
             priority="20">
+            <enablement>
+            </enablement>
       </descriptorType>
       <configProvider
             class="org.eclipse.cdt.debug.internal.core.launch.CoreBuildLocalLaunchConfigProvider"
             descriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
             priority="10">
+            <enablement>
+            </enablement>
       </configProvider>
       <configProvider
             class="org.eclipse.cdt.debug.core.launch.CoreBuildGenericLaunchConfigProvider"
             descriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
             priority="10">
+            <enablement>
+            </enablement>
       </configProvider>
    </extension>
 </plugin>

@@ -13,3 +13,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.launchbar.ui.controls.internal
 Bundle-Activator: org.eclipse.launchbar.ui.tests.internal.Activator
+Automatic-Module-Name: org.eclipse.launchbar.ui.tests

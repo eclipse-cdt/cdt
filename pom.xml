@@ -14,8 +14,8 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>1.2.0</tycho-version>
-		<tycho-extras-version>1.2.0</tycho-extras-version>
+		<tycho-version>1.3.0</tycho-version>
+		<tycho-extras-version>1.3.0</tycho-extras-version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -338,7 +338,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.10.0</version>
+					<version>3.11.0</version>
 					<configuration>
 						<sourceEncoding>utf-8</sourceEncoding>
 						<minimumTokens>100</minimumTokens>

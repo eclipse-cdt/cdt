@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e0b6721b_85103897",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui.tests/src/org/eclipse/cdt/debug/gdbjtag/core/tests/jtagdevice/GenericSerialOnlyExtendeRemote.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2018-12-21T14:59:53Z",
+      "side": 1,
+      "message": "Extended",
+      "range": {
+        "startLine": 5,
+        "startChar": 30,
+        "endLine": 5,
+        "endChar": 37
+      },
+      "revId": "c086148d4827b6f46450a53914d467e9ca8c5891",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

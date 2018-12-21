@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 QNX Software Systems and others.
+ * Copyright (c) 2016, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,15 @@
  *******************************************************************************/
 package org.eclipse.launchbar.core.internal.target;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.launchbar.core.internal.Activator;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
@@ -32,7 +34,7 @@ public class LaunchTargetTest {
 	}
 
 	@Test
-	public void testRemoveLaunchTarget() throws CoreException {
+	public void testRemoveLaunchTarget() {
 		ILaunchTargetManager manager = Activator.getLaunchTargetManager();
 		// Account for pre-populated targets
 		int baseSize = manager.getLaunchTargets().length;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ public class LaunchBarManagerTest {
 		final ILaunchTargetManager targetManager = mock(ILaunchTargetManager.class);
 		ILaunchTarget localTarget = mock(ILaunchTarget.class);
 		doReturn(ILaunchTargetManager.localLaunchTargetTypeId).when(localTarget).getTypeId();
-		doReturn("Local").when(localTarget).getName();
+		doReturn("Local").when(localTarget).getId();
 		doReturn(new ILaunchTarget[] { localTarget }).when(targetManager).getLaunchTargets();
 
 		// Inject the launch config
@@ -94,7 +94,7 @@ public class LaunchBarManagerTest {
 
 		assertNotNull(manager.getActiveLaunchTarget());
 		assertEquals(ILaunchTargetManager.localLaunchTargetTypeId, manager.getActiveLaunchTarget().getTypeId());
-		assertEquals("Local", manager.getActiveLaunchTarget().getName());
+		assertEquals("Local", manager.getActiveLaunchTarget().getId());
 
 		assertNotNull(manager.getActiveLaunchMode());
 		assertEquals("run", manager.getActiveLaunchMode().getIdentifier());
@@ -166,7 +166,7 @@ public class LaunchBarManagerTest {
 		final ILaunchTargetManager targetManager = mock(ILaunchTargetManager.class);
 		ILaunchTarget localTarget = mock(ILaunchTarget.class);
 		doReturn(ILaunchTargetManager.localLaunchTargetTypeId).when(localTarget).getTypeId();
-		doReturn("Local").when(localTarget).getName();
+		doReturn("Local").when(localTarget).getId();
 		doReturn(new ILaunchTarget[] { localTarget }).when(targetManager).getLaunchTargets();
 
 		ILaunchConfiguration launchConfig = mock(ILaunchConfiguration.class);
@@ -207,7 +207,7 @@ public class LaunchBarManagerTest {
 		assertEquals(descriptor, manager.getActiveLaunchDescriptor());
 		assertEquals(runMode, manager.getActiveLaunchMode());
 		assertEquals(ILaunchTargetManager.localLaunchTargetTypeId, manager.getActiveLaunchTarget().getTypeId());
-		assertEquals("Local", manager.getActiveLaunchTarget().getName());
+		assertEquals("Local", manager.getActiveLaunchTarget().getId());
 		assertEquals(launchConfig, manager.getActiveLaunchConfiguration());
 	}
 

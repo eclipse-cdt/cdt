@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2018 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ public class LaunchBarManager2Test {
 	private ILaunchTarget[] targets;
 
 	public class FixedLaunchBarManager extends LaunchBarManager {
-		public FixedLaunchBarManager() throws CoreException {
+		public FixedLaunchBarManager() {
 			super(false);
 		}
 
@@ -218,7 +218,7 @@ public class LaunchBarManager2Test {
 	private ILaunchTarget mockRemoteConnection(String t2) {
 		ILaunchTarget target = mock(ILaunchTarget.class);
 		doReturn(t2).when(target).getTypeId();
-		doReturn(t2 + ".target").when(target).getName();
+		doReturn(t2 + ".target").when(target).getId();
 		return target;
 	}
 
@@ -267,13 +267,13 @@ public class LaunchBarManager2Test {
 		manager = new FixedLaunchBarManager();
 		localTarget = mock(ILaunchTarget.class);
 		doReturn(ILaunchTargetManager.localLaunchTargetTypeId).when(localTarget).getTypeId();
-		doReturn("Local").when(localTarget).getName();
+		doReturn("Local").when(localTarget).getId();
 		// mock
 		launchObject = "test";
 		// remote connections
 		otherTarget = mock(ILaunchTarget.class);
 		doReturn("otherTargetType").when(otherTarget).getTypeId();
-		doReturn("otherTarget").when(otherTarget).getName();
+		doReturn("otherTarget").when(otherTarget).getId();
 		targets = new ILaunchTarget[] { otherTarget, localTarget };
 		// lc
 		String launchConfigTypeId = "lctype1";
@@ -399,7 +399,7 @@ public class LaunchBarManager2Test {
 	}
 
 	@Test
-	public void testGetLaunchDescriptors() throws CoreException {
+	public void testGetLaunchDescriptors() {
 		manager.launchObjectAdded(launchObject);
 		manager.launchConfigurationAdded(launchConfig);
 		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
@@ -668,7 +668,7 @@ public class LaunchBarManager2Test {
 	}
 
 	@Test
-	public void testGetActiveLaunchDescriptor() throws CoreException {
+	public void testGetActiveLaunchDescriptor() {
 		ILaunchBarListener lis = mock(ILaunchBarListener.class);
 		manager.addListener(lis);
 		manager.launchObjectAdded(launchObject);
@@ -678,7 +678,7 @@ public class LaunchBarManager2Test {
 	}
 
 	@Test
-	public void testSetActiveLaunchDescriptorUnkn() throws CoreException {
+	public void testSetActiveLaunchDescriptorUnkn() {
 		try {
 			manager.setActiveLaunchDescriptor(descriptor);
 			fail();
@@ -695,7 +695,7 @@ public class LaunchBarManager2Test {
 	}
 
 	@Test
-	public void testSetActiveLaunchDescriptorLisBad() throws CoreException {
+	public void testSetActiveLaunchDescriptorLisBad() {
 		ILaunchBarListener lis = mock(ILaunchBarListener.class);
 		manager.addListener(lis);
 		doThrow(new NullPointerException()).when(lis).activeLaunchDescriptorChanged(any(ILaunchDescriptor.class));
@@ -754,7 +754,7 @@ public class LaunchBarManager2Test {
 	}
 
 	@Test
-	public void testSetActiveLaunchModeUnsupported() throws CoreException {
+	public void testSetActiveLaunchModeUnsupported() {
 		ILaunchConfigurationType lctype2 = mockLCType("lctype2");
 		ILaunchMode mode = mockLaunchModes(lctype2, "modex")[0];
 		mockLaunchModes(launchConfigType, "run", "debug", "foo");

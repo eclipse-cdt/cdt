@@ -19,7 +19,7 @@
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.8</help-docs-eclipserun-repo>
+		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.10</help-docs-eclipserun-repo>
 	</properties>
 
 	<licenses>
@@ -39,7 +39,7 @@
 	<repositories>
 		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.8/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.10/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -49,7 +49,7 @@
 		</repository>
 		<repository>
 			<id>cdt</id>
-			<url>http://download.eclipse.org/tools/cdt/releases/9.5/</url>
+			<url>http://download.eclipse.org/tools/cdt/releases/9.6/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -212,17 +212,7 @@
 						<environment>
 							<os>linux</os>
 							<ws>gtk</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
 							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86</arch>
 						</environment>
 						<environment>
 							<os>win32</os>

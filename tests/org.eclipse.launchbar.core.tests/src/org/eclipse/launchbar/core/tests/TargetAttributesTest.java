@@ -9,7 +9,6 @@ import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
 import org.junit.Test;
 
-@SuppressWarnings("nls")
 public class TargetAttributesTest {
 
 	@Test

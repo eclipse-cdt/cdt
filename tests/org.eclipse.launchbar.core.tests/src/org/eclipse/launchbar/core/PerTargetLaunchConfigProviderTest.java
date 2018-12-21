@@ -34,7 +34,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-@SuppressWarnings("nls")
 @FixMethodOrder(MethodSorters.JVM)
 public class PerTargetLaunchConfigProviderTest {
 	private ILaunchTarget localTarget;

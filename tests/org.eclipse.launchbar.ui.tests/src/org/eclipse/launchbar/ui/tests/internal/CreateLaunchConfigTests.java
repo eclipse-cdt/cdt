@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-@SuppressWarnings("nls")
 public class CreateLaunchConfigTests {
 
 	private static SWTWorkbenchBot bot;

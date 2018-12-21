@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.service.prefs.Preferences;
 
-@SuppressWarnings("nls")
 public class LaunchTargetTest {
 	private org.osgi.service.prefs.Preferences pref;
 

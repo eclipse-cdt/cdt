@@ -62,7 +62,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-@SuppressWarnings({ "restriction", "nls" })
+@SuppressWarnings({ "restriction" })
 @FixMethodOrder(MethodSorters.JVM)
 public class LaunchBarManager2Test {
 	private LaunchBarManager manager;

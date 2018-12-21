@@ -20,7 +20,6 @@ import org.eclipse.swtbot.swt.finder.results.Result;
 import org.eclipse.swtbot.swt.finder.widgets.AbstractSWTBotControl;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 
-@SuppressWarnings("nls")
 public class SWTBotConfigSelector extends SWTBotCSelector {
 
 	private class ActionArea extends AbstractSWTBotControl<Composite> {

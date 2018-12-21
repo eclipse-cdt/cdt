@@ -40,7 +40,6 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-@SuppressWarnings("nls")
 public class LaunchBarManagerTest {
 	@Test
 	public void startupTest() throws Exception {

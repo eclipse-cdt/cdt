@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15a7ec2e_8466839a",
+        "filename": "debug/org.eclipse.cdt.debug.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2018-12-22T09:03:33Z",
+      "side": 1,
+      "message": "This should be .100",
+      "revId": "1eee0216e4d0521993d39ecb6e7a5fa2130a4382",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

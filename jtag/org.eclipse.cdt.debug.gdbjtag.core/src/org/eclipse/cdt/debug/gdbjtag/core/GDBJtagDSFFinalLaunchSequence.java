@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 QNX Software Systems and others.
+ * Copyright (c) 2007, 2019 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@
  *     John Dallaway - Execute run commands before resume (Bug 525692)
  *     John Dallaway - Test for reset/delay/halt command not defined (Bug 361881)
  *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
+ *     John Dallaway - Report download progress (Bug 543149)
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -49,10 +50,12 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
@@ -65,11 +68,17 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOOBRecord;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIStatusAsyncOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MITuple;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -88,6 +97,51 @@ import org.eclipse.core.variables.VariablesPlugin;
  */
 public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 
+	private abstract class DownloadStatusListener implements IEventListener {
+
+		private static final String ASYNC_CLASS_DOWNLOAD = "download"; //$NON-NLS-1$
+		private static final String VAR_SECTION = "section"; //$NON-NLS-1$
+		private static final String VAR_SECTION_SENT = "section-sent"; //$NON-NLS-1$
+		private static final String VAR_SECTION_SIZE = "section-size"; //$NON-NLS-1$
+
+		abstract void handleStatus(String status);
+
+		@Override
+		public void eventReceived(Object output) {
+			if (output instanceof MIOutput) {
+				for (MIOOBRecord oobr : ((MIOutput) output).getMIOOBRecords()) {
+					if (oobr instanceof MIStatusAsyncOutput) {
+						asyncOutputReceived((MIStatusAsyncOutput) oobr);
+					}
+				}
+			}
+		}
+
+		private void asyncOutputReceived(MIStatusAsyncOutput output) {
+			if (ASYNC_CLASS_DOWNLOAD.equals(output.getAsyncClass())) {
+				Map<String, String> results = new HashMap<>();
+				for (MIResult result : output.getMIResults()) {
+					if (result.getMIValue() instanceof MITuple) {
+						for (MIResult field : ((MITuple) result.getMIValue()).getMIResults()) {
+							results.put(field.getVariable(), field.getMIValue().toString());
+						}
+					}
+				}
+				String section = results.get(VAR_SECTION);
+				if (section != null) {
+					StringBuilder status = new StringBuilder();
+					status.append(String.format(Messages.getString("GDBJtagDebugger.downloading"), section)); //$NON-NLS-1$
+					String sectionSent = results.get(VAR_SECTION_SENT);
+					String sectionSize = results.get(VAR_SECTION_SIZE);
+					if ((sectionSent != null) && (sectionSize != null)) {
+						status.append(String.format(" (%s/%s)", sectionSent, sectionSize)); //$NON-NLS-1$
+					}
+					handleStatus(status.toString());
+				}
+			}
+		}
+	}
+
 	/** utility method; cuts down on clutter */
 	private void queueCommands(List<String> commands, RequestMonitor rm) {
 		if (!commands.isEmpty()) {
@@ -105,6 +159,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 
 	private DsfServicesTracker fTracker;
 	private IMIContainerDMContext fContainerCtx;
+	private IProgressMonitor fProgressMonitor;
 
 	/**
 	 * @since 8.2
@@ -112,6 +167,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	public GDBJtagDSFFinalLaunchSequence(DsfSession session, Map<String, Object> attributes,
 			RequestMonitorWithProgress rm) {
 		super(session, attributes, rm);
+		fProgressMonitor = rm.getProgressMonitor();
 	}
 
 	public GDBJtagDSFFinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType sessionType,
@@ -491,7 +547,20 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 				}
 				List<String> commands = new ArrayList<>();
 				fGdbJtagDevice.doLoadImage(imageFileName, imageOffset, commands);
-				queueCommands(commands, rm);
+				IEventListener downloadStatusListener = new DownloadStatusListener() {
+					@Override
+					protected void handleStatus(String status) {
+						fProgressMonitor.subTask("- " + status); //$NON-NLS-1$
+					}
+				};
+				fCommandControl.addEventListener(downloadStatusListener);
+				queueCommands(commands, new ImmediateRequestMonitor(rm) {
+					@Override
+					protected void handleCompleted() {
+						fCommandControl.removeEventListener(downloadStatusListener);
+						rm.done();
+					}
+				});
 			} else {
 				rm.done();
 			}

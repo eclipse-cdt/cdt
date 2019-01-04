@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="42">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="43">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
@@ -87,6 +87,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.lsp4e" version="0.0.0"/>
+<unit id="org.eclipse.lsp4e.debug" version="0.0.0"/>
 <repository location="http://download.eclipse.org/lsp4e/snapshots/"/>
 </location>
 </locations>

@@ -1,0 +1,12 @@
+{
+  "name": "cdt-debug-servers",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "Eclipse CDT",
+  "license": "EPL",
+  "scripts": {},
+  "dependencies": {
+    "cdt-gdb-adapter": "https://ci.eclipse.org/cdt/view/Github/job/cdt-gdb-adapter-master/lastSuccessfulBuild/artifact/cdt-gdb-adapter.tgz"
+  }
+}

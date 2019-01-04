@@ -28,6 +28,7 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
+import org.eclipse.cdt.launch.ui.CLaunchConfigurationTab;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;

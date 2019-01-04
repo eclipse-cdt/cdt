@@ -19,7 +19,6 @@ package org.eclipse.cdt.dsf.gdb.launching;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -72,7 +71,6 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -614,27 +612,8 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	}
 
 	private IProject getProject() throws CoreException {
-		String projectName = getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-				(String) null);
-		IProject project = null;
-		if (projectName == null) {
-			IResource[] resources = getLaunchConfiguration().getMappedResources();
-			if (resources != null && resources.length > 0 && resources[0] instanceof IProject) {
-				project = (IProject) resources[0];
-			}
-		} else {
-			projectName = projectName.trim();
-			if (projectName.length() == 0) {
-				return null;
-			}
-			project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		}
-
-		if (project == null || !project.isAccessible()) {
-			// No project
-			return null;
-		}
-		return project;
+		ILaunchConfiguration configuration = getLaunchConfiguration();
+		return org.eclipse.cdt.launch.LaunchUtils.getProject(configuration);
 	}
 
 	/**
@@ -725,15 +704,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	 * @since 5.0
 	 */
 	public String getProgramArguments() throws CoreException {
-		String programArguments = getLaunchConfiguration()
-				.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
-
-		if (programArguments != null) {
-			programArguments = VariablesPlugin.getDefault().getStringVariableManager()
-					.performStringSubstitution(programArguments);
-		}
-
-		return programArguments;
+		return org.eclipse.cdt.launch.LaunchUtils.getProgramArguments(getLaunchConfiguration());
 	}
 
 	/**
@@ -743,60 +714,9 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	 * @since 5.0
 	 */
 	public String getProgramPath() throws CoreException {
+		ILaunchConfiguration configuration = getLaunchConfiguration();
 		String programName = getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
-		if (programName == null) {
-			programName = getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
-					(String) null);
-		}
-		if (programName == null) {
-			throwException(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
-					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
-		}
-		programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
-		IPath programPath = new Path(programName);
-		if (programPath.isEmpty()) {
-			throwException(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), null, //$NON-NLS-1$
-					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
-		}
-
-		if (!programPath.isAbsolute()) {
-			IProject project = getProject();
-			ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
-			if (cproject != null) {
-				// Find the specified program within the specified project
-				IFile wsProgramPath = cproject.getProject().getFile(programPath);
-				programPath = wsProgramPath.getLocation();
-			}
-		}
-		if (!programPath.toFile().exists()) {
-			throwException(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
-					new FileNotFoundException(
-							LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found", //$NON-NLS-1$
-									programPath.toOSString())),
-					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
-		}
-
-		return programPath.toOSString();
-	}
-
-	/**
-	 * Throws a core exception with an error status object built from the given
-	 * message, lower level exception, and error code.
-	 *
-	 * @param message
-	 *            the status message
-	 * @param exception
-	 *            lower level exception associated with the error, or
-	 *            <code>null</code> if none
-	 * @param code
-	 *            error code
-	 */
-	private static void throwException(String message, Throwable exception, int code) throws CoreException {
-		MultiStatus status = new MultiStatus(GdbPlugin.PLUGIN_ID, code, message, exception);
-		status.add(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, code,
-				exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
-				exception));
-		throw new CoreException(status);
+		return org.eclipse.cdt.launch.LaunchUtils.resolveProgramPath(configuration, programName);
 	}
 
 	/**

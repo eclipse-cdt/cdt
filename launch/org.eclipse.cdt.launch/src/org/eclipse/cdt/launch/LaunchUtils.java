@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
@@ -33,14 +35,19 @@ import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -48,6 +55,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Utility methods.
@@ -100,6 +109,90 @@ public class LaunchUtils {
 			args = getStringVariableManager().performStringSubstitution(args);
 		}
 		return args;
+	}
+
+	/**
+	 * Return the program path
+	 *
+	 * @param configuration Launch configuration to obtain paths from
+	 * @return the program path
+	 * @throws CoreException if program path can not be resolved.
+	 */
+	public static String getProgramPath(ILaunchConfiguration configuration) throws CoreException {
+		return resolveProgramPath(configuration, null);
+	}
+
+	/**
+	 * Return the program path, resolved as an absolute OS string.
+	 *
+	 * @param configuration Launch configuration to obtain paths from
+	 * @param programName Optional (can be null) starting point for program name
+	 * @return the program path
+	 * @throws CoreException if program path can not be resolved.
+	 */
+	public static String resolveProgramPath(ILaunchConfiguration configuration, String programName)
+			throws CoreException {
+		if (programName == null) {
+			programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String) null);
+		}
+		if (programName == null) {
+			throwException(Messages.LaunchUtils_program_file_not_specified, null,
+					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
+		}
+		programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
+		IPath programPath = new Path(programName);
+		if (programPath.isEmpty()) {
+			throwException(Messages.LaunchUtils_program_file_does_not_exist, null,
+					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+		}
+
+		if (!programPath.isAbsolute()) {
+			IProject project = getProject(configuration);
+			ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
+			if (cproject != null) {
+				// Find the specified program within the specified project
+				IFile wsProgramPath = cproject.getProject().getFile(programPath);
+				programPath = wsProgramPath.getLocation();
+			}
+		}
+		if (!programPath.toFile().exists()) {
+			throwException(Messages.LaunchUtils_program_file_does_not_exist,
+					new FileNotFoundException(
+							MessageFormat.format(Messages.LaunchUtils__0_not_found, programPath.toOSString())),
+					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+		}
+
+		return programPath.toOSString();
+	}
+
+	/**
+	 * Return project or <code>null</code> if project is not accessible or not specified.
+	 * @param configuration Launch configuration to obtain project from
+	 * @return the project
+	 * @throws CoreException
+	 */
+	public static IProject getProject(ILaunchConfiguration configuration) throws CoreException {
+		String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
+				(String) null);
+		IProject project = null;
+		if (projectName == null) {
+			IResource[] resources = configuration.getMappedResources();
+			if (resources != null && resources.length > 0 && resources[0] instanceof IProject) {
+				project = (IProject) resources[0];
+			}
+		} else {
+			projectName = projectName.trim();
+			if (projectName.length() == 0) {
+				return null;
+			}
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		}
+
+		if (project == null || !project.isAccessible()) {
+			// No project
+			return null;
+		}
+		return project;
 	}
 
 	/**
@@ -242,5 +335,25 @@ public class LaunchUtils {
 			}
 		}
 		return buildConfig;
+	}
+
+	/**
+	 * Throws a core exception with an error status object built from the given
+	 * message, lower level exception, and error code.
+	 *
+	 * @param message
+	 *            the status message
+	 * @param exception
+	 *            lower level exception associated with the error, or
+	 *            <code>null</code> if none
+	 * @param code
+	 *            error code
+	 */
+	private static void throwException(String message, Throwable exception, int code) throws CoreException {
+		MultiStatus status = new MultiStatus(LaunchUIPlugin.PLUGIN_ID, code, message, exception);
+		status.add(new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, code,
+				exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
+				exception));
+		throw new CoreException(status);
 	}
 }

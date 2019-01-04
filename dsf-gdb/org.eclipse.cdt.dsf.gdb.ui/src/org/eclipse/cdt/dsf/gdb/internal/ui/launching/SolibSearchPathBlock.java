@@ -59,7 +59,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -313,9 +313,8 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 
 		if (fDirList != null) {
 			try {
-				@SuppressWarnings("unchecked")
 				List<String> values = configuration.getAttribute(
-						IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
+						IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.emptyList());
 				ArrayList<Path> paths = new ArrayList<>(values.size());
 				Iterator<String> it = values.iterator();
 				while (it.hasNext()) {
@@ -333,9 +332,8 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	}
 
 	public static File[] getAutoSolibs(ILaunchConfiguration configuration) throws CoreException {
-		@SuppressWarnings("unchecked")
 		List<String> autoSolibs = configuration
-				.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB_LIST, Collections.EMPTY_LIST);
+				.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB_LIST, Collections.emptyList());
 
 		List<File> list = new ArrayList<>(autoSolibs.size());
 		Iterator<String> it = autoSolibs.iterator();
@@ -350,7 +348,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.emptyList());
 	}
 
 	/* (non-Javadoc)
@@ -467,7 +465,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		@SuppressWarnings("unchecked")
 		List<IPath> dirList = fDirList.getSelectedElements();
 
-		final HashSet<IPath> libs = new HashSet<>(10);
+		final HashSet<File> libs = new HashSet<>(10);
 		if (generateLibraryList(dirList.toArray(new IPath[dirList.size()]), libs)) {
 			ITreeContentProvider cp = new ITreeContentProvider() {
 				@Override
@@ -490,7 +488,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 				@Override
 				public Object[] getElements(Object inputElement) {
 					if (inputElement instanceof Set) {
-						return ((Set) inputElement).toArray();
+						return ((Set<?>) inputElement).toArray();
 					}
 					return new Object[0];
 				}
@@ -517,7 +515,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			dialog.setTitle(LaunchUIMessages.getString("SolibSearchPathBlock.7")); //$NON-NLS-1$
 			dialog.setMessage(LaunchUIMessages.getString("SolibSearchPathBlock.8")); //$NON-NLS-1$
 			dialog.setEmptyListMessage(LaunchUIMessages.getString("SolibSearchPathBlock.9")); //$NON-NLS-1$
-			dialog.setComparator(new ViewerSorter());
+			dialog.setComparator(new ViewerComparator());
 			dialog.setInput(libs);
 			dialog.setInitialElementSelections(Arrays.asList(fAutoSolibs));
 			if (dialog.open() == Window.OK) {
@@ -529,7 +527,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		return changed;
 	}
 
-	private boolean generateLibraryList(final IPath[] paths, final Set libs) {
+	private boolean generateLibraryList(final IPath[] paths, final Set<File> libs) {
 		boolean result = true;
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {

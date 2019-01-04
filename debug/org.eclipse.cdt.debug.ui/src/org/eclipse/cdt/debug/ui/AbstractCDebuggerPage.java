@@ -20,8 +20,7 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
  * Common function for debugger pages.
  * @since 3.1
  */
-abstract public class AbstractCDebuggerPage extends AbstractLaunchConfigurationTab
-		implements ICDebuggerPage, ICDebuggerPageExtension {
+abstract public class AbstractCDebuggerPage extends AbstractLaunchConfigurationTab implements ICDebuggerPageExtension {
 
 	private String fDebuggerID = null;
 	private ListenerList<IContentChangeListener> fContentListeners;

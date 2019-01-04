@@ -119,7 +119,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 		if (fSolibSearchPathBlock != null)
 			fSolibSearchPathBlock.performApply(configuration);
 		try {
-			Map attrs = configuration.getAttributes();
+			Map<String, Object> attrs = configuration.getAttributes();
 
 			if (fAutoSoLibButton != null)
 				attrs.put(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB,

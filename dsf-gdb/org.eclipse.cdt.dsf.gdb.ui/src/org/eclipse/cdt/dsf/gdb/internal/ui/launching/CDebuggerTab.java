@@ -223,7 +223,8 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, getDebuggerId());
 			ICDebuggerPage dynamicTab = getDynamicTab();
 			if (dynamicTab == null) {
-				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map) null);
+				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP,
+						(Map<String, String>) null);
 			} else {
 				dynamicTab.performApply(config);
 			}
@@ -492,7 +493,8 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 				}
 			}
 			if (wc != null) {
-				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map) null);
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP,
+						(Map<String, String>) null);
 			}
 		} else {
 			if (wc == null) {

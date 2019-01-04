@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.cdt.debug.dap.DAPPreferencePage"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            id="org.eclipse.cdt.debug.dap.DAPPreferencePage"
+            name="%PreferencePageTitle">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.cdt.debug.dap.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
+            id="org.eclipse.cdt.debug.dap.localCLaunch"
+            type="org.eclipse.cdt.launch.applicationLaunchType"
+            modes="debug"
+            delegate="org.eclipse.cdt.debug.dap.DapLaunchDelegate"
+            name="%launchDelegate.localApplication.name"
+            delegateDescription="%launchDelegate.localApplication.description"
+            sourceLocatorId="org.eclipse.lsp4e.debug.sourceLocator"
+            sourcePathComputerId="org.eclipse.lsp4e.debug.sourcePathComputer">
+      </launchDelegate>
+   </extension>
+
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
+      <!-- Local application launch tabs-->
+      <tab
+            id="org.eclipse.cdt.debug.dap.localApplicationLaunch.mainTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.main.name"
+            class="org.eclipse.cdt.debug.dap.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.debug.dap.localCLaunch"/>
+      </tab>
+      <tab id="org.eclipse.cdt.debug.dap.localApplicationLaunch.argumentsTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.arguments.name"
+            class="org.eclipse.cdt.debug.dap.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.cdt.debug.dap.localCLaunch"/>
+        <placement after="org.eclipse.cdt.debug.dap.mainTab"/>
+      </tab>
+      <tab 
+            id="org.eclipse.cdt.debug.dap.localApplicationLaunch.environmentTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.environment.name"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+         <associatedDelegate delegate="org.eclipse.cdt.debug.dap.localCLaunch"/>
+         <placement after="org.eclipse.cdt.debug.dap.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.debug.dap.localApplicationLaunch.dspOverrideTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.dspOverride.name"
+            class="org.eclipse.lsp4e.debug.launcher.DSPOverrideSettingsTab">
+        <associatedDelegate delegate="org.eclipse.cdt.debug.dap.localCLaunch"/>
+        <placement after="org.eclipse.debug.ui.environmentTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.debug.dap.localApplicationLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.sourceLookup.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.debug.dap.localCLaunch"/>
+        <placement after="org.eclipse.lsp4e.debug.launcher.DSPOverrideSettingsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.debug.dap.localApplicationLaunch.commonTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.common.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.debug.dap.localCLaunch"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
+   </extension>
+</plugin>

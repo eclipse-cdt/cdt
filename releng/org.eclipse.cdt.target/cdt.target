@@ -89,6 +89,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.lsp4e" version="0.0.0"/>
+<unit id="org.eclipse.lsp4e.debug" version="0.0.0"/>
 <repository location="http://download.eclipse.org/lsp4e/snapshots/"/>
 </location>
 </locations>

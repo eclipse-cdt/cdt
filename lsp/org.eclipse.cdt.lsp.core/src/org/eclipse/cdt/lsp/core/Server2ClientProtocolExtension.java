@@ -56,7 +56,7 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				final String cqueryStatusFieldId = "org.eclipse.lsp4e.cpp.status"; //$NON-NLS-1$
+				final String cqueryStatusFieldId = "org.eclipse.cdt.lsp.core.status"; //$NON-NLS-1$
 				final int width = 28;
 				IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
 				for (IWorkbenchWindow window : workbenchWindows) {

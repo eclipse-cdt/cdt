@@ -30,7 +30,7 @@ import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 
 public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider {
 
-	public static final String ID = "org.eclipse.lsp4e.languages.cpp"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.cdt.lsp.core"; //$NON-NLS-1$
 
 	private IResourceChangeListener fResourceListener;
 

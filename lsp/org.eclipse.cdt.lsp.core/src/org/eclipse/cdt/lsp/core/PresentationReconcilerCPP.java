@@ -83,8 +83,8 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	private BracketInserter fBracketInserter;
 	private DefaultPositionUpdater semanticHighlightingPositionUpdater;
 
-	public static final String SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY = "org.eclipse.lsp4e.cpp.semanticHighlight"; //$NON-NLS-1$
-	public static final String INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY = "org.eclipse.lsp4e.cpp.inactiveCodeHighlight"; //$NON-NLS-1$
+	public static final String SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY = "org.eclipse.cdt.lsp.core.semanticHighlight"; //$NON-NLS-1$
+	public static final String INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY = "org.eclipse.cdt.lsp.core.inactiveCodeHighlight"; //$NON-NLS-1$
 
 	// A set containing all active objects of PresentationReconcilerCPP.
 	public static Set<PresentationReconcilerCPP> presentationReconcilers = ConcurrentHashMap.newKeySet();

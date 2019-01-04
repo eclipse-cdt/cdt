@@ -399,7 +399,7 @@
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
-				<lsp4e-cpp.skip.tests>true</lsp4e-cpp.skip.tests>
+				<lsp.skip.tests>true</lsp.skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -407,7 +407,7 @@
 			<properties>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
-				<lsp4e-cpp.skip.tests>true</lsp4e-cpp.skip.tests>
+				<lsp.skip.tests>true</lsp.skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -415,11 +415,11 @@
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
-				<lsp4e-cpp.skip.tests>true</lsp4e-cpp.skip.tests>
+				<lsp.skip.tests>true</lsp.skip.tests>
 			</properties>
 		</profile>
 		<profile>
-			<id>skip-tests-except-lsp4e-cpp</id>
+			<id>skip-tests-except-lsp</id>
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
@@ -431,7 +431,7 @@
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
-				<lsp4e-cpp.skip.tests>true</lsp4e-cpp.skip.tests>
+				<lsp.skip.tests>true</lsp.skip.tests>
 			</properties>
 		</profile>
 		<profile>

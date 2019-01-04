@@ -21,7 +21,7 @@ public class Activator extends AbstractUIPlugin {
 	public Activator() {
 	}
 
-	public static final String PLUGIN_ID = "org.eclipse.lsp4e.cpp.language"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.cdt.lsp.core"; //$NON-NLS-1$
 
 	private static Activator plugin;
 

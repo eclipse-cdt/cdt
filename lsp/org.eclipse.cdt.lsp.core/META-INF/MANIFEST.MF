@@ -26,4 +26,4 @@ Bundle-Activator: org.eclipse.cdt.lsp.core.Activator
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ui.editors.text,
  org.eclipse.ui.texteditor
-Automatic-Module-Name: org.eclipse.lsp4e.cpp.language
+Automatic-Module-Name: org.eclipse.cdt.lsp.core

@@ -244,7 +244,7 @@ public class SerialPort {
 		if (osName.equals("Mac OS X")) { //$NON-NLS-1$
 			return listDevs(Pattern.compile("cu\\..*")); //$NON-NLS-1$
 		} else if (osName.equals("Linux")) { //$NON-NLS-1$
-			return listDevs(Pattern.compile("(ttyUSB|ttyACM).*")); //$NON-NLS-1$
+			return listDevs(Pattern.compile("(ttyUSB|ttyACM|ttyS).*")); //$NON-NLS-1$
 		} else if (osName.startsWith("Windows")) { //$NON-NLS-1$
 			List<String> ports = new ArrayList<>();
 			int i = 0;

@@ -16,8 +16,6 @@
    <launcherArgs>
       <programArgs>-data @noDefault
       </programArgs>
-      <programArgsLin>--launcher.GTK_version 2
-      </programArgsLin>
       <vmArgsLin>-Xms100m -Xmx512m  -Dosgi.requiredJavaVersion=1.8
       </vmArgsLin>
       <vmArgsMac>-Xms100m -Xmx512m  -XstartOnFirstThread -Dosgi.requiredJavaVersion=1.8 -Dorg.eclipse.swt.internal.carbon.smallFonts

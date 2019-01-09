@@ -16,6 +16,41 @@
       "revId": "7ca5a66bf9522e9860b6a6a81658c10276b6184a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "240b76a2_c2f92e80",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/CDebuggerTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-01-09T18:21:18Z",
+      "side": 1,
+      "message": "Because org.eclipse.cdt.dsf.gdb.internal.ui.launching.CLaunchConfigurationTab (in same package) was deleted in favour of org.eclipse.cdt.launch.ui.CLaunchConfigurationTab",
+      "parentUuid": "86940135_e921e9dd",
+      "revId": "7ca5a66bf9522e9860b6a6a81658c10276b6184a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6fef158a_5b100328",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/CDebuggerTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-01-09T18:21:18Z",
+      "side": 1,
+      "message": "Here is the ref.",
+      "revId": "7ca5a66bf9522e9860b6a6a81658c10276b6184a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

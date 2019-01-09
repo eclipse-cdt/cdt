@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "86940135_e921e9dd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/CDebuggerTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2019-01-09T15:12:48Z",
+      "side": 1,
+      "message": "Confused why this was needed. There were no other code changes in this class?",
+      "revId": "7ca5a66bf9522e9860b6a6a81658c10276b6184a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

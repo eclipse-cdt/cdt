@@ -416,7 +416,9 @@ public class TestModelManager implements ITestModelUpdater, ITestModelAccessor {
 
 	@Override
 	public void setTestingTime(int testingTime) {
-		currentTestCase.setTestingTime(testingTime);
+		if (currentTestCase != null) {
+			currentTestCase.setTestingTime(testingTime);
+		}
 	}
 
 	@Override

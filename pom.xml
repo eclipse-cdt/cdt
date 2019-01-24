@@ -14,8 +14,8 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>1.3.0</tycho-version>
-		<tycho-extras-version>1.3.0</tycho-extras-version>
+		<tycho-version>1.4.0-SNAPSHOT</tycho-version>
+		<tycho-extras-version>1.4.0-SNAPSHOT</tycho-extras-version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -83,6 +83,10 @@
 		<pluginRepository>
 			<id>cbi</id>
 			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>tycho-snapshots</id>
+			<url>https://repo.eclipse.org/content/repositories/tycho-snapshots/</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<profiles>

@@ -167,6 +167,9 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 			return false;
 		}
 		EvalFunctionSet o = (EvalFunctionSet) other;
+		if (fFunctionSet == null) {
+			return o.fFunctionSet == null;
+		}
 		return fFunctionSet.equals(o.fFunctionSet);
 	}
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="cdt" sequenceNumber="36">
+<?pde version="3.8"?><target name="cdt" sequenceNumber="37">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
@@ -60,7 +60,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/webtools/downloads/drops/R3.10.0/S-3.10.0.RC2-20180524070951/repository"/>
+<repository location="http://download.eclipse.org/webtools/downloads/drops/R3.10.0/R-3.10.0-20180611164516/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group" version="0.0.0"/>

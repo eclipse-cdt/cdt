@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a0f10b8_6afc0e25",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTFunctionCallExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-01-29T21:31:15Z",
+      "side": 1,
+      "message": "What\u0027s the proper way to change public API?",
+      "revId": "a630029691503393c7121974861068d66aa6b7bb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

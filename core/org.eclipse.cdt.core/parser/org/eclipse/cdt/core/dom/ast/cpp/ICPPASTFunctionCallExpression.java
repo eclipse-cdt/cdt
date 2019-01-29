@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * @since 5.1
@@ -38,5 +39,11 @@ public interface ICPPASTFunctionCallExpression
 	 * the function call, or {@code null} if the operator() is not overloaded.
 	 * @since 5.8
 	 */
+	@Deprecated
 	public ICPPFunction getOverload();
+
+	/**
+	 * @since 6.6
+	 */
+	public IBinding getOverloadBinding();
 }

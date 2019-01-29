@@ -2759,7 +2759,7 @@ public class CPPSemantics {
 
 		if (bestFnCost == null) {
 			if (unknownFunction == null)
-				return null;
+				return new ProblemBinding(lookupName, lookupPoint, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
 
 			setTargetedFunctionsToUnknown(argTypes);
 			return CPPDeferredFunction.createForCandidates(fns);

@@ -16,6 +16,24 @@
       "revId": "a630029691503393c7121974861068d66aa6b7bb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "62274292_a0b49939",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTFunctionCallExpression.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-01-31T06:43:26Z",
+      "side": 1,
+      "message": "CDT follows semantic versioning (https://semver.org/), so the procedure for changing public API is to:\n\n * Add the alternative API in the next minor release (e.g. CDT 9.7.0), deprecating the old API\n * Remove the old API in the next major release (e.g. CDT 10.0.0).\n\nAs an additional measure, we usually announce an intention to remove a deprecated API on the mailing list, so downstream consumers (e.g. plugins) are forewarned. Very widely used APIs may be kept deprecated for multiple major releases. (For example, we could have removed IValue.numericalValue() in CDT 9.0.0, but chose not to.)\n\n\u003d\u003d\u003d\u003d\n\nAll that said: in this case, I think we can avoid breaking the API, by returning an object that implements both IProblemBinding and ICPPFunction. We already have types similar to that, like CPPClassType.CPPClassTypeProblem. We don\u0027t have one for functions, but we can add one.",
+      "parentUuid": "8a0f10b8_6afc0e25",
+      "revId": "a630029691503393c7121974861068d66aa6b7bb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

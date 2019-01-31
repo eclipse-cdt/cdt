@@ -21,7 +21,7 @@
 <feature
       id="org.eclipse.rse.dstore"
       label="%featureName"
-      version="4.5.1.qualifier"
+      version="4.5.100.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.dstore"
       license-feature="org.eclipse.license"

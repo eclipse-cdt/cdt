@@ -14,7 +14,7 @@
 <feature
       id="org.eclipse.rse.tests"
       label="%featureName"
-      version="4.5.1.qualifier"
+      version="4.5.100.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1.qualifier">

@@ -17,7 +17,7 @@
 	<parent>
 		<groupId>org.eclipse.tm.terminal</groupId>
 		<artifactId>org.eclipse.tm.terminal.features</artifactId>
-		<version>4.5.1-SNAPSHOT</version>
+		<version>4.5.100-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>org.eclipse.tm.terminal.view.rse.sdk.feature</artifactId>

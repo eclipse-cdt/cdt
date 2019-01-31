@@ -22,7 +22,7 @@
 
 	<properties>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.git</tycho.scmUrl>
-		<tycho-version>1.2.0</tycho-version>
+		<tycho-version>1.3.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 
 		<cbi-plugins.version>1.1.4</cbi-plugins.version>
@@ -34,7 +34,7 @@
 		<!-- Check available versions at https://repository.sonatype.org/content/repositories/public/org/jacoco/jacoco-maven-plugin -->
 		<jacoco-version>0.7.9</jacoco-version>
 
-		<sdk-version>4.10-I-builds</sdk-version>
+		<sdk-version>4.11-I-builds</sdk-version>
 		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
 

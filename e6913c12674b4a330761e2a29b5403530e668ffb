@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d4c3b515_b90a8e26",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTFunctionCallExpression.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-01T01:45:43Z",
+      "side": 1,
+      "message": "How about \"if (b instanceof IProblemBinding \u0026\u0026 !(b instanceof ICPPFunction))\", in case some future code already returns a CPPFunctionProblem for some codepaths in resolveFunction()?",
+      "revId": "e6913c12674b4a330761e2a29b5403530e668ffb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

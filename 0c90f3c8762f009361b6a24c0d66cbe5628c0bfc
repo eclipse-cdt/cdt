@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf9d476e_d7e38ff6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-04T21:40:21Z",
+      "side": 1,
+      "message": "Do you think the approach of flattening types to check for aggregate init is valid?",
+      "revId": "0c90f3c8762f009361b6a24c0d66cbe5628c0bfc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -16,6 +16,23 @@
       "revId": "0c90f3c8762f009361b6a24c0d66cbe5628c0bfc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0c768a5d_e50263f5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-05T19:04:59Z",
+      "side": 1,
+      "message": "I am going to move this to a common checkAggregateInitialization for IArrayType and ICPPClassType.",
+      "revId": "0c90f3c8762f009361b6a24c0d66cbe5628c0bfc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

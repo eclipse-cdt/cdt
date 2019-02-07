@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.lsp4e.LanguageServersRegistry;
 import org.eclipse.lsp4e.LanguageServersRegistry.LanguageServerDefinition;
 import org.eclipse.lsp4e.LanguageServiceAccessor;
-import org.eclipse.lsp4e.ProjectSpecificLanguageServerWrapper;
+import org.eclipse.lsp4e.LanguageServerWrapper;
 import org.eclipse.lsp4j.DidChangeWatchedFilesParams;
 import org.eclipse.lsp4j.FileChangeType;
 import org.eclipse.lsp4j.FileEvent;
@@ -47,7 +47,7 @@ final class CPPResourceChangeListener implements IResourceChangeListener {
 	public void resourceChanged(IResourceChangeEvent event) {
 		LanguageServerDefinition definition = LanguageServersRegistry.getInstance()
 				.getDefinition(CPPStreamConnectionProvider.ID);
-		ProjectSpecificLanguageServerWrapper wrapper = getLanguageSeverWrapper(definition);
+		LanguageServerWrapper wrapper = getLanguageSeverWrapper(definition);
 		if (event.getType() != IResourceChangeEvent.POST_CHANGE || !isRelevantDelta(event.getDelta())
 				|| wrapper == null) {
 			return;
@@ -56,7 +56,7 @@ final class CPPResourceChangeListener implements IResourceChangeListener {
 		sendFileEvents(wrapper, createFileEventsFromResourceEvent(event));
 	}
 
-	private static void sendFileEvents(ProjectSpecificLanguageServerWrapper wrapper, List<FileEvent> fileEvents) {
+	private static void sendFileEvents(LanguageServerWrapper wrapper, List<FileEvent> fileEvents) {
 		if (!fileEvents.isEmpty()) {
 			DidChangeWatchedFilesParams params = new DidChangeWatchedFilesParams(fileEvents);
 			wrapper.getServer().getWorkspaceService().didChangeWatchedFiles(params);
@@ -81,7 +81,7 @@ final class CPPResourceChangeListener implements IResourceChangeListener {
 		return fileEvents;
 	}
 
-	private ProjectSpecificLanguageServerWrapper getLanguageSeverWrapper(LanguageServerDefinition definition) {
+	private LanguageServerWrapper getLanguageSeverWrapper(LanguageServerDefinition definition) {
 		try {
 			return LanguageServiceAccessor.getLSWrapperForConnection(fProject, definition);
 		} catch (IOException e) {

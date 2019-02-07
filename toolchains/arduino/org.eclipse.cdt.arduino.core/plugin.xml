@@ -54,6 +54,8 @@
             class="org.eclipse.cdt.arduino.core.internal.launch.ArduinoLaunchConfigurationProvider"
             descriptorType="org.eclipse.cdt.arduino.core.descriptorType"
             priority="5">
+           <enablement>
+           </enablement>
       </configProvider>
    </extension>
    <extension

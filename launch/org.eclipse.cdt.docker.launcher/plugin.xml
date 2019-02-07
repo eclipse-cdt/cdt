@@ -154,6 +154,8 @@
            class="org.eclipse.cdt.internal.docker.launcher.ui.launchbar.CoreBuildContainerLaunchConfigProvider"
            descriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
            priority="15">
+           <enablement>
+           </enablement>
      </configProvider>
   </extension>
 </plugin>

@@ -23,6 +23,8 @@
             class="org.eclipse.cdt.launch.serial.internal.SerialFlashLaunchConfigProvider"
             descriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
             priority="10">
+            <enablement>
+            </enablement>
       </configProvider>
    </extension>
 

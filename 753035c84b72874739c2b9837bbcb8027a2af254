@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "98293dfd_1304a714",
+        "filename": "cross/org.eclipse.cdt.launch.serial.core/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-07T18:00:07Z",
+      "side": 1,
+      "message": "This should be bumped to .100 as CDT now strictly follows https://wiki.eclipse.org/Version_Numbering.",
+      "revId": "753035c84b72874739c2b9837bbcb8027a2af254",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d62f0c71_88db1335",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-07T18:00:07Z",
+      "side": 1,
+      "message": "ditto.",
+      "revId": "753035c84b72874739c2b9837bbcb8027a2af254",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e28d2e69_5d8b2156",
+        "filename": "toolchains/arduino/org.eclipse.cdt.arduino.core/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-07T18:00:07Z",
+      "side": 1,
+      "message": "ditto",
+      "revId": "753035c84b72874739c2b9837bbcb8027a2af254",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

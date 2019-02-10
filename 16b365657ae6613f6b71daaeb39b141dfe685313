@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "844f7fa9_ee9d87ae",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12985,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-10T19:48:55Z",
+      "side": 1,
+      "message": "It\u0027s easy for this comment to become separated from the tests above, so let\u0027s be more specific: \"// TODO brace elision tests with conversion\"",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8f6683e_8d00a0de",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-10T19:48:55Z",
+      "side": 1,
+      "message": "Let\u0027s stick to the convention of using an \u0027f\u0027 prefix for field names. fIndex?",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "447799a0_b3b81b24",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-10T19:48:55Z",
+      "side": 1,
+      "message": "This method can be private.",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27f888e9_51418a80",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-10T19:48:55Z",
+      "side": 1,
+      "message": "Likewise.",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c4d9686_6b69d574",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-10T19:48:55Z",
+      "side": 1,
+      "message": "As checkElement() and checkInitializationOfElements() are mutually recursive, we might be overwriting the fWorstCost used by an outer call with a better cost here. I think we should use a local variable instead.",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d1d278cc_02e1e839",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-10T19:48:55Z",
+      "side": 1,
+      "message": "\"df\"? Also, this parameter is not used.",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "efca843b_dbcd1e39",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-10T19:48:55Z",
+      "side": 1,
+      "message": "Let\u0027s move this function into AggregateInitialization.",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6ba43905_e32471ce",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-10T19:48:55Z",
+      "side": 1,
+      "message": "I think this would read better if the entry point were a static function: AggregateInitialization.check(target, arg). If it\u0027s convenient to have an instance in the implementation, the static function can create one as an implementation detail (with the constructor used being private).",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "25c51b47_ec8d6ce5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-10T19:48:55Z",
+      "side": 1,
+      "message": "What is the purpose of this change? It doesn\u0027t seem to be necessary to make any tests pass.",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "663814b4_643e5afe",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-10T19:48:55Z",
+      "side": 1,
+      "message": "Should we actually check the aggregate initialization here? (We can leave that for a follow-up.)",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "443592cc_cb825951",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-10T19:48:55Z",
+      "side": 1,
+      "message": "We cannot in general obtain an IASTName here, because this evaluation may come from e.g. a decltype() in the signature of a function stored in the index, so there is no AST to work with. Instead, we can pass null for the name, and pass classType.getNameCharArray() for the \"char[] arg\" parameter instead.",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

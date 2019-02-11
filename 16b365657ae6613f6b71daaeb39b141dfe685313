@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ddbac2a4_f21e2685",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12985,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-11T20:57:06Z",
+      "side": 1,
+      "message": "This was actually for myself, but I didn\u0027t have time and forgot about it. I\u0027ll add a test!",
+      "parentUuid": "844f7fa9_ee9d87ae",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a8f6683e_8d00a0de",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2019-02-10T19:48:55Z",
       "side": 1,
       "message": "Let\u0027s stick to the convention of using an \u0027f\u0027 prefix for field names. fIndex?",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4af03a9_ab631487",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-11T20:57:06Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "a8f6683e_8d00a0de",
       "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "2cb47c05_b56cc58d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-11T20:57:06Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "447799a0_b3b81b24",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27f888e9_51418a80",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2019-02-10T19:48:55Z",
       "side": 1,
       "message": "Likewise.",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "34e0db0c_f990af70",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-11T20:57:06Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "27f888e9_51418a80",
       "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "f90e686c_f8c157b0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-11T20:57:06Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "6c4d9686_6b69d574",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d1d278cc_02e1e839",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2019-02-10T19:48:55Z",
       "side": 1,
       "message": "\"df\"? Also, this parameter is not used.",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "747c934b_fbe69995",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-11T20:57:06Z",
+      "side": 1,
+      "message": "Oh, actually I forgot to commit my last changes where I make all worstCosts local. Probably in this state I was debugging a problem and reverted the change. :(",
+      "parentUuid": "d1d278cc_02e1e839",
       "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -138,6 +246,24 @@
     },
     {
       "key": {
+        "uuid": "e6ae894a_ab4ddb60",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-11T20:57:06Z",
+      "side": 1,
+      "message": "Thanks!",
+      "parentUuid": "6ba43905_e32471ce",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "25c51b47_ec8d6ce5",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
         "patchSetId": 2
@@ -149,6 +275,24 @@
       "writtenOn": "2019-02-10T19:48:55Z",
       "side": 1,
       "message": "What is the purpose of this change? It doesn\u0027t seem to be necessary to make any tests pass.",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baadb4c7_6c479c0e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-11T20:57:06Z",
+      "side": 1,
+      "message": "I added an additional test in testBraceElisionForAggregateInit2_WithNonAggregate_543038",
+      "parentUuid": "25c51b47_ec8d6ce5",
       "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -172,6 +316,24 @@
     },
     {
       "key": {
+        "uuid": "b8a5c7c7_5096f48c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-11T20:57:06Z",
+      "side": 1,
+      "message": "I changed the TODO, and will add the check directly after this is merged.",
+      "parentUuid": "663814b4_643e5afe",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "443592cc_cb825951",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
         "patchSetId": 2
@@ -183,6 +345,24 @@
       "writtenOn": "2019-02-10T19:48:55Z",
       "side": 1,
       "message": "We cannot in general obtain an IASTName here, because this evaluation may come from e.g. a decltype() in the signature of a function stored in the index, so there is no AST to work with. Instead, we can pass null for the name, and pass classType.getNameCharArray() for the \"char[] arg\" parameter instead.",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5196b2_477d5d2a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-11T20:57:06Z",
+      "side": 1,
+      "message": "Done.\nHowever I still see only `name.getBinding().getName()` on an error. Maybe something missing in ProblemBindingChecker.\n\nExample:\n\nstruct level0{\n\tint a;\n\tint b;\n};\n\nstruct level1{\npublic:\n\tlevel1(level0 a): a(a){}\nprivate:\n\tlevel0 a;\n};\n\nint main() {\n\tlevel1{1,2};\n}",
+      "parentUuid": "443592cc_cb825951",
       "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

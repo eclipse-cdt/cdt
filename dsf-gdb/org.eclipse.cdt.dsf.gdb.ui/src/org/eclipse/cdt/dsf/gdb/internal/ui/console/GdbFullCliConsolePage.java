@@ -120,12 +120,12 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 
 	@Override
 	public void dispose() {
-		super.dispose();
 		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow())
 				.removeDebugContextListener(this);
 		fTerminalControl.disposeTerminal();
 		fMenuManager.dispose();
 		GdbUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPreferenceListener);
+		super.dispose();
 	}
 
 	@Override

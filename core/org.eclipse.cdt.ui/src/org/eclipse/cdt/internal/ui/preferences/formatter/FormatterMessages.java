@@ -369,6 +369,7 @@ final class FormatterMessages extends NLS {
 	public static String ModifyDialog_tabpage_braces_title;
 	public static String ModifyDialog_tabpage_indentation_title;
 	public static String ModifyDialog_tabpage_whitespace_title;
+	public static String ModifyDialog_tabpage_formatter_tag_title;
 	//	public static String ModifyDialog_tabpage_blank_lines_title;
 	public static String ModifyDialog_tabpage_new_lines_title;
 	public static String ModifyDialog_tabpage_control_statements_title;
@@ -401,6 +402,15 @@ final class FormatterMessages extends NLS {
 	public static String ProfileManager_unmanaged_profile_with_name;
 
 	public static String CPreview_formatter_exception;
+
+	public static String FormatterModifyDialog_offOn_preview_header;
+	public static String FormatterModifyDialog_offOn_description;
+	public static String FormatterModifyDialog_offOn_pref_enable;
+	public static String FormatterModifyDialog_offOn_pref_off_tag;
+	public static String FormatterModifyDialog_offOn_pref_on_tag;
+	public static String FormatterModifyDialog_offOn_error_startsWithWhitespace;
+	public static String FormatterModifyDialog_offOn_error_endsWithWhitespace;
+	public static String FormatterModifyDialog_offOn_error_empty;
 
 	private FormatterMessages() {
 		// Do not instantiate

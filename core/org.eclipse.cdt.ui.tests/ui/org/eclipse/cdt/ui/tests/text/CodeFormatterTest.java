@@ -3563,4 +3563,44 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testAttributedNamedScopedEnumDeclaration_Bug535256_4() throws Exception {
 		assertFormatterResult();
 	}
+
+	////@formatter:off
+	//int
+	//main(){
+	//return
+	//0
+	//;}
+	////@formatter:on
+
+	////@formatter:off
+	//int
+	//main(){
+	//return
+	//0
+	//;}
+	////@formatter:on
+	public void testOnOffTags() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+		assertFormatterResult();
+	}
+
+	////@formatter:off
+	// void formatme() {
+	// int x;
+	// }
+	////@formatter:on
+
+	////@formatter:off
+	// void formatme() {
+	// int x;
+	// }
+	////@formatter:on
+	public void testOnOffTagsFirstLineIndent() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+		assertFormatterResult();
+	}
 }

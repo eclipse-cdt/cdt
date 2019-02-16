@@ -95,7 +95,7 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 		fRadioFormatAllLines = addRadioButton(group, PreferencesMessages.SaveActionsPreferencePage_formatAllLines, null,
 				0);
 		fRadioFormatEditedLines = addRadioButton(group, PreferencesMessages.SaveActionsPreferencePage_formatEditedLines,
-				REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES, 0);
+				FORMAT_SOURCE_CODE_LIMIT_TO_EDITED_LINES, 0);
 		createDependency(checkboxFormat, FORMAT_SOURCE_CODE, fRadioFormatAllLines);
 		createDependency(checkboxFormat, FORMAT_SOURCE_CODE, fRadioFormatEditedLines);
 

@@ -69,6 +69,18 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	};
 
 	/**
+	 * Preference validator
+	 */
+	interface PreferenceValidator {
+		/**
+		 * Validate callback
+		 * @param value The value to be checked
+		 * @return String error or null otherwise
+		 */
+		String validate(String value);
+	}
+
+	/**
 	 * The base class of all Preference classes. A preference class provides a wrapper
 	 * around one or more SWT widgets and handles the input of values for some key.
 	 * On each change, the new value is written to the map and the listeners are notified.
@@ -77,6 +89,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 		private final Map<String, String> fPreferences;
 		private boolean fEnabled;
 		private String fKey;
+		private PreferenceValidator fValidator;
 
 		/**
 		 * Create a new Preference.
@@ -143,6 +156,22 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 		 * of this object has changed (enabled, key, ...).
 		 */
 		protected abstract void updateWidget();
+
+		public void setValidator(PreferenceValidator validator) {
+			fValidator = validator;
+		}
+
+		/**
+		 * Check if preference is valid according to its validator
+		 * @param value The preference value
+		 * @return Null if valid, the error string otherwise
+		 */
+		protected String isValid(String value) {
+			if (fValidator != null) {
+				return fValidator.validate(value);
+			}
+			return null;
+		}
 	}
 
 	/**
@@ -315,6 +344,126 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 		@Override
 		public Control getControl() {
 			return fCombo;
+		}
+	}
+
+	/**
+	 * Wrapper around a textfied
+	 */
+	protected final class StringPreference extends Preference {
+
+		private final Label fLabel;
+		private final Text fText;
+
+		protected String fSelected;
+		protected String fOldSelected;
+
+		/**
+		 * Create a new NumberPreference.
+		 * @param composite The composite on which the SWT widgets are added.
+		 * @param numColumns The number of columns in the composite's GridLayout.
+		 * @param preferences The map to store the values.
+		 * @param key The key to store the values.
+		 * @param text The label text for this Preference.
+		 */
+		public StringPreference(Composite composite, int numColumns, Map<String, String> preferences, String key,
+				String text) {
+			super(preferences, key);
+
+			fLabel = createLabel(numColumns - 1, composite, text, GridData.FILL_HORIZONTAL);
+			fText = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.LEFT);
+			fText.setFont(composite.getFont());
+
+			fText.setLayoutData(
+					createGridData(1, GridData.HORIZONTAL_ALIGN_END, fPixelConverter.convertWidthInCharsToPixels(20)));
+
+			updateWidget();
+
+			fText.addFocusListener(new FocusListener() {
+				@Override
+				public void focusGained(FocusEvent e) {
+					StringPreference.this.focusGained();
+				}
+
+				@Override
+				public void focusLost(FocusEvent e) {
+					StringPreference.this.focusLost();
+				}
+			});
+
+			fText.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					fieldModified();
+				}
+			});
+		}
+
+		private IStatus createErrorStatus(String error) {
+			return new Status(IStatus.ERROR, CUIPlugin.getPluginId(), 0, Messages.format(error), null);
+		}
+
+		protected void focusGained() {
+			fOldSelected = fSelected;
+			fText.setSelection(0, fText.getCharCount());
+		}
+
+		protected void focusLost() {
+			updateStatus(null);
+			final String input = fText.getText();
+			if (validInput(input) != null)
+				fSelected = fOldSelected;
+			else
+				fSelected = input;
+			if (fSelected != fOldSelected) {
+				saveSelected();
+				fText.setText(fSelected);
+			}
+		}
+
+		protected void fieldModified() {
+			final String trimInput = fText.getText().trim();
+			final String error = validInput(fText.getText());
+
+			updateStatus(error == null ? null : createErrorStatus(error));
+
+			if (error == null) {
+				if (fSelected.equals(trimInput)) {
+					fSelected = trimInput;
+					saveSelected();
+				}
+			}
+		}
+
+		private String validInput(String input) {
+			return isValid(input);
+		}
+
+		private void saveSelected() {
+			getPreferences().put(getKey(), fSelected);
+			setChanged();
+			notifyObservers();
+		}
+
+		@Override
+		protected void updateWidget() {
+			final boolean hasKey = getKey() != null;
+
+			fLabel.setEnabled(hasKey && getEnabled());
+			fText.setEnabled(hasKey && getEnabled());
+
+			if (hasKey) {
+				String s = getPreferences().get(getKey());
+				fSelected = s;
+				fText.setText(s);
+			} else {
+				fText.setText(""); //$NON-NLS-1$
+			}
+		}
+
+		@Override
+		public Control getControl() {
+			return fText;
 		}
 	}
 
@@ -895,6 +1044,17 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 		group.setLayout(layout);//createGridLayout(numColumns, true));
 		group.setText(text);
 		return group;
+	}
+
+	/*
+	 * Convenience method to create a NumberPreference. The widget is registered as
+	 * a potential focus holder, and the default updater is added.
+	 */
+	protected StringPreference createStringPref(Composite composite, int numColumns, String name, String key) {
+		final StringPreference pref = new StringPreference(composite, numColumns, fWorkingValues, key, name);
+		fDefaultFocusManager.add(pref);
+		pref.addObserver(fUpdater);
+		return pref;
 	}
 
 	/*

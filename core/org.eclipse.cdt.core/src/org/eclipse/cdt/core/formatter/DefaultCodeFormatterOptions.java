@@ -264,6 +264,12 @@ public class DefaultCodeFormatterOptions {
 	public boolean use_tabs_only_for_leading_indentations;
 	public int initial_indentation_level;
 	public String line_separator;
+	/** @since 6.7 */
+	public String comment_formatter_on_tag;
+	/** @since 6.7 */
+	public String comment_formatter_off_tag;
+	/** @since 6.7 */
+	public boolean use_fomatter_comment_tag;
 
 	private DefaultCodeFormatterOptions() {
 		// cannot be instantiated
@@ -282,6 +288,11 @@ public class DefaultCodeFormatterOptions {
 
 	public Map<String, String> getMap() {
 		Map<String, String> options = new HashMap<>();
+		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, comment_formatter_on_tag);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, comment_formatter_off_tag);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG,
+				this.use_fomatter_comment_tag ? DefaultCodeFormatterConstants.TRUE
+						: DefaultCodeFormatterConstants.FALSE);
 		//		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ALLOCATION_EXPRESSION, getAlignment(this.alignment_for_arguments_in_allocation_expression));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
 				getAlignment(this.alignment_for_arguments_in_method_invocation));
@@ -2025,10 +2036,25 @@ public class DefaultCodeFormatterOptions {
 				this.tab_char = MIXED;
 			}
 		}
+		final Object formatterCommentOnTag = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG);
+		if (formatterCommentOnTag != null) {
+			this.comment_formatter_on_tag = (String) formatterCommentOnTag;
+		}
+		final Object formatterCommentOffTag = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG);
+		if (formatterCommentOffTag != null) {
+			this.comment_formatter_off_tag = (String) formatterCommentOffTag;
+		}
+		final Object useFormatterCommentTag = settings.get(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG);
+		if (useFormatterCommentTag != null) {
+			this.use_fomatter_comment_tag = DefaultCodeFormatterConstants.TRUE.equals(useFormatterCommentTag);
+		}
 	}
 
 	public void setDefaultSettings() {
 		//		this.alignment_for_arguments_in_allocation_expression = Alignment.M_COMPACT_SPLIT;
+		this.comment_formatter_on_tag = DefaultCodeFormatterConstants.FORMATTER_ON_TAG;
+		this.comment_formatter_off_tag = DefaultCodeFormatterConstants.FORMATTER_OFF_TAG;
+		this.use_fomatter_comment_tag = true;
 		this.alignment_for_arguments_in_method_invocation = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_assignment = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_base_clause_in_type_declaration = Alignment.M_NEXT_PER_LINE_SPLIT;

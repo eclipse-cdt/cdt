@@ -91,6 +91,38 @@ public class DefaultCodeFormatterConstants {
 	 */
 	public static final String FALSE = "false"; //$NON-NLS-1$
 
+	/**
+	 * <pre>
+	 * FORMATTER / Formatter on tag format option
+	 *     - option id:         "org.eclipse.cdt.core.formatter.comment_formatter_on_tag"
+	 *     - default:           @formatter:on
+	 * </pre>
+	 * @see CCorePlugin#FORMAT_ON_TAG
+	 * @since 6.7
+	 */
+	public static final String FORMATTER_COMMENT_ON_TAG = CCorePlugin.PLUGIN_ID + ".formatter.comment_formatter_on_tag"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Formatter off tag format option
+	 *     - option id:         "org.eclipse.cdt.core.formatter.comment_formatter_off_tag"
+	 *     - default:           @formatter:off
+	 * </pre>
+	 * @see CCorePlugin#FORMAT_OFF_TAG
+	 * @since 6.7
+	 */
+	public static final String FORMATTER_COMMENT_OFF_TAG = CCorePlugin.PLUGIN_ID
+			+ ".formatter.comment_formatter_off_tag"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Formatter on tag format option
+	 *     - option id:         "org.eclipse.cdt.core.formatter.use_comment_formatter_tag"
+	 *     - default:           true
+	 * </pre>
+	 * @since 6.7
+	 */
+	public static final String FORMATTER_USE_COMMENT_TAG = CCorePlugin.PLUGIN_ID
+			+ ".formatter.use_comment_formatter_tag"; //$NON-NLS-1$
+
 	//	/**
 	//	 * <pre>
 	//	 * FORMATTER / Option to align type members of a type declaration on column
@@ -2483,6 +2515,21 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 */
 	public static final int WRAP_ONE_PER_LINE = 3;
+
+	/**
+	 * <pre>
+	 * FORMATTER / Default formatter on tag
+	 * </pre>
+	 * @since 6.7
+	 */
+	public static final String FORMATTER_ON_TAG = "@formatter:on"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Default formatter off tag
+	 * </pre>
+	 * @since 6.7
+	 */
+	public static final String FORMATTER_OFF_TAG = "@formatter:off"; //$NON-NLS-1$
 
 	/*
 	 * Private constants.

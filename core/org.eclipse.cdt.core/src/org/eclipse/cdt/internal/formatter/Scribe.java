@@ -88,7 +88,14 @@ public class Scribe {
 	private int textRegionStart;
 	public int scannerEndPosition;
 
-	private List<Position> fSkipPositions = Collections.emptyList();
+	/**
+	 * It keeps the list of inactive region.
+	 */
+	private List<Position> fSkipInactivePositions = Collections.emptyList();
+	/**
+	 * It keeps the list of no-format region.
+	 */
+	private List<Position> fSkipForbiddenPositions = Collections.emptyList();
 
 	private boolean skipOverInactive;
 
@@ -668,10 +675,19 @@ public class Scribe {
 	}
 
 	/**
+	 * Set the positions where we don't want to perform any check
+	 * @param list The list of positions
+	 */
+	public void setSkipForbiddenPositions(List<Position> list) {
+		if (list != null)
+			fSkipForbiddenPositions = list;
+	}
+
+	/**
 	 * @param list
 	 */
-	public void setSkipPositions(List<Position> list) {
-		fSkipPositions = list;
+	public void setSkipInactivePositions(List<Position> list) {
+		fSkipInactivePositions = list;
 		skipOverInactive = !list.isEmpty();
 	}
 
@@ -1287,8 +1303,22 @@ public class Scribe {
 	 * @param offset
 	 * @return
 	 */
+	private boolean isForbidden(int offset) {
+		for (Iterator<Position> iter = fSkipForbiddenPositions.iterator(); iter.hasNext();) {
+			Position pos = iter.next();
+			if (pos.includes(offset)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param offset
+	 * @return
+	 */
 	private Position getInactivePosAt(int offset) {
-		for (Iterator<Position> iter = fSkipPositions.iterator(); iter.hasNext();) {
+		for (Iterator<Position> iter = fSkipInactivePositions.iterator(); iter.hasNext();) {
 			Position pos = iter.next();
 			if (pos.includes(offset)) {
 				return pos;
@@ -2037,7 +2067,7 @@ public class Scribe {
 	}
 
 	boolean shouldSkip(int offset) {
-		return offset >= fSkipStartOffset && offset < fSkipEndOffset;
+		return ((offset >= fSkipStartOffset && offset < fSkipEndOffset) || isForbidden(offset));
 	}
 
 	void skipRange(int offset, int endOffset) {

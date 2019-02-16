@@ -38,5 +38,6 @@ public class FormatterModifyDialog extends ModifyDialog {
 				new ControlStatementsTabPage(this, values));
 		addTabPage(FormatterMessages.ModifyDialog_tabpage_line_wrapping_title, new LineWrappingTabPage(this, values));
 		addTabPage(FormatterMessages.ModifyDialog_tabpage_comments_title, new CommentsTabPage(this, values));
+		addTabPage(FormatterMessages.ModifyDialog_tabpage_formatter_tag_title, new FormatterTagTabPage(this, values));
 	}
 }

@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
@@ -438,7 +439,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		localScanner.setSource(compilationUnitSource);
 		scribe.initializeScanner(compilationUnitSource);
-		scribe.setSkipPositions(collectInactiveCodePositions(unit));
+		scribe.setSkipInactivePositions(collectInactiveCodePositions(unit));
+		scribe.setSkipForbiddenPositions(collectNoFormatCodePositions(unit));
 
 		fStatus = new MultiStatus(CCorePlugin.PLUGIN_ID, 0, "Formatting problem(s) in '" + unit.getFilePath() + "'", //$NON-NLS-1$//$NON-NLS-2$
 				null);
@@ -4463,6 +4465,64 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Collect source positions of no-format sections in the given translation unit.
+	 *
+	 * @param translationUnit  the {@link IASTTranslationUnit}, may be <code>null</code>
+	 * @return a {@link List} of {@link Position}s
+	 */
+	private List<Position> collectNoFormatCodePositions(IASTTranslationUnit translationUnit) {
+		if (translationUnit == null || !this.preferences.use_fomatter_comment_tag) {
+			return Collections.emptyList();
+		}
+		String fileName = translationUnit.getFilePath();
+		if (fileName == null) {
+			return Collections.emptyList();
+		}
+		List<Position> positions = new ArrayList<>();
+		int inactiveCodeStart = -1;
+		boolean inInactiveCode = false;
+
+		IASTComment[] commentsStmts = translationUnit.getComments();
+
+		for (IASTComment commentStmt : commentsStmts) {
+			IASTComment statement = commentStmt;
+			if (!statement.isPartOfTranslationUnitFile()) {
+				// comment is from a different file
+				continue;
+			}
+			IASTNodeLocation nodeLocation = statement.getFileLocation();
+			if (nodeLocation == null) {
+				continue;
+			}
+
+			String comment = new String(statement.getComment());
+			/**
+			 * According to JDT formatter rules, we need to evaluate the latest tag if both
+			 * are defined at the same time in the comment.
+			 */
+			int offPos = comment.lastIndexOf(this.preferences.comment_formatter_off_tag);
+			int onPos = comment.lastIndexOf(this.preferences.comment_formatter_on_tag);
+			if (offPos != -1 && offPos > onPos) {
+				if (!inInactiveCode) {
+					inactiveCodeStart = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
+					inInactiveCode = true;
+				}
+			} else if (onPos != -1 && onPos > offPos) {
+				if (inInactiveCode) {
+					int inactiveCodeEnd = nodeLocation.getNodeOffset();
+					positions.add(new Position(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
+				}
+				inInactiveCode = false;
+			}
+		}
+		if (inInactiveCode) {
+			positions.add(new Position(inactiveCodeStart, translationUnit.getFileLocation().getNodeLength()));
+			inInactiveCode = false;
+		}
+		return positions;
 	}
 
 	/**

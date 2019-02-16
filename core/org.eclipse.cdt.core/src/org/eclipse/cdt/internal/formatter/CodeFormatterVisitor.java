@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
@@ -438,7 +439,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		localScanner.setSource(compilationUnitSource);
 		scribe.initializeScanner(compilationUnitSource);
-		scribe.setSkipPositions(collectInactiveCodePositions(unit));
+		List<Position> skipList = collectInactiveCodePositions(unit);
+		skipList.addAll(collectNoFormatCodePositions(unit));
+		scribe.setSkipPositions(skipList);
 
 		fStatus = new MultiStatus(CCorePlugin.PLUGIN_ID, 0, "Formatting problem(s) in '" + unit.getFilePath() + "'", //$NON-NLS-1$//$NON-NLS-2$
 				null);
@@ -4463,6 +4466,61 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Collect source positions of no-format sections in the given translation unit.
+	 *
+	 * @param translationUnit  the {@link IASTTranslationUnit}, may be <code>null</code>
+	 * @return a {@link List} of {@link Position}s
+	 */
+	private List<Position> collectNoFormatCodePositions(IASTTranslationUnit translationUnit) {
+		if (translationUnit == null || !this.preferences.use_fomatter_comment_tag) {
+			return Collections.emptyList();
+		}
+		String fileName = translationUnit.getFilePath();
+		if (fileName == null) {
+			return Collections.emptyList();
+		}
+		List<Position> positions = new ArrayList<>();
+		int inactiveCodeStart = -1;
+		boolean inInactiveCode = false;
+		Stack<Boolean> inactiveCodeStack = new Stack<>();
+
+		IASTComment[] commentsStmts = translationUnit.getComments();
+
+		for (IASTComment commentStmt : commentsStmts) {
+			IASTComment statement = commentStmt;
+			if (!statement.isPartOfTranslationUnitFile()) {
+				// comment is from a different file
+				continue;
+			}
+			IASTNodeLocation nodeLocation = statement.getFileLocation();
+			if (nodeLocation == null) {
+				continue;
+			}
+			String coment = new String(statement.getComment());
+			if (coment.contains(this.preferences.comment_formatter_off_tag)) {
+				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
+				if (statement.isActive()) {
+					if (!inInactiveCode) {
+						inactiveCodeStart = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
+						inInactiveCode = true;
+					}
+				}
+			} else if (coment.contains(this.preferences.comment_formatter_on_tag)) {
+				try {
+					boolean wasInInactiveCode = inactiveCodeStack.pop().booleanValue();
+					if (inInactiveCode && !wasInInactiveCode) {
+						int inactiveCodeEnd = nodeLocation.getNodeOffset();
+						positions.add(new Position(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
+					}
+					inInactiveCode = wasInInactiveCode;
+				} catch (EmptyStackException e) {
+				}
+			}
+		}
+		return positions;
 	}
 
 	/**

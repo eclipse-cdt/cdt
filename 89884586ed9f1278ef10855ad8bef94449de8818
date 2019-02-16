@@ -1,0 +1,112 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a256e7fa_178a23ba",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2057,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-16T14:23:45Z",
+      "side": 1,
+      "message": "Normally I would say that the default would aim to give the same results as the previous behaviour. However in this case I think having the tags on by default makes sense.",
+      "revId": "89884586ed9f1278ef10855ad8bef94449de8818",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "12e1561e_23da0fdc",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4477,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-16T14:23:45Z",
+      "side": 1,
+      "message": "This implementation does not support on/off that cross #ifdefs (active code) AFAICT. I don\u0027t think it would be obvious to me as a user that this was the case, especially if I was trying to stop formatting of the #ifdef line itself.",
+      "revId": "89884586ed9f1278ef10855ad8bef94449de8818",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a0a3cd89_1bb692e7",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4488,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-16T14:23:45Z",
+      "side": 1,
+      "message": "The stacking of on/off tags is more complicated than JDT\u0027s support. IMHO this code should match behaviour of JDT and that would also make it a little simpler.",
+      "revId": "89884586ed9f1278ef10855ad8bef94449de8818",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "94821543_2cca7b4a",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4502,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-16T14:23:45Z",
+      "side": 1,
+      "message": "minor, typo in name of variable",
+      "range": {
+        "startLine": 4502,
+        "startChar": 10,
+        "endLine": 4502,
+        "endChar": 16
+      },
+      "revId": "89884586ed9f1278ef10855ad8bef94449de8818",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bfe3f7fe_24864ef9",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4506,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-16T14:23:45Z",
+      "side": 1,
+      "message": "minor, it seems this check should be the outer check, i.e. no point in searching contents of each comment for off tag - this is only true if we don\u0027t stack the on/off tags.",
+      "revId": "89884586ed9f1278ef10855ad8bef94449de8818",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8862bb9e_f69337f3",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4519,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-16T14:23:45Z",
+      "side": 1,
+      "message": "Please add comment in catch about why it is here. I assume it is the expected result if there are \"on\"s without corresponding \"off\"s.",
+      "revId": "89884586ed9f1278ef10855ad8bef94449de8818",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

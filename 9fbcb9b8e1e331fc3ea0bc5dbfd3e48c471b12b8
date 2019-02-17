@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "716d0bc9_4f7678a3",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 3600,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-17T17:01:08Z",
+      "side": 1,
+      "message": "I added this test to demonstrate a failure in the formatter off. The formatter is changing still the indent of the first line. Is there an off by 1 error in the offset calculations?",
+      "revId": "9fbcb9b8e1e331fc3ea0bc5dbfd3e48c471b12b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

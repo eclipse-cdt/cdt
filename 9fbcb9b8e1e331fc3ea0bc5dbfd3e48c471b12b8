@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "9db440d1_7935d3e7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/SaveActionsPreferencePage.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-17T21:13:32Z",
+      "side": 1,
+      "message": "I have decided this is too important of a change to hide away in here. Although a minor code change, this is one of proper significance and have spilt it out into its own bug/gerrit. \n\nSee https://git.eclipse.org/r/#/c/137094/ and https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d544516",
+      "revId": "9fbcb9b8e1e331fc3ea0bc5dbfd3e48c471b12b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "999ac134_840c9ab2",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterMessages.properties",
         "patchSetId": 6

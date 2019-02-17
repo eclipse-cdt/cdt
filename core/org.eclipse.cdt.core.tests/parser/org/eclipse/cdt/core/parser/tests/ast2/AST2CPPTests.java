@@ -12719,6 +12719,12 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		helper.assertVariableValue("waldo", 1);
 	}
 
+	//	constexpr bool waldo = unsigned(-1) < unsigned(0);
+	public void testNegativeCastToUnsigned_544509() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("waldo", 0);
+	}
+
 	//  namespace x {
 	//  	void foo();
 	//	}

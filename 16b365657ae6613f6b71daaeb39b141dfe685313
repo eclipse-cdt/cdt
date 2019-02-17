@@ -299,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "4864bde7_027de8ff",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-17T01:10:12Z",
+      "side": 1,
+      "message": "Thanks for the testcase!\n\nI tried to think a bit about whether this is the right approach, but C++\u0027s initialization rules make my head spin :)\n\nSo, if this doesn\u0027t break any tests, let\u0027s go with it.",
+      "parentUuid": "baadb4c7_6c479c0e",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "663814b4_643e5afe",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
         "patchSetId": 2
@@ -363,6 +381,24 @@
       "side": 1,
       "message": "Done.\nHowever I still see only `name.getBinding().getName()` on an error. Maybe something missing in ProblemBindingChecker.\n\nExample:\n\nstruct level0{\n\tint a;\n\tint b;\n};\n\nstruct level1{\npublic:\n\tlevel1(level0 a): a(a){}\nprivate:\n\tlevel0 a;\n};\n\nint main() {\n\tlevel1{1,2};\n}",
       "parentUuid": "443592cc_cb825951",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1c10aaed_e7b808ad",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-17T01:10:12Z",
+      "side": 1,
+      "message": "We can fix this by having ProblemBinding.getNameCharArray() return \"arg\" rather than the empty string if it doesn\u0027t have an AST node.\n\nThere is more we could do to make the error message friendlier, but that should be good enough for now.",
+      "parentUuid": "da5196b2_477d5d2a",
       "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

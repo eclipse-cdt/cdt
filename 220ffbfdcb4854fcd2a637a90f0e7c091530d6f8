@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "49817d6a_2a4281d0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/FormatterTagTabPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-17T13:03:01Z",
+      "side": 1,
+      "message": "Please add copyright block to new files with correct ownership (you or your company). See other files for an example.",
+      "revId": "220ffbfdcb4854fcd2a637a90f0e7c091530d6f8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

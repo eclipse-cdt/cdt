@@ -41,6 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -189,7 +190,23 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			}
 		}
 		if (fArguments.length == 1) {
-			return fArguments[0].getValue();
+			IValue argVal = fArguments[0].getValue();
+			if (argVal instanceof IntegralValue && argVal.numberValue() != null) {
+				// Cast signed integer to unsigned.
+				Long val = argVal.numberValue().longValue();
+				if (val < 0 && inputType instanceof ICPPBasicType && ((ICPPBasicType) inputType).isUnsigned()) {
+					long sizeof = SizeofCalculator.getSizeAndAlignment(inputType).size;
+					if (sizeof > 4) {
+						// Java's "long" can't represent the full range of an 64-bit unsigned integer
+						// in C++.
+						sizeof = 4;
+					}
+					long range = (1L << (sizeof * 8 - 1));
+					val += range;
+					return IntegralValue.create(val);
+				}
+			}
+			return argVal;
 		}
 		return IntegralValue.UNKNOWN;
 	}

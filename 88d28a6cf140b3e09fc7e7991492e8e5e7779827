@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e4bdc8c6_6661c9f9",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 3587,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-18T19:40:51Z",
+      "side": 1,
+      "message": "Any reason you removed the test?",
+      "revId": "88d28a6cf140b3e09fc7e7991492e8e5e7779827",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

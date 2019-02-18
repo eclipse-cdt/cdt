@@ -15,7 +15,9 @@
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -43,6 +45,7 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.PixelConverter;
@@ -343,6 +346,10 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 				getShell().setSize(new Point(stringLengthInPixel, pt.y));
 			}
 		}
+
+		Optional.ofNullable(getToolBarManager()).ifPresent(mgr -> {
+			Arrays.stream(mgr.getItems()).forEach(IContributionItem::update);
+		});
 	}
 
 	private void fillToolBar() {

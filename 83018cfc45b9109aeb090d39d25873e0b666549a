@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d249557_4a853254",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 3589,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-18T21:56:50Z",
+      "side": 1,
+      "message": "these trailing whitespaces weren\u0027t in my commit, not sure how/where they came from.",
+      "range": {
+        "startLine": 3589,
+        "startChar": 19,
+        "endLine": 3589,
+        "endChar": 20
+      },
+      "revId": "83018cfc45b9109aeb090d39d25873e0b666549a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

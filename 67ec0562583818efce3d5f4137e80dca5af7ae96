@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0082e882_132a224f",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12924,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-19T07:03:34Z",
+      "side": 1,
+      "message": "Why is it not enough to just `bh.assertNonProblem(\"level1(level0 a)\", \"level1\");` to trigger an error? (`assertEquals(ctor, implicitNames[0].resolveBinding());` will fail if the change in `if (arguments.length \u003d\u003d 1 \u0026\u0026 arguments[0] instanceof EvalInitList \u0026\u0026 !fUsesBracedInitList) {` in EvalTypeId is reverted.)",
+      "revId": "67ec0562583818efce3d5f4137e80dca5af7ae96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

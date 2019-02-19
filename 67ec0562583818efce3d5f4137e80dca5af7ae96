@@ -16,6 +16,24 @@
       "revId": "67ec0562583818efce3d5f4137e80dca5af7ae96",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "83251381_585c98de",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12924,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-19T21:24:51Z",
+      "side": 1,
+      "message": "\u003e Why is it not enough to just `bh.assertNonProblem(\"level1(level0\n \u003e a)\", \"level1\");` to trigger an error?\n\n`bh.assertNonProblem(\"level1(level0 a)\", \"level1\");` checks the binding at the constructor declaration. There is no error at the constructor declaration, the error is at the constructor use, which is `level1{{1,2}};`.",
+      "parentUuid": "0082e882_132a224f",
+      "revId": "67ec0562583818efce3d5f4137e80dca5af7ae96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

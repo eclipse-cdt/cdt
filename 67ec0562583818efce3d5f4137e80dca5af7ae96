@@ -70,6 +70,24 @@
       "revId": "67ec0562583818efce3d5f4137e80dca5af7ae96",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9094725b_d6153f5c",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12924,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-19T23:41:02Z",
+      "side": 1,
+      "message": "Actually, it looks like we have assertImplicitName() which effectively does that.\n\nToo late, though, I already merged the patch :)",
+      "parentUuid": "08506ddf_8a8bb7b5",
+      "revId": "67ec0562583818efce3d5f4137e80dca5af7ae96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

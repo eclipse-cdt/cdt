@@ -317,6 +317,24 @@
     },
     {
       "key": {
+        "uuid": "d3c78ad5_eeb36220",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-19T07:03:34Z",
+      "side": 1,
+      "message": "To be honest, I didn\u0027t think about it at all. I just found that in the test case it takes this branch and tried this \"fix\". Let me know if you prefer to revert it and take this change in a separate patch.",
+      "parentUuid": "4864bde7_027de8ff",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "663814b4_643e5afe",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
         "patchSetId": 2
@@ -399,6 +417,24 @@
       "side": 1,
       "message": "We can fix this by having ProblemBinding.getNameCharArray() return \"arg\" rather than the empty string if it doesn\u0027t have an AST node.\n\nThere is more we could do to make the error message friendlier, but that should be good enough for now.",
       "parentUuid": "da5196b2_477d5d2a",
+      "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "38005e06_452f22c6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-19T07:03:34Z",
+      "side": 1,
+      "message": "Thanks!",
+      "parentUuid": "1c10aaed_e7b808ad",
       "revId": "16b365657ae6613f6b71daaeb39b141dfe685313",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

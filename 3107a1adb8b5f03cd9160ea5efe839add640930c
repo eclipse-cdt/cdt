@@ -16,6 +16,24 @@
       "revId": "3107a1adb8b5f03cd9160ea5efe839add640930c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e10aef83_dedad552",
+        "filename": "codan/org.eclipse.cdt.codan.ui/schema/codanMarkerResolution.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2019-02-19T08:31:34Z",
+      "side": 1,
+      "message": "I dug a little into XSD and as it turns out, that a complex type allows for exactly one element. However, you are right in that the original solution was somewhat badly implemented. It turns out that what we really want is:\n\n         \u003csequence\u003e\n            \u003celement ref\u003d\"resolution\" minOccurs\u003d\"1\" maxOccurs\u003d\"unbounded\"/\u003e\n            \u003celement ref\u003d\"universalResolution\" minOccurs\u003d\"0\" maxOccurs\u003d\"unbounded\"/\u003e\n         \u003c/sequence\u003e\n\nthe occurrence attributes on sequences mean that the sequence as whole can be repeated multiple times, which is not actually what we want to express. We really want there to be exactly one sequence in which the is at least one \u0027resolution\u0027 and * \u0027universalResolution\u0027s.\n\n(As a side-note: When there is exactly one element in the sequence declaration, the effect of allowing the sequence to repeat is obviously the same as allowing the element to repeat. However, in the presence of multiple elements, we would constrain plug-ins to specify them in the order specified by the sequence and to repeat that pattern. This would mean, that in theory there would need to be a \u0027resolution\u0027 between every two \u0027unversalResolution\u0027s.)\n\nA slight issue that doesn\u0027t seem to cause a problem in real life (at least as far as I can tell) is that we enforce that all \u0027resolution\u0027 elements have to precede all \u0027universalResolution\u0027 elements. Eclipse does not seem to enforce that (in fact is doesn\u0027t even warn about it) but I think it is something to keep in mind.\n\nAs far as I can tell, Eclipse does not support XSD 1.1 (though I have to concede that I haven thoroughly investigated that). It it did, we could reformulate the description as\n\n         \u003call\u003e\n            \u003celement ref\u003d\"resolution\" minOccurs\u003d\"1\" maxOccurs\u003d\"unbounded\"/\u003e\n            \u003celement ref\u003d\"universalResolution\" minOccurs\u003d\"0\" maxOccurs\u003d\"unbounded\"/\u003e\n         \u003c/all\u003e\n\nwhich would not constrain the order of appearance of the elements. XSD 1.0 sadly doesn\u0027t provide the same amount of flexibility. The only possible approximation would be to have a sequence of choices, which would prevent us from enforcing the presence of at least one resolution. (A choice of sequences would require there to be at least one \u0027resolution\u0027 for every change in ordering, which is also not what we want).\n\nThinking about this, I come to realize that I am not sure if (in the presence of \u0027universalResolution\u0027s) we should still require users to provide at least one \u0027resolution\u0027. Maybe it would be better to also accept extensions which only contribute \u0027universalResolution\u0027s, but I think that is probably something we would need to think about more in-depth.",
+      "parentUuid": "1b5f2c0b_dc6045f8",
+      "revId": "3107a1adb8b5f03cd9160ea5efe839add640930c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

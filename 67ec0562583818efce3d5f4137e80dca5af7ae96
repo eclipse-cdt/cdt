@@ -52,6 +52,24 @@
       "revId": "67ec0562583818efce3d5f4137e80dca5af7ae96",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08506ddf_8a8bb7b5",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12924,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-19T23:37:06Z",
+      "side": 1,
+      "message": "Ah, ok. That question makes more sense :)\n\nThe answer there is that assertNonProblem() only checks for the binding of an explicit name, which for \"level1\" is the class type. The class type is resolved fine, there is no problem.\n\nIt would be possible to get assertNonProblem() to check bindings of implicit names, by checking if the node is an IASTImplicitNameOwner. The call still wouldn\u0027t be (\"level{{1,2}};\", 6), though - it would need to select the node that owns the implicit names (in this case, the simple type constructor expression).",
+      "parentUuid": "14099d7b_2a89521f",
+      "revId": "67ec0562583818efce3d5f4137e80dca5af7ae96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

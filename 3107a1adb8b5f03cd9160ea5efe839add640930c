@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b5f2c0b_dc6045f8",
+        "filename": "codan/org.eclipse.cdt.codan.ui/schema/codanMarkerResolution.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-19T00:36:57Z",
+      "side": 1,
+      "message": "I don\u0027t know this schema definition language well, but nesting maxOccurs like this seems suspect.\n\nWould the following not be better:\n\n  \u003csequence minOccurs\u003d\"1\" maxOccurs\u003d\"unbounded\"\u003e\n    \u003celement ref\u003d\"resolution\"\u003e\n  \u003c/sequence\u003e\n  \u003csequence minOccurs\u003d\"0\" maxOccurs\u003d\"unbounded\"\u003e\n    \u003celement ref\u003d\"universalResolution\"\u003e\n  \u003c/sequence\u003e",
+      "revId": "3107a1adb8b5f03cd9160ea5efe839add640930c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

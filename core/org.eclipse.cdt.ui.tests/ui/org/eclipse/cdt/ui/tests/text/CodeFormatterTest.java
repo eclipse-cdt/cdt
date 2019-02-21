@@ -3365,6 +3365,59 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void foo() {
+	//	switch(int i{}){
+	//	}
+	//}
+
+	//void foo() {
+	//	switch (int i { }) {
+	//	}
+	//}
+	public void testSwitchControllerDeclarationFormat_1() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//	switch(  int i=42  ){
+	//	}
+	//}
+
+	//void foo() {
+	//	switch (int i = 42) {
+	//	}
+	//}
+	public void testSwitchControllerDeclarationFormat_2() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//	switch
+	//	(int i{}){
+	//	}
+	//}
+
+	//void foo() {
+	//	switch (int i { }) {
+	//	}
+	//}
+	public void testSwitchControllerDeclarationFormat_3() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//	switch(constexpr bool k=true;int i{}){
+	//	}
+	//}
+
+	//void foo() {
+	//	switch (constexpr bool k = true; int i { }) {
+	//	}
+	//}
+	public void testSwitchControllerDeclarationFormat_4() throws Exception {
+		assertFormatterResult();
+	}
+
 	//namespace na {
 	//inline namespace nb {
 	//}

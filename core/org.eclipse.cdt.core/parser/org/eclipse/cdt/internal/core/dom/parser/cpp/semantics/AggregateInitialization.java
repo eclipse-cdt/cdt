@@ -60,17 +60,18 @@ class AggregateInitialization {
 	 * else recurses into the subaggregate.
 	 */
 	private Cost checkElement(IType type, IValue initialValue, Cost worstCost) throws DOMException {
+		IType nestedType = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
 		if (fIndex >= fInitializers.length)
 			// TODO for arrays we could short-circuit default init instead of trying to init each element
-			return checkInitializationFromDefaultMemberInitializer(type, initialValue, worstCost);
-		worstCost = new Cost(fInitializers[fIndex].getType(), type, Rank.IDENTITY);
+			return checkInitializationFromDefaultMemberInitializer(nestedType, initialValue, worstCost);
+		worstCost = new Cost(fInitializers[fIndex].getType(), nestedType, Rank.IDENTITY);
 
-		if (fInitializers[fIndex].isInitializerList() || !isAggregate(type)) { // no braces are elided
+		if (fInitializers[fIndex].isInitializerList() || !isAggregate(nestedType)) { // no braces are elided
 			// p3: The elements of the initializer list are taken as initializers for the elements
 			//     of the aggregate, in order.
 			ICPPEvaluation initializer = fInitializers[fIndex];
 			fIndex++;
-			Cost cost = Conversions.checkImplicitConversionSequence(type, initializer.getType(),
+			Cost cost = Conversions.checkImplicitConversionSequence(nestedType, initializer.getType(),
 					initializer.getValueCategory(), UDCMode.ALLOWED, Context.ORDINARY);
 			if (!cost.converts()) {
 				return cost;
@@ -84,7 +85,7 @@ class AggregateInitialization {
 				worstCost = cost;
 			}
 		} else { // braces are elided: need to check on subaggregates
-			Cost cost = checkInitializationOfElements(type, worstCost);
+			Cost cost = checkInitializationOfElements(nestedType, worstCost);
 			if (!cost.converts())
 				return cost;
 			if (cost.compareTo(worstCost) > 0) {

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87ded9ed_d28dbf21",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-21T19:06:05Z",
+      "side": 1,
+      "message": "The changes to this file can be removed from the patch.",
+      "revId": "a97782da83ca8ae6745d713b138d2bdb7aebb16d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

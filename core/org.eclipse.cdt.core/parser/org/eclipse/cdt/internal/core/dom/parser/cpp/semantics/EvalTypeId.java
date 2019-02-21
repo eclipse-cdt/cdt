@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -299,20 +300,20 @@ public class EvalTypeId extends CPPDependentEvaluation {
 				if (binding instanceof ICPPFunction) {
 					return (ICPPFunction) binding;
 				}
-				// TODO check aggregate initialization
 				if (fUsesBracedInitList && allConstructorsAreCompilerGenerated(constructors)) {
-					return AGGREGATE_INITIALIZATION;
+					Cost cost = AggregateInitialization.check(classType,
+							new EvalInitList(arguments, getTemplateDefinition()));
+					if (cost.converts())
+						return AGGREGATE_INITIALIZATION;
+					else
+						return new CPPFunction.CPPFunctionProblem(null, ISemanticProblem.BINDING_NOT_FOUND,
+								classType.getNameCharArray());
 				}
 				if (binding instanceof IProblemBinding && !(binding instanceof ICPPFunction))
 					return new CPPFunction.CPPFunctionProblem(null, ((IProblemBinding) binding).getID(),
 							classType.getNameCharArray());
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
-			}
-
-			// TODO check aggregate initialization
-			if (fUsesBracedInitList && allConstructorsAreCompilerGenerated(constructors)) {
-				return AGGREGATE_INITIALIZATION;
 			}
 		}
 		return null;

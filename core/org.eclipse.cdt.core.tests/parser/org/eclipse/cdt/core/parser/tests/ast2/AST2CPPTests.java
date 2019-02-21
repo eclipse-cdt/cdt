@@ -12885,8 +12885,8 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	}
 	public void testBraceElisionForAggregateInit1_SimpleTooManyInitializers_543038() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
-		//		bh.assertProblem("array{{1,2}}", 5); // TODO not implemented
-		//		bh.assertProblem("array{1,2}", 5); // TODO not implemented
+		bh.assertImplicitName("array{{1,2}}", 5, IProblemBinding.class);
+		bh.assertImplicitName("array{1,2}", 5, IProblemBinding.class);
 		bh.assertImplicitName("a0", 2, IProblemBinding.class);
 		bh.assertProblem("foo({1,2})", 3);
 		bh.assertProblem("foo({{1,2}})", 3);
@@ -12918,14 +12918,8 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	}
 	public void testBraceElisionForAggregateInit2_WithNonAggregate_543038() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
-
 		bh.assertNonProblem("foo({level1{{1,2}}})", 3);
-
-		ICPPConstructor ctor = bh.assertNonProblem("level1(level0 a)", "level1");
-		ICPPASTSimpleTypeConstructorExpression typeConstructorExpr = bh.assertNode("level1{{1,2}};", "level1{{1,2}}");
-		IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) typeConstructorExpr).getImplicitNames();
-		assertEquals(ctor, implicitNames[0].resolveBinding());
-
+		bh.assertImplicitName("level1{{1,2}};", 6, ICPPConstructor.class);
 		bh.assertImplicitName("level1{1,2};", 6, IProblemBinding.class);
 		bh.assertProblem("foo({{{1,2,3}}}", 3);
 	}
@@ -12988,5 +12982,25 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		bh.assertNonProblem("foo({{{1,2,3},1,2,3}});", 3);
 		bh.assertNonProblem("foo({{1,2,3,{1,2,3}}});", 3);
 		bh.assertProblem("foo({{1,2,{1,2,3}}});", 3);
+	}
+
+	//	template<typename T, int D>
+	//	struct trait {
+	//		using type = T[D];
+	//	};
+	//
+	//	template<typename T, int D>
+	//	struct array {
+	//		typename trait<T, D>::type data;
+	//	};
+	//
+	// void foo(array<int, 1>) {
+	// }
+	//
+	//	int main() {
+	//		foo({1});
+	//	}
+	public void testBraceElisionForAggregateInit6_typedef_543038() throws Exception {
+		parseAndCheckBindings();
 	}
 }

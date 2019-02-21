@@ -45,6 +45,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
@@ -267,6 +268,9 @@ public class TypeTraits {
 	 * no base classes (Clause 10), and no virtual functions (10.3).
 	 */
 	public static boolean isAggregateClass(ICPPClassType classType) {
+		// 8.1.5.1 p.2 (N4659): The closure type is not an aggregate type.
+		if (classType instanceof CPPClosureType)
+			return false;
 		if (classType.getBases().length > 0)
 			return false;
 		ICPPMethod[] methods = classType.getDeclaredMethods();

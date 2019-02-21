@@ -3686,11 +3686,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (!startsWithMacroExpansion(node)) {
 			scribe.printNextToken(Token.t_switch);
 		}
-		IASTExpression controllerExpression = node.getControllerExpression();
+		IASTNode controller = node.getControllerExpression();
 		try {
 			// optional init-statement
 			if (node instanceof ICPPASTSwitchStatement) {
-				IASTStatement initStatement = ((ICPPASTSwitchStatement) node).getInitializerStatement();
+				ICPPASTSwitchStatement cppSwitchStatement = ((ICPPASTSwitchStatement) node);
+				IASTStatement initStatement = cppSwitchStatement.getInitializerStatement();
 				if (initStatement != null) {
 					beginSwitchClause();
 					fHasClauseInitStatement = true;
@@ -3699,12 +3700,17 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 						scribe.space();
 					}
 				}
+
+				if (controller == null) {
+					controller = cppSwitchStatement.getControllerDeclaration();
+				}
 			}
+
 			// Controller expression
-			if (!doNodesHaveSameOffset(node, controllerExpression) && !fHasClauseInitStatement) {
+			if (!doNodesHaveSameOffset(node, controller) && !fHasClauseInitStatement) {
 				beginSwitchClause();
 			}
-			controllerExpression.accept(this);
+			controller.accept(this);
 			if (peekNextToken() == Token.tRPAREN) {
 				scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_switch);
 			}
@@ -3743,7 +3749,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			boolean wasAStatement = false;
 			for (int i = 0; i < statementsLength; i++) {
 				final IASTStatement statement = statements.get(i);
-				if (doNodeLocationsOverlap(controllerExpression, statement)) {
+				if (doNodeLocationsOverlap(controller, statement)) {
 					statement.accept(this);
 					continue;
 				}

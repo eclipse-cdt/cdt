@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f7b1d44f_68cda3c6",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 12925,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-02-21T23:51:38Z",
+      "side": 1,
+      "message": "Since you\u0027re writing a new patch anyways, might as well change this to use assertImplicitName() as discussed previously.",
+      "revId": "2ac920f5b7880e9567a16dd84b5d3dbf1e300081",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -88,6 +88,24 @@
       "revId": "67ec0562583818efce3d5f4137e80dca5af7ae96",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b1cc59fd_b460d070",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12924,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-02-21T06:46:55Z",
+      "side": 1,
+      "message": "Actually I am using assertImplicitName some lines below, but I didn’t get when to use it. Thanks for the explanation!",
+      "parentUuid": "9094725b_d6153f5c",
+      "revId": "67ec0562583818efce3d5f4137e80dca5af7ae96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

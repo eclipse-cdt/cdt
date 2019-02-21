@@ -12989,4 +12989,24 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		bh.assertNonProblem("foo({{1,2,3,{1,2,3}}});", 3);
 		bh.assertProblem("foo({{1,2,{1,2,3}}});", 3);
 	}
+
+	//	template<typename T, int D>
+	//	struct trait {
+	//		using type = T[D];
+	//	};
+	//
+	//	template<typename T, int D>
+	//	struct array {
+	//		typename trait<T, D>::type data;
+	//	};
+	//
+	// void foo(array<int, 1>) {
+	// }
+	//
+	//	int main() {
+	//		foo({1});
+	//	}
+	public void testBraceElisionForAggregateInit6_typedef_543038() throws Exception {
+		parseAndCheckBindings();
+	}
 }

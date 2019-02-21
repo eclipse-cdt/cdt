@@ -60,6 +60,7 @@ class AggregateInitialization {
 	 * else recurses into the subaggregate.
 	 */
 	private Cost checkElement(IType type, IValue initialValue, Cost worstCost) throws DOMException {
+		type = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
 		if (fIndex >= fInitializers.length)
 			// TODO for arrays we could short-circuit default init instead of trying to init each element
 			return checkInitializationFromDefaultMemberInitializer(type, initialValue, worstCost);

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "899e52d7_e5231848",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/SemanticHighlightingTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 815,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2019-02-21T13:02:22Z",
+      "side": 0,
+      "message": "Since the unary \u0027()\u0027 expression does not share the same evaluation as its operand anymore, we also don\u0027t get the superfluous overloadedOperator mark anymore.",
+      "range": {
+        "startLine": 813,
+        "startChar": 0,
+        "endLine": 815,
+        "endChar": 113
+      },
+      "revId": "f60bbf25dda0d99fe7c7cd781afae6f3455a0908",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

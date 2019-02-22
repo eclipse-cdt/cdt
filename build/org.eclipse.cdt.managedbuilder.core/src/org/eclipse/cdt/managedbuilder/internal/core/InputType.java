@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 Intel Corporation and others.
+ * Copyright (c) 2005, 2019 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
+ * EclipseSource
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -282,13 +283,13 @@ public class InputType extends BuildObject implements IInputType {
 		//  Clone the children
 		if (inputType.inputOrderList != null) {
 			for (InputOrder inputOrder : inputType.getInputOrderList()) {
-				InputOrder newInputOrder = new InputOrder(this, inputOrder);
+				InputOrder newInputOrder = new InputOrder(this, inputOrder, copyIds);
 				getInputOrderList().add(newInputOrder);
 			}
 		}
 		if (inputType.additionalInputList != null) {
 			for (AdditionalInput additionalInput : inputType.getAdditionalInputList()) {
-				AdditionalInput newAdditionalInput = new AdditionalInput(this, additionalInput);
+				AdditionalInput newAdditionalInput = new AdditionalInput(this, additionalInput, copyIds);
 				getAdditionalInputList().add(newAdditionalInput);
 			}
 		}

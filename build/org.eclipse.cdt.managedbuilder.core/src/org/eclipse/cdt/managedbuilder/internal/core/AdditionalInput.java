@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 Intel Corporation and others.
+ * Copyright (c) 2005, 2019 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     Intel Corporation - Initial API and implementation
  *     IBM Corporation
  *     Marc-Andre Laperle
+ *     EclipseSource
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -131,6 +132,10 @@ public class AdditionalInput implements IAdditionalInput {
 	 * @param additionalInput The existing AdditionalInput to clone.
 	 */
 	public AdditionalInput(IInputType parent, AdditionalInput additionalInput) {
+		this(parent, additionalInput, false);
+	}
+
+	public AdditionalInput(IInputType parent, AdditionalInput additionalInput, boolean retainRebuildState) {
 		this.fParent = parent;
 		fIsExtensionAdditionalInput = false;
 
@@ -143,8 +148,13 @@ public class AdditionalInput implements IAdditionalInput {
 			fKind = additionalInput.fKind;
 		}
 
-		setDirty(true);
-		setRebuildState(true);
+		if (retainRebuildState) {
+			setDirty(additionalInput.fIsDirty);
+			setRebuildState(additionalInput.fRebuildState);
+		} else {
+			setDirty(true);
+			setRebuildState(true);
+		}
 	}
 
 	/*

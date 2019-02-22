@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 Intel Corporation and others.
+ * Copyright (c) 2005, 2019 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
+ * EclipseSource
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -90,6 +91,17 @@ public class InputOrder implements IInputOrder {
 	 * @param inputOrder The existing InputOrder to clone.
 	 */
 	public InputOrder(IInputType parent, InputOrder inputOrder) {
+		this(parent, inputOrder, false);
+	}
+
+	/**
+	 * Create an <code>InputOrder</code> based upon an existing InputOrder.
+	 *
+	 * @param parent The <code>IInputType</code> the InputOrder will be added to.
+	 * @param inputOrder The existing InputOrder to clone.
+	 * @param retainRebuildState Whether or not to retain the <code>rebuildState</code> and <code>dirty</code> state of <code>inputOrder</code>.
+	 */
+	public InputOrder(IInputType parent, InputOrder inputOrder, boolean retainRebuildState) {
 		this.fParent = parent;
 		fIsExtensionInputOrder = false;
 
@@ -106,8 +118,13 @@ public class InputOrder implements IInputOrder {
 			fExcluded = inputOrder.fExcluded;
 		}
 
-		setDirty(true);
-		setRebuildState(true);
+		if (retainRebuildState) {
+			setDirty(inputOrder.fIsDirty);
+			setRebuildState(inputOrder.fRebuildState);
+		} else {
+			setDirty(true);
+			setRebuildState(true);
+		}
 	}
 
 	/*

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 Intel Corporation and others.
+ * Copyright (c) 2005, 2019 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
+ * EclipseSource
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -229,7 +230,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (inputType.sourceContentTypeIds != null) {
 			sourceContentTypeIds = inputType.sourceContentTypeIds.clone();
 		}
-		if(inputType.sourceContentTypes != null) {
+		if (inputType.sourceContentTypes != null) {
 			sourceContentTypes = inputType.sourceContentTypes.clone();
 		}
 		if (inputType.inputExtensions != null) {
@@ -279,18 +280,18 @@ public class InputType extends BuildObject implements IInputType {
 		//  Clone the children
 		if (inputType.inputOrderList != null) {
 			for (InputOrder inputOrder : inputType.getInputOrderList()) {
-				InputOrder newInputOrder = new InputOrder(this, inputOrder);
+				InputOrder newInputOrder = new InputOrder(this, inputOrder, copyIds);
 				getInputOrderList().add(newInputOrder);
 			}
 		}
 		if (inputType.additionalInputList != null) {
 			for (AdditionalInput additionalInput : inputType.getAdditionalInputList()) {
-				AdditionalInput newAdditionalInput = new AdditionalInput(this, additionalInput);
+				AdditionalInput newAdditionalInput = new AdditionalInput(this, additionalInput, copyIds);
 				getAdditionalInputList().add(newAdditionalInput);
 			}
 		}
 
-		if (copyIds){
+		if (copyIds) {
 			isDirty = inputType.isDirty;
 			rebuildState = inputType.rebuildState;
 		} else {

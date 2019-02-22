@@ -1,0 +1,10 @@
+Verified+1: CI Bot
+Code-Review+1: Jonah Graham <jonah@kichwacoders.com>
+Code-Review+1: Hansruedi Patzen <hansruedi.patzen@hsr.ch>
+Code-Review+1: Felix Morgner <fmorgner@hsr.ch>
+Code-Review+2: Doug Schaefer <dschaefer@blackberry.com>
+Submitted-by: Doug Schaefer <dschaefer@blackberry.com>
+Submitted-at: Fri, 22 Feb 2019 10:01:29 -0500
+Reviewed-on: https://git.eclipse.org/r/137352
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

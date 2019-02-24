@@ -439,8 +439,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		localScanner.setSource(compilationUnitSource);
 		scribe.initializeScanner(compilationUnitSource);
-		scribe.setSkipInactivePositions(collectInactiveCodePositions(unit));
-		scribe.setSkipForbiddenPositions(collectNoFormatCodePositions(unit));
+		List<Position> inactive = collectInactiveCodePositions(unit);
+		inactive.addAll(collectNoFormatCodePositions(unit));
+		scribe.setSkipInactivePositions(inactive);
 
 		fStatus = new MultiStatus(CCorePlugin.PLUGIN_ID, 0, "Formatting problem(s) in '" + unit.getFilePath() + "'", //$NON-NLS-1$//$NON-NLS-2$
 				null);
@@ -4513,7 +4514,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			int onPos = comment.lastIndexOf(this.preferences.comment_formatter_on_tag);
 			if (offPos != -1 && offPos > onPos) {
 				if (!inInactiveCode) {
-					inactiveCodeStart = nodeLocation.getNodeOffset();
+					inactiveCodeStart = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 					inInactiveCode = true;
 				}
 			} else if (onPos != -1 && onPos > offPos) {

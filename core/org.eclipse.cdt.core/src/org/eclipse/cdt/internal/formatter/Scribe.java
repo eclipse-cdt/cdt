@@ -93,10 +93,9 @@ public class Scribe {
 	 */
 	private List<Position> fSkipInactivePositions = Collections.emptyList();
 	/**
-	 * It keeps the list of no-format region.
+	 * When scribe is in inactive state, source edits are not allowed.
 	 */
-	private List<Position> fSkipForbiddenPositions = Collections.emptyList();
-
+	private boolean inactiveState = false;
 	private boolean skipOverInactive;
 
 	private int fSkipStartOffset = Integer.MAX_VALUE;
@@ -144,11 +143,13 @@ public class Scribe {
 	}
 
 	private final void addDeleteEdit(int start, int end) {
-		addOptimizedReplaceEdit(start, end - start + 1, EMPTY_STRING);
+		if (!inactiveState)
+			addOptimizedReplaceEdit(start, end - start + 1, EMPTY_STRING);
 	}
 
 	public final void addInsertEdit(int insertPosition, CharSequence insertedString) {
-		addOptimizedReplaceEdit(insertPosition, 0, insertedString);
+		if (!inactiveState)
+			addOptimizedReplaceEdit(insertPosition, 0, insertedString);
 	}
 
 	/**
@@ -158,7 +159,8 @@ public class Scribe {
 	 * @param replacement  the replacement string
 	 */
 	public final void addReplaceEdit(int start, int end, CharSequence replacement) {
-		addOptimizedReplaceEdit(start, end - start + 1, replacement);
+		if (!inactiveState)
+			addOptimizedReplaceEdit(start, end - start + 1, replacement);
 	}
 
 	private final void addOptimizedReplaceEdit(int offset, int length, CharSequence replacement) {
@@ -675,15 +677,6 @@ public class Scribe {
 	}
 
 	/**
-	 * Set the positions where we don't want to perform any check
-	 * @param list The list of positions
-	 */
-	public void setSkipForbiddenPositions(List<Position> list) {
-		if (list != null)
-			fSkipForbiddenPositions = list;
-	}
-
-	/**
 	 * @param list
 	 */
 	public void setSkipInactivePositions(List<Position> list) {
@@ -770,6 +763,10 @@ public class Scribe {
 	}
 
 	public void printRaw(int startOffset, int length) {
+		printRaw(startOffset, length, true);
+	}
+
+	private void printRaw(int startOffset, int length, boolean skipInactive) {
 		if (length <= 0) {
 			return;
 		}
@@ -788,7 +785,8 @@ public class Scribe {
 		boolean savedSkipOverInactive = skipOverInactive;
 		int savedScannerEndPos = scannerEndPosition;
 		preserveNewLines = true;
-		skipOverInactive = false;
+		if (skipInactive)
+			skipOverInactive = false;
 		scannerEndPosition = startOffset + length;
 		try {
 			scanner.resetTo(Math.max(startOffset, currentPosition), startOffset + length);
@@ -1061,7 +1059,7 @@ public class Scribe {
 	public void printEndOfTranslationUnit() {
 		int currentTokenStartPosition = scanner.getCurrentPosition();
 		if (currentTokenStartPosition <= scannerEndPosition) {
-			printRaw(currentTokenStartPosition, scannerEndPosition - currentTokenStartPosition + 1);
+			printRaw(currentTokenStartPosition, scannerEndPosition - currentTokenStartPosition + 1, false);
 		}
 	}
 
@@ -1095,7 +1093,16 @@ public class Scribe {
 					if (startOffset < endOffset) {
 						int savedIndentLevel = indentationLevel;
 						scanner.resetTo(scanner.getCurrentTokenStartPosition(), scanner.eofPosition);
+						inactiveState = true;
+						/**
+						 * We are entering in inactive state so if we added a new line previously,
+						 * starting a new line, we need to remove it.
+						 */
+						if (editsIndex > 0 && lineSeparator.equals(edits[editsIndex - 1].replacement)) {
+							editsIndex--;
+						}
 						printRaw(startOffset, endOffset - startOffset);
+						inactiveState = false;
 						while (indentationLevel > savedIndentLevel) {
 							unIndent();
 						}
@@ -1297,20 +1304,7 @@ public class Scribe {
 		}
 		scanner.resetTo(currentTokenStartPosition, scannerEndPosition);
 		return hasWhitespace;
-	}
 
-	/**
-	 * @param offset
-	 * @return
-	 */
-	private boolean isForbidden(int offset) {
-		for (Iterator<Position> iter = fSkipForbiddenPositions.iterator(); iter.hasNext();) {
-			Position pos = iter.next();
-			if (pos.includes(offset)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -2067,7 +2061,7 @@ public class Scribe {
 	}
 
 	boolean shouldSkip(int offset) {
-		return ((offset >= fSkipStartOffset && offset < fSkipEndOffset) || isForbidden(offset));
+		return offset >= fSkipStartOffset && offset < fSkipEndOffset;
 	}
 
 	void skipRange(int offset, int endOffset) {

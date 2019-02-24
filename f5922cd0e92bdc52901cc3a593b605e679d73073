@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bbe4ba1b_4a26c643",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CMacroExpansionExplorationControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-02-24T23:08:11Z",
+      "side": 1,
+      "message": "Do you know why it worked before without this? This might be a platform regression.",
+      "revId": "f5922cd0e92bdc52901cc3a593b605e679d73073",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -527,7 +527,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//const SimpleStruct array[] = { { SIZEOF(simpleStruct, num),
 	//#if FOO
-	//		"foo"
+	//"foo"
 	//#else
 	//		"bar"
 	//#endif
@@ -1799,10 +1799,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	foo ARGS;
 	//	CALL;
 	//#if X
-	//	if (1)
-	//	{
-	//		t = 1;
-	//	}
+	//                        if (1)
+	//                        {
+	//                                t = 1;
+	//                        }
 	//#endif
 	//}
 	public void testMacroAsFunctionArguments_Bug253039() throws Exception {

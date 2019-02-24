@@ -527,7 +527,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//const SimpleStruct array[] = { { SIZEOF(simpleStruct, num),
 	//#if FOO
-	//		"foo"
+	//"foo"
 	//#else
 	//		"bar"
 	//#endif
@@ -1799,10 +1799,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	foo ARGS;
 	//	CALL;
 	//#if X
-	//	if (1)
-	//	{
-	//		t = 1;
-	//	}
+	//                        if (1)
+	//                        {
+	//                                t = 1;
+	//                        }
 	//#endif
 	//}
 	public void testMacroAsFunctionArguments_Bug253039() throws Exception {
@@ -3654,6 +3654,40 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+		assertFormatterResult();
+	}
+
+	//int code_before_inactive;
+	//#if 0
+	//    void this_line_intentionally_indented() {
+	// int x;
+	// }
+	//#endif
+	//int code_after_inactive;
+
+	//int code_before_inactive;
+	//#if 0
+	//    void this_line_intentionally_indented() {
+	// int x;
+	// }
+	//#endif
+	//int code_after_inactive;
+	public void testDoeNotFormatInactiveCode() throws Exception {
+		assertFormatterResult();
+	}
+
+	//#if 0
+	//    void this_line_intentionally_indented() {
+	// int x;
+	// }
+	//#endif
+
+	//#if 0
+	//    void this_line_intentionally_indented() {
+	// int x;
+	// }
+	//#endif
+	public void testDoeNotFormatInactiveCodeEntireFile() throws Exception {
 		assertFormatterResult();
 	}
 }

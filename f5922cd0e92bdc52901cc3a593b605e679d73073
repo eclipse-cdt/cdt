@@ -16,6 +16,24 @@
       "revId": "f5922cd0e92bdc52901cc3a593b605e679d73073",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ebd79d34_27dff87f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CMacroExpansionExplorationControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 110516
+      },
+      "writtenOn": "2019-02-25T07:27:22Z",
+      "side": 1,
+      "message": "I am not entirely sure. I would venture to guess that the initial implementation made the possibly flawed assumption that the onFocus listener would be guaranteed to be called before we register the handlers in fillToolbar. I haven\u0027t checked with the documentation though, as to whether or not there ever was such a guarantee.",
+      "parentUuid": "bbe4ba1b_4a26c643",
+      "revId": "f5922cd0e92bdc52901cc3a593b605e679d73073",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

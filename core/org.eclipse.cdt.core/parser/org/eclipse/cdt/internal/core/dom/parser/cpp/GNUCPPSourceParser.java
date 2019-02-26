@@ -366,25 +366,28 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 			haveName = true;
 
-			// Check for template-id
-			if (nameSpec instanceof IASTName && LTcatchEOF(1) == IToken.tLT) {
-				IASTName name = (IASTName) nameSpec;
-				final boolean inBinaryExpression = ctx != CastExprCtx.eNotInBExpr;
-				final int haveArgs = haveTemplateArguments(inBinaryExpression);
-				boolean templateID = true;
-				if (!keywordTemplate) {
-					if (haveArgs == NO_TEMPLATE_ID) {
-						templateID = false;
-					} else if (haveArgs == AMBIGUOUS_TEMPLATE_ID) {
-						templateID = strat.shallParseAsTemplateID(name);
+			try {
+				// Check for template-id
+				if (nameSpec instanceof IASTName && LTcatchEOF(1) == IToken.tLT) {
+					IASTName name = (IASTName) nameSpec;
+					final boolean inBinaryExpression = ctx != CastExprCtx.eNotInBExpr;
+					final int haveArgs = haveTemplateArguments(inBinaryExpression);
+					boolean templateID = true;
+					if (!keywordTemplate) {
+						if (haveArgs == NO_TEMPLATE_ID) {
+							templateID = false;
+						} else if (haveArgs == AMBIGUOUS_TEMPLATE_ID) {
+							templateID = strat.shallParseAsTemplateID(name);
+						}
+					}
+					if (templateID) {
+						if (haveArgs == NO_TEMPLATE_ID)
+							throwBacktrack(LA(1));
+
+						nameSpec = (ICPPASTName) addTemplateArguments(name, strat);
 					}
 				}
-				if (templateID) {
-					if (haveArgs == NO_TEMPLATE_ID)
-						throwBacktrack(LA(1));
-
-					nameSpec = (ICPPASTName) addTemplateArguments(name, strat);
-				}
+			} catch (EndOfFileException ignored) {
 			}
 
 			endOffset = calculateEndOffset(nameSpec);

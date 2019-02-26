@@ -120,13 +120,22 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 
 			// C++17 template<auto>
 			if (type instanceof CPPPlaceholderType) {
-				CPPDependentEvaluation eval = new EvalBinding(this, null, getPrimaryDeclaration());
-				TypeOfDependentExpression replacementType = new TypeOfDependentExpression(eval);
-				replacementType.setForTemplateAuto(true);
-				type = replacementType;
+				type = getDependentTypeForAuto();
+			}
+			// template<auto...>
+			if (type instanceof CPPParameterPackType
+					&& ((CPPParameterPackType) type).getType() instanceof CPPPlaceholderType) {
+				type = new CPPParameterPackType(getDependentTypeForAuto());
 			}
 		}
 		return type;
+	}
+
+	private IType getDependentTypeForAuto() {
+		CPPDependentEvaluation eval = new EvalBinding(this, null, getPrimaryDeclaration());
+		TypeOfDependentExpression replacementType = new TypeOfDependentExpression(eval);
+		replacementType.setForTemplateAuto(true);
+		return replacementType;
 	}
 
 	@Override

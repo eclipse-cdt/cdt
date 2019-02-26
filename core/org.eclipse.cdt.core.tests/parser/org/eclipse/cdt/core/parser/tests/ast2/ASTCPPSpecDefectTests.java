@@ -76,4 +76,11 @@ public class ASTCPPSpecDefectTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	auto f(int x, int y) -> decltype(x < y ? x : y) {
+	//		return x < y ? x : y;
+	//	}
+	public void testUnparenthesizedConditionalExpressionInTrailingReturnType_544818() throws Exception {
+		parseAndCheckBindings();
+	}
+
 }

@@ -621,6 +621,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				}
 			}
 			return AMBIGUOUS_TEMPLATE_ID;
+		} catch (EndOfFileException ignored) {
+			return NO_TEMPLATE_ID;
 		} finally {
 			backup(mark);
 		}

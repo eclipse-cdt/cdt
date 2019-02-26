@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "53bdff3f_0126b953",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-26T15:08:24Z",
+      "side": 1,
+      "message": "I suspect you just reused the bug title for the commit\nmessage, but it made it non-obvious to see at a glance\nwhat this change is. I think there is consensus in the bug\nto not format any code in inactive regions, and that is what\nthe change appears to do. \n\nCan this be reworded as:\n\nBug 278903 - do not format any code in inactive regions\n\nI hope this comment makes sense.",
+      "revId": "689aaf04d9c8dac6fca6e330441690758da68452",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dbea9b03_d7ef03e4",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/Scribe.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1096,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-26T15:08:24Z",
+      "side": 1,
+      "message": "I think this can be more simply:\n\n\tif (editsIndex \u003e 0 \u0026\u0026 lineSeparator.equals(edits[editsIndex - 1].replacement)) {\n\t\teditsIndex--;\n\t}",
+      "revId": "689aaf04d9c8dac6fca6e330441690758da68452",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6346be4f_840adece",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 3690,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-02-26T15:08:24Z",
+      "side": 1,
+      "message": "I wrote a test to make sure I understand your change, unfortunately it is failing.",
+      "revId": "689aaf04d9c8dac6fca6e330441690758da68452",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

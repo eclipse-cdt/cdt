@@ -11260,4 +11260,26 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		bh.assertProblem("foo(0)", 3);
 	}
 
+	//  template <auto First, auto...>
+	//  struct getFirst {
+	//      static constexpr auto value = First;
+	//  };
+	//  template <auto, auto Second, auto...>
+	//  struct getSecond {
+	//      static constexpr auto value = Second;
+	//  };
+	//	template <auto... T>
+	//	struct A {
+	//	    static constexpr auto first = getFirst<T...>::value;
+	//	    static constexpr auto second = getSecond<T...>::value;
+	//	};
+	//
+	//	typedef A<42,43> B;
+	//  static constexpr auto val1 = B::first;
+	//  static constexpr auto val2 = B::second;
+	public void testVariadicTemplateAuto_544681() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("val1", 42);
+		helper.assertVariableValue("val2", 43);
+	}
 }

@@ -13003,4 +13003,14 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	public void testBraceElisionForAggregateInit6_typedef_543038() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	struct array{
+	//		bool data[1];
+	//	};
+	//
+	//	constexpr bool res = array{false}.data[0];
+	public void testBraceElisionEval_544747() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertVariableValue("res", 0);
+	}
 }

@@ -155,6 +155,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			if (EvalUtil.isCompilerGeneratedCtor(ctor)) {
 				return CompositeValue.create(classType);
 			} else if (ctor == AGGREGATE_INITIALIZATION) {
+				// As the create() call recurses over the EvalInitList, it should check for brace elision.
 				return CompositeValue.create(new EvalInitList(fArguments, getTemplateDefinition()), classType);
 			} else if (ctor != null) {
 				EvalConstructor evalCtor = new EvalConstructor(classType, (ICPPConstructor) ctor, fArguments,

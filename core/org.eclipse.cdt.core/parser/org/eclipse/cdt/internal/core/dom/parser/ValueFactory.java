@@ -289,16 +289,14 @@ public class ValueFactory {
 		// Some C++ expression types can involve evaluating functions.
 		// For these, the value will be computed based on the evaluation.
 		if (exp instanceof ICPPASTFunctionCallExpression || exp instanceof ICPPASTSimpleTypeConstructorExpression
-				|| exp instanceof ICPPASTUnaryExpression || exp instanceof ICPPASTBinaryExpression) {
+				|| exp instanceof ICPPASTUnaryExpression || exp instanceof ICPPASTBinaryExpression
+				|| exp instanceof IASTArraySubscriptExpression) {
 			return null;
 		}
 
 		if (exp == null)
 			return IntegralValue.UNKNOWN;
 
-		if (exp instanceof IASTArraySubscriptExpression) {
-			return IntegralValue.UNKNOWN;
-		}
 		if (exp instanceof IASTBinaryExpression) {
 			return evaluateBinaryExpression((IASTBinaryExpression) exp);
 		}

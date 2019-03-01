@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b02adece_fb9a5d23",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-01T06:36:58Z",
+      "side": 1,
+      "message": "I\u0027m a bit hesitant to swallow EOF exceptions from this entire block. I\u0027d rather we put the catch inside haveTemplateArguments(), and return NO_TEMPLATE_ID from it if an EOF is caught.",
+      "revId": "a2845783387a1946f2029d00dd0298c80c1f6b33",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

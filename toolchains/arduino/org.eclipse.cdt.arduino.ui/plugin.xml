@@ -28,6 +28,9 @@
             id="org.eclipse.cdt.arduino.ui.newProjectWizard"
             name="Arduino Project"
             project="true">
+           <description>
+              Create a new Arduino Project
+           </description>
       </wizard>
    </extension>
    <extension

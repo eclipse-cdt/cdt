@@ -76,6 +76,15 @@ public class CodanTestCase extends BaseTestCase {
 		return false;
 	}
 
+	/**
+	 * Override for header files
+	 *
+	 * @return is header tests
+	 */
+	public boolean isHeader() {
+		return false;
+	}
+
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -215,7 +224,18 @@ public class CodanTestCase extends BaseTestCase {
 				return loadcode(code, new File(tmpDir, fileName));
 			}
 		}
-		String ext = cpp ? ".cpp" : ".c";
+		String ext;
+		if (cpp) {
+			if (isHeader())
+				ext = ".hpp";
+			else
+				ext = ".cpp";
+		} else {
+			if (isHeader())
+				ext = ".h";
+			else
+				ext = ".c";
+		}
 		File testFile = null;
 		try {
 			testFile = File.createTempFile("test", ext, tmpDir); //$NON-NLS-1$

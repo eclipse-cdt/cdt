@@ -3690,4 +3690,73 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testDoeNotFormatInactiveCodeEntireFile() throws Exception {
 		assertFormatterResult();
 	}
+
+
+	//#define MYTMPL template<typename T>
+	//MYTMPL
+	//class Foo {
+	//};
+
+	//#define MYTMPL template<typename T>
+	//MYTMPL
+	//class Foo {
+	//};
+	public void testTemplateIdWithMacro1_Bug462566() throws Exception {
+		assertFormatterResult();
+	}
+
+	//template<typename T>
+	//struct myvec {
+	//};
+	//#define vi myvec<int>
+	//vi v;
+
+	//template<typename T>
+	//struct myvec {
+	//};
+	//#define vi myvec<int>
+	//vi v;
+	public void testTemplateIdWithMacro2_Bug462566() throws Exception {
+		assertFormatterResult();
+	}
+
+	//#define FOREACH_BAD for( Foreach_bad<int> fe; fe.i; ++fe.i )
+	//void bar() {
+	//	FOREACH_BAD
+	//	{
+	//		printf("loop body\n");
+	//	}
+	//}
+
+	//#define FOREACH_BAD for( Foreach_bad<int> fe; fe.i; ++fe.i )
+	//void bar() {
+	//	FOREACH_BAD
+	//	{
+	//		printf("loop body\n");
+	//	}
+	//}
+	public void testTemplateIdWithMacro3_Bug406231() throws Exception {
+		assertFormatterResult();
+	}
+
+	//#define ForIndex(I,N) for (int I=0;I<int(N);I++)
+	//int foo() {
+	//	int s = 0;
+	//	ForIndex(i, 10)
+	//	{
+	//		s += i;
+	//	}
+	//}
+
+	//#define ForIndex(I,N) for (int I=0;I<int(N);I++)
+	//int foo() {
+	//	int s = 0;
+	//	ForIndex(i, 10)
+	//	{
+	//		s += i;
+	//	}
+	//}
+	public void testTemplateIdWithMacro4_Bug406231() throws Exception {
+		assertFormatterResult();
+	}
 }

@@ -439,5 +439,20 @@
                name="%problem.name.DecltypeAutoProblem">
          </problem>
       </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.UsingInHeaderChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.UsingInHeaderChecker"
+            name="%checker.name.UsingInHeaderChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.UsingInHeaderProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.UsingInHeaderProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.UsingInHeaderProblem"
+               name="%problem.name.UsingInHeaderProblem">
+         </problem>
+      </checker>     
    </extension>
 </plugin>

@@ -3759,4 +3759,27 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testTemplateIdWithMacro4_Bug406231() throws Exception {
 		assertFormatterResult();
 	}
+
+	//class data
+	//{
+	//public:
+	//	template <class x> bool operator< (x const &n) const
+	//	{
+	//	    return n < 0;
+	//	}
+	//};
+	////explicit instantiation
+	//template bool data::operator< <int>(int const &) const;
+
+	//class data {
+	//public:
+	//	template<class x> bool operator<(x const &n) const {
+	//		return n < 0;
+	//	}
+	//};
+	////explicit instantiation
+	//template bool data::operator< <int>(int const &) const;
+	public void testTemplateInstantiationOperatorLesser_Bug540252() throws Exception {
+		assertFormatterResult();
+	}
 }

@@ -1783,10 +1783,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			options.fSpaceBeforeSeparator = preferences.insert_space_before_comma_in_template_parameters;
 			formatList(Arrays.asList(templateParameters), options, false, false, null);
 		}
-		scribe.printNextToken(new int[] { Token.tGT, Token.tSHIFTR },
-				preferences.insert_space_before_closing_angle_bracket_in_template_parameters);
-		if (preferences.insert_space_after_closing_angle_bracket_in_template_parameters) {
-			scribe.space();
+		int nextToken = peekNextToken();
+		if (nextToken == Token.tGT || nextToken == Token.tSHIFTR) {
+			scribe.printNextToken(new int[] { Token.tGT, Token.tSHIFTR },
+					preferences.insert_space_before_closing_angle_bracket_in_template_parameters);
+			if (preferences.insert_space_after_closing_angle_bracket_in_template_parameters) {
+				scribe.space();
+			}
 		}
 
 		// Declaration
@@ -3565,9 +3568,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private int visit(ICPPASTTemplateId node) {
 		IASTName name = node.getTemplateName();
 		name.accept(this);
-		scribe.printNextToken(Token.tLT, preferences.insert_space_before_opening_angle_bracket_in_template_arguments);
-		if (preferences.insert_space_after_opening_angle_bracket_in_template_arguments) {
-			scribe.space();
+		if (peekNextToken() == Token.tLT) {
+			scribe.printNextToken(Token.tLT,
+					preferences.insert_space_before_opening_angle_bracket_in_template_arguments);
+			if (preferences.insert_space_after_opening_angle_bracket_in_template_arguments) {
+				scribe.space();
+			}
 		}
 		final IASTNode[] templateArguments = node.getTemplateArguments();
 		if (templateArguments.length > 0) {
@@ -3585,9 +3591,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			return PROCESS_SKIP;
 		}
 
-		scribe.printNextToken(Token.tGT, preferences.insert_space_before_closing_angle_bracket_in_template_arguments);
-
 		int nextToken = peekNextToken();
+
+		if (nextToken == Token.tGT)
+			scribe.printNextToken(Token.tGT,
+					preferences.insert_space_before_closing_angle_bracket_in_template_arguments);
+
+		nextToken = peekNextToken();
 		if (node.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME || nextToken == Token.tGT) {
 			if (nextToken == Token.tLPAREN) {
 				if (preferences.insert_space_before_opening_paren_in_method_invocation)

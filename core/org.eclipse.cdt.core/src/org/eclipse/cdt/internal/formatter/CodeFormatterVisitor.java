@@ -3570,8 +3570,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		IASTName name = node.getTemplateName();
 		name.accept(this);
 		if (peekNextToken() == Token.tLT) {
-			scribe.printNextToken(Token.tLT,
-					preferences.insert_space_before_opening_angle_bracket_in_template_arguments);
+			char[] simpleId = name.getSimpleID();
+			if (simpleId[simpleId.length - 1] == '<')
+				scribe.printNextToken(Token.tLT, true);
+			else
+				scribe.printNextToken(Token.tLT,
+						preferences.insert_space_before_opening_angle_bracket_in_template_arguments);
 			if (preferences.insert_space_after_opening_angle_bracket_in_template_arguments) {
 				scribe.space();
 			}

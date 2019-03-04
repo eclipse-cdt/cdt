@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b26f5600_085029dc",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2019-03-04T07:56:53Z",
+      "side": 1,
+      "message": "Better not to use a nightly but rather a fixed build form the branch point. Otherwise it will keep failing as the nightly changes.",
+      "range": {
+        "startLine": 32,
+        "startChar": 58,
+        "endLine": 32,
+        "endChar": 75
+      },
+      "revId": "cdc99feef2c1188fec42b7f51bb28adbe46fd97e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

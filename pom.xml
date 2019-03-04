@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<prerequisites>
-		<maven>${required-maven-version}</maven>
+		<maven>${requiredven-version}</maven>
 	</prerequisites>
 
 	<groupId>org.eclipse.cdt</groupId>
@@ -29,7 +29,7 @@
 		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.10/</help-docs-eclipserun-repo>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
 		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
-		<comparator.repo>https://download.eclipse.org/tools/cdt/builds/9.7/nightly/</comparator.repo>
+		<comparator.repo>https://ci.eclipse.org/cdt/job/cdt-9.7/3/artifact/releng/org.eclipse.cdt.repo/target/repository/</comparator.repo>
 		<compare-version-with-baselines.skip>false</compare-version-with-baselines.skip>
 		<!--
 			Valid options: error, warning, and ignore

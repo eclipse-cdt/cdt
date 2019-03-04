@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cbdc7e2d_abd60b43",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/UsingInHeaderChecker.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-04T07:07:47Z",
+      "side": 1,
+      "message": "This is the default for AbstractIndexAstChecker, so there is no need to override this.",
+      "revId": "05e9191b3edfec77b469055365559b51c228ba6b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

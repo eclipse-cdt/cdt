@@ -22,6 +22,30 @@
       "revId": "cdc99feef2c1188fec42b7f51bb28adbe46fd97e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1ce07e75_50316488",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-03-04T08:04:27Z",
+      "side": 1,
+      "message": "OK. I was wondering, I will update to RC1 when I publish soon. However I don\u0027t really understand why pointing at a nightly fails it.",
+      "parentUuid": "b26f5600_085029dc",
+      "range": {
+        "startLine": 32,
+        "startChar": 58,
+        "endLine": 32,
+        "endChar": 75
+      },
+      "revId": "cdc99feef2c1188fec42b7f51bb28adbe46fd97e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

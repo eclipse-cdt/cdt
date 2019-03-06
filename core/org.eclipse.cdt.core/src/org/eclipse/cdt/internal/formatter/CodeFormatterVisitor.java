@@ -3556,7 +3556,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		for (ICPPASTNameSpecifier nameSpec : node.getQualifier()) {
 			nameSpec.accept(this);
-			scribe.printNextToken(Token.tCOLONCOLON);
+			if (peekNextToken() == Token.tCOLONCOLON)
+				scribe.printNextToken(Token.tCOLONCOLON);
 		}
 		if (peekNextToken() == Token.tCOMPL) {
 			// destructor

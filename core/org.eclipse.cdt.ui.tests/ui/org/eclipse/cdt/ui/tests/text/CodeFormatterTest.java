@@ -3781,4 +3781,34 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testTemplateInstantiationOperatorLesser_Bug540252() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#define WW(x) std::ostringstream(x)
+	//namespace some_namespace
+	//{
+	//	void func()
+	//	{
+	//		try
+	//		{
+	//			WW("1") << "2";
+	//		}
+	//		catch (const std::exception& e)
+	//		{
+	//			std::cout << "blah...." << std::endl;
+	//		}
+	//	}
+	//}
+
+	//#define WW(x) std::ostringstream(x)
+	//namespace some_namespace {
+	//void func() {
+	//	try {
+	//		WW("1") << "2";
+	//	} catch (const std::exception& e) {
+	//		std::cout << "blah...." << std::endl;
+	//	}
+	//}
+	//}
+	public void testFormmatterWithMacro_Bug543947() throws Exception {
+		assertFormatterResult();
+	}
 }

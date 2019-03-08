@@ -178,9 +178,11 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IType r2 = getCompositeType(r);
 			IType[] p = ft.getParameterTypes();
 			IType[] p2 = getCompositeTypes(p);
-			if (r != r2 || p != p2) {
+			ICPPEvaluation n = ft.getNoexceptSpecifier();
+			ICPPEvaluation n2 = getCompositeEvaluation(n);
+			if (r != r2 || p != p2 || n != n2) {
 				return new CPPFunctionType(r2, p2, ft.isConst(), ft.isVolatile(), ft.hasRefQualifier(),
-						ft.isRValueReference(), ft.takesVarArgs());
+						ft.isRValueReference(), ft.takesVarArgs(), n2);
 			}
 			return ft;
 		}

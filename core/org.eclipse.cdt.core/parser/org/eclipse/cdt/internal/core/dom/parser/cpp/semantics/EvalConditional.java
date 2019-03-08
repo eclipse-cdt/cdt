@@ -417,4 +417,10 @@ public class EvalConditional extends CPPDependentEvaluation {
 				|| (fPositive != null && fPositive.referencesTemplateParameter())
 				|| fNegative.referencesTemplateParameter();
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		return fCondition.isNoexcept() && fPositive.isNoexcept()
+				&& fNegative.isNoexcept();
+	}
 }

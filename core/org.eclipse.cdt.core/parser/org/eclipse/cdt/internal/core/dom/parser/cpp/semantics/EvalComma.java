@@ -265,4 +265,18 @@ public class EvalComma extends CPPDependentEvaluation {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		if (getOverloads() != null)
+			for (ICPPFunction overload : getOverloads()) {
+				if (overload != null && !EvalUtil.evaluateNoexceptSpecifier(overload.getType().getNoexceptSpecifier()))
+					return false;
+			}
+		for (ICPPEvaluation arg : fArguments) {
+			if (!arg.isNoexcept())
+				return false;
+		}
+		return true;
+	}
 }

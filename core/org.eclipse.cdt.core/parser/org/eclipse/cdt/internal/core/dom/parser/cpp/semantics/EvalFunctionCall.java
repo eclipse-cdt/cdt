@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
@@ -42,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
@@ -126,7 +128,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 	}
 
 	private boolean computeIsConstantExpression() {
-		return areAllConstantExpressions(fArguments) && isNullOrConstexprFunc(getOverload());
+		return areAllConstantExpressions(fArguments) && isNullOrConstexprFunc(resolveFunctionBinding());
 	}
 
 	@Override
@@ -494,5 +496,35 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			}
 			return null;
 		}
+	}
+
+	ICPPFunctionType resolveFunctionType() {
+		ICPPFunction function = resolveFunctionBinding();
+		if (function != null) {
+			return function.getType();
+		}
+		IType result = fArguments[0].getType();
+		if (result instanceof IPointerType) {
+			result = ((IPointerType) result).getType();
+		} else if (result instanceof CPPClosureType) {
+			result = ((CPPClosureType) result).getFunctionCallOperator().getType();
+		}
+		if (result instanceof ICPPFunctionType) {
+			return (ICPPFunctionType) result;
+		}
+		return null;
+	}
+
+	@Override
+	public boolean isNoexcept() {
+		if (!EvalUtil.evaluateNoexceptSpecifier(resolveFunctionType().getNoexceptSpecifier()))
+			return false;
+
+		for (int i = 1; i < fArguments.length; i++) {
+			ICPPEvaluation eval = fArguments[i];
+			if (!eval.isNoexcept())
+				return false;
+		}
+		return true;
 	}
 }

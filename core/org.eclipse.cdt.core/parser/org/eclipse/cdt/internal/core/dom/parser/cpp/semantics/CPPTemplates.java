@@ -1559,7 +1559,10 @@ public class CPPTemplates {
 				IType[] params = instantiateTypes(ps, context);
 				final IType r = ft.getReturnType();
 				IType ret = instantiateType(r, context);
-				if (ret == r && params == ps) {
+				ICPPEvaluation noex = ft.getNoexceptSpecifier();
+				ICPPEvaluation noexcept = noex == null ? null
+						: noex.instantiate(context, IntegralValue.MAX_RECURSION_DEPTH);
+				if (ret == r && params == ps && noexcept == noex) {
 					return type;
 				}
 				// The parameter types need to be adjusted.
@@ -1569,8 +1572,9 @@ public class CPPTemplates {
 						params[i] = CPPVisitor.adjustParameterType(p, true);
 					}
 				}
+
 				return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(), ft.hasRefQualifier(),
-						ft.isRValueReference(), ft.takesVarArgs());
+						ft.isRValueReference(), ft.takesVarArgs(), noexcept);
 			}
 
 			if (type instanceof ICPPTemplateParameter) {
@@ -2610,7 +2614,7 @@ public class CPPTemplates {
 					nExplicitArgs);
 			return new CPPFunctionType(originalType.getReturnType(), parameterTypesWithExplicitArguments,
 					originalType.isConst(), originalType.isVolatile(), originalType.hasRefQualifier(),
-					originalType.isRValueReference(), originalType.takesVarArgs());
+					originalType.isRValueReference(), originalType.takesVarArgs(), originalType.getNoexceptSpecifier());
 		} else
 			return originalType;
 	}

@@ -361,8 +361,8 @@ public class SemanticUtil {
 			if (ret == r && params == ps) {
 				return type;
 			}
-			return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(), ft.hasRefQualifier(),
-					ft.isRValueReference(), ft.takesVarArgs());
+			return new CPPFunctionType(ret, params, ft.getNoexceptSpecifier(), ft.isConst(), ft.isVolatile(),
+					ft.hasRefQualifier(), ft.isRValueReference(), ft.takesVarArgs());
 		}
 
 		if (type instanceof ITypedef) {

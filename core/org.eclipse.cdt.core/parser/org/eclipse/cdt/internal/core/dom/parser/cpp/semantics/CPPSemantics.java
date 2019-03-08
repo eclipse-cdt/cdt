@@ -4118,7 +4118,7 @@ public class CPPSemantics {
 			parms[i] = t;
 			theParms[i] = new CPPBuiltinParameter(t);
 		}
-		ICPPFunctionType functionType = new CPPFunctionType(returnType, parms);
+		ICPPFunctionType functionType = new CPPFunctionType(returnType, parms, null);
 		return new CPPImplicitFunction(CALL_FUNCTION, scope, functionType, theParms, false, false);
 	}
 

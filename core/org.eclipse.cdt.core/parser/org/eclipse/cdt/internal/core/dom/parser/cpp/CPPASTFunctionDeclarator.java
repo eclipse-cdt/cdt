@@ -18,6 +18,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -31,11 +32,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 /**
  * Represents a function declarator.
  */
 public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPASTFunctionDeclarator {
+	public static final ICPPEvaluation NOEXCEPT_TRUE = new EvalFixed(CPPBasicType.BOOLEAN, ValueCategory.PRVALUE,
+			IntegralValue.create(true));
+
 	private ICPPASTParameterDeclaration[] parameters;
 	private IASTTypeId[] typeIds = NO_EXCEPTION_SPECIFICATION;
 	private ICPPASTExpression noexceptExpression;
@@ -387,5 +393,15 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 				virtSpecifier.setPropertyInParent(VIRT_SPECIFIER);
 			}
 		}
+	}
+
+	@Override
+	public ICPPEvaluation getNoexceptEvaluation() {
+		if (getNoexceptExpression() != null) {
+			return getNoexceptExpression().getEvaluation();
+		} else if (getExceptionSpecification() == IASTTypeId.EMPTY_TYPEID_ARRAY) {
+			return NOEXCEPT_TRUE;
+		}
+		return null;
 	}
 }

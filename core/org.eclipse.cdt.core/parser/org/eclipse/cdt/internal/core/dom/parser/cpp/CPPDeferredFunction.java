@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.CoreException;
 public class CPPDeferredFunction extends CPPUnknownBinding
 		implements ICPPDeferredFunction, ICPPComputableFunction, ISerializableType {
 	private static final ICPPFunctionType FUNCTION_TYPE = new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION,
-			IType.EMPTY_TYPE_ARRAY);
+			IType.EMPTY_TYPE_ARRAY, null);
 
 	/**
 	 * Creates a CPPDeferredFunction given a set of overloaded functions

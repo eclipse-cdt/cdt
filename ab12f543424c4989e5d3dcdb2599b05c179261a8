@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a62d4d0f_4d85f233",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-03-08T22:17:56Z",
+      "side": 1,
+      "message": "Ignore the `funCall.getOverload() !\u003d null`, then my question: funCall.isConstantExpression() checks if the overload is null and in this case return true. But the expressions in my example are not constant expressions...",
+      "revId": "ab12f543424c4989e5d3dcdb2599b05c179261a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1b812633_706cc770",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-03-08T22:17:56Z",
+      "side": 1,
+      "message": "What does getOverload() do? For EvalFunctionCall it just tries to find overloaded operator() for types? I\u0027d have expected I get the function overload which is actually called.",
+      "revId": "ab12f543424c4989e5d3dcdb2599b05c179261a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "04d1a0b5_8dee27a5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-03-08T22:17:56Z",
+      "side": 1,
+      "message": "In the following I am checking different cases which are different kind of function calls. Looks like I am missing a mechanism to get the CPPFunction for all these cases.",
+      "revId": "ab12f543424c4989e5d3dcdb2599b05c179261a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8737b69b_3621bb17",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-03-08T22:17:56Z",
+      "side": 1,
+      "message": "Is there a helper to get the declaration from a definition, in case there is no declaration which is not a definition?",
+      "revId": "ab12f543424c4989e5d3dcdb2599b05c179261a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

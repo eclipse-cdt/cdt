@@ -21,14 +21,19 @@ import java.util.Set;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
@@ -202,5 +207,44 @@ public class EvalUtil {
 
 	public static boolean isDefaultConstructor(ICPPConstructor constructor) {
 		return constructor.getRequiredArgumentCount() == 0;
+	}
+
+	public static boolean evaluateNoexceptSpecifier(ICPPEvaluation noexceptSpecifier) {
+		if (noexceptSpecifier == null)
+			return false;
+		else {
+			IntegralValue v = (IntegralValue) noexceptSpecifier.getValue();
+			return v.numberValue().longValue() == 1;
+		}
+	}
+
+	public static boolean bindingIsNoexcept(IBinding b) {
+		if (b != null) {
+			if (b instanceof ICPPFunction) {
+				ICPPFunction f = (ICPPFunction) b;
+				ICPPFunctionType ft = f.getType();
+				if (EvalUtil.evaluateNoexceptSpecifier(ft.getNoexceptSpecifier())) {
+					return true;
+				} else {
+					// check for empty throw()
+					return f.getExceptionSpecification() == IType.EMPTY_TYPE_ARRAY;
+				}
+			} else if (b instanceof CPPVariable) {
+				CPPVariable v = (CPPVariable) b;
+				if (v.getType() instanceof IPointerType) {
+					IPointerType ptr = (IPointerType) v.getType();
+					if (ptr.getType() instanceof ICPPFunctionType) {
+						return EvalUtil
+								.evaluateNoexceptSpecifier(((ICPPFunctionType) ptr.getType()).getNoexceptSpecifier());
+					}
+				} else if (v.getType() instanceof CPPClosureType) {
+					CPPClosureType t = (CPPClosureType) v.getType();
+					return EvalUtil
+							.evaluateNoexceptSpecifier(t.getFunctionCallOperator().getType().getNoexceptSpecifier());
+				}
+			}
+		}
+		assert false;
+		return true;
 	}
 }

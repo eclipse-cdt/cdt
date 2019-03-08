@@ -477,4 +477,19 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		if (isConstantExpression()) // TODO check why this is needed
+			return true;
+
+		CPPFunction f = (CPPFunction) getConstructor();
+		if (f != null && f.getType() != null) // TODO case triggered by original bug report
+			return EvalUtil.evaluateNoexceptSpecifier(f.getType().getNoexceptSpecifier());
+		else
+			// TODO The following is not handled correctly as the conversion operator is not called
+			//  auto closure = [](int i) noexcept {return i;};
+			//  constexpr bool is_noexcept = noexcept(static_cast<int (*)(int)>(closure));
+			return true;
+	}
 }

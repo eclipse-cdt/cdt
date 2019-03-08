@@ -470,4 +470,12 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		return false;
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		if (inCalledContext) {
+			return EvalUtil.bindingIsNoexcept(getMember());
+		} else
+			return true; // in unevaluated context
+	}
 }

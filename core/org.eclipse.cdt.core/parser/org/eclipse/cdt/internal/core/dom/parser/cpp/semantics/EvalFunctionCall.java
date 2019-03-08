@@ -126,7 +126,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 	}
 
 	private boolean computeIsConstantExpression() {
-		return areAllConstantExpressions(fArguments) && isNullOrConstexprFunc(getOverload());
+		return areAllConstantExpressions(fArguments) && isNullOrConstexprFunc(resolveFunctionBinding());
 	}
 
 	@Override
@@ -494,5 +494,15 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			}
 			return null;
 		}
+	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		for (int i = 0; i < fArguments.length; i++) {
+			ICPPEvaluation eval = fArguments[i];
+			if (!eval.isNoexcept(i == 0))
+				return false;
+		}
+		return true;
 	}
 }

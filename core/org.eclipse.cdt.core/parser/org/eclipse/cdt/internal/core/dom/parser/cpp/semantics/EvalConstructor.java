@@ -391,4 +391,10 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 
 		return new EvalConstructor(newType, newConstructor, newArguments, getTemplateDefinition());
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

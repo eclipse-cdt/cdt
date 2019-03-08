@@ -65,6 +65,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -80,6 +81,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.FunctionHelpers;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
@@ -610,5 +612,16 @@ public class EvalBinary extends CPPDependentEvaluation {
 	@Override
 	public String toString() {
 		return fArg1.toString() + " <op> " + fArg2.toString(); //$NON-NLS-1$
+	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		ICPPFunction overload = getOverload();
+		if (overload != null) {
+			ICPPASTFunctionDeclarator decl = FunctionHelpers.findDeclarator(overload);
+			if (decl.getNoexceptExpression() == null)
+				return false;
+		}
+		return fArg1.isNoexcept(inCalledContext) && fArg2.isNoexcept(inCalledContext);
 	}
 }

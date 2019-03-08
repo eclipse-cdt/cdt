@@ -23,7 +23,9 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -31,8 +33,10 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
@@ -43,10 +47,12 @@ import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.VariableHelpers;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -126,7 +132,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 	}
 
 	private boolean computeIsConstantExpression() {
-		return areAllConstantExpressions(fArguments) && isNullOrConstexprFunc(getOverload());
+		return areAllConstantExpressions(fArguments) && isNullOrConstexprFunc(resolveFunctionBinding());
 	}
 
 	@Override
@@ -370,8 +376,8 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 		return EvalFixed.INCOMPLETE;
 	}
 
-	private ICPPFunction resolveFunctionBinding() {
-		ICPPFunction function = getOverload();
+	private IBinding resolveBindingTemp() {
+		IBinding function = getOverload();
 		if (function == null) {
 			ICPPEvaluation funcEval = fArguments[0];
 			if (funcEval instanceof EvalFunctionSet) {
@@ -388,11 +394,64 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 				binding = funcEvalMemberAccess.getMember();
 			}
 
-			if (binding instanceof ICPPFunction) {
-				function = (ICPPFunction) binding;
-			}
+			function = binding;
 		}
 		return function;
+	}
+
+	private ICPPASTFunctionDeclarator findDeclarator() { // TODO compare with VariableHelpers.findDeclarator()
+		ICPPASTFunctionDeclarator funDecl = null;
+		IBinding f = resolveBindingTemp();
+		if (f != null) { // TODO moved to EvalBinding
+			if (f instanceof CPPFunction) {
+				CPPFunction fun = (CPPFunction) f;
+				if (fun.getDeclarations() != null && fun.getDeclarations()[0] instanceof ICPPASTFunctionDeclarator) { // exception specifier has to be same for all declarations
+					funDecl = (ICPPASTFunctionDeclarator) fun.getDeclarations()[0];
+				} else {
+					funDecl = fun.getDefinition();
+				}
+			} else if (f instanceof CPPVariable) {
+				CPPVariable v = (CPPVariable) f;
+				// function ptrs TODO this looks quite hacked...
+				if (v.getType() instanceof IPointerType
+						&& ((IPointerType) (v.getType())).getType() instanceof ICPPFunctionType) {
+					IASTDeclarator decl = VariableHelpers.findDeclarator((IASTName) v.getDefinition());
+					if (decl instanceof ICPPASTFunctionDeclarator)
+						funDecl = (ICPPASTFunctionDeclarator) decl;
+				}
+			}
+		}
+		return funDecl;
+	}
+
+	private ICPPFunction resolveFunctionBinding() {
+		//		ICPPFunction function = getOverload();
+		//		if (function == null) {
+		//			ICPPEvaluation funcEval = fArguments[0];
+		//			if (funcEval instanceof EvalFunctionSet) {
+		//				EvalFunctionSet funcEvalFunctionSet = (EvalFunctionSet) funcEval;
+		//				funcEval = funcEvalFunctionSet.resolveFunction(Arrays.copyOfRange(fArguments, 1, fArguments.length));
+		//			}
+		//
+		//			IBinding binding = null;
+		//			if (funcEval instanceof EvalBinding) {
+		//				EvalBinding funcEvalBinding = (EvalBinding) funcEval;
+		//				binding = funcEvalBinding.getBinding();
+		//			} else if (funcEval instanceof EvalMemberAccess) {
+		//				EvalMemberAccess funcEvalMemberAccess = (EvalMemberAccess) funcEval;
+		//				binding = funcEvalMemberAccess.getMember();
+		//			}
+		//
+		//			if (binding instanceof ICPPFunction) {
+		//				function = (ICPPFunction) binding;
+		//			}
+		//		}
+		//		return function;
+		IBinding binding = resolveBindingTemp();
+		if (binding instanceof ICPPFunction)
+			return (ICPPFunction) binding;
+		else
+			return null;
 	}
 
 	private boolean isReference(IBinding binding) {
@@ -494,5 +553,22 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			}
 			return null;
 		}
+	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		if (isConstantExpression())
+			return true;
+		for (int i = 0; i < fArguments.length; i++) {
+			ICPPEvaluation eval = fArguments[i];
+			if (!eval.isNoexcept(i == 0 || inCalledContext))
+				return false;
+		}
+		//		/*if (fArguments[0] instanceof EvalMemberAccess)
+		//			return true; // TODO
+		//		else */if (fArguments[0] instanceof EvalBinding)
+		//			return EvalUtil.isNoexceptInEvaluatedContext((EvalBinding) fArguments[0]);
+		//		else
+		return true;
 	}
 }

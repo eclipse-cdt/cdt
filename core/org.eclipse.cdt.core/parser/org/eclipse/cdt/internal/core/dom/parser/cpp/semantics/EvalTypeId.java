@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -471,6 +472,23 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			if (arg.referencesTemplateParameter())
 				return true;
 		}
+		return false;
+	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		if (isConstantExpression())
+			return true;
+
+		CPPFunction f = (CPPFunction) getConstructor();
+		ICPPASTFunctionDeclarator funDecl;
+		if (f.getDeclarations() != null && f.getDeclarations()[0] instanceof ICPPASTFunctionDeclarator) { // exception specifier has to be same for all declarations
+			funDecl = (ICPPASTFunctionDeclarator) f.getDeclarations()[0];
+		} else {
+			funDecl = f.getDefinition();
+		}
+		if (funDecl != null)
+			return funDecl.getNoexceptExpression() != null;
 		return false;
 	}
 }

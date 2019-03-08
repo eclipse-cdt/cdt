@@ -203,4 +203,31 @@ public class EvalUtil {
 	public static boolean isDefaultConstructor(ICPPConstructor constructor) {
 		return constructor.getRequiredArgumentCount() == 0;
 	}
+
+	//	public static boolean isNoexceptInEvaluatedContext(EvalBinding eval) {
+	//		IBinding b = eval.getBinding();
+	//		if (b != null) {
+	//			ICPPASTFunctionDeclarator funDecl = null;
+	//			if (b instanceof CPPFunction) {
+	//				CPPFunction fun = (CPPFunction) b;
+	//				if (fun.getDeclarations() != null && fun.getDeclarations()[0] instanceof ICPPASTFunctionDeclarator) { // exception specifier has to be same for all declarations
+	//					funDecl = (ICPPASTFunctionDeclarator) fun.getDeclarations()[0];
+	//				} else {
+	//					funDecl = fun.getDefinition();
+	//				}
+	//			} else if (b instanceof CPPVariable) {
+	//				CPPVariable v = (CPPVariable) b;
+	//				// function ptrs TODO this looks quite hacked...
+	//				if (v.getType() instanceof IPointerType
+	//						&& ((IPointerType) (v.getType())).getType() instanceof ICPPFunctionType) {
+	//					IASTDeclarator decl = VariableHelpers.findDeclarator((IASTName) v.getDefinition());
+	//					if (decl instanceof ICPPASTFunctionDeclarator)
+	//						funDecl = (ICPPASTFunctionDeclarator) decl;
+	//				}
+	//			}
+	//			if (funDecl != null)
+	//				return funDecl.getNoexceptExpression() != null;
+	//		}
+	//		return false;
+	//	}
 }

@@ -28,11 +28,14 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -50,9 +53,12 @@ import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.FunctionHelpers;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.VariableHelpers;
 import org.eclipse.core.runtime.CoreException;
 
 public class EvalBinding extends CPPDependentEvaluation {
@@ -514,5 +520,65 @@ public class EvalBinding extends CPPDependentEvaluation {
 	@Override
 	public String toString() {
 		return getBinding().toString();
+	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		if (inCalledContext) {
+			// TODO cleanup
+			// TODO code-duplication with EvalMemberAccess
+			IBinding f = getBinding();
+			if (f != null) {
+				ICPPASTFunctionDeclarator funDecl = null;
+				if (f instanceof ICPPFunction)
+					funDecl = FunctionHelpers.findDeclarator((ICPPFunction) f);
+				else if (f instanceof CPPVariable) {
+					CPPVariable v = (CPPVariable) f;
+					// function ptrs TODO this looks quite hacked...
+					if (v.getType() instanceof IPointerType
+							&& ((IPointerType) (v.getType())).getType() instanceof ICPPFunctionType) {
+						IASTDeclarator decl = VariableHelpers.findDeclarator((IASTName) v.getDefinition());
+						if (decl instanceof ICPPASTFunctionDeclarator)
+							funDecl = (ICPPASTFunctionDeclarator) decl;
+					}
+				}
+
+				if (funDecl != null)
+					return funDecl.getNoexceptExpression() != null;
+
+				//				if (f instanceof CPPFunction) {
+				//					CPPFunction fun = (CPPFunction) f;
+				//					if (fun.getDeclarations() != null
+				//							&& fun.getDeclarations()[0] instanceof ICPPASTFunctionDeclarator) { // exception specifier has to be same for all declarations
+				//						funDecl = (ICPPASTFunctionDeclarator) fun.getDeclarations()[0];
+				//					} else {
+				//						funDecl = fun.getDefinition();
+				//					}
+				//				} else if (f instanceof CPPVariable) {
+				//					CPPVariable v = (CPPVariable) f;
+				//					// function ptrs TODO this looks quite hacked...
+				//					if (v.getType() instanceof IPointerType
+				//							&& ((IPointerType) (v.getType())).getType() instanceof ICPPFunctionType) {
+				//						IASTDeclarator decl = VariableHelpers.findDeclarator((IASTName) v.getDefinition());
+				//						if (decl instanceof ICPPASTFunctionDeclarator)
+				//							funDecl = (ICPPASTFunctionDeclarator) decl;
+				//					}
+				//				} else if (f instanceof ICPPFunctionSpecialization) {
+				//					CPPFunctionTemplate funTemplate = (CPPFunctionTemplate) ((ICPPFunctionSpecialization) f)
+				//							.getSpecializedBinding();
+				//					if (funTemplate.getDeclarations() != null
+				//							&& funTemplate.getDeclarations()[0] instanceof ICPPASTFunctionDeclarator) {
+				//						funDecl = (ICPPASTFunctionDeclarator) funTemplate.getDeclarations()[0];
+				//					} else {
+				//						funDecl = (ICPPASTFunctionDeclarator) funTemplate.getDefinition();
+				//					}
+				//					//					CPPFunctionTemplate
+				//				}
+				//				if (funDecl != null)
+				//					return funDecl.getNoexceptExpression() != null;
+			}
+			return false; // TODO
+		} else
+			return true; // in unevaluated context
 	}
 }

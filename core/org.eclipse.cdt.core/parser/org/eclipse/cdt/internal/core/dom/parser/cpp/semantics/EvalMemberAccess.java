@@ -27,7 +27,9 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import java.util.Collection;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
@@ -39,10 +41,12 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -52,11 +56,15 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.VariableHelpers;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -469,5 +477,41 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	@Override
 	public boolean referencesTemplateParameter() {
 		return false;
+	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		// TODO cleanup
+		// TODO code-duplication with EvalBinding
+		if (inCalledContext) {
+			IBinding b = getMember();
+			if (b != null) {
+				ICPPASTFunctionDeclarator funDecl = null;
+				if (b instanceof CPPFunction) {
+					CPPFunction fun = (CPPFunction) b;
+					if (fun.getDeclarations() != null
+							&& fun.getDeclarations()[0] instanceof ICPPASTFunctionDeclarator) { // exception specifier has to be same for all declarations
+						funDecl = (ICPPASTFunctionDeclarator) fun.getDeclarations()[0];
+					} else {
+						funDecl = fun.getDefinition();
+					}
+				} else if (b instanceof CPPVariable) {
+					CPPVariable v = (CPPVariable) b;
+					// function ptrs TODO this looks quite hacked...
+					if (v.getType() instanceof IPointerType
+							&& ((IPointerType) (v.getType())).getType() instanceof ICPPFunctionType) {
+						IASTDeclarator decl = VariableHelpers.findDeclarator((IASTName) v.getDefinition());
+						if (decl instanceof ICPPASTFunctionDeclarator)
+							funDecl = (ICPPASTFunctionDeclarator) decl;
+					} else if (v instanceof CPPField) {
+						return true;
+					}
+				}
+				if (funDecl != null)
+					return funDecl.getNoexceptExpression() != null;
+			}
+			return false;
+		} else
+			return true;
 	}
 }

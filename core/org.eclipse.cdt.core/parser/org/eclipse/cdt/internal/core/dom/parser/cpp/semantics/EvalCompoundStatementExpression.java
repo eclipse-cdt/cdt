@@ -142,4 +142,10 @@ public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		return fDelegate.referencesTemplateParameter();
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

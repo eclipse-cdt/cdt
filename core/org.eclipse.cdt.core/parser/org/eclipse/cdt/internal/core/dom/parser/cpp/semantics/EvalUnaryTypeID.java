@@ -286,4 +286,10 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 		}
 		return EvalFixed.INCOMPLETE;
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -265,4 +265,13 @@ public class EvalComma extends CPPDependentEvaluation {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		for (ICPPEvaluation arg : fArguments) {
+			if (!arg.isNoexcept(inCalledContext))
+				return false;
+		}
+		return true;
+	}
 }

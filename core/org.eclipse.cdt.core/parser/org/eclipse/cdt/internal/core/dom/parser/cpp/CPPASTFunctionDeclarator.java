@@ -18,6 +18,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -164,6 +165,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 	public void setEmptyExceptionSpecification() {
 		assertNotFrozen();
 		typeIds = IASTTypeId.EMPTY_TYPEID_ARRAY;
+		setNoexceptExpression(new CPPASTLiteralExpression(IASTLiteralExpression.lk_true, "true".toCharArray())); //$NON-NLS-1$ // TODO this is probably not the correct way to do it...
 	}
 
 	@Override
@@ -175,6 +177,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 			typeId.setParent(this);
 			typeId.setPropertyInParent(EXCEPTION_TYPEID);
 		}
+		noexceptExpression = null;
 	}
 
 	@Override

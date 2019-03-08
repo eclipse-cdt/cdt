@@ -184,8 +184,8 @@ public class EvalBinary extends CPPDependentEvaluation {
 			IType[] parameterTypes = SemanticUtil.getParameterTypesIncludingImplicitThis(overload);
 			if (parameterTypes.length >= 2) {
 				boolean allowContextualConversion = operatorAllowsContextualConversion();
-				arg1 = maybeApplyConversion(fArg1, parameterTypes[0], allowContextualConversion);
-				arg2 = maybeApplyConversion(fArg2, parameterTypes[1], allowContextualConversion);
+				arg1 = maybeApplyConversion(fArg1, parameterTypes[0], allowContextualConversion, true);
+				arg2 = maybeApplyConversion(fArg2, parameterTypes[1], allowContextualConversion, true);
 			} else {
 				CCorePlugin.log(IStatus.ERROR, "Unexpected overload for binary operator " + fOperator //$NON-NLS-1$
 						+ ": '" + overload.getName() + "'"); //$NON-NLS-1$//$NON-NLS-2$
@@ -610,5 +610,15 @@ public class EvalBinary extends CPPDependentEvaluation {
 	@Override
 	public String toString() {
 		return fArg1.toString() + " <op> " + fArg2.toString(); //$NON-NLS-1$
+	}
+
+	@Override
+	public boolean isNoexcept() {
+		ICPPFunction overload = getOverload();
+		if (overload != null) {
+			if (!EvalUtil.evaluateNoexceptSpecifier(overload.getType().getNoexceptSpecifier()))
+				return false;
+		}
+		return fArg1.isNoexcept() && fArg2.isNoexcept();
 	}
 }

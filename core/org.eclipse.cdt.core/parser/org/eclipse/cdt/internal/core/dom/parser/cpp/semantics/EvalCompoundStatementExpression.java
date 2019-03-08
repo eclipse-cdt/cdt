@@ -142,4 +142,9 @@ public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		return fDelegate.referencesTemplateParameter();
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		return fDelegate.isNoexcept();
+	}
 }

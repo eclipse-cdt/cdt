@@ -362,7 +362,7 @@ public class SemanticUtil {
 				return type;
 			}
 			return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(), ft.hasRefQualifier(),
-					ft.isRValueReference(), ft.takesVarArgs());
+					ft.isRValueReference(), ft.takesVarArgs(), ft.getNoexceptSpecifier());
 		}
 
 		if (type instanceof ITypedef) {

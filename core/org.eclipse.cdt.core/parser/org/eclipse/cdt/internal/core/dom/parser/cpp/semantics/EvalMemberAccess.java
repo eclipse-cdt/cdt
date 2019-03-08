@@ -470,4 +470,9 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		return false;
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		return fOwnerEval.isNoexcept();
+	}
 }

@@ -1570,7 +1570,7 @@ public class CPPTemplates {
 					}
 				}
 				return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(), ft.hasRefQualifier(),
-						ft.isRValueReference(), ft.takesVarArgs());
+						ft.isRValueReference(), ft.takesVarArgs(), ft.getNoexceptSpecifier());
 			}
 
 			if (type instanceof ICPPTemplateParameter) {
@@ -2610,7 +2610,7 @@ public class CPPTemplates {
 					nExplicitArgs);
 			return new CPPFunctionType(originalType.getReturnType(), parameterTypesWithExplicitArguments,
 					originalType.isConst(), originalType.isVolatile(), originalType.hasRefQualifier(),
-					originalType.isRValueReference(), originalType.takesVarArgs());
+					originalType.isRValueReference(), originalType.takesVarArgs(), originalType.getNoexceptSpecifier());
 		} else
 			return originalType;
 	}

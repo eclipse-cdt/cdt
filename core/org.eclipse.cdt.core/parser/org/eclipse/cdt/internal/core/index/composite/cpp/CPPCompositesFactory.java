@@ -180,7 +180,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IType[] p2 = getCompositeTypes(p);
 			if (r != r2 || p != p2) {
 				return new CPPFunctionType(r2, p2, ft.isConst(), ft.isVolatile(), ft.hasRefQualifier(),
-						ft.isRValueReference(), ft.takesVarArgs());
+						ft.isRValueReference(), ft.takesVarArgs(), ft.getNoexceptSpecifier());
 			}
 			return ft;
 		}

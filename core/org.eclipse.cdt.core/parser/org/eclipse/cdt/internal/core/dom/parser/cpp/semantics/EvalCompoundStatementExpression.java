@@ -142,4 +142,12 @@ public class EvalCompoundStatementExpression extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		return fDelegate.referencesTemplateParameter();
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		// TODO
+		//		In principle, a correct implementation here would check if any of the statements in the statement-expression can throw, which would mean implementing noexcept checking for statements as well as expressions.
+		//		However, we've regularly been punting on that sort of thing (in fact, we don't even store the statements currently, though we could, now that we have ICPPExecution to represent them),
+		return fDelegate.isNoexcept(inCalledContext);
+	}
 }

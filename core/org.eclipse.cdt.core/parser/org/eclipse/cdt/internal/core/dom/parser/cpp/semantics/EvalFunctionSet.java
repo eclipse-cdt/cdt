@@ -380,4 +380,10 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		return false;
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		//		assert false; // TODO this assert is hit
+		return true;
+	}
 }

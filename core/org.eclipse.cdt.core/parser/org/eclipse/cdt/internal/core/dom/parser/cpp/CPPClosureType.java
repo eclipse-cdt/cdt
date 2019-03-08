@@ -115,7 +115,10 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		// Function call operator
 		final IType returnType = getReturnType();
 		final IType[] parameterTypes = getParameterTypes();
-		ft = new CPPFunctionType(returnType, parameterTypes, !isMutable(), false, false, false, false);
+		ft = new CPPFunctionType(returnType, parameterTypes, !isMutable(), false, false, false, false,
+				//				fLambdaExpression.getDeclarator().getNoexceptExpression() == null ? null
+				//						: fLambdaExpression.getDeclarator().getNoexceptExpression().getEvaluation());
+				null);
 
 		ICPPParameter[] params = getParameters();
 		char[] operatorParensName = OverloadableOperator.PAREN.toCharArray();
@@ -140,7 +143,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		// Conversion operator
 		if (needConversionOperator) {
 			final CPPFunctionType conversionTarget = new CPPFunctionType(returnType, parameterTypes);
-			ft = new CPPFunctionType(conversionTarget, IType.EMPTY_TYPE_ARRAY, true, false, false, false, false);
+			ft = new CPPFunctionType(conversionTarget, IType.EMPTY_TYPE_ARRAY, true, false, false, false, false, null); // TODO think about this
 			// Calling CPPASTConversionName.createName(IType) would try to stringize the type to
 			// construct a name, which is unnecessary work (not to mention prone to recursion with
 			// dependent types). Since the name doesn't matter anyways, just make one up.

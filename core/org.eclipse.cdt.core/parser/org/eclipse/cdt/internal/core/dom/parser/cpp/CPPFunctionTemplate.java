@@ -77,7 +77,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 		super.addDeclaration(node);
 	}
 
-	private ICPPASTFunctionDeclarator getFirstFunctionDtor() {
+	public ICPPASTFunctionDeclarator getFirstFunctionDtor() {
 		IASTDeclarator dtor = getDeclaratorByName(getDefinition());
 		if (dtor instanceof ICPPASTFunctionDeclarator)
 			return (ICPPASTFunctionDeclarator) dtor;

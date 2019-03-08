@@ -115,7 +115,8 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		// Function call operator
 		final IType returnType = getReturnType();
 		final IType[] parameterTypes = getParameterTypes();
-		ft = new CPPFunctionType(returnType, parameterTypes, !isMutable(), false, false, false, false);
+		ft = new CPPFunctionType(returnType, parameterTypes, getNoexceptEvaluation(), !isMutable(), false, false, false,
+				false);
 
 		ICPPParameter[] params = getParameters();
 		char[] operatorParensName = OverloadableOperator.PAREN.toCharArray();
@@ -139,8 +140,9 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 
 		// Conversion operator
 		if (needConversionOperator) {
-			final CPPFunctionType conversionTarget = new CPPFunctionType(returnType, parameterTypes);
-			ft = new CPPFunctionType(conversionTarget, IType.EMPTY_TYPE_ARRAY, true, false, false, false, false);
+			final CPPFunctionType conversionTarget = new CPPFunctionType(returnType, parameterTypes, null);
+			ft = new CPPFunctionType(conversionTarget, IType.EMPTY_TYPE_ARRAY,
+					CPPASTFunctionDeclarator.NOEXCEPT_TRUE /* (CWG DR 1722) */, true, false, false, false, false);
 			// Calling CPPASTConversionName.createName(IType) would try to stringize the type to
 			// construct a name, which is unnecessary work (not to mention prone to recursion with
 			// dependent types). Since the name doesn't matter anyways, just make one up.
@@ -256,6 +258,13 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 			}
 		}
 		return fParameterTypes;
+	}
+
+	private ICPPEvaluation getNoexceptEvaluation() {
+		ICPPEvaluation eval = null;
+		if (fLambdaExpression.getDeclarator() != null)
+			eval = fLambdaExpression.getDeclarator().getNoexceptEvaluation();
+		return eval;
 	}
 
 	public ICPPParameter[] getParameters() {

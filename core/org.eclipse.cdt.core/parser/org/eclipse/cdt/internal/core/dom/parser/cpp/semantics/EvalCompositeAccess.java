@@ -188,4 +188,9 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 		int elementId = buffer.getInt();
 		return new EvalCompositeAccess(parent, elementId);
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		return parent.isNoexcept();
+	}
 }

@@ -250,6 +250,12 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	private boolean computeIsConstantExpression() {
+		if (getConstructor() == null && fArguments.length == 1) {
+			// maybe EvalTypeID represents a conversion
+			ICPPEvaluation conversionEval = maybeApplyConversion(fArguments[0], fInputType, false, false);
+			if (!conversionEval.isConstantExpression())
+				return false;
+		}
 		return !fRepresentsNewExpression && areAllConstantExpressions(fArguments)
 				&& isNullOrConstexprFunc(getConstructor());
 	}
@@ -476,5 +482,25 @@ public class EvalTypeId extends CPPDependentEvaluation {
 				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public boolean isNoexcept() {
+		if (getConstructor() instanceof CPPFunction) {
+			CPPFunction f = (CPPFunction) getConstructor();
+			if (f != AGGREGATE_INITIALIZATION) {
+				if (!EvalUtil.evaluateNoexceptSpecifier(f.getType().getNoexceptSpecifier()))
+					return false;
+			}
+		} else if (fArguments.length == 1) {
+			// maybe EvalTypeID represents a conversion
+			ICPPEvaluation conversionEval = maybeApplyConversion(fArguments[0], fInputType, false, false);
+			return conversionEval.isNoexcept();
+		}
+		for (ICPPEvaluation arg : fArguments) {
+			if (!arg.isNoexcept())
+				return false;
+		}
+		return true;
 	}
 }

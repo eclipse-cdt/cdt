@@ -37,13 +37,14 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 	private final boolean hasRefQualifier;
 	private final boolean isRValueReference;
 	private final boolean takesVarargs;
+	private final ICPPEvaluation noexceptSpecifier;
 
-	public CPPFunctionType(IType returnType, IType[] types) {
-		this(returnType, types, false, false, false, false, false);
+	public CPPFunctionType(IType returnType, IType[] types, ICPPEvaluation noexceptSpecifier) {
+		this(returnType, types, noexceptSpecifier, false, false, false, false, false);
 	}
 
-	public CPPFunctionType(IType returnType, IType[] types, boolean isConst, boolean isVolatile,
-			boolean hasRefQualifier, boolean isRValueReference, boolean takesVarargs) {
+	public CPPFunctionType(IType returnType, IType[] types, ICPPEvaluation noexceptSpecifier, boolean isConst,
+			boolean isVolatile, boolean hasRefQualifier, boolean isRValueReference, boolean takesVarargs) {
 		this.returnType = returnType;
 		this.parameters = types;
 		this.isConst = isConst;
@@ -51,6 +52,7 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 		this.hasRefQualifier = hasRefQualifier;
 		this.isRValueReference = isRValueReference;
 		this.takesVarargs = takesVarargs;
+		this.noexceptSpecifier = noexceptSpecifier;
 	}
 
 	@Override
@@ -167,6 +169,7 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 		for (int i = 0; i < parameters.length; i++) {
 			buffer.marshalType(parameters[i]);
 		}
+		buffer.marshalEvaluation(noexceptSpecifier, true);
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
@@ -176,11 +179,18 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 		for (int i = 0; i < pars.length; i++) {
 			pars[i] = buffer.unmarshalType();
 		}
+		ICPPEvaluation noexcept = buffer.unmarshalEvaluation();
 		boolean isConst = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
 		boolean takesVarargs = (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
 		boolean isVolatile = (firstBytes & ITypeMarshalBuffer.FLAG3) != 0;
 		boolean hasRefQualifier = (firstBytes & ITypeMarshalBuffer.FLAG4) != 0;
 		boolean isRValueReference = (firstBytes & ITypeMarshalBuffer.FLAG5) != 0;
-		return new CPPFunctionType(rt, pars, isConst, isVolatile, hasRefQualifier, isRValueReference, takesVarargs);
+		return new CPPFunctionType(rt, pars, noexcept, isConst, isVolatile, hasRefQualifier, isRValueReference,
+				takesVarargs);
+	}
+
+	@Override
+	public ICPPEvaluation getNoexceptSpecifier() {
+		return noexceptSpecifier;
 	}
 }

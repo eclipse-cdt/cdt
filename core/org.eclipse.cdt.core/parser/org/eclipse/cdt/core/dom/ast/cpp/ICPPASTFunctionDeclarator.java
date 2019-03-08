@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 
 /**
  * C++ adds a few things to function declarators.
@@ -153,6 +154,14 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 * @since 5.5
 	 */
 	public ICPPASTExpression getNoexceptExpression();
+
+	/**
+	 * Returns the noexcept evaluation, or {@code null} if no noexcept specification is present, or
+	 * or an evaluation representing {@code noexcept(true)} in case of an empty exception specification.
+	 * @since 6.7
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public ICPPEvaluation getNoexceptEvaluation();
 
 	/**
 	 * Sets the noexcept expression.

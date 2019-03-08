@@ -55,7 +55,7 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	 * Only library and variable C path entries may have source attachments.
 	 * For library C path entries, the result path (if present) locates a source
 	 * archive or folder. This archive or folder can be located in a project of the
-	 * workspace or outside thr workspace. For variable c path entries, the
+	 * workspace or outside the workspace. For variable c path entries, the
 	 * result path (if present) has an analogous form and meaning as the
 	 * variable path, namely the first segment is the name of a c path variable.
 	 * </p>

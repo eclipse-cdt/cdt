@@ -11645,10 +11645,10 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		ICPPFunction waldo3 = helper.assertNonProblem("waldo3");
 		// constexpr on a function *should not* make its return type const
 		assertSameType(waldo1.getType().getReturnType(), CommonCPPTypes.int_);
-		assertSameType(waldo2.getType().getReturnType(),
-				new CPPPointerType(new CPPFunctionType(CommonCPPTypes.int_, new IType[] { CommonCPPTypes.int_ })));
+		assertSameType(waldo2.getType().getReturnType(), new CPPPointerType(
+				new CPPFunctionType(CommonCPPTypes.int_, new IType[] { CommonCPPTypes.int_ }, null)));
 		// constexpr on a method *should not* make the method const
-		assertSameType(waldo3.getType(), new CPPFunctionType(CommonCPPTypes.int_, new IType[] {}));
+		assertSameType(waldo3.getType(), new CPPFunctionType(CommonCPPTypes.int_, new IType[] {}, null));
 	}
 
 	//	void waldo() noexcept;
@@ -13099,5 +13099,213 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	public void testUnknownSizeCharArrayInitFromStringLiteral_545756() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		bh.assertImplicitName("foo", 3, IProblemBinding.class);
+	}
+
+	//	int fun();
+	//	int fun_noexcept() noexcept;
+	//	int fun2(int);
+	//	int fun2_noexcept(int) noexcept;
+	//	constexpr int fun_constexpr() {return 1;}
+	//	int (*fptr)();
+	//	int (*fptr_noexcept)() noexcept;
+	//  bool condition();
+	//
+	//	constexpr bool fun_is_not_noexcept = noexcept(fun());
+	//	constexpr bool unevaluated_fun_is_noexcept = noexcept(fun);
+	//	constexpr bool fun_noexcept_is_noexcept = noexcept(fun_noexcept());
+	//	constexpr bool fun2_arg_is_not_noexcept = noexcept(fun2(1));
+	//	constexpr bool fun2_noexcept_arg_is_noexcept = noexcept(fun2_noexcept(1));
+	//	constexpr bool fun2_noexcept_arg_not_noexcept_is_not_noexcept = noexcept(fun2_noexcept(fun()));
+	//	constexpr bool fun_constexpr_is_noexcept = noexcept(fun_constexpr());
+	//	constexpr bool fptr_is_not_noexcept = noexcept(fptr());
+	//	constexpr bool fptr_noexcept_is_noexcept = noexcept(fptr_noexcept());
+	//  constexpr bool throw_is_not_noexcept = noexcept(throw fun_noexcept());
+	public void testNoexceptOperatorFunctions_545021() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("fun_is_not_noexcept", 0);
+		helper.assertVariableValue("unevaluated_fun_is_noexcept", 1);
+		helper.assertVariableValue("fun_noexcept_is_noexcept", 1);
+		helper.assertVariableValue("fun2_arg_is_not_noexcept", 0);
+		helper.assertVariableValue("fun2_noexcept_arg_is_noexcept", 1);
+		helper.assertVariableValue("fun2_noexcept_arg_not_noexcept_is_not_noexcept", 0);
+		helper.assertVariableValue("fun_constexpr_is_noexcept", 1);
+		helper.assertVariableValue("fptr_is_not_noexcept", 0);
+		helper.assertVariableValue("fptr_noexcept_is_noexcept", 1);
+		helper.assertVariableValue("throw_is_not_noexcept", 0);
+	}
+
+	//	int fun();
+	//	int fun_noexcept() noexcept;
+	//  bool condition();
+	//  bool noexcept_condition() noexcept;
+	//	constexpr bool comma_is_noexcept = noexcept(fun_noexcept(), fun_noexcept());
+	//	constexpr bool comma_is_not_noexcept = noexcept(fun(), fun_noexcept());
+	//  constexpr bool not_noexcept_conditional = noexcept(noexcept_condition() ? fun() : fun_noexcept());
+	//  constexpr bool is_noexcept_conditional = noexcept(noexcept_condition() ? fun_noexcept() : fun_noexcept());
+	//  constexpr bool condition_not_noexcept = noexcept(condition() ? fun_noexcept() : fun_noexcept());
+	public void testNoexceptOperatorOperators_545021() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("comma_is_noexcept", 1);
+		helper.assertVariableValue("comma_is_not_noexcept", 0);
+		helper.assertVariableValue("not_noexcept_conditional", 0);
+		helper.assertVariableValue("is_noexcept_conditional", 1);
+		helper.assertVariableValue("condition_not_noexcept", 0);
+	}
+
+	//  struct aggregate{
+	//      int a;
+	//  };
+	//  aggregate agg;
+	//
+	//  constexpr bool aggregate_init_is_noexcept = noexcept(aggregate{1});
+	//  constexpr bool aggregate_access_is_noexcept = noexcept(agg.a);
+	public void testNoexceptOperatorAggregate_545021() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("aggregate_init_is_noexcept", 1);
+		helper.assertVariableValue("aggregate_access_is_noexcept", 1);
+	}
+
+	//	struct myclass{
+	//		myclass() noexcept{}
+	//		myclass(int){}
+	//		constexpr myclass(int, int){}
+	//	};
+	//  constexpr bool ctor_is_noexcept = noexcept(myclass{});
+	//  constexpr bool ctor_is_not_noexcept = noexcept(myclass{1});
+	//  constexpr bool constexpr_ctor_is_noexcept = noexcept(myclass{1, 1});
+	public void testNoexceptOperatorConstructors_545021() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("ctor_is_noexcept", 1);
+		helper.assertVariableValue("ctor_is_not_noexcept", 0);
+		helper.assertVariableValue("constexpr_ctor_is_noexcept", 1);
+	}
+
+	//	struct type {
+	//		int mem();
+	//		int mem_noexcept() noexcept;
+	//		constexpr int constexpr_mem() {return 1;}
+	//		operator int() noexcept;
+	//		operator int*();
+	//	};
+	//  type t;
+	//	int (type::*memptr)();
+	//	int (type::*memptr_noexcept)() noexcept;
+	//	constexpr bool mem_is_not_noexcept = noexcept(type{}.mem());
+	//	constexpr bool unevaluated_mem_is_noexcept = noexcept(type{}.mem);
+	//	constexpr bool mem_noexcept_is_noexcept = noexcept(type{}.mem_noexcept());
+	//	constexpr bool constexpr_mem_is_noexcept = noexcept(type{}.constexpr_mem());
+	//	constexpr bool memptr_is_not_noexcept = noexcept((type{}.*(memptr))());
+	//	constexpr bool unevaluated_memptr_is_noexcept = noexcept((type{}.*(memptr)));
+	//	constexpr bool memptr_noexcept_is_noexcept = noexcept((type{}.*(memptr_noexcept))());
+	//	constexpr bool noexcept_conversion = noexcept(static_cast<int>(t));
+	//	constexpr bool not_noexcept_conversion = noexcept(static_cast<int*>(t));
+	//	constexpr bool conversion_from_constructor = noexcept(static_cast<int*>(type{}));
+	public void testNoexceptOperatorType_545021() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("mem_is_not_noexcept", 0);
+		helper.assertVariableValue("unevaluated_mem_is_noexcept", 1);
+		helper.assertVariableValue("mem_noexcept_is_noexcept", 1);
+		helper.assertVariableValue("constexpr_mem_is_noexcept", 1);
+		helper.assertVariableValue("memptr_is_not_noexcept", 0);
+		//		TODO(havogt): needs implementation of [except.spec] p.14 (c++11) noexcept for implicitly declared special member functions
+		//		helper.assertVariableValue("unevaluated_memptr_is_noexcept", 1);
+		helper.assertVariableValue("memptr_noexcept_is_noexcept", 1);
+		helper.assertVariableValue("noexcept_conversion", 1);
+		helper.assertVariableValue("not_noexcept_conversion", 0);
+		helper.assertVariableValue("conversion_from_constructor", 0);
+	}
+
+	//	template<typename T>
+	//	int funt(T);
+	//	template<typename T>
+	//	int funt_noexcept(T) noexcept;
+	//
+	//	constexpr bool funt_is_not_noexcept = noexcept(funt(1));
+	//	constexpr bool funt_noexcept_is_noexcept = noexcept(funt_noexcept(1));
+	public void testNoexceptOperatorFunctionTemplates_545021() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("funt_is_not_noexcept", 0);
+		helper.assertVariableValue("funt_noexcept_is_noexcept", 1);
+	}
+
+	//  struct type1{
+	//      void operator=(int);
+	//      bool operator!();
+	//  };
+	//  type1 t1;
+	//  struct type2{
+	//      void operator=(int) noexcept;
+	//      bool operator!() noexcept;
+	//  };
+	//  type2 t2;
+	//  constexpr bool binaryop_is_not_noexcept = noexcept(t1 = 1);
+	//  constexpr bool unaryop_is_not_noexcept = noexcept(!t1);
+	//  constexpr bool noexcept_binaryop_is_noexcept = noexcept(t2 = 1);
+	//  constexpr bool noexcept_unaryop_is_noexcept = noexcept(!t2);
+	public void testNoexceptOperatorOverloadedOperators_545021() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("binaryop_is_not_noexcept", 0);
+		helper.assertVariableValue("unaryop_is_not_noexcept", 0);
+		helper.assertVariableValue("noexcept_binaryop_is_noexcept", 1);
+		helper.assertVariableValue("noexcept_unaryop_is_noexcept", 1);
+	}
+
+	//	void fun();
+	//	void fun_taking_funptr(void(*ptr)()) noexcept;
+	//
+	//	constexpr bool is_noexcept = noexcept(fun_taking_funptr(fun));
+	public void testNoexceptOperatorNoncalledFunctionPtr_545021() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("is_noexcept", 1);
+	}
+
+	//	void fun() throw();
+	//	constexpr bool is_noexcept = noexcept(fun());
+	public void testNoexceptOperatorEmptyThrow_545021() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("is_noexcept", 1);
+	}
+
+	//  auto closure_noexcept = [](int i) noexcept {return i;};
+	//  constexpr bool is_noexcept = noexcept(closure_noexcept());
+	//  auto closure = [](int i) {return i;};
+	//  constexpr bool is_not_noexcept = noexcept(closure());
+	//  constexpr bool conversion_is_noexcept = noexcept(static_cast<int (*)(int)>(closure));
+	public void testNoexceptOperatorLambda_545021() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("is_noexcept", 1);
+		helper.assertVariableValue("is_not_noexcept", 0);
+		helper.assertVariableValue("conversion_is_noexcept", 1);
+	}
+
+	//	  template <bool B>
+	//	  void foo() noexcept(B);
+	//
+	//	  constexpr bool is_noexcept = noexcept(foo<true>());
+	//	  constexpr bool is_not_noexcept = noexcept(foo<false>());
+	public void testNoexceptOperatorDependentNoexcept_545021() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("is_noexcept", 1);
+		helper.assertVariableValue("is_not_noexcept", 0);
+	}
+
+	//	  struct S { int mem; };
+	//	  S foo();  // could throw
+	//	  constexpr bool is_not_noexcept = noexcept(foo().mem);  // should be false
+	public void testNoexceptOperatorOwnerEval_545021() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("is_not_noexcept", 0);
 	}
 }

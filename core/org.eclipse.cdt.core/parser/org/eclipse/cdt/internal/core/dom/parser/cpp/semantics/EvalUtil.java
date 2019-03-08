@@ -203,4 +203,13 @@ public class EvalUtil {
 	public static boolean isDefaultConstructor(ICPPConstructor constructor) {
 		return constructor.getRequiredArgumentCount() == 0;
 	}
+
+	public static boolean evaluateNoexceptSpecifier(ICPPEvaluation noexceptSpecifier) {
+		if (noexceptSpecifier != null) {
+			IntegralValue v = (IntegralValue) noexceptSpecifier.getValue();
+			if (v.numberValue() != null)
+				return v.numberValue().longValue() == 1;
+		}
+		return false;
+	}
 }

@@ -513,4 +513,10 @@ public class EvalID extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		return fFieldOwner != null && fFieldOwner.referencesTemplateParameter();
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		assert false; // Shouldn't exist outside of a dependent context
+		return true;
+	}
 }

@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
  */
 public class CPPUnknownMethod extends CPPUnknownMember implements ICPPMethod {
 	private static final ICPPFunctionType FUNCTION_TYPE = new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION,
-			IType.EMPTY_TYPE_ARRAY);
+			IType.EMPTY_TYPE_ARRAY, null);
 
 	public CPPUnknownMethod(IType owner, char[] name) {
 		super(owner, name);

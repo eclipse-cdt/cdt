@@ -172,9 +172,10 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	 * @param argument the evaluation to convert
 	 * @param targetType the type to convert to
 	 * @param allowContextualConversion enable/disable explicit contextual conversion
+	 * @param onlyConstexprConversion allow only constexpr conversion operators
 	 */
 	protected static ICPPEvaluation maybeApplyConversion(ICPPEvaluation argument, IType targetType,
-			boolean allowContextualConversion) {
+			boolean allowContextualConversion, boolean onlyConstexprConversion) {
 		if (targetType == null) {
 			return argument;
 		}
@@ -195,7 +196,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 						targetType, false, allowContextualConversion);
 				ICPPFunction conversion = cost.getUserDefinedConversion();
 				if (conversion != null) {
-					if (!conversion.isConstexpr()) {
+					if (onlyConstexprConversion && !conversion.isConstexpr()) {
 						return EvalFixed.INCOMPLETE;
 					}
 					ICPPEvaluation eval = new EvalMemberAccess(uqType, valueCategory, conversion, argument, false,

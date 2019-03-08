@@ -1559,7 +1559,10 @@ public class CPPTemplates {
 				IType[] params = instantiateTypes(ps, context);
 				final IType r = ft.getReturnType();
 				IType ret = instantiateType(r, context);
-				if (ret == r && params == ps) {
+				ICPPEvaluation noex = ft.getNoexceptSpecifier();
+				ICPPEvaluation noexcept = noex == null ? null
+						: noex.instantiate(context, IntegralValue.MAX_RECURSION_DEPTH);
+				if (ret == r && params == ps && noexcept == noex) {
 					return type;
 				}
 				// The parameter types need to be adjusted.
@@ -1569,7 +1572,8 @@ public class CPPTemplates {
 						params[i] = CPPVisitor.adjustParameterType(p, true);
 					}
 				}
-				return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(), ft.hasRefQualifier(),
+
+				return new CPPFunctionType(ret, params, noexcept, ft.isConst(), ft.isVolatile(), ft.hasRefQualifier(),
 						ft.isRValueReference(), ft.takesVarArgs());
 			}
 
@@ -2609,8 +2613,8 @@ public class CPPTemplates {
 			IType[] parameterTypesWithExplicitArguments = Arrays.copyOf(originalType.getParameterTypes(),
 					nExplicitArgs);
 			return new CPPFunctionType(originalType.getReturnType(), parameterTypesWithExplicitArguments,
-					originalType.isConst(), originalType.isVolatile(), originalType.hasRefQualifier(),
-					originalType.isRValueReference(), originalType.takesVarArgs());
+					originalType.getNoexceptSpecifier(), originalType.isConst(), originalType.isVolatile(),
+					originalType.hasRefQualifier(), originalType.isRValueReference(), originalType.takesVarArgs());
 		} else
 			return originalType;
 	}
@@ -2966,7 +2970,7 @@ public class CPPTemplates {
 		Cost cost = Conversions.checkImplicitConversionSequence(p, a, LVALUE, UDCMode.FORBIDDEN, Context.ORDINARY);
 		if (cost == null || !cost.converts()) {
 			ICPPEvaluation eval = arg.getNonTypeEvaluation();
-			ICPPEvaluation newEval = CPPEvaluation.maybeApplyConversion(eval, p, false);
+			ICPPEvaluation newEval = CPPEvaluation.maybeApplyConversion(eval, p, false, true);
 			if (newEval == EvalFixed.INCOMPLETE && newEval != eval)
 				return null;
 			return new CPPTemplateNonTypeArgument(newEval);

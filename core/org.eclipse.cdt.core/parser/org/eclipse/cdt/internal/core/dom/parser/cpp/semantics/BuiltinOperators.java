@@ -555,7 +555,7 @@ class BuiltinOperators {
 
 	private void addFunction(IType returnType, IType[] parameterTypes) {
 		ICPPParameter[] parameter = new ICPPParameter[parameterTypes.length];
-		ICPPFunctionType functionType = new CPPFunctionType(returnType, parameterTypes);
+		ICPPFunctionType functionType = new CPPFunctionType(returnType, parameterTypes, null);
 		String sig = ASTTypeUtil.getType(functionType, true);
 		if (fSignatures == null) {
 			fSignatures = new HashSet<>();

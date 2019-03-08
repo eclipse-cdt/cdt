@@ -51,6 +51,9 @@
    <!-- Bug 536800 gnu.io.rxtx is a workswith dep we are not allowed to redistribute --> 
    <!-- <bundle id="gnu.io.rxtx"><category name="deps"/></bundle> -->
 
+   <!-- other hidden features / deps -->
+   <feature id="org.eclipse.cdt.native"/>
+
    <category-def name="terminal_main" label="Terminal Features">
       <description>
          TM Terminal Features

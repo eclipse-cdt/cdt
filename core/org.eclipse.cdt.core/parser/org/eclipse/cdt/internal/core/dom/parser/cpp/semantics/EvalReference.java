@@ -193,4 +193,10 @@ public class EvalReference extends CPPDependentEvaluation {
 			return new EvalReference(record, referredBinding, templateDefinition);
 		}
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		assert false;
+		return true;
+	}
 }

@@ -391,4 +391,10 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 
 		return new EvalConstructor(newType, newConstructor, newArguments, getTemplateDefinition());
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		// TODO how can I trigger this?
+		return EvalUtil.evaluateNoexceptSpecifier(fConstructor.getType().getNoexceptSpecifier());
+	}
 }

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -80,5 +81,10 @@ public class ProblemFunctionType extends ProblemType implements ICPPFunctionType
 	@Override
 	public IPointerType getThisType() {
 		return new CPPPointerType(new ProblemType(getID()));
+	}
+
+	@Override
+	public ICPPEvaluation getNoexceptSpecifier() {
+		return null;
 	}
 }

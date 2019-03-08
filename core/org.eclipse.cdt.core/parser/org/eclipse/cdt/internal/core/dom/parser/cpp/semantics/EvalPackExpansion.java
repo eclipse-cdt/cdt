@@ -145,4 +145,10 @@ public class EvalPackExpansion extends CPPDependentEvaluation {
 		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalPackExpansion(expansionPattern, templateDefinition);
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		assert false;
+		return true;
+	}
 }

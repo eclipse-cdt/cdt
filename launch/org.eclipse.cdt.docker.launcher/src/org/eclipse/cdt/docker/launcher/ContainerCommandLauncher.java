@@ -187,7 +187,7 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 					String modifiedArg = realArg;
 					// if the directory of the arg as a file exists, we mount it
 					// and modify the argument to be unix-style
-					if (f.isFile()) {
+					if (f.isFile() || f.isDirectory()) {
 						f = f.getParentFile();
 						modifiedArg = "/" //$NON-NLS-1$
 								+ p.toPortableString().replace(':', '/');

@@ -1899,7 +1899,8 @@ public class CPPVisitor extends ASTQueries {
 			pTypes[i] = pt;
 		}
 
-		return new CPPFunctionType(returnType, pTypes, isConst, isVolatile, false, false, false);
+		return new CPPFunctionType(returnType, pTypes, null /* TODO(havogt) [except.spec] p.14 (c++11) noexcept for implicitly declared special member functions not implemented */, isConst, isVolatile, false, false,
+				false);
 	}
 
 	/**
@@ -1946,8 +1947,9 @@ public class CPPVisitor extends ASTQueries {
 		}
 
 		RefQualifier refQualifier = fnDtor.getRefQualifier();
-		CPPFunctionType type = new CPPFunctionType(returnType, pTypes, fnDtor.isConst(), fnDtor.isVolatile(),
-				refQualifier != null, refQualifier == RefQualifier.RVALUE, fnDtor.takesVarArgs());
+		CPPFunctionType type = new CPPFunctionType(returnType, pTypes, fnDtor.getNoexceptEvaluation(), fnDtor.isConst(),
+				fnDtor.isVolatile(), refQualifier != null, refQualifier == RefQualifier.RVALUE,
+				fnDtor.takesVarArgs());
 		final IASTDeclarator nested = fnDtor.getNestedDeclarator();
 		if (nested != null) {
 			return createType(type, nested);
@@ -2546,8 +2548,9 @@ public class CPPVisitor extends ASTQueries {
 			// above.
 			IType[] pTypes = createParameterTypes(declarator);
 			RefQualifier refQualifier = declarator.getRefQualifier();
-			IType result = new CPPFunctionType(returnType, pTypes, declarator.isConst(), declarator.isVolatile(),
-					refQualifier != null, refQualifier == RefQualifier.RVALUE, declarator.takesVarArgs());
+			IType result = new CPPFunctionType(returnType, pTypes, declarator.getNoexceptEvaluation(), declarator.isConst(),
+					declarator.isVolatile(), refQualifier != null, refQualifier == RefQualifier.RVALUE,
+					declarator.takesVarArgs());
 			final IASTDeclarator nested = declarator.getNestedDeclarator();
 			if (nested != null) {
 				result = createType(result, nested);

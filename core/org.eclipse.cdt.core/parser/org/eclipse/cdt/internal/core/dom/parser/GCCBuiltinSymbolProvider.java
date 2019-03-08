@@ -494,7 +494,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			theParms[i] = fCpp ? new CPPBuiltinParameter(pType) : new CBuiltinParameter(pType);
 		}
 		IType rt = toType(returnType);
-		IFunctionType ft = fCpp ? new CPPFunctionType(rt, pTypes) : new CFunctionType(rt, pTypes);
+		IFunctionType ft = fCpp ? new CPPFunctionType(rt, pTypes, null) : new CFunctionType(rt, pTypes);
 
 		IBinding b = fCpp
 				? new CPPImplicitFunction(toCharArray(name), fScope, (ICPPFunctionType) ft, (ICPPParameter[]) theParms,
@@ -608,7 +608,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		} else if (tstr.equals("va_list")) {
 			// Use 'char*(*)()'
 			IType rt = toType("char*");
-			t = fCpp ? new CPPPointerType(new CPPFunctionType(rt, IType.EMPTY_TYPE_ARRAY))
+			t = fCpp ? new CPPPointerType(new CPPFunctionType(rt, IType.EMPTY_TYPE_ARRAY, null))
 					: new CPointerType(new CFunctionType(rt, IType.EMPTY_TYPE_ARRAY), 0);
 		} else if (tstr.equals("size_t")) {
 			t = toType("unsigned long");

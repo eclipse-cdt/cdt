@@ -52,6 +52,13 @@ public interface ICPPEvaluation {
 	boolean isConstantExpression();
 
 	/**
+	 * Return the result of the noexcept-operator applied to the expression.
+	 * [expr.unary.noexcept]
+	 * @param inCalledContext {@code true} if the evaluation is the target of a function call
+	 */
+	boolean isNoexcept(boolean inCalledContext);
+
+	/**
 	 * Returns {@code true} if this expression is equivalent to 'other' for
 	 * declaration matching purposes.
 	 */

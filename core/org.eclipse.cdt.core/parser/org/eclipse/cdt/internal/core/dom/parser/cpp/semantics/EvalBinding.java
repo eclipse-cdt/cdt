@@ -532,4 +532,12 @@ public class EvalBinding extends CPPDependentEvaluation {
 	public String toString() {
 		return getBinding().toString();
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		if (inCalledContext) {
+			return EvalUtil.bindingIsNoexcept(getBinding());
+		} else
+			return true; // in unevaluated context
+	}
 }

@@ -334,7 +334,11 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return info == null ? IntegralValue.UNKNOWN : IntegralValue.create(info.alignment);
 		}
 		case op_noexcept:
-			return IntegralValue.UNKNOWN; // TODO(sprigogin): Implement
+			// [expr.unary.noexcept]
+			if (arg.isConstantExpression())
+				return IntegralValue.create(true);
+			else
+				return IntegralValue.create(arg.isNoexcept(false));
 		case op_sizeofParameterPack:
 			IValue opVal = fArgument.getValue();
 			return IntegralValue.create(opVal.numberOfSubValues());
@@ -522,5 +526,17 @@ public class EvalUnary extends CPPDependentEvaluation {
 	@Override
 	public boolean referencesTemplateParameter() {
 		return fArgument.referencesTemplateParameter();
+	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		if (fOperator == op_throw)
+			return false;
+		ICPPFunction overload = getOverload();
+		if (overload != null) {
+			if (!EvalUtil.evaluateNoexceptSpecifier(overload.getType().getNoexceptSpecifier()))
+				return false;
+		}
+		return fArgument.isNoexcept(inCalledContext);
 	}
 }

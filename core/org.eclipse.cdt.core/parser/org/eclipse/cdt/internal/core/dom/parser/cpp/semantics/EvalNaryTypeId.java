@@ -169,4 +169,9 @@ public class EvalNaryTypeId extends CPPDependentEvaluation {
 		IBinding templateDefinition = buffer.unmarshalBinding();
 		return new EvalNaryTypeId(Operator.values()[op], operands, templateDefinition);
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		return true;
+	}
 }

@@ -611,4 +611,10 @@ public class EvalBinary extends CPPDependentEvaluation {
 	public String toString() {
 		return fArg1.toString() + " <op> " + fArg2.toString(); //$NON-NLS-1$
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

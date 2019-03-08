@@ -13009,4 +13009,42 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	public void testBraceElisionForAggregateInit6_typedef_543038() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	int fun();
+	//	int fun_noexcept() noexcept;
+	//	constexpr int fun_constexpr() {return 1;}
+	//	int (*fptr)();
+	//	int (*fptr_noexcept)() noexcept;
+	//	struct type {
+	//		int mem();
+	//		int mem_noexcept() noexcept;
+	//		constexpr int constexpr_mem() {return 1;}
+	//	};
+	//	int (type::*memptr)();
+	//	int (type::*memptr_noexcept)() noexcept;
+	//
+	//	constexpr bool fun_is_not_noexcept = noexcept(fun());
+	//	constexpr bool fun_noexcept_is_noexcept = noexcept(fun_noexcept());
+	//	constexpr bool fun_constexpr_is_noexcept = noexcept(fun_constexpr());
+	//	constexpr bool fptr_is_not_noexcept = noexcept(fptr());
+	//	constexpr bool fptr_noexcept_is_noexcept = noexcept(fptr_noexcept());
+	//	constexpr bool mem_is_not_noexcept = noexcept(type{}.mem());
+	//	constexpr bool mem_noexcept_is_noexcept = noexcept(type{}.mem_noexcept());
+	//	constexpr bool constexpr_mem_is_noexcept = noexcept(type{}.constexpr_mem());
+	//	constexpr bool memptr_is_not_noexcept = noexcept((type{}.*(memptr))());
+	//	constexpr bool memptr_noexcept_is_noexcept = noexcept((type{}.*(memptr_noexcept))());
+	//	constexpr bool comma_is_noexcept = noexcept(fun_noexcept(), fun_noexcept());
+	//	constexpr bool comma_is_not_noexcept = noexcept(fun(), fun_noexcept());
+	public void testNoexceptOperator_545021() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("fun_is_not_noexcept", 0);
+		helper.assertVariableValue("fun_noexcept_is_noexcept", 1);
+		helper.assertVariableValue("fun_constexpr_is_noexcept", 1);
+		//				helper.assertVariableValue("fptr_is_not_noexcept", 0);
+		//		helper.assertVariableValue("fptr_noexcept_is_noexcept", 1);
+		helper.assertVariableValue("mem_is_not_noexcept", 0);
+		helper.assertVariableValue("mem_noexcept_is_noexcept", 1);
+		helper.assertVariableValue("comma_is_noexcept", 1);
+		helper.assertVariableValue("comma_is_not_noexcept", 0);
+	}
 }

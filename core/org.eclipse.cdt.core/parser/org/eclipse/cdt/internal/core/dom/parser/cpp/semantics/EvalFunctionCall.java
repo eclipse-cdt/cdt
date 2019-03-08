@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -126,7 +127,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 	}
 
 	private boolean computeIsConstantExpression() {
-		return areAllConstantExpressions(fArguments) && isNullOrConstexprFunc(getOverload());
+		return areAllConstantExpressions(fArguments) && isNullOrConstexprFunc(resolveFunctionBinding());
 	}
 
 	@Override
@@ -494,5 +495,22 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			}
 			return null;
 		}
+	}
+
+	@Override
+	public boolean isNoexcept() {
+		if (isConstantExpression())
+			return true;
+		ICPPFunction f = resolveFunctionBinding();
+		if (f != null && f instanceof CPPFunction) {
+			CPPFunction fun = (CPPFunction) f;
+			if (fun.getDeclarations() != null && fun.getDeclarations()[0] instanceof ICPPASTFunctionDeclarator) { // exception specifier has to be same for all declarations
+				ICPPASTFunctionDeclarator funcDecl = (ICPPASTFunctionDeclarator) fun.getDeclarations()[0];
+				return funcDecl.getNoexceptExpression() != null;
+			} else if (fun.getDefinition() != null) {
+				return fun.getDefinition().getNoexceptExpression() != null;
+			}
+		}
+		return false; // TODO
 	}
 }

@@ -167,4 +167,10 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		return isValueDependent();
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

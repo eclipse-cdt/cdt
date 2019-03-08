@@ -334,7 +334,39 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return info == null ? IntegralValue.UNKNOWN : IntegralValue.create(info.alignment);
 		}
 		case op_noexcept:
-			return IntegralValue.UNKNOWN; // TODO(sprigogin): Implement
+			// [expr.unary.noexcept]
+			return IntegralValue.create(arg.isNoexcept());
+
+		//			CPPFunction fun = null;
+		//			if (arg instanceof EvalFunctionCall) {
+		//				EvalFunctionCall funCall = (EvalFunctionCall) arg;
+		//				//				if (funCall.getOverload() != null && funCall.isConstantExpression())
+		//				//					return IntegralValue.create(true);
+		//
+		//				ICPPFunction f = funCall.getOverload();
+		//				if (f != null && f instanceof CPPFunction) {
+		//					fun = (CPPFunction) f;
+		//				} else if (funCall.getArguments().length == 1 && funCall.getArguments()[0] instanceof EvalBinding) {
+		//					EvalBinding b = (EvalBinding) funCall.getArguments()[0];
+		//					if (b.getBinding() instanceof CPPFunction)
+		//						fun = (CPPFunction) b.getBinding();
+		//				} else if (funCall.getArguments().length == 1
+		//						&& funCall.getArguments()[0] instanceof EvalMemberAccess) {
+		//					EvalMemberAccess mem = (EvalMemberAccess) funCall.getArguments()[0];
+		//					fun = (CPPFunction) mem.getMember();
+		//				}
+		//			} else if (arg instanceof EvalBinding) {
+		//				fun = (CPPFunction) ((EvalBinding) arg).getBinding();
+		//			}
+		//			if (fun != null) {
+		//				if (fun.getDeclarations() != null && fun.getDeclarations()[0] instanceof ICPPASTFunctionDeclarator) { // exception specifier has to be same for all declarations
+		//					ICPPASTFunctionDeclarator funcDecl = (ICPPASTFunctionDeclarator) fun.getDeclarations()[0];
+		//					return IntegralValue.create(funcDecl.getNoexceptExpression() != null);
+		//				} else if (fun.getDefinition() != null) {
+		//					return IntegralValue.create(fun.getDefinition().getNoexceptExpression() != null);
+		//				}
+		//			}
+		//			return IntegralValue.UNKNOWN;
 		case op_sizeofParameterPack:
 			IValue opVal = fArgument.getValue();
 			return IntegralValue.create(opVal.numberOfSubValues());
@@ -522,5 +554,10 @@ public class EvalUnary extends CPPDependentEvaluation {
 	@Override
 	public boolean referencesTemplateParameter() {
 		return fArgument.referencesTemplateParameter();
+	}
+
+	@Override
+	public boolean isNoexcept() {
+		return true; // TODO
 	}
 }

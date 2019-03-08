@@ -515,4 +515,10 @@ public class EvalBinding extends CPPDependentEvaluation {
 	public String toString() {
 		return getBinding().toString();
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

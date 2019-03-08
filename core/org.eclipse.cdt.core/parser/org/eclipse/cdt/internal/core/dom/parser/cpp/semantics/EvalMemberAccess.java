@@ -470,4 +470,10 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	public boolean referencesTemplateParameter() {
 		return false;
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

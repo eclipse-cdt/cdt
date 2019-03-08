@@ -180,4 +180,10 @@ public class EvalInitList extends CPPDependentEvaluation {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -477,4 +477,13 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		if (isConstantExpression()) // TODO check why this is needed
+			return true;
+
+		CPPFunction f = (CPPFunction) getConstructor();
+		return EvalUtil.evaluateNoexceptSpecifier(f.getType().getNoexceptSpecifier());
+	}
 }

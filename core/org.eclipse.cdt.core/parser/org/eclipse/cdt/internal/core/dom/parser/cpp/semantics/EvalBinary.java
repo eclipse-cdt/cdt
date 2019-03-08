@@ -611,4 +611,13 @@ public class EvalBinary extends CPPDependentEvaluation {
 	public String toString() {
 		return fArg1.toString() + " <op> " + fArg2.toString(); //$NON-NLS-1$
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		ICPPFunction overload = getOverload();
+		if (overload != null) {
+			return EvalUtil.evaluateNoexceptSpecifier(overload.getType().getNoexceptSpecifier());
+		}
+		return fArg1.isNoexcept(inCalledContext) && fArg2.isNoexcept(inCalledContext);
+	}
 }

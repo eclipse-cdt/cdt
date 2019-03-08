@@ -180,4 +180,13 @@ public class EvalInitList extends CPPDependentEvaluation {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean isNoexcept(boolean inCalledContext) {
+		for (ICPPEvaluation eval : getClauses()) {
+			if (!eval.isNoexcept(inCalledContext))
+				return false;
+		}
+		return true;
+	}
 }

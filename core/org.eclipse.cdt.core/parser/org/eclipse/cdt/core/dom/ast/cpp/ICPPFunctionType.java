@@ -17,6 +17,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 
 /**
  * @noextend This interface is not intended to be extended by clients.
@@ -44,6 +45,13 @@ public interface ICPPFunctionType extends IFunctionType {
 	 * @since 5.9
 	 */
 	public boolean isRValueReference();
+
+	/**
+	 * Returns the evaluation object for the noexcept specifier or null if there is no noexcept specifier.
+	 * @since 6.7
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public ICPPEvaluation getNoexceptSpecifier();
 
 	/**
 	 * Whether the function type takes variable number of arguments.

@@ -226,4 +226,9 @@ public final class EvalFixed extends CPPEvaluation {
 	public String toString() {
 		return fType.toString() + ": " + fValue.toString(); //$NON-NLS-1$
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		return true;
+	}
 }

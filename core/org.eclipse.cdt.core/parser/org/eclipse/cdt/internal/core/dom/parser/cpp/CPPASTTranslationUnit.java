@@ -103,7 +103,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 		IBinding temp = null;
 		IType[] newParms = new IType[1];
 		newParms[0] = cpp_size_t;
-		ICPPFunctionType newFunctionType = new CPPFunctionType(cpp_void_p, newParms);
+		ICPPFunctionType newFunctionType = new CPPFunctionType(cpp_void_p, newParms, null);
 		ICPPParameter[] newTheParms = new ICPPParameter[1];
 		newTheParms[0] = new CPPBuiltinParameter(newParms[0]);
 		temp = new CPPImplicitFunction(OverloadableOperator.NEW.toCharArray(), theScope, newFunctionType, newTheParms,
@@ -120,7 +120,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 		temp = null;
 		IType[] deleteParms = new IType[1];
 		deleteParms[0] = cpp_void_p;
-		ICPPFunctionType deleteFunctionType = new CPPFunctionType(cpp_void, deleteParms);
+		ICPPFunctionType deleteFunctionType = new CPPFunctionType(cpp_void, deleteParms, null);
 		ICPPParameter[] deleteTheParms = new ICPPParameter[1];
 		deleteTheParms[0] = new CPPBuiltinParameter(deleteParms[0]);
 		temp = new CPPImplicitFunction(OverloadableOperator.DELETE.toCharArray(), theScope, deleteFunctionType,

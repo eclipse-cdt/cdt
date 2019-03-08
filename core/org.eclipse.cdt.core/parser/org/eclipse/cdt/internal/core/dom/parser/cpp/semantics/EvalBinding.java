@@ -532,4 +532,9 @@ public class EvalBinding extends CPPDependentEvaluation {
 	public String toString() {
 		return getBinding().toString();
 	}
+
+	@Override
+	public boolean isNoexcept() {
+		return true;
+	}
 }

@@ -41,7 +41,7 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 	private final CPPFunctionType functionType;
 
 	public AutoTypeResolver(IType paramType) {
-		functionType = new CPPFunctionType(new CPPBasicType(Kind.eVoid, 0), new IType[] { paramType });
+		functionType = new CPPFunctionType(new CPPBasicType(Kind.eVoid, 0), new IType[] { paramType }, null);
 	}
 
 	@Override

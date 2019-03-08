@@ -2552,4 +2552,12 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	public void testOOM_529646() throws Exception {
 		checkBindings();
 	}
+
+	//	int foo() noexcept;
+
+	//	constexpr bool is_noexcept = noexcept(foo());
+	public void testNoexceptOperator_545021() throws Exception {
+		IVariable isNoexcept = getBindingFromASTName("is_noexcept", 11);
+		assertEquals(1, isNoexcept.getInitialValue().numberValue().longValue());
+	}
 }

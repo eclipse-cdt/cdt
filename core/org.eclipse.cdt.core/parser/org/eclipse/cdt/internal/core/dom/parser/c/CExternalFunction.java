@@ -43,7 +43,7 @@ public class CExternalFunction extends CFunction implements ICExternalBinding {
 	public IFunctionType getType() {
 		if (type == null) {
 			// Bug 321856: Prevent recursions
-			type = new CPPFunctionType(VOID_TYPE, IType.EMPTY_TYPE_ARRAY);
+			type = new CPPFunctionType(VOID_TYPE, IType.EMPTY_TYPE_ARRAY, null);
 			IFunctionType computedType = createType();
 			if (computedType != null) {
 				type = computedType;

@@ -40,13 +40,13 @@
 
 		<!-- <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20180905201904/repository/</orbit-site> -->
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/latest-I/</orbit-site>
-		<cdt-site>http://download.eclipse.org/tools/cdt/builds/9.4</cdt-site>
+		<cdt-site>https://download.eclipse.org/tools/cdt/builds/9.7/nightly/</cdt-site>
 		<remote-site>http://download.eclipse.org/tools/ptp/builds/remote/nightly/</remote-site>
 		<!-- <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/photon/milestones/</remote-site> -->
 		<swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
 
 		<!-- TODO: remove dep on simrel site -->
-		<platform-release-site>http://download.eclipse.org/staging/2018-09/</platform-release-site>
+		<platform-release-site>http://download.eclipse.org/staging/2018-12/</platform-release-site>
 
 	</properties>
 

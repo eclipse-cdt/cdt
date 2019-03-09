@@ -33,7 +33,6 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
@@ -132,14 +131,6 @@ public class CPPASTFunctionCallExpression extends ASTNode
 			ICPPFunction overload = getOverload();
 			if (overload == null)
 				return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-
-			if (overload instanceof IProblemBinding) {
-				CPPASTImplicitName overloadName = null;
-				overloadName = new CPPASTImplicitName(overload.getNameCharArray(), this);
-				overloadName.setBinding(overload);
-				overloadName.setOffsetAndLength((ASTNode) getFunctionNameExpression());
-				return fImplicitNames = new IASTImplicitName[] { overloadName };
-			}
 
 			if (getEvaluation() instanceof EvalTypeId) {
 				CPPASTImplicitName n1 = new CPPASTImplicitName(overload.getNameCharArray(), this);
@@ -273,9 +264,6 @@ public class CPPASTFunctionCallExpression extends ASTNode
 						try {
 							ICPPConstructor[] constructors = cls.getConstructors();
 							IBinding b = CPPSemantics.resolveFunction(data, constructors, true, false);
-							if (b instanceof IProblemBinding && !(b instanceof ICPPFunction))
-								b = new CPPFunction.CPPFunctionProblem(data.getLookupName(),
-										((IProblemBinding) b).getID());
 							if (b instanceof ICPPFunction)
 								return (ICPPFunction) b;
 						} catch (DOMException e) {

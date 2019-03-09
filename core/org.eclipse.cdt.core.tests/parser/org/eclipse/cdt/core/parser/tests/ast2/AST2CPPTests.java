@@ -12841,24 +12841,6 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		bh.assertImplicitName("a0", 2, IProblemBinding.class);
 	}
 
-	//	struct type {
-	//	  type(int a) {}
-	//	};
-	//
-	//	struct other_type {};
-	//
-	//	int main() {
-	//	  type(1, 2);
-	//	  type{1, 2};
-	//	  type(other_type());
-	//	}
-	public void testCtorWithWrongArguments_543913() throws Exception {
-		BindingAssertionHelper bh = getAssertionHelper();
-		bh.assertImplicitName("type(1, 2)", 4, IProblemBinding.class);
-		bh.assertImplicitName("type{1, 2}", 4, IProblemBinding.class);
-		bh.assertImplicitName("type(other_type())", 4, IProblemBinding.class);
-	}
-
 	//	struct array{
 	//		int data[1];
 	//	};

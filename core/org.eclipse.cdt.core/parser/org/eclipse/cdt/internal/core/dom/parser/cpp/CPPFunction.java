@@ -53,7 +53,6 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -64,47 +63,6 @@ import org.eclipse.core.runtime.PlatformObject;
  * Binding for C++ function
  */
 public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInternalFunction {
-
-	public static class CPPFunctionProblem extends ProblemBinding implements ICPPFunction {
-		public CPPFunctionProblem(IASTNode node, int id, char[] arg) {
-			super(node, id, arg);
-		}
-
-		public CPPFunctionProblem(IASTName name, int id) {
-			super(name, id);
-		}
-
-		@Override
-		public IScope getFunctionScope() {
-			return null;
-		}
-
-		@Override
-		public boolean isNoReturn() {
-			return false;
-		}
-
-		@Override
-		public ICPPFunctionType getType() {
-			return null;
-		}
-
-		@Override
-		public ICPPFunctionType getDeclaredType() {
-			return null;
-		}
-
-		@Override
-		public ICPPParameter[] getParameters() {
-			return ICPPParameter.EMPTY_CPPPARAMETER_ARRAY;
-		}
-
-		@Override
-		public int getRequiredArgumentCount() {
-			return 0;
-		}
-	}
-
 	public static final ICPPFunction UNINITIALIZED_FUNCTION = new CPPFunction(null) {
 		@Override
 		public String toString() {

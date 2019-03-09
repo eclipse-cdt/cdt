@@ -4162,6 +4162,16 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 	}
 
+	private boolean isEmptyStatement(IASTNode node) {
+		IASTNodeLocation[] locations = node.getNodeLocations();
+		if (locations.length == 1 && node instanceof ASTNode) {
+			ASTNode statement = (ASTNode) node;
+			IASTFileLocation fileLocation = locations[0].asFileLocation();
+			return fileLocation.getNodeLength() == 1 && fileLocation.getNodeOffset() == statement.getOffset();
+		}
+		return false;
+	}
+
 	private boolean startsWithMacroExpansion(IASTNode node) {
 		if (fInsideMacroArguments)
 			return false;
@@ -4375,7 +4385,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			final int indentLevel = scribe.indentationLevel;
 			for (int i = 1; i < statementsLength - 1; i++) {
 				final IASTStatement statement = statements.get(i);
-				if (!(statement instanceof IASTNullStatement)
+				if ((!(statement instanceof IASTNullStatement) || isEmptyStatement(statement))
 						&& !doNodeLocationsOverlap(statement, statements.get(i - 1))) {
 					scribe.startNewLine();
 				}

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "88f839c1_0ce3db6c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-09T06:26:15Z",
+      "side": 1,
+      "message": "\u003e funCall.isConstantExpression() checks if the overload is null and\n \u003e in this case return true. \n\nEvalFunctionCall.isConstantExpression() also checks that every argument of the function is a constant expression.\n\nNote that EvalFunctionCall models the function expression itself as one of the arguments.\n\n \u003e But the expressions in my example are not\n \u003e constant expressions...\n\nWhich example do you have in mind?",
+      "parentUuid": "a62d4d0f_4d85f233",
+      "revId": "ab12f543424c4989e5d3dcdb2599b05c179261a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1b812633_706cc770",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-08T22:17:56Z",
       "side": 1,
       "message": "What does getOverload() do? For EvalFunctionCall it just tries to find overloaded operator() for types? I\u0027d have expected I get the function overload which is actually called.",
+      "revId": "ab12f543424c4989e5d3dcdb2599b05c179261a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6767a4d2_f40c7da6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-09T06:26:15Z",
+      "side": 1,
+      "message": "Yes, getOverload() only returns something if the call expression represents an overloaded operator() invocation.\n\nIf you want the called function in general, EvalFunctionCall.resolveFunctionBinding() computes that. It\u0027s not currently public because we haven\u0027t needed to use it from outside EvalFunctionCall so far, but it could be.",
+      "parentUuid": "1b812633_706cc770",
       "revId": "ab12f543424c4989e5d3dcdb2599b05c179261a8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,41 @@
     },
     {
       "key": {
+        "uuid": "79a7902d_40a5495a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-09T06:26:15Z",
+      "side": 1,
+      "message": "Yes, this block looks very similar to the implementation of EvalFunctionCall.resolveFunctionBinding() :)",
+      "parentUuid": "04d1a0b5_8dee27a5",
+      "revId": "ab12f543424c4989e5d3dcdb2599b05c179261a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d2afd83_a6c881bd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-09T06:26:15Z",
+      "side": 1,
+      "message": "I don\u0027t think this is correct - merely mentioning a function\u0027s name cannot throw, even if calling the function can.",
+      "revId": "ab12f543424c4989e5d3dcdb2599b05c179261a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8737b69b_3621bb17",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
         "patchSetId": 1
@@ -64,6 +135,24 @@
       "writtenOn": "2019-03-08T22:17:56Z",
       "side": 1,
       "message": "Is there a helper to get the declaration from a definition, in case there is no declaration which is not a definition?",
+      "revId": "ab12f543424c4989e5d3dcdb2599b05c179261a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ecd7ffd9_9f617578",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-09T06:26:15Z",
+      "side": 1,
+      "message": "CPPFunction.getDefinition() returns the definition\u0027s declarator (as opposed to the IASTFunctionDefinition node itself), which is what has the noexcept expression (and which you\u0027re already using in the \"else if\" case).",
+      "parentUuid": "8737b69b_3621bb17",
       "revId": "ab12f543424c4989e5d3dcdb2599b05c179261a8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

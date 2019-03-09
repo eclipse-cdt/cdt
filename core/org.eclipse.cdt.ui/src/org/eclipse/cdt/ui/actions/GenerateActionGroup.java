@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.editor.OrganizeIncludesAction;
 import org.eclipse.cdt.internal.ui.editor.SortLinesAction;
+import org.eclipse.cdt.internal.ui.refactoring.overridemethods.OverrideMethodsAction;
 import org.eclipse.cdt.ui.refactoring.actions.GettersAndSettersAction;
 import org.eclipse.cdt.ui.refactoring.actions.ImplementMethodAction;
 import org.eclipse.cdt.ui.refactoring.actions.RefactoringAction;
@@ -117,7 +118,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	private List<RefactoringAction> fRefactorActions = new ArrayList<>();
 
 	private AddIncludeAction fAddInclude;
-	//	private OverrideMethodsAction fOverrideMethods;
+	private OverrideMethodsAction fOverrideMethods;
 	//	private GenerateHashCodeEqualsAction fHashCodeEquals;
 	private GettersAndSettersAction fAddGetterSetter;
 	private ImplementMethodAction fImplementMethod;
@@ -177,9 +178,9 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		//		fCopyQualifiedNameAction.setActionDefinitionId(CopyQualifiedNameAction.JAVA_EDITOR_ACTION_DEFINITIONS_ID);
 		//		editor.setAction("CopyQualifiedName", fCopyQualifiedNameAction); //$NON-NLS-1$
 		//
-		//		fOverrideMethods= new OverrideMethodsAction(editor);
-		//		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
-		//		editor.setAction("OverrideMethods", fOverrideMethods); //$NON-NLS-1$
+		fOverrideMethods = new OverrideMethodsAction(editor);
+		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
+		editor.setAction("OverrideMethods", fOverrideMethods); //$NON-NLS-1$
 		//
 		fAddGetterSetter = new GettersAndSettersAction(editor);
 		fAddGetterSetter.setActionDefinitionId(ICEditorActionDefinitionIds.GETTERS_AND_SETTERS);
@@ -262,9 +263,11 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		fSelectionProvider = selectionProvider == null ? fSite.getSelectionProvider() : selectionProvider;
 		ISelection selection = fSelectionProvider.getSelection();
 
-		//		fOverrideMethods= new OverrideMethodsAction(site);
-		//		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
-		//
+		fOverrideMethods = new OverrideMethodsAction();
+		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
+		fOverrideMethods.setSite(fSite);
+		fRefactorActions.add(fOverrideMethods);
+
 		fAddGetterSetter = new GettersAndSettersAction();
 		fAddGetterSetter.setActionDefinitionId(ICEditorActionDefinitionIds.GETTERS_AND_SETTERS);
 		fAddGetterSetter.setSite(fSite);
@@ -311,7 +314,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		//		fCleanUp= new CleanUpAction(site);
 		//		fCleanUp.setActionDefinitionId(ICEditorActionDefinitionIds.CLEAN_UP);
 
-		//		fOverrideMethods.update(selection);
+		fOverrideMethods.update(selection);
 		//		fAddDelegateMethods.update(selection);
 		//		fAddUnimplementedConstructors.update(selection);
 		//		fGenerateConstructorUsingFields.update(selection);
@@ -332,7 +335,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 			fAddTaskAction.setEnabled(false);
 		}
 
-		//		registerSelectionListener(fSelectionProvider, fOverrideMethods);
+		registerSelectionListener(fSelectionProvider, fOverrideMethods);
 		//		registerSelectionListener(fSelectionProvider, fAddDelegateMethods);
 		//		registerSelectionListener(fSelectionProvider, fAddUnimplementedConstructors);
 		//		registerSelectionListener(fSelectionProvider, fGenerateConstructorUsingFields);
@@ -437,7 +440,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		added += addAction(source, fSortLines);
 		//		added+= addAction(source, fCleanUp);
 		source.add(new Separator(GROUP_GENERATE));
-		//		added+= addAction(source, fOverrideMethods);
+		added += addAction(source, fOverrideMethods);
 		added += addAction(source, fAddGetterSetter);
 		added += addAction(source, fImplementMethod);
 		//		added+= addAction(source, fAddDelegateMethods);
@@ -462,7 +465,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		//		added+= addAction(source, fSortMembers);
 		//		added+= addAction(source, fCleanUp);
 		source.add(new Separator(GROUP_GENERATE));
-		//		added+= addAction(source, fOverrideMethods);
+		added += addAction(source, fOverrideMethods);
 		added += addAction(source, fAddGetterSetter);
 		added += addAction(source, fImplementMethod);
 		//		added+= addAction(source, fAddDelegateMethods);
@@ -497,7 +500,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 
 	private void setGlobalActionHandlers(IActionBars actionBar) {
 		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_INCLUDE, fAddInclude);
-		//		actionBar.setGlobalActionHandler(CdtActionConstants.OVERRIDE_METHODS, fOverrideMethods);
+		actionBar.setGlobalActionHandler(CdtActionConstants.OVERRIDE_METHODS, fOverrideMethods);
 		actionBar.setGlobalActionHandler(CdtActionConstants.GETTERS_AND_SETTERS, fAddGetterSetter);
 		actionBar.setGlobalActionHandler(CdtActionConstants.IMPLEMENT_METHOD, fImplementMethod);
 		//		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_DELEGATE_METHODS, fAddDelegateMethods);

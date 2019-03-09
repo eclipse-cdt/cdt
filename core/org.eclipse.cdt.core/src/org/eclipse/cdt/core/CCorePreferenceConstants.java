@@ -369,6 +369,36 @@ public class CCorePreferenceConstants {
 	public static final boolean DEFAULT_PLACE_CONST_RIGHT_OF_TYPE = false;
 
 	/**
+	 * A named preference that specifies whether the override keyword should be added
+	 * to method signature.
+	 *
+	 * @since 6.7
+	 */
+	public static final String ADD_OVERRIDE_KEYWORD = "astwriter.addOverride"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that specifies whether the virtual keyword should be added
+	 * to method signature.
+	 *
+	 * @since 6.7
+	 */
+	public static final String IGNORE_VIRTUAL_KEYWORD = "astwriter.ignoreVirtual"; //$NON-NLS-1$
+
+	/**
+	 * Default value for {@link #ADD_OVERRIDE_KEYWORD}.
+	 *
+	 * @since 6.7
+	 */
+	public static final boolean DEFAULT_ADD_OVERRIDE_KEYWORD = false;
+
+	/**
+	 * Default value for {@link #IGNORE_VIRTUAL_KEYWORD}.
+	 *
+	 * @since 6.7
+	 */
+	public static final boolean DEFAULT_IGNORE_VIRTUAL_KEYWORD = false;
+
+	/**
 	 * Returns the node in the preference in the given context.
 	 *
 	 * @param key The preference key.

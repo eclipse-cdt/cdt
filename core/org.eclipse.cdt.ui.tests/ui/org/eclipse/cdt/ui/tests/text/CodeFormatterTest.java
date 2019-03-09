@@ -3729,8 +3729,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//#define FOREACH_BAD for( Foreach_bad<int> fe; fe.i; ++fe.i )
 	//void bar() {
-	//	FOREACH_BAD
-	//	{
+	//	FOREACH_BAD {
 	//		printf("loop body\n");
 	//	}
 	//}
@@ -3750,8 +3749,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//#define ForIndex(I,N) for (int I=0;I<int(N);I++)
 	//int foo() {
 	//	int s = 0;
-	//	ForIndex(i, 10)
-	//	{
+	//	ForIndex(i, 10) {
 	//		s += i;
 	//	}
 	//}

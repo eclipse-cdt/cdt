@@ -3888,6 +3888,24 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testLinkage3_Bug299482() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_LINKAGE_DECLARATION,
 				DefaultCodeFormatterConstants.NEXT_LINE);
+	}
+
+	//#define EMPTY1(x)
+	//#define EMPTY2(x)
+	//int main() {
+	//	EMPTY1(bool x = true);
+	//	EMPTY2(bool x = true);
+	//	return 0;
+	//}
+
+	//#define EMPTY1(x)
+	//#define EMPTY2(x)
+	//int main() {
+	//	EMPTY1(bool x = true);
+	//	EMPTY2(bool x = true);
+	//	return 0;
+	//}
+	public void testEmptyMacros_Bug361768() throws Exception {
 		assertFormatterResult();
 	}
 

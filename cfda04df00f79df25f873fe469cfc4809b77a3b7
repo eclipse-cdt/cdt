@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "29858271_525c38f5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionCall.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-03-09T22:53:50Z",
+      "side": 1,
+      "message": "The question I had yesterday about the constant expression would be solved, if this is a valid fix.",
+      "revId": "cfda04df00f79df25f873fe469cfc4809b77a3b7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

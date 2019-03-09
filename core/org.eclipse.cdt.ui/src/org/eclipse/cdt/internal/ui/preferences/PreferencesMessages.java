@@ -224,6 +224,9 @@ public final class PreferencesMessages extends NLS {
 	public static String CodeStyleBlock_const_keyword_placement;
 	public static String CodeStyleBlock_const_left;
 	public static String CodeStyleBlock_const_right;
+	public static String CodeStyleBlock_function_overridden_methods;
+	public static String CodeStyleBlock_preserve_virtual;
+	public static String CodeStyleBlock_add_override_keyword;
 
 	public static String TodoTaskPreferencePage_title;
 	public static String TodoTaskPreferencePage_description;

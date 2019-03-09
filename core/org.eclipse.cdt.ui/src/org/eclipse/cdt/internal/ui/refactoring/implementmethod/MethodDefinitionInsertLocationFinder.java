@@ -161,7 +161,8 @@ public class MethodDefinitionInsertLocationFinder {
 				if (pm != null && pm.isCanceled()) {
 					return outputDeclarations;
 				}
-				if (decl.getFileLocation().getStartingLineNumber() >= methodPosition.getStartingLineNumber()) {
+				if (methodPosition != null
+						&& decl.getFileLocation().getStartingLineNumber() >= methodPosition.getStartingLineNumber()) {
 					break;
 				}
 				if (isMemberFunctionDeclaration(decl)) {
@@ -176,7 +177,8 @@ public class MethodDefinitionInsertLocationFinder {
 	private static Collection<IASTSimpleDeclaration> getAllFollowingSimpleDeclarationsFromClass(
 			IASTDeclaration[] declarations, IASTFileLocation methodPosition, IProgressMonitor pm) {
 		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<>();
-
+		if (methodPosition == null)
+			return outputDeclarations;
 		if (declarations.length >= 0) {
 			for (IASTDeclaration decl : declarations) {
 				if (pm != null && pm.isCanceled()) {

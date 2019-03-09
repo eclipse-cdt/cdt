@@ -171,12 +171,41 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		List<MethodToImplementConfig> methodsToImplement = data.getMethodsToImplement();
 		SubMonitor sm = SubMonitor.convert(pm, 4 * methodsToImplement.size());
 		for (MethodToImplementConfig config : methodsToImplement) {
-			createDefinition(collector, config, sm.newChild(4));
+			createDefinition(collector, config, sm.newChild(4), -1);
 		}
 	}
 
+	/**
+	 * Utility method to collect modifications from another Refactoring
+	 * @param pm The progress monitor
+	 * @param collector The collector
+	 * @param methods List of methods
+	 * @param functionOffset A function offset to determine fully qualified names
+	 * @throws CoreException
+	 * @throws OperationCanceledException
+	 */
+	public void collectModifications(IProgressMonitor pm, ModificationCollector collector,
+			List<IASTSimpleDeclaration> methods, int functionOffset) throws CoreException, OperationCanceledException {
+		data.setMethodDeclarations(methods);
+		List<MethodToImplementConfig> methodsToImplement = data.getMethodsToImplement();
+		SubMonitor sm = SubMonitor.convert(pm, 4 * methodsToImplement.size());
+		for (MethodToImplementConfig config : methodsToImplement) {
+			createDefinition(collector, config, sm.newChild(4), functionOffset);
+		}
+	}
+
+	/**
+	 * Create definition for a method
+	 * @param collector A modification collector
+	 * @param config The method to be inserted
+	 * @param subMonitor A sub monitor for the progress
+	 * @param functionOffset A function offset to determine fully qualified names. A negative number
+	 * can be used to use the node offset of method as returned by getFileLocation().getNodeOffset()
+	 * @throws CoreException
+	 * @throws OperationCanceledException
+	 */
 	protected void createDefinition(ModificationCollector collector, MethodToImplementConfig config,
-			IProgressMonitor subMonitor) throws CoreException, OperationCanceledException {
+			IProgressMonitor subMonitor, int functionOffset) throws CoreException, OperationCanceledException {
 		if (subMonitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
@@ -196,7 +225,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		}
 
 		IASTNode nodeToInsertBefore = insertLocation.getNodeToInsertBefore();
-		IASTNode createdMethodDefinition = createFunctionDefinition(ast, decl, insertLocation);
+		IASTNode createdMethodDefinition = createFunctionDefinition(ast, decl, insertLocation, functionOffset);
 		subMonitor.worked(1);
 		ASTRewrite methodRewrite = translationUnitRewrite.insertBefore(parent, nodeToInsertBefore,
 				createdMethodDefinition, null);
@@ -243,8 +272,18 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		return insertLocation;
 	}
 
+	/**
+	 * Create the function definition
+	 * @param unit The translation unit
+	 * @param methodDeclaration The method to be inserted
+	 * @param insertLocation The position for the insert operation
+	 * @param functionOffset A function offset to determine fully qualified names. A negative number
+	 * can be used to use the node offset of method as returned by getFileLocation().getNodeOffset()
+	 * @return
+	 * @throws CoreException
+	 */
 	private IASTDeclaration createFunctionDefinition(IASTTranslationUnit unit, IASTSimpleDeclaration methodDeclaration,
-			InsertLocation insertLocation) throws CoreException {
+			InsertLocation insertLocation, int functionOffset) throws CoreException {
 		IASTDeclSpecifier declSpecifier = methodDeclaration.getDeclSpecifier().copy(CopyStyle.withLocations);
 		ICPPASTFunctionDeclarator functionDeclarator = (ICPPASTFunctionDeclarator) methodDeclaration
 				.getDeclarators()[0];
@@ -264,7 +303,8 @@ public class ImplementMethodRefactoring extends CRefactoring {
 			declSpecifier.setStorageClass(IASTDeclSpecifier.sc_unspecified);
 		}
 
-		ICPPASTQualifiedName qName = createQualifiedNameFor(functionDeclarator, declarationParent, insertLocation);
+		ICPPASTQualifiedName qName = createQualifiedNameFor(functionDeclarator, declarationParent, insertLocation,
+				functionOffset);
 
 		createdMethodDeclarator = nodeFactory.newFunctionDeclarator(qName);
 		createdMethodDeclarator.setConst(functionDeclarator.isConst());
@@ -299,12 +339,22 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		return functionDefinition;
 	}
 
+	/**
+	 * Create the fully qualified name for the declaration
+	 * @param functionDeclarator The function declaration
+	 * @param declarationParent Parent of declaration
+	 * @param insertLocation Insert position
+	 * @param functionOffset A function offset to determine fully qualified names. A negative number
+	 * can be used to use the node offset of method as returned by getFileLocation().getNodeOffset()
+	 * @return The fully qualified name
+	 * @throws CoreException
+	 */
 	private ICPPASTQualifiedName createQualifiedNameFor(IASTFunctionDeclarator functionDeclarator,
-			IASTNode declarationParent, InsertLocation insertLocation) throws CoreException {
+			IASTNode declarationParent, InsertLocation insertLocation, int functionOffset) throws CoreException {
 		int insertOffset = insertLocation.getInsertPosition();
 		return NameHelper.createQualifiedNameFor(functionDeclarator.getName(), tu,
-				functionDeclarator.getFileLocation().getNodeOffset(), insertLocation.getTranslationUnit(), insertOffset,
-				refactoringContext);
+				functionOffset > 0 ? functionOffset : functionDeclarator.getFileLocation().getNodeOffset(),
+				insertLocation.getTranslationUnit(), insertOffset, refactoringContext);
 	}
 
 	public ImplementMethodData getRefactoringData() {
@@ -343,8 +393,12 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		if (isOneOrMoreImplementationInHeader(subProgressMonitor)) {
 			result.addInfo(Messages.ImplementMethodRefactoring_NoImplFile);
 		}
-		Checks.addModifiedFilesToChecker(getAllFilesToModify(), checkContext);
+		finalConditions(checkContext);
 		return result;
+	}
+
+	public void finalConditions(CheckConditionsContext checkContext) {
+		Checks.addModifiedFilesToChecker(getAllFilesToModify(), checkContext);
 	}
 
 	private boolean isOneOrMoreImplementationInHeader(IProgressMonitor subProgressMonitor) throws CoreException {

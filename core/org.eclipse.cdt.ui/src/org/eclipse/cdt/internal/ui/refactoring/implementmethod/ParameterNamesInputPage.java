@@ -135,7 +135,7 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 			// We can have multiple preview jobs. We don't
 			// want multiple jobs concurrently using the same ASTs
 			synchronized (implementMethodRefactoring) {
-				implementMethodRefactoring.createDefinition(collector, config, monitor);
+				implementMethodRefactoring.createDefinition(collector, config, monitor, -1);
 				finalChange = collector.createFinalChange();
 			}
 			InsertEdit insertEdit = getInsertEdit(finalChange);

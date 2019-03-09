@@ -94,5 +94,9 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 				CCorePreferenceConstants.DEFAULT_SCALABILITY_MAXIMUM_TOKENS);
 		defaultPreferences.putBoolean(CCorePreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE,
 				CCorePreferenceConstants.DEFAULT_PLACE_CONST_RIGHT_OF_TYPE);
+		defaultPreferences.putBoolean(CCorePreferenceConstants.ADD_OVERRIDE_KEYWORD,
+				CCorePreferenceConstants.DEFAULT_ADD_OVERRIDE_KEYWORD);
+		defaultPreferences.putBoolean(CCorePreferenceConstants.IGNORE_VIRTUAL_KEYWORD,
+				CCorePreferenceConstants.DEFAULT_IGNORE_VIRTUAL_KEYWORD);
 	}
 }

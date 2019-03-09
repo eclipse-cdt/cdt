@@ -37,10 +37,15 @@ class CodeStyleBlock extends OptionsConfigurationBlock {
 			PreferenceConstants.FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER);
 	private static final Key PLACE_CONST_RIGHT_OF_TYPE = getKey(CCorePlugin.PLUGIN_ID,
 			CCorePreferenceConstants.PLACE_CONST_RIGHT_OF_TYPE);
+	private static final Key ADD_OVERRIDE_KEYWORD = getKey(CCorePlugin.PLUGIN_ID,
+			CCorePreferenceConstants.ADD_OVERRIDE_KEYWORD);
+	private static final Key IGNORE_VIRTUAL_KEYWORD = getKey(CCorePlugin.PLUGIN_ID,
+			CCorePreferenceConstants.IGNORE_VIRTUAL_KEYWORD);
 
 	private static Key[] getAllKeys() {
 		return new Key[] { CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER, FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT,
-				FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, PLACE_CONST_RIGHT_OF_TYPE, };
+				FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, PLACE_CONST_RIGHT_OF_TYPE, ADD_OVERRIDE_KEYWORD,
+				IGNORE_VIRTUAL_KEYWORD };
 	}
 
 	public CodeStyleBlock(IStatusChangeListener context, IProject project, IWorkbenchPreferenceContainer container) {
@@ -68,6 +73,9 @@ class CodeStyleBlock extends OptionsConfigurationBlock {
 
 		composite = addSubsection(control, PreferencesMessages.CodeStyleBlock_const_keyword_placement);
 		fillConstPlacementsSections(composite);
+
+		composite = addSubsection(control, PreferencesMessages.CodeStyleBlock_function_overrdden_methods);
+		fillOverriddenSection(composite);
 
 		scrolled.setContent(control);
 		final Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -116,6 +124,16 @@ class CodeStyleBlock extends OptionsConfigurationBlock {
 		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_const_left, PLACE_CONST_RIGHT_OF_TYPE, FALSE_TRUE,
 				0);
 		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_const_right, PLACE_CONST_RIGHT_OF_TYPE, TRUE_FALSE,
+				0);
+	}
+
+	private void fillOverriddenSection(Composite composite) {
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		composite.setLayout(layout);
+
+		addCheckBox(composite, PreferencesMessages.CodeStyleBlock_add_overridden, ADD_OVERRIDE_KEYWORD, TRUE_FALSE, 0);
+		addCheckBox(composite, PreferencesMessages.CodeStyleBlock_ignore_virtual, IGNORE_VIRTUAL_KEYWORD, TRUE_FALSE,
 				0);
 	}
 

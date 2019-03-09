@@ -17,53 +17,6 @@
 
 	<profiles>
 		<profile>
-			<id>build-native.linux.x86</id>
-			<activation>
-				<property>
-					<name>native</name>
-					<value>linux.x86</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>natives</id>
-								<phase>process-resources</phase>
-								<configuration>
-									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=x86" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>clean-natives</id>
-								<phase>clean</phase>
-								<configuration>
-									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=x86" />
-											<arg value="clean" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
 			<id>build-native.linux.x86_64</id>
 			<activation>
 				<property>
@@ -97,100 +50,6 @@
 									<target>
 										<exec executable="make" newenvironment="false" dir="./library">
 											<arg value="ARCH=x86_64" />
-											<arg value="clean" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>build-native.linux.ppc</id>
-			<activation>
-				<property>
-					<name>native</name>
-					<value>linux.ppc</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>natives</id>
-								<phase>process-resources</phase>
-								<configuration>
-									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=ppc" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>clean-natives</id>
-								<phase>clean</phase>
-								<configuration>
-									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=ppc" />
-											<arg value="clean" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>build-native.linux.ppc64</id>
-			<activation>
-				<property>
-					<name>native</name>
-					<value>linux.ppc64</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>natives</id>
-								<phase>process-resources</phase>
-								<configuration>
-									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=ppc64" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>clean-natives</id>
-								<phase>clean</phase>
-								<configuration>
-									<target>
-										<exec executable="make" newenvironment="false" dir="./library">
-											<arg value="ARCH=ppc64" />
 											<arg value="clean" />
 										</exec>
 									</target>
@@ -266,22 +125,7 @@
 	    <environment>
 	      <os>linux</os>
 	      <ws>gtk</ws>
-	      <arch>x86</arch>
-	    </environment>
-	    <environment>
-	      <os>linux</os>
-	      <ws>gtk</ws>
 	      <arch>x86_64</arch>
-	    </environment>
-	    <environment>
-	      <os>linux</os>
-	      <ws>gtk</ws>
-	      <arch>ppc</arch>
-	    </environment>
-	    <environment>
-	      <os>linux</os>
-	      <ws>gtk</ws>
-	      <arch>ppc64</arch>
 	    </environment>
 	    <environment>
 	      <os>linux</os>

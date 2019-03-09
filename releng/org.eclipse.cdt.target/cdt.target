@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="42">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="43">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
@@ -18,7 +18,7 @@
 <unit id="org.junit.source" version="0.0.0"/>
 <unit id="org.mockito" version="0.0.0"/>
 <unit id="org.slf4j.impl.log4j12" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20180531190352/repository/"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20190226160451/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.epp.logging.aeri.feature.feature.group" version="0.0.0"/>
@@ -39,7 +39,8 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <!-- Needed for org.eclipse.emf.edit -->
 <!-- Need to pull in org.eclipse.cdt.utils.pty for org.eclipse.remote.core to build -->
-<repository location="http://download.eclipse.org/releases/photon"/>
+<!-- This slows down the build significantly, it should be removed when it becomes possible. -->
+<repository location="https://download.eclipse.org/releases/2019-03/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="0.0.0"/>
@@ -49,7 +50,7 @@
 <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.test.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.8/"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.11milestones/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
@@ -62,7 +63,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/webtools/downloads/drops/R3.10.0/R-3.10.0-20180611164516/repository"/>
+<repository location="https://download.eclipse.org/webtools/downloads/drops/R3.12.0/R-3.12.0-20181130055351/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group" version="0.0.0"/>

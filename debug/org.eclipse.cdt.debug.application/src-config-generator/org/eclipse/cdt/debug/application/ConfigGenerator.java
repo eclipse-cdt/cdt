@@ -40,7 +40,6 @@ public class ConfigGenerator {
 
 	static {
 		PLUGINS_WITH_START_LEVEL.put("org.apache.felix.scr", "@1\\:start"); //$NON-NLS-1$ //$NON-NLS-2$
-		PLUGINS_WITH_START_LEVEL.put("org.eclipse.equinox.ds", "@1\\:start"); //$NON-NLS-1$ //$NON-NLS-2$
 		PLUGINS_WITH_START_LEVEL.put("org.eclipse.equinox.common", "@2\\:start"); //$NON-NLS-1$ //$NON-NLS-2$
 		PLUGINS_WITH_START_LEVEL.put("org.eclipse.core.runtime", "@start"); //$NON-NLS-1$ //$NON-NLS-2$
 		// We don't want the user to do "Check for updates", etc.

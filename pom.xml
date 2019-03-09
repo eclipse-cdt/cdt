@@ -102,12 +102,9 @@
 
 		<module>core/org.eclipse.cdt.core.native</module>
 		<module>core/org.eclipse.cdt.core.linux</module>
-		<module>core/org.eclipse.cdt.core.linux.x86</module>
 		<module>core/org.eclipse.cdt.core.linux.x86_64</module>
-		<module>core/org.eclipse.cdt.core.linux.ppc64</module>
 		<module>core/org.eclipse.cdt.core.linux.ppc64le</module>
 		<module>core/org.eclipse.cdt.core.win32</module>
-		<module>core/org.eclipse.cdt.core.win32.x86</module>
 		<module>core/org.eclipse.cdt.core.win32.x86_64</module>
 		<module>core/org.eclipse.cdt.core.macosx</module>
 		<module>core/org.eclipse.cdt.core</module>
@@ -533,27 +530,12 @@
 						<environment>
 							<os>linux</os>
 							<ws>gtk</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
 							<arch>x86_64</arch>
 						</environment>
 						<environment>
 							<os>linux</os>
 							<ws>gtk</ws>
-							<arch>ppc64</arch>
-						</environment>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
 							<arch>ppc64le</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86</arch>
 						</environment>
 						<environment>
 							<os>win32</os>
@@ -611,11 +593,8 @@
 								<plugin id="org.eclipse.cdt.autotools.docs"/>
 								<plugin id="org.eclipse.cdt.meson.docs"/>
 								<plugin id="org.eclipse.cdt.core.linux.ppc64le"/>
-								<plugin id="org.eclipse.cdt.core.linux.ppc64"/>
 								<plugin id="org.eclipse.cdt.core.linux.x86_64"/>
-								<plugin id="org.eclipse.cdt.core.linux.x86"/>
 								<plugin id="org.eclipse.cdt.core.win32.x86_64"/>
-								<plugin id="org.eclipse.cdt.core.win32.x86"/>
 								<plugin id="org.eclipse.cdt.debug.application.doc"/>
 								<plugin id="org.eclipse.cdt.doc.user"/>
 								<plugin id="org.eclipse.cdt.debug.gdbjtag"/>

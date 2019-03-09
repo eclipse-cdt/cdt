@@ -29,53 +29,6 @@
 
 	<profiles>
 		<profile>
-			<id>build-native.linux.x86</id>
-			<activation>
-				<property>
-					<name>native</name>
-					<value>linux.x86</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>natives</id>
-								<phase>process-resources</phase>
-								<configuration>
-									<target>
-										<exec executable="make" newenvironment="false" dir="./jni">
-											<arg value="LIBS=../os/linux/x86/libserial.so" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>clean-natives</id>
-								<phase>clean</phase>
-								<configuration>
-									<target>
-										<exec executable="make" newenvironment="false" dir="./jni">
-											<arg value="LIBS=../os/linux/x86/libserial.so" />
-											<arg value="clean" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
 			<id>build-native.linux.x86_64</id>
 			<activation>
 				<property>
@@ -109,53 +62,6 @@
 									<target>
 										<exec executable="make" newenvironment="false" dir="./jni">
 											<arg value="LIBS=../os/linux/x86_64/libserial.so" />
-											<arg value="clean" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>build-native.linux.ppc64</id>
-			<activation>
-				<property>
-					<name>native</name>
-					<value>linux.ppc64</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>natives</id>
-								<phase>process-resources</phase>
-								<configuration>
-									<target>
-										<exec executable="make" newenvironment="false" dir="./jni">
-											<arg value="LIBS=../os/linux/ppc64/libserial.so" />
-										</exec>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>clean-natives</id>
-								<phase>clean</phase>
-								<configuration>
-									<target>
-										<exec executable="make" newenvironment="false" dir="./jni">
-											<arg value="LIBS=../os/linux/ppc64/libserial.so" />
 											<arg value="clean" />
 										</exec>
 									</target>

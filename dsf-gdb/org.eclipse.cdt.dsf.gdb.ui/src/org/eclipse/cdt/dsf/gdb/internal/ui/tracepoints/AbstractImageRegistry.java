@@ -34,13 +34,15 @@ import org.osgi.framework.Bundle;
  *
  * @since 2.1
  */
-public abstract class AbstractImageRegistry extends ImageRegistry {
+public abstract class AbstractImageRegistry {
 	private HashMap<String, String> fPlugins = new HashMap<>();
 	private HashMap<String, String[]> fLocations = new HashMap<>();
 	private URL fBaseUrl;
+	private ImageRegistry fImageRegistry;
 
 	protected AbstractImageRegistry(Plugin plugin) {
 		fBaseUrl = plugin.getBundle().getEntry("/"); //$NON-NLS-1$
+		fImageRegistry = new ImageRegistry();
 	}
 
 	/**
@@ -83,33 +85,29 @@ public abstract class AbstractImageRegistry extends ImageRegistry {
 		fLocations.put(key, locations);
 	}
 
-	// overrider
-	@Override
 	final public Image get(String key) {
-		Image i = super.get(key);
+		Image i = fImageRegistry.get(key);
 		if (i != null) {
 			return i;
 		}
 
 		ImageDescriptor d = createFileImageDescriptor(key);
 		if (d != null) {
-			put(key, d);
-			return super.get(key);
+			fImageRegistry.put(key, d);
+			return fImageRegistry.get(key);
 		}
 		return null;
 	}
 
-	// overrider
-	@Override
 	final public ImageDescriptor getDescriptor(String key) {
-		ImageDescriptor d = super.getDescriptor(key);
+		ImageDescriptor d = fImageRegistry.getDescriptor(key);
 		if (d != null) {
 			return d;
 		}
 
 		d = createFileImageDescriptor(key);
 		if (d != null) {
-			put(key, d);
+			fImageRegistry.put(key, d);
 			return d;
 		}
 		return null;
@@ -132,7 +130,7 @@ public abstract class AbstractImageRegistry extends ImageRegistry {
 				try {
 					full = new URL(url, loc);
 					ImageDescriptor candidate = ImageDescriptor.createFromURL(full);
-					if (candidate != null && candidate.getImageData() != null) {
+					if (candidate != null && candidate.getImageData(100) != null) {
 						return candidate;
 					}
 				} catch (MalformedURLException e) {

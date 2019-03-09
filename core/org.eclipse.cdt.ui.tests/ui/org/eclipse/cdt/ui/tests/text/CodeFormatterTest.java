@@ -3811,4 +3811,23 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testFormmatterWithMacro_Bug543947() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#define EMPTY1(x)
+	//#define EMPTY2(x)
+	//int main() {
+	//	EMPTY1(bool x = true);
+	//	EMPTY2(bool x = true);
+	//	return 0;
+	//}
+
+	//#define EMPTY1(x)
+	//#define EMPTY2(x)
+	//int main() {
+	//	EMPTY1(bool x = true);
+	//	EMPTY2(bool x = true);
+	//	return 0;
+	//}
+	public void testEmptyMacros_Bug361768() throws Exception {
+		assertFormatterResult();
+	}
 }

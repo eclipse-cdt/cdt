@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="cdt" sequenceNumber="38">
+<?pde version="3.8"?><target name="cdt" sequenceNumber="39">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
@@ -75,10 +75,12 @@
 <unit id="org.eclipse.tools.templates.core" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.core.source" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>
+<unit id="org.eclipse.tools.templates.freemarker.java11" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.freemarker.source" version="0.0.0"/>
+<unit id="org.eclipse.tools.templates.freemarker.java11.source" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.ui" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.ui.source" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.template-1.1.1-simrel-2018-12-m2a/"/>
+<repository location="http://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.template-1.1.1-simrel-2018-12a/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="tm-feature.feature.group" version="0.0.0"/>

@@ -3238,15 +3238,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTExpressionStatement node) {
 		Runnable semicolonFormatter = null;
-		if (!fHasClauseInitStatement) {
-			semicolonFormatter = new TrailingSemicolonFormatter(node);
-			scribe.setTailFormatter(semicolonFormatter);
-		}
+		semicolonFormatter = new TrailingSemicolonFormatter(node);
+		scribe.setTailFormatter(semicolonFormatter);
 		node.getExpression().accept(this);
-		if (semicolonFormatter != null) {
-			semicolonFormatter.run();
-			scribe.setTailFormatter(null);
-		}
+		semicolonFormatter.run();
+		scribe.setTailFormatter(null);
 		if (!fHasClauseInitStatement) {
 			scribe.startNewLine();
 		}

@@ -3811,4 +3811,23 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testFormmatterWithMacro_Bug543947() throws Exception {
 		assertFormatterResult();
 	}
+
+	//int main() {
+	//	int i = 0;
+	//	for(i = 0;i<3;i++){
+	//	}
+	//	return 0;
+	//}
+
+	//int main() {
+	//	int i = 0;
+	//	for (i = 0 ; i < 3 ; i++) {
+	//	}
+	//	return 0;
+	//}
+	public void testSpaceAfterSemicolonInFor_Bug453385() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_SEMICOLON_IN_FOR, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_SEMICOLON_IN_FOR, CCorePlugin.INSERT);
+		assertFormatterResult();
+	}
 }

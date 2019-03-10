@@ -383,12 +383,11 @@ final class FormatterMessages extends NLS {
 	public static String NewLinesTabPage_preview_header;
 	public static String NewLinesTabPage_newlines_group_title;
 	public static String NewLinesTabPage_newlines_group_option_before_colon_in_constructor_initializer_list;
+	public static String NewLinesTabPage_newlines_emtpy_statement_on_new_line;
 	//	public static String NewLinesTabPage_newlines_group_option_empty_class_body;
 	//	public static String NewLinesTabPage_newlines_group_option_empty_method_body;
 	//	public static String NewLinesTabPage_newlines_group_option_empty_block;
 	//	public static String NewLinesTabPage_newlines_group_option_empty_end_of_file;
-	//	public static String NewLinesTabPage_empty_statement_group_title;
-	//	public static String NewLinesTabPage_emtpy_statement_group_option_empty_statement_on_new_line;
 	//	public static String NewLinesTabPage_arrayInitializer_group_title;
 	//	public static String NewLinesTabPage_array_group_option_after_opening_brace_of_array_initializer;
 	//	public static String NewLinesTabPage_array_group_option_before_closing_brace_of_array_initializer;

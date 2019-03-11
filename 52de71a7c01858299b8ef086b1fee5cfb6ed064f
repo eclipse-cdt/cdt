@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7e04be21_2c6378d7",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2019-03-11T09:07:58Z",
+      "side": 1,
+      "message": "If this is really going in 9.7.x then this needs to be 1.2.101 on this branch. See https://wiki.eclipse.org/Version_Numbering",
+      "range": {
+        "startLine": 5,
+        "startChar": 20,
+        "endLine": 5,
+        "endChar": 23
+      },
+      "revId": "52de71a7c01858299b8ef086b1fee5cfb6ed064f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

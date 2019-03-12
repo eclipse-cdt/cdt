@@ -15,8 +15,7 @@ class AClass: public ABaseClass {
 	void test1() const throw (int);
 	void test2() throw ();
 };
-AClass::AClass(int x) throw (int) :
-		ABaseClass(x) {
+AClass::AClass(int x) throw (int) : ABaseClass(x) {
 	for (int i = 0; i < 12; i++) {
 	}
 }

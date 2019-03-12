@@ -113,8 +113,7 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 	//TestClass::TestClass(int a, int b):beta(b) {
 	//}
 
-	//TestClass::TestClass(int a, int b) :
-	//		alpha(a), beta(b) {
+	//TestClass::TestClass(int a, int b) : alpha(a), beta(b) {
 	//}
 	public void testCtorChainInitializer() throws Exception {
 		compareResult(new ASTVisitor() {

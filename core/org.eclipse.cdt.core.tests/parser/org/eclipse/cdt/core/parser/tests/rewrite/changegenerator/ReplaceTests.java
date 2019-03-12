@@ -172,8 +172,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//TestClass::TestClass(int a):beta(b){
 	//}
 
-	//TestClass::TestClass(int a) :
-	//		alpha(a) {
+	//TestClass::TestClass(int a) : alpha(a) {
 	//}
 	public void testCtorChainInitializer() throws Exception {
 		compareResult(new ASTVisitor() {

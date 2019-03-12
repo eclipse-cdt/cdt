@@ -115,8 +115,7 @@ public class AppendTests extends ChangeGeneratorTest {
 	//}
 	//
 
-	//TestClass::TestClass(int a, int b) :
-	//		beta(b), alpha(a) {
+	//TestClass::TestClass(int a, int b) : beta(b), alpha(a) {
 	//}
 	//
 	public void testCtorChainInitializer() throws Exception {

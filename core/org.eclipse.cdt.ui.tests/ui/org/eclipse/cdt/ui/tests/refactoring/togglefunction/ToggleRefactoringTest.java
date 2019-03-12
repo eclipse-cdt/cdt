@@ -507,8 +507,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//
 	//struct myClass {
 	//	int fVal;
-	//	myClass(int implname) :
-	//			fVal(implname) {
+	//	myClass(int implname) : fVal(implname) {
 	//	}
 	//};
 	public void testTestDifferentParameterNames() throws Exception {
@@ -540,8 +539,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//====================
 	//struct myClass {
 	//	int fVal;
-	//	myClass(int implname) :
-	//			fVal(implname) {
+	//	myClass(int implname) : fVal(implname) {
 	//	}
 	//};
 	public void testTestMissingParameterNames() throws Exception {
@@ -1339,8 +1337,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	}
 	//};
 	//
-	//inline A::A(int x, int y) :
-	//		a(x), b(y) {
+	//inline A::A(int x, int y) : a(x), b(y) {
 	//}
 	public void testTestConstructorToggleInClassToInHeader() throws Exception {
 		assertRefactoringSuccess();
@@ -1390,8 +1387,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	return 0;
 	//}
 	//
-	//A::A(int x, int y) :
-	//		a(x), b(y) {
+	//A::A(int x, int y) : a(x), b(y) {
 	//}
 	public void testTestConstructorToggleInHeaderToImplementation() throws Exception {
 		assertRefactoringSuccess();
@@ -1426,8 +1422,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//#include <iostream>
 	//
 	//class A {
-	//	A(int x, int y) :
-	//			a(x), b(y) {
+	//	A(int x, int y) : a(x), b(y) {
 	//	}
 	//	~A() {
 	//	}

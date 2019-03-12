@@ -1400,17 +1400,14 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 				scribe.printNextToken(Token.tCOLON,
 						!preferences.insert_new_line_before_colon_in_constructor_initializer_list);
-				if (preferences.insert_new_line_before_colon_in_constructor_initializer_list) {
-					scribe.space();
-				} else {
-					scribe.printTrailingComment();
-					scribe.startNewLine();
-					scribe.indentForContinuation();
-				}
+				scribe.space();
+				scribe.printTrailingComment();
 				final ListOptions options = new ListOptions(preferences.alignment_for_constructor_initializer_list);
 				options.fTieBreakRule = Alignment.R_OUTERMOST;
 				formatList(Arrays.asList(constructorChain), options, false, false, null);
-				scribe.unIndentForContinuation();
+				if (preferences.insert_new_line_before_colon_in_constructor_initializer_list) {
+					scribe.unIndentForContinuation();
+				}
 			}
 
 			if (cppFunctionDefinition.isDefaulted() || cppFunctionDefinition.isDeleted()) {

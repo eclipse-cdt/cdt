@@ -4081,6 +4081,21 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+	}
+
+	//int foo(int arg1) const
+	//{
+	//	return 2;
+	//}
+
+	//int foo(int arg1) const
+	//{
+	//	return 2;
+	//}
+	public void testConstMethodsWithNeverJoin_Bug376395() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES, false);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION,
+				DefaultCodeFormatterConstants.NEXT_LINE);
 		assertFormatterResult();
 	}
 }

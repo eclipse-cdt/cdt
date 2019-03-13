@@ -101,6 +101,7 @@ public class NewSerialFlashTargetWizardPage extends WizardPage {
 								serialPortCombo.select(i);
 								break;
 							}
+							i++;
 						}
 					}
 				}

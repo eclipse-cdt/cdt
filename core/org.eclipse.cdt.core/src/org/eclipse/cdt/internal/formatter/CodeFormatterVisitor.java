@@ -368,7 +368,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 			} else {
 				// Skip the rest (=0)
-				if (needSpace && scribe.printComment()) {
+				if (needSpace) {
+					scribe.printTrailingComment();
 					scribe.space();
 				}
 				skipNode(node);

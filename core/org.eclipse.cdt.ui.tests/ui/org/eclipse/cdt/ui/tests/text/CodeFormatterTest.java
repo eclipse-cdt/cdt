@@ -3903,4 +3903,20 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testFormmatterWithMacroFuncStyle_Bug475349() throws Exception {
 		assertFormatterResult();
 	}
+
+	//int foo(int arg1) const
+	//{
+	//	return 2;
+	//}
+
+	//int foo(int arg1) const
+	//{
+	//	return 2;
+	//}
+	public void testConstMethodsWithNeverJoin_Bug376395() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES, false);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION,
+				DefaultCodeFormatterConstants.NEXT_LINE);
+		assertFormatterResult();
+	}
 }

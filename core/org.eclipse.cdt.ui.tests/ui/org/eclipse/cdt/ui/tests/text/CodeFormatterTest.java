@@ -3811,4 +3811,30 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testFormmatterWithMacro_Bug543947() throws Exception {
 		assertFormatterResult();
 	}
+
+	//struct __attribute__((packed))foo{
+	//	char a;
+	//	char b;
+	//};
+
+	//struct __attribute__((packed)) foo {
+	//	char a;
+	//	char b;
+	//};
+	public void testAttributesWithStructs1_Bug467346() throws Exception {
+		assertFormatterResult();
+	}
+
+	//struct foo{
+	//	char a;
+	//	char b;
+	//}__attribute__((packed));
+
+	//struct foo {
+	//	char a;
+	//	char b;
+	//} __attribute__((packed));
+	public void testAttributesWithStructs2_Bug467346() throws Exception {
+		assertFormatterResult();
+	}
 }

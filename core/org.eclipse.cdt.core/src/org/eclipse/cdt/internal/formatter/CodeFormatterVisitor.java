@@ -1912,6 +1912,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(ICPPASTCompositeTypeSpecifier node) {
+		boolean formatAttributes = false;
+
 		scribe.printComment();
 		final int line = scribe.line;
 
@@ -1936,6 +1938,20 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		final IASTName name = node.getName();
 		if (name != null) {
+			if (token == Token.t_struct || token == Token.t_union) {
+				IASTAttributeSpecifier[] attributes = node.getAttributeSpecifiers();
+				if (attributes.length > 0) {
+					/**
+					 * According to GCC docs, attributes can be defined just after struct
+					 * or union keywords or just after the closing brace.
+					 */
+					if (name.getFileLocation() == null || nodeOffset(name) > nodeOffset(attributes[0])) {
+						formatAttributes(node, true, false, IGCCASTAttributeList.TYPE_FILTER);
+					} else {
+						formatAttributes = true;
+					}
+				}
+			}
 			scribe.space();
 			name.accept(this);
 		}
@@ -2027,6 +2043,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			scribe.indent();
 		}
 		formatClosingBrace(preferences.brace_position_for_type_declaration);
+		if (formatAttributes)
+			formatAttributes(node, true, false, IGCCASTAttributeList.TYPE_FILTER);
 		return PROCESS_SKIP;
 	}
 

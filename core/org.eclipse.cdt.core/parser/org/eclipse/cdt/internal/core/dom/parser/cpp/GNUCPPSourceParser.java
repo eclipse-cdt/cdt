@@ -2790,7 +2790,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			}
 
 			IASTName qualifiedName = qualifiedName();
-			endOffset = consume(IToken.tSEMI).getEndOffset();
+			endOffset = consumeOrEOC(IToken.tSEMI).getEndOffset();
 
 			ICPPASTNamespaceAlias alias = getNodeFactory().newNamespaceAlias(name, qualifiedName);
 			((ASTNode) alias).setOffsetAndLength(offset, endOffset - offset);

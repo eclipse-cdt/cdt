@@ -1965,4 +1965,10 @@ public class CompletionTests extends CompletionTestBase {
 		int expectedPos = getDocument().get().lastIndexOf("fin") + 6;
 		assertCursorPositionsAfterReplacement(new int[] { expectedPos });
 	}
+
+	//	namespace outer { namespace inner {} }
+	//	namespace alias = o/*cursor*/
+	public void testCompletionInNamespaceAlias_545360() throws Exception {
+		assertCompletionResults(new String[] { "outer::" });
+	}
 }

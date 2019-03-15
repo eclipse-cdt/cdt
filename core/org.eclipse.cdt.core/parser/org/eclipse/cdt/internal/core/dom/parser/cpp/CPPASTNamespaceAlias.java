@@ -13,15 +13,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * @author jcamelon
  */
-public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAlias {
+public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAlias, ICPPASTCompletionContext {
 	private IASTName alias;
 	private IASTName qualifiedName;
 
@@ -110,5 +116,29 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
 		if (qualifiedName == n)
 			return r_reference;
 		return r_unclear;
+	}
+
+	@Override
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		return findBindings(n, isPrefix, null);
+	}
+
+	@Override
+	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
+		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
+
+		int j = 0;
+		for (int i = 0; i < bindings.length; i++) {
+			IBinding binding = bindings[i];
+			if (binding instanceof ICPPNamespace) {
+				if (i != j)
+					bindings[j] = binding;
+				j++;
+			}
+		}
+
+		if (j < bindings.length)
+			return Arrays.copyOfRange(bindings, 0, j);
+		return bindings;
 	}
 }

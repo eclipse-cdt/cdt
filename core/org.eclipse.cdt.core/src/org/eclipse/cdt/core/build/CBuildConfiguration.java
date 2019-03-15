@@ -758,7 +758,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		synchronized (scannerInfoLock) {
 			info = scannerInfoCache.getScannerInfo(resource);
 		}
-		if (info == null) {
+		if (info == null || info.getIncludePaths().length == 0) {
 			ICElement celement = CCorePlugin.getDefault().getCoreModel().create(resource);
 			if (celement instanceof ITranslationUnit) {
 				try {
@@ -927,6 +927,10 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 					boolean hasCommand = true;
 					synchronized (scannerInfoLock) {
 						if (scannerInfoCache.hasCommand(commandStrings)) {
+							IExtendedScannerInfo info = scannerInfoCache.getScannerInfo(commandStrings);
+							if (info.getIncludePaths().length == 0) {
+								needScannerRefresh = true;
+							}
 							if (!scannerInfoCache.hasResource(commandStrings, resource)) {
 								scannerInfoCache.addResource(commandStrings, resource);
 								infoChanged = true;
@@ -1053,6 +1057,10 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 					boolean hasCommand = true;
 					synchronized (scannerInfoLock) {
 						if (scannerInfoCache.hasCommand(commandStrings)) {
+							IExtendedScannerInfo info = scannerInfoCache.getScannerInfo(commandStrings);
+							if (info.getIncludePaths().length == 0) {
+								needScannerRefresh = true;
+							}
 							if (!scannerInfoCache.hasResource(commandStrings, resource)) {
 								scannerInfoCache.addResource(commandStrings, resource);
 								infoChanged = true;

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.ui.build;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.cdt.core.build.IToolChain;
@@ -314,8 +315,24 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 		}
 
 		try {
-			if (!toolChains.equals(manager.getAllToolChains())) {
-				manager.setToolChainOrder(toolChains);
+			Collection<IToolChain> latestToolchains = manager.getAllToolChains();
+			if (!toolChains.equals(latestToolchains)) {
+
+				List<IToolChain> newOrderedList = new ArrayList<>();
+				for (IToolChain toolChain : toolChains) {
+					if (latestToolchains.contains(toolChain)) { //Still there? - for example: existing user defined tool chain would have been removed
+						newOrderedList.add(toolChain);
+					}
+				}
+
+				//add the remaining list at the end - for example: newly added user defined tool chains
+				for (IToolChain toolChain : latestToolchains) {
+					if (!newOrderedList.contains(toolChain)) {
+						newOrderedList.add(toolChain);
+					}
+				}
+
+				manager.setToolChainOrder(newOrderedList);
 			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e.getStatus());

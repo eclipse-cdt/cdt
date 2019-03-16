@@ -4455,8 +4455,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		localScanner.resetTo(getCurrentPosition(), scribe.scannerEndPosition);
 		int token = localScanner.getNextToken();
-		while (token == Token.tBLOCKCOMMENT || token == Token.tLINECOMMENT) {
+		int currentStart = localScanner.getCurrentTokenStartPosition();
+		Position p = scribe.getInactivePosAt(currentStart);
+		while ((token == Token.tBLOCKCOMMENT || token == Token.tLINECOMMENT) || p != null) {
 			token = localScanner.getNextToken();
+			currentStart = localScanner.getCurrentTokenStartPosition();
+			p = scribe.getInactivePosAt(currentStart);
 		}
 		return token;
 	}

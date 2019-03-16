@@ -1311,7 +1311,7 @@ public class Scribe {
 	 * @param offset
 	 * @return
 	 */
-	private Position getInactivePosAt(int offset) {
+	Position getInactivePosAt(int offset) {
 		for (Iterator<Position> iter = fSkipInactivePositions.iterator(); iter.hasNext();) {
 			Position pos = iter.next();
 			if (pos.includes(offset)) {

@@ -3890,4 +3890,17 @@ public class CodeFormatterTest extends BaseUITestCase {
 				DefaultCodeFormatterConstants.NEXT_LINE);
 		assertFormatterResult();
 	}
+
+	//#define START_SECTION() do { int a = 0; } while (0)
+	//void code() {
+	//	START_SECTION();
+	//}
+
+	//#define START_SECTION() do { int a = 0; } while (0)
+	//void code() {
+	//	START_SECTION();
+	//}
+	public void testFormmatterWithMacroFuncStyle_Bug475349() throws Exception {
+		assertFormatterResult();
+	}
 }

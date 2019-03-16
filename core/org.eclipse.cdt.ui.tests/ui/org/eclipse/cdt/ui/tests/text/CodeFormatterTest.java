@@ -4081,6 +4081,34 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+	}
+
+	//#define ONE
+	//namespace n1 {
+	//namespace n2 {
+	//#ifdef ONE
+	//int v1;
+	//#elif defined(TWO)
+	//int v2;
+	//#endif
+	//}
+	//}
+	//int main(){return 0;}
+
+	//#define ONE
+	//namespace n1 {
+	//namespace n2 {
+	//#ifdef ONE
+	//int v1;
+	//#elif defined(TWO)
+	//int v2;
+	//#endif
+	//}
+	//}
+	//int main() {
+	//	return 0;
+	//}
+	public void testNamespacesWithInactiveSections_Bug405049() throws Exception {
 		assertFormatterResult();
 	}
 }

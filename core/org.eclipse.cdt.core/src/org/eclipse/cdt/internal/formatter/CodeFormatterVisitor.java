@@ -581,7 +581,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private boolean isFunctionStyleMacroExpansion(IASTPreprocessorMacroExpansion macroExpansion) {
 		IASTName name = macroExpansion.getMacroReference();
 		IMacroBinding binding = (IMacroBinding) name.resolveBinding();
-		return binding.isFunctionStyle() && binding.getParameterList().length > 0;
+		return binding.isFunctionStyle() && binding.getParameterList().length >= 0;
 	}
 
 	private void formatFunctionStyleMacroExpansion(IASTPreprocessorMacroExpansion macroExpansion) {
@@ -3215,7 +3215,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 		}
-		scribe.printTrailingComment();
+		//scribe.printTrailingComment();
 		return PROCESS_SKIP;
 	}
 

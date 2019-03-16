@@ -73,6 +73,7 @@ public final class CIndenter {
 		final int prefAccessSpecifierIndent;
 		final int prefAccessSpecifierExtraSpaces;
 		final int prefNamespaceBodyIndent;
+		final int prefLinkageBodyIndent;
 		final boolean prefIndentBracesForBlocks;
 		final boolean prefIndentBracesForArrays;
 		final boolean prefIndentBracesForMethods;
@@ -140,6 +141,7 @@ public final class CIndenter {
 			prefAccessSpecifierIndent = prefAccessSpecifierIndent();
 			prefAccessSpecifierExtraSpaces = prefAccessSpecifierExtraSpaces();
 			prefNamespaceBodyIndent = prefNamespaceBodyIndent();
+			prefLinkageBodyIndent = prefLinkageBodyIndent();
 			prefIndentBracesForArrays = prefIndentBracesForArrays();
 			prefIndentBracesForMethods = prefIndentBracesForMethods();
 			prefIndentBracesForTypes = prefIndentBracesForTypes();
@@ -364,6 +366,14 @@ public final class CIndenter {
 		private int prefNamespaceBodyIndent() {
 			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(
 					DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER)))
+				return prefBlockIndent();
+			else
+				return 0;
+		}
+
+		private int prefLinkageBodyIndent() {
+			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(
+					DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_LINKAGE)))
 				return prefBlockIndent();
 			else
 				return 0;
@@ -1902,7 +1912,9 @@ public final class CIndenter {
 					return setFirstElementAlignment(pos, bound);
 				else
 					fIndent = fPrefs.prefArrayIndent;
-			} else if (isNamespace() || isLinkageSpec()) {
+			} else if (isLinkageSpec()) {
+				fIndent = fPrefs.prefLinkageBodyIndent;
+			} else if (isNamespace()) {
 				fIndent = fPrefs.prefNamespaceBodyIndent;
 			} else if (looksLikeEnumDeclaration()) {
 				fIndent = fPrefs.prefTypeIndent;

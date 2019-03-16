@@ -3811,4 +3811,17 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testFormmatterWithMacro_Bug543947() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#define START_SECTION() do { int a = 0; } while (0)
+	//void code() {
+	//	START_SECTION();
+	//}
+
+	//#define START_SECTION() do { int a = 0; } while (0)
+	//void code() {
+	//	START_SECTION();
+	//}
+	public void testFormmatterWithMacroFuncStyle_Bug475349() throws Exception {
+		assertFormatterResult();
+	}
 }

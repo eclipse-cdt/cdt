@@ -4123,4 +4123,33 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testCastFuncDeclarator2_Bug390324() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#define ONE
+	//namespace n1 {
+	//namespace n2 {
+	//#ifdef ONE
+	//int v1;
+	//#elif defined(TWO)
+	//int v2;
+	//#endif
+	//}
+	//}
+	//int main(){return 0;}
+
+	//#define ONE
+	//namespace n1 {
+	//namespace n2 {
+	//#ifdef ONE
+	//int v1;
+	//#elif defined(TWO)
+	//int v2;
+	//#endif
+	//}
+	//}
+	//int main() {
+	//	return 0;
+	//}
+	public void testNamespacesWithInactiveSections_Bug405049() throws Exception {
+		assertFormatterResult();
+	}
 }

@@ -1170,11 +1170,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			scribe.space();
 			memberDecls[0].accept(this);
 		} else {
-			// TLETODO [formatter] need options for linkage specification
-			formatLeftCurlyBrace(line, preferences.brace_position_for_namespace_declaration);
-			formatOpeningBrace(preferences.brace_position_for_namespace_declaration,
-					preferences.insert_space_before_opening_brace_in_namespace_declaration);
-			if (preferences.indent_body_declarations_compare_to_namespace_header) {
+			formatLeftCurlyBrace(line, preferences.brace_position_for_linkage_declaration);
+			formatOpeningBrace(preferences.brace_position_for_linkage_declaration,
+					preferences.insert_space_before_opening_brace_in_linkage_declaration);
+			if (preferences.indent_body_declarations_compare_to_linkage) {
 				scribe.indent();
 			}
 			scribe.startNewLine();
@@ -1182,10 +1181,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				declaration.accept(this);
 				scribe.startNewLine();
 			}
-			if (preferences.indent_body_declarations_compare_to_namespace_header) {
+			if (preferences.indent_body_declarations_compare_to_linkage) {
 				scribe.unIndent();
 			}
-			formatClosingBrace(preferences.brace_position_for_namespace_declaration);
+			formatClosingBrace(preferences.brace_position_for_linkage_declaration);
 		}
 		return PROCESS_SKIP;
 	}

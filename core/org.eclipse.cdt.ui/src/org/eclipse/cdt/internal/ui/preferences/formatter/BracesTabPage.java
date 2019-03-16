@@ -71,7 +71,10 @@ public class BracesTabPage extends FormatterTabPage {
 			"}" + //$NON-NLS-1$
 			"}" + //$NON-NLS-1$
 			"}" + //$NON-NLS-1$
-			"} // end namespace FOO"; //$NON-NLS-1$
+			"} // end namespace FOO\n\n" + //$NON-NLS-1$
+			"extern \"C\" {\n" + //$NON-NLS-1$
+			"void func();\n" + //$NON-NLS-1$
+			"}\n"; //$NON-NLS-1$
 
 	private TranslationUnitPreview fPreview;
 
@@ -108,6 +111,8 @@ public class BracesTabPage extends FormatterTabPage {
 				DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION);
 		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_namespace_declaration,
 				DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_NAMESPACE_DECLARATION);
+		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_linkage_declaration,
+				DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_LINKAGE_DECLARATION);
 		//		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_constructor_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_CONSTRUCTOR_DECLARATION);
 		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_function_declaration,
 				DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION);

@@ -532,6 +532,22 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_BRACE_POSITION_FOR_NAMESPACE_DECLARATION = CCorePlugin.PLUGIN_ID
 			+ ".formatter.brace_position_for_namespace_declaration"; //$NON-NLS-1$
 
+	/**
+	 * <pre>
+	 * FORMATTER / Option to position the braces of a linkage declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.brace_position_for_linkage_declaration"
+	 *     - possible values:   { END_OF_LINE, NEXT_LINE, NEXT_LINE_SHIFTED, NEXT_LINE_ON_WRAP }
+	 *     - default:           END_OF_LINE
+	 * </pre>
+	 * @see #END_OF_LINE
+	 * @see #NEXT_LINE
+	 * @see #NEXT_LINE_SHIFTED
+	 * @see #NEXT_LINE_ON_WRAP
+	 * @since 6.7
+	 */
+	public static final String FORMATTER_BRACE_POSITION_FOR_LINKAGE_DECLARATION = CCorePlugin.PLUGIN_ID
+			+ ".formatter.brace_position_for_linkage_declaration"; //$NON-NLS-1$
+
 	//	/**
 	//	 * <pre>
 	//	 * FORMATTER / Option to control whether blank lines are cleared inside comments
@@ -735,6 +751,19 @@ public class DefaultCodeFormatterConstants {
 	 */
 	public static final String FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER = CCorePlugin.PLUGIN_ID
 			+ ".formatter.indent_body_declarations_compare_to_namespace_header"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to indent body declarations compare to its enclosing linkage section
+	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_body_declarations_compare_to_linkage"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           TRUE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 * @since 6.7
+	 */
+	public static final String FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_LINKAGE = CCorePlugin.PLUGIN_ID
+			+ ".formatter.indent_body_declarations_compare_to_linkage"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to indent breaks compare to cases
@@ -1999,6 +2028,19 @@ public class DefaultCodeFormatterConstants {
 	 */
 	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_NAMESPACE_DECLARATION = CCorePlugin.PLUGIN_ID
 			+ ".formatter.insert_space_before_opening_brace_in_namespace_declaration"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space before the opening brace in a linkage declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_brace_in_linkage_declaration"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.7
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_LINKAGE_DECLARATION = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_before_opening_brace_in_linkage_declaration"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space before the opening bracket

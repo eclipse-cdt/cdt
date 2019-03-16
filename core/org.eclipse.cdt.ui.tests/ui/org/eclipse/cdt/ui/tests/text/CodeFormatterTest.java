@@ -3811,4 +3811,44 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testFormmatterWithMacro_Bug543947() throws Exception {
 		assertFormatterResult();
 	}
+
+	//extern "C" {
+	//void func();
+	//}
+
+	//extern "C" {
+	//	void func();
+	//}
+	public void testLinkage1_Bug299482() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_LINKAGE,
+				DefaultCodeFormatterConstants.TRUE);
+		assertFormatterResult();
+	}
+
+	//extern "C" {
+	//void func();
+	//}
+
+	//extern "C"{
+	//void func();
+	//}
+	public void testLinkage2_Bug299482() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_LINKAGE_DECLARATION,
+				DefaultCodeFormatterConstants.FALSE);
+		assertFormatterResult();
+	}
+
+	//extern "C" {
+	//void func();
+	//}
+
+	//extern "C"
+	//{
+	//void func();
+	//}
+	public void testLinkage3_Bug299482() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_LINKAGE_DECLARATION,
+				DefaultCodeFormatterConstants.NEXT_LINE);
+		assertFormatterResult();
+	}
 }

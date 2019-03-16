@@ -57,6 +57,10 @@ final class FormatterMessages extends NLS {
 	public static String WhiteSpaceTabPage_expression_list;
 	public static String WhiteSpaceTabPage_expression_list_before_comma;
 	public static String WhiteSpaceTabPage_expression_list_after_comma;
+	public static String WhiteSpaceTabPage_namespace;
+	public static String WhiteSpaceTabPage_namespace_before_brace;
+	public static String WhiteSpaceTabPage_linkage;
+	public static String WhiteSpaceTabPage_linkage_before_brace;
 	public static String WhiteSpaceTabPage_initializer_list;
 	public static String WhiteSpaceTabPage_calls;
 	public static String WhiteSpaceTabPage_calls_before_comma_in_function_args;
@@ -145,6 +149,8 @@ final class FormatterMessages extends NLS {
 	public static String WhiteSpaceOptions_class_decl;
 	public static String WhiteSpaceOptions_initializer_list;
 	public static String WhiteSpaceOptions_block;
+	public static String WhiteSpaceOptions_namespace;
+	public static String WhiteSpaceOptions_linkage;
 	public static String WhiteSpaceOptions_arrays;
 	public static String WhiteSpaceOptions_arguments;
 	public static String WhiteSpaceOptions_parameters;
@@ -291,6 +297,7 @@ final class FormatterMessages extends NLS {
 	public static String BracesTabPage_group_brace_positions_title;
 	public static String BracesTabPage_option_class_declaration;
 	public static String BracesTabPage_option_namespace_declaration;
+	public static String BracesTabPage_option_linkage_declaration;
 	public static String BracesTabPage_option_function_declaration;
 	public static String BracesTabPage_option_blocks;
 	public static String BracesTabPage_option_blocks_in_case;
@@ -362,6 +369,7 @@ final class FormatterMessages extends NLS {
 	public static String IndentationTabPage_switch_group_option_indent_statements_within_case_body;
 	public static String IndentationTabPage_switch_group_option_indent_break_statements;
 	public static String IndentationTabPage_namespace_group_option_indent_declarations_within_namespace;
+	public static String IndentationTabPage_linkage_group_option_indent_declarations_within_linkage;
 	public static String IndentationTabPage_indent_empty_lines;
 	public static String IndentationTabPage_use_tabs_only_for_leading_indentations;
 	public static String ModifyDialog_dialog_title;

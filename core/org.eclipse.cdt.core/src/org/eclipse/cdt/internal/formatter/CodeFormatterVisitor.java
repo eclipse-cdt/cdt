@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EmptyStackException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -401,6 +402,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private final Scanner localScanner;
+	private List<Position> fInactivePreprocessorPositions;
 	final DefaultCodeFormatterOptions preferences;
 	private final Scribe scribe;
 
@@ -424,6 +426,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		};
 		this.preferences = preferences;
 		scribe = new Scribe(this, offset, length);
+		fInactivePreprocessorPositions = Collections.emptyList();
 	}
 
 	/**
@@ -439,8 +442,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		localScanner.setSource(compilationUnitSource);
 		scribe.initializeScanner(compilationUnitSource);
-		List<Position> inactive = collectInactiveCodePositions(unit);
-		inactive.addAll(collectNoFormatCodePositions(unit));
+		fInactivePreprocessorPositions = collectInactiveCodePositions(unit);
+		List<Position> inactive = collectNoFormatCodePositions(unit);
+		inactive.addAll(fInactivePreprocessorPositions);
 		scribe.setSkipInactivePositions(inactive);
 
 		fStatus = new MultiStatus(CCorePlugin.PLUGIN_ID, 0, "Formatting problem(s) in '" + unit.getFilePath() + "'", //$NON-NLS-1$//$NON-NLS-2$
@@ -4484,14 +4488,34 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		return peekNextToken(false);
 	}
 
+	/**
+	 * It returns a position range if offset is included into an inactive
+	 * preprocessor region.
+	 * @param offset The offset to be checked
+	 * @return The region if found, null otherwise
+	 */
+	private Position getInactivePosAt(int offset) {
+		for (Iterator<Position> iter = fInactivePreprocessorPositions.iterator(); iter.hasNext();) {
+			Position pos = iter.next();
+			if (pos.includes(offset)) {
+				return pos;
+			}
+		}
+		return null;
+	}
+
 	private int peekNextToken(boolean ignoreSkip) {
 		if (!ignoreSkip && scribe.shouldSkip(getCurrentPosition())) {
 			return Token.tBADCHAR;
 		}
 		localScanner.resetTo(getCurrentPosition(), scribe.scannerEndPosition);
 		int token = localScanner.getNextToken();
-		while (token == Token.tBLOCKCOMMENT || token == Token.tLINECOMMENT) {
+		int currentStart = localScanner.getCurrentTokenStartPosition();
+		Position p = getInactivePosAt(currentStart);
+		while ((token == Token.tBLOCKCOMMENT || token == Token.tLINECOMMENT) || p != null) {
 			token = localScanner.getNextToken();
+			currentStart = localScanner.getCurrentTokenStartPosition();
+			p = getInactivePosAt(currentStart);
 		}
 		return token;
 	}

@@ -88,6 +88,10 @@ public class DefaultCodeFormatterOptions {
 	public String brace_position_for_initializer_list;
 	public String brace_position_for_method_declaration;
 	public String brace_position_for_namespace_declaration;
+	/**
+	 * @since 6.7
+	 */
+	public String brace_position_for_linkage_declaration;
 	public String brace_position_for_switch;
 	public String brace_position_for_type_declaration;
 
@@ -122,6 +126,10 @@ public class DefaultCodeFormatterOptions {
 	public boolean indent_access_specifier_compare_to_type_header;
 	public int indent_access_specifier_extra_spaces;
 	public boolean indent_body_declarations_compare_to_namespace_header;
+	/**
+	 * @since 6.7
+	 */
+	public boolean indent_body_declarations_compare_to_linkage;
 	public boolean indent_declaration_compare_to_template_header;
 	public boolean indent_breaks_compare_to_cases;
 	public boolean indent_empty_lines;
@@ -227,6 +235,10 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_before_opening_brace_in_method_declaration;
 	public boolean insert_space_before_opening_brace_in_type_declaration;
 	public boolean insert_space_before_opening_brace_in_namespace_declaration;
+	/**
+	 * @since 6.7
+	 */
+	public boolean insert_space_before_opening_brace_in_linkage_declaration;
 	public boolean insert_space_before_opening_bracket;
 	public boolean insert_space_before_opening_paren_in_catch;
 	public boolean insert_space_before_opening_paren_in_for;
@@ -350,6 +362,8 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_SWITCH, this.brace_position_for_switch);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_NAMESPACE_DECLARATION,
 				this.brace_position_for_namespace_declaration);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_LINKAGE_DECLARATION,
+				this.brace_position_for_linkage_declaration);
 		//		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_CLEAR_BLANK_LINES, this.comment_clear_blank_lines ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		//		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_FORMAT, this.comment_format ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		//		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_FORMAT_HEADER, this.comment_format_header ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
@@ -390,6 +404,9 @@ public class DefaultCodeFormatterOptions {
 						: DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER,
 				this.indent_body_declarations_compare_to_namespace_header ? DefaultCodeFormatterConstants.TRUE
+						: DefaultCodeFormatterConstants.FALSE);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_LINKAGE,
+				this.indent_body_declarations_compare_to_linkage ? DefaultCodeFormatterConstants.TRUE
 						: DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BREAKS_COMPARE_TO_CASES,
 				this.indent_breaks_compare_to_cases ? DefaultCodeFormatterConstants.TRUE
@@ -630,6 +647,9 @@ public class DefaultCodeFormatterOptions {
 						: CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_NAMESPACE_DECLARATION,
 				this.insert_space_before_opening_brace_in_namespace_declaration ? CCorePlugin.INSERT
+						: CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_LINKAGE_DECLARATION,
+				this.insert_space_before_opening_brace_in_linkage_declaration ? CCorePlugin.INSERT
 						: CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACKET,
 				this.insert_space_before_opening_bracket ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -1095,6 +1115,15 @@ public class DefaultCodeFormatterOptions {
 				this.brace_position_for_namespace_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
 			}
 		}
+		final Object bracePositionForLinkageDeclarationOption = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_LINKAGE_DECLARATION);
+		if (bracePositionForLinkageDeclarationOption != null) {
+			try {
+				this.brace_position_for_linkage_declaration = (String) bracePositionForLinkageDeclarationOption;
+			} catch (ClassCastException e) {
+				this.brace_position_for_linkage_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
+			}
+		}
 		//		final Object commentClearBlankLinesOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_CLEAR_BLANK_LINES);
 		//		if (commentClearBlankLinesOption != null) {
 		//			this.comment_clear_blank_lines = DefaultCodeFormatterConstants.TRUE.equals(commentClearBlankLinesOption);
@@ -1224,6 +1253,12 @@ public class DefaultCodeFormatterOptions {
 		if (indentBodyDeclarationsCompareToNamespaceHeaderOption != null) {
 			this.indent_body_declarations_compare_to_namespace_header = DefaultCodeFormatterConstants.TRUE
 					.equals(indentBodyDeclarationsCompareToNamespaceHeaderOption);
+		}
+		final Object indentBodyDeclarationsCompareToLinkageOption = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_LINKAGE);
+		if (indentBodyDeclarationsCompareToLinkageOption != null) {
+			this.indent_body_declarations_compare_to_linkage = DefaultCodeFormatterConstants.TRUE
+					.equals(indentBodyDeclarationsCompareToLinkageOption);
 		}
 		final Object indentBreaksCompareToCasesOption = settings
 				.get(DefaultCodeFormatterConstants.FORMATTER_INDENT_BREAKS_COMPARE_TO_CASES);
@@ -1814,6 +1849,12 @@ public class DefaultCodeFormatterOptions {
 			this.insert_space_before_opening_brace_in_namespace_declaration = CCorePlugin.INSERT
 					.equals(insertSpaceBeforeOpeningBraceInNamespaceDeclarationOption);
 		}
+		final Object insertSpaceBeforeOpeningBraceInLinkageDeclarationOption = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_LINKAGE_DECLARATION);
+		if (insertSpaceBeforeOpeningBraceInLinkageDeclarationOption != null) {
+			this.insert_space_before_opening_brace_in_linkage_declaration = CCorePlugin.INSERT
+					.equals(insertSpaceBeforeOpeningBraceInLinkageDeclarationOption);
+		}
 		final Object insertSpaceBeforeOpeningBracketInArrayReferenceOption = settings
 				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACKET);
 		if (insertSpaceBeforeOpeningBracketInArrayReferenceOption != null) {
@@ -2087,6 +2128,7 @@ public class DefaultCodeFormatterOptions {
 		this.brace_position_for_initializer_list = DefaultCodeFormatterConstants.END_OF_LINE;
 		this.brace_position_for_method_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
 		this.brace_position_for_namespace_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
+		this.brace_position_for_linkage_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
 		this.brace_position_for_switch = DefaultCodeFormatterConstants.END_OF_LINE;
 		this.brace_position_for_type_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
 		this.comment_min_distance_between_code_and_line_comment = 1;
@@ -2108,6 +2150,7 @@ public class DefaultCodeFormatterOptions {
 		this.indent_statements_compare_to_block = true;
 		this.indent_statements_compare_to_body = true;
 		this.indent_body_declarations_compare_to_namespace_header = false;
+		this.indent_body_declarations_compare_to_linkage = false;
 		//		this.indent_body_declarations_compare_to_enum_declaration_header = true;
 		this.indent_body_declarations_compare_to_access_specifier = true;
 		this.indent_breaks_compare_to_cases = true;
@@ -2209,6 +2252,7 @@ public class DefaultCodeFormatterOptions {
 		this.insert_space_before_opening_brace_in_switch = true;
 		this.insert_space_before_opening_brace_in_type_declaration = true;
 		this.insert_space_before_opening_brace_in_namespace_declaration = true;
+		this.insert_space_before_opening_brace_in_linkage_declaration = true;
 		this.insert_space_before_opening_bracket = false;
 		this.insert_space_before_opening_paren_in_catch = true;
 		this.insert_space_before_opening_paren_in_exception_specification = true;
@@ -2294,11 +2338,13 @@ public class DefaultCodeFormatterOptions {
 		this.brace_position_for_method_declaration = DefaultCodeFormatterConstants.NEXT_LINE;
 		this.brace_position_for_type_declaration = DefaultCodeFormatterConstants.NEXT_LINE;
 		this.brace_position_for_namespace_declaration = DefaultCodeFormatterConstants.NEXT_LINE;
+		this.brace_position_for_linkage_declaration = DefaultCodeFormatterConstants.NEXT_LINE;
 		this.brace_position_for_switch = DefaultCodeFormatterConstants.NEXT_LINE;
 
 		this.indent_statements_compare_to_block = true;
 		this.indent_statements_compare_to_body = true;
 		this.indent_body_declarations_compare_to_namespace_header = false;
+		this.indent_body_declarations_compare_to_linkage = false;
 		//		this.indent_body_declarations_compare_to_enum_declaration_header = true;
 		this.indent_breaks_compare_to_cases = true;
 		this.indent_empty_lines = false;
@@ -2357,11 +2403,13 @@ public class DefaultCodeFormatterOptions {
 		this.brace_position_for_method_declaration = DefaultCodeFormatterConstants.NEXT_LINE;
 		this.brace_position_for_type_declaration = DefaultCodeFormatterConstants.NEXT_LINE;
 		this.brace_position_for_namespace_declaration = DefaultCodeFormatterConstants.NEXT_LINE;
+		this.brace_position_for_linkage_declaration = DefaultCodeFormatterConstants.NEXT_LINE;
 		this.brace_position_for_switch = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 
 		this.indent_statements_compare_to_block = true;
 		this.indent_statements_compare_to_body = true;
 		this.indent_body_declarations_compare_to_namespace_header = true;
+		this.indent_body_declarations_compare_to_linkage = true;
 		//		this.indent_body_declarations_compare_to_enum_declaration_header = true;
 		this.indent_declaration_compare_to_template_header = true;
 		this.indent_breaks_compare_to_cases = true;
@@ -2433,11 +2481,13 @@ public class DefaultCodeFormatterOptions {
 		this.brace_position_for_method_declaration = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 		this.brace_position_for_type_declaration = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 		this.brace_position_for_namespace_declaration = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
+		this.brace_position_for_linkage_declaration = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 		this.brace_position_for_switch = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 
 		this.indent_statements_compare_to_block = false;
 		this.indent_statements_compare_to_body = false;
 		this.indent_body_declarations_compare_to_namespace_header = false;
+		this.indent_body_declarations_compare_to_linkage = false;
 		this.indent_breaks_compare_to_cases = true;
 		this.indent_empty_lines = false;
 		this.indent_switchstatements_compare_to_cases = true;

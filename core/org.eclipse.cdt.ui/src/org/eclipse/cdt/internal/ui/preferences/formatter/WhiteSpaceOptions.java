@@ -218,6 +218,12 @@ public final class WhiteSpaceOptions {
 	private final PreviewSnippet BLOCK_PREVIEW = new PreviewSnippet(CodeFormatter.K_STATEMENTS,
 			"if (true) { return 1; } else { return 2; }"); //$NON-NLS-1$
 
+	private final PreviewSnippet NAMESPACE_PREVIEW = new PreviewSnippet(CodeFormatter.K_STATEMENTS,
+			"namespace FOO { int n1; }"); //$NON-NLS-1$
+
+	private final PreviewSnippet LINKAGE_PREVIEW = new PreviewSnippet(CodeFormatter.K_STATEMENTS,
+			"extern \"C\" { void func(); }"); //$NON-NLS-1$
+
 	private final PreviewSnippet PAREN_EXPR_PREVIEW = new PreviewSnippet(CodeFormatter.K_STATEMENTS,
 			"result= (a *( b +  c + d) * (e + f));"); //$NON-NLS-1$
 
@@ -447,6 +453,8 @@ public final class WhiteSpaceOptions {
 				FormatterMessages.WhiteSpaceTabPage_declarations);
 		createClassTree(workingValues, declarations);
 		createDeclaratorListTree(workingValues, declarations);
+		createNamespaceTree(workingValues, declarations);
+		createLinkageTree(workingValues, declarations);
 		//        createConstructorTree(workingValues, declarations);
 		createMethodDeclTree(workingValues, declarations);
 		createExceptionSpecificationTree(workingValues, declarations);
@@ -626,6 +634,12 @@ public final class WhiteSpaceOptions {
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_BLOCK, BLOCK_PREVIEW);
 		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_switch,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_SWITCH, SWITCH_PREVIEW);
+		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_namespace,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_NAMESPACE_DECLARATION,
+				NAMESPACE_PREVIEW);
+		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_linkage,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_LINKAGE_DECLARATION,
+				LINKAGE_PREVIEW);
 	}
 
 	private void createBeforeClosingParenTree(Map<String, String> workingValues, final InnerNode parent) {
@@ -975,6 +989,24 @@ public final class WhiteSpaceOptions {
 		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_after_comma_in_params,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_THROWS,
 				METHOD_DECL_PREVIEW);
+		return root;
+	}
+
+	private InnerNode createNamespaceTree(Map<String, String> workingValues, InnerNode parent) {
+		final InnerNode root = new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_namespace);
+
+		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_namespace_before_brace,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_NAMESPACE_DECLARATION,
+				NAMESPACE_PREVIEW);
+		return root;
+	}
+
+	private InnerNode createLinkageTree(Map<String, String> workingValues, InnerNode parent) {
+		final InnerNode root = new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceTabPage_linkage);
+
+		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_linkage_before_brace,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_LINKAGE_DECLARATION,
+				LINKAGE_PREVIEW);
 		return root;
 	}
 

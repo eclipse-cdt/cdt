@@ -74,7 +74,10 @@ public class IndentationTabPage extends FormatterTabPage {
 			"}" + //$NON-NLS-1$
 			"}" + //$NON-NLS-1$
 			"}" + //$NON-NLS-1$
-			"} // end namespace FOO"; //$NON-NLS-1$
+			"} // end namespace FOO\n\n" + //$NON-NLS-1$
+			"extern \"C\" {\n" + //$NON-NLS-1$
+			"void func();\n" + //$NON-NLS-1$
+			"}\n"; //$NON-NLS-1$
 
 	private TranslationUnitPreview fPreview;
 	private String fOldTabChar = null;
@@ -160,6 +163,10 @@ public class IndentationTabPage extends FormatterTabPage {
 				FormatterMessages.IndentationTabPage_namespace_group_option_indent_declarations_within_namespace,
 				DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER,
 				FALSE_TRUE);
+
+		createCheckboxPref(classGroup, numColumns,
+				FormatterMessages.IndentationTabPage_linkage_group_option_indent_declarations_within_linkage,
+				DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_LINKAGE, FALSE_TRUE);
 
 		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_indent_empty_lines,
 				DefaultCodeFormatterConstants.FORMATTER_INDENT_EMPTY_LINES, FALSE_TRUE);

@@ -164,6 +164,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.util.IUnaryPredicate;
 import org.eclipse.cdt.core.parser.util.InstanceOfPredicate;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;
@@ -1628,6 +1629,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private void formatPointers(IASTPointerOperator[] pointers) {
+		TrailingTokenFormatter tailFormatter = null;
 		for (IASTPointerOperator pointer : pointers) {
 			if (scribe.printComment()) {
 				scribe.space();
@@ -1637,9 +1639,53 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 			if (pointer instanceof ICPPASTReferenceOperator) {
 				if (((ICPPASTReferenceOperator) pointer).isRValueReference()) {
-					scribe.printNextToken(Token.tAND, false);
+					try {
+						IASTFunctionDeclarator decl = ASTQueries.findAncestorWithType(pointer,
+								IASTFunctionDeclarator.class);
+						if (decl != null) {
+							IToken token = decl.getSyntax();
+							IToken leading = null;
+							if (decl.getParent() != null)
+								leading = decl.getParent().getLeadingSyntax();
+							//Don't apply spaces to function pointer for operator * in braces
+							//or pointers in templates declaration/parameter
+							if (token != null && token.getType() != Token.tLPAREN
+									&& (leading == null || leading.getType() != Token.tGT)) {
+								tailFormatter = new TrailingTokenFormatter(Token.tAND, pointer.getParent(),
+										this.preferences.insert_space_before_pointer_in_method_declaration,
+										this.preferences.insert_space_after_pointer_in_method_declaration);
+								tailFormatter.run();
+							}
+						} else {
+							scribe.printNextToken(Token.tAND, false);
+						}
+					} catch (ExpansionOverlapsBoundaryException e) {
+						scribe.printNextToken(Token.tAND, false);
+					}
 				} else {
-					scribe.printNextToken(Token.tAMPER, false);
+					try {
+						IASTFunctionDeclarator decl = ASTQueries.findAncestorWithType(pointer,
+								IASTFunctionDeclarator.class);
+						if (decl != null) {
+							IToken token = decl.getSyntax();
+							IToken leading = null;
+							if (decl.getParent() != null)
+								leading = decl.getParent().getLeadingSyntax();
+							//Don't apply spaces to function pointer for operator * in braces
+							//or pointers in templates declaration/parameter
+							if (token != null && token.getType() != Token.tLPAREN
+									&& (leading == null || leading.getType() != Token.tGT)) {
+								tailFormatter = new TrailingTokenFormatter(Token.tAMPER, pointer.getParent(),
+										this.preferences.insert_space_before_pointer_in_method_declaration,
+										this.preferences.insert_space_after_pointer_in_method_declaration);
+								tailFormatter.run();
+							}
+						} else {
+							scribe.printNextToken(Token.tAMPER, false);
+						}
+					} catch (ExpansionOverlapsBoundaryException e) {
+						scribe.printNextToken(Token.tAMPER, false);
+					}
 				}
 			} else if (pointer instanceof ICPPASTPointerToMember) {
 				final ICPPASTPointerToMember ptrToMember = (ICPPASTPointerToMember) pointer;
@@ -1652,7 +1698,29 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					scribe.space();
 				}
 			} else {
-				scribe.printNextToken(Token.tSTAR, false);
+				try {
+					IASTFunctionDeclarator decl = ASTQueries.findAncestorWithType(pointer,
+							IASTFunctionDeclarator.class);
+					if (decl != null) {
+						IToken token = decl.getSyntax();
+						IToken leading = null;
+						if (decl.getParent() != null)
+							leading = decl.getParent().getLeadingSyntax();
+						//Don't apply spaces to function pointer for operator * in braces
+						//or pointers in templates declaration/parameter
+						if (token != null && token.getType() != Token.tLPAREN
+								&& (leading == null || leading.getType() != Token.tGT)) {
+							tailFormatter = new TrailingTokenFormatter(Token.tSTAR, pointer.getParent(),
+									this.preferences.insert_space_before_pointer_in_method_declaration,
+									this.preferences.insert_space_after_pointer_in_method_declaration);
+							tailFormatter.run();
+						}
+					} else {
+						scribe.printNextToken(Token.tSTAR, false);
+					}
+				} catch (ExpansionOverlapsBoundaryException e) {
+					scribe.printNextToken(Token.tSTAR, false);
+				}
 				if (skipConstVolatileRestrict()) {
 					scribe.space();
 				}

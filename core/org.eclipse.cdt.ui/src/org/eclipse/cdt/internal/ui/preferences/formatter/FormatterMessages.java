@@ -83,6 +83,8 @@ final class FormatterMessages extends NLS {
 	public static String WhiteSpaceTabPage_after_opening_brace;
 	public static String WhiteSpaceTabPage_after_closing_brace;
 	public static String WhiteSpaceTabPage_before_opening_brace;
+	public static String WhiteSpaceTabPage_before_pointer;
+	public static String WhiteSpaceTabPage_after_pointer;
 	public static String WhiteSpaceTabPage_before_closing_brace;
 	public static String WhiteSpaceTabPage_between_empty_braces;
 	public static String WhiteSpaceTabPage_after_opening_paren;
@@ -124,6 +126,7 @@ final class FormatterMessages extends NLS {
 	public static String WhiteSpaceOptions_prefix_operator;
 	public static String WhiteSpaceOptions_postfix_operator;
 	public static String WhiteSpaceOptions_opening_paren;
+	public static String WhiteSpaceOptions_pointer;
 	public static String WhiteSpaceOptions_catch;
 	public static String WhiteSpaceOptions_for;
 	public static String WhiteSpaceOptions_if;
@@ -164,6 +167,8 @@ final class FormatterMessages extends NLS {
 	public static String WhiteSpaceOptions_case;
 	public static String WhiteSpaceOptions_default;
 	public static String WhiteSpaceOptions_statements;
+	public static String WhiteSpaceOptions_before_pointer;
+	public static String WhiteSpaceOptions_after_pointer;
 	public static String WhiteSpaceOptions_before_opening_paren;
 	public static String WhiteSpaceOptions_after_opening_paren;
 	public static String WhiteSpaceOptions_before_closing_paren;

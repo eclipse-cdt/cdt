@@ -139,6 +139,26 @@ public class ASTQueries {
 	 * Traverses parent chain of the given node and returns the first node of the given type.
 	 * @param node the start node
 	 * @param type the type to look for
+	 * @param maxDepth search with a max depth in the tree
+	 * @return the node itself or its closest ancestor that has the given type, or {@code null}
+	 *     if no such node is found with the specified maxDepth.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends IASTNode> T findAncestorWithType(IASTNode node, Class<T> type, int maxDepth) {
+		int i = 0;
+		while (node != null && !type.isInstance(node) && i < maxDepth) {
+			node = node.getParent();
+			i++;
+		}
+		if (i == maxDepth)
+			return null;
+		return (T) node;
+	}
+
+	/**
+	 * Traverses parent chain of the given node and returns the first node of the given type.
+	 * @param node the start node
+	 * @param type the type to look for
 	 * @return the node itself or its closest ancestor that has the given type, or {@code null}
 	 *     if no such node is found.
 	 */

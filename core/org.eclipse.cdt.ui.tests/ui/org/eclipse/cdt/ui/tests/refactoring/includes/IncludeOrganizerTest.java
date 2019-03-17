@@ -700,7 +700,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//namespace ns3 {
 	//namespace ns2 {
 	//namespace ns1 {
-	//C * f(const A &a, B *b);
+	//C* f(const A& a, B* b);
 	//} /* namespace ns1 */
 	//} /* namespace ns2 */
 	//} /* namespace ns3 */

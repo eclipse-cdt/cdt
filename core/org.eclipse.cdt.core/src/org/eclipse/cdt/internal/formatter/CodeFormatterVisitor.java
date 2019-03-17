@@ -164,6 +164,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.util.IUnaryPredicate;
 import org.eclipse.cdt.core.parser.util.InstanceOfPredicate;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;
@@ -1631,6 +1632,36 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 	}
 
+	private void alignPointer(IASTPointerOperator[] pointers, IASTPointerOperator pointer, int token) {
+		TrailingTokenFormatter tailFormatter = null;
+		IASTNode parent = pointer.getParent();
+		if (parent instanceof IASTFunctionDeclarator) {
+			tailFormatter = new TrailingTokenFormatter(token, pointer.getParent(),
+					this.preferences.insert_space_before_pointer_in_method_declaration,
+					this.preferences.insert_space_after_pointer_in_method_declaration);
+			tailFormatter.run();
+		} else {
+			IASTParameterDeclaration n = ASTQueries.findAncestorWithType(pointer, IASTParameterDeclaration.class);
+			if (n != null && !(n.getDeclarator() instanceof IASTFunctionDeclarator)) {
+				tailFormatter = new TrailingTokenFormatter(token, pointer.getParent(),
+						this.preferences.insert_space_before_pointer_in_method_declaration,
+						this.preferences.insert_space_after_pointer_in_method_declaration);
+				tailFormatter.run();
+			} else if (parent != null && parent.getParent() instanceof IASTSimpleDeclaration) {
+				IASTSimpleDeclaration simple = (IASTSimpleDeclaration) parent.getParent();
+				IASTDeclarator[] declarators = simple.getDeclarators();
+				boolean first = declarators.length == 0 || declarators[0].getPointerOperators() == pointers;
+				tailFormatter = new TrailingTokenFormatter(token, pointer.getParent(),
+						first ? this.preferences.insert_space_before_pointer_in_declarator_list
+								: this.preferences.insert_space_before_pointer_in_declarator_list
+										|| this.preferences.insert_space_after_comma_in_declarator_list,
+						this.preferences.insert_space_after_pointer_in_declarator_list);
+				tailFormatter.run();
+			} else
+				scribe.printNextToken(token, false);
+		}
+	}
+
 	private void formatPointers(IASTPointerOperator[] pointers) {
 		for (IASTPointerOperator pointer : pointers) {
 			if (scribe.printComment()) {
@@ -1641,9 +1672,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 			if (pointer instanceof ICPPASTReferenceOperator) {
 				if (((ICPPASTReferenceOperator) pointer).isRValueReference()) {
-					scribe.printNextToken(Token.tAND, false);
+					alignPointer(pointers, pointer, Token.tAND);
 				} else {
-					scribe.printNextToken(Token.tAMPER, false);
+					alignPointer(pointers, pointer, Token.tAMPER);
 				}
 			} else if (pointer instanceof ICPPASTPointerToMember) {
 				final ICPPASTPointerToMember ptrToMember = (ICPPASTPointerToMember) pointer;
@@ -1656,7 +1687,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					scribe.space();
 				}
 			} else {
-				scribe.printNextToken(Token.tSTAR, false);
+				alignPointer(pointers, pointer, Token.tSTAR);
 				if (skipConstVolatileRestrict()) {
 					scribe.space();
 				}

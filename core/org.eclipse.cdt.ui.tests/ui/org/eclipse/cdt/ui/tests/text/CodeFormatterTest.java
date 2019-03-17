@@ -434,7 +434,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//int main(int argc, char const int * argv[]) { try { for (int i = 1; i < argc; ++i) { } return 0; } catch (float e) { return 1; } catch (...) { return 2; } }
 
-	//int main(int argc, char const int * argv[]) {
+	//int main(int argc, char const int* argv[]) {
 	//	try {
 	//		for (int i = 1; i < argc; ++i) {
 	//		}
@@ -600,9 +600,9 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//static void* h();
 	//int* (*a) [2];
 
-	//static void *f() {
+	//static void* f() {
 	//}
-	//static void * g();
+	//static void* g();
 	//static void* h();
 	//int* (*a)[2];
 	public void testSpaceBetweenDeclSpecAndDeclarator() throws Exception {
@@ -1074,7 +1074,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//void bar(const TP_SMALLINT intVal) { }
 
 	//#define TP_SMALLINT int32_t
-	//void foo(const TP_SMALLINT &intVal) {
+	//void foo(const TP_SMALLINT& intVal) {
 	//}
 	//void bar(const TP_SMALLINT intVal) {
 	//}
@@ -1590,7 +1590,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//#define FOREVER1 for(;;)
 	//#define FOREVER2 while(1)
 	//
-	//int main(int argc, char **argv) {
+	//int main(int argc, char** argv) {
 	//	FOREVER1 {
 	//		doSomething();
 	//	}
@@ -2255,8 +2255,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//void extend_terminal_bond_to_label(vector<atom_t> &atom, const vector<letters_t> &letters, int n_letters, const vector<bond_t> &bond, int n_bond, const vector<label_t> &label, int n_label, double avg, double maxh, double max_dist_double_bond);
 
-	//void extend_terminal_bond_to_label(vector<atom_t> &atom, const vector<letters_t> &letters, int n_letters,
-	//                                   const vector<bond_t> &bond, int n_bond, const vector<label_t> &label, int n_label,
+	//void extend_terminal_bond_to_label(vector<atom_t>& atom, const vector<letters_t>& letters, int n_letters,
+	//                                   const vector<bond_t>& bond, int n_bond, const vector<label_t>& label, int n_label,
 	//                                   double avg, double maxh, double max_dist_double_bond);
 	public void testWrappingOfTemplateIdAsParameterType_Bug325783() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
@@ -2287,10 +2287,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//void extend_terminal_bond_to_label(vector<atom_t> &atom, const vector<letters_t> &letters, int n_letters, const vector<bond_t> &bond, int n_bond, const vector<label_t> &label, int n_label, double avg, double maxh, double max_dist_double_bond);
 
-	//void extend_terminal_bond_to_label(vector<atom_t> &atom,
-	//                                   const vector<letters_t> &letters,
-	//                                   int n_letters, const vector<bond_t> &bond,
-	//                                   int n_bond, const vector<label_t> &label,
+	//void extend_terminal_bond_to_label(vector<atom_t>& atom,
+	//                                   const vector<letters_t>& letters,
+	//                                   int n_letters, const vector<bond_t>& bond,
+	//                                   int n_bond, const vector<label_t>& label,
 	//                                   int n_label, double avg, double maxh,
 	//                                   double max_dist_double_bond);
 	public void testWrappingOfTemplateIdAsParameterType_Bug325783_2() throws Exception {
@@ -3834,12 +3834,12 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//class data {
 	//public:
-	//	template<class x> bool operator<(x const &n) const {
+	//	template<class x> bool operator<(x const& n) const {
 	//		return n < 0;
 	//	}
 	//};
 	////explicit instantiation
-	//template bool data::operator< <int>(int const &) const;
+	//template bool data::operator< <int>(int const&) const;
 	public void testTemplateInstantiationOperatorLesser_Bug540252() throws Exception {
 		assertFormatterResult();
 	}

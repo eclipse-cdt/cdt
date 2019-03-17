@@ -312,7 +312,7 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 	//void foo(int *parameter) {
 	//}
 
-	//void foo(int **parameter) {
+	//void foo(int** parameter) {
 	//}
 	public void testPointerParameter() throws Exception {
 		compareResult(new ASTVisitor() {

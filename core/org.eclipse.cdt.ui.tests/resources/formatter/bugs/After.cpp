@@ -21,7 +21,7 @@ AClass::AClass(int x) throw (int) :
 	}
 }
 // keep space between decl spec and declarator
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 }
 // handling of string concat
 char* s1 = "this " "is " "one " "string.";

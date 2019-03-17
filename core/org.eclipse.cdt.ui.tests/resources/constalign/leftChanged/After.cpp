@@ -1,7 +1,7 @@
 
-void f(const int * const);
+void f(const int* const);
 
-void f(const int * const) {
+void f(const int* const) {
 
 }
 

@@ -8,9 +8,9 @@ struct SimpleStruct {
 	float floatNum;
 };
 
-void SimpleStruct_construct(struct SimpleStruct * const s);
+void SimpleStruct_construct(struct SimpleStruct* const s);
 
-int SimpleStruct_doSomething(const struct SimpleStruct * const s);
+int SimpleStruct_doSomething(const struct SimpleStruct* const s);
 
 #endif /* SIMPLE_H */
 
@@ -34,14 +34,14 @@ const SimpleStruct array[] = { { SIZEOF(simpleStruct, num),
 
 //          single line outside scope
 
-void SimpleStruct_construct(struct SimpleStruct * const s) {
+void SimpleStruct_construct(struct SimpleStruct* const s) {
 	// single line
 	s->num = 1;
 	s->name = "boo";
 	s->floatNum = 1.5;
 }
 
-int ConnectParams_doSomething(const struct SimpleStruct * const s) {
+int ConnectParams_doSomething(const struct SimpleStruct* const s) {
 	/*
 	 * multiline
 	 */

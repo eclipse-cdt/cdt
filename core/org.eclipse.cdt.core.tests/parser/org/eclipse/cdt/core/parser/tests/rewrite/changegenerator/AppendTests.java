@@ -292,7 +292,7 @@ public class AppendTests extends ChangeGeneratorTest {
 	//void foo(int parameter) {
 	//}
 
-	//void foo(int *parameter) {
+	//void foo(int* parameter) {
 	//}
 	public void testPointerToParamter() throws Exception {
 		compareResult(new ASTVisitor() {
@@ -323,7 +323,7 @@ public class AppendTests extends ChangeGeneratorTest {
 	//void foo(int *parameter) {
 	//}
 
-	//void foo(int **parameter) {
+	//void foo(int** parameter) {
 	//}
 	public void testPointerToPointerParameter() throws Exception {
 		compareResult(new ASTVisitor() {

@@ -177,7 +177,8 @@ public final class WhiteSpaceOptions {
 
 	private final PreviewSnippet METHOD_DECL_PREVIEW = new PreviewSnippet(CodeFormatter.K_CLASS_BODY_DECLARATIONS,
 			"void foo() throw(E0, E1) {}" + //$NON-NLS-1$
-					"void bar(int x, int y) throw() {}"); //$NON-NLS-1$
+					"void bar(int x, int y) throw() {}" + //$NON-NLS-1$
+					"void* baz(int* x, int& y) {return 0;}"); //$NON-NLS-1$
 
 	private final PreviewSnippet INITIALIZER_LIST_PREVIEW = new PreviewSnippet(CodeFormatter.K_STATEMENTS,
 			"int array[]= {1, 2, 3};"); //$NON-NLS-1$
@@ -241,6 +242,13 @@ public final class WhiteSpaceOptions {
 		final ArrayList<InnerNode> roots = new ArrayList<>();
 
 		InnerNode element;
+
+		element = new InnerNode(null, workingValues, FormatterMessages.WhiteSpaceOptions_pointer);
+		createBeforePointerTree(workingValues,
+				createChild(element, workingValues, FormatterMessages.WhiteSpaceOptions_before));
+		createAfterPointerTree(workingValues,
+				createChild(element, workingValues, FormatterMessages.WhiteSpaceOptions_after));
+		roots.add(element);
 
 		element = new InnerNode(null, workingValues, FormatterMessages.WhiteSpaceOptions_opening_paren);
 		createBeforeOpenParenTree(workingValues,
@@ -343,6 +351,12 @@ public final class WhiteSpaceOptions {
 		final ArrayList<InnerNode> roots = new ArrayList<>();
 
 		InnerNode parent;
+
+		parent = createParentNode(roots, workingValues, FormatterMessages.WhiteSpaceOptions_before_pointer);
+		createBeforePointerTree(workingValues, parent);
+
+		parent = createParentNode(roots, workingValues, FormatterMessages.WhiteSpaceOptions_after_pointer);
+		createAfterPointerTree(workingValues, parent);
 
 		parent = createParentNode(roots, workingValues, FormatterMessages.WhiteSpaceOptions_before_opening_paren);
 		createBeforeOpenParenTree(workingValues, parent);
@@ -675,6 +689,19 @@ public final class WhiteSpaceOptions {
 				PAREN_EXPR_PREVIEW);
 	}
 
+	private void createBeforePointerTree(Map<String, String> workingValues, final InnerNode parent) {
+
+		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_function,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_POINTER_IN_METHOD_DECLARATION,
+				METHOD_DECL_PREVIEW);
+	}
+
+	private void createAfterPointerTree(Map<String, String> workingValues, final InnerNode parent) {
+		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_function,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_POINTER_IN_METHOD_DECLARATION,
+				METHOD_DECL_PREVIEW);
+	}
+
 	private void createBeforeOpenParenTree(Map<String, String> workingValues, final InnerNode parent) {
 
 		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_catch,
@@ -955,6 +982,12 @@ public final class WhiteSpaceOptions {
 				METHOD_DECL_PREVIEW);
 		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_opening_brace,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_METHOD_DECLARATION,
+				METHOD_DECL_PREVIEW);
+		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_pointer,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_POINTER_IN_METHOD_DECLARATION,
+				METHOD_DECL_PREVIEW);
+		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_after_pointer,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_POINTER_IN_METHOD_DECLARATION,
 				METHOD_DECL_PREVIEW);
 
 		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_comma_in_params,

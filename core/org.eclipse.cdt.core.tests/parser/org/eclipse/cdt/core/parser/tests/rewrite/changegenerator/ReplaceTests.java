@@ -526,10 +526,10 @@ public class ReplaceTests extends ChangeGeneratorTest {
 		});
 	}
 
-	//void foo(int &parameter) {
+	//void foo(int& parameter) {
 	//}
 
-	//void foo(int *parameter) {
+	//void foo(int* parameter) {
 	//}
 	public void testPointerInParameter() throws Exception {
 		compareResult(new ASTVisitor() {

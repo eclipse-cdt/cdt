@@ -1965,6 +1965,32 @@ public class DefaultCodeFormatterConstants {
 			+ ".formatter.insert_space_before_opening_brace_in_method_declaration"; //$NON-NLS-1$
 	/**
 	 * <pre>
+	 * FORMATTER / Option to insert a space before a pointer in a method declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_pointer_in_method_declaration"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.7
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_POINTER_IN_METHOD_DECLARATION = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_before_pointer_in_method_declaration"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space after a pointer in a method declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_pointer_in_method_declaration"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.7
+	 */
+	public static final String FORMATTER_INSERT_SPACE_AFTER_POINTER_IN_METHOD_DECLARATION = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_after_pointer_in_method_declaration"; //$NON-NLS-1$
+	/**
+	 * <pre>
 	 * FORMATTER / Option to insert a space before the opening brace in a switch statement
 	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_brace_in_switch"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }

@@ -225,6 +225,14 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_before_opening_brace_in_initializer_list;
 	public boolean insert_space_before_opening_brace_in_block;
 	public boolean insert_space_before_opening_brace_in_method_declaration;
+	/**
+	 * @since 6.7
+	 */
+	public boolean insert_space_before_pointer_in_method_declaration;
+	/**
+	 * @since 6.7
+	 */
+	public boolean insert_space_after_pointer_in_method_declaration;
 	public boolean insert_space_before_opening_brace_in_type_declaration;
 	public boolean insert_space_before_opening_brace_in_namespace_declaration;
 	public boolean insert_space_before_opening_bracket;
@@ -625,6 +633,11 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_METHOD_DECLARATION,
 				this.insert_space_before_opening_brace_in_method_declaration ? CCorePlugin.INSERT
 						: CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_POINTER_IN_METHOD_DECLARATION,
+				this.insert_space_before_pointer_in_method_declaration ? CCorePlugin.INSERT
+						: CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_POINTER_IN_METHOD_DECLARATION,
+				this.insert_space_after_pointer_in_method_declaration ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_TYPE_DECLARATION,
 				this.insert_space_before_opening_brace_in_type_declaration ? CCorePlugin.INSERT
 						: CCorePlugin.DO_NOT_INSERT);
@@ -1802,6 +1815,18 @@ public class DefaultCodeFormatterOptions {
 			this.insert_space_before_opening_brace_in_method_declaration = CCorePlugin.INSERT
 					.equals(insertSpaceBeforeOpeningBraceInMethodDeclarationOption);
 		}
+		final Object insertSpaceBeforePointerInMethodDeclarationOption = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_POINTER_IN_METHOD_DECLARATION);
+		if (insertSpaceBeforePointerInMethodDeclarationOption != null) {
+			this.insert_space_before_pointer_in_method_declaration = CCorePlugin.INSERT
+					.equals(insertSpaceBeforePointerInMethodDeclarationOption);
+		}
+		final Object insertSpaceAfterPointerInMethodDeclarationOption = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_POINTER_IN_METHOD_DECLARATION);
+		if (insertSpaceAfterPointerInMethodDeclarationOption != null) {
+			this.insert_space_after_pointer_in_method_declaration = CCorePlugin.INSERT
+					.equals(insertSpaceAfterPointerInMethodDeclarationOption);
+		}
 		final Object insertSpaceBeforeOpeningBraceInTypeDeclarationOption = settings
 				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_TYPE_DECLARATION);
 		if (insertSpaceBeforeOpeningBraceInTypeDeclarationOption != null) {
@@ -2206,6 +2231,8 @@ public class DefaultCodeFormatterOptions {
 		this.insert_space_before_opening_brace_in_initializer_list = true;
 		this.insert_space_before_opening_brace_in_block = true;
 		this.insert_space_before_opening_brace_in_method_declaration = true;
+		this.insert_space_before_pointer_in_method_declaration = false;
+		this.insert_space_after_pointer_in_method_declaration = true;
 		this.insert_space_before_opening_brace_in_switch = true;
 		this.insert_space_before_opening_brace_in_type_declaration = true;
 		this.insert_space_before_opening_brace_in_namespace_declaration = true;

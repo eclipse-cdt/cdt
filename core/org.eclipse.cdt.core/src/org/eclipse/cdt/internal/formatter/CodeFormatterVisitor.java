@@ -1628,6 +1628,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private void formatPointers(IASTPointerOperator[] pointers) {
+		TrailingTokenFormatter tailFormatter = null;
 		for (IASTPointerOperator pointer : pointers) {
 			if (scribe.printComment()) {
 				scribe.space();
@@ -1637,9 +1638,15 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 			if (pointer instanceof ICPPASTReferenceOperator) {
 				if (((ICPPASTReferenceOperator) pointer).isRValueReference()) {
-					scribe.printNextToken(Token.tAND, false);
+					tailFormatter = new TrailingTokenFormatter(Token.tAND, pointer.getParent(),
+							this.preferences.insert_space_before_pointer_in_method_declaration,
+							this.preferences.insert_space_after_pointer_in_method_declaration);
+					tailFormatter.run();
 				} else {
-					scribe.printNextToken(Token.tAMPER, false);
+					tailFormatter = new TrailingTokenFormatter(Token.tAMPER, pointer.getParent(),
+							this.preferences.insert_space_before_pointer_in_method_declaration,
+							this.preferences.insert_space_after_pointer_in_method_declaration);
+					tailFormatter.run();
 				}
 			} else if (pointer instanceof ICPPASTPointerToMember) {
 				final ICPPASTPointerToMember ptrToMember = (ICPPASTPointerToMember) pointer;
@@ -1647,12 +1654,18 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				if (name != null) {
 					name.accept(this);
 				}
-				scribe.printNextToken(Token.tSTAR, false);
+				tailFormatter = new TrailingTokenFormatter(Token.tSTAR, pointer.getParent(),
+						this.preferences.insert_space_before_pointer_in_method_declaration,
+						this.preferences.insert_space_after_pointer_in_method_declaration);
+				tailFormatter.run();
 				if (skipConstVolatileRestrict()) {
 					scribe.space();
 				}
 			} else {
-				scribe.printNextToken(Token.tSTAR, false);
+				tailFormatter = new TrailingTokenFormatter(Token.tSTAR, pointer.getParent(),
+						this.preferences.insert_space_before_pointer_in_method_declaration,
+						this.preferences.insert_space_after_pointer_in_method_declaration);
+				tailFormatter.run();
 				if (skipConstVolatileRestrict()) {
 					scribe.space();
 				}

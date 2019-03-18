@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "be2a628e_45d6f770",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 4
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2019-03-18T22:36:12Z",
+      "side": 1,
+      "message": "Should probably change the to 9.7 at this point",
+      "range": {
+        "startLine": 71,
+        "startChar": 19,
+        "endLine": 71,
+        "endChar": 94
+      },
+      "revId": "1f107dfa15b55c3526ad4ff83b1ecde78105db25",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

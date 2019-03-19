@@ -16,6 +16,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -391,8 +392,15 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	@Override
 	public boolean isNoReturn() {
 		ICPPASTFunctionDeclarator fdecl = getFirstFunctionDtor();
-		if (fdecl != null) {
-			return AttributeUtil.hasNoreturnAttribute(fdecl);
+		if (fdecl == null) {
+			return false;
+		}
+		if (AttributeUtil.hasNoreturnAttribute(fdecl)) {
+			return true;
+		}
+		IASTNode parent = fdecl.getParent();
+		if (parent instanceof IASTAttributeOwner) {
+			return AttributeUtil.hasNoreturnAttribute((IASTAttributeOwner) parent);
 		}
 		return false;
 	}

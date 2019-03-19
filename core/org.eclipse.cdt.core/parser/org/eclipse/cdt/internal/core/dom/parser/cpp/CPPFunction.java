@@ -734,7 +734,10 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 	@Override
 	public boolean isNoReturn() {
-		ICPPASTFunctionDeclarator dtor = getPreferredDtor();
+		return isNoReturn(getPreferredDtor());
+	}
+
+	public static boolean isNoReturn(ICPPASTFunctionDeclarator dtor) {
 		if (dtor == null) {
 			return false;
 		}

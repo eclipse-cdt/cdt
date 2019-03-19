@@ -36,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
-import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -390,11 +389,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 
 	@Override
 	public boolean isNoReturn() {
-		ICPPASTFunctionDeclarator fdecl = getFirstFunctionDtor();
-		if (fdecl != null) {
-			return AttributeUtil.hasNoreturnAttribute(fdecl);
-		}
-		return false;
+		return CPPFunction.isNoReturn(getFirstFunctionDtor());
 	}
 
 	private IASTDeclarator getDeclaratorByName(IASTNode node) {

@@ -487,4 +487,15 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testTemplateFunctionReturn_509751b() throws Exception {
 		checkSampleAboveCpp();
 	}
+
+	//	template <typename T>
+	//	[[noreturn]] void foo(const T& e) {
+	//		throw e;
+	//	}
+	//	int bar() {
+	//		foo<int>(5);
+	//	}
+	public void testTemplateFunctionNoReturn() throws Exception {
+		checkSampleAboveCpp();
+	}
 }

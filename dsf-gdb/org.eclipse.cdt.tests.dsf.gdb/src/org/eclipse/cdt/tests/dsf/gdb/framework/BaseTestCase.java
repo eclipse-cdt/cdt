@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -326,7 +327,17 @@ public class BaseTestCase {
 		ILaunch[] launches = launchManager.getLaunches();
 		for (ILaunch launch : launches) {
 			if (!launch.isTerminated()) {
-				fail("Something has gone wrong, there is an unterminated launch from a previous test!");
+				ILaunchConfiguration cause = launch.getLaunchConfiguration();
+				if (cause == null) {
+					fail("Something has gone wrong, there is an unterminated launch from a previous test!");
+				} else {
+					fail(MessageFormat.format(
+							"Something has gone wrong, there is an unterminated launch ({0}) from a previous test!",
+							cause.getName()));
+					System.err.println(MessageFormat.format(
+							"Something has gone wrong, there is an unterminated launch ({0}) from a previous test!",
+							cause.getName()));
+				}
 			}
 		}
 		if (launches.length > 0) {

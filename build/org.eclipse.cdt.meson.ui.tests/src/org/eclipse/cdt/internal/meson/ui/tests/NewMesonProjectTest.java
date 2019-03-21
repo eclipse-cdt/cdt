@@ -43,6 +43,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -126,6 +127,7 @@ public class NewMesonProjectTest {
 	}
 
 	@Test
+	@Ignore
 	public void buildMesonProject() throws Exception {
 		String projectName = "MesonTestProj";
 		// Make sure the project indexer completes. At that point we're stable.

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fd948875_1c8eb343",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/implementmethod/ImplementMethodRefactoring.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 356,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-03-21T06:05:30Z",
+      "side": 1,
+      "message": "before final merge we need to change the check here, it must be ≥ 0",
+      "range": {
+        "startLine": 356,
+        "startChar": 4,
+        "endLine": 356,
+        "endChar": 18
+      },
+      "revId": "4cb1151ebe905f665117427455eea73d1a560147",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

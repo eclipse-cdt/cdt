@@ -72,6 +72,7 @@ import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 @Intermittent(repetition = 3)
+@Ignore
 public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase {
 	public @Rule IntermittentRule intermittentRule = new IntermittentRule();
 	protected static final String EXEC_NAME = "LaunchConfigurationAndRestartTestApp.exe";

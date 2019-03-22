@@ -4081,6 +4081,38 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+	}
+
+	//int main() {
+	//	auto f = []() {
+	//
+	//		for(int c1 = 0; c1 < 3; c1 ++) {
+	//			for(int i = 0; i < 5; i ++) {
+	//				for(int c2 = 0; c2 < 3; c2 ++) {
+	//					// keep me here
+	//				}
+	//			}
+	//		}
+	//	};
+	//	f();
+	//	return 0;
+	//}
+
+	//int main() {
+	//	auto f = []() {
+	//
+	//		for (int c1 = 0; c1 < 3; c1++) {
+	//			for (int i = 0; i < 5; i++) {
+	//				for (int c2 = 0; c2 < 3; c2++) {
+	//					// keep me here
+	//				}
+	//			}
+	//		}
+	//	};
+	//	f();
+	//	return 0;
+	//}
+	public void testAlignmentOfLambda_Bug500000() throws Exception {
 		assertFormatterResult();
 	}
 }

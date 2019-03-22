@@ -412,6 +412,17 @@ public class LineWrappingTabPage extends FormatterTabPage {
 			FormatterMessages.LineWrappingTabPage_throws_clause,
 			FormatterMessages.LineWrappingTabPage_throws_clause_lowercase);
 
+	private final Category fLambdaCategory = new Category(
+			DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_LAMBDA_EXPRESSION, "int foo() {" + //$NON-NLS-1$
+					"  auto f = [](){for(int c1 = 0; c1 < 3; c1 ++) {\n" + //$NON-NLS-1$
+					"			for(int i = 0; i < 5; i ++) {\n" + //$NON-NLS-1$
+					"				for(int c2 = 0; c2 < 3; c2 ++) {\n" + //$NON-NLS-1$
+					"				}\n" + //$NON-NLS-1$
+					"			}\n" + //$NON-NLS-1$
+					"		}};}", //$NON-NLS-1$
+			FormatterMessages.LineWrappingTabPage_lambda_expression,
+			FormatterMessages.LineWrappingTabPage_lambda_expression_lowercase);
+
 	private final Category fConstructorInitializerListCategory = new Category(
 			DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONSTRUCTOR_INITIALIZER_LIST, "class Point {" + //$NON-NLS-1$
 					"public:" + //$NON-NLS-1$
@@ -638,6 +649,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		methodDeclarations.children.add(fMethodDeclarationsParametersCategory);
 		methodDeclarations.children.add(fMethodThrowsClauseCategory);
 		methodDeclarations.children.add(fConstructorInitializerListCategory);
+		methodDeclarations.children.add(fLambdaCategory);
 
 		final Category enumDeclarations = new Category(FormatterMessages.LineWrappingTabPage_enum_decls,
 				FormatterMessages.LineWrappingTabPage_enum_decls_lowercase);

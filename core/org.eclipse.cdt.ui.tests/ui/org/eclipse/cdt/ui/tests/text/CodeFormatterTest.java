@@ -3903,4 +3903,37 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testFormmatterWithMacroFuncStyle_Bug475349() throws Exception {
 		assertFormatterResult();
 	}
+	
+	//int main() {
+	//	auto f = []() {
+	//
+	//		for(int c1 = 0; c1 < 3; c1 ++) {
+	//			for(int i = 0; i < 5; i ++) {
+	//				for(int c2 = 0; c2 < 3; c2 ++) {
+	//					// keep me here
+	//				}
+	//			}
+	//		}
+	//	};
+	//	f();
+	//	return 0;
+	//}
+
+	//int main() {
+	//	auto f = []() {
+	//
+	//		for (int c1 = 0; c1 < 3; c1++) {
+	//			for (int i = 0; i < 5; i++) {
+	//				for (int c2 = 0; c2 < 3; c2++) {
+	//					// keep me here
+	//				}
+	//			}
+	//		}
+	//	};
+	//	f();
+	//	return 0;
+	//}
+	public void testAlignmentOfLambda_Bug500000() throws Exception {
+		assertFormatterResult();
+	}
 }

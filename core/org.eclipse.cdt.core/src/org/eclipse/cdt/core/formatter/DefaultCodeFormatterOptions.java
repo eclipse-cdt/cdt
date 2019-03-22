@@ -79,6 +79,7 @@ public class DefaultCodeFormatterOptions {
 	public int alignment_for_parameters_in_method_declaration;
 	public int alignment_for_throws_clause_in_method_declaration;
 	public int alignment_for_constructor_initializer_list;
+	public int alignment_for_lambda_expression;
 
 	//	public boolean align_type_members_on_columns;
 
@@ -193,6 +194,8 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_after_question_in_conditional;
 	public boolean insert_space_after_semicolon_in_for;
 	public boolean insert_space_after_unary_operator;
+	public boolean insert_space_after_lambda_return;
+	public boolean insert_space_before_lambda_return;
 	public boolean insert_space_before_assignment_operator;
 	public boolean insert_space_before_binary_operator;
 	public boolean insert_space_before_closing_angle_bracket_in_template_arguments;
@@ -340,6 +343,8 @@ public class DefaultCodeFormatterOptions {
 				getAlignment(this.alignment_for_constructor_initializer_list));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION,
 				getAlignment(this.alignment_for_throws_clause_in_method_declaration));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_LAMBDA_EXPRESSION,
+				getAlignment(this.alignment_for_lambda_expression));
 		//		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGN_TYPE_MEMBERS_ON_COLUMNS, this.align_type_members_on_columns ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_AFTER_IMPORTS, Integer.toString(this.blank_lines_after_includes));
 		//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_FIELD, Integer.toString(this.blank_lines_before_field));
@@ -550,6 +555,10 @@ public class DefaultCodeFormatterOptions {
 				this.insert_space_after_semicolon_in_for ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_UNARY_OPERATOR,
 				this.insert_space_after_unary_operator ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_LAMBDA_RETURN,
+				this.insert_space_after_lambda_return ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_LAMBDA_RETURN,
+				this.insert_space_before_lambda_return ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_ASSIGNMENT_OPERATOR,
 				this.insert_space_before_assignment_operator ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_BINARY_OPERATOR,
@@ -952,6 +961,17 @@ public class DefaultCodeFormatterOptions {
 				this.alignment_for_throws_clause_in_method_declaration = Alignment.M_COMPACT_SPLIT;
 			} catch (ClassCastException e) {
 				this.alignment_for_throws_clause_in_method_declaration = Alignment.M_COMPACT_SPLIT;
+			}
+		}
+		final Object alignmentForLambdaExpressionOption = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_LAMBDA_EXPRESSION);
+		if (alignmentForLambdaExpressionOption != null) {
+			try {
+				this.alignment_for_lambda_expression = Integer.parseInt((String) alignmentForLambdaExpressionOption);
+			} catch (NumberFormatException e) {
+				this.alignment_for_lambda_expression = Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_BY_ONE;
+			} catch (ClassCastException e) {
+				this.alignment_for_lambda_expression = Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_BY_ONE;
 			}
 		}
 		//		final Object alignTypeMembersOnColumnsOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGN_TYPE_MEMBERS_ON_COLUMNS);
@@ -1617,6 +1637,16 @@ public class DefaultCodeFormatterOptions {
 		if (insertSpaceAfterUnaryOperatorOption != null) {
 			this.insert_space_after_unary_operator = CCorePlugin.INSERT.equals(insertSpaceAfterUnaryOperatorOption);
 		}
+		final Object insertSpaceAfterLambdaReturnOption = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_LAMBDA_RETURN);
+		if (insertSpaceAfterLambdaReturnOption != null) {
+			this.insert_space_after_lambda_return = CCorePlugin.INSERT.equals(insertSpaceAfterLambdaReturnOption);
+		}
+		final Object insertSpaceBeforeLambdaReturnOption = settings
+				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_LAMBDA_RETURN);
+		if (insertSpaceBeforeLambdaReturnOption != null) {
+			this.insert_space_before_lambda_return = CCorePlugin.INSERT.equals(insertSpaceBeforeLambdaReturnOption);
+		}
 		final Object insertSpaceBeforeAssignmentOperatorOption = settings
 				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_ASSIGNMENT_OPERATOR);
 		if (insertSpaceBeforeAssignmentOperatorOption != null) {
@@ -2122,6 +2152,7 @@ public class DefaultCodeFormatterOptions {
 		this.alignment_for_parameters_in_method_declaration = Alignment.M_COMPACT_SPLIT;
 		//		this.alignment_for_selector_in_method_invocation = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_throws_clause_in_method_declaration = Alignment.M_COMPACT_SPLIT;
+		this.alignment_for_lambda_expression = Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_BY_ONE;
 		//		this.align_type_members_on_columns = false;
 		//		this.blank_lines_after_includes = 1;
 		//		this.blank_lines_before_field = 1;
@@ -2219,6 +2250,8 @@ public class DefaultCodeFormatterOptions {
 		this.insert_space_after_question_in_conditional = true;
 		this.insert_space_after_semicolon_in_for = true;
 		this.insert_space_after_unary_operator = false;
+		this.insert_space_after_lambda_return = true;
+		this.insert_space_before_lambda_return = true;
 		this.insert_space_before_assignment_operator = true;
 		this.insert_space_before_binary_operator = true;
 		this.insert_space_before_closing_angle_bracket_in_template_arguments = false;

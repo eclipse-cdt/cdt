@@ -4152,4 +4152,75 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testNamespacesWithInactiveSections_Bug405049() throws Exception {
 		assertFormatterResult();
 	}
+
+	//int main() {
+	//	auto f = []() {
+	//
+	//		for(int c1 = 0; c1 < 3; c1 ++) {
+	//			for(int i = 0; i < 5; i ++) {
+	//				for(int c2 = 0; c2 < 3; c2 ++) {
+	//					// keep me here
+	//				}
+	//			}
+	//		}
+	//	};
+	//	f();
+	//	return 0;
+	//}
+
+	//int main() {
+	//	auto f = []() {
+	//
+	//		for (int c1 = 0; c1 < 3; c1++) {
+	//			for (int i = 0; i < 5; i++) {
+	//				for (int c2 = 0; c2 < 3; c2++) {
+	//					// keep me here
+	//				}
+	//			}
+	//		}
+	//	};
+	//	f();
+	//	return 0;
+	//}
+	public void testAlignmentOfLambda1_Bug500000() throws Exception {
+		assertFormatterResult();
+	}
+
+	//int main() {
+	//	int n = 0;
+	//	auto f = [=]()mutable{n= 20;};
+	//	f();
+	//	return 0;
+	//}
+
+	//int main() {
+	//	int n = 0;
+	//	auto f = [=]() mutable {
+	//		n = 20;
+	//	};
+	//	f();
+	//	return 0;
+	//}
+	public void testAlignmentOfLambda2_Bug500000() throws Exception {
+		assertFormatterResult();
+	}
+
+	//int main() {
+	//	int n = 0;
+	//	auto f = [=]()throw(int)[[deprecated]]{throw 1;};
+	//	f();
+	//	return 0;
+	//}
+
+	//int main() {
+	//	int n = 0;
+	//	auto f = [=]() throw (int) [[deprecated]] {
+	//		throw 1;
+	//	};
+	//	f();
+	//	return 0;
+	//}
+	public void testAlignmentOfLambda3_Bug500000() throws Exception {
+		assertFormatterResult();
+	}
 }

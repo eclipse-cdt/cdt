@@ -338,6 +338,17 @@ public class DefaultCodeFormatterConstants {
 	 */
 	public static final String FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION = CCorePlugin.PLUGIN_ID
 			+ ".formatter.alignment_for_throws_clause_in_method_declaration"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option for alignment of lambda expression
+	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_lambda_expression"
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
+	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
+	 * </pre>
+	 * @see #createAlignmentValue(boolean, int, int)
+	 */
+	public static final String FORMATTER_ALIGNMENT_FOR_LAMBDA_EXPRESSION = CCorePlugin.PLUGIN_ID
+			+ ".formatter.alignment_for_lambda_expression"; //$NON-NLS-1$
 	//	/**
 	//	 * <pre>
 	//	 * FORMATTER / Option to add blank lines after #include directive
@@ -1528,6 +1539,30 @@ public class DefaultCodeFormatterConstants {
 	 */
 	public static final String FORMATTER_INSERT_SPACE_AFTER_UNARY_OPERATOR = CCorePlugin.PLUGIN_ID
 			+ ".formatter.insert_space_after_unary_operator"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space after lambda return
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_lambda_return"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_SPACE_AFTER_LAMBDA_RETURN = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_after_lambda_return"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space before lambda return
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_before_lambda_return"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_LAMBDA_RETURN = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_before_lambda_return"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space before an assignment operator

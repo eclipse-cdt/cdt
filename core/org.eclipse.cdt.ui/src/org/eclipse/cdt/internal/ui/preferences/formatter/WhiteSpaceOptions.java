@@ -179,6 +179,9 @@ public final class WhiteSpaceOptions {
 			"void foo() throw(E0, E1) {}" + //$NON-NLS-1$
 					"void bar(int x, int y) throw() {}"); //$NON-NLS-1$
 
+	private final PreviewSnippet LAMBDA_PREVIEW = new PreviewSnippet(CodeFormatter.K_CLASS_BODY_DECLARATIONS,
+			"void foo() { auto f = []()->int{return 0;};}"); //$NON-NLS-1$
+
 	private final PreviewSnippet INITIALIZER_LIST_PREVIEW = new PreviewSnippet(CodeFormatter.K_STATEMENTS,
 			"int array[]= {1, 2, 3};"); //$NON-NLS-1$
 
@@ -448,6 +451,7 @@ public final class WhiteSpaceOptions {
 		createClassTree(workingValues, declarations);
 		createDeclaratorListTree(workingValues, declarations);
 		//        createConstructorTree(workingValues, declarations);
+		createLambdaDeclTree(workingValues, declarations);
 		createMethodDeclTree(workingValues, declarations);
 		createExceptionSpecificationTree(workingValues, declarations);
 		createLabelTree(workingValues, declarations);
@@ -569,6 +573,8 @@ public final class WhiteSpaceOptions {
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_PREFIX_OPERATOR, OPERATOR_PREVIEW);
 		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_postfix_operator,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_POSTFIX_OPERATOR, OPERATOR_PREVIEW);
+		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_lambda_arrow_operator,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_LAMBDA_RETURN, LAMBDA_PREVIEW);
 	}
 
 	private void createBeforeClosingBracketTree(Map<String, String> workingValues, final InnerNode parent) {
@@ -775,6 +781,8 @@ public final class WhiteSpaceOptions {
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_PREFIX_OPERATOR, OPERATOR_PREVIEW);
 		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_postfix_operator,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_POSTFIX_OPERATOR, OPERATOR_PREVIEW);
+		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_lambda_arrow_operator,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_LAMBDA_RETURN, LAMBDA_PREVIEW);
 	}
 
 	private void createAfterOpenBracketTree(Map<String, String> workingValues, final InnerNode parent) {
@@ -921,6 +929,17 @@ public final class WhiteSpaceOptions {
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_POSTFIX_OPERATOR, OPERATOR_PREVIEW);
 		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_operators_after_postfix_operators,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_POSTFIX_OPERATOR, OPERATOR_PREVIEW);
+		return root;
+	}
+
+	private InnerNode createLambdaDeclTree(Map<String, String> workingValues, InnerNode parent) {
+		final InnerNode root = new InnerNode(parent, workingValues,
+				FormatterMessages.WhiteSpaceTabPage_lambda_expressions);
+
+		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_lambda_before_return,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_LAMBDA_RETURN, LAMBDA_PREVIEW);
+		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_lambda_after_return,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_LAMBDA_RETURN, LAMBDA_PREVIEW);
 		return root;
 	}
 

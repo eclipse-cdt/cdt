@@ -43,6 +43,9 @@ final class FormatterMessages extends NLS {
 	public static String WhiteSpaceTabPage_operators_after_prefix_operators;
 	public static String WhiteSpaceTabPage_operators_before_postfix_operators;
 	public static String WhiteSpaceTabPage_operators_after_postfix_operators;
+	public static String WhiteSpaceTabPage_lambda_expressions;
+	public static String WhiteSpaceTabPage_lambda_before_return;
+	public static String WhiteSpaceTabPage_lambda_after_return;
 	public static String WhiteSpaceTabPage_classes;
 	public static String WhiteSpaceTabPage_classes_before_opening_brace_of_a_class;
 	public static String WhiteSpaceTabPage_classes_before_colon_of_base_clause;
@@ -123,6 +126,7 @@ final class FormatterMessages extends NLS {
 	public static String WhiteSpaceOptions_unary_operator;
 	public static String WhiteSpaceOptions_prefix_operator;
 	public static String WhiteSpaceOptions_postfix_operator;
+	public static String WhiteSpaceOptions_lambda_arrow_operator;
 	public static String WhiteSpaceOptions_opening_paren;
 	public static String WhiteSpaceOptions_catch;
 	public static String WhiteSpaceOptions_for;
@@ -198,6 +202,7 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_parameters;
 	public static String LineWrappingTabPage_arguments;
 	public static String LineWrappingTabPage_throws_clause;
+	public static String LineWrappingTabPage_lambda_expression;
 	public static String LineWrappingTabPage_constructor_initializer_list;
 	public static String LineWrappingTabPage_enum_decls;
 	public static String LineWrappingTabPage_enumerator_list;
@@ -221,6 +226,7 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_parameters_lowercase;
 	public static String LineWrappingTabPage_arguments_lowercase;
 	public static String LineWrappingTabPage_throws_clause_lowercase;
+	public static String LineWrappingTabPage_lambda_expression_lowercase;
 	public static String LineWrappingTabPage_constructor_initializer_list_lowercase;
 	public static String LineWrappingTabPage_enum_decls_lowercase;
 	public static String LineWrappingTabPage_enumerator_list_lowercase;

@@ -32,6 +32,7 @@ public class Alignment {
 	public static final String CONDITIONAL_EXPRESSION = "conditionalExpression"; //$NON-NLS-1$
 	public static final String CONDITIONAL_EXPRESSION_CHAIN = "conditionalExpressionChain"; //$NON-NLS-1$
 	public static final String DECLARATION_INITIALIZER = "declarationInitializer"; //$NON-NLS-1$
+	public static final String LAMBDA_EXPRESSION = "lambdaExpression"; //$NON-NLS-1$
 	public static final String DESIGNATED_INITIALIZER = "designatedInitializer"; //$NON-NLS-1$
 	public static final String EXCEPTION_SPECIFICATION = "exceptionSpecification"; //$NON-NLS-1$
 	public static final String FIELD_REFERENCE = "fieldReference"; //$NON-NLS-1$

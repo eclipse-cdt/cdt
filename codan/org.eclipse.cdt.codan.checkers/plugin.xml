@@ -467,6 +467,21 @@
                markerType="org.eclipse.cdt.codan.core.codanProblem"
                messagePattern="%problem.messagePattern.CStyleCastProblem"
                name="%problem.name.CStyleCastProblem">
+          </problem>
+       </checker>
+       <checker
+            class="org.eclipse.cdt.codan.internal.checkers.FloatCompareChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.FloatCompareChecker"
+            name="%checker.name.FloatCompareChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="true"
+               defaultSeverity="Warning"
+               description="%problem.description.FloatCompareProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.FloatCompareProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.FloatCompareProblem"
+               name="%problem.name.FloatCompareProblem">
          </problem>
       </checker>
    </extension>

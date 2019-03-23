@@ -1733,7 +1733,7 @@ public class CPPVisitor extends ASTQueries {
 		return areEquivalentBindings(candidate, target, index);
 	}
 
-	private static boolean areEquivalentBindings(IBinding binding1, IBinding binding2, IIndex index) {
+	public static boolean areEquivalentBindings(IBinding binding1, IBinding binding2, IIndex index) {
 		if (binding1.equals(binding2)) {
 			return true;
 		}

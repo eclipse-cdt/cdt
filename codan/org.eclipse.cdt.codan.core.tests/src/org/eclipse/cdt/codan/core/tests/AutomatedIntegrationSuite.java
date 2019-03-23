@@ -26,6 +26,7 @@ import org.eclipse.cdt.codan.core.internal.checkers.CommentCheckerLineTests;
 import org.eclipse.cdt.codan.core.internal.checkers.CommentCheckerNestedTests;
 import org.eclipse.cdt.codan.core.internal.checkers.CopyrightCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.DecltypeAutoCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.FloatCompareCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.FormatStringCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.GotoStatementCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.NonVirtualDestructorCheckerTest;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.codan.core.internal.checkers.SuggestedParenthesisCheckerT
 import org.eclipse.cdt.codan.core.internal.checkers.SuspiciousSemicolonCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.SwitchCaseCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.UnusedSymbolInFileScopeCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.UsingInHeaderCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.VariablesCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.VirtualMethodCallCheckerTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.AssignmentInConditionQuickFixTest;
@@ -99,6 +101,8 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(VirtualMethodCallCheckerTest.class);
 		suite.addTestSuite(AssignmentOperatorCheckerTest.class);
 		suite.addTestSuite(VariablesCheckerTest.class);
+		suite.addTestSuite(UsingInHeaderCheckerTest.class);
+		suite.addTestSuite(FloatCompareCheckerTest.class);
 		// framework
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes

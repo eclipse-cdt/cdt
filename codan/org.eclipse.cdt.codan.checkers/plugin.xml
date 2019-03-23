@@ -564,5 +564,48 @@
                name="%problem.name.MissReferenceProblem">
          </problem>
       </checker>
+      <checker
+           class="org.eclipse.cdt.codan.internal.checkers.ClassMembersConstChecker"
+           id="org.eclipse.cdt.codan.internal.checkers.ClassMembersConst"
+           name="%checker.name.ClassMembersConst">
+        <problem
+              category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
+              defaultEnabled="false"
+              defaultSeverity="Error"
+              description="%problem.description.MemberCannotBeUsedInStatic"
+              id="org.eclipse.cdt.codan.internal.checkers.MemberCannotBeUsedInStatic"
+              markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
+              messagePattern="%problem.messagePattern.MemberCannotBeUsedInStatic"
+              name="%problem.name.MemberCannotBeUsedInStatic">
+        </problem>
+        <problem
+              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+              defaultEnabled="false"
+              defaultSeverity="Warning"
+              description="%problem.description.MethodShouldBeStatic"
+              id="org.eclipse.cdt.codan.internal.checkers.MethodShouldBeStatic"
+              messagePattern="%problem.messagePattern.MethodShouldBeStatic"
+              name="%problem.name.MethodShouldBeStatic">
+        </problem>
+        <problem
+              category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
+              defaultEnabled="false"
+              defaultSeverity="Error"
+              description="%problem.description.MemberCannotBeWritten"
+              id="org.eclipse.cdt.codan.internal.checkers.MemberCannotBeWritten"
+              markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
+              messagePattern="%problem.messagePattern.MemberCannotBeWritten"
+              name="%problem.name.MemberCannotBeWritten">
+        </problem>
+        <problem
+              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+              defaultEnabled="false"
+              defaultSeverity="Warning"
+              description="%problem.description.MethodShouldBeConst"
+              id="org.eclipse.cdt.codan.internal.checkers.MethodShouldBeConst"
+              messagePattern="%problem.messagePattern.MethodShouldBeConst"
+              name="%problem.name.MethodShouldBeConst">
+        </problem>
+     </checker>
    </extension>
 </plugin>

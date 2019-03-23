@@ -55,10 +55,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 /**
@@ -224,32 +224,12 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 
 		private IField getContainedEquivalentBinding(Iterable<IField> fields, IBinding binding, IIndex index) {
 			for (IField field : fields) {
-				if (areEquivalentBindings(binding, field, index)) {
+				if (CPPVisitor.areEquivalentBindings(binding, field, index)) {
 					return field;
 				}
 			}
 
 			return null;
-		}
-
-		private boolean areEquivalentBindings(IBinding binding1, IBinding binding2, IIndex index) {
-			if (binding1.equals(binding2)) {
-				return true;
-			}
-			if ((binding1 instanceof IIndexBinding) != (binding2 instanceof IIndexBinding) && index != null) {
-				if (binding1 instanceof IIndexBinding) {
-					binding2 = index.adaptBinding(binding2);
-				} else {
-					binding1 = index.adaptBinding(binding1);
-				}
-				if (binding1 == null || binding2 == null) {
-					return false;
-				}
-				if (binding1.equals(binding2)) {
-					return true;
-				}
-			}
-			return false;
 		}
 
 		/** Checks whether class member of the specified type should be initialized

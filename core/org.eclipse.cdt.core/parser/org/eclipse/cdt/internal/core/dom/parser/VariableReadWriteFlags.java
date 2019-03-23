@@ -137,7 +137,7 @@ public abstract class VariableReadWriteFlags {
 			if (indirection > 0 && node.getPropertyInParent() == IASTArraySubscriptExpression.ARRAY) {
 				return rwAnyNode(expr, indirection - 1);
 			}
-			return READ;
+			return READ | WRITE;
 		}
 		if (expr instanceof IASTConditionalExpression) {
 			if (node.getPropertyInParent() == IASTConditionalExpression.LOGICAL_CONDITION) {

@@ -454,5 +454,20 @@
                name="%problem.name.UsingInHeaderProblem">
          </problem>
       </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.CopyrightChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.CopyrightChecker"
+            name="%checker.name.CopyrightChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.CopyrightProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.CopyrightProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.CopyrightProblem"
+               name="%problem.name.CopyrightProblem">
+         </problem>
+      </checker>
    </extension>
 </plugin>

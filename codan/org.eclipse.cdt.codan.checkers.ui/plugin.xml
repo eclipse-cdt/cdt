@@ -79,6 +79,14 @@
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixFallthroughAttribute"
              problemId="org.eclipse.cdt.codan.internal.checkers.CaseBreakProblem">
        </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixAddDefaultSwitch"
+             problemId="org.eclipse.cdt.codan.internal.checkers.MissDefaultProblem">
+       </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixAddCaseSwitch"
+             problemId="org.eclipse.cdt.codan.internal.checkers.MissCaseProblem">
+       </resolution>
        <universalResolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixSuppressProblem">
        </universalResolution>

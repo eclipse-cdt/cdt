@@ -39,6 +39,7 @@ import org.eclipse.cdt.codan.core.internal.checkers.SuspiciousSemicolonCheckerTe
 import org.eclipse.cdt.codan.core.internal.checkers.SwitchCaseCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.UnusedSymbolInFileScopeCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.UsingInHeaderCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.VariableShadowingCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.VariablesCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.VirtualMethodCallCheckerTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.AssignmentInConditionQuickFixTest;
@@ -103,6 +104,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(VariablesCheckerTest.class);
 		suite.addTestSuite(UsingInHeaderCheckerTest.class);
 		suite.addTestSuite(FloatCompareCheckerTest.class);
+		suite.addTestSuite(VariableShadowingCheckerTest.class);
 		// framework
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes

@@ -499,5 +499,30 @@
                name="%problem.name.CopyrightProblem">
          </problem>
       </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.SwitchCaseChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.SwitchCaseChecker"
+            name="%checker.name.SwitchCaseChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.MissCaseProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.MissCaseProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.MissCaseProblem"
+               name="%problem.name.MissCaseProblem">
+         </problem>
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.MissDefaultProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.MissDefaultProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.MissDefaultProblem"
+               name="%problem.name.MissDefaultProblem">
+         </problem>
+      </checker>
    </extension>
 </plugin>

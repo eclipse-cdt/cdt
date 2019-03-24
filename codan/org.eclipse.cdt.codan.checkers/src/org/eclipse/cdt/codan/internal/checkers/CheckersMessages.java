@@ -40,6 +40,7 @@ public class CheckersMessages extends NLS {
 	public static String BlacklistChecker_list_item;
 	public static String UnusedSymbolInFileScopeChecker_CharacterSequence;
 	public static String UnusedSymbolInFileScopeChecker_Exceptions;
+	public static String SymbolShadowingChecker_CheckFunctionParameters;
 
 	public static String Copyright_regex;
 

@@ -39,6 +39,12 @@ public class CheckersMessages extends NLS {
 	public static String UnusedSymbolInFileScopeChecker_CharacterSequence;
 	public static String UnusedSymbolInFileScopeChecker_Exceptions;
 
+	public static String VariableShadowingChecker_at_byte;
+	public static String VariableShadowingChecker_at_line;
+	public static String VariableShadowingChecker_ParamMarkShadowedDescription;
+	public static String VariableShadowingChecker_shadowed_by;
+	public static String VariableShadowingChecker_shadowing;
+
 	static {
 		NLS.initializeMessages(CheckersMessages.class.getName(), CheckersMessages.class);
 	}

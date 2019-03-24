@@ -579,5 +579,19 @@
                name="%problem.name.BlacklistProblem">
          </problem>
       </checker>
+      <checker
+           class="org.eclipse.cdt.codan.internal.checkers.VariableShadowingChecker"
+           id="org.eclipse.cdt.codan.internal.checkers.VariableShadowing"
+           name="%checker.name.VariableShadowing">
+           <problem
+              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+              defaultEnabled="false"
+              defaultSeverity="Warning"
+              description="%problem.description.VariableShadowing"
+              id="org.eclipse.cdt.codan.internal.checkers.VariableShadowingProblem"
+              messagePattern="%problem.messagePattern.VariableShadowing"
+              name="%problem.name.VariableShadowing">
+	       </problem>
+       </checker>
    </extension>
 </plugin>

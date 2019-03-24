@@ -43,6 +43,8 @@ public class CheckersMessages extends NLS {
 
 	public static String Copyright_regex;
 
+	public static String ShallowCopyChecker_OnlyNew;
+
 	static {
 		NLS.initializeMessages(CheckersMessages.class.getName(), CheckersMessages.class);
 	}

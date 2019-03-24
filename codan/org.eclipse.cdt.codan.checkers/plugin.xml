@@ -601,6 +601,21 @@
                markerType="org.eclipse.cdt.codan.core.codanProblem"
                messagePattern="%problem.messagePattern.BlacklistProblem"
                name="%problem.name.BlacklistProblem">
+          </problem>
+      </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.ShallowCopyChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.ShallowCopyChecker"
+            name="%checker.name.ShallowCopyChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.ShallowCopyProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.ShallowCopyProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.ShallowCopyProblem"
+               name="%problem.name.ShallowCopyProblem">
          </problem>
       </checker>
       <checker

@@ -32,6 +32,7 @@ import org.eclipse.cdt.codan.core.internal.checkers.ReturnStyleCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.StatementHasNoEffectCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.SuggestedParenthesisCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.SuspiciousSemicolonCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.SwitchCaseCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.UnusedSymbolInFileScopeCheckerTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.AssignmentInConditionQuickFixTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixBreakTest;
@@ -84,6 +85,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(UnusedSymbolInFileScopeCheckerTest.class);
 		suite.addTestSuite(CommentCheckerLineTests.class);
 		suite.addTestSuite(CommentCheckerNestedTests.class);
+		suite.addTestSuite(SwitchCaseCheckerTest.class);
 		// framework
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes

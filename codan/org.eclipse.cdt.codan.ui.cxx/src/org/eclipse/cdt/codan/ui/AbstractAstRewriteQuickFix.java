@@ -15,6 +15,7 @@ package org.eclipse.cdt.codan.ui;
 
 import org.eclipse.cdt.codan.internal.ui.cxx.Activator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.core.resources.IMarker;
@@ -104,5 +105,22 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 		}
 		astName = getASTNameFromPositions(ast, region.getOffset(), region.getLength());
 		return astName;
+	}
+
+	/**
+	 * @since 3.5
+	 */
+	protected IASTNode getASTNodeFromPositions(IASTTranslationUnit ast, final int charStart, final int length) {
+		IASTNode node = ast.getNodeSelector(null).findEnclosingNode(charStart, length);
+		return node;
+	}
+
+	/**
+	 * @since 3.5
+	 */
+	protected IASTNode getASTNodeFromMarker(IMarker marker, IASTTranslationUnit ast) {
+		final int charStart = marker.getAttribute(IMarker.CHAR_START, -1);
+		final int length = marker.getAttribute(IMarker.CHAR_END, -1) - charStart;
+		return getASTNodeFromPositions(ast, charStart, length);
 	}
 }

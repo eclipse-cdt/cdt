@@ -628,5 +628,19 @@
                name="%problem.name.MultipleDeclarationsProblem">
          </problem>
       </checker>
+      <checker
+           class="org.eclipse.cdt.codan.internal.checkers.SymbolShadowingChecker"
+           id="org.eclipse.cdt.codan.internal.checkers.SymbolShadowing"
+           name="%checker.name.SymbolShadowing">
+           <problem
+              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+              defaultEnabled="false"
+              defaultSeverity="Warning"
+              description="%problem.description.SymbolShadowing"
+              id="org.eclipse.cdt.codan.internal.checkers.SymbolShadowingProblem"
+              messagePattern="%problem.messagePattern.SymbolShadowing"
+              name="%problem.name.SymbolShadowing">
+	       </problem>
+       </checker>
    </extension>
 </plugin>

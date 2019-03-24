@@ -39,6 +39,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  */
 public class SemanticQueries {
 
+	private static final String OPERATOR_EQ = "operator ="; //$NON-NLS-1$
+
 	public static boolean isCopyOrMoveConstructor(ICPPConstructor constructor) {
 		return isCopyOrMoveConstructor(constructor, CopyOrMoveConstructorKind.COPY_OR_MOVE);
 	}
@@ -53,6 +55,31 @@ public class SemanticQueries {
 
 	private enum CopyOrMoveConstructorKind {
 		COPY, MOVE, COPY_OR_MOVE
+	}
+
+	/**
+	 * Check if the method is a copy assignment operator, i.e. an overload of "operator="
+	 * with one parameter which is of the same class type.
+	 * @param method The method to be checked
+	 * @return True if the method is a copy assignment operator, false otherwise
+	 * @since 6.7
+	 */
+	public static boolean isCopyAssignmentOperator(ICPPMethod method) {
+		if (!OPERATOR_EQ.equals(method.getName()))
+			return false;
+		if (!isCallableWithNumberOfArguments(method, 1))
+			return false;
+		IType firstArgumentType = method.getType().getParameterTypes()[0];
+		firstArgumentType = SemanticUtil.getNestedType(firstArgumentType, TDEF);
+		if (!(firstArgumentType instanceof ICPPReferenceType))
+			return false;
+		ICPPReferenceType firstArgReferenceType = (ICPPReferenceType) firstArgumentType;
+		firstArgumentType = firstArgReferenceType.getType();
+		firstArgumentType = SemanticUtil.getNestedType(firstArgumentType, CVTYPE);
+		ICPPClassType classType = method.getClassOwner();
+		if (classType instanceof ICPPClassTemplate)
+			classType = CPPTemplates.createDeferredInstance((ICPPClassTemplate) classType);
+		return firstArgumentType.isSameType(classType);
 	}
 
 	private static boolean isCopyOrMoveConstructor(ICPPConstructor constructor, CopyOrMoveConstructorKind kind) {

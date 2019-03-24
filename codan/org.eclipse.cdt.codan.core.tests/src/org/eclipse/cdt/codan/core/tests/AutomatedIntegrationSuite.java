@@ -28,6 +28,7 @@ import org.eclipse.cdt.codan.core.internal.checkers.NonVirtualDestructorCheckerT
 import org.eclipse.cdt.codan.core.internal.checkers.ProblemBindingCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ReturnCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ReturnStyleCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.ShallowCopyCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.StatementHasNoEffectCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.SuggestedParenthesisCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.SuspiciousSemicolonCheckerTest;
@@ -82,6 +83,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(UnusedSymbolInFileScopeCheckerTest.class);
 		suite.addTestSuite(CommentCheckerLineTests.class);
 		suite.addTestSuite(CommentCheckerNestedTests.class);
+		suite.addTestSuite(ShallowCopyCheckerTest.class);
 		// framework
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes

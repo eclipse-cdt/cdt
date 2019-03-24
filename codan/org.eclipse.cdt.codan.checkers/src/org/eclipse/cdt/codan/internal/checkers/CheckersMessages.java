@@ -39,6 +39,8 @@ public class CheckersMessages extends NLS {
 	public static String UnusedSymbolInFileScopeChecker_CharacterSequence;
 	public static String UnusedSymbolInFileScopeChecker_Exceptions;
 
+	public static String ShallowCopyChecker_OnlyNew;
+
 	static {
 		NLS.initializeMessages(CheckersMessages.class.getName(), CheckersMessages.class);
 	}

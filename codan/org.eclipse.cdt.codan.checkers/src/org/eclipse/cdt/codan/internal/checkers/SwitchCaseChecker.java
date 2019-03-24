@@ -1,0 +1,113 @@
+/*******************************************************************************
+ * Copyright (c) 2019 Marco Stornelli
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+package org.eclipse.cdt.codan.internal.checkers;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
+
+public class SwitchCaseChecker extends AbstractIndexAstChecker {
+	public static final String MISS_CASE_ID = "org.eclipse.cdt.codan.internal.checkers.MissCaseProblem"; //$NON-NLS-1$
+	public static final String MISS_DEFAULT_ID = "org.eclipse.cdt.codan.internal.checkers.MissDefaultProblem"; //$NON-NLS-1$
+
+	@Override
+	public void processAst(IASTTranslationUnit ast) {
+		ast.accept(new ASTVisitor() {
+			{
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement statement) {
+				if (statement instanceof IASTSwitchStatement && !isProducedByMacroExpansion(statement)) {
+					IASTExpression controller = ((IASTSwitchStatement) statement).getControllerExpression();
+					IASTStatement bodyStmt = ((IASTSwitchStatement) statement).getBody();
+					IType type = controller.getExpressionType();
+					Set<Number> enumValues = new HashSet<>();
+					boolean defaultFound = false;
+					if (type instanceof IEnumeration) {
+						IEnumerator[] enums = ((IEnumeration) type).getEnumerators();
+						for (IEnumerator e : enums) {
+							enumValues.add(e.getValue().numberValue());
+						}
+					} else
+						return PROCESS_CONTINUE;
+					final List<IASTStatement> statements;
+					if (bodyStmt instanceof IASTCompoundStatement) {
+						statements = Arrays.asList(((IASTCompoundStatement) bodyStmt).getStatements());
+					} else {
+						statements = Collections.singletonList(bodyStmt);
+					}
+					for (IASTStatement s : statements) {
+						if (s instanceof IASTDefaultStatement) {
+							defaultFound = true;
+						} else if (s instanceof IASTCaseStatement
+								&& ((IASTCaseStatement) s).getExpression() instanceof IASTIdExpression) {
+							IASTName name = ((IASTIdExpression) ((IASTCaseStatement) s).getExpression()).getName();
+							IBinding binding = name.resolveBinding();
+							if (binding instanceof IEnumerator) {
+								enumValues.remove(((IEnumerator) binding).getValue().numberValue());
+							}
+						} else if (s instanceof IASTCaseStatement
+								&& ((IASTCaseStatement) s).getExpression() instanceof IASTLiteralExpression) {
+							Number value = ValueFactory
+									.getConstantNumericalValue(((IASTCaseStatement) s).getExpression());
+							if (value != null)
+								enumValues.remove(value);
+						}
+					}
+					if (!defaultFound) {
+						if (enumValues.size() != 0)
+							reportProblem(MISS_CASE_ID, statement);
+						else
+							reportProblem(MISS_DEFAULT_ID, statement);
+					}
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
+
+	/**
+	 * Checks if the given statement is a result of macro expansion with a possible
+	 * exception for the trailing semicolon.
+	 *
+	 * @param statement the statement to check.
+	 * @return <code>true</code> if the statement is a result of macro expansion
+	 */
+	private boolean isProducedByMacroExpansion(IASTStatement statement) {
+		IASTNodeLocation[] locations = statement.getNodeLocations();
+		return locations.length > 0 && locations[0] instanceof IASTMacroExpansionLocation
+				&& (locations.length == 1 || locations.length == 2 && locations[1].getNodeLength() == 1);
+	}
+}

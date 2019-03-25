@@ -66,7 +66,8 @@ class AggregateInitialization {
 			return checkInitializationFromDefaultMemberInitializer(nestedType, initialValue, worstCost);
 		worstCost = new Cost(fInitializers[fIndex].getType(), nestedType, Rank.IDENTITY);
 
-		if (fInitializers[fIndex].isInitializerList() || !isAggregate(nestedType)) { // no braces are elided
+		if (fInitializers[fIndex].isInitializerList() || !isAggregate(nestedType)
+				|| sameType(nestedType, fInitializers[fIndex].getType())) { // no braces are elided
 			// p3: The elements of the initializer list are taken as initializers for the elements
 			//     of the aggregate, in order.
 			ICPPEvaluation initializer = fInitializers[fIndex];
@@ -78,7 +79,7 @@ class AggregateInitialization {
 			}
 			// If the initializer-clause is an expression and a narrowing conversion is
 			// required to convert the expression, the program is ill-formed.
-			if (!(initializer instanceof EvalInitList) && cost.isNarrowingConversion()) {
+			if (!(initializer.isConstantExpression()) && cost.isNarrowingConversion()) {
 				return Cost.NO_CONVERSION;
 			}
 			if (cost.compareTo(worstCost) > 0) {
@@ -93,6 +94,20 @@ class AggregateInitialization {
 			}
 		}
 		return worstCost;
+	}
+
+	private boolean sameType(IType t1, IType t2) {
+		if (t1.isSameType(t2))
+			return true;
+		if (t1 instanceof IArrayType && t2 instanceof IArrayType) {
+			IArrayType a1 = (IArrayType) t1;
+			IArrayType a2 = (IArrayType) t2;
+			IType tmp1 = SemanticUtil.getNestedType(a1.getType(), SemanticUtil.ALLCVQ);
+			IType tmp2 = SemanticUtil.getNestedType(a2.getType(), SemanticUtil.ALLCVQ);
+			return a1.getSize().numberValue().longValue() == a2.getSize().numberValue().longValue()
+					&& tmp1.isSameType(tmp2);
+		}
+		return false;
 	}
 
 	/**

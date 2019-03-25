@@ -329,6 +329,19 @@ public class Conversions {
 					false);
 		}
 
+		if (uqTarget instanceof IArrayType && uqSource instanceof IArrayType) {
+			// TODO I cannot find what the standard says about this case..
+			// just trying this if all tests pass
+			IArrayType a1 = (IArrayType) uqTarget;
+			IArrayType a2 = (IArrayType) uqSource;
+			IType tmp1 = SemanticUtil.getNestedType(a1.getType(), SemanticUtil.ALLCVQ);
+			IType tmp2 = SemanticUtil.getNestedType(a2.getType(), SemanticUtil.ALLCVQ);
+			if (a1.getSize().numberValue().longValue() == a2.getSize().numberValue().longValue()
+					&& tmp1.isSameType(tmp2)) {
+				return new Cost(source, target, Rank.CONVERSION);
+			}
+		}
+
 		return checkStandardConversionSequence(uqSource, target);
 	}
 

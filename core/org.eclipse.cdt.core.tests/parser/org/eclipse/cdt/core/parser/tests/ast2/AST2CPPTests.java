@@ -13009,4 +13009,13 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	public void testBraceElisionForAggregateInit6_typedef_543038() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//  struct type{
+	//      int a;
+	//  };
+	//  type b{sizeof(type)};
+	public void testNoNarrowingConversionInConstexpr_545756() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertNonProblem("b{sizeof(type)};", 1);
+	}
 }

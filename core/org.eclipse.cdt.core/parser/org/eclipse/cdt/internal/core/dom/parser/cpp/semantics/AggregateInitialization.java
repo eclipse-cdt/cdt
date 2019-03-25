@@ -11,12 +11,14 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
@@ -66,7 +68,15 @@ class AggregateInitialization {
 			return checkInitializationFromDefaultMemberInitializer(nestedType, initialValue, worstCost);
 		worstCost = new Cost(fInitializers[fIndex].getType(), nestedType, Rank.IDENTITY);
 
-		if (fInitializers[fIndex].isInitializerList() || !isAggregate(nestedType)) { // no braces are elided
+		if (initFromStringLiteral(nestedType, fInitializers[fIndex])) {
+			// TODO [dcl.init.string]
+			// TODO maybe init one char at a time, i.e. use standard aggregate init
+			Cost cost = new Cost(fInitializers[fIndex].getType(), nestedType, Rank.CONVERSION);
+			fIndex++;
+			if (cost.compareTo(worstCost) > 0) {
+				worstCost = cost;
+			}
+		} else if (fInitializers[fIndex].isInitializerList() || !isAggregate(nestedType)) { // no braces are elided
 			// p3: The elements of the initializer list are taken as initializers for the elements
 			//     of the aggregate, in order.
 			ICPPEvaluation initializer = fInitializers[fIndex];
@@ -78,7 +88,7 @@ class AggregateInitialization {
 			}
 			// If the initializer-clause is an expression and a narrowing conversion is
 			// required to convert the expression, the program is ill-formed.
-			if (!(initializer instanceof EvalInitList) && cost.isNarrowingConversion()) {
+			if (!(initializer.isConstantExpression()) && cost.isNarrowingConversion()) {
 				return Cost.NO_CONVERSION;
 			}
 			if (cost.compareTo(worstCost) > 0) {
@@ -93,6 +103,33 @@ class AggregateInitialization {
 			}
 		}
 		return worstCost;
+	}
+
+	private boolean isCharArray(IType target) {
+		if (target instanceof IArrayType) {
+			IArrayType arr = (IArrayType) target;
+			if (arr.getType() instanceof CPPBasicType) {
+				CPPBasicType t = (CPPBasicType) arr.getType();
+				Kind k = t.getKind();
+				return k == Kind.eChar || k == Kind.eChar16 || k == Kind.eChar32 || k == Kind.eWChar;
+			}
+		}
+		return false;
+	}
+
+	private boolean fromStringLiteral(ICPPEvaluation initializer) {
+		if (initializer.getType() instanceof IArrayType) {
+			IArrayType arr = (IArrayType) initializer.getType();
+			IType type = SemanticUtil.getNestedType(arr.getType(), SemanticUtil.ALLCVQ);
+			if (type instanceof CPPBasicType) {
+				return ((CPPBasicType) type).isFromStringLiteral();
+			}
+		}
+		return false;
+	}
+
+	private boolean initFromStringLiteral(IType target, ICPPEvaluation initializer) {
+		return isCharArray(target) && fromStringLiteral(initializer);
 	}
 
 	/**

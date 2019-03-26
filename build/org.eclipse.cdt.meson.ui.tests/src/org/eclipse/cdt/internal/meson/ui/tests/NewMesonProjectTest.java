@@ -43,13 +43,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @SuppressWarnings("nls")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
 public class NewMesonProjectTest {
 
 	private static SWTWorkbenchBot bot;
@@ -185,10 +183,10 @@ public class NewMesonProjectTest {
 		assertEquals("Build dir: " + projectPath + "/build/default", lines[5]);
 		assertEquals("Build type: native build", lines[6]);
 		assertEquals("Project name: MesonTestProj", lines[7]);
-		assertTrue(lines[8].startsWith("Native C compiler: cc"));
-		assertEquals("Build targets in project: 1", lines[11]);
-		assertTrue(lines[lines.length - 3].startsWith("[1/2] cc  -IMesonTestProj@exe"));
-		assertTrue(lines[lines.length - 2].startsWith("[2/2] cc  -o MesonTestProj"));
+		assertTrue(lines[lines.length - 3].startsWith("[1/2] cc"));
+		assertTrue(lines[lines.length - 3].contains("-IMesonTestProj@exe"));
+		assertTrue(lines[lines.length - 2].startsWith("[2/2] cc"));
+		assertTrue(lines[lines.length - 2].contains("-o MesonTestProj"));
 
 		int i = 0;
 		while (i < 10 && !lines[lines.length - 1].startsWith("Build complete")) {

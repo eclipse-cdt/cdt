@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "7a9b822c_494c1646",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-03-26T06:52:39Z",
+      "side": 1,
+      "message": "I want to distinguish the following 2 cases:\n\n  struct type{\n      unsigned long int a;\n  };\n  const int v1 \u003d 2;\n  const int v2 \u003d 2; // or constexpr\n  type a{v1*v2}; // ok\n\n\n  struct type{\n      unsigned long int a;\n  };\n  int v1 \u003d 2;\n  const int v2 \u003d 2;\n  type a{v1*v2}; // not ok, not a constant expression according to clang",
+      "parentUuid": "9e8120ff_7cd7b890",
+      "revId": "ba51ef8fbb3658266ffd1d44fd584e83aefe92e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4d0f35a8_9de23047",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
         "patchSetId": 1
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "I don\u0027t think it\u0027s allowed:\n\n  using Arr3 \u003d int[3];\n  Arr3 a \u003d {1, 2, 3};\n  Arr3 b \u003d a;  // does not compile\n\nOr am I misunderstanding the scenario?",
       "parentUuid": "4d0f35a8_9de23047",
+      "revId": "ba51ef8fbb3658266ffd1d44fd584e83aefe92e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f00bfdce_d2f4563f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-03-26T06:52:39Z",
+      "side": 1,
+      "message": "Indeed, I was looking fro the wrong thing.\nThe case I tried to fix is probably just char[] init from string literal. I\u0027ll try to find where this is handled.\n\n  struct type {\n      char data[2];\n  };\n  type a{\"s\"};",
+      "parentUuid": "6c0a5406_c5cbba8b",
       "revId": "ba51ef8fbb3658266ffd1d44fd584e83aefe92e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

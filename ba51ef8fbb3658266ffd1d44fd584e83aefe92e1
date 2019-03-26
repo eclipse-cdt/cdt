@@ -73,6 +73,23 @@
     },
     {
       "key": {
+        "uuid": "2f89e818_e47728f8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-26T23:50:17Z",
+      "side": 1,
+      "message": "Is IArrayType.isSameType() not sufficient? (If so, could we add a testcase that exercises that?)",
+      "revId": "ba51ef8fbb3658266ffd1d44fd584e83aefe92e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4d0f35a8_9de23047",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
         "patchSetId": 1

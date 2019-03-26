@@ -160,10 +160,14 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 		case op_sizeof:
 		case op_sizeofParameterPack:
 		case op_alignof:
-			CPPBasicType t = (CPPBasicType) CPPVisitor.get_SIZE_T().clone();
-			if (getValue().numberValue() != null)
-				t.setAssociatedNumericalValue(getValue().numberValue().longValue());
-			return t;
+			IType o = CPPVisitor.get_SIZE_T();
+			if (o instanceof CPPBasicType) {
+				CPPBasicType t = (CPPBasicType) o.clone();
+				if (getValue().numberValue() != null)
+					t.setAssociatedNumericalValue(getValue().numberValue().longValue());
+				return t;
+			}
+			return o;
 		case op_typeid:
 			return CPPVisitor.get_type_info();
 		case op_has_nothrow_copy:

@@ -120,7 +120,8 @@ public class MesonPropertyPage extends PropertyPage {
 				if (launcher instanceof ICBuildCommandLauncher) {
 					((ICBuildCommandLauncher) launcher).setBuildConfiguration(buildConfig);
 				}
-				Process p = launcher.execute(new Path("meson"), new String[] { "-h" }, //$NON-NLS-1$ //$NON-NLS-2$
+				Process p = launcher.execute(new Path("meson"), //$NON-NLS-1$
+						new String[] { "setup", "-h" }, //$NON-NLS-1$ //$NON-NLS-2$
 						new String[0], sourceDir, new NullProgressMonitor());
 				if (p == null) {
 					return null;

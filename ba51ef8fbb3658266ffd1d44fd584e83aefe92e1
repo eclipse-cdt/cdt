@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9e8120ff_7cd7b890",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-26T06:02:57Z",
+      "side": 1,
+      "message": "By constexpr values, do you mean literals (if so check for EvalFixed)? Or an identifier naming a constexpr variable (check for EvalBinding or EvalMemberAccess)?",
+      "parentUuid": "63e34ee1_d23748c7",
+      "revId": "ba51ef8fbb3658266ffd1d44fd584e83aefe92e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4d0f35a8_9de23047",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-25T22:36:07Z",
       "side": 1,
       "message": "Do you know what should be done for the case where an array is initialized from an array?",
+      "revId": "ba51ef8fbb3658266ffd1d44fd584e83aefe92e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c0a5406_c5cbba8b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-26T06:02:57Z",
+      "side": 1,
+      "message": "I don\u0027t think it\u0027s allowed:\n\n  using Arr3 \u003d int[3];\n  Arr3 a \u003d {1, 2, 3};\n  Arr3 b \u003d a;  // does not compile\n\nOr am I misunderstanding the scenario?",
+      "parentUuid": "4d0f35a8_9de23047",
       "revId": "ba51ef8fbb3658266ffd1d44fd584e83aefe92e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

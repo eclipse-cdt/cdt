@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "6f40eabc_6b412b5d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-03-27T20:47:57Z",
+      "side": 1,
+      "message": "I\u0027ll make a standalone example and open an issue.",
+      "parentUuid": "a224b0c1_1dd7667c",
+      "revId": "ba51ef8fbb3658266ffd1d44fd584e83aefe92e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2f89e818_e47728f8",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
         "patchSetId": 1
@@ -84,6 +102,24 @@
       "writtenOn": "2019-03-26T23:50:17Z",
       "side": 1,
       "message": "Is IArrayType.isSameType() not sufficient? (If so, could we add a testcase that exercises that?)",
+      "revId": "ba51ef8fbb3658266ffd1d44fd584e83aefe92e1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b7d470b6_452835ab",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-03-27T20:47:57Z",
+      "side": 1,
+      "message": "I\u0027ll push a new fix where this code is gone.",
+      "parentUuid": "2f89e818_e47728f8",
       "revId": "ba51ef8fbb3658266ffd1d44fd584e83aefe92e1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

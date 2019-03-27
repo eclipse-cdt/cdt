@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f1a32879_9215d7c7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-03-27T20:55:26Z",
+      "side": 1,
+      "message": "I still have to implement this, currently I just accept all string literals for char array init. Probably the code that does the check doesn\u0027t belong to this class. Where should I place it? I am wondering if there is somewhere a similar code that checks the direct initialization, like\n\n  char s[2] \u003d \"s\";",
+      "revId": "e7cf4eb26756b0a978acd137f8dd82e2ecb2c0a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

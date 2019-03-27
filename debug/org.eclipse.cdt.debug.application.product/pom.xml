@@ -153,49 +153,6 @@
 						</executions>
 					</plugin>
 					 -->
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>deploy</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<target>
-										<!-- Cleanup the "rcp" destination, and copy over the new archives -->
-										<delete includeemptydirs="false" failonerror="false">
-											<fileset dir="${rcpDestination}">
-												<include name="*.tar.gz" />
-												<include name="*.zip" />
-											</fileset>
-										</delete>
-										<mkdir dir="${rcpDestination}" />
-										<copy includeemptydirs="false" todir="${rcpDestination}">
-											<fileset dir="target/products">
-												<include name="cdt-stand-alone-debugger-*" />
-											</fileset>
-										</copy>
-
-										<!-- Cleanup the "rcp-repository" update site, and copy over the 
-											new one -->
-										<delete includeemptydirs="false" failonerror="false">
-											<fileset dir="${rcpSiteDestination}">
-												<include name="**" />
-											</fileset>
-										</delete>
-										<mkdir dir="${rcpSiteDestination}" />
-										<copy includeemptydirs="false" todir="${rcpSiteDestination}">
-											<fileset dir="target/repository">
-												<include name="**" />
-											</fileset>
-										</copy>
-									</target>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
 				</plugins>
 			</build>
 		</profile>

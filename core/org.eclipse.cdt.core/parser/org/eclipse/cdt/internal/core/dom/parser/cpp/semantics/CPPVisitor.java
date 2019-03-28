@@ -67,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -2148,6 +2149,13 @@ public class CPPVisitor extends ASTQueries {
 			IASTNode initClause = declarator.getInitializer();
 			if (initClause instanceof IASTEqualsInitializer) {
 				initClause = ((IASTEqualsInitializer) initClause).getInitializerClause();
+				if (initClause instanceof IASTLiteralExpression && SemanticUtil.isConst(type)) {
+					IType t = SemanticUtil.getNestedType(type, TDEF | ALLCVQ);
+					if (t instanceof CPPBasicType) {
+						IValue v = SemanticUtil.getValueOfInitializer(declarator.getInitializer(), t);
+						((CPPBasicType) t).setAssociatedNumericalValue(v.numberValue().longValue());
+					}
+				}
 			}
 			if (initClause instanceof IASTInitializerList) {
 				IType t = SemanticUtil.getNestedType(type, TDEF);

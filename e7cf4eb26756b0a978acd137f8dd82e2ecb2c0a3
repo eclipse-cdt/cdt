@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "1e2863f8_61129258",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-28T06:18:59Z",
+      "side": 1,
+      "message": "I don\u0027t think we have code to check direct initialization. This is new territory.\n\nWe could put it into this class for now, or create a new class in the \u0027semantics\u0027 package.\n\nFeel free to be permissive at first. We can tighten the checking incrementally.",
+      "parentUuid": "f1a32879_9215d7c7",
+      "revId": "e7cf4eb26756b0a978acd137f8dd82e2ecb2c0a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07be1cdd_346b9f75",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
         "patchSetId": 2

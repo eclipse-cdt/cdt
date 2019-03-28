@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "c41f5ad7_cac78f9b",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13017,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-28T06:02:03Z",
+      "side": 1,
+      "message": "As written, this test passes even without any code changes.\n\nWhat you want is parseAndCheckImplicitNameBindings().",
+      "revId": "e7cf4eb26756b0a978acd137f8dd82e2ecb2c0a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f1a32879_9215d7c7",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
         "patchSetId": 2

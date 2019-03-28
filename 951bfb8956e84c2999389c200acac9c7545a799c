@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56a920d7_80bf6b93",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-28T23:32:29Z",
+      "side": 1,
+      "message": "getSize() needs to be null-checked (documentation says it can be null if unspecified).\n\nnumberValue() also needs to be null-checked as discussed in the other patch.",
+      "revId": "951bfb8956e84c2999389c200acac9c7545a799c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5ec736e_a3a97422",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-28T23:32:29Z",
+      "side": 1,
+      "message": "It\u0027s sufficient to cast to IBasicType here. (It\u0027s a good practice to use the minimal interface needed. For example, if for some reason we need to add another implementation of ICPPBasicType besides CPPBasicType, we won\u0027t have to update this code.)",
+      "revId": "951bfb8956e84c2999389c200acac9c7545a799c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

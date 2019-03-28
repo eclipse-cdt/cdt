@@ -419,25 +419,6 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		assertEquals(1, graph.getUnconnectedNodeSize());
 	}
 
-	//	 foo() {
-	//	   int a=10,x=5;
-	//	   if (x<0)
-	//	       a++;
-	//	 }
-	public void test_deadbranch() {
-		buildCfg(getAboveComment(), false);
-		checkCfg(false);
-		IStartNode startNode = graph.getStartNode();
-		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
-		IDecisionNode des = (IDecisionNode) decl.getOutgoing();
-		assertEquals("x<0", data(des));
-		IBasicBlock bElse = branchEnd(des, IBranchNode.ELSE);
-		IBasicBlock m2 = jumpEnd(branchEnd(des, IBranchNode.THEN));
-		IBasicBlock m1 = jumpEnd(bElse);
-		assertNull(m2);
-		assertNotNull(m1);
-	}
-
 	//	int test1_f()
 	//	{
 	//	    while (1)

@@ -81,11 +81,13 @@ public class ControlFlowGraphBuilder {
 	IConnectorNode outerBreak;
 	IConnectorNode outerContinue;
 	Map<String, IBranchNode> labels = new LinkedHashMap<>();
+	ValueFactory valueFactory;
 
 	/**
 	 * Builds the graph.
 	 */
 	public CxxControlFlowGraph build(IASTFunctionDefinition def) {
+		valueFactory = new ValueFactory(false);
 		IASTStatement body = def.getBody();
 		start = new CxxStartNode();
 		exits = new ArrayList<>();
@@ -595,7 +597,7 @@ public class ControlFlowGraphBuilder {
 		if (node instanceof ICfgData) {
 			IASTNode ast = (IASTNode) ((ICfgData) node).getData();
 			if (ast instanceof IASTExpression) {
-				Number numericalValue = ValueFactory.getConstantNumericalValue((IASTExpression) ast);
+				Number numericalValue = valueFactory.getConstantNumericalValue((IASTExpression) ast);
 				if (numericalValue != null)
 					return numericalValue.longValue() == testvalue;
 			}

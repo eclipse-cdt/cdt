@@ -101,7 +101,8 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 		if (d == null)
 			return null;
 
-		IValue val = ValueFactory.create(d);
+		ValueFactory f = new ValueFactory();
+		IValue val = f.create(d);
 		IType t = getType();
 		return new CPPTemplateNonTypeArgument(val, t);
 	}

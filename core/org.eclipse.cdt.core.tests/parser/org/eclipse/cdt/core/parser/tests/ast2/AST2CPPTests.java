@@ -12991,4 +12991,31 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	public void testBraceElisionForAggregateInit6_typedef_543038() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//  struct type{
+	//      int a;
+	//  };
+	//  type b{sizeof(type)};
+	public void testAggregateInitNoNarrowingConversionInConstContext_545756() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+
+	//  struct type{
+	//      int a;
+	//  };
+	//  const unsigned long v = 1;
+	//  type b{v};
+	public void testAggregateInitNoNarrowingConversionInConstContext2_545756() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+
+	//  struct type{
+	//      int a;
+	//  };
+	//  unsigned long v = 1;
+	//  type b{v};
+	public void testAggregateInitNarrowingConversion_545756() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertImplicitName("b{v};", 1, IProblemBinding.class);
+	}
 }

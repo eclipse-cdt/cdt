@@ -146,7 +146,8 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 		if (sizeExpression == null)
 			return value = null;
 
-		return value = ValueFactory.create(sizeExpression);
+		ValueFactory f = new ValueFactory();
+		return value = f.create(sizeExpression);
 	}
 
 	@Override

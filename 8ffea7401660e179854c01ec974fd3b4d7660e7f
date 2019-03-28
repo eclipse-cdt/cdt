@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e0411a75_09c6d161",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2156,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-28T23:18:32Z",
+      "side": 1,
+      "message": "v.numberValue() could return null if the value is dependent or unknown.",
+      "revId": "8ffea7401660e179854c01ec974fd3b4d7660e7f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10bc7618_f22039c6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnaryTypeID.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-28T23:18:32Z",
+      "side": 1,
+      "message": "To expand on the other comment, it\u0027s basically if IValue is a DependentValue (numerical value depends on a template parameter), or IntegralValue.ERROR or IntegralValue.UNKNOWN (which can happen if e.g. fOrigType is a ProblemType.",
+      "revId": "8ffea7401660e179854c01ec974fd3b4d7660e7f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

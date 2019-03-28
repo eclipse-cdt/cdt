@@ -13009,4 +13009,33 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	public void testBraceElisionForAggregateInit6_typedef_543038() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	struct type {
+	//	    char data[2];
+	//	};
+	//
+	//	type foo{"s"};
+	public void testCharArrayInitFromStringLiteral_545756() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+
+	//	struct type {
+	//	    char data[3];
+	//	};
+	//
+	//	type foo{"big"};
+	public void testCharArrayInitFromTooLargeStringLiteral_545756() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertImplicitName("foo", 3, IProblemBinding.class);
+	}
+
+	//	struct type {
+	//	    char data[2];
+	//	};
+	//
+	//	type foo{L"s"};
+	public void testCharArrayInitFromWrongTypeStringLiteral_545756() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertImplicitName("foo", 3, IProblemBinding.class);
+	}
 }

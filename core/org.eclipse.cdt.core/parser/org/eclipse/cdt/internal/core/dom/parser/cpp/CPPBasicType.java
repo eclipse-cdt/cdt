@@ -83,7 +83,8 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		}
 		fModifiers = qualifiers;
 		if (expression instanceof ICPPASTInitializerClause) {
-			Number num = ValueFactory.create(expression).numberValue();
+			ValueFactory f = new ValueFactory();
+			Number num = f.create(expression).numberValue();
 			fAssociatedValue = num != null ? num.longValue() : null;
 		}
 	}

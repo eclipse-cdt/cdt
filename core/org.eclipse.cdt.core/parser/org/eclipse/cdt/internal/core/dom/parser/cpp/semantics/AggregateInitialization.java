@@ -11,12 +11,15 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
@@ -60,6 +63,7 @@ class AggregateInitialization {
 	 * else recurses into the subaggregate.
 	 */
 	private Cost checkElement(IType type, IValue initialValue, Cost worstCost) throws DOMException {
+		assert !CPPTemplates.isDependentType(type);
 		IType nestedType = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
 		if (fIndex >= fInitializers.length)
 			// TODO for arrays we could short-circuit default init instead of trying to init each element
@@ -67,6 +71,30 @@ class AggregateInitialization {
 		worstCost = new Cost(fInitializers[fIndex].getType(), nestedType, Rank.IDENTITY);
 
 		ICPPEvaluation initializer = fInitializers[fIndex];
+		if (initFromStringLiteral(nestedType, initializer)) {
+			// [dcl.init.string]
+			fIndex++;
+			Number sizeOfCharArrayNumber = getArraySize(nestedType);
+			long sizeofCharArray = 0; // will error in case we cannot determine the size
+			if (sizeOfCharArrayNumber != null) {
+				sizeofCharArray = sizeOfCharArrayNumber.longValue();
+			}
+			Number sizeofStringLiteralNumber = getArraySize(initializer.getType());
+			long sizeofStringLiteral = Long.MAX_VALUE; // will error in case we cannot determine the size
+			if (sizeofStringLiteralNumber != null) {
+				sizeofStringLiteral = sizeofStringLiteralNumber.longValue();
+			}
+			IType targetCharType = getBasicTypeFromArray(nestedType);
+			IType literalCharType = getBasicTypeFromArray(initializer.getType());
+			Cost cost;
+			if (sizeofCharArray >= sizeofStringLiteral && targetCharType.isSameType(literalCharType)) {
+				cost = new Cost(initializer.getType(), nestedType, Rank.CONVERSION);
+			} else {
+				cost = Cost.NO_CONVERSION;
+			}
+			return cost;
+		}
+
 		Cost costWithoutElision = Conversions.checkImplicitConversionSequence(nestedType, initializer.getType(),
 				initializer.getValueCategory(), UDCMode.ALLOWED, Context.ORDINARY);
 		if (costWithoutElision.converts()) {
@@ -179,4 +207,48 @@ class AggregateInitialization {
 		return ArrayUtil.trim(result);
 	}
 
+	/**
+	 * @param type
+	 * @return CPPBasicType of element; null if type is not IArrayType or element is not CPPBasicType
+	 */
+	private static ICPPBasicType getBasicTypeFromArray(IType type) {
+		if (type instanceof IArrayType) {
+			IType nested = SemanticUtil.getNestedType(((IArrayType) type).getType(), SemanticUtil.ALLCVQ);
+			if (nested instanceof ICPPBasicType) {
+				return (ICPPBasicType) nested;
+			}
+		}
+		return null;
+	}
+
+	private static boolean isCharArray(IType target) {
+		ICPPBasicType t = getBasicTypeFromArray(target);
+		if (t != null) {
+			Kind k = t.getKind();
+			return k == Kind.eChar || k == Kind.eChar16 || k == Kind.eChar32 || k == Kind.eWChar;
+		}
+		return false;
+	}
+
+	private static boolean fromStringLiteral(ICPPEvaluation initializer) {
+		ICPPBasicType t = getBasicTypeFromArray(initializer.getType());
+		if (t != null && t instanceof CPPBasicType) {
+			return ((CPPBasicType) t).isFromStringLiteral();
+		}
+		return false;
+	}
+
+	private static boolean initFromStringLiteral(IType target, ICPPEvaluation initializer) {
+		return isCharArray(target) && fromStringLiteral(initializer);
+	}
+
+	private static Number getArraySize(IType type) {
+		if (((IArrayType) type).getSize() != null) {
+			IValue size = ((IArrayType) type).getSize();
+			if (size.numberValue() != null) {
+				return ((IArrayType) type).getSize().numberValue();
+			}
+		}
+		return null;
+	}
 }

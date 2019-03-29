@@ -164,7 +164,8 @@ public abstract class ASTEnumerator extends ASTAttributeOwner implements IASTEnu
 				IValue val;
 				IASTExpression expr = etor.getValue();
 				if (expr != null) {
-					val = ValueFactory.create(expr);
+					ValueFactory f = new ValueFactory();
+					val = f.create(expr);
 					previousExplicitValue = val;
 					delta = 1;
 					if (fixedType == null) {

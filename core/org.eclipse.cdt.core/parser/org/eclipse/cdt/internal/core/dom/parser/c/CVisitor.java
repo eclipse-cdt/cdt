@@ -1796,7 +1796,8 @@ public class CVisitor extends ASTQueries {
 
 		IType expressionType = expression.getExpressionType();
 		if (expressionType instanceof IBasicType) {
-			IValue value = ValueFactory.create(expression);
+			ValueFactory f = new ValueFactory();
+			IValue value = f.create(expression);
 			if (value != null && value.numberValue() != null) {
 				return value.numberValue().longValue() == 0;
 			}

@@ -189,7 +189,8 @@ public class CVariable extends PlatformObject implements ICInternalBinding, IVar
 			if (init instanceof IASTEqualsInitializer) {
 				final IASTInitializerClause initClause = ((IASTEqualsInitializer) init).getInitializerClause();
 				if (initClause instanceof IASTExpression) {
-					return ValueFactory.create((IASTExpression) initClause);
+					ValueFactory f = new ValueFactory();
+					return f.create((IASTExpression) initClause);
 				}
 			}
 			if (init != null)

@@ -420,7 +420,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 	}
 
 	//	 foo() {
-	//	   int a=10,x=5;
+	//	   const int a=10,x=5;
 	//	   if (x<0)
 	//	       a++;
 	//	 }

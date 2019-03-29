@@ -129,6 +129,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
@@ -5782,7 +5783,7 @@ public class AST2Tests extends AST2TestBase {
 			IVariable v = (IVariable) bh.assertNonProblem("a=", 1);
 			checkValue(v.getInitialValue(), -4);
 			v = (IVariable) bh.assertNonProblem("b=", 1);
-			checkValue(v.getInitialValue(), 0);
+			assertEquals(v.getInitialValue(), IntegralValue.UNKNOWN);
 			v = (IVariable) bh.assertNonProblem("c=", 1);
 			assertNull(v.getInitialValue().numberValue());
 

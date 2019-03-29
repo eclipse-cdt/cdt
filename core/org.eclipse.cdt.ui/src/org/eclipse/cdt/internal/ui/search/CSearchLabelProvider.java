@@ -168,8 +168,7 @@ public class CSearchLabelProvider extends LabelProvider implements IStyledLabelP
 		for (Match match : lineElement.getMatches()) {
 			int offset = Math.max(0, match.getOffset() - lineOffset);
 			int length = Math.min(match.getLength(), lineContent.length() - offset);
-			Styler style = match.isWriteAccess() ? ColoringLabelProvider.HIGHLIGHT_WRITE_STYLE
-					: ColoringLabelProvider.HIGHLIGHT_STYLE;
+			Styler style = ColoringLabelProvider.HIGHLIGHT_STYLE;
 			styled.setStyle(offset, length, style);
 		}
 		return styled;

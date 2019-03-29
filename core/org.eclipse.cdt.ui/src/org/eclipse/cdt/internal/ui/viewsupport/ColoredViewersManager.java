@@ -26,11 +26,7 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 
 public class ColoredViewersManager implements IPropertyChangeListener {
-	public static final String INHERITED_COLOR_NAME = "org.eclipse.cdt.ui.ColoredLabels.inherited"; //$NON-NLS-1$
-
-	public static final String HIGHLIGHT_BG_COLOR_NAME = "org.eclipse.cdt.ui.ColoredLabels.match_highlight"; //$NON-NLS-1$
-	public static final String HIGHLIGHT_WRITE_BG_COLOR_NAME = "org.eclipse.cdt.ui.ColoredLabels.writeaccess_highlight"; //$NON-NLS-1$
-
+	public static final String HIGHLIGHT_BG_COLOR_NAME = "org.eclipse.search.ui.match.highlight"; //$NON-NLS-1$
 	private static ColoredViewersManager fgInstance = new ColoredViewersManager();
 
 	private Set<ColoringLabelProvider> fManagedLabelProviders;
@@ -67,8 +63,7 @@ public class ColoredViewersManager implements IPropertyChangeListener {
 		String property = event.getProperty();
 		if (property.equals(JFacePreferences.QUALIFIER_COLOR) || property.equals(JFacePreferences.COUNTER_COLOR)
 				|| property.equals(JFacePreferences.DECORATIONS_COLOR) || property.equals(HIGHLIGHT_BG_COLOR_NAME)
-				|| property.equals(IWorkbenchPreferenceConstants.USE_COLORED_LABELS)
-				|| property.equals(HIGHLIGHT_WRITE_BG_COLOR_NAME)) {
+				|| property.equals(IWorkbenchPreferenceConstants.USE_COLORED_LABELS)) {
 			Display.getDefault().asyncExec(new Runnable() {
 				@Override
 				public void run() {

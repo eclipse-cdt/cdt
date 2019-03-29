@@ -28,8 +28,6 @@ import org.eclipse.swt.custom.StyleRange;
 public class ColoringLabelProvider extends DecoratingStyledCellLabelProvider implements ILabelProvider {
 	public static final Styler HIGHLIGHT_STYLE = StyledString.createColorRegistryStyler(null,
 			ColoredViewersManager.HIGHLIGHT_BG_COLOR_NAME);
-	public static final Styler HIGHLIGHT_WRITE_STYLE = StyledString.createColorRegistryStyler(null,
-			ColoredViewersManager.HIGHLIGHT_WRITE_BG_COLOR_NAME);
 
 	public ColoringLabelProvider(IStyledLabelProvider labelProvider) {
 		this(labelProvider, null, null);

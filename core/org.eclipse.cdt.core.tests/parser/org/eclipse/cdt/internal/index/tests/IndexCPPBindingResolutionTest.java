@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.core.runtime.CoreException;
 
@@ -1472,7 +1473,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 		IVariable v = (IVariable) getBindingFromASTName("a;", 1);
 		asserValueEquals(v.getInitialValue(), -4);
 		v = (IVariable) getBindingFromASTName("b;", 1);
-		asserValueEquals(v.getInitialValue(), 0);
+		assertEquals(v.getInitialValue(), IntegralValue.UNKNOWN);
 		v = (IVariable) getBindingFromASTName("c;", 1);
 		assertNull(v.getInitialValue().numberValue());
 

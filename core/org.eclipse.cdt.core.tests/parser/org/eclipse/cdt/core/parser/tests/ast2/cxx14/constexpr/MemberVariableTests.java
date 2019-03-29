@@ -85,7 +85,7 @@ public class MemberVariableTests extends TestBase {
 	//		int x;
 	//	};
 	//	struct S {
-	//		T t{5};
+	//		const T t{5};
 	//		int i = t.x * 2;
 	//	};
 	//	constexpr int f() {

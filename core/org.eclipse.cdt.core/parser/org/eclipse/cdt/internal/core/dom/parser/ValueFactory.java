@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -396,7 +397,13 @@ public class ValueFactory {
 
 		IValue value = null;
 		if (b instanceof IVariable) {
-			value = ((IVariable) b).getInitialValue();
+			IVariable bVar = (IVariable) b;
+			IType realType = SemanticUtil.getNestedType(bVar.getType(), SemanticUtil.TDEF);
+			if (realType instanceof IQualifierType) {
+				if (((IQualifierType) realType).isConst()) {
+					value = ((IVariable) b).getInitialValue();
+				}
+			}
 		} else if (b instanceof IEnumerator) {
 			value = ((IEnumerator) b).getValue();
 		}

@@ -545,7 +545,7 @@ public class ConstructorTests extends TestBase {
 	//		int y;
 	//	};
 	//	struct Base {
-	//		X x{5};
+	//		const X x{5};
 	//	};
 	//	struct Derived : Base {
 	//		int n = 2 * x.y;

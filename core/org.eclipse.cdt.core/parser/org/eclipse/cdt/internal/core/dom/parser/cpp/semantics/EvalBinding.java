@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -363,9 +364,24 @@ public class EvalBinding extends CPPDependentEvaluation {
 		IValue value = null;
 
 		if (fBinding instanceof ICPPVariable) {
-			ICPPEvaluation valueEval = EvalUtil.getVariableValue((ICPPVariable) fBinding, new ActivationRecord());
-			if (valueEval != null) {
-				value = valueEval.getValue();
+			ICPPVariable bVar = (ICPPVariable) fBinding;
+			if (bVar.isConstexpr()) {
+				ICPPEvaluation valueEval = EvalUtil.getVariableInitialValue((ICPPVariable) fBinding,
+						new ActivationRecord());
+				if (valueEval != null) {
+					value = valueEval.getValue();
+				}
+			} else {
+				IType realType = SemanticUtil.getNestedType(bVar.getType(), SemanticUtil.TDEF);
+				if (realType instanceof IQualifierType) {
+					if (((IQualifierType) realType).isConst()) {
+						ICPPEvaluation valueEval = EvalUtil.getVariableInitialValue((ICPPVariable) fBinding,
+								new ActivationRecord());
+						if (valueEval != null) {
+							value = valueEval.getValue();
+						}
+					}
+				}
 			}
 		} else if (fBinding instanceof IEnumerator) {
 			value = ((IEnumerator) fBinding).getValue();

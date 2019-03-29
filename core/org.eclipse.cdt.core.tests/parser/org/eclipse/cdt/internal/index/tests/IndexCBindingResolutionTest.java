@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 
 import junit.framework.TestSuite;
 
@@ -397,7 +398,7 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		IVariable v = (IVariable) getBindingFromASTName("a;", 1);
 		checkValue(v.getInitialValue(), -4);
 		v = (IVariable) getBindingFromASTName("b;", 1);
-		checkValue(v.getInitialValue(), 0);
+		assertEquals(v.getInitialValue(), IntegralValue.UNKNOWN);
 		v = (IVariable) getBindingFromASTName("c;", 1);
 		assertNull(v.getInitialValue().numberValue());
 

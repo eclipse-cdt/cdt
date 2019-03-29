@@ -527,4 +527,17 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testNoReturnWithGoto_Bug492878() throws Exception {
 		checkSampleAboveCpp();
 	}
+
+	//int foo(int a) { // error
+	//	unsigned int* p = 0;
+	//	p = &a;
+	//	if (p) {
+	//		int b = a;
+	//	} else {
+	//		return 1;
+	//	}
+	//}
+	public void testNoReturnWithInitVar_Bug545877() throws Exception {
+		checkSampleAboveCpp();
+	}
 }

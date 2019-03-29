@@ -886,7 +886,8 @@ public class SemanticUtil {
 				}
 			}
 			if (clause instanceof IASTExpression) {
-				return ValueFactory.create((IASTExpression) clause);
+				ValueFactory f = new ValueFactory();
+				return f.create((IASTExpression) clause);
 			}
 
 			if (clause instanceof ICPPASTInitializerList) {

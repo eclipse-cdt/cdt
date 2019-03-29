@@ -88,7 +88,8 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
 		if (sizeExpression == null)
 			return value = null;
 
-		return value = ValueFactory.create(sizeExpression);
+		ValueFactory f = new ValueFactory();
+		return value = f.create(sizeExpression);
 	}
 
 	@Override

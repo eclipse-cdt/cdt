@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -81,10 +82,25 @@ import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 
 public class ValueFactory {
+
+	/**
+	 * When true the evaluation of a variable takes into account the variable initial
+	 * value only if the variable is const.
+	 */
+	private boolean fEvalOnlyConstVars;
+
+	public ValueFactory() {
+		fEvalOnlyConstVars = false;
+	}
+
+	public ValueFactory(boolean evalVars) {
+		fEvalOnlyConstVars = evalVars;
+	}
+
 	/**
 	 * Creates the value for an expression.
 	 */
-	public static IValue create(IASTExpression expr) {
+	public IValue create(IASTExpression expr) {
 		try {
 			CPPSemantics.pushLookupPoint(expr);
 			IValue val = evaluate(expr);
@@ -285,7 +301,7 @@ public class ValueFactory {
 	/**
 	 * Computes the canonical representation of the value of the expression.
 	 */
-	private static IValue evaluate(IASTExpression exp) {
+	private IValue evaluate(IASTExpression exp) {
 		// Some C++ expression types can involve evaluating functions.
 		// For these, the value will be computed based on the evaluation.
 		if (exp instanceof ICPPASTFunctionCallExpression || exp instanceof ICPPASTSimpleTypeConstructorExpression
@@ -382,7 +398,7 @@ public class ValueFactory {
 	/**
 	 * Extract a value off a binding.
 	 */
-	private static IValue evaluateBinding(IBinding b) {
+	private IValue evaluateBinding(IBinding b) {
 		if (b instanceof IType) {
 			return IntegralValue.UNKNOWN;
 		}
@@ -396,7 +412,17 @@ public class ValueFactory {
 
 		IValue value = null;
 		if (b instanceof IVariable) {
-			value = ((IVariable) b).getInitialValue();
+			if (!fEvalOnlyConstVars) {
+				value = ((IVariable) b).getInitialValue();
+			} else {
+				IVariable bVar = (IVariable) b;
+				IType realType = SemanticUtil.getNestedType(bVar.getType(), SemanticUtil.TDEF);
+				if (realType instanceof IQualifierType) {
+					if (((IQualifierType) realType).isConst()) {
+						value = ((IVariable) b).getInitialValue();
+					}
+				}
+			}
 		} else if (b instanceof IEnumerator) {
 			value = ((IEnumerator) b).getValue();
 		}
@@ -482,7 +508,7 @@ public class ValueFactory {
 		return IntegralValue.create(sizeAndAlignment.size);
 	}
 
-	private static IValue evaluateUnaryExpression(IASTUnaryExpression exp) {
+	private IValue evaluateUnaryExpression(IASTUnaryExpression exp) {
 		final int unaryOp = exp.getOperator();
 
 		if (unaryOp == IASTUnaryExpression.op_sizeof) {
@@ -568,7 +594,7 @@ public class ValueFactory {
 		return IntegralValue.UNKNOWN;
 	}
 
-	private static IValue evaluateBinaryExpression(IASTBinaryExpression exp) {
+	private IValue evaluateBinaryExpression(IASTBinaryExpression exp) {
 		final int op = exp.getOperator();
 
 		// Optimization: if the operator is == or != and the AST nodes
@@ -644,7 +670,7 @@ public class ValueFactory {
 	 * @return the numerical value of the expression, or {@code null} if the expression cannot be evaluated
 	 *     to a constant
 	 */
-	public static Number getConstantNumericalValue(IASTExpression expr) {
+	public Number getConstantNumericalValue(IASTExpression expr) {
 		try {
 			CPPSemantics.pushLookupPoint(expr);
 			IValue val = evaluate(expr);

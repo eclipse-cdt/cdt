@@ -225,7 +225,7 @@ public final class CompositeValue implements IValue {
 			for (ICPPField field : fields) {
 				if (field.isStatic())
 					continue;
-				final ICPPEvaluation value = EvalUtil.getVariableValue(field, record);
+				final ICPPEvaluation value = EvalUtil.getVariableInitialValue(field, record);
 				int fieldPos = CPPASTFieldReference.getFieldPosition(field);
 				if (fieldPos == -1) {
 					continue;

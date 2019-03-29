@@ -163,13 +163,15 @@ public class EvalUtil {
 	 * Returns the initial value of the given variable, evaluated in the context of
 	 * the given activation record.
 	 */
-	public static ICPPEvaluation getVariableValue(ICPPVariable variable, ActivationRecord record) {
+	public static ICPPEvaluation getVariableInitialValue(ICPPVariable variable, ActivationRecord record) {
 		Set<ICPPVariable> recursionProtectionSet = fInitialValueInProgress.get();
 		if (!recursionProtectionSet.add(variable)) {
 			return EvalFixed.INCOMPLETE;
 		}
 		try {
 			IType type = variable.getType();
+			if (!SemanticUtil.isConst(type))
+				return null;
 			IType nestedType = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 			IValue initialValue = variable.getInitialValue();
 			ICPPEvaluation valueEval = null;

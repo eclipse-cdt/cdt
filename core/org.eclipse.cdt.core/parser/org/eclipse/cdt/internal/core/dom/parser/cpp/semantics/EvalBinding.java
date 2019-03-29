@@ -363,7 +363,8 @@ public class EvalBinding extends CPPDependentEvaluation {
 		IValue value = null;
 
 		if (fBinding instanceof ICPPVariable) {
-			ICPPEvaluation valueEval = EvalUtil.getVariableValue((ICPPVariable) fBinding, new ActivationRecord());
+			ICPPEvaluation valueEval = EvalUtil.getVariableInitialValue((ICPPVariable) fBinding,
+					new ActivationRecord());
 			if (valueEval != null) {
 				value = valueEval.getValue();
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 QNX Software Systems and others.
+ * Copyright (c) 2005, 2019 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Ken Ryall (Nokia) - bugs 178731, 246201
+ *     John Dallaway - Match launch configuration type (bug 545941)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.launch;
 
@@ -96,7 +97,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		ILaunchConfiguration configuration = null;
 		List<ILaunchConfiguration> candidateConfigs = Collections.emptyList();
 		try {
-			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
+			ILaunchConfigurationType type = getCLaunchConfigType();
+			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(type);
 			candidateConfigs = new ArrayList<>(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				ILaunchConfiguration config = configs[i];

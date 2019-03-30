@@ -13010,6 +13010,19 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		parseAndCheckBindings();
 	}
 
+	//	struct S1 {
+	//	};
+	//	struct S2 {
+	//		S1 s1;
+	//	};
+	//	auto f() {
+	//		auto s1 = S1 { };
+	//		return S2 { s1 };
+	//	}
+	public void testBraceElisionForAggregateInit7_545957() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+
 	//  struct type{
 	//      int a;
 	//  };

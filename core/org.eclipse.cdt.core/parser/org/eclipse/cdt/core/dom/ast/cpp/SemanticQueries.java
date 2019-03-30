@@ -39,23 +39,74 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  */
 public class SemanticQueries {
 
+	private static final String OPERATOR_EQ = "operator ="; //$NON-NLS-1$
+
 	public static boolean isCopyOrMoveConstructor(ICPPConstructor constructor) {
-		return isCopyOrMoveConstructor(constructor, CopyOrMoveConstructorKind.COPY_OR_MOVE);
+		return isCopyOrMoveConstructor(constructor, CopyOrMoveKind.COPY_OR_MOVE);
 	}
 
 	public static boolean isMoveConstructor(ICPPConstructor constructor) {
-		return isCopyOrMoveConstructor(constructor, CopyOrMoveConstructorKind.MOVE);
+		return isCopyOrMoveConstructor(constructor, CopyOrMoveKind.MOVE);
 	}
 
 	public static boolean isCopyConstructor(ICPPConstructor constructor) {
-		return isCopyOrMoveConstructor(constructor, CopyOrMoveConstructorKind.COPY);
+		return isCopyOrMoveConstructor(constructor, CopyOrMoveKind.COPY);
 	}
 
-	private enum CopyOrMoveConstructorKind {
+	private enum CopyOrMoveKind {
 		COPY, MOVE, COPY_OR_MOVE
 	}
 
-	private static boolean isCopyOrMoveConstructor(ICPPConstructor constructor, CopyOrMoveConstructorKind kind) {
+	/**
+	 * @since 6.8
+	 */
+	public static boolean isCopyAssignmentOperator(ICPPMethod method) {
+		return isAssignmentOperator(method, CopyOrMoveKind.COPY);
+	}
+
+	/**
+	 * @since 6.8
+	 */
+	public static boolean isCopyOrMoveAssignmentOperator(ICPPMethod method) {
+		return isAssignmentOperator(method, CopyOrMoveKind.COPY_OR_MOVE);
+	}
+
+	/**
+	 * @since 6.8
+	 */
+	public static boolean isMoveAssignmentOperator(ICPPMethod method) {
+		return isAssignmentOperator(method, CopyOrMoveKind.MOVE);
+	}
+
+	/**
+	 * Check if the method is a copy assignment operator, i.e. an overload of "operator="
+	 * with one parameter which is of the same class type.
+	 * @param method The method to be checked
+	 * @return True if the method is a copy assignment operator, false otherwise
+	 */
+	private static boolean isAssignmentOperator(ICPPMethod method, CopyOrMoveKind kind) {
+		if (!OPERATOR_EQ.equals(method.getName()))
+			return false;
+		if (!isCallableWithNumberOfArguments(method, 1))
+			return false;
+		IType firstArgumentType = method.getType().getParameterTypes()[0];
+		firstArgumentType = SemanticUtil.getNestedType(firstArgumentType, TDEF);
+		if (!(firstArgumentType instanceof ICPPReferenceType))
+			return false;
+		if (kind == CopyOrMoveKind.COPY && ((ICPPReferenceType) firstArgumentType).isRValueReference())
+			return false;
+		if (kind == CopyOrMoveKind.MOVE && !((ICPPReferenceType) firstArgumentType).isRValueReference())
+			return false;
+		ICPPReferenceType firstArgReferenceType = (ICPPReferenceType) firstArgumentType;
+		firstArgumentType = firstArgReferenceType.getType();
+		firstArgumentType = SemanticUtil.getNestedType(firstArgumentType, CVTYPE);
+		ICPPClassType classType = method.getClassOwner();
+		if (classType instanceof ICPPClassTemplate)
+			classType = CPPTemplates.createDeferredInstance((ICPPClassTemplate) classType);
+		return firstArgumentType.isSameType(classType);
+	}
+
+	private static boolean isCopyOrMoveConstructor(ICPPConstructor constructor, CopyOrMoveKind kind) {
 		// 12.8/2-3 [class.copy]:
 		// "A non-template constructor for class X is a copy [move] constructor
 		//  if its first parameter is of type X&[&], const X&[&], volatile X&[&]
@@ -71,9 +122,9 @@ public class SemanticQueries {
 			return false;
 		ICPPReferenceType firstArgReferenceType = (ICPPReferenceType) firstArgumentType;
 		boolean isRvalue = firstArgReferenceType.isRValueReference();
-		if (isRvalue && kind == CopyOrMoveConstructorKind.COPY)
+		if (isRvalue && kind == CopyOrMoveKind.COPY)
 			return false;
-		if (!isRvalue && kind == CopyOrMoveConstructorKind.MOVE)
+		if (!isRvalue && kind == CopyOrMoveKind.MOVE)
 			return false;
 		firstArgumentType = firstArgReferenceType.getType();
 		firstArgumentType = SemanticUtil.getNestedType(firstArgumentType, CVTYPE);

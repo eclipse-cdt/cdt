@@ -467,6 +467,21 @@
                markerType="org.eclipse.cdt.codan.core.codanProblem"
                messagePattern="%problem.messagePattern.CStyleCastProblem"
                name="%problem.name.CStyleCastProblem">
+          </problem>
+       </checker>
+       <checker
+            class="org.eclipse.cdt.codan.internal.checkers.GotoStatementChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.GotoStatementChecker"
+            name="%checker.name.GotoStatementChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.GotoStatementProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.GotoStatementProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.GotoStatementProblem"
+               name="%problem.name.GotoStatementProblem">
          </problem>
       </checker>
    </extension>

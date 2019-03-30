@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0bddb7b8_a2d12c40",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-30T21:50:03Z",
+      "side": 1,
+      "message": "If this code is ever called with \"type\" being dependent, this could give a false positive error.\n\nHowever, I don\u0027t think this code is ever currently called with \"type\" being dependent, and it\u0027s probably better if we don\u0027t allow that in the future either.\n\nTo be sure, could you add an \"assert !CPPTemplates.isDependentType(type)\" at the top of the function?",
+      "revId": "9cd1741f4b10a5b5bc37be1e563f77f3f21bd2ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

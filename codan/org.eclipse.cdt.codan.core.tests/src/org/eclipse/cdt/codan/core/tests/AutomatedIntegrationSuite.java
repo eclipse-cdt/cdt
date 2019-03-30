@@ -16,6 +16,7 @@ package org.eclipse.cdt.codan.core.tests;
 
 import org.eclipse.cdt.codan.core.internal.checkers.AbstractClassInstantiationCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.AssignmentInConditionCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.AssignmentOperatorCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.AssignmentToItselfCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.CStyleCastCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.CaseBreakCheckerTest;
@@ -95,6 +96,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(CopyrightCheckerTest.class);
 		suite.addTestSuite(SwitchCaseCheckerTest.class);
 		suite.addTestSuite(VirtualMethodCallCheckerTest.class);
+		suite.addTestSuite(AssignmentOperatorCheckerTest.class);
 		// framework
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes

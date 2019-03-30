@@ -469,5 +469,30 @@
                name="%problem.name.CStyleCastProblem">
          </problem>
       </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.VirtualMethodCallChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.VirtualMethodCallChecker"
+            name="%checker.name.VirtualMethodCallChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="false"
+               defaultSeverity="Error"
+               description="%problem.description.VirtualMethodCallProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.VirtualMethodCallProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.VirtualMethodCallProblem"
+               name="%problem.name.VirtualMethodCallProblem">
+         </problem>
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="false"
+               defaultSeverity="Error"
+               description="%problem.description.ThrowInDestructorProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.ThrowInDestructorProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.ThrowInDestructorProblem"
+               name="%problem.name.ThrowInDestructorProblem">
+         </problem>
+      </checker>
    </extension>
 </plugin>

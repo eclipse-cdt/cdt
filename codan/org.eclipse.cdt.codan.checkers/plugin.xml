@@ -564,5 +564,20 @@
                name="%problem.name.MissReferenceProblem">
          </problem>
       </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.BlacklistChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.BlacklistChecker"
+            name="%checker.name.BlacklistChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.BlacklistProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.BlacklistProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.BlacklistProblem"
+               name="%problem.name.BlacklistProblem">
+         </problem>
+      </checker>
    </extension>
 </plugin>

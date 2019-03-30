@@ -36,6 +36,8 @@ public class CheckersMessages extends NLS {
 	public static String SuspiciousSemicolonChecker_ParamElse;
 	public static String ProblemBindingChecker_Candidates;
 	public static String SwitchCaseChecker_ParameterDefaultAllEnums;
+	public static String BlacklistChecker_list;
+	public static String BlacklistChecker_list_item;
 	public static String UnusedSymbolInFileScopeChecker_CharacterSequence;
 	public static String UnusedSymbolInFileScopeChecker_Exceptions;
 

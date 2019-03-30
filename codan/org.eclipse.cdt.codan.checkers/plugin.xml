@@ -539,5 +539,30 @@
                name="%problem.name.VirtualMethodCallProblem">
          </problem>
       </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.AssignmentOperatorChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.AssignmentOperatorChecker"
+            name="%checker.name.AssignmentOperatorChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.MissSelfCheckProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.MissSelfCheckProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.MissSelfCheckProblem"
+               name="%problem.name.MissSelfCheckProblem">
+         </problem>
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.MissReferenceProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.MissReferenceProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.MissReferenceProblem"
+               name="%problem.name.MissReferenceProblem">
+         </problem>
+      </checker>
    </extension>
 </plugin>

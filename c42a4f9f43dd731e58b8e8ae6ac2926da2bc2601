@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "65e53afb_1dafa54c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-30T03:52:08Z",
+      "side": 1,
+      "message": "I think this getArraySize() call needs a null check as well.",
+      "revId": "c42a4f9f43dd731e58b8e8ae6ac2926da2bc2601",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

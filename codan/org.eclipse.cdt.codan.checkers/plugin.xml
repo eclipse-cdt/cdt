@@ -524,5 +524,20 @@
                name="%problem.name.MissDefaultProblem">
          </problem>
       </checker>
+      <checker     
+            class="org.eclipse.cdt.codan.internal.checkers.VirtualMethodCallChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.VirtualMethodCallChecker"
+            name="%checker.name.VirtualMethodCallChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="false"
+               defaultSeverity="Error"
+               description="%problem.description.VirtualMethodCallProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.VirtualMethodCallProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.VirtualMethodCallProblem"
+               name="%problem.name.VirtualMethodCallProblem">
+         </problem>
+      </checker>
    </extension>
 </plugin>

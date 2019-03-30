@@ -192,7 +192,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private static final int DEFAULT_PARM_LIST_SIZE = 4;
 	private static final int DEFAULT_CATCH_HANDLER_LIST_SIZE = 4;
-	private static final int TEMPLATE_ARGUMENT_NESTING_DEPTH_LIMIT = 256;
+	private static final int TEMPLATE_ARGUMENT_NESTING_DEPTH_LIMIT = 192;
 
 	// This is a parameter to the protected function {@link #declarator(DtorStrategy, DeclarationOptions)}
 	// so it needs to be protected too.

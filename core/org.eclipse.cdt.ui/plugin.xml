@@ -627,14 +627,16 @@
       </colorDefinition>
       <colorDefinition
             id="org.eclipse.cdt.ui.ColoredLabels.match_highlight"
-            isEditable="false"
-            label="%Dummy.label"
+            categoryId="org.eclipse.cdt.ui.presentation"
+            isEditable="true"
+            label="%CSearch.color.match_highlight"
             value="206, 204, 247">
       </colorDefinition>
       <colorDefinition
             id="org.eclipse.cdt.ui.ColoredLabels.writeaccess_highlight"
-            isEditable="false"
-            label="%Dummy.label"
+            categoryId="org.eclipse.cdt.ui.presentation"
+            isEditable="true"
+            label="%CSearch.color.match_write_highlight"
             value="240, 216, 168">
       </colorDefinition>
       <colorDefinition
@@ -1386,7 +1388,15 @@
       <keyword
             label="%preferenceKeywords.indexer"
             id="org.eclipse.cdt.ui.indexer"/>
-   </extension>  
+      <keyword
+            label="%preferenceKeywords.colored_labels"
+            id="org.eclipse.cdt.ui.ColoredLabels.match_highlight">
+      </keyword>
+      <keyword
+            label="%preferenceKeywords.colored_labels"
+            id="org.eclipse.cdt.ui.ColoredLabels.writeaccess_highlight">
+      </keyword>
+   </extension>
 
    <extension
          point="org.eclipse.ui.menus">

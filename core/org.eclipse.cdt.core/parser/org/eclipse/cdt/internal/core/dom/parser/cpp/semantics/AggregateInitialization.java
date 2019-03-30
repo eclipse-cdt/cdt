@@ -66,24 +66,23 @@ class AggregateInitialization {
 			return checkInitializationFromDefaultMemberInitializer(nestedType, initialValue, worstCost);
 		worstCost = new Cost(fInitializers[fIndex].getType(), nestedType, Rank.IDENTITY);
 
-		if (fInitializers[fIndex].isInitializerList() || !isAggregate(nestedType)) { // no braces are elided
+		ICPPEvaluation initializer = fInitializers[fIndex];
+		Cost costWithoutElision = Conversions.checkImplicitConversionSequence(nestedType, initializer.getType(),
+				initializer.getValueCategory(), UDCMode.ALLOWED, Context.ORDINARY);
+		if (costWithoutElision.converts()) {
 			// p3: The elements of the initializer list are taken as initializers for the elements
 			//     of the aggregate, in order.
-			ICPPEvaluation initializer = fInitializers[fIndex];
 			fIndex++;
-			Cost cost = Conversions.checkImplicitConversionSequence(nestedType, initializer.getType(),
-					initializer.getValueCategory(), UDCMode.ALLOWED, Context.ORDINARY);
-			if (!cost.converts()) {
-				return cost;
-			}
 			// If the initializer-clause is an expression and a narrowing conversion is
 			// required to convert the expression, the program is ill-formed.
-			if (!(initializer instanceof EvalInitList) && cost.isNarrowingConversion()) {
+			if (!(initializer instanceof EvalInitList) && costWithoutElision.isNarrowingConversion()) {
 				return Cost.NO_CONVERSION;
 			}
-			if (cost.compareTo(worstCost) > 0) {
-				worstCost = cost;
+			if (costWithoutElision.compareTo(worstCost) > 0) {
+				worstCost = costWithoutElision;
 			}
+		} else if (fInitializers[fIndex].isInitializerList() || !isAggregate(nestedType)) { // cannot elide braces
+			return costWithoutElision; // doesn't convert
 		} else { // braces are elided: need to check on subaggregates
 			Cost cost = checkInitializationOfElements(nestedType, worstCost);
 			if (!cost.converts())

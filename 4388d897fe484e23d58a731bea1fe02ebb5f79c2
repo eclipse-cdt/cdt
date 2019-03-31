@@ -16,6 +16,227 @@
       "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "00a33edf_c55553b8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 622,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "If there is a noexcept-expression, it needs to be evaluated.\n\nIn the current AST formulation, that would be done using ValueFactory.create(IASTExpression), but once we start using evaluations it will be ICPPEvaluation.getValue().\n\nThis applies to several other places in this patch where currently we just check if the noexcept-expression is null.",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a9aa0e3_108d159f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinaryTypeId.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "A binary type-id expression is evaluated at compile time, so it can never throw.",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a431243_033a6895",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalCompositeAccess.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "This can throw if \u0027parent\u0027 can. (Evaluation of the member access itself cannot throw.)",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "958427ac_6438f70f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalCompoundStatementExpression.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "In principle, a correct implementation here would check if any of the statements in the statement-expression can throw, which would mean implementing noexcept checking for statements as well as expressions.\n\nHowever, we\u0027ve regularly been punting on that sort of thing (in fact, we don\u0027t even store the statements currently, though we could, now that we have ICPPExecution to represent them), so feel free to continue doing so and just return fDelegate.isNoexcept().",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cea8bd08_a8d5df87",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConditional.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "As we don\u0027t know which branch will be taken, we need to assume that this can throw if any of the condition, positive, or negative expressions can throw.",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "18acb76d_e5714f65",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "This should evaluate fConstructor\u0027s noexcept-expression.",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6d347972_2babf5e8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionSet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "This can never throw.\n\n(It actually should never exist outside of a dependent context, and we shouldn\u0027t try to evaluate noexcept in a dependent context, so feel free to add an \"assert false\" as well.)",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0ee3d721_b34b758d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalID.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "This could throw if e.g. evaluation of fFieldOwner can, but this also shouldn\u0027t exist outside of a dependent context, so let\u0027s also \"assert false\" and \"return true\".",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2e6543ef_3b790423",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalNaryTypeId.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "Evaluated at compile time, cannot throw.",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a301033d_1fec801b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalPackExpansion.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "Shouldn\u0027t exist outside of a dependent context, \"assert false\".",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8914614_19efb537",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalReference.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "I\u0027m going to confess that I\u0027ve never fully understood this class :) I _think_ it\u0027s only used as an intermediate result during constexpr evaluation, and as such this method will never actually be called. (If you\u0027d like to test this theory, feel free to \"assert false\" and see if the assertion is ever hit.)\n\nBut following the pattern of other methods, returning getTargetEvaluation().isNoexcept() would also be fine.",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ded1c30b_662ffdd9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 571,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "If fOperator is op_throw, we need to return true :)",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4ba3234d_e141a1cb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnaryTypeID.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:50:50Z",
+      "side": 1,
+      "message": "Evaluated at compile time, cannot throw.",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

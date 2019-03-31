@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5424033e_11c0f734",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPEvaluation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-03-31T07:14:01Z",
+      "side": 1,
+      "message": "Fixing your API documentation TODOs before submitting a patch for review, helps your reviewer understand the patch :)",
+      "revId": "4388d897fe484e23d58a731bea1fe02ebb5f79c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

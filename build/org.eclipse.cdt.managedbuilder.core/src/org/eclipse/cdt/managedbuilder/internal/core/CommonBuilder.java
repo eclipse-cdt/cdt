@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Intel Corporation and others.
+ * Copyright (c) 2007, 2019 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  * Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *                                Save build output (bug 294106)
  * Andrew Gvozdev (Quoin Inc)   - Saving build output implemented in different way (bug 306222)
+ * Umair Sair (Mentor Graphics) - Setting current project for markers creation (bug 545976)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -743,6 +744,8 @@ public class CommonBuilder extends ACBuilder {
 
 			if (status.isBuild()) {
 				try {
+					// Set the current project for markers creation
+					setCurrentProject(bInfo.getProject());
 					boolean isClean = builder.getBuildRunner().invokeBuild(kind, bInfo.getProject(),
 							bInfo.getConfiguration(), builder, bInfo.getConsole(), this, this, monitor);
 					if (isClean) {
@@ -1111,6 +1114,8 @@ public class CommonBuilder extends ACBuilder {
 
 							@Override
 							public void run(IProgressMonitor monitor) throws CoreException {
+								// Set the current project for markers creation
+								setCurrentProject(bInfo.getProject());
 								bInfo.fBuilder.getBuildRunner().invokeBuild(CLEAN_BUILD, bInfo.getProject(),
 										bInfo.getConfiguration(), bInfo.getBuilder(), bInfo.getConsole(),
 										CommonBuilder.this, CommonBuilder.this, monitor);
@@ -1128,6 +1133,8 @@ public class CommonBuilder extends ACBuilder {
 			backgroundJob.setRule(rule);
 			backgroundJob.schedule();
 		} else {
+			// Set the current project for markers creation
+			setCurrentProject(bInfo.getProject());
 			bInfo.fBuilder.getBuildRunner().invokeBuild(CLEAN_BUILD, bInfo.getProject(), bInfo.getConfiguration(),
 					bInfo.getBuilder(), bInfo.getConsole(), this, this, monitor);
 		}

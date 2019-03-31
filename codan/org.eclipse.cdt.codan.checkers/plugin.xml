@@ -588,5 +588,30 @@
                name="%problem.name.BlacklistProblem">
          </problem>
       </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.VariableInitializationChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.VariableInitializationChecker"
+            name="%checker.name.VariablesChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.StaticVariableInHeaderProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.StaticVariableInHeaderProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.StaticVariableInHeaderProblem"
+               name="%problem.name.StaticVariableInHeaderProblem">
+         </problem>
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.MultipleDeclarationsProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.MultipleDeclarationsProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.MultipleDeclarationsProblem"
+               name="%problem.name.MultipleDeclarationsProblem">
+         </problem>
+      </checker>
    </extension>
 </plugin>

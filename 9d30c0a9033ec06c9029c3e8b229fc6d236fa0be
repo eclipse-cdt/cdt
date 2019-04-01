@@ -22,6 +22,30 @@
       "revId": "9d30c0a9033ec06c9029c3e8b229fc6d236fa0be",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36416443_7c81eca6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 171781
+      },
+      "writtenOn": "2019-04-01T14:17:39Z",
+      "side": 1,
+      "message": "ok, I\u0027ll update.. whats the convention here? Anywhere documented? Why patch versions are not 1, 2, 3,...?",
+      "parentUuid": "047efb55_4c23dd61",
+      "range": {
+        "startLine": 5,
+        "startChar": 20,
+        "endLine": 5,
+        "endChar": 23
+      },
+      "revId": "9d30c0a9033ec06c9029c3e8b229fc6d236fa0be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

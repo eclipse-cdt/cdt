@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "047efb55_4c23dd61",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-04-01T11:41:36Z",
+      "side": 1,
+      "message": "It should be 200",
+      "range": {
+        "startLine": 5,
+        "startChar": 20,
+        "endLine": 5,
+        "endChar": 23
+      },
+      "revId": "9d30c0a9033ec06c9029c3e8b229fc6d236fa0be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

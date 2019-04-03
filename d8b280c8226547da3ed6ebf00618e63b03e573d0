@@ -864,6 +864,24 @@
     },
     {
       "key": {
+        "uuid": "91640e92_169f9f03",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/OverrideMethodsAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T12:40:16Z",
+      "side": 1,
+      "message": "Yes. I think it’s the only new API in the UI plugin.",
+      "parentUuid": "75d6c2e3_e55c155e",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b288e98_3228b613",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/OverrideMethodsAction.java",
         "patchSetId": 5

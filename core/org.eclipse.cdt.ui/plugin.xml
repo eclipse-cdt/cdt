@@ -630,7 +630,7 @@
             categoryId="org.eclipse.cdt.ui.presentation"
             isEditable="true"
             label="%CSearch.color.match_highlight"
-            value="206, 204, 247">
+            defaultsTo="org.eclipse.search.ui.match.highlight">
       </colorDefinition>
       <colorDefinition
             id="org.eclipse.cdt.ui.ColoredLabels.writeaccess_highlight"

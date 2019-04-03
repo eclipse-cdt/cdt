@@ -629,13 +629,13 @@
             id="org.eclipse.cdt.ui.ColoredLabels.match_highlight"
             isEditable="false"
             label="%Dummy.label"
-            value="206, 204, 247">
+            defaultsTo="org.eclipse.search.ui.match.highlight">
       </colorDefinition>
       <colorDefinition
             id="org.eclipse.cdt.ui.ColoredLabels.writeaccess_highlight"
             isEditable="false"
             label="%Dummy.label"
-            value="240, 216, 168">
+            defaultsTo="org.eclipse.search.ui.match.highlight">
       </colorDefinition>
       <colorDefinition
             id="org.eclipse.cdt.ui.c_multi_line_comment"

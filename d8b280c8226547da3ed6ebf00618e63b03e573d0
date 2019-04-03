@@ -1,0 +1,571 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "31b939b6_0aaeef17",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "I wasn\u0027t 100% sure what \"ignore\" meant without reading the comment above, i.e. could it mean that the generation would allow shadowing a method that was not marked as virtual? I think it might be clearer to rename this preference something like \"preserve virtual keyword\" and also in the UI text. What do you think?",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ee313ad3_c35d73b6",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePreferenceConstants.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "Why not true by default? Are we worrying about the fact that people might not have moved to C++11?",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f90dae90_ecf85d51",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/overridemethods/OverrideMethodsRefactoringTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "Should we test more locations for initial selection?",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d5e98732_dc2ed2a0",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/overridemethods/OverrideMethodsRefactoringTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "Is there any C++ attributes that apply here that would need to carry on the override? I don\u0027t know enough about Standard attributes.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5d0aefcd_b4aeef96",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/overridemethods/OverrideMethodsRefactoringTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "We should test overriding more than one method at a time. I don\u0027t think it\u0027s working right now!",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63d183e6_d56e7959",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/overridemethods/OverrideMethodsRefactoringTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "How about a test for an override in a nested class?",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a81fe04_62ce5add",
+        "filename": "core/org.eclipse.cdt.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "Even if we move OverrideMethodsAction to internal, I would say we could keep this minor version bump because it is a new feature being added.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10199a58_b021b9d7",
+        "filename": "core/org.eclipse.cdt.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 1936,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "we can remove this small trailing white space at the same time as addressing other comments.",
+      "range": {
+        "startLine": 1936,
+        "startChar": 20,
+        "endLine": 1936,
+        "endChar": 26
+      },
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4a582a5_23b22d8d",
+        "filename": "core/org.eclipse.cdt.ui/plugin.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 4484,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "I don\u0027t think this contribution is required since it returns null. See OverrideMethodsRefactoringContribution.java",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2181a3c1_c4f18167",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CodeStyleBlock.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "overridden",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d44ac08_a1a9d7d6",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "_overridden_",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8239a14e_55a4f9d5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "CodeStyleBlock_add_override_keyword? Since this keyword only makes sense in overridden methods (I think!), overridden doesn\u0027t have to be in the name.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d2b5e8ee_bba7c75d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/implementmethod/ImplementMethodRefactoring.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "I wonder If there is a way to better document this param. It was not obvious to me why it was needed at first. From what I understand, it is needed because of the fact that the declarator generated by the Override refactoring does not have a valid offset yet.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7e5529e6_a67351de",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/implementmethod/ParameterNamesInputPage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "Maybe we should have two versions of createDefinition, one without the offset. In order to hide this not-so-obvious parameter.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "412a07bf_55d60085",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/CodeParser.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "While I find this approach to be somewhat ingenious, it feels too much like a hack to me.\nI would expect that we copy nodes from the overridden \"Method\" declaration in order to generate the new override method declarations.\n\nI gave this approach a try, although I didn\u0027t go as far as to fix all the cases. I added this code in a new method called Method.createNode:\n\nIASTName declaration \u003d DefinitionFinder.getMemberDeclaration(getMethod(),\n        getDeclSpecifier().getTranslationUnit(), context, null);\nINodeFactory factory \u003d getDeclSpecifier().getTranslationUnit().getASTNodeFactory();\nif (declaration !\u003d null) {\n    IASTDeclarator declarator \u003d (IASTDeclarator) declaration.getParent();\n    IASTNode parent \u003d declarator.getParent();\n    if (parent instanceof IASTSimpleDeclaration) {\n        IASTSimpleDeclaration simpleDecl \u003d (IASTSimpleDeclaration) parent;\n        IASTDeclSpecifier declSpec \u003d simpleDecl.getDeclSpecifier().copy();\n        if (declSpec instanceof ICPPASTDeclSpecifier \u0026\u0026 fOptions.ignoreVirtual()) {\n            ((ICPPASTDeclSpecifier) declSpec).setVirtual(false);\n        }\n        simple \u003d factory.newSimpleDeclaration(declSpec);\n        IASTDeclarator newDeclarator \u003d declarator.copy();\n        if (newDeclarator instanceof ICPPASTFunctionDeclarator) {\n            ICPPASTFunctionDeclarator funcDeclarator \u003d (ICPPASTFunctionDeclarator) newDeclarator;\n            funcDeclarator.setPureVirtual(false);\n            if (fOptions.addOverride()) {\n                funcDeclarator.addVirtSpecifier(((ICPPNodeFactory)factory).newVirtSpecifier(SpecifierKind.Override));\t\n            }\n        }\n        simple.addDeclarator(newDeclarator);\n        simple.setParent(getDeclSpecifier());\n        return simple;\n    }\n}",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1b0ecc58_2a7b6529",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/Messages.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "PreserveVirtual? See comment in\nCCorePreferenceConstants.java",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d6b42dc3_9d764d76",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/Messages.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "Since having no base classes means having no methods to override, maybe the message can just be \"No methods to override.\".",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7011d2c8_1b144f88",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/Messages.properties",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "Preserve \u0027virtual\u0027 keyword? See comment in\nCCorePreferenceConstants.java",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b9734aa5_5cc20d24",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/Method.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "I don\u0027t think we\u0027ll need this if we go with the ASTnode-copying approach, see comment in CodeParser.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "be869693_dfd361d7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/OverrideMethodsInputPage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "consisted",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f4dc7cdc_3e0d2dc6",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/OverrideMethodsInputPage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "I don\u0027t know why this message appears at the bottom of the wizard page, but it happens in other refactorings too so we can address this separately later.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0be93c26_ece41fd6",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/OverrideMethodsInputPage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "maybe inline this variable?",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b3feba5_da327af7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/OverrideMethodsRefactoring.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "I don\u0027t understand this comment. Why should only one file be modified? Possibly a header (declarations) and a source file (definitions) so that\u0027s two? I must be missing something.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1cc706d5_7a9e3ce5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/OverrideMethodsRefactoringContribution.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "I don\u0027t think this contribution is required since it returns null.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b11f320_25a4a439",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/OverrideOptions.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "fPreserveVirtual, etc",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f380d804_f5e42a2c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/VirtualMethodContainer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "Can we do instead:\n\n\t\t\tif (methods \u003d\u003d null) {\n\t\t\t\tmethods \u003d new ArrayList\u003c\u003e();\n\t\t\t\tfData.put(classType, methods);\n\t\t\t}\n\t\t\tmethods.add(method);\n\n?",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8b27918f_7418c4b2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/VirtualMethodsASTVisitor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "Is \"mayfa\" the user name for Pavel? Or is this someone else? It is important to make sure that there is not another unknown author.\nOnce this is cleared up, this line can be removed. If it\u0027s someone else, the name should be added at the top in the copyright header.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d4083cc_b8032e80",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/package-info.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "I think some of this should be put in the refactoring class itself. But I also think it\u0027s a bit too verbose. I don\u0027t think it\u0027s usual in CDT to have documentation in package-info.java.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "03b3f47b_c550ef39",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/package-info.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "I would remove from this line.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a53826a5_d084e3df",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/package-info.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "To this line.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4e5a1367_201fcabc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/OverrideMethodsAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "Missing copyright header.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "df786b5d_e218a8c4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/OverrideMethodsAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "Can we move this to an internal package? I know it\u0027s going to be a hassle but my thinking is that we might want to merge Override + Implement method together, just like JDT does (the action is called \"Override/Implement methods\"). If we don\u0027t put it internal and we do merge it, we\u0027d have to either break the API when removing this or deprecate it and make it call the new merged one which is not really semantically the same for a client of the API.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b288e98_3228b613",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/OverrideMethodsAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "I think this is meant to trigger from the outline view, etc. It would be nice to make this work.",
+      "revId": "d8b280c8226547da3ed6ebf00618e63b03e573d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -22,6 +22,23 @@
       "revId": "4cb1151ebe905f665117427455eea73d1a560147",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4337ef8_726471ae",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/OverrideMethodsAction.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-03T04:32:21Z",
+      "side": 1,
+      "message": "This file is missing the copyright header.",
+      "revId": "4cb1151ebe905f665117427455eea73d1a560147",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

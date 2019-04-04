@@ -75,8 +75,10 @@ class AggregateInitialization {
 			fIndex++;
 			// [dcl.init.aggr] If the initializer-clause is an expression and a narrowing conversion is
 			// required to convert the expression, the program is ill-formed.
-			if (!(initializer instanceof EvalInitList) && costWithoutElision.isNarrowingConversion()) {
-				return Cost.NO_CONVERSION;
+			if (!initializer.isConstantExpression()) {
+				if (!(initializer instanceof EvalInitList) && costWithoutElision.isNarrowingConversion()) {
+					return Cost.NO_CONVERSION;
+				}
 			}
 			if (costWithoutElision.compareTo(worstCost) > 0) {
 				worstCost = costWithoutElision;

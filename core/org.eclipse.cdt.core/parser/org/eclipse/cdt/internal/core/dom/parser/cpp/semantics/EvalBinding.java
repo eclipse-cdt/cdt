@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
@@ -257,8 +258,24 @@ public class EvalBinding extends CPPDependentEvaluation {
 	}
 
 	private boolean computeIsConstantExpression() {
-		return fBinding instanceof IEnumerator || fBinding instanceof ICPPFunction
-				|| (fBinding instanceof IVariable && isConstexprValue(((IVariable) fBinding).getInitialValue()));
+		if (fBinding instanceof IEnumerator || fBinding instanceof ICPPFunction)
+			return true;
+		else if (fBinding instanceof ICPPVariable) {
+			if (!isConstexprValue(((IVariable) fBinding).getInitialValue()))
+				return false;
+			ICPPVariable var = (ICPPVariable) fBinding;
+			if (var.isConstexpr())
+				return true;
+			IType type = SemanticUtil.getNestedType(var.getType(), SemanticUtil.TDEF | SemanticUtil.REF);
+			if (ExpressionTypes.isConst(type)) {
+				if (var instanceof ICPPField) {
+					if (var.isStatic())
+						return true;
+				} else
+					return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

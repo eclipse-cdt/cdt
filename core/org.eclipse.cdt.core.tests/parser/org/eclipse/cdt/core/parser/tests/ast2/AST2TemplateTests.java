@@ -11282,4 +11282,20 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		helper.assertVariableValue("val1", 42);
 		helper.assertVariableValue("val2", 43);
 	}
+
+	//  template <typename T>
+	//  constexpr T id(T a) {
+	//      return a;
+	//  }
+	//
+	//  template <int> struct Waldo {using type = int;};
+	//
+	//  const int forty_two = 42;
+	//  using const_int_ref = int const&;
+	//  const_int_ref ref_forty_two = forty_two;
+	//
+	//  Waldo<id(ref_forty_two)>::type a;
+	public void testGlobalConstWorksAsConstExpression_545756() throws Exception {
+		parseAndCheckBindings();
+	}
 }

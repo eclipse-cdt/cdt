@@ -254,6 +254,9 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 		if (!recursionProtectionSet.add(this)) {
 			return IntegralValue.UNKNOWN;
 		}
+		if (!SemanticUtil.isConst(SemanticUtil.getNestedType(getType(), TDEF))) {
+			return IntegralValue.UNKNOWN;
+		}
 		try {
 			IValue initialValue = null;
 			final IType nestedType = SemanticUtil.getNestedType(getType(), TDEF | REF | CVTYPE);

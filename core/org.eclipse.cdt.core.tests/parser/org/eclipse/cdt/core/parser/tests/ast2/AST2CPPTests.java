@@ -13031,6 +13031,18 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		parseAndCheckImplicitNameBindings();
 	}
 
+	//	struct A {
+	//	    int x;
+	//	};
+	//
+	//	template <typename T>
+	//	struct B {
+	//	    A a{sizeof(T)};
+	//	};
+	public void testAggregateInitNoNarrowingConversionInDependentConstContext_545756() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+
 	//  struct type{
 	//      int a;
 	//  };

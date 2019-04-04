@@ -113,7 +113,7 @@ public class ExpressionTypes {
 		return type;
 	}
 
-	private static boolean isConst(IType type) {
+	public static boolean isConst(IType type) {
 		if (type instanceof IQualifierType) {
 			return ((IQualifierType) type).isConst();
 		} else if (type instanceof IPointerType) {

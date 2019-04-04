@@ -202,7 +202,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 
 	@Override
 	public boolean isConstexpr() {
-		return VariableHelpers.isConstexpr(fDefinition);
+		return VariableHelpers.isConstexpr(fDefinition != null ? fDefinition : fDeclarations[0]);
 	}
 
 	@Override

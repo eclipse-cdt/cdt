@@ -1998,7 +1998,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		scribe.startNewLine();
 
 		IASTDeclaration[] memberDecls = node.getMembers();
-		for (IASTDeclaration declaration : memberDecls) {
+		for (int i = 0; i < memberDecls.length; i++) {
+			IASTDeclaration declaration = memberDecls[i];
 			if (preferences.indent_body_declarations_compare_to_access_specifier) {
 				scribe.indent();
 			}
@@ -2007,18 +2008,24 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				if (preferences.indent_body_declarations_compare_to_access_specifier) {
 					scribe.unIndent();
 				}
-				if (enterNode(declaration)) {
-					scribe.startNewLine();
-					visit((ICPPASTVisibilityLabel) declaration);
-					scribe.startNewLine();
-					exitNode(declaration);
-				}
-			} else {
-				if (enterNode(declaration)) {
+				IASTDeclaration next = null;
+				if (i < memberDecls.length - 1 && !(memberDecls[i + 1] instanceof IASTProblemHolder))
+					next = memberDecls[i + 1];
+				if (i == memberDecls.length - 1 || next == null || !doNodeLocationsOverlap(declaration, next)) {
 					if (getCurrentPosition() <= nodeOffset(declaration))
 						scribe.startNewLine();
-					formatDeclaration(declaration);
-					exitNode(declaration);
+				}
+				declaration.accept(this);
+			} else {
+				if (!(declaration instanceof IASTProblemHolder)) {
+					IASTDeclaration next = null;
+					if (i < memberDecls.length - 1 && !(memberDecls[i + 1] instanceof IASTProblemHolder))
+						next = memberDecls[i + 1];
+					if (i == memberDecls.length - 1 || next == null || !doNodeLocationsOverlap(declaration, next)) {
+						if (getCurrentPosition() <= nodeOffset(declaration))
+							scribe.startNewLine();
+					}
+					declaration.accept(this);
 				} else {
 					skipNode(declaration);
 				}

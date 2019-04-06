@@ -3903,4 +3903,19 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testFormmatterWithMacroFuncStyle_Bug475349() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#define bool bool
+	//struct ARGS {
+	//	bool _unprune;
+	//	bool _distributed_timing;
+	//};
+
+	//#define bool bool
+	//struct ARGS {
+	//	bool _unprune;
+	//	bool _distributed_timing;
+	//};
+	public void testBoolInStructWithMacro_Bug397710() throws Exception {
+		assertFormatterResult();
+	}
 }

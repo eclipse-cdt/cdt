@@ -119,6 +119,15 @@
                messagePattern="%problem.messagePattern.NoReturn"
                name="%problem.name.NoReturn">
          </problem>
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.LocalVarReturn"
+               id="org.eclipse.cdt.codan.checkers.localvarreturn"
+               messagePattern="%problem.messagePattern.LocalVarReturn"
+               name="%problem.name.LocalVarReturn">
+         </problem>
       </checker>
       <checker
             class="org.eclipse.cdt.codan.internal.checkers.ProblemBindingChecker"

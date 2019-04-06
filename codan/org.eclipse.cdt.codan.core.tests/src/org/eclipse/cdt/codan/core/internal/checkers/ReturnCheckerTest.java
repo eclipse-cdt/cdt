@@ -26,7 +26,8 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		enableProblems(ReturnChecker.RET_NORET_ID, ReturnChecker.RET_ERR_VALUE_ID, ReturnChecker.RET_NO_VALUE_ID);
+		enableProblems(ReturnChecker.RET_NORET_ID, ReturnChecker.RET_ERR_VALUE_ID, ReturnChecker.RET_NO_VALUE_ID,
+				ReturnChecker.RET_LOCAL_ID);
 	}
 
 	@Override
@@ -525,6 +526,100 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	goto cleanup;
 	//}
 	public void testNoReturnWithGoto_Bug492878() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	int& bar() {
+	//		int a = 0;
+	//		return a; //error here
+	//	}
+	public void testReturnByRef() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	int* bar() {
+	//		int a = 0;
+	//		return &a; //error here
+	//	}
+	public void testReturnByPtr() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	int& bar() {
+	//		int a = 0;
+	//		return reinterpret_cast<int&>(a); //error here
+	//	}
+	public void testReturnByCastRef() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	int* bar() {
+	//		int a = 0;
+	//		return reinterpret_cast<int*>(a);
+	//	}
+	public void testReturnByCastPtr() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	int* bar() {
+	//		int a = 0, b = 0;
+	//		bool cond = true;
+	//		return cond ? &a : b; //error here
+	//	}
+	public void testReturnByTernary() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	struct S { int a; }
+	//	int& bar() {
+	//		struct S s;
+	//		return s.a; //error here
+	//	}
+	public void testReturnLocalStructField() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	class Test {
+	//	private:
+	//		int field;
+	//	public:
+	//		int& bar() {
+	//			return field;
+	//		}
+	//	}
+	public void testReturnClassField() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	class Test {
+	//	private:
+	//		int field;
+	//	public:
+	//		void foo(double*);
+	//		void (Test::*op_func)(double*) bar() {
+	//			return foo;
+	//		}
+	//	}
+	public void testReturnClassMethod() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//int& foo() {
+	//	int* a = new int;
+	//	return *a;
+	//}
+	public void testReturnRefUsingDerefPtr() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//void foo() {
+	//	int local;
+	//	auto s = [&local]() {
+	//	    return &local;  // ok
+	//	};
+	//	int* ptr = s();
+	//}
+	public void testReturnLambda() throws Exception {
 		checkSampleAboveCpp();
 	}
 }

@@ -4003,4 +4003,19 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_SEMICOLON_IN_FOR, CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
+
+	//#define bool bool
+	//struct ARGS {
+	//	bool _unprune;
+	//	bool _distributed_timing;
+	//};
+
+	//#define bool bool
+	//struct ARGS {
+	//	bool _unprune;
+	//	bool _distributed_timing;
+	//};
+	public void testBoolInStructWithMacro_Bug397710() throws Exception {
+		assertFormatterResult();
+	}
 }

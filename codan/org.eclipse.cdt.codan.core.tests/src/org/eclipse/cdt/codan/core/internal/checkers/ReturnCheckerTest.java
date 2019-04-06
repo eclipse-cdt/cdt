@@ -26,7 +26,8 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		enableProblems(ReturnChecker.RET_NORET_ID, ReturnChecker.RET_ERR_VALUE_ID, ReturnChecker.RET_NO_VALUE_ID);
+		enableProblems(ReturnChecker.RET_NORET_ID, ReturnChecker.RET_ERR_VALUE_ID, ReturnChecker.RET_NO_VALUE_ID,
+				ReturnChecker.RET_LOCAL_ID);
 	}
 
 	@Override
@@ -525,6 +526,101 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	goto cleanup;
 	//}
 	public void testNoReturnWithGoto_Bug492878() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	int& bar() {
+	//		int a = 0;
+	//		return a; //error here
+	//	}
+	public void testReturnByRef_Bug546173() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	int* bar() {
+	//		int a = 0;
+	//		return &a; //error here
+	//	}
+	public void testReturnByPtr_Bug546173() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	int& bar() {
+	//		int a = 0;
+	//		return reinterpret_cast<int&>(a); //error here
+	//	}
+	public void testReturnByCastRef_Bug546173() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	int* bar() {
+	//		int a = 0;
+	//		return reinterpret_cast<int*>(a);
+	//	}
+	public void testReturnByCastPtr_Bug546173() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	int* bar() {
+	//		int a = 0, b = 0;
+	//		bool cond = true;
+	//		return cond ? &a : //error here
+	//					  &b; //error here
+	//	}
+	public void testReturnByTernary_Bug546173() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	struct S { int a; }
+	//	int& bar() {
+	//		struct S s;
+	//		return s.a; //error here
+	//	}
+	public void testReturnLocalStructField_Bug546173() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	class Test {
+	//	private:
+	//		int field;
+	//	public:
+	//		int& bar() {
+	//			return field;
+	//		}
+	//	}
+	public void testReturnClassField_Bug546173() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//	class Test {
+	//	private:
+	//		int field;
+	//	public:
+	//		void foo(double*);
+	//		void (Test::*bar())(double*) {
+	//			 return &Test::foo;
+	//		}
+	//	}
+	public void testReturnClassMethod_Bug546173() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//int& foo() {
+	//	int* a = new int;
+	//	return *a;
+	//}
+	public void testReturnRefUsingDerefPtr_Bug546173() throws Exception {
+		checkSampleAboveCpp();
+	}
+
+	//void foo() {
+	//	int local;
+	//	auto s = [&local]() {
+	//	    return &local;  // ok
+	//	};
+	//	int* ptr = s();
+	//}
+	public void testReturnLambda_Bug546173() throws Exception {
 		checkSampleAboveCpp();
 	}
 }

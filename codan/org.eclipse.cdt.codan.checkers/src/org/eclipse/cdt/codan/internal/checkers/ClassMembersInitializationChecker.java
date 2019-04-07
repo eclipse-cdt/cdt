@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -199,6 +200,11 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 		@Override
 		public int visit(IASTName name) {
 			if (!constructorsStack.empty()) {
+				if (name.getParent() instanceof IASTFieldReference) {
+					IASTFieldReference ref = (IASTFieldReference) name.getParent();
+					if (!referencesThis(ref.getFieldOwner()))
+						return PROCESS_CONTINUE;
+				}
 				Set<IField> actualConstructorFields = constructorsStack.peek();
 				if (!actualConstructorFields.isEmpty()) {
 					IBinding binding = name.resolveBinding();

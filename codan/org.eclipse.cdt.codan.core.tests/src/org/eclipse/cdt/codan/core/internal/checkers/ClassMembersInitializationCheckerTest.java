@@ -685,4 +685,18 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
+	//	class Waldo {
+	//	private:
+	//		int location;
+	//	public:
+	//	  Waldo() {
+	//	    Waldo d;
+	//		d.location = 1;
+	//	  }
+	//	};
+	public void testOtherInstance_Bug519473() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(5);
+	}
 }

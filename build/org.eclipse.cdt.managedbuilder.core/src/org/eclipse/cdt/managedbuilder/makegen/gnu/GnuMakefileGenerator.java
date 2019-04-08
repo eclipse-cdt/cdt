@@ -16,6 +16,7 @@
  *     James Blackburn (Broadcom Corp.)
  *     Marc-Andre Laperle
  *     Liviu Ionescu - [322168]
+ *     Dorothea Pilz-Roeder (Advantest Europe GmbH) - [180451]
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
@@ -105,7 +106,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * extensions present in Gnu Make.
  *
  * @since 1.2
- * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
@@ -441,7 +441,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		builder = config.getEditableBuilder();
 		initToolInfos();
 		//set the top build dir path
-		topBuildDir = project.getFolder(info.getConfigurationName()).getFullPath();
+		initializeTopBuildDir(info.getConfigurationName());
 	}
 
 	/**
@@ -620,7 +620,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		 * 1. This is an incremental build, so if the top-level directory is not
 		 * there, then a rebuild is needed.
 		 */
-		IFolder folder = project.getFolder(config.getName());
+		IFolder folder = project.getFolder(computeTopBuildDir(config.getName()));
 		if (!folder.exists()) {
 			return regenerateMakefiles();
 		}
@@ -903,7 +903,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 
 		// Create the top-level directory for the build output
-		topBuildDir = createDirectory(config.getName());
+		ensureTopBuildDir();
 		checkCancel();
 
 		// Get the list of subdirectories
@@ -1196,7 +1196,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		//buffer.append(NEWLINE);
 
 		// include makefile.init supplementary makefile
-		buffer.append("-include " + ROOT + SEPARATOR + MAKEFILE_INIT).append(NEWLINE); //$NON-NLS-1$
+		buffer.append("-include " + reachProjectRoot() + SEPARATOR + MAKEFILE_INIT).append(NEWLINE); //$NON-NLS-1$
 		buffer.append(NEWLINE);
 
 		// Get the clean command from the build model
@@ -1257,7 +1257,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 
 		// Include makefile.defs supplemental makefile
-		buffer.append("-include ").append(ROOT).append(SEPARATOR).append(MAKEFILE_DEFS).append(NEWLINE); //$NON-NLS-1$
+		buffer.append("-include ").append(reachProjectRoot()).append(SEPARATOR).append(MAKEFILE_DEFS).append(NEWLINE); //$NON-NLS-1$
 
 		return (buffer.append(NEWLINE));
 	}
@@ -1492,7 +1492,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		buffer.append(NEWLINE);
 
 		// Include makefile.targets supplemental makefile
-		buffer.append("-include ").append(ROOT).append(SEPARATOR).append(MAKEFILE_TARGETS).append(NEWLINE); //$NON-NLS-1$
+		buffer.append("-include ").append(reachProjectRoot()).append(SEPARATOR).append(MAKEFILE_TARGETS) //$NON-NLS-1$
+				.append(NEWLINE);
 
 		return buffer;
 	}
@@ -1972,7 +1973,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		IResource[] resources = module.members();
 
 		IResourceInfo rcInfo;
-		IFolder folder = project.getFolder(config.getName());
+		IFolder folder = project.getFolder(computeTopBuildDir(config.getName()));
 
 		for (IResource resource : resources) {
 			if (resource.getType() == IResource.FILE) {
@@ -2435,7 +2436,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		String defaultOutputName = EMPTY_STRING;
 		String primaryDependencyName = EMPTY_STRING;
 		String patternPrimaryDependencyName = EMPTY_STRING;
-		String home = (generatedSource) ? DOT : ROOT;
+		String home = (generatedSource) ? DOT : reachProjectRoot();
 		String resourcePath = null;
 		boolean patternRule = true;
 		boolean isItLinked = false;
@@ -3729,7 +3730,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			if (generatedSource) {
 				srcName = "./" + srcPath.toString(); //$NON-NLS-1$
 			} else {
-				srcName = ROOT + "/" + srcPath.toString(); //$NON-NLS-1$
+				srcName = reachProjectRoot() + SEPARATOR + srcPath.toString();
 			}
 		} else {
 			if (generatedSource && !sourceLocation.isAbsolute()) {
@@ -4547,7 +4548,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		initToolInfos();
 		//set the top build dir path
-		topBuildDir = project.getFolder(cfg.getName()).getFullPath();
+		initializeTopBuildDir(cfg.getName());
 
 		srcEntries = config.getSourceEntries();
 		if (srcEntries.length == 0) {
@@ -4607,4 +4608,52 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 		return h;
 	}
+
+	private void ensureTopBuildDir() throws CoreException {
+		IPath buildWorkingDir = getBuildWorkingDir();
+		if (buildWorkingDir != null) {
+			createDirectory(buildWorkingDir.toString());
+		}
+	}
+
+	private void initializeTopBuildDir(String configName) {
+		topBuildDir = project.getFolder(computeTopBuildDir(configName)).getFullPath();
+	}
+
+	/**
+	 * Can be overwritten by a subclass to specify the top build directory to be
+	 * used. Default implementation simply returns configuration name.
+	 * <p>
+	 * <strong>Note</strong>: be careful by overriding this method - all places in the custom code and related
+	 * scripts using or referencing top build directory must also be changed to use same logic.
+	 *
+	 * @param configName name of the configuration
+	 * @return project relative path for top build directory
+	 * @since 8.7
+	 */
+	protected IPath computeTopBuildDir(String configName) {
+		return new Path(configName);
+	}
+
+	/**
+	 * @return As many ".." as required to get from getBuildWorkingDir() to the project root.
+	 *
+	 *         E.g. If getBuildWorkingDir() is "Debug", then the function returns "..". If
+	 *         getBuildWorkingDir() returns "x86/Debug" then "../.." is returned.
+	 *
+	 * @since 8.7
+	 */
+	public String reachProjectRoot() {
+		IPath buildWorkingDir = getBuildWorkingDir();
+		if (buildWorkingDir == null) {
+			return ROOT;
+		}
+		String root = ROOT;
+		int segCnt = buildWorkingDir.segmentCount();
+		for (int i = 1; i < segCnt; i++) {
+			root += SEPARATOR + ROOT;
+		}
+		return root;
+	}
+
 }

@@ -996,7 +996,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		// create rule of the form
 		// OBJS = $(macroName1: ../%.input1=%.output1) ... $(macroNameN: ../%.inputN=%.outputN)
 		return IManagedBuilderMakefileGenerator.WHITESPACE + "$(" + macroName + //$NON-NLS-1$
-				IManagedBuilderMakefileGenerator.COLON + IManagedBuilderMakefileGenerator.ROOT
+				IManagedBuilderMakefileGenerator.COLON + makeGen.reachProjectRoot()
 				+ IManagedBuilderMakefileGenerator.SEPARATOR + IManagedBuilderMakefileGenerator.WILDCARD + DOT
 				+ srcExtensionName + "=" + wildcard + OptDotExt + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}

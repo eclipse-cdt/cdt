@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e68530a_2abcbbdc",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2011,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2019-04-08T21:22:02Z",
+      "side": 1,
+      "message": "Looking at the code you are replacing, there is logic being performed in the enterNode() and visit(ICPPASTVisibilityLabel) code that doesn\u0027t appear here.  How is the removal explained and could comments be added to do this?",
+      "revId": "692f180208d6c6798a0bd9f7e83f455c831c4bc5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

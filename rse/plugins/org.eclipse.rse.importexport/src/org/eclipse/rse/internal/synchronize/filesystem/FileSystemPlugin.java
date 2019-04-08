@@ -16,7 +16,6 @@ package org.eclipse.rse.internal.synchronize.filesystem;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.internal.synchronize.RSESyncUtils;
@@ -53,11 +52,9 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 	/**
 	 * Override the standard plugin constructor.
 	 * 
-	 * @param descriptor
-	 *            the plugin descriptor
 	 */
-	public FileSystemPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public FileSystemPlugin() {
+		super();
 		// record this instance as the singleton
 		plugin = this;
 	}

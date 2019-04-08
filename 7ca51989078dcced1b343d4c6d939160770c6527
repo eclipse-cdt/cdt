@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a6701bfb_a6deee12",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 3891,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-04-08T16:47:59Z",
+      "side": 1,
+      "message": "The \t\tassertFormatterResult();\nis lost from here.",
+      "revId": "7ca51989078dcced1b343d4c6d939160770c6527",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

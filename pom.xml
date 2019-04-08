@@ -34,9 +34,8 @@
 		<!-- Check available versions at https://repository.sonatype.org/content/repositories/public/org/jacoco/jacoco-maven-plugin -->
 		<jacoco-version>0.7.9</jacoco-version>
 
-		<sdk-version>4.11-I-builds</sdk-version>
 		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
-		<platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
+		<platform-site>http://download.eclipse.org/eclipse/updates/I-builds/</platform-site>
 
 		<!-- <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20180905201904/repository/</orbit-site> -->
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/latest-I/</orbit-site>
@@ -270,13 +269,6 @@
 						<!-- <useUIHarness>true</useUIHarness>  -->
 						<!-- <useUIThread>true</useUIThread> -->
 						<failIfNoTests>false</failIfNoTests>
-						<!-- <dependencies>
-							<dependency>
-								<type>p2-installable-unit</type>
-								<artifactId>org.eclipse.platform.feature.group</artifactId>
-								<version>${sdk-version}</version>
-							</dependency>
-						</dependencies> -->
 						<product>org.eclipse.platform.ide</product>
 						<!-- <argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=256m -Drse.enableSecureStoreAccess=false -Dorg.eclipse.swt.browser.UseWebKitGTK=true</argLine> -->
 						<argLine> -ea </argLine>

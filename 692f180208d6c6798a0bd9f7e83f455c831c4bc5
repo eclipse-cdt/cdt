@@ -16,6 +16,24 @@
       "revId": "692f180208d6c6798a0bd9f7e83f455c831c4bc5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1ddf6b42_6318ae94",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2011,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-04-09T06:06:08Z",
+      "side": 1,
+      "message": "Just to have uniform approach in the code. The methods enterNode and so on are just \"behind\" the call of\n\ndeclaration.accept(this);\n\nexactly what we are doing in the rest of formatter code.",
+      "parentUuid": "8e68530a_2abcbbdc",
+      "revId": "692f180208d6c6798a0bd9f7e83f455c831c4bc5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

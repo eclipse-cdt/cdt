@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "82b8f0ce_d99b9e8a",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1828,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-04-09T20:23:48Z",
+      "side": 1,
+      "message": "This is (approx) the test from https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d449394#c0 so I thought it would be most valuable to explicitly test for it.",
+      "revId": "290cb246b6d708e1634e3d07f0f929768ae2d9b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

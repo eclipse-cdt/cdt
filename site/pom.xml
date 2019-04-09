@@ -20,5 +20,6 @@
 
 	<groupId>org.eclipse.tm.rse</groupId>
 	<artifactId>org.eclipse.tm.site</artifactId>
+	<version>4.5.101-SNAPSHOT</version>
 	<packaging>eclipse-repository</packaging>
 </project>

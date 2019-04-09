@@ -143,6 +143,7 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_new_line_before_catch_in_try_statement;
 	public boolean insert_new_line_before_closing_brace_in_initializer_list;
 	public boolean insert_new_line_before_colon_in_constructor_initializer_list;
+	public boolean insert_new_line_after_colon_in_constructor_initializer_list;
 	public boolean insert_new_line_before_else_in_if_statement;
 	public boolean insert_new_line_before_while_in_do_statement;
 	public boolean insert_new_line_before_identifier_in_function_declaration;
@@ -436,6 +437,9 @@ public class DefaultCodeFormatterOptions {
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST,
 				this.insert_new_line_before_colon_in_constructor_initializer_list ? CCorePlugin.INSERT
 						: CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST,
+				this.insert_new_line_after_colon_in_constructor_initializer_list ? CCorePlugin.INSERT
+						: CCorePlugin.INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_ELSE_IN_IF_STATEMENT,
 				this.insert_new_line_before_else_in_if_statement ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_WHILE_IN_DO_STATEMENT,
@@ -1321,6 +1325,12 @@ public class DefaultCodeFormatterOptions {
 		if (insertNewLineBeforeClosingBraceInInitializerListOption != null) {
 			this.insert_new_line_before_closing_brace_in_initializer_list = CCorePlugin.INSERT
 					.equals(insertNewLineBeforeClosingBraceInInitializerListOption);
+		}
+		final Object insertNewLineAfterColonInConstructorInitializerListOption = settings.get(
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST);
+		if (insertNewLineAfterColonInConstructorInitializerListOption != null) {
+			this.insert_new_line_after_colon_in_constructor_initializer_list = CCorePlugin.INSERT
+					.equals(insertNewLineAfterColonInConstructorInitializerListOption);
 		}
 		final Object insertNewLineBeforeColonInConstructorInitializerListOption = settings.get(
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST);

@@ -934,6 +934,18 @@ public class DefaultCodeFormatterConstants {
 			+ ".formatter.insert_new_line_before_colon_in_constructor_initializer_list"; //$NON-NLS-1$
 	/**
 	 * <pre>
+	 * FORMATTER / Option to insert a new line after colon in constructor initializer list.
+	 *     - option id:         "org.eclipse.cdt.core.formatter.formatter.insert_new_line_after_colon_in_constructor_initializer_list"
+	 *     - possible values:   { DO_NOT_INSERT, INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_NEW_LINE_AFTER_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_new_line_after_colon_in_constructor_initializer_list"; //$NON-NLS-1$
+	/**
+	 * <pre>
 	 * FORMATTER / Option to insert a new line before the else keyword in if statement
 	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_before_else_in_if_statement"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }

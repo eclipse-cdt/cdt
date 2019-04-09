@@ -46,6 +46,10 @@ public class NewLinesTabPage extends FormatterTabPage {
 		final Group newlinesGroup = createGroup(numColumns, composite,
 				FormatterMessages.NewLinesTabPage_newlines_group_title);
 		createPref(newlinesGroup, numColumns,
+				FormatterMessages.NewLinesTabPage_newlines_group_option_after_colon_in_constructor_initializer_list,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST,
+				DO_NOT_INSERT_INSERT);
+		createPref(newlinesGroup, numColumns,
 				FormatterMessages.NewLinesTabPage_newlines_group_option_before_colon_in_constructor_initializer_list,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST,
 				DO_NOT_INSERT_INSERT);

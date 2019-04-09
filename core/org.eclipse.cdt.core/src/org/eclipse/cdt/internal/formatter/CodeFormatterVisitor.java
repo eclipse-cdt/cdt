@@ -1399,17 +1399,22 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 				scribe.printNextToken(Token.tCOLON,
 						!preferences.insert_new_line_before_colon_in_constructor_initializer_list);
-				if (preferences.insert_new_line_before_colon_in_constructor_initializer_list) {
+				if (!preferences.insert_new_line_after_colon_in_constructor_initializer_list) {
 					scribe.space();
-				} else {
+				}
+				if (preferences.insert_new_line_after_colon_in_constructor_initializer_list) {
 					scribe.printTrailingComment();
 					scribe.startNewLine();
-					scribe.indentForContinuation();
+					if (!preferences.insert_new_line_before_colon_in_constructor_initializer_list)
+						scribe.indentForContinuation();
 				}
 				final ListOptions options = new ListOptions(preferences.alignment_for_constructor_initializer_list);
 				options.fTieBreakRule = Alignment.R_OUTERMOST;
 				formatList(Arrays.asList(constructorChain), options, false, false, null);
-				scribe.unIndentForContinuation();
+				if (preferences.insert_new_line_after_colon_in_constructor_initializer_list
+						|| preferences.insert_new_line_before_colon_in_constructor_initializer_list) {
+					scribe.unIndentForContinuation();
+				}
 			}
 
 			if (cppFunctionDefinition.isDefaulted() || cppFunctionDefinition.isDeleted()) {

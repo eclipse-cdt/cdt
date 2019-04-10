@@ -14,8 +14,8 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>1.4.0-SNAPSHOT</tycho-version>
-		<tycho-extras-version>1.4.0-SNAPSHOT</tycho-extras-version>
+		<tycho-version>1.4.0</tycho-version>
+		<tycho-extras-version>1.4.0</tycho-extras-version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -39,7 +39,7 @@
 	<repositories>
 		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.10/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.11/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -49,7 +49,7 @@
 		</repository>
 		<repository>
 			<id>cdt</id>
-			<url>http://download.eclipse.org/tools/cdt/releases/9.6/</url>
+			<url>http://download.eclipse.org/tools/cdt/releases/9.7</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>

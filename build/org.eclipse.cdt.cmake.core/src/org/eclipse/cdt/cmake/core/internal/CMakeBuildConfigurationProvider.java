@@ -112,6 +112,7 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 		configName.append(launchMode);
 		if ("linux-container".equals(os)) { //$NON-NLS-1$
 			String osConfigName = toolChain.getProperty("linux-container-id"); //$NON-NLS-1$
+			osConfigName = osConfigName.replaceAll("/", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 			configName.append('.');
 			configName.append(osConfigName);
 		} else {

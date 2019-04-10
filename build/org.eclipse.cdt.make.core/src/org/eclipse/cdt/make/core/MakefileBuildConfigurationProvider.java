@@ -80,6 +80,7 @@ public class MakefileBuildConfigurationProvider implements ICBuildConfigurationP
 		String os = toolChain.getProperty(IToolChain.ATTR_OS);
 		if ("linux-container".equals(os)) { //$NON-NLS-1$
 			String osConfigName = toolChain.getProperty("linux-container-id"); //$NON-NLS-1$
+			osConfigName = osConfigName.replaceAll("/", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 			configName.append('.');
 			configName.append(osConfigName);
 		} else {

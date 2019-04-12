@@ -63,7 +63,7 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 	public void testString() throws Exception {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("const char* aString;", result); //$NON-NLS-1$
+		assertContainedIn("const char *aString;", result); //$NON-NLS-1$
 	}
 
 	// void func() {
@@ -72,7 +72,7 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 	public void testWString() throws Exception {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("const wchar_t* aWString;", result); //$NON-NLS-1$
+		assertContainedIn("const wchar_t *aWString;", result); //$NON-NLS-1$
 	}
 
 	// void func() {

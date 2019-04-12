@@ -554,24 +554,24 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 	//A.h
 	//class X {
 	//	void method() {
-	//		char* a = /*$*/"sometext"/*$$*/;
+	//		char *a = /*$*/"sometext"/*$$*/;
 	//	}
 	//
 	//	void method2() {
-	//		const char* b = "sometext";
+	//		const char *b = "sometext";
 	//	}
 	//};
 	//====================
 	//class X {
 	//	void method() {
-	//		char* a = EXTRACTED;
+	//		char *a = EXTRACTED;
 	//	}
 	//
 	//	void method2() {
-	//		const char* b = EXTRACTED;
+	//		const char *b = EXTRACTED;
 	//	}
 	//
-	//	static const char* EXTRACTED = "sometext";
+	//	static const char *EXTRACTED = "sometext";
 	//};
 	public void testString() throws Exception {
 		assertRefactoringSuccess();
@@ -580,26 +580,26 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 	//A.h
 	//class X {
 	//	void method() {
-	//		wchar_t* a = /*$*/L"sometext"/*$$*/;
+	//		wchar_t *a = /*$*/L"sometext"/*$$*/;
 	//	}
 	//
 	//	void method2() {
-	//		const wchar_t* b = L"sometext";
-	//		const char* c = "sometext";
+	//		const wchar_t *b = L"sometext";
+	//		const char *c = "sometext";
 	//	}
 	//};
 	//====================
 	//class X {
 	//	void method() {
-	//		wchar_t* a = EXTRACTED;
+	//		wchar_t *a = EXTRACTED;
 	//	}
 	//
 	//	void method2() {
-	//		const wchar_t* b = EXTRACTED;
-	//		const char* c = "sometext";
+	//		const wchar_t *b = EXTRACTED;
+	//		const char *c = "sometext";
 	//	}
 	//
-	//	static const wchar_t* EXTRACTED = L"sometext";
+	//	static const wchar_t *EXTRACTED = L"sometext";
 	//};
 	public void testExtractConstantWideString() throws Exception {
 		assertRefactoringSuccess();

@@ -1127,12 +1127,20 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			scribe.space();
 		}
 
-		// namespace <name>
-		scribe.printNextToken(Token.t_namespace, false);
-		scribe.space();
-		formatLeadingAttributes(node, ICPPASTAttributeList.TYPE_FILTER);
-		boolean isNamedNamespace = !CPPVisitor.isAnonymousNamespace(node);
-		if (isNamedNamespace) {
+		boolean isNamedNamespace = false;
+		if (!(node.getParent() instanceof ICPPASTNamespaceDefinition)) {
+			// namespace <name>
+			scribe.printNextToken(Token.t_namespace, false);
+			scribe.space();
+			formatLeadingAttributes(node, ICPPASTAttributeList.TYPE_FILTER);
+			isNamedNamespace = !CPPVisitor.isAnonymousNamespace(node);
+			if (isNamedNamespace) {
+				IASTName name = node.getName();
+				name.accept(this);
+			}
+			return PROCESS_CONTINUE;
+		} else {
+			scribe.printNextToken(Token.tCOLONCOLON, false);
 			IASTName name = node.getName();
 			name.accept(this);
 		}

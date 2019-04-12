@@ -4018,4 +4018,15 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testBoolInStructWithMacro_Bug397710() throws Exception {
 		assertFormatterResult();
 	}
+
+	//namespace AA::BB {
+	//int a;
+	//}
+
+	//namespace AA::BB {
+	//int a;
+	//}
+	public void testNestedNamespace_Bug546221() throws Exception {
+		assertFormatterResult();
+	}
 }

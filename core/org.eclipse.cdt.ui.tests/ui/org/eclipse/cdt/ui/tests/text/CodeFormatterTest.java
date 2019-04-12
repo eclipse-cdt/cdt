@@ -142,7 +142,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//pvar;
 
 	//int var;
-	//int* pvar;
+	//int *pvar;
 	public void testSpaceBetweenTypeAndIdentifier_Bug194603() throws Exception {
 		assertFormatterResult();
 	}
@@ -229,7 +229,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//};
 	//
 	//void test() {
-	//    ClassWithALongName* variable_with_a_long_name;
+	//    ClassWithALongName *variable_with_a_long_name;
 	//    for (ClassWithALongName::Iterator iter_for_class_with_a_long_name =
 	//            variable_with_a_long_name->getIterator();
 	//            !iter_for_class_with_a_long_name.isDone();
@@ -416,7 +416,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	return 2;
 	//}
 
-	//int main(int argc, char const int* argv[])
+	//int main(int argc, char const int *argv[])
 	//try {
 	//	for (int i = 1; i < argc; ++i) {
 	//	}
@@ -434,7 +434,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//int main(int argc, char const int * argv[]) { try { for (int i = 1; i < argc; ++i) { } return 0; } catch (float e) { return 1; } catch (...) { return 2; } }
 
-	//int main(int argc, char const int * argv[]) {
+	//int main(int argc, char const int *argv[]) {
 	//	try {
 	//		for (int i = 1; i < argc; ++i) {
 	//		}
@@ -556,7 +556,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//void f() {
 	//	int *px = ::new int(0);
-	//	int* py[] = new int[5](0, 1, 2, 3, 4);
+	//	int *py[] = new int[5](0, 1, 2, 3, 4);
 	//	int *pz[] = new (px) int(0);
 	//	delete[] py;
 	//	::delete px;
@@ -600,11 +600,11 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//static void* h();
 	//int* (*a) [2];
 
-	//static void *f() {
+	//static void* f() {
 	//}
-	//static void * g();
+	//static void* g();
 	//static void* h();
-	//int* (*a)[2];
+	//int *(*a)[2];
 	public void testSpaceBetweenDeclSpecAndDeclarator() throws Exception {
 		assertFormatterResult();
 	}
@@ -701,7 +701,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//};
 	//
 	//void test() {
-	//    ClassWithALongName* variable_with_a_long_name =
+	//    ClassWithALongName *variable_with_a_long_name =
 	//            variable_with_a_long_name->methodWithAQuiteLongName();
 	//    variable_with_a_long_name =
 	//            variable_with_a_long_name->methodWithAQuiteLongName();
@@ -731,8 +731,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//};
 	//
 	//void test() {
-	//    ClassWithALongName* variable_with_a_long_name;
-	//    ClassWithALongName* another_variable = variable_with_a_long_name
+	//    ClassWithALongName *variable_with_a_long_name;
+	//    ClassWithALongName *another_variable = variable_with_a_long_name
 	//            ->methodWithALongName()->anotherMethodWithALongName();
 	//}
 	public void testMemberAccess() throws Exception {
@@ -831,7 +831,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    EAbout
 	//    };
 	//
-	//CActiveScheduler* scheduler = new (ELeave) CActiveScheduler();
+	//CActiveScheduler *scheduler = new (ELeave) CActiveScheduler();
 	public void testFormatterRegressions_Bug225858() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
 		assertFormatterResult();
@@ -1044,14 +1044,14 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	if (D::iterator it = m.find(e))
 	//		m.erase(it);
 	//}
-	//T* A::b(T* t) {
+	//T* A::b(T *t) {
 	//	S::iterator it = m.find(t);
 	//	if (!it)
 	//		return NULL;
 	//	else
 	//		return *it;
 	//}
-	//M* A::c(M* tm) {
+	//M* A::c(M *tm) {
 	//	N::iterator it = myN.find(tm);
 	//	if (!it)
 	//		return NULL;
@@ -1087,13 +1087,13 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//void f3(const char* long_parameter_name,int very_loooooooooooong_parameter_name,int very_loong_parameter_name)  ;
 	//void f4(const char* long_parameter_name, int very_loooooooooooong_parameter_name,int very_looong_parameter_name)  ;
 
-	//void f1(const char* long_parameter_name, int very_looooooooooong_parameter_name,
+	//void f1(const char *long_parameter_name, int very_looooooooooong_parameter_name,
 	//        int another_parameter_name);
-	//void f2(const char* long_parameter_name,
+	//void f2(const char *long_parameter_name,
 	//        int very_loooooooooooong_parameter_name, int another_parameter_name);
-	//void f3(const char* long_parameter_name,
+	//void f3(const char *long_parameter_name,
 	//        int very_loooooooooooong_parameter_name, int very_loong_parameter_name);
-	//void f4(const char* long_parameter_name,
+	//void f4(const char *long_parameter_name,
 	//        int very_loooooooooooong_parameter_name,
 	//        int very_looong_parameter_name);
 	public void testFunctionDeclaration() throws Exception {
@@ -1108,11 +1108,11 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//const char* function_name2(const char* parameter_name, const char* another_parameter_name,
 	//int very_looooooooooooooooooooooooong_parameter_name);
 
-	//const char* function_name1(const char* parameter_name,
-	//                           const char* another_parameter_name,
+	//const char* function_name1(const char *parameter_name,
+	//                           const char *another_parameter_name,
 	//                           int very_loooooooooooooooooooooooong_parameter_name);
 	//const char* function_name2(
-	//        const char* parameter_name, const char* another_parameter_name,
+	//        const char *parameter_name, const char *another_parameter_name,
 	//        int very_looooooooooooooooooooooooong_parameter_name);
 	public void testFunctionDeclarationFallbackFormat() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
@@ -1131,8 +1131,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//#define ABSTRACT = 0
 	//
 	//class A {
-	//    virtual bool function_with_a_loooooong_name(const char* parameter) ABSTRACT;
-	//    virtual bool function_with_a_looooooong_name(const char* parameter)
+	//    virtual bool function_with_a_loooooong_name(const char *parameter) ABSTRACT;
+	//    virtual bool function_with_a_looooooong_name(const char *parameter)
 	//            ABSTRACT;
 	//};
 	public void testFunctionDeclarationTrailingMacro_1() throws Exception {
@@ -1168,9 +1168,9 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//void f1(const char* long_parameter_name,int very_looooooooong_parameter_name){}
 	//void f2(const char* long_parameter_name,int very_loooooooooong_parameter_name){}
 
-	//void f1(const char* long_parameter_name, int very_looooooooong_parameter_name) {
+	//void f1(const char *long_parameter_name, int very_looooooooong_parameter_name) {
 	//}
-	//void f2(const char* long_parameter_name,
+	//void f2(const char *long_parameter_name,
 	//        int very_loooooooooong_parameter_name) {
 	//}
 	public void testFunctionDefinition() throws Exception {
@@ -1191,10 +1191,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//struct moveonly {
 	//    moveonly() = default;
-	//    moveonly(const moveonly&) = delete;
-	//    moveonly(moveonly&&) = default;
-	//    moveonly& operator=(const moveonly&) = delete;
-	//    moveonly& operator=(moveonly&&) = default;
+	//    moveonly(const moveonly &) = delete;
+	//    moveonly(moveonly &&) = default;
+	//    moveonly& operator=(const moveonly &) = delete;
+	//    moveonly& operator=(moveonly &&) = default;
 	//    ~moveonly() = default;
 	//};
 	public void testFunctionDefinitionWithoutBody() throws Exception {
@@ -1322,14 +1322,14 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
-	//void function(const char* s);
+	//void function(const char *s);
 	//
 	//void test() {
 	//function("string literal"
 	//"continuation of the string literal");
 	//}
 
-	//void function(const char* s);
+	//void function(const char *s);
 	//
 	//void test() {
 	//    function("string literal"
@@ -1456,7 +1456,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//#define STREAM GetStream()
 	//class Stream {
-	//    Stream& operator <<(const char*);
+	//    Stream& operator <<(const char *);
 	//};
 	//Stream GetStream();
 	//
@@ -2204,7 +2204,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//#define new new(__FILE__, __LINE__)
 	//void func() {
-	//	char* a = new char[10];
+	//	char *a = new char[10];
 	//}
 	public void testPlacementNewAsMacro_Bug298593() throws Exception {
 		assertFormatterResult();
@@ -2227,7 +2227,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//if (x == 0) x = 5;}
 
 	//void f() {
-	//	w_char* p = L"wide string literal";
+	//	w_char *p = L"wide string literal";
 	//	int x = 0;
 	//	if (x == 0)
 	//		x = 5;
@@ -2305,7 +2305,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//void f() {
 	//	int array[5] = { 1, 2, 3, 4, 5 };
-	//	for (int& x : array)
+	//	for (int &x : array)
 	//		x *= 2;
 	//}
 	public void testRangeBasedFor_Bug328472() throws Exception {
@@ -2506,12 +2506,12 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//}
 
 	//class Stream {
-	//    Stream& operator<<(const char* s);
+	//    Stream& operator<<(const char *s);
 	//};
 	//
 	//class Voidifier {
 	//public:
-	//    void operator&(Stream&);
+	//    void operator&(Stream &);
 	//};
 	//
 	//Stream stream;
@@ -2544,12 +2544,12 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//}
 
 	//class Stream {
-	//    Stream& operator<<(const char* s);
+	//    Stream& operator<<(const char *s);
 	//};
 	//
 	//class Voidifier {
 	//public:
-	//    void operator&(Stream&);
+	//    void operator&(Stream &);
 	//};
 	//
 	//Stream stream;
@@ -2568,7 +2568,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	}
 
 	//class Stream {
-	//Stream& operator<<(const char* s);
+	//Stream& operator<<(const char *s);
 	//};
 	//const char* function();
 	//
@@ -2578,7 +2578,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//}
 
 	//class Stream {
-	//    Stream& operator<<(const char* s);
+	//    Stream& operator<<(const char *s);
 	//};
 	//const char* function();
 	//
@@ -2595,7 +2595,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	}
 
 	//class Stream {
-	//Stream& operator<<(const char* s);
+	//Stream& operator<<(const char *s);
 	//Stream& operator<<(int i);
 	//};
 	//
@@ -2608,7 +2608,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//}
 
 	//class Stream {
-	//    Stream& operator<<(const char* s);
+	//    Stream& operator<<(const char *s);
 	//    Stream& operator<<(int i);
 	//};
 	//
@@ -2640,7 +2640,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//}
 
 	//struct Stream {
-	//    Stream& operator <<(const char*);
+	//    Stream& operator <<(const char *);
 	//};
 	//Stream GetStream();
 	//
@@ -2673,7 +2673,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//}
 
 	//struct Stream {
-	//    Stream& operator <<(const char*);
+	//    Stream& operator <<(const char *);
 	//};
 	//Stream GetStream();
 	//
@@ -2717,17 +2717,17 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//int very_loooooooooooooooooooooooong_name;
 	//
 	//struct Stream {
-	//  Stream& operator <<(const char*);
+	//  Stream& operator <<(const char *);
 	//};
 	//Stream GetStream();
 	//
 	//struct Voidifier {
-	//  void operator&(Stream&);
+	//  void operator&(Stream &);
 	//};
 	//
 	//#define MY_MACRO(a) (a) ? (void) 0 : Voidifier() & GetStream() << " "
 	//
-	//void test(const char* variable_with_a_loooong_name) {
+	//void test(const char *variable_with_a_loooong_name) {
 	//  MY_MACRO(loooooooooooong_name(loooong_name,
 	//          very_loooooooooooooooooooooooong_name))
 	//      << variable_with_a_loooong_name;
@@ -2743,7 +2743,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	}
 
 	//struct Stream {
-	//Stream& operator <<(const char*);
+	//Stream& operator <<(const char *);
 	//};
 	//Stream GetStream();
 	//
@@ -2759,12 +2759,12 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//}
 
 	//struct Stream {
-	//    Stream& operator <<(const char*);
+	//    Stream& operator <<(const char *);
 	//};
 	//Stream GetStream();
 	//
 	//struct Voidifier {
-	//    void operator&(Stream&);
+	//    void operator&(Stream &);
 	//};
 	//
 	//#define MY_MACRO(a) (a) ? (void) 0 : Voidifier() & GetStream() << " "
@@ -2961,7 +2961,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//struct {
 	//	int n;
-	//}* l;
+	//} *l;
 	//void f(int p0, int p1) {
 	//	f((p0 + 2), l->n);
 	//}
@@ -3865,7 +3865,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//void func() {
 	//	try {
 	//		WW("1") << "2";
-	//	} catch (const std::exception& e) {
+	//	} catch (const std::exception &e) {
 	//		std::cout << "blah...." << std::endl;
 	//	}
 	//}

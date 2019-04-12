@@ -76,7 +76,7 @@ public class CatchByReferenceQuickFixTest extends QuickFixTestCase {
 		setQuickFix(new CatchByReferenceQuickFix());
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("catch (C&)", result); //$NON-NLS-1$
+		assertContainedIn("catch (C &)", result); //$NON-NLS-1$
 	}
 
 	// struct C {
@@ -122,7 +122,7 @@ public class CatchByReferenceQuickFixTest extends QuickFixTestCase {
 		setQuickFix(new CatchByConstReferenceQuickFix());
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("catch (const C&)", result); //$NON-NLS-1$
+		assertContainedIn("catch (const C &)", result); //$NON-NLS-1$
 	}
 
 	// struct C {

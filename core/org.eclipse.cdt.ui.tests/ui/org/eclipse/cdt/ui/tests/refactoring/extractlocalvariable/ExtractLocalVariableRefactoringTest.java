@@ -86,7 +86,7 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 	//}
 	//====================
 	//const char* foo() {
-	//	const char* helloWorld = "Hello World!";
+	//	const char *helloWorld = "Hello World!";
 	//	return helloWorld;
 	//}
 	public void testStringLiteral() throws Exception {
@@ -269,7 +269,7 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 	//====================
 	//void foo() {
 	//	int a[2];
-	//	int* i = a + 1;
+	//	int *i = a + 1;
 	//	int b = *i;
 	//}
 	public void testPointer() throws Exception {
@@ -277,16 +277,16 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 	}
 
 	//A.cpp
-	//const volatile int* k;
+	//const volatile int *k;
 	//
 	//void foo() {
 	//	/*$*/k;/*$$*/
 	//}
 	//====================
-	//const volatile int* k;
+	//const volatile int *k;
 	//
 	//void foo() {
-	//	const volatile int* k0 = k;
+	//	const volatile int *k0 = k;
 	//	k0;
 	//}
 	public void testQualifiers() throws Exception {
@@ -328,7 +328,7 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 	//
 	//void func() {
 	//	int* (*a)[2];
-	//	int* (*a0)[2] = a;
+	//	int *(*a0)[2] = a;
 	//	a0;
 	//}
 	public void testArrayOfFunctionPointers_Bug318784() throws Exception {
@@ -578,7 +578,7 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 	//struct Tpl {};
 	//
 	//void func() {
-	//	Tpl<int(const char*, long int (*)(float))> t;
+	//	Tpl<int(const char *, long int (*)(float))> t;
 	//	/*$*/t/*$$*/;
 	//}
 	//====================
@@ -586,8 +586,8 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 	//struct Tpl {};
 	//
 	//void func() {
-	//	Tpl<int(const char*, long int (*)(float))> t;
-	//	Tpl<int(const char*, long int (*)(float))> t0 = t;
+	//	Tpl<int(const char *, long int (*)(float))> t;
+	//	Tpl<int(const char *, long int (*)(float))> t0 = t;
 	//	t0;
 	//}
 	public void testTemplateWithFunctionArgument_487186() throws Exception {

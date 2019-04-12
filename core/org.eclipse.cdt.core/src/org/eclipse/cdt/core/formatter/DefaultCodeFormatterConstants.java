@@ -543,7 +543,7 @@ public class DefaultCodeFormatterConstants {
 	 * @see #NEXT_LINE
 	 * @see #NEXT_LINE_SHIFTED
 	 * @see #NEXT_LINE_ON_WRAP
-	 * @since 6.7
+	 * @since 6.8
 	 */
 	public static final String FORMATTER_BRACE_POSITION_FOR_LINKAGE_DECLARATION = CCorePlugin.PLUGIN_ID
 			+ ".formatter.brace_position_for_linkage_declaration"; //$NON-NLS-1$
@@ -760,7 +760,7 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see #TRUE
 	 * @see #FALSE
-	 * @since 6.7
+	 * @since 6.8
 	 */
 	public static final String FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_LINKAGE = CCorePlugin.PLUGIN_ID
 			+ ".formatter.indent_body_declarations_compare_to_linkage"; //$NON-NLS-1$
@@ -941,6 +941,7 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see CCorePlugin#INSERT
 	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.8
 	 */
 	public static final String FORMATTER_INSERT_NEW_LINE_AFTER_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST = CCorePlugin.PLUGIN_ID
 			+ ".formatter.insert_new_line_after_colon_in_constructor_initializer_list"; //$NON-NLS-1$
@@ -2006,6 +2007,58 @@ public class DefaultCodeFormatterConstants {
 			+ ".formatter.insert_space_before_opening_brace_in_method_declaration"; //$NON-NLS-1$
 	/**
 	 * <pre>
+	 * FORMATTER / Option to insert a space before a pointer in a method declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_pointer_in_method_declaration"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.8
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_POINTER_IN_METHOD_DECLARATION = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_before_pointer_in_method_declaration"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space after a pointer in a method declaration
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_pointer_in_method_declaration"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.8
+	 */
+	public static final String FORMATTER_INSERT_SPACE_AFTER_POINTER_IN_METHOD_DECLARATION = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_after_pointer_in_method_declaration"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space after a pointer in a declarator list
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_pointer_in_declarator_list"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.8
+	 */
+	public static final String FORMATTER_INSERT_SPACE_AFTER_POINTER_IN_DECLARATOR_LIST = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_after_pointer_in_declarator_list"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space before a pointer in a declarator list
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_pointer_in_declarator_list"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.8
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_POINTER_IN_DECLARATOR_LIST = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_space_before_pointer_in_declarator_list"; //$NON-NLS-1$
+	/**
+	 * <pre>
 	 * FORMATTER / Option to insert a space before the opening brace in a switch statement
 	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_brace_in_switch"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
@@ -2049,7 +2102,7 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see CCorePlugin#INSERT
 	 * @see CCorePlugin#DO_NOT_INSERT
-	 * @since 6.7
+	 * @since 6.8
 	 */
 	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_LINKAGE_DECLARATION = CCorePlugin.PLUGIN_ID
 			+ ".formatter.insert_space_before_opening_brace_in_linkage_declaration"; //$NON-NLS-1$

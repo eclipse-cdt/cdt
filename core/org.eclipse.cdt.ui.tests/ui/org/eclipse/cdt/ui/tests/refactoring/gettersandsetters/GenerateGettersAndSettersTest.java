@@ -303,7 +303,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	int systemId;
 	//
 	//protected:
-	//	char* name;
+	//	char *name;
 	//
 	//public:
 	//	const int socSecNo;
@@ -314,7 +314,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	~Person(); // destructor
 	//
-	//	char*   Name();
+	//	char   *Name();
 	//
 	//	void	Print();
 	//
@@ -343,7 +343,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	int systemId;
 	//
 	//protected:
-	//	char* name;
+	//	char *name;
 	//
 	//public:
 	//	const int socSecNo;
@@ -354,7 +354,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	~Person(); // destructor
 	//
-	//	char*   Name();
+	//	char   *Name();
 	//
 	//	void	Print();
 	//
@@ -370,7 +370,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//		this->systemId = systemId;
 	//	}
 	//
-	//	void setName(char* name) {
+	//	void setName(char *name) {
 	//		this->name = name;
 	//	}
 	//};
@@ -386,7 +386,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	return socSecNo;
 	//}
 	//
-	//int main(int argc, char** argv) {
+	//int main(int argc, char **argv) {
 	//}
 	//====================
 	public void testOneSetterSelection() throws Exception {
@@ -403,7 +403,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	int systemId;
 	//
 	//protected:
-	//	char* name;
+	//	char *name;
 	//
 	//public:
 	//	const int socSecNo;
@@ -414,7 +414,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	~Person(); // destructor
 	//
-	//	char*   Name();
+	//	char   *Name();
 	//
 	//	void	Print();
 	//
@@ -443,7 +443,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	int systemId;
 	//
 	//protected:
-	//	char* name;
+	//	char *name;
 	//
 	//public:
 	//	const int socSecNo;
@@ -454,7 +454,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	~Person(); // destructor
 	//
-	//	char*   Name();
+	//	char   *Name();
 	//
 	//	void	Print();
 	//
@@ -474,7 +474,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//		return name;
 	//	}
 	//
-	//	void setName(char* name) {
+	//	void setName(char *name) {
 	//		this->name = name;
 	//	}
 	//};
@@ -490,7 +490,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	return socSecNo;
 	//}
 	//
-	//int main(int argc, char** argv) {
+	//int main(int argc, char **argv) {
 	//}
 	//====================
 	public void testGetterAndSetterSelection() throws Exception {
@@ -508,7 +508,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	int systemId;
 	//
 	//protected:
-	//	char* name;
+	//	char *name;
 	//
 	//public:
 	//	const int socSecNo;
@@ -519,7 +519,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	~Person(); // destructor
 	//
-	//	char*   Name();
+	//	char   *Name();
 	//
 	//	void	Print();
 	//
@@ -540,7 +540,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	int systemId;
 	//
 	//protected:
-	//	char* name;
+	//	char *name;
 	//
 	//public:
 	//	const int socSecNo;
@@ -551,7 +551,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	~Person(); // destructor
 	//
-	//	char*   Name();
+	//	char   *Name();
 	//
 	//	void	Print();
 	//
@@ -563,7 +563,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//		return name;
 	//	}
 	//
-	//	void setName(char* name) {
+	//	void setName(char *name) {
 	//		this->name = name;
 	//	}
 	//
@@ -587,7 +587,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	return socSecNo;
 	//}
 	//
-	//int main(int argc, char** argv) {
+	//int main(int argc, char **argv) {
 	//}
 	//====================
 	public void testMultipleSelection() throws Exception {
@@ -781,9 +781,9 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//#define A_H_
 	//
 	//struct FullName {
-	//	const char* first;
-	//	const char* last;
-	//	FullName(const FullName& other);
+	//	const char *first;
+	//	const char *last;
+	//	FullName(const FullName &other);
 	//	~FullName();
 	//};
 	//
@@ -803,7 +803,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	~Person(); // destructor
 	//
-	//	char*   Name();
+	//	char   *Name();
 	//
 	//	void	Print();
 	//
@@ -824,9 +824,9 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//#define A_H_
 	//
 	//struct FullName {
-	//	const char* first;
-	//	const char* last;
-	//	FullName(const FullName& other);
+	//	const char *first;
+	//	const char *last;
+	//	FullName(const FullName &other);
 	//	~FullName();
 	//};
 	//
@@ -846,7 +846,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	~Person(); // destructor
 	//
-	//	char*   Name();
+	//	char   *Name();
 	//
 	//	void	Print();
 	//
@@ -858,7 +858,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	void setSystemId(int systemId);
 	//	const FullName& getName() const;
-	//	void setName(const FullName& name);
+	//	void setName(const FullName &name);
 	//};
 	//
 	//int gooo = 1;
@@ -872,7 +872,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	return socSecNo;
 	//}
 	//
-	//int main(int argc, char** argv) {
+	//int main(int argc, char **argv) {
 	//}
 	//====================
 	//#include "A.h"
@@ -881,7 +881,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	return name;
 	//}
 	//
-	//void Person::setName(const FullName& name) {
+	//void Person::setName(const FullName &name) {
 	//	this->name = name;
 	//}
 	//
@@ -889,7 +889,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	return socSecNo;
 	//}
 	//
-	//int main(int argc, char** argv) {
+	//int main(int argc, char **argv) {
 	//}
 	public void testPassByReferenceSeparateDefinition() throws Exception {
 		definitionSeparate = true;
@@ -1034,7 +1034,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	int systemId;
 	//
 	//protected:
-	//	char* name;
+	//	char *name;
 	//
 	//public:
 	//	const int socSecNo;
@@ -1045,7 +1045,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	~Person(); // destructor
 	//
-	//	char*   Name();
+	//	char   *Name();
 	//
 	//	void	Print();
 	//
@@ -1074,7 +1074,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	int systemId;
 	//
 	//protected:
-	//	char* name;
+	//	char *name;
 	//
 	//public:
 	//	const int socSecNo;
@@ -1085,7 +1085,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	~Person(); // destructor
 	//
-	//	char*   Name();
+	//	char   *Name();
 	//
 	//	void	Print();
 	//
@@ -1101,7 +1101,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//		this->systemId = systemId;
 	//	}
 	//
-	//	void setName(char* name);
+	//	void setName(char *name);
 	//};
 	//
 	//int gooo = 1;
@@ -1115,12 +1115,12 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	return socSecNo;
 	//}
 	//
-	//int main(int argc, char** argv) {
+	//int main(int argc, char **argv) {
 	//}
 	//====================
 	//#include "A.h"
 	//
-	//void Person::setName(char* name) {
+	//void Person::setName(char *name) {
 	//	this->name = name;
 	//}
 	//
@@ -1128,7 +1128,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	return socSecNo;
 	//}
 	//
-	//int main(int argc, char** argv) {
+	//int main(int argc, char **argv) {
 	//}
 	public void testOneSetterSelectionSeparateDefinition() throws Exception {
 		definitionSeparate = true;
@@ -1145,7 +1145,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	int systemId;
 	//
 	//protected:
-	//	char* name;
+	//	char *name;
 	//
 	//public:
 	//	const int socSecNo;
@@ -1156,7 +1156,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	~Person(); // destructor
 	//
-	//	char*   Name();
+	//	char   *Name();
 	//
 	//	void	Print();
 	//
@@ -1185,7 +1185,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	int systemId;
 	//
 	//protected:
-	//	char* name;
+	//	char *name;
 	//
 	//public:
 	//	const int socSecNo;
@@ -1196,7 +1196,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//	~Person(); // destructor
 	//
-	//	char*   Name();
+	//	char   *Name();
 	//
 	//	void	Print();
 	//
@@ -1213,7 +1213,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	}
 	//
 	//	char* getName() const;
-	//	void setName(char* name);
+	//	void setName(char *name);
 	//};
 	//
 	//int gooo = 1;
@@ -1227,7 +1227,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	return socSecNo;
 	//}
 	//
-	//int main(int argc, char** argv) {
+	//int main(int argc, char **argv) {
 	//}
 	//====================
 	//#include "A.h"
@@ -1236,7 +1236,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	return name;
 	//}
 	//
-	//void Person::setName(char* name) {
+	//void Person::setName(char *name) {
 	//	this->name = name;
 	//}
 	//
@@ -1244,7 +1244,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//	return socSecNo;
 	//}
 	//
-	//int main(int argc, char** argv) {
+	//int main(int argc, char **argv) {
 	//}
 	public void testSelectionWithSeparateDefinition() throws Exception {
 		definitionSeparate = true;
@@ -1618,7 +1618,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//		return b;
 	//	}
 	//
-	//	void setB(int* b) {
+	//	void setB(int *b) {
 	//		this->b = b;
 	//	}
 	//

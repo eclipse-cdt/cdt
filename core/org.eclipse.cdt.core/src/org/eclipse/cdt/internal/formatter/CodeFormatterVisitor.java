@@ -303,7 +303,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		@Override
 		public void run() {
-			boolean needSpace = skipConstVolatileRestrict();
+			boolean needSpace = skipConstVolatileRestrict(true);
 			int token = peekNextToken();
 			// Ref-qualifier.
 			if (token == Token.tAMPER || token == Token.tAND) {
@@ -830,9 +830,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (name != null && name.getSimpleID().length != 0 || nestedDecl != null) {
 			if (node.getPropertyInParent() != IASTDeclarator.NESTED_DECLARATOR && isFirstDeclarator(node)) {
 				// Preserve non-space between pointer operator and name or nested declarator.
-				if (pointerOperators.length == 0 || scribe.printComment()) {
+				if (pointerOperators.length == 0) {
 					scribe.space();
-				}
+				} else
+					scribe.printComment();
 			}
 			if (name != null)
 				name.accept(this);
@@ -1544,11 +1545,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 	}
 
-	private boolean skipConstVolatileRestrict() {
+	private boolean skipConstVolatileRestrict(boolean spaceBefore) {
 		boolean skipped = false;
 		int token = peekNextToken();
 		while (token == Token.t_const || token == Token.t_volatile || token == Token.t_restrict) {
-			scribe.printNextToken(token, true);
+			scribe.printNextToken(token, spaceBefore);
 			token = peekNextToken();
 			skipped = true;
 		}
@@ -1642,6 +1643,61 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 	}
 
+	/**
+	 * Align pointers according to user formatter rule. Pointers (or references) can be
+	 * left, center or right alignment. Pointers with implicit name will be always left
+	 * aligned unless they have nested declarators.
+	 * @param pointers The list of all pointers
+	 * @param pointer The pointer to be formatted
+	 * @param token The token to be used: and, amper, star.
+	 */
+	private boolean alignPointer(IASTPointerOperator[] pointers, IASTPointerOperator pointer, int token) {
+		boolean firstPtr = pointer == pointers[0];
+		boolean lastPtr = pointers.length == 1 || pointer == pointers[pointers.length - 1];
+		TrailingTokenFormatter tailFormatter = null;
+		IASTNode parent = pointer.getParent();
+		boolean needSpace = false;
+		if (parent instanceof IASTFunctionDeclarator) {
+			tailFormatter = new TrailingTokenFormatter(token, pointer.getParent(), false, true);
+			tailFormatter.run();
+		} else {
+			if (parent instanceof IASTDeclarator) {
+				char[] simpleId = ((IASTDeclarator) parent).getName().getSimpleID();
+				IASTDeclarator nested = ((IASTDeclarator) parent).getNestedDeclarator();
+				if ((simpleId == null || simpleId.length == 0) && nested == null) {
+					needSpace = true;
+					tailFormatter = new TrailingTokenFormatter(token, pointer.getParent(), false, false);
+					tailFormatter.run();
+					return needSpace;
+				}
+			}
+			if (parent != null && parent.getParent() instanceof IASTParameterDeclaration) {
+				needSpace = this.preferences.insert_space_after_pointer_in_method_declaration && lastPtr;
+				tailFormatter = new TrailingTokenFormatter(token, pointer.getParent(),
+						this.preferences.insert_space_before_pointer_in_method_declaration && firstPtr,
+						this.preferences.insert_space_after_pointer_in_method_declaration && lastPtr);
+				tailFormatter.run();
+			} else if (parent != null && parent.getParent() instanceof IASTSimpleDeclaration) {
+				needSpace = this.preferences.insert_space_after_pointer_in_declarator_list && lastPtr;
+				IASTSimpleDeclaration simple = (IASTSimpleDeclaration) parent.getParent();
+				IASTDeclarator[] declarators = simple.getDeclarators();
+				boolean first = declarators.length == 0 || declarators[0].getPointerOperators() == pointers;
+				tailFormatter = new TrailingTokenFormatter(token, pointer.getParent(),
+						first ? this.preferences.insert_space_before_pointer_in_declarator_list && firstPtr
+								: (this.preferences.insert_space_before_pointer_in_declarator_list
+										|| this.preferences.insert_space_after_comma_in_declarator_list) && firstPtr,
+						this.preferences.insert_space_after_pointer_in_declarator_list && lastPtr);
+				tailFormatter.run();
+			} else
+				scribe.printNextToken(token, false);
+		}
+		return needSpace;
+	}
+
+	/**
+	 * Format pointers operators
+	 * @param pointers The list of pointers
+	 */
 	private void formatPointers(IASTPointerOperator[] pointers) {
 		for (IASTPointerOperator pointer : pointers) {
 			if (scribe.printComment()) {
@@ -1652,9 +1708,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 			if (pointer instanceof ICPPASTReferenceOperator) {
 				if (((ICPPASTReferenceOperator) pointer).isRValueReference()) {
-					scribe.printNextToken(Token.tAND, false);
+					alignPointer(pointers, pointer, Token.tAND);
 				} else {
-					scribe.printNextToken(Token.tAMPER, false);
+					alignPointer(pointers, pointer, Token.tAMPER);
 				}
 			} else if (pointer instanceof ICPPASTPointerToMember) {
 				final ICPPASTPointerToMember ptrToMember = (ICPPASTPointerToMember) pointer;
@@ -1663,12 +1719,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					name.accept(this);
 				}
 				scribe.printNextToken(Token.tSTAR, false);
-				if (skipConstVolatileRestrict()) {
+				if (skipConstVolatileRestrict(false)) {
 					scribe.space();
 				}
 			} else {
-				scribe.printNextToken(Token.tSTAR, false);
-				if (skipConstVolatileRestrict()) {
+				boolean needSpace = alignPointer(pointers, pointer, Token.tSTAR);
+				if (skipConstVolatileRestrict(needSpace)) {
 					scribe.space();
 				}
 			}

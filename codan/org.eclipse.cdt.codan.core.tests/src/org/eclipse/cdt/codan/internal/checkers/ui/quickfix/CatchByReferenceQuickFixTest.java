@@ -140,7 +140,7 @@ public class CatchByReferenceQuickFixTest extends QuickFixTestCase {
 		String result = runQuickFixOneFile();
 		setPlaceConstRight(before);
 
-		assertContainedIn("catch (C const &)", result); //$NON-NLS-1$
+		assertContainedIn("catch (C const&)", result); //$NON-NLS-1$
 	}
 
 }

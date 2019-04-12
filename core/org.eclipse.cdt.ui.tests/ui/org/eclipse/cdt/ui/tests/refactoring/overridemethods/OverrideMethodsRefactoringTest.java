@@ -137,7 +137,7 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 	//class Base {
 	//public:
 	//	virtual ~Base();
-	//	virtual void baseFunc(Base* ptr) const = 0;
+	//	virtual void baseFunc(Base *ptr) const = 0;
 	//};
 	//};
 	//namespace SECOND {
@@ -152,14 +152,14 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 	//class Base {
 	//public:
 	//	virtual ~Base();
-	//	virtual void baseFunc(Base* ptr) const = 0;
+	//	virtual void baseFunc(Base *ptr) const = 0;
 	//};
 	//};
 	//namespace SECOND {
 	//class X: public FIRST::Base {
 	//public:
 	//	X();
-	//	virtual void baseFunc(FIRST::Base* ptr) const;
+	//	virtual void baseFunc(FIRST::Base *ptr) const;
 	//};
 	//};
 
@@ -168,7 +168,7 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 	//====================
 	//#include "A.h"
 	//
-	//void SECOND::X::baseFunc(FIRST::Base* ptr) const {
+	//void SECOND::X::baseFunc(FIRST::Base *ptr) const {
 	//}
 	public void testWithMixedNamespaceHeaderAndSource() throws Exception {
 		selectedMethods = new String[] { "baseFunc(FIRST::Base *)const" };
@@ -538,7 +538,7 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 	//class Base {
 	//public:
 	//	virtual ~Base();
-	//	virtual void* baseFunc(void* ptr) const = 0;
+	//	virtual void* baseFunc(void *ptr) const = 0;
 	//};
 	//class X: public Base {
 	//public:
@@ -549,12 +549,12 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 	//class Base {
 	//public:
 	//	virtual ~Base();
-	//	virtual void* baseFunc(void* ptr) const = 0;
+	//	virtual void* baseFunc(void *ptr) const = 0;
 	//};
 	//class X: public Base {
 	//public:
 	//	X();
-	//	virtual void* baseFunc(void* ptr) const;
+	//	virtual void* baseFunc(void *ptr) const;
 	//};
 
 	//A.cpp
@@ -562,7 +562,7 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 	//====================
 	//#include "A.h"
 	//
-	//void* X::baseFunc(void* ptr) const {
+	//void* X::baseFunc(void *ptr) const {
 	//}
 	public void testWithPointers() throws Exception {
 		selectedMethods = new String[] { "baseFunc(void *)const" };
@@ -573,7 +573,7 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 	//class Base {
 	//public:
 	//	virtual ~Base();
-	//	virtual void* baseFunc(void* ptr) const = 0, method2();
+	//	virtual void* baseFunc(void *ptr) const = 0, method2();
 	//};
 	//class X: public Base {
 	//public:
@@ -584,12 +584,12 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 	//class Base {
 	//public:
 	//	virtual ~Base();
-	//	virtual void* baseFunc(void* ptr) const = 0, method2();
+	//	virtual void* baseFunc(void *ptr) const = 0, method2();
 	//};
 	//class X: public Base {
 	//public:
 	//	X();
-	//	virtual void* baseFunc(void* ptr) const;
+	//	virtual void* baseFunc(void *ptr) const;
 	//};
 
 	//A.cpp
@@ -597,7 +597,7 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 	//====================
 	//#include "A.h"
 	//
-	//void* X::baseFunc(void* ptr) const {
+	//void* X::baseFunc(void *ptr) const {
 	//}
 	public void testWithMultipleMethodsOnSameLine() throws Exception {
 		selectedMethods = new String[] { "baseFunc(void *)const" };

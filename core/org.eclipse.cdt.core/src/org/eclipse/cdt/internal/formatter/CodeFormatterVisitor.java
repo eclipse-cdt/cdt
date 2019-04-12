@@ -439,7 +439,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		localScanner.setSource(compilationUnitSource);
 		scribe.initializeScanner(compilationUnitSource);
-		List<Position> inactive = collectInactiveCodePositions(unit);
+		List<InactivePosition> inactive = collectInactiveCodePositions(unit);
 		inactive.addAll(collectNoFormatCodePositions(unit));
 		scribe.setSkipInactivePositions(inactive);
 
@@ -4530,7 +4530,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * @param translationUnit  the {@link IASTTranslationUnit}, may be <code>null</code>
 	 * @return a {@link List} of {@link Position}s
 	 */
-	private List<Position> collectNoFormatCodePositions(IASTTranslationUnit translationUnit) {
+	private List<InactivePosition> collectNoFormatCodePositions(IASTTranslationUnit translationUnit) {
 		if (translationUnit == null || !this.preferences.use_fomatter_comment_tag) {
 			return Collections.emptyList();
 		}
@@ -4538,7 +4538,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (fileName == null) {
 			return Collections.emptyList();
 		}
-		List<Position> positions = new ArrayList<>();
+		List<InactivePosition> positions = new ArrayList<>();
 		int inactiveCodeStart = -1;
 		boolean inInactiveCode = false;
 
@@ -4569,14 +4569,15 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 			} else if (onPos != -1 && onPos > offPos) {
 				if (inInactiveCode) {
-					int inactiveCodeEnd = nodeLocation.getNodeOffset();
-					positions.add(new Position(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
+					int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
+					positions.add(new InactivePosition(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart, false));
 				}
 				inInactiveCode = false;
 			}
 		}
 		if (inInactiveCode) {
-			positions.add(new Position(inactiveCodeStart, translationUnit.getFileLocation().getNodeLength()));
+			positions.add(
+					new InactivePosition(inactiveCodeStart, translationUnit.getFileLocation().getNodeLength(), false));
 			inInactiveCode = false;
 		}
 		return positions;
@@ -4589,7 +4590,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * @param translationUnit  the {@link IASTTranslationUnit}, may be <code>null</code>
 	 * @return a {@link List} of {@link Position}s
 	 */
-	private static List<Position> collectInactiveCodePositions(IASTTranslationUnit translationUnit) {
+	private static List<InactivePosition> collectInactiveCodePositions(IASTTranslationUnit translationUnit) {
 		if (translationUnit == null) {
 			return Collections.emptyList();
 		}
@@ -4597,7 +4598,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (fileName == null) {
 			return Collections.emptyList();
 		}
-		List<Position> positions = new ArrayList<>();
+		List<InactivePosition> positions = new ArrayList<>();
 		int inactiveCodeStart = -1;
 		boolean inInactiveCode = false;
 		Stack<Boolean> inactiveCodeStack = new Stack<>();
@@ -4648,7 +4649,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					inInactiveCode = true;
 				} else if (elseStmt.taken() && inInactiveCode) {
 					int inactiveCodeEnd = nodeLocation.getNodeOffset();
-					positions.add(new Position(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
+					positions.add(new InactivePosition(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart, true));
 					inInactiveCode = false;
 				}
 			} else if (statement instanceof IASTPreprocessorElifStatement) {
@@ -4658,7 +4659,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					inInactiveCode = true;
 				} else if (elifStmt.taken() && inInactiveCode) {
 					int inactiveCodeEnd = nodeLocation.getNodeOffset();
-					positions.add(new Position(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
+					positions.add(new InactivePosition(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart, true));
 					inInactiveCode = false;
 				}
 			} else if (statement instanceof IASTPreprocessorEndifStatement) {
@@ -4666,7 +4667,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					boolean wasInInactiveCode = inactiveCodeStack.pop().booleanValue();
 					if (inInactiveCode && !wasInInactiveCode) {
 						int inactiveCodeEnd = nodeLocation.getNodeOffset();
-						positions.add(new Position(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
+						positions.add(
+								new InactivePosition(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart, true));
 					}
 					inInactiveCode = wasInInactiveCode;
 				} catch (EmptyStackException e) {

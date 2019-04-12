@@ -27,7 +27,6 @@ import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;
 import org.eclipse.cdt.internal.formatter.scanner.Scanner;
 import org.eclipse.cdt.internal.formatter.scanner.Token;
-import org.eclipse.jface.text.Position;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -91,7 +90,7 @@ public class Scribe {
 	/**
 	 * It keeps the list of inactive region.
 	 */
-	private List<Position> fSkipInactivePositions = Collections.emptyList();
+	private List<InactivePosition> fSkipInactivePositions = Collections.emptyList();
 	/**
 	 * When scribe is in inactive state, source edits are not allowed.
 	 */
@@ -679,7 +678,7 @@ public class Scribe {
 	/**
 	 * @param list
 	 */
-	public void setSkipInactivePositions(List<Position> list) {
+	public void setSkipInactivePositions(List<InactivePosition> list) {
 		fSkipInactivePositions = list;
 		skipOverInactive = !list.isEmpty();
 	}
@@ -1086,7 +1085,7 @@ public class Scribe {
 		int lines = 0;
 		while ((currentToken = scanner.nextToken()) != null) {
 			if (skipOverInactive) {
-				Position inactivePos = getInactivePosAt(scanner.getCurrentTokenStartPosition());
+				InactivePosition inactivePos = getInactivePosAt(scanner.getCurrentTokenStartPosition());
 				if (inactivePos != null) {
 					int startOffset = Math.min(scanner.getCurrentTokenStartPosition(), inactivePos.getOffset());
 					int endOffset = Math.min(scannerEndPosition, inactivePos.getOffset() + inactivePos.getLength());
@@ -1098,7 +1097,8 @@ public class Scribe {
 						 * We are entering in inactive state so if we added a new line previously,
 						 * starting a new line, we need to remove it.
 						 */
-						if (editsIndex > 0 && lineSeparator.equals(edits[editsIndex - 1].replacement)) {
+						if (inactivePos.isPreprocessorRegion() && editsIndex > 0
+								&& lineSeparator.equals(edits[editsIndex - 1].replacement)) {
 							editsIndex--;
 						}
 						printRaw(startOffset, endOffset - startOffset);
@@ -1311,9 +1311,9 @@ public class Scribe {
 	 * @param offset
 	 * @return
 	 */
-	private Position getInactivePosAt(int offset) {
-		for (Iterator<Position> iter = fSkipInactivePositions.iterator(); iter.hasNext();) {
-			Position pos = iter.next();
+	private InactivePosition getInactivePosAt(int offset) {
+		for (Iterator<InactivePosition> iter = fSkipInactivePositions.iterator(); iter.hasNext();) {
+			InactivePosition pos = iter.next();
 			if (pos.includes(offset)) {
 				return pos;
 			}

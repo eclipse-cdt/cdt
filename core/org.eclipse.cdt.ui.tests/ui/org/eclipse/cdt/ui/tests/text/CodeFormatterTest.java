@@ -4018,4 +4018,69 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testBoolInStructWithMacro_Bug397710() throws Exception {
 		assertFormatterResult();
 	}
+
+	///* @formatter:off */
+	//int xx2(){string s1="abc";string s2="def";}
+	///* @formatter:on */
+	//
+	///* @formatter:on */
+	//int xx(){string s1="abc";string s2="def";}
+	///* @formatter:off */
+	///* @formatter:on */
+	//int xx3(){string s1="abc";string s2="def";}
+
+	///* @formatter:off */
+	//int xx2(){string s1="abc";string s2="def";}
+	///* @formatter:on */
+	//
+	///* @formatter:on */
+	//int xx() {
+	//	string s1 = "abc";
+	//	string s2 = "def";
+	//}
+	///* @formatter:off */
+	///* @formatter:on */
+	//int xx3() {
+	//	string s1 = "abc";
+	//	string s2 = "def";
+	//}
+	public void testOnOffTags1_Bug546391() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+		assertFormatterResult();
+	}
+
+	//int xx(){string s1="abc";string s2="def";}
+	///* @formatter:off */
+
+	//int xx() {
+	//	string s1 = "abc";
+	//	string s2 = "def";
+	//}
+	///* @formatter:off */
+	public void testOnOffTags2_Bug546391() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+		assertFormatterResult();
+	}
+
+	///* @formatter:off */
+	//int xx(){string s1="abc";string s2="def";}
+	///* @formatter:on
+	//		*
+	//	*/
+
+	///* @formatter:off */
+	//int xx(){string s1="abc";string s2="def";}
+	///* @formatter:on
+	//		*
+	//	*/
+	public void testOnOffTags3_Bug546391() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+		assertFormatterResult();
+	}
 }

@@ -782,7 +782,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	void extracted(int* j);
+	//	void extracted(int *j);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -815,7 +815,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//}
 	//
-	//void A::extracted(int* j) {
+	//void A::extracted(int *j) {
 	//	++*j;
 	//	help();
 	//}
@@ -850,7 +850,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	int j;
 	//};
 	//
-	//int extracted(const struct A* a) {
+	//int extracted(const struct A *a) {
 	//	return a->i + a->j;
 	//}
 	//
@@ -872,7 +872,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	return i - j;
 	//}
 	//====================
-	//void swap(int* i, int* j) {
+	//void swap(int *i, int *j) {
 	//	int k = *i;
 	//	*i = *j;
 	//	*j = k;
@@ -907,7 +907,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//====================
 	//#include "A.h"
 	//
-	//int extracted(A b, A* a) {
+	//int extracted(A b, A *a) {
 	//	return a->method() + b.const_method();
 	//}
 	//
@@ -923,14 +923,14 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A.h
 	//class A {
 	//public:
-	//	A(int i, const char* s);
+	//	A(int i, const char *s);
 	//	int method();
 	//};
 
 	//A.cpp
 	//#include "A.h"
 	//
-	//void test(int i, const char* s) {
+	//void test(int i, const char *s) {
 	//	/*$*/A a(i, s);/*$$*/
 	//	if (i != 0)
 	//		a.method();
@@ -938,12 +938,12 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//====================
 	//#include "A.h"
 	//
-	//A extracted(int i, const char* s) {
+	//A extracted(int i, const char *s) {
 	//	A a(i, s);
 	//	return a;
 	//}
 	//
-	//void test(int i, const char* s) {
+	//void test(int i, const char *s) {
 	//	A a = extracted(i, s);
 	//	if (i != 0)
 	//		a.method();
@@ -979,7 +979,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	void extracted(int& i);
+	//	void extracted(int &i);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -1012,7 +1012,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//}
 	//
-	//void A::extracted(int& i) {
+	//void A::extracted(int &i) {
 	//	++i;
 	//	help();
 	//}
@@ -1143,7 +1143,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	int extracted(int i, int y, float x, B* b);
+	//	int extracted(int i, int y, float x, B *b);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -1160,7 +1160,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::foo() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	int y = x + i;
 	//	/*$*/++i;
 	//	b->hello(y);
@@ -1182,7 +1182,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//}
 	//
-	//int A::extracted(int i, int y, float x, B* b) {
+	//int A::extracted(int i, int y, float x, B *b) {
 	//	++i;
 	//	b->hello(y);
 	//	i = i + x;
@@ -1193,7 +1193,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::foo() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	int y = x + i;
 	//	i = extracted(i, y, x, b);
 	//	++x;
@@ -1238,7 +1238,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	bool extracted(bool y, float x, int& i, B* b);
+	//	bool extracted(bool y, float x, int &i, B *b);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -1255,7 +1255,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::foo() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	bool y = false;
 	//	/*$*/++i;
 	//	b->hello(y);
@@ -1279,7 +1279,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//}
 	//
-	//bool A::extracted(bool y, float x, int& i, B* b) {
+	//bool A::extracted(bool y, float x, int &i, B *b) {
 	//	++i;
 	//	b->hello(y);
 	//	y = !y;
@@ -1291,7 +1291,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::foo() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	bool y = false;
 	//	y = extracted(y, x, i, b);
 	//	b->hello(y);
@@ -1350,7 +1350,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	float extracted(int& i, int y, float x, B* b);
+	//	float extracted(int &i, int y, float x, B *b);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -1367,7 +1367,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::foo() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	int y = x + i;
 	//	/*$*/++i;
 	//	b->hello(y);
@@ -1389,7 +1389,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//}
 	//
-	//float A::extracted(int& i, int y, float x, B* b) {
+	//float A::extracted(int &i, int y, float x, B *b) {
 	//	++i;
 	//	b->hello(y);
 	//	i = i + x;
@@ -1400,7 +1400,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::foo() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	int y = x + i;
 	//	x = extracted(i, y, x, b);
 	//	++x;
@@ -1459,7 +1459,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	B* extracted(int& i, int y, float x, B* b);
+	//	B* extracted(int &i, int y, float x, B *b);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -1499,7 +1499,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//}
 	//
-	//B* A::extracted(int& i, int y, float x, B* b) {
+	//B* A::extracted(int &i, int y, float x, B *b) {
 	//	++i;
 	//	b->hello(y);
 	//	i = i + x;
@@ -1885,7 +1885,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//====================
 	//void print(int i, double a, double b);
 	//
-	//extracted(double x, int i, double* y, double* s) {
+	//extracted(double x, int i, double *y, double *s) {
 	//	x *= x;
 	//	*y *= i;
 	//	*s += x / *y;
@@ -1972,7 +1972,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	goto loop4;
 	//}
 	//====================
-	//int extracted(int a, int b, int* c, int* d) {
+	//int extracted(int a, int b, int *c, int *d) {
 	//	a++;
 	//	b++;
 	//	*c++;
@@ -2107,7 +2107,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int main() {
 	//	int m_capacity;
 	//	/*$*/m_capacity += INITIAL_CAPACITY;
-	//	string* newElements = new string[m_capacity];/*$$*/
+	//	string *newElements = new string[m_capacity];/*$$*/
 	//	newElements[0] = "s";
 	//}
 	//====================
@@ -2119,13 +2119,13 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//string* runTest(int m_capacity) {
 	//	m_capacity += INITIAL_CAPACITY;
-	//	string* newElements = new string[m_capacity];
+	//	string *newElements = new string[m_capacity];
 	//	return newElements;
 	//}
 	//
 	//int main() {
 	//	int m_capacity;
-	//	string* newElements = runTest(m_capacity);
+	//	string *newElements = runTest(m_capacity);
 	//	newElements[0] = "s";
 	//}
 	public void testStringArray() throws Exception {
@@ -2141,7 +2141,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//public:
 	//	A();
 	//	virtual ~A();
-	//	int foo(int& a);
+	//	int foo(int &a);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -2153,10 +2153,10 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//public:
 	//	A();
 	//	virtual ~A();
-	//	int foo(int& a);
+	//	int foo(int &a);
 	//
 	//private:
-	//	void extracted(int b, int c, int& a);
+	//	void extracted(int b, int c, int &a);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -2170,7 +2170,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//}
 	//
-	//int A::foo(int& a) {
+	//int A::foo(int &a) {
 	//	int b = 7;
 	//	int c = 8;
 	//	/*$*/a = b + c;/*$$*/
@@ -2185,11 +2185,11 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//}
 	//
-	//void A::extracted(int b, int c, int& a) {
+	//void A::extracted(int b, int c, int &a) {
 	//	a = b + c;
 	//}
 	//
-	//int A::foo(int& a) {
+	//int A::foo(int &a) {
 	//	int b = 7;
 	//	int c = 8;
 	//	extracted(b, c, a);
@@ -2301,7 +2301,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//====================
 	//#include "Test.h"
 	//
-	//const A::B* extracted(A* x, const char* y) {
+	//const A::B* extracted(A *x, const char *y) {
 	//	return x->m(y);
 	//}
 	//
@@ -3051,7 +3051,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	int extracted(int j, int& a);
+	//	int extracted(int j, int &a);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -3093,7 +3093,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	i = extracted(i, j);
 	//}
 	//
-	//int A::extracted(int j, int& a) {
+	//int A::extracted(int j, int &a) {
 	//	j++;
 	//	a++;
 	//	help();
@@ -3241,7 +3241,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	int extracted(int i, float& j);
+	//	int extracted(int i, float &j);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -3287,7 +3287,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	blabla += 1;
 	//}
 	//
-	//int A::extracted(int i, float& j) {
+	//int A::extracted(int i, float &j) {
 	//	++i;
 	//	j += 1;
 	//	help();
@@ -3425,7 +3425,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	void extracted(int& i, float j);
+	//	void extracted(int &i, float j);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -3468,7 +3468,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	extracted(oo, blabla);
 	//}
 	//
-	//void A::extracted(int& i, float j) {
+	//void A::extracted(int &i, float j) {
 	//	++i;
 	//	j += 1;
 	//	help();
@@ -3604,7 +3604,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	int extracted(int i, int y, float x, B* b);
+	//	int extracted(int i, int y, float x, B *b);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -3618,7 +3618,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	int y = x + i;
 	//	++i;
 	//	b->hello(y);
@@ -3632,7 +3632,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::foo() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	int y = x + i;
 	//	/*$*/++i;
 	//	b->hello(y);
@@ -3655,7 +3655,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	int y = x + i;
 	//	i = extracted(i, y, x, b);
 	//	b->hello(y);
@@ -3663,7 +3663,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	i++;
 	//}
 	//
-	//int A::extracted(int i, int y, float x, B* b) {
+	//int A::extracted(int i, int y, float x, B *b) {
 	//	++i;
 	//	b->hello(y);
 	//	i = i + x;
@@ -3674,7 +3674,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::foo() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	int y = x + i;
 	//	i = extracted(i, y, x, b);
 	//	b->hello(y);
@@ -3733,7 +3733,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	int extracted(int i, int y, float x, B* b);
+	//	int extracted(int i, int y, float x, B *b);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -3747,7 +3747,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	int y = x + i;
 	//	++i;
 	//	b->hello(y);
@@ -3761,7 +3761,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::foo() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	int y = x + i;
 	//	/*$*/++i;
 	//	b->hello(y);
@@ -3783,7 +3783,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	int y = x + i;
 	//	i = extracted(i, y, x, b);
 	//	b->hello(y);
@@ -3791,7 +3791,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	i++;
 	//}
 	//
-	//int A::extracted(int i, int y, float x, B* b) {
+	//int A::extracted(int i, int y, float x, B *b) {
 	//	++i;
 	//	b->hello(y);
 	//	i = i + x;
@@ -3802,7 +3802,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::foo() {
 	//	int i = 2;
 	//	float x = i;
-	//	B* b = new B();
+	//	B *b = new B();
 	//	int y = x + i;
 	//	i = extracted(i, y, x, b);
 	//	b->hello(y);
@@ -4143,7 +4143,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	int extracted(int& i, int b);
+	//	int extracted(int &i, int b);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -4183,7 +4183,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//}
 	//
-	//int A::extracted(int& i, int b) {
+	//int A::extracted(int &i, int b) {
 	//	++i;
 	//	help();
 	//	ADD(b);

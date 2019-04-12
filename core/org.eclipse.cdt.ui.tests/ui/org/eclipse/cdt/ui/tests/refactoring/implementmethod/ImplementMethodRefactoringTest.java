@@ -615,7 +615,7 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 	//
 	//class TestClass {
 	//public:
-	//	/*$*/int* get(char* val);/*$$*/
+	//	/*$*/int* get(char *val);/*$$*/
 	//};
 	//
 
@@ -624,7 +624,7 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 	//====================
 	//#include "A.h"
 	//
-	//int* TestClass::get(char* val) {
+	//int* TestClass::get(char *val) {
 	//}
 	public void testPointerReturnValue_Bug238253() throws Exception {
 		assertRefactoringSuccess();

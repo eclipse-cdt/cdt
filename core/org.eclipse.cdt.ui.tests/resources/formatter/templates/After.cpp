@@ -13,16 +13,16 @@ class Foo {
 // TEMPLATE_STRUCT
 template<class Key, class Value, class SortAlgorithm = DefaultSort>
 struct Map {
-	Key* keys;
-	Value* values;
-	SortAlgorithm* sortAlgorithm;
+	Key *keys;
+	Value *values;
+	SortAlgorithm *sortAlgorithm;
 	Map();
 };
 
 // TEMPLATE_CLASS
 template<class T> class nonVector {
 private:
-	T* head;
+	T *head;
 
 public:
 	nonVector() {
@@ -65,7 +65,7 @@ template<class Bar> void Foo::fum(int i) {
 }
 
 // TEMPLATE_VARIABLES
-template<bool threads, int inst> char* default_alloc_template<threads, inst>::S_start_free =
+template<bool threads, int inst> char *default_alloc_template<threads, inst>::S_start_free =
 		0;
 
 // an instantiation, not a template:

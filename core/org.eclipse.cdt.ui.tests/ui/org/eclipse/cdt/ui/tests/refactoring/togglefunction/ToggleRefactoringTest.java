@@ -632,7 +632,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//class A {
 	//public:
 	//	template<typename U, typename V>
-	//	void /*$*/foo/*$$*/(const U& u, const V& v) {
+	//	void /*$*/foo/*$$*/(const U &u, const V &v) {
 	//		return;
 	//	}
 	//};
@@ -641,12 +641,12 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//class A {
 	//public:
 	//	template<typename U, typename V>
-	//	void foo(const U& u, const V& v);
+	//	void foo(const U &u, const V &v);
 	//};
 	//
 	//template<typename T, typename S>
 	//template<typename U, typename V>
-	//inline void A<T, S>::foo(const U& u, const V& v) {
+	//inline void A<T, S>::foo(const U &u, const V &v) {
 	//	return;
 	//}
 	public void testTestComplexTemplateFunctionFromInClassToInHeader() throws Exception {
@@ -663,7 +663,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//
 	//template<typename T, typename S>
 	//template<typename U, typename V>
-	//inline void A<T,S>::foo(const U& u, const V& v) {
+	//inline void A<T,S>::foo(const U &u, const V &v) {
 	//	return;
 	//}
 	//====================
@@ -671,7 +671,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//class A {
 	//public:
 	//	template<typename U, typename V>
-	//	void foo(const U& u, const V& v) {
+	//	void foo(const U &u, const V &v) {
 	//		return;
 	//	}
 	//};
@@ -959,7 +959,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	try {
 	//		return;
 	//	}
-	//	catch (std::exception& e1){
+	//	catch (std::exception &e1){
 	//		return;
 	//	}
 	//};
@@ -975,7 +975,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//try {
 	//	return;
 	//}
-	//catch (std::exception& e1) {
+	//catch (std::exception &e1) {
 	//	return;
 	//}
 	public void testTestTryCatchFromInClassToInHeader() throws Exception {
@@ -1022,7 +1022,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//try {
 	//	return;
 	//}
-	//catch (std::exception& e1) {
+	//catch (std::exception &e1) {
 	//	return;
 	//}
 	public void testTestTryCatchFromInHeaderToImplementation() throws Exception {
@@ -1066,7 +1066,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	try {
 	//		return;
 	//	}
-	//	catch (std::exception& e1) {
+	//	catch (std::exception &e1) {
 	//		return;
 	//	}
 	//};
@@ -1083,10 +1083,10 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	try {
 	//		return;
 	//	}
-	//	catch (std::exception& e1) {
+	//	catch (std::exception &e1) {
 	//		return;
 	//	}
-	//	catch (std::exception& e2) {
+	//	catch (std::exception &e2) {
 	//		return;
 	//	}
 	//};
@@ -1102,10 +1102,10 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//try {
 	//	return;
 	//}
-	//catch (std::exception& e1) {
+	//catch (std::exception &e1) {
 	//	return;
 	//}
-	//catch (std::exception& e2) {
+	//catch (std::exception &e2) {
 	//	return;
 	//}
 	public void testTestMultipleTryCatchFromInClassToInHeader() throws Exception {
@@ -1155,10 +1155,10 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//try {
 	//	return;
 	//}
-	//catch (std::exception& e1) {
+	//catch (std::exception &e1) {
 	//	return;
 	//}
-	//catch (std::exception& e2) {
+	//catch (std::exception &e2) {
 	//	return;
 	//}
 	public void testTestMultipleTryCatchFromInHeaderToImplementation() throws Exception {
@@ -1205,10 +1205,10 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	try {
 	//		return;
 	//	}
-	//	catch (std::exception& e1) {
+	//	catch (std::exception &e1) {
 	//		return;
 	//	}
-	//	catch (std::exception& e2) {
+	//	catch (std::exception &e2) {
 	//		return;
 	//	}
 	//};
@@ -1787,7 +1787,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	}
 	//};
 	//
-	//int freeFunction(int* a, int& b);
+	//int freeFunction(int *a, int &b);
 
 	//A.cpp
 	//#include "A.h"
@@ -1802,7 +1802,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	return 0;
 	//}
 	//
-	//int freeFunction(int* a, int& b) {
+	//int freeFunction(int *a, int &b) {
 	//	return 42;
 	//}
 	public void testTestFreeFunctionToggleFromHeaderToImplementation() throws Exception {
@@ -1842,7 +1842,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	}
 	//};
 	//
-	//int freeFunction(int* a, int& b);
+	//int freeFunction(int *a, int &b);
 	//====================
 	//#include <iostream>
 	//
@@ -1859,7 +1859,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	}
 	//};
 	//
-	//int freeFunction(int* a, int& b) {
+	//int freeFunction(int *a, int &b) {
 	//	return 42;
 	//}
 	public void testTestFreeFunctionToggleFromImplementationToHeaderWithDeclaration() throws Exception {
@@ -1917,11 +1917,11 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	}
 	//};
 	//
-	//int freeFunction(int* a, int& b)
+	//int freeFunction(int *a, int &b)
 	//try {
 	//	return 42;
 	//}
-	//catch (std::exception& e) {
+	//catch (std::exception &e) {
 	//}
 	public void testTestFreeFunctionToggleFromImplementationToHeaderWithOutDeclaration() throws Exception {
 		assertRefactoringSuccess();

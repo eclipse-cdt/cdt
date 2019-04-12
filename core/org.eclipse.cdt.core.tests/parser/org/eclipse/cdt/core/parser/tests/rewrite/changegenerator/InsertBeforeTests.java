@@ -59,9 +59,9 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 		return new TestSuite(InsertBeforeTests.class);
 	}
 
-	//int* pi[3];
+	//int *pi[3];
 
-	//int* pi[5][3];
+	//int *pi[5][3];
 	public void testArrayModifier() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -84,9 +84,9 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 		});
 	}
 
-	//int* values = new int[5];
+	//int *values = new int[5];
 
-	//int* values = new int[6][5];
+	//int *values = new int[6][5];
 	public void testArraySizeExpression() throws Exception {
 		compareResult(new ASTVisitor() {
 			{

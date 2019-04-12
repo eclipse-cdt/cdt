@@ -4081,6 +4081,16 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+	}
+
+	//namespace AA::BB {
+	//int a;
+	//}
+
+	//namespace AA::BB {
+	//int a;
+	//}
+	public void testNestedNamespace_Bug546221() throws Exception {
 		assertFormatterResult();
 	}
 }

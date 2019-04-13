@@ -6,7 +6,7 @@
 	<file src="/templates/autotools/Makefile.am"
 		dest="/${projectName}/Makefile.am"/>
 	<file src="/templates/autotools/src/main.c"
-		dest="/${projectName}/src/main.c"
+		dest="/${projectName}/src/${projectName}.c"
 		open="true"/>
 	<file src="/templates/autotools/src/Makefile.am"
 		dest="/${projectName}/src/Makefile.am"/>				

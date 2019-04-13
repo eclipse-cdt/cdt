@@ -1,2 +1,2 @@
-bin_PROGRAMS = hello
-hello_SOURCES = main.c
+bin_PROGRAMS = ${projectName}
+${projectName}_SOURCES = ${projectName}.c

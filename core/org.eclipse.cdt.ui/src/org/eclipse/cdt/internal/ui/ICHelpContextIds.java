@@ -51,6 +51,7 @@ public interface ICHelpContextIds {
 	public static final String TOGGLE_MARK_OCCURRENCES_ACTION = PREFIX + "toggle_mark_occurrences_action_context"; //$NON-NLS-1$
 	public static final String FORMAT_ALL = PREFIX + "format_all_action"; //$NON-NLS-1$
 	public static final String GOTO_MATCHING_BRACKET_ACTION = PREFIX + "goto_matching_bracket_action"; //$NON-NLS-1$
+	public static final String COPY_QUALIFIED_NAME_ACTION = PREFIX + "copy_qualified_name_action_context"; //$NON-NLS-1$
 
 	// Preference/property pages
 	public static final String C_PREF_PAGE = PREFIX + "c_pref"; //$NON-NLS-1$

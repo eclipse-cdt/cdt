@@ -315,4 +315,10 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.select.last"</code>).
 	 */
 	public static final String SELECT_LAST = "org.eclipse.cdt.ui.edit.text.c.select.last"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the edit -> copy qualified name
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.copy.qualified.name"</code>).
+	 */
+	public static final String COPY_QUALIFIED_NAME = "org.eclipse.cdt.ui.edit.text.c.copy.qualified.name"; //$NON-NLS-1$
 }

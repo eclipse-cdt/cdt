@@ -14,11 +14,11 @@
 
 package org.eclipse.cdt.core.autotools.core;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.autotools.core.internal.Activator;
-import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
@@ -34,6 +34,7 @@ public class AutotoolsBuildConfigurationProvider implements ICBuildConfiguration
 
 	public static final String ID = Activator.PLUGIN_ID + ".provider"; //$NON-NLS-1$
 
+	private IAutotoolsToolChainManager manager = Activator.getService(IAutotoolsToolChainManager.class);
 	private ICBuildConfigurationManager configManager = Activator.getService(ICBuildConfigurationManager.class);
 
 	@Override
@@ -43,48 +44,51 @@ public class AutotoolsBuildConfigurationProvider implements ICBuildConfiguration
 
 	@Override
 	public ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
-		IToolChain toolChain = null;
+		if (config.getName().equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
+			IToolChain toolChain = null;
 
-		// try the toolchain for the local target
-		Map<String, String> properties = new HashMap<>();
-		properties.put(IToolChain.ATTR_OS, Platform.getOS());
-		properties.put(IToolChain.ATTR_ARCH, Platform.getOSArch());
-		IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
-		for (IToolChain tc : toolChainManager.getToolChainsMatching(properties)) {
-			toolChain = tc;
-			break;
-		}
-
-		// local didn't work, try and find one that does
-		if (toolChain == null) {
-			for (IToolChain tc : toolChainManager.getToolChainsMatching(new HashMap<>())) {
+			// try the toolchain for the local target
+			Map<String, String> properties = new HashMap<>();
+			properties.put(IToolChain.ATTR_OS, Platform.getOS());
+			properties.put(IToolChain.ATTR_ARCH, Platform.getOSArch());
+			IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
+			for (IToolChain tc : toolChainManager.getToolChainsMatching(properties)) {
 				toolChain = tc;
 				break;
 			}
-		}
 
-		if (toolChain != null) {
-			return new AutotoolsBuildConfiguration(config, name, toolChain);
-		} else {
+			// local didn't work, try and find one that does
+			if (toolChain == null) {
+				for (IToolChain tc : toolChainManager.getToolChainsMatching(new HashMap<>())) {
+					toolChain = tc;
+					break;
+				}
+			}
+
+			if (toolChain != null) {
+				return new AutotoolsBuildConfiguration(config, name, toolChain);
+			}
+			// No valid combinations
 			return null;
 		}
+		AutotoolsBuildConfiguration autotoolsConfig = new AutotoolsBuildConfiguration(config, name);
+		IAutotoolsToolChainFile tcFile = autotoolsConfig.getToolChainFile();
+		IToolChain toolChain = autotoolsConfig.getToolChain();
+		if (toolChain == null) {
+			// config not complete
+			return null;
+		}
+		if (tcFile != null && !toolChain.equals(tcFile.getToolChain())) {
+			// toolchain changed
+			return new AutotoolsBuildConfiguration(config, name, tcFile.getToolChain(), tcFile,
+					autotoolsConfig.getLaunchMode());
+		}
+		return autotoolsConfig;
 	}
 
 	@Override
 	public ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
 			IProgressMonitor monitor) throws CoreException {
-		// See if there is one already
-		for (IBuildConfiguration config : project.getBuildConfigs()) {
-			ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
-			if (cconfig != null) {
-				CBuildConfiguration cmakeConfig = cconfig.getAdapter(AutotoolsBuildConfiguration.class);
-				if (cmakeConfig != null && cmakeConfig.getToolChain().equals(toolChain)
-						&& launchMode.equals(cmakeConfig.getLaunchMode())) {
-					return cconfig;
-				}
-			}
-		}
-
 		// get matching toolchain file if any
 		Map<String, String> properties = new HashMap<>();
 		String os = toolChain.getProperty(IToolChain.ATTR_OS);
@@ -92,14 +96,45 @@ public class AutotoolsBuildConfigurationProvider implements ICBuildConfiguration
 			properties.put(IToolChain.ATTR_OS, os);
 		}
 		String arch = toolChain.getProperty(IToolChain.ATTR_ARCH);
-		if (!arch.isEmpty()) {
+		if (arch != null && !arch.isEmpty()) {
 			properties.put(IToolChain.ATTR_ARCH, arch);
+		}
+		IAutotoolsToolChainFile file = manager.getToolChainFileFor(toolChain);
+		if (file == null) {
+			Collection<IAutotoolsToolChainFile> files = manager.getToolChainFilesMatching(properties);
+			if (!files.isEmpty()) {
+				file = files.iterator().next();
+				toolChain = file.getToolChain();
+			}
 		}
 
 		// create config
-		String configName = "autotools." + launchMode + '.' + toolChain.getId(); //$NON-NLS-1$
-		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, configName, monitor);
-		CBuildConfiguration autotoolsConfig = new AutotoolsBuildConfiguration(config, configName);
+		StringBuilder configName = new StringBuilder("autotools."); //$NON-NLS-1$
+		configName.append(launchMode);
+		if ("linux-container".equals(os)) { //$NON-NLS-1$
+			String osConfigName = toolChain.getProperty("linux-container-id"); //$NON-NLS-1$
+			osConfigName = osConfigName.replaceAll("/", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+			configName.append('.');
+			configName.append(osConfigName);
+		} else {
+			if (os != null) {
+				configName.append('.');
+				configName.append(os);
+			}
+			if (arch != null && !arch.isEmpty()) {
+				configName.append('.');
+				configName.append(arch);
+			}
+		}
+		String name = configName.toString();
+		int i = 0;
+		while (configManager.hasConfiguration(this, project, name)) {
+			name = configName.toString() + '.' + (++i);
+		}
+
+		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, name, monitor);
+		AutotoolsBuildConfiguration autotoolsConfig = new AutotoolsBuildConfiguration(config, name, toolChain, file,
+				launchMode);
 		configManager.addBuildConfiguration(config, autotoolsConfig);
 		return autotoolsConfig;
 	}

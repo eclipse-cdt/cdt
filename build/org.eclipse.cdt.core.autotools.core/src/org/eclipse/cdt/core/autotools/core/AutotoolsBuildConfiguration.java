@@ -16,14 +16,20 @@ package org.eclipse.cdt.core.autotools.core;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.autotools.core.internal.Activator;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
@@ -32,6 +38,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 
@@ -40,12 +48,58 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 	public static final String BUILD_COMMAND = "autotools.command.build"; //$NON-NLS-1$
 	public static final String CLEAN_COMMAND = "autotools.command.clean"; //$NON-NLS-1$
 
+	private static final String TOOLCHAIN_FILE = "cdt.autotools.toolchainfile"; //$NON-NLS-1$
+	private IAutotoolsToolChainFile toolChainFile;
+
 	public AutotoolsBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
+		IAutotoolsToolChainManager manager = Activator.getService(IAutotoolsToolChainManager.class);
+		Preferences settings = getSettings();
+		String pathStr = settings.get(TOOLCHAIN_FILE, ""); //$NON-NLS-1$
+		if (!pathStr.isEmpty()) {
+			Path path = Paths.get(pathStr);
+			toolChainFile = manager.getToolChainFile(path);
+		} else {
+			toolChainFile = manager.getToolChainFileFor(getToolChain());
+			if (toolChainFile != null) {
+				saveToolChainFile();
+			}
+		}
 	}
 
 	public AutotoolsBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
 		super(config, name, toolChain, "run"); // TODO: why "run" //$NON-NLS-1$
+	}
+
+	public AutotoolsBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
+			IAutotoolsToolChainFile toolChainFile, String launchMode) {
+		super(config, name, toolChain, launchMode);
+
+		this.toolChainFile = toolChainFile;
+		if (toolChainFile != null) {
+			saveToolChainFile();
+		}
+	}
+
+	private void saveToolChainFile() {
+		Preferences settings = getSettings();
+		settings.put(TOOLCHAIN_FILE, toolChainFile.getPath().toString());
+		try {
+			settings.flush();
+		} catch (BackingStoreException e) {
+			Activator.log(e);
+		}
+	}
+
+	public IAutotoolsToolChainFile getToolChainFile() {
+		return toolChainFile;
+	}
+
+	private boolean isLocal() throws CoreException {
+		IToolChain toolchain = getToolChain();
+		return (Platform.getOS().equals(toolchain.getProperty(IToolChain.ATTR_OS))
+				|| "linux-container".equals(toolchain.getProperty(IToolChain.ATTR_OS))) //$NON-NLS-1$
+				&& (Platform.getOSArch().equals(toolchain.getProperty(IToolChain.ATTR_ARCH)));
 	}
 
 	@Override
@@ -55,15 +109,15 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 		IProject project = getProject();
 
 		execute(Arrays.asList(new String[] { "autoreconf", "--install" }), project.getLocation(), console, monitor); //$NON-NLS-1$ //$NON-NLS-2$
-		execute(Arrays.asList(new String[] { "./configure" }), project.getLocation(), console, monitor); //$NON-NLS-1$
-		execute(Arrays.asList(new String[] { "make" }), project.getLocation(), console, monitor); //$NON-NLS-1$
+		executeRemote(Arrays.asList(new String[] { "./configure" }), project.getLocation(), console, monitor); //$NON-NLS-1$
+		executeRemote(Arrays.asList(new String[] { "make" }), project.getLocation(), console, monitor); //$NON-NLS-1$
 
 		return new IProject[] { project };
 	}
 
 	@Override
 	public void clean(IConsole console, IProgressMonitor monitor) throws CoreException {
-		execute(Arrays.asList(new String[] { "make", "clean" }), getProject().getLocation(), console, monitor); //$NON-NLS-1$ //$NON-NLS-2$
+		executeRemote(Arrays.asList(new String[] { "make", "clean" }), getProject().getLocation(), console, monitor); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	protected void execute(List<String> command, IPath dir, IConsole console, IProgressMonitor monitor)
@@ -97,10 +151,72 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 			Process process = builder.start();
 			watchProcess(process, console);
 		} catch (IOException e) {
-			throw new CoreException(Activator.errorStatus("Error executing: " + String.join(" ", command), e)); //$NON-NLS-2$
+			throw new CoreException(Activator.errorStatus("Error executing: " + String.join(" ", command), e)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+	}
+
+	protected void executeRemote(List<String> command, IPath dir, IConsole console, IProgressMonitor monitor)
+			throws CoreException {
+
+		IProject project = getProject();
+
+		try {
+			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+
+			ConsoleOutputStream outStream = console.getOutputStream();
+
+			Path buildDir = getBuildDirectory();
+
+			String cmd = command.get(0);
+
+			if (cmd.startsWith(".")) { //$NON-NLS-1$
+				Path cmdPath = Paths.get(dir.toString(), cmd);
+				if (cmdPath.toFile().exists()) {
+					command.set(0, cmdPath.toAbsolutePath().toString());
+				}
+			}
+
+			outStream.write("Building in: " + buildDir.toString() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+
+			// Make sure we have a toolchain file if cross
+			if (toolChainFile == null && !isLocal()) {
+				IAutotoolsToolChainManager manager = Activator.getService(IAutotoolsToolChainManager.class);
+				toolChainFile = manager.getToolChainFileFor(getToolChain());
+
+				if (toolChainFile == null) {
+					// error
+					throw new CoreException(
+							Activator.errorStatus("Error executing: " + String.join(" ", command), null)); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
+
+			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
+					getToolChain().getErrorParserIds())) {
+				epm.setOutputStream(console.getOutputStream());
+
+				IEnvironmentVariable[] env = new IEnvironmentVariable[0];
+
+				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
+						getBuildDirectory().toString());
+
+				Process p = startBuildProcess(command, env, workingDir, console, monitor);
+				if (p == null) {
+					console.getErrorStream().write(String.format("Error executing: {0}", String.join(" ", command))); //$NON-NLS-1$ //$NON-NLS-2$
+					throw new CoreException(
+							Activator.errorStatus("Error executing: " + String.join(" ", command), null)); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+
+				watchProcess(p, new IConsoleParser[] { epm });
+			}
+
+			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+
+		} catch (IOException e) {
+			throw new CoreException(Activator.errorStatus("Error executing: " + String.join(" ", command), e)); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
 	}
 
 }

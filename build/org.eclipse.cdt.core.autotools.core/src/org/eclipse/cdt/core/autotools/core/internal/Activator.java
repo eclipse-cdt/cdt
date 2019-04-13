@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Intel Corporation and others.
+ * Copyright (c) 2017, 2019 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,10 @@
 
 package org.eclipse.cdt.core.autotools.core.internal;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleActivator;
@@ -49,4 +53,26 @@ public class Activator implements BundleActivator {
 		ServiceReference<T> ref = context.getServiceReference(service);
 		return ref != null ? context.getService(ref) : null;
 	}
+
+	public static void log(IStatus status) {
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
+
+	public static void logErrorMessage(String message) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, null));
+	}
+
+	public static void log(Throwable e) {
+		if (e instanceof InvocationTargetException) {
+			e = ((InvocationTargetException) e).getTargetException();
+		}
+		IStatus status = null;
+		if (e instanceof CoreException) {
+			status = ((CoreException) e).getStatus();
+		} else {
+			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e);
+		}
+		log(status);
+	}
+
 }

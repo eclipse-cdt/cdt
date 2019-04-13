@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.core.autotools.core;singleton:=true
-Bundle-Version: 1.0.1.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.eclipse.cdt.core.autotools.core.internal.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.tools.templates.freemarker;bundle-version="1.0.0",
@@ -13,4 +13,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.cdt.core.autotools.core
 Bundle-Localization: plugin
+Service-Component: OSGI-INF/component.xml
 Automatic-Module-Name: org.eclipse.cdt.core.autotools.core

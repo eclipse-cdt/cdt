@@ -574,6 +574,8 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_ELCL_NAVIGATE_FORWARD = createUnManaged(T_ELCL, "forward_nav.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ELCL_OPEN_DECLARATION = createUnManaged(T_ELCL, "goto_input.gif"); //$NON-NLS-1$
 
+	public static final ImageDescriptor DESC_DLCL_COPY_QUALIFIED_NAME = createUnManaged(T_DLCL, "cpyqual_menu.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_COPY_QUALIFIED_NAME = createUnManaged(T_ELCL, "cpyqual_menu.png"); //$NON-NLS-1$
 	// incorrectly defined descriptors
 	/** @deprecated as of CDT 8.0. */
 	@Deprecated

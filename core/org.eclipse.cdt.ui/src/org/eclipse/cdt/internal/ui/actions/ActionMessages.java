@@ -105,6 +105,12 @@ public class ActionMessages extends NLS {
 	public static String ExpandAllAction_label;
 	public static String ExpandAllAction_tooltip;
 	public static String ExpandAllAction_description;
+	public static String CopyQualifiedNameAction_ToolTipText;
+	public static String CopyQualifiedNameAction_InfoDialogTitel;
+	public static String CopyQualifiedNameAction_ErrorDescription;
+	public static String CopyQualifiedNameAction_ActionName;
+	public static String CopyQualifiedNameAction_ErrorTitle;
+	public static String CopyQualifiedNameAction_NoElementToQualify;
 
 	static {
 		// Initialize resource bundle.

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "258b3a5f_2f13d356",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinding.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-13T21:16:41Z",
+      "side": 1,
+      "message": "There is a quirk in our representation of \u0027const\u0027 where, if a type is a const pointer type, we represent the const as just a flag on the IPointerType, rather than by wrapping the IPointerType into an IQualifierType.\n\nAs a result, a complete check needs to check both cases. Consider making ExpressionTypes.isConst() public and using that.",
+      "revId": "e748fe83ceac366369fa73294776bd0499a4333f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

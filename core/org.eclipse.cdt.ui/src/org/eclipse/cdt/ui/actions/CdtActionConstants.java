@@ -494,4 +494,11 @@ public class CdtActionConstants {
 	 * <code>"org.eclipse.cdt.ui.actions.ExceptionOccurrences"</code>).
 	 */
 	public static final String FIND_EXCEPTION_OCCURRENCES = "org.eclipse.cdt.ui.actions.ExceptionOccurrences"; //$NON-NLS-1$
+
+	/**
+	 * Source menu: name of standard action to copy fully qualified names (value
+	 * <code>"org.eclipse.cdt.ui.actions.CopyQualifiedName"</code>).
+	 * @since 6.5
+	 */
+	public static final String COPY_QUALIFIED_NAME = "org.eclipse.cdt.ui.actions.CopyQualifiedName"; //$NON-NLS-1$
 }

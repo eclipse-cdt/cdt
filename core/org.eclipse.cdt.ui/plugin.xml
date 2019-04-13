@@ -1961,6 +1961,14 @@
          </action>
 <!-- Edit group -->
          <action
+               definitionId="org.eclipse.cdt.ui.edit.text.c.copy.qualified.name"
+               label="%CopyQualifiedName.label"
+               retarget="true"
+               menubarPath="org.eclipse.jdt.ui.source.menu/editGroup"
+               icon="$nl$/icons/elcl16/cpyqual_menu.png"
+               id="org.eclipse.cdt.ui.actions.CopyQualifiedName">
+         </action>
+         <action
                definitionId="org.eclipse.cdt.ui.edit.text.c.format"
                label="%FormatAction.label"
                retarget="true"
@@ -2397,6 +2405,11 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.toggle.comment"/>
+     <key
+            sequence="M1+Q"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.copy.qualified.name"/>
      <key
             sequence="M1+7"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -2956,6 +2969,12 @@
             description="%category.source.description"
             id="org.eclipse.cdt.ui.category.source">
       </category>
+      <command
+            name="%ActionDefinition.copyQualifiedName.name"
+            description="%ActionDefinition.copyQualifiedName.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.copy.qualified.name">
+      </command>
       <command
             name="%ActionDefinition.format.name"
             description="%ActionDefinition.format.description"

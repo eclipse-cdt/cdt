@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.actions.CDTQuickMenuCreator;
+import org.eclipse.cdt.internal.ui.actions.CopyQualifiedNameAction;
 import org.eclipse.cdt.internal.ui.editor.AddIncludeAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
@@ -134,7 +135,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	//	private SortMembersAction fSortMembers;
 	private SortLinesAction fSortLines;
 	private FormatAllAction fFormatAll;
-	//	private CopyQualifiedNameAction fCopyQualifiedNameAction;
+	private CopyQualifiedNameAction fCopyQualifiedNameAction;
 	//
 	private static final String QUICK_MENU_ID = "org.eclipse.cdt.ui.edit.text.c.source.quickMenu"; //$NON-NLS-1$
 
@@ -172,10 +173,10 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		fSortLines.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_LINES);
 		editor.setAction("SortLines", fSortLines); //$NON-NLS-1$
 
-		//		IAction pastAction= editor.getAction(ITextEditorActionConstants.PASTE);//IWorkbenchActionDefinitionIds.PASTE);
-		//		fCopyQualifiedNameAction= new CopyQualifiedNameAction(editor, null, pastAction);
-		//		fCopyQualifiedNameAction.setActionDefinitionId(CopyQualifiedNameAction.JAVA_EDITOR_ACTION_DEFINITIONS_ID);
-		//		editor.setAction("CopyQualifiedName", fCopyQualifiedNameAction); //$NON-NLS-1$
+		fCopyQualifiedNameAction = new CopyQualifiedNameAction(editor);
+		fCopyQualifiedNameAction.setActionDefinitionId(ICEditorActionDefinitionIds.COPY_QUALIFIED_NAME);
+		editor.setAction("CopyQualifiedName", fCopyQualifiedNameAction); //$NON-NLS-1$
+		editor.markAsSelectionDependentAction("CopyQualifiedName", true); //$NON-NLS-1$
 		//
 		//		fOverrideMethods= new OverrideMethodsAction(editor);
 		//		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
@@ -307,6 +308,8 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		//
 		fFormatAll = new FormatAllAction(site);
 		fFormatAll.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
+		//      fCopyQualifiedNameAction = new CopyQualifiedNameAction(site);
+		//      fCopyQualifiedNameAction.setActionDefinitionId(ICEditorActionDefinitionIds.COPY_QUALIFIED_NAME);
 		//
 		//		fCleanUp= new CleanUpAction(site);
 		//		fCleanUp.setActionDefinitionId(ICEditorActionDefinitionIds.CLEAN_UP);
@@ -346,6 +349,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		//		registerSelectionListener(fSelectionProvider, fSortMembers);
 		registerSelectionListener(fSelectionProvider, fAddTaskAction);
 		//		registerSelectionListener(fSelectionProvider, fCleanUp);
+		//      registerSelectionListener(fSelectionProvider, fCopyQualifiedNameAction);
 
 		selectionChanged(new SelectionChangedEvent(fSelectionProvider, selection));
 		registerSelectionListener(fSelectionProvider, this);
@@ -430,6 +434,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		added += addEditorAction(source, ITextEditorActionConstants.SHIFT_LEFT);
 		added += addEditorAction(source, "Indent"); //$NON-NLS-1$
 		added += addEditorAction(source, "Format"); //$NON-NLS-1$
+		added += addAction(source, fCopyQualifiedNameAction);
 		source.add(new Separator(GROUP_ORGANIZE));
 		added += addAction(source, fAddInclude);
 		added += addAction(source, fOrganizeIncludes);
@@ -456,6 +461,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		//		added+= addAction(source, fAddCppDocStub);
 		source.add(new Separator(GROUP_EDIT));
 		added += addAction(source, fFormatAll);
+		added += addAction(source, fCopyQualifiedNameAction);
 		source.add(new Separator(GROUP_ORGANIZE));
 		added += addAction(source, fAddInclude);
 		added += addAction(source, fOrganizeIncludes);
@@ -515,7 +521,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 			actionBar.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), fAddTaskAction);
 			actionBar.setGlobalActionHandler(CdtActionConstants.FORMAT, fFormatAll);
 		} else {
-			//			actionBar.setGlobalActionHandler(CopyQualifiedNameAction.ACTION_HANDLER_ID, fCopyQualifiedNameAction);
+			actionBar.setGlobalActionHandler(CdtActionConstants.COPY_QUALIFIED_NAME, fCopyQualifiedNameAction);
 		}
 	}
 

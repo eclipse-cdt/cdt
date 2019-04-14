@@ -4093,4 +4093,34 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testNestedNamespace_Bug546221() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void someAction(int i) {
+	//}
+	//int foo() {
+	//	auto f = static_cast<void (*)(int)>(&someAction);
+	//}
+
+	//void someAction(int i) {
+	//}
+	//int foo() {
+	//	auto f = static_cast<void (*)(int)>(&someAction);
+	//}
+	public void testCastFuncDeclarator1_Bug390324() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void someAction(int i) {
+	//}
+	//int foo() {
+	//	auto f = (void (*)(int)) (&someAction);
+	//}
+
+	//void someAction(int i) {
+	//}
+	//int foo() {
+	//	auto f = (void (*)(int)) (&someAction);
+	//}
+	public void testCastFuncDeclarator2_Bug390324() throws Exception {
+		assertFormatterResult();
+	}
 }

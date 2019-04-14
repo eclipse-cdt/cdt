@@ -4357,4 +4357,52 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testConstVolatileMember_Bug548512() throws Exception {
 		assertFormatterResult();
 	}
+
+	///*
+	//* A Block
+	//* comment
+	//*/
+	//int foo();
+	///*
+	//* Another Block
+	//* comment
+	//*/
+
+	///*
+	//* A Block
+	//* comment
+	//*/
+	//int foo();
+	///*
+	// * Another Block
+	// * comment
+	// */
+	public void testHeaderComment() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_HEADER, DefaultCodeFormatterConstants.FALSE);
+		assertFormatterResult();
+	}
+
+	//int foo();
+	///*
+	//* Another Block
+	//* comment
+	//*/
+
+	//int foo();
+	///*
+	//* Another Block
+	//* comment
+	//*/
+	public void testBlockComment() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_BLOCK, DefaultCodeFormatterConstants.FALSE);
+		assertFormatterResult();
+	}
+
+	//int foo();//a comment
+
+	//int foo();//a comment
+	public void testLineComment() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE, DefaultCodeFormatterConstants.FALSE);
+		assertFormatterResult();
+	}
 }

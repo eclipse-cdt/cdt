@@ -322,6 +322,18 @@ public class DefaultCodeFormatterOptions {
 	public String comment_formatter_off_tag;
 	/** @since 6.7 */
 	public boolean use_fomatter_comment_tag;
+	/**
+	 * @since 6.9
+	 */
+	public boolean format_block_comment;
+	/**
+	 * @since 6.9
+	 */
+	public boolean format_line_comment;
+	/**
+	 * @since 6.9
+	 */
+	public boolean format_header_comment;
 
 	private DefaultCodeFormatterOptions() {
 		// cannot be instantiated
@@ -345,6 +357,12 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG,
 				this.use_fomatter_comment_tag ? DefaultCodeFormatterConstants.TRUE
 						: DefaultCodeFormatterConstants.FALSE);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE,
+				format_line_comment ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_BLOCK,
+				format_block_comment ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_HEADER,
+				format_header_comment ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		//		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ALLOCATION_EXPRESSION, getAlignment(this.alignment_for_arguments_in_allocation_expression));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
 				getAlignment(this.alignment_for_arguments_in_method_invocation));
@@ -2214,6 +2232,18 @@ public class DefaultCodeFormatterOptions {
 		if (useFormatterCommentTag != null) {
 			this.use_fomatter_comment_tag = DefaultCodeFormatterConstants.TRUE.equals(useFormatterCommentTag);
 		}
+		final Object formatHeaderComment = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_HEADER);
+		if (formatHeaderComment != null) {
+			this.format_header_comment = DefaultCodeFormatterConstants.TRUE.equals(formatHeaderComment);
+		}
+		final Object formatBlockComment = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_BLOCK);
+		if (formatBlockComment != null) {
+			this.format_block_comment = DefaultCodeFormatterConstants.TRUE.equals(formatBlockComment);
+		}
+		final Object formatLineComment = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE);
+		if (formatLineComment != null) {
+			this.format_line_comment = DefaultCodeFormatterConstants.TRUE.equals(formatLineComment);
+		}
 	}
 
 	public void setDefaultSettings() {
@@ -2221,6 +2251,9 @@ public class DefaultCodeFormatterOptions {
 		this.comment_formatter_on_tag = DefaultCodeFormatterConstants.FORMATTER_ON_TAG;
 		this.comment_formatter_off_tag = DefaultCodeFormatterConstants.FORMATTER_OFF_TAG;
 		this.use_fomatter_comment_tag = true;
+		this.format_block_comment = true;
+		this.format_header_comment = true;
+		this.format_line_comment = true;
 		this.alignment_for_arguments_in_method_invocation = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_assignment = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_base_clause_in_type_declaration = Alignment.M_NEXT_PER_LINE_SPLIT;

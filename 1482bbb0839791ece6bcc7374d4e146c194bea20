@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1cc66b2d_122cd76b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/Method.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-04-14T18:26:57Z",
+      "side": 1,
+      "message": "Ok, I can add a comment. The basic problem with a plain copy is the qualified name of parameters and return value. The test \"mixed namespace\" failed.",
+      "parentUuid": "8ec358cb_0d36e5ae",
+      "revId": "1482bbb0839791ece6bcc7374d4e146c194bea20",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "344aa896_d7b720fb",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/Method.java",
         "patchSetId": 12
@@ -30,6 +48,24 @@
       "writtenOn": "2019-04-14T17:49:36Z",
       "side": 1,
       "message": "I think there should be a small test for this, i.e.\nvirtual void * method(), method2();",
+      "revId": "1482bbb0839791ece6bcc7374d4e146c194bea20",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae963c7_854712ed",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/Method.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-04-14T18:26:57Z",
+      "side": 1,
+      "message": "Ok, I will add a test with a pointer as return value.",
+      "parentUuid": "344aa896_d7b720fb",
       "revId": "1482bbb0839791ece6bcc7374d4e146c194bea20",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "20704086_c0f99e2a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/OverrideMethodsRefactoring.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-04-14T18:26:57Z",
+      "side": 1,
+      "message": "Ok",
+      "parentUuid": "dd5cfb00_7f439061",
+      "revId": "1482bbb0839791ece6bcc7374d4e146c194bea20",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "29bb5408_ce683b3d",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/VirtualMethodsASTVisitor.java",
         "patchSetId": 12
@@ -81,6 +135,24 @@
       "writtenOn": "2019-04-14T17:49:36Z",
       "side": 1,
       "message": "I think we need to use the qualified name here, otherwise, you could have a class/struct with the same name but in another namespace and it would match. Here is an example where this is problematic:\n\nnamespace FIRST {\nclass Base {\npublic:\n\tvirtual ~Base() {}\n\tvirtual void baseFunc(Base* ptr) const \u003d 0;\n\tvirtual void baseFunc2(Base* ptr) const \u003d 0;\n};\n}\n\nnamespace SECOND {\nclass X: public FIRST::Base {\npublic:\n\tX();\n\tvirtual void baseFunc(Base* ptr) const {}\n};\n}\n\nnamespace THIRD {\nclass X: public FIRST::Base {\npublic:\n\tX();\n\tvirtual void baseFunc2(Base* ptr) const {}\n};\n}\n\nIn the outline view, if I select the class SECOND::X and do Override Methods, then it suggests to override baseFunc even thought it is already implemented. This is because this logic actually picked THIRD::X as the selected class (fClassNode, etc).",
+      "revId": "1482bbb0839791ece6bcc7374d4e146c194bea20",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "feae63a4_acac6eca",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/overridemethods/VirtualMethodsASTVisitor.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-04-14T18:26:57Z",
+      "side": 1,
+      "message": "Ok, but the problem is: how? :) Can we get a fully qualified name from ICElement? If you have an idea or you can tell me where similar code is used I can take a look, it would be worth even for another commit. I didn\u0027t find a way to ICElement is a better way.",
+      "parentUuid": "29bb5408_ce683b3d",
       "revId": "1482bbb0839791ece6bcc7374d4e146c194bea20",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

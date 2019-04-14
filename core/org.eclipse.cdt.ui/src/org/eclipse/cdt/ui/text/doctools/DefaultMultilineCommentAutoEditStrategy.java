@@ -17,6 +17,8 @@ package org.eclipse.cdt.ui.text.doctools;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -25,8 +27,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
@@ -60,8 +64,41 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	protected static final String MULTILINE_MID = " * "; //$NON-NLS-1$
 	protected static final String MULTILINE_END = "*/"; //$NON-NLS-1$
 	private static String fgDefaultLineDelim = "\n"; //$NON-NLS-1$
+	private boolean fFormatBlocks;
 
 	public DefaultMultilineCommentAutoEditStrategy() {
+		this(null);
+	}
+
+	/**
+	 * @since 6.5
+	 */
+	public DefaultMultilineCommentAutoEditStrategy(ICProject project) {
+		if (project == null) {
+			Map<String, ?> options = CCorePlugin.getOptions();
+			Map<String, String> formatterPrefs = new HashMap<>(options.size());
+			for (String key : options.keySet()) {
+				Object value = options.get(key);
+				if (value instanceof String) {
+					formatterPrefs.put(key, (String) value);
+				}
+			}
+			DefaultCodeFormatterOptions preferences = new DefaultCodeFormatterOptions(formatterPrefs);
+			fFormatBlocks = preferences.format_block_comment;
+		} else {
+			Map<String, String> options = project.getOptions(true);
+			DefaultCodeFormatterOptions preferences = new DefaultCodeFormatterOptions(options);
+			fFormatBlocks = preferences.format_block_comment;
+		}
+	}
+
+	/**
+	 * Check if edit strategy is enabled
+	 * @return True if enabled, false otherwise
+	 * @since 6.5
+	 */
+	protected boolean isEnabled() {
+		return fFormatBlocks;
 	}
 
 	/**
@@ -69,6 +106,8 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 */
 	@Override
 	public void customizeDocumentCommand(IDocument doc, DocumentCommand cmd) {
+		if (!isEnabled())
+			return;
 		fgDefaultLineDelim = TextUtilities.getDefaultLineDelimiter(doc);
 		if (doc instanceof IDocumentExtension4) {
 			boolean forNewLine = cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text);
@@ -119,6 +158,8 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * @param c the command to deal with
 	 */
 	public void customizeDocumentAfterNewLine(IDocument doc, final DocumentCommand c) {
+		if (!isEnabled())
+			return;
 		int offset = c.offset;
 		if (offset == -1 || doc.getLength() == 0)
 			return;

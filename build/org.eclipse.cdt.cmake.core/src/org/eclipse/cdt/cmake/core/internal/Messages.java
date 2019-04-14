@@ -19,6 +19,7 @@ public class Messages extends NLS {
 	public static String CMakeBuildConfiguration_BuildingComplete;
 	public static String CMakeBuildConfiguration_BuildComplete;
 	public static String CMakeBuildConfiguration_Cleaning;
+	public static String CMakeBuildConfiguration_Configuring;
 	public static String CMakeBuildConfiguration_NotFound;
 	public static String CMakeBuildConfiguration_NoToolchainFile;
 	public static String CMakeBuildConfiguration_ProcCompCmds;

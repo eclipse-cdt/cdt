@@ -504,7 +504,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		IAutoEditStrategy[] NONE = new IAutoEditStrategy[0];
 
 		if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType))
-			return new IAutoEditStrategy[] { new DefaultMultilineCommentAutoEditStrategy() };
+			return new IAutoEditStrategy[] { new DefaultMultilineCommentAutoEditStrategy(getCProject()) };
 		if (ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(contentType))
 			return single != null ? new IAutoEditStrategy[] { single } : NONE;
 		else if (ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(contentType))

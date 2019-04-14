@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "df7110aa_8cee2538",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterOptions.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-04-14T13:10:29Z",
+      "side": 1,
+      "message": "This seems to be missing in implementation/defaults?",
+      "revId": "835113f9900ce43509ef30c2f6987e5a96a06975",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

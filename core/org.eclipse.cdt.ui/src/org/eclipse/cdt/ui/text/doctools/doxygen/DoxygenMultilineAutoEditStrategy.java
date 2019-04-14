@@ -63,6 +63,14 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	}
 
 	/**
+	 * @since 6.6
+	 */
+	@Override
+	protected boolean isEnabled() {
+		return true;
+	}
+
+	/**
 	 * @param decl the function declarator to document
 	 * @param ds the function specifier to document
 	 * @return content describing the specified function

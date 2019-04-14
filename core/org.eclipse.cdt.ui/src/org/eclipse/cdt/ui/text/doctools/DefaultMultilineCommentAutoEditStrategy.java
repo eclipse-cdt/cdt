@@ -25,8 +25,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
@@ -60,8 +62,34 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	protected static final String MULTILINE_MID = " * "; //$NON-NLS-1$
 	protected static final String MULTILINE_END = "*/"; //$NON-NLS-1$
 	private static String fgDefaultLineDelim = "\n"; //$NON-NLS-1$
+	private ICProject fProject;
 
 	public DefaultMultilineCommentAutoEditStrategy() {
+		this(null);
+	}
+
+	/**
+	 * @since 6.6
+	 */
+	public DefaultMultilineCommentAutoEditStrategy(ICProject project) {
+		fProject = project;
+	}
+
+	/**
+	 * Check if edit strategy is enabled
+	 * @return True if enabled, false otherwise
+	 * @since 6.6
+	 */
+	protected boolean isEnabled() {
+		boolean formatBlocks = false;
+		if (fProject == null) {
+			formatBlocks = DefaultCodeFormatterConstants.TRUE
+					.equals(CCorePlugin.getOption(DefaultCodeFormatterConstants.FORMATTER_COMMENT_BLOCK));
+		} else {
+			formatBlocks = DefaultCodeFormatterConstants.TRUE
+					.equals(fProject.getOption(DefaultCodeFormatterConstants.FORMATTER_COMMENT_BLOCK, true));
+		}
+		return formatBlocks;
 	}
 
 	/**
@@ -69,6 +97,8 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 */
 	@Override
 	public void customizeDocumentCommand(IDocument doc, DocumentCommand cmd) {
+		if (!isEnabled())
+			return;
 		fgDefaultLineDelim = TextUtilities.getDefaultLineDelimiter(doc);
 		if (doc instanceof IDocumentExtension4) {
 			boolean forNewLine = cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text);
@@ -119,6 +149,8 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * @param c the command to deal with
 	 */
 	public void customizeDocumentAfterNewLine(IDocument doc, final DocumentCommand c) {
+		if (!isEnabled())
+			return;
 		int offset = c.offset;
 		if (offset == -1 || doc.getLength() == 0)
 			return;

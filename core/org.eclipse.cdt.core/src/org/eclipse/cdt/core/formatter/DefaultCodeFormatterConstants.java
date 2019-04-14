@@ -122,6 +122,36 @@ public class DefaultCodeFormatterConstants {
 	 */
 	public static final String FORMATTER_USE_COMMENT_TAG = CCorePlugin.PLUGIN_ID
 			+ ".formatter.use_comment_formatter_tag"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Formatter option to format header comment
+	 *     - option id:         "org.eclipse.cdt.core.formatter.format_header_comment"
+	 *     - default:           true
+	 * </pre>
+	 * @since 6.8
+	 */
+	public static final String FORMATTER_COMMENT_HEADER = CCorePlugin.PLUGIN_ID
+			+ ".formatter.format_header_comment"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Formatter option to format block comment
+	 *     - option id:         "org.eclipse.cdt.core.formatter.format_block_comment"
+	 *     - default:           true
+	 * </pre>
+	 * @since 6.8
+	 */
+	public static final String FORMATTER_COMMENT_BLOCK = CCorePlugin.PLUGIN_ID
+			+ ".formatter.format_block_comment"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Formatter option to format line comment
+	 *     - option id:         "org.eclipse.cdt.core.formatter.format_line_comment"
+	 *     - default:           true
+	 * </pre>
+	 * @since 6.8
+	 */
+	public static final String FORMATTER_COMMENT_LINE = CCorePlugin.PLUGIN_ID
+			+ ".formatter.format_line_comment"; //$NON-NLS-1$
 
 	//	/**
 	//	 * <pre>
@@ -543,7 +573,7 @@ public class DefaultCodeFormatterConstants {
 	 * @see #NEXT_LINE
 	 * @see #NEXT_LINE_SHIFTED
 	 * @see #NEXT_LINE_ON_WRAP
-	 * @since 6.7
+	 * @since 6.8
 	 */
 	public static final String FORMATTER_BRACE_POSITION_FOR_LINKAGE_DECLARATION = CCorePlugin.PLUGIN_ID
 			+ ".formatter.brace_position_for_linkage_declaration"; //$NON-NLS-1$
@@ -760,7 +790,7 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see #TRUE
 	 * @see #FALSE
-	 * @since 6.7
+	 * @since 6.8
 	 */
 	public static final String FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_LINKAGE = CCorePlugin.PLUGIN_ID
 			+ ".formatter.indent_body_declarations_compare_to_linkage"; //$NON-NLS-1$
@@ -941,6 +971,7 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see CCorePlugin#INSERT
 	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.8
 	 */
 	public static final String FORMATTER_INSERT_NEW_LINE_AFTER_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST = CCorePlugin.PLUGIN_ID
 			+ ".formatter.insert_new_line_after_colon_in_constructor_initializer_list"; //$NON-NLS-1$
@@ -2049,7 +2080,7 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see CCorePlugin#INSERT
 	 * @see CCorePlugin#DO_NOT_INSERT
-	 * @since 6.7
+	 * @since 6.8
 	 */
 	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_LINKAGE_DECLARATION = CCorePlugin.PLUGIN_ID
 			+ ".formatter.insert_space_before_opening_brace_in_linkage_declaration"; //$NON-NLS-1$

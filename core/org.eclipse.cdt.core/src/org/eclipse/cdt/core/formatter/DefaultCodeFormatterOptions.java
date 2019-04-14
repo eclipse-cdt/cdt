@@ -89,7 +89,7 @@ public class DefaultCodeFormatterOptions {
 	public String brace_position_for_method_declaration;
 	public String brace_position_for_namespace_declaration;
 	/**
-	 * @since 6.7
+	 * @since 6.8
 	 */
 	public String brace_position_for_linkage_declaration;
 	public String brace_position_for_switch;
@@ -127,7 +127,7 @@ public class DefaultCodeFormatterOptions {
 	public int indent_access_specifier_extra_spaces;
 	public boolean indent_body_declarations_compare_to_namespace_header;
 	/**
-	 * @since 6.7
+	 * @since 6.8
 	 */
 	public boolean indent_body_declarations_compare_to_linkage;
 	public boolean indent_declaration_compare_to_template_header;
@@ -143,6 +143,9 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_new_line_before_catch_in_try_statement;
 	public boolean insert_new_line_before_closing_brace_in_initializer_list;
 	public boolean insert_new_line_before_colon_in_constructor_initializer_list;
+	/**
+	 * @since 6.8
+	 */
 	public boolean insert_new_line_after_colon_in_constructor_initializer_list;
 	public boolean insert_new_line_before_else_in_if_statement;
 	public boolean insert_new_line_before_while_in_do_statement;
@@ -237,7 +240,7 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_before_opening_brace_in_type_declaration;
 	public boolean insert_space_before_opening_brace_in_namespace_declaration;
 	/**
-	 * @since 6.7
+	 * @since 6.8
 	 */
 	public boolean insert_space_before_opening_brace_in_linkage_declaration;
 	public boolean insert_space_before_opening_bracket;
@@ -283,6 +286,18 @@ public class DefaultCodeFormatterOptions {
 	public String comment_formatter_off_tag;
 	/** @since 6.7 */
 	public boolean use_fomatter_comment_tag;
+	/**
+	 * @since 6.8
+	 */
+	public boolean format_block_comment;
+	/**
+	 * @since 6.8
+	 */
+	public boolean format_line_comment;
+	/**
+	 * @since 6.8
+	 */
+	public boolean format_header_comment;
 
 	private DefaultCodeFormatterOptions() {
 		// cannot be instantiated
@@ -306,6 +321,12 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG,
 				this.use_fomatter_comment_tag ? DefaultCodeFormatterConstants.TRUE
 						: DefaultCodeFormatterConstants.FALSE);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE,
+				format_line_comment ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_BLOCK,
+				format_block_comment ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_HEADER,
+				format_header_comment ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		//		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ALLOCATION_EXPRESSION, getAlignment(this.alignment_for_arguments_in_allocation_expression));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
 				getAlignment(this.alignment_for_arguments_in_method_invocation));
@@ -2099,6 +2120,18 @@ public class DefaultCodeFormatterOptions {
 		if (useFormatterCommentTag != null) {
 			this.use_fomatter_comment_tag = DefaultCodeFormatterConstants.TRUE.equals(useFormatterCommentTag);
 		}
+		final Object formatHeaderComment = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_HEADER);
+		if (formatHeaderComment != null) {
+			this.format_header_comment = DefaultCodeFormatterConstants.TRUE.equals(formatHeaderComment);
+		}
+		final Object formatBlockComment = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_BLOCK);
+		if (formatBlockComment != null) {
+			this.format_block_comment = DefaultCodeFormatterConstants.TRUE.equals(formatBlockComment);
+		}
+		final Object formatLineComment = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE);
+		if (formatLineComment != null) {
+			this.format_line_comment = DefaultCodeFormatterConstants.TRUE.equals(formatLineComment);
+		}
 	}
 
 	public void setDefaultSettings() {
@@ -2106,6 +2139,9 @@ public class DefaultCodeFormatterOptions {
 		this.comment_formatter_on_tag = DefaultCodeFormatterConstants.FORMATTER_ON_TAG;
 		this.comment_formatter_off_tag = DefaultCodeFormatterConstants.FORMATTER_OFF_TAG;
 		this.use_fomatter_comment_tag = true;
+		this.format_block_comment = true;
+		this.format_header_comment = true;
+		this.format_line_comment = true;
 		this.alignment_for_arguments_in_method_invocation = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_assignment = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_base_clause_in_type_declaration = Alignment.M_NEXT_PER_LINE_SPLIT;

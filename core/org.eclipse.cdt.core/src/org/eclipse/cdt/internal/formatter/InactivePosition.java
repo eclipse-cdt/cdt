@@ -1,7 +1,3 @@
-package org.eclipse.cdt.internal.formatter;
-
-import org.eclipse.jface.text.Position;
-
 /*******************************************************************************
  * Copyright (c) 2019 Marco Stornelli
  *
@@ -13,6 +9,10 @@ import org.eclipse.jface.text.Position;
  * SPDX-License-Identifier: EPL-2.0
  *
  *******************************************************************************/
+package org.eclipse.cdt.internal.formatter;
+
+import org.eclipse.jface.text.Position;
+
 public class InactivePosition extends Position {
 
 	private boolean preprocessorRegion;

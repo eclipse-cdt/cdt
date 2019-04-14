@@ -2497,13 +2497,19 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTCastExpression node) {
+		Runnable tailFormatter = null;
 		switch (node.getOperator()) {
 		case IASTCastExpression.op_cast:
 			scribe.printNextToken(Token.tLPAREN, false);
 			if (preferences.insert_space_after_opening_paren_in_cast) {
 				scribe.space();
 			}
-			node.getTypeId().accept(this);
+			tailFormatter = scribe.takeTailFormatter();
+			try {
+				node.getTypeId().accept(this);
+			} finally {
+				scribe.setTailFormatter(tailFormatter);
+			}
 			try {
 				if (node.getTypeId().getTrailingSyntax().getType() == IToken.tRPAREN) {
 					scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_cast);
@@ -2528,7 +2534,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			if (preferences.insert_space_after_opening_angle_bracket_in_template_arguments) {
 				scribe.space();
 			}
-			node.getTypeId().accept(this);
+			tailFormatter = scribe.takeTailFormatter();
+			try {
+				node.getTypeId().accept(this);
+			} finally {
+				scribe.setTailFormatter(tailFormatter);
+			}
 			scribe.printNextToken(Token.tGT,
 					preferences.insert_space_before_closing_angle_bracket_in_template_arguments);
 			if (preferences.insert_space_before_opening_paren_in_method_invocation) {
@@ -2539,7 +2550,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			if (preferences.insert_space_after_opening_paren_in_method_invocation) {
 				scribe.space();
 			}
-			Runnable tailFormatter = scribe.takeTailFormatter();
+			tailFormatter = scribe.takeTailFormatter();
 			try {
 				node.getOperand().accept(this);
 			} finally {

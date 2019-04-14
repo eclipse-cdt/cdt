@@ -4083,4 +4083,34 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
 		assertFormatterResult();
 	}
+
+	//void someAction(int i) {
+	//}
+	//int foo() {
+	//	auto f = static_cast<void (*)(int)>(&someAction);
+	//}
+
+	//void someAction(int i) {
+	//}
+	//int foo() {
+	//	auto f = static_cast<void (*)(int)>(&someAction);
+	//}
+	public void testCastFuncDeclarator1_Bug390324() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void someAction(int i) {
+	//}
+	//int foo() {
+	//	auto f = (void (*)(int)) (&someAction);
+	//}
+
+	//void someAction(int i) {
+	//}
+	//int foo() {
+	//	auto f = (void (*)(int)) (&someAction);
+	//}
+	public void testCastFuncDeclarator2_Bug390324() throws Exception {
+		assertFormatterResult();
+	}
 }

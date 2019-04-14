@@ -122,6 +122,36 @@ public class DefaultCodeFormatterConstants {
 	 */
 	public static final String FORMATTER_USE_COMMENT_TAG = CCorePlugin.PLUGIN_ID
 			+ ".formatter.use_comment_formatter_tag"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Formatter option to format header comment
+	 *     - option id:         "org.eclipse.cdt.core.formatter.format_header_comment"
+	 *     - default:           true
+	 * </pre>
+	 * @since 6.8
+	 */
+	public static final String FORMATTER_COMMENT_HEADER = CCorePlugin.PLUGIN_ID
+			+ ".formatter.format_header_comment"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Formatter option to format block comment
+	 *     - option id:         "org.eclipse.cdt.core.formatter.format_block_comment"
+	 *     - default:           true
+	 * </pre>
+	 * @since 6.8
+	 */
+	public static final String FORMATTER_COMMENT_BLOCK = CCorePlugin.PLUGIN_ID
+			+ ".formatter.format_block_comment"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Formatter option to format line comment
+	 *     - option id:         "org.eclipse.cdt.core.formatter.format_line_comment"
+	 *     - default:           true
+	 * </pre>
+	 * @since 6.8
+	 */
+	public static final String FORMATTER_COMMENT_LINE = CCorePlugin.PLUGIN_ID
+			+ ".formatter.format_line_comment"; //$NON-NLS-1$
 
 	//	/**
 	//	 * <pre>

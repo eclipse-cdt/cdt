@@ -340,6 +340,9 @@ final class FormatterMessages extends NLS {
 	public static String CommentsTabPage_preserve_white_space_before_line_comment;
 	public static String CommentsTabPage_line_up_line_comment_in_blocks_on_first_column;
 	public static String CommentsTabPage_line_width;
+	public static String CommentsTabPage_block_comment;
+	public static String CommentsTabPage_line_comment;
+	public static String CommentsTabPage_header_comment;
 	public static String CustomCodeFormatterBlock_formatter_name;
 	public static String CustomCodeFormatterBlock_default_formatter;
 	public static String CustomCodeFormatterBlock_formatter_note;

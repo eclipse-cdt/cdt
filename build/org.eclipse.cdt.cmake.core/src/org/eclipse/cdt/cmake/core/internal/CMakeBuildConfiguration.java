@@ -145,11 +145,19 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			case "Ninja": //$NON-NLS-1$
 				runCMake = !Files.exists(buildDir.resolve("build.ninja")); //$NON-NLS-1$
 				break;
+			case "Unix Makefiles": //$NON-NLS-1$
+				runCMake = !Files.exists(buildDir.resolve("Makefile")); //$NON-NLS-1$
+				break;
 			default:
 				runCMake = !Files.exists(buildDir.resolve("CMakeFiles")); //$NON-NLS-1$
 			}
 
 			if (runCMake) { // $NON-NLS-1$
+
+				console.getOutputStream().write(String.format(Messages.CMakeBuildConfiguration_Configuring, buildDir));
+				// clean output to make sure there is no content
+				// incompatible with current settings (cmake config would fail)
+				cleanBuildDirectory(buildDir);
 
 				List<String> command = new ArrayList<>();
 
@@ -339,4 +347,21 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
+	private void cleanDirectory(Path dir) throws IOException {
+		Path[] files = Files.list(dir).toArray(Path[]::new);
+		for (Path file : files) {
+			if (Files.isDirectory(file))
+				cleanDirectory(file);
+			else
+				Files.delete(file);
+		}
+	}
+
+	private void cleanBuildDirectory(Path buildDir) throws IOException {
+		if (!Files.exists(buildDir))
+			return;
+		if (Files.isDirectory(buildDir))
+			cleanDirectory(buildDir);
+		// TODO: not a directory should we do something?
+	}
 }

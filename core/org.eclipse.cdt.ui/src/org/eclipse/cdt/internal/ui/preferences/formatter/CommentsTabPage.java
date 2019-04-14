@@ -80,6 +80,7 @@ public class CommentsTabPage extends FormatterTabPage {
 			"void lineComments() {\n" + //$NON-NLS-1$
 			"\tprintf(\"%d\\n\", 1234);   \t\t// Integer number\n" + //$NON-NLS-1$
 			"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t// More here\n" + //$NON-NLS-1$
+			"\t/*\n\t * Another block\n\t * comment\n\t*/\n" + //$NON-NLS-1$
 			"\tprintf(\"%.5g\\n\", 12.34);\t\t// Floating point number\n" + //$NON-NLS-1$
 			"}\n"; //$NON-NLS-1$
 
@@ -102,6 +103,12 @@ public class CommentsTabPage extends FormatterTabPage {
 				FormatterMessages.CommentsTabPage_group1_title);
 		//		final CheckboxPreference singleLineCommentsOnFirstColumn= createPrefFalseTrue(lineCommentGroup, numColumns, FormatterMessages.CommentsTabPage_format_line_comments_on_first_column, DefaultCodeFormatterConstants.FORMATTER_COMMENT_FORMAT_LINE_COMMENT_STARTING_ON_FIRST_COLUMN, false);
 		//		((GridData) singleLineCommentsOnFirstColumn.getControl().getLayoutData()).horizontalIndent= indent;
+		createPrefFalseTrue(lineCommentGroup, numColumns, FormatterMessages.CommentsTabPage_block_comment,
+				DefaultCodeFormatterConstants.FORMATTER_COMMENT_BLOCK, false);
+		createPrefFalseTrue(lineCommentGroup, numColumns, FormatterMessages.CommentsTabPage_line_comment,
+				DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE, false);
+		createPrefFalseTrue(lineCommentGroup, numColumns, FormatterMessages.CommentsTabPage_header_comment,
+				DefaultCodeFormatterConstants.FORMATTER_COMMENT_HEADER, false);
 		createPrefFalseTrue(lineCommentGroup, numColumns,
 				FormatterMessages.CommentsTabPage_preserve_white_space_before_line_comment,
 				DefaultCodeFormatterConstants.FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT,

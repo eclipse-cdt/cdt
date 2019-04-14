@@ -934,78 +934,86 @@ public class Scribe {
 		int currentTokenStartPosition = scanner.getCurrentTokenStartPosition();
 		int currentTokenEndPosition = scanner.getCurrentTokenEndPosition() + 1;
 
-		scanner.resetTo(currentTokenStartPosition, currentTokenEndPosition);
-		int currentCharacter;
-		boolean isNewLine = false;
-		int start = currentTokenStartPosition;
-		int nextCharacterStart = currentTokenStartPosition;
-		printIndentationIfNecessary();
-		if (pendingSpace) {
-			addInsertEdit(currentTokenStartPosition, SPACE);
-		}
-		needSpace = false;
-		pendingSpace = false;
-		int previousStart = currentTokenStartPosition;
-
-		while (nextCharacterStart <= currentTokenEndPosition && (currentCharacter = scanner.getNextChar()) != -1) {
-			nextCharacterStart = scanner.getCurrentPosition();
-
-			switch (currentCharacter) {
-			case '\r':
-				if (isNewLine) {
-					line++;
-				}
-				start = previousStart;
-				isNewLine = true;
-				if (scanner.getNextChar('\n')) {
-					currentCharacter = '\n';
-					nextCharacterStart = scanner.getCurrentPosition();
-				}
-				break;
-			case '\n':
-				if (isNewLine) {
-					line++;
-				}
-				start = previousStart;
-				isNewLine = true;
-				break;
-			default:
-				if (isNewLine) {
-					if (Character.isWhitespace((char) currentCharacter)) {
-						int previousStartPosition = scanner.getCurrentPosition();
-						while (currentCharacter != -1 && currentCharacter != '\r' && currentCharacter != '\n'
-								&& Character.isWhitespace((char) currentCharacter)) {
-							previousStart = nextCharacterStart;
-							previousStartPosition = scanner.getCurrentPosition();
-							currentCharacter = scanner.getNextChar();
-							nextCharacterStart = scanner.getCurrentPosition();
-						}
-						if (currentCharacter == '\r' || currentCharacter == '\n') {
-							nextCharacterStart = previousStartPosition;
-						}
-					}
-					column = 1;
-					line++;
-
-					StringBuilder buffer = new StringBuilder();
-					buffer.append(lineSeparator);
-					printIndentationIfNecessary(buffer);
-					buffer.append(' ');
-
-					addReplaceEdit(start, previousStart - 1, String.valueOf(buffer));
-				} else {
-					column += (nextCharacterStart - previousStart);
-				}
-				isNewLine = false;
+		boolean oldState = inactiveState;
+		if ((currentTokenStartPosition > 0 && !preferences.format_block_comment)
+				|| (currentTokenStartPosition == 0 && !preferences.format_header_comment))
+			inactiveState = true;
+		try {
+			scanner.resetTo(currentTokenStartPosition, currentTokenEndPosition);
+			int currentCharacter;
+			boolean isNewLine = false;
+			int start = currentTokenStartPosition;
+			int nextCharacterStart = currentTokenStartPosition;
+			printIndentationIfNecessary();
+			if (pendingSpace) {
+				addInsertEdit(currentTokenStartPosition, SPACE);
 			}
-			previousStart = nextCharacterStart;
-			scanner.setCurrentPosition(nextCharacterStart);
-		}
-		lastNumberOfNewLines = 0;
-		needSpace = false;
-		scanner.resetTo(currentTokenEndPosition, scannerEndPosition);
-		if (forceNewLine) {
-			startNewLine();
+			needSpace = false;
+			pendingSpace = false;
+			int previousStart = currentTokenStartPosition;
+
+			while (nextCharacterStart <= currentTokenEndPosition && (currentCharacter = scanner.getNextChar()) != -1) {
+				nextCharacterStart = scanner.getCurrentPosition();
+
+				switch (currentCharacter) {
+				case '\r':
+					if (isNewLine) {
+						line++;
+					}
+					start = previousStart;
+					isNewLine = true;
+					if (scanner.getNextChar('\n')) {
+						currentCharacter = '\n';
+						nextCharacterStart = scanner.getCurrentPosition();
+					}
+					break;
+				case '\n':
+					if (isNewLine) {
+						line++;
+					}
+					start = previousStart;
+					isNewLine = true;
+					break;
+				default:
+					if (isNewLine) {
+						if (Character.isWhitespace((char) currentCharacter)) {
+							int previousStartPosition = scanner.getCurrentPosition();
+							while (currentCharacter != -1 && currentCharacter != '\r' && currentCharacter != '\n'
+									&& Character.isWhitespace((char) currentCharacter)) {
+								previousStart = nextCharacterStart;
+								previousStartPosition = scanner.getCurrentPosition();
+								currentCharacter = scanner.getNextChar();
+								nextCharacterStart = scanner.getCurrentPosition();
+							}
+							if (currentCharacter == '\r' || currentCharacter == '\n') {
+								nextCharacterStart = previousStartPosition;
+							}
+						}
+						column = 1;
+						line++;
+
+						StringBuilder buffer = new StringBuilder();
+						buffer.append(lineSeparator);
+						printIndentationIfNecessary(buffer);
+						buffer.append(' ');
+
+						addReplaceEdit(start, previousStart - 1, String.valueOf(buffer));
+					} else {
+						column += (nextCharacterStart - previousStart);
+					}
+					isNewLine = false;
+				}
+				previousStart = nextCharacterStart;
+				scanner.setCurrentPosition(nextCharacterStart);
+			}
+			lastNumberOfNewLines = 0;
+			needSpace = false;
+			scanner.resetTo(currentTokenEndPosition, scannerEndPosition);
+			if (forceNewLine) {
+				startNewLine();
+			}
+		} finally {
+			inactiveState = oldState;
 		}
 	}
 
@@ -1092,17 +1100,20 @@ public class Scribe {
 					if (startOffset < endOffset) {
 						int savedIndentLevel = indentationLevel;
 						scanner.resetTo(scanner.getCurrentTokenStartPosition(), scanner.eofPosition);
-						inactiveState = true;
-						/**
-						 * We are entering in inactive state so if we added a new line previously,
-						 * starting a new line, we need to remove it.
-						 */
-						if (inactivePos.isPreprocessorRegion() && editsIndex > 0
-								&& lineSeparator.equals(edits[editsIndex - 1].replacement)) {
-							editsIndex--;
+						try {
+							inactiveState = true;
+							/**
+							 * We are entering in inactive state so if we added a new line previously,
+							 * starting a new line, we need to remove it.
+							 */
+							if (inactivePos.isPreprocessorRegion() && editsIndex > 0
+									&& lineSeparator.equals(edits[editsIndex - 1].replacement)) {
+								editsIndex--;
+							}
+							printRaw(startOffset, endOffset - startOffset);
+						} finally {
+							inactiveState = false;
 						}
-						printRaw(startOffset, endOffset - startOffset);
-						inactiveState = false;
 						while (indentationLevel > savedIndentLevel) {
 							unIndent();
 						}
@@ -1329,150 +1340,158 @@ public class Scribe {
 		int start = currentTokenStartPosition;
 		int nextCharacterStart = currentTokenStartPosition;
 
-		// Print comment line indentation
-		int commentIndentationLevel;
-		boolean onFirstColumn = isOnFirstColumn(start);
-		if (!preferences.comment_line_up_line_comment_in_blocks_on_first_column && indentationLevel == 0) {
-			commentIndentationLevel = column - 1;
-		} else {
-			if (onFirstColumn && preferences.never_indent_line_comments_on_first_column) {
+		boolean oldState = inactiveState;
+		if ((currentTokenStartPosition > 0 && !preferences.format_line_comment)
+				|| (currentTokenStartPosition == 0 && !preferences.format_header_comment))
+			inactiveState = true;
+		try {
+			// Print comment line indentation
+			int commentIndentationLevel;
+			boolean onFirstColumn = isOnFirstColumn(start);
+			if (!preferences.comment_line_up_line_comment_in_blocks_on_first_column && indentationLevel == 0) {
 				commentIndentationLevel = column - 1;
 			} else {
-				// Indentation may be specific for contiguous comment
-				// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=293300
-				if (lastLineComment.contiguous) {
-					// The leading spaces have been set while looping in the printComment(int) method
-					int currentCommentIndentation = computeIndentation(lastLineComment.leadingSpaces, 0);
-					// Keep the current comment indentation when over the previous contiguous line comment
-					// and the previous comment has not been re-indented
-					int relativeIndentation = currentCommentIndentation - lastLineComment.currentIndentation;
-					boolean similarCommentsIndentation = false;
-					if (tabLength == 0) {
-						similarCommentsIndentation = relativeIndentation == 0;
-					} else if (relativeIndentation > -tabLength) {
-						similarCommentsIndentation = relativeIndentation == 0
-								|| currentCommentIndentation != 0 && lastLineComment.currentIndentation != 0;
-					}
-					if (similarCommentsIndentation && lastLineComment.indentation != indentationLevel) {
-						int currentIndentationLevel = indentationLevel;
-						indentationLevel = lastLineComment.indentation;
-						printIndentationIfNecessary();
-						indentationLevel = currentIndentationLevel;
-						commentIndentationLevel = lastLineComment.indentation;
+				if (onFirstColumn && preferences.never_indent_line_comments_on_first_column) {
+					commentIndentationLevel = column - 1;
+				} else {
+					// Indentation may be specific for contiguous comment
+					// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=293300
+					if (lastLineComment.contiguous) {
+						// The leading spaces have been set while looping in the printComment(int) method
+						int currentCommentIndentation = computeIndentation(lastLineComment.leadingSpaces, 0);
+						// Keep the current comment indentation when over the previous contiguous line comment
+						// and the previous comment has not been re-indented
+						int relativeIndentation = currentCommentIndentation - lastLineComment.currentIndentation;
+						boolean similarCommentsIndentation = false;
+						if (tabLength == 0) {
+							similarCommentsIndentation = relativeIndentation == 0;
+						} else if (relativeIndentation > -tabLength) {
+							similarCommentsIndentation = relativeIndentation == 0
+									|| currentCommentIndentation != 0 && lastLineComment.currentIndentation != 0;
+						}
+						if (similarCommentsIndentation && lastLineComment.indentation != indentationLevel) {
+							int currentIndentationLevel = indentationLevel;
+							indentationLevel = lastLineComment.indentation;
+							printIndentationIfNecessary();
+							indentationLevel = currentIndentationLevel;
+							commentIndentationLevel = lastLineComment.indentation;
+						} else {
+							printIndentationIfNecessary();
+							commentIndentationLevel = column - 1;
+						}
 					} else {
 						printIndentationIfNecessary();
 						commentIndentationLevel = column - 1;
 					}
+				}
+			}
+
+			// Prepare white space before the comment.
+			StringBuilder whitespace = null;
+			if (!lastLineComment.contiguous && commentIndentationLevel != indentationLevel
+					&& !(preferences.never_indent_line_comments_on_first_column && onFirstColumn)) {
+				whitespace = new StringBuilder();
+				int whitespaceStartPosition = currentTokenStartPosition - lastLineComment.leadingSpaces.length;
+				int indent = getIndentationOfOffset(whitespaceStartPosition);
+				int distance = computeIndentation(lastLineComment.leadingSpaces, indent) - indent;
+				if (preferences.comment_preserve_white_space_between_code_and_line_comment
+						&& distance >= preferences.comment_min_distance_between_code_and_line_comment) {
+					whitespace.append(lastLineComment.leadingSpaces);
 				} else {
-					printIndentationIfNecessary();
-					commentIndentationLevel = column - 1;
-				}
-			}
-		}
-
-		// Prepare white space before the comment.
-		StringBuilder whitespace = null;
-		if (!lastLineComment.contiguous && commentIndentationLevel != indentationLevel
-				&& !(preferences.never_indent_line_comments_on_first_column && onFirstColumn)) {
-			whitespace = new StringBuilder();
-			int whitespaceStartPosition = currentTokenStartPosition - lastLineComment.leadingSpaces.length;
-			int indent = getIndentationOfOffset(whitespaceStartPosition);
-			int distance = computeIndentation(lastLineComment.leadingSpaces, indent) - indent;
-			if (preferences.comment_preserve_white_space_between_code_and_line_comment
-					&& distance >= preferences.comment_min_distance_between_code_and_line_comment) {
-				whitespace.append(lastLineComment.leadingSpaces);
-			} else {
-				for (int i = 0; i < preferences.comment_min_distance_between_code_and_line_comment; i++) {
-					whitespace.append(' ');
-				}
-			}
-		}
-
-		// Store line comment information
-		lastLineComment.currentIndentation = getIndentationOfOffset(currentTokenStartPosition);
-		lastLineComment.contiguous = true;
-
-		while (true) {
-			Location location = new Location(this, scanner.getCurrentPosition());
-			int commentIndent = commentIndentationLevel;
-
-			// Add pending space if necessary
-			if (whitespace != null) {
-				addInsertEdit(currentTokenStartPosition, whitespace);
-				commentIndent = computeIndentation(whitespace, commentIndentationLevel);
-				needSpace = false;
-				pendingSpace = false;
-			}
-			lastLineComment.indentation = commentIndent;
-
-			int previousStart = currentTokenStartPosition;
-
-			int indent = commentIndent;
-			loop: while (nextCharacterStart <= currentTokenEndPosition
-					&& (currentCharacter = scanner.getNextChar()) != -1) {
-				nextCharacterStart = scanner.getCurrentPosition();
-
-				switch (currentCharacter) {
-				case '\r':
-				case '\n':
-					start = previousStart;
-					break loop;
-				}
-				indent = computeIndentation((char) currentCharacter, indent);
-				previousStart = nextCharacterStart;
-			}
-
-			if (start != currentTokenStartPosition) {
-				// This means that the line comment doesn't end the file
-				addReplaceEdit(start, currentTokenEndPosition - 1, lineSeparator);
-				line++;
-				column = 1;
-				lastNumberOfNewLines = 1;
-			}
-			if (!checkLineWrapping || indent <= pageWidth || whitespace == null || commentIndent
-					- commentIndentationLevel <= preferences.comment_min_distance_between_code_and_line_comment) {
-				break;
-			}
-
-			// Maximum line length was exceeded. Try to reduce white space before the comment by
-			// removing the last white space character.
-			whitespace.deleteCharAt(whitespace.length() - 1);
-			if (computeIndentation(lastLineComment.leadingSpaces, commentIndentationLevel)
-					- commentIndentationLevel < preferences.comment_min_distance_between_code_and_line_comment) {
-				// The white space shrank too much. Rebuild it to satisfy the minimum distance
-				// requirement.
-				whitespace.delete(0, whitespace.length());
-				for (int i = 0; i < preferences.comment_min_distance_between_code_and_line_comment; i++) {
-					whitespace.append(' ');
-				}
-			}
-			resetAt(location);
-			scanner.resetTo(location.inputOffset, scanner.eofPosition);
-		}
-
-		needSpace = false;
-		pendingSpace = false;
-		// realign to the proper value
-		if (currentAlignment != null) {
-			if (memberAlignment != null) {
-				// select the last alignment
-				if (currentAlignment.location.inputOffset > memberAlignment.location.inputOffset) {
-					if (currentAlignment.couldBreak() && currentAlignment.wasSplit) {
-						currentAlignment.performFragmentEffect();
+					for (int i = 0; i < preferences.comment_min_distance_between_code_and_line_comment; i++) {
+						whitespace.append(' ');
 					}
-				} else {
-					indentationLevel = Math.max(indentationLevel, memberAlignment.breakIndentationLevel);
 				}
-			} else if (currentAlignment.couldBreak() && currentAlignment.wasSplit) {
-				currentAlignment.performFragmentEffect();
 			}
-			if (currentAlignment.name.equals(Alignment.BINARY_EXPRESSION) && currentAlignment.enclosing != null
-					&& currentAlignment.enclosing.equals(Alignment.BINARY_EXPRESSION)
-					&& indentationLevel < currentAlignment.breakIndentationLevel) {
-				indentationLevel = currentAlignment.breakIndentationLevel;
+
+			// Store line comment information
+			lastLineComment.currentIndentation = getIndentationOfOffset(currentTokenStartPosition);
+			lastLineComment.contiguous = true;
+
+			while (true) {
+				Location location = new Location(this, scanner.getCurrentPosition());
+				int commentIndent = commentIndentationLevel;
+
+				// Add pending space if necessary
+				if (whitespace != null) {
+					addInsertEdit(currentTokenStartPosition, whitespace);
+					commentIndent = computeIndentation(whitespace, commentIndentationLevel);
+					needSpace = false;
+					pendingSpace = false;
+				}
+				lastLineComment.indentation = commentIndent;
+
+				int previousStart = currentTokenStartPosition;
+
+				int indent = commentIndent;
+				loop: while (nextCharacterStart <= currentTokenEndPosition
+						&& (currentCharacter = scanner.getNextChar()) != -1) {
+					nextCharacterStart = scanner.getCurrentPosition();
+
+					switch (currentCharacter) {
+					case '\r':
+					case '\n':
+						start = previousStart;
+						break loop;
+					}
+					indent = computeIndentation((char) currentCharacter, indent);
+					previousStart = nextCharacterStart;
+				}
+
+				if (start != currentTokenStartPosition) {
+					// This means that the line comment doesn't end the file
+					addReplaceEdit(start, currentTokenEndPosition - 1, lineSeparator);
+					line++;
+					column = 1;
+					lastNumberOfNewLines = 1;
+				}
+				if (!checkLineWrapping || indent <= pageWidth || whitespace == null || commentIndent
+						- commentIndentationLevel <= preferences.comment_min_distance_between_code_and_line_comment) {
+					break;
+				}
+
+				// Maximum line length was exceeded. Try to reduce white space before the comment by
+				// removing the last white space character.
+				whitespace.deleteCharAt(whitespace.length() - 1);
+				if (computeIndentation(lastLineComment.leadingSpaces, commentIndentationLevel)
+						- commentIndentationLevel < preferences.comment_min_distance_between_code_and_line_comment) {
+					// The white space shrank too much. Rebuild it to satisfy the minimum distance
+					// requirement.
+					whitespace.delete(0, whitespace.length());
+					for (int i = 0; i < preferences.comment_min_distance_between_code_and_line_comment; i++) {
+						whitespace.append(' ');
+					}
+				}
+				resetAt(location);
+				scanner.resetTo(location.inputOffset, scanner.eofPosition);
 			}
+
+			needSpace = false;
+			pendingSpace = false;
+			// realign to the proper value
+			if (currentAlignment != null) {
+				if (memberAlignment != null) {
+					// select the last alignment
+					if (currentAlignment.location.inputOffset > memberAlignment.location.inputOffset) {
+						if (currentAlignment.couldBreak() && currentAlignment.wasSplit) {
+							currentAlignment.performFragmentEffect();
+						}
+					} else {
+						indentationLevel = Math.max(indentationLevel, memberAlignment.breakIndentationLevel);
+					}
+				} else if (currentAlignment.couldBreak() && currentAlignment.wasSplit) {
+					currentAlignment.performFragmentEffect();
+				}
+				if (currentAlignment.name.equals(Alignment.BINARY_EXPRESSION) && currentAlignment.enclosing != null
+						&& currentAlignment.enclosing.equals(Alignment.BINARY_EXPRESSION)
+						&& indentationLevel < currentAlignment.breakIndentationLevel) {
+					indentationLevel = currentAlignment.breakIndentationLevel;
+				}
+			}
+			scanner.resetTo(currentTokenEndPosition, scannerEndPosition);
+		} finally {
+			inactiveState = oldState;
 		}
-		scanner.resetTo(currentTokenEndPosition, scannerEndPosition);
 	}
 
 	public void printEmptyLines(int linesNumber) {

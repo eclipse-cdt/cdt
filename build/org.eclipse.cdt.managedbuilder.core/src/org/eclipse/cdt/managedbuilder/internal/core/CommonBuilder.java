@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Intel Corporation and others.
+ * Copyright (c) 2007, 2019 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  * Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *                                Save build output (bug 294106)
  * Andrew Gvozdev (Quoin Inc)   - Saving build output implemented in different way (bug 306222)
+ * Umair Sair (Mentor Graphics) - Project dependencies are not built in the correct order (bug 546407)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -99,6 +100,7 @@ public class CommonBuilder extends ACBuilder {
 	private static CfgBuildSet fBuildSet = new CfgBuildSet();
 
 	private boolean fBuildErrOccured;
+	private Set<String> builtRefConfigIds = new HashSet<>();
 
 	public CommonBuilder() {
 	}
@@ -432,6 +434,7 @@ public class CommonBuilder extends ACBuilder {
 			printEvent(kind, args);
 
 		fBuildSet.start(this);
+		builtRefConfigIds.clear();
 
 		IProject project = getProject();
 
@@ -533,6 +536,11 @@ public class CommonBuilder extends ACBuilder {
 			monitor.beginTask(ManagedMakeMessages.getResourceString("CommonBuilder.22"), cfgs.length); //$NON-NLS-1$
 			for (IConfiguration cfg : cfgs) {
 				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+				if (builtRefConfigIds.contains(cfg.getId())) {
+					subMonitor.done();
+					continue;
+				}
+
 				nextConfigChanged.setValue(false);
 				try {
 					IBuilder builder = cfg.getEditableBuilder();
@@ -553,6 +561,7 @@ public class CommonBuilder extends ACBuilder {
 				} catch (CoreException e) {
 					ManagedBuilderCorePlugin.log(e);
 				} finally {
+					builtRefConfigIds.add(cfg.getId());
 					subMonitor.done();
 				}
 				refConfigChanged.setValue(refConfigChanged.getValue() || nextConfigChanged.getValue());
@@ -568,8 +577,9 @@ public class CommonBuilder extends ACBuilder {
 		List<IConfiguration> cfgList = new ArrayList<>(cfgs.length);
 		for (IConfiguration cfg : cfgs) {
 			IProject project = cfg.getOwner().getProject();
-			Set<String> set = fBuildSet.getCfgIdSet(project, true);
-			if (set.add(cfg.getId())) {
+			fBuildSet.getCfgIdSet(project, true).add(cfg.getId());
+
+			if (!builtRefConfigIds.contains(cfg.getId())) {
 				if (VERBOSE) {
 					outputTrace(cfg.getOwner().getProject().getName(),
 							"set: adding cfg " + cfg.getName() + " ( id=" + cfg.getId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

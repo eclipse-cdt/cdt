@@ -16,6 +16,24 @@
       "revId": "e992286548ba0c7580fbba359b876b66b3ecc945",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5d6b767b_978f7bf8",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2019-04-15T17:27:02Z",
+      "side": 1,
+      "message": "The CDT UI only offers \u0027Makefile\u0027 and \u0027Ninja\u0027 as build options so I thought I would fix those first.\n(the clean method below also assumes make as default).\n\nSupport for msbuld probably deserves its own bug as there is more than this to implement.",
+      "parentUuid": "b30f44f6_2a7ed4d2",
+      "revId": "e992286548ba0c7580fbba359b876b66b3ecc945",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

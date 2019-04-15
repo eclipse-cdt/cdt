@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b30f44f6_2a7ed4d2",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2019-04-15T16:38:37Z",
+      "side": 1,
+      "message": "This assumes the default is \u0027Make\u0027. On Windows, for example, the default is actually msbuild. We need a bit more code here to make sure.",
+      "revId": "e992286548ba0c7580fbba359b876b66b3ecc945",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

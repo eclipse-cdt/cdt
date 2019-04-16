@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "052316eb_4000fb0d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ICPPEvaluation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-16T21:43:42Z",
+      "side": 1,
+      "message": "Not sure if this explanation helps. The best illustration of the use of this parameter is the following example:\n\n  struct type {\n\tint mem();\n  };\n  int (type::*memptr)();\n\n  constexpr bool is_noexcept \u003d noexcept((type{}.*(memptr))());\n  //constexpr bool is_noexcept \u003d noexcept(type{}.*(memptr));\n\n  static_assert(is_noexcept, \"\");\n\n  template\u003cbool T\u003e\n  struct trigger{};\n\n  trigger\u003cis_noexcept\u003e a;\n\nThe information if the function ptr is called needs to be propagated, though not sure if it actually works properly in all cases. I didn\u0027t find a better solution.",
+      "revId": "f46c8400e804489c5dc80f77f8404ea99b383189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

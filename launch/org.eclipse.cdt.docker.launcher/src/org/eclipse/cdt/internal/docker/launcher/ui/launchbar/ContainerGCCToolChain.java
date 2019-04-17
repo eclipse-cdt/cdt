@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017, 2018 QNX Software Systems and others.
+ * Copyright (c) 2015, 2019 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -84,7 +84,7 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain,
 	public ContainerGCCToolChain(String id, IToolChainProvider provider, Map<String, String> properties,
 			IEnvironmentVariable[] envVars) {
 		this.provider = provider;
-		this.path = new File("/usr/bin/gcc").toPath(); //$NON-NLS-1$
+		this.path = new File("gcc").toPath(); //$NON-NLS-1$
 
 		// We include arch in the id since a compiler can support multiple arches.
 		StringBuilder idBuilder = new StringBuilder("container-gcc-"); //$NON-NLS-1$
@@ -475,11 +475,7 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain,
 
 	@Override
 	public Path getCommandPath(Path command) {
-		if (command.isAbsolute()) {
-			return command;
-		}
-
-		return new File("/usr/bin/" + command).toPath(); //$NON-NLS-1$
+		return command;
 	}
 
 	private void initCompileCommands() {

@@ -1,0 +1,276 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e74475b6_5fc4b981",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 13140,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "Why is this not noexcept?",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d67bca11_eefcb753",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 13181,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "Is this even valid given that there are two overloads?",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a85226d6_e7410404",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 13204,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "Presumably that\u0027s intended to be `noexcept(!t2)`",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a44cd28a_dd4e146b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunctionType.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "We\u0027ll need to go through the call sites of this constructor as well and provide a noexcept evaluation where possible.",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0cd74c5b_c13e3016",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1573,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "The noexcept specifier needs to be instantiated too:\n\nICPPEvaluation noexcept \u003d ft.getNoexceptSpecifier();\nif (noexcept !\u003d null) {\n    noexcept \u003d noexcept.instantiate(context, IntegralValue.MAX_RECURSION_DEPTH);\n}",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "61a7726f_a4e170c4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 619,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "If there\u0027s an overload the result should be (overload is noexcept) \u0026\u0026 (arg1 is noexcept) \u0026\u0026 (arg2 is noexcept).",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1582a571_645dc793",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalComma.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "We should consider getOverloads() as well.",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "924583ec_e1c06604",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConditional.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "The condition expression could throw as well.",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cc11ff66_9417a9cc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "It\u0027s possible you can\u0027t. I think that, like EvalReference, EvalConstructor is only created as an intermediate result during constexpr evaluation.",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae8d8093_82e295c8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionSet.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "Would be interesting to see a test case that triggers this assert.",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63372613_9f839c01",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalID.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "Likewise.",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7b2b30b0_26d03789",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalMemberAccess.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "We need to check fOwnerEval as well.\n\nTest case:\n\n  struct S { int mem; };\n  S foo();  // could throw\n  constexpr bool n \u003d noexcept(foo().mem);  // should be false",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f14688c6_9a7abf87",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalPackExpansion.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "It would be good to give a justification for the assert in a comment. (I mentioned what they are in my comments on Patch Set 3.)",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28f8a248_7edea8ff",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "(overload is noexcept) \u0026\u0026 (argument is noexcept)",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5452b475_f1164a21",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUtil.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "numberValue() needs a null check",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6effdf98_fa7c5b15",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/composite/cpp/CPPCompositesFactory.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:01:58Z",
+      "side": 1,
+      "message": "We should use getCompositeEvaluation().",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

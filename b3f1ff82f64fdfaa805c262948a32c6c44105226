@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "722ca0e4_0db620c1",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 13140,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "It is not even valid code... Same for the line above. Thanks for catching this. I\u0027ll split this test in several smaller ones...",
+      "parentUuid": "e74475b6_5fc4b981",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d67bca11_eefcb753",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
         "patchSetId": 7
@@ -30,6 +48,24 @@
       "writtenOn": "2019-04-19T06:01:58Z",
       "side": 1,
       "message": "Is this even valid given that there are two overloads?",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b40bd65f_23878946",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 13181,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Removed both as already tested above",
+      "parentUuid": "d67bca11_eefcb753",
       "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "650cbf25_90c507c6",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 13204,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "fixed",
+      "parentUuid": "a85226d6_e7410404",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a44cd28a_dd4e146b",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunctionType.java",
         "patchSetId": 7
@@ -64,6 +118,24 @@
       "writtenOn": "2019-04-19T06:01:58Z",
       "side": 1,
       "message": "We\u0027ll need to go through the call sites of this constructor as well and provide a noexcept evaluation where possible.",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b044ea6_543522b9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunctionType.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "I already did this. Could you double-check? My conclusion was that either no noexcept, i.e. null is correct, or it is too costly for me to fully understand the context.",
+      "parentUuid": "a44cd28a_dd4e146b",
       "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -105,6 +177,42 @@
     },
     {
       "key": {
+        "uuid": "fcc04ac2_52a26d0b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1573,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0cd74c5b_c13e3016",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "99847ff5_9d444575",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1573,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e2db8e47_306344f5",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "61a7726f_a4e170c4",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
         "patchSetId": 7
@@ -116,6 +224,24 @@
       "writtenOn": "2019-04-19T06:01:58Z",
       "side": 1,
       "message": "If there\u0027s an overload the result should be (overload is noexcept) \u0026\u0026 (arg1 is noexcept) \u0026\u0026 (arg2 is noexcept).",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d1b7d1b8_8a7695fc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 619,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "61a7726f_a4e170c4",
       "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -139,6 +265,24 @@
     },
     {
       "key": {
+        "uuid": "f61cb482_3ffb02f2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalComma.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1582a571_645dc793",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "924583ec_e1c06604",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConditional.java",
         "patchSetId": 7
@@ -150,6 +294,24 @@
       "writtenOn": "2019-04-19T06:01:58Z",
       "side": 1,
       "message": "The condition expression could throw as well.",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9c00ebd1_2d28f76d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConditional.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "924583ec_e1c06604",
       "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -173,6 +335,24 @@
     },
     {
       "key": {
+        "uuid": "d74d09ec_b57ad600",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalConstructor.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "comment removed",
+      "parentUuid": "cc11ff66_9417a9cc",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ae8d8093_82e295c8",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionSet.java",
         "patchSetId": 7
@@ -184,6 +364,24 @@
       "writtenOn": "2019-04-19T06:01:58Z",
       "side": 1,
       "message": "Would be interesting to see a test case that triggers this assert.",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fb7e41a9_3e52cfb1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionSet.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Cannot reproduce now, so I guess it was due to a buggy implementation in some intermediate state.",
+      "parentUuid": "ae8d8093_82e295c8",
       "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -207,6 +405,24 @@
     },
     {
       "key": {
+        "uuid": "3ab1a2af_273637e3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalID.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "I was able to hit this assert with a code snippet which had some other parsing errors. So I\u0027ll ignore it for now and re-enabled the assert.",
+      "parentUuid": "63372613_9f839c01",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7b2b30b0_26d03789",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalMemberAccess.java",
         "patchSetId": 7
@@ -218,6 +434,24 @@
       "writtenOn": "2019-04-19T06:01:58Z",
       "side": 1,
       "message": "We need to check fOwnerEval as well.\n\nTest case:\n\n  struct S { int mem; };\n  S foo();  // could throw\n  constexpr bool n \u003d noexcept(foo().mem);  // should be false",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6ccb7dbb_40a9c542",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalMemberAccess.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b2b30b0_26d03789",
       "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -241,6 +475,24 @@
     },
     {
       "key": {
+        "uuid": "3020773a_a6c11a78",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalPackExpansion.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f14688c6_9a7abf87",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28f8a248_7edea8ff",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
         "patchSetId": 7
@@ -252,6 +504,42 @@
       "writtenOn": "2019-04-19T06:01:58Z",
       "side": 1,
       "message": "(overload is noexcept) \u0026\u0026 (argument is noexcept)",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c3f01a10_ea30993e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "28f8a248_7edea8ff",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c60bd51b_7cafe684",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "28f8a248_7edea8ff",
       "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -275,6 +563,24 @@
     },
     {
       "key": {
+        "uuid": "7b84d28c_0d573d96",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUtil.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5452b475_f1164a21",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6effdf98_fa7c5b15",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/composite/cpp/CPPCompositesFactory.java",
         "patchSetId": 7
@@ -286,6 +592,24 @@
       "writtenOn": "2019-04-19T06:01:58Z",
       "side": 1,
       "message": "We should use getCompositeEvaluation().",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c8db1891_a1870d86",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/composite/cpp/CPPCompositesFactory.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-19T22:47:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6effdf98_fa7c5b15",
       "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

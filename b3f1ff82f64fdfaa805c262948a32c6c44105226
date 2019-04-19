@@ -87,6 +87,24 @@
     },
     {
       "key": {
+        "uuid": "e2db8e47_306344f5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1573,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-19T06:06:37Z",
+      "side": 1,
+      "message": "Test case for this:\n\n  template \u003cbool B\u003e\n  void foo() noexcept(B);\n\n  constexpr bool n1 \u003d noexcept(foo\u003ctrue\u003e());  // should be true\n  constexpr bool n2 \u003d noexcept(foo\u003cfalse\u003e());  // should be false",
+      "parentUuid": "0cd74c5b_c13e3016",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "61a7726f_a4e170c4",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinary.java",
         "patchSetId": 7

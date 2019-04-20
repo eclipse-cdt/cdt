@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ed342e0_320951e8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTFunctionDeclarator.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-20T19:40:21Z",
+      "side": 1,
+      "message": "See TODO",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba9360b8_6c2d6b4f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionCall.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-20T19:40:21Z",
+      "side": 1,
+      "message": "I think this null check shouldn\u0027t be needed, but with the code snippet from the original bug report I get a NPE otherwise. My guess is that we run into another problem, but I didn\u0027t spend time to investigate.",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "55267e0d_eabf2a55",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-20T19:40:21Z",
+      "side": 1,
+      "message": "What\u0027s the reason why conversion are not created when the evaluation is constructed?",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c9e49d8e_5b39ac29",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-20T19:40:21Z",
+      "side": 1,
+      "message": "Can we run into this else-block with something else than a conversion?",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

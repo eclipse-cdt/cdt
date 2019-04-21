@@ -107,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "690a5a12_e4988b59",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-21T20:01:52Z",
+      "side": 1,
+      "message": "It is actually to handle the opposite:\n\n  struct S {\n    operator int() { return 42; }\n  };\n\n  constexpr bool is_noexcept \u003d noexcept(static_cast\u003cint\u003e(S{}));\n\nWithout the change is_noexcept would be true (but should be false), as the EvalFunctionCall for the conversion operator is only created in the maybeApplyConversion(). And as you pointed out, there are probably other places were conversion is not properly checked. Therefore, I was wondering why the evaluations for conversions are not created in any case, but have to be created case by case via maybeApplyConversion.",
+      "parentUuid": "d5b8bc2b_820b434b",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c9e49d8e_5b39ac29",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
         "patchSetId": 10
@@ -136,6 +154,24 @@
       "side": 1,
       "message": "* Invalid code can probably lead to the constructor being null, or a ProblemBinding other than CPPFunctionProblem.\n* You could have something like \"int(5)\", which involves neither a constructor nor a conversion function.\n\nIn any case, we need to check the noexcept-ness of the arguments.",
       "parentUuid": "c9e49d8e_5b39ac29",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b715fdc4_c8dbe787",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-21T20:01:52Z",
+      "side": 1,
+      "message": "- Added check for arguments.\n- Only assume that it is a conversion if it has only one argument. As far as I can see there is no better way to check that the EvalTypeID was created for a conversion operation.",
+      "parentUuid": "10a7119b_50921166",
       "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

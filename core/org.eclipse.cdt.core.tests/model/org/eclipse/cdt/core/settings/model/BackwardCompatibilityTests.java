@@ -79,13 +79,13 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 
 		IPathEntry[] expectedResolvedEntries = new IPathEntry[] { CoreModel.newSourceEntry(project.getFullPath()),
 				CoreModel.newOutputEntry(project.getFullPath()),
-				CoreModel.newIncludeEntry(project.getFullPath(), null, project.getLocation().append("a/b/c")),
-				CoreModel.newIncludeEntry(project.getFullPath(), null, new Path("/d/e/f")),
+				CoreModel.newIncludeEntry(project.getFullPath(), null, project.getLocation().append("a/b/c"), false),
+				CoreModel.newIncludeEntry(project.getFullPath(), null, new Path("/d/e/f"), true),
 				// Relative path with VALUE_WORKSPACE_PATH generates 2 entries, see MBSLanguageSettingsProvider
-				CoreModel.newIncludeEntry(project.getFullPath(), null, project.getLocation().append("g/h/i")),
+				CoreModel.newIncludeEntry(project.getFullPath(), null, project.getLocation().append("g/h/i"), false),
 				CoreModel.newIncludeEntry(project.getFullPath(), project.getFullPath().makeRelative(),
-						new Path("g/h/i")),
-				CoreModel.newIncludeEntry(project.getFullPath(), new Path("j"), new Path("k/l")),
+						new Path("g/h/i"), false),
+				CoreModel.newIncludeEntry(project.getFullPath(), new Path("j"), new Path("k/l"), true),
 				CoreModel.newMacroEntry(project.getFullPath(), "a", "b"),
 				CoreModel.newMacroEntry(project.getFullPath(), "c", ""), };
 		checkEntriesMatch(expectedResolvedEntries, resolvedentries);

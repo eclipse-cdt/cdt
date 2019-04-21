@@ -325,6 +325,8 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 
 	@Override
 	public boolean isSameType(IType type) {
+		if (type == null)
+			return false;
 		if (type == this)
 			return true;
 		if (type instanceof ITypedef || type instanceof IIndexBinding)

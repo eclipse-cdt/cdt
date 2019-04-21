@@ -92,7 +92,7 @@ public final class CPPTemplateTypeArgument implements ICPPTemplateArgument {
 
 	@Override
 	public boolean isSameValue(ICPPTemplateArgument arg) {
-		return fType.isSameType(arg.getTypeValue());
+		return arg.isTypeValue() && fType.isSameType(arg.getTypeValue());
 	}
 
 	@Override

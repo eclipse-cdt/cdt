@@ -28,6 +28,7 @@ import org.eclipse.cdt.codan.core.internal.checkers.CopyrightCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.DecltypeAutoCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.FormatStringCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.GotoStatementCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.MagicNumberCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.NonVirtualDestructorCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ProblemBindingCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ReturnCheckerTest;
@@ -97,6 +98,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(SwitchCaseCheckerTest.class);
 		suite.addTestSuite(VirtualMethodCallCheckerTest.class);
 		suite.addTestSuite(AssignmentOperatorCheckerTest.class);
+		suite.addTestSuite(MagicNumberCheckerTest.class);
 		// framework
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes

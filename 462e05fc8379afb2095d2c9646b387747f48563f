@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "eafa499d_3756685f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTFunctionDeclarator.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-21T05:41:46Z",
+      "side": 1,
+      "message": "I don\u0027t think we need to invent an AST node, we can just do it at the evaluation level. \n\nWe can add ICPPASTFunctionDeclarator.getNoexceptEvaluation(), whose implementation does:\n\n  if (getNoexceptionExpression() !\u003d null) {\n    return getNoexceptionExpression().getEvaluation();\n  }\n  if (getExceptionSpecification() \u003d\u003d IASTTypeId.EMPTY_TYPEID_ARRAY) {\n    return /* EvalFixed for \"true\" */;\n  }\n  return null;\n\nand then use getNoexceptionEvaluation() instead of getNoexceptExpression().getEvaluation() when creating function types.",
+      "parentUuid": "2ed342e0_320951e8",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba9360b8_6c2d6b4f",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionCall.java",
         "patchSetId": 10
@@ -30,6 +48,24 @@
       "writtenOn": "2019-04-20T19:40:21Z",
       "side": 1,
       "message": "I think this null check shouldn\u0027t be needed, but with the code snippet from the original bug report I get a NPE otherwise. My guess is that we run into another problem, but I didn\u0027t spend time to investigate.",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d8655d9a_a425fb4c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalFunctionCall.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-21T05:41:46Z",
+      "side": 1,
+      "message": "You could get null if you have invalid code, where a call expression has a variable of non-callable type in place of the function, or if resolution of the call operator fails, etc.",
+      "parentUuid": "ba9360b8_6c2d6b4f",
       "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "d5b8bc2b_820b434b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-21T05:41:46Z",
+      "side": 1,
+      "message": "Do I understand correctly, that the added code is intended to handle cases like this:\n\nstruct S {\n  constexpr operator int() { return 42; }\n};\n\nconstexpr int val \u003d int(S());\n\n?\n\nIf so, I think not handling it may be an oversight. We should probably add support for this to getValue() as well. (We can do that in a separate patch.)",
+      "parentUuid": "55267e0d_eabf2a55",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c9e49d8e_5b39ac29",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
         "patchSetId": 10
@@ -64,6 +118,24 @@
       "writtenOn": "2019-04-20T19:40:21Z",
       "side": 1,
       "message": "Can we run into this else-block with something else than a conversion?",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10a7119b_50921166",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-21T05:41:46Z",
+      "side": 1,
+      "message": "* Invalid code can probably lead to the constructor being null, or a ProblemBinding other than CPPFunctionProblem.\n* You could have something like \"int(5)\", which involves neither a constructor nor a conversion function.\n\nIn any case, we need to check the noexcept-ness of the arguments.",
+      "parentUuid": "c9e49d8e_5b39ac29",
       "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

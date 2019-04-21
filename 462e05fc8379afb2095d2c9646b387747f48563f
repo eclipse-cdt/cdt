@@ -125,6 +125,24 @@
     },
     {
       "key": {
+        "uuid": "f91f7926_117daa73",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-21T21:03:02Z",
+      "side": 1,
+      "message": "Not sure what you mean by opposite. \"int(S{})\" and and \"static_cast\u003cint\u003e(S{})\" are basically the same thing written different ways (they both end up calling S.operator int()).\n\nDo you have a suggestion for a common place to create the conversion evaluations?",
+      "parentUuid": "690a5a12_e4988b59",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c9e49d8e_5b39ac29",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
         "patchSetId": 10
@@ -172,6 +190,24 @@
       "side": 1,
       "message": "- Added check for arguments.\n- Only assume that it is a conversion if it has only one argument. As far as I can see there is no better way to check that the EvalTypeID was created for a conversion operation.",
       "parentUuid": "10a7119b_50921166",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63d59dd6_ff9ab25c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-21T21:03:02Z",
+      "side": 1,
+      "message": "What is it that you\u0027re trying to distinguish between? The way it was written, e.g. static_cast\u003cT\u003e(x) vs. T(x)? Or whether we actually end up calling a conversion operator rather than a constructor?\n\nNote that the latter cannot be distinguished based on syntax alone. In general, given two class types A and B, \"A{B{}}\" could call either a conversion operator or a constructor. It could even be ambiguous between both.",
+      "parentUuid": "b715fdc4_c8dbe787",
       "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

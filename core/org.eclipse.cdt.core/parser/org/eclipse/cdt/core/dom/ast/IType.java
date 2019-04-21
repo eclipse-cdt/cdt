@@ -36,6 +36,7 @@ public interface IType extends Cloneable {
 	 * See {@link ICPPTemplateTemplateParameter#isSameType(IType)} or
 	 * {@link ICPPTemplateTypeParameter#isSameType(IType)} for the semantics of comparing template
 	 * parameters denoting types.
+	 * @param type can be {@code null}.
 	 */
 	public boolean isSameType(IType type);
 }

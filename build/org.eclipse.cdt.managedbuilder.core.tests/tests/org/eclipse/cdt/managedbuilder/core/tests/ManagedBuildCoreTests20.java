@@ -14,11 +14,14 @@
 package org.eclipse.cdt.managedbuilder.core.tests;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -340,15 +343,17 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		});
 
 		// Check the build information before we change it
-		IScannerInfo currentSettings = provider.getScannerInformation(project);
+		IExtendedScannerInfo currentSettings = (IExtendedScannerInfo) provider.getScannerInformation(project);
 
 		Map<String, String> currentSymbols = currentSettings.getDefinedSymbols();
 		// It should simply contain the built-in
 		assertTrue(currentSymbols.containsKey("BUILTIN"));
 		assertEquals(currentSymbols.get("BUILTIN"), "");
 
-		String[] currentPaths = currentSettings.getIncludePaths();
-		BuildSystemTestHelper.checkDiff(expectedPaths, currentPaths);
+		List<String> currentPaths = new ArrayList<>(Arrays.asList(currentSettings.getIncludePaths()));
+		currentPaths.addAll(Arrays.asList(currentSettings.getLocalIncludePath()));
+		assertTrue(currentPaths.size() == expectedPaths.length);
+		BuildSystemTestHelper.checkEntries(expectedPaths, currentPaths.toArray(new String[currentPaths.size()]));
 
 		// Add some defined symbols programmatically
 		String[] expectedSymbols = { "DEBUG", "GNOME = ME " };

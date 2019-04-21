@@ -34,6 +34,24 @@
       "revId": "5de4cc5d46844a391504bcc1528a59d03ae5c3b8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "32952f85_d2015564",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunctionType.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-21T21:03:02Z",
+      "side": 1,
+      "message": "Right, this is a breaking change to the index format.\n\nWe need to increment the index version number (PDOM.DEFAULT_VERSION and such), that will force an index rebuild.",
+      "parentUuid": "dc2ffd4f_b593c524",
+      "revId": "5de4cc5d46844a391504bcc1528a59d03ae5c3b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

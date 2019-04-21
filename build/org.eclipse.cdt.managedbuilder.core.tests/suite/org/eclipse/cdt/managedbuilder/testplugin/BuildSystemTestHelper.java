@@ -124,6 +124,27 @@ public class BuildSystemTestHelper {
 		return project;
 	}
 
+	public static void checkEntries(Object[] e1, Object[] e2) {
+		if (e1.length != e2.length)
+			org.junit.Assert.fail("entries arrays have different length \ne1: " + arrayToString(e1) + "\ne2:"
+					+ arrayToString(e2) + "\n");
+
+		for (int i = 0; i < e1.length; i++) {
+			Object entry = e1[i];
+			boolean found = false;
+			for (int k = 0; k < e2.length; k++) {
+				Object entry2 = e2[k];
+				if (entry.equals(entry2)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				org.junit.Assert
+						.fail("unable to find entry " + entry.toString() + "\nin array \n" + arrayToString(e2) + "\n");
+		}
+	}
+
 	static public void checkDiff(Object[] expected, Object[] actual) {
 		LinkedHashSet<? extends Object> set1 = new LinkedHashSet<>(Arrays.asList(expected));
 		LinkedHashSet<? extends Object> set2 = new LinkedHashSet<>(Arrays.asList(actual));

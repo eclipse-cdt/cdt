@@ -142,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "fa2187fa_5cac7f64",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunctionType.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-21T05:41:46Z",
+      "side": 1,
+      "message": "Ok, I looked them over, and you\u0027re right, I don\u0027t think any of them need a noexcept evaluation.\n\nIt might still be good software engineering practice to add a parameter to this constructor, and have the \"null\"s at the call sites, so that the author of a potential future call site is forced to consider whether or not to pass in a noexcept evaluation... but it\u0027s not a big deal, I\u0027m ok with not doing that.",
+      "parentUuid": "5b044ea6_543522b9",
+      "revId": "b3f1ff82f64fdfaa805c262948a32c6c44105226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0cd74c5b_c13e3016",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
         "patchSetId": 7

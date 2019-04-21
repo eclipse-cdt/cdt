@@ -16,6 +16,23 @@
       "revId": "53368829c1daecbd740e92edd258c43f82ab551f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ce55f55_603a858c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPTemplateTypeArgument.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-21T21:16:52Z",
+      "side": 1,
+      "message": "Other implementations of IType.isSameType() handle a null argument gracefully. So, I think the change should be to CPPClosureType.isSameType().\n\n(Feel free to add a comment to the documentation of IType.isSameType() saying that its implementations are expected to handle a null argument, as well.)",
+      "revId": "53368829c1daecbd740e92edd258c43f82ab551f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

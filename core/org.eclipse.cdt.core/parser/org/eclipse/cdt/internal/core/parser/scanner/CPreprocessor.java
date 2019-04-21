@@ -75,6 +75,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ScannerContext.CodeState;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerContext.Conditional;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.osgi.framework.Version;
 
 /**
@@ -464,6 +465,17 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	 * @return the include search path
 	 */
 	public static IncludeSearchPath configureIncludeSearchPath(File directory, IScannerInfo info) {
+		return configureIncludeSearchPath(directory, info, null);
+	}
+
+	/**
+	 * Returns include search path for a given current directory and a IScannerInfo.
+	 * @param directory the current directory
+	 * @param info scanner information, or {@code null} if not available
+	 * @param projectPath The main absolute project path
+	 * @return the include search path
+	 */
+	public static IncludeSearchPath configureIncludeSearchPath(File directory, IScannerInfo info, IPath projectPath) {
 		boolean inhibitUseOfCurrentFileDirectory = false;
 		List<IncludeSearchPathElement> elements = new ArrayList<>();
 
@@ -489,7 +501,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 					if ("-".equals(path)) { //$NON-NLS-1$
 						inhibitUseOfCurrentFileDirectory = true;
 					} else {
-						elements.add(new IncludeSearchPathElement(makeAbsolute(directory, path), false));
+						String abs = makeAbsolute(directory, path);
+						elements.add(new IncludeSearchPathElement(abs,
+								projectPath != null ? abs.startsWith(projectPath.toOSString()) : false));
 					}
 				}
 			}

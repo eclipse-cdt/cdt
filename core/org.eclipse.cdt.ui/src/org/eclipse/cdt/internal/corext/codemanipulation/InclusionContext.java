@@ -61,9 +61,11 @@ public class InclusionContext {
 		fTuLocation = fTu.getLocation();
 		ICProject cProject = fTu.getCProject();
 		fProject = cProject.getProject();
+		IPath projectPath = fProject.getLocation();
 		fCurrentDirectory = fTuLocation == null ? null : fTuLocation.removeLastSegments(1);
 		IScannerInfo scannerInfo = fTu.getScannerInfo(true);
-		fIncludeSearchPath = CPreprocessor.configureIncludeSearchPath(fCurrentDirectory.toFile(), scannerInfo);
+		fIncludeSearchPath = CPreprocessor.configureIncludeSearchPath(fCurrentDirectory.toFile(), scannerInfo,
+				projectPath);
 		fIncludeResolutionCache = new HashMap<>();
 		fInverseIncludeResolutionCache = new HashMap<>();
 		fPreferences = new IncludePreferences(cProject);

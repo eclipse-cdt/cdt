@@ -38,6 +38,8 @@ public class CheckersMessages extends NLS {
 	public static String SwitchCaseChecker_ParameterDefaultAllEnums;
 	public static String BlacklistChecker_list;
 	public static String BlacklistChecker_list_item;
+	public static String MagicNumberChecker_ParameterArray;
+	public static String MagicNumberChecker_ParameterOperatorParen;
 	public static String UnusedSymbolInFileScopeChecker_CharacterSequence;
 	public static String UnusedSymbolInFileScopeChecker_Exceptions;
 

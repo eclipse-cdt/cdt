@@ -628,5 +628,20 @@
                name="%problem.name.MultipleDeclarationsProblem">
          </problem>
       </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.MagicNumberChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.MagicNumberChecker"
+            name="%checker.name.MagicNumberChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.MagicNumberProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.MagicNumberProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.MagicNumberProblem"
+               name="%problem.name.MagicNumberProblem">
+         </problem>
+      </checker>
    </extension>
 </plugin>

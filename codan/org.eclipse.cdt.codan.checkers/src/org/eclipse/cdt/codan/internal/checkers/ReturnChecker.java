@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
@@ -210,7 +211,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	private boolean isCompoundStatement(IASTStatement last) {
 		return last instanceof IASTIfStatement || last instanceof IASTWhileStatement || last instanceof IASTDoStatement
 				|| last instanceof IASTForStatement || last instanceof IASTSwitchStatement
-				|| last instanceof IASTCompoundStatement || last instanceof ICPPASTTryBlockStatement;
+				|| last instanceof IASTCompoundStatement || last instanceof ICPPASTTryBlockStatement
+				|| last instanceof IASTGotoStatement;
 	}
 
 	protected boolean isFuncExitStatement(IASTStatement statement) {

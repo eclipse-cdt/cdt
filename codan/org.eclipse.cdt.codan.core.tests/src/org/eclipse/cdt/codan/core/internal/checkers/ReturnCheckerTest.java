@@ -515,4 +515,16 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testTemplateFunctionNoReturn() throws Exception {
 		checkSampleAboveCpp();
 	}
+
+	//int foo() {
+	//	int errcode = -1;
+	//	errcode = 0;
+	//	cleanup:
+	//	return errcode;
+	//	barf:
+	//	goto cleanup;
+	//}
+	public void testNoReturnWithGoto_Bug492878() throws Exception {
+		checkSampleAboveCpp();
+	}
 }

@@ -33,6 +33,24 @@
       "revId": "53368829c1daecbd740e92edd258c43f82ab551f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f302a3fb_01f54ee9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPTemplateTypeArgument.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-04-21T21:28:28Z",
+      "side": 1,
+      "message": "To answer your question: I don\u0027t think so. I think there could be legitimate reasons to compare type and non-type template arguments. Thinking of an example is somewhat tricky, but perhaps something like this:\n\ntemplate \u003ctypename T\u003e void foo();\n\n// Overload on template parameter kind. That\u0027s valid.\ntemplate \u003cint I\u003e void foo();\n\ntemplate \u003ctypename T\u003e\nauto bar() -\u003e decltype(foo\u003cT\u003e());\n\n// Declaration matching code will need to compare\n// template argument lists \u003cT\u003e and \u003cT()\u003e to determine\n// if this is a redeclaration or an overload.\ntemplate \u003ctypename T\u003e\nauto bar() -\u003e decltype(foo\u003cT()\u003e());",
+      "parentUuid": "5129f3e2_90894677",
+      "revId": "53368829c1daecbd740e92edd258c43f82ab551f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

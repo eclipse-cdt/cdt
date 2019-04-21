@@ -23,9 +23,11 @@ import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
+import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICPathEntry;
@@ -46,6 +48,8 @@ import org.eclipse.core.variables.VariablesPlugin;
  */
 public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 		implements ILanguageSettingsBroadcastingProvider {
+	private static final String PROJECTNAME_PATH = "/${ProjName}/"; //$NON-NLS-1$
+
 	@Override
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc,
 			String languageId) {
@@ -54,6 +58,7 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 		}
 
 		IPath projectPath = rc.getProjectRelativePath();
+		IPath absProjectPath = rc.getProject().getLocation();
 		ICLanguageSetting[] languageSettings = null;
 
 		if (rc instanceof IFile) {
@@ -101,20 +106,26 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 															"workspace_loc", rc.getProject().getName()) + Path.SEPARATOR //$NON-NLS-1$
 															+ pathStr;
 													// clear "RESOLVED" flag
-													int flags = entry.getFlags() & ~(ICSettingEntry.RESOLVED
-															| ICSettingEntry.VALUE_WORKSPACE_PATH);
+													int flags = entry.getFlags()
+															& ~(ICSettingEntry.RESOLVED
+																	| ICSettingEntry.VALUE_WORKSPACE_PATH)
+															| ICSettingEntry.LOCAL;
 													ICLanguageSettingEntry projectRootedEntry = (ICLanguageSettingEntry) CDataUtil
 															.createEntry(kind, projectRootedPath, projectRootedPath,
 																	null, flags);
 													if (!list.contains(projectRootedEntry)) {
 														list.add(projectRootedEntry);
 													}
+												} else {
+													entry = getLocalEntry(entry, location, absProjectPath);
 												}
 											} catch (CdtVariableException e) {
 												// Swallow exceptions but also log them
 												ManagedBuilderCorePlugin.log(e);
 											}
 
+										} else {
+											entry = getLocalEntry(entry, pathStr, absProjectPath);
 										}
 									}
 									if (!list.contains(entry)) {
@@ -128,6 +139,16 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 			}
 		}
 		return LanguageSettingsStorage.getPooledList(list);
+	}
+
+	private ICLanguageSettingEntry getLocalEntry(ICLanguageSettingEntry e, String entryPath, IPath projectPath) {
+		if (!(e instanceof ICIncludePathEntry) || entryPath == null || projectPath == null)
+			return e;
+		if (entryPath.startsWith(PROJECTNAME_PATH))
+			return CDataUtil.getPooledEntry(new CIncludePathEntry(e.getName(), e.getFlags() | ICPathEntry.LOCAL));
+		else if (entryPath.startsWith(projectPath.toOSString()))
+			return CDataUtil.getPooledEntry(new CIncludePathEntry(e.getName(), e.getFlags() | ICPathEntry.LOCAL));
+		return e;
 	}
 
 	/**

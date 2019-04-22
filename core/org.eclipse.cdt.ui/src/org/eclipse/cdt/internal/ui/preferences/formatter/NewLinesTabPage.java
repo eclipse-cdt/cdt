@@ -55,6 +55,10 @@ public class NewLinesTabPage extends FormatterTabPage {
 				DO_NOT_INSERT_INSERT);
 		createPref(newlinesGroup, numColumns, FormatterMessages.NewLinesTabPage_newlines_emtpy_statement_on_new_line,
 				DefaultCodeFormatterConstants.FORMATTER_PUT_EMPTY_STATEMENT_ON_NEW_LINE, FALSE_TRUE);
+		createPref(newlinesGroup, numColumns,
+				FormatterMessages.NewLinesTabPage_newlines_before_identifier_in_function_declaration,
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_IDENTIFIER_IN_FUNCTION_DECLARATION,
+				DO_NOT_INSERT_INSERT);
 		//		createPref(newlinesGroup, numColumns, FormatterMessages.NewLinesTabPage_newlines_group_option_empty_class_body, DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_IN_EMPTY_TYPE_DECLARATION, DO_NOT_INSERT_INSERT);
 		//		createPref(newlinesGroup, numColumns, FormatterMessages.NewLinesTabPage_newlines_group_option_empty_anonymous_class_body, DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_IN_EMPTY_ANONYMOUS_TYPE_DECLARATION, DO_NOT_INSERT_INSERT);
 		//		createPref(newlinesGroup, numColumns, FormatterMessages.NewLinesTabPage_newlines_group_option_empty_method_body, DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_IN_EMPTY_METHOD_BODY, DO_NOT_INSERT_INSERT);

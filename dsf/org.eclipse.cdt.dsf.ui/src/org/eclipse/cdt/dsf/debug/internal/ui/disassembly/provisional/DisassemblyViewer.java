@@ -19,6 +19,8 @@ import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocume
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -27,20 +29,27 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * DisassemblyViewer
  */
-public class DisassemblyViewer extends SourceViewer {
+public class DisassemblyViewer extends SourceViewer implements IPropertyChangeListener {
 
 	class ResizeListener implements ControlListener {
 		@Override
@@ -53,8 +62,12 @@ public class DisassemblyViewer extends SourceViewer {
 		}
 	}
 
+	private Color fForegroundColor;
+	private Color fBackgroundColor;
 	private boolean fUserTriggeredScrolling;
 	private int fCachedLastTopPixel;
+	private IPreferenceStore fPreferenceStore;
+	private boolean fIsConfigured = false;
 
 	/**
 	 * Create a new DisassemblyViewer.
@@ -65,10 +78,107 @@ public class DisassemblyViewer extends SourceViewer {
 	 * @param styles
 	 */
 	public DisassemblyViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler,
-			boolean showsAnnotationOverview, int styles) {
+			boolean showsAnnotationOverview, int styles, IPreferenceStore store) {
 		super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
 		// always readonly
 		setEditable(false);
+		setPreferenceStore(store);
+	}
+
+	/**
+	 * Creates a color from the information stored in the given preference store.
+	 * Returns <code>null</code> if there is no such information available.
+	 *
+	 * @param store the store to read from
+	 * @param key the key used for the lookup in the preference store
+	 * @param display the display used create the color
+	 * @return the created color according to the specification in the preference store
+	 */
+	private Color createColor(IPreferenceStore store, String key, Display display) {
+		RGB rgb = null;
+
+		if (store.contains(key)) {
+			if (store.isDefault(key)) {
+				rgb = PreferenceConverter.getDefaultColor(store, key);
+			} else {
+				rgb = PreferenceConverter.getColor(store, key);
+			}
+
+			if (rgb != null)
+				return new Color(display, rgb);
+		}
+
+		return null;
+	}
+
+	protected void initializeViewerColors() {
+		if (fPreferenceStore != null) {
+			StyledText styledText = getTextWidget();
+
+			// ----------- foreground color --------------------
+			Color color = fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT)
+					? null
+					: createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND,
+							styledText.getDisplay());
+			styledText.setForeground(color);
+
+			if (fForegroundColor != null)
+				fForegroundColor.dispose();
+
+			fForegroundColor = color;
+
+			// ---------- background color ----------------------
+			color = fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT) ? null
+					: createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND,
+							styledText.getDisplay());
+			styledText.setBackground(color);
+
+			if (fBackgroundColor != null)
+				fBackgroundColor.dispose();
+
+			fBackgroundColor = color;
+		}
+	}
+
+	public void setPreferenceStore(IPreferenceStore store) {
+		if (fIsConfigured && fPreferenceStore != null)
+			fPreferenceStore.removePropertyChangeListener(this);
+
+		fPreferenceStore = store;
+
+		if (fIsConfigured && fPreferenceStore != null) {
+			fPreferenceStore.addPropertyChangeListener(this);
+			initializeViewerColors();
+		}
+	}
+
+	@Override
+	public void unconfigure() {
+		if (fForegroundColor != null) {
+			fForegroundColor.dispose();
+			fForegroundColor = null;
+		}
+		if (fBackgroundColor != null) {
+			fBackgroundColor.dispose();
+			fBackgroundColor = null;
+		}
+
+		if (fPreferenceStore != null)
+			fPreferenceStore.removePropertyChangeListener(this);
+
+		super.unconfigure();
+
+		fIsConfigured = false;
+	}
+
+	@Override
+	public void configure(SourceViewerConfiguration configuration) {
+		super.configure(configuration);
+		if (fPreferenceStore != null) {
+			fPreferenceStore.addPropertyChangeListener(this);
+			initializeViewerColors();
+		}
+		fIsConfigured = true;
 	}
 
 	/*
@@ -273,4 +383,14 @@ public class DisassemblyViewer extends SourceViewer {
 		super.updateViewportListeners(origin);
 	}
 
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		String property = event.getProperty();
+		if (AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND.equals(property)
+				|| AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT.equals(property)
+				|| AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND.equals(property)
+				|| AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)) {
+			initializeViewerColors();
+		}
+	}
 }

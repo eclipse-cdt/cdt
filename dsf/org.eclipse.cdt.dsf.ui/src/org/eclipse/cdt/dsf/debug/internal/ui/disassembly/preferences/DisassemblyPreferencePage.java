@@ -21,8 +21,11 @@ import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyMessages;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyHelpContextIds;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.DataFormatException;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -46,6 +49,7 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 	private List<Button> fCheckBoxes = new ArrayList<>();
 	private List<Combo> fComboBoxes = new ArrayList<>();
 	private ArrayList<Text> fNumberFields = new ArrayList<>();
+	private List<ColorSelector> colors = new ArrayList<>();
 	private ModifyListener fNumberFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
@@ -111,11 +115,55 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 		Button showSymbolsCB = addCheckBox(composite, label, DisassemblyPreferenceConstants.SHOW_SYMBOLS, 0);
 		showSymbolsCB.setToolTipText(DisassemblyMessages.DisassemblyPreferencePage_showSymbolsTooltip);
 
+		Composite stylesComposite = new Composite(parent, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
+		stylesComposite.setLayout(layout);
+		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		colors.add(createColorFieldEditor(DisassemblyPreferenceConstants.ERROR_COLOR,
+				DisassemblyMessages.DisassemblyPreferencePage_errorColor, stylesComposite));
+		colors.add(createColorFieldEditor(DisassemblyPreferenceConstants.INSTRUCTION_COLOR,
+				DisassemblyMessages.DisassemblyPreferencePage_instructionColor, stylesComposite));
+		colors.add(createColorFieldEditor(DisassemblyPreferenceConstants.SOURCE_COLOR,
+				DisassemblyMessages.DisassemblyPreferencePage_sourceColor, stylesComposite));
+		colors.add(createColorFieldEditor(DisassemblyPreferenceConstants.LABEL_COLOR,
+				DisassemblyMessages.DisassemblyPreferencePage_labelColor, stylesComposite));
+		colors.add(createColorFieldEditor(DisassemblyPreferenceConstants.RULER_BACKGROUND_COLOR,
+				DisassemblyMessages.DisassemblyPreferencePage_rulerBackgroundColor, stylesComposite));
+		colors.add(createColorFieldEditor(DisassemblyPreferenceConstants.ADDRESS_COLOR,
+				DisassemblyMessages.DisassemblyPreferencePage_addressColor, stylesComposite));
+		colors.add(createColorFieldEditor(DisassemblyPreferenceConstants.CODE_BYTES_COLOR,
+				DisassemblyMessages.DisassemblyPreferencePage_codeBytesColor, stylesComposite));
+		colors.add(createColorFieldEditor(DisassemblyPreferenceConstants.FUNCTION_OFFSETS_COLOR,
+				DisassemblyMessages.DisassemblyPreferencePage_offsetsColor, stylesComposite));
+
 		Dialog.applyDialogFont(parent);
 
 		initialize();
 
 		return composite;
+	}
+
+	/**
+	 * Creates a new color field editor.
+	 */
+	private ColorSelector createColorFieldEditor(String preferenceName, String label, Composite parent) {
+		Label labelControl = new Label(parent, SWT.LEFT);
+		labelControl.setText(label);
+		GridData gd = new GridData();
+		gd.horizontalIndent = GridData.BEGINNING;
+		labelControl.setLayoutData(gd);
+
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment = GridData.END;
+		ColorSelector colorSelector = new ColorSelector(parent);
+		colorSelector.getButton().setLayoutData(gd);
+		colorSelector.getButton().setData(preferenceName);
+
+		return colorSelector;
 	}
 
 	/* (non-Javadoc)
@@ -216,7 +264,10 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 			Combo combo = iter.next();
 			store.setValue((String) combo.getData(), fcRadixValues[combo.getSelectionIndex()]);
 		}
-		return super.performOk();
+		for (ColorSelector c : colors) {
+			store.setValue((String) c.getButton().getData(), StringConverter.asString(c.getColorValue()));
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -243,7 +294,13 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 				}
 			}
 		}
-		super.performDefaults();
+		for (ColorSelector c : colors) {
+			try {
+				c.setColorValue(StringConverter.asRGB(store.getDefaultString((String) c.getButton().getData())));
+			} catch (DataFormatException e) {
+				DsfUIPlugin.log(e);
+			}
+		}
 	}
 
 	/**
@@ -268,6 +325,13 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 					combo.select(i);
 					break;
 				}
+			}
+		}
+		for (ColorSelector c : colors) {
+			try {
+				c.setColorValue(StringConverter.asRGB(store.getString((String) c.getButton().getData())));
+			} catch (DataFormatException e) {
+				DsfUIPlugin.log(e);
 			}
 		}
 	}

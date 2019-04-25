@@ -40,6 +40,7 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 	 */
 	public OpcodeRulerColumn() {
 		super();
+		setBackground(getColor(DisassemblyPreferenceConstants.RULER_BACKGROUND_COLOR));
 		setForeground(getColor(DisassemblyPreferenceConstants.CODE_BYTES_COLOR));
 		setRadix(getPreferenceStore().getInt(DisassemblyPreferenceConstants.OPCODE_RADIX));
 	}
@@ -119,6 +120,9 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 		} else if (DisassemblyPreferenceConstants.OPCODE_RADIX.equals(property)) {
 			setRadix(store.getInt(property));
 			layout(false);
+			needRedraw = true;
+		} else if (DisassemblyPreferenceConstants.RULER_BACKGROUND_COLOR.equals(property)) {
+			setBackground(getColor(property));
 			needRedraw = true;
 		}
 		if (needRedraw) {

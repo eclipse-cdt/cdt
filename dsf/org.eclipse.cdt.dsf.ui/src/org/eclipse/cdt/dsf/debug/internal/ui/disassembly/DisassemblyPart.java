@@ -725,8 +725,23 @@ public abstract class DisassemblyPart extends WorkbenchPart
 					support.setColumnVisible(desc, newState);
 				}
 			}
+		} else if (property.equals(DisassemblyPreferenceConstants.ERROR_COLOR)) {
+			fErrorColor = EditorsUI.getSharedTextColors().getColor(
+					PreferenceConverter.getColor(getPreferenceStore(), DisassemblyPreferenceConstants.ERROR_COLOR));
+			refreshView(10);
+		} else if (property.equals(DisassemblyPreferenceConstants.INSTRUCTION_COLOR)) {
+			fInstructionColor = EditorsUI.getSharedTextColors().getColor(PreferenceConverter
+					.getColor(getPreferenceStore(), DisassemblyPreferenceConstants.INSTRUCTION_COLOR));
+			refreshView(10);
+		} else if (property.equals(DisassemblyPreferenceConstants.SOURCE_COLOR)) {
+			fSourceColor = EditorsUI.getSharedTextColors().getColor(
+					PreferenceConverter.getColor(getPreferenceStore(), DisassemblyPreferenceConstants.SOURCE_COLOR));
+			refreshView(10);
+		} else if (property.equals(DisassemblyPreferenceConstants.LABEL_COLOR)) {
+			fLabelColor = EditorsUI.getSharedTextColors().getColor(
+					PreferenceConverter.getColor(getPreferenceStore(), DisassemblyPreferenceConstants.LABEL_COLOR));
+			refreshView(10);
 		}
-
 	}
 
 	/**
@@ -741,7 +756,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		parent.setLayout(layout);
 		fVerticalRuler = createVerticalRuler();
 		int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
-		fViewer = new DisassemblyViewer(parent, fVerticalRuler, getOverviewRuler(), true, styles);
+		fViewer = new DisassemblyViewer(parent, fVerticalRuler, getOverviewRuler(), true, styles, getPreferenceStore());
 		SourceViewerConfiguration sourceViewerConfig = new DisassemblyViewerConfiguration(this);
 		fViewer.addTextPresentationListener(this);
 		fViewer.configure(sourceViewerConfig);
@@ -785,10 +800,14 @@ public abstract class DisassemblyPart extends WorkbenchPart
 			}
 		});
 
-		fErrorColor = getSharedColors().getColor(new RGB(96, 0, 0));
-		fInstructionColor = getSharedColors().getColor(new RGB(0, 0, 96));
-		fSourceColor = getSharedColors().getColor(new RGB(64, 0, 80));
-		fLabelColor = getSharedColors().getColor(new RGB(0, 0, 96));
+		fErrorColor = EditorsUI.getSharedTextColors().getColor(
+				PreferenceConverter.getColor(getPreferenceStore(), DisassemblyPreferenceConstants.ERROR_COLOR));
+		fInstructionColor = EditorsUI.getSharedTextColors().getColor(
+				PreferenceConverter.getColor(getPreferenceStore(), DisassemblyPreferenceConstants.INSTRUCTION_COLOR));
+		fSourceColor = EditorsUI.getSharedTextColors().getColor(
+				PreferenceConverter.getColor(getPreferenceStore(), DisassemblyPreferenceConstants.SOURCE_COLOR));
+		fLabelColor = EditorsUI.getSharedTextColors().getColor(
+				PreferenceConverter.getColor(getPreferenceStore(), DisassemblyPreferenceConstants.LABEL_COLOR));
 
 		IVerticalRuler ruler = getVerticalRuler();
 		if (ruler instanceof CompositeRuler) {

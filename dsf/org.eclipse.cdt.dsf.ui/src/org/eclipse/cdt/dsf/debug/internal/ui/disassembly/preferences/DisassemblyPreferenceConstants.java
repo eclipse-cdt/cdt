@@ -41,6 +41,11 @@ public class DisassemblyPreferenceConstants {
 	public static final String AVOID_READ_BEFORE_PC = "disassembly.avoidReadBeforePC"; //$NON-NLS-1$
 	public static final String TRACK_EXPRESSION = "disassembly.trackExpression"; //$NON-NLS-1$
 	public static final String SYNC_ACTIVE_CONTEXT = "disassembly.syncActiveContext"; //$NON-NLS-1$
+	public static final String RULER_BACKGROUND_COLOR = "disassembly.rulerBackgroundColor"; //$NON-NLS-1$
+	public static final String ERROR_COLOR = "disassembly.errorColor"; //$NON-NLS-1$
+	public static final String INSTRUCTION_COLOR = "disassembly.instructionColor"; //$NON-NLS-1$
+	public static final String SOURCE_COLOR = "disassembly.sourceColor"; //$NON-NLS-1$
+	public static final String LABEL_COLOR = "disassembly.labelColor"; //$NON-NLS-1$
 
 	/**
 	 *
@@ -66,6 +71,11 @@ public class DisassemblyPreferenceConstants {
 		PreferenceConverter.setDefault(store, ADDRESS_COLOR, new RGB(0, 96, 0));
 		PreferenceConverter.setDefault(store, FUNCTION_OFFSETS_COLOR, new RGB(96, 0, 0));
 		PreferenceConverter.setDefault(store, CODE_BYTES_COLOR, new RGB(96, 0, 0));
+		PreferenceConverter.setDefault(store, RULER_BACKGROUND_COLOR, new RGB(255, 255, 255));
+		PreferenceConverter.setDefault(store, ERROR_COLOR, new RGB(96, 0, 0));
+		PreferenceConverter.setDefault(store, INSTRUCTION_COLOR, new RGB(0, 0, 96));
+		PreferenceConverter.setDefault(store, SOURCE_COLOR, new RGB(64, 0, 80));
+		PreferenceConverter.setDefault(store, LABEL_COLOR, new RGB(0, 0, 96));
 	}
 
 	public static class Initializer extends AbstractPreferenceInitializer {

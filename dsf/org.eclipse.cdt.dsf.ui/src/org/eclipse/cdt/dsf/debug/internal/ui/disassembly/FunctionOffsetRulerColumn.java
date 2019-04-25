@@ -37,6 +37,7 @@ public class FunctionOffsetRulerColumn extends DisassemblyRulerColumn {
 	public FunctionOffsetRulerColumn() {
 		super();
 		setForeground(getColor(DisassemblyPreferenceConstants.FUNCTION_OFFSETS_COLOR));
+		setBackground(getColor(DisassemblyPreferenceConstants.RULER_BACKGROUND_COLOR));
 	}
 
 	/*
@@ -77,6 +78,9 @@ public class FunctionOffsetRulerColumn extends DisassemblyRulerColumn {
 		boolean needRedraw = false;
 		if (DisassemblyPreferenceConstants.FUNCTION_OFFSETS_COLOR.equals(property)) {
 			setForeground(getColor(property));
+			needRedraw = true;
+		} else if (DisassemblyPreferenceConstants.RULER_BACKGROUND_COLOR.equals(property)) {
+			setBackground(getColor(property));
 			needRedraw = true;
 		}
 		if (needRedraw) {

@@ -68,6 +68,14 @@ public final class DisassemblyMessages extends NLS {
 	public static String DisassemblyPreferencePage_OpcodeFormat;
 	public static String DisassemblyPreferencePage_OpcodeFormatTooltip;
 	public static String DisassemblyPreferencePage_showRadixTooltip;
+	public static String DisassemblyPreferencePage_addressColor;
+	public static String DisassemblyPreferencePage_rulerBackgroundColor;
+	public static String DisassemblyPreferencePage_errorColor;
+	public static String DisassemblyPreferencePage_instructionColor;
+	public static String DisassemblyPreferencePage_sourceColor;
+	public static String DisassemblyPreferencePage_labelColor;
+	public static String DisassemblyPreferencePage_codeBytesColor;
+	public static String DisassemblyPreferencePage_offsetsColor;
 	public static String DisassemblyIPAnnotation_primary;
 	public static String DisassemblyIPAnnotation_secondary;
 	public static String SourceReadingJob_name;

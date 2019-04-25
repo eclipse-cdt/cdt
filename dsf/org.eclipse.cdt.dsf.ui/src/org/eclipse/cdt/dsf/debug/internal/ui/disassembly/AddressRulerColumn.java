@@ -54,6 +54,7 @@ public class AddressRulerColumn extends DisassemblyRulerColumn
 		setForeground(getColor(DisassemblyPreferenceConstants.ADDRESS_COLOR));
 		setRadix(prefs.getInt(DisassemblyPreferenceConstants.ADDRESS_RADIX));
 		setShowRadixPrefix(prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_ADDRESS_RADIX));
+		setBackground(getColor(DisassemblyPreferenceConstants.RULER_BACKGROUND_COLOR));
 		setAddressSize(32);
 	}
 
@@ -198,6 +199,9 @@ public class AddressRulerColumn extends DisassemblyRulerColumn
 			updateNumberOfDigits();
 			computeIndentations();
 			layout(false);
+			needRedraw = true;
+		} else if (DisassemblyPreferenceConstants.RULER_BACKGROUND_COLOR.equals(property)) {
+			setBackground(getColor(property));
 			needRedraw = true;
 		}
 		if (needRedraw) {

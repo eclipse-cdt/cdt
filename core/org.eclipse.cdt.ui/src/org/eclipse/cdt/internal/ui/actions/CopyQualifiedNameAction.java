@@ -82,23 +82,7 @@ public class CopyQualifiedNameAction extends TextEditorAction {
 	private boolean isValidSelection(ITextSelection selection) {
 		if (selection == null || selection.isEmpty() || selection.getLength() <= 0)
 			return false;
-		final int offset = selection.getOffset();
-		final int length = selection.getLength();
-		ITranslationUnit translationUnit = (ITranslationUnit) CDTUITools
-				.getEditorInputCElement(fEditor.getEditorInput());
-		String qualName = null;
-		try {
-			IASTTranslationUnit ast = translationUnit.getAST(null, 0);
-			if (ast != null) {
-				IASTNode enclosingNode = ast.getNodeSelector(null).findEnclosingNode(offset, length);
-				NameVisitor n = new NameVisitor();
-				enclosingNode.accept(n);
-				qualName = n.getQualifiedName();
-			}
-		} catch (CoreException e) {
-			return false;
-		}
-		return qualName != null;
+		return true;
 	}
 
 	@Override

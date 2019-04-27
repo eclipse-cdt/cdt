@@ -221,4 +221,16 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 		assertTrue((start == -1 && end == -1) || // ok, not multi-line
 				!code.substring(start, end).contains("\n"));
 	}
+
+	//class A {
+	//public:
+	//	class B {
+	//	public:
+	//		virtual void test();
+	//	};
+	//}
+	public void testNestedClasses_Bug468749() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(3, NonVirtualDestructor.PROBLEM_ID);
+	}
 }

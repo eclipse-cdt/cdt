@@ -221,4 +221,19 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 		assertTrue((start == -1 && end == -1) || // ok, not multi-line
 				!code.substring(start, end).contains("\n"));
 	}
+
+	//template <typename T>
+	//class A {
+	//   virtual void f() {}
+	//public:
+	//    virtual ~A() {}
+	//};
+	//template <typename T>
+	//class B : public A<T> {
+	//    virtual void f() {}
+	//};
+	public void testDeferredClasses_Bug458850() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

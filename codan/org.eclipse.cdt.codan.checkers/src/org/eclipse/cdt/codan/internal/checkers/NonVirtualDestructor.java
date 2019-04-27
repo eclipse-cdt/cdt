@@ -99,7 +99,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 					boolean hasVirtualDestructor = hasVirtualDestructor(classType);
 					checkedClassTypes.clear();
 					if (hasVirtualDestructor) {
-						return PROCESS_SKIP;
+						return PROCESS_CONTINUE;
 					}
 					ICPPMethod virtualMethod = null;
 					for (ICPPMethod method : ClassTypeHelper.getAllDeclaredMethods(classType)) {
@@ -108,13 +108,13 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 						}
 					}
 					if (virtualMethod == null) {
-						return PROCESS_SKIP;
+						return PROCESS_CONTINUE;
 					}
 					ICPPMethod destructor = getDestructor(classType);
 					if (destructor != null && destructor.getVisibility() != ICPPASTVisibilityLabel.v_public
 							&& classType.getFriends().length == 0) {
 						// No error if the destructor is protected or private and there are no friends.
-						return PROCESS_SKIP;
+						return PROCESS_CONTINUE;
 					}
 
 					IASTNode node = decl;
@@ -125,7 +125,6 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 						}
 					}
 					reportProblem(PROBLEM_ID, node, new String(className.getSimpleID()), virtualMethod.getName());
-					return PROCESS_SKIP;
 				} finally {
 					CPPSemantics.popLookupPoint();
 				}

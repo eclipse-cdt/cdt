@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
@@ -39,7 +40,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  *
  * @author Alena Laskavaia
  */
-public class NonVirtualDestructor extends AbstractIndexAstChecker {
+@SuppressWarnings("restriction")
+public class NonVirtualDestructorChecker extends AbstractIndexAstChecker {
 	public static final String PROBLEM_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
 
 	// Prevent stack overflow in case: class A: public A {};
@@ -52,7 +54,12 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	}
 
 	private static ICPPMethod getDestructor(ICPPClassType classType) {
-		for (ICPPMethod method : classType.getDeclaredMethods()) {
+		ICPPMethod[] methods = null;
+		if (classType instanceof ICPPDeferredClassInstance)
+			methods = ((ICPPDeferredClassInstance) classType).getClassTemplate().getDeclaredMethods();
+		else
+			methods = classType.getDeclaredMethods();
+		for (ICPPMethod method : methods) {
 			if (method.isDestructor()) {
 				return method;
 			}

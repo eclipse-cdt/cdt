@@ -16,11 +16,11 @@
 package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.tests.CheckerTestCase;
-import org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructor;
+import org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorChecker;
 import org.eclipse.core.resources.IMarker;
 
 /**
- * Test for {@link NonVirtualDestructor} class.
+ * Test for {@link NonVirtualDestructorChecker} class.
  */
 public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	@Override
@@ -31,7 +31,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		enableProblems(NonVirtualDestructor.PROBLEM_ID);
+		enableProblems(NonVirtualDestructorChecker.PROBLEM_ID);
 	}
 
 	// struct A {
@@ -231,6 +231,21 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//}
 	public void testNestedClasses_Bug468749() throws Exception {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLine(3, NonVirtualDestructor.PROBLEM_ID);
+		checkErrorLine(3, NonVirtualDestructorChecker.PROBLEM_ID);
+	}
+
+	//template <typename T>
+	//class A {
+	//   virtual void f() {}
+	//public:
+	//    virtual ~A() {}
+	//};
+	//template <typename T>
+	//class B : public A<T> {
+	//    virtual void f() {}
+	//};
+	public void testDeferredClasses_Bug458850() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
 	}
 }

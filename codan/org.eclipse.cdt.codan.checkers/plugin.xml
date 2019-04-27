@@ -33,7 +33,7 @@
       </checker>
       
       <checker
-            class="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructor"
+            class="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorChecker"
             id="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructor"
             name="%checker.name.NonVirtualDestructor">
          <problem

@@ -2406,7 +2406,7 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.toggle.comment"/>
      <key
-            sequence="M1+Q"
+            sequence="M1+M2+M3+C"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.copy.qualified.name"/>

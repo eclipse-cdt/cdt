@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d2839d1c_21a4cb86",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/overridemethods/OverrideMethodsRefactoringTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-04-28T03:56:20Z",
+      "side": 1,
+      "message": "Could you hook up this test in org.eclipse.cdt.ui.tests.refactoring.RefactoringTestSuite ? Otherwise, it will not be executed in the CI, etc.",
+      "revId": "04661f791d253d878b0fc1bf5f3bec453cd83852",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

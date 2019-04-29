@@ -13062,8 +13062,9 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		bh.assertImplicitName("b{v};", 1, IProblemBinding.class);
 	}
 
+	//  using my_char = char;
 	//	struct type {
-	//	    char data[2];
+	//	    my_char data[2];
 	//	};
 	//
 	//	type foo{"s"};

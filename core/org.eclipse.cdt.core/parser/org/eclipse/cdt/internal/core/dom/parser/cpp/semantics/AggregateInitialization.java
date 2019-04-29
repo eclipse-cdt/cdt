@@ -215,7 +215,8 @@ class AggregateInitialization {
 	 */
 	private static ICPPBasicType getBasicTypeFromArray(IType type) {
 		if (type instanceof IArrayType) {
-			IType nested = SemanticUtil.getNestedType(((IArrayType) type).getType(), SemanticUtil.ALLCVQ);
+			IType nested = SemanticUtil.getNestedType(((IArrayType) type).getType(),
+					SemanticUtil.ALLCVQ | SemanticUtil.TDEF);
 			if (nested instanceof ICPPBasicType) {
 				return (ICPPBasicType) nested;
 			}

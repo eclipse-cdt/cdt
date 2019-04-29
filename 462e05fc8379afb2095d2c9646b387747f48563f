@@ -143,6 +143,24 @@
     },
     {
       "key": {
+        "uuid": "5edff4fd_f7058fa9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-29T07:04:27Z",
+      "side": 1,
+      "message": "Sorry, by opposite I meant, my fix handles the non-constexpr case. Before my change, all conversions were considered to be constant expressions.\nI propose we discuss better handling of conversion in bug 546616. (My naive understanding would be that a maybeApplyConversion()-like method could be called whenever a EvalTypeId is created. But I didn\u0027t look in detail.)",
+      "parentUuid": "f91f7926_117daa73",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c9e49d8e_5b39ac29",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
         "patchSetId": 10
@@ -208,6 +226,24 @@
       "side": 1,
       "message": "What is it that you\u0027re trying to distinguish between? The way it was written, e.g. static_cast\u003cT\u003e(x) vs. T(x)? Or whether we actually end up calling a conversion operator rather than a constructor?\n\nNote that the latter cannot be distinguished based on syntax alone. In general, given two class types A and B, \"A{B{}}\" could call either a conversion operator or a constructor. It could even be ambiguous between both.",
       "parentUuid": "b715fdc4_c8dbe787",
+      "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90d7b3c9_5006144d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalTypeId.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-04-29T07:04:27Z",
+      "side": 1,
+      "message": "The second, if it isn\u0027t a constructor I assume it is a conversion (or at least that \"maybe\" it is a conversion). Probably there is an implicit assumption here that `!(getConstructor() instanceof CPPFunction)` is equivalent to `getConstructor() \u003d\u003d null`.",
+      "parentUuid": "63d59dd6_ff9ab25c",
       "revId": "462e05fc8379afb2095d2c9646b387747f48563f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

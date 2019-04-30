@@ -3726,6 +3726,11 @@ public class CPPSemantics {
 				IType sourceType = evaluation.getType();
 				ValueCategory isLValue = evaluation.getValueCategory();
 				if (sourceType != null) {
+					if (CPPTemplates.isDependentType(sourceType)) {
+						IType[] tmp = { sourceType };
+						setTargetedFunctionsToUnknown(tmp);
+						return CPPDeferredFunction.createForCandidates(type.getConstructors());
+					}
 					Cost c;
 					if (calculateInheritanceDepth(sourceType, type) >= 0) {
 						c = Conversions.copyInitializationOfClass(isLValue, sourceType, type, false);
@@ -3747,6 +3752,11 @@ public class CPPSemantics {
 				// List initialization.
 				ICPPEvaluation eval = ((ICPPASTInitializerClause) initializer).getEvaluation();
 				if (eval instanceof EvalInitList) {
+					if (CPPTemplates.isDependentType(eval.getType())) {
+						IType[] tmp = { eval.getType() };
+						setTargetedFunctionsToUnknown(tmp);
+						return CPPDeferredFunction.createForCandidates(type.getConstructors());
+					}
 					Cost c = Conversions.listInitializationSequence((EvalInitList) eval, type, UDCMode.ALLOWED, true);
 					if (c.converts()) {
 						ICPPFunction f = c.getUserDefinedConversion();

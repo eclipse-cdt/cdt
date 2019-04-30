@@ -13101,4 +13101,38 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		BindingAssertionHelper bh = getAssertionHelper();
 		bh.assertImplicitName("foo", 3, IProblemBinding.class);
 	}
+
+	//	class Time {
+	//	};
+	//
+	//	template<class T>
+	//	class Test {
+	//	private:
+	//	    T t;
+	//	public:
+	//	   void test() {
+	//	        Time time = t.get();
+	//	   }
+	//	};
+	public void testCopyInitializationFromDependentType_546843() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+
+	//	class Time {
+	//		int a;
+	//	 };
+	//
+	//	template<class T>
+	//	class Test {
+	//	private:
+	//	    T t;
+	//	public:
+	//	   void test() {
+	//	        Time time{t.get()};
+	//	   }
+	//	};
+	public void testListInitializationFromDependentType_546843() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+
 }

@@ -58,70 +58,80 @@ class AggregateInitialization {
 			return worstCost;
 	}
 
+	private static int sRecursionDepth = 0;
+
 	/**
 	 * If no braces are elided, check initialization of element by taking the next clause from the EvalInitList,
 	 * else recurses into the subaggregate.
 	 */
 	private Cost checkElement(IType type, IValue initialValue, Cost worstCost) throws DOMException {
-		assert !CPPTemplates.isDependentType(type);
-		IType nestedType = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
-		if (fIndex >= fInitializers.length)
-			// TODO for arrays we could short-circuit default init instead of trying to init each element
-			return checkInitializationFromDefaultMemberInitializer(nestedType, initialValue, worstCost);
-		worstCost = new Cost(fInitializers[fIndex].getType(), nestedType, Rank.IDENTITY);
+		try {
+			++sRecursionDepth;
+			if (sRecursionDepth > 20) {
+				throw new RuntimeException("We are going to get into an infinite recursion");
+			}
+			assert !CPPTemplates.isDependentType(type);
+			IType nestedType = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
+			if (fIndex >= fInitializers.length)
+				// TODO for arrays we could short-circuit default init instead of trying to init each element
+				return checkInitializationFromDefaultMemberInitializer(nestedType, initialValue, worstCost);
+			worstCost = new Cost(fInitializers[fIndex].getType(), nestedType, Rank.IDENTITY);
 
-		ICPPEvaluation initializer = fInitializers[fIndex];
-		if (initFromStringLiteral(nestedType, initializer)) {
-			// [dcl.init.string]
-			fIndex++;
-			Number sizeOfCharArrayNumber = getArraySize(nestedType);
-			long sizeofCharArray = 0; // will error in case we cannot determine the size
-			if (sizeOfCharArrayNumber != null) {
-				sizeofCharArray = sizeOfCharArrayNumber.longValue();
+			ICPPEvaluation initializer = fInitializers[fIndex];
+			if (initFromStringLiteral(nestedType, initializer)) {
+				// [dcl.init.string]
+				fIndex++;
+				Number sizeOfCharArrayNumber = getArraySize(nestedType);
+				long sizeofCharArray = 0; // will error in case we cannot determine the size
+				if (sizeOfCharArrayNumber != null) {
+					sizeofCharArray = sizeOfCharArrayNumber.longValue();
+				}
+				Number sizeofStringLiteralNumber = getArraySize(initializer.getType());
+				long sizeofStringLiteral = Long.MAX_VALUE; // will error in case we cannot determine the size
+				if (sizeofStringLiteralNumber != null) {
+					sizeofStringLiteral = sizeofStringLiteralNumber.longValue();
+				}
+				IType targetCharType = getBasicTypeFromArray(nestedType);
+				IType literalCharType = getBasicTypeFromArray(initializer.getType());
+				Cost cost;
+				if (sizeofCharArray >= sizeofStringLiteral && targetCharType.isSameType(literalCharType)) {
+					cost = new Cost(initializer.getType(), nestedType, Rank.CONVERSION);
+				} else {
+					cost = Cost.NO_CONVERSION;
+				}
+				return cost;
 			}
-			Number sizeofStringLiteralNumber = getArraySize(initializer.getType());
-			long sizeofStringLiteral = Long.MAX_VALUE; // will error in case we cannot determine the size
-			if (sizeofStringLiteralNumber != null) {
-				sizeofStringLiteral = sizeofStringLiteralNumber.longValue();
-			}
-			IType targetCharType = getBasicTypeFromArray(nestedType);
-			IType literalCharType = getBasicTypeFromArray(initializer.getType());
-			Cost cost;
-			if (sizeofCharArray >= sizeofStringLiteral && targetCharType.isSameType(literalCharType)) {
-				cost = new Cost(initializer.getType(), nestedType, Rank.CONVERSION);
-			} else {
-				cost = Cost.NO_CONVERSION;
-			}
-			return cost;
-		}
 
-		Cost costWithoutElision = Conversions.checkImplicitConversionSequence(nestedType, initializer.getType(),
-				initializer.getValueCategory(), UDCMode.ALLOWED, Context.ORDINARY);
-		if (costWithoutElision.converts()) {
-			// p3: The elements of the initializer list are taken as initializers for the elements
-			//     of the aggregate, in order.
-			fIndex++;
-			// [dcl.init.aggr] If the initializer-clause is an expression and a narrowing conversion is
-			// required to convert the expression, the program is ill-formed.
-			if (!initializer.isConstantExpression()) {
-				if (!(initializer instanceof EvalInitList) && costWithoutElision.isNarrowingConversion()) {
-					return Cost.NO_CONVERSION;
+			Cost costWithoutElision = Conversions.checkImplicitConversionSequence(nestedType, initializer.getType(),
+					initializer.getValueCategory(), UDCMode.ALLOWED, Context.ORDINARY);
+			if (costWithoutElision.converts()) {
+				// p3: The elements of the initializer list are taken as initializers for the elements
+				//     of the aggregate, in order.
+				fIndex++;
+				// [dcl.init.aggr] If the initializer-clause is an expression and a narrowing conversion is
+				// required to convert the expression, the program is ill-formed.
+				if (!initializer.isConstantExpression()) {
+					if (!(initializer instanceof EvalInitList) && costWithoutElision.isNarrowingConversion()) {
+						return Cost.NO_CONVERSION;
+					}
+				}
+				if (costWithoutElision.compareTo(worstCost) > 0) {
+					worstCost = costWithoutElision;
+				}
+			} else if (fInitializers[fIndex].isInitializerList() || !isAggregate(nestedType)) { // cannot elide braces
+				return costWithoutElision; // doesn't convert
+			} else { // braces are elided: need to check on subaggregates
+				Cost cost = checkInitializationOfElements(nestedType, worstCost);
+				if (!cost.converts())
+					return cost;
+				if (cost.compareTo(worstCost) > 0) {
+					worstCost = cost;
 				}
 			}
-			if (costWithoutElision.compareTo(worstCost) > 0) {
-				worstCost = costWithoutElision;
-			}
-		} else if (fInitializers[fIndex].isInitializerList() || !isAggregate(nestedType)) { // cannot elide braces
-			return costWithoutElision; // doesn't convert
-		} else { // braces are elided: need to check on subaggregates
-			Cost cost = checkInitializationOfElements(nestedType, worstCost);
-			if (!cost.converts())
-				return cost;
-			if (cost.compareTo(worstCost) > 0) {
-				worstCost = cost;
-			}
+			return worstCost;
+		} finally {
+			--sRecursionDepth;
 		}
-		return worstCost;
 	}
 
 	/**

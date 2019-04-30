@@ -13135,4 +13135,29 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		parseAndCheckImplicitNameBindings();
 	}
 
+	//	struct B{
+	//	    B a;
+	//	};
+	//	B t{1};
+	public void testSelfAggregation_546805() throws Exception {
+		// Note that ideally we would report an error already on the declaration of B as
+		// the class is aggregating itself. Today, we only report an error because of a
+		// wrong constructor argument.
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertImplicitName("t{1};", 1, IProblemBinding.class);
+	}
+
+	//	struct B;
+	//	struct A{
+	//	    B b;
+	//	};
+	//	struct B{
+	//		A a;
+	//	};
+	//	B t{1};
+	public void testIndirectSelfAggregation_546805() throws Exception {
+		// See comment in previous test
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertImplicitName("t{1};", 1, IProblemBinding.class);
+	}
 }

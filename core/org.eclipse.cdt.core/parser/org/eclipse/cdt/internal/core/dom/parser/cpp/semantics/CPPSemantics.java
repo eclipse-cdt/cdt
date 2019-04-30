@@ -3739,6 +3739,9 @@ public class CPPSemantics {
 							return f;
 						// If a conversion is used, the constructor is elided.
 					} else {
+						if (CPPTemplates.isDependentType(sourceType)) {
+							return CPPDeferredFunction.createForCandidates(type.getConstructors());
+						}
 						return new ProblemBinding(null, typeId, ISemanticProblem.BINDING_NOT_FOUND,
 								type.getConstructors());
 					}
@@ -3753,6 +3756,9 @@ public class CPPSemantics {
 						if (f instanceof ICPPConstructor)
 							return f;
 					} else {
+						if (CPPTemplates.isDependentType(eval.getType())) {
+							return CPPDeferredFunction.createForCandidates(type.getConstructors());
+						}
 						return new ProblemBinding(null, typeId, ISemanticProblem.BINDING_NOT_FOUND,
 								type.getConstructors());
 					}

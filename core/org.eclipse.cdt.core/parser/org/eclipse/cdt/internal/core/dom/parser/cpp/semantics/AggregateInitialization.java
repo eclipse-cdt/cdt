@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -71,6 +72,8 @@ class AggregateInitialization {
 		worstCost = new Cost(fInitializers[fIndex].getType(), nestedType, Rank.IDENTITY);
 
 		ICPPEvaluation initializer = fInitializers[fIndex];
+		if (initializer.getType() instanceof IProblemType)
+			return Cost.NO_CONVERSION;
 		if (initFromStringLiteral(nestedType, initializer)) {
 			// [dcl.init.string]
 			fIndex++;

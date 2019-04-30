@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -71,6 +72,8 @@ class AggregateInitialization {
 		worstCost = new Cost(fInitializers[fIndex].getType(), nestedType, Rank.IDENTITY);
 
 		ICPPEvaluation initializer = fInitializers[fIndex];
+		if (initializer.getType() instanceof IProblemType)
+			return Cost.NO_CONVERSION;
 		if (initFromStringLiteral(nestedType, initializer)) {
 			// [dcl.init.string]
 			fIndex++;
@@ -128,7 +131,7 @@ class AggregateInitialization {
 	 * checkElement() for each element of an array or each field of a class aggregate.
 	 */
 	private Cost checkInitializationOfElements(IType type, Cost worstCost) throws DOMException {
-		if (type instanceof ICPPClassType && TypeTraits.isAggregateClass((ICPPClassType) type)) {
+		if (type instanceof ICPPClassType && isAggregate(type)) {
 			ICPPField[] fields = getFieldsForAggregateInitialization((ICPPClassType) type);
 			for (ICPPField field : fields) {
 				Cost cost = checkElement(field.getType(), field.getInitialValue(), worstCost);
@@ -180,8 +183,25 @@ class AggregateInitialization {
 	}
 
 	private static boolean isAggregate(IType type) {
-		return (type instanceof ICPPClassType && TypeTraits.isAggregateClass((ICPPClassType) type))
-				|| type instanceof IArrayType;
+		return (type instanceof ICPPClassType && TypeTraits.isAggregateClass((ICPPClassType) type)
+				&& !isSelfAggregate((ICPPClassType) type, null)) || type instanceof IArrayType;
+	}
+
+	// Check if a class is (illegally) aggregating itself
+	private static boolean isSelfAggregate(ICPPClassType type, ICPPClassType subType) {
+		if (type.isSameType(subType))
+			return true;
+
+		if (subType == null)
+			subType = type;
+		for (ICPPField field : subType.getDeclaredFields()) {
+			IType fieldType = field.getType();
+			if (fieldType instanceof ICPPClassType && TypeTraits.isAggregateClass((ICPPClassType) fieldType)) {
+				if (isSelfAggregate(type, (ICPPClassType) fieldType))
+					return true;
+			}
+		}
+		return false;
 	}
 
 	/**

@@ -13101,4 +13101,16 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		BindingAssertionHelper bh = getAssertionHelper();
 		bh.assertImplicitName("foo", 3, IProblemBinding.class);
 	}
+
+	//	struct B{
+	//	    B a;
+	//	};
+	//	B t{1};
+	public void testasdf() throws Exception {
+		// Note that ideally we would report an error already on the declaration of B as
+		// the class is aggregating itself. Today, we only report an error because of a
+		// wrong constructor argument.
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertImplicitName("t{1};", 1, IProblemBinding.class);
+	}
 }

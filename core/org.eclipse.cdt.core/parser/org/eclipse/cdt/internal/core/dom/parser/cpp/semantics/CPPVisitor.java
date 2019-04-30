@@ -884,7 +884,17 @@ public class CPPVisitor extends ASTQueries {
 			} else {
 				// Looks like a variable declaration.
 				IType t1 = createType(declarator);
-				if (SemanticUtil.getNestedType(t1, TDEF) instanceof IFunctionType) {
+				if (t1 instanceof IProblemType
+						&& ((IProblemType) t1).getID() == IProblemType.BINDING_RECURSION_IN_LOOKUP) {
+					if (simpleDecl.getDeclSpecifier() instanceof ICPPASTNamedTypeSpecifier) {
+						ICPPASTNamedTypeSpecifier tmp = (ICPPASTNamedTypeSpecifier) simpleDecl.getDeclSpecifier();
+						tmp.getName()
+								.setBinding(new ProblemBinding(tmp.getName(), IProblemBinding.SEMANTIC_INVALID_TYPE));
+					}
+					//					binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_TYPE);
+					//					binding = new ProblemBinding(((ICPPASTNamedTypeSpecifier) simpleDecl.getDeclSpecifier()).getName(),
+					//							simpleDecl, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP);
+				} else if (SemanticUtil.getNestedType(t1, TDEF) instanceof IFunctionType) {
 					// Function declaration via a typedef for a function type
 					isFunction = true;
 				} else if (binding instanceof IParameter) {
@@ -2171,6 +2181,22 @@ public class CPPVisitor extends ASTQueries {
 
 			if (isPackExpansion) {
 				type = new CPPParameterPackType(type);
+			}
+
+			if (type instanceof ICPPClassType) {
+				if (parent.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
+					ICPPASTCompositeTypeSpecifier comp = (ICPPASTCompositeTypeSpecifier) parent.getParent();
+					//					ICPPASTCompositeTypeSpecifier comp = ((ICPPInternalClassTypeMixinHost)type).getCo;
+					IASTName n = comp.getName();
+					IBinding b = n.resolveBinding();
+					if (b instanceof ICPPClassType) {
+						ICPPClassType parentType = (ICPPClassType) b;
+						if (type.isSameType(parentType)) {
+							//							n.setBinding(new ProblemBinding(n, IProblemBinding.SEMANTIC_INVALID_TYPE));
+							return ProblemType.RECURSION_IN_LOOKUP;
+						}
+					}
+				}
 			}
 			return type;
 		} finally {

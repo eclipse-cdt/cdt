@@ -286,6 +286,10 @@ public class TypeTraits {
 			if (!(field.getVisibility() == ICPPMember.v_public || field.isStatic())) {
 				return false;
 			}
+			// Protects against an infinite recursion for a class (illegally) aggregating itself.
+			//			if (classType.isSameType(field.getType())) {
+			//				return false;
+			//			}
 		}
 		return true;
 	}

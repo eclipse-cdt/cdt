@@ -16,6 +16,24 @@
       "revId": "c1c188583a60afe5d0c15012f3902bd9e5e6bc9f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0487d37d_2432d253",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3730,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-05-02T06:00:39Z",
+      "side": 1,
+      "message": "This function predates my involvement with CDT, but I think its purpose is to ensure that a CPPFunctionSet only appears as an intermediate result during the binding resolution process; if it cannot be resolved to a specific function, it will be replaced with a CPPDeferredFunction instead.\n\nI think we should use it here, too.",
+      "parentUuid": "c7567da7_8206be50",
+      "revId": "c1c188583a60afe5d0c15012f3902bd9e5e6bc9f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

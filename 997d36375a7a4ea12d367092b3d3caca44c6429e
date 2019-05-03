@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e0f11b41_7163bbf9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 887,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-05-03T21:51:34Z",
+      "side": 1,
+      "message": "The other case where we get a ProblemType is for problems with auto type deduction. These problems should probably also be forwarded as ProblemBindings (in a different patch).",
+      "revId": "997d36375a7a4ea12d367092b3d3caca44c6429e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a8df1f0_5dad2f95",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 891,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-05-03T21:51:34Z",
+      "side": 1,
+      "message": "Is this an acceptable approach? Substituting the existing binding with a ProblemBinding?",
+      "revId": "997d36375a7a4ea12d367092b3d3caca44c6429e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

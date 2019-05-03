@@ -659,7 +659,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 
 		// Make sure the build directory is available
-		topBuildDir = createDirectory(config.getName());
+		ensureTopBuildDir();
 		checkCancel();
 
 		// Make sure that there is a makefile containing all the folders participating
@@ -792,12 +792,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		//TODO: fix to use builder output dir instead
 		String[] configNames = ManagedBuildManager.getBuildInfo(project).getConfigurationNames();
 		for (String name : configNames) {
-			IPath root = new Path(name);
-			// It is if it is a root of the resource pathname
-			if (root.isPrefixOf(path))
+			IPath pathOfConfig = computeTopBuildDir(name);
+			if (pathOfConfig.isPrefixOf(path)) {
 				return true;
+			}
 		}
-
 		return false;
 	}
 

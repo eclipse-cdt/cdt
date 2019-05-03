@@ -659,7 +659,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 
 		// Make sure the build directory is available
-		topBuildDir = createDirectory(config.getName());
+		ensureTopBuildDir();
 		checkCancel();
 
 		// Make sure that there is a makefile containing all the folders participating

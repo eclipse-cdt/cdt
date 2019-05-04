@@ -45,6 +45,8 @@ public interface IMethodStub {
 
 	public boolean isDestructor();
 
+	public boolean isEnabledByDefault();
+
 	public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses,
 			String lineDelimiter) throws CoreException;
 

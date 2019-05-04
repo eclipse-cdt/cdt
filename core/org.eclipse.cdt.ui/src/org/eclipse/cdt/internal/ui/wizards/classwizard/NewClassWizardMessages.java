@@ -123,6 +123,10 @@ public final class NewClassWizardMessages extends NLS {
 	public static String NewClassCodeGeneration_createType_task_source;
 	public static String NewClassCodeGeneration_stub_constructor_name;
 	public static String NewClassCodeGeneration_stub_destructor_name;
+	public static String NewClassCodeGeneration_stub_copy_constructor_name;
+	public static String NewClassCodeGeneration_stub_move_constructor_name;
+	public static String NewClassCodeGeneration_stub_assign_op_name;
+	public static String NewClassCodeGeneration_stub_move_op_name;
 
 	static {
 		NLS.initializeMessages(NewClassWizardMessages.class.getName(), NewClassWizardMessages.class);

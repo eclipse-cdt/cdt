@@ -104,4 +104,9 @@ public abstract class AbstractMethodStub implements IMethodStub {
 	@Override
 	public abstract String createMethodImplementation(ITranslationUnit tu, String className,
 			IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException;
+
+	@Override
+	public boolean isEnabledByDefault() {
+		return true;
+	}
 }

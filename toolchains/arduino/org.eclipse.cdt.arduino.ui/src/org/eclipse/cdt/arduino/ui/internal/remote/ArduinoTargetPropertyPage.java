@@ -55,11 +55,20 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		portSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		String currentPort = arduinoRemote.getPortName();
-		portSelector.setText(currentPort);
 		try {
-			for (String port : SerialPort.list()) {
+			int i = 0;
+			int portIdx = -1;
+			String[] ports = SerialPort.list();
+			for (String port : ports) {
 				portSelector.add(port);
+				if (port.equals(currentPort))
+					portIdx = i;
+				++i;
 			}
+			if (portIdx >= 0)
+				portSelector.select(portIdx);
+			if (ports.length == 0)
+				portSelector.setText(Messages.ArduinoTargetPropertyPage_1);
 		} catch (IOException e) {
 			Activator.log(e);
 		}
@@ -100,8 +109,10 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		ArduinoBoard board = boards[boardSelector.getSelectionIndex()];
 		ArduinoRemoteConnection.setBoardId(workingCopy, board);
 
-		String portName = portSelector.getItem(portSelector.getSelectionIndex());
-		ArduinoRemoteConnection.setPortName(workingCopy, portName);
+		int idx = portSelector.getSelectionIndex();
+		if (idx >= 0) {
+			ArduinoRemoteConnection.setPortName(workingCopy, portSelector.getItem(idx));
+		}
 
 		try {
 			workingCopy.save();

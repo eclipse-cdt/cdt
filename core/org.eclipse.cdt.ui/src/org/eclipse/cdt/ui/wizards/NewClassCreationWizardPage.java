@@ -44,13 +44,17 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.internal.ui.wizards.NewElementWizardPage;
 import org.eclipse.cdt.internal.ui.wizards.SourceFolderSelectionDialog;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.AssignOpMethodStub;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.BaseClassInfo;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.BaseClassesListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.ConstructorMethodStub;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.CopyConstructorMethodStub;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.DestructorMethodStub;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.IBaseClassInfo;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.IMethodStub;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.MethodStubsListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.MoveAssignOpMethodStub;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.MoveConstructorMethodStub;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NamespaceSelectionDialog;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialog;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialog.ITypeSelectionListener;
@@ -491,7 +495,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			if (stub.canModifyInline()) {
 				stub.setInline(getBooleanSettingWithDefault(KEY_STUB_INLINE + i, stub.isInline()));
 			}
-			addMethodStub(stub, getBooleanSettingWithDefault(KEY_STUB_SELECTED + i, true));
+			addMethodStub(stub, getBooleanSettingWithDefault(KEY_STUB_SELECTED + i, stub.isEnabledByDefault()));
 		}
 
 		setTestFileSelection(fDialogSettings.getBoolean(KEY_TEST_FILE_SELECTED), true);
@@ -574,7 +578,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
 	protected IMethodStub[] getDefaultMethodStubs() {
-		return new IMethodStub[] { new ConstructorMethodStub(), new DestructorMethodStub() };
+		return new IMethodStub[] { new ConstructorMethodStub(), new DestructorMethodStub(),
+				new CopyConstructorMethodStub(), new MoveConstructorMethodStub(), new AssignOpMethodStub(),
+				new MoveAssignOpMethodStub() };
 	}
 
 	/**

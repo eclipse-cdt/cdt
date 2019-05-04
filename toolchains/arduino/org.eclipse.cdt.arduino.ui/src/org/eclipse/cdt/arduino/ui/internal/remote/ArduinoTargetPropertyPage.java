@@ -100,8 +100,11 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		ArduinoBoard board = boards[boardSelector.getSelectionIndex()];
 		ArduinoRemoteConnection.setBoardId(workingCopy, board);
 
-		String portName = portSelector.getItem(portSelector.getSelectionIndex());
-		ArduinoRemoteConnection.setPortName(workingCopy, portName);
+		int idx = portSelector.getSelectionIndex();
+		if (idx >= 0) {
+			String portName = portSelector.getItem(idx);
+			ArduinoRemoteConnection.setPortName(workingCopy, portName);
+		}
 
 		try {
 			workingCopy.save();

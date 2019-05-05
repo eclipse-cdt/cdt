@@ -16,6 +16,7 @@ package org.eclipse.cdt.codan.core.internal.checkers;
 import org.eclipse.cdt.codan.core.tests.CheckerTestCase;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Test for {@see AssignmentInConditionChecker} class
@@ -142,5 +143,53 @@ public class AssignmentInConditionCheckerTest extends CheckerTestCase {
 	public void test_whileMacro() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(4);
+	}
+
+	//void test_commaPrecededIf() {
+	//	int a, b;
+	//	if (a=some_value(), b=some_other_value(), a=b){ // warning here
+	//		// do something
+	//	}else{
+	//		// do something else
+	//	}
+	//}
+	//int some_value(){return 0;}
+	//int ome_other_value(){return 1;}
+	public void test_commaPrecededIf() throws CoreException {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(3);
+	}
+
+	//void test_commaPrecededWhile() {
+	//	int NO_ERROR = 0;
+	//	int error_code;
+	//	while (error_code = read_from_file(), error_code = NO_ERROR) { // warning
+	//		// do something
+	//	}
+	//}
+	public void test_commaPrecededWhile() throws CoreException {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(4);
+	}
+
+	//void test_commaPrecededDoWhile() {
+	//	int NO_ERROR = 0;
+	//	int error_code;
+	//	do{
+	//		// do something
+	//	} while (error_code = read_from_file(), error_code = NO_ERROR); // warning
+	//}
+	public void test_commaPrecededDoWhile() throws CoreException {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(6);
+	}
+
+	//void test_commaPrecededConditioal(){
+	//	int a, b, c;
+	//	c = (a=some_value(), b=some_other_value(), a=b)? a : b; // warning here
+	//}
+	public void test_commaPrecededConditioal() throws CoreException {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(3);
 	}
 }

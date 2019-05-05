@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -52,6 +53,11 @@ public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 			if (e instanceof IASTBinaryExpression) {
 				IASTBinaryExpression binExpr = (IASTBinaryExpression) e;
 				return binExpr.getOperator() == IASTBinaryExpression.op_assign;
+			} else if (e instanceof IASTExpressionList) {
+				for (IASTExpression expr : ((IASTExpressionList) e).getExpressions()) {
+					if (isAssignmentExpression(expr))
+						return true;
+				}
 			}
 			return false;
 		}

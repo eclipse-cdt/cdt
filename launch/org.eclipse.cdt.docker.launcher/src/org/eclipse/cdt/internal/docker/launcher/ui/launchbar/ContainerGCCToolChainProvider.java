@@ -164,7 +164,9 @@ public class ContainerGCCToolChainProvider implements IToolChainProvider, IDocke
 					try {
 						String connectionURI = connection.getUri();
 						Collection<IToolChain> toolChains = toolChainManager.getAllToolChains();
-						for (IToolChain toolChain : toolChains) {
+						IToolChain[] toolChainArray = toolChains.toArray(new IToolChain[0]);
+						for (int i = 0; i < toolChains.size(); ++i) {
+							IToolChain toolChain = toolChainArray[i];
 							String uri = toolChain.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
 							if (connectionURI.equals(uri)) {
 								toolChainManager.removeToolChain(toolChain);

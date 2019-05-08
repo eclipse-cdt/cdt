@@ -33,6 +33,24 @@
       "revId": "997d36375a7a4ea12d367092b3d3caca44c6429e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e40de9e_4ec16373",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 891,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-05-08T04:50:22Z",
+      "side": 1,
+      "message": "I\u0027m a bit confused by what\u0027s going on here. Why do we need to make a change to this function at all? Is the change to createType() not sufficient?",
+      "parentUuid": "0a8df1f0_5dad2f95",
+      "revId": "997d36375a7a4ea12d367092b3d3caca44c6429e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 QNX Software Systems and others.
+ * Copyright (c) 2017, 2019 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.docker.launcher;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,7 +23,13 @@ import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager2;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.cdt.core.build.IToolChainProvider;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.internal.docker.launcher.ui.launchbar.ContainerGCCToolChain;
+import org.eclipse.cdt.internal.docker.launcher.ui.launchbar.ContainerGCCToolChainProvider;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -135,7 +142,8 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 		checkConfigs.schedule();
 
 		try {
-			launchbarManager.setActiveLaunchTarget(defaultTarget);
+			if (defaultTarget != null)
+				launchbarManager.setActiveLaunchTarget(defaultTarget);
 		} catch (CoreException e) {
 			DockerLaunchUIPlugin.log(e);
 		}
@@ -168,6 +176,7 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 					}
 
 					List<IDockerImage> images = connection.getImages();
+					IToolChainProvider provider = new ContainerGCCToolChainProvider();
 					for (IDockerImage image : images) {
 						if (!image.isDangling() && !image.isIntermediateImage()) {
 
@@ -197,6 +206,35 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 							wc.setAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, image.repoTags().get(0));
 
 							wc.save();
+
+							Map<String, String> properties = new HashMap<>();
+
+							properties.put(ILaunchTarget.ATTR_OS, ContainerTargetTypeProvider.CONTAINER_LINUX);
+							properties.put(ILaunchTarget.ATTR_ARCH, Platform.getOSArch());
+							properties.put(IContainerLaunchTarget.ATTR_CONNECTION_URI, connection.getUri());
+							properties.put(IContainerLaunchTarget.ATTR_IMAGE_ID, image.repoTags().get(0));
+							// following can be used for naming build
+							// configurations
+							properties.put(ContainerGCCToolChainProvider.CONTAINER_LINUX_CONFIG_ID,
+									image.repoTags().get(0).replace(':', '_'));
+							// .replace('/', '_'));
+
+							IToolChainManager toolChainManager = MakeCorePlugin.getService(IToolChainManager.class);
+
+							Collection<IToolChain> toolChains;
+							try {
+								toolChains = toolChainManager.getToolChainsMatching(properties);
+								if (toolChains.isEmpty()) {
+									ContainerGCCToolChain toolChain = new ContainerGCCToolChain(
+											"gcc-img-" + image.id().substring(0, //$NON-NLS-1$
+													19),
+											provider, properties, null);
+									toolChainManager.addToolChain(toolChain);
+								}
+							} catch (CoreException e) {
+								DockerLaunchUIPlugin.log(e);
+							}
+
 						}
 					}
 

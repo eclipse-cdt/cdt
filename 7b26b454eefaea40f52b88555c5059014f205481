@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "4ed7fad0_d31f4059",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/CopyrightChecker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-09T03:06:32Z",
+      "side": 1,
+      "message": "Ok, I think we can leave it like that.",
+      "parentUuid": "e54bb6ec_eb1c7611",
+      "revId": "7b26b454eefaea40f52b88555c5059014f205481",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fd346307_64069ff9",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/CopyrightChecker.java",
         "patchSetId": 7

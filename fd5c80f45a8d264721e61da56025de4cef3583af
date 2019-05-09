@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c5c8176f_9f54ce61",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-09T04:02:09Z",
+      "side": 1,
+      "message": "It\u0027s a bit strange to call this class \"virtual method call\" since it also checks for \"throw\" in destructors. I\u0027m not sure what to call it though... UnsafeOperationInCtorDtorChecker? Urg...\nI guess it would also be inconvenient to split it in two checkers? Because of code duplication?",
+      "revId": "fd5c80f45a8d264721e61da56025de4cef3583af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

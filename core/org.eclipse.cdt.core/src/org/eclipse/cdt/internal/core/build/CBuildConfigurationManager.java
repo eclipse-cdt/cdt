@@ -164,9 +164,11 @@ public class CBuildConfigurationManager
 		for (IBuildConfiguration config : project.getBuildConfigs()) {
 			names.add(config.getName());
 		}
+		// ensure the default build configuration always exists
+		names.add(""); //$NON-NLS-1$
+		names.add(name);
 
 		IProjectDescription desc = project.getDescription();
-		names.add(name);
 		desc.setBuildConfigs(names.toArray(new String[names.size()]));
 		project.setDescription(desc, monitor);
 

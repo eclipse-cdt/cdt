@@ -24,6 +24,7 @@ import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceCompositeDescriptor;
 import org.eclipse.cdt.codan.core.param.LaunchModeProblemPreference;
 import org.eclipse.cdt.codan.core.param.ListProblemPreference;
+import org.eclipse.cdt.codan.core.param.SuppressionCommentProblemPreference;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -55,17 +56,19 @@ public class ParametersComposite extends Composite {
 	private FieldEditorPreferencePage page;
 	private IProblem problem;
 	private PreferenceStore prefStore;
+	private boolean combined;
 
 	/**
 	 * @param parent
 	 * @param problem
 	 * @param style
 	 */
-	public ParametersComposite(Composite parent, final IProblem problem) {
+	public ParametersComposite(Composite parent, final IProblem problem, final boolean combined) {
 		super(parent, SWT.NONE);
 		if (problem == null)
 			throw new NullPointerException();
 		this.setLayout(new GridLayout(2, false));
+		this.combined = combined;
 		this.problem = problem;
 		this.prefStore = new PreferenceStore();
 		page = new FieldEditorPreferencePage(FieldEditorPreferencePage.GRID) {
@@ -248,6 +251,9 @@ public class ParametersComposite extends Composite {
 		String key = desc.getQualifiedKey();
 		switch (desc.getType()) {
 		case TYPE_STRING:
+			if (desc.getKey().equals(SuppressionCommentProblemPreference.KEY) && combined
+					&& prefStore.getString(key).equals(NO_CHANGE))
+				return;
 			desc.setValue(prefStore.getString(key));
 			break;
 		case TYPE_BOOLEAN:

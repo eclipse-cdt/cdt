@@ -42,7 +42,7 @@ public class CustomizeProblemComposite extends Composite {
 	 * @param resource
 	 * @param style
 	 */
-	public CustomizeProblemComposite(Composite parent, IProblem selectedProblem, IResource resource) {
+	public CustomizeProblemComposite(Composite parent, IProblem selectedProblem, IResource resource, boolean combined) {
 		super(parent, SWT.NONE);
 		this.setLayout(new GridLayout(1, false));
 		this.problem = selectedProblem;
@@ -50,7 +50,7 @@ public class CustomizeProblemComposite extends Composite {
 		final TabFolder tabFolder = new TabFolder(this, SWT.TOP);
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		// createMainTab(tabFolder);
-		createParamtersTab(tabFolder);
+		createParamtersTab(tabFolder, combined);
 		createScopeTab(tabFolder);
 		createLaunchingTab(tabFolder);
 	}
@@ -64,13 +64,13 @@ public class CustomizeProblemComposite extends Composite {
 	/**
 	 * @param tabFolder
 	 */
-	private void createParamtersTab(TabFolder tabFolder) {
+	private void createParamtersTab(TabFolder tabFolder, boolean combined) {
 		TabItem tabItem1 = new TabItem(tabFolder, SWT.NULL);
 		tabItem1.setText(CodanUIMessages.CustomizeProblemComposite_TabParameters);
 		parametersTab = new Composite(tabFolder, SWT.NONE);
 		tabItem1.setControl(parametersTab);
 		parametersTab.setLayout(new GridLayout());
-		problemsComposite = new ParametersComposite(parametersTab, problem);
+		problemsComposite = new ParametersComposite(parametersTab, problem, combined);
 		problemsComposite.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
 	}
 

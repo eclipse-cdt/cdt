@@ -37,6 +37,7 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 	private IProblem problem;
 	private IProblem[] problems;
 	private IResource resource;
+	private boolean combined;
 
 	/**
 	 * @param parentShell
@@ -45,6 +46,7 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 	 */
 	public CustomizeProblemDialog(Shell parentShell, IProblem[] selectedProblems, IResource resource) {
 		super(parentShell);
+		this.combined = false;
 		this.problems = selectedProblems;
 		this.problem = buildCombined(selectedProblems);
 		this.resource = resource;
@@ -62,9 +64,12 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 		if (selectedProblems.length == 1) {
 			return one;
 		}
+		combined = true;
 		CodanProblem problem = new CodanProblem("multi", getTitle()); //$NON-NLS-1$
 		problem.setMessagePattern(ParametersComposite.NO_CHANGE);
-		problem.setPreference(new RootProblemPreference());
+		RootProblemPreference combPref = new RootProblemPreference();
+		combPref.getSuppressionCommentPreference().setValue(ParametersComposite.NO_CHANGE);
+		problem.setPreference(combPref);
 		problem.setSeverity(one.getSeverity());
 		problem.setEnabled(one.isEnabled());
 		if (one.getPreference() instanceof RootProblemPreference) {
@@ -92,7 +97,7 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 		setTitle(getTitle());
 		setMessage(CodanUIMessages.CustomizeProblemDialog_Message);
 		Composite area = (Composite) super.createDialogArea(parent);
-		comp = new CustomizeProblemComposite(area, problem, resource);
+		comp = new CustomizeProblemComposite(area, problem, resource, combined);
 		GridData ld = new GridData(GridData.FILL_BOTH);
 		ld.minimumHeight = 300;
 		comp.setLayoutData(ld);

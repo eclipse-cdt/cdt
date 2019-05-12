@@ -16,8 +16,6 @@
 package org.eclipse.cdt.examples.dsf.pda;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
@@ -153,13 +151,18 @@ public class PDAPlugin extends Plugin {
 	 * <code>IPath</code> in the plugin directory, or <code>null</code> if none.
 	 */
 	public static File getFileInPlugin(IPath path) {
-		try {
-			URL installURL = new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
-			URL localURL = Platform.asLocalURL(installURL);
-			return new File(localURL.getFile());
-		} catch (IOException ioe) {
-			return null;
+		if (true) {
+			throw new RuntimeException(
+					"The commented out code below has not worked in many years with a NullPointerException. Now the API that was returning null has been removed, see Bug 475944");
 		}
+		return null;
+		//		try {
+		//			URL installURL = new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
+		//			URL localURL = Platform.asLocalURL(installURL);
+		//			return new File(localURL.getFile());
+		//		} catch (IOException ioe) {
+		//			return null;
+		//		}
 	}
 
 	/**

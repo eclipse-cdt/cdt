@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -243,11 +242,15 @@ public class PDABackend extends AbstractDsfService {
 		commandList.add(javaVMExec);
 
 		commandList.add("-cp");
-		try {
-			commandList.add(File.pathSeparator + PDAPlugin.getFileInPlugin(new Path("bin")) + File.pathSeparator
-					+ new File(Platform.asLocalURL(PDAPlugin.getDefault().getDescriptor().getInstallURL()).getFile()));
-		} catch (IOException e) {
+		if (true) {
+			throw new RuntimeException(
+					"The commented out code below has not worked in many years with a NullPointerException. Now the API that was returning null has been removed, see Bug 475944");
 		}
+		//		try {
+		//			commandList.add(File.pathSeparator + PDAPlugin.getFileInPlugin(new Path("bin")) + File.pathSeparator
+		//					+ new File(Platform.asLocalURL(PDAPlugin.getDefault().getDescriptor().getInstallURL()).getFile()));
+		//		} catch (IOException e) {
+		//		}
 
 		commandList.add("org.eclipse.cdt.examples.pdavm.PDAVirtualMachine");
 

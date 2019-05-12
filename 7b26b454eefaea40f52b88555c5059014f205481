@@ -90,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "e891a00b_bf55a270",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/CopyrightChecker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-05-12T01:40:01Z",
+      "side": 1,
+      "message": "PS. For what its worth, the example here has \"Copyrsight\" miss spelt.",
+      "parentUuid": "fd346307_64069ff9",
+      "revId": "7b26b454eefaea40f52b88555c5059014f205481",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ca7bb9ee_25ad6799",
         "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/CopyrightCheckerTest.java",
         "patchSetId": 7

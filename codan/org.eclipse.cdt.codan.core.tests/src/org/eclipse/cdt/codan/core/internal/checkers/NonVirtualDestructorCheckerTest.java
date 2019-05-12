@@ -248,4 +248,34 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
+	//template<typename T>
+	//class Base;
+	//template <typename T>
+	//class A {
+	//    using type = Base<T>;
+	//};
+	//template<typename T>
+	//class B: public A<T>::type {
+	//  virtual void f() {}
+	//};
+	public void testDeferredClasses1_Bug468742() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	//struct Root {
+	//};
+	//template<typename T>
+	//class A: public T {
+	//public:
+	//  virtual int f() const = 0;
+	//};
+	//typedef A<Root> B;
+	//class C: public A<Root> {
+	//};
+	public void testDeferredClasses2_Bug468742() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(9);
+	}
 }

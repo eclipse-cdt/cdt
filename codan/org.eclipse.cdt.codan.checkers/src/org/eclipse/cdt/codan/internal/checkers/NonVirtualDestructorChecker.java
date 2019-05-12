@@ -30,10 +30,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * Checker to find that class has virtual method and non virtual destructor
@@ -73,6 +75,10 @@ public class NonVirtualDestructorChecker extends AbstractIndexAstChecker {
 		if (destructor != null && destructor.isVirtual()) {
 			return true;
 		}
+		//We can't say anything in this case, so return true to avoid false positive
+		if (destructor == null && CPPTemplates.isDependentType(classType)) {
+			return true;
+		}
 		ICPPBase[] bases = classType.getBases();
 		for (ICPPBase base : bases) {
 			IBinding baseClass = base.getBaseClass();
@@ -81,6 +87,9 @@ public class NonVirtualDestructorChecker extends AbstractIndexAstChecker {
 				if (!checkedClassTypes.contains(cppClassType) && hasVirtualDestructor(cppClassType)) {
 					return true;
 				}
+			} else if (baseClass instanceof ICPPTemplateTypeParameter) {
+				//We can't say anything in this case, so return true to avoid false positive
+				return true;
 			}
 		}
 		return false;

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "725082e0_f67c3de6",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-05-12T00:50:14Z",
+      "side": 1,
+      "message": "I am using a versioned I-build. It provides a couple of advantages:\n\n- some sense of reproducibility of old builds. The old I builds are not kept indefinietely, but at least you can sort of tell when it is built against\n- the main I build is a composite repo, which means that p2 needs to download and resolve all the children repos, having a specific repo speeds things up.\n\nThere is a disadvantage, the repo needs to be updated more frequently (weekly or so).",
+      "revId": "b4a635f81c49596328840dd0ac3bcd832efe310d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

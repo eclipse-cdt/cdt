@@ -16,6 +16,24 @@
       "revId": "183d70ed26594bbb6255dbb8af878fc7faa29fa1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e84667e_9f823db3",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/CopyrightChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-05-13T04:59:02Z",
+      "side": 1,
+      "message": "Not only, this path is verified when the comment is multiline and there aren\u0027t other comments after. If there is at least another comment not consecutive, the check is already performed in processComment.",
+      "parentUuid": "2a57d5e0_67fa51fb",
+      "revId": "183d70ed26594bbb6255dbb8af878fc7faa29fa1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

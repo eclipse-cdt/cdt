@@ -89,7 +89,7 @@ public class DefaultCodeFormatterOptions {
 	public String brace_position_for_method_declaration;
 	public String brace_position_for_namespace_declaration;
 	/**
-	 * @since 6.7
+	 * @since 6.8
 	 */
 	public String brace_position_for_linkage_declaration;
 	public String brace_position_for_switch;
@@ -127,7 +127,7 @@ public class DefaultCodeFormatterOptions {
 	public int indent_access_specifier_extra_spaces;
 	public boolean indent_body_declarations_compare_to_namespace_header;
 	/**
-	 * @since 6.7
+	 * @since 6.8
 	 */
 	public boolean indent_body_declarations_compare_to_linkage;
 	public boolean indent_declaration_compare_to_template_header;
@@ -143,6 +143,9 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_new_line_before_catch_in_try_statement;
 	public boolean insert_new_line_before_closing_brace_in_initializer_list;
 	public boolean insert_new_line_before_colon_in_constructor_initializer_list;
+	/**
+	 * @since 6.8
+	 */
 	public boolean insert_new_line_after_colon_in_constructor_initializer_list;
 	public boolean insert_new_line_before_else_in_if_statement;
 	public boolean insert_new_line_before_while_in_do_statement;
@@ -168,7 +171,13 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_after_comma_in_method_invocation_arguments;
 	public boolean insert_space_after_comma_in_method_declaration_parameters;
 	public boolean insert_space_after_comma_in_method_declaration_throws;
+	/**
+	 * @since 6.8
+	 */
 	public boolean insert_space_after_pointer_in_declarator_list;
+	/**
+	 * @since 6.8
+	 */
 	public boolean insert_space_before_pointer_in_declarator_list;
 	public boolean insert_space_after_comma_in_declarator_list;
 	public boolean insert_space_after_comma_in_expression_list;
@@ -236,12 +245,18 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_before_opening_brace_in_initializer_list;
 	public boolean insert_space_before_opening_brace_in_block;
 	public boolean insert_space_before_opening_brace_in_method_declaration;
+	/**
+	 * @since 6.8
+	 */
 	public boolean insert_space_before_pointer_in_method_declaration;
+	/**
+	 * @since 6.8
+	 */
 	public boolean insert_space_after_pointer_in_method_declaration;
 	public boolean insert_space_before_opening_brace_in_type_declaration;
 	public boolean insert_space_before_opening_brace_in_namespace_declaration;
 	/**
-	 * @since 6.7
+	 * @since 6.8
 	 */
 	public boolean insert_space_before_opening_brace_in_linkage_declaration;
 	public boolean insert_space_before_opening_bracket;

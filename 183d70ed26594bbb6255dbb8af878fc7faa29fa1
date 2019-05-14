@@ -34,6 +34,24 @@
       "revId": "183d70ed26594bbb6255dbb8af878fc7faa29fa1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cb51d2a3_2e24257f",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/CopyrightChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-14T02:12:07Z",
+      "side": 1,
+      "message": "hmm, ok. Either way, the reason I brought this up is that if I insert a breakpoint here, I never hit it when running the tests.",
+      "parentUuid": "0e84667e_9f823db3",
+      "revId": "183d70ed26594bbb6255dbb8af878fc7faa29fa1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

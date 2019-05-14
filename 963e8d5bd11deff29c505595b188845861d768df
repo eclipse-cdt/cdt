@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cca5cb30_99ef1faf",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUtil.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-05-14T05:55:48Z",
+      "side": 1,
+      "message": "Do we know it will be an IntegralValue? (Could we get here if it\u0027s dependent, in which case it could be a DependentValue?)",
+      "revId": "963e8d5bd11deff29c505595b188845861d768df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -166,6 +166,9 @@ public class CBuildConfigurationManager
 			for (IBuildConfiguration config : project.getBuildConfigs()) {
 				names.add(config.getName());
 			}
+			// need to add default config name because it can be active by
+			// default without being in the build config list used above
+			names.add(IBuildConfiguration.DEFAULT_CONFIG_NAME);
 
 			IProjectDescription desc = project.getDescription();
 			names.add(name);

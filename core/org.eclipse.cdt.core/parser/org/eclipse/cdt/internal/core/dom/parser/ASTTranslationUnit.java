@@ -95,8 +95,18 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private IBuiltinBindingsProvider fBuiltinBindingsProvider;
 
 	// Caches
-	private final WeakHashMap<IType, String> fUnnormalizedTypeStringCache = new WeakHashMap<>();
-	private final WeakHashMap<IType, String> fNormalizedTypeStringCache = new WeakHashMap<>();
+	private final ThreadLocal<WeakHashMap<IType, String>> fUnnormalizedTypeStringCache = new ThreadLocal<WeakHashMap<IType, String>>() {
+		@Override
+		protected WeakHashMap<IType, String> initialValue() {
+			return new WeakHashMap<>();
+		}
+	};
+	private final ThreadLocal<WeakHashMap<IType, String>> fNormalizedTypeStringCache = new ThreadLocal<WeakHashMap<IType, String>>() {
+		@Override
+		protected WeakHashMap<IType, String> initialValue() {
+			return new WeakHashMap<>();
+		}
+	};
 
 	@Override
 	public final IASTTranslationUnit getTranslationUnit() {
@@ -585,6 +595,6 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	}
 
 	public Map<IType, String> getTypeStringCache(boolean normalized) {
-		return normalized ? fNormalizedTypeStringCache : fUnnormalizedTypeStringCache;
+		return normalized ? fNormalizedTypeStringCache.get() : fUnnormalizedTypeStringCache.get();
 	}
 }

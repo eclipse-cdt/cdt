@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.internal.core.InternalDebugCoreMessages;
@@ -139,9 +140,12 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 		ICBuildConfiguration buildConfig = getBuildConfiguration(configuration, mode, target, monitor);
 		if (buildConfig != null) {
 			IProject project = getProject(configuration);
-			IProjectDescription desc = project.getDescription();
-			desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
-			project.setDescription(desc, monitor);
+			CoreModel m = CoreModel.getDefault();
+			synchronized (m) {
+				IProjectDescription desc = project.getDescription();
+				desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
+				project.setDescription(desc, monitor);
+			}
 		}
 
 		// proceed with the build

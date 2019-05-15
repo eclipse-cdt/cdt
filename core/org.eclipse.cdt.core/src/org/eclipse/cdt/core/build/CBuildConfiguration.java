@@ -281,9 +281,12 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 			return;
 		}
 
-		IProjectDescription projectDesc = project.getDescription();
-		projectDesc.setActiveBuildConfig(config.getName());
-		project.setDescription(projectDesc, monitor);
+		CoreModel m = CoreModel.getDefault();
+		synchronized (m) {
+			IProjectDescription projectDesc = project.getDescription();
+			projectDesc.setActiveBuildConfig(config.getName());
+			project.setDescription(projectDesc, monitor);
+		}
 	}
 
 	protected Preferences getSettings() {

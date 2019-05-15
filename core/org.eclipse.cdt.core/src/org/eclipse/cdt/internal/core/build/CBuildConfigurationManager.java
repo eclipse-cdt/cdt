@@ -160,15 +160,18 @@ public class CBuildConfigurationManager
 			String configName, IProgressMonitor monitor) throws CoreException {
 		String name = provider.getId() + '/' + configName;
 
-		Set<String> names = new HashSet<>();
-		for (IBuildConfiguration config : project.getBuildConfigs()) {
-			names.add(config.getName());
-		}
+		CoreModel m = CoreModel.getDefault();
+		synchronized (m) {
+			Set<String> names = new HashSet<>();
+			for (IBuildConfiguration config : project.getBuildConfigs()) {
+				names.add(config.getName());
+			}
 
-		IProjectDescription desc = project.getDescription();
-		names.add(name);
-		desc.setBuildConfigs(names.toArray(new String[names.size()]));
-		project.setDescription(desc, monitor);
+			IProjectDescription desc = project.getDescription();
+			names.add(name);
+			desc.setBuildConfigs(names.toArray(new String[names.size()]));
+			project.setDescription(desc, monitor);
+		}
 
 		return project.getBuildConfig(name);
 	}

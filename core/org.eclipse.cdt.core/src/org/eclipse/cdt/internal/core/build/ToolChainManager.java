@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
+ * Copyright (c) 2015, 2019 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -117,7 +117,7 @@ public class ToolChainManager implements IToolChainManager {
 				.node("order"); //$NON-NLS-1$
 		prefs.put("n", Integer.toString(orderedToolChains.size())); //$NON-NLS-1$
 		int i = 0;
-		for (IToolChain toolChain : orderedToolChains) {
+		for (IToolChain toolChain : orderedToolChains.toArray(new IToolChain[0])) {
 			prefs.put(Integer.toString(i) + ".type", toolChain.getTypeId()); //$NON-NLS-1$
 			prefs.put(Integer.toString(i) + ".id", toolChain.getId()); //$NON-NLS-1$
 			i++;
@@ -191,7 +191,7 @@ public class ToolChainManager implements IToolChainManager {
 		init();
 		List<IToolChain> tcs = new ArrayList<>();
 		if (orderedToolChains != null) {
-			for (IToolChain toolChain : orderedToolChains) {
+			for (IToolChain toolChain : orderedToolChains.toArray(new IToolChain[0])) {
 				boolean matches = true;
 				for (Map.Entry<String, String> property : properties.entrySet()) {
 					String tcProperty = toolChain.getProperty(property.getKey());

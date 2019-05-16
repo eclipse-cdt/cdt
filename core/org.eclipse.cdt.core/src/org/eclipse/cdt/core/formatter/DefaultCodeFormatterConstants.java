@@ -346,6 +346,7 @@ public class DefaultCodeFormatterConstants {
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
+	 * @since 6.8
 	 */
 	public static final String FORMATTER_ALIGNMENT_FOR_LAMBDA_EXPRESSION = CCorePlugin.PLUGIN_ID
 			+ ".formatter.alignment_for_lambda_expression"; //$NON-NLS-1$
@@ -1548,6 +1549,7 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see CCorePlugin#INSERT
 	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.8
 	 */
 	public static final String FORMATTER_INSERT_SPACE_AFTER_LAMBDA_RETURN = CCorePlugin.PLUGIN_ID
 			+ ".formatter.insert_space_after_lambda_return"; //$NON-NLS-1$
@@ -1560,6 +1562,7 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see CCorePlugin#INSERT
 	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.8
 	 */
 	public static final String FORMATTER_INSERT_SPACE_BEFORE_LAMBDA_RETURN = CCorePlugin.PLUGIN_ID
 			+ ".formatter.insert_space_before_lambda_return"; //$NON-NLS-1$

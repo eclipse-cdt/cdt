@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 QNX Software Systems and others.
+ * Copyright (c) 2017, 2019 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -147,6 +147,8 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener {
 								// active config last and this will be left in build console for user to see
 								names.remove(buildConfig.getBuildConfiguration().getName());
 								names.add(buildConfig.getBuildConfiguration().getName());
+
+								desc.setBuildConfigs(names.toArray(new String[0]));
 								desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
 								finalProject.setDescription(desc, monitor);
 							}

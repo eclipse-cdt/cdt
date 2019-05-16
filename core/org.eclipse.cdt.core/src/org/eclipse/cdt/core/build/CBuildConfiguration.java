@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 QNX Software Systems and others.
+ * Copyright (c) 2015, 2019 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -298,6 +298,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 			names.remove(config.getName());
 			names.add(config.getName());
 
+			projectDesc.setBuildConfigs(names.toArray(new String[0]));
 			projectDesc.setActiveBuildConfig(config.getName());
 			project.setDescription(projectDesc, monitor);
 		}

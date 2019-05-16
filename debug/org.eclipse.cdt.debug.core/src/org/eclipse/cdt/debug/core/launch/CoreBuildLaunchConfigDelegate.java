@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 QNX Software Systems and others.
+ * Copyright (c) 2016, 2019 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -158,6 +158,7 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 				names.remove(buildConfig.getBuildConfiguration().getName());
 				names.add(buildConfig.getBuildConfiguration().getName());
 
+				desc.setBuildConfigs(names.toArray(new String[0]));
 				desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
 				project.setDescription(desc, monitor);
 			}

@@ -29,9 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -284,6 +286,18 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		CoreModel m = CoreModel.getDefault();
 		synchronized (m) {
 			IProjectDescription projectDesc = project.getDescription();
+			IBuildConfiguration[] bconfigs = project.getBuildConfigs();
+			Set<String> names = new LinkedHashSet<>();
+			for (IBuildConfiguration bconfig : bconfigs) {
+				names.add(bconfig.getName());
+			}
+			// must add default config name as it may not be in build config list
+			names.add(IBuildConfiguration.DEFAULT_CONFIG_NAME);
+			// ensure active config is last in list so clean build will clean
+			// active config last and this will be left in build console for user to see
+			names.remove(config.getName());
+			names.add(config.getName());
+
 			projectDesc.setActiveBuildConfig(config.getName());
 			project.setDescription(projectDesc, monitor);
 		}

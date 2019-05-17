@@ -95,12 +95,16 @@ public class MakefileBuildConfigurationProvider implements ICBuildConfigurationP
 			}
 		}
 		String name = configName.toString();
-		int i = 0;
-		while (configManager.hasConfiguration(this, project, name)) {
-			name = configName.toString() + '.' + (++i);
+		IBuildConfiguration config = null;
+		// reuse any IBuildConfiguration with the same name for the project
+		// so adding the CBuildConfiguration will override the old one stored
+		// by the CBuildConfigurationManager
+		if (configManager.hasConfiguration(this, project, name)) {
+			config = project.getBuildConfig(this.getId() + '/' + name);
 		}
-
-		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, name, monitor);
+		if (config == null) {
+			config = configManager.createBuildConfiguration(this, project, name, monitor);
+		}
 		StandardBuildConfiguration makeConfig = new StandardBuildConfiguration(config, name, toolChain, launchMode);
 		configManager.addBuildConfiguration(config, makeConfig);
 		return makeConfig;

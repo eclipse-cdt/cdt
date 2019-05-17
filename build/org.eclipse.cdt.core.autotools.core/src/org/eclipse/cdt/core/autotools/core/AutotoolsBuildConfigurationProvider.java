@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Intel Corporation and others.
+ * Copyright (c) 2017, 2019 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -111,12 +111,17 @@ public class AutotoolsBuildConfigurationProvider implements ICBuildConfiguration
 			}
 		}
 		String name = configName.toString();
-		int i = 0;
-		while (configManager.hasConfiguration(this, project, name)) {
-			name = configName.toString() + '.' + (++i);
+		IBuildConfiguration config = null;
+		// reuse any IBuildConfiguration with the same name for the project
+		// so adding the CBuildConfiguration will override the old one stored
+		// by the CBuildConfigurationManager
+		if (configManager.hasConfiguration(this, project, name)) {
+			config = project.getBuildConfig(this.getId() + '/' + name);
+		}
+		if (config == null) {
+			config = configManager.createBuildConfiguration(this, project, name, monitor);
 		}
 
-		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, name, monitor);
 		AutotoolsBuildConfiguration autotoolsConfig = new AutotoolsBuildConfiguration(config, name, toolChain,
 				launchMode);
 		configManager.addBuildConfiguration(config, autotoolsConfig);

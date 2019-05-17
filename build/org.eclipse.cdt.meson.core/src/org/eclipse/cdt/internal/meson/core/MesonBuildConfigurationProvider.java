@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 QNX Software Systems and others.
+ * Copyright (c) 2016, 2019 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -129,12 +129,17 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 			}
 		}
 		String name = configName.toString();
-		int i = 0;
-		while (configManager.hasConfiguration(this, project, name)) {
-			name = configName.toString() + '.' + (++i);
+		IBuildConfiguration config = null;
+		// reuse any IBuildConfiguration with the same name for the project
+		// so adding the CBuildConfiguration will override the old one stored
+		// by the CBuildConfigurationManager
+		if (configManager.hasConfiguration(this, project, name)) {
+			config = project.getBuildConfig(this.getId() + '/' + name);
+		}
+		if (config == null) {
+			config = configManager.createBuildConfiguration(this, project, name, monitor);
 		}
 
-		IBuildConfiguration config = configManager.createBuildConfiguration(this, project, name, monitor);
 		MesonBuildConfiguration mesonConfig = new MesonBuildConfiguration(config, name, toolChain, file, launchMode);
 		configManager.addBuildConfiguration(config, mesonConfig);
 		return mesonConfig;

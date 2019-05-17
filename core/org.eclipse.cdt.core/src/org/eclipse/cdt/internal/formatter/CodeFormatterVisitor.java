@@ -3998,11 +3998,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		// switch body
 		String brace_position = preferences.brace_position_for_switch;
+		boolean hasOpenBrace = false;
 		int braceIndent = -1;
 		IASTStatement bodyStmt = node.getBody();
 		if (!startsWithMacroExpansion(bodyStmt)) {
 			boolean insertSpaceBeforeOpeningBrace = preferences.insert_space_before_opening_brace_in_switch;
 			formatAttributes(bodyStmt, insertSpaceBeforeOpeningBrace, false);
+			hasOpenBrace = peekNextToken() == Token.tLBRACE;
 			formatOpeningBrace(brace_position, insertSpaceBeforeOpeningBrace);
 			scribe.startNewLine();
 			braceIndent = scribe.numberOfIndentations;
@@ -4142,7 +4144,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 			scribe.startNewLine();
 
-			formatClosingBrace(brace_position);
+			if (hasOpenBrace)
+				formatClosingBrace(brace_position);
 		}
 		exitNode(bodyStmt);
 		return PROCESS_SKIP;

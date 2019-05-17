@@ -4223,4 +4223,23 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testAlignmentOfLambda3_Bug500000() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void foo() {
+	//	int a;
+	//	switch (a)
+	//	default: {
+	//		break;
+	//	}
+	//}
+
+	//void foo() {
+	//	int a;
+	//	switch (a)
+	//	default: {
+	//		break;
+	//	}
+	//}
+	public void testSwitchNoParen_Bug353022() throws Exception {
+		assertFormatterResult();
+	}
 }

@@ -22,11 +22,11 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
 	private static String NAME = NewClassWizardMessages.NewClassCodeGeneration_stub_constructor_name;
 
 	public ConstructorMethodStub() {
-		this(ASTAccessVisibility.PUBLIC, false);
+		this(ASTAccessVisibility.PUBLIC, EImplMethod.DEFINITION);
 	}
 
-	public ConstructorMethodStub(ASTAccessVisibility access, boolean isInline) {
-		super(NAME, access, false, isInline);
+	public ConstructorMethodStub(ASTAccessVisibility access, EImplMethod method) {
+		super(NAME, access, false, method);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
 		StringBuilder buf = new StringBuilder();
 		buf.append(className);
 		buf.append("()"); //$NON-NLS-1$
-		if (fIsInline) {
+		if (isInline()) {
 			buf.append('{');
 			buf.append(lineDelimiter);
 			String body = CodeGeneration.getConstructorBodyContent(tu, className, null, lineDelimiter);
@@ -44,6 +44,10 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
 				buf.append(lineDelimiter);
 			}
 			buf.append('}');
+		} else if (isDefault()) {
+			buf.append(" = default;"); //$NON-NLS-1$
+		} else if (isDeleted()) {
+			buf.append(" = delete;"); //$NON-NLS-1$
 		} else {
 			buf.append(";"); //$NON-NLS-1$
 		}
@@ -53,7 +57,7 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
 	@Override
 	public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses,
 			String lineDelimiter) throws CoreException {
-		if (fIsInline) {
+		if (!hasDefinition()) {
 			return ""; //$NON-NLS-1$
 		}
 		StringBuilder buf = new StringBuilder();

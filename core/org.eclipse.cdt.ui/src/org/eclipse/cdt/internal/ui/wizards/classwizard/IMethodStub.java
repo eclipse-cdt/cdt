@@ -19,6 +19,10 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.core.runtime.CoreException;
 
 public interface IMethodStub {
+	public enum EImplMethod {
+		DEFINITION, INLINE, DEFAULT, DELETED
+	}
+
 	public String getName();
 
 	public String getDescription();
@@ -35,11 +39,19 @@ public interface IMethodStub {
 
 	public void setVirtual(boolean isVirtual);
 
+	public EImplMethod getImplMethod();
+
 	public boolean isInline();
 
-	public boolean canModifyInline();
+	public boolean isDeleted();
 
-	public void setInline(boolean isVirtual);
+	public boolean isDefault();
+
+	public boolean hasDefinition();
+
+	public boolean canModifyImplementation();
+
+	public void setImplMethod(EImplMethod method);
 
 	public boolean isConstructor();
 

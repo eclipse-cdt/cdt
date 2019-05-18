@@ -54,7 +54,7 @@ public final class MethodStubsLabelProvider implements ITableLabelProvider {
 		case 2:
 			return BaseClassesLabelProvider.getYesNoText(stub.isVirtual());
 		case 3:
-			return BaseClassesLabelProvider.getYesNoText(stub.isInline());
+			return BaseClassesLabelProvider.getImplText(stub.getImplMethod());
 		default:
 			return null;
 		}

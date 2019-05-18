@@ -89,10 +89,14 @@ public final class NewClassWizardMessages extends NLS {
 	public static String BaseClassesLabelProvider_access_public_label;
 	public static String BaseClassesLabelProvider_access_protected_label;
 	public static String BaseClassesLabelProvider_access_private_label;
+	public static String BaseClassesLabelProvider_impl_definition;
+	public static String BaseClassesLabelProvider_impl_deleted;
+	public static String BaseClassesLabelProvider_impl_default;
+	public static String BaseClassesLabelProvider_impl_inline;
 	public static String MethodStubsDialogField_headings_name;
 	public static String MethodStubsDialogField_headings_access;
 	public static String MethodStubsDialogField_headings_virtual;
-	public static String MethodStubsDialogField_headings_inline;
+	public static String MethodStubsDialogField_headings_implementation;
 	public static String NamespaceSelectionDialog_title;
 	public static String NamespaceSelectionDialog_message;
 	public static String EnclosingClassSelectionDialog_title;

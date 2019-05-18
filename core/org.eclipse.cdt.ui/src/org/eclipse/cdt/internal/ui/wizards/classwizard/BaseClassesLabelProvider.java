@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.IMethodStub.EImplMethod;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -26,6 +27,11 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
 	private static final String ACCESS_PROTECTED = NewClassWizardMessages.BaseClassesLabelProvider_access_protected_label;
 	private static final String ACCESS_PRIVATE = NewClassWizardMessages.BaseClassesLabelProvider_access_private_label;
 
+	private static final String IMPL_DEFINITION = NewClassWizardMessages.BaseClassesLabelProvider_impl_definition;
+	private static final String IMPL_DEFAULT = NewClassWizardMessages.BaseClassesLabelProvider_impl_default;
+	private static final String IMPL_DELETED = NewClassWizardMessages.BaseClassesLabelProvider_impl_deleted;
+	private static final String IMPL_INLINE = NewClassWizardMessages.BaseClassesLabelProvider_impl_inline;
+
 	public static final String getYesNoText(boolean value) {
 		return value ? YES_VALUE : NO_VALUE;
 	}
@@ -36,6 +42,20 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
 		if (access == ASTAccessVisibility.PROTECTED)
 			return ACCESS_PROTECTED;
 		return ACCESS_PUBLIC;
+	}
+
+	public static final String getImplText(EImplMethod method) {
+		switch (method) {
+		case DELETED:
+			return IMPL_DELETED;
+		case DEFAULT:
+			return IMPL_DEFAULT;
+		case INLINE:
+			return IMPL_INLINE;
+		case DEFINITION:
+		default:
+			return IMPL_DEFINITION;
+		}
 	}
 
 	private static TypeInfoLabelProvider fTypeInfoLabelProvider = new TypeInfoLabelProvider(

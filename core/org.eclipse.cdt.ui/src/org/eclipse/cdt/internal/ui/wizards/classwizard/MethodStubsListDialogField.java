@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.ui.wizards.classwizard;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.IMethodStub.EImplMethod;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
@@ -38,12 +39,17 @@ public class MethodStubsListDialogField extends CheckedListDialogField<IMethodSt
 	private static final String CP_NAME = "name"; //$NON-NLS-1$
 	private static final String CP_ACCESS = "access"; //$NON-NLS-1$
 	private static final String CP_VIRTUAL = "virtual"; //$NON-NLS-1$
-	private static final String CP_INLINE = "inline"; //$NON-NLS-1$
+	private static final String CP_IMPL = "impl"; //$NON-NLS-1$
 	static final Integer INDEX_YES = 0;
 	static final Integer INDEX_NO = 1;
 	static final Integer INDEX_PUBLIC = 0;
 	static final Integer INDEX_PROTECTED = 1;
 	static final Integer INDEX_PRIVATE = 2;
+
+	static final Integer INDEX_DEFINITION = EImplMethod.DEFINITION.ordinal();
+	static final Integer INDEX_INLINE = EImplMethod.INLINE.ordinal();
+	static final Integer INDEX_DEFAULT = EImplMethod.DEFAULT.ordinal();
+	static final Integer INDEX_DELETED = EImplMethod.DELETED.ordinal();
 
 	private final class CellHandler implements ICellModifier {
 		@Override
@@ -54,8 +60,8 @@ public class MethodStubsListDialogField extends CheckedListDialogField<IMethodSt
 					return stub.canModifyAccess();
 				} else if (property.equals(CP_VIRTUAL)) {
 					return stub.canModifyVirtual();
-				} else if (property.equals(CP_INLINE)) {
-					return stub.canModifyInline();
+				} else if (property.equals(CP_IMPL)) {
+					return stub.canModifyImplementation();
 				}
 			}
 			return false;
@@ -79,10 +85,14 @@ public class MethodStubsListDialogField extends CheckedListDialogField<IMethodSt
 				if (stub.isVirtual())
 					return INDEX_YES;
 				return INDEX_NO;
-			} else if (property.equals(CP_INLINE)) {
+			} else if (property.equals(CP_IMPL)) {
 				if (stub.isInline())
-					return INDEX_YES;
-				return INDEX_NO;
+					return INDEX_INLINE;
+				else if (stub.isDefault())
+					return INDEX_DEFAULT;
+				else if (stub.isDeleted())
+					return INDEX_DELETED;
+				return INDEX_DEFINITION;
 			}
 			return null;
 		}
@@ -112,9 +122,9 @@ public class MethodStubsListDialogField extends CheckedListDialogField<IMethodSt
 					Integer yesno = (Integer) value;
 					stub.setVirtual(yesno.equals(INDEX_YES));
 					refresh();
-				} else if (property.equals(CP_INLINE) && value instanceof Integer) {
-					Integer yesno = (Integer) value;
-					stub.setInline(yesno.equals(INDEX_YES));
+				} else if (property.equals(CP_IMPL) && value instanceof Integer) {
+					EImplMethod m = EImplMethod.values()[(int) value];
+					stub.setImplMethod(m);
 					refresh();
 				}
 			}
@@ -128,9 +138,9 @@ public class MethodStubsListDialogField extends CheckedListDialogField<IMethodSt
 		String[] headers = new String[] { NewClassWizardMessages.MethodStubsDialogField_headings_name,
 				NewClassWizardMessages.MethodStubsDialogField_headings_access,
 				NewClassWizardMessages.MethodStubsDialogField_headings_virtual,
-				NewClassWizardMessages.MethodStubsDialogField_headings_inline };
+				NewClassWizardMessages.MethodStubsDialogField_headings_implementation };
 		ColumnLayoutData[] columns = new ColumnLayoutData[] { new ColumnWeightData(70, 30),
-				new ColumnWeightData(40, 30), new ColumnWeightData(30, 25), new ColumnWeightData(30, 25), };
+				new ColumnWeightData(40, 30), new ColumnWeightData(30, 25), new ColumnWeightData(50, 30), };
 		setTableColumns(new ListDialogField.ColumnsDescription(columns, headers, true));
 	}
 
@@ -153,7 +163,14 @@ public class MethodStubsListDialogField extends CheckedListDialogField<IMethodSt
 
 		CellEditor virtualCellEditor = new ComboBoxCellEditor(table,
 				new String[] { /* INDEX_YES */BaseClassesLabelProvider.getYesNoText(true),
-						/* INDEX_NO */BaseClassesLabelProvider.getYesNoText(false) },
+						/* INDEX_NO */ BaseClassesLabelProvider.getYesNoText(false) },
+				SWT.READ_ONLY);
+
+		CellEditor implCellEditor = new ComboBoxCellEditor(table,
+				new String[] { /* INDEX_DEFINITION */BaseClassesLabelProvider.getImplText(EImplMethod.DEFINITION),
+						/* INDEX_INLINE */BaseClassesLabelProvider.getImplText(EImplMethod.INLINE),
+						/* INDEX_DEFAULT */BaseClassesLabelProvider.getImplText(EImplMethod.DEFAULT),
+						/* INDEX_DELETED */BaseClassesLabelProvider.getImplText(EImplMethod.DELETED) },
 				SWT.READ_ONLY);
 
 		CellEditor accessCellEditor = new ComboBoxCellEditor(table,
@@ -162,8 +179,8 @@ public class MethodStubsListDialogField extends CheckedListDialogField<IMethodSt
 						/* INDEX_PRIVATE */BaseClassesLabelProvider.getAccessText(ASTAccessVisibility.PRIVATE) },
 				SWT.READ_ONLY);
 
-		viewer.setCellEditors(new CellEditor[] { null, accessCellEditor, virtualCellEditor, virtualCellEditor });
-		viewer.setColumnProperties(new String[] { CP_NAME, CP_ACCESS, CP_VIRTUAL, CP_INLINE });
+		viewer.setCellEditors(new CellEditor[] { null, accessCellEditor, virtualCellEditor, implCellEditor });
+		viewer.setColumnProperties(new String[] { CP_NAME, CP_ACCESS, CP_VIRTUAL, CP_IMPL });
 		viewer.setCellModifier(new CellHandler());
 		return viewer;
 	}

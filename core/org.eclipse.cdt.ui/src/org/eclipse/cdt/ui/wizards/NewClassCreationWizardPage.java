@@ -52,6 +52,7 @@ import org.eclipse.cdt.internal.ui.wizards.classwizard.CopyConstructorMethodStub
 import org.eclipse.cdt.internal.ui.wizards.classwizard.DestructorMethodStub;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.IBaseClassInfo;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.IMethodStub;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.IMethodStub.EImplMethod;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.MethodStubsListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.MoveAssignOpMethodStub;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.MoveConstructorMethodStub;
@@ -120,7 +121,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	private static final String KEY_TEST_FILE_SELECTED = "testFileSelected"; //$NON-NLS-1$
 	private static final String KEY_STUB_SELECTED = "stubSelected"; //$NON-NLS-1$
 	private static final String KEY_STUB_VIRTUAL = "stubVirtual"; //$NON-NLS-1$
-	private static final String KEY_STUB_INLINE = "stubInline"; //$NON-NLS-1$
+	private static final String KEY_STUB_IMPL = "stubImpl"; //$NON-NLS-1$
 
 	// Field IDs
 	protected static final int SOURCE_FOLDER_ID = 1;
@@ -492,8 +493,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			if (stub.canModifyVirtual()) {
 				stub.setVirtual(getBooleanSettingWithDefault(KEY_STUB_VIRTUAL + i, stub.isVirtual()));
 			}
-			if (stub.canModifyInline()) {
-				stub.setInline(getBooleanSettingWithDefault(KEY_STUB_INLINE + i, stub.isInline()));
+			if (stub.canModifyImplementation()) {
+				stub.setImplMethod(getEnumSettingWithDefault(KEY_STUB_IMPL + i, EImplMethod.DEFINITION));
 			}
 			addMethodStub(stub, getBooleanSettingWithDefault(KEY_STUB_SELECTED + i, stub.isEnabledByDefault()));
 		}
@@ -508,6 +509,14 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			return defaultValue;
 		}
 		return Boolean.valueOf(value);
+	}
+
+	private EImplMethod getEnumSettingWithDefault(String key, EImplMethod defaultValue) {
+		String value = fDialogSettings.get(key);
+		if (value == null) {
+			return defaultValue;
+		}
+		return EImplMethod.valueOf(value);
 	}
 
 	/**
@@ -2079,8 +2088,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			if (stub.canModifyVirtual()) {
 				fDialogSettings.put(KEY_STUB_VIRTUAL + i, stub.isVirtual());
 			}
-			if (stub.canModifyInline()) {
-				fDialogSettings.put(KEY_STUB_INLINE + i, stub.isInline());
+			if (stub.canModifyImplementation()) {
+				fDialogSettings.put(KEY_STUB_IMPL + i, stub.getImplMethod().name());
 			}
 			fDialogSettings.put(KEY_STUB_SELECTED + i, fMethodStubsDialogField.isChecked(stub));
 		}

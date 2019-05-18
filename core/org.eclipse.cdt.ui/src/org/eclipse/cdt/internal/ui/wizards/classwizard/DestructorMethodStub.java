@@ -24,24 +24,24 @@ public final class DestructorMethodStub extends AbstractMethodStub {
 	private static String NAME = NewClassWizardMessages.NewClassCodeGeneration_stub_destructor_name;
 
 	public DestructorMethodStub() {
-		this(ASTAccessVisibility.PUBLIC, true, false);
+		this(ASTAccessVisibility.PUBLIC, true, EImplMethod.DEFINITION);
 	}
 
-	public DestructorMethodStub(ASTAccessVisibility access, boolean isVirtual, boolean isInline) {
-		super(NAME, access, isVirtual, isInline);
+	public DestructorMethodStub(ASTAccessVisibility access, boolean isVirtual, EImplMethod method) {
+		super(NAME, access, isVirtual, method);
 	}
 
 	@Override
 	public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses,
 			String lineDelimiter) throws CoreException {
 		StringBuilder buf = new StringBuilder();
-		if (fIsVirtual) {
+		if (isVirtual()) {
 			buf.append("virtual "); //$NON-NLS-1$
 		}
 		buf.append("~"); //$NON-NLS-1$
 		buf.append(className);
 		buf.append("()"); //$NON-NLS-1$
-		if (fIsInline) {
+		if (isInline()) {
 			buf.append('{');
 			buf.append(lineDelimiter);
 			String body = CodeGeneration.getDestructorBodyContent(tu, className, null, lineDelimiter);
@@ -50,6 +50,10 @@ public final class DestructorMethodStub extends AbstractMethodStub {
 				buf.append(lineDelimiter);
 			}
 			buf.append('}');
+		} else if (isDefault()) {
+			buf.append(" = default;"); //$NON-NLS-1$
+		} else if (isDeleted()) {
+			buf.append(" = delete;"); //$NON-NLS-1$
 		} else {
 			buf.append(";"); //$NON-NLS-1$
 		}
@@ -59,7 +63,7 @@ public final class DestructorMethodStub extends AbstractMethodStub {
 	@Override
 	public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses,
 			String lineDelimiter) throws CoreException {
-		if (fIsInline) {
+		if (!hasDefinition()) {
 			return ""; //$NON-NLS-1$
 		}
 		StringBuilder buf = new StringBuilder();

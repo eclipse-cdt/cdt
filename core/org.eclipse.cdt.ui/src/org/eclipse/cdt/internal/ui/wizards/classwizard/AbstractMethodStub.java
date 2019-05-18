@@ -19,17 +19,37 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.core.runtime.CoreException;
 
 public abstract class AbstractMethodStub implements IMethodStub {
-	protected String fName;
-	protected String fDescription;
-	protected ASTAccessVisibility fAccess;
-	protected boolean fIsVirtual;
-	protected boolean fIsInline;
+	private String fName;
+	private String fDescription;
+	private ASTAccessVisibility fAccess;
+	private boolean fIsVirtual;
+	private EImplMethod fImplMethod;
 
-	public AbstractMethodStub(String name, ASTAccessVisibility access, boolean isVirtual, boolean isInline) {
+	public AbstractMethodStub(String name, ASTAccessVisibility access, boolean isVirtual, EImplMethod impl) {
 		fName = name;
 		fAccess = access;
 		fIsVirtual = isVirtual;
-		fIsInline = isInline;
+		fImplMethod = impl;
+	}
+
+	@Override
+	public EImplMethod getImplMethod() {
+		return fImplMethod;
+	}
+
+	@Override
+	public boolean isDeleted() {
+		return fImplMethod == EImplMethod.DELETED;
+	}
+
+	@Override
+	public boolean isDefault() {
+		return fImplMethod == EImplMethod.DEFAULT;
+	}
+
+	@Override
+	public boolean hasDefinition() {
+		return fImplMethod == EImplMethod.DEFINITION;
 	}
 
 	@Override
@@ -64,12 +84,12 @@ public abstract class AbstractMethodStub implements IMethodStub {
 
 	@Override
 	public boolean isInline() {
-		return fIsInline;
+		return fImplMethod == EImplMethod.INLINE;
 	}
 
 	@Override
-	public void setInline(boolean isInline) {
-		fIsInline = isInline;
+	public void setImplMethod(EImplMethod method) {
+		fImplMethod = method;
 	}
 
 	@Override
@@ -83,7 +103,7 @@ public abstract class AbstractMethodStub implements IMethodStub {
 	}
 
 	@Override
-	public boolean canModifyInline() {
+	public boolean canModifyImplementation() {
 		return true;
 	}
 

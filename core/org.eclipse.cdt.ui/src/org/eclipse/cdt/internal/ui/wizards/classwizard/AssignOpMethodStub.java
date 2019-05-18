@@ -22,11 +22,11 @@ public final class AssignOpMethodStub extends AbstractMethodStub {
 	private static String NAME = NewClassWizardMessages.NewClassCodeGeneration_stub_assign_op_name;
 
 	public AssignOpMethodStub() {
-		this(ASTAccessVisibility.PUBLIC, false);
+		this(ASTAccessVisibility.PUBLIC, EImplMethod.DEFINITION);
 	}
 
-	public AssignOpMethodStub(ASTAccessVisibility access, boolean isInline) {
-		super(NAME, access, false, isInline);
+	public AssignOpMethodStub(ASTAccessVisibility access, EImplMethod method) {
+		super(NAME, access, false, method);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public final class AssignOpMethodStub extends AbstractMethodStub {
 		buf.append("& operator=(const "); //$NON-NLS-1$
 		buf.append(className);
 		buf.append("& other)"); //$NON-NLS-1$
-		if (fIsInline) {
+		if (isInline()) {
 			buf.append('{');
 			buf.append(lineDelimiter);
 			String body = CodeGeneration.getMethodBodyContent(tu, className, "operator=", null, lineDelimiter); //$NON-NLS-1$
@@ -46,6 +46,10 @@ public final class AssignOpMethodStub extends AbstractMethodStub {
 				buf.append(lineDelimiter);
 			}
 			buf.append('}');
+		} else if (isDefault()) {
+			buf.append(" = default;"); //$NON-NLS-1$
+		} else if (isDeleted()) {
+			buf.append(" = delete;"); //$NON-NLS-1$
 		} else {
 			buf.append(";"); //$NON-NLS-1$
 		}
@@ -55,7 +59,7 @@ public final class AssignOpMethodStub extends AbstractMethodStub {
 	@Override
 	public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses,
 			String lineDelimiter) throws CoreException {
-		if (fIsInline) {
+		if (!hasDefinition()) {
 			return ""; //$NON-NLS-1$
 		}
 		StringBuilder buf = new StringBuilder();

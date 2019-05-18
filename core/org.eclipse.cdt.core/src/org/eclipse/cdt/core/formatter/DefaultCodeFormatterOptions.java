@@ -79,6 +79,9 @@ public class DefaultCodeFormatterOptions {
 	public int alignment_for_parameters_in_method_declaration;
 	public int alignment_for_throws_clause_in_method_declaration;
 	public int alignment_for_constructor_initializer_list;
+	/**
+	 * @since 6.8
+	 */
 	public int alignment_for_lambda_expression;
 
 	//	public boolean align_type_members_on_columns;
@@ -205,7 +208,13 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_after_question_in_conditional;
 	public boolean insert_space_after_semicolon_in_for;
 	public boolean insert_space_after_unary_operator;
+	/**
+	 * @since 6.8
+	 */
 	public boolean insert_space_after_lambda_return;
+	/**
+	 * @since 6.8
+	 */
 	public boolean insert_space_before_lambda_return;
 	public boolean insert_space_before_assignment_operator;
 	public boolean insert_space_before_binary_operator;
